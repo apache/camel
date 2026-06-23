@@ -360,7 +360,7 @@ public class CompositeApiBatchManualIT extends AbstractSalesforceTestBase {
                 from("direct:deleteBatchAccounts")
                         .to("salesforce:query?sObjectClass=" + Accounts.class.getName()
                             + "&sObjectQuery=SELECT Id FROM Account WHERE Name = 'Account created from Composite batch API'")
-                        .split(simple("${body.records}")).setHeader("sObjectId", simple("${body.id}"))
+                        .split(simple("${body.records}")).setHeader("CamelSalesforceSObjectId", simple("${body.id}"))
                         .to("salesforce:deleteSObject?sObjectName=Account").end();
             }
         };

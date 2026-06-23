@@ -2162,7 +2162,7 @@ public interface CxfRsEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final CxfRsHeaderNameBuilder INSTANCE = new CxfRsHeaderNameBuilder();
+        public static final CxfRsHeaderNameBuilder INSTANCE = new CxfRsHeaderNameBuilder();
 
         /**
          * The name of the operation.
@@ -2171,10 +2171,10 @@ public interface CxfRsEndpointBuilderFactory {
          * 
          * Group: common
          * 
-         * @return the name of the header {@code operationName}.
+         * @return the name of the header {@code CxfOperationName}.
          */
-        public String operationName() {
-            return "operationName";
+        public String cxfOperationName() {
+            return "CamelCxfOperationName";
         }
         /**
          * The authentication.

@@ -35,6 +35,7 @@ import org.apache.camel.test.infra.kafka.services.KafkaService;
 import org.apache.camel.test.infra.kafka.services.KafkaServiceFactory;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.ConsumerGroupDescription;
+import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.common.config.SaslConfigs;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
@@ -45,7 +46,6 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.Timeout;
-import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperties;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.junit.jupiter.api.extension.RegisterExtension;
@@ -63,7 +63,6 @@ import static org.junit.jupiter.api.Assertions.fail;
                                  disabledReason = "Requires Kafka container"),
         @EnabledIfSystemProperty(named = "kafka.instance.type", matches = "kafka", disabledReason = "Requires Kafka container")
 })
-@DisabledIfSystemProperty(named = "ci.env.name", matches = ".*", disabledReason = "Flaky on Github CI")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class KafkaConsumerAuthInvalidIT {
     public static final String TOPIC = "test-auth-invalid-it";
@@ -79,7 +78,7 @@ public class KafkaConsumerAuthInvalidIT {
     @RegisterExtension
     private static final CamelContextExtension contextExtension = new DefaultCamelContextExtension();
 
-    private org.apache.kafka.clients.producer.KafkaProducer<String, String> producer;
+    private KafkaProducer<String, String> producer;
 
     @BeforeEach
     public void before() {
@@ -90,7 +89,7 @@ public class KafkaConsumerAuthInvalidIT {
         props.put(SaslConfigs.SASL_MECHANISM, "PLAIN");
 
         try {
-            producer = new org.apache.kafka.clients.producer.KafkaProducer<>(props);
+            producer = new KafkaProducer<>(props);
         } catch (Exception e) {
             fail(e.getMessage());
         }
@@ -152,10 +151,10 @@ public class KafkaConsumerAuthInvalidIT {
         MockEndpoint dlq = contextExtension.getMockEndpoint("mock:dlq");
 
         dlq.expectedMessageCount(1);
-        dlq.assertIsSatisfied(3000);
+        dlq.assertIsSatisfied(10000);
 
         to.expectedMessageCount(0);
-        to.assertIsSatisfied(3000);
+        to.assertIsSatisfied(10000);
 
         final Map<String, ConsumerGroupDescription> allGroups
                 = assertDoesNotThrow(() -> KafkaAdminUtil.getConsumerGroupInfo("KafkaConsumerAuthInvalidIT",

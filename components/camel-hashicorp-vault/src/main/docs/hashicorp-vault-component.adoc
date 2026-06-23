@@ -7,8 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Only producer is supported
-//Manually maintained attributes
-:camel-spring-boot-name: hashicorp-vault
 
 *Since Camel {since}*
 
@@ -112,6 +110,18 @@ When using the `operation` option to create, get, list secrets etc., you should 
 
 At this point, you'll be able to reference a property in the following way:
 
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+    .to("{{hashicorp:secret:route}}");
+----
+
+XML::
++
 [source,xml]
 ----
 <camelContext>
@@ -122,10 +132,35 @@ At this point, you'll be able to reference a property in the following way:
 </camelContext>
 ----
 
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: "{{hashicorp:secret:route}}"
+----
+====
+
 Where route will be the name of the secret stored in the Hashicorp Vault instance, in the 'secret' engine.
 
 You could specify a default value in case the secret is not present on Hashicorp Vault instance:
 
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+    .to("{{hashicorp:secret:route:default}}");
+----
+
+XML::
++
 [source,xml]
 ----
 <camelContext>
@@ -135,6 +170,19 @@ You could specify a default value in case the secret is not present on Hashicorp
     </route>
 </camelContext>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: "{{hashicorp:secret:route:default}}"
+----
+====
 
 In this case, if the secret doesn't exist in the 'secret' engine, the property will fall back to "default" as value.
 
@@ -154,6 +202,18 @@ Also, you are able to get a particular field of the secret, if you have, for exa
 
 You're able to do get single secret value in your route, in the 'secret' engine, like for example:
 
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+    .log("Username is {{hashicorp:secret:database#username}}");
+----
+
+XML::
++
 [source,xml]
 ----
 <camelContext>
@@ -164,10 +224,35 @@ You're able to do get single secret value in your route, in the 'secret' engine,
 </camelContext>
 ----
 
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - log:
+            message: "Username is {{hashicorp:secret:database#username}}"
+----
+====
+
 Or re-use the property as part of an endpoint.
 
 You could specify a default value in case the particular field of secret is not present on Hashicorp Vault instance, in the 'secret' engine:
 
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+    .log("Username is {{hashicorp:secret:database#username:admin}}");
+----
+
+XML::
++
 [source,xml]
 ----
 <camelContext>
@@ -178,10 +263,35 @@ You could specify a default value in case the particular field of secret is not 
 </camelContext>
 ----
 
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - log:
+            message: "Username is {{hashicorp:secret:database#username:admin}}"
+----
+====
+
 In this case, if the secret doesn't exist or the secret exists (in the 'secret' engine) but the username field is not part of the secret, the property will fall back to "admin" as value.
 
 There is also the syntax to get a particular version of the secret for both the approach, with field/default value specified or only with secret:
 
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+    .to("{{hashicorp:secret:route@2}}");
+----
+
+XML::
++
 [source,xml]
 ----
 <camelContext>
@@ -192,8 +302,33 @@ There is also the syntax to get a particular version of the secret for both the 
 </camelContext>
 ----
 
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: "{{hashicorp:secret:route@2}}"
+----
+====
+
 This approach will return the RAW route secret with version '2', in the 'secret' engine.
 
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+    .to("{{hashicorp:route:default@2}}");
+----
+
+XML::
++
 [source,xml]
 ----
 <camelContext>
@@ -204,8 +339,33 @@ This approach will return the RAW route secret with version '2', in the 'secret'
 </camelContext>
 ----
 
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: "{{hashicorp:route:default@2}}"
+----
+====
+
 This approach will return the route secret value with version '2' or default value in case the secret doesn't exist or the version doesn't exist (in the 'secret' engine).
 
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+    .log("Username is {{hashicorp:secret:database#username:admin@2}}");
+----
+
+XML::
++
 [source,xml]
 ----
 <camelContext>
@@ -215,6 +375,19 @@ This approach will return the route secret value with version '2' or default val
     </route>
 </camelContext>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - log:
+            message: "Username is {{hashicorp:secret:database#username:admin@2}}"
+----
+====
 
 This approach will return the username field of the database secret with version '2' or admin in case the secret doesn't exist or the version doesn't exist (in the 'secret' engine).
 
@@ -279,7 +452,6 @@ For example, if a secret named `database` is updated in Vault:
 
 This polling approach works with all Hashicorp Vault deployments (on-premise, cloud, enterprise, and open-source) without requiring additional infrastructure.
 
-include::spring-boot:partial$starter.adoc[]
 
 === Using Hashicorp Vault Property Function in Spring Boot for Early resolving properties
 

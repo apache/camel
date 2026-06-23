@@ -498,7 +498,7 @@ public interface AsteriskEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final AsteriskHeaderNameBuilder INSTANCE = new AsteriskHeaderNameBuilder();
+        public static final AsteriskHeaderNameBuilder INSTANCE = new AsteriskHeaderNameBuilder();
 
         /**
          * The name of the Asterisk event.

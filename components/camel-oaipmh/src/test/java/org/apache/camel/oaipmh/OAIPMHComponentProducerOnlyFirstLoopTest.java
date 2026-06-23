@@ -56,7 +56,7 @@ public class OAIPMHComponentProducerOnlyFirstLoopTest extends CamelTestSupport {
                 from("direct:start")
                         .setHeader("CamelOaimphFrom", constant("2020-06-01T00:00:00Z"))
                         .setHeader("CamelOaimphOnlyFirst", constant("true"))
-                        .loopDoWhile(simple("${in.header.CamelOaimphResumptionToken} || ${body} == 'foo'"))
+                        .loopDoWhile(simple("${in.header.CamelOaimphResumptionToken} != null || ${body} == 'foo'"))
                         .to("oaipmh://localhost:" + mockOaipmhServer.getHttpPort() + "/oai/request")
                         .split(body())
                         .split(xpath(

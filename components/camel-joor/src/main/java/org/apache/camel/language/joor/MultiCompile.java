@@ -18,6 +18,8 @@ package org.apache.camel.language.joor;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.StringWriter;
 import java.lang.invoke.MethodHandles;
@@ -26,6 +28,9 @@ import java.net.URI;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -107,6 +112,7 @@ public final class MultiCompile {
         }
 
         JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
+        List<Path> tempFiles = new ArrayList<>();
 
         try {
             if (!options.contains("-classpath")) {
@@ -130,6 +136,14 @@ public final class MultiCompile {
 
                         if ("file".equals(url.getProtocol())) {
                             classpath.append(new File(url.toURI()));
+                        } else {
+                            // handle non-file URLs (e.g. jar:nested: from Spring Boot fat-jars)
+                            // by extracting the resource to a temp file
+                            Path tempJar = extractUrlToTempFile(url);
+                            if (tempJar != null) {
+                                tempFiles.add(tempJar);
+                                classpath.append(tempJar.toFile());
+                            }
                         }
                     }
                 }
@@ -223,6 +237,25 @@ public final class MultiCompile {
             throw e;
         } catch (Exception e) {
             throw new ReflectException("Error while compiling unit " + unit, e);
+        } finally {
+            for (Path temp : tempFiles) {
+                try {
+                    Files.deleteIfExists(temp);
+                } catch (IOException e) {
+                    LOG.debug("Failed to delete temp file: {}", temp, e);
+                }
+            }
+        }
+    }
+
+    private static Path extractUrlToTempFile(URL url) {
+        try (InputStream is = url.openStream()) {
+            Path temp = Files.createTempFile("camel-joor-cp-", ".jar");
+            Files.copy(is, temp, StandardCopyOption.REPLACE_EXISTING);
+            return temp;
+        } catch (IOException e) {
+            LOG.debug("Could not extract classpath entry from URL: {}", url, e);
+            return null;
         }
     }
 

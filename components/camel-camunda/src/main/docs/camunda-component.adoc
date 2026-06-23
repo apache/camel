@@ -7,8 +7,6 @@
 :supportlevel: Preview
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
-//Manually maintained attributes
-:camel-spring-boot-name: camunda
 
 *Since Camel {since}*
 
@@ -33,19 +31,19 @@ To use the Camunda component, Maven users will need to add the
 following dependency to their `pom.xml`:
 
 [source,xml]
------------------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-camunda</artifactId>
     <version>${camel-version}</version>
 </dependency>
------------------------------------------------
+----
 
 == URI format
 
--------------------------------
+----
 camunda://[endpoint]?[options]
--------------------------------
+----
 
 
 // component options: START
@@ -60,26 +58,28 @@ include::partial$component-endpoint-headers.adoc[]
 
 Set the `clusterId`, `clientId`, `clientSecret`, and `region` component options.
 
+._Java-only: programmatic component configuration_
 [source,java]
-----------------------------------------------------------------------------------------------------------------------
+----
 CamundaComponent camunda = context.getComponent("camunda", CamundaComponent.class);
 camunda.setClusterId("your-cluster-id");
 camunda.setClientId("your-client-id");
 camunda.setClientSecret("your-client-secret");
 camunda.setRegion("bru-2");
-----------------------------------------------------------------------------------------------------------------------
+----
 
 === Self-Managed
 
 Set the `grpcAddress` and `restAddress` component options. For authenticated self-managed clusters,
 also set `clientId`, `clientSecret`, and `oAuthAPI`.
 
+._Java-only: programmatic component configuration_
 [source,java]
-----------------------------------------------------------------------------------------------------------------------
+----
 CamundaComponent camunda = context.getComponent("camunda", CamundaComponent.class);
 camunda.setGrpcAddress("http://localhost:26500");
 camunda.setRestAddress("http://localhost:8080");
-----------------------------------------------------------------------------------------------------------------------
+----
 
 == Usage
 
@@ -149,7 +149,7 @@ YAML::
         - setBody:
             simple: '{"process_id":"processId","variables":${body}}'
         - to:
-            uri: "camunda://startProcess"
+            uri: camunda://startProcess
 ----
 
 XML::
@@ -220,7 +220,7 @@ YAML::
         - setBody:
             simple: '{"process_instance_key": 123}'
         - to:
-            uri: "camunda://cancelProcess"
+            uri: camunda://cancelProcess
 ----
 
 XML::
@@ -268,7 +268,7 @@ YAML::
         - setBody:
             simple: '{"name":"MessageName","correlation_key":"messageKey","time_to_live":100,"variables":{}}'
         - to:
-            uri: "camunda://publishMessage"
+            uri: camunda://publishMessage
 ----
 
 XML::
@@ -295,7 +295,7 @@ Java::
 ----
 from("direct:deploy")
     .process(exchange -> {
-        exchange.getIn().setHeader(CamundaConstants.RESOURCE_NAME, "process.bpmn");
+        exchange.getIn().setHeader("CamelCamundaResourceName", "process.bpmn");
         exchange.getIn().setBody(content.getBytes());
     })
     .to("camunda://deployResource");
@@ -313,7 +313,7 @@ YAML::
             name: CamelCamundaResourceName
             simple: "process.bpmn"
         - to:
-            uri: "camunda://deployResource"
+            uri: camunda://deployResource
 ----
 
 XML::
@@ -378,7 +378,10 @@ YAML::
 ----
 - route:
     from:
-      uri: "camunda://worker?jobType=myJobType&timeout=20"
+      uri: camunda://worker
+      parameters:
+        jobType: myJobType
+        timeout: 20
       steps:
         - log:
             message: "Received job ${header.CamelCamundaJobKey}"
@@ -404,25 +407,8 @@ Java::
 [source,java]
 ----
 from("camunda://worker?jobType=myJobType&timeout=20")
-    .process(exchange -> {
-        Map<String, Object> result = new HashMap<>();
-        result.put("approved", true);
-        exchange.getIn().setBody(result);
-    });
-----
-
-YAML::
-+
-[source,yaml]
-----
-- route:
-    from:
-      uri: "camunda://worker?jobType=myJobType&timeout=20"
-      steps:
-        - setBody:
-            constant:
-              resultType: "java.util.Map"
-              expression: ""
+    .setBody(simple("${map('approved',true)}"))
+    .to("camunda://completeJob");
 ----
 
 XML::
@@ -431,8 +417,28 @@ XML::
 ----
 <route>
   <from uri="camunda://worker?jobType=myJobType&amp;timeout=20"/>
-  <process ref="myJobProcessor"/>
+  <setBody>
+    <simple>${map('approved',true)}</simple>
+  </setBody>
+  <to uri="camunda://completeJob"/>
 </route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: camunda://worker
+      parameters:
+        jobType: myJobType
+        timeout: 20
+    steps:
+      - setBody:
+          simple: "${map('approved',true)}"
+      - to:
+          uri: camunda://completeJob
 ----
 ====
 
@@ -451,10 +457,8 @@ Java::
 [source,java]
 ----
 from("camunda://worker?jobType=myJobType&timeout=20")
-    .process(exchange -> {
-        exchange.getIn().setHeader(CamundaConstants.ERROR_CODE, "INVALID_DATA");
-        exchange.getIn().setHeader(CamundaConstants.ERROR_MESSAGE, "Data validation failed");
-    })
+    .setHeader("CamelCamundaErrorCode", constant("INVALID_DATA"))
+    .setHeader("CamelCamundaErrorMessage", constant("Data validation failed"))
     .to("camunda://throwError");
 ----
 
@@ -464,16 +468,19 @@ YAML::
 ----
 - route:
     from:
-      uri: "camunda://worker?jobType=myJobType&timeout=20"
+      uri: camunda://worker
+      parameters:
+        jobType: myJobType
+        timeout: 20
       steps:
         - setHeader:
             name: CamelCamundaErrorCode
-            simple: "INVALID_DATA"
+            constant: INVALID_DATA
         - setHeader:
             name: CamelCamundaErrorMessage
-            simple: "Data validation failed"
+            constant: "Data validation failed"
         - to:
-            uri: "camunda://throwError"
+            uri: camunda://throwError
 ----
 
 XML::
@@ -483,10 +490,10 @@ XML::
 <route>
   <from uri="camunda://worker?jobType=myJobType&amp;timeout=20"/>
   <setHeader name="CamelCamundaErrorCode">
-    <simple>INVALID_DATA</simple>
+    <constant>INVALID_DATA</constant>
   </setHeader>
   <setHeader name="CamelCamundaErrorMessage">
-    <simple>Data validation failed</simple>
+    <constant>Data validation failed</constant>
   </setHeader>
   <to uri="camunda://throwError"/>
 </route>

@@ -56,7 +56,7 @@ public class JCacheAggregationRepository extends ServiceSupport
     private JCacheConfiguration configuration;
     @Metadata(description = "Whether optimistic locking is in use")
     private boolean optimistic;
-    @Metadata(label = "advanced",
+    @Metadata(label = "advanced", security = "insecure:serialization",
               description = "Whether headers on the Exchange that are Java objects and Serializable should be included and saved to the repository")
     private boolean allowSerializedHeaders;
 

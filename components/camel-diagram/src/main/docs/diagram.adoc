@@ -1,0 +1,354 @@
+= Diagram Component
+:doctitle: Diagram
+:shortname: diagram
+:artifactid: camel-diagram
+:description: Camel Route Diagram rendering
+:since: 4.21
+:supportlevel: Preview
+:tabs-sync-option:
+
+*Since Camel {since}*
+
+The Diagram module provides route diagram rendering capabilities for Apache Camel routes.
+It can generate visual route diagrams as PNG images or plain ASCII art text representations from route structure data.
+
+== Features
+
+* Render route diagrams as PNG images with colored nodes and scope boxes
+* Render route diagrams as plain ASCII art text for terminal output
+* Support for all Camel EIPs: choice, doTry/doCatch, filter, split, loop, multicast, and more
+* Scope boxes visually group branching and scoping EIPs
+* Multiple color themes: dark, light, transparent, or custom (PNG only)
+* Highlight specific paths through routes (e.g., error paths or message traces) with colored arrows
+
+== Usage
+
+=== As a library
+
+Add the `camel-diagram` dependency to your project:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-diagram</artifactId>
+</dependency>
+----
+
+==== Using Camel Java API
+
+You can use the diagram renderer with the Camel API to render as PNG images:
+
+._Java-only: using RouteDiagramDumper to render as PNG image_
+[source,java]
+----
+RouteDiagramDumper dumper = PluginHelper.getRouteDiagramDumper(context);
+BufferedImage image = dumper.dumpRoutesAsImage("*", RouteDiagramDumper.Theme.DARK);
+----
+
+Or render as ASCII art text:
+
+._Java-only: using RouteDiagramDumper to render as ASCII art_
+[source,java]
+----
+RouteDiagramDumper dumper = PluginHelper.getRouteDiagramDumper(context);
+String ascii = dumper.dumpRoutesAsAsciiArt("*");
+----
+
+==== Using standalone Java API
+
+Then use the API to render diagrams:
+
+._Java-only: standalone rendering to PNG image_
+[source,java]
+----
+import org.apache.camel.diagram.*;
+import org.apache.camel.diagram.RouteDiagramLayoutEngine.*;
+import org.apache.camel.diagram.RouteDiagramRenderer.*;
+
+// Parse route structure from JSON
+List<RouteInfo> routes = RouteDiagramHelper.parseRoutes(jsonObject);
+
+// Layout and render
+RouteDiagramLayoutEngine engine = new RouteDiagramLayoutEngine();
+RouteDiagramRenderer renderer = new RouteDiagramRenderer();
+
+LayoutRoute lr = engine.layoutRoute(routes.get(0), RouteDiagramLayoutEngine.PADDING);
+DiagramColors colors = DiagramColors.parse("dark");
+BufferedImage image = renderer.renderDiagram(List.of(lr), lr.maxY + RouteDiagramLayoutEngine.V_GAP, colors);
+
+// Save to file
+ImageIO.write(image, "PNG", new File("diagram.png"));
+----
+
+To render as ASCII art instead:
+
+._Java-only: standalone rendering to ASCII art_
+[source,java]
+----
+import org.apache.camel.diagram.*;
+import org.apache.camel.diagram.RouteDiagramLayoutEngine.*;
+
+// Parse route structure from JSON
+List<RouteInfo> routes = RouteDiagramHelper.parseRoutes(jsonObject);
+
+// Layout and render as ASCII
+RouteDiagramLayoutEngine engine = new RouteDiagramLayoutEngine();
+LayoutRoute lr = engine.layoutRoute(routes.get(0), RouteDiagramLayoutEngine.PADDING);
+
+RouteDiagramAsciiRenderer renderer = new RouteDiagramAsciiRenderer(engine.getNodeWidth());
+String ascii = renderer.renderDiagram(List.of(lr), lr.maxY + RouteDiagramLayoutEngine.V_GAP);
+System.out.println(ascii);
+----
+
+=== With Camel CLI
+
+The diagram rendering is used by the `camel cmd route-diagram` command in Camel CLI:
+
+[source,bash]
+----
+camel cmd route-diagram MyRoute.java
+----
+
+=== Developer console
+
+When the developer console is enabled (for example with `camel run --console`), the `route-diagram`
+console renders the running routes using the interactive `<camel-route-diagram>` web component,
+fed by the `route-structure` console. Request `?format=png` to get the legacy inline PNG image
+instead, or use the `ascii` / `unicode` themes for plain-text output.
+
+== Color Themes
+
+The following built-in themes are available:
+
+* `dark` - dark background (default)
+* `light` - light background
+* `transparent` - transparent background
+
+Custom colors can be specified using the format:
+
+[source,properties]
+----
+bg=#1e1e1e:from=#2e7d32:to=#1565c0:eip=#8957e5:choice=#d29922
+----
+
+Color values can be `#hex` codes or ANSI color names (e.g., `seagreen`, `steelblue`).
+
+To use dark theme
+
+[source,bash]
+----
+camel cmd route-diagram MyRoute.java --theme=dark
+----
+
+== ASCII Art Rendering
+
+The ASCII art renderer produces plain text diagrams using box-drawing characters.
+This is useful for terminal output where images cannot be displayed.
+
+Nodes are drawn as boxes using `+`, `-`, and `|` characters, with arrows using `|` and `v`.
+Branching EIPs (choice, multicast, etc.) produce L-shaped arrows with horizontal connector lines.
+Long labels are automatically wrapped to fit within the box width.
+
+Example output for a simple route:
+
+[source,text]
+----
+route1
+    +----------------------+
+    |      timer:tick      |
+    +----------------------+
+                |
+                |
+                |
+                v
+    +----------------------+
+    |        log:a         |
+    +----------------------+
+----
+
+Example output for a branching route with choice:
+
+[source,text]
+----
+route1
+                  +----------------------+
+                  |      timer:tick      |
+                  +----------------------+
+                              |
+                              v
+                  +----------------------+
+                  |       choice()       |
+                  +----------------------+
+                              |
+              +---------------+---------------+
+              v                               v
+  +----------------------+        +----------------------+
+  |      when(...)       |        |     otherwise()      |
+  +----------------------+        +----------------------+
+              |                               |
+              v                               v
+  +----------------------+        +----------------------+
+  |        log:a         |        |        log:b         |
+  +----------------------+        +----------------------+
+----
+
+Scope boxes (for filter, split, doTry, etc.) are rendered with dashed borders using `:` for vertical
+and `- - -` for horizontal lines.
+
+Use `--theme=ascii` for plain ASCII art:
+
+[source,bash]
+----
+camel cmd route-diagram MyRoute.java --theme=ascii
+----
+
+== Unicode Rendering
+
+The `unicode` theme uses Unicode box-drawing characters for a cleaner look.
+Node boxes use `┌──┐ │ └──┘`, arrows use `│` and `▼`, and branch junctions use `┴`.
+Scope boxes use `╌` (dashed horizontal) and `╎` (dashed vertical) with no corners.
+
+[source,bash]
+----
+camel cmd route-diagram MyRoute.java --theme=unicode
+----
+
+Example output:
+
+[source,text]
+----
+route1
+┌──────────────────────┐
+│      timer:tick      │
+└──────────────────────┘
+           │
+           │
+           ▼
+┌──────────────────────┐
+│        log:a         │
+└──────────────────────┘
+----
+
+== Path Highlighting
+
+You can highlight specific paths through routes by specifying node IDs.
+The arrows and lines between consecutive highlighted nodes are rendered in color,
+making it easy to visualize message flow, error paths, or trace results.
+
+Two highlight styles are available:
+
+* `success` - Green arrows (default). Useful for visualizing successful message paths or trace results.
+* `fail` - Red arrows. Useful for visualizing error paths or failure routes.
+
+Only the arrows between highlighted nodes are colored — the node boxes remain unchanged.
+When highlighting is active, only routes that contain highlighted nodes are rendered.
+
+=== With Camel CLI
+
+Use the `--highlight` and `--highlight-style` options:
+
+[source,bash]
+----
+camel cmd route-diagram MyRoute.yaml --theme=unicode --highlight "from1,setBody1,log1" --highlight-style success
+----
+
+To highlight an error path in red:
+
+[source,bash]
+----
+camel cmd route-diagram MyRoute.yaml --theme=unicode --highlight "from1,filter1,throwException1" --highlight-style fail
+----
+
+The node IDs (e.g., `from1`, `setBody1`, `log1`) correspond to the IDs assigned in the route structure.
+You can discover them by inspecting the route structure JSON from a running Camel application,
+or they typically follow the pattern `<eipName><index>`.
+
+=== With Java API
+
+._Java-only: path highlighting with ASCII and PNG renderers_
+[source,java]
+----
+import org.apache.camel.diagram.*;
+import org.apache.camel.diagram.RouteDiagramLayoutEngine.*;
+
+Set<String> highlightedNodes = Set.of("from1", "setBody1", "log1");
+RouteDiagramHelper.HighlightStyle style = RouteDiagramHelper.HighlightStyle.SUCCESS;
+
+// For ASCII/Unicode rendering
+RouteDiagramAsciiRenderer renderer = new RouteDiagramAsciiRenderer(engine.getNodeWidth(), true);
+String diagram = renderer.renderDiagramAnsi(layoutRoutes, totalHeight, highlightedNodes, style);
+
+// For PNG rendering
+RouteDiagramRenderer pngRenderer = new RouteDiagramRenderer(nodeWidth, fontSize);
+BufferedImage image = pngRenderer.renderDiagram(layoutRoutes, totalHeight, colors, highlightedNodes, style);
+----
+
+== Embeddable Web Component
+
+`camel-diagram` ships a lightweight `<camel-route-diagram>` web component that renders
+interactive route diagrams as SVG directly in the browser.
+Any application with `camel-diagram` on the classpath automatically serves the component
+as a static resource — no extra server configuration needed.
+
+=== Usage
+
+Include the bundled script served from `META-INF/resources/camel/diagram/camel-route-diagram.js`
+(automatically exposed by Servlet 3 containers and Quarkus/Spring Boot static-resource mechanisms):
+
+[source,html]
+----
+<script type="module" src="/camel/diagram/camel-route-diagram.js"></script>
+
+<camel-route-diagram
+  src="/q/dev/route-structure"
+  refresh="5000"
+  filter="my-route">
+</camel-route-diagram>
+----
+
+The `src` attribute must point to an endpoint returning the `route-structure` dev console JSON
+(for example the Quarkus Dev UI endpoint `/q/dev/route-structure`).
+The component automatically appends `?metric=true` so that per-processor exchange statistics
+are included in the diagram.
+
+=== Attributes
+
+[width="100%",cols="2,5,2",options="header"]
+|===
+| Attribute | Description | Default
+| `src` | URL to fetch the route-structure JSON from (required) | —
+| `refresh` | Polling interval in milliseconds; `0` disables polling | `0`
+| `filter` | Route ID filter, forwarded as `?filter=` query parameter | (all routes)
+|===
+
+=== Theming
+
+The component is theme-agnostic.
+It respects `prefers-color-scheme` automatically for dark/light mode,
+and exposes CSS custom properties so the host application can override every visual aspect:
+
+[source,css]
+----
+camel-route-diagram {
+  --crd-bg:                   #ffffff;   /* canvas background */
+  --crd-fg:                   #1e293b;   /* text colour */
+  --crd-edge:                 #94a3b8;   /* edge/arrow colour */
+  --crd-stat:                 #64748b;   /* metric overlay text */
+  --crd-font:                 system-ui; /* font family */
+  --crd-font-size:            12px;      /* base font size */
+  --crd-color-route:          #6366f1;   /* "route" node */
+  --crd-color-from:           #0ea5e9;   /* "from" node */
+  --crd-color-to:             #0ea5e9;   /* "to" node */
+  --crd-color-log:            #64748b;   /* "log" node */
+  --crd-color-choice:         #f59e0b;   /* "choice" node */
+  --crd-color-when:           #fbbf24;   /* "when" branch */
+  --crd-color-otherwise:      #fbbf24;   /* "otherwise" branch */
+  --crd-color-doTry:          #f59e0b;   /* "doTry" scope */
+  --crd-color-doCatch:        #fbbf24;   /* "doCatch" clause */
+  --crd-color-doFinally:      #fbbf24;   /* "doFinally" clause */
+  --crd-color-multicast:      #8b5cf6;   /* "multicast" node */
+  --crd-color-circuitBreaker: #ef4444;   /* "circuitBreaker" node */
+  --crd-color-default:        #6366f1;   /* all other EIP nodes */
+}
+----

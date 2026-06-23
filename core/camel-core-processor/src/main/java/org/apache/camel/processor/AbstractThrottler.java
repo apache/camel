@@ -26,11 +26,13 @@ import org.apache.camel.Expression;
 import org.apache.camel.Traceable;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.RouteIdAware;
+import org.apache.camel.spi.StepIdAware;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class AbstractThrottler extends BaseProcessorSupport implements Traceable, IdAware, RouteIdAware, Throttler {
+public abstract class AbstractThrottler extends BaseProcessorSupport
+        implements Traceable, IdAware, RouteIdAware, StepIdAware, Throttler {
 
     private static final Logger LOG = LoggerFactory.getLogger(AbstractThrottler.class);
 
@@ -43,6 +45,7 @@ public abstract class AbstractThrottler extends BaseProcessorSupport implements 
     protected final Expression correlationExpression;
     protected String id;
     protected String routeId;
+    protected String stepId;
     protected boolean rejectExecution;
     protected boolean asyncDelayed;
     protected boolean callerRunsWhenRejected = true;
@@ -117,6 +120,16 @@ public abstract class AbstractThrottler extends BaseProcessorSupport implements 
     @Override
     public void setRouteId(String routeId) {
         this.routeId = routeId;
+    }
+
+    @Override
+    public String getStepId() {
+        return stepId;
+    }
+
+    @Override
+    public void setStepId(String stepId) {
+        this.stepId = stepId;
     }
 
     @Override

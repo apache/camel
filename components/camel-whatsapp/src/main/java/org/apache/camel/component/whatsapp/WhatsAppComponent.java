@@ -33,7 +33,7 @@ public class WhatsAppComponent extends DefaultComponent {
 
     @Metadata(required = true, description = "Phone Number ID taken from WhatsApp Meta for Developers Dashboard")
     private String phoneNumberId;
-    @Metadata(label = "security", secret = true, required = true,
+    @Metadata(label = "security", security = "secret", required = true,
               description = "Authorization Token taken from WhatsApp Meta for Developers Dashboard")
     private String authorizationToken;
 
@@ -44,7 +44,7 @@ public class WhatsAppComponent extends DefaultComponent {
     private String baseUri = API_DEFAULT_URL;
     @Metadata(label = "advanced", defaultValue = API_DEFAULT_VERSION, description = "WhatsApp Cloud API version")
     private String apiVersion = API_DEFAULT_VERSION;
-    @Metadata(description = "Webhook verify token", label = "advanced", secret = true)
+    @Metadata(description = "Webhook verify token", label = "advanced", security = "secret")
     private String webhookVerifyToken;
 
     public WhatsAppComponent() {

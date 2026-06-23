@@ -34,7 +34,7 @@ public class FileToFtpsExplicitTLSWithoutClientAuthIT extends FtpsServerExplicit
                + "&securityProtocol=TLSv1.3&implicit=false&delete=true";
     }
 
-    @Disabled("CAMEL-16784:Disable testFromFileToFtp tests")
+    @Disabled("Embedded Apache FtpServer does not support TLS 1.3")
     @Test
     public void testFromFileToFtp() throws Exception {
 

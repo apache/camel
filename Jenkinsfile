@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-def MAVEN_PARAMS = "-B -e -fae -V -Dnoassembly -Dmaven.compiler.fork=true -Dsurefire.rerunFailingTestsCount=2 -Dfailsafe.rerunFailingTestsCount=1"
+def MAVEN_PARAMS = "-B -e -fae -V -Dnoassembly -Dsurefire.rerunFailingTestsCount=2 -Dfailsafe.rerunFailingTestsCount=1"
 def MAVEN_TEST_PARAMS = env.MAVEN_TEST_PARAMS ?: "-Dci.env.name=apache.org"
 def MAVEN_TEST_PARAMS_UBUNTU = env.MAVEN_TEST_PARAMS ?: "-Dci.env.name=apache.org"
 def MAVEN_JDK_17_PARAMS = "-Denforcer.skip=true"
@@ -63,11 +63,15 @@ pipeline {
                 options {
                     throttle(['camel'])
                 }
-                when { anyOf {
-                    expression { params.PLATFORM_FILTER == 'all' }
-                    expression { params.PLATFORM_FILTER == env.PLATFORM }
-                    expression { params.JDK_FILTER == 'all' }
-                    expression { params.JDK_FILTER == env.JDK_NAME }
+                when { allOf {
+                    anyOf {
+                        expression { params.PLATFORM_FILTER == 'all' }
+                        expression { params.PLATFORM_FILTER == env.PLATFORM }
+                    }
+                    anyOf {
+                        expression { params.JDK_FILTER == 'all' }
+                        expression { params.JDK_FILTER == env.JDK_NAME }
+                    }
                 } }
                 axes {
                     axis {

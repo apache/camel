@@ -129,6 +129,10 @@ public final class MockOaipmhServer {
         return this.httpsPort;
     }
 
+    public WireMockServer getServer() {
+        return server;
+    }
+
     public static final class OaipmhMockTransformer extends ResponseDefinitionTransformer {
 
         @Override

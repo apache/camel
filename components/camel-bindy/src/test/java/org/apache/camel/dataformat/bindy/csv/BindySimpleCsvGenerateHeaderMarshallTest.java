@@ -91,7 +91,7 @@ public class BindySimpleCsvGenerateHeaderMarshallTest {
         @Override
         public void configure() {
             BindyCsvDataFormat camelDataFormat
-                    = new BindyCsvDataFormat(org.apache.camel.dataformat.bindy.model.simple.oneclassgenerateheader.Order.class);
+                    = new BindyCsvDataFormat(Order.class);
             camelDataFormat.setLocale("en");
 
             from("direct:start").marshal(camelDataFormat).to("mock:result");

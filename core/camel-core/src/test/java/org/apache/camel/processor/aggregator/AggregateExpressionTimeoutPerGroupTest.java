@@ -28,7 +28,7 @@ public class AggregateExpressionTimeoutPerGroupTest extends ContextTestSupport {
 
     @Test
     public void testAggregateExpressionPerGroupTimeout() throws Exception {
-        getMockEndpoint("mock:aggregated").expectedBodiesReceived("G+H+I", "D+E+F", "A+B+C");
+        getMockEndpoint("mock:aggregated").expectedBodiesReceivedInAnyOrder("G+H+I", "D+E+F", "A+B+C");
 
         // will use fallback timeout (1 sec)
         template.sendBodyAndHeader("direct:start", "A", "id", 789);

@@ -16,9 +16,11 @@
  */
 package org.apache.camel.dsl.jbang.core.commands;
 
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.stream.Stream;
 
 import org.apache.camel.dsl.jbang.core.common.EnvironmentHelper;
 import org.apache.camel.dsl.jbang.core.common.VersionHelper;
@@ -35,7 +37,7 @@ import org.jline.utils.AttributedStyle;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "shell",
-                     description = "Interactive Camel JBang shell.",
+                     description = "Interactive Camel CLI shell.",
                      footer = {
                              "%nExamples:",
                              "  camel shell",
@@ -55,7 +57,13 @@ public class Shell extends CamelCommand {
 
     @Override
     public Integer doCall() throws Exception {
-        PicocliCommandRegistry registry = new PicocliCommandRegistry(CamelJBangMain.getCommandLine());
+        // TODO: replace with new PicocliCommandRegistry(commandLine, "Camel") when JLine merges #1947
+        PicocliCommandRegistry registry = new PicocliCommandRegistry(CamelJBangMain.getCommandLine()) {
+            @Override
+            public String name() {
+                return "Camel";
+            }
+        };
 
         String homeDir = HomeHelper.resolveHomeDir();
         Path history = Paths.get(homeDir, ".camel-jbang-history");
@@ -97,8 +105,11 @@ public class Shell extends CamelCommand {
         }
 
         try (org.jline.shell.Shell shell = builder.build()) {
+            EnvironmentHelper.setActiveTerminal(shell.terminal());
             printBanner(shell, camelVersion, colorEnabled);
             shell.run();
+        } finally {
+            EnvironmentHelper.setActiveTerminal(null);
         }
         return 0;
     }
@@ -145,14 +156,42 @@ public class Shell extends CamelCommand {
             }
             writer.println(sb.toAnsi(shell.terminal()));
         } else {
-            String banner = "Apache Camel JBang Shell";
+            String banner = "Apache Camel CLI Shell";
             if (camelVersion != null) {
                 banner += " v" + camelVersion;
             }
             writer.println(banner);
         }
-        writer.println("Type 'help' for available commands, 'exit' to quit.");
+        int routeCount = countRouteFiles();
+        if (routeCount == 0) {
+            writer.println("No routes found in current directory.");
+            writer.println("  Quick start:  init MyRoute.yaml && run *");
+            writer.println("  Templates:    init --list");
+            writer.println("  Docs:         doc <component>");
+            writer.println("  AI scaffold:  plugin add kit");
+            writer.println("  Need help?    help");
+        } else {
+            writer.printf("Found %d route file(s) in current directory.%n", routeCount);
+            writer.println("  Run:   run *");
+            writer.println("  Watch: run * --dev");
+        }
         writer.println();
         writer.flush();
+    }
+
+    private static int countRouteFiles() {
+        try (Stream<Path> files = Files.list(Paths.get("."))) {
+            return (int) files.filter(Files::isRegularFile)
+                    .filter(p -> {
+                        String name = p.getFileName().toString();
+                        return (name.endsWith(".yaml") && !name.endsWith(".kamelet.yaml")
+                                && !name.equals("application.yaml"))
+                                || (name.endsWith(".xml") && !name.equals("pom.xml"))
+                                || name.endsWith(".java");
+                    })
+                    .count();
+        } catch (IOException e) {
+            return 0;
+        }
     }
 }

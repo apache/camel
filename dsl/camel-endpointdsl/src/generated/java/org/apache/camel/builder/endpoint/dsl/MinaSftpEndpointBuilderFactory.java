@@ -2458,7 +2458,10 @@ public interface MinaSftpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets whether to use strict host key checking.
+         * Sets whether to use strict host key checking. Setting this to 'no'
+         * (the default) disables host key verification and makes SFTP
+         * connections vulnerable to man-in-the-middle attacks. Use 'yes' in
+         * production environments.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -4531,7 +4534,10 @@ public interface MinaSftpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets whether to use strict host key checking.
+         * Sets whether to use strict host key checking. Setting this to 'no'
+         * (the default) disables host key verification and makes SFTP
+         * connections vulnerable to man-in-the-middle attacks. Use 'yes' in
+         * production environments.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -6157,7 +6163,10 @@ public interface MinaSftpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets whether to use strict host key checking.
+         * Sets whether to use strict host key checking. Setting this to 'no'
+         * (the default) disables host key verification and makes SFTP
+         * connections vulnerable to man-in-the-middle attacks. Use 'yes' in
+         * production environments.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -6927,7 +6936,7 @@ public interface MinaSftpEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final MinaSftpHeaderNameBuilder INSTANCE = new MinaSftpHeaderNameBuilder();
+        public static final MinaSftpHeaderNameBuilder INSTANCE = new MinaSftpHeaderNameBuilder();
 
         /**
          * A long value containing the file size.

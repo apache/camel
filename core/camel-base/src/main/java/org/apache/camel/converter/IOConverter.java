@@ -27,11 +27,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.ObjectInput;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutput;
-import java.io.ObjectOutputStream;
-import java.io.ObjectStreamClass;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Reader;
@@ -250,42 +245,6 @@ public final class IOConverter {
     }
 
     @Converter(order = 33)
-    public static ObjectOutput toObjectOutput(OutputStream stream) throws IOException {
-        if (stream instanceof ObjectOutput out) {
-            return out;
-        } else {
-            return new ObjectOutputStream(IOHelper.buffered(stream));
-        }
-    }
-
-    @Converter(order = 34)
-    public static ObjectInput toObjectInput(final InputStream stream, final Exchange exchange) throws IOException {
-        if (stream instanceof ObjectInput objectInput) {
-            return objectInput;
-        } else {
-            return new ObjectInputStream(IOHelper.buffered(stream)) {
-                @Override
-                protected Class<?> resolveClass(ObjectStreamClass objectStreamClass)
-                        throws IOException, ClassNotFoundException {
-                    // need to let Camel be able to resolve class using ClassResolver SPI, to let class loading
-                    // work in OSGi and other containers
-                    Class<?> answer = null;
-                    String name = objectStreamClass.getName();
-                    if (exchange != null) {
-                        LOG.trace("Loading class {} using Camel ClassResolver", name);
-                        answer = exchange.getContext().getClassResolver().resolveClass(name);
-                    }
-                    if (answer == null) {
-                        LOG.trace("Loading class {} using JDK default implementation", name);
-                        answer = super.resolveClass(objectStreamClass);
-                    }
-                    return answer;
-                }
-            };
-        }
-    }
-
-    @Converter(order = 35)
     public static byte[] toBytes(InputStream stream) throws IOException {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         IOHelper.copyAndCloseInput(IOHelper.buffered(stream), bos);
@@ -295,36 +254,36 @@ public final class IOConverter {
         return bos.toByteArray();
     }
 
-    @Converter(order = 36)
+    @Converter(order = 34)
     public static byte[] toByteArray(ByteArrayOutputStream os) {
         return os.toByteArray();
     }
 
-    @Converter(order = 37)
+    @Converter(order = 35)
     public static ByteBuffer covertToByteBuffer(InputStream is) throws IOException {
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         IOHelper.copyAndCloseInput(is, os);
         return ByteBuffer.wrap(os.toByteArray());
     }
 
-    @Converter(order = 38)
+    @Converter(order = 36)
     public static String toString(ByteArrayOutputStream os, Exchange exchange) throws IOException {
         return os.toString(ExchangeHelper.getCharset(exchange));
     }
 
-    @Converter(order = 39)
+    @Converter(order = 37)
     public static InputStream toInputStream(ByteArrayOutputStream os) {
         // no buffering required as the complete byte array input is already
         // passed over as a whole
         return new ByteArrayInputStream(os.toByteArray());
     }
 
-    @Converter(order = 40)
+    @Converter(order = 38)
     public static Properties toProperties(File file) throws IOException {
         return toProperties(new FileInputStream(file));
     }
 
-    @Converter(order = 41)
+    @Converter(order = 39)
     public static Properties toProperties(InputStream is) throws IOException {
         Properties prop = new Properties();
         try {
@@ -335,7 +294,7 @@ public final class IOConverter {
         return prop;
     }
 
-    @Converter(order = 42)
+    @Converter(order = 40)
     public static Properties toProperties(Reader reader) throws IOException {
         Properties prop = new Properties();
         try {
@@ -346,17 +305,17 @@ public final class IOConverter {
         return prop;
     }
 
-    @Converter(order = 43)
+    @Converter(order = 41)
     public static Path toPath(File file) {
         return file.toPath();
     }
 
-    @Converter(order = 44)
+    @Converter(order = 42)
     public static File toFile(Path path) {
         return path.toFile();
     }
 
-    @Converter(order = 45)
+    @Converter(order = 43)
     public static Charset toCharset(String name) {
         return Charset.forName(name);
     }

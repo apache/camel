@@ -23,24 +23,18 @@ import io.opentelemetry.api.common.Attributes;
 import io.opentelemetry.api.common.AttributesBuilder;
 import io.opentelemetry.api.trace.Span;
 import io.opentelemetry.api.trace.StatusCode;
-import io.opentelemetry.context.Scope;
 import org.apache.camel.telemetry.TagConstants;
 
 public class OpenTelemetrySpanAdapter implements org.apache.camel.telemetry.Span {
 
     private static final String DEFAULT_EVENT_NAME = "log";
-    static final String BAGGAGE_CAMEL_FLAG = "camelScope";
 
     private final Span otelSpan;
     private final Baggage baggage;
-    private Scope scope;
-    private Scope baggageScope;
 
     protected OpenTelemetrySpanAdapter(Span otelSpan, Baggage baggage) {
         this.otelSpan = otelSpan;
-        // We store an important flag in the baggage in order to verify if the
-        // root span was generated internally or from a third party dependency.
-        this.baggage = baggage.toBuilder().put(BAGGAGE_CAMEL_FLAG, "true").build();
+        this.baggage = baggage;
     }
 
     protected Span getSpan() {
@@ -48,8 +42,8 @@ public class OpenTelemetrySpanAdapter implements org.apache.camel.telemetry.Span
     }
 
     protected void makeCurrent() {
-        this.scope = this.otelSpan.makeCurrent();
-        this.baggageScope = this.baggage.makeCurrent();
+        // NOTE: we had changed the implementation not to depend
+        // any longer by thread scopes.
     }
 
     protected void end() {
@@ -57,12 +51,8 @@ public class OpenTelemetrySpanAdapter implements org.apache.camel.telemetry.Span
     }
 
     protected void close() {
-        if (baggageScope != null) {
-            this.baggageScope.close();
-        }
-        if (scope != null) {
-            this.scope.close();
-        }
+        // NOTE: we had changed the implementation not to depend
+        // any longer by thread scopes
     }
 
     protected Baggage getBaggage() {

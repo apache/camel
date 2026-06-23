@@ -638,7 +638,7 @@ public interface Textract2EndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final Textract2HeaderNameBuilder INSTANCE = new Textract2HeaderNameBuilder();
+        public static final Textract2HeaderNameBuilder INSTANCE = new Textract2HeaderNameBuilder();
 
         /**
          * The operation we want to perform.

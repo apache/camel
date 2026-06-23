@@ -34,7 +34,6 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
-import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -58,10 +57,10 @@ class BlobConsumerIT extends Base {
 
     @BeforeAll
     public void setup() {
-        batchContainerName = RandomStringUtils.randomAlphabetic(5).toLowerCase();
-        prefixContainerName = RandomStringUtils.randomAlphabetic(5).toLowerCase();
-        blobName = RandomStringUtils.randomAlphabetic(5);
-        blobName2 = RandomStringUtils.randomAlphabetic(5);
+        batchContainerName = RandomStringUtils.secure().nextAlphabetic(5).toLowerCase();
+        prefixContainerName = RandomStringUtils.secure().nextAlphabetic(5).toLowerCase();
+        blobName = RandomStringUtils.secure().nextAlphabetic(5);
+        blobName2 = RandomStringUtils.secure().nextAlphabetic(5);
 
         containerClient = serviceClient.getBlobContainerClient(containerName);
         batchContainerClient = serviceClient.getBlobContainerClient(batchContainerName);
@@ -214,7 +213,7 @@ class BlobConsumerIT extends Base {
     }
 
     private String generateRandomBlobName(String prefix, String extension) {
-        return prefix + randomAlphabetic(5).toLowerCase() + "." + extension;
+        return prefix + RandomStringUtils.secure().nextAlphabetic(5).toLowerCase() + "." + extension;
     }
 
     @AfterAll

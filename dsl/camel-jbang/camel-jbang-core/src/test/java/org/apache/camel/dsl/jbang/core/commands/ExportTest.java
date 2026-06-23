@@ -30,6 +30,7 @@ import java.util.stream.Stream;
 import org.apache.camel.dsl.jbang.core.common.CamelJBangConstants;
 import org.apache.camel.dsl.jbang.core.common.HawtioVersion;
 import org.apache.camel.dsl.jbang.core.common.RuntimeType;
+import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
@@ -63,7 +64,7 @@ class ExportTest {
     @AfterEach
     public void end() throws IOException {
         // force removing, since deleteOnExit is not removing.
-        org.apache.camel.util.FileUtil.removeDir(workingDir);
+        FileUtil.removeDir(workingDir);
     }
 
     private static Stream<Arguments> runtimeProvider() {
@@ -180,7 +181,8 @@ class ExportTest {
     private Export createCommand(RuntimeType rt, String[] files, String... args) {
         Export command = new Export(new CamelJBangMain());
         CommandLine.populateCommand(command, "--gav=examples:route:1.0.0", "--dir=" + workingDir, "--quiet",
-                "--runtime=%s".formatted(rt.runtime()));
+                "--runtime=%s".formatted(rt.runtime()),
+                CamelCommandBaseTestSupport.quarkusExtRegistry());
         if (args != null) {
             CommandLine.populateCommand(command, args);
         }
@@ -458,6 +460,8 @@ class ExportTest {
         Assertions.assertTrue(new File(workingDir + "/src/main/docker", "Dockerfile").exists(), "Missing Dockerfile");
         // Readme
         Assertions.assertTrue(new File(workingDir, "readme.md").exists(), "Missing readme.md");
+        // AGENTS.md
+        Assertions.assertTrue(new File(workingDir, "AGENTS.md").exists(), "Missing AGENTS.md");
     }
 
     // Each runtime may have a different logic
@@ -518,6 +522,8 @@ class ExportTest {
         Assertions.assertTrue(new File(workingDir + "/src/main/docker", "Dockerfile").exists(), "Missing Dockerfile");
         // Readme
         Assertions.assertTrue(new File(workingDir, "readme.md").exists(), "Missing readme.md");
+        // AGENTS.md
+        Assertions.assertTrue(new File(workingDir, "AGENTS.md").exists(), "Missing AGENTS.md");
     }
 
     @ParameterizedTest
@@ -906,6 +912,22 @@ class ExportTest {
             Assertions.assertTrue(content.contains("quarkus.hawtio.authenticationEnabled=false"),
                     "should contain quarkus.hawtio.authenticationEnabled property, was " + content);
         }
+    }
+
+    @ParameterizedTest
+    @MethodSource("runtimeProvider")
+    public void shouldContainJibProfile(RuntimeType rt) throws Exception {
+        Export command = new Export(new CamelJBangMain());
+        CommandLine.populateCommand(command, "--gav=examples:route:1.0.0", "--dir=" + workingDir,
+                "--runtime=%s".formatted(rt.runtime()), "src/test/resources/route.yaml");
+        int exit = command.doCall();
+
+        Assertions.assertEquals(0, exit);
+
+        File f = new File(workingDir, "pom.xml");
+        String content = IOHelper.loadText(new FileInputStream(f));
+        Assertions.assertTrue(content.contains("<id>jib</id>"),
+                "Jib profile not exported!");
     }
 
 }

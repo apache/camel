@@ -25,6 +25,8 @@ package org.apache.camel;
  * {@link ExchangeExtension#setSafeCopyProperty(String, SafeCopyProperty)}. This allows the property value object to
  * return a copy object to be set on the target exchange object instead of the original value object. This protects the
  * properties from unintended mutation when using parallelProcessing in Multicast or RecipientList EIP
+ *
+ * @since 3.10
  */
 public interface SafeCopyProperty {
 

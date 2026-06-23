@@ -522,7 +522,7 @@ public interface FlinkEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final FlinkHeaderNameBuilder INSTANCE = new FlinkHeaderNameBuilder();
+        public static final FlinkHeaderNameBuilder INSTANCE = new FlinkHeaderNameBuilder();
 
         /**
          * The dataset.

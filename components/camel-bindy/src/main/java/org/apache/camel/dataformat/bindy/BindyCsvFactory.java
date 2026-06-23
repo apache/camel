@@ -215,6 +215,8 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
             data = data.trim();
         }
 
+        boolean fieldContinueParseOnFailure = shouldContinueOnFailure(dataField.continueParseOnFailure());
+
         if (dataField.required()) {
             // Increment counter of mandatory fields
             ++counterMandatoryFields;
@@ -251,14 +253,16 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
         if (!data.isEmpty()) {
             try {
                 if (quoting && quote != null && (data.contains("\\" + quote) || data.contains(quote)) && quotingEscaped) {
-                    value = format.parse(data.replaceAll("\\\\" + quote, "\\" + quote));
+                    value = parseField(format, data.replaceAll("\\\\" + quote, "\\" + quote), fieldContinueParseOnFailure,
+                            field.getType(), dataField.defaultValue());
                 } else if (quote != null && quote.equals(DOUBLE_QUOTES_SYMBOL)
                         && data.contains(DOUBLE_QUOTES_SYMBOL + DOUBLE_QUOTES_SYMBOL) && !quotingEscaped) {
                     // If double-quotes are used to enclose fields, the two double
                     // quotes character must be replaced with one according to RFC 4180 section 2.7
-                    value = format.parse(data.replace(DOUBLE_QUOTES_SYMBOL + DOUBLE_QUOTES_SYMBOL, DOUBLE_QUOTES_SYMBOL));
+                    value = parseField(format, data.replace(DOUBLE_QUOTES_SYMBOL + DOUBLE_QUOTES_SYMBOL, DOUBLE_QUOTES_SYMBOL),
+                            fieldContinueParseOnFailure, field.getType(), dataField.defaultValue());
                 } else {
-                    value = format.parse(data);
+                    value = parseField(format, data, fieldContinueParseOnFailure, field.getType(), dataField.defaultValue());
                 }
             } catch (FormatException ie) {
                 throw new IllegalArgumentException(ie.getMessage() + ", position: " + pos + ", line: " + line, ie);
@@ -693,6 +697,9 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
 
                     trimLine = csvRecord.trimLine();
                     LOG.debug("Trim line: {}", trimLine);
+
+                    continueParseOnFailure = csvRecord.continueParseOnFailure();
+                    LOG.debug("Continue parse on failure: {}", continueParseOnFailure);
                 }
 
                 if (section != null) {

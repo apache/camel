@@ -17,9 +17,7 @@
 package org.apache.camel.component.pqc.lifecycle;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.PrivateKey;
@@ -37,6 +35,9 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.camel.component.pqc.PQCKeyEncapsulationAlgorithms;
 import org.apache.camel.component.pqc.PQCSignatureAlgorithms;
+import org.bouncycastle.pqc.crypto.lms.LMOtsParameters;
+import org.bouncycastle.pqc.crypto.lms.LMSigParameters;
+import org.bouncycastle.pqc.jcajce.spec.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.vault.authentication.TokenAuthentication;
@@ -277,7 +278,7 @@ public class HashicorpVaultKeyLifecycleManager implements KeyLifecycleManager {
         byte[] publicKeyBytes = keyPair.getPublic().getEncoded(); // X.509/SubjectPublicKeyInfo format
         String privateKeyBase64 = Base64.getEncoder().encodeToString(privateKeyBytes);
         String publicKeyBase64 = Base64.getEncoder().encodeToString(publicKeyBytes);
-        String metadataBase64 = serializeMetadata(metadata);
+        String metadataJson = KeyMetadataCodec.toJson(metadata);
 
         VaultKeyValueOperations keyValue = vaultTemplate.opsForKeyValue(secretsEngine,
                 VaultKeyValueOperationsSupport.KeyValueBackend.versioned());
@@ -296,9 +297,9 @@ public class HashicorpVaultKeyLifecycleManager implements KeyLifecycleManager {
         publicKeyData.put("algorithm", metadata.getAlgorithm());
         keyValue.put(getKeyPath(keyId) + "/public", publicKeyData);
 
-        // Store metadata separately
+        // Store metadata separately as JSON (see KeyMetadataCodec)
         Map<String, Object> metadataData = new HashMap<>();
-        metadataData.put("metadata", metadataBase64);
+        metadataData.put("metadata", metadataJson);
         metadataData.put("keyId", keyId);
         metadataData.put("algorithm", metadata.getAlgorithm());
         keyValue.put(getKeyPath(keyId) + "/metadata", metadataData);
@@ -390,8 +391,10 @@ public class HashicorpVaultKeyLifecycleManager implements KeyLifecycleManager {
             return null;
         }
 
-        String metadataBase64 = (String) secretData.get("metadata");
-        KeyMetadata metadata = deserializeMetadata(metadataBase64);
+        String storedMetadata = (String) secretData.get("metadata");
+        KeyMetadata metadata = KeyMetadataCodec.isJson(storedMetadata)
+                ? KeyMetadataCodec.fromJson(storedMetadata)
+                : deserializeMetadata(storedMetadata);
 
         // Cache it
         metadataCache.put(keyId, metadata);
@@ -548,18 +551,16 @@ public class HashicorpVaultKeyLifecycleManager implements KeyLifecycleManager {
         }
     }
 
-    private String serializeMetadata(KeyMetadata metadata) throws Exception {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        try (ObjectOutputStream oos = new ObjectOutputStream(baos)) {
-            oos.writeObject(metadata);
-        }
-        return Base64.getEncoder().encodeToString(baos.toByteArray());
-    }
-
+    /**
+     * Reads a legacy (pre-JSON) Base64-encoded, Java-serialized {@link KeyMetadata}. The deserialization is constrained
+     * to the expected types via {@link KeyMetadataCodec#METADATA_FILTER}. Retained for backward compatibility with
+     * metadata written by older versions; new metadata is stored as JSON.
+     */
     private KeyMetadata deserializeMetadata(String base64) throws Exception {
         byte[] data = Base64.getDecoder().decode(base64);
         ByteArrayInputStream bais = new ByteArrayInputStream(data);
         try (ObjectInputStream ois = new ObjectInputStream(bais)) {
+            ois.setObjectInputFilter(KeyMetadataCodec.METADATA_FILTER);
             return (KeyMetadata) ois.readObject();
         }
     }
@@ -595,46 +596,46 @@ public class HashicorpVaultKeyLifecycleManager implements KeyLifecycleManager {
         try {
             switch (algorithm) {
                 case "DILITHIUM":
-                    return org.bouncycastle.pqc.jcajce.spec.DilithiumParameterSpec.dilithium2;
+                    return DilithiumParameterSpec.dilithium2;
                 case "MLDSA":
                 case "SLHDSA":
                     // These use default initialization
                     return null;
                 case "FALCON":
-                    return org.bouncycastle.pqc.jcajce.spec.FalconParameterSpec.falcon_512;
+                    return FalconParameterSpec.falcon_512;
                 case "SPHINCSPLUS":
-                    return org.bouncycastle.pqc.jcajce.spec.SPHINCSPlusParameterSpec.sha2_128s;
+                    return SPHINCSPlusParameterSpec.sha2_128s;
                 case "XMSS":
-                    return new org.bouncycastle.pqc.jcajce.spec.XMSSParameterSpec(
+                    return new XMSSParameterSpec(
                             10,
-                            org.bouncycastle.pqc.jcajce.spec.XMSSParameterSpec.SHA256);
+                            XMSSParameterSpec.SHA256);
                 case "XMSSMT":
-                    return org.bouncycastle.pqc.jcajce.spec.XMSSMTParameterSpec.XMSSMT_SHA2_20d2_256;
+                    return XMSSMTParameterSpec.XMSSMT_SHA2_20d2_256;
                 case "LMS":
                 case "HSS":
-                    return new org.bouncycastle.pqc.jcajce.spec.LMSKeyGenParameterSpec(
-                            org.bouncycastle.pqc.crypto.lms.LMSigParameters.lms_sha256_n32_h10,
-                            org.bouncycastle.pqc.crypto.lms.LMOtsParameters.sha256_n32_w4);
+                    return new LMSKeyGenParameterSpec(
+                            LMSigParameters.lms_sha256_n32_h10,
+                            LMOtsParameters.sha256_n32_w4);
                 case "MLKEM":
                 case "KYBER":
                     // These use default initialization
                     return null;
                 case "NTRU":
-                    return org.bouncycastle.pqc.jcajce.spec.NTRUParameterSpec.ntruhps2048509;
+                    return NTRUParameterSpec.ntruhps2048509;
                 case "NTRULPRime":
-                    return org.bouncycastle.pqc.jcajce.spec.NTRULPRimeParameterSpec.ntrulpr653;
+                    return NTRULPRimeParameterSpec.ntrulpr653;
                 case "SNTRUPrime":
-                    return org.bouncycastle.pqc.jcajce.spec.SNTRUPrimeParameterSpec.sntrup761;
+                    return SNTRUPrimeParameterSpec.sntrup761;
                 case "SABER":
-                    return org.bouncycastle.pqc.jcajce.spec.SABERParameterSpec.lightsaberkem128r3;
+                    return SABERParameterSpec.lightsaberkem128r3;
                 case "FRODO":
-                    return org.bouncycastle.pqc.jcajce.spec.FrodoParameterSpec.frodokem640aes;
+                    return FrodoParameterSpec.frodokem640aes;
                 case "BIKE":
-                    return org.bouncycastle.pqc.jcajce.spec.BIKEParameterSpec.bike128;
+                    return BIKEParameterSpec.bike128;
                 case "HQC":
-                    return org.bouncycastle.pqc.jcajce.spec.HQCParameterSpec.hqc128;
+                    return HQCParameterSpec.hqc128;
                 case "CMCE":
-                    return org.bouncycastle.pqc.jcajce.spec.CMCEParameterSpec.mceliece348864;
+                    return CMCEParameterSpec.mceliece348864;
                 default:
                     return null;
             }

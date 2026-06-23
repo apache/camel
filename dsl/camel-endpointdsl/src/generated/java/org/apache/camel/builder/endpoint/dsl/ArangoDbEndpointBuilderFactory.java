@@ -405,7 +405,7 @@ public interface ArangoDbEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final ArangoDbHeaderNameBuilder INSTANCE = new ArangoDbHeaderNameBuilder();
+        public static final ArangoDbHeaderNameBuilder INSTANCE = new ArangoDbHeaderNameBuilder();
 
         /**
          * Indicates if there are multiple documents to update. If set to true,
@@ -457,10 +457,10 @@ public interface ArangoDbEndpointBuilderFactory {
          * 
          * Group: producer
          * 
-         * @return the name of the header {@code key}.
+         * @return the name of the header {@code ArangoDbKey}.
          */
-        public String key() {
-            return "key";
+        public String arangoDbKey() {
+            return "CamelArangoDbKey";
         }
         /**
          * The type of the result of the operation.
@@ -470,10 +470,10 @@ public interface ArangoDbEndpointBuilderFactory {
          * Default: BaseDocument.class or BaseEdgeDocument.class
          * Group: producer
          * 
-         * @return the name of the header {@code ResultClassType}.
+         * @return the name of the header {@code ArangoDbResultClassType}.
          */
-        public String resultClassType() {
-            return "ResultClassType";
+        public String arangoDbResultClassType() {
+            return "CamelArangoDbResultClassType";
         }
         /**
          * The AQL query to execute.

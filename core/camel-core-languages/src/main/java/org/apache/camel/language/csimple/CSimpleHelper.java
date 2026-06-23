@@ -18,6 +18,7 @@ package org.apache.camel.language.csimple;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringWriter;
 import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 import java.security.MessageDigest;
@@ -261,10 +262,10 @@ public final class CSimpleHelper {
         if (body instanceof String str) {
             return str;
         }
-        final java.io.StringWriter writer = new java.io.StringWriter();
+        final StringWriter writer = new StringWriter();
         try {
             Jsoner.serializeCarelessly(body, writer);
-        } catch (final java.io.IOException caught) {
+        } catch (final IOException caught) {
             /* See StringWriter. */
         }
         String answer = writer.toString();

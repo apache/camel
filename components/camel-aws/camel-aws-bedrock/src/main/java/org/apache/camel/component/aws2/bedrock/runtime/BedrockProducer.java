@@ -27,6 +27,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.component.aws2.bedrock.runtime.stream.BedrockStreamHandler;
+import org.apache.camel.component.aws2.bedrock.runtime.stream.ConverseStreamHandler;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
@@ -34,11 +35,20 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.awscore.exception.AwsServiceException;
 import software.amazon.awssdk.core.SdkBytes;
+import software.amazon.awssdk.core.document.Document;
 import software.amazon.awssdk.services.bedrockruntime.BedrockRuntimeClient;
+import software.amazon.awssdk.services.bedrockruntime.model.ApplyGuardrailRequest;
+import software.amazon.awssdk.services.bedrockruntime.model.ApplyGuardrailResponse;
 import software.amazon.awssdk.services.bedrockruntime.model.ContentBlock;
 import software.amazon.awssdk.services.bedrockruntime.model.ConverseRequest;
 import software.amazon.awssdk.services.bedrockruntime.model.ConverseResponse;
 import software.amazon.awssdk.services.bedrockruntime.model.ConverseStreamRequest;
+import software.amazon.awssdk.services.bedrockruntime.model.GuardrailConfiguration;
+import software.amazon.awssdk.services.bedrockruntime.model.GuardrailContentBlock;
+import software.amazon.awssdk.services.bedrockruntime.model.GuardrailContentSource;
+import software.amazon.awssdk.services.bedrockruntime.model.GuardrailStreamConfiguration;
+import software.amazon.awssdk.services.bedrockruntime.model.GuardrailStreamProcessingMode;
+import software.amazon.awssdk.services.bedrockruntime.model.GuardrailTrace;
 import software.amazon.awssdk.services.bedrockruntime.model.InferenceConfiguration;
 import software.amazon.awssdk.services.bedrockruntime.model.InvokeModelRequest;
 import software.amazon.awssdk.services.bedrockruntime.model.InvokeModelResponse;
@@ -574,27 +584,27 @@ public class BedrockProducer extends DefaultProducer {
             }
 
             // Optional: Additional model request fields
-            software.amazon.awssdk.core.document.Document additionalFields = exchange.getMessage()
+            Document additionalFields = exchange.getMessage()
                     .getHeader(BedrockConstants.CONVERSE_ADDITIONAL_MODEL_REQUEST_FIELDS,
-                            software.amazon.awssdk.core.document.Document.class);
+                            Document.class);
             if (ObjectHelper.isNotEmpty(additionalFields)) {
                 builder.additionalModelRequestFields(additionalFields);
             }
 
             // Optional: Guardrail configuration
-            software.amazon.awssdk.services.bedrockruntime.model.GuardrailConfiguration guardrailConfig
+            GuardrailConfiguration guardrailConfig
                     = exchange.getMessage().getHeader(BedrockConstants.GUARDRAIL_CONFIG,
-                            software.amazon.awssdk.services.bedrockruntime.model.GuardrailConfiguration.class);
+                            GuardrailConfiguration.class);
             if (ObjectHelper.isNotEmpty(guardrailConfig)) {
                 builder.guardrailConfig(guardrailConfig);
             } else if (ObjectHelper.isNotEmpty(getConfiguration().getGuardrailIdentifier())) {
                 // Build from endpoint configuration
-                builder.guardrailConfig(software.amazon.awssdk.services.bedrockruntime.model.GuardrailConfiguration.builder()
+                builder.guardrailConfig(GuardrailConfiguration.builder()
                         .guardrailIdentifier(getConfiguration().getGuardrailIdentifier())
                         .guardrailVersion(getConfiguration().getGuardrailVersion())
                         .trace(getConfiguration().isGuardrailTrace()
-                                ? software.amazon.awssdk.services.bedrockruntime.model.GuardrailTrace.ENABLED
-                                : software.amazon.awssdk.services.bedrockruntime.model.GuardrailTrace.DISABLED)
+                                ? GuardrailTrace.ENABLED
+                                : GuardrailTrace.DISABLED)
                         .build());
             }
 
@@ -604,7 +614,7 @@ public class BedrockProducer extends DefaultProducer {
         try {
             ConverseResponse response = bedrockRuntimeClient.converse(request);
 
-            org.apache.camel.Message message = getMessageForResponse(exchange);
+            Message message = getMessageForResponse(exchange);
 
             // Set the output message content as body
             if (ObjectHelper.isNotEmpty(response.output()) && ObjectHelper.isNotEmpty(response.output().message())) {
@@ -690,28 +700,28 @@ public class BedrockProducer extends DefaultProducer {
             }
 
             // Optional: Additional model request fields
-            software.amazon.awssdk.core.document.Document additionalFields = exchange.getMessage()
+            Document additionalFields = exchange.getMessage()
                     .getHeader(BedrockConstants.CONVERSE_ADDITIONAL_MODEL_REQUEST_FIELDS,
-                            software.amazon.awssdk.core.document.Document.class);
+                            Document.class);
             if (ObjectHelper.isNotEmpty(additionalFields)) {
                 builder.additionalModelRequestFields(additionalFields);
             }
 
             // Optional: Guardrail configuration (use GuardrailStreamConfiguration for streaming)
-            software.amazon.awssdk.services.bedrockruntime.model.GuardrailStreamConfiguration guardrailConfig
+            GuardrailStreamConfiguration guardrailConfig
                     = exchange.getMessage().getHeader(BedrockConstants.GUARDRAIL_CONFIG,
-                            software.amazon.awssdk.services.bedrockruntime.model.GuardrailStreamConfiguration.class);
+                            GuardrailStreamConfiguration.class);
             if (ObjectHelper.isNotEmpty(guardrailConfig)) {
                 builder.guardrailConfig(guardrailConfig);
             } else if (ObjectHelper.isNotEmpty(getConfiguration().getGuardrailIdentifier())) {
                 // Build from endpoint configuration
-                builder.guardrailConfig(software.amazon.awssdk.services.bedrockruntime.model.GuardrailStreamConfiguration
+                builder.guardrailConfig(GuardrailStreamConfiguration
                         .builder()
                         .guardrailIdentifier(getConfiguration().getGuardrailIdentifier())
                         .guardrailVersion(getConfiguration().getGuardrailVersion())
                         .streamProcessingMode(getConfiguration().isGuardrailTrace()
-                                ? software.amazon.awssdk.services.bedrockruntime.model.GuardrailStreamProcessingMode.ASYNC
-                                : software.amazon.awssdk.services.bedrockruntime.model.GuardrailStreamProcessingMode.SYNC)
+                                ? GuardrailStreamProcessingMode.ASYNC
+                                : GuardrailStreamProcessingMode.SYNC)
                         .build());
             }
 
@@ -733,16 +743,16 @@ public class BedrockProducer extends DefaultProducer {
                 streamOutputMode = exchange.getIn().getHeader(BedrockConstants.STREAM_OUTPUT_MODE, String.class);
             }
 
-            org.apache.camel.Message message = getMessageForResponse(exchange);
-            org.apache.camel.component.aws2.bedrock.runtime.stream.ConverseStreamHandler.StreamMetadata metadata
-                    = new org.apache.camel.component.aws2.bedrock.runtime.stream.ConverseStreamHandler.StreamMetadata();
+            Message message = getMessageForResponse(exchange);
+            ConverseStreamHandler.StreamMetadata metadata
+                    = new ConverseStreamHandler.StreamMetadata();
 
             if ("chunks".equals(streamOutputMode)) {
                 // Chunks mode - emit each chunk as separate message
                 List<String> allChunks = new ArrayList<>();
                 getEndpoint().getBedrockRuntimeAsyncClient().converseStream(
                         request,
-                        org.apache.camel.component.aws2.bedrock.runtime.stream.ConverseStreamHandler.createChunksHandler(
+                        ConverseStreamHandler.createChunksHandler(
                                 metadata,
                                 allChunks,
                                 null))
@@ -757,7 +767,7 @@ public class BedrockProducer extends DefaultProducer {
                 StringBuilder fullText = new StringBuilder();
                 getEndpoint().getBedrockRuntimeAsyncClient().converseStream(
                         request,
-                        org.apache.camel.component.aws2.bedrock.runtime.stream.ConverseStreamHandler.createCompleteHandler(
+                        ConverseStreamHandler.createCompleteHandler(
                                 metadata,
                                 fullText))
                         .join();
@@ -775,8 +785,8 @@ public class BedrockProducer extends DefaultProducer {
     }
 
     private void setConverseStreamingMetadata(
-            org.apache.camel.Message message,
-            org.apache.camel.component.aws2.bedrock.runtime.stream.ConverseStreamHandler.StreamMetadata metadata) {
+            Message message,
+            ConverseStreamHandler.StreamMetadata metadata) {
         if (ObjectHelper.isNotEmpty(metadata.getStopReason())) {
             message.setHeader(BedrockConstants.CONVERSE_STOP_REASON, metadata.getStopReason());
         }
@@ -790,11 +800,11 @@ public class BedrockProducer extends DefaultProducer {
     }
 
     private void applyGuardrail(BedrockRuntimeClient bedrockRuntimeClient, Exchange exchange) throws InvalidPayloadException {
-        software.amazon.awssdk.services.bedrockruntime.model.ApplyGuardrailRequest request;
+        ApplyGuardrailRequest request;
 
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getMessage().getMandatoryBody();
-            if (payload instanceof software.amazon.awssdk.services.bedrockruntime.model.ApplyGuardrailRequest guardrailRequest) {
+            if (payload instanceof ApplyGuardrailRequest guardrailRequest) {
                 request = guardrailRequest;
             } else {
                 throw new IllegalArgumentException(
@@ -802,11 +812,12 @@ public class BedrockProducer extends DefaultProducer {
             }
         } else {
             // Build request from headers and configuration
-            software.amazon.awssdk.services.bedrockruntime.model.ApplyGuardrailRequest.Builder builder
-                    = software.amazon.awssdk.services.bedrockruntime.model.ApplyGuardrailRequest.builder();
+            ApplyGuardrailRequest.Builder builder
+                    = ApplyGuardrailRequest.builder();
 
             // Guardrail identifier from header or configuration
-            String guardrailIdentifier = exchange.getMessage().getHeader(BedrockConstants.GUARDRAIL_CONFIG, String.class);
+            String guardrailIdentifier
+                    = exchange.getMessage().getHeader(BedrockConstants.GUARDRAIL_IDENTIFIER, String.class);
             if (ObjectHelper.isEmpty(guardrailIdentifier)) {
                 guardrailIdentifier = getConfiguration().getGuardrailIdentifier();
             }
@@ -824,11 +835,11 @@ public class BedrockProducer extends DefaultProducer {
             if (ObjectHelper.isEmpty(source)) {
                 source = "INPUT"; // Default to INPUT
             }
-            builder.source(software.amazon.awssdk.services.bedrockruntime.model.GuardrailContentSource.fromValue(source));
+            builder.source(GuardrailContentSource.fromValue(source));
 
             // Content blocks from header
             @SuppressWarnings("unchecked")
-            List<software.amazon.awssdk.services.bedrockruntime.model.GuardrailContentBlock> content
+            List<GuardrailContentBlock> content
                     = exchange.getMessage().getHeader(BedrockConstants.GUARDRAIL_CONTENT, List.class);
             if (ObjectHelper.isNotEmpty(content)) {
                 builder.content(content);
@@ -841,10 +852,10 @@ public class BedrockProducer extends DefaultProducer {
         }
 
         try {
-            software.amazon.awssdk.services.bedrockruntime.model.ApplyGuardrailResponse response
+            ApplyGuardrailResponse response
                     = bedrockRuntimeClient.applyGuardrail(request);
 
-            org.apache.camel.Message message = getMessageForResponse(exchange);
+            Message message = getMessageForResponse(exchange);
 
             // Set action as body
             message.setBody(response.action().toString());

@@ -238,6 +238,8 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
                 //token = token.trim();
             }
 
+            boolean fieldContinueParseOnFailure = shouldContinueOnFailure(dataField.continueParseOnFailure());
+
             // Check mandatory field
             if (dataField.required()) {
 
@@ -279,7 +281,7 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
             }
             if (!token.isEmpty()) {
                 try {
-                    value = format.parse(token);
+                    value = parseField(format, token, fieldContinueParseOnFailure, field.getType(), dataField.defaultValue());
                 } catch (FormatException ie) {
                     throw new IllegalArgumentException(ie.getMessage() + ", position: " + offset + ", line: " + line, ie);
                 } catch (Exception e) {
@@ -623,21 +625,24 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
 
                 countGrapheme = fixedLengthRecord.countGrapheme();
                 LOG.debug("Enable grapheme counting instead of codepoints: {}", countGrapheme);
+
+                continueParseOnFailure = fixedLengthRecord.continueParseOnFailure();
+                LOG.debug("Continue parse on failure: {}", continueParseOnFailure);
             }
         }
 
         if (hasHeader && isHeader) {
-            throw new java.lang.IllegalArgumentException(
+            throw new IllegalArgumentException(
                     "Record can not be configured with both 'isHeader=true' and 'hasHeader=true'");
         }
 
         if (hasFooter && isFooter) {
-            throw new java.lang.IllegalArgumentException(
+            throw new IllegalArgumentException(
                     "Record can not be configured with both 'isFooter=true' and 'hasFooter=true'");
         }
 
         if ((isHeader || isFooter) && (skipHeader || skipFooter)) {
-            throw new java.lang.IllegalArgumentException(
+            throw new IllegalArgumentException(
                     "skipHeader and/or skipFooter can not be configured on a record where 'isHeader=true' or 'isFooter=true'");
         }
 

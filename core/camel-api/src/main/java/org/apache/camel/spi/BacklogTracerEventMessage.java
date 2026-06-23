@@ -19,11 +19,25 @@ package org.apache.camel.spi;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
+import org.jspecify.annotations.Nullable;
 
 /**
- * Represents a traced message by the BacklogTracer.
+ * Snapshot of a single exchange event captured by the {@link BacklogTracer} as a message transits a route node.
+ * <p/>
+ * Each instance represents a detached, point-in-time view of the exchange at one route node: the exchange body and
+ * headers are serialized to XML/JSON at capture time so they can be read after the exchange has moved on or has
+ * completed. The unique {@link #getUid()} counter and {@link #getTimestamp()} allow events to be correlated and ordered
+ * across concurrent exchanges.
+ * <p/>
+ * For each route a message passes through, the tracer emits at least two events: a "first" event when the exchange
+ * enters the route ({@link #isFirst()}) and a "last" event when it leaves ({@link #isLast()}). An exchange routed
+ * across multiple routes (e.g. via Direct or SEDA) produces separate first/last pairs for each route.
+ *
+ * @see   BacklogTracer
+ * @see   BacklogEventMessage
+ * @since 4.0
  */
-public interface BacklogTracerEventMessage {
+public interface BacklogTracerEventMessage extends BacklogEventMessage {
 
     String ROOT_TAG = "backlogTracerEventMessage";
     String TIMESTAMP_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSZ";
@@ -53,6 +67,7 @@ public interface BacklogTracerEventMessage {
     /**
      * The location of the trace (source code name:line) if possible.
      */
+    @Nullable
     String getLocation();
 
     /**
@@ -78,21 +93,25 @@ public interface BacklogTracerEventMessage {
     /**
      * Node id where the message is being routed to
      */
+    @Nullable
     String getToNode();
 
     /**
      * Parent node id for this node
      */
+    @Nullable
     String getToNodeParentId();
 
     /**
      * Special for choice where we want to know which when predicate was triggered
      */
+    @Nullable
     String getToNodeParentWhenId();
 
     /**
      * Special for choice where we want to know which when predicate was triggered
      */
+    @Nullable
     String getToNodeParentWhenLabel();
 
     /**
@@ -118,7 +137,16 @@ public interface BacklogTracerEventMessage {
     /**
      * The correlation id to a parent exchange (if any)
      */
+    @Nullable
     String getCorrelationExchangeId();
+
+    /**
+     * The breadcrumb id that links exchanges across broker boundaries (Kafka, SEDA, JMS, etc.)
+     *
+     * @since 4.21
+     */
+    @Nullable
+    String getBreadcrumbId();
 
     /**
      * The name of the thread that is processing the message, when this event was captured.
@@ -163,17 +191,20 @@ public interface BacklogTracerEventMessage {
     /**
      * The exception as XML (exception type, message and stacktrace)
      */
+    @Nullable
     String getExceptionAsXml();
 
     /**
      * The exception as JSon (exception type, message and stacktrace)
      */
+    @Nullable
     String getExceptionAsJSon();
 
     /**
      * The endpoint uri if this trace is either from a route input (from), or the exchange was sent to an endpoint such
      * as (to, toD, wireTap) etc.
      */
+    @Nullable
     String getEndpointUri();
 
     /**
@@ -184,12 +215,20 @@ public interface BacklogTracerEventMessage {
     boolean isRemoteEndpoint();
 
     /**
+     * Whether the endpoint is a stub endpoint.
+     *
+     * @since 4.21
+     */
+    boolean isStubEndpoint();
+
+    /**
      * Gets the endpoint remote address such as URL, hostname, connection-string, or cloud region, that are component
      * specific.
      *
      * @return the address or null if no address can be determined.
      * @see    EndpointServiceLocation
      */
+    @Nullable
     String getEndpointServiceUrl();
 
     /**
@@ -197,6 +236,7 @@ public interface BacklogTracerEventMessage {
      *
      * @see EndpointServiceLocation
      */
+    @Nullable
     String getEndpointServiceProtocol();
 
     /**
@@ -207,6 +247,7 @@ public interface BacklogTracerEventMessage {
      * @return optional metadata or null if no data
      * @see    EndpointServiceLocation
      */
+    @Nullable
     Map<String, String> getEndpointServiceMetadata();
 
     /**

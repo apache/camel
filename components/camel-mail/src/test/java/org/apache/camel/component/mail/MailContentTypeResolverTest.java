@@ -99,7 +99,9 @@ public class MailContentTypeResolverTest extends CamelTestSupport {
                     }
                 });
 
-                from(james.uriPrefix(Protocol.pop3) + "&initialDelay=100&delay=100").to("mock:result");
+                from(james.uriPrefix(Protocol.pop3) + "&initialDelay=100&delay=100")
+                        .convertBodyTo(String.class)
+                        .to("mock:result");
             }
         };
     }

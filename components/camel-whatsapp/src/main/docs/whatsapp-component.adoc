@@ -7,8 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Only producer is supported
-//Manually maintained attributes
-:camel-spring-boot-name: whatsapp
 
 *Since Camel {since}*
 
@@ -29,21 +27,20 @@ Maven users will need to add the following dependency to their `pom.xml`
 for this component:
 
 [source,xml]
-------------------------------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-whatsapp</artifactId>
     <version>x.x.x</version>
     <!-- use the same version as your Camel core version -->
 </dependency>
-------------------------------------------------------------
+----
 
 == URI format
 
-----------------------------------------------------
+----
 whatsapp:type[?options]
-----------------------------------------------------
-
+----
 
 
 // component options: START
@@ -66,19 +63,20 @@ Business Cloud API.
 
 in Java DSL
 
+._Java-only: inline Processor lambda with TextMessageRequest construction_
 [source,java]
----------------------------------------------------------
+----
 from("direct:start")
 	.process(exchange -> {
 		 TextMessageRequest request = new TextMessageRequest();
 		 request.setTo(insertYourRecipientPhoneNumberHere);
 		 request.setText(new TextMessage());
 		 request.getText().setBody("This is an auto-generated message from Camel \uD83D\uDC2B");
-        
+
 		 exchange.getIn().setBody(request);
 	})
 	.to("whatsapp:123456789:insertYourPhoneNumberIdHere?authorizationToken=123456789:insertYourAuthorizationTokenHere");
----------------------------------------------------------
+----
 For more information you can refer to https://developers.facebook.com/docs/whatsapp/cloud-api/reference[Cloud API Reference], Supported API are: https://developers.facebook.com/docs/whatsapp/cloud-api/reference/messages[Messages] and https://developers.facebook.com/docs/whatsapp/cloud-api/reference/media[Media]
 
 === Webhook Mode
@@ -89,21 +87,22 @@ To enable webhook mode, users need first to add a REST implementation to their a
 Maven users, for example, can add *netty-http* to their `pom.xml` file:
 
 [source,xml]
-------------------------------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-netty-http</artifactId>
 </dependency>
-------------------------------------------------------------
+----
 
 Once done, you need to prepend the webhook URI to the whatsapp URI you want to use.
 
 In Java DSL:
 
+._Java-only: uses fromF with string formatting_
 [source,java]
----------------------------------------------------------
+----
 fromF("webhook:whatsapp:%s?authorizationToken=%s&webhookVerifyToken=%s", "<phoneNumberId>", "<AuthorizationToken>", "<webhookVerifyToken>").log("${body}")
----------------------------------------------------------
+----
 
 You can follow the
 https://developers.facebook.com/docs/whatsapp/cloud-api/guides/set-up-webhooks[set up webhooks guide]

@@ -102,7 +102,7 @@ public class Cw2Producer extends DefaultProducer {
         builder.metricData(metricData).namespace(determineNameSpace(exchange));
 
         PutMetricDataRequest request = builder.build();
-        LOG.info("Sending request [{}] from exchange [{}]...", request, exchange);
+        LOG.debug("Sending request [{}] from exchange [{}]...", request, exchange);
         client.putMetricData(request);
     }
 

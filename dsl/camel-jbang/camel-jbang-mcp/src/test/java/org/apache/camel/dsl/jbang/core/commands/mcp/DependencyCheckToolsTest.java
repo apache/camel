@@ -16,6 +16,8 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.mcp;
 
+import java.util.Optional;
+
 import io.quarkiverse.mcp.server.ToolCallException;
 import org.junit.jupiter.api.Test;
 
@@ -29,7 +31,7 @@ class DependencyCheckToolsTest {
     DependencyCheckToolsTest() {
         tools = new DependencyCheckTools();
         CatalogService catalogService = new CatalogService();
-        catalogService.catalogRepos = java.util.Optional.empty();
+        catalogService.catalogRepos = Optional.empty();
         tools.catalogService = catalogService;
         tools.dependencyData = new DependencyData();
     }
@@ -179,7 +181,7 @@ class DependencyCheckToolsTest {
         DependencyCheckTools.DependencyCheckResult result
                 = tools.camel_dependency_check(POM_WITH_BOM, null, null, null, null, null);
 
-        // 4.10.0 is older than the catalog version (4.20.0-SNAPSHOT)
+        // 4.10.0 is older than the catalog version (4.21.0-SNAPSHOT)
         assertThat(result.versionStatus().status()).isEqualTo("outdated");
         assertThat(result.versionStatus().outdated()).isTrue();
         assertThat(result.versionStatus().catalogVersion()).isNotEmpty();

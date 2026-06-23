@@ -25,23 +25,23 @@
        http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc.xsd
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
-  
-  <!-- START SNIPPET: example -->  
-  <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
-    <route>
-			 <!-- trigger every second -->
-       <from uri="timer://kickoff?period=1000"/>
-       <setBody>
-         <constant>select * from customer</constant>
-       </setBody>
-       <to uri="jdbc:testdb"/>
-       <to uri="mock:result"/>
-    </route>
-  </camelContext>
-  
-  <!-- Just add a demo to show how to bind a data source for camel in Spring-->
-  <jdbc:embedded-database id="testdb" type="DERBY">
-  	<jdbc:script location="classpath:sql/init.sql"/>
-  </jdbc:embedded-database>
-  <!-- END SNIPPET: example -->
+
+    <!-- START SNIPPET: example -->  
+    <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+        <route>
+            <!-- Trigger every second. -->
+            <from uri="timer://kickoff?period=1000"/>
+            <setBody>
+                <constant>SELECT * FROM customer</constant>
+            </setBody>
+            <to uri="jdbc:testdb"/>
+            <to uri="mock:result"/>
+        </route>
+    </camelContext>
+
+    <!-- Just add a demo to show how to bind a data source for camel in Spring-->
+    <jdbc:embedded-database id="testdb" type="H2">
+        <jdbc:script location="classpath:sql/init.sql"/>
+    </jdbc:embedded-database>
+    <!-- END SNIPPET: example -->
 </beans>

@@ -115,6 +115,8 @@ public class AS2Configuration {
     @UriParam(label = "security")
     private Certificate[] validateSigningCertificateChain;
     @UriParam(label = "security")
+    private boolean signatureVerificationRequired;
+    @UriParam(label = "security")
     private SSLContext sslContext;
     // If you use localhost-based AS2 server, you don't need to specify a hostnameVerifier
     @UriParam(label = "security")
@@ -123,19 +125,19 @@ public class AS2Configuration {
     private Integer asyncMdnPortNumber;
     @UriParam
     private String receiptDeliveryOption;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String userName;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String password;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String accessToken;
     @UriParam(defaultValue = "false", label = "producer")
     private boolean expectContinue;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String mdnUserName;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String mdnPassword;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String mdnAccessToken;
 
     public AS2ApiName getApiName() {
@@ -541,6 +543,21 @@ public class AS2Configuration {
      */
     public void setValidateSigningCertificateChain(Certificate[] validateSigningCertificateChain) {
         this.validateSigningCertificateChain = validateSigningCertificateChain;
+    }
+
+    public boolean isSignatureVerificationRequired() {
+        return signatureVerificationRequired;
+    }
+
+    /**
+     * Whether to reject an inbound signed AS2 message that cannot be verified because no
+     * validateSigningCertificateChain is configured (server only). When false (default), such a message is delivered
+     * after logging a warning, preserving the previous behaviour. When true, the message is rejected instead of being
+     * delivered without verifying its signature. Has no effect when validateSigningCertificateChain is set (signatures
+     * are always validated then) or for unsigned messages.
+     */
+    public void setSignatureVerificationRequired(boolean signatureVerificationRequired) {
+        this.signatureVerificationRequired = signatureVerificationRequired;
     }
 
     public SSLContext getSslContext() {

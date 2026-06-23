@@ -24,6 +24,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.component.cxf.common.CxfPayload;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
@@ -54,7 +55,7 @@ public class CxfDispatchPayloadTest extends CxfDispatchTestSupport {
         Exchange exchange = sendJaxWsDispatchPayload(name, false);
         assertEquals(false, exchange.isFailed(), "The request should be handled sucessfully");
 
-        org.apache.camel.Message response = exchange.getMessage();
+        Message response = exchange.getMessage();
         assertNotNull(response, "The response must not be null");
 
         String value = decodeResponseFromPayload((CxfPayload<?>) response.getBody(CxfPayload.class), exchange);
@@ -67,7 +68,7 @@ public class CxfDispatchPayloadTest extends CxfDispatchTestSupport {
         Exchange exchange = sendJaxWsDispatchPayload(name, true);
         assertEquals(false, exchange.isFailed(), "The request should be handled sucessfully");
 
-        org.apache.camel.Message response = exchange.getOut();
+        Message response = exchange.getOut();
         assertNotNull(response, "The response must not be null");
 
         assertNull(response.getBody(), "The response must be null");

@@ -20,18 +20,20 @@ import java.util.Properties;
 
 import org.apache.camel.util.ObjectHelper;
 import org.apache.kafka.clients.consumer.Consumer;
+import org.apache.kafka.clients.consumer.KafkaConsumer;
+import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.Producer;
 
 public class DefaultKafkaClientFactory implements KafkaClientFactory {
 
     @Override
     public Producer getProducer(Properties kafkaProps) {
-        return new org.apache.kafka.clients.producer.KafkaProducer(kafkaProps);
+        return new KafkaProducer(kafkaProps);
     }
 
     @Override
     public Consumer getConsumer(Properties kafkaProps) {
-        return new org.apache.kafka.clients.consumer.KafkaConsumer(kafkaProps);
+        return new KafkaConsumer(kafkaProps);
     }
 
     @Override

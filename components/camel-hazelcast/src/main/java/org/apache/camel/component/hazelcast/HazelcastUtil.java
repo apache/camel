@@ -35,6 +35,7 @@ public final class HazelcastUtil {
         cfg.setProperty(
                 "hazelcast.logging.type",
                 System.getProperty("hazelcast.logging.type", "slf4j"));
+        HazelcastSerializationFilterHelper.applyDefault(cfg);
 
         return newInstance(cfg);
     }

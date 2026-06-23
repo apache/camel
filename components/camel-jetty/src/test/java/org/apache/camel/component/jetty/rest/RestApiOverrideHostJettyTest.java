@@ -20,18 +20,11 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jetty.BaseJettyTest;
 import org.apache.camel.model.rest.RestParamType;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@DisabledIfSystemProperty(named = "ci.env.name", matches = ".*", disabledReason = "Flaky on Github CI due to use of JMX")
 public class RestApiOverrideHostJettyTest extends BaseJettyTest {
-
-    @Override
-    protected boolean useJmx() {
-        return true;
-    }
 
     @Test
     public void testApi() {

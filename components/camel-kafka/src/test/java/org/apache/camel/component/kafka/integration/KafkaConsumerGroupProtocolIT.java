@@ -31,6 +31,7 @@ import org.apache.camel.test.infra.core.annotations.RouteFixture;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.FeatureMetadata;
 import org.apache.kafka.clients.admin.FinalizedVersionRange;
+import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.Uuid;
 import org.apache.kafka.common.header.internals.RecordHeader;
@@ -68,7 +69,7 @@ public class KafkaConsumerGroupProtocolIT extends BaseKafkaTestSupport {
                                            + "&interceptorClasses=org.apache.camel.component.kafka.MockConsumerInterceptor"
                                            + "&groupProtocol=consumer";
 
-    private org.apache.kafka.clients.producer.KafkaProducer<String, String> producer;
+    private KafkaProducer<String, String> producer;
 
     @BeforeAll
     static void checkConsumerProtocolSupport() {
@@ -88,7 +89,7 @@ public class KafkaConsumerGroupProtocolIT extends BaseKafkaTestSupport {
     @BeforeEach
     public void before() {
         Properties props = getDefaultProperties();
-        producer = new org.apache.kafka.clients.producer.KafkaProducer<>(props);
+        producer = new KafkaProducer<>(props);
         MockConsumerInterceptor.recordsCaptured.clear();
     }
 
@@ -142,7 +143,7 @@ public class KafkaConsumerGroupProtocolIT extends BaseKafkaTestSupport {
         assertEquals(5, MockConsumerInterceptor.recordsCaptured.stream()
                 .flatMap(i -> StreamSupport.stream(i.records(TOPIC).spliterator(), false)).count());
 
-        java.util.Map<String, Object> headers = to.getExchanges().get(0).getIn().getHeaders();
+        Map<String, Object> headers = to.getExchanges().get(0).getIn().getHeaders();
         assertFalse(headers.containsKey(skippedHeaderKey), "Should not receive skipped header");
         assertTrue(headers.containsKey(propagatedHeaderKey), "Should receive propagated header");
     }

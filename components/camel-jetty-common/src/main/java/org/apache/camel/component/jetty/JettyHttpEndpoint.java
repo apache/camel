@@ -17,6 +17,7 @@
 package org.apache.camel.component.jetty;
 
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Map;
 
@@ -25,12 +26,16 @@ import jakarta.servlet.Filter;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.http.base.OAuthHttpSecuritySupport;
+import org.apache.camel.http.base.OAuthProfileAwareHttpEndpoint;
 import org.apache.camel.http.common.HttpCommonEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.eclipse.jetty.server.Handler;
 
-public abstract class JettyHttpEndpoint extends HttpCommonEndpoint {
+public abstract class JettyHttpEndpoint extends HttpCommonEndpoint implements OAuthProfileAwareHttpEndpoint {
+
+    private OAuthHttpSecuritySupport oauthHttpSecurity;
 
     @UriParam(label = "consumer",
               description = "Specifies whether to enable the session manager on the server side of Jetty.")
@@ -80,6 +85,12 @@ public abstract class JettyHttpEndpoint extends HttpCommonEndpoint {
     @UriParam(label = "security",
               description = "To configure security using SSLContextParameters")
     private SSLContextParameters sslContextParameters;
+    @UriParam(label = "consumer,security", displayName = "OAuth Profile",
+              description = "OAuth profile name for validating incoming Authorization: Bearer tokens. "
+                            + "When set, the request is authenticated before the route is processed. "
+                            + "This requires an OAuthTokenValidationFactory; camel-oauth provides the default implementation. "
+                            + "This is Camel endpoint-level validation and does not replace Jetty handlers or container security.")
+    private String oauthProfile;
     @UriParam(label = "consumer,advanced", defaultValue = "-1",
               description = "The max idle time (in milli seconds) is applied to an HTTP request for IO operations and delayed dispatch."
                             +
@@ -252,6 +263,20 @@ public abstract class JettyHttpEndpoint extends HttpCommonEndpoint {
         this.sslContextParameters = sslContextParameters;
     }
 
+    @Override
+    public String getOauthProfile() {
+        return oauthProfile;
+    }
+
+    public void setOauthProfile(String oauthProfile) {
+        this.oauthProfile = oauthProfile;
+    }
+
+    @Override
+    public OAuthHttpSecuritySupport getOauthHttpSecurity() {
+        return oauthHttpSecurity;
+    }
+
     public long getIdleTimeout() {
         return idleTimeout;
     }
@@ -316,5 +341,34 @@ public abstract class JettyHttpEndpoint extends HttpCommonEndpoint {
 
     public void setMaxRequestSize(Long maxRequestSize) {
         this.maxRequestSize = maxRequestSize;
+    }
+
+    @Override
+    protected void doInit() throws Exception {
+        super.doInit();
+        oauthHttpSecurity = OAuthHttpSecuritySupport.create(getCamelContext(), oauthProfile);
+    }
+
+    @Override
+    public String getServiceUrl() {
+        if (getPort() == 0) {
+            var httpUri = getHttpUri();
+            var serverConnector = getComponent().findServerConnector(this);
+            if (httpUri != null && serverConnector != null) {
+                try {
+                    return new URI(
+                            httpUri.getScheme(),
+                            httpUri.getUserInfo(),
+                            httpUri.getHost(),
+                            serverConnector.getLocalPort(),
+                            httpUri.getPath(),
+                            httpUri.getQuery(),
+                            httpUri.getFragment()).toString();
+                } catch (URISyntaxException e) {
+                    throw new IllegalStateException("Invalid service URL", e);
+                }
+            }
+        }
+        return super.getServiceUrl();
     }
 }

@@ -21,10 +21,10 @@ import org.apache.camel.spi.Metadata;
 public interface GoogleCloudFunctionsConstants {
     @Metadata(description = "The operation to perform",
               javaType = "org.apache.camel.component.google.functions.GoogleCloudFunctionsOperations")
-    String OPERATION = "GoogleCloudFunctionsOperation";
+    String OPERATION = "CamelGoogleCloudFunctionsOperation";
     @Metadata(description = "The name of the function (as defined in source code) that will be executed. Used for createFunction operation",
               javaType = "String")
-    String ENTRY_POINT = "GoogleCloudFunctionsEntryPoint";
+    String ENTRY_POINT = "CamelGoogleCloudFunctionsEntryPoint";
     @Metadata(description = """
             The runtime in which to run the function.
 
@@ -46,10 +46,10 @@ public interface GoogleCloudFunctionsConstants {
 
             Used for createFunction operation.""",
               javaType = "String")
-    String RUNTIME = "GoogleCloudFunctionsRuntime";
+    String RUNTIME = "CamelGoogleCloudFunctionsRuntime";
     @Metadata(description = "The Google Cloud Storage URL, starting with `gs://`, pointing to the zip archive which contains the function. Used for createFunction operation.",
               javaType = "String")
-    String SOURCE_ARCHIVE_URL = "GoogleCloudFunctionsSourceArchiveUrl";
+    String SOURCE_ARCHIVE_URL = "CamelGoogleCloudFunctionsSourceArchiveUrl";
     @Metadata(description = "The response object resulting from the Google Functions Client invocation", javaType = "Object")
-    String RESPONSE_OBJECT = "GoogleCloudFunctionsResponseObject";
+    String RESPONSE_OBJECT = "CamelGoogleCloudFunctionsResponseObject";
 }

@@ -33,8 +33,8 @@ public class AggregateTimeoutOnlyTest extends ContextTestSupport {
         // by default the use latest aggregation strategy is used so we get
         // message 9
         result.expectedBodiesReceived("Message 9");
-        // should take 0.1 seconds to complete this one
-        result.setResultMinimumWaitTime(90);
+        // should take about 1 second to complete this one
+        result.setResultMinimumWaitTime(900);
 
         for (int i = 0; i < 10; i++) {
             template.sendBodyAndHeader("direct:start", "Message " + i, "id", "1");
@@ -50,9 +50,9 @@ public class AggregateTimeoutOnlyTest extends ContextTestSupport {
             public void configure() {
                 // START SNIPPET: e1
                 from("direct:start")
-                        // aggregate timeout after 0.1 second
-                        .aggregate(header("id"), new UseLatestAggregationStrategy()).completionTimeout(100)
-                        .completionTimeoutCheckerInterval(10).to("mock:result");
+                        // aggregate timeout after 1 second
+                        .aggregate(header("id"), new UseLatestAggregationStrategy()).completionTimeout(1000)
+                        .completionTimeoutCheckerInterval(50).to("mock:result");
                 // END SNIPPET: e1
             }
         };

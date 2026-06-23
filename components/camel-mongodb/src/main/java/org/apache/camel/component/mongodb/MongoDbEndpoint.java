@@ -78,18 +78,18 @@ public class MongoDbEndpoint extends DefaultEndpoint implements EndpointServiceL
     @Metadata(required = true)
     private String connectionBean;
 
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String username;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String password;
     @UriParam
     private String hosts;
     //Authentication configuration
     @UriParam(label = "security")
     private String authSource;
-    @UriParam
+    @UriParam(endpointIdentity = true)
     private String database;
-    @UriParam
+    @UriParam(endpointIdentity = true)
     private String collection;
     @UriParam
     private String collectionIndex;

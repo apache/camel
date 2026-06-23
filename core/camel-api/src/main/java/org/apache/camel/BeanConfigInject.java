@@ -23,8 +23,17 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Used to indicate an injection point of a configuration bean (obtained from the {@link org.apache.camel.spi.Registry},
- * or a new instance is created) into a POJO.
+ * Marks a field, method, constructor, or parameter as an injection point for a configuration bean.
+ * <p/>
+ * {@link #value()} specifies the root property prefix (e.g. {@code camel.component.mycomp}). During bean
+ * post-processing Camel first looks for an existing instance in the {@link org.apache.camel.spi.Registry}; if none is
+ * found it creates a new instance of the declared type and binds all matching properties from that prefix using Camel's
+ * property-binding mechanism. This is the standard way to inject typed configuration objects into components and custom
+ * services.
+ *
+ * @see   BeanInject
+ * @see   PropertyInject
+ * @since 3.2
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Documented

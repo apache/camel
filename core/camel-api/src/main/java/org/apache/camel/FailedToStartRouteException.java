@@ -16,30 +16,56 @@
  */
 package org.apache.camel;
 
+import java.util.Objects;
+
+import org.jspecify.annotations.Nullable;
+
 /**
- * Exception when failing to start a {@link Route}.
+ * Thrown when a previously built {@link Route} fails to start as part of the {@link CamelContext} startup or a
+ * {@link org.apache.camel.spi.RouteController} {@code startRoute} call.
+ * <p/>
+ * Carries the failing {@code routeId} and the source location (where available) so error messages can point at the
+ * offending DSL. For failures during route construction itself use {@link FailedToCreateRouteException}.
  */
 public class FailedToStartRouteException extends RuntimeCamelException {
 
     private final String routeId;
-    private final String location;
+    private final @Nullable String location;
 
+    /**
+     * @param routeId the route id that failed to start
+     * @param message the detail message
+     */
     public FailedToStartRouteException(String routeId, String message) {
-        super("Failed to start route: " + routeId + " because: " + message);
+        super("Failed to start route: " + Objects.requireNonNull(routeId, "routeId") + " because: "
+              + Objects.requireNonNull(message, "message"));
         this.routeId = routeId;
         this.location = null;
     }
 
+    /**
+     * @param routeId the route id that failed to start
+     * @param message the detail message
+     * @param cause   the cause of the failure
+     */
     public FailedToStartRouteException(String routeId, String message, Throwable cause) {
-        super("Failed to start route: " + routeId + " because: " + message, cause);
+        super("Failed to start route: " + Objects.requireNonNull(routeId, "routeId") + " because: "
+              + Objects.requireNonNull(message, "message"), Objects.requireNonNull(cause, "cause"));
         this.routeId = routeId;
         this.location = null;
     }
 
-    public FailedToStartRouteException(String routeId, String location, String message, Throwable cause) {
-        super("Failed to start route: " + routeId + (location != null ? " (source: " + location + ")" : "") + " because: "
-              + message,
-              cause);
+    /**
+     * @param routeId  the route id that failed to start
+     * @param location the source location of the route definition, or {@code null} if unknown
+     * @param message  the detail message
+     * @param cause    the cause of the failure
+     */
+    public FailedToStartRouteException(String routeId, @Nullable String location, String message, Throwable cause) {
+        super("Failed to start route: " + Objects.requireNonNull(routeId, "routeId")
+              + (location != null ? " (source: " + location + ")" : "") + " because: "
+              + Objects.requireNonNull(message, "message"),
+              Objects.requireNonNull(cause, "cause"));
         this.routeId = routeId;
         this.location = location;
     }
@@ -48,7 +74,7 @@ public class FailedToStartRouteException extends RuntimeCamelException {
         return routeId;
     }
 
-    public String getLocation() {
+    public @Nullable String getLocation() {
         return location;
     }
 }

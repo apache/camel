@@ -58,17 +58,18 @@ YAML::
 +
 [source,yaml]
 ----
-- from:
-    uri: direct:a
-    steps:
-      - setVariables:
-          variables:
-            - name: myVar
-              constant: test
-            - name: otherVar
-              constant: other
-      - to: 
-          uri: direct:b
+- route:
+    from:
+      uri: direct:a
+      steps:
+        - setVariables:
+            variables:
+              - name: myVar
+                constant: test
+              - name: otherVar
+                constant: other
+        - to:
+            uri: direct:b
 ----
 ====
 
@@ -109,17 +110,22 @@ YAML::
 +
 [source,yaml]
 ----
-- from:
-    uri: direct:a
-    steps:
-      - setVariables:
-          variables:
-            - name: randomNumber
-              simple: "${random(1,100)}"
-            - name: body
-              simple: "${body}"
-      - to: 
-          uri:direct:b
+- route:
+    from:
+      uri: direct:a
+      steps:
+        - setVariables:
+            variables:
+              - name: randomNumber
+                expression:
+                  simple:
+                    expression: "${random(1,100)}"
+              - name: body
+                expression:
+                  simple:
+                    expression: "${body}"
+        - to:
+            uri: direct:b
 ----
 ====
 
@@ -161,19 +167,23 @@ YAML::
 +
 [source,yaml]
 ----
-- from:
-    uri: direct:a
-    steps:
-      - setVariables:
-          variables:
-            - name: foo
-              simple: "${body}"
-            - name: bar
-              simple:
-                expression: "${variable.foo} > 10"
-                resultType: "boolean"       
-      - to: 
-          uri:direct:b
+- route:
+    from:
+      uri: direct:a
+      steps:
+        - setVariables:
+            variables:
+              - name: foo
+                expression:
+                  simple:
+                    expression: "${body}"
+              - name: bar
+                expression:
+                  simple:
+                    expression: "${variable.foo} > 10"
+                    resultType: "boolean"
+        - to:
+            uri: direct:b
 ----
 ====
 
@@ -182,29 +192,24 @@ YAML::
 It's also possible to build a Map and pass it as the single argument to `setVariables().`
 If the order in which the variables should be set is important, use a `LinkedHashMap`.
 
-====
-Java::
-+
+._Java-only: using a LinkedHashMap to set variables in order_
 [source,java]
 ----
 private Map<String, Expression> variableMap = new java.util.LinkedHashMap<>();
 variableMap.put("foo", ConstantLanguage.constant("ABC"));
 variableMap.put("bar", ConstantLanguage.constant("XYZ"));
-        
+
 from("direct:startMap")
     .setVariables(variableMap)
     .to("direct:b");
 ----
-====
 
 If the ordering is not critical, then `Map.of(name1, expr1, name2, expr2...)` can be used.
-====
-Java::
-+
+
+._Java-only: using Map.of for unordered variables_
 [source,java]
 ----
 from("direct:startMap")
     .setVariables(Map.of("foo", "ABC", "bar", "XYZ"))
     .to("direct:b");
 ----
-====

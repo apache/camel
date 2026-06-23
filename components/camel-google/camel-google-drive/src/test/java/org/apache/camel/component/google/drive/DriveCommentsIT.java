@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.google.api.services.drive.model.Comment;
+import com.google.api.services.drive.model.CommentList;
 import com.google.api.services.drive.model.File;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.google.drive.internal.DriveCommentsApiMethod;
@@ -55,7 +56,7 @@ public class DriveCommentsIT extends AbstractGoogleDriveTestSupport {
         // parameter type is String
         headers.put("CamelGoogleDrive.fileId", fileId);
         // parameter type is com.google.api.services.drive.model.Comment
-        com.google.api.services.drive.model.Comment comment = new com.google.api.services.drive.model.Comment();
+        Comment comment = new Comment();
         comment.setContent("Camel rocks!");
         headers.put("CamelGoogleDrive.content", comment);
 
@@ -63,7 +64,7 @@ public class DriveCommentsIT extends AbstractGoogleDriveTestSupport {
 
         // 3. get a list of comments on the file
         // using String message body for single parameter "fileId"
-        com.google.api.services.drive.model.CommentList result1 = requestBody("direct://LIST", fileId);
+        CommentList result1 = requestBody("direct://LIST", fileId);
 
         assertNotNull(result1.get("items"));
         LOG.debug("list: {}", result1);
@@ -77,7 +78,7 @@ public class DriveCommentsIT extends AbstractGoogleDriveTestSupport {
         // parameter type is String
         headers.put("CamelGoogleDrive.commentId", comment2.getId());
 
-        final com.google.api.services.drive.model.Comment result3 = requestBodyAndHeaders("direct://GET", null, headers);
+        final Comment result3 = requestBodyAndHeaders("direct://GET", null, headers);
 
         assertNotNull(result3, "get result");
 
@@ -100,7 +101,7 @@ public class DriveCommentsIT extends AbstractGoogleDriveTestSupport {
         headers.put("CamelGoogleDrive.commentId", comment2.getId());
 
         try {
-            final com.google.api.services.drive.model.Comment result4 = requestBodyAndHeaders("direct://GET", null, headers);
+            final Comment result4 = requestBodyAndHeaders("direct://GET", null, headers);
             fail("Should have thrown an exception.");
         } catch (Exception e) {
             // Likely safe to ignore in this context

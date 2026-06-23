@@ -349,7 +349,7 @@ public interface LangChain4jEmbeddingStoreEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final LangChain4jEmbeddingStoreHeaderNameBuilder INSTANCE = new LangChain4jEmbeddingStoreHeaderNameBuilder();
+        public static final LangChain4jEmbeddingStoreHeaderNameBuilder INSTANCE = new LangChain4jEmbeddingStoreHeaderNameBuilder();
 
         /**
          * The action to be performed.

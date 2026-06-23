@@ -430,7 +430,9 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
         header.setDefaultValue(metadata.defaultValue());
         header.setDeprecated(field.isAnnotationPresent(Deprecated.class));
         header.setDeprecationNote(metadata.deprecationNote());
-        header.setSecret(metadata.secret());
+        header.setSecret(metadata.secret() || "secret".equals(metadata.security()));
+        header.setSecurity(metadata.security());
+        header.setInsecureValue(metadata.insecureValue());
         header.setGroup(EndpointHelper.labelAsGroupName(metadata.label(), componentModel.isConsumerOnly(),
                 componentModel.isProducerOnly()));
         header.setLabel(metadata.label());
@@ -994,7 +996,9 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
 
                 boolean required = metadata != null && metadata.required();
                 String label = metadata != null ? metadata.label() : null;
-                boolean secret = metadata != null && metadata.secret();
+                String security = metadata != null ? metadata.security() : null;
+                boolean secret = metadata != null && metadata.secret() || "secret".equals(security);
+                String insecureValue = metadata != null ? metadata.insecureValue() : null;
                 boolean autowired = metadata != null && metadata.autowired();
                 boolean supportFileReference = metadata != null && metadata.supportFileReference();
                 boolean largeInput = metadata != null && metadata.largeInput();
@@ -1108,6 +1112,8 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
                     option.setDeprecated(deprecated);
                     option.setDeprecationNote(deprecationNote);
                     option.setSecret(secret);
+                    option.setSecurity(security);
+                    option.setInsecureValue(insecureValue);
                     option.setAutowired(autowired);
                     option.setGroup(group);
                     option.setLabel(label);
@@ -1253,6 +1259,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
                     String paramOptionalPrefix = param.optionalPrefix();
                     String paramPrefix = param.prefix();
                     boolean multiValue = param.multiValue();
+                    boolean endpointIdentity = param.endpointIdentity();
                     Object defaultValue = param.defaultValue();
                     if (isNullOrEmpty(defaultValue) && metadata != null) {
                         defaultValue = metadata.defaultValue();
@@ -1294,7 +1301,8 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
 
                         collectNonNestedField(componentModel, classElement, nestedTypeName, nestedFieldName, componentOption,
                                 apiName, apiOption, apiParams, metadata, fieldElement, deprecated, deprecationNote, secret,
-                                fieldName, param, apiParam, name, paramOptionalPrefix, paramPrefix, multiValue, defaultValue,
+                                fieldName, param, apiParam, name, paramOptionalPrefix, paramPrefix, multiValue,
+                                endpointIdentity, defaultValue,
                                 defaultValueNote, required, label, displayName, fieldTypeElement, fieldTypeName);
                     }
                 }
@@ -1346,7 +1354,8 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
             boolean componentOption, String apiName, boolean apiOption, ApiParams apiParams, Metadata metadata,
             Field fieldElement, boolean deprecated, String deprecationNote, Boolean secret, String fieldName, UriParam param,
             ApiParam apiParam, String name, String paramOptionalPrefix, String paramPrefix, boolean multiValue,
-            Object defaultValue, String defaultValueNote, boolean required, String label, String displayName,
+            boolean endpointIdentity, Object defaultValue, String defaultValueNote, boolean required, String label,
+            String displayName,
             Class<?> fieldTypeElement, String fieldTypeName) {
         String docComment = param.description();
         if (Strings.isNullOrEmpty(docComment)) {
@@ -1373,7 +1382,16 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
         // prepare default value so its value is correct according to its type
         defaultValue = getDefaultValue(defaultValue, fieldTypeName, isDuration);
 
-        boolean isSecret = secret != null && secret || param.secret();
+        // resolve security: prefer explicit security attribute from @UriParam, then @Metadata, then fall back to secret=true
+        String metaSecurity = metadata != null ? metadata.security() : null;
+        String resolvedSecurity = !Strings.isNullOrEmpty(param.security()) ? param.security() : metaSecurity;
+        boolean isSecret = secret != null && secret || param.secret() || "secret".equals(resolvedSecurity);
+        if (Strings.isNullOrEmpty(resolvedSecurity) && isSecret) {
+            resolvedSecurity = "secret";
+        }
+        String metaInsecureValue = metadata != null ? metadata.insecureValue() : null;
+        String resolvedInsecureValue
+                = !Strings.isNullOrEmpty(param.insecureValue()) ? param.insecureValue() : metaInsecureValue;
         boolean isAutowired = metadata != null && metadata.autowired();
         boolean supportFileReference = metadata != null && metadata.supportFileReference();
         boolean important = metadata != null && metadata.important();
@@ -1422,6 +1440,8 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
         option.setDeprecated(deprecated);
         option.setDeprecationNote(deprecationNote);
         option.setSecret(isSecret);
+        option.setSecurity(resolvedSecurity);
+        option.setInsecureValue(resolvedInsecureValue);
         option.setAutowired(isAutowired);
         option.setGroup(group);
         option.setLabel(label);
@@ -1432,6 +1452,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
         option.setPrefix(paramPrefix);
         option.setOptionalPrefix(paramOptionalPrefix);
         option.setMultiValue(multiValue);
+        option.setEndpointIdentity(endpointIdentity);
         option.setSupportFileReference(supportFileReference);
         option.setImportant(important);
         if (componentOption) {
@@ -1563,7 +1584,15 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
             // prepare default value so its value is correct according to its type
             defaultValue = getDefaultValue(defaultValue, fieldTypeName, isDuration);
 
-            boolean isSecret = secret != null && secret || path.secret();
+            String metaSecurity = metadata != null ? metadata.security() : null;
+            String resolvedSecurity = !Strings.isNullOrEmpty(path.security()) ? path.security() : metaSecurity;
+            boolean isSecret = secret != null && secret || path.secret() || "secret".equals(resolvedSecurity);
+            if (Strings.isNullOrEmpty(resolvedSecurity) && isSecret) {
+                resolvedSecurity = "secret";
+            }
+            String metaInsecureValue = metadata != null ? metadata.insecureValue() : null;
+            String resolvedInsecureValue
+                    = !Strings.isNullOrEmpty(path.insecureValue()) ? path.insecureValue() : metaInsecureValue;
             boolean isAutowired = metadata != null && metadata.autowired();
             boolean supportFileReference = metadata != null && metadata.supportFileReference();
             boolean largeInput = metadata != null && metadata.largeInput();
@@ -1613,6 +1642,8 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
             option.setDeprecated(deprecated);
             option.setDeprecationNote(deprecationNote);
             option.setSecret(isSecret);
+            option.setSecurity(resolvedSecurity);
+            option.setInsecureValue(resolvedInsecureValue);
             option.setAutowired(isAutowired);
             option.setGroup(group);
             option.setLabel(label);

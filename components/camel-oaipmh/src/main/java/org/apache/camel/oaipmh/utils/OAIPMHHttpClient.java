@@ -24,6 +24,8 @@ import java.nio.charset.StandardCharsets;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
+import java.util.Collections;
+import java.util.Map;
 
 import org.apache.hc.client5.http.ClientProtocolException;
 import org.apache.hc.client5.http.classic.methods.HttpGet;
@@ -50,6 +52,7 @@ public class OAIPMHHttpClient {
     private static final Logger LOG = LoggerFactory.getLogger(OAIPMHHttpClient.class);
 
     private boolean ignoreSSLWarnings;
+    private Map<String, String> httpHeaders = Collections.emptyMap();
 
     public String doRequest(
             URI baseURI, String verb, String set, String from, String until, String metadataPrefix, String token,
@@ -87,6 +90,7 @@ public class OAIPMHHttpClient {
             }
 
             HttpGet httpget = new HttpGet(builder.build());
+            httpHeaders.forEach(httpget::addHeader);
 
             LOG.info("Executing request: {} ", httpget);
 
@@ -142,6 +146,14 @@ public class OAIPMHHttpClient {
 
     public void setIgnoreSSLWarnings(boolean ignoreSSLWarnings) {
         this.ignoreSSLWarnings = ignoreSSLWarnings;
+    }
+
+    public Map<String, String> getHttpHeaders() {
+        return httpHeaders;
+    }
+
+    public void setHttpHeaders(Map<String, String> httpHeaders) {
+        this.httpHeaders = httpHeaders != null ? httpHeaders : Collections.emptyMap();
     }
 
 }

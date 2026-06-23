@@ -29,7 +29,7 @@ public final class OcsfConstants {
     /**
      * Current OCSF schema version supported.
      */
-    public static final String SCHEMA_VERSION = "1.7.0";
+    public static final String SCHEMA_VERSION = "1.8.0";
 
     // OCSF Event Categories
     public static final int CATEGORY_UNCATEGORIZED = 0;

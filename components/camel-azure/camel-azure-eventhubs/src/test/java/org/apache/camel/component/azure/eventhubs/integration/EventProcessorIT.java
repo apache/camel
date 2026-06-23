@@ -57,7 +57,7 @@ public class EventProcessorIT {
     @BeforeAll
     public void prepare() throws Exception {
         final Properties properties = TestUtils.loadAzureAccessFromJvmEnv();
-        final String containerName = RandomStringUtils.randomAlphabetic(5).toLowerCase();
+        final String containerName = RandomStringUtils.secure().nextAlphabetic(5).toLowerCase();
 
         configuration = new EventHubsConfiguration();
         configuration.setConnectionString(properties.getProperty("connectionString"));

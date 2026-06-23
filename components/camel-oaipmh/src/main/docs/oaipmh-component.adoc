@@ -7,8 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
-//Manually maintained attributes
-:camel-spring-boot-name: oaipmh
 
 *Since Camel {since}*
 
@@ -53,28 +51,77 @@ The OAI-PMH component supports both consumer and producer endpoints.
 
 The following is a basic example of how to send a request to an OAI-PMH Server.
 
-in Java DSL
-
+[tabs]
+====
+Java::
++
 [source,java]
----------------------------------------------------------
+----
 from("direct:start").to("oaipmh:baseUrlRepository/oai/request");
----------------------------------------------------------
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <to uri="oaipmh:baseUrlRepository/oai/request"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: oaipmh:baseUrlRepository/oai/request
+----
+====
 
 The result is a set of pages in XML format with all the records of the consulted repository.
 
 === Consumer Example
 
 The following is a basic example of how to receive all messages from an OAI-PMH Server.
-In Java DSL
 
+[tabs]
+====
+Java::
++
 [source,java]
----------------------------------------------------------
+----
 from("oaipmh:baseUrlRepository/oai/request")
-.to(mock:result)
----------------------------------------------------------
+    .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="oaipmh:baseUrlRepository/oai/request"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: oaipmh:baseUrlRepository/oai/request
+      steps:
+        - to:
+            uri: mock:result
+----
+====
 
 == More Information
 
 For more details see the http://www.openarchives.org/pmh/[OAI-PMH documentation].
-
-include::spring-boot:partial$starter.adoc[]

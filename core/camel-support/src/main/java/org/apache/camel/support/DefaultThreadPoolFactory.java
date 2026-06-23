@@ -34,10 +34,12 @@ import org.apache.camel.StaticService;
 import org.apache.camel.spi.ThreadPoolFactory;
 import org.apache.camel.spi.ThreadPoolProfile;
 import org.apache.camel.support.service.ServiceSupport;
+import org.apache.camel.util.concurrent.BoundedExecutorService;
 import org.apache.camel.util.concurrent.RejectableScheduledThreadPoolExecutor;
 import org.apache.camel.util.concurrent.RejectableThreadPoolExecutor;
 import org.apache.camel.util.concurrent.SizedScheduledExecutorService;
 import org.apache.camel.util.concurrent.ThreadFactoryTypeAware;
+import org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy;
 import org.apache.camel.util.concurrent.ThreadType;
 
 /**
@@ -64,6 +66,19 @@ public class DefaultThreadPoolFactory extends ServiceSupport implements CamelCon
 
     @Override
     public ExecutorService newThreadPool(ThreadPoolProfile profile, ThreadFactory factory) {
+        // Virtual threads: use the policy enum directly from the profile to avoid reverse-mapping
+        if (profile.getMaxQueueSize() > 0
+                && ThreadPoolFactoryType.from(factory, profile) == ThreadPoolFactoryType.VIRTUAL) {
+            ThreadPoolRejectedPolicy policy = profile.getRejectedPolicy();
+            if (policy == null) {
+                policy = ThreadPoolRejectedPolicy.CallerRuns;
+            }
+            return new BoundedExecutorService(
+                    ThreadPoolFactoryType.newThreadPerTaskExecutor(factory),
+                    profile.getMaxQueueSize(),
+                    profile.getKeepAliveTime(), profile.getTimeUnit(),
+                    false, policy);
+        }
         // allow core thread timeout is default true if not configured
         boolean allow = profile.getAllowCoreThreadTimeOut() != null ? profile.getAllowCoreThreadTimeOut() : true;
         return newThreadPool(profile.getPoolSize(),
@@ -199,7 +214,7 @@ public class DefaultThreadPoolFactory extends ServiceSupport implements CamelCon
         }
 
         @SuppressWarnings("unchecked")
-        private static ExecutorService newThreadPerTaskExecutor(ThreadFactory threadFactory) {
+        static ExecutorService newThreadPerTaskExecutor(ThreadFactory threadFactory) {
             try {
                 return (ExecutorService) Executors.class
                         .getMethod("newThreadPerTaskExecutor", ThreadFactory.class)

@@ -36,29 +36,29 @@ import org.apache.camel.spi.UriParams;
 @UriParams
 final class FilesToken {
 
-    @UriParam(label = "security", description = "part of SAS token", secret = true)
+    @UriParam(label = "security", description = "part of SAS token", security = "secret")
     private String sv;
-    @UriParam(label = "security", description = "part of account SAS token", secret = true)
+    @UriParam(label = "security", description = "part of account SAS token", security = "secret")
     private String ss;
-    @UriParam(label = "security", description = "part of SAS token", secret = true)
+    @UriParam(label = "security", description = "part of SAS token", security = "secret")
     private String srt;
-    @UriParam(label = "security", description = "part of SAS token", secret = true)
+    @UriParam(label = "security", description = "part of SAS token", security = "secret")
     private String sp;
-    @UriParam(label = "security", description = "part of SAS token", secret = true)
+    @UriParam(label = "security", description = "part of SAS token", security = "secret")
     private String se;
-    @UriParam(label = "security", description = "part of SAS token", secret = true)
+    @UriParam(label = "security", description = "part of SAS token", security = "secret")
     private String st;
-    @UriParam(label = "security", description = "part of SAS token", secret = true)
+    @UriParam(label = "security", description = "part of SAS token", security = "secret")
     private String spr;
-    @UriParam(label = "security", description = "part of SAS token", secret = true)
+    @UriParam(label = "security", description = "part of SAS token", security = "secret")
     private String sig;
-    @UriParam(label = "security", description = "part of service SAS token", secret = true)
+    @UriParam(label = "security", description = "part of service SAS token", security = "secret")
     private String si;
-    @UriParam(label = "security", description = "part of service SAS token", secret = true)
+    @UriParam(label = "security", description = "part of service SAS token", security = "secret")
     private String sr;
-    @UriParam(label = "security", description = "part of service SAS token", secret = true)
+    @UriParam(label = "security", description = "part of service SAS token", security = "secret")
     private String sdd;
-    @UriParam(label = "security", description = "part of SAS token", secret = true)
+    @UriParam(label = "security", description = "part of SAS token", security = "secret")
     private String sip;
 
     public void setSv(String sv) {

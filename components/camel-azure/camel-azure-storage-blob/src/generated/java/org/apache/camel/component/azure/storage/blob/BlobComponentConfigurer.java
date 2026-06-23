@@ -124,6 +124,8 @@ public class BlobComponentConfigurer extends PropertyConfigurerSupport implement
         case "sourceblobaccesskey":
         case "sourceBlobAccessKey": getOrCreateConfiguration(target).setSourceBlobAccessKey(property(camelContext, java.lang.String.class, value)); return true;
         case "timeout": getOrCreateConfiguration(target).setTimeout(property(camelContext, java.time.Duration.class, value)); return true;
+        case "versionid":
+        case "versionId": getOrCreateConfiguration(target).setVersionId(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }
@@ -230,6 +232,8 @@ public class BlobComponentConfigurer extends PropertyConfigurerSupport implement
         case "sourceblobaccesskey":
         case "sourceBlobAccessKey": return java.lang.String.class;
         case "timeout": return java.time.Duration.class;
+        case "versionid":
+        case "versionId": return java.lang.String.class;
         default: return null;
         }
     }
@@ -332,6 +336,8 @@ public class BlobComponentConfigurer extends PropertyConfigurerSupport implement
         case "sourceblobaccesskey":
         case "sourceBlobAccessKey": return getOrCreateConfiguration(target).getSourceBlobAccessKey();
         case "timeout": return getOrCreateConfiguration(target).getTimeout();
+        case "versionid":
+        case "versionId": return getOrCreateConfiguration(target).getVersionId();
         default: return null;
         }
     }

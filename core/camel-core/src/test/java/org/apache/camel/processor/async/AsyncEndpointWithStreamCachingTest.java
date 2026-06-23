@@ -52,7 +52,7 @@ public class AsyncEndpointWithStreamCachingTest extends ContextTestSupport {
                 context.addComponent("async", new MyAsyncComponent());
 
                 // enable stream caching to ensure it works using async API
-                from("direct:start").streamCaching().tracing().to("mock:before").to("log:before").process(new Processor() {
+                from("direct:start").streamCache(true).tracing().to("mock:before").to("log:before").process(new Processor() {
                     public void process(Exchange exchange) {
                         beforeThreadName = Thread.currentThread().getName();
                     }

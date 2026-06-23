@@ -53,7 +53,9 @@ public class DefaultMessage extends MessageSupport {
     @Override
     public void reset() {
         super.reset();
-        if (headers != null) {
+        if (headers instanceof CopyOnWriteHeadersMap) {
+            headers = null;
+        } else if (headers != null) {
             headers.clear();
         }
         removeTrait(MessageTrait.ATTACHMENTS);
@@ -62,70 +64,37 @@ public class DefaultMessage extends MessageSupport {
     @Override
     public Object getHeader(String name) {
         if (headers == null) {
-            // force creating headers
+            if (!isPopulateHeadersSupported()) {
+                return null;
+            }
             headers = createHeaders();
         }
-
-        if (!headers.isEmpty()) {
-            return headers.get(name);
-        } else {
-            return null;
-        }
+        return headers.get(name);
     }
 
     @Override
     public Object getHeader(String name, Object defaultValue) {
-        Object answer = null;
-
-        if (headers == null) {
-            // force creating headers
-            headers = createHeaders();
-        }
-
-        if (!headers.isEmpty()) {
-            answer = headers.get(name);
-        }
+        Object answer = getHeader(name);
         return answer != null ? answer : defaultValue;
     }
 
     @Override
     public Object getHeader(String name, Supplier<Object> defaultValueSupplier) {
-        Object answer = null;
-
-        if (headers == null) {
-            // force creating headers
-            headers = createHeaders();
-        }
-
-        if (!headers.isEmpty()) {
-            answer = headers.get(name);
-        }
+        Object answer = getHeader(name);
         return answer != null ? answer : defaultValueSupplier.get();
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public <T> T getHeader(String name, Class<T> type) {
-        Object value = null;
-
-        if (headers == null) {
-            // force creating headers
-            headers = createHeaders();
-        }
-
-        if (!headers.isEmpty()) {
-            value = headers.get(name);
-        }
+        Object value = getHeader(name);
         if (value == null) {
-            // lets avoid NullPointerException when converting to boolean for null values
             if (boolean.class == type) {
                 return (T) Boolean.FALSE;
             }
             return null;
         }
 
-        // eager same instance type test to avoid the overhead of invoking the type converter
-        // if already same type
         if (type.isInstance(value)) {
             return (T) value;
         }
@@ -141,29 +110,17 @@ public class DefaultMessage extends MessageSupport {
     @Override
     @SuppressWarnings("unchecked")
     public <T> T getHeader(String name, Object defaultValue, Class<T> type) {
-        Object value = null;
-
-        if (headers == null) {
-            // force creating headers
-            headers = createHeaders();
-        }
-
-        if (!headers.isEmpty()) {
-            value = headers.get(name);
-        }
+        Object value = getHeader(name);
         if (value == null) {
             value = defaultValue;
         }
         if (value == null) {
-            // lets avoid NullPointerException when converting to boolean for null values
             if (boolean.class == type) {
                 return (T) Boolean.FALSE;
             }
             return null;
         }
 
-        // eager same instance type test to avoid the overhead of invoking the type converter
-        // if already same type
         if (type.isInstance(value)) {
             return (T) value;
         }
@@ -204,20 +161,16 @@ public class DefaultMessage extends MessageSupport {
 
     @Override
     public void setHeader(String name, Object value) {
-        if (headers == null) {
-            headers = createHeaders();
-        }
-        headers.put(name, value);
+        getHeaders().put(name, value);
     }
 
     @Override
     public Object removeHeader(String name) {
         if (headers == null) {
-            // force creating headers
+            if (!isPopulateHeadersSupported()) {
+                return null;
+            }
             headers = createHeaders();
-        }
-        if (headers.isEmpty()) {
-            return null;
         }
         return headers.remove(name);
     }
@@ -230,28 +183,30 @@ public class DefaultMessage extends MessageSupport {
     @Override
     public boolean removeHeaders(String pattern, String... excludePatterns) {
         if (headers == null) {
-            // force creating headers
+            if (!isPopulateHeadersSupported()) {
+                return false;
+            }
             headers = createHeaders();
         }
         if (headers.isEmpty()) {
             return false;
         }
+        Map<String, Object> h = headers;
 
         // special optimized
         if (excludePatterns == null && "*".equals(pattern)) {
-            headers.clear();
+            h.clear();
             return true;
         }
 
-        final Set<String> toBeRemoved = PatternHelper.matchingSet(headers, pattern, excludePatterns);
+        final Set<String> toBeRemoved = PatternHelper.matchingSet(h, pattern, excludePatterns);
 
         if (toBeRemoved != null) {
-            if (toBeRemoved.size() == headers.size()) {
-                // special optimization when all should be removed
-                headers.clear();
+            if (toBeRemoved.size() == h.size()) {
+                h.clear();
             } else {
                 for (String key : toBeRemoved) {
-                    headers.remove(key);
+                    h.remove(key);
                 }
             }
 
@@ -340,5 +295,34 @@ public class DefaultMessage extends MessageSupport {
      */
     protected boolean hasPopulatedHeaders() {
         return headers != null;
+    }
+
+    /**
+     * Shares headers with the source message using copy-on-write. Both messages will share the same underlying map
+     * until one of them mutates it.
+     */
+    void copyHeadersFrom(DefaultMessage source) {
+        if (source.headers == null && source.isPopulateHeadersSupported()) {
+            // force creating headers
+            source.headers = source.createHeaders();
+        }
+        if (source.headers != null) {
+            HeadersMapFactory factory = camelContext.getCamelContextExtension().getHeadersMapFactory();
+            if (factory != null) {
+                Map<String, Object> raw;
+                if (source.headers instanceof CopyOnWriteHeadersMap cow) {
+                    raw = cow.getUnderlying();
+                } else {
+                    raw = source.headers;
+                }
+                source.headers = new CopyOnWriteHeadersMap(raw, factory);
+                this.headers = new CopyOnWriteHeadersMap(raw, factory);
+            } else {
+                // no factory available, fall back to deep copy
+                this.headers = new HashMap<>(source.headers);
+            }
+        } else {
+            this.headers = null;
+        }
     }
 }

@@ -21,10 +21,11 @@ import java.util.Map;
 import com.influxdb.client.InfluxDBClient;
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.DefaultComponent;
 
-@org.apache.camel.spi.annotations.Component("influxdb2")
+@Component("influxdb2")
 public class InfluxDb2Component extends DefaultComponent {
 
     @Metadata(autowired = true)

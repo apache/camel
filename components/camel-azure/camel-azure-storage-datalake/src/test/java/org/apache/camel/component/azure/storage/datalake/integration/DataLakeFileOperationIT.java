@@ -52,7 +52,7 @@ public class DataLakeFileOperationIT extends Base {
 
     @BeforeAll
     public void setup() throws Exception {
-        randomFileName = RandomStringUtils.randomAlphabetic(10);
+        randomFileName = RandomStringUtils.secure().nextAlphabetic(10);
 
         fileSystemClientWrapper = new DataLakeServiceClientWrapper(serviceClient)
                 .getDataLakeFileSystemClientWrapper(configuration.getFileSystemName());

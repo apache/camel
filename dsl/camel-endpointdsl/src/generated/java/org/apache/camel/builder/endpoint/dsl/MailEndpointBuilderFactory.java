@@ -2104,6 +2104,146 @@ public interface MailEndpointBuilderFactory {
             return this;
         }
         /**
+         * Whether message headers From and Sender override the sender
+         * pre-configured in the endpoint URI. Defaults to true. Set to false to
+         * always use the endpoint URI sender, ignoring any From or Sender
+         * headers from the message.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: producer
+         * 
+         * @param useHeaderFrom the value to set
+         * @return the dsl builder
+         */
+        default MailEndpointProducerBuilder useHeaderFrom(boolean useHeaderFrom) {
+            doSetProperty("useHeaderFrom", useHeaderFrom);
+            return this;
+        }
+        /**
+         * Whether message headers From and Sender override the sender
+         * pre-configured in the endpoint URI. Defaults to true. Set to false to
+         * always use the endpoint URI sender, ignoring any From or Sender
+         * headers from the message.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: producer
+         * 
+         * @param useHeaderFrom the value to set
+         * @return the dsl builder
+         */
+        default MailEndpointProducerBuilder useHeaderFrom(String useHeaderFrom) {
+            doSetProperty("useHeaderFrom", useHeaderFrom);
+            return this;
+        }
+        /**
+         * Whether message headers To, CC, and BCC override the recipients
+         * pre-configured in the endpoint URI. Defaults to true. Set to false to
+         * always use the endpoint URI recipients, ignoring any recipient
+         * headers from the message.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: producer
+         * 
+         * @param useHeaderRecipients the value to set
+         * @return the dsl builder
+         */
+        default MailEndpointProducerBuilder useHeaderRecipients(boolean useHeaderRecipients) {
+            doSetProperty("useHeaderRecipients", useHeaderRecipients);
+            return this;
+        }
+        /**
+         * Whether message headers To, CC, and BCC override the recipients
+         * pre-configured in the endpoint URI. Defaults to true. Set to false to
+         * always use the endpoint URI recipients, ignoring any recipient
+         * headers from the message.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: producer
+         * 
+         * @param useHeaderRecipients the value to set
+         * @return the dsl builder
+         */
+        default MailEndpointProducerBuilder useHeaderRecipients(String useHeaderRecipients) {
+            doSetProperty("useHeaderRecipients", useHeaderRecipients);
+            return this;
+        }
+        /**
+         * Whether message header Reply-To overrides the replyTo pre-configured
+         * in the endpoint URI. Defaults to true. Set to false to always use the
+         * endpoint URI replyTo, ignoring any Reply-To header from the message.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: producer
+         * 
+         * @param useHeaderReplyTo the value to set
+         * @return the dsl builder
+         */
+        default MailEndpointProducerBuilder useHeaderReplyTo(boolean useHeaderReplyTo) {
+            doSetProperty("useHeaderReplyTo", useHeaderReplyTo);
+            return this;
+        }
+        /**
+         * Whether message header Reply-To overrides the replyTo pre-configured
+         * in the endpoint URI. Defaults to true. Set to false to always use the
+         * endpoint URI replyTo, ignoring any Reply-To header from the message.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: producer
+         * 
+         * @param useHeaderReplyTo the value to set
+         * @return the dsl builder
+         */
+        default MailEndpointProducerBuilder useHeaderReplyTo(String useHeaderReplyTo) {
+            doSetProperty("useHeaderReplyTo", useHeaderReplyTo);
+            return this;
+        }
+        /**
+         * Whether message header Subject overrides the subject pre-configured
+         * in the endpoint URI. Defaults to true. Set to false to always use the
+         * endpoint URI subject, ignoring any Subject header from the message.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: producer
+         * 
+         * @param useHeaderSubject the value to set
+         * @return the dsl builder
+         */
+        default MailEndpointProducerBuilder useHeaderSubject(boolean useHeaderSubject) {
+            doSetProperty("useHeaderSubject", useHeaderSubject);
+            return this;
+        }
+        /**
+         * Whether message header Subject overrides the subject pre-configured
+         * in the endpoint URI. Defaults to true. Set to false to always use the
+         * endpoint URI subject, ignoring any Subject header from the message.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: producer
+         * 
+         * @param useHeaderSubject the value to set
+         * @return the dsl builder
+         */
+        default MailEndpointProducerBuilder useHeaderSubject(String useHeaderSubject) {
+            doSetProperty("useHeaderSubject", useHeaderSubject);
+            return this;
+        }
+        /**
          * The password for login. See also setAuthenticator(MailAuthenticator).
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -2716,6 +2856,52 @@ public interface MailEndpointBuilderFactory {
          */
         default AdvancedMailEndpointProducerBuilder useInlineAttachments(String useInlineAttachments) {
             doSetProperty("useInlineAttachments", useInlineAttachments);
+            return this;
+        }
+        /**
+         * Whether to allow dynamic JavaMail session properties (message headers
+         * whose key starts with mail.smtp. or mail.smtps.) to override the
+         * endpoint configuration on a per-message basis. This is disabled by
+         * default. Only enable it when these headers originate exclusively from
+         * trusted route logic, never from data crossing a trust boundary (for
+         * example HTTP query parameters, or JMS/Kafka messages from untrusted
+         * producers). When enabled, an attacker able to set these headers could
+         * weaken transport security (such as mail.smtp.ssl.trust or
+         * mail.smtp.starttls.enable) or redirect the SMTP connection.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param useJavaMailSessionPropertiesFromHeaders the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMailEndpointProducerBuilder useJavaMailSessionPropertiesFromHeaders(boolean useJavaMailSessionPropertiesFromHeaders) {
+            doSetProperty("useJavaMailSessionPropertiesFromHeaders", useJavaMailSessionPropertiesFromHeaders);
+            return this;
+        }
+        /**
+         * Whether to allow dynamic JavaMail session properties (message headers
+         * whose key starts with mail.smtp. or mail.smtps.) to override the
+         * endpoint configuration on a per-message basis. This is disabled by
+         * default. Only enable it when these headers originate exclusively from
+         * trusted route logic, never from data crossing a trust boundary (for
+         * example HTTP query parameters, or JMS/Kafka messages from untrusted
+         * producers). When enabled, an attacker able to set these headers could
+         * weaken transport security (such as mail.smtp.ssl.trust or
+         * mail.smtp.starttls.enable) or redirect the SMTP connection.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param useJavaMailSessionPropertiesFromHeaders the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMailEndpointProducerBuilder useJavaMailSessionPropertiesFromHeaders(String useJavaMailSessionPropertiesFromHeaders) {
+            doSetProperty("useJavaMailSessionPropertiesFromHeaders", useJavaMailSessionPropertiesFromHeaders);
             return this;
         }
     }
@@ -3453,7 +3639,7 @@ public interface MailEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final MailHeaderNameBuilder INSTANCE = new MailHeaderNameBuilder();
+        public static final MailHeaderNameBuilder INSTANCE = new MailHeaderNameBuilder();
 
         /**
          * Subject.
@@ -3547,10 +3733,10 @@ public interface MailEndpointBuilderFactory {
          * 
          * Group: consumer
          * 
-         * @return the name of the header {@code copyTo}.
+         * @return the name of the header {@code MailCopyTo}.
          */
-        public String copyTo() {
-            return "copyTo";
+        public String mailCopyTo() {
+            return "CamelMailCopyTo";
         }
         /**
          * After processing a mail message, it can be moved to a mail folder
@@ -3560,10 +3746,10 @@ public interface MailEndpointBuilderFactory {
          * 
          * Group: consumer
          * 
-         * @return the name of the header {@code moveTo}.
+         * @return the name of the header {@code MailMoveTo}.
          */
-        public String moveTo() {
-            return "moveTo";
+        public String mailMoveTo() {
+            return "CamelMailMoveTo";
         }
         /**
          * Deletes the messages after they have been processed.
@@ -3572,10 +3758,10 @@ public interface MailEndpointBuilderFactory {
          * 
          * Group: consumer
          * 
-         * @return the name of the header {@code delete}.
+         * @return the name of the header {@code MailDelete}.
          */
-        public String delete() {
-            return "delete";
+        public String mailDelete() {
+            return "CamelMailDelete";
         }
         /**
          * The message ID.

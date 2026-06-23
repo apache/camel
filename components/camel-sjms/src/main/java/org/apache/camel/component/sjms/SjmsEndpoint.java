@@ -215,8 +215,17 @@ public class SjmsEndpoint extends DefaultEndpoint
                             + " alone does not prevent gadget-chain execution that happens inside the provider's ObjectInputStream;"
                             + " to block such attacks, also configure the JMS provider's own deserialization filter and/or"
                             + " the JVM-wide -Djdk.serialFilter. When this option is not set and no JVM-wide filter is configured,"
-                            + " a conservative default filter allowing java.**, javax.** and org.apache.camel.** is applied.")
+                            + " a conservative default filter denying java.net.** and otherwise allowing java.**, javax.**"
+                            + " and org.apache.camel.** is applied.")
     private String deserializationFilter;
+    @UriParam(label = "advanced", security = "insecure:serialization",
+              description = "Whether to enable sending and receiving JMS ObjectMessage."
+                            + " By default this is disabled because Java object serialization is a known source of security"
+                            + " vulnerabilities. Enable this option only if you trust the source of the messages and need"
+                            + " to send or receive Java serialized objects via JMS. When disabled, Camel will refuse to"
+                            + " create or read JMS ObjectMessage instances. Options that rely on ObjectMessage internally"
+                            + " (such as transferException) require this option to be enabled.")
+    private boolean objectMessageEnabled;
     @UriParam(label = "advanced", enums = "Bytes,Map,Object,Stream,Text",
               description = "Allows you to force the use of a specific jakarta.jms.Message implementation for sending JMS messages."
                             + " Possible values are: Bytes, Map, Object, Stream, Text."
@@ -244,7 +253,7 @@ public class SjmsEndpoint extends DefaultEndpoint
               description = "Specifies the interval between recovery attempts, i.e. when a connection is being refreshed, in milliseconds."
                             + " The default is 5000 ms, that is, 5 seconds.")
     private long recoveryInterval = 5000;
-    @UriParam(label = "advanced",
+    @UriParam(label = "advanced", security = "insecure:serialization",
               description = "If enabled and you are using Request Reply messaging (InOut) and an Exchange failed on the consumer side,"
                             + " then the caused Exception will be send back in response as a jakarta.jms.ObjectMessage."
                             + " If the client is Camel, the returned Exception is rethrown. This allows you to use Camel JMS as a bridge"
@@ -472,7 +481,7 @@ public class SjmsEndpoint extends DefaultEndpoint
     protected JmsBinding createBinding() {
         return new JmsBinding(
                 isMapJmsMessage(), isAllowNullBody(), getHeaderFilterStrategy(), getJmsKeyFormatStrategy(),
-                getMessageCreatedStrategy(), getJmsMessageType(), getDeserializationFilter());
+                getMessageCreatedStrategy(), getJmsMessageType(), getDeserializationFilter(), isObjectMessageEnabled());
     }
 
     public void setBinding(JmsBinding binding) {
@@ -767,11 +776,26 @@ public class SjmsEndpoint extends DefaultEndpoint
      * pattern is evaluated after the JMS provider has deserialized the payload, so this option alone does not prevent
      * gadget-chain execution that happens inside the provider's {@code ObjectInputStream}; to block such attacks, also
      * configure the JMS provider's own deserialization filter and/or the JVM-wide {@code -Djdk.serialFilter}. When this
-     * option is not set and no JVM-wide filter is configured, a conservative default filter allowing {@code java.**},
-     * {@code javax.**} and {@code org.apache.camel.**} is applied.
+     * option is not set and no JVM-wide filter is configured, a conservative default filter denying {@code java.net.**}
+     * and otherwise allowing {@code java.**}, {@code javax.**} and {@code org.apache.camel.**} is applied.
      */
     public void setDeserializationFilter(String deserializationFilter) {
         this.deserializationFilter = deserializationFilter;
+    }
+
+    public boolean isObjectMessageEnabled() {
+        return objectMessageEnabled;
+    }
+
+    /**
+     * Whether to enable sending and receiving JMS ObjectMessage. By default this is disabled because Java object
+     * serialization is a known source of security vulnerabilities. Enable this option only if you trust the source of
+     * the messages and need to send or receive Java serialized objects via JMS. When disabled, Camel will refuse to
+     * create or read JMS ObjectMessage instances. Options that rely on ObjectMessage internally (such as
+     * transferException) require this option to be enabled.
+     */
+    public void setObjectMessageEnabled(boolean objectMessageEnabled) {
+        this.objectMessageEnabled = objectMessageEnabled;
     }
 
     public MessageCreatedStrategy getMessageCreatedStrategy() {

@@ -25,6 +25,7 @@ import org.apache.camel.component.kafka.KafkaConstants;
 import org.apache.camel.component.kafka.MockConsumerInterceptor;
 import org.apache.camel.component.kafka.integration.common.KafkaTestUtil;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -37,12 +38,12 @@ public class KafkaConsumerTopicIsPatternIT extends BaseKafkaTestSupport {
     public static final String TOPIC = "vess123d";
     public static final String TOPIC_PATTERN = "v.*d";
 
-    private org.apache.kafka.clients.producer.KafkaProducer<String, String> producer;
+    private KafkaProducer<String, String> producer;
 
     @BeforeEach
     public void before() {
         Properties props = getDefaultProperties();
-        producer = new org.apache.kafka.clients.producer.KafkaProducer<>(props);
+        producer = new KafkaProducer<>(props);
         MockConsumerInterceptor.recordsCaptured.clear();
 
     }

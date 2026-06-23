@@ -131,7 +131,7 @@ public class PQCSignatureWithKeyStoreTest extends CamelTestSupport {
         KeyStore keyStore = KeyStore.getInstance("JKS");
         char[] password = "changeit".toCharArray();
         keyStore.load(null, password); // initialize new keystore
-        keyStore.setKeyEntry("mykey", kp.getPrivate(), password, new java.security.cert.Certificate[] { certificate });
+        keyStore.setKeyEntry("mykey", kp.getPrivate(), password, new Certificate[] { certificate });
 
         // Save keystore to file
         try (FileOutputStream fos = new FileOutputStream("keystore.jks")) {

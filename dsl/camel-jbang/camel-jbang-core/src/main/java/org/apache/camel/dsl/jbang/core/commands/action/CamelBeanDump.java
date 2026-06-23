@@ -35,7 +35,11 @@ import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
 @Command(name = "bean", description = "List beans in a running Camel integration", sortOptions = false,
-         showDefaultValues = true)
+         showDefaultValues = true,
+         footer = {
+                 "%nExamples:",
+                 "  camel cmd bean",
+                 "  camel cmd bean --filter=myBean" })
 public class CamelBeanDump extends ActionBaseCommand {
 
     public static class NameTypeCompletionCandidates implements Iterable<String> {

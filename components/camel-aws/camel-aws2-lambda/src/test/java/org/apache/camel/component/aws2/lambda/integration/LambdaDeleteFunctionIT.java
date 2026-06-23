@@ -28,12 +28,10 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.aws2.lambda.Lambda2Constants;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import software.amazon.awssdk.services.lambda.model.DeleteFunctionResponse;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@DisabledIfSystemProperty(named = "ci.env.name", matches = ".*", disabledReason = "Flaky on GitHub Actions")
 public class LambdaDeleteFunctionIT extends Aws2LambdaBase {
 
     @EndpointInject

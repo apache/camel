@@ -25,7 +25,11 @@ import org.apache.camel.spi.annotations.JdkService;
 /**
  * A faster {@link HeadersMapFactory} which is using the {@link com.cedarsoftware.util.CaseInsensitiveMap} map
  * implementation.
+ *
+ * @deprecated use the default {@code DefaultHeadersMapFactory} from camel-core which now provides O(1) hash-based
+ *             lookups. This component will be removed in a future release.
  */
+@Deprecated
 @JdkService(HeadersMapFactory.FACTORY)
 public class FastHeadersMapFactory implements HeadersMapFactory {
 

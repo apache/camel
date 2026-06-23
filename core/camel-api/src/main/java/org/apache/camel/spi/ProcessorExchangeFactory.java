@@ -23,16 +23,25 @@ import org.apache.camel.NonManagedService;
 import org.apache.camel.Processor;
 
 /**
- * Factory used by {@link org.apache.camel.Processor} (EIPs) when they create copies of the processed {@link Exchange}.
+ * Factory used by {@link org.apache.camel.Processor} implementations (EIPs) when they create copies of the current
+ * {@link Exchange} for sub-routing.
  * <p/>
- * Some EIPs like WireTap, Multicast, Split etc creates copies of the processed exchange which they use as sub
- * exchanges. This factory allows to use exchange pooling.
+ * EIPs such as WireTap, Multicast, and Splitter each create one or more derived exchanges (copies or correlated copies)
+ * to fan out processing. This factory gives those EIPs the same exchange-pooling benefit as {@link ExchangeFactory}
+ * gives to consumers, without conflating the two lifecycle boundaries.
+ * <p/>
+ * Like {@link ExchangeFactory}, this factory is pluggable:
+ * <ul>
+ * <li><b>default</b> — creates a new {@link Exchange} copy per sub-routing invocation.</li>
+ * <li><b>pooled</b> — reuses {@link org.apache.camel.PooledExchange} instances, recycling them after the sub-exchange
+ * completes its portion of the route.</li>
+ * </ul>
+ * Each stateful EIP receives its own private {@code ProcessorExchangeFactory} instance via
+ * {@link #newProcessorExchangeFactory(org.apache.camel.Processor)}.
  *
- * The factory is pluggable which allows to use different strategies. The default factory will create a new
- * {@link Exchange} instance, and the pooled factory will pool and reuse exchanges.
- *
- * @see ExchangeFactory
- * @see org.apache.camel.PooledExchange
+ * @see   ExchangeFactory
+ * @see   org.apache.camel.PooledExchange
+ * @since 3.10
  */
 public interface ProcessorExchangeFactory extends PooledObjectFactory<Exchange>, NonManagedService, RouteIdAware, IdAware {
 

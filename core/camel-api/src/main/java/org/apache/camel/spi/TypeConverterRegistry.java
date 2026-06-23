@@ -25,13 +25,29 @@ import org.apache.camel.LoggingLevel;
 import org.apache.camel.StaticService;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.TypeConverterExists;
+import org.jspecify.annotations.Nullable;
 
 /**
- * Registry for type converters.
+ * Central registry for all {@link TypeConverter} instances available in a
+ * <a href="https://camel.apache.org/manual/type-converter.html">Camel type-conversion</a> context.
  * <p/>
- * The utilization {@link Statistics} is by default disabled, as it has a slight performance impact under very high
- * concurrent load. The statistics can be enabled using
- * {@link org.apache.camel.CamelContext#setTypeConverterStatisticsEnabled(Boolean)} (boolean)} method.
+ * At startup, Camel discovers and loads type converters from the classpath via {@link TypeConverterLoader}
+ * implementations and from compile-time-generated bundles through {@link BulkTypeConverters}. At runtime, components
+ * and routes look up a converter for a given from-to type pair via {@link #lookup(Class, Class)}. Converters can also
+ * be added or removed programmatically at any time.
+ * <p/>
+ * When two converters claim the same from-to pair, the registry applies the {@link TypeConverterExists} policy
+ * (default: {@link TypeConverterExists#Ignore}). The registry also supports <em>fallback</em> converters consulted when
+ * no primary converter is found for a pair.
+ * <p/>
+ * Usage statistics (hit/miss/fail counters) are available via {@link #getStatistics()} but are disabled by default due
+ * to overhead under high concurrent load. Enable them with
+ * {@link org.apache.camel.CamelContext#setTypeConverterStatisticsEnabled(Boolean)}.
+ *
+ * @see TypeConverter
+ * @see TypeConverterLoader
+ * @see BulkTypeConverters
+ * @see TypeConverterExists
  */
 public interface TypeConverterRegistry extends StaticService, CamelContextAware {
 
@@ -124,6 +140,7 @@ public interface TypeConverterRegistry extends StaticService, CamelContextAware 
      * @param  fromType the type to convert from
      * @return          the type converter or <tt>null</tt> if not found.
      */
+    @Nullable
     TypeConverter lookup(Class<?> toType, Class<?> fromType);
 
     /**

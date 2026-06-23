@@ -124,6 +124,8 @@ public class CamelSpringBootExecutionListener extends AbstractTestExecutionListe
             CamelAnnotationsHandler.handleRouteCoverageDump(context, testClass, s -> testName);
             // also dump route as either xml or yaml
             CamelAnnotationsHandler.handleRouteDump(context, testClass, s -> testName);
+            // and dump route diagrams
+            CamelAnnotationsHandler.handleRouteDiagramDump(context, testClass, s -> testName);
         }
     }
 }

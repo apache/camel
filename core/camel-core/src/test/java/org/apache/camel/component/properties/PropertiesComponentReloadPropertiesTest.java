@@ -21,6 +21,7 @@ import java.util.Properties;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.util.IOHelper;
 import org.junit.jupiter.api.Test;
 
@@ -43,7 +44,7 @@ public class PropertiesComponentReloadPropertiesTest extends ContextTestSupport 
     public void testReloadProperties() throws Exception {
         context.start();
 
-        org.apache.camel.spi.PropertiesComponent pc = context.getPropertiesComponent();
+        PropertiesComponent pc = context.getPropertiesComponent();
         Properties prop = pc.loadProperties();
 
         assertNotNull(prop);
@@ -70,7 +71,7 @@ public class PropertiesComponentReloadPropertiesTest extends ContextTestSupport 
     public void testReloadPropertiesPattern() throws Exception {
         context.start();
 
-        org.apache.camel.spi.PropertiesComponent pc = context.getPropertiesComponent();
+        PropertiesComponent pc = context.getPropertiesComponent();
         Properties prop = pc.loadProperties();
 
         assertNotNull(prop);
@@ -98,7 +99,7 @@ public class PropertiesComponentReloadPropertiesTest extends ContextTestSupport 
     public void testReloadNotMatch() {
         context.start();
 
-        org.apache.camel.spi.PropertiesComponent pc = context.getPropertiesComponent();
+        PropertiesComponent pc = context.getPropertiesComponent();
         Properties prop = pc.loadProperties();
 
         assertNotNull(prop);

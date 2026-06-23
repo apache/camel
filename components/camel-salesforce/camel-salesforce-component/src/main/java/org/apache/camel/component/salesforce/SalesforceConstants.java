@@ -23,6 +23,8 @@ public final class SalesforceConstants {
     // Streaming headers
     @Metadata(label = "consumer", description = "The Streaming API replayId.", javaType = "Object")
     public static final String HEADER_SALESFORCE_REPLAY_ID = "CamelSalesforceReplayId";
+    @Metadata(label = "consumer", description = "The Streaming API eventUuid.", javaType = "Object")
+    public static final String HEADER_SALESFORCE_EVENT_UUID = "CamelSalesforceEventUuid";
     @Metadata(label = "consumer", description = "The change event schema.", javaType = "Object")
     public static final String HEADER_SALESFORCE_CHANGE_EVENT_SCHEMA = "CamelSalesforceChangeEventSchema";
     @Metadata(label = "consumer", description = "The event type.", javaType = "String")

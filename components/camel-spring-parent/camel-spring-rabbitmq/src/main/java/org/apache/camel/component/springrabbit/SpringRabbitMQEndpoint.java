@@ -79,13 +79,13 @@ public class SpringRabbitMQEndpoint extends DefaultEndpoint implements AsyncEndp
     @UriParam(label = "consumer", defaultValue = "direct", enums = "direct,fanout,headers,topic",
               description = "The type of the exchange")
     private String exchangeType = "direct";
-    @UriParam(label = "common",
+    @UriParam(label = "common", endpointIdentity = true,
               description = "The value of a routing key to use. Default is empty which is not helpful when using the default (or any direct) exchange, but fine if the exchange is a headers exchange for instance.")
     private String routingKey = "";
     @UriParam(label = "common",
               description = "The connection factory to be use. A connection factory must be configured either on the component or endpoint.")
     private ConnectionFactory connectionFactory;
-    @UriParam(label = "common",
+    @UriParam(label = "common", endpointIdentity = true,
               description = "The queue(s) to use for consuming or producing messages. Multiple queue names can be separated by comma."
                             + " If none has been configured then Camel will generate an unique id as the queue name.")
     private String queues;

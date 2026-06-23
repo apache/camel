@@ -20,11 +20,14 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.camel.Exchange;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Used for validating incoming client responses with Camel Rest DSL.
  * <p>
  * This allows to plugin different validators.
+ *
+ * @since 4.13
  */
 public interface RestClientResponseValidator {
 
@@ -58,6 +61,7 @@ public interface RestClientResponseValidator {
      * @param  validationContent validation context
      * @return                   the validation error, or <tt>null</tt> if success
      */
+    @Nullable
     ValidationError validate(Exchange exchange, ValidationContext validationContent);
 
 }

@@ -136,7 +136,7 @@ public class ICalDataFormatTest extends CamelTestSupport {
         meeting.add(dev2);
 
         // Create a calendar
-        net.fortuna.ical4j.model.Calendar icsCalendar = new net.fortuna.ical4j.model.Calendar();
+        Calendar icsCalendar = new Calendar();
         icsCalendar.add(ImmutableVersion.VERSION_2_0);
         icsCalendar.add(new ProdId("-//Events Calendar//iCal4j 1.0//EN"));
         icsCalendar.add(ImmutableCalScale.GREGORIAN);

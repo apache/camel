@@ -26,7 +26,6 @@ import java.util.Set;
 
 import org.apache.camel.tooling.maven.MavenArtifact;
 import org.apache.camel.tooling.maven.MavenDownloader;
-import org.apache.camel.tooling.maven.MavenDownloaderImpl;
 import org.apache.camel.tooling.maven.MavenGav;
 import org.apache.camel.tooling.maven.MavenResolutionException;
 import org.apache.camel.util.FileUtil;
@@ -34,7 +33,10 @@ import picocli.CommandLine;
 
 @CommandLine.Command(name = "copy",
                      description = "Copies all Camel dependencies required to run to a specific directory", sortOptions = false,
-                     showDefaultValues = true)
+                     showDefaultValues = true,
+                     footer = {
+                             "%nExamples:",
+                             "  camel dependency copy --output-directory=lib/" })
 public class DependencyCopy extends DependencyList {
 
     private static final Set<String> EXCLUDED_GROUP_IDS = Set.of("org.fusesource.jansi", "org.apache.logging.log4j");
@@ -45,32 +47,38 @@ public class DependencyCopy extends DependencyList {
                         defaultValue = "lib", required = true)
     protected String outputDirectory;
 
+    private boolean outputDirectoryCreated = false;
+
     public DependencyCopy(CamelJBangMain main) {
         super(main);
     }
 
     private void createOutputDirectory() {
-        Path outputDirectoryPath = Paths.get(outputDirectory);
-        if (Files.exists(outputDirectoryPath)) {
-            if (Files.isDirectory(outputDirectoryPath)) {
-                FileUtil.removeDir(outputDirectoryPath.toFile());
-            } else {
-                printer().printErr("Error creating the output directory: " + outputDirectory
-                                   + " is not a directory");
-                return;
+        if (!outputDirectoryCreated) {
+            outputDirectoryCreated = true;
+            Path outputDirectoryPath = Paths.get(outputDirectory);
+            if (Files.exists(outputDirectoryPath)) {
+                if (Files.isDirectory(outputDirectoryPath)) {
+                    FileUtil.removeDir(outputDirectoryPath.toFile());
+                } else {
+                    printer().printErr("Error creating the output directory: " + outputDirectory
+                                       + " is not a directory");
+                    return;
+                }
             }
-        }
-        try {
-            Files.createDirectories(outputDirectoryPath);
-        } catch (IOException e) {
-            throw new UncheckedIOException("Error creating the output directory: " + outputDirectory, e);
+            try {
+                Files.createDirectories(outputDirectoryPath);
+            } catch (IOException e) {
+                throw new UncheckedIOException("Error creating the output directory: " + outputDirectory, e);
+            }
         }
     }
 
     @Override
     protected void outputGav(MavenGav gav, int index, int total) {
         try {
-            List<MavenArtifact> artifacts = getDownloader().resolveArtifacts(
+            createOutputDirectory();
+            List<MavenArtifact> artifacts = mavenResolver.downloader().resolveArtifacts(
                     List.of(gav.toString()), Set.of(), true, gav.getVersion().contains("SNAPSHOT"));
             for (MavenArtifact artifact : artifacts) {
                 Path target = Paths.get(outputDirectory, artifact.getFile().getName());
@@ -86,16 +94,4 @@ public class DependencyCopy extends DependencyList {
         }
     }
 
-    private MavenDownloader getDownloader() {
-        if (downloader == null) {
-            init();
-        }
-        return downloader;
-    }
-
-    private void init() {
-        this.downloader = new MavenDownloaderImpl();
-        ((MavenDownloaderImpl) downloader).build();
-        createOutputDirectory();
-    }
 }

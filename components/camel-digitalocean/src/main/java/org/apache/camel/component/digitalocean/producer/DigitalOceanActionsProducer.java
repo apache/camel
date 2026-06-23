@@ -29,6 +29,7 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * The DigitalOcean producer for Actions API.
  */
+@Deprecated(since = "4.21")
 public class DigitalOceanActionsProducer extends DigitalOceanProducer {
 
     public DigitalOceanActionsProducer(DigitalOceanEndpoint endpoint, DigitalOceanConfiguration configuration) {

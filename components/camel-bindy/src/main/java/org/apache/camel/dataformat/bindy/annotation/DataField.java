@@ -152,4 +152,14 @@ public @interface DataField {
      * org.apache.camel.dataformat.bindy.csv.BindySimpleCsvFunctionWithExternalMethodTest.replaceToBar
      */
     String method() default "";
+
+    /**
+     * Whether to keep going when parsing this field fails.
+     *
+     * TRUE forces tolerance for this field — a parse error is replaced with the field's defaultValue, or the
+     * type-appropriate default if no defaultValue is set. FALSE forces strict behavior: the exception propagates and
+     * aborts the unmarshal as it always has. INHERIT (the default) defers to the record-level setting on @CsvRecord
+     * or @FixedLengthRecord.
+     */
+    ContinueOnFailure continueParseOnFailure() default ContinueOnFailure.INHERIT;
 }

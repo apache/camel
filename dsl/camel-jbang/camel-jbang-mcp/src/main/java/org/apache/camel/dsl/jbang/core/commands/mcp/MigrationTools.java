@@ -112,7 +112,7 @@ public class MigrationTools {
             @ToolArg(description = "Comma-separated list of Camel component artifactIds") String camelComponents,
             @ToolArg(description = "Current Camel version (e.g., 3.20.0)") String currentVersion,
             @ToolArg(description = "Target Camel version (e.g., 4.18.0)") String targetVersion,
-            @ToolArg(description = "Runtime type: main, spring-boot, or quarkus") String runtime,
+            @ToolArg(description = ToolArgDocs.RUNTIME_REQUIRED) String runtime,
             @ToolArg(description = "Current Java version (e.g., 11, 17, 21)") String javaVersion) {
 
         if (camelComponents == null || camelComponents.isBlank()) {
@@ -210,7 +210,7 @@ public class MigrationTools {
                         + "BEFORE running the OpenRewrite recipes. If the project does not compile, fix the build "
                         + "errors first. OpenRewrite requires a compilable project to parse and transform the code.")
     public MigrationRecipesResult camel_migration_recipes(
-            @ToolArg(description = "Runtime type: main, spring-boot, or quarkus") String runtime,
+            @ToolArg(description = ToolArgDocs.RUNTIME_REQUIRED) String runtime,
             @ToolArg(description = "Current Camel version (e.g., 4.4.0)") String currentVersion,
             @ToolArg(description = "Target Camel version (e.g., 4.18.0)") String targetVersion,
             @ToolArg(description = "Current Java version (e.g., 11, 17)") String javaVersion,

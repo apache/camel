@@ -30,6 +30,7 @@ import org.w3c.dom.Node;
 
 import org.apache.camel.component.schematron.constant.Constants;
 import org.apache.camel.component.schematron.exception.SchematronConfigException;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * Class generating Templates for a given schematron rules
@@ -61,7 +62,7 @@ public final class TemplatesFactory {
             for (String template : PIPELINE) {
                 String path = Constants.SCHEMATRON_TEMPLATES_ROOT_DIR
                         .concat("/").concat(template);
-                InputStream xsl = org.apache.camel.util.ObjectHelper.loadResourceAsStream(path);
+                InputStream xsl = ObjectHelper.loadResourceAsStream(path);
                 if (xsl == null) {
                     xsl = this.getClass().getClassLoader().getResourceAsStream(path);
                 }

@@ -6,20 +6,49 @@
 :since: 2.10
 :supportlevel: Stable
 :tabs-sync-option:
-//Manually maintained attributes
-:camel-spring-boot-name: gson
 
 *Since Camel {since}*
 
 Gson is a Data Format that uses the
 https://github.com/google/gson[Gson Library]
 
+[tabs]
+====
+Java::
++
 [source,java]
--------------------------------
-from("activemq:My.Queue").
-  marshal().json(JsonLibrary.Gson).
-  to("mqseries:Another.Queue");
--------------------------------
+----
+from("activemq:My.Queue")
+    .marshal().json(JsonLibrary.Gson)
+    .to("mqseries:Another.Queue");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="activemq:My.Queue"/>
+  <marshal><json library="Gson"/></marshal>
+  <to uri="mqseries:Another.Queue"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: activemq:My.Queue
+      steps:
+        - marshal:
+            json:
+              library: Gson
+        - to:
+            uri: mqseries:Another.Queue
+----
+====
 
 == Gson Options
 
@@ -46,6 +75,3 @@ substituting the version number for the latest & greatest release.
   <!-- use the same version as your Camel core version -->
 </dependency>
 ----------------------------------------------------------
-
-
-include::spring-boot:partial$starter.adoc[]

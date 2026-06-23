@@ -21,6 +21,8 @@ import org.apache.camel.Service;
 
 /**
  * A factory for using micrometer with resilience4j circuit breakers
+ *
+ * @since 4.15
  */
 public interface Resilience4jMicrometerFactory extends Service, CamelContextAware {
 

@@ -1822,7 +1822,7 @@ public interface Olingo4EndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final Olingo4HeaderNameBuilder INSTANCE = new Olingo4HeaderNameBuilder();
+        public static final Olingo4HeaderNameBuilder INSTANCE = new Olingo4HeaderNameBuilder();
 
         /**
          * The response Http headers.

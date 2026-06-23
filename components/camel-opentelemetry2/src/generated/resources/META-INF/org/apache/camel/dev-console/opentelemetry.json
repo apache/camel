@@ -1,0 +1,15 @@
+{
+  "console": {
+    "kind": "console",
+    "group": "camel",
+    "name": "opentelemetry",
+    "title": "OpenTelemetry Spans",
+    "description": "OpenTelemetry span data captured in dev mode",
+    "deprecated": false,
+    "javaType": "org.apache.camel.opentelemetry2.OpenTelemetryDevConsole",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-opentelemetry2",
+    "version": "4.21.0-SNAPSHOT"
+  }
+}
+

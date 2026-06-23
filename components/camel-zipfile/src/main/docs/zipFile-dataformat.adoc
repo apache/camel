@@ -6,8 +6,6 @@
 :since: 2.11
 :supportlevel: Stable
 :tabs-sync-option:
-//Manually maintained attributes
-:camel-spring-boot-name: zipfile
 
 *Since Camel {since}*
 
@@ -28,12 +26,44 @@ In this example, we marshal a regular text/XML payload to a compressed
 payload using Zip file compression, and send it to an ActiveMQ queue
 called MY_QUEUE.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:start")
     .marshal().zipFile()
     .to("activemq:queue:MY_QUEUE");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="direct:start"/>
+    <marshal>
+        <zipFile/>
+    </marshal>
+    <to uri="activemq:queue:MY_QUEUE"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+    steps:
+      - marshal:
+          zipFile: {}
+      - to:
+          uri: activemq:queue:MY_QUEUE
+----
+====
 
 The name of the Zip entry inside the created Zip file is based on the
 incoming `CamelFileName` message header, which is the standard message
@@ -44,12 +74,46 @@ suffix. So, for example, if the following route finds a file named
 "test.txt" in the input directory, the output will be a Zip file named
 "test.txt.zip" containing a single Zip entry named "test.txt":
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("file:input/directory?antInclude=*/.txt")
     .marshal().zipFile()
     .to("file:output/directory");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="file:input/directory?antInclude=*/.txt"/>
+    <marshal>
+        <zipFile/>
+    </marshal>
+    <to uri="file:output/directory"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: file:input/directory
+      parameters:
+        antInclude: "*/.txt"
+    steps:
+      - marshal:
+          zipFile: {}
+      - to:
+          uri: file:output/directory
+----
+====
 
 If there is no incoming `CamelFileName` message header, (for example, if
 the file component is not the consumer), then the
@@ -59,6 +123,10 @@ Since the message ID is normally a unique generated ID, you will end up with fil
 this behavior, then you can set the value of the `CamelFileName` header
 explicitly in your route:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:start")
@@ -66,6 +134,40 @@ from("direct:start")
     .marshal().zipFile()
     .to("file:output/directory");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="direct:start"/>
+    <setHeader name="CamelFileName">
+        <constant>report.txt</constant>
+    </setHeader>
+    <marshal>
+        <zipFile/>
+    </marshal>
+    <to uri="file:output/directory"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+    steps:
+      - setHeader:
+          name: CamelFileName
+          constant: report.txt
+      - marshal:
+          zipFile: {}
+      - to:
+          uri: file:output/directory
+----
+====
 
 This route would result in a Zip file named "report.txt.zip" in the
 output directory, containing a single Zip entry named "report.txt".
@@ -76,6 +178,7 @@ In this example we unmarshal a Zip file payload from an ActiveMQ queue
 called MY_QUEUE to its original format, and forward it for processing to
 the `UnZippedMessageProcessor`.
 
+._Java-only: inline Processor class_
 [source,java]
 ----
 from("activemq:queue:MY_QUEUE")
@@ -87,6 +190,7 @@ If the zip file has more than one entry, the usingIterator option of
 ZipFileDataFormat to be true, and you can use splitter to do the further
 work.
 
+._Java-only: Java programmatic data format configuration_
 [source,java]
 ----
 ZipFileDataFormat zipFile = new ZipFileDataFormat();
@@ -101,6 +205,7 @@ from("file:src/test/resources/org/apache/camel/dataformat/zipfile/?delay=1000&no
 
 Or you can use the ZipSplitter as an expression for splitter directly like this:
 
+._Java-only: Java ZipSplitter class_
 [source,java]
 ----
 from("file:src/test/resources/org/apache/camel/dataformat/zipfile?delay=1000&noop=true")
@@ -122,8 +227,9 @@ Please note that this aggregation strategy requires eager completion check to wo
 ====
 
 In this example, we aggregate all text files found in the input directory
-into a single Zip file that is stored in the output directory. 
+into a single Zip file that is stored in the output directory.
 
+._Java-only: Java ZipAggregationStrategy class_
 [source,java]
 ----
 from("file:input/directory?antInclude=*/.txt")
@@ -137,6 +243,7 @@ java.io.File.createTempFile, with the ".zip" suffix. If you want to
 override this behavior, then you can set the value of
 the `CamelFileName` header explicitly in your route:
 
+._Java-only: Java ZipAggregationStrategy class_
 [source,java]
 ----
 from("file:input/directory?antInclude=*/.txt")
@@ -164,6 +271,3 @@ the download page for the latest versions).
   <!-- use the same version as your Camel core version -->
 </dependency>
 ----
-
-
-include::spring-boot:partial$starter.adoc[]

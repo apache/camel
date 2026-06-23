@@ -51,6 +51,9 @@ public class OAIPMHConsumer extends ScheduledPollConsumer {
         if (getEndpoint().isIgnoreSSLWarnings()) {
             this.harvester.getHttpClient().setIgnoreSSLWarnings(true);
         }
+        if (getEndpoint().getHttpHeaders() != null && !getEndpoint().getHttpHeaders().isEmpty()) {
+            this.harvester.getHttpClient().setHttpHeaders(getEndpoint().getHttpHeaders());
+        }
         super.doStart();
     }
 

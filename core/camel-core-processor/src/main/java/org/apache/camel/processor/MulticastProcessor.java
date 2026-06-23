@@ -60,6 +60,7 @@ import org.apache.camel.spi.InternalProcessorFactory;
 import org.apache.camel.spi.ProcessorExchangeFactory;
 import org.apache.camel.spi.ReactiveExecutor;
 import org.apache.camel.spi.RouteIdAware;
+import org.apache.camel.spi.StepIdAware;
 import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.support.AsyncProcessorConverterHelper;
 import org.apache.camel.support.AsyncProcessorSupport;
@@ -87,7 +88,7 @@ import static org.apache.camel.util.ObjectHelper.notNull;
  * of the message exchange.
  */
 public class MulticastProcessor extends BaseProcessorSupport
-        implements Navigate<Processor>, Traceable, IdAware, RouteIdAware, ErrorHandlerAware {
+        implements Navigate<Processor>, Traceable, IdAware, RouteIdAware, StepIdAware, ErrorHandlerAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(MulticastProcessor.class);
 
@@ -170,6 +171,7 @@ public class MulticastProcessor extends BaseProcessorSupport
     private Processor errorHandler;
     private String id;
     private String routeId;
+    private String stepId;
     private final Collection<Processor> processors;
     private final AggregationStrategy aggregationStrategy;
     private final boolean parallelProcessing;
@@ -257,6 +259,16 @@ public class MulticastProcessor extends BaseProcessorSupport
     @Override
     public void setRouteId(String routeId) {
         this.routeId = routeId;
+    }
+
+    @Override
+    public String getStepId() {
+        return stepId;
+    }
+
+    @Override
+    public void setStepId(String stepId) {
+        this.stepId = stepId;
     }
 
     @Override

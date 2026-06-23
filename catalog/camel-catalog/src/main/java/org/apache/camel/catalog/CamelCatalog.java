@@ -663,4 +663,19 @@ public interface CamelCatalog {
      */
     List<ReleaseModel> camelQuarkusReleases();
 
+    /**
+     * Checks whether two endpoint URIs refer to the same logical endpoint.
+     * <p/>
+     * Two URIs match when they share the same scheme, context-path, and &mdash; if the component declares any query
+     * parameters as {@code endpointIdentity} &mdash; the same values for those identity parameters. Non-identity query
+     * parameters (timeouts, buffer sizes, etc.) are ignored.
+     * <p/>
+     * Implemented by default via the shared base class; declared here so the full catalog interface exposes it.
+     *
+     * @param  uri1 the first endpoint uri
+     * @param  uri2 the second endpoint uri
+     * @return      {@code true} if both URIs identify the same destination
+     */
+    boolean matchEndpointIdentity(String uri1, String uri2);
+
 }

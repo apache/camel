@@ -16,7 +16,6 @@
  */
 package org.apache.camel.main;
 
-import java.time.Duration;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -203,10 +202,7 @@ public final class DefaultConfigurationConfigurer {
 
         camelContext.getInflightRepository().setInflightBrowseEnabled(config.isInflightRepositoryBrowseEnabled());
 
-        camelContext.getErrorRegistry().setEnabled(config.isErrorRegistryEnabled());
-        camelContext.getErrorRegistry().setMaximumEntries(config.getErrorRegistryMaximumEntries());
-        camelContext.getErrorRegistry().setTimeToLive(Duration.ofSeconds(config.getErrorRegistryTimeToLiveSeconds()));
-        camelContext.getErrorRegistry().setStackTraceEnabled(config.isErrorRegistryStackTraceEnabled());
+        // error registry is configured via ErrorRegistryConfigurationProperties (camel.errorRegistry.*)
 
         if (config.getLogDebugMaxChars() != 0) {
             camelContext.getGlobalOptions().put(Exchange.LOG_DEBUG_BODY_MAX_CHARS,
@@ -254,6 +250,9 @@ public final class DefaultConfigurationConfigurer {
             }
         }
 
+        // message size
+        camelContext.setMessageSize(config.isMessageSizeEnabled());
+
         if ("default".equals(config.getUuidGenerator())) {
             camelContext.setUuidGenerator(new DefaultUuidGenerator());
         } else if ("short".equals(config.getUuidGenerator())) {
@@ -298,6 +297,9 @@ public final class DefaultConfigurationConfigurer {
             reloader.setPattern(config.getRoutesReloadPattern());
             reloader.setRemoveAllRoutes(config.isRoutesReloadRemoveAllRoutes());
             camelContext.addService(reloader);
+            // disable contentCache on resource-based components so that resource files (e.g. XSLT
+            // stylesheets, templates) are reloaded live without restarting routes
+            camelContext.addLifecycleStrategy(new DevModeContentCacheStrategy());
         }
         if (config.getDumpRoutes() != null) {
             DumpRoutesStrategy drs = camelContext.getCamelContextExtension().getContextPlugin(DumpRoutesStrategy.class);
@@ -350,12 +352,8 @@ public final class DefaultConfigurationConfigurer {
         camelContext.getGlobalEndpointConfiguration().setBridgeErrorHandler(config.isEndpointBridgeErrorHandler());
         camelContext.getGlobalEndpointConfiguration().setLazyStartProducer(config.isEndpointLazyStartProducer());
 
-        if (config.isMessageHistory()) {
-            camelContext.setMessageHistory(true);
-        }
-        if (config.isSourceLocationEnabled()) {
-            camelContext.setSourceLocationEnabled(true);
-        }
+        camelContext.setMessageHistory(config.isMessageHistory());
+        camelContext.setSourceLocationEnabled(config.isSourceLocationEnabled());
 
         camelContext.setTracing(config.isTracing());
         camelContext.setTracingStandby(config.isTracingStandby());
@@ -601,7 +599,7 @@ public final class DefaultConfigurationConfigurer {
         if (healthCheckRegistry != null) {
             // Health check repository
             Set<HealthCheckRepository> repositories = registry.findByType(HealthCheckRepository.class);
-            if (org.apache.camel.util.ObjectHelper.isNotEmpty(repositories)) {
+            if (ObjectHelper.isNotEmpty(repositories)) {
                 for (HealthCheckRepository repository : repositories) {
                     healthCheckRegistry.register(repository);
                 }

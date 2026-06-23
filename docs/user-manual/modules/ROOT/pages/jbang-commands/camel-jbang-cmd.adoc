@@ -28,8 +28,12 @@ camel cmd [options]
 | xref:jbang-commands/camel-jbang-cmd-reload.adoc[reload] | Trigger reloading Camel
 | xref:jbang-commands/camel-jbang-cmd-reset-stats.adoc[reset-stats] | Reset performance statistics
 | xref:jbang-commands/camel-jbang-cmd-resume-route.adoc[resume-route] | Resume Camel routes
+| xref:jbang-commands/camel-jbang-cmd-route-diagram.adoc[route-diagram] | Display Camel route diagram in the terminal
+| xref:jbang-commands/camel-jbang-cmd-route-dump.adoc[route-dump] | Dump Camel route in XML, YAML, or Java DSL format
 | xref:jbang-commands/camel-jbang-cmd-route-structure.adoc[route-structure] | Dump Camel route structure
+| xref:jbang-commands/camel-jbang-cmd-route-topology.adoc[route-topology] | Display inter-route topology connections
 | xref:jbang-commands/camel-jbang-cmd-send.adoc[send] | Send messages to endpoints
+| xref:jbang-commands/camel-jbang-cmd-span.adoc[span] | Display OpenTelemetry spans from running Camel integrations
 | xref:jbang-commands/camel-jbang-cmd-start-group.adoc[start-group] | Start Camel route groups
 | xref:jbang-commands/camel-jbang-cmd-start-route.adoc[start-route] | Start Camel routes
 | xref:jbang-commands/camel-jbang-cmd-stop-group.adoc[stop-group] | Stop Camel route groups

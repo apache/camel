@@ -22,6 +22,7 @@ import java.util.List;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.apache.flink.api.common.RuntimeExecutionMode;
+import org.apache.flink.configuration.ExecutionOptions;
 import org.apache.flink.streaming.api.CheckpointingMode;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.datastream.DataStreamSource;
@@ -84,7 +85,7 @@ public class DataStreamProducerTest extends CamelTestSupport {
         env.setRuntimeMode(RuntimeExecutionMode.BATCH);
 
         Assertions.assertThat(env.getConfiguration().get(
-                org.apache.flink.configuration.ExecutionOptions.RUNTIME_MODE))
+                ExecutionOptions.RUNTIME_MODE))
                 .isEqualTo(RuntimeExecutionMode.BATCH);
     }
 

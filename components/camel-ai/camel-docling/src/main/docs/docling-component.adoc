@@ -9,7 +9,6 @@
 :component-header: Only producer is supported
 //Manually maintained attributes
 :group: AI
-:camel-spring-boot-name: docling
 
 *Since Camel {since}*
 
@@ -152,14 +151,14 @@ YAML::
 ----
 - route:
     from:
-      uri: "file:///data/documents"
+      uri: file:///data/documents
       parameters:
         include: ".*\\.pdf"
     steps:
       - to:
-          uri: "docling:CONVERT_TO_MARKDOWN"
+          uri: docling:CONVERT_TO_MARKDOWN
       - to:
-          uri: "file:///data/output"
+          uri: file:///data/output
 ----
 ====
 
@@ -185,12 +184,12 @@ YAML::
 ----
 - route:
     from:
-      uri: "file:///data/documents"
+      uri: file:///data/documents
       parameters:
         include: ".*\\.pdf"
     steps:
       - to:
-          uri: "docling:CONVERT_TO_HTML"
+          uri: docling:CONVERT_TO_HTML
           parameters:
             contentInBody: true
       - process:
@@ -228,12 +227,12 @@ YAML::
 ----
 - route:
     from:
-      uri: "file:///data/documents"
+      uri: file:///data/documents
       parameters:
         include: ".*\\.pdf"
     steps:
       - to:
-          uri: "docling:EXTRACT_STRUCTURED_DATA"
+          uri: docling:EXTRACT_STRUCTURED_DATA
           parameters:
             useDoclingServe: true
             contentInBody: true
@@ -270,32 +269,32 @@ YAML::
 # CLI mode
 - route:
     from:
-      uri: "file:///data/documents"
+      uri: file:///data/documents
       parameters:
         include: ".*\\.pdf"
     steps:
       - to:
-          uri: "docling:CONVERT_TO_MARKDOWN"
+          uri: docling:CONVERT_TO_MARKDOWN
           parameters:
             enableOCR: false
       - to:
-          uri: "file:///data/output"
+          uri: file:///data/output
 
 # API mode
 - route:
     from:
-      uri: "file:///data/documents"
+      uri: file:///data/documents
       parameters:
         include: ".*\\.pdf"
     steps:
       - to:
-          uri: "docling:CONVERT_TO_MARKDOWN"
+          uri: docling:CONVERT_TO_MARKDOWN
           parameters:
             useDoclingServe: true
             doOcr: false
             contentInBody: true
       - to:
-          uri: "file:///data/output"
+          uri: file:///data/output
 ----
 ====
 
@@ -321,7 +320,7 @@ YAML::
 ----
 - route:
     from:
-      uri: "file:///data/documents"
+      uri: file:///data/documents
       parameters:
         include: ".*\\.pdf"
     steps:
@@ -335,9 +334,9 @@ YAML::
           name: "CamelDoclingOCRLanguage"
           constant: "es"
       - to:
-          uri: "docling:CONVERT_TO_MARKDOWN"  # Operation will be overridden by header
+          uri: docling:CONVERT_TO_MARKDOWN  # Operation will be overridden by header
       - to:
-          uri: "file:///data/output"
+          uri: file:///data/output
 ----
 ====
 
@@ -364,7 +363,7 @@ YAML::
 ----
 - route:
     from:
-      uri: "file:///data/documents"
+      uri: file:///data/documents
       parameters:
         include: ".*\\.pdf"
     steps:
@@ -375,9 +374,9 @@ YAML::
               ref: "customArgsBean"
               method: "createCustomArgs"
       - to:
-          uri: "docling:CONVERT_TO_MARKDOWN"
+          uri: docling:CONVERT_TO_MARKDOWN
       - to:
-          uri: "file:///data/output"
+          uri: file:///data/output
 ----
 ====
 
@@ -467,14 +466,16 @@ YAML::
 ----
 - route:
     from:
-      uri: "file:///data/documents"
+      uri: file:///data/documents
       parameters:
         include: ".*\\.pdf"
     steps:
       - to:
-          uri: "docling:EXTRACT_METADATA"
-      - log: "Document: ${header.CamelDoclingMetadataTitle} by ${header.CamelDoclingMetadataAuthor}"
-      - log: "Pages: ${header.CamelDoclingMetadataPageCount}"
+          uri: docling:EXTRACT_METADATA
+      - log:
+          message: "Document: ${header.CamelDoclingMetadataTitle} by ${header.CamelDoclingMetadataAuthor}"
+      - log:
+          message: "Pages: ${header.CamelDoclingMetadataPageCount}"
       - process:
           ref: "metadataProcessor"
 ----
@@ -507,12 +508,12 @@ YAML::
 ----
 - route:
     from:
-      uri: "file:///data/documents"
+      uri: file:///data/documents
       parameters:
         include: ".*\\.pdf"
     steps:
       - to:
-          uri: "docling:EXTRACT_METADATA"
+          uri: docling:EXTRACT_METADATA
           parameters:
             includeRawMetadata: true
       - process:
@@ -551,29 +552,42 @@ YAML::
 ----
 - route:
     from:
-      uri: "file:///data/documents"
+      uri: file:///data/documents
       parameters:
         include: ".*\\.pdf"
     steps:
       - to:
-          uri: "docling:EXTRACT_METADATA"
+          uri: docling:EXTRACT_METADATA
       - choice:
           when:
-            - simple: "${header.CamelDoclingMetadataPageCount} > 100"
+            - expression:
+                simple:
+                  expression: "${header.CamelDoclingMetadataPageCount} > 100"
               steps:
-                - log: "Large document with ${header.CamelDoclingMetadataPageCount} pages"
-                - to: "file:///data/large-docs"
-            - simple: "${header.CamelDoclingMetadataLanguage} == 'fr'"
+                - log:
+                    message: "Large document with ${header.CamelDoclingMetadataPageCount} pages"
+                - to:
+                    uri: file:///data/large-docs
+            - expression:
+                simple:
+                  expression: "${header.CamelDoclingMetadataLanguage} == 'fr'"
               steps:
-                - log: "French document"
-                - to: "file:///data/french-docs"
-            - simple: "${header.CamelDoclingMetadataAuthor} contains 'Smith'"
+                - log:
+                    message: "French document"
+                - to:
+                    uri: file:///data/french-docs
+            - expression:
+                simple:
+                  expression: "${header.CamelDoclingMetadataAuthor} contains 'Smith'"
               steps:
-                - log: "Document by Smith"
-                - to: "file:///data/smith-docs"
+                - log:
+                    message: "Document by Smith"
+                - to:
+                    uri: file:///data/smith-docs
           otherwise:
             steps:
-              - to: "file:///data/other-docs"
+              - to:
+                  uri: file:///data/other-docs
 ----
 ====
 
@@ -602,12 +616,12 @@ YAML::
 ----
 - route:
     from:
-      uri: "file:///data/documents"
+      uri: file:///data/documents
       parameters:
         include: ".*\\.pdf"
     steps:
       - to:
-          uri: "docling:EXTRACT_METADATA"
+          uri: docling:EXTRACT_METADATA
           parameters:
             includeMetadataInHeaders: false
       - process:
@@ -647,12 +661,12 @@ YAML::
 # Get content directly in body (file is automatically deleted)
 - route:
     from:
-      uri: "file:///data/documents"
+      uri: file:///data/documents
       parameters:
         include: ".*\\.pdf"
     steps:
       - to:
-          uri: "docling:CONVERT_TO_MARKDOWN"
+          uri: docling:CONVERT_TO_MARKDOWN
           parameters:
             contentInBody: true
       - process:
@@ -661,12 +675,12 @@ YAML::
 # Get file path (file is preserved)
 - route:
     from:
-      uri: "file:///data/documents"
+      uri: file:///data/documents
       parameters:
         include: ".*\\.pdf"
     steps:
       - to:
-          uri: "docling:CONVERT_TO_MARKDOWN"
+          uri: docling:CONVERT_TO_MARKDOWN
           parameters:
             contentInBody: false
       - process:
@@ -677,6 +691,8 @@ YAML::
 === Processor Bean Examples
 
 When using YAML DSL, the processor references used in the examples above would be implemented as Spring beans:
+
+._Java-only: Spring bean Processor implementation_
 
 [source,java]
 ----
@@ -731,642 +747,6 @@ public class CustomArgsBean {
 }
 ----
 
-== Batch Processing
-
-The component supports batch processing of multiple documents when using docling-serve API mode. This is particularly useful for:
-- Processing multiple documents efficiently with parallel execution
-- Queue-based document processing workflows
-- High-volume document conversion scenarios
-- Better resource utilization with configurable parallelism
-
-=== Batch Operations
-
-The following batch operations are available (all require `useDoclingServe=true`):
-
-[width="100%",cols="2,4",options="header"]
-|===
-| Operation | Description
-
-| `BATCH_CONVERT_TO_MARKDOWN`
-| Convert multiple documents to Markdown format in parallel
-
-| `BATCH_CONVERT_TO_HTML`
-| Convert multiple documents to HTML format in parallel
-
-| `BATCH_CONVERT_TO_JSON`
-| Convert multiple documents to JSON format in parallel
-
-| `BATCH_EXTRACT_TEXT`
-| Extract text from multiple documents in parallel
-
-| `BATCH_EXTRACT_STRUCTURED_DATA`
-| Extract structured data from multiple documents in parallel with table structure recognition enabled by default
-
-|===
-
-=== Basic Batch Processing
-
-[tabs]
-====
-Java::
-+
-[source,java]
-----
-from("direct:documents")
-    .process(exchange -> {
-        List<String> documents = Arrays.asList(
-            "/data/doc1.pdf",
-            "/data/doc2.pdf",
-            "/data/doc3.docx"
-        );
-        exchange.getIn().setBody(documents);
-    })
-    .to("docling:convert?" +
-        "operation=BATCH_CONVERT_TO_MARKDOWN&" +
-        "useDoclingServe=true&" +
-        "batchParallelism=4&" +
-        "batchFailOnFirstError=true")
-    .process(exchange -> {
-        BatchProcessingResults results = exchange.getIn().getBody(BatchProcessingResults.class);
-        log.info("Processed {} documents, {} succeeded, {} failed",
-            results.getTotalDocuments(),
-            results.getSuccessCount(),
-            results.getFailureCount());
-
-        // Access individual results
-        for (BatchConversionResult result : results.getResults()) {
-            if (result.isSuccess()) {
-                log.info("Document {}: {}", result.getOriginalPath(), result.getResult());
-            } else {
-                log.error("Document {} failed: {}", result.getOriginalPath(), result.getErrorMessage());
-            }
-        }
-    });
-----
-
-YAML::
-+
-[source,yaml]
-----
-- route:
-    id: batch-convert
-    from:
-      uri: "direct:documents"
-    steps:
-      - to:
-          uri: "docling:convert"
-          parameters:
-            operation: "BATCH_CONVERT_TO_MARKDOWN"
-            useDoclingServe: true
-            batchParallelism: 4
-            batchFailOnFirstError: true
-      - log: "Processed ${header.CamelDoclingBatchSuccessCount}/${header.CamelDoclingBatchTotalDocuments} documents successfully"
-      - split:
-          simple: "${body.results}"
-          steps:
-            - choice:
-                when:
-                  - simple: "${body.success}"
-                    steps:
-                      - to: "file:///data/output?fileName=${body.documentId}.md"
-                otherwise:
-                  steps:
-                    - log: "Failed: ${body.originalPath} - ${body.errorMessage}"
-----
-====
-
-=== Queue-Based Batch Processing
-
-This example shows a queue-based batch processing workflow:
-
-[tabs]
-====
-Java::
-+
-[source,java]
-----
-// Route 1: Collect documents from file system and send to queue
-from("file:///data/incoming?noop=true&maxMessagesPerPoll=50")
-    .convertBodyTo(String.class)
-    .setHeader("documentPath", simple("${body}"))
-    .to("seda:document-queue?waitForTaskToComplete=Never");
-
-// Route 2: Aggregate documents from queue into batches
-from("seda:document-queue?concurrentConsumers=1")
-    .aggregate(constant(true))
-        .completionSize(10)          // Batch size
-        .completionTimeout(5000)     // Or timeout after 5 seconds
-    .process(exchange -> {
-        // Convert aggregated exchanges to document list
-        @SuppressWarnings("unchecked")
-        List<Exchange> exchanges = exchange.getProperty(Exchange.GROUPED_EXCHANGE, List.class);
-        List<String> documentPaths = exchanges.stream()
-            .map(e -> e.getIn().getHeader("documentPath", String.class))
-            .collect(Collectors.toList());
-        exchange.getIn().setBody(documentPaths);
-    })
-    .to("direct:batch-process");
-
-// Route 3: Process batch with docling
-from("direct:batch-process")
-    .to("docling:convert?" +
-        "operation=BATCH_CONVERT_TO_MARKDOWN&" +
-        "useDoclingServe=true&" +
-        "batchParallelism=5&" +
-        "batchFailOnFirstError=false")
-    .process(exchange -> {
-        BatchProcessingResults results = exchange.getIn().getBody(BatchProcessingResults.class);
-        log.info("Batch completed: {}/{} successful",
-            results.getSuccessCount(), results.getTotalDocuments());
-    })
-    .split(simple("${body.results}"))
-        .choice()
-            .when(simple("${body.success}"))
-                .to("file:///data/output?fileName=${body.documentId}.md")
-            .otherwise()
-                .to("file:///data/failed?fileName=${body.documentId}.error");
-----
-
-YAML::
-+
-[source,yaml]
-----
-# Define beans for processing
-- beans:
-  - name: documentListProcessor
-    type: "#class:org.apache.camel.processor.aggregate.GroupedBodyAggregationStrategy"
-    properties:
-      strategyMethodName: "aggregate"
-
-# Route 1: Collect documents
-- route:
-    from:
-      uri: "file:///data/incoming"
-      parameters:
-        noop: true
-        maxMessagesPerPoll: 50
-    steps:
-      - convertBodyTo:
-          type: "java.lang.String"
-      - setHeader:
-          name: "documentPath"
-          simple: "${body}"
-      - to:
-          uri: "seda:document-queue"
-          parameters:
-            waitForTaskToComplete: "Never"
-
-# Route 2: Aggregate into batches
-- route:
-    from:
-      uri: "seda:document-queue"
-      parameters:
-        concurrentConsumers: 1
-    steps:
-      - aggregate:
-          aggregationStrategy:
-            bean: "documentListProcessor"
-          correlationExpression:
-            constant: true
-          completionSize: 10
-          completionTimeout: 5000
-      - to: "direct:batch-process"
-
-# Route 3: Process batch
-- route:
-    from:
-      uri: "direct:batch-process"
-    steps:
-      - to:
-          uri: "docling:convert"
-          parameters:
-            operation: "BATCH_CONVERT_TO_MARKDOWN"
-            useDoclingServe: true
-            batchParallelism: 5
-            batchFailOnFirstError: false
-      - split:
-          simple: "${body.results}"
-          steps:
-            - choice:
-                when:
-                  - simple: "${body.success}"
-                    steps:
-                      - to: "file:///data/output?fileName=${body.documentId}.md"
-                otherwise:
-                  steps:
-                    - to: "file:///data/failed?fileName=${body.documentId}.error"
-----
-====
-
-NOTE: For the aggregation example above, you can also use a custom processor. Create a Java class:
-
-[source,java]
-----
-public class DocumentListProcessor implements Processor {
-    @Override
-    public void process(Exchange exchange) throws Exception {
-        @SuppressWarnings("unchecked")
-        List<Exchange> exchanges = exchange.getProperty(Exchange.GROUPED_EXCHANGE, List.class);
-        List<String> documentPaths = exchanges.stream()
-            .map(e -> e.getIn().getHeader("documentPath", String.class))
-            .collect(Collectors.toList());
-        exchange.getIn().setBody(documentPaths);
-    }
-}
-----
-
-Then reference it in the YAML:
-
-[source,yaml]
-----
-- beans:
-  - name: documentListProcessor
-    type: "com.example.DocumentListProcessor"
-----
-
-=== Batch Processing with Error Handling
-
-Control how errors are handled during batch processing:
-
-[tabs]
-====
-Java::
-+
-[source,java]
-----
-// Fail entire batch on first error
-from("direct:batch-strict")
-    .to("docling:convert?" +
-        "operation=BATCH_CONVERT_TO_MARKDOWN&" +
-        "useDoclingServe=true&" +
-        "batchFailOnFirstError=true")
-    .log("All documents converted successfully");
-
-// Continue processing on errors
-from("direct:batch-lenient")
-    .to("docling:convert?" +
-        "operation=BATCH_CONVERT_TO_MARKDOWN&" +
-        "useDoclingServe=true&" +
-        "batchFailOnFirstError=false")
-    .process(exchange -> {
-        BatchProcessingResults results = exchange.getIn().getBody(BatchProcessingResults.class);
-
-        if (results.hasAnyFailures()) {
-            log.warn("Batch completed with {} failures", results.getFailureCount());
-
-            // Handle failed documents
-            for (BatchConversionResult failure : results.getFailed()) {
-                log.error("Failed: {} - {}",
-                    failure.getOriginalPath(),
-                    failure.getErrorMessage());
-            }
-        }
-    });
-----
-
-YAML::
-+
-[source,yaml]
-----
-# Fail on first error
-- route:
-    id: batch-strict
-    from:
-      uri: "direct:batch-strict"
-    steps:
-      - to:
-          uri: "docling:convert"
-          parameters:
-            operation: "BATCH_CONVERT_TO_MARKDOWN"
-            useDoclingServe: true
-            batchFailOnFirstError: true
-      - log: "All documents converted successfully"
-
-# Continue on errors and process failures
-- route:
-    id: batch-lenient
-    from:
-      uri: "direct:batch-lenient"
-    steps:
-      - to:
-          uri: "docling:convert"
-          parameters:
-            operation: "BATCH_CONVERT_TO_MARKDOWN"
-            useDoclingServe: true
-            batchFailOnFirstError: false
-      - log: "Batch completed: ${header.CamelDoclingBatchSuccessCount} succeeded, ${header.CamelDoclingBatchFailureCount} failed"
-      - choice:
-          when:
-            - simple: "${header.CamelDoclingBatchFailureCount} > 0"
-              steps:
-                - split:
-                    simple: "${body.failed}"
-                    steps:
-                      - log: "Failed document: ${body.originalPath} - ${body.errorMessage}"
-                      - to: "file:///data/failed?fileName=${body.documentId}.error"
-          otherwise:
-            steps:
-              - log: "All documents processed successfully"
-----
-====
-
-=== Batch Configuration Parameters
-
-[width="100%",cols="2,1,4",options="header"]
-|===
-| Parameter | Default | Description
-
-| `batchSize`
-| 10
-| Maximum number of documents in a single batch
-
-| `batchParallelism`
-| 4
-| Number of parallel threads for processing documents
-
-| `batchFailOnFirstError`
-| true
-| If true, fail entire batch on first error; if false, continue processing
-
-| `batchTimeout`
-| 300000
-| Maximum time to wait for batch completion in milliseconds
-
-| `splitBatchResults`
-| false
-| Split batch results into individual exchanges (List) instead of single BatchProcessingResults object
-
-|===
-
-=== Batch Processing Headers
-
-Headers can be used to override batch configuration per-message:
-
-[width="100%",cols="2,1,4",options="header"]
-|===
-| Header | Type | Description
-
-| `CamelDoclingBatchSize`
-| Integer
-| Override batch size for this operation
-
-| `CamelDoclingBatchParallelism`
-| Integer
-| Override parallelism for this operation
-
-| `CamelDoclingBatchFailOnFirstError`
-| Boolean
-| Override fail-on-first-error setting
-
-| `CamelDoclingBatchTimeout`
-| Long
-| Override batch timeout in milliseconds
-
-| `CamelDoclingBatchTotalDocuments`
-| Integer
-| Total documents in batch (output header)
-
-| `CamelDoclingBatchSuccessCount`
-| Integer
-| Number of successful conversions (output header)
-
-| `CamelDoclingBatchFailureCount`
-| Integer
-| Number of failed conversions (output header)
-
-| `CamelDoclingBatchProcessingTime`
-| Long
-| Total processing time in milliseconds (output header)
-
-| `CamelDoclingBatchSplitResults`
-| Boolean
-| Override splitBatchResults setting for this operation
-
-|===
-
-=== Input Formats for Batch Processing
-
-The batch operations accept multiple input formats:
-
-[source,java]
-----
-// List of file paths
-List<String> paths = Arrays.asList("/data/doc1.pdf", "/data/doc2.pdf");
-
-// List of File objects
-List<File> files = Arrays.asList(new File("doc1.pdf"), new File("doc2.pdf"));
-
-// Array of paths
-String[] pathArray = {"/data/doc1.pdf", "/data/doc2.pdf"};
-
-// Array of File objects
-File[] fileArray = {new File("doc1.pdf"), new File("doc2.pdf")};
-
-// Directory path (processes all files in directory)
-String dirPath = "/data/documents";
-----
-
-=== BatchProcessingResults Object
-
-The batch operations return a `BatchProcessingResults` object with:
-
-**Properties:**
-- `results`: List of individual BatchConversionResult objects
-- `totalDocuments`: Total number of documents processed
-- `successCount`: Number of successful conversions
-- `failureCount`: Number of failed conversions
-- `totalProcessingTimeMs`: Total processing time in milliseconds
-
-**Helper Methods:**
-- `getSuccessful()`: Returns list of successful results
-- `getFailed()`: Returns list of failed results
-- `isAllSuccessful()`: Returns true if all documents succeeded
-- `hasAnySuccessful()`: Returns true if at least one document succeeded
-- `hasAnyFailures()`: Returns true if at least one document failed
-- `getSuccessRate()`: Returns success rate as percentage (0.0-100.0)
-
-**BatchConversionResult Properties:**
-- `documentId`: Unique identifier for the document
-- `originalPath`: Original file path or URL
-- `result`: Converted content (if successful)
-- `success`: Whether conversion succeeded
-- `errorMessage`: Error message (if failed)
-- `processingTimeMs`: Processing time for this document
-- `batchIndex`: Index in the batch (0-based)
-
-=== Splitting Batch Results into Individual Exchanges
-
-By default, batch operations return a single `BatchProcessingResults` object containing all results. You can enable `splitBatchResults=true` to return a `List<BatchConversionResult>` instead, allowing you to process each document individually using Camel's split EIP.
-
-**Use Cases:**
-- Process each document result independently
-- Route successful and failed documents to different destinations
-- Apply individual transformations per document
-- Integrate with streaming or async processing patterns
-
-[tabs]
-====
-Java::
-+
-[source,java]
-----
-// Example 1: Split and process each document individually
-from("direct:batch-documents")
-    .to("docling:convert?" +
-        "operation=BATCH_CONVERT_TO_MARKDOWN&" +
-        "useDoclingServe=true&" +
-        "splitBatchResults=true&" +
-        "contentInBody=true")
-    .split(body())
-        .process(exchange -> {
-            BatchConversionResult result = exchange.getIn().getBody(BatchConversionResult.class);
-            log.info("Processing document: {}", result.getDocumentId());
-
-            if (result.isSuccess()) {
-                // Process successful conversion
-                String content = result.getResult();
-                // ... do something with content
-            } else {
-                // Handle failed conversion
-                log.error("Failed to convert {}: {}",
-                    result.getOriginalPath(), result.getErrorMessage());
-            }
-        })
-    .end();
-
-// Example 2: Route based on success/failure
-from("direct:batch-with-routing")
-    .to("docling:convert?" +
-        "operation=BATCH_CONVERT_TO_MARKDOWN&" +
-        "useDoclingServe=true&" +
-        "splitBatchResults=true&" +
-        "batchFailOnFirstError=false&" +
-        "contentInBody=true")
-    .split(body())
-        .choice()
-            .when(simple("${body.success} == true"))
-                .log("Success: ${body.documentId}")
-                .to("file:///data/success?fileName=${body.documentId}.md")
-            .otherwise()
-                .log("Failed: ${body.documentId} - ${body.errorMessage}")
-                .to("file:///data/failed?fileName=${body.documentId}.error")
-        .end()
-    .end();
-
-// Example 3: Parallel processing with threads
-from("direct:batch-parallel-individual")
-    .to("docling:convert?" +
-        "operation=BATCH_CONVERT_TO_MARKDOWN&" +
-        "useDoclingServe=true&" +
-        "splitBatchResults=true&" +
-        "contentInBody=true")
-    .split(body())
-        .parallelProcessing()
-        .threads(5)
-        .process(exchange -> {
-            BatchConversionResult result = exchange.getIn().getBody(BatchConversionResult.class);
-            // Process each document in parallel
-            processDocument(result);
-        })
-    .end();
-----
-
-YAML::
-+
-[source,yaml]
-----
-# Example 1: Split and route based on success
-- route:
-    from:
-      uri: "direct:batch-with-split"
-    steps:
-      - to:
-          uri: "docling:convert"
-          parameters:
-            operation: "BATCH_CONVERT_TO_MARKDOWN"
-            useDoclingServe: true
-            splitBatchResults: true
-            contentInBody: true
-      - split:
-          simple: "${body}"
-          steps:
-            - choice:
-                when:
-                  - simple: "${body.success}"
-                    steps:
-                      - log: "Success: ${body.documentId}"
-                      - to: "file:///data/success?fileName=${body.documentId}.md"
-                otherwise:
-                  steps:
-                    - log: "Failed: ${body.documentId}"
-                    - to: "file:///data/failed?fileName=${body.documentId}.error"
-
-# Example 2: Split with parallel processing
-- route:
-    id: batch-split-parallel
-    from:
-      uri: "direct:batch-parallel"
-    steps:
-      - to:
-          uri: "docling:convert"
-          parameters:
-            operation: "BATCH_CONVERT_TO_MARKDOWN"
-            useDoclingServe: true
-            splitBatchResults: true
-            batchParallelism: 4
-            contentInBody: true
-      - split:
-          simple: "${body}"
-          parallelProcessing: true
-          steps:
-            - log: "Processing document ${body.documentId} (index ${body.batchIndex})"
-            - choice:
-                when:
-                  - simple: "${body.success}"
-                    steps:
-                      - log: "Successfully converted ${body.documentId}"
-                      - to: "file:///data/processed?fileName=${body.documentId}.md"
-                otherwise:
-                  steps:
-                    - log: "Failed to convert ${body.documentId}: ${body.errorMessage}"
-                    - to: "file:///data/errors?fileName=${body.documentId}.error"
-----
-====
-
-**Comparison: BatchProcessingResults vs Split Results**
-
-[width="100%",cols="3,3,3",options="header"]
-|===
-| Scenario | splitBatchResults=false | splitBatchResults=true
-
-| Return type
-| `BatchProcessingResults`
-| `List<BatchConversionResult>`
-
-| Number of exchanges
-| 1 exchange with all results
-| Use `.split(body())` to create 1 exchange per document
-
-| Use case
-| Aggregate statistics, batch-level processing
-| Individual document processing, routing per result
-
-| Access to batch stats
-| Direct via object methods
-| Via headers (CamelDoclingBatch*)
-
-| Camel pattern
-| Process entire batch together
-| Split and process individually
-
-|===
-
-**Note:** When using `splitBatchResults=true`, batch statistics are still available via headers:
-- `CamelDoclingBatchTotalDocuments`
-- `CamelDoclingBatchSuccessCount`
-- `CamelDoclingBatchFailureCount`
-- `CamelDoclingBatchProcessingTime`
-
 == Document Chunking
 
 The component supports document chunking via docling-serve, which splits documents into semantically meaningful chunks suitable for RAG (Retrieval-Augmented Generation) pipelines, vector databases, and other NLP workflows. Unlike naive text splitting, docling chunking is structure-aware — it respects document headings, paragraphs, and tables — and the hybrid chunker is also token-aware, ensuring chunks fit within model token limits.
@@ -1416,15 +796,17 @@ YAML::
 ----
 - route:
     from:
-      uri: "file:///data/documents"
+      uri: file:///data/documents
       parameters:
         include: ".*\\.pdf"
     steps:
       - setHeader:
           name: CamelDoclingInputFilePath
-          simple: "${file:absolute.path}"
+          expression:
+            simple:
+              expression: "${file:absolute.path}"
       - to:
-          uri: "docling:CHUNK_HYBRID"
+          uri: docling:CHUNK_HYBRID
           parameters:
             useDoclingServe: true
             contentInBody: true
@@ -1432,9 +814,12 @@ YAML::
             chunkingMaxTokens: 128
             chunkingMergePeers: true
       - split:
-          simple: "${body}"
+          expression:
+            simple:
+              expression: "${body}"
           steps:
-            - log: "Chunk ${body.chunkIndex}: ${body.text}"
+            - log:
+                message: "Chunk ${body.chunkIndex}: ${body.text}"
 ----
 ====
 
@@ -1471,13 +856,15 @@ YAML::
 - route:
     id: ingest-pdf
     from:
-      uri: "direct:ingest-pdf"
+      uri: direct:ingest-pdf
     steps:
       - setHeader:
           name: CamelDoclingInputFilePath
-          simple: "${header.pdfFilePath}"
+          expression:
+            simple:
+              expression: "${header.pdfFilePath}"
       - to:
-          uri: "docling:CHUNK_HYBRID"
+          uri: docling:CHUNK_HYBRID
           parameters:
             useDoclingServe: true
             contentInBody: true
@@ -1485,15 +872,20 @@ YAML::
             chunkingMaxTokens: "{{embedding.max-tokens}}"
             chunkingMergePeers: true
       - split:
-          simple: "${body}"
+          expression:
+            simple:
+              expression: "${body}"
           steps:
             - setBody:
-                simple: "${body.text}"
+                expression:
+                  simple:
+                    expression: "${body.text}"
             - to:
-                uri: "openai:embeddings"
+                uri: openai:embeddings
                 parameters:
                   embeddingModel: "{{embedding.model}}"
-            - to: "direct:store-embedding"
+            - to:
+                uri: direct:store-embedding
 ----
 ====
 
@@ -1523,734 +915,29 @@ YAML::
 ----
 - route:
     from:
-      uri: "file:///data/documents"
+      uri: file:///data/documents
       parameters:
         include: ".*\\.pdf"
     steps:
       - setHeader:
           name: CamelDoclingInputFilePath
-          simple: "${file:absolute.path}"
+          expression:
+            simple:
+              expression: "${file:absolute.path}"
       - to:
-          uri: "docling:CHUNK_HIERARCHICAL"
+          uri: docling:CHUNK_HIERARCHICAL
           parameters:
             useDoclingServe: true
             contentInBody: true
       - split:
-          simple: "${body}"
+          expression:
+            simple:
+              expression: "${body}"
           steps:
-            - log: "Section [${body.headings}] page ${body.pageNumbers}: ${body.text}"
+            - log:
+                message: "Section [${body.headings}] page ${body.pageNumbers}: ${body.text}"
 ----
 ====
-
-== Asynchronous Processing
-
-The component supports asynchronous document conversion when using docling-serve API mode. This is particularly useful for:
-- Large documents that take a long time to process
-- High-volume batch processing scenarios
-- Better resource utilization on the server side
-
-=== Enabling Async Mode
-
-[tabs]
-====
-Java::
-+
-[source,java]
-----
-from("file:///data/documents?include=.*\\.pdf")
-    .to("docling:CONVERT_TO_MARKDOWN?" +
-        "useDoclingServe=true&" +
-        "useAsyncMode=true&" +
-        "asyncPollInterval=2000&" +
-        "asyncTimeout=300000&" +
-        "contentInBody=true")
-    .to("file:///data/output");
-----
-
-YAML::
-+
-[source,yaml]
-----
-- route:
-    from:
-      uri: "file:///data/documents"
-      parameters:
-        include: ".*\\.pdf"
-    steps:
-      - to:
-          uri: "docling:CONVERT_TO_MARKDOWN"
-          parameters:
-            useDoclingServe: true
-            useAsyncMode: true
-            asyncPollInterval: 2000
-            asyncTimeout: 300000
-            contentInBody: true
-      - to:
-          uri: "file:///data/output"
-----
-====
-
-=== Async Processing with Custom Timeout
-
-For very large documents, you may need to increase the timeout:
-
-[tabs]
-====
-Java::
-+
-[source,java]
-----
-from("file:///data/large-documents?include=.*\\.pdf")
-    .to("docling:CONVERT_TO_MARKDOWN?" +
-        "useDoclingServe=true&" +
-        "useAsyncMode=true&" +
-        "asyncPollInterval=5000&" +
-        "asyncTimeout=600000&" +  // 10 minutes
-        "contentInBody=true")
-    .to("file:///data/output");
-----
-
-YAML::
-+
-[source,yaml]
-----
-- route:
-    from:
-      uri: "file:///data/large-documents"
-      parameters:
-        include: ".*\\.pdf"
-    steps:
-      - to:
-          uri: "docling:CONVERT_TO_MARKDOWN"
-          parameters:
-            useDoclingServe: true
-            useAsyncMode: true
-            asyncPollInterval: 5000
-            asyncTimeout: 600000
-            contentInBody: true
-      - to:
-          uri: "file:///data/output"
-----
-====
-
-=== Using Headers to Control Async Behavior
-
-You can override async settings per-message using headers:
-
-[tabs]
-====
-Java::
-+
-[source,java]
-----
-from("file:///data/documents?include=.*\\.pdf")
-    .process(exchange -> {
-        File file = exchange.getIn().getBody(File.class);
-        // Use async mode only for large files
-        if (file.length() > 10 * 1024 * 1024) { // > 10MB
-            exchange.getIn().setHeader("CamelDoclingUseAsyncMode", true);
-            exchange.getIn().setHeader("CamelDoclingAsyncTimeout", 600000L);
-        }
-    })
-    .to("docling:CONVERT_TO_MARKDOWN?useDoclingServe=true&contentInBody=true")
-    .to("file:///data/output");
-----
-
-YAML::
-+
-[source,yaml]
-----
-- route:
-    from:
-      uri: "file:///data/documents"
-      parameters:
-        include: ".*\\.pdf"
-    steps:
-      - process:
-          ref: "asyncDecisionProcessor"
-      - to:
-          uri: "docling:CONVERT_TO_MARKDOWN"
-          parameters:
-            useDoclingServe: true
-            contentInBody: true
-      - to:
-          uri: "file:///data/output"
-----
-====
-
-=== Custom Async Workflows
-
-For advanced use cases, you can use the `SUBMIT_ASYNC_CONVERSION` and `CHECK_CONVERSION_STATUS` operations to build custom async workflows with full control over task submission and status polling.
-
-**When to use custom workflows:**
-
-- You need custom polling intervals that vary per task
-- You want to implement custom retry or backoff strategies
-- You need to coordinate multiple async tasks
-- You want to store task IDs in a database for later retrieval
-- You need fine-grained control over timeout and error handling
-
-**When to use built-in async mode (useAsyncMode=true):**
-
-- Standard use cases where automatic polling is sufficient
-- You want the simplest configuration
-- Default polling intervals and timeouts work for your needs
-
-NOTE: Custom polling workflows require Java processors and are more complex. The built-in async mode (`useAsyncMode=true`) is recommended for most use cases.
-
-==== Simple Manual Polling (Java)
-
-The simplest custom workflow uses a Java loop to poll for status:
-
-[source,java]
-----
-// Submit conversion
-String taskId = template.requestBody(
-    "docling:convert?operation=SUBMIT_ASYNC_CONVERSION&useDoclingServe=true",
-    "/path/to/document.pdf", String.class);
-
-// Poll for completion
-ConversionStatus status;
-int attempts = 0;
-do {
-    Thread.sleep(1000);
-    status = template.requestBody(
-        "docling:convert?operation=CHECK_CONVERSION_STATUS&useDoclingServe=true",
-        taskId, ConversionStatus.class);
-    attempts++;
-} while (status.isInProgress() && attempts < 60);
-
-// Get result
-if (status.isCompleted()) {
-    String result = status.getResult();
-    // Process result...
-}
-----
-
-==== Submit and Poll Pattern (Camel Route)
-
-[tabs]
-====
-Java::
-+
-[source,java]
-----
-// Submit async conversion and poll until complete
-from("file:///data/documents?include=.*\\.pdf")
-    .log("Starting async conversion for: ${header.CamelFileName}")
-    // Step 1: Submit conversion
-    .to("docling:convert?operation=SUBMIT_ASYNC_CONVERSION&useDoclingServe=true")
-    .log("Submitted conversion with task ID: ${body}")
-    .setHeader("taskId", body())
-    .setProperty("maxAttempts", constant(60))
-    .setProperty("attempt", constant(0))
-    // Step 2: Poll for completion
-    .loopDoWhile(method(MyPollingHelper.class, "shouldContinuePolling"))
-        .process(exchange -> {
-            // Increment attempt counter
-            Integer attempt = exchange.getProperty("attempt", Integer.class);
-            exchange.setProperty("attempt", attempt != null ? attempt + 1 : 1);
-        })
-        .log("Polling attempt ${exchangeProperty.attempt} of ${exchangeProperty.maxAttempts}")
-        .setBody(header("taskId"))
-        .to("docling:convert?operation=CHECK_CONVERSION_STATUS&useDoclingServe=true")
-        .setProperty("conversionStatus", body())
-        .process(exchange -> {
-            ConversionStatus status = exchange.getProperty("conversionStatus", ConversionStatus.class);
-            if (status.isCompleted()) {
-                exchange.setProperty("isCompleted", true);
-            } else if (status.isFailed()) {
-                exchange.setProperty("isFailed", true);
-                exchange.setProperty("errorMessage", status.getErrorMessage());
-            }
-        })
-        .choice()
-            .when(exchangeProperty("isCompleted").isEqualTo(true))
-                .stop()
-            .when(exchangeProperty("isFailed").isEqualTo(true))
-                .throwException(new RuntimeException("Conversion failed"))
-        .end()
-        .delay(1000)
-    .end()
-    // Step 3: Extract result
-    .process(exchange -> {
-        ConversionStatus status = exchange.getProperty("conversionStatus", ConversionStatus.class);
-        if (status != null && status.isCompleted() && status.getResult() != null) {
-            exchange.getIn().setBody(status.getResult());
-        } else {
-            throw new RuntimeException("Conversion did not complete");
-        }
-    })
-    .to("file:///data/output");
-
-// Helper class for loop condition
-public class MyPollingHelper {
-    public static boolean shouldContinuePolling(Exchange exchange) {
-        Integer attempt = exchange.getProperty("attempt", Integer.class);
-        Integer maxAttempts = exchange.getProperty("maxAttempts", Integer.class);
-        Boolean isCompleted = exchange.getProperty("isCompleted", Boolean.class);
-        Boolean isFailed = exchange.getProperty("isFailed", Boolean.class);
-
-        if (Boolean.TRUE.equals(isCompleted) || Boolean.TRUE.equals(isFailed)) {
-            return false;
-        }
-        if (attempt != null && maxAttempts != null && attempt >= maxAttempts) {
-            return false;
-        }
-        return true;
-    }
-}
-----
-
-YAML::
-+
-[source,yaml]
-----
-# Note: For YAML, consider using the built-in async mode (useAsyncMode=true)
-# which handles polling automatically. Custom polling is easier in Java DSL.
-
-- route:
-    id: async-with-custom-polling
-    from:
-      uri: "file:///data/documents"
-      parameters:
-        include: ".*\\.pdf"
-    steps:
-      - log: "Starting async conversion for: ${header.CamelFileName}"
-      - to:
-          uri: "docling:convert"
-          parameters:
-            operation: "SUBMIT_ASYNC_CONVERSION"
-            useDoclingServe: true
-      - log: "Submitted conversion with task ID: ${body}"
-      - setHeader:
-          name: "taskId"
-          simple: "${body}"
-      # For YAML, simpler to use Java processor bean or built-in async mode
-      - to:
-          uri: "bean:asyncPollingProcessor"
-      - to: "file:///data/output"
-----
-====
-
-==== ConversionStatus Object
-
-The `CHECK_CONVERSION_STATUS` operation returns a `ConversionStatus` object with the following properties:
-
-- **taskId** (String) - The task identifier
-- **status** (enum) - PENDING, IN_PROGRESS, COMPLETED, FAILED, or UNKNOWN
-- **result** (String) - Converted document content (available when status is COMPLETED)
-- **errorMessage** (String) - Error details (available when status is FAILED)
-- **progress** (Integer) - Task queue position
-
-Helper methods:
-- `isCompleted()` - Returns true if conversion completed successfully
-- `isFailed()` - Returns true if conversion failed
-- `isInProgress()` - Returns true if conversion is still processing
-
-==== Parallel Processing with Custom Workflow
-
-[tabs]
-====
-Java::
-+
-[source,java]
-----
-// Submit multiple conversions
-from("file:///data/documents?include=.*\\.pdf")
-    .to("docling:convert?operation=SUBMIT_ASYNC_CONVERSION&useDoclingServe=true")
-    .to("seda:task-queue");
-
-// Process task queue with multiple threads
-from("seda:task-queue?concurrentConsumers=5")
-    .log("Processing task: ${body}")
-    .setHeader("taskId", body())
-    .setProperty("maxAttempts", constant(60))
-    .setProperty("attempt", constant(0))
-    .loopDoWhile(method(MyPollingHelper.class, "shouldContinuePolling"))
-        .process(exchange -> {
-            Integer attempt = exchange.getProperty("attempt", Integer.class);
-            exchange.setProperty("attempt", attempt != null ? attempt + 1 : 1);
-        })
-        .setBody(header("taskId"))
-        .to("docling:convert?operation=CHECK_CONVERSION_STATUS&useDoclingServe=true")
-        .setProperty("conversionStatus", body())
-        .process(exchange -> {
-            ConversionStatus status = exchange.getProperty("conversionStatus", ConversionStatus.class);
-            if (status.isCompleted()) {
-                exchange.setProperty("isCompleted", true);
-            } else if (status.isFailed()) {
-                exchange.setProperty("isFailed", true);
-            }
-        })
-        .choice()
-            .when(exchangeProperty("isCompleted").isEqualTo(true))
-                .stop()
-            .when(exchangeProperty("isFailed").isEqualTo(true))
-                .stop()
-        .end()
-        .delay(1000)
-    .end()
-    .process(exchange -> {
-        ConversionStatus status = exchange.getProperty("conversionStatus", ConversionStatus.class);
-        if (status != null && status.isCompleted()) {
-            exchange.getIn().setBody(status.getResult());
-        }
-    })
-    .choice()
-        .when(body().isNotNull())
-            .to("file:///data/output?fileName=${header.CamelFileName}")
-    .end();
-----
-
-YAML::
-+
-[source,yaml]
-----
-# For parallel processing in YAML, recommend using built-in async mode
-# which is simpler and handles concurrency automatically
-
-- route:
-    from:
-      uri: "file:///data/documents"
-      parameters:
-        include: ".*\\.pdf"
-    steps:
-      - to:
-          uri: "docling:convert"
-          parameters:
-            operation: "CONVERT_TO_MARKDOWN"
-            useDoclingServe: true
-            useAsyncMode: true
-            asyncPollInterval: 1000
-            asyncTimeout: 120000
-            contentInBody: true
-      - to:
-          uri: "file:///data/output"
-          parameters:
-            fileName: "${header.CamelFileName}"
-----
-====
-
-TIP: For a complete working example of custom polling workflow, see the `testCustomPollingWorkflowWithRoute()` test in `DoclingServeProducerIT.java` in the camel-docling test sources.
-
-== Using Docling-Serve API
-
-=== Basic usage with docling-serve
-
-[tabs]
-====
-Java::
-+
-[source,java]
-----
-from("file:///data/documents?include=.*\\.pdf")
-    .to("docling:CONVERT_TO_MARKDOWN?useDoclingServe=true&doclingServeUrl=http://localhost:5001&contentInBody=true")
-    .process(exchange -> {
-        String markdown = exchange.getIn().getBody(String.class);
-        log.info("Converted content: {}", markdown);
-    });
-----
-
-YAML::
-+
-[source,yaml]
-----
-- route:
-    from:
-      uri: "file:///data/documents"
-      parameters:
-        include: ".*\\.pdf"
-    steps:
-      - to:
-          uri: "docling:CONVERT_TO_MARKDOWN"
-          parameters:
-            useDoclingServe: true
-            doclingServeUrl: "http://localhost:5001"
-            contentInBody: true
-      - process:
-          ref: "markdownProcessor"
-----
-====
-
-=== Converting documents from URLs using docling-serve
-
-When using docling-serve API mode, you can also process documents from URLs:
-
-[tabs]
-====
-Java::
-+
-[source,java]
-----
-from("timer:convert?repeatCount=1")
-    .setBody(constant("https://arxiv.org/pdf/2501.17887"))
-    .to("docling:CONVERT_TO_MARKDOWN?useDoclingServe=true&contentInBody=true")
-    .to("file:///data/output");
-----
-
-YAML::
-+
-[source,yaml]
-----
-- route:
-    from:
-      uri: "timer:convert"
-      parameters:
-        repeatCount: 1
-    steps:
-      - setBody:
-          constant: "https://arxiv.org/pdf/2501.17887"
-      - to:
-          uri: "docling:CONVERT_TO_MARKDOWN"
-          parameters:
-            useDoclingServe: true
-            contentInBody: true
-      - to:
-          uri: "file:///data/output"
-----
-====
-
-=== Batch processing with docling-serve
-
-[tabs]
-====
-Java::
-+
-[source,java]
-----
-from("file:///data/documents?include=.*\\.(pdf|docx)")
-    .to("docling:CONVERT_TO_HTML?useDoclingServe=true&doclingServeUrl=http://localhost:5001&contentInBody=true")
-    .to("file:///data/converted?fileName=${file:name.noext}.html");
-----
-
-YAML::
-+
-[source,yaml]
-----
-- route:
-    from:
-      uri: "file:///data/documents"
-      parameters:
-        include: ".*\\.(pdf|docx)"
-    steps:
-      - to:
-          uri: "docling:CONVERT_TO_HTML"
-          parameters:
-            useDoclingServe: true
-            doclingServeUrl: "http://localhost:5001"
-            contentInBody: true
-      - to:
-          uri: "file:///data/converted"
-          parameters:
-            fileName: "${file:name.noext}.html"
-----
-====
-
-=== Authentication with docling-serve
-
-The component supports multiple authentication mechanisms for secured docling-serve instances.
-
-==== Bearer Token Authentication
-
-[tabs]
-====
-Java::
-+
-[source,java]
-----
-from("file:///data/documents?include=.*\\.pdf")
-    .to("docling:CONVERT_TO_MARKDOWN?" +
-        "useDoclingServe=true&" +
-        "doclingServeUrl=http://localhost:5001&" +
-        "authenticationScheme=BEARER&" +
-        "authenticationToken=your-bearer-token-here&" +
-        "contentInBody=true")
-    .to("file:///data/output");
-----
-
-YAML::
-+
-[source,yaml]
-----
-- route:
-    from:
-      uri: "file:///data/documents"
-      parameters:
-        include: ".*\\.pdf"
-    steps:
-      - to:
-          uri: "docling:CONVERT_TO_MARKDOWN"
-          parameters:
-            useDoclingServe: true
-            doclingServeUrl: "http://localhost:5001"
-            authenticationScheme: "BEARER"
-            authenticationToken: "your-bearer-token-here"
-            contentInBody: true
-      - to:
-          uri: "file:///data/output"
-----
-====
-
-==== API Key Authentication
-
-[tabs]
-====
-Java::
-+
-[source,java]
-----
-from("file:///data/documents?include=.*\\.pdf")
-    .to("docling:CONVERT_TO_MARKDOWN?" +
-        "useDoclingServe=true&" +
-        "doclingServeUrl=http://localhost:5001&" +
-        "authenticationScheme=API_KEY&" +
-        "authenticationToken=your-api-key-here&" +
-        "apiKeyHeader=X-API-Key&" +
-        "contentInBody=true")
-    .to("file:///data/output");
-----
-
-YAML::
-+
-[source,yaml]
-----
-- route:
-    from:
-      uri: "file:///data/documents"
-      parameters:
-        include: ".*\\.pdf"
-    steps:
-      - to:
-          uri: "docling:CONVERT_TO_MARKDOWN"
-          parameters:
-            useDoclingServe: true
-            doclingServeUrl: "http://localhost:5001"
-            authenticationScheme: "API_KEY"
-            authenticationToken: "your-api-key-here"
-            apiKeyHeader: "X-API-Key"
-            contentInBody: true
-      - to:
-          uri: "file:///data/output"
-----
-====
-
-==== Using Custom API Key Header
-
-If your docling-serve instance uses a custom header name for API keys:
-
-[tabs]
-====
-Java::
-+
-[source,java]
-----
-from("file:///data/documents?include=.*\\.pdf")
-    .to("docling:CONVERT_TO_MARKDOWN?" +
-        "useDoclingServe=true&" +
-        "doclingServeUrl=http://localhost:5001&" +
-        "authenticationScheme=API_KEY&" +
-        "authenticationToken=your-api-key-here&" +
-        "apiKeyHeader=X-Custom-API-Key&" +
-        "contentInBody=true")
-    .to("file:///data/output");
-----
-
-YAML::
-+
-[source,yaml]
-----
-- route:
-    from:
-      uri: "file:///data/documents"
-      parameters:
-        include: ".*\\.pdf"
-    steps:
-      - to:
-          uri: "docling:CONVERT_TO_MARKDOWN"
-          parameters:
-            useDoclingServe: true
-            doclingServeUrl: "http://localhost:5001"
-            authenticationScheme: "API_KEY"
-            authenticationToken: "your-api-key-here"
-            apiKeyHeader: "X-Custom-API-Key"
-            contentInBody: true
-      - to:
-          uri: "file:///data/output"
-----
-====
-
-==== Using Authentication Token from Properties
-
-For better security, store authentication tokens in properties or environment variables:
-
-[tabs]
-====
-Java::
-+
-[source,java]
-----
-from("file:///data/documents?include=.*\\.pdf")
-    .to("docling:CONVERT_TO_MARKDOWN?" +
-        "useDoclingServe=true&" +
-        "doclingServeUrl={{docling.serve.url}}&" +
-        "authenticationScheme=BEARER&" +
-        "authenticationToken={{docling.serve.token}}&" +
-        "contentInBody=true")
-    .to("file:///data/output");
-----
-
-YAML::
-+
-[source,yaml]
-----
-- route:
-    from:
-      uri: "file:///data/documents"
-      parameters:
-        include: ".*\\.pdf"
-    steps:
-      - to:
-          uri: "docling:CONVERT_TO_MARKDOWN"
-          parameters:
-            useDoclingServe: true
-            doclingServeUrl: "{{docling.serve.url}}"
-            authenticationScheme: "BEARER"
-            authenticationToken: "{{docling.serve.token}}"
-            contentInBody: true
-      - to:
-          uri: "file:///data/output"
-----
-====
-
-Then define in `application.properties`:
-[source,properties]
-----
-docling.serve.url=http://localhost:5001
-docling.serve.token=your-bearer-token-here
-----
-
-==== OAuth Authentication
-
-When the docling-serve instance is protected by an OAuth identity provider, set the `oauthProfile` parameter to acquire an access token via the OAuth 2.0 Client Credentials grant. The token is used as the `authenticationToken` and the `authenticationScheme` is automatically set to `BEARER`. This requires `camel-oauth` on the classpath.
-
-[source,properties]
-----
-camel.oauth.docling.client-id=my-client
-camel.oauth.docling.client-secret=my-secret
-camel.oauth.docling.token-endpoint=https://idp.example.com/token
-----
-
-[source,java]
-----
-from("file:///data/input")
-    .to("docling:CONVERT_TO_MARKDOWN"
-        + "?useDoclingServe=true"
-        + "&doclingServeUrl=http://localhost:5001"
-        + "&oauthProfile=docling"
-        + "&contentInBody=true")
-    .log("${body}");
-----
 
 == Advanced Processing Options (API Mode)
 
@@ -2393,12 +1080,12 @@ YAML::
 ----
 - route:
     from:
-      uri: "file:///data/documents"
+      uri: file:///data/documents
       parameters:
         include: ".*\\.pdf"
     steps:
       - to:
-          uri: "docling:EXTRACT_STRUCTURED_DATA"
+          uri: docling:EXTRACT_STRUCTURED_DATA
           parameters:
             useDoclingServe: true
             doOcr: true
@@ -2455,12 +1142,12 @@ YAML::
 ----
 - route:
     from:
-      uri: "file:///data/documents"
+      uri: file:///data/documents
       parameters:
         include: ".*\\.pdf"
     steps:
       - to:
-          uri: "docling:CONVERT_TO_JSON"
+          uri: docling:CONVERT_TO_JSON
           parameters:
             useDoclingServe: true
             contentInBody: true
@@ -2492,6 +1179,14 @@ The component handles various error scenarios:
 - **Batch Processing**: When processing multiple documents, async mode allows better parallelization as the docling-serve instance can process multiple documents concurrently while Camel polls for results.
 - **Enrichment Features**: Enabling advanced options like `doPictureClassification` or `doPictureDescription` may require additional ML models on the server and can increase processing time.
 
+== Sub-Pages
+
+For more details on specific features, see:
+
+* xref:others:docling-batch-processing.adoc[Batch Processing] - Batch operations, queue-based processing, error handling, and result splitting
+* xref:others:docling-async-processing.adoc[Asynchronous Processing] - Async mode, custom timeouts, polling patterns, and parallel processing
+* xref:others:docling-serve.adoc[Using Docling-Serve API] - Remote API usage, URL processing, and authentication methods
+
 == HTTP Client Configuration
 
 When using docling-serve API mode, the component uses the https://github.com/docling-project/docling-java[docling-java] library which internally uses Java's built-in `HttpClient`. The HTTP client is configured with sensible defaults and connection management is handled automatically by the library.
@@ -2513,6 +1208,10 @@ When using docling-serve API mode, the component uses the https://github.com/doc
 | `asyncTimeout`
 | 300000
 | Maximum time to wait for async conversion completion in milliseconds (5 minutes).
+
+| `asyncTaskTtl`
+| 86400000
+| Time-to-live for pending async conversion tasks in milliseconds (24 hours). Tasks older than this will be automatically evicted from memory to prevent leaks. A background cleanup task runs periodically to remove expired entries.
 
 |===
 
@@ -2546,12 +1245,12 @@ YAML::
 ----
 - route:
     from:
-      uri: "file:///data/large-documents"
+      uri: file:///data/large-documents
       parameters:
         include: ".*\\.pdf"
     steps:
       - to:
-          uri: "docling:CONVERT_TO_MARKDOWN"
+          uri: docling:CONVERT_TO_MARKDOWN
           parameters:
             useDoclingServe: true
             useAsyncMode: true
@@ -2559,7 +1258,7 @@ YAML::
             asyncTimeout: 600000
             contentInBody: true
       - to:
-          uri: "file:///data/output"
+          uri: file:///data/output
 ----
 ====
 
@@ -2573,4 +1272,3 @@ YAML::
 
 4. **Monitor with logging**: Use DEBUG level logging to monitor API calls and async task status.
 
-include::spring-boot:partial$starter.adoc[]

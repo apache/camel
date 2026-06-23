@@ -46,9 +46,9 @@ public class MinioConfiguration implements Cloneable {
     @UriParam(label = "advanced")
     private OkHttpClient customHttpClient;
 
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String accessKey;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String secretKey;
 
     @UriParam(label = "common", defaultValue = "true")

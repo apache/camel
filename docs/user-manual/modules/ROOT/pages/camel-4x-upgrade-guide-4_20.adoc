@@ -36,3 +36,17 @@ segments is no longer accepted and will result in an `InvalidTopicNameException`
 If your Camel routes use topic URIs with extra `/` characters in the topic name portion
 (e.g., `pulsar:persistent://public/default/my-topic/sub-path`), you must replace the extra `/` with
 another separator such as `-` (e.g., `pulsar:persistent://public/default/my-topic-sub-path`).
+
+=== camel-oaipmh
+
+A new parameter to allow users to set or override HTTP Headers for consumers or producers.
+
+For example to set the HTTP Header `Authorization`, use: `httpHeader.Authorization=test-token`. You can also set it from the Java DSL.
+
+```java
+from("direct:start")
+  .to("oaipmh://my-server:8081"
+  + "/oai/request"
+  + "&httpHeader.Authorization=test-token"
+  + "&httpHeader.X-Custom=hello");
+```

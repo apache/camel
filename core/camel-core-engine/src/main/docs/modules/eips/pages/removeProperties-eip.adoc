@@ -60,13 +60,14 @@ YAML::
 +
 [source,yaml]
 ----
-- from:
-    uri: seda:b
-    steps:
-      - removeProperties:
-          pattern: "*"
-      - to:
-          uri: mock:result
+- route:
+    from:
+      uri: seda:b
+      steps:
+        - removeProperties:
+            pattern: "*"
+        - to:
+            uri: mock:result
 ----
 ====
 
@@ -104,13 +105,14 @@ YAML::
 +
 [source,yaml]
 ----
-- from:
-    uri: seda:b
-    steps:
-      - removeProperties:
-          pattern: "Foo*"
-      - to:
-          uri: mock:result
+- route:
+    from:
+      uri: seda:b
+      steps:
+        - removeProperties:
+            pattern: "Foo*"
+        - to:
+            uri: mock:result
 ----
 ====
 

@@ -7,8 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Only producer is supported
-//Manually maintained attributes
-:camel-spring-boot-name: mustache
 
 *Since Camel {since}*
 
@@ -87,11 +85,38 @@ resource. This allows you to provide a dynamic template at runtime.
 
 For example, you could use something like:
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------
-from("activemq:My.Queue").
-to("mustache:com/acme/MyResponse.mustache");
---------------------------------------------
+----
+from("activemq:My.Queue")
+    .to("mustache:com/acme/MyResponse.mustache");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="activemq:My.Queue"/>
+  <to uri="mustache:com/acme/MyResponse.mustache"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: activemq:My.Queue
+      steps:
+        - to:
+            uri: mustache:com/acme/MyResponse.mustache
+----
+====
 
 To use a Mustache template to formulate a response for a message for
 InOut message exchanges (where there is a `JMSReplyTo` header).
@@ -99,22 +124,89 @@ InOut message exchanges (where there is a `JMSReplyTo` header).
 If you want to use InOnly and consume the message and send it to another
 destination, you could use:
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------
-from("activemq:My.Queue").
-to("mustache:com/acme/MyResponse.mustache").
-to("activemq:Another.Queue");
---------------------------------------------
+----
+from("activemq:My.Queue")
+    .to("mustache:com/acme/MyResponse.mustache")
+    .to("activemq:Another.Queue");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="activemq:My.Queue"/>
+  <to uri="mustache:com/acme/MyResponse.mustache"/>
+  <to uri="activemq:Another.Queue"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: activemq:My.Queue
+      steps:
+        - to:
+            uri: mustache:com/acme/MyResponse.mustache
+        - to:
+            uri: activemq:Another.Queue
+----
+====
 
 It's possible to specify what template the component should use
 dynamically via a header, so for example:
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------------------
-from("direct:in").
-setHeader(MustacheConstants.MUSTACHE_RESOURCE_URI).constant("path/to/my/template.mustache").
-to("mustache:dummy?allowTemplateFromHeader=true");
---------------------------------------------------------------------------------------------
+----
+from("direct:in")
+    .setHeader("MustacheResourceUri").constant("path/to/my/template.mustache")
+    .to("mustache:dummy?allowTemplateFromHeader=true");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:in"/>
+  <setHeader name="MustacheResourceUri">
+    <constant>path/to/my/template.mustache</constant>
+  </setHeader>
+  <to uri="mustache:dummy?allowTemplateFromHeader=true"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:in
+      steps:
+        - setHeader:
+            name: MustacheResourceUri
+            expression:
+              constant:
+                expression: path/to/my/template.mustache
+        - to:
+            uri: mustache:dummy
+            parameters:
+              allowTemplateFromHeader: true
+----
+====
 
 === The Email Example
 
@@ -129,7 +221,3 @@ Thanks for the order of {{headers.item}}.
 Regards Camel Riders Bookstore
 {{body}}
 -------------------------------------------------
-
-
-
-include::spring-boot:partial$starter.adoc[]

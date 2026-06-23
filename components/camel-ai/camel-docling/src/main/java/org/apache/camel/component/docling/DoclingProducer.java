@@ -52,6 +52,7 @@ import java.util.stream.Stream;
 import ai.docling.core.DoclingDocument;
 import ai.docling.core.DoclingDocument.DocumentOrigin;
 import ai.docling.serve.api.DoclingServeApi;
+import ai.docling.serve.api.chunk.request.ChunkDocumentRequest;
 import ai.docling.serve.api.chunk.request.HierarchicalChunkDocumentRequest;
 import ai.docling.serve.api.chunk.request.HybridChunkDocumentRequest;
 import ai.docling.serve.api.chunk.request.options.HierarchicalChunkerOptions;
@@ -158,7 +159,7 @@ public class DoclingProducer extends DefaultProducer {
     private DoclingConfiguration configuration;
     private DoclingServeApi doclingServeApi;
     private ObjectMapper objectMapper;
-    private Map<String, CompletableFuture<ConvertDocumentResponse>> pendingAsyncTasks;
+    private Map<String, AsyncTaskEntry> pendingAsyncTasks;
     private AtomicLong taskIdCounter;
 
     public DoclingProducer(DoclingEndpoint endpoint) {
@@ -366,10 +367,11 @@ public class DoclingProducer extends DefaultProducer {
         CompletableFuture<ConvertDocumentResponse> asyncResult
                 = doclingServeApi.convertSourceAsync(request).toCompletableFuture();
 
-        // Generate a unique task ID and store the future for later status checks
+        // Generate a unique task ID and store the future with timestamp for later status checks
         String taskId = "task-" + taskIdCounter.incrementAndGet();
-        pendingAsyncTasks.put(taskId, asyncResult);
-        LOG.debug("Started async conversion with task ID: {}", taskId);
+        AsyncTaskEntry taskEntry = new AsyncTaskEntry(taskId, asyncResult);
+        pendingAsyncTasks.put(taskId, taskEntry);
+        LOG.debug("Started async conversion with task ID: {} at {}", taskId, taskEntry.getCreatedAtMs());
 
         // Set task ID in body and header
         exchange.getIn().setBody(taskId);
@@ -424,9 +426,9 @@ public class DoclingProducer extends DefaultProducer {
         LOG.debug("Checking status for task: {}", taskId);
 
         // Check the local pending tasks map first (tasks submitted via SUBMIT_ASYNC_CONVERSION)
-        CompletableFuture<ConvertDocumentResponse> future = pendingAsyncTasks.get(taskId);
-        if (future != null) {
-            return checkLocalAsyncTask(taskId, future);
+        AsyncTaskEntry taskEntry = pendingAsyncTasks.get(taskId);
+        if (taskEntry != null) {
+            return checkLocalAsyncTask(taskId, taskEntry.getFuture());
         }
 
         // Fall back to server-side task polling
@@ -618,7 +620,7 @@ public class DoclingProducer extends DefaultProducer {
     }
 
     private void addSourceToChunkRequest(
-            ai.docling.serve.api.chunk.request.ChunkDocumentRequest.Builder requestBuilder, String inputSource)
+            ChunkDocumentRequest.Builder requestBuilder, String inputSource)
             throws IOException {
         if (inputSource.startsWith("http://") || inputSource.startsWith("https://")) {
             requestBuilder.source(
@@ -731,7 +733,7 @@ public class DoclingProducer extends DefaultProducer {
             if (configuration.isIncludeRawMetadata()) {
                 JsonNode rootNode = objectMapper.readTree(jsonOutput);
                 @SuppressWarnings("unchecked")
-                Map<String, Object> rawMap = objectMapper.convertValue(rootNode, java.util.Map.class);
+                Map<String, Object> rawMap = objectMapper.convertValue(rootNode, Map.class);
                 metadata.setRawMetadata(rawMap);
             }
 

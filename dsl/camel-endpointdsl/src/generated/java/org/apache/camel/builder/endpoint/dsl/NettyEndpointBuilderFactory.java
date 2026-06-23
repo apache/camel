@@ -4775,7 +4775,7 @@ public interface NettyEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final NettyHeaderNameBuilder INSTANCE = new NettyHeaderNameBuilder();
+        public static final NettyHeaderNameBuilder INSTANCE = new NettyHeaderNameBuilder();
 
         /**
          * Indicates whether the channel should be closed after complete.

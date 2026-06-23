@@ -22,6 +22,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
@@ -38,8 +39,14 @@ import io.swagger.v3.oas.models.security.SecurityScheme.In;
 import io.swagger.v3.oas.models.security.SecurityScheme.Type;
 import io.swagger.v3.oas.models.servers.Server;
 import org.apache.camel.CamelContext;
+import org.apache.camel.Consumer;
+import org.apache.camel.Endpoint;
+import org.apache.camel.Processor;
+import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.engine.DefaultClassResolver;
 import org.apache.camel.spi.RestConfiguration;
+import org.apache.camel.spi.RestOpenApiConsumerFactory;
+import org.apache.camel.support.DefaultComponent;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -87,6 +94,86 @@ public class RestOpenApiEndpointV3Test {
         oas30Parameter = new Parameter().name("q").required(false);
         assertThat(RestOpenApiEndpoint.queryParameterExpression(oas30Parameter))
                 .isEqualTo("q={q?}");
+    }
+
+    @Test
+    public void shouldPassDirectConsumerEndpointParametersToDelegate() throws Exception {
+        final CamelContext camelContext = new DefaultCamelContext();
+        final RestOpenApiComponent component = new RestOpenApiComponent(camelContext);
+        String specificationUri = Objects.requireNonNull(RestOpenApiEndpointV3Test.class.getResource("/openapi-v3.json"))
+                .toString();
+        final RecordingRestOpenApiConsumerFactory delegate = new RecordingRestOpenApiConsumerFactory();
+        camelContext.addComponent("rest-openapi", component);
+        camelContext.addComponent("delegate-http", delegate);
+        camelContext.start();
+
+        try {
+            RestOpenApiEndpoint endpoint = camelContext.getEndpoint(
+                    "rest-openapi:" + specificationUri + "?consumerComponentName=delegate-http&oauthProfile=myprofile",
+                    RestOpenApiEndpoint.class);
+
+            endpoint.createConsumer(exchange -> {
+            });
+
+            // oauthProfile is a first-class endpoint option bound to the endpoint and injected into
+            // the parameters passed to the delegate consumer factory
+            assertThat(endpoint.getOauthProfile()).isEqualTo("myprofile");
+            assertThat(delegate.parameters).containsEntry("oauthProfile", "myprofile");
+        } finally {
+            camelContext.stop();
+        }
+    }
+
+    @Test
+    public void oauthProfileFailsClosedWhenDelegateDoesNotSupportIt() throws Exception {
+        final CamelContext camelContext = new DefaultCamelContext();
+        final RestOpenApiComponent component = new RestOpenApiComponent(camelContext);
+        String specificationUri = Objects.requireNonNull(RestOpenApiEndpointV3Test.class.getResource("/openapi-v3.json"))
+                .toString();
+        camelContext.addComponent("rest-openapi", component);
+        camelContext.addComponent("no-oauth-http", new NoOAuthRestOpenApiConsumerFactory());
+        camelContext.start();
+
+        try {
+            RestOpenApiEndpoint endpoint = camelContext.getEndpoint(
+                    "rest-openapi:" + specificationUri + "?consumerComponentName=no-oauth-http&oauthProfile=myprofile",
+                    RestOpenApiEndpoint.class);
+
+            IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+                    () -> endpoint.createConsumer(exchange -> {
+                    }));
+
+            assertThat(exception.getMessage())
+                    .contains("The oauthProfile option is not supported by the resolved RestOpenApiConsumerFactory")
+                    .contains(NoOAuthRestOpenApiConsumerFactory.class.getName());
+        } finally {
+            camelContext.stop();
+        }
+    }
+
+    @Test
+    public void unknownEndpointPropertyIsTolerated() throws Exception {
+        final CamelContext camelContext = new DefaultCamelContext();
+        final RestOpenApiComponent component = new RestOpenApiComponent(camelContext);
+        String specificationUri = Objects.requireNonNull(RestOpenApiEndpointV3Test.class.getResource("/openapi-v3.json"))
+                .toString();
+        final RecordingRestOpenApiConsumerFactory delegate = new RecordingRestOpenApiConsumerFactory();
+        camelContext.addComponent("rest-openapi", component);
+        camelContext.addComponent("delegate-http", delegate);
+        camelContext.start();
+
+        try {
+            RestOpenApiEndpoint endpoint = camelContext.getEndpoint(
+                    "rest-openapi:" + specificationUri + "?consumerComponentName=delegate-http&unknownOption=value",
+                    RestOpenApiEndpoint.class);
+
+            endpoint.createConsumer(exchange -> {
+            });
+
+            assertThat(delegate.parameters).containsEntry("unknownOption", "value");
+        } finally {
+            camelContext.stop();
+        }
     }
 
     @Test
@@ -437,6 +524,47 @@ public class RestOpenApiEndpointV3Test {
                 component, Collections.emptyMap());
 
         assertThat(endpoint.getSpecificationUri()).isEqualTo(RestOpenApiComponent.DEFAULT_SPECIFICATION_URI);
+    }
+
+    private static final class RecordingRestOpenApiConsumerFactory extends DefaultComponent
+            implements RestOpenApiConsumerFactory {
+
+        private Map<String, Object> parameters;
+
+        @Override
+        protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public Consumer createConsumer(
+                CamelContext camelContext, Processor processor, String contextPath, RestConfiguration configuration,
+                Map<String, Object> parameters) {
+            this.parameters = new HashMap<>(parameters);
+            return mock(Consumer.class);
+        }
+
+        @Override
+        public boolean supportsOAuthProfile() {
+            return true;
+        }
+    }
+
+    private static final class NoOAuthRestOpenApiConsumerFactory extends DefaultComponent
+            implements RestOpenApiConsumerFactory {
+
+        @Override
+        protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public Consumer createConsumer(
+                CamelContext camelContext, Processor processor, String contextPath, RestConfiguration configuration,
+                Map<String, Object> parameters) {
+            return mock(Consumer.class);
+        }
+        // does not override supportsOAuthProfile: the default is false
     }
 
 }

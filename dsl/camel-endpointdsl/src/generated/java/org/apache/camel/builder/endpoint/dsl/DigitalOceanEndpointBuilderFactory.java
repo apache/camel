@@ -326,6 +326,7 @@ public interface DigitalOceanEndpointBuilderFactory {
          * 
          * @return the dsl builder for the headers' name.
          */
+        @Deprecated
         default DigitalOceanHeaderNameBuilder digitalocean() {
             return DigitalOceanHeaderNameBuilder.INSTANCE;
         }
@@ -352,6 +353,7 @@ public interface DigitalOceanEndpointBuilderFactory {
          * @param path operation
          * @return the dsl builder
          */
+        @Deprecated
         default DigitalOceanEndpointBuilder digitalocean(String path) {
             return DigitalOceanEndpointBuilderFactory.endpointBuilder("digitalocean", path);
         }
@@ -380,6 +382,7 @@ public interface DigitalOceanEndpointBuilderFactory {
          * @param path operation
          * @return the dsl builder
          */
+        @Deprecated
         default DigitalOceanEndpointBuilder digitalocean(String componentName, String path) {
             return DigitalOceanEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
@@ -393,7 +396,7 @@ public interface DigitalOceanEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final DigitalOceanHeaderNameBuilder INSTANCE = new DigitalOceanHeaderNameBuilder();
+        public static final DigitalOceanHeaderNameBuilder INSTANCE = new DigitalOceanHeaderNameBuilder();
 
         /**
          * The operation to perform.

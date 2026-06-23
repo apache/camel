@@ -7,8 +7,6 @@
 :supportlevel: Stable-deprecated
 :deprecated: *deprecated*
 :tabs-sync-option:
-//Manually maintained attributes
-:camel-spring-boot-name: observation
 
 *Since Camel {since}*
 
@@ -47,8 +45,9 @@ To explicitly configure OpenTelemetry support, instantiate the `OpenTelemetryTra
 context. You can optionally specify a `Tracer`, or alternatively it can be implicitly discovered using the
 `Registry`
 
+._Java-only: configuring MicrometerObservationTracer with metrics and tracing_
 [source,java]
---------------------------------------------------------------------------------------------------
+----
 ObservationRegistry observationRegistry = ObservationRegistry.create();
 MicrometerObservationTracer micrometerObservationTracer = new MicrometerObservationTracer();
 
@@ -72,7 +71,7 @@ micrometerObservationTracer.setTracer(otelTracer);
 
 // Initialize the MicrometerObservationTracer
 micrometerObservationTracer.init(context);
---------------------------------------------------------------------------------------------------
+----
 
 == Spring Boot
 
@@ -85,7 +84,6 @@ the main class with `@CamelObservation`.
 The `MicrometerObservationTracer` will be implicitly obtained from the camel context's `Registry`, unless
 a `MicrometerObservationTracer` bean has been defined by the application.
 
-include::spring-boot:partial$starter.adoc[]
 
 == MDC Logging
 

@@ -43,13 +43,13 @@ public class DigitalSignatureConfiguration implements Cloneable, CamelContextAwa
     @UriPath
     @Metadata(required = true)
     private String name;
-    @UriParam(secret = true)
+    @UriParam(security = "secret")
     private PrivateKey privateKey;
     @UriParam(label = "advanced")
     private KeyStoreParameters keyStoreParameters;
     @UriParam
     private KeyStore keystore;
-    @UriParam(label = "advanced", secret = true)
+    @UriParam(label = "advanced", security = "secret")
     private SecureRandom secureRandom;
     @UriParam(defaultValue = "SHA256withRSA")
     private String algorithm = "SHA256withRSA";
@@ -61,7 +61,7 @@ public class DigitalSignatureConfiguration implements Cloneable, CamelContextAwa
     private String signatureHeaderName;
     @UriParam
     private String alias;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String password;
     @UriParam(label = "advanced")
     private PublicKey publicKey;
@@ -73,7 +73,7 @@ public class DigitalSignatureConfiguration implements Cloneable, CamelContextAwa
     private String publicKeyName;
     @UriParam
     private String certificateName;
-    @UriParam(secret = true)
+    @UriParam(security = "secret")
     private String privateKeyName;
     @UriParam
     private String keystoreName;

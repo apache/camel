@@ -736,6 +736,14 @@ public class JmsComponent extends HeaderFilterStrategyComponent {
         configuration.setDeserializationFilter(deserializationFilter);
     }
 
+    public boolean isObjectMessageEnabled() {
+        return configuration.isObjectMessageEnabled();
+    }
+
+    public void setObjectMessageEnabled(boolean objectMessageEnabled) {
+        configuration.setObjectMessageEnabled(objectMessageEnabled);
+    }
+
     public void setPreserveMessageQos(boolean preserveMessageQos) {
         configuration.setPreserveMessageQos(preserveMessageQos);
     }

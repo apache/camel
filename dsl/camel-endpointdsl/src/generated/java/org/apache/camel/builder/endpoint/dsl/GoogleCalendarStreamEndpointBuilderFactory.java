@@ -1081,7 +1081,7 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final GoogleCalendarStreamHeaderNameBuilder INSTANCE = new GoogleCalendarStreamHeaderNameBuilder();
+        public static final GoogleCalendarStreamHeaderNameBuilder INSTANCE = new GoogleCalendarStreamHeaderNameBuilder();
 
         /**
          * The calendar event id.

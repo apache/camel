@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://schema.ocsf.io/1.7.0/objects/certificate",
+  "$id": "https://schema.ocsf.io/1.8.0/objects/certificate",
   "title": "Certificate",
   "type": "object",
   "javaType": "org.apache.camel.dataformat.ocsf.model.Certificate",
@@ -14,6 +14,10 @@
       "type": "string",
       "title": "Unique ID"
     },
+    "issuer": {
+      "type": "string",
+      "title": "Issuer Distinguished Name"
+    },
     "is_self_signed": {
       "type": "boolean",
       "title": "Certificate Self-Signed"
@@ -21,10 +25,6 @@
     "subject": {
       "type": "string",
       "title": "Subject Distinguished Name"
-    },
-    "issuer": {
-      "type": "string",
-      "title": "Issuer Distinguished Name"
     },
     "fingerprints": {
       "type": "array",

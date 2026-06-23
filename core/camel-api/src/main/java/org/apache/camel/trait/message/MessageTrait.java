@@ -19,6 +19,8 @@ package org.apache.camel.trait.message;
 /**
  * Message traits are runtime traits that can be associated with a message (for instance, the redelivery state, a data
  * type, etc). This is specifically for internal usage of Camel and not a public API.
+ *
+ * @since 4.0
  */
 public enum MessageTrait {
 

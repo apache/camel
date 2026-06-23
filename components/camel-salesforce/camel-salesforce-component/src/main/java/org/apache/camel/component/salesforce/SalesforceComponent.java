@@ -120,7 +120,7 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
     private String clientId;
 
     @Metadata(description = "OAuth Consumer Secret of the connected app configured in the Salesforce instance setup.",
-              label = "common,security", secret = true)
+              label = "common,security", security = "secret")
     private String clientSecret;
 
     @Metadata(description = "Refresh token already obtained in the refresh token OAuth flow. One needs to setup a web"
@@ -129,7 +129,7 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
                             + " https://test.salesforce.com/services/oauth2/success and then retrive the refresh_token from the URL at the"
                             + " end of the flow. Note that in development organizations Salesforce allows hosting the callback web "
                             + " application at localhost.",
-              label = "common,security", secret = true)
+              label = "common,security", security = "secret")
     private String refreshToken;
 
     @Metadata(description = "Username used in OAuth flow to gain access to access token. It's easy to get started with"
@@ -140,7 +140,7 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
     @Metadata(description = "Password used in OAuth flow to gain access to access token. It's easy to get started with"
                             + " password OAuth flow, but in general one should avoid it as it is deemed less secure than other flows."
                             + " Make sure that you append security token to the end of the password if using one.",
-              label = "common,security", secret = true)
+              label = "common,security", security = "secret")
     private String password;
 
     @Metadata(description = "KeyStore parameters to use in OAuth JWT flow. The KeyStore should contain only one entry"
@@ -252,7 +252,7 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
     private String httpProxyUsername;
 
     @Metadata(description = "Password to use to authenticate against the HTTP proxy server.", label = "common,proxy,security",
-              secret = true)
+              security = "secret")
     private String httpProxyPassword;
 
     @Metadata(description = "Used in authentication against the HTTP proxy server, needs to match the URI of the proxy"

@@ -108,7 +108,9 @@ public class ConsumeJmsObjectMessageTest extends AbstractJMSTest {
             CamelContext camelContext, ConnectionFactory connectionFactory, String componentName) {
         jmsTemplate = new JmsTemplate(connectionFactory);
 
-        return super.setupComponent(camelContext, connectionFactory, componentName);
+        JmsComponent component = super.setupComponent(camelContext, connectionFactory, componentName);
+        component.setObjectMessageEnabled(true);
+        return component;
     }
 
     @Override

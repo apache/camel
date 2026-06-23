@@ -118,10 +118,16 @@ public class MicrometerRoutePolicyMulticastSubRouteTest extends AbstractMicromet
                             "Counter " + counter.getId() + " should have count of " + count);
                     break;
                 }
-                case APP_INFO_METER_NAME:
+                case APP_INFO_METER_NAME: {
                     Gauge gauge = (Gauge) meter;
-                    // It's enough to validate it does not throw a class cast exception
+                    Meter.Id id = gauge.getId();
+                    assertEquals(0.0, gauge.value(), "app.info gauge should have a stable value of 0.0");
+                    assertEquals(context.getVersion(), id.getTag("camel.version"));
+                    assertEquals(context.getName(), id.getTag("camel.context"));
+                    assertEquals("Main", id.getTag("camel.runtime.provider"));
+                    assertEquals(context.getVersion(), id.getTag("camel.runtime.version"));
                     break;
+                }
                 default: {
                     fail("Unexpected meter " + meterName);
                     break;

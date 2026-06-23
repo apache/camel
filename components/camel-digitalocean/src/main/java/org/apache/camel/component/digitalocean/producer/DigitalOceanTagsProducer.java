@@ -30,6 +30,7 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * The DigitalOcean producer for Tags API.
  */
+@Deprecated(since = "4.21")
 public class DigitalOceanTagsProducer extends DigitalOceanProducer {
 
     public DigitalOceanTagsProducer(DigitalOceanEndpoint endpoint, DigitalOceanConfiguration configuration) {

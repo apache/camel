@@ -24,6 +24,7 @@ import jakarta.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.BeanScope;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.annotations.DslArg;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -40,8 +41,10 @@ public class BeanDefinition extends NoOutputDefinition<BeanDefinition> {
     private Object bean;
 
     @XmlAttribute
+    @DslArg(position = 0)
     private String ref;
     @XmlAttribute
+    @DslArg(position = 1)
     private String method;
     @XmlAttribute
     private String beanType;

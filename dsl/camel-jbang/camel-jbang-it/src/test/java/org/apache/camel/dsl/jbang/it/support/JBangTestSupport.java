@@ -111,7 +111,8 @@ public abstract class JBangTestSupport {
         FORMATS_MAPPING_DATA("data.csv", "/jbang/it/data-mapping/data-formats/data.csv"),
         STUB_ROUTE("StubRoute.java", "/jbang/it/StubRoute.java"),
         HISTORY_ROUTE("HistoryRoute.java", "/jbang/it/HistoryRoute.java"),
-        USER_SOURCE_KAMELET("user-source.kamelet.yaml", "/jbang/it/user-source.kamelet.yaml");
+        USER_SOURCE_KAMELET("user-source.kamelet.yaml", "/jbang/it/user-source.kamelet.yaml"),
+        GROUP_ROUTE("GroupRoute.java", "/jbang/it/GroupRoute.java");
 
         private String name;
         private String resPath;

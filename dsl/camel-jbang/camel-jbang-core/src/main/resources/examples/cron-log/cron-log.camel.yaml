@@ -1,0 +1,13 @@
+- route:
+    id: cron-log
+    from:
+      uri: cron:tab
+      parameters:
+        schedule: "0/5 * * * * ?"
+      steps:
+        - setBody:
+            expression:
+              simple:
+                expression: "{{cron.message}} ${date:now:HH:mm:ss}"
+        - log:
+            message: "${body}"

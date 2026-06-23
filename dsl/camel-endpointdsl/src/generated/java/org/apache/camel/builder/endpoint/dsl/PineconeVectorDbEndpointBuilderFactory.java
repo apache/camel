@@ -389,7 +389,7 @@ public interface PineconeVectorDbEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final PineconeVectorDbHeaderNameBuilder INSTANCE = new PineconeVectorDbHeaderNameBuilder();
+        public static final PineconeVectorDbHeaderNameBuilder INSTANCE = new PineconeVectorDbHeaderNameBuilder();
 
         /**
          * The action to be performed.

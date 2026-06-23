@@ -27,6 +27,7 @@ import java.util.concurrent.locks.ReentrantLock;
 import jakarta.jms.Connection;
 import jakarta.jms.ConnectionFactory;
 import jakarta.jms.ExceptionListener;
+import jakarta.jms.IllegalStateException;
 import jakarta.jms.JMSException;
 import jakarta.jms.Message;
 import jakarta.jms.MessageConsumer;
@@ -34,6 +35,7 @@ import jakarta.jms.MessageListener;
 import jakarta.jms.Session;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.component.sjms.MessageListenerContainer;
 import org.apache.camel.component.sjms.SessionMessageListener;
 import org.apache.camel.component.sjms.SjmsEndpoint;
 import org.apache.camel.component.sjms.jms.DestinationCreationStrategy;
@@ -48,7 +50,7 @@ import org.slf4j.LoggerFactory;
 import static org.apache.camel.component.sjms.SjmsHelper.*;
 
 public class SimpleMessageListenerContainer extends ServiceSupport
-        implements org.apache.camel.component.sjms.MessageListenerContainer, ExceptionListener {
+        implements MessageListenerContainer, ExceptionListener {
 
     private static final Logger LOG = LoggerFactory.getLogger(SimpleMessageListenerContainer.class);
 
@@ -205,7 +207,7 @@ public class SimpleMessageListenerContainer extends ServiceSupport
             initConsumers();
             LOG.debug("Successfully recovered JMS Connection (attempt: {})", task.iteration());
             // success so do not try again
-            return false;
+            return true;
         } catch (Exception e) {
             String message = "Failed to recover JMS Connection (attempt: " + task.iteration() + "). Will try again in "
                              + endpoint.getRecoveryInterval() + " millis";
@@ -222,7 +224,7 @@ public class SimpleMessageListenerContainer extends ServiceSupport
                 recoverPool = endpoint.getCamelContext().getExecutorServiceManager().newSingleThreadScheduledExecutor(this,
                         "SjmsConnectionRecovery");
             }
-            if (recoverTask == null) {
+            if (recoverTask == null || !recoverTask.isRunning()) {
                 recoverTask = createTask();
                 recoverFuture = recoverTask.schedule(endpoint.getCamelContext(), () -> recoverConnection(recoverTask));
             }
@@ -366,7 +368,7 @@ public class SimpleMessageListenerContainer extends ServiceSupport
             if (this.connection != null) {
                 try {
                     this.connection.start();
-                } catch (jakarta.jms.IllegalStateException e) {
+                } catch (IllegalStateException e) {
                     // ignore as it may already be started
                 }
             }

@@ -50,7 +50,7 @@ public class DefaultHeaderFilterStrategy implements HeaderFilterStrategy {
     public static final Pattern CAMEL_FILTER_PATTERN = Pattern.compile("(?i)Camel[.a-zA-z0-9]*");
 
     /**
-     * A filter pattern for keys starting with <tt>Camel</tt>, or <tt>camel</tt>.
+     * A filter pattern for keys starting with <tt>Camel</tt> or <tt>camel</tt>.
      */
     public static final String[] CAMEL_FILTER_STARTS_WITH = new String[] { "Camel", "camel" };
 
@@ -59,25 +59,25 @@ public class DefaultHeaderFilterStrategy implements HeaderFilterStrategy {
                             + " Multiple patterns can be separated by comma")
     private Set<String> inFilter;
     private Pattern inFilterPattern;
-    private String[] inFilterStartsWith;
+    private String[] inFilterStartsWith = CAMEL_FILTER_STARTS_WITH.clone();
 
     @Metadata(javaType = "java.lang.String",
               description = "Sets the out direction filter set. The out direction is referred to copying headers from a Camel message to an external message."
                             + " Multiple patterns can be separated by comma")
     private Set<String> outFilter;
     private Pattern outFilterPattern;
-    private String[] outFilterStartsWith;
+    private String[] outFilterStartsWith = CAMEL_FILTER_STARTS_WITH.clone();
 
-    @Metadata(label = "advanced", defaultValue = "false",
-              description = "Whether header names should be converted to lower case before checking it with the filter Set."
+    @Metadata(label = "advanced", defaultValue = "true",
+              description = "Whether header names should be converted to lower case before checking it with the filter Set. This ensures that all variations of header names will be taken into account."
                             + " It does not affect filtering using regular expression pattern.")
-    private boolean lowerCase;
+    private boolean lowerCase = true;
     @Metadata(label = "advanced", defaultValue = "false",
               description = "Whether to allow null values. By default a header is skipped if its value is null. Setting this to true will preserve the header.")
     private boolean allowNullValues;
     @Metadata(label = "advanced", defaultValue = "true",
               description = "Sets the caseInsensitive property which is a boolean to determine whether header names should be case insensitive"
-                            + " when checking it with the filter set. It does not affect filtering using regular expression pattern.")
+                            + " when checking it with the filter set. This ensures that all variations of header names will be taken into account. It does not affect filtering using regular expression pattern.")
     private boolean caseInsensitive = true;
     @Metadata(label = "advanced", defaultValue = "true",
               description = "Sets what to do when a pattern or filter set is matched."
@@ -250,7 +250,8 @@ public class DefaultHeaderFilterStrategy implements HeaderFilterStrategy {
 
     /**
      * Gets the isLowercase property which is a boolean to determine whether header names should be converted to lower
-     * case before checking it with the filter Set. It does not affect filtering using regular expression pattern.
+     * case before checking it with the filter Set. This ensures that all variations of header names will be taken into
+     * account. It does not affect filtering using regular expression pattern.
      */
     public boolean isLowerCase() {
         return lowerCase;
@@ -258,7 +259,8 @@ public class DefaultHeaderFilterStrategy implements HeaderFilterStrategy {
 
     /**
      * Sets the isLowercase property which is a boolean to determine whether header names should be converted to lower
-     * case before checking it with the filter Set. It does not affect filtering using regular expression pattern.
+     * case before checking it with the filter Set. This ensures that all variations of header names will be taken into
+     * account. It does not affect filtering using regular expression pattern.
      */
     public void setLowerCase(boolean value) {
         lowerCase = value;
@@ -266,7 +268,8 @@ public class DefaultHeaderFilterStrategy implements HeaderFilterStrategy {
 
     /**
      * Gets the caseInsensitive property which is a boolean to determine whether header names should be case insensitive
-     * when checking it with the filter set. It does not affect filtering using regular expression pattern.
+     * when checking it with the filter set. This ensures that all variations of header names will be taken into
+     * account.. It does not affect filtering using regular expression pattern.
      *
      * @return <tt>true</tt> if header names is case insensitive.
      */
@@ -276,7 +279,8 @@ public class DefaultHeaderFilterStrategy implements HeaderFilterStrategy {
 
     /**
      * Sets the caseInsensitive property which is a boolean to determine whether header names should be case insensitive
-     * when checking it with the filter set. It does not affect filtering using regular expression pattern,
+     * when checking it with the filter set. This ensures that all variations of header names will be taken into
+     * account.. It does not affect filtering using regular expression pattern,
      *
      * @param caseInsensitive <tt>true</tt> if header names is case insensitive.
      */
@@ -373,7 +377,7 @@ public class DefaultHeaderFilterStrategy implements HeaderFilterStrategy {
     }
 
     private boolean tryPattern(String headerName, String lower, Pattern pattern) {
-        // optimize if its the default pattern as we know the pattern is to check for keys starting with Camel
+        // optimize if it's the default pattern as we know the pattern is to check for keys starting with Camel
         if (pattern == CAMEL_FILTER_PATTERN) {
             boolean match = headerName.startsWith("Camel") || headerName.startsWith("camel");
             if (match) {

@@ -37,8 +37,9 @@ public class DefaultHeaderFilterStrategyTest extends ContextTestSupport {
         comp.setAllowNullValues(true);
         assertTrue(comp.isAllowNullValues());
 
-        comp.setLowerCase(true);
         assertTrue(comp.isLowerCase());
+        comp.setLowerCase(false);
+        assertFalse(comp.isLowerCase());
 
         assertTrue(comp.isCaseInsensitive());
         comp.setCaseInsensitive(false);
@@ -78,6 +79,7 @@ public class DefaultHeaderFilterStrategyTest extends ContextTestSupport {
     @Test
     public void testInFilterCaseSensitive() {
         DefaultHeaderFilterStrategy comp = new DefaultHeaderFilterStrategy();
+        comp.setLowerCase(false);
         comp.setCaseInsensitive(false);
 
         Set<String> set = new HashSet<>();
@@ -208,6 +210,36 @@ public class DefaultHeaderFilterStrategyTest extends ContextTestSupport {
         assertFalse(comp.applyFilterToExternalHeaders("foo", "cheese", exchange));
         assertTrue(comp.applyFilterToExternalHeaders("CamelVersion", "3.7", exchange));
         assertTrue(comp.applyFilterToExternalHeaders("camelJETTYSession", "true", exchange));
+    }
+
+    @Test
+    public void testInStartsWithDefaultFiltering() {
+        DefaultHeaderFilterStrategy comp = new DefaultHeaderFilterStrategy();
+
+        Exchange exchange = new DefaultExchange(context);
+
+        assertFalse(comp.applyFilterToExternalHeaders("foo", "bar", exchange));
+        assertFalse(comp.applyFilterToExternalHeaders("content-type", "text/plain", exchange));
+        assertTrue(comp.applyFilterToExternalHeaders("CamelVersion", "4.21", exchange));
+        assertTrue(comp.applyFilterToExternalHeaders("camelJettySession", "true", exchange));
+        assertTrue(comp.applyFilterToExternalHeaders("CAMELFooBar", "x", exchange));
+        assertFalse(comp.applyFilterToExternalHeaders("org.apache.camel.foo", "x", exchange));
+        assertFalse(comp.applyFilterToExternalHeaders("org.apache.camel", "x", exchange));
+    }
+
+    @Test
+    public void testOutStartsWithDefaultFiltering() {
+        DefaultHeaderFilterStrategy comp = new DefaultHeaderFilterStrategy();
+
+        Exchange exchange = new DefaultExchange(context);
+
+        assertFalse(comp.applyFilterToCamelHeaders("foo", "bar", exchange));
+        assertFalse(comp.applyFilterToCamelHeaders("content-type", "text/plain", exchange));
+        assertTrue(comp.applyFilterToCamelHeaders("CamelVersion", "4.21", exchange));
+        assertTrue(comp.applyFilterToCamelHeaders("camelJettySession", "true", exchange));
+        assertTrue(comp.applyFilterToCamelHeaders("CAMELFooBar", "x", exchange));
+        assertFalse(comp.applyFilterToCamelHeaders("org.apache.camel.foo", "x", exchange));
+        assertFalse(comp.applyFilterToCamelHeaders("org.apache.camel", "x", exchange));
     }
 
     @Test

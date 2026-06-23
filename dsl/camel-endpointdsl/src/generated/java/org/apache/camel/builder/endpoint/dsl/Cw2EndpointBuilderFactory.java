@@ -644,7 +644,7 @@ public interface Cw2EndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final Cw2HeaderNameBuilder INSTANCE = new Cw2HeaderNameBuilder();
+        public static final Cw2HeaderNameBuilder INSTANCE = new Cw2HeaderNameBuilder();
 
         /**
          * The operation to perform.

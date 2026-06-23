@@ -62,10 +62,14 @@ public final class VertxHelper {
         tcpsslOptions.setSsl(true);
 
         KeyManagerFactory keyManagerFactory = createKeyManagerFactory(camelContext, sslContextParameters);
-        tcpsslOptions.setKeyCertOptions(new KeyManagerFactoryOptions(keyManagerFactory));
+        if (keyManagerFactory != null) {
+            tcpsslOptions.setKeyCertOptions(new KeyManagerFactoryOptions(keyManagerFactory));
+        }
 
         TrustManagerFactory trustManagerFactory = createTrustManagerFactory(camelContext, sslContextParameters);
-        tcpsslOptions.setTrustOptions(new TrustManagerFactoryOptions(trustManagerFactory));
+        if (trustManagerFactory != null) {
+            tcpsslOptions.setTrustOptions(new TrustManagerFactoryOptions(trustManagerFactory));
+        }
 
         if (sslContextParameters.getTrustManagers() != null &&
                 sslContextParameters.getTrustManagers().getTrustManager() == TrustAllTrustManager.INSTANCE) {

@@ -137,7 +137,13 @@ public enum TransactionGatewayApiMethod implements ApiMethod {
     VOID_TRANSACTION(
         com.braintreegateway.Result.class,
         "voidTransaction",
-        arg("id", String.class));
+        arg("id", String.class)),
+
+    VOID_TRANSACTION_1(
+        com.braintreegateway.Result.class,
+        "voidTransaction",
+        arg("id", String.class),
+        arg("voidRequest", com.braintreegateway.TransactionVoidRequest.class));
 
     private final ApiMethod apiMethod;
 

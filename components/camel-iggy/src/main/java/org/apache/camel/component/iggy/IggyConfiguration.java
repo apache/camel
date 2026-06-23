@@ -30,9 +30,9 @@ public class IggyConfiguration implements Cloneable {
     private String host = "localhost";
     @UriParam(defaultValue = "8090", description = "Iggy server port number")
     private int port = 8090;
-    @UriParam(secret = true, label = "security", description = "Iggy username")
+    @UriParam(security = "secret", label = "security", description = "Iggy username")
     private String username;
-    @UriParam(secret = true, description = "Iggy password")
+    @UriParam(security = "secret", description = "Iggy password")
     private String password;
     @UriParam(defaultValue = "true",
               description = "Whether to automatically create stream if it does not exist")
@@ -42,7 +42,7 @@ public class IggyConfiguration implements Cloneable {
     private boolean autoCreateTopic = true;
     @UriParam(description = "Stream identifier")
     private Long streamId;
-    @UriParam(description = "Stream name")
+    @UriParam(description = "Stream name", endpointIdentity = true)
     private String streamName;
     @UriParam(defaultValue = "1", description = "Number of partitions for the topic")
     private Long partitionsCount = 1L;

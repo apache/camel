@@ -17,6 +17,7 @@
 package org.apache.camel.oaipmh.component;
 
 import java.net.URI;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.Category;
@@ -75,6 +76,13 @@ public class OAIPMHEndpoint extends ScheduledPollEndpoint implements EndpointSer
               description = "Returns the response of a single request. Otherwise it will make requests until there is no more data to return.")
     private boolean onlyFirst;
 
+    @UriParam(label = "advanced",
+              description = "Custom HTTP headers to send with each request to the OAI-PMH repository, "
+                            + "for example for Authorization or Accept-Language.",
+              javaType = "java.util.Map<java.lang.String, java.lang.String>",
+              prefix = "httpHeader.", multiValue = true)
+    private Map<String, String> httpHeaders;
+
     private Map<String, Object> queryParameters;
 
     public OAIPMHEndpoint(String uri, String remaining, OAIPMHComponent component) {
@@ -102,6 +110,27 @@ public class OAIPMHEndpoint extends ScheduledPollEndpoint implements EndpointSer
         super.doInit();
 
         validateParameters();
+
+        // Collect httpHeader.* lenient params into the httpHeaders map so they become HTTP headers,
+        // not URL query parameters. This handles the URI-string form: ?httpHeader.Authorization=token
+        if (queryParameters != null) {
+            Map<String, String> fromUri = new HashMap<>();
+            queryParameters.entrySet().removeIf(entry -> {
+                if (entry.getKey().startsWith("httpHeader.")) {
+                    fromUri.put(entry.getKey().substring("httpHeader.".length()), String.valueOf(entry.getValue()));
+                    return true;
+                }
+                return false;
+            });
+            if (!fromUri.isEmpty()) {
+                if (httpHeaders == null) {
+                    httpHeaders = fromUri;
+                } else {
+                    fromUri.putAll(httpHeaders);
+                    httpHeaders = fromUri;
+                }
+            }
+        }
 
         // build uri from parameters
         String prefix = "";
@@ -221,6 +250,14 @@ public class OAIPMHEndpoint extends ScheduledPollEndpoint implements EndpointSer
 
     public void setOnlyFirst(boolean onlyFist) {
         this.onlyFirst = onlyFist;
+    }
+
+    public Map<String, String> getHttpHeaders() {
+        return httpHeaders;
+    }
+
+    public void setHttpHeaders(Map<String, String> httpHeaders) {
+        this.httpHeaders = httpHeaders;
     }
 
 }

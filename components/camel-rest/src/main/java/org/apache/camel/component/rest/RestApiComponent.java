@@ -20,12 +20,13 @@ import java.util.Map;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 
 /**
  * Rest API component.
  */
-@org.apache.camel.spi.annotations.Component("rest-api")
+@Component("rest-api")
 public class RestApiComponent extends DefaultComponent {
 
     @Metadata(label = "consumer")

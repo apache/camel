@@ -213,7 +213,7 @@ public class MilvusComponentIT extends MilvusTestSupport {
 
         assertThat(result).isNotNull();
         assertThat(result.getException()).isNull();
-        assertThat(result.getMessage().getBody(SearchResponse.class).getRowRecords().size() == 2);
+        assertThat(result.getMessage().getBody(SearchResponse.class).getRowRecords().get(0)).hasSize(2);
     }
 
     @Test
@@ -234,7 +234,7 @@ public class MilvusComponentIT extends MilvusTestSupport {
 
         assertThat(result).isNotNull();
         assertThat(result.getException()).isNull();
-        assertThat(result.getMessage().getBody(QueryResults.class).getFieldsDataCount() == 2);
+        assertThat(result.getMessage().getBody(QueryResults.class).getFieldsDataCount()).isEqualTo(2);
     }
 
     @Test
@@ -272,7 +272,7 @@ public class MilvusComponentIT extends MilvusTestSupport {
 
         assertThat(result).isNotNull();
         assertThat(result.getException()).isNull();
-        assertThat(result.getMessage().getBody(SearchResponse.class).getRowRecords().size() == 0);
+        assertThat(result.getMessage().getBody(SearchResponse.class).getRowRecords().get(0)).isEmpty();
     }
 
     // --- Helper-based tests (same operations via MilvusHelper beans) ---

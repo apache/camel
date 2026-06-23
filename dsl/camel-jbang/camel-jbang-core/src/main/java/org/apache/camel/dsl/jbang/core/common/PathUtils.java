@@ -21,6 +21,7 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.util.Comparator;
 import java.util.stream.Stream;
 
 /**
@@ -99,7 +100,7 @@ public final class PathUtils {
         }
 
         try (Stream<Path> paths = Files.walk(directory)) {
-            paths.sorted(java.util.Comparator.reverseOrder())
+            paths.sorted(Comparator.reverseOrder())
                     .forEach(path -> {
                         try {
                             Files.deleteIfExists(path);

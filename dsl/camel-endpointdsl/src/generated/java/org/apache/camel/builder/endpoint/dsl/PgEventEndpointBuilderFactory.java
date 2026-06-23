@@ -667,7 +667,7 @@ public interface PgEventEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final PgEventHeaderNameBuilder INSTANCE = new PgEventHeaderNameBuilder();
+        public static final PgEventHeaderNameBuilder INSTANCE = new PgEventHeaderNameBuilder();
 
         /**
          * The name of the channel.

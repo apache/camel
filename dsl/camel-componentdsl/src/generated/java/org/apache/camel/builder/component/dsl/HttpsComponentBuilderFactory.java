@@ -318,7 +318,10 @@ public interface HttpsComponentBuilderFactory {
     
         
         /**
-         * Disables automatic request recovery and re-execution.
+         * Disables automatic request recovery and re-execution. This is useful
+         * when a server responds with HTTP 429 (Too Many Requests) and includes
+         * a long Retry-After header, which would otherwise cause the client to
+         * wait (and appear to hang) before retrying.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -782,6 +785,32 @@ public interface HttpsComponentBuilderFactory {
             return this;
         }
     
+        
+        /**
+         * Controls how hostname verification is performed during the TLS
+         * handshake. CLIENT (default) delegates entirely to the configured
+         * x509HostnameVerifier, preserving the behaviour of httpclient 5.5 and
+         * earlier a NoopHostnameVerifier will disable verification. BUILTIN
+         * uses the JDK SSLParameters hostname check only, ignoring the
+         * configured verifier. BOTH runs the JDK built-in check first and then
+         * the configured verifier; a NoopHostnameVerifier cannot bypass the
+         * built-in check under BUILTIN or BOTH. Prefer BOTH when no custom
+         * verifier semantics are needed for stronger out-of-the-box security.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.hc.client5.http.ssl.HostnameVerificationPolicy&lt;/code&gt; type.
+         * 
+         * Default: CLIENT
+         * Group: security
+         * 
+         * @param hostnameVerificationPolicy the value to set
+         * @return the dsl builder
+         */
+        default HttpsComponentBuilder hostnameVerificationPolicy(org.apache.hc.client5.http.ssl.HostnameVerificationPolicy hostnameVerificationPolicy) {
+            doSetProperty("hostnameVerificationPolicy", hostnameVerificationPolicy);
+            return this;
+        }
+    
         /**
          * To configure security using SSLContextParameters. Important: Only one
          * instance of org.apache.camel.support.jsse.SSLContextParameters is
@@ -966,6 +995,7 @@ public interface HttpsComponentBuilderFactory {
             case "proxyAuthUsername": ((HttpComponent) component).setProxyAuthUsername((java.lang.String) value); return true;
             case "proxyHost": ((HttpComponent) component).setProxyHost((java.lang.String) value); return true;
             case "proxyPort": ((HttpComponent) component).setProxyPort((java.lang.Integer) value); return true;
+            case "hostnameVerificationPolicy": ((HttpComponent) component).setHostnameVerificationPolicy((org.apache.hc.client5.http.ssl.HostnameVerificationPolicy) value); return true;
             case "sslContextParameters": ((HttpComponent) component).setSslContextParameters((org.apache.camel.support.jsse.SSLContextParameters) value); return true;
             case "useGlobalSslContextParameters": ((HttpComponent) component).setUseGlobalSslContextParameters((boolean) value); return true;
             case "x509HostnameVerifier": ((HttpComponent) component).setX509HostnameVerifier((javax.net.ssl.HostnameVerifier) value); return true;

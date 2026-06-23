@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.jdbc;
 
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
@@ -55,7 +54,10 @@ public abstract class AbstractJdbcGeneratedKeysTest extends AbstractJdbcTestSupp
         assertEquals(1, generatedKeys.size());
 
         Map<String, Object> row = generatedKeys.get(0);
-        assertEquals(BigDecimal.valueOf(2), row.get("1"), "auto increment value should be 2");
+        // H2 returns column name "ID", Derby returns column index "1"
+        Object generatedKey = row.get("ID") != null ? row.get("ID") : row.get("1");
+        // H2 returns Integer, Derby returns BigDecimal - compare numeric values
+        assertEquals(2, ((Number) generatedKey).intValue(), "auto increment value should be 2");
 
         assertEquals(1, out.getMessage().getHeader(JdbcConstants.JDBC_GENERATED_KEYS_ROW_COUNT),
                 "generated keys row count should be one");
@@ -93,7 +95,10 @@ public abstract class AbstractJdbcGeneratedKeysTest extends AbstractJdbcTestSupp
         assertEquals(1, generatedKeys.size());
 
         Map<String, Object> row = generatedKeys.get(0);
-        assertEquals(BigDecimal.valueOf(2), row.get("1"), "auto increment value should be 2");
+        // H2 returns column name "ID", Derby returns column index "1"
+        Object generatedKey = row.get("ID") != null ? row.get("ID") : row.get("1");
+        // H2 returns Integer, Derby returns BigDecimal - compare numeric values
+        assertEquals(2, ((Number) generatedKey).intValue(), "auto increment value should be 2");
 
         assertEquals(1, out.getMessage().getHeader(JdbcConstants.JDBC_GENERATED_KEYS_ROW_COUNT),
                 "generated keys row count should be one");
@@ -131,7 +136,10 @@ public abstract class AbstractJdbcGeneratedKeysTest extends AbstractJdbcTestSupp
         assertEquals(1, generatedKeys.size());
 
         Map<String, Object> row = generatedKeys.get(0);
-        assertEquals(BigDecimal.valueOf(2), row.get("1"), "auto increment value should be 2");
+        // H2 returns column name "ID", Derby returns column index "1"
+        Object generatedKey = row.get("ID") != null ? row.get("ID") : row.get("1");
+        // H2 returns Integer, Derby returns BigDecimal - compare numeric values
+        assertEquals(2, ((Number) generatedKey).intValue(), "auto increment value should be 2");
 
         assertEquals(1, out.getMessage().getHeader(JdbcConstants.JDBC_GENERATED_KEYS_ROW_COUNT),
                 "generated keys row count should be one");

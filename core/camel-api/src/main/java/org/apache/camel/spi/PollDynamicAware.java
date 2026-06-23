@@ -22,11 +22,14 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Service;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Used for components that can optimise the usage of {@link org.apache.camel.processor.PollProcessor} (poll/pollEnrich)
  * to reuse a static {@link Endpoint} and {@link org.apache.camel.DynamicPollingConsumer} that supports using headers to
  * provide the dynamic parts. For example many of the file based components supports this.
+ *
+ * @since 4.11
  */
 public interface PollDynamicAware extends Service, CamelContextAware {
 
@@ -114,6 +117,7 @@ public interface PollDynamicAware extends Service, CamelContextAware {
      * @return           the static uri, or <tt>null</tt> to not let poll/pollEnrich use this optimisation.
      * @throws Exception is thrown if error resolving the static uri.
      */
+    @Nullable
     String resolveStaticUri(Exchange exchange, DynamicAwareEntry entry) throws Exception;
 
 }

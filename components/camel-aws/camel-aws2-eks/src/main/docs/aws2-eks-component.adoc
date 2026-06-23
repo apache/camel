@@ -9,7 +9,6 @@
 :component-header: Only producer is supported
 //Manually maintained attributes
 :group: AWS
-:camel-spring-boot-name: aws2-eks
 
 *Since Camel {since}*
 
@@ -27,9 +26,9 @@ https://aws.amazon.com/eks/[Amazon EKS].
 
 == URI Format
 
--------------------------
+----
 aws2-eks://label[?options]
--------------------------
+----
 
 You can append query options to the URI in the following format:
 
@@ -85,23 +84,54 @@ Camel-AWS EKS component provides the following operation on the producer side:
 
 - listClusters: this operation will list the available clusters in EKS
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:listClusters")
-    .to("aws2-eks://test?eksClient=#amazonEksClient&operation=listClusters")
---------------------------------------------------------------------------------
+    .to("aws2-eks://test?eksClient=#amazonEksClient&operation=listClusters");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:listClusters"/>
+  <to uri="aws2-eks://test?eksClient=#amazonEksClient&amp;operation=listClusters"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:listClusters
+      steps:
+        - to:
+            uri: aws2-eks://test
+            parameters:
+              eksClient: "#amazonEksClient"
+              operation: listClusters
+----
+====
 
 === Using a POJO as body
 
 Sometimes building an AWS Request can be complex because of multiple options. We introduce the possibility to use a POJO as a body.
 In AWS EKS there are multiple operations you can submit, as an example for List cluster request, you can do something like:
 
+._Java-only: using a POJO request body with the AWS SDK builder_
 [source,java]
-------------------------------------------------------------------------------------------------------
+----
 from("direct:start")
   .setBody(ListClustersRequest.builder().maxResults(12).build())
   .to("aws2-eks://test?eksClient=#amazonEksClient&operation=listClusters&pojoRequest=true")
-------------------------------------------------------------------------------------------------------
+----
 
 In this way, you'll pass the request directly without the need of passing headers and options specifically related to this operation.
 
@@ -112,15 +142,14 @@ Maven users will need to add the following dependency to their pom.xml.
 *pom.xml*
 
 [source,xml]
----------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-aws2-eks</artifactId>
     <version>${camel-version}</version>
 </dependency>
----------------------------------------
+----
 
 where `$\{camel-version}` must be replaced by the actual version of Camel.
 
 
-include::spring-boot:partial$starter.adoc[]

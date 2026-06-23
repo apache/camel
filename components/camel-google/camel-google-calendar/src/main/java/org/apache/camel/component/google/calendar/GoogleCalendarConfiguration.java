@@ -47,17 +47,17 @@ public class GoogleCalendarConfiguration implements GoogleCommonConfiguration {
     private String clientId;
     @UriParam
     private String applicationName;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String emailAddress;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String clientSecret;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String accessToken;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String refreshToken;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String p12FileName;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String user;
     /* Service account */
     @UriParam(label = "security")

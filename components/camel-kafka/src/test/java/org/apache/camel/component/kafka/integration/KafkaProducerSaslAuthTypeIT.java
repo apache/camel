@@ -18,6 +18,7 @@ package org.apache.camel.component.kafka.integration;
 
 import java.time.Duration;
 import java.util.Collections;
+import java.util.Map;
 import java.util.Properties;
 
 import org.apache.camel.CamelContext;
@@ -192,7 +193,7 @@ public class KafkaProducerSaslAuthTypeIT {
 
         // Send a message with custom headers
         producerTemplate.sendBodyAndHeaders("direct:start", "message-with-headers",
-                java.util.Map.of(
+                Map.of(
                         KafkaConstants.KEY, "header-test-key",
                         "CustomHeader", "custom-value"));
 

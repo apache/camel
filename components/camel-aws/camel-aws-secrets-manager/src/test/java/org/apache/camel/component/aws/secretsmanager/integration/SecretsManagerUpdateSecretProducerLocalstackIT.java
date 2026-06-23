@@ -24,7 +24,6 @@ import org.apache.camel.component.aws.secretsmanager.SecretsManagerConstants;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import software.amazon.awssdk.services.secretsmanager.model.CreateSecretResponse;
 import software.amazon.awssdk.services.secretsmanager.model.UpdateSecretResponse;
 
@@ -32,7 +31,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@DisabledIfSystemProperty(named = "ci.env.name", matches = ".*", disabledReason = "Flaky on GitHub Actions")
 public class SecretsManagerUpdateSecretProducerLocalstackIT extends AwsSecretsManagerBaseTest {
 
     @EndpointInject("mock:result")

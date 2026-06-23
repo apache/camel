@@ -62,16 +62,18 @@ public class SSLConfigurationProperties implements BootstrapCloseable {
     private String keyStoreType;
     @Metadata(label = "advanced")
     private String keyStoreProvider;
-    @Metadata(secret = true)
+    @Metadata(security = "secret")
     private String keystorePassword;
     @Metadata
     private String trustStore;
-    @Metadata(secret = true)
+    @Metadata(security = "secret")
     private String trustStorePassword;
-    @Metadata
+    @Metadata(security = "insecure:ssl")
     private boolean trustAllCertificates;
     @Metadata
     private boolean selfSigned;
+    @Metadata(label = "advanced", defaultValue = "EC", enums = "EC,RSA")
+    private String selfSignedKeyType = "EC";
     @Metadata(label = "advanced")
     private String keyManagerAlgorithm;
     @Metadata(label = "advanced")
@@ -401,6 +403,18 @@ public class SSLConfigurationProperties implements BootstrapCloseable {
         this.selfSigned = selfSigned;
     }
 
+    public String getSelfSignedKeyType() {
+        return selfSignedKeyType;
+    }
+
+    /**
+     * The key algorithm to use when generating the self-signed certificate for development use (requires selfSigned to
+     * be enabled). Supported values are EC (default, NIST P-256) and RSA (2048-bit).
+     */
+    public void setSelfSignedKeyType(String selfSignedKeyType) {
+        this.selfSignedKeyType = selfSignedKeyType;
+    }
+
     public String getKeyManagerAlgorithm() {
         return keyManagerAlgorithm;
     }
@@ -702,6 +716,15 @@ public class SSLConfigurationProperties implements BootstrapCloseable {
      */
     public SSLConfigurationProperties withSelfSigned(boolean selfSigned) {
         this.selfSigned = selfSigned;
+        return this;
+    }
+
+    /**
+     * The key algorithm to use when generating the self-signed certificate for development use (requires selfSigned to
+     * be enabled). Supported values are EC (default, NIST P-256) and RSA (2048-bit).
+     */
+    public SSLConfigurationProperties withSelfSignedKeyType(String selfSignedKeyType) {
+        this.selfSignedKeyType = selfSignedKeyType;
         return this;
     }
 

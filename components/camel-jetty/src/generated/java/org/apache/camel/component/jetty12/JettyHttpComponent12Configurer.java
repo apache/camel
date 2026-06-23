@@ -273,11 +273,11 @@ public class JettyHttpComponent12Configurer extends PropertyConfigurerSupport im
         case "socketconnectorproperties":
         case "socketConnectorProperties": return java.lang.Object.class;
         case "socketconnectors":
-        case "socketConnectors": return org.eclipse.jetty.server.Connector.class;
+        case "socketConnectors": return org.eclipse.jetty.server.ServerConnector.class;
         case "sslsocketconnectorproperties":
         case "sslSocketConnectorProperties": return java.lang.Object.class;
         case "sslsocketconnectors":
-        case "sslSocketConnectors": return org.eclipse.jetty.server.Connector.class;
+        case "sslSocketConnectors": return org.eclipse.jetty.server.ServerConnector.class;
         default: return null;
         }
     }

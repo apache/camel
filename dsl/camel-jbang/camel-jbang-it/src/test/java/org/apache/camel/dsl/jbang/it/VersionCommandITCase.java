@@ -30,10 +30,10 @@ public class VersionCommandITCase extends JBangTestSupport {
     @DisabledIfSystemProperty(named = CliProperties.FORCE_RUN_VERSION, matches = ".+")
     public void versionCommandTest() {
         Assertions.assertThat(execute("version").trim())
-                .contains("Camel JBang version: " + version());
+                .contains("Camel CLI version: " + version());
         execute("version set 3.20.2");
         Assertions.assertThat(execute("version").trim())
-                .contains("Camel JBang version: " + version())
+                .contains("Camel CLI version: " + version())
                 .contains("User configuration:")
                 .contains("camel-version = 3.20.2");
     }

@@ -28,9 +28,9 @@ public class ArangoDbConfiguration implements Cloneable {
     private String host;
     @UriParam(label = "producer")
     private int port;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String user;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String password;
     @UriParam(label = "producer")
     private String documentCollection;

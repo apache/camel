@@ -18,13 +18,13 @@ package org.apache.camel.component.zookeepermaster.group.internal;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.net.ServerSocket;
 import java.util.List;
 import java.util.Map;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.component.zookeepermaster.group.NodeState;
-import org.apache.camel.test.AvailablePortFinder;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.retry.RetryOneTime;
@@ -44,12 +44,14 @@ public class ZooKeeperGroupTest {
     private CuratorFramework curator;
     private ZooKeeperGroup<NodeState> group;
 
-    private int findFreePort() {
-        return AvailablePortFinder.getNextRandomAvailable();
+    private int findFreePort() throws IOException {
+        try (ServerSocket socket = new ServerSocket(0)) {
+            return socket.getLocalPort();
+        }
     }
 
     @BeforeEach
-    public void setUp() {
+    public void setUp() throws IOException {
         int port = findFreePort();
         curator = CuratorFrameworkFactory.builder()
                 .connectString("localhost:" + port)

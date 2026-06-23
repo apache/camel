@@ -1,0 +1,2596 @@
+= Apache Camel 4.x Upgrade Guide
+
+This document is for helping you upgrade your Apache Camel application
+from Camel 4.x to 4.y. For example, if you are upgrading Camel 4.0 to 4.2, then you should follow the guides
+from both 4.0 to 4.1 and 4.1 to 4.2.
+
+[NOTE]
+====
+https://github.com/apache/camel-upgrade-recipes/[The Camel Upgrade Recipes project] provides automated assistance for some common migration tasks.
+Note that manual migration is still required.
+See the xref:camel-upgrade-recipes-tool.adoc[documentation] page for details.
+====
+
+== Upgrading Camel 4.20 to 4.21
+
+=== camel-grok - potential breaking change
+
+The library used for Camel Grok component has been migrated from no more maintained `io.krakens:java-grok` to its fork `io.github.whatap:java-grok`.
+It implies small differences listed https://github.com/whatap/java-grok#what-is-different-from-iokrakensjava-grok[here].
+
+=== camel-jbang
+
+The project exported by `camel export` now includes additional guidance for AI coding assistants. The generated
+`readme.md` gained a _For AI coding assistants_ section linking to the Apache Camel website LLM index,
+and a new `AGENTS.md` file is generated at the project root. This applies to all runtimes (Camel Main, Spring Boot and Quarkus).
+
+=== camel-micrometer
+
+The `MicrometerExchangeEventNotifier` now always includes the `routeId` tag on exchange event metrics.
+When `fromRouteId` is not available (for example, on Exchanges created by `ProducerTemplate`), the tag value is an empty string instead of omitting the tag.
+This ensures Prometheus-compatible metric export when Route triggered and ProducerTemplate Exchanges are mixed.
+Dashboards or alerts that assumed the `routeId` label was absent must be updated to treat `routeId=""` accordingly.
+
+=== camel-dataformat
+
+The `dataformat:` component now applies the global `camel.dataformat.<name>.*` configuration (for example from
+`application.properties`) when it creates the data format instance. Previously a `dataformat:` endpoint such as
+`to("dataformat:beanio:unmarshal")` ignored this global configuration and used only the options provided on the
+endpoint URI, which could leave the data format incompletely configured. This aligns the component with the
+`marshal()` / `unmarshal()` DSL, which already honors the global configuration. Options specified on the endpoint URI
+continue to take precedence over the global configuration.
+
+=== camel-langchain4j-tools
+
+When the LLM requests multiple tool invocations within a single request, each tool is now invoked on its
+own independent copy of the exchange (similar to the multicast/splitter patterns) instead of sharing a single
+exchange across all tools. This guarantees complete isolation: the message body, argument headers, and any
+exception produced by one tool no longer leak into subsequent tool invocations of the same request.
+
+As a consequence, a tool route no longer receives the previous tool's output as its message body, nor the
+previous tool's argument headers. Each tool route starts from the original incoming exchange and only sees
+its own declared arguments as headers. Routes that (intentionally or accidentally) relied on this leaked state
+between tools must be adjusted to carry such data explicitly.
+
+=== Component documentation
+
+The Spring Boot auto-configuration tables have been removed from individual component documentation pages.
+Spring Boot auto-configuration options are now documented in the Camel Spring Boot documentation site,
+with a dedicated page per starter.
+
+=== camel-core
+
+==== Simple language: internal builder classes reorganized
+
+The internal class `org.apache.camel.language.simple.SimpleExpressionBuilder`
+(in `camel-core-languages`) has been removed. Its methods have been split across
+seven domain-aligned builder classes:
+
+- `CollectionExpressionBuilder`
+- `DateExpressionBuilder`
+- `FileExpressionBuilder`
+- `MathExpressionBuilder`
+- `MiscExpressionBuilder`
+- `OgnlExpressionBuilder`
+- `StringExpressionBuilder`
+
+These classes are all in the `org.apache.camel.language.simple` package and are
+internal API (not part of `camel-api`). Applications and custom DSLs that import
+`SimpleExpressionBuilder` directly must update their imports to the appropriate
+replacement class.
+
+==== Simple language: `floor`/`ceil` return `long` instead of `int`
+
+The `floor` and `ceil` functions in the Simple language previously silently
+overflowed for input values larger than `Integer.MAX_VALUE` because the result
+was cast to `int`. They now return `long`. Routes that pass the result of
+`floor`/`ceil` to a method that expects `int` may require an explicit cast or
+a converter step.
+
+==== Simple language: `range(N)` starts at 1, not 0
+
+In csimple, `range(N)` previously generated a range starting at 0 (i.e., 0..N-1).
+It now starts at 1 (i.e., 1..N), consistent with the `simple` language behaviour.
+Routes using csimple with `range(N)` that relied on the range starting at 0 must
+be updated.
+
+The `camel-api` module now has an optional dependency on `org.jspecify:jspecify` for null safety annotations
+(`@NullMarked`, `@Nullable`). The dependency is `<optional>true</optional>`, so it is not pulled transitively
+into your application. The annotations are used to document nullability contracts across the Camel API surface
+and enable compile-time null checking with tools like NullAway. If you want to leverage these annotations in
+your own code or tooling, add `org.jspecify:jspecify` explicitly to your project dependencies.
+
+The `org.apache.camel.support.DefaultHeaderFilterStrategy` changed default setting for lowercase from `false` to `true`.
+If your application relies on case-sensitive header name matching (for example, two headers that differ only in
+case such as `X-Foo` and `x-foo`), restore the previous behavior by calling `setLowerCase(false)` on your strategy.
+
+The `DefaultHeaderFilterStrategy` now blocks headers whose names start with `Camel` or `camel`
+(case-insensitive) by default in both the inbound (external to Camel) and outbound
+(Camel to external) directions. Previously this required each component to explicitly call
+`setInFilterStartsWith(CAMEL_FILTER_STARTS_WITH)` and `setOutFilterStartsWith(CAMEL_FILTER_STARTS_WITH)`.
+
+This affects anyone who:
+
+* Configures `DefaultHeaderFilterStrategy` directly, OR
+* Extends `DefaultHeaderFilterStrategy` in a custom component without explicitly calling `setInFilterStartsWith` or `setOutFilterStartsWith`.
+
+If these headers need to pass through, opt out by calling `setInFilterStartsWith((String[]) null)` and/or
+`setOutFilterStartsWith((String[]) null)`, or by supplying a custom filter array.
+See `ClassicJmsHeaderFilterStrategy` for a worked example of the opt-out pattern.
+
+The following component-specific header filter strategy classes have been removed because
+`DefaultHeaderFilterStrategy` now provides equivalent behavior by default:
+
+* `CoAPHeaderFilterStrategy`
+* `CometdHeaderFilterStrategy`
+* `IggyHeaderFilterStrategy`
+* `NatsHeaderFilterStrategy`
+* `VertxWebsocketHeaderFilterStrategy`
+* `XmppHeaderFilterStrategy`
+
+If your code references any of these classes directly, replace them with `new DefaultHeaderFilterStrategy()`, which now provides the same behavior by default.
+
+The class `org.apache.camel.http.common.HttpProtocolHeaderFilterStrategy` has been deprecated.
+Use `org.apache.camel.http.base.HttpProtocolHeaderFilterStrategy` directly instead.
+
+==== Error Registry SPI changes
+
+The `ErrorRegistry` SPI has been enhanced to capture rich exchange data snapshots at error time,
+following the same pattern as BacklogTracer. The following breaking changes apply:
+
+- The `org.apache.camel.spi.ErrorRegistryEntry` interface has been removed and replaced by `BacklogErrorEventMessage`,
+  which extends a new `BacklogEventMessage` base interface shared with `BacklogTracerEventMessage`.
+- The `ErrorRegistryView.browse()` methods now return `Collection<BacklogErrorEventMessage>` instead of
+  `Collection<ErrorRegistryEntry>`.
+- The `stackTraceEnabled` option on `ErrorRegistry` has been removed. The full `Throwable` is now always captured.
+- Error registry configuration properties have moved from `camel.main.errorRegistryXxx` to the grouped
+  `camel.errorRegistry.*` prefix. The old flat properties (`camel.main.errorRegistryEnabled`,
+  `camel.main.errorRegistryMaximumEntries`, `camel.main.errorRegistryTimeToLiveSeconds`,
+  `camel.main.errorRegistryStackTraceEnabled`) are removed.
+
+New configuration properties under `camel.errorRegistry.*`:
+
+[options="header"]
+|===
+| Old property | New property
+| `camel.main.errorRegistryEnabled` | `camel.errorRegistry.enabled`
+| `camel.main.errorRegistryMaximumEntries` | `camel.errorRegistry.maximumEntries`
+| `camel.main.errorRegistryTimeToLiveSeconds` | `camel.errorRegistry.timeToLiveSeconds`
+| `camel.main.errorRegistryStackTraceEnabled` | _(removed, always captures full exception)_
+|===
+
+New capture options: `bodyMaxChars`, `bodyIncludeStreams`, `bodyIncludeFiles`,
+`includeExchangeProperties`, `includeExchangeVariables` — matching the BacklogTracer configuration.
+
+==== Virtual threads: `maxQueueSize` now honored in `threads()` EIP
+
+When virtual threads are enabled (`camel.threads.virtual.enabled=true`), the `threads()` EIP now honors `maxQueueSize`
+for backpressure. Previously, `maxQueueSize` was silently ignored and tasks were accepted unboundedly.
+
+The virtual thread executor is wrapped with a semaphore-based concurrency limit (`BoundedExecutorService`) that enforces
+a flat cap of `maxQueueSize` on delegated tasks. The `keepAliveTime` parameter is repurposed as the
+semaphore acquisition timeout (pool sizing parameters are not applicable to virtual threads).
+
+==== New `Block` rejected policy
+
+A new `Block` value has been added to `ThreadPoolRejectedPolicy`. With `Block`, the caller blocks indefinitely until
+capacity becomes available. This applies to both platform and virtual threads. The existing `CallerRuns` (default) and
+`Abort` policies are unchanged.
+
+The type converters for Java serialized objects with types `java.io.ObjectInput` and `java.io.ObjectOutput` has been removed.
+Java object serialization is a recurring source of security issues and therefore these converters has been removed.
+These converters are not used at all by Camel itself. To restore compatibility then end users can add these type converters back as custom converters in their own Camel applications.
+However, using Java serialization is discouraged and highly recommend to use other means.
+
+Removed `org.apache.camel.spi.ReifierStrategy` which is no longer in use by Camel and can safely be removed.
+
+A new `getChildren()` default method has been added to `org.apache.camel.NamedNode`. It returns `List<NamedNode>` and
+provides a uniform API for traversing the route model tree, including structural nodes like `WhenDefinition` and
+`OtherwiseDefinition` that are not `ProcessorDefinition` subclasses and therefore invisible to `getOutputs()`.
+Code that walks the model tree recursively should prefer `getChildren()` over `getOutputs()` to avoid needing
+special-case handling for Choice EIP.
+
+The `NamedNode.getLevel()` and `getParentId()` methods no longer treat `when` and `otherwise` nodes as "shallow".
+Previously these nodes were flattened to the same level as their parent `choice`, which was inconsistent with how
+`doCatch` and `doFinally` work inside `doTry`. Now `when` and `otherwise` contribute their own level, consistent
+with the tree structure exposed by `getChildren()`. This affects level values reported via JMX (`ManagedProcessor.getLevel()`)
+and dev consoles for nodes inside Choice EIP branches.
+
+=== camel-main
+
+The development-only self-signed certificate generated when `camel.ssl.selfSigned=true` (used to enable HTTPS without
+providing a keystore) now defaults to an *EC* key (NIST P-256, signed with SHA256withECDSA) instead of *RSA-2048*.
+The key algorithm is configurable via the new `camel.ssl.selfSignedKeyType` option, which accepts `EC` (default) or
+`RSA`. Set `camel.ssl.selfSignedKeyType=RSA` to retain the previous behaviour.
+
+This certificate is intended for development use only and is regenerated on each restart, so the change does not affect
+production deployments, which must provide their own keystore via `camel.ssl.keyStore`.
+
+=== camel-jbang
+
+Camel JBang has been rebranded as Camel CLI in the documentation.
+Camel CLI is powered by https://www.jbang.dev/[JBang].
+
+README files (`README.md`, `README.adoc`, etc.) are now included when running integrations with `camel run`.
+Previously these files were silently excluded. The README files are added to the classpath
+and exposed via the CLI connector so tools such as `camel monitor` can display them.
+
+The `camel wrapper` command now installs the scripts as `camel` instead of `camelw`.
+You can use the `--command-name=camelw` to use the old name.
+
+The `camel run` and `camel export` commands now auto-detect `application.properties` (and profile-specific
+variants such as `application-prod.properties`) in the current directory and include them automatically.
+Previously you had to explicitly list the properties file on the command line
+(e.g. `camel run hello.java application.properties`). This is no longer required.
+
+When `camel.main.routesReloadEnabled=true` (automatically set by `camel run --dev`), Camel now
+auto-disables `contentCache` on resource-based components (such as `xslt`) whose default is
+`true`, so that edits to the resource file are picked up on the next message without restarting
+the route. Set `camel.component.<name>.contentCache=true` (or pass `?contentCache=true` on the
+URI) to opt back in to caching during dev mode.
+
+The `camel get route-dump` command has been moved to `camel cmd route-dump`, grouping it with the other
+route action commands (`route-diagram`, `route-structure`, `route-topology`).
+
+==== Container-optimized layered Docker packaging for `camel export`
+
+The `camel export` command now generates Dockerfiles optimized for container image layer caching
+across all three runtimes. Previously, Camel Main and Spring Boot exports produced a single-layer
+fat JAR Dockerfile; now each runtime uses a layered approach where dependencies (stable) and
+application code (volatile) are in separate Docker layers.
+
+Each runtime implements layered packaging using its native mechanism:
+
+- **Camel Main**: the generated POM now includes `maven-jar-plugin` (with classpath manifest) and
+  `maven-dependency-plugin:copy-dependencies`. The Dockerfile copies `target/lib/` first (cached
+  dependency layer), then the thin `.original` JAR (small application layer).
+- **Spring Boot**: a multi-stage Dockerfile using Spring Boot's `jarmode=tools extract --layers`
+  to split the fat JAR into 4 Docker layers (dependencies, spring-boot-loader,
+  snapshot-dependencies, application).
+- **Quarkus**: unchanged — already uses fast-jar packaging with a 4-layer Dockerfile.
+
+The Quarkus-specific `--quarkus-package-type` option is now deprecated and hidden from help output.
+Quarkus exports always use fast-jar (layered) packaging.
+
+==== Improved default `--quarkus-version`
+
+The default behavior of commands requiring Quarkus Platform version has improved.
+Before Camel 4.21.0, when the version was not set via `--quarkus-version`, a default hardcoded value was used.
+We were not especially good at upgrading that version and also, the version of Quarkus Platform that delivers
+a specific version of Camel was always released several weeks after Camel, so it could never be up to date.
+
+Since Camel 4.21.0, the default version of Quarkus Platform is determined at Camel JBang runtime by querying
+Quarkus Extension Registry (https://registry.quarkus.io/), especially its
+`https://registry.quarkus.io/client/platforms/all[/client/platforms/all]` endpoint.
+The version chosen is the newest Quarkus Platform compatible with either the Camel version specified via `--camel-version`,
+if available, or the version of the currently running `camel-jbang`.
+
+Unless you pass `--fresh`, the content from Quarkus Extension Registry is fetched at most once a day
+and cached under `~/.camel/quarkus-extension-registries`.
+You may force using the cached resource by passing `--download=false`.
+
+Finally, the default base URI `https://registry.quarkus.io` of Quarkus Extension Registry
+can be overridden via `--quarkus-ext-registry`.
+In addition to `http://` and `https://`, it also accepts `file://` URIs.
+Those may come in handy when cannot access the internet.
+Append `.json` to the resource path when you store it locally.
+
+The internal Maven downloader used by Camel JBang now defaults to preferring locally cached
+artifacts over remote ones (`preferLocal = true`). Previously the default was `false`, meaning
+the downloader would always check remote repositories first. With the new default, already-resolved
+artifacts in the local Maven repository are used directly without contacting remote repositories.
+Use `--fresh` to force re-downloading from remote repositories when needed.
+
+==== camel-jbang-mcp
+
+The `camel_route_context` tool response no longer echoes the input route back to the caller. The
+`route` field has been removed from `RouteContextResult`; the response now contains only `format`,
+`components`, `eips`, and `summary`. This reduces token consumption for callers passing large
+routes.
+
+The `camel_catalog_component_doc` tool no longer returns every component option by default. Two new
+arguments make the response lean by default to reduce LLM context-window pressure:
+
+* `optionsFilter` (optional) — case-insensitive substring match on option name.
+* `includeOptions` (optional) — one of `required`, `common`, or `all`; defaults to `common`, which
+  excludes deprecated options and options whose label contains `advanced`. Pass `all` to restore the
+  previous behaviour.
+
+The `groupId`, `artifactId`, and `version` fields have been removed from the `camel_catalog_component_doc`
+response. A new `camel_catalog_component_maven` tool returns just those Maven coordinates and should be
+called only when you actually need to add the component as a dependency.
+
+The list-style catalog tools — `camel_catalog_components`, `camel_catalog_dataformats`,
+`camel_catalog_languages`, and `camel_catalog_eips` — no longer return the verbose
+`description` field in their per-item entries. Callers that need the full description should call
+the matching `*_doc` tool. The default `limit` for `camel_catalog_components` and
+`camel_catalog_dataformats` is also lowered from 50 to 20; pass an explicit `limit` to restore the
+previous behaviour.
+
+==== camel-jbang plugin commands
+
+The `camel plugin get --all` option is deprecated. Use the new `camel plugin list` command instead,
+which lists all available plugins (installed, bundled, and known 3rd party).
+The `camel plugin get` command now only shows installed plugins.
+
+==== camel-jbang plugins
+
+Plugins are now loaded lazily. Built-in commands that do not consume plugins
+(for example `camel get`, `camel version`, `camel ps`, `camel stop`) skip plugin
+discovery entirely, avoiding classpath scans and Maven resolution on every
+invocation. Plugin-consuming commands (`run`, `export`, `cmd`, `shell`) and
+plugin-provided commands (such as `kubernetes`, `generate`, `test`) continue
+to work unchanged. When an external plugin is resolved through Maven, its resolved classpath is
+cached in `~/.camel-jbang-plugins.json` under a new `resolved` block. Subsequent
+invocations load the plugin directly from the cached jars without going through
+the Maven downloader. The cache is validated by file size and modification time
+on both the cached jars and the plugin's POM, so SNAPSHOT plugins rebuilt
+locally are picked up automatically. The cache is also invalidated when the
+Camel version, the plugin GAV, or the effective `--repos`/`--repo` value
+changes. No user action is required; existing plugin entries are populated on
+first use after upgrade.
+
+=== camel-opentelemetry2 — Embedded OTLP receiver for OpenTelemetry Java Agent
+
+A new `exportTarget` option has been added to `OpenTelemetryTracer`. When using the OpenTelemetry Java Agent
+via Camel JBang, this option controls where spans are exported:
+
+* `tui` (default) — an embedded OTLP receiver is started inside the Camel process; the agent exports spans
+  to this receiver, which feeds them into the TUI Spans tab. No external collector is needed.
+* `jaeger` — the agent exports spans directly to a Jaeger instance (OTLP on port 4318). No embedded
+  receiver is created.
+
+Two new CLI flags have been added to `camel run`, `camel dev`, and `camel debug`:
+
+* `--open-telemetry-agent` — attaches the OpenTelemetry Java Agent to the Camel process. The agent
+  auto-instruments HTTP clients, JDBC, Kafka clients, gRPC, and other libraries.
+* `--open-telemetry-agent-export=<tui|jaeger>` — selects the export target (default: `tui`).
+
+The `camel-opentelemetry2` module now has an additional `provided`-scope dependency on
+`io.opentelemetry.proto:opentelemetry-proto` for the embedded OTLP receiver. This dependency is not
+pulled transitively into applications using `camel-opentelemetry2` at runtime.
+
+=== camel-yaml-dsl
+
+A new canonical JSON Schema variant (`camelYamlDsl-canonical.json`) has been added alongside the existing classic
+schema (`camelYamlDsl.json`). The canonical schema removes all implicit patterns (string shorthands, inline
+expressions, `oneOf`/`anyOf`/`not` constructs) to provide a simpler, more predictable schema for tooling
+such as IDEs, code generators, and AI assistants. See the xref:components:others:yaml-dsl.adoc[YAML DSL]
+documentation for details.
+
+The `YamlValidator` class now accepts a `boolean canonical` constructor parameter to validate against the
+canonical schema.
+
+A new `camel validate normalize` command has been added to Camel CLI. It rewrites YAML routes from the
+classic (shorthand) form to the canonical (explicit) form. The `camel validate yaml` command also
+supports a new `--canonical` flag to validate against the canonical schema.
+
+Camel now logs a WARN message when YAML DSL routes use compact (shorthand) notation instead of
+the canonical form. This encourages adopting the canonical style which is more tooling and AI friendly.
+The warning is logged once per resource file. To disable this warning, set
+`camel.main.yamlDslCompactNotationWarn = false` in `application.properties`.
+
+The YAML DSL now supports classpath-discovered `YamlDeserializerResolver` implementations.
+Optional modules can list resolver classes in `META-INF/services/org/apache/camel/YamlDeserializerResolver`
+to contribute custom YAML route step names automatically when the module is on the classpath, without changing
+`camel-yaml-dsl` and without requiring users to register resolver beans before routes are parsed.
+Registry-provided resolvers remain supported.
+Custom step names are runtime extensions and are not included in the generated YAML DSL JSON schemas unless schema
+generation is extended separately.
+See xref:components:others:yaml-dsl.adoc[YAML DSL] for details.
+
+=== camel-a2a (new, preview)
+
+A new `camel-a2a` component has been added providing support for the Agent-to-Agent (A2A) protocol.
+The component scheme is `a2a`. As a consumer, it exposes Camel routes as A2A-compliant agents;
+as a producer, it calls remote A2A agents. This component has **Preview** support level.
+The component also provides an `a2aSubTask` route step for scoped progress updates around nested route steps in Camel's model-based DSLs.
+This is a generated Camel route model step available to DSLs such as Java, XML, and YAML; it is not a component-provided YAML deserializer extension.
+Routes that use it need `camel-a2a` on the classpath for runtime processor creation.
+The progress expressions are route semantics, so expression evaluation failures fail the route.
+Failures while storing or notifying the resulting progress event are best-effort and do not replace the route outcome.
+Progress emission outside an active A2A task context is a no-op by default; set `failIfNoTaskContext=true` on
+`a2aSubTask` when such use should fail route processing.
+
+Consumer routes require an HTTP server component on the classpath. Use `camel-platform-http-vertx` for JSON-RPC agents, or use `camel-undertow` / `camel-jetty` when serving REST custom-method routes such as `/message:send` or real-time SSE streaming. The default Vert.x/platform-http transport treats colons as path-parameter delimiters and buffers `InputStream` streaming responses.
+
+For A2A consumers, `validateAuth` defaults to `true`. The well-known agent card endpoint remains public, but A2A
+operation endpoints fail closed unless the resolved agent card declares a security scheme that Camel can validate.
+Set `validateAuth=false` explicitly only when intentionally serving unauthenticated A2A operations. Network-exposed agents should declare `securitySchemes` and `securityRequirements` in the agent card and configure `apiKey`, `bearerToken`, or `oauthProfile` on the endpoint.
+
+=== camel-kafka / Spring Boot
+
+When using `camel-kafka-starter` with Spring Boot, the standard `spring.kafka.*` properties are now automatically
+bridged to the Camel Kafka component configuration (CAMEL-22760). This means you no longer need to duplicate
+Kafka settings under both `spring.kafka.*` and `camel.component.kafka.*`.
+
+The bridged properties include `bootstrap-servers`, `security.protocol`, SSL/TLS settings (keystore, truststore),
+`consumer.group-id`, `client-id`, and SASL properties (`sasl.mechanism`, `sasl.jaas.config`, `sasl.kerberos.service.name`).
+
+Explicit `camel.component.kafka.*` settings always take precedence over the bridged Spring Boot values.
+
+The bridge is enabled by default. To disable it, set:
+
+[source,properties]
+----
+camel.component.kafka.bridge-spring-kafka-properties=false
+----
+
+=== Default deserialization filter tightened
+
+The default `ObjectInputFilter` pattern that ships with the components listed below has been tightened
+to explicitly deny classes under `java.net.**` before allowing the rest of `java.**`, `javax.**` and
+`org.apache.camel.**`. The previous default did not deny `java.net.**`, which meant classes whose
+`hashCode`/`equals` methods perform network I/O (notably `java.net.URL` and `java.net.InetAddress`)
+could be deserialized by the in-code default.
+
+Affected components:
+
+* `camel-jms`, `camel-sjms`, `camel-amqp`, `camel-mina`, `camel-netty`, `camel-netty-http`,
+`camel-vertx-http`, `camel-infinispan`
+* The aggregation repository components: `camel-leveldb`, `camel-cassandraql`, `camel-consul`,
+`camel-sql` (JDBC aggregation repository)
+
+The new default is:
+
+[source,text]
+----
+!java.net.**;java.**;javax.**;org.apache.camel.**;!*
+----
+
+(or `!java.net.**;java.**;org.apache.camel.**;!*` for the aggregation repository components, which
+do not include `javax.**`).
+
+The endpoint-level option `deserializationFilter` and the JVM-wide system property
+`-Djdk.serialFilter` continue to override this default. Applications that have a legitimate need to
+deserialize `java.net.URL` or other `java.net.*` types must configure an explicit filter.
+
+For production deployments handling untrusted serialized payloads, the in-code filter is intended as
+defense-in-depth only. The primary mitigation should be configured at the messaging provider:
+
+* ActiveMQ Artemis: `deserializationAllowList` / `deserializationDenyList` (see the Artemis docs)
+* ActiveMQ Classic: the `org.apache.activemq.SERIALIZABLE_PACKAGES` system property
+
+=== camel-kamelet
+
+Kamelet endpoint URIs constructed from YAML DSL `parameters:` blocks are no longer URL-encoded at runtime.
+Previously, property values containing special characters (such as `/`) were incorrectly URL-encoded
+(e.g., `application/json` became `application%2Fjson`), which caused issues because the Kamelet component
+uses raw URIs and does not decode them. This fix aligns the YAML DSL `parameters:` handling with how
+inline kamelet URIs (e.g., `kamelet:myKamelet?key=value`) already work.
+
+If you have workarounds in place to deal with encoded kamelet property values, they can be removed.
+
+=== camel-jms
+
+JMS `ObjectMessage` support is now disabled by default. Java object serialization is a recurring source
+of security issues, and Camel JMS routes rarely use `ObjectMessage` in practice. The component will now
+refuse to create or read `jakarta.jms.ObjectMessage` instances unless the new `objectMessageEnabled`
+option is explicitly set to `true`.
+
+This affects the following endpoint/component options that rely on `ObjectMessage` internally:
+
+* `jmsMessageType=Object` (or sending a `Serializable` body that is auto-detected as `Object`)
+* `transferExchange=true`
+* `transferException=true`
+* receiving a JMS `ObjectMessage` produced by an external sender
+
+To restore the previous behavior, enable the option at the component or endpoint level:
+
+[source,properties]
+----
+camel.component.jms.objectMessageEnabled=true
+----
+
+Or, on a single endpoint:
+
+[source,text]
+----
+jms:queue:foo?objectMessageEnabled=true
+----
+
+=== camel-nats
+
+The NATS consumer no longer sends a reply to the `replyTo` subject by default. Previously, the consumer
+would unconditionally publish the exchange body back to the NATS `replyTo` subject after route processing,
+regardless of the exchange pattern. This could cause `TypeConversionException` or payload-size-exceeded
+errors when the route body was not suitable for reply.
+
+The reply is now only sent when the exchange pattern is `InOut`. To restore request/reply behavior, set
+`exchangePattern=InOut` on the consumer endpoint:
+
+[source,text]
+----
+nats:myTopic?exchangePattern=InOut
+----
+
+Routes that do not use NATS request/reply are unaffected.
+
+=== camel-sjms / camel-sjms2
+
+The same default applies to `camel-sjms` (and `camel-sjms2`, which inherits from it): JMS `ObjectMessage`
+support is now disabled by default and gated by a new `objectMessageEnabled` option (default `false`)
+on `SjmsComponent` / `SjmsEndpoint`.
+
+This affects the same endpoint/component options as `camel-jms`:
+
+* `jmsMessageType=Object` (or sending a `Serializable` body that is auto-detected as `Object`)
+* `transferException=true`
+* receiving a JMS `ObjectMessage` produced by an external sender
+
+To restore the previous behavior, enable the option at the component or endpoint level:
+
+[source,properties]
+----
+camel.component.sjms.objectMessageEnabled=true
+camel.component.sjms2.objectMessageEnabled=true
+----
+
+Or, on a single endpoint:
+
+[source,text]
+----
+sjms:queue:foo?objectMessageEnabled=true
+sjms2:queue:foo?objectMessageEnabled=true
+----
+
+=== camel-redis
+
+The `RedisAggregationRepository` now uses per-key distributed locks instead of a single global lock.
+Previously, all pessimistic aggregation operations serialized on a single Redis lock named `"aggregationLock"`.
+The lock key is now `<mapName>-lock-<correlationKey>`, so operations on unrelated correlation keys no longer
+block each other. Existing deployments that inspect Redis lock keys will see different key names after upgrading.
+
+The `remove()` method now throws `RuntimeCamelException` instead of `RuntimeException` when a transaction
+rollback occurs. Routes that catch `RuntimeException` explicitly are unaffected, but routes that catch
+`RuntimeCamelException` specifically will now also catch this failure path.
+
+=== camel-hazelcast
+
+Hazelcast instances created and managed by Camel (when no user-supplied
+`Config` or `HazelcastInstance` is provided) now apply a default
+`JavaSerializationFilterConfig` on the `SerializationConfig` of the
+`Config` built by Camel. The default whitelists the class name prefixes
+`java.`, `javax.`, `org.apache.camel.` and blacklists `java.net.`.
+
+This affects:
+
+* `camel-hazelcast` component endpoints when neither `hazelcastInstance`,
+`hazelcastConfigUri`, nor a referenced `Config` is supplied
+* `HazelcastAggregationRepository` and `HazelcastIdempotentRepository`
+when no `hazelcastInstance` is supplied
+* `HazelcastUtil#newInstance()` (no-arg)
+
+A user-supplied `JavaSerializationFilterConfig` (set on the
+`SerializationConfig` of a `Config` provided via `hazelcastConfigUri`, a
+referenced `Config` bean, or already wired into a pre-built
+`HazelcastInstance`) is respected and is not overwritten.
+
+Applications that store classes outside the default whitelist on a
+Hazelcast topic, queue, map, list, set, or in one of the repositories
+above must provide their own `Config` with a
+`JavaSerializationFilterConfig` configured for their class names.
+
+=== camel-bindy
+
+Bindy can now keep going when an individual field fails to parse, instead of aborting the whole
+unmarshal. Two new opt-in annotation elements drive this:
+
+* `continueParseOnFailure` on `@CsvRecord`, `@FixedLengthRecord`, and `@Message` (record-level boolean,
+  default `false`). When `true`, every field on the record tolerates parse failures by default.
+* `continueParseOnFailure` on `@DataField` and `@KeyValuePairField` (field-level tri-state of type
+  `ContinueOnFailure`, default `INHERIT`). `TRUE` and `FALSE` override the record-level setting
+  for that one field; `INHERIT` defers to the record.
+
+When a parse fails and the field is tolerant, Bindy substitutes the field's existing `@DataField.defaultValue`
+(if set) by running it through the same `Format` instance — so the substitute is automatically the
+right Java type. If no `defaultValue` is set, the field gets the same fallback an unfilled field would
+get today: `null` for object types, and the primitive's `MIN_VALUE` sentinel (the existing
+`getDefaultValueForPrimitive` convention) for `int`, `long`, etc. `boolean` falls back to `false` and
+`String` to `""` (or `null` if `defaultValueStringAsNull` is enabled on the DataFormat).
+
+Everything is opt-in; default behavior is unchanged. `@KeyValuePairField` does not have a `defaultValue`
+element today, so KVP fields can only fall back to the type-appropriate default.
+
+[source,java]
+----
+@CsvRecord(separator = ",", continueParseOnFailure = true)
+public class Order {
+    @DataField(pos = 1)
+    private int id;
+
+    @DataField(pos = 2, pattern = "yyyy-MM-dd", defaultValue = "1970-01-01")
+    private Date orderDate;     // bad input -> 1970-01-01 instead of throwing
+
+    @DataField(pos = 3, continueParseOnFailure = ContinueOnFailure.FALSE)
+    private BigDecimal amount;  // this one field stays strict
+}
+----
+
+=== camel-keycloak
+
+The `KeycloakSecurityPolicy` route policy now always verifies the access token when one is present - signature,
+issuer and expiry for local JWT verification, or active state and issuer when token introspection is enabled -
+even when neither `requiredRoles` nor `requiredPermissions` is configured. Previously the token was only verified
+when at least one role or permission was required.
+
+Routes that attach a `KeycloakSecurityPolicy` without any roles or permissions and that previously forwarded an
+unverified or invalid token will now have such requests rejected with a `CamelAuthorizationException`. Provide a
+valid, verifiable token (or configure `requiredRoles` / `requiredPermissions`) for these routes.
+
+=== camel-elasticsearch / camel-elasticsearch-rest-client / camel-solr
+
+The `camel-elasticsearch`, `camel-elasticsearch-rest-client` and `camel-solr` components now support
+configuring TLS through `SSLContextParameters` (the JSSE utility), in addition to the existing
+`certificatePath` option. The new `sslContextParameters` option allows configuring named groups,
+signature schemes, cipher suites and protocols, for example post-quantum named groups such as
+`X25519MLKEM768` on JDK 25+. It can be set at the endpoint or component level, and the components also
+honor the context-wide global SSL configuration via `useGlobalSslContextParameters`. When configured,
+`SSLContextParameters` takes precedence over `certificatePath`.
+
+For `camel-elasticsearch` and `camel-elasticsearch-rest-client`, the HTTP client is now configured with
+the TLS settings regardless of whether basic authentication (`user`/`password`) is set. Previously the
+`certificatePath` option was silently ignored unless both `user` and `password` were configured. Routes
+that set `certificatePath` without credentials will now correctly use the configured TLS context where it
+was previously a no-op.
+
+=== camel-openai
+
+The `chat-completion` operation now accepts `WrappedFile` (the body type produced by the file, FTP, SFTP and SMB
+components), `Path`, `byte[]` and `InputStream` message bodies for file-based and vision model input, in addition
+to `java.io.File`. Previously such bodies were converted to a String, which corrupted binary image content.
+
+The MIME type of the body is now detected from headers (the new `CamelOpenAIMediaType` header, `CamelFileContentType`,
+cloud storage content-type headers such as `CamelAwsS3ContentType`, or `Content-Type`), and finally the file name
+extension using the Camel built-in MIME type table. Previously only `Files.probeContentType()` was used, which could
+fail to detect the type on some platforms. A `byte[]` or `InputStream` body whose detected MIME type is an image is now
+sent to the model as a base64-encoded image instead of being converted to text; bodies without image MIME type metadata
+keep the previous text behavior. XML and JSON files (`application/xml`, `application/json`) are treated as text prompts.
+
+The `sse` `transportType` is deprecated. it is recommended to switch to `streamableHttp`.
+
+=== camel-stomp removal
+
+Camel stomp was deprecated with Camel 4.17. The stomp library didn't have any activities in the last 10 years. The component is now removed.
+
+=== camel-aws-xray removal
+
+Camel AWS X-Ray was deprecated with Camel 4.17. Amazon Web Services X-Ray service is in maintenance mode since February 2026. The component is now removed.
+
+=== camel-guava-eventbus removal
+
+Camel Guava EventBus was deprecated with Camel 4.6. The component is now removed.
+
+=== camel-grape removal
+
+Camel Grape was deprecated with Camel 4.1. The component is now removed.
+
+=== camel-elytron removal
+
+Camel Grape was deprecated with Camel 4.0. The component is now removed.
+
+=== camel-github removal
+
+Camel GitHub was deprecated with Camel 4.18. The component is now removed.
+There is `camel-github2` to replace it.
+Technically, `camel-github` was based on Eclipse EGit which is no more active. `camel-github2` is based on `org.kohsuke:github-api`.
+
+=== camel-telemetry
+
+In order to prevent some potential span leakage in `camel-opentelemetry2` (see notes below) we had to perform some changes and introduce the following parameter:
+
+```
+|`disableCoreProcessors`| false | Disable any inner core processors (any core DSL processor provided in the route, for example `bean`, `log`, ...).
+```
+
+This is required in order to distinguish the older `traceProcessors` parameter which now accounts **exclusively** for custom processors. Keeping the default parameter (`false`) could increase the number of spans generated, though, this is required to guarantee consistency and memory sealing. If you need to reduce the number of spans for any reason you can explicitly provide exclusion configuration.
+
+NOTE: turn `disableCoreProcessors` to `true` and `traceProcessors` to `false` to skip entirely all processors. However it is not recommended to disable core processors in order to avoid the generation of third party dependencies orphaned spans.
+
+In this version we have also changed certain interfaces, so, if you have custom telemetry implementations, you may need to adjust to them:
+
+==== `org.apache.camel.telemetry.SpanLifecycleManager`
+
+The `create` method signature has changed:
+
+[source,java]
+----
+// Old signature
+Span create(String spanName, Span parent, SpanContextPropagationExtractor extractor)
+
+// New signature
+Span create(String spanName, String spanKind, Span parent, SpanContextPropagationExtractor
+extractor)
+----
+
+==== `org.apache.camel.telemetry.SpanDecorator`
+
+A new method must be implemented:
+
+[source,java]
+----
+String getSpanKind(String operation)
+----
+
+This method should return the appropriate SpanKind based on the operation. Most implementations can
+extend from:
+
+- `AbstractSpanDecorator` (returns `INTERNAL` for all operations)
+- `AbstractHttpSpanDecorator` (returns `CLIENT` for `EVENT_SENT`, `SERVER` for `EVENT_RECEIVED`)
+- `AbstractMessagingSpanDecorator` (returns `PRODUCER` for `EVENT_SENT`, `CONSUMER` for `EVENT_RECEIVED`)
+
+==== Reduced span verbosity for endpoint-sending processors
+
+Processors that send to an endpoint (`to`, `toD`, `wireTap`, `enrich`) no longer emit a redundant
+processor span (`EVENT_PROCESS`) wrapping the endpoint event span (`EVENT_SENT`). Previously these
+EIPs produced two spans in a parent-child relationship — the processor span added no value because
+the event span already captures the destination, timing, and status.
+
+A new `org.apache.camel.EndpointSending` marker interface in `camel-api` identifies processors that
+will produce their own endpoint span via `ExchangeSendingEvent`. The telemetry intercept strategy
+skips creating a processor span for these processors.
+
+This reduces span tree depth and total span count for routes that use `to`, `toD`, `wireTap`, or
+`enrich`. Non-send EIPs (`log`, `bean`, `split`, `aggregate`, etc.) continue to produce processor
+spans as before.
+
+If you have custom telemetry code that relies on the processor span existing as a parent of the
+endpoint span for `to`, `toD`, `wireTap`, or `enrich`, you will need to adjust your span hierarchy
+expectations.
+
+==== Route-level filtering with `traceCustomIdOnly`
+
+The `traceCustomIdOnly` option now also applies at the route level. Routes without an explicit
+`.routeId()` are excluded entirely from tracing — no route span, no processor spans, and no
+endpoint send spans are created within them. Previously, `traceCustomIdOnly` only filtered
+individual processors within all routes.
+
+This means that if you relied on `traceCustomIdOnly=true` while leaving routes with auto-generated
+IDs, those routes will now produce zero spans. To restore tracing for a route, assign it an explicit
+`.routeId()`.
+
+=== camel-opentelemetry2
+
+In order to prevent a potential leak when running asynchronous components we need to rethink the implementation details of `camel-opentelemetry2` and remove the  `Scope` wrapping that, when asynchronous, was opening the `Scope` in a thread and closing in another (what we had called "dirty" context). We are now removing this wrapping and moving this part exclusively in the custom Camel `Processors`. Here Camel will take care to open the Opentelemetry scope and close it within the same thread.
+
+What it means is that, from now on, the final user or any third party dependency can only "control" the Opentelemetry context within the boundary of a Processor execution.
+
+This is just an informative note, there is not action expected by the final user.
+
+=== camel-djl
+
+The `nlp/word_embedding` application no longer ships a built-in zoo predictor.
+The only zoo model previously listed for this application — `ai.djl.mxnet:glove:0.0.2` —
+relied on the discontinued Apache MXNet engine and never loaded successfully (the
+corresponding integration test had been permanently `@Disabled`). The
+`ZooWordEmbeddingPredictor` class has been removed and the `nlp/word_embedding`
+branch of `ModelPredictorProducer.getZooPredictor` now reports `Application not
+supported` for that path.
+
+Routes that use a custom word-embedding model (no `artifactId`, with explicit
+`model` and `translator` parameters) are unaffected — `CustomWordEmbeddingPredictor`
+and the `nlp/word_embedding` branch of `getCustomPredictor` remain in place.
+
+=== camel-aws-bedrock
+
+The `applyGuardrail` producer operation now reads the guardrail identifier from a new dedicated header
+`CamelAwsBedrockGuardrailIdentifier` (constant `BedrockConstants.GUARDRAIL_IDENTIFIER`, typed `String`)
+instead of `CamelAwsBedrockGuardrailConfig`. The `CamelAwsBedrockGuardrailConfig` header is typed
+`GuardrailConfiguration` and is reserved for the `converse` and `converseStream` operations; the
+previous code path silently produced `null` whenever a route mixed `converse` and `applyGuardrail`
+calls. If you were not setting the guardrail identifier via header, the endpoint-level
+`guardrailIdentifier` option continues to work without changes.
+
+=== camel-jgroups - potential breaking change
+
+The Exchange header constants in `JGroupsConstants` have been renamed to follow
+the Camel naming convention used across the rest of the component catalog. The
+Java field names are unchanged; only the header string values have changed:
+
+[options="header"]
+|===
+| Constant | Previous value | New value
+| `JGroupsConstants.HEADER_JGROUPS_CHANNEL_ADDRESS` | `JGROUPS_CHANNEL_ADDRESS` | `CamelJGroupsChannelAddress`
+| `JGroupsConstants.HEADER_JGROUPS_DEST` | `JGROUPS_DEST` | `CamelJGroupsDest`
+| `JGroupsConstants.HEADER_JGROUPS_SRC` | `JGROUPS_SRC` | `CamelJGroupsSrc`
+| `JGroupsConstants.HEADER_JGROUPS_ORIGINAL_MESSAGE` | `JGROUPS_ORIGINAL_MESSAGE` | `CamelJGroupsOriginalMessage`
+|===
+
+This is a breaking change for routes that read or write these headers by
+their literal string value. Routes that reference the constant symbolically
+(for example `setHeader(JGroupsConstants.HEADER_JGROUPS_DEST, ...)`) continue
+to work without changes. Routes that set the header by its literal string
+value (for example `setHeader("JGROUPS_DEST", ...)`) must be updated to use
+the new value (`setHeader("CamelJGroupsDest", ...)`).
+
+=== camel-elasticsearch-rest-client
+
+The Exchange header constants in `ElasticSearchRestClientConstant` have been
+renamed to follow the Camel naming convention used across the rest of the
+component catalog. The Java field names are unchanged; only the header string
+values have changed:
+
+[options="header"]
+|===
+| Constant | Previous value | New value
+| `ElasticSearchRestClientConstant.ID` | `ID` | `CamelElasticsearchId`
+| `ElasticSearchRestClientConstant.SEARCH_QUERY` | `SEARCH_QUERY` | `CamelElasticsearchSearchQuery`
+| `ElasticSearchRestClientConstant.INDEX_SETTINGS` | `INDEX_SETTINGS` | `CamelElasticsearchIndexSettings`
+| `ElasticSearchRestClientConstant.INDEX_NAME` | `INDEX_NAME` | `CamelElasticsearchIndexName`
+| `ElasticSearchRestClientConstant.OPERATION` | `OPERATION` | `CamelElasticsearchOperation`
+|===
+
+Routes that reference the constant symbolically (for example
+`setHeader(ElasticSearchRestClientConstant.SEARCH_QUERY, ...)`) continue to
+work without changes. Routes that set the header by its literal string value
+(for example `setHeader("SEARCH_QUERY", ...)`) must be updated to use the
+new value (`setHeader("CamelElasticsearchSearchQuery", ...)`).
+
+=== camel-cxf
+
+The Exchange header constants in `CxfConstants` (module `camel-cxf-common`, shared
+by `camel-cxf` and `camel-cxfrs`) have been renamed to follow the Camel naming
+convention used across the rest of the component catalog. The Java field names are
+unchanged; only the header string values have changed:
+
+[options="header"]
+|===
+| Constant | Previous value | New value
+| `CxfConstants.OPERATION_NAME` | `operationName` | `CamelCxfOperationName`
+| `CxfConstants.OPERATION_NAMESPACE` | `operationNamespace` | `CamelCxfOperationNamespace`
+|===
+
+Routes that reference the constant symbolically (for example
+`setHeader(CxfConstants.OPERATION_NAME, ...)`) continue to work without changes.
+Routes that set the header by its literal string value (for example
+`setHeader("operationName", ...)`) must be updated to use the new value
+(`setHeader("CamelCxfOperationName", ...)`).
+
+In particular, the documented `cxfrs` `SimpleConsumer` dispatch idiom that routes
+on the operation name by its literal header name must be updated:
+
+._Java-only: updated CXF operation name header in recipientList_
+[source,java]
+----
+// before
+from("cxfrs:bean:rsServer?bindingStyle=SimpleConsumer")
+    .recipientList(simple("direct:${header.operationName}"));
+
+// after
+from("cxfrs:bean:rsServer?bindingStyle=SimpleConsumer")
+    .recipientList(simple("direct:${header.CamelCxfOperationName}"));
+----
+
+==== Behaviour change: cross-transport propagation of the operation header
+
+Because the renamed header value now begins with `Camel`, it is filtered by the
+standard transport `HeaderFilterStrategy` (`JmsHeaderFilterStrategy`,
+`HttpHeaderFilterStrategy`, etc.) when crossing a transport boundary, by design
+— `Camel*` headers are framework-internal and are not propagated over the wire.
+
+Routes that bridge an external transport (JMS, HTTP, ...) into a `cxf:` producer
+and select the SOAP operation from a header supplied by the sender must
+therefore carry the operation in a non-`Camel`-prefixed application header and
+map it to `CxfConstants.OPERATION_NAME` (`CamelCxfOperationName`) in the route
+between the transport `from` and the `cxf:` `to`:
+
+[source,xml]
+----
+<!-- before (pre-4.21) -->
+<route>
+    <from uri="jms:queue:bridge.cxf"/>
+    <to uri="cxf://bean:serviceEndpoint"/>
+</route>
+<!-- caller sets the header keyed by the pre-4.21 value:
+     setHeader("operationName", "greetMe") -->
+
+<!-- after -->
+<route>
+    <from uri="jms:queue:bridge.cxf"/>
+    <setHeader name="CamelCxfOperationName">
+        <simple>${header.operationName}</simple>
+    </setHeader>
+    <to uri="cxf://bean:serviceEndpoint"/>
+</route>
+<!-- caller sets a non-Camel-prefixed application carrier header (any name
+     that is not stripped by the transport HeaderFilterStrategy works);
+     the route restores the CXF operation header after the transport hop. -->
+----
+
+The same pattern applies to HTTP-based bridges (`platform-http`/`jetty`/`netty
+-http`/`http` -> `cxf:`) and any other transport whose default
+`HeaderFilterStrategy` filters `Camel*` headers.
+
+==== WS-Security dependency is now optional
+
+The `cxf-rt-ws-security` dependency in `camel-cxf-soap` is now **optional**. Most Camel CXF users do
+not need WS-Security / SAML support, yet the dependency transitively pulled in 13+ `org.opensaml`
+JARs hosted on a third-party Maven repository (`build.shibboleth.net`) that has proven unreliable,
+causing intermittent CI and build failures.
+
+If your project uses WS-Security features (signatures, encryption, username tokens, SAML), you will
+need to add `cxf-rt-ws-security` explicitly to your project's POM:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.cxf</groupId>
+    <artifactId>cxf-rt-ws-security</artifactId>
+</dependency>
+----
+
+If you also need OpenSAML (for SAML-based WS-Security), add the `org.opensaml` dependencies
+explicitly and configure the Shibboleth Maven repository (`https://build.shibboleth.net/nexus/content/repositories/releases`)
+in your project's POM or Maven `settings.xml`.
+
+=== camel-dns - potential breaking change
+
+The Exchange header constants in `DnsConstants` have been renamed to follow the
+Camel naming convention used across the rest of the component catalog. The Java
+field names are unchanged; only the header string values have changed:
+
+[options="header"]
+|===
+| Constant | Previous value | New value
+| `DnsConstants.DNS_CLASS`  | `dns.class`  | `CamelDnsClass`
+| `DnsConstants.DNS_NAME`   | `dns.name`   | `CamelDnsName`
+| `DnsConstants.DNS_DOMAIN` | `dns.domain` | `CamelDnsDomain`
+| `DnsConstants.DNS_SERVER` | `dns.server` | `CamelDnsServer`
+| `DnsConstants.DNS_TYPE`   | `dns.type`   | `CamelDnsType`
+| `DnsConstants.TERM`       | `term`       | `CamelDnsTerm`
+|===
+
+Routes that reference the constant symbolically (for example
+`setHeader(DnsConstants.DNS_SERVER, ...)`) continue to work without changes.
+Routes that set the header by its literal string value (for example
+`setHeader("dns.server", ...)` or `setHeader("term", ...)`) must be updated to
+use the new value:
+
+._Java-only: updated DNS header names in route_
+[source,java]
+----
+// before
+from("direct:start")
+    .setHeader("dns.name", constant("www.example.com"))
+    .setHeader("dns.type", constant("A"))
+    .to("dns:lookup");
+
+// after
+from("direct:start")
+    .setHeader("CamelDnsName", constant("www.example.com"))
+    .setHeader("CamelDnsType", constant("A"))
+    .to("dns:lookup");
+----
+
+==== Behaviour change: cross-transport propagation of dns.* headers
+
+Because the renamed header values now begin with `Camel`, they are filtered by
+the standard transport `HeaderFilterStrategy` (`JmsHeaderFilterStrategy`,
+`HttpHeaderFilterStrategy`, etc.) when crossing a transport boundary, by design
+— `Camel*` headers are framework-internal and are not propagated over the wire.
+
+Routes that bridge an external transport (HTTP, JMS, ...) into a `dns:`
+producer and let the sender choose the DNS operation parameters via headers
+must therefore carry those parameters in non-`Camel`-prefixed application
+headers and map them to the corresponding `DnsConstants` value in the route
+between the transport `from` and the `dns:` `to`. Allowing untrusted senders
+to drive `DnsConstants.DNS_SERVER` (the recursive resolver target in
+`dns:dig`) without such a mapping step is not the intended use of the
+component.
+
+=== camel-solr
+
+The two Exchange header prefix constants in `SolrConstants` have been renamed to
+follow the Camel naming convention already used by the other constants in the
+same file (which were renamed in 4.10 under CAMEL-21697). The Java field names
+are unchanged; only the prefix string values have changed:
+
+[options="header"]
+|===
+| Constant | Previous value | New value
+| `SolrConstants.HEADER_FIELD_PREFIX` | `SolrField.` | `CamelSolrField.`
+| `SolrConstants.HEADER_PARAM_PREFIX` | `SolrParam.` | `CamelSolrParam.`
+|===
+
+Routes that reference the constants symbolically (for example
+`setHeader(SolrConstants.HEADER_FIELD_PREFIX + "id", ...)`) continue to work
+without changes. Routes that set the headers by their literal string value
+(for example `setHeader("SolrField.id", ...)` or
+`setHeader("SolrParam.commit", ...)`) must be updated to use the new prefix
+(`CamelSolrField.id`, `CamelSolrParam.commit`).
+
+Because the renamed prefixes now begin with `Camel`, they are stripped by the
+standard transport `HeaderFilterStrategy` (`HttpHeaderFilterStrategy`, etc.)
+when crossing a transport boundary, by design — `Camel*` headers are
+framework-internal and are not propagated over the wire. Routes that bridge an
+external transport (HTTP, JMS, ...) into a `solr:` producer and want to drive
+Solr document fields or query parameters from a header supplied by the sender
+must therefore carry the value in a non-`Camel`-prefixed application header and
+map it to the appropriate `CamelSolrField.*` / `CamelSolrParam.*` header in the
+route between the transport `from` and the `solr:` `to`.
+
+=== camel-aws2-s3
+
+The `listObjects` operation now uses the `ListObjectsV2` AWS API instead of the deprecated `ListObjects` API.
+If you use `pojoRequest=true` with `operation=listObjects`, you must change your request and response types:
+
+* `ListObjectsRequest` -> `ListObjectsV2Request`
+* `ListObjectsResponse` -> `ListObjectsV2Response`
+
+The non-POJO path (header-based configuration) is updated automatically and requires no changes.
+
+=== camel-nats
+
+Fixed the JetStream consumer pull subscription mode (which is the default) so that messages are
+actually consumed from the server. Previously the consumer would set up a pull subscription but never
+issue any pull/fetch requests, so no messages were delivered until the user explicitly switched to
+push mode with `pullSubscription=false`.
+
+Two new endpoint options have been added to control the pull fetch loop:
+
+* `pullBatchSize` (default `10`) — maximum number of messages to fetch per pull request.
+* `pullFetchTimeout` (default `1000` ms) — maximum time to wait for a batch on each fetch.
+
+The default `headerFilterStrategy` is now a new `NatsHeaderFilterStrategy` that filters headers
+starting with `Camel` / `camel` (case-insensitive) in both the inbound and outbound directions,
+aligning the component with the rest of the Camel component catalog (`camel-kafka`, `camel-mail`,
+`camel-coap`, `camel-google-pubsub`, ...). Routes that relied on passing through these header
+names from NATS messages can supply a custom `headerFilterStrategy` to restore the previous
+behaviour.
+
+=== camel-as2
+
+The AS2 server consumer now logs a warning when it delivers an inbound signed message without verifying
+its signature because no `validateSigningCertificateChain` is configured. A new opt-in
+`signatureVerificationRequired` option (server only, default `false`) can be set to reject such
+unverifiable signed messages with an `insufficient-message-security` error instead of delivering them
+unverified. The default behaviour is otherwise unchanged.
+
+=== camel-oauth
+
+`OAuthTokenRequest.refreshTokenGrant(...)` now sends the RFC 6749 `refresh_token` form parameter for
+the refresh token grant instead of the incorrect `token` parameter.
+Custom test servers or identity-provider mocks that expected the old request body should be updated.
+
+`UserProfile` token verification now fails closed when no JWK set is available: a signed token can no
+longer be accepted when the configured JWK set is missing or empty, since its signature cannot be
+verified in that case. Deployments with a correctly resolved JWK set are unaffected; this aligns the
+legacy `UserProfile` path with the `JwtTokenValidator` SPI path.
+
+=== camel-platform-http, camel-servlet, camel-jetty, camel-netty-http, and camel-undertow
+
+The `platform-http`, `servlet`, `jetty`, `netty-http`, and `undertow` HTTP consumer endpoints now have an
+`oauthProfile` option for opt-in validation of incoming `Authorization: Bearer` tokens using the public OAuth
+token validation SPI. Undertow WebSocket consumer endpoints also support the option.
+Existing routes are unchanged unless this option is set.
+Routes that enable `oauthProfile` need an `OAuthTokenValidationFactory`; `camel-oauth` provides the
+default implementation and runtimes can provide their own implementation backed by native security.
+Applications can also select a profile-specific validator with
+`camel.oauth.<profile>.validation-factory=#bean:myTokenValidationFactory`; if configured, the referenced
+bean must exist and implement `OAuthTokenValidationFactory`.
+The default `camel-oauth` provider requires `expected-issuer`/`base-uri`, `expected-audience`, and HTTPS
+identity-provider endpoints unless the new explicit opt-out properties are set.
+JWT validation profiles can also set `expected-token-type` to require a specific JWT `typ` header
+such as `at+jwt`.
+HTTP requests and supported WebSocket upgrade requests without a Bearer token or with an invalid
+token are rejected with HTTP 401; missing credentials receive a `WWW-Authenticate: Bearer` response
+header and invalid tokens receive `WWW-Authenticate: Bearer error="invalid_token"`.
+Malformed `Authorization` headers are rejected with HTTP 400 and
+`WWW-Authenticate: Bearer error="invalid_request"`.
+Static profile configuration is resolved and validated at route startup. Updates to OAuth profile
+properties from `application.properties`, secrets, config maps, vaults, or other property sources
+require restarting the route or Camel context before they take effect. Token validation infrastructure
+failures are rejected with HTTP 503.
+For valid tokens, the token validation result is stored on the exchange as the
+`CamelOAuthTokenValidationResult` exchange property. Route code can use the result to read the
+principal name, token scopes, and immutable token attributes/claims. The raw `Authorization` header is
+removed before the route is invoked.
+This is a pre-route authentication check; HTTP consumers may still accept, decode, or bind the
+inbound request before validation according to their normal transport lifecycle.
+For Undertow WebSocket consumers, validation happens during the HTTP upgrade handshake and the result
+is attached to the `ONOPEN` event exchange when `fireWebSocketChannelEvents=true`, and to subsequent
+message exchanges for that connection.
+Rest DSL and contract-first OpenAPI routes pass the option to the selected HTTP consumer with
+`restConfiguration().endpointProperty("oauthProfile", "myprofile")`.
+Direct contract-first OpenAPI consumer routes can also pass the option on the endpoint URI, for example
+`rest-openapi:petstore-v3.json?consumerComponentName=platform-http&oauthProfile=myprofile`.
+OpenAPI `securitySchemes` are not converted into `oauthProfile` automatically.
+The `oauthProfile` option is a first-class `rest-openapi` endpoint option that is forwarded to the
+selected consumer delegate, which is responsible for enforcing it. The route fails at startup when
+the resolved `RestOpenApiConsumerFactory` does not declare that its consumers enforce `oauthProfile`
+via the new `RestOpenApiConsumerFactory.supportsOAuthProfile()` method, which defaults to `false`.
+Custom factories that enforce the option must override it to return `true`; the built-in
+`platform-http` delegate declares support.
+For netty-http consumers, `oauthProfile` requires `usingExecutorService=true` and `sync=true`, which
+are the defaults, so blocking validation does not run on a Netty event-loop thread and rejection
+responses can be returned to the client. Routes that combine `oauthProfile`
+with `nettySharedHttpServer` fail at startup, because the shared pipeline does not use the endpoint
+executor service. When several netty-http consumers share the same host and port, a consumer with
+`oauthProfile` fails at startup when another endpoint already initialized the shared server with
+`usingExecutorService=false`, because the first consumer on an address decides the effective pipeline
+configuration.
+The `atmosphere-websocket` component does not support `oauthProfile` and rejects the option at route
+startup.
+
+The public incoming-token validation SPI consists of `OAuthTokenValidationFactory`,
+`OAuthTokenValidationConfig`, and `OAuthTokenValidationResult`.
+Components and route code can also use `OAuthHelper.validateOAuthToken(...)` from `camel-support`.
+Providers can implement `OAuthTokenValidationFactory#validateConfiguration(...)` to fail fast during
+route startup.
+
+Platform HTTP engine implementations can override the new
+`PlatformHttpEngine#createConsumer(PlatformHttpEndpoint, Processor, PlatformHttpSecurityHandler)` SPI
+to customize validation wrapping. `PlatformHttpSecurityHandler` is the wrapper contract. The default
+implementation wraps the Camel route processor, so validation is enforced before route processing but
+after the engine has created the request exchange.
+
+=== camel-xmpp
+
+The default `headerFilterStrategy` is now a new `XmppHeaderFilterStrategy` that filters headers
+starting with `Camel` / `camel` (case-insensitive) in both the inbound and outbound directions,
+aligning the component with the rest of the Camel component catalog (`camel-kafka`, `camel-mail`,
+`camel-coap`, `camel-google-pubsub`, ...). Routes that relied on passing through these header
+names from XMPP messages can supply a custom `headerFilterStrategy` to restore the previous
+behaviour.
+
+=== camel-spring-ws - potential breaking change
+
+The `spring-ws` consumer now applies a `HeaderFilterStrategy` to the SOAP headers it maps onto the
+Camel `Exchange`. The default `headerFilterStrategy` is a new `SpringWebserviceHeaderFilterStrategy`
+that filters header names starting with `Camel` / `camel` (case-insensitive) in both the inbound and
+outbound directions, aligning the component with the rest of the Camel component catalog
+(`camel-cxf`, `camel-mail`, `camel-coap`, ...). SOAP header element and attribute names that fall in
+that namespace are no longer propagated as `Exchange` headers. Routes that relied on receiving such
+header names from inbound SOAP headers can supply a custom `headerFilterStrategy` (via the new
+`headerFilterStrategy` endpoint option) to restore the previous behaviour.
+
+The transitive `org.opensaml` dependencies pulled in by `spring-ws-security` have been excluded.
+Camel's Spring-WS component does not use OpenSAML, and these artifacts are hosted on a third-party
+Maven repository (`build.shibboleth.net`) that has proven unreliable, causing intermittent CI and
+build failures. If your project depends on OpenSAML for SAML-based WS-Security, you will need to
+add the `org.opensaml` dependencies explicitly.
+
+=== camel-whatsapp
+
+The `camel-whatsapp` webhook consumer now supports optional verification of inbound webhook event
+callbacks via the new `webhookSecret` endpoint option. When set, event callbacks whose
+`X-Hub-Signature-256` HMAC-SHA256 signature is missing or invalid are rejected with HTTP 403; when
+the option is not set, behaviour is unchanged.
+
+=== camel-lucene
+
+The Exchange header values exposed by `LuceneConstants` have been renamed to follow the standard
+Camel naming convention. The field names are unchanged, so routes referencing the constants
+(`LuceneConstants.HEADER_QUERY`, `LuceneConstants.HEADER_RETURN_LUCENE_DOCS`) continue to work
+without modification. However, routes that set or read these headers using the raw string values
+must be updated:
+
+* `QUERY` -> `CamelLuceneQuery`
+* `RETURN_LUCENE_DOCS` -> `CamelLuceneReturnLuceneDocs`
+
+As a consequence, the generated Endpoint DSL header accessors on `LuceneHeaderNameBuilder`
+have been renamed accordingly:
+
+* `qUERY()` -> `luceneQuery()`
+* `returnLuceneDocs()` -> `luceneReturnLuceneDocs()`
+
+=== camel-couchdb
+
+The Exchange header values exposed by `CouchDbConstants` have been renamed to follow the standard
+Camel naming convention. The field names are unchanged, so routes referencing the constants
+(e.g. `CouchDbConstants.HEADER_METHOD`, `CouchDbConstants.HEADER_DOC_ID`) continue to work
+without modification. However, routes that set or read these headers using the raw string values
+must be updated:
+
+* `CouchDbDatabase` -> `CamelCouchDbDatabase`
+* `CouchDbSeq` -> `CamelCouchDbSeq`
+* `CouchDbId` -> `CamelCouchDbId`
+* `CouchDbRev` -> `CamelCouchDbRev`
+* `CouchDbMethod` -> `CamelCouchDbMethod`
+
+The generated Endpoint DSL header accessors on `CouchDbHeaderNameBuilder` retain the same method names
+but now return the updated `CamelCouchDb*` values. No code changes are needed if you use these accessors.
+
+=== camel-couchbase
+
+The Exchange header values exposed by `CouchbaseConstants` have been renamed to follow the standard
+Camel naming convention. The field names are unchanged, so routes referencing the constants
+(e.g. `CouchbaseConstants.HEADER_ID`, `CouchbaseConstants.HEADER_TTL`) continue to work
+without modification. However, routes that set or read these headers using the raw string values
+must be updated:
+
+* `CCB_KEY` -> `CamelCouchbaseKey`
+* `CCB_ID` -> `CamelCouchbaseId`
+* `CCB_TTL` -> `CamelCouchbaseTtl`
+* `CCB_DDN` -> `CamelCouchbaseDesignDocumentName`
+* `CCB_VN` -> `CamelCouchbaseViewName`
+
+As a consequence, the generated Endpoint DSL header accessors on `CouchbaseHeaderNameBuilder`
+have been renamed accordingly:
+
+* `ccbKey()` -> `couchbaseKey()`
+* `ccbId()` -> `couchbaseId()`
+* `ccbTtl()` -> `couchbaseTtl()`
+* `ccbDdn()` -> `couchbaseDesignDocumentName()`
+* `ccbVn()` -> `couchbaseViewName()`
+
+=== camel-jgroups-raft
+
+The Exchange header constants in `JGroupsRaftConstants` have been renamed to
+follow the Camel naming convention used across the rest of the component
+catalog. The Java field names are unchanged; only the header string values
+have changed:
+
+[options="header"]
+|===
+| Constant | Previous value | New value
+| `JGroupsRaftConstants.HEADER_JGROUPSRAFT_LOG_SIZE` | `JGROUPSRAFT_LOG_SIZE` | `CamelJGroupsRaftLogSize`
+| `JGroupsRaftConstants.HEADER_JGROUPSRAFT_COMMIT_INDEX` | `JGROUPSRAFT_COMMIT_INDEX` | `CamelJGroupsRaftCommitIndex`
+| `JGroupsRaftConstants.HEADER_JGROUPSRAFT_CURRENT_TERM` | `JGROUPSRAFT_CURRENT_TERM` | `CamelJGroupsRaftCurrentTerm`
+| `JGroupsRaftConstants.HEADER_JGROUPSRAFT_IS_LEADER` | `JGROUPSRAFT_IS_LEADER` | `CamelJGroupsRaftIsLeader`
+| `JGroupsRaftConstants.HEADER_JGROUPSRAFT_LAST_APPLIED` | `JGROUPSRAFT_LAST_APPLIED` | `CamelJGroupsRaftLastApplied`
+| `JGroupsRaftConstants.HEADER_JGROUPSRAFT_LEADER_ADDRESS` | `JGROUPSRAFT_LEADER_ADDRESS` | `CamelJGroupsRaftLeaderAddress`
+| `JGroupsRaftConstants.HEADER_JGROUPSRAFT_RAFT_ID` | `JGROUPSRAFT_RAFT_ID` | `CamelJGroupsRaftRaftId`
+| `JGroupsRaftConstants.HEADER_JGROUPSRAFT_EVENT_TYPE` | `JGROUPSRAFT_EVENT_TYPE` | `CamelJGroupsRaftEventType`
+| `JGroupsRaftConstants.HEADER_JGROUPSRAFT_SET_OFFSET` | `JGROUPSRAFT_SET_OFFSET` | `CamelJGroupsRaftSetOffset`
+| `JGroupsRaftConstants.HEADER_JGROUPSRAFT_SET_LENGTH` | `JGROUPSRAFT_SET_LENGTH` | `CamelJGroupsRaftSetLength`
+| `JGroupsRaftConstants.HEADER_JGROUPSRAFT_SET_TIMEOUT` | `JGROUPSRAFT_SET_TIMEOUT` | `CamelJGroupsRaftSetTimeout`
+| `JGroupsRaftConstants.HEADER_JGROUPSRAFT_SET_TIMEUNIT` | `JGROUPSRAFT_SET_TIMEUNIT` | `CamelJGroupsRaftSetTimeUnit`
+|===
+
+Routes that reference the constant symbolically (for example
+`setHeader(JGroupsRaftConstants.HEADER_JGROUPSRAFT_SET_TIMEOUT, ...)`) continue
+to work without changes. Routes that set the header by its literal string value
+(for example `setHeader("JGROUPSRAFT_SET_TIMEOUT", ...)`) must be updated to
+use the new value (`setHeader("CamelJGroupsRaftSetTimeout", ...)`).
+
+=== camel-jira - potential breaking change
+
+The Exchange header constants in `JiraConstants` have been renamed to follow the
+Camel naming convention used across the rest of the component catalog. The Java
+field names are unchanged; only the header string values have changed:
+
+[options="header"]
+|===
+| Constant | Previous value | New value
+| `JiraConstants.ISSUE_ASSIGNEE_ID` | `IssueAssigneeId` | `CamelJiraIssueAssigneeId`
+| `JiraConstants.ISSUE_ASSIGNEE` | `IssueAssignee` | `CamelJiraIssueAssignee`
+| `JiraConstants.ISSUE_COMPONENTS` | `IssueComponents` | `CamelJiraIssueComponents`
+| `JiraConstants.ISSUE_COMMENT` | `IssueComment` | `CamelJiraIssueComment`
+| `JiraConstants.ISSUE_CHANGED` | `IssueChanged` | `CamelJiraIssueChanged`
+| `JiraConstants.ISSUE_KEY` | `IssueKey` | `CamelJiraIssueKey`
+| `JiraConstants.ISSUE_PRIORITY_ID` | `IssuePriorityId` | `CamelJiraIssuePriorityId`
+| `JiraConstants.ISSUE_PRIORITY_NAME` | `IssuePriorityName` | `CamelJiraIssuePriorityName`
+| `JiraConstants.ISSUE_PROJECT_KEY` | `ProjectKey` | `CamelJiraIssueProjectKey`
+| `JiraConstants.ISSUE_SUMMARY` | `IssueSummary` | `CamelJiraIssueSummary`
+| `JiraConstants.ISSUE_TRANSITION_ID` | `IssueTransitionId` | `CamelJiraIssueTransitionId`
+| `JiraConstants.ISSUE_TYPE_ID` | `IssueTypeId` | `CamelJiraIssueTypeId`
+| `JiraConstants.ISSUE_TYPE_NAME` | `IssueTypeName` | `CamelJiraIssueTypeName`
+| `JiraConstants.ISSUE_WATCHED_ISSUES` | `IssueWatchedIssues` | `CamelJiraIssueWatchedIssues`
+| `JiraConstants.ISSUE_WATCHERS_ADD` | `IssueWatchersAdd` | `CamelJiraIssueWatchersAdd`
+| `JiraConstants.ISSUE_WATCHERS_REMOVE` | `IssueWatchersRemove` | `CamelJiraIssueWatchersRemove`
+| `JiraConstants.PARENT_ISSUE_KEY` | `ParentIssueKey` | `CamelJiraParentIssueKey`
+| `JiraConstants.CHILD_ISSUE_KEY` | `ChildIssueKey` | `CamelJiraChildIssueKey`
+| `JiraConstants.LINK_TYPE` | `linkType` | `CamelJiraLinkType`
+| `JiraConstants.MINUTES_SPENT` | `minutesSpent` | `CamelJiraMinutesSpent`
+|===
+
+Routes that reference the constants symbolically (for example
+`setHeader(JiraConstants.ISSUE_KEY, ...)`) continue to work without changes.
+Routes that set the header by its literal string value (for example
+`setHeader("IssueKey", ...)`) must be updated to use the new value
+(`setHeader("CamelJiraIssueKey", ...)`).
+
+As a consequence, the generated Endpoint DSL header accessors on
+`JiraHeaderNameBuilder` have been renamed accordingly:
+
+* `issueAssigneeId()` -> `jiraIssueAssigneeId()`
+* `issueAssignee()` -> `jiraIssueAssignee()`
+* `issueComponents()` -> `jiraIssueComponents()`
+* `issueChanged()` -> `jiraIssueChanged()`
+* `issueKey()` -> `jiraIssueKey()`
+* `issuePriorityId()` -> `jiraIssuePriorityId()`
+* `issuePriorityName()` -> `jiraIssuePriorityName()`
+* `projectKey()` -> `jiraIssueProjectKey()`
+* `issueSummary()` -> `jiraIssueSummary()`
+* `issueTransitionId()` -> `jiraIssueTransitionId()`
+* `issueTypeId()` -> `jiraIssueTypeId()`
+* `issueTypeName()` -> `jiraIssueTypeName()`
+* `issueWatchedIssues()` -> `jiraIssueWatchedIssues()`
+* `issueWatchersAdd()` -> `jiraIssueWatchersAdd()`
+* `issueWatchersRemove()` -> `jiraIssueWatchersRemove()`
+* `parentIssueKey()` -> `jiraParentIssueKey()`
+* `childIssueKey()` -> `jiraChildIssueKey()`
+* `linkType()` -> `jiraLinkType()`
+* `minutesSpent()` -> `jiraMinutesSpent()`
+
+=== camel-vertx-websocket
+
+The `vertx-websocket` consumer now applies a `HeaderFilterStrategy` to the WebSocket query and
+path parameters before mapping them into the Camel message headers. The new default
+`VertxWebsocketHeaderFilterStrategy` filters headers starting with `Camel` / `camel`
+(case-insensitive) in both the inbound and outbound directions, aligning the component with the
+rest of the Camel component catalog (`camel-coap`, `camel-kafka`, `camel-nats`, ...). A new
+`headerFilterStrategy` endpoint option is available; routes that relied on receiving
+`Camel`-prefixed header names from WebSocket query or path parameters can supply a custom
+`headerFilterStrategy` to restore the previous behaviour.
+
+=== camel-atmosphere-websocket
+
+The `atmosphere-websocket` consumer now applies the endpoint `HeaderFilterStrategy` to the
+WebSocket query parameters before mapping them into the Camel message headers. The inherited
+default `HttpHeaderFilterStrategy` filters headers starting with `Camel` / `camel`
+(case-insensitive). Routes that relied on receiving `Camel`-prefixed header names from WebSocket
+query parameters can supply a custom `headerFilterStrategy` to restore the previous behaviour.
+
+=== camel-iggy
+
+The `iggy` consumer now applies a `HeaderFilterStrategy` to the Iggy message user-headers before
+mapping them into the Camel message headers. The new default `IggyHeaderFilterStrategy` filters
+headers starting with `Camel` / `camel` (case-insensitive) in both the inbound and outbound
+directions, aligning the component with the rest of the Camel component catalog. A new
+`headerFilterStrategy` endpoint option is available; routes that relied on receiving
+`Camel`-prefixed user-header names from Iggy messages can supply a custom `headerFilterStrategy`
+to restore the previous behaviour.
+
+=== camel-dapr - potential breaking change
+
+The `dapr` component now ships a default `DaprHeaderFilterStrategy` (extending
+`DefaultHeaderFilterStrategy`) and exposes it via the standard `headerFilterStrategy`
+endpoint/component option, aligning the component with the rest of the Camel component
+catalog (`camel-iggy`, `camel-kafka`, `camel-jms`, ...). The strategy filters headers
+starting with `Camel` / `camel` (case-insensitive) in both directions.
+
+In addition, the `dapr-pubsub` consumer no longer copies the inbound CloudEvent's
+`pubsubName` and `topic` into the `CamelDaprPubSubName` (`DaprConstants.PUBSUB_NAME`)
+and `CamelDaprTopic` (`DaprConstants.TOPIC`) message headers. These two constants are
+producer-direction routing headers: they are read back on the producer side by
+`DaprConfigurationOptionsProxy` and take precedence over the endpoint-configured
+`pubSubName` / `topic`. Setting them on a consumed exchange caused a route such as
+
+._Java-only: Dapr pubsub route affected by header change_
+[source,java]
+----
+from("dapr-pubsub:configured-pubsub:configured-topic")
+    .to("dapr-pubsub:configured-pubsub:another-topic");
+----
+
+to carry the inbound pubsubName / topic into the producer hop instead of using the
+configured destination. The remaining CloudEvent metadata headers (`CamelDaprID`,
+`CamelDaprSource`, `CamelDaprType`, `CamelDaprSpecificVersion`,
+`CamelDaprDataContentType`, `CamelDaprBinaryData`, `CamelDaprTime`,
+`CamelDaprTraceParent`, `CamelDaprTraceState`) are unchanged and are still set on the
+inbound exchange.
+
+Because a `dapr-pubsub` consumer subscribes to a single, fixed `pubSubName` / `topic`,
+the removed headers were redundant with the endpoint configuration. Routes that relied
+on reading `CamelDaprPubSubName` / `CamelDaprTopic` from a consumed exchange should read
+the configured destination from the endpoint URI instead.
+
+=== camel-shiro - potential breaking change
+
+The three Exchange header constants in `ShiroSecurityConstants` that drive
+Shiro authentication used header values outside the `Camel` namespace
+(`SHIRO_SECURITY_TOKEN`, `SHIRO_SECURITY_USERNAME`, `SHIRO_SECURITY_PASSWORD`)
+and were therefore not filtered by the default `HeaderFilterStrategy`. They
+have been renamed to follow the Camel naming convention. The Java field names
+are unchanged; only the header string values have changed:
+
+[options="header"]
+|===
+| Constant | Previous value | New value
+| `ShiroSecurityConstants.SHIRO_SECURITY_TOKEN` | `SHIRO_SECURITY_TOKEN` | `CamelShiroSecurityToken`
+| `ShiroSecurityConstants.SHIRO_SECURITY_USERNAME` | `SHIRO_SECURITY_USERNAME` | `CamelShiroSecurityUsername`
+| `ShiroSecurityConstants.SHIRO_SECURITY_PASSWORD` | `SHIRO_SECURITY_PASSWORD` | `CamelShiroSecurityPassword`
+|===
+
+These headers carry credentials and a serialized authentication token, so
+filtering them at transport boundaries by default is particularly important.
+
+Routes that reference the constants symbolically (for example
+`setHeader(ShiroSecurityConstants.SHIRO_SECURITY_USERNAME, ...)`) continue to
+work without changes. Routes that set the header by its literal string value
+(for example `setHeader("SHIRO_SECURITY_USERNAME", ...)`) must be updated to
+use the new value (`setHeader("CamelShiroSecurityUsername", ...)`).
+
+Because the three header values are now in the `Camel*` namespace, transports
+that filter Camel-internal headers by default (JMS, CXF, HTTP, etc.) will
+strip the serialized Shiro authentication token before publishing. This is
+the intended behavior for untrusted producers. Trusted Shiro-over-transport
+routes that previously relied on the token surviving the boundary must opt
+those three headers back in via a custom `HeaderFilterStrategy`, for example:
+
+[source,java]
+----
+public class ShiroFriendlyJmsHeaderFilterStrategy extends JmsHeaderFilterStrategy {
+    @Override
+    public boolean applyFilterToCamelHeaders(String name, Object value, Exchange ex) {
+        if (isShiroSecurityHeader(name)) {
+            return false;
+        }
+        return super.applyFilterToCamelHeaders(name, value, ex);
+    }
+
+    @Override
+    public boolean applyFilterToExternalHeaders(String name, Object value, Exchange ex) {
+        if (isShiroSecurityHeader(name)) {
+            return false;
+        }
+        return super.applyFilterToExternalHeaders(name, value, ex);
+    }
+
+    private static boolean isShiroSecurityHeader(String name) {
+        return ShiroSecurityConstants.SHIRO_SECURITY_TOKEN.equalsIgnoreCase(name)
+                || ShiroSecurityConstants.SHIRO_SECURITY_USERNAME.equalsIgnoreCase(name)
+                || ShiroSecurityConstants.SHIRO_SECURITY_PASSWORD.equalsIgnoreCase(name);
+    }
+}
+
+jmsComponent.setHeaderFilterStrategy(new ShiroFriendlyJmsHeaderFilterStrategy());
+----
+
+A worked example is in `ShiroOverJmsTest` in the `camel-itest` module.
+
+
+
+=== camel-undertow - potential breaking change
+
+`UndertowHeaderFilterStrategy` now also filters the legacy `websocket.*`
+Exchange-header prefix (in addition to the `Camel*` / `camel*` /
+`org.apache.camel.*` prefixes it already filtered). This applies to both the
+in (wire -> exchange) and out (exchange -> wire) directions and follows the
+dedicated-filter-strategy shape used by CAMEL-23532 for
+`camel-vertx-websocket` / `camel-atmosphere-websocket` / `camel-iggy`.
+
+The constants in `UndertowConstants` (`CONNECTION_KEY`, `CONNECTION_KEY_LIST`,
+`SEND_TO_ALL`, `EVENT_TYPE`, `EVENT_TYPE_ENUM`, `CHANNEL`, `EXCHANGE`) keep
+their existing string values (`websocket.connectionKey`,
+`websocket.connectionKey.list`, `websocket.sendToAll`, etc.) because they are
+part of the undertow component's externally-visible API contract; routes
+referencing them (symbolically or by literal value) continue to work
+unchanged within an undertow route.
+
+The behaviour change applies at undertow's transport boundary:
+
+* Outbound (exchange -> wire): if an exchange ends up at an undertow producer
+  carrying an Exchange header whose name starts with `websocket.`, that
+  header will no longer be propagated onto the outbound HTTP/websocket
+  request as a wire-level header.
+* Inbound (wire -> exchange): if an undertow consumer receives a request
+  whose wire-level headers include a name starting with `websocket.`, that
+  header will no longer be mapped into the resulting Camel exchange.
+
+Note that the `HeaderFilterStrategy` only governs the transport boundary; it
+does not prevent cross-component header injection (for example, an
+`http -> undertow` route where the HTTP consumer maps an attacker-supplied
+`websocket.connectionKey` header into the exchange and the undertow producer
+then reads it via `in.getHeader(...)` to dispatch to a specific peer). For
+defence in depth at the trust boundary, route authors should explicitly strip
+these headers from untrusted inbound traffic, for example:
+
+._Java-only: stripping websocket headers at the trust boundary_
+[source,java]
+----
+from("jetty:http://0.0.0.0:8080/api")
+    .removeHeaders("websocket.*")
+    .to("undertow:ws://internal-broker/notifications");
+----
+
+Routes that intentionally relied on undertow mapping `websocket.*` wire
+headers in or out can supply a custom `headerFilterStrategy` endpoint option
+to restore the previous behaviour.
+
+=== camel-netty-http / camel-undertow - potential breaking change
+
+The `muteException` consumer option now defaults to `true` in `camel-netty-http` and
+`camel-undertow`, aligning these components with the other HTTP server components
+(`camel-http`, `camel-jetty`, `camel-servlet`, and `camel-platform-http`), which have
+been defaulting `muteException` to `true` for a long time.
+
+When an exchange fails processing on the consumer side, the HTTP response now has an
+empty body. Previously the response body contained the exception stack trace as
+`text/plain`.
+
+Routes that rely on the exception stack trace being present in the response body must
+set `muteException=false` explicitly on the endpoint or component after the upgrade:
+
+[source,text]
+----
+netty-http:http://0.0.0.0:8080/foo?muteException=false
+undertow:http://0.0.0.0:8080/foo?muteException=false
+----
+
+Note that `muteException` takes precedence over `transferException`, as it already does
+in the other HTTP server components. Routes using `transferException=true` on these two
+components must now also set `muteException=false` for the serialized exception to be
+returned in the response.
+
+=== camel-web3j - potential breaking change
+
+The Exchange header constants in `Web3jConstants` have been renamed to follow the
+Camel naming convention used across the rest of the component catalog. The Java
+field names are unchanged; only the header string values have changed:
+
+[options="header"]
+|===
+| Constant | Previous value | New value
+| `Web3jConstants.ID` | `ID` | `CamelWeb3jId`
+| `Web3jConstants.OPERATION` | `OPERATION` | `CamelWeb3jOperation`
+| `Web3jConstants.AT_BLOCK` | `AT_BLOCK` | `CamelWeb3jAtBlock`
+| `Web3jConstants.ADDRESS` | `ADDRESS` | `CamelWeb3jAddress`
+| `Web3jConstants.ADDRESSES` | `ADDRESSES` | `CamelWeb3jAddresses`
+| `Web3jConstants.FROM_ADDRESS` | `FROM_ADDRESS` | `CamelWeb3jFromAddress`
+| `Web3jConstants.TO_ADDRESS` | `TO_ADDRESS` | `CamelWeb3jToAddress`
+| `Web3jConstants.POSITION` | `POSITION` | `CamelWeb3jPosition`
+| `Web3jConstants.BLOCK_HASH` | `BLOCK_HASH` | `CamelWeb3jBlockHash`
+| `Web3jConstants.TRANSACTION_HASH` | `TRANSACTION_HASH` | `CamelWeb3jTransactionHash`
+| `Web3jConstants.SHA3_HASH_OF_DATA_TO_SIGN` | `SHA3_HASH_OF_DATA_TO_SIGN` | `CamelWeb3jSha3HashOfDataToSign`
+| `Web3jConstants.SIGNED_TRANSACTION_DATA` | `SIGNED_TRANSACTION_DATA` | `CamelWeb3jSignedTransactionData`
+| `Web3jConstants.FULL_TRANSACTION_OBJECTS` | `FULL_TRANSACTION_OBJECTS` | `CamelWeb3jFullTransactionObjects`
+| `Web3jConstants.INDEX` | `INDEX` | `CamelWeb3jIndex`
+| `Web3jConstants.SOURCE_CODE` | `SOURCE_CODE` | `CamelWeb3jSourceCode`
+| `Web3jConstants.FILTER_ID` | `FILTER_ID` | `CamelWeb3jFilterId`
+| `Web3jConstants.DATABASE_NAME` | `DATABASE_NAME` | `CamelWeb3jDatabaseName`
+| `Web3jConstants.KEY_NAME` | `KEY_NAME` | `CamelWeb3jKeyName`
+| `Web3jConstants.NONCE` | `NONCE` | `CamelWeb3jNonce`
+| `Web3jConstants.HEADER_POW_HASH` | `HEADER_POW_HASH` | `CamelWeb3jHeaderPowHash`
+| `Web3jConstants.MIX_DIGEST` | `MIX_DIGEST` | `CamelWeb3jMixDigest`
+| `Web3jConstants.CLIENT_ID` | `CLIENT_ID` | `CamelWeb3jClientId`
+| `Web3jConstants.GAS_PRICE` | `GAS_PRICE` | `CamelWeb3jGasPrice`
+| `Web3jConstants.GAS_LIMIT` | `GAS_LIMIT` | `CamelWeb3jGasLimit`
+| `Web3jConstants.VALUE` | `VALUE` | `CamelWeb3jValue`
+| `Web3jConstants.DATA` | `DATA` | `CamelWeb3jData`
+| `Web3jConstants.FROM_BLOCK` | `FROM_BLOCK` | `CamelWeb3jFromBlock`
+| `Web3jConstants.TO_BLOCK` | `TO_BLOCK` | `CamelWeb3jToBlock`
+| `Web3jConstants.TOPICS` | `TOPICS` | `CamelWeb3jTopics`
+| `Web3jConstants.PRIORITY` | `PRIORITY` | `CamelWeb3jPriority`
+| `Web3jConstants.TTL` | `TTL` | `CamelWeb3jTtl`
+| `Web3jConstants.PRIVATE_FOR` | `PRIVATE_FOR` | `CamelWeb3jPrivateFor`
+| `Web3jConstants.PRIVATE_FROM` | `PRIVATE_FROM` | `CamelWeb3jPrivateFrom`
+| `Web3jConstants.ERROR_CODE` | `ERROR_CODE` | `CamelWeb3jErrorCode`
+| `Web3jConstants.ERROR_DATA` | `ERROR_DATA` | `CamelWeb3jErrorData`
+| `Web3jConstants.ERROR_MESSAGE` | `ERROR_MESSAGE` | `CamelWeb3jErrorMessage`
+| `Web3jConstants.HEADER_STATUS` | `status` | `CamelWeb3jStatus`
+| `Web3jConstants.HEADER_OPERATION` | `operation` | `CamelWeb3jHeaderOperation`
+| `Web3jConstants.ETH_HASHRATE` | `ETH_HASHRATE` | `CamelWeb3jEthHashrate`
+|===
+
+Routes that reference the constants symbolically (for example
+`setHeader(Web3jConstants.FROM_ADDRESS, ...)`) continue to work without changes.
+Routes that set the header by its literal string value (for example
+`setHeader("FROM_ADDRESS", ...)`) must be updated to use the new value
+(`setHeader("CamelWeb3jFromAddress", ...)`).
+
+The `Web3jConstants.ETH_HASHRATE` constant is dual-purpose: it is both the
+`CamelWeb3jOperation` value that dispatches the `ethHashrate` RPC and the header
+name read by the `ETH_SUBMIT_HASHRATE` operation. Routes that referenced the
+literal string `"ETH_HASHRATE"` (in either role) must be updated to
+`"CamelWeb3jEthHashrate"`. Routes using the symbolic constant reference are
+unaffected. The other producer-dispatch operation identifiers (`WEB3_CLIENT_VERSION`,
+`ETH_GAS_PRICE`, `ETH_SEND_TRANSACTION`, ...) keep their previous string values
+because they are operation enum values rather than Exchange header names.
+
+As a consequence, the generated Endpoint DSL header accessors on
+`Web3jHeaderNameBuilder` have been renamed accordingly:
+
+* `iD()` -> `web3jId()`
+* `atBlock()` -> `web3jAtBlock()`
+* `aDDRESS()` -> `web3jAddress()`
+* `aDDRESSES()` -> `web3jAddresses()`
+* `fromAddress()` -> `web3jFromAddress()`
+* `toAddress()` -> `web3jToAddress()`
+* `pOSITION()` -> `web3jPosition()`
+* `blockHash()` -> `web3jBlockHash()`
+* `transactionHash()` -> `web3jTransactionHash()`
+* `sha3HashOfDataToSign()` -> `web3jSha3HashOfDataToSign()`
+* `signedTransactionData()` -> `web3jSignedTransactionData()`
+* `fullTransactionObjects()` -> `web3jFullTransactionObjects()`
+* `iNDEX()` -> `web3jIndex()`
+* `sourceCode()` -> `web3jSourceCode()`
+* `filterId()` -> `web3jFilterId()`
+* `databaseName()` -> `web3jDatabaseName()`
+* `keyName()` -> `web3jKeyName()`
+* `nONCE()` -> `web3jNonce()`
+* `headerPowHash()` -> `web3jHeaderPowHash()`
+* `mixDigest()` -> `web3jMixDigest()`
+* `clientId()` -> `web3jClientId()`
+* `gasPrice()` -> `web3jGasPrice()`
+* `gasLimit()` -> `web3jGasLimit()`
+* `vALUE()` -> `web3jValue()`
+* `dATA()` -> `web3jData()`
+* `fromBlock()` -> `web3jFromBlock()`
+* `toBlock()` -> `web3jToBlock()`
+* `tOPICS()` -> `web3jTopics()`
+* `pRIORITY()` -> `web3jPriority()`
+* `tTL()` -> `web3jTtl()`
+* `privateFor()` -> `web3jPrivateFor()`
+* `privateFrom()` -> `web3jPrivateFrom()`
+* `errorCode()` -> `web3jErrorCode()`
+* `errorData()` -> `web3jErrorData()`
+* `errorMessage()` -> `web3jErrorMessage()`
+* `status()` -> `web3jStatus()`
+* `operation()` -> `web3jHeaderOperation()`
+* `ethHashrate()` -> `web3jEthHashrate()`
+
+A new accessor `web3jOperation()` is also generated for `Web3jConstants.OPERATION`
+(the producer dispatch header). This constant did not appear in the catalog
+previously, so no DSL accessor renaming applies to it.
+
+=== camel-openstack - potential breaking change
+
+The Exchange header constants in `OpenstackConstants`, `KeystoneConstants`,
+`NovaConstants`, `CinderConstants`, `GlanceConstants`, `NeutronConstants`,
+and `SwiftConstants` have been renamed to follow the Camel naming convention
+used across the rest of the component catalog. The Java field names are
+unchanged; only the header string values have changed.
+
+Common constants (in `OpenstackConstants`):
+
+[options="header"]
+|===
+| Constant | Previous value | New value
+| `OpenstackConstants.OPERATION` | `operation` | `CamelOpenstackOperation`
+| `OpenstackConstants.ID` | `ID` | `CamelOpenstackId`
+| `OpenstackConstants.NAME` | `name` | `CamelOpenstackName`
+| `OpenstackConstants.DESCRIPTION` | `description` | `CamelOpenstackDescription`
+| `OpenstackConstants.PROPERTIES` | `properties` | `CamelOpenstackProperties`
+|===
+
+Keystone (`KeystoneConstants`):
+
+[options="header"]
+|===
+| Constant | Previous value | New value
+| `KeystoneConstants.DESCRIPTION` | `description` | `CamelOpenstackKeystoneDescription`
+| `KeystoneConstants.DOMAIN_ID` | `domainId` | `CamelOpenstackKeystoneDomainId`
+| `KeystoneConstants.PARENT_ID` | `parentId` | `CamelOpenstackKeystoneParentId`
+| `KeystoneConstants.PASSWORD` | `password` | `CamelOpenstackKeystonePassword`
+| `KeystoneConstants.EMAIL` | `email` | `CamelOpenstackKeystoneEmail`
+| `KeystoneConstants.USER_ID` | `userId` | `CamelOpenstackKeystoneUserId`
+| `KeystoneConstants.GROUP_ID` | `groupId` | `CamelOpenstackKeystoneGroupId`
+|===
+
+Nova (`NovaConstants`):
+
+[options="header"]
+|===
+| Constant | Previous value | New value
+| `NovaConstants.FLAVOR_ID` | `FlavorId` | `CamelOpenstackNovaFlavorId`
+| `NovaConstants.RAM` | `RAM` | `CamelOpenstackNovaRam`
+| `NovaConstants.VCPU` | `VCPU` | `CamelOpenstackNovaVcpu`
+| `NovaConstants.DISK` | `disk` | `CamelOpenstackNovaDisk`
+| `NovaConstants.SWAP` | `swap` | `CamelOpenstackNovaSwap`
+| `NovaConstants.RXTXFACTOR` | `rxtxFactor` | `CamelOpenstackNovaRxtxFactor`
+| `NovaConstants.ADMIN_PASSWORD` | `AdminPassword` | `CamelOpenstackNovaAdminPassword`
+| `NovaConstants.IMAGE_ID` | `ImageId` | `CamelOpenstackNovaImageId`
+| `NovaConstants.KEYPAIR_NAME` | `KeypairName` | `CamelOpenstackNovaKeypairName`
+| `NovaConstants.NETWORK` | `NetworkId` | `CamelOpenstackNovaNetworkId`
+| `NovaConstants.ACTION` | `action` | `CamelOpenstackNovaAction`
+|===
+
+Cinder (`CinderConstants`):
+
+[options="header"]
+|===
+| Constant | Previous value | New value
+| `CinderConstants.SIZE` | `size` | `CamelOpenstackCinderSize`
+| `CinderConstants.VOLUME_TYPE` | `volumeType` | `CamelOpenstackCinderVolumeType`
+| `CinderConstants.IMAGE_REF` | `imageRef` | `CamelOpenstackCinderImageRef`
+| `CinderConstants.SNAPSHOT_ID` | `snapshotId` | `CamelOpenstackCinderSnapshotId`
+| `CinderConstants.IS_BOOTABLE` | `isBootable` | `CamelOpenstackCinderIsBootable`
+| `CinderConstants.VOLUME_ID` | `volumeId` | `CamelOpenstackCinderVolumeId`
+| `CinderConstants.FORCE` | `force` | `CamelOpenstackCinderForce`
+|===
+
+Glance (`GlanceConstants`):
+
+[options="header"]
+|===
+| Constant | Previous value | New value
+| `GlanceConstants.DISK_FORMAT` | `diskFormat` | `CamelOpenstackGlanceDiskFormat`
+| `GlanceConstants.CONTAINER_FORMAT` | `containerFormat` | `CamelOpenstackGlanceContainerFormat`
+| `GlanceConstants.OWNER` | `owner` | `CamelOpenstackGlanceOwner`
+| `GlanceConstants.IS_PUBLIC` | `isPublic` | `CamelOpenstackGlanceIsPublic`
+| `GlanceConstants.MIN_RAM` | `minRam` | `CamelOpenstackGlanceMinRam`
+| `GlanceConstants.MIN_DISK` | `minDisk` | `CamelOpenstackGlanceMinDisk`
+| `GlanceConstants.SIZE` | `size` | `CamelOpenstackGlanceSize`
+| `GlanceConstants.CHECKSUM` | `checksum` | `CamelOpenstackGlanceChecksum`
+|===
+
+Neutron (`NeutronConstants`):
+
+[options="header"]
+|===
+| Constant | Previous value | New value
+| `NeutronConstants.TENANT_ID` | `tenantId` | `CamelOpenstackNeutronTenantId`
+| `NeutronConstants.NETWORK_ID` | `networkId` | `CamelOpenstackNeutronNetworkId`
+| `NeutronConstants.ADMIN_STATE_UP` | `adminStateUp` | `CamelOpenstackNeutronAdminStateUp`
+| `NeutronConstants.NETWORK_TYPE` | `networkType` | `CamelOpenstackNeutronNetworkType`
+| `NeutronConstants.PHYSICAL_NETWORK` | `physicalNetwork` | `CamelOpenstackNeutronPhysicalNetwork`
+| `NeutronConstants.SEGMENT_ID` | `segmentId` | `CamelOpenstackNeutronSegmentId`
+| `NeutronConstants.IS_SHARED` | `isShared` | `CamelOpenstackNeutronIsShared`
+| `NeutronConstants.IS_ROUTER_EXTERNAL` | `isRouterExternal` | `CamelOpenstackNeutronIsRouterExternal`
+| `NeutronConstants.ENABLE_DHCP` | `enableDHCP` | `CamelOpenstackNeutronEnableDhcp`
+| `NeutronConstants.GATEWAY` | `gateway` | `CamelOpenstackNeutronGateway`
+| `NeutronConstants.IP_VERSION` | `ipVersion` | `CamelOpenstackNeutronIpVersion`
+| `NeutronConstants.CIDR` | `cidr` | `CamelOpenstackNeutronCidr`
+| `NeutronConstants.SUBNET_POOL` | `subnetPools` | `CamelOpenstackNeutronSubnetPools`
+| `NeutronConstants.DEVICE_ID` | `deviceId` | `CamelOpenstackNeutronDeviceId`
+| `NeutronConstants.MAC_ADDRESS` | `macAddress` | `CamelOpenstackNeutronMacAddress`
+| `NeutronConstants.ROUTER_ID` | `routerId` | `CamelOpenstackNeutronRouterId`
+| `NeutronConstants.SUBNET_ID` | `subnetId` | `CamelOpenstackNeutronSubnetId`
+| `NeutronConstants.PORT_ID` | `portId` | `CamelOpenstackNeutronPortId`
+| `NeutronConstants.ITERFACE_TYPE` | `interfaceType` | `CamelOpenstackNeutronInterfaceType`
+|===
+
+Swift (`SwiftConstants`):
+
+[options="header"]
+|===
+| Constant | Previous value | New value
+| `SwiftConstants.CONTAINER_NAME` | `containerName` | `CamelOpenstackSwiftContainerName`
+| `SwiftConstants.OBJECT_NAME` | `objectName` | `CamelOpenstackSwiftObjectName`
+| `SwiftConstants.LIMIT` | `limit` | `CamelOpenstackSwiftLimit`
+| `SwiftConstants.MARKER` | `marker` | `CamelOpenstackSwiftMarker`
+| `SwiftConstants.END_MARKER` | `end_marker` | `CamelOpenstackSwiftEndMarker`
+| `SwiftConstants.DELIMITER` | `delimiter` | `CamelOpenstackSwiftDelimiter`
+| `SwiftConstants.PATH` | `path` | `CamelOpenstackSwiftPath`
+|===
+
+`SwiftConstants.CONTAINER_METADATA_PREFIX`, `SwiftConstants.VERSIONS_LOCATION`,
+`SwiftConstants.CONTAINER_READ`, and `SwiftConstants.CONTAINER_WRITE`
+intentionally keep their previous values (`X-Container-Meta-`,
+`X-Versions-Location`, `X-Container-Read`, `X-Container-Write`) because they
+are part of the Swift HTTP protocol contract used by openstack4j to forward
+container metadata and ACLs to the Swift backend. Renaming them would break
+interoperability with the Swift API.
+
+Routes that reference the constants symbolically (for example
+`setHeader(OpenstackConstants.OPERATION, ...)`) continue to work without
+changes. Routes that set the header by its literal string value (for example
+`setHeader("operation", ...)`) must be updated to use the new value
+(`setHeader("CamelOpenstackOperation", ...)`).
+
+The generated Endpoint DSL header accessors on each component's
+`HeaderNameBuilder` are renamed accordingly (`operation()` ->
+`openstackOperation()`, `password()` -> `openstackKeystonePassword()`,
+`adminPassword()` -> `openstackNovaAdminPassword()`, etc.).
+
+=== camel-pdf - potential breaking change
+
+The Exchange header constants in `PdfHeaderConstants` have been renamed to
+follow the Camel naming convention used across the rest of the component
+catalog. The Java field names are unchanged; only the header string values
+have changed:
+
+[options="header"]
+|===
+| Constant | Previous value | New value
+| `PdfHeaderConstants.PROTECTION_POLICY_HEADER_NAME` | `protection-policy` | `CamelPdfProtectionPolicy`
+| `PdfHeaderConstants.PDF_DOCUMENT_HEADER_NAME` | `pdf-document` | `CamelPdfDocument`
+| `PdfHeaderConstants.DECRYPTION_MATERIAL_HEADER_NAME` | `decryption-material` | `CamelPdfDecryptionMaterial`
+| `PdfHeaderConstants.FILES_TO_MERGE_HEADER_NAME` | `files-to-merge` | `CamelPdfFilesToMerge`
+|===
+
+Routes that reference the constants symbolically (for example
+`setHeader(PdfHeaderConstants.PDF_DOCUMENT_HEADER_NAME, ...)`) continue to
+work without changes. Routes that set the header by its literal string value
+(for example `setHeader("pdf-document", ...)`) must be updated to use the
+new value (`setHeader("CamelPdfDocument", ...)`).
+
+As a consequence, the generated Endpoint DSL header accessors on
+`PdfHeaderNameBuilder` have been renamed accordingly:
+
+* `protectionPolicy()` -> `pdfProtectionPolicy()`
+* `pdfDocument()` -> `pdfDocument()` (unchanged in name, returns the new value)
+* `decryptionMaterial()` -> `pdfDecryptionMaterial()`
+* `filesToMerge()` -> `pdfFilesToMerge()`
+
+=== camel-elasticsearch / camel-opensearch - potential breaking change
+
+The Exchange header constants in `ElasticsearchConstants` and
+`OpensearchConstants` have been renamed to follow the Camel naming convention
+used across the rest of the component catalog. The Java field names are
+unchanged; only the header string values have changed.
+
+`ElasticsearchConstants`:
+
+[options="header"]
+|===
+| Constant | Previous value | New value
+| `ElasticsearchConstants.PARAM_OPERATION` | `operation` | `CamelElasticsearchOperation`
+| `ElasticsearchConstants.PARAM_INDEX_ID` | `indexId` | `CamelElasticsearchIndexId`
+| `ElasticsearchConstants.PARAM_INDEX_NAME` | `indexName` | `CamelElasticsearchIndexName`
+| `ElasticsearchConstants.PARAM_DOCUMENT_CLASS` | `documentClass` | `CamelElasticsearchDocumentClass`
+| `ElasticsearchConstants.PARAM_WAIT_FOR_ACTIVE_SHARDS` | `waitForActiveShards` | `CamelElasticsearchWaitForActiveShards`
+| `ElasticsearchConstants.PARAM_SCROLL_KEEP_ALIVE_MS` | `scrollKeepAliveMs` | `CamelElasticsearchScrollKeepAliveMs`
+| `ElasticsearchConstants.PARAM_SCROLL` | `useScroll` | `CamelElasticsearchUseScroll`
+| `ElasticsearchConstants.PARAM_SIZE` | `size` | `CamelElasticsearchSize`
+| `ElasticsearchConstants.PARAM_FROM` | `from` | `CamelElasticsearchFrom`
+| `ElasticsearchConstants.PARAM_DOCUMENT_MODE` | `enableDocumentOnlyMode` | `CamelElasticsearchEnableDocumentOnlyMode`
+|===
+
+`OpensearchConstants`:
+
+[options="header"]
+|===
+| Constant | Previous value | New value
+| `OpensearchConstants.PARAM_OPERATION` | `operation` | `CamelOpensearchOperation`
+| `OpensearchConstants.PARAM_INDEX_ID` | `indexId` | `CamelOpensearchIndexId`
+| `OpensearchConstants.PARAM_INDEX_NAME` | `indexName` | `CamelOpensearchIndexName`
+| `OpensearchConstants.PARAM_DOCUMENT_CLASS` | `documentClass` | `CamelOpensearchDocumentClass`
+| `OpensearchConstants.PARAM_WAIT_FOR_ACTIVE_SHARDS` | `waitForActiveShards` | `CamelOpensearchWaitForActiveShards`
+| `OpensearchConstants.PARAM_SCROLL_KEEP_ALIVE_MS` | `scrollKeepAliveMs` | `CamelOpensearchScrollKeepAliveMs`
+| `OpensearchConstants.PARAM_SCROLL` | `useScroll` | `CamelOpensearchUseScroll`
+| `OpensearchConstants.PARAM_SIZE` | `size` | `CamelOpensearchSize`
+| `OpensearchConstants.PARAM_FROM` | `from` | `CamelOpensearchFrom`
+|===
+
+`ElasticsearchConstants.PROPERTY_SCROLL_ES_QUERY_COUNT` and
+`OpensearchConstants.PROPERTY_SCROLL_OPENSEARCH_QUERY_COUNT` were already
+`Camel`-prefixed (`CamelElasticsearchScrollQueryCount` /
+`CamelOpenSearchScrollQueryCount`) and are unchanged.
+
+Routes that reference the constants symbolically (for example
+`setHeader(ElasticsearchConstants.PARAM_INDEX_NAME, ...)`) continue to work
+without changes. Routes that set the header by its literal string value
+(for example `setHeader("indexName", ...)`) must be updated to use the
+new value (`setHeader("CamelElasticsearchIndexName", ...)`).
+
+The generated Endpoint DSL header accessors on
+`ElasticsearchHeaderNameBuilder` and `OpensearchHeaderNameBuilder` have
+been renamed accordingly (`operation()` -> `elasticsearchOperation()` /
+`opensearchOperation()`, `indexId()` -> `elasticsearchIndexId()` /
+`opensearchIndexId()`, etc.).
+
+=== camel-github2 - potential breaking change
+
+The producer-side Exchange header constants in `GitHub2Constants` have been
+renamed to follow the Camel naming convention used across the rest of the
+component catalog. The Java field names are unchanged; only the header string
+values have changed:
+
+[options="header"]
+|===
+| Constant | Previous value | New value
+| `GitHub2Constants.GITHUB_PULLREQUEST` | `GitHubPullRequest` | `CamelGitHubPullRequest`
+| `GitHub2Constants.GITHUB_INRESPONSETO` | `GitHubInResponseTo` | `CamelGitHubInResponseTo`
+| `GitHub2Constants.GITHUB_PULLREQUEST_HEAD_COMMIT_SHA` | `GitHubPullRequestHeadCommitSHA` | `CamelGitHubPullRequestHeadCommitSha`
+| `GitHub2Constants.GITHUB_ISSUE_TITLE` | `GitHubIssueTitle` | `CamelGitHubIssueTitle`
+|===
+
+The consumer-side constants (`GITHUB_COMMIT_AUTHOR`, `GITHUB_COMMIT_COMMITTER`,
+`GITHUB_COMMIT_SHA`, `GITHUB_COMMIT_URL`, `GITHUB_EVENT_PAYLOAD`) were already
+`Camel`-prefixed (`CamelGitHubCommitAuthor`, etc.) and are unchanged, as is the
+`GITHUB_CLIENT` registry-lookup key (`github2Client`).
+
+Routes that reference the constants symbolically (for example
+`setHeader(GitHub2Constants.GITHUB_PULLREQUEST, ...)`) continue to work without
+changes. Routes that set the header by its literal string value (for example
+`setHeader("GitHubPullRequest", ...)`) must be updated to use the new value
+(`setHeader("CamelGitHubPullRequest", ...)`).
+
+As a consequence, the generated Endpoint DSL header accessor
+`gitHubPullRequestHeadCommitSHA()` on `GitHub2HeaderNameBuilder` has been
+renamed to `gitHubPullRequestHeadCommitSha()`. The remaining accessors
+(`gitHubPullRequest()`, `gitHubInResponseTo()`, `gitHubIssueTitle()`) keep
+their names but now return the new `Camel`-prefixed values.
+
+NOTE: The deprecated `camel-github` component (the predecessor of
+`camel-github2`) was removed in Camel 4.21 (see the _camel-github removal_
+entry above), so the analogous rename does not apply there.
+
+=== camel-google-functions / camel-google-secret-manager / camel-google-vision / camel-google-text-to-speech / camel-google-speech-to-text - potential breaking change
+
+The Exchange header constants in these Google Cloud components carried a
+`GoogleCloud<Service>` / `GoogleSecretManager` prefix that is not in the
+`Camel` namespace, so the default `HeaderFilterStrategy` did not filter them
+at transport boundaries. They have been renamed to add the `Camel` prefix.
+The Java field names are unchanged; only the header string values have changed:
+
+[options="header"]
+|===
+| Constant | Previous value | New value
+| `GoogleCloudFunctionsConstants.OPERATION` | `GoogleCloudFunctionsOperation` | `CamelGoogleCloudFunctionsOperation`
+| `GoogleCloudFunctionsConstants.ENTRY_POINT` | `GoogleCloudFunctionsEntryPoint` | `CamelGoogleCloudFunctionsEntryPoint`
+| `GoogleCloudFunctionsConstants.RUNTIME` | `GoogleCloudFunctionsRuntime` | `CamelGoogleCloudFunctionsRuntime`
+| `GoogleCloudFunctionsConstants.SOURCE_ARCHIVE_URL` | `GoogleCloudFunctionsSourceArchiveUrl` | `CamelGoogleCloudFunctionsSourceArchiveUrl`
+| `GoogleCloudFunctionsConstants.RESPONSE_OBJECT` | `GoogleCloudFunctionsResponseObject` | `CamelGoogleCloudFunctionsResponseObject`
+| `GoogleSecretManagerConstants.OPERATION` | `GoogleSecretManagerOperation` | `CamelGoogleSecretManagerOperation`
+| `GoogleCloudVisionConstants.OPERATION` | `GoogleCloudVisionOperation` | `CamelGoogleCloudVisionOperation`
+| `GoogleCloudVisionConstants.RESPONSE_OBJECT` | `GoogleCloudVisionResponseObject` | `CamelGoogleCloudVisionResponseObject`
+| `GoogleCloudTextToSpeechConstants.OPERATION` | `GoogleCloudTextToSpeechOperation` | `CamelGoogleCloudTextToSpeechOperation`
+| `GoogleCloudTextToSpeechConstants.RESPONSE_OBJECT` | `GoogleCloudTextToSpeechResponseObject` | `CamelGoogleCloudTextToSpeechResponseObject`
+| `GoogleCloudSpeechToTextConstants.OPERATION` | `GoogleCloudSpeechToTextOperation` | `CamelGoogleCloudSpeechToTextOperation`
+| `GoogleCloudSpeechToTextConstants.RESPONSE_OBJECT` | `GoogleCloudSpeechToTextResponseObject` | `CamelGoogleCloudSpeechToTextResponseObject`
+|===
+
+The `GoogleSecretManagerConstants.SECRET_ID`, `VERSION_ID` and `REPLICATION`
+constants were already `Camel`-prefixed (`CamelGoogleSecretManagerSecretId`,
+etc.) and are unchanged.
+
+Routes that reference the constants symbolically (for example
+`setHeader(GoogleCloudFunctionsConstants.OPERATION, ...)`) continue to work
+without changes. Routes that set the header by its literal string value (for
+example `setHeader("GoogleCloudFunctionsOperation", ...)`) must be updated to
+use the new value (`setHeader("CamelGoogleCloudFunctionsOperation", ...)`).
+
+The generated Endpoint DSL header accessor names are unchanged (for example
+`googleCloudFunctionsOperation()`), since the `Camel` prefix is stripped when
+deriving the accessor name; the accessors now return the new `Camel`-prefixed
+values.
+
+=== camel-arangodb - potential breaking change
+
+Two Exchange header constants in `ArangoDbConstants` that were not in the
+`Camel` namespace (and therefore not filtered by the default
+`HeaderFilterStrategy`) have been renamed to follow the Camel naming
+convention. The Java field names are unchanged; only the header string values
+have changed:
+
+[options="header"]
+|===
+| Constant | Previous value | New value
+| `ArangoDbConstants.ARANGO_KEY` | `key` | `CamelArangoDbKey`
+| `ArangoDbConstants.RESULT_CLASS_TYPE` | `ResultClassType` | `CamelArangoDbResultClassType`
+|===
+
+The remaining constants (`MULTI_UPDATE`, `MULTI_INSERT`, `MULTI_DELETE`,
+`AQL_QUERY`, `AQL_QUERY_BIND_PARAMETERS`, `AQL_QUERY_OPTIONS`) were already
+`Camel`-prefixed and are unchanged.
+
+Routes that reference the constants symbolically (for example
+`setHeader(ArangoDbConstants.ARANGO_KEY, ...)`) continue to work without
+changes. Routes that set the header by its literal string value (for example
+`setHeader("key", ...)`) must be updated to use the new value
+(`setHeader("CamelArangoDbKey", ...)`).
+
+As a consequence, the generated Endpoint DSL header accessors on
+`ArangoDbHeaderNameBuilder` have been renamed: `key()` -> `arangoDbKey()` and
+`resultClassType()` -> `arangoDbResultClassType()`.
+
+=== camel-jt400 - potential breaking change
+
+The two Exchange header constants in `Jt400Constants` that were not in the
+`Camel` namespace (and therefore not filtered by the default
+`HeaderFilterStrategy`) have been renamed to follow the Camel naming
+convention. The Java field names are unchanged; only the header string values
+have changed:
+
+[options="header"]
+|===
+| Constant | Previous value | New value
+| `Jt400Constants.KEY` | `KEY` | `CamelJt400Key`
+| `Jt400Constants.SENDER_INFORMATION` | `SENDER_INFORMATION` | `CamelJt400SenderInformation`
+|===
+
+`Jt400Constants.KEY` is the data-queue key used for keyed-data-queue read and
+write operations. The remaining constants (`MESSAGE`, `MESSAGE_ID`,
+`MESSAGE_FILE`, `MESSAGE_TYPE`, `MESSAGE_SEVERITY`, `MESSAGE_DFT_RPY`,
+`MESSAGE_REPLYTO_KEY`) were already `Camel`-prefixed and are unchanged.
+
+Routes that reference the constants symbolically (for example
+`setHeader(Jt400Constants.KEY, ...)`) continue to work without changes. Routes
+that set the header by its literal string value (for example
+`setHeader("KEY", ...)`) must be updated to use the new value
+(`setHeader("CamelJt400Key", ...)`).
+
+As a consequence, the generated Endpoint DSL header accessors on
+`Jt400HeaderNameBuilder` have been renamed: `kEY()` -> `jt400Key()` and
+`senderInformation()` -> `jt400SenderInformation()`.
+
+=== camel-mail - potential breaking change
+
+The consumer-side dispatch header constants in `MailConstants` that control
+post-processing of a consumed mail message used header values outside the
+`Camel` namespace (`copyTo`, `moveTo`, `delete`) and were therefore not
+filtered by the default `HeaderFilterStrategy`. They have been renamed to
+follow the Camel naming convention (companion to the CAMEL-23522
+`mail.smtp.*` hardening). The Java field names are unchanged; only the header
+string values have changed:
+
+[options="header"]
+|===
+| Constant | Previous value | New value
+| `MailConstants.MAIL_COPY_TO` | `copyTo` | `CamelMailCopyTo`
+| `MailConstants.MAIL_MOVE_TO` | `moveTo` | `CamelMailMoveTo`
+| `MailConstants.MAIL_DELETE` | `delete` | `CamelMailDelete`
+|===
+
+The standard RFC 5322 message header constants (`MAIL_SUBJECT` = `Subject`,
+`MAIL_FROM` = `From`, `MAIL_TO` = `To`, `MAIL_CC` = `Cc`, `MAIL_BCC` = `Bcc`,
+`MAIL_REPLY_TO` = `Reply-To`, `MAIL_CONTENT_TYPE` = `contentType`) are
+**unchanged**, as they map directly to the corresponding email fields and
+renaming them would break mail interoperability.
+
+The equally-named `copyTo` and `moveTo` *endpoint URI options* on the mail
+consumer are also unchanged; only the Exchange header values are affected.
+
+Routes that reference the constants symbolically (for example
+`setHeader(MailConstants.MAIL_DELETE, ...)`) continue to work without changes.
+Routes that set the header by its literal string value (for example
+`setHeader("delete", true)`) must be updated to use the new value
+(`setHeader("CamelMailDelete", true)`).
+
+As a consequence, the generated Endpoint DSL header accessors on
+`MailHeaderNameBuilder` have been renamed: `copyTo()` -> `mailCopyTo()`,
+`moveTo()` -> `mailMoveTo()`, and `delete()` -> `mailDelete()`.
+
+**Header Override Options (Hardening)**
+
+Added new configuration options to `camel-mail` to provide finer control over message header overrides for security and hardening purposes.
+
+The following options have been added to the mail endpoint:
+
+* `useHeaderRecipients`
+* `useHeaderFrom`
+* `useHeaderSubject`
+* `useHeaderReplyTo`
+
+These options default to `true` to maintain backward compatibility. Users who wish to prevent exchange headers from overriding pre-configured endpoint URI values can now set these to `false` to secure their routes against unintended header injection.
+
+=== camel-milo - potential breaking change
+
+The `MiloConstants.HEADER_AWAIT` constant, which controls whether milo-client
+writes are awaited, used the header value `await` — outside the `Camel`
+namespace and therefore not filtered by the default `HeaderFilterStrategy`. It
+has been renamed to follow the Camel naming convention. The Java field name is
+unchanged; only the header string value has changed:
+
+[options="header"]
+|===
+| Constant | Previous value | New value
+| `MiloConstants.HEADER_AWAIT` | `await` | `CamelMiloAwait`
+|===
+
+`MiloConstants.HEADER_NODE_IDS` was already `Camel`-prefixed
+(`CamelMiloNodeIds`) and is unchanged.
+
+Routes that reference the constant symbolically (for example
+`setHeader(MiloConstants.HEADER_AWAIT, ...)`) continue to work without changes.
+Routes that set the header by its literal string value (for example
+`setHeader("await", ...)`) must be updated to use the new value
+(`setHeader("CamelMiloAwait", ...)`).
+
+As a consequence, the generated Endpoint DSL header accessor `await()` on
+`MiloClientHeaderNameBuilder` has been renamed to `miloAwait()`.
+
+=== camel-kafka - potential breaking change
+
+The Exchange header constants in `KafkaConstants` used header values in the
+lowercase / dotted `kafka.*` namespace, outside the `Camel` namespace, and
+were therefore not filtered by the default `HeaderFilterStrategy` on
+upstream HTTP / REST consumers. They have been renamed to follow the Camel
+naming convention used across the rest of the component catalog. The Java
+field names are unchanged; only the header string values have changed:
+
+[options="header"]
+|===
+| Constant | Previous value | New value
+| `KafkaConstants.PARTITION_KEY` | `kafka.PARTITION_KEY` | `CamelKafkaPartitionKey`
+| `KafkaConstants.PARTITION` | `kafka.PARTITION` | `CamelKafkaPartition`
+| `KafkaConstants.KEY` | `kafka.KEY` | `CamelKafkaKey`
+| `KafkaConstants.TOPIC` | `kafka.TOPIC` | `CamelKafkaTopic`
+| `KafkaConstants.OVERRIDE_TOPIC` | `kafka.OVERRIDE_TOPIC` | `CamelKafkaOverrideTopic`
+| `KafkaConstants.OFFSET` | `kafka.OFFSET` | `CamelKafkaOffset`
+| `KafkaConstants.HEADERS` | `kafka.HEADERS` | `CamelKafkaHeaders`
+| `KafkaConstants.LAST_RECORD_BEFORE_COMMIT` | `kafka.LAST_RECORD_BEFORE_COMMIT` | `CamelKafkaLastRecordBeforeCommit`
+| `KafkaConstants.LAST_POLL_RECORD` | `kafka.LAST_POLL_RECORD` | `CamelKafkaLastPollRecord`
+| `KafkaConstants.TIMESTAMP` | `kafka.TIMESTAMP` | `CamelKafkaTimestamp`
+| `KafkaConstants.OVERRIDE_TIMESTAMP` | `kafka.OVERRIDE_TIMESTAMP` | `CamelKafkaOverrideTimestamp`
+| `KafkaConstants.KAFKA_RECORD_META` | `kafka.RECORD_META` | `CamelKafkaRecordMeta`
+|===
+
+`KafkaConstants.MANUAL_COMMIT` was already `Camel`-prefixed
+(`CamelKafkaManualCommit`) and is unchanged. The non-header constants in the
+class (`KAFKA_DEFAULT_ENCODER`, `KAFKA_STRING_ENCODER`,
+`KAFKA_DEFAULT_SERIALIZER`, `KAFKA_DEFAULT_DESERIALIZER`,
+`PARTITIONER_RANGE_ASSIGNOR`, `KAFKA_SUBSCRIBE_ADAPTER`) are not Exchange
+headers and are unchanged.
+
+`KafkaConstants.OVERRIDE_TOPIC` and `KafkaConstants.OVERRIDE_TIMESTAMP` are
+producer-read headers consulted by `KafkaProducer.evaluateTopic()` and the
+timestamp override path. The rename also closes the cross-transport
+propagation gap where these headers, in their previous `kafka.*` form,
+would pass through `HttpHeaderFilterStrategy` (which only filters the
+`Camel` prefix) on an upstream HTTP / REST consumer wired to a Kafka
+producer in the same route. With the new `CamelKafka*` values, the default
+filter strategy strips them at the transport boundary.
+
+Routes that reference the constants symbolically (for example
+`setHeader(KafkaConstants.OVERRIDE_TOPIC, ...)` or
+`${headers[KafkaConstants.TOPIC]}` via the symbolic name) continue to work
+without changes. Routes that set or read the headers by their literal
+string values (for example `setHeader("kafka.OVERRIDE_TOPIC", ...)` or
+Simple expressions such as `${headers[kafka.TOPIC]}`) must be updated to
+use the new values:
+
+._Java-only: updated Kafka header names in route_
+[source,java]
+----
+// before
+from("platform-http:/api/events")
+    .setHeader("kafka.OVERRIDE_TOPIC", constant("events.topic"))
+    .to("kafka:default?brokers=localhost:9092");
+
+// after
+from("platform-http:/api/events")
+    .setHeader(KafkaConstants.OVERRIDE_TOPIC, constant("events.topic"))
+    .to("kafka:default?brokers=localhost:9092");
+----
+
+A route that bridges an untrusted HTTP / REST consumer to a Kafka producer
+should also continue to apply the standard transport-boundary mitigation,
+which now also covers the kafka headers:
+
+._Java-only: stripping Camel headers at the transport boundary_
+[source,java]
+----
+from("platform-http:/api/events")
+    .removeHeaders("Camel*")
+    .to("kafka:default?brokers=localhost:9092");
+----
+
+The bundled Kafka Connect-style transformers under
+`org.apache.camel.component.kafka.transform` (`RegexRouter`,
+`TimestampRouter`, `MessageTimestampRouter`, `ValueToKey`) have been
+updated to use the renamed `KafkaConstants` values internally and are
+unaffected at the call site.
+
+The local copies of these constants in
+`org.apache.camel.tracing.decorators.KafkaSpanDecorator` (deprecated since
+4.19.0) and `org.apache.camel.telemetry.decorators.KafkaSpanDecorator` have
+been kept in sync with the new values so that Kafka span tagging continues
+to work for routes that have migrated to the new header names.
+
+The generated Endpoint DSL header accessors on
+`KafkaEndpointBuilderFactory$KafkaHeaderNameBuilder` (for example
+`kafkaOverrideTopic()`, `kafkaTopic()`, `kafkaPartitionKey()`) keep their
+method names; only the returned string value reflects the new
+`CamelKafka*` convention.
+
+=== Jackson dataformat documentation pages renamed
+
+The Jackson 2.x and Jackson 3.x lines ship the same dataformat names (`jackson`, `jacksonXml`,
+`avroJackson`, `protobufJackson`) for DSL drop-in compatibility, but their documentation pages
+previously shared the same filename and silently overwrote each other when the doc site was
+built (CAMEL-23531). The pages have been split and now carry an explicit `2` or `3` suffix:
+
+[options="header"]
+|===
+| Module | Old page | New page
+| `camel-jackson` | `jackson-dataformat.adoc` | `jackson2-dataformat.adoc`
+| `camel-jacksonxml` | `jacksonXml-dataformat.adoc` | `jacksonXml2-dataformat.adoc`
+| `camel-jackson-avro` | `avroJackson-dataformat.adoc` | `avroJackson2-dataformat.adoc`
+| `camel-jackson-protobuf` | `protobufJackson-dataformat.adoc` | `protobufJackson2-dataformat.adoc`
+| `camel-jackson3` | `jackson-dataformat.adoc` | `jackson3-dataformat.adoc`
+| `camel-jackson3xml` | `jacksonXml-dataformat.adoc` | `jacksonXml3-dataformat.adoc`
+| `camel-jackson3-avro` | `avroJackson-dataformat.adoc` | `avroJackson3-dataformat.adoc`
+| `camel-jackson3-protobuf` | `protobufJackson-dataformat.adoc` | `protobufJackson3-dataformat.adoc`
+|===
+
+The page titles are likewise disambiguated (`JSON Jackson 2` / `JSON Jackson 3`, etc.) and both
+variants now appear in the dataformats navigation. Update any external `xref:` links that point
+at the old filenames; routes referencing the dataformats by `name` are unaffected.
+
+=== camel-platform-http-main
+
+Two new optional configuration properties are available on both `camel.server.*` and `camel.management.*`
+for the embedded HTTP server:
+
+* `jwtIssuer` — when set, validates the `iss` (issuer) claim of incoming JWT tokens.
+* `jwtAudience` — comma-separated list of accepted audience values; when set, validates the `aud` (audience)
+  claim. A token is accepted if its `aud` claim matches any configured value.
+
+Both default to unset. When both are unset, JWT validation behaviour is unchanged (signature plus the
+default `exp` / `nbf` checks).
+
+Additionally, when `authenticationEnabled=true` but neither a basic-auth properties file
+(`basicPropertiesFile`) nor a JWT keystore (`jwtKeystoreType`) is configured, the embedded HTTP server now
+logs a clear warning at startup that it is starting without authentication. Previously this
+misconfiguration started an unprotected server silently. The server still starts and the behaviour is
+otherwise unchanged; configure an authentication mechanism or set `authenticationEnabled=false` to remove
+the warning.
+
+=== camel-test
+
+`org.apache.camel.test.AvailablePortFinder.Port` now also implements
+`AfterEachCallback` and `BeforeAllCallback`. When the `Port` is registered as a
+non-static `@RegisterExtension` field, it is automatically released after each
+test method, instead of leaking until JVM exit. The previous behaviour for
+static `@RegisterExtension` fields (port reserved for the whole class, released
+on `afterAll`) is preserved. Tests that manually called `port.release()` from an
+`@AfterEach` method to work around CAMEL-21122 no longer need that workaround.
+
+=== camel-mongodb-gridfs
+
+The Exchange header values exposed by `GridFsConstants` have been renamed to follow the standard
+Camel naming convention, bringing `camel-mongodb-gridfs` in line with the parent `camel-mongodb`
+component (`MongoDbConstants.OPERATION_HEADER = "CamelMongoDbOperation"`). The Java field names
+are unchanged, so routes referencing the constants symbolically
+(e.g. `GridFsConstants.GRIDFS_OPERATION`, `GridFsConstants.GRIDFS_OBJECT_ID`) continue to work
+without modification. However, routes that set or read these headers using the raw string values
+must be updated:
+
+* `gridfs.operation` -> `CamelGridFsOperation`
+* `gridfs.metadata` -> `CamelGridFsMetadata`
+* `gridfs.chunksize` -> `CamelGridFsChunkSize`
+* `gridfs.objectid` -> `CamelGridFsObjectId`
+* `gridfs.fileid` -> `CamelGridFsFileId`
+
+As a consequence, the generated Endpoint DSL header accessors on `GridFsHeaderNameBuilder`
+have been renamed accordingly:
+
+* `gridfsOperation()` -> `gridFsOperation()`
+* `gridfsMetadata()` -> `gridFsMetadata()`
+* `gridfsChunksize()` -> `gridFsChunkSize()`
+* `gridfsObjectid()` -> `gridFsObjectId()`
+* `gridfsFileid()` -> `gridFsFileId()`
+
+=== camel-jooq - dbcp
+
+The `commons-dbcp` dependency has been removed. Even if is a very common usage with it, this is only a test dependency. In case, you are relying on it, you will need to add it to you project dependency. Note that, for our tests and examples, we migrated to use `commons-dbcp2`.
+
+=== Deprecation of camel-ironmq
+
+The component camel-ironmq is deprecated. The official library used has been unmaintained since 2017
+All the other client libraries (in other languages) are unmaintained since the same amount of time.
+The whole iron-io GitHub organization has almost no activity.
+
+=== Deprecation of camel-digitalocean
+
+The component camel-digitalocean is deprecated. The java library used has been unmaintained for several years and there is no replacement.
+
+=== Deprecation of camel-irc
+
+The component camel-irc is deprecated. The library used had no stable release since 2007. There is no Java library very active for this protocol.
+
+=== Deprecation of camel-iec-60870
+
+The component camel-iec-60870 is deprecated. The library used to implement it NeoScada is no more maintained since 2021. There are no alternatives in Java with compatible license.
+
+=== Deprecation of camel-jasypt CLI entrypoint
+
+The `org.apache.camel.component.jasypt.Main` class — the command line entrypoint that lets the `camel-jasypt`
+jar be invoked directly (e.g. via JBang) to encrypt or decrypt property values — is now deprecated and will be
+removed in a future Camel release.
+
+Use the standalone CLI scripts (`encrypt.sh` / `decrypt.sh` / `digest.sh`) shipped in the upstream
+link:https://github.com/jasypt/jasypt/releases/tag/jasypt-1.9.3[jasypt-1.9.3 distribution] instead. They cover
+the same workflow and let us drop the duplicate implementation maintained inside `camel-jasypt`. The component
+itself (property-source decryption at runtime) is unaffected.
+
+=== camel-langchain4j-tools / camel-langchain4j-agent / camel-spring-ai-tools
+
+Tool argument headers are now filtered against the tool's declared parameter schema. When the LLM returns
+a tool call, only JSON field names that match a declared `parameter.<name>` are set as Exchange headers.
+Undeclared field names are logged at WARN level and skipped.
+
+This is a breaking change for tools defined without explicit `parameter.*` declarations. Previously, all
+LLM-provided argument field names were set as Exchange headers without filtering. Now, tools with no
+declared parameters will have zero argument headers set from the LLM tool call.
+
+For example, a tool defined as:
+
+._Java-only: tool route without declared parameters_
+[source,java]
+----
+from("langchain4j-tools:test1?tags=user&description=Does not really do anything")
+----
+
+will no longer receive any LLM-provided arguments as headers. To restore argument flow, declare the
+expected parameters explicitly:
+
+._Java-only: tool route with declared parameters_
+[source,java]
+----
+from("langchain4j-tools:test1?tags=user&description=Query user by number&parameter.number=integer")
+----
+
+Additionally, `camel-langchain4j-agent` now extracts primitive values (`int`, `long`, `double`, `boolean`,
+`String`) from tool arguments instead of setting raw `JsonNode` objects as headers.
+
+=== Deprecation of camel-headersmap
+
+The component camel-headersmap is deprecated. Since Camel 4.21, the default `CaseInsensitiveMap` in camel-core
+uses a custom O(1) hash table with zero-allocation lookups and header key deduplication, making the external
+cedarsoftware `java-util` dependency unnecessary. Simply remove the `camel-headersmap` dependency from your
+project — the core implementation now provides equivalent or better performance.
+
+=== Deprecation of camel-paho
+
+The components camel-paho is deprecated. There were no new release since 2020 of the Java client, last non-regulatory commit was in 2022.
+
+=== Tightened default ObjectInputFilter across deserialization sites - potential breaking change
+
+The in-code default `ObjectInputFilter` shipped by the following components now includes JEP-290 graph-shape limits
+(`maxdepth=20`, `maxrefs=10000`, `maxbytes=10485760`) in addition to the existing class allowlist:
+
+* `camel-infinispan` - `DefaultExchangeHolderUtils` (remote aggregation repository deserialization)
+* `camel-mina` - `MinaConverter` (on-the-wire object stream)
+* `camel-netty` - `NettyConverter` (on-the-wire object stream)
+* `camel-netty-http` - `NettyHttpHelper` (HTTP body deserialization when `transferException=true`)
+* `camel-vertx-http` - `VertxHttpHelper` (HTTP body deserialization)
+* `camel-leveldb` - `LevelDBAggregationRepository.deserializationFilter` default value
+* `camel-cassandraql` - `CassandraAggregationRepository.deserializationFilter` default value
+* `camel-consul` - `ConsulRegistry.deserializationFilter` default value
+* `camel-sql` - `JdbcAggregationRepository.deserializationFilter` default value
+
+The new defaults are:
+
+* `!java.net.**;java.**;javax.**;org.apache.camel.**;maxdepth=20;maxrefs=10000;maxbytes=10485760;!*`
+  (camel-infinispan, camel-mina, camel-netty, camel-netty-http, camel-vertx-http)
+* `!java.net.**;java.**;org.apache.camel.**;maxdepth=20;maxrefs=10000;maxbytes=10485760;!*`
+  (camel-leveldb, camel-cassandraql, camel-consul, camel-sql)
+
+These limits provide defense-in-depth so that operators who have not set `-Djdk.serialFilter` still get
+sensible graph-shape limits out of the box. The class allowlist is unchanged.
+
+Operators retain the existing override paths:
+
+* The JVM-wide `-Djdk.serialFilter` system property takes precedence over the Camel default in every site
+  that ships one. Set it to a value that includes the structural clauses you want (or leave them out to
+  disable structural checks).
+* On the configurable repositories and endpoint configurations (`LevelDBAggregationRepository`,
+  `JdbcAggregationRepository`, `CassandraAggregationRepository`, `ConsulRegistry`, the netty-http /
+  vertx-http endpoint configuration), the existing `deserializationFilter` option accepts a fully custom
+  filter string and can be used to relax or further tighten the defaults per endpoint.
+
+Routes that legitimately deserialize very deep, very wide, or very large object graphs may need to either
+raise the structural limits via the `deserializationFilter` option or via `-Djdk.serialFilter`, or migrate
+off Java serialization entirely.
+
+Note that `camel-jms` and `camel-sjms` apply their filter as a post-deserialization class check (after
+the JMS provider has already decoded the payload). Graph-shape limits are therefore not meaningful in
+those sites and have not been added; DoS hardening on the JMS path must be configured at the JMS provider
+level (for example Artemis `deserializationAllowList`, ActiveMQ Classic `SERIALIZABLE_PACKAGES`) or via
+`-Djdk.serialFilter`.
+
+=== camel-azure-storage-blob
+
+A new container-level operation `listBlobVersions` has been added. It returns one `BlobItem`
+per version of every blob in the container, each carrying its own `versionId` and
+`isCurrentVersion` flag, so the full version history can be inspected. Requires versioning to be
+enabled on the storage account. The same `prefix`, `regex` and `maxResultsPerPage` filters as
+`listBlobs` are honoured.
+
+=== camel-irc - potential breaking change
+
+The Exchange header constants in `IrcConstants` have been renamed to follow the
+Camel naming convention used across the rest of the component catalog. The Java
+field names are unchanged; only the header string values have changed:
+
+[options="header"]
+|===
+| Constant | Previous value | New value
+| `IrcConstants.IRC_MESSAGE_TYPE`     | `irc.messageType`     | `CamelIrcMessageType`
+| `IrcConstants.IRC_TARGET`           | `irc.target`          | `CamelIrcTarget`
+| `IrcConstants.IRC_SEND_TO`          | `irc.sendTo`          | `CamelIrcSendTo`
+| `IrcConstants.IRC_USER_KICKED`      | `irc.user.kicked`     | `CamelIrcUserKicked`
+| `IrcConstants.IRC_USER_HOST`        | `irc.user.host`       | `CamelIrcUserHost`
+| `IrcConstants.IRC_USER_NICK`        | `irc.user.nick`       | `CamelIrcUserNick`
+| `IrcConstants.IRC_USER_SERVERNAME`  | `irc.user.servername` | `CamelIrcUserServername`
+| `IrcConstants.IRC_USER_USERNAME`    | `irc.user.username`   | `CamelIrcUserUsername`
+| `IrcConstants.IRC_NUM`              | `irc.num`             | `CamelIrcNum`
+| `IrcConstants.IRC_VALUE`            | `irc.value`           | `CamelIrcValue`
+|===
+
+Routes that reference the constant symbolically (for example
+`header(IrcConstants.IRC_SEND_TO)` or
+`setHeader(IrcConstants.IRC_TARGET, ...)`) continue to work without changes.
+Routes that set or read the header by its literal string value (for example
+`setHeader("irc.sendTo", ...)`) must be updated to use the new value:
+
+._Java-only: updated IRC header name in ProducerTemplate call_
+[source,java]
+----
+// before
+template.sendBodyAndHeader("irc:bot@irc.server.org/#chan", "hello",
+    "irc.sendTo", "#otherchan");
+
+// after
+template.sendBodyAndHeader("irc:bot@irc.server.org/#chan", "hello",
+    "CamelIrcSendTo", "#otherchan");
+----
+
+==== Behaviour change: cross-transport propagation of irc.* headers
+
+Because the renamed header values now begin with `Camel`, they are filtered by
+the standard transport `HeaderFilterStrategy` (`JmsHeaderFilterStrategy`,
+`HttpHeaderFilterStrategy`, etc.) when crossing a transport boundary, by design
+— `Camel*` headers are framework-internal and are not propagated over the wire.
+
+Routes that bridge an external transport (HTTP, JMS, ...) into an `irc:`
+producer and let the sender choose the IRC destination via the `irc.sendTo`
+header must therefore carry that value in a non-`Camel`-prefixed application
+header and map it to `IrcConstants.IRC_SEND_TO` in the route between the
+transport `from` and the `irc:` `to`. Allowing untrusted senders to drive
+`IrcConstants.IRC_SEND_TO` without such a mapping step is not the intended use
+of the component.
+
+
+=== camel-salesforce - potential breaking change
+
+The Exchange header constants in `SalesforceEndpointConfig` have been renamed to
+follow the Camel naming convention used across the rest of the component catalog,
+so that they are governed by the default `HeaderFilterStrategy` (which only filters
+`Camel`/`camel`-prefixed headers). The Java field names are unchanged; only the
+header string values have changed.
+
+These parameters are dual-use: they can be supplied either as endpoint options (for
+example `salesforce:query?sObjectQuery=...`) or as message headers. *The endpoint
+option spelling is unchanged* -- only the *header* name has changed.
+
+[options="header"]
+|===
+| Constant | Previous value | New value
+| `SalesforceEndpointConfig.SOBJECT_NAME` | `sObjectName` | `CamelSalesforceSObjectName`
+| `SalesforceEndpointConfig.SOBJECT_ID` | `sObjectId` | `CamelSalesforceSObjectId`
+| `SalesforceEndpointConfig.SOBJECT_IDS` | `sObjectIds` | `CamelSalesforceSObjectIds`
+| `SalesforceEndpointConfig.SOBJECT_FIELDS` | `sObjectFields` | `CamelSalesforceSObjectFields`
+| `SalesforceEndpointConfig.SOBJECT_EXT_ID_NAME` | `sObjectIdName` | `CamelSalesforceSObjectIdName`
+| `SalesforceEndpointConfig.SOBJECT_EXT_ID_VALUE` | `sObjectIdValue` | `CamelSalesforceSObjectIdValue`
+| `SalesforceEndpointConfig.SOBJECT_BLOB_FIELD_NAME` | `sObjectBlobFieldName` | `CamelSalesforceSObjectBlobFieldName`
+| `SalesforceEndpointConfig.SOBJECT_CLASS` | `sObjectClass` | `CamelSalesforceSObjectClass`
+| `SalesforceEndpointConfig.SOBJECT_QUERY` | `sObjectQuery` | `CamelSalesforceSObjectQuery`
+| `SalesforceEndpointConfig.STREAM_QUERY_RESULT` | `streamQueryResult` | `CamelSalesforceStreamQueryResult`
+| `SalesforceEndpointConfig.SOBJECT_SEARCH` | `sObjectSearch` | `CamelSalesforceSObjectSearch`
+| `SalesforceEndpointConfig.APEX_METHOD` | `apexMethod` | `CamelSalesforceApexMethod`
+| `SalesforceEndpointConfig.APEX_URL` | `apexUrl` | `CamelSalesforceApexUrl`
+| `SalesforceEndpointConfig.APEX_QUERY_PARAM_PREFIX` | `apexQueryParam.` | `CamelSalesforceApexQueryParam.`
+| `SalesforceEndpointConfig.COMPOSITE_METHOD` | `compositeMethod` | `CamelSalesforceCompositeMethod`
+| `SalesforceEndpointConfig.LIMIT` | `limit` | `CamelSalesforceLimit`
+| `SalesforceEndpointConfig.ALL_OR_NONE` | `allOrNone` | `CamelSalesforceAllOrNone`
+| `SalesforceEndpointConfig.EVENT_NAME` | `eventName` | `CamelSalesforceEventName`
+| `SalesforceEndpointConfig.EVENT_SCHEMA_ID` | `eventSchemaId` | `CamelSalesforceEventSchemaId`
+| `SalesforceEndpointConfig.EVENT_SCHEMA_FORMAT` | `eventSchemaFormat` | `CamelSalesforceEventSchemaFormat`
+| `SalesforceEndpointConfig.CONTENT_TYPE` | `contentType` | `CamelSalesforceContentType`
+| `SalesforceEndpointConfig.JOB_ID` | `jobId` | `CamelSalesforceJobId`
+| `SalesforceEndpointConfig.BATCH_ID` | `batchId` | `CamelSalesforceBatchId`
+| `SalesforceEndpointConfig.RESULT_ID` | `resultId` | `CamelSalesforceResultId`
+| `SalesforceEndpointConfig.QUERY_LOCATOR` | `queryLocator` | `CamelSalesforceQueryLocator`
+| `SalesforceEndpointConfig.LOCATOR` | `locator` | `CamelSalesforceLocator`
+| `SalesforceEndpointConfig.MAX_RECORDS` | `maxRecords` | `CamelSalesforceMaxRecords`
+| `SalesforceEndpointConfig.PK_CHUNKING` | `pkChunking` | `CamelSalesforcePkChunking`
+| `SalesforceEndpointConfig.PK_CHUNKING_CHUNK_SIZE` | `pkChunkingChunkSize` | `CamelSalesforcePkChunkingChunkSize`
+| `SalesforceEndpointConfig.PK_CHUNKING_PARENT` | `pkChunkingParent` | `CamelSalesforcePkChunkingParent`
+| `SalesforceEndpointConfig.PK_CHUNKING_START_ROW` | `pkChunkingStartRow` | `CamelSalesforcePkChunkingStartRow`
+| `SalesforceEndpointConfig.REPORT_ID` | `reportId` | `CamelSalesforceReportId`
+| `SalesforceEndpointConfig.INCLUDE_DETAILS` | `includeDetails` | `CamelSalesforceIncludeDetails`
+| `SalesforceEndpointConfig.REPORT_METADATA` | `reportMetadata` | `CamelSalesforceReportMetadata`
+| `SalesforceEndpointConfig.INSTANCE_ID` | `instanceId` | `CamelSalesforceInstanceId`
+| `SalesforceEndpointConfig.RAW_PATH` | `rawPath` | `CamelSalesforceRawPath`
+| `SalesforceEndpointConfig.RAW_METHOD` | `rawMethod` | `CamelSalesforceRawMethod`
+| `SalesforceEndpointConfig.RAW_QUERY_PARAMETERS` | `rawQueryParameters` | `CamelSalesforceRawQueryParameters`
+| `SalesforceEndpointConfig.RAW_HTTP_HEADERS` | `rawHttpHeaders` | `CamelSalesforceRawHttpHeaders`
+|===
+
+Routes that reference the constants symbolically (for example
+`setHeader(SalesforceEndpointConfig.SOBJECT_QUERY, ...)`) continue to work without
+changes. Routes that set the value as a *header* by its literal string (for example
+`setHeader("sObjectQuery", ...)`) must be updated to the new value
+(`setHeader("CamelSalesforceSObjectQuery", ...)`), or preferably switch to the
+symbolic constant. The `apexQueryParam.` header prefix is likewise renamed to
+`CamelSalesforceApexQueryParam.`, so a header such as `apexQueryParam.foo` must now
+be set as `CamelSalesforceApexQueryParam.foo`.
+
+The configuration-only options that are never read from a message header --
+`apiVersion`, `format`, `rawPayload`, `defaultReplayId`, `fallBackReplayId`,
+`initialReplayIdMap`, `replayPreset`, `pubSubDeserializeType`, `pubSubPojoClass`,
+`notFoundBehaviour` and `fallbackToLatestReplayId` -- are unchanged, as is the
+Approval API `approval` / `approval.<property>` mechanism (whose endpoint-option and
+header spellings are intentionally identical and bound to the `approval` endpoint
+parameter name).
+
+==== Behaviour change: cross-transport propagation
+
+Because the renamed header values now begin with `Camel`, they are filtered by the
+standard transport `HeaderFilterStrategy` (`HttpHeaderFilterStrategy`,
+`JmsHeaderFilterStrategy`, etc.) when crossing a transport boundary, by design --
+`Camel*` headers are framework-internal and are not propagated over the wire.
+
+Routes that bridge an external transport (HTTP, JMS, ...) into a `salesforce:`
+producer and let the sender choose, for example, the SOQL query, the target SObject
+or the Apex endpoint via these headers must carry those values in
+non-`Camel`-prefixed application headers and map them to the corresponding
+`SalesforceEndpointConfig` constants in the route between the transport `from` and
+the `salesforce:` `to`. As defence-in-depth, strip inbound Camel-internal headers
+arriving from untrusted producers with `removeHeaders("CamelSalesforce*")` (or the
+broader `removeHeaders("Camel*")`) before the producer.
+
+=== camel-pqc
+
+The key lifecycle managers now store key metadata as JSON instead of using Java serialization.
+`AwsSecretsManagerKeyLifecycleManager` and `HashicorpVaultKeyLifecycleManager` previously stored the
+`KeyMetadata` as a Base64-encoded, Java-serialized value; they now store it as JSON, consistent with
+`FileBasedKeyLifecycleManager`. Metadata written by previous versions is still read transparently and
+is migrated to JSON the next time the metadata is updated.
+
+Because older versions cannot read the new JSON metadata, downgrading after new key metadata has been
+written is not supported.
+
+=== camel-http
+
+The `camel-http` component now requires Apache HttpClient 5.5 or later (previously 5.4+). The
+`ClientTlsStrategyBuilder.buildClassic()` and `setHostVerificationPolicy()` APIs used internally
+were introduced in HttpClient 5.5. Overriding the `httpclient5` version to 5.4.x or earlier will
+produce `NoSuchMethodError` at runtime.
+
+==== TLS hostname verification policy
+
+`camel-http` now explicitly uses `HostnameVerificationPolicy.CLIENT` when constructing the TLS
+strategy. This means only the configured `x509HostnameVerifier` (defaulting to
+`DefaultHostnameVerifier`) decides whether a certificate matches the target hostname. The JDK's
+built-in endpoint-identification check via `SSLParameters.setEndpointIdentificationAlgorithm("https")`
+is not applied.
+
+This restores the behavior from HttpClient 5.5.2, where `NoopHostnameVerifier` actually disabled
+hostname verification. HttpClient 5.6 changed the default to `HostnameVerificationPolicy.BOTH`,
+which enables the JDK check alongside the custom verifier — making `NoopHostnameVerifier` ineffective
+because the JDK check runs first and rejects mismatched certificates.
+
+The policy is now configurable via the `hostnameVerificationPolicy` option on both `HttpComponent`
+and `HttpEndpoint`, accepting `CLIENT` (default), `BUILTIN`, or `BOTH`:
+
+* `CLIENT` — only the configured `x509HostnameVerifier` decides. `NoopHostnameVerifier` disables verification. This is the default and preserves backward compatibility.
+* `BUILTIN` — only the JDK SSLParameters hostname check runs. The configured verifier is ignored.
+* `BOTH` — the JDK check runs first, then the configured verifier. A `NoopHostnameVerifier` cannot bypass the JDK check. Recommended where no custom verifier semantics are needed.
+
+Users who were affected by the `NoopHostnameVerifier` regression introduced in HttpClient 5.6 should
+keep the default `CLIENT` policy or set it explicitly. Users who want stronger out-of-the-box security
+and do not rely on a custom verifier can opt in to `BOTH`.
+
+The `CLIENT` policy is a deliberate choice: it preserves backward compatibility and allows
+`NoopHostnameVerifier` to work as documented. A future release may add an option to opt into the
+`BOTH` policy for defense-in-depth.
+
+=== camel-schematron - potential breaking change
+
+The Schematron rules-compilation `TransformerFactory` now runs with secure processing enabled
+(`FEATURE_SECURE_PROCESSING`) and with external DTD and external stylesheet access disabled
+(`accessExternalDTD` and `accessExternalStylesheet` set to empty), as defense-in-depth against XXE and
+external-resource resolution while compiling Schematron rules. This matches the hardening already applied
+to the component's `SAXParserFactory`. The bundled ISO Schematron skeleton stylesheets continue to be
+resolved from the classpath via the component's `URIResolver` and are therefore unaffected.
+
+If your Schematron rules legitimately reference an external DTD, external entity, or external stylesheet,
+those references will no longer be resolved and rule compilation will fail; inline the referenced content
+instead.
+
+=== camel-jackson - potential breaking change
+
+The `camel-jackson` data format now creates its default `ObjectMapper` with
+`MapperFeature.BLOCK_UNSAFE_POLYMORPHIC_BASE_TYPES` enabled, consistent with the mapper used by the
+component's JSON data-type transformer. This is defense-in-depth against gadget-chain deserialization: when
+polymorphic / default typing is enabled, Jackson refuses unsafe base types (such as `Object`, `Serializable`
+or `Comparable`).
+
+This only affects routes that enable polymorphic / default typing on an unsafe base type; ordinary
+marshalling and unmarshalling are unchanged. If you rely on that behaviour, supply your own `ObjectMapper`
+(via the `objectMapper` option or the registry) configured without this feature.
+
+=== camel-jacksonxml - potential breaking change
+
+The `camel-jacksonxml` data format now creates its default `XmlMapper` with
+`MapperFeature.BLOCK_UNSAFE_POLYMORPHIC_BASE_TYPES` enabled, mirroring the same hardening applied to
+`camel-jackson`. This is defense-in-depth against gadget-chain deserialization: when polymorphic / default
+typing is enabled, Jackson refuses unsafe base types (such as `Object`, `Serializable` or `Comparable`).
+
+This only affects routes that enable polymorphic / default typing on an unsafe base type; ordinary
+marshalling and unmarshalling are unchanged. If you rely on that behaviour, supply your own `XmlMapper`
+(via the `xmlMapper` option) configured without this feature.
+
+=== camel-diagram: Embeddable web component
+
+A new `<camel-route-diagram>` web component is now bundled inside `camel-diagram.jar`
+at `META-INF/resources/camel/diagram/camel-route-diagram.js`.
+Any Servlet 3 container (including Quarkus and Spring Boot) serving the JAR automatically
+exposes the script as a static resource.
+
+The component consumes the existing `route-structure` dev console JSON endpoint and renders
+routes as interactive SVG diagrams with optional per-processor metric overlays and configurable
+periodic refresh.
+It is theme-agnostic, respects `prefers-color-scheme` for automatic dark/light mode, and
+exposes CSS custom properties for full visual control.
+
+See the `camel-diagram` component documentation for usage instructions and theming options.

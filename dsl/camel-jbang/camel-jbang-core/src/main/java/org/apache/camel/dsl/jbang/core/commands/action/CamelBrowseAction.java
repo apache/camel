@@ -35,11 +35,15 @@ import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
-import org.fusesource.jansi.Ansi;
+import org.jline.jansi.Ansi;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "browse",
-                     description = "Browse pending messages on endpoints", sortOptions = false, showDefaultValues = true)
+                     description = "Browse pending messages on endpoints", sortOptions = false, showDefaultValues = true,
+                     footer = {
+                             "%nExamples:",
+                             "  camel cmd browse --endpoint=seda:foo",
+                             "  camel cmd browse --endpoint=seda:foo --limit=10" })
 public class CamelBrowseAction extends ActionBaseCommand {
 
     public static class UriSizeCompletionCandidates implements Iterable<String> {

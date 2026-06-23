@@ -452,7 +452,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Default:
-         * .*secret$|.*password$|.*sasl\.jaas\.config$|.*basic\.auth\.user\.info|.*registry\.auth\.client-secret
+         * .*secret$|.*password$|.*sasl\.jaas\.config$|.*basic\.auth\.user\.info|.*registry\.auth\.client-secret|.*credentials\.json$
          * Group: postgres
          * 
          * @param customSanitizePattern the value to set
@@ -3208,7 +3208,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final DebeziumPostgresHeaderNameBuilder INSTANCE = new DebeziumPostgresHeaderNameBuilder();
+        public static final DebeziumPostgresHeaderNameBuilder INSTANCE = new DebeziumPostgresHeaderNameBuilder();
 
         /**
          * The metadata about the source event, for example table name, database

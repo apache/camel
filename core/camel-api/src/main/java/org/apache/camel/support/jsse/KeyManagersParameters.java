@@ -24,6 +24,7 @@ import java.security.Security;
 import javax.net.ssl.KeyManager;
 import javax.net.ssl.KeyManagerFactory;
 
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,10 +35,10 @@ public class KeyManagersParameters extends JsseParameters {
 
     private static final Logger LOG = LoggerFactory.getLogger(KeyManagersParameters.class);
 
-    protected KeyStoreParameters keyStore;
-    protected String keyPassword;
-    protected String provider;
-    protected String algorithm;
+    protected @Nullable KeyStoreParameters keyStore;
+    protected @Nullable String keyPassword;
+    protected @Nullable String provider;
+    protected @Nullable String algorithm;
 
     /**
      * Creates {@link KeyManager}s based on this instance's configuration and the {@code KeyStore} produced by the
@@ -73,7 +74,8 @@ public class KeyManagersParameters extends JsseParameters {
 
         char[] kmfPassword = null;
         if (this.getKeyPassword() != null) {
-            kmfPassword = this.parsePropertyValue(this.getKeyPassword()).toCharArray();
+            String resolvedPassword = this.parsePropertyValue(this.getKeyPassword());
+            kmfPassword = resolvedPassword != null ? resolvedPassword.toCharArray() : this.getKeyPassword().toCharArray();
         }
 
         KeyStore ks = this.getKeyStore() == null ? null : this.getKeyStore().createKeyStore();
@@ -86,7 +88,7 @@ public class KeyManagersParameters extends JsseParameters {
         return keyManagers;
     }
 
-    public KeyStoreParameters getKeyStore() {
+    public @Nullable KeyStoreParameters getKeyStore() {
         return keyStore;
     }
 
@@ -96,11 +98,11 @@ public class KeyManagersParameters extends JsseParameters {
      *
      * @param value the configuration to use
      */
-    public void setKeyStore(KeyStoreParameters value) {
+    public void setKeyStore(@Nullable KeyStoreParameters value) {
         this.keyStore = value;
     }
 
-    public String getKeyPassword() {
+    public @Nullable String getKeyPassword() {
         return keyPassword;
     }
 
@@ -110,11 +112,11 @@ public class KeyManagersParameters extends JsseParameters {
      *
      * @param value the value to use
      */
-    public void setKeyPassword(String value) {
+    public void setKeyPassword(@Nullable String value) {
         this.keyPassword = value;
     }
 
-    public String getProvider() {
+    public @Nullable String getProvider() {
         return provider;
     }
 
@@ -127,11 +129,11 @@ public class KeyManagersParameters extends JsseParameters {
      *
      * @see         Security#getProviders()
      */
-    public void setProvider(String value) {
+    public void setProvider(@Nullable String value) {
         this.provider = value;
     }
 
-    public String getAlgorithm() {
+    public @Nullable String getAlgorithm() {
         return algorithm;
     }
 
@@ -144,7 +146,7 @@ public class KeyManagersParameters extends JsseParameters {
      * @param value the desired algorithm or {@code null} to use default
      * @see         KeyManagerFactory#getDefaultAlgorithm()
      */
-    public void setAlgorithm(String value) {
+    public void setAlgorithm(@Nullable String value) {
         this.algorithm = value;
     }
 

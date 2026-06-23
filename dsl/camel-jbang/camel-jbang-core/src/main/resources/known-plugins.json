@@ -1,0 +1,20 @@
+[
+  {
+    "name": "forage",
+    "command": "forage",
+    "description": "Production ready Apache Camel components configurations via properties",
+    "firstVersion": "4.10.0",
+    "groupId": "io.kaoto.forage",
+    "artifactId": "camel-jbang-plugin-forage",
+    "vendor": "Community"
+  },
+  {
+    "name": "camel-kit",
+    "command": "kit",
+    "description": "Design Apache Camel Integrations with AI",
+    "firstVersion": "4.10.0",
+    "groupId": "io.github.luigidemasi",
+    "artifactId": "camel-kit-jbang-plugin",
+    "vendor": "Community"
+  }
+]

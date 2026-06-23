@@ -19,6 +19,7 @@ package org.apache.camel.component.smb;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.EnumSet;
 
@@ -181,6 +182,17 @@ public class SmbOperations implements SmbFileOperations {
                     SMB2ShareAccess.ALL,
                     SMB2CreateDisposition.FILE_OPEN, null)) {
                 f.deleteOnClose();
+            } catch (SMBApiException e) {
+                if (e.getStatusCode() == 0xc0000022L) {
+                    throw new GenericFileOperationFailedException(
+                            "Access denied when trying to delete file: " + name
+                                                                  + ". Ensure the authenticated user has DELETE permission on the file"
+                                                                  + " and that the server's volume security style allows SMB-based access control."
+                                                                  + " If the volume uses UNIX security style, NTFS ACLs are ignored"
+                                                                  + " and only file ownership and UNIX mode bits (chmod/chown) are evaluated.",
+                            e);
+                }
+                throw e;
             }
         }
         return true;
@@ -360,7 +372,7 @@ public class SmbOperations implements SmbFileOperations {
 
                 try (InputStream is = shareFile.getInputStream()) {
                     // store content as a file in the local work directory in the temp handle
-                    java.nio.file.Files.copy(is, temp.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                    Files.copy(is, temp.toPath(), StandardCopyOption.REPLACE_EXISTING);
                 }
 
                 exchange.getIn().setHeader(SmbConstants.SMB_UNC_PATH, shareFile.getUncPath());

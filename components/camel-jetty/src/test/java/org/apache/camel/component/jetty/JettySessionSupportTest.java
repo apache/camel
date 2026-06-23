@@ -21,7 +21,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class JettySessionSupportTest extends BaseJettyTest {
 
@@ -31,22 +30,24 @@ class JettySessionSupportTest extends BaseJettyTest {
     }
 
     @Test
-    void testJettySessionSupportInvalid() {
-        RouteBuilder routeBuilder = new RouteBuilder() {
+    void testJettySessionSupportOnExistingServer() throws Exception {
+        context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("jetty:http://localhost:{{port}}/hello").to("mock:foo");
+                from("jetty:http://localhost:{{port}}/hello").transform(simple("Hello ${body}"));
 
-                from("jetty:http://localhost:{{port}}/bye?sessionSupport=true").to("mock:bar");
+                from("jetty:http://localhost:{{port}}/bye?sessionSupport=true").transform(simple("Bye ${body}"));
             }
-        };
+        });
+        context.start();
 
-        assertThrows(
-                IllegalStateException.class,
-                () -> context.addRoutes(routeBuilder),
-                "Server has already been started. Cannot enabled sessionSupport on http:localhost:%d".formatted(getPort()));
+        try {
+            String reply = template.requestBody("http://localhost:{{port}}/hello", "World", String.class);
+            assertEquals("Hello World", reply);
 
-        if (context.isStarted()) {
+            reply = template.requestBody("http://localhost:{{port}}/bye", "World", String.class);
+            assertEquals("Bye World", reply);
+        } finally {
             context.stop();
         }
     }

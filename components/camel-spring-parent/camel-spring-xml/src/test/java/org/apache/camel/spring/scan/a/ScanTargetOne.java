@@ -16,7 +16,9 @@
  */
 package org.apache.camel.spring.scan.a;
 
-@org.apache.camel.spring.scan.ScannableOne
+import org.apache.camel.spring.scan.ScannableOne;
+
+@ScannableOne
 public class ScanTargetOne {
 
     public void someMethod() {

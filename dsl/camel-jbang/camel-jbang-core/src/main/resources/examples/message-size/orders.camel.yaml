@@ -1,0 +1,85 @@
+# Producers: simulate different payload sizes using Content-Length header
+- route:
+    id: small-producer
+    from:
+      uri: timer:small
+      parameters:
+        period: 2000
+      steps:
+        - setHeader:
+            name: Content-Length
+            simple: "${random(100,1023)}"
+        - setHeader:
+            name: source
+            simple: small-producer
+        - to:
+            uri: seda:small
+
+- route:
+    id: medium-producer
+    from:
+      uri: timer:medium
+      parameters:
+        period: 3000
+      steps:
+        - setHeader:
+            name: Content-Length
+            simple: "${random(8192,18432)}"
+        - setHeader:
+            name: source
+            simple: medium-producer
+        - setHeader:
+            name: tracking-id
+            simple: "TRK-${random(10000,99999)}"
+        - to:
+            uri: seda:medium
+
+- route:
+    id: large-producer
+    from:
+      uri: timer:large
+      parameters:
+        period: 5000
+      steps:
+        - setHeader:
+            name: Content-Length
+            simple: "${random(10485760,20971520)}"
+        - setHeader:
+            name: source
+            simple: large-producer
+        - setHeader:
+            name: tracking-id
+            simple: "TRK-${random(10000,99999)}"
+        - setHeader:
+            name: batch-id
+            simple: "BATCH-${random(100,999)}"
+        - setHeader:
+            name: priority
+            simple: "${random(1,5)}"
+        - to:
+            uri: seda:large
+
+# Consumers: process messages from each seda endpoint
+- route:
+    id: process-small
+    from:
+      uri: seda:small
+      steps:
+        - log:
+            message: "Small: Content-Length=${header.Content-Length}"
+
+- route:
+    id: process-medium
+    from:
+      uri: seda:medium
+      steps:
+        - log:
+            message: "Medium: Content-Length=${header.Content-Length}"
+
+- route:
+    id: process-large
+    from:
+      uri: seda:large
+      steps:
+        - log:
+            message: "Large: Content-Length=${header.Content-Length}"

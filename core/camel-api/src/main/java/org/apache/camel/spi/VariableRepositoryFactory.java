@@ -16,8 +16,12 @@
  */
 package org.apache.camel.spi;
 
+import org.jspecify.annotations.Nullable;
+
 /**
  * Factory for {@link VariableRepository}.
+ *
+ * @since 4.4
  */
 public interface VariableRepositoryFactory {
 
@@ -32,11 +36,19 @@ public interface VariableRepositoryFactory {
     String ROUTE_VARIABLE_REPOSITORY_ID = "route-variable-repository";
 
     /**
+     * Registry bean id for group {@link VariableRepository}.
+     *
+     * @since 4.21
+     */
+    String GROUP_VARIABLE_REPOSITORY_ID = "group-variable-repository";
+
+    /**
      * Gets the {@link VariableRepository} for the given id
      *
      * @param  id the repository id
      * @return    the repository or <tt>null</tt> if none found
      */
+    @Nullable
     VariableRepository getVariableRepository(String id);
 
 }

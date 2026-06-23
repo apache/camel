@@ -27,13 +27,13 @@ public class TwitterConfiguration {
 
     @UriParam(label = "consumer", defaultValue = "polling", enums = "polling,direct")
     private EndpointType type = EndpointType.POLLING;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String accessToken;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String accessTokenSecret;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String consumerKey;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String consumerSecret;
     @UriParam(label = "consumer,filter")
     private String userIds;

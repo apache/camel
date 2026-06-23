@@ -53,8 +53,6 @@ public class AS2AsyncMdnBasicAuthHeaderTest extends AbstractAS2ITSupport {
     private static final String MDN_PASSWORD = "rider";
     private static final String MDN_ACCESS_TOKEN = "MTQ0NjJkZmQ5OTM2NDE1ZTZjNGZmZjI3";
     @RegisterExtension
-    AvailablePortFinder.Port targetPort = AvailablePortFinder.find();
-    @RegisterExtension
     AvailablePortFinder.Port receiptServerPort = AvailablePortFinder.find();
     @RegisterExtension
     AvailablePortFinder.Port jettyPort = AvailablePortFinder.find();
@@ -88,6 +86,7 @@ public class AS2AsyncMdnBasicAuthHeaderTest extends AbstractAS2ITSupport {
             """;
 
     private AS2ServerConnection serverConnection;
+    private int targetPort;
 
     @Override
     public void setupResources() throws Exception {
@@ -186,18 +185,19 @@ public class AS2AsyncMdnBasicAuthHeaderTest extends AbstractAS2ITSupport {
 
     @Override
     protected void customizeConfiguration(AS2Configuration configuration) {
-        configuration.setTargetPortNumber(targetPort.getPort());
+        configuration.setTargetPortNumber(targetPort);
     }
 
     // AS2 server adds Authorization header to MDN returned asynchronously
     private void receiveTestMessages() throws IOException {
         serverConnection = new AS2ServerConnection(
                 "1.1", "AS2ClientManagerIntegrationTest Server",
-                "server.example.com", targetPort.getPort(), AS2SignatureAlgorithm.SHA256WITHRSA,
+                "server.example.com", 0, AS2SignatureAlgorithm.SHA256WITHRSA,
                 null, null, null,
                 "TBD", null, null,
                 // server authorization config
                 MDN_USER_NAME, MDN_PASSWORD, MDN_ACCESS_TOKEN);
+        targetPort = serverConnection.getLocalPort();
         serverConnection.listen("/", new AS2AsyncMDNServerManagerIT.RequestHandler());
     }
 }

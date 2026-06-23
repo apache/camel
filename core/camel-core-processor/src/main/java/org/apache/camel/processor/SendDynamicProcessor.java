@@ -23,6 +23,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Component;
 import org.apache.camel.Endpoint;
+import org.apache.camel.EndpointSending;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.ExchangePropertyKey;
@@ -38,6 +39,7 @@ import org.apache.camel.spi.OptimisedComponentResolver;
 import org.apache.camel.spi.ProducerCache;
 import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.spi.SendDynamicAware;
+import org.apache.camel.spi.StepIdAware;
 import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.cache.DefaultProducerCache;
@@ -52,7 +54,8 @@ import org.slf4j.LoggerFactory;
  *
  * @see org.apache.camel.processor.SendProcessor
  */
-public class SendDynamicProcessor extends BaseProcessorSupport implements IdAware, RouteIdAware, CamelContextAware {
+public class SendDynamicProcessor extends BaseProcessorSupport
+        implements EndpointSending, IdAware, RouteIdAware, StepIdAware, CamelContextAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(SendDynamicProcessor.class);
 
@@ -68,6 +71,7 @@ public class SendDynamicProcessor extends BaseProcessorSupport implements IdAwar
     protected HeadersMapFactory headersMapFactory;
     protected String id;
     protected String routeId;
+    protected String stepId;
     protected boolean ignoreInvalidEndpoint;
     protected int cacheSize;
     protected boolean allowOptimisedComponents = true;
@@ -101,6 +105,16 @@ public class SendDynamicProcessor extends BaseProcessorSupport implements IdAwar
     @Override
     public void setRouteId(String routeId) {
         this.routeId = routeId;
+    }
+
+    @Override
+    public String getStepId() {
+        return stepId;
+    }
+
+    @Override
+    public void setStepId(String stepId) {
+        this.stepId = stepId;
     }
 
     @Override

@@ -678,7 +678,7 @@ public interface CouchDbEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final CouchDbHeaderNameBuilder INSTANCE = new CouchDbHeaderNameBuilder();
+        public static final CouchDbHeaderNameBuilder INSTANCE = new CouchDbHeaderNameBuilder();
 
         /**
          * The database the message came from.
@@ -690,7 +690,7 @@ public interface CouchDbEndpointBuilderFactory {
          * @return the name of the header {@code CouchDbDatabase}.
          */
         public String couchDbDatabase() {
-            return "CouchDbDatabase";
+            return "CamelCouchDbDatabase";
         }
         /**
          * The couchdb changeset sequence number of the update / delete message.
@@ -702,7 +702,7 @@ public interface CouchDbEndpointBuilderFactory {
          * @return the name of the header {@code CouchDbSeq}.
          */
         public String couchDbSeq() {
-            return "CouchDbSeq";
+            return "CamelCouchDbSeq";
         }
         /**
          * The couchdb document id.
@@ -714,7 +714,7 @@ public interface CouchDbEndpointBuilderFactory {
          * @return the name of the header {@code CouchDbId}.
          */
         public String couchDbId() {
-            return "CouchDbId";
+            return "CamelCouchDbId";
         }
         /**
          * The couchdb document revision.
@@ -726,7 +726,7 @@ public interface CouchDbEndpointBuilderFactory {
          * @return the name of the header {@code CouchDbRev}.
          */
         public String couchDbRev() {
-            return "CouchDbRev";
+            return "CamelCouchDbRev";
         }
         /**
          * The method (delete / update).
@@ -738,7 +738,7 @@ public interface CouchDbEndpointBuilderFactory {
          * @return the name of the header {@code CouchDbMethod}.
          */
         public String couchDbMethod() {
-            return "CouchDbMethod";
+            return "CamelCouchDbMethod";
         }
         /**
          * The resume action to execute when resuming.

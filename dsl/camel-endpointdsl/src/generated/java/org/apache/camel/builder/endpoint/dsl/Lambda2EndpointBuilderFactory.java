@@ -595,7 +595,7 @@ public interface Lambda2EndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final Lambda2HeaderNameBuilder INSTANCE = new Lambda2HeaderNameBuilder();
+        public static final Lambda2HeaderNameBuilder INSTANCE = new Lambda2HeaderNameBuilder();
 
         /**
          * The operation we want to perform. Override operation passed as query

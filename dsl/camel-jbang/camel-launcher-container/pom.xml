@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-jbang-parent</artifactId>
-        <version>4.20.0-SNAPSHOT</version>
+        <version>4.21.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -36,7 +36,7 @@
 
     <properties>
         <camel-prepare-component>false</camel-prepare-component>
-        <camel-launcher.version>4.20.0-SNAPSHOT</camel-launcher.version>
+        <camel-launcher.version>4.21.0-SNAPSHOT</camel-launcher.version>
         <container.base-image>eclipse-temurin:21-jre</container.base-image>
         <container.user>ubuntu</container.user>
         <docker.context>${project.build.directory}/docker</docker.context>

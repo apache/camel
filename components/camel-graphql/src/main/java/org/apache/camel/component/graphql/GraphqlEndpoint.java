@@ -62,11 +62,11 @@ public class GraphqlEndpoint extends DefaultEndpoint implements EndpointServiceL
     private URI httpUri;
     @UriParam
     private String proxyHost;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String accessToken;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String username;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String password;
     @UriParam(label = "security", defaultValue = "Bearer")
     private String jwtAuthorizationType;

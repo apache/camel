@@ -1,0 +1,11 @@
+from("direct:start")
+    .routeId("myRoute")
+    .choice()
+        .when(simple("${header.type} == 'a'"))
+            .to("mock:a")
+        .when(simple("${header.type} == 'b'"))
+            .to("mock:b")
+        .otherwise()
+            .to("mock:other")
+    .end()
+    .to("mock:result");

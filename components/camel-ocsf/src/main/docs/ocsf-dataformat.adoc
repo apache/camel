@@ -6,8 +6,6 @@
 :since: 4.18
 :supportlevel: Stable
 :tabs-sync-option:
-//Manually maintained attributes
-:camel-spring-boot-name: ocsf
 
 *Since Camel {since}*
 
@@ -17,7 +15,7 @@ OCSF is an open-source standard for cybersecurity event logging and data normali
 
 == Supported OCSF Event Classes
 
-This data format includes POJOs for 34 OCSF event classes and 68 reusable object types. Key event classes include:
+This data format includes POJOs for 34 OCSF event classes and 70 reusable object types (based on OCSF schema 1.8.0). Key event classes include:
 
 *Findings (Category 2):*
 
@@ -50,6 +48,10 @@ All event classes extend `OcsfEvent` which provides common attributes like `time
 
 === Marshalling OCSF Events
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:start")
@@ -57,8 +59,40 @@ from("direct:start")
     .to("kafka:security-events");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <marshal>
+    <ocsf/>
+  </marshal>
+  <to uri="kafka:security-events"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - marshal:
+            ocsf: {}
+        - to:
+            uri: kafka:security-events
+----
+====
+
 === Unmarshalling OCSF Events
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("kafka:security-events")
@@ -66,8 +100,40 @@ from("kafka:security-events")
     .to("direct:process");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="kafka:security-events"/>
+  <unmarshal>
+    <ocsf/>
+  </unmarshal>
+  <to uri="direct:process"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: kafka:security-events
+      steps:
+        - unmarshal:
+            ocsf: {}
+        - to:
+            uri: direct:process
+----
+====
+
 === Unmarshalling to a Specific Event Class
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("kafka:security-events")
@@ -75,10 +141,43 @@ from("kafka:security-events")
     .to("direct:process");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="kafka:security-events"/>
+  <unmarshal>
+    <ocsf unmarshalType="org.apache.camel.dataformat.ocsf.model.DetectionFinding"/>
+  </unmarshal>
+  <to uri="direct:process"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: kafka:security-events
+      steps:
+        - unmarshal:
+            ocsf:
+              unmarshalType: org.apache.camel.dataformat.ocsf.model.DetectionFinding
+        - to:
+            uri: direct:process
+----
+====
+
 === Using with AWS Security Hub
 
 AWS Security Hub now outputs findings in OCSF format. You can use this data format to process those findings:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("aws-securityhub:findings")
@@ -90,41 +189,56 @@ from("aws-securityhub:findings")
             .to("direct:normal-severity");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="aws-securityhub:findings"/>
+  <unmarshal>
+    <ocsf unmarshalType="org.apache.camel.dataformat.ocsf.model.DetectionFinding"/>
+  </unmarshal>
+  <choice>
+    <when>
+      <simple>${body.severityId} >= 4</simple>
+      <to uri="direct:high-severity"/>
+    </when>
+    <otherwise>
+      <to uri="direct:normal-severity"/>
+    </otherwise>
+  </choice>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: aws-securityhub:findings
+      steps:
+        - unmarshal:
+            ocsf:
+              unmarshalType: org.apache.camel.dataformat.ocsf.model.DetectionFinding
+        - choice:
+            when:
+              - simple: "${body.severityId} >= 4"
+                steps:
+                  - to:
+                      uri: direct:high-severity
+            otherwise:
+              steps:
+                - to:
+                    uri: direct:normal-severity
+----
+====
+
 == OCSF Options
 
 // dataformat options: START
 include::partial$dataformat-options.adoc[]
 // dataformat options: END
-
-== Using OCSF in Spring DSL
-
-You can use the OCSF data format directly in Spring XML:
-
-[source,xml]
-----
-<route>
-    <from uri="kafka:security-events"/>
-    <unmarshal>
-        <ocsf unmarshalType="org.apache.camel.dataformat.ocsf.model.DetectionFinding"/>
-    </unmarshal>
-    <to uri="direct:process"/>
-</route>
-----
-
-Or define a reusable data format:
-
-[source,xml]
-----
-<dataFormats>
-    <ocsf id="ocsfDetection" unmarshalType="org.apache.camel.dataformat.ocsf.model.DetectionFinding"/>
-</dataFormats>
-
-<route>
-    <from uri="kafka:security-events"/>
-    <unmarshal ref="ocsfDetection"/>
-    <to uri="direct:process"/>
-</route>
-----
 
 == OCSF Event Categories
 
@@ -145,6 +259,7 @@ OCSF defines the following event categories:
 
 == Example: Creating a Detection Finding
 
+._Java-only: creating and marshalling a DetectionFinding POJO_
 [source,java]
 ----
 DetectionFinding finding = new DetectionFinding();
@@ -174,6 +289,7 @@ You can combine the OCSF DataFormat with the LangChain4j Chat component to use a
 
 === Java DSL Example
 
+._Java-only: AI-powered security finding summarization with process and langchain4j_
 [source,java]
 ----
 from("kafka:security-events")
@@ -212,22 +328,30 @@ from("kafka:security-events")
 ----
 - route:
     from:
-      uri: "kafka:security-events"
+      uri: kafka:security-events
     steps:
       - unmarshal:
           ocsf:
             unmarshalType: "org.apache.camel.dataformat.ocsf.model.DetectionFinding"
       - setHeader:
           name: "findingTitle"
-          simple: "${body.findingInfo?.title}"
+          expression:
+            simple:
+              expression: "${body.findingInfo?.title}"
       - setHeader:
           name: "findingSeverity"
-          simple: "${body.severityId}"
+          expression:
+            simple:
+              expression: "${body.severityId}"
       - setHeader:
           name: "findingMessage"
-          simple: "${body.message}"
+          expression:
+            simple:
+              expression: "${body.message}"
       - setBody:
-          simple: |
+          expression:
+            simple:
+              expression: |
             Analyze this security detection finding and provide a brief summary:
 
             Title: ${header.findingTitle}
@@ -239,11 +363,11 @@ from("kafka:security-events")
             2. Recommended immediate actions
             3. Risk assessment (Critical/High/Medium/Low)
       - to:
-          uri: "langchain4j-chat:security-analyst"
+          uri: langchain4j-chat:security-analyst
           parameters:
             chatModel: "#chatLanguageModel"
       - to:
-          uri: "direct:ai-summary"
+          uri: direct:ai-summary
 ----
 
 == Dependencies
@@ -316,8 +440,8 @@ Reusable objects used within event classes:
 * `Cloud`, `Container`, `Image` - Cloud and container objects
 * `Metadata`, `Product`, `Observable`, `Enrichment` - Metadata objects
 * `Certificate`, `Tls`, `Fingerprint` - Cryptographic objects
-* `HttpRequest`, `HttpResponse`, `DnsQuery`, `Url` - Network protocol objects
-* `Location`, `Organization`, `Service` - Context objects
+* `HttpRequest`, `HttpResponse`, `DnsQuery`, `Url`, `Packet` - Network protocol objects
+* `Location`, `Organization`, `Service`, `Token` - Context objects
 * `Cve`, `Cvss`, `Cwe`, `Epss` - Vulnerability reference objects
 
 == Updating OCSF Schema Version
@@ -344,7 +468,7 @@ To update the OCSF model classes to a new version:
 [source,bash]
 ----
 cd src/main/script
-python3 generate-ocsf-schemas.py --version 1.7.0 --output ../resources/schema --clean
+python3 generate-ocsf-schemas.py --version 1.8.0 --output ../resources/schema --clean
 ----
 
 2. Build and test to verify the changes (Java classes are generated automatically during build):
@@ -356,6 +480,11 @@ mvn clean test
 
 3. Commit the updated JSON schema files.
 
+NOTE: The script first tries to load the requested OCSF version from the
+bundled `ocsf-json-schema` Python package. If the version is not bundled
+yet (typical for the most recent OCSF release), the script automatically
+downloads the schema from `https://schema.ocsf.io/\{version}/export/schema`.
+
 === Script Options
 
 The script supports the following options:
@@ -364,7 +493,7 @@ The script supports the following options:
 |===
 |Option |Default |Description
 
-|`--version`, `-v` |1.7.0 |OCSF schema version to generate
+|`--version`, `-v` |1.8.0 |OCSF schema version to generate
 |`--output`, `-o` |../resources/schema |Output directory for schema files
 |`--clean` |false |Remove existing schema files before generating
 |`--all-classes` |false |Generate all available event classes (not just the default list)
@@ -392,5 +521,3 @@ The generated schemas use:
 * https://schema.ocsf.io/[OCSF Schema Browser]
 * https://github.com/ocsf/ocsf-schema[OCSF Schema GitHub]
 * https://docs.aws.amazon.com/securityhub/latest/userguide/securityhub-ocsf.html[AWS Security Hub OCSF Documentation]
-
-include::spring-boot:partial$starter.adoc[]

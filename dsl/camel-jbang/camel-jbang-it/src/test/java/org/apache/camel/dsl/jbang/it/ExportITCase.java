@@ -151,8 +151,8 @@ public class ExportITCase extends JBangTestSupport {
     public void testGeneratedDockerfilesOnExportQuarkus() {
         execute(String.format("export --runtime=quarkus --gav=com.foo:acme:1.0-SNAPSHOT --directory=%s",
                 mountPoint()));
+        assertFileInDataFolderExists("src/main/docker/Dockerfile");
         assertFileInDataFolderExists("src/main/docker/Dockerfile.jvm");
-        assertFileInDataFolderExists("src/main/docker/Dockerfile.legacy-jar");
         assertFileInDataFolderExists("src/main/docker/Dockerfile.native");
         assertFileInDataFolderExists("src/main/docker/Dockerfile.native-micro");
     }

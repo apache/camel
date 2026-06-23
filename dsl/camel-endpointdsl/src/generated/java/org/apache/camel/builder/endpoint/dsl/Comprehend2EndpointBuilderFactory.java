@@ -626,7 +626,7 @@ public interface Comprehend2EndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final Comprehend2HeaderNameBuilder INSTANCE = new Comprehend2HeaderNameBuilder();
+        public static final Comprehend2HeaderNameBuilder INSTANCE = new Comprehend2HeaderNameBuilder();
 
         /**
          * The operation we want to perform.

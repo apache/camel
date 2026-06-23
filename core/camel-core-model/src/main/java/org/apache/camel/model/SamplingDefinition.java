@@ -111,6 +111,18 @@ public class SamplingDefinition extends NoOutputDefinition<SamplingDefinition> {
     }
 
     /**
+     * Sets the sample message count which only a single {@link org.apache.camel.Exchange} will pass through after this
+     * many received. Supports property placeholders.
+     *
+     * @param  messageFrequency the message frequency
+     * @return                  the builder
+     */
+    public SamplingDefinition sampleMessageFrequency(String messageFrequency) {
+        setMessageFrequency(messageFrequency);
+        return this;
+    }
+
+    /**
      * Sets the sample period during which only a single {@link org.apache.camel.Exchange} will pass through.
      *
      * @param  samplePeriod the period

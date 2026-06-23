@@ -29,7 +29,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.thrift.generated.Calculator;
 import org.apache.camel.component.thrift.generated.Operation;
 import org.apache.camel.component.thrift.generated.Work;
-import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.apache.thrift.async.AsyncMethodCallback;
 import org.apache.thrift.async.TAsyncClientManager;
@@ -40,7 +39,6 @@ import org.apache.thrift.transport.TTransportException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,8 +48,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ThriftConsumerAsyncTest extends CamelTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(ThriftConsumerAsyncTest.class);
-    @RegisterExtension
-    AvailablePortFinder.Port thriftTestPort = AvailablePortFinder.find();
+
     private static final int THRIFT_TEST_NUM1 = 12;
     private static final int THRIFT_TEST_NUM2 = 13;
     private Calculator.AsyncClient thriftClient;
@@ -63,11 +60,16 @@ public class ThriftConsumerAsyncTest extends CamelTestSupport {
     private int allTypesResult;
     private Work echoResult;
 
+    private int getActualPort() {
+        return ((ThriftConsumer) context.getRoutes().get(0).getConsumer()).getLocalPort();
+    }
+
     @BeforeEach
     public void startThriftClient() throws IOException, TTransportException {
         if (transport == null) {
-            LOG.info("Connecting to the Thrift server on port: {}", thriftTestPort.getPort());
-            transport = new TNonblockingSocket("localhost", thriftTestPort.getPort());
+            int thriftTestPort = getActualPort();
+            LOG.info("Connecting to the Thrift server on port: {}", thriftTestPort);
+            transport = new TNonblockingSocket("localhost", thriftTestPort);
             thriftClient = (new Calculator.AsyncClient.Factory(new TAsyncClientManager(), new TBinaryProtocol.Factory()))
                     .getAsyncClient(transport);
         }
@@ -243,8 +245,7 @@ public class ThriftConsumerAsyncTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("thrift://localhost:" + thriftTestPort.getPort()
-                     + "/org.apache.camel.component.thrift.generated.Calculator")
+                from("thrift://localhost:0/org.apache.camel.component.thrift.generated.Calculator")
                         .to("mock:thrift-service").choice()
                         .when(header(ThriftConstants.THRIFT_METHOD_NAME_HEADER).isEqualTo("calculate"))
                         .setBody(simple(Integer.valueOf(THRIFT_TEST_NUM1 * THRIFT_TEST_NUM2).toString()))

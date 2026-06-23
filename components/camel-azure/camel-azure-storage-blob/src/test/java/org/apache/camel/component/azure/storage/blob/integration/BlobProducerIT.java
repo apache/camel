@@ -63,7 +63,7 @@ class BlobProducerIT extends Base {
 
     @Test
     void testUploadBlockBlob() throws InterruptedException {
-        final String blobName = RandomStringUtils.randomAlphabetic(10);
+        final String blobName = RandomStringUtils.secure().nextAlphabetic(10);
 
         result.expectedMessageCount(1);
 
@@ -77,7 +77,7 @@ class BlobProducerIT extends Base {
 
     @Test
     void testCommitAndStageBlockBlob() throws InterruptedException {
-        final String blobName = RandomStringUtils.randomAlphabetic(10);
+        final String blobName = RandomStringUtils.secure().nextAlphabetic(10);
 
         result.expectedMessageCount(1);
 
@@ -102,7 +102,7 @@ class BlobProducerIT extends Base {
 
     @Test
     void testCommitAppendBlobWithError() throws InterruptedException {
-        final String blobName = RandomStringUtils.randomAlphabetic(10);
+        final String blobName = RandomStringUtils.secure().nextAlphabetic(10);
 
         template.send("direct:commitAppendBlobWithError", exchange -> {
             exchange.getIn().setHeader(BlobConstants.BLOB_NAME, blobName);
@@ -122,7 +122,7 @@ class BlobProducerIT extends Base {
 
     @Test
     void testCreateAndUpdateAppendBlob() throws InterruptedException {
-        final String blobName = RandomStringUtils.randomAlphabetic(10);
+        final String blobName = RandomStringUtils.secure().nextAlphabetic(10);
 
         result.expectedMessageCount(1);
 
@@ -145,7 +145,7 @@ class BlobProducerIT extends Base {
 
     @Test
     void testCreateAndUploadPageBlob() throws InterruptedException {
-        final String blobName = RandomStringUtils.randomAlphabetic(10);
+        final String blobName = RandomStringUtils.secure().nextAlphabetic(10);
 
         result.expectedMessageCount(1);
 

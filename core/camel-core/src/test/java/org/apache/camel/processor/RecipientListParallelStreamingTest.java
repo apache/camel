@@ -49,8 +49,8 @@ public class RecipientListParallelStreamingTest extends ContextTestSupport {
 
                 from("direct:streaming").recipientList(header("foo")).parallelProcessing().streaming().to("mock:result");
 
-                from("direct:a").delay(100).transform(constant("a"));
-                from("direct:b").delay(500).transform(constant("b"));
+                from("direct:a").delay(100).syncDelayed().transform(constant("a"));
+                from("direct:b").delay(500).syncDelayed().transform(constant("b"));
                 from("direct:c").transform(constant("c"));
             }
         };

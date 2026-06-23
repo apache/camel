@@ -29,15 +29,17 @@ import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.RouteIdAware;
+import org.apache.camel.spi.StepIdAware;
 import org.apache.camel.support.AsyncProcessorConverterHelper;
 
 public class PausableProcessor extends BaseProcessorSupport
-        implements Navigate<Processor>, CamelContextAware, IdAware, RouteIdAware {
+        implements Navigate<Processor>, CamelContextAware, IdAware, RouteIdAware, StepIdAware {
 
     private final AsyncProcessor processor;
     private CamelContext camelContext;
     private String id;
     private String routeId;
+    private String stepId;
 
     public PausableProcessor(Processor processor) {
         this.processor = AsyncProcessorConverterHelper.convert(processor);
@@ -91,5 +93,15 @@ public class PausableProcessor extends BaseProcessorSupport
     @Override
     public void setRouteId(String routeId) {
         this.routeId = routeId;
+    }
+
+    @Override
+    public String getStepId() {
+        return stepId;
+    }
+
+    @Override
+    public void setStepId(String stepId) {
+        this.stepId = stepId;
     }
 }

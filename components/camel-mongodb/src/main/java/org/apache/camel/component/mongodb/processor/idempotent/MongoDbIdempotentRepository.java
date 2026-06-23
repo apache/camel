@@ -17,6 +17,7 @@
 package org.apache.camel.component.mongodb.processor.idempotent;
 
 import com.mongodb.ErrorCategory;
+import com.mongodb.MongoWriteException;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.result.DeleteResult;
@@ -64,7 +65,7 @@ public class MongoDbIdempotentRepository extends ServiceSupport implements Idemp
         Document document = new Document(MONGO_ID, key);
         try {
             collection.insertOne(document);
-        } catch (com.mongodb.MongoWriteException ex) {
+        } catch (MongoWriteException ex) {
             if (ex.getError().getCategory() == ErrorCategory.DUPLICATE_KEY) {
                 return false;
             }

@@ -31,6 +31,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.Route;
 import org.apache.camel.Service;
 import org.apache.camel.StaticService;
 import org.apache.camel.cluster.CamelClusterService;
@@ -377,7 +378,7 @@ public class DefaultManagementObjectNameStrategy implements ManagementObjectName
     }
 
     @Override
-    public ObjectName getObjectNameForRoute(org.apache.camel.Route route) throws MalformedObjectNameException {
+    public ObjectName getObjectNameForRoute(Route route) throws MalformedObjectNameException {
         StringBuilder buffer = new StringBuilder();
         buffer.append(domainName).append(":");
         buffer.append(KEY_CONTEXT).append("=").append(getContextId(route.getCamelContext())).append(",");

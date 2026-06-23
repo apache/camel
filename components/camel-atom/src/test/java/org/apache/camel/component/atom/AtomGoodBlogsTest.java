@@ -65,7 +65,7 @@ public class AtomGoodBlogsTest {
                 // Using splitEntries=true will during polling only fetch one Atom Entry at any given time.
                 // As the feed.atom file contains 7 entries, using this will require 7 polls to fetch the entire
                 // content. When Camel have reach the end of entries it will refresh the atom feed from URI source
-                // and restart - but as Camel by default uses the UpdatedDateFilter it will only deliver new
+                // and restart - but as the Camel Atom component is idempotent by default, it will only deliver new
                 // blog entries to "seda:feeds". So only when James Straham updates his blog with a new entry
                 // Camel will create an exchange for the seda:feeds.
                 from("atom:file:src/test/data/feed.atom?splitEntries=true&delay=1000").to("seda:feeds");

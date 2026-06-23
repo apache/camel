@@ -215,6 +215,99 @@ class PomSanitizerTest {
         assertThat(findings).anyMatch(f -> f.contains("passphrase"));
     }
 
+    @Test
+    void detectsConnectionStringElement() {
+        String pom
+                = "<project><properties><connectionString>Server=myserver;Password=secret123</connectionString></properties></project>";
+        List<String> findings = PomSanitizer.detectSensitiveContent(pom);
+        assertThat(findings).anyMatch(f -> f.contains("connectionString"));
+    }
+
+    // ---- CDATA tests ----
+
+    @Test
+    void detectsCdataWrappedSecrets() {
+        String pom = "<project><properties><db.password><![CDATA[superSecret123]]></db.password></properties></project>";
+        List<String> findings = PomSanitizer.detectSensitiveContent(pom);
+        assertThat(findings).anyMatch(f -> f.contains("password"));
+    }
+
+    @Test
+    void masksCdataWrappedSecrets() {
+        String pom = "<project><properties><db.password><![CDATA[superSecret123]]></db.password></properties></project>";
+        PomSanitizer.SanitizationResult result = PomSanitizer.sanitize(pom);
+        assertThat(result.pomContent()).doesNotContain("superSecret123");
+        assertThat(result.pomContent()).contains("<db.password>***MASKED***</db.password>");
+    }
+
+    @Test
+    void preservesPlaceholderInsideCdata() {
+        String pom = "<project><properties><db.password><![CDATA[${env.DB_PASSWORD}]]></db.password></properties></project>";
+        PomSanitizer.SanitizationResult result = PomSanitizer.sanitize(pom);
+        assertThat(result.pomContent()).contains("${env.DB_PASSWORD}");
+        assertThat(result.detectedPatterns()).isEmpty();
+    }
+
+    // ---- Camel property placeholder tests ----
+
+    @Test
+    void ignoresCamelPropertyPlaceholders() {
+        String pom = "<project><properties>"
+                     + "<db.password>{{vault:db/password}}</db.password>"
+                     + "<api.token>{{my.token}}</api.token>"
+                     + "</properties></project>";
+        List<String> findings = PomSanitizer.detectSensitiveContent(pom);
+        assertThat(findings).isEmpty();
+    }
+
+    @Test
+    void preservesCamelPropertyPlaceholders() {
+        String pom = "<project><properties><db.password>{{vault:db/password}}</db.password></properties></project>";
+        PomSanitizer.SanitizationResult result = PomSanitizer.sanitize(pom);
+        assertThat(result.pomContent()).contains("{{vault:db/password}}");
+        assertThat(result.detectedPatterns()).isEmpty();
+    }
+
+    @Test
+    void masksPartialCamelPlaceholder() {
+        String pom = "<project><properties><db.password>{{notClosed</db.password></properties></project>";
+        PomSanitizer.SanitizationResult result = PomSanitizer.sanitize(pom);
+        assertThat(result.pomContent()).contains("***MASKED***");
+    }
+
+    // ---- URL credential tests ----
+
+    @Test
+    void detectsUrlEmbeddedCredentials() {
+        String pom = "<project><properties>"
+                     + "<db.url>jdbc:mysql://admin:s3cret@db.example.com:3306/mydb</db.url>"
+                     + "</properties></project>";
+        PomSanitizer.SanitizationResult result = PomSanitizer.sanitize(pom);
+        assertThat(result.pomContent()).doesNotContain("s3cret");
+        assertThat(result.pomContent()).contains("://admin:***MASKED***@");
+        assertThat(result.detectedPatterns()).anyMatch(f -> f.contains("URL credential"));
+    }
+
+    @Test
+    void elementPatternTakesPrecedenceOverUrlPattern() {
+        String pom = "<project><properties>"
+                     + "<db.password>jdbc:mysql://admin:s3cret@host/db</db.password>"
+                     + "</properties></project>";
+        PomSanitizer.SanitizationResult result = PomSanitizer.sanitize(pom);
+        assertThat(result.pomContent()).contains("<db.password>***MASKED***</db.password>");
+        assertThat(result.pomContent()).doesNotContain("s3cret");
+    }
+
+    @Test
+    void noFalsePositiveOnPortNumbers() {
+        String pom = "<project><properties>"
+                     + "<db.url>http://localhost:8080/api</db.url>"
+                     + "</properties></project>";
+        PomSanitizer.SanitizationResult result = PomSanitizer.sanitize(pom);
+        assertThat(result.pomContent()).contains("http://localhost:8080/api");
+        assertThat(result.detectedPatterns()).isEmpty();
+    }
+
     // ---- Process helper tests ----
 
     @Test

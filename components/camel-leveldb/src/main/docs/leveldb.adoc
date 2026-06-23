@@ -7,8 +7,6 @@
 :supportlevel: Stable-deprecated
 :deprecated: *deprecated*
 :tabs-sync-option:
-//Manually maintained attributes
-:camel-spring-boot-name: leveldb
 
 *Since Camel {since}*
 
@@ -76,10 +74,12 @@ used then the `maximumRedeliveries` option must also be provided.
 |`deserializationFilter` |String |A deserialization filter used when
 deserializing exchange data from the LevelDB store. The filter uses the
 standard Java `ObjectInputFilter` pattern syntax. By default, the filter
-is set to `java.**;org.apache.camel.**;!*` which allows Java platform
-classes and Apache Camel classes. If your application stores custom objects,
-you can adjust this filter to include additional packages
-(e.g., `java.**;org.apache.camel.**;com.mycompany.**;!*`).
+is set to `!java.net.**;java.**;org.apache.camel.**;!*`, which denies
+classes under `java.net.*` (whose `hashCode`/`equals` methods perform
+network I/O) and otherwise allows Java platform classes and Apache Camel
+classes. If your application stores custom objects, you can adjust this
+filter to include additional packages
+(e.g., `!java.net.**;java.**;org.apache.camel.**;com.mycompany.**;!*`).
 |=======================================================================
 
 The `repositoryName` option must be provided. Then either the
@@ -144,11 +144,13 @@ You can use serialization via Jackson (using json).
 Jackson's serialization brings better performance, but also several limitations.
 
 Example of jackson serialization:
+
+._Java-only: programmatic Jackson serializer configuration_
 [source,java]
-----------------------------------------
+----
 LevelDBAggregationRepository repo = ...; //initialization of repository
 repo.setSerializer(new JacksonLevelDBSerializer());
-----------------------------------------
+----
 
 Limitation of jackson serializer is caused by binary data:
 
@@ -156,14 +158,15 @@ Limitation of jackson serializer is caused by binary data:
 * If payload contains objects with binary fields. Those fields won't be serialized/deserialized correctly. Customized serializer
 can be used to solve this problem. Please use custom serializer with Jackson by providing own Module:
 
+._Java-only: custom Jackson module with serializer and deserializer_
 [source,java]
-----------------------------------------
+----
 SimpleModule simpleModule = new SimpleModule();
 simpleModule.addSerializer(ObjectWithBinaryField.class, new ObjectWithBinaryFieldSerializer()); //custom serializer
 simpleModule.addDeserializer(ObjectWithBinaryField.class, new ObjectWithBinaryFieldDeserializer()); //custom deserializer
 
 repo.setSerializer(new JacksonLevelDBSerializer(simpleModule));
-----------------------------------------
+----
 
 [[LevelDB-UsingLevelDBAggregationRepositoryinJavaDSL]]
 == Using LevelDBAggregationRepository in Java DSL
@@ -185,12 +188,10 @@ If you use Maven, you could add the following to your pom.xml,
 substituting the version number for the latest & greatest release.
 
 [source,xml]
-----------------------------------------
+----
 <dependency>
   <groupId>org.apache.camel</groupId>
   <artifactId>camel-leveldb</artifactId>
   <version>x.y.z</version>
 </dependency>
-----------------------------------------
-
-include::spring-boot:partial$starter.adoc[]
+----

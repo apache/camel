@@ -52,10 +52,9 @@ public class ExplainTools {
     public RouteContextResult camel_route_context(
             @ToolArg(description = "The Camel route content (YAML, XML, or Java DSL)") String route,
             @ToolArg(description = "Route format: yaml, xml, or java (default: yaml)") String format,
-            @ToolArg(description = "Runtime type: main, spring-boot, or quarkus (default: main)") String runtime,
-            @ToolArg(description = "Camel version to use (e.g., 4.17.0). If not specified, uses the default catalog version.") String camelVersion,
-            @ToolArg(description = "Platform BOM coordinates in GAV format (groupId:artifactId:version). "
-                                   + "When provided, overrides camelVersion.") String platformBom) {
+            @ToolArg(description = ToolArgDocs.RUNTIME) String runtime,
+            @ToolArg(description = ToolArgDocs.CAMEL_VERSION) String camelVersion,
+            @ToolArg(description = ToolArgDocs.PLATFORM_BOM) String platformBom) {
 
         if (route == null || route.isBlank()) {
             throw new ToolCallException("Route content is required", null);
@@ -90,7 +89,7 @@ public class ExplainTools {
 
             RouteContextSummary summary = new RouteContextSummary(components.size(), eips.size());
 
-            return new RouteContextResult(resolvedFormat, route, components, eips, summary);
+            return new RouteContextResult(resolvedFormat, components, eips, summary);
         } catch (ToolCallException e) {
             throw e;
         } catch (Throwable e) {
@@ -156,7 +155,7 @@ public class ExplainTools {
     // Result records
 
     public record RouteContextResult(
-            String format, String route, List<RouteComponent> components,
+            String format, List<RouteComponent> components,
             List<RouteEip> eips, RouteContextSummary summary) {
     }
 

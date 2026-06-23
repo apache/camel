@@ -47,11 +47,11 @@ public class AsteriskEndpoint extends DefaultEndpoint implements EndpointService
     @UriParam(label = "producer")
     private AsteriskAction action;
 
-    @UriParam(secret = true)
+    @UriParam(security = "secret")
     @Metadata(required = true)
     private String username;
 
-    @UriParam(secret = true)
+    @UriParam(security = "secret")
     @Metadata(required = true)
     private String password;
 

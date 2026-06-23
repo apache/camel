@@ -148,7 +148,7 @@ public abstract class SolrTestSupport implements CamelTestSupportHelper, Configu
     protected void solrInsertTestEntry(String id) {
         Map<String, Object> headers = new HashMap<>();
         headers.put(SolrConstants.PARAM_OPERATION, SolrConstants.OPERATION_INSERT);
-        headers.put("SolrField.id", id);
+        headers.put("CamelSolrField.id", id);
         template.sendBodyAndHeaders(DEFAULT_START_ENDPOINT, "", headers);
     }
 

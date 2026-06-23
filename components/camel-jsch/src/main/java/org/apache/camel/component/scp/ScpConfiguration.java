@@ -33,23 +33,23 @@ public class ScpConfiguration extends RemoteFileConfiguration {
     public static final String DEFAULT_MOD = "664";
     @UriParam(label = "security", defaultValue = "true")
     private boolean useUserKnownHostsFile = true;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     @Metadata(supportFileReference = true)
     private String knownHostsFile;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String privateKeyFile;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private byte[] privateKeyBytes;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String privateKeyFilePassphrase;
-    @UriParam(label = "security", secret = true,
+    @UriParam(label = "security", security = "secret",
               description = "Set the OpenSSH certificate file path for certificate-based authentication.")
     private String certFile;
-    @UriParam(label = "security", secret = true,
+    @UriParam(label = "security", security = "secret",
               description = "Set the OpenSSH certificate (loaded from classpath by default) for certificate-based authentication.")
     @Metadata(supportFileReference = true)
     private String certUri;
-    @UriParam(label = "security", secret = true,
+    @UriParam(label = "security", security = "secret",
               description = "Set the OpenSSH certificate as a byte array for certificate-based authentication.")
     private byte[] certBytes;
     @UriParam(label = "security",
@@ -64,7 +64,7 @@ public class ScpConfiguration extends RemoteFileConfiguration {
     // null means default jsch list will be used
     @UriParam(label = "security,advanced")
     private String ciphers;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String preferredAuthentications;
 
     public ScpConfiguration() {

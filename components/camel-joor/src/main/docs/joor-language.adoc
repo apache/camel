@@ -7,8 +7,6 @@
 :supportlevel: Stable-deprecated
 :deprecated: *deprecated*
 :tabs-sync-option:
-//Manually maintained attributes
-:camel-spring-boot-name: joor
 
 *Since Camel {since}*
 
@@ -65,6 +63,7 @@ These functions are convenient for getting the message body, header or exchange 
 
 Here we want to get the message body as a `com.foo.MyUser` type we can do as follows:
 
+._Java-only: jOOR type conversion function_
 [source,java]
 ----
 var user = bodyAs(com.foo.MyUser.class);
@@ -72,6 +71,7 @@ var user = bodyAs(com.foo.MyUser.class);
 
 You can omit _.class_ to make the function a little smaller:
 
+._Java-only: jOOR shorthand type conversion_
 [source,java]
 ----
 var user = bodyAs(com.foo.MyUser);
@@ -87,6 +87,7 @@ import com.foo.MyUser;
 
 And then the function can be shortened:
 
+._Java-only: jOOR type conversion with imported class_
 [source,java]
 ----
 var user = bodyAs(MyUser);
@@ -102,6 +103,7 @@ In the jOOR script you declare the injected beans using the syntax `#bean:beanId
 
 For example, suppose we have the following bean
 
+._Java-only: bean class used for dependency injection_
 [source,java]
 ----
 public class MyEchoBean {
@@ -120,6 +122,7 @@ And this bean is registered with the name `myEcho` in the Camel registry.
 
 The jOOR script can then inject this bean directly in the script where the bean is in use:
 
+._Java-only: jOOR bean injection in route_
 [source,java]
 ----
 from("direct:start")
@@ -131,6 +134,7 @@ Now this code may seem a bit magic, but what happens is that the `myEcho` bean i
 
 Under the hood, Camel jOOR generates the following source code compiled once:
 
+._Java-only: generated compiled jOOR script class_
 [source,java]
 ----
 public class JoorScript1 implements org.apache.camel.language.joor.JoorMethod {
@@ -150,6 +154,7 @@ public class JoorScript1 implements org.apache.camel.language.joor.JoorMethod {
 
 You can also store a reference to the bean in a variable which would more resemble how you would code in Java
 
+._Java-only: jOOR bean variable reference in route_
 [source,java]
 ----
 from("direct:start")
@@ -165,6 +170,7 @@ Therefore, we use _bean_ as name in the script.
 
 The jOOR language will automatically import from:
 
+._Java-only: jOOR auto-imported packages_
 [source,java]
 ----
 import java.util.*;
@@ -197,6 +203,7 @@ echo()=bodyAs(String) + bodyAs(String)
 
 Which allows using `echo()` in the jOOR language script such as:
 
+._Java-only: jOOR alias usage in route_
 [source,java]
 ----
 from("direct:hello")
@@ -206,6 +213,7 @@ from("direct:hello")
 
 The `echo()` alias will be replaced with its value resulting in a script as:
 
+._Java-only: jOOR alias expansion result_
 [source,java]
 ----
 .transform(joor("'Hello ' + bodyAs(String) + bodyAs(String)"))
@@ -213,6 +221,7 @@ The `echo()` alias will be replaced with its value resulting in a script as:
 
 You can configure a custom configuration location for the `camel-joor.properties` file or reference to a bean in the registry:
 
+._Java-only: programmatic language configuration_
 [source,java]
 ----
 JoorLanguage joor = (JoorLanguage) context.resolveLanguage("joor");
@@ -221,6 +230,7 @@ joor.setConfigResource("ref:MyJoorConfig");
 
 And then register a bean in the registry with id `MyJoorConfig` that is a String value with the content.
 
+._Java-only: programmatic bean registration_
 [source,java]
 ----
 String config = "....";
@@ -242,7 +252,7 @@ from("seda:orders")
   .to("seda:upper");
 ----
 
-XML DSL::
+XML::
 +
 [source,xml]
 ----
@@ -255,6 +265,22 @@ XML DSL::
 </route>
 ----
 
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: seda:orders
+      steps:
+        - transform:
+            expression:
+              joor:
+                expression: "message.getBody(String.class).toUpperCase()"
+        - to:
+            uri: seda:upper
+----
+
 ====
 
 === Multi statements
@@ -263,6 +289,7 @@ It is possible to include multiple statements.
 The code below shows an example where the `user` header is retrieved in a first statement.
 And then, in a second statement we return a value whether the user is `null` or not.
 
+._Java-only: jOOR multi-statement expression in route_
 [source,java]
 ----
 from("seda:orders")
@@ -272,6 +299,7 @@ from("seda:orders")
 
 Notice how we have to quote strings in strings, and that is annoying, so instead we can use single quotes:
 
+._Java-only: jOOR single-quoted string syntax_
 [source,java]
 ----
 from("seda:orders")
@@ -316,6 +344,23 @@ In XML DSL it's easier because you can turn off pre-compilation in the `<joor>` 
 </route>
 ----
 
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: jms:incoming
+      steps:
+        - transform:
+            expression:
+              joor:
+                expression: "resource:file:src/main/resources/orders.joor"
+                preCompile: false
+        - to:
+            uri: jms:orders
+----
+
 ====
 
 === Lambda-based AggregationStrategy
@@ -336,6 +381,7 @@ The lambda syntax is representing a Java util `BiFunction<Exchange, Exchange, Ob
 
 For example, to aggregate message bodies together, we can do this as shown:
 
+._Java-only: jOOR lambda-based aggregation strategy_
 [source,java]
 ----
 (e1, e2) -> {
@@ -353,8 +399,6 @@ The code that you can write is therefore limited to a number of Java statements.
 The supported runtime is intended for Java standalone, Spring Boot, Camel Quarkus and other microservices runtimes.
 It is not supported on any kind of Java Application Server runtime.
 
-jOOR does not support runtime compilation with Spring Boot using _fat jar_ packaging (https://github.com/jOOQ/jOOR/issues/69), it works with exploded classpath.
-
 == Dependencies
 
 To use scripting languages in your camel routes, you need to add a dependency on *camel-joor*.
@@ -362,12 +406,10 @@ To use scripting languages in your camel routes, you need to add a dependency on
 If you use Maven you could add the following to your `pom.xml`, substituting the version number for the latest and greatest release.
 
 [source,xml]
----------------------------------------
+----
 <dependency>
   <groupId>org.apache.camel</groupId>
   <artifactId>camel-joor</artifactId>
   <version>x.x.x</version>
 </dependency>
----------------------------------------
-
-include::spring-boot:partial$starter.adoc[]
+----

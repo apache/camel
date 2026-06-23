@@ -19,6 +19,7 @@
  */
 package org.apache.camel.component.dhis2;
 
+import java.io.InputStream;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -60,8 +61,8 @@ public class Dhis2PutIT extends AbstractDhis2TestSupport {
         // parameter type is java.util.Map
         headers.put("CamelDhis2.queryParams", new HashMap<>());
 
-        String name = RandomStringUtils.randomAlphabetic(8);
-        final java.io.InputStream result = requestBodyAndHeaders(endpointUri,
+        String name = RandomStringUtils.secure().nextAlphabetic(8);
+        final InputStream result = requestBodyAndHeaders(endpointUri,
                 new OrganisationUnit().withName(name).withShortName(name).withOpeningDate(new Date()), headers);
         OrganisationUnit organisationUnit
                 = Environment.DHIS2_CLIENT.get("organisationUnits/{id}", Environment.ORG_UNIT_ID_UNDER_TEST)

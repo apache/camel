@@ -84,7 +84,7 @@ EXPOSE 22
 USER jbang
 
 RUN echo "Updating jbang" \
-    && jbang version --update
+    && jbang version --update || true
 
 RUN echo "Clearing JBang cache" \
     && jbang cache clear

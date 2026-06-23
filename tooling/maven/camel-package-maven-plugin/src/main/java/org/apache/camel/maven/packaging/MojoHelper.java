@@ -38,7 +38,7 @@ public final class MojoHelper {
     public static List<Path> getComponentPath(Path dir) {
         switch (dir.getFileName().toString()) {
             case "camel-ai":
-                return Arrays.asList(dir.resolve("camel-chatscript"), dir.resolve("camel-djl"),
+                return Arrays.asList(dir.resolve("camel-a2a"), dir.resolve("camel-chatscript"), dir.resolve("camel-djl"),
                         dir.resolve("camel-huggingface"),
                         dir.resolve("camel-langchain4j-agent"), dir.resolve("camel-langchain4j-chat"),
                         dir.resolve("camel-langchain4j-embeddings"), dir.resolve("camel-langchain4j-embeddingstore"),
@@ -132,7 +132,7 @@ public final class MojoHelper {
                         dir.resolve("camel-aws2-sqs"), dir.resolve("camel-aws2-step-functions"),
                         dir.resolve("camel-aws2-sts"),
                         dir.resolve("camel-aws2-timestream"), dir.resolve("camel-aws2-translate"),
-                        dir.resolve("camel-aws-xray"), dir.resolve("camel-aws-secrets-manager"),
+                        dir.resolve("camel-aws-secrets-manager"),
                         dir.resolve("camel-aws-cloudtrail"), dir.resolve("camel-aws-config"),
                         dir.resolve("camel-aws-bedrock"),
                         dir.resolve("camel-aws2-textract"), dir.resolve("camel-aws2-transcribe"),

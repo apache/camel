@@ -7,8 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Only producer is supported
-//Manually maintained attributes
-:camel-spring-boot-name: solr
 
 *Since Camel {since}*
 
@@ -21,20 +19,20 @@ Maven users will need to add the following dependency to their `pom.xml`
 for this component:
 
 [source,xml]
-------------------------------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-solr</artifactId>
     <version>x.x.x</version>
     <!-- use the same version as your Camel core version -->
 </dependency>
-------------------------------------------------------------
+----
 
 == URI format
 
---------------------------------------
+----
 solr://host[:port]?[options]
---------------------------------------
+----
 
 // component options: START
 include::partial$component-configure-options.adoc[]
@@ -60,7 +58,7 @@ the following. Some operations also require the message body to be set.
 |=======================================================================
 |Operation |Message body |Description
 
-|`INSERT` | n/a |inserts/updates a document using message headers (solr fields must be prefixed with "SolrField.")
+|`INSERT` | n/a |inserts/updates a document using message headers (solr fields must be prefixed with "CamelSolrField.")
 |`INSERT` | File |inserts/updates a document or documents using the given File (using ContentStreamUpdateRequest)
 |`INSERT` | SolrInputDocument or Collection<SolrInputDocument>|inserts/updates a document or documents based on the given (collection of) SolrInputDocument
 |`INSERT` | bean or Collection<bean> |inserts/updates a document or documents based on values in an http://wiki.apache.org/solr/Solrj#Directly_adding_POJOs_to_Solr[annotated bean]
@@ -78,30 +76,36 @@ the following. Some operations also require the message body to be set.
 
 Below is a simple `INSERT`, `DELETE` and `SEARCH` example
 
+[tabs]
+====
+Java::
++
 [source,java]
----------------------------------------------------------------------------------------
+----
 from("direct:insert")
-    .setHeader(SolrConstants.PARAM_OPERATION, constant(SolrOperation.INSERT))
-    .setHeader(SolrConstants.FIELD + "id", body())
+    .setHeader("CamelSolrOperation", constant("INSERT"))
+    .setHeader("CamelSolrField.id", body())
     .to("solr://localhost:8983/solr");
 
 from("direct:delete")
-    .setHeader(SolrConstants.PARAM_OPERATION, constant(SolrOperation.DELETE))
+    .setHeader("CamelSolrOperation", constant("DELETE"))
     .to("solr://localhost:8983/solr");
 
 from("direct:search")
-    .setHeader(SolrConstants.PARAM_OPERATION, constant(SolrOperation.SEARCH))
+    .setHeader("CamelSolrOperation", constant("SEARCH"))
     .to("solr://localhost:8983/solr");
----------------------------------------------------------------------------------------
+----
 
+XML::
++
 [source,xml]
-------------------------------------------
+----
 <route>
     <from uri="direct:insert"/>
     <setHeader name="CamelSolrOperation">
         <constant>INSERT</constant>
     </setHeader>
-    <setHeader name="SolrField.id">
+    <setHeader name="CamelSolrField.id">
         <simple>${body}</simple>
     </setHeader>
     <to uri="solr://localhost:8983/solr"/>
@@ -120,22 +124,64 @@ from("direct:search")
     </setHeader>
     <to uri="solr://localhost:8983/solr"/>
 </route>
-------------------------------------------
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:insert
+      steps:
+        - setHeader:
+            name: CamelSolrOperation
+            expression:
+              constant:
+                expression: INSERT
+        - setHeader:
+            name: CamelSolrField.id
+            expression:
+              simple:
+                expression: "${body}"
+        - to:
+            uri: solr://localhost:8983/solr
+- route:
+    from:
+      uri: direct:delete
+      steps:
+        - setHeader:
+            name: CamelSolrOperation
+            expression:
+              constant:
+                expression: DELETE
+        - to:
+            uri: solr://localhost:8983/solr
+- route:
+    from:
+      uri: direct:search
+      steps:
+        - setHeader:
+            name: CamelSolrOperation
+            expression:
+              constant:
+                expression: SEARCH
+        - to:
+            uri: solr://localhost:8983/solr
+----
+====
 
 A client would simply need to pass a body message to the insert or
 delete routes and then call the commit route.
 
+._Java-only: sending messages to Solr routes using ProducerTemplate_
 [source,java]
------------------------------------------------
-template.sendBodyAndHeader("direct:insert", "1234", "SolrParam.commit", true);
-template.sendBodyAndHeader("direct:delete", "1234", "SolrParam.commit", true);
+----
+template.sendBodyAndHeader("direct:insert", "1234", "CamelSolrParam.commit", true);
+template.sendBodyAndHeader("direct:delete", "1234", "CamelSolrParam.commit", true);
 template.sendBody("direct:search", "id:1234");
------------------------------------------------
+----
 
 For more information:
 
 https://solr.apache.org/guide/solr/latest/[Apache Solr Reference Guide]
-
-
-
-include::spring-boot:partial$starter.adoc[]

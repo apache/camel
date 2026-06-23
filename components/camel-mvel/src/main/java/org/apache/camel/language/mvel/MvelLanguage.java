@@ -25,6 +25,7 @@ import org.apache.camel.Predicate;
 import org.apache.camel.spi.ScriptingLanguage;
 import org.apache.camel.spi.annotations.Language;
 import org.apache.camel.support.TypedLanguageSupport;
+import org.mvel2.MVEL;
 
 /**
  * An <a href="http://mvel.codehaus.org/">MVEL</a> {@link org.apache.camel.spi.Language} plugin
@@ -50,8 +51,8 @@ public class MvelLanguage extends TypedLanguageSupport implements ScriptingLangu
     public <T> T evaluate(String script, Map<String, Object> bindings, Class<T> resultType) {
         script = loadResource(script);
         try {
-            Serializable compiled = org.mvel2.MVEL.compileExpression(script);
-            Object value = org.mvel2.MVEL.executeExpression(compiled, bindings);
+            Serializable compiled = MVEL.compileExpression(script);
+            Object value = MVEL.executeExpression(compiled, bindings);
             return getCamelContext().getTypeConverter().convertTo(resultType, value);
         } catch (Exception e) {
             throw new ExpressionIllegalSyntaxException(script, e);

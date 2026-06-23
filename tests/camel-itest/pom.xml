@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>tests</artifactId>
-        <version>4.20.0-SNAPSHOT</version>
+        <version>4.21.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-itest</artifactId>
@@ -63,13 +63,6 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-cxf-spring-soap</artifactId>
-            <!-- conflicts with mockmail for unit testing, so we exclude this geronimo spec -->
-            <exclusions>
-                <exclusion>
-                    <groupId>org.apache.geronimo.specs</groupId>
-                    <artifactId>geronimo-javamail_1.4_spec</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
@@ -80,6 +73,12 @@
             <artifactId>cxf-rt-ws-security</artifactId>
             <version>${cxf-version}</version>
             <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.opensaml</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
@@ -120,13 +119,6 @@
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-rss</artifactId>
             <scope>test</scope>
-            <!-- conflicts with mockmail for unit testing, so we exclude this geronimo spec -->
-            <exclusions>
-                <exclusion>
-                    <groupId>org.apache.geronimo.specs</groupId>
-                    <artifactId>geronimo-javamail_1.4_spec</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
@@ -151,23 +143,6 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-velocity</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-mail</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.jvnet.mock-javamail</groupId>
-            <artifactId>mock-javamail</artifactId>
-            <version>${mock-javamail-version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>javax.mail</groupId>
-                    <artifactId>mail</artifactId>
-                </exclusion>
-            </exclusions>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -208,17 +183,11 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- some TX tests using iBatis -->
+        <!-- some TX tests using H2 -->
         <dependency>
-            <groupId>org.apache.derby</groupId>
-            <artifactId>derby</artifactId>
-            <version>${derby-version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.derby</groupId>
-            <artifactId>derbytools</artifactId>
-            <version>${derby-version}</version>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <version>${h2-version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -352,7 +321,7 @@
         </dependency>
         <dependency>
             <groupId>org.jboss.narayana.jta</groupId>
-            <artifactId>narayana-jta-jakarta</artifactId>
+            <artifactId>narayana-jta</artifactId>
             <version>${narayana-version}</version>
         </dependency>
         <dependency>
@@ -431,9 +400,6 @@
                     <plugin>
                         <artifactId>maven-surefire-plugin</artifactId>
                         <configuration>
-                            <systemPropertyVariables>
-                                <derby.stream.error.file>target/derby.log</derby.stream.error.file>
-                            </systemPropertyVariables>
                             <excludes>
                                 <!-- exclude doc tests as they dont work on CI server -->
                                 <exclude>**/*DocumentationTest.*</exclude>

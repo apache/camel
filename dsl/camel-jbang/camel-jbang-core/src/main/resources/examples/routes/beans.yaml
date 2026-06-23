@@ -1,0 +1,5 @@
+- beans:
+  - name: "greeter"
+    type: "camel.example.Greeter"
+    properties:
+      message: '{{greeter.message}}'

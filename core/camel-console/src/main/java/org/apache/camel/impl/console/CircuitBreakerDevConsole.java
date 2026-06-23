@@ -16,8 +16,6 @@
  */
 package org.apache.camel.impl.console;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.Route;
@@ -26,6 +24,7 @@ import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.console.AbstractDevConsole;
 import org.apache.camel.throttling.ThrottlingExceptionRoutePolicy;
 import org.apache.camel.util.TimeUtils;
+import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 
 @DevConsole(name = "circuit-breaker", description = "Display circuit breaker information")
@@ -60,7 +59,7 @@ public class CircuitBreakerDevConsole extends AbstractDevConsole {
     protected Map<String, Object> doCallJson(Map<String, Object> options) {
         JsonObject root = new JsonObject();
 
-        final List<JsonObject> list = new ArrayList<>();
+        final JsonArray list = new JsonArray();
         for (Route route : getCamelContext().getRoutes()) {
             for (RoutePolicy rp : route.getRoutePolicyList()) {
                 if (rp instanceof ThrottlingExceptionRoutePolicy cb) {

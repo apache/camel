@@ -21,9 +21,11 @@ import org.apache.camel.support.jsse.KeyManagersParameters;
 import org.apache.camel.support.jsse.KeyStoreParameters;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.support.jsse.TrustManagersParameters;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.TestInstance;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@Disabled("Test was flaky 4 years ago. It is now completely broken when launched with Maven. See CAMEL-23499")
 public class FileToFtpsExplicitSSLWithClientAuthAndSSLContextParametersIT extends FileToFtpsExplicitSSLWithClientAuthIT {
 
     @BindToRegistry("sslContextParameters")

@@ -9,7 +9,6 @@
 :component-header: Only consumer is supported
 //Manually maintained attributes
 :group: AWS
-:camel-spring-boot-name: aws-cloudtrail
 
 *Since Camel {since}*
 
@@ -75,4 +74,3 @@ This means you won't consume the events registered in the Cloudtrail logs stored
 This is important to notice, and it must be taken into account when using this component.
 
 
-include::spring-boot:partial$starter.adoc[]

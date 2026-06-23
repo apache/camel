@@ -16,20 +16,25 @@
  */
 package org.apache.camel.dsl.jbang.core.commands;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Scanner;
 import java.util.Stack;
 import java.util.StringJoiner;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.dsl.jbang.core.commands.catalog.KameletCatalogHelper;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
+import org.apache.camel.dsl.jbang.core.common.EnvironmentHelper;
 import org.apache.camel.dsl.jbang.core.common.ResourceDoesNotExist;
 import org.apache.camel.dsl.jbang.core.common.VersionHelper;
 import org.apache.camel.github.GistResourceResolver;
@@ -39,6 +44,7 @@ import org.apache.camel.spi.Resource;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.apache.commons.io.IOUtils;
+import org.jline.terminal.Terminal;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 import picocli.CommandLine.Parameters;
@@ -80,7 +86,7 @@ public class Init extends CamelCommand {
     private String fromKamelet;
 
     @Option(names = {
-            "--kamelets-version" }, description = "Apache Camel Kamelets version")
+            "--kamelets-version" }, description = "Apache Camel Kamelets version (auto-detected from classpath if not set)")
     private String kameletsVersion;
 
     @Option(names = { "--pipe" },
@@ -101,13 +107,18 @@ public class Init extends CamelCommand {
             return listTemplates();
         }
         if (file == null) {
+            // try interactive picker if running in a TTY and not in CI
+            if (EnvironmentHelper.isInteractiveTerminal()) {
+                return interactivePicker();
+            }
             printer().printErr("Missing required parameter: <file>");
+            printer().printErr("Run 'camel init --list' to see available templates, or run interactively in a terminal.");
             return 1;
         }
         int code = execute();
         if (code == 0) {
             // In case of successful execution, we create the working directory if it does not exist to help the tooling
-            // know that it is a Camel JBang project
+            // know that it is a Camel CLI project
             createWorkingDirectoryIfAbsent();
         }
         return code;
@@ -154,6 +165,10 @@ public class Init extends CamelCommand {
         }
 
         if (is == null) {
+            is = Init.class.getClassLoader().getResourceAsStream("templates/" + ext + ".ftl");
+        }
+        if (is == null) {
+            // fallback to old .tmpl format
             is = Init.class.getClassLoader().getResourceAsStream("templates/" + ext + ".tmpl");
         }
         if (is == null) {
@@ -166,6 +181,8 @@ public class Init extends CamelCommand {
         }
         String content = IOHelper.loadText(is);
         IOHelper.close(is);
+        // Strip FreeMarker license header comment (appears as literal text in .ftl files)
+        content = content.replaceFirst("(?s)\\A<#--.*?-->\\s*", "");
 
         if (!directory.equals(".")) {
             if (cleanDirectory) {
@@ -179,7 +196,8 @@ public class Init extends CamelCommand {
         if (!targetPath.isAbsolute()) {
             targetPath = Paths.get(directory, file);
         }
-        content = content.replaceFirst("\\{\\{ \\.Name }}", name);
+        content = content.replace("{{ .Name }}", name);
+        content = content.replace("[=Name]", name);
         if (fromKamelet != null) {
             content = content.replaceFirst("\\s\\sname:\\s" + fromKamelet, "  name: " + name);
             content = content.replaceFirst("camel.apache.org/provider: \"Apache Software Foundation\"",
@@ -201,7 +219,8 @@ public class Init extends CamelCommand {
         }
         if ("java".equals(ext)) {
             String packageDeclaration = computeJavaPackageDeclaration(targetPath);
-            content = content.replaceFirst("\\{\\{ \\.PackageDeclaration }}", packageDeclaration);
+            content = content.replace("{{ .PackageDeclaration }}", packageDeclaration);
+            content = content.replace("[=PackageDeclaration]", packageDeclaration);
         }
         // in case of using relative paths in the file name
         Path parentPath = targetPath.getParent();
@@ -226,7 +245,7 @@ public class Init extends CamelCommand {
         int index = canonicalPath.indexOf(srcMainJavaPath);
         if (index != -1) {
             String packagePath = canonicalPath.substring(index + srcMainJavaPath.length() + 1);
-            String packageName = packagePath.replace(java.io.File.separatorChar, '.');
+            String packageName = packagePath.replace(File.separatorChar, '.');
             if (!packageName.isEmpty()) {
                 packageDeclaration = "package " + packageName + ";\n\n";
             }
@@ -275,6 +294,106 @@ public class Init extends CamelCommand {
         printer().println("Example: camel init MyRoute.java");
 
         return 0;
+    }
+
+    private int interactivePicker() throws Exception {
+        // Build template categories
+        Map<String, List<String[]>> categories = new LinkedHashMap<>();
+        categories.put("Routes", List.of(
+                new String[] { "yaml", "YAML DSL route", ".yaml" },
+                new String[] { "java", "Java DSL route", ".java" },
+                new String[] { "xml", "XML DSL route", ".xml" }));
+        categories.put("Kamelets", List.of(
+                new String[] { "kamelet-source.yaml", "Kamelet source connector", ".kamelet.yaml" },
+                new String[] { "kamelet-sink.yaml", "Kamelet sink connector", ".kamelet.yaml" },
+                new String[] { "kamelet-action.yaml", "Kamelet action processor", ".kamelet.yaml" }));
+        List<String[]> pipeTemplates = new ArrayList<>();
+        pipeTemplates.add(new String[] { "init-pipe.yaml", "Pipe CR (source to sink)", ".yaml" });
+        categories.put("Pipes and CRs", pipeTemplates);
+
+        Terminal activeTerminal = EnvironmentHelper.getActiveTerminal();
+        InputStream scannerInput = activeTerminal != null ? activeTerminal.input() : System.in;
+        Scanner scanner = new Scanner(scannerInput);
+
+        // Step 1: Pick a category
+        printer().println("Select a template category:");
+        List<String> categoryNames = new ArrayList<>(categories.keySet());
+        for (int i = 0; i < categoryNames.size(); i++) {
+            printer().printf("  %d) %s%n", i + 1, categoryNames.get(i));
+        }
+        printer().print("Choice [1]: ");
+        String categoryInput = scanner.nextLine().trim();
+        int categoryIdx;
+        try {
+            categoryIdx = categoryInput.isEmpty() ? 0 : Integer.parseInt(categoryInput) - 1;
+        } catch (NumberFormatException e) {
+            printer().printErr("Invalid choice: " + categoryInput);
+            return 1;
+        }
+        if (categoryIdx < 0 || categoryIdx >= categoryNames.size()) {
+            printer().printErr("Invalid choice: must be between 1 and " + categoryNames.size());
+            return 1;
+        }
+
+        // Step 2: Pick a template
+        String selectedCategory = categoryNames.get(categoryIdx);
+        List<String[]> templates = categories.get(selectedCategory);
+        printer().println();
+        printer().println("Select a template:");
+        for (int i = 0; i < templates.size(); i++) {
+            printer().printf("  %d) %s%n", i + 1, templates.get(i)[1]);
+        }
+        printer().print("Choice [1]: ");
+        String templateInput = scanner.nextLine().trim();
+        int templateIdx;
+        try {
+            templateIdx = templateInput.isEmpty() ? 0 : Integer.parseInt(templateInput) - 1;
+        } catch (NumberFormatException e) {
+            printer().printErr("Invalid choice: " + templateInput);
+            return 1;
+        }
+        if (templateIdx < 0 || templateIdx >= templates.size()) {
+            printer().printErr("Invalid choice: must be between 1 and " + templates.size());
+            return 1;
+        }
+
+        String[] selected = templates.get(templateIdx);
+        String ext = selected[2];
+        String defaultName = "MyRoute" + ext;
+        if (ext.endsWith(".kamelet.yaml")) {
+            if (selected[0].contains("source")) {
+                defaultName = "my-source.kamelet.yaml";
+            } else if (selected[0].contains("sink")) {
+                defaultName = "my-sink.kamelet.yaml";
+            } else {
+                defaultName = "my-action.kamelet.yaml";
+            }
+        } else if (selected[0].contains("pipe")) {
+            defaultName = "my-pipe.yaml";
+            pipe = true;
+        }
+
+        // Step 3: Prompt for filename
+        printer().println();
+        printer().printf("Filename [%s]: ", defaultName);
+        String filename = scanner.nextLine().trim();
+        if (filename.isEmpty()) {
+            filename = defaultName;
+        }
+
+        this.file = filename;
+        int code = execute();
+        if (code == 0) {
+            createWorkingDirectoryIfAbsent();
+            printer().println();
+            printer().println("Created: " + filename);
+            printer().println();
+            printer().println("Next steps:");
+            printer().println("  Run:           camel run " + filename);
+            printer().println("  Run (live):    camel run " + filename + " --dev");
+            printer().println("  Documentation: camel doc <component>");
+        }
+        return code;
     }
 
     private void createWorkingDirectoryIfAbsent() {

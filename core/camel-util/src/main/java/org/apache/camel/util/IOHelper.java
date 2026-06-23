@@ -42,6 +42,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.UnsupportedCharsetException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Scanner;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Supplier;
@@ -492,7 +493,7 @@ public final class IOHelper {
         if (it instanceof Closeable closeable) {
             IOHelper.closeWithException(closeable);
         }
-        if (it instanceof java.util.Scanner scanner) {
+        if (it instanceof Scanner scanner) {
             IOException ioException = scanner.ioException();
             if (ioException != null) {
                 throw ioException;

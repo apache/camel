@@ -31,6 +31,7 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * The DigitalOcean producer for Snapshots API.
  */
+@Deprecated(since = "4.21")
 public class DigitalOceanSnapshotsProducer extends DigitalOceanProducer {
 
     public DigitalOceanSnapshotsProducer(DigitalOceanEndpoint endpoint, DigitalOceanConfiguration configuration) {

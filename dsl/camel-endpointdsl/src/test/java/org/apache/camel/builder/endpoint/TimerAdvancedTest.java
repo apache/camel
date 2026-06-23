@@ -67,7 +67,7 @@ public class TimerAdvancedTest extends BaseEndpointDslTest {
                 errorHandler(noErrorHandler());
 
                 from(timer("foo").period(0).delay(-1).repeatCount(10).advanced().exceptionHandler(myErrorHandler))
-                        .noAutoStartup()
+                        .autoStartup(false)
                         .to("mock:result")
                         .throwException(new IllegalArgumentException("Forced"));
             }

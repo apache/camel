@@ -27,18 +27,14 @@ import org.apache.camel.support.jsse.KeyManagersParameters;
 import org.apache.camel.support.jsse.KeyStoreParameters;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.support.jsse.TrustManagersParameters;
-import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.parallel.Isolated;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Isolated
 public class LumberjackComponentSSLTest extends CamelTestSupport {
-    @RegisterExtension
-    AvailablePortFinder.Port port = AvailablePortFinder.find();
 
     @Override
     protected RouteBuilder createRouteBuilder() {
@@ -47,10 +43,13 @@ public class LumberjackComponentSSLTest extends CamelTestSupport {
 
         return new RouteBuilder() {
             public void configure() {
-                // Lumberjack configured with SSL
-                from("lumberjack:0.0.0.0:" + port.getPort() + "?sslContextParameters=#ssl").to("mock:output");
+                from("lumberjack:0.0.0.0:0?sslContextParameters=#ssl").routeId("lumberjack").to("mock:output");
             }
         };
+    }
+
+    private int getActualPort() {
+        return ((LumberjackConsumer) context.getRoute("lumberjack").getConsumer()).getLocalPort();
     }
 
     @Test
@@ -62,7 +61,7 @@ public class LumberjackComponentSSLTest extends CamelTestSupport {
         List<Integer> windows = Arrays.asList(15, 10, 15, 10, 10);
 
         // When sending messages
-        List<Integer> responses = LumberjackUtil.sendMessages(port.getPort(), createClientSSLContextParameters(), windows);
+        List<Integer> responses = LumberjackUtil.sendMessages(getActualPort(), createClientSSLContextParameters(), windows);
 
         // Then we should have the messages we're expecting
         mock.assertIsSatisfied();

@@ -24,25 +24,28 @@ import java.util.Optional;
  */
 public enum PluginType {
 
-    KUBERNETES("kubernetes", "kubernetes", "Run Camel applications on Kubernetes", "4.8.0", null),
-    GENERATE("generate", "generate", "Generate code such as DTOs", "4.8.0", null),
-    EDIT("edit", "edit", "Edit Camel files with suggestions", "4.12.0", null),
-    TEST("test", "test", "Manage tests for Camel applications", "4.14.0", null),
-    ROUTE_PARSER("route-parser", "route-parser", "Parses Java route and dumps route structure", "4.17.0", null),
-    VALIDATE("validate", "validate", "Validate Camel routes", "4.18.0", null);
+    KUBERNETES("kubernetes", "kubernetes", "Run Camel applications on Kubernetes", "4.8.0", null, "ASF"),
+    GENERATE("generate", "generate", "Generate code such as DTOs", "4.8.0", null, "ASF"),
+    EDIT("edit", "edit", "Edit Camel files with suggestions", "4.12.0", null, "ASF"),
+    TEST("test", "test", "Manage tests for Camel applications", "4.14.0", null, "ASF"),
+    ROUTE_PARSER("route-parser", "route-parser", "Parses Java route and dumps route structure", "4.17.0", null, "ASF"),
+    VALIDATE("validate", "validate", "Validate Camel routes", "4.18.0", null, "ASF"),
+    TUI("tui", "tui", "Camel Dashboard", "4.20.0", null, "ASF");
 
     private final String name;
     private final String command;
     private final String description;
     private final String firstVersion;
     private final String repos;
+    private final String vendor;
 
-    PluginType(String name, String command, String description, String firstVersion, String repos) {
+    PluginType(String name, String command, String description, String firstVersion, String repos, String vendor) {
         this.name = name;
         this.command = command;
         this.description = description;
         this.firstVersion = firstVersion;
         this.repos = repos;
+        this.vendor = vendor;
     }
 
     public static Optional<PluginType> findByName(String name) {
@@ -69,5 +72,9 @@ public enum PluginType {
 
     public String getRepos() {
         return repos;
+    }
+
+    public String getVendor() {
+        return vendor;
     }
 }

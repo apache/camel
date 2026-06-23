@@ -701,7 +701,7 @@ public interface RestEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final RestHeaderNameBuilder INSTANCE = new RestHeaderNameBuilder();
+        public static final RestHeaderNameBuilder INSTANCE = new RestHeaderNameBuilder();
 
         /**
          * The query parameters for the rest call to be used.

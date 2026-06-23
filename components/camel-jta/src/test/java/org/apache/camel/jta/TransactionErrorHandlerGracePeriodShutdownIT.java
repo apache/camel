@@ -27,7 +27,9 @@ import java.util.concurrent.TimeUnit;
 
 import jakarta.transaction.Status;
 import jakarta.transaction.TransactionManager;
+import jakarta.transaction.TransactionSynchronizationRegistry;
 
+import com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionSynchronizationRegistryImple;
 import io.agroal.api.AgroalDataSource;
 import io.agroal.api.configuration.supplier.AgroalDataSourceConfigurationSupplier;
 import io.agroal.api.security.NamePrincipal;
@@ -76,8 +78,8 @@ public class TransactionErrorHandlerGracePeriodShutdownIT {
     public void setUp() throws Exception {
         // Narayana transaction manager and synchronization registry
         tm = com.arjuna.ats.jta.TransactionManager.transactionManager();
-        jakarta.transaction.TransactionSynchronizationRegistry tsr
-                = new com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionSynchronizationRegistryImple();
+        TransactionSynchronizationRegistry tsr
+                = new TransactionSynchronizationRegistryImple();
 
         String jdbcUrl = postgres.jdbcUrl();
 

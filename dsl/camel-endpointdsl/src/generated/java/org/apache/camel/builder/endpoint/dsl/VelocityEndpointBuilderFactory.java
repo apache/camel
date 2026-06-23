@@ -349,7 +349,7 @@ public interface VelocityEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final VelocityHeaderNameBuilder INSTANCE = new VelocityHeaderNameBuilder();
+        public static final VelocityHeaderNameBuilder INSTANCE = new VelocityHeaderNameBuilder();
 
         /**
          * The name of the velocity template.

@@ -4283,7 +4283,7 @@ public interface SalesforceEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final SalesforceHeaderNameBuilder INSTANCE = new SalesforceHeaderNameBuilder();
+        public static final SalesforceHeaderNameBuilder INSTANCE = new SalesforceHeaderNameBuilder();
 
         /**
          * The Streaming API replayId.
@@ -4296,6 +4296,18 @@ public interface SalesforceEndpointBuilderFactory {
          */
         public String salesforceReplayId() {
             return "CamelSalesforceReplayId";
+        }
+        /**
+         * The Streaming API eventUuid.
+         * 
+         * The option is a: {@code Object} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code SalesforceEventUuid}.
+         */
+        public String salesforceEventUuid() {
+            return "CamelSalesforceEventUuid";
         }
         /**
          * The change event schema.

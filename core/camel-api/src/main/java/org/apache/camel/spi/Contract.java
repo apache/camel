@@ -16,21 +16,40 @@
  */
 package org.apache.camel.spi;
 
+import java.util.Objects;
+
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
+import org.jspecify.annotations.Nullable;
 
 /**
- * A Contract which represents the input type and/or output type of the {@link Endpoint} or {@link Processor}.
+ * Declares the expected input and/or output {@link DataType} of an {@link Endpoint} or {@link Processor}.
+ * <p/>
+ * When a route step declares a contract, Camel compares the message's actual {@link DataType} against the declared
+ * input and output types and, if they differ, applies a matching {@link Transformer} to convert the payload; it can
+ * also run a {@link Validator} when {@link #isValidateInput()} or {@link #isValidateOutput()} is set. This is the
+ * mechanism behind declarative input/output typing on routes.
+ * <p/>
+ * See <a href="https://camel.apache.org/manual/transformer.html">Transformer</a> in the Camel user manual.
+ *
+ * @see DataType
+ * @see Transformer
+ * @see Validator
  */
 public class Contract {
 
-    private DataType inputType;
-    private DataType outputType;
+    private @Nullable DataType inputType;
+    private @Nullable DataType outputType;
     private boolean validateInput;
     private boolean validateOutput;
-    private String contractString;
+    private @Nullable String contractString;
 
-    public DataType getInputType() {
+    /**
+     * Gets the declared input data type.
+     *
+     * @return the input type, or <tt>null</tt> if none is declared
+     */
+    public @Nullable DataType getInputType() {
         return inputType;
     }
 
@@ -40,6 +59,7 @@ public class Contract {
      * @param inputType input data type
      */
     public void setInputType(String inputType) {
+        Objects.requireNonNull(inputType, "inputType");
         this.inputType = new DataType(inputType);
         this.contractString = null;
     }
@@ -50,11 +70,17 @@ public class Contract {
      * @param clazz Java class which represents input data type
      */
     public void setInputType(Class<?> clazz) {
+        Objects.requireNonNull(clazz, "clazz");
         this.inputType = new DataType(clazz);
         this.contractString = null;
     }
 
-    public DataType getOutputType() {
+    /**
+     * Gets the declared output data type.
+     *
+     * @return the output type, or <tt>null</tt> if none is declared
+     */
+    public @Nullable DataType getOutputType() {
         return outputType;
     }
 
@@ -64,6 +90,7 @@ public class Contract {
      * @param outputType output data type
      */
     public void setOutputType(String outputType) {
+        Objects.requireNonNull(outputType, "outputType");
         this.outputType = new DataType(outputType);
         this.contractString = null;
     }
@@ -74,10 +101,16 @@ public class Contract {
      * @param clazz Java class which represents output data type
      */
     public void setOutputType(Class<?> clazz) {
+        Objects.requireNonNull(clazz, "clazz");
         this.outputType = new DataType(clazz);
         this.contractString = null;
     }
 
+    /**
+     * Whether the input should be validated against the input data type.
+     *
+     * @return <tt>true</tt> if input validation is enabled
+     */
     public boolean isValidateInput() {
         return validateInput;
     }
@@ -89,6 +122,11 @@ public class Contract {
         this.validateInput = validate;
     }
 
+    /**
+     * Whether the output should be validated against the output data type.
+     *
+     * @return <tt>true</tt> if output validation is enabled
+     */
     public boolean isValidateOutput() {
         return validateOutput;
     }
@@ -113,7 +151,7 @@ public class Contract {
     }
 
     @Override
-    public boolean equals(Object target) {
+    public boolean equals(@Nullable Object target) {
         if (!(target instanceof Contract)) {
             return false;
         }

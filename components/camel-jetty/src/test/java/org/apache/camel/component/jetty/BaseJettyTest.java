@@ -23,7 +23,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.http.common.HttpHeaderFilterStrategy;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit6.CamelTestSupport;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
 public abstract class BaseJettyTest extends CamelTestSupport {
@@ -35,13 +34,6 @@ public abstract class BaseJettyTest extends CamelTestSupport {
 
     @RegisterExtension
     protected AvailablePortFinder.Port port2 = AvailablePortFinder.find();
-
-    // Due to CAMEL-21122 ports are never released. So, force them to be released.
-    @AfterEach
-    void cleanupPorts() {
-        port1.release();
-        port2.release();
-    }
 
     @Override
     protected CamelContext createCamelContext() throws Exception {

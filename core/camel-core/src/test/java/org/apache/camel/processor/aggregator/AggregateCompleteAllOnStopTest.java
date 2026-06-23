@@ -16,17 +16,20 @@
  */
 package org.apache.camel.processor.aggregator;
 
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.BodyInAggregatingStrategy;
 import org.apache.camel.processor.aggregate.MemoryAggregationRepository;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.DisabledOnOs;
 
-@DisabledOnOs(architectures = { "s390x" },
-              disabledReason = "This test does not run reliably on s390x (see CAMEL-21438)")
+import static org.awaitility.Awaitility.await;
+
 public class AggregateCompleteAllOnStopTest extends ContextTestSupport {
+
+    protected final MemoryAggregationRepository repo = new MemoryAggregationRepository();
 
     @Test
     public void testCompleteAllOnStop() throws Exception {
@@ -44,9 +47,19 @@ public class AggregateCompleteAllOnStopTest extends ContextTestSupport {
 
         input.assertIsSatisfied();
 
+        // mock:input fires before the aggregator step, so assertIsSatisfied() can
+        // return while C is still in-flight between mock:input and the aggregator.
+        // Wait until C is actually stored in the repository before stopping.
+        awaitLastMessageInAggregator();
+
         context.getRouteController().stopRoute("foo");
 
         assertMockEndpointsSatisfied();
+    }
+
+    protected void awaitLastMessageInAggregator() throws Exception {
+        await().atMost(10, TimeUnit.SECONDS)
+                .until(() -> repo.get(context, "foo") != null);
     }
 
     @Override
@@ -57,8 +70,8 @@ public class AggregateCompleteAllOnStopTest extends ContextTestSupport {
                 from("seda:start").routeId("foo")
                         .to("mock:input")
                         .aggregate(header("id"), new BodyInAggregatingStrategy())
-                        .aggregationRepository(new MemoryAggregationRepository())
-                        .completionSize(2).completionTimeout(100).completeAllOnStop().completionTimeoutCheckerInterval(10)
+                        .aggregationRepository(repo)
+                        .completionSize(2).completionTimeout(5000).completeAllOnStop().completionTimeoutCheckerInterval(10)
                         .to("mock:aggregated");
             }
         };

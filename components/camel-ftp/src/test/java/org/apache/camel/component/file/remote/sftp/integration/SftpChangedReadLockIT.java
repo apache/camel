@@ -85,7 +85,8 @@ public class SftpChangedReadLockIT extends SftpServerTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from(getFtpUrl()).routeId("foo").noAutoStartup().to(TestSupport.fileUri(testDirectory, "out"), "mock:result");
+                from(getFtpUrl()).routeId("foo").autoStartup(false).to(TestSupport.fileUri(testDirectory, "out"),
+                        "mock:result");
             }
         };
     }

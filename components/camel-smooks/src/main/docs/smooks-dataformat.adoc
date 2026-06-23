@@ -6,8 +6,6 @@
 :since: 4.9
 :supportlevel: Stable
 :tabs-sync-option:
-//Manually maintained attributes
-:camel-spring-boot-name: smooks
 
 *Since Camel {since}*
 
@@ -45,13 +43,15 @@ YAML::
 +
 [source,yaml]
 ----
-- from:
-    uri: direct:unmarshal
+- route:
+    from:
+      uri: direct:unmarshal
     steps:
       - unmarshal:
           smooks:
             smooksConfig: csv-smooks-unmarshal-config.xml
-      - log: "Unmarshalled customers: ${body}"
+      - log:
+          message: "Unmarshalled customers: ${body}"
 ----
 ====
 
@@ -79,5 +79,3 @@ The Smooks configuration in `csv-smooks-unmarshal-config.xml` is as follows:
 // dataformat options: START
 include::partial$dataformat-options.adoc[]
 // dataformat options: END
-
-include::spring-boot:partial$starter.adoc[]

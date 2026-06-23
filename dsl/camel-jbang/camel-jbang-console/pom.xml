@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-jbang-parent</artifactId>
-        <version>4.20.0-SNAPSHOT</version>
+        <version>4.21.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -32,7 +32,7 @@
     <packaging>jar</packaging>
 
     <name>Camel :: JBang :: Console</name>
-    <description>Camel JBang Console</description>
+    <description>Camel CLI Console</description>
 
     <properties>
         <firstVersion>3.21.0</firstVersion>
@@ -50,6 +50,11 @@
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-support</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-management</artifactId>
+        </dependency>
+
     </dependencies>
 
 </project>

@@ -68,7 +68,9 @@ YAML::
               simple:
                 expression: "${body} regex '^\\w{10}\\,\\d{2}\\,\\w{24}$'"
         - to:
-            uri: bean:myServiceBean?method=processLine
+            uri: bean:myServiceBean
+            parameters:
+              method: processLine
 ----
 ====
 

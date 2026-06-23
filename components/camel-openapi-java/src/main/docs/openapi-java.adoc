@@ -6,8 +6,6 @@
 :since: 3.1
 :supportlevel: Stable
 :tabs-sync-option:
-//Manually maintained attributes
-:camel-spring-boot-name: openapi-java
 
 *Since Camel {since}*
 
@@ -38,37 +36,26 @@ the REST components (without the need for servlet)
 You can enable the OpenApi api from the rest-dsl by configuring the
 `apiContextPath` dsl as shown below:
 
+._Java-only: Rest DSL configuration with class literals_
 [source,java]
 ----
-public class UserRouteBuilder extends RouteBuilder {
-    @Override
-    public void configure() throws Exception {
-        // configure we want to use servlet as the component for the rest DSL,
-        // and we enable json binding mode
-        restConfiguration().component("netty-http").bindingMode(RestBindingMode.json)
-            // and output using pretty print
-            .dataFormatProperty("prettyPrint", "true")
-            // setup context path and port number that netty will use
-            .contextPath("/").port(8080)
-            // add OpenApi api-doc out of the box
-            .apiContextPath("/api-doc")
-                .apiProperty("api.title", "User API").apiProperty("api.version", "1.2.3")
-                // and enable CORS
-                .apiProperty("cors", "true");
+restConfiguration().component("netty-http").bindingMode(RestBindingMode.json)
+    .dataFormatProperty("prettyPrint", "true")
+    .contextPath("/").port(8080)
+    .apiContextPath("/api-doc")
+        .apiProperty("api.title", "User API").apiProperty("api.version", "1.2.3")
+        .apiProperty("cors", "true");
 
-        // this user REST service is json only
-        rest("/user").description("User rest service")
-            .consumes("application/json").produces("application/json")
-            .get("/{id}").description("Find user by id").outType(User.class)
-                .param().name("id").type(path).description("The id of the user to get").dataType("int").endParam()
-                .to("bean:userService?method=getUser(${header.id})")
-            .put().description("Updates or create a user").type(User.class)
-                .param().name("body").type(body).description("The user to update or create").endParam()
-                .to("bean:userService?method=updateUser")
-            .get("/findAll").description("Find all users").outType(User[].class)
-                .to("bean:userService?method=listUsers");
-    }
-}
+rest("/user").description("User rest service")
+    .consumes("application/json").produces("application/json")
+    .get("/{id}").description("Find user by id").outType(User.class)
+        .param().name("id").type(path).description("The id of the user to get").dataType("int").endParam()
+        .to("bean:userService?method=getUser(${header.id})")
+    .put().description("Updates or create a user").type(User.class)
+        .param().name("body").type(body).description("The user to update or create").endParam()
+        .to("bean:userService?method=updateUser")
+    .get("/findAll").description("Find all users").outType(User[].class)
+        .to("bean:userService?method=listUsers");
 ----
  
 
@@ -138,6 +125,7 @@ to the generated OpenAPI document and not to the actual REST services
 The Rest DSL now supports declaring OpenApi `securityDefinitions` in the generated API document.
 For example, as shown below:
 
+._Java-only: Rest DSL security definitions builder API_
 [source,java]
 ----
 rest("/user").tag("dude").description("User rest service")
@@ -157,6 +145,7 @@ Here we have set up two security definitions
 Then you need to specify on the rest operations which security to use by referring to
 their key (petstore_auth or api_key).
 
+._Java-only: Rest DSL security on operations with class literals_
 [source,java]
 ----
 .get("/{id}/{date}").description("Find user by id and date").outType(User.class)
@@ -188,6 +177,7 @@ By default, the value for these fields is determined by `X-Forwarded` headers, `
 
 This can be overridden by specifying your own host, port & scheme on the REST configuration.
 
+._Java-only: programmatic restConfiguration builder API_
 [source,java]
 ----
 restConfiguration().component("netty-http")
@@ -196,5 +186,3 @@ restConfiguration().component("netty-http")
     .host("localhost")
     .port(8080);
 ----
-
-include::spring-boot:partial$starter.adoc[]

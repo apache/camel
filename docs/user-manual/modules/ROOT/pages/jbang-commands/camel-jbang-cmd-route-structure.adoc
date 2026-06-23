@@ -20,7 +20,10 @@ camel cmd route-structure [options]
 |===
 | Option | Description | Default | Type
 | `--brief` | To show less detailed route structure |  | boolean
+| `--description` | To show description instead of code |  | boolean
 | `--filter` | Filter route by filename or route id (multiple names can be separated by comma) |  | String
+| `--ignore-loading-error` | Whether to ignore route loading and compilation errors (use this with care!) | false | boolean
+| `--json` | Output in JSON Format |  | boolean
 | `--raw` | To output raw without metadata |  | boolean
 | `--sort` | Sort route by name or id | name | String
 | `-h,--help` | Display the help and sub-commands |  | boolean

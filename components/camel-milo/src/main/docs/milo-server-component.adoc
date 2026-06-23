@@ -7,8 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
-//Manually maintained attributes
-:camel-spring-boot-name: milo
 
 *Since Camel {since}*
 
@@ -67,6 +65,3 @@ With Milo 1.0.5, several security-related API changes were introduced:
 * The `ServerCertificateValidator` class has been replaced with `CertificateValidator`
 * Certificate validation now uses `org.eclipse.milo.opcua.stack.core.security.CertificateValidator`
 * When configuring custom certificate validators programmatically, ensure you're using the updated API
-
-
-include::spring-boot:partial$starter.adoc[]

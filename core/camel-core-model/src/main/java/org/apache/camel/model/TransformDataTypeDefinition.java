@@ -23,6 +23,7 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.annotations.DslArg;
 
 /**
  * Transforms the message body based on known data type transformers.
@@ -33,8 +34,10 @@ import org.apache.camel.spi.Metadata;
 public class TransformDataTypeDefinition extends NoOutputDefinition<TransformDataTypeDefinition> {
 
     @XmlAttribute
+    @DslArg(position = 0)
     private String fromType;
     @XmlAttribute(required = true)
+    @DslArg(position = 1)
     private String toType;
 
     public TransformDataTypeDefinition() {

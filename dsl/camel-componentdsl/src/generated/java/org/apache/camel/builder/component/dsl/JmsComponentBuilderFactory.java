@@ -1718,6 +1718,30 @@ public interface JmsComponentBuilderFactory {
     
         
         /**
+         * Whether to enable sending and receiving JMS ObjectMessage. By default
+         * this is disabled because Java object serialization is a known source
+         * of security vulnerabilities. Enable this option only if you trust the
+         * source of the messages and need to send or receive Java serialized
+         * objects via JMS. When disabled, Camel will refuse to create or read
+         * JMS ObjectMessage instances. Options that rely on ObjectMessage
+         * internally (such as transferExchange and transferException) require
+         * this option to be enabled.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param objectMessageEnabled the value to set
+         * @return the dsl builder
+         */
+        default JmsComponentBuilder objectMessageEnabled(boolean objectMessageEnabled) {
+            doSetProperty("objectMessageEnabled", objectMessageEnabled);
+            return this;
+        }
+    
+        
+        /**
          * Specifies whether to inhibit the delivery of messages published by
          * its own connection.
          * 
@@ -2077,8 +2101,9 @@ public interface JmsComponentBuilderFactory {
          * provider's ObjectInputStream; to block such attacks, also configure
          * the JMS provider's own deserialization filter and/or the JVM-wide
          * -Djdk.serialFilter. When this option is not set and no JVM-wide
-         * filter is configured, a conservative default filter allowing java.,
-         * javax. and org.apache.camel. is applied.
+         * filter is configured, a conservative default filter denying java.net.
+         * and otherwise allowing java., javax. and org.apache.camel. is
+         * applied.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -2342,6 +2367,7 @@ public interface JmsComponentBuilderFactory {
             case "messageIdEnabled": getOrCreateConfiguration((JmsComponent) component).setMessageIdEnabled((boolean) value); return true;
             case "messageListenerContainerFactory": getOrCreateConfiguration((JmsComponent) component).setMessageListenerContainerFactory((org.apache.camel.component.jms.MessageListenerContainerFactory) value); return true;
             case "messageTimestampEnabled": getOrCreateConfiguration((JmsComponent) component).setMessageTimestampEnabled((boolean) value); return true;
+            case "objectMessageEnabled": getOrCreateConfiguration((JmsComponent) component).setObjectMessageEnabled((boolean) value); return true;
             case "pubSubNoLocal": getOrCreateConfiguration((JmsComponent) component).setPubSubNoLocal((boolean) value); return true;
             case "queueBrowseStrategy": ((JmsComponent) component).setQueueBrowseStrategy((org.apache.camel.component.jms.QueueBrowseStrategy) value); return true;
             case "receiveTimeout": getOrCreateConfiguration((JmsComponent) component).setReceiveTimeout((long) value); return true;

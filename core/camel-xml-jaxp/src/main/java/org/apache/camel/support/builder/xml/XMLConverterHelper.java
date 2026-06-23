@@ -189,10 +189,10 @@ public class XMLConverterHelper {
 
         // Enable the Security feature by default
         try {
-            factory.setFeature(javax.xml.XMLConstants.FEATURE_SECURE_PROCESSING, true);
+            factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
         } catch (TransformerConfigurationException e) {
             LOG.warn("TransformerFactory doesn't support the feature {} with value {}, due to {}.",
-                    javax.xml.XMLConstants.FEATURE_SECURE_PROCESSING, "true", e.getMessage(), e);
+                    XMLConstants.FEATURE_SECURE_PROCESSING, "true", e.getMessage(), e);
         }
         LOG.debug("Configuring TransformerFactory to not allow access to external DTD/Stylesheet");
         factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");

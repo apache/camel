@@ -1133,7 +1133,7 @@ public interface GitEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final GitHeaderNameBuilder INSTANCE = new GitHeaderNameBuilder();
+        public static final GitHeaderNameBuilder INSTANCE = new GitHeaderNameBuilder();
 
         /**
          * The operation to do on a repository, if not specified as endpoint

@@ -25,6 +25,12 @@ public enum BlobOperationsDefinition {
      * Returns a list of containers in the storage account.
      */
     listBlobContainers,
+    /**
+     * Returns a list of blobs across the storage account whose index tags match the given SQL-like filter expression
+     * (for example {@code "Environment" = 'Production' AND "Status" = 'Active'}). The filter is read from the
+     * {@code CamelAzureStorageBlobTagFilter} header or the message body.
+     */
+    findBlobsByTags,
 
     // Operations on the container level
     //
@@ -41,6 +47,13 @@ public enum BlobOperationsDefinition {
      * Returns a list of blobs in this container, with folder structures flattened.
      */
     listBlobs,
+    /**
+     * Returns the list of blobs and their versions in this container. Each {@code BlobItem} in the result carries its
+     * own {@code versionId} and {@code isCurrentVersion} flag, allowing the full version history of every blob to be
+     * inspected. Requires versioning to be enabled on the storage account. Honours the same {@code prefix},
+     * {@code regex} and {@code maxResultsPerPage} filters as {@link #listBlobs}.
+     */
+    listBlobVersions,
 
     // Operations on the blob level
     //
@@ -140,5 +153,41 @@ public enum BlobOperationsDefinition {
     /**
      * Creates a read-only snapshot of a blob. The snapshot ID is returned in the exchange headers.
      */
-    createBlobSnapshot
+    createBlobSnapshot,
+    /**
+     * Sets user-defined index tags on a blob. Tags are key-value pairs that can be used to filter and query blobs
+     * across containers.
+     */
+    setBlobTags,
+    /**
+     * Retrieves user-defined index tags from a blob.
+     */
+    getBlobTags,
+    /**
+     * Sets a legal hold on a blob. Legal holds prevent blob modification and deletion until the hold is explicitly
+     * cleared. The legal hold flag is read from the {@code CamelAzureStorageBlobLegalHold} header or the message body
+     * (Boolean).
+     */
+    setBlobLegalHold,
+    /**
+     * Sets a time-based immutability policy on a blob. The policy expiry time is read from the
+     * {@code CamelAzureStorageBlobImmutabilityPolicyExpiryTime} header (OffsetDateTime) and the policy mode from the
+     * {@code CamelAzureStorageBlobImmutabilityPolicyMode} header (BlobImmutabilityPolicyMode, defaults to UNLOCKED). A
+     * pre-built {@code BlobImmutabilityPolicy} can also be passed via the message body or the
+     * {@code CamelAzureStorageBlobImmutabilityPolicy} header.
+     */
+    setBlobImmutabilityPolicy,
+    /**
+     * Restores the contents and metadata of a soft-deleted blob and any associated soft-deleted snapshots. Soft delete
+     * must be enabled on the storage account for this operation to succeed. The HTTP response headers from the
+     * underlying request are returned in the exchange headers.
+     */
+    undeleteBlob,
+    /**
+     * Sets the access tier of an existing blob. The target tier is read from the
+     * {@code CamelAzureStorageBlobAccessTier} header (AccessTier) or from the message body (AccessTier). When
+     * rehydrating an archived blob, the optional {@code CamelAzureStorageBlobRehydratePriority} header
+     * (RehydratePriority) controls the rehydration priority.
+     */
+    setBlobTier
 }

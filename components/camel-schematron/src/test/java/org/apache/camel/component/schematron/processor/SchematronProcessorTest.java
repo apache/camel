@@ -28,6 +28,7 @@ import javax.xml.transform.stream.StreamSource;
 import net.sf.saxon.TransformerFactoryImpl;
 import org.apache.camel.component.schematron.constant.Constants;
 import org.apache.camel.component.schematron.util.Utils;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -105,7 +106,7 @@ public class SchematronProcessorTest {
         @Override
         public Source resolve(String href, String base) throws TransformerException {
             return new StreamSource(
-                    org.apache.camel.util.ObjectHelper.loadResourceAsStream("custom-resolver/".concat(href)));
+                    ObjectHelper.loadResourceAsStream("custom-resolver/".concat(href)));
         }
     }
 }

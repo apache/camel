@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://schema.ocsf.io/1.7.0/classes/process_activity",
+  "$id": "https://schema.ocsf.io/1.8.0/classes/process_activity",
   "title": "ProcessActivity",
   "type": "object",
   "javaType": "org.apache.camel.dataformat.ocsf.model.ProcessActivity",
@@ -9,18 +9,52 @@
     "$ref": "OcsfEvent.json"
   },
   "properties": {
+    "requested_permissions": {
+      "type": "integer",
+      "title": "Requested Permissions"
+    },
     "actor": {
       "$ref": "Actor.json"
+    },
+    "module": {
+      "$ref": "Module.json"
+    },
+    "injection_type_id": {
+      "type": "integer",
+      "title": "Injection Type ID"
+    },
+    "exit_code": {
+      "type": "integer",
+      "title": "Exit Code"
+    },
+    "device": {
+      "$ref": "Device.json"
+    },
+    "launch_type_id": {
+      "type": "integer",
+      "title": "Launch Type ID"
+    },
+    "actual_permissions": {
+      "type": "integer",
+      "title": "Actual Permissions"
+    },
+    "process": {
+      "$ref": "Process.json"
+    },
+    "injection_type": {
+      "type": "string",
+      "title": "Injection Type"
+    },
+    "launch_type": {
+      "type": "string",
+      "title": "Launch Type"
     },
     "raw_data_size": {
       "type": "integer",
       "title": "Raw Data Size"
     },
-    "device": {
-      "$ref": "Device.json"
-    },
-    "process": {
-      "$ref": "Process.json"
+    "raw_data_hash": {
+      "$ref": "Fingerprint.json"
     },
     "enrichments": {
       "type": "array",
@@ -28,40 +62,6 @@
       "items": {
         "$ref": "Enrichment.json"
       }
-    },
-    "module": {
-      "$ref": "Module.json"
-    },
-    "exit_code": {
-      "type": "integer",
-      "title": "Exit Code"
-    },
-    "actual_permissions": {
-      "type": "integer",
-      "title": "Actual Permissions"
-    },
-    "injection_type_id": {
-      "type": "integer",
-      "title": "Injection Type ID"
-    },
-    "raw_data_hash": {
-      "$ref": "Fingerprint.json"
-    },
-    "launch_type_id": {
-      "type": "integer",
-      "title": "Launch Type ID"
-    },
-    "injection_type": {
-      "type": "string",
-      "title": "Injection Type"
-    },
-    "requested_permissions": {
-      "type": "integer",
-      "title": "Requested Permissions"
-    },
-    "launch_type": {
-      "type": "string",
-      "title": "Launch Type"
     }
   }
 }

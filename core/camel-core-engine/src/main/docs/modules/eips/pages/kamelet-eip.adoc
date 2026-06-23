@@ -24,6 +24,7 @@ In special situations like these, then you **must** use this Kamelet EIP instead
 
 Given the following Kamelet (as a route template):
 
+._Java-only: defining a route template (Kamelet) with an aggregation strategy_
 [source,java]
 ----
 routeTemplate("my-aggregate")
@@ -78,7 +79,9 @@ YAML::
       uri: direct:start
       steps:
         - to:
-            uri: kamelet:my-aggregate?count=5
+            uri: kamelet:my-aggregate
+            parameters:
+              count: 5
         - to:
             uri: log:info
         - to:

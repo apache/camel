@@ -23,6 +23,8 @@ import jakarta.ws.rs.client.AsyncInvoker;
 import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.core.MultivaluedMap;
 
+import org.apache.camel.Message;
+import org.apache.cxf.jaxrs.client.WebClient;
 import org.apache.cxf.message.Exchange;
 
 /**
@@ -68,7 +70,7 @@ public interface CxfRsBinding {
      * @throws Exception     can be thrown if error in the binding process
      */
     Object bindCamelMessageBodyToRequestBody(
-            org.apache.camel.Message camelMessage,
+            Message camelMessage,
             org.apache.camel.Exchange camelExchange)
             throws Exception;
 
@@ -121,7 +123,7 @@ public interface CxfRsBinding {
      * @return               the {@link Entity} to use
      */
     Entity<Object> bindCamelMessageToRequestEntity(
-            Object body, org.apache.camel.Message camelMessage, org.apache.camel.Exchange camelExchange)
+            Object body, Message camelMessage, org.apache.camel.Exchange camelExchange)
             throws Exception;
 
     /**
@@ -136,7 +138,7 @@ public interface CxfRsBinding {
      * @return               the {@link Entity} to use
      */
     Entity<Object> bindCamelMessageToRequestEntity(
-            Object body, org.apache.camel.Message camelMessage, org.apache.camel.Exchange camelExchange,
-            org.apache.cxf.jaxrs.client.WebClient webClient)
+            Object body, Message camelMessage, org.apache.camel.Exchange camelExchange,
+            WebClient webClient)
             throws Exception;
 }

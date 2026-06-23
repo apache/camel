@@ -26,8 +26,11 @@ The configuration properties for the Telemetry component are:
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
 |Option |Default |Description
-|`traceProcessors`| false | Trace inner processors.
-|`excludePatterns` |  | Sets exclude pattern that will disable tracing for those spans that matches the pattern. The variable is a comma separated values of filters to execute (eg, `log*,direct*,setBody*`, ...)
+|`traceProcessors`| false | Trace inner custom processors (i.e., any `process` configured in the route).
+|`disableCoreProcessors`| false | Disable any inner core processors (any core DSL processor provided in the route, for example `bean`, `log`, ...).
+|`traceCustomIdOnly`| false | When enabled, only trace routes and processors where the author explicitly assigned a custom ID. Routes without a custom `.routeId()` are excluded entirely — no route span, no processor spans, and no endpoint send spans are created within them. Within traced routes, only processors with a custom `.id()` produce spans (requires `traceProcessors=true`). This provides intent-based filtering: name the routes and steps you care about, and only those appear in your observability tool.
+| `excludePatterns` | | A comma-separated list of patterns (e.g., `log*,direct*,setBody*`) to exclude from tracing. Spans matching these patterns will be disabled. If nothing is specified, no processors are excluded by default.
+| `includePatterns` | | A comma-separated list of patterns (e.g., `log*,direct*,setBody*`) to explicitly include in a trace. Spans matching these patterns will be enabled. If nothing is specified, all processors are included by default.
 |`traceHeadersInclusion`| false | Add the generated telemetry `CAMEL_TRACE_ID` and `CAMEL_SPAN_ID` Exchange headers.
 |=======================================================================
 
@@ -121,11 +124,13 @@ The upstream application must inject the context into the event sent (typically 
 
 This feature is implementation specific, the abstraction just provide the interface that must be implemented concretely in each of the implementation.
 
-=== Processor tracing
+=== Custom Processor tracing
 
 When this feature is enabled, you will be able to collect a finer grain number of Spans into a Trace. Each of the different endpoint processors will be collected. You can enable the feature using the `traceProcessors` parameter (default `false`).
 
 NOTE: enabling this feature will provide many more Spans for each Trace.
+
+By default, the "core" processors part of any Camel DSL (for example, `bean`, `log`, ...) are included in order to manage properly any further instrumentation done at this level. Disabling this feature is not recommended but it can be done via `disableCoreProcessors` parameter.
 
 == Implementation specific abstraction
 
@@ -147,7 +152,7 @@ The `initTracer()` is in charge to inject a concrete implementation of `SpanLife
 ```java
 public interface SpanLifecycleManager {
 
-    Span create(String spanName, Span parent, SpanContextPropagationExtractor extractor);
+    Span create(String spanName, String spanKind, Span parent, SpanContextPropagationExtractor extractor);
 
     void activate(Span span);
 

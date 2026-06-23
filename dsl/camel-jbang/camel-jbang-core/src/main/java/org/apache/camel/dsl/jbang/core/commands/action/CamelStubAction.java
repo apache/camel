@@ -36,11 +36,15 @@ import org.apache.camel.support.PatternHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
-import org.fusesource.jansi.Ansi;
+import org.jline.jansi.Ansi;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
-@Command(name = "stub", description = "Browse stub endpoints", sortOptions = false, showDefaultValues = true)
+@Command(name = "stub", description = "Browse stub endpoints", sortOptions = false, showDefaultValues = true,
+         footer = {
+                 "%nExamples:",
+                 "  camel cmd stub",
+                 "  camel cmd stub --browse" })
 public class CamelStubAction extends ActionWatchCommand {
 
     @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")

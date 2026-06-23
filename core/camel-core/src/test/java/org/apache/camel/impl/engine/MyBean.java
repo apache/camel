@@ -16,7 +16,9 @@
  */
 package org.apache.camel.impl.engine;
 
-@org.apache.camel.spi.annotations.Component(value = "MyBean")
+import org.apache.camel.spi.annotations.Component;
+
+@Component(value = "MyBean")
 public class MyBean {
     public String addString(String source, String dst) {
         return source + dst;

@@ -18,15 +18,28 @@ package org.apache.camel.spi;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
- * Strategy for configurers.
+ * Utility class for managing the lifecycle of bootstrap-phase {@link PropertyConfigurer} instances generated for
+ * {@link Configurer @Configurer(bootstrap = true)} types.
+ * <p/>
+ * During {@link org.apache.camel.CamelContext} startup, generated configurers for bootstrap-only types (such as main
+ * configuration classes that are only configured once) are held in memory. After the context has finished starting,
+ * calling {@link #clearBootstrapConfigurers()} releases those maps to reduce the steady-state memory footprint. Modules
+ * register their own cleaner via {@link #addBootstrapConfigurerClearer(Runnable)} during initialization so that the
+ * strategy does not need to know their internal data structures.
+ *
+ * @see   Configurer
+ * @see   PropertyConfigurer
+ * @since 3.7
  */
 public abstract class ConfigurerStrategy {
 
     private static final List<Runnable> BOOTSTRAP_CLEARERS = new ArrayList<>();
 
     public static void addBootstrapConfigurerClearer(Runnable strategy) {
+        Objects.requireNonNull(strategy, "strategy");
         BOOTSTRAP_CLEARERS.add(strategy);
     }
 

@@ -6,8 +6,6 @@
 :since: 4.8
 :supportlevel: Preview
 :tabs-sync-option:
-//Manually maintained attributes
-:camel-spring-boot-name: langchain4j-tokenizer
 
 *Since Camel {since}*
 

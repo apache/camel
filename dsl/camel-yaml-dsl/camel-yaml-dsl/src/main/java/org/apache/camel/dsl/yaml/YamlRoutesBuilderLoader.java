@@ -176,6 +176,7 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
 
             private boolean doConfigure(Object item) throws Exception {
                 if (item instanceof OutputAwareFromDefinition) {
+                    ctx.warnCompactNotationOnce(LOG);
                     RouteDefinition route = new RouteDefinition();
                     route.setInput(((OutputAwareFromDefinition) item).getDelegate());
                     route.setOutputs(((OutputAwareFromDefinition) item).getOutputs());
@@ -602,7 +603,8 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
         }
 
         if (params != null && !params.isEmpty()) {
-            String query = URISupport.createQueryString(params);
+            // kamelet uses useRawUri so parameters should not be encoded
+            String query = URISupport.createQueryString(params, !kamelet);
             // CAMEL-23284: restore property placeholders that were URL-encoded
             query = query.replace("%7B%7B", "{{").replace("%7D%7D", "}}");
             uri = uri + "?" + query;

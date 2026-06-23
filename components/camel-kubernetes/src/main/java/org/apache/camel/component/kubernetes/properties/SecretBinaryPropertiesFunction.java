@@ -16,10 +16,12 @@
  */
 package org.apache.camel.component.kubernetes.properties;
 
+import org.apache.camel.spi.annotations.PropertiesFunction;
+
 /**
  * Resolves binary type secret keys .
  */
-@org.apache.camel.spi.annotations.PropertiesFunction("secret-binary")
+@PropertiesFunction("secret-binary")
 public class SecretBinaryPropertiesFunction extends BaseSecretPropertiesFunction {
 
     @Override

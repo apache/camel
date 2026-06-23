@@ -20,10 +20,23 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Producer;
+import org.jspecify.annotations.Nullable;
 
 /**
- * Allows SPI to plugin a {@link RestProducerFactory} that creates the Camel {@link Producer} responsible for performing
- * HTTP requests to call a remote REST service.
+ * SPI that creates the Camel {@link org.apache.camel.Producer} responsible for performing HTTP requests to call a
+ * remote REST service.
+ * <p/>
+ * Implementations are provided by HTTP-capable Camel components such as {@code camel-http}, {@code camel-netty-http},
+ * and {@code camel-vertx-http}. At runtime, {@link org.apache.camel.CamelContext} selects the active implementation
+ * from the registry using the producer component name configured in {@link RestConfiguration}. The single
+ * {@link #createProducer} method receives the full invocation contract: target host (scheme:host:port), HTTP verb, base
+ * path, URI template, query parameters, accepted and produced media types, the shared {@link RestConfiguration}, and
+ * any additional component-specific parameters.
+ * <p/>
+ * See <a href="https://camel.apache.org/manual/rest-dsl.html">Rest DSL</a> in the Camel user manual.
+ *
+ * @see RestConsumerFactory
+ * @see RestConfiguration
  */
 public interface RestProducerFactory {
 
@@ -46,7 +59,8 @@ public interface RestProducerFactory {
      */
     Producer createProducer(
             CamelContext camelContext, String host,
-            String verb, String basePath, String uriTemplate, String queryParameters,
-            String consumes, String produces, RestConfiguration configuration, Map<String, Object> parameters)
+            String verb, String basePath, @Nullable String uriTemplate, @Nullable String queryParameters,
+            @Nullable String consumes, @Nullable String produces, RestConfiguration configuration,
+            Map<String, Object> parameters)
             throws Exception;
 }

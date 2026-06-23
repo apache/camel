@@ -64,7 +64,7 @@ public class BoxTasksManagerIT extends AbstractBoxITSupport {
     //needs https://community.box.com/t5/custom/page/page-id/BoxViewTicketDetail?ticket_id=1895413 to be solved
     @Test
     public void testAddAssignmentToTask() {
-        com.box.sdk.BoxTask result = null;
+        BoxTask result = null;
 
         final Map<String, Object> headers = new HashMap<>();
         // parameter type is String
@@ -80,7 +80,7 @@ public class BoxTasksManagerIT extends AbstractBoxITSupport {
 
     @Test
     public void testAddFileTask() {
-        com.box.sdk.BoxTask result = null;
+        BoxTask result = null;
 
         try {
             final Map<String, Object> headers = new HashMap<>();
@@ -134,7 +134,7 @@ public class BoxTasksManagerIT extends AbstractBoxITSupport {
     public void testGetFileTasks() {
         // using String message body for single parameter "fileId"
         @SuppressWarnings("rawtypes")
-        final java.util.List result = requestBody("direct://GETFILETASKS", testFile.getID());
+        final List result = requestBody("direct://GETFILETASKS", testFile.getID());
 
         assertNotNull(result, "getFileTasks result");
         LOG.debug("getFileTasks: {}", result);
@@ -144,7 +144,7 @@ public class BoxTasksManagerIT extends AbstractBoxITSupport {
     @Test
     public void testGetTaskAssignmentInfo() {
         BoxTaskAssignment.Info info = testTask.addAssignment(getCurrentUser());
-        com.box.sdk.BoxTaskAssignment.Info result = null;
+        BoxTaskAssignment.Info result = null;
 
         try {
             // using String message body for single parameter "taskAssignmentId"
@@ -178,7 +178,7 @@ public class BoxTasksManagerIT extends AbstractBoxITSupport {
         requestBodyAndHeaders("direct://ADDASSIGNMENTTOTASK", null, headers);
 
         @SuppressWarnings("rawtypes")
-        final java.util.List result = requestBody("direct://GETTASKASSIGNMENTS", testTask.getID());
+        final List result = requestBody("direct://GETTASKASSIGNMENTS", testTask.getID());
 
         assertNotNull(result, "getTaskAssignments result");
         LOG.debug("getTaskAssignments: {}", result);
@@ -187,7 +187,7 @@ public class BoxTasksManagerIT extends AbstractBoxITSupport {
     @Test
     public void testGetTaskInfo() {
         // using String message body for single parameter "taskId"
-        final com.box.sdk.BoxTask.Info result = requestBody("direct://GETTASKINFO", testTask.getID());
+        final BoxTask.Info result = requestBody("direct://GETTASKINFO", testTask.getID());
 
         assertNotNull(result, "getTaskInfo result");
         LOG.debug("getTaskInfo: {}", result);
@@ -204,7 +204,7 @@ public class BoxTasksManagerIT extends AbstractBoxITSupport {
         // parameter type is com.box.sdk.BoxTask.Info
         headers.put("CamelBox.info", info);
 
-        final com.box.sdk.BoxTask result = requestBodyAndHeaders("direct://UPDATETASKINFO", null, headers);
+        final BoxTask result = requestBodyAndHeaders("direct://UPDATETASKINFO", null, headers);
 
         assertNotNull(result, "updateTaskInfo result");
         LOG.debug("updateTaskInfo: {}", result);

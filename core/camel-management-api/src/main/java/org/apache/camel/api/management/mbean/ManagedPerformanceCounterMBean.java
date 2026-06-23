@@ -78,6 +78,9 @@ public interface ManagedPerformanceCounterMBean extends ManagedCounterMBean {
     @ManagedAttribute(description = "First Exchange Completed ExchangeId")
     String getFirstExchangeCompletedExchangeId();
 
+    @ManagedAttribute(description = "Last Exchange Failure Handled Timestamp")
+    Date getLastExchangeFailureHandledTimestamp();
+
     @ManagedAttribute(description = "Last Exchange Failed Timestamp")
     Date getLastExchangeFailureTimestamp();
 

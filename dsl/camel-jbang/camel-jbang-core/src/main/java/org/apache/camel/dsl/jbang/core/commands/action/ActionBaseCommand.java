@@ -21,6 +21,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.regex.Pattern;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
@@ -45,7 +46,7 @@ abstract class ActionBaseCommand extends CamelCommand {
 
     protected static JsonObject getJsonObject(Path outputFile, long timeout) {
         StopWatch watch = new StopWatch();
-        while (watch.taken() < 5000) {
+        while (watch.taken() < timeout) {
             File f = outputFile.toFile();
             try {
                 // give time for response to be ready
@@ -157,7 +158,7 @@ abstract class ActionBaseCommand extends CamelCommand {
      * @param  configureAction a function to configure the action JSON object
      * @return                 the output file path
      */
-    protected Path prepareAction(String pid, String action, java.util.function.Consumer<JsonObject> configureAction) {
+    protected Path prepareAction(String pid, String action, Consumer<JsonObject> configureAction) {
         // ensure output file is deleted before executing action
         Path outputFile = getOutputFile(pid);
         PathUtils.deleteFile(outputFile);

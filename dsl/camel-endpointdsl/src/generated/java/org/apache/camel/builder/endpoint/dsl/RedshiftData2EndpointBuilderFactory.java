@@ -597,7 +597,7 @@ public interface RedshiftData2EndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final RedshiftData2HeaderNameBuilder INSTANCE = new RedshiftData2HeaderNameBuilder();
+        public static final RedshiftData2HeaderNameBuilder INSTANCE = new RedshiftData2HeaderNameBuilder();
 
         /**
          * The operation we want to perform.

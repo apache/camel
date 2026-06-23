@@ -256,7 +256,7 @@ public class DebugDevConsole extends AbstractDevConsole {
                         String rid = to.getString("routeId");
                         String loc = to.getString("location");
                         if (rid != null) {
-                            List<JsonObject> code = enrichSourceCode(rid, loc, limit);
+                            JsonArray code = enrichSourceCode(rid, loc, limit);
                             if (code != null && !code.isEmpty()) {
                                 to.put("code", code);
                             }
@@ -340,7 +340,7 @@ public class DebugDevConsole extends AbstractDevConsole {
         return arr;
     }
 
-    private List<JsonObject> enrichSourceCode(String routeId, String location, int lines) {
+    private JsonArray enrichSourceCode(String routeId, String location, int lines) {
         Route route = getCamelContext().getRoute(routeId);
         if (route == null) {
             return null;
@@ -350,7 +350,7 @@ public class DebugDevConsole extends AbstractDevConsole {
             return null;
         }
 
-        List<JsonObject> code = new ArrayList<>();
+        JsonArray code = new JsonArray();
 
         location = StringHelper.afterLast(location, ":");
         int line = 0;

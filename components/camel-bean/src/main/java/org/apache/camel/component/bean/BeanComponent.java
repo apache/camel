@@ -21,6 +21,7 @@ import java.util.Map;
 import org.apache.camel.BeanScope;
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.support.LRUCache;
 import org.apache.camel.support.LRUCacheFactory;
@@ -31,7 +32,7 @@ import org.slf4j.LoggerFactory;
 /**
  * The bean component is for invoking Java beans from Camel.
  */
-@org.apache.camel.spi.annotations.Component("bean")
+@Component("bean")
 public class BeanComponent extends DefaultComponent {
 
     private static final Logger LOG = LoggerFactory.getLogger(BeanComponent.class);

@@ -18,6 +18,8 @@ package org.apache.camel.spi;
 
 /**
  * Marker interface for {@link LifecycleStrategy} that are used for auto-wiring components, data formats and languages.
+ *
+ * @since 3.12
  */
 public interface AutowiredLifecycleStrategy extends LifecycleStrategy {
 }

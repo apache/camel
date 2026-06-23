@@ -89,8 +89,25 @@ public @interface UriParam {
 
     /**
      * Whether the option is secret/sensitive information such as a password.
+     *
+     * @deprecated use {@code security = "secret"} instead.
      */
+    @Deprecated(since = "4.19.0")
     boolean secret() default false;
+
+    /**
+     * Security category for this option.
+     *
+     * @see Metadata#security()
+     */
+    String security() default "";
+
+    /**
+     * The value that makes this option insecure.
+     *
+     * @see Metadata#insecureValue()
+     */
+    String insecureValue() default "";
 
     /**
      * To re-associate the preferred Java type of this parameter.
@@ -119,5 +136,14 @@ public @interface UriParam {
      * <code>consumer.delay=5000</code>
      */
     String optionalPrefix() default "";
+
+    /**
+     * Whether this query parameter is part of the endpoint's destination identity.
+     *
+     * Most components encode the destination (queue name, topic, bucket, etc.) in the URI context path. Some
+     * components, however, use a query parameter for this purpose. Marking such parameters allows tooling — such as the
+     * route topology service — to include them when building canonical URIs for endpoint matching.
+     */
+    boolean endpointIdentity() default false;
 
 }

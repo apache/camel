@@ -6,20 +6,49 @@
 :since: 2.20
 :supportlevel: Stable
 :tabs-sync-option:
-//Manually maintained attributes
-:camel-spring-boot-name: fastjson
 
 *Since Camel {since}*
 
 Fastjson is a Data Format that uses the
 https://github.com/alibaba/fastjson[Fastjson Library]
 
+[tabs]
+====
+Java::
++
 [source,java]
--------------------------------
-from("activemq:My.Queue").
-  marshal().json(JsonLibrary.Fastjson).
-  to("mqseries:Another.Queue");
--------------------------------
+----
+from("activemq:My.Queue")
+    .marshal().json(JsonLibrary.Fastjson)
+    .to("mqseries:Another.Queue");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="activemq:My.Queue"/>
+  <marshal><json library="Fastjson"/></marshal>
+  <to uri="mqseries:Another.Queue"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: activemq:My.Queue
+      steps:
+        - marshal:
+            json:
+              library: Fastjson
+        - to:
+            uri: mqseries:Another.Queue
+----
+====
 
 == Fastjson Options
 
@@ -46,6 +75,3 @@ substituting the version number for the latest & greatest release.
   <!-- use the same version as your Camel core version -->
 </dependency>
 ----------------------------------------------------------
-
-
-include::spring-boot:partial$starter.adoc[]

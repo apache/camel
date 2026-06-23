@@ -46,6 +46,7 @@ public class AsyncWiretapTest extends ExchangeTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
         this.mockTracer = new MockTracer();
+        this.mockTracer.setDisableCoreProcessors(true);
         CamelContextAware.trySetCamelContext(mockTracer, context);
         mockTracer.init(context);
         return context;

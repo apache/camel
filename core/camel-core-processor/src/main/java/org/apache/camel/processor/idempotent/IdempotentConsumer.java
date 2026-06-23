@@ -33,6 +33,7 @@ import org.apache.camel.processor.BaseProcessorSupport;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.spi.RouteIdAware;
+import org.apache.camel.spi.StepIdAware;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.support.AsyncProcessorConverterHelper;
 import org.apache.camel.support.service.ServiceHelper;
@@ -48,13 +49,14 @@ import org.slf4j.LoggerFactory;
  * @see org.apache.camel.spi.IdempotentRepository
  */
 public class IdempotentConsumer extends BaseProcessorSupport
-        implements CamelContextAware, Navigate<Processor>, IdAware, RouteIdAware {
+        implements CamelContextAware, Navigate<Processor>, IdAware, RouteIdAware, StepIdAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(IdempotentConsumer.class);
 
     private CamelContext camelContext;
     private String id;
     private String routeId;
+    private String stepId;
     private final Expression messageIdExpression;
     private final AsyncProcessor processor;
     private final IdempotentRepository idempotentRepository;
@@ -107,6 +109,16 @@ public class IdempotentConsumer extends BaseProcessorSupport
 
     public void setRouteId(String routeId) {
         this.routeId = routeId;
+    }
+
+    @Override
+    public String getStepId() {
+        return stepId;
+    }
+
+    @Override
+    public void setStepId(String stepId) {
+        this.stepId = stepId;
     }
 
     @Override

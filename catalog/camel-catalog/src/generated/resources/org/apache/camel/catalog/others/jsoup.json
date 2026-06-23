@@ -1,0 +1,15 @@
+{
+  "other": {
+    "kind": "other",
+    "name": "jsoup",
+    "title": "Jsoup",
+    "description": "Cleanup HTML content",
+    "deprecated": false,
+    "firstVersion": "4.21.0",
+    "label": "transformation",
+    "supportLevel": "Preview",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-jsoup",
+    "version": "4.21.0-SNAPSHOT"
+  }
+}

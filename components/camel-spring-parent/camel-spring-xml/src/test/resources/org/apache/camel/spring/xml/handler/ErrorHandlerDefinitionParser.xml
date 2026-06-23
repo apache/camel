@@ -55,7 +55,7 @@
     </camelContext>
     <!-- END SNIPPET: example -->
 
-    <jdbc:embedded-database id="dataSource" type="DERBY" />
+    <jdbc:embedded-database id="dataSource" type="H2"/>
 
     <!-- spring transaction manager -->
     <bean id="txManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">

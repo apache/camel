@@ -6,8 +6,6 @@
 :since: 1.1
 :supportlevel: Stable
 :tabs-sync-option:
-//Manually maintained attributes
-:camel-spring-boot-name: xpath
 
 *Since Camel {since}*
 
@@ -70,6 +68,9 @@ local part. Camel will try to resolve a variable in the following steps:
 
 ==== Example of using variables, header and body in XPath expression
 You can combine headers, properties, body and variables in an XPath expression as shown in the example below:
+
+._Java-only: uses Document.class type conversion in setVariable/setHeader_
+
 [source,java]
 ----
 from("timer:java?period=1000,repeatCount=1")
@@ -113,6 +114,21 @@ Here's an example showing some of these functions in use.
 If you prefer to configure your routes in your Spring
 XML file, then you can use XPath expressions as follows
 
+[tabs]
+====
+Java::
++
+[source,java]
+----
+Namespaces ns = new Namespaces("foo", "http://example.com/person");
+
+from("activemq:MyQueue")
+    .filter(xpath("/foo:person[@name='James']", ns))
+        .to("mqseries:SomeOtherQueue");
+----
+
+XML::
++
 [source,xml]
 ----
 <beans xmlns="http://www.springframework.org/schema/beans"
@@ -134,6 +150,24 @@ XML file, then you can use XPath expressions as follows
 </beans>
 ----
 
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: activemq:MyQueue
+      steps:
+        - filter:
+            expression:
+              xpath:
+                expression: "/foo:person[@name='James']"
+            steps:
+              - to:
+                  uri: mqseries:SomeOtherQueue
+----
+====
+
 Notice how we can reuse the namespace prefixes, *foo* in this case, in
 the XPath expression for easier namespace-based XPath expressions.
 
@@ -149,19 +183,99 @@ Content-Based Router.
 Then, you should use Stream Caching or convert the message body to
 a `String` prior, which is safe to be re-read multiple times.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
-from("queue:foo").
-  filter().xpath("//foo").
-  to("queue:bar")
+from("queue:foo")
+  .filter().xpath("//foo")
+  .to("queue:bar");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="queue:foo"/>
+  <filter>
+    <xpath>//foo</xpath>
+    <to uri="queue:bar"/>
+  </filter>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: queue:foo
+      steps:
+        - filter:
+            expression:
+              xpath:
+                expression: //foo
+            steps:
+              - to:
+                  uri: queue:bar
+----
+====
+
+[tabs]
+====
+Java::
++
 [source,java]
 ----
-from("queue:foo").
-  choice().xpath("//foo").to("queue:bar").
-  otherwise().to("queue:others");
+from("queue:foo")
+  .choice().when(xpath("//foo")).to("queue:bar")
+  .otherwise().to("queue:others");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="queue:foo"/>
+  <choice>
+    <when>
+      <xpath>//foo</xpath>
+      <to uri="queue:bar"/>
+    </when>
+    <otherwise>
+      <to uri="queue:others"/>
+    </otherwise>
+  </choice>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: queue:foo
+      steps:
+        - choice:
+            when:
+              - expression:
+                  xpath:
+                    expression: //foo
+                steps:
+                  - to:
+                      uri: queue:bar
+            otherwise:
+              steps:
+                - to:
+                    uri: queue:others
+----
+====
 
 == Setting a result type
 
@@ -171,6 +285,8 @@ want a result type to be a `String`. To do this, you have to instruct the
 XPath which result type to use.
 
 In Java DSL:
+
+._Java-only: XPath expression builder API_
 
 [source,java]
 ----
@@ -187,6 +303,8 @@ In XML DSL you use the *resultType* attribute to provide the fully qualified cla
 TIP: Classes from `java.lang` can omit the FQN name, so you can use `resultType="String"`
 
 Using `@XPath` annotation:
+
+._Java-only: Java bean integration annotation_
 
 [source,java]
 ----
@@ -209,6 +327,8 @@ header's value, you can do this by defining the 'headerName' attribute.
 
 And in Java DSL you specify the headerName as the second parameter as shown:
 
+._Java-only: XPath expression builder API_
+
 [source,java]
 ----
 xpath("/invoice/@orderType = 'premium'", "invoiceDetails")
@@ -220,6 +340,10 @@ xpath("/invoice/@orderType = 'premium'", "invoiceDetails")
 Here is a simple example using an XPath expression as a predicate in a
 xref:eips:filter-eip.adoc[Message Filter]:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:start")
@@ -227,8 +351,8 @@ from("direct:start")
         .to("mock:result");
 ----
 
-And in XML
-
+XML::
++
 [source,xml]
 ----
 <route>
@@ -240,11 +364,31 @@ And in XML
 </route>
 ----
 
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - filter:
+            expression:
+              xpath:
+                expression: "/person[@name='James']"
+            steps:
+              - to:
+                  uri: mock:result
+----
+====
+
 == Using namespaces
 
 If you have a standard set of namespaces you wish to work with and wish
 to share them across many XPath expressions, you can use the
 `org.apache.camel.support.builder.Namespaces` when using Java DSL as shown:
+
+._Java-only: Namespaces builder API_
 
 [source,java]
 ----
@@ -268,6 +412,8 @@ In the XPath expression then the namespace is used by its prefix, e.g.:
 
 The namespace builder supports adding multiple namespaces as shown:
 
+._Java-only: Namespaces builder API_
+
 [source,java]
 ----
 Namespaces ns = new Namespaces("c", "http://acme.com/cheese")
@@ -281,6 +427,7 @@ in the XML root tag (or one of the `camelContext`, `routes`, `route` tags).
 In the XML example below we use Spring XML where the namespace is declared in the root tag `beans`,
 in the line with `xmlns:foo="http://example.com/person"`:
 
+._XML-only:_
 [source,xml]
 ----
 <beans xmlns="http://www.springframework.org/schema/beans"
@@ -314,10 +461,12 @@ value from the message and bind it to a method parameter.
 
 NOTE: The default `@XPath` annotation has SOAP and XML namespaces available.
 
+._Java-only: Java bean integration annotation_
+
 [source,java]
 ----
 public class Foo {
-    
+
     @Consume(uri = "activemq:my.queue")
     public void doSomething(@XPath("/person/@name") String name, String xml) {
         // process the inbound message here
@@ -338,6 +487,8 @@ and hence why `CamelContext` is needed.
 
 For example, you can do something like this:
 
+._Java-only: XPathBuilder API_
+
 [source,java]
 ----
 boolean matches = XPathBuilder.xpath("/foo/bar/@xyz").matches(context, "<foo><bar xyz='cheese'/></foo>"));
@@ -347,6 +498,8 @@ This will match the given predicate.
 
 You can also evaluate as shown in the following three examples:
 
+._Java-only: XPathBuilder API_
+
 [source,java]
 ----
 String name = XPathBuilder.xpath("foo/bar").evaluate(context, "<foo><bar>cheese</bar></foo>", String.class);
@@ -355,6 +508,8 @@ Boolean bool = XPathBuilder.xpath("foo/bar").evaluate(context, "<foo><bar>true</
 ----
 
 Evaluating with a `String` result is a common requirement and make this simpler:
+
+._Java-only: XPathBuilder API_
 
 [source,java]
 ----
@@ -498,6 +653,8 @@ You can enable this option in Java DSL and XML DSL:
 
 Java DSL:
 
+._Java-only: XPathBuilder API_
+
 [source,java]
 ----
 XPathBuilder.xpath("/foo:person/@id", String.class).logNamespaces()
@@ -527,6 +684,8 @@ You can externalize the script and have Apache Camel load it from a resource
 such as `"classpath:"`, `"file:"`, or `"http:"`.
 This is done using the following syntax: `"resource:scheme:location"`,
 e.g., to refer to a file on the classpath you can do:
+
+._Java-only: Java DSL expression syntax_
 
 [source,java]
 ----
@@ -566,6 +725,10 @@ Which you want to transform to a smaller structure:
 
 Then you can use simple as template and XPath to grab the content from the message payload, as shown in the route snippet below:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:start")
@@ -578,17 +741,86 @@ from("direct:start")
         .to("mock:result");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <transform>
+    <simple><![CDATA[<user>
+  <rool>${xpath(/order/@id)}</rool>
+  <country>${xpath(/order/address/co/text())}</country>
+  <fullname>${xpath(/order/first/text())}</fullname>
+</user>]]></simple>
+  </transform>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - transform:
+            simple: |
+              <user>
+                <rool>${xpath(/order/@id)}</rool>
+                <country>${xpath(/order/address/co/text())}</country>
+                <fullname>${xpath(/order/first/text())}</fullname>
+              </user>
+        - to:
+            uri: mock:result
+----
+====
+
 Notice how we use `${xpath(exp}` syntax in the simple template to use xpath that will be evaluated on the message body,
 to extract the content to be used in the output (see previous for output).
 
 Since the simple language can output anything, you can also use this to output in plain text or JSON, etc.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:start")
         .transform().simple("The order ${xpath(/order/@id)} is being shipped to ${xpath(/order/address/co/text())}")
         .to("mock:result");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <transform>
+    <simple>The order ${xpath(/order/@id)} is being shipped to ${xpath(/order/address/co/text())}</simple>
+  </transform>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - transform:
+            simple: "The order ${xpath(/order/@id)} is being shipped to ${xpath(/order/address/co/text())}"
+        - to:
+            uri: mock:result
+----
+====
 
 == Dependencies
 
@@ -599,13 +831,10 @@ If you use Maven, you could add the following to your `pom.xml`,
 substituting the version number for the latest & greatest release.
 
 [source,xml]
---------------------------------------
+----
 <dependency>
   <groupId>org.apache.camel</groupId>
   <artifactId>camel-xpath</artifactId>
   <version>x.x.x</version>
 </dependency>
---------------------------------------
-
-
-include::spring-boot:partial$starter.adoc[]
+----

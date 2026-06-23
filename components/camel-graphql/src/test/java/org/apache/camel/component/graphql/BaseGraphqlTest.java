@@ -38,7 +38,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class BaseGraphqlTest extends BaseHttpTest {
+public abstract class BaseGraphqlTest extends BaseHttpTest {
 
     protected void assertUnauthorizedResponse(Exchange exchange) {
         assertNotNull(exchange);

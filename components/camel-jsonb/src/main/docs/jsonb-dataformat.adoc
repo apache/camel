@@ -6,22 +6,50 @@
 :since: 3.7
 :supportlevel: Stable
 :tabs-sync-option:
-//Manually maintained attributes
-:camel-spring-boot-name: jsonb
 
 *Since Camel {since}*
 
 JSON-B is a Data Format that uses the standard (javax) JSON-B library.
 
+[tabs]
+====
+Java::
++
 [source,java]
--------------------------------
-from("activemq:My.Queue").
-  marshal().json(JsonLibrary.Jsonb).
-  to("mqseries:Another.Queue");
--------------------------------
+----
+from("activemq:My.Queue")
+    .marshal().json(JsonLibrary.Jsonb)
+    .to("mqseries:Another.Queue");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="activemq:My.Queue"/>
+  <marshal><json library="Jsonb"/></marshal>
+  <to uri="mqseries:Another.Queue"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: activemq:My.Queue
+      steps:
+        - marshal:
+            json:
+              library: Jsonb
+        - to:
+            uri: mqseries:Another.Queue
+----
+====
 
 == JSON-B Options
-
 
 
 // dataformat options: START
@@ -59,6 +87,3 @@ If you want to add the Johnzon implementation, and you are using maven, add foll
   <version>x.x.x</version>  
 </dependency>
 ----------------------------------------------------------
-
-
-include::spring-boot:partial$starter.adoc[]

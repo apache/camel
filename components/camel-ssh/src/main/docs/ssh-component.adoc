@@ -7,8 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
-//Manually maintained attributes
-:camel-spring-boot-name: ssh
 
 *Since Camel {since}*
 
@@ -37,7 +35,6 @@ ssh:[username[:password]@]host[:port][?options]
 -----------------------------------------------
 
 
-
 // component options: START
 include::partial$component-configure-options.adoc[]
 include::partial$component-endpoint-options.adoc[]
@@ -53,11 +50,25 @@ When the SSH Component is used as a Producer (`.to("ssh://...")`), it
 will send the message body as the command to execute on the remote SSH
 server.
 
-Here is an example of this within the XML DSL. Note that the command has
-an XML encoded newline (`+&#10;+`).
+Here is an example of this. Note that the command has
+a newline (`+&#10;+`).
 
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:exampleSshProducer")
+    .setBody(constant("features:list\n"))
+    .to("ssh://user:pass@localhost:8101")
+    .log("${body}");
+----
+
+XML::
++
 [source,xml]
-----------------------------------------------
+----
 <route id="camel-example-ssh-producer">
   <from uri="direct:exampleSshProducer"/>
   <setBody>
@@ -66,7 +77,27 @@ an XML encoded newline (`+&#10;+`).
   <to uri="ssh://user:pass@localhost:8101"/>
   <log message="${body}"/>
 </route>
-----------------------------------------------
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    id: camel-example-ssh-producer
+    from:
+      uri: direct:exampleSshProducer
+      steps:
+        - setBody:
+            expression:
+              constant:
+                expression: "features:list\n"
+        - to:
+            uri: ssh://user:pass@localhost:8101
+        - log:
+            message: "${body}"
+----
+====
 
 === Authentication
 
@@ -84,30 +115,50 @@ certificate-based authentication.
 3.  If neither `certResource` nor `keyPairProvider` are set, it will use
 the `username` and `password` options for authentication. Even though the `username` 
 and `password` are provided in the endpoint configuration and headers set with 
-`SshConstants.USERNAME_HEADER` (`CamelSshUsername`) and 
-`SshConstants.PASSWORD_HEADER` (`CamelSshPassword`), the endpoint 
+`CamelSshUsername` and
+`CamelSshPassword`, the endpoint 
 configuration is surpassed and credentials set in the headers are used.
 
 The following route fragment shows an SSH polling consumer using a
 certificate from the classpath.
 
-In the XML DSL,
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("ssh://scott@localhost:8101?certResource=classpath:test_rsa&useFixedDelay=true&delay=5000&pollCommand=features:list%0A")
+    .log("${body}");
+----
 
+XML::
++
 [source,xml]
--------------------------------------------------------------------------------------------------------------------------------------------------
+----
 <route>
   <from uri="ssh://scott@localhost:8101?certResource=classpath:test_rsa&amp;useFixedDelay=true&amp;delay=5000&amp;pollCommand=features:list%0A"/>
   <log message="${body}"/>
 </route>
--------------------------------------------------------------------------------------------------------------------------------------------------
+----
 
-In the Java DSL,
-
-[source,java]
------------------------------------------------------------------------------------------------------------------------------
-from("ssh://scott@localhost:8101?certResource=classpath:test_rsa&useFixedDelay=true&delay=5000&pollCommand=features:list%0A")
-    .log("${body}");
------------------------------------------------------------------------------------------------------------------------------
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: ssh://scott@localhost:8101
+      parameters:
+        certResource: "classpath:test_rsa"
+        useFixedDelay: true
+        delay: 5000
+        pollCommand: "features:list%0A"
+      steps:
+        - log:
+            message: "${body}"
+----
+====
 
 An example of using Public Key authentication is provided in
 `examples/camel-example-ssh-security`.
@@ -140,7 +191,3 @@ The component uses `sshd-core` library which is based on either `bouncycastle` o
   <version>1.71</version>
 </dependency>
 -----------------------------------------
-
-
-
-include::spring-boot:partial$starter.adoc[]

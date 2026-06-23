@@ -50,6 +50,7 @@ public class AsyncCXFTest extends OpenTelemetryTracerTestSupport {
         OpenTelemetryTracer tst = new OpenTelemetryTracer();
         tst.setTracer(otelExtension.getOpenTelemetry().getTracer("traceTest"));
         tst.setContextPropagators(otelExtension.getOpenTelemetry().getPropagators());
+        tst.setDisableCoreProcessors(true);
         CamelContext context = super.createCamelContext();
         CamelContextAware.trySetCamelContext(tst, context);
         tst.init(context);

@@ -57,6 +57,7 @@ public class AS2ConfigurationConfigurer extends org.apache.camel.support.compone
         map.put("Server", java.lang.String.class);
         map.put("ServerFqdn", java.lang.String.class);
         map.put("ServerPortNumber", java.lang.Integer.class);
+        map.put("SignatureVerificationRequired", boolean.class);
         map.put("SignedReceiptMicAlgorithms", java.lang.String.class);
         map.put("SigningAlgorithm", org.apache.camel.component.as2.api.AS2SignatureAlgorithm.class);
         map.put("SigningCertificateChain", java.security.cert.Certificate[].class);
@@ -142,6 +143,8 @@ public class AS2ConfigurationConfigurer extends org.apache.camel.support.compone
         case "serverFqdn": target.setServerFqdn(property(camelContext, java.lang.String.class, value)); return true;
         case "serverportnumber":
         case "serverPortNumber": target.setServerPortNumber(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "signatureverificationrequired":
+        case "signatureVerificationRequired": target.setSignatureVerificationRequired(property(camelContext, boolean.class, value)); return true;
         case "signedreceiptmicalgorithms":
         case "signedReceiptMicAlgorithms": target.setSignedReceiptMicAlgorithms(property(camelContext, java.lang.String.class, value)); return true;
         case "signingalgorithm":
@@ -242,6 +245,8 @@ public class AS2ConfigurationConfigurer extends org.apache.camel.support.compone
         case "serverFqdn": return java.lang.String.class;
         case "serverportnumber":
         case "serverPortNumber": return java.lang.Integer.class;
+        case "signatureverificationrequired":
+        case "signatureVerificationRequired": return boolean.class;
         case "signedreceiptmicalgorithms":
         case "signedReceiptMicAlgorithms": return java.lang.String.class;
         case "signingalgorithm":
@@ -338,6 +343,8 @@ public class AS2ConfigurationConfigurer extends org.apache.camel.support.compone
         case "serverFqdn": return target.getServerFqdn();
         case "serverportnumber":
         case "serverPortNumber": return target.getServerPortNumber();
+        case "signatureverificationrequired":
+        case "signatureVerificationRequired": return target.isSignatureVerificationRequired();
         case "signedreceiptmicalgorithms":
         case "signedReceiptMicAlgorithms": return target.getSignedReceiptMicAlgorithms();
         case "signingalgorithm":

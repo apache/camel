@@ -20,6 +20,8 @@
 package org.apache.camel.component.salesforce.dto.generated;
 
 import java.io.InputStream;
+import java.time.LocalDate;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -165,27 +167,27 @@ public class ContentVersion extends AbstractDescribedSObjectBase {
         this.ReasonForChange = ReasonForChange;
     }
 
-    private java.lang.String SharingOption;
+    private String SharingOption;
 
     @JsonProperty("SharingOption")
-    public java.lang.String getSharingOption() {
+    public String getSharingOption() {
         return this.SharingOption;
     }
 
     @JsonProperty("SharingOption")
-    public void setSharingOption(java.lang.String SharingOption) {
+    public void setSharingOption(String SharingOption) {
         this.SharingOption = SharingOption;
     }
 
-    private java.lang.String SharingPrivacy;
+    private String SharingPrivacy;
 
     @JsonProperty("SharingPrivacy")
-    public java.lang.String getSharingPrivacy() {
+    public String getSharingPrivacy() {
         return this.SharingPrivacy;
     }
 
     @JsonProperty("SharingPrivacy")
-    public void setSharingPrivacy(java.lang.String SharingPrivacy) {
+    public void setSharingPrivacy(String SharingPrivacy) {
         this.SharingPrivacy = SharingPrivacy;
     }
 
@@ -213,15 +215,15 @@ public class ContentVersion extends AbstractDescribedSObjectBase {
         this.RatingCount = RatingCount;
     }
 
-    private java.time.ZonedDateTime ContentModifiedDate;
+    private ZonedDateTime ContentModifiedDate;
 
     @JsonProperty("ContentModifiedDate")
-    public java.time.ZonedDateTime getContentModifiedDate() {
+    public ZonedDateTime getContentModifiedDate() {
         return this.ContentModifiedDate;
     }
 
     @JsonProperty("ContentModifiedDate")
-    public void setContentModifiedDate(java.time.ZonedDateTime ContentModifiedDate) {
+    public void setContentModifiedDate(ZonedDateTime ContentModifiedDate) {
         this.ContentModifiedDate = ContentModifiedDate;
     }
 
@@ -284,15 +286,15 @@ public class ContentVersion extends AbstractDescribedSObjectBase {
         this.FeaturedContentBoost = FeaturedContentBoost;
     }
 
-    private java.time.LocalDate FeaturedContentDate;
+    private LocalDate FeaturedContentDate;
 
     @JsonProperty("FeaturedContentDate")
-    public java.time.LocalDate getFeaturedContentDate() {
+    public LocalDate getFeaturedContentDate() {
         return this.FeaturedContentDate;
     }
 
     @JsonProperty("FeaturedContentDate")
-    public void setFeaturedContentDate(java.time.LocalDate FeaturedContentDate) {
+    public void setFeaturedContentDate(LocalDate FeaturedContentDate) {
         this.FeaturedContentDate = FeaturedContentDate;
     }
 
@@ -353,15 +355,15 @@ public class ContentVersion extends AbstractDescribedSObjectBase {
         this.FileType = FileType;
     }
 
-    private java.lang.String PublishStatus;
+    private String PublishStatus;
 
     @JsonProperty("PublishStatus")
-    public java.lang.String getPublishStatus() {
+    public String getPublishStatus() {
         return this.PublishStatus;
     }
 
     @JsonProperty("PublishStatus")
-    public void setPublishStatus(java.lang.String PublishStatus) {
+    public void setPublishStatus(String PublishStatus) {
         this.PublishStatus = PublishStatus;
     }
 
@@ -458,27 +460,27 @@ public class ContentVersion extends AbstractDescribedSObjectBase {
     public void setFirstPublishLocation(AbstractDescribedSObjectBase FirstPublishLocation) {
         this.FirstPublishLocation = FirstPublishLocation;
     }
-    private java.lang.String Origin;
+    private String Origin;
 
     @JsonProperty("Origin")
-    public java.lang.String getOrigin() {
+    public String getOrigin() {
         return this.Origin;
     }
 
     @JsonProperty("Origin")
-    public void setOrigin(java.lang.String Origin) {
+    public void setOrigin(String Origin) {
         this.Origin = Origin;
     }
 
-    private java.lang.String ContentLocation;
+    private String ContentLocation;
 
     @JsonProperty("ContentLocation")
-    public java.lang.String getContentLocation() {
+    public String getContentLocation() {
         return this.ContentLocation;
     }
 
     @JsonProperty("ContentLocation")
-    public void setContentLocation(java.lang.String ContentLocation) {
+    public void setContentLocation(String ContentLocation) {
         this.ContentLocation = ContentLocation;
     }
 

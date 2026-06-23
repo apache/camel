@@ -18,6 +18,7 @@ package org.apache.camel.oaipmh.component;
 
 import java.net.URI;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 
 import org.apache.camel.Exchange;
@@ -50,6 +51,9 @@ public class OAIPMHProducer extends DefaultProducer {
                 endpoint.getFrom(),
                 endpoint.getSet(),
                 endpoint.getIdentifier());
+        if (endpoint.getHttpHeaders() != null && !endpoint.getHttpHeaders().isEmpty()) {
+            harvester.getHttpClient().setHttpHeaders(endpoint.getHttpHeaders());
+        }
         overrideHarvesterConfigs(exchange.getIn(), harvester);
         if (endpoint.isIgnoreSSLWarnings()) {
             harvester.getHttpClient().setIgnoreSSLWarnings(true);
@@ -75,6 +79,11 @@ public class OAIPMHProducer extends DefaultProducer {
         checkAndSetConfigs(msg, OAIPMHConstants.RESUMPTION_TOKEN, harvester::setResumptionToken, String.class);
         checkAndSetConfigs(msg, OAIPMHConstants.ONLY_FIRST, endpoint::setOnlyFirst, Boolean.class);
         checkAndSetConfigs(msg, OAIPMHConstants.IGNORE_SSL_WARNINGS, endpoint::setIgnoreSSLWarnings, Boolean.class);
+        @SuppressWarnings("unchecked")
+        Map<String, String> httpHeadersOverride = msg.getHeader(OAIPMHConstants.HTTP_HEADERS, Map.class);
+        if (httpHeadersOverride != null && !httpHeadersOverride.isEmpty()) {
+            harvester.getHttpClient().setHttpHeaders(httpHeadersOverride);
+        }
     }
 
     private <T> void checkAndSetConfigs(final Message message, final String key, final Consumer<T> fn, final Class<T> type) {

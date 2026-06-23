@@ -9,7 +9,6 @@
 :component-header: Only producer is supported
 //Manually maintained attributes
 :group: AWS
-:camel-spring-boot-name: aws2-cw
 
 *Since Camel {since}*
 
@@ -28,9 +27,9 @@ https://aws.amazon.com/cloudwatch/[Amazon CloudWatch].
 
 == URI Format
 
-----------------------------
+----
 aws2-cw://namespace[?options]
-----------------------------
+----
 
 The metrics will be created if they don't already exist.
 
@@ -76,11 +75,40 @@ If you need more control over the `CloudWatchClient` instance
 configuration you can create your own instance and refer to it from the
 URI:
 
+[tabs]
+====
+Java::
++
 [source,java]
--------------------------------------------------
+----
 from("direct:start")
-.to("aws2-cw://namespace?amazonCwClient=#client");
--------------------------------------------------
+    .to("aws2-cw://namespace?amazonCwClient=#client");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <to uri="aws2-cw://namespace?amazonCwClient=#client"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: aws2-cw://namespace
+            parameters:
+              amazonCwClient: "#client"
+----
+====
 
 The `#client` refers to a `CloudWatchClient` in the
 Registry.
@@ -92,13 +120,13 @@ Maven users will need to add the following dependency to their pom.xml.
 *pom.xml*
 
 [source,xml]
----------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-aws2-cw</artifactId>
     <version>${camel-version}</version>
 </dependency>
----------------------------------------
+----
 
 where `${camel-version`} must be replaced by the actual version of Camel.
 
@@ -106,20 +134,47 @@ where `${camel-version`} must be replaced by the actual version of Camel.
 
 === Producer Example
 
+[tabs]
+====
+Java::
++
 [source,java]
--------------------------------
+----
 from("direct:start")
   .to("aws2-cw://http://camel.apache.org/aws-cw");
--------------------------------
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <to uri="aws2-cw://http://camel.apache.org/aws-cw"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: aws2-cw://http://camel.apache.org/aws-cw
+----
+====
 
 and sends something like
 
+._Java-only: setting CloudWatch metric headers programmatically_
 [source,java]
--------------------------------
+----
 exchange.getIn().setHeader(Cw2Constants.METRIC_NAME, "ExchangesCompleted");
 exchange.getIn().setHeader(Cw2Constants.METRIC_VALUE, "2.0");
 exchange.getIn().setHeader(Cw2Constants.METRIC_UNIT, "Count");
--------------------------------
+----
 
 
-include::spring-boot:partial$starter.adoc[]

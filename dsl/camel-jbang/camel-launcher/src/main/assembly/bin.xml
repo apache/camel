@@ -25,6 +25,15 @@
         <format>zip</format>
         <format>tar.gz</format>
     </formats>
+    <dependencySets>
+        <dependencySet>
+            <outputDirectory>bin</outputDirectory>
+            <includes>
+                <include>org.jolokia:jolokia-agent-jvm:jar:javaagent</include>
+            </includes>
+            <useProjectArtifact>false</useProjectArtifact>
+        </dependencySet>
+    </dependencySets>
     <fileSets>
         <fileSet>
             <directory>${project.basedir}</directory>

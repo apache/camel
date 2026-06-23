@@ -64,8 +64,8 @@
     </bean>
 
     <!-- XA datasource used to create the database tables -->
-    <bean id="myXADataSource" class="org.apache.derby.jdbc.EmbeddedXADataSource">
-        <property name="databaseName" value="target/testdb;create=true"/>
+    <bean id="myXADataSource" class="org.h2.jdbcx.JdbcDataSource">
+        <property name="url" value="jdbc:h2:file:./target/testdb"/>
         <property name="user" value="sa"/>
         <property name="password" value=""/>
     </bean>

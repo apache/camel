@@ -23,6 +23,8 @@ import org.apache.camel.Exchange;
  * exchange matches.
  * <p/>
  * This is used by the mock endpoint, for example.
+ *
+ * @since 3.0
  */
 public interface NotifyBuilderMatcher {
 

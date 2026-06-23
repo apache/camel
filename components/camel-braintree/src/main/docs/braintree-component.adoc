@@ -7,8 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Only producer is supported
-//Manually maintained attributes
-:camel-spring-boot-name: braintree
 
 *Since Camel {since}*
 
@@ -41,19 +39,51 @@ include::partial$component-endpoint-options.adoc[]
 include::partial$component-endpoint-headers.adoc[]
 // component options: END
 
+[NOTE]
+====
+This is an API-based component, so per-call parameters can be supplied through `Camel`-prefixed
+exchange headers in addition to the endpoint options. If the route consumes messages from untrusted
+producers, strip these internal headers at the trust boundary -- for example with
+`removeHeaders("Camel*")` -- before the message reaches this component, so that a sender cannot
+override the API call. See xref:manual::security-model.adoc[the Camel security model] for details.
+====
+
 == Examples
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct://GENERATE")
-    .to("braintree://sclientToken/generate");
+    .to("braintree://clientToken/generate");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct://GENERATE"/>
+  <to uri="braintree://clientToken/generate"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:GENERATE
+      steps:
+        - to:
+            uri: braintree:clientToken/generate
+----
+====
 
 == More Information
 
 For more information on the endpoints and options see Braintree
 references at https://developers.braintreepayments.com/reference/overview[https://developers.braintreepayments.com/reference/overview]
-
-
-
-include::spring-boot:partial$starter.adoc[]

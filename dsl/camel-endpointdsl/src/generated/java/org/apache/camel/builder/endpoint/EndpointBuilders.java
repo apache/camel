@@ -25,6 +25,7 @@ import javax.annotation.processing.Generated;
 @Generated("org.apache.camel.maven.packaging.EndpointDslMojo")
 public interface EndpointBuilders
         extends
+            org.apache.camel.builder.endpoint.dsl.A2AEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.AMQPEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.AS2EndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.AWS2EC2EndpointBuilderFactory,
@@ -130,7 +131,6 @@ public interface EndpointBuilders
             org.apache.camel.builder.endpoint.dsl.GeoCoderEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.GitEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.GitHub2EndpointBuilderFactory,
-            org.apache.camel.builder.endpoint.dsl.GitHubEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.GlanceEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.GoogleBigQueryEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.GoogleBigQuerySQLEndpointBuilderFactory,
@@ -150,11 +150,9 @@ public interface EndpointBuilders
             org.apache.camel.builder.endpoint.dsl.GoogleSheetsEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.GoogleSheetsStreamEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.GoogleVertexAIEndpointBuilderFactory,
-            org.apache.camel.builder.endpoint.dsl.GrapeEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.GraphqlEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.GridFsEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.GrpcEndpointBuilderFactory,
-            org.apache.camel.builder.endpoint.dsl.GuavaEventBusEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.HashicorpVaultEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.HazelcastAtomicnumberEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.HazelcastInstanceEndpointBuilderFactory,
@@ -332,6 +330,7 @@ public interface EndpointBuilders
             org.apache.camel.builder.endpoint.dsl.ServletEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.Ses2EndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.SftpEndpointBuilderFactory,
+            org.apache.camel.builder.endpoint.dsl.ShellEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.SimpleNotificationEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.Sjms2EndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.SjmsEndpointBuilderFactory,
@@ -361,7 +360,6 @@ public interface EndpointBuilders
             org.apache.camel.builder.endpoint.dsl.StAXEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.StepFunctions2EndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.StitchEndpointBuilderFactory,
-            org.apache.camel.builder.endpoint.dsl.StompEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.StreamEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.StringTemplateEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.StripeEndpointBuilderFactory,

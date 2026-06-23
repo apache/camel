@@ -7,8 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
-//Manually maintained attributes
-:camel-spring-boot-name: box
 
 *Since Camel {since}*
 
@@ -46,6 +44,15 @@ include::partial$component-endpoint-options.adoc[]
 include::partial$component-endpoint-headers.adoc[]
 // component options: END
 
+[NOTE]
+====
+This is an API-based component, so per-call parameters can be supplied through `Camel`-prefixed
+exchange headers in addition to the endpoint options. If the route consumes messages from untrusted
+producers, strip these internal headers at the trust boundary -- for example with
+`removeHeaders("Camel*")` -- before the message reaches this component, so that a sender cannot
+override the API call. See xref:manual::security-model.adoc[the Camel security model] for details.
+====
+
 == Usage
 
 === Connection Authentication Types
@@ -68,19 +75,75 @@ The Box component supports three different types of authenticated connections.
 
 The following route uploads new files to the user's root folder:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("file:...")
     .to("box://files/upload/inBody=fileUploadRequest");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="file:..."/>
+    <to uri="box://files/upload/inBody=fileUploadRequest"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: file:...
+    steps:
+      - to:
+          uri: box://files/upload/inBody=fileUploadRequest
+----
+====
+
 The following route polls user's account for updates:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("box://events/listen?startingPosition=-1")
     .to("bean:blah");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="box://events/listen?startingPosition=-1"/>
+    <to uri="bean:blah"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: box://events/listen
+      parameters:
+        startingPosition: -1
+    steps:
+      - to:
+          uri: bean:blah
+----
+====
 
 The following route uses a producer with dynamic header options. The
 *fileId* property has the Box file id and the *output* property has 
@@ -88,6 +151,7 @@ the output stream of the file contents, so they are assigned to the
 *CamelBox.fileId* header and *CamelBox.output* header respectively
 as follows:
 
+._Java-only: uses header() expression to set dynamic headers_
 [source,java]
 ----
 from("direct:foo")
@@ -100,6 +164,3 @@ from("direct:foo")
 === More information
 
 See more details at the Box API reference: https://developer.box.com/reference
-
-
-include::spring-boot:partial$starter.adoc[]

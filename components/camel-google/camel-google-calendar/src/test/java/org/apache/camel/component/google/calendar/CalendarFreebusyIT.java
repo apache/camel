@@ -22,6 +22,7 @@ import java.util.List;
 import com.google.api.client.util.DateTime;
 import com.google.api.services.calendar.model.FreeBusyRequest;
 import com.google.api.services.calendar.model.FreeBusyRequestItem;
+import com.google.api.services.calendar.model.FreeBusyResponse;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.google.calendar.internal.CalendarFreebusyApiMethod;
 import org.apache.camel.component.google.calendar.internal.GoogleCalendarApiCollection;
@@ -47,7 +48,7 @@ public class CalendarFreebusyIT extends AbstractGoogleCalendarTestSupport {
     public void testQuery() {
         // using com.google.api.services.calendar.model.FreeBusyRequest message
         // body for single parameter "content"
-        com.google.api.services.calendar.model.FreeBusyRequest request = new FreeBusyRequest();
+        FreeBusyRequest request = new FreeBusyRequest();
         List<FreeBusyRequestItem> items = new ArrayList<>();
         items.add(new FreeBusyRequestItem().setId(getCalendar().getId()));
         request.setItems(items);
@@ -55,7 +56,7 @@ public class CalendarFreebusyIT extends AbstractGoogleCalendarTestSupport {
         request.setTimeMin(DateTime.parseRfc3339("2014-11-10T20:45:30-00:00"));
         request.setTimeMax(DateTime.parseRfc3339("2014-11-10T21:45:30-00:00"));
 
-        final com.google.api.services.calendar.model.FreeBusyResponse result = requestBody("direct://QUERY", request);
+        final FreeBusyResponse result = requestBody("direct://QUERY", request);
 
         assertNotNull(result, "query result");
         LOG.debug("query: {}", result);

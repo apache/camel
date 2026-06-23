@@ -8,7 +8,7 @@
     "javaType": "org.apache.camel.component.azure.eventhubs.transform.EventHubsCloudEventDataTypeTransformer",
     "groupId": "org.apache.camel",
     "artifactId": "camel-azure-eventhubs",
-    "version": "4.20.0-SNAPSHOT"
+    "version": "4.21.0-SNAPSHOT"
   }
 }
 

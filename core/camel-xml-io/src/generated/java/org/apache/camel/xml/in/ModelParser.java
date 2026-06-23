@@ -70,59 +70,14 @@ public class ModelParser extends BaseParser {
         super(reader, namespace);
     }
 
-    protected AggregateDefinition doParseAggregateDefinition() throws IOException, XmlPullParserException {
-        return doParse(new AggregateDefinition(), (def, key, val) -> switch (key) {
-                case "aggregateController": def.setAggregateController(val); yield true;
-                case "aggregationRepository": def.setAggregationRepository(val); yield true;
-                case "aggregationStrategy": def.setAggregationStrategy(val); yield true;
-                case "aggregationStrategyMethodAllowNull": def.setAggregationStrategyMethodAllowNull(val); yield true;
-                case "aggregationStrategyMethodName": def.setAggregationStrategyMethodName(val); yield true;
-                case "closeCorrelationKeyOnCompletion": def.setCloseCorrelationKeyOnCompletion(val); yield true;
-                case "completeAllOnStop": def.setCompleteAllOnStop(val); yield true;
-                case "completionFromBatchConsumer": def.setCompletionFromBatchConsumer(val); yield true;
-                case "completionInterval": def.setCompletionInterval(val); yield true;
-                case "completionOnNewCorrelationGroup": def.setCompletionOnNewCorrelationGroup(val); yield true;
-                case "completionSize": def.setCompletionSize(val); yield true;
-                case "completionTimeout": def.setCompletionTimeout(val); yield true;
-                case "completionTimeoutCheckerInterval": def.setCompletionTimeoutCheckerInterval(val); yield true;
-                case "discardOnAggregationFailure": def.setDiscardOnAggregationFailure(val); yield true;
-                case "discardOnCompletionTimeout": def.setDiscardOnCompletionTimeout(val); yield true;
-                case "eagerCheckCompletion": def.setEagerCheckCompletion(val); yield true;
-                case "executorService": def.setExecutorService(val); yield true;
-                case "forceCompletionOnStop": def.setForceCompletionOnStop(val); yield true;
-                case "ignoreInvalidCorrelationKeys": def.setIgnoreInvalidCorrelationKeys(val); yield true;
-                case "optimisticLocking": def.setOptimisticLocking(val); yield true;
-                case "parallelProcessing": def.setParallelProcessing(val); yield true;
-                case "timeoutCheckerExecutorService": def.setTimeoutCheckerExecutorService(val); yield true;
+    protected A2ASubTaskDefinition doParseA2ASubTaskDefinition() throws IOException, XmlPullParserException {
+        return doParse(new A2ASubTaskDefinition(), (def, key, val) -> switch (key) {
+                case "emitAfter": def.setEmitAfter(val); yield true;
+                case "emitBefore": def.setEmitBefore(val); yield true;
+                case "emitOnError": def.setEmitOnError(val); yield true;
+                case "failIfNoTaskContext": def.setFailIfNoTaskContext(val); yield true;
                 default: yield processorDefinitionAttributeHandler().accept(def, key, val);
-            }, (def, key) -> switch (key) {
-                case "completionPredicate": def.setCompletionPredicate(doParseExpressionSubElementDefinition()); yield true;
-                case "completionSizeExpression": def.setCompletionSizeExpression(doParseExpressionSubElementDefinition()); yield true;
-                case "completionTimeoutExpression": def.setCompletionTimeoutExpression(doParseExpressionSubElementDefinition()); yield true;
-                case "correlationExpression": def.setCorrelationExpression(doParseExpressionSubElementDefinition()); yield true;
-                case "optimisticLockRetryPolicy": def.setOptimisticLockRetryPolicyDefinition(doParseOptimisticLockRetryPolicyDefinition()); yield true;
-                default: yield outputDefinitionElementHandler().accept(def, key);
-            }, noValueHandler());
-    }
-    protected ExpressionSubElementDefinition doParseExpressionSubElementDefinition() throws IOException, XmlPullParserException {
-        return doParse(new ExpressionSubElementDefinition(), noAttributeHandler(), (def, key) -> {
-                ExpressionDefinition v = doParseExpressionDefinitionRef(key);
-                if (v != null) {
-                    def.setExpressionType(v);
-                    return true;
-                }
-                return false;
-            }, noValueHandler());
-    }
-    protected OptimisticLockRetryPolicyDefinition doParseOptimisticLockRetryPolicyDefinition() throws IOException, XmlPullParserException {
-        return doParse(new OptimisticLockRetryPolicyDefinition(), (def, key, val) -> switch (key) {
-                case "exponentialBackOff": def.setExponentialBackOff(val); yield true;
-                case "maximumRetries": def.setMaximumRetries(val); yield true;
-                case "maximumRetryDelay": def.setMaximumRetryDelay(val); yield true;
-                case "randomBackOff": def.setRandomBackOff(val); yield true;
-                case "retryDelay": def.setRetryDelay(val); yield true;
-                default: yield false;
-            }, noElementHandler(), noValueHandler());
+            }, outputDefinitionElementHandler(), noValueHandler());
     }
     protected <T extends OutputDefinition> ElementHandler<T> outputDefinitionElementHandler() {
         return (def, key) -> {
@@ -157,6 +112,61 @@ public class ModelParser extends BaseParser {
             case "generatedId": def.setGeneratedId(doParseText()); yield true;
             default: yield false;
         };
+    }
+    protected AggregateDefinition doParseAggregateDefinition() throws IOException, XmlPullParserException {
+        return doParse(new AggregateDefinition(), (def, key, val) -> switch (key) {
+                case "aggregateController": def.setAggregateController(val); yield true;
+                case "aggregationRepository": def.setAggregationRepository(val); yield true;
+                case "aggregationStrategy": def.setAggregationStrategy(val); yield true;
+                case "aggregationStrategyMethodAllowNull": def.setAggregationStrategyMethodAllowNull(val); yield true;
+                case "aggregationStrategyMethodName": def.setAggregationStrategyMethodName(val); yield true;
+                case "closeCorrelationKeyOnCompletion": def.setCloseCorrelationKeyOnCompletion(val); yield true;
+                case "completeAllOnStop": def.setCompleteAllOnStop(val); yield true;
+                case "completionFromBatchConsumer": def.setCompletionFromBatchConsumer(val); yield true;
+                case "completionInterval": def.setCompletionInterval(val); yield true;
+                case "completionOnNewCorrelationGroup": def.setCompletionOnNewCorrelationGroup(val); yield true;
+                case "completionSize": def.setCompletionSize(val); yield true;
+                case "completionTimeout": def.setCompletionTimeout(val); yield true;
+                case "completionTimeoutCheckerInterval": def.setCompletionTimeoutCheckerInterval(val); yield true;
+                case "discardOnAggregationFailure": def.setDiscardOnAggregationFailure(val); yield true;
+                case "discardOnCompletionTimeout": def.setDiscardOnCompletionTimeout(val); yield true;
+                case "eagerCheckCompletion": def.setEagerCheckCompletion(val); yield true;
+                case "executorService": def.setExecutorService(val); yield true;
+                case "forceCompletionOnStop": def.setForceCompletionOnStop(val); yield true;
+                case "ignoreInvalidCorrelationKeys": def.setIgnoreInvalidCorrelationKeys(val); yield true;
+                case "optimisticLocking": def.setOptimisticLocking(val); yield true;
+                case "optimisticLockingSyncRetry": def.setOptimisticLockingSyncRetry(val); yield true;
+                case "parallelProcessing": def.setParallelProcessing(val); yield true;
+                case "timeoutCheckerExecutorService": def.setTimeoutCheckerExecutorService(val); yield true;
+                default: yield processorDefinitionAttributeHandler().accept(def, key, val);
+            }, (def, key) -> switch (key) {
+                case "completionPredicate": def.setCompletionPredicate(doParseExpressionSubElementDefinition()); yield true;
+                case "completionSizeExpression": def.setCompletionSizeExpression(doParseExpressionSubElementDefinition()); yield true;
+                case "completionTimeoutExpression": def.setCompletionTimeoutExpression(doParseExpressionSubElementDefinition()); yield true;
+                case "correlationExpression": def.setCorrelationExpression(doParseExpressionSubElementDefinition()); yield true;
+                case "optimisticLockRetryPolicy": def.setOptimisticLockRetryPolicyDefinition(doParseOptimisticLockRetryPolicyDefinition()); yield true;
+                default: yield outputDefinitionElementHandler().accept(def, key);
+            }, noValueHandler());
+    }
+    protected ExpressionSubElementDefinition doParseExpressionSubElementDefinition() throws IOException, XmlPullParserException {
+        return doParse(new ExpressionSubElementDefinition(), noAttributeHandler(), (def, key) -> {
+                ExpressionDefinition v = doParseExpressionDefinitionRef(key);
+                if (v != null) {
+                    def.setExpressionType(v);
+                    return true;
+                }
+                return false;
+            }, noValueHandler());
+    }
+    protected OptimisticLockRetryPolicyDefinition doParseOptimisticLockRetryPolicyDefinition() throws IOException, XmlPullParserException {
+        return doParse(new OptimisticLockRetryPolicyDefinition(), (def, key, val) -> switch (key) {
+                case "exponentialBackOff": def.setExponentialBackOff(val); yield true;
+                case "maximumRetries": def.setMaximumRetries(val); yield true;
+                case "maximumRetryDelay": def.setMaximumRetryDelay(val); yield true;
+                case "randomBackOff": def.setRandomBackOff(val); yield true;
+                case "retryDelay": def.setRetryDelay(val); yield true;
+                default: yield false;
+            }, noElementHandler(), noValueHandler());
     }
     protected BeanDefinition doParseBeanDefinition() throws IOException, XmlPullParserException {
         return doParse(new BeanDefinition(), (def, key, val) -> switch (key) {
@@ -921,11 +931,8 @@ public class ModelParser extends BaseParser {
                 case "errorHandler": def.setErrorHandler(doParseErrorHandlerDefinition()); yield true;
                 case "from": def.setInput(doParseFromDefinition()); yield true;
                 case "inputType": def.setInputType(doParseInputTypeDefinition()); yield true;
-                case "kamelet": def.setKamelet(Boolean.valueOf(doParseText())); yield true;
                 case "outputType": def.setOutputType(doParseOutputTypeDefinition()); yield true;
-                case "rest": def.setRest(Boolean.valueOf(doParseText())); yield true;
                 case "routeProperty": doAdd(doParsePropertyDefinition(), def.getRouteProperties(), def::setRouteProperties); yield true;
-                case "template": def.setTemplate(Boolean.valueOf(doParseText())); yield true;
                 default: yield outputDefinitionElementHandler().accept(def, key);
             }, noValueHandler());
     }
@@ -1793,6 +1800,7 @@ public class ModelParser extends BaseParser {
     protected HL7DataFormat doParseHL7DataFormat() throws IOException, XmlPullParserException {
         return doParse(new HL7DataFormat(), (def, key, val) -> switch (key) {
                 case "parser": def.setParser(val); yield true;
+                case "targetFormat": def.setTargetFormat(val); yield true;
                 case "validate": def.setValidate(val); yield true;
                 default: yield identifiedTypeAttributeHandler().accept(def, key, val);
             }, noElementHandler(), noValueHandler());
@@ -2726,6 +2734,7 @@ public class ModelParser extends BaseParser {
     }
     protected ProcessorDefinition doParseProcessorDefinitionRef(String key) throws IOException, XmlPullParserException {
         switch (key) {
+            case "a2aSubTask": return doParseA2ASubTaskDefinition();
             case "aggregate": return doParseAggregateDefinition();
             case "bean": return doParseBeanDefinition();
             case "doCatch": return doParseCatchDefinition();

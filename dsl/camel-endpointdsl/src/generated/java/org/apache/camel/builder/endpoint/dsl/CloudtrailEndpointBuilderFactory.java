@@ -1167,7 +1167,7 @@ public interface CloudtrailEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final CloudtrailHeaderNameBuilder INSTANCE = new CloudtrailHeaderNameBuilder();
+        public static final CloudtrailHeaderNameBuilder INSTANCE = new CloudtrailHeaderNameBuilder();
 
         /**
          * The event ID of the cloud trail event consumed.

@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-spring-parent</artifactId>
-        <version>4.20.0-SNAPSHOT</version>
+        <version>4.21.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-spring-xml</artifactId>
@@ -132,17 +132,11 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.apache.derby</groupId>
-            <artifactId>derby</artifactId>
-            <version>${derby-version}</version>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <version>${h2-version}</version>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>org.apache.derby</groupId>
-            <artifactId>derbytools</artifactId>
-            <version>${derby-version}</version>
-            <scope>test</scope>
-        </dependency>        
         <dependency>
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest</artifactId>
@@ -560,7 +554,7 @@
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <configuration>
                     <links>
-                        <link>http://download.oracle.com/javase/17/docs/api/</link>
+                        <link>https://docs.oracle.com/en/java/javase/${jdk.version}/docs/api/</link>
                         <link>http://javadoc.io/doc/org.apache.camel/camel-core-model/latest/</link>
                         <link>http://javadoc.io/doc/org.apache.camel/camel-core-engine/latest/</link>
                     </links>
@@ -626,7 +620,7 @@
                         </executions>
                         <configuration>
                             <links>
-                                <link>http://download.oracle.com/javase/17/docs/api/</link>
+                                <link>https://docs.oracle.com/en/java/javase/${jdk.version}/docs/api/</link>
                             </links>
                             <isOffline>${camel.javadoc.offline}</isOffline>
                             <stylesheetfile>${basedir}/../../etc/css/stylesheet.css</stylesheetfile>

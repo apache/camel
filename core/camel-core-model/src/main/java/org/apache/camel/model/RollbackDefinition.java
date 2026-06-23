@@ -22,6 +22,7 @@ import jakarta.xml.bind.annotation.XmlAttribute;
 import jakarta.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.annotations.DslArg;
 
 /**
  * Forces a rollback by stopping routing the message
@@ -32,6 +33,7 @@ import org.apache.camel.spi.Metadata;
 public class RollbackDefinition extends NoOutputDefinition<RollbackDefinition> {
 
     @XmlAttribute
+    @DslArg
     private String message;
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean")

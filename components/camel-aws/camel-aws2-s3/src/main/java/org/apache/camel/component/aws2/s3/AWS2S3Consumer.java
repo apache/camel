@@ -31,6 +31,7 @@ import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.component.aws2.s3.utils.AWS2S3Utils;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.support.ScheduledBatchPollingConsumer;
 import org.apache.camel.support.SynchronizationAdapter;
@@ -52,8 +53,8 @@ import software.amazon.awssdk.services.s3.model.GetObjectRequest.Builder;
 import software.amazon.awssdk.services.s3.model.GetObjectResponse;
 import software.amazon.awssdk.services.s3.model.HeadBucketRequest;
 import software.amazon.awssdk.services.s3.model.HeadObjectRequest;
-import software.amazon.awssdk.services.s3.model.ListObjectsRequest;
-import software.amazon.awssdk.services.s3.model.ListObjectsResponse;
+import software.amazon.awssdk.services.s3.model.ListObjectsV2Request;
+import software.amazon.awssdk.services.s3.model.ListObjectsV2Response;
 import software.amazon.awssdk.services.s3.model.NoSuchKeyException;
 import software.amazon.awssdk.services.s3.model.S3Object;
 import software.amazon.awssdk.utils.IoUtils;
@@ -130,7 +131,7 @@ public class AWS2S3Consumer extends ScheduledBatchPollingConsumer {
         } else {
             LOG.trace("Queueing objects in bucket [{}]...", bucketName);
 
-            ListObjectsRequest.Builder listObjectsRequest = ListObjectsRequest.builder();
+            ListObjectsV2Request.Builder listObjectsRequest = ListObjectsV2Request.builder();
             listObjectsRequest.bucket(bucketName);
             if (ObjectHelper.isNotEmpty(getConfiguration().getPrefix())) {
                 listObjectsRequest.prefix(getConfiguration().getPrefix());
@@ -146,13 +147,13 @@ public class AWS2S3Consumer extends ScheduledBatchPollingConsumer {
             // continue from where we left last time
             if (marker != null) {
                 LOG.trace("Resuming from marker: {}", marker);
-                listObjectsRequest.marker(marker);
+                listObjectsRequest.continuationToken(marker);
             }
 
-            ListObjectsResponse listObjects = getAmazonS3Client().listObjects(listObjectsRequest.build());
+            ListObjectsV2Response listObjects = getAmazonS3Client().listObjectsV2(listObjectsRequest.build());
 
             if (Boolean.TRUE.equals(listObjects.isTruncated())) {
-                String next = listObjects.nextMarker();
+                String next = listObjects.nextContinuationToken();
                 if (next == null && listObjects.hasContents() && ObjectHelper.isEmpty(listObjects.prefix())) {
                     // fallback to use last key from the returned list of objects
                     int size = listObjects.contents().size();
@@ -162,7 +163,7 @@ public class AWS2S3Consumer extends ScheduledBatchPollingConsumer {
                     }
                 }
                 marker = next;
-                LOG.trace("Returned list is truncated, so setting next marker: {}", marker);
+                LOG.trace("Returned list is truncated, so setting next continuation token: {}", marker);
             } else {
                 // no more data so clear marker
                 marker = null;
@@ -284,7 +285,7 @@ public class AWS2S3Consumer extends ScheduledBatchPollingConsumer {
             return true;
         } else {
             // Config says to ignore folders/directories
-            return !Optional.of(s3Object.response().contentType()).orElse("")
+            return !Optional.ofNullable(s3Object.response().contentType()).orElse("")
                     .toLowerCase().startsWith("application/x-directory");
         }
     }
@@ -358,13 +359,9 @@ public class AWS2S3Consumer extends ScheduledBatchPollingConsumer {
 
                 StringBuilder builder = new StringBuilder();
 
-                if (ObjectHelper.isNotEmpty(getConfiguration().getDestinationBucketPrefix())) {
-                    builder.append(getConfiguration().getDestinationBucketPrefix());
-                }
+                builder.append(AWS2S3Utils.evaluateDestinationBucketPrefix(exchange, getConfiguration()));
                 builder.append(key);
-                if (ObjectHelper.isNotEmpty(getConfiguration().getDestinationBucketSuffix())) {
-                    builder.append(getConfiguration().getDestinationBucketSuffix());
-                }
+                builder.append(AWS2S3Utils.evaluateDestinationBucketSuffix(exchange, getConfiguration()));
 
                 String destinationKey = builder.toString();
                 if (getConfiguration().isRemovePrefixOnMove()) {

@@ -31,6 +31,7 @@ step and return it.
 The `Processor` interface is a central API in Camel.
 Its API is purposely designed to be both straightforward and flexible in the form of a single functional method:
 
+._Java-only: the Processor interface_
 [source,java]
 ----
 @FunctionalInterface
@@ -53,6 +54,7 @@ the xref:enterprise-integration-patterns.adoc[EIP patterns].
 
 Once you have written a class which implements `Processor` like this:
 
+._Java-only: implementing a custom Processor class_
 [source,java]
 ----
 public class MyProcessor implements Processor {
@@ -64,6 +66,7 @@ public class MyProcessor implements Processor {
 
 Then in Camel you can call this processor:
 
+._Java-only: calling a Processor by instantiating it directly_
 [source,java]
 ----
 from("activemq:myQueue")
@@ -135,6 +138,7 @@ YAML::
 
 The process can be used in routes as an anonymous inner class such:
 
+._Java-only: using an anonymous inner class as a Processor_
 [source,java]
 ----
     from("activemq:myQueue").process(new Processor() {

@@ -573,8 +573,8 @@ public class GoogleVertexAIProducer extends DefaultProducer {
         try {
             Map<String, Object> response = OBJECT_MAPPER.readValue(responseJson, Map.class);
             Object content = response.get("content");
-            if (content instanceof java.util.List) {
-                java.util.List<Map<String, Object>> contentList = (java.util.List<Map<String, Object>>) content;
+            if (content instanceof List) {
+                List<Map<String, Object>> contentList = (List<Map<String, Object>>) content;
                 StringBuilder sb = new StringBuilder();
                 for (Map<String, Object> block : contentList) {
                     if ("text".equals(block.get("type"))) {

@@ -590,6 +590,25 @@ public interface BlobEndpointBuilderFactory {
             return this;
         }
         /**
+         * The blob version identifier used to target a specific blob version on
+         * read operations (getBlob, downloadBlobToFile, downloadLink). Requires
+         * blob versioning to be enabled on the storage account. When set, the
+         * read targets the version scoped client instead of the live blob. Can
+         * also be provided per-exchange via the CamelAzureStorageBlobVersionId
+         * header.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param versionId the value to set
+         * @return the dsl builder
+         */
+        default BlobEndpointConsumerBuilder versionId(String versionId) {
+            doSetProperty("versionId", versionId);
+            return this;
+        }
+        /**
          * Delete blobs from Azure after they have been retrieved. The delete is
          * only performed if the Exchange is committed. If a rollback occurs,
          * the blob is not deleted. If this option is false, then the same blobs
@@ -2041,6 +2060,25 @@ public interface BlobEndpointBuilderFactory {
             return this;
         }
         /**
+         * The blob version identifier used to target a specific blob version on
+         * read operations (getBlob, downloadBlobToFile, downloadLink). Requires
+         * blob versioning to be enabled on the storage account. When set, the
+         * read targets the version scoped client instead of the live blob. Can
+         * also be provided per-exchange via the CamelAzureStorageBlobVersionId
+         * header.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param versionId the value to set
+         * @return the dsl builder
+         */
+        default BlobEndpointProducerBuilder versionId(String versionId) {
+            doSetProperty("versionId", versionId);
+            return this;
+        }
+        /**
          * A user-controlled value that you can use to track requests. The value
          * of the sequence number must be between 0 and 263 - 1.The default
          * value is 0.
@@ -3221,6 +3259,25 @@ public interface BlobEndpointBuilderFactory {
             return this;
         }
         /**
+         * The blob version identifier used to target a specific blob version on
+         * read operations (getBlob, downloadBlobToFile, downloadLink). Requires
+         * blob versioning to be enabled on the storage account. When set, the
+         * read targets the version scoped client instead of the live blob. Can
+         * also be provided per-exchange via the CamelAzureStorageBlobVersionId
+         * header.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param versionId the value to set
+         * @return the dsl builder
+         */
+        default BlobEndpointBuilder versionId(String versionId) {
+            doSetProperty("versionId", versionId);
+            return this;
+        }
+        /**
          * Access key for the associated azure account name to be used for
          * authentication with azure blob services.
          * 
@@ -3380,7 +3437,7 @@ public interface BlobEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final BlobHeaderNameBuilder INSTANCE = new BlobHeaderNameBuilder();
+        public static final BlobHeaderNameBuilder INSTANCE = new BlobHeaderNameBuilder();
 
         /**
          * (All) Specify the producer operation to execute, please see the doc
@@ -4338,6 +4395,141 @@ public interface BlobEndpointBuilderFactory {
          */
         public String azureStorageBlobSnapshotId() {
             return "CamelAzureStorageBlobSnapshotId";
+        }
+        /**
+         * The blob version identifier. On read operations (getBlob,
+         * downloadBlobToFile, downloadLink) it can be provided as input to
+         * target a specific blob version when versioning is enabled on the
+         * storage account. On the consumer side it is populated from the blob
+         * properties when available.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code AzureStorageBlobVersionId}.
+         */
+        public String azureStorageBlobVersionId() {
+            return "CamelAzureStorageBlobVersionId";
+        }
+        /**
+         * Flag indicating whether this is the current version of the blob.
+         * 
+         * The option is a: {@code Boolean} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code
+         * AzureStorageBlobIsCurrentVersion}.
+         */
+        public String azureStorageBlobIsCurrentVersion() {
+            return "CamelAzureStorageBlobIsCurrentVersion";
+        }
+        /**
+         * (producer) (setBlobTags) The tags to set on the blob as key-value
+         * pairs. (consumer) The tags retrieved from the blob.
+         * 
+         * The option is a: {@code Map<String,String>} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code AzureStorageBlobTags}.
+         */
+        public String azureStorageBlobTags() {
+            return "CamelAzureStorageBlobTags";
+        }
+        /**
+         * (findBlobsByTags) A SQL-like expression that filters blobs across the
+         * storage account based on their index tags, for example Environment =
+         * 'Production' AND Status = 'Active'.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AzureStorageBlobTagFilter}.
+         */
+        public String azureStorageBlobTagFilter() {
+            return "CamelAzureStorageBlobTagFilter";
+        }
+        /**
+         * (producer) (setBlobLegalHold) The legal hold status to set on the
+         * blob. When set to true the blob is protected from modification and
+         * deletion until the hold is cleared by setting the value to false.
+         * (consumer) The legal hold status returned by the setBlobLegalHold
+         * operation.
+         * 
+         * The option is a: {@code Boolean} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code AzureStorageBlobLegalHold}.
+         */
+        public String azureStorageBlobLegalHold() {
+            return "CamelAzureStorageBlobLegalHold";
+        }
+        /**
+         * (setBlobImmutabilityPolicy) A pre-built BlobImmutabilityPolicy object
+         * that overrides the policy expiry time and mode headers when present.
+         * 
+         * The option is a: {@code
+         * com.azure.storage.blob.models.BlobImmutabilityPolicy} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * AzureStorageBlobImmutabilityPolicy}.
+         */
+        public String azureStorageBlobImmutabilityPolicy() {
+            return "CamelAzureStorageBlobImmutabilityPolicy";
+        }
+        /**
+         * (setBlobImmutabilityPolicy) The expiry time of the time-based
+         * retention policy. Required unless a pre-built BlobImmutabilityPolicy
+         * is provided via the body or the
+         * CamelAzureStorageBlobImmutabilityPolicy header.
+         * 
+         * The option is a: {@code java.time.OffsetDateTime} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * AzureStorageBlobImmutabilityPolicyExpiryTime}.
+         */
+        public String azureStorageBlobImmutabilityPolicyExpiryTime() {
+            return "CamelAzureStorageBlobImmutabilityPolicyExpiryTime";
+        }
+        /**
+         * (setBlobImmutabilityPolicy) The mode of the immutability policy:
+         * UNLOCKED (default, can be modified or deleted), LOCKED (cannot be
+         * modified or shortened, only extended), or MUTABLE.
+         * 
+         * The option is a: {@code
+         * com.azure.storage.blob.models.BlobImmutabilityPolicyMode} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * AzureStorageBlobImmutabilityPolicyMode}.
+         */
+        public String azureStorageBlobImmutabilityPolicyMode() {
+            return "CamelAzureStorageBlobImmutabilityPolicyMode";
+        }
+        /**
+         * (setBlobTier) The rehydrate priority used when rehydrating a blob
+         * from the archive tier: Standard or High. Ignored when changing tier
+         * between non-archive tiers.
+         * 
+         * The option is a: {@code
+         * com.azure.storage.blob.models.RehydratePriority} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * AzureStorageBlobRehydratePriority}.
+         */
+        public String azureStorageBlobRehydratePriority() {
+            return "CamelAzureStorageBlobRehydratePriority";
         }
     }
     static BlobEndpointBuilder endpointBuilder(String componentName, String path) {

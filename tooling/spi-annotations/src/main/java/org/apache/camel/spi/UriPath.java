@@ -42,14 +42,14 @@ public @interface UriPath {
     String name() default "";
 
     /**
-     * A human display name of the parameter.
+     * A human display name of the path.
      *
      * This is used for documentation and tooling only.
      */
     String displayName() default "";
 
     /**
-     * The default value of the parameter.
+     * The default value of the path.
      *
      * Note that this attribute is only for documentation purpose. The default value in use at runtime is the value the
      * Java field was assigned.
@@ -57,9 +57,9 @@ public @interface UriPath {
     String defaultValue() default "";
 
     /**
-     * A special note about the default value.
+     * A special note about the default value of the path.
      *
-     * This can be used to document special cases about the default value.
+     * This can be used to document special cases about the default value of the path.
      */
     String defaultValueNote() default "";
 
@@ -71,7 +71,15 @@ public @interface UriPath {
     String description() default "";
 
     /**
-     * Allows to define enums this options accepts.
+     * To re-associate the preferred Java type of this parameter.
+     *
+     * This is used for parameters which are of a specialized type but can be configured by another Java type, such as
+     * from a String.
+     */
+    String javaType() default "";
+
+    /**
+     * Allows to define enums this path option accepts.
      *
      * If the type is already an enum, then this option should not be used; instead you can use this option when the
      * type is a String that only accept certain values.
@@ -85,22 +93,31 @@ public @interface UriPath {
      *
      * Multiple labels can be defined as a comma separated value.
      *
-     * The labels is intended for grouping the parameters, such as <var>consumer</var>, <var>producer</var>,
+     * The labels is intended for grouping the path options, such as <var>consumer</var>, <var>producer</var>,
      * <var>common</var>, <var>security</var>, etc.
      */
     String label() default "";
 
     /**
-     * Whether the option is secret/sensitive information such as a password.
+     * Whether the path option is secret/sensitive information such as a password.
+     *
+     * @deprecated use {@code security = "secret"} instead.
      */
+    @Deprecated(since = "4.19.0")
     boolean secret() default false;
 
     /**
-     * To re-associate the preferred Java type of this parameter.
+     * Security category for this path option.
      *
-     * This is used for parameters which are of a specialized type but can be configured by another Java type, such as
-     * from a String.
+     * @see Metadata#security()
      */
-    String javaType() default "";
+    String security() default "";
+
+    /**
+     * The value that makes this path option insecure.
+     *
+     * @see Metadata#insecureValue()
+     */
+    String insecureValue() default "";
 
 }

@@ -9,7 +9,6 @@
 :component-header: Only producer is supported
 //Manually maintained attributes
 :group: AWS
-:camel-spring-boot-name: aws2-redshift
 
 *Since Camel {since}*
 
@@ -29,9 +28,9 @@ https://aws.amazon.com/redshift/[AWS Redshift].
 
 == URI Format
 
--------------------------
+----
 aws2-redshift-data://label[?options]
--------------------------
+----
 
 You can append query options to the URI in the following format:
 
@@ -93,11 +92,41 @@ Camel-AWS Redshift Data component provides the following operation on the produc
 
 - listDatabases: this operation will list redshift databases
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:listDatabases")
-    .to("aws2-redshift-data://test?awsRedshiftDataClient=#awsRedshiftDataClient&operation=listDatabases")
---------------------------------------------------------------------------------
+    .to("aws2-redshift-data://test?awsRedshiftDataClient=#awsRedshiftDataClient&operation=listDatabases");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:listDatabases"/>
+  <to uri="aws2-redshift-data://test?awsRedshiftDataClient=#awsRedshiftDataClient&amp;operation=listDatabases"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:listDatabases
+      steps:
+        - to:
+            uri: aws2-redshift-data://test
+            parameters:
+              awsRedshiftDataClient: "#awsRedshiftDataClient"
+              operation: listDatabases
+----
+====
 
 === Using a POJO as body
 
@@ -105,12 +134,13 @@ Sometimes building an AWS Request can be complex because of multiple options. We
 In AWS Redshift Data there are multiple operations you can submit, as an example for List Databases
  request, you can do something like:
 
+._Java-only: using a POJO request body with the AWS SDK builder_
 [source,java]
-------------------------------------------------------------------------------------------------------
+----
 from("direct:start")
   .setBody(ListDatabases.builder().database("database1").build())
   .to("aws2-redshift-data://test?awsRedshiftDataClient=#awsRedshiftDataClient&operation=listDatabases&pojoRequest=true")
-------------------------------------------------------------------------------------------------------
+----
 
 In this way you'll pass the request directly without the need of passing headers and options specifically related to this operation.
 
@@ -121,15 +151,14 @@ Maven users will need to add the following dependency to their pom.xml.
 *pom.xml*
 
 [source,xml]
----------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-redshift-data</artifactId>
     <version>${camel-version}</version>
 </dependency>
----------------------------------------
+----
 
 where `$\{camel-version}` must be replaced by the actual version of Camel.
 
 
-include::spring-boot:partial$starter.adoc[]

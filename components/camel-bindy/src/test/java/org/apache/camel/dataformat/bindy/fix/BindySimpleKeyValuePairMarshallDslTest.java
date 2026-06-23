@@ -84,7 +84,7 @@ public class BindySimpleKeyValuePairMarshallDslTest {
         @Override
         public void configure() {
             from("direct:start").marshal()
-                    .bindy(BindyType.KeyValue, org.apache.camel.dataformat.bindy.model.fix.simple.Order.class)
+                    .bindy(BindyType.KeyValue, Order.class)
                     .to("mock:result");
         }
 

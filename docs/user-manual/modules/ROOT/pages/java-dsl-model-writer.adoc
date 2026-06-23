@@ -1,0 +1,218 @@
+= Java DSL Model Writer
+
+The Java DSL Model Writer converts Camel model definitions (parsed from XML or YAML) into
+compilable Java DSL source code. This enables tooling — such as the xref:camel-jbang.adoc[Camel CLI],
+MCP servers, and TUI — to offer route conversion, code generation, and migration workflows.
+
+The writer lives in the `camel-java-io` module alongside the XML and YAML I/O modules.
+
+== Supported Constructs
+
+The writer handles all top-level Camel constructs:
+
+[cols="1,2,1"]
+|===
+| Construct | Java DSL Entry Point | Builder Class
+
+| Routes
+| `from("...")`
+| `RouteBuilder`
+
+| REST DSL
+| `rest("...")`
+| `RouteBuilder`
+
+| REST Configuration
+| `restConfiguration()`
+| `RouteBuilder`
+
+| Route Templates
+| `routeTemplate("id")`
+| `RouteBuilder`
+
+| Templated Routes
+| `templatedRoute("ref")`
+| `RouteBuilder`
+
+| Route Configuration
+| `routeConfiguration("id")`
+| `RouteConfigurationBuilder`
+
+| Error Handlers
+| `errorHandler(deadLetterChannel(...))`
+| `RouteBuilder`
+
+| Transformers
+| `transformer()`
+| `RouteBuilder`
+
+| Validators
+| `validator()`
+| `RouteBuilder`
+|===
+
+All EIPs, expressions, data formats, and load balancers within routes are supported
+through the generated writer code.
+
+== API Usage
+
+The entry point is `JavaDslModelWriter`. Each top-level construct has a dedicated `write` method
+that returns a `String` containing compilable Java DSL code:
+
+._Java-only: using JavaDslModelWriter to convert model definitions_
+[source,java]
+----
+import org.apache.camel.java.out.JavaDslModelWriter;
+
+JavaDslModelWriter writer = new JavaDslModelWriter();
+
+// Convert a route definition to Java DSL
+String javaDsl = writer.writeRouteDefinition(routeDefinition);
+
+// Convert a REST definition
+String restDsl = writer.writeRest(restDefinition);
+
+// Convert a route template
+String templateDsl = writer.writeRouteTemplate(routeTemplateDefinition);
+
+// Convert a templated route
+String templatedDsl = writer.writeTemplatedRoute(templatedRouteDefinition);
+
+// Convert rest configuration
+String restConfigDsl = writer.writeRestConfiguration(restConfigurationDefinition);
+
+// Convert route configuration (with error handler)
+String routeConfigDsl = writer.writeRouteConfiguration(routeConfigurationDefinition);
+
+// Convert a transformer
+String transformerDsl = writer.writeTransformer(transformerDefinition);
+
+// Convert a validator
+String validatorDsl = writer.writeValidator(validatorDefinition);
+----
+
+=== Converting an XML file
+
+A typical conversion reads XML, parses it with `ModelParser`, then writes each definition:
+
+._Java-only: converting an XML route file to Java DSL_
+[source,java]
+----
+import org.apache.camel.model.RoutesDefinition;
+import org.apache.camel.xml.in.ModelParser;
+import org.apache.camel.java.out.JavaDslModelWriter;
+
+// Parse XML routes
+ModelParser parser = new ModelParser(inputStream, "http://camel.apache.org/schema/xml-io");
+RoutesDefinition routes = parser.parseRoutesDefinition().orElse(null);
+
+// Convert each route to Java DSL
+JavaDslModelWriter writer = new JavaDslModelWriter();
+for (RouteDefinition route : routes.getRoutes()) {
+    String javaDsl = writer.writeRouteDefinition(route);
+    System.out.println(javaDsl);
+}
+----
+
+== Output Examples
+
+=== Route
+
+Given the XML:
+
+[source,xml]
+----
+<route id="myRoute">
+    <from uri="timer:tick?period=1000"/>
+    <filter>
+        <simple>${header.foo} != null</simple>
+        <to uri="mock:filtered"/>
+    </filter>
+    <to uri="mock:result"/>
+</route>
+----
+
+The writer produces:
+
+._Java-only: generated Java DSL output for a route with filter_
+[source,java]
+----
+from("timer:tick?period=1000")
+    .routeId("myRoute")
+    .filter(simple("${header.foo} != null"))
+        .to("mock:filtered")
+    .end()
+    .to("mock:result");
+----
+
+=== REST DSL
+
+._Java-only: generated Java DSL output for REST DSL_
+[source,java]
+----
+rest("/api")
+    .get("/users")
+        .to("direct:getUsers")
+    .post("/users")
+        .type(User.class)
+        .to("direct:createUser");
+----
+
+=== Route Template
+
+._Java-only: generated Java DSL output for a route template_
+[source,java]
+----
+routeTemplate("myTemplate")
+    .templateParameter("foo")
+    .templateParameter("bar", "defaultVal")
+    .from("direct:{{foo}}")
+    .to("mock:{{bar}}");
+----
+
+=== Transformer
+
+._Java-only: generated Java DSL output for a transformer_
+[source,java]
+----
+transformer()
+    .fromType("xml")
+    .toType("json")
+    .withUri("direct:transform");
+----
+
+=== Validator
+
+._Java-only: generated Java DSL output for a validator_
+[source,java]
+----
+validator()
+    .type("xml")
+    .withUri("direct:validate");
+----
+
+== Architecture
+
+The writer is split into two classes:
+
+* `JavaDslModelWriterSupport` — hand-written base class with top-level entry methods
+  (`writeRouteDefinition`, `writeRest`, `writeRouteTemplate`, etc.) and rendering helpers
+  for expressions, data formats, error handlers, and special constructs.
+
+* `JavaDslModelWriter` — generated subclass (via `camel-package-maven-plugin`) that provides
+  `doWrite*` methods for every model definition, writing attributes and child elements using
+  the support class helpers.
+
+This split allows the generated code to handle the bulk of attribute/child rendering while
+the support class controls the overall structure and handles constructs that need custom
+DSL mapping (template parameters, error handler chaining, transformer/validator builders, etc.).
+
+== Limitations
+
+* **DataFormat transformers** — `DataFormatTransformerDefinition` requires inline data format
+  construction and is not yet supported.
+* **Predicate validators** — `PredicateValidatorDefinition` requires inline expression
+  construction and is not yet supported.
+* The writer produces syntactically correct Java DSL but does not add `import` statements
+  or class wrappers — the caller is responsible for wrapping the output in a `RouteBuilder`
+  class.

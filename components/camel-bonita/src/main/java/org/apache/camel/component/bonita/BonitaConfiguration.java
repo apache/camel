@@ -36,9 +36,9 @@ public class BonitaConfiguration implements Cloneable {
     private String port = "8080";
     @UriParam
     private String processName;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String username;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String password;
 
     public String getHostname() {

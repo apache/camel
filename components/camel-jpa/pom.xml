@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>4.20.0-SNAPSHOT</version>
+        <version>4.21.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-jpa</artifactId>
@@ -90,15 +90,9 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.apache.derby</groupId>
-            <artifactId>derby</artifactId>
-            <version>${derby-version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.derby</groupId>
-            <artifactId>derbytools</artifactId>
-            <version>${derby-version}</version>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <version>${h2-version}</version>
             <scope>test</scope>
         </dependency>        
         <dependency>
@@ -122,6 +116,12 @@
             <groupId>jakarta.transaction</groupId>
             <artifactId>jakarta.transaction-api</artifactId>
             <version>${jakarta-transaction-api-version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.awaitility</groupId>
+            <artifactId>awaitility</artifactId>
+            <version>${awaitility-version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -249,8 +249,8 @@
             </build>
             <dependencies>
                 <dependency>
-                    <groupId>org.hibernate</groupId>
-                    <artifactId>hibernate-core-jakarta</artifactId>
+                    <groupId>org.hibernate.orm</groupId>
+                    <artifactId>hibernate-core</artifactId>
                     <version>${hibernate-version}</version>
                     <scope>test</scope>
                 </dependency>

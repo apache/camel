@@ -19,12 +19,21 @@ package org.apache.camel.spi;
 import org.apache.camel.CamelContext;
 
 /**
- * A marker interface to identify the object as being configurable via a configurer class.
+ * Configures a single property on a target object (such as a {@link org.apache.camel.Component},
+ * {@link org.apache.camel.Endpoint}, or EIP) without using reflection.
  * <p/>
- * This is used in Camel to have fast property configuration of Camel components & endpoints, and for EIP patterns as
- * well.
+ * Camel generates a {@code PropertyConfigurer} implementation at build time for each configurable type, giving fast,
+ * reflection-free property binding during bootstrap. The {@link #configure} method sets one named property and reports
+ * whether the property was recognized, with optional case-insensitive name matching. Generated configurers implement
+ * {@link GeneratedPropertyConfigurer}, types that expose their configurer implement {@link PropertyConfigurerAware},
+ * and configurers that can additionally describe their options implement {@link PropertyConfigurerGetter}.
+ * <p/>
+ * See <a href="https://camel.apache.org/manual/property-binding.html">Property Binding</a> in the Camel user manual.
  *
- * @see PropertyConfigurerGetter
+ * @see   GeneratedPropertyConfigurer
+ * @see   PropertyConfigurerGetter
+ * @see   PropertyConfigurerAware
+ * @since 3.0
  */
 public interface PropertyConfigurer {
 

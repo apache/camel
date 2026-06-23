@@ -131,7 +131,7 @@ public class KafkaConsumerHealthCheckIT extends KafkaHealthCheckTestSupport {
         to.expectedHeaderReceived(PROPAGATED_CUSTOM_HEADER, PROPAGATED_HEADER_VALUE);
 
         Properties props = KafkaTestUtil.getDefaultProperties(service);
-        try (KafkaProducer<String, String> producer = new org.apache.kafka.clients.producer.KafkaProducer<>(props)) {
+        try (KafkaProducer<String, String> producer = new KafkaProducer<>(props)) {
             for (int k = 0; k < 5; k++) {
                 String msg = "message-" + k;
                 ProducerRecord<String, String> data = new ProducerRecord<>(TOPIC, "1", msg);

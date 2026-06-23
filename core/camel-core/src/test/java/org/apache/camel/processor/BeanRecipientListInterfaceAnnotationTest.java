@@ -18,6 +18,7 @@ package org.apache.camel.processor;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.apache.camel.RecipientList;
 import org.apache.camel.spi.Registry;
 
 public class BeanRecipientListInterfaceAnnotationTest extends BeanRecipientListTest {
@@ -34,7 +35,7 @@ public class BeanRecipientListInterfaceAnnotationTest extends BeanRecipientListT
     }
 
     interface Route {
-        @org.apache.camel.RecipientList
+        @RecipientList
         String[] route(String body);
     }
 

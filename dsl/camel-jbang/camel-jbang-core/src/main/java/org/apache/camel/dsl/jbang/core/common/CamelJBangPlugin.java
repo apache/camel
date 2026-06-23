@@ -39,4 +39,5 @@ public @interface CamelJBangPlugin {
      * First version this plugin was released.
      */
     String firstVersion();
+
 }

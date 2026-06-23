@@ -72,7 +72,7 @@ class CosmosDbClientOperationsIT {
 
     @Test
     void testCreateDeleteDatabase() {
-        final String databaseName = RandomStringUtils.randomAlphabetic(10).toLowerCase();
+        final String databaseName = RandomStringUtils.secure().nextAlphabetic(10).toLowerCase();
 
         // test create database
         final CosmosDatabaseResponse createdDatabase = CosmosDbClientOperations.withClient(clientWrapper)
@@ -99,7 +99,7 @@ class CosmosDbClientOperationsIT {
 
     @Test
     void testGetDatabaseOperations() {
-        final String databaseName = RandomStringUtils.randomAlphabetic(10).toLowerCase();
+        final String databaseName = RandomStringUtils.secure().nextAlphabetic(10).toLowerCase();
 
         // first try to get operations without creating the database
         CosmosDbClientOperations.withClient(clientWrapper)
@@ -123,7 +123,7 @@ class CosmosDbClientOperationsIT {
     @Test
     void testQueryAndReadAllDatabases() {
         // create bunch of databases
-        final String prefixDatabaseNames = RandomStringUtils.randomAlphabetic(10).toLowerCase();
+        final String prefixDatabaseNames = RandomStringUtils.secure().nextAlphabetic(10).toLowerCase();
         final int expectedSize = 5;
 
         for (int i = 0; i < expectedSize; i++) {

@@ -19,7 +19,19 @@ package org.apache.camel.spi;
 import java.util.Optional;
 
 /**
- * Finder to find factories from the resource classpath, usually <b>META-INF/services/org/apache/camel/</b>.
+ * Looks up and instantiates SPI factory classes declared in resource files on the classpath, following the
+ * {@code META-INF/services/org/apache/camel/} service-file convention used throughout Camel.
+ * <p/>
+ * Each service file contains the fully-qualified class name of a factory implementation. Given a lookup key, the finder
+ * appends the key to {@link #getResourcePath()}, reads the file, loads the named class via the {@link ClassResolver},
+ * and instantiates it. This mechanism lets components and modules ship their implementations without explicit
+ * registration; Camel discovers them automatically at startup via this discovery contract.
+ * <p/>
+ * {@link FactoryFinderResolver} creates and caches {@code FactoryFinder} instances per resource path, so each distinct
+ * path has exactly one finder for the lifetime of the {@link org.apache.camel.CamelContext}.
+ *
+ * @see FactoryFinderResolver
+ * @see ClassResolver
  */
 public interface FactoryFinder {
 

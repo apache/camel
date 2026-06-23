@@ -31,7 +31,11 @@ import org.apache.camel.tooling.maven.MavenArtifact;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
-@Command(name = "hawtio", description = "Launch Hawtio web console", sortOptions = false, showDefaultValues = true)
+@Command(name = "hawtio", description = "Launch Hawtio web console", sortOptions = false, showDefaultValues = true,
+         footer = {
+                 "%nExamples:",
+                 "  camel hawtio",
+                 "  camel hawtio --port=8090" })
 public class Hawtio extends CamelCommand {
 
     @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
@@ -40,6 +44,10 @@ public class Hawtio extends CamelCommand {
     @CommandLine.Option(names = { "--version" },
                         description = "Version of the Hawtio web console", defaultValue = HawtioVersion.HAWTIO_VERSION)
     String version = HawtioVersion.HAWTIO_VERSION;
+
+    @CommandLine.Option(names = { "--host" },
+                        description = "Hostname to bind the Hawtio web console to", defaultValue = "127.0.0.1")
+    String host = "127.0.0.1";
 
     // use port 8888 as 8080 is too commonly used
     @CommandLine.Option(names = { "--port" },
@@ -116,6 +124,8 @@ public class Hawtio extends CamelCommand {
                 Object hawt = clazz.getDeclaredConstructor().newInstance();
                 Method m = clazz.getMethod("setWar", String.class);
                 ObjectHelper.invokeMethod(m, hawt, war);
+                m = clazz.getMethod("setHost", String.class);
+                ObjectHelper.invokeMethod(m, hawt, host);
                 m = clazz.getMethod("setPort", Integer.class);
                 ObjectHelper.invokeMethod(m, hawt, port);
                 m = clazz.getMethod("run");
@@ -123,7 +133,7 @@ public class Hawtio extends CamelCommand {
 
                 if (openUrl) {
                     // open web browser
-                    String url = "http://localhost:" + port + "/hawtio";
+                    String url = "http://" + host + ":" + port + "/hawtio";
                     System.setProperty("hawtio.url", url);
                     if (openUrl && Desktop.isDesktopSupported()) {
                         try {

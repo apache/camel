@@ -28,6 +28,7 @@ import org.apache.hc.client5.http.classic.methods.HttpPost;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.core5.http.ClassicHttpResponse;
 import org.apache.hc.core5.http.HttpEntity;
+import org.apache.hc.core5.http.HttpVersion;
 import org.apache.hc.core5.http.io.HttpClientResponseHandler;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -108,7 +109,7 @@ public class SplunkHECProducerTest {
                     ClassicHttpResponse mockResponse = mock(ClassicHttpResponse.class);
                     when(mockResponse.getCode()).thenReturn(statusCode);
                     when(mockResponse.getReasonPhrase()).thenReturn(reasonPhrase);
-                    when(mockResponse.getVersion()).thenReturn(org.apache.hc.core5.http.HttpVersion.HTTP_1_1);
+                    when(mockResponse.getVersion()).thenReturn(HttpVersion.HTTP_1_1);
                     HttpEntity entity = mock(HttpEntity.class);
                     doAnswer(inv -> {
                         OutputStream os = inv.getArgument(0);

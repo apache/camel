@@ -16,27 +16,26 @@
  */
 package org.apache.camel.dataformat.barcode;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.test.spring.junit6.CamelSpringTestSupport;
-import org.junit.jupiter.api.condition.DisabledOnOs;
-import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.AbstractXmlApplicationContext;
 
-@DisabledOnOs(architectures = { "s390x" },
-              disabledReason = "This test does not run reliably on s390x (see CAMEL-21438)")
 public class BarcodeDataFormatSpringTest extends BarcodeDataFormatCamelTest {
 
     @Override
-    public boolean isUseRouteBuilder() {
-        return false;
-    }
-
-    @Override
     protected CamelContext createCamelContext() throws Exception {
-        ApplicationContext applicationContext
-                = CamelSpringTestSupport.newAppContext("barcodeDataformatSpring.xml",
-                        getClass());
-        return SpringCamelContext.springCamelContext(applicationContext, true);
+        testConfiguration().withUseRouteBuilder(false);
+        Map<String, String> props = new HashMap<>();
+        props.put(CamelSpringTestSupport.TEST_CLASS_NAME_PROPERTY, getClass().getName());
+        props.put(CamelSpringTestSupport.TEST_CLASS_SIMPLE_NAME_PROPERTY, getClass().getSimpleName());
+        props.put(CamelSpringTestSupport.TEST_DIRECTORY_PROPERTY, testDirectory.toString());
+        AbstractXmlApplicationContext applicationContext
+                = CamelSpringTestSupport.newAppContext("barcodeDataformatSpring.xml", getClass(), props);
+        return applicationContext.getBean(SpringCamelContext.class);
     }
 
 }

@@ -32,9 +32,9 @@ public class IBMCOSConfiguration implements Cloneable {
     @UriParam(label = "advanced")
     @Metadata(autowired = true)
     private AmazonS3 cosClient;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String apiKey;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String serviceInstanceId;
     @UriParam
     private String endpointUrl;

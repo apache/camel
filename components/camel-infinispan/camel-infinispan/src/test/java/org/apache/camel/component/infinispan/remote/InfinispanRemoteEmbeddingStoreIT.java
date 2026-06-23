@@ -30,7 +30,6 @@ import org.apache.camel.component.infinispan.InfinispanConstants;
 import org.apache.camel.component.infinispan.InfinispanOperation;
 import org.apache.camel.component.infinispan.remote.embeddingstore.EmbeddingStoreUtil;
 import org.apache.camel.spi.DataType;
-import org.apache.commons.lang3.SystemUtils;
 import org.awaitility.Awaitility;
 import org.infinispan.api.annotations.indexing.option.VectorSimilarity;
 import org.infinispan.client.hotrod.RemoteCacheManager;
@@ -196,9 +195,7 @@ public class InfinispanRemoteEmbeddingStoreIT extends InfinispanRemoteTestSuppor
         configuration.setSecurityRealm("default");
         configuration.setSecure(true);
 
-        if (SystemUtils.IS_OS_MAC) {
-            configuration.addConfigurationProperty("infinispan.client.hotrod.client_intelligence", "BASIC");
-        }
+        configuration.addConfigurationProperty("infinispan.client.hotrod.client_intelligence", "BASIC");
 
         return configuration;
     }

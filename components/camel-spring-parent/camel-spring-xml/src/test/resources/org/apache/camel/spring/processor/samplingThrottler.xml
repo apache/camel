@@ -41,11 +41,6 @@
             <sample messageFrequency="5"/>
             <to uri="mock:result"/>
         </route>
-        <route>
-            <from uri="direct:sample-placeholder"/>
-            <sample samplePeriod="{{sample.period}}"/>
-            <to uri="mock:result"/>
-        </route>
         <!-- END SNIPPET: e1 -->
 
     </camelContext>

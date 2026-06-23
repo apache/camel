@@ -38,6 +38,8 @@ public class OAIPMHEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
         case "from": target.setFrom(property(camelContext, java.lang.String.class, value)); return true;
         case "greedy": target.setGreedy(property(camelContext, boolean.class, value)); return true;
+        case "httpheaders":
+        case "httpHeaders": target.setHttpHeaders(property(camelContext, java.util.Map.class, value)); return true;
         case "identifier": target.setIdentifier(property(camelContext, java.lang.String.class, value)); return true;
         case "ignoresslwarnings":
         case "ignoreSSLWarnings": target.setIgnoreSSLWarnings(property(camelContext, boolean.class, value)); return true;
@@ -94,6 +96,8 @@ public class OAIPMHEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "exchangePattern": return org.apache.camel.ExchangePattern.class;
         case "from": return java.lang.String.class;
         case "greedy": return boolean.class;
+        case "httpheaders":
+        case "httpHeaders": return java.util.Map.class;
         case "identifier": return java.lang.String.class;
         case "ignoresslwarnings":
         case "ignoreSSLWarnings": return boolean.class;
@@ -151,6 +155,8 @@ public class OAIPMHEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "exchangePattern": return target.getExchangePattern();
         case "from": return target.getFrom();
         case "greedy": return target.isGreedy();
+        case "httpheaders":
+        case "httpHeaders": return target.getHttpHeaders();
         case "identifier": return target.getIdentifier();
         case "ignoresslwarnings":
         case "ignoreSSLWarnings": return target.isIgnoreSSLWarnings();
@@ -192,6 +198,8 @@ public class OAIPMHEndpointConfigurer extends PropertyConfigurerSupport implemen
     @Override
     public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "httpheaders":
+        case "httpHeaders": return java.lang.String.class;
         case "schedulerproperties":
         case "schedulerProperties": return java.lang.Object.class;
         default: return null;

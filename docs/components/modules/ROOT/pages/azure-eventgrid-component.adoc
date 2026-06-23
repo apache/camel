@@ -1,0 +1,1 @@
+../../../../../components/camel-azure/camel-azure-eventgrid/src/main/docs/azure-eventgrid-component.adoc

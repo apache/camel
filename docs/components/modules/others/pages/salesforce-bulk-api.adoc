@@ -1,0 +1,1 @@
+../../../../../components/camel-salesforce/camel-salesforce-component/src/main/docs/salesforce-bulk-api.adoc

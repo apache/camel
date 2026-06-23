@@ -22,10 +22,19 @@ import java.util.function.Predicate;
 import org.apache.camel.Ordered;
 
 /**
- * A source for properties that can be loaded all at once during initialization, such as loading .properties files.
+ * A {@link PropertiesSource} whose properties can be loaded all at once during initialization, such as a .properties
+ * file.
  * <p/>
- * A source can implement {@link Ordered} to control the ordering of which sources are used by the Camel properties
- * component. The source with the highest precedence (the lowest number) will be used first.
+ * In addition to looking up single values, a loadable source can return its entire set of properties via
+ * {@link #loadProperties()} (optionally filtered by key) and can re-read them from the location to support reloading.
+ * Like any source it may implement {@link Ordered} to control precedence; the source with the highest precedence (the
+ * lowest number) is used first.
+ * <p/>
+ * See <a href="https://camel.apache.org/manual/using-propertyplaceholder.html">Using PropertyPlaceholder</a> in the
+ * Camel user manual.
+ *
+ * @see   PropertiesSource
+ * @since 3.0
  */
 public interface LoadablePropertiesSource extends PropertiesSource {
 

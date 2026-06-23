@@ -91,32 +91,31 @@ public class TimerRouteAutoConfigIT extends CamelTestSupport {
         mockEndpoint.expectedBodiesReceived(body);
         template.sendBody("direct:in1", body);
 
-        // capture logs from the LoggingMetricExporter
-        await().atMost(Duration.ofMillis(1000L)).until(handler::hasLogs);
+        await().atMost(Duration.ofSeconds(5)).untilAsserted(() -> {
+            List<LogRecord> logs = new ArrayList<>(handler.getLogs());
+            assertFalse(logs.isEmpty(), "No metrics were exported");
 
-        List<LogRecord> logs = new ArrayList<>(handler.getLogs());
-        assertFalse(logs.isEmpty(), "No metrics were exported");
-
-        long dataCount = logs.stream()
-                .map(LogRecord::getParameters)
-                .filter(Objects::nonNull)
-                .flatMap(Arrays::stream)
-                .filter(MetricData.class::isInstance)
-                .map(MetricData.class::cast)
-                .filter(md -> "A".equals(md.getName()))
-                .peek(md -> {
-                    PointData pd = md.getData()
-                            .getPoints()
-                            .stream()
-                            .findFirst()
-                            .orElseThrow();
-                    assertInstanceOf(HistogramPointData.class, pd, "Expected HistogramPointData");
-                    HistogramPointData hpd = (HistogramPointData) pd;
-                    assertEquals(1L, hpd.getCount());
-                    assertTrue(hpd.getMin() >= DELAY);
-                })
-                .count();
-        assertTrue(dataCount > 0, "No metric data found with name A");
+            long dataCount = logs.stream()
+                    .map(LogRecord::getParameters)
+                    .filter(Objects::nonNull)
+                    .flatMap(Arrays::stream)
+                    .filter(MetricData.class::isInstance)
+                    .map(MetricData.class::cast)
+                    .filter(md -> "A".equals(md.getName()))
+                    .peek(md -> {
+                        PointData pd = md.getData()
+                                .getPoints()
+                                .stream()
+                                .findFirst()
+                                .orElseThrow();
+                        assertInstanceOf(HistogramPointData.class, pd, "Expected HistogramPointData");
+                        HistogramPointData hpd = (HistogramPointData) pd;
+                        assertEquals(1L, hpd.getCount());
+                        assertTrue(hpd.getMin() >= DELAY);
+                    })
+                    .count();
+            assertTrue(dataCount > 0, "No metric data found with name A");
+        });
         MockEndpoint.assertIsSatisfied(context);
     }
 

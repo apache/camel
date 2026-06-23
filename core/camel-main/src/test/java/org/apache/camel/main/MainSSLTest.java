@@ -17,6 +17,8 @@
 package org.apache.camel.main;
 
 import java.security.KeyStore;
+import java.security.cert.X509Certificate;
+import java.util.Collection;
 import java.util.List;
 
 import javax.net.ssl.SSLContext;
@@ -455,14 +457,38 @@ public class MainSSLTest {
         Assertions.assertTrue(ks.containsAlias("camel-self-signed"));
         assertNotNull(ks.getKey("camel-self-signed", "test-password".toCharArray()));
 
-        java.security.cert.X509Certificate cert
-                = (java.security.cert.X509Certificate) ks.getCertificate("camel-self-signed");
+        X509Certificate cert
+                = (X509Certificate) ks.getCertificate("camel-self-signed");
         assertNotNull(cert);
 
+        // the default key type is EC (NIST P-256) signed with SHA256withECDSA
+        Assertions.assertEquals("EC", cert.getPublicKey().getAlgorithm());
+        Assertions.assertEquals("SHA256withECDSA", cert.getSigAlgName());
+
         // verify the certificate has a SAN extension with localhost
-        java.util.Collection<java.util.List<?>> sans = cert.getSubjectAlternativeNames();
+        Collection<List<?>> sans = cert.getSubjectAlternativeNames();
         assertNotNull(sans);
         // should have DNS:localhost and IP:127.0.0.1
+        Assertions.assertTrue(sans.size() >= 2);
+    }
+
+    @Test
+    public void testSelfSignedCertificateGeneratorRSA() throws Exception {
+        KeyStore ks = SelfSignedCertificateGenerator.generateKeyStore("test-password", "RSA");
+        assertNotNull(ks);
+        Assertions.assertTrue(ks.containsAlias("camel-self-signed"));
+        assertNotNull(ks.getKey("camel-self-signed", "test-password".toCharArray()));
+
+        X509Certificate cert
+                = (X509Certificate) ks.getCertificate("camel-self-signed");
+        assertNotNull(cert);
+
+        // RSA remains selectable, signed with SHA256withRSA
+        Assertions.assertEquals("RSA", cert.getPublicKey().getAlgorithm());
+        Assertions.assertEquals("SHA256withRSA", cert.getSigAlgName());
+
+        Collection<List<?>> sans = cert.getSubjectAlternativeNames();
+        assertNotNull(sans);
         Assertions.assertTrue(sans.size() >= 2);
     }
 

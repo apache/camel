@@ -6,8 +6,6 @@
 :since: 2.13
 :supportlevel: Stable
 :tabs-sync-option:
-//Manually maintained attributes
-:camel-spring-boot-name: jsonpath
 
 *Since Camel {since}*
 
@@ -258,6 +256,10 @@ By default, the message body is the source for the jsonpath evaluation.
 However, if you need to refer to a variable or message header instead as the body,
 then this is easy as shown below:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:start")
@@ -265,6 +267,40 @@ from("direct:start")
     .setBody(simple("${jsonpath(variable:cars , $.length())}"))
     .to("mock:cars");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <setVariable name="cars">
+    <constant>["Ford", "BMW", "Fiat"]</constant>
+  </setVariable>
+  <setBody>
+    <simple>${jsonpath(variable:cars , $.length())}</simple>
+  </setBody>
+  <to uri="mock:cars"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - setVariable:
+            name: cars
+            constant: '["Ford", "BMW", "Fiat"]'
+        - setBody:
+            simple: "${jsonpath(variable:cars , $.length())}"
+        - to:
+            uri: mock:cars
+----
+====
 
 Here we set a variable named _cars_ with a json array of 3 cars. Then we want to count the length
 of the array using jsonpath length function. Notice how we use the inlined simple language, and can
@@ -276,6 +312,7 @@ You can use xref:manual::bean-integration.adoc[Bean Integration] to invoke a
 method on a bean and use various languages such as JSONPath (via the `@JsonPath` annotation)
 to extract a value from the message and bind it to a method parameter, as shown below:
 
+._Java-only: Java annotation bean integration_
 [source,java]
 ----
 public class Foo {
@@ -294,13 +331,13 @@ detected automatically, if the document is encoded in unicode (UTF-8,
 UTF-16LE, UTF-16BE, UTF-32LE, UTF-32BE) as specified in RFC-4627.
 If the encoding is a non-unicode encoding, you can either make sure that
 you enter the document in String format to JSONPath, or you
-can specify the encoding in the header `CamelJsonPathJsonEncoding` which
-is defined as a constant in: `JsonpathConstants.HEADER_JSON_ENCODING`.
+can specify the encoding in the header `CamelJsonPathJsonEncoding`.
 
 === Split JSON data into sub rows as JSON
 
 You can use JSONPath to split a JSON document, such as:
 
+._Java-only: Java DSL with class literal parameter_
 [source,java]
 ----
 from("direct:start")
@@ -317,6 +354,7 @@ Then each book is logged, however the message body is a `Map` instance. Sometime
 you may want to output this as plain String JSON value instead, which can be done
 with the `writeAsString` option as shown:
 
+._Java-only: Java DSL with class literal parameter_
 [source,java]
 ----
 from("direct:start")
@@ -330,6 +368,7 @@ Then each book is logged as a String JSON value.
 
 It is possible to unpack a single-element array into an object:
 
+._Java-only: Java DSL with class literal parameter_
 [source,java]
 ----
 from("direct:start")
@@ -347,6 +386,7 @@ by specifying the `source` option.
 For example, to count the number of books from a JSON document that
 was stored in a header named `books` you can do:
 
+._Java-only: Java fluent expression builder API_
 [source,java]
 ----
 var jp = expression().jsonpath("$..store.book.length()").resultType(int.class)
@@ -359,6 +399,7 @@ from("direct:start")
 
 And you can also inline the expression:
 
+._Java-only: Java fluent expression builder API_
 [source,java]
 ----
 from("direct:start")
@@ -374,6 +415,7 @@ TIP: You can also use `variable:` as source prefix to refer to an Exchange varia
 
 The same example in XML DSL would be easier to do:
 
+._XML-only:_
 [source,xml]
 ----
 <route>
@@ -412,5 +454,3 @@ also make it XML or plain text based:
     <location>${jsonpath($.customer.address.country)}</location>
 </customer>
 ----
-
-include::spring-boot:partial$starter.adoc[]

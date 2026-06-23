@@ -1,0 +1,1 @@
+../../../../../components/camel-diagram/src/main/docs/diagram.adoc

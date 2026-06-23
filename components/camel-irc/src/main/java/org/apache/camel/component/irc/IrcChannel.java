@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.irc;
 
+@Deprecated(since = "4.21")
 public final class IrcChannel {
     private String name;
     private String key;

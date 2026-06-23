@@ -19,6 +19,7 @@ package org.apache.camel.coap;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.security.GeneralSecurityException;
 import java.security.KeyStore;
 import java.security.PrivateKey;
@@ -44,6 +45,7 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
+import org.apache.camel.support.DefaultHeaderFilterStrategy;
 import org.apache.camel.support.jsse.ClientAuthentication;
 import org.apache.camel.support.jsse.KeyManagersParameters;
 import org.apache.camel.support.jsse.SSLContextParameters;
@@ -84,7 +86,7 @@ public class CoAPEndpoint extends DefaultEndpoint implements EndpointServiceLoca
     private URI uri;
     @UriParam(label = "consumer", enums = "DELETE,GET,POST,PUT")
     private String coapMethodRestrict;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private PrivateKey privateKey;
     @UriParam(label = "security")
     private PublicKey publicKey;
@@ -121,7 +123,7 @@ public class CoAPEndpoint extends DefaultEndpoint implements EndpointServiceLoca
         super(uri, component);
         try {
             this.uri = new URI(uri);
-        } catch (java.net.URISyntaxException use) {
+        } catch (URISyntaxException use) {
             this.uri = null;
         }
         this.component = component;
@@ -280,7 +282,7 @@ public class CoAPEndpoint extends DefaultEndpoint implements EndpointServiceLoca
     @Override
     public HeaderFilterStrategy getHeaderFilterStrategy() {
         if (headerFilterStrategy == null) {
-            headerFilterStrategy = new CoAPHeaderFilterStrategy();
+            headerFilterStrategy = new DefaultHeaderFilterStrategy();
         }
         return headerFilterStrategy;
     }

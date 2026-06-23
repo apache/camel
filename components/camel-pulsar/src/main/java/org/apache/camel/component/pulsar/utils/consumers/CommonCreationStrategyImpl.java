@@ -64,7 +64,8 @@ public final class CommonCreationStrategyImpl {
                 .subscriptionMode(endpointConfiguration.getSubscriptionMode().toPulsarSubscriptionMode())
                 .acknowledgmentGroupTime(endpointConfiguration.getAckGroupTimeMillis(), TimeUnit.MILLISECONDS)
                 .negativeAckRedeliveryDelay(endpointConfiguration.getNegativeAckRedeliveryDelayMicros(), TimeUnit.MICROSECONDS)
-                .readCompacted(endpointConfiguration.isReadCompacted());
+                .readCompacted(endpointConfiguration.isReadCompacted())
+                .enableBatchIndexAcknowledgment(endpointConfiguration.isEnableBatchIndexAcknowledgment());
 
         if (endpointConfiguration.isMessageListener()) {
             builder.messageListener(new PulsarMessageListener(pulsarEndpoint, pulsarConsumer));

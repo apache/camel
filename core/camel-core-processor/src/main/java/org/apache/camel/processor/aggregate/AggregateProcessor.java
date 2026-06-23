@@ -59,6 +59,7 @@ import org.apache.camel.spi.ReactiveExecutor;
 import org.apache.camel.spi.RecoverableAggregationRepository;
 import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.spi.ShutdownAware;
+import org.apache.camel.spi.StepIdAware;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.support.DefaultTimeoutMap;
 import org.apache.camel.support.ExchangeHelper;
@@ -85,7 +86,7 @@ import org.slf4j.LoggerFactory;
  * message.
  */
 public class AggregateProcessor extends BaseProcessorSupport
-        implements Navigate<Processor>, Traceable, ShutdownAware, IdAware, RouteIdAware {
+        implements Navigate<Processor>, Traceable, ShutdownAware, IdAware, RouteIdAware, StepIdAware {
 
     public static final String AGGREGATE_TIMEOUT_CHECKER = "AggregateTimeoutChecker";
     public static final String AGGREGATE_OPTIMISTIC_LOCKING_EXECUTOR = "AggregateOptimisticLockingExecutor";
@@ -106,6 +107,7 @@ public class AggregateProcessor extends BaseProcessorSupport
     private final AsyncProcessor processor;
     private String id;
     private String routeId;
+    private String stepId;
     private AggregationStrategy aggregationStrategy;
     private boolean preCompletion;
     private Expression correlationExpression;
@@ -231,6 +233,7 @@ public class AggregateProcessor extends BaseProcessorSupport
     private Integer closeCorrelationKeyOnCompletion;
     private boolean parallelProcessing;
     private boolean optimisticLocking;
+    private boolean optimisticLockingSyncRetry;
 
     // different ways to have completion triggered
     private boolean eagerCheckCompletion;
@@ -314,6 +317,16 @@ public class AggregateProcessor extends BaseProcessorSupport
     }
 
     @Override
+    public String getStepId() {
+        return stepId;
+    }
+
+    @Override
+    public void setStepId(String stepId) {
+        this.stepId = stepId;
+    }
+
+    @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
         try {
             return doProcess(exchange, callback);
@@ -374,6 +387,20 @@ public class AggregateProcessor extends BaseProcessorSupport
                         "On attempt {} OptimisticLockingAggregationRepository: {} threw OptimisticLockingException while trying to aggregate exchange: {}",
                         attempt, aggregationRepository, exchange, e);
                 if (optimisticLockRetryPolicy.shouldRetry(attempt)) {
+                    if (optimisticLockingSyncRetry) {
+                        // Synchronous retry: delay in the same thread instead of
+                        // scheduling on a background thread. This ensures aggregation
+                        // stays within a single thread (e.g. for transactional processing).
+                        try {
+                            optimisticLockRetryPolicy.doDelay(attempt);
+                        } catch (InterruptedException ie) {
+                            Thread.currentThread().interrupt();
+                            exchange.setException(ie);
+                            callback.done(sync);
+                            return sync;
+                        }
+                        continue;
+                    }
                     long delay = optimisticLockRetryPolicy.getDelay(attempt);
                     if (delay > 0) {
                         int nextAttempt = attempt;
@@ -1126,6 +1153,14 @@ public class AggregateProcessor extends BaseProcessorSupport
         this.optimisticLocking = optimisticLocking;
     }
 
+    public boolean isOptimisticLockingSyncRetry() {
+        return optimisticLockingSyncRetry;
+    }
+
+    public void setOptimisticLockingSyncRetry(boolean optimisticLockingSyncRetry) {
+        this.optimisticLockingSyncRetry = optimisticLockingSyncRetry;
+    }
+
     public AggregationRepository getAggregationRepository() {
         return aggregationRepository;
     }
@@ -1702,7 +1737,7 @@ public class AggregateProcessor extends BaseProcessorSupport
         // but only do this when forced=false, as that is when we have chance to
         // send out new messages to be routed by Camel. When forced=true, then
         // we have to shutdown in a hurry
-        if (!forced && forceCompletionOnStop) {
+        if (!forced && (forceCompletionOnStop || completeAllOnStop)) {
             doForceCompletionOnStop();
         }
     }

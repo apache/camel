@@ -61,7 +61,7 @@ public class TestPlugin implements Plugin {
      * Command execution strategy delegates to Citrus JBang for subcommands like init or run. Performs special command
      * preparations and makes sure to run the proper Citrus version for this Camel release.
      *
-     * @param main Camel JBang main that provides the output printer.
+     * @param main Camel CLI main that provides the output printer.
      */
     private record CitrusExecutionStrategy(CamelJBangMain main) implements CommandLine.IExecutionStrategy {
 
@@ -145,7 +145,7 @@ public class TestPlugin implements Plugin {
 
         /**
          * Prepare and execute Citrus run command. Automatically navigates to test subfolder if it is present and uses
-         * this as a working directory. Runs command asynchronous streaming logs to the main output of this Camel JBang
+         * this as a working directory. Runs command asynchronous streaming logs to the main output of this Camel CLI
          * process.
          */
         private int executeRunCommand(JBangSupport citrus, List<String> args) {

@@ -69,7 +69,7 @@ public class GitHub2Endpoint extends ScheduledPollEndpoint implements EndpointSe
     private String startingSha = "last";
     @UriParam(label = "consumer", defaultValue = "true")
     private boolean commitMessageAsBody = true;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String oauthToken;
     @UriParam
     @Metadata(required = true)

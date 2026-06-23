@@ -71,10 +71,10 @@ public class DataLakeConsumerIT extends Base {
 
     @BeforeAll
     public void setup() {
-        batchFileSystemName = RandomStringUtils.randomAlphabetic(5).toLowerCase(Locale.ROOT);
-        batchFileSystemName1 = RandomStringUtils.randomAlphabetic(5).toLowerCase(Locale.ROOT);
-        batchFileSystemName2 = RandomStringUtils.randomAlphabetic(5).toLowerCase(Locale.ROOT);
-        fileName = RandomStringUtils.randomAlphabetic(5);
+        batchFileSystemName = RandomStringUtils.secure().nextAlphabetic(5).toLowerCase(Locale.ROOT);
+        batchFileSystemName1 = RandomStringUtils.secure().nextAlphabetic(5).toLowerCase(Locale.ROOT);
+        batchFileSystemName2 = RandomStringUtils.secure().nextAlphabetic(5).toLowerCase(Locale.ROOT);
+        fileName = RandomStringUtils.secure().nextAlphabetic(5);
         fileSystemClient = serviceClient.getFileSystemClient(fileSystemName);
         batchFileSystemClient = serviceClient.getFileSystemClient(batchFileSystemName);
         batchFileSystemClient1 = serviceClient.getFileSystemClient(batchFileSystemName1);
@@ -217,7 +217,7 @@ public class DataLakeConsumerIT extends Base {
     }
 
     private String generateRandomFileName(String extension) {
-        return RandomStringUtils.randomAlphabetic(5).toLowerCase(Locale.ROOT) + "." + extension;
+        return RandomStringUtils.secure().nextAlphabetic(5).toLowerCase(Locale.ROOT) + "." + extension;
     }
 
 }

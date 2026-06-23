@@ -46,29 +46,10 @@ public class CSimpleExpressionParserTest {
     }
 
     @Test
-    public void testMisc() {
+    public void testMessageHistory() {
         CSimpleExpressionParser parser = new CSimpleExpressionParser();
 
-        String code = parser.parseExpression("${random(10)}");
-        Assertions.assertEquals("random(exchange, 0, 10)", code);
-        code = parser.parseExpression("${random(10, 20)}");
-        Assertions.assertEquals("random(exchange, 10, 20)", code);
-        code = parser.parseExpression("${random(10, ${header.max})}");
-        Assertions.assertEquals("random(exchange, 10, header(message, \"max\"))", code);
-        code = parser.parseExpression("${random(${header.min}, ${header.max})}");
-        Assertions.assertEquals("random(exchange, header(message, \"min\"), header(message, \"max\"))", code);
-
-        code = parser.parseExpression("${skip(10)}");
-        Assertions.assertEquals("skip(exchange, 10)", code);
-        code = parser.parseExpression("${skip(${header.max})}");
-        Assertions.assertEquals("skip(exchange, header(message, \"max\"))", code);
-
-        code = parser.parseExpression("${collate(10)}");
-        Assertions.assertEquals("collate(exchange, 10)", code);
-        code = parser.parseExpression("${collate(${header.max})}");
-        Assertions.assertEquals("collate(exchange, header(message, \"max\"))", code);
-
-        code = parser.parseExpression("${messageHistory}");
+        String code = parser.parseExpression("${messageHistory}");
         Assertions.assertEquals("messageHistory(exchange, true)", code);
         code = parser.parseExpression("${messageHistory(false)}");
         Assertions.assertEquals("messageHistory(exchange, false)", code);

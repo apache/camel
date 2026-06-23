@@ -19,38 +19,14 @@ package org.apache.camel.processor.aggregator;
 import org.apache.camel.AggregationStrategy;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.processor.aggregate.MemoryAggregationRepository;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 
 /**
  * Based on user forum issue
  */
-@DisabledIfSystemProperty(named = "ci.env.name", matches = ".*", disabledReason = "Flaky on GitHub Actions")
 public class AggregateLostGroupIssueTest extends ContextTestSupport {
-
-    private int messageIndex;
-    private MemoryAggregationRepository aggregationRepository;
-
-    @BeforeEach
-    public void setUp() throws Exception {
-        messageIndex = 0;
-        super.setUp();
-        getAggregationRepository().start();
-        context.getRouteController().startRoute("foo");
-    }
-
-    @AfterEach
-    public void tearDown() throws Exception {
-        context.getRouteController().stopRoute("foo");
-        getAggregationRepository().stop();
-        super.tearDown();
-    }
 
     @Test
     public void testAggregateLostGroupIssue() throws Exception {
@@ -59,14 +35,11 @@ public class AggregateLostGroupIssueTest extends ContextTestSupport {
         mock.message(0).body().isEqualTo("0,1,2,3,4,5,6,7,8,9");
         mock.message(1).body().isEqualTo("10,11,12,13,14,15,16,17,18,19");
 
-        assertMockEndpointsSatisfied();
-    }
-
-    protected synchronized MemoryAggregationRepository getAggregationRepository() {
-        if (aggregationRepository == null) {
-            aggregationRepository = new MemoryAggregationRepository();
+        for (int i = 0; i < 20; i++) {
+            template.sendBodyAndHeader("direct:aggregator", i, "aggregateGroup", "group1");
         }
-        return aggregationRepository;
+
+        assertMockEndpointsSatisfied();
     }
 
     @Override
@@ -74,14 +47,7 @@ public class AggregateLostGroupIssueTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("timer://foo?period=10&delay=0").id("foo").startupOrder(2).process(new Processor() {
-                    public void process(Exchange exchange) {
-                        exchange.getMessage().setBody(messageIndex++);
-                        exchange.getMessage().setHeader("aggregateGroup", "group1");
-                    }
-                }).to("direct:aggregator");
-
-                from("direct:aggregator").startupOrder(1).aggregate(header("aggregateGroup"), new AggregationStrategy() {
+                from("direct:aggregator").aggregate(header("aggregateGroup"), new AggregationStrategy() {
                     public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
                         if (oldExchange == null) {
                             return newExchange;
@@ -93,8 +59,8 @@ public class AggregateLostGroupIssueTest extends ContextTestSupport {
                         oldExchange.getIn().setBody(oldBody + "," + newBody);
                         return oldExchange;
                     }
-                }).aggregationRepository(getAggregationRepository())
-                        .completionSize(10).completionTimeout(500).completionTimeoutCheckerInterval(100).to("log:aggregated")
+                }).completionSize(10).completionTimeout(5000).completionTimeoutCheckerInterval(100)
+                        .to("log:aggregated")
                         .to("mock:result");
             }
         };

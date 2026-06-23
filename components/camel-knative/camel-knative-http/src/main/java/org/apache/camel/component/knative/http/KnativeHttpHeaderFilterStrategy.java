@@ -26,12 +26,5 @@ public class KnativeHttpHeaderFilterStrategy extends DefaultHeaderFilterStrategy
 
     protected final void initialize() {
         HttpUtil.addCommonFilters(getOutFilter());
-
-        setLowerCase(true);
-
-        // filter headers begin with "Camel" or "org.apache.camel"
-        // must ignore case for Http based transports
-        setOutFilterPattern("(?i)(Camel|org\\.apache\\.camel)[\\.|a-z|A-z|0-9]*");
-        setInFilterStartsWith(CAMEL_FILTER_STARTS_WITH);
     }
 }

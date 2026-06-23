@@ -17,6 +17,8 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
     @Override
     public ConstructNode resolve(String id) {
         switch(id) {
+            case "a2aSubTask": return new ModelDeserializers.A2ASubTaskDefinitionDeserializer();
+            case "org.apache.camel.model.A2ASubTaskDefinition": return new ModelDeserializers.A2ASubTaskDefinitionDeserializer();
             case "asn1": return new ModelDeserializers.ASN1DataFormatDeserializer();
             case "org.apache.camel.model.dataformat.ASN1DataFormat": return new ModelDeserializers.ASN1DataFormatDeserializer();
             case "aggregate": return new ModelDeserializers.AggregateDefinitionDeserializer();
@@ -165,6 +167,8 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "org.apache.camel.model.InterceptSendToEndpointDefinition": return new ModelDeserializers.InterceptSendToEndpointDefinitionDeserializer();
             case "iso8583": return new ModelDeserializers.Iso8583DataFormatDeserializer();
             case "org.apache.camel.model.dataformat.Iso8583DataFormat": return new ModelDeserializers.Iso8583DataFormatDeserializer();
+            case "jacksonXml": return new ModelDeserializers.JacksonXMLDataFormatDeserializer();
+            case "org.apache.camel.model.dataformat.JacksonXMLDataFormat": return new ModelDeserializers.JacksonXMLDataFormatDeserializer();
             case "java": return new ModelDeserializers.JavaExpressionDeserializer();
             case "org.apache.camel.model.language.JavaExpression": return new ModelDeserializers.JavaExpressionDeserializer();
             case "js": return new ModelDeserializers.JavaScriptExpressionDeserializer();

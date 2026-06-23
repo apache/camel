@@ -23,6 +23,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.kafka.integration.common.KafkaTestUtil;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -32,12 +33,12 @@ public class KafkaConsumerBatchSizeIT extends BaseKafkaTestSupport {
 
     public static final String TOPIC = "test-batch";
 
-    private org.apache.kafka.clients.producer.KafkaProducer<String, String> producer;
+    private KafkaProducer<String, String> producer;
 
     @BeforeEach
     public void before() {
         Properties props = getDefaultProperties();
-        producer = new org.apache.kafka.clients.producer.KafkaProducer<>(props);
+        producer = new KafkaProducer<>(props);
     }
 
     @AfterEach

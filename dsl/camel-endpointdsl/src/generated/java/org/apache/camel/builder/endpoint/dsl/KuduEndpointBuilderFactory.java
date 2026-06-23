@@ -214,7 +214,7 @@ public interface KuduEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final KuduHeaderNameBuilder INSTANCE = new KuduHeaderNameBuilder();
+        public static final KuduHeaderNameBuilder INSTANCE = new KuduHeaderNameBuilder();
 
         /**
          * The schema.

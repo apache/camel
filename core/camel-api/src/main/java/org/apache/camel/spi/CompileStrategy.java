@@ -16,14 +16,19 @@
  */
 package org.apache.camel.spi;
 
+import org.jspecify.annotations.Nullable;
+
 /**
  * Strategy for runtime compiled languages and DSLs.
+ *
+ * @since 4.3
  */
 public interface CompileStrategy {
 
     /**
      * Work directory for compiler. Can be used to write compiled classes or other resources.
      */
+    @Nullable
     String getWorkDir();
 
     /**

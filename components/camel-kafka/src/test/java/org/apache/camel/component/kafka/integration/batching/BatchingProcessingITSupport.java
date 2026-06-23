@@ -27,6 +27,7 @@ import org.apache.camel.Message;
 import org.apache.camel.component.kafka.KafkaConstants;
 import org.apache.camel.component.kafka.integration.BaseKafkaTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.junit.jupiter.api.BeforeEach;
 import org.slf4j.Logger;
@@ -46,12 +47,12 @@ abstract class BatchingProcessingITSupport extends BaseKafkaTestSupport {
     @EndpointInject("mock:resultBar")
     protected MockEndpoint toBar;
 
-    protected org.apache.kafka.clients.producer.KafkaProducer<String, String> producer;
+    protected KafkaProducer<String, String> producer;
 
     @BeforeEach
     public void createClient() {
         Properties props = getDefaultProperties();
-        producer = new org.apache.kafka.clients.producer.KafkaProducer<>(props);
+        producer = new KafkaProducer<>(props);
     }
 
     public void cleanupKafka(String topic) {

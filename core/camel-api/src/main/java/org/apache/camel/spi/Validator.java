@@ -16,24 +16,37 @@
  */
 package org.apache.camel.spi;
 
+import java.util.Objects;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Message;
 import org.apache.camel.ValidationException;
 import org.apache.camel.support.service.ServiceSupport;
+import org.jspecify.annotations.Nullable;
 
 /**
- * <a href="http://camel.apache.org/validator.html">Validator</a> performs message content validation according to the
- * declared data type. {@link org.apache.camel.processor.ContractAdvice} applies Validator if input/output type is
- * declared on a route with validation enabled.
+ * Validates message content against a declared {@link DataType}, as described in the
+ * <a href="https://camel.apache.org/manual/transformer.html">Transformer and Validator</a> documentation.
+ * <p/>
+ * When a route declares an {@code inputType} or {@code outputType} with {@code validate = true},
+ * {@link org.apache.camel.processor.ContractAdvice} invokes the registered {@code Validator} for that type before (or
+ * after) the route's main processing logic. If the message content does not satisfy the validator's rules, the
+ * validator should throw a {@link org.apache.camel.ValidationException} to signal the failure.
+ * <p/>
+ * Validators are registered in the {@link ValidatorRegistry} keyed by their target {@link DataType}. Custom validators
+ * extend this abstract class and are registered via the DSL (e.g., {@code inputType} / {@code outputType} with
+ * {@code validate = true}), which wires them through {@link org.apache.camel.model.ValidatorDefinition} during route
+ * startup.
  *
- * @see {@link org.apache.camel.processor.ContractAdvice} {@link org.apache.camel.model.InputTypeDefinition}
- *      {@link org.apache.camel.model.OutputTypeDefinition}
+ * @see ValidatorRegistry
+ * @see DataType
+ * @see org.apache.camel.model.ValidatorDefinition
  */
 public abstract class Validator extends ServiceSupport implements CamelContextAware {
 
-    private CamelContext camelContext;
-    private DataType type;
+    private @Nullable CamelContext camelContext;
+    private @Nullable DataType type;
 
     /**
      * Perform data validation with specified type.
@@ -47,7 +60,7 @@ public abstract class Validator extends ServiceSupport implements CamelContextAw
     /**
      * Get 'from' data type.
      */
-    public DataType getType() {
+    public @Nullable DataType getType() {
         return type;
     }
 
@@ -57,18 +70,19 @@ public abstract class Validator extends ServiceSupport implements CamelContextAw
      * @param type data type
      */
     public Validator setType(String type) {
+        Objects.requireNonNull(type, "type");
         this.type = new DataType(type);
         return this;
     }
 
     @Override
-    public CamelContext getCamelContext() {
+    public @Nullable CamelContext getCamelContext() {
         return this.camelContext;
     }
 
     @Override
     public void setCamelContext(CamelContext context) {
-        this.camelContext = context;
+        this.camelContext = Objects.requireNonNull(context, "context");
     }
 
     @Override

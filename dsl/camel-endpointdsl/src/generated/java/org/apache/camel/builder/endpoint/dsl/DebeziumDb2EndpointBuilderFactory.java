@@ -464,7 +464,7 @@ public interface DebeziumDb2EndpointBuilderFactory {
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Default:
-         * .*secret$|.*password$|.*sasl\.jaas\.config$|.*basic\.auth\.user\.info|.*registry\.auth\.client-secret
+         * .*secret$|.*password$|.*sasl\.jaas\.config$|.*basic\.auth\.user\.info|.*registry\.auth\.client-secret|.*credentials\.json$
          * Group: db2
          * 
          * @param customSanitizePattern the value to set
@@ -2418,7 +2418,7 @@ public interface DebeziumDb2EndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final DebeziumDb2HeaderNameBuilder INSTANCE = new DebeziumDb2HeaderNameBuilder();
+        public static final DebeziumDb2HeaderNameBuilder INSTANCE = new DebeziumDb2HeaderNameBuilder();
 
         /**
          * The metadata about the source event, for example table name, database

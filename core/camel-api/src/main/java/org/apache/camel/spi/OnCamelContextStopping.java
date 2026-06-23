@@ -19,9 +19,24 @@ package org.apache.camel.spi;
 import org.apache.camel.CamelContext;
 
 /**
- * Notification on stopping a {@link CamelContext}.
+ * Event handler invoked while the {@link CamelContext} is stopping, before it has fully stopped.
+ * <p/>
+ * Implementations are registered in the {@link Registry} and discovered by Camel during bootstrap. This callback fires
+ * as the context begins shutting down its routes and services, suiting cleanup that must run while the context is still
+ * partly operational. For the full set of lifecycle callbacks see {@link OnCamelContextEvent}.
+ * <p/>
+ * See <a href="https://camel.apache.org/manual/lifecycle.html">Lifecycle</a> in the Camel user manual.
+ *
+ * @see   OnCamelContextEvent
+ * @since 3.5
  */
 @FunctionalInterface
 public interface OnCamelContextStopping extends OnCamelContextEvent {
+
+    /**
+     * Callback invoked while the {@link CamelContext} is stopping.
+     *
+     * @param context the camel context
+     */
     void onContextStopping(CamelContext context);
 }

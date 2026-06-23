@@ -40,9 +40,23 @@ import com.networknt.schema.SpecificationVersion;
 public class YamlValidator {
 
     private static final String LOCATION = "/schema/camelYamlDsl.json";
+    private static final String LOCATION_CANONICAL = "/schema/camelYamlDsl-canonical.json";
 
     private final ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
+    private final boolean canonical;
     private Schema schema;
+
+    public YamlValidator() {
+        this(false);
+    }
+
+    public YamlValidator(boolean canonical) {
+        this.canonical = canonical;
+    }
+
+    public boolean isCanonical() {
+        return canonical;
+    }
 
     public List<Error> validate(File file) throws Exception {
         if (schema == null) {
@@ -61,7 +75,8 @@ public class YamlValidator {
     }
 
     public void init() throws Exception {
-        var model = mapper.readTree(YamlValidator.class.getResourceAsStream(LOCATION));
+        String location = canonical ? LOCATION_CANONICAL : LOCATION;
+        var model = mapper.readTree(YamlValidator.class.getResourceAsStream(location));
         var version = getSpecificationVersion(model).orElse(SpecificationVersion.DRAFT_4);
         var config = SchemaRegistryConfig.builder().locale(Locale.ENGLISH).build();
 
@@ -69,7 +84,7 @@ public class YamlValidator {
                 builder -> builder.schemaRegistryConfig(config));
 
         // Use a proper URI for the schema location to ensure $ref resolution works
-        var schemaLocation = SchemaLocation.of(LOCATION);
+        var schemaLocation = SchemaLocation.of(location);
         schema = schemaRegistry.getSchema(schemaLocation, model);
     }
 

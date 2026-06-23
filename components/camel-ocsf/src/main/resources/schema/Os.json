@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://schema.ocsf.io/1.7.0/objects/os",
+  "$id": "https://schema.ocsf.io/1.8.0/objects/os",
   "title": "Os",
   "type": "object",
   "javaType": "org.apache.camel.dataformat.ocsf.model.Os",
@@ -26,13 +26,13 @@
       "type": "string",
       "title": "Country"
     },
-    "type_id": {
-      "type": "integer",
-      "title": "Type ID"
-    },
     "lang": {
       "type": "string",
       "title": "Language"
+    },
+    "type_id": {
+      "type": "integer",
+      "title": "Type ID"
     },
     "cpe_name": {
       "type": "string",

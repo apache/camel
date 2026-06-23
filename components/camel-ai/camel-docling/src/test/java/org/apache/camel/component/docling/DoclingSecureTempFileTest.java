@@ -29,6 +29,7 @@ import java.util.Set;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.support.SynchronizationAdapter;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIf;
@@ -97,7 +98,7 @@ class DoclingSecureTempFileTest extends CamelTestSupport {
         // Use a Synchronization to capture directory permissions before cleanup
         Exchange exchange = createExchangeWithBody("Text content for permission test");
         exchange.getExchangeExtension().addOnCompletion(
-                new org.apache.camel.support.SynchronizationAdapter() {
+                new SynchronizationAdapter() {
                     @Override
                     public void onDone(Exchange exchange) {
                         // Check all docling dirs created during this exchange

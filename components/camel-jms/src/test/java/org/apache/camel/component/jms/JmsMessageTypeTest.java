@@ -20,6 +20,8 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
+import jakarta.jms.ConnectionFactory;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.Exchange;
@@ -51,6 +53,14 @@ public class JmsMessageTypeTest extends AbstractJMSTest {
     @Override
     protected String getComponentName() {
         return "jms";
+    }
+
+    @Override
+    protected JmsComponent setupComponent(
+            CamelContext camelContext, ConnectionFactory connectionFactory, String componentName) {
+        JmsComponent component = super.setupComponent(camelContext, connectionFactory, componentName);
+        component.setObjectMessageEnabled(true);
+        return component;
     }
 
     @ContextFixture

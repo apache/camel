@@ -28,6 +28,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.dataformat.bindy.annotation.ContinueOnFailure;
 import org.apache.camel.dataformat.bindy.annotation.Link;
 import org.apache.camel.dataformat.bindy.annotation.OneToMany;
 import org.apache.camel.support.ObjectHelper;
@@ -50,6 +51,7 @@ public abstract class BindyAbstractFactory implements BindyFactory {
     private String locale;
     private Class<?> type;
     private boolean defaultValueStringAsNull;
+    protected boolean continueParseOnFailure;
 
     protected BindyAbstractFactory(Class<?> type) throws Exception {
         this.type = type;
@@ -202,6 +204,39 @@ public abstract class BindyAbstractFactory implements BindyFactory {
         }
 
         return Integer.valueOf(keyGenerated);
+    }
+
+    protected boolean shouldContinueOnFailure(ContinueOnFailure fieldOpinion) {
+        return switch (fieldOpinion) {
+            case TRUE -> true;
+            case FALSE -> false;
+            case INHERIT -> continueParseOnFailure;
+        };
+    }
+
+    /**
+     * Parse a single field value with optional tolerance for failures.
+     *
+     * If parsing succeeds, returns the parsed value. If it fails and {@code continueOnFailure} is false, the original
+     * exception is rethrown so the caller can wrap it with position/line context (this is the existing fail-fast
+     * behavior). If it fails and {@code continueOnFailure} is true, returns the field's {@code defaultValue} parsed
+     * through the same Format, or — if no defaultValue is set — the type-appropriate default from
+     * {@link #getDefaultValueForPrimitive}.
+     */
+    protected Object parseField(
+            Format format, String string, boolean continueOnFailure, Class<?> fieldType, String defaultValue)
+            throws Exception {
+        try {
+            return format.parse(string);
+        } catch (Exception e) {
+            if (!continueOnFailure) {
+                throw e;
+            }
+            if (!defaultValue.isEmpty()) {
+                return format.parse(defaultValue);
+            }
+            return getDefaultValueForPrimitive(fieldType, isDefaultValueStringAsNull());
+        }
     }
 
     private static NumberFormat getNumberFormat() {

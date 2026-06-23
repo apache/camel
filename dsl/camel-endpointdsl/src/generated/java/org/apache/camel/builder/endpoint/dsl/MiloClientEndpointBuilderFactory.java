@@ -2330,7 +2330,7 @@ public interface MiloClientEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final MiloClientHeaderNameBuilder INSTANCE = new MiloClientHeaderNameBuilder();
+        public static final MiloClientHeaderNameBuilder INSTANCE = new MiloClientHeaderNameBuilder();
 
         /**
          * The node ids.
@@ -2351,10 +2351,10 @@ public interface MiloClientEndpointBuilderFactory {
          * 
          * Group: producer
          * 
-         * @return the name of the header {@code await}.
+         * @return the name of the header {@code MiloAwait}.
          */
-        public String await() {
-            return "await";
+        public String miloAwait() {
+            return "CamelMiloAwait";
         }
     }
     static MiloClientEndpointBuilder endpointBuilder(String componentName, String path) {

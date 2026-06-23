@@ -43,9 +43,9 @@ public class SmbConfiguration extends GenericFileConfiguration {
     private String shareName;
     @UriPath(description = "The base directory within the share")
     private String path;
-    @UriParam(label = "security", description = "The username required to access the share", secret = true)
+    @UriParam(label = "security", description = "The username required to access the share", security = "secret")
     private String username;
-    @UriParam(label = "security", description = "The password to access the share", secret = true)
+    @UriParam(label = "security", description = "The password to access the share", security = "secret")
     private String password;
     @UriParam(label = "security", description = "The user domain")
     private String domain;

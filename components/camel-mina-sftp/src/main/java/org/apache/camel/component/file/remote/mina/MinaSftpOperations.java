@@ -65,6 +65,7 @@ import org.apache.sshd.common.cipher.Cipher;
 import org.apache.sshd.common.compression.BuiltinCompressions;
 import org.apache.sshd.common.config.keys.OpenSshCertificate;
 import org.apache.sshd.common.kex.BuiltinDHFactories;
+import org.apache.sshd.common.kex.KexProposalOption;
 import org.apache.sshd.common.kex.KeyExchangeFactory;
 import org.apache.sshd.common.signature.BuiltinSignatures;
 import org.apache.sshd.common.signature.Signature;
@@ -743,10 +744,10 @@ public class MinaSftpOperations implements RemoteFileOperations<SftpRemoteFile> 
         try {
             // Get the negotiated compression algorithms (client-to-server and server-to-client)
             String c2sCompression = session.getKexState() != null
-                    ? session.getNegotiatedKexParameter(org.apache.sshd.common.kex.KexProposalOption.C2SCOMP)
+                    ? session.getNegotiatedKexParameter(KexProposalOption.C2SCOMP)
                     : null;
             String s2cCompression = session.getKexState() != null
-                    ? session.getNegotiatedKexParameter(org.apache.sshd.common.kex.KexProposalOption.S2CCOMP)
+                    ? session.getNegotiatedKexParameter(KexProposalOption.S2CCOMP)
                     : null;
 
             boolean compressionNone = "none".equals(c2sCompression) || "none".equals(s2cCompression);

@@ -21,13 +21,15 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Traceable;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.RouteIdAware;
+import org.apache.camel.spi.StepIdAware;
 
 /**
  * A processor which removes one ore more headers from the IN or OUT message
  */
-public class RemoveHeadersProcessor extends BaseProcessorSupport implements Traceable, IdAware, RouteIdAware {
+public class RemoveHeadersProcessor extends BaseProcessorSupport implements Traceable, IdAware, RouteIdAware, StepIdAware {
     private String id;
     private String routeId;
+    private String stepId;
     private final String pattern;
     private final String[] excludePattern;
 
@@ -76,6 +78,16 @@ public class RemoveHeadersProcessor extends BaseProcessorSupport implements Trac
     @Override
     public void setRouteId(String routeId) {
         this.routeId = routeId;
+    }
+
+    @Override
+    public String getStepId() {
+        return stepId;
+    }
+
+    @Override
+    public void setStepId(String stepId) {
+        this.stepId = stepId;
     }
 
     public String getPattern() {

@@ -20,6 +20,8 @@ import org.apache.camel.StaticService;
 
 /**
  * Strategy for dumping routes during startup dump all loaded routes (incl rests and route templates).
+ *
+ * @since 4.1
  */
 public interface DumpRoutesStrategy extends StaticService {
 
@@ -31,7 +33,7 @@ public interface DumpRoutesStrategy extends StaticService {
     /**
      * Dump routes
      *
-     * @param format xml or yaml
+     * @param format xml, yaml, or java (json for route structure)
      */
     void dumpRoutes(String format);
 
@@ -84,5 +86,23 @@ public interface DumpRoutesStrategy extends StaticService {
      * generated names.
      */
     void setOutput(String output);
+
+    boolean isTopology();
+
+    /**
+     * Whether to also dump route topology diagram when dumping route diagrams. Default is true.
+     *
+     * @since 4.21
+     */
+    void setTopology(boolean topology);
+
+    boolean isTopologyExternal();
+
+    /**
+     * Whether to include external systems (kafka, http, etc.) in the topology diagram. Default is true.
+     *
+     * @since 4.21
+     */
+    void setTopologyExternal(boolean topologyExternal);
 
 }

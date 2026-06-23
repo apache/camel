@@ -17,7 +17,6 @@
 package org.apache.camel.impl.console;
 
 import java.io.LineNumberReader;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -35,6 +34,7 @@ import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.console.AbstractDevConsole;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StringHelper;
+import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 
 @DevConsole(name = "source", description = "Dump route source code")
@@ -104,7 +104,7 @@ public class SourceDevConsole extends AbstractDevConsole {
     @Override
     protected JsonObject doCallJson(Map<String, Object> options) {
         final JsonObject root = new JsonObject();
-        final List<JsonObject> list = new ArrayList<>();
+        final JsonArray list = new JsonArray();
 
         Function<ManagedRouteMBean, Object> task = mrb -> {
             JsonObject jo = new JsonObject();
@@ -117,7 +117,7 @@ public class SourceDevConsole extends AbstractDevConsole {
             }
 
             String loc = mrb.getSourceLocation();
-            List<JsonObject> code = ConsoleHelper.loadSourceAsJson(getCamelContext(), loc);
+            JsonArray code = ConsoleHelper.loadSourceAsJson(getCamelContext(), loc);
             if (code != null) {
                 jo.put("code", code);
             }

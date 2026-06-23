@@ -21,6 +21,7 @@ import java.util.Map;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.*;
+import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.HeaderFilterStrategyComponent;
 import org.apache.camel.util.FileUtil;
@@ -31,7 +32,7 @@ import org.apache.camel.util.URISupport;
 /**
  * Rest component.
  */
-@org.apache.camel.spi.annotations.Component("rest")
+@Component("rest")
 @Metadata(label = "verifiers", enums = "parameters,connectivity")
 public class RestComponent extends HeaderFilterStrategyComponent {
 

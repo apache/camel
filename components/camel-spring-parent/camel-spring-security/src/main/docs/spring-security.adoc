@@ -6,8 +6,6 @@
 :since: 2.3
 :supportlevel: Stable
 :tabs-sync-option:
-//Manually maintained attributes
-:camel-spring-boot-name: spring-security
 
 *Since Camel {since}*
 
@@ -72,6 +70,7 @@ are required to use this component. Here is an example of how to
 configure these objects in Spring XML using the Spring Security
 namespace:
 
+._XML-only: Spring Security authentication and authorization manager configuration_
 [source,xml]
 ----
 <beans xmlns="http://www.springframework.org/schema/beans"
@@ -100,6 +99,7 @@ Now that the underlying security objects are set up, we can use them to
 configure an authorization policy and use that policy to control access
 to a route:
 
+._XML-only: Spring XML authorization policy with Camel route_
 [source,xml]
 ----
 <beans xmlns="http://www.springframework.org/schema/beans"
@@ -151,6 +151,7 @@ are collected, they need to be placed in the In message or the
 `SecurityContextHolder` so the Camel xref:spring-security.adoc[Spring
 Security] component can access them:
 
+._Java-only: extracting credentials from HTTP header and creating a Subject_
 [source,java]
 ----
 import javax.security.auth.Subject;
@@ -219,6 +220,22 @@ The `CamelAuthorizationException` will have a reference to the ID of the
 policy which threw the exception, so you can handle errors based on the
 policy as well as the type of exception:
 
+[tabs]
+====
+Java::
++
+[source,java]
+----
+onException(AccessDeniedException.class)
+    .choice()
+        .when(simple("${exception.policyId} == 'user'"))
+            .transform(constant("You do not have ROLE_USER access!"))
+        .when(simple("${exception.policyId} == 'admin'"))
+            .transform(constant("You do not have ROLE_ADMIN access!"));
+----
+
+XML::
++
 [source,xml]
 ----
 <onException>
@@ -240,4 +257,23 @@ policy as well as the type of exception:
 </onException>
 ----
 
-include::spring-boot:partial$starter.adoc[]
+YAML::
++
+[source,yaml]
+----
+- onException:
+    exception:
+      - org.springframework.security.authentication.AccessDeniedException
+    steps:
+      - choice:
+          when:
+            - simple: "${exception.policyId} == 'user'"
+              steps:
+                - transform:
+                    constant: "You do not have ROLE_USER access!"
+            - simple: "${exception.policyId} == 'admin'"
+              steps:
+                - transform:
+                    constant: "You do not have ROLE_ADMIN access!"
+----
+====

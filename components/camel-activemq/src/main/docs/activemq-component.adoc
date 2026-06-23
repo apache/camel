@@ -7,8 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
-//Manually maintained attributes
-:camel-spring-boot-name: activemq
 
 *Since Camel {since}*
 
@@ -69,21 +67,78 @@ You'll need to provide a connectionFactory to the ActiveMQ Component, to have th
 
 === Producer Example
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
+----
 from("timer:mytimer?period=5000")
-        .setBody(constant("HELLO from Camel!"))
-        .to("activemq:queue:HELLO.WORLD");
---------------------------------------------------------------------------------
+    .setBody(constant("HELLO from Camel!"))
+    .to("activemq:queue:HELLO.WORLD");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="timer:mytimer?period=5000"/>
+  <setBody>
+    <constant>HELLO from Camel!</constant>
+  </setBody>
+  <to uri="activemq:queue:HELLO.WORLD"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: timer:mytimer
+      parameters:
+        period: 5000
+      steps:
+        - setBody:
+            constant: "HELLO from Camel!"
+        - to:
+            uri: activemq:queue:HELLO.WORLD
+----
+====
 
 === Consumer Example
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
+----
 from("activemq:queue:HELLO.WORLD")
-        .log("Received a message - ${body}");
---------------------------------------------------------------------------------
+    .log("Received a message - ${body}");
+----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="activemq:queue:HELLO.WORLD"/>
+  <log message="Received a message - ${body}"/>
+</route>
+----
 
-
-include::spring-boot:partial$starter.adoc[]
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: activemq:queue:HELLO.WORLD
+      steps:
+        - log:
+            message: "Received a message - ${body}"
+----
+====

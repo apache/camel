@@ -801,6 +801,50 @@ public interface AS2EndpointBuilderFactory {
             return this;
         }
         /**
+         * Whether to reject an inbound signed AS2 message that cannot be
+         * verified because no validateSigningCertificateChain is configured
+         * (server only). When false (default), such a message is delivered
+         * after logging a warning, preserving the previous behaviour. When
+         * true, the message is rejected instead of being delivered without
+         * verifying its signature. Has no effect when
+         * validateSigningCertificateChain is set (signatures are always
+         * validated then) or for unsigned messages.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param signatureVerificationRequired the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointConsumerBuilder signatureVerificationRequired(boolean signatureVerificationRequired) {
+            doSetProperty("signatureVerificationRequired", signatureVerificationRequired);
+            return this;
+        }
+        /**
+         * Whether to reject an inbound signed AS2 message that cannot be
+         * verified because no validateSigningCertificateChain is configured
+         * (server only). When false (default), such a message is delivered
+         * after logging a warning, preserving the previous behaviour. When
+         * true, the message is rejected instead of being delivered without
+         * verifying its signature. Has no effect when
+         * validateSigningCertificateChain is set (signatures are always
+         * validated then) or for unsigned messages.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param signatureVerificationRequired the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointConsumerBuilder signatureVerificationRequired(String signatureVerificationRequired) {
+            doSetProperty("signatureVerificationRequired", signatureVerificationRequired);
+            return this;
+        }
+        /**
          * The list of algorithms, in order of preference, requested to generate
          * a message integrity check (MIC) returned in message disposition
          * notification (MDN). Multiple algorithms can be separated by comma.
@@ -1872,6 +1916,50 @@ public interface AS2EndpointBuilderFactory {
             return this;
         }
         /**
+         * Whether to reject an inbound signed AS2 message that cannot be
+         * verified because no validateSigningCertificateChain is configured
+         * (server only). When false (default), such a message is delivered
+         * after logging a warning, preserving the previous behaviour. When
+         * true, the message is rejected instead of being delivered without
+         * verifying its signature. Has no effect when
+         * validateSigningCertificateChain is set (signatures are always
+         * validated then) or for unsigned messages.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param signatureVerificationRequired the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointProducerBuilder signatureVerificationRequired(boolean signatureVerificationRequired) {
+            doSetProperty("signatureVerificationRequired", signatureVerificationRequired);
+            return this;
+        }
+        /**
+         * Whether to reject an inbound signed AS2 message that cannot be
+         * verified because no validateSigningCertificateChain is configured
+         * (server only). When false (default), such a message is delivered
+         * after logging a warning, preserving the previous behaviour. When
+         * true, the message is rejected instead of being delivered without
+         * verifying its signature. Has no effect when
+         * validateSigningCertificateChain is set (signatures are always
+         * validated then) or for unsigned messages.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param signatureVerificationRequired the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointProducerBuilder signatureVerificationRequired(String signatureVerificationRequired) {
+            doSetProperty("signatureVerificationRequired", signatureVerificationRequired);
+            return this;
+        }
+        /**
          * The list of algorithms, in order of preference, requested to generate
          * a message integrity check (MIC) returned in message disposition
          * notification (MDN). Multiple algorithms can be separated by comma.
@@ -2881,6 +2969,50 @@ public interface AS2EndpointBuilderFactory {
          */
         default AS2EndpointBuilder password(String password) {
             doSetProperty("password", password);
+            return this;
+        }
+        /**
+         * Whether to reject an inbound signed AS2 message that cannot be
+         * verified because no validateSigningCertificateChain is configured
+         * (server only). When false (default), such a message is delivered
+         * after logging a warning, preserving the previous behaviour. When
+         * true, the message is rejected instead of being delivered without
+         * verifying its signature. Has no effect when
+         * validateSigningCertificateChain is set (signatures are always
+         * validated then) or for unsigned messages.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param signatureVerificationRequired the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointBuilder signatureVerificationRequired(boolean signatureVerificationRequired) {
+            doSetProperty("signatureVerificationRequired", signatureVerificationRequired);
+            return this;
+        }
+        /**
+         * Whether to reject an inbound signed AS2 message that cannot be
+         * verified because no validateSigningCertificateChain is configured
+         * (server only). When false (default), such a message is delivered
+         * after logging a warning, preserving the previous behaviour. When
+         * true, the message is rejected instead of being delivered without
+         * verifying its signature. Has no effect when
+         * validateSigningCertificateChain is set (signatures are always
+         * validated then) or for unsigned messages.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param signatureVerificationRequired the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointBuilder signatureVerificationRequired(String signatureVerificationRequired) {
+            doSetProperty("signatureVerificationRequired", signatureVerificationRequired);
             return this;
         }
         /**

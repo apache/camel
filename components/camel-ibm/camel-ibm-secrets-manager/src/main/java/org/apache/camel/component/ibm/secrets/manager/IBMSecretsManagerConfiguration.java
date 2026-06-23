@@ -30,7 +30,7 @@ public class IBMSecretsManagerConfiguration implements Cloneable {
     private String label;
     @UriParam
     private String serviceUrl;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String token;
     @UriParam(label = "producer")
     private IBMSecretsManagerOperation operation = IBMSecretsManagerOperation.createArbitrarySecret;

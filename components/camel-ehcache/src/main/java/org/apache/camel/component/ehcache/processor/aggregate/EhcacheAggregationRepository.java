@@ -51,7 +51,7 @@ public class EhcacheAggregationRepository extends ServiceSupport implements Reco
     private String cacheName;
     private Cache<String, DefaultExchangeHolder> cache;
 
-    @Metadata(label = "advanced",
+    @Metadata(label = "advanced", security = "insecure:serialization",
               description = "Whether headers on the Exchange that are Java objects and Serializable should be included and saved to the repository")
     private boolean allowSerializedHeaders;
     @Metadata(description = "Whether or not recovery is enabled", defaultValue = "true")

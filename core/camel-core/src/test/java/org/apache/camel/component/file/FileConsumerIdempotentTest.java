@@ -57,6 +57,10 @@ public class FileConsumerIdempotentTest extends ContextTestSupport {
 
         oneExchangeDone.matchesWaitTime();
 
+        // wait for the file to be fully post-processed (moved to done/ and idempotent key committed)
+        Awaitility.await().atMost(5, TimeUnit.SECONDS)
+                .until(() -> Files.exists(testFile("done/report.txt")));
+
         // reset mock and set new expectations
         mock.reset();
         mock.expectedMessageCount(0);
@@ -66,7 +70,8 @@ public class FileConsumerIdempotentTest extends ContextTestSupport {
 
         // should NOT consume the file again, let a bit time pass to let the
         // consumer try to consume it but it should not
-        Awaitility.await().pollDelay(100, TimeUnit.MILLISECONDS).untilAsserted(() -> assertMockEndpointsSatisfied());
+        Awaitility.await().pollDelay(1, TimeUnit.SECONDS).atMost(2, TimeUnit.SECONDS)
+                .untilAsserted(() -> assertMockEndpointsSatisfied());
 
         FileEndpoint fe = context.getEndpoint(fileUri(), FileEndpoint.class);
         assertNotNull(fe);

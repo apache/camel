@@ -9,7 +9,6 @@
 :component-header: Only producer is supported
 //Manually maintained attributes
 :group: OpenStack
-:camel-spring-boot-name: openstack
 
 *Since Camel {since}*
 
@@ -101,4 +100,3 @@ or `org.openstack4j.model.storage.object.options.ContainerListOptions` for listi
 
 |=========================================================================
 
-include::spring-boot:partial$starter.adoc[]

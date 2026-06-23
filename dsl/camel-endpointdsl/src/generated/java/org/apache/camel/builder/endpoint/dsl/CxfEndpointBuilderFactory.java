@@ -2644,7 +2644,7 @@ public interface CxfEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final CxfHeaderNameBuilder INSTANCE = new CxfHeaderNameBuilder();
+        public static final CxfHeaderNameBuilder INSTANCE = new CxfHeaderNameBuilder();
 
         /**
          * The name of the operation.
@@ -2653,10 +2653,10 @@ public interface CxfEndpointBuilderFactory {
          * 
          * Group: common
          * 
-         * @return the name of the header {@code operationName}.
+         * @return the name of the header {@code CxfOperationName}.
          */
-        public String operationName() {
-            return "operationName";
+        public String cxfOperationName() {
+            return "CamelCxfOperationName";
         }
         /**
          * The operation namespace.
@@ -2665,10 +2665,10 @@ public interface CxfEndpointBuilderFactory {
          * 
          * Group: common
          * 
-         * @return the name of the header {@code operationNamespace}.
+         * @return the name of the header {@code CxfOperationNamespace}.
          */
-        public String operationNamespace() {
-            return "operationNamespace";
+        public String cxfOperationNamespace() {
+            return "CamelCxfOperationNamespace";
         }
         /**
          * The destination override url.

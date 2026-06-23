@@ -255,6 +255,8 @@ public class PackageLanguageMojo extends AbstractGeneratorMojo {
             option.setDeprecated(opt.isDeprecated());
             option.setDeprecationNote(opt.getDeprecationNote());
             option.setSecret(opt.isSecret());
+            option.setSecurity(opt.getSecurity());
+            option.setInsecureValue(opt.getInsecureValue());
             option.setDefaultValue(opt.getDefaultValue());
             option.setDefaultValueNote(opt.getDefaultValueNote());
             option.setAsPredicate(opt.isAsPredicate());
@@ -276,6 +278,24 @@ public class PackageLanguageMojo extends AbstractGeneratorMojo {
                             && field.isAnnotationPresent(Metadata.class)) {
                         try {
                             addFunction(model, field);
+                        } catch (Exception e) {
+                            getLog().warn(e);
+                        }
+                    }
+                }
+            }
+        }
+
+        // read class and find operatorsClass and add each field as an operator in the model
+        if (lan.operatorsClass() != void.class) {
+            classElement = loadClass(lan.operatorsClass().getName());
+            if (classElement != null) {
+                for (Field field : classElement.getFields()) {
+                    final boolean isEnum = classElement.isEnum();
+                    if ((isEnum || isStatic(field.getModifiers()) && field.getType() == String.class)
+                            && field.isAnnotationPresent(Metadata.class)) {
+                        try {
+                            addOperator(model, field);
                         } catch (Exception e) {
                             getLog().warn(e);
                         }
@@ -330,6 +350,12 @@ public class PackageLanguageMojo extends AbstractGeneratorMojo {
         fun.setDeprecated(field.isAnnotationPresent(Deprecated.class));
         fun.setDeprecationNote(metadata.deprecationNote());
         fun.setSecret(metadata.secret());
+        String sec = metadata.security();
+        if (Strings.isNullOrEmpty(sec) && metadata.secret()) {
+            sec = "secret";
+        }
+        fun.setSecurity(sec);
+        fun.setInsecureValue(metadata.insecureValue());
         String label = metadata.label();
         boolean ognl = false;
         if (label.contains(",ognl")) {
@@ -340,7 +366,83 @@ public class PackageLanguageMojo extends AbstractGeneratorMojo {
         fun.setGroup(group);
         fun.setLabel(label);
         fun.setOgnl(ognl);
+        // parse examples from @Metadata.examples()
+        if (metadata.examples() != null) {
+            for (String ex : metadata.examples()) {
+                if (!Strings.isNullOrEmpty(ex)) {
+                    fun.addExample(ex.trim());
+                }
+            }
+        }
+        // parse param= entries from field-level @Metadata.annotations()
+        if (metadata.annotations() != null) {
+            for (String s : metadata.annotations()) {
+                if (s.startsWith("param=")) {
+                    LanguageModel.FunctionParamModel param = parseParam(s.substring(6));
+                    if (param != null) {
+                        fun.addParam(param);
+                    }
+                }
+            }
+        }
         model.addFunction(fun);
+    }
+
+    private void addOperator(LanguageModel model, Field field) throws Exception {
+        final Metadata metadata = field.getAnnotation(Metadata.class);
+        LanguageModel.LanguageOperatorModel op = new LanguageModel.LanguageOperatorModel();
+        op.setConstantName(String.format("%s#%s", field.getDeclaringClass().getName(), field.getName()));
+        op.setName((String) field.get(null));
+        op.setDescription(metadata.description().trim());
+        op.setKind("operator");
+        String displayName = metadata.displayName();
+        if (Strings.isNullOrEmpty(displayName)) {
+            displayName = Strings.asTitle(field.getName().replace('_', ' ').toLowerCase());
+        }
+        op.setDisplayName(displayName);
+        op.setDeprecated(field.isAnnotationPresent(Deprecated.class));
+        op.setDeprecationNote(metadata.deprecationNote());
+        op.setLabel(metadata.label());
+        if (metadata.examples() != null) {
+            for (String ex : metadata.examples()) {
+                if (!Strings.isNullOrEmpty(ex)) {
+                    op.addExample(ex.trim());
+                }
+            }
+        }
+        if (metadata.annotations() != null) {
+            for (String s : metadata.annotations()) {
+                if (s.startsWith("kind=")) {
+                    op.setOperatorKind(s.substring(5));
+                } else if (s.startsWith("syntax=")) {
+                    op.setOperatorSyntax(s.substring(7));
+                } else if (s.startsWith("precedence=")) {
+                    op.setPrecedence(Integer.parseInt(s.substring(11)));
+                }
+            }
+        }
+        model.addOperator(op);
+    }
+
+    private static LanguageModel.FunctionParamModel parseParam(String value) {
+        // format: name:javaType:required|optional:defaultValue:description
+        String[] parts = value.split(":", 5);
+        if (parts.length < 2) {
+            return null;
+        }
+        LanguageModel.FunctionParamModel param = new LanguageModel.FunctionParamModel();
+        param.setName(parts[0].trim());
+        param.setJavaType(parts[1].trim());
+        if (parts.length > 2) {
+            param.setRequired("required".equalsIgnoreCase(parts[2].trim()));
+        }
+        if (parts.length > 3 && !parts[3].trim().isEmpty()) {
+            param.setDefaultValue(parts[3].trim());
+        }
+        if (parts.length > 4) {
+            param.setDescription(parts[4].trim());
+        }
+        return param;
     }
 
     private static String readClassFromCamelResource(File file, StringBuilder buffer, BuildContext buildContext)

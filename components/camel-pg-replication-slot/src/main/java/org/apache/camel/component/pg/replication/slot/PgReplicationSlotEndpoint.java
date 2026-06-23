@@ -67,7 +67,7 @@ public class PgReplicationSlotEndpoint extends ScheduledPollEndpoint {
     private String outputPlugin;
     @UriParam(description = "Postgres user", label = "common", defaultValue = "postgres")
     private String user = "postgres";
-    @UriParam(description = "Postgres password", label = "common", secret = true)
+    @UriParam(description = "Postgres password", label = "common", security = "secret")
     private String password;
     @UriParam(label = "advanced", defaultValue = "10")
     private Integer statusInterval = 10;

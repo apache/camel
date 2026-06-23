@@ -23,6 +23,7 @@ import org.apache.camel.Message;
 import org.apache.camel.Traceable;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.RouteIdAware;
+import org.apache.camel.spi.StepIdAware;
 import org.apache.camel.support.DefaultMessage;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -30,10 +31,11 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * A processor which sets the body on the OUT message with an {@link Expression}.
  */
-public class TransformProcessor extends BaseProcessorSupport implements Traceable, IdAware, RouteIdAware {
+public class TransformProcessor extends BaseProcessorSupport implements Traceable, IdAware, RouteIdAware, StepIdAware {
 
     private String id;
     private String routeId;
+    private String stepId;
     private final Expression expression;
 
     public TransformProcessor(Expression expression) {
@@ -110,6 +112,16 @@ public class TransformProcessor extends BaseProcessorSupport implements Traceabl
     @Override
     public void setRouteId(String routeId) {
         this.routeId = routeId;
+    }
+
+    @Override
+    public String getStepId() {
+        return stepId;
+    }
+
+    @Override
+    public void setStepId(String stepId) {
+        this.stepId = stepId;
     }
 
     public Expression getExpression() {

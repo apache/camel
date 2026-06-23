@@ -8,7 +8,7 @@
     "javaType": "org.apache.camel.component.neo4j.transformer.Neo4jReverseEmbeddingsDataTypeTransformer",
     "groupId": "org.apache.camel",
     "artifactId": "camel-neo4j",
-    "version": "4.20.0-SNAPSHOT"
+    "version": "4.21.0-SNAPSHOT"
   }
 }
 

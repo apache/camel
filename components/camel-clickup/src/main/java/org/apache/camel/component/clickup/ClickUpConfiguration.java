@@ -37,10 +37,11 @@ public class ClickUpConfiguration {
     private String baseUrl;
 
     @UriParam(description = "The authorization token for authenticating against the ClickUp API.", label = "security",
-              secret = true)
+              security = "secret")
     private String authorizationToken;
 
-    @UriParam(description = "The shared secret obtained in the webhook creation response.", label = "security", secret = true)
+    @UriParam(description = "The shared secret obtained in the webhook creation response.", label = "security",
+              security = "secret")
     private String webhookSecret;
 
     @UriParam(description = "The comma separated list of events to which the webhook must subscribe")

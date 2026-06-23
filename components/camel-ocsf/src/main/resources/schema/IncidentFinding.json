@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://schema.ocsf.io/1.7.0/classes/incident_finding",
+  "$id": "https://schema.ocsf.io/1.8.0/classes/incident_finding",
   "title": "IncidentFinding",
   "type": "object",
   "javaType": "org.apache.camel.dataformat.ocsf.model.IncidentFinding",
@@ -9,50 +9,9 @@
     "$ref": "OcsfEvent.json"
   },
   "properties": {
-    "verdict_id": {
-      "type": "integer",
-      "title": "Verdict ID"
-    },
-    "desc": {
-      "type": "string",
-      "title": "Description"
-    },
-    "impact": {
-      "type": "string",
-      "title": "Impact"
-    },
-    "raw_data_size": {
-      "type": "integer",
-      "title": "Raw Data Size"
-    },
-    "ticket": {
-      "$ref": "Ticket.json"
-    },
-    "enrichments": {
-      "type": "array",
-      "description": "",
-      "items": {
-        "$ref": "Enrichment.json"
-      }
-    },
-    "confidence_score": {
-      "type": "integer",
-      "title": "Confidence Score"
-    },
     "impact_id": {
       "type": "integer",
       "title": "Impact ID"
-    },
-    "verdict": {
-      "type": "string",
-      "title": "Verdict"
-    },
-    "src_url": {
-      "type": "string",
-      "title": "Source URL"
-    },
-    "assignee": {
-      "$ref": "User.json"
     },
     "finding_info_list": {
       "type": "array",
@@ -61,23 +20,16 @@
         "$ref": "FindingInfo.json"
       }
     },
-    "confidence_id": {
-      "type": "integer",
-      "title": "Confidence ID"
+    "ticket": {
+      "$ref": "Ticket.json"
     },
-    "comment": {
+    "priority": {
       "type": "string",
-      "title": "Comment"
+      "title": "Priority"
     },
-    "assignee_group": {
-      "$ref": "Group.json"
-    },
-    "priority_id": {
+    "impact_score": {
       "type": "integer",
-      "title": "Priority ID"
-    },
-    "vendor_attributes": {
-      "$ref": "VendorAttributes.json"
+      "title": "Impact Score"
     },
     "tickets": {
       "type": "array",
@@ -86,8 +38,51 @@
         "$ref": "Ticket.json"
       }
     },
-    "raw_data_hash": {
-      "$ref": "Fingerprint.json"
+    "comment": {
+      "type": "string",
+      "title": "Comment"
+    },
+    "verdict_id": {
+      "type": "integer",
+      "title": "Verdict ID"
+    },
+    "assignee_group": {
+      "$ref": "Group.json"
+    },
+    "confidence": {
+      "type": "string",
+      "title": "Confidence"
+    },
+    "confidence_id": {
+      "type": "integer",
+      "title": "Confidence ID"
+    },
+    "desc": {
+      "type": "string",
+      "title": "Description"
+    },
+    "confidence_score": {
+      "type": "integer",
+      "title": "Confidence Score"
+    },
+    "priority_id": {
+      "type": "integer",
+      "title": "Priority ID"
+    },
+    "verdict": {
+      "type": "string",
+      "title": "Verdict"
+    },
+    "vendor_attributes": {
+      "$ref": "VendorAttributes.json"
+    },
+    "impact": {
+      "type": "string",
+      "title": "Impact"
+    },
+    "is_suspected_breach": {
+      "type": "boolean",
+      "title": "Suspected Breach"
     },
     "attacks": {
       "type": "array",
@@ -96,21 +91,26 @@
         "$ref": "Attack.json"
       }
     },
-    "priority": {
-      "type": "string",
-      "title": "Priority"
+    "assignee": {
+      "$ref": "User.json"
     },
-    "is_suspected_breach": {
-      "type": "boolean",
-      "title": "Suspected Breach"
-    },
-    "impact_score": {
+    "raw_data_size": {
       "type": "integer",
-      "title": "Impact Score"
+      "title": "Raw Data Size"
     },
-    "confidence": {
+    "raw_data_hash": {
+      "$ref": "Fingerprint.json"
+    },
+    "enrichments": {
+      "type": "array",
+      "description": "",
+      "items": {
+        "$ref": "Enrichment.json"
+      }
+    },
+    "src_url": {
       "type": "string",
-      "title": "Confidence"
+      "title": "Source URL"
     }
   }
 }

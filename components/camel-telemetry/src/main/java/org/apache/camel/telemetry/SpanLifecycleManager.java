@@ -21,7 +21,7 @@ package org.apache.camel.telemetry;
  */
 public interface SpanLifecycleManager {
 
-    Span create(String spanName, Span parent, SpanContextPropagationExtractor extractor);
+    Span create(String spanName, String spanKind, Span parent, SpanContextPropagationExtractor extractor);
 
     void activate(Span span);
 

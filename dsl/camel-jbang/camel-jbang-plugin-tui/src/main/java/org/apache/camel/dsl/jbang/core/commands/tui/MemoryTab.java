@@ -1,0 +1,470 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.apache.camel.dsl.jbang.core.commands.tui;
+
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
+import dev.tamboui.buffer.Buffer;
+import dev.tamboui.layout.Constraint;
+import dev.tamboui.layout.Layout;
+import dev.tamboui.layout.Rect;
+import dev.tamboui.style.Color;
+import dev.tamboui.style.Style;
+import dev.tamboui.terminal.Frame;
+import dev.tamboui.text.Line;
+import dev.tamboui.text.Span;
+import dev.tamboui.text.Text;
+import dev.tamboui.tui.event.KeyEvent;
+import dev.tamboui.widgets.block.Block;
+import dev.tamboui.widgets.block.BorderType;
+import dev.tamboui.widgets.paragraph.Paragraph;
+import org.apache.camel.dsl.jbang.core.common.PathUtils;
+import org.apache.camel.util.TimeUtils;
+import org.apache.camel.util.json.JsonObject;
+
+import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.*;
+
+class MemoryTab implements MonitorTab {
+
+    // Unicode block characters for gauge bar
+    private static final String GAUGE_FILLED = "█";
+    private static final String GAUGE_EMPTY = "░";
+
+    private final MonitorContext ctx;
+    private final Map<String, LinkedList<Long>> heapMemHistory;
+
+    MemoryTab(MonitorContext ctx, MetricsCollector metrics) {
+        this.ctx = ctx;
+        this.heapMemHistory = metrics.getHeapMemHistory();
+    }
+
+    @Override
+    public boolean handleKeyEvent(KeyEvent ke) {
+        if (ke.isChar('g')) {
+            triggerGC();
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean handleEscape() {
+        return false;
+    }
+
+    @Override
+    public void navigateUp() {
+    }
+
+    @Override
+    public void navigateDown() {
+    }
+
+    @Override
+    public void render(Frame frame, Rect area) {
+        IntegrationInfo info = ctx.findSelectedIntegration();
+        if (info == null) {
+            renderNoSelection(frame, area);
+            return;
+        }
+
+        // Layout: stats panel + chart row (14 + 1 for axis)
+        int statsHeight = 11;
+        if (info.oldGenUsed > 0) {
+            statsHeight += 2;
+        }
+        if (info.metaspaceUsed > 0) {
+            statsHeight += 2;
+        }
+        if (info.threadCount > 0) {
+            statsHeight += 2;
+        }
+        List<Rect> chunks = Layout.vertical()
+                .constraints(Constraint.length(statsHeight), Constraint.length(15))
+                .split(area);
+
+        renderStats(frame, chunks.get(0), info);
+
+        // Limit chart width: use ~2/3 of area, leave right side empty
+        int chartWidth = Math.max(40, area.width() * 2 / 3);
+        List<Rect> hChunks = Layout.horizontal()
+                .constraints(Constraint.length(chartWidth), Constraint.fill())
+                .split(chunks.get(1));
+        List<Rect> vChunks = Layout.vertical()
+                .constraints(Constraint.length(14), Constraint.length(1))
+                .split(hChunks.get(0));
+
+        renderSparkline(frame, vChunks.get(0), info);
+        renderTimeAxis(frame, vChunks.get(1), info);
+    }
+
+    private void renderStats(Frame frame, Rect area, IntegrationInfo info) {
+        List<Line> lines = new ArrayList<>();
+
+        // Heap memory with two gauge bars (used/committed and used/max)
+        if (info.heapMemUsed > 0) {
+            lines.add(Line.from(
+                    Span.styled("  Heap Memory", Style.EMPTY.fg(Color.CYAN).bold())));
+            lines.add(Line.from(
+                    Span.styled("  used:      ", Style.EMPTY.dim()),
+                    Span.styled(formatBytes(info.heapMemUsed), Style.EMPTY.fg(Color.WHITE).bold())));
+
+            if (info.heapMemCommitted > 0) {
+                long pctComm = info.heapMemUsed * 100 / info.heapMemCommitted;
+                String gaugeComm = buildGaugeBar(pctComm, 30);
+                Color colorComm = pctComm >= 80 ? Color.LIGHT_RED : pctComm >= 60 ? Color.YELLOW : Color.GREEN;
+                lines.add(Line.from(
+                        Span.styled("  committed: ", Style.EMPTY.dim()),
+                        Span.styled(String.format("%-10s", formatBytes(info.heapMemCommitted)), Style.EMPTY),
+                        Span.styled(gaugeComm, Style.EMPTY.fg(colorComm)),
+                        Span.styled(String.format("  %d%%", pctComm), Style.EMPTY.fg(colorComm).bold())));
+            }
+            if (info.heapMemMax > 0) {
+                long pctMax = info.heapMemUsed * 100 / info.heapMemMax;
+                String gaugeMax = buildGaugeBar(pctMax, 30);
+                Color colorMax = pctMax >= 80 ? Color.LIGHT_RED : pctMax >= 60 ? Color.YELLOW : Color.GREEN;
+                lines.add(Line.from(
+                        Span.styled("  max:       ", Style.EMPTY.dim()),
+                        Span.styled(String.format("%-10s", formatBytes(info.heapMemMax)), Style.EMPTY),
+                        Span.styled(gaugeMax, Style.EMPTY.fg(colorMax)),
+                        Span.styled(String.format("  %d%%", pctMax), Style.EMPTY.fg(colorMax).bold())));
+            }
+        }
+
+        // Old Gen pool
+        if (info.oldGenUsed > 0) {
+            long oldPct = info.oldGenMax > 0 ? info.oldGenUsed * 100 / info.oldGenMax : 0;
+            String oldGauge = buildGaugeBar(oldPct, 30);
+            Color oldColor = oldPct >= 80 ? Color.LIGHT_RED : oldPct >= 60 ? Color.YELLOW : Color.GREEN;
+
+            lines.add(Line.from(
+                    Span.styled("  Old Gen:   ", Style.EMPTY.dim()),
+                    Span.styled(String.format("%-10s", formatBytes(info.oldGenUsed)), Style.EMPTY.fg(Color.WHITE).bold()),
+                    Span.styled(oldGauge, Style.EMPTY.fg(oldColor)),
+                    Span.styled(String.format("  %d%%", oldPct), Style.EMPTY.fg(oldColor).bold())));
+            lines.add(Line.from(
+                    Span.styled("  committed: ", Style.EMPTY.dim()),
+                    Span.raw(formatBytes(info.oldGenCommitted)),
+                    Span.styled("    max: ", Style.EMPTY.dim()),
+                    Span.raw(formatBytes(info.oldGenMax))));
+        }
+
+        // Non-heap memory + Metaspace
+        if (info.nonHeapMemUsed > 0) {
+            lines.add(Line.from(Span.raw("")));
+            lines.add(Line.from(
+                    Span.styled("  Non-Heap Memory", Style.EMPTY.fg(Color.CYAN).bold())));
+            lines.add(Line.from(
+                    Span.styled("  used:      ", Style.EMPTY.dim()),
+                    Span.styled(String.format("%-10s", formatBytes(info.nonHeapMemUsed)), Style.EMPTY.fg(Color.WHITE).bold()),
+                    Span.styled("  committed: ", Style.EMPTY.dim()),
+                    Span.raw(formatBytes(info.nonHeapMemCommitted))));
+        }
+        if (info.metaspaceUsed > 0) {
+            lines.add(Line.from(
+                    Span.styled("  Metaspace: ", Style.EMPTY.dim()),
+                    Span.styled(String.format("%-10s", formatBytes(info.metaspaceUsed)), Style.EMPTY.fg(Color.WHITE).bold()),
+                    Span.styled("  committed: ", Style.EMPTY.dim()),
+                    Span.raw(formatBytes(info.metaspaceCommitted)),
+                    info.metaspaceMax > 0
+                            ? Span.styled("  max: " + formatBytes(info.metaspaceMax), Style.EMPTY.dim())
+                            : Span.raw("")));
+        }
+
+        // Threads
+        if (info.threadCount > 0) {
+            lines.add(Line.from(Span.raw("")));
+            List<Span> threadSpans = new ArrayList<>();
+            threadSpans.add(Span.styled("  Threads", Style.EMPTY.fg(Color.CYAN).bold()));
+            threadSpans.add(Span.styled("  current: ", Style.EMPTY.dim()));
+            threadSpans.add(Span.styled(String.valueOf(info.threadCount), Style.EMPTY.fg(Color.WHITE).bold()));
+            threadSpans.add(Span.styled("  peak: ", Style.EMPTY.dim()));
+            threadSpans.add(Span.raw(String.valueOf(info.peakThreadCount)));
+            lines.add(Line.from(threadSpans));
+        }
+
+        // GC and class loading on the same line
+        List<Span> gcSpans = new ArrayList<>();
+        gcSpans.add(Span.styled("  GC: ", Style.EMPTY.dim()));
+        gcSpans.add(Span.raw(info.gcCollectionCount + " collections"));
+        if (info.gcCollectionTime > 0) {
+            gcSpans.add(Span.styled("  time: ", Style.EMPTY.dim()));
+            gcSpans.add(Span.raw(TimeUtils.printDuration(info.gcCollectionTime, true)));
+        }
+        if (info.loadedClassCount > 0) {
+            gcSpans.add(Span.styled("    Classes: ", Style.EMPTY.dim()));
+            gcSpans.add(Span.raw(String.valueOf(info.loadedClassCount)));
+        }
+        lines.add(Line.from(Span.raw("")));
+        lines.add(Line.from(gcSpans));
+
+        Paragraph paragraph = Paragraph.builder()
+                .text(Text.from(lines))
+                .block(Block.builder().borderType(BorderType.ROUNDED).title(" Memory ").build())
+                .build();
+
+        frame.renderWidget(paragraph, area);
+    }
+
+    private static final String[] BAR_EIGHTHS = { " ", "▁", "▂", "▃", "▄", "▅", "▆", "▇", "█" };
+
+    private void renderSparkline(Frame frame, Rect area, IntegrationInfo info) {
+        String pid = info.pid;
+        LinkedList<Long> hist = heapMemHistory.get(pid);
+
+        if (hist == null || hist.isEmpty()) {
+            Paragraph p = Paragraph.builder()
+                    .text(Text.from(Line.from(Span.styled("  Collecting heap data...", Style.EMPTY.dim()))))
+                    .block(Block.builder().borderType(BorderType.ROUNDED).title(" Heap Usage ").build())
+                    .build();
+            frame.renderWidget(p, area);
+            return;
+        }
+
+        // Use committed as the scale ceiling
+        long observedMax = hist.stream().mapToLong(Long::longValue).max().orElse(1);
+        long ceiling = info.heapMemCommitted > 0 ? info.heapMemCommitted : observedMax;
+        if (observedMax > ceiling) {
+            ceiling = observedMax;
+        }
+
+        long pct = ceiling > 0 ? info.heapMemUsed * 100 / ceiling : 0;
+        Color barColor = pct >= 80 ? Color.LIGHT_RED : pct >= 60 ? Color.YELLOW : Color.GREEN;
+
+        String title = String.format(" Heap Usage (%s / %s committed) ", formatBytes(info.heapMemUsed), formatBytes(ceiling));
+
+        // Render the block border first
+        Block block = Block.builder().borderType(BorderType.ROUNDED).title(title).build();
+        frame.renderWidget(block, area);
+        Rect inner = block.inner(area);
+
+        if (inner.isEmpty() || ceiling <= 0) {
+            return;
+        }
+
+        int chartW = inner.width();
+        int chartH = inner.height();
+
+        // Build data array right-aligned: latest data on the right
+        long[] data = new long[chartW];
+        int startIdx = Math.max(0, hist.size() - chartW);
+        int dataOffset = Math.max(0, chartW - hist.size());
+        for (int i = startIdx; i < hist.size(); i++) {
+            data[dataOffset + (i - startIdx)] = hist.get(i);
+        }
+
+        // Render multi-row bar chart into the buffer
+        Buffer buf = frame.buffer();
+        Style barStyle = Style.EMPTY.fg(barColor);
+
+        for (int col = 0; col < chartW; col++) {
+            double ratio = (double) data[col] / ceiling;
+            // Total eighths this column fills (chartH rows * 8 eighths per row)
+            double fillEighths = ratio * chartH * 8.0;
+            int totalEighths = (int) Math.round(fillEighths);
+
+            // Render from bottom to top
+            for (int row = 0; row < chartH; row++) {
+                int y = inner.y() + chartH - 1 - row;
+                int x = inner.x() + col;
+                int rowEighths = Math.min(8, Math.max(0, totalEighths - row * 8));
+                if (rowEighths > 0) {
+                    buf.setString(x, y, BAR_EIGHTHS[rowEighths], barStyle);
+                }
+            }
+        }
+    }
+
+    private void renderTimeAxis(Frame frame, Rect area, IntegrationInfo info) {
+        LinkedList<Long> hist = heapMemHistory.get(info.pid);
+        int points = hist != null ? hist.size() : 0;
+        long totalSeconds = points * 5L;
+
+        String timeLabel;
+        if (totalSeconds < 60) {
+            timeLabel = totalSeconds + "s ago";
+        } else {
+            timeLabel = (totalSeconds / 60) + "m ago";
+        }
+
+        int w = area.width();
+        if (w < 10) {
+            return;
+        }
+
+        // Pad to fill the width: "Xm ago" on the left, "now" on the right
+        String left = " " + timeLabel;
+        String right = "now ";
+        int gap = Math.max(1, w - left.length() - right.length());
+
+        Line line = Line.from(
+                Span.styled(left, Style.EMPTY.dim()),
+                Span.raw(" ".repeat(gap)),
+                Span.styled(right, Style.EMPTY.dim()));
+
+        frame.renderWidget(Paragraph.builder().text(Text.from(line)).build(), area);
+    }
+
+    @Override
+    public void renderFooter(List<Span> spans) {
+        hint(spans, "Esc", "back");
+        hint(spans, "g", "gc");
+    }
+
+    private void triggerGC() {
+        IntegrationInfo info = ctx.findSelectedIntegration();
+        if (info == null) {
+            return;
+        }
+        JsonObject root = new JsonObject();
+        root.put("action", "gc");
+        Path actionFile = ctx.getActionFile(info.pid);
+        PathUtils.writeTextSafely(root.toJson(), actionFile);
+    }
+
+    @Override
+    public String getHelpText() {
+        return """
+                # Memory
+
+                The Memory tab shows JVM memory usage, garbage collection stats, and a
+                real-time heap usage chart. This helps you monitor memory consumption,
+                detect memory leaks, and understand GC behavior.
+
+                ## Heap Memory
+
+                The JVM heap is where Java objects live. Three values matter:
+
+                - **used**: Memory currently occupied by live objects. This value goes up as objects are created and drops when garbage collection runs
+                - **committed**: Memory the JVM has reserved from the operating system. This is your working set — the JVM can use this much without requesting more from the OS. The JVM may increase committed memory up to the max limit as needed
+                - **max**: The absolute upper limit set by `-Xmx`. The JVM will never use more than this. If used reaches max and GC cannot free enough space, you get an `OutOfMemoryError`
+
+                Two gauge bars show how full the heap is:
+
+                ```
+                committed: 80 MB  ████████████████░░░░░░░░░░░░░░  53%
+                max:       16 GB  ██░░░░░░░░░░░░░░░░░░░░░░░░░░░░   2%
+                ```
+
+                The committed bar shows how much of the reserved memory is in use —
+                this is the most useful indicator for day-to-day monitoring. The max
+                bar shows how much headroom remains before the JVM hits its hard limit.
+
+                ## Example Screen
+
+                ```
+                 Heap: used 55 MB / committed 80 MB / max 16 GB
+                 committed: 80 MB  ████████████████░░░░░░░░░░░░░░  68%
+                 max:       16 GB  ██░░░░░░░░░░░░░░░░░░░░░░░░░░░░   0%
+
+                 Old Gen:   used 19 MB / committed 24 MB / max 16 GB
+                 Non-Heap:  used 66 MB / committed 68 MB
+                 Metaspace: used 43 MB / committed 44 MB
+
+                 GC: 19 collections, 28 ms total
+                ```
+
+                ## Old Gen
+
+                When objects survive multiple garbage collections, they are promoted to
+                the Old Generation memory pool. Old Gen stores long-lived objects like
+                caches, connection pools, and singleton beans.
+
+                **Watch for**: Old Gen usage that keeps growing over time without going
+                back down after GC. This pattern often indicates a **memory leak** —
+                objects being retained that should have been released.
+
+                ## Non-Heap and Metaspace
+
+                - **Non-Heap**: Memory outside the heap used by the JVM itself — JIT compiled code, thread stacks, internal data structures
+                - **Metaspace**: A subset of non-heap where Java class metadata is stored (class definitions, method tables, constant pools). Replaced the old PermGen space in Java 8+. Metaspace grows automatically but can be limited with `-XX:MaxMetaspaceSize`
+
+                High Metaspace usage is normal for large applications with many classes.
+                It typically stays stable after startup.
+
+                ## Garbage Collection
+
+                - **Collections**: Total number of GC cycles. The JVM runs GC automatically when it needs to free memory. Modern collectors (G1, ZGC) run frequently with short pauses
+                - **Time**: Total time spent in GC (milliseconds). High GC time relative to uptime means the JVM is spending too much time cleaning up — consider increasing heap size
+
+                **GC key**: The key at the top identifies which GC algorithm is active
+                (e.g., `G1 Young Generation`, `ZGC`). Different algorithms have
+                different trade-offs between throughput and pause times.
+
+                ## Sparkline Chart
+
+                The chart shows heap usage over time. Color indicates how full the
+                heap is relative to committed memory:
+
+                - **Green**: below 60% — healthy, plenty of headroom
+                - **Yellow**: 60-80% — getting full, GC is working harder
+                - **Red**: above 80% — high pressure, risk of long GC pauses or OOM
+
+                A sawtooth pattern (usage rises then drops sharply) is normal — it shows
+                GC reclaiming memory periodically. A steadily rising baseline that
+                never drops back suggests a memory leak.
+
+                ## Keys
+
+                - `g` — trigger garbage collection on the running integration (sends a GC request to the JVM — useful for testing if high usage is just uncollected garbage)
+                - `Esc` — back
+                """;
+    }
+
+    private static String buildGaugeBar(long pct, int width) {
+        int filled = (int) (pct * width / 100);
+        int empty = width - filled;
+        return GAUGE_FILLED.repeat(Math.max(0, filled)) + GAUGE_EMPTY.repeat(Math.max(0, empty));
+    }
+
+    @Override
+    public JsonObject getTableDataAsJson() {
+        IntegrationInfo info = ctx.findSelectedIntegration();
+        if (info == null) {
+            return null;
+        }
+        JsonObject result = new JsonObject();
+        result.put("tab", "Memory");
+        JsonObject data = new JsonObject();
+        data.put("heapMemUsed", info.heapMemUsed);
+        data.put("heapMemCommitted", info.heapMemCommitted);
+        data.put("heapMemMax", info.heapMemMax);
+        data.put("nonHeapMemUsed", info.nonHeapMemUsed);
+        data.put("nonHeapMemCommitted", info.nonHeapMemCommitted);
+        if (info.oldGenUsed > 0) {
+            data.put("oldGenUsed", info.oldGenUsed);
+            data.put("oldGenCommitted", info.oldGenCommitted);
+            data.put("oldGenMax", info.oldGenMax);
+        }
+        if (info.metaspaceUsed > 0) {
+            data.put("metaspaceUsed", info.metaspaceUsed);
+            data.put("metaspaceCommitted", info.metaspaceCommitted);
+            data.put("metaspaceMax", info.metaspaceMax);
+        }
+        data.put("gcCollectionCount", info.gcCollectionCount);
+        data.put("gcCollectionTime", info.gcCollectionTime);
+        data.put("loadedClassCount", info.loadedClassCount);
+        data.put("threadCount", info.threadCount);
+        data.put("peakThreadCount", info.peakThreadCount);
+        result.put("snapshot", data);
+        return result;
+    }
+}

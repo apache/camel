@@ -40,10 +40,10 @@ public class SplunkHECConfiguration {
     private String host;
     @UriParam(defaultValue = "/services/collector/event")
     private String splunkEndpoint = "/services/collector/event";
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     @Metadata(required = true)
     private String token;
-    @UriParam(label = "security")
+    @UriParam(label = "security", security = "insecure:ssl")
     private boolean skipTlsVerify;
     @UriParam(label = "security", defaultValue = "true")
     private boolean https = true;

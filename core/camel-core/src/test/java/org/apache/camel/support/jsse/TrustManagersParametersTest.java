@@ -26,19 +26,33 @@ import javax.net.ssl.X509TrustManager;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.junit.jupiter.api.parallel.Isolated;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@DisabledIfSystemProperty(named = "ci.env.name", matches = ".*", disabledReason = "Flaky on Github CI")
 @Isolated("This test is regularly flaky")
 public class TrustManagersParametersTest extends AbstractJsseParametersTest {
 
+    private CamelContext context;
+
+    @BeforeEach
+    public void setUp() throws Exception {
+        context = new DefaultCamelContext();
+    }
+
+    @AfterEach
+    public void tearDown() throws Exception {
+        if (context != null) {
+            context.close();
+        }
+    }
+
     protected KeyStoreParameters createMinimalKeyStoreParameters() {
         KeyStoreParameters ksp = new KeyStoreParameters();
-        ksp.setCamelContext(new DefaultCamelContext());
+        ksp.setCamelContext(context);
 
         ksp.setResource("org/apache/camel/support/jsse/localhost.p12");
         ksp.setPassword("changeit");
@@ -48,32 +62,35 @@ public class TrustManagersParametersTest extends AbstractJsseParametersTest {
 
     protected TrustManagersParameters createMinimalTrustManagersParameters() {
         TrustManagersParameters tmp = new TrustManagersParameters();
-        tmp.setCamelContext(new DefaultCamelContext());
+        tmp.setCamelContext(context);
         tmp.setKeyStore(this.createMinimalKeyStoreParameters());
         return tmp;
     }
 
     @Test
     public void testPropertyPlaceholders() throws Exception {
-        CamelContext context = this.createPropertiesPlaceholderAwareContext();
+        CamelContext propContext = this.createPropertiesPlaceholderAwareContext();
+        try {
+            KeyStoreParameters ksp = new KeyStoreParameters();
+            ksp.setCamelContext(propContext);
 
-        KeyStoreParameters ksp = new KeyStoreParameters();
-        ksp.setCamelContext(context);
+            ksp.setType("{{keyStoreParameters.type}}");
+            ksp.setProvider("{{keyStoreParameters.provider}}");
+            ksp.setResource("{{keyStoreParameters.resource}}");
+            ksp.setPassword("{{keyStoreParameters.password}}");
 
-        ksp.setType("{{keyStoreParameters.type}}");
-        ksp.setProvider("{{keyStoreParameters.provider}}");
-        ksp.setResource("{{keyStoreParameters.resource}}");
-        ksp.setPassword("{{keyStoreParameters.password}}");
+            TrustManagersParameters tmp = new TrustManagersParameters();
+            tmp.setCamelContext(propContext);
+            tmp.setKeyStore(ksp);
 
-        TrustManagersParameters tmp = new TrustManagersParameters();
-        tmp.setCamelContext(context);
-        tmp.setKeyStore(ksp);
+            tmp.setAlgorithm("{{trustManagersParameters.algorithm}}");
+            tmp.setProvider("{{trustManagersParameters.provider}}");
 
-        tmp.setAlgorithm("{{trustManagersParameters.algorithm}}");
-        tmp.setProvider("{{trustManagersParameters.provider}}");
-
-        TrustManager[] tms = tmp.createTrustManagers();
-        validateTrustManagers(tms);
+            TrustManager[] tms = tmp.createTrustManagers();
+            validateTrustManagers(tms);
+        } finally {
+            propContext.close();
+        }
     }
 
     @Test

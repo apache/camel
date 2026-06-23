@@ -246,7 +246,7 @@ public interface DJLEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final DJLHeaderNameBuilder INSTANCE = new DJLHeaderNameBuilder();
+        public static final DJLHeaderNameBuilder INSTANCE = new DJLHeaderNameBuilder();
 
         /**
          * The input data used for prediction.

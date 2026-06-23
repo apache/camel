@@ -114,6 +114,11 @@ public abstract class AbstractSpanDecorator implements SpanDecorator {
         span.setTag(TagConstants.URL_SCHEME, scheme);
         span.setTag(TagConstants.EXCHANGE_ID, exchange.getExchangeId());
 
+        final String routeId;
+        if (exchange != null && (routeId = exchange.getFromRouteId()) != null) {
+            span.setTag(TagConstants.ROUTE_ID, routeId);
+        }
+
         // Including the endpoint URI provides access to any options that may
         // have been provided, for subsequent analysis
         String uri = endpoint.toString(); // toString will sanitize
@@ -174,5 +179,10 @@ public abstract class AbstractSpanDecorator implements SpanDecorator {
     @Override
     public SpanContextPropagationInjector getInjector(Exchange exchange) {
         return new CamelHeadersSpanContextPropagationInjector(exchange.getIn().getHeaders());
+    }
+
+    @Override
+    public String getSpanKind(String operationName) {
+        return "INTERNAL";
     }
 }

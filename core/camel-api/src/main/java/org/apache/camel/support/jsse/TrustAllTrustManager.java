@@ -32,6 +32,8 @@ import org.slf4j.LoggerFactory;
  * completely bypasses SSL certificate verification. Using this in production can expose the application to
  * man-in-the-middle attacks.
  * </p>
+ *
+ * @since 4.9
  */
 public class TrustAllTrustManager implements X509TrustManager {
 

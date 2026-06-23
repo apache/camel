@@ -19,9 +19,11 @@ package org.apache.camel.component.file;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -43,10 +45,12 @@ class FileProducerCharsetUTFtoISOConfiguredTest extends ContextTestSupport {
 
         assertTrue(oneExchangeDone.matchesWaitTime());
 
-        assertFileExists(testFile(OUTPUT_FILE));
-        byte[] data = Files.readAllBytes(testFile(OUTPUT_FILE));
-
-        assertEquals(DATA, new String(data, StandardCharsets.ISO_8859_1));
+        // The file may have been created but not yet fully flushed to disk
+        Awaitility.await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> {
+            assertFileExists(testFile(OUTPUT_FILE));
+            byte[] data = Files.readAllBytes(testFile(OUTPUT_FILE));
+            assertEquals(DATA, new String(data, StandardCharsets.ISO_8859_1));
+        });
     }
 
     @Override

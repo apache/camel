@@ -102,8 +102,6 @@ public class DaprPubSubConsumer extends DefaultConsumer {
         message.setBody(cloudEvent.getData());
 
         // set headers
-        message.setHeader(DaprConstants.PUBSUB_NAME, cloudEvent.getPubsubName());
-        message.setHeader(DaprConstants.TOPIC, cloudEvent.getTopic());
         message.setHeader(DaprConstants.ID, cloudEvent.getId());
         message.setHeader(DaprConstants.SOURCE, cloudEvent.getSource());
         message.setHeader(DaprConstants.TYPE, cloudEvent.getType());

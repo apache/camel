@@ -19,6 +19,8 @@ package org.apache.camel;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import org.jspecify.annotations.Nullable;
+
 /**
  * Tagging interface to indicate that a type is capable of caching the underlying data stream.
  * <p/>
@@ -34,6 +36,8 @@ import java.io.OutputStream;
  * <b>Important:</b> All the classes from the Camel release that implements {@link StreamCache} is NOT intended for end
  * users to create as instances, but they are part of Camels
  * <a href="https://camel.apache.org/manual/stream-caching.html">stream-caching</a> functionality.
+ *
+ * @see org.apache.camel.spi.StreamCachingStrategy
  */
 public interface StreamCache {
 
@@ -64,6 +68,7 @@ public interface StreamCache {
      * @return                     a copy, or <tt>null</tt> if copy is not possible
      * @throws java.io.IOException is thrown if the copy fails
      */
+    @Nullable
     StreamCache copy(Exchange exchange) throws IOException;
 
     /**

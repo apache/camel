@@ -7,8 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Only producer is supported
-//Manually maintained attributes
-:camel-spring-boot-name: jolt
 
 *Since Camel {since}*
 
@@ -54,31 +52,123 @@ include::partial$component-endpoint-headers.adoc[]
 
 For example, you could use something like
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------
-from("activemq:My.Queue").
-  to("jolt:com/acme/MyResponse.json");
---------------------------------------
+----
+from("activemq:My.Queue")
+    .to("jolt:com/acme/MyResponse.json");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="activemq:My.Queue"/>
+  <to uri="jolt:com/acme/MyResponse.json"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: activemq:My.Queue
+      steps:
+        - to:
+            uri: jolt:com/acme/MyResponse.json
+----
+====
 
 And a file-based resource:
 
+[tabs]
+====
+Java::
++
 [source,java]
----------------------------------------------------------------
-from("activemq:My.Queue").
-  to("jolt:file://myfolder/MyResponse.json?contentCache=true").
-  to("activemq:Another.Queue");
----------------------------------------------------------------
+----
+from("activemq:My.Queue")
+    .to("jolt:file://myfolder/MyResponse.json?contentCache=true")
+    .to("activemq:Another.Queue");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="activemq:My.Queue"/>
+  <to uri="jolt:file://myfolder/MyResponse.json?contentCache=true"/>
+  <to uri="activemq:Another.Queue"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: activemq:My.Queue
+      steps:
+        - to:
+            uri: jolt:file://myfolder/MyResponse.json
+            parameters:
+              contentCache: true
+        - to:
+            uri: activemq:Another.Queue
+----
+====
 
 You can also specify what specification the component should use
 dynamically via a header, so, for example:
 
+[tabs]
+====
+Java::
++
 [source,java]
----------------------------------------------------------------------
-from("direct:in").
-  setHeader("CamelJoltResourceUri").constant("path/to/my/spec.json").
-  to("jolt:dummy?allowTemplateFromHeader=true");
----------------------------------------------------------------------
+----
+from("direct:in")
+    .setHeader("CamelJoltResourceUri").constant("path/to/my/spec.json")
+    .to("jolt:dummy?allowTemplateFromHeader=true");
+----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:in"/>
+  <setHeader name="CamelJoltResourceUri">
+    <constant>path/to/my/spec.json</constant>
+  </setHeader>
+  <to uri="jolt:dummy?allowTemplateFromHeader=true"/>
+</route>
+----
 
-
-include::spring-boot:partial$starter.adoc[]
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:in
+      steps:
+        - setHeader:
+            name: CamelJoltResourceUri
+            expression:
+              constant:
+                expression: path/to/my/spec.json
+        - to:
+            uri: jolt:dummy
+            parameters:
+              allowTemplateFromHeader: true
+----
+====

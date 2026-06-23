@@ -46,6 +46,19 @@ import org.apache.camel.builder.component.dsl.*;
 public interface ComponentsBuilderFactory {
 
     /**
+     * A2A (camel-a2a)
+     * A2A endpoint for agent-to-agent communication.
+     * 
+     * Category: ai
+     * Since: 4.21
+     * Maven coordinates: org.apache.camel:camel-a2a
+     * 
+     * @return the dsl builder
+     */
+    static A2aComponentBuilderFactory.A2aComponentBuilder a2a() {
+        return A2aComponentBuilderFactory.a2a();
+    }
+    /**
      * ActiveMQ 5.x (camel-activemq)
      * Send messages to (or consume from) Apache ActiveMQ 5.x. This component
      * extends the Camel JMS component.
@@ -1725,19 +1738,6 @@ public interface ComponentsBuilderFactory {
         return GitComponentBuilderFactory.git();
     }
     /**
-     * GitHub (camel-github)
-     * Interact with the GitHub API.
-     * 
-     * Category: file,cloud,api
-     * Since: 2.15
-     * Maven coordinates: org.apache.camel:camel-github
-     * 
-     * @return the dsl builder
-     */
-    static GithubComponentBuilderFactory.GithubComponentBuilder github() {
-        return GithubComponentBuilderFactory.github();
-    }
-    /**
      * GitHub2 (camel-github2)
      * Interact with the GitHub API.
      * 
@@ -1987,20 +1987,6 @@ public interface ComponentsBuilderFactory {
         return GoogleVisionComponentBuilderFactory.googleVision();
     }
     /**
-     * Grape (camel-grape)
-     * Fetch, load and manage additional jars dynamically after Camel Context
-     * was started.
-     * 
-     * Category: management
-     * Since: 2.16
-     * Maven coordinates: org.apache.camel:camel-grape
-     * 
-     * @return the dsl builder
-     */
-    static GrapeComponentBuilderFactory.GrapeComponentBuilder grape() {
-        return GrapeComponentBuilderFactory.grape();
-    }
-    /**
      * GraphQL (camel-graphql)
      * Send GraphQL queries and mutations to external systems.
      * 
@@ -2025,19 +2011,6 @@ public interface ComponentsBuilderFactory {
      */
     static GrpcComponentBuilderFactory.GrpcComponentBuilder grpc() {
         return GrpcComponentBuilderFactory.grpc();
-    }
-    /**
-     * Guava EventBus (camel-guava-eventbus)
-     * Send and receive messages to/from Guava EventBus.
-     * 
-     * Category: messaging
-     * Since: 2.10
-     * Maven coordinates: org.apache.camel:camel-guava-eventbus
-     * 
-     * @return the dsl builder
-     */
-    static GuavaEventbusComponentBuilderFactory.GuavaEventbusComponentBuilder guavaEventbus() {
-        return GuavaEventbusComponentBuilderFactory.guavaEventbus();
     }
     /**
      * Hashicorp Vault (camel-hashicorp-vault)
@@ -3773,7 +3746,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * OpenAI (camel-openai)
-     * OpenAI endpoint for chat completion and embeddings.
+     * OpenAI endpoint for chat completion, embeddings, and audio transcription.
      * 
      * Category: ai
      * Since: 4.17
@@ -4407,6 +4380,19 @@ public interface ComponentsBuilderFactory {
         return SftpComponentBuilderFactory.sftp();
     }
     /**
+     * Shell (camel-shell)
+     * Camel Shell component
+     * 
+     * Category: api
+     * Since: 4.21
+     * Maven coordinates: org.apache.camel:camel-shell
+     * 
+     * @return the dsl builder
+     */
+    static ShellComponentBuilderFactory.ShellComponentBuilder shell() {
+        return ShellComponentBuilderFactory.shell();
+    }
+    /**
      * Simple JMS (camel-sjms)
      * Send and receive messages to/from a JMS Queue or Topic using plain JMS
      * 1.x API.
@@ -4803,20 +4789,6 @@ public interface ComponentsBuilderFactory {
      */
     static StitchComponentBuilderFactory.StitchComponentBuilder stitch() {
         return StitchComponentBuilderFactory.stitch();
-    }
-    /**
-     * Stomp (camel-stomp)
-     * Send and receive messages to/from STOMP (Simple Text Oriented Messaging
-     * Protocol) compliant message brokers.
-     * 
-     * Category: messaging
-     * Since: 2.12
-     * Maven coordinates: org.apache.camel:camel-stomp
-     * 
-     * @return the dsl builder
-     */
-    static StompComponentBuilderFactory.StompComponentBuilder stomp() {
-        return StompComponentBuilderFactory.stomp();
     }
     /**
      * Stream (camel-stream)

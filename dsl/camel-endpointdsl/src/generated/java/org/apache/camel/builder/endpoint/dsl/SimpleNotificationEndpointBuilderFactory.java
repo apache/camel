@@ -76,36 +76,6 @@ public interface SimpleNotificationEndpointBuilderFactory {
             return this;
         }
         /**
-         * Ignore SSL verification.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: producer
-         * 
-         * @param ignoreSslVerification the value to set
-         * @return the dsl builder
-         */
-        default SimpleNotificationEndpointBuilder ignoreSslVerification(boolean ignoreSslVerification) {
-            doSetProperty("ignoreSslVerification", ignoreSslVerification);
-            return this;
-        }
-        /**
-         * Ignore SSL verification.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: producer
-         * 
-         * @param ignoreSslVerification the value to set
-         * @return the dsl builder
-         */
-        default SimpleNotificationEndpointBuilder ignoreSslVerification(String ignoreSslVerification) {
-            doSetProperty("ignoreSslVerification", ignoreSslVerification);
-            return this;
-        }
-        /**
          * TTL for published message.
          * 
          * The option is a: <code>int</code> type.
@@ -294,6 +264,36 @@ public interface SimpleNotificationEndpointBuilderFactory {
          */
         default SimpleNotificationEndpointBuilder serviceKeys(String serviceKeys) {
             doSetProperty("serviceKeys", serviceKeys);
+            return this;
+        }
+        /**
+         * Ignore SSL verification.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param ignoreSslVerification the value to set
+         * @return the dsl builder
+         */
+        default SimpleNotificationEndpointBuilder ignoreSslVerification(boolean ignoreSslVerification) {
+            doSetProperty("ignoreSslVerification", ignoreSslVerification);
+            return this;
+        }
+        /**
+         * Ignore SSL verification.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param ignoreSslVerification the value to set
+         * @return the dsl builder
+         */
+        default SimpleNotificationEndpointBuilder ignoreSslVerification(String ignoreSslVerification) {
+            doSetProperty("ignoreSslVerification", ignoreSslVerification);
             return this;
         }
     }

@@ -22,10 +22,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 
-@DisabledIfSystemProperty(named = "ci.env.name", matches = ".*", disabledReason = "Flaky on Github CI")
 @DisabledOnOs(architectures = { "s390x" },
               disabledReason = "This test does not run reliably on s390x (see CAMEL-21438)")
 public class MulticastParallelStreamingTimeoutTest extends ContextTestSupport {
@@ -35,6 +33,7 @@ public class MulticastParallelStreamingTimeoutTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         // A will timeout so we only get B and C (C is faster than B)
         mock.expectedBodiesReceived("CB");
+        mock.setResultWaitTime(20000);
 
         template.sendBody("direct:start", "Hello");
 
@@ -56,11 +55,11 @@ public class MulticastParallelStreamingTimeoutTest extends ContextTestSupport {
                         oldExchange.getIn().setBody(body + newExchange.getIn().getBody(String.class));
                         return oldExchange;
                     }
-                }).parallelProcessing().streaming().timeout(2000).to("direct:a", "direct:b", "direct:c")
+                }).parallelProcessing().streaming().timeout(10000).to("direct:a", "direct:b", "direct:c")
                         // use end to indicate end of multicast route
                         .end().to("mock:result");
 
-                from("direct:a").delay(3000).setBody(constant("A"));
+                from("direct:a").delay(20000).setBody(constant("A"));
 
                 from("direct:b").delay(500).setBody(constant("B"));
 

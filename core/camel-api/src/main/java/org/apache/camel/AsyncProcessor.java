@@ -24,6 +24,9 @@ import java.util.concurrent.CompletableFuture;
  * <p/>
  * Any processor can be coerced to have an {@link AsyncProcessor} interface by using the
  * {@link org.apache.camel.support.AsyncProcessorConverterHelper#convert AsyncProcessorConverterHelper.convert} method.
+ *
+ * @see Processor
+ * @see AsyncCallback
  */
 public interface AsyncProcessor extends Processor {
 
@@ -37,7 +40,7 @@ public interface AsyncProcessor extends Processor {
      * @param  callback the {@link AsyncCallback} will be invoked when the processing of the exchange is completed. If
      *                  the exchange is completed synchronously, then the callback is also invoked synchronously. The
      *                  callback should therefore be careful of starting recursive loop.
-     * @return          (doneSync) <tt>true</tt> to continue execute synchronously, <tt>false</tt> to continue being
+     * @return          (doneSync) <tt>true</tt> to continue execution synchronously, <tt>false</tt> to continue being
      *                  executed asynchronously
      */
     boolean process(Exchange exchange, AsyncCallback callback);

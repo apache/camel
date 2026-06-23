@@ -1454,7 +1454,7 @@ public interface KubernetesConfigMapsEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final KubernetesConfigMapsHeaderNameBuilder INSTANCE = new KubernetesConfigMapsHeaderNameBuilder();
+        public static final KubernetesConfigMapsHeaderNameBuilder INSTANCE = new KubernetesConfigMapsHeaderNameBuilder();
 
         /**
          * The Producer operation.

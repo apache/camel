@@ -22,6 +22,8 @@ import org.apache.camel.LineNumberAware;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.model.ProcessorDefinition;
+import org.apache.camel.model.ProcessorDefinitionHelper;
+import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.ToDefinition;
 import org.apache.camel.processor.SendProcessor;
 import org.apache.camel.support.CamelContextHelper;
@@ -34,6 +36,15 @@ public class SendReifier extends ProcessorReifier<ToDefinition> {
 
     @Override
     public Processor createProcessor() throws Exception {
+        // route templates with optional URI should skip the processor if the URI is not provided
+        RouteDefinition rd = ProcessorDefinitionHelper.getRoute(definition);
+        if (rd != null && rd.isTemplate() != null && rd.isTemplate()) {
+            String rawUri = definition.getEndpointUri();
+            if (isOptionalUriAndNotResolved(camelContext, rawUri)) {
+                return null;
+            }
+        }
+
         SendProcessor answer = new SendProcessor(resolveEndpoint(), parse(ExchangePattern.class, definition.getPattern()));
         answer.setDisabled(isDisabled(camelContext, definition));
         answer.setVariableSend(parseString(definition.getVariableSend()));

@@ -17,11 +17,15 @@
 
 package org.apache.camel.resume;
 
+import org.jspecify.annotations.Nullable;
+
 /**
  * This provides an interface for resumable objects. Such objects allow its users to address them at a specific offset.
  * For example, when reading large files, it may be possible to inform the last offset that was read, thus allowing
  * users of this interface to skip to that offset. This can potentially improve resumable operations by allowing
  * reprocessing of data.
+ *
+ * @since 3.17
  */
 public interface Resumable {
 
@@ -31,6 +35,7 @@ public interface Resumable {
      * @return An OffsetKey instance with the addressable part of the object. May return null or an EmptyOffset
      *         depending on the type of the resumable
      */
+    @Nullable
     OffsetKey<?> getOffsetKey();
 
     /**

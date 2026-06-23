@@ -34,12 +34,12 @@ public class SecretsManagerConfiguration implements Cloneable, AwsCommonConfigur
     @UriParam(label = "advanced")
     @Metadata(autowired = true)
     private SecretsManagerClient secretsManagerClient;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String accessKey;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String secretKey;
 
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String sessionToken;
     @UriParam
     @Metadata(required = true)
@@ -54,7 +54,7 @@ public class SecretsManagerConfiguration implements Cloneable, AwsCommonConfigur
     private String region;
     @UriParam
     private boolean pojoRequest;
-    @UriParam(label = "security")
+    @UriParam(label = "security", security = "insecure:ssl")
     private boolean trustAllCertificates;
     @UriParam
     private boolean overrideEndpoint;

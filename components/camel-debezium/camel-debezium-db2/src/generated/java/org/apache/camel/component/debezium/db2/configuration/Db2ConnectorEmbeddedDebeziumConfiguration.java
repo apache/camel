@@ -99,8 +99,8 @@ public class Db2ConnectorEmbeddedDebeziumConfiguration
     private int maxQueueSize = 8192;
     @UriParam(label = LABEL_NAME, defaultValue = "warn")
     private String guardrailCollectionsLimitAction = "warn";
-    @UriParam(label = LABEL_NAME, defaultValue = ".*secret$|.*password$|.*sasl\\.jaas\\.config$|.*basic\\.auth\\.user\\.info|.*registry\\.auth\\.client-secret")
-    private String customSanitizePattern = ".*secret$|.*password$|.*sasl\\.jaas\\.config$|.*basic\\.auth\\.user\\.info|.*registry\\.auth\\.client-secret";
+    @UriParam(label = LABEL_NAME, defaultValue = ".*secret$|.*password$|.*sasl\\.jaas\\.config$|.*basic\\.auth\\.user\\.info|.*registry\\.auth\\.client-secret|.*credentials\\.json$")
+    private String customSanitizePattern = ".*secret$|.*password$|.*sasl\\.jaas\\.config$|.*basic\\.auth\\.user\\.info|.*registry\\.auth\\.client-secret|.*credentials\\.json$";
     @UriParam(label = LABEL_NAME, defaultValue = "1024")
     private int incrementalSnapshotChunkSize = 1024;
     @UriParam(label = LABEL_NAME)

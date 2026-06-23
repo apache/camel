@@ -23,9 +23,23 @@ import org.apache.camel.Ordered;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.function.ThrowingBiConsumer;
 import org.apache.camel.util.function.ThrowingConsumer;
+import org.jspecify.annotations.Nullable;
 
 /**
- * To apply custom configurations to {@link Component} instances.
+ * Strategy for applying custom configuration to {@link Component} instances as they are created.
+ * <p/>
+ * Customizers are discovered from the {@link Registry} and applied to each component during bootstrap, with
+ * {@link #isEnabled(String, Component)} (and an optional {@link Policy}) deciding whether a given component is
+ * customized, and {@link Ordered} controlling the order. Use the {@link #builder()} /
+ * {@link #forType(Class, ThrowingConsumer)} helpers to target a concrete component type. This is the component-level
+ * counterpart to {@link CamelContextCustomizer}.
+ * <p/>
+ * See <a href="https://camel.apache.org/manual/camelcontext-autoconfigure.html">CamelContext auto-configuration</a> in
+ * the Camel user manual.
+ *
+ * @see CamelContextCustomizer
+ * @see DataFormatCustomizer
+ * @see LanguageCustomizer
  */
 @FunctionalInterface
 public interface ComponentCustomizer extends Ordered {
@@ -139,7 +153,7 @@ public interface ComponentCustomizer extends Ordered {
      */
     class Builder<T extends Component> {
         private final Class<T> type;
-        private BiPredicate<String, Component> condition;
+        private @Nullable BiPredicate<String, Component> condition;
         private int order;
 
         public Builder(Class<T> type) {
@@ -221,10 +235,11 @@ public interface ComponentCustomizer extends Ordered {
                 };
             }
 
+            final BiPredicate<String, Component> cond = condition;
             return new BiPredicate<>() {
                 @Override
                 public boolean test(String name, Component target) {
-                    return type.isAssignableFrom(target.getClass()) && condition.test(name, target);
+                    return type.isAssignableFrom(target.getClass()) && cond != null && cond.test(name, target);
                 }
             };
         }

@@ -42,6 +42,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.DEFAULT_CAMEL_MESSAGE_HISTORY_METER_NAME;
 import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.ROUTE_ID_ATTRIBUTE;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -113,9 +114,9 @@ public class ManagedMessageHistoryAutoConfigIT extends CamelTestSupport {
 
                 assertPointDataForRouteId(metricData, "route1");
 
-                assertTrue(verifyMetricDataHasNodeId(metricData, "route1", "foo"));
-                assertTrue(verifyMetricDataHasNodeId(metricData, "route2", "bar"));
-                assertTrue(verifyMetricDataHasNodeId(metricData, "route2", "baz"));
+                assertMetricDataHasNodeId(metricData, "route1", "foo");
+                assertMetricDataHasNodeId(metricData, "route2", "bar");
+                assertMetricDataHasNodeId(metricData, "route2", "baz");
 
                 dataCount++;
             }
@@ -123,10 +124,12 @@ public class ManagedMessageHistoryAutoConfigIT extends CamelTestSupport {
         assertTrue(dataCount > 0, "No metric data found");
     }
 
-    private boolean verifyMetricDataHasNodeId(MetricData metricData, String routeId, String nodeId) {
-        return metricData.getData().getPoints().stream()
-                .filter(point -> routeId.equals(getRouteId(point)))
-                .anyMatch(point -> nodeId.equals(point.getAttributes().get(AttributeKey.stringKey("nodeId"))));
+    private void assertMetricDataHasNodeId(MetricData metricData, String routeId, String nodeId) {
+        assertThat(metricData.getData().getPoints())
+                .anyMatch(point -> {
+                    return routeId.equals(getRouteId(point))
+                            && nodeId.equals(point.getAttributes().get(AttributeKey.stringKey("nodeId")));
+                }, "No metric data found for node " + nodeId + "of route " + routeId + " ");
     }
 
     private void assertPointDataForRouteId(MetricData metricData, String routeId) {

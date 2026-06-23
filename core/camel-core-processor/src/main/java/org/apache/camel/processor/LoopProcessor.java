@@ -32,6 +32,7 @@ import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.ReactiveExecutor;
 import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.spi.ShutdownAware;
+import org.apache.camel.spi.StepIdAware;
 import org.apache.camel.support.ExchangeHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,12 +42,14 @@ import static org.apache.camel.processor.PipelineHelper.continueProcessing;
 /**
  * The processor which sends messages in a loop.
  */
-public class LoopProcessor extends BaseDelegateProcessorSupport implements Traceable, IdAware, RouteIdAware, ShutdownAware {
+public class LoopProcessor extends BaseDelegateProcessorSupport
+        implements Traceable, IdAware, RouteIdAware, StepIdAware, ShutdownAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(LoopProcessor.class);
 
     private String id;
     private String routeId;
+    private String stepId;
     private boolean shutdownPending;
     private final ReactiveExecutor reactiveExecutor;
     private final Expression expression;
@@ -261,6 +264,16 @@ public class LoopProcessor extends BaseDelegateProcessorSupport implements Trace
     @Override
     public void setRouteId(String routeId) {
         this.routeId = routeId;
+    }
+
+    @Override
+    public String getStepId() {
+        return stepId;
+    }
+
+    @Override
+    public void setStepId(String stepId) {
+        this.stepId = stepId;
     }
 
     @Override

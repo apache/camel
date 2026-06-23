@@ -41,4 +41,4 @@ context.getRegistry().bind("camelCxfUndertowHttpTransportDownloader", new org.ap
     }
 });
 
-return "Camel JBang will automatic download org.apache.cxf:cxf-rt-transports-http-undertow:" + cxfVersion + " if needed by camel-cxf-soap";
+return "Camel CLI will automatic download org.apache.cxf:cxf-rt-transports-http-undertow:" + cxfVersion + " if needed by camel-cxf-soap";

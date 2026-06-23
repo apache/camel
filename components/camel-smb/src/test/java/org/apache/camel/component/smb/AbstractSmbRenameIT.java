@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.smb;
 
+import java.net.URI;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -114,7 +115,7 @@ public abstract class AbstractSmbRenameIT extends SmbServerTestSupport {
 
             // Replicate parent logic to build configuration
             String baseUri = getBaseUri(uri);
-            SmbConfiguration config = new SmbConfiguration(new java.net.URI(baseUri));
+            SmbConfiguration config = new SmbConfiguration(new URI(baseUri));
 
             // Handle backwards compatible path parameter
             String path = getAndRemoveParameter(parameters, "path", String.class);

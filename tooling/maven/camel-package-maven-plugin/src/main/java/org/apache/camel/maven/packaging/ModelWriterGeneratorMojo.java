@@ -112,6 +112,10 @@ public abstract class ModelWriterGeneratorMojo extends AbstractGeneratorMojo {
 
     abstract String getWriterPackage();
 
+    protected String getTemplateName() {
+        return "velocity/model-writer.vm";
+    }
+
     protected String generateWriter() throws MojoExecutionException {
         try (DynamicClassLoader classLoader
                 = DynamicClassLoader.createDynamicClassLoader(project.getCompileClasspathElements())) {
@@ -170,7 +174,7 @@ public abstract class ModelWriterGeneratorMojo extends AbstractGeneratorMojo {
         ctx.put("package", getWriterPackage());
         ctx.put("model", model);
         ctx.put("mojo", this);
-        return velocity("velocity/model-writer.vm", ctx);
+        return velocity(getTemplateName(), ctx);
     }
 
     protected String postGenerateWriter(String writer) {

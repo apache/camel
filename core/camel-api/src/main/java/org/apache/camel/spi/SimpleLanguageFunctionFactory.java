@@ -18,11 +18,14 @@ package org.apache.camel.spi;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
+import org.jspecify.annotations.Nullable;
 
 /**
  * A factory for extending the simple language with functions from external components.
  * <p/>
  * This requires to have the external component JAR on the classpath.
+ *
+ * @since 4.10
  */
 public interface SimpleLanguageFunctionFactory {
 
@@ -40,16 +43,22 @@ public interface SimpleLanguageFunctionFactory {
      *
      * @return              the created function as an expression, or <tt>null</tt> if not supported by this factory.
      */
+    @Nullable
     Expression createFunction(CamelContext camelContext, String function, int index);
 
     /**
      * Creates the Java source code that performs the function (for csimple).
      *
-     * @param  camelContext the camel context
-     * @param  function     the function
-     * @param  index        index of the function in the literal input
-     * @return              the source code or <tt>null</tt> if not supported by this factory.
+     * @param      camelContext the camel context
+     * @param      function     the function
+     * @param      index        index of the function in the literal input
+     * @return                  the source code or <tt>null</tt> if not supported by this factory.
+     * @deprecated              will be removed along with csimple
      */
-    String createCode(CamelContext camelContext, String function, int index);
+    @Nullable
+    @Deprecated(since = "4.21")
+    default String createCode(CamelContext camelContext, String function, int index) {
+        return null;
+    }
 
 }

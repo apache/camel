@@ -287,6 +287,7 @@ public class FooApplicationTest {
 However if you are using `camel-test` and your unit tests are extending `CamelTestSupport` then you can
 turn on route coverage as shown:
 
+._Java-only: enabling route coverage in CamelTestSupport_
 [source,java]
 ----
 @Override
@@ -297,8 +298,12 @@ public boolean isDumpRouteCoverage() {
 
 IMPORTANT: Routes that can be route coveraged **MUST** have a unique id assigned, in other words you cannot use anonymous routes.
 
-You do this using `routeId` in Java DSL:
+You do this using `routeId`:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("jms:queue:cheese").routeId("cheesy")
@@ -306,8 +311,8 @@ from("jms:queue:cheese").routeId("cheesy")
   ...
 ----
 
-And in XML DSL you just assign the route id via the id attribute
-
+XML::
++
 [source,xml]
 ----
 <route id="cheesy">
@@ -316,6 +321,21 @@ And in XML DSL you just assign the route id via the id attribute
   ...
 </route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    id: cheesy
+    from:
+      uri: jms:queue:cheese
+      steps:
+        - to:
+            uri: log:foo
+        ...
+----
+====
 
 === Generating route coverage report
 

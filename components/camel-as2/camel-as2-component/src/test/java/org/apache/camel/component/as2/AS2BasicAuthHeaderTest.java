@@ -27,13 +27,11 @@ import org.apache.camel.component.as2.api.*;
 import org.apache.camel.component.as2.api.entity.ApplicationEntity;
 import org.apache.camel.component.as2.api.entity.DispositionNotificationMultipartReportEntity;
 import org.apache.camel.component.as2.api.entity.MimeEntity;
-import org.apache.camel.test.AvailablePortFinder;
 import org.apache.hc.core5.http.ClassicHttpRequest;
 import org.apache.hc.core5.http.ContentType;
 import org.apache.hc.core5.http.HttpEntity;
 import org.apache.hc.core5.http.HttpRequest;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
@@ -44,8 +42,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
  */
 public class AS2BasicAuthHeaderTest extends AbstractAS2ITSupport {
 
-    @RegisterExtension
-    AvailablePortFinder.Port targetPort = AvailablePortFinder.find();
     // Basic Auth takes precedence when auth token also provided
     private static final String USER_NAME = "camel";
     private static final String PASSWORD = "rider";
@@ -80,6 +76,7 @@ public class AS2BasicAuthHeaderTest extends AbstractAS2ITSupport {
             """;
 
     private AS2ServerConnection serverConnection;
+    private int targetPort;
     private AS2ClientManagerIT.RequestHandler requestHandler;
 
     @Override
@@ -193,15 +190,16 @@ public class AS2BasicAuthHeaderTest extends AbstractAS2ITSupport {
 
     @Override
     protected void customizeConfiguration(AS2Configuration configuration) {
-        configuration.setTargetPortNumber(targetPort.getPort());
+        configuration.setTargetPortNumber(targetPort);
     }
 
     private void receiveTestMessages() throws IOException {
         serverConnection = new AS2ServerConnection(
                 "1.1", "AS2ClientManagerIntegrationTest Server",
-                "server.example.com", targetPort.getPort(), AS2SignatureAlgorithm.SHA256WITHRSA,
+                "server.example.com", 0, AS2SignatureAlgorithm.SHA256WITHRSA,
                 null, null, null,
                 "TBD", null, null, null, null, null);
+        targetPort = serverConnection.getLocalPort();
         requestHandler = new AS2ClientManagerIT.RequestHandler();
         serverConnection.listen("/", requestHandler);
     }

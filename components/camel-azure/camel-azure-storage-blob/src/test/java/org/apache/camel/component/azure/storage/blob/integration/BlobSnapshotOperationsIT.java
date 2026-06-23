@@ -144,7 +144,7 @@ class BlobSnapshotOperationsIT extends Base {
 
     private BlobOperations freshBlob() {
         final BlobClientWrapper clientWrapper
-                = blobContainerClientWrapper.getBlobClientWrapper(RandomStringUtils.randomAlphabetic(10));
+                = blobContainerClientWrapper.getBlobClientWrapper(RandomStringUtils.secure().nextAlphabetic(10));
         return new BlobOperations(configuration, clientWrapper);
     }
 

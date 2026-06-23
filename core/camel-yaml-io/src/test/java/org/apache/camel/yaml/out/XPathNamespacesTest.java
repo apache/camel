@@ -17,13 +17,15 @@
 package org.apache.camel.yaml.out;
 
 import java.io.ByteArrayInputStream;
-import java.io.StringWriter;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RoutesDefinition;
+import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.xml.in.ModelParser;
 import org.assertj.core.api.InstanceOfAssertFactories;
 import org.junit.jupiter.api.Test;
@@ -43,10 +45,14 @@ class XPathNamespacesTest {
                     .extracting(RouteDefinition::getOutputs, InstanceOfAssertFactories.list(ProcessorDefinition.class))
                     .hasSize(3);
 
-            StringWriter sw = new StringWriter();
-            new org.apache.camel.yaml.out.ModelWriter(sw).writeRoutesDefinition(routesDefinition.get());
+            YamlModelWriter writer = new YamlModelWriter();
+            List<JsonObject> roots = new ArrayList<>();
+            for (RouteDefinition route : routesDefinition.get().getRoutes()) {
+                roots.add(writer.writeRouteDefinition(route));
+            }
+            String out = writer.printAsYaml(roots);
 
-            assertThat(sw).hasToString(EXPECTED_YAML);
+            assertThat(out).isEqualTo(EXPECTED_YAML);
         }
     }
 
@@ -82,6 +88,7 @@ class XPathNamespacesTest {
     //language=yaml
     private static final String EXPECTED_YAML = """
             - route:
+                customId: true
                 id: direct:route-with-xpath-expression-custom-namespace
                 from:
                   uri: direct:route-with-xpath-expression-custom-namespace
@@ -91,31 +98,44 @@ class XPathNamespacesTest {
                         expression:
                           xpath:
                             resultType: java.lang.String
-                            saxon: "true"
+                            saxon: true
                             expression: /routes-ns-def:parent/routes-ns-def:child
                             namespace:
-                              routes-ns-def: http://www.example.com/schema
-                              route-ns-def: http://www.example.com/schema
+                              - key: xsi
+                                value: http://www.w3.org/2001/XMLSchema-instance
+                              - key: routes-ns-def
+                                value: http://www.example.com/schema
+                              - key: route-ns-def
+                                value: http://www.example.com/schema
                     - setProperty:
                         name: child-expression-namespace-from-route
                         expression:
                           xpath:
                             resultType: java.lang.String
-                            saxon: "true"
+                            saxon: true
                             expression: /route-ns-def:parent/route-ns-def:child
                             namespace:
-                              routes-ns-def: http://www.example.com/schema
-                              route-ns-def: http://www.example.com/schema
+                              - key: xsi
+                                value: http://www.w3.org/2001/XMLSchema-instance
+                              - key: routes-ns-def
+                                value: http://www.example.com/schema
+                              - key: route-ns-def
+                                value: http://www.example.com/schema
                     - setProperty:
                         name: child-expression-namespace-from-xpath
                         expression:
                           xpath:
                             resultType: java.lang.String
-                            saxon: "true"
+                            saxon: true
                             expression: /expression-ns-def:parent/expression-ns-def:child
                             namespace:
-                              routes-ns-def: http://www.example.com/schema
-                              route-ns-def: http://www.example.com/schema
-                              expression-ns-def: http://www.example.com/schema
-                        """;
+                              - key: xsi
+                                value: http://www.w3.org/2001/XMLSchema-instance
+                              - key: routes-ns-def
+                                value: http://www.example.com/schema
+                              - key: route-ns-def
+                                value: http://www.example.com/schema
+                              - key: expression-ns-def
+                                value: http://www.example.com/schema
+                    """;
 }

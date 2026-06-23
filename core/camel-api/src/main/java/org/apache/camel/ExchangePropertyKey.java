@@ -17,9 +17,17 @@
 package org.apache.camel;
 
 import org.apache.camel.spi.CircuitBreakerConstants;
+import org.jspecify.annotations.Nullable;
 
 /**
- * An enum of common and known keys for exchange properties used by camel-core.
+ * Typed enum of the well-known {@link Exchange} property keys used by camel-core.
+ * <p/>
+ * Each constant wraps the corresponding {@link Exchange} string constant and provides a type-safe alternative for
+ * reading and writing internal exchange properties via {@link Exchange#getProperty(ExchangePropertyKey)} and
+ * {@link Exchange#setProperty(ExchangePropertyKey, Object)}.
+ *
+ * @see   Exchange
+ * @since 3.9
  */
 public enum ExchangePropertyKey {
 
@@ -64,6 +72,8 @@ public enum ExchangePropertyKey {
     INTERCEPT_SEND_TO_ENDPOINT_WHEN_MATCHED(Exchange.INTERCEPT_SEND_TO_ENDPOINT_WHEN_MATCHED),
     LOOP_INDEX(Exchange.LOOP_INDEX),
     LOOP_SIZE(Exchange.LOOP_SIZE),
+    MESSAGE_BODY_SIZE(Exchange.MESSAGE_BODY_SIZE),
+    MESSAGE_HEADERS_SIZE(Exchange.MESSAGE_HEADERS_SIZE),
     MESSAGE_HISTORY(Exchange.MESSAGE_HISTORY),
     MULTICAST_COMPLETE(Exchange.MULTICAST_COMPLETE),
     MULTICAST_INDEX(Exchange.MULTICAST_INDEX),
@@ -100,7 +110,7 @@ public enum ExchangePropertyKey {
         return name;
     }
 
-    public static ExchangePropertyKey asExchangePropertyKey(String name) {
+    public static @Nullable ExchangePropertyKey asExchangePropertyKey(String name) {
         switch (name) {
             case Exchange.AGGREGATED_COMPLETED_BY:
                 return AGGREGATED_COMPLETED_BY;
@@ -182,6 +192,10 @@ public enum ExchangePropertyKey {
                 return LOOP_INDEX;
             case Exchange.LOOP_SIZE:
                 return LOOP_SIZE;
+            case Exchange.MESSAGE_BODY_SIZE:
+                return MESSAGE_BODY_SIZE;
+            case Exchange.MESSAGE_HEADERS_SIZE:
+                return MESSAGE_HEADERS_SIZE;
             case Exchange.MESSAGE_HISTORY:
                 return MESSAGE_HISTORY;
             case Exchange.MULTICAST_COMPLETE:

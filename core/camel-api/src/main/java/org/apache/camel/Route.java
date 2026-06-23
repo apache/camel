@@ -29,14 +29,24 @@ import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.RouteController;
 import org.apache.camel.spi.RouteError;
 import org.apache.camel.spi.RoutePolicy;
+import org.jspecify.annotations.Nullable;
 
 /**
- * A <a href="http://camel.apache.org/routes.html">Route</a> defines the processing used on an inbound message exchange
- * from a specific {@link org.apache.camel.Endpoint} within a {@link org.apache.camel.CamelContext}.
+ * A <a href="https://camel.apache.org/manual/routes.html">Route</a> defines the processing applied to an inbound
+ * {@link Exchange} arriving at a specific {@link Endpoint} within a {@link CamelContext}.
  * <p/>
- * Use the API from {@link org.apache.camel.CamelContext} to control the lifecycle of a route, such as starting and
- * stopping using the {@link org.apache.camel.spi.RouteController#startRoute(String)} and
- * {@link org.apache.camel.spi.RouteController#stopRoute(String)} methods.
+ * Each route has a unique id, an input {@link Endpoint}, and a chain of {@link Processor}s that transform or route the
+ * exchange. Routes are built using a DSL ({@link RoutesBuilder}, {@code RouteBuilder} in Java DSL, YAML DSL, XML DSL)
+ * and are registered in the {@link CamelContext} at startup.
+ * <p/>
+ * The lifecycle of a route (start, stop, suspend, resume) is managed through the
+ * {@link org.apache.camel.spi.RouteController}. A route can also carry optional
+ * {@link org.apache.camel.spi.RoutePolicy} objects that apply governance rules such as throttling or scheduling.
+ *
+ * @see RoutesBuilder
+ * @see CamelContext
+ * @see org.apache.camel.spi.RouteController
+ * @see org.apache.camel.spi.RoutePolicy
  */
 public interface Route extends RuntimeConfiguration {
 
@@ -63,6 +73,7 @@ public interface Route extends RuntimeConfiguration {
     /**
      * Gets the node prefix id
      */
+    @Nullable
     String getNodePrefixId();
 
     /**
@@ -92,6 +103,7 @@ public interface Route extends RuntimeConfiguration {
      *
      * @return the route group
      */
+    @Nullable
     String getGroup();
 
     /**
@@ -148,6 +160,7 @@ public interface Route extends RuntimeConfiguration {
      *
      * @return the description, or <tt>null</tt> if no description has been configured.
      */
+    @Nullable
     String getDescription();
 
     /**
@@ -157,6 +170,7 @@ public interface Route extends RuntimeConfiguration {
      *
      * @return the note, or <tt>null</tt> if no note has been configured.
      */
+    @Nullable
     String getNote();
 
     /**
@@ -167,6 +181,7 @@ public interface Route extends RuntimeConfiguration {
      *
      * @return the configuration, or <tt>null</tt> if no configuration has been configured.
      */
+    @Nullable
     String getConfigurationId();
 
     /**
@@ -174,16 +189,19 @@ public interface Route extends RuntimeConfiguration {
      *
      * @return the source, or null if this route is not loaded from a resource
      */
+    @Nullable
     Resource getSourceResource();
 
     /**
      * The source:line-number where the route input is located in the source code
      */
+    @Nullable
     String getSourceLocation();
 
     /**
      * The source:line-number in short format that can be used for logging or summary purposes.
      */
+    @Nullable
     String getSourceLocationShort();
 
     /**
@@ -234,6 +252,7 @@ public interface Route extends RuntimeConfiguration {
      *
      * @return a navigator for {@link Processor}.
      */
+    @Nullable
     Navigate<Processor> navigate();
 
     /**
@@ -258,6 +277,7 @@ public interface Route extends RuntimeConfiguration {
      *
      * @return the error or <tt>null</tt> if no error
      */
+    @Nullable
     RouteError getLastError();
 
     /**
@@ -269,17 +289,18 @@ public interface Route extends RuntimeConfiguration {
      *
      * @param error the error
      */
-    void setLastError(RouteError error);
+    void setLastError(@Nullable RouteError error);
 
     /**
      * Gets the route startup order
      */
+    @Nullable
     Integer getStartupOrder();
 
     /**
      * Sets the route startup order
      */
-    void setStartupOrder(Integer startupOrder);
+    void setStartupOrder(@Nullable Integer startupOrder);
 
     /**
      * Gets the {@link RouteController} for this route.
@@ -321,11 +342,13 @@ public interface Route extends RuntimeConfiguration {
     /**
      * Gets the route description
      */
+    @Nullable
     String getRouteDescription();
 
     /**
      * Gets the route note
      */
+    @Nullable
     String getRouteNote();
 
     /**
@@ -335,6 +358,7 @@ public interface Route extends RuntimeConfiguration {
      *
      * @return the route type during creation of the route, is null after the route has been created.
      */
+    @Nullable
     NamedNode getRoute();
 
     /**
@@ -373,6 +397,7 @@ public interface Route extends RuntimeConfiguration {
      *
      * @return the managed intercept strategy, or <tt>null</tt> if not managed
      */
+    @Nullable
     ManagementInterceptStrategy getManagementInterceptStrategy();
 
     /**
@@ -382,25 +407,26 @@ public interface Route extends RuntimeConfiguration {
      */
     List<RoutePolicy> getRoutePolicyList();
 
-    // called at completion time
+    /** Sets the error handler factory for this route. */
     void setErrorHandlerFactory(ErrorHandlerFactory errorHandlerFactory);
 
-    // called at runtime
+    /** Gets the error handler factory for this route. */
     ErrorHandlerFactory getErrorHandlerFactory();
 
-    // called at runtime
+    /** Gets the on completion processors. */
     Collection<Processor> getOnCompletions();
 
-    // called at completion time
+    /** Sets an on completion processor. */
     void setOnCompletion(String onCompletionId, Processor processor);
 
-    // called at runtime
+    /** Gets the on exception processors. */
     Collection<Processor> getOnExceptions();
 
-    // called at runtime
+    /** Gets the on exception processor for the given id. */
+    @Nullable
     Processor getOnException(String onExceptionId);
 
-    // called at completion time
+    /** Sets an on exception processor. */
     void setOnException(String onExceptionId, Processor processor);
 
     /**

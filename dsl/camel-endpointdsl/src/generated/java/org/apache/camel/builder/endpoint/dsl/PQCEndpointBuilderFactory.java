@@ -699,7 +699,7 @@ public interface PQCEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final PQCHeaderNameBuilder INSTANCE = new PQCHeaderNameBuilder();
+        public static final PQCHeaderNameBuilder INSTANCE = new PQCHeaderNameBuilder();
 
         /**
          * The operation we want to perform.

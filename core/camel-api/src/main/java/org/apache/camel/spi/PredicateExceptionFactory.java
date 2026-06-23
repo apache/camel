@@ -18,10 +18,13 @@ package org.apache.camel.spi;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Predicate;
+import org.jspecify.annotations.Nullable;
 
 /**
  * A factory that can be used to create a specific exception when a {@link Predicate} returning false, which can be used
  * by camel-validator and other components.
+ *
+ * @since 3.15
  */
 public interface PredicateExceptionFactory {
 
@@ -34,6 +37,7 @@ public interface PredicateExceptionFactory {
      * @return           the exception, or <tt>null</tt> to not use a specific exception but let Camel use a standard
      *                   exception such as PredicateValidationException.
      */
-    Exception newPredicateException(Exchange exchange, Predicate predicate, String nodeId);
+    @Nullable
+    Exception newPredicateException(Exchange exchange, Predicate predicate, @Nullable String nodeId);
 
 }

@@ -444,7 +444,7 @@ public interface DebeziumPostgresComponentBuilderFactory {
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default:
-         * .*secret$|.*password$|.*sasl\.jaas\.config$|.*basic\.auth\.user\.info|.*registry\.auth\.client-secret
+         * .*secret$|.*password$|.*sasl\.jaas\.config$|.*basic\.auth\.user\.info|.*registry\.auth\.client-secret|.*credentials\.json$
          * Group: postgres
          * 
          * @param customSanitizePattern the value to set

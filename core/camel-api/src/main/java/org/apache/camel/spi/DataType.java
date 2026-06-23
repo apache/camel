@@ -16,7 +16,10 @@
  */
 package org.apache.camel.spi;
 
+import java.util.Objects;
+
 import org.apache.camel.util.StringHelper;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Represents the data type URN which is used for message data type contract.
@@ -34,6 +37,8 @@ import org.apache.camel.util.StringHelper;
  * `http:cloud-events` and `aws-s3:cloud-events` where the scheme relates to the respective component's scheme. This
  * information could be leveraged to detect required {@link Transformer} and {@link Validator} implementations provided
  * as part of these components.
+ * <p/>
+ * See <a href="https://camel.apache.org/manual/transformer.html">Transformer</a> in the Camel user manual.
  *
  * @see DataTypeAware
  * @see Transformer
@@ -48,11 +53,11 @@ public class DataType {
     public static final DataType ANY = new DataType(ANY_TYPE_URN);
 
     private final String scheme;
-    private String name;
+    private @Nullable String name;
     private boolean isJavaType;
-    private String typeString;
+    private @Nullable String typeString;
 
-    public DataType(String urn) {
+    public DataType(@Nullable String urn) {
         if (urn != null) {
             String[] split = StringHelper.splitOnCharacter(urn, ":", 2);
             scheme = split[0];
@@ -67,6 +72,7 @@ public class DataType {
     }
 
     public DataType(Class<?> clazz) {
+        Objects.requireNonNull(clazz, "clazz");
         scheme = JAVA_TYPE_SCHEME;
         isJavaType = true;
         name = clazz.getName();
@@ -76,7 +82,7 @@ public class DataType {
         return scheme;
     }
 
-    public String getName() {
+    public @Nullable String getName() {
         return name;
     }
 
@@ -96,16 +102,16 @@ public class DataType {
         return this.typeString;
     }
 
-    public static boolean isAnyType(DataType dataType) {
+    public static boolean isAnyType(@Nullable DataType dataType) {
         return dataType == null || DataType.ANY.equals(dataType);
     }
 
-    public static boolean isJavaType(DataType dataType) {
+    public static boolean isJavaType(@Nullable DataType dataType) {
         return dataType != null && dataType.isJavaType();
     }
 
     @Override
-    public boolean equals(Object target) {
+    public boolean equals(@Nullable Object target) {
         if (target instanceof DataType targetDt) {
             String targetScheme = targetDt.getScheme();
             String targetName = targetDt.getName();

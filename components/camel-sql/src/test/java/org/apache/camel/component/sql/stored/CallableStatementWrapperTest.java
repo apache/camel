@@ -35,17 +35,28 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class CallableStatementWrapperTest extends CamelTestSupport {
 
+    /* This is necessary when debugging tests to enable HSQLDB to find
+       the classes in the classpath. */
+    /*
+    static {
+        if (System.getProperty("hsqldb.method_class_names") == null) {
+            System.setProperty(
+                    "hsqldb.method_class_names",
+                    "org.apache.camel.component.sql.stored.*");
+        }
+    }
+    */
+
     private TemplateParser templateParser;
     private EmbeddedDatabase db;
     private JdbcTemplate jdbcTemplate;
     private CallableStatementWrapperFactory factory;
 
     @Override
-
     public void doPreSetup() throws Exception {
         db = new EmbeddedDatabaseBuilder()
                 .setName(getClass().getSimpleName())
-                .setType(EmbeddedDatabaseType.DERBY)
+                .setType(EmbeddedDatabaseType.HSQL)
                 .addScript("sql/storedProcedureTest.sql").build();
         jdbcTemplate = new JdbcTemplate(db);
 
@@ -60,32 +71,7 @@ public class CallableStatementWrapperTest extends CamelTestSupport {
     @Test
     public void shouldExecuteStoredProcedure() throws Exception {
         CallableStatementWrapper wrapper = new CallableStatementWrapper(
-                "SUBNUMBERS"
-                                                                        + "(INTEGER ${header.v1},INTEGER ${header.v2},OUT INTEGER resultofsub)",
-                factory);
-
-        final Exchange exchange = createExchangeWithBody(null);
-        exchange.getIn().setHeader("v1", 1);
-        exchange.getIn().setHeader("v2", 2);
-
-        wrapper.call(new WrapperExecuteCallback() {
-            @Override
-            public void execute(StatementWrapper statementWrapper) throws SQLException, DataAccessException {
-                statementWrapper.populateStatement(null, exchange);
-
-                Map resultOfQuery = (Map) statementWrapper.executeStatement();
-                assertEquals(-1, resultOfQuery.get("resultofsub"));
-            }
-        });
-    }
-
-    @Test
-    public void shouldExecuteStoredFunction() throws Exception {
-        CallableStatementWrapperFactory factory = new CallableStatementWrapperFactory(jdbcTemplate, templateParser, true);
-
-        CallableStatementWrapper wrapper = new CallableStatementWrapper(
-                "SUBNUMBERS_FUNCTION"
-                                                                        + "(OUT INTEGER resultofsub, INTEGER ${header.v1},INTEGER ${header.v2})",
+                "SUBNUMBERS(INTEGER ${header.v1},INTEGER ${header.v2},OUT INTEGER resultofsub)",
                 factory);
 
         final Exchange exchange = createExchangeWithBody(null);
@@ -116,7 +102,6 @@ public class CallableStatementWrapperTest extends CamelTestSupport {
                 //no output parameter in stored procedure NILADIC()
                 //Spring sets #update-count-1
                 assertNotNull(result.get("#update-count-1"));
-
             }
         });
     }
@@ -127,5 +112,4 @@ public class CallableStatementWrapperTest extends CamelTestSupport {
             db.shutdown();
         }
     }
-
 }

@@ -38,42 +38,19 @@ public final class VertxHttpHelper {
 
     /**
      * Default {@link ObjectInputFilter} pattern applied when deserializing Java objects from HTTP responses with
-     * Content-Type {@code application/x-java-serialized-object}. Allows standard Java types and Apache Camel types and
-     * rejects everything else. Can be overridden per-endpoint via
+     * Content-Type {@code application/x-java-serialized-object}. Allows standard Java types and Apache Camel types,
+     * denies {@code java.net.**}, and applies JEP-290 graph-shape limits ({@code maxdepth}, {@code maxrefs},
+     * {@code maxbytes}) as defense-in-depth against resource-exhaustion payloads. Can be overridden per-endpoint via
      * {@link VertxHttpConfiguration#setDeserializationFilter(String)} or globally via the JVM system property
      * {@code jdk.serialFilter}.
      */
-    static final String DEFAULT_DESERIALIZATION_FILTER = "java.**;javax.**;org.apache.camel.**;!*";
+    static final String DEFAULT_DESERIALIZATION_FILTER
+            = "!java.net.**;java.**;javax.**;org.apache.camel.**;maxdepth=20;maxrefs=10000;maxbytes=10485760;!*";
 
     private static final Logger LOG = LoggerFactory.getLogger(VertxHttpHelper.class);
 
     private VertxHttpHelper() {
         // Utility class
-    }
-
-    /**
-     * Resolves a HTTP URI query string from the given exchange message headers
-     */
-    public static String resolveQueryString(Exchange exchange, VertxHttpEndpoint endpoint) throws URISyntaxException {
-        Message message = exchange.getMessage();
-        String queryString = (String) message.removeHeader(Exchange.REST_HTTP_QUERY);
-        if (ObjectHelper.isEmpty(queryString)) {
-            queryString = message.getHeader(VertxHttpConstants.HTTP_QUERY, String.class);
-        }
-
-        String uriString = null;
-        if (!endpoint.getConfiguration().isBridgeEndpoint()) {
-            uriString = message.getHeader(VertxHttpConstants.HTTP_URI, String.class);
-            uriString = exchange.getContext().resolvePropertyPlaceholders(uriString);
-        }
-
-        if (ObjectHelper.isNotEmpty(uriString)) {
-            uriString = UnsafeUriCharactersEncoder.encodeHttpURI(uriString);
-            URI uri = new URI(uriString);
-            queryString = uri.getQuery();
-        }
-
-        return queryString;
     }
 
     /**
@@ -110,7 +87,37 @@ public final class VertxHttpHelper {
             }
         }
 
-        uri = UnsafeUriCharactersEncoder.encodeHttpURI(uri);
+        // Get query string from headers (rest producer may provide an override)
+        String queryString = (String) message.removeHeader(Exchange.REST_HTTP_QUERY);
+        if (queryString == null) {
+            queryString = message.getHeader(VertxHttpConstants.HTTP_QUERY, String.class);
+        }
+
+        // Parse URI to check for existing query string
+        URI tempUri = new URI(uri);
+        if (queryString == null) {
+            queryString = tempUri.getRawQuery();
+        }
+        if (queryString == null && endpoint.getConfiguration().getHttpUri() != null) {
+            queryString = endpoint.getConfiguration().getHttpUri().getRawQuery();
+        }
+
+        // Build the complete URI string with encoded query (similar to camel-http approach)
+        // Encode the full URI once to avoid double-encoding
+        if (queryString != null) {
+            // Build URI string without query first
+            String baseUri = tempUri.toString();
+            int queryIndex = baseUri.indexOf('?');
+            if (queryIndex != -1) {
+                baseUri = baseUri.substring(0, queryIndex);
+            }
+            // Encode query string using RFC1738 encoding (includes [, ], #, etc.)
+            // This is stricter than encodeHttpURI() which only encodes a subset
+            queryString = UnsafeUriCharactersEncoder.encode(queryString);
+            uri = baseUri + "?" + queryString;
+        } else {
+            uri = UnsafeUriCharactersEncoder.encode(uri);
+        }
 
         return new URI(uri);
     }

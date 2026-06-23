@@ -25,6 +25,8 @@ You can use this in all of Camel's runtime such as Spring Boot, Quarkus, Camel M
 
 The following `my-route.xml` source file:
 
+._XML-only:_
+
 .my-route.xml
 [source,xml]
 ----
@@ -111,7 +113,7 @@ Here's an example `camel.xml` file, which defines both the routes and beans used
 
 A `my-route` route is referring to `greeter` bean which is defined using Spring `<bean>` element.
 
-More examples can be found in xref:manual:ROOT:camel-jbang.adoc#_using_spring_beans_in_camel_xml_dsl[Camel JBang] page.
+More examples can be found in xref:manual:ROOT:camel-jbang-beans.adoc#_using_spring_beans_xml_in_camel_xml_dsl[Camel CLI] page.
 
 === Using bean with constructors
 

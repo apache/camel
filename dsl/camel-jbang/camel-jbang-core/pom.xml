@@ -25,7 +25,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-jbang-parent</artifactId>
-        <version>4.20.0-SNAPSHOT</version>
+        <version>4.21.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -33,7 +33,7 @@
     <packaging>jar</packaging>
 
     <name>Camel :: JBang :: Core</name>
-    <description>Camel JBang Core</description>
+    <description>Camel CLI Core</description>
 
     <properties>
         <firstVersion>3.12.0</firstVersion>
@@ -45,6 +45,10 @@
 
     <dependencies>
         <!-- camel -->
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-diagram</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-main</artifactId>
@@ -140,16 +144,17 @@
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-slf4j2-impl</artifactId>
         </dependency>
-        <!-- color logging -->
-        <dependency>
-            <groupId>org.fusesource.jansi</groupId>
-            <artifactId>jansi</artifactId>
-            <version>${jansi-version}</version>
-        </dependency>
 
         <dependency>
             <groupId>org.codehaus.plexus</groupId>
             <artifactId>plexus-xml</artifactId>
+        </dependency>
+
+        <!-- template engine for code generation -->
+        <dependency>
+            <groupId>org.freemarker</groupId>
+            <artifactId>freemarker</artifactId>
+            <version>${freemarker-version}</version>
         </dependency>
 
         <!-- test dependencies -->
@@ -173,6 +178,18 @@
             <groupId>org.awaitility</groupId>
             <artifactId>awaitility</artifactId>
             <version>${awaitility-version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.wiremock</groupId>
+            <artifactId>wiremock</artifactId>
+            <version>${wiremock-version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-junit-jupiter</artifactId>
+            <version>${mockito-version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -238,5 +255,94 @@
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <id>sync-example-catalog</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>download-example-catalog</id>
+                                <phase>generate-resources</phase>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                                <configuration>
+                                    <target>
+                                        <property name="examples.base" value="https://raw.githubusercontent.com/apache/camel-jbang-examples/main"/>
+                                        <property name="examples.dest" value="${project.basedir}/src/main/resources/examples"/>
+                                        <!-- Catalog -->
+                                        <get src="${examples.base}/camel-jbang-example-catalog.json"
+                                             dest="${examples.dest}/camel-jbang-example-catalog.json"
+                                             usetimestamp="true"/>
+                                        <!-- Bundled examples -->
+                                        <macrodef name="sync-example">
+                                            <attribute name="name"/>
+                                            <attribute name="file"/>
+                                            <sequential>
+                                                <mkdir dir="${examples.dest}/@{name}"/>
+                                                <get src="${examples.base}/@{name}/@{file}"
+                                                     dest="${examples.dest}/@{name}/@{file}"
+                                                     usetimestamp="true"/>
+                                            </sequential>
+                                        </macrodef>
+                                        <!-- camel-1-trbute -->
+                                        <sync-example name="camel-1-tribute" file="README.md"/>
+                                        <sync-example name="camel-1-tribute" file="application.properties"/>
+                                        <sync-example name="camel-1-tribute" file="jms-to-file.camel.yaml"/>
+                                        <!-- circuit-breaker -->
+                                        <sync-example name="circuit-breaker" file="README.md"/>
+                                        <sync-example name="circuit-breaker" file="route.camel.yaml"/>
+                                        <!-- cron-log -->
+                                        <sync-example name="cron-log" file="README.md"/>
+                                        <sync-example name="cron-log" file="application.properties"/>
+                                        <sync-example name="cron-log" file="cron-log.camel.yaml"/>
+                                        <!-- groovy -->
+                                        <sync-example name="groovy" file="README.md"/>
+                                        <sync-example name="groovy" file="application.properties"/>
+                                        <sync-example name="groovy" file="groovy.camel.yaml"/>
+                                        <!-- message-size -->
+                                        <sync-example name="message-size" file="README.md"/>
+                                        <sync-example name="message-size" file="orders.camel.yaml"/>
+                                        <!-- rest-api -->
+                                        <sync-example name="rest-api" file="README.md"/>
+                                        <sync-example name="rest-api" file="application.properties"/>
+                                        <sync-example name="rest-api" file="rest-api.camel.yaml"/>
+                                        <!-- route-topology -->
+                                        <sync-example name="route-topology" file="README.md"/>
+                                        <sync-example name="route-topology" file="application.properties"/>
+                                        <sync-example name="route-topology" file="route-topology.camel.yaml"/>
+                                        <!-- routes -->
+                                        <sync-example name="routes" file="Greeter.java"/>
+                                        <sync-example name="routes" file="README.md"/>
+                                        <sync-example name="routes" file="application.properties"/>
+                                        <sync-example name="routes" file="beans.yaml"/>
+                                        <sync-example name="routes" file="routes.camel.yaml"/>
+                                        <!-- timer-log -->
+                                        <sync-example name="timer-log" file="README.md"/>
+                                        <sync-example name="timer-log" file="application.properties"/>
+                                        <sync-example name="timer-log" file="timer-log.camel.yaml"/>
+                                        <!-- tui-hello-world -->
+                                        <sync-example name="tui-hello-world" file="README.md"/>
+                                        <sync-example name="tui-hello-world" file="tui-hello-world.yaml"/>
+                                        <!-- xslt -->
+                                        <sync-example name="xslt" file="README.md"/>
+                                        <sync-example name="xslt" file="consumer.camel.yaml"/>
+                                        <mkdir dir="${examples.dest}/xslt/input"/>
+                                        <sync-example name="xslt" file="input/account.xml"/>
+                                        <sync-example name="xslt" file="stylesheet.xsl"/>
+                                    </target>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 
 </project>

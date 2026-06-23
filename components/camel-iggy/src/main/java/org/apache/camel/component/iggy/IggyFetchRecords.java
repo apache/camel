@@ -25,6 +25,7 @@ import java.util.stream.Collectors;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.component.iggy.client.IggyClientConnectionPool;
+import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.support.BridgeExceptionHandlerToErrorHandler;
 import org.apache.camel.support.task.Tasks;
 import org.apache.camel.support.task.budget.Budgets;
@@ -33,6 +34,7 @@ import org.apache.iggy.consumergroup.Consumer;
 import org.apache.iggy.identifier.ConsumerId;
 import org.apache.iggy.identifier.StreamId;
 import org.apache.iggy.identifier.TopicId;
+import org.apache.iggy.message.Message;
 import org.apache.iggy.message.PolledMessages;
 import org.apache.iggy.message.PollingStrategy;
 import org.slf4j.Logger;
@@ -133,7 +135,7 @@ public class IggyFetchRecords implements Runnable {
                     polledMessages.partitionId(),
                     configuration.isAutoCommit() ? polledMessages.currentOffset() : offset);
 
-            for (org.apache.iggy.message.Message message : polledMessages.messages()) {
+            for (Message message : polledMessages.messages()) {
                 Exchange exchange = createExchange(message);
                 try {
                     iggyConsumer.getProcessor().process(exchange);
@@ -157,7 +159,7 @@ public class IggyFetchRecords implements Runnable {
         }
     }
 
-    private Exchange createExchange(org.apache.iggy.message.Message message) {
+    private Exchange createExchange(Message message) {
         Exchange exchange = iggyConsumer.createExchange(true);
 
         exchange.getIn().setBody(new String(message.payload())); // TODO is it ok?
@@ -174,7 +176,13 @@ public class IggyFetchRecords implements Runnable {
                 hv -> hv.getValue().asString() // TODO this way `HeaderKind kind` will be lost
         ));
         if (!stringUserHeaders.isEmpty()) {
-            exchange.getIn().getHeaders().putAll(stringUserHeaders);
+            HeaderFilterStrategy headerFilterStrategy = endpoint.getHeaderFilterStrategy();
+            for (Map.Entry<String, Object> entry : stringUserHeaders.entrySet()) {
+                if (headerFilterStrategy == null
+                        || !headerFilterStrategy.applyFilterToExternalHeaders(entry.getKey(), entry.getValue(), exchange)) {
+                    exchange.getIn().setHeader(entry.getKey(), entry.getValue());
+                }
+            }
         }
 
         return exchange;

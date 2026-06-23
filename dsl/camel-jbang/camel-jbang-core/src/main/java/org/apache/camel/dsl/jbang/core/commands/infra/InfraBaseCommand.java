@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -103,6 +104,8 @@ public abstract class InfraBaseCommand extends CamelCommand {
                     pids.put(Long.valueOf(pid), pidFile);
                 }
             }
+        } catch (NoSuchFileException e) {
+            // camel directory does not exist yet
         }
 
         return pids;
@@ -245,7 +248,8 @@ public abstract class InfraBaseCommand extends CamelCommand {
             List<String> aliasImplementation,
             String groupId,
             String artifactId,
-            String version) {
+            String version,
+            String serviceVersion) {
     }
 
     record Row(String pid, String alias, String aliasImplementation, String description, String serviceData) {

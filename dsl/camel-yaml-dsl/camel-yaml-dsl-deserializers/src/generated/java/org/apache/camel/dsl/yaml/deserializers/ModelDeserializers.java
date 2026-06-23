@@ -11,6 +11,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.dsl.yaml.common.YamlDeserializerBase;
 import org.apache.camel.dsl.yaml.common.YamlDeserializerEndpointAwareBase;
 import org.apache.camel.dsl.yaml.common.YamlDeserializerSupport;
+import org.apache.camel.model.A2ASubTaskDefinition;
 import org.apache.camel.model.AggregateDefinition;
 import org.apache.camel.model.BeanDefinition;
 import org.apache.camel.model.BeanFactoryDefinition;
@@ -268,6 +269,92 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
+            nodes = "a2aSubTask",
+            types = org.apache.camel.model.A2ASubTaskDefinition.class,
+            order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
+            displayName = "A2A Sub Task",
+            description = "Groups route steps and emits A2A progress events before, after, or when the grouped work fails.",
+            deprecated = false,
+            properties = {
+                    @YamlProperty(name = "description", type = "string", description = "Sets the description of this node", displayName = "Description"),
+                    @YamlProperty(name = "disabled", type = "boolean", defaultValue = "false", description = "Disables this EIP from the route.", displayName = "Disabled"),
+                    @YamlProperty(name = "emitAfter", type = "string", description = "Simple expression template to emit after the nested steps complete successfully", displayName = "Emit After"),
+                    @YamlProperty(name = "emitBefore", type = "string", description = "Simple expression template to emit before the nested steps run", displayName = "Emit Before"),
+                    @YamlProperty(name = "emitOnError", type = "string", description = "Simple expression template to emit when the nested steps fail", displayName = "Emit On Error"),
+                    @YamlProperty(name = "failIfNoTaskContext", type = "boolean", defaultValue = "false", description = "Whether to fail if the current Exchange does not have an active A2A task context", displayName = "Fail If No Task Context"),
+                    @YamlProperty(name = "id", type = "string", description = "Sets the id of this node", displayName = "Id"),
+                    @YamlProperty(name = "note", type = "string", description = "Sets the note of this node", displayName = "Note"),
+                    @YamlProperty(name = "steps", type = "array:org.apache.camel.model.ProcessorDefinition")
+            }
+    )
+    public static class A2ASubTaskDefinitionDeserializer extends YamlDeserializerBase<A2ASubTaskDefinition> {
+        public A2ASubTaskDefinitionDeserializer() {
+            super(A2ASubTaskDefinition.class);
+        }
+
+        @Override
+        protected A2ASubTaskDefinition newInstance() {
+            return new A2ASubTaskDefinition();
+        }
+
+        @Override
+        protected boolean setProperty(A2ASubTaskDefinition target, String propertyKey,
+                String propertyName, Node node) {
+            propertyKey = org.apache.camel.util.StringHelper.dashToCamelCase(propertyKey);
+            switch(propertyKey) {
+                case "disabled": {
+                    String val = asText(node);
+                    target.setDisabled(val);
+                    break;
+                }
+                case "emitAfter": {
+                    String val = asText(node);
+                    target.setEmitAfter(val);
+                    break;
+                }
+                case "emitBefore": {
+                    String val = asText(node);
+                    target.setEmitBefore(val);
+                    break;
+                }
+                case "emitOnError": {
+                    String val = asText(node);
+                    target.setEmitOnError(val);
+                    break;
+                }
+                case "failIfNoTaskContext": {
+                    String val = asText(node);
+                    target.setFailIfNoTaskContext(val);
+                    break;
+                }
+                case "id": {
+                    String val = asText(node);
+                    target.setId(val);
+                    break;
+                }
+                case "description": {
+                    String val = asText(node);
+                    target.setDescription(val);
+                    break;
+                }
+                case "note": {
+                    String val = asText(node);
+                    target.setNote(val);
+                    break;
+                }
+                case "steps": {
+                    setSteps(target, node);
+                    break;
+                }
+                default: {
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
+
+    @YamlType(
             nodes = "asn1",
             inline = true,
             types = org.apache.camel.model.dataformat.ASN1DataFormat.class,
@@ -361,6 +448,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "note", type = "string", description = "Sets the note of this node", displayName = "Note"),
                     @YamlProperty(name = "optimisticLockRetryPolicy", type = "object:org.apache.camel.model.OptimisticLockRetryPolicyDefinition", description = "Allows to configure retry settings when using optimistic locking.", displayName = "Optimistic Lock Retry Policy"),
                     @YamlProperty(name = "optimisticLocking", type = "boolean", defaultValue = "false", description = "Turns on using optimistic locking, which requires the aggregationRepository being used, is supporting this by implementing org.apache.camel.spi.OptimisticLockingAggregationRepository .", displayName = "Optimistic Locking"),
+                    @YamlProperty(name = "optimisticLockingSyncRetry", type = "boolean", defaultValue = "false", description = "When optimistic locking is enabled, retries happen synchronously in the same thread instead of being scheduled on a background thread. This preserves transaction context for repositories that require single-thread transactional guarantees. Only takes effect when optimisticLocking() is also enabled.", displayName = "Optimistic Locking Sync Retry"),
                     @YamlProperty(name = "parallelProcessing", type = "boolean", defaultValue = "false", description = "When aggregated are completed they are being send out of the aggregator. This option indicates whether or not Camel should use a thread pool with multiple threads for concurrency. If no custom thread pool has been specified then Camel creates a default pool with 10 concurrent threads.", displayName = "Parallel Processing"),
                     @YamlProperty(name = "steps", type = "array:org.apache.camel.model.ProcessorDefinition"),
                     @YamlProperty(name = "timeoutCheckerExecutorService", type = "string", description = "If using either of the completionTimeout, completionTimeoutExpression, or completionInterval options a background thread is created to check for the completion for every aggregator. Set this option to provide a custom thread pool to be used rather than creating a new thread for every aggregator.", displayName = "Timeout Checker Executor Service")
@@ -509,6 +597,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "optimisticLocking": {
                     String val = asText(node);
                     target.setOptimisticLocking(val);
+                    break;
+                }
+                case "optimisticLockingSyncRetry": {
+                    String val = asText(node);
+                    target.setOptimisticLockingSyncRetry(val);
                     break;
                 }
                 case "parallelProcessing": {
@@ -6413,6 +6506,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             properties = {
                     @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id"),
                     @YamlProperty(name = "parser", type = "string", description = "To use a custom HL7 parser", displayName = "Parser"),
+                    @YamlProperty(name = "targetFormat", type = "enum:XML", description = "The target format for marshal output and unmarshal result type. By default, marshal encodes to HL7 ER7, and unmarshal returns a HAPI Message object. If this is set to XML, marshal encodes to HL7 XML, and unmarshal returns an XML DOM Document.", displayName = "Target Format"),
                     @YamlProperty(name = "validate", type = "boolean", defaultValue = "true", description = "Whether to validate the HL7 message Is by default true.", displayName = "Validate")
             }
     )
@@ -6439,6 +6533,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "parser": {
                     String val = asText(node);
                     target.setParser(val);
+                    break;
+                }
+                case "targetFormat": {
+                    String val = asText(node);
+                    target.setTargetFormat(val);
                     break;
                 }
                 case "validate": {
@@ -17640,7 +17739,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "maxQueueSize", type = "number", description = "Sets the maximum number of tasks in the work queue. Use -1 or Integer.MAX_VALUE for an unbounded queue", displayName = "Max Queue Size"),
                     @YamlProperty(name = "note", type = "string", description = "Sets the note of this node", displayName = "Note"),
                     @YamlProperty(name = "poolSize", type = "number", description = "Sets the core pool size", displayName = "Pool Size"),
-                    @YamlProperty(name = "rejectedPolicy", type = "enum:Abort,CallerRuns", description = "Sets the handler for tasks which cannot be executed by the thread pool.", displayName = "Rejected Policy"),
+                    @YamlProperty(name = "rejectedPolicy", type = "enum:Abort,CallerRuns,Block", description = "Sets the handler for tasks which cannot be executed by the thread pool.", displayName = "Rejected Policy"),
                     @YamlProperty(name = "timeUnit", type = "enum:NANOSECONDS,MICROSECONDS,MILLISECONDS,SECONDS,MINUTES,HOURS,DAYS", description = "Sets the time unit to use for keep alive time By default SECONDS is used.", displayName = "Time Unit")
             }
     )
@@ -17741,7 +17840,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "maxQueueSize", type = "number", description = "Sets the maximum number of tasks in the work queue. Use -1 or Integer.MAX_VALUE for an unbounded queue", displayName = "Max Queue Size"),
                     @YamlProperty(name = "note", type = "string", description = "Sets the note of this node", displayName = "Note"),
                     @YamlProperty(name = "poolSize", type = "number", description = "Sets the core pool size", displayName = "Pool Size"),
-                    @YamlProperty(name = "rejectedPolicy", type = "enum:Abort,CallerRuns", description = "Sets the handler for tasks which cannot be executed by the thread pool.", displayName = "Rejected Policy"),
+                    @YamlProperty(name = "rejectedPolicy", type = "enum:Abort,CallerRuns,Block", description = "Sets the handler for tasks which cannot be executed by the thread pool.", displayName = "Rejected Policy"),
                     @YamlProperty(name = "threadName", type = "string", defaultValue = "Threads", description = "Sets the thread name to use.", displayName = "Thread Name"),
                     @YamlProperty(name = "timeUnit", type = "enum:NANOSECONDS,MICROSECONDS,MILLISECONDS,SECONDS,MINUTES,HOURS,DAYS", description = "Sets the keep alive time unit. By default SECONDS is used.", displayName = "Time Unit")
             }

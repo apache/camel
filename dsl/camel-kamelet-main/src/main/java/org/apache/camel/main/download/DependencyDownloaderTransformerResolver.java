@@ -48,7 +48,9 @@ public final class DependencyDownloaderTransformerResolver extends DefaultTransf
     @Override
     public Transformer resolve(TransformerKey key, CamelContext context) {
         String name = key.toString();
-        TransformerModel model = catalog.transformerModel(name);
+        // catalog stores transformer names in normalized (dash-separated) format
+        String normalizedName = normalize(key);
+        TransformerModel model = catalog.transformerModel(normalizedName);
         if (model != null) {
             downloadLoader(model.getGroupId(), model.getArtifactId(), model.getVersion());
         }
@@ -59,10 +61,11 @@ public final class DependencyDownloaderTransformerResolver extends DefaultTransf
             answer = super.resolve(key, context);
         } else {
             answer = new StubTransformer();
+            answer.setName(name);
         }
 
         if (answer == null) {
-            List<String> suggestion = SuggestSimilarHelper.didYouMean(catalog.findTransformerNames(), name);
+            List<String> suggestion = SuggestSimilarHelper.didYouMean(catalog.findTransformerNames(), normalizedName);
             if (suggestion != null && !suggestion.isEmpty()) {
                 String s = String.join(", ", suggestion);
                 throw new IllegalArgumentException("Cannot find transformer with name: " + name + ". Did you mean: " + s);
@@ -82,7 +85,12 @@ public final class DependencyDownloaderTransformerResolver extends DefaultTransf
             return true;
         }
 
-        boolean stubbed = PatternHelper.matchPatterns(name, stubPattern.split(","));
+        boolean stubbed = false;
+        for (String n : stubPattern.split(",")) {
+            if (n.startsWith("transformer:")) {
+                stubbed |= PatternHelper.matchPattern(name, n.substring(12));
+            }
+        }
         return !stubbed;
     }
 

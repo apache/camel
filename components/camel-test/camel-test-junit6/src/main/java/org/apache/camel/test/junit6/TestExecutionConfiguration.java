@@ -163,7 +163,7 @@ public class TestExecutionConfiguration {
      * @return     <tt>true</tt> per class, <tt>false</tt> per test.
      */
     @Deprecated(since = "4.7.0")
-    protected TestExecutionConfiguration withCreateCamelContextPerClass(boolean createCamelContextPerClass) {
+    public TestExecutionConfiguration withCreateCamelContextPerClass(boolean createCamelContextPerClass) {
         this.createCamelContextPerClass = createCamelContextPerClass;
         return this;
     }

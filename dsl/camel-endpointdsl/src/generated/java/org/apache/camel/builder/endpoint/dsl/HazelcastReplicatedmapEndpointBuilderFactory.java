@@ -628,7 +628,7 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final HazelcastReplicatedmapHeaderNameBuilder INSTANCE = new HazelcastReplicatedmapHeaderNameBuilder();
+        public static final HazelcastReplicatedmapHeaderNameBuilder INSTANCE = new HazelcastReplicatedmapHeaderNameBuilder();
 
         /**
          * the object id to store / find your object inside the cache.

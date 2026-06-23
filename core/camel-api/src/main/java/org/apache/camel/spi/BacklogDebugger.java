@@ -24,18 +24,30 @@ import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.Processor;
 import org.apache.camel.StatefulService;
 import org.apache.camel.util.StopWatch;
+import org.jspecify.annotations.Nullable;
 
 /**
- * A {@link org.apache.camel.spi.Debugger} that has easy debugging functionality which can be used from JMX with
- * {@link org.apache.camel.api.management.mbean.ManagedBacklogDebuggerMBean}.
+ * High-level route debugger SPI that suspends {@link Exchange} processing at named breakpoints and exposes the
+ * suspended state for inspection, as described in the
+ * <a href="https://camel.apache.org/manual/debugger.html">Debugger</a> documentation.
  * <p/>
- * This implementation allows setting breakpoints (with or without a condition) and inspect the {@link Exchange} dumped
- * in XML in {@link BacklogTracerEventMessage} format. There is operations to resume suspended breakpoints to continue
- * routing the {@link Exchange}. There is also step functionality, so you can single step a given {@link Exchange}.
+ * The {@code BacklogDebugger} builds on the lower-level {@link Debugger} API but adds breakpoint management with
+ * optional conditions, step-mode execution, and exchange inspection via XML/JSON dumps in
+ * {@link BacklogTracerEventMessage} format. All operations are exposed over JMX through
+ * {@link org.apache.camel.api.management.mbean.ManagedBacklogDebuggerMBean}, allowing IDE tooling (e.g.,
+ * camel-idea-plugin) to control a running Camel context remotely.
  * <p/>
- * This implementation will only break the first {@link Exchange} that arrives to a breakpoint. If Camel routes using
- * concurrency then sub-sequent {@link Exchange} will continue to be routed, if their breakpoint already holds a
- * suspended {@link Exchange}.
+ * On reaching a breakpoint, only the <em>first</em> arriving {@link Exchange} is suspended; concurrent exchanges on the
+ * same breakpoint continue to route past it. A suspended exchange blocks its carrier thread until explicitly resumed
+ * via one of the {@code resume*} methods.
+ * <p/>
+ * When the environment variable {@value #SUSPEND_MODE_ENV_VAR_NAME} (or system property
+ * {@value #SUSPEND_MODE_SYSTEM_PROP_NAME}) is set to {@code true}, the debugger suspends <em>all</em> routes at startup
+ * and waits for a debugger client to attach before processing any messages.
+ *
+ * @see   Debugger
+ * @see   BacklogTracerEventMessage
+ * @since 4.2
  */
 public interface BacklogDebugger extends StatefulService {
 
@@ -61,6 +73,7 @@ public interface BacklogDebugger extends StatefulService {
      * comma. Use special value _all_routes_ to add a breakpoint for the first node for every route, in other words this
      * makes it easy to debug from the beginning of every route without knowing the exact node ids.
      */
+    @Nullable
     String getInitialBreakpoints();
 
     /**
@@ -312,6 +325,7 @@ public interface BacklogDebugger extends StatefulService {
      * @param  id node id for the breakpoint
      * @return    the suspended exchange or null if there isn't one suspended at the given breakpoint.
      */
+    @Nullable
     Exchange getSuspendedExchange(String id);
 
     /**
@@ -320,6 +334,7 @@ public interface BacklogDebugger extends StatefulService {
      * @param  id node id for the breakpoint
      * @return    the trace event or null if there isn't one suspended at the given breakpoint.
      */
+    @Nullable
     BacklogTracerEventMessage getSuspendedBreakpointMessage(String id);
 
     /**
@@ -433,6 +448,7 @@ public interface BacklogDebugger extends StatefulService {
     /**
      * Callback invoked before hitting a breakpoint
      */
+    @Nullable
     StopWatch beforeProcess(Exchange exchange, Processor processor, NamedNode definition);
 
     /**

@@ -17,6 +17,9 @@
 
 package org.apache.camel.component.jackson3.protobuf.transform;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.component.jackson3.SchemaHelper;
 import org.apache.camel.component.jackson3.SchemaType;
@@ -86,5 +89,41 @@ class ProtobufSchemaResolverTest {
         Assertions.assertEquals(ProtobufSchema.class, exchange.getProperty(SchemaHelper.CONTENT_SCHEMA).getClass());
         Assertions.assertEquals(SchemaType.PROTOBUF.type(), exchange.getProperty(SchemaHelper.CONTENT_SCHEMA_TYPE));
         Assertions.assertEquals(Person.class.getName(), exchange.getProperty(SchemaHelper.CONTENT_CLASS));
+    }
+
+    @Test
+    void shouldDecodeUrlEncodedSchemaFromSetter() throws Exception {
+        // CAMEL-23534: Schema properties are URL-encoded when passed from Pipe to Kamelet
+        // Use proto2 syntax which matches the existing Person.proto test resource
+        String schemaString = """
+                message Person {
+                   required string name = 1;
+                   optional int32 age = 2;
+                }
+                """;
+
+        // Simulate URL encoding that happens when properties are passed from Pipe to Kamelet
+        String urlEncodedSchema = URLEncoder.encode(schemaString, StandardCharsets.UTF_8);
+
+        // The encoded schema should contain URL-encoded characters like %3D for =, %22 for ", etc.
+        Assertions.assertTrue(urlEncodedSchema.contains("%3D"), "Schema should be URL-encoded");
+
+        // Create resolver and set the URL-encoded schema via the setter method
+        ProtobufSchemaResolver schemaResolver = new ProtobufSchemaResolver();
+
+        // This should not throw an exception - the resolver should decode the schema
+        Assertions.assertDoesNotThrow(() -> schemaResolver.setSchema(urlEncodedSchema),
+                "URL-encoded schema should be decoded and parsed successfully");
+
+        // Verify the schema was parsed correctly
+        Exchange exchange = new DefaultExchange(camelContext);
+        exchange.setProperty(SchemaHelper.CONTENT_CLASS, Person.class.getName());
+        exchange.getMessage().setBody(person);
+
+        schemaResolver.process(exchange);
+
+        Assertions.assertNotNull(exchange.getProperty(SchemaHelper.CONTENT_SCHEMA));
+        Assertions.assertEquals(ProtobufSchema.class, exchange.getProperty(SchemaHelper.CONTENT_SCHEMA).getClass());
+        Assertions.assertEquals(SchemaType.PROTOBUF.type(), exchange.getProperty(SchemaHelper.CONTENT_SCHEMA_TYPE));
     }
 }

@@ -649,6 +649,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
                 String source = LoggerHelper.getLineNumberLoggerName(input);
                 String exchangeId = exchange.getExchangeId();
                 String correlationExchangeId = exchange.getProperty(ExchangePropertyKey.CORRELATION_ID, String.class);
+                String breadcrumbId = exchange.getIn().getHeader(Exchange.BREADCRUMB_ID, String.class);
                 String routeId = routeDefinition.getRouteId();
                 String fromRouteId = exchange.getFromRouteId();
                 int level = 1;
@@ -666,7 +667,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
                         input.getId(),
                         null, null, null,
                         input.getShortName(), input.getLabel(),
-                        level, exchangeId, correlationExchangeId, rest, template, data);
+                        level, exchangeId, correlationExchangeId, breadcrumbId, rest, template, data);
                 if (exchange.getFromEndpoint() instanceof EndpointServiceLocation esl) {
                     first.setEndpointServiceUrl(esl.getServiceUrl());
                     first.setEndpointServiceProtocol(esl.getServiceProtocol());
@@ -687,6 +688,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
                 String source = LoggerHelper.getLineNumberLoggerName(input);
                 String exchangeId = exchange.getExchangeId();
                 String correlationExchangeId = exchange.getProperty(ExchangePropertyKey.CORRELATION_ID, String.class);
+                String breadcrumbId = exchange.getIn().getHeader(Exchange.BREADCRUMB_ID, String.class);
                 String routeId = routeDefinition.getRouteId();
                 String fromRouteId = exchange.getFromRouteId();
                 int level = 1;
@@ -704,7 +706,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
                         input.getId(),
                         null, null, null,
                         input.getShortName(), input.getLabel(),
-                        level, exchangeId, correlationExchangeId, rest, template, data);
+                        level, exchangeId, correlationExchangeId, breadcrumbId, rest, template, data);
                 if (exchange.getFromEndpoint() instanceof EndpointServiceLocation esl) {
                     first.setEndpointServiceUrl(esl.getServiceUrl());
                     first.setEndpointServiceProtocol(esl.getServiceProtocol());
@@ -725,11 +727,12 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
             String uri = null;
             boolean remote = true;
             Endpoint endpoint = null;
+            Endpoint consumerEndpoint = null;
             if ((data.isFirst() || data.isLast())) {
                 if (route.getConsumer() != null) {
-                    // get the actual resolved uri
-                    uri = route.getConsumer().getEndpoint().getEndpointUri();
-                    remote = route.getConsumer().getEndpoint().isRemote();
+                    consumerEndpoint = route.getConsumer().getEndpoint();
+                    uri = consumerEndpoint.getEndpointUri();
+                    remote = consumerEndpoint.isRemote();
                     endpoint = route.getEndpoint();
                 } else {
                     uri = routeDefinition.getEndpointUrl();
@@ -739,6 +742,11 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
                 data.setEndpointUri(uri);
             }
             data.setRemoteEndpoint(remote);
+            if ((uri != null && uri.startsWith("stub:"))
+                    || (consumerEndpoint != null
+                            && "StubEndpoint".equals(consumerEndpoint.getClass().getSimpleName()))) {
+                data.setStubEndpoint(true);
+            }
             if (endpoint instanceof EndpointServiceLocation esl) {
                 data.setEndpointServiceUrl(esl.getServiceUrl());
                 data.setEndpointServiceProtocol(esl.getServiceProtocol());
@@ -775,6 +783,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
         public DefaultBacklogTracerEventMessage before(Exchange exchange) throws Exception {
             String exchangeId = exchange.getExchangeId();
             String correlationExchangeId = exchange.getProperty(ExchangePropertyKey.CORRELATION_ID, String.class);
+            String breadcrumbId = exchange.getIn().getHeader(Exchange.BREADCRUMB_ID, String.class);
             int level = processorDefinition.getLevel();
             String routeId = ExchangeHelper.getAtRouteId(exchange);
             String fromRouteId = exchange.getFromRouteId();
@@ -794,7 +803,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
                     processorDefinition.getId(),
                     null, null, null,
                     processorDefinition.getShortName(), processorDefinition.getLabel(),
-                    level + 1, exchangeId, correlationExchangeId, false, false, data);
+                    level + 1, exchangeId, correlationExchangeId, breadcrumbId, false, false, data);
             backlogTracer.traceEvent(event);
             return event;
         }
@@ -806,6 +815,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
                 String source = LoggerHelper.getLineNumberLoggerName(processorDefinition);
                 String exchangeId = exchange.getExchangeId();
                 String correlationExchangeId = exchange.getProperty(ExchangePropertyKey.CORRELATION_ID, String.class);
+                String breadcrumbId = exchange.getIn().getHeader(Exchange.BREADCRUMB_ID, String.class);
                 String routeId = ExchangeHelper.getAtRouteId(exchange);
                 String fromRouteId = exchange.getFromRouteId();
                 int level = 1;
@@ -823,7 +833,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
                         processorDefinition.getId(),
                         null, null, null,
                         processorDefinition.getShortName(), processorDefinition.getLabel(),
-                        level, exchangeId, correlationExchangeId, false, false, data);
+                        level, exchangeId, correlationExchangeId, breadcrumbId, false, false, data);
                 if (exchange.getFromEndpoint() instanceof EndpointServiceLocation esl) {
                     first.setEndpointServiceUrl(esl.getServiceUrl());
                     first.setEndpointServiceProtocol(esl.getServiceProtocol());
@@ -931,6 +941,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
                 String toNodeLabel = StringHelper.limitLength(processorDefinition.getLabel(), 50);
                 String exchangeId = exchange.getExchangeId();
                 String correlationExchangeId = exchange.getProperty(ExchangePropertyKey.CORRELATION_ID, String.class);
+                String breadcrumbId = exchange.getIn().getHeader(Exchange.BREADCRUMB_ID, String.class);
                 int level = processorDefinition.getLevel();
 
                 boolean includeExchangeProperties = backlogTracer.isIncludeExchangeProperties();
@@ -951,7 +962,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
                         toNodeParentId,
                         toNodeParentWhenId, toNodeParentWhenLabel,
                         toNodeShortName, toNodeLabel, level,
-                        exchangeId, correlationExchangeId, rest, template, data);
+                        exchangeId, correlationExchangeId, breadcrumbId, rest, template, data);
                 backlogTracer.traceEvent(event);
                 return event;
             }
@@ -969,6 +980,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
                     String fromRouteId = exchange.getFromRouteId();
                     String exchangeId = exchange.getExchangeId();
                     String correlationExchangeId = exchange.getProperty(ExchangePropertyKey.CORRELATION_ID, String.class);
+                    String breadcrumbId = exchange.getIn().getHeader(Exchange.BREADCRUMB_ID, String.class);
                     boolean includeExchangeProperties = backlogTracer.isIncludeExchangeProperties();
                     boolean includeExchangeVariables = backlogTracer.isIncludeExchangeVariables();
                     long created = exchange.getClock().getCreated();
@@ -985,7 +997,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
                             false, true, backlogTracer.incrementTraceCounter(), created, source, fromRouteId, routeId, toNode,
                             null, null,
                             null, toNodeShortName, toNodeLabel,
-                            level, exchangeId, correlationExchangeId, rest, template, data);
+                            level, exchangeId, correlationExchangeId, breadcrumbId, rest, template, data);
                     backlogTracer.traceEvent(pseudoLast);
                     doneProcessing(exchange, pseudoLast);
                     doneProcessing(exchange, pseudoFirst);
@@ -1009,6 +1021,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
             String uri = null;
             boolean remote = true;
             Endpoint endpoint = notifier.after(exchange);
+            Endpoint resolvedEndpoint = endpoint;
             if (endpoint != null) {
                 uri = endpoint.getEndpointUri();
                 remote = endpoint.isRemote();
@@ -1017,9 +1030,9 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
                 // pseudo first/last event (the from in the route)
                 Route route = camelContext.getRoute(routeDefinition.getRouteId());
                 if (route != null && route.getConsumer() != null) {
-                    // get the actual resolved uri
-                    uri = route.getConsumer().getEndpoint().getEndpointUri();
-                    remote = route.getConsumer().getEndpoint().isRemote();
+                    resolvedEndpoint = route.getConsumer().getEndpoint();
+                    uri = resolvedEndpoint.getEndpointUri();
+                    remote = resolvedEndpoint.isRemote();
                 } else {
                     uri = routeDefinition.getEndpointUrl();
                 }
@@ -1028,6 +1041,11 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
                 data.setEndpointUri(uri);
             }
             data.setRemoteEndpoint(remote);
+            if ((uri != null && uri.startsWith("stub:"))
+                    || (resolvedEndpoint != null
+                            && "StubEndpoint".equals(resolvedEndpoint.getClass().getSimpleName()))) {
+                data.setStubEndpoint(true);
+            }
             if (endpoint instanceof EndpointServiceLocation esl) {
                 data.setEndpointServiceUrl(esl.getServiceUrl());
                 data.setEndpointServiceProtocol(esl.getServiceProtocol());

@@ -3828,7 +3828,7 @@ public interface SmbEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final SmbHeaderNameBuilder INSTANCE = new SmbHeaderNameBuilder();
+        public static final SmbHeaderNameBuilder INSTANCE = new SmbHeaderNameBuilder();
 
         /**
          * A long value containing the file size.

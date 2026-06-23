@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://schema.ocsf.io/1.7.0/classes/datastore_activity",
+  "$id": "https://schema.ocsf.io/1.8.0/classes/datastore_activity",
   "title": "DatastoreActivity",
   "type": "object",
   "javaType": "org.apache.camel.dataformat.ocsf.model.DatastoreActivity",
@@ -9,30 +9,31 @@
     "$ref": "OcsfEvent.json"
   },
   "properties": {
-    "actor": {
-      "$ref": "Actor.json"
+    "databucket": {
+      "type": "object",
+      "additionalProperties": true
     },
-    "raw_data_size": {
-      "type": "integer",
-      "title": "Raw Data Size"
-    },
-    "http_response": {
-      "$ref": "HttpResponse.json"
-    },
-    "enrichments": {
-      "type": "array",
-      "description": "",
-      "items": {
-        "$ref": "Enrichment.json"
-      }
-    },
-    "http_request": {
-      "$ref": "HttpRequest.json"
+    "database": {
+      "type": "object",
+      "additionalProperties": true
     },
     "src_endpoint": {
       "$ref": "NetworkEndpoint.json"
     },
-    "databucket": {
+    "http_response": {
+      "$ref": "HttpResponse.json"
+    },
+    "type": {
+      "type": "string",
+      "title": "Datastore Type"
+    },
+    "actor": {
+      "$ref": "Actor.json"
+    },
+    "dst_endpoint": {
+      "$ref": "NetworkEndpoint.json"
+    },
+    "table": {
       "type": "object",
       "additionalProperties": true
     },
@@ -40,27 +41,26 @@
       "type": "integer",
       "title": "Datastore Type ID"
     },
-    "dst_endpoint": {
-      "$ref": "NetworkEndpoint.json"
-    },
-    "raw_data_hash": {
-      "$ref": "Fingerprint.json"
-    },
-    "database": {
-      "type": "object",
-      "additionalProperties": true
+    "http_request": {
+      "$ref": "HttpRequest.json"
     },
     "query_info": {
       "type": "object",
       "additionalProperties": true
     },
-    "type": {
-      "type": "string",
-      "title": "Datastore Type"
+    "raw_data_size": {
+      "type": "integer",
+      "title": "Raw Data Size"
     },
-    "table": {
-      "type": "object",
-      "additionalProperties": true
+    "raw_data_hash": {
+      "$ref": "Fingerprint.json"
+    },
+    "enrichments": {
+      "type": "array",
+      "description": "",
+      "items": {
+        "$ref": "Enrichment.json"
+      }
     }
   }
 }

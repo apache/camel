@@ -70,8 +70,8 @@ public class OtherExpression extends BaseSimpleNode {
 
     @Override
     public Expression createExpression(CamelContext camelContext, String expression) {
-        org.apache.camel.util.ObjectHelper.notNull(left, "left node", this);
-        org.apache.camel.util.ObjectHelper.notNull(right, "right node", this);
+        ObjectHelper.notNull(left, "left node", this);
+        ObjectHelper.notNull(right, "right node", this);
 
         // the expression parser does not parse literal text into single/double quote tokens
         // so we need to manually remove leading quotes from the literal text when using the other operators
@@ -118,8 +118,8 @@ public class OtherExpression extends BaseSimpleNode {
     }
 
     private String doCreateCode(CamelContext camelContext, String expression) throws SimpleParserException {
-        org.apache.camel.util.ObjectHelper.notNull(left, "left node", this);
-        org.apache.camel.util.ObjectHelper.notNull(right, "right node", this);
+        ObjectHelper.notNull(left, "left node", this);
+        ObjectHelper.notNull(right, "right node", this);
 
         // the expression parser does not parse literal text into single/double quote tokens
         // so we need to manually remove leading quotes from the literal text when using the other operators

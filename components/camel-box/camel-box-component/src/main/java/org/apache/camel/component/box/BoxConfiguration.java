@@ -68,20 +68,20 @@ public class BoxConfiguration {
     @UriParam
     private String clientId;
 
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String publicKeyId;
 
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String privateKeyFile;
 
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String privateKeyPassword;
 
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String clientSecret;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String userName;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String userPassword;
 
     @UriParam(label = "advanced,security")

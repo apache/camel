@@ -73,9 +73,9 @@ public class CassandraEndpoint extends ScheduledPollEndpoint implements Endpoint
     private boolean prepareStatements = true;
     @UriParam
     private String clusterName;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String username;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String password;
     @UriParam(label = "advanced")
     private CqlSession session;

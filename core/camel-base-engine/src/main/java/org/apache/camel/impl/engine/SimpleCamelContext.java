@@ -16,12 +16,14 @@
  */
 package org.apache.camel.impl.engine;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ScheduledExecutorService;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
+import org.apache.camel.NamedRoute;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.RouteTemplateContext;
@@ -67,7 +69,9 @@ import org.apache.camel.spi.InternalProcessorFactory;
 import org.apache.camel.spi.LanguageResolver;
 import org.apache.camel.spi.ManagementNameStrategy;
 import org.apache.camel.spi.MessageHistoryFactory;
+import org.apache.camel.spi.MessageSizeStrategy;
 import org.apache.camel.spi.ModelJAXBContextFactory;
+import org.apache.camel.spi.ModelToJavaDumper;
 import org.apache.camel.spi.ModelToStructureDumper;
 import org.apache.camel.spi.ModelToXMLDumper;
 import org.apache.camel.spi.ModelToYAMLDumper;
@@ -550,6 +554,14 @@ public class SimpleCamelContext extends AbstractCamelContext {
     }
 
     @Override
+    protected ModelToJavaDumper createModelToJavaDumper() {
+        return ResolverHelper.resolveMandatoryBootstrapService(getCamelContextReference(),
+                ModelToJavaDumper.FACTORY,
+                ModelToJavaDumper.class,
+                "camel-java-io");
+    }
+
+    @Override
     protected ModelToStructureDumper createModelToStructureDumper() {
         return ResolverHelper.resolveMandatoryBootstrapService(getCamelContextReference(),
                 ModelToStructureDumper.FACTORY,
@@ -611,10 +623,10 @@ public class SimpleCamelContext extends AbstractCamelContext {
 
     @Override
     protected RestRegistryFactory createRestRegistryFactory() {
-        return ResolverHelper.resolveMandatoryBootstrapService(getCamelContextReference(),
+        return ResolverHelper.resolveBootstrapService(getCamelContextReference(),
                 RestRegistryFactory.FACTORY,
-                RestRegistryFactory.class,
-                "camel-rest");
+                RestRegistryFactory.class)
+                .orElse(null);
     }
 
     @Override
@@ -625,6 +637,11 @@ public class SimpleCamelContext extends AbstractCamelContext {
     @Override
     protected StreamCachingStrategy createStreamCachingStrategy() {
         return new DefaultStreamCachingStrategy();
+    }
+
+    @Override
+    protected MessageSizeStrategy createMessageSizeStrategy() {
+        return new DefaultMessageSizeStrategy();
     }
 
     @Override
@@ -771,6 +788,11 @@ public class SimpleCamelContext extends AbstractCamelContext {
 
     @Override
     public void removeRouteTemplates(String pattern) throws Exception {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public List<NamedRoute> getNamedRouteDefinitions() {
         throw new UnsupportedOperationException();
     }
 

@@ -24,6 +24,7 @@ import org.slf4j.Logger;
 /**
  * A helper class which logs errors
  */
+@Deprecated(since = "4.21")
 public class IrcLogger extends IRCEventAdapter {
     private Logger log;
     private String server;

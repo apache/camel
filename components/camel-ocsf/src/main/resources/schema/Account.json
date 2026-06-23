@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://schema.ocsf.io/1.7.0/objects/account",
+  "$id": "https://schema.ocsf.io/1.8.0/objects/account",
   "title": "Account",
   "type": "object",
   "javaType": "org.apache.camel.dataformat.ocsf.model.Account",
@@ -36,6 +36,18 @@
     "type_id": {
       "type": "integer",
       "title": "Type ID"
+    },
+    "is_disabled": {
+      "type": "boolean",
+      "title": "Disabled"
+    },
+    "is_locked": {
+      "type": "boolean",
+      "title": "Locked"
+    },
+    "is_on_premises_sync_enabled": {
+      "type": "boolean",
+      "title": "On-Premises Sync Enabled"
     }
   },
   "description": "The Account object."

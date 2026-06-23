@@ -41,7 +41,7 @@ class VersionGetTest extends CamelCommandBaseTestSupport {
 
         List<String> lines = printer.getLines();
         Assertions.assertTrue(lines.get(0).startsWith("JBang version:"));
-        Assertions.assertTrue(lines.get(1).startsWith("Camel JBang version:"));
+        Assertions.assertTrue(lines.get(1).startsWith("Camel CLI version:"));
     }
 
     @Test
@@ -59,7 +59,7 @@ class VersionGetTest extends CamelCommandBaseTestSupport {
         List<String> lines = printer.getLines();
         Assertions.assertEquals(5, lines.size());
         Assertions.assertTrue(lines.get(0).startsWith("JBang version:"));
-        Assertions.assertTrue(lines.get(1).startsWith("Camel JBang version:"));
+        Assertions.assertTrue(lines.get(1).startsWith("Camel CLI version:"));
         Assertions.assertEquals("User configuration:", lines.get(2));
         Assertions.assertEquals("camel-version = latest", lines.get(3));
         Assertions.assertEquals("kamelets-version = greatest", lines.get(4));

@@ -26,6 +26,7 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
+import org.apache.camel.Traceable;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.processor.BaseProcessorSupport;
@@ -39,7 +40,7 @@ import org.apache.camel.support.service.ServiceHelper;
  */
 @ManagedResource(description = "Managed Kamelet Processor")
 public class KameletProcessor extends BaseProcessorSupport
-        implements CamelContextAware, Navigate<Processor>, org.apache.camel.Traceable, IdAware, RouteIdAware {
+        implements CamelContextAware, Navigate<Processor>, Traceable, IdAware, RouteIdAware {
 
     private final String name;
     private final AsyncProcessor processor;

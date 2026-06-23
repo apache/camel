@@ -59,6 +59,10 @@ public class LumberjackConsumer extends DefaultConsumer {
         super.doSuspend();
     }
 
+    public int getLocalPort() {
+        return lumberjackServer.getLocalPort();
+    }
+
     private ThreadFactory getThreadFactory() {
         String threadNamePattern = getEndpoint().getCamelContext().getExecutorServiceManager().getThreadNamePattern();
         return new CamelThreadFactory(threadNamePattern, "LumberjackNettyExecutor", true);

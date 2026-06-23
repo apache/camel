@@ -16,6 +16,7 @@
  */
 package org.apache.camel.reifier;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.camel.Expression;
@@ -38,8 +39,8 @@ public class SetVariablesReifier extends ProcessorReifier<SetVariablesDefinition
         if (definition.getVariables().isEmpty()) {
             throw new IllegalArgumentException("There must be at least one variable specified");
         }
-        List<Expression> nameExprs = new java.util.ArrayList<>(definition.getVariables().size());
-        List<Expression> valueExprs = new java.util.ArrayList<>(definition.getVariables().size());
+        List<Expression> nameExprs = new ArrayList<>(definition.getVariables().size());
+        List<Expression> valueExprs = new ArrayList<>(definition.getVariables().size());
         for (SetVariableDefinition varDef : definition.getVariables()) {
             valueExprs.add(createExpression(varDef.getExpression()));
             Expression nameExpr;

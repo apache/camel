@@ -31,7 +31,7 @@ import org.apache.camel.test.junit6.ExchangeTestSupport;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.LoggerContext;
 import org.apache.logging.log4j.core.appender.RollingFileAppender;
-import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 
 public class TelemetryDevTracerTestSupport extends ExchangeTestSupport {
 
@@ -61,7 +61,7 @@ public class TelemetryDevTracerTestSupport extends ExchangeTestSupport {
      * This one is required to rollover the log traces database file and make sure each test has its own
      * set of fresh data.
      */
-    @AfterEach
+    @BeforeEach
     public synchronized void clearLogTraces() throws IOException {
         final LoggerContext ctx = (LoggerContext) LogManager.getContext(false);
         RollingFileAppender appender = (RollingFileAppender) ctx.getConfiguration().getAppenders().get("file2");

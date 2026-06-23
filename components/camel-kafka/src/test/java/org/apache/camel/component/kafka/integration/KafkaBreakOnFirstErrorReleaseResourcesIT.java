@@ -29,6 +29,7 @@ import org.apache.camel.component.kafka.integration.common.KafkaAdminUtil;
 import org.apache.camel.component.kafka.testutil.CamelKafkaUtil;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.kafka.clients.admin.NewTopic;
+import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.*;
@@ -63,7 +64,7 @@ class KafkaBreakOnFirstErrorReleaseResourcesIT extends BaseKafkaTestSupport {
     @EndpointInject("mock:result")
     private MockEndpoint to;
 
-    private org.apache.kafka.clients.producer.KafkaProducer<String, String> producer;
+    private KafkaProducer<String, String> producer;
 
     @BeforeAll
     public static void setupTopic() {
@@ -81,7 +82,7 @@ class KafkaBreakOnFirstErrorReleaseResourcesIT extends BaseKafkaTestSupport {
 
         // setup the producer
         Properties props = getDefaultProperties();
-        producer = new org.apache.kafka.clients.producer.KafkaProducer<>(props);
+        producer = new KafkaProducer<>(props);
         MockConsumerInterceptor.recordsCaptured.clear();
     }
 

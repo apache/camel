@@ -17,7 +17,14 @@
 package org.apache.camel;
 
 /**
- * A marker to indicate the {@link Service} should not be registered in JMX for management.
+ * Marker interface that excludes a {@link Service} from JMX management registration.
+ * <p/>
+ * By default, Camel registers internal services (components, producers, consumers, etc.) as JMX MBeans so that they can
+ * be monitored and controlled at runtime. Services that implement {@code NonManagedService} are silently skipped during
+ * this registration phase, which is appropriate for lightweight helper services, anonymous inner-class processors, or
+ * services that would expose no useful management attributes.
+ *
+ * @see Service
  */
 public interface NonManagedService {
 }

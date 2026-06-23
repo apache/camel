@@ -72,12 +72,12 @@ public class DisruptorConcurrentConsumersNPEIssueTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("disruptor:foo?concurrentConsumers=5").routeId("first").noAutoStartup()
+                from("disruptor:foo?concurrentConsumers=5").routeId("first").autoStartup(false)
                         .to("mock:result");
 
                 from("disruptor:foo?concurrentConsumers=5").routeId("second").to("mock:result");
 
-                from("direct:foo").routeId("third").noAutoStartup().to("mock:result");
+                from("direct:foo").routeId("third").autoStartup(false).to("mock:result");
             }
         };
     }

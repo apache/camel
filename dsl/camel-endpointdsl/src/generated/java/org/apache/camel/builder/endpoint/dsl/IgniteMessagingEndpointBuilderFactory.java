@@ -583,7 +583,7 @@ public interface IgniteMessagingEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final IgniteMessagingHeaderNameBuilder INSTANCE = new IgniteMessagingHeaderNameBuilder();
+        public static final IgniteMessagingHeaderNameBuilder INSTANCE = new IgniteMessagingHeaderNameBuilder();
 
         /**
          * (producer) Allows you to dynamically change the topic to send

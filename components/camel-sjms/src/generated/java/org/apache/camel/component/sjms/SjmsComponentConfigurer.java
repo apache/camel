@@ -45,6 +45,8 @@ public class SjmsComponentConfigurer extends PropertyConfigurerSupport implement
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "messagecreatedstrategy":
         case "messageCreatedStrategy": target.setMessageCreatedStrategy(property(camelContext, org.apache.camel.component.sjms.jms.MessageCreatedStrategy.class, value)); return true;
+        case "objectmessageenabled":
+        case "objectMessageEnabled": target.setObjectMessageEnabled(property(camelContext, boolean.class, value)); return true;
         case "recoveryinterval":
         case "recoveryInterval": target.setRecoveryInterval(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "replytoontimeoutmaxconcurrentconsumers":
@@ -85,6 +87,8 @@ public class SjmsComponentConfigurer extends PropertyConfigurerSupport implement
         case "lazyStartProducer": return boolean.class;
         case "messagecreatedstrategy":
         case "messageCreatedStrategy": return org.apache.camel.component.sjms.jms.MessageCreatedStrategy.class;
+        case "objectmessageenabled":
+        case "objectMessageEnabled": return boolean.class;
         case "recoveryinterval":
         case "recoveryInterval": return long.class;
         case "replytoontimeoutmaxconcurrentconsumers":
@@ -121,6 +125,8 @@ public class SjmsComponentConfigurer extends PropertyConfigurerSupport implement
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "messagecreatedstrategy":
         case "messageCreatedStrategy": return target.getMessageCreatedStrategy();
+        case "objectmessageenabled":
+        case "objectMessageEnabled": return target.isObjectMessageEnabled();
         case "recoveryinterval":
         case "recoveryInterval": return target.getRecoveryInterval();
         case "replytoontimeoutmaxconcurrentconsumers":

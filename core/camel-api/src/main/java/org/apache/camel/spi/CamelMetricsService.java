@@ -21,6 +21,8 @@ import org.apache.camel.Service;
 
 /**
  * A Camel metrics service is a factory for micrometer metrics.
+ *
+ * @since 4.5
  */
 public interface CamelMetricsService extends Service, CamelContextAware {
 

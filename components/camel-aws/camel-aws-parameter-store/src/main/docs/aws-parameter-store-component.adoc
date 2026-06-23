@@ -9,7 +9,6 @@
 :component-header: Only producer is supported
 //Manually maintained attributes
 :group: AWS
-:camel-spring-boot-name: aws-parameter-store
 
 *Since Camel {since}*
 
@@ -121,6 +120,18 @@ When using the `operation` option to create, get, list parameters etc., you shou
 
 At this point, you'll be able to reference a property in the following way:
 
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+    .to("{{aws-parameterstore:/myapp/config/endpoint}}");
+----
+
+XML::
++
 [source,xml]
 ----
 <camelContext>
@@ -131,10 +142,35 @@ At this point, you'll be able to reference a property in the following way:
 </camelContext>
 ----
 
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: "{{aws-parameterstore:/myapp/config/endpoint}}"
+----
+====
+
 Where `/myapp/config/endpoint` will be the name (path) of the parameter stored in the AWS Systems Manager Parameter Store.
 
 You could specify a default value in case the parameter is not present on AWS Parameter Store:
 
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+    .to("{{aws-parameterstore:/myapp/config/endpoint:http://localhost:8080}}");
+----
+
+XML::
++
 [source,xml]
 ----
 <camelContext>
@@ -145,12 +181,39 @@ You could specify a default value in case the parameter is not present on AWS Pa
 </camelContext>
 ----
 
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: "{{aws-parameterstore:/myapp/config/endpoint:http://localhost:8080}}"
+----
+====
+
 In this case, if the parameter doesn't exist, the property will fall back to "http://localhost:8080" as value.
 
 === Parameter Store Hierarchies
 
 AWS Parameter Store supports hierarchical parameter names. You can organize parameters into hierarchies using forward slashes:
 
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+    .log("Database host is {{aws-parameterstore:/myapp/database/host}}")
+    .log("Database port is {{aws-parameterstore:/myapp/database/port}}")
+    .log("Database user is {{aws-parameterstore:/myapp/database/username}}");
+----
+
+XML::
++
 [source,xml]
 ----
 <camelContext>
@@ -163,10 +226,39 @@ AWS Parameter Store supports hierarchical parameter names. You can organize para
 </camelContext>
 ----
 
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - log:
+            message: "Database host is {{aws-parameterstore:/myapp/database/host}}"
+        - log:
+            message: "Database port is {{aws-parameterstore:/myapp/database/port}}"
+        - log:
+            message: "Database user is {{aws-parameterstore:/myapp/database/username}}"
+----
+====
+
 === SecureString Parameters
 
 AWS Parameter Store supports SecureString parameters which are encrypted using AWS KMS. The Parameter Store properties function automatically decrypts SecureString parameters:
 
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+    .log("API Key is {{aws-parameterstore:/myapp/secrets/api-key}}");
+----
+
+XML::
++
 [source,xml]
 ----
 <camelContext>
@@ -176,6 +268,19 @@ AWS Parameter Store supports SecureString parameters which are encrypted using A
     </route>
 </camelContext>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - log:
+            message: "API Key is {{aws-parameterstore:/myapp/secrets/api-key}}"
+----
+====
 
 The only requirement is adding the camel-aws-parameter-store jar to your Camel application.
 
@@ -208,6 +313,10 @@ Camel-AWS-Parameter-Store component provides the following operation on the prod
 
 This operation retrieves a single parameter value by name.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:getParameter")
@@ -215,10 +324,45 @@ from("direct:getParameter")
     .to("aws-parameter-store://test?operation=getParameter");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="direct:getParameter"/>
+    <setHeader name="CamelAwsParameterStoreName">
+        <constant>/myapp/config/endpoint</constant>
+    </setHeader>
+    <to uri="aws-parameter-store://test?operation=getParameter"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:getParameter
+    steps:
+      - setHeader:
+          name: CamelAwsParameterStoreName
+          constant: /myapp/config/endpoint
+      - to:
+          uri: aws-parameter-store://test
+          parameters:
+            operation: getParameter
+----
+====
+
 ==== getParameters
 
 This operation retrieves multiple parameters by their names.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:getParameters")
@@ -226,10 +370,45 @@ from("direct:getParameters")
     .to("aws-parameter-store://test?operation=getParameters");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="direct:getParameters"/>
+    <setHeader name="CamelAwsParameterStoreNames">
+        <constant>/myapp/config/host,/myapp/config/port</constant>
+    </setHeader>
+    <to uri="aws-parameter-store://test?operation=getParameters"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:getParameters
+    steps:
+      - setHeader:
+          name: CamelAwsParameterStoreNames
+          constant: "/myapp/config/host,/myapp/config/port"
+      - to:
+          uri: aws-parameter-store://test
+          parameters:
+            operation: getParameters
+----
+====
+
 ==== getParametersByPath
 
 This operation retrieves all parameters within a hierarchy.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:getParametersByPath")
@@ -238,10 +417,51 @@ from("direct:getParametersByPath")
     .to("aws-parameter-store://test?operation=getParametersByPath");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="direct:getParametersByPath"/>
+    <setHeader name="CamelAwsParameterStorePath">
+        <constant>/myapp/config</constant>
+    </setHeader>
+    <setHeader name="CamelAwsParameterStoreRecursive">
+        <constant>true</constant>
+    </setHeader>
+    <to uri="aws-parameter-store://test?operation=getParametersByPath"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:getParametersByPath
+    steps:
+      - setHeader:
+          name: CamelAwsParameterStorePath
+          constant: /myapp/config
+      - setHeader:
+          name: CamelAwsParameterStoreRecursive
+          constant: "true"
+      - to:
+          uri: aws-parameter-store://test
+          parameters:
+            operation: getParametersByPath
+----
+====
+
 ==== putParameter
 
 This operation creates or updates a parameter.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:putParameter")
@@ -251,8 +471,54 @@ from("direct:putParameter")
     .to("aws-parameter-store://test?operation=putParameter");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="direct:putParameter"/>
+    <setHeader name="CamelAwsParameterStoreName">
+        <constant>/myapp/config/endpoint</constant>
+    </setHeader>
+    <setHeader name="CamelAwsParameterStoreType">
+        <constant>String</constant>
+    </setHeader>
+    <setBody>
+        <constant>http://localhost:8080</constant>
+    </setBody>
+    <to uri="aws-parameter-store://test?operation=putParameter"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:putParameter
+    steps:
+      - setHeader:
+          name: CamelAwsParameterStoreName
+          constant: /myapp/config/endpoint
+      - setHeader:
+          name: CamelAwsParameterStoreType
+          constant: String
+      - setBody:
+          constant: "http://localhost:8080"
+      - to:
+          uri: aws-parameter-store://test
+          parameters:
+            operation: putParameter
+----
+====
+
 For SecureString parameters:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:putSecureParameter")
@@ -262,10 +528,56 @@ from("direct:putSecureParameter")
     .to("aws-parameter-store://test?operation=putParameter");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="direct:putSecureParameter"/>
+    <setHeader name="CamelAwsParameterStoreName">
+        <constant>/myapp/secrets/api-key</constant>
+    </setHeader>
+    <setHeader name="CamelAwsParameterStoreType">
+        <constant>SecureString</constant>
+    </setHeader>
+    <setBody>
+        <constant>my-secret-api-key</constant>
+    </setBody>
+    <to uri="aws-parameter-store://test?operation=putParameter"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:putSecureParameter
+    steps:
+      - setHeader:
+          name: CamelAwsParameterStoreName
+          constant: /myapp/secrets/api-key
+      - setHeader:
+          name: CamelAwsParameterStoreType
+          constant: SecureString
+      - setBody:
+          constant: my-secret-api-key
+      - to:
+          uri: aws-parameter-store://test
+          parameters:
+            operation: putParameter
+----
+====
+
 ==== deleteParameter
 
 This operation deletes a single parameter.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:deleteParameter")
@@ -273,10 +585,45 @@ from("direct:deleteParameter")
     .to("aws-parameter-store://test?operation=deleteParameter");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="direct:deleteParameter"/>
+    <setHeader name="CamelAwsParameterStoreName">
+        <constant>/myapp/config/old-endpoint</constant>
+    </setHeader>
+    <to uri="aws-parameter-store://test?operation=deleteParameter"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:deleteParameter
+    steps:
+      - setHeader:
+          name: CamelAwsParameterStoreName
+          constant: /myapp/config/old-endpoint
+      - to:
+          uri: aws-parameter-store://test
+          parameters:
+            operation: deleteParameter
+----
+====
+
 ==== deleteParameters
 
 This operation deletes multiple parameters.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:deleteParameters")
@@ -284,10 +631,45 @@ from("direct:deleteParameters")
     .to("aws-parameter-store://test?operation=deleteParameters");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="direct:deleteParameters"/>
+    <setHeader name="CamelAwsParameterStoreNames">
+        <constant>/myapp/config/old1,/myapp/config/old2</constant>
+    </setHeader>
+    <to uri="aws-parameter-store://test?operation=deleteParameters"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:deleteParameters
+    steps:
+      - setHeader:
+          name: CamelAwsParameterStoreNames
+          constant: "/myapp/config/old1,/myapp/config/old2"
+      - to:
+          uri: aws-parameter-store://test
+          parameters:
+            operation: deleteParameters
+----
+====
+
 ==== describeParameters
 
 This operation lists parameter metadata.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:describeParameters")
@@ -295,16 +677,82 @@ from("direct:describeParameters")
     .to("aws-parameter-store://test?operation=describeParameters");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="direct:describeParameters"/>
+    <setHeader name="CamelAwsParameterStoreMaxResults">
+        <constant>10</constant>
+    </setHeader>
+    <to uri="aws-parameter-store://test?operation=describeParameters"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:describeParameters
+    steps:
+      - setHeader:
+          name: CamelAwsParameterStoreMaxResults
+          constant: "10"
+      - to:
+          uri: aws-parameter-store://test
+          parameters:
+            operation: describeParameters
+----
+====
+
 ==== getParameterHistory
 
 This operation retrieves the history of a parameter.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:getParameterHistory")
     .setHeader(ParameterStoreConstants.PARAMETER_NAME, constant("/myapp/config/endpoint"))
     .to("aws-parameter-store://test?operation=getParameterHistory");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="direct:getParameterHistory"/>
+    <setHeader name="CamelAwsParameterStoreName">
+        <constant>/myapp/config/endpoint</constant>
+    </setHeader>
+    <to uri="aws-parameter-store://test?operation=getParameterHistory"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:getParameterHistory
+    steps:
+      - setHeader:
+          name: CamelAwsParameterStoreName
+          constant: /myapp/config/endpoint
+      - to:
+          uri: aws-parameter-store://test
+          parameters:
+            operation: getParameterHistory
+----
+====
 
 == Dependencies
 
@@ -324,4 +772,3 @@ Maven users will need to add the following dependency to their pom.xml.
 where `$\{camel-version}` must be replaced by the actual version of Camel.
 
 
-include::spring-boot:partial$starter.adoc[]

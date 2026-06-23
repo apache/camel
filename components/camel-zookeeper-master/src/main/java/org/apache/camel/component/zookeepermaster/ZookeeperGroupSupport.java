@@ -59,7 +59,7 @@ public class ZookeeperGroupSupport<T extends NodeState> extends ServiceSupport
     private int maximumConnectionTimeout = 10 * 1000;
     @Metadata(defaultValue = "localhost:2181")
     private String zooKeeperUrl;
-    @Metadata(label = "security", secret = true)
+    @Metadata(label = "security", security = "secret")
     private String zooKeeperPassword;
 
     @Override

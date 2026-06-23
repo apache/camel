@@ -306,6 +306,7 @@ public final class TraitHelper {
         buildProperties.add("jkube.container-image.name=%s".formatted(imageToUse));
 
         Container containerTrait = Optional.ofNullable(traitsSpec.getContainer()).orElseGet(Container::new);
+        containerTrait.setImage(imageToUse);
 
         if (containerTrait.getImagePullPolicy() != null) {
             var imagePullPolicy = containerTrait.getImagePullPolicy().getValue();
@@ -340,7 +341,7 @@ public final class TraitHelper {
     public static boolean exposesHttpService(TraitContext context, boolean download) {
         try {
             boolean exposesHttpServices = false;
-            CamelCatalog catalog = context.getCatalog(download);
+            CamelCatalog catalog = context.getCatalog();
             if (context.getSources() != null) {
                 for (Source source : context.getSources()) {
                     SourceMetadata metadata = context.inspectMetaData(source);

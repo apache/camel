@@ -9,7 +9,6 @@
 :component-header: Both producer and consumer are supported
 //Manually maintained attributes
 :group: Kubernetes
-:camel-spring-boot-name: kubernetes
 
 *Since Camel {since}*
 
@@ -35,4 +34,3 @@ include::partial$component-endpoint-headers.adoc[]
 - `updateCustomResource`
 
 
-include::spring-boot:partial$starter.adoc[]

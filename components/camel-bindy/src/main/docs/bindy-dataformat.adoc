@@ -6,8 +6,6 @@
 :since: 2.0
 :supportlevel: Stable
 :tabs-sync-option:
-//Manually maintained attributes
-:camel-spring-boot-name: bindy
 
 *Since Camel {since}*
 
@@ -112,6 +110,10 @@ expressions, e.g., the '\|' sign, then you have to mask it, like '\|'
 | autospanLine | boolean |  | false a| Last record spans rest of line (optional) - if enabled then the last column is auto spanned to end of line, for
 example if it is a comment, etc this allows the line to contain all characters, also the delimiter char.
 
+| continueParseOnFailure | boolean |  | false a| If true, a parse failure on any field in this record is replaced with the field's defaultValue (or the
+type-appropriate default if no defaultValue is set), instead of aborting the unmarshal. Individual fields can opt
+out per-field via @DataField.continueParseOnFailure. Default false preserves the existing fail-fast behavior.
+
 | crlf | String |  | WINDOWS a| Character to be used to add a carriage return after each record (optional) - allow defining the carriage return
 character to use. If you specify a value other than the three listed before, the value you enter (custom) will be
 used as the CRLF character(s). Three values can be used : WINDOWS, UNIX, MAC, or custom.
@@ -156,6 +158,7 @@ The separator used to segregate the fields in the CSV record is `,` :
 10, J, Pauline, M, XD12345678, Fortis Dynamic 15/15, 2500, USD, 08-01-2009
 ----
 
+._Java-only: Java annotation model class_
 [source,java]
 ----
 @CsvRecord( separator = "," )
@@ -172,6 +175,7 @@ Compare to the previous case, the separator here is `;` instead of `,` :
 10; J; Pauline; M; XD12345678; Fortis Dynamic 15/15; 2500; USD; 08-01-2009
 ----
 
+._Java-only: Java annotation model class_
 [source,java]
 ----
 @CsvRecord( separator = ";" )
@@ -188,6 +192,7 @@ Compare to the previous case, the separator here is `|` instead of `;` :
 10| J| Pauline| M| XD12345678| Fortis Dynamic 15/15| 2500| USD| 08-01-2009
 ----
 
+._Java-only: Java annotation model class_
 [source,java]
 ----
 @CsvRecord( separator = "\\|" )
@@ -216,6 +221,7 @@ In this case, bindy will remove the first and last character of the line which i
 "10","J","Pauline"," M","XD12345678","Fortis Dynamic 15,15","2500","USD","08-01-2009"
 ----
 
+._Java-only: Java annotation model class_
 [source,java]
 ----
 @CsvRecord( separator = "\",\"" )
@@ -232,6 +238,7 @@ record is enclosed with either single or double quotes and automatically removes
 "10","J","Pauline"," M","XD12345678","Fortis Dynamic 15,15","2500","USD","08-01-2009"
 ----
 
+._Java-only: Java annotation model class_
 [source,java]
 ----
 @CsvRecord( separator = "," )
@@ -244,6 +251,7 @@ Notice that if you want to marshal from Object to CSV and use quotes,
 then you need to specify which quote character to use, using the `quote`
 attribute on the `@CsvRecord` as shown below:
 
+._Java-only: Java annotation model class_
 [source,java]
 ----
 @CsvRecord( separator = ",", quote = "\"" )
@@ -264,6 +272,7 @@ order id, client id, first name, last name, isin code, instrument name, quantity
 To inform bindy that this first line must be skipped during the parsing
 process, then we use the attribute :
 
+._Java-only: Java annotation model class_
 [source,java]
 ----
 @CsvRecord(separator = ",", skipFirstLine = true)
@@ -277,6 +286,7 @@ public Class Order {
 To include at the first line of the CSV generated, the attribute
 `generateHeaderColumns` must be set to true in the annotation like this :
 
+._Java-only: Java annotation model class_
 [source,java]
 ----
 @CsvRecord( generateHeaderColumns = true )
@@ -299,6 +309,7 @@ If the platform where camel-bindy will run is not Windows but Macintosh
 or Unix, then you can change the crlf property like this. Three values
 are available: `WINDOWS`, `UNIX` or `MAC`.
 
+._Java-only: Java annotation model class_
 [source,java]
 ----
 @CsvRecord(separator = ",", crlf="MAC")
@@ -312,6 +323,7 @@ character, you can opt to specify it using the crlf parameter. In the
 following example, we can end the line with a comma followed by the
 newline character:
 
+._Java-only: Java annotation model class_
 [source,java]
 ----
 @CsvRecord(separator = ",", crlf=",\n")
@@ -328,6 +340,7 @@ Then, in this case, we can use the attribute `isOrdered = true` to
 indicate this in combination with attribute `position` of the DataField
 annotation.
 
+._Java-only: Java annotation model class_
 [source,java]
 ----
 @CsvRecord(isOrdered = true)
@@ -377,6 +390,7 @@ annotation Link in the Order class like this :
 
 *Property Link*
 
+._Java-only: Java annotation model class_
 [source,java]
 ----
 @CsvRecord(separator = ",")
@@ -394,6 +408,7 @@ And for the class Client :
 
 *Class Link*
 
+._Java-only: Java annotation model class_
 [source,java]
 ----
 @Link
@@ -429,6 +444,13 @@ int, date, ...) and optionally of a pattern.
 
 | columnName | String |  |  a| Name of the header column (optional). Uses the name of the property as default. Only applicable when `CsvRecord`
 has `generateHeaderColumns = true`
+
+| continueParseOnFailure | ContinueOnFailure |  | INHERIT a| Whether to keep going when parsing this field fails.
+
+TRUE forces tolerance for this field — a parse error is replaced with the field's defaultValue, or the
+type-appropriate default if no defaultValue is set. FALSE forces strict behavior: the exception propagates and
+aborts the unmarshal as it always has. INHERIT (the default) defers to the record-level setting on @CsvRecord
+or @FixedLengthRecord.
 
 | decimalSeparator | String |  |  | Decimal Separator to be used with BigDecimal number
 
@@ -482,6 +504,7 @@ record.
 
 *Position*
 
+._Java-only: Java annotation model class_
 [source,java]
 ----
 @CsvRecord(separator = ",")
@@ -502,6 +525,7 @@ the class Client (see here after).
 
 *Position continues in another model class*
 
+._Java-only: Java annotation model class_
 [source,java]
 ----
 public class Client {
@@ -523,6 +547,7 @@ The pattern allows enriching or validates the format of your data
 
 *Pattern*
 
+._Java-only: Java annotation model class_
 [source,java]
 ----
 @CsvRecord(separator = ",")
@@ -556,6 +581,7 @@ your number.
 
 *Precision*
 
+._Java-only: Java annotation model class_
 [source,java]
 ----
 @CsvRecord(separator = ",")
@@ -596,6 +622,7 @@ Here is an example:
 
 *Position is different in output*
 
+._Java-only: Java annotation model class_
 [source,java]
 ----
 @CsvRecord(separator = ",", isOrdered = true)
@@ -633,6 +660,7 @@ true.
 
 *Required*
 
+._Java-only: Java annotation model class_
 [source,java]
 ----
 @CsvRecord(separator = ",")
@@ -667,6 +695,7 @@ true.
 
 *Trim*
 
+._Java-only: Java annotation model class_
 [source,java]
 ----
 @CsvRecord(separator = ",")
@@ -693,6 +722,7 @@ If a field is not defined then uses the value indicated by the
 
 *Default value*
 
+._Java-only: Java annotation model class_
 [source,java]
 ----
 @CsvRecord(separator = ",")
@@ -717,6 +747,8 @@ public class Order {
 Specifies the column name for the property only if `@CsvRecord` has annotation `generateHeaderColumns = true`.
 
 *Column Name*
+
+._Java-only: Java annotation model class_
 [source,java]
 ----
 @CsvRecord(separator = ",", generateHeaderColumns = true)
@@ -758,6 +790,10 @@ field, we can then add 'pad' characters.
 [width="100%",cols="10%,10%,10%,10%,60%",options="header",]
 |===
 | Parameter name | Type | Required | Default value | Info
+
+| continueParseOnFailure | boolean |  | false a| If true, a parse failure on any field in this record is replaced with the field's defaultValue (or the
+type-appropriate default if no defaultValue is set), instead of aborting the unmarshal. Individual fields can opt
+out per-field via @DataField.continueParseOnFailure. Default false preserves the existing fail-fast behavior.
 
 | countGrapheme | boolean |  | false | Indicates how chars are counted
 
@@ -808,6 +844,7 @@ This example shows how to design the model to parse/format a fixed message:
 
 *Fixed-simple*
 
+._Java-only: Java annotation model class_
 [source,java]
 ----
 @FixedLengthRecord(length=54, paddingChar=' ')
@@ -859,6 +896,7 @@ field and how to assign a padding character which is `' '` here:
 
 *Fixed-padding-align*
 
+._Java-only: Java annotation model class_
 [source,java]
 ----
 @FixedLengthRecord(length=60, paddingChar=' ')
@@ -912,6 +950,7 @@ the field as we have a number format where we would like to pad with
 
 *Fixed-padding-field*
 
+._Java-only: Java annotation model class_
 [source,java]
 ----
 @FixedLengthRecord(length = 65, paddingChar = ' ')
@@ -964,6 +1003,7 @@ in the following example:
 
 *Fixed-delimited*
 
+._Java-only: Java annotation model class_
 [source,java]
 ----
 @FixedLengthRecord
@@ -1021,6 +1061,7 @@ defined by the value of `instrumentNumberLen` field in the record.
 
 *Fixed-delimited*
 
+._Java-only: Java annotation model class_
 [source,java]
 ----
 @FixedLengthRecord
@@ -1081,6 +1122,7 @@ record and footer record.
 ----
 *Fixed-header-and-footer-main-class*
 
+._Java-only: Java annotation model class_
 [source,java]
 ----
 @FixedLengthRecord(header = OrderHeader.class, footer = OrderFooter.class)
@@ -1156,6 +1198,7 @@ of interest. In this case, you can tell Bindy to skip parsing of
 everything beyond the last mapped field by setting the
 `ignoreTrailingChars` property on the `@FixedLengthRecord` declaration.
 
+._Java-only: Java annotation model class_
 [source,java]
 ----
 @FixedLengthRecord(ignoreTrailingChars = true)
@@ -1213,6 +1256,10 @@ or 'anything'.
 
 | pairSeparator | String | &#10003; |  | Pair separator used to split the key value pairs in tokens (mandatory). Can be '=', ';', or 'anything'.
 
+| continueParseOnFailure | boolean |  | false a| If true, a parse failure on any field in this message is replaced with the type-appropriate default (null, "",
+false, or MIN_VALUE for numeric primitives), instead of aborting the unmarshal. Individual fields can opt out
+per-field via @KeyValuePairField.continueParseOnFailure. Default false preserves the existing fail-fast behavior.
+
 | crlf | String |  | WINDOWS a| Character to be used to add a carriage return after each record (optional). Possible values = WINDOWS, UNIX, MAC,
 or custom. If you specify a value other than the three listed before, the value you enter (custom) will be used
 as the CRLF character(s).
@@ -1244,6 +1291,7 @@ and how to use the annotation:
 
 *FIX - message*
 
+._Java-only: Java annotation model class_
 [source,java]
 ----
 @Message(keyValuePairSeparator = "=", pairSeparator = "\\u0001", type="FIX", version="4.1")
@@ -1282,6 +1330,13 @@ pattern and if the field is required.
 
 | tag | int | &#10003; |  | tag identifying the field in the message (mandatory) - must be unique
 
+| continueParseOnFailure | ContinueOnFailure |  | INHERIT a| Whether to keep going when parsing this field fails.
+
+TRUE forces tolerance — a parse error is replaced with the type-appropriate default (null, "", false, or
+MIN_VALUE for numeric primitives). KeyValuePairField doesn't currently have a defaultValue element, so there's no
+user-supplied substitute available here. FALSE forces strict behavior. INHERIT (the default) defers
+to @Message.continueParseOnFailure.
+
 | impliedDecimalSeparator | boolean |  | false | <b>Camel 2.11:</b> Indicates if there is a decimal point implied at a specified location
 
 | name | String |  |  | name of the field (optional)
@@ -1306,6 +1361,7 @@ This parameter represents the key of the field in the message:
 
 *FIX message - Tag*
 
+._Java-only: Java annotation model class_
 [source,java]
 ----
 @Message(keyValuePairSeparator = "=", pairSeparator = "\\u0001", type="FIX", version="4.1")
@@ -1343,6 +1399,7 @@ annotation `@KeyValuePairField`.
 
 *FIX message - Tag - sort*
 
+._Java-only: Java annotation model class_
 [source,java]
 ----
 @Message(keyValuePairSeparator = "=", pairSeparator = "\\u0001", type = "FIX", version = "4.1", isOrdered = true)
@@ -1394,6 +1451,7 @@ Definition of the header section:
 
 *FIX message - Section - Header*
 
+._Java-only: Java annotation model class_
 [source,java]
 ----
 @Section(number = 1)
@@ -1411,6 +1469,7 @@ Definition of the body section:
 
 *FIX message - Section - Body*
 
+._Java-only: Java annotation model class_
 [source,java]
 ----
 @Section(number = 2)
@@ -1432,6 +1491,7 @@ Definition of the footer section:
 
 *FIX message - Section - Footer*
 
+._Java-only: Java annotation model class_
 [source,java]
 ----
 @Section(number = 3)
@@ -1506,6 +1566,7 @@ of Book.
 
 *Generate CSV with repetitive data*
 
+._Java-only: Java annotation model class_
 [source,java]
 ----
 @CsvRecord(separator=",")
@@ -1555,6 +1616,7 @@ And the code:
 
 *Reading FIX message containing group of tags/keys*
 
+._Java-only: Java annotation model class_
 [source,java]
 ----
 public class Order {
@@ -1595,6 +1657,7 @@ The purpose of the annotation `@BindyConverter` is to define a converter
 to be used on field level. The provided class must implement the
 Format interface.
 
+._Java-only: Java annotation model class_
 [source,java]
 ----
 @FixedLengthRecord(length = 10, paddingChar = ' ')
@@ -1622,6 +1685,7 @@ public static class CustomConverter implements Format<String> {
 The purpose of the annotation `@FormatFactories` is to define a set of converters
 at record-level. The provided classes must implement the `FormatFactoryInterface` interface.
 
+._Java-only: Java annotation model class_
 [source,java]
 ----
 @CsvRecord(separator = ",")
@@ -1668,6 +1732,81 @@ public static class OrderNumberFormatFactory extends AbstractFormatFactory {
 }
 ----
 
+=== Handling parse failures
+
+By default, when Bindy can't parse a field — say a malformed date, or `"abc"` in an `int` column — it
+throws and the whole unmarshal aborts, even if the rest of the row would have parsed fine. You can
+opt into a tolerant mode where the bad field is replaced with a fallback value and the row is delivered
+intact.
+
+==== Turning it on
+
+There are two annotation elements, on different levels:
+
+* `continueParseOnFailure` on the *record* annotation (`@CsvRecord`, `@FixedLengthRecord`, `@Message`)
+  — a plain boolean that sets the default for every field in that record.
+* `continueParseOnFailure` on the *field* annotation (`@DataField`, `@KeyValuePairField`) — a tri-state
+  enum (`ContinueOnFailure`) that can override the record default for one specific field.
+
+The tri-state lets a single strict field live inside an otherwise-tolerant record, or vice versa:
+
+[width="100%",cols="34%,33%,33%",options="header"]
+|===
+| `@CsvRecord` | `@DataField` | Effective behavior
+| (unset, `false`) | `INHERIT` (default) | Strict — exception propagates, like today
+| `true` | `INHERIT` | Tolerant
+| `true` | `FALSE` | Strict (the field overrides the record)
+| `false` | `TRUE` | Tolerant (the field overrides the record)
+|===
+
+==== What the tolerant path substitutes
+
+When a parse fails and the field is tolerant, Bindy picks a substitute value in this order:
+
+. If the field has a `@DataField.defaultValue` set, it's parsed through the *same* `Format` that just
+  failed. So a `defaultValue = "1970-01-01"` on a `Date` field becomes a real `Date`, a
+  `defaultValue = "0.00"` on a `BigDecimal` becomes a real `BigDecimal`, and so on. The type is
+  always correct.
+. Otherwise the field gets the same fallback an unfilled field would get: `null` for object types
+  (`Date`, `BigDecimal`, `String` with `defaultValueStringAsNull=true`, custom converters), `""` for
+  `String`, `false` for `boolean`, and `MIN_VALUE` for numeric primitives (`int`, `long`, `byte`,
+  `short`, `float`, `double`, `char`).
+
+[NOTE]
+====
+The `MIN_VALUE` sentinel for numeric primitives is Bindy's existing convention from
+`getDefaultValueForPrimitive`; it's not specific to this feature. If you want `0` instead, set an
+explicit `defaultValue = "0"` on the field.
+====
+
+==== Example
+
+._Java-only: Java annotation model class_
+[source,java]
+----
+@CsvRecord(separator = ",", continueParseOnFailure = true)
+public class Order {
+    @DataField(pos = 1)
+    private int id;                       // bad int -> Integer.MIN_VALUE
+
+    @DataField(pos = 2, pattern = "yyyy-MM-dd", defaultValue = "1970-01-01")
+    private Date orderDate;               // bad date -> 1970-01-01
+
+    @DataField(pos = 3, continueParseOnFailure = ContinueOnFailure.FALSE)
+    private BigDecimal amount;            // bad number still throws; this field is exempt
+}
+----
+
+A row like `1,2026-01-15,42.50` parses normally. A row like `xyz,not-a-date,42.50` produces an `Order`
+with `id = Integer.MIN_VALUE`, `orderDate = 1970-01-01`, and `amount = 42.50`. A row with a bad
+`amount` (e.g. `1,2026-01-15,xyz`) still throws, because that field is annotated strict.
+
+==== KVP caveat
+
+`@KeyValuePairField` does not currently have a `defaultValue` element, so KVP fields can only fall
+back to the type-appropriate default (`null`, `""`, `false`, or `MIN_VALUE`). Everything else works
+the same as CSV and fixed-length.
+
 === Supported Datatypes
 
 The DefaultFormatFactory makes formatting of the following datatype available by
@@ -1705,6 +1844,7 @@ corresponds to the class associated with the CSV record type) which is
 configured with _com.acme.model.MyModel.class_ to initialize the model objects
 configured in this package.
 
+._Java-only: Java annotation model class_
 [source,java]
 ----
 DataFormat bindy = new BindyCsvDataFormat(com.acme.model.MyModel.class);
@@ -1712,8 +1852,9 @@ DataFormat bindy = new BindyCsvDataFormat(com.acme.model.MyModel.class);
 
 === Setting locale
 
-Bindy supports configuring the locale on the dataformat, such as 
+Bindy supports configuring the locale on the dataformat, such as
 
+._Java-only: Java annotation model class_
 [source,java]
 ----
 BindyCsvDataFormat bindy = new BindyCsvDataFormat(com.acme.model.MyModel.class);
@@ -1724,6 +1865,7 @@ bindy.setLocale("us");
 Or to use the platform default locale, then use "default" as the locale
 name.
 
+._Java-only: Java annotation model class_
 [source,java]
 ----
 BindyCsvDataFormat bindy = new BindyCsvDataFormat(com.acme.model.MyModel.class);
@@ -1733,6 +1875,7 @@ bindy.setLocale("default");
 
 === Unmarshaling
 
+._Java-only: Java annotation model class_
 [source,java]
 ----
 from("file://inbox")
@@ -1744,6 +1887,7 @@ Alternatively, you can use a named reference to a data format which can
 then be defined in your registry, e.g., your
 Spring XML file:
 
+._Java-only: Java annotation model class_
 [source,java]
 ----
 from("file://inbox")
@@ -1763,6 +1907,7 @@ object to be returned per line.
 
 Each object can be retrieved using its class name.
 
+._Java-only: Java annotation model class_
 [source,java]
 ----
 List<Map<String, Object>> unmarshaledModels = (List<Map<String, Object>>) exchange.getIn().getBody();
@@ -1784,17 +1929,16 @@ for processing in a route, you could use a combination of a
 Splitter and a Processor as per
 the following:
 
+._Java-only: inline Processor implementation_
 [source,java]
 ----
 from("file://inbox")
     .unmarshal(bindy)
     .split(body())
-        .process(new Processor() {
-            public void process(Exchange exchange) throws Exception {
-                Message in = exchange.getIn();
-                Map<String, Object> modelMap = (Map<String, Object>) in.getBody();
-                in.setBody(modelMap.get(Order.class.getCanonicalName()));
-            }
+        .process(exchange -> {
+            Message in = exchange.getIn();
+            Map<String, Object> modelMap = (Map<String, Object>) in.getBody();
+            in.setBody(modelMap.get(Order.class.getCanonicalName()));
         })
         .to("direct:handleSingleOrder")
     .end();
@@ -1807,6 +1951,7 @@ can already do the character set conversion. Sometimes you need to remove this p
 exchange before sending it to the unmarshal. If you don't remove it, the conversion might be done twice,
 which might lead to unwanted results.
 
+._Java-only: Java constant reference_
 [source,java]
 ----
 from("file://inbox?charset=Cp922")
@@ -1820,6 +1965,7 @@ from("file://inbox?charset=Cp922")
 To generate CSV records from a collection of model objects, you create
 the following route :
 
+._Java-only: Java annotation model class_
 [source,java]
 ----
 from("direct:handleOrders")
@@ -1894,13 +2040,10 @@ substituting the version number for the latest & greatest release (see
 the download page for the latest versions).
 
 [source,xml]
---------------------------------------
+----
 <dependency>
   <groupId>org.apache.camel</groupId>
   <artifactId>camel-bindy</artifactId>
   <version>x.x.x</version>
 </dependency>
---------------------------------------
-
-
-include::spring-boot:partial$starter.adoc[]
+----

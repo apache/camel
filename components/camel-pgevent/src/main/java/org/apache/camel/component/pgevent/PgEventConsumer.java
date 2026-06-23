@@ -117,7 +117,7 @@ public class PgEventConsumer extends DefaultConsumer {
                         }
                         LOG.debug("Connecting successful");
                     }
-                    return false;
+                    return true;
                 });
             }
         }

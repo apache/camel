@@ -14,5 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-@jakarta.xml.bind.annotation.XmlSchema(namespace = "message.jaxb.converter.camel.apache.org")
+@XmlSchema(namespace = "message.jaxb.converter.camel.apache.org")
 package org.apache.camel.converter.jaxb.message;
+
+import jakarta.xml.bind.annotation.XmlSchema;

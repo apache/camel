@@ -531,6 +531,38 @@ public interface VertxWebsocketEndpointBuilderFactory {
             doSetProperty("serverOptions", serverOptions);
             return this;
         }
+        /**
+         * To use a custom HeaderFilterStrategy to filter header to and from
+         * Camel message.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param headerFilterStrategy the value to set
+         * @return the dsl builder
+         */
+        default AdvancedVertxWebsocketEndpointConsumerBuilder headerFilterStrategy(org.apache.camel.spi.HeaderFilterStrategy headerFilterStrategy) {
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
+            return this;
+        }
+        /**
+         * To use a custom HeaderFilterStrategy to filter header to and from
+         * Camel message.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param headerFilterStrategy the value to set
+         * @return the dsl builder
+         */
+        default AdvancedVertxWebsocketEndpointConsumerBuilder headerFilterStrategy(String headerFilterStrategy) {
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
+            return this;
+        }
     }
 
     /**
@@ -812,6 +844,38 @@ public interface VertxWebsocketEndpointBuilderFactory {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
+        /**
+         * To use a custom HeaderFilterStrategy to filter header to and from
+         * Camel message.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param headerFilterStrategy the value to set
+         * @return the dsl builder
+         */
+        default AdvancedVertxWebsocketEndpointProducerBuilder headerFilterStrategy(org.apache.camel.spi.HeaderFilterStrategy headerFilterStrategy) {
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
+            return this;
+        }
+        /**
+         * To use a custom HeaderFilterStrategy to filter header to and from
+         * Camel message.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param headerFilterStrategy the value to set
+         * @return the dsl builder
+         */
+        default AdvancedVertxWebsocketEndpointProducerBuilder headerFilterStrategy(String headerFilterStrategy) {
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
+            return this;
+        }
     }
 
     /**
@@ -960,6 +1024,38 @@ public interface VertxWebsocketEndpointBuilderFactory {
             return (VertxWebsocketEndpointBuilder) this;
         }
 
+        /**
+         * To use a custom HeaderFilterStrategy to filter header to and from
+         * Camel message.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param headerFilterStrategy the value to set
+         * @return the dsl builder
+         */
+        default AdvancedVertxWebsocketEndpointBuilder headerFilterStrategy(org.apache.camel.spi.HeaderFilterStrategy headerFilterStrategy) {
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
+            return this;
+        }
+        /**
+         * To use a custom HeaderFilterStrategy to filter header to and from
+         * Camel message.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param headerFilterStrategy the value to set
+         * @return the dsl builder
+         */
+        default AdvancedVertxWebsocketEndpointBuilder headerFilterStrategy(String headerFilterStrategy) {
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
+            return this;
+        }
     }
 
     public interface VertxWebsocketBuilders {
@@ -1043,7 +1139,7 @@ public interface VertxWebsocketEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final VertxWebsocketHeaderNameBuilder INSTANCE = new VertxWebsocketHeaderNameBuilder();
+        public static final VertxWebsocketHeaderNameBuilder INSTANCE = new VertxWebsocketHeaderNameBuilder();
 
         /**
          * Sends the message to the client with the given connection key. You

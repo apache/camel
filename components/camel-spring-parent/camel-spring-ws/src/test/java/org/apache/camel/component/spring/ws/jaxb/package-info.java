@@ -14,6 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-@jakarta.xml.bind.annotation.XmlSchema(namespace = "http://www.stockquotes.edu/",
-                                       elementFormDefault = jakarta.xml.bind.annotation.XmlNsForm.QUALIFIED)
+@XmlSchema(namespace = "http://www.stockquotes.edu/",
+           elementFormDefault = XmlNsForm.QUALIFIED)
 package org.apache.camel.component.spring.ws.jaxb;
+
+import jakarta.xml.bind.annotation.XmlNsForm;
+import jakarta.xml.bind.annotation.XmlSchema;

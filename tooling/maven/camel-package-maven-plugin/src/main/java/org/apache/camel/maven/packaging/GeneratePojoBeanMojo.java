@@ -234,39 +234,50 @@ public class GeneratePojoBeanMojo extends AbstractGeneratorMojo {
                 = Stream.of(classElement.getDeclaredFields()).filter(f -> f.getAnnotation(Metadata.class) != null).toList();
 
         for (Field fi : fields) {
-            BeanPojoOptionModel o = new BeanPojoOptionModel();
-            Metadata ai = fi.getAnnotation(Metadata.class);
-            o.setKind("property");
-            o.setName(fi.getName());
-            if (!ai.label().isEmpty()) {
-                o.setLabel(ai.label());
-            }
-            if (!ai.defaultValue().isEmpty()) {
-                o.setDefaultValue(ai.defaultValue());
-            }
-            o.setRequired(ai.required());
-            String displayName = ai.displayName();
-            if (displayName.isEmpty()) {
-                displayName = Strings.asTitle(o.getName());
-            }
-            o.setDisplayName(displayName);
-            o.setDeprecated(fi.getAnnotation(Deprecated.class) != null);
-            o.setAutowired(ai.autowired());
-            o.setSecret(ai.secret());
-            String javaType = ai.javaType();
-            if (javaType.isEmpty()) {
-                javaType = fi.getType().getTypeName();
-            }
-            o.setJavaType(javaType);
-            o.setDescription(ai.description());
-            String enums = ai.enums();
-            if (!enums.isEmpty()) {
-                String[] values = enums.split(",");
-                o.setEnums(Stream.of(values).map(String::trim).toList());
-            }
-            o.setType(getType(javaType, !enums.isEmpty(), false));
-            model.addOption(o);
+            model.addOption(extractFieldOption(fi));
         }
+    }
+
+    private static BeanPojoOptionModel extractFieldOption(Field fi) {
+        BeanPojoOptionModel o = new BeanPojoOptionModel();
+        Metadata ai = fi.getAnnotation(Metadata.class);
+        o.setKind("property");
+        o.setName(fi.getName());
+        if (!ai.label().isEmpty()) {
+            o.setLabel(ai.label());
+        }
+        if (!ai.defaultValue().isEmpty()) {
+            o.setDefaultValue(ai.defaultValue());
+        }
+        o.setRequired(ai.required());
+        String displayName = ai.displayName();
+        if (displayName.isEmpty()) {
+            displayName = Strings.asTitle(o.getName());
+        }
+        o.setDisplayName(displayName);
+        o.setDeprecated(fi.getAnnotation(Deprecated.class) != null);
+        o.setAutowired(ai.autowired());
+        String sec = ai.security();
+        boolean secret = ai.secret() || "secret".equals(sec);
+        o.setSecret(secret);
+        if (sec.isEmpty() && secret) {
+            sec = "secret";
+        }
+        o.setSecurity(sec.isEmpty() ? null : sec);
+        o.setInsecureValue(ai.insecureValue().isEmpty() ? null : ai.insecureValue());
+        String javaType = ai.javaType();
+        if (javaType.isEmpty()) {
+            javaType = fi.getType().getTypeName();
+        }
+        o.setJavaType(javaType);
+        o.setDescription(ai.description());
+        String enums = ai.enums();
+        if (!enums.isEmpty()) {
+            String[] values = enums.split(",");
+            o.setEnums(Stream.of(values).map(String::trim).toList());
+        }
+        o.setType(getType(javaType, !enums.isEmpty(), false));
+        return o;
     }
 
     private static String interfaceName(Index index, ClassInfo target) {

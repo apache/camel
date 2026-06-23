@@ -589,7 +589,7 @@ public interface ECS2EndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final ECS2HeaderNameBuilder INSTANCE = new ECS2HeaderNameBuilder();
+        public static final ECS2HeaderNameBuilder INSTANCE = new ECS2HeaderNameBuilder();
 
         /**
          * The operation we want to perform.

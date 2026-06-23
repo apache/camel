@@ -6,9 +6,6 @@
 :since: 2.0
 :supportlevel: Stable
 :tabs-sync-option:
-//Manually maintained attributes
-:camel-spring-boot-name: core
-:starter-artifactid: camel-core-starter
 
 *Since Camel {since}*
 
@@ -25,6 +22,18 @@ include::partial$language-options.adoc[]
 
 The `recipientList` EIP can utilize a exchangeProperty like:
 
+[tabs]
+====
+
+Java::
++
+[source,java]
+----
+from("direct:a").recipientList(exchangeProperty("myProperty"));
+----
+
+XML::
++
 [source,xml]
 ----
 <route>
@@ -35,17 +44,24 @@ The `recipientList` EIP can utilize a exchangeProperty like:
 </route>
 ----
 
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:a
+      steps:
+        - recipientList:
+            expression:
+              exchangeProperty:
+                expression: myProperty
+----
+====
+
 In this case, the list of recipients are contained in the property
 'myProperty'.
-
-And the same example in Java DSL:
-
-[source,java]
-----
-from("direct:a").recipientList(exchangeProperty("myProperty"));
-----
 
 == Dependencies
 
 The ExchangeProperty language is part of *camel-core*.
-

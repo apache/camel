@@ -22,13 +22,13 @@ import java.util.Map;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.eclipse.jetty.server.Connector;
+import org.eclipse.jetty.server.ServerConnector;
 import org.junit.jupiter.api.Disabled;
 
 @Disabled
 public class ExplicitHttpsRouteTest extends HttpsRouteTest {
 
-    private Connector createSslSocketConnector(int port) {
+    private ServerConnector createSslSocketConnector(int port) {
         /*
          * SslSelectChannelConnector sslSocketConnector = new
          * SslSelectChannelConnector();
@@ -44,7 +44,7 @@ public class ExplicitHttpsRouteTest extends HttpsRouteTest {
             public void configure() {
                 // START SNIPPET: e1
                 // create SSL select channel connectors for port 9080 and 9090
-                Map<Integer, Connector> connectors = new HashMap<>();
+                Map<Integer, ServerConnector> connectors = new HashMap<>();
                 connectors.put(port1.getPort(), createSslSocketConnector(port1.getPort()));
                 connectors.put(port2.getPort(), createSslSocketConnector(port2.getPort()));
 

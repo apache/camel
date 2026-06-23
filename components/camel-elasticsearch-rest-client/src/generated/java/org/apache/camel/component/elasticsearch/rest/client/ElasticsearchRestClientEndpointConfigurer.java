@@ -45,6 +45,8 @@ public class ElasticsearchRestClientEndpointConfigurer extends PropertyConfigure
         case "snifferInterval": target.setSnifferInterval(property(camelContext, int.class, value)); return true;
         case "sockettimeout":
         case "socketTimeout": target.setSocketTimeout(property(camelContext, int.class, value)); return true;
+        case "sslcontextparameters":
+        case "sslContextParameters": target.setSslContextParameters(property(camelContext, org.apache.camel.support.jsse.SSLContextParameters.class, value)); return true;
         case "user": target.setUser(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
@@ -80,6 +82,8 @@ public class ElasticsearchRestClientEndpointConfigurer extends PropertyConfigure
         case "snifferInterval": return int.class;
         case "sockettimeout":
         case "socketTimeout": return int.class;
+        case "sslcontextparameters":
+        case "sslContextParameters": return org.apache.camel.support.jsse.SSLContextParameters.class;
         case "user": return java.lang.String.class;
         default: return null;
         }
@@ -111,6 +115,8 @@ public class ElasticsearchRestClientEndpointConfigurer extends PropertyConfigure
         case "snifferInterval": return target.getSnifferInterval();
         case "sockettimeout":
         case "socketTimeout": return target.getSocketTimeout();
+        case "sslcontextparameters":
+        case "sslContextParameters": return target.getSslContextParameters();
         case "user": return target.getUser();
         default: return null;
         }

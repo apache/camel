@@ -29,6 +29,7 @@ import org.apache.camel.component.cxf.common.CXFTestSupport;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.component.cxf.jaxws.CxfEndpoint;
 import org.apache.camel.util.URISupport;
+import org.apache.cxf.interceptor.Fault;
 import org.apache.cxf.transport.http.HTTPException;
 import org.junit.jupiter.api.Test;
 
@@ -87,7 +88,7 @@ public class CxfEndpointBeansRouterTest extends AbstractSpringBeanTestSupport {
         });
 
         Exception ex = reply.getException();
-        assertTrue(ex instanceof org.apache.cxf.interceptor.Fault
+        assertTrue(ex instanceof Fault
                 || ex instanceof HTTPException, "Should get the fault here");
     }
 

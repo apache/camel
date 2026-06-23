@@ -52,7 +52,8 @@ import org.apache.camel.CamelContext;
  * </code>
  * </pre>
  *
- * @see org.apache.camel.impl.engine.DefaultContextServiceLoaderPlugin
+ * @see   org.apache.camel.impl.engine.DefaultContextServiceLoaderPlugin
+ * @since 4.15
  */
 public interface ContextServicePlugin {
 

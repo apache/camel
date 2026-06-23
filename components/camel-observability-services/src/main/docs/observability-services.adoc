@@ -82,7 +82,7 @@ NOTE: feature available since version 4.19.0
 
 The presence of this component will make sure that when the application is shutting down, certain metrics are stored on log of the application in order to be preserved for any future analysis or shared with your log aggregator. This could be a solution to investigate how many exchanges were processed, how many have failed, etc, on an application that has a sudden or even a controlled shutdown. You can think on a cronjob running and being able at any moment to learn certain stats without the need to have your application running to scrape the `/metrics` endpoint.
 
-You can even change `camel.metrics.logMetricsOnShutdown` and `camel.metrics.logMetricsOnShutdownFilters` in order to qualify better this behavior, which defaults to `true` and `app.info,camel.exchanges.*` by default.
+You can even change `camel.metrics.logMetricsOnShutdown` and `camel.metrics.logMetricsOnShutdownFilters` in order to qualify better this behavior, which defaults to `true` and exchanges, application and jvm memory metrics by default.
 
 === OpenTelemetry configuration
 

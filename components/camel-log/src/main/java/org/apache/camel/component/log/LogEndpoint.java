@@ -297,9 +297,12 @@ public class LogEndpoint extends ProcessorEndpoint implements LineNumberAware {
             Long groupDelay = getGroupDelay();
             answer = new ThroughputLogger(camelLogger, this.getCamelContext(), getGroupInterval(), groupDelay, groupActiveOnly);
         } else {
-            answer = new CamelLogProcessor(
+            CamelLogProcessor clp = new CamelLogProcessor(
                     camelLogger, localFormatter, getMaskingFormatter(),
                     getCamelContext().getCamelContextExtension().getLogListeners());
+            clp.setRouteLogMaskAware(true);
+            clp.setEndpointLogMask(logMask);
+            answer = clp;
         }
         // the logger is the processor
         setProcessor(answer);

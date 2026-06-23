@@ -28,13 +28,13 @@ public class VertxHttpQueryStringTest extends VertxHttpTestSupport {
     @Test
     public void testQueryStringPropertyPlaceholder() {
         String result = template.requestBody(getProducerUri() + "?os={{sys:os.name}}", null, String.class);
-        assertEquals("os=" + System.getProperty("os.name"), result.replaceAll("%20", " "));
+        assertEquals("os=" + System.getProperty("os.name").replace(' ', '+'), result);
     }
 
     @Test
     public void testQueryStringFromHttpUriHeader() {
         String result = template.requestBody(getProducerUri() + "?os={{sys:os.name}}", null, String.class);
-        assertEquals("os=" + System.getProperty("os.name"), result.replaceAll("%20", " "));
+        assertEquals("os=" + System.getProperty("os.name").replace(' ', '+'), result);
     }
 
     @Test
@@ -64,7 +64,8 @@ public class VertxHttpQueryStringTest extends VertxHttpTestSupport {
                         .setBody(header(Exchange.HTTP_QUERY));
 
                 from("direct:start")
-                        .setHeader(Exchange.HTTP_URI, constant(getTestServerUrl() + "?foo=bar#^[]"))
+                        .setHeader(Exchange.HTTP_URI, constant(getTestServerUrl()))
+                        .setHeader(Exchange.HTTP_QUERY, constant("foo=bar#^[]"))
                         .to(getProducerUri());
             }
         };

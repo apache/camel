@@ -40,6 +40,7 @@ import org.slf4j.LoggerFactory;
              syntax = "irc:hostname:port",
              alternativeSyntax = "irc:username:password@hostname:port",
              category = { Category.CHAT }, headersClass = IrcConstants.class)
+@Deprecated(since = "4.21")
 public class IrcEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     private static final Logger LOG = LoggerFactory.getLogger(IrcEndpoint.class);

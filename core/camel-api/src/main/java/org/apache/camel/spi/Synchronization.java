@@ -17,12 +17,12 @@
 package org.apache.camel.spi;
 
 import org.apache.camel.Exchange;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Provides a hook for custom {@link org.apache.camel.Processor} or {@link org.apache.camel.Component} instances to
  * respond to completed or failed processing of an {@link Exchange} rather like Spring's
- * <a href="http://static.springframework.org/spring/docs/2.5.x/api/org/springframework/transaction/
- * support/TransactionSynchronization.html">TransactionSynchronization</a>
+ * {@code org.springframework.transaction.support.TransactionSynchronization}
  */
 public interface Synchronization {
 
@@ -46,7 +46,7 @@ public interface Synchronization {
      *
      * @return An instance of {@link SynchronizationRouteAware} or null if unset for this synchronization
      */
-    default SynchronizationRouteAware getRouteSynchronization() {
+    default @Nullable SynchronizationRouteAware getRouteSynchronization() {
         return null;
     }
 

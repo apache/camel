@@ -34,11 +34,11 @@ public class Translate2Configuration implements Cloneable, AwsCommonConfiguratio
     @UriParam(label = "advanced")
     @Metadata(autowired = true)
     private TranslateClient translateClient;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String accessKey;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String secretKey;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String sessionToken;
     @UriParam(defaultValue = "translateText")
     @Metadata(required = true)
@@ -59,7 +59,7 @@ public class Translate2Configuration implements Cloneable, AwsCommonConfiguratio
     private boolean autodetectSourceLanguage;
     @UriParam
     private boolean pojoRequest;
-    @UriParam(label = "security")
+    @UriParam(label = "security", security = "insecure:ssl")
     private boolean trustAllCertificates;
     @UriParam
     private boolean overrideEndpoint;

@@ -1,0 +1,25 @@
+- route:
+    from:
+      uri: once
+      parameters:
+        name: validate
+      steps:
+        - setHeader:
+            name: contactEmail
+            expression:
+              constant:
+                expression: user@example.com
+        - choice:
+            when:
+              - expression:
+                  groovy:
+                    expression: |-
+                      import org.apache.commons.validator.routines.EmailValidator
+                      EmailValidator.getInstance().isValid(request.headers['contactEmail'])
+                steps:
+                  - log:
+                      message: "Valid contact: ${header.contactEmail}"
+            otherwise:
+              steps:
+                - log:
+                    message: "Invalid email: ${header.contactEmail}"

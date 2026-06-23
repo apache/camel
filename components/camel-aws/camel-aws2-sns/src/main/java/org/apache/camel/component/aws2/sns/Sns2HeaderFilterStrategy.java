@@ -19,14 +19,12 @@ package org.apache.camel.component.aws2.sns;
 import org.apache.camel.support.DefaultHeaderFilterStrategy;
 
 public class Sns2HeaderFilterStrategy extends DefaultHeaderFilterStrategy {
+
     public Sns2HeaderFilterStrategy() {
         initialize();
     }
 
     protected void initialize() {
-        setLowerCase(true);
-
-        // filter headers begin with "Camel" or "org.apache.camel"
-        setOutFilterPattern("(breadcrumbId|Camel|org\\.apache\\.camel)[\\.|a-z|A-z|0-9]*");
+        getOutFilter().add("breadcrumbId");
     }
 }

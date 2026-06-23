@@ -517,7 +517,7 @@ public interface CamelEventEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final CamelEventHeaderNameBuilder INSTANCE = new CamelEventHeaderNameBuilder();
+        public static final CamelEventHeaderNameBuilder INSTANCE = new CamelEventHeaderNameBuilder();
 
         /**
          * The event type name (e.g., RouteStarted, ExchangeCompleted).

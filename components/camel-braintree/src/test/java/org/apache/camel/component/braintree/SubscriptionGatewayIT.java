@@ -19,6 +19,9 @@ package org.apache.camel.component.braintree;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.braintreegateway.ResourceCollection;
+import com.braintreegateway.Result;
+import com.braintreegateway.Subscription;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.braintree.internal.BraintreeApiCollection;
 import org.apache.camel.component.braintree.internal.SubscriptionGatewayApiMethod;
@@ -42,7 +45,7 @@ public class SubscriptionGatewayIT extends AbstractBraintreeTestSupport {
     @Test
     public void testCancel() {
         // using String message body for single parameter "id"
-        final com.braintreegateway.Result result = requestBody("direct://CANCEL", null);
+        final Result result = requestBody("direct://CANCEL", null);
 
         assertNotNull(result, "cancel result");
         LOG.debug("cancel: {}", result);
@@ -53,7 +56,7 @@ public class SubscriptionGatewayIT extends AbstractBraintreeTestSupport {
     @Test
     public void testCreate() {
         // using com.braintreegateway.SubscriptionRequest message body for single parameter "request"
-        final com.braintreegateway.Result result = requestBody("direct://CREATE", null);
+        final Result result = requestBody("direct://CREATE", null);
 
         assertNotNull(result, "create result");
         LOG.debug("create: {}", result);
@@ -69,7 +72,7 @@ public class SubscriptionGatewayIT extends AbstractBraintreeTestSupport {
         // parameter type is String
         headers.put("CamelBraintree.id", null);
 
-        final com.braintreegateway.Result result = requestBodyAndHeaders("direct://DELETE", null, headers);
+        final Result result = requestBodyAndHeaders("direct://DELETE", null, headers);
 
         assertNotNull(result, "delete result");
         LOG.debug("delete: {}", result);
@@ -80,7 +83,7 @@ public class SubscriptionGatewayIT extends AbstractBraintreeTestSupport {
     @Test
     public void testFind() {
         // using String message body for single parameter "id"
-        final com.braintreegateway.Subscription result = requestBody("direct://FIND", null);
+        final Subscription result = requestBody("direct://FIND", null);
 
         assertNotNull(result, "find result");
         LOG.debug("find: {}", result);
@@ -91,7 +94,7 @@ public class SubscriptionGatewayIT extends AbstractBraintreeTestSupport {
     @Test
     public void testRetryCharge() {
         // using String message body for single parameter "subscriptionId"
-        final com.braintreegateway.Result result = requestBody("direct://RETRYCHARGE", null);
+        final Result result = requestBody("direct://RETRYCHARGE", null);
 
         assertNotNull(result, "retryCharge result");
         LOG.debug("retryCharge: {}", result);
@@ -107,7 +110,7 @@ public class SubscriptionGatewayIT extends AbstractBraintreeTestSupport {
         // parameter type is java.math.BigDecimal
         headers.put("CamelBraintree.amount", null);
 
-        final com.braintreegateway.Result result = requestBodyAndHeaders("direct://RETRYCHARGE_1", null, headers);
+        final Result result = requestBodyAndHeaders("direct://RETRYCHARGE_1", null, headers);
 
         assertNotNull(result, "retryCharge result");
         LOG.debug("retryCharge: {}", result);
@@ -118,7 +121,7 @@ public class SubscriptionGatewayIT extends AbstractBraintreeTestSupport {
     @Test
     public void testSearch() {
         // using com.braintreegateway.SubscriptionSearchRequest message body for single parameter "searchRequest"
-        final com.braintreegateway.ResourceCollection result = requestBody("direct://SEARCH", null);
+        final ResourceCollection result = requestBody("direct://SEARCH", null);
 
         assertNotNull(result, "search result");
         LOG.debug("search: {}", result);
@@ -134,7 +137,7 @@ public class SubscriptionGatewayIT extends AbstractBraintreeTestSupport {
         // parameter type is com.braintreegateway.SubscriptionRequest
         headers.put("CamelBraintree.request", null);
 
-        final com.braintreegateway.Result result = requestBodyAndHeaders("direct://UPDATE", null, headers);
+        final Result result = requestBodyAndHeaders("direct://UPDATE", null, headers);
 
         assertNotNull(result, "update result");
         LOG.debug("update: {}", result);

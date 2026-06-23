@@ -87,7 +87,7 @@ public class TelemetryDevTracer extends Tracer {
         }
 
         @Override
-        public Span create(String spanName, Span parent, SpanContextPropagationExtractor extractor) {
+        public Span create(String spanName, String spanKind, Span parent, SpanContextPropagationExtractor extractor) {
             Span span = DevSpanAdapter.buildSpan(spanName);
             String traceId = UUID.randomUUID().toString().replaceAll("-", "");
             if (parent != null) {

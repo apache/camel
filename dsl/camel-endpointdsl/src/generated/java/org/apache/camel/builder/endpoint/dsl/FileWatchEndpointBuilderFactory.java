@@ -510,7 +510,7 @@ public interface FileWatchEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final FileWatchHeaderNameBuilder INSTANCE = new FileWatchHeaderNameBuilder();
+        public static final FileWatchHeaderNameBuilder INSTANCE = new FileWatchHeaderNameBuilder();
 
         /**
          * Type of event. Possible values: CREATE, DELETE, MODIFY.

@@ -6,9 +6,6 @@
 :since: 1.1
 :supportlevel: Stable
 :tabs-sync-option:
-//Manually maintained attributes
-:camel-spring-boot-name: core
-:starter-artifactid: camel-core-starter
 
 *Since Camel {since}*
 
@@ -92,11 +89,15 @@ YAML::
     steps:
       - choice:
           when:
-            - simple: "${header.foo} == 'bar'"
+            - expression:
+                simple:
+                  expression: "${header.foo} == 'bar'"
               steps:
                 - to:
                     uri: direct:b
-            - simple: "${header.foo} == 'cheese'"
+            - expression:
+                simple:
+                  expression: "${header.foo} == 'cheese'"
               steps:
                 - to:
                     uri: direct:c
@@ -121,6 +122,31 @@ include::partial$language-options.adoc[]
 The Simple language has many built-in functions which allows access to various part of Camel and the current `Exchange`, the message payload such as body and headers, and much more.
 
 NOTE: Some functions take 1 or more arguments enclosed in parentheses, and arguments separated by comma (ie `${replace('custID','customerId')}`.
+
+=== Inlined Result Type Function
+
+**Available as of Camel 4.21**
+
+The simple language, has many built-in functions, and each of them take different set of parameters, and some are more advanced than others, for example
+the functions working with JSon or XML payloads. Regards of that, you may have need for being able to easily specify that the function should return the value
+as an integer instead of _what it would otherwise do_. To make this easy we have built-in a fixed set of very common result types to make this easy.
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|====
+|Prefix |Response Type |Description
+|`int:` | `Integer` | To use `Integer` as a result type.
+|`integer:` | `Integer` | To use `Integer` as a result type.
+|`long:` | `Long` | To use `Long` as a result type.
+|`boolean:` | `Boolean` | To use `Boolean` as a result type.
+|`string:` | `String` | To use `String` (text) as a result type.
+|====
+
+You do this by prefixing the function with any of the above, such as `${int:header.age}` to return the age header as an integer.
+If you use XML then the XPath function can do this as well such as `${int:xpath(//food/quantity)}`.
+
+If you need to use a type that is not in the table above, then you can combine two functions together with the `${convertTo(type)}` function, as follows:
+
+`${xpath(//food[name='food1']/price/text())} ~> ${convertTo(java.math.BigDecimal)}`
 
 === Core Camel Functions
 
@@ -198,6 +224,42 @@ to access Camel functionality and content of the message being routed.
 The core functions are powerful to give easy access to the current `Exchange` / `Message` being routed so
 you can get the message body, headers, variables and exchange properties.
 
+The `body` function returns the message body as-is. If the body is a `String` with value `Hello World`, then `$\{body}` returns `Hello World`.
+
+The `bodyAs` function converts the body to the given type. For example if the body is the integer `42`, then `${bodyAs(String)}` returns `"42"` as a String.
+And `${mandatoryBodyAs(Integer)}` will throw an exception if the body is `null`, otherwise it converts and returns the value.
+
+The `bodyOneLine` function converts the body to a String and removes all line-breaks, so the string is in one line. This is useful for logging.
+
+The `bodyType` function returns the Java class of the message body. For example if the body is `"Hello"`, then the type is `java.lang.String`.
+
+The `convertTo` function converts the message body (or a given expression) to the specified type.
+For example `${convertTo(int)}` converts the body to an `Integer`, and `${convertTo(byte[])}` converts to a byte array.
+You can also convert a nested expression: `${convertTo($\{body},String)}`.
+
+The `headerAs` function returns a header value converted to the given type. For example if a header `num` contains the string `"42"`,
+then `${headerAs(num,Integer)}` returns the integer `42`.
+
+The `variableAs` function works similarly for variables. If a variable `num` contains `"99"`,
+then `${variableAs(num,Integer)}` returns the integer `99`.
+
+The `exchangeProperty` function returns an exchange property. You can use dot, colon, or bracket notation:
+`${exchangeProperty.color}`, `${exchangeProperty:color}`, or `${exchangeProperty[color]}` all return the same value.
+
+The `setHeader` function sets a message header from an expression. For example `${setHeader(foo,$\{body})}` sets the header `foo` to the current body.
+You can also specify a type: `${setHeader(bar,int,$\{body})}` converts the body to an `Integer` before setting the header.
+Setting a header to `null` removes it: `${setHeader(bar,$\{null})}`.
+
+The `setVariable` function works the same as `setHeader` but for exchange variables. For example `${setVariable(count,$\{body.length})}` stores
+the body length in a variable named `count`, which can later be used as `${variable.count}`.
+
+The `val` function returns its argument as a constant value (unchanged). For example `${val(abc)}` returns the string `abc`.
+When using a nested function `${val($\{body})}`, it captures the current body value at evaluation time.
+
+The `kindOfType` function returns a string describing the _kind_ of a value. It returns one of: `null`, `string`, `number`, `boolean`, `array`, or `object`.
+For example `${kindOfType('Hello')}` returns `string`, `${kindOfType(123)}` returns `number`,
+and if the body is a `List` then `${kindOfType()}` returns `array`.
+
 During routing, you can use the xref:eips:log-eip.adoc[LogEIP] to write to the log, for example:
 
 [tabs]
@@ -240,6 +302,33 @@ For example `${length('Hello World')}` returns `11`. For larger payloads, then w
 the length is pre-computed and usually does not require to load the content into memory.
 
 The `throwException` function is used for throwing an exception.
+For example `${throwException('Invalid order')}` throws an `IllegalArgumentException` with the given message.
+You can also specify the exception type: `${throwException('Not found',java.io.FileNotFoundException)}`.
+
+The `exchangeId` function returns the unique identifier of the current exchange.
+This is commonly used for correlation in log messages: `$\{exchangeId}` returns a value like `ID-myhost-1234-1234567890-0-1`.
+
+The `routeId` function returns the id of the route currently processing the exchange.
+For example `$\{routeId}` returns `myRoute` when the exchange is inside a route with `routeId("myRoute")`.
+The `fromRouteId` function returns the route id where the exchange was _originally created_, which can differ from `routeId`
+when the exchange has been forwarded to another route via `direct` or `seda`.
+
+The `exception.message` function is commonly used in error handling to get the exception message.
+For example in an `onException` block you can log: `"Failed: ${exception.message}"`.
+If an `IllegalStateException("boom")` was thrown, then `${exception.message}` returns `boom`.
+Use `${exception.stacktrace}` if you need the full stack trace.
+
+The `properties:key:default` function looks up a property placeholder value from the Camel configuration.
+For example `${properties:myApp.greeting}` returns the value of the `myApp.greeting` property.
+You can also specify a default value: `${properties:myApp.greeting:Hello}` returns `Hello` if the property is not set.
+And `${propertiesExist:myApp.greeting}` returns `true` or `false` depending on whether the property exists.
+
+The `headers` function returns all message headers as a `java.util.Map`. This is useful when you need
+to pass all headers to a bean or processor. The `${headers.size}` returns the number of headers.
+
+The `messageTimestamp` function returns the timestamp from the source system (e.g., Kafka, JMS) if available.
+This is different from the exchange created timestamp, as it reflects when the original event occurred.
+Returns `0` if no timestamp is available.
 
 
 === Array & List Functions
@@ -265,6 +354,7 @@ in arrays or lists.
 |`mapRemove(key)` | `List` | Removes the key from the message body as a map object.
 |`mapRemove(source,key)` | `List` | Removes the key from the source expression as a map object.
 |`createEmpty(kind)` | `<T>` | Creates a new empty object of the given kind. The `string` kind creates an empty `String` object. The `list` creates an empty `ArrayList`, and `map` creates an empty `LinkedHashMap` object. Use `set` to create an empty `java.util.LinkedHashSet`.
+|`filter(exp,fun)` | `List` | Returns a List containing only the values from the input expression for which the function evaluates to true. This function is not supported when using csimple.
 |`reverse(val1,val2,...)` | `List` | Returns a list of all the values, but in reverse order.
 |`shuffle(val1,val2,...)` | `List` | Returns a list of all the values shuffled in random order.
 |`size()` | `int` | Returns the number of elements in collection or array based message body. If the value is null then 0 is returned, otherwise 1.
@@ -327,6 +417,19 @@ and you want to skip this line, then you can use `${skip(1)}` that then returns 
 The `split` function is as the name implies used for splitting the message body or the value (using a separator) into an array of sub elements.
 For example if the message body a CSV payload then using `${split(\\n)}` (you need to escape the new-line character) will split
 this into a `String[]` separated by new-line.
+If the body is `a:b:c` then `${split(:)}` returns a list `[a, b, c]`.
+You can also split a header or variable value: `${split($\{header.csv},-)}` splits the header value using `-` as separator.
+
+The `sort` function sorts values in natural order. If the body is a list `[b, a, c]` then `${sort()}` returns `[a, b, c]`.
+To sort in reverse (descending) order use `${sort(true)}` which returns `[c, b, a]`.
+
+The `createEmpty` function creates a new empty object. `${createEmpty(list)}` returns an empty `ArrayList`,
+`${createEmpty(map)}` returns an empty `LinkedHashMap`, `${createEmpty(set)}` returns an empty `LinkedHashSet`,
+and `${createEmpty(string)}` returns an empty `String`.
+
+The `filter` function filters elements from a collection based on a predicate.
+For example if the body is `Camel,Dog,Cheese` then `${filter($\{body},$\{length() > 4})}` returns a list with `[Camel, Cheese]`
+(only elements with more than 4 characters). You can also filter by content: `${filter($\{body},$\{contains(dog)})}` returns `[Dog]`.
 
 
 === Boolean & Condition Functions
@@ -337,13 +440,13 @@ The condition functions is small functions that mostly evaluates to a `boolean` 
 |====
 |Function |Response Type |Description
 |`assert(exp,msg)` | `null` | Evaluates the expression and throws an exception with the message if the condition is false. This function is not supported when using csimple.
-|`contains(text`) | `boolean` | Returns true if the message body contains part of the text (ignore case)
-|`contains(exp,text`) | `boolean` | Returns true if the expression contains part of the text (ignore case)
-|`iif(predicate,trueExp,falseExp`) | `Object` | The inlined if function evaluates the predicate expression and returns the value of _trueExp_ if the predicate is `true`, otherwise the value of `falseExp` is returned. This function is similar to the ternary operator in Java.
+|`contains(text)` | `boolean` | Returns true if the message body contains part of the text (ignore case)
+|`contains(exp,text)` | `boolean` | Returns true if the expression contains part of the text (ignore case)
+|`iif(predicate,trueExp,falseExp)` | `Object` | The inlined if function evaluates the predicate expression and returns the value of _trueExp_ if the predicate is `true`, otherwise the value of `falseExp` is returned. This function is similar to the ternary operator in Java.
 |`isEmpty` | `boolean` | Whether the message body is `null` or empty (list/map types are tested if they have 0 elements).
 |`isEmpty(exp)` | `boolean` | Whether the expression is `null` or empty (list/map types are tested if they have 0 elements).
-|`isAlpha()` | `boolean` | Whether the message body is numeric value (A..Z). For more advanced checks use the `regex` operator.
-|`isAlpha(exp)` | `boolean` | Whether the expression is numeric value (A..Z). For more advanced checks use the `regex` operator.
+|`isAlpha()` | `boolean` | Whether the message body is alphabetic value (A..Z). For more advanced checks use the `regex` operator.
+|`isAlpha(exp)` | `boolean` | Whether the expression is alphabetic value (A..Z). For more advanced checks use the `regex` operator.
 |`isAlphaNumeric()` | `boolean` | Whether the message body is alphanumeric value (A..Z0-9). For more advanced checks use the `regex` operator.
 |`isAlphaNumeric(exp)` | `boolean` | Whether the expression is alphanumeric value (A..Z0-9). For more advanced checks use the `regex` operator.
 |`isNumeric()` | `boolean` | Whether the message body is numeric value (0..9). For more advanced checks use the `regex` operator.
@@ -367,11 +470,17 @@ The `isEmpty` is primary for checking if a value is either `null` or empty strin
 The `isAlpha` / `isAlphaNumeric` and `isNumeric` is for checking if a value only contains `A..Z` or `A.Z0..9`, or `0..9` characters.
 Camel will use from the JDK `Character.isLetter` / `Character.isLetterOrDigit`, or `Character.isDigit` methods internally.
 
-So `${isAlpha('Hello World'}` will actually return `false` because there is a whitespace. However `${isAlpha('HelloWorld'}` returns `true`.
+So `${isAlpha('Hello World')}` will actually return `false` because there is a whitespace. However `${isAlpha('HelloWorld')}` returns `true`.
 
 TIP: You can use the `regex` operator to use regular expressions for more advanced tests.
 
-And the `not` function is function to inverse the boolean value.
+The `not` function inverts a boolean value. If the body is empty then `${not()}` returns `true`.
+If the body is `"Hello"` then `${not()}` returns `false`.
+You can also negate a predicate: `${not($\{body} == 'Hello')}` returns `false` when the body is `Hello`, and `true` otherwise.
+
+The `assert` function evaluates a condition and throws an exception if it fails.
+For example `${assert($\{body} == 'Hello', 'Must be Hello')}` will pass when the body is `Hello`,
+but throws a `SimpleAssertionException` with the message `Must be Hello` when the body is anything else.
 
 
 === Date & Time Functions
@@ -383,8 +492,8 @@ The date functions is used for parsing and formatting with date and times.
 |Function |Response Type |Description
 |`date:millis` | `long` | Returns the current timestamp as millis in unix epoch.
 |`date:command` | `Date` | Evaluates to a `java.util.Date` object. Supported commands are: `now` for current timestamp, `exchangeCreated` for the timestamp when the current exchange was created, `header.xxx` to use the `Long/Date` object in the header with the key xxx. `variable.xxx` to use the `Long/Date` in the variable with the key xxx. `exchangeProperty.xxx` to use the `Long/Date` object in the exchange property with the key xxx. `file` for the last modified timestamp of the file (only available with a File consumer). Command accepts offsets such as: `now-24h` or `header.xxx+1h` or `now+1h30m-100`.
-|`date:command:pattern` | `String` | Date formatting using `java.text.SimpleDateFormat` patterns. See `data:command` function for additional documentation on the commands.
-|`date-with-timezone:command:timezone:pattern` | `String` | Date formatting using `java.text.SimpleDateFormat` timezones and patterns. See `data:command` function for additional documentation on the commands.
+|`date:command:pattern` | `String` | Date formatting using `java.text.SimpleDateFormat` patterns. See `date:command` function for additional documentation on the commands.
+|`date-with-timezone:command:timezone:pattern` | `String` | Date formatting using `java.text.SimpleDateFormat` timezones and patterns. See `date:command` function for additional documentation on the commands.
 |====
 
 For example to get the current time use `${date:now}` which is returned as a `java.util.Date` object.
@@ -395,6 +504,14 @@ And to get the time 8 hours in the future `${date:now+8h:hh:mm:ss}`.
 
 There is also a timezone supported function so you can say `date-with-timezone:header.birthday:GMT+8:yyyy-MM-dd'T'HH:mm:ss:SSS`.
 This will get the `Date` object from the header with key birthday, and format that using the given pattern in the timezone GMT+8.
+
+You can also use date offsets with headers or exchange properties. For example `${date:header.birthday+24h:yyyyMMdd}` returns the date
+from the header shifted forward by 24 hours. And `${date:header.birthday-10s:yyyy-MM-dd'T'HH:mm:ss:SSS}` subtracts 10 seconds.
+
+Exchange properties work the same way: `${date:exchangeProperty.birthday:yyyyMMdd}` formats the property date.
+
+The `date:exchangeCreated` command returns the timestamp when the current exchange was created:
+`${date:exchangeCreated:hh:mm:ss a}` formats it as a 12-hour time with AM/PM marker.
 
 
 === Math & Numeric Functions
@@ -424,13 +541,13 @@ The `abs` function returns the absolute value of a numeric value. It converts th
 A few examples `${abs(-5)}` returns `5`, and `${abs(5)}` also returns `5`.
 
 The `average` function calculates the average (mean) of integral numbers (not floating point).
-Assume message body is `[10, 20, 30]` (as `List<Integer>` or similar) then `${avg()}` results in `20`
+Assume message body is `[10, 20, 30]` (as `List<Integer>` or similar) then `${average()}` results in `20`
 
 The `ceil` functions returns the value of number rounded up to the nearest integer that is greater than or equal to number.
 For example `${ceil(5.7)}` returns `6`, and `${ceil(5.1)}` also returns `6`.
 
 The `floor` functions returns the value of number rounded down to the nearest integer that is smaller or equal to number.
-For example `${ceil(5.7)}` returns `5`, and `${ceil(5.1)}` also returns `5`.
+For example `${floor(5.7)}` returns `5`, and `${floor(5.1)}` also returns `5`.
 
 The `max` and `min` functions in are used to find the maximum or minimum value among a set of numeric integral values.
 For example message body contains a list `[10, 5, 30, 15]` then `${max()}` returns `30` and `${min()}` returns `5`.
@@ -444,7 +561,7 @@ For example `${range(10)}` returns the numbers `0..9`. And `${range(1,10)}` retu
 The `sum` function adds up numeric values (not floating point) and returns the result as a long.
 Assume message body is `[10, 20, 30]` (as `List<Integer>` or similar) then `${sum()}` results in `60`
 You can also use the `sum` function to add or subtract numbers. For example if you want to add 2 to a number, you can do
-`$sum($\{body},2)}`, and likewise to subtract you use negative number, such as `$sum($\{body},-2)}`.
+`${sum($\{body},2)}`, and likewise to subtract you use negative number, such as `${sum($\{body},-2)}`.
 
 === Other Functions
 
@@ -459,7 +576,7 @@ Other kind of functions.
 |`load(file)` | `String` | Loads the content of the resource from classpath (cannot load from file-system to avoid dangerous situations).
 |`null` | `null` | Returns a `null` value.
 |`sys.key` | `String` | *Deprecated* To lookup the JVM system property with the given key.
-|`sysenv.key` | `String` | To lookup the JVM system property with the given key.
+|`sysenv.key` | `String` | To lookup the OS environment variable with the given key.
 |`threadId` | `String` | Returns the id of the current thread.
 |`threadName` | `String` | Returns the name of the current thread.
 |`uuid(kind)` | `String` | Returns a UUID using the Camel `UuidGenerator`. You can choose kind between `default`, `classic`, `short`, `simple` and `random` as the kind. If no kind is given, then `default` is used. It is also possible to use a custom `UuidGenerator` and bind the bean to the xref:manual::registry.adoc[Registry] with an id. For example `${uuid(myGenerator)}` where the id is `myGenerator`.
@@ -467,20 +584,29 @@ Other kind of functions.
 
 To use OS environment variables you use the `${env.key}` function, such as `${env.PATH}` or `${env.HOME}`, or `${env.JAVA_HOME}`.
 Notice how the key should be in uppercase, as required by OS environment variables.
+For example `${env.HOME}` returns the home directory path such as `/home/scott`.
 
 The `hash` function is used for calculating a hash value of the given value. The `${hash()}` would use the message body and SHA-256 as algorithm and
 return a hash value as String hex-decimal.
+For example if the body is `hello` then `${hash()}` returns the SHA-256 hash as a hex string.
+You can also specify the algorithm: `${hash($\{body},SHA3-256)}` uses SHA3-256 instead of the default SHA-256.
+To hash a specific expression: `${hash($\{header.apiKey})}` hashes the value of a header.
 
 The `hostname` function returns the OS hostname and does not require using parenthesis, so just use `$\{hostname}`.
+For example `$\{hostname}` returns the local machine hostname such as `myserver`.
 
-The `null` function returns a `null` value such as `$\{null}`.
+The `null` function returns a `null` value such as `$\{null}`. This is useful for setting a header or variable to null:
+`${setHeader(foo,$\{null})}` removes the header `foo`.
 
-To use JVM system properties you use the `${sysenv.key}` function, such as `${sysenv.java.version}` or `${sysenv.java.io.tmpdir}`.
+To use OS environment variables you can also use the `${sysenv.key}` function (an alias for `${env.key}`), such as `${sysenv.PATH}` or `${sysenv.HOME}`.
 
-You can get the current thread id by the `$\{threadId}` function, and the name via `$\{threadName}`.
+You can get the current thread id by the `$\{threadId}` function (returns a numeric id),
+and the name via `$\{threadName}` (returns the thread name such as `Camel (camel-1) thread #1 - direct://start`).
 
 And you can generate unique IDs with the xref:manual::uuidgenerator.adoc[Camel UUID Generator] by the `uuid` function.
 The generator supports different kinds `default`, `classic`, `short`, `simple` and `random`, such as `${uuid(random)}`.
+For example `$\{uuid}` returns a UUID like `ID-myhost-1234-1234567890-0-1`, and `${uuid(short)}` returns a shorter form.
+You can also bind a custom `UuidGenerator` to the registry and use it by name: `${uuid(myGenerator)}`.
 
 To load data from classpath, you can use the load function such as `$\{load(myrules.json)}`.
 If the file is not present on classpath, then an exception is thrown. However, you can mark the file as optional as follows:
@@ -512,14 +638,14 @@ The string functions is various functions to work with values that are String an
 |`safeQuote()` | `String` | Returns the message body safely quoted if needed
 |`safeQuote(exp)` | `String` | Returns the expression safely quoted if needed
 |`substring(num1)` | `String` | Returns a substring of the message body. If the number is positive, then the returned string is clipped from the beginning. If the number is negative, then the returned string is clipped from the ending.
-|`substring(num1,num2)` | `String` | Returns a substring of the message body. If the number is positive, then the returned string is clipped from the beginning. If the number is negative, then the returned string is clipped from the ending.
-|`substring(num1,num2,exp)` | `String` | Returns a substring of the given expression. If the number is positive, then the returned string is clipped from the beginning. If the number is negative, then the returned string is clipped from the ending.
+|`substring(num1,num2)` | `String` | Returns a substring of the message body. `num1` clips from the beginning, `num2` clips from the ending. Negative values clip from the opposite end.
+|`substring(num1,num2,exp)` | `String` | Returns a substring of the given expression. `num1` clips from the beginning, `num2` clips from the ending. Negative values clip from the opposite end.
 |`substringAfter(after)` | `String` | Returns a substring of the message body that comes after. Returns `null` if nothing comes after.
 |`substringAfter(exp,after)` | `String` | Returns a substring of the expression that comes after. Returns `null` if nothing comes after.
 |`substringBefore(before)` | `String` | Returns a substring of the message body that comes before. Returns `null` if nothing comes before.
 |`substringBefore(exp,before)` | `String` | Returns a substring of the expression that comes before. Returns `null` if nothing comes before.
-|`substringBetween(after,before` | `String` | Returns a substring of the message body that are between before and after. Returns `null` if nothing comes between.
-|`substringBetween(exp,after,before` | `String` | Returns a substring of the expression that are between before and after. Returns `null` if nothing comes between.
+|`substringBetween(after,before)` | `String` | Returns a substring of the message body that are between before and after. Returns `null` if nothing comes between.
+|`substringBetween(exp,after,before)` | `String` | Returns a substring of the expression that are between before and after. Returns `null` if nothing comes between.
 |`trim()` | `String` | The trim function trims the message body by removing all leading and trailing white spaces.
 |`trim(exp)` | `String` | The trim function trims the expression by removing all leading and trailing white spaces.
 |`unquote()` | `String` | Returns the message body with any leading/ending quotes removed
@@ -545,7 +671,8 @@ To use semicolon as separator you would use `${join(;)}`. The `prefix` argument 
 `${join(&,id=)}` would return `id=A&id=B&id=C`.
 
 The `lowercase` and `uppercase` functions are as the name implies used for lower and uppercasing.
-So `${lowercase('Hello World`)}` returns `hello world` and `${uppercase('Hello World`)}` returns `HELLO WORLD`.
+So `${lowercase('Hello World')}` returns `hello world` and `${uppercase('Hello World')}` returns `HELLO WORLD`.
+Without arguments, they operate on the message body: if the body is `HELLO` then `${lowercase()}` returns `hello`.
 
 You can use the `normalizeWhitespace` function to _clean up_ a value by removing extra whitespaces. This is done by ensuring that
 there are exactly only 1 whitespace between words. And as well trimming the value for empty whitespace
@@ -554,7 +681,7 @@ in the beginning and end. Suppose the message body is a String value with `"   H
 The `pad` function returns a copy of the string with extra padding, if necessary, so that its total number of characters is at least the absolute value of the width parameter.
 If width is a positive number, then the string is padded to the right; if negative, it is padded to the left.
 The optional separator specifies the padding character(s) to use. If not specified, it defaults to the space character.
-If the message body contains `foo` then `${pad(5)}` return `"foo  "` and `${pad(-5)}` returns `"  foo"`, and `${pad(-5,'@')}` returns `@@foo`.
+If the message body contains `foo` then `${pad($\{body},5)}` returns `"foo  "` and `${pad($\{body},-5)}` returns `"  foo"`, and `${pad($\{body},-5,'@')}` returns `@@foo`.
 
 The `replace` function is used for finding a given text in a string and replacing it with another.
 For example the message body contains `Hello a how are you`, then `${replace(a,b)}` returns `Hello b how bre you`.
@@ -576,6 +703,13 @@ So the previous example can also be trimmed by nesting the function as follows:
 `${trim(${substringBetween('great','how')})}` which would return `"big World"`.
 
 And of course `${trim('  hello world  ')}` returns `hello world`.
+Without arguments, `${trim()}` trims the message body. If the body is `"  hello  "` then `${trim()}` returns `hello`.
+
+The `length` function calculates the payload length in bytes. If the body is `Hello` then `${length()}` returns `5`.
+You can also pass a literal: `${length('Hello World')}` returns `11`.
+
+The `size` function returns the number of elements in a collection or array.
+If the body is a `List` with elements `[a, b, c]` then `${size()}` returns `3`.
 
 The `quote` function is making sure the returned value is enclosed in double quotes.
 If the value is currently in single quote, then this will be converted to double quotes.
@@ -583,11 +717,14 @@ If the value is currently in single quote, then this will be converted to double
 If the message body contains `Hello World` then `${quote()}` returns `"Hello World"`.
 And using `${quote('Hi from me')}` then `"Hi from me"` is returned.
 
+The `unquote` function removes any surrounding single or double quotes from a value.
+If the body contains `'hello'` then `${unquote()}` returns `hello` (without the quotes).
+
 The `safeQuote` function is quoting the value depending on the value type
 (uses the same logic as `kindOfType` function). In essence values that are null, boolean or numbers are not quoted,
-while everything else is. The `safeQuote` function is useful when working with JSon data.
+while everything else is. The `safeQuote` function is useful when working with JSON data.
 
-For example when doing JSon to JSon mapping you can extract values form the source document,
+For example when doing JSON to JSON mapping you can extract values form the source document,
 to be included in the output, but the values may or may not need to be quoted. Then you can use the `~>` chain operator
 to call the `safeQuote` function as shown below:
 
@@ -600,34 +737,34 @@ to call the `safeQuote` function as shown below:
 ----
 
 
-=== XML & JSon Functions
+=== XML & JSON Functions
 
-Functions to work with XML and JSon payloads.
+Functions to work with XML and JSON payloads.
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |====
 |Function |Response Type |Description
-|`jq(exp)` | `Object` | When working with JSon data, then this allows using the JQ language, for example, to extract data from the message body (in JSon format). This requires having camel-jq JAR on the classpath.
-|`jq(input,exp)` | `Object` | Same as `jq(exp)` but to use the _input_ expression as the source of the JSon document.
-|`jsonpath(exp)` | `Object` | When working with JSon data, then this allows using the JsonPath language, for example, to extract data from the message body (in JSon format). This requires having camel-jsonpath JAR on the classpath.
-|`jsonpath(input,exp)` | `Object` | Same as `jsonpath(exp)` but to use the _input_ expression as the source of the JSon document.
-|`pretty(exp)` | `String` | Converts the expression to a `String`, and attempts to pretty print (if JSon or XML) otherwise return the value as-is.
-|`prettyBody` | `String` | Converts the message body to a `String`, and attempts to pretty print (if JSon or XML) otherwise return the value as-is.
-|`simpleJsonpath(exp)` | `Object` | When working with JSon data, then this allows using built-in Simple JsonPath, for example, to extract data from the message body (in JSon format).
-|`simpleJsonpath(input,exp)` | `Object` | Same as `simpleJsonpath(exp)` but to use the _input_ expression as the source of the JSon document.
-|`toJson(exp)` | `String` | Converts the expression to a JSon `String` representation. String values are returned as-is, null values return null, all other types are serialized to JSon.
-|`toJsonBody` | `String` | Converts the message body to a JSon `String` representation. String values are returned as-is, null values return null, all other types are serialized to JSon.
-|`toPrettyJson(exp)` | `String` | Converts the expression to a JSon `String` representation. String values are returned as-is, null values return null, all other types are serialized to JSon in pretty mode.
-|`toPrettyJsonBody` | `String` | Converts the message body to a JSon `String` representation. String values are returned as-is, null values return null, all other types are serialized to JSon in pretty mode.
+|`jq(exp)` | `Object` | When working with JSON data, then this allows using the JQ language, for example, to extract data from the message body (in JSON format). This requires having camel-jq JAR on the classpath.
+|`jq(input,exp)` | `Object` | Same as `jq(exp)` but to use the _input_ expression as the source of the JSON document.
+|`jsonpath(exp)` | `Object` | When working with JSON data, then this allows using the JsonPath language, for example, to extract data from the message body (in JSON format). This requires having camel-jsonpath JAR on the classpath.
+|`jsonpath(input,exp)` | `Object` | Same as `jsonpath(exp)` but to use the _input_ expression as the source of the JSON document.
+|`pretty(exp)` | `String` | Converts the expression to a `String`, and attempts to pretty print (if JSON or XML) otherwise return the value as-is.
+|`prettyBody` | `String` | Converts the message body to a `String`, and attempts to pretty print (if JSON or XML) otherwise return the value as-is.
+|`simpleJsonpath(exp)` | `Object` | When working with JSON data, then this allows using built-in Simple JsonPath, for example, to extract data from the message body (in JSON format).
+|`simpleJsonpath(input,exp)` | `Object` | Same as `simpleJsonpath(exp)` but to use the _input_ expression as the source of the JSON document.
+|`toJson(exp)` | `String` | Converts the expression to a JSON `String` representation. String values are returned as-is, null values return null, all other types are serialized to JSON.
+|`toJsonBody` | `String` | Converts the message body to a JSON `String` representation. String values are returned as-is, null values return null, all other types are serialized to JSON.
+|`toPrettyJson(exp)` | `String` | Converts the expression to a JSON `String` representation. String values are returned as-is, null values return null, all other types are serialized to JSON in pretty mode.
+|`toPrettyJsonBody` | `String` | Converts the message body to a JSON `String` representation. String values are returned as-is, null values return null, all other types are serialized to JSON in pretty mode.
 |`xpath(exp)` | `Object` | When working with XML data, then this allows using the XPath language, for example, to extract data from the message body (in XML format). This requires having camel-xpath JAR on the classpath.
-|`xpath(input,exp)` | `Object` | When working with XML data, then this allows using the XPath language, for example, to extract data from the message body (in XML format). This requires having camel-xpath JAR on the classpath. For input you can choose `header:key`, `exchangeProperty:key` or `variable:key` to use as input for the JSon payload instead of the message body.
+|`xpath(input,exp)` | `Object` | When working with XML data, then this allows using the XPath language, for example, to extract data from the message body (in XML format). This requires having camel-xpath JAR on the classpath. For input you can choose `header:key`, `exchangeProperty:key` or `variable:key` to use as input for the JSON payload instead of the message body.
 |====
 
-The simple language has support for working with XML and JSon data by offering functions that leverage the
-xref:languages:jsonpath-language.adoc[JSonPath], xref:languages:jq-language.adoc[JQ], xref:languages:xpath-language.adoc[XPath] languages.
+The simple language has support for working with XML and JSON data by offering functions that leverage the
+xref:languages:jsonpath-language.adoc[JSONPath], xref:languages:jq-language.adoc[JQ], xref:languages:xpath-language.adoc[XPath] languages.
 This also mean that you must include the required JARs on the classpath.
 
-The `jq` function (JSon Query) is used for using the JQ language to obtain data from an existing JSon payload.
+The `jq` function (JSON Query) is used for using the JQ language to obtain data from an existing JSON payload.
 For example given this payload:
 
 [source,json]
@@ -639,6 +776,10 @@ Then `${jq(.id)}` will return `123`.
 
 You can also use this for basic data mapping such as:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:map")
@@ -651,11 +792,52 @@ from("direct:map")
         .to("log:data");
 ----
 
-The `jsonpath` function works similar to `jq` but uses JSonPath.
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:map"/>
+  <transform>
+    <simple>{
+              "roll": ${jq(.id)},
+              "country": "${jq(.country // constant(sweden))}",
+              "fullname": "${jq(.name)}"
+            }</simple>
+  </transform>
+  <to uri="log:data"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:map
+      steps:
+        - transform:
+            simple: |-
+              {
+                "roll": ${jq(.id)},
+                "country": "${jq(.country // constant(sweden))}",
+                "fullname": "${jq(.name)}"
+              }
+        - to:
+            uri: log:data
+----
+====
+
+The `jsonpath` function works similar to `jq` but uses JSONPath.
 When using `${jsonpath($.id)}` will also return `123`.
 
 And the data mapping can be done as follows with JSonPath instead of JQ:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:map")
@@ -668,11 +850,52 @@ from("direct:map")
         .to("log:data");
 ----
 
-The `simpleJsonpath` function is using Camel's built in JSon library from `camel-util-json` that is a basic JSon parser.
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:map"/>
+  <transform>
+    <simple>{
+              "roll": ${jsonpath($.id)},
+              "years": ${jsonpath($.age)},
+              "fullname": "${jsonpath($.name)}"
+            }</simple>
+  </transform>
+  <to uri="log:data"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:map
+      steps:
+        - transform:
+            simple: |-
+              {
+                "roll": ${jsonpath($.id)},
+                "years": ${jsonpath($.age)},
+                "fullname": "${jsonpath($.name)}"
+              }
+        - to:
+            uri: log:data
+----
+====
+
+The `simpleJsonpath` function is using Camel's built in JSON library from `camel-util-json` that is a basic JSON parser.
 The syntax for the path is similar to Camel's bean OGNL syntax to use a dot notation to walk down a nested structure.
 
-Because the input JSon is not nested then the mapping example is just:
+Because the input JSON is not nested then the mapping example is just:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:map")
@@ -685,7 +908,44 @@ from("direct:map")
         .to("log:data");
 ----
 
-However, if there are nested JSon such as:
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:map"/>
+  <transform>
+    <simple>{
+              "roll": ${simpleJsonpath(id)},
+              "years": ${simpleJsonpath(age)},
+              "fullname": "${simpleJsonpath(name)}"
+            }</simple>
+  </transform>
+  <to uri="log:data"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:map
+      steps:
+        - transform:
+            simple: |-
+              {
+                "roll": ${simpleJsonpath(id)},
+                "years": ${simpleJsonpath(age)},
+                "fullname": "${simpleJsonpath(name)}"
+              }
+        - to:
+            uri: log:data
+----
+====
+
+However, if there are nested JSON such as:
 
 [source,json]
 ----
@@ -713,7 +973,7 @@ However, if there are nested JSon such as:
 }
 ----
 
-Then you can retrieve data from the JSon payload as follows:
+Then you can retrieve data from the JSON payload as follows:
 
 [source,text]
 ----
@@ -738,9 +998,9 @@ For example, we attempt to refer to a non-existing attribute
 library.book[0]?.cheese
 ----
 
-The optional marker can also be used sooner in the path, such as `foo?.bar.age` which will not fail if there are no nested _bar_ node in the JSon payload.
+The optional marker can also be used sooner in the path, such as `foo?.bar.age` which will not fail if there are no nested _bar_ node in the JSON payload.
 
-The `toJson` function is to convert the payload to JSon as a `String` value. However, if the payload is already a `String` then no conversion happens.
+The `toJson` function is to convert the payload to JSON as a `String` value. However, if the payload is already a `String` then no conversion happens.
 So suppose the payload is a `Map` object as follows:
 
 [source,java]
@@ -750,9 +1010,23 @@ map.put("name", "Jack");
 map.put("id", 123);
 ----
 
-Then `toJson` will output: `{"name":"Jack","id":123}`.
+Then `toJson` will output:
 
-There are also _pretty_ alternatives so when calling `toPrettyJson` will output: TODO:
+[source,json]
+----
+{"name":"Jack","id":123}
+----
+
+
+There are also _pretty_ alternatives so when calling `toPrettyJson` will output:
+
+[source,json]
+----
+{
+  "name": "Jack",
+  "id": 123
+}
+----
 
 The `xpath` function is for working with XML and using XPath expressions to extract data from XML payloads.
 
@@ -775,20 +1049,61 @@ Then `${xpath(/order/@id)}` will return `123`.
 
 And the data mapping can be done with XPath as follows:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:map")
     .transform().simple("""
         {
-          "roll": ${jsonpath($.id)},
-          "years": ${jsonpath($.age)},
-          "fullname": "${jsonpath($.name)}"
+          "id": ${xpath(/order/@id)},
+          "item": "${xpath(/order/item)}",
+          "fullname": "${xpath(/order/first)} ${xpath(/order/last)}"
         }""")
     .to("log:data");
 ----
 
-The `pretty` function is used for pretty printing JSon or XML data as a String value.
-For example given the following JSon payload (in a single line): `{"id": 123, "age": 42, "name": "scott"}`
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:map"/>
+  <transform>
+    <simple>{
+          "id": ${xpath(/order/@id)},
+          "item": "${xpath(/order/item)}",
+          "fullname": "${xpath(/order/first)} ${xpath(/order/last)}"
+        }</simple>
+  </transform>
+  <to uri="log:data"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:map
+      steps:
+        - transform:
+            simple: |-
+              {
+                "id": ${xpath(/order/@id)},
+                "item": "${xpath(/order/item)}",
+                "fullname": "${xpath(/order/first)} ${xpath(/order/last)}"
+              }
+        - to:
+            uri: log:data
+----
+====
+
+The `pretty` function is used for pretty printing JSON or XML data as a String value.
+For example given the following JSON payload (in a single line): `{"id": 123, "age": 42, "name": "scott"}`
 then `$\{pretty}` will output this nicely formatted:
 
 [source,json]
@@ -885,6 +1200,71 @@ this by `${base64Decode(Q2FtZWw=)}` which then returns `Camel`.
 If you want to encode the message body then use `${base64Encode()}`, but you can also
 provide a nested function such as `${base64Encode(${header.myKey})}` to encode a header.
 
+=== HTML Functions
+
+From *Camel 4.21* onwards then Camel has built-in HTML functions to make it easy to clean/parse and decode.
+
+This requires having `camel-jsoup` JAR on the classpath.
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|====
+|Function |Response Type |Description
+|`htmlClean()` | `String` |Cleans the HTML to remove unsafe links and JavaScripts from the message body
+|`htmlClean(exp)` | `String` |Cleans the HTML to remove unsafe links and JavaScripts from the expression
+|`htmlDecode()` | `String` |Decodes the HTML as plain text (removing all HTML tags) that is also suitable as input for AI and LLMs
+|`htmlDecode(exp)` | `String` |Decodes the HTML as plain text (removing all HTML tags) that is also suitable as input for AI and LLMs
+|`htmlParse()` | `org.jsoup.nodes.Document` |Parses the HTML as a JSoup object from the message body
+|`htmlParse(exp)` | `org.jsoup.nodes.Document` |Parses the HTML as a JSoup object from the expression
+|====
+
+Camel comes with functions to use `camel-jsoup` JAR for HTML cleaning and decoding.
+
+For example `${htmlDecode(${header.myHtml})}` will from the header with key `myHtml` decode
+the HTML (removing all tags) into a plain text, which can be fed into LLMs etc.
+
+The `${htmlClean()}` function can be used to remove unwanted tags from the HTML to
+https://jsoup.org/cookbook/cleaning-html/safelist-sanitizer[sanitize untrusted HTML].
+
+The `${htmlParse()`} is used to parse the HTML into a Java `org.jsoup.nodes.Document` structure which is similar to `org.w3c.Document`
+but uses the JSoup API instead.
+
+=== A2A Functions
+
+From *Camel 4.21* onwards, Camel has built-in Agent-to-Agent (A2A) functions to emit task progress and extract data
+from A2A messages, tasks, and agent cards.
+
+This requires having `camel-a2a` JAR on the classpath.
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|====
+|Function |Response Type |Description
+|`a2a:emit(message)` | `String` |Emits an A2A task progress update with `WORKING` state. Requires an active A2A task context.
+|`a2a:emit(state,message)` | `String` |Emits an A2A task progress update with the given task state, such as `WORKING`, `INPUT_REQUIRED`, `COMPLETED`, `FAILED`, `CANCELED`, `REJECTED`, or `AUTH_REQUIRED`.
+|`a2a:text` | `String` |Extracts `TextPart` content from an A2A Task or Message in the message body.
+|`a2a:text(expression)` | `String` |Extracts `TextPart` content from an A2A Task or Message returned by the expression.
+|`a2a:data` | `String` |Extracts `DataPart` content as a JSON string from an A2A Task or Message in the message body.
+|`a2a:data(expression)` | `String` |Extracts `DataPart` content as a JSON string from an A2A Task or Message returned by the expression.
+|`a2a:file` | `String` |Extracts `FilePart` content from an A2A Task or Message in the message body.
+|`a2a:file(expression)` | `String` |Extracts `FilePart` content from an A2A Task or Message returned by the expression.
+|`a2a:card` | `String` |Returns the resolved A2A agent card as a JSON string.
+|`a2a:card.name` | `String` |Returns the resolved A2A agent card name.
+|`a2a:card.description` | `String` |Returns the resolved A2A agent card description.
+|`a2a:card.url` | `String` |Returns the resolved A2A agent card URL.
+|`a2a:card.version` | `String` |Returns the resolved A2A agent card version.
+|`a2a:card.skills` | `String` |Returns the resolved A2A agent card skills as human-readable text.
+|`a2a:card.skills.json` | `String` |Returns the resolved A2A agent card skills as a JSON array string.
+|`a2a:card.iconUrl` | `String` |Returns the resolved A2A agent card icon URL.
+|`a2a:card.documentationUrl` | `String` |Returns the resolved A2A agent card documentation URL.
+|`a2a:card.provider` | `String` |Returns the resolved A2A agent card provider as a JSON string.
+|`a2a:card.capabilities` | `String` |Returns the resolved A2A agent card capabilities as a JSON string.
+|`a2a:card.supportedInterfaces` | `String` |Returns the resolved A2A agent card supported interfaces as a JSON array string.
+|`a2a:card.securitySchemes` | `String` |Returns the resolved A2A agent card security schemes as a JSON object string.
+|`a2a:card.securityRequirements` | `String` |Returns the resolved A2A agent card security requirements as a JSON array string.
+|`a2a:card.security` | `String` |Returns the resolved A2A agent card legacy security field as a JSON array string.
+|====
+
+For example, `${a2a:emit('Searching documents')}` emits a `WORKING` progress event for the current A2A task.
+Use `${a2a:emit(INPUT_REQUIRED,'Please provide your address')}` to emit progress with an explicit task state.
 
 == Built-in Symbols
 
@@ -896,7 +1276,7 @@ The following special symbols can be used when escaped with `\` as below:
 |`\\n` | To use newline character.
 |`\\t` | To use tab character.
 |`\\r` | To use carriage return character.
-|`\\}` | To use the `}` character as text. This may be needed when building a JSon structure with the simple language.
+|`\\}` | To use the `}` character as text. This may be needed when building a JSON structure with the simple language.
 |====
 
 For example to use a new-line character in the split function `${split(\\n)}`.
@@ -1048,7 +1428,7 @@ And there can be as many chains:
 
 [source,text]
 ----
-${leftValue} ~> ${midValue} ~> ${midValue} -> ${rightValue}
+${leftValue} ~> ${midValue} ~> ${midValue} ~> ${rightValue}
 ----
 
 For example if the message body contains `Hello World` then the follow would return `WORLD`:
@@ -1239,6 +1619,7 @@ languages for testing with simple operators. Now you can do this with the simple
 language. In the sample below, we want to test it if the header is a widget
 order:
 
+._XML-only:_
 [source,xml]
 ----
 <from uri="seda:orders">
@@ -1257,14 +1638,14 @@ For instance:
 
 [source,java]
 -----
-simple("${header.title} contains 'Camel' && ${header.type'} == 'gold'")
+simple("${header.title} contains 'Camel' && ${header.type} == 'gold'")
 -----
 
 And of course the `||` is also supported. The sample would be:
 
 [source,java]
 -----
-simple("${header.title} contains 'Camel' || ${header.type'} == 'gold'")
+simple("${header.title} contains 'Camel' || ${header.type} == 'gold'")
 -----
 
 == Init Blocks
@@ -1295,7 +1676,8 @@ Notice how the block uses the `$init{` ... `}init$` markers to indicate the star
 Inside the init block, then you can assign local variables in the syntax `$key := <statement>;` where you can then use simple language to compute
 the value of the variable.
 
-IMPORTANT: Each statement must end with semicolon and new-line (`;\n`). This makes the init block more similar to Java programming language,
+IMPORTANT: Each statement must end with semicolon and new-line (`;\n`). You can only have 1 statement per line.
+This makes the init block more similar to Java programming language,
 and it was also necessary to make this work for the internal simple parser used by Camel.
 
 Here are a couple of examples:
@@ -1305,7 +1687,7 @@ Here are a couple of examples:
 $init{
   $cheese := 'Hello ${body}';
   $minAge := 18;
-  $foo := ${upper('Hello $body}'};
+  $foo := ${uppercase('Hello ${body}')};
   $bar := ${header.code > 999 ? 'Gold' : 'Silver'};
 }init$
 ----
@@ -1319,7 +1701,7 @@ $init{
   $minAge := 18;
 
   // say hello to my friend
-  $foo := ${upper('Hello $body}'};
+  $foo := ${uppercase('Hello ${body}')};
 
   // either gold or silver
   $bar := ${header.code > 999 ? 'Gold' : 'Silver'};
@@ -1329,13 +1711,13 @@ $init{
 The local variables can then easily be used in the Simple language either using the `${variable.foo}` syntax
 or the shorthand syntax `$foo`.
 
-For example as below where we do a basic JSon mapping:
+For example as below where we do a basic JSON mapping:
 
 [source,text]
 ----
 $init{
-  $greeting := ${upper('Hello $body}'}
-  $level := ${header.code > 999 ? 'Gold' : 'Silver'}
+  $greeting := ${uppercase('Hello ${body}')};
+  $level := ${header.code > 999 ? 'Gold' : 'Silver'};
 }init$
 {
   "message": "$greeting",
@@ -1358,7 +1740,7 @@ from("direct:welcome")
   .transform().simple(
           """
             $init{
-              $greeting := ${upper('Hello $body}'};
+              $greeting := ${uppercase('Hello ${body}')};
               $level := ${header.code > 999 ? 'Gold' : 'Silver'};
             }init$
             {
@@ -1379,7 +1761,7 @@ XML::
     <transform>
         <simple>
             $init{
-              $greeting := ${upper('Hello $body}'};
+              $greeting := ${uppercase('Hello ${body}')};
               $level := ${header.code > 999 ? 'Gold' : 'Silver'};
             }init$
             {
@@ -1404,7 +1786,7 @@ YAML::
           simple:
             expression: |-
                 $init{
-                  $greeting := ${upper('Hello $body}'};
+                  $greeting := ${uppercase('Hello ${body}')};
                   $level := ${header.code > 999 ? 'Gold' : 'Silver'};
                 }init$
                 {
@@ -1666,26 +2048,12 @@ simple("${body.address.zip} > 1000")
 
 == EIP Examples
 
-In the XML DSL sample below, we filter based on a header value:
+Below we filter based on a header value:
 
-[source,xml]
-----
-<from uri="seda:orders">
-   <filter>
-       <simple>${header.foo}</simple>
-       <to uri="mock:fooOrders"/>
-   </filter>
-</from>
-----
-
-The Simple language can be used for the predicate test above in the
-Message Filter pattern, where we test if the
-in message has a `foo` header (a header with the key `foo` exists). If
-the expression evaluates to `*true*`, then the message is routed to the
-`mock:fooOrders` endpoint, otherwise the message is dropped.
-
-The same example in Java DSL:
-
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("seda:orders")
@@ -1693,8 +2061,47 @@ from("seda:orders")
         .to("seda:fooOrders");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="seda:orders"/>
+  <filter>
+    <simple>${header.foo}</simple>
+    <to uri="seda:fooOrders"/>
+  </filter>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: seda:orders
+      steps:
+        - filter:
+            simple: "${header.foo}"
+            steps:
+              - to:
+                  uri: seda:fooOrders
+----
+====
+
+The Simple language can be used for the predicate test above in the
+Message Filter pattern, where we test if the
+in message has a `foo` header (a header with the key `foo` exists). If
+the expression evaluates to `*true*`, then the message is routed to the
+`seda:fooOrders` endpoint, otherwise the message is dropped.
+
 You can also use the simple language for simple text concatenations such as:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:hello")
@@ -1702,11 +2109,43 @@ from("direct:hello")
     .to("mock:reply");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:hello"/>
+  <transform>
+    <simple>Hello ${header.user} how are you?</simple>
+  </transform>
+  <to uri="mock:reply"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:hello
+      steps:
+        - transform:
+            simple: "Hello ${header.user} how are you?"
+        - to:
+            uri: mock:reply
+----
+====
+
 Notice that we must use `${ }` placeholders in the expression now to
 allow Camel to parse it correctly.
 
 And this sample uses the date command to output current date.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:hello")
@@ -1714,15 +2153,75 @@ from("direct:hello")
     .to("mock:reply");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:hello"/>
+  <transform>
+    <simple>The today is ${date:now:yyyyMMdd} and it is a great day.</simple>
+  </transform>
+  <to uri="mock:reply"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:hello
+      steps:
+        - transform:
+            simple: "The today is ${date:now:yyyyMMdd} and it is a great day."
+        - to:
+            uri: mock:reply
+----
+====
+
 And in the sample below, we invoke the bean language to invoke a method
 on a bean to be included in the returned string:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:order")
     .transform().simple("OrderId: ${bean:orderIdGenerator}")
     .to("mock:reply");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:order"/>
+  <transform>
+    <simple>OrderId: ${bean:orderIdGenerator}</simple>
+  </transform>
+  <to uri="mock:reply"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:order
+      steps:
+        - transform:
+            simple: "OrderId: ${bean:orderIdGenerator}"
+        - to:
+            uri: mock:reply
+----
+====
 
 Where `orderIdGenerator` is the id of the bean registered in the
 Registry. If using Spring, then it is the Spring bean
@@ -1732,6 +2231,10 @@ If we want to declare which method to invoke on the order id generator
 bean we must prepend `.method name` such as below where we invoke the
 `generateId` method.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:order")
@@ -1739,15 +2242,75 @@ from("direct:order")
     .to("mock:reply");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:order"/>
+  <transform>
+    <simple>OrderId: ${bean:orderIdGenerator.generateId}</simple>
+  </transform>
+  <to uri="mock:reply"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:order
+      steps:
+        - transform:
+            simple: "OrderId: ${bean:orderIdGenerator.generateId}"
+        - to:
+            uri: mock:reply
+----
+====
+
 We can use the `?method=methodname` option that we are familiar with the
 xref:components::bean-component.adoc[Bean] component itself:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:order")
     .transform().simple("OrderId: ${bean:orderIdGenerator?method=generateId}")
     .to("mock:reply");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:order"/>
+  <transform>
+    <simple>OrderId: ${bean:orderIdGenerator?method=generateId}</simple>
+  </transform>
+  <to uri="mock:reply"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:order
+      steps:
+        - transform:
+            simple: "OrderId: ${bean:orderIdGenerator?method=generateId}"
+        - to:
+            uri: mock:reply
+----
+====
 
 You can also convert the body to a given
 type, for example, to ensure that it is a String you can do:
@@ -1815,6 +2378,7 @@ Instead of the message body then a simple expression can be nested as input, for
 </setBody>
 ----
 
+[#_replacing_double_and_single_quotes]
 == Replacing double and single quotes
 
 You can use the `replace` function to more easily replace all single or double quotes in the message body,
@@ -1824,12 +2388,44 @@ syntax where double quote is `\&quot;` and single quote is `\&apos;` (yeah that 
 
 For example, to replace all double quotes with single quotes:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:order")
   .transform().simple("${replace(&quot; , &apos;)}")
   .to("mock:reply");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:order"/>
+  <transform>
+    <simple>${replace(&amp;quot; , &amp;apos;)}</simple>
+  </transform>
+  <to uri="mock:reply"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:order
+      steps:
+        - transform:
+            simple: "${replace(&quot; , &apos;)}"
+        - to:
+            uri: mock:reply
+----
+====
 
 And to replace all single quotes with double quotes:
 
@@ -1858,6 +2454,7 @@ booleans, integers, etc.
 
 For example, to set a header as a boolean type, you can do:
 
+._Java-only: setting result type on a simple expression_
 [source,java]
 ----
 .setHeader("cool", simple("true", Boolean.class))
@@ -1906,50 +2503,31 @@ such as `"classpath:"`, `"file:"`, or `"http:"`.
 This is done using the following syntax: `"resource:scheme:location"`,
 e.g., to refer to a file on the classpath you can do:
 
+._Java-only: loading a simple script from an external resource_
 [source,java]
 ----
 .setHeader("myHeader").simple("resource:classpath:mysimple.txt")
 ----
 
-== Pretty XML or JSon
+== Pretty XML or JSON
 
 From *Camel 4.18* onwards then the Simple language can _pretty format_ the output.
 
-In Java DSL you turn this on via the `boolean` parameter that is set as `true` below:
+You turn this on via the `pretty` option set to `true`:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
-from("direct:xml")
-    .setBody().simple("<person><name>Jack</name></person>", true)
-    .to("mock:result");
-
 from("direct:json")
     .setBody().simple("{ \"name\": \"Jack\", \"age\": 44 }", true)
     .to("mock:result");
-
-from("direct:text")
-    .setBody().simple("Hello ${body}", true)
-    .to("mock:result");
 ----
 
-In YAML DSL you specific `pretty: true` as follows:
-
-[source,yaml]
-----
-route:
-  from:
-    uri: direct:xml
-    steps:
-      - setBody:
-          simple:
-            expression: "<person><name>Jack</name></person>"
-            pretty: true
-      - to:
-          uri: mock:result
-----
-
-And in XML DSL you use the pretty attribute to true as show below:
-
+XML::
++
 [source,xml]
 ----
 <route>
@@ -1961,6 +2539,37 @@ And in XML DSL you use the pretty attribute to true as show below:
 </route>
 ----
 
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:json
+      steps:
+        - setBody:
+            simple:
+              expression: "{ \"name\": \"Jack\", \"age\": 44 }"
+              pretty: true
+        - to:
+            uri: mock:result
+----
+====
+
+This works with XML, JSON and text content:
+
+._Java-only: pretty formatting with different content types_
+[source,java]
+----
+from("direct:xml")
+    .setBody().simple("<person><name>Jack</name></person>", true)
+    .to("mock:result");
+
+from("direct:text")
+    .setBody().simple("Hello ${body}", true)
+    .to("mock:result");
+----
+
 == Adding custom functions to Simple language
 
 You can add custom functions to the Simple language by adding to the `org.apache.camel.spi.SimpleFunctionRegistry`.
@@ -1970,6 +2579,7 @@ A custom function should either be an `Expression` or a `org.apache.camel.spi.Si
 You may want to use `Expression` when you build custom functions from the built-in functions in Camel.
 This can be done programmatically such as:
 
+._Java-only: registering a custom function with SimpleFunctionRegistry_
 [source,java]
 ----
 SimpleFunctionRegistry reg = PluginHelper.getSimpleFunctionRegistry(getCamelContext());
@@ -1987,6 +2597,10 @@ can be done by using the `org.apache.camel.support.ExpressionAdapter` class as a
 
 The foo function can now be used in simple such as:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:start")
@@ -1994,11 +2608,40 @@ from("direct:start")
         .to("mock:result");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <setBody>
+    <simple>Hello ${foo}</simple>
+  </setBody>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - setBody:
+            simple: "Hello ${foo}"
+        - to:
+            uri: mock:result
+----
+====
+
 Notice how the foo function is used just like it was a built-in function using `$\{foo}` syntax.
 
 Since a custom function is just an `Expression` then it's possible to build custom functions from
 all the Camel languages such as Groovy, JSonPath and even Simple as well.
 
+._Java-only: building a custom function from Simple expressions_
 [source,java]
 ----
 var bar = context.resolveLanguage("simple").createExpression("${trim()} ~> ${normalizeWhitespace()} ~> ${capitalize()} ~> ${quote()}");
@@ -2012,6 +2655,10 @@ which allows to provide the input as fixed value such as a string literal or to 
 
 For example the foo function uses variable with name `msg` as the input:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:start")
@@ -2020,8 +2667,46 @@ from("direct:start")
         .to("mock:result");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <setVariable name="msg">
+    <constant>Moon</constant>
+  </setVariable>
+  <setBody>
+    <simple>Bye ${foo(${variable.msg})}</simple>
+  </setBody>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - setVariable:
+            name: msg
+            constant: "Moon"
+        - setBody:
+            simple: "Bye ${foo(${variable.msg})}"
+        - to:
+            uri: mock:result
+----
+====
+
 And instead of nesting the variable inside the foo function, we can also use the `~>` chain operator:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:start")
@@ -2030,8 +2715,43 @@ from("direct:start")
         .to("mock:result");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <setVariable name="msg">
+    <constant>Moon</constant>
+  </setVariable>
+  <setBody>
+    <simple>Bye ${variable.msg} ~> ${foo}</simple>
+  </setBody>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - setVariable:
+            name: msg
+            constant: "Moon"
+        - setBody:
+            simple: "Bye ${variable.msg} ~> ${foo}"
+        - to:
+            uri: mock:result
+----
+====
+
 You can also build custom functions as a Java class as below:
 
+._Java-only: implementing SimpleFunction interface_
 [source,java]
 ----
 public class FooSimpleFunction implements SimpleFunction {
@@ -2052,6 +2772,7 @@ This gives you the full power to implement the function logic in standard Java.
 
 This function can be added programmatically:
 
+._Java-only: adding a SimpleFunction to the registry_
 [source,java]
 ----
 SimpleFunctionRegistry reg = PluginHelper.getSimpleFunctionRegistry(getCamelContext());
@@ -2060,9 +2781,55 @@ reg.addFunction(new FooSimpleFunction());
 ----
 
 TIP: The custom function can then be made discoverable by Camel by dependency injection.
-If you use standalone Camel you can add `@BindToRegistry("foo-function)` to the class.
+If you use standalone Camel you can add `@BindToRegistry("foo-function")` to the class.
 For Spring Boot use `@Component` or `@Service` and Quarkus you can for example use `@ApplicationScoped`.
 
+
+== JavaScript Validator
+
+The `camel-catalog` JAR includes a self-contained JavaScript validator for the Simple language.
+It can syntax-check expressions and predicates in any browser or Node.js environment — no Java backend required.
+
+The files are located in the JAR under:
+
+----
+org/apache/camel/catalog/simple/camel-simple-validator.js
+org/apache/camel/catalog/simple/camel-simple-validator.html
+----
+
+The `.js` file is auto-generated from `simple.json` during the Maven build, so its list of functions and operators
+always matches the current Camel version.
+
+=== API
+
+The validator exposes these functions:
+
+* `validate(input, mode)` — validate a Simple expression or predicate.
+  `mode` is `'expression'` (default) or `'predicate'`.
+  Returns `{ valid: boolean, diagnostics: [...] }`.
+* `complete(input, pos)` — return completion suggestions at the given cursor position.
+* `getFunctions()` — return the list of known Simple function names.
+* `getOperators()` — return the list of known Simple operators with their kind and description.
+
+=== Usage in Node.js
+
+[source,javascript]
+----
+const { validate, complete } = require('./camel-simple-validator.js');
+
+const result = validate("${body} == 'hello'", 'predicate');
+console.log(result.valid);       // true
+console.log(result.diagnostics); // []
+
+const bad = validate("${bdy}", 'expression');
+console.log(bad.valid);          // false
+console.log(bad.diagnostics[0].message); // "Unknown function 'bdy', did you mean 'body'?"
+----
+
+=== Usage in a browser
+
+Extract `camel-simple-validator.html` from the JAR and open it in a browser.
+It provides an interactive form where you can type Simple expressions and validate them with instant feedback.
 
 == Dependencies
 

@@ -28,6 +28,7 @@ import org.apache.camel.component.tahu.SparkplugTCKService;
 import org.apache.camel.component.tahu.TahuConstants;
 import org.eclipse.tahu.edge.CommandListener;
 import org.eclipse.tahu.message.model.EdgeNodeDescriptor;
+import org.eclipse.tahu.message.model.Message;
 import org.eclipse.tahu.message.model.MessageType;
 import org.eclipse.tahu.message.model.Metric;
 import org.eclipse.tahu.message.model.SparkplugBPayload;
@@ -154,7 +155,7 @@ public class TahuHostApplicationManualIT {
     private static final List<MessageType> HANDLED_MESSAGE_TYPES = List.of(MessageType.NBIRTH, MessageType.NDATA,
             MessageType.NDEATH, MessageType.DBIRTH, MessageType.DDATA, MessageType.DDEATH);
 
-    void onMessageConsumer(EdgeNodeDescriptor edgeNodeDescriptor, org.eclipse.tahu.message.model.Message tahuMessage) {
+    void onMessageConsumer(EdgeNodeDescriptor edgeNodeDescriptor, Message tahuMessage) {
         try {
             Topic topic = tahuMessage.getTopic();
             SparkplugBPayload payload = tahuMessage.getPayload();

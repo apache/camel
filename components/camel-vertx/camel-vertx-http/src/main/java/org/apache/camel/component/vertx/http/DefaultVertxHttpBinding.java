@@ -40,35 +40,24 @@ import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.URISupport;
 
 import static org.apache.camel.component.vertx.http.VertxHttpConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT;
 
 public class DefaultVertxHttpBinding implements VertxHttpBinding {
-
-    private volatile Map<String, Object> defaultQueryParams;
 
     @Override
     public HttpRequest<Buffer> prepareHttpRequest(VertxHttpEndpoint endpoint, Exchange exchange) throws Exception {
         VertxHttpConfiguration configuration = endpoint.getConfiguration();
         Message message = exchange.getMessage();
 
-        // Resolve query string from the HTTP_QUERY header or default to those provided on the endpoint HTTP URI
-        String queryString = VertxHttpHelper.resolveQueryString(exchange, endpoint);
-        Map<String, Object> queryParams = null;
-        if (ObjectHelper.isEmpty(queryString)) {
-            // use default query string from endpoint configuration
-            queryString = configuration.getHttpUri().getQuery();
-            if (defaultQueryParams == null) {
-                defaultQueryParams = URISupport.parseQuery(queryString);
-            }
-            queryParams = defaultQueryParams;
-        }
+        // Resolve the URI to use which includes query string (similar to camel-http approach)
+        // Query string is already encoded in resolveHttpURI to avoid decode/re-encode issues
+        URI uri = VertxHttpHelper.resolveHttpURI(exchange, endpoint);
 
         // Determine the HTTP method to use if not specified in the HTTP_METHOD header
         HttpMethod method = message.getHeader(VertxHttpConstants.HTTP_METHOD, configuration.getHttpMethod(), HttpMethod.class);
         if (method == null) {
-            if (ObjectHelper.isNotEmpty(queryString)) {
+            if (ObjectHelper.isNotEmpty(uri.getQuery())) {
                 method = HttpMethod.GET;
             } else if (message.getBody() != null) {
                 method = HttpMethod.POST;
@@ -77,24 +66,31 @@ public class DefaultVertxHttpBinding implements VertxHttpBinding {
             }
         }
 
-        // Resolve the URI to use which is either a combination of headers HTTP_URI & HTTP_PATH or the HTTP URI configured on the endpoint
-        URI uri = VertxHttpHelper.resolveHttpURI(exchange, endpoint);
-
+        // Use the complete URI string (with query string already encoded)
+        // This avoids the decode/re-encode cycle that causes issues with strict HTTP parsers
         WebClient webClient = endpoint.getWebClient();
         HttpRequest<Buffer> request;
-        if (uri.getPort() != -1) {
-            request = webClient.request(method, uri.getPort(), uri.getHost(), uri.getPath());
-        } else {
-            request = webClient.requestAbs(method, uri.toString());
-        }
 
-        // Configure query params
-        if (ObjectHelper.isNotEmpty(queryString)) {
-            if (queryParams == null) {
-                queryParams = URISupport.parseQuery(queryString);
+        // When using a proxy, use requestAbs() with the full absolute URL. For direct requests (no proxy), use request()
+        if (ObjectHelper.isNotEmpty(configuration.getProxyHost())) {
+            // Proxy mode - use absolute URL
+            request = webClient.requestAbs(method, uri.toString());
+        } else {
+            // Direct mode - use host/port/path to work with HTTP servers with strict request parsers
+            String pathAndQuery = uri.getRawPath();
+            if (ObjectHelper.isEmpty(pathAndQuery)) {
+                pathAndQuery = "/";
             }
-            for (Map.Entry<String, Object> entry : queryParams.entrySet()) {
-                request.addQueryParam(entry.getKey(), entry.getValue().toString());
+            if (uri.getRawQuery() != null) {
+                pathAndQuery = pathAndQuery + "?" + uri.getRawQuery();
+            }
+
+            if (uri.getPort() != -1) {
+                request = webClient.request(method, uri.getPort(), uri.getHost(), pathAndQuery);
+            } else {
+                // Default ports: 80 for http, 443 for https
+                int port = "https".equals(uri.getScheme()) ? 443 : 80;
+                request = webClient.request(method, port, uri.getHost(), pathAndQuery);
             }
         }
 

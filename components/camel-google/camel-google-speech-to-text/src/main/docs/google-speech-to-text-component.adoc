@@ -9,7 +9,6 @@
 :component-header: Only producer is supported
 //Manually maintained attributes
 :group: Google
-:camel-spring-boot-name: google-speech-to-text
 
 *Since Camel {since}*
 
@@ -22,14 +21,14 @@ Maven users will need to add the following dependency to their pom.xml
 for this component:
 
 [source,xml]
-------------------------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-google-speech-to-text</artifactId>
     <!-- use the same version as your Camel core version -->
     <version>x.x.x</version>
 </dependency>
-------------------------------------------------------
+----
 
 [[GoogleSpeechToText-AuthenticationConfiguration]]
 
@@ -41,35 +40,65 @@ For more information, please refer to https://github.com/googleapis/google-cloud
 When you have the **service account key**, you can provide authentication credentials to your application code.
 Google security credentials can be set through the component endpoint:
 
+._Java-only: constructing the endpoint URI programmatically_
+
 [source,java]
---------------------------------------------------------
+----
 String endpoint = "google-speech-to-text://recognize?serviceAccountKey=/home/user/Downloads/my-key.json";
---------------------------------------------------------
+----
 
 Or by setting the environment variable `GOOGLE_APPLICATION_CREDENTIALS` :
 
---------------------------------------------------------
+----
 export GOOGLE_APPLICATION_CREDENTIALS="/home/user/Downloads/my-key.json"
---------------------------------------------------------
+----
 
 
 == URI Format
 
---------------------------------------------------------
+----
 google-speech-to-text://operation[?options]
---------------------------------------------------------
+----
 
 You can append query options to the URI in the following format,
 `?options=value&option2=value&...`
 
 For example, in order to perform speech recognition on audio data, use the following snippet:
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:start")
     .to("google-speech-to-text://recognize?serviceAccountKey=/home/user/Downloads/my-key.json");
---------------------------------------------------------------------------------
+----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <to uri="google-speech-to-text://recognize?serviceAccountKey=/home/user/Downloads/my-key.json"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: google-speech-to-text://recognize
+            parameters:
+              serviceAccountKey: /home/user/Downloads/my-key.json
+----
+====
 
 
 // component options: START
@@ -100,48 +129,146 @@ You can override the operation at runtime by setting the `GoogleCloudSpeechToTex
 
 If you need to have more control over the `SpeechClient` instance configuration, you can create your own instance and refer to it in your Camel google-speech-to-text component configuration:
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:start")
     .to("google-speech-to-text://recognize?client=#mySpeechClient");
---------------------------------------------------------------------------------
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <to uri="google-speech-to-text://recognize?client=#mySpeechClient"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: google-speech-to-text://recognize
+            parameters:
+              client: "#mySpeechClient"
+----
+====
 
 === Google Cloud Speech To Text Producer Operation examples
 
-- `recognize`: this operation transcribes audio data to text
+- `recognize`: this operation transcribes audio data to text. The message body should contain the audio data as a `byte[]`.
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:start")
-    .process(exchange -> {
-        byte[] audioData = Files.readAllBytes(Path.of("/path/to/audio.wav"));
-        exchange.getIn().setBody(audioData);
-    })
     .to("google-speech-to-text://recognize?serviceAccountKey=/home/user/Downloads/my-key.json&encoding=LINEAR16&sampleRateHertz=16000&languageCode=en-US")
     .log("body:${body}")
     .to("mock:result");
---------------------------------------------------------------------------------
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <to uri="google-speech-to-text://recognize?serviceAccountKey=/home/user/Downloads/my-key.json&amp;encoding=LINEAR16&amp;sampleRateHertz=16000&amp;languageCode=en-US"/>
+  <log message="body:${body}"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: google-speech-to-text://recognize
+            parameters:
+              serviceAccountKey: /home/user/Downloads/my-key.json
+              encoding: LINEAR16
+              sampleRateHertz: 16000
+              languageCode: en-US
+        - log:
+            message: "body:${body}"
+        - to:
+            uri: mock:result
+----
+====
 
 This operation will return the transcribed text as a `String`. The full `RecognizeResponse` is available via the `GoogleCloudSpeechToTextResponseObject` message header.
 
 - Using different audio encodings:
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:start")
-    .process(exchange -> {
-        byte[] audioData = Files.readAllBytes(Path.of("/path/to/audio.flac"));
-        exchange.getIn().setBody(audioData);
-    })
     .to("google-speech-to-text://recognize?serviceAccountKey=/home/user/Downloads/my-key.json&encoding=FLAC&languageCode=fr-FR")
     .log("body:${body}")
     .to("mock:result");
---------------------------------------------------------------------------------
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <to uri="google-speech-to-text://recognize?serviceAccountKey=/home/user/Downloads/my-key.json&amp;encoding=FLAC&amp;languageCode=fr-FR"/>
+  <log message="body:${body}"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: google-speech-to-text://recognize
+            parameters:
+              serviceAccountKey: /home/user/Downloads/my-key.json
+              encoding: FLAC
+              languageCode: fr-FR
+        - log:
+            message: "body:${body}"
+        - to:
+            uri: mock:result
+----
+====
 
 - Using POJO request for full control:
 
+._Java-only: Google Cloud SDK RecognizeRequest builder_
+
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:start")
     .process(exchange -> {
         RecognitionConfig config = RecognitionConfig.newBuilder()
@@ -161,24 +288,60 @@ from("direct:start")
     .to("google-speech-to-text://recognize?serviceAccountKey=/home/user/Downloads/my-key.json&pojoRequest=true")
     .log("body:${body}")
     .to("mock:result");
---------------------------------------------------------------------------------
+----
 
 When using `pojoRequest=true`, the body should be a `RecognizeRequest` and the transcribed text is returned as the body.
 
 - Overriding the operation at runtime via header:
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:start")
-    .process(exchange -> {
-        byte[] audioData = Files.readAllBytes(Path.of("/path/to/audio.wav"));
-        exchange.getIn().setBody(audioData);
-        exchange.getIn().setHeader(GoogleCloudSpeechToTextConstants.OPERATION, GoogleCloudSpeechToTextOperations.recognize);
-    })
+    .setHeader("CamelGoogleCloudSpeechToTextOperation", constant("recognize"))
     .to("google-speech-to-text://recognize?serviceAccountKey=/home/user/Downloads/my-key.json")
     .log("body:${body}")
     .to("mock:result");
---------------------------------------------------------------------------------
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <setHeader name="CamelGoogleCloudSpeechToTextOperation">
+    <constant>recognize</constant>
+  </setHeader>
+  <to uri="google-speech-to-text://recognize?serviceAccountKey=/home/user/Downloads/my-key.json"/>
+  <log message="body:${body}"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - setHeader:
+            name: CamelGoogleCloudSpeechToTextOperation
+            constant: recognize
+        - to:
+            uri: google-speech-to-text://recognize
+            parameters:
+              serviceAccountKey: /home/user/Downloads/my-key.json
+        - log:
+            message: "body:${body}"
+        - to:
+            uri: mock:result
+----
+====
 
 
-include::spring-boot:partial$starter.adoc[]

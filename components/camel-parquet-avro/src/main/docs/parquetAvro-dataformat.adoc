@@ -6,8 +6,6 @@
 :since: 4.0
 :supportlevel: Stable
 :tabs-sync-option:
-//Manually maintained attributes
-:camel-spring-boot-name: parquet-avro
 
 *Since Camel {since}*
 
@@ -31,19 +29,21 @@ There are ways to unmarshal parquet files/structures, usually binary parquet fil
 
 In this first example we unmarshal file payload to OutputStream and send it to mock endpoint, then we will be able to get GenericRecord or POJO (it could be a list if that is coming through)
 
+._Java-only: unmarshal with a local parquet data format variable_
 [source,java]
------------------------------------------------------------------------
+----
 from("direct:unmarshal").unmarshal(parquet).to("mock:unmarshal");
------------------------------------------------------------------------
+----
 
 == Marshal
 
 Marshalling is the reverse process of unmarshalling, so when you have your `GenericRecord` or POJO and marshal it, you will get the parquet-formatted output stream on your producer endpoint.
 
+._Java-only: marshal with a local parquet data format variable_
 [source,java]
------------------------------------------------------------------------
+----
 from("direct:marshal").marshal(parquet).to("mock:marshal");
------------------------------------------------------------------------
+----
 
 == Dependencies
 
@@ -54,14 +54,11 @@ If you use Maven you can add the following to your `pom.xml`,
 substituting the version number for the latest & greatest release.
 
 [source,xml]
-----------------------------------------------------------
+----
 <dependency>
   <groupId>org.apache.camel</groupId>
   <artifactId>camel-parquet-avro</artifactId>
   <version>x.x.x</version>
   <!-- use the same version as your Camel core version -->
 </dependency>
-----------------------------------------------------------
-
-
-include::spring-boot:partial$starter.adoc[]
+----

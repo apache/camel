@@ -61,8 +61,8 @@ class WrapperCommandTest {
 
         assertEquals(0, exit);
         assertTrue(Files.exists(workingDir.resolve(".camel/camel-wrapper.properties")));
-        assertTrue(Files.exists(workingDir.resolve("camelw")));
-        assertTrue(Files.exists(workingDir.resolve("camelw.cmd")));
+        assertTrue(Files.exists(workingDir.resolve("camel")));
+        assertTrue(Files.exists(workingDir.resolve("camel.cmd")));
     }
 
     @Test
@@ -138,11 +138,11 @@ class WrapperCommandTest {
 
         assertEquals(0, exit);
 
-        String camelw = Files.readString(workingDir.resolve("camelw"));
+        String camelw = Files.readString(workingDir.resolve("camel"));
         assertTrue(camelw.startsWith("#!/bin/sh"));
         assertTrue(camelw.contains("camel-wrapper.properties"));
 
-        String camelwCmd = Files.readString(workingDir.resolve("camelw.cmd"));
+        String camelwCmd = Files.readString(workingDir.resolve("camel.cmd"));
         assertTrue(camelwCmd.contains("camel-wrapper.properties"));
     }
 
@@ -176,6 +176,30 @@ class WrapperCommandTest {
         String output = printer.getOutput();
         assertTrue(output.contains("Apache Camel wrapper installed successfully."));
         assertTrue(output.contains("Camel version: 4.10.0"));
-        assertTrue(output.contains("camelw"));
+        assertTrue(output.contains("camel"));
     }
+
+    @Test
+    void testWrapperCommandName() throws Exception {
+        CamelJBangMain main = new CamelJBangMain();
+        StringPrinter printer = new StringPrinter();
+        main.setOut(printer);
+
+        WrapperCommand cmd = new WrapperCommand(main);
+        cmd.directory = workingDir.toString();
+        cmd.camelVersion = "4.10.0";
+        cmd.commandName = "cheese";
+
+        int exit = cmd.doCall();
+
+        assertEquals(0, exit);
+
+        String camelw = Files.readString(workingDir.resolve("cheese"));
+        assertTrue(camelw.startsWith("#!/bin/sh"));
+        assertTrue(camelw.contains("camel-wrapper.properties"));
+
+        String camelwCmd = Files.readString(workingDir.resolve("cheese.cmd"));
+        assertTrue(camelwCmd.contains("camel-wrapper.properties"));
+    }
+
 }

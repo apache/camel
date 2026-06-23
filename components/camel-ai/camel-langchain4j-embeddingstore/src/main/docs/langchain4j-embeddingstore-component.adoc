@@ -9,7 +9,6 @@
 :component-header: Only producer is supported
 //Manually maintained attributes
 :group: AI
-:camel-spring-boot-name: langchain4j-embeddingstore
 
 *Since Camel {since}*
 
@@ -50,7 +49,6 @@ include::partial$component-endpoint-options.adoc[]
 include::partial$component-endpoint-headers.adoc[]
 // component options: END
 
-include::spring-boot:partial$starter.adoc[]
 
 == Usage
 
@@ -58,6 +56,7 @@ include::spring-boot:partial$starter.adoc[]
 
 The component requires an `EmbeddingStore` instance. Register it in the Camel registry:
 
+._Java-only: programmatic EmbeddingStore configuration and registry binding_
 [source,java]
 ----
 EmbeddingStore<TextSegment> embeddingStore = PgVectorEmbeddingStore.builder()
@@ -94,10 +93,14 @@ YAML::
 ----
 - route:
     from:
-      uri: "direct:store"
+      uri: direct:store
     steps:
-      - to: "langchain4j-embeddings:embed"
-      - to: "langchain4j-embeddingstore:myStore?action=ADD"
+      - to:
+          uri: langchain4j-embeddings:embed
+      - to:
+          uri: langchain4j-embeddingstore:myStore
+          parameters:
+            action: ADD
 ----
 ====
 
@@ -124,10 +127,16 @@ YAML::
 ----
 - route:
     from:
-      uri: "direct:search"
+      uri: direct:search
     steps:
-      - to: "langchain4j-embeddings:embed"
-      - to: "langchain4j-embeddingstore:myStore?action=SEARCH&maxResults=5&minScore=0.7"
+      - to:
+          uri: langchain4j-embeddings:embed
+      - to:
+          uri: langchain4j-embeddingstore:myStore
+          parameters:
+            action: SEARCH
+            maxResults: 5
+            minScore: 0.7
 ----
 ====
 
@@ -155,11 +164,18 @@ YAML::
 ----
 - route:
     from:
-      uri: "direct:search"
+      uri: direct:search
     steps:
-      - to: "langchain4j-embeddings:embed"
-      - to: "langchain4j-embeddingstore:myStore?action=SEARCH&maxResults=5&returnTextContent=true"
-      - log: "Found texts: ${body}"
+      - to:
+          uri: langchain4j-embeddings:embed
+      - to:
+          uri: langchain4j-embeddingstore:myStore
+          parameters:
+            action: SEARCH
+            maxResults: 5
+            returnTextContent: true
+      - log:
+          message: "Found texts: ${body}"
 ----
 ====
 
@@ -184,11 +200,16 @@ YAML::
 ----
 - route:
     from:
-      uri: "direct:remove"
+      uri: direct:remove
     steps:
       - setBody:
-          simple: "${header.embeddingId}"
-      - to: "langchain4j-embeddingstore:myStore?action=REMOVE"
+          expression:
+            simple:
+              expression: "${header.embeddingId}"
+      - to:
+          uri: langchain4j-embeddingstore:myStore
+          parameters:
+            action: REMOVE
 ----
 ====
 
@@ -196,6 +217,7 @@ YAML::
 
 A complete example showing document ingestion and retrieval:
 
+._Java-only: multi-route RAG pipeline with split and tokenize_
 [source,java]
 ----
 // Ingestion route: chunk, embed, and store documents

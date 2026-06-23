@@ -7,8 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Only producer is supported
-//Manually maintained attributes
-:camel-spring-boot-name: mybatis
 
 *Since Camel {since}*
 
@@ -62,11 +60,38 @@ the header with the key `CamelMyBatisResult`.
 For example, if you wish to consume beans from a JMS queue and insert
 them into a database, you could do the following:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("activemq:queue:newAccount")
-  .to("mybatis-bean:AccountService:insertBeanAccount");
+    .to("mybatis-bean:AccountService:insertBeanAccount");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="activemq:queue:newAccount"/>
+  <to uri="mybatis-bean:AccountService:insertBeanAccount"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: activemq:queue:newAccount
+      steps:
+        - to:
+            uri: mybatis-bean:AccountService:insertBeanAccount
+----
+====
 
 Notice we have to specify the bean name and method name, as we need to instruct
 Camel which kind of operation to invoke.
@@ -84,6 +109,7 @@ bean annotations. You can configure type alias in the SqlMapConfig file:
 
 On the `AccountService` bean you can declare the MyBatis mappins using annotations as shown:
 
+._Java-only: MyBatis bean annotation mappings_
 [source,java]
 ----
 public interface AccountService {
@@ -102,7 +128,3 @@ public interface AccountService {
 
 }
 ----
-
-
-
-include::spring-boot:partial$starter.adoc[]

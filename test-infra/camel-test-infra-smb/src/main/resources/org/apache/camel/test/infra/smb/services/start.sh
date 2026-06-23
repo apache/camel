@@ -26,10 +26,34 @@ for file in $(seq 1 100) ; do
 	echo ${RANDOM} > /data/ro/${file}.txt ;
 done
 
+echo "Creating no-delete files (root-owned, sticky bit on directory)"
+for file in $(seq 1 10) ; do
+	echo ${RANDOM} > /data/no-delete/${file}.txt ;
+done
+chmod 1777 /data/no-delete
+
+echo "Creating unix-security files (simulates UNIX security style)"
+for file in $(seq 1 10) ; do
+	echo ${RANDOM} > /data/unix-security/${file}.txt ;
+done
+chmod 1777 /data/unix-security
+
+echo "Creating fixed-delete files (same as no-delete but with correct ownership)"
+for file in $(seq 1 10) ; do
+	echo ${RANDOM} > /data/fixed-delete/${file}.txt ;
+done
+
+echo "Creating unix-owned files (UNIX security style + correct ownership)"
+for file in $(seq 1 10) ; do
+	echo ${RANDOM} > /data/unix-owned/${file}.txt ;
+done
+
 useradd camel
 printf "camelTester123\ncamelTester123\n" | smbpasswd -s -a camel
 
 chown -Rv camel /data/rw
+chown -Rv camel /data/fixed-delete
+chown -Rv camel /data/unix-owned
 
 nmbd -D
 smbd -D -s /etc/samba/smb.conf

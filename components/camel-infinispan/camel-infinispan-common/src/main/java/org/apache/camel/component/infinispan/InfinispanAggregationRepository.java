@@ -53,11 +53,11 @@ public abstract class InfinispanAggregationRepository
                             + " When this limit is hit, then the Exchange is moved to the dead letter channel.",
               defaultValue = "3")
     private int maximumRedeliveries = 3;
-    @Metadata(label = "advanced",
+    @Metadata(label = "advanced", security = "insecure:serialization",
               description = "Whether headers on the Exchange that are Java objects and Serializable should be included and saved to the repository")
     private boolean allowSerializedHeaders;
 
-    protected InfinispanAggregationRepository() {
+    public InfinispanAggregationRepository() {
     }
 
     /**

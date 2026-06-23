@@ -43,11 +43,11 @@ public class EventHubsConfiguration implements Cloneable {
     private String eventHubName;
     @UriParam(label = "security")
     private String sharedAccessName;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String sharedAccessKey;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String connectionString;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     @Metadata(autowired = true)
     private TokenCredential tokenCredential;
     @UriParam(label = "common", defaultValue = "AMQP")
@@ -62,11 +62,11 @@ public class EventHubsConfiguration implements Cloneable {
     private CheckpointStore checkpointStore;
     @UriParam(label = "consumer")
     private String blobAccountName;
-    @UriParam(label = "consumer", secret = true)
+    @UriParam(label = "consumer", security = "secret")
     private String blobAccessKey;
     @UriParam(label = "consumer")
     private String blobContainerName;
-    @UriParam(label = "consumer", secret = true)
+    @UriParam(label = "consumer", security = "secret")
     private StorageSharedKeyCredential blobStorageSharedKeyCredential;
     @UriParam(label = "consumer")
     private Map<String, EventPosition> eventPosition = new HashMap<>();

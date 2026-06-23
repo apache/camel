@@ -9,7 +9,6 @@
 :component-header: Only producer is supported
 //Manually maintained attributes
 :group: Kubernetes
-:camel-spring-boot-name: kubernetes
 
 *Since Camel {since}*
 
@@ -40,33 +39,62 @@ include::partial$component-endpoint-headers.adoc[]
 
 - `listPersistentVolumes`: this operation lists the PVs on a kubernetes cluster
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
-from("direct:list").
-    toF("kubernetes-persistent-volumes:///?kubernetesClient=#kubernetesClient&operation=listPersistentVolumes").
-    to("mock:result");
---------------------------------------------------------------------------------
+----
+from("direct:list")
+    .to("kubernetes-persistent-volumes:///?kubernetesClient=#kubernetesClient&operation=listPersistentVolumes")
+    .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:list"/>
+  <to uri="kubernetes-persistent-volumes:///?kubernetesClient=#kubernetesClient&amp;operation=listPersistentVolumes"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:list
+      steps:
+        - to:
+            uri: kubernetes-persistent-volumes:///
+            parameters:
+              kubernetesClient: "#kubernetesClient"
+              operation: listPersistentVolumes
+        - to:
+            uri: mock:result
+----
+====
 
 This operation returns a list of PVs from your cluster
 
 - `listPersistentVolumesByLabels`: this operation lists the PVs by labels on a kubernetes cluster
 
+._Java-only: sets a Map header for label selection_
 [source,java]
---------------------------------------------------------------------------------
-from("direct:listByLabels").process(new Processor() {
-            @Override
-            public void process(Exchange exchange) throws Exception {
-                Map<String, String> labels = new HashMap<>();
-                labels.put("key1", "value1");
-                labels.put("key2", "value2");
-                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_PERSISTENT_VOLUMES_LABELS, labels);
-            }
-        });
-    toF("kubernetes-persistent-volumes:///?kubernetesClient=#kubernetesClient&operation=listPersistentVolumesByLabels").
-    to("mock:result");
---------------------------------------------------------------------------------
+----
+from("direct:listByLabels")
+    .process(exchange -> {
+        exchange.getIn().setHeader("CamelKubernetesPersistentVolumesLabels",
+            Map.of("key1", "value1", "key2", "value2"));
+    })
+    .to("kubernetes-persistent-volumes:///?kubernetesClient=#kubernetesClient&operation=listPersistentVolumesByLabels")
+    .to("mock:result");
+----
 
 This operation returns a list of PVs from your cluster using a label selector (with key1 and key2, with value value1 and value2)
 
 
-include::spring-boot:partial$starter.adoc[]

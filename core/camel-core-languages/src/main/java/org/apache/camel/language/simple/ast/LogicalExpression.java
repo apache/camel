@@ -48,11 +48,17 @@ public class LogicalExpression extends BaseSimpleNode {
     }
 
     public boolean acceptLeftNode(SimpleNode lef) {
+        if (!(lef instanceof BinaryExpression) && !(lef instanceof LogicalExpression)) {
+            return false;
+        }
         this.left = lef;
         return true;
     }
 
     public boolean acceptRightNode(SimpleNode right) {
+        if (!(right instanceof BinaryExpression) && !(right instanceof LogicalExpression)) {
+            return false;
+        }
         this.right = right;
         return true;
     }

@@ -25,8 +25,22 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "additionalbodyproperty":
         case "additionalBodyProperty": target.getConfiguration().setAdditionalBodyProperty(property(camelContext, java.util.Map.class, value)); return true;
+        case "additionalresponseheader":
+        case "additionalResponseHeader": target.getConfiguration().setAdditionalResponseHeader(property(camelContext, java.util.Map.class, value)); return true;
         case "apikey":
         case "apiKey": target.getConfiguration().setApiKey(property(camelContext, java.lang.String.class, value)); return true;
+        case "audiolanguage":
+        case "audioLanguage": target.getConfiguration().setAudioLanguage(property(camelContext, java.lang.String.class, value)); return true;
+        case "audiomodel":
+        case "audioModel": target.getConfiguration().setAudioModel(property(camelContext, java.lang.String.class, value)); return true;
+        case "audioprompt":
+        case "audioPrompt": target.getConfiguration().setAudioPrompt(property(camelContext, java.lang.String.class, value)); return true;
+        case "audioresponseformat":
+        case "audioResponseFormat": target.getConfiguration().setAudioResponseFormat(property(camelContext, java.lang.String.class, value)); return true;
+        case "audiotemperature":
+        case "audioTemperature": target.getConfiguration().setAudioTemperature(property(camelContext, java.lang.Double.class, value)); return true;
+        case "audiotimestampgranularities":
+        case "audioTimestampGranularities": target.getConfiguration().setAudioTimestampGranularities(property(camelContext, java.lang.String.class, value)); return true;
         case "autotoolexecution":
         case "autoToolExecution": target.getConfiguration().setAutoToolExecution(property(camelContext, boolean.class, value)); return true;
         case "baseurl":
@@ -90,6 +104,8 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "storefullresponse":
         case "storeFullResponse": target.getConfiguration().setStoreFullResponse(property(camelContext, boolean.class, value)); return true;
         case "streaming": target.getConfiguration().setStreaming(property(camelContext, boolean.class, value)); return true;
+        case "stripthinking":
+        case "stripThinking": target.getConfiguration().setStripThinking(property(camelContext, boolean.class, value)); return true;
         case "systemmessage":
         case "systemMessage": target.getConfiguration().setSystemMessage(property(camelContext, java.lang.String.class, value)); return true;
         case "temperature": target.getConfiguration().setTemperature(property(camelContext, java.lang.Double.class, value)); return true;
@@ -106,8 +122,22 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "additionalbodyproperty":
         case "additionalBodyProperty": return java.util.Map.class;
+        case "additionalresponseheader":
+        case "additionalResponseHeader": return java.util.Map.class;
         case "apikey":
         case "apiKey": return java.lang.String.class;
+        case "audiolanguage":
+        case "audioLanguage": return java.lang.String.class;
+        case "audiomodel":
+        case "audioModel": return java.lang.String.class;
+        case "audioprompt":
+        case "audioPrompt": return java.lang.String.class;
+        case "audioresponseformat":
+        case "audioResponseFormat": return java.lang.String.class;
+        case "audiotemperature":
+        case "audioTemperature": return java.lang.Double.class;
+        case "audiotimestampgranularities":
+        case "audioTimestampGranularities": return java.lang.String.class;
         case "autotoolexecution":
         case "autoToolExecution": return boolean.class;
         case "baseurl":
@@ -171,6 +201,8 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "storefullresponse":
         case "storeFullResponse": return boolean.class;
         case "streaming": return boolean.class;
+        case "stripthinking":
+        case "stripThinking": return boolean.class;
         case "systemmessage":
         case "systemMessage": return java.lang.String.class;
         case "temperature": return java.lang.Double.class;
@@ -188,8 +220,22 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "additionalbodyproperty":
         case "additionalBodyProperty": return target.getConfiguration().getAdditionalBodyProperty();
+        case "additionalresponseheader":
+        case "additionalResponseHeader": return target.getConfiguration().getAdditionalResponseHeader();
         case "apikey":
         case "apiKey": return target.getConfiguration().getApiKey();
+        case "audiolanguage":
+        case "audioLanguage": return target.getConfiguration().getAudioLanguage();
+        case "audiomodel":
+        case "audioModel": return target.getConfiguration().getAudioModel();
+        case "audioprompt":
+        case "audioPrompt": return target.getConfiguration().getAudioPrompt();
+        case "audioresponseformat":
+        case "audioResponseFormat": return target.getConfiguration().getAudioResponseFormat();
+        case "audiotemperature":
+        case "audioTemperature": return target.getConfiguration().getAudioTemperature();
+        case "audiotimestampgranularities":
+        case "audioTimestampGranularities": return target.getConfiguration().getAudioTimestampGranularities();
         case "autotoolexecution":
         case "autoToolExecution": return target.getConfiguration().isAutoToolExecution();
         case "baseurl":
@@ -253,6 +299,8 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "storefullresponse":
         case "storeFullResponse": return target.getConfiguration().isStoreFullResponse();
         case "streaming": return target.getConfiguration().isStreaming();
+        case "stripthinking":
+        case "stripThinking": return target.getConfiguration().isStripThinking();
         case "systemmessage":
         case "systemMessage": return target.getConfiguration().getSystemMessage();
         case "temperature": return target.getConfiguration().getTemperature();
@@ -269,6 +317,8 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "additionalbodyproperty":
         case "additionalBodyProperty": return java.lang.Object.class;
+        case "additionalresponseheader":
+        case "additionalResponseHeader": return java.lang.Object.class;
         case "mcpserver":
         case "mcpServer": return java.lang.Object.class;
         default: return null;

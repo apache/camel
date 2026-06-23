@@ -33,13 +33,13 @@ public class ZendeskComponent extends AbstractApiComponent<ZendeskApiName, Zende
 
     @Metadata
     private String serverUrl;
-    @Metadata(label = "security", secret = true)
+    @Metadata(label = "security", security = "secret")
     private String username;
-    @Metadata(label = "security", secret = true)
+    @Metadata(label = "security", security = "secret")
     private String oauthToken;
-    @Metadata(label = "security", secret = true)
+    @Metadata(label = "security", security = "secret")
     private String token;
-    @Metadata(label = "security", secret = true)
+    @Metadata(label = "security", security = "secret")
     private String password;
     @Metadata(label = "advanced")
     private Zendesk zendesk;

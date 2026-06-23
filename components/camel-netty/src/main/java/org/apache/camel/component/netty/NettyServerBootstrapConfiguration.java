@@ -116,7 +116,7 @@ public class NettyServerBootstrapConfiguration implements Cloneable {
     @UriParam(defaultValue = DEFAULT_ENABLED_PROTOCOLS, label = "security",
               description = "Which protocols to enable when using SSL")
     protected String enabledProtocols = DEFAULT_ENABLED_PROTOCOLS;
-    @UriParam(label = "security", secret = true,
+    @UriParam(label = "security", security = "secret",
               description = "Password to use for the keyStore and trustStore. The same password must be configured for both resources.")
     protected String passphrase;
     @UriParam(label = "advanced",

@@ -43,6 +43,8 @@ public class VertxWebsocketEndpointConfigurer extends PropertyConfigurerSupport 
         case "fireWebSocketConnectionEvents": target.getConfiguration().setFireWebSocketConnectionEvents(property(camelContext, boolean.class, value)); return true;
         case "handshakeheaders":
         case "handshakeHeaders": target.getConfiguration().setHandshakeHeaders(property(camelContext, java.util.Map.class, value)); return true;
+        case "headerfilterstrategy":
+        case "headerFilterStrategy": target.setHeaderFilterStrategy(property(camelContext, org.apache.camel.spi.HeaderFilterStrategy.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "maxreconnectattempts":
@@ -87,6 +89,8 @@ public class VertxWebsocketEndpointConfigurer extends PropertyConfigurerSupport 
         case "fireWebSocketConnectionEvents": return boolean.class;
         case "handshakeheaders":
         case "handshakeHeaders": return java.util.Map.class;
+        case "headerfilterstrategy":
+        case "headerFilterStrategy": return org.apache.camel.spi.HeaderFilterStrategy.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "maxreconnectattempts":
@@ -132,6 +136,8 @@ public class VertxWebsocketEndpointConfigurer extends PropertyConfigurerSupport 
         case "fireWebSocketConnectionEvents": return target.getConfiguration().isFireWebSocketConnectionEvents();
         case "handshakeheaders":
         case "handshakeHeaders": return target.getConfiguration().getHandshakeHeaders();
+        case "headerfilterstrategy":
+        case "headerFilterStrategy": return target.getHeaderFilterStrategy();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "maxreconnectattempts":

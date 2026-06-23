@@ -72,6 +72,10 @@ public class AS2AsyncMDNServerConnection {
         listenerThread.start();
     }
 
+    public int getLocalPort() {
+        return listenerThread != null ? listenerThread.serverSocket.getLocalPort() : -1;
+    }
+
     public void close() {
         if (listenerThread != null) {
             lock.lock();

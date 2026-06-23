@@ -16,12 +16,17 @@
  */
 package org.apache.camel.processor.throttle;
 
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.throttling.ThrottlingExceptionRoutePolicy;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import static org.awaitility.Awaitility.await;
 
 public class ThrottlingExceptionRoutePolicyOpenViaConfigTest extends ContextTestSupport {
 
@@ -51,16 +56,16 @@ public class ThrottlingExceptionRoutePolicyOpenViaConfigTest extends ContextTest
 
     @Test
     public void testThrottlingRoutePolicyStartWithAlwaysOpenOffThenToggle() throws Exception {
+        final ServiceSupport consumer = (ServiceSupport) context.getRoute("foo").getConsumer();
 
         // send first set of messages
         // should go through b/c circuit is closed
         int size = 5;
         for (int i = 0; i < size; i++) {
             template.sendBody(url, "MessageRound1 " + i);
-            Thread.sleep(3);
         }
         result.expectedMessageCount(size);
-        result.setResultWaitTime(1000);
+        result.setResultWaitTime(5000);
         assertMockEndpointsSatisfied();
 
         // set keepOpen to true
@@ -70,31 +75,29 @@ public class ThrottlingExceptionRoutePolicyOpenViaConfigTest extends ContextTest
         // by sending another message
         template.sendBody(url, "MessageTrigger");
 
-        // give time for circuit to open
-        Thread.sleep(500);
+        // wait for the circuit to open (consumer suspended)
+        await().atMost(5, TimeUnit.SECONDS).until(consumer::isSuspended);
 
         // send next set of messages
         // should NOT go through b/c circuit is open
         for (int i = 0; i < size; i++) {
             template.sendBody(url, "MessageRound2 " + i);
-            Thread.sleep(3);
         }
 
-        // gives time for policy half open check to run every second
-        // and should not close b/c keepOpen is true
-        Thread.sleep(500);
-
+        // should not close b/c keepOpen is true
         result.expectedMessageCount(size + 1);
-        result.setResultWaitTime(1000);
+        result.setResultWaitTime(2000);
         assertMockEndpointsSatisfied();
 
         // set keepOpen to false
         policy.setKeepOpen(false);
 
-        // gives time for policy half open check to run every second
-        // and it should close b/c keepOpen is false
+        // wait for the consumer to resume since keepOpen is now false
+        await().atMost(5, TimeUnit.SECONDS).until(consumer::isStarted);
+
+        // it should close b/c keepOpen is false — queued messages should now arrive
         result.expectedMessageCount(size * 2 + 1);
-        result.setResultWaitTime(1000);
+        result.setResultWaitTime(5000);
         assertMockEndpointsSatisfied();
     }
 
@@ -103,7 +106,7 @@ public class ThrottlingExceptionRoutePolicyOpenViaConfigTest extends ContextTest
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from(url).routePolicy(policy).log("${body}").to("log:foo?groupSize=10").to("mock:result");
+                from(url).routeId("foo").routePolicy(policy).log("${body}").to("log:foo?groupSize=10").to("mock:result");
             }
         };
     }

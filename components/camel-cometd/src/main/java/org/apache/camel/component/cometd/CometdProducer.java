@@ -18,6 +18,7 @@ package org.apache.camel.component.cometd;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultProducer;
+import org.cometd.bayeux.Promise;
 import org.cometd.bayeux.server.BayeuxServer;
 import org.cometd.bayeux.server.ServerChannel;
 import org.cometd.bayeux.server.ServerMessage;
@@ -49,8 +50,14 @@ public class CometdProducer extends DefaultProducer implements CometdProducerCon
         endpoint.connect(this);
         // should probably look into synchronization for this.
         if (service == null) {
+            CometdBinding binding;
+            if (endpoint.getHeaderFilterStrategy() != null) {
+                binding = new CometdBinding(bayeux, false, endpoint.getHeaderFilterStrategy());
+            } else {
+                binding = new CometdBinding(bayeux);
+            }
             service = new ProducerService(
-                    getBayeux(), new CometdBinding(bayeux), endpoint.getPath(), this, getEndpoint().isDisconnectLocalSession());
+                    getBayeux(), binding, endpoint.getPath(), this, getEndpoint().isDisconnectLocalSession());
         }
     }
 
@@ -108,7 +115,7 @@ public class CometdProducer extends DefaultProducer implements CometdProducerCon
                     logDelivery(exchange, channel);
                     ServerMessage.Mutable mutable = binding.createCometdMessage(channel, serverSession,
                             exchange.getIn());
-                    channel.publish(serverSession, mutable, new org.cometd.bayeux.Promise<>() {
+                    channel.publish(serverSession, mutable, new Promise<>() {
                     });
                 }
             } finally {

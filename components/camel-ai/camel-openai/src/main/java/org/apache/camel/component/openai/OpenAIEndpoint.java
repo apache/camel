@@ -57,12 +57,13 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.support.OAuthHelper;
+import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * OpenAI endpoint for chat completion and embeddings.
+ * OpenAI endpoint for chat completion, embeddings, and audio transcription.
  */
 @UriEndpoint(firstVersion = "4.17.0",
              scheme = "openai",
@@ -76,7 +77,8 @@ public class OpenAIEndpoint extends DefaultEndpoint {
     private static final Logger LOG = LoggerFactory.getLogger(OpenAIEndpoint.class);
 
     @UriPath
-    @Metadata(required = true, description = "The operation to perform: 'chat-completion', 'embeddings', or 'tool-execution'")
+    @Metadata(required = true,
+              description = "The operation to perform: 'chat-completion', 'embeddings', 'tool-execution', or 'audio-transcription'")
     private OpenAIOperations operation;
 
     @UriParam
@@ -101,6 +103,7 @@ public class OpenAIEndpoint extends DefaultEndpoint {
             case chatCompletion -> new OpenAIProducer(this);
             case embeddings -> new OpenAIEmbeddingsProducer(this);
             case toolExecution -> new OpenAIToolExecutionProducer(this);
+            case audioTranscription -> new OpenAIAudioTranscriptionProducer(this);
         };
     }
 
@@ -135,6 +138,7 @@ public class OpenAIEndpoint extends DefaultEndpoint {
             returnDirectTools.clear();
         }
         if (client != null) {
+            client.close();
             client = null;
         }
         super.doStop();
@@ -348,7 +352,7 @@ public class OpenAIEndpoint extends DefaultEndpoint {
     }
 
     McpSchema.CallToolResult callTool(McpSyncClient mcpClient, String toolName, Map<String, Object> argsMap) {
-        McpSchema.CallToolRequest request = new McpSchema.CallToolRequest(toolName, argsMap);
+        McpSchema.CallToolRequest request = new McpSchema.CallToolRequest(toolName, argsMap, null);
         try {
             return mcpClient.callTool(request);
         } catch (McpTransportException e) {
@@ -392,7 +396,7 @@ public class OpenAIEndpoint extends DefaultEndpoint {
 
     private void configureSslFromContextParameters(
             OpenAIOkHttpClient.Builder builder,
-            org.apache.camel.support.jsse.SSLContextParameters sslContextParameters)
+            SSLContextParameters sslContextParameters)
             throws Exception {
         SSLContext sslContext = sslContextParameters.createSSLContext(getCamelContext());
 

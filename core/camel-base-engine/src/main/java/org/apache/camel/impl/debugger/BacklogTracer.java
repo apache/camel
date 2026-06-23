@@ -26,12 +26,17 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.NamedNode;
 import org.apache.camel.Predicate;
+import org.apache.camel.Route;
 import org.apache.camel.spi.BacklogTracerEventMessage;
 import org.apache.camel.spi.Language;
 import org.apache.camel.support.CamelContextHelper;
+import org.apache.camel.support.LoggerHelper;
+import org.apache.camel.support.MessageHelper;
 import org.apache.camel.support.PatternHelper;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.StringHelper;
@@ -45,7 +50,7 @@ import org.apache.camel.util.json.Jsoner;
  * This tracer allows to store message tracers per node in the Camel routes. The tracers is stored in a backlog queue
  * (FIFO based) which allows to pull the traced messages on demand.
  */
-public class BacklogTracer extends ServiceSupport implements org.apache.camel.spi.BacklogTracer {
+public class BacklogTracer extends ServiceSupport implements org.apache.camel.spi.SyntheticBacklogTracer {
 
     // limit the tracer to a thousand messages in total
     public static final int MAX_BACKLOG_SIZE = 1000;
@@ -61,6 +66,7 @@ public class BacklogTracer extends ServiceSupport implements org.apache.camel.sp
     // use tracer to capture additional information for capturing latest completed exchange message-history
     private final Queue<BacklogTracerEventMessage> provisionalHistoryQueue = new LinkedBlockingQueue<>(MAX_BACKLOG_SIZE);
     private final Queue<BacklogTracerEventMessage> completeHistoryQueue = new LinkedBlockingQueue<>(MAX_BACKLOG_SIZE + 1);
+    private volatile String lastCompletedBreadcrumbId;
     private boolean removeOnDump = true;
     private int bodyMaxChars = 32 * 1024;
     private boolean bodyIncludeStreams;
@@ -98,6 +104,7 @@ public class BacklogTracer extends ServiceSupport implements org.apache.camel.sp
      * @param  exchange   the exchange
      * @return            <tt>true</tt> to trace, <tt>false</tt> to skip tracing
      */
+    @Override
     public boolean shouldTrace(NamedNode definition, Exchange exchange) {
         // special in standby mode we allow using tracer to capture latest tracing data for
         // enriched message history
@@ -138,7 +145,57 @@ public class BacklogTracer extends ServiceSupport implements org.apache.camel.sp
         return false;
     }
 
-    public void traceEvent(DefaultBacklogTracerEventMessage event) {
+    @Override
+    public void traceFirstNode(NamedNode node, Exchange exchange) {
+        traceNode(node, exchange, true, false);
+    }
+
+    @Override
+    public void traceLastNode(NamedNode node, Exchange exchange) {
+        traceNode(node, exchange, false, true);
+    }
+
+    private void traceNode(NamedNode node, Exchange exchange, boolean first, boolean last) {
+        if (!shouldTrace(node, exchange)) {
+            return;
+        }
+        long timestamp = System.currentTimeMillis();
+        String toNode = node.getId();
+        String toNodeParentId = node.getParentId();
+        String toNodeShortName = node.getShortName();
+        String toNodeLabel = StringHelper.limitLength(node.getLabel(), 50);
+        String exchangeId = exchange.getExchangeId();
+        String correlationExchangeId = exchange.getProperty(ExchangePropertyKey.CORRELATION_ID, String.class);
+        String breadcrumbId = exchange.getIn().getHeader(Exchange.BREADCRUMB_ID, String.class);
+        int level = node.getLevel();
+        String fromRouteId = exchange.getFromRouteId();
+        String source = LoggerHelper.getLineNumberLoggerName(node);
+        JsonObject data = MessageHelper.dumpAsJSonObject(exchange.getIn(), isIncludeExchangeProperties(),
+                isIncludeExchangeVariables(), true, true, isBodyIncludeStreams(), isBodyIncludeFiles(), getBodyMaxChars());
+        DefaultBacklogTracerEventMessage event = new DefaultBacklogTracerEventMessage(
+                camelContext, first, last, incrementTraceCounter(), timestamp, source, fromRouteId, fromRouteId, toNode,
+                toNodeParentId, null, null, toNodeShortName, toNodeLabel, level,
+                exchangeId, correlationExchangeId, breadcrumbId, false, false, data);
+        if ((first || last) && fromRouteId != null) {
+            Route route = camelContext.getRoute(fromRouteId);
+            if (route != null && route.getConsumer() != null) {
+                Endpoint ep = route.getConsumer().getEndpoint();
+                String endpointUri = ep.getEndpointUri();
+                event.setEndpointUri(endpointUri);
+                event.setRemoteEndpoint(ep.isRemote());
+                if ((endpointUri != null && endpointUri.startsWith("stub:"))
+                        || "StubEndpoint".equals(ep.getClass().getSimpleName())) {
+                    event.setStubEndpoint(true);
+                }
+            }
+        }
+        // synthetic events are snapshots, mark done immediately so elapsed doesn't keep growing
+        event.doneProcessing();
+        traceEvent(event);
+    }
+
+    @Override
+    public void traceEvent(BacklogTracerEventMessage event) {
         // special in standby mode we allow using tracer to capture latest tracing data for
         // enriched message history
         boolean history = (enabled || standby) && camelContext.isMessageHistory();
@@ -148,24 +205,59 @@ public class BacklogTracer extends ServiceSupport implements org.apache.camel.sp
 
         // handle capturing events for last full completed exchange (aka replay)
         if (camelContext.isMessageHistory()) {
-            String tid = null;
             var head = provisionalHistoryQueue.peek();
+            String bid = null;
+            String tid = null;
             if (head != null) {
+                bid = head.getBreadcrumbId();
                 tid = head.getExchangeId();
             }
-            if (tid == null || tid.equals(event.getExchangeId()) || tid.equals(event.getCorrelationExchangeId())) {
+            // correlate by breadcrumb ID when available (links exchanges across broker boundaries)
+            // fallback to exchange ID / correlation ID matching when breadcrumb is not set
+            boolean match;
+            if (bid != null && event.getBreadcrumbId() != null) {
+                match = bid.equals(event.getBreadcrumbId());
+            } else {
+                match = tid == null || tid.equals(event.getExchangeId()) || tid.equals(event.getCorrelationExchangeId());
+            }
+            // check if this event continues a previously completed breadcrumb flow
+            // (e.g. a downstream route connected via Kafka/SEDA that starts after the originating route finished)
+            boolean appendMode = false;
+            if (head == null && event.getBreadcrumbId() != null
+                    && event.getBreadcrumbId().equals(lastCompletedBreadcrumbId)) {
+                appendMode = true;
+            } else if (head != null && event.getBreadcrumbId() != null
+                    && event.getBreadcrumbId().equals(lastCompletedBreadcrumbId)
+                    && head.getBreadcrumbId() != null
+                    && head.getBreadcrumbId().equals(lastCompletedBreadcrumbId)) {
+                appendMode = true;
+            }
+            if (match || appendMode) {
                 boolean added = provisionalHistoryQueue.offer(event);
                 boolean original = head != null && event.getRouteId() != null && event.getRouteId().equals(head.getRouteId());
                 if (event.isLast() && original) {
-                    // only trigger completion when it's the original last
-                    completeHistoryQueue.clear();
-                    completeHistoryQueue.addAll(provisionalHistoryQueue);
-                    // in case we hit the limit then ensure the last is always added to the complete history
-                    if (!added) {
-                        completeHistoryQueue.add(event);
+                    if (appendMode) {
+                        // downstream route finished: merge into existing complete history
+                        completeHistoryQueue.addAll(provisionalHistoryQueue);
+                        if (!added) {
+                            completeHistoryQueue.add(event);
+                        }
+                    } else {
+                        // originating route finished: replace complete history
+                        completeHistoryQueue.clear();
+                        completeHistoryQueue.addAll(provisionalHistoryQueue);
+                        if (!added) {
+                            completeHistoryQueue.add(event);
+                        }
+                        lastCompletedBreadcrumbId = event.getBreadcrumbId();
                     }
                     provisionalHistoryQueue.clear();
                 }
+            } else if (lastCompletedBreadcrumbId != null && event.getBreadcrumbId() != null
+                    && event.getBreadcrumbId().equals(lastCompletedBreadcrumbId)) {
+                // late-arriving event from a downstream route (e.g. second branch of a multicast via Kafka/SEDA)
+                // that arrived after the provisional queue was claimed by a new exchange
+                completeHistoryQueue.add(event);
             }
         }
         if (!enabled) {
@@ -495,6 +587,7 @@ public class BacklogTracer extends ServiceSupport implements org.apache.camel.sp
         provisionalHistoryQueue.clear();
     }
 
+    @Override
     public long incrementTraceCounter() {
         return traceCounter.incrementAndGet();
     }

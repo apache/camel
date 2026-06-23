@@ -78,7 +78,7 @@ public class VertxHttpComponent extends HeaderFilterStrategyComponent
     private VertxHttpBinding vertxHttpBinding;
     @Metadata(label = "security", defaultValue = "false")
     private boolean useGlobalSslContextParameters;
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced", security = "insecure:serialization")
     private boolean allowJavaSerializedObject;
     @Metadata(label = "producer", defaultValue = "true")
     private boolean responsePayloadAsByteArray = true;

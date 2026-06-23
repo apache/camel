@@ -23,8 +23,16 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Marks a method on a POJO as being the preferred method to invoke when Camel looks for methods to invoke using the
- * {@link org.apache.camel.component.bean.BeanEndpoint BeanEndpoint}.
+ * Marks a method on a bean as the preferred handler for
+ * <a href="https://camel.apache.org/manual/bean-binding.html">bean binding</a>.
+ * <p/>
+ * When Camel invokes a bean via the Bean EIP or {@link Consume} and the bean has multiple public methods, it uses
+ * heuristics to select the best match. Annotating exactly one method with {@code @Handler} short-circuits that
+ * selection: Camel always calls the annotated method without ambiguity checks or reflection-based scoring. Only one
+ * method per class should carry this annotation.
+ *
+ * @see Consume
+ * @see Body
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Documented

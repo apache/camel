@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.keycloak;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -287,7 +288,7 @@ public class KeycloakConsumer extends ScheduledBatchPollingConsumer {
         if (value == null || value.trim().isEmpty()) {
             return null;
         }
-        List<String> result = new java.util.ArrayList<>();
+        List<String> result = new ArrayList<>();
         for (String item : value.split(",")) {
             String trimmed = item.trim();
             if (!trimmed.isEmpty()) {

@@ -30,6 +30,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.http.base.cookie.CookieHandler;
 import org.apache.camel.http.base.cookie.ExchangeCookieHandler;
 import org.apache.camel.http.base.cookie.InstanceCookieHandler;
+import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -68,7 +69,7 @@ public class CookieHandlerTest extends CamelTestSupport {
 
     @BeforeEach
     public void setupTest() throws Exception {
-        exchange = new org.apache.camel.support.DefaultExchange(context);
+        exchange = new DefaultExchange(context);
     }
 
     @ParameterizedTest

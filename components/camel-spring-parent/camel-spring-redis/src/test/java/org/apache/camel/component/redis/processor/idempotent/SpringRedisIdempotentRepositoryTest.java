@@ -23,6 +23,7 @@ import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.connection.RedisServerCommands;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.SetOperations;
 
@@ -44,6 +45,8 @@ public class SpringRedisIdempotentRepositoryTest {
     private RedisConnection redisConnection;
     @Mock
     private SetOperations<String, String> setOperations;
+    @Mock
+    private RedisServerCommands redisServerCommands;
 
     private SpringRedisIdempotentRepository idempotentRepository;
 
@@ -52,6 +55,7 @@ public class SpringRedisIdempotentRepositoryTest {
         when(redisTemplate.opsForSet()).thenReturn(setOperations);
         when(redisTemplate.getConnectionFactory()).thenReturn(redisConnectionFactory);
         when(redisTemplate.getConnectionFactory().getConnection()).thenReturn(redisConnection);
+        when(redisConnection.serverCommands()).thenReturn(redisServerCommands);
         idempotentRepository = SpringRedisIdempotentRepository.redisIdempotentRepository(redisTemplate, REPOSITORY);
     }
 
@@ -76,7 +80,7 @@ public class SpringRedisIdempotentRepositoryTest {
     @Test
     public void shouldClearRepository() {
         idempotentRepository.clear();
-        verify(redisConnection).flushDb();
+        verify(redisConnection.serverCommands()).flushDb();
     }
 
     @Test

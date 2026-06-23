@@ -6,8 +6,6 @@
 :since: 2.21
 :supportlevel: Stable
 :tabs-sync-option:
-//Manually maintained attributes
-:camel-spring-boot-name: fhir
 
 *Since Camel {since}*
 
@@ -20,5 +18,3 @@ XML parser to parse to/from XML format to/from a HAPI-FHIR's `IBaseResource`.
 // dataformat options: START
 include::partial$dataformat-options.adoc[]
 // dataformat options: END
-
-include::spring-boot:partial$starter.adoc[]

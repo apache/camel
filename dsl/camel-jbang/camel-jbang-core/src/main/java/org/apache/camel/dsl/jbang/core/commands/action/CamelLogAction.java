@@ -41,12 +41,13 @@ import org.apache.camel.catalog.impl.TimePatternConverter;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.CommandHelper;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
+import org.apache.camel.dsl.jbang.core.common.EnvironmentHelper;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.json.JsonObject;
-import org.fusesource.jansi.Ansi;
-import org.fusesource.jansi.AnsiConsole;
+import org.jline.jansi.Ansi;
+import org.jline.jansi.AnsiConsole;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "log",
@@ -132,6 +133,11 @@ public class CamelLogAction extends ActionBaseCommand {
 
     @Override
     public Integer doCall() throws Exception {
+        if (follow && EnvironmentHelper.isEmbedded()) {
+            follow = false;
+            printer().println("Tip: press F3 to switch to the Log tab for live log streaming");
+        }
+
         Map<Long, Row> rows = new LinkedHashMap<>();
 
         // find new pids
@@ -391,7 +397,12 @@ public class CamelLogAction extends ActionBaseCommand {
                     colors.put(name, color);
                 }
                 String n = String.format("%-" + nameMaxWidth + "s", name);
-                AnsiConsole.out().print(Ansi.ansi().fg(color).a(n).a("| ").reset());
+                String prefix = Ansi.ansi().fg(color).a(n).a("| ").reset().toString();
+                if (EnvironmentHelper.isEmbedded()) {
+                    printer().print(prefix);
+                } else {
+                    AnsiConsole.out().print(prefix);
+                }
             }
         } else {
             line = unescapeAnsi(line);
@@ -422,7 +433,11 @@ public class CamelLogAction extends ActionBaseCommand {
             line = before != null ? before + "---" + after : after;
         }
         if (loggingColor) {
-            AnsiConsole.out().println(line);
+            if (EnvironmentHelper.isEmbedded()) {
+                printer().println(line);
+            } else {
+                AnsiConsole.out().println(line);
+            }
         } else {
             printer().println(line);
         }

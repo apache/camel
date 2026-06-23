@@ -31,6 +31,7 @@ import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.spi.ExchangeFactory;
 import org.apache.camel.spi.HostedService;
 import org.apache.camel.spi.RouteIdAware;
+import org.apache.camel.spi.StepIdAware;
 import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
@@ -42,7 +43,7 @@ import org.slf4j.LoggerFactory;
  * A default consumer useful for implementation inheritance.
  */
 public class DefaultConsumer extends ServiceSupport
-        implements Consumer, RouteAware, RouteIdAware, HealthCheckAware, HostedService {
+        implements Consumer, RouteAware, RouteIdAware, StepIdAware, HealthCheckAware, HostedService {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultConsumer.class);
 
@@ -55,6 +56,7 @@ public class DefaultConsumer extends ServiceSupport
     private ExceptionHandler exceptionHandler;
     private Route route;
     private String routeId;
+    private String stepId;
 
     public DefaultConsumer(Endpoint endpoint, Processor processor) {
         this.endpoint = endpoint;
@@ -97,6 +99,16 @@ public class DefaultConsumer extends ServiceSupport
     @Override
     public void setRouteId(String routeId) {
         this.routeId = routeId;
+    }
+
+    @Override
+    public String getStepId() {
+        return stepId;
+    }
+
+    @Override
+    public void setStepId(String stepId) {
+        this.stepId = stepId;
     }
 
     /**

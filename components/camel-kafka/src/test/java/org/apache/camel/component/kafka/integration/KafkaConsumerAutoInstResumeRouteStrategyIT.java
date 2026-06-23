@@ -19,6 +19,7 @@ package org.apache.camel.component.kafka.integration;
 import java.time.Duration;
 import java.util.Collections;
 import java.util.Properties;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -29,6 +30,7 @@ import org.apache.camel.processor.resume.TransientResumeStrategy;
 import org.apache.camel.processor.resume.kafka.KafkaResumeStrategyConfigurationBuilder;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
+import org.awaitility.Awaitility;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -54,20 +56,21 @@ public class KafkaConsumerAutoInstResumeRouteStrategyIT extends BaseKafkaTestSup
     public void before() {
         Properties props = KafkaTestUtil.getDefaultProperties(service);
         KafkaTestUtil.createTopic(service, TOPIC, 1);
-        KafkaProducer<Object, Object> producer = new KafkaProducer<>(props);
-
-        for (int i = 0; i < 10; i++) {
-            producer.send(new ProducerRecord<>(TOPIC, String.valueOf(i)));
+        try (KafkaProducer<Object, Object> producer = new KafkaProducer<>(props)) {
+            for (int i = 0; i < 10; i++) {
+                producer.send(new ProducerRecord<>(TOPIC, String.valueOf(i)));
+            }
+            producer.flush();
         }
     }
 
     @Test
     @Timeout(value = 30)
-    public void testOffsetIsBeingChecked() throws InterruptedException {
+    public void testOffsetIsBeingChecked() {
         MockEndpoint mock = contextExtension.getMockEndpoint(KafkaTestUtil.MOCK_RESULT);
 
         mock.expectedMessageCount(10);
-        mock.assertIsSatisfied();
+        Awaitility.await().atMost(25, TimeUnit.SECONDS).untilAsserted(() -> mock.assertIsSatisfied());
     }
 
     @AfterEach

@@ -68,6 +68,14 @@ public final class HL7ConverterLoader implements TypeConverterLoader, CamelConte
                 }
                 return answer;
             });
+        addTypeConverter(registry, ca.uhn.hl7v2.model.Message.class, org.w3c.dom.Document.class, false,
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.hl7.HL7Converter.toMessage((org.w3c.dom.Document) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, java.lang.String.class, ca.uhn.hl7v2.model.Message.class, false,
             (type, exchange, value) -> {
                 Object answer = org.apache.camel.component.hl7.HL7Converter.toString((ca.uhn.hl7v2.model.Message) value);

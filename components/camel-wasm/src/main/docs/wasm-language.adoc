@@ -6,8 +6,6 @@
 :since: 4.5
 :supportlevel: Experimental
 :tabs-sync-option:
-//Manually maintained attributes
-:camel-spring-boot-name: wasm
 
 *Since Camel {since}*
 
@@ -37,7 +35,7 @@ The module hosting the function *must* provide the functions to allocate/dealloc
 Here's an example of the mentioned functions implemented in https://www.rust-lang.org[Rust]:
 
 [source,rust]
----------------------------------------
+----
 pub extern "C" fn alloc(size: u32) -> *mut u8 {
     let mut buf = Vec::with_capacity(size as usize);
     let ptr = buf.as_mut_ptr();
@@ -52,7 +50,7 @@ pub unsafe extern "C" fn dealloc(ptr: &mut u8, len: i32) {
     // Retakes the pointer which allows its memory to be freed.
     let _ = Vec::from_raw_parts(ptr, 0, len as usize);
 }
----------------------------------------
+----
 
 === Data shapes
 
@@ -61,8 +59,9 @@ data exchange leverages Wasm's memory that can be accessed by both the host and 
 At this stage, the data structure that the component exchange with the Wasm function is a subset of the Apache Camel Message,
 containing headers the body encoded as a base64 string:
 
+._Java-only: data wrapper class definition_
 [source,java]
--------------------------------------------------
+----
 public static class Wrapper {
     @JsonProperty
     public Map<String, String> headers = new HashMap<>();
@@ -70,16 +69,16 @@ public static class Wrapper {
     @JsonProperty
     public byte[] body;
 }
--------------------------------------------------
+----
 
 === Data processing
 
 The component expects the processing function to have the following signature:
 
 [source,rust]
----------------------------------------
+----
 fn function(ptr: u32, len: u32) -> u64
----------------------------------------
+----
 
 * it accepts two 32bit unsigned integers arguments
 ** a pointer to the memory location when the input data has been written (`ptr`)
@@ -92,7 +91,7 @@ fn function(ptr: u32, len: u32) -> u64
 Here's an example of a complete function:
 
 [source,rust]
----------------------------------------
+----
 #[derive(Serialize, Deserialize)]
 struct Message {
     headers: HashMap<String, serde_json::Value>,
@@ -125,40 +124,18 @@ pub extern fn transform(ptr: u32, len: u32) -> u64 {
 
     return ((out_ptr as u64) << 32) | out_len as u64;
 }
----------------------------------------
+----
 
 == Examples
 
 Supposing we have compiled a Wasm module containing the function above, then it can be called in a Camel Route by its name and module resource location:
 
-
 [source,java]
----------------------------------------
- try (CamelContext cc = new DefaultCamelContext()) {
-    FluentProducerTemplate pt = cc.createFluentProducerTemplate();
-
-    cc.addRoutes(new RouteBuilder() {
-        @Override
-        public void configure() throws Exception {
-            from("direct:in")
-                    .tramsform()
-                      .wasm("transform", "classpath://functions.wasm");
-        }
-    });
-    cc.start();
-
-    Exchange out = pt.to("direct:in")
-            .withHeader("foo", "bar")
-            .withBody("hello")
-            .request(Exchange.class);
-
-    assertThat(out.getMessage().getHeaders())
-            .containsEntry("foo", "bar");
-    assertThat(out.getMessage().getBody(String.class))
-            .isEqualTo("HELLO");
-}
----------------------------------------
-
+----
+from("direct:in")
+    .transform()
+        .wasm("transform", "classpath://functions.wasm");
+----
 
 
 == Dependencies
@@ -167,12 +144,10 @@ If you use Maven you could add the following to your `pom.xml`,
 substituting the version number for the latest and greatest release.
 
 [source,xml]
----------------------------------------
+----
 <dependency>
   <groupId>org.apache.camel</groupId>
   <artifactId>camel-wasm</artifactId>
   <version>x.x.x</version>
 </dependency>
----------------------------------------
-
-include::spring-boot:partial$starter.adoc[]
+----

@@ -9,7 +9,6 @@
 :component-header: Only producer is supported
 //Manually maintained attributes
 :group: Huawei Cloud
-:camel-spring-boot-name: huaweicloud-smn
 
 *Since Camel {since}*
 
@@ -21,22 +20,22 @@ Maven users will need to add the following dependency to their `pom.xml`
 for this component:
 
 [source,xml]
-------------------------------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-huaweicloud-smn</artifactId>
     <version>x.x.x</version>
     <!-- use the same version as your Camel core version -->
 </dependency>
-------------------------------------------------------------
+----
 
 == URI format
 
 To send a notification.
 
-------------------------
+----
 hwcloud-smn:service[?options]
-------------------------
+----
 
 
 // component options: START
@@ -93,40 +92,80 @@ include::partial$component-endpoint-headers.adoc[]
 === Inline Configuration of route
 
 ==== publishAsTextMessage
-Java DSL
+
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:triggerRoute")
-.setProperty(SmnProperties.NOTIFICATION_SUBJECT, constant("Notification Subject"))
-.setProperty(SmnProperties.NOTIFICATION_TOPIC_NAME,constant(testConfiguration.getProperty("topic")))
-.setProperty(SmnProperties.NOTIFICATION_TTL, constant(60))
-.to("hwcloud-smn:publishMessageService?operation=publishAsTextMessage&accessKey=*********&secretKey=********&projectId=9071a38e7f6a4ba7b7bcbeb7d4ea6efc&region=cn-north-4")
---------------------------------------------------------------------------------
+    .setProperty(SmnProperties.NOTIFICATION_SUBJECT, constant("Notification Subject"))
+    .setProperty(SmnProperties.NOTIFICATION_TOPIC_NAME, constant("reji-test"))
+    .setProperty(SmnProperties.NOTIFICATION_TTL, constant(60))
+    .to("hwcloud-smn:publishMessageService?operation=publishAsTextMessage&accessKey=*********&secretKey=********&projectId=9071a38e7f6a4ba7b7bcbeb7d4ea6efc&region=cn-north-4");
+----
 
-XML DSL
+XML::
++
 [source,xml]
---------------------------------------------------------------------------------
+----
 <route>
-   <from uri="direct:triggerRoute" />
-   <setProperty name="CamelHwCloudSmnSubject">
-      <constant>this is my subjectline</constant>
-   </setProperty>
-   <setProperty name="CamelHwCloudSmnTopic">
-      <constant>reji-test</constant>
-   </setProperty>
-   <setProperty name="CamelHwCloudSmnMessageTtl">
-      <constant>60</constant>
-   </setProperty>
-   <to uri="hwcloud-smn:publishMessageService?operation=publishAsTextMessage&amp;accessKey=*********&amp;secretKey=********&amp;projectId=9071a38e7f6a4ba7b7bcbeb7d4ea6efc&amp;region=cn-north-4" />
+  <from uri="direct:triggerRoute"/>
+  <setProperty name="CamelHwCloudSmnSubject">
+    <constant>this is my subjectline</constant>
+  </setProperty>
+  <setProperty name="CamelHwCloudSmnTopic">
+    <constant>reji-test</constant>
+  </setProperty>
+  <setProperty name="CamelHwCloudSmnMessageTtl">
+    <constant>60</constant>
+  </setProperty>
+  <to uri="hwcloud-smn:publishMessageService?operation=publishAsTextMessage&amp;accessKey=*********&amp;secretKey=********&amp;projectId=9071a38e7f6a4ba7b7bcbeb7d4ea6efc&amp;region=cn-north-4"/>
 </route>
---------------------------------------------------------------------------------
+----
 
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:triggerRoute
+      steps:
+        - setProperty:
+            name: CamelHwCloudSmnSubject
+            expression:
+              constant:
+                expression: this is my subjectline
+        - setProperty:
+            name: CamelHwCloudSmnTopic
+            expression:
+              constant:
+                expression: reji-test
+        - setProperty:
+            name: CamelHwCloudSmnMessageTtl
+            expression:
+              constant:
+                expression: "60"
+        - to:
+            uri: hwcloud-smn:publishMessageService
+            parameters:
+              operation: publishAsTextMessage
+              accessKey: "*********"
+              secretKey: "********"
+              projectId: 9071a38e7f6a4ba7b7bcbeb7d4ea6efc
+              region: cn-north-4
+----
+====
 
 
 === publishAsTemplatedMessage
-Java DSL
+
+._Java-only: requires Java Map variable for template tags_
+
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:triggerRoute")
 .setProperty("CamelHwCloudSmnSubject", constant("This is my subjectline"))
 .setProperty("CamelHwCloudSmnTopic", constant("reji-test"))
@@ -134,7 +173,7 @@ from("direct:triggerRoute")
 .setProperty("CamelHwCloudSmnTemplateTags", constant(tags))
 .setProperty("CamelHwCloudSmnTemplateName", constant("hello-template"))
 .to("hwcloud-smn:publishMessageService?operation=publishAsTemplatedMessage&accessKey=*********&secretKey=********&projectId=9071a38e7f6a4ba7b7bcbeb7d4ea6efc&region=cn-north-4")
---------------------------------------------------------------------------------
+----
 
 === Using ServiceKey configuration Bean
 
@@ -150,14 +189,15 @@ Check the following code snippets
    <property name="secretKey" value="your_secret_key" />
 </bean>
 ----
+._Java-only: requires Java constants and test configuration properties_
+
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:triggerRoute")
  .setProperty(SmnProperties.NOTIFICATION_SUBJECT, constant("Notification Subject"))
- .setProperty(SmnProperties.NOTIFICATION_TOPIC_NAME,constant(testConfiguration.getProperty("topic")))
+ .setProperty(SmnProperties.NOTIFICATION_TOPIC_NAME, constant(testConfiguration.getProperty("topic")))
  .setProperty(SmnProperties.NOTIFICATION_TTL, constant(60))
  .to("hwcloud-smn:publishMessageService?operation=publishAsTextMessage&projectId=9071a38e7f6a4ba7b7bcbeb7d4ea6efc&region=cn-north-4&serviceKeys=#myServiceKeyConfig")
---------------------------------------------------------------------------------
+----
 
 
-include::spring-boot:partial$starter.adoc[]

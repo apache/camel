@@ -24,6 +24,8 @@ import java.util.Date;
 
 /**
  * A clock abstraction used to track pass of time
+ *
+ * @since 4.4
  */
 public interface Clock {
 

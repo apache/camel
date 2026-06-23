@@ -9,7 +9,6 @@
 :component-header: Both producer and consumer are supported
 //Manually maintained attributes
 :group: Spring
-:camel-spring-boot-name: spring-redis
 
 *Since Camel {since}*
 
@@ -36,7 +35,6 @@ To use this component, you must have a Redis server running.
 ----------------------------------
 spring-redis://host:port[?options]
 ----------------------------------
-
 
 
 // component options: START
@@ -341,5 +339,3 @@ Maven users will need to add the following dependency to their pom.xml.
 where `${camel-version`} must be replaced by the actual version of Camel.
 
 
-
-include::spring-boot:partial$starter.adoc[]

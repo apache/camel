@@ -512,10 +512,8 @@ main() {
       local projectRoot
       projectRoot=$(findProjectRoot "${project}")
       if [[ ${projectRoot} = "." ]]; then
-        echo "The root project is affected, skipping targeted module testing"
-        echo "<!-- ci-tested-modules -->" > "incremental-test-comment.md"
-        echo ":information_source: CI did not run targeted module tests (root project files changed)." >> "incremental-test-comment.md"
-        exit 0
+        echo "  Skipping non-module file: ${project} (no parent pom.xml found)"
+        continue
       elif [[ ${projectRoot} != "${lastProjectRoot}" ]]; then
         totalAffected=$((totalAffected + 1))
         pl="$pl,${projectRoot}"
@@ -564,10 +562,14 @@ main() {
     done <<< "$pom_files"
   fi
 
-  # Step 2b: Scalpel detection (parallel, for any pom.xml change)
+  # Step 2b: Scalpel detection (for parent or module pom.xml changes)
   # Scalpel uses effective POM model comparison — catches managed deps,
   # plugin changes, and transitive impacts that grep misses.
-  if echo "$diff_body" | grep -q '^diff --git a/.*pom\.xml'; then
+  # Skip when only the root pom.xml changed — it contains build-infrastructure
+  # config (license plugin, checkstyle, etc.) that doesn't affect module
+  # compilation or test behavior. Without this filter, Scalpel reports every
+  # module as affected because they all inherit from the root POM.
+  if echo "$diff_body" | sed -n 's|^diff --git a/\(.*\) b/.*|\1|p' | grep -q '.*/pom\.xml$'; then
     echo ""
     echo "Running Scalpel POM analysis..."
     runScalpelDetection
@@ -832,9 +834,9 @@ main() {
     # Show end of build log
     if [[ -f "$log" ]]; then
       echo ""
-      echo "Last 50 lines of build log:"
+      echo "Last 500 lines of build log:"
       echo "------------------------------------------------------------"
-      tail -50 "$log"
+      tail -500 "$log"
       echo "------------------------------------------------------------"
       echo ""
     else

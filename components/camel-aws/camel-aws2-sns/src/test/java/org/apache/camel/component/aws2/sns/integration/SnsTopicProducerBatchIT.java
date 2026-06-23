@@ -26,14 +26,12 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.infra.common.SharedNameGenerator;
 import org.apache.camel.test.infra.common.TestEntityNameGenerator;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import software.amazon.awssdk.services.sns.model.PublishBatchRequestEntry;
 import software.amazon.awssdk.services.sns.model.PublishBatchResponse;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-@DisabledIfSystemProperty(named = "ci.env.name", matches = ".*", disabledReason = "Flaky on GitHub Actions")
 public class SnsTopicProducerBatchIT extends Aws2SNSBase {
 
     @RegisterExtension

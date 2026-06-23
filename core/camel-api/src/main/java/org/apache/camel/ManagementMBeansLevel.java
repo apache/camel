@@ -19,13 +19,26 @@ package org.apache.camel;
 import jakarta.xml.bind.annotation.XmlEnum;
 
 /**
- * Level of mbeans for registration
+ * Controls which Camel objects are registered as JMX MBeans for management and monitoring.
+ * <p/>
+ * When JMX management is active, Camel can expose the {@link CamelContext}, its {@link Route}s, and individual
+ * {@link Processor}s as MBeans. Registering many processors improves observability but increases heap usage; this enum
+ * lets operators trade off granularity against overhead.
+ * <p/>
+ * Configure via {@code ManagementAgent.setMBeansLevel(ManagementMBeansLevel)} or the property
+ * {@code camel.main.jmx-management-mbeans-level}.
+ *
+ * @see   ManagementStatisticsLevel
+ * @since 3.17
  */
 @XmlEnum
 public enum ManagementMBeansLevel {
 
+    /** Only register the CamelContext MBean. */
     ContextOnly,
+    /** Register MBeans for the CamelContext and routes. */
     RoutesOnly,
+    /** Register MBeans for the CamelContext, routes, and processors. */
     Default;
 
     public boolean isRoutes() {

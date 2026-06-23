@@ -19,10 +19,14 @@ package org.apache.camel.component.keycloak.security;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.PublicKey;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 import org.keycloak.common.VerificationException;
+import org.keycloak.jose.jws.JWSBuilder;
 import org.keycloak.representations.AccessToken;
 import org.mockito.Mockito;
 
@@ -40,7 +44,7 @@ public class KeycloakSecurityHelperTest {
         when(token.getRealmAccess()).thenReturn(realmAccess);
         when(realmAccess.getRoles()).thenReturn(Set.of("realm-admin", "user"));
 
-        when(token.getResourceAccess()).thenReturn(java.util.Map.of("test-client", clientAccess));
+        when(token.getResourceAccess()).thenReturn(Map.of("test-client", clientAccess));
         when(clientAccess.getRoles()).thenReturn(Set.of("client-admin"));
 
         Set<String> roles = KeycloakSecurityHelper.extractRoles(token, "test-realm", "test-client");
@@ -174,6 +178,52 @@ public class KeycloakSecurityHelperTest {
     }
 
     @Test
+    void testParseAndVerifyAccessTokenRejectsExpiredToken() throws Exception {
+        String expectedIssuer = "http://localhost:8080/realms/test";
+
+        KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA");
+        keyGen.initialize(2048);
+        KeyPair keyPair = keyGen.generateKeyPair();
+
+        AccessToken token = new AccessToken();
+        token.issuer(expectedIssuer);
+        token.subject("user-123");
+        token.exp(System.currentTimeMillis() / 1000 - 3600);
+
+        String signed = new JWSBuilder()
+                .type("JWT")
+                .jsonContent(token)
+                .rsa256(keyPair.getPrivate());
+
+        assertThrows(VerificationException.class,
+                () -> KeycloakSecurityHelper.parseAndVerifyAccessToken(signed, keyPair.getPublic(), expectedIssuer));
+    }
+
+    @Test
+    void testParseAndVerifyAccessTokenAcceptsValidToken() throws Exception {
+        String expectedIssuer = "http://localhost:8080/realms/test";
+
+        KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA");
+        keyGen.initialize(2048);
+        KeyPair keyPair = keyGen.generateKeyPair();
+
+        AccessToken token = new AccessToken();
+        token.issuer(expectedIssuer);
+        token.subject("user-123");
+        token.exp(System.currentTimeMillis() / 1000 + 3600);
+
+        String signed = new JWSBuilder()
+                .type("JWT")
+                .jsonContent(token)
+                .rsa256(keyPair.getPrivate());
+
+        AccessToken verified
+                = KeycloakSecurityHelper.parseAndVerifyAccessToken(signed, keyPair.getPublic(), expectedIssuer);
+        assertEquals("user-123", verified.getSubject());
+        assertEquals(expectedIssuer, verified.getIssuer());
+    }
+
+    @Test
     void testExtractPermissions() {
         AccessToken token = Mockito.mock(AccessToken.class);
 
@@ -182,12 +232,12 @@ public class KeycloakSecurityHelperTest {
         when(token.getAuthorization()).thenReturn(authorization);
 
         // Test permissions extraction from custom claims
-        java.util.Map<String, Object> otherClaims = new java.util.HashMap<>();
-        otherClaims.put("permissions", java.util.Arrays.asList("read:documents", "write:documents", "admin:users"));
+        Map<String, Object> otherClaims = new HashMap<>();
+        otherClaims.put("permissions", Arrays.asList("read:documents", "write:documents", "admin:users"));
 
         when(token.getOtherClaims()).thenReturn(otherClaims);
 
-        java.util.Set<String> permissions = KeycloakSecurityHelper.extractPermissions(token);
+        Set<String> permissions = KeycloakSecurityHelper.extractPermissions(token);
 
         assertEquals(3, permissions.size());
         assertTrue(permissions.contains("read:documents"));
@@ -200,13 +250,13 @@ public class KeycloakSecurityHelperTest {
         AccessToken token = Mockito.mock(AccessToken.class);
 
         // Mock other claims with permissions
-        java.util.Map<String, Object> otherClaims = new java.util.HashMap<>();
-        otherClaims.put("permissions", java.util.Arrays.asList("read:files", "write:files", "delete:files"));
+        Map<String, Object> otherClaims = new HashMap<>();
+        otherClaims.put("permissions", Arrays.asList("read:files", "write:files", "delete:files"));
 
         when(token.getOtherClaims()).thenReturn(otherClaims);
         when(token.getAuthorization()).thenReturn(null);
 
-        java.util.Set<String> permissions = KeycloakSecurityHelper.extractPermissions(token);
+        Set<String> permissions = KeycloakSecurityHelper.extractPermissions(token);
 
         assertEquals(3, permissions.size());
         assertTrue(permissions.contains("read:files"));
@@ -219,13 +269,13 @@ public class KeycloakSecurityHelperTest {
         AccessToken token = Mockito.mock(AccessToken.class);
 
         // Mock other claims with scope-based permissions
-        java.util.Map<String, Object> otherClaims = new java.util.HashMap<>();
+        Map<String, Object> otherClaims = new HashMap<>();
         otherClaims.put("scope", "read write admin");
 
         when(token.getOtherClaims()).thenReturn(otherClaims);
         when(token.getAuthorization()).thenReturn(null);
 
-        java.util.Set<String> permissions = KeycloakSecurityHelper.extractPermissions(token);
+        Set<String> permissions = KeycloakSecurityHelper.extractPermissions(token);
 
         assertEquals(3, permissions.size());
         assertTrue(permissions.contains("read"));
@@ -237,9 +287,9 @@ public class KeycloakSecurityHelperTest {
     void testExtractPermissionsEmpty() {
         AccessToken token = Mockito.mock(AccessToken.class);
         when(token.getAuthorization()).thenReturn(null);
-        when(token.getOtherClaims()).thenReturn(java.util.Map.of());
+        when(token.getOtherClaims()).thenReturn(Map.of());
 
-        java.util.Set<String> permissions = KeycloakSecurityHelper.extractPermissions(token);
+        Set<String> permissions = KeycloakSecurityHelper.extractPermissions(token);
 
         assertTrue(permissions.isEmpty());
     }

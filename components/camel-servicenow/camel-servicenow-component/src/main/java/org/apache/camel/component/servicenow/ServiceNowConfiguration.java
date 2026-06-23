@@ -46,17 +46,17 @@ import org.apache.cxf.transports.http.configuration.HTTPClientPolicy;
 
 @UriParams
 public class ServiceNowConfiguration implements Cloneable {
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     @Metadata(required = true)
     private String userName;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     @Metadata(required = true)
     private String password;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String oauthClientId;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String oauthClientSecret;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String oauthTokenUrl;
     @UriParam(label = "security")
     private String apiUrl;

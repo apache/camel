@@ -24,6 +24,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.spi.CamelLogger;
 import org.apache.camel.spi.ExchangeFormatter;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.support.processor.DefaultExchangeFormatter;
 import org.apache.camel.support.processor.ThroughputLogger;
@@ -31,7 +32,7 @@ import org.apache.camel.support.processor.ThroughputLogger;
 /**
  * The <a href="http://camel.apache.org/mock.html">Mock Component</a> provides mock endpoints for testing.
  */
-@org.apache.camel.spi.annotations.Component("mock")
+@Component("mock")
 public class MockComponent extends DefaultComponent {
 
     @Metadata(label = "producer",

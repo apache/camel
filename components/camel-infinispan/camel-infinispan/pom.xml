@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-infinispan-parent</artifactId>
-        <version>4.20.0-SNAPSHOT</version>
+        <version>4.21.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-infinispan</artifactId>
@@ -109,7 +109,7 @@
         </dependency>
         <dependency>
             <groupId>org.infinispan</groupId>
-            <artifactId>infinispan-commons-test</artifactId>
+            <artifactId>infinispan-testing</artifactId>
             <version>${infinispan-version}</version>
             <scope>test</scope>
         </dependency>

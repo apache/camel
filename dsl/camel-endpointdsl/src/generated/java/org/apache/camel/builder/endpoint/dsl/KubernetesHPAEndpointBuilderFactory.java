@@ -1454,7 +1454,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final KubernetesHPAHeaderNameBuilder INSTANCE = new KubernetesHPAHeaderNameBuilder();
+        public static final KubernetesHPAHeaderNameBuilder INSTANCE = new KubernetesHPAHeaderNameBuilder();
 
         /**
          * The Producer operation.

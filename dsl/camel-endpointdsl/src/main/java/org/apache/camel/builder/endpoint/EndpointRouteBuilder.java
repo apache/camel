@@ -38,6 +38,21 @@ public abstract class EndpointRouteBuilder extends RouteBuilder implements Endpo
     }
 
     /**
+     * Returns the entry point for accessing all component header name builders.
+     * <p>
+     * Usage example:
+     *
+     * <pre>
+     * .setHeader(headers().kafka().kafkaKey(), constant("myKey"))
+     * </pre>
+     *
+     * @return the header builders entry point
+     */
+    public static EndpointHeaderBuilders headers() {
+        return new EndpointHeaderBuilders();
+    }
+
+    /**
      * Add routes to a context using a lambda expression. It can be used as following:
      *
      * <pre>

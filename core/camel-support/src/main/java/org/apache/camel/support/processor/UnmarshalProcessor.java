@@ -30,6 +30,7 @@ import org.apache.camel.Traceable;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.RouteIdAware;
+import org.apache.camel.spi.StepIdAware;
 import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.service.ServiceHelper;
@@ -41,10 +42,11 @@ import org.apache.camel.util.ObjectHelper;
  * format</a>
  */
 public class UnmarshalProcessor extends AsyncProcessorSupport
-        implements Traceable, CamelContextAware, IdAware, RouteIdAware, DisabledAware {
+        implements Traceable, CamelContextAware, IdAware, RouteIdAware, StepIdAware, DisabledAware {
 
     private String id;
     private String routeId;
+    private String stepId;
     private CamelContext camelContext;
     private boolean disabled;
     private final DataFormat dataFormat;
@@ -155,6 +157,16 @@ public class UnmarshalProcessor extends AsyncProcessorSupport
     @Override
     public void setRouteId(String routeId) {
         this.routeId = routeId;
+    }
+
+    @Override
+    public String getStepId() {
+        return stepId;
+    }
+
+    @Override
+    public void setStepId(String stepId) {
+        this.stepId = stepId;
     }
 
     @Override

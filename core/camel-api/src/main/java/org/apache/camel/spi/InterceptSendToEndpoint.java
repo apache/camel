@@ -19,10 +19,17 @@ package org.apache.camel.spi;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
+import org.jspecify.annotations.Nullable;
 
 /**
- * This is an endpoint when sending to it, is intercepted and is routed in a detour, with the following flow: before,
- * send to original endpoint (can be skipped), after (optional).
+ * An {@link Endpoint} wrapper that, when sent to, detours the exchange: before, send to the original endpoint (which
+ * can be skipped), then after (optional).
+ * <p/>
+ * This is the endpoint created by {@link InterceptEndpointFactory} to implement the interceptSendToEndpoint EIP. The
+ * before/after {@link Processor}s and the optional {@link Predicate} guard are configurable, as is whether the original
+ * send is {@link #isSkip() skipped}.
+ *
+ * @see InterceptEndpointFactory
  */
 public interface InterceptSendToEndpoint extends Endpoint {
 
@@ -34,32 +41,35 @@ public interface InterceptSendToEndpoint extends Endpoint {
     /**
      * Optional predicate that must match to trigger this interceptor.
      */
+    @Nullable
     Predicate getOnWhen();
 
     /**
      * Optional predicate that must match to trigger this interceptor.
      */
-    void setOnWhen(Predicate onWhen);
+    void setOnWhen(@Nullable Predicate onWhen);
 
     /**
      * The processor for routing in a detour before sending to the original endpoint.
      */
+    @Nullable
     Processor getBefore();
 
     /**
      * Sets the processor for routing in a detour before sending to the original endpoint.
      */
-    void setBefore(Processor before);
+    void setBefore(@Nullable Processor before);
 
     /**
      * The processor (optional) for routing after sending to the original endpoint.
      */
+    @Nullable
     Processor getAfter();
 
     /**
      * Sets the processor (optional) for routing after sending to the original endpoint.
      */
-    void setAfter(Processor after);
+    void setAfter(@Nullable Processor after);
 
     /**
      * Whether to skip sending to the original endpoint.

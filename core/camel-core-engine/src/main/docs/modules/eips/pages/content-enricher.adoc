@@ -51,13 +51,14 @@ YAML::
 +
 [source,yaml]
 ----
-- from:
-    uri: activemq:My.Queue
-    steps:
-      - to:
-          uri: velocity:com/acme/MyResponse.vm
-      - to:
-          uri: activemq:Another.Queue
+- route:
+    from:
+      uri: activemq:My.Queue
+      steps:
+        - to:
+            uri: velocity:com/acme/MyResponse.vm
+        - to:
+            uri: activemq:Another.Queue
 ----
 ====
 
@@ -66,6 +67,7 @@ xref:manual::expression.adoc[Expression].
 In the example below, the message
 is enriched by appending ` World!` to the message body:
 
+._Java-only: fluent builder to append to the message body_
 [source,java]
 ----
 from("direct:start")
@@ -126,6 +128,7 @@ YAML::
 In this example, we add our own xref:manual::processor.adoc[Processor] using
 explicit Java to enrich the message:
 
+._Java-only: using an inline Processor to enrich the message_
 [source,java]
 ----
 from("direct:start")
@@ -141,6 +144,7 @@ from("direct:start")
 In the Java code above we used an inlined `Processor` which is harder to do with XML or YAML DSL.
 A good practice is to use a class for your custom `Processor` which can then be referenced in the DSL:
 
+._Java-only: custom Processor class registered in the Registry_
 [source,java]
 ----
 @BindToRegistry("myProcessor")
@@ -229,14 +233,15 @@ YAML::
 +
 [source,yaml]
 ----
-- from:
-    uri: activemq:Input
-    steps:
-      - bean:
-          ref: myBeanName
-          method: doTransform
-      - to:
-          uri: activemq:Output
+- route:
+    from:
+      uri: activemq:Input
+      steps:
+        - bean:
+            ref: myBeanName
+            method: doTransform
+        - to:
+            uri: activemq:Output
 ----
 ====
 

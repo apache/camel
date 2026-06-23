@@ -18,6 +18,7 @@ package org.apache.camel.processor.aggregator;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.AggregationStrategy;
@@ -36,12 +37,11 @@ import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.junit.jupiter.api.parallel.Isolated;
 
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.*;
 
-@DisabledIfSystemProperty(named = "ci.env.name", matches = ".*", disabledReason = "Flaky on Github CI")
 @Isolated
 public class AggregateProcessorTest extends ContextTestSupport {
 
@@ -213,7 +213,7 @@ public class AggregateProcessorTest extends ContextTestSupport {
         AggregationStrategy as = new BodyInAggregatingStrategy();
 
         AggregateProcessor ap = new AggregateProcessor(context, done, corr, as, executorService, true);
-        ap.setCompletionTimeout(100);
+        ap.setCompletionTimeout(500);
         ap.setEagerCheckCompletion(eager);
         ap.setCompletionTimeoutCheckerInterval(10);
         ap.start();
@@ -235,12 +235,12 @@ public class AggregateProcessorTest extends ContextTestSupport {
         e4.getIn().setHeader("id", 123);
 
         ap.process(e1);
-        Thread.sleep(5);
         ap.process(e2);
-        Thread.sleep(10);
         ap.process(e3);
 
-        Thread.sleep(150);
+        await().atMost(5, TimeUnit.SECONDS)
+                .untilAsserted(() -> assertEquals(1, mock.getReceivedCounter()));
+
         ap.process(e4);
 
         assertMockEndpointsSatisfied();
@@ -262,7 +262,7 @@ public class AggregateProcessorTest extends ContextTestSupport {
         AggregationStrategy as = new BodyInAggregatingStrategy();
 
         AggregateProcessor ap = new AggregateProcessor(context, done, corr, as, executorService, true);
-        ap.setCompletionInterval(100);
+        ap.setCompletionInterval(500);
         ap.setCompletionTimeoutCheckerInterval(10);
         ap.start();
 
@@ -286,7 +286,9 @@ public class AggregateProcessorTest extends ContextTestSupport {
         ap.process(e2);
         ap.process(e3);
 
-        Thread.sleep(250);
+        await().atMost(5, TimeUnit.SECONDS)
+                .untilAsserted(() -> assertEquals(1, mock.getReceivedCounter()));
+
         ap.process(e4);
 
         assertMockEndpointsSatisfied();

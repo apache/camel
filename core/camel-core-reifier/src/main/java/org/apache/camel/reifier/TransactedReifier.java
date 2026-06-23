@@ -24,6 +24,7 @@ import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.TransactedDefinition;
 import org.apache.camel.processor.WrapProcessor;
 import org.apache.camel.spi.Policy;
+import org.apache.camel.util.ObjectHelper;
 
 public class TransactedReifier extends AbstractPolicyReifier<TransactedDefinition> {
 
@@ -38,7 +39,7 @@ public class TransactedReifier extends AbstractPolicyReifier<TransactedDefinitio
     @Override
     public Processor createProcessor() throws Exception {
         Policy policy = resolvePolicy();
-        org.apache.camel.util.ObjectHelper.notNull(policy, "policy", this);
+        ObjectHelper.notNull(policy, "policy", this);
 
         // before wrap
         policy.beforeWrap(route, definition);

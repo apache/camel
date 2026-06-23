@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>dsl</artifactId>
-        <version>4.20.0-SNAPSHOT</version>
+        <version>4.21.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-kamelet-main</artifactId>
@@ -62,6 +62,10 @@
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
+            <artifactId>camel-diagram</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
             <artifactId>camel-dsl-modeline</artifactId>
         </dependency>
         <dependency>
@@ -75,6 +79,10 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-xml-io</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-java-io</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>

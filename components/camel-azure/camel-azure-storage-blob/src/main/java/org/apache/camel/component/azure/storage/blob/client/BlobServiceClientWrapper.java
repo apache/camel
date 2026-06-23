@@ -20,9 +20,12 @@ import java.time.Duration;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.azure.core.util.Context;
 import com.azure.storage.blob.BlobServiceClient;
 import com.azure.storage.blob.models.BlobContainerItem;
 import com.azure.storage.blob.models.ListBlobContainersOptions;
+import com.azure.storage.blob.models.TaggedBlobItem;
+import com.azure.storage.blob.options.FindBlobsOptions;
 import org.apache.camel.util.ObjectHelper;
 
 public class BlobServiceClientWrapper {
@@ -37,6 +40,16 @@ public class BlobServiceClientWrapper {
 
     public List<BlobContainerItem> listBlobContainers(final ListBlobContainersOptions options, final Duration timeout) {
         return client.listBlobContainers(options, timeout).stream().collect(Collectors.toList());
+    }
+
+    public List<TaggedBlobItem> findBlobsByTags(final String filter, final Integer maxResultsPerPage, final Duration timeout) {
+        ObjectHelper.notNull(filter, "filter cannot be null");
+
+        final FindBlobsOptions options = new FindBlobsOptions(filter);
+        if (maxResultsPerPage != null) {
+            options.setMaxResultsPerPage(maxResultsPerPage);
+        }
+        return client.findBlobsByTags(options, timeout, Context.NONE).stream().collect(Collectors.toList());
     }
 
     public BlobContainerClientWrapper getBlobContainerClientWrapper(final String containerName) {

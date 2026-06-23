@@ -1,0 +1,51 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schema.ocsf.io/1.8.0/objects/packet",
+  "title": "Packet",
+  "type": "object",
+  "javaType": "org.apache.camel.dataformat.ocsf.model.Packet",
+  "additionalProperties": true,
+  "properties": {
+    "value": {
+      "type": "string",
+      "title": "Value"
+    },
+    "format": {
+      "type": "string",
+      "title": "Format"
+    },
+    "encoding": {
+      "type": "string",
+      "title": "Encoding"
+    },
+    "source": {
+      "type": "string",
+      "title": "Source"
+    },
+    "sequence_number": {
+      "type": "integer",
+      "title": "Sequence Number"
+    },
+    "encoding_id": {
+      "type": "integer",
+      "title": "Encoding ID"
+    },
+    "end_offset": {
+      "type": "integer",
+      "title": "End Offset"
+    },
+    "format_id": {
+      "type": "integer",
+      "title": "Format ID"
+    },
+    "source_id": {
+      "type": "integer",
+      "title": "Source ID"
+    },
+    "start_offset": {
+      "type": "integer",
+      "title": "Start Offset"
+    }
+  },
+  "description": "The Packet object."
+}

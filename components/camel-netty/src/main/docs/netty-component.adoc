@@ -7,8 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
-//Manually maintained attributes
-:camel-spring-boot-name: netty
 
 *Since Camel {since}*
 
@@ -178,6 +176,7 @@ Read further about using <<Netty-NonShareableEncodersOrDecoders,non-shareable en
 The lists of codecs need to be added to the Camel's registry, so they can
 be resolved when the endpoint is created.
 
+._Java-only: Java programmatic registry configuration_
 [source,java]
 ----
 ChannelHandlerFactory lengthDecoder = ChannelHandlerFactories.newLengthFieldBasedFrameDecoder(1048576, 0, 4, 0, 4);
@@ -260,16 +259,38 @@ XML::
 +
 [source,xml]
 ----
-<camelContext id="multiple-netty-codecs-context" xmlns="http://camel.apache.org/schema/spring">
-    <route>
-        <from uri="direct:multiple-codec"/>
-        <to uri="netty:tcp://0.0.0.0:5150?encoders=#encoders&amp;sync=false"/>
-    </route>
-    <route>
-        <from uri="netty:tcp://0.0.0.0:5150?decoders=#length-decoder,#string-decoder&amp;sync=false"/>
-        <to uri="mock:multiple-codec"/>
-    </route>
-</camelContext>
+<route>
+    <from uri="direct:multiple-codec"/>
+    <to uri="netty:tcp://0.0.0.0:5150?encoders=#encoders&amp;sync=false"/>
+</route>
+<route>
+    <from uri="netty:tcp://0.0.0.0:5150?decoders=#length-decoder,#string-decoder&amp;sync=false"/>
+    <to uri="mock:multiple-codec"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:multiple-codec
+      steps:
+        - to:
+            uri: "netty:tcp://0.0.0.0:5150"
+            parameters:
+              encoders: "#encoders"
+              sync: false
+- route:
+    from:
+      uri: "netty:tcp://0.0.0.0:5150"
+      parameters:
+        decoders: "#length-decoder,#string-decoder"
+        sync: false
+      steps:
+        - to:
+            uri: mock:multiple-codec
 ----
 
 ====
@@ -287,19 +308,50 @@ value.
 For instance, the example below will close the channel after it has
 written the bye message back to the client:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
-from("netty:tcp://0.0.0.0:8080").process(new Processor() {
-    public void process(Exchange exchange) throws Exception {
-        String body = exchange.getIn().getBody(String.class);
-        exchange.getOut().setBody("Bye " + body);
-        // some condition that determines if we should close
-        if (close) {
-            exchange.getOut().setHeader(NettyConstants.NETTY_CLOSE_CHANNEL_WHEN_COMPLETE, true);
-        }
-    }
-});
+from("netty:tcp://0.0.0.0:8080")
+    .setBody(simple("Bye ${body}"))
+    // set the CamelNettyCloseChannelWhenComplete header to true to close the channel
+    .setHeader("CamelNettyCloseChannelWhenComplete", constant(true));
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="netty:tcp://0.0.0.0:8080"/>
+  <setBody>
+    <simple>Bye ${body}</simple>
+  </setBody>
+  <!-- set the CamelNettyCloseChannelWhenComplete header to true to close the channel -->
+  <setHeader name="CamelNettyCloseChannelWhenComplete">
+    <constant>true</constant>
+  </setHeader>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+# set the CamelNettyCloseChannelWhenComplete header to true to close the channel
+- route:
+    from:
+      uri: netty:tcp://0.0.0.0:8080
+      steps:
+        - setBody:
+            simple: "Bye ${body}"
+        - setHeader:
+            name: CamelNettyCloseChannelWhenComplete
+            constant: true
+----
+====
 
 [[Netty-Addingcustomchannelpipelinefactoriestogaincompletecontroloveracreatedpipeline]]
 Adding custom channel pipeline factories to gain complete control over a created pipeline
@@ -331,6 +383,7 @@ created
 
 ==== Using custom pipeline factory
 
+._Java-only: Java class definition_
 [source,java]
 ----
 public class SampleServerInitializerFactory extends ServerInitializerFactory {
@@ -351,27 +404,14 @@ public class SampleServerInitializerFactory extends ServerInitializerFactory {
 The custom channel pipeline factory can then be added to the registry
 and instantiated/utilized on a Camel route in the following way
 
+._Java-only: Java programmatic registry and route configuration_
 [source,java]
 ----
 Registry registry = camelContext.getRegistry();
 ServerInitializerFactory factory = new TestServerInitializerFactory();
 registry.bind("spf", factory);
-context.addRoutes(new RouteBuilder() {
-  public void configure() {
-      String netty_ssl_endpoint =
-         "netty:tcp://0.0.0.0:5150?serverInitializerFactory=#spf"
-      String return_string =
-         "When You Go Home, Tell Them Of Us And Say,"
-         + "For Your Tomorrow, We Gave Our Today.";
-
-      from(netty_ssl_endpoint)
-       .process(new Processor() {
-          public void process(Exchange exchange) throws Exception {
-            exchange.getOut().setBody(return_string);
-          }
-       }
-  }
-});
+from("netty:tcp://0.0.0.0:5150?serverInitializerFactory=#spf")
+    .setBody(constant("When You Go Home, Tell Them Of Us And Say, For Your Tomorrow, We Gave Our Today."));
 ----
 
 === Reusing Netty boss and worker thread pools
@@ -410,25 +450,83 @@ Netty producers.
 Then in the Camel routes we can refer to this worker pools by
 configuring the `workerPool` option in the URI as shown below:
 
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("netty:tcp://0.0.0.0:5021?textline=true&sync=true&workerPool=#sharedPool&usingExecutorService=false")
+    .to("log:result");
+----
+
+XML::
++
 [source,xml]
 ----
 <route>
   <from uri="netty:tcp://0.0.0.0:5021?textline=true&amp;sync=true&amp;workerPool=#sharedPool&amp;usingExecutorService=false"/>
   <to uri="log:result"/>
-  ...
 </route>
 ----
 
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: netty:tcp://0.0.0.0:5021
+      parameters:
+        textline: true
+        sync: true
+        workerPool: "#sharedPool"
+        usingExecutorService: false
+      steps:
+        - to:
+            uri: log:result
+----
+====
+
 And if we have another route, we can refer to the shared worker pool:
 
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("netty:tcp://0.0.0.0:5022?textline=true&sync=true&workerPool=#sharedPool&usingExecutorService=false")
+    .to("log:result");
+----
+
+XML::
++
 [source,xml]
 ----
 <route>
   <from uri="netty:tcp://0.0.0.0:5022?textline=true&amp;sync=true&amp;workerPool=#sharedPool&amp;usingExecutorService=false"/>
   <to uri="log:result"/>
-  ...
 </route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: netty:tcp://0.0.0.0:5022
+      parameters:
+        textline: true
+        sync: true
+        workerPool: "#sharedPool"
+        usingExecutorService: false
+      steps:
+        - to:
+            uri: log:result
+----
+====
 
 And so forth.
 
@@ -507,6 +605,7 @@ MacOS/BSD::
 
 Note that Object serialization is not allowed by default, and so a decoder must be configured.
 
+._Java-only: Java annotation and class definition_
 [source,java]
 ----
 @BindToRegistry("decoder")
@@ -519,31 +618,44 @@ public ChannelHandler getDecoder() throws Exception {
     };
 }
 
-RouteBuilder builder = new RouteBuilder() {
-  public void configure() {
-    from("netty:udp://0.0.0.0:5155?sync=true&decoders=#decoder")
-      .process(new Processor() {
-         public void process(Exchange exchange) throws Exception {
-           Poetry poetry = (Poetry) exchange.getIn().getBody();
-           // Process poetry in some way
-           exchange.getOut().setBody("Message received);
-         }
-       }
-    }
-};
+from("netty:udp://0.0.0.0:5155?sync=true&decoders=#decoder")
+    .to("bean:poetryProcessor");
 ----
 
 === A TCP-based Netty consumer endpoint using One-way communication
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
-RouteBuilder builder = new RouteBuilder() {
-  public void configure() {
-       from("netty:tcp://0.0.0.0:5150")
-           .to("mock:result");
-  }
-};
+from("netty:tcp://0.0.0.0:5150")
+    .to("mock:result");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="netty:tcp://0.0.0.0:5150"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: netty:tcp://0.0.0.0:5150
+    steps:
+      - to:
+          uri: mock:result
+----
+====
 
 === An SSL/TCP-based Netty consumer endpoint using Request-Reply communication
 
@@ -559,6 +671,7 @@ The following examples demonstrate how to use the utility with the Netty compone
 [[Netty-Programmaticconfigurationofthecomponent]]
 Programmatic configuration of the component
 
+._Java-only: Java programmatic SSL configuration_
 [source,java]
 ----
 KeyStoreParameters ksp = new KeyStoreParameters();
@@ -599,25 +712,11 @@ Spring DSL based configuration of endpoint
 [[Netty-UsingBasicSSLTLSconfigurationontheJettyComponent]]
 Using Basic SSL/TLS configuration on the Jetty Component
 
+._Java-only: SSL route configuration_
 [source,java]
 ----
-context.addRoutes(new RouteBuilder() {
-  public void configure() {
-      String netty_ssl_endpoint =
-         "netty:tcp://0.0.0.0:5150?sync=true&ssl=true&passphrase=changeit"
-         + "&keyStoreResource=file:src/test/resources/keystore.jks&trustStoreResource=file:src/test/resources/keystore.jks";
-      String return_string =
-         "When You Go Home, Tell Them Of Us And Say,"
-         + "For Your Tomorrow, We Gave Our Today.";
-
-      from(netty_ssl_endpoint)
-       .process(new Processor() {
-          public void process(Exchange exchange) throws Exception {
-            exchange.getOut().setBody(return_string);
-          }
-       }
-  }
-});
+from("netty:tcp://0.0.0.0:5150?sync=true&ssl=true&passphrase=changeit&keyStoreResource=file:src/test/resources/keystore.jks&trustStoreResource=file:src/test/resources/keystore.jks")
+    .setBody(constant("When You Go Home, Tell Them Of Us And Say, For Your Tomorrow, We Gave Our Today."));
 ----
 
 [[Netty-GettingaccesstoSSLSessionandtheclientcertificate]]
@@ -628,9 +727,10 @@ get details about the client certificate. When `ssl=true` then the
 xref:netty-component.adoc[Netty] component will store the `SSLSession` as a
 header on the Camel Message as shown below:
 
+._Java-only: Java SSL session API_
 [source,java]
 ----
-SSLSession session = exchange.getIn().getHeader(NettyConstants.NETTY_SSL_SESSION, SSLSession.class);
+SSLSession session = exchange.getIn().getHeader("CamelNettySSLSession", SSLSession.class);
 // get the first certificate which is client certificate
 javax.security.cert.X509Certificate cert = session.getPeerCertificateChain()[0];
 Principal principal = cert.getSubjectDN();
@@ -650,5 +750,3 @@ enriches the Camel Message with headers having
 details about the client certificate. For example, the subject name is
 readily available in the header `CamelNettySSLClientCertSubjectName`.
 ====
-
-include::spring-boot:partial$starter.adoc[]

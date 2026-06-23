@@ -2,20 +2,19 @@
 :doctitle: OpenAI
 :shortname: openai
 :artifactid: camel-openai
-:description: OpenAI endpoint for chat completion and embeddings.
+:description: OpenAI endpoint for chat completion, embeddings, and audio transcription.
 :since: 4.17
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Only producer is supported
 //Manually maintained attributes
 :group: AI
-:camel-spring-boot-name: openai
 
 *Since Camel {since}*
 
 *{component-header}*
 
-The OpenAI component provides integration with OpenAI and OpenAI-compatible APIs for chat completion and text embeddings using the official openai-java SDK.
+The OpenAI component provides integration with OpenAI and OpenAI-compatible APIs for chat completion, text embeddings, and audio transcription using the official openai-java SDK.
 
 Maven users will need to add the following dependency to their `pom.xml` for this component:
 
@@ -41,6 +40,7 @@ Supported operations:
 * `chat-completion` - Generate chat completions using language models
 * `embeddings` - Generate vector embeddings from text for semantic search and RAG applications
 * `tool-execution` - Execute MCP tool calls from a stored chat completion response (used in manual tool loops)
+* `audio-transcription` - Transcribe audio files to text using speech-to-text models (e.g., Whisper, GPT-4o Transcribe)
 
 // component options: START
 include::partial$component-configure-options.adoc[]
@@ -78,14 +78,48 @@ camel.oauth.azure.token-endpoint=https://login.microsoftonline.com/tenant/oauth2
 camel.oauth.azure.scope=https://cognitiveservices.azure.com/.default
 ----
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:chat")
     .to("openai:chat-completion?model=gpt-4&oauthProfile=azure");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:chat"/>
+  <to uri="openai:chat-completion?model=gpt-4&amp;oauthProfile=azure"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:chat
+      steps:
+        - to:
+            uri: openai:chat-completion
+            parameters:
+              model: gpt-4
+              oauthProfile: azure
+----
+====
+
 MCP servers can also use OAuth independently via per-server `oauthProfile`:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:chat")
@@ -95,6 +129,35 @@ from("direct:chat")
         + "&mcpServer.tools.url=https://mcp.internal/mcp"
         + "&mcpServer.tools.oauthProfile=keycloak");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="direct:chat"/>
+    <to uri="openai:chat-completion?model=gpt-4&amp;oauthProfile=azure&amp;mcpServer.tools.transportType=streamableHttp&amp;mcpServer.tools.url=https://mcp.internal/mcp&amp;mcpServer.tools.oauthProfile=keycloak"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:chat
+      steps:
+        - to:
+            uri: openai:chat-completion
+            parameters:
+              model: gpt-4
+              oauthProfile: azure
+              mcpServer.tools.transportType: streamableHttp
+              mcpServer.tools.url: https://mcp.internal/mcp
+              mcpServer.tools.oauthProfile: keycloak
+----
+====
 
 === Basic Chat Completion with String Input
 
@@ -110,6 +173,20 @@ from("direct:chat")
     .log("Response: ${body}");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:chat"/>
+  <setBody>
+    <constant>What is Apache Camel?</constant>
+  </setBody>
+  <to uri="openai:chat-completion"/>
+  <log message="Response: ${body}"/>
+</route>
+----
+
 YAML::
 +
 [source,yaml]
@@ -122,13 +199,17 @@ YAML::
             uri: openai:chat-completion
             parameters:
               userMessage: What is Apache Camel?
-        - log: "Response: ${body}"
+        - log:
+            message: "Response: ${body}"
 ----
 ====
 
 === File-Backed Prompt with Text File
 
-.Usage example:
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("file:prompts?noop=true")
@@ -136,21 +217,174 @@ from("file:prompts?noop=true")
     .log("Response: ${body}");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="file:prompts?noop=true"/>
+  <to uri="openai:chat-completion"/>
+  <log message="Response: ${body}"/>
+</route>
+----
 
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: file:prompts?noop=true
+      steps:
+        - to:
+            uri: openai:chat-completion
+        - log:
+            message: "Response: ${body}"
+----
+====
 
 === Image File Input with Vision Model
 
-.Usage example:
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("file:images?noop=true")
-    .to("openai:chat-completion?model=gpt-4.1-mini?userMessage=Describe what you see in this image")
+    .to("openai:chat-completion?model=gpt-4.1-mini&userMessage=Describe what you see in this image")
     .log("Response: ${body}");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="file:images?noop=true"/>
+  <to uri="openai:chat-completion?model=gpt-4.1-mini&amp;userMessage=Describe what you see in this image"/>
+  <log message="Response: ${body}"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: file:images?noop=true
+      steps:
+        - to:
+            uri: openai:chat-completion
+            parameters:
+              model: gpt-4.1-mini
+              userMessage: Describe what you see in this image
+        - log:
+            message: "Response: ${body}"
+----
+====
+
+Image input also works with bodies produced by remote file and cloud storage components, such as FTP/SFTP (`WrappedFile`), AWS S3, Azure Blob Storage or MinIO (`byte[]` or `InputStream`). The MIME type is detected from the component's content-type header or the file name:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("aws2-s3:my-bucket")
+    .to("openai:chat-completion?model=gpt-4.1-mini&userMessage=Describe what you see in this image")
+    .log("Response: ${body}");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="aws2-s3:my-bucket"/>
+  <to uri="openai:chat-completion?model=gpt-4.1-mini&amp;userMessage=Describe what you see in this image"/>
+  <log message="Response: ${body}"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: aws2-s3:my-bucket
+      steps:
+        - to:
+            uri: openai:chat-completion
+            parameters:
+              model: gpt-4.1-mini
+              userMessage: Describe what you see in this image
+        - log:
+            message: "Response: ${body}"
+----
+====
+
+When no content-type header is available, set the `CamelOpenAIMediaType` header explicitly:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:image")
+    .setHeader("CamelOpenAIMediaType", constant("image/png"))
+    .setHeader("CamelOpenAIUserMessage", constant("Describe what you see in this image"))
+    .to("openai:chat-completion?model=gpt-4.1-mini")
+    .log("Response: ${body}");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:image"/>
+  <setHeader name="CamelOpenAIMediaType">
+    <constant>image/png</constant>
+  </setHeader>
+  <setHeader name="CamelOpenAIUserMessage">
+    <constant>Describe what you see in this image</constant>
+  </setHeader>
+  <to uri="openai:chat-completion?model=gpt-4.1-mini"/>
+  <log message="Response: ${body}"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:image
+      steps:
+        - setHeader:
+            name: CamelOpenAIMediaType
+            constant: "image/png"
+        - setHeader:
+            name: CamelOpenAIUserMessage
+            constant: "Describe what you see in this image"
+        - to:
+            uri: openai:chat-completion
+            parameters:
+              model: gpt-4.1-mini
+        - log:
+            message: "Response: ${body}"
+----
+====
+
 [NOTE]
 ====
-When using image files, the userMessage is required. Supported image formats are detected by MIME type (e.g., `image/png`, `image/jpeg`, `image/gif`, `image/webp`).
+When using image input, the userMessage is required. Supported image formats are detected by MIME type (e.g., `image/png`, `image/jpeg`, `image/gif`, `image/webp`).
 ====
 
 === Streaming Response
@@ -185,8 +419,9 @@ When `streaming=true`, the component returns an `Iterator<ChatCompletionChunk>` 
               - log:
                   id: log-6722
                   message: ${body}
-            simple:
-              expression: ${body}
+            expression:
+              simple:
+                expression: ${body}
             streaming: true
 ----
 
@@ -194,7 +429,7 @@ When `streaming=true`, the component returns an `Iterator<ChatCompletionChunk>` 
 
 .When `outputClass` is set, the model is instructed to produce JSON matching the given class, but the component returns the raw String. Deserialize the body yourself (e.g., with Camel's Jackson) if you need a typed object.
 
-.Usage example:
+._Java-only: uses Java class definition for `outputClass` schema_
 [source,java]
 ----
 public class Person {
@@ -213,7 +448,10 @@ from("direct:structured")
 
 The `jsonSchema` option instructs the model to return JSON that conforms to the provided schema. The response will be valid JSON but is not automatically validated against the schema:
 
-.Usage example:
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:json-schema")
@@ -223,9 +461,49 @@ from("direct:json-schema")
     .log("JSON response: ${body}");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:json-schema"/>
+  <setBody>
+    <constant>Create a product description</constant>
+  </setBody>
+  <setHeader name="CamelOpenAIJsonSchema">
+    <constant>{"type":"object","properties":{"name":{"type":"string"},"price":{"type":"number"}}}</constant>
+  </setHeader>
+  <to uri="openai:chat-completion"/>
+  <log message="JSON response: ${body}"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:json-schema
+      steps:
+        - setBody:
+            constant: "Create a product description"
+        - setHeader:
+            name: CamelOpenAIJsonSchema
+            constant: '{"type":"object","properties":{"name":{"type":"string"},"price":{"type":"number"}}}'
+        - to:
+            uri: openai:chat-completion
+        - log:
+            message: "JSON response: ${body}"
+----
+====
+
 You can also load the schema from a resource file:
 
-.Usage example:
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:json-schema-resource")
@@ -233,6 +511,39 @@ from("direct:json-schema-resource")
     .to("openai:chat-completion?jsonSchema=resource:classpath:schemas/product.schema.json")
     .log("JSON response: ${body}");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:json-schema-resource"/>
+  <setBody>
+    <constant>Create a product description</constant>
+  </setBody>
+  <to uri="openai:chat-completion?jsonSchema=resource:classpath:schemas/product.schema.json"/>
+  <log message="JSON response: ${body}"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:json-schema-resource
+      steps:
+        - setBody:
+            constant: "Create a product description"
+        - to:
+            uri: openai:chat-completion
+            parameters:
+              jsonSchema: "resource:classpath:schemas/product.schema.json"
+        - log:
+            message: "JSON response: ${body}"
+----
+====
 
 [NOTE]
 ====
@@ -242,6 +553,11 @@ For full schema validation, integrate with the `camel-json-validator` component 
 === Conversation Memory (Per Exchange)
 
 .Usage example:
+
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:conversation")
@@ -253,29 +569,81 @@ from("direct:conversation")
     .log("Second response: ${body}"); // Will remember "Alice"
 ----
 
-=== Using Third-Party or Local OpenAI-Compatible Endpoint
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:conversation"/>
+  <setBody>
+    <constant>My name is Alice</constant>
+  </setBody>
+  <to uri="openai:chat-completion?conversationMemory=true"/>
+  <log message="First response: ${body}"/>
+  <setBody>
+    <constant>What is my name?</constant>
+  </setBody>
+  <to uri="openai:chat-completion?conversationMemory=true"/>
+  <log message="Second response: ${body}"/>
+</route>
+----
 
-.Usage example:
-[source,java]
+YAML::
++
+[source,yaml]
 ----
-from("direct:local")
-    .setBody(constant("Hello from local LLM"))
-    .to("openai:chat-completion?baseUrl=http://localhost:1234/v1&model=local-model")
-    .log("${body}");
+- route:
+    from:
+      uri: direct:conversation
+      steps:
+        - setBody:
+            constant: "My name is Alice"
+        - to:
+            uri: openai:chat-completion
+            parameters:
+              conversationMemory: true
+        - log:
+            message: "First response: ${body}"
+        - setBody:
+            constant: "What is my name?"
+        - to:
+            uri: openai:chat-completion
+            parameters:
+              conversationMemory: true
+        - log:
+            message: "Second response: ${body}"
 ----
+====
 
 == Input Handling
 
 The component accepts the following types of input in the message body:
 
 1. *String*: The prompt text is taken directly from the body
-2. *File*: Used for file-based prompts. The component handles two types of files:
-   * *Text files* (MIME type starting with `text/`): The file content is read and used as the prompt. If userMessage endpoint option or `CamelOpenAIUserMessage` is set, it overrides the file content
+2. *File*, *Path* or *WrappedFile* (the body type produced by the file, FTP, SFTP and SMB components): Used for file-based prompts. The component handles two types of files:
+   * *Text files* (MIME type starting with `text/`, plus `application/xml` and `application/json`): The file content is read and used as the prompt. If userMessage endpoint option or `CamelOpenAIUserMessage` is set, it overrides the file content
    * *Image files* (MIME type starting with `image/`): The file is encoded as a base64 data URL and sent to vision-capable models. The userMessage is **required** when using image files
+3. *byte[]* or *InputStream* (the body types produced by cloud storage components such as AWS S3, Azure Blob Storage, Google Cloud Storage and MinIO): When the detected MIME type is an image, the content is encoded as a base64 data URL and sent to vision-capable models (userMessage is **required**). Otherwise, the content is converted to a String and used as the prompt
+
+=== MIME Type Detection
+
+For `File`, `Path` and locally backed `WrappedFile` bodies, the MIME type is resolved in the following order:
+
+1. The `CamelOpenAIMediaType` header
+2. The `CamelFileContentType` header
+3. The file name extension, using the Camel built-in MIME type table (e.g., `.png`, `.jpg`, `.gif`, `.webp`, `.txt`, `.csv`, `.md`, `.xml`, `.json`)
+
+For `byte[]`, `InputStream` and remote `WrappedFile` bodies, the MIME type is resolved in the following order:
+
+1. The `CamelOpenAIMediaType` header
+2. Cloud storage content-type headers: `CamelAwsS3ContentType`, `CamelAzureStorageBlobContentType`, `CamelAzureStorageDataLakeContentType`, `CamelGoogleCloudStorageContentType`, `CamelMinioContentType`, `CamelIBMCOSContentType`
+3. The `Content-Type` header
+4. The `CamelFileContentType` header
+5. The extension of the file name in the `CamelFileName` header
 
 [NOTE]
 ====
-When using `File` input, the component uses `Files.probeContentType()` to detect the file type. Ensure your system has proper MIME type detection configured.
+Set the `CamelOpenAIMediaType` header to override the MIME type detection, for example when the payload has no content-type metadata or the detection picks the wrong type.
 ====
 
 == Output Handling
@@ -313,7 +681,7 @@ IMPORTANT:
 
 Example of manual conversation history:
 
-.Usage example:
+._Java-only: uses OpenAI SDK `ChatCompletionMessageParam` types_
 [source,java]
 ----
 List<ChatCompletionMessageParam> history = new ArrayList<>();
@@ -337,6 +705,7 @@ When no SSL parameters are set, the default JVM trust store is used.
 
 The component implements `SSLContextParametersAware` and supports Camel's standard `SSLContextParameters` for SSL configuration. When set, `SSLContextParameters` takes precedence over the individual `ssl*` properties (same pattern as `camel-kafka`).
 
+._Java-only: programmatic `SSLContextParameters` configuration_
 [source,java]
 ----
 KeyStoreParameters trustStoreParams = new KeyStoreParameters();
@@ -357,6 +726,7 @@ from("direct:chat")
 
 To use global SSL context parameters for all OpenAI endpoints:
 
+._Java-only: programmatic component configuration_
 [source,java]
 ----
 OpenAIComponent openai = context.getComponent("openai", OpenAIComponent.class);
@@ -402,6 +772,10 @@ YAML::
 
 For two-way authentication, configure both trust store and key store:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:chat")
@@ -414,10 +788,45 @@ from("direct:chat")
         + "&sslKeyPassword=keypass");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:chat"/>
+  <to uri="openai:chat-completion?model=gpt-4&amp;baseUrl=https://my-llm-server:8443/v1&amp;sslTruststoreLocation=/path/to/truststore.jks&amp;sslTruststorePassword=changeit&amp;sslKeystoreLocation=/path/to/keystore.jks&amp;sslKeystorePassword=changeit&amp;sslKeyPassword=keypass"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:chat
+      steps:
+        - to:
+            uri: openai:chat-completion
+            parameters:
+              model: gpt-4
+              baseUrl: https://my-llm-server:8443/v1
+              sslTruststoreLocation: /path/to/truststore.jks
+              sslTruststorePassword: changeit
+              sslKeystoreLocation: /path/to/keystore.jks
+              sslKeystorePassword: changeit
+              sslKeyPassword: keypass
+----
+====
+
 === Disabling Hostname Verification
 
 In development or test environments, hostname verification can be disabled by setting `sslEndpointAlgorithm` to an empty string or `none`:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:chat")
@@ -427,6 +836,35 @@ from("direct:chat")
         + "&sslTruststorePassword=changeit"
         + "&sslEndpointAlgorithm=none");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:chat"/>
+  <to uri="openai:chat-completion?model=gpt-4&amp;baseUrl=https://localhost:8443/v1&amp;sslTruststoreLocation=/path/to/truststore.jks&amp;sslTruststorePassword=changeit&amp;sslEndpointAlgorithm=none"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:chat
+      steps:
+        - to:
+            uri: openai:chat-completion
+            parameters:
+              model: gpt-4
+              baseUrl: https://localhost:8443/v1
+              sslTruststoreLocation: /path/to/truststore.jks
+              sslTruststorePassword: changeit
+              sslEndpointAlgorithm: none
+----
+====
 
 WARNING: Disabling hostname verification is insecure and should only be used in non-production environments.
 
@@ -450,242 +888,14 @@ WARNING: Disabling hostname verification is insecure and should only be used in 
 | `sslEndpointAlgorithm` | String | `https` | Hostname verification algorithm; set to empty or `none` to disable
 |===
 
-== Compatibility
+== Reasoning Models
 
-This component works with any OpenAI API-compatible endpoint by setting the `baseUrl` parameter. This includes:
+Some OpenAI-compatible models (e.g., Qwen3, DeepSeek-R1) return chain-of-thought reasoning in a separate `reasoning_content` field alongside the regular `content` in the API response. The component automatically extracts this field and sets it as the `CamelOpenAIReasoningContent` message header.
 
-- OpenAI official API (`https://api.openai.com/v1`)
-- Local LLM servers (e.g., Ollama, LM Studio, LocalAI)
-- Third-party OpenAI-compatible providers
+This is independent from the inline `<think>...</think>` tag stripping controlled by `stripThinking`. A response can populate both headers simultaneously:
 
-[NOTE]
-====
-When using local or third-party providers, ensure they support the chat completions and/or embeddings API endpoint format. Some providers may have different authentication requirements or API variations.
-====
-
-=== Embedding Models by Provider
-
-[cols="1,2,1"]
-|===
-| Provider | Recommended Model | Dimensions
-
-| OpenAI | `text-embedding-3-small` | 1536 (reducible to 256, 512, 1024)
-| OpenAI | `text-embedding-3-large` | 3072 (reducible)
-| Ollama | `nomic-embed-text` | 768
-| Ollama | `mxbai-embed-large` | 1024
-| Mistral | `mistral-embed` | 1024
-|===
-
-.Example using Ollama for local embeddings:
-[source,yaml]
-----
-- to:
-    uri: openai:embeddings
-    parameters:
-      baseUrl: http://localhost:11434/v1
-      embeddingModel: nomic-embed-text
-----
-
-== Embeddings Operation
-
-The `embeddings` operation generates vector embeddings from text, which can be used for semantic search, similarity comparison, and RAG (Retrieval-Augmented Generation) applications.
-
-=== Basic Embedding
-
-[tabs]
-====
-Java::
-+
-[source,java]
-----
-from("direct:embed")
-    .setBody(constant("What is Apache Camel?"))
-    .to("openai:embeddings?embeddingModel=nomic-embed-text")
-----
-
-YAML::
-+
-[source,yaml]
-----
-- route:
-    from:
-      uri: direct:embed
-      steps:
-        - to:
-            uri: openai:embeddings
-            parameters:
-              embeddingModel: nomic-embed-text
-----
-====
-
-The response body is the embedding vector data:
-
-* Single input: `List<Float>` (a single embedding vector)
-* Batch input: `List<List<Float>>` (one embedding vector per input string)
-
-Additional metadata (model, token usage, vector size, count) is exposed via headers (see `OpenAIConstants`).
-
-=== Batch Embedding
-
-You can embed multiple texts in a single request by passing a `List<String>`:
-
-[source,java]
-----
-from("direct:batch-embed")
-    .setBody(constant(List.of("First text", "Second text", "Third text")))
-    .to("openai:embeddings?embeddingModel=nomic-embed-text")
-    .log("Generated ${header.CamelOpenAIEmbeddingCount} embeddings");
-----
-
-=== Direct Vector Database Integration
-
-For single-input requests, the component returns a raw `List<Float>` embedding vector, enabling direct chaining to vector database components.
-
-==== PostgreSQL + pgvector (Recommended)
-
-Using the xref:pgvector-component.adoc[PGVector] component:
-
-[source,yaml]
-----
-# Index documents in PostgreSQL with pgvector
-- route:
-    from:
-      uri: direct:index
-      steps:
-        - setVariable:
-            name: text
-            simple: "${body}"
-        - to:
-            uri: openai:embeddings
-            parameters:
-              embeddingModel: nomic-embed-text
-        - setHeader:
-            name: CamelPgVectorAction
-            constant: UPSERT
-        - setHeader:
-            name: CamelPgVectorTextContent
-            simple: "${variable.text}"
-        - to:
-            uri: pgvector:documents
-
-# Similarity search
-- route:
-    from:
-      uri: direct:search
-      steps:
-        - to:
-            uri: openai:embeddings
-            parameters:
-              embeddingModel: nomic-embed-text
-        - setHeader:
-            name: CamelPgVectorAction
-            constant: SIMILARITY_SEARCH
-        - setHeader:
-            name: CamelPgVectorQueryTopK
-            constant: 5
-        - to:
-            uri: pgvector:documents
-----
-
-The pgvector component handles table creation, HNSW indexing, upsert with conflict resolution, and similarity search with configurable distance types (cosine, euclidean, inner product). See the xref:pgvector-component.adoc[PGVector component documentation] for details.
-
-For custom table schemas, complex queries (joins, CTEs), or integration with existing PostgreSQL tables, you can use `camel-sql` directly with the pgvector extension:
-
-[source,yaml]
-----
-- to:
-    uri: sql:INSERT INTO documents (content, embedding) VALUES (:#text, :#embedding::vector)
-----
-
-==== Alternative: Dedicated Vector Databases
-
-For specialized vector workloads, you can also use `camel-qdrant`, `camel-weaviate`, `camel-milvus`, or `camel-pinecone`:
-
-=== Similarity Calculation
-
-The component can automatically calculate cosine similarity when a reference embedding is provided:
-
-[source,java]
-----
-List<Float> referenceEmbedding = /* previously computed embedding */;
-
-from("direct:compare")
-    .setBody(constant("New text to compare"))
-    .setHeader("CamelOpenAIReferenceEmbedding", constant(referenceEmbedding))
-    .to("openai:embeddings?embeddingModel=nomic-embed-text")
-    .log("Similarity score: ${header.CamelOpenAISimilarityScore}");
-----
-
-You can also use `SimilarityUtils` directly for manual calculations:
-
-[source,java]
-----
-import org.apache.camel.component.openai.SimilarityUtils;
-
-double similarity = SimilarityUtils.cosineSimilarity(embedding1, embedding2);
-double distance = SimilarityUtils.euclideanDistance(embedding1, embedding2);
-List<Float> normalized = SimilarityUtils.normalize(embedding);
-----
-
-=== Embeddings Output Headers
-
-The following headers are set after an embeddings request:
-
-[cols="1,1,3"]
-|===
-| Header | Type | Description
-
-| `CamelOpenAIEmbeddingResponseModel` | String | The model used for embedding
-| `CamelOpenAIEmbeddingCount` | Integer | Number of embeddings returned
-| `CamelOpenAIEmbeddingVectorSize` | Integer | Dimension of each embedding vector
-| `CamelOpenAIPromptTokens` | Integer | Tokens used in the input
-| `CamelOpenAITotalTokens` | Integer | Total tokens used
-| `CamelOpenAIOriginalText` | String/List | Original input text(s)
-| `CamelOpenAISimilarityScore` | Double | Cosine similarity (if reference embedding provided)
-|===
-
-== MCP Tool Calling (Agentic Loop)
-
-The component supports automatic tool calling via the https://modelcontextprotocol.io[Model Context Protocol (MCP)]. When MCP servers are configured, the component acts as an MCP client: it lists available tools, converts them to OpenAI function-calling format, and runs an agentic loop — the model requests tool calls, the component executes them via MCP, feeds results back, and repeats until the model produces a final text answer.
-
-=== MCP Server Configuration
-
-MCP servers are configured inline on the endpoint URI using the `mcpServer.` prefix pattern. Each server is identified by a name, with sub-properties for transport type, command/URL, and arguments.
-
-==== Streamable HTTP Transport
-
-[source,java]
-----
-from("direct:chat")
-    .to("openai:chat-completion?model=gpt-4"
-        + "&mcpServer.api.transportType=streamableHttp"
-        + "&mcpServer.api.url=http://localhost:9090/mcp");
-----
-
-==== SSE Transport
-
-[source,java]
-----
-from("direct:chat")
-    .to("openai:chat-completion?model=gpt-4"
-        + "&mcpServer.weather.transportType=sse"
-        + "&mcpServer.weather.url=http://localhost:8080");
-----
-
-==== Stdio Transport
-
-[source,java]
-----
-from("direct:chat")
-    .to("openai:chat-completion?model=gpt-4"
-        + "&mcpServer.fs.transportType=stdio"
-        + "&mcpServer.fs.command=npx"
-        + "&mcpServer.fs.args=-y,@modelcontextprotocol/server-filesystem,/tmp");
-----
-
-==== Multiple MCP Servers
-
-Multiple servers can be configured on the same endpoint. Tools from all servers are merged and made available to the model:
+* `CamelOpenAIReasoningContent` — from the API-level `reasoning_content` field
+* `CamelOpenAIThinkingContent` — from inline `<think>` tags in the `content` field (requires `stripThinking=true`)
 
 [tabs]
 ====
@@ -694,12 +904,23 @@ Java::
 [source,java]
 ----
 from("direct:chat")
-    .to("openai:chat-completion?model=gpt-4"
-        + "&mcpServer.fs.transportType=stdio"
-        + "&mcpServer.fs.command=npx"
-        + "&mcpServer.fs.args=-y,@modelcontextprotocol/server-filesystem,/tmp"
-        + "&mcpServer.weather.transportType=sse"
-        + "&mcpServer.weather.url=http://localhost:8080");
+    .to("openai:chat-completion?model=qwen3&stripThinking=true")
+    .log("Answer: ${body}")
+    .log("Reasoning: ${header.CamelOpenAIReasoningContent}")
+    .log("Thinking: ${header.CamelOpenAIThinkingContent}");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:chat"/>
+  <to uri="openai:chat-completion?model=qwen3&amp;stripThinking=true"/>
+  <log message="Answer: ${body}"/>
+  <log message="Reasoning: ${header.CamelOpenAIReasoningContent}"/>
+  <log message="Thinking: ${header.CamelOpenAIThinkingContent}"/>
+</route>
 ----
 
 YAML::
@@ -713,48 +934,24 @@ YAML::
         - to:
             uri: openai:chat-completion
             parameters:
-              model: gpt-4
-              mcpServer.fs.transportType: stdio
-              mcpServer.fs.command: npx
-              mcpServer.fs.args: "-y,@modelcontextprotocol/server-filesystem,/tmp"
-              mcpServer.weather.transportType: sse
-              mcpServer.weather.url: http://localhost:8080
-        - log: "${body}"
+              model: qwen3
+              stripThinking: true
+        - log:
+            message: "Answer: ${body}"
+        - log:
+            message: "Reasoning: ${header.CamelOpenAIReasoningContent}"
+        - log:
+            message: "Thinking: ${header.CamelOpenAIThinkingContent}"
 ----
 ====
 
-=== Agentic Loop Behavior
+NOTE: Reasoning content extraction is supported in non-streaming mode only (both simple and agentic/MCP tool loop paths). Streaming responses do not extract reasoning content.
 
-When the model responds with tool calls, the component automatically:
+=== Mapping Additional Response Fields to Headers
 
-1. Executes each tool call via the corresponding MCP server
-2. Sends the tool results back to the model
-3. Repeats until the model produces a final text response
+The `additionalResponseHeader` option allows mapping any extra field from the API response message into a named Camel header. This is useful for provider-specific fields that are not part of the standard OpenAI response schema.
 
-The `maxToolIterations` option (default: 50) prevents infinite loops. If exceeded, an `IllegalStateException` is thrown.
-
-Set `autoToolExecution=false` to disable the agentic loop and receive raw tool calls in the message body instead:
-
-[source,java]
-----
-from("direct:chat")
-    .to("openai:chat-completion?model=gpt-4"
-        + "&autoToolExecution=false"
-        + "&mcpServer.api.transportType=streamableHttp"
-        + "&mcpServer.api.url=http://localhost:9090/mcp")
-    .log("Tool calls: ${body}"); // body is the raw tool calls list
-----
-
-=== Manual Tool Loop with `tool-execution` Operation
-
-When `autoToolExecution=false`, you can implement your own tool loop using the `openai:tool-execution` operation and Camel's `loopDoWhile` EIP. This gives you full control to add logging, filtering, retry logic, or custom routing between tool calls — without writing any Java code.
-
-The `tool-execution` operation:
-
-* Reads the stored `ChatCompletion` response (requires `storeFullResponse=true` on the chat-completion call)
-* Extracts tool calls and executes them via MCP
-* Rebuilds the conversation history with the proper message chain
-* Clears the body for the next chat-completion call
+The key is the field name in the API response, and the value is the Camel header name to set:
 
 [tabs]
 ====
@@ -763,118 +960,21 @@ Java::
 [source,java]
 ----
 from("direct:chat")
-    // Save the original prompt for the tool-execution operation
-    .setProperty("originalPrompt", body())
-
-    // Initial call: tools are listed but not auto-executed
-    .to("openai:chat-completion?autoToolExecution=false"
-        + "&conversationMemory=true&storeFullResponse=true"
-        + "&mcpServer.api.transportType=streamableHttp"
-        + "&mcpServer.api.url=http://localhost:9090/mcp")
-
-    // Loop while the model requests tool calls
-    .loopDoWhile(header("CamelOpenAIFinishReason").isEqualTo("tool_calls"))
-        // Execute tool calls via MCP
-        .to("openai:tool-execution"
-            + "?mcpServer.api.transportType=streamableHttp"
-            + "&mcpServer.api.url=http://localhost:9090/mcp")
-        // Send updated conversation back to the model
-        .to("openai:chat-completion?autoToolExecution=false"
-            + "&conversationMemory=true&storeFullResponse=true"
-            + "&mcpServer.api.transportType=streamableHttp"
-            + "&mcpServer.api.url=http://localhost:9090/mcp")
-    .end()
-
-    .log("Final answer: ${body}");
+    .to("openai:chat-completion?model=qwen3"
+        + "&additionalResponseHeader.reasoning_content=CamelMyReasoning"
+        + "&additionalResponseHeader.custom_field=CamelMyCustomField")
+    .log("Custom reasoning: ${header.CamelMyReasoning}");
 ----
 
-YAML::
+XML::
 +
-[source,yaml]
+[source,xml]
 ----
-- route:
-    from:
-      uri: direct:chat
-      steps:
-        - setProperty:
-            name: originalPrompt
-            simple: "${body}"
-        - to:
-            uri: openai:chat-completion
-            parameters:
-              autoToolExecution: false
-              conversationMemory: true
-              storeFullResponse: true
-              mcpServer.api.transportType: streamableHttp
-              mcpServer.api.url: http://localhost:9090/mcp
-        - loopDoWhile:
-            simple: "${header.CamelOpenAIFinishReason} == 'tool_calls'"
-            steps:
-              - to:
-                  uri: openai:tool-execution
-                  parameters:
-                    mcpServer.api.transportType: streamableHttp
-                    mcpServer.api.url: http://localhost:9090/mcp
-              - to:
-                  uri: openai:chat-completion
-                  parameters:
-                    autoToolExecution: false
-                    conversationMemory: true
-                    storeFullResponse: true
-                    mcpServer.api.transportType: streamableHttp
-                    mcpServer.api.url: http://localhost:9090/mcp
-        - log: "Final answer: ${body}"
-----
-====
-
-NOTE: The `tool-execution` operation requires the `originalPrompt` exchange property (set via `setProperty` before the first call) and the `CamelOpenAIResponse` exchange property (set by `storeFullResponse=true`).
-
-=== returnDirect
-
-MCP tools can declare `returnDirect=true` in their annotations. When *all* tools invoked in a single batch carry this flag, the component short-circuits: it returns the tool result directly as the exchange body without sending it back to the model for further processing.
-
-This is useful for tools whose output is the definitive answer (e.g., a database lookup) and does not need LLM interpretation.
-
-The `CamelOpenAIMcpReturnDirect` header is set to `true` when this occurs, so downstream processors can distinguish tool-direct responses from LLM-generated ones.
-
-NOTE: Tool execution errors always bypass `returnDirect` — errors are sent back to the model for graceful handling.
-
-=== MCP Tool Call Headers
-
-The following headers are set after the agentic loop completes:
-
-[cols="1,1,3"]
-|===
-| Header | Type | Description
-
-| `CamelOpenAIToolIterations` | Integer | Number of tool call iterations performed
-| `CamelOpenAIMcpToolCalls` | List<String> | Ordered list of tool names called during the loop
-| `CamelOpenAIMcpReturnDirect` | Boolean | `true` if the response came directly from a tool with `returnDirect`
-|===
-
-=== Conversation Memory with MCP Tools
-
-When `conversationMemory=true`, the full tool call chain is stored in the conversation history exchange property (`CamelOpenAIConversationHistory`). This includes:
-
-- Assistant messages containing tool call requests
-- Tool result messages with execution outputs
-- The final assistant text response
-
-This enables multi-turn agentic conversations where the model can reference previous tool interactions across exchanges.
-
-==== Multi-Turn Example
-
-[tabs]
-====
-Java::
-+
-[source,java]
-----
-from("direct:chat")
-    .to("openai:chat-completion?conversationMemory=true"
-        + "&mcpServer.api.transportType=streamableHttp"
-        + "&mcpServer.api.url=http://localhost:9090/mcp")
-    .to("mock:response");
+<route>
+  <from uri="direct:chat"/>
+  <to uri="openai:chat-completion?model=qwen3&amp;additionalResponseHeader.reasoning_content=CamelMyReasoning&amp;additionalResponseHeader.custom_field=CamelMyCustomField"/>
+  <log message="Custom reasoning: ${header.CamelMyReasoning}"/>
+</route>
 ----
 
 YAML::
@@ -888,95 +988,35 @@ YAML::
         - to:
             uri: openai:chat-completion
             parameters:
-              conversationMemory: true
-              mcpServer.api.transportType: streamableHttp
-              mcpServer.api.url: http://localhost:9090/mcp
-        - log: "${body}"
+              model: qwen3
+              additionalResponseHeader.reasoning_content: CamelMyReasoning
+              additionalResponseHeader.custom_field: CamelMyCustomField
+        - log:
+            message: "Custom reasoning: ${header.CamelMyReasoning}"
 ----
 ====
 
-With this route, a multi-turn conversation works as follows:
+String-valued fields are set directly. Non-string fields (numbers, booleans, objects) are converted using `toString()`.
 
-[source,java]
-----
-// Turn 1: the model calls the "add" tool and returns the result
-Exchange turn1 = template.request("direct:chat", e ->
-    e.getIn().setBody("Use the add tool to add 15 and 27"));
-// Response: "The result of adding 15 and 27 is 42."
+NOTE: This maps fields from the response message's additional properties (fields not part of the standard schema). Standard response fields like `content`, `role`, and `tool_calls` are not accessible through this option.
 
-// Turn 2: carry forward the conversation history
-List<?> history = turn1.getProperty("CamelOpenAIConversationHistory", List.class);
-Exchange turn2 = template.request("direct:chat", e -> {
-    e.getIn().setBody("What numbers did you just add?");
-    e.setProperty("CamelOpenAIConversationHistory", history);
-});
-// Response: "I added 15 and 27." — the model remembers the tool interaction
-----
+== Sub-Pages
 
-The conversation history includes the full tool call chain from turn 1 (the assistant's tool call request, the tool result, and the final answer), so in turn 2 the model has complete context of what happened — including which tools were called and what they returned.
+For more details on specific features, see:
 
-NOTE: When `systemMessage` is set and `conversationMemory` is enabled, the conversation history is reset. This allows starting fresh conversations within the same route.
-
-=== MCP Protocol Version
-
-When using the Streamable HTTP transport, the component advertises MCP protocol versions during initialization. By default, the SDK's built-in versions are used. If your MCP server does not support the latest protocol version, you can restrict the advertised versions:
-
-[source,java]
-----
-from("direct:chat")
-    .to("openai:chat-completion?model=gpt-4"
-        + "&mcpServer.api.transportType=streamableHttp"
-        + "&mcpServer.api.url=http://localhost:9090/mcp"
-        + "&mcpProtocolVersions=2024-11-05,2025-03-26,2025-06-18");
-----
-
-=== MCP Connection Recovery
-
-When `mcpReconnect=true` (the default), the component automatically recovers from MCP server connection failures. If a tool call fails with a transport error, the component:
-
-1. Closes the failed connection
-2. Creates a new transport and client using the original server configuration
-3. Re-initializes and re-lists available tools
-4. Retries the tool call once on the new connection
-
-This handles scenarios where an MCP server restarts, a network connection drops, or a stdio subprocess dies. If reconnection fails, the original transport error is propagated.
-
-Set `mcpReconnect=false` to disable automatic recovery:
-
-[source,java]
-----
-from("direct:chat")
-    .to("openai:chat-completion?model=gpt-4"
-        + "&mcpReconnect=false"
-        + "&mcpServer.api.transportType=streamableHttp"
-        + "&mcpServer.api.url=http://localhost:9090/mcp");
-----
-
-=== Error Handling in the Agentic Loop
-
-[cols="1,3"]
-|===
-| Scenario | Behavior
-
-| MCP client initialization failure | Route fails to start (`RuntimeException` during `doStart()`)
-| Tool execution throws an exception | Error is caught, logged as WARN, and sent as tool result text to the model
-| MCP transport error (`mcpReconnect=true`) | Automatic reconnection and retry (once). If retry fails, error is sent to the model
-| MCP `CallToolResult.isError()` is true | Error content is sent as tool result text to the model
-| Tool name not found in any server | `IllegalStateException` is thrown
-| Max iterations exceeded | `IllegalStateException` is thrown with the tool call log
-| Streaming + MCP tools with autoToolExecution | Falls back to non-streaming (logged as INFO)
-|===
+* xref:others:openai-mcp.adoc[MCP Tool Calling] - Model Context Protocol server configuration, agentic loop, streaming, and connection recovery
+* xref:others:openai-providers.adoc[OpenAI-Compatible Providers] - Using Ollama, LM Studio, vLLM, and OpenRouter as alternative backends
+* xref:others:openai-operations.adoc[Embeddings and Audio Operations] - Text embeddings, vector database integration, and audio transcription
 
 == Error Handling
 
 The component may throw the following exceptions:
 
 * `IllegalArgumentException`:
-  ** When an invalid operation is specified (supported: `chat-completion`, `embeddings`)
+  ** When an invalid operation is specified (supported: `chat-completion`, `embeddings`, `tool-execution`, `audio-transcription`)
   ** When message body or user message is missing
   ** When image file is provided without userMessage (chat-completion)
   ** When unsupported file type is provided (only text and image files are supported)
   ** When invalid JSON schema string is provided
 * API-specific exceptions from the OpenAI SDK for network errors, authentication failures, rate limiting, etc.
 
-include::spring-boot:partial$starter.adoc[]

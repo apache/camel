@@ -21,21 +21,21 @@ import org.apache.camel.spi.Metadata;
 public class ElasticSearchRestClientConstant {
 
     @Metadata(description = " ID of the object to index or retrieve or delete", javaType = "String")
-    public static final String ID = "ID";
+    public static final String ID = "CamelElasticsearchId";
 
     @Metadata(description = "The JSON Query to perform for search", javaType = "String")
-    public static final String SEARCH_QUERY = "SEARCH_QUERY";
+    public static final String SEARCH_QUERY = "CamelElasticsearchSearchQuery";
 
     @Metadata(description = "Advanced - The JSON Index Settings and/or Mappings Query to perform to create an index",
               javaType = "String")
-    public static final String INDEX_SETTINGS = "INDEX_SETTINGS";
+    public static final String INDEX_SETTINGS = "CamelElasticsearchIndexSettings";
 
     @Metadata(description = "The Index name", javaType = "String")
-    public static final String INDEX_NAME = "INDEX_NAME";
+    public static final String INDEX_NAME = "CamelElasticsearchIndexName";
 
     @Metadata(description = "The operation to perform",
               javaType = "org.apache.camel.component.elasticsearch.rest.client.ElasticsearchRestClientOperation")
-    public static final String OPERATION = "OPERATION";
+    public static final String OPERATION = "CamelElasticsearchOperation";
 
     public static final int SOCKET_CONNECTION_TIMEOUT = 30000;
     public static final int SNIFFER_INTERVAL_AND_FAILURE_DELAY = 60000;

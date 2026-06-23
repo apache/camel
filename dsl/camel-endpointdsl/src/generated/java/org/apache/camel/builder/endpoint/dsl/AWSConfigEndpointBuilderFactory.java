@@ -591,7 +591,7 @@ public interface AWSConfigEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final AWSConfigHeaderNameBuilder INSTANCE = new AWSConfigHeaderNameBuilder();
+        public static final AWSConfigHeaderNameBuilder INSTANCE = new AWSConfigHeaderNameBuilder();
 
         /**
          * The operation we want to perform.

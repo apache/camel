@@ -50,10 +50,10 @@ public class XMLSecurityDataFormat extends DataFormatDefinition implements Names
               enums = "TRIPLEDES,AES_128,AES_128_GCM,AES_192,AES_192_GCM,AES_256,AES_256_GCM,SEED_128,CAMELLIA_128,CAMELLIA_192,CAMELLIA_256")
     private String xmlCipherAlgorithm;
     @XmlAttribute
-    @Metadata(secret = true)
+    @Metadata(security = "secret")
     private String passPhrase;
     @XmlAttribute
-    @Metadata(label = "advanced", secret = true)
+    @Metadata(label = "advanced", security = "secret")
     private byte[] passPhraseByte;
     @XmlAttribute
     private String secureTag;

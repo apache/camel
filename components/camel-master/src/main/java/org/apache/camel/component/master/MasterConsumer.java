@@ -203,7 +203,7 @@ public class MasterConsumer extends DefaultConsumer implements ResumeAware<Resum
 
                 LOG.info("Leadership taken. Attempt #{} success. Consumer started: {}", leaderTask.iteration(),
                         delegatedEndpoint);
-                return false; // no more attempts
+                return true; // no more attempts
             });
         } finally {
             lock.unlock();

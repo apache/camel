@@ -17,6 +17,7 @@
 package org.apache.camel.component.keycloak.security;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -53,6 +54,7 @@ import org.keycloak.admin.client.resource.RealmResource;
 import org.keycloak.admin.client.resource.UserResource;
 import org.keycloak.representations.idm.ClientRepresentation;
 import org.keycloak.representations.idm.CredentialRepresentation;
+import org.keycloak.representations.idm.ProtocolMapperRepresentation;
 import org.keycloak.representations.idm.RealmRepresentation;
 import org.keycloak.representations.idm.RoleRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
@@ -172,11 +174,33 @@ public class KeycloakTokenIntrospectionIT extends CamelTestSupport {
 
             // Get client secret
             TEST_CLIENT_SECRET = clientResource.getSecret().getValue();
+
+            // Add audience mapper to include this client in the token audience
+            // This is required for Keycloak 26.6.2+ token introspection
+            addAudienceMapper(clientResource);
+
             LOG.info("Created test client: {} with secret for introspection", TEST_CLIENT_ID);
         } else {
             throw new RuntimeException("Failed to create client. Status: " + response.getStatus());
         }
         response.close();
+    }
+
+    private static void addAudienceMapper(ClientResource clientResource) {
+        ProtocolMapperRepresentation audienceMapper
+                = new ProtocolMapperRepresentation();
+        audienceMapper.setName("audience-mapper");
+        audienceMapper.setProtocol("openid-connect");
+        audienceMapper.setProtocolMapper("oidc-audience-mapper");
+
+        Map<String, String> config = new HashMap<>();
+        config.put("included.client.audience", TEST_CLIENT_ID);
+        config.put("access.token.claim", "true");
+        config.put("id.token.claim", "false");
+        audienceMapper.setConfig(config);
+
+        clientResource.getProtocolMappers().createMapper(audienceMapper);
+        LOG.info("Added audience mapper to client: {}", TEST_CLIENT_ID);
     }
 
     private static void createTestRoles() {
@@ -725,8 +749,8 @@ public class KeycloakTokenIntrospectionIT extends CamelTestSupport {
      */
     private String getAccessToken(String username, String password) {
         try (Client client = ClientBuilder.newClient()) {
-            String tokenUrl = keycloakService.getKeycloakServerUrl() + "/realms/" + TEST_REALM_NAME
-                              + "/protocol/openid-connect/token";
+            String serverRealm = keycloakService.serverUrl() + "/realms/" + TEST_REALM_NAME;
+            String tokenUrl = serverRealm + "/protocol/openid-connect/token";
 
             Form form = new Form()
                     .param("grant_type", "password")

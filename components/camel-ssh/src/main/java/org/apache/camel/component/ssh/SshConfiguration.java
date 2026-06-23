@@ -38,9 +38,9 @@ public class SshConfiguration implements Cloneable {
     private String host;
     @UriPath(defaultValue = "" + DEFAULT_SSH_PORT)
     private int port = DEFAULT_SSH_PORT;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String username;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String password;
     @UriParam(label = "consumer")
     private String pollCommand;
@@ -50,7 +50,7 @@ public class SshConfiguration implements Cloneable {
     private String keyType;
     @UriParam(label = "security")
     private String certResource;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String certResourcePassword;
     @UriParam(defaultValue = "30000")
     private long timeout = 30000;

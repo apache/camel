@@ -20,12 +20,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.function.Function;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
+import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.springai.tools.spec.CamelToolExecutorCache;
@@ -120,12 +123,23 @@ public class SpringAiToolsEndpoint extends DefaultEndpoint {
         final SpringAiToolsConsumer springAiToolsConsumer = new SpringAiToolsConsumer(this, processor);
         configureConsumer(springAiToolsConsumer);
 
+        // Get declared parameter names to filter incoming arguments
+        final Set<String> declaredParams;
+        if (parameters != null && !parameters.isEmpty()) {
+            declaredParams = parseParameterMetadata(parameters).keySet();
+        } else {
+            declaredParams = Set.of();
+        }
+
         // Create a function that executes the Camel route
-        java.util.function.Function<java.util.Map<String, Object>, String> function = args -> {
+        Function<Map<String, Object>, String> function = args -> {
             try {
-                org.apache.camel.Exchange exchange = createExchange();
-                // Set arguments as headers
-                for (java.util.Map.Entry<String, Object> entry : args.entrySet()) {
+                Exchange exchange = createExchange();
+                // Set arguments as headers, filtered against declared parameters
+                for (Map.Entry<String, Object> entry : args.entrySet()) {
+                    if (!declaredParams.contains(entry.getKey())) {
+                        continue;
+                    }
                     exchange.getMessage().setHeader(entry.getKey(), entry.getValue());
                 }
 
@@ -149,9 +163,9 @@ public class SpringAiToolsEndpoint extends DefaultEndpoint {
             // Build JSON schema from parameters map
             String inputSchema = buildJsonSchemaFromParameters(parameters);
             builder.inputSchema(inputSchema);
-            builder.inputType(java.util.Map.class);
+            builder.inputType(Map.class);
         } else {
-            builder.inputType(java.util.Map.class);
+            builder.inputType(Map.class);
         }
 
         // Configure tool metadata

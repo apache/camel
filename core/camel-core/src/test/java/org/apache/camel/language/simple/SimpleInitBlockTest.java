@@ -79,6 +79,17 @@ public class SimpleInitBlockTest extends LanguageTestSupport {
             orderId=$sku,total=$sum
             """;
 
+    private static final String INIT6 = """
+            $init{
+              $greeting := ${uppercase('Hello ${body}')};
+              $level := ${header.code > 999 ? 'Gold' : 'Silver'};
+            }init$
+            {
+              "message": "$greeting",
+              "status": "$level"
+            }
+            """;
+
     @Test
     public void testInitBlockExpression() throws Exception {
         exchange.getMessage().setBody("Hello Camel");
@@ -130,6 +141,19 @@ public class SimpleInitBlockTest extends LanguageTestSupport {
         exchange.getMessage().setHeader("lines", "76,34");
 
         assertExpression(exchange, INIT5, "orderId=123,total=210\n");
+    }
+
+    @Test
+    public void testInitBlockExample() throws Exception {
+        exchange.getMessage().setBody("joe");
+        exchange.getMessage().setHeader("code", "456");
+
+        assertExpression(exchange, INIT6, """
+                {
+                  "message": "HELLO JOE",
+                  "status": "Silver"
+                }
+                """);
     }
 
     @Test

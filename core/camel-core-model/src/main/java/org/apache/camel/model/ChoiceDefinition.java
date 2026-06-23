@@ -253,6 +253,16 @@ public class ChoiceDefinition extends NoOutputDefinition<ChoiceDefinition> {
     }
 
     @Override
+    public List<NamedNode> getChildren() {
+        var answer = new ArrayList<NamedNode>();
+        answer.addAll(whenClauses);
+        if (otherwise != null) {
+            answer.add(otherwise);
+        }
+        return answer;
+    }
+
+    @Override
     public List<ProcessorDefinition<?>> getOutputs() {
         var answer = new ArrayList<ProcessorDefinition<?>>();
         for (WhenDefinition when : whenClauses) {

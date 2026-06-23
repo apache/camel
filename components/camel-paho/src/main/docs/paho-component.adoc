@@ -1,14 +1,13 @@
-= Paho Component
+= Paho Component (deprecated)
 :doctitle: Paho
 :shortname: paho
 :artifactid: camel-paho
 :description: Communicate with MQTT message brokers using Eclipse Paho MQTT Client.
 :since: 2.16
-:supportlevel: Stable
+:supportlevel: Stable-deprecated
+:deprecated: *deprecated*
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
-//Manually maintained attributes
-:camel-spring-boot-name: paho
 
 *Since Camel {since}*
 
@@ -55,6 +54,7 @@ include::partial$component-endpoint-headers.adoc[]
 By default, the Camel Paho component operates on the binary payloads
 extracted out of (or put into) the MQTT message:
 
+._Java-only: receiving and sending binary payloads using the Paho component_
 [source,java]
 ----
 // Receive payload
@@ -68,6 +68,7 @@ producerTemplate.sendBody("paho:topic", payload);
 Of course, Camel build-in xref:manual::type-converter.adoc[type conversion API] can perform the automatic data type transformations for you.
 In the example below Camel automatically converts binary payload into `String` (and conversely):
 
+._Java-only: automatic type conversion of payloads_
 [source,java]
 ----
 // Receive payload
@@ -84,36 +85,149 @@ producerTemplate.sendBody("paho:topic", payload);
 For example, the following snippet reads messages from the MQTT broker
 installed on the same host as the Camel router:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("paho:some/queue")
     .to("mock:test");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="paho:some/queue"/>
+  <to uri="mock:test"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: paho:some/queue
+      steps:
+        - to:
+            uri: mock:test
+----
+====
+
 While the snippet below sends a message to the MQTT broker:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:test")
     .to("paho:some/target/queue");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:test"/>
+  <to uri="paho:some/target/queue"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:test
+      steps:
+        - to:
+            uri: paho:some/target/queue
+----
+====
+
 For example, this is how to read messages from the remote MQTT broker:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("paho:some/queue?brokerUrl=tcp://iot.eclipse.org:1883")
     .to("mock:test");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="paho:some/queue?brokerUrl=tcp://iot.eclipse.org:1883"/>
+  <to uri="mock:test"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: paho:some/queue
+      parameters:
+        brokerUrl: "tcp://iot.eclipse.org:1883"
+      steps:
+        - to:
+            uri: mock:test
+----
+====
+
 And here we override the default topic and set to a dynamic topic
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:test")
-    .setHeader(PahoConstants.CAMEL_PAHO_OVERRIDE_TOPIC, simple("${header.customerId}"))
+    .setHeader("CamelPahoOverrideTopic", simple("${header.customerId}"))
     .to("paho:some/target/queue");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="direct:test"/>
+    <setHeader name="CamelPahoOverrideTopic">
+        <simple>${header.customerId}</simple>
+    </setHeader>
+    <to uri="paho:some/target/queue"/>
+</route>
+----
 
-include::spring-boot:partial$starter.adoc[]
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:test
+    steps:
+      - setHeader:
+          name: CamelPahoOverrideTopic
+          simple: "${header.customerId}"
+      - to:
+          uri: paho:some/target/queue
+----
+====

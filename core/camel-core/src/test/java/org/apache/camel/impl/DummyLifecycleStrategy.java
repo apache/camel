@@ -63,22 +63,22 @@ public class DummyLifecycleStrategy extends LifecycleStrategySupport {
     }
 
     @Override
-    public void onServiceAdd(CamelContext context, Service service, org.apache.camel.Route route) {
+    public void onServiceAdd(CamelContext context, Service service, Route route) {
         events.add("onServiceAdd");
     }
 
     @Override
-    public void onServiceRemove(CamelContext context, Service service, org.apache.camel.Route route) {
+    public void onServiceRemove(CamelContext context, Service service, Route route) {
         events.add("onServiceRemove");
     }
 
     @Override
-    public void onRoutesAdd(Collection<org.apache.camel.Route> routes) {
+    public void onRoutesAdd(Collection<Route> routes) {
         events.add("onRoutesAdd");
     }
 
     @Override
-    public void onRoutesRemove(Collection<org.apache.camel.Route> routes) {
+    public void onRoutesRemove(Collection<Route> routes) {
         events.add("onRoutesRemove");
     }
 

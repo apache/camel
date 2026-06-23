@@ -1,54 +1,36 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://schema.ocsf.io/1.7.0/objects/file",
+  "$id": "https://schema.ocsf.io/1.8.0/objects/file",
   "title": "File",
   "type": "object",
   "javaType": "org.apache.camel.dataformat.ocsf.model.File",
   "additionalProperties": true,
   "properties": {
-    "uid": {
-      "type": "string",
-      "title": "Unique ID"
+    "product": {
+      "$ref": "Product.json"
     },
-    "desc": {
-      "type": "string",
-      "title": "Description"
+    "drive_type_id": {
+      "type": "integer",
+      "title": "Drive Type ID"
+    },
+    "tags": {
+      "type": "array",
+      "title": "Tags",
+      "items": {
+        "type": "object",
+        "additionalProperties": true
+      }
+    },
+    "owner": {
+      "$ref": "User.json"
     },
     "drive_type": {
       "type": "string",
       "title": "Drive Type"
     },
-    "encryption_details": {
-      "type": "object",
-      "additionalProperties": true
-    },
-    "internal_name": {
+    "type": {
       "type": "string",
-      "title": "Internal Name"
-    },
-    "accessed_time": {
-      "type": "integer",
-      "existingJavaType": "java.lang.Long",
-      "title": "Accessed Time"
-    },
-    "confidentiality": {
-      "type": "string",
-      "title": "Confidentiality"
-    },
-    "product": {
-      "$ref": "Product.json"
-    },
-    "uri": {
-      "type": "string",
-      "title": "File URI"
-    },
-    "size": {
-      "type": "integer",
-      "title": "Size"
-    },
-    "xattributes": {
-      "type": "object",
-      "additionalProperties": true
+      "title": "Type"
     },
     "hashes": {
       "type": "array",
@@ -61,110 +43,143 @@
       "type": "integer",
       "title": "Attributes"
     },
-    "created_time": {
-      "type": "integer",
-      "existingJavaType": "java.lang.Long",
-      "title": "Created Time"
-    },
-    "tags": {
-      "type": "array",
-      "title": "Tags",
-      "items": {
-        "type": "object",
-        "additionalProperties": true
-      }
-    },
-    "creator": {
-      "$ref": "User.json"
-    },
-    "owner": {
-      "$ref": "User.json"
-    },
     "security_descriptor": {
       "type": "string",
       "title": "Security Descriptor"
     },
-    "volume": {
+    "confidentiality": {
       "type": "string",
-      "title": "Volume"
+      "title": "Confidentiality"
     },
-    "is_system": {
-      "type": "boolean",
-      "title": "System"
-    },
-    "type_id": {
-      "type": "integer",
-      "title": "Type ID"
-    },
-    "path": {
+    "uri": {
       "type": "string",
-      "title": "Path"
-    },
-    "drive_type_id": {
-      "type": "integer",
-      "title": "Drive Type ID"
-    },
-    "version": {
-      "type": "string",
-      "title": "Version"
-    },
-    "confidentiality_id": {
-      "type": "integer",
-      "title": "Confidentiality ID"
-    },
-    "is_encrypted": {
-      "type": "boolean",
-      "title": "Encrypted"
+      "title": "File URI"
     },
     "modified_time": {
       "type": "integer",
       "existingJavaType": "java.lang.Long",
       "title": "Modified Time"
     },
-    "name": {
-      "type": "string",
-      "title": "Name"
-    },
-    "signature": {
-      "type": "object",
-      "additionalProperties": true
-    },
-    "url": {
-      "$ref": "Url.json"
-    },
-    "modifier": {
-      "$ref": "User.json"
-    },
     "is_deleted": {
       "type": "boolean",
       "title": "Deleted"
     },
-    "parent_folder": {
+    "name": {
       "type": "string",
-      "title": "Parent Folder"
-    },
-    "company_name": {
-      "type": "string",
-      "title": "Company Name"
-    },
-    "type": {
-      "type": "string",
-      "title": "Type"
+      "title": "Name"
     },
     "mime_type": {
       "type": "string",
       "title": "MIME type"
     },
+    "signature": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "confidentiality_id": {
+      "type": "integer",
+      "title": "Confidentiality ID"
+    },
+    "creator": {
+      "$ref": "User.json"
+    },
     "is_readonly": {
       "type": "boolean",
       "title": "Read-Only"
+    },
+    "encryption_details": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "volume": {
+      "type": "string",
+      "title": "Volume"
+    },
+    "url": {
+      "$ref": "Url.json"
+    },
+    "parent_folder": {
+      "type": "string",
+      "title": "Parent Folder"
+    },
+    "imported_symbols": {
+      "type": "array",
+      "title": "Imported Symbols",
+      "items": {
+        "type": "string"
+      }
+    },
+    "is_system": {
+      "type": "boolean",
+      "title": "System"
+    },
+    "version": {
+      "type": "string",
+      "title": "Version"
+    },
+    "accessed_time": {
+      "type": "integer",
+      "existingJavaType": "java.lang.Long",
+      "title": "Accessed Time"
+    },
+    "signatures": {
+      "type": "array",
+      "title": "Digital Signatures",
+      "items": {
+        "type": "object",
+        "additionalProperties": true
+      }
+    },
+    "xattributes": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "path": {
+      "type": "string",
+      "title": "Path"
+    },
+    "desc": {
+      "type": "string",
+      "title": "Description"
+    },
+    "type_id": {
+      "type": "integer",
+      "title": "Type ID"
+    },
+    "internal_name": {
+      "type": "string",
+      "title": "Internal Name"
+    },
+    "size": {
+      "type": "integer",
+      "title": "Size"
+    },
+    "modifier": {
+      "$ref": "User.json"
     },
     "ext": {
       "type": "string",
       "title": "File Extension"
     },
+    "created_time": {
+      "type": "integer",
+      "existingJavaType": "java.lang.Long",
+      "title": "Created Time"
+    },
     "accessor": {
       "$ref": "User.json"
+    },
+    "uid": {
+      "type": "string",
+      "title": "Unique ID"
+    },
+    "is_encrypted": {
+      "type": "boolean",
+      "title": "Encrypted"
+    },
+    "company_name": {
+      "type": "string",
+      "title": "Company Name"
     }
   },
   "description": "The File object."

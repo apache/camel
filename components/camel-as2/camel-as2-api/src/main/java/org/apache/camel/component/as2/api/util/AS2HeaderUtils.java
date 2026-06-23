@@ -17,6 +17,7 @@
 package org.apache.camel.component.as2.api.util;
 
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 
 import org.apache.camel.component.as2.api.AS2Header;
@@ -166,7 +167,7 @@ public final class AS2HeaderUtils {
     public static void addAuthorizationHeader(HttpMessage message, String userName, String password, String accessToken) {
         if (userName != null && password != null) {
             message.addHeader(AS2Header.AUTHORIZATION,
-                    ("Basic " + java.util.Base64.getEncoder().encodeToString((userName + ":" + password).getBytes())));
+                    ("Basic " + Base64.getEncoder().encodeToString((userName + ":" + password).getBytes())));
         } else if (accessToken != null) {
             message.addHeader(AS2Header.AUTHORIZATION, "Bearer " + accessToken);
         }

@@ -175,6 +175,11 @@ public class ProcessorDevConsole extends AbstractDevConsole {
                 String ago = TimeUtils.printSince(last.getTime());
                 sb.append(String.format("%n        Since Last Completed: %s", ago));
             }
+            last = mp.getLastExchangeFailureHandledTimestamp();
+            if (last != null) {
+                String ago = TimeUtils.printSince(last.getTime());
+                sb.append(String.format("%n        Since Last Failure Handled: %s", ago));
+            }
             last = mp.getLastExchangeFailureTimestamp();
             if (last != null) {
                 String ago = TimeUtils.printSince(last.getTime());
@@ -306,7 +311,7 @@ public class ProcessorDevConsole extends AbstractDevConsole {
                 jo.put("uri", destination);
             }
 
-            final JsonObject stats = getStatsObject(mp);
+            final JsonObject stats = gatherProcessorStats(mp);
             jo.put("statistics", stats);
         }
     }
@@ -325,7 +330,7 @@ public class ProcessorDevConsole extends AbstractDevConsole {
         return null;
     }
 
-    private static JsonObject getStatsObject(ManagedProcessorMBean mp) {
+    public static JsonObject gatherProcessorStats(ManagedProcessorMBean mp) {
         JsonObject stats = new JsonObject();
         stats.put("idleSince", mp.getIdleSince());
         stats.put("exchangesTotal", mp.getExchangesTotal());
@@ -345,6 +350,10 @@ public class ProcessorDevConsole extends AbstractDevConsole {
         last = mp.getLastExchangeCompletedTimestamp();
         if (last != null) {
             stats.put("lastCompletedExchangeTimestamp", last.getTime());
+        }
+        last = mp.getLastExchangeFailureHandledTimestamp();
+        if (last != null) {
+            stats.put("lastFailureHandledExchangeTimestamp", last.getTime());
         }
         last = mp.getLastExchangeFailureTimestamp();
         if (last != null) {

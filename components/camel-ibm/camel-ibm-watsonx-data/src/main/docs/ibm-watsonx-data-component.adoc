@@ -9,7 +9,6 @@
 :component-header: Only producer is supported
 //Manually maintained attributes
 :group: IBM
-:camel-spring-boot-name: ibm-watsonx-data
 
 *Since Camel {since}*
 
@@ -59,23 +58,81 @@ include::partial$component-endpoint-headers.adoc[]
 
 The component supports authentication via IBM Cloud API Key:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:start")
-    .to("ibm-watsonx-data:myLakehouse?apiKey=YOUR_API_KEY"
-        + "&serviceUrl=https://us-south.lakehouse.cloud.ibm.com/lakehouse/api/v2"
-        + "&operation=listCatalogs");
+    .to("ibm-watsonx-data:myLakehouse?apiKey=YOUR_API_KEY&serviceUrl=https://us-south.lakehouse.cloud.ibm.com/lakehouse/api/v2&operation=listCatalogs");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <to uri="ibm-watsonx-data:myLakehouse?apiKey=YOUR_API_KEY&amp;serviceUrl=https://us-south.lakehouse.cloud.ibm.com/lakehouse/api/v2&amp;operation=listCatalogs"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: ibm-watsonx-data:myLakehouse
+            parameters:
+              apiKey: YOUR_API_KEY
+              serviceUrl: "https://us-south.lakehouse.cloud.ibm.com/lakehouse/api/v2"
+              operation: listCatalogs
+----
+====
 
 OAuth 2.0 Client Credentials grant is also supported when `camel-oauth` is on the classpath:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:start")
-    .to("ibm-watsonx-data:myLakehouse?oauthProfile=ibm"
-        + "&serviceUrl=https://us-south.lakehouse.cloud.ibm.com/lakehouse/api/v2"
-        + "&operation=listCatalogs");
+    .to("ibm-watsonx-data:myLakehouse?oauthProfile=ibm&serviceUrl=https://us-south.lakehouse.cloud.ibm.com/lakehouse/api/v2&operation=listCatalogs");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <to uri="ibm-watsonx-data:myLakehouse?oauthProfile=ibm&amp;serviceUrl=https://us-south.lakehouse.cloud.ibm.com/lakehouse/api/v2&amp;operation=listCatalogs"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: ibm-watsonx-data:myLakehouse
+            parameters:
+              oauthProfile: ibm
+              serviceUrl: "https://us-south.lakehouse.cloud.ibm.com/lakehouse/api/v2"
+              operation: listCatalogs
+----
+====
 
 == Operations
 
@@ -143,51 +200,160 @@ The component supports the following operations:
 
 === List Catalogs
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:listCatalogs")
-    .to("ibm-watsonx-data:lakehouse?apiKey={{ibm.apiKey}}"
-        + "&serviceUrl={{ibm.watsonxdata.url}}"
-        + "&operation=listCatalogs")
+    .to("ibm-watsonx-data:lakehouse?apiKey={{ibm.apiKey}}&serviceUrl={{ibm.watsonxdata.url}}&operation=listCatalogs")
     .log("Catalogs: ${body}");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:listCatalogs"/>
+  <to uri="ibm-watsonx-data:lakehouse?apiKey={{ibm.apiKey}}&amp;serviceUrl={{ibm.watsonxdata.url}}&amp;operation=listCatalogs"/>
+  <log message="Catalogs: ${body}"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:listCatalogs
+      steps:
+        - to:
+            uri: ibm-watsonx-data:lakehouse
+            parameters:
+              apiKey: "{{ibm.apiKey}}"
+              serviceUrl: "{{ibm.watsonxdata.url}}"
+              operation: listCatalogs
+        - log:
+            message: "Catalogs: ${body}"
+----
+====
+
 === List Tables in a Schema
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:listTables")
-    .to("ibm-watsonx-data:lakehouse?apiKey={{ibm.apiKey}}"
-        + "&serviceUrl={{ibm.watsonxdata.url}}"
-        + "&catalogName=my-catalog"
-        + "&schemaName=my-schema"
-        + "&engineId=my-presto-engine"
-        + "&operation=listTables")
+    .to("ibm-watsonx-data:lakehouse?apiKey={{ibm.apiKey}}&serviceUrl={{ibm.watsonxdata.url}}&catalogName=my-catalog&schemaName=my-schema&engineId=my-presto-engine&operation=listTables")
     .log("Tables: ${body}");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:listTables"/>
+  <to uri="ibm-watsonx-data:lakehouse?apiKey={{ibm.apiKey}}&amp;serviceUrl={{ibm.watsonxdata.url}}&amp;catalogName=my-catalog&amp;schemaName=my-schema&amp;engineId=my-presto-engine&amp;operation=listTables"/>
+  <log message="Tables: ${body}"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:listTables
+      steps:
+        - to:
+            uri: ibm-watsonx-data:lakehouse
+            parameters:
+              apiKey: "{{ibm.apiKey}}"
+              serviceUrl: "{{ibm.watsonxdata.url}}"
+              catalogName: my-catalog
+              schemaName: my-schema
+              engineId: my-presto-engine
+              operation: listTables
+        - log:
+            message: "Tables: ${body}"
+----
+====
+
 === Create a Schema
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:createSchema")
     .setHeader("CamelIBMWatsonxDataSchemaName", constant("new_schema"))
     .setHeader("CamelIBMWatsonxDataCustomPath", constant("s3a://my-bucket/new_schema"))
-    .to("ibm-watsonx-data:lakehouse?apiKey={{ibm.apiKey}}"
-        + "&serviceUrl={{ibm.watsonxdata.url}}"
-        + "&catalogName=my-catalog"
-        + "&engineId=my-engine"
-        + "&operation=createSchema")
+    .to("ibm-watsonx-data:lakehouse?apiKey={{ibm.apiKey}}&serviceUrl={{ibm.watsonxdata.url}}&catalogName=my-catalog&engineId=my-engine&operation=createSchema")
     .log("Schema created: ${body}");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:createSchema"/>
+  <setHeader name="CamelIBMWatsonxDataSchemaName">
+    <constant>new_schema</constant>
+  </setHeader>
+  <setHeader name="CamelIBMWatsonxDataCustomPath">
+    <constant>s3a://my-bucket/new_schema</constant>
+  </setHeader>
+  <to uri="ibm-watsonx-data:lakehouse?apiKey={{ibm.apiKey}}&amp;serviceUrl={{ibm.watsonxdata.url}}&amp;catalogName=my-catalog&amp;engineId=my-engine&amp;operation=createSchema"/>
+  <log message="Schema created: ${body}"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:createSchema
+      steps:
+        - setHeader:
+            name: CamelIBMWatsonxDataSchemaName
+            constant: new_schema
+        - setHeader:
+            name: CamelIBMWatsonxDataCustomPath
+            constant: "s3a://my-bucket/new_schema"
+        - to:
+            uri: ibm-watsonx-data:lakehouse
+            parameters:
+              apiKey: "{{ibm.apiKey}}"
+              serviceUrl: "{{ibm.watsonxdata.url}}"
+              catalogName: my-catalog
+              engineId: my-engine
+              operation: createSchema
+        - log:
+            message: "Schema created: ${body}"
+----
+====
+
 === Using Dynamic Operations via Headers
+
+._Java-only: requires Java enum WatsonxDataOperations constant_
 
 [source,java]
 ----
 from("direct:dynamic")
     .setHeader("CamelIBMWatsonxDataOperation", constant(WatsonxDataOperations.listPrestoEngines))
-    .to("ibm-watsonx-data:lakehouse?apiKey={{ibm.apiKey}}"
-        + "&serviceUrl={{ibm.watsonxdata.url}}")
+    .to("ibm-watsonx-data:lakehouse?apiKey={{ibm.apiKey}}&serviceUrl={{ibm.watsonxdata.url}}")
     .log("Engines: ${body}");
 ----

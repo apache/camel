@@ -16,15 +16,24 @@
  */
 package org.apache.camel;
 
+import org.jspecify.annotations.Nullable;
+
 /**
- * Interface to be used for processors that delegate to the real processor
+ * A {@link Processor} that wraps another {@link Processor} and delegates {@link Exchange} processing to it, following
+ * the <em>Decorator</em> pattern.
+ * <p/>
+ * Implementations use this interface to intercept, modify, or enrich exchanges before and after they are forwarded to
+ * the delegate processor.
+ *
+ * @see Processor
  */
 public interface DelegateProcessor extends Processor {
 
     /**
      * Gets the delegated {@link Processor}.
      *
-     * @return the processor we delegate to
+     * @return the processor we delegate to, or <tt>null</tt> if the delegate has not been initialized yet
      */
+    @Nullable
     Processor getProcessor();
 }

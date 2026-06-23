@@ -18,6 +18,7 @@ package org.apache.camel.component.infinispan.remote.protostream;
 
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectOutputStream;
+import java.net.URI;
 
 import com.example.external.NotAllowedSerializable;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -28,8 +29,17 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class DefaultExchangeHolderUtilsTest {
+
+    @Test
+    public void testDefaultFilterContainsGraphShapeLimits() {
+        String filter = DefaultExchangeHolderUtils.DEFAULT_DESERIALIZATION_FILTER;
+        assertTrue(filter.contains("maxdepth="), "Expected maxdepth in filter: " + filter);
+        assertTrue(filter.contains("maxrefs="), "Expected maxrefs in filter: " + filter);
+        assertTrue(filter.contains("maxbytes="), "Expected maxbytes in filter: " + filter);
+    }
 
     @Test
     public void testDeserializeAcceptsDefaultExchangeHolder() {
@@ -53,6 +63,19 @@ public class DefaultExchangeHolderUtilsTest {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         try (ObjectOutputStream oos = new ObjectOutputStream(baos)) {
             oos.writeObject(new NotAllowedSerializable("blocked"));
+        }
+
+        RuntimeException thrown = assertThrows(RuntimeException.class,
+                () -> DefaultExchangeHolderUtils.deserialize(baos.toByteArray()));
+        Throwable cause = thrown.getCause();
+        assertNotNull(cause);
+    }
+
+    @Test
+    public void testDeserializeRejectsJavaNetClass() throws Exception {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        try (ObjectOutputStream oos = new ObjectOutputStream(baos)) {
+            oos.writeObject(URI.create("http://example.com/"));
         }
 
         RuntimeException thrown = assertThrows(RuntimeException.class,

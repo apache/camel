@@ -14,5 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-@jakarta.xml.bind.annotation.XmlSchema(namespace = "baz", elementFormDefault = jakarta.xml.bind.annotation.XmlNsForm.QUALIFIED)
+@XmlSchema(namespace = "baz", elementFormDefault = XmlNsForm.QUALIFIED)
 package org.apache.camel.converter.soap.name.testpackage;
+
+import jakarta.xml.bind.annotation.XmlNsForm;
+import jakarta.xml.bind.annotation.XmlSchema;

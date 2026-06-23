@@ -23,9 +23,9 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.BodyInAggregatingStrategy;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
+import org.junit.jupiter.api.parallel.Isolated;
 
-@DisabledIfSystemProperty(named = "ci.env.name", matches = ".*", disabledReason = "Flaky on Github CI")
+@Isolated
 public class AggregatorWithBatchConsumingIssueTest extends ContextTestSupport {
 
     @Test

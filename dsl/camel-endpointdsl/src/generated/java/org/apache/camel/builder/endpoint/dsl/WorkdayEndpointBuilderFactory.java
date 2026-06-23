@@ -296,7 +296,7 @@ public interface WorkdayEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final WorkdayHeaderNameBuilder INSTANCE = new WorkdayHeaderNameBuilder();
+        public static final WorkdayHeaderNameBuilder INSTANCE = new WorkdayHeaderNameBuilder();
 
         /**
          * The workday URL.

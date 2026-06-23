@@ -221,7 +221,7 @@ public class CronScheduledRoutePolicyTest {
                     from("direct:start")
                             .routeId("test")
                             .routePolicy(policy)
-                            .noAutoStartup()
+                            .autoStartup(false)
                             .to("mock:success");
                 }
             });

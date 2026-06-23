@@ -26,9 +26,9 @@ import java.nio.CharBuffer;
 import java.util.*;
 import java.util.stream.Stream;
 
-import io.krakens.grok.api.Grok;
-import io.krakens.grok.api.GrokCompiler;
-import io.krakens.grok.api.Match;
+import io.whatap.grok.api.Grok;
+import io.whatap.grok.api.GrokCompiler;
+import io.whatap.grok.api.Match;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;

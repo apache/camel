@@ -384,7 +384,7 @@ YAML::
 ----
 ====
 
-If you use Camel Main, Camel Spring Boot, Camel Quarkus or Camel JBang, you can also enable this in `application.properties` such as:
+If you use Camel Main, Camel Spring Boot, Camel Quarkus or Camel CLI, you can also enable this in `application.properties` such as:
 
 [source,properties]
 ----
@@ -617,6 +617,8 @@ format on the classpath. By default, Camel will use `jackson` as the data format
 |`xm` |Binding to/from XML is enabled, and requires `camel-jaxb` or `camel-jacksonxml` on the classpath.
 |`json_xml` |Binding to/from JSON and XML is enabled and requires both data formats to be on the classpath.
 |===
+
+IMPORTANT: In `auto` binding mode, the `consumes` option is used as a *fallback* for format detection when the incoming request has no `Content-Type` header (or the header does not indicate JSON or XML). It does *not* reject requests whose `Content-Type` does not match `consumes`. For example, an endpoint configured with `.consumes("application/json").bindingMode(auto)` will still accept and deserialize an XML request if the client sends `Content-Type: application/xml` and an XML-capable data format (e.g., `camel-jaxb`) is on the classpath. If you need to enforce that the `Content-Type` matches the `consumes` declaration, enable <<Client Request and Response Validation>> with `clientRequestValidation(true)`, which returns HTTP 415 for mismatched content types. Alternatively, use an explicit binding mode (`json` or `xml`) to restrict which data formats are available.
 
 When using `camel-jaxb` for XML bindings, then
 you can use the option `mustBeJAXBElement` to relax the output message
@@ -1028,6 +1030,56 @@ header is set then that value takes precedence over the default value.
 
 You can set multiple options of the same level, so you can, for
 example, configure two component options, and three endpoint options, etc.
+
+=== OAuth Bearer token validation
+
+For HTTP consumer components that support OAuth Bearer token validation, such as
+`platform-http`, `servlet`, `jetty`, `netty-http`, and `undertow`, set the `oauthProfile` endpoint
+option with `endpointProperty`:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+restConfiguration()
+    .component("netty-http")
+    .endpointProperty("oauthProfile", "myprofile");
+----
+XML::
++
+[source,xml]
+----
+<restConfiguration component="netty-http">
+  <endpointProperty key="oauthProfile" value="myprofile"/>
+</restConfiguration>
+----
+YAML::
++
+[source,yaml]
+----
+- restConfiguration:
+    component: netty-http
+    endpointProperty:
+      - key: oauthProfile
+        value: myprofile
+----
+====
+
+When using the default validator implementation, add the xref:components:others:oauth.adoc[camel-oauth]
+component to the application classpath and configure the named profile with `camel.oauth.<profile>.*`
+properties. The OAuth check runs before route processors. Depending on the selected HTTP consumer,
+the transport may already have accepted, decoded, or bound parts of the inbound request.
+
+For valid tokens, route code can read the validation result from the exchange property:
+
+[source,java]
+----
+OAuthTokenValidationResult result = exchange.getProperty(
+    "CamelOAuthTokenValidationResult",
+    OAuthTokenValidationResult.class);
+----
 
 
 == Enabling or disabling Jackson JSON features
@@ -1534,7 +1586,10 @@ YAML::
       - path: "/{id}"
         description: "Find user by id"
         outType: "org.apache.camel.example.rest.User"
-        to: "bean:userService?method=getUser(${header.id})"
+        to:
+          uri: bean:userService
+          parameters:
+            method: "getUser(${header.id})"
         param:
           - name: "id"
             type: "path"
@@ -1581,7 +1636,10 @@ YAML::
     put:
       - description: "Updates or create a user"
         type: "org.apache.camel.example.rest.User"
-        to: "bean:userService?method=updateUser"
+        to:
+          uri: bean:userService
+          parameters:
+            method: updateUser
         param:
           - name: "body"
             type: "body"

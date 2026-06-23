@@ -37,7 +37,7 @@ public class ManagedRouteDumpStatsAsXmlTest extends ManagementTestSupport {
     public void testPerformanceCounterStats() throws Exception {
         // get the stats for the route
         MBeanServer mbeanServer = getMBeanServer();
-        ObjectName on = getCamelObjectName(TYPE_ROUTE, "foo");
+        ObjectName on = getCamelObjectName(TYPE_ROUTE, "foo with < sign");
 
         getMockEndpoint("mock:result").expectedMessageCount(1);
 
@@ -62,8 +62,8 @@ public class ManagedRouteDumpStatsAsXmlTest extends ManagementTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").routeId("foo")
-                        .to("log:foo").id("to-log")
+                from("direct:start").routeId("foo with < sign")
+                        .to("log:foo").id("to-log & me")
                         .delay(100)
                         .to("mock:result").id("to-mock");
             }

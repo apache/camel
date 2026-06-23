@@ -38,7 +38,7 @@ public class InfinispanRemoteConfiguration extends InfinispanConfiguration imple
     private boolean secure;
     @UriParam(label = "common,security")
     private String username;
-    @UriParam(label = "common,security", secret = true)
+    @UriParam(label = "common,security", security = "secret")
     private String password;
     @UriParam(label = "common,security")
     private String saslMechanism;

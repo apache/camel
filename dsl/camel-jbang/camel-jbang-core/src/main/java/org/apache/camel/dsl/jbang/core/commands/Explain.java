@@ -16,31 +16,18 @@
  */
 package org.apache.camel.dsl.jbang.core.commands;
 
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.time.Duration;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-import java.util.function.BiFunction;
-import java.util.stream.Stream;
 
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
-import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.model.EipModel;
 import org.apache.camel.util.FileUtil;
-import org.apache.camel.util.json.JsonArray;
-import org.apache.camel.util.json.JsonObject;
-import org.apache.camel.util.json.Jsoner;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 import picocli.CommandLine.Parameters;
@@ -48,7 +35,7 @@ import picocli.CommandLine.Parameters;
 /**
  * Command to explain Camel routes using AI/LLM services.
  * <p>
- * Supports multiple LLM providers: Ollama, OpenAI, Azure OpenAI, vLLM, LM Studio, LocalAI, etc.
+ * Supports multiple LLM providers: Ollama, OpenAI, Azure OpenAI, Anthropic, Vertex AI, vLLM, LM Studio, LocalAI, etc.
  */
 @Command(name = "explain",
          description = "Explain what a Camel route does using AI/LLM",
@@ -57,7 +44,8 @@ import picocli.CommandLine.Parameters;
                  "%nExamples:",
                  "  camel explain hello.java",
                  "  camel explain hello.yaml --format=markdown",
-                 "  camel explain hello.java --model=gpt-4" })
+                 "  camel explain hello.java --model=gpt-4",
+                 "  camel explain hello.yaml --api-type=anthropic" })
 public class Explain extends CamelCommand {
 
     public static class FormatCompletionCandidates implements Iterable<String> {
@@ -71,10 +59,7 @@ public class Explain extends CamelCommand {
         }
     }
 
-    private static final String DEFAULT_OLLAMA_URL = "http://localhost:11434";
     private static final String DEFAULT_MODEL = "llama3.2";
-    private static final int CONNECT_TIMEOUT_SECONDS = 10;
-    private static final int HEALTH_CHECK_TIMEOUT_SECONDS = 5;
 
     private static final List<String> COMMON_COMPONENTS = Arrays.asList(
             "kafka", "http", "https", "file", "timer", "direct", "seda",
@@ -99,21 +84,6 @@ public class Explain extends CamelCommand {
             "marshal", "unmarshal", "convertBodyTo",
             "enrich", "pollEnrich", "wireTap", "pipeline");
 
-    enum ApiType {
-        ollama((explain, prompts) -> explain.callOllama(prompts[0], prompts[1], prompts[2])),
-        openai((explain, prompts) -> explain.callOpenAiCompatible(prompts[0], prompts[1], prompts[2], prompts[3]));
-
-        private final BiFunction<Explain, String[], String> caller;
-
-        ApiType(BiFunction<Explain, String[], String> caller) {
-            this.caller = caller;
-        }
-
-        String call(Explain explain, String endpoint, String sysPrompt, String userPrompt, String apiKey) {
-            return caller.apply(explain, new String[] { endpoint, sysPrompt, userPrompt, apiKey });
-        }
-    }
-
     @Parameters(description = "Route file(s) to explain", arity = "1..*")
     List<String> files;
 
@@ -122,12 +92,11 @@ public class Explain extends CamelCommand {
     String url;
 
     @Option(names = { "--api-type" },
-            description = "API type: 'ollama' or 'openai' (OpenAI-compatible)",
-            defaultValue = "ollama")
-    ApiType apiType = ApiType.ollama;
+            description = "API type: 'ollama', 'openai' (OpenAI-compatible), or 'anthropic' (Anthropic/Vertex AI)")
+    LlmClient.ApiType apiType;
 
     @Option(names = { "--api-key" },
-            description = "API key for authentication. Also reads OPENAI_API_KEY or LLM_API_KEY env vars")
+            description = "API key for authentication. Also reads ANTHROPIC_API_KEY, OPENAI_API_KEY, or LLM_API_KEY env vars")
     String apiKey;
 
     @Option(names = { "--model" },
@@ -172,27 +141,31 @@ public class Explain extends CamelCommand {
             defaultValue = "true")
     boolean stream = true;
 
-    private final HttpClient httpClient = HttpClient.newBuilder()
-            .connectTimeout(Duration.ofSeconds(CONNECT_TIMEOUT_SECONDS))
-            .build();
-
     public Explain(CamelJBangMain main) {
         super(main);
     }
 
     @Override
     public Integer doCall() throws Exception {
-        String endpoint = detectEndpoint();
-        if (endpoint == null) {
+        LlmClient client = LlmClient.create()
+                .withUrl(url)
+                .withApiType(apiType)
+                .withApiKey(apiKey)
+                .withModel(model)
+                .withTimeout(timeout)
+                .withTemperature(temperature)
+                .withStream(stream)
+                .withPrinter(printer());
+
+        if (!client.detectEndpoint()) {
             printUsageHelp();
             return 1;
         }
 
-        String resolvedApiKey = resolveApiKey();
-        printConfiguration(endpoint, resolvedApiKey);
+        printConfiguration(client);
 
         for (String file : files) {
-            int result = explainRoute(file, endpoint, resolvedApiKey);
+            int result = explainRoute(file, client);
             if (result != 0) {
                 return result;
             }
@@ -200,12 +173,12 @@ public class Explain extends CamelCommand {
         return 0;
     }
 
-    private void printConfiguration(String endpoint, String resolvedApiKey) {
+    private void printConfiguration(LlmClient client) {
         printer().println("LLM Configuration:");
-        printer().println("  URL: " + endpoint);
-        printer().println("  API Type: " + apiType);
-        printer().println("  Model: " + model);
-        printMaskedApiKey(resolvedApiKey);
+        printer().println("  URL: " + (client.url != null ? client.url : "(Vertex AI)"));
+        printer().println("  API Type: " + client.apiType);
+        printer().println("  Model: " + client.model);
+        printMaskedApiKey(client.apiKey);
         printer().println();
     }
 
@@ -224,119 +197,10 @@ public class Explain extends CamelCommand {
         printer().printErr("  1. camel infra run ollama");
         printer().printErr("  2. camel explain my-route.yaml --url=http://localhost:11434");
         printer().printErr("  3. camel explain my-route.yaml --url=https://api.openai.com --api-type=openai --api-key=sk-...");
+        printer().printErr("  4. camel explain my-route.yaml --api-type=anthropic  (uses ANTHROPIC_API_KEY or Vertex AI)");
     }
 
-    private String detectEndpoint() {
-        return tryExplicitUrl()
-                .or(this::tryInfraOllama)
-                .or(this::tryDefaultOllama)
-                .orElse(null);
-    }
-
-    private Optional<String> tryExplicitUrl() {
-        if (url == null || url.isBlank()) {
-            return Optional.empty();
-        }
-        if (isEndpointReachable(url)) {
-            return Optional.of(url);
-        }
-        printer().printErr("Cannot connect to LLM service at: " + url);
-        return Optional.empty();
-    }
-
-    private Optional<String> tryInfraOllama() {
-        try {
-            Map<Long, Path> pids = findOllamaPids();
-            for (Path pidFile : pids.values()) {
-                String baseUrl = readBaseUrlFromPidFile(pidFile);
-                if (baseUrl != null && isEndpointReachable(baseUrl)) {
-                    apiType = ApiType.ollama;
-                    return Optional.of(baseUrl);
-                }
-            }
-        } catch (Exception e) {
-            // ignore
-        }
-        return Optional.empty();
-    }
-
-    private String readBaseUrlFromPidFile(Path pidFile) throws Exception {
-        String json = Files.readString(pidFile);
-        JsonObject jo = (JsonObject) Jsoner.deserialize(json);
-        return jo.getString("baseUrl");
-    }
-
-    private Optional<String> tryDefaultOllama() {
-        if (isEndpointReachable(DEFAULT_OLLAMA_URL)) {
-            apiType = ApiType.ollama;
-            return Optional.of(DEFAULT_OLLAMA_URL);
-        }
-        return Optional.empty();
-    }
-
-    private String resolveApiKey() {
-        if (apiKey != null && !apiKey.isBlank()) {
-            return apiKey;
-        }
-        return Stream.of("OPENAI_API_KEY", "LLM_API_KEY")
-                .map(System::getenv)
-                .filter(k -> k != null && !k.isBlank())
-                .findFirst()
-                .orElse(null);
-    }
-
-    private Map<Long, Path> findOllamaPids() throws Exception {
-        Map<Long, Path> pids = new HashMap<>();
-        Path camelDir = CommandLineHelper.getCamelDir();
-
-        if (!Files.exists(camelDir)) {
-            return pids;
-        }
-
-        try (Stream<Path> fileStream = Files.list(camelDir)) {
-            fileStream
-                    .filter(this::isOllamaPidFile)
-                    .forEach(p -> addPidEntry(pids, p));
-        }
-        return pids;
-    }
-
-    private boolean isOllamaPidFile(Path p) {
-        String name = p.getFileName().toString();
-        return name.startsWith("infra-ollama-") && name.endsWith(".json");
-    }
-
-    private void addPidEntry(Map<Long, Path> pids, Path p) {
-        String name = p.getFileName().toString();
-        String pidStr = name.substring(name.lastIndexOf("-") + 1, name.lastIndexOf('.'));
-        try {
-            pids.put(Long.valueOf(pidStr), p);
-        } catch (NumberFormatException e) {
-            // ignore
-        }
-    }
-
-    private boolean isEndpointReachable(String endpoint) {
-        return tryHealthCheck(endpoint + "/api/tags")
-                || tryHealthCheck(endpoint + "/v1/models")
-                || tryHealthCheck(endpoint);
-    }
-
-    private boolean tryHealthCheck(String healthUrl) {
-        try {
-            HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(healthUrl))
-                    .timeout(Duration.ofSeconds(HEALTH_CHECK_TIMEOUT_SECONDS))
-                    .GET()
-                    .build();
-            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-            return response.statusCode() == 200;
-        } catch (Exception e) {
-            return false;
-        }
-    }
-
-    private int explainRoute(String file, String endpoint, String resolvedApiKey) throws Exception {
+    private int explainRoute(String file, LlmClient client) throws Exception {
         Path path = Path.of(file);
         if (!Files.exists(path)) {
             printer().printErr("File not found: " + file);
@@ -353,7 +217,10 @@ public class Explain extends CamelCommand {
 
         printPromptsIfRequested(sysPrompt, userPrompt);
 
-        String explanation = apiType.call(this, endpoint, sysPrompt, userPrompt, resolvedApiKey);
+        printer().println("Analyzing route with " + client.model + " (" + client.apiType + ")...");
+        printer().println();
+
+        String explanation = client.generate(sysPrompt, userPrompt);
 
         return handleExplanationResult(explanation);
     }
@@ -382,8 +249,6 @@ public class Explain extends CamelCommand {
             printer().printErr("Failed to get explanation from LLM");
             return 1;
         }
-        // With streaming, response was already printed during generation
-        // Without streaming, we need to print it now
         if (!stream) {
             printer().println(explanation);
         }
@@ -494,160 +359,5 @@ public class Explain extends CamelCommand {
             sb.append(Character.toLowerCase(c));
         }
         return sb.toString();
-    }
-
-    String callOllama(String endpoint, String sysPrompt, String userPrompt) {
-        JsonObject request = new JsonObject();
-        request.put("model", model);
-        request.put("prompt", userPrompt);
-        request.put("system", sysPrompt);
-        request.put("stream", stream);
-
-        JsonObject options = new JsonObject();
-        options.put("temperature", temperature);
-        request.put("options", options);
-
-        printer().println("Analyzing route with " + model + " (Ollama)...");
-        printer().println();
-
-        if (stream) {
-            return sendStreamingRequest(endpoint + "/api/generate", request);
-        }
-        JsonObject response = sendRequest(endpoint + "/api/generate", request, null);
-        return response != null ? response.getString("response") : null;
-    }
-
-    String callOpenAiCompatible(String endpoint, String sysPrompt, String userPrompt, String resolvedApiKey) {
-        JsonArray messages = new JsonArray();
-        messages.add(createMessage("system", sysPrompt));
-        messages.add(createMessage("user", userPrompt));
-
-        JsonObject request = new JsonObject();
-        request.put("model", model);
-        request.put("messages", messages);
-        request.put("temperature", temperature);
-
-        String apiUrl = normalizeOpenAiUrl(endpoint);
-
-        printer().println("Analyzing route with " + model + " (OpenAI-compatible)...");
-        printer().println();
-
-        JsonObject response = sendRequest(apiUrl, request, resolvedApiKey);
-        return extractOpenAiContent(response);
-    }
-
-    private JsonObject createMessage(String role, String content) {
-        JsonObject msg = new JsonObject();
-        msg.put("role", role);
-        msg.put("content", content);
-        return msg;
-    }
-
-    private String normalizeOpenAiUrl(String endpoint) {
-        String url = endpoint.endsWith("/") ? endpoint.substring(0, endpoint.length() - 1) : endpoint;
-        if (!url.endsWith("/v1/chat/completions")) {
-            url = url.endsWith("/v1") ? url : url + "/v1";
-            url = url + "/chat/completions";
-        }
-        return url;
-    }
-
-    private String extractOpenAiContent(JsonObject response) {
-        if (response == null) {
-            return null;
-        }
-        JsonArray choices = (JsonArray) response.get("choices");
-        if (choices == null || choices.isEmpty()) {
-            return null;
-        }
-        JsonObject firstChoice = (JsonObject) choices.get(0);
-        JsonObject message = (JsonObject) firstChoice.get("message");
-        return message != null ? message.getString("content") : null;
-    }
-
-    private String sendStreamingRequest(String url, JsonObject body) {
-        try {
-            HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(url))
-                    .timeout(Duration.ofSeconds(timeout))
-                    .header("Content-Type", "application/json")
-                    .POST(HttpRequest.BodyPublishers.ofString(body.toJson()))
-                    .build();
-
-            HttpResponse<Stream<String>> response = httpClient.send(
-                    request, HttpResponse.BodyHandlers.ofLines());
-
-            if (response.statusCode() != 200) {
-                handleErrorStatus(response.statusCode(), "Streaming request failed");
-                return null;
-            }
-
-            StringBuilder fullResponse = new StringBuilder();
-            response.body().forEach(line -> {
-                if (line.isBlank()) {
-                    return;
-                }
-                try {
-                    JsonObject chunk = (JsonObject) Jsoner.deserialize(line);
-                    String text = chunk.getString("response");
-                    if (text != null) {
-                        printer().print(text);
-                        fullResponse.append(text);
-                    }
-                } catch (Exception e) {
-                    // Skip malformed chunks
-                }
-            });
-
-            printer().println();
-            return fullResponse.toString();
-
-        } catch (java.net.http.HttpTimeoutException e) {
-            printer().printErr("\nRequest timed out after " + timeout + " seconds.");
-            return null;
-        } catch (Exception e) {
-            printer().printErr("\nError during streaming: " + e.getMessage());
-            return null;
-        }
-    }
-
-    private JsonObject sendRequest(String url, JsonObject body, String authKey) {
-        try {
-            HttpRequest.Builder builder = HttpRequest.newBuilder()
-                    .uri(URI.create(url))
-                    .timeout(Duration.ofSeconds(timeout))
-                    .header("Content-Type", "application/json")
-                    .POST(HttpRequest.BodyPublishers.ofString(body.toJson()));
-
-            if (authKey != null && !authKey.isBlank()) {
-                builder.header("Authorization", "Bearer " + authKey);
-            }
-
-            HttpResponse<String> response = httpClient.send(builder.build(), HttpResponse.BodyHandlers.ofString());
-
-            if (response.statusCode() == 200) {
-                return (JsonObject) Jsoner.deserialize(response.body());
-            }
-
-            handleErrorStatus(response.statusCode(), response.body());
-            return null;
-
-        } catch (java.net.http.HttpTimeoutException e) {
-            printer().printErr("Request timed out after " + timeout + " seconds.");
-            return null;
-        } catch (Exception e) {
-            printer().printErr("Error calling LLM: " + e.getMessage());
-            return null;
-        }
-    }
-
-    private void handleErrorStatus(int statusCode, String body) {
-        printer().printErr("LLM returned status: " + statusCode);
-        switch (statusCode) {
-            case 401 -> printer().printErr("Authentication failed. Check your API key.");
-            case 404 -> printer().printErr("Model '" + model + "' not found.");
-            case 429 -> printer().printErr("Rate limit exceeded.");
-            default -> printer().printErr(body);
-        }
     }
 }

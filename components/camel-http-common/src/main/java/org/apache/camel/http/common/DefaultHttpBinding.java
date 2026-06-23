@@ -50,6 +50,7 @@ import org.apache.camel.StreamCache;
 import org.apache.camel.attachment.AttachmentMessage;
 import org.apache.camel.attachment.CamelFileDataSource;
 import org.apache.camel.converter.stream.CachedOutputStream;
+import org.apache.camel.http.base.HttpHeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.GZIPHelper;
@@ -91,7 +92,7 @@ public class DefaultHttpBinding implements HttpBinding {
     private boolean mapHttpMessageBody = true;
     private boolean mapHttpMessageHeaders = true;
     private boolean mapHttpMessageFormUrlEncodedBody = true;
-    private HeaderFilterStrategy headerFilterStrategy = new org.apache.camel.http.base.HttpHeaderFilterStrategy();
+    private HeaderFilterStrategy headerFilterStrategy = new HttpHeaderFilterStrategy();
     private String fileNameExtWhitelist;
 
     public DefaultHttpBinding() {

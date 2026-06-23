@@ -40,6 +40,9 @@ public class HL7DataFormat extends DataFormatDefinition {
     @XmlAttribute
     @Metadata(defaultValue = "true", javaType = "java.lang.Boolean")
     private String validate;
+    @XmlAttribute
+    @Metadata(enums = "XML")
+    private String targetFormat;
 
     public HL7DataFormat() {
         super("hl7");
@@ -49,12 +52,14 @@ public class HL7DataFormat extends DataFormatDefinition {
         super(source);
         this.parser = source.parser;
         this.validate = source.validate;
+        this.targetFormat = source.targetFormat;
     }
 
     private HL7DataFormat(Builder builder) {
         this();
         this.parser = builder.parser;
         this.validate = builder.validate;
+        this.targetFormat = builder.targetFormat;
     }
 
     @Override
@@ -86,6 +91,19 @@ public class HL7DataFormat extends DataFormatDefinition {
         this.parser = parser;
     }
 
+    public String getTargetFormat() {
+        return targetFormat;
+    }
+
+    /**
+     * The target format for marshal output and unmarshal result type. By default, marshal encodes to HL7 ER7, and
+     * unmarshal returns a HAPI Message object. If this is set to XML, marshal encodes to HL7 XML, and unmarshal returns
+     * an XML DOM Document.
+     */
+    public void setTargetFormat(String targetFormat) {
+        this.targetFormat = targetFormat;
+    }
+
     /**
      * {@code Builder} is a specific builder for {@link HL7DataFormat}.
      */
@@ -94,6 +112,7 @@ public class HL7DataFormat extends DataFormatDefinition {
 
         private String parser;
         private String validate;
+        private String targetFormat;
 
         /**
          * Whether to validate the HL7 message
@@ -120,6 +139,16 @@ public class HL7DataFormat extends DataFormatDefinition {
          */
         public Builder parser(String parser) {
             this.parser = parser;
+            return this;
+        }
+
+        /**
+         * The target format for marshal output and unmarshal result type. By default, marshal encodes to HL7 ER7, and
+         * unmarshal returns a HAPI Message object. If this is set to XML, marshal encodes to HL7 XML, and unmarshal
+         * returns an XML DOM Document.
+         */
+        public Builder targetFormat(String targetFormat) {
+            this.targetFormat = targetFormat;
             return this;
         }
 

@@ -291,6 +291,40 @@ class KameletTest extends YamlTestSupport {
             MockEndpoint.assertIsSatisfied(context)
     }
 
+    def "kamelet (definition with local bean via bean ref)"() {
+        setup:
+            loadRoutes '''
+                - routeTemplate:
+                    id: "myTemplate"
+                    beans:
+                      - name: "myCounter"
+                        type: java.util.concurrent.atomic.AtomicInteger
+                    from:
+                      uri: "kamelet:source"
+                      steps:
+                        - bean:
+                            ref: "{{myCounter}}"
+                            method: "getAndIncrement"
+                - from:
+                    uri: "direct:start"
+                    steps:
+                      - to: "kamelet:myTemplate"
+                      - to: "mock:result"
+            '''
+
+            withMock('mock:result') {
+                expectedMessageCount 1
+                expectedBodiesReceived '0'
+            }
+        when:
+            withTemplate {
+                to('direct:start').withBody('hello').send()
+            }
+
+        then:
+            MockEndpoint.assertIsSatisfied(context)
+    }
+
     def "kamelet (definition with default parameters)"() {
         setup:
             loadRoutes """
@@ -348,6 +382,37 @@ class KameletTest extends YamlTestSupport {
             withMock('mock:result') {
                 expectedMessageCount 1
                 expectedBodiesReceived 'test'
+            }
+        when:
+            withTemplate {
+                to('direct:start').withBody('hello').send()
+            }
+        then:
+            MockEndpoint.assertIsSatisfied(context)
+    }
+
+    def "kamelet (properties not url encoded)"() {
+        setup:
+            addTemplate('setPayloadWithType') {
+                from('kamelet:source')
+                    .setBody().simple('{{contentType}}')
+                    .to("kamelet:sink")
+            }
+
+            loadRoutes '''
+                - from:
+                    uri: "direct:start"
+                    steps:
+                      - kamelet:
+                          name: "setPayloadWithType"
+                          parameters:
+                            contentType: "application/json"
+                      - to: "mock:result"
+            '''
+
+            withMock('mock:result') {
+                expectedMessageCount 1
+                expectedBodiesReceived 'application/json'
             }
         when:
             withTemplate {

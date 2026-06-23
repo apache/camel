@@ -25,6 +25,7 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.StaticService;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.util.ObjectHelper;
+import org.jspecify.annotations.Nullable;
 
 /**
  * A registry for health checks.
@@ -61,6 +62,7 @@ public interface HealthCheckRegistry extends CamelContextAware, StaticService, I
      *
      * @return either {@link HealthCheck} or {@link HealthCheckRepository}, or <tt>null</tt> if none found.
      */
+    @Nullable
     Object resolveById(String id);
 
     /**
@@ -106,7 +108,7 @@ public interface HealthCheckRegistry extends CamelContextAware, StaticService, I
      * a RouteController could use the registry to decide to restart a route with failing health checks - spring boot
      * could integrate such checks within its health endpoint or make it available only as separate endpoint.
      */
-    static HealthCheckRegistry get(CamelContext context) {
+    static @Nullable HealthCheckRegistry get(@Nullable CamelContext context) {
         return context != null ? context.getCamelContextExtension().getContextPlugin(HealthCheckRegistry.class) : null;
     }
 
@@ -124,13 +126,14 @@ public interface HealthCheckRegistry extends CamelContextAware, StaticService, I
      * Pattern to exclude health checks from being invoked by Camel when checking healths. Multiple patterns can be
      * separated by comma.
      */
+    @Nullable
     String getExcludePattern();
 
     /**
      * Pattern to exclude health checks from being invoked by Camel when checking healths. Multiple patterns can be
      * separated by comma.
      */
-    void setExcludePattern(String excludePattern);
+    void setExcludePattern(@Nullable String excludePattern);
 
     /**
      * Whether the given health check has been excluded

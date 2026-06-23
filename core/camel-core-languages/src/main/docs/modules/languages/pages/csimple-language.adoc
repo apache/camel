@@ -7,9 +7,6 @@
 :supportlevel: Stable-deprecated
 :deprecated: *deprecated*
 :tabs-sync-option:
-//Manually maintained attributes
-:camel-spring-boot-name: core
-:starter-artifactid: camel-core-starter
 
 *Since Camel {since}*
 
@@ -245,6 +242,10 @@ echo()=${bodyAs(String)} ${bodyAs(String)}
 
 Which allows to use _echo()_ in the csimple language script such as:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:hello")
@@ -252,8 +253,37 @@ from("direct:hello")
     .log("You said ${body}");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:hello"/>
+  <transform>
+    <csimple>Hello echo()</csimple>
+  </transform>
+  <log message="You said ${body}"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:hello
+      steps:
+        - transform:
+            csimple: "Hello echo()"
+        - log:
+            message: "You said ${body}"
+----
+====
+
 The _echo()_ alias will be replaced with its value resulting in a script as:
 
+._Java-only: expanded echo() alias_
 [source,java]
 ----
     .transform(csimple("Hello ${bodyAs(String)} ${bodyAs(String)}"))

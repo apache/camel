@@ -25,7 +25,10 @@ import org.apache.camel.dsl.jbang.core.common.VersionHelper;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "get", description = "Displays current Camel version", sortOptions = false,
-                     showDefaultValues = true)
+                     showDefaultValues = true,
+                     footer = {
+                             "%nExamples:",
+                             "  camel version get" })
 public class VersionGet extends CamelCommand {
 
     @CommandLine.Option(names = { "--global" }, description = "Use global or local configuration")
@@ -44,7 +47,7 @@ public class VersionGet extends CamelCommand {
 
         CamelCatalog catalog = new DefaultCamelCatalog();
         String v = catalog.getCatalogVersion();
-        printer().println("Camel JBang version: " + v);
+        printer().println("Camel CLI version: " + v);
 
         CommandLineHelper.loadProperties(properties -> {
             String uv = properties.getProperty("camel-version");

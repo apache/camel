@@ -36,19 +36,19 @@ public class DropboxConfiguration {
 
     //dropbox auth options
     @UriParam
-    @Metadata(label = "security", required = true, secret = true)
+    @Metadata(label = "security", required = true, security = "secret")
     private String accessToken;
     @UriParam
-    @Metadata(label = "security", required = true, secret = true)
+    @Metadata(label = "security", required = true, security = "secret")
     private Long expireIn;
     @UriParam
-    @Metadata(label = "security", required = true, secret = true)
+    @Metadata(label = "security", required = true, security = "secret")
     private String refreshToken;
     @UriParam
-    @Metadata(label = "security", required = true, secret = true)
+    @Metadata(label = "security", required = true, security = "secret")
     private String apiKey;
     @UriParam
-    @Metadata(label = "security", required = true, secret = true)
+    @Metadata(label = "security", required = true, security = "secret")
     private String apiSecret;
 
     //local path to put files

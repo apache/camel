@@ -20,7 +20,7 @@ import java.io.IOException;
 
 import javax.annotation.processing.Filer;
 
-import com.squareup.javapoet.JavaFile;
+import com.palantir.javapoet.JavaFile;
 import io.swagger.v3.oas.models.OpenAPI;
 
 final class FilerGenerator extends RestDslSourceCodeGenerator<Filer> {

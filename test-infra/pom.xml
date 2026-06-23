@@ -21,7 +21,7 @@
     <parent>
         <artifactId>camel-parent</artifactId>
         <groupId>org.apache.camel</groupId>
-        <version>4.20.0-SNAPSHOT</version>
+        <version>4.21.0-SNAPSHOT</version>
         <relativePath>../parent</relativePath>
     </parent>
 
@@ -99,6 +99,7 @@
         <module>camel-test-infra-ibmmq</module>
         <module>camel-test-infra-docling</module>
         <module>camel-test-infra-iggy</module>
+        <module>camel-test-infra-jaeger</module>
         <module>camel-test-infra-mcp-everything</module>
         <module>camel-test-infra-all</module>
     </modules>

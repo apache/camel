@@ -19,19 +19,15 @@ package org.apache.camel.component.grok;
 import java.util.List;
 import java.util.Map;
 
-import io.krakens.grok.api.exception.GrokException;
-import org.apache.camel.CamelExecutionException;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.test.junit6.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class GrokOptionalOptionsTest extends CamelTestSupport {
@@ -40,23 +36,19 @@ public class GrokOptionalOptionsTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                DataFormat grokFlattenedTrue = new GrokDataFormat("%{INT:i} %{INT:i}")
-                        .setFlattened(true);
-                DataFormat grokFlattenedFalse = new GrokDataFormat("%{INT:i} %{INT:i}")
-                        .setFlattened(false);
+                DataFormat grokMultipleInt = new GrokDataFormat("%{INT:i:integer} %{INT:j:integer}");
 
                 DataFormat grokNamedOnlyTrue = new GrokDataFormat("%{URI:website}")
                         .setNamedOnly(true);
                 DataFormat grokNamedOnlyFalse = new GrokDataFormat("%{URI:website}")
                         .setNamedOnly(false);
 
-                DataFormat grokAllowMultipleMatchesPerLineTrue = new GrokDataFormat("%{INT:i}")
+                DataFormat grokAllowMultipleMatchesPerLineTrue = new GrokDataFormat("%{INT:i:integer}")
                         .setAllowMultipleMatchesPerLine(true);
-                DataFormat grokAllowMultipleMatchesPerLineFalse = new GrokDataFormat("%{INT:i}")
+                DataFormat grokAllowMultipleMatchesPerLineFalse = new GrokDataFormat("%{INT:i:integer}")
                         .setAllowMultipleMatchesPerLine(false);
 
-                from("direct:flattenedTrue").unmarshal(grokFlattenedTrue);
-                from("direct:flattenedFalse").unmarshal(grokFlattenedFalse);
+                from("direct:multipleInt").unmarshal(grokMultipleInt);
                 from("direct:namedOnlyTrue").unmarshal(grokNamedOnlyTrue);
                 from("direct:namedOnlyFalse").unmarshal(grokNamedOnlyFalse);
                 from("direct:allowMultipleMatchesPerLineTrue").unmarshal(grokAllowMultipleMatchesPerLineTrue);
@@ -69,16 +61,15 @@ public class GrokOptionalOptionsTest extends CamelTestSupport {
     @Test
     @SuppressWarnings("unchecked")
     public void testFlattened() {
-        Map<String, Object> flattenedFalse = template.requestBody("direct:flattenedFalse", "123 456", Map.class);
-        assertNotNull(flattenedFalse);
-        assertTrue(flattenedFalse.containsKey("i"));
-        assertTrue(flattenedFalse.get("i") instanceof List);
-        assertEquals("123", ((List) flattenedFalse.get("i")).get(0));
-        assertEquals("456", ((List) flattenedFalse.get("i")).get(1));
+        Map<String, Object> multipleInt = template.requestBody("direct:multipleInt", "123 456", Map.class);
+        assertNotNull(multipleInt);
+        assertTrue(multipleInt.containsKey("i"));
+        assertTrue(multipleInt.get("i") instanceof Integer);
+        assertEquals(123, multipleInt.get("i"));
 
-        CamelExecutionException e = assertThrows(CamelExecutionException.class,
-                () -> template.requestBody("direct:flattenedTrue", "1 2"));
-        assertIsInstanceOf(GrokException.class, e.getCause());
+        assertTrue(multipleInt.containsKey("j"));
+        assertTrue(multipleInt.get("j") instanceof Integer);
+        assertEquals(456, multipleInt.get("j"));
     }
 
     @Test
@@ -110,9 +101,9 @@ public class GrokOptionalOptionsTest extends CamelTestSupport {
                 List.class);
         assertNotNull(allowMultipleMatchesPerLineTrue);
         assertEquals(3, allowMultipleMatchesPerLineTrue.size());
-        assertEquals("1", allowMultipleMatchesPerLineTrue.get(0).get("i"));
-        assertEquals("2", allowMultipleMatchesPerLineTrue.get(1).get("i"));
-        assertEquals("3", allowMultipleMatchesPerLineTrue.get(2).get("i"));
+        assertEquals(1, allowMultipleMatchesPerLineTrue.get(0).get("i"));
+        assertEquals(2, allowMultipleMatchesPerLineTrue.get(1).get("i"));
+        assertEquals(3, allowMultipleMatchesPerLineTrue.get(2).get("i"));
 
         List<Map<String, Object>> allowMultipleMatchesPerLineFalse = template.requestBody(
                 "direct:allowMultipleMatchesPerLineFalse",
@@ -120,8 +111,8 @@ public class GrokOptionalOptionsTest extends CamelTestSupport {
                 List.class);
         assertNotNull(allowMultipleMatchesPerLineFalse);
         assertEquals(2, allowMultipleMatchesPerLineFalse.size());
-        assertEquals("1", allowMultipleMatchesPerLineFalse.get(0).get("i"));
-        assertEquals("3", allowMultipleMatchesPerLineFalse.get(1).get("i"));
+        assertEquals(1, allowMultipleMatchesPerLineFalse.get(0).get("i"));
+        assertEquals(3, allowMultipleMatchesPerLineFalse.get(1).get("i"));
 
     }
 }

@@ -41,8 +41,15 @@ public class ResponseBuilder {
     }
 
     public String createSimpleTextResponse(String content) throws Exception {
+        return createSimpleTextResponse(content, null);
+    }
+
+    public String createSimpleTextResponse(String content, String reasoningContent) throws Exception {
         Map<String, Object> responseMessage = createBaseMessage();
         responseMessage.put("content", content);
+        if (reasoningContent != null) {
+            responseMessage.put("reasoning_content", reasoningContent);
+        }
 
         Map<String, Object> choice = createBaseChoice("stop", responseMessage);
         Map<String, Object> chatCompletion = createBaseChatCompletion(choice);
@@ -61,7 +68,9 @@ public class ResponseBuilder {
         return objectMapper.writeValueAsString(chatCompletion);
     }
 
-    public String createFinalToolResponse(JsonNode messagesNode, String fallbackContent, String toolContentResponse)
+    public String createFinalToolResponse(
+            JsonNode messagesNode, String fallbackContent, String toolContentResponse,
+            String reasoningContent)
             throws Exception {
         Map<String, Object> responseMessage = createBaseMessage();
 
@@ -75,6 +84,9 @@ public class ResponseBuilder {
             content = extractLastToolContent(messagesNode).orElse("All tools processed");
         }
         responseMessage.put("content", content);
+        if (reasoningContent != null) {
+            responseMessage.put("reasoning_content", reasoningContent);
+        }
 
         Map<String, Object> choice = createBaseChoice("stop", responseMessage);
         Map<String, Object> chatCompletion = createBaseChatCompletion(choice);
@@ -84,7 +96,7 @@ public class ResponseBuilder {
     }
 
     public String createFinalToolResponse(JsonNode messagesNode, String fallbackContent) throws Exception {
-        return createFinalToolResponse(messagesNode, fallbackContent, null);
+        return createFinalToolResponse(messagesNode, fallbackContent, null, null);
     }
 
     public String createErrorResponse(int statusCode, String errorMessage, HttpExchange exchange) {

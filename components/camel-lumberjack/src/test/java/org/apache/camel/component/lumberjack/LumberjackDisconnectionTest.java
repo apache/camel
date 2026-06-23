@@ -25,12 +25,10 @@ import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.parallel.Isolated;
 
 import static org.apache.camel.test.junit6.TestSupport.assertCollectionSize;
@@ -40,17 +38,18 @@ import static org.apache.camel.test.junit6.TestSupport.assertCollectionSize;
               disabledReason = "This test does not run reliably on multiple platforms (see CAMEL-21438)")
 @Isolated
 public class LumberjackDisconnectionTest extends CamelTestSupport {
-    @RegisterExtension
-    AvailablePortFinder.Port port = AvailablePortFinder.find();
 
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                // Lumberjack configured with something that throws an exception
-                from("lumberjack:0.0.0.0:" + port.getPort()).process(new ErrorProcessor()).to("mock:output");
+                from("lumberjack:0.0.0.0:0").routeId("lumberjack").process(new ErrorProcessor()).to("mock:output");
             }
         };
+    }
+
+    private int getActualPort() {
+        return ((LumberjackConsumer) context.getRoute("lumberjack").getConsumer()).getLocalPort();
     }
 
     @Test
@@ -64,7 +63,7 @@ public class LumberjackDisconnectionTest extends CamelTestSupport {
         List<Integer> windows = Arrays.asList(15, 10);
 
         // When sending messages
-        List<Integer> responses = LumberjackUtil.sendMessages(port.getPort(), null, windows, false);
+        List<Integer> responses = LumberjackUtil.sendMessages(getActualPort(), null, windows, false);
 
         // Then we should have the messages we're expecting
         mock.assertIsSatisfied();

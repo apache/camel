@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.DynamicRouter;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
@@ -68,7 +69,7 @@ public class DynamicRouterAnnotationTest extends ContextTestSupport {
     // START SNIPPET: e2
     public static class MyBean {
 
-        @org.apache.camel.DynamicRouter
+        @DynamicRouter
         public String dynamicRouter(String body) {
             bodies.add(body);
             invoked++;

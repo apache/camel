@@ -7,8 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
-//Manually maintained attributes
-:camel-spring-boot-name: mongodb
 
 *Since Camel {since}*
 
@@ -48,28 +46,27 @@ Maven users will need to add the following dependency to their `pom.xml`
 for this component:
 
 [source,xml]
-------------------------------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-mongodb</artifactId>
     <version>x.y.z</version>
     <!-- use the same version as your Camel core version -->
 </dependency>
-------------------------------------------------------------
+----
 
 == URI formats
 
----------------------------------------------------------------------------------------------------------------
+----
 mongodb:connectionBean?database=databaseName&collection=collectionName&operation=operationName[&moreOptions...]
 mongodb:dummy?hosts=hostnames&database=databaseName&collection=collectionName&operation=operationName[&moreOptions...]
----------------------------------------------------------------------------------------------------------------
+----
 
 // component options: START
 include::partial$component-configure-options.adoc[]
 include::partial$component-endpoint-options.adoc[]
 include::partial$component-endpoint-headers.adoc[]
 // component options: END
-
 
 
 == Usage
@@ -84,7 +81,7 @@ Since mongo java driver 3, the WriteConcern and readPreference options have not 
 They are defined in the mongoClient object:
 
 [source,xml]
-----------------------------------------------------------------------------------------------------------------------------------
+----
 <beans xmlns="http://www.springframework.org/schema/beans"
 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
 xmlns:context="http://www.springframework.org/schema/context"
@@ -100,7 +97,7 @@ xsi:schemaLocation="http://www.springframework.org/schema/context
     <mongo:client-options write-concern="NORMAL" />
   </mongo:mongo-client>
 </beans>
-----------------------------------------------------------------------------------------------------------------------------------
+----
 
 === MongoDB operations - producer endpoints
 
@@ -115,22 +112,93 @@ http://bsonspec.org/spec.html[http://bsonspec.org/spec.html]
 and
 http://www.mongodb.org/display/DOCS/Java+Types[http://www.mongodb.org/display/DOCS/Java+Types].
 
+[tabs]
+====
+Java::
++
 [source,java]
-------------------------------------------------------------------------------
+----
 from("direct:findById")
     .to("mongodb:myDb?database=flights&collection=tickets&operation=findById")
     .to("mock:resultFindById");
-------------------------------------------------------------------------------
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:findById"/>
+  <to uri="mongodb:myDb?database=flights&amp;collection=tickets&amp;operation=findById"/>
+  <to uri="mock:resultFindById"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:findById
+      steps:
+        - to:
+            uri: mongodb:myDb
+            parameters:
+              database: flights
+              collection: tickets
+              operation: findById
+        - to:
+            uri: mock:resultFindById
+----
+====
 
 Please note that the default _id is treated by Mongo as and `ObjectId` type, so you may need to convert it properly.
 
+[tabs]
+====
+Java::
++
 [source,java]
-------------------------------------------------------------------------------
+----
 from("direct:findById")
     .convertBodyTo(ObjectId.class)
     .to("mongodb:myDb?database=flights&collection=tickets&operation=findById")
     .to("mock:resultFindById");
-------------------------------------------------------------------------------
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:findById"/>
+  <convertBodyTo type="org.bson.types.ObjectId"/>
+  <to uri="mongodb:myDb?database=flights&amp;collection=tickets&amp;operation=findById"/>
+  <to uri="mock:resultFindById"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:findById
+      steps:
+        - convertBodyTo:
+            type: org.bson.types.ObjectId
+        - to:
+            uri: mongodb:myDb
+            parameters:
+              database: flights
+              collection: tickets
+              operation: findById
+        - to:
+            uri: mock:resultFindById
+----
+====
 
 [TIP]
 ====
@@ -152,22 +220,58 @@ Create query selectors using the `Filters` provided by the MongoDB Driver.
 
 ====== Example without a query selector (returns the first document in a collection)
 
+[tabs]
+====
+Java::
++
 [source,java]
-------------------------------------------------------------------------------------
+----
 from("direct:findOneByQuery")
     .to("mongodb:myDb?database=flights&collection=tickets&operation=findOneByQuery")
     .to("mock:resultFindOneByQuery");
-------------------------------------------------------------------------------------
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:findOneByQuery"/>
+  <to uri="mongodb:myDb?database=flights&amp;collection=tickets&amp;operation=findOneByQuery"/>
+  <to uri="mock:resultFindOneByQuery"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:findOneByQuery
+      steps:
+        - to:
+            uri: mongodb:myDb
+            parameters:
+              database: flights
+              collection: tickets
+              operation: findOneByQuery
+        - to:
+            uri: mock:resultFindOneByQuery
+----
+====
 
 ====== Example with a query selector (returns the first matching document in a collection):
 
+._Java-only: requires Bson Filters object_
+
 [source,java]
-------------------------------------------------------------------------------------
+----
 from("direct:findOneByQuery")
-    .setHeader(MongoDbConstants.CRITERIA, constant(Filters.eq("name", "Raul Kripalani")))
+    .setHeader("CamelMongoDbCriteria", constant(Filters.eq("name", "Raul Kripalani")))
     .to("mongodb:myDb?database=flights&collection=tickets&operation=findOneByQuery")
     .to("mock:resultFindOneByQuery");
-------------------------------------------------------------------------------------
+----
 
 [TIP]
 ====
@@ -189,33 +293,71 @@ See <<Type conversions>> for more info.
 
 ====== Example without a query selector (returns all documents in a collection)
 
+[tabs]
+====
+Java::
++
 [source,java]
------------------------------------------------------------------------------
+----
 from("direct:findAll")
     .to("mongodb:myDb?database=flights&collection=tickets&operation=findAll")
     .to("mock:resultFindAll");
------------------------------------------------------------------------------
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:findAll"/>
+  <to uri="mongodb:myDb?database=flights&amp;collection=tickets&amp;operation=findAll"/>
+  <to uri="mock:resultFindAll"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:findAll
+      steps:
+        - to:
+            uri: mongodb:myDb
+            parameters:
+              database: flights
+              collection: tickets
+              operation: findAll
+        - to:
+            uri: mock:resultFindAll
+----
+====
 
 ====== Example with a query selector (returns all matching documents in a collection)
 
+._Java-only: requires Bson Filters object_
+
 [source,java]
------------------------------------------------------------------------------
+----
 from("direct:findAll")
-    .setHeader(MongoDbConstants.CRITERIA, Filters.eq("name", "Raul Kripalani"))
+    .setHeader("CamelMongoDbCriteria", constant(Filters.eq("name", "Raul Kripalani")))
     .to("mongodb:myDb?database=flights&collection=tickets&operation=findAll")
     .to("mock:resultFindAll");
------------------------------------------------------------------------------
+----
 
 ====== Example with option _outputType=MongoIterable_ and batch size
 
+._Java-only: requires Bson Filters object_
+
 [source,java]
------------------------------------------------------------------------------
+----
 from("direct:findAll")
-    .setHeader(MongoDbConstants.BATCH_SIZE).constant(10)
-    .setHeader(MongoDbConstants.CRITERIA, constant(Filters.eq("name", "Raul Kripalani")))
+    .setHeader("CamelMongoDbBatchSize", constant(10))
+    .setHeader("CamelMongoDbCriteria", constant(Filters.eq("name", "Raul Kripalani")))
     .to("mongodb:myDb?database=flights&collection=tickets&operation=findAll&outputType=MongoIterable")
     .to("mock:resultFindAll");
------------------------------------------------------------------------------
+----
 
 [TIP]
 ====
@@ -235,27 +377,69 @@ and as a result, the operation will not run against the
 "notableScientists" collection, but against the "dynamicCollectionName"
 collection.
 
+[tabs]
+====
+Java::
++
 [source,java]
-------------------------------------------------------------------------------------------------------------------------------------
+----
 from("direct:count")
-  .to("mongodb:myDb?database=tickets&collection=flights&operation=count&dynamicity=true");
+    .to("mongodb:myDb?database=tickets&collection=flights&operation=count&dynamicity=true");
+----
 
-Long result = template.requestBodyAndHeader("direct:count", "irrelevantBody", MongoDbConstants.COLLECTION, "dynamicCollectionName");
-assertTrue("Result is not of type Long", result instanceof Long);
-------------------------------------------------------------------------------------------------------------------------------------
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:count"/>
+  <to uri="mongodb:myDb?database=tickets&amp;collection=flights&amp;operation=count&amp;dynamicity=true"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:count
+      steps:
+        - to:
+            uri: mongodb:myDb
+            parameters:
+              database: tickets
+              collection: flights
+              operation: count
+              dynamicity: true
+----
+====
+
+To dynamically target a different collection, set the `CamelMongoDbCollection` header:
+
+._Java-only: Java test API (ProducerTemplate)_
+
+[source,java]
+----
+Long result = template.requestBodyAndHeader("direct:count", "irrelevantBody",
+        "CamelMongoDbCollection", "dynamicCollectionName");
+----
 
 You can provide a query
 *The query object is extracted `CamelMongoDbCriteria` header*.
-if the CamelMongoDbCriteria header is null the query object is extracted 
+if the CamelMongoDbCriteria header is null the query object is extracted
 message body, i.e., it should be of type `Bson` or convertible to
 `Bson`., and
 operation will return the number of documents matching the criteria.
 
+._Java-only: Java test API (ProducerTemplate)_
+
 [source,java]
-------------------------------------------------------------------------------------------------------------------------
+----
 Document query = ...
-Long count = template.requestBodyAndHeader("direct:count", query, MongoDbConstants.COLLECTION, "dynamicCollectionName");
-------------------------------------------------------------------------------------------------------------------------
+Long count = template.requestBodyAndHeader("direct:count", query,
+        "CamelMongoDbCollection", "dynamicCollectionName");
+----
 
 ===== Specifying a `fields` filter (projection)
 
@@ -264,30 +448,21 @@ entirety (with all their fields). If your documents are large, and you
 only require retrieving a subset of their fields, you can specify a
 field filter in all query operations, simply by setting the relevant
 `Bson` (or type convertible to `Bson`, such as a JSON String,
-Map, etc.) on the `CamelMongoDbFieldsProjection` header, constant shortcut:
-`MongoDbConstants.FIELDS_PROJECTION`.
+Map, etc.) on the `CamelMongoDbFieldsProjection` header.
 
 Here is an example that uses MongoDB's `Projections` to simplify
 the creation of Bson. It retrieves all fields except `_id` and
 `boringField`:
 
-[source,java]
-----------------------------------------------------------------------------------------------------------------------------
-// route: from("direct:findAll").to("mongodb:myDb?database=flights&collection=tickets&operation=findAll")
-Bson fieldProjection = Projection.exclude("_id", "boringField");
-Object result = template.requestBodyAndHeader("direct:findAll", ObjectUtils.NULL, MongoDbConstants.FIELDS_PROJECTION, fieldProjection);
-----------------------------------------------------------------------------------------------------------------------------
-
-Here is an example that uses MongoDB's `Projections` to simplify
-the creation of Bson. It retrieves all fields except `_id` and
-`boringField`:
+._Java-only: Java test API with Bson Projection_
 
 [source,java]
-----------------------------------------------------------------------------------------------------------------------------
+----
 // route: from("direct:findAll").to("mongodb:myDb?database=flights&collection=tickets&operation=findAll")
 Bson fieldProjection = Projection.exclude("_id", "boringField");
-Object result = template.requestBodyAndHeader("direct:findAll", ObjectUtils.NULL, MongoDbConstants.FIELDS_PROJECTION, fieldProjection);
-----------------------------------------------------------------------------------------------------------------------------
+Object result = template.requestBodyAndHeader("direct:findAll", ObjectUtils.NULL,
+        "CamelMongoDbFieldsProjection", fieldProjection);
+----
 
 ===== Specifying a sort clause
 
@@ -297,12 +472,15 @@ that uses MongoDB's `Sorts` to simplify
 the creation of Bson. It retrieves all fields except `_id` and
 `boringField`:
 
+._Java-only: Java test API with Bson Sorts_
+
 [source,java]
-----------------------------------------------------------------------------------------------------------------------------
+----
 // route: from("direct:findAll").to("mongodb:myDb?database=flights&collection=tickets&operation=findAll")
 Bson sorts = Sorts.descending("_id");
-Object result = template.requestBodyAndHeader("direct:findAll", ObjectUtils.NULL, MongoDbConstants.SORT_BY, sorts);
-----------------------------------------------------------------------------------------------------------------------------
+Object result = template.requestBodyAndHeader("direct:findAll", ObjectUtils.NULL,
+        "CamelMongoDbSortBy", sorts);
+----
 
 In a Camel route, the SORT_BY header can be used with the findOneByQuery
 operation to achieve the same result. If the FIELDS_PROJECTION header is also
@@ -312,15 +490,17 @@ parameterized MyBatis SELECT query). This example demonstrates fetching
 the temporally newest document from a collection and reducing the result 
 to a single field, based on the `documentTimestamp` field:
 
+._Java-only: requires Bson Sorts and Projection objects_
+
 [source,java]
-----------------------------------------------------------------------------------------------------------------------------
-.from("direct:someTriggeringEvent")
-.setHeader(MongoDbConstants.SORT_BY).constant(Sorts.descending("documentTimestamp"))
-.setHeader(MongoDbConstants.FIELDS_PROJECTION).constant(Projection.include("documentTimestamp"))
-.setBody().constant("{}")
-.to("mongodb:myDb?database=local&collection=myDemoCollection&operation=findOneByQuery")
-.to("direct:aMyBatisParameterizedSelect");
-----------------------------------------------------------------------------------------------------------------------------
+----
+from("direct:someTriggeringEvent")
+    .setHeader("CamelMongoDbSortBy", constant(Sorts.descending("documentTimestamp")))
+    .setHeader("CamelMongoDbFieldsProjection", constant(Projection.include("documentTimestamp")))
+    .setBody(constant("{}"))
+    .to("mongodb:myDb?database=local&collection=myDemoCollection&operation=findOneByQuery")
+    .to("direct:aMyBatisParameterizedSelect");
+----
 
 ==== Create/update operations
 
@@ -335,11 +515,42 @@ of objects of any type, as long as they are - or can be converted to -
 `Document`.
 Example:
 
+[tabs]
+====
+Java::
++
 [source,java]
------------------------------------------------------------------------------
+----
 from("direct:insert")
     .to("mongodb:myDb?database=flights&collection=tickets&operation=insert");
------------------------------------------------------------------------------
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:insert"/>
+  <to uri="mongodb:myDb?database=flights&amp;collection=tickets&amp;operation=insert"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:insert
+      steps:
+        - to:
+            uri: mongodb:myDb
+            parameters:
+              database: flights
+              collection: tickets
+              operation: insert
+----
+====
 
 The operation will return a WriteResult, and depending on the
 `WriteConcern` or the value of the `invokeGetLastError` option,
@@ -363,8 +574,7 @@ expected to ensure at the application level that is unique (and this is
 a good practice too).
 
 OID(s) of the inserted record(s) are stored in the
-message header under `CamelMongoOid` key (`MongoDbConstants.OID`
-constant). The value stored is `org.bson.types.ObjectId` for single
+message header under `CamelMongoOid` key. The value stored is `org.bson.types.ObjectId` for single
 insert or `java.util.List<org.bson.types.ObjectId>` if multiple records
 have been inserted.
 
@@ -397,36 +607,69 @@ If the document to be saved does not contain the `_id` attribute, the operation 
 
 For example:
 
+[tabs]
+====
+Java::
++
 [source,java]
----------------------------------------------------------------------------
+----
 from("direct:insert")
     .to("mongodb:myDb?database=flights&collection=tickets&operation=save");
----------------------------------------------------------------------------
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:insert"/>
+  <to uri="mongodb:myDb?database=flights&amp;collection=tickets&amp;operation=save"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:insert
+      steps:
+        - to:
+            uri: mongodb:myDb
+            parameters:
+              database: flights
+              collection: tickets
+              operation: save
+----
+====
+
+._Java-only: Java test API (ProducerTemplate)_
 
 [source,java]
-------------------------------------------------------------------------------------------------------------------------------------------
+----
 // route: from("direct:insert").to("mongodb:myDb?database=flights&collection=tickets&operation=save");
-org.bson.Document docForSave = new org.bson.Document();
+Document docForSave = new Document();
 docForSave.put("key", "value");
 Object result = template.requestBody("direct:insert", docForSave);
-------------------------------------------------------------------------------------------------------------------------------------------
+----
 
 ===== update
 
 Update one or multiple records in the collection. Requires a filter query and
 a update rules.
 
-You can define the filter using `MongoDBConstants.CRITERIA` header as `Bson`
+You can define the filter using `CamelMongoDbCriteria` header as `Bson`
 and define the update rules as `Bson` in Body.
 
 [NOTE]
 ====
 *Update after enrich*
 
-While defining the filter by using `MongoDBConstants.CRITERIA` header as `Bson`
+While defining the filter by using `CamelMongoDbCriteria` header as `Bson`
 to query mongodb before you do update, you should notice you need to remove it from the resulting Camel exchange
 during aggregation if you use the enrich pattern with an aggregation strategy and then apply mongodb update.
-If you don't remove this header during aggregation and/or redefine `MongoDBConstants.CRITERIA` header before sending
+If you don't remove this header during aggregation and/or redefine `CamelMongoDbCriteria` header before sending
 Camel exchange to mongodb producer endpoint, you may end up with invalid Camel exchange payload while updating mongodb.
 ====
 
@@ -450,43 +693,46 @@ records, set the `CamelMongoDbMultiUpdate` IN message header to `true`.
 ====
 
 
-A header with key `CamelMongoDbRecordsAffected` will be returned
-(`MongoDbConstants.RECORDS_AFFECTED` constant) with the number of
+A header with key `CamelMongoDbRecordsAffected` will be returned with the number of
 records updated (copied from `WriteResult.getN()`).
 
 For example, the following will update *all* records whose filterField
 field equals true by setting the value of the "scientist" field to
 "Darwin":
 
+._Java-only: Java test API with Bson filter and update_
+
 [source,java]
-------------------------------------------------------------------------------------------------------------------------------------------
+----
 // route: from("direct:update").to("mongodb:myDb?database=science&collection=notableScientists&operation=update");
 List<Bson> body = new ArrayList<>();
 Bson filterField = Filters.eq("filterField", true);
 body.add(filterField);
 BsonDocument updateObj = new BsonDocument().append("$set", new BsonDocument("scientist", new BsonString("Darwin")));
 body.add(updateObj);
-Object result = template.requestBodyAndHeader("direct:update", body, MongoDbConstants.MULTIUPDATE, true);
-------------------------------------------------------------------------------------------------------------------------------------------
+Object result = template.requestBodyAndHeader("direct:update", body, "CamelMongoDbMultiUpdate", true);
+----
+
+._Java-only: Java test API with criteria header_
 
 [source,java]
-------------------------------------------------------------------------------------------------------------------------------------------
+----
 // route: from("direct:update").to("mongodb:myDb?database=science&collection=notableScientists&operation=update");
-Maps<String, Object> headers = new HashMap<>(2);
-headers.add(MongoDbConstants.MULTIUPDATE, true);
-headers.add(MongoDbConstants.FIELDS_FILTER, Filters.eq("filterField", true));
-String updateObj = Updates.set("scientist", "Darwin");;
+Map<String, Object> headers = new HashMap<>(2);
+headers.put("CamelMongoDbMultiUpdate", true);
+headers.put("CamelMongoDbCriteria", Filters.eq("filterField", true));
+Bson updateObj = Updates.set("scientist", "Darwin");
 Object result = template.requestBodyAndHeaders("direct:update", updateObj, headers);
+----
 
-------------------------------------------------------------------------------------------------------------------------------------------
+._Java-only: Java test API with JSON string_
 
 [source,java]
-------------------------------------------------------------------------------------------------------------------------------------------
+----
 // route: from("direct:update").to("mongodb:myDb?database=science&collection=notableScientists&operation=update");
 String updateObj = "[{\"filterField\": true}, {\"$set\", {\"scientist\", \"Darwin\"}}]";
-Object result = template.requestBodyAndHeader("direct:update", updateObj, MongoDbConstants.MULTIUPDATE, true);
-
-------------------------------------------------------------------------------------------------------------------------------------------
+Object result = template.requestBodyAndHeader("direct:update", updateObj, "CamelMongoDbMultiUpdate", true);
+----
 
 ==== Delete operations
 
@@ -499,15 +745,16 @@ act as the removal filter query, and is expected to be of type
 'conditionField' equals true, in the science database, notableScientists
 collection:
 
+._Java-only: Java test API with Bson filter_
+
 [source,java]
-------------------------------------------------------------------------------------------------------------------
+----
 // route: from("direct:remove").to("mongodb:myDb?database=science&collection=notableScientists&operation=remove");
 Bson conditionField = Filters.eq("conditionField", true);
 Object result = template.requestBody("direct:remove", conditionField);
-------------------------------------------------------------------------------------------------------------------
+----
 
-A header with key `CamelMongoDbRecordsAffected` is returned
-(`MongoDbConstants.RECORDS_AFFECTED` constant) with type `int`,
+A header with key `CamelMongoDbRecordsAffected` is returned with type `int`,
 containing the number of records deleted (copied from
 `WriteResult.getN()`).
 
@@ -521,17 +768,19 @@ Requires a `List<WriteModel<Document>>` as the IN message body containing comman
 The following example will insert a new scientist "Pierre Curie", update record with id "5" by setting the value of the "scientist" field to
 "Marie Curie" and delete record with id "3" :
 
+._Java-only: Java test API with WriteModel objects_
+
 [source,java]
-------------------------------------------------------------------------------------------------------------------
+----
 // route: from("direct:bulkWrite").to("mongodb:myDb?database=science&collection=notableScientists&operation=bulkWrite");
 List<WriteModel<Document>> bulkOperations = Arrays.asList(
-            new InsertOneModel<>(new Document("scientist", "Pierre Curie")),
-            new UpdateOneModel<>(new Document("_id", "5"), 
-                                 new Document("$set", new Document("scientist", "Marie Curie"))),
-            new DeleteOneModel<>(new Document("_id", "3")));
+        new InsertOneModel<>(new Document("scientist", "Pierre Curie")),
+        new UpdateOneModel<>(new Document("_id", "5"),
+                new Document("$set", new Document("scientist", "Marie Curie"))),
+        new DeleteOneModel<>(new Document("_id", "3")));
 
 BulkWriteResult result = template.requestBody("direct:bulkWrite", bulkOperations, BulkWriteResult.class);
-------------------------------------------------------------------------------------------------------------------
+----
 
 By default, operations are executed in order and interrupted on the first write error without processing any remaining write operations in the list.
 To instruct MongoDB to continue to process remaining write operations in the list, set the `CamelMongoDbBulkOrdered` IN message header to `false`. 
@@ -546,16 +795,18 @@ Perform an aggregation with the given pipeline contained in the
 body.
 *Aggregations could be long and heavy operations. Use with care.*
 
+._Java-only: requires Bson aggregation pipeline_
+
 [source,java]
-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+----
 // route: from("direct:aggregate").to("mongodb:myDb?database=science&collection=notableScientists&operation=aggregate");
-List<Bson> aggregate = Arrays.asList(match(or(eq("scientist", "Darwin"), eq("scientist", 
+List<Bson> aggregate = Arrays.asList(match(or(eq("scientist", "Darwin"), eq("scientist", "Einstein"))),
         group("$scientist", sum("count", 1)));
 from("direct:aggregate")
-    .setBody().constant(aggregate)
+    .setBody(constant(aggregate))
     .to("mongodb:myDb?database=science&collection=notableScientists&operation=aggregate")
     .to("mock:resultAggregate");
-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+----
 
 By default, a List of all results is returned. This can be heavy on memory depending on the size of the results. A safer alternative is to set your
 outputType=MongoIterable. The next Processor will see an iterable in the message body allowing it to step through the results one by one.
@@ -563,18 +814,20 @@ Thus, setting a batch size and returning an iterable allows for efficient retrie
 
 An example would look like:
 
+._Java-only: requires Bson aggregation pipeline_
+
 [source,java]
-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
-List<Bson> aggregate = Arrays.asList(match(or(eq("scientist", "Darwin"), eq("scientist",
+----
+List<Bson> aggregate = Arrays.asList(match(or(eq("scientist", "Darwin"), eq("scientist", "Einstein"))),
         group("$scientist", sum("count", 1)));
 from("direct:aggregate")
-    .setHeader(MongoDbConstants.BATCH_SIZE).constant(10)
-    .setBody().constant(aggregate)
+    .setHeader("CamelMongoDbBatchSize", constant(10))
+    .setBody(constant(aggregate))
     .to("mongodb:myDb?database=science&collection=notableScientists&operation=aggregate&outputType=MongoIterable")
     .split(body())
     .streaming()
     .to("mock:resultAggregate");
-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+----
 
 Note that calling `.split(body())` is enough to send the entries down the route one-by-one, however it would still load all the entries into memory first.
 Calling `.streaming()` is thus required to load data into memory by batches.
@@ -586,7 +839,7 @@ Equivalent of running the `db.stats()` command in the MongoDB shell,
 which displays useful statistic figures about the database. +
  For example:
 
--------------------------------------
+----
 > db.stats();
 {
     "db" : "test",
@@ -602,16 +855,18 @@ which displays useful statistic figures about the database. +
     "nsSizeMB" : 16,
     "ok" : 1
 }
--------------------------------------
+----
 
 Usage example:
 
+._Java-only: Java test API (ProducerTemplate)_
+
 [source,java]
----------------------------------------------------------------------------------------------------------
+----
 // from("direct:getDbStats").to("mongodb:myDb?database=flights&collection=tickets&operation=getDbStats");
 Object result = template.requestBody("direct:getDbStats", "irrelevantBody");
 assertTrue("Result is not of type Document", result instanceof Document);
----------------------------------------------------------------------------------------------------------
+----
 
 The operation will return a data structure similar to the one displayed
 in the shell, in the form of a `Document` in the OUT message body.
@@ -622,7 +877,7 @@ Equivalent of running the `db.collection.stats()` command in the MongoDB
 shell, which displays useful statistic figures about the collection. +
  For example:
 
------------------------------
+----
 > db.camelTest.stats();
 {
     "ns" : "test.camelTest",
@@ -641,16 +896,18 @@ shell, which displays useful statistic figures about the collection. +
     },
     "ok" : 1
 }
------------------------------
+----
 
 Usage example:
 
+._Java-only: Java test API (ProducerTemplate)_
+
 [source,java]
------------------------------------------------------------------------------------------------------------
+----
 // from("direct:getColStats").to("mongodb:myDb?database=flights&collection=tickets&operation=getColStats");
 Object result = template.requestBody("direct:getColStats", "irrelevantBody");
 assertTrue("Result is not of type Document", result instanceof Document);
------------------------------------------------------------------------------------------------------------
+----
 
 The operation will return a data structure similar to the one displayed
 in the shell, in the form of a `Document` in the OUT message body.
@@ -662,30 +919,32 @@ getting host information, replication or sharding status.
 
 Collection parameter is not used for this operation.
 
+._Java-only: Java test API (ProducerTemplate)_
+
 [source,java]
---------------------------------------------------------------------------------
+----
 // route: from("command").to("mongodb:myDb?database=science&operation=command");
 DBObject commandBody = new BasicDBObject("hostInfo", "1");
 Object result = template.requestBody("direct:command", commandBody);
---------------------------------------------------------------------------------
+----
 
 ==== Dynamic operations
 
 An Exchange can override the endpoint's fixed operation by setting the
-`CamelMongoDbOperation` header, defined by the
-`MongoDbConstants.OPERATION_HEADER` constant. +
- The values supported are determined by the MongoDbOperation enumeration
+`CamelMongoDbOperation` header. The values supported are determined by the MongoDbOperation enumeration
 and match the accepted values for the `operation` parameter on the
 endpoint URI.
 
 For example:
 
+._Java-only: Java test API (ProducerTemplate)_
+
 [source,java]
------------------------------------------------------------------------------------------------------------------------------
+----
 // from("direct:insert").to("mongodb:myDb?database=flights&collection=tickets&operation=insert");
-Object result = template.requestBodyAndHeader("direct:insert", "irrelevantBody", MongoDbConstants.OPERATION_HEADER, "count");
+Object result = template.requestBodyAndHeader("direct:insert", "irrelevantBody", "CamelMongoDbOperation", "count");
 assertTrue("Result is not of type Long", result instanceof Long);
------------------------------------------------------------------------------------------------------------------------------
+----
 
 === Consumers
 There are several types of consumers:
@@ -754,13 +1013,46 @@ value of 1000ms.), which you can modify to suit your needs.
 
 An example:
 
+[tabs]
+====
+Java::
++
 [source,java]
------------------------------------------------------------------------------------------------------
+----
 from("mongodb:myDb?database=flights&collection=cancellations&tailTrackIncreasingField=departureTime")
     .id("tailableCursorConsumer1")
     .autoStartup(false)
     .to("mock:test");
------------------------------------------------------------------------------------------------------
+----
+
+XML::
++
+[source,xml]
+----
+<route id="tailableCursorConsumer1" autoStartup="false">
+  <from uri="mongodb:myDb?database=flights&amp;collection=cancellations&amp;tailTrackIncreasingField=departureTime"/>
+  <to uri="mock:test"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    id: tailableCursorConsumer1
+    autoStartup: false
+    from:
+      uri: mongodb:myDb
+      parameters:
+        database: flights
+        collection: cancellations
+        tailTrackIncreasingField: departureTime
+      steps:
+        - to:
+            uri: mock:test
+----
+====
 
 The above route will consume from the `flights.cancellations` capped
 collection, using `departureTime` as the increasing field, with a
@@ -808,29 +1100,102 @@ with persistent tail tracking turned on, and persisting under the
 the last processed value under the "lastTrackingValue" field
 (`camelTailTracking` and `lastTrackingValue` are defaults).
 
+[tabs]
+====
+Java::
++
 [source,java]
------------------------------------------------------------------------------------------------------------------------------------
-from("mongodb:myDb?database=flights&collection=cancellations&tailTrackIncreasingField=departureTime&persistentTailTracking=true" + 
+----
+from("mongodb:myDb?database=flights&collection=cancellations&tailTrackIncreasingField=departureTime&persistentTailTracking=true" +
      "&persistentId=cancellationsTracker")
     .id("tailableCursorConsumer2")
     .autoStartup(false)
     .to("mock:test");
------------------------------------------------------------------------------------------------------------------------------------
+----
+
+XML::
++
+[source,xml]
+----
+<route id="tailableCursorConsumer2" autoStartup="false">
+  <from uri="mongodb:myDb?database=flights&amp;collection=cancellations&amp;tailTrackIncreasingField=departureTime&amp;persistentTailTracking=true&amp;persistentId=cancellationsTracker"/>
+  <to uri="mock:test"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    id: tailableCursorConsumer2
+    autoStartup: false
+    from:
+      uri: mongodb:myDb
+      parameters:
+        database: flights
+        collection: cancellations
+        tailTrackIncreasingField: departureTime
+        persistentTailTracking: true
+        persistentId: cancellationsTracker
+      steps:
+        - to:
+            uri: mock:test
+----
+====
 
 Below is another example identical to the one above, but where the
 persistent tail tracking runtime information will be stored under the
 "trackers.camelTrackers" collection, in the "lastProcessedDepartureTime"
 field:
 
+[tabs]
+====
+Java::
++
 [source,java]
------------------------------------------------------------------------------------------------------------------------------------
-from("mongodb:myDb?database=flights&collection=cancellations&tailTrackIncreasingField=departureTime&persistentTailTracking=true" + 
-     "&persistentId=cancellationsTracker&tailTrackDb=trackers&tailTrackCollection=camelTrackers" + 
+----
+from("mongodb:myDb?database=flights&collection=cancellations&tailTrackIncreasingField=departureTime&persistentTailTracking=true" +
+     "&persistentId=cancellationsTracker&tailTrackDb=trackers&tailTrackCollection=camelTrackers" +
      "&tailTrackField=lastProcessedDepartureTime")
     .id("tailableCursorConsumer3")
     .autoStartup(false)
     .to("mock:test");
------------------------------------------------------------------------------------------------------------------------------------
+----
+
+XML::
++
+[source,xml]
+----
+<route id="tailableCursorConsumer3" autoStartup="false">
+  <from uri="mongodb:myDb?database=flights&amp;collection=cancellations&amp;tailTrackIncreasingField=departureTime&amp;persistentTailTracking=true&amp;persistentId=cancellationsTracker&amp;tailTrackDb=trackers&amp;tailTrackCollection=camelTrackers&amp;tailTrackField=lastProcessedDepartureTime"/>
+  <to uri="mock:test"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    id: tailableCursorConsumer3
+    autoStartup: false
+    from:
+      uri: mongodb:myDb
+      parameters:
+        database: flights
+        collection: cancellations
+        tailTrackIncreasingField: departureTime
+        persistentTailTracking: true
+        persistentId: cancellationsTracker
+        tailTrackDb: trackers
+        tailTrackCollection: camelTrackers
+        tailTrackField: lastProcessedDepartureTime
+      steps:
+        - to:
+            uri: mock:test
+----
+====
 
 ==== Change Streams Consumer
 
@@ -842,22 +1207,46 @@ The exchange body will contain the full document of any change.
 To configure Change Streams Consumer you need to specify `consumerType`, `database`, `collection`
 and optional JSON property `streamFilter` to filter events.
 That JSON property is standard MongoDB `$match` aggregation.
-It could be easily specified using XML DSL configuration:
+It could be easily specified using the DSL configuration:
 
-[source,xml]
--------------
-<route id="filterConsumer">
-    <from uri="mongodb:myDb?consumerType=changeStreams&amp;database=flights&amp;collection=tickets&amp;streamFilter={ '$match':{'$or':[{'fullDocument.stringValue': 'specificValue'}]} }"/>
-    <to uri="mock:test"/>
-</route>
--------------
-
-Java configuration:
+[tabs]
+====
+Java::
++
 [source,java]
--------------
+----
 from("mongodb:myDb?consumerType=changeStreams&database=flights&collection=tickets&streamFilter={ '$match':{'$or':[{'fullDocument.stringValue': 'specificValue'}]} }")
     .to("mock:test");
--------------
+----
+
+XML::
++
+[source,xml]
+----
+<route id="filterConsumer">
+  <from uri="mongodb:myDb?consumerType=changeStreams&amp;database=flights&amp;collection=tickets&amp;streamFilter={ '$match':{'$or':[{'fullDocument.stringValue': 'specificValue'}]} }"/>
+  <to uri="mock:test"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    id: filterConsumer
+    from:
+      uri: mongodb:myDb
+      parameters:
+        consumerType: changeStreams
+        database: flights
+        collection: tickets
+        streamFilter: "{ '$match':{'$or':[{'fullDocument.stringValue': 'specificValue'}]} }"
+      steps:
+        - to:
+            uri: mock:test
+----
+====
 
 TIP: You can externalize the streamFilter value into a property placeholder which allows the endpoint
 URI parameters to be _cleaner_ and easier to read.
@@ -891,15 +1280,44 @@ The following route defined in Spring XML executes the operation
 
 *Get DB stats for specified collection*
 
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+    .to("mongodb:mongoBean?database=${mongodb.database}&collection=${mongodb.collection}&operation=getDbStats")
+    .to("direct:result");
+----
+
+XML::
++
 [source,xml]
----------------------------------------------------------------------------------------------------------------------------
+----
 <route>
   <from uri="direct:start" />
   <!-- using bean 'mongoBean' defined above -->
   <to uri="mongodb:mongoBean?database=${mongodb.database}&amp;collection=${mongodb.collection}&amp;operation=getDbStats" />
   <to uri="direct:result" />
 </route>
----------------------------------------------------------------------------------------------------------------------------
+----
 
-
-include::spring-boot:partial$starter.adoc[]
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: mongodb:mongoBean
+            parameters:
+              database: "${mongodb.database}"
+              collection: "${mongodb.collection}"
+              operation: getDbStats
+        - to:
+            uri: direct:result
+----
+====

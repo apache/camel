@@ -209,9 +209,9 @@ public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
     private CxfConfigurer cxfConfigurer;
     @UriParam(label = "advanced", defaultValue = "30000", javaType = "java.time.Duration")
     private long continuationTimeout = 30000;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String username;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String password;
     @UriParam(label = "advanced", prefix = "properties.", multiValue = true)
     private Map<String, Object> properties;
@@ -677,7 +677,7 @@ public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
 
         if (getWsdlURL() == null && getServiceClass() == null) {
             // no WSDL and serviceClass specified, set our default serviceClass
-            setServiceClass(org.apache.camel.component.cxf.jaxws.DefaultSEI.class.getName());
+            setServiceClass(DefaultSEI.class.getName());
             setDefaultOperationNamespace(CxfConstants.DISPATCH_NAMESPACE);
             setDefaultOperationName(CxfConstants.DISPATCH_DEFAULT_OPERATION_NAMESPACE);
             if (getDataFormat().equals(DataFormat.PAYLOAD)) {
@@ -729,7 +729,7 @@ public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
         if (getWsdlURL() == null && getServiceClass() == null) {
             // no WSDL and serviceClass specified, set our default serviceClass
             if (getDataFormat().equals(DataFormat.PAYLOAD)) {
-                setServiceClass(org.apache.camel.component.cxf.jaxws.DefaultPayloadProviderSEI.class.getName());
+                setServiceClass(DefaultPayloadProviderSEI.class.getName());
             }
         }
 

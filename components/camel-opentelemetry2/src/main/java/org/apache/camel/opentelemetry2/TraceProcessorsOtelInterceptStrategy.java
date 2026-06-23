@@ -1,0 +1,137 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.apache.camel.opentelemetry2;
+
+import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+
+import io.opentelemetry.api.baggage.Baggage;
+import io.opentelemetry.context.Scope;
+import org.apache.camel.AsyncCallback;
+import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
+import org.apache.camel.NamedNode;
+import org.apache.camel.Processor;
+import org.apache.camel.spi.InterceptStrategy;
+import org.apache.camel.support.AsyncCallbackToCompletableFutureAdapter;
+import org.apache.camel.support.processor.DelegateAsyncProcessor;
+import org.apache.camel.telemetry.Span;
+import org.apache.camel.telemetry.SpanStorageManagerExchange;
+
+/**
+ * TraceProcessorsOtelInterceptStrategy is used to wrap each processor calls and generate the scope required for any
+ * custom Opentelemetry activity in the processor to be available.
+ */
+public class TraceProcessorsOtelInterceptStrategy implements InterceptStrategy {
+
+    private static final String BAGGAGE_HEADER_PREFIX = "OTEL_BAGGAGE_";
+
+    // NOTE: this is an implementation detail that the interceptor should not know.
+    // We are temporarily using this to evaluate as a patch for a context leak problem we're suffering.
+    // Once we are clear this is correctly fixed and no more corner cases, then, we should change the TraceProcessorsInterceptStrategy
+    // class in camel-telemetry component in order to be able to retrieve the span before executing the processor and perform
+    // a similar logic of what we're doing here.
+    private SpanStorageManagerExchange spanStorage = new SpanStorageManagerExchange();
+
+    @Override
+    public Processor wrapProcessorInInterceptors(
+            CamelContext camelContext,
+            NamedNode processorDefinition, Processor target, Processor nextTarget)
+            throws Exception {
+        return new TraceProcessor(target);
+    }
+
+    private class TraceProcessor extends DelegateAsyncProcessor {
+
+        public TraceProcessor(Processor target) {
+            super(target);
+        }
+
+        @Override
+        public void process(Exchange exchange) throws Exception {
+            Span activeSpan = spanStorage.peek(exchange);
+            if (activeSpan != null) {
+                OpenTelemetrySpanAdapter otelSpan = (OpenTelemetrySpanAdapter) activeSpan;
+                Baggage baggage = collectBaggage(otelSpan.getBaggage(), exchange);
+                try (Scope scope = otelSpan.getSpan().makeCurrent();
+                     Scope baggageScope = baggage.makeCurrent()) {
+                    processor.process(exchange);
+                }
+            } else {
+                processor.process(exchange);
+            }
+        }
+
+        @Override
+        public boolean process(Exchange exchange, AsyncCallback callback) {
+            Span activeSpan = spanStorage.peek(exchange);
+            if (activeSpan != null) {
+                OpenTelemetrySpanAdapter otelSpan = (OpenTelemetrySpanAdapter) activeSpan;
+                Baggage baggage = collectBaggage(otelSpan.getBaggage(), exchange);
+                try (Scope scope = otelSpan.getSpan().makeCurrent();
+                     Scope baggageScope = baggage.makeCurrent()) {
+                    return processor.process(exchange, doneSync -> {
+                        callback.done(doneSync);
+                    });
+                }
+            } else {
+                return processor.process(exchange, doneSync -> {
+                    callback.done(doneSync);
+                });
+            }
+        }
+
+        @Override
+        public CompletableFuture<Exchange> processAsync(Exchange exchange) {
+            AsyncCallbackToCompletableFutureAdapter<Exchange> callback
+                    = new AsyncCallbackToCompletableFutureAdapter<>(exchange);
+            process(exchange, callback);
+            return callback.getFuture();
+        }
+    }
+
+    private Baggage collectBaggage(Baggage baggage, Exchange exchange) {
+        baggage = getBaggageFromProperties(baggage, exchange);
+        baggage = getBaggageFromHeaders(baggage, exchange);
+        return baggage;
+    }
+
+    private Baggage getBaggageFromProperties(Baggage baggage, Exchange exchange) {
+        for (String propertyKey : exchange.getProperties().keySet()) {
+            if (propertyKey != null && propertyKey.startsWith(org.apache.camel.telemetry.Tracer.BAGGAGE_PROPERTY)) {
+                String key = propertyKey.substring(org.apache.camel.telemetry.Tracer.BAGGAGE_PROPERTY.length());
+                String value = exchange.getProperty(propertyKey) == null
+                        ? null : exchange.getProperty(propertyKey).toString();
+                baggage = baggage.toBuilder().put(key, value).build();
+            }
+        }
+        return baggage;
+    }
+
+    private Baggage getBaggageFromHeaders(Baggage baggage, Exchange exchange) {
+        for (Map.Entry<String, Object> entry : exchange.getMessage().getHeaders().entrySet()) {
+            String headerKey = entry.getKey();
+            if (headerKey != null && headerKey.startsWith(BAGGAGE_HEADER_PREFIX)) {
+                String key = headerKey.substring(BAGGAGE_HEADER_PREFIX.length());
+                String value = entry.getValue() == null ? null : entry.getValue().toString();
+                baggage = baggage.toBuilder().put(key, value).build();
+            }
+        }
+        return baggage;
+    }
+
+}

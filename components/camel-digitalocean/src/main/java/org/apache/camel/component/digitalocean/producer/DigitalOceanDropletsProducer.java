@@ -47,6 +47,7 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * The DigitalOcean producer for Droplets API.
  */
+@Deprecated(since = "4.21")
 public class DigitalOceanDropletsProducer extends DigitalOceanProducer {
 
     private Integer dropletId;

@@ -21,7 +21,7 @@ import org.apache.camel.api.management.ManagedOperation;
 
 public interface ManagedDumpRoutesStrategyMBean {
 
-    @ManagedOperation(description = "Dump routes in YAML or XML format.")
+    @ManagedOperation(description = "Dump routes in YAML, XML or JSon (route structure) format.")
     void dumpRoutes(String format);
 
     @ManagedAttribute(description = "Camel ID")

@@ -19,13 +19,15 @@ package org.apache.camel.component.elasticsearch.rest.client;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
+import org.apache.camel.SSLContextParametersAware;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
+import org.apache.camel.support.jsse.SSLContextParameters;
 import org.elasticsearch.client.RestClient;
 
 @Component("elasticsearch-rest-client")
-public class ElasticsearchRestClientComponent extends DefaultComponent {
+public class ElasticsearchRestClientComponent extends DefaultComponent implements SSLContextParametersAware {
 
     @Metadata(label = "advanced", autowired = true)
     RestClient restClient;
@@ -35,12 +37,16 @@ public class ElasticsearchRestClientComponent extends DefaultComponent {
     private int connectionTimeout = ElasticSearchRestClientConstant.SOCKET_CONNECTION_TIMEOUT;
     @Metadata(defaultValue = "" + ElasticSearchRestClientConstant.SOCKET_CONNECTION_TIMEOUT)
     private int socketTimeout = ElasticSearchRestClientConstant.SOCKET_CONNECTION_TIMEOUT;
-    @Metadata(label = "security", secret = true)
+    @Metadata(label = "security", security = "secret")
     private String user;
-    @Metadata(label = "security", secret = true)
+    @Metadata(label = "security", security = "secret")
     private String password;
     @Metadata(label = "security", supportFileReference = true)
     private String certificatePath;
+    @Metadata(label = "security")
+    private SSLContextParameters sslContextParameters;
+    @Metadata(label = "security", defaultValue = "false")
+    private boolean useGlobalSslContextParameters;
     @Metadata(label = "advanced")
     private boolean enableSniffer;
     @Metadata(label = "advanced", defaultValue = "" + ElasticSearchRestClientConstant.SNIFFER_INTERVAL_AND_FAILURE_DELAY)
@@ -61,10 +67,14 @@ public class ElasticsearchRestClientComponent extends DefaultComponent {
         endpoint.setUser(user);
         endpoint.setPassword(password);
         endpoint.setCertificatePath(certificatePath);
+        endpoint.setSslContextParameters(sslContextParameters);
         endpoint.setEnableSniffer(enableSniffer);
         endpoint.setSnifferInterval(snifferInterval);
         endpoint.setSniffAfterFailureDelay(sniffAfterFailureDelay);
         setProperties(endpoint, parameters);
+        if (endpoint.getSslContextParameters() == null) {
+            endpoint.setSslContextParameters(retrieveGlobalSslContextParameters());
+        }
         return endpoint;
     }
 
@@ -176,5 +186,30 @@ public class ElasticsearchRestClientComponent extends DefaultComponent {
 
     public void setSniffAfterFailureDelay(int sniffAfterFailureDelay) {
         this.sniffAfterFailureDelay = sniffAfterFailureDelay;
+    }
+
+    public SSLContextParameters getSslContextParameters() {
+        return sslContextParameters;
+    }
+
+    /**
+     * To configure security using SSLContextParameters. When configured, this takes precedence over the
+     * {@code certificatePath} option.
+     */
+    public void setSslContextParameters(SSLContextParameters sslContextParameters) {
+        this.sslContextParameters = sslContextParameters;
+    }
+
+    @Override
+    public boolean isUseGlobalSslContextParameters() {
+        return useGlobalSslContextParameters;
+    }
+
+    /**
+     * Enable usage of global SSL context parameters.
+     */
+    @Override
+    public void setUseGlobalSslContextParameters(boolean useGlobalSslContextParameters) {
+        this.useGlobalSslContextParameters = useGlobalSslContextParameters;
     }
 }

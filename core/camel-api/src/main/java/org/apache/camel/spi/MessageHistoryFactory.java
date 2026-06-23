@@ -21,9 +21,22 @@ import org.apache.camel.Exchange;
 import org.apache.camel.MessageHistory;
 import org.apache.camel.NamedNode;
 import org.apache.camel.StaticService;
+import org.jspecify.annotations.Nullable;
 
 /**
- * A factory to create {@link MessageHistory} instances.
+ * Factory for creating {@link MessageHistory} entries, which together form the audit trail of a single
+ * {@link org.apache.camel.Exchange} as it passes through each node of a route.
+ * <p/>
+ * When the message history feature is enabled on the {@link org.apache.camel.CamelContext}, Camel's
+ * {@link InternalProcessor} calls
+ * {@link #newMessageHistory(String, org.apache.camel.NamedNode, org.apache.camel.Exchange)} at every route-node
+ * boundary and attaches the resulting entry to the exchange's history list. This history can later be rendered (e.g.,
+ * as part of an exception stack trace) to show exactly which EIP nodes the message visited and in what order. The
+ * {@link #setCopyMessage(boolean)} option controls whether a snapshot of the message body is captured at each step,
+ * which is useful for debugging but adds memory overhead.
+ *
+ * @see org.apache.camel.MessageHistory
+ * @see ExchangeFormatter
  */
 public interface MessageHistoryFactory extends StaticService, CamelContextAware {
 
@@ -56,6 +69,7 @@ public interface MessageHistoryFactory extends StaticService, CamelContextAware 
      * only include nodes that are Step EIPs then use the EIP shortname, eg step. You can also include multiple nodes
      * separated by comma, eg step,wiretap,to
      */
+    @Nullable
     String getNodePattern();
 
     /**
@@ -63,6 +77,6 @@ public interface MessageHistoryFactory extends StaticService, CamelContextAware 
      * only include nodes that are Step EIPs then use the EIP shortname, eg step. You can also include multiple nodes
      * separated by comma, eg step,wiretap,to
      */
-    void setNodePattern(String nodePattern);
+    void setNodePattern(@Nullable String nodePattern);
 
 }

@@ -78,10 +78,9 @@ public class DiagnoseTools {
                         + "ResolveEndpointFailedException, FailedToCreateRouteException, and more.")
     public DiagnoseResult camel_error_diagnose(
             @ToolArg(description = "The Camel stack trace or error message to diagnose") String error,
-            @ToolArg(description = "Runtime type: main, spring-boot, or quarkus (default: main)") String runtime,
-            @ToolArg(description = "Camel version to use (e.g., 4.17.0). If not specified, uses the default catalog version.") String camelVersion,
-            @ToolArg(description = "Platform BOM coordinates in GAV format (groupId:artifactId:version). "
-                                   + "When provided, overrides camelVersion.") String platformBom) {
+            @ToolArg(description = ToolArgDocs.RUNTIME) String runtime,
+            @ToolArg(description = ToolArgDocs.CAMEL_VERSION) String camelVersion,
+            @ToolArg(description = ToolArgDocs.PLATFORM_BOM) String platformBom) {
 
         if (error == null || error.isBlank()) {
             throw new ToolCallException("Error message or stack trace is required", null);

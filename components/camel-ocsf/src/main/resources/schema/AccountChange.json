@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://schema.ocsf.io/1.7.0/classes/account_change",
+  "$id": "https://schema.ocsf.io/1.8.0/classes/account_change",
   "title": "AccountChange",
   "type": "object",
   "javaType": "org.apache.camel.dataformat.ocsf.model.AccountChange",
@@ -9,15 +9,17 @@
     "$ref": "OcsfEvent.json"
   },
   "properties": {
-    "actor": {
-      "$ref": "Actor.json"
-    },
-    "raw_data_size": {
-      "type": "integer",
-      "title": "Raw Data Size"
+    "src_endpoint": {
+      "$ref": "NetworkEndpoint.json"
     },
     "http_response": {
       "$ref": "HttpResponse.json"
+    },
+    "user": {
+      "$ref": "User.json"
+    },
+    "actor": {
+      "$ref": "Actor.json"
     },
     "policies": {
       "type": "array",
@@ -26,21 +28,14 @@
         "$ref": "Policy.json"
       }
     },
-    "enrichments": {
-      "type": "array",
-      "description": "",
-      "items": {
-        "$ref": "Enrichment.json"
-      }
+    "user_result": {
+      "$ref": "User.json"
     },
     "http_request": {
       "$ref": "HttpRequest.json"
     },
-    "src_endpoint": {
-      "$ref": "NetworkEndpoint.json"
-    },
-    "user": {
-      "$ref": "User.json"
+    "policy": {
+      "$ref": "Policy.json"
     },
     "auth_factors": {
       "type": "array",
@@ -49,14 +44,19 @@
         "$ref": "AuthFactor.json"
       }
     },
-    "user_result": {
-      "$ref": "User.json"
+    "raw_data_size": {
+      "type": "integer",
+      "title": "Raw Data Size"
     },
     "raw_data_hash": {
       "$ref": "Fingerprint.json"
     },
-    "policy": {
-      "$ref": "Policy.json"
+    "enrichments": {
+      "type": "array",
+      "description": "",
+      "items": {
+        "$ref": "Enrichment.json"
+      }
     }
   }
 }

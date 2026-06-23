@@ -21,9 +21,14 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
+import org.jspecify.annotations.Nullable;
 
 /**
- * This interface is implemented by all events.
+ * Base interface for all Camel events used by the {@link EventNotifier} for notifications about
+ * {@link org.apache.camel.Exchange}, {@link org.apache.camel.Route}, {@link org.apache.camel.CamelContext}, and
+ * {@link org.apache.camel.Service} lifecycle changes.
+ *
+ * @since 3.0
  */
 public interface CamelEvent {
 
@@ -75,8 +80,10 @@ public interface CamelEvent {
         Custom
     }
 
+    /** Returns the type of this event. */
     Type getType();
 
+    /** Returns the source of this event (typically the CamelContext, Exchange, Route, or Service). */
     Object getSource();
 
     /**
@@ -97,8 +104,10 @@ public interface CamelEvent {
 
     }
 
+    /** Event related to {@link CamelContext} lifecycle changes. */
     interface CamelContextEvent extends CamelEvent {
 
+        /** Returns the CamelContext. */
         CamelContext getContext();
 
         @Override
@@ -108,6 +117,7 @@ public interface CamelEvent {
 
     }
 
+    /** Fired when the CamelContext is initializing. */
     interface CamelContextInitializingEvent extends CamelContextEvent {
         @Override
         default Type getType() {
@@ -115,6 +125,7 @@ public interface CamelEvent {
         }
     }
 
+    /** Fired when the CamelContext has been initialized. */
     interface CamelContextInitializedEvent extends CamelContextEvent {
         @Override
         default Type getType() {
@@ -122,6 +133,7 @@ public interface CamelEvent {
         }
     }
 
+    /** Fired when the CamelContext has been resumed. */
     interface CamelContextResumedEvent extends CamelContextEvent {
         @Override
         default Type getType() {
@@ -129,6 +141,7 @@ public interface CamelEvent {
         }
     }
 
+    /** Fired when the CamelContext failed to resume. */
     interface CamelContextResumeFailureEvent extends CamelContextEvent, FailureEvent {
         @Override
         default Type getType() {
@@ -136,6 +149,7 @@ public interface CamelEvent {
         }
     }
 
+    /** Fired when the CamelContext is resuming. */
     interface CamelContextResumingEvent extends CamelContextEvent {
         @Override
         default Type getType() {
@@ -143,6 +157,7 @@ public interface CamelEvent {
         }
     }
 
+    /** Fired when the CamelContext has been fully started. */
     interface CamelContextStartedEvent extends CamelContextEvent {
         @Override
         default Type getType() {
@@ -150,6 +165,7 @@ public interface CamelEvent {
         }
     }
 
+    /** Fired when the CamelContext is starting. */
     interface CamelContextStartingEvent extends CamelContextEvent {
         @Override
         default Type getType() {
@@ -157,6 +173,7 @@ public interface CamelEvent {
         }
     }
 
+    /** Fired when the CamelContext failed to start. */
     interface CamelContextStartupFailureEvent extends CamelContextEvent, FailureEvent {
         @Override
         default Type getType() {
@@ -164,6 +181,7 @@ public interface CamelEvent {
         }
     }
 
+    /** Fired when the CamelContext failed to stop cleanly. */
     interface CamelContextStopFailureEvent extends CamelContextEvent, FailureEvent {
         @Override
         default Type getType() {
@@ -171,6 +189,7 @@ public interface CamelEvent {
         }
     }
 
+    /** Fired when the CamelContext has been stopped. */
     interface CamelContextStoppedEvent extends CamelContextEvent {
         @Override
         default Type getType() {
@@ -178,6 +197,7 @@ public interface CamelEvent {
         }
     }
 
+    /** Fired when the CamelContext is stopping. */
     interface CamelContextStoppingEvent extends CamelContextEvent {
         @Override
         default Type getType() {
@@ -185,6 +205,7 @@ public interface CamelEvent {
         }
     }
 
+    /** Fired when the CamelContext has been suspended. */
     interface CamelContextSuspendedEvent extends CamelContextEvent {
         @Override
         default Type getType() {
@@ -192,6 +213,7 @@ public interface CamelEvent {
         }
     }
 
+    /** Fired when the CamelContext is suspending. */
     interface CamelContextSuspendingEvent extends CamelContextEvent {
         @Override
         default Type getType() {
@@ -199,6 +221,7 @@ public interface CamelEvent {
         }
     }
 
+    /** Fired when routes are starting. */
     interface CamelContextRoutesStartingEvent extends CamelContextEvent {
         @Override
         default Type getType() {
@@ -206,6 +229,7 @@ public interface CamelEvent {
         }
     }
 
+    /** Fired when routes have been started. */
     interface CamelContextRoutesStartedEvent extends CamelContextEvent {
         @Override
         default Type getType() {
@@ -213,6 +237,7 @@ public interface CamelEvent {
         }
     }
 
+    /** Fired when routes are stopping. */
     interface CamelContextRoutesStoppingEvent extends CamelContextEvent {
         @Override
         default Type getType() {
@@ -220,6 +245,7 @@ public interface CamelEvent {
         }
     }
 
+    /** Fired when routes have been stopped. */
     interface CamelContextRoutesStoppedEvent extends CamelContextEvent {
         @Override
         default Type getType() {
@@ -227,6 +253,7 @@ public interface CamelEvent {
         }
     }
 
+    /** Fired when the CamelContext is reloading. */
     interface CamelContextReloadingEvent extends CamelContextEvent {
         @Override
         default Type getType() {
@@ -234,6 +261,7 @@ public interface CamelEvent {
         }
     }
 
+    /** Fired when the CamelContext has been reloaded. */
     interface CamelContextReloadedEvent extends CamelContextEvent {
         @Override
         default Type getType() {
@@ -241,6 +269,7 @@ public interface CamelEvent {
         }
     }
 
+    /** Fired when the CamelContext failed to reload. */
     interface CamelContextReloadFailureEvent extends CamelContextEvent, FailureEvent {
         @Override
         default Type getType() {
@@ -248,8 +277,10 @@ public interface CamelEvent {
         }
     }
 
+    /** Event related to {@link Exchange} processing. */
     interface ExchangeEvent extends CamelEvent {
 
+        /** Returns the exchange. */
         Exchange getExchange();
 
         @Override
@@ -258,6 +289,7 @@ public interface CamelEvent {
         }
     }
 
+    /** Fired when an exchange has been completed successfully. */
     interface ExchangeCompletedEvent extends ExchangeEvent {
         @Override
         default Type getType() {
@@ -265,6 +297,7 @@ public interface CamelEvent {
         }
     }
 
+    /** Fired when a new exchange has been created. */
     interface ExchangeCreatedEvent extends ExchangeEvent {
         @Override
         default Type getType() {
@@ -272,6 +305,7 @@ public interface CamelEvent {
         }
     }
 
+    /** Fired when an exchange has failed. */
     interface ExchangeFailedEvent extends ExchangeEvent, FailureEvent {
         @Override
         default Type getType() {
@@ -279,16 +313,22 @@ public interface CamelEvent {
         }
     }
 
+    /** Event providing details about how a failure was handled during exchange processing. */
     interface ExchangeFailureEvent extends ExchangeEvent {
 
+        /** Returns the processor that handled the failure. */
         Processor getFailureHandler();
 
+        /** Whether the failure was handled by a dead letter channel. */
         boolean isDeadLetterChannel();
 
+        /** Returns the dead letter channel endpoint URI, or null if not applicable. */
+        @Nullable
         String getDeadLetterUri();
 
     }
 
+    /** Fired after a failure has been handled by an error handler. */
     interface ExchangeFailureHandledEvent extends ExchangeFailureEvent {
         @Override
         default Type getType() {
@@ -296,6 +336,7 @@ public interface CamelEvent {
         }
     }
 
+    /** Fired when a failure is about to be handled by an error handler. */
     interface ExchangeFailureHandlingEvent extends ExchangeFailureEvent {
         @Override
         default Type getType() {
@@ -303,8 +344,10 @@ public interface CamelEvent {
         }
     }
 
+    /** Fired when an exchange is about to be redelivered. */
     interface ExchangeRedeliveryEvent extends ExchangeEvent {
 
+        /** Returns the redelivery attempt number (starts from 1). */
         int getAttempt();
 
         @Override
@@ -313,8 +356,10 @@ public interface CamelEvent {
         }
     }
 
+    /** Fired when an exchange is about to be sent to an endpoint. */
     interface ExchangeSendingEvent extends ExchangeEvent {
 
+        /** Returns the destination endpoint. */
         Endpoint getEndpoint();
 
         @Override
@@ -323,10 +368,13 @@ public interface CamelEvent {
         }
     }
 
+    /** Fired when an exchange has been sent to an endpoint. */
     interface ExchangeSentEvent extends ExchangeEvent {
 
+        /** Returns the destination endpoint. */
         Endpoint getEndpoint();
 
+        /** Returns the time taken in milliseconds. */
         long getTimeTaken();
 
         @Override
@@ -335,10 +383,13 @@ public interface CamelEvent {
         }
     }
 
+    /** Event related to a Step EIP processing. */
     interface StepEvent extends ExchangeEvent {
+        /** Returns the Step EIP id. */
         String getStepId();
     }
 
+    /** Fired when a Step EIP has started processing an exchange. */
     interface StepStartedEvent extends StepEvent {
         @Override
         default Type getType() {
@@ -346,6 +397,7 @@ public interface CamelEvent {
         }
     }
 
+    /** Fired when a Step EIP has completed processing an exchange. */
     interface StepCompletedEvent extends StepEvent {
         @Override
         default Type getType() {
@@ -353,6 +405,7 @@ public interface CamelEvent {
         }
     }
 
+    /** Fired when a Step EIP has failed processing an exchange. */
     interface StepFailedEvent extends StepEvent, FailureEvent {
         @Override
         default Type getType() {
@@ -360,8 +413,10 @@ public interface CamelEvent {
         }
     }
 
+    /** Event related to {@link Route} lifecycle changes. */
     interface RouteEvent extends CamelEvent {
 
+        /** Returns the route. */
         Route getRoute();
 
         @Override
@@ -370,6 +425,7 @@ public interface CamelEvent {
         }
     }
 
+    /** Fired when a route has been added. */
     interface RouteAddedEvent extends RouteEvent {
         @Override
         default Type getType() {
@@ -377,6 +433,7 @@ public interface CamelEvent {
         }
     }
 
+    /** Fired when a route has been removed. */
     interface RouteRemovedEvent extends RouteEvent {
         @Override
         default Type getType() {
@@ -401,6 +458,7 @@ public interface CamelEvent {
         int getTotal();
     }
 
+    /** Fired when a route is starting. */
     interface RouteStartingEvent extends RouteEvent {
         @Override
         default Type getType() {
@@ -408,6 +466,7 @@ public interface CamelEvent {
         }
     }
 
+    /** Fired when a route has been started. */
     interface RouteStartedEvent extends RouteEvent {
         @Override
         default Type getType() {
@@ -415,6 +474,7 @@ public interface CamelEvent {
         }
     }
 
+    /** Fired when a route is stopping. */
     interface RouteStoppingEvent extends RouteEvent {
         @Override
         default Type getType() {
@@ -422,6 +482,7 @@ public interface CamelEvent {
         }
     }
 
+    /** Fired when a route has been stopped. */
     interface RouteStoppedEvent extends RouteEvent {
         @Override
         default Type getType() {
@@ -461,8 +522,10 @@ public interface CamelEvent {
         }
     }
 
+    /** Event related to {@link org.apache.camel.Service} lifecycle changes. */
     interface ServiceEvent extends CamelEvent {
 
+        /** Returns the service. */
         Object getService();
 
         @Override
@@ -471,6 +534,7 @@ public interface CamelEvent {
         }
     }
 
+    /** Fired when a service failed to start. */
     interface ServiceStartupFailureEvent extends ServiceEvent, FailureEvent {
         @Override
         default Type getType() {
@@ -478,6 +542,7 @@ public interface CamelEvent {
         }
     }
 
+    /** Fired when a service failed to stop. */
     interface ServiceStopFailureEvent extends ServiceEvent, FailureEvent {
         @Override
         default Type getType() {

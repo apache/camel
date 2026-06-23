@@ -53,7 +53,7 @@ public class MailProducerUnsupportedCharsetTest extends CamelTestSupport {
         context.start();
 
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedBodiesReceived("Hello World\r\n", "Bye World\r\n");
+        mock.expectedBodiesReceivedInAnyOrder("Hello World\r\n", "Bye World\r\n");
         mock.allMessages().header("Content-Type").isEqualTo("text/plain");
 
         Map<String, Object> headers = new HashMap<>();

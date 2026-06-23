@@ -16,6 +16,8 @@
  */
 package org.apache.camel;
 
+import java.util.Objects;
+
 /**
  * Exception when failing to add type converters due there is already an existing type converter.
  */
@@ -24,8 +26,13 @@ public class TypeConverterExistsException extends RuntimeCamelException {
     private final transient Class<?> toType;
     private final transient Class<?> fromType;
 
+    /**
+     * @param toType   the target type of the converter that already exists
+     * @param fromType the source type of the converter that already exists
+     */
     public TypeConverterExistsException(Class<?> toType, Class<?> fromType) {
-        super("Failed to add type converter because a type converter exists. " + fromType + " -> " + toType);
+        super("Failed to add type converter because a type converter exists. "
+              + Objects.requireNonNull(fromType, "fromType") + " -> " + Objects.requireNonNull(toType, "toType"));
         this.toType = toType;
         this.fromType = fromType;
     }

@@ -49,11 +49,13 @@ public abstract class FeedEntryPollingConsumer<E> extends FeedPollingConsumer {
             E entry = list.get(entryIndex--);
             polledMessages++;
 
-            Exchange exchange = endpoint.createExchange(feed, entry);
-            getProcessor().process(exchange);
-            if (this.throttleEntries) {
-                // return and wait for the next poll to continue from last time (this consumer is stateful)
-                return polledMessages;
+            if (isValidItem(entry)) {
+                Exchange exchange = endpoint.createExchange(feed, entry);
+                getProcessor().process(exchange);
+                if (this.throttleEntries) {
+                    // return and wait for the next poll to continue from last time (this consumer is stateful)
+                    return polledMessages;
+                }
             }
         }
 
@@ -62,6 +64,10 @@ public abstract class FeedEntryPollingConsumer<E> extends FeedPollingConsumer {
         resetList();
 
         return polledMessages;
+    }
+
+    protected boolean isValidItem(E entry) {
+        return true;
     }
 
     protected abstract void resetList();

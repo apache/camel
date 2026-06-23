@@ -1,0 +1,32 @@
+= camel validate
+
+Validate Camel source code
+
+
+== Usage
+
+[source,bash]
+----
+camel validate [options]
+----
+
+
+== Subcommands
+
+[cols="2,5",options="header"]
+|===
+| Subcommand | Description
+| xref:jbang-commands/camel-jbang-validate-yaml.adoc[yaml] | Parse and validate YAML routes
+| xref:jbang-commands/camel-jbang-validate-normalize.adoc[normalize] | Normalize YAML routes to canonical (explicit) form
+|===
+
+
+
+== Options
+
+[cols="2,5,1,2",options="header"]
+|===
+| Option | Description | Default | Type
+| `-h,--help` | Display the help and sub-commands |  | boolean
+|===
+

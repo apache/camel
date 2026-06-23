@@ -26,7 +26,7 @@ import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 
 /**
- * OpenAI component for chat completion and embeddings.
+ * OpenAI component for chat completion, embeddings, and audio transcription.
  */
 @Component("openai")
 public class OpenAIComponent extends DefaultComponent implements SSLContextParametersAware {
@@ -42,6 +42,9 @@ public class OpenAIComponent extends DefaultComponent implements SSLContextParam
 
     @Metadata(description = "Default model for embeddings endpoints")
     private String embeddingModel;
+
+    @Metadata(description = "Default model for audio transcription endpoints")
+    private String audioModel;
 
     @Metadata(label = "security", defaultValue = "false",
               description = "Enable usage of global SSL context parameters")
@@ -62,6 +65,9 @@ public class OpenAIComponent extends DefaultComponent implements SSLContextParam
         }
         if (embeddingModel != null) {
             configuration.setEmbeddingModel(embeddingModel);
+        }
+        if (audioModel != null) {
+            configuration.setAudioModel(audioModel);
         }
 
         OpenAIEndpoint endpoint = new OpenAIEndpoint(uri, this, configuration);
@@ -106,6 +112,14 @@ public class OpenAIComponent extends DefaultComponent implements SSLContextParam
 
     public void setEmbeddingModel(String embeddingModel) {
         this.embeddingModel = embeddingModel;
+    }
+
+    public String getAudioModel() {
+        return audioModel;
+    }
+
+    public void setAudioModel(String audioModel) {
+        this.audioModel = audioModel;
     }
 
     @Override

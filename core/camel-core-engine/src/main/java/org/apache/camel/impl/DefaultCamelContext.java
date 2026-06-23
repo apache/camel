@@ -30,6 +30,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
 import org.apache.camel.FailedToStartRouteException;
 import org.apache.camel.LoggingLevel;
+import org.apache.camel.NamedRoute;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
@@ -430,6 +431,11 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
     }
 
     @Override
+    public List<NamedRoute> getNamedRouteDefinitions() {
+        return new ArrayList<>(model.getRouteDefinitions());
+    }
+
+    @Override
     public List<RestDefinition> getRestDefinitions() {
         return model.getRestDefinitions();
     }
@@ -684,6 +690,7 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
                     // no side-effect from previously used values that Camel may use in its endpoint
                     // registry and elsewhere
                     if (bbr != null && !bbr.isEmpty()) {
+                        Map<String, String> beanNameMappings = new HashMap<>();
                         for (Map.Entry<String, Object> param : params.entrySet()) {
                             Object value = param.getValue();
                             if (value instanceof String oldKey) {
@@ -695,7 +702,16 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
                                             routeDefinition.getId(), oldKey, newKey);
                                     bbrCopy.put(newKey, bbr.remove(oldKey));
                                     param.setValue(newKey);
+                                    beanNameMappings.put(oldKey, newKey);
                                 }
+                            }
+                        }
+                        // ensure bean names removed during clash detection are still
+                        // available as template parameters so they can be referenced
+                        // directly in routes via {{beanName}}
+                        for (Map.Entry<String, String> mapping : beanNameMappings.entrySet()) {
+                            if (!params.containsKey(mapping.getKey())) {
+                                params.put(mapping.getKey(), mapping.getValue());
                             }
                         }
                         // the remainder of the local beans must also have their ids made global unique

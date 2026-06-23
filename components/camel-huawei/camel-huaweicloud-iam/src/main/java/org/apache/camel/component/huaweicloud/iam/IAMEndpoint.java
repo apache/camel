@@ -40,54 +40,53 @@ import org.apache.camel.util.ObjectHelper;
              category = { Category.CLOUD }, producerOnly = true)
 public class IAMEndpoint extends DefaultEndpoint {
 
-    @UriPath(description = "Operation to be performed", displayName = "Operation", label = "producer", secret = false)
+    @UriPath(description = "Operation to be performed", displayName = "Operation", label = "producer")
     @Metadata(required = true)
     private String operation;
 
-    @UriParam(description = "IAM service region",
-              displayName = "Service region", secret = false)
+    @UriParam(description = "IAM service region", displayName = "Service region")
     @Metadata(required = true)
     private String region;
 
-    @UriParam(description = "Proxy server ip/hostname", displayName = "Proxy server host", secret = false)
+    @UriParam(description = "Proxy server ip/hostname", displayName = "Proxy server host")
     @Metadata(required = false)
     private String proxyHost;
 
-    @UriParam(description = "Proxy server port", displayName = "Proxy server port", secret = false)
+    @UriParam(description = "Proxy server port", displayName = "Proxy server port")
     @Metadata(required = false)
     private int proxyPort;
 
-    @UriParam(description = "Proxy authentication user", displayName = "Proxy user", secret = true)
+    @UriParam(description = "Proxy authentication user", displayName = "Proxy user", security = "secret")
     @Metadata(required = false)
     private String proxyUser;
 
-    @UriParam(description = "Proxy authentication password", displayName = "Proxy password", secret = true)
+    @UriParam(description = "Proxy authentication password", displayName = "Proxy password", security = "secret")
     @Metadata(required = false)
     private String proxyPassword;
 
-    @UriParam(description = "Ignore SSL verification", displayName = "SSL Verification Ignored", secret = false,
-              defaultValue = "false")
+    @UriParam(description = "Ignore SSL verification", displayName = "SSL Verification Ignored",
+              defaultValue = "false", label = "security", security = "insecure:ssl")
     @Metadata(required = false)
     private boolean ignoreSslVerification;
 
     @UriParam(description = "Configuration object for cloud service authentication", displayName = "Service Configuration",
-              secret = true)
+              security = "secret")
     @Metadata(required = false)
     private ServiceKeys serviceKeys;
 
-    @UriParam(description = "Access key for the cloud user", displayName = "API access key (AK)", secret = true)
+    @UriParam(description = "Access key for the cloud user", displayName = "API access key (AK)", security = "secret")
     @Metadata(required = true)
     private String accessKey;
 
-    @UriParam(description = "Secret key for the cloud user", displayName = "API secret key (SK)", secret = true)
+    @UriParam(description = "Secret key for the cloud user", displayName = "API secret key (SK)", security = "secret")
     @Metadata(required = true)
     private String secretKey;
 
-    @UriParam(description = "User ID to perform operation with", displayName = "User ID", secret = true)
+    @UriParam(description = "User ID to perform operation with", displayName = "User ID", security = "secret")
     @Metadata(required = false)
     private String userId;
 
-    @UriParam(description = "Group ID to perform operation with", displayName = "Group ID", secret = true)
+    @UriParam(description = "Group ID to perform operation with", displayName = "Group ID", security = "secret")
     @Metadata(required = false)
     private String groupId;
 

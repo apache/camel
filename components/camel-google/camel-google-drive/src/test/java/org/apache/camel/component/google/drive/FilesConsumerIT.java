@@ -51,7 +51,7 @@ public class FilesConsumerIT extends AbstractGoogleDriveTestSupport {
         MockEndpoint.assertIsSatisfied(context);
 
         FileList fileList
-                = mock.getReceivedExchanges().get(0).getIn().getBody(com.google.api.services.drive.model.FileList.class);
+                = mock.getReceivedExchanges().get(0).getIn().getBody(FileList.class);
         assertTrue(fileInList(fileId, fileList));
 
     }

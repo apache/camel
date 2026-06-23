@@ -37,66 +37,67 @@ import org.apache.camel.util.ObjectHelper;
              category = { Category.CLOUD, Category.SERVERLESS }, producerOnly = true)
 public class FunctionGraphEndpoint extends DefaultEndpoint {
 
-    @UriPath(description = "Operation to be performed", displayName = "Operation", label = "producer", secret = false)
+    @UriPath(description = "Operation to be performed", displayName = "Operation", label = "producer")
     @Metadata(required = true)
     private String operation;
 
     @UriParam(description = "FunctionGraph service region. This is lower precedence than endpoint based configuration",
-              displayName = "Service region", secret = false)
+              displayName = "Service region")
     @Metadata(required = true)
     private String region;
 
-    @UriParam(description = "Cloud project ID", displayName = "Project ID", secret = false)
+    @UriParam(description = "Cloud project ID", displayName = "Project ID")
     @Metadata(required = true)
     private String projectId;
 
     @UriParam(description = "Functions that can be logically grouped together",
-              displayName = "Function package", secret = false, defaultValue = FunctionGraphConstants.DEFAULT_FUNCTION_PACKAGE)
+              displayName = "Function package", defaultValue = FunctionGraphConstants.DEFAULT_FUNCTION_PACKAGE)
     @Metadata(required = false)
     private String functionPackage;
 
     @UriParam(description = "Name of the function to invoke",
-              displayName = "Function name", secret = false)
+              displayName = "Function name")
     @Metadata(required = false)
     private String functionName;
 
-    @UriParam(description = "Proxy server ip/hostname", displayName = "Proxy server host", secret = false, label = "proxy")
+    @UriParam(description = "Proxy server ip/hostname", displayName = "Proxy server host", label = "proxy")
     @Metadata(required = false)
     private String proxyHost;
 
-    @UriParam(description = "Proxy server port", displayName = "Proxy server port", secret = false, label = "proxy")
+    @UriParam(description = "Proxy server port", displayName = "Proxy server port", label = "proxy")
     @Metadata(required = false)
     private int proxyPort;
 
-    @UriParam(description = "Proxy authentication user", displayName = "Proxy user", secret = true, label = "proxy")
+    @UriParam(description = "Proxy authentication user", displayName = "Proxy user", security = "secret", label = "proxy")
     @Metadata(required = false)
     private String proxyUser;
 
-    @UriParam(description = "Proxy authentication password", displayName = "Proxy password", secret = true, label = "proxy")
+    @UriParam(description = "Proxy authentication password", displayName = "Proxy password", security = "secret",
+              label = "proxy")
     @Metadata(required = false)
     private String proxyPassword;
 
-    @UriParam(description = "Ignore SSL verification", displayName = "SSL Verification Ignored", secret = false,
-              defaultValue = "false", label = "security")
+    @UriParam(description = "Ignore SSL verification", displayName = "SSL Verification Ignored",
+              defaultValue = "false", label = "security", security = "insecure:ssl")
     @Metadata(required = false)
     private boolean ignoreSslVerification;
 
     @UriParam(description = "FunctionGraph url. Carries higher precedence than region parameter based client initialization",
-              displayName = "Service endpoint", secret = false)
+              displayName = "Service endpoint")
     @Metadata(required = false)
     private String endpoint;
 
     @UriParam(description = "Configuration object for cloud service authentication", displayName = "Service Configuration",
-              secret = true)
+              security = "secret")
     @Metadata(required = false)
     private ServiceKeys serviceKeys;
 
-    @UriParam(description = "Access key for the cloud user", displayName = "API access key (AK)", secret = true,
+    @UriParam(description = "Access key for the cloud user", displayName = "API access key (AK)", security = "secret",
               label = "security")
     @Metadata(required = true)
     private String accessKey;
 
-    @UriParam(description = "Secret key for the cloud user", displayName = "API secret key (SK)", secret = true,
+    @UriParam(description = "Secret key for the cloud user", displayName = "API secret key (SK)", security = "secret",
               label = "security")
     @Metadata(required = true)
     private String secretKey;

@@ -23,19 +23,20 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.component.zeebe.internal.OperationName;
 import org.apache.camel.component.zeebe.internal.ZeebeService;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 
 @Deprecated(since = "4.19.0")
-@org.apache.camel.spi.annotations.Component("zeebe")
+@Component("zeebe")
 public class ZeebeComponent extends DefaultComponent {
 
     @Metadata(defaultValue = "" + ZeebeConstants.DEFAULT_GATEWAY_HOST, label = "security")
     String gatewayHost = ZeebeConstants.DEFAULT_GATEWAY_HOST;
     @Metadata(defaultValue = "" + ZeebeConstants.DEFAULT_GATEWAY_PORT, label = "security")
     int gatewayPort = ZeebeConstants.DEFAULT_GATEWAY_PORT;
-    @Metadata(label = "security", secret = true)
+    @Metadata(label = "security", security = "secret")
     String clientId;
-    @Metadata(label = "security", secret = true)
+    @Metadata(label = "security", security = "secret")
     String clientSecret;
     @Metadata
     String oAuthAPI;

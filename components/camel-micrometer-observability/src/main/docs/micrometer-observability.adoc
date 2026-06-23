@@ -6,8 +6,6 @@
 :since: 4.15
 :supportlevel: Preview
 :tabs-sync-option:
-//Manually maintained attributes
-:camel-spring-boot-name: micrometer-observability
 
 *Since Camel {since}*
 
@@ -28,22 +26,24 @@ The configuration properties for the component are:
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
 |Option |Default |Description
-|`excludePatterns` |  | Sets exclude pattern that will disable tracing for those spans that matches the pattern. The variable is a comma separated values of filters to execute (eg, `log*,direct*,setBody*`, ...)
-|`traceProcessors` | `false` | Setting this to true will create new spans for each Camel Processors.
-Use the excludePattern property to filter out Processors
+|`enabled`| false | Turn the tracing on/off.
+|`traceProcessors`| false | Trace inner custom processors (i.e., any `process` configured in the route).
+|`disableCoreProcessors`| false | Disable any inner core processors (any core DSL processor provided in the route, for example `bean`, `log`, ...).
+| `excludePatterns` | | A comma-separated list of patterns (e.g., `log*,direct*,setBody*`) to exclude from tracing. Spans matching these patterns will be disabled. If nothing is specified, no processors are excluded by default.
+| `includePatterns` | | A comma-separated list of patterns (e.g., `log*,direct*,setBody*`) to explicitly include in a trace. Spans matching these patterns will be enabled. If nothing is specified, all processors are included by default.
 |`traceHeadersInclusion`| false | Add the generated telemetry `CAMEL_TRACE_ID` and `CAMEL_SPAN_ID` Exchange headers.
 |=======================================================================
 
-include::spring-boot:partial$starter.adoc[]
 
 === Spring Boot context propagation
 
-The starter is in charge to autoconfigure the component. Additionally you will need to specify the concrete Propagation implementation by adding the dependency you wish to use (for example, `io.micrometer:micrometer-tracing-bridge-otel`, 'io.micrometer:micrometer-tracing-bridge-brave' or any other technology you wish to use). If none is provided, a "no-op" implementation will be defined as default.
+The starter is in charge to autoconfigure the component. Additionally you will need to specify the concrete Propagation implementation by adding the dependency you wish to use (for example, `io.micrometer:micrometer-tracing-bridge-otel`, `io.micrometer:micrometer-tracing-bridge-brave` or any other technology you wish to use). If none is provided, a "no-op" implementation will be defined as default.
 
 == Using with standalone Camel
 
 If you use `camel-main` as standalone Camel, add `camel-micrometer-observability` component in your POM, and setup the proper configuration. Mind that, since the component is a facade to a concrete implementation, you are in charge to provide the configuration programmatically. The minimum required for the component to start is the following snippet of code:
 
+._Java-only: minimum setup for MicrometerObservabilityTracer in standalone Camel_
 ```java
 import org.apache.camel.micrometer.observability.MicrometerObservabilityTracer;
 ...
@@ -56,10 +56,11 @@ import org.apache.camel.micrometer.observability.MicrometerObservabilityTracer;
     }
 ```
 
-You can run this, for example, directly via Camel JBang using `camel run MyTest.java --dep camel-micrometer-observability`. This basic configuration will start an "in-memory" simple implementation with a "no-op" context propagation. You may want to use this exclusively for development purposes. In order to configure it for a production environment you will need to setup a `Tracer`, an `ObservationRegistry` and a `Propagator`.
+You can run this, for example, directly via Camel CLI using `camel run MyTest.java --dep camel-micrometer-observability`. This basic configuration will start an "in-memory" simple implementation with a "no-op" context propagation. You may want to use this exclusively for development purposes. In order to configure it for a production environment you will need to setup a `Tracer`, an `ObservationRegistry` and a `Propagator`.
 
 If you need to setup the specific component parameters, you may do it directly on the tracer object, for example:
 
+._Java-only: configuring tracer parameters programmatically_
 ```java
      myTracer.setTraceProcessors(true);
      myTracer.setExcludePatterns("log*,to*");
@@ -75,6 +76,7 @@ The production configuration vary based on the concrete technology you use (like
 
 Here it follows an example to configure the component to work with Opentelemetry bridge. First of all, you need to include in your project the dependencies for `io.micrometer:micrometer-tracing-bridge-otel` and `io.opentelemetry:opentelemetry-sdk:x.y.z` (you need to explicitly set the version for the last dependency).
 
+._Java-only: configuring the OpenTelemetry bridge with Micrometer tracing_
 ```java
 import org.apache.camel.micrometer.observability.MicrometerObservabilityTracer;
 import io.micrometer.tracing.otel.bridge.OtelBaggageManager;
@@ -119,7 +121,7 @@ import io.opentelemetry.api.trace.propagation.W3CTraceContextPropagator;
                 event -> {
                 },
                 new OtelBaggageManager(
-                        currentTraceContext, List.of(MicrometerObservabilitySpanAdapter.BAGGAGE_CAMEL_FLAG), List.of()));
+                        currentTraceContext, List.of(), List.of()));
         OtelPropagator otelPropagator = new OtelPropagator(propagators, otelTracer);
         getContext().getRegistry().bind("MicrometerObservabilityTracer", micrometerTracer);
         getContext().getRegistry().bind("OpentelemetryPropagators", otelPropagator);
@@ -132,8 +134,6 @@ import io.opentelemetry.api.trace.propagation.W3CTraceContextPropagator;
 NOTE: this is an example that can be used as a reference. It may not work exactly as it is, since, the related dependency can change from version to version. You will need to check in details looking at the concrete implementation documentation.
 
 You can see that the configuration of this component may get a bit difficult, unless you are already familiar with the tracing technology you're going to implement.
-
-NOTE: an important thing to do is to include a `BaggageManager` specifying the baggage properties to include during context propagation. The field provided in the example, `MicrometerObservabilitySpanAdapter.BAGGAGE_CAMEL_FLAG`, is necessary to handle consistency across asynchronous threads.
 
 === How to trace
 
@@ -153,15 +153,14 @@ As an alternative, you can add Mapped Diagnostic Context tracing information (ie
 
 When you're working at a very low level, you may need to tweak your metrics and add some in-process custom `span` in order to trace some specific measure of your application. If you need this advanced use case, you can create it during your process by configuring a Micrometer Tracer object and share it to your route. For example, in Java DSL:
 
+._Java-only: creating a custom span within a Camel processor_
 [source,java]
 ----
 protected io.micrometer.tracing.Tracer tracer = new OtelTracer(
     otelTracer,
     currentTraceContext,
-    event -> {
-    },
-    new OtelBaggageManager(
-            currentTraceContext, List.of(MicrometerObservabilitySpanAdapter.BAGGAGE_CAMEL_FLAG), List.of()));
+    event -> {},
+    new OtelBaggageManager(currentTraceContext, List.of(), List.of()));
 ...
 public void process(Exchange exchange) throws Exception {
     exchange.getIn().setHeader("operation", "fake");
@@ -173,3 +172,27 @@ public void process(Exchange exchange) throws Exception {
     mySpan.end();
 }
 ----
+
+=== Baggage customization
+
+`Baggage` is a way to attach key-value metadata to a request and carry it across service boundaries. In the context of telemetry technologies, baggage travels along with the context (like trace/span), but it's meant for custom data you define, not telemetry internals. Camel allows you to programmatically provide any `Baggage` information via Exchange property settings. Whenever the component finds a property defined as `CamelBaggage_xyz` it will consider it as a baggage variable named `xyz`. For example, in Java DSL:
+
+._Java-only: setting baggage properties and retrieving them via Micrometer API_
+[source,java]
+----
+                from("direct:start")
+                        .setProperty("CamelBaggage_myValue", constant("1234"))
+                        .routeId("start")
+                        .log("A message")
+                        .process(exchange -> {
+                            // Baggage is available via the Micrometer Observability API
+                            String val = tracer.getBaggage("myValue").get();
+                        })
+                        .to("log:info");
+----
+
+Any span executed after the `setProperty` will include a baggage variable named `myValue` with value `1234` which will be reflected in your telemetry result as well.
+
+NOTE: an important thing to do is to include a `BaggageManager` specifying the baggage properties to include during context propagation. You may require to configure those baggages fields you want to propagate across the boards.
+
+Any baggage setting defined externally (i.e., calling the Camel process into another external process where you're setting some baggage) is normally going to be propagated in Camel logic.

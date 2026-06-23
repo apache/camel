@@ -226,7 +226,7 @@ public interface SmooksEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final SmooksHeaderNameBuilder INSTANCE = new SmooksHeaderNameBuilder();
+        public static final SmooksHeaderNameBuilder INSTANCE = new SmooksHeaderNameBuilder();
 
         /**
          * The Smooks execution context.

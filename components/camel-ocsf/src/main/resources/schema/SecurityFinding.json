@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://schema.ocsf.io/1.7.0/classes/security_finding",
+  "$id": "https://schema.ocsf.io/1.8.0/classes/security_finding",
   "title": "SecurityFinding",
   "type": "object",
   "javaType": "org.apache.camel.dataformat.ocsf.model.SecurityFinding",
@@ -9,72 +9,20 @@
     "$ref": "OcsfEvent.json"
   },
   "properties": {
-    "impact": {
-      "type": "string",
-      "title": "Impact"
-    },
-    "resources": {
-      "type": "array",
-      "description": "",
-      "items": {
-        "$ref": "ResourceDetails.json"
-      }
-    },
-    "raw_data_size": {
+    "impact_id": {
       "type": "integer",
-      "title": "Raw Data Size"
-    },
-    "risk_score": {
-      "type": "integer",
-      "title": "Risk Score"
-    },
-    "process": {
-      "$ref": "Process.json"
+      "title": "Impact ID"
     },
     "state": {
       "type": "string",
       "title": "State"
     },
-    "kill_chain": {
-      "type": "array",
-      "description": "",
-      "items": {
-        "$ref": "KillChainPhase.json"
-      }
+    "compliance": {
+      "$ref": "Compliance.json"
     },
-    "enrichments": {
-      "type": "array",
-      "description": "",
-      "items": {
-        "$ref": "Enrichment.json"
-      }
-    },
-    "confidence_score": {
+    "impact_score": {
       "type": "integer",
-      "title": "Confidence Score"
-    },
-    "state_id": {
-      "type": "integer",
-      "title": "State ID"
-    },
-    "impact_id": {
-      "type": "integer",
-      "title": "Impact ID"
-    },
-    "finding": {
-      "type": "object",
-      "additionalProperties": true
-    },
-    "malware": {
-      "type": "array",
-      "description": "",
-      "items": {
-        "$ref": "Malware.json"
-      }
-    },
-    "confidence_id": {
-      "type": "integer",
-      "title": "Confidence ID"
+      "title": "Impact Score"
     },
     "evidence": {
       "type": [
@@ -88,16 +36,9 @@
       ],
       "title": "Evidence"
     },
-    "cis_csc": {
-      "type": "array",
-      "title": "CIS CSC",
-      "items": {
-        "type": "object",
-        "additionalProperties": true
-      }
-    },
-    "analytic": {
-      "$ref": "Analytic.json"
+    "risk_level": {
+      "type": "string",
+      "title": "Risk Level"
     },
     "vulnerabilities": {
       "type": "array",
@@ -106,30 +47,17 @@
         "$ref": "Vulnerability.json"
       }
     },
-    "risk_level_id": {
+    "risk_score": {
       "type": "integer",
-      "title": "Risk Level ID"
+      "title": "Risk Score"
     },
-    "compliance": {
-      "$ref": "Compliance.json"
-    },
-    "raw_data_hash": {
-      "$ref": "Fingerprint.json"
-    },
-    "attacks": {
+    "cis_csc": {
       "type": "array",
-      "description": "",
+      "title": "CIS CSC",
       "items": {
-        "$ref": "Attack.json"
+        "type": "object",
+        "additionalProperties": true
       }
-    },
-    "impact_score": {
-      "type": "integer",
-      "title": "Impact Score"
-    },
-    "confidence": {
-      "type": "string",
-      "title": "Confidence"
     },
     "nist": {
       "type": "array",
@@ -138,15 +66,87 @@
         "type": "string"
       }
     },
-    "risk_level": {
-      "type": "string",
-      "title": "Risk Level"
-    },
     "data_sources": {
       "type": "array",
       "title": "Data Sources",
       "items": {
         "type": "string"
+      }
+    },
+    "confidence": {
+      "type": "string",
+      "title": "Confidence"
+    },
+    "risk_level_id": {
+      "type": "integer",
+      "title": "Risk Level ID"
+    },
+    "finding": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "kill_chain": {
+      "type": "array",
+      "description": "",
+      "items": {
+        "$ref": "KillChainPhase.json"
+      }
+    },
+    "resources": {
+      "type": "array",
+      "description": "",
+      "items": {
+        "$ref": "ResourceDetails.json"
+      }
+    },
+    "confidence_id": {
+      "type": "integer",
+      "title": "Confidence ID"
+    },
+    "confidence_score": {
+      "type": "integer",
+      "title": "Confidence Score"
+    },
+    "analytic": {
+      "$ref": "Analytic.json"
+    },
+    "process": {
+      "$ref": "Process.json"
+    },
+    "state_id": {
+      "type": "integer",
+      "title": "State ID"
+    },
+    "impact": {
+      "type": "string",
+      "title": "Impact"
+    },
+    "malware": {
+      "type": "array",
+      "description": "",
+      "items": {
+        "$ref": "Malware.json"
+      }
+    },
+    "attacks": {
+      "type": "array",
+      "description": "",
+      "items": {
+        "$ref": "Attack.json"
+      }
+    },
+    "raw_data_size": {
+      "type": "integer",
+      "title": "Raw Data Size"
+    },
+    "raw_data_hash": {
+      "$ref": "Fingerprint.json"
+    },
+    "enrichments": {
+      "type": "array",
+      "description": "",
+      "items": {
+        "$ref": "Enrichment.json"
       }
     }
   }

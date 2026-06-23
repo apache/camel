@@ -73,23 +73,28 @@ YAML::
 +
 [source,yaml]
 ----
-- from:
-    uri: direct:a
-    steps:
-      - choice:
-          when:
-            - simple: "${header.foo} == 'bar'"
+- route:
+    from:
+      uri: direct:a
+      steps:
+        - choice:
+            when:
+              - expression:
+                  simple:
+                    expression: "${header.foo} == 'bar'"
+                steps:
+                  - to:
+                      uri: direct:b
+              - expression:
+                  simple:
+                    expression: "${header.foo} == 'cheese'"
+                steps:
+                  - to:
+                      uri: direct:c
+            otherwise:
               steps:
                 - to:
-                    uri: direct:b
-            - simple: "${header.foo} == 'cheese'"
-              steps:
-                - to:
-                    uri: direct:c
-          otherwise:
-            steps:
-              - to:
-                  uri: direct:d
+                    uri: direct:d
 ----
 ====
 
@@ -103,6 +108,7 @@ xref:loadBalance-eip.adoc[Load Balancer] EIP inside the Choice EIP in the first 
 
 *Code will not compile*
 
+._Java-only: incorrect use of loadBalance inside choice_
 [source,java]
 ----
 from("direct:start")
@@ -117,6 +123,7 @@ Well, the first issue is that the xref:loadBalance-eip.adoc[Load Balancer] EIP
 uses the additional routing to know what to use in the load balancing.
 In this example, that would be:
 
+._Java-only: load balancer routing snippet_
 [source,java]
 ----
 .to("mock:foo").to("mock:bar")
@@ -128,6 +135,7 @@ So the route is updated as follows:
 
 *Code will still not compile*
 
+._Java-only: using end() does not fix the compilation issue_
 [source,java]
 ----
 from("direct:start")
@@ -151,6 +159,7 @@ to the scope of the Choice EIP.
 
 *Code compiles*
 
+._Java-only: using endChoice() to fix the compilation issue_
 [source,java]
 ----
 from("direct:start")
@@ -248,21 +257,29 @@ YAML::
 +
 [source,yaml]
 ----
-- from:
-    uri: "direct:a"
-    steps:
-      - choice:
-          precondition: true
-          when:
-            - simple: "{{?foo}}"
+- route:
+    from:
+      uri: direct:a
+      steps:
+        - choice:
+            precondition: true
+            when:
+              - expression:
+                  simple:
+                    expression: "{{?foo}}"
+                steps:
+                  - to:
+                      uri: direct:foo
+              - expression:
+                  simple:
+                    expression: "{{?bar}}"
+                steps:
+                  - to:
+                      uri: direct:bar
+            otherwise:
               steps:
-                - to: "direct:foo"
-            - simple: "{{?bar}}"
-              steps:
-                - to: "direct:bar"
-          otherwise:
-            steps:
-              - to: "direct:other"
+                - to:
+                    uri: direct:other
 ----
 ====
 

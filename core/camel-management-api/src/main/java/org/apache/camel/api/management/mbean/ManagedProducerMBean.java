@@ -20,6 +20,9 @@ import org.apache.camel.api.management.ManagedAttribute;
 
 public interface ManagedProducerMBean extends ManagedServiceMBean {
 
+    @ManagedAttribute(description = "Step ID")
+    String getStepId();
+
     @ManagedAttribute(description = "Endpoint URI", mask = true)
     String getEndpointUri();
 

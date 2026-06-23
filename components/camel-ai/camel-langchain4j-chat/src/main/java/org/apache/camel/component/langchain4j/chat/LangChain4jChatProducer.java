@@ -80,14 +80,17 @@ public class LangChain4jChatProducer extends DefaultProducer {
     }
 
     private void processSingleMessage(Exchange exchange) throws InvalidPayloadException {
-        // Retrieve the mandatory body from the exchange
-        final var message = exchange.getIn().getMandatoryBody();
+        final var body = exchange.getIn().getMandatoryBody();
 
-        // Use pattern matching with instanceof to streamline type checks and assignments
-        ChatMessage userMessage = (message instanceof String str) ? new UserMessage(str) : (ChatMessage) message;
+        ChatMessage userMessage;
+        if (body instanceof ChatMessage cm) {
+            userMessage = cm;
+        } else {
+            String text = exchange.getIn().getMandatoryBody(String.class);
+            userMessage = new UserMessage(text);
+        }
 
         populateResponse(sendChatMessage(userMessage, exchange), exchange);
-
     }
 
     @SuppressWarnings("unchecked")

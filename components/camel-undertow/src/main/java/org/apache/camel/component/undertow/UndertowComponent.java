@@ -81,8 +81,8 @@ public class UndertowComponent extends DefaultComponent
     private boolean useGlobalSslContextParameters;
     @Metadata(label = "advanced")
     private UndertowHostOptions hostOptions;
-    @Metadata(label = "consumer")
-    private boolean muteException;
+    @Metadata(label = "consumer", defaultValue = "true")
+    private boolean muteException = true;
     @Metadata(label = "security")
     private Object securityConfiguration;
     @Metadata(label = "security")
@@ -271,7 +271,9 @@ public class UndertowComponent extends DefaultComponent
 
         if (!map.containsKey("undertowHttpBinding")) {
             // use the rest binding, if not using a custom http binding
-            endpoint.setUndertowHttpBinding(new RestUndertowHttpBinding(endpoint.isUseStreaming()));
+            UndertowHttpBinding binding = new RestUndertowHttpBinding(endpoint.isUseStreaming());
+            binding.setMuteException(endpoint.getMuteException());
+            endpoint.setUndertowHttpBinding(binding);
         }
 
         // configure consumer properties

@@ -109,7 +109,7 @@ public class MiloServerComponent extends DefaultComponent {
     private String securityPoliciesById;
     @Metadata(label = "security")
     private Set<SecurityPolicy> securityPolicies;
-    @Metadata(label = "security", secret = true)
+    @Metadata(label = "security", security = "secret")
     private String userAuthenticationCredentials;
     @Metadata(label = "security")
     private String usernameSecurityPolicyUri = OpcUaServerConfig.USER_TOKEN_POLICY_USERNAME.getSecurityPolicyUri();

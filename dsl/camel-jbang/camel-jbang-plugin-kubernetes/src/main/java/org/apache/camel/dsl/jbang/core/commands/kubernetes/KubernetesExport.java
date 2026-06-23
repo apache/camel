@@ -36,6 +36,10 @@ import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.Export;
 import org.apache.camel.dsl.jbang.core.commands.ExportBaseCommand;
 import org.apache.camel.dsl.jbang.core.commands.ExportHelper;
+import org.apache.camel.dsl.jbang.core.commands.MavenResolverMixin;
+import org.apache.camel.dsl.jbang.core.commands.MavenResolverMixinSpec;
+import org.apache.camel.dsl.jbang.core.commands.QuarkusPlatformMixin;
+import org.apache.camel.dsl.jbang.core.commands.QuarkusPlatformMixinSpec;
 import org.apache.camel.dsl.jbang.core.commands.Run;
 import org.apache.camel.dsl.jbang.core.commands.RunHelper;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.TraitCatalog;
@@ -43,11 +47,13 @@ import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.TraitContext;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.TraitHelper;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.model.Container;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.model.Traits;
+import org.apache.camel.dsl.jbang.core.common.CatalogLoader;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.RuntimeType;
 import org.apache.camel.dsl.jbang.core.common.RuntimeUtil;
 import org.apache.camel.dsl.jbang.core.common.Source;
 import org.apache.camel.dsl.jbang.core.common.SourceHelper;
+import org.apache.camel.tooling.maven.MavenGav;
 import org.apache.camel.util.CamelCaseOrderedProperties;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.StringHelper;
@@ -146,13 +152,13 @@ public class KubernetesExport extends Export {
         super(main);
 
         runtime = configurer.runtime;
-        quarkusVersion = configurer.quarkusVersion;
-
+        final Properties emptyProps = new Properties();
+        quarkusPlatform = QuarkusPlatformMixin.of(emptyProps, configurer);
         exportBaseDir = configurer.exportBaseDir;
         files = configurer.files;
         name = configurer.name;
         gav = configurer.gav;
-        repositories = configurer.repositories;
+        mavenResolver = MavenResolverMixin.of(emptyProps, configurer);
         dependencies = configurer.dependencies;
         excludes = configurer.excludes;
         mavenSettings = configurer.mavenSettings;
@@ -166,8 +172,6 @@ public class KubernetesExport extends Export {
         localKameletDir = configurer.localKameletDir;
         springBootVersion = configurer.springBootVersion;
         camelSpringBootVersion = configurer.camelSpringBootVersion;
-        quarkusGroupId = configurer.quarkusGroupId;
-        quarkusArtifactId = configurer.quarkusArtifactId;
         openapi = configurer.openapi;
         exportDir = configurer.exportDir;
         packageName = configurer.packageName;
@@ -176,8 +180,6 @@ public class KubernetesExport extends Export {
         javaLiveReload = configurer.javaLiveReload;
         ignoreLoadingError = configurer.ignoreLoadingError;
         mavenWrapper = configurer.mavenWrapper;
-        fresh = configurer.fresh;
-        download = configurer.download;
         skipPlugins = configurer.skipPlugins;
         packageScanJars = configurer.packageScanJars;
         quiet = configurer.quiet;
@@ -226,16 +228,24 @@ public class KubernetesExport extends Export {
             }
         }
 
-        String projectName = getProjectName();
-        String runtimeVersion;
+        final CamelCatalog catalog;
         if (runtime == RuntimeType.quarkus) {
-            runtimeVersion = quarkusVersion;
+            MavenGav camelQuarkusBom = quarkusPlatform
+                    .resolve(
+                            camelVersion,
+                            mavenResolver.downloader()::resolveArtifact,
+                            mavenResolver.download(),
+                            mavenResolver.fresh())
+                    .quarkusCamelBom();
+            catalog = CatalogLoader.loadQuarkusCatalog(camelQuarkusBom, mavenResolver.downloader()::resolveArtifact);
         } else if (runtime == RuntimeType.springBoot) {
-            runtimeVersion = camelSpringBootVersion;
+            catalog = CatalogLoader.loadSpringBootCatalog(mavenResolver.repos(), camelSpringBootVersion,
+                    mavenResolver.download());
+        } else if (runtime == RuntimeType.main) {
+            catalog = CatalogLoader.loadCatalog(mavenResolver.repos(), camelVersion, mavenResolver.download());
         } else {
-            runtimeVersion = camelVersion;
+            throw new IllegalArgumentException("Unsupported runtime: " + runtime);
         }
-        CamelCatalog catalog = CatalogHelper.loadCatalog(runtime, runtimeVersion, repositories, quarkusGroupId, download);
 
         List<Source> sources;
         try {
@@ -247,6 +257,7 @@ public class KubernetesExport extends Export {
             return 1;
         }
 
+        String projectName = getProjectName();
         TraitContext context = new TraitContext(projectName, getVersion(), printer(), catalog, sources);
 
         // Add annotations to TraitContext
@@ -433,13 +444,13 @@ public class KubernetesExport extends Export {
 
     protected Integer export(Path exportBaseDir, ExportBaseCommand cmd) throws Exception {
         if (runtime == RuntimeType.quarkus) {
-            cmd.pomTemplateName = "quarkus-kubernetes-pom.tmpl";
+            cmd.pomTemplateName = "quarkus-kubernetes-pom.ftl";
         }
         if (runtime == RuntimeType.springBoot) {
-            cmd.pomTemplateName = "spring-boot-kubernetes-pom.tmpl";
+            cmd.pomTemplateName = "spring-boot-kubernetes-pom.ftl";
         }
         if (runtime == RuntimeType.main) {
-            cmd.pomTemplateName = "main-kubernetes-pom.tmpl";
+            cmd.pomTemplateName = "main-kubernetes-pom.ftl";
         }
         return super.export(exportBaseDir, cmd);
     }
@@ -511,6 +522,8 @@ public class KubernetesExport extends Export {
             return "localhost:5001";
         } else if (ClusterType.MINIKUBE.isEqualTo(clusterType)) {
             return "localhost:5000";
+        } else if (ClusterType.OPENSHIFT.isEqualTo(clusterType)) {
+            return "image-registry.openshift-image-registry.svc:5000";
         }
 
         return null;
@@ -619,7 +632,7 @@ public class KubernetesExport extends Export {
             List<String> files,
             String name,
             String gav,
-            String repositories,
+            String repos,
             List<String> dependencies,
             List<String> excludes,
             String mavenSettings,
@@ -635,6 +648,7 @@ public class KubernetesExport extends Export {
             String camelSpringBootVersion,
             String quarkusGroupId,
             String quarkusArtifactId,
+            String quarkusExtensionRegistryBaseUri,
             String openapi,
             String exportDir,
             String packageName,
@@ -650,6 +664,9 @@ public class KubernetesExport extends Export {
             boolean logging,
             String loggingLevel,
             boolean verbose,
-            boolean skipPlugins) {
+            boolean skipPlugins,
+            String camelQuarkusGroupId,
+            String camelQuarkusArtifactId,
+            String camelQuarkusVersion) implements QuarkusPlatformMixinSpec, MavenResolverMixinSpec {
     }
 }

@@ -24,7 +24,7 @@ import org.apache.camel.spi.UriParams;
 @UriParams
 public class WatsonSpeechToTextConfiguration implements Cloneable {
 
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     @Metadata(required = true)
     private String apiKey;
 

@@ -24,6 +24,7 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
+import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.solr.client.solrj.SolrClient;
 
@@ -37,9 +38,9 @@ public class SolrConfiguration {
     private int port = -1;
     @UriPath(defaultValue = SolrConstants.DEFAULT_BASE_PATH)
     private String basePath;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String username;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String password;
     @UriParam
     private SolrOperation operation;
@@ -60,6 +61,8 @@ public class SolrConfiguration {
     @UriParam(label = "security")
     @Metadata(supportFileReference = true)
     private String certificatePath;
+    @UriParam(label = "security")
+    private SSLContextParameters sslContextParameters;
     @UriParam
     private Long requestTimeout;
     @UriParam
@@ -309,6 +312,19 @@ public class SolrConfiguration {
 
     public void setCertificatePath(String certificatePath) {
         this.certificatePath = certificatePath;
+    }
+
+    public SSLContextParameters getSslContextParameters() {
+        return sslContextParameters;
+    }
+
+    /**
+     * To configure security using SSLContextParameters. When configured, this takes precedence over the
+     * {@code certificatePath} option. This allows configuring named groups, signature schemes, cipher suites, and
+     * protocols for the TLS connection.
+     */
+    public void setSslContextParameters(SSLContextParameters sslContextParameters) {
+        this.sslContextParameters = sslContextParameters;
     }
 
     /**

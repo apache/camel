@@ -42,25 +42,17 @@ header named `orderid` with value `123`.
 In addition to the implementation of the `PlatformHttp` SPI based on Vert.x, this module provides a Vert.x based HTTP
 server compatible with the `VertxPlatformHttpEngine`:
 
+._Java-only: programmatic VertxPlatformHttpServer setup_
 [source,java]
 ----
-final int port = AvailablePortFinder.getNextAvailable();
-final CamelContext context = new DefaultCamelContext();
-
 VertxPlatformHttpServerConfiguration conf = new VertxPlatformHttpServerConfiguration();
 conf.setBindPort(port);
 
 context.addService(new VertxPlatformHttpServer(conf));
-context.addRoutes(new RouteBuilder() {
-    @Override
-    public void configure() throws Exception {
-        from("platform-http:/test")
-            .routeId("get")
-            .setBody().constant("Hello from Camel's PlatformHttp service");
-    }
-});
 
-context.start();
+from("platform-http:/test")
+    .routeId("get")
+    .setBody().constant("Hello from Camel's PlatformHttp service");
 ----
 
 == Implementing a reverse proxy
@@ -69,6 +61,7 @@ Platform HTTP component can act as a reverse proxy, in that case `Exchange.HTTP_
 
 Here's an example of an HTTP proxy that simply redirects the Exchange to the origin server.
 
+._Java-only: reverse proxy using string concatenation with Exchange constants_
 [source,java]
 ----
 from("platform-http:proxy")
@@ -81,6 +74,7 @@ from("platform-http:proxy")
 The Vertx HTTP server has its own API abstraction for HTTP request/response objects which you can access via
 Camel `HttpMessage` as shown in the custom `Processor` below :
 
+._Java-only: inline Processor accessing Vertx request and response objects_
 [source,java]
 ----
 .process(exchange -> {
@@ -100,13 +94,45 @@ Camel `HttpMessage` as shown in the custom `Processor` below :
 When large request / response payloads are expected, there is a `useStreaming` option, which can be enabled to improve performance.
 When `useStreaming` is `true`, it will take advantage of xref:manual::stream-caching.adoc[stream caching]. In conjunction with enabling disk spooling, you can avoid having to store the entire request body payload in memory.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
-// Handle a large request body and stream it to a file
 from("platform-http:/upload?httpMethodRestrict=POST&useStreaming=true")
     .log("Processing large request body...")
-    .to("file:/uploads?fileName=uploaded.txt")
+    .to("file:/uploads?fileName=uploaded.txt");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="platform-http:/upload?httpMethodRestrict=POST&amp;useStreaming=true"/>
+  <log message="Processing large request body..."/>
+  <to uri="file:/uploads?fileName=uploaded.txt"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: platform-http:/upload
+      parameters:
+        httpMethodRestrict: POST
+        useStreaming: true
+      steps:
+        - log:
+            message: "Processing large request body..."
+        - to:
+            uri: file:/uploads?fileName=uploaded.txt
+----
+====
 
 NOTE: This requires to upload the content as `application/octet-stream` to leverage streaming mode. You cannot upload using `multipart`.
 
@@ -120,6 +146,7 @@ To set up authentication, you need to create `AuthenticationConfigEntries`, as s
 This example uses Vert.x https://vertx.io/docs/apidocs/io/vertx/ext/web/handler/BasicAuthHandler.html[BasicAuthHandler] and https://vertx.io/docs/vertx-auth-properties/java/[PropertyFileAuthentication] to configure Basic http authentication with users info stored in `myPropFile.properties` file.
 Mind that in Vert.x order of adding `AuthenticationHandlers` matters, so `AuthenticationConfigEntries` with a more specific url path are applied first.
 
+._Java-only: programmatic authentication configuration with Vertx handlers_
 [source,java]
 ----
 final int port = AvailablePortFinder.getNextAvailable();
@@ -142,14 +169,8 @@ authenticationConfig.setEnabled(true);
 conf.setAuthenticationConfig(authenticationConfig);
 
 context.addService(new VertxPlatformHttpServer(conf));
-context.addRoutes(new RouteBuilder() {
-    @Override
-    public void configure() throws Exception {
-        from("platform-http:/test")
-            .routeId("get")
-            .setBody().constant("Hello from Camel's PlatformHttp service");
-    }
-});
 
-context.start();
+from("platform-http:/test")
+    .routeId("get")
+    .setBody().constant("Hello from Camel's PlatformHttp service");
 ----

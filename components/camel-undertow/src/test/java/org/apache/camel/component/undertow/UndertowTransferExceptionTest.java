@@ -52,7 +52,8 @@ public class UndertowTransferExceptionTest extends BaseUndertowTest {
         return new RouteBuilder() {
 
             public void configure() {
-                from("undertow:http://localhost:" + getPort() + "/test/transfer?transferException=true").to("mock:input")
+                from("undertow:http://localhost:" + getPort() + "/test/transfer?muteException=false&transferException=true")
+                        .to("mock:input")
                         .throwException(new IllegalArgumentException("Camel cannot do this"));
             }
         };

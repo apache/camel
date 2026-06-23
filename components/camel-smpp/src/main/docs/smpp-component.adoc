@@ -7,8 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
-//Manually maintained attributes
-:camel-spring-boot-name: smpp
 
 *Since Camel {since}*
 
@@ -32,14 +30,14 @@ Maven users will need to add the following dependency to their `pom.xml`
 for this component:
 
 [source,xml]
-------------------------------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-smpp</artifactId>
     <version>x.x.x</version>
     <!-- use the same version as your Camel core version -->
 </dependency>
-------------------------------------------------------------
+----
 
 [TIP]
 ====
@@ -159,10 +157,10 @@ throttling messages in the SMPP route before handing them to the SMSC.
 
 == URI format
 
---------------------------------------------
+----
 smpp://[username@]hostname[:port][?options]
 smpps://[username@]hostname[:port][?options]
---------------------------------------------
+----
 
 If no *username* is provided, then Camel will provide the default value
 `smppclient`. +
@@ -199,71 +197,114 @@ code to the SMSC. This feature is useful to e.g., instruct the SMSC to
 resend the short message at a later time. This could be done with the
 following lines of code:
 
+._Java-only: uses doTry/doCatch with Exception.class literal and ProcessRequestException constructor_
 [source,java]
---------------------------------------------------------------------------------------------------------------------------
+----
 from("smpp://smppclient@localhost:2775?password=password&enquireLinkTimer=3000&transactionTimer=5000&systemType=consumer")
   .doTry()
     .to("bean:dao?method=updateSmsState")
   .doCatch(Exception.class)
     .throwException(new ProcessRequestException("update of sms state failed", 100))
   .end();
---------------------------------------------------------------------------------------------------------------------------
+----
 
 Please refer to the http://smsforum.net/SMPP_v3_4_Issue1_2.zip[SMPP
 specification] for the complete list of error codes and their meanings.
 
 == Examples
 
-A route which sends an SMS using the Java DSL:
+A route which sends an SMS:
 
+[tabs]
+====
+Java::
++
 [source,java]
-------------------------------------------------------------------------------------------
+----
 from("direct:start")
-  .to("smpp://smppclient@localhost:2775?
-      password=password&enquireLinkTimer=3000&transactionTimer=5000&systemType=producer");
-------------------------------------------------------------------------------------------
+    .to("smpp://smppclient@localhost:2775?password=password&enquireLinkTimer=3000&transactionTimer=5000&systemType=producer");
+----
 
-A route which sends an SMS using the Spring XML DSL:
-
+XML::
++
 [source,xml]
------------------------------------------------------------------------------------------------------------
+----
 <route>
   <from uri="direct:start"/>
-  <to uri="smpp://smppclient@localhost:2775?
-           password=password&amp;enquireLinkTimer=3000&amp;transactionTimer=5000&amp;systemType=producer"/>
+  <to uri="smpp://smppclient@localhost:2775?password=password&amp;enquireLinkTimer=3000&amp;transactionTimer=5000&amp;systemType=producer"/>
 </route>
------------------------------------------------------------------------------------------------------------
+----
 
-A route which receives an SMS using the Java DSL:
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: smpp://smppclient@localhost:2775
+            parameters:
+              password: password
+              enquireLinkTimer: 3000
+              transactionTimer: 5000
+              systemType: producer
+----
+====
 
+A route which receives an SMS:
+
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------------------------------------------------
+----
 from("smpp://smppclient@localhost:2775?password=password&enquireLinkTimer=3000&transactionTimer=5000&systemType=consumer")
-  .to("bean:foo");
---------------------------------------------------------------------------------------------------------------------------
+    .to("bean:foo");
+----
 
-A route which receives an SMS using the Spring XML DSL:
-
+XML::
++
 [source,xml]
-----------------------------------------------------------------------------------------------------------------
-  <route>
-     <from uri="smpp://smppclient@localhost:2775?
-                password=password&amp;enquireLinkTimer=3000&amp;transactionTimer=5000&amp;systemType=consumer"/>
-     <to uri="bean:foo"/>
-  </route>
-----------------------------------------------------------------------------------------------------------------
+----
+<route>
+  <from uri="smpp://smppclient@localhost:2775?password=password&amp;enquireLinkTimer=3000&amp;transactionTimer=5000&amp;systemType=consumer"/>
+  <to uri="bean:foo"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: smpp://smppclient@localhost:2775
+      parameters:
+        password: password
+        enquireLinkTimer: 3000
+        transactionTimer: 5000
+        systemType: consumer
+      steps:
+        - to:
+            uri: bean:foo
+----
+====
 
 An example of using transceiver (TRX) binding type:
 
+._Java-only: multi-route definition with string concatenation and route id assignment_
 [source,java]
---------------------------------------------------------------------------------------------------------------------------
+----
 from("direct:start")
         .to("smpp://j@localhost:8056?password=jpwd&systemType=producer" +
             "&messageReceiverRouteId=sampleMessageReceiverRouteId");
 
 from("direct:messageReceiver").id("sampleMessageReceiverRouteId")
         .to("bean:foo");
---------------------------------------------------------------------------------------------------------------------------
+----
 
 Please note that with TRX binding type, you wouldn't define a corresponding redundant SMPP consumer. Camel will use the
 specified route by `messageReceiverRouteId` as the corresponding consumer. Internally, it uses one and same SmppSession
@@ -288,10 +329,6 @@ problems. If you use log4j, you can add the following line to your
 configuration:
 
 [source,properties]
---------------------------------------------------
+----
 log4j.logger.org.apache.camel.component.smpp=DEBUG
---------------------------------------------------
-
-
-
-include::spring-boot:partial$starter.adoc[]
+----

@@ -31,7 +31,6 @@ import org.apache.camel.spi.DataFormatContentTypeHeader;
 import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
 import org.apache.camel.spi.PropertyConfigurer;
 import org.apache.camel.spi.PropertyConfigurerAware;
-import org.apache.camel.spi.ReifierStrategy;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.PropertyBindingSupport;
@@ -59,9 +58,6 @@ public abstract class DataFormatReifier<T extends DataFormatDefinition> extends 
     public static void registerReifier(
             Class<? extends DataFormatDefinition> dataFormatClass,
             BiFunction<CamelContext, DataFormatDefinition, DataFormatReifier<? extends DataFormatDefinition>> creator) {
-        if (DATAFORMATS.isEmpty()) {
-            ReifierStrategy.addReifierClearer(DataFormatReifier::clearReifiers);
-        }
         DATAFORMATS.put(dataFormatClass, creator);
     }
 

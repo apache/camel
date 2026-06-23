@@ -21,7 +21,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import picocli.CommandLine;
 
-class RunTest {
+class RunTest extends CamelCommandBaseTestSupport {
 
     @Test
     public void shouldParseJavaVersionOption() throws Exception {
@@ -53,5 +53,55 @@ class RunTest {
         CommandLine.populateCommand(command, "--java-version=21", "route.yaml");
 
         Assertions.assertEquals("21", command.javaVersion);
+    }
+
+    @Test
+    public void shouldListExamples() throws Exception {
+        Run command = new Run(new CamelJBangMain().withPrinter(printer));
+        command.example = "";
+        int exit = command.doCall();
+
+        Assertions.assertEquals(0, exit);
+        String output = printer.getOutput();
+        Assertions.assertTrue(output.contains("Available examples:"));
+        Assertions.assertTrue(output.contains("circuit-breaker"));
+        Assertions.assertTrue(output.contains("groovy"));
+        Assertions.assertTrue(output.contains("routes"));
+    }
+
+    @Test
+    public void shouldRejectUnknownExample() throws Exception {
+        Run command = new Run(new CamelJBangMain().withPrinter(printer));
+        command.example = "nonexistent";
+        int exit = command.doCall();
+
+        Assertions.assertEquals(1, exit);
+    }
+
+    @Test
+    public void shouldSuggestSimilarExample() throws Exception {
+        Run command = new Run(new CamelJBangMain().withPrinter(printer));
+        command.example = "circuit-brake";
+        int exit = command.doCall();
+
+        Assertions.assertEquals(1, exit);
+        String output = printer.getOutput();
+        Assertions.assertTrue(output.contains("Did you mean"));
+    }
+
+    @Test
+    public void shouldParseExampleOption() throws Exception {
+        Run command = new Run(new CamelJBangMain());
+        CommandLine.populateCommand(command, "--example=circuit-breaker");
+
+        Assertions.assertEquals("circuit-breaker", command.example);
+    }
+
+    @Test
+    public void shouldParseExampleListOption() throws Exception {
+        Run command = new Run(new CamelJBangMain());
+        CommandLine.populateCommand(command, "--example");
+
+        Assertions.assertNotNull(command.example);
     }
 }

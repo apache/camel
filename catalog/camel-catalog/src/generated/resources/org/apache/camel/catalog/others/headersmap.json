@@ -4,12 +4,12 @@
     "name": "headersmap",
     "title": "Headersmap",
     "description": "Fast case-insensitive headers map implementation",
-    "deprecated": false,
+    "deprecated": true,
     "firstVersion": "2.20.0",
     "label": "core",
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-headersmap",
-    "version": "4.20.0-SNAPSHOT"
+    "version": "4.21.0-SNAPSHOT"
   }
 }

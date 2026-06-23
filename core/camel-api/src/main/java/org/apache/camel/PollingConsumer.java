@@ -16,8 +16,10 @@
  */
 package org.apache.camel;
 
+import org.jspecify.annotations.Nullable;
+
 /**
- * Represents a <a href="http://camel.apache.org/polling-consumer.html">Polling Consumer</a> where the caller polls for
+ * Represents a <a href="https://camel.apache.org/polling-consumer.html">Polling Consumer</a> where the caller polls for
  * messages when it is ready.
  * <p/>
  * When you are done with the returned {@link Exchange} you must ensure to invoke
@@ -29,6 +31,9 @@ package org.apache.camel;
  * Important: Do not do any initialization in the constructor. Instead use
  * {@link org.apache.camel.support.service.ServiceSupport#doInit()} or
  * {@link org.apache.camel.support.service.ServiceSupport#doStart()}.
+ *
+ * @see DynamicPollingConsumer
+ * @see BatchConsumer
  */
 public interface PollingConsumer extends Consumer {
 
@@ -43,6 +48,7 @@ public interface PollingConsumer extends Consumer {
      *
      * @return the message exchange received.
      */
+    @Nullable
     Exchange receive();
 
     /**
@@ -54,6 +60,7 @@ public interface PollingConsumer extends Consumer {
      *
      * @return the message exchange if one is immediately available otherwise <tt>null</tt>
      */
+    @Nullable
     Exchange receiveNoWait();
 
     /**
@@ -69,5 +76,6 @@ public interface PollingConsumer extends Consumer {
      * @return         the message exchange if one was available within the timeout period, or <tt>null</tt> if the
      *                 timeout expired
      */
+    @Nullable
     Exchange receive(long timeout);
 }

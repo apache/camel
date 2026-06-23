@@ -25,6 +25,8 @@ public class OpenAIComponentConfigurer extends PropertyConfigurerSupport impleme
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "apikey":
         case "apiKey": target.setApiKey(property(camelContext, java.lang.String.class, value)); return true;
+        case "audiomodel":
+        case "audioModel": target.setAudioModel(property(camelContext, java.lang.String.class, value)); return true;
         case "autowiredenabled":
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "baseurl":
@@ -45,6 +47,8 @@ public class OpenAIComponentConfigurer extends PropertyConfigurerSupport impleme
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "apikey":
         case "apiKey": return java.lang.String.class;
+        case "audiomodel":
+        case "audioModel": return java.lang.String.class;
         case "autowiredenabled":
         case "autowiredEnabled": return boolean.class;
         case "baseurl":
@@ -66,6 +70,8 @@ public class OpenAIComponentConfigurer extends PropertyConfigurerSupport impleme
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "apikey":
         case "apiKey": return target.getApiKey();
+        case "audiomodel":
+        case "audioModel": return target.getAudioModel();
         case "autowiredenabled":
         case "autowiredEnabled": return target.isAutowiredEnabled();
         case "baseurl":

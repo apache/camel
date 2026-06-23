@@ -24,26 +24,26 @@ import org.apache.camel.spi.UriParams;
 @UriParams
 public class JiraConfiguration implements Cloneable {
 
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String verificationCode;
 
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String consumerKey;
 
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String privateKey;
 
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String accessToken;
 
     @UriParam
     @Metadata(required = true)
     private String jiraUrl;
 
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String username;
 
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String password;
 
     @UriParam(defaultValue = "6000")

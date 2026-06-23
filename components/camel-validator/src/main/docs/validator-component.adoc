@@ -8,8 +8,6 @@
 :tabs-sync-option:
 :component-header: Only producer is supported
 :core:
-//Manually maintained attributes
-:camel-spring-boot-name: validator
 
 *Since Camel {since}*
 
@@ -58,6 +56,3 @@ validator endpoint is cleared and reread with the next process call with
 the JMX operation `clearCachedSchema`. You can also use this method to
 programmatically clear the cache. This method is available on the
 `ValidatorEndpoint` class.
-
-
-include::spring-boot:partial$starter.adoc[]

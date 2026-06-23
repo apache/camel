@@ -420,7 +420,7 @@ public interface LanguageEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final LanguageHeaderNameBuilder INSTANCE = new LanguageHeaderNameBuilder();
+        public static final LanguageHeaderNameBuilder INSTANCE = new LanguageHeaderNameBuilder();
 
         /**
          * The script to execute provided in the header. Takes precedence over

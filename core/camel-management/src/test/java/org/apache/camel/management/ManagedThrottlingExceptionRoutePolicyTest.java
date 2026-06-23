@@ -19,6 +19,7 @@ package org.apache.camel.management;
 import java.io.IOException;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import javax.management.JMX;
 import javax.management.MBeanServer;
@@ -35,6 +36,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
 
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -139,7 +141,7 @@ public class ManagedThrottlingExceptionRoutePolicyTest extends ManagementTestSup
         val = proxy.getCurrentFailures();
         assertEquals(1, val.intValue());
 
-        Thread.sleep(200);
+        await().atMost(10, TimeUnit.SECONDS).until(() -> proxy.getLastFailure() > 0);
 
         // the route has 1 failure X mills ago
         lastFail = proxy.getLastFailure();

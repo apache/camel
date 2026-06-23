@@ -24,7 +24,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.aws2.lambda.Lambda2Constants;
 import org.apache.camel.component.aws2.lambda.Lambda2Operations;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import software.amazon.awssdk.services.lambda.model.CreateAliasResponse;
 import software.amazon.awssdk.services.lambda.model.CreateFunctionResponse;
 import software.amazon.awssdk.services.lambda.model.GetAliasResponse;
@@ -33,7 +32,6 @@ import software.amazon.awssdk.services.lambda.model.ListAliasesResponse;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-@DisabledIfSystemProperty(named = "ci.env.name", matches = ".*", disabledReason = "Flaky on GitHub Actions")
 public class LambdaAliasesIT extends Aws2LambdaBase {
 
     @Test

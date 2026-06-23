@@ -53,7 +53,7 @@ public class WeaviateVectorDbConfiguration implements Cloneable {
     private String proxyScheme;
 
     @Metadata(label = "producer",
-              description = "API Key to authenticate to weaviate with", secret = true)
+              description = "API Key to authenticate to weaviate with", security = "secret")
     @UriParam
     private String apiKey;
 

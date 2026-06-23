@@ -31,11 +31,11 @@ public class TwilioComponent extends AbstractApiComponent<TwilioApiName, TwilioC
 
     @Metadata
     private TwilioConfiguration configuration = new TwilioConfiguration();
-    @Metadata(label = "common,security", secret = true)
+    @Metadata(label = "common,security", security = "secret")
     private String username;
-    @Metadata(label = "common,security", secret = true)
+    @Metadata(label = "common,security", security = "secret")
     private String password;
-    @Metadata(label = "common,security", secret = true)
+    @Metadata(label = "common,security", security = "secret")
     private String accountSid;
     @Metadata(label = "advanced", autowired = true)
     private TwilioRestClient restClient;

@@ -24,6 +24,7 @@ import org.apache.camel.component.digitalocean.DigitalOceanEndpoint;
 /**
  * The DigitalOcean producer for Regions API.
  */
+@Deprecated(since = "4.21")
 public class DigitalOceanRegionsProducer extends DigitalOceanProducer {
 
     public DigitalOceanRegionsProducer(DigitalOceanEndpoint endpoint, DigitalOceanConfiguration configuration) {

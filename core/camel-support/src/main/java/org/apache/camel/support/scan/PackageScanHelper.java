@@ -32,6 +32,7 @@ import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.spi.Injector;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.Registry;
+import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.support.PluginHelper;
 
 import static org.apache.camel.util.ObjectHelper.isEmpty;
@@ -162,7 +163,7 @@ public class PackageScanHelper {
                             String method = entry.getValue();
                             // phase-5: now call init method on created beans
                             try {
-                                org.apache.camel.support.ObjectHelper.invokeMethodSafe(method, bean);
+                                ObjectHelper.invokeMethodSafe(method, bean);
                             } catch (Exception e) {
                                 throw RuntimeCamelException.wrapRuntimeCamelException(e);
                             }

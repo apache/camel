@@ -46,7 +46,6 @@ import org.apache.hc.client5.http.impl.nio.PoolingAsyncClientConnectionManagerBu
 import org.apache.hc.client5.http.ssl.ClientTlsStrategyBuilder;
 import org.apache.hc.core5.http.HttpHost;
 import org.apache.hc.core5.http.nio.ssl.TlsStrategy;
-import org.apache.hc.core5.reactor.ssl.TlsDetails;
 import org.apache.hc.core5.util.Timeout;
 import org.opensearch.client.RestClient;
 import org.opensearch.client.RestClientBuilder;
@@ -514,9 +513,7 @@ class OpensearchProducer extends DefaultAsyncProducer {
 
                 // Build TLS strategy
                 ClientTlsStrategyBuilder tlsStrategyBuilder = ClientTlsStrategyBuilder.create()
-                        .setHostnameVerifier(configuration.getHostnameVerifier())
-                        .setTlsDetailsFactory(
-                                sslEngine -> new TlsDetails(sslEngine.getSession(), sslEngine.getApplicationProtocol()));
+                        .setHostnameVerifier(configuration.getHostnameVerifier());
 
                 // Set SSL context if available
                 if (sslContext != null) {

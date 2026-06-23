@@ -18,9 +18,16 @@ package org.apache.camel.dsl.yaml.validator;
 
 import java.io.File;
 
+import org.apache.camel.dsl.yaml.common.YamlDeserializerBase;
+import org.apache.camel.dsl.yaml.common.YamlDeserializerResolver;
+import org.apache.camel.model.StepDefinition;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.snakeyaml.engine.v2.api.ConstructNode;
+import org.snakeyaml.engine.v2.nodes.Node;
+
+import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.asText;
 
 public class CamelYamlParserTest {
 
@@ -42,6 +49,11 @@ public class CamelYamlParserTest {
     }
 
     @Test
+    public void testParseRuntimeCustomStep() throws Exception {
+        Assertions.assertTrue(parser.parse(new File("src/test/resources/custom-parser-step.yaml")).isEmpty());
+    }
+
+    @Test
     public void testParseBad() throws Exception {
         var report = parser.parse(new File("src/test/resources/bad.yaml"));
         Assertions.assertFalse(report.isEmpty());
@@ -57,5 +69,40 @@ public class CamelYamlParserTest {
         Assertions.assertEquals(1, report.size());
         Assertions.assertTrue(report.get(0).getMessage().contains("Unknown node id: setCheese"));
         Assertions.assertTrue(report.get(0).getMessage().contains("- setCheese:"));
+    }
+
+    public static final class ParserStepResolver implements YamlDeserializerResolver {
+        @Override
+        public ConstructNode resolve(String id) {
+            if ("parserStep".equals(id)) {
+                return new ParserStepDeserializer();
+            }
+            return null;
+        }
+    }
+
+    static final class ParserStepDeserializer extends YamlDeserializerBase<StepDefinition> {
+        ParserStepDeserializer() {
+            super(StepDefinition.class);
+        }
+
+        @Override
+        protected StepDefinition newInstance() {
+            return new StepDefinition();
+        }
+
+        @Override
+        protected boolean setProperty(StepDefinition target, String propertyKey, String propertyName, Node value) {
+            switch (propertyKey) {
+                case "id":
+                    target.setId(asText(value));
+                    return true;
+                case "steps":
+                    setSteps(target, value);
+                    return true;
+                default:
+                    return false;
+            }
+        }
     }
 }

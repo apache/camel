@@ -25,6 +25,7 @@ import org.eclipse.neoscada.protocol.iec60870.ProtocolOptions;
 import org.eclipse.neoscada.protocol.iec60870.client.data.DataModuleOptions;
 
 @UriParams
+@Deprecated(since = "4.21")
 public class ClientOptions extends BaseOptions<ClientOptions> {
 
     /**

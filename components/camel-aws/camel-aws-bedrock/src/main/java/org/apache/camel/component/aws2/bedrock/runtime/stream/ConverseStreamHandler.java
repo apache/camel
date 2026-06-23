@@ -23,6 +23,7 @@ import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.services.bedrockruntime.model.ConverseStreamResponseHandler;
+import software.amazon.awssdk.services.bedrockruntime.model.GuardrailTrace;
 import software.amazon.awssdk.services.bedrockruntime.model.TokenUsage;
 
 /**
@@ -129,7 +130,7 @@ public final class ConverseStreamHandler {
         private String stopReason;
         private TokenUsage usage;
         private int chunkCount;
-        private software.amazon.awssdk.services.bedrockruntime.model.GuardrailTrace guardrailTrace;
+        private GuardrailTrace guardrailTrace;
 
         public String getFullText() {
             return fullText;
@@ -171,11 +172,11 @@ public final class ConverseStreamHandler {
             this.chunkCount = chunkCount;
         }
 
-        public software.amazon.awssdk.services.bedrockruntime.model.GuardrailTrace getGuardrailTrace() {
+        public GuardrailTrace getGuardrailTrace() {
             return guardrailTrace;
         }
 
-        public void setGuardrailTrace(software.amazon.awssdk.services.bedrockruntime.model.GuardrailTrace guardrailTrace) {
+        public void setGuardrailTrace(GuardrailTrace guardrailTrace) {
             this.guardrailTrace = guardrailTrace;
         }
     }

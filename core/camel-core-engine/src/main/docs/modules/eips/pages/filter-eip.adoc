@@ -131,6 +131,11 @@ YAML::
 Here is another example of calling a xref:languages:bean-language.adoc[method on a bean]
 to define the filter behavior:
 
+[tabs]
+====
+
+Java::
++
 [source,java]
 ----
 from("direct:start")
@@ -140,22 +145,8 @@ from("direct:start")
     .to("mock:all");
 ----
 
-And then bean can have a method that returns a `boolean` as the predicate:
-
-[source,java]
-----
-public static class MyBean {
-
-    public boolean isGoldCustomer(@Header("level") String level) {
-        return level.equals("gold");
-    }
-
-}
-----
-
-And in XML we can call the bean in `<method>` where we can specify the FQN class name
-of the bean as shown:
-
+XML::
++
 [source,xml]
 ----
 <route>
@@ -168,8 +159,8 @@ of the bean as shown:
 </route>
 ----
 
-And similar in YAML DSL:
-
+YAML::
++
 [source,yaml]
 ----
 - route:
@@ -186,6 +177,20 @@ And similar in YAML DSL:
                   uri: mock:gold
         - to:
             uri: mock:all
+----
+====
+
+The bean can have a method that returns a `boolean` as the predicate:
+
+[source,java]
+----
+public static class MyBean {
+
+    public boolean isGoldCustomer(@Header("level") String level) {
+        return level.equals("gold");
+    }
+
+}
 ----
 
 === Filtering with status property

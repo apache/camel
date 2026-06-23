@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.google.api.services.gmail.model.Label;
+import com.google.api.services.gmail.model.ListLabelsResponse;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.google.mail.internal.GmailUsersLabelsApiMethod;
 import org.apache.camel.component.google.mail.internal.GoogleMailApiCollection;
@@ -46,7 +47,7 @@ public class GmailUsersLabelsIT extends AbstractGoogleMailTestSupport {
     @Test
     public void testLabels() {
         // using String message body for single parameter "userId"
-        com.google.api.services.gmail.model.ListLabelsResponse labels = requestBody("direct://LIST", CURRENT_USERID);
+        ListLabelsResponse labels = requestBody("direct://LIST", CURRENT_USERID);
 
         String labelId = null;
         if (getTestLabel(labels) == null) {
@@ -58,7 +59,7 @@ public class GmailUsersLabelsIT extends AbstractGoogleMailTestSupport {
             // parameter type is com.google.api.services.gmail.model.Label
             headers.put("CamelGoogleMail.content", label);
 
-            com.google.api.services.gmail.model.Label result = requestBodyAndHeaders("direct://CREATE", null, headers);
+            Label result = requestBodyAndHeaders("direct://CREATE", null, headers);
 
             assertNotNull(result, "create result");
             labelId = result.getId();
@@ -83,7 +84,7 @@ public class GmailUsersLabelsIT extends AbstractGoogleMailTestSupport {
         assertNull(getTestLabel(labels));
     }
 
-    private Label getTestLabel(com.google.api.services.gmail.model.ListLabelsResponse labels) {
+    private Label getTestLabel(ListLabelsResponse labels) {
         for (Label label : labels.getLabels()) {
             if (CAMEL_TEST_LABEL.equals(label.getName())) {
                 return label;

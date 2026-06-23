@@ -22,6 +22,7 @@ import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.dataformat.bindy.model.simple.oneclassmath.Math;
 import org.apache.camel.test.spring.junit6.CamelSpringTest;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -95,7 +96,7 @@ public class BindySimpleCsvUnmarshallBadIntegerTest {
     public static class ContextConfig extends RouteBuilder {
 
         BindyCsvDataFormat orderBindyDataFormat
-                = new BindyCsvDataFormat(org.apache.camel.dataformat.bindy.model.simple.oneclassmath.Math.class);
+                = new BindyCsvDataFormat(Math.class);
 
         @Override
         public void configure() {

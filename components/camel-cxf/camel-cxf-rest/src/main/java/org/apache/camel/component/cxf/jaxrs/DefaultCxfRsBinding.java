@@ -79,7 +79,7 @@ public class DefaultCxfRsBinding implements CxfRsBinding, HeaderFilterStrategyAw
             throw camelExchange.getException();
         }
 
-        org.apache.camel.Message response;
+        Message response;
         if (camelExchange.getPattern().isOutCapable()) {
             response = camelExchange.getMessage();
         } else {

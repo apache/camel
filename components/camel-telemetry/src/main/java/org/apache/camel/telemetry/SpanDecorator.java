@@ -38,4 +38,5 @@ public interface SpanDecorator {
 
     SpanContextPropagationInjector getInjector(Exchange exchange);
 
+    String getSpanKind(String operation);
 }

@@ -26,6 +26,7 @@ The Spring test context may be specified in one of three ways:
 * a class annotated with `SpringBootConfiguration` accessible in the package of the test class or a parent package.
 
 
+._Java-only: uses Java test annotations and Spring Boot configuration class._
 [source,java]
 ----
 package com.foo;
@@ -82,6 +83,7 @@ class CamelSpringBootSimpleTest {
 There are multiple approaches to test Camel Spring 4.x based routes with JUnit 6.
 An approach is to extend `org.apache.camel.test.spring.junit6.CamelSpringTestSupport`, for instance:
 
+._Java-only: extends CamelSpringTestSupport, a Java test base class._
 [source,java]
 ----
 public class SimpleMockTest extends CamelSpringTestSupport {
@@ -117,6 +119,7 @@ Instead of instantiating the `CamelContext` and routes programmatically,
 this class relies on a Spring context to wire the needed components together.
 If your test extends this class, you must provide the Spring context by implementing the following method:
 
+._Java-only: Java method signature for Spring context creation._
 [source,java]
 ----
 protected abstract AbstractApplicationContext createApplicationContext();
@@ -127,6 +130,7 @@ protected abstract AbstractApplicationContext createApplicationContext();
 A better and recommended approach involves the usage of the
 `org.apache.camel.test.spring.junit6.CamelSpringTest` annotation, as shown:
 
+._Java-only: uses Java test annotations and Spring dependency injection._
 [source,java]
 ----
 package com.foo;
@@ -167,6 +171,7 @@ the example above loads the file `com/foo/CamelSpringPlainTest-context.xml`.
 
 This XML file is Spring XML file as shown:
 
+._XML-only: Spring XML context file with Camel route definition_
 [source,xml]
 ----
 <?xml version="1.0" encoding="UTF-8"?>
@@ -204,6 +209,7 @@ The following annotations can be used with `camel-spring-junit6` unit testing.
 | `@DisableJmx` | Used for disabling JMX
 | `@EnableRouteCoverage` | Enables dumping route coverage statistics. The route coverage status is written as xml files in the `target/camel-route-coverage` directory after the test has finished. See more information at xref:manual::camel-report-maven-plugin.adoc[Camel Maven Report Plugin].
 | `@EnableRouteDump` | Enables dumping route. The route dump is written as xml or yaml files in the `target/camel-route-dump` directory after the test has finished.
+| `@EnableRouteDiagramDump` | Enable dumping route diagrams into the specified folder. This requires having camel-diagram on the classpath.
 | `@ExcludeRoutes` | Indicates if certain route builder classes should be excluded from package scan discovery
 | `@MockEndpoints` | Auto-mocking of endpoints whose URIs match the provided filter. For more information, see xref:manual::advice-with.adoc[Advice With].
 | `@MockEndpointsAndSkip` | Auto-mocking of endpoints whose URIs match the provided filter with the added provision that the endpoints are also skipped. For more information, see xref:manual::advice-with.adoc[Advice With].

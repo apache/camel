@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.google.mail;
 
+import com.google.api.services.gmail.model.Profile;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.google.mail.internal.GmailUsersApiMethod;
 import org.apache.camel.component.google.mail.internal.GoogleMailApiCollection;
@@ -40,7 +41,7 @@ public class GmailUsersIT extends AbstractGoogleMailTestSupport {
     @Test
     public void testGetProfile() {
         // using String message body for single parameter "userId"
-        final com.google.api.services.gmail.model.Profile result = requestBody("direct://GETPROFILE", CURRENT_USERID);
+        final Profile result = requestBody("direct://GETPROFILE", CURRENT_USERID);
 
         assertNotNull(result, "getProfile result");
         assertNotNull(result.getEmailAddress(), "Should be email address associated with current account");

@@ -26,7 +26,7 @@ import org.apache.camel.support.DefaultComponent;
 @Component("stripe")
 public class StripeComponent extends DefaultComponent {
 
-    @Metadata(label = "security", secret = true,
+    @Metadata(label = "security", security = "secret",
               description = "The Stripe API key for authentication")
     private String apiKey;
 

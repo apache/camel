@@ -7,8 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Only producer is supported
-//Manually maintained attributes
-:camel-spring-boot-name: ldap
 
 *Since Camel {since}*
 
@@ -23,20 +21,20 @@ Maven users will need to add the following dependency to their `pom.xml`
 for this component:
 
 [source,xml]
-------------------------------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-ldap</artifactId>
     <version>x.x.x</version>
     <!-- use the same version as your Camel core version -->
 </dependency>
-------------------------------------------------------------
+----
 
 == URI format
 
------------------------------
+----
 ldap:ldapServerBean[?options]
------------------------------
+----
 
 The _ldapServerBean_ portion of the URI refers to a
 https://docs.oracle.com/en/java/javase/17/docs/api/java.naming/javax/naming/directory/DirContext.html[DirContext]
@@ -87,7 +85,7 @@ public class LdapServerProducer {
 XML (Spring)::
 +
 [source,xml]
------------------------------------------------------------------------------------------
+----
 <bean id="ldapserver" class="javax.naming.directory.InitialDirContext" scope="prototype">
   <constructor-arg>
     <props>
@@ -97,7 +95,7 @@ XML (Spring)::
     </props>
   </constructor-arg>
 </bean>
------------------------------------------------------------------------------------------
+----
 ====
 
 The preceding example declares a regular Sun-based LDAP `DirContext`
@@ -126,8 +124,9 @@ Following on from the configuration above, the code sample below
 sends an LDAP request to filter search a group for a member. The Common
 Name is then extracted from the response.
 
+._Java-only: Java test API (ProducerTemplate)_
 [source,java]
-----------------------------------------------------------
+----
 ProducerTemplate template = exchange.getContext().createProducerTemplate();
 
 Collection<SearchResult> results = template.requestBody(
@@ -144,23 +143,24 @@ if (results.size() > 0) {
   String deviceCN = (String) deviceCNAttr.get();
   // ...
 }
-----------------------------------------------------------
+----
 
 If no specific filter is required (for example, you need to look
 up a single entry), specify a wildcard filter expression.
 If the LDAP entry has a Common Name, use a filter expression like:
 
-------
+----
 (cn=*)
-------
+----
 
 === Binding using credentials
 
 A Camel end user donated this sample code he used to bind to the ldap
 server using credentials.
 
+._Java-only: Java programmatic CamelContext and LDAP context setup_
 [source,java]
----------------------------------------------------------------------------------------
+----
 Properties props = new Properties();
 props.setProperty(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
 props.setProperty(Context.PROVIDER_URL, "ldap://localhost:389");
@@ -173,32 +173,8 @@ props.setProperty(Context.SECURITY_CREDENTIALS, "secret");
 DefaultRegistry reg = new DefaultRegistry();
 reg.bind("myldap", new InitialLdapContext(props, null));
 
-CamelContext context = new DefaultCamelContext(reg);
-context.addRoutes(
-    new RouteBuilder() {
-        @Override
-        public void configure() throws Exception { 
-            from("direct:start").to("ldap:myldap?base=ou=test");
-        }
-    }
-);
-context.start();
-
-ProducerTemplate template = context.createProducerTemplate();
-
-Endpoint endpoint = context.getEndpoint("direct:start");
-Exchange exchange = endpoint.createExchange();
-exchange.getIn().setBody("(uid=test)");
-Exchange out = template.send(endpoint, exchange);
-
-Collection<SearchResult> data = out.getMessage().getBody(Collection.class);
-assert data != null;
-assert !data.isEmpty();
-
-System.out.println(out.getMessage().getBody());
-
-context.stop();
----------------------------------------------------------------------------------------
+from("direct:start").to("ldap:myldap?base=ou=test");
+----
 
 == Configuring SSL
 
@@ -234,7 +210,7 @@ public class LdapServerProducer {
 XML (Spring)::
 +
 [source,xml]
-----------------------------------------------------------------------------------------------------------------------------------
+----
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -265,7 +241,7 @@ XML (Spring)::
         </constructor-arg>
     </bean>
 </beans>
-----------------------------------------------------------------------------------------------------------------------------------
+----
 ====
 
 *Custom Socket Factory*
@@ -368,7 +344,7 @@ ldap.trustStorePassword=secret
 XML (Spring)::
 +
 [source,java]
------------------------------------------------------------------------------------------------------
+----
 package com.example.ldap;
 
 import java.io.IOException;
@@ -454,7 +430,5 @@ public class CustomSocketFactory extends SSLSocketFactory {
         return socketFactory.createSocket(ia, i, ia1, i1);
     }
 }
------------------------------------------------------------------------------------------------------
+----
 ====
-
-include::spring-boot:partial$starter.adoc[]

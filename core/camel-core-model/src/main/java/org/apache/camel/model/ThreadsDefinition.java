@@ -26,6 +26,7 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.annotations.DslArg;
 import org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy;
 
 /**
@@ -45,9 +46,11 @@ public class ThreadsDefinition extends NoOutputDefinition<ThreadsDefinition>
     private String executorService;
     @XmlAttribute
     @Metadata(javaType = "java.lang.Integer")
+    @DslArg(position = 0, renderType = "long")
     private String poolSize;
     @XmlAttribute
     @Metadata(javaType = "java.lang.Integer")
+    @DslArg(position = 1, renderType = "long")
     private String maxPoolSize;
     @XmlAttribute
     @Metadata(javaType = "java.lang.Long")
@@ -67,7 +70,7 @@ public class ThreadsDefinition extends NoOutputDefinition<ThreadsDefinition>
     private String threadName;
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy",
-              enums = "Abort,CallerRuns")
+              enums = "Abort,CallerRuns,Block")
     private String rejectedPolicy;
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "true")

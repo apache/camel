@@ -21,6 +21,8 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.camel.component.salesforce.api.dto.AbstractDescribedSObjectBase;
+import org.apache.camel.component.salesforce.api.dto.Address;
+import org.apache.camel.component.salesforce.api.dto.GeoLocation;
 import org.apache.camel.component.salesforce.api.dto.SObjectDescription;
 import org.apache.camel.component.salesforce.api.dto.SObjectDescriptionUrls;
 import org.apache.camel.component.salesforce.api.dto.SObjectField;
@@ -163,15 +165,15 @@ public class Account extends AbstractDescribedSObjectBase {
         this.BillingLongitude = BillingLongitude;
     }
 
-    private org.apache.camel.component.salesforce.api.dto.Address BillingAddress;
+    private Address BillingAddress;
 
     @JsonProperty("BillingAddress")
-    public org.apache.camel.component.salesforce.api.dto.Address getBillingAddress() {
+    public Address getBillingAddress() {
         return this.BillingAddress;
     }
 
     @JsonProperty("BillingAddress")
-    public void setBillingAddress(org.apache.camel.component.salesforce.api.dto.Address BillingAddress) {
+    public void setBillingAddress(Address BillingAddress) {
         this.BillingAddress = BillingAddress;
     }
 
@@ -259,15 +261,15 @@ public class Account extends AbstractDescribedSObjectBase {
         this.ShippingLongitude = ShippingLongitude;
     }
 
-    private org.apache.camel.component.salesforce.api.dto.Address ShippingAddress;
+    private Address ShippingAddress;
 
     @JsonProperty("ShippingAddress")
-    public org.apache.camel.component.salesforce.api.dto.Address getShippingAddress() {
+    public Address getShippingAddress() {
         return this.ShippingAddress;
     }
 
     @JsonProperty("ShippingAddress")
-    public void setShippingAddress(org.apache.camel.component.salesforce.api.dto.Address ShippingAddress) {
+    public void setShippingAddress(Address ShippingAddress) {
         this.ShippingAddress = ShippingAddress;
     }
 
@@ -559,15 +561,15 @@ public class Account extends AbstractDescribedSObjectBase {
         this.Shipping_Location__Longitude__s = Shipping_Location__Longitude__s;
     }
 
-    private org.apache.camel.component.salesforce.api.dto.GeoLocation Shipping_Location__c;
+    private GeoLocation Shipping_Location__c;
 
     @JsonProperty("Shipping_Location__c")
-    public org.apache.camel.component.salesforce.api.dto.GeoLocation getShipping_Location__c() {
+    public GeoLocation getShipping_Location__c() {
         return this.Shipping_Location__c;
     }
 
     @JsonProperty("Shipping_Location__c")
-    public void setShipping_Location__c(org.apache.camel.component.salesforce.api.dto.GeoLocation Shipping_Location__c) {
+    public void setShipping_Location__c(GeoLocation Shipping_Location__c) {
         this.Shipping_Location__c = Shipping_Location__c;
     }
 

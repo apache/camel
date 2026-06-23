@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.micrometer.json;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -249,11 +248,10 @@ public class AbstractMicrometerService extends ServiceSupport {
                 .map(AbstractMicrometerService::convertMeterToMap)
                 .forEach(logEntry -> {
                     try {
-                        // We put on warn level to make sure it is printed even if the log is
-                        // at higher levels. Important: we also include a start and end tag to make sure the
+                        // we include a start and end tag to make sure the
                         // scraper can more easily identify the metric content.
                         String metric = "#METRIC-START#" + mapper.writeValueAsString(logEntry) + "#METRIC-END#";
-                        LOG.warn(metric);
+                        LOG.info(metric);
                     } catch (Exception e) {
                         LOG.error("Error logging metric " + logEntry.get("name"), e);
                     }
@@ -272,14 +270,13 @@ public class AbstractMicrometerService extends ServiceSupport {
                 // If not other runtime is available, we assume we're on Camel main
                 rt = Optional.of(new RuntimeInfo(RuntimeInfo.MAIN, getCamelContext().getVersion()));
             }
-            meterRegistry.gaugeCollectionSize(
-                    APP_INFO_METER_NAME,
-                    Tags.of(
+            Gauge.builder(APP_INFO_METER_NAME, () -> 0.0)
+                    .tags(Tags.of(
                             "camel.version", getCamelContext().getVersion(),
                             "camel.context", getCamelContext().getName(),
                             "camel.runtime.provider", rt.get().runtimeProvider,
-                            "camel.runtime.version", rt.get().runtimeVersion),
-                    new ArrayList<String>());
+                            "camel.runtime.version", rt.get().runtimeVersion))
+                    .register(meterRegistry);
         }
     }
 

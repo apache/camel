@@ -25,6 +25,7 @@ import jakarta.xml.bind.annotation.XmlTransient;
 import org.apache.camel.AggregationStrategy;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.annotations.DslArg;
 
 /**
  * Enriches messages with data polled from a secondary resource
@@ -34,6 +35,7 @@ import org.apache.camel.spi.Metadata;
 @Metadata(label = "eip,transformation")
 @XmlRootElement(name = "pollEnrich")
 @XmlAccessorType(XmlAccessType.FIELD)
+@DslArg(exclude = "expression")
 public class PollEnrichDefinition extends ExpressionNode
         implements AggregationStrategyAwareDefinition<PollEnrichDefinition> {
 

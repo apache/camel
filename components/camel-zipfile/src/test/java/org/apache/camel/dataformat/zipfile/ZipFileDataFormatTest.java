@@ -325,7 +325,7 @@ public class ZipFileDataFormatTest extends CamelTestSupport {
                 from("direct:dslZip").marshal().zipFile().to("mock:dslZip");
                 from("direct:dslUnzip").unmarshal().zipFile().to("mock:dslUnzip");
                 from("direct:corruptUnzip").unmarshal().zipFile().to("mock:corruptUnzip");
-                from("direct:zipStreamCache").streamCaching().marshal().zipFile().to("mock:zipStreamCache");
+                from("direct:zipStreamCache").streamCache(true).marshal().zipFile().to("mock:zipStreamCache");
 
                 ZipFileDataFormat maxDecompressedSizeZip = new ZipFileDataFormat();
                 // Only allow 10 bytes to be decompressed

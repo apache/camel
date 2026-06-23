@@ -24,14 +24,12 @@ import org.apache.hc.core5.http.impl.bootstrap.HttpServer;
 import org.apache.hc.core5.http.impl.bootstrap.ServerBootstrap;
 import org.apache.hc.core5.util.TimeValue;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 
 import static org.apache.camel.http.common.HttpMethods.GET;
 import static org.apache.camel.test.junit6.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@DisabledIfSystemProperty(named = "ci.env.name", matches = ".*", disabledReason = "Flaky on Github CI")
 public class HttpNoConnectionTest extends BaseHttpTest {
 
     private HttpServer localServer;

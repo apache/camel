@@ -28,8 +28,7 @@ import java.util.stream.Stream;
 import com.google.api.gax.core.CredentialsProvider;
 import com.google.api.gax.core.FixedCredentialsProvider;
 import com.google.api.gax.core.NoCredentialsProvider;
-import com.google.api.gax.grpc.GrpcTransportChannel;
-import com.google.api.gax.rpc.FixedTransportChannelProvider;
+import com.google.api.gax.grpc.InstantiatingGrpcChannelProvider;
 import com.google.api.gax.rpc.StatusCode;
 import com.google.api.gax.rpc.TransportChannelProvider;
 import com.google.auth.Credentials;
@@ -44,7 +43,6 @@ import com.google.cloud.pubsub.v1.stub.SubscriberStubSettings;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.RemovalListener;
-import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import org.apache.camel.Endpoint;
 import org.apache.camel.RuntimeCamelException;
@@ -153,9 +151,10 @@ public class GooglePubsubComponent extends HeaderFilterStrategyComponent {
             throws IOException {
         Publisher.Builder builder = Publisher.newBuilder(topicName);
         if (StringHelper.trimToNull(endpoint) != null) {
-            ManagedChannel channel = ManagedChannelBuilder.forTarget(endpoint).usePlaintext().build();
-            TransportChannelProvider channelProvider
-                    = FixedTransportChannelProvider.create(GrpcTransportChannel.create(channel));
+            TransportChannelProvider channelProvider = InstantiatingGrpcChannelProvider.newBuilder()
+                    .setEndpoint(endpoint)
+                    .setChannelConfigurator(ManagedChannelBuilder::usePlaintext)
+                    .build();
             builder.setChannelProvider(channelProvider);
         }
         builder.setCredentialsProvider(getCredentialsProvider(googlePubsubEndpoint));
@@ -180,9 +179,10 @@ public class GooglePubsubComponent extends HeaderFilterStrategyComponent {
             throws IOException {
         Subscriber.Builder builder = Subscriber.newBuilder(subscriptionName, messageReceiver);
         if (StringHelper.trimToNull(endpoint) != null) {
-            ManagedChannel channel = ManagedChannelBuilder.forTarget(endpoint).usePlaintext().build();
-            TransportChannelProvider channelProvider
-                    = FixedTransportChannelProvider.create(GrpcTransportChannel.create(channel));
+            TransportChannelProvider channelProvider = InstantiatingGrpcChannelProvider.newBuilder()
+                    .setEndpoint(endpoint)
+                    .setChannelConfigurator(ManagedChannelBuilder::usePlaintext)
+                    .build();
             builder.setChannelProvider(channelProvider);
         }
         builder.setCredentialsProvider(getCredentialsProvider(googlePubsubEndpoint));
@@ -206,9 +206,10 @@ public class GooglePubsubComponent extends HeaderFilterStrategyComponent {
         }
 
         if (StringHelper.trimToNull(endpoint) != null) {
-            ManagedChannel channel = ManagedChannelBuilder.forTarget(endpoint).usePlaintext().build();
-            TransportChannelProvider channelProvider
-                    = FixedTransportChannelProvider.create(GrpcTransportChannel.create(channel));
+            TransportChannelProvider channelProvider = InstantiatingGrpcChannelProvider.newBuilder()
+                    .setEndpoint(endpoint)
+                    .setChannelConfigurator(ManagedChannelBuilder::usePlaintext)
+                    .build();
             builder.setTransportChannelProvider(channelProvider);
         }
         builder.setCredentialsProvider(getCredentialsProvider(googlePubsubEndpoint));
@@ -219,9 +220,10 @@ public class GooglePubsubComponent extends HeaderFilterStrategyComponent {
         SubscriptionAdminSettings.Builder builder = SubscriptionAdminSettings.newBuilder();
 
         if (StringHelper.trimToNull(endpoint) != null) {
-            ManagedChannel channel = ManagedChannelBuilder.forTarget(endpoint).usePlaintext().build();
-            TransportChannelProvider channelProvider
-                    = FixedTransportChannelProvider.create(GrpcTransportChannel.create(channel));
+            TransportChannelProvider channelProvider = InstantiatingGrpcChannelProvider.newBuilder()
+                    .setEndpoint(endpoint)
+                    .setChannelConfigurator(ManagedChannelBuilder::usePlaintext)
+                    .build();
             builder.setTransportChannelProvider(channelProvider);
         }
         builder.setCredentialsProvider(getCredentialsProvider(googlePubsubEndpoint));

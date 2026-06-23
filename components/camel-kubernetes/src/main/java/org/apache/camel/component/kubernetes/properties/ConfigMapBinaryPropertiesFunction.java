@@ -16,10 +16,12 @@
  */
 package org.apache.camel.component.kubernetes.properties;
 
+import org.apache.camel.spi.annotations.PropertiesFunction;
+
 /**
  * Resolves binary type configmap keys .
  */
-@org.apache.camel.spi.annotations.PropertiesFunction("configmap-binary")
+@PropertiesFunction("configmap-binary")
 public class ConfigMapBinaryPropertiesFunction extends BaseConfigMapPropertiesFunction {
 
     @Override

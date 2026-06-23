@@ -835,6 +835,7 @@ In Spring XML, the equivalent route would be written as follows:
 
 NOTE: Notice how the namespace in XML can also be defined in the root tag such as `<camelContext>`.
 
+._XML-only:_
 [source,xml]
 ----
 <camelContext xmlns:ns1="urn:shop">
@@ -934,6 +935,10 @@ aggregate and return a combined response to the original caller.
 The route below illustrates this and how the split supports a custom `AggregationStrategy`
 to build up the combined response message.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 // this routes starts from the direct:start endpoint
@@ -953,6 +958,41 @@ from("direct:start")
     // this bean will receive the result of the aggregate strategy: MyOrderStrategy
     .to("bean:MyOrderService?method=buildCombinedResponse")
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="direct:start"/>
+    <split aggregationStrategy="#class:com.foo.MyOrderStrategy">
+        <tokenize token="@"/>
+        <to uri="bean:MyOrderService?method=handleOrder"/>
+    </split>
+    <to uri="bean:MyOrderService?method=buildCombinedResponse"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - split:
+            aggregationStrategy: "#class:com.foo.MyOrderStrategy"
+            expression:
+              tokenize:
+                token: "@"
+            steps:
+              - to:
+                  uri: bean:MyOrderService?method=handleOrder
+        - to:
+            uri: bean:MyOrderService?method=buildCombinedResponse
+----
+====
 
 And the OrderService bean is as follows:
 

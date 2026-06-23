@@ -26,53 +26,53 @@ public final class NeutronConstants extends OpenstackConstants {
     public static final String NEUTRON_PORT_SYSTEM = "ports";
     public static final String NEUTRON_ROUTER_SYSTEM = "routers";
     @Metadata(label = "network port router", description = "Tenant ID.", javaType = "String")
-    public static final String TENANT_ID = "tenantId";
+    public static final String TENANT_ID = "CamelOpenstackNeutronTenantId";
     @Metadata(label = "subnet port", description = "Network ID.", javaType = "String")
-    public static final String NETWORK_ID = "networkId";
+    public static final String NETWORK_ID = "CamelOpenstackNeutronNetworkId";
 
     //network
     @Metadata(label = "network", description = "AdminStateUp header.", javaType = "Boolean")
-    public static final String ADMIN_STATE_UP = "adminStateUp";
+    public static final String ADMIN_STATE_UP = "CamelOpenstackNeutronAdminStateUp";
     @Metadata(label = "network", description = "Network type.", javaType = "org.openstack4j.model.network.NetworkType")
-    public static final String NETWORK_TYPE = "networkType";
+    public static final String NETWORK_TYPE = "CamelOpenstackNeutronNetworkType";
     @Metadata(label = "network", description = "Physical network.", javaType = "String")
-    public static final String PHYSICAL_NETWORK = "physicalNetwork";
+    public static final String PHYSICAL_NETWORK = "CamelOpenstackNeutronPhysicalNetwork";
     @Metadata(label = "network", description = "Segment ID.", javaType = "String")
-    public static final String SEGMENT_ID = "segmentId";
+    public static final String SEGMENT_ID = "CamelOpenstackNeutronSegmentId";
     @Metadata(label = "network", description = "Is shared.", javaType = "Boolean")
-    public static final String IS_SHARED = "isShared";
+    public static final String IS_SHARED = "CamelOpenstackNeutronIsShared";
     @Metadata(label = "network", description = "Is router external.", javaType = "Boolean")
-    public static final String IS_ROUTER_EXTERNAL = "isRouterExternal";
+    public static final String IS_ROUTER_EXTERNAL = "CamelOpenstackNeutronIsRouterExternal";
 
     //subnet
     @Metadata(label = "subnet", description = "Enable DHCP.", javaType = "Boolean")
-    public static final String ENABLE_DHCP = "enableDHCP";
+    public static final String ENABLE_DHCP = "CamelOpenstackNeutronEnableDhcp";
     @Metadata(label = "subnet", description = "Gateway.", javaType = "String")
-    public static final String GATEWAY = "gateway";
+    public static final String GATEWAY = "CamelOpenstackNeutronGateway";
     @Metadata(label = "subnet", description = "IP version.", javaType = "org.openstack4j.model.network.IPVersionType")
-    public static final String IP_VERSION = "ipVersion";
+    public static final String IP_VERSION = "CamelOpenstackNeutronIpVersion";
     @Metadata(label = "subnet", description = "The cidr representing the IP range for this subnet, based on IP version.",
               javaType = "String")
-    public static final String CIDR = "cidr";
+    public static final String CIDR = "CamelOpenstackNeutronCidr";
     @Metadata(label = "subnet", description = "The allocation pool.",
               javaType = "org.openstack4j.openstack.networking.domain.NeutronPool")
-    public static final String SUBNET_POOL = "subnetPools";
+    public static final String SUBNET_POOL = "CamelOpenstackNeutronSubnetPools";
 
     //port
     @Metadata(label = "port", description = "Device ID.", javaType = "String")
-    public static final String DEVICE_ID = "deviceId";
+    public static final String DEVICE_ID = "CamelOpenstackNeutronDeviceId";
     @Metadata(label = "port", description = "MAC address.", javaType = "String")
-    public static final String MAC_ADDRESS = "macAddress";
+    public static final String MAC_ADDRESS = "CamelOpenstackNeutronMacAddress";
 
     //router
     @Metadata(label = "router", description = "Router ID.", javaType = "String")
-    public static final String ROUTER_ID = "routerId";
+    public static final String ROUTER_ID = "CamelOpenstackNeutronRouterId";
     @Metadata(label = "router subnet", description = "Subnet ID.", javaType = "String")
-    public static final String SUBNET_ID = "subnetId";
+    public static final String SUBNET_ID = "CamelOpenstackNeutronSubnetId";
     @Metadata(label = "port router", description = "Port ID.", javaType = "String")
-    public static final String PORT_ID = "portId";
+    public static final String PORT_ID = "CamelOpenstackNeutronPortId";
     @Metadata(label = "router", description = "Interface type.", javaType = "org.openstack4j.model.network.AttachInterfaceType")
-    public static final String ITERFACE_TYPE = "interfaceType";
+    public static final String ITERFACE_TYPE = "CamelOpenstackNeutronInterfaceType";
 
     public static final String ATTACH_INTERFACE = "attachInterface";
     public static final String DETACH_INTERFACE = "detachInterface";

@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://schema.ocsf.io/1.7.0/classes/network_file_activity",
+  "$id": "https://schema.ocsf.io/1.8.0/classes/network_file_activity",
   "title": "NetworkFileActivity",
   "type": "object",
   "javaType": "org.apache.camel.dataformat.ocsf.model.NetworkFileActivity",
@@ -9,20 +9,78 @@
     "$ref": "OcsfEvent.json"
   },
   "properties": {
-    "cumulative_traffic": {
-      "type": "object",
-      "additionalProperties": true
+    "ja4_fingerprint_list": {
+      "type": "array",
+      "title": "JA4+ Fingerprints",
+      "items": {
+        "$ref": "Ja4Fingerprint.json"
+      }
+    },
+    "observation_point": {
+      "type": "string",
+      "title": "Observation Point"
+    },
+    "src_endpoint": {
+      "$ref": "NetworkEndpoint.json"
+    },
+    "tls": {
+      "$ref": "Tls.json"
     },
     "actor": {
       "$ref": "Actor.json"
     },
+    "cumulative_traffic": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "dst_endpoint": {
+      "$ref": "NetworkEndpoint.json"
+    },
+    "packet_list": {
+      "type": "array",
+      "description": "",
+      "items": {
+        "$ref": "Packet.json"
+      }
+    },
     "connection_info": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "app_name": {
+      "type": "string",
+      "title": "Application Name"
+    },
+    "traffic": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "expiration_time": {
+      "type": "integer",
+      "existingJavaType": "java.lang.Long",
+      "title": "Expiration Time"
+    },
+    "network_observation_point": {
+      "$ref": "NetworkEndpoint.json"
+    },
+    "app_protocol_name": {
+      "type": "string",
+      "title": "Application Protocol Name"
+    },
+    "observation_point_id": {
+      "type": "integer",
+      "title": "Observation Point ID"
+    },
+    "proxy": {
       "type": "object",
       "additionalProperties": true
     },
     "raw_data_size": {
       "type": "integer",
       "title": "Raw Data Size"
+    },
+    "raw_data_hash": {
+      "$ref": "Fingerprint.json"
     },
     "file": {
       "$ref": "File.json"
@@ -33,50 +91,6 @@
       "items": {
         "$ref": "Enrichment.json"
       }
-    },
-    "traffic": {
-      "type": "object",
-      "additionalProperties": true
-    },
-    "src_endpoint": {
-      "$ref": "NetworkEndpoint.json"
-    },
-    "app_name": {
-      "type": "string",
-      "title": "Application Name"
-    },
-    "dst_endpoint": {
-      "$ref": "NetworkEndpoint.json"
-    },
-    "raw_data_hash": {
-      "$ref": "Fingerprint.json"
-    },
-    "ja4_fingerprint_list": {
-      "type": "array",
-      "title": "JA4+ Fingerprints",
-      "items": {
-        "$ref": "Ja4Fingerprint.json"
-      }
-    },
-    "expiration_time": {
-      "type": "integer",
-      "existingJavaType": "java.lang.Long",
-      "title": "Expiration Time"
-    },
-    "observation_point_id": {
-      "type": "integer",
-      "title": "Observation Point ID"
-    },
-    "proxy": {
-      "type": "object",
-      "additionalProperties": true
-    },
-    "observation_point": {
-      "type": "string",
-      "title": "Observation Point"
-    },
-    "tls": {
-      "$ref": "Tls.json"
     }
   }
 }

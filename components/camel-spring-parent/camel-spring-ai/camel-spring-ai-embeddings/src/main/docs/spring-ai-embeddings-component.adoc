@@ -9,7 +9,6 @@
 :component-header: Only producer is supported
 //Manually maintained attributes
 :group: AI
-:camel-spring-boot-name: spring-ai-embeddings
 
 *Since Camel {since}*
 
@@ -55,12 +54,42 @@ The embedding vectors are returned in the message body, with additional metadata
 
 === Single Text Example
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:start")
     .to("spring-ai-embeddings:myEmbedding")
     .log("Embedding vector: ${body}");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <to uri="spring-ai-embeddings:myEmbedding"/>
+  <log message="Embedding vector: ${body}"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: spring-ai-embeddings:myEmbedding
+        - log:
+            message: "Embedding vector: ${body}"
+----
+====
 
 When processing a single String, the component returns:
 
@@ -73,6 +102,10 @@ When processing a single String, the component returns:
 
 === Batch Processing Example
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:batch")
@@ -80,6 +113,37 @@ from("direct:batch")
     .to("spring-ai-embeddings:myEmbedding")
     .log("Number of embeddings: ${body.size()}");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:batch"/>
+  <setBody>
+    <constant>["text 1", "text 2", "text 3"]</constant>
+  </setBody>
+  <to uri="spring-ai-embeddings:myEmbedding"/>
+  <log message="Number of embeddings: ${body.size()}"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:batch
+      steps:
+        - setBody:
+            constant: '["text 1", "text 2", "text 3"]'
+        - to:
+            uri: spring-ai-embeddings:myEmbedding
+        - log:
+            message: "Number of embeddings: ${body.size()}"
+----
+====
 
 When processing a List<String>, the component returns:
 
@@ -89,4 +153,3 @@ When processing a List<String>, the component returns:
 ** `CamelSpringAiEmbeddingInputTexts` - The original input texts as List<String>
 ** `CamelSpringAiEmbeddingMetadata` - Response metadata
 
-include::spring-boot:partial$starter.adoc[]

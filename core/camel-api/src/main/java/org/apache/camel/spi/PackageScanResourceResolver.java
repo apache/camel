@@ -25,7 +25,8 @@ import org.apache.camel.StaticService;
 /**
  * A resolver that can find resources based on package scanning.
  *
- * @see PackageScanClassResolver
+ * @see   PackageScanClassResolver
+ * @since 3.0
  */
 public interface PackageScanResourceResolver extends StaticService {
 

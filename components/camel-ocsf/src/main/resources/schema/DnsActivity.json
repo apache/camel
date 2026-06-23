@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://schema.ocsf.io/1.7.0/classes/dns_activity",
+  "$id": "https://schema.ocsf.io/1.8.0/classes/dns_activity",
   "title": "DnsActivity",
   "type": "object",
   "javaType": "org.apache.camel.dataformat.ocsf.model.DnsActivity",
@@ -9,32 +9,76 @@
     "$ref": "OcsfEvent.json"
   },
   "properties": {
+    "rcode": {
+      "type": "string",
+      "title": "Response Code"
+    },
+    "query_time": {
+      "type": "integer",
+      "existingJavaType": "java.lang.Long",
+      "title": "Query Time"
+    },
+    "ja4_fingerprint_list": {
+      "type": "array",
+      "title": "JA4+ Fingerprints",
+      "items": {
+        "$ref": "Ja4Fingerprint.json"
+      }
+    },
+    "observation_point": {
+      "type": "string",
+      "title": "Observation Point"
+    },
+    "src_endpoint": {
+      "$ref": "NetworkEndpoint.json"
+    },
+    "query": {
+      "$ref": "DnsQuery.json"
+    },
+    "tls": {
+      "$ref": "Tls.json"
+    },
     "cumulative_traffic": {
       "type": "object",
       "additionalProperties": true
+    },
+    "dst_endpoint": {
+      "$ref": "NetworkEndpoint.json"
+    },
+    "rcode_id": {
+      "type": "integer",
+      "title": "Response Code ID"
+    },
+    "packet_list": {
+      "type": "array",
+      "description": "",
+      "items": {
+        "$ref": "Packet.json"
+      }
     },
     "connection_info": {
       "type": "object",
       "additionalProperties": true
     },
-    "raw_data_size": {
-      "type": "integer",
-      "title": "Raw Data Size"
-    },
-    "enrichments": {
-      "type": "array",
-      "description": "",
-      "items": {
-        "$ref": "Enrichment.json"
-      }
+    "app_name": {
+      "type": "string",
+      "title": "Application Name"
     },
     "traffic": {
       "type": "object",
       "additionalProperties": true
     },
-    "rcode_id": {
+    "network_observation_point": {
+      "$ref": "NetworkEndpoint.json"
+    },
+    "response_time": {
       "type": "integer",
-      "title": "Response Code ID"
+      "existingJavaType": "java.lang.Long",
+      "title": "Response Time"
+    },
+    "app_protocol_name": {
+      "type": "string",
+      "title": "Application Protocol Name"
     },
     "answers": {
       "type": "array",
@@ -44,57 +88,27 @@
         "additionalProperties": true
       }
     },
-    "src_endpoint": {
-      "$ref": "NetworkEndpoint.json"
-    },
-    "app_name": {
-      "type": "string",
-      "title": "Application Name"
-    },
-    "query": {
-      "$ref": "DnsQuery.json"
-    },
-    "dst_endpoint": {
-      "$ref": "NetworkEndpoint.json"
-    },
-    "response_time": {
-      "type": "integer",
-      "existingJavaType": "java.lang.Long",
-      "title": "Response Time"
-    },
-    "rcode": {
-      "type": "string",
-      "title": "Response Code"
-    },
-    "raw_data_hash": {
-      "$ref": "Fingerprint.json"
-    },
-    "ja4_fingerprint_list": {
-      "type": "array",
-      "title": "JA4+ Fingerprints",
-      "items": {
-        "$ref": "Ja4Fingerprint.json"
-      }
-    },
     "observation_point_id": {
       "type": "integer",
       "title": "Observation Point ID"
-    },
-    "query_time": {
-      "type": "integer",
-      "existingJavaType": "java.lang.Long",
-      "title": "Query Time"
     },
     "proxy": {
       "type": "object",
       "additionalProperties": true
     },
-    "observation_point": {
-      "type": "string",
-      "title": "Observation Point"
+    "raw_data_size": {
+      "type": "integer",
+      "title": "Raw Data Size"
     },
-    "tls": {
-      "$ref": "Tls.json"
+    "raw_data_hash": {
+      "$ref": "Fingerprint.json"
+    },
+    "enrichments": {
+      "type": "array",
+      "description": "",
+      "items": {
+        "$ref": "Enrichment.json"
+      }
     }
   }
 }

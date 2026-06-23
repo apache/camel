@@ -82,4 +82,11 @@ public @interface Message {
      * @return boolean
      */
     boolean isOrdered() default false;
+
+    /**
+     * If true, a parse failure on any field in this message is replaced with the type-appropriate default (null, "",
+     * false, or MIN_VALUE for numeric primitives), instead of aborting the unmarshal. Individual fields can opt out
+     * per-field via @KeyValuePairField.continueParseOnFailure. Default false preserves the existing fail-fast behavior.
+     */
+    boolean continueParseOnFailure() default false;
 }

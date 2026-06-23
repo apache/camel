@@ -1718,7 +1718,7 @@ public interface IBMCOSEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final IBMCOSHeaderNameBuilder INSTANCE = new IBMCOSHeaderNameBuilder();
+        public static final IBMCOSHeaderNameBuilder INSTANCE = new IBMCOSHeaderNameBuilder();
 
         /**
          * The bucket Name which this object will be stored or which will be

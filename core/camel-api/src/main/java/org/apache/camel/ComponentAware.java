@@ -16,8 +16,14 @@
  */
 package org.apache.camel;
 
+import org.jspecify.annotations.Nullable;
+
 /**
- * An interface to represent an object which wishes to be injected with a {@link Component}.
+ * Implemented by objects, such as {@link Endpoint}, that are associated with and can expose their parent
+ * {@link Component}.
+ *
+ * @see Component
+ * @see Endpoint
  */
 public interface ComponentAware {
 
@@ -33,6 +39,7 @@ public interface ComponentAware {
      *
      * @return the component
      */
+    @Nullable
     Component getComponent();
 
     /**
@@ -42,7 +49,7 @@ public interface ComponentAware {
      * @return                          an instance of the underlying concrete Component as the required type.
      * @throws IllegalArgumentException if the component class can't be cast to required type,
      */
-    default <T extends Component> T getComponent(Class<T> type) {
+    default <T extends Component> @Nullable T getComponent(Class<T> type) {
         final Component component = getComponent();
 
         if (component == null) {

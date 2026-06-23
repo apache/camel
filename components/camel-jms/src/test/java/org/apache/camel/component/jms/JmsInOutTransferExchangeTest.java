@@ -19,6 +19,8 @@ package org.apache.camel.component.jms;
 import java.util.HashMap;
 import java.util.Map;
 
+import jakarta.jms.ConnectionFactory;
+
 import org.apache.activemq.artemis.jms.client.ActiveMQObjectMessage;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ConsumerTemplate;
@@ -64,6 +66,14 @@ public class JmsInOutTransferExchangeTest extends AbstractJMSTest {
     @Override
     protected String getComponentName() {
         return "activemq";
+    }
+
+    @Override
+    protected JmsComponent setupComponent(
+            CamelContext camelContext, ConnectionFactory connectionFactory, String componentName) {
+        JmsComponent component = super.setupComponent(camelContext, connectionFactory, componentName);
+        component.setObjectMessageEnabled(true);
+        return component;
     }
 
     @Test

@@ -48,10 +48,10 @@ public class NetWeaverEndpoint extends DefaultEndpoint implements EndpointServic
     @UriParam(defaultValue = "true")
     private boolean flatternMap = true;
     @UriParam
-    @Metadata(required = true, secret = true)
+    @Metadata(required = true, security = "secret")
     private String username;
     @UriParam
-    @Metadata(required = true, secret = true)
+    @Metadata(required = true, security = "secret")
     private String password;
 
     public NetWeaverEndpoint(String endpointUri, Component component) {

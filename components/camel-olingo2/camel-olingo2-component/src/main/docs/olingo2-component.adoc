@@ -8,8 +8,6 @@
 :deprecated: *deprecated*
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
-//Manually maintained attributes
-:camel-spring-boot-name: olingo2
 
 *Since Camel {since}*
 
@@ -47,25 +45,34 @@ Maven users will need to add the following dependency to their pom.xml
 for this component:
 
 [source,xml]
-----------------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-olingo2</artifactId>
     <version>${camel-version}</version>
 </dependency>
-----------------------------------------------
+----
 
 == URI format
 
-------------------------------------------------
+----
 olingo2://endpoint/<resource-path>?[options]
-------------------------------------------------
+----
 
 // component options: START
 include::partial$component-configure-options.adoc[]
 include::partial$component-endpoint-options.adoc[]
 include::partial$component-endpoint-headers.adoc[]
 // component options: END
+
+[NOTE]
+====
+This is an API-based component, so per-call parameters can be supplied through `Camel`-prefixed
+exchange headers in addition to the endpoint options. If the route consumes messages from untrusted
+producers, strip these internal headers at the trust boundary -- for example with
+`removeHeaders("Camel*")` -- before the message reaches this component, so that a sender cannot
+override the API call. See xref:manual::security-model.adoc[the Camel security model] for details.
+====
 
 == Usage
 
@@ -115,33 +122,62 @@ the OData resource being queried, created or modified.
 == Examples
 
 The following route reads top 5 entries from the Manufacturer feed
-ordered by ascending Name property. 
+ordered by ascending Name property.
 
+._Java-only: uses setHeader with Java constant_
 [source,java]
-------------------------------------------------------------
+----
 from("direct:...")
     .setHeader("CamelOlingo2.$top", "5");
     .to("olingo2://read/Manufacturers?orderBy=Name%20asc");
-------------------------------------------------------------
+----
 
 The following route reads Manufacturer entry using the key property
-value in incoming *id* header. 
+value in incoming *id* header.
 
+._Java-only: uses setHeader with header() expression_
 [source,java]
-------------------------------------------------------------
+----
 from("direct:...")
     .setHeader("CamelOlingo2.keyPredicate", header("id"))
     .to("olingo2://read/Manufacturers");
-------------------------------------------------------------
+----
 
 The following route creates Manufacturer entry using the
 `java.util.Map<String, Object>` in the body message.
 
+[tabs]
+====
+Java::
++
 [source,java]
-------------------------------------------------------------
+----
 from("direct:...")
     .to("olingo2://create/Manufacturers");
-------------------------------------------------------------
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="direct:..."/>
+    <to uri="olingo2://create/Manufacturers"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:...
+    steps:
+      - to:
+          uri: olingo2://create/Manufacturers
+----
+====
 
 The following route polls Manufacturer
 http://olingo.apache.org/doc/tutorials/deltaClient.html[delta
@@ -149,13 +185,41 @@ feed] every 30 seconds. The bean *blah* updates the bean *paramsBean* to
 add an updated *!deltatoken* property with the value returned in the
 *ODataDeltaFeed* result. Since the initial delta token is not known, the
 consumer endpoint will produce an *ODataFeed* value the first time, and
-*ODataDeltaFeed* on subsequent polls. 
+*ODataDeltaFeed* on subsequent polls.
 
+[tabs]
+====
+Java::
++
 [source,java]
----------------------------------------------------------------------------------------------------------
+----
 from("olingo2://read/Manufacturers?queryParams=#paramsBean&timeUnit=SECONDS&delay=30")
     .to("bean:blah");
----------------------------------------------------------------------------------------------------------
+----
 
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="olingo2://read/Manufacturers?queryParams=#paramsBean&amp;timeUnit=SECONDS&amp;delay=30"/>
+    <to uri="bean:blah"/>
+</route>
+----
 
-include::spring-boot:partial$starter.adoc[]
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: olingo2://read/Manufacturers
+      parameters:
+        queryParams: "#paramsBean"
+        timeUnit: SECONDS
+        delay: 30
+    steps:
+      - to:
+          uri: bean:blah
+----
+====

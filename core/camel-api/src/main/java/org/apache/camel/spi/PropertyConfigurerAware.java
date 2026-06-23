@@ -16,16 +16,29 @@
  */
 package org.apache.camel.spi;
 
+import org.jspecify.annotations.Nullable;
+
 /**
- * An interface to represent an object which is capable of configuring via {@link PropertyConfigurer}.
+ * Implemented by objects that can supply the {@link PropertyConfigurer} for a given bean instance.
+ * <p/>
+ * This lets Camel obtain the fast, reflection-free configurer for a target without looking it up separately, for
+ * example when a {@link org.apache.camel.Component} provides the configurer for the endpoints it creates. The returned
+ * configurer is then used to bind properties during bootstrap.
+ * <p/>
+ * See <a href="https://camel.apache.org/manual/property-binding.html">Property Binding</a> in the Camel user manual.
+ *
+ * @see   PropertyConfigurer
+ * @since 3.0
  */
 public interface PropertyConfigurerAware {
 
     /**
-     * Gets the configurer.
+     * Gets the {@link PropertyConfigurer} for the given bean instance.
      *
-     * @param instance the bean instance
+     * @param  instance the bean instance
+     * @return          the configurer, or <tt>null</tt> if none is available
      */
+    @Nullable
     PropertyConfigurer getPropertyConfigurer(Object instance);
 
 }

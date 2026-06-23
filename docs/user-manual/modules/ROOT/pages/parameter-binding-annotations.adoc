@@ -146,7 +146,9 @@ YAML::
       uri: activemq:someQueue
       steps:
         - to:
-            uri: bean:myBean?method=doSomething
+            uri: bean:myBean
+            parameters:
+              method: doSomething
 ----
 ====
 

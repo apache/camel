@@ -28,19 +28,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Stream;
 
-import org.apache.camel.component.as2.api.entity.AS2DispositionModifier;
-import org.apache.camel.component.as2.api.entity.AS2DispositionType;
-import org.apache.camel.component.as2.api.entity.AS2MessageDispositionNotificationEntity;
-import org.apache.camel.component.as2.api.entity.ApplicationEDIFACTEntity;
-import org.apache.camel.component.as2.api.entity.ApplicationEntity;
-import org.apache.camel.component.as2.api.entity.ApplicationPkcs7MimeCompressedDataEntity;
-import org.apache.camel.component.as2.api.entity.ApplicationPkcs7MimeEnvelopedDataEntity;
-import org.apache.camel.component.as2.api.entity.ApplicationPkcs7SignatureEntity;
-import org.apache.camel.component.as2.api.entity.DispositionMode;
-import org.apache.camel.component.as2.api.entity.DispositionNotificationMultipartReportEntity;
-import org.apache.camel.component.as2.api.entity.MimeEntity;
-import org.apache.camel.component.as2.api.entity.MultipartSignedEntity;
-import org.apache.camel.component.as2.api.entity.TextPlainEntity;
+import org.apache.camel.component.as2.api.entity.*;
 import org.apache.camel.component.as2.api.util.AS2Utils;
 import org.apache.camel.component.as2.api.util.EntityUtils;
 import org.apache.camel.component.as2.api.util.HttpMessageUtils;
@@ -85,15 +73,17 @@ public class AS2MessageTest extends AS2MessageTestBase {
         setupKeysAndCertificates();
 
         testServer = new AS2ServerConnection(
-                AS2_VERSION, "MyServer-HTTP/1.1", SERVER_FQDN, TARGET_PORT.getPort(), AS2SignatureAlgorithm.SHA256WITHRSA,
+                AS2_VERSION, "MyServer-HTTP/1.1", SERVER_FQDN, 0, AS2SignatureAlgorithm.SHA256WITHRSA,
                 certList.toArray(new Certificate[0]), signingKP.getPrivate(), decryptingKP.getPrivate(), MDN_MESSAGE_TEMPLATE,
                 VALIDATE_SIGNING_CERTIFICATE_CHAIN, null, null, null, null);
+        targetPort = testServer.getLocalPort();
+        recipientDeliveryAddress = "http://localhost:" + targetPort + "/handle-receipts";
         testServer.listen("*", new HttpRequestHandler() {
             @Override
             public void handle(ClassicHttpRequest request, ClassicHttpResponse response, HttpContext context)
                     throws HttpException, IOException {
                 try {
-                    org.apache.camel.component.as2.api.entity.EntityParser.parseAS2MessageEntity(request);
+                    EntityParser.parseAS2MessageEntity(request);
                     context.setAttribute(AS2ServerManager.SUBJECT, SUBJECT);
                     context.setAttribute(AS2ServerManager.FROM, AS2_NAME);
                     LOG.debug("{}", AS2Utils.printMessage(request));
@@ -135,7 +125,7 @@ public class AS2MessageTest extends AS2MessageTestBase {
         assertEquals(AS2_NAME, request.getFirstHeader(AS2Header.AS2_TO).getValue(), "Unexpected AS2 to value");
         assertTrue(request.getFirstHeader(AS2Header.MESSAGE_ID).getValue().endsWith(CLIENT_FQDN + ">"),
                 "Unexpected message id value");
-        assertEquals(TARGET_HOST + ":" + TARGET_PORT, request.getFirstHeader(AS2Header.TARGET_HOST).getValue(),
+        assertEquals(TARGET_HOST + ":" + targetPort, request.getFirstHeader(AS2Header.TARGET_HOST).getValue(),
                 "Unexpected target host value");
         assertEquals(USER_AGENT, request.getFirstHeader(AS2Header.USER_AGENT).getValue(), "Unexpected user agent value");
         assertNotNull(request.getFirstHeader(AS2Header.DATE), "Date value missing");
@@ -204,7 +194,7 @@ public class AS2MessageTest extends AS2MessageTestBase {
         assertEquals(AS2_NAME, request.getFirstHeader(AS2Header.AS2_TO).getValue(), "Unexpected AS2 to value");
         assertTrue(request.getFirstHeader(AS2Header.MESSAGE_ID).getValue().endsWith(CLIENT_FQDN + ">"),
                 "Unexpected message id value");
-        assertEquals(TARGET_HOST + ":" + TARGET_PORT, request.getFirstHeader(AS2Header.TARGET_HOST).getValue(),
+        assertEquals(TARGET_HOST + ":" + targetPort, request.getFirstHeader(AS2Header.TARGET_HOST).getValue(),
                 "Unexpected target host value");
         assertEquals(USER_AGENT, request.getFirstHeader(AS2Header.USER_AGENT).getValue(), "Unexpected user agent value");
         assertNotNull(request.getFirstHeader(AS2Header.DATE), "Date value missing");
@@ -262,7 +252,7 @@ public class AS2MessageTest extends AS2MessageTestBase {
         assertEquals(AS2_NAME, request.getFirstHeader(AS2Header.AS2_TO).getValue(), "Unexpected AS2 to value");
         assertTrue(request.getFirstHeader(AS2Header.MESSAGE_ID).getValue().endsWith(CLIENT_FQDN + ">"),
                 "Unexpected message id value");
-        assertEquals(TARGET_HOST + ":" + TARGET_PORT,
+        assertEquals(TARGET_HOST + ":" + targetPort,
                 request.getFirstHeader(AS2Header.TARGET_HOST).getValue(), "Unexpected target host value");
         assertEquals(USER_AGENT,
                 request.getFirstHeader(AS2Header.USER_AGENT).getValue(), "Unexpected user agent value");
@@ -375,7 +365,7 @@ public class AS2MessageTest extends AS2MessageTestBase {
                 null, "Got ya message!", null);
 
         // Send MDN
-        HttpCoreContext httpContext = mdnManager.send(mdn, mdn.getMainMessageContentType(), RECIPIENT_DELIVERY_ADDRESS);
+        HttpCoreContext httpContext = mdnManager.send(mdn, mdn.getMainMessageContentType(), recipientDeliveryAddress);
         HttpRequest mndRequest = httpContext.getRequest();
         Arrays.stream(request.getHeaders(AS2Header.CONTENT_DISPOSITION)).forEach(h -> LOG.debug("{}", h));
         DispositionNotificationMultipartReportEntity reportEntity
@@ -440,7 +430,7 @@ public class AS2MessageTest extends AS2MessageTestBase {
         assertEquals(AS2_NAME, request.getFirstHeader(AS2Header.AS2_TO).getValue(), "Unexpected AS2 to value");
         assertTrue(request.getFirstHeader(AS2Header.MESSAGE_ID).getValue().endsWith(CLIENT_FQDN + ">"),
                 "Unexpected message id value");
-        assertEquals(TARGET_HOST + ":" + TARGET_PORT, request.getFirstHeader(AS2Header.TARGET_HOST).getValue(),
+        assertEquals(TARGET_HOST + ":" + targetPort, request.getFirstHeader(AS2Header.TARGET_HOST).getValue(),
                 "Unexpected target host value");
         assertEquals(USER_AGENT, request.getFirstHeader(AS2Header.USER_AGENT).getValue(), "Unexpected user agent value");
         assertNotNull(request.getFirstHeader(AS2Header.DATE), "Date value missing");
@@ -514,7 +504,7 @@ public class AS2MessageTest extends AS2MessageTestBase {
         assertEquals(AS2_NAME, request.getFirstHeader(AS2Header.AS2_TO).getValue(), "Unexpected AS2 to value");
         assertTrue(request.getFirstHeader(AS2Header.MESSAGE_ID).getValue().endsWith(CLIENT_FQDN + ">"),
                 "Unexpected message id value");
-        assertEquals(TARGET_HOST + ":" + TARGET_PORT, request.getFirstHeader(AS2Header.TARGET_HOST).getValue(),
+        assertEquals(TARGET_HOST + ":" + targetPort, request.getFirstHeader(AS2Header.TARGET_HOST).getValue(),
                 "Unexpected target host value");
         assertEquals(USER_AGENT, request.getFirstHeader(AS2Header.USER_AGENT).getValue(), "Unexpected user agent value");
         assertNotNull(request.getFirstHeader(AS2Header.DATE), "Date value missing");
@@ -668,7 +658,7 @@ public class AS2MessageTest extends AS2MessageTestBase {
         assertEquals(AS2_NAME, request.getFirstHeader(AS2Header.AS2_TO).getValue(), "Unexpected AS2 to value");
         assertTrue(request.getFirstHeader(AS2Header.MESSAGE_ID).getValue().endsWith(CLIENT_FQDN + ">"),
                 "Unexpected message id value");
-        assertEquals(TARGET_HOST + ":" + TARGET_PORT, request.getFirstHeader(AS2Header.TARGET_HOST).getValue(),
+        assertEquals(TARGET_HOST + ":" + targetPort, request.getFirstHeader(AS2Header.TARGET_HOST).getValue(),
                 "Unexpected target host value");
         assertEquals(USER_AGENT, request.getFirstHeader(AS2Header.USER_AGENT).getValue(), "Unexpected user agent value");
         assertNotNull(request.getFirstHeader(AS2Header.DATE), "Date value missing");
@@ -735,7 +725,7 @@ public class AS2MessageTest extends AS2MessageTestBase {
         assertEquals(AS2_NAME, request.getFirstHeader(AS2Header.AS2_TO).getValue(), "Unexpected AS2 to value");
         assertTrue(request.getFirstHeader(AS2Header.MESSAGE_ID).getValue().endsWith(CLIENT_FQDN + ">"),
                 "Unexpected message id value");
-        assertEquals(TARGET_HOST + ":" + TARGET_PORT, request.getFirstHeader(AS2Header.TARGET_HOST).getValue(),
+        assertEquals(TARGET_HOST + ":" + targetPort, request.getFirstHeader(AS2Header.TARGET_HOST).getValue(),
                 "Unexpected target host value");
         assertEquals(USER_AGENT, request.getFirstHeader(AS2Header.USER_AGENT).getValue(), "Unexpected user agent value");
         assertNotNull(request.getFirstHeader(AS2Header.DATE), "Date value missing");

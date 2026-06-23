@@ -28,19 +28,26 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.PollingConsumerPollStrategy;
 import org.apache.camel.spi.Registry;
 import org.awaitility.Awaitility;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Unit test for poll strategy
  */
-@DisabledIfSystemProperty(named = "ci.env.name", matches = ".*", disabledReason = "Flaky on Github CI")
 public class FileConsumerPollStrategyStopOnRollbackTest extends ContextTestSupport {
 
     private static int counter;
     private static volatile String event = "";
+
+    @Override
+    @BeforeEach
+    public void setUp() throws Exception {
+        counter = 0;
+        event = "";
+        super.setUp();
+    }
 
     @Override
     protected Registry createCamelRegistry() throws Exception {
@@ -53,7 +60,7 @@ public class FileConsumerPollStrategyStopOnRollbackTest extends ContextTestSuppo
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from(fileUri("?pollStrategy=#myPoll&initialDelay=0&delay=10"))
+                from(fileUri("?pollStrategy=#myPoll&initialDelay=100&delay=100"))
                         .convertBodyTo(String.class).to("mock:result");
             }
         };

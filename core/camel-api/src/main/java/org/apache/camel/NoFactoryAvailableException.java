@@ -17,22 +17,41 @@
 package org.apache.camel;
 
 import java.io.IOException;
+import java.util.Objects;
 
 /**
- * Thrown if no factory resource is available for the given URI
+ * Thrown by the Camel {@code FactoryFinder} mechanism when no implementation class can be located for a given service
+ * URI.
+ * <p/>
+ * The {@code FactoryFinder} scans the classpath for service descriptor files under
+ * {@code META-INF/services/org/apache/camel/} to discover pluggable implementations of Camel SPIs (components, data
+ * formats, languages, dumpers, etc.). When the required JAR is absent from the classpath, or when the service
+ * descriptor file is missing or misconfigured, this exception is thrown with the full service URI that could not be
+ * resolved. It extends {@link java.io.IOException} so callers that use the raw I/O-based discovery path can catch it at
+ * the right level; higher-level Camel code typically wraps it in a {@link RuntimeCamelException} for propagation across
+ * unchecked API boundaries.
+ *
+ * @see RuntimeCamelException
  */
 public class NoFactoryAvailableException extends IOException {
 
     private final String uri;
 
+    /**
+     * @param uri the URI for which no factory class could be found
+     */
     public NoFactoryAvailableException(String uri) {
-        super("Cannot find factory class for resource: " + uri);
+        super("Cannot find factory class for resource: " + Objects.requireNonNull(uri, "uri"));
         this.uri = uri;
     }
 
+    /**
+     * @param uri   the URI for which no factory class could be found
+     * @param cause the cause of the failure
+     */
     public NoFactoryAvailableException(String uri, Throwable cause) {
         this(uri);
-        initCause(cause);
+        initCause(Objects.requireNonNull(cause, "cause"));
     }
 
     public String getUri() {

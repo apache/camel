@@ -22,6 +22,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import jakarta.jms.ConnectionFactory;
+
 import org.apache.activemq.artemis.jms.client.ActiveMQQueue;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ConsumerTemplate;
@@ -30,6 +32,7 @@ import org.apache.camel.Message;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.AbstractJMSTest;
+import org.apache.camel.component.jms.JmsComponent;
 import org.apache.camel.component.mock.AssertionClause;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.infra.core.CamelContextExtension;
@@ -98,6 +101,14 @@ public class ActiveMQPropagateSerializableHeadersIT extends AbstractJMSTest {
     @Override
     protected String getComponentName() {
         return "activemq";
+    }
+
+    @Override
+    protected JmsComponent setupComponent(
+            CamelContext camelContext, ConnectionFactory connectionFactory, String componentName) {
+        JmsComponent component = super.setupComponent(camelContext, connectionFactory, componentName);
+        component.setObjectMessageEnabled(true);
+        return component;
     }
 
     @ContextFixture

@@ -9,7 +9,6 @@
 :component-header: Only producer is supported
 //Manually maintained attributes
 :group: Kubernetes
-:camel-spring-boot-name: kubernetes
 
 *Since Camel {since}*
 
@@ -34,4 +33,3 @@ include::partial$component-endpoint-headers.adoc[]
 - `updateCronJob`
 - `deleteCronJob`
 
-include::spring-boot:partial$starter.adoc[]

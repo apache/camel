@@ -37,7 +37,10 @@ import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
 @Command(name = "vault",
-         description = "List secrets from security vaults", sortOptions = false, showDefaultValues = true)
+         description = "List secrets from security vaults", sortOptions = false, showDefaultValues = true,
+         footer = {
+                 "%nExamples:",
+                 "  camel get vault" })
 public class ListVault extends ProcessWatchCommand {
 
     public static class PidNameCompletionCandidates implements Iterable<String> {
@@ -84,10 +87,12 @@ public class ListVault extends ProcessWatchCommand {
                         if ("CamelJBang".equals(row.name)) {
                             row.name = ProcessHelper.extractName(root, ph);
                         }
+                        final Row baseRow = row.copy();
                         JsonObject vaults = (JsonObject) root.get("vaults");
                         if (vaults != null) {
                             JsonObject aws = (JsonObject) vaults.get("aws-secrets");
                             if (aws != null) {
+                                row = baseRow.copy();
                                 row.vault = "AWS";
                                 row.region = aws.getString("region");
                                 row.lastCheck = aws.getLongOrDefault("lastCheckTimestamp", 0);
@@ -106,6 +111,7 @@ public class ListVault extends ProcessWatchCommand {
                             }
                             JsonObject gcp = (JsonObject) vaults.get("gcp-secrets");
                             if (gcp != null) {
+                                row = baseRow.copy();
                                 row.vault = "GCP";
                                 row.lastCheck = gcp.getLongOrDefault("lastCheckTimestamp", 0);
                                 row.lastReload = gcp.getLongOrDefault("lastReloadTimestamp", 0);
@@ -123,6 +129,7 @@ public class ListVault extends ProcessWatchCommand {
                             }
                             JsonObject azure = (JsonObject) vaults.get("azure-secrets");
                             if (azure != null) {
+                                row = baseRow.copy();
                                 row.vault = "Azure";
                                 row.lastCheck = azure.getLongOrDefault("lastCheckTimestamp", 0);
                                 row.lastReload = azure.getLongOrDefault("lastReloadTimestamp", 0);
@@ -141,6 +148,7 @@ public class ListVault extends ProcessWatchCommand {
 
                             JsonObject kubernetes = (JsonObject) vaults.get("kubernetes-secrets");
                             if (kubernetes != null) {
+                                row = baseRow.copy();
                                 row.vault = "Kubernetes";
                                 row.lastCheck = kubernetes.getLongOrDefault("startCheckTimestamp", 0);
                                 row.lastReload = kubernetes.getLongOrDefault("lastReloadTimestamp", 0);
@@ -159,6 +167,7 @@ public class ListVault extends ProcessWatchCommand {
 
                             JsonObject hashicorp = (JsonObject) vaults.get("hashicorp-secrets");
                             if (hashicorp != null) {
+                                row = baseRow.copy();
                                 row.vault = "Hashicorp";
                                 row.lastCheck = hashicorp.getLongOrDefault("startCheckTimestamp", 0);
                                 row.lastReload = hashicorp.getLongOrDefault("lastReloadTimestamp", 0);
@@ -167,6 +176,7 @@ public class ListVault extends ProcessWatchCommand {
 
                             JsonObject cmKubernetes = (JsonObject) vaults.get("kubernetes-configmaps");
                             if (cmKubernetes != null) {
+                                row = baseRow.copy();
                                 row.vault = "Kubernetes-cm";
                                 row.lastCheck = cmKubernetes.getLongOrDefault("startCheckTimestamp", 0);
                                 row.lastReload = cmKubernetes.getLongOrDefault("lastReloadTimestamp", 0);

@@ -1,0 +1,15 @@
+- route:
+    id: timer-log
+    from:
+      uri: timer
+      parameters:
+        timerName: tick
+        period: "{{timer.period}}"
+      steps:
+        - setBody:
+            expression:
+              simple:
+                expression: "{{greeting.message}}"
+        - log:
+            message: "${body}"
+

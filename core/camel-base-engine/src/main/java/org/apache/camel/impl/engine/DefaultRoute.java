@@ -90,6 +90,7 @@ public class DefaultRoute extends ServiceSupport implements Route {
     private Boolean logMask;
     private Boolean logExhaustedMessageBody;
     private Boolean streamCache;
+    private Boolean messageSize;
     private Long delay;
     private Boolean autoStartup = Boolean.TRUE;
     private final List<RoutePolicy> routePolicyList = new ArrayList<>();
@@ -502,6 +503,20 @@ public class DefaultRoute extends ServiceSupport implements Route {
         } else {
             // fallback to the option from camel context
             return camelContext.isStreamCaching();
+        }
+    }
+
+    @Override
+    public void setMessageSize(Boolean messageSize) {
+        this.messageSize = messageSize;
+    }
+
+    @Override
+    public Boolean isMessageSize() {
+        if (messageSize != null) {
+            return messageSize;
+        } else {
+            return camelContext.isMessageSize();
         }
     }
 

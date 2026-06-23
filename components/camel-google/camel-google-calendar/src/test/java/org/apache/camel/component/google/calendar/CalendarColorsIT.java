@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.google.calendar;
 
+import com.google.api.services.calendar.model.Colors;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.google.calendar.internal.CalendarColorsApiMethod;
 import org.apache.camel.component.google.calendar.internal.GoogleCalendarApiCollection;
@@ -39,7 +40,7 @@ public class CalendarColorsIT extends AbstractGoogleCalendarTestSupport {
 
     @Test
     public void testGet() {
-        com.google.api.services.calendar.model.Colors result = requestBody("direct://GET", null);
+        Colors result = requestBody("direct://GET", null);
 
         assertNotNull(result, "get result");
         LOG.debug("get: {}", result);

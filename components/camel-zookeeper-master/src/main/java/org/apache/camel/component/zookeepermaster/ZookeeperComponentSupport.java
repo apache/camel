@@ -33,7 +33,7 @@ public abstract class ZookeeperComponentSupport extends DefaultComponent {
     private int maximumConnectionTimeout = 10 * 1000;
     @Metadata(defaultValue = "localhost:2181")
     private String zooKeeperUrl;
-    @Metadata(label = "security", secret = true)
+    @Metadata(label = "security", security = "secret")
     private String zooKeeperPassword;
 
     public Group<CamelNodeState> createGroup(String path) {

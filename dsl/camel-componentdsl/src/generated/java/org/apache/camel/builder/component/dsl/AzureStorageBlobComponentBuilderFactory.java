@@ -382,6 +382,26 @@ public interface AzureStorageBlobComponentBuilderFactory {
             return this;
         }
     
+        /**
+         * The blob version identifier used to target a specific blob version on
+         * read operations (getBlob, downloadBlobToFile, downloadLink). Requires
+         * blob versioning to be enabled on the storage account. When set, the
+         * read targets the version scoped client instead of the live blob. Can
+         * also be provided per-exchange via the CamelAzureStorageBlobVersionId
+         * header.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param versionId the value to set
+         * @return the dsl builder
+         */
+        default AzureStorageBlobComponentBuilder versionId(java.lang.String versionId) {
+            doSetProperty("versionId", versionId);
+            return this;
+        }
+    
         
         /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
@@ -996,6 +1016,7 @@ public interface AzureStorageBlobComponentBuilderFactory {
             case "serviceClient": getOrCreateConfiguration((BlobComponent) component).setServiceClient((com.azure.storage.blob.BlobServiceClient) value); return true;
             case "snapshotId": getOrCreateConfiguration((BlobComponent) component).setSnapshotId((java.lang.String) value); return true;
             case "timeout": getOrCreateConfiguration((BlobComponent) component).setTimeout((java.time.Duration) value); return true;
+            case "versionId": getOrCreateConfiguration((BlobComponent) component).setVersionId((java.lang.String) value); return true;
             case "bridgeErrorHandler": ((BlobComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "deleteAfterRead": getOrCreateConfiguration((BlobComponent) component).setDeleteAfterRead((boolean) value); return true;
             case "destinationBlobPrefix": getOrCreateConfiguration((BlobComponent) component).setDestinationBlobPrefix((java.lang.String) value); return true;

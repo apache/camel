@@ -16,22 +16,39 @@
 #
 
 github:
-  description: "Apache Camel is an open source integration framework that empowers you to quickly and easily integrate various systems consuming or producing data."
+  description: "Apache Camel is an open source integration framework with 350+ connectors. Write routes in Java, YAML, or XML. Run on Spring Boot, Quarkus, or standalone. Apache License 2.0."
   homepage: https://camel.apache.org
   labels:
     - camel
     - integration
-    - eip
-    - microservices
+    - integration-framework
+    - enterprise-integration-patterns
     - java
+    - spring-boot
+    - quarkus
+    - cloud-native
+    - kubernetes
+    - kafka
+    - rest-api
+    - yaml
+    - data-transformation
+    - middleware
+    - microservices
+    - mcp
+  enabled_merge_buttons:
+    squash: true
+    squash_commit_message: PR_TITLE_AND_COMMIT_DETAILS
+    merge: true
+    rebase: true
   dependabot_alerts:  true
   dependabot_updates: true
   autolink_jira:
     - CAMEL
 
   protected_branches:
-    # protect main against force push
     main: {}
+    camel-4.14.x: {}
+    camel-4.18.x: {}
   
 notifications:
   pullrequests: commits@camel.apache.org

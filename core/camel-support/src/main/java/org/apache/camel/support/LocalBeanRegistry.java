@@ -58,7 +58,7 @@ public final class LocalBeanRegistry extends SupplierRegistry {
             Object bean = lookupByName(id);
             if (bean != null) {
                 try {
-                    org.apache.camel.support.ObjectHelper.invokeMethodSafe(method, bean);
+                    ObjectHelper.invokeMethodSafe(method, bean);
                 } catch (Exception e) {
                     // ignore
                 }

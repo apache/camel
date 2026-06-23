@@ -27,6 +27,48 @@ import org.apache.camel.builder.endpoint.dsl.*;
 public class StaticEndpointBuilders {
 
     /**
+     * A2A (camel-a2a)
+     * A2A endpoint for agent-to-agent communication.
+     * 
+     * Category: ai
+     * Since: 4.21
+     * Maven coordinates: org.apache.camel:camel-a2a
+     * 
+     * Syntax: <code>a2a:agentCardSource</code>
+     * 
+     * Path parameter: agentCardSource (required)
+     * The agent card source (classpath:, file:, http://, https://, or plain
+     * name)
+     * 
+     * @param path agentCardSource
+     * @return the dsl builder
+     */
+    public static A2AEndpointBuilderFactory.A2AEndpointBuilder a2a(String path) {
+        return a2a("a2a", path);
+    }
+    /**
+     * A2A (camel-a2a)
+     * A2A endpoint for agent-to-agent communication.
+     * 
+     * Category: ai
+     * Since: 4.21
+     * Maven coordinates: org.apache.camel:camel-a2a
+     * 
+     * Syntax: <code>a2a:agentCardSource</code>
+     * 
+     * Path parameter: agentCardSource (required)
+     * The agent card source (classpath:, file:, http://, https://, or plain
+     * name)
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path agentCardSource
+     * @return the dsl builder
+     */
+    public static A2AEndpointBuilderFactory.A2AEndpointBuilder a2a(String componentName, String path) {
+        return A2AEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * ActiveMQ 5.x (camel-activemq)
      * Send messages to (or consume from) Apache ActiveMQ 5.x. This component
      * extends the Camel JMS component.
@@ -4272,6 +4314,7 @@ public class StaticEndpointBuilders {
      * @param path operation
      * @return the dsl builder
      */
+    @Deprecated
     public static DigitalOceanEndpointBuilderFactory.DigitalOceanEndpointBuilder digitalocean(String path) {
         return digitalocean("digitalocean", path);
     }
@@ -4300,6 +4343,7 @@ public class StaticEndpointBuilders {
      * @param path operation
      * @return the dsl builder
      */
+    @Deprecated
     public static DigitalOceanEndpointBuilderFactory.DigitalOceanEndpointBuilder digitalocean(String componentName, String path) {
         return DigitalOceanEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
@@ -5574,60 +5618,6 @@ public class StaticEndpointBuilders {
         return GitEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * GitHub (camel-github)
-     * Interact with the GitHub API.
-     * 
-     * Category: file,cloud,api
-     * Since: 2.15
-     * Maven coordinates: org.apache.camel:camel-github
-     * 
-     * Syntax: <code>github:type/branchName</code>
-     * 
-     * Path parameter: type (required)
-     * What git operation to execute
-     * There are 10 enums and the value can be one of: CLOSEPULLREQUEST,
-     * PULLREQUESTCOMMENT, COMMIT, PULLREQUEST, TAG, PULLREQUESTSTATE,
-     * PULLREQUESTFILES, GETCOMMITFILE, CREATEISSUE, EVENT
-     * 
-     * Path parameter: branchName
-     * Name of branch
-     * 
-     * @param path type/branchName
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static GitHubEndpointBuilderFactory.GitHubEndpointBuilder github(String path) {
-        return github("github", path);
-    }
-    /**
-     * GitHub (camel-github)
-     * Interact with the GitHub API.
-     * 
-     * Category: file,cloud,api
-     * Since: 2.15
-     * Maven coordinates: org.apache.camel:camel-github
-     * 
-     * Syntax: <code>github:type/branchName</code>
-     * 
-     * Path parameter: type (required)
-     * What git operation to execute
-     * There are 10 enums and the value can be one of: CLOSEPULLREQUEST,
-     * PULLREQUESTCOMMENT, COMMIT, PULLREQUEST, TAG, PULLREQUESTSTATE,
-     * PULLREQUESTFILES, GETCOMMITFILE, CREATEISSUE, EVENT
-     * 
-     * Path parameter: branchName
-     * Name of branch
-     * 
-     * @param componentName to use a custom component name for the endpoint
-     * instead of the default name
-     * @param path type/branchName
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static GitHubEndpointBuilderFactory.GitHubEndpointBuilder github(String componentName, String path) {
-        return GitHubEndpointBuilderFactory.endpointBuilder(componentName, path);
-    }
-    /**
      * GitHub2 (camel-github2)
      * Interact with the GitHub API.
      * 
@@ -6510,50 +6500,6 @@ public class StaticEndpointBuilders {
         return GoogleCloudVisionEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * Grape (camel-grape)
-     * Fetch, load and manage additional jars dynamically after Camel Context
-     * was started.
-     * 
-     * Category: management
-     * Since: 2.16
-     * Maven coordinates: org.apache.camel:camel-grape
-     * 
-     * Syntax: <code>grape:defaultCoordinates</code>
-     * 
-     * Path parameter: defaultCoordinates (required)
-     * Maven coordinates to use as default to grab if the message body is empty.
-     * 
-     * @param path defaultCoordinates
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static GrapeEndpointBuilderFactory.GrapeEndpointBuilder grape(String path) {
-        return grape("grape", path);
-    }
-    /**
-     * Grape (camel-grape)
-     * Fetch, load and manage additional jars dynamically after Camel Context
-     * was started.
-     * 
-     * Category: management
-     * Since: 2.16
-     * Maven coordinates: org.apache.camel:camel-grape
-     * 
-     * Syntax: <code>grape:defaultCoordinates</code>
-     * 
-     * Path parameter: defaultCoordinates (required)
-     * Maven coordinates to use as default to grab if the message body is empty.
-     * 
-     * @param componentName to use a custom component name for the endpoint
-     * instead of the default name
-     * @param path defaultCoordinates
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static GrapeEndpointBuilderFactory.GrapeEndpointBuilder grape(String componentName, String path) {
-        return GrapeEndpointBuilderFactory.endpointBuilder(componentName, path);
-    }
-    /**
      * GraphQL (camel-graphql)
      * Send GraphQL queries and mutations to external systems.
      * 
@@ -6648,48 +6594,6 @@ public class StaticEndpointBuilders {
      */
     public static GrpcEndpointBuilderFactory.GrpcEndpointBuilder grpc(String componentName, String path) {
         return GrpcEndpointBuilderFactory.endpointBuilder(componentName, path);
-    }
-    /**
-     * Guava EventBus (camel-guava-eventbus)
-     * Send and receive messages to/from Guava EventBus.
-     * 
-     * Category: messaging
-     * Since: 2.10
-     * Maven coordinates: org.apache.camel:camel-guava-eventbus
-     * 
-     * Syntax: <code>guava-eventbus:eventBusRef</code>
-     * 
-     * Path parameter: eventBusRef
-     * To lookup the Guava EventBus from the registry with the given name
-     * 
-     * @param path eventBusRef
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static GuavaEventBusEndpointBuilderFactory.GuavaEventBusEndpointBuilder guavaEventbus(String path) {
-        return guavaEventbus("guava-eventbus", path);
-    }
-    /**
-     * Guava EventBus (camel-guava-eventbus)
-     * Send and receive messages to/from Guava EventBus.
-     * 
-     * Category: messaging
-     * Since: 2.10
-     * Maven coordinates: org.apache.camel:camel-guava-eventbus
-     * 
-     * Syntax: <code>guava-eventbus:eventBusRef</code>
-     * 
-     * Path parameter: eventBusRef
-     * To lookup the Guava EventBus from the registry with the given name
-     * 
-     * @param componentName to use a custom component name for the endpoint
-     * instead of the default name
-     * @param path eventBusRef
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static GuavaEventBusEndpointBuilderFactory.GuavaEventBusEndpointBuilder guavaEventbus(String componentName, String path) {
-        return GuavaEventBusEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
      * Hashicorp Vault (camel-hashicorp-vault)
@@ -7965,6 +7869,7 @@ public class StaticEndpointBuilders {
      * @param path uriPath
      * @return the dsl builder
      */
+    @Deprecated
     public static ClientEndpointBuilderFactory.ClientEndpointBuilder iec60870Client(String path) {
         return iec60870Client("iec60870-client", path);
     }
@@ -7987,6 +7892,7 @@ public class StaticEndpointBuilders {
      * @param path uriPath
      * @return the dsl builder
      */
+    @Deprecated
     public static ClientEndpointBuilderFactory.ClientEndpointBuilder iec60870Client(String componentName, String path) {
         return ClientEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
@@ -8007,6 +7913,7 @@ public class StaticEndpointBuilders {
      * @param path uriPath
      * @return the dsl builder
      */
+    @Deprecated
     public static ServerEndpointBuilderFactory.ServerEndpointBuilder iec60870Server(String path) {
         return iec60870Server("iec60870-server", path);
     }
@@ -8029,6 +7936,7 @@ public class StaticEndpointBuilders {
      * @param path uriPath
      * @return the dsl builder
      */
+    @Deprecated
     public static ServerEndpointBuilderFactory.ServerEndpointBuilder iec60870Server(String componentName, String path) {
         return ServerEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
@@ -8616,6 +8524,7 @@ public class StaticEndpointBuilders {
      * @param path hostname:port
      * @return the dsl builder
      */
+    @Deprecated
     public static IrcEndpointBuilderFactory.IrcEndpointBuilder irc(String path) {
         return irc("irc", path);
     }
@@ -8641,6 +8550,7 @@ public class StaticEndpointBuilders {
      * @param path hostname:port
      * @return the dsl builder
      */
+    @Deprecated
     public static IrcEndpointBuilderFactory.IrcEndpointBuilder irc(String componentName, String path) {
         return IrcEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
@@ -8661,6 +8571,7 @@ public class StaticEndpointBuilders {
      * @param path queueName
      * @return the dsl builder
      */
+    @Deprecated
     public static IronMQEndpointBuilderFactory.IronMQEndpointBuilder ironmq(String path) {
         return ironmq("ironmq", path);
     }
@@ -8683,6 +8594,7 @@ public class StaticEndpointBuilders {
      * @param path queueName
      * @return the dsl builder
      */
+    @Deprecated
     public static IronMQEndpointBuilderFactory.IronMQEndpointBuilder ironmq(String componentName, String path) {
         return IronMQEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
@@ -12546,7 +12458,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * OpenAI (camel-openai)
-     * OpenAI endpoint for chat completion and embeddings.
+     * OpenAI endpoint for chat completion, embeddings, and audio transcription.
      * 
      * Category: ai
      * Since: 4.17
@@ -12555,10 +12467,10 @@ public class StaticEndpointBuilders {
      * Syntax: <code>openai:operation</code>
      * 
      * Path parameter: operation (required)
-     * The operation to perform: 'chat-completion', 'embeddings', or
-     * 'tool-execution'
-     * There are 3 enums and the value can be one of: chat-completion,
-     * embeddings, tool-execution
+     * The operation to perform: 'chat-completion', 'embeddings',
+     * 'tool-execution', or 'audio-transcription'
+     * There are 4 enums and the value can be one of: chat-completion,
+     * embeddings, tool-execution, audio-transcription
      * 
      * @param path operation
      * @return the dsl builder
@@ -12568,7 +12480,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * OpenAI (camel-openai)
-     * OpenAI endpoint for chat completion and embeddings.
+     * OpenAI endpoint for chat completion, embeddings, and audio transcription.
      * 
      * Category: ai
      * Since: 4.17
@@ -12577,10 +12489,10 @@ public class StaticEndpointBuilders {
      * Syntax: <code>openai:operation</code>
      * 
      * Path parameter: operation (required)
-     * The operation to perform: 'chat-completion', 'embeddings', or
-     * 'tool-execution'
-     * There are 3 enums and the value can be one of: chat-completion,
-     * embeddings, tool-execution
+     * The operation to perform: 'chat-completion', 'embeddings',
+     * 'tool-execution', or 'audio-transcription'
+     * There are 4 enums and the value can be one of: chat-completion,
+     * embeddings, tool-execution, audio-transcription
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -13128,6 +13040,7 @@ public class StaticEndpointBuilders {
      * @param path topic
      * @return the dsl builder
      */
+    @Deprecated
     public static PahoEndpointBuilderFactory.PahoEndpointBuilder paho(String path) {
         return paho("paho", path);
     }
@@ -13149,6 +13062,7 @@ public class StaticEndpointBuilders {
      * @param path topic
      * @return the dsl builder
      */
+    @Deprecated
     public static PahoEndpointBuilderFactory.PahoEndpointBuilder paho(String componentName, String path) {
         return PahoEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
@@ -14743,6 +14657,46 @@ public class StaticEndpointBuilders {
         return SftpEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * Shell (camel-shell)
+     * Camel Shell component
+     * 
+     * Category: api
+     * Since: 4.21
+     * Maven coordinates: org.apache.camel:camel-shell
+     * 
+     * Syntax: <code>shell:prompt</code>
+     * 
+     * Path parameter: prompt (required)
+     * Shell prompt
+     * 
+     * @param path prompt
+     * @return the dsl builder
+     */
+    public static ShellEndpointBuilderFactory.ShellEndpointBuilder shell(String path) {
+        return shell("shell", path);
+    }
+    /**
+     * Shell (camel-shell)
+     * Camel Shell component
+     * 
+     * Category: api
+     * Since: 4.21
+     * Maven coordinates: org.apache.camel:camel-shell
+     * 
+     * Syntax: <code>shell:prompt</code>
+     * 
+     * Path parameter: prompt (required)
+     * Shell prompt
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path prompt
+     * @return the dsl builder
+     */
+    public static ShellEndpointBuilderFactory.ShellEndpointBuilder shell(String componentName, String path) {
+        return ShellEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * Simple JMS (camel-sjms)
      * Send and receive messages to/from a JMS Queue or Topic using plain JMS
      * 1.x API.
@@ -16074,50 +16028,6 @@ public class StaticEndpointBuilders {
      */
     public static StitchEndpointBuilderFactory.StitchEndpointBuilder stitch(String componentName, String path) {
         return StitchEndpointBuilderFactory.endpointBuilder(componentName, path);
-    }
-    /**
-     * Stomp (camel-stomp)
-     * Send and receive messages to/from STOMP (Simple Text Oriented Messaging
-     * Protocol) compliant message brokers.
-     * 
-     * Category: messaging
-     * Since: 2.12
-     * Maven coordinates: org.apache.camel:camel-stomp
-     * 
-     * Syntax: <code>stomp:destination</code>
-     * 
-     * Path parameter: destination (required)
-     * Name of the queue
-     * 
-     * @param path destination
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static StompEndpointBuilderFactory.StompEndpointBuilder stomp(String path) {
-        return stomp("stomp", path);
-    }
-    /**
-     * Stomp (camel-stomp)
-     * Send and receive messages to/from STOMP (Simple Text Oriented Messaging
-     * Protocol) compliant message brokers.
-     * 
-     * Category: messaging
-     * Since: 2.12
-     * Maven coordinates: org.apache.camel:camel-stomp
-     * 
-     * Syntax: <code>stomp:destination</code>
-     * 
-     * Path parameter: destination (required)
-     * Name of the queue
-     * 
-     * @param componentName to use a custom component name for the endpoint
-     * instead of the default name
-     * @param path destination
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static StompEndpointBuilderFactory.StompEndpointBuilder stomp(String componentName, String path) {
-        return StompEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
      * Stream (camel-stream)

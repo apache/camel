@@ -23,8 +23,8 @@ import java.util.List;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.LineNumberAware;
+import org.apache.camel.NamedNode;
 import org.apache.camel.model.AdviceWithDefinition;
-import org.apache.camel.model.ChoiceDefinition;
 import org.apache.camel.model.EndpointRequiredDefinition;
 import org.apache.camel.model.EnrichDefinition;
 import org.apache.camel.model.FromDefinition;
@@ -32,6 +32,7 @@ import org.apache.camel.model.InterceptDefinition;
 import org.apache.camel.model.InterceptSendToEndpointDefinition;
 import org.apache.camel.model.OnCompletionDefinition;
 import org.apache.camel.model.OnExceptionDefinition;
+import org.apache.camel.model.OutputNode;
 import org.apache.camel.model.PipelineDefinition;
 import org.apache.camel.model.PollEnrichDefinition;
 import org.apache.camel.model.ProcessorDefinition;
@@ -39,7 +40,6 @@ import org.apache.camel.model.ProcessorDefinitionHelper;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.ToDynamicDefinition;
 import org.apache.camel.model.TransactedDefinition;
-import org.apache.camel.model.WhenDefinition;
 import org.apache.camel.support.PatternHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -475,17 +475,13 @@ public final class AdviceWithTasks {
         if (parent == null) {
             return null;
         }
-        // for CBR then use the outputs from the node itself
-        // so we work on the right branch in the CBR (when/otherwise)
-        if (parent instanceof ChoiceDefinition choice) {
-            // look in which branch the node is from
-            for (WhenDefinition when : choice.getWhenClauses()) {
-                if (when.getOutputs().contains(node)) {
-                    return when.getOutputs();
+        // check if the node is inside a structural child (e.g., when/otherwise in a choice)
+        // so we work on the right branch
+        for (NamedNode child : parent.getChildren()) {
+            if (child instanceof OutputNode outputNode && !(child instanceof ProcessorDefinition)) {
+                if (outputNode.getOutputs().contains(node)) {
+                    return outputNode.getOutputs();
                 }
-            }
-            if (choice.getOtherwise() != null) {
-                return choice.getOtherwise().getOutputs();
             }
         }
         List<ProcessorDefinition<?>> outputs = parent.getOutputs();

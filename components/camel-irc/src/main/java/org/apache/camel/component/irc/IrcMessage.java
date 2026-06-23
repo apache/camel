@@ -23,6 +23,7 @@ import org.apache.camel.support.DefaultMessage;
 import org.apache.camel.support.ExchangeHelper;
 import org.schwering.irc.lib.IRCUser;
 
+@Deprecated(since = "4.21")
 public class IrcMessage extends DefaultMessage {
     private String messageType;
     private String target;

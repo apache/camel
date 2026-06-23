@@ -32,12 +32,30 @@ import org.apache.camel.Producer;
 import org.apache.camel.Route;
 import org.apache.camel.Service;
 import org.apache.camel.cluster.CamelClusterService;
+import org.jspecify.annotations.Nullable;
 
 /**
- * Strategy for computing {@link ObjectName} names for the various beans that Camel register for management.
+ * Strategy for computing the full {@link ObjectName} (domain plus all key-value properties) for every Camel artifact
+ * registered in JMX.
+ * <p/>
+ * A JMX {@link ObjectName} encodes both a domain (e.g., {@code org.apache.camel}) and a set of typed key-value pairs
+ * (e.g., {@code context=myApp, type=routes, name=myRoute}). This strategy provides a dedicated factory method for each
+ * Camel artifact type so that the correct type key and identifying attributes are always applied consistently.
+ * <p/>
+ * The {@link ManagementStrategy} calls the appropriate {@code getObjectNameFor*} method before invoking
+ * {@link ManagementAgent#register(Object, ObjectName)} or {@link ManagementAgent#unregister(ObjectName)}. The domain
+ * portion of the {@link ObjectName} is configured on {@link ManagementAgent#getMBeanObjectDomainName()}, while the name
+ * key within the context entry is governed by {@link ManagementNameStrategy}.
+ * <p/>
+ * See <a href="https://camel.apache.org/manual/jmx.html">JMX</a> in the Camel user manual.
+ *
+ * @see ManagementNameStrategy
+ * @see ManagementObjectStrategy
+ * @see ManagementAgent
  */
 public interface ManagementObjectNameStrategy {
 
+    @Nullable
     ObjectName getObjectName(Object managedObject) throws MalformedObjectNameException;
 
     ObjectName getObjectNameForCamelContext(String managementName, String name) throws MalformedObjectNameException;
@@ -79,7 +97,7 @@ public interface ManagementObjectNameStrategy {
     ObjectName getObjectNameForThreadPool(CamelContext context, ThreadPoolExecutor threadPool, String id, String sourceId)
             throws MalformedObjectNameException;
 
-    default ObjectName getObjectNameForThreadPool(
+    default @Nullable ObjectName getObjectNameForThreadPool(
             CamelContext context, ExecutorService executorService, String id, String sourceId)
             throws MalformedObjectNameException {
         return null;

@@ -137,7 +137,9 @@ import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.ManagementNameStrategy;
 import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.spi.MessageHistoryFactory;
+import org.apache.camel.spi.MessageSizeStrategy;
 import org.apache.camel.spi.ModelJAXBContextFactory;
+import org.apache.camel.spi.ModelToJavaDumper;
 import org.apache.camel.spi.ModelToStructureDumper;
 import org.apache.camel.spi.ModelToXMLDumper;
 import org.apache.camel.spi.ModelToYAMLDumper;
@@ -161,11 +163,13 @@ import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestRegistry;
 import org.apache.camel.spi.RestRegistryFactory;
 import org.apache.camel.spi.RouteController;
+import org.apache.camel.spi.RouteDiagramDumper;
 import org.apache.camel.spi.RouteError.Phase;
 import org.apache.camel.spi.RouteFactory;
 import org.apache.camel.spi.RoutePolicyFactory;
 import org.apache.camel.spi.RouteStartupOrder;
 import org.apache.camel.spi.RouteTemplateParameterSource;
+import org.apache.camel.spi.RouteTopologyDumper;
 import org.apache.camel.spi.RoutesLoader;
 import org.apache.camel.spi.RuntimeEndpointRegistry;
 import org.apache.camel.spi.ShutdownStrategy;
@@ -277,6 +281,7 @@ public abstract class AbstractCamelContext extends BaseService
     private Boolean logMask = Boolean.FALSE;
     private Boolean logExhaustedMessageBody = Boolean.FALSE;
     private Boolean streamCache = Boolean.TRUE;
+    private Boolean messageSize = Boolean.FALSE;
     private Boolean disableJMX = Boolean.FALSE;
     private Boolean loadTypeConverters = Boolean.FALSE;
     private Boolean loadHealthChecks = Boolean.FALSE;
@@ -401,6 +406,7 @@ public abstract class AbstractCamelContext extends BaseService
         camelContextExtension.lazyAddContextPlugin(BeanProcessorFactory.class, this::createBeanProcessorFactory);
         camelContextExtension.lazyAddContextPlugin(ModelToXMLDumper.class, this::createModelToXMLDumper);
         camelContextExtension.lazyAddContextPlugin(ModelToYAMLDumper.class, this::createModelToYAMLDumper);
+        camelContextExtension.lazyAddContextPlugin(ModelToJavaDumper.class, this::createModelToJavaDumper);
         camelContextExtension.lazyAddContextPlugin(ModelToStructureDumper.class, this::createModelToStructureDumper);
         camelContextExtension.lazyAddContextPlugin(DeferServiceFactory.class, this::createDeferServiceFactory);
         camelContextExtension.lazyAddContextPlugin(AnnotationBasedProcessorFactory.class,
@@ -410,6 +416,8 @@ public abstract class AbstractCamelContext extends BaseService
         camelContextExtension.lazyAddContextPlugin(GroovyScriptCompiler.class, this::createGroovyScriptCompiler);
         camelContextExtension.lazyAddContextPlugin(SimpleFunctionRegistry.class, this::createSimpleFunctionRegistry);
         camelContextExtension.lazyAddContextPlugin(RestRegistry.class, this::createRestRegistry);
+        camelContextExtension.lazyAddContextPlugin(RouteDiagramDumper.class, this::createRouteDiagramDumper);
+        camelContextExtension.lazyAddContextPlugin(RouteTopologyDumper.class, this::createRouteTopologyDumper);
     }
 
     protected static <T> T lookup(CamelContext context, String ref, Class<T> type) {
@@ -2008,6 +2016,16 @@ public abstract class AbstractCamelContext extends BaseService
     }
 
     @Override
+    public void setMessageSize(Boolean messageSize) {
+        this.messageSize = messageSize;
+    }
+
+    @Override
+    public Boolean isMessageSize() {
+        return messageSize;
+    }
+
+    @Override
     public void setTracing(Boolean tracing) {
         this.trace = tracing;
     }
@@ -3134,6 +3152,10 @@ public abstract class AbstractCamelContext extends BaseService
                       + " See more details at https://camel.apache.org/stream-caching.html");
         }
 
+        if (isMessageSizeInUse()) {
+            getMessageSizeStrategy().setEnabled(true);
+        }
+
         if (isAllowUseOriginalMessage()) {
             LOG.debug("AllowUseOriginalMessage enabled because UseOriginalMessage is in use");
         }
@@ -3174,6 +3196,8 @@ public abstract class AbstractCamelContext extends BaseService
             LOG.debug("Skip starting routes as CamelContext has been configured with autoStartup=false");
         }
 
+        // dump routes when as we have model before creating the runtime models, which can help during troubleshooting
+        // when routes have problems starting
         if (getDumpRoutes() != null && !"false".equals(getDumpRoutes())) {
             doDumpRoutes();
         }
@@ -3556,6 +3580,10 @@ public abstract class AbstractCamelContext extends BaseService
 
     protected boolean isStreamCachingInUse() throws Exception {
         return isStreamCaching();
+    }
+
+    protected boolean isMessageSizeInUse() throws Exception {
+        return isMessageSize();
     }
 
     protected void bindDataFormats() throws Exception {
@@ -4333,6 +4361,16 @@ public abstract class AbstractCamelContext extends BaseService
     }
 
     @Override
+    public MessageSizeStrategy getMessageSizeStrategy() {
+        return camelContextExtension.getMessageSizeStrategy();
+    }
+
+    @Override
+    public void setMessageSizeStrategy(MessageSizeStrategy messageSizeStrategy) {
+        camelContextExtension.setMessageSizeStrategy(messageSizeStrategy);
+    }
+
+    @Override
     public RestRegistry getRestRegistry() {
         return PluginHelper.getRestRegistry(this);
     }
@@ -4344,7 +4382,24 @@ public abstract class AbstractCamelContext extends BaseService
 
     protected RestRegistry createRestRegistry() {
         RestRegistryFactory factory = camelContextExtension.getRestRegistryFactory();
+        if (factory == null) {
+            return null;
+        }
         return factory.createRegistry();
+    }
+
+    protected RouteDiagramDumper createRouteDiagramDumper() {
+        return ResolverHelper.resolveMandatoryService(getCamelContextReference(),
+                RouteDiagramDumper.FACTORY,
+                RouteDiagramDumper.class,
+                "camel-diagram");
+    }
+
+    protected RouteTopologyDumper createRouteTopologyDumper() {
+        return ResolverHelper.resolveMandatoryService(getCamelContextReference(),
+                RouteTopologyDumper.FACTORY,
+                RouteTopologyDumper.class,
+                "camel-core-engine");
     }
 
     @Override
@@ -4441,6 +4496,8 @@ public abstract class AbstractCamelContext extends BaseService
 
     protected abstract StreamCachingStrategy createStreamCachingStrategy();
 
+    protected abstract MessageSizeStrategy createMessageSizeStrategy();
+
     protected abstract TypeConverter createTypeConverter();
 
     protected abstract TypeConverterRegistry createTypeConverterRegistry();
@@ -4536,6 +4593,8 @@ public abstract class AbstractCamelContext extends BaseService
     protected abstract ModelToXMLDumper createModelToXMLDumper();
 
     protected abstract ModelToYAMLDumper createModelToYAMLDumper();
+
+    protected abstract ModelToJavaDumper createModelToJavaDumper();
 
     protected abstract ModelToStructureDumper createModelToStructureDumper();
 

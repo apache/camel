@@ -16,6 +16,10 @@
  */
 package org.apache.camel.dsl.jbang.core.commands;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.concurrent.Callable;
 
 import org.apache.camel.catalog.CamelCatalog;
@@ -42,12 +46,14 @@ import org.apache.camel.dsl.jbang.core.commands.infra.InfraGet;
 import org.apache.camel.dsl.jbang.core.commands.infra.InfraList;
 import org.apache.camel.dsl.jbang.core.commands.infra.InfraLog;
 import org.apache.camel.dsl.jbang.core.commands.infra.InfraPs;
+import org.apache.camel.dsl.jbang.core.commands.infra.InfraRestart;
 import org.apache.camel.dsl.jbang.core.commands.infra.InfraRun;
 import org.apache.camel.dsl.jbang.core.commands.infra.InfraStop;
 import org.apache.camel.dsl.jbang.core.commands.plugin.PluginAdd;
 import org.apache.camel.dsl.jbang.core.commands.plugin.PluginCommand;
 import org.apache.camel.dsl.jbang.core.commands.plugin.PluginDelete;
 import org.apache.camel.dsl.jbang.core.commands.plugin.PluginGet;
+import org.apache.camel.dsl.jbang.core.commands.plugin.PluginList;
 import org.apache.camel.dsl.jbang.core.commands.process.*;
 import org.apache.camel.dsl.jbang.core.commands.update.UpdateCommand;
 import org.apache.camel.dsl.jbang.core.commands.update.UpdateList;
@@ -58,7 +64,9 @@ import org.apache.camel.dsl.jbang.core.commands.version.VersionList;
 import org.apache.camel.dsl.jbang.core.commands.version.VersionSet;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.PluginHelper;
+import org.apache.camel.dsl.jbang.core.common.PluginType;
 import org.apache.camel.dsl.jbang.core.common.Printer;
+import org.apache.camel.util.json.JsonObject;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
@@ -108,8 +116,12 @@ public class CamelJBangMain implements Callable<Integer> {
                         .addSubcommand("reload", new CommandLine(new CamelReloadAction(this)))
                         .addSubcommand("reset-stats", new CommandLine(new CamelResetStatsAction(this)))
                         .addSubcommand("resume-route", new CommandLine(new CamelRouteResumeAction(this)))
+                        .addSubcommand("route-diagram", new CommandLine(new CamelRouteDiagramAction(this)))
+                        .addSubcommand("route-dump", new CommandLine(new CamelRouteDumpAction(this)))
                         .addSubcommand("route-structure", new CommandLine(new CamelRouteStructureAction(this)))
+                        .addSubcommand("route-topology", new CommandLine(new CamelRouteTopologyAction(this)))
                         .addSubcommand("send", new CommandLine(new CamelSendAction(this)))
+                        .addSubcommand("span", new CommandLine(new CamelSpanAction(this)))
                         .addSubcommand("start-group", new CommandLine(new CamelRouteGroupStartAction(this)))
                         .addSubcommand("start-route", new CommandLine(new CamelRouteStartAction(this)))
                         .addSubcommand("stop-group", new CommandLine(new CamelRouteGroupStopAction(this)))
@@ -125,16 +137,19 @@ public class CamelJBangMain implements Callable<Integer> {
                 .addSubcommand("completion", new CommandLine(new Complete(this)))
                 .addSubcommand("doc", new CommandLine(new CatalogDoc(this)))
                 .addSubcommand("debug", new CommandLine(new Debug(this)))
+                .addSubcommand("dev", new CommandLine(new Dev(this)))
                 .addSubcommand("dependency", new CommandLine(new DependencyCommand(this))
                         .addSubcommand("copy", new CommandLine(new DependencyCopy(this)))
                         .addSubcommand("list", new CommandLine(new DependencyList(this)))
                         .addSubcommand("runtime", new CommandLine(new DependencyRuntime(this)))
                         .addSubcommand("update", new CommandLine(new DependencyUpdate(this))))
                 .addSubcommand("dirty", new CommandLine(new Dirty(this)))
+                .addSubcommand("doctor", new CommandLine(new Doctor(this)))
                 .addSubcommand("eval", new CommandLine(new EvalCommand(this))
                         .addSubcommand("expression", new CommandLine(new EvalExpressionCommand(this))))
                 .addSubcommand("export", new CommandLine(new Export(this)))
                 .addSubcommand("explain", new CommandLine(new Explain(this)))
+                .addSubcommand("ask", new CommandLine(new Ask(this)))
                 .addSubcommand("harden", new CommandLine(new Harden(this)))
                 .addSubcommand("get", new CommandLine(new CamelStatus(this))
                         .addSubcommand("bean", new CommandLine(new CamelBeanDump(this)))
@@ -144,6 +159,7 @@ public class CamelJBangMain implements Callable<Integer> {
                         .addSubcommand("context", new CommandLine(new CamelContextStatus(this)))
                         .addSubcommand("count", new CommandLine(new CamelCount(this)))
                         .addSubcommand("endpoint", new CommandLine(new ListEndpoint(this)))
+                        .addSubcommand("error", new CommandLine(new ListError(this)))
                         .addSubcommand("event", new CommandLine(new ListEvent(this)))
                         .addSubcommand("groovy", new CommandLine(new ListGroovy(this)))
                         .addSubcommand("group", new CommandLine(new CamelRouteGroupStatus(this)))
@@ -160,7 +176,6 @@ public class CamelJBangMain implements Callable<Integer> {
                         .addSubcommand("rest", new CommandLine(new ListRest(this)))
                         .addSubcommand("route", new CommandLine(new CamelRouteStatus(this)))
                         .addSubcommand("route-controller", new CommandLine(new RouteControllerAction(this)))
-                        .addSubcommand("route-dump", new CommandLine(new CamelRouteDumpAction(this)))
                         .addSubcommand("service", new CommandLine(new ListService(this)))
                         .addSubcommand("source", new CommandLine(new CamelSourceAction(this)))
                         .addSubcommand("startup-recorder", new CommandLine(new CamelStartupRecorderAction(this)))
@@ -173,6 +188,7 @@ public class CamelJBangMain implements Callable<Integer> {
                         .addSubcommand("list", new CommandLine(new InfraList(this)))
                         .addSubcommand("log", new CommandLine(new InfraLog(this)))
                         .addSubcommand("ps", new CommandLine(new InfraPs(this)))
+                        .addSubcommand("restart", new CommandLine(new InfraRestart(this)))
                         .addSubcommand("run", new CommandLine(new InfraRun(this)))
                         .addSubcommand("stop", new CommandLine(new InfraStop(this))))
                 .addSubcommand("init", new CommandLine(new Init(this)))
@@ -182,8 +198,10 @@ public class CamelJBangMain implements Callable<Integer> {
                 .addSubcommand("plugin", new CommandLine(new PluginCommand(this))
                         .addSubcommand("add", new CommandLine(new PluginAdd(this)))
                         .addSubcommand("delete", new CommandLine(new PluginDelete(this)))
-                        .addSubcommand("get", new CommandLine(new PluginGet(this))))
+                        .addSubcommand("get", new CommandLine(new PluginGet(this)))
+                        .addSubcommand("list", new CommandLine(new PluginList(this))))
                 .addSubcommand("ps", new CommandLine(new ListProcess(this)))
+                .addSubcommand("restart", new CommandLine(new RestartProcess(this)))
                 .addSubcommand("run", new CommandLine(new Run(this)))
                 .addSubcommand("sbom", new CommandLine(new SBOMGenerator(this)))
                 .addSubcommand("script", new CommandLine(new Script(this)))
@@ -212,7 +230,7 @@ public class CamelJBangMain implements Callable<Integer> {
 
         postAddCommands(commandLine, args);
 
-        if (discoverPlugins) {
+        if (discoverPlugins && PluginHelper.shouldDiscoverPlugins(commandLine, args)) {
             PluginHelper.addPlugins(commandLine, this, args);
         }
 
@@ -225,6 +243,9 @@ public class CamelJBangMain implements Callable<Integer> {
         CommandLineHelper.augmentWithUserConfiguration(commandLine);
         preExecute(commandLine, args);
         int exitCode = commandLine.execute(args);
+        if (isHelpRequest(args)) {
+            printAvailablePlugins();
+        }
         postExecute(commandLine, args, exitCode);
         quit(exitCode);
     }
@@ -262,6 +283,71 @@ public class CamelJBangMain implements Callable<Integer> {
     public Integer call() throws Exception {
         commandLine.execute("--help");
         return 0;
+    }
+
+    private static boolean isHelpRequest(String[] args) {
+        if (args == null || args.length == 0) {
+            return true;
+        }
+        for (String arg : args) {
+            if ("--help".equals(arg) || "-h".equals(arg)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    void printAvailablePlugins() {
+        // check if the plugin banner is disabled via global config
+        boolean[] enabled = { true };
+        CommandLineHelper.loadProperties(properties -> {
+            String v = properties.getProperty("camel.jbang.plugin.banner");
+            if ("false".equalsIgnoreCase(v)) {
+                enabled[0] = false;
+            }
+        });
+        if (!enabled[0]) {
+            return;
+        }
+
+        Set<String> installed = new HashSet<>();
+        JsonObject config = PluginHelper.getPluginConfig();
+        if (config != null) {
+            JsonObject plugins = config.getMap("plugins");
+            if (plugins != null) {
+                installed.addAll(plugins.keySet());
+            }
+        }
+        // also consider already registered subcommands as installed
+        Set<String> registered = commandLine.getSubcommands().keySet();
+
+        List<String[]> rows = new ArrayList<>();
+        for (PluginType pt : PluginType.values()) {
+            if (!installed.contains(pt.getName()) && !registered.contains(pt.getCommand())) {
+                rows.add(new String[] { pt.getCommand(), pt.getDescription() });
+            }
+        }
+        for (JsonObject kp : PluginHelper.loadKnownPlugins()) {
+            String name = kp.getString("name");
+            String command = kp.getStringOrDefault("command", name);
+            if (!installed.contains(name) && !registered.contains(command)
+                    && PluginType.findByName(name).isEmpty()) {
+                rows.add(new String[] { command, kp.getStringOrDefault("description", "") });
+            }
+        }
+
+        if (!rows.isEmpty()) {
+            int maxCmd = rows.stream().mapToInt(r -> r[0].length()).max().orElse(0);
+            out.println();
+            out.println("Plugins (not installed):");
+            for (String[] row : rows) {
+                out.printf("  %-" + maxCmd + "s   %s%n", row[0], row[1]);
+            }
+            out.println();
+            out.println("Tip: Install with: camel plugin add <name>");
+            out.println("     Bundled plugins are auto-installed on first use.");
+            out.println("     Turn off: camel config set camel.jbang.plugin.banner=false");
+        }
     }
 
     /**

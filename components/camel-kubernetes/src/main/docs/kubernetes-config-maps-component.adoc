@@ -9,7 +9,6 @@
 :component-header: Both producer and consumer are supported
 //Manually maintained attributes
 :group: Kubernetes
-:camel-spring-boot-name: kubernetes
 
 *Since Camel {since}*
 
@@ -42,51 +41,137 @@ include::partial$component-endpoint-headers.adoc[]
 
 - `listConfigMaps`: this operation lists the configmaps
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
-from("direct:list").
-    to("kubernetes-config-maps:///?kubernetesClient=#kubernetesClient&operation=listConfigMaps").
-    to("mock:result");
---------------------------------------------------------------------------------
+----
+from("direct:list")
+    .to("kubernetes-config-maps:///?kubernetesClient=#kubernetesClient&operation=listConfigMaps")
+    .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:list"/>
+  <to uri="kubernetes-config-maps:///?kubernetesClient=#kubernetesClient&amp;operation=listConfigMaps"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:list
+      steps:
+        - to:
+            uri: kubernetes-config-maps:///
+            parameters:
+              kubernetesClient: "#kubernetesClient"
+              operation: listConfigMaps
+        - to:
+            uri: mock:result
+----
+====
 
 This operation returns a List of ConfigMaps from your cluster
 
 - `listConfigMapsByLabels`: this operation lists the configmaps selected by label
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
-from("direct:listByLabels").process(new Processor() {
+----
+from("direct:listByLabels")
+    .setHeader("CamelKubernetesConfigMapsLabels", constant("key1=value1,key2=value2"))
+    .to("kubernetes-config-maps:///?kubernetesClient=#kubernetesClient&operation=listConfigMapsByLabels")
+    .to("mock:result");
+----
 
-            @Override
-            public void process(Exchange exchange) throws Exception {
-                Map<String, String> labels = new HashMap<>();
-                labels.put("key1", "value1");
-                labels.put("key2", "value2");
-                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CONFIGMAPS_LABELS, labels);
-            }
-        });
-    to("kubernetes-config-maps:///?kubernetesClient=#kubernetesClient&operation=listConfigMapsByLabels").
-    to("mock:result");
---------------------------------------------------------------------------------
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:listByLabels"/>
+  <setHeader name="CamelKubernetesConfigMapsLabels">
+    <constant>key1=value1,key2=value2</constant>
+  </setHeader>
+  <to uri="kubernetes-config-maps:///?kubernetesClient=#kubernetesClient&amp;operation=listConfigMapsByLabels"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:listByLabels
+      steps:
+        - setHeader:
+            name: CamelKubernetesConfigMapsLabels
+            expression:
+              constant:
+                expression: key1=value1,key2=value2
+        - to:
+            uri: kubernetes-config-maps:///
+            parameters:
+              kubernetesClient: "#kubernetesClient"
+              operation: listConfigMapsByLabels
+        - to:
+            uri: mock:result
+----
+====
 
 This operation returns a List of ConfigMaps from your cluster, using a label selector (with key1 and key2, with value value1 and value2)
 
 === Kubernetes ConfigMaps Consumer Example
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
-fromF("kubernetes-config-maps://%s?oauthToken=%s", host, authToken)
-    .process(new KubernetesProcessor()).to("mock:result");
+----
+from("kubernetes-config-maps://{{kubernetes-host}}?oauthToken={{kubernetes-token}}")
+    .to("log:result");
+----
 
-    public class KubernetesProcessor implements Processor {
-        @Override
-        public void process(Exchange exchange) throws Exception {
-            Message in = exchange.getIn();
-            ConfigMap cm = exchange.getIn().getBody(ConfigMap.class);
-            log.info("Got event with configmap name: " + cm.getMetadata().getName() + " and action " + in.getHeader(KubernetesConstants.KUBERNETES_EVENT_ACTION));
-        }
-    }
---------------------------------------------------------------------------------
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="kubernetes-config-maps://{{kubernetes-host}}?oauthToken={{kubernetes-token}}"/>
+  <to uri="log:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: kubernetes-config-maps://{{kubernetes-host}}
+      parameters:
+        oauthToken: "{{kubernetes-token}}"
+      steps:
+        - to:
+            uri: log:result
+----
+====
 
 This consumer returns a message per event received for all ConfigMaps from all namespaces in the cluster.
 
@@ -126,6 +211,19 @@ first = Carlsberg
 
 Then these values can be used in your Camel routes such as:
 
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+    .log("What {{configmap:myconfig/drink}} do you want?")
+    .log("I want {{configmap:myconfig/first}}");
+----
+
+XML::
++
 [source,xml]
 ----
 <camelContext>
@@ -136,6 +234,21 @@ Then these values can be used in your Camel routes such as:
   </route>
 </camelContext>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - log:
+            message: "What {{configmap:myconfig/drink}} do you want?"
+        - log:
+            message: "I want {{configmap:myconfig/first}}"
+----
+====
 
 You can also provide a default value in case a key does not exist:
 
@@ -159,4 +272,3 @@ where `camel.vault.kubernetescm.refreshEnabled` will enable the automatic contex
 
 Whenever a configmap listed in the property, will be updated in the same namespace of the running application, the Camel context will be reloaded, refreshing the configmap value.
 
-include::spring-boot:partial$starter.adoc[]

@@ -53,6 +53,9 @@ public class ModelWriter extends BaseWriter {
         super(writer, null);
     }
 
+    public void writeA2ASubTaskDefinition(A2ASubTaskDefinition def) throws IOException {
+        doWriteA2ASubTaskDefinition("a2aSubTask", def);
+    }
     public void writeAggregateDefinition(AggregateDefinition def) throws IOException {
         doWriteAggregateDefinition("aggregate", def);
     }
@@ -769,11 +772,22 @@ public class ModelWriter extends BaseWriter {
         doWriteOptionalIdentifiedDefinitionRef(null, def);
     }
 
+    protected void doWriteA2ASubTaskDefinition(String name, A2ASubTaskDefinition def) throws IOException {
+        startElement(name);
+        doWriteProcessorDefinitionAttributes(def);
+        doWriteAttribute("emitBefore", def.getEmitBefore(), null);
+        doWriteAttribute("emitAfter", def.getEmitAfter(), null);
+        doWriteAttribute("emitOnError", def.getEmitOnError(), null);
+        doWriteAttribute("failIfNoTaskContext", def.getFailIfNoTaskContext(), "false");
+        doWriteList(null, null, def.getOutputs(), this::doWriteProcessorDefinitionRef);
+        endElement(name);
+    }
     protected void doWriteAggregateDefinition(String name, AggregateDefinition def) throws IOException {
         startElement(name);
         doWriteProcessorDefinitionAttributes(def);
         doWriteAttribute("parallelProcessing", def.getParallelProcessing(), null);
         doWriteAttribute("optimisticLocking", def.getOptimisticLocking(), null);
+        doWriteAttribute("optimisticLockingSyncRetry", def.getOptimisticLockingSyncRetry(), "false");
         doWriteAttribute("executorService", def.getExecutorService(), null);
         doWriteAttribute("timeoutCheckerExecutorService", def.getTimeoutCheckerExecutorService(), null);
         doWriteAttribute("aggregateController", def.getAggregateController(), null);
@@ -1587,9 +1601,6 @@ public class ModelWriter extends BaseWriter {
     protected void doWriteRouteDefinition(String name, RouteDefinition def) throws IOException {
         startElement(name);
         doWriteProcessorDefinitionAttributes(def);
-        doWriteAttribute("template", toString(def.isTemplate()), null);
-        doWriteAttribute("kamelet", toString(def.isKamelet()), null);
-        doWriteAttribute("rest", toString(def.isRest()), null);
         doWriteAttribute("group", def.getGroup(), null);
         doWriteAttribute("nodePrefixId", def.getNodePrefixId(), null);
         doWriteAttribute("routeConfigurationId", def.getRouteConfigurationId(), null);
@@ -2398,6 +2409,7 @@ public class ModelWriter extends BaseWriter {
         doWriteIdentifiedTypeAttributes(def);
         doWriteAttribute("parser", def.getParser(), null);
         doWriteAttribute("validate", def.getValidate(), "true");
+        doWriteAttribute("targetFormat", def.getTargetFormat(), null);
         endElement(name);
     }
     protected void doWriteIcalDataFormat(String name, IcalDataFormat def) throws IOException {
@@ -3574,6 +3586,7 @@ public class ModelWriter extends BaseWriter {
     protected void doWriteOptionalIdentifiedDefinitionRef(String n, OptionalIdentifiedDefinition v) throws IOException {
         if (v != null) {
             switch (v.getClass().getSimpleName()) {
+                case "A2ASubTaskDefinition" -> doWriteA2ASubTaskDefinition("a2aSubTask", (A2ASubTaskDefinition) v);
                 case "AggregateDefinition" -> doWriteAggregateDefinition("aggregate", (AggregateDefinition) v);
                 case "BeanDefinition" -> doWriteBeanDefinition("bean", (BeanDefinition) v);
                 case "CatchDefinition" -> doWriteCatchDefinition("doCatch", (CatchDefinition) v);
@@ -3681,6 +3694,7 @@ public class ModelWriter extends BaseWriter {
     protected void doWriteProcessorDefinitionRef(String n, ProcessorDefinition v) throws IOException {
         if (v != null) {
             switch (v.getClass().getSimpleName()) {
+                case "A2ASubTaskDefinition" -> doWriteA2ASubTaskDefinition("a2aSubTask", (A2ASubTaskDefinition) v);
                 case "AggregateDefinition" -> doWriteAggregateDefinition("aggregate", (AggregateDefinition) v);
                 case "BeanDefinition" -> doWriteBeanDefinition("bean", (BeanDefinition) v);
                 case "CatchDefinition" -> doWriteCatchDefinition("doCatch", (CatchDefinition) v);

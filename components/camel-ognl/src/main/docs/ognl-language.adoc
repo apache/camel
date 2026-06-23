@@ -7,8 +7,6 @@
 :supportlevel: Stable-deprecated
 :deprecated: *deprecated*
 :tabs-sync-option:
-//Manually maintained attributes
-:camel-spring-boot-name: ognl
 
 *Since Camel {since}*
 
@@ -31,6 +29,7 @@ request.body.familyName
 
 Or use similar syntax as in Java:
 
+._Java-only: OGNL expression using Java method call syntax_
 [source,java]
 ----
 getRequest().getBody().getFamilyName()
@@ -42,8 +41,6 @@ getRequest().getBody().getFamilyName()
 // language options: START
 include::partial$language-options.adoc[]
 // language options: END
-
-
 
 
 == Variables
@@ -71,6 +68,10 @@ include::partial$language-options.adoc[]
 For example, you could use OGNL inside a xref:eips:filter-eip.adoc[Message
 Filter]
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("seda:foo")
@@ -78,8 +79,8 @@ from("seda:foo")
     .to("seda:bar");
 ----
 
-And in XML:
-
+XML::
++
 [source,xml]
 ----
 <route>
@@ -91,6 +92,24 @@ And in XML:
 </route>
 ----
 
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: seda:foo
+      steps:
+        - filter:
+            expression:
+              ognl:
+                expression: request.headers.foo == 'bar'
+            steps:
+              - to:
+                  uri: seda:bar
+----
+====
+
 
 == Loading script from external resource
 
@@ -99,6 +118,7 @@ such as `"classpath:"`, `"file:"`, or `"http:"`.
 This is done using the following syntax: `"resource:scheme:location"`,
 e.g., to refer to a file on the classpath you can do:
 
+._Java-only: loading an OGNL script from the classpath_
 [source,java]
 ----
 .setHeader("myHeader").ognl("resource:classpath:myognl.txt")
@@ -113,13 +133,10 @@ If you use Maven, you could add the following to your `pom.xml`,
 substituting the version number for the latest & greatest release.
 
 [source,xml]
--------------------------------------
+----
 <dependency>
   <groupId>org.apache.camel</groupId>
   <artifactId>camel-ognl</artifactId>
   <version>x.x.x</version>
 </dependency>
--------------------------------------
-
-
-include::spring-boot:partial$starter.adoc[]
+----

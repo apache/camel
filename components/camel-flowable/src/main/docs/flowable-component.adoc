@@ -7,8 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
-//Manually maintained attributes
-:camel-spring-boot-name: flowable
 
 *Since Camel {since}*
 
@@ -41,10 +39,37 @@ The event message can then be mapped to process or case variables in the process
 
 The following example sends an event to the Flowable event registry for further processing:
 
+[tabs]
+====
+Java::
++
 [source,java]
-----------------------------------------------------------------------
+----
 from("direct:start").to("flowable:exampleChannel");
-----------------------------------------------------------------------
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <to uri="flowable:exampleChannel"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: flowable:exampleChannel
+----
+====
 
 == Dependencies
 

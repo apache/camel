@@ -46,6 +46,7 @@ import org.apache.camel.TypeConverter;
 import org.apache.camel.component.langchain4j.tools.spec.CamelToolExecutorCache;
 import org.apache.camel.component.langchain4j.tools.spec.CamelToolSpecification;
 import org.apache.camel.support.DefaultProducer;
+import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -119,6 +120,8 @@ public class LangChain4jToolsProducer extends DefaultProducer {
             return null;
         }
 
+        final Exchange baseline = ExchangeHelper.createCopy(exchange, true);
+
         // First talk to the model to get the tools to be called
         int i = 0;
         do {
@@ -129,7 +132,7 @@ public class LangChain4jToolsProducer extends DefaultProducer {
             }
 
             // Only invoke the tools ... the response will be computed on the next loop
-            invokeTools(chatMessages, exchange, response, toolPair);
+            invokeTools(chatMessages, exchange, response, toolPair, baseline);
             LOG.debug("Finished iteration {}", i);
             i++;
         } while (true);
@@ -153,7 +156,8 @@ public class LangChain4jToolsProducer extends DefaultProducer {
     }
 
     private void invokeTools(
-            List<ChatMessage> chatMessages, Exchange exchange, Response<AiMessage> response, ToolPair toolPair) {
+            List<ChatMessage> chatMessages, Exchange exchange, Response<AiMessage> response, ToolPair toolPair,
+            Exchange baseline) {
         int i = 0;
         List<ToolExecutionRequest> toolExecutionRequests = response.content().toolExecutionRequests();
         for (ToolExecutionRequest toolExecutionRequest : toolExecutionRequests) {
@@ -170,13 +174,28 @@ public class LangChain4jToolsProducer extends DefaultProducer {
             final CamelToolSpecification camelToolSpecification = toolPair.callableTools().stream()
                     .filter(c -> c.getToolSpecification().name().equals(toolName)).findFirst().get();
 
+            final Exchange toolExchange = ExchangeHelper.createCopy(baseline, true);
+
             try {
                 TypeConverter typeConverter = endpoint.getCamelContext().getTypeConverter();
+
+                // Get declared parameters from tool specification to filter incoming fields
+                Set<String> declaredParams = Set.of();
+                JsonObjectSchema paramSchema = camelToolSpecification.getToolSpecification().parameters();
+                if (paramSchema != null && paramSchema.properties() != null) {
+                    declaredParams = paramSchema.properties().keySet();
+                }
+                final Set<String> allowedParams = declaredParams;
 
                 // Map Json to Header
                 JsonNode jsonNode = objectMapper.readValue(toolExecutionRequest.arguments(), JsonNode.class);
                 jsonNode.fieldNames()
                         .forEachRemaining(name -> {
+                            if (!allowedParams.contains(name)) {
+                                LOG.warn("Skipping undeclared tool argument '{}' for tool '{}'",
+                                        name, toolName);
+                                return;
+                            }
                             final JsonNode value = jsonNode.get(name);
                             Object headerValue;
 
@@ -196,23 +215,29 @@ public class LangChain4jToolsProducer extends DefaultProducer {
                                 headerValue = value;
                             }
 
-                            exchange.getMessage().setHeader(name, headerValue);
+                            toolExchange.getMessage().setHeader(name, headerValue);
                         });
 
                 // Execute the consumer route
 
-                camelToolSpecification.getConsumer().getProcessor().process(exchange);
+                camelToolSpecification.getConsumer().getProcessor().process(toolExchange);
                 i++;
             } catch (Exception e) {
                 // How to handle this exception?
-                exchange.setException(e);
+                toolExchange.setException(e);
             }
+
+            ExchangeHelper.copyResults(exchange, toolExchange);
 
             chatMessages.add(new ToolExecutionResultMessage(
                     toolExecutionRequest.id(),
                     toolExecutionRequest.name(),
-                    exchange.getIn().getBody(String.class)));
+                    toolExchange.getIn().getBody(String.class)));
         }
+
+        // Clear route stop flag after all tools so it does not leak
+        // into the calling route and prevent subsequent steps from executing
+        exchange.setRouteStop(false);
     }
 
     /**

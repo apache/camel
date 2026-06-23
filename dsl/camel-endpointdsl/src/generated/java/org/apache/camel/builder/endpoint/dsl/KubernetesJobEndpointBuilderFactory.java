@@ -511,7 +511,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final KubernetesJobHeaderNameBuilder INSTANCE = new KubernetesJobHeaderNameBuilder();
+        public static final KubernetesJobHeaderNameBuilder INSTANCE = new KubernetesJobHeaderNameBuilder();
 
         /**
          * The Producer operation.

@@ -30,7 +30,7 @@ public class BindyUnmarshalCommaIssue2Test extends BindyUnmarshalCommaIssueTest 
             @Override
             public void configure() {
                 from("direct:start")
-                        .unmarshal(new BindyCsvDataFormat(org.apache.camel.dataformat.bindy.csv2.WeatherModel.class))
+                        .unmarshal(new BindyCsvDataFormat(WeatherModel.class))
                         .to("mock:result");
             }
         };

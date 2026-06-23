@@ -16,6 +16,8 @@
  */
 package org.apache.camel.management;
 
+import java.util.concurrent.TimeUnit;
+
 import javax.management.MBeanServer;
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
@@ -27,10 +29,10 @@ import org.apache.camel.api.management.mbean.ManagedAggregateProcessorMBean;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.processor.aggregate.AggregateController;
 import org.apache.camel.processor.aggregate.DefaultAggregateController;
+import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
 
@@ -38,7 +40,6 @@ import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TY
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-@DisabledIfSystemProperty(named = "ci.env.name", matches = ".*", disabledReason = "Flaky on Github CI")
 @DisabledOnOs(OS.AIX)
 public class ManagedAggregateControllerTest extends ManagementTestSupport {
 
@@ -67,8 +68,11 @@ public class ManagedAggregateControllerTest extends ManagementTestSupport {
         getMockEndpoint("mock:aggregated").expectedBodiesReceivedInAnyOrder("test1test3", "test2test4");
         getMockEndpoint("mock:aggregated").expectedPropertyReceived(Exchange.AGGREGATED_COMPLETED_BY, "force");
 
-        Integer pending = (Integer) mbeanServer.invoke(on, "aggregationRepositoryGroups", null, null);
-        assertEquals(2, pending.intValue());
+        Awaitility.await().atMost(5, TimeUnit.SECONDS)
+                .untilAsserted(() -> {
+                    Integer p = (Integer) mbeanServer.invoke(on, "aggregationRepositoryGroups", null, null);
+                    assertEquals(2, p.intValue());
+                });
 
         Integer groups = (Integer) mbeanServer.invoke(on, "forceCompletionOfAllGroups", null, null);
         assertEquals(2, groups.intValue());
@@ -102,7 +106,7 @@ public class ManagedAggregateControllerTest extends ManagementTestSupport {
         Integer inflight = (Integer) mbeanServer.getAttribute(on, "InProgressCompleteExchanges");
         assertEquals(0, inflight.intValue());
 
-        pending = (Integer) mbeanServer.invoke(on, "aggregationRepositoryGroups", null, null);
+        Integer pending = (Integer) mbeanServer.invoke(on, "aggregationRepositoryGroups", null, null);
         assertEquals(0, pending.intValue());
     }
 
@@ -123,8 +127,11 @@ public class ManagedAggregateControllerTest extends ManagementTestSupport {
         getMockEndpoint("mock:aggregated").expectedBodiesReceivedInAnyOrder("test1test3");
         getMockEndpoint("mock:aggregated").expectedPropertyReceived(Exchange.AGGREGATED_COMPLETED_BY, "force");
 
-        Integer pending = (Integer) mbeanServer.invoke(on, "aggregationRepositoryGroups", null, null);
-        assertEquals(2, pending.intValue());
+        Awaitility.await().atMost(5, TimeUnit.SECONDS)
+                .untilAsserted(() -> {
+                    Integer p = (Integer) mbeanServer.invoke(on, "aggregationRepositoryGroups", null, null);
+                    assertEquals(2, p.intValue());
+                });
 
         Integer groups = (Integer) mbeanServer.invoke(on, "forceCompletionOfGroup", new Object[] { "1" },
                 new String[] { "java.lang.String" });
@@ -159,8 +166,8 @@ public class ManagedAggregateControllerTest extends ManagementTestSupport {
         Integer inflight = (Integer) mbeanServer.getAttribute(on, "InProgressCompleteExchanges");
         assertEquals(0, inflight.intValue());
 
-        pending = (Integer) mbeanServer.invoke(on, "aggregationRepositoryGroups", null, null);
-        assertEquals(1, pending.intValue());
+        Integer pending2 = (Integer) mbeanServer.invoke(on, "aggregationRepositoryGroups", null, null);
+        assertEquals(1, pending2.intValue());
 
         // we can also use the client mbean
         ManagedAggregateProcessorMBean client = context.getCamelContextExtension().getContextPlugin(ManagedCamelContext.class)

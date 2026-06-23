@@ -31,6 +31,7 @@ import org.apache.camel.component.kafka.testutil.CamelKafkaUtil;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.kafka.clients.admin.CreateTopicsResult;
 import org.apache.kafka.clients.admin.NewTopic;
+import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.Uuid;
 import org.awaitility.Awaitility;
@@ -75,7 +76,7 @@ class KafkaBreakOnFirstErrorSeekIssueIT extends BaseKafkaTestSupport {
     @EndpointInject("mock:result")
     private MockEndpoint to;
 
-    private org.apache.kafka.clients.producer.KafkaProducer<String, String> producer;
+    private KafkaProducer<String, String> producer;
 
     @BeforeAll
     public static void setupTopic() {
@@ -89,7 +90,7 @@ class KafkaBreakOnFirstErrorSeekIssueIT extends BaseKafkaTestSupport {
 
         // setup the producer
         Properties props = getDefaultProperties();
-        producer = new org.apache.kafka.clients.producer.KafkaProducer<>(props);
+        producer = new KafkaProducer<>(props);
         MockConsumerInterceptor.recordsCaptured.clear();
         // create the topic w/ more than 1 partitions - moved here from BeforeAll
         final NewTopic mytopic = new NewTopic(TOPIC, PARTITION_COUNT, (short) 1);

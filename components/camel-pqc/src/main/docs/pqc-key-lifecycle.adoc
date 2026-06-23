@@ -1,0 +1,1175 @@
+= PQC Key Lifecycle Management
+:tabs-sync-option:
+
+xref:ROOT:pqc-component.adoc[Back to PQC Component]
+
+The PQC component provides comprehensive key lifecycle management capabilities for Post-Quantum Cryptography keys. This includes key generation, storage, rotation, expiration, revocation, and format conversion.
+
+Key lifecycle management is critical for maintaining security in production environments, especially with stateful hash-based signature algorithms (XMSS, XMSSMT, LMS, HSS) that have limited signature capacity.
+
+== Key Lifecycle Manager Interface
+
+The `KeyLifecycleManager` interface provides the following operations:
+
+* **Key Generation** - Generate new key pairs with algorithm-specific parameters
+* **Key Storage** - Store and retrieve keys with metadata
+* **Key Rotation** - Rotate keys and deprecate old ones
+* **Key Expiration** - Mark keys as expired based on age or policy
+* **Key Revocation** - Revoke compromised keys with reason tracking
+* **Key Export/Import** - Convert keys between formats (PEM, DER, PKCS8, X.509)
+* **Key Listing** - List all keys with their metadata
+* **Rotation Detection** - Check if keys need rotation based on age or usage
+
+== Available Implementations
+
+The component provides four implementations of `KeyLifecycleManager`:
+
+=== FileBasedKeyLifecycleManager
+
+A production-ready implementation that persists keys and metadata to disk.
+
+**Features:**
+
+* Persistent storage - keys survive application restarts
+* File-based storage with `.key` and `.metadata` files
+* In-memory caching for performance
+* Automatic loading of existing keys on startup
+* Secure file permissions
+
+**Use Cases:**
+
+* Production environments
+* Single-instance deployments
+* When persistence is required
+* Audit and compliance requirements
+
+**Example:**
+
+._Java-only: FileBasedKeyLifecycleManager usage_
+[source,java]
+----
+KeyLifecycleManager keyManager = new FileBasedKeyLifecycleManager("/secure/keys");
+
+// Generate a new Dilithium key
+KeyPair keyPair = keyManager.generateKeyPair("DILITHIUM", "app-signing-key",
+    DilithiumParameterSpec.dilithium2);
+
+// Use the key
+KeyMetadata metadata = keyManager.getKeyMetadata("app-signing-key");
+logger.info("Key created: {}", metadata);
+----
+
+=== InMemoryKeyLifecycleManager
+
+A lightweight implementation that stores keys in memory only.
+
+**Features:**
+
+* Non-persistent storage - keys lost on restart
+* ConcurrentHashMap-based storage
+* No I/O overhead
+* Thread-safe operations
+* Additional utility methods: `clear()` and `size()`
+
+**Use Cases:**
+
+* Testing and development
+* Ephemeral workloads
+* Short-lived applications
+* Unit and integration tests
+
+**Example:**
+
+._Java-only: InMemoryKeyLifecycleManager usage_
+[source,java]
+----
+InMemoryKeyLifecycleManager keyManager = new InMemoryKeyLifecycleManager();
+
+// Generate a test key
+KeyPair keyPair = keyManager.generateKeyPair("FALCON", "test-key");
+
+// Clean up after testing
+keyManager.clear();
+----
+
+=== HashicorpVaultKeyLifecycleManager
+
+An enterprise-grade implementation that integrates with HashiCorp Vault for centralized secret management.
+
+**Security Implementation:**
+
+This implementation uses industry-standard cryptographic key formats and separation of concerns:
+
+* **Private keys**: Stored in PKCS#8 format (RFC 5208) - the standard for private key encoding
+* **Public keys**: Stored in X.509/SubjectPublicKeyInfo format (RFC 5280) - the standard for public key encoding
+* **Separate storage**: Private keys, public keys, and metadata are stored in distinct Vault paths
+* **Fine-grained ACLs**: Enables different access policies for private keys (restricted) vs public keys (read-only)
+
+**Security Note:** This implementation stores PQC keys in Vault's KV secrets engine. While this approach uses industry-standard formats and enables fine-grained access control, organizations with stringent security requirements should consider:
+
+* Using **Hardware Security Modules (HSMs)** via PKCS#11 for keys that must never be exportable
+* Implementing additional encryption layers using **Vault's Transit engine** to encrypt key material before storage
+* Applying **strict Vault policies** limiting private key access to specific services or key IDs only
+* Regular **key rotation** and **audit log monitoring**
+* For production use, review and customize the Vault ACL policies shown in the setup section
+
+**Features:**
+
+* Centralized secret management via HashiCorp Vault
+* Industry-standard key formats (PKCS#8 for private keys, X.509 for public keys)
+* Separate storage for private and public keys (enables different ACLs)
+* Automatic audit logging of all key operations
+* Fine-grained access control with Vault policies
+* Encryption at rest
+* High availability support (Vault HA clusters)
+* In-memory caching for performance
+* Uses Spring Vault (spring-vault-core) consistent with camel-hashicorp-vault
+* HashiCorp Cloud Platform (HCP) Vault support
+
+**Dependencies:**
+
+To use HashicorpVaultKeyLifecycleManager, add the following optional dependency:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.springframework.vault</groupId>
+    <artifactId>spring-vault-core</artifactId>
+    <version>${spring-vault-core-version}</version>
+</dependency>
+----
+
+**Example with VaultTemplate:**
+
+._Java-only: HashicorpVaultKeyLifecycleManager with VaultTemplate_
+[source,java]
+----
+// Using existing VaultTemplate (recommended when using camel-hashicorp-vault)
+@BindToRegistry("vaultTemplate")
+public VaultTemplate createVaultTemplate() {
+    VaultEndpoint vaultEndpoint = new VaultEndpoint();
+    vaultEndpoint.setHost("localhost");
+    vaultEndpoint.setPort(8200);
+    vaultEndpoint.setScheme("https");
+
+    return new VaultTemplate(vaultEndpoint, new TokenAuthentication("s.token"));
+}
+
+@BindToRegistry("keyLifecycleManager")
+public HashicorpVaultKeyLifecycleManager createKeyManager() {
+    return new HashicorpVaultKeyLifecycleManager(
+        vaultTemplate,      // Reuse existing VaultTemplate
+        "secret",           // Secrets engine name
+        "pqc/keys"         // Key prefix in Vault
+    );
+}
+
+// Generate a Dilithium key stored in Vault
+KeyPair keyPair = keyManager.generateKeyPair("DILITHIUM", "app-signing-key",
+    DilithiumParameterSpec.dilithium2);
+
+// Key is stored in Vault at: secret/data/pqc/keys/app-signing-key
+----
+
+**Example with Direct Configuration:**
+
+._Java-only: HashicorpVaultKeyLifecycleManager with direct configuration_
+[source,java]
+----
+// Direct configuration with connection parameters
+HashicorpVaultKeyLifecycleManager keyManager =
+    new HashicorpVaultKeyLifecycleManager(
+        "vault.example.com",  // host
+        8200,                 // port
+        "https",              // scheme
+        "s.your-token",       // Vault token
+        "secret",             // secrets engine (optional, defaults to "secret")
+        "pqc/keys"           // key prefix (optional, defaults to "pqc/keys")
+    );
+----
+
+**Example with HashiCorp Cloud Platform (HCP) Vault:**
+
+._Java-only: HashicorpVaultKeyLifecycleManager with HCP Vault_
+[source,java]
+----
+// Configuration for HCP Vault with namespace
+HashicorpVaultKeyLifecycleManager keyManager =
+    new HashicorpVaultKeyLifecycleManager(
+        "your-cluster.vault.hashicorp.cloud",  // HCP Vault host
+        8200,                                    // port
+        "https",                                 // scheme
+        "s.your-hcp-token",                     // HCP Vault token
+        "secret",                                // secrets engine
+        "pqc/keys",                             // key prefix
+        true,                                    // cloud=true for HCP Vault
+        "admin"                                  // namespace (required for HCP)
+    );
+
+// Key is stored in HCP Vault at: admin/secret/data/pqc/keys/hcp-key
+----
+
+**YAML Configuration:**
+
+[source,yaml]
+----
+camel:
+  beans:
+    vaultEndpoint:
+      type: org.springframework.vault.client.VaultEndpoint
+      properties:
+        host: "vault.example.com"
+        port: 8200
+        scheme: "https"
+
+    tokenAuthentication:
+      type: org.springframework.vault.authentication.TokenAuthentication
+      constructorArgs:
+        - "${VAULT_TOKEN}"
+
+    vaultTemplate:
+      type: org.springframework.vault.core.VaultTemplate
+      constructorArgs:
+        - "#bean:vaultEndpoint"
+        - "#bean:tokenAuthentication"
+
+    keyLifecycleManager:
+      type: org.apache.camel.component.pqc.lifecycle.HashicorpVaultKeyLifecycleManager
+      constructorArgs:
+        - "#bean:vaultTemplate"
+        - "secret"
+        - "pqc/keys"
+        - false              # cloud
+        - null               # namespace
+----
+
+**Vault Storage Structure:**
+
+Keys are stored in Vault's KV v2 secrets engine with separate paths for private keys, public keys, and metadata. This separation enables fine-grained access control where applications can access public keys without having access to private keys.
+
+[source,text]
+----
+secret/                                    # Secrets engine
+├── data/
+│   └── pqc/
+│       └── keys/
+│           ├── app-signing-key/
+│           │   ├── private                # Private key path (STRICT ACL)
+│           │   │   ├── key                # Base64-encoded PKCS#8 private key
+│           │   │   ├── format             # "PKCS8"
+│           │   │   └── algorithm          # "DILITHIUM"
+│           │   ├── public                 # Public key path (READ-ONLY ACL)
+│           │   │   ├── key                # Base64-encoded X.509 public key
+│           │   │   ├── format             # "X509"
+│           │   │   └── algorithm          # "DILITHIUM"
+│           │   └── metadata               # Metadata path
+│           │       ├── metadata           # Serialized KeyMetadata
+│           │       ├── keyId              # "app-signing-key"
+│           │       └── algorithm          # "DILITHIUM"
+│           └── app-signing-key-v2/
+│               ├── private/
+│               ├── public/
+│               └── metadata/
+└── metadata/
+    └── pqc/
+        └── keys/
+            ├── app-signing-key/           # Vault metadata entry
+            └── app-signing-key-v2/
+----
+
+**Vault Setup and Security Policies:**
+
+To use HashicorpVaultKeyLifecycleManager, configure Vault with appropriate policies. The implementation stores private keys, public keys, and metadata separately to enable fine-grained access control.
+
+**Basic Policy (Full Access - Development/Testing):**
+
+[source,bash]
+----
+# Enable KV v2 secrets engine (usually enabled by default)
+vault secrets enable -path=secret kv-v2
+
+# Create basic policy with full access to all key paths
+cat > pqc-policy-full.hcl <<EOF
+# Full access to private keys
+path "secret/data/pqc/keys/*/private" {
+  capabilities = ["create", "read", "update", "delete"]
+}
+
+# Full access to public keys
+path "secret/data/pqc/keys/*/public" {
+  capabilities = ["create", "read", "update", "delete"]
+}
+
+# Full access to metadata
+path "secret/data/pqc/keys/*/metadata" {
+  capabilities = ["create", "read", "update", "delete"]
+}
+
+# List access to key paths
+path "secret/metadata/pqc/keys/*" {
+  capabilities = ["list", "read", "delete"]
+}
+EOF
+
+# Apply policy
+vault policy write pqc-keys-full pqc-policy-full.hcl
+
+# Create token with policy
+vault token create -policy=pqc-keys-full
+----
+
+**Production Policies (Fine-Grained Access Control):**
+
+For production, create separate policies for different access levels. The following example shows four policies with increasing restriction:
+
+[source,bash]
+----
+# POLICY 1: Admin Policy (Key Management Service)
+# Full access to generate, rotate, and manage keys
+cat > pqc-policy-admin.hcl <<EOF
+path "secret/data/pqc/keys/*/private" {
+  capabilities = ["create", "read", "update", "delete"]
+}
+path "secret/data/pqc/keys/*/public" {
+  capabilities = ["create", "read", "update", "delete"]
+}
+path "secret/data/pqc/keys/*/metadata" {
+  capabilities = ["create", "read", "update", "delete"]
+}
+path "secret/metadata/pqc/keys/*" {
+  capabilities = ["list", "read", "delete"]
+}
+EOF
+vault policy write pqc-admin pqc-policy-admin.hcl
+
+# POLICY 2: Signing Service (Read Private Keys)
+cat > pqc-policy-signing.hcl <<EOF
+path "secret/data/pqc/keys/*/private" {
+  capabilities = ["read"]
+}
+path "secret/data/pqc/keys/*/public" {
+  capabilities = ["read"]
+}
+path "secret/data/pqc/keys/*/metadata" {
+  capabilities = ["read"]
+}
+path "secret/metadata/pqc/keys/*" {
+  capabilities = ["list", "read"]
+}
+EOF
+vault policy write pqc-signing pqc-policy-signing.hcl
+
+# POLICY 3: Application Policy (Public Keys Only - Verification)
+cat > pqc-policy-app.hcl <<EOF
+path "secret/data/pqc/keys/*/public" {
+  capabilities = ["read"]
+}
+path "secret/data/pqc/keys/*/metadata" {
+  capabilities = ["read"]
+}
+path "secret/metadata/pqc/keys/*" {
+  capabilities = ["list", "read"]
+}
+EOF
+vault policy write pqc-app pqc-policy-app.hcl
+
+# POLICY 4: Specific Key Access (Production Best Practice)
+cat > pqc-policy-specific.hcl <<EOF
+path "secret/data/pqc/keys/app-signing-key/private" {
+  capabilities = ["read"]
+}
+path "secret/data/pqc/keys/app-signing-key/public" {
+  capabilities = ["read"]
+}
+path "secret/data/pqc/keys/app-signing-key/metadata" {
+  capabilities = ["read"]
+}
+EOF
+vault policy write pqc-app-signing-key pqc-policy-specific.hcl
+
+# Create tokens with different policies
+vault token create -policy=pqc-admin        # For key management service
+vault token create -policy=pqc-signing      # For signing service
+vault token create -policy=pqc-app          # For applications (verification only)
+vault token create -policy=pqc-app-signing-key  # For specific key access
+----
+
+**Integration with camel-hashicorp-vault:**
+
+HashicorpVaultKeyLifecycleManager can share the same VaultTemplate with the camel-hashicorp-vault component:
+
+._Java-only: reusing VaultTemplate from camel-hashicorp-vault_
+[source,java]
+----
+@BindToRegistry("keyLifecycleManager")
+public HashicorpVaultKeyLifecycleManager createKeyManager() {
+    VaultTemplate vaultTemplate = context.getRegistry()
+        .lookupByNameAndType("vaultTemplate", VaultTemplate.class);
+
+    return new HashicorpVaultKeyLifecycleManager(
+        vaultTemplate,
+        "secret",
+        "pqc/keys"
+    );
+}
+----
+
+=== AwsSecretsManagerKeyLifecycleManager
+
+An enterprise-grade implementation that integrates with AWS Secrets Manager for centralized secret management.
+
+**Security Implementation:**
+
+This implementation uses industry-standard cryptographic key formats and separation of concerns:
+
+* **Private keys**: Stored in PKCS#8 format (RFC 5208) - the standard for private key encoding
+* **Public keys**: Stored in X.509/SubjectPublicKeyInfo format (RFC 5280) - the standard for public key encoding
+* **Separate storage**: Private keys, public keys, and metadata are stored as distinct AWS secrets
+* **Fine-grained IAM policies**: Enables different access policies for private keys (restricted) vs public keys (read-only)
+
+**Security Note:** This implementation stores PQC keys in AWS Secrets Manager. While this approach uses industry-standard formats and enables fine-grained access control, organizations with stringent security requirements should consider:
+
+* Using **AWS CloudHSM** for keys that must never be exportable
+* Implementing additional encryption layers using **AWS KMS Customer Master Keys (CMKs)**
+* Applying **strict IAM policies** limiting private key access to specific services or roles only
+* Regular **key rotation** and **CloudTrail audit log monitoring**
+* For production use, review and customize the IAM policies shown in the setup section
+
+**Dependencies:**
+
+To use AwsSecretsManagerKeyLifecycleManager, add the following optional dependency:
+
+[source,xml]
+----
+<dependency>
+    <groupId>software.amazon.awssdk</groupId>
+    <artifactId>secretsmanager</artifactId>
+    <version>${aws-java-sdk2-version}</version>
+</dependency>
+----
+
+**Example with SecretsManagerClient:**
+
+._Java-only: AwsSecretsManagerKeyLifecycleManager with SecretsManagerClient_
+[source,java]
+----
+// Using existing SecretsManagerClient (recommended when using camel-aws-secrets-manager)
+@BindToRegistry("secretsManagerClient")
+public SecretsManagerClient createSecretsManagerClient() {
+    return SecretsManagerClient.builder()
+        .region(Region.US_EAST_1)
+        .build(); // Uses default AWS credentials chain
+}
+
+@BindToRegistry("keyLifecycleManager")
+public AwsSecretsManagerKeyLifecycleManager createKeyManager() {
+    return new AwsSecretsManagerKeyLifecycleManager(
+        secretsManagerClient,   // Reuse existing client
+        "pqc/keys"             // Key prefix
+    );
+}
+
+// Generate a Dilithium key stored in AWS Secrets Manager
+KeyPair keyPair = keyManager.generateKeyPair("DILITHIUM", "app-signing-key",
+    DilithiumParameterSpec.dilithium2);
+
+// Keys are stored as: pqc/keys/app-signing-key/private, /public, /metadata
+----
+
+**Example with Direct Configuration:**
+
+._Java-only: AwsSecretsManagerKeyLifecycleManager with direct configuration_
+[source,java]
+----
+AwsSecretsManagerKeyLifecycleManager keyManager =
+    new AwsSecretsManagerKeyLifecycleManager(
+        "us-east-1",          // AWS region
+        "AKIAIOSFODNN7EXAMPLE", // access key (optional, uses default credentials if null)
+        "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY", // secret key (optional)
+        "pqc/keys"            // key prefix (optional, defaults to "pqc/keys")
+    );
+----
+
+**Example with LocalStack (Testing):**
+
+._Java-only: AwsSecretsManagerKeyLifecycleManager with LocalStack_
+[source,java]
+----
+AwsSecretsManagerKeyLifecycleManager keyManager =
+    new AwsSecretsManagerKeyLifecycleManager(
+        "us-east-1",                    // region
+        "test",                         // access key for LocalStack
+        "test",                         // secret key for LocalStack
+        "pqc/test-keys",                // key prefix
+        "http://localhost:4566"         // LocalStack endpoint
+    );
+----
+
+**YAML Configuration:**
+
+[source,yaml]
+----
+camel:
+  beans:
+    keyLifecycleManager:
+      type: org.apache.camel.component.pqc.lifecycle.AwsSecretsManagerKeyLifecycleManager
+      constructorArgs:
+        - "us-east-1"           # region
+        - "${AWS_ACCESS_KEY}"   # access key from environment
+        - "${AWS_SECRET_KEY}"   # secret key from environment
+        - "pqc/keys"            # key prefix
+        - null                  # endpoint override (null for production)
+----
+
+**AWS Secrets Storage Structure:**
+
+Each key creates three secrets in AWS Secrets Manager:
+
+[source,text]
+----
+pqc/keys/app-signing-key/private     # PKCS#8 private key (STRICT IAM POLICY)
+  {
+    "key": "MIIEvQIBADANBg...",        # Base64-encoded PKCS#8 private key
+    "format": "PKCS8",
+    "algorithm": "DILITHIUM"
+  }
+  Tags: ManagedBy=camel-pqc
+
+pqc/keys/app-signing-key/public      # X.509 public key (READ-ONLY IAM POLICY)
+  {
+    "key": "MIIBIjANBgkqhk...",        # Base64-encoded X.509 public key
+    "format": "X509",
+    "algorithm": "DILITHIUM"
+  }
+  Tags: ManagedBy=camel-pqc
+
+pqc/keys/app-signing-key/metadata    # Key metadata
+  {
+    "metadata": "rO0ABXNyAC9vcm...",  # Serialized KeyMetadata object
+    "keyId": "app-signing-key",
+    "algorithm": "DILITHIUM"
+  }
+  Tags: ManagedBy=camel-pqc
+----
+
+**AWS IAM Policies:**
+
+To use AwsSecretsManagerKeyLifecycleManager, configure IAM policies for appropriate access control. The pattern follows the same four-level model as Vault (Admin, Signing Service, Application, Specific Key). See the full policy examples below.
+
+**Basic Policy (Full Access - Development/Testing):**
+
+[source,json]
+----
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "PQCKeysFullAccess",
+      "Effect": "Allow",
+      "Action": [
+        "secretsmanager:CreateSecret",
+        "secretsmanager:GetSecretValue",
+        "secretsmanager:PutSecretValue",
+        "secretsmanager:DeleteSecret",
+        "secretsmanager:ListSecrets",
+        "secretsmanager:DescribeSecret",
+        "secretsmanager:TagResource"
+      ],
+      "Resource": "arn:aws:secretsmanager:*:*:secret:pqc/keys/*"
+    },
+    {
+      "Sid": "KMSAccess",
+      "Effect": "Allow",
+      "Action": [
+        "kms:Decrypt",
+        "kms:Encrypt",
+        "kms:GenerateDataKey"
+      ],
+      "Resource": "*",
+      "Condition": {
+        "StringEquals": {
+          "kms:ViaService": "secretsmanager.*.amazonaws.com"
+        }
+      }
+    }
+  ]
+}
+----
+
+**Production Policies (Fine-Grained Access Control):**
+
+The production setup follows the same four-tier model as Vault:
+
+* **Admin Policy** - Full access for key management service (create, read, update, delete all key paths)
+* **Signing Service Policy** - Read-only access to private keys, public keys, and metadata for signing operations
+* **Application Policy** - Read-only access to public keys and metadata (explicitly denies private key access)
+* **Specific Key Access** - Limits access to a specific key ID only (production best practice)
+
+**Application Policy (Public Keys Only) example:**
+
+[source,json]
+----
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "ReadPublicKeysOnly",
+      "Effect": "Allow",
+      "Action": [
+        "secretsmanager:GetSecretValue",
+        "secretsmanager:DescribeSecret"
+      ],
+      "Resource": [
+        "arn:aws:secretsmanager:*:*:secret:pqc/keys/*/public-*",
+        "arn:aws:secretsmanager:*:*:secret:pqc/keys/*/metadata-*"
+      ]
+    },
+    {
+      "Sid": "DenyPrivateKeyAccess",
+      "Effect": "Deny",
+      "Action": "secretsmanager:GetSecretValue",
+      "Resource": "arn:aws:secretsmanager:*:*:secret:pqc/keys/*/private-*"
+    },
+    {
+      "Sid": "ListKeys",
+      "Effect": "Allow",
+      "Action": "secretsmanager:ListSecrets",
+      "Resource": "*"
+    },
+    {
+      "Sid": "KMSDecrypt",
+      "Effect": "Allow",
+      "Action": "kms:Decrypt",
+      "Resource": "*"
+    }
+  ]
+}
+----
+
+**Integration with camel-aws-secrets-manager:**
+
+AwsSecretsManagerKeyLifecycleManager can share the same SecretsManagerClient with the camel-aws-secrets-manager component:
+
+._Java-only: reusing SecretsManagerClient from camel-aws-secrets-manager_
+[source,java]
+----
+@BindToRegistry("keyLifecycleManager")
+public AwsSecretsManagerKeyLifecycleManager createKeyManager() {
+    SecretsManagerClient secretsManagerClient = context.getRegistry()
+        .lookupByNameAndType("secretsManagerClient", SecretsManagerClient.class);
+
+    return new AwsSecretsManagerKeyLifecycleManager(
+        secretsManagerClient,
+        "pqc/keys"
+    );
+}
+----
+
+=== Comparison of Implementations
+
+[options="header"]
+|===
+|Feature |FileBasedKeyLifecycleManager |InMemoryKeyLifecycleManager |HashicorpVaultKeyLifecycleManager |AwsSecretsManagerKeyLifecycleManager
+
+|Persistence
+|File system
+|Memory only
+|Vault backend
+|AWS Secrets Manager
+
+|Distributed
+|Single node
+|Single node
+|Multi-node
+|Multi-region
+
+|Audit Logging
+|Manual
+|None
+|Automatic (Vault)
+|Automatic (CloudTrail)
+
+|Access Control
+|File permissions
+|None
+|Vault policies
+|IAM policies
+
+|Encryption at Rest
+|OS-dependent
+|N/A
+|Always (Vault)
+|Always (AWS KMS)
+
+|High Availability
+|No
+|No
+|Yes (Vault HA)
+|Yes (AWS Multi-AZ)
+
+|External Dependencies
+|None
+|None
+|Vault + spring-vault
+|AWS SDK v2
+
+|Use Case
+|Single server
+|Testing/Dev
+|Production/Enterprise (Vault)
+|Production/Enterprise (AWS)
+|===
+
+== Key Generation
+
+The key lifecycle manager supports all PQC algorithms with sensible default parameter specifications.
+
+=== Signature Algorithms
+
+._Java-only: generating key pairs for various PQC signature algorithms_
+[source,java]
+----
+// ML-DSA (uses default ML-DSA-65)
+KeyPair mldsaKey = keyManager.generateKeyPair("MLDSA", "mldsa-key");
+
+// Dilithium with specific parameter
+KeyPair dilithiumKey = keyManager.generateKeyPair("DILITHIUM", "dilithium-key",
+    DilithiumParameterSpec.dilithium3);
+
+// Falcon (uses default Falcon-512)
+KeyPair falconKey = keyManager.generateKeyPair("FALCON", "falcon-key");
+
+// XMSS (uses default 10-tree height with SHA-256)
+KeyPair xmssKey = keyManager.generateKeyPair("XMSS", "xmss-key");
+
+// XMSSMT (uses default XMSSMT-SHA2-20d2-256)
+KeyPair xmssmtKey = keyManager.generateKeyPair("XMSSMT", "xmssmt-key");
+
+// LMS/HSS (uses default LMS-SHA256-N32-H10)
+KeyPair lmsKey = keyManager.generateKeyPair("LMS", "lms-key");
+----
+
+=== Key Encapsulation Algorithms
+
+._Java-only: generating key pairs for various PQC KEM algorithms_
+[source,java]
+----
+// ML-KEM (uses default)
+KeyPair mlkemKey = keyManager.generateKeyPair("MLKEM", "mlkem-key");
+
+// NTRU (uses default ntruhps2048509)
+KeyPair ntruKey = keyManager.generateKeyPair("NTRU", "ntru-key");
+
+// SNTRUPrime (uses default sntrup761)
+KeyPair sntrupKey = keyManager.generateKeyPair("SNTRUPrime", "sntrup-key");
+
+// BIKE (uses default bike128)
+KeyPair bikeKey = keyManager.generateKeyPair("BIKE", "bike-key");
+----
+
+== Key Metadata
+
+Each key is associated with metadata that tracks its lifecycle:
+
+._Java-only: retrieving and inspecting key metadata_
+[source,java]
+----
+KeyMetadata metadata = keyManager.getKeyMetadata("my-key");
+
+System.out.println("Key ID: " + metadata.getKeyId());
+System.out.println("Algorithm: " + metadata.getAlgorithm());
+System.out.println("Status: " + metadata.getStatus());
+System.out.println("Created: " + metadata.getCreatedAt());
+System.out.println("Age (days): " + metadata.getAgeInDays());
+System.out.println("Usage count: " + metadata.getUsageCount());
+System.out.println("Expires at: " + metadata.getExpiresAt());
+System.out.println("Next rotation: " + metadata.getNextRotationAt());
+----
+
+**Key Status Values:**
+
+* `ACTIVE` - Key is active and can be used
+* `EXPIRED` - Key has expired and should not be used
+* `REVOKED` - Key has been revoked due to compromise
+* `PENDING_ROTATION` - Key should be rotated soon
+* `DEPRECATED` - Key has been rotated and replaced
+
+== Key Rotation
+
+Key rotation is essential for maintaining security. The lifecycle manager supports automated rotation:
+
+._Java-only: checking rotation need and rotating a key_
+[source,java]
+----
+// Check if key needs rotation
+boolean needsRotation = keyManager.needsRotation("old-key",
+    Duration.ofDays(90),  // Max age: 90 days
+    10000);                // Max usage: 10,000 operations
+
+if (needsRotation) {
+    // Rotate the key
+    KeyPair newKey = keyManager.rotateKey("old-key", "new-key", "DILITHIUM");
+
+    // Old key is now DEPRECATED
+    // New key is ACTIVE
+    logger.info("Key rotated successfully");
+}
+----
+
+== Key Export and Import
+
+Keys can be exported and imported in multiple formats:
+
+**Supported Formats:**
+
+* `PEM` - Privacy-Enhanced Mail format (Base64 encoded)
+* `DER` - Distinguished Encoding Rules (binary)
+* `PKCS8` - PKCS#8 format for private keys
+* `X509` - X.509 format for public keys
+
+**Export Example:**
+
+._Java-only: exporting keys in PEM and DER formats_
+[source,java]
+----
+KeyPair keyPair = keyManager.getKey("my-key");
+
+// Export public key as PEM
+byte[] publicPem = keyManager.exportPublicKey(keyPair, KeyFormat.PEM);
+String pemString = new String(publicPem);
+System.out.println(pemString);
+// Output:
+// -----BEGIN PUBLIC KEY-----
+// MIIBIjAN...
+// -----END PUBLIC KEY-----
+
+// Export entire key pair (public only for safety)
+byte[] keyPairPem = keyManager.exportKey(keyPair, KeyFormat.PEM, false);
+
+// Export with private key (USE WITH CAUTION)
+byte[] fullExport = keyManager.exportKey(keyPair, KeyFormat.DER, true);
+----
+
+**Import Example:**
+
+._Java-only: importing a key from PEM format_
+[source,java]
+----
+// Import from PEM format
+byte[] pemData = Files.readAllBytes(Paths.get("public-key.pem"));
+KeyPair imported = keyManager.importKey(pemData, KeyFormat.PEM, "DILITHIUM");
+
+// Store the imported key
+KeyMetadata metadata = new KeyMetadata("imported-key", "DILITHIUM");
+keyManager.storeKey("imported-key", imported, metadata);
+----
+
+== Key Expiration and Revocation
+
+**Expire a Key:**
+
+._Java-only: setting expiration and manually expiring a key_
+[source,java]
+----
+// Set expiration time
+KeyMetadata metadata = keyManager.getKeyMetadata("my-key");
+metadata.setExpiresAt(Instant.now().plus(Duration.ofDays(365)));
+keyManager.updateKeyMetadata("my-key", metadata);
+
+// Manually expire immediately
+keyManager.expireKey("my-key");
+
+// Check if expired
+if (metadata.isExpired()) {
+    logger.warn("Key {} has expired", metadata.getKeyId());
+}
+----
+
+**Revoke a Key:**
+
+._Java-only: revoking a compromised key_
+[source,java]
+----
+// Revoke a compromised key
+keyManager.revokeKey("compromised-key", "Private key exposed in log file");
+
+KeyMetadata metadata = keyManager.getKeyMetadata("compromised-key");
+assert metadata.getStatus() == KeyMetadata.KeyStatus.REVOKED;
+assert metadata.getDescription().contains("Revoked: Private key exposed");
+----
+
+== Listing and Managing Keys
+
+._Java-only: listing, filtering, and deleting keys_
+[source,java]
+----
+// List all keys
+List<KeyMetadata> allKeys = keyManager.listKeys();
+
+// Filter active keys
+List<KeyMetadata> activeKeys = allKeys.stream()
+    .filter(m -> m.getStatus() == KeyMetadata.KeyStatus.ACTIVE)
+    .collect(Collectors.toList());
+
+// Find keys needing rotation
+for (KeyMetadata metadata : allKeys) {
+    if (keyManager.needsRotation(metadata.getKeyId(), Duration.ofDays(90), 5000)) {
+        logger.warn("Key {} needs rotation", metadata.getKeyId());
+    }
+}
+
+// Delete old keys
+for (KeyMetadata metadata : allKeys) {
+    if (metadata.getStatus() == KeyMetadata.KeyStatus.DEPRECATED
+        && metadata.getAgeInDays() > 365) {
+        keyManager.deleteKey(metadata.getKeyId());
+        logger.info("Deleted old deprecated key: {}", metadata.getKeyId());
+    }
+}
+----
+
+== Integration with Camel Routes
+
+The key lifecycle manager can be registered in the Camel registry and used in routes:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+@BindToRegistry("keyLifecycleManager")
+public KeyLifecycleManager createKeyManager() throws IOException {
+    return new FileBasedKeyLifecycleManager("/secure/keys");
+}
+
+@BindToRegistry("signingKey")
+public KeyPair createSigningKey() throws Exception {
+    KeyLifecycleManager manager = createKeyManager();
+    return manager.generateKeyPair("DILITHIUM", "route-signing-key",
+        DilithiumParameterSpec.dilithium2);
+}
+----
+
+YAML::
++
+[source,yaml]
+----
+camel:
+  beans:
+    keyLifecycleManager:
+      type: org.apache.camel.component.pqc.lifecycle.FileBasedKeyLifecycleManager
+      properties:
+        keyDirectoryPath: "/secure/keys"
+
+    signingKey:
+      type: org.apache.camel.component.pqc.lifecycle.FileBasedKeyLifecycleManager
+      scriptLanguage: groovy
+      script: |
+        def manager = new org.apache.camel.component.pqc.lifecycle.FileBasedKeyLifecycleManager('/secure/keys')
+        def spec = org.bouncycastle.pqc.jcajce.spec.DilithiumParameterSpec.dilithium2
+        manager.generateKeyPair('DILITHIUM', 'route-signing-key', spec)
+----
+====
+
+**Using in Routes:**
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("timer:check-rotation?period=86400000") // Check daily
+    .bean("keyLifecycleManager", "needsRotation('route-signing-key', 90, 10000)")
+    .choice()
+        .when(body().isEqualTo(true))
+            .log("Rotating signing key")
+            .bean("keyLifecycleManager", "rotateKey('route-signing-key', 'route-signing-key-new', 'DILITHIUM')")
+            .to("log:rotation-complete")
+        .otherwise()
+            .log("Key rotation not needed")
+    .end();
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    id: check-key-rotation
+    from:
+      uri: timer:check-rotation
+      parameters:
+        period: 86400000  # Check daily
+    steps:
+      - bean:
+          ref: keyLifecycleManager
+          method: needsRotation('route-signing-key', 90, 10000)
+      - choice:
+          when:
+            - expression:
+                simple:
+                  expression: "${body} == true"
+              steps:
+                - log:
+                    message: "Rotating signing key"
+                - bean:
+                    ref: keyLifecycleManager
+                    method: rotateKey('route-signing-key', 'route-signing-key-new', 'DILITHIUM')
+                - to:
+                    uri: log:rotation-complete
+          otherwise:
+            steps:
+              - log:
+                  message: "Key rotation not needed"
+----
+====
+
+== Default Parameter Specifications
+
+The lifecycle manager provides sensible defaults for all algorithms:
+
+|===
+|Algorithm |Default Parameter Spec
+
+|DILITHIUM |dilithium2
+|FALCON |falcon_512
+|SPHINCSPLUS |sha2_128s
+|XMSS |10-tree height with SHA-256
+|XMSSMT |XMSSMT-SHA2-20d2-256
+|LMS/HSS |LMS-SHA256-N32-H10 with SHA256-N32-W4
+|NTRU |ntruhps2048509
+|NTRULPRime |ntrulpr653
+|SNTRUPrime |sntrup761
+|SABER |lightsaberkem128r3
+|FRODO |frodokem640aes
+|BIKE |bike128
+|HQC |hqc128
+|CMCE |mceliece348864
+|===
+
+== Best Practices
+
+**1. Regular Key Rotation**
+
+Implement automated key rotation policies:
+
+._Java-only: automated key rotation policy_
+[source,java]
+----
+// Rotate keys every 90 days or after 10,000 uses
+Duration maxAge = Duration.ofDays(90);
+long maxUsage = 10000;
+
+if (keyManager.needsRotation(keyId, maxAge, maxUsage)) {
+    keyManager.rotateKey(keyId, keyId + "-new", algorithm);
+}
+----
+
+**2. Secure Storage**
+
+For FileBasedKeyLifecycleManager:
+
+* Store keys in a secure directory with restricted permissions
+* Use encrypted file systems where possible
+* Implement backup strategies for key files
+* Monitor access to key directories
+
+**3. Key Metadata Tracking**
+
+Always update metadata when using keys:
+
+._Java-only: updating key usage metadata_
+[source,java]
+----
+KeyMetadata metadata = keyManager.getKeyMetadata(keyId);
+metadata.updateLastUsed(); // Increments usage count
+keyManager.updateKeyMetadata(keyId, metadata);
+----
+
+**4. Handle Stateful Signatures Carefully**
+
+For XMSS, XMSSMT, LMS, and HSS algorithms:
+
+* Track signature usage to prevent exhaustion
+* Never reuse a stateful signature state (critical security requirement)
+* Monitor usage percentage and rotate before exhaustion
+* Set appropriate `maxSignatures` based on tree height
+
+**5. Secure Key Export**
+
+When exporting keys:
+
+* Export public keys only when possible
+* Encrypt private key exports
+* Use secure channels for key transfer
+* Audit all key export operations
+
+**6. Testing Strategy**
+
+Use InMemoryKeyLifecycleManager for tests:
+
+._Java-only: test setup and cleanup with InMemoryKeyLifecycleManager_
+[source,java]
+----
+@BeforeEach
+public void setup() {
+    keyManager = new InMemoryKeyLifecycleManager();
+}
+
+@AfterEach
+public void cleanup() {
+    keyManager.clear();
+}
+----
+
+== Thread Safety
+
+Both implementations are thread-safe:
+
+* **FileBasedKeyLifecycleManager**: Uses ConcurrentHashMap for caching and atomic file operations
+* **InMemoryKeyLifecycleManager**: Uses ConcurrentHashMap for all storage
+
+Concurrent key operations are safe:
+
+._Java-only: concurrent key generation with thread pool_
+[source,java]
+----
+ExecutorService executor = Executors.newFixedThreadPool(10);
+
+for (int i = 0; i < 100; i++) {
+    final int index = i;
+    executor.submit(() -> {
+        try {
+            keyManager.generateKeyPair("DILITHIUM", "key-" + index,
+                DilithiumParameterSpec.dilithium2);
+        } catch (Exception e) {
+            logger.error("Key generation failed", e);
+        }
+    });
+}
+
+executor.shutdown();
+executor.awaitTermination(1, TimeUnit.MINUTES);
+----
+
+== Migration Between Implementations
+
+To migrate from InMemoryKeyLifecycleManager to FileBasedKeyLifecycleManager:
+
+._Java-only: migrating keys between lifecycle manager implementations_
+[source,java]
+----
+InMemoryKeyLifecycleManager memoryManager = new InMemoryKeyLifecycleManager();
+FileBasedKeyLifecycleManager fileManager = new FileBasedKeyLifecycleManager("/secure/keys");
+
+// Export all keys
+List<KeyMetadata> keys = memoryManager.listKeys();
+for (KeyMetadata metadata : keys) {
+    KeyPair keyPair = memoryManager.getKey(metadata.getKeyId());
+    fileManager.storeKey(metadata.getKeyId(), keyPair, metadata);
+}
+
+logger.info("Migrated {} keys to file-based storage", keys.size());
+----

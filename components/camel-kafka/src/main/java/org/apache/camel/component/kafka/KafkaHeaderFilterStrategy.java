@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.kafka;
 
+import java.util.Arrays;
+
 import org.apache.camel.support.DefaultHeaderFilterStrategy;
 
 public class KafkaHeaderFilterStrategy extends DefaultHeaderFilterStrategy {
@@ -28,10 +30,10 @@ public class KafkaHeaderFilterStrategy extends DefaultHeaderFilterStrategy {
         // filter out kafka record metadata
         getInFilter().add("org.apache.kafka.clients.producer.RecordMetadata");
 
-        setLowerCase(true);
-
-        // filter headers beginning with "Camel" or "org.apache.camel" or "kafka."
-        setOutFilterStartsWith("Camel", "camel", "org.apache.camel.", "kafka.");
-        setInFilterStartsWith("Camel", "camel", "org.apache.camel.", "kafka.");
+        // filter headers beginning with Camel-internal prefixes and "kafka."
+        String[] kafkaFilterStartsWith = Arrays.copyOf(CAMEL_FILTER_STARTS_WITH, CAMEL_FILTER_STARTS_WITH.length + 1);
+        kafkaFilterStartsWith[CAMEL_FILTER_STARTS_WITH.length] = "kafka.";
+        setOutFilterStartsWith(kafkaFilterStartsWith);
+        setInFilterStartsWith(kafkaFilterStartsWith);
     }
 }

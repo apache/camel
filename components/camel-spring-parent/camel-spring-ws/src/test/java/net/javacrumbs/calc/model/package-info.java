@@ -22,6 +22,9 @@
 // Generated on: 2017.02.12 at 12:58:35 AM EET
 //
 
-@jakarta.xml.bind.annotation.XmlSchema(namespace = "http://javacrumbs.net/calc",
-                                       elementFormDefault = jakarta.xml.bind.annotation.XmlNsForm.QUALIFIED)
+@XmlSchema(namespace = "http://javacrumbs.net/calc",
+           elementFormDefault = XmlNsForm.QUALIFIED)
 package net.javacrumbs.calc.model;
+
+import jakarta.xml.bind.annotation.XmlNsForm;
+import jakarta.xml.bind.annotation.XmlSchema;

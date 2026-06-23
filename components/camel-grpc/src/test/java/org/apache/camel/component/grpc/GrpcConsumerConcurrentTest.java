@@ -16,23 +16,23 @@
  */
 package org.apache.camel.component.grpc;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Callable;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import com.googlecode.junittoolbox.MultithreadingTester;
-import com.googlecode.junittoolbox.RunnableAssert;
 import io.grpc.ManagedChannel;
 import io.grpc.netty.NettyChannelBuilder;
 import io.grpc.stub.StreamObserver;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,13 +40,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class GrpcConsumerConcurrentTest extends CamelTestSupport {
+public class GrpcConsumerConcurrentTest extends GrpcTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(GrpcConsumerConcurrentTest.class);
 
-    @RegisterExtension
-    static AvailablePortFinder.Port grpcAsyncRequestTestPort = AvailablePortFinder.find();
-    @RegisterExtension
-    static AvailablePortFinder.Port grpcHeadersTestPort = AvailablePortFinder.find();
     private static final int CONCURRENT_THREAD_COUNT = 30;
     private static final int ROUNDS_PER_THREAD_COUNT = 10;
     private static final String GRPC_TEST_PING_VALUE = "PING";
@@ -63,85 +59,95 @@ public class GrpcConsumerConcurrentTest extends CamelTestSupport {
     }
 
     @Test
-    public void testAsyncWithConcurrentThreads() {
-        RunnableAssert ra = new RunnableAssert("foo") {
+    public void testAsyncWithConcurrentThreads() throws Exception {
+        int asyncPort = getRoutePort("grpc-async");
+        runConcurrent(() -> {
+            final CountDownLatch latch = new CountDownLatch(1);
+            ManagedChannel asyncRequestChannel
+                    = NettyChannelBuilder.forAddress("localhost", asyncPort).usePlaintext()
+                            .build();
+            PingPongGrpc.PingPongStub asyncNonBlockingStub = PingPongGrpc.newStub(asyncRequestChannel);
 
-            @Override
-            public void run() {
-                final CountDownLatch latch = new CountDownLatch(1);
-                ManagedChannel asyncRequestChannel
-                        = NettyChannelBuilder.forAddress("localhost", grpcAsyncRequestTestPort.getPort()).usePlaintext()
-                                .build();
-                PingPongGrpc.PingPongStub asyncNonBlockingStub = PingPongGrpc.newStub(asyncRequestChannel);
+            PongResponseStreamObserver responseObserver = new PongResponseStreamObserver(latch);
+            int instanceId = createId();
 
-                PongResponseStreamObserver responseObserver = new PongResponseStreamObserver(latch);
-                int instanceId = createId();
-
-                final PingRequest pingRequest
-                        = PingRequest.newBuilder().setPingName(GRPC_TEST_PING_VALUE).setPingId(instanceId).build();
-                StreamObserver<PingRequest> requestObserver = asyncNonBlockingStub.pingAsyncAsync(responseObserver);
-                requestObserver.onNext(pingRequest);
-                requestObserver.onNext(pingRequest);
-                requestObserver.onCompleted();
-                try {
-                    assertTrue(latch.await(5, TimeUnit.SECONDS));
-                } catch (InterruptedException e) {
-                    LOG.debug("Unhandled exception (probably safe to ignore): {}", e.getMessage(), e);
-                }
-
-                PongResponse pongResponse = responseObserver.getPongResponse();
-
-                assertNotNull(pongResponse, "instanceId = " + instanceId);
-                assertEquals(instanceId, pongResponse.getPongId());
-                assertEquals(GRPC_TEST_PING_VALUE + GRPC_TEST_PONG_VALUE, pongResponse.getPongName());
-
-                asyncRequestChannel.shutdown().shutdownNow();
+            final PingRequest pingRequest
+                    = PingRequest.newBuilder().setPingName(GRPC_TEST_PING_VALUE).setPingId(instanceId).build();
+            StreamObserver<PingRequest> requestObserver = asyncNonBlockingStub.pingAsyncAsync(responseObserver);
+            requestObserver.onNext(pingRequest);
+            requestObserver.onNext(pingRequest);
+            requestObserver.onCompleted();
+            try {
+                assertTrue(latch.await(5, TimeUnit.SECONDS));
+            } catch (InterruptedException e) {
+                LOG.debug("Unhandled exception (probably safe to ignore): {}", e.getMessage(), e);
             }
-        };
 
-        new MultithreadingTester().add(ra).numThreads(CONCURRENT_THREAD_COUNT).numRoundsPerThread(ROUNDS_PER_THREAD_COUNT)
-                .run();
+            PongResponse pongResponse = responseObserver.getPongResponse();
+
+            assertNotNull(pongResponse, "instanceId = " + instanceId);
+            assertEquals(instanceId, pongResponse.getPongId());
+            assertEquals(GRPC_TEST_PING_VALUE + GRPC_TEST_PONG_VALUE, pongResponse.getPongName());
+
+            asyncRequestChannel.shutdown().shutdownNow();
+            return null;
+        });
     }
 
     @Test
-    public void testHeadersWithConcurrentThreads() {
-        RunnableAssert ra = new RunnableAssert("foo") {
+    public void testHeadersWithConcurrentThreads() throws Exception {
+        int headersPort = getRoutePort("grpc-headers");
+        runConcurrent(() -> {
+            int instanceId = createId();
+            final CountDownLatch latch = new CountDownLatch(1);
+            ManagedChannel asyncRequestChannel = NettyChannelBuilder.forAddress("localhost", headersPort)
+                    .userAgent(GRPC_USER_AGENT_PREFIX + instanceId)
+                    .usePlaintext().build();
+            PingPongGrpc.PingPongStub asyncNonBlockingStub = PingPongGrpc.newStub(asyncRequestChannel);
 
-            @Override
-            public void run() {
-                int instanceId = createId();
-                final CountDownLatch latch = new CountDownLatch(1);
-                ManagedChannel asyncRequestChannel = NettyChannelBuilder.forAddress("localhost", grpcHeadersTestPort.getPort())
-                        .userAgent(GRPC_USER_AGENT_PREFIX + instanceId)
-                        .usePlaintext().build();
-                PingPongGrpc.PingPongStub asyncNonBlockingStub = PingPongGrpc.newStub(asyncRequestChannel);
+            PongResponseStreamObserver responseObserver = new PongResponseStreamObserver(latch);
 
-                PongResponseStreamObserver responseObserver = new PongResponseStreamObserver(latch);
-
-                final PingRequest pingRequest
-                        = PingRequest.newBuilder().setPingName(GRPC_TEST_PING_VALUE).setPingId(instanceId).build();
-                StreamObserver<PingRequest> requestObserver = asyncNonBlockingStub.pingAsyncAsync(responseObserver);
-                requestObserver.onNext(pingRequest);
-                requestObserver.onNext(pingRequest);
-                requestObserver.onCompleted();
-                try {
-                    assertTrue(latch.await(5, TimeUnit.SECONDS));
-                } catch (InterruptedException e) {
-                    LOG.debug("Interrupted while waiting for the response", e);
-                }
-
-                PongResponse pongResponse = responseObserver.getPongResponse();
-
-                assertNotNull(pongResponse, "instanceId = " + instanceId);
-                assertEquals(instanceId, pongResponse.getPongId());
-                assertEquals(GRPC_USER_AGENT_PREFIX + instanceId, pongResponse.getPongName());
-
-                asyncRequestChannel.shutdown().shutdownNow();
+            final PingRequest pingRequest
+                    = PingRequest.newBuilder().setPingName(GRPC_TEST_PING_VALUE).setPingId(instanceId).build();
+            StreamObserver<PingRequest> requestObserver = asyncNonBlockingStub.pingAsyncAsync(responseObserver);
+            requestObserver.onNext(pingRequest);
+            requestObserver.onNext(pingRequest);
+            requestObserver.onCompleted();
+            try {
+                assertTrue(latch.await(5, TimeUnit.SECONDS));
+            } catch (InterruptedException e) {
+                LOG.debug("Interrupted while waiting for the response", e);
             }
-        };
 
-        new MultithreadingTester().add(ra).numThreads(CONCURRENT_THREAD_COUNT).numRoundsPerThread(ROUNDS_PER_THREAD_COUNT)
-                .run();
+            PongResponse pongResponse = responseObserver.getPongResponse();
+
+            assertNotNull(pongResponse, "instanceId = " + instanceId);
+            assertEquals(instanceId, pongResponse.getPongId());
+            assertEquals(GRPC_USER_AGENT_PREFIX + instanceId, pongResponse.getPongName());
+
+            asyncRequestChannel.shutdown().shutdownNow();
+            return null;
+        });
+    }
+
+    private void runConcurrent(Callable<?> task) throws Exception {
+        ExecutorService executor = Executors.newFixedThreadPool(CONCURRENT_THREAD_COUNT);
+        try {
+            List<Future<?>> futures = new ArrayList<>();
+            for (int thread = 0; thread < CONCURRENT_THREAD_COUNT; thread++) {
+                futures.add(executor.submit(() -> {
+                    for (int round = 0; round < ROUNDS_PER_THREAD_COUNT; round++) {
+                        task.call();
+                    }
+                    return null;
+                }));
+            }
+            for (Future<?> future : futures) {
+                future.get(1, TimeUnit.MINUTES);
+            }
+        } finally {
+            executor.shutdownNow();
+        }
     }
 
     @Override
@@ -149,12 +155,12 @@ public class GrpcConsumerConcurrentTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("grpc://localhost:" + grpcAsyncRequestTestPort.getPort()
-                     + "/org.apache.camel.component.grpc.PingPong?synchronous=true&consumerStrategy=AGGREGATION")
+                from("grpc://localhost:0/org.apache.camel.component.grpc.PingPong?synchronous=true&consumerStrategy=AGGREGATION&hash=1")
+                        .routeId("grpc-async")
                         .bean(new GrpcMessageBuilder(), "buildAsyncPongResponse");
 
-                from("grpc://localhost:" + grpcHeadersTestPort.getPort()
-                     + "/org.apache.camel.component.grpc.PingPong?synchronous=true&consumerStrategy=AGGREGATION")
+                from("grpc://localhost:0/org.apache.camel.component.grpc.PingPong?synchronous=true&consumerStrategy=AGGREGATION&hash=2")
+                        .routeId("grpc-headers")
                         .process(new HeaderExchangeProcessor());
             }
         };

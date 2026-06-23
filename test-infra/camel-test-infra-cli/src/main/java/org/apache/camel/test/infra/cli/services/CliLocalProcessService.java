@@ -25,6 +25,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
@@ -128,7 +129,7 @@ public class CliLocalProcessService implements CliService {
             execute(String.format("config set repos=%s", mavenRepos));
         }
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Camel JBang version {}", version());
+            LOG.debug("Camel CLI version {}", version());
         }
     }
 
@@ -342,7 +343,7 @@ public class CliLocalProcessService implements CliService {
                         version = StringHelper.between(versionSummary, "camel-version = ", "\n").trim();
                     }
                     if (version == null) {
-                        version = StringHelper.between(versionSummary, "Camel JBang version:", "\n").trim();
+                        version = StringHelper.between(versionSummary, "Camel CLI version:", "\n").trim();
                     }
                     return version;
                 });
@@ -406,7 +407,7 @@ public class CliLocalProcessService implements CliService {
             ProcessBuilder pb;
             if (IS_WINDOWS) {
                 String script = "iex \"& { $(iwr -useb https://ps.jbang.dev) } app setup\"";
-                String encoded = java.util.Base64.getEncoder().encodeToString(
+                String encoded = Base64.getEncoder().encodeToString(
                         script.getBytes(StandardCharsets.UTF_16LE));
                 pb = new ProcessBuilder("powershell", "-NoProfile", "-EncodedCommand", encoded);
             } else {

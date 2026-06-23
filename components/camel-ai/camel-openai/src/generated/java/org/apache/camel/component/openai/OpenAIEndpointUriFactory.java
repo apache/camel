@@ -21,11 +21,19 @@ public class OpenAIEndpointUriFactory extends org.apache.camel.support.component
 
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
+    private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(40);
+        Set<String> props = new HashSet<>(48);
         props.add("additionalBodyProperty");
+        props.add("additionalResponseHeader");
         props.add("apiKey");
+        props.add("audioLanguage");
+        props.add("audioModel");
+        props.add("audioPrompt");
+        props.add("audioResponseFormat");
+        props.add("audioTemperature");
+        props.add("audioTimestampGranularities");
         props.add("autoToolExecution");
         props.add("baseUrl");
         props.add("conversationHistoryProperty");
@@ -60,6 +68,7 @@ public class OpenAIEndpointUriFactory extends org.apache.camel.support.component
         props.add("sslTruststoreType");
         props.add("storeFullResponse");
         props.add("streaming");
+        props.add("stripThinking");
         props.add("systemMessage");
         props.add("temperature");
         props.add("topP");
@@ -71,8 +80,10 @@ public class OpenAIEndpointUriFactory extends org.apache.camel.support.component
         secretProps.add("sslKeystorePassword");
         secretProps.add("sslTruststorePassword");
         SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
-        Map<String, String> prefixes = new HashMap<>(2);
+        ENDPOINT_IDENTITY_PROPERTY_NAMES = Collections.emptySet();
+        Map<String, String> prefixes = new HashMap<>(3);
         prefixes.put("additionalBodyProperty", "additionalBodyProperty.");
+        prefixes.put("additionalResponseHeader", "additionalResponseHeader.");
         prefixes.put("mcpServer", "mcpServer.");
         MULTI_VALUE_PREFIXES = Collections.unmodifiableMap(prefixes);
     }
@@ -102,6 +113,11 @@ public class OpenAIEndpointUriFactory extends org.apache.camel.support.component
     @Override
     public Set<String> secretPropertyNames() {
         return SECRET_PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> endpointIdentityPropertyNames() {
+        return ENDPOINT_IDENTITY_PROPERTY_NAMES;
     }
 
     @Override

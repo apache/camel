@@ -43,6 +43,10 @@ public final class CliProperties {
 
     public static final String SKIP_INSTALL = "cli.service.skip.install";
 
+    public static final String FROM_IMAGE = "cli.service.from.image";
+
+    public static final String DELETE_IMAGE_ON_EXIT = "cli.service.delete.image.on.exit";
+
     private CliProperties() {
     }
 }

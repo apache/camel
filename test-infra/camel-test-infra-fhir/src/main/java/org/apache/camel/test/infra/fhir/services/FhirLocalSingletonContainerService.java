@@ -19,7 +19,7 @@ package org.apache.camel.test.infra.fhir.services;
 import org.junit.jupiter.api.extension.ExtensionContext;
 
 public class FhirLocalSingletonContainerService extends FhirLocalContainerService
-        implements ExtensionContext.Store.CloseableResource {
+        implements AutoCloseable {
 
     @Override
     public void beforeAll(ExtensionContext extensionContext) {

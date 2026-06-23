@@ -47,14 +47,17 @@ public class SpringAiEmbeddingsProducer extends DefaultProducer {
         List<String> inputTexts;
         Object body = message.getBody();
 
-        if (body instanceof String str) {
-            inputTexts = List.of(str);
-        } else if (body instanceof List) {
+        if (body instanceof List) {
             inputTexts = (List<String>) body;
         } else {
-            throw new IllegalArgumentException(
-                    "Message body must be a String or List<String>, but was: "
-                                               + (body != null ? body.getClass().getName() : "null"));
+            String str = message.getBody(String.class);
+            if (str != null) {
+                inputTexts = List.of(str);
+            } else {
+                throw new IllegalArgumentException(
+                        "Message body must be a String or List<String>, but was: "
+                                                   + (body != null ? body.getClass().getName() : "null"));
+            }
         }
 
         final EmbeddingResponse response = model.call(new EmbeddingRequest(

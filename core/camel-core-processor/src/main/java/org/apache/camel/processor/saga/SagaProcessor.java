@@ -29,19 +29,22 @@ import org.apache.camel.saga.CamelSagaService;
 import org.apache.camel.saga.CamelSagaStep;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.RouteIdAware;
+import org.apache.camel.spi.StepIdAware;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
 
 /**
  * Processor for handling sagas.
  */
-public abstract class SagaProcessor extends BaseDelegateProcessorSupport implements Traceable, IdAware, RouteIdAware {
+public abstract class SagaProcessor extends BaseDelegateProcessorSupport
+        implements Traceable, IdAware, RouteIdAware, StepIdAware {
 
     protected final CamelSagaService sagaService;
     protected final CamelSagaStep step;
     protected final SagaCompletionMode completionMode;
     private String id;
     private String routeId;
+    private String stepId;
 
     protected SagaProcessor(CamelContext camelContext, Processor childProcessor, CamelSagaService sagaService,
                             SagaCompletionMode completionMode, CamelSagaStep step) {
@@ -52,7 +55,12 @@ public abstract class SagaProcessor extends BaseDelegateProcessorSupport impleme
     }
 
     protected CompletableFuture<CamelSagaCoordinator> getCurrentSagaCoordinator(Exchange exchange) {
-        String currentSaga = exchange.getIn().getHeader(Exchange.SAGA_LONG_RUNNING_ACTION, String.class);
+        // try internal state first (survives removeHeaders("*"))
+        String currentSaga = exchange.getExchangeExtension().getSagaLongRunningAction();
+        if (currentSaga == null) {
+            // fall back to header for interoperability (e.g., LRA protocol)
+            currentSaga = exchange.getIn().getHeader(Exchange.SAGA_LONG_RUNNING_ACTION, String.class);
+        }
         if (currentSaga != null) {
             return sagaService.getSaga(currentSaga);
         }
@@ -62,10 +70,13 @@ public abstract class SagaProcessor extends BaseDelegateProcessorSupport impleme
 
     protected void setCurrentSagaCoordinator(Exchange exchange, CamelSagaCoordinator coordinator) {
         if (coordinator != null) {
-            exchange.getIn().setHeader(Exchange.SAGA_LONG_RUNNING_ACTION, coordinator.getId());
+            String id = coordinator.getId();
+            exchange.getIn().setHeader(Exchange.SAGA_LONG_RUNNING_ACTION, id);
+            exchange.getExchangeExtension().setSagaLongRunningAction(id);
         } else {
             exchange.getIn().removeHeader(Exchange.SAGA_LONG_RUNNING_ACTION);
             exchange.getMessage().removeHeader(Exchange.SAGA_LONG_RUNNING_ACTION);
+            exchange.getExchangeExtension().setSagaLongRunningAction(null);
         }
     }
 
@@ -119,6 +130,16 @@ public abstract class SagaProcessor extends BaseDelegateProcessorSupport impleme
     @Override
     public void setRouteId(String routeId) {
         this.routeId = routeId;
+    }
+
+    @Override
+    public String getStepId() {
+        return stepId;
+    }
+
+    @Override
+    public void setStepId(String stepId) {
+        this.stepId = stepId;
     }
 
     @Override

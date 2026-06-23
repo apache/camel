@@ -70,7 +70,7 @@ public class PQCConfiguration implements Cloneable {
     @Metadata(label = "advanced")
     private String keyPairAlias;
     @UriParam
-    @Metadata(label = "advanced", secret = true)
+    @Metadata(label = "advanced", security = "secret")
     private String keyStorePassword;
 
     // Hybrid cryptography configuration

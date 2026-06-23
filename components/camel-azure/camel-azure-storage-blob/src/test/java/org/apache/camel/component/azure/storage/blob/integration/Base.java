@@ -74,7 +74,7 @@ public class Base extends CamelTestSupport {
 
     @BeforeAll
     public void initProperties() {
-        containerName = RandomStringUtils.randomAlphabetic(5).toLowerCase();
+        containerName = RandomStringUtils.secure().nextAlphabetic(5).toLowerCase();
 
         configuration = new BlobConfiguration();
         configuration.setCredentialType(SHARED_KEY_CREDENTIAL);

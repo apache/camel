@@ -33,6 +33,7 @@ import org.apache.camel.Traceable;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.InterceptableProcessor;
 import org.apache.camel.spi.RouteIdAware;
+import org.apache.camel.spi.StepIdAware;
 import org.apache.camel.support.EventHelper;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -43,13 +44,14 @@ import org.slf4j.LoggerFactory;
  * A processor which catches exceptions.
  */
 public class CatchProcessor extends BaseDelegateProcessorSupport
-        implements Traceable, IdAware, RouteIdAware, InterceptableProcessor {
+        implements Traceable, IdAware, RouteIdAware, StepIdAware, InterceptableProcessor {
 
     private static final Logger LOG = LoggerFactory.getLogger(CatchProcessor.class);
 
     private final CamelContext camelContext;
     private String id;
     private String routeId;
+    private String stepId;
     private final List<Class<? extends Throwable>> exceptions;
     private boolean extendedStatistics;
     // to capture how many different exceptions has been caught
@@ -104,6 +106,16 @@ public class CatchProcessor extends BaseDelegateProcessorSupport
     @Override
     public void setRouteId(String routeId) {
         this.routeId = routeId;
+    }
+
+    @Override
+    public String getStepId() {
+        return stepId;
+    }
+
+    @Override
+    public void setStepId(String stepId) {
+        this.stepId = stepId;
     }
 
     @Override

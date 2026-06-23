@@ -126,7 +126,7 @@ Java::
 [source,java]
 ----
 from("file:inbox")
-  .streamCaching()
+  .streamCache(true)
   .to("bean:foo");
 ----
 
@@ -167,7 +167,7 @@ camel.main.streamCachingSpoolThreshold = 65536
 camel.main.streamCachingBufferSize = 16384;
 ----
 
-TIP: You can run Camel JBang: `camel doc main --filter=stream` from CLI to see all the options.
+TIP: You can run Camel CLI: `camel doc main --filter=stream` from CLI to see all the options.
 
 
 == Configuring StreamCachingStrategy in Spring XML

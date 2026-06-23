@@ -6,8 +6,6 @@
 :since: 2.14
 :supportlevel: Stable
 :tabs-sync-option:
-//Manually maintained attributes
-:camel-spring-boot-name: barcode
 
 *Since Camel {since}*
 
@@ -26,14 +24,14 @@ If you use maven, you could just add the following to your pom.xml,
 substituting the version number for the latest & greatest release (see
 the download page for the latest versions).
 
-[source,java]
-----------------------------------------
+[source,xml]
+----
 <dependency>
   <groupId>org.apache.camel</groupId>
   <artifactId>camel-barcode</artifactId>
   <version>x.x.x</version>
 </dependency>
-----------------------------------------
+----
 
 == Barcode Options
 
@@ -61,37 +59,41 @@ The default values are:
 |barcode format (BarcodeFormat) |QR-Code
 |=======================================================================
 
+._Java-only: Java programmatic data format instantiation_
 [source,java]
-------------------------------------------
+----
 // QR-Code default
 DataFormat code = new BarcodeDataFormat();
-------------------------------------------
+----
 
 If you want to use zxing hints, you can use the 'addToHintMap' method of
 your BarcodeDataFormat instance:
 
+._Java-only: Java data format configuration API_
 [source,java]
------------------------------------------------------------
+----
 code.addToHintMap(DecodeHintType.TRY_HARDER, Boolean.true);
------------------------------------------------------------
+----
 
 For possible hints, please consult the xzing documentation.
 
 === Marshalling
 
+._Java-only: route using Java data format variable_
 [source,java]
-----------------------------
+----
 from("direct://code")
   .marshal(code)
   .to("file://barcode_out");
-----------------------------
+----
 
 You can call the route from a test class with:
 
+._Java-only: Java test API (ProducerTemplate)_
 [source,java]
--------------------------------------------------------------
+----
 template.sendBody("direct://code", "This is a testmessage!");
--------------------------------------------------------------
+----
 
 You should find inside the 'barcode_out' folder this image:
 
@@ -103,12 +105,13 @@ The unmarshaller is generic.
 For unmarshalling, you can use any BarcodeDataFormat instance.
 If you've two instances, one for (generating) QR-Code and one for PDF417, it doesn't matter which one will be used.
 
+._Java-only: route using Java data format variable_
 [source,java]
---------------------------------------------------------------------
+----
 from("file://barcode_in?noop=true")
   .unmarshal(code) // for unmarshalling, the instance doesn't matter
   .to("mock:out");
---------------------------------------------------------------------
+----
 
 If you'll paste the QR-Code image above into the 'barcode_in' folder,
 you should find _`This is a testmessage!`_ inside the mock.
@@ -133,6 +136,3 @@ You can find the ORIENTATION as header variable:
 |ORIENTATION |Integer	 |rotate value in degrees .
 |=======================================================================
  
-
-
-include::spring-boot:partial$starter.adoc[]

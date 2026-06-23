@@ -9,7 +9,6 @@
 :component-header: Both producer and consumer are supported
 //Manually maintained attributes
 :group: Kubernetes
-:camel-spring-boot-name: kubernetes
 
 *Since Camel {since}*
 
@@ -42,50 +41,100 @@ include::partial$component-endpoint-headers.adoc[]
 
 - `listServices`: this operation lists the services on a kubernetes cluster
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
-from("direct:list").
-    toF("kubernetes-services:///?kubernetesClient=#kubernetesClient&operation=listServices").
-    to("mock:result");
---------------------------------------------------------------------------------
+----
+from("direct:list")
+    .to("kubernetes-services:///?kubernetesClient=#kubernetesClient&operation=listServices")
+    .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:list"/>
+  <to uri="kubernetes-services:///?kubernetesClient=#kubernetesClient&amp;operation=listServices"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:list
+    steps:
+      - to:
+          uri: kubernetes-services:///
+          parameters:
+            kubernetesClient: "#kubernetesClient"
+            operation: listServices
+      - to:
+          uri: mock:result
+----
+====
 
 This operation returns a List of services from your cluster
 
 - `listServicesByLabels`: this operation lists the deployments by labels on a kubernetes cluster
 
+._Java-only: sets a Map header for label selection_
 [source,java]
---------------------------------------------------------------------------------
-from("direct:listByLabels").process(new Processor() {
-            @Override
-            public void process(Exchange exchange) throws Exception {
-                Map<String, String> labels = new HashMap<>();
-                labels.put("key1", "value1");
-                labels.put("key2", "value2");
-                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_SERVICE_LABELS, labels);
-            }
-        });
-    toF("kubernetes-services:///?kubernetesClient=#kubernetesClient&operation=listServicesByLabels").
-    to("mock:result");
---------------------------------------------------------------------------------
+----
+from("direct:listByLabels")
+    .process(exchange -> {
+        exchange.getIn().setHeader("CamelKubernetesServiceLabels",
+            Map.of("key1", "value1", "key2", "value2"));
+    })
+    .to("kubernetes-services:///?kubernetesClient=#kubernetesClient&operation=listServicesByLabels")
+    .to("mock:result");
+----
 
 This operation returns a list of services from your cluster using a label selector (with key1 and key2, with value value1 and value2)
 
 === Kubernetes Services Consumer Example
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
-fromF("kubernetes-services://%s?oauthToken=%s", host, authToken)
-    .process(new KubernetesProcessor()).to("mock:result");
+----
+from("kubernetes-services://{{kubernetes-host}}?oauthToken={{kubernetes-token}}")
+    .to("log:result");
+----
 
-    public class KubernetesProcessor implements Processor {
-        @Override
-        public void process(Exchange exchange) throws Exception {
-            Message in = exchange.getIn();
-            Service sv = exchange.getIn().getBody(Service.class);
-            log.info("Got event with service name: " + sv.getMetadata().getName() + " and action " + in.getHeader(KubernetesConstants.KUBERNETES_EVENT_ACTION));
-        }
-    }
---------------------------------------------------------------------------------
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="kubernetes-services://{{kubernetes-host}}?oauthToken={{kubernetes-token}}"/>
+  <to uri="log:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: kubernetes-services://{{kubernetes-host}}
+      parameters:
+        oauthToken: "{{kubernetes-token}}"
+    steps:
+      - to:
+          uri: log:result
+----
+====
 
 This consumer returns a message per event received for all Services from all namespaces in the cluster.
 
@@ -97,4 +146,3 @@ You can narrow the scope of the consumer using the following query parameter com
 - `namespace` + `labelKey` + `labelValue` - Watch Services with the specified label in the given namespace.
 
 
-include::spring-boot:partial$starter.adoc[]

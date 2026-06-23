@@ -123,7 +123,24 @@ public final class LoggerHelper {
     }
 
     public static String sourceNameOnly(String location) {
-        return stripScheme(stripSourceLocationLineNumber(location));
+        int cnt = StringHelper.countChar(location, ':');
+        if (cnt <= 1) {
+            // include pseudo scheme due to extract methods rely on scheme included
+            location = "file:" + location;
+        }
+        Integer line = extractSourceLocationLineNumber(location);
+        if (line != null) {
+            // remove line number
+            location = extractSourceLocationNoLineNumber(location);
+            // strip scheme so its only the name
+            if (location.contains(":")) {
+                location = stripScheme(location);
+            }
+            return location;
+        } else {
+            // no line number so strip scheme
+            return stripScheme(location);
+        }
     }
 
     public static Integer extractSourceLocationLineNumber(String location) {
@@ -141,6 +158,15 @@ public final class LoggerHelper {
             }
         }
         return null;
+    }
+
+    public static String extractSourceLocationNoLineNumber(String location) {
+        Integer line = extractSourceLocationLineNumber(location);
+        if (line != null) {
+            int pos = location.lastIndexOf(':');
+            return location.substring(0, pos);
+        }
+        return location;
     }
 
 }

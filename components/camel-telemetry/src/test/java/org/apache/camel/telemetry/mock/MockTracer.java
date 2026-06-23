@@ -53,7 +53,7 @@ public class MockTracer extends Tracer {
         Map<String, Span> inMemoryStorageMap = new HashMap<>();
 
         @Override
-        public Span create(String spanName, Span parentSpan, SpanContextPropagationExtractor extractor) {
+        public Span create(String spanName, String spanKind, Span parentSpan, SpanContextPropagationExtractor extractor) {
             Span span = MockSpanAdapter.buildSpan(spanName);
             String traceId = UUID.randomUUID().toString().replaceAll("-", "");
             if (parentSpan != null) {

@@ -16,6 +16,9 @@
  */
 package org.apache.camel.spi;
 
+/**
+ * @since 3.0
+ */
 public interface CircuitBreakerConstants {
 
     @Metadata(label = "circuitBreaker", description = "Whether the exchange was processed successfully by the circuit breaker",

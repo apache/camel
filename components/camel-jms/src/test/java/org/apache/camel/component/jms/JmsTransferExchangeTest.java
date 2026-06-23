@@ -18,6 +18,8 @@ package org.apache.camel.component.jms;
 
 import java.util.concurrent.TimeUnit;
 
+import jakarta.jms.ConnectionFactory;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.ProducerTemplate;
@@ -86,6 +88,14 @@ public class JmsTransferExchangeTest extends AbstractJMSTest {
     @Override
     protected String getComponentName() {
         return "activemq";
+    }
+
+    @Override
+    protected JmsComponent setupComponent(
+            CamelContext camelContext, ConnectionFactory connectionFactory, String componentName) {
+        JmsComponent component = super.setupComponent(camelContext, connectionFactory, componentName);
+        component.setObjectMessageEnabled(true);
+        return component;
     }
 
     @Override

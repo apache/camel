@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-cxf-parent</artifactId>
-        <version>4.20.0-SNAPSHOT</version>
+        <version>4.21.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-cxf-soap</artifactId>
@@ -194,6 +194,13 @@
             <groupId>org.apache.cxf</groupId>
             <artifactId>cxf-rt-ws-security</artifactId>
             <version>${cxf-version}</version>
+            <optional>true</optional>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.opensaml</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
 

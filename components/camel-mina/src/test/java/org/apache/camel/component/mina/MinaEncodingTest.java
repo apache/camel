@@ -36,7 +36,8 @@ public class MinaEncodingTest extends BaseMinaTest {
 
     @Test
     public void testTCPEncodeUTF8InputIsBytes() throws Exception {
-        final String uri = String.format("mina:tcp://localhost:%1$s?encoding=UTF-8&sync=false", getPort());
+        final String uri = String.format(
+                "mina:tcp://localhost:%1$s?encoding=UTF-8&sync=false&objectCodecPattern=[B", getPort());
         context.addRoutes(getBuilder(uri));
 
         MockEndpoint endpoint = getMockEndpoint("mock:result");

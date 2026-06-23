@@ -7,8 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Only producer is supported
-//Manually maintained attributes
-:camel-spring-boot-name: elasticsearch-rest-client
 
 *Since Camel {since}*
 
@@ -63,14 +61,14 @@ You can set the name of the target index from the `indexName` URI parameter opti
 You must provide the index id of the content to delete either in the message body, or via a message header with the key `ID` .
 
 |`CREATE_INDEX` | |Creates the specified `indexName` and returns a `boolean` value as the message exchange body, indicating whether the operation was successful.
-You can set the name of the target index to create from the `indexName` URI parameter option, or by providing a message header with the key `INDEX_NAME`.
-You may also provide a header with the key `INDEX_SETTINGS` where the value is a JSON String representation of the index settings.
+You can set the name of the target index to create from the `indexName` URI parameter option, or by providing a message header with the key `CamelElasticsearchIndexName`.
+You may also provide a header with the key `CamelElasticsearchIndexSettings` where the value is a JSON String representation of the index settings.
 
 |`DELETE_INDEX` | |Deletes the specified `indexName` and returns a `boolean` value as the message exchange body, indicating whether the operation was successful.
-You can set the name of the target index to create from the `indexName` URI parameter option, or by providing a message header with the key `INDEX_NAME`.
+You can set the name of the target index to create from the `indexName` URI parameter option, or by providing a message header with the key `CamelElasticsearchIndexName`.
 
 |`SEARCH` |`Map` (optional) |Search for content with either a `Map` of `String` keys & values of query criteria. Or a JSON string representation of the query. Matching documents are returned as a JSON string set on the message exchange body.
-You can set the JSON query String by providing a message header with the key `SEARCH_QUERY`.
+You can set the JSON query String by providing a message header with the key `CamelElasticsearchSearchQuery`.
 You can set the message exchange body to a `Map` of `String` keys & values for the query criteria.
 
 |===
@@ -81,6 +79,10 @@ You can set the message exchange body to a `Map` of `String` keys & values for t
 
 To index some content.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:index")
@@ -88,57 +90,233 @@ from("direct:index")
     .to("elasticsearch-rest-client://myCluster?operation=INDEX_OR_UPDATE&indexName=myIndex");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:index"/>
+  <setBody>
+    <constant>{"content": "ElasticSearch With Camel"}</constant>
+  </setBody>
+  <to uri="elasticsearch-rest-client://myCluster?operation=INDEX_OR_UPDATE&amp;indexName=myIndex"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:index
+      steps:
+        - setBody:
+            constant: '{"content": "ElasticSearch With Camel"}'
+        - to:
+            uri: elasticsearch-rest-client://myCluster
+            parameters:
+              operation: INDEX_OR_UPDATE
+              indexName: myIndex
+----
+====
+
 To update existing indexed content, provide the `ID` message header and the message body with the updated content.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:index")
-    .setHeader("ID").constant("1")
+    .setHeader("CamelElasticsearchId").constant("1")
     .setBody().constant("{\"content\": \"ElasticSearch REST Client With Camel\"}")
     .to("elasticsearch-rest-client://myCluster?operation=INDEX_OR_UPDATE&indexName=myIndex");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:index"/>
+  <setHeader name="CamelElasticsearchId">
+    <constant>1</constant>
+  </setHeader>
+  <setBody>
+    <constant>{"content": "ElasticSearch REST Client With Camel"}</constant>
+  </setBody>
+  <to uri="elasticsearch-rest-client://myCluster?operation=INDEX_OR_UPDATE&amp;indexName=myIndex"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:index
+      steps:
+        - setHeader:
+            name: CamelElasticsearchId
+            constant: "1"
+        - setBody:
+            constant: '{"content": "ElasticSearch REST Client With Camel"}'
+        - to:
+            uri: elasticsearch-rest-client://myCluster
+            parameters:
+              operation: INDEX_OR_UPDATE
+              indexName: myIndex
+----
+====
+
 === Get By ID Example
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:getById")
-    .setHeader("ID").constant("1")
+    .setHeader("CamelElasticsearchId").constant("1")
     .to("elasticsearch-rest-client://myCluster?operation=GET_BY_ID&indexName=myIndex");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:getById"/>
+  <setHeader name="CamelElasticsearchId">
+    <constant>1</constant>
+  </setHeader>
+  <to uri="elasticsearch-rest-client://myCluster?operation=GET_BY_ID&amp;indexName=myIndex"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:getById
+      steps:
+        - setHeader:
+            name: CamelElasticsearchId
+            constant: "1"
+        - to:
+            uri: elasticsearch-rest-client://myCluster
+            parameters:
+              operation: GET_BY_ID
+              indexName: myIndex
+----
+====
 
 === Delete Example
 
 To delete indexed content, provide the `ID` message header.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:getById")
-    .setHeader("ID").constant("1")
+    .setHeader("CamelElasticsearchId").constant("1")
     .to("elasticsearch-rest-client://myCluster?operation=DELETE&indexName=myIndex");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:getById"/>
+  <setHeader name="CamelElasticsearchId">
+    <constant>1</constant>
+  </setHeader>
+  <to uri="elasticsearch-rest-client://myCluster?operation=DELETE&amp;indexName=myIndex"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:getById
+      steps:
+        - setHeader:
+            name: CamelElasticsearchId
+            constant: "1"
+        - to:
+            uri: elasticsearch-rest-client://myCluster
+            parameters:
+              operation: DELETE
+              indexName: myIndex
+----
+====
 
 === Create Index Example
 
 To create a new index.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:createIndex")
     .to("elasticsearch-rest-client://myCluster?operation=CREATE_INDEX&indexName=myIndex");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:createIndex"/>
+  <to uri="elasticsearch-rest-client://myCluster?operation=CREATE_INDEX&amp;indexName=myIndex"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:createIndex
+      steps:
+        - to:
+            uri: elasticsearch-rest-client://myCluster
+            parameters:
+              operation: CREATE_INDEX
+              indexName: myIndex
+----
+====
+
 To create a new index with some custom settings.
 
+._Java-only: uses a Java String variable for index settings_
 [source,java]
 ----
 String indexSettings = "{\"settings\":{\"number_of_replicas\": 1,\"number_of_shards\": 3,\"analysis\": {},\"refresh_interval\": \"1s\"},\"mappings\":{\"dynamic\": false,\"properties\": {\"title\": {\"type\": \"text\", \"analyzer\": \"english\"}}}}";
 ----
 
+._Java-only: route using the indexSettings Java variable_
 [source,java]
 ----
 from("direct:createIndex")
-    .setHeader("INDEX_SETTINGS").constant(indexSettings)
+    .setHeader("CamelElasticsearchIndexSettings").constant(indexSettings)
     .to("elasticsearch-rest-client://myCluster?operation=CREATE_INDEX&indexName=myIndex");
 ----
 
@@ -146,36 +324,102 @@ from("direct:createIndex")
 
 To delete an index.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:deleteIndex")
     .to("elasticsearch-rest-client://myCluster?operation=DELETE_INDEX&indexName=myIndex");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:deleteIndex"/>
+  <to uri="elasticsearch-rest-client://myCluster?operation=DELETE_INDEX&amp;indexName=myIndex"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:deleteIndex
+      steps:
+        - to:
+            uri: elasticsearch-rest-client://myCluster
+            parameters:
+              operation: DELETE_INDEX
+              indexName: myIndex
+----
+====
+
 === Search Example
 
 Search with a JSON query.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:search")
-    .setHeader("SEARCH_QUERY").constant("{\"query\":{\"match\":{\"content\":\"ElasticSearch With Camel\"}}}")
+    .setHeader("CamelElasticsearchSearchQuery").constant("{\"query\":{\"match\":{\"content\":\"ElasticSearch With Camel\"}}}")
     .to("elasticsearch-rest-client://myCluster?operation=SEARCH&indexName=myIndex");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:search"/>
+  <setHeader name="CamelElasticsearchSearchQuery">
+    <constant>{"query":{"match":{"content":"ElasticSearch With Camel"}}}</constant>
+  </setHeader>
+  <to uri="elasticsearch-rest-client://myCluster?operation=SEARCH&amp;indexName=myIndex"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:search
+      steps:
+        - setHeader:
+            name: CamelElasticsearchSearchQuery
+            constant: '{"query":{"match":{"content":"ElasticSearch With Camel"}}}'
+        - to:
+            uri: elasticsearch-rest-client://myCluster
+            parameters:
+              operation: SEARCH
+              indexName: myIndex
+----
+====
+
 Search on specific field(s) using `Map`.
 
+._Java-only: creating a search criteria Map_
 [source,java]
 ----
 Map<String, String> criteria = new HashMap<>();
 criteria.put("content", "Camel");
 ----
 
+._Java-only: route using the criteria Java variable_
 [source,java]
 ----
 from("direct:search")
     .setBody().constant(criteria)
     .to("elasticsearch-rest-client://myCluster?operation=SEARCH&indexName=myIndex");
 ----
-
-include::spring-boot:partial$starter.adoc[]

@@ -6,8 +6,6 @@
 :since: 2.17
 :supportlevel: Stable
 :tabs-sync-option:
-//Manually maintained attributes
-:camel-spring-boot-name: snakeyaml
 
 *Since Camel {since}*
 
@@ -35,24 +33,56 @@ WARNING: SnakeYAML can load any class from YAML definition which may lead to sec
 
 - Turn Object messages into yaml then send to MQSeries
 +
-[source,java]
-------------------------------------------------------------
-from("activemq:My.Queue")
-  .marshal().yaml()
-  .to("mqseries:Another.Queue");
-------------------------------------------------------------
+[tabs]
+====
+Java::
 +
 [source,java]
-------------------------------------------------------------
+----
+from("activemq:My.Queue")
+    .marshal().yaml()
+    .to("mqseries:Another.Queue");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="activemq:My.Queue"/>
+  <marshal><yaml/></marshal>
+  <to uri="mqseries:Another.Queue"/>
+</route>
+----
+
+YAML DSL::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: activemq:My.Queue
+      steps:
+        - marshal:
+            yaml: {}
+        - to:
+            uri: mqseries:Another.Queue
+----
+====
+
+._Java-only: selecting the SnakeYAML library explicitly_
+[source,java]
+----
 from("activemq:My.Queue")
   .marshal().yaml(YAMLLibrary.SnakeYAML)
   .to("mqseries:Another.Queue");
-------------------------------------------------------------
+----
 
 - Restrict classes to be loaded from YAML
-+
+
+._Java-only: programmatic type filter configuration_
 [source,java]
-------------------------------------------------------------
+----
 // Creat a SnakeYAMLDataFormat instance
 SnakeYAMLDataFormat yaml = new SnakeYAMLDataFormat();
 
@@ -62,7 +92,7 @@ yaml.addTypeFilters(TypeFilters.types(MyPojo.class, MyOtherPojo.class));
 from("activemq:My.Queue")
   .unmarshal(yaml)
   .to("mqseries:Another.Queue");
-------------------------------------------------------------
+----
 
 == Using YAML in Spring DSL
 
@@ -70,8 +100,9 @@ When using Data Format in Spring DSL, you need to
 declare the data formats first. This is done in the *DataFormats* XML
 tag.
 
+._XML-only: Spring XML data format definitions with type filters_
 [source,xml]
---------------------------------------------------------------------------------
+----
 <dataFormats>
   <!--
     here we define a YAML data format with the id snake and that it should use
@@ -93,27 +124,69 @@ tag.
     <typeFilter value="com.mycompany\..*" type="regexp"/>
   </yaml>
 </dataFormats>
---------------------------------------------------------------------------------
+----
 
 And then you can refer to those ids in the route:
 
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:unmarshal")
+    .unmarshal("snake")
+    .to("mock:unmarshal");
+
+from("direct:unmarshal-safe")
+    .unmarshal("snake-safe")
+    .to("mock:unmarshal-safe");
+----
+
+XML::
++
 [source,xml]
--------------------------------------
-  <route>
-    <from uri="direct:unmarshal"/>
-    <unmarshal>
-      <custom ref="snake"/>
-    </unmarshal>
-    <to uri="mock:unmarshal"/>
-  </route>
-  <route>
-    <from uri="direct:unmarshal-safe"/>
-    <unmarshal>
-      <custom ref="snake-safe"/>
-    </unmarshal>
-    <to uri="mock:unmarshal-safe"/>
-  </route>
--------------------------------------
+----
+<route>
+  <from uri="direct:unmarshal"/>
+  <unmarshal>
+    <custom ref="snake"/>
+  </unmarshal>
+  <to uri="mock:unmarshal"/>
+</route>
+<route>
+  <from uri="direct:unmarshal-safe"/>
+  <unmarshal>
+    <custom ref="snake-safe"/>
+  </unmarshal>
+  <to uri="mock:unmarshal-safe"/>
+</route>
+----
+
+YAML DSL::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:unmarshal
+      steps:
+        - unmarshal:
+            custom:
+              ref: snake
+        - to:
+            uri: mock:unmarshal
+- route:
+    from:
+      uri: direct:unmarshal-safe
+      steps:
+        - unmarshal:
+            custom:
+              ref: snake-safe
+        - to:
+            uri: mock:unmarshal-safe
+----
+====
 
 
 == Dependencies for SnakeYAML
@@ -126,13 +199,10 @@ substituting the version number for the latest release
 (see the download page for the latest versions).
 
 [source,xml]
-------------------------------------------
+----
 <dependency>
   <groupId>org.apache.camel</groupId>
   <artifactId>camel-snakeyaml</artifactId>
   <version>${camel-version}</version>
 </dependency>
-------------------------------------------
-
-
-include::spring-boot:partial$starter.adoc[]
+----

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor.aggregator;
 
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
@@ -23,6 +25,7 @@ import org.apache.camel.processor.BodyInAggregatingStrategy;
 import org.apache.camel.processor.aggregate.ClosedCorrelationKeyException;
 import org.junit.jupiter.api.Test;
 
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -79,7 +82,9 @@ public class AggregateClosedCorrelationKeyTest extends ContextTestSupport {
         template.sendBodyAndHeader("direct:start", "D", "id", 2);
         template.sendBodyAndHeader("direct:start", "E", "id", 3);
         template.sendBodyAndHeader("direct:start", "F", "id", 3);
-        Thread.sleep(200);
+        // wait for all 3 aggregated results to arrive (keys become closed)
+        await().atMost(5, TimeUnit.SECONDS)
+                .until(() -> getMockEndpoint("mock:result").getReceivedCounter() >= 3);
         // 2 of them should now be closed
         int closed = 0;
 

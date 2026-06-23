@@ -8,8 +8,6 @@
 :tabs-sync-option:
 :component-header: Only producer is supported
 :core:
-//Manually maintained attributes
-:camel-spring-boot-name: log
 
 *Since Camel {since}*
 
@@ -80,13 +78,19 @@ include::partial$component-endpoint-headers.adoc[]
 In the route below we log the incoming orders at `DEBUG` level before
 the order is processed:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
-from("activemq:orders").to("log:com.mycompany.order?level=DEBUG").to("bean:processOrder");
+from("activemq:orders")
+    .to("log:com.mycompany.order?level=DEBUG")
+    .to("bean:processOrder");
 ----
 
-Or using Spring XML to define the route:
-
+XML::
++
 [source,xml]
 ----
 <route>
@@ -96,27 +100,110 @@ Or using Spring XML to define the route:
 </route>
 ----
 
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: activemq:orders
+      steps:
+        - to:
+            uri: log:com.mycompany.order
+            parameters:
+              level: DEBUG
+        - to:
+            uri: bean:processOrder
+----
+====
+
 === Regular logger with formatter example
 
 In the route below we log the incoming orders at `INFO` level before the
 order is processed.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("activemq:orders").
     to("log:com.mycompany.order?showAll=true&multiline=true").to("bean:processOrder");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="activemq:orders"/>
+  <to uri="log:com.mycompany.order?showAll=true&amp;multiline=true"/>
+  <to uri="bean:processOrder"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: activemq:orders
+      steps:
+        - to:
+            uri: log:com.mycompany.order
+            parameters:
+              showAll: true
+              multiline: true
+        - to:
+            uri: bean:processOrder
+----
+====
+
 === Throughput logger with groupSize example
 
 In the route below we log the throughput of the incoming orders at
 `DEBUG` level grouped by 10 messages.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("activemq:orders").
     to("log:com.mycompany.order?level=DEBUG&groupSize=10").to("bean:processOrder");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="activemq:orders"/>
+  <to uri="log:com.mycompany.order?level=DEBUG&amp;groupSize=10"/>
+  <to uri="bean:processOrder"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: activemq:orders
+      steps:
+        - to:
+            uri: log:com.mycompany.order
+            parameters:
+              level: DEBUG
+              groupSize: 10
+        - to:
+            uri: bean:processOrder
+----
+====
 
 === Throughput logger with groupInterval example
 
@@ -124,11 +211,46 @@ This route will result in message stats logged every 10s, with an
 initial 60s delay, and stats should be displayed even if there isn't any
 message traffic.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("activemq:orders").
     to("log:com.mycompany.order?level=DEBUG&groupInterval=10000&groupDelay=60000&groupActiveOnly=false").to("bean:processOrder");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="activemq:orders"/>
+  <to uri="log:com.mycompany.order?level=DEBUG&amp;groupInterval=10000&amp;groupDelay=60000&amp;groupActiveOnly=false"/>
+  <to uri="bean:processOrder"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: activemq:orders
+      steps:
+        - to:
+            uri: log:com.mycompany.order
+            parameters:
+              level: DEBUG
+              groupInterval: 10000
+              groupDelay: 60000
+              groupActiveOnly: false
+        - to:
+            uri: bean:processOrder
+----
+====
 
 The following will be logged:
 
@@ -142,12 +264,16 @@ You can enable security masking for logging by setting `logMask` flag to `true`.
 Note that this option also affects Log EIP.
 
 To enable mask in Java DSL at CamelContext level:
+
+._Java-only: enabling log masking on CamelContext_
 [source,java]
 ----
 camelContext.setLogMask(true);
 ----
 
 And in XML:
+
+._XML-only: enabling log masking on `CamelContext`_
 [source,xml]
 ----
 <camelContext logMask="true">
@@ -156,20 +282,39 @@ And in XML:
 You can also turn it on|off at endpoint level. To enable mask in Java DSL at endpoint level,
 add logMask=true option in the URI for the log endpoint:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:start").to("log:foo?logMask=true");
 ----
 
-And in XML:
-
+XML::
++
 [source,xml]
 ----
 <route>
-  <from uri="direct:foo"/>
+  <from uri="direct:start"/>
   <to uri="log:foo?logMask=true"/>
 </route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: log:foo
+            parameters:
+              logMask: true
+----
+====
 
 `org.apache.camel.support.processor.DefaultMaskingFormatter` is used for the masking by default.
 If you want to use a custom masking formatter, put it into registry with the name `CamelCustomLogMask`.
@@ -211,6 +356,7 @@ in either of two ways:
 
 *Explicitly instantiating the LogComponent in your Registry:*
 
+._XML-only: Spring bean declaration for custom `LogComponent` with `ExchangeFormatter`_
 [source,xml]
 ----
 <bean name="log" class="org.apache.camel.component.log.LogComponent">
@@ -223,10 +369,11 @@ in either of two ways:
 Simply by registering a bean with the name `logFormatter`; the Log
 Component is intelligent enough to pick it up automatically.
 
+._XML-only: Spring bean registration for auto-detected `ExchangeFormatter`_
 [source,xml]
------
+----
 <bean name="logFormatter" class="com.xyz.MyCustomExchangeFormatter" />
------
+----
 
 [NOTE]
 ====
@@ -243,6 +390,7 @@ custom log formatter. Though when you do that, you should define the
 "logFormatter" as prototype scoped, so it's not shared if you have
 different parameters, e.g.:
 
+._XML-only: Spring bean with prototype scope for per-endpoint `ExchangeFormatter`_
 [source,xml]
 ----
 <bean name="logFormatter" class="com.xyz.MyCustomExchangeFormatter" scope="prototype"/>
@@ -251,13 +399,10 @@ different parameters, e.g.:
 And then we can have Camel routes using the log uri with different
 options:
 
+._XML-only: example `<to>` elements showing different log endpoint URIs_
 [source,xml]
----------------------------------------------
+----
 <to uri="log:foo?param1=foo&amp;param2=100"/>
 
 <to uri="log:bar?param1=bar&amp;param2=200"/>
----------------------------------------------
-
-
-
-include::spring-boot:partial$starter.adoc[]
+----

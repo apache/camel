@@ -25,7 +25,10 @@ import picocli.CommandLine;
 
 @CommandLine.Command(name = "transformer",
                      description = "List data type transformers from the Camel Catalog", sortOptions = false,
-                     showDefaultValues = true)
+                     showDefaultValues = true,
+                     footer = {
+                             "%nExamples:",
+                             "  camel catalog transformer" })
 public class CatalogTransformer extends CatalogBaseCommand {
 
     public CatalogTransformer(CamelJBangMain main) {

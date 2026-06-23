@@ -21,9 +21,11 @@ camel cmd receive [options]
 | Option | Description | Default | Type
 | `--action` | Action to start, stop, clear, status, or dump messages | status | String
 | `--compact` | Compact output (no empty line separating messages) | true | boolean
+| `--download` | Whether to allow automatic downloading JAR dependencies (over the internet) | true | boolean
 | `--endpoint,--uri` | Endpoint to receive messages from (can be uri or pattern to refer to existing endpoint) |  | String
 | `--find` | Find and highlight matching text (ignore case). |  | String
 | `--follow` | Keep following and outputting new messages (press enter to exit). | true | boolean
+| `--fresh` | Make sure we use fresh (i.e. non-cached) resources | false | boolean
 | `--grep` | Filter messages to only output matching text (ignore case). |  | String
 | `--logging-color` | Use colored logging | true | boolean
 | `--mask` | Whether to mask endpoint URIs to avoid printing sensitive information such as password or access keys |  | boolean
@@ -33,6 +35,7 @@ camel cmd receive [options]
 | `--pretty` | Pretty print message body when using JSon or XML format |  | boolean
 | `--prop,--property` | Additional properties; override existing (only applicable when NOT using an existing running Camel) |  | String
 | `--properties` | comma separated list of properties file (only applicable when NOT using an existing running Camel) (ex. /path/to/file.properties,/path/to/other.properties |  | String
+| `--repo,--repos` | Additional maven repositories for download on-demand (Use commas to separate multiple repositories) |  | String
 | `--short-uri` | List endpoint URI without query parameters (short) |  | boolean
 | `--show-body` | Show message body in received messages | true | boolean
 | `--show-exchange-properties` | Show exchange properties in received messages | false | boolean

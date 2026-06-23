@@ -50,11 +50,11 @@ public class TahuConfiguration implements Cloneable {
     @Metadata(applicableFor = { TahuConstants.EDGE_NODE_SCHEME, TahuConstants.HOST_APP_SCHEME })
     private boolean checkClientIdLength = false;
 
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     @Metadata(applicableFor = { TahuConstants.EDGE_NODE_SCHEME, TahuConstants.HOST_APP_SCHEME })
     private String username;
 
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     @Metadata(applicableFor = { TahuConstants.EDGE_NODE_SCHEME, TahuConstants.HOST_APP_SCHEME })
     private String password;
 

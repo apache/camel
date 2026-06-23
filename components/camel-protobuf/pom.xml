@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>4.20.0-SNAPSHOT</version>
+        <version>4.21.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-protobuf</artifactId>
@@ -123,13 +123,13 @@
                     <sourceDirectories>
                         <sourceDirectory>${project.basedir}/src/test/proto</sourceDirectory>
                     </sourceDirectories>
-                    <binaryMavenPlugins>
-                        <binaryMavenPlugin>
+                    <plugins>
+                        <plugin kind="binary-maven">
                             <groupId>io.grpc</groupId>
                             <artifactId>protoc-gen-grpc-java</artifactId>
                             <version>${grpc-version}</version>
-                        </binaryMavenPlugin>
-                    </binaryMavenPlugins>
+                        </plugin>
+                    </plugins>
                 </configuration>
                 <executions>
                     <execution>

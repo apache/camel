@@ -6,8 +6,6 @@
 :since: 4.14
 :supportlevel: Stable
 :tabs-sync-option:
-//Manually maintained attributes
-:camel-spring-boot-name: iso8583
 
 *Since Camel {since}*
 
@@ -57,19 +55,57 @@ The data format requires to know the ISO-Type of the message to understand how t
 A default ISO-Type can be configured on the data format. However, you can use a custom header with id `CamelIso8583IsoType`
 on the Exchange message to override and specify another ISO-Type, such as:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:payment")
-  .setHeader("CamelIso8583IsoType", constant("0200"))
-  .unmarshal().iso8583()
-  .to("bean:payment");
+    .setHeader("CamelIso8583IsoType", constant("0200"))
+    .unmarshal().iso8583()
+    .to("bean:payment");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:payment"/>
+  <setHeader name="CamelIso8583IsoType"><constant>0200</constant></setHeader>
+  <unmarshal><iso8583/></unmarshal>
+  <to uri="bean:payment"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:payment
+      steps:
+        - setHeader:
+            name: CamelIso8583IsoType
+            constant: "0200"
+        - unmarshal:
+            iso8583: {}
+        - to:
+            uri: bean:payment
+----
+====
 
 == Example
 
 You can use this data format to unmarshal a ISO-8853 message such as a 0210 payment response, and then select the information
 from the message you need and covert this to JSon as shown below:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("jms:payment:response")
@@ -88,8 +124,56 @@ from("jms:payment:response")
         .to("direct:payementResponse");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="jms:payment:response"/>
+  <unmarshal><iso8583 isoType="0210"/></unmarshal>
+  <transform>
+    <simple>{
+  "op": "${body.getAt(3).value}",
+  "amount": ${body.getAt(4).value.toPlainString},
+  "ref": "${body.getAt(37).value}",
+  "response": "${body.getAt(39).value}",
+  "terminal": "${body.getAt(41).value}",
+  "currency": "${body.getAt(49).value}"
+}</simple>
+  </transform>
+  <to uri="direct:payementResponse"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: jms:payment:response
+      steps:
+        - unmarshal:
+            iso8583:
+              isoType: "0210"
+        - transform:
+            simple: |
+              {
+                "op": "${body.getAt(3).value}",
+                "amount": ${body.getAt(4).value.toPlainString},
+                "ref": "${body.getAt(37).value}",
+                "response": "${body.getAt(39).value}",
+                "terminal": "${body.getAt(41).value}",
+                "currency": "${body.getAt(49).value}"
+              }
+        - to:
+            uri: direct:payementResponse
+----
+====
+
 Instead of simple language you can also use Groovy which has a special support in J8583 library:
 
+._Java-only: using Groovy language for ISO-8583 field extraction_
 [source,java]
 ----
 from("jms:payment:response")
@@ -122,14 +206,11 @@ If you use maven, you could add the following to your `pom.xml`,
 substituting the version number for the latest and greatest release.
 
 [source,xml]
-----------------------------------------------------------
+----
 <dependency>
   <groupId>org.apache.camel</groupId>
   <artifactId>camel-iso8583</artifactId>
   <version>x.x.x</version>
   <!-- use the same version as your Camel core version -->
 </dependency>
-----------------------------------------------------------
-
-
-include::spring-boot:partial$starter.adoc[]
+----

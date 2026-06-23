@@ -6,8 +6,6 @@
 :since: 4.15
 :supportlevel: Preview
 :tabs-sync-option:
-//Manually maintained attributes
-:camel-spring-boot-name: mdc
 
 *Since Camel {since}*
 
@@ -23,6 +21,7 @@ NOTE: don't set legacy MDC via `context.setUseMDCLogging(true)` on `CamelContext
 
 The goal of this component is to avoid to work on low level API in Java. In older MDC implementations you had to hack into the code to include MDC such as:
 
+._Java-only: legacy approach to setting MDC values directly via SLF4J API_
 [source,java]
 ----
     org.slf4j.MDC.put("myCustomMDCKey", "myCustomKeyValue");
@@ -30,6 +29,7 @@ The goal of this component is to avoid to work on low level API in Java. In olde
 
 And later you had to make sure to provide MDC context propagation in async components (eg, `wiretap`) in order to make sure to have such context available in the new executing async thread. With this new service, the only thing to do is to add the value as a Camel Exchange header (or a property), for example:
 
+._Java-only: setting an MDC value as a Camel Exchange header_
 [source,java]
 ----
     .setHeader("myCustomMDCKey", simple("myCustomKeyValue"))
@@ -70,6 +70,6 @@ The configuration properties for the MDC component are:
 |=======================================================================
 |Option |Default |Description
 |`camel.mdc.enabled`| false | Enable the MDC logging.
-|`camel.mdc.customHeaders` |  | Provide the exchange headers you would like to trace in MDC. Use `*` value as a wildcard to include more exchange headers at once, for example `CAMEL_HTTP_*` or only the `*` to include all available exchange headers.
-|`camel.mdc.customProperties` |  | Provide the exchange properties you would like to trace in MDC. Use `*` value as a wildcard to include more exchange properties at once, for example `property_*` or only the `*` to include all available exchange properties.
+|`camel.mdc.customExchangeHeaders` |  | Provide the exchange headers you would like to trace in MDC. Use `*` value as a wildcard to include more exchange headers at once, for example `CAMEL_HTTP_*` or only the `*` to include all available exchange headers.
+|`camel.mdc.customExchangeProperties` |  | Provide the exchange properties you would like to trace in MDC. Use `*` value as a wildcard to include more exchange properties at once, for example `property_*` or only the `*` to include all available exchange properties.
 |=======================================================================

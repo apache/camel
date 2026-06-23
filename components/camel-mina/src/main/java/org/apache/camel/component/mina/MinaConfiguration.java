@@ -60,7 +60,7 @@ public class MinaConfiguration implements Cloneable {
     private long timeout = 30000;
     @UriParam(label = "producer,advanced", defaultValue = "true")
     private boolean lazySessionCreation = true;
-    @UriParam(label = "advanced")
+    @UriParam(label = "advanced", security = "insecure:serialization")
     @Deprecated
     private boolean transferExchange;
     @UriParam

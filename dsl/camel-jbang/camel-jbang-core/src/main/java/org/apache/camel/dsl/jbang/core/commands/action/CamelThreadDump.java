@@ -38,7 +38,11 @@ import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
 @Command(name = "thread-dump", description = "List threads in a running Camel integration", sortOptions = false,
-         showDefaultValues = true)
+         showDefaultValues = true,
+         footer = {
+                 "%nExamples:",
+                 "  camel cmd thread-dump",
+                 "  camel cmd thread-dump --trace" })
 public class CamelThreadDump extends ActionWatchCommand {
 
     public static class IdNameStateCompletionCandidates implements Iterable<String> {

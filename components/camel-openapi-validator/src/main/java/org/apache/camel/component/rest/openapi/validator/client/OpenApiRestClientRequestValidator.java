@@ -16,6 +16,12 @@
  */
 package org.apache.camel.component.rest.openapi.validator.client;
 
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+
 import com.atlassian.oai.validator.OpenApiInteractionValidator;
 import com.atlassian.oai.validator.model.SimpleRequest;
 import com.atlassian.oai.validator.report.JsonValidationReportFormat;
@@ -41,6 +47,10 @@ public class OpenApiRestClientRequestValidator implements RestClientRequestValid
     private static final Logger LOG = LoggerFactory.getLogger(OpenApiRestClientRequestValidator.class);
 
     private final HttpHeaderFilterStrategy filter = new HttpHeaderFilterStrategy();
+
+    private volatile OpenAPI cachedOpenAPI;
+    private volatile Map<String, String> cachedLevels;
+    private volatile OpenApiInteractionValidator cachedValidator;
 
     public OpenApiRestClientRequestValidator() {
         // add extra additional HTTP request headers to skip
@@ -68,6 +78,9 @@ public class OpenApiRestClientRequestValidator implements RestClientRequestValid
         // need to clip base-path
         if (path != null && path.startsWith(basePath)) {
             path = path.substring(basePath.length());
+        }
+        if (path == null) {
+            path = "/";
         }
 
         String accept = exchange.getMessage().getHeader("Accept", String.class);
@@ -99,34 +112,26 @@ public class OpenApiRestClientRequestValidator implements RestClientRequestValid
         if (query != null) {
             String[] params = query.split("&");
             for (String param : params) {
-                String[] keyValue = param.split("=");
-                if (keyValue.length == 2) {
-                    builder.withQueryParam(keyValue[0], keyValue[1]);
-                } else if (keyValue.length == 1) {
-                    builder.withQueryParam(keyValue[0], "");
-                }
+                String[] keyValue = param.split("=", 2);
+                String qKey = urlDecode(keyValue[0]);
+                String qValue = keyValue.length == 2 ? urlDecode(keyValue[1]) : "";
+                builder.withQueryParam(qKey, qValue);
             }
         }
 
-        LevelResolver.Builder lr = LevelResolver.create();
+        Map<String, String> effectiveLevels = new HashMap<>();
         RestConfiguration rc = exchange.getContext().getRestConfiguration();
         if (rc.getValidationLevels() != null) {
-            for (var e : rc.getValidationLevels().entrySet()) {
-                String key = e.getKey();
-                var level = ValidationReport.Level.valueOf(e.getValue());
-                if ("defaultLevel".equalsIgnoreCase(key)) {
-                    lr.withDefaultLevel(level);
-                } else {
-                    lr.withLevel(key, level);
-                }
-            }
+            effectiveLevels.putAll(rc.getValidationLevels());
         }
-        OpenApiInteractionValidator validator = OpenApiInteractionValidator.createFor(openAPI)
-                .withLevelResolver(lr.build())
-                .build();
+        if (!validationContent.requiredBody()) {
+            effectiveLevels.put("validation.request.body.missing", "IGNORE");
+        }
+
+        OpenApiInteractionValidator validator = getOrCreateValidator(openAPI, effectiveLevels);
         ValidationReport report = validator.validateRequest(builder.build());
 
-        // create report if error of DEBUG logging
+        // create report if error or DEBUG logging
         if (report.hasErrors() || LOG.isDebugEnabled()) {
             String msg;
             if (accept != null && accept.contains("application/json")) {
@@ -141,6 +146,37 @@ public class OpenApiRestClientRequestValidator implements RestClientRequestValid
         }
 
         return null;
+    }
+
+    private OpenApiInteractionValidator getOrCreateValidator(OpenAPI openAPI, Map<String, String> levels) {
+        if (cachedValidator != null && cachedOpenAPI == openAPI && Objects.equals(cachedLevels, levels)) {
+            return cachedValidator;
+        }
+        LevelResolver.Builder lr = LevelResolver.create();
+        for (var e : levels.entrySet()) {
+            String key = e.getKey();
+            var level = ValidationReport.Level.valueOf(e.getValue());
+            if ("defaultLevel".equalsIgnoreCase(key)) {
+                lr.withDefaultLevel(level);
+            } else {
+                lr.withLevel(key, level);
+            }
+        }
+        OpenApiInteractionValidator v = OpenApiInteractionValidator.createFor(openAPI)
+                .withLevelResolver(lr.build())
+                .build();
+        cachedOpenAPI = openAPI;
+        cachedLevels = new HashMap<>(levels);
+        cachedValidator = v;
+        return v;
+    }
+
+    private static String urlDecode(String s) {
+        try {
+            return URLDecoder.decode(s, StandardCharsets.UTF_8);
+        } catch (IllegalArgumentException e) {
+            return s;
+        }
     }
 
     private static boolean startsWithIgnoreCase(String s, String prefix) {

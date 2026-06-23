@@ -17,7 +17,6 @@
 
 package org.apache.camel.dsl.jbang.core.commands;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -35,13 +34,8 @@ public final class ExportHelper {
         // prevent instantiation of utility class.
     }
 
-    public static void safeCopy(ClassLoader classLoader, String scheme, Path source, Path target, boolean override)
-            throws Exception {
-        safeCopy(classLoader, scheme, source, target, override, false);
-    }
-
     public static void safeCopy(
-            ClassLoader classLoader, String scheme, Path source, Path target, boolean override, boolean symbolicLink)
+            ClassLoader classLoader, String scheme, Path source, Path target, boolean override)
             throws Exception {
         if ("classpath".equals(scheme)) {
             // in windows the source object contains the windows file separator
@@ -52,15 +46,11 @@ public final class ExportHelper {
                 IOHelper.copy(ins, outs);
             }
         } else {
-            safeCopy(source, target, override, symbolicLink);
+            safeCopy(source, target, override);
         }
     }
 
     public static void safeCopy(Path source, Path target, boolean override) throws Exception {
-        safeCopy(source, target, override, false);
-    }
-
-    public static void safeCopy(Path source, Path target, boolean override, boolean symbolicLink) throws Exception {
         if (!Files.exists(source)) {
             return;
         }
@@ -71,28 +61,13 @@ public final class ExportHelper {
                 stream.filter(Files::isRegularFile)
                         .forEach(child -> {
                             try {
-                                safeCopy(child, target.resolve(child.getFileName()), override, symbolicLink);
+                                safeCopy(child, target.resolve(child.getFileName()), override);
                             } catch (Exception e) {
                                 throw new RuntimeException(e);
                             }
                         });
             }
             return;
-        }
-
-        if (symbolicLink) {
-            try {
-                // must use absolute paths
-                Path link = target.toAbsolutePath();
-                Path src = source.toAbsolutePath();
-                if (Files.exists(link)) {
-                    Files.delete(link);
-                }
-                Files.createSymbolicLink(link, src);
-                return; // success
-            } catch (IOException e) {
-                // ignore
-            }
         }
 
         if (!Files.exists(target)) {

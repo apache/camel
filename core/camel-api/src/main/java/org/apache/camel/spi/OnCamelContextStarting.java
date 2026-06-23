@@ -19,9 +19,24 @@ package org.apache.camel.spi;
 import org.apache.camel.CamelContext;
 
 /**
- * Notification on starting a {@link CamelContext}.
+ * Event handler invoked while the {@link CamelContext} is starting, before it has fully started.
+ * <p/>
+ * Implementations are registered in the {@link Registry} and discovered by Camel during bootstrap. This callback fires
+ * as the context begins starting its routes and services, suiting work that must run just before the context becomes
+ * operational. For the full set of lifecycle callbacks see {@link OnCamelContextEvent}.
+ * <p/>
+ * See <a href="https://camel.apache.org/manual/lifecycle.html">Lifecycle</a> in the Camel user manual.
+ *
+ * @see   OnCamelContextEvent
+ * @since 3.5
  */
 @FunctionalInterface
 public interface OnCamelContextStarting extends OnCamelContextEvent {
+
+    /**
+     * Callback invoked while the {@link CamelContext} is starting.
+     *
+     * @param context the camel context
+     */
     void onContextStarting(CamelContext context);
 }

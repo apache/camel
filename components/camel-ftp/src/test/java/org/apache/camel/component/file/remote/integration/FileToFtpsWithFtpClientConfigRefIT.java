@@ -28,13 +28,14 @@ import org.junit.jupiter.api.condition.EnabledIf;
  * Test the ftps component over SSL (explicit) and without client authentication
  */
 @EnabledIf(value = "org.apache.camel.test.infra.ftp.services.embedded.FtpsUtil#hasRequiredAlgorithms")
+@Disabled("Test was flaky 4 years ago. It is now completely broken when launched with Maven. See CAMEL-23499")
 public class FileToFtpsWithFtpClientConfigRefIT extends FtpsServerExplicitSSLWithoutClientAuthTestSupport {
 
     @BindToRegistry("ftpsClient")
-    private final FTPSClient client = new FTPSClient("SSLv3");
+    private final FTPSClient client = new FTPSClient("TLSv1.2");
 
     @BindToRegistry("ftpsClientIn")
-    private final FTPSClient client1 = new FTPSClient("SSLv3");
+    private final FTPSClient client1 = new FTPSClient("TLSv1.2");
 
     private String getFtpUrl(boolean in) {
         return "ftps://admin@localhost:{{ftp.server.port}}/tmp2/camel?password=admin&initialDelay=2000&ftpClient=#ftpsClient"
@@ -42,7 +43,6 @@ public class FileToFtpsWithFtpClientConfigRefIT extends FtpsServerExplicitSSLWit
                + "&disableSecureDataChannelDefaults=true&delete=true";
     }
 
-    @Disabled("CAMEL-16784:Disable testFromFileToFtp tests")
     @Test
     public void testFromFileToFtp() throws Exception {
 

@@ -21,6 +21,7 @@ import java.util.List;
 
 import com.azure.core.http.HttpHeaders;
 import com.azure.storage.blob.models.BlobItem;
+import com.azure.storage.blob.models.ListBlobsOptions;
 import org.apache.camel.component.azure.storage.blob.BlobConfiguration;
 import org.apache.camel.component.azure.storage.blob.BlobConstants;
 import org.apache.camel.component.azure.storage.blob.client.BlobContainerClientWrapper;
@@ -28,6 +29,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -35,6 +37,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -118,6 +121,53 @@ class BlobContainerOperationsTest {
         assertTrue(items.contains("invoice5.pdf"));
     }
 
+    @Test
+    void testListBlobVersions() {
+        when(client.listBlobs(any(), any())).thenReturn(listBlobVersionsMock());
+
+        final BlobContainerOperations blobContainerOperations = new BlobContainerOperations(configuration, client);
+        final BlobOperationResponse response = blobContainerOperations.listBlobVersions(null);
+
+        assertNotNull(response);
+
+        // Verify the operation forced retrieveVersions=true on the request
+        final ArgumentCaptor<ListBlobsOptions> optionsCaptor = ArgumentCaptor.forClass(ListBlobsOptions.class);
+        verify(client).listBlobs(optionsCaptor.capture(), any());
+        assertNotNull(optionsCaptor.getValue().getDetails());
+        assertTrue(optionsCaptor.getValue().getDetails().getRetrieveVersions());
+
+        @SuppressWarnings("unchecked")
+        final List<BlobItem> body = (List<BlobItem>) response.getBody();
+        assertEquals(3, body.size());
+        assertEquals("item-1", body.get(0).getName());
+        assertEquals("v1", body.get(0).getVersionId());
+        assertEquals("item-1", body.get(1).getName());
+        assertEquals("v2", body.get(1).getVersionId());
+        assertTrue(body.get(1).isCurrentVersion());
+        assertEquals("item-2", body.get(2).getName());
+        assertEquals("v1", body.get(2).getVersionId());
+    }
+
+    @Test
+    void testListBlobVersionsWithRegex() {
+        BlobConfiguration myConfiguration = new BlobConfiguration();
+        myConfiguration.setAccountName("cameldev");
+        myConfiguration.setContainerName("awesome2");
+        myConfiguration.setRegex("item-1");
+
+        when(client.listBlobs(any(), any())).thenReturn(listBlobVersionsMock());
+
+        final BlobContainerOperations blobContainerOperations = new BlobContainerOperations(myConfiguration, client);
+        final BlobOperationResponse response = blobContainerOperations.listBlobVersions(null);
+
+        assertNotNull(response);
+
+        @SuppressWarnings("unchecked")
+        final List<BlobItem> body = (List<BlobItem>) response.getBody();
+        assertEquals(2, body.size());
+        assertTrue(body.stream().allMatch(b -> b.getName().equals("item-1")));
+    }
+
     private HttpHeaders createContainerMock() {
         final HttpHeaders httpHeaders = new HttpHeaders();
 
@@ -135,6 +185,16 @@ class BlobContainerOperationsTest {
         httpHeaders.set("x-ms-delete-type-permanent", "true");
 
         return httpHeaders;
+    }
+
+    private List<BlobItem> listBlobVersionsMock() {
+        final List<BlobItem> items = new LinkedList<>();
+
+        items.add(new BlobItem().setName("item-1").setVersionId("v1").setCurrentVersion(false).setDeleted(false));
+        items.add(new BlobItem().setName("item-1").setVersionId("v2").setCurrentVersion(true).setDeleted(false));
+        items.add(new BlobItem().setName("item-2").setVersionId("v1").setCurrentVersion(true).setDeleted(false));
+
+        return items;
     }
 
     private List<BlobItem> listBlobsMock() {

@@ -40,6 +40,7 @@ public class OpenAIMock implements BeforeEachCallback, AfterEachCallback {
     private HttpServer server;
     private final List<MockExpectation> expectations;
     private final List<EmbeddingExpectation> embeddingExpectations;
+    private final List<AudioTranscriptionExpectation> audioTranscriptionExpectations;
     private final OpenAIMockBuilder builder;
     private final ObjectMapper objectMapper;
     private ExecutorService executor;
@@ -47,8 +48,11 @@ public class OpenAIMock implements BeforeEachCallback, AfterEachCallback {
     public OpenAIMock() {
         this.expectations = new ArrayList<>();
         this.embeddingExpectations = new ArrayList<>();
+        this.audioTranscriptionExpectations = new ArrayList<>();
         this.objectMapper = new ObjectMapper();
-        this.builder = new OpenAIMockBuilder(this, this.expectations, this.embeddingExpectations);
+        this.builder = new OpenAIMockBuilder(
+                this, this.expectations, this.embeddingExpectations,
+                this.audioTranscriptionExpectations);
     }
 
     public OpenAIMockBuilder builder() {
@@ -65,7 +69,10 @@ public class OpenAIMock implements BeforeEachCallback, AfterEachCallback {
     @Override
     public void beforeEach(ExtensionContext context) throws Exception {
         server = HttpServer.create(new InetSocketAddress(0), 0);
-        server.createContext("/", new OpenAIMockServerHandler(expectations, embeddingExpectations, objectMapper));
+        server.createContext("/",
+                new OpenAIMockServerHandler(
+                        expectations, embeddingExpectations, audioTranscriptionExpectations,
+                        objectMapper));
 
         executor = Executors.newSingleThreadExecutor();
         server.setExecutor(executor);

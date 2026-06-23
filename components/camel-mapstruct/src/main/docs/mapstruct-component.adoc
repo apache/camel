@@ -7,8 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Only producer is supported
-//Manually maintained attributes
-:camel-spring-boot-name: mapstruct
 
 *Since Camel {since}*
 
@@ -40,6 +38,7 @@ This is necessary because the _Mapper_ classes are to be used for converting POJ
 
 For example, to set up two packages, you can do the following:
 
+._Java-only: configuring MapStruct mapper packages programmatically_
 [source,java]
 ----
 MapstructComponent mc = context.getComponent("mapstruct", MapstructComponent.class);
@@ -58,11 +57,38 @@ are then introspected to discover the mapping methods. These mapping methods are
 into the Camel xref:manual::type-converter.adoc[Type Converter] registry. This means that you can
 also use type converter to convert the POJOs with MapStruct, such as:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:foo")
-  .convertBodyTo(MyFooDto.class);
+    .convertBodyTo(MyFooDto.class);
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:foo"/>
+  <convertBodyTo type="MyFooDto"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:foo
+      steps:
+        - convertBodyTo:
+            type: MyFooDto
+----
+====
 
 Where `MyFooDto` is a POJO that MapStruct is able to convert to/from.
 
@@ -70,5 +96,3 @@ NOTE: Camel does not support mapper methods defined with a `void` return type su
 
 WARNING: If you define multiple mapping methods for the same from / to types, then the implementation chosen by
 Camel to do its type conversion is potentially non-deterministic.
-
-include::spring-boot:partial$starter.adoc[]

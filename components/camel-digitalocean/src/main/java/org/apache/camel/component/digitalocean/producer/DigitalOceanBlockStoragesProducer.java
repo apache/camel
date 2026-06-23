@@ -37,6 +37,7 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * The DigitalOcean producer for BlockStorages API.
  */
+@Deprecated(since = "4.21")
 public class DigitalOceanBlockStoragesProducer extends DigitalOceanProducer {
 
     public DigitalOceanBlockStoragesProducer(DigitalOceanEndpoint endpoint, DigitalOceanConfiguration configuration) {

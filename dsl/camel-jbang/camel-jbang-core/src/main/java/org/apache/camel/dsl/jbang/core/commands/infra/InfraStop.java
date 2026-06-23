@@ -25,7 +25,10 @@ import org.apache.camel.dsl.jbang.core.common.PathUtils;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "stop",
-                     description = "Shuts down running external services", sortOptions = false, showDefaultValues = true)
+                     description = "Shuts down running external services", sortOptions = false, showDefaultValues = true,
+                     footer = {
+                             "%nExamples:",
+                             "  camel infra stop kafka" })
 public class InfraStop extends InfraBaseCommand {
 
     @CommandLine.Parameters(description = "Name or pid of running service(s)", arity = "0..1")

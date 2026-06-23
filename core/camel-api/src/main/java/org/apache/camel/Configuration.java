@@ -26,6 +26,8 @@ import java.lang.annotation.Target;
  * Marks the class as a {@link CamelConfiguration} class.
  *
  * This allows runtimes such as Camel Main to do package scan and automatic discover Camel configuration classes.
+ *
+ * @since 3.16
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Documented

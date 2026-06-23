@@ -33,11 +33,11 @@ public class Transcribe2Configuration implements Cloneable, AwsCommonConfigurati
     private String label;
     @UriParam
     private TranscribeClient transcribeClient;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String accessKey;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String secretKey;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String sessionToken;
     @UriParam
     private String region;
@@ -45,7 +45,7 @@ public class Transcribe2Configuration implements Cloneable, AwsCommonConfigurati
     private boolean overrideEndpoint;
     @UriParam
     private String uriEndpointOverride;
-    @UriParam(defaultValue = "true")
+    @UriParam(security = "insecure:ssl", defaultValue = "true")
     private boolean trustAllCertificates;
     @UriParam(defaultValue = "false")
     private boolean useDefaultCredentialsProvider;
@@ -67,9 +67,9 @@ public class Transcribe2Configuration implements Cloneable, AwsCommonConfigurati
     private Integer proxyPort;
     @UriParam(enums = "HTTP,HTTPS", defaultValue = "HTTPS")
     private Protocol proxyProtocol = Protocol.HTTPS;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String proxyUsername;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String proxyPassword;
 
     /**

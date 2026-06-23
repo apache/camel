@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.box;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -70,7 +71,7 @@ public class BoxCollaborationsManagerIT extends AbstractBoxITSupport {
         // parameter type is com.box.sdk.BoxCollaboration.Role
         headers.put("CamelBox.role", BoxCollaboration.Role.EDITOR);
 
-        final com.box.sdk.BoxCollaboration result = requestBodyAndHeaders("direct://ADDFOLDERCOLLABORATIONBYEMAIL",
+        final BoxCollaboration result = requestBodyAndHeaders("direct://ADDFOLDERCOLLABORATIONBYEMAIL",
                 testFolder.getID(), headers);
 
         assertNotNull(result, "addFolderCollaboration result");
@@ -97,7 +98,7 @@ public class BoxCollaborationsManagerIT extends AbstractBoxITSupport {
             // parameter type is com.box.sdk.BoxCollaboration.Role
             headers.put("CamelBox.role", BoxCollaboration.Role.EDITOR);
 
-            final com.box.sdk.BoxCollaboration result = requestBodyAndHeaders("direct://ADDFOLDERCOLLABORATION",
+            final BoxCollaboration result = requestBodyAndHeaders("direct://ADDFOLDERCOLLABORATION",
                     testFolder.getID(), headers);
             assertNotNull(result, "addFolderCollaboration result");
             LOG.debug("addFolderCollaboration: {}", result);
@@ -114,7 +115,7 @@ public class BoxCollaborationsManagerIT extends AbstractBoxITSupport {
     @Test
     public void testGetCollaborationInfo() {
         // using String message body for single parameter "collaborationId"
-        final com.box.sdk.BoxCollaboration.Info result = requestBody("direct://GETCOLLABORATIONINFO",
+        final BoxCollaboration.Info result = requestBody("direct://GETCOLLABORATIONINFO",
                 testCollaboration.getID());
 
         assertNotNull(result, "getCollaborationInfo result");
@@ -125,7 +126,7 @@ public class BoxCollaborationsManagerIT extends AbstractBoxITSupport {
     public void testGetFolderCollaborations() {
         // using String message body for single parameter "folderId"
         @SuppressWarnings("rawtypes")
-        final java.util.Collection result = requestBody("direct://GETFOLDERCOLLABORATIONS", testFolder.getID());
+        final Collection result = requestBody("direct://GETFOLDERCOLLABORATIONS", testFolder.getID());
 
         assertNotNull(result, "getFolderCollaborations result");
         LOG.debug("getFolderCollaborations: {}", result);
@@ -134,7 +135,7 @@ public class BoxCollaborationsManagerIT extends AbstractBoxITSupport {
     @SuppressWarnings("rawtypes")
     @Test
     public void testGetPendingCollaborations() {
-        final java.util.Collection result = requestBody("direct://GETPENDINGCOLLABORATIONS", null);
+        final Collection result = requestBody("direct://GETPENDINGCOLLABORATIONS", null);
 
         assertNotNull(result, "getPendingCollaborations result");
         LOG.debug("getPendingCollaborations: {}", result);
@@ -151,7 +152,7 @@ public class BoxCollaborationsManagerIT extends AbstractBoxITSupport {
         info.setRole(BoxCollaboration.Role.PREVIEWER);
         headers.put("CamelBox.info", info);
 
-        final com.box.sdk.BoxCollaboration result = requestBodyAndHeaders("direct://UPDATECOLLABORATIONINFO", null,
+        final BoxCollaboration result = requestBodyAndHeaders("direct://UPDATECOLLABORATIONINFO", null,
                 headers);
 
         assertNotNull(result, "updateCollaborationInfo result");

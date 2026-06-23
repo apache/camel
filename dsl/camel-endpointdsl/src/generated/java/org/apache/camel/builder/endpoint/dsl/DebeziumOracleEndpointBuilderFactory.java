@@ -500,7 +500,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Default:
-         * .*secret$|.*password$|.*sasl\.jaas\.config$|.*basic\.auth\.user\.info|.*registry\.auth\.client-secret
+         * .*secret$|.*password$|.*sasl\.jaas\.config$|.*basic\.auth\.user\.info|.*registry\.auth\.client-secret|.*credentials\.json$
          * Group: oracle
          * 
          * @param customSanitizePattern the value to set
@@ -3851,7 +3851,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final DebeziumOracleHeaderNameBuilder INSTANCE = new DebeziumOracleHeaderNameBuilder();
+        public static final DebeziumOracleHeaderNameBuilder INSTANCE = new DebeziumOracleHeaderNameBuilder();
 
         /**
          * The metadata about the source event, for example table name, database

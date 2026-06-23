@@ -21,6 +21,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.spi.Registry;
+import org.apache.camel.spi.annotations.Language;
 import org.apache.camel.support.ExpressionAdapter;
 import org.apache.camel.support.ExpressionToPredicateAdapter;
 import org.apache.camel.support.PredicateToExpressionAdapter;
@@ -30,7 +31,7 @@ import org.apache.camel.support.builder.ExpressionBuilder;
 /**
  * A language for referred expressions or predicates.
  */
-@org.apache.camel.spi.annotations.Language("ref")
+@Language("ref")
 public class RefLanguage extends TypedLanguageSupport {
 
     @Override

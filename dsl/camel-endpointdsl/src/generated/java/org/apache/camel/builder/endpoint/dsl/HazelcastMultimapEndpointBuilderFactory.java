@@ -628,7 +628,7 @@ public interface HazelcastMultimapEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final HazelcastMultimapHeaderNameBuilder INSTANCE = new HazelcastMultimapHeaderNameBuilder();
+        public static final HazelcastMultimapHeaderNameBuilder INSTANCE = new HazelcastMultimapHeaderNameBuilder();
 
         /**
          * the object id to store / find your object inside the cache.

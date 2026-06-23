@@ -29,6 +29,7 @@ camel run [options]
 | `--dep,--dependency` | Add additional dependencies |  | List
 | `--download` | Whether to allow automatic downloading JAR dependencies (over the internet) | true | boolean
 | `--empty` | Run an empty Camel without loading source files | false | boolean
+| `--example` | Run an example by name, or list available examples when no name is given. |  | String
 | `--exclude` | Exclude files by name or pattern |  | List
 | `--fresh` | Make sure we use fresh (i.e. non-cached) resources | false | boolean
 | `--gav` | The Maven group:artifact:version (used during exporting) |  | String
@@ -38,7 +39,7 @@ camel run [options]
 | `--jfr` | Enables Java Flight Recorder saving recording to disk on exit | false | boolean
 | `--jfr-profile` | Java Flight Recorder profile to use (such as default or profile) |  | String
 | `--jvm-debug` | To enable JVM remote debugging on port 4004 by default. The supported values are true to enable the remote debugging, false to disable the remote debugging or a number to use a custom port |  | int
-| `--kamelets-version` | Apache Camel Kamelets version |  | String
+| `--kamelets-version` | Apache Camel Kamelets version (auto-detected from classpath if not set) |  | String
 | `--lazy-bean` | Whether to use lazy bean initialization (can help with complex classloading issues) | false | boolean
 | `--local-kamelet-dir` | Local directory (or github link) for loading Kamelets (takes precedence). Multiple directories can be specified separated by comma. |  | String
 | `--logging` | Can be used to turn off logging | true | boolean
@@ -58,24 +59,27 @@ camel run [options]
 | `--metrics` _(deprecated)_ | Deprecated: use --observe instead. Metrics (Micrometer and Prometheus) at /q/metrics on local HTTP server (port 8080 by default) | false | boolean
 | `--modeline` | Whether to support JBang style //DEPS to specify additional dependencies | true | boolean
 | `--name` | The name of the Camel application | CamelJBang | String
-| `--observe` | Enable observability services | false | boolean
+| `--observe` | Enable observability services (health, metrics, dev console, and lightweight Camel-only tracing in the TUI Spans tab) | false | boolean
 | `--open-api` | Adds an OpenAPI spec from the given file (json or yaml file) |  | String
-| `--package-scan-jars` | Whether to automatic package scan JARs for custom Spring or Quarkus beans making them available for Camel JBang | false | boolean
+| `--open-telemetry-agent` | Enable OpenTelemetry Java Agent for auto-instrumentation of third-party libraries (HTTP clients, JDBC, Kafka clients, gRPC, etc.). Traces are shown in the TUI Spans tab with Camel spans in cyan and 3rd-party agent spans in magenta. | false | boolean
+| `--open-telemetry-agent-export` | Where to export OpenTelemetry Agent traces: tui (embedded receiver in TUI) or jaeger (external Jaeger). With jaeger, start Jaeger first via 'camel infra run jaeger' and view traces at \http://localhost:16686 | tui | String
+| `--package-scan-jars` | Whether to automatic package scan JARs for custom Spring or Quarkus beans making them available for Camel CLI | false | boolean
 | `--port` | Embeds a local HTTP server on this port (port 8080 by default; use 0 to dynamic assign a free random port number) |  | int
 | `--profile` | Profile to run (dev, test, prod). | dev | String
 | `--prompt` | Allow user to type in required parameters in prompt if not present in application | false | boolean
 | `--prop,--property` | Additional properties (override existing) |  | String
 | `--properties` | comma separated list of properties file (ex. /path/to/file.properties,/path/to/other.properties |  | String
-| `--quarkus-artifact-id` | Quarkus Platform Maven artifactId | quarkus-bom | String
-| `--quarkus-group-id` | Quarkus Platform Maven groupId | io.quarkus.platform | String
-| `--quarkus-version` | Quarkus Platform version | RuntimeType.QUARKUS_VERSION | String
+| `--quarkus-artifact-id` _(deprecated)_ | Deprecated. This value is not used anymore. It is kept only for backwards compatibility and will be removed in Camel 5.x. Camel commands may use either 'quarkus-bom' or 'quarkus-camel-bom' artifactIds depending on the context. | quarkus-bom | String
+| `--quarkus-ext-registry` | The base URI of Quarkus Extension Registry. The default is {@value RuntimeType#QUARKUS_EXTENSION_REGISTRY_BASE_URL} unless camel.jbang.quarkus.platform.url system property is set (the /client/platforms suffix is removed if present). |  | String
+| `--quarkus-group-id` | groupId of Quarkus Platform BOM; honored only if --quarkus-version is set | io.quarkus.platform | String
+| `--quarkus-version` | version of Quarkus Platform BOM; the default value is looked up in Quarkus Extension Registry |  | String
 | `--reload,--dev` | Enables dev mode (live reload when source files are updated and saved) |  | boolean
-| `--repo,--repos` | Additional maven repositories (Use commas to separate multiple repositories) |  | String
+| `--repo,--repos` | Additional maven repositories for download on-demand (Use commas to separate multiple repositories) |  | String
 | `--runtime` | Runtime (camel-main, spring-boot, quarkus) | camel-main | RuntimeType
 | `--skip-plugins` | Skip resolving plugin dependencies | false | boolean
 | `--source-dir` | Source directory for dynamically loading Camel file(s) to run. When using this, then files cannot be specified at the same time. |  | String
 | `--spring-boot-version` | Spring Boot version | RuntimeType.SPRING_BOOT_VERSION | String
-| `--stub` | Stubs all the matching endpoint uri with the given component name or pattern. Multiple names can be separated by comma. (all = stub all endpoints). |  | String
+| `--stub` | Stubs all the matching endpoint uri with the given component name or pattern. Multiple names can be separated by comma. (all = stub all endpoints, remote = stub only remote components). |  | String
 | `--trace` | Enables trace logging of the routed messages | false | boolean
 | `--verbose` | Verbose output of startup activity (dependency resolution and downloading | false | boolean
 | `-h,--help` | Display the help and sub-commands |  | boolean

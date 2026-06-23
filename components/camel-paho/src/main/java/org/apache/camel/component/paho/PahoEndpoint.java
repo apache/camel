@@ -41,6 +41,7 @@ import org.eclipse.paho.client.mqttv3.persist.MqttDefaultFilePersistence;
  */
 @UriEndpoint(firstVersion = "2.16.0", scheme = "paho", title = "Paho", category = { Category.MESSAGING, Category.IOT },
              syntax = "paho:topic", headersClass = PahoConstants.class)
+@Deprecated(since = "4.21")
 public class PahoEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     // Configuration members

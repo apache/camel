@@ -51,12 +51,12 @@ public class NettyHttpConfiguration extends NettyConfiguration {
     private boolean compression;
     @UriParam(label = "producer", defaultValue = "true")
     private boolean throwExceptionOnFailure = true;
-    @UriParam(label = "advanced")
+    @UriParam(label = "advanced", security = "insecure:serialization")
     private boolean transferException;
     @UriParam(label = "advanced,security")
     private String deserializationFilter;
-    @UriParam(label = "consumer")
-    private boolean muteException;
+    @UriParam(label = "consumer", defaultValue = "true")
+    private boolean muteException = true;
     @UriParam(label = "consumer")
     private boolean matchOnUriPrefix;
     @UriParam(label = "consumer,advanced", defaultValue = "true")
@@ -198,8 +198,8 @@ public class NettyHttpConfiguration extends NettyConfiguration {
      * Sets an ObjectInputFilter pattern (jdk.serialFilter syntax) applied when deserializing Java objects from HTTP
      * responses with Content-Type application/x-java-serialized-object. This is used when transferException is enabled
      * and the remote side returns a serialized exception. When not set, the filter configured via the JVM system
-     * property jdk.serialFilter is used when present; otherwise a conservative default filter allowing java., javax.
-     * and org.apache.camel. packages is applied.
+     * property jdk.serialFilter is used when present; otherwise a conservative default filter denying java.net. and
+     * otherwise allowing java., javax. and org.apache.camel. packages is applied.
      */
     public void setDeserializationFilter(String deserializationFilter) {
         this.deserializationFilter = deserializationFilter;

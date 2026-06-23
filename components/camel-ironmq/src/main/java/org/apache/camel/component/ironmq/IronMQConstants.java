@@ -18,6 +18,7 @@ package org.apache.camel.component.ironmq;
 
 import org.apache.camel.spi.Metadata;
 
+@Deprecated(since = "4.21")
 public interface IronMQConstants {
 
     @Metadata(description = "(producer) The id of the IronMQ message as a String when sending a single message, or a Ids object when sending a array of strings."

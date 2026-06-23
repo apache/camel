@@ -43,7 +43,6 @@ import org.apache.camel.support.task.budget.IterationBoundedBudget;
 import org.apache.camel.test.infra.infinispan.services.InfinispanService;
 import org.apache.camel.test.infra.infinispan.services.InfinispanServiceFactory;
 import org.apache.camel.test.junit6.CamelTestSupport;
-import org.apache.commons.lang3.SystemUtils;
 import org.infinispan.client.hotrod.RemoteCacheManager;
 import org.infinispan.client.hotrod.configuration.ConfigurationBuilder;
 import org.infinispan.commons.configuration.StringConfiguration;
@@ -266,11 +265,9 @@ public class LangChain4jEmbeddingsComponentInfinispanTargetIT extends CamelTestS
                 .saslMechanism("SCRAM-SHA-512")
                 .realm("default");
 
-        if (SystemUtils.IS_OS_MAC) {
-            Properties properties = new Properties();
-            properties.put("infinispan.client.hotrod.client_intelligence", "BASIC");
-            clientBuilder.withProperties(properties);
-        }
+        Properties properties = new Properties();
+        properties.put("infinispan.client.hotrod.client_intelligence", "BASIC");
+        clientBuilder.withProperties(properties);
         return clientBuilder;
     }
 }

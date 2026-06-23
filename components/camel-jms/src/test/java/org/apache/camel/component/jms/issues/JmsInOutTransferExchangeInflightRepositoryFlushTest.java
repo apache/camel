@@ -16,12 +16,15 @@
  */
 package org.apache.camel.component.jms.issues;
 
+import jakarta.jms.ConnectionFactory;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.AbstractJMSTest;
+import org.apache.camel.component.jms.JmsComponent;
 import org.apache.camel.component.jms.support.SerializableRequestDto;
 import org.apache.camel.component.jms.support.SerializableResponseDto;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -46,6 +49,14 @@ public class JmsInOutTransferExchangeInflightRepositoryFlushTest extends Abstrac
     @Override
     protected String getComponentName() {
         return "activemq";
+    }
+
+    @Override
+    protected JmsComponent setupComponent(
+            CamelContext camelContext, ConnectionFactory connectionFactory, String componentName) {
+        JmsComponent component = super.setupComponent(camelContext, connectionFactory, componentName);
+        component.setObjectMessageEnabled(true);
+        return component;
     }
 
     @Test

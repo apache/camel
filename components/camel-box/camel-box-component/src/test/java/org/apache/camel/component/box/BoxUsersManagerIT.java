@@ -18,10 +18,12 @@ package org.apache.camel.component.box;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.box.sdk.BoxAPIConnection;
 import com.box.sdk.BoxAPIException;
+import com.box.sdk.BoxFolder;
 import com.box.sdk.BoxUser;
 import com.box.sdk.CreateUserParams;
 import com.box.sdk.EmailAlias;
@@ -67,7 +69,7 @@ public class BoxUsersManagerIT extends AbstractBoxITSupport {
     @Disabled
     @Test
     public void testAddUserEmailAlias() {
-        com.box.sdk.EmailAlias result = null;
+        EmailAlias result = null;
         try {
             final Map<String, Object> headers = new HashMap<>();
             // parameter type is String
@@ -92,7 +94,7 @@ public class BoxUsersManagerIT extends AbstractBoxITSupport {
         //This test makes sense only with JWT authentication. With standard (OAuth) it will always fail.
         assumeTrue(jwtAuthentication, "Test has to be executed with standard authentication.");
 
-        com.box.sdk.BoxUser result = null;
+        BoxUser result = null;
 
         try {
             CreateUserParams params = new CreateUserParams();
@@ -131,7 +133,7 @@ public class BoxUsersManagerIT extends AbstractBoxITSupport {
         assertNotNull(enterpriseUser1Login,
                 "Email for enterprise user has to be defined in test-options.properties for this test to succeed.");
 
-        com.box.sdk.BoxUser result = null;
+        BoxUser result = null;
 
         try {
             CreateUserParams params = new CreateUserParams();
@@ -213,7 +215,7 @@ public class BoxUsersManagerIT extends AbstractBoxITSupport {
         headers.put("CamelBox.fields", null);
 
         @SuppressWarnings("rawtypes")
-        final java.util.List result = requestBodyAndHeaders("direct://GETALLENTERPRISEOREXTERNALUSERS", null, headers);
+        final List result = requestBodyAndHeaders("direct://GETALLENTERPRISEOREXTERNALUSERS", null, headers);
 
         assertNotNull(result, "getAllEnterpriseOrExternalUsers result");
         LOG.debug("getAllEnterpriseOrExternalUsers: {}", result);
@@ -221,7 +223,7 @@ public class BoxUsersManagerIT extends AbstractBoxITSupport {
 
     @Test
     public void testGetCurrentUser() {
-        final com.box.sdk.BoxUser result = requestBody("direct://GETCURRENTUSER", testUser.getID());
+        final BoxUser result = requestBody("direct://GETCURRENTUSER", testUser.getID());
 
         assertNotNull(result, "getCurrentUser result");
         LOG.debug("getCurrentUser: {}", result);
@@ -231,7 +233,7 @@ public class BoxUsersManagerIT extends AbstractBoxITSupport {
     public void testGetUserEmailAlias() {
         // using String message body for single parameter "userId"
         @SuppressWarnings("rawtypes")
-        final java.util.Collection result = requestBody("direct://GETUSEREMAILALIAS", testUser.getID());
+        final Collection result = requestBody("direct://GETUSEREMAILALIAS", testUser.getID());
 
         assertNotNull(result, "getUserEmailAlias result");
         LOG.debug("getUserEmailAlias: {}", result);
@@ -240,7 +242,7 @@ public class BoxUsersManagerIT extends AbstractBoxITSupport {
     @Test
     public void testGetUserInfo() {
         // using String message body for single parameter "userId"
-        final com.box.sdk.BoxUser.Info result = requestBody("direct://GETUSERINFO", testUser.getID());
+        final BoxUser.Info result = requestBody("direct://GETUSERINFO", testUser.getID());
 
         assertNotNull(result, "getUserInfo result");
         LOG.debug("getUserInfo: {}", result);
@@ -260,7 +262,7 @@ public class BoxUsersManagerIT extends AbstractBoxITSupport {
             headers.put("CamelBox.userId", testUser.getID());
             // parameter type is com.box.sdk.BoxUser.Info
             headers.put("CamelBox.info", info);
-            final com.box.sdk.BoxUser result = requestBodyAndHeaders("direct://UPDATEUSERINFO", null, headers);
+            final BoxUser result = requestBodyAndHeaders("direct://UPDATEUSERINFO", null, headers);
             assertNotNull(result, "updateUserInfo result");
             LOG.debug("updateUserInfo: {}", result);
         } finally {
@@ -302,7 +304,7 @@ public class BoxUsersManagerIT extends AbstractBoxITSupport {
             headers.put("CamelBox.userId", user1.getID());
             headers.put("CamelBox.sourceUserId", user2.getID());
 
-            final com.box.sdk.BoxFolder.Info result = requestBodyAndHeaders("direct://MOVEFOLDERTOUSER", null, headers);
+            final BoxFolder.Info result = requestBodyAndHeaders("direct://MOVEFOLDERTOUSER", null, headers);
             assertNotNull(result, "moveFolderToUser result");
         } finally {
             if (user1 != null) {

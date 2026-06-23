@@ -29,6 +29,7 @@ import org.slf4j.LoggerFactory;
 /**
  * The DigitalOcean producer.
  */
+@Deprecated(since = "4.21")
 public abstract class DigitalOceanProducer extends DefaultProducer {
     protected static final Logger LOG = LoggerFactory.getLogger(DigitalOceanProducer.class);
     protected DigitalOceanConfiguration configuration;

@@ -270,7 +270,7 @@ public class StaxStreamXMLReader implements XMLReader {
 
     private void handleDtd() throws SAXException {
         if (getLexicalHandler() != null) {
-            javax.xml.stream.Location location = reader.getLocation();
+            Location location = reader.getLocation();
             getLexicalHandler().startDTD(null, location.getPublicId(), location.getSystemId());
         }
         if (getLexicalHandler() != null) {

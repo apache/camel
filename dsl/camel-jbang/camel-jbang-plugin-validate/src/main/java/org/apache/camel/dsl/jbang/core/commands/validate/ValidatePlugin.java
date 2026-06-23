@@ -27,7 +27,8 @@ public class ValidatePlugin implements Plugin {
     @Override
     public void customize(CommandLine commandLine, CamelJBangMain main) {
         var cmd = new CommandLine(new ValidateCommand(main))
-                .addSubcommand("yaml", new CommandLine(new YamlValidateCommand(main)));
+                .addSubcommand("yaml", new CommandLine(new YamlValidateCommand(main)))
+                .addSubcommand("normalize", new CommandLine(new YamlNormalizeCommand(main)));
 
         commandLine.addSubcommand("validate", cmd);
     }

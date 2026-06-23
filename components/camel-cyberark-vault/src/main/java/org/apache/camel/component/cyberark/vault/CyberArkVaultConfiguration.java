@@ -47,16 +47,16 @@ public class CyberArkVaultConfiguration implements Cloneable {
     @Metadata(required = true)
     private String account;
 
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String username;
 
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String password;
 
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String apiKey;
 
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String authToken;
 
     @UriParam(defaultValue = "true")

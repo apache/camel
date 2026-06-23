@@ -19,6 +19,7 @@ package org.apache.camel.component.jackson3.converter;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jackson3.JacksonConstants;
 import org.apache.camel.test.junit6.CamelTestSupport;
+import org.json.JSONException;
 import org.junit.jupiter.api.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.skyscreamer.jsonassert.JSONCompareMode;
@@ -28,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class JacksonConversionsPojoTest extends CamelTestSupport {
     @Test
-    public void shouldConvertPojoToString() throws org.json.JSONException {
+    public void shouldConvertPojoToString() throws JSONException {
         context.getGlobalOptions().put(JacksonConstants.ENABLE_TYPE_CONVERTER, "true");
         context.getGlobalOptions().put(JacksonConstants.TYPE_CONVERTER_TO_POJO, "true");
 
@@ -43,7 +44,7 @@ public class JacksonConversionsPojoTest extends CamelTestSupport {
     }
 
     @Test
-    public void shouldConvertJAXBPojoToString() throws org.json.JSONException {
+    public void shouldConvertJAXBPojoToString() throws JSONException {
         context.getGlobalOptions().put(JacksonConstants.ENABLE_TYPE_CONVERTER, "true");
         context.getGlobalOptions().put(JacksonConstants.TYPE_CONVERTER_TO_POJO, "true");
         context.getGlobalOptions().put(JacksonConstants.TYPE_CONVERTER_MODULE_CLASS_NAMES,

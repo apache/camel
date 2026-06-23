@@ -30,6 +30,8 @@ import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.commands.MavenResolverMixin;
+import org.apache.camel.dsl.jbang.core.commands.QuarkusPlatformMixin;
 import org.apache.camel.dsl.jbang.core.common.CatalogLoader;
 import org.apache.camel.dsl.jbang.core.common.RuntimeCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.RuntimeType;
@@ -37,6 +39,7 @@ import org.apache.camel.dsl.jbang.core.common.RuntimeTypeConverter;
 import org.apache.camel.dsl.jbang.core.common.TerminalWidthHelper;
 import org.apache.camel.dsl.jbang.core.common.VersionHelper;
 import org.apache.camel.dsl.jbang.core.model.CatalogBaseDTO;
+import org.apache.camel.main.util.SuggestSimilarHelper;
 import org.apache.camel.tooling.maven.MavenGav;
 import org.apache.camel.tooling.model.ArtifactModel;
 import org.apache.camel.util.json.Jsoner;
@@ -54,21 +57,11 @@ public abstract class CatalogBaseCommand extends CamelCommand {
                         description = "Runtime (${COMPLETION-CANDIDATES})")
     RuntimeType runtime;
 
-    @CommandLine.Option(names = { "--download" }, defaultValue = "true",
-                        description = "Whether to allow automatic downloading JAR dependencies (over the internet)")
-    boolean download = true;
+    @CommandLine.Mixin
+    MavenResolverMixin mavenResolver;
 
-    @CommandLine.Option(names = { "--quarkus-version" }, description = "Quarkus Platform version",
-                        defaultValue = RuntimeType.QUARKUS_VERSION)
-    String quarkusVersion;
-
-    @CommandLine.Option(names = { "--quarkus-group-id" }, description = "Quarkus Platform Maven groupId",
-                        defaultValue = "io.quarkus.platform")
-    String quarkusGroupId = "io.quarkus.platform";
-
-    @CommandLine.Option(names = { "--repo", "--repos" },
-                        description = "Additional maven repositories for download on-demand (Use commas to separate multiple repositories)")
-    String repos;
+    @CommandLine.Mixin
+    QuarkusPlatformMixin quarkusPlatform;
 
     @CommandLine.Option(names = { "--sort" },
                         description = "Sort by name, support-level, or description", defaultValue = "name")
@@ -108,14 +101,21 @@ public abstract class CatalogBaseCommand extends CamelCommand {
 
     CamelCatalog loadCatalog() throws Exception {
         if (RuntimeType.springBoot == runtime) {
-            return CatalogLoader.loadSpringBootCatalog(repos, camelVersion, download);
+            return CatalogLoader.loadSpringBootCatalog(mavenResolver.repos(), camelVersion, mavenResolver.download());
         } else if (RuntimeType.quarkus == runtime) {
-            return CatalogLoader.loadQuarkusCatalog(repos, quarkusVersion, quarkusGroupId, download);
+            final MavenGav quarkusCamelBom
+                    = quarkusPlatform.resolve(
+                            camelVersion,
+                            mavenResolver.downloader()::resolveArtifact,
+                            mavenResolver.download(),
+                            mavenResolver.fresh())
+                            .quarkusCamelBom();
+            return CatalogLoader.loadQuarkusCatalog(quarkusCamelBom, mavenResolver.downloader()::resolveArtifact);
         }
         if (camelVersion == null) {
             return new DefaultCamelCatalog(true);
         } else {
-            return CatalogLoader.loadCatalog(repos, camelVersion, download);
+            return CatalogLoader.loadCatalog(mavenResolver.repos(), camelVersion, mavenResolver.download());
         }
     }
 
@@ -180,6 +180,16 @@ public abstract class CatalogBaseCommand extends CamelCommand {
                                 .maxWidth(descWidth, OverflowBehaviour.ELLIPSIS_RIGHT)
                                 .with(this::shortDescription))));
             }
+        } else if (filterName != null) {
+            // suggest similar names when filter returns no results
+            List<String> allNames = collectRows().stream().map(r -> r.name).collect(Collectors.toList());
+            List<String> suggestions = SuggestSimilarHelper.didYouMean(allNames, filterName);
+            if (!suggestions.isEmpty()) {
+                printer().println("No results for filter: " + filterName + ". Did you mean? " + String.join(", ", suggestions));
+            } else {
+                printer().println("No results for filter: " + filterName);
+            }
+            printer().println("Tip: use 'camel doc " + filterName + "' for detailed documentation.");
         }
 
         return 0;

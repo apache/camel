@@ -26,9 +26,24 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Route;
 import org.apache.camel.Service;
 import org.apache.camel.VetoCamelContextStartException;
+import org.jspecify.annotations.Nullable;
 
 /**
- * Strategy for lifecycle notifications.
+ * Observer SPI that receives callbacks for every significant lifecycle event in a
+ * {@link org.apache.camel.CamelContext}.
+ * <p/>
+ * Callbacks cover the full lifecycle of the context itself (initializing, starting, started, stopping, stopped), plus
+ * every {@link org.apache.camel.Component}, {@link org.apache.camel.Endpoint}, {@link org.apache.camel.Route}, and
+ * {@link org.apache.camel.Service} that is added, started, stopped, or removed. Thread pool creation and shutdown are
+ * also notified. Multiple strategies can be registered via
+ * {@link org.apache.camel.CamelContext#addLifecycleStrategy(LifecycleStrategy)}. The JMX management layer
+ * ({@link ManagementStrategy}) is the primary built-in implementor; it registers and unregisters MBeans in response to
+ * lifecycle events. Implementations may throw {@link org.apache.camel.VetoCamelContextStartException} from
+ * {@link #onContextInitializing} to prevent context startup.
+ * <p/>
+ * See <a href="https://camel.apache.org/manual/lifecycle.html">Lifecycle</a> in the Camel user manual.
+ *
+ * @see ManagementStrategy
  */
 public interface LifecycleStrategy {
 
@@ -144,7 +159,7 @@ public interface LifecycleStrategy {
      * @param service the added service
      * @param route   the route the service belongs to if any possible to determine
      */
-    void onServiceAdd(CamelContext context, Service service, Route route);
+    void onServiceAdd(CamelContext context, Service service, @Nullable Route route);
 
     /**
      * Notification on removing a {@link Service}.
@@ -153,7 +168,7 @@ public interface LifecycleStrategy {
      * @param service the removed service
      * @param route   the route the service belongs to if any possible to determine
      */
-    void onServiceRemove(CamelContext context, Service service, Route route);
+    void onServiceRemove(CamelContext context, Service service, @Nullable Route route);
 
     /**
      * Notification on removing a {@link Service}.
@@ -163,7 +178,7 @@ public interface LifecycleStrategy {
      * @param route    the route the service belongs to if any possible to determine
      * @param shutdown whether camel is being shutdown
      */
-    default void onServiceRemove(CamelContext context, Service service, Route route, boolean shutdown) {
+    default void onServiceRemove(CamelContext context, Service service, @Nullable Route route, boolean shutdown) {
         onServiceRemove(context, service, route);
     }
 
@@ -193,14 +208,14 @@ public interface LifecycleStrategy {
      *
      * @param camelContext        the camel context
      * @param threadPool          the thread pool
-     * @param id                  id of the thread pool (can be null in special cases)
+     * @param id                  id of the thread pool
      * @param sourceId            id of the source creating the thread pool (can be null in special cases)
      * @param routeId             id of the route for the source (is null if no source)
      * @param threadPoolProfileId id of the thread pool profile, if used for creating this thread pool (can be null)
      */
     void onThreadPoolAdd(
             CamelContext camelContext, ThreadPoolExecutor threadPool, String id,
-            String sourceId, String routeId, String threadPoolProfileId);
+            @Nullable String sourceId, @Nullable String routeId, @Nullable String threadPoolProfileId);
 
     /**
      * Notification on removing a thread pool.
@@ -216,14 +231,14 @@ public interface LifecycleStrategy {
      *
      * @param camelContext        the camel context
      * @param executorService     the executor service
-     * @param id                  id of the thread pool (can be null in special cases)
+     * @param id                  id of the thread pool
      * @param sourceId            id of the source creating the thread pool (can be null in special cases)
      * @param routeId             id of the route for the source (is null if no source)
      * @param threadPoolProfileId id of the thread pool profile, if used for creating this thread pool (can be null)
      */
     default void onThreadPoolAdd(
             CamelContext camelContext, ExecutorService executorService, String id,
-            String sourceId, String routeId, String threadPoolProfileId) {
+            @Nullable String sourceId, @Nullable String routeId, @Nullable String threadPoolProfileId) {
     }
 
     /**

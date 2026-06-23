@@ -16,6 +16,8 @@
  */
 package org.apache.camel.main.download;
 
+import java.time.Duration;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.TypeConversionException;
 import org.apache.camel.converter.ObjectConverter;
@@ -47,6 +49,8 @@ public class ExportTypeConverter extends TypeConverterSupport {
                 return (T) Short.valueOf("1");
             } else if (type == byte.class || type == Byte.class) {
                 return (T) Byte.valueOf("0");
+            } else if (type == Duration.class) {
+                return (T) Duration.ofMillis(1);
             } else if (type == String.class) {
                 return (T) PropertyConfigurerSupport.MAGIC_VALUE;
             }

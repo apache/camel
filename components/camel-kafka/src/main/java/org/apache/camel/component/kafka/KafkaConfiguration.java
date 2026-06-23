@@ -271,19 +271,19 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
 
     // SSL
     // ssl.key.password
-    @UriParam(label = "common,security", secret = true)
+    @UriParam(label = "common,security", security = "secret")
     private String sslKeyPassword;
     // ssl.keystore.location
     @UriParam(label = "common,security")
     private String sslKeystoreLocation;
     // ssl.keystore.password
-    @UriParam(label = "common,security", secret = true)
+    @UriParam(label = "common,security", security = "secret")
     private String sslKeystorePassword;
     // ssl.truststore.location
     @UriParam(label = "common,security")
     private String sslTruststoreLocation;
     // ssl.truststore.password
-    @UriParam(label = "common,security", secret = true)
+    @UriParam(label = "common,security", security = "secret")
     private String sslTruststorePassword;
     // SSL
     // ssl.enabled.protocols
@@ -340,7 +340,7 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     @UriParam(label = "common,security", defaultValue = "DEFAULT")
     // sasl.kerberos.principal.to.local.rules
     private String kerberosPrincipalToLocalRules;
-    @UriParam(label = "common,security", secret = true)
+    @UriParam(label = "common,security", security = "secret")
     // sasl.jaas.config
     private String saslJaasConfig;
 
@@ -358,7 +358,7 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
               description = "Username for SASL authentication. Used when saslAuthType is set to PLAIN, SCRAM_SHA_256, or SCRAM_SHA_512.")
     private String saslUsername;
 
-    @UriParam(label = "common,security", secret = true,
+    @UriParam(label = "common,security", security = "secret",
               description = "Password for SASL authentication. Used when saslAuthType is set to PLAIN, SCRAM_SHA_256, or SCRAM_SHA_512.")
     private String saslPassword;
 
@@ -366,7 +366,7 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
               description = "OAuth client ID. Used when saslAuthType is set to OAUTH.")
     private String oauthClientId;
 
-    @UriParam(label = "common,security", secret = true,
+    @UriParam(label = "common,security", security = "secret",
               description = "OAuth client secret. Used when saslAuthType is set to OAUTH.")
     private String oauthClientSecret;
 

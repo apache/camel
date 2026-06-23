@@ -26,6 +26,7 @@ import java.security.KeyStore;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.security.cert.Certificate;
 import java.security.spec.InvalidKeySpecException;
 import java.util.Arrays;
 import java.util.Map;
@@ -35,6 +36,7 @@ import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.DESedeKeySpec;
 import javax.crypto.spec.SecretKeySpec;
+import javax.security.auth.DestroyFailedException;
 import javax.xml.transform.dom.DOMSource;
 
 import org.w3c.dom.Document;
@@ -54,6 +56,7 @@ import org.apache.camel.spi.annotations.Dataformat;
 import org.apache.camel.support.jsse.KeyStoreParameters;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.IOHelper;
+import org.apache.xml.security.Init;
 import org.apache.xml.security.encryption.EncryptedData;
 import org.apache.xml.security.encryption.EncryptedKey;
 import org.apache.xml.security.encryption.XMLCipher;
@@ -125,7 +128,7 @@ public class XMLSecurityDataFormat extends ServiceSupport implements DataFormat,
             //ignore
         }
 
-        org.apache.xml.security.Init.init();
+        Init.init();
 
         if (!wasSet) {
             try {
@@ -342,7 +345,7 @@ public class XMLSecurityDataFormat extends ServiceSupport implements DataFormat,
         // Clean the secret key from memory
         try {
             dataEncryptionKey.destroy();
-        } catch (javax.security.auth.DestroyFailedException ex) {
+        } catch (DestroyFailedException ex) {
             LOG.debug("Error destroying key: {}", ex.getMessage());
         }
     }
@@ -372,13 +375,13 @@ public class XMLSecurityDataFormat extends ServiceSupport implements DataFormat,
         // Clean the secret keys from memory
         try {
             dataEncryptionKey.destroy();
-        } catch (javax.security.auth.DestroyFailedException ex) {
+        } catch (DestroyFailedException ex) {
             LOG.debug("Error destroying key: {}", ex.getMessage());
         }
 
         try {
             keyEncryptionKey.destroy();
-        } catch (javax.security.auth.DestroyFailedException ex) {
+        } catch (DestroyFailedException ex) {
             LOG.debug("Error destroying key: {}", ex.getMessage());
         }
     }
@@ -401,7 +404,7 @@ public class XMLSecurityDataFormat extends ServiceSupport implements DataFormat,
      */
     // TODO Move this to a crypto utility class
     private Key getPublicKey(KeyStore keystore, String alias, String password) throws Exception {
-        java.security.cert.Certificate cert = keystore.getCertificate(alias);
+        Certificate cert = keystore.getCertificate(alias);
         if (cert != null) {
             // Get public key
             return cert.getPublicKey();
@@ -482,7 +485,7 @@ public class XMLSecurityDataFormat extends ServiceSupport implements DataFormat,
         Object ret = null;
         try {
             ret = decode(exchange, encodedDocument, keyEncryptionKey, true);
-        } catch (org.apache.xml.security.encryption.XMLEncryptionException ex) {
+        } catch (XMLEncryptionException ex) {
             if (ex.getMessage().equals("encryption.nokey")) {
                 //the message don't have EncryptionKey, try key directly
                 ret = decode(exchange, encodedDocument, keyEncryptionKey, false);
@@ -494,7 +497,7 @@ public class XMLSecurityDataFormat extends ServiceSupport implements DataFormat,
         // Clean the secret key from memory
         try {
             keyEncryptionKey.destroy();
-        } catch (javax.security.auth.DestroyFailedException ex) {
+        } catch (DestroyFailedException ex) {
             LOG.debug("Error destroying key: {}", ex.getMessage());
         }
 
@@ -517,7 +520,7 @@ public class XMLSecurityDataFormat extends ServiceSupport implements DataFormat,
         Object ret = null;
         try {
             ret = decode(exchange, encodedDocument, keyEncryptionKey, true);
-        } catch (org.apache.xml.security.encryption.XMLEncryptionException ex) {
+        } catch (XMLEncryptionException ex) {
             if (ex.getMessage().equals("encryption.nokey")) {
                 //the message don't have EncryptionKey, try key directly
                 ret = decode(exchange, encodedDocument, keyEncryptionKey, false);
@@ -529,7 +532,7 @@ public class XMLSecurityDataFormat extends ServiceSupport implements DataFormat,
         // Clean the private key from memory
         try {
             keyEncryptionKey.destroy();
-        } catch (javax.security.auth.DestroyFailedException ex) {
+        } catch (DestroyFailedException ex) {
             LOG.debug("Error destroying key: {}", ex.getMessage());
         }
 

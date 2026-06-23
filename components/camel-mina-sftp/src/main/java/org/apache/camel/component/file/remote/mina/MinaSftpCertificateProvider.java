@@ -24,6 +24,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.GeneralSecurityException;
 import java.security.PublicKey;
+import java.time.Instant;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.file.GenericFileOperationFailedException;
@@ -241,22 +242,22 @@ public final class MinaSftpCertificateProvider {
             throw new GenericFileOperationFailedException(
                     String.format("Certificate from '%s' is not valid. Valid from %s to %s, current time: %s",
                             resourceName,
-                            validAfter > 0 ? java.time.Instant.ofEpochSecond(validAfter) : "epoch",
+                            validAfter > 0 ? Instant.ofEpochSecond(validAfter) : "epoch",
                             validBefore == OpenSshCertificate.INFINITY
                                     ? "forever"
-                                    : java.time.Instant.ofEpochSecond(validBefore),
-                            java.time.Instant.now()));
+                                    : Instant.ofEpochSecond(validBefore),
+                            Instant.now()));
         }
 
         if (LOG.isTraceEnabled()) {
             long validAfter = certificate.getValidAfter();
             long validBefore = certificate.getValidBefore();
             LOG.trace("Certificate validity check passed: validAfter={}, validBefore={}, now={}",
-                    validAfter > 0 ? java.time.Instant.ofEpochSecond(validAfter) : "always",
+                    validAfter > 0 ? Instant.ofEpochSecond(validAfter) : "always",
                     validBefore == OpenSshCertificate.INFINITY
                             ? "forever"
-                            : java.time.Instant.ofEpochSecond(validBefore),
-                    java.time.Instant.now());
+                            : Instant.ofEpochSecond(validBefore),
+                    Instant.now());
         }
     }
 }

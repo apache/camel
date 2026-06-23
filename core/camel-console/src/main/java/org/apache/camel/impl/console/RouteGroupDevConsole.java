@@ -124,6 +124,11 @@ public class RouteGroupDevConsole extends AbstractDevConsole {
                 String ago = TimeUtils.printSince(last.getTime());
                 sb.append(String.format("%n    Since Last Completed: %s", ago));
             }
+            last = mrg.getLastExchangeFailureHandledTimestamp();
+            if (last != null) {
+                String ago = TimeUtils.printSince(last.getTime());
+                sb.append(String.format("%n    Since Last Failure Handled: %s", ago));
+            }
             last = mrg.getLastExchangeFailureTimestamp();
             if (last != null) {
                 String ago = TimeUtils.printSince(last.getTime());
@@ -146,7 +151,7 @@ public class RouteGroupDevConsole extends AbstractDevConsole {
         }
 
         final JsonObject root = new JsonObject();
-        final List<JsonObject> list = new ArrayList<>();
+        final JsonArray list = new JsonArray();
         Function<ManagedRouteGroupMBean, Object> task = mrg -> {
             JsonObject jo = new JsonObject();
             list.add(jo);
@@ -190,6 +195,10 @@ public class RouteGroupDevConsole extends AbstractDevConsole {
             last = mrg.getLastExchangeCompletedTimestamp();
             if (last != null) {
                 stats.put("lastCompletedExchangeTimestamp", last.getTime());
+            }
+            last = mrg.getLastExchangeFailureHandledTimestamp();
+            if (last != null) {
+                stats.put("lastFailureHandledExchangeTimestamp", last.getTime());
             }
             last = mrg.getLastExchangeFailureTimestamp();
             if (last != null) {

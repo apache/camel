@@ -17,6 +17,7 @@
 package org.apache.camel.component.ibm.watson.discovery;
 
 import java.io.InputStream;
+import java.util.Collections;
 
 import com.ibm.watson.discovery.v2.Discovery;
 import com.ibm.watson.discovery.v2.model.*;
@@ -120,7 +121,7 @@ public class WatsonDiscoveryProducer extends DefaultProducer {
             collectionId = getEndpoint().getConfiguration().getCollectionId();
         }
         if (collectionId != null) {
-            builder.collectionIds(java.util.Collections.singletonList(collectionId));
+            builder.collectionIds(Collections.singletonList(collectionId));
         }
 
         QueryResponse result = discovery.query(builder.build()).execute().getResult();

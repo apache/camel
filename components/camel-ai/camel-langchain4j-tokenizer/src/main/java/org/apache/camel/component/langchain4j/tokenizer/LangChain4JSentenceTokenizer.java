@@ -19,8 +19,9 @@ package org.apache.camel.component.langchain4j.tokenizer;
 
 import org.apache.camel.component.langchain4j.tokenizer.config.LangChain4JConfiguration;
 import org.apache.camel.component.langchain4j.tokenizer.util.SplitterTypes;
+import org.apache.camel.spi.annotations.Tokenizer;
 
-@org.apache.camel.spi.annotations.Tokenizer("langChain4jSentenceTokenizer")
+@Tokenizer("langChain4jSentenceTokenizer")
 public class LangChain4JSentenceTokenizer extends AbstractLangChain4JTokenizer<LangChain4JConfiguration> {
 
     @Override

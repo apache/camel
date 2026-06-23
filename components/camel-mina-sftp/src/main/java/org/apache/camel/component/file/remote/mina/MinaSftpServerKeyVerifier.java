@@ -29,6 +29,7 @@ import java.security.PublicKey;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.camel.CamelContext;
@@ -110,7 +111,7 @@ public class MinaSftpServerKeyVerifier extends KnownHostsServerKeyVerifier {
                 log.debug("Loaded {} known hosts entries", entries.size());
             } catch (IOException | GeneralSecurityException e) {
                 log.warn("Failed to load known hosts entries: {}", e.getMessage());
-                cachedEntries = java.util.Collections.emptyList();
+                cachedEntries = Collections.emptyList();
             }
         }
 

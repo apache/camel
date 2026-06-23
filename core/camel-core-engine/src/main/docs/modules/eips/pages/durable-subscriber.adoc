@@ -65,13 +65,19 @@ YAML::
             uri: activemq:topic:foo
 - route:
     from:
-      uri: activemq:topic:foo?clientId=1&durableSubscriptionName=bar1
+      uri: activemq:topic:foo
+      parameters:
+        clientId: 1
+        durableSubscriptionName: bar1
       steps:
         - to:
             uri: mock:result1
 - route:
     from:
-      uri: activemq:topic:foo?clientId=2&durableSubscriptionName=bar2
+      uri: activemq:topic:foo
+      parameters:
+        clientId: 2
+        durableSubscriptionName: bar2
       steps:
         - to:
             uri: mock:result2

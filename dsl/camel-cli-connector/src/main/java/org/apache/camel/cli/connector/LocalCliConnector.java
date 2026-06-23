@@ -24,6 +24,8 @@ import java.lang.management.ClassLoadingMXBean;
 import java.lang.management.GarbageCollectorMXBean;
 import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryMXBean;
+import java.lang.management.MemoryPoolMXBean;
+import java.lang.management.MemoryType;
 import java.lang.management.RuntimeMXBean;
 import java.lang.management.ThreadMXBean;
 import java.nio.file.Files;
@@ -74,6 +76,7 @@ import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.ResourceLoader;
 import org.apache.camel.spi.ResourceReloadStrategy;
 import org.apache.camel.spi.RoutesLoader;
+import org.apache.camel.spi.RuntimeEndpointRegistry;
 import org.apache.camel.spi.ShutdownPrepared;
 import org.apache.camel.support.LoadOnDemandReloadStrategy;
 import org.apache.camel.support.MessageHelper;
@@ -95,7 +98,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * CLI Connector for local management of Camel integrations from Camel JBang.
+ * CLI Connector for local management of Camel integrations from Camel CLI.
  */
 public class LocalCliConnector extends ServiceSupport implements CliConnector, CamelContextAware {
 
@@ -124,6 +127,7 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
     private long traceFilePos;   // keep track of trace offset
     private File messageHistoryFile;
     private File debugFile;
+    private File errorFile;
     private File receiveFile;
     private long receiveFilePos; // keep track of receive offset
     private byte[] lastSource;
@@ -195,12 +199,13 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
             outputFile = createLockFile(lockFile.getName() + "-output.json");
             traceFile = createLockFile(lockFile.getName() + "-trace.json");
             messageHistoryFile = createLockFile(lockFile.getName() + "-history.json");
+            errorFile = createLockFile(lockFile.getName() + "-error.json");
             debugFile = createLockFile(lockFile.getName() + "-debug.json");
             receiveFile = createLockFile(lockFile.getName() + "-receive.json");
             scheduledFuture = executor.scheduleWithFixedDelay(this::task, 0, delay, TimeUnit.MILLISECONDS);
-            LOG.info("Camel JBang CLI enabled");
+            LOG.info("Camel CLI connector enabled");
         } else {
-            LOG.warn("Cannot create PID file: {}. This integration cannot be managed by Camel JBang CLI.", getPid());
+            LOG.warn("Cannot create PID file: {}. This integration cannot be managed by Camel CLI connector.", getPid());
         }
     }
 
@@ -236,7 +241,7 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
         terminateExecutor.submit(new Runnable() {
             @Override
             public void run() {
-                LOG.info("Camel JBang terminating JVM");
+                LOG.info("Camel CLI connector terminating JVM");
                 try {
                     // if we are debugging then detach before stopping camel
                     BacklogDebugger debugger = camelContext.hasService(BacklogDebugger.class);
@@ -272,12 +277,36 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
     }
 
     protected void actionTask() {
+        // scan for all action files: {pid}-action.json (legacy) and {pid}-action-{requestId}.json (multi-client)
+        File dir = lockFile.getParentFile();
+        String prefix = lockFile.getName() + "-action";
+        File[] actionFiles = dir.listFiles((d, name) -> name.startsWith(prefix) && name.endsWith(".json"));
+        if (actionFiles == null || actionFiles.length == 0) {
+            return;
+        }
+        for (File af : actionFiles) {
+            String suffix = af.getName().substring(prefix.length());
+            // suffix is either ".json" (legacy) or "-{requestId}.json" (multi-client)
+            String requestId = suffix.startsWith("-")
+                    ? suffix.substring(1, suffix.length() - 5)  // strip leading "-" and trailing ".json"
+                    : null;
+            File of = requestId != null
+                    ? new File(dir, lockFile.getName() + "-output-" + requestId + ".json")
+                    : this.outputFile;
+            processAction(af, of);
+        }
+    }
+
+    private void processAction(File af, File of) {
         String action = null;
+        File prevOutputFile = this.outputFile;
         try {
-            JsonObject root = loadAction();
+            JsonObject root = loadAction(af);
             if (root == null || root.isEmpty()) {
                 return;
             }
+            // set outputFile so all doAction* methods write to the correct file
+            this.outputFile = of;
 
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Action: {}", root);
@@ -302,16 +331,22 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                 doActionDebugTask(root);
             } else if ("reset-stats".equals(action)) {
                 doActionResetStatsTask();
+            } else if ("jvm".equals(action)) {
+                doActionJvmTask();
             } else if ("thread-dump".equals(action)) {
                 doActionThreadDumpTask();
             } else if ("top-processors".equals(action)) {
                 doActionTopProcessorsTask();
             } else if ("source".equals(action)) {
                 doActionSourceTask(root);
+            } else if ("rest-spec".equals(action)) {
+                doActionRestSpecTask(root);
             } else if ("route-dump".equals(action)) {
                 doActionRouteDumpTask(root);
             } else if ("route-structure".equals(action)) {
                 doActionRouteStructureTask(root);
+            } else if ("route-topology".equals(action)) {
+                doActionRouteTopologyTask(root);
             } else if ("route-controller".equals(action)) {
                 doActionRouteControllerTask(root);
             } else if ("startup-recorder".equals(action)) {
@@ -330,20 +365,43 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                 doActionTraceTask(root);
             } else if ("browse".equals(action)) {
                 doActionBrowseTask(root);
+            } else if ("span".equals(action)) {
+                doActionSpanTask(root);
             } else if ("receive".equals(action)) {
                 doActionReceiveTask(root);
+            } else if ("readme".equals(action)) {
+                doActionReadmeTask(root);
             } else if ("cli-debug".equals(action)) {
                 doActionCliDebug(root);
             }
         } catch (Exception e) {
-            // ignore
-            LOG.warn("Error executing action: {} due to: {}. This exception is ignored.", action != null ? action : actionFile,
+            LOG.warn("Error executing action: {} due to: {}. This exception is ignored.", action != null ? action : af,
                     e.getMessage(),
                     e);
         } finally {
-            // action done so delete file
-            FileUtil.deleteFile(actionFile);
+            this.outputFile = prevOutputFile;
+            FileUtil.deleteFile(af);
         }
+    }
+
+    private void doActionReadmeTask(JsonObject root) throws Exception {
+        String readmeFiles = camelContext.getPropertiesComponent()
+                .resolveProperty("camel.jbang.readmeFiles").orElse(null);
+        JsonObject json = new JsonObject();
+        if (readmeFiles != null) {
+            String filter = root.getString("filter");
+            for (String f : readmeFiles.split(",")) {
+                if (filter == null || f.contains(filter)) {
+                    File file = new File(f);
+                    if (file.isFile() && file.exists()) {
+                        json.put("file", f);
+                        json.put("content", Files.readString(file.toPath()));
+                        break;
+                    }
+                }
+            }
+        }
+        IOHelper.writeText(json.toJson(), outputFile);
     }
 
     private void doActionCliDebug(JsonObject root) {
@@ -683,9 +741,27 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
         if (dc != null) {
             String filter = root.getString("filter");
             String brief = root.getString("brief");
+            String metric = root.getString("metric");
             JsonObject json
                     = (JsonObject) dc.call(DevConsole.MediaType.JSON,
-                            Map.of("filter", filter, "brief", brief));
+                            Map.of("filter", filter, "brief", brief, "metric", metric));
+            LOG.trace("Updating output file: {}", outputFile);
+            IOHelper.writeText(json.toJson(), outputFile);
+        } else {
+            IOHelper.writeText("{}", outputFile);
+        }
+    }
+
+    private void doActionRouteTopologyTask(JsonObject root) throws Exception {
+        DevConsole dc = camelContext.getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class)
+                .resolveById("route-topology");
+        if (dc != null) {
+            String metric = root.getStringOrDefault("metric", "false");
+            String external = root.getStringOrDefault("external", "false");
+            String routes = root.getStringOrDefault("routes", "false");
+            JsonObject json
+                    = (JsonObject) dc.call(DevConsole.MediaType.JSON,
+                            Map.of("metric", metric, "external", external, "routes", routes));
             LOG.trace("Updating output file: {}", outputFile);
             IOHelper.writeText(json.toJson(), outputFile);
         } else {
@@ -706,11 +782,37 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
         }
     }
 
+    private void doActionRestSpecTask(JsonObject root) throws Exception {
+        DevConsole dc = camelContext.getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class)
+                .resolveById("rest-spec");
+        if (dc != null) {
+            String filter = root.getString("filter");
+            Map<String, Object> options = filter != null ? Map.of("filter", filter) : Map.of();
+            JsonObject json = (JsonObject) dc.call(DevConsole.MediaType.JSON, options);
+            LOG.trace("Updating output file: {}", outputFile);
+            IOHelper.writeText(json.toJson(), outputFile);
+        } else {
+            IOHelper.writeText("{}", outputFile);
+        }
+    }
+
     private void doActionTopProcessorsTask() throws IOException {
         DevConsole dc
                 = camelContext.getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class).resolveById("top");
         if (dc != null) {
             JsonObject json = (JsonObject) dc.call(DevConsole.MediaType.JSON, Map.of(Exchange.HTTP_PATH, "/*"));
+            LOG.trace("Updating output file: {}", outputFile);
+            IOHelper.writeText(json.toJson(), outputFile);
+        } else {
+            IOHelper.writeText("{}", outputFile);
+        }
+    }
+
+    private void doActionJvmTask() throws IOException {
+        DevConsole dc = camelContext.getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class)
+                .resolveById("jvm");
+        if (dc != null) {
+            JsonObject json = (JsonObject) dc.call(DevConsole.MediaType.JSON);
             LOG.trace("Updating output file: {}", outputFile);
             IOHelper.writeText(json.toJson(), outputFile);
         } else {
@@ -746,13 +848,16 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
         DevConsole dc = camelContext.getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class)
                 .resolveById("trace");
         if (dc != null) {
+            Map<String, Object> params = new HashMap<>();
             String enabled = root.getString("enabled");
-            JsonObject json;
             if (enabled != null) {
-                json = (JsonObject) dc.call(DevConsole.MediaType.JSON, Map.of("enabled", enabled));
-            } else {
-                json = (JsonObject) dc.call(DevConsole.MediaType.JSON);
+                params.put("enabled", enabled);
             }
+            String dump = root.getString("dump");
+            if (dump != null) {
+                params.put("dump", dump);
+            }
+            JsonObject json = (JsonObject) dc.call(DevConsole.MediaType.JSON, params);
             LOG.trace("Updating output file: {}", outputFile);
             IOHelper.writeText(json.toJson(), outputFile);
         } else {
@@ -781,6 +886,26 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
             IOHelper.writeText(json.toJson(), outputFile);
         } else {
             IOHelper.writeText("{}", outputFile);
+        }
+    }
+
+    private void doActionSpanTask(JsonObject root) throws IOException {
+        DevConsole dc = camelContext.getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class)
+                .resolveById("opentelemetry");
+        if (dc != null) {
+            Map<String, Object> params = new HashMap<>();
+            params.put("dump", "true");
+            String limit = root.getString("limit");
+            if (limit != null) {
+                params.put("limit", limit);
+            }
+            JsonObject json = (JsonObject) dc.call(DevConsole.MediaType.JSON, params);
+            LOG.trace("Updating output file: {}", outputFile);
+            IOHelper.writeText(json.toJson(), outputFile);
+        } else {
+            JsonObject json = new JsonObject();
+            json.put("enabled", false);
+            IOHelper.writeText(json.toJson(), outputFile);
         }
     }
 
@@ -839,6 +964,10 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
         if (mcc != null) {
             mcc.getManagedCamelContext().reset(true);
         }
+        RuntimeEndpointRegistry reg = camelContext.getRuntimeEndpointRegistry();
+        if (reg != null) {
+            reg.reset();
+        }
     }
 
     private void doActionDebugTask(JsonObject root) throws Exception {
@@ -893,7 +1022,7 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                 cr.setCamelContext(camelContext);
                 camelContext.addService(cr);
             }
-            cr.load("Camel JBang", files, restart);
+            cr.load("Camel CLI", files, restart);
             JsonObject jo = new JsonObject();
             Exception error = cr.getLastError();
             if (error != null) {
@@ -912,11 +1041,11 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
     private void doActionReloadTask() {
         ContextReloadStrategy cr = camelContext.hasService(ContextReloadStrategy.class);
         if (cr != null) {
-            cr.onReload("Camel JBang");
+            cr.onReload("Camel CLI");
         } else {
             ResourceReloadStrategy rr = camelContext.hasService(ResourceReloadStrategy.class);
             if (rr != null) {
-                rr.onReload("Camel JBang");
+                rr.onReload("Camel CLI");
             }
         }
     }
@@ -1060,9 +1189,13 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
     }
 
     JsonObject loadAction() {
+        return loadAction(actionFile);
+    }
+
+    JsonObject loadAction(File file) {
         try {
-            if (actionFile != null && actionFile.exists()) {
-                FileInputStream fis = new FileInputStream(actionFile);
+            if (file != null && file.exists()) {
+                FileInputStream fis = new FileInputStream(file);
                 String text = IOHelper.loadText(fis);
                 IOHelper.close(fis);
                 if (!text.isEmpty()) {
@@ -1097,6 +1230,13 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
             RuntimeMXBean mb = ManagementFactory.getRuntimeMXBean();
             if (mb != null) {
                 rc.put("javaVersion", mb.getVmVersion());
+                rc.put("javaVendor", mb.getVmVendor());
+                rc.put("javaVmName", mb.getVmName());
+            }
+            String readmeFiles = camelContext.getPropertiesComponent()
+                    .resolveProperty("camel.jbang.readmeFiles").orElse(null);
+            if (readmeFiles != null) {
+                rc.put("readmeFiles", readmeFiles);
             }
             root.put("runtime", rc);
 
@@ -1289,6 +1429,20 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                         root.put("groovy", json);
                     }
                 }
+                DevConsole dc26 = dcr.resolveById("errors");
+                if (dc26 != null) {
+                    JsonObject json = (JsonObject) dc26.call(DevConsole.MediaType.JSON,
+                            Map.of("stackTrace", "true"));
+                    if (json != null && !json.isEmpty()) {
+                        // only include metadata in status file (full error data is in the error file)
+                        JsonObject summary = new JsonObject();
+                        summary.put("enabled", json.get("enabled"));
+                        summary.put("size", json.get("size"));
+                        summary.put("maximumEntries", json.get("maximumEntries"));
+                        summary.put("timeToLive", json.get("timeToLive"));
+                        root.put("errors", summary);
+                    }
+                }
             }
             // various details
             JsonObject mem = collectMemory();
@@ -1379,6 +1533,23 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                     messageHistoryFile, e.getMessage(), e);
         }
         try {
+            DevConsole dc13c = camelContext.getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class)
+                    .resolveById("errors");
+            if (dc13c != null) {
+                JsonObject json = (JsonObject) dc13c.call(DevConsole.MediaType.JSON,
+                        Map.of("stackTrace", "true"));
+                if (json != null && !json.isEmpty()) {
+                    LOG.trace("Updating error file: {}", errorFile);
+                    String data = json.toJson() + System.lineSeparator();
+                    IOHelper.writeText(data, errorFile);
+                }
+            }
+        } catch (Exception e) {
+            // ignore
+            LOG.trace("Error updating error file: {} due to: {}. This exception is ignored.",
+                    errorFile, e.getMessage(), e);
+        }
+        try {
             DevConsole dc14 = camelContext.getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class)
                     .resolveById("receive");
             if (dc14 != null) {
@@ -1416,9 +1587,25 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
             root.put("heapMemoryMax", mb.getHeapMemoryUsage().getMax());
             root.put("nonHeapMemoryUsed", mb.getNonHeapMemoryUsage().getUsed());
             root.put("nonHeapMemoryCommitted", mb.getNonHeapMemoryUsage().getCommitted());
+            collectMemoryPools(root);
             return root;
         }
         return null;
+    }
+
+    private void collectMemoryPools(JsonObject root) {
+        for (MemoryPoolMXBean pool : ManagementFactory.getMemoryPoolMXBeans()) {
+            String name = pool.getName().toLowerCase(Locale.ROOT);
+            if (pool.getType() == MemoryType.HEAP && (name.contains("old") || name.contains("tenured"))) {
+                root.put("oldGenUsed", pool.getUsage().getUsed());
+                root.put("oldGenCommitted", pool.getUsage().getCommitted());
+                root.put("oldGenMax", pool.getUsage().getMax());
+            } else if (name.contains("metaspace")) {
+                root.put("metaspaceUsed", pool.getUsage().getUsed());
+                root.put("metaspaceCommitted", pool.getUsage().getCommitted());
+                root.put("metaspaceMax", pool.getUsage().getMax());
+            }
+        }
     }
 
     private JsonObject collectClassLoading() {
@@ -1539,6 +1726,9 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
         }
         if (messageHistoryFile != null) {
             FileUtil.deleteFile(messageHistoryFile);
+        }
+        if (errorFile != null) {
+            FileUtil.deleteFile(errorFile);
         }
         if (debugFile != null) {
             FileUtil.deleteFile(debugFile);

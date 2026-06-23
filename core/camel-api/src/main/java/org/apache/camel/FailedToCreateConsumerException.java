@@ -16,32 +16,58 @@
  */
 package org.apache.camel;
 
+import java.util.Objects;
+
 import static org.apache.camel.util.URISupport.sanitizeUri;
 
 /**
- * Thrown if Camel failed to create a consumer for a given endpoint.
+ * Thrown when an {@link Endpoint} cannot produce a {@link Consumer}, for example because the endpoint URI is not
+ * consumer-capable, required options are missing, or an underlying client connection cannot be opened.
+ * <p/>
+ * The originating endpoint URI is sanitized (credentials removed) before being included in the message.
  */
 public class FailedToCreateConsumerException extends RuntimeCamelException {
 
     private final String uri;
 
+    /**
+     * @param endpointURI the URI of the endpoint for which consumer creation failed
+     * @param cause       the cause of the failure
+     */
     public FailedToCreateConsumerException(String endpointURI, Throwable cause) {
-        super("Failed to create Consumer for endpoint for: " + sanitizeUri(endpointURI) + ". Reason: " + cause, cause);
+        super("Failed to create Consumer for endpoint for: " + sanitizeUri(Objects.requireNonNull(endpointURI, "endpointURI"))
+              + ". Reason: " + Objects.requireNonNull(cause, "cause"), cause);
         this.uri = sanitizeUri(endpointURI);
     }
 
+    /**
+     * @param endpoint the endpoint for which consumer creation failed
+     * @param cause    the cause of the failure
+     */
     public FailedToCreateConsumerException(Endpoint endpoint, Throwable cause) {
-        super("Failed to create Consumer for endpoint: " + endpoint + ". Reason: " + cause, cause);
+        super("Failed to create Consumer for endpoint: " + Objects.requireNonNull(endpoint, "endpoint") + ". Reason: "
+              + Objects.requireNonNull(cause, "cause"), cause);
         this.uri = sanitizeUri(endpoint.getEndpointUri());
     }
 
+    /**
+     * @param endpoint the endpoint for which consumer creation failed
+     * @param message  the detail message
+     * @param cause    the cause of the failure
+     */
     public FailedToCreateConsumerException(Endpoint endpoint, String message, Throwable cause) {
-        super("Failed to create Consumer for endpoint: " + endpoint + ". Reason: " + message, cause);
+        super("Failed to create Consumer for endpoint: " + Objects.requireNonNull(endpoint, "endpoint") + ". Reason: "
+              + Objects.requireNonNull(message, "message"), Objects.requireNonNull(cause, "cause"));
         this.uri = sanitizeUri(endpoint.getEndpointUri());
     }
 
+    /**
+     * @param endpoint the endpoint for which consumer creation failed
+     * @param message  the detail message
+     */
     public FailedToCreateConsumerException(Endpoint endpoint, String message) {
-        super("Failed to create Consumer for endpoint: " + endpoint + ". Reason: " + message);
+        super("Failed to create Consumer for endpoint: " + Objects.requireNonNull(endpoint, "endpoint") + ". Reason: "
+              + Objects.requireNonNull(message, "message"));
         this.uri = sanitizeUri(endpoint.getEndpointUri());
     }
 

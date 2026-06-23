@@ -16,6 +16,8 @@
  */
 package org.apache.camel;
 
+import java.util.Objects;
+
 /**
  * Exception indicating a failure while trying to create a proxy of a given type and on a given endpoint
  */
@@ -24,8 +26,14 @@ public class ProxyInstantiationException extends RuntimeCamelException {
     private final Class<?> type;
     private final Endpoint endpoint;
 
+    /**
+     * @param type     the interface type for which a proxy could not be instantiated
+     * @param endpoint the endpoint on which the proxy was being created
+     * @param cause    the cause of the failure
+     */
     public ProxyInstantiationException(Class<?> type, Endpoint endpoint, Throwable cause) {
-        super("Could not instantiate proxy of type " + type.getName() + " on endpoint " + endpoint, cause);
+        super("Could not instantiate proxy of type " + Objects.requireNonNull(type, "type").getName() + " on endpoint "
+              + Objects.requireNonNull(endpoint, "endpoint"), Objects.requireNonNull(cause, "cause"));
         this.type = type;
         this.endpoint = endpoint;
     }

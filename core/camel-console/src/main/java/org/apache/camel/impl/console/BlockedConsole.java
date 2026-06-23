@@ -16,8 +16,6 @@
  */
 package org.apache.camel.impl.console;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
@@ -25,6 +23,7 @@ import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.console.AbstractDevConsole;
 import org.apache.camel.util.TimeUtils;
+import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 
 @DevConsole(name = "blocked", displayName = "Blocked Exchanges", description = "Display blocked exchanges")
@@ -56,7 +55,7 @@ public class BlockedConsole extends AbstractDevConsole {
         AsyncProcessorAwaitManager am = PluginHelper.getAsyncProcessorAwaitManager(getCamelContext());
         root.put("blocked", am.size());
 
-        final List<JsonObject> list = new ArrayList<>();
+        final JsonArray list = new JsonArray();
         for (AsyncProcessorAwaitManager.AwaitThread at : am.browse()) {
             JsonObject props = new JsonObject();
             props.put("exchangeId", at.getExchange().getExchangeId());

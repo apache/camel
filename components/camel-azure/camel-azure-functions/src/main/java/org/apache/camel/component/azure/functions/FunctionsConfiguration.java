@@ -39,7 +39,7 @@ public class FunctionsConfiguration implements Cloneable {
     private String functionName;
 
     // Security parameters
-    @UriParam(label = "security", secret = true,
+    @UriParam(label = "security", security = "secret",
               description = "The Azure subscription ID (required for management operations)")
     private String subscriptionId;
 
@@ -47,19 +47,19 @@ public class FunctionsConfiguration implements Cloneable {
               description = "The resource group name containing the function app (required for management operations)")
     private String resourceGroup;
 
-    @UriParam(label = "security", secret = true,
+    @UriParam(label = "security", security = "secret",
               description = "The function key for direct HTTP invocation")
     private String functionKey;
 
-    @UriParam(label = "security", secret = true,
+    @UriParam(label = "security", security = "secret",
               description = "The host key for the function app (used if function key is not provided)")
     private String hostKey;
 
-    @UriParam(label = "security", secret = true,
+    @UriParam(label = "security", security = "secret",
               description = "Azure AD Client ID for service principal authentication")
     private String clientId;
 
-    @UriParam(label = "security", secret = true,
+    @UriParam(label = "security", security = "secret",
               description = "Azure AD Client Secret for service principal authentication")
     private String clientSecret;
 
@@ -108,7 +108,7 @@ public class FunctionsConfiguration implements Cloneable {
               description = "Runtime version")
     private String runtimeVersion;
 
-    @UriParam(label = "producer", secret = true,
+    @UriParam(label = "producer", security = "secret",
               description = "Storage account connection string for function app")
     private String storageAccountConnectionString;
 

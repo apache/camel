@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.as2;
 
+import java.security.cert.Certificate;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.as2.api.*;
@@ -261,13 +263,13 @@ public class AS2ServerWildcardPatternIT extends AS2ServerSecTestBase {
                 null,
                 null,
                 signingAlgorithm,
-                structure.isSigned() ? new java.security.cert.Certificate[] { signingCert } : null,
+                structure.isSigned() ? new Certificate[] { signingCert } : null,
                 structure.isSigned() ? signingKP.getPrivate() : null,
                 compressionAlgorithm,
                 DISPOSITION_NOTIFICATION_TO,
                 SIGNED_RECEIPT_MIC_ALGORITHMS,
                 encryptionAlgorithm,
-                structure.isEncrypted() ? new java.security.cert.Certificate[] { signingCert } : null,
+                structure.isEncrypted() ? new Certificate[] { signingCert } : null,
                 null,
                 null,
                 null,

@@ -9,7 +9,6 @@
 :component-header: Only producer is supported
 //Manually maintained attributes
 :group: AWS
-:camel-spring-boot-name: aws2-timestream
 
 *Since Camel {since}*
 
@@ -40,9 +39,9 @@ https://aws.amazon.com/timestream/[AWS Timestream].
 
 == URI Format
 
--------------------------
+----
 aws2-timestream://clientType:label[?options]
--------------------------
+----
 
 You can append query options to the URI in the following format:
 
@@ -128,23 +127,101 @@ Camel-AWS Timestream component provides the following operation on the producer 
 * Write Operation
 ** createDatabase: this operation will create a timestream database
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:createDatabase")
     .setHeader(Timestream2Constants.DATABASE_NAME, constant("testDb"))
     .setHeader(Timestream2Constants.KMS_KEY_ID, constant("testKmsKey"))
-    .to("aws2-timestream://write:test?awsTimestreamWriteClient=#awsTimestreamWriteClient&operation=createDatabase")
---------------------------------------------------------------------------------
+    .to("aws2-timestream://write:test?awsTimestreamWriteClient=#awsTimestreamWriteClient&operation=createDatabase");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="direct:createDatabase"/>
+    <setHeader name="CamelAwsTimestreamDatabaseName">
+        <constant>testDb</constant>
+    </setHeader>
+    <setHeader name="CamelAwsTimestreamKmsKeyId">
+        <constant>testKmsKey</constant>
+    </setHeader>
+    <to uri="aws2-timestream://write:test?awsTimestreamWriteClient=#awsTimestreamWriteClient&amp;operation=createDatabase"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:createDatabase
+    steps:
+      - setHeader:
+          name: CamelAwsTimestreamDatabaseName
+          constant: testDb
+      - setHeader:
+          name: CamelAwsTimestreamKmsKeyId
+          constant: testKmsKey
+      - to:
+          uri: aws2-timestream://write:test
+          parameters:
+            awsTimestreamWriteClient: "#awsTimestreamWriteClient"
+            operation: createDatabase
+----
+====
 
 * Query Operation
 ** query: this operation will execute a timestream query
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:query")
     .setHeader(Timestream2Constants.QUERY_STRING, constant("SELECT * FROM testDb.testTable ORDER BY time DESC LIMIT 10"))
-    .to("aws2-timestream://query:test?awsTimestreamQueryClient=#awsTimestreamQueryClient&operation=query")
---------------------------------------------------------------------------------
+    .to("aws2-timestream://query:test?awsTimestreamQueryClient=#awsTimestreamQueryClient&operation=query");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="direct:query"/>
+    <setHeader name="CamelAwsTimestreamQueryString">
+        <constant>SELECT * FROM testDb.testTable ORDER BY time DESC LIMIT 10</constant>
+    </setHeader>
+    <to uri="aws2-timestream://query:test?awsTimestreamQueryClient=#awsTimestreamQueryClient&amp;operation=query"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:query
+    steps:
+      - setHeader:
+          name: CamelAwsTimestreamQueryString
+          constant: "SELECT * FROM testDb.testTable ORDER BY time DESC LIMIT 10"
+      - to:
+          uri: aws2-timestream://query:test
+          parameters:
+            awsTimestreamQueryClient: "#awsTimestreamQueryClient"
+            operation: query
+----
+====
 
 === Using a POJO as body
 
@@ -155,22 +232,24 @@ In AWS Timestream there are multiple operations you can submit, as an example fo
 * Write Operation
 ** createDatabase: this operation will create a timestream database
 
+._Java-only: uses AWS SDK POJO request builder as message body_
 [source,java]
-------------------------------------------------------------------------------------------------------
+----
 from("direct:start")
   .setBody(CreateDatabaseRequest.builder().database(Database.builder().databaseName("testDb").kmsKeyId("testKmsKey").build()).build())
   .to("aws2-timestream://write:test?awsTimestreamWriteClient=#awsTimestreamWriteClient&operation=createDatabase&pojoRequest=true")
-------------------------------------------------------------------------------------------------------
+----
 
 * Query Operation
 ** query: this operation will execute a timestream query
 
+._Java-only: uses AWS SDK POJO request builder as message body_
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:query")
     .setBody(QueryRequest.builder().queryString("SELECT * FROM testDb.testTable ORDER BY time DESC LIMIT 10").build())
     .to("aws2-timestream://query:test?awsTimestreamQueryClient=#awsTimestreamQueryClient&operation=query&pojoRequest=true")
---------------------------------------------------------------------------------
+----
 
 In this way, you'll pass the request directly without the need of passing headers and options specifically related to this operation.
 
@@ -181,15 +260,14 @@ Maven users will need to add the following dependency to their pom.xml.
 *pom.xml*
 
 [source,xml]
----------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-aws2-timestream</artifactId>
     <version>${camel-version}</version>
 </dependency>
----------------------------------------
+----
 
 where `$\{camel-version}` must be replaced by the actual version of Camel.
 
 
-include::spring-boot:partial$starter.adoc[]

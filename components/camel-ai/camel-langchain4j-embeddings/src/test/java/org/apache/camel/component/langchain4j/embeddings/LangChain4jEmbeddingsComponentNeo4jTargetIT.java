@@ -165,7 +165,7 @@ public class LangChain4jEmbeddingsComponentNeo4jTargetIT extends CamelTestSuppor
                         .setHeader(Neo4jHeaders.OPERATION).constant(Neo4Operation.CREATE_VECTOR)
                         .setHeader(Neo4jHeaders.VECTOR_ID).constant("1")
                         .setHeader(Neo4jHeaders.LABEL).constant("Test")
-                        .transformDataType(new org.apache.camel.spi.DataType("neo4j:embeddings"))
+                        .transformDataType(new DataType("neo4j:embeddings"))
                         .to(NEO4J_URI);
 
                 from("direct:search")

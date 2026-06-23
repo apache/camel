@@ -22,6 +22,6 @@ import org.apache.camel.component.file.remote.BaseServerTestSupport;
  * Abstract base class for unit testing using a secure FTP Server (over SSL/TLS)
  */
 public abstract class FtpsServerTestSupport extends BaseServerTestSupport {
-    protected static final String AUTH_VALUE_SSL = "SSLv3";
+    protected static final String AUTH_VALUE_SSL = "TLSv1.2";
     protected static final String AUTH_VALUE_TLS = "TLSv1.3";
 }

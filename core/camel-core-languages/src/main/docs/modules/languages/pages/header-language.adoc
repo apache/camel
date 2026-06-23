@@ -6,9 +6,6 @@
 :since: 1.5
 :supportlevel: Stable
 :tabs-sync-option:
-//Manually maintained attributes
-:camel-spring-boot-name: core
-:starter-artifactid: camel-core-starter
 
 *Since Camel {since}*
 
@@ -25,6 +22,18 @@ include::partial$language-options.adoc[]
 
 The `recipientList` EIP can utilize a header:
 
+[tabs]
+====
+
+Java::
++
+[source,java]
+----
+from("direct:a").recipientList(header("myHeader"));
+----
+
+XML::
++
 [source,xml]
 ----
 <route>
@@ -35,17 +44,24 @@ The `recipientList` EIP can utilize a header:
 </route>
 ----
 
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:a
+      steps:
+        - recipientList:
+            expression:
+              header:
+                expression: myHeader
+----
+====
+
 In this case, the list of recipients are contained in the header
 'myHeader'.
-
-And the same example in Java DSL:
-
-[source,java]
-----
-from("direct:a").recipientList(header("myHeader"));
-----
 
 == Dependencies
 
 The Header language is part of *camel-core*.
-

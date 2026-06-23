@@ -412,7 +412,7 @@ public interface WatsonLanguageEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final WatsonLanguageHeaderNameBuilder INSTANCE = new WatsonLanguageHeaderNameBuilder();
+        public static final WatsonLanguageHeaderNameBuilder INSTANCE = new WatsonLanguageHeaderNameBuilder();
 
         /**
          * The operation to perform.

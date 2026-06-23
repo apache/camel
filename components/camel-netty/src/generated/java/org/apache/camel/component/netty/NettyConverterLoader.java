@@ -60,6 +60,14 @@ public final class NettyConverterLoader implements TypeConverterLoader, CamelCon
                 }
                 return answer;
             });
+        addTypeConverter(registry, io.netty.buffer.ByteBuf.class, java.io.InputStream.class, false,
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.netty.NettyConverter.toByteBuffer((java.io.InputStream) value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, io.netty.buffer.ByteBuf.class, java.lang.String.class, false,
             (type, exchange, value) -> {
                 Object answer = org.apache.camel.component.netty.NettyConverter.toByteBuffer((java.lang.String) value, exchange);

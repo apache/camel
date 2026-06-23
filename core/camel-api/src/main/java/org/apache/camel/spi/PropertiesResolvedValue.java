@@ -16,9 +16,22 @@
  */
 package org.apache.camel.spi;
 
+import org.jspecify.annotations.Nullable;
+
 /**
- * Data about a {@link PropertiesComponent} property placeholder that has been resolved to a value by Camel.
+ * Captures how a single {@link PropertiesComponent} property placeholder was resolved, for inspection and tooling.
+ * <p/>
+ * Each instance records the placeholder {@code name}, the {@code originalValue} (the raw placeholder expression), the
+ * resolved {@code value}, any {@code defaultValue} that applied, and the {@code source} that provided the value. Camel
+ * tracks these so the resolved configuration can be reviewed, for example by the developer console or diagnostics.
+ * <p/>
+ * See <a href="https://camel.apache.org/manual/using-propertyplaceholder.html">Using PropertyPlaceholder</a> in the
+ * Camel user manual.
+ *
+ * @see   PropertiesComponent
+ * @since 4.9
  */
-public record PropertiesResolvedValue(String name, String originalValue, String value, String defaultValue, String source) {
+public record PropertiesResolvedValue(String name, String originalValue, String value, @Nullable String defaultValue,
+        @Nullable String source) {
 
 }

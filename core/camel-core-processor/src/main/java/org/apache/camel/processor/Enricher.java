@@ -23,6 +23,7 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.CamelExchangeException;
+import org.apache.camel.EndpointSending;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.ExchangePropertyKey;
@@ -32,6 +33,7 @@ import org.apache.camel.spi.HeadersMapFactory;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.ProcessorExchangeFactory;
 import org.apache.camel.spi.RouteIdAware;
+import org.apache.camel.spi.StepIdAware;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.MessageHelper;
@@ -49,11 +51,13 @@ import static org.apache.camel.support.ExchangeHelper.copyResultsPreservePattern
  *
  * @see PollEnricher
  */
-public class Enricher extends BaseProcessorSupport implements IdAware, RouteIdAware, CamelContextAware {
+public class Enricher extends BaseProcessorSupport
+        implements EndpointSending, IdAware, RouteIdAware, StepIdAware, CamelContextAware {
 
     private CamelContext camelContext;
     private String id;
     private String routeId;
+    private String stepId;
     private final Expression expression;
     private final String uri;
     private String variableSend;
@@ -102,6 +106,16 @@ public class Enricher extends BaseProcessorSupport implements IdAware, RouteIdAw
     @Override
     public void setRouteId(String routeId) {
         this.routeId = routeId;
+    }
+
+    @Override
+    public String getStepId() {
+        return stepId;
+    }
+
+    @Override
+    public void setStepId(String stepId) {
+        this.stepId = stepId;
     }
 
     public Expression getExpression() {

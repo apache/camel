@@ -44,6 +44,8 @@ public class MicrometerPrometheusConfigurer extends org.apache.camel.support.com
         case "logMetricsOnShutdown": target.setLogMetricsOnShutdown(property(camelContext, boolean.class, value)); return true;
         case "logmetricsonshutdownfilters":
         case "logMetricsOnShutdownFilters": target.setLogMetricsOnShutdownFilters(property(camelContext, java.lang.String.class, value)); return true;
+        case "logmetricsonshutdownformat":
+        case "logMetricsOnShutdownFormat": target.setLogMetricsOnShutdownFormat(property(camelContext, java.lang.String.class, value)); return true;
         case "namingstrategy":
         case "namingStrategy": target.setNamingStrategy(property(camelContext, java.lang.String.class, value)); return true;
         case "path": target.setPath(property(camelContext, java.lang.String.class, value)); return true;
@@ -81,6 +83,8 @@ public class MicrometerPrometheusConfigurer extends org.apache.camel.support.com
         case "logMetricsOnShutdown": return boolean.class;
         case "logmetricsonshutdownfilters":
         case "logMetricsOnShutdownFilters": return java.lang.String.class;
+        case "logmetricsonshutdownformat":
+        case "logMetricsOnShutdownFormat": return java.lang.String.class;
         case "namingstrategy":
         case "namingStrategy": return java.lang.String.class;
         case "path": return java.lang.String.class;
@@ -119,6 +123,8 @@ public class MicrometerPrometheusConfigurer extends org.apache.camel.support.com
         case "logMetricsOnShutdown": return target.isLogMetricsOnShutdown();
         case "logmetricsonshutdownfilters":
         case "logMetricsOnShutdownFilters": return target.getLogMetricsOnShutdownFilters();
+        case "logmetricsonshutdownformat":
+        case "logMetricsOnShutdownFormat": return target.getLogMetricsOnShutdownFormat();
         case "namingstrategy":
         case "namingStrategy": return target.getNamingStrategy();
         case "path": return target.getPath();

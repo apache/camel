@@ -26,17 +26,8 @@ public class CxfRsHeaderFilterStrategy extends DefaultHeaderFilterStrategy {
     }
 
     protected void initialize() {
-
         getOutFilter().add(CxfConstants.OPERATION_NAME.toLowerCase());
 
         getOutFilter().add("Content-Type".toLowerCase());
-        // Support to filter the Content-Type case insensitive
-        setLowerCase(true);
-
-        // filter headers begin with "Camel" or "org.apache.camel"
-        setOutFilterStartsWith(CAMEL_FILTER_STARTS_WITH);
-        setInFilterStartsWith(CAMEL_FILTER_STARTS_WITH);
-
     }
-
 }

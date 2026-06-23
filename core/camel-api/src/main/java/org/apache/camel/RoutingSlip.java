@@ -23,11 +23,11 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Indicates that this method is to be used as a <a href="http://camel.apache.org/routing-slip.html">Routing Slip</a>
+ * Indicates that this method is to be used as a <a href="https://camel.apache.org/routing-slip.html">Routing Slip</a>
  * routing the incoming message through a series of processing steps.
  *
  * When a message {@link org.apache.camel.Exchange} is received from an {@link org.apache.camel.Endpoint} then the
- * <a href="http://camel.apache.org/bean-integration.html">Bean Integration</a> mechanism is used to map the incoming
+ * <a href="https://camel.apache.org/bean-integration.html">Bean Integration</a> mechanism is used to map the incoming
  * {@link org.apache.camel.Message} to the method parameters.
  *
  * The return value of the method is then converted to either a {@link java.util.Collection} or array of objects where

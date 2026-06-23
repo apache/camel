@@ -560,6 +560,17 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition>
     }
 
     /**
+     * Enable delayer for this route.
+     *
+     * @param  delay delay in millis. Supports property placeholders.
+     * @return       the builder
+     */
+    public RouteDefinition delayer(String delay) {
+        setDelayer(delay);
+        return this;
+    }
+
+    /**
      * Installs the given <a href="http://camel.apache.org/error-handler.html">error handler</a> builder.
      *
      * @param  ref reference to existing error handler
@@ -1279,12 +1290,11 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition>
     /**
      * This route is created from REST DSL
      */
+    @XmlTransient
     public void setRest(Boolean rest) {
         this.rest = rest;
     }
 
-    @XmlAttribute
-    @Metadata(label = "advanced")
     public Boolean isRest() {
         return rest;
     }
@@ -1292,12 +1302,11 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition>
     /**
      * This route is created from a route template (or from a Kamelet).
      */
+    @XmlTransient
     public void setTemplate(Boolean template) {
         this.template = template;
     }
 
-    @XmlAttribute
-    @Metadata(label = "advanced")
     public Boolean isTemplate() {
         return template;
     }
@@ -1305,12 +1314,11 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition>
     /**
      * This route is created from a Kamelet.
      */
+    @XmlTransient
     public void setKamelet(Boolean kamelet) {
         this.kamelet = kamelet;
     }
 
-    @XmlAttribute
-    @Metadata(label = "advanced")
     public Boolean isKamelet() {
         return kamelet;
     }

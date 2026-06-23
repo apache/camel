@@ -27,10 +27,8 @@ import org.awaitility.Awaitility;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-@DisabledIfSystemProperty(named = "ci.env.name", matches = ".*", disabledReason = "Flaky on Github CI")
 public class JmsMultipleConsumersQueueTest extends AbstractJMSTest {
 
     @Order(2)
@@ -90,8 +88,8 @@ public class JmsMultipleConsumersQueueTest extends AbstractJMSTest {
     }
 
     private void waitForConnections() {
-        Awaitility.await().until(() -> context.getRoute("route-1").getUptimeMillis() > 100);
-        Awaitility.await().until(() -> context.getRoute("route-2").getUptimeMillis() > 100);
-        Awaitility.await().until(() -> context.getRoute("route-3").getUptimeMillis() > 100);
+        Awaitility.await().until(() -> context.getRoute("route-1").getUptimeMillis() > 500);
+        Awaitility.await().until(() -> context.getRoute("route-2").getUptimeMillis() > 500);
+        Awaitility.await().until(() -> context.getRoute("route-3").getUptimeMillis() > 500);
     }
 }

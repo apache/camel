@@ -16,7 +16,6 @@
  */
 package org.apache.camel.yaml;
 
-import java.io.IOException;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -37,6 +36,8 @@ import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.ExpressionNode;
 import org.apache.camel.model.FromDefinition;
 import org.apache.camel.model.OptionalIdentifiedDefinition;
+import org.apache.camel.model.RouteConfigurationDefinition;
+import org.apache.camel.model.RouteConfigurationsDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RouteTemplateDefinition;
 import org.apache.camel.model.RouteTemplatesDefinition;
@@ -45,16 +46,19 @@ import org.apache.camel.model.SendDefinition;
 import org.apache.camel.model.ToDynamicDefinition;
 import org.apache.camel.model.dataformat.DataFormatsDefinition;
 import org.apache.camel.model.language.ExpressionDefinition;
+import org.apache.camel.model.rest.RestDefinition;
+import org.apache.camel.model.rest.RestsDefinition;
 import org.apache.camel.spi.ModelToYAMLDumper;
 import org.apache.camel.spi.NamespaceAware;
 import org.apache.camel.spi.annotations.JdkService;
 import org.apache.camel.util.KeyValueHolder;
-import org.apache.camel.yaml.out.ModelWriter;
+import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.yaml.out.YamlModelWriter;
 
 import static org.apache.camel.model.ProcessorDefinitionHelper.filterTypeInOutputs;
 
 /**
- * Lightweight {@link org.apache.camel.spi.ModelToYAMLDumper} based on the generated {@link ModelWriter}.
+ * Lightweight {@link org.apache.camel.spi.ModelToYAMLDumper} based on the generated {@link YamlModelWriter}.
  */
 @JdkService(ModelToYAMLDumper.FACTORY)
 public class LwModelToYAMLDumper implements ModelToYAMLDumper {
@@ -86,63 +90,6 @@ public class LwModelToYAMLDumper implements ModelToYAMLDumper {
             }
         };
 
-        StringWriter buffer = new StringWriter();
-        ModelWriter writer = new ModelWriter(buffer) {
-            @Override
-            protected void doWriteOptionalIdentifiedDefinitionAttributes(OptionalIdentifiedDefinition<?> def)
-                    throws IOException {
-
-                if (generatedIds || Boolean.TRUE.equals(def.getCustomId())) {
-                    // write id
-                    doWriteAttribute("id", def.getId());
-                }
-                // write location information
-                if (sourceLocation || context.isDebugging()) {
-                    String loc = (def instanceof RouteDefinition rd1 ? rd1.getInput() : def).getLocation();
-                    int line = (def instanceof RouteDefinition rd2 ? rd2.getInput() : def).getLineNumber();
-                    if (line != -1) {
-                        writer.addAttribute("sourceLineNumber", Integer.toString(line));
-                        writer.addAttribute("sourceLocation", loc);
-                    }
-                }
-            }
-
-            @Override
-            protected void doWriteValue(String value) throws IOException {
-                if (value != null && !value.isEmpty()) {
-                    super.doWriteValue(value);
-                }
-            }
-
-            @Override
-            protected void text(String name, String text) throws IOException {
-                if (resolvePlaceholders) {
-                    text = resolve(text, properties);
-                }
-                super.text(name, text);
-            }
-
-            @Override
-            protected void attribute(String name, Object value) throws IOException {
-                if (resolvePlaceholders && value != null) {
-                    value = resolve(value.toString(), properties);
-                }
-                super.attribute(name, value);
-            }
-
-            String resolve(String value, Properties properties) {
-                context.getPropertiesComponent().setLocalProperties(properties);
-                try {
-                    return context.resolvePropertyPlaceholders(value);
-                } catch (Exception e) {
-                    return value;
-                } finally {
-                    // clear local after the route is dumped
-                    context.getPropertiesComponent().setLocalProperties(null);
-                }
-            }
-        };
-
         // gather all namespaces from the routes or route which is stored on the expression nodes
         if (definition instanceof RouteTemplatesDefinition templates) {
             templates.getRouteTemplates().forEach(template -> extractor.accept(template.getRoute()));
@@ -154,16 +101,91 @@ public class LwModelToYAMLDumper implements ModelToYAMLDumper {
             extractor.accept(route);
         }
 
+        YamlModelWriter writer = new YamlModelWriter() {
+            @Override
+            protected void doWriteOptionalIdentifiedDefinitionAttributes(
+                    JsonObject jo, OptionalIdentifiedDefinition<?> def) {
+                if (generatedIds || Boolean.TRUE.equals(def.getCustomId())) {
+                    doWriteAttribute(jo, "id", def.getId(), null);
+                }
+                doWriteAttribute(jo, "description", def.getDescription(), null);
+                if (sourceLocation || context.isDebugging()) {
+                    String loc = (def instanceof RouteDefinition rd1 ? rd1.getInput() : def).getLocation();
+                    int line = (def instanceof RouteDefinition rd2 ? rd2.getInput() : def).getLineNumber();
+                    if (line != -1) {
+                        doWriteAttribute(jo, "sourceLineNumber", Integer.toString(line), null);
+                        doWriteAttribute(jo, "sourceLocation", loc, null);
+                    }
+                }
+            }
+
+            @Override
+            protected void doWriteAttribute(JsonObject jo, String key, String value, String defaultValue) {
+                if (resolvePlaceholders && value != null) {
+                    value = resolve(value, properties);
+                }
+                if ("uri".equals(key) && uriAsParameters) {
+                    expandUri(jo, value);
+                    return;
+                }
+                super.doWriteAttribute(jo, key, value, defaultValue);
+            }
+
+            @Override
+            protected void doWriteValue(JsonObject jo, String value) {
+                if (resolvePlaceholders && value != null) {
+                    value = resolve(value, properties);
+                }
+                super.doWriteValue(jo, value);
+            }
+
+            String resolve(String value, Properties properties) {
+                context.getPropertiesComponent().setLocalProperties(properties);
+                try {
+                    return context.resolvePropertyPlaceholders(value);
+                } catch (Exception e) {
+                    return value;
+                } finally {
+                    context.getPropertiesComponent().setLocalProperties(null);
+                }
+            }
+        };
         writer.setUriAsParameters(uriAsParameters);
         writer.setCamelContext(context);
-        writer.start();
-        try {
-            writer.writeOptionalIdentifiedDefinitionRef((OptionalIdentifiedDefinition) definition);
-        } finally {
-            writer.stop();
+
+        List<JsonObject> roots = new ArrayList<>();
+        if (definition instanceof RoutesDefinition rd) {
+            for (RouteDefinition route : rd.getRoutes()) {
+                roots.add(writer.writeRouteDefinition(route));
+            }
+        } else if (definition instanceof RouteDefinition route) {
+            roots.add(writer.writeRouteDefinition(route));
+        } else if (definition instanceof RouteTemplatesDefinition rtd) {
+            for (RouteTemplateDefinition template : rtd.getRouteTemplates()) {
+                roots.add(writer.writeRouteTemplateDefinition(template));
+            }
+        } else if (definition instanceof RouteTemplateDefinition template) {
+            roots.add(writer.writeRouteTemplateDefinition(template));
+        } else if (definition instanceof RestsDefinition rd) {
+            for (RestDefinition rest : rd.getRests()) {
+                roots.add(writer.writeRestDefinition(rest));
+            }
+        } else if (definition instanceof RestDefinition rest) {
+            roots.add(writer.writeRestDefinition(rest));
+        } else if (definition instanceof RouteConfigurationsDefinition rcd) {
+            for (RouteConfigurationDefinition config : rcd.getRouteConfigurations()) {
+                roots.add(writer.writeRouteConfigurationDefinition(config));
+            }
+        } else if (definition instanceof RouteConfigurationDefinition config) {
+            roots.add(writer.writeRouteConfigurationDefinition(config));
+        } else {
+            JsonObject jo = writer.writeOptionalIdentifiedDefinitionRef((OptionalIdentifiedDefinition) definition);
+            if (jo != null) {
+                roots.add(jo);
+            }
         }
 
-        return buffer.toString();
+        return writer.printAsYaml(roots);
     }
 
     @Override
@@ -421,7 +443,7 @@ public class LwModelToYAMLDumper implements ModelToYAMLDumper {
             // noop
         }
 
-        public void writeDataFormats(Map<String, DataFormatDefinition> dataFormats) throws Exception {
+        public void writeDataFormats(Map<String, DataFormatDefinition> dataFormats) {
             if (dataFormats.isEmpty()) {
                 return;
             }
@@ -431,16 +453,13 @@ public class LwModelToYAMLDumper implements ModelToYAMLDumper {
             DataFormatsDefinition def = new DataFormatsDefinition();
             def.setDataFormats(new ArrayList<>(dataFormats.values()));
 
-            StringWriter tmp = new StringWriter();
-            ModelWriter writer = new ModelWriter(tmp);
+            YamlModelWriter writer = new YamlModelWriter();
             writer.setCamelContext(camelContext);
-            writer.start();
-            try {
-                writer.writeDataFormatsDefinition(def);
-            } finally {
-                writer.stop();
-            }
-            for (String line : tmp.toString().split("\n")) {
+            JsonObject jo = writer.writeDataFormatsDefinition(def);
+            List<JsonObject> roots = new ArrayList<>();
+            roots.add(jo);
+            String yaml = writer.printAsYaml(roots);
+            for (String line : yaml.split("\n")) {
                 buffer.write("    ");
                 buffer.write(line);
                 buffer.write("\n");

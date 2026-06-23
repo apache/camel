@@ -26,6 +26,7 @@ import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBElement;
 import jakarta.xml.bind.JAXBException;
 import jakarta.xml.bind.JAXBIntrospector;
+import jakarta.xml.ws.Holder;
 
 import javax.xml.namespace.QName;
 
@@ -146,8 +147,8 @@ public class SoapDataFormat extends JaxbDataFormat {
 
         // In the case of a parameter, the class of the value of the holder class
         // is used for the mapping rather than the holder class itself.
-        if (fromObj instanceof jakarta.xml.ws.Holder) {
-            jakarta.xml.ws.Holder holder = (jakarta.xml.ws.Holder) fromObj;
+        if (fromObj instanceof Holder) {
+            Holder holder = (Holder) fromObj;
             value = holder.value;
             if (null == value) {
                 return null;

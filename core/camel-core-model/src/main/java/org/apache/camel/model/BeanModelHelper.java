@@ -30,6 +30,7 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.ScriptingLanguage;
 import org.apache.camel.support.ExchangeHelper;
+import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.support.ScriptHelper;
 import org.apache.camel.util.StringHelper;
@@ -194,7 +195,7 @@ public final class BeanModelHelper {
                             PropertyBindingSupport.setPropertiesOnTarget(camelContext, local, props);
                         }
                         if (def.getInitMethod() != null) {
-                            org.apache.camel.support.ObjectHelper.invokeMethodSafe(def.getInitMethod(), local);
+                            ObjectHelper.invokeMethodSafe(def.getInitMethod(), local);
                         }
                         if (def.getDestroyMethod() != null) {
                             routeTemplateContext.registerDestroyMethod(def.getName(), def.getDestroyMethod());
@@ -221,7 +222,7 @@ public final class BeanModelHelper {
                             }
                             if (def.getInitMethod() != null) {
                                 try {
-                                    org.apache.camel.support.ObjectHelper.invokeMethodSafe(def.getInitMethod(), local);
+                                    ObjectHelper.invokeMethodSafe(def.getInitMethod(), local);
                                 } catch (Exception e) {
                                     throw RuntimeCamelException.wrapRuntimeException(e);
                                 }
@@ -283,7 +284,7 @@ public final class BeanModelHelper {
                         }
                     }
                     if (def.getInitMethod() != null) {
-                        org.apache.camel.support.ObjectHelper.invokeMethodSafe(def.getInitMethod(), local);
+                        ObjectHelper.invokeMethodSafe(def.getInitMethod(), local);
                     }
                     if (def.getDestroyMethod() != null) {
                         routeTemplateContext.registerDestroyMethod(def.getName(), def.getDestroyMethod());

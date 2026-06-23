@@ -1017,6 +1017,50 @@ public interface SjmsEndpointBuilderFactory {
             return this;
         }
         /**
+         * Whether to enable sending and receiving JMS ObjectMessage. By default
+         * this is disabled because Java object serialization is a known source
+         * of security vulnerabilities. Enable this option only if you trust the
+         * source of the messages and need to send or receive Java serialized
+         * objects via JMS. When disabled, Camel will refuse to create or read
+         * JMS ObjectMessage instances. Options that rely on ObjectMessage
+         * internally (such as transferException) require this option to be
+         * enabled.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param objectMessageEnabled the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSjmsEndpointConsumerBuilder objectMessageEnabled(boolean objectMessageEnabled) {
+            doSetProperty("objectMessageEnabled", objectMessageEnabled);
+            return this;
+        }
+        /**
+         * Whether to enable sending and receiving JMS ObjectMessage. By default
+         * this is disabled because Java object serialization is a known source
+         * of security vulnerabilities. Enable this option only if you trust the
+         * source of the messages and need to send or receive Java serialized
+         * objects via JMS. When disabled, Camel will refuse to create or read
+         * JMS ObjectMessage instances. Options that rely on ObjectMessage
+         * internally (such as transferException) require this option to be
+         * enabled.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param objectMessageEnabled the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSjmsEndpointConsumerBuilder objectMessageEnabled(String objectMessageEnabled) {
+            doSetProperty("objectMessageEnabled", objectMessageEnabled);
+            return this;
+        }
+        /**
          * Specifies the interval between recovery attempts, i.e. when a
          * connection is being refreshed, in milliseconds. The default is 5000
          * ms, that is, 5 seconds.
@@ -1145,8 +1189,9 @@ public interface SjmsEndpointBuilderFactory {
          * provider's ObjectInputStream; to block such attacks, also configure
          * the JMS provider's own deserialization filter and/or the JVM-wide
          * -Djdk.serialFilter. When this option is not set and no JVM-wide
-         * filter is configured, a conservative default filter allowing java.,
-         * javax. and org.apache.camel. is applied.
+         * filter is configured, a conservative default filter denying java.net.
+         * and otherwise allowing java., javax. and org.apache.camel. is
+         * applied.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -2204,6 +2249,50 @@ public interface SjmsEndpointBuilderFactory {
             return this;
         }
         /**
+         * Whether to enable sending and receiving JMS ObjectMessage. By default
+         * this is disabled because Java object serialization is a known source
+         * of security vulnerabilities. Enable this option only if you trust the
+         * source of the messages and need to send or receive Java serialized
+         * objects via JMS. When disabled, Camel will refuse to create or read
+         * JMS ObjectMessage instances. Options that rely on ObjectMessage
+         * internally (such as transferException) require this option to be
+         * enabled.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param objectMessageEnabled the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSjmsEndpointProducerBuilder objectMessageEnabled(boolean objectMessageEnabled) {
+            doSetProperty("objectMessageEnabled", objectMessageEnabled);
+            return this;
+        }
+        /**
+         * Whether to enable sending and receiving JMS ObjectMessage. By default
+         * this is disabled because Java object serialization is a known source
+         * of security vulnerabilities. Enable this option only if you trust the
+         * source of the messages and need to send or receive Java serialized
+         * objects via JMS. When disabled, Camel will refuse to create or read
+         * JMS ObjectMessage instances. Options that rely on ObjectMessage
+         * internally (such as transferException) require this option to be
+         * enabled.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param objectMessageEnabled the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSjmsEndpointProducerBuilder objectMessageEnabled(String objectMessageEnabled) {
+            doSetProperty("objectMessageEnabled", objectMessageEnabled);
+            return this;
+        }
+        /**
          * Specifies the interval between recovery attempts, i.e. when a
          * connection is being refreshed, in milliseconds. The default is 5000
          * ms, that is, 5 seconds.
@@ -2332,8 +2421,9 @@ public interface SjmsEndpointBuilderFactory {
          * provider's ObjectInputStream; to block such attacks, also configure
          * the JMS provider's own deserialization filter and/or the JVM-wide
          * -Djdk.serialFilter. When this option is not set and no JVM-wide
-         * filter is configured, a conservative default filter allowing java.,
-         * javax. and org.apache.camel. is applied.
+         * filter is configured, a conservative default filter denying java.net.
+         * and otherwise allowing java., javax. and org.apache.camel. is
+         * applied.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -2928,6 +3018,50 @@ public interface SjmsEndpointBuilderFactory {
             return this;
         }
         /**
+         * Whether to enable sending and receiving JMS ObjectMessage. By default
+         * this is disabled because Java object serialization is a known source
+         * of security vulnerabilities. Enable this option only if you trust the
+         * source of the messages and need to send or receive Java serialized
+         * objects via JMS. When disabled, Camel will refuse to create or read
+         * JMS ObjectMessage instances. Options that rely on ObjectMessage
+         * internally (such as transferException) require this option to be
+         * enabled.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param objectMessageEnabled the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSjmsEndpointBuilder objectMessageEnabled(boolean objectMessageEnabled) {
+            doSetProperty("objectMessageEnabled", objectMessageEnabled);
+            return this;
+        }
+        /**
+         * Whether to enable sending and receiving JMS ObjectMessage. By default
+         * this is disabled because Java object serialization is a known source
+         * of security vulnerabilities. Enable this option only if you trust the
+         * source of the messages and need to send or receive Java serialized
+         * objects via JMS. When disabled, Camel will refuse to create or read
+         * JMS ObjectMessage instances. Options that rely on ObjectMessage
+         * internally (such as transferException) require this option to be
+         * enabled.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param objectMessageEnabled the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSjmsEndpointBuilder objectMessageEnabled(String objectMessageEnabled) {
+            doSetProperty("objectMessageEnabled", objectMessageEnabled);
+            return this;
+        }
+        /**
          * Specifies the interval between recovery attempts, i.e. when a
          * connection is being refreshed, in milliseconds. The default is 5000
          * ms, that is, 5 seconds.
@@ -3056,8 +3190,9 @@ public interface SjmsEndpointBuilderFactory {
          * provider's ObjectInputStream; to block such attacks, also configure
          * the JMS provider's own deserialization filter and/or the JVM-wide
          * -Djdk.serialFilter. When this option is not set and no JVM-wide
-         * filter is configured, a conservative default filter allowing java.,
-         * javax. and org.apache.camel. is applied.
+         * filter is configured, a conservative default filter denying java.net.
+         * and otherwise allowing java., javax. and org.apache.camel. is
+         * applied.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -3151,7 +3286,7 @@ public interface SjmsEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final SjmsHeaderNameBuilder INSTANCE = new SjmsHeaderNameBuilder();
+        public static final SjmsHeaderNameBuilder INSTANCE = new SjmsHeaderNameBuilder();
 
         /**
          * DestinationName is a JMS queue or topic name. By default, the

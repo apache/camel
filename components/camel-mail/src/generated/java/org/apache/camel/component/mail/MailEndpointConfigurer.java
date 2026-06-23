@@ -141,8 +141,18 @@ public class MailEndpointConfigurer extends PropertyConfigurerSupport implements
         case "unseen": target.getConfiguration().setUnseen(property(camelContext, boolean.class, value)); return true;
         case "usefixeddelay":
         case "useFixedDelay": target.setUseFixedDelay(property(camelContext, boolean.class, value)); return true;
+        case "useheaderfrom":
+        case "useHeaderFrom": target.getConfiguration().setUseHeaderFrom(property(camelContext, boolean.class, value)); return true;
+        case "useheaderrecipients":
+        case "useHeaderRecipients": target.getConfiguration().setUseHeaderRecipients(property(camelContext, boolean.class, value)); return true;
+        case "useheaderreplyto":
+        case "useHeaderReplyTo": target.getConfiguration().setUseHeaderReplyTo(property(camelContext, boolean.class, value)); return true;
+        case "useheadersubject":
+        case "useHeaderSubject": target.getConfiguration().setUseHeaderSubject(property(camelContext, boolean.class, value)); return true;
         case "useinlineattachments":
         case "useInlineAttachments": target.getConfiguration().setUseInlineAttachments(property(camelContext, boolean.class, value)); return true;
+        case "usejavamailsessionpropertiesfromheaders":
+        case "useJavaMailSessionPropertiesFromHeaders": target.getConfiguration().setUseJavaMailSessionPropertiesFromHeaders(property(camelContext, boolean.class, value)); return true;
         case "username": target.getConfiguration().setUsername(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
@@ -269,8 +279,18 @@ public class MailEndpointConfigurer extends PropertyConfigurerSupport implements
         case "unseen": return boolean.class;
         case "usefixeddelay":
         case "useFixedDelay": return boolean.class;
+        case "useheaderfrom":
+        case "useHeaderFrom": return boolean.class;
+        case "useheaderrecipients":
+        case "useHeaderRecipients": return boolean.class;
+        case "useheaderreplyto":
+        case "useHeaderReplyTo": return boolean.class;
+        case "useheadersubject":
+        case "useHeaderSubject": return boolean.class;
         case "useinlineattachments":
         case "useInlineAttachments": return boolean.class;
+        case "usejavamailsessionpropertiesfromheaders":
+        case "useJavaMailSessionPropertiesFromHeaders": return boolean.class;
         case "username": return java.lang.String.class;
         default: return null;
         }
@@ -398,8 +418,18 @@ public class MailEndpointConfigurer extends PropertyConfigurerSupport implements
         case "unseen": return target.getConfiguration().isUnseen();
         case "usefixeddelay":
         case "useFixedDelay": return target.isUseFixedDelay();
+        case "useheaderfrom":
+        case "useHeaderFrom": return target.getConfiguration().isUseHeaderFrom();
+        case "useheaderrecipients":
+        case "useHeaderRecipients": return target.getConfiguration().isUseHeaderRecipients();
+        case "useheaderreplyto":
+        case "useHeaderReplyTo": return target.getConfiguration().isUseHeaderReplyTo();
+        case "useheadersubject":
+        case "useHeaderSubject": return target.getConfiguration().isUseHeaderSubject();
         case "useinlineattachments":
         case "useInlineAttachments": return target.getConfiguration().isUseInlineAttachments();
+        case "usejavamailsessionpropertiesfromheaders":
+        case "useJavaMailSessionPropertiesFromHeaders": return target.getConfiguration().isUseJavaMailSessionPropertiesFromHeaders();
         case "username": return target.getConfiguration().getUsername();
         default: return null;
         }

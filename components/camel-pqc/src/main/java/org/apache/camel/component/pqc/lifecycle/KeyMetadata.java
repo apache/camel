@@ -17,6 +17,7 @@
 package org.apache.camel.component.pqc.lifecycle;
 
 import java.io.Serializable;
+import java.time.Duration;
 import java.time.Instant;
 
 /**
@@ -132,7 +133,7 @@ public class KeyMetadata implements Serializable {
     }
 
     public long getAgeInDays() {
-        return java.time.Duration.between(createdAt, Instant.now()).toDays();
+        return Duration.between(createdAt, Instant.now()).toDays();
     }
 
     @Override

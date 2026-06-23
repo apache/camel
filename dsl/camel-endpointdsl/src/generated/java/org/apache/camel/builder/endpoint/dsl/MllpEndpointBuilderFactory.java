@@ -2070,7 +2070,7 @@ public interface MllpEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final MllpHeaderNameBuilder INSTANCE = new MllpHeaderNameBuilder();
+        public static final MllpHeaderNameBuilder INSTANCE = new MllpHeaderNameBuilder();
 
         /**
          * The local TCP Address of the Socket.

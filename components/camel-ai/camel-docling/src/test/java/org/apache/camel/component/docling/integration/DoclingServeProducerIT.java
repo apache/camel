@@ -23,6 +23,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.time.Duration;
+import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicReference;
 
 import ai.docling.core.DoclingDocument;
@@ -208,7 +209,7 @@ class DoclingServeProducerIT extends DoclingITestSupport {
         // Use sync endpoint but override with async header
         String result = template.requestBodyAndHeaders("direct:convert-markdown-serve",
                 testFile.toString(),
-                new java.util.HashMap<String, Object>() {
+                new HashMap<String, Object>() {
                     {
                         put(DoclingHeaders.INPUT_FILE_PATH, testFile.toString());
                         put(DoclingHeaders.USE_ASYNC_MODE, true);

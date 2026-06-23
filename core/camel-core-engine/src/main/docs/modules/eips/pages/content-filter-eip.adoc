@@ -20,6 +20,7 @@ image::eip/ContentFilter.gif[image]
 In this example, we add our own xref:manual::processor.adoc[Processor] using
 explicit Java to filter the message:
 
+._Java-only: using an inline Processor to filter the message_
 [source,java]
 ----
 from("direct:start")
@@ -37,6 +38,7 @@ from("direct:start")
 In the Java code above we used an inlined `Processor` which is harder to do with XML or YAML DSL.
 A good practice is to use a class for your custom `Processor` which can then be referenced in the DSL:
 
+._Java-only: custom Processor class registered in the Registry_
 [source,java]
 ----
 @BindToRegistry("myProcessor")
@@ -127,14 +129,15 @@ YAML::
 +
 [source,yaml]
 ----
-- from:
-    uri: activemq:Input
-    steps:
-      - bean:
-          ref: myBeanName
-          method: doFilter
-      - to:
-          uri: activemq:Output
+- route:
+    from:
+      uri: activemq:Input
+      steps:
+        - bean:
+            ref: myBeanName
+            method: doFilter
+        - to:
+            uri: activemq:Output
 ----
 ====
 
@@ -173,13 +176,14 @@ YAML::
 +
 [source,yaml]
 ----
-- from: 
-    uri: activemq:Input
-    steps:
-      - setBody:
-          expression:
-            xpath: //foo:bar
-      - to:
-          uri: activemq:Output
+- route:
+    from:
+      uri: activemq:Input
+      steps:
+        - setBody:
+            expression:
+              xpath: //foo:bar
+        - to:
+            uri: activemq:Output
 ----
 ====
