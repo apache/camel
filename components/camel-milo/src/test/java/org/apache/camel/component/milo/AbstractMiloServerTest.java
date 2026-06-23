@@ -44,6 +44,20 @@ public abstract class AbstractMiloServerTest extends CamelTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(AbstractMiloServerTest.class);
 
+    // Password with special characters (@ $ ? & / # % (URL escaped: %25) . : * and non-ASCII ö) to verify
+    // that the credential parser handles delimiters and URI-sensitive chars correctly
+    protected static final String SPECIAL_CHAR_CREDENTIAL = "pass@$?&/#%25.:*wörd3";
+
+    // Username with special characters ($ and non-ASCII ü) to verify that usernames
+    // containing non-alphanumeric and non-ASCII characters are parsed correctly
+    protected static final String SPECIAL_CHAR_USER = "üs$er4";
+
+    // Comma-separated "user:pass" pairs: two plain, one with special-char password and special-char username
+    private static final String TEST_CREDENTIALS = String.join(",",
+            "foo:bar",
+            "foo2:bar2",
+            SPECIAL_CHAR_USER + ":" + SPECIAL_CHAR_CREDENTIAL);
+
     @RegisterExtension
     AvailablePortFinder.Port serverPortHolder = AvailablePortFinder.find();
 
@@ -109,7 +123,7 @@ public abstract class AbstractMiloServerTest extends CamelTestSupport {
     protected void configureMiloServer(final MiloServerComponent server) throws Exception {
         server.setBindAddresses("localhost");
         server.setPort(getServerPort());
-        server.setUserAuthenticationCredentials("foo:bar,foo2:bar2");
+        server.setUserAuthenticationCredentials(TEST_CREDENTIALS);
         server.setUsernameSecurityPolicyUri(SecurityPolicy.None);
         server.setSecurityPoliciesById("None");
         server.setEnableAnonymousAuthentication(true);
