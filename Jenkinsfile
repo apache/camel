@@ -127,7 +127,24 @@ pipeline {
                         steps {
                             cleanWs()
                             sh 'rm -rvf /home/jenkins/.m2/repository/org/apache/camel'
-                            checkout scm
+                            script {
+                                // Use full clone for JDK 17 on ubuntu-avx (needed for Sonar analysis)
+                                // Use shallow clone for all other combinations
+                                if ("${PLATFORM}" == "ubuntu-avx" && "${JDK_NAME}" == "jdk_17_latest") {
+                                    echo "Using full clone for ${PLATFORM}-${JDK_NAME} (required for code coverage and Sonar)"
+                                    checkout scm
+                                } else {
+                                    echo "Using shallow clone for ${PLATFORM}-${JDK_NAME}"
+                                    checkout([
+                                        $class: 'GitSCM',
+                                        branches: scm.branches,
+                                        extensions: [
+                                            [$class: 'CloneOption', depth: 1, noTags: true, shallow: true]
+                                        ],
+                                        userRemoteConfigs: scm.userRemoteConfigs
+                                    ])
+                                }
+                            }
                         }
                     }
 
