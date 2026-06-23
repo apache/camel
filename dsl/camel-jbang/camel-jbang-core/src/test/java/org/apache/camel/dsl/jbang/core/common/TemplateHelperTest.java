@@ -299,7 +299,7 @@ class TemplateHelperTest {
     }
 
     @Test
-    void testQuarkusPomTemplate() throws IOException {
+    void testQuarkusPomTemplateOlderVersion() throws IOException {
         Map<String, Object> model = new HashMap<>();
         model.put("GroupId", "com.example");
         model.put("ArtifactId", "my-quarkus-app");
@@ -307,6 +307,7 @@ class TemplateHelperTest {
         model.put("QuarkusGroupId", "io.quarkus.platform");
         model.put("QuarkusArtifactId", "quarkus-bom");
         model.put("QuarkusVersion", "3.17.0");
+        model.put("UseQuarkusJunit", false);
         model.put("QuarkusPackageType", "uber-jar");
         model.put("JavaVersion", "21");
         model.put("ProjectBuildOutputTimestamp", "2024-01-01T00:00:00Z");
@@ -325,6 +326,42 @@ class TemplateHelperTest {
                 "Should contain QuarkusPackageType");
         // Maven ${...} should pass through
         assertTrue(result.contains("${quarkus.platform.version}"));
+        // Quarkus < 3.31 should use quarkus-junit5
+        assertTrue(result.contains("<artifactId>quarkus-junit5</artifactId>"),
+                "Should use quarkus-junit5 for Quarkus < 3.31");
+        assertFalse(result.contains("<artifactId>quarkus-junit</artifactId>"),
+                "Should not use quarkus-junit for Quarkus < 3.31");
+    }
+
+    @Test
+    void testQuarkusPomTemplateCurrentVersion() throws IOException {
+        Map<String, Object> model = new HashMap<>();
+        model.put("GroupId", "com.example");
+        model.put("ArtifactId", "my-quarkus-app");
+        model.put("Version", "1.0.0");
+        model.put("QuarkusGroupId", "io.quarkus.platform");
+        model.put("QuarkusArtifactId", "quarkus-bom");
+        model.put("QuarkusVersion", "3.36.3");
+        model.put("UseQuarkusJunit", true);
+        model.put("QuarkusPackageType", "uber-jar");
+        model.put("JavaVersion", "21");
+        model.put("ProjectBuildOutputTimestamp", "2024-01-01T00:00:00Z");
+        model.put("BuildProperties", "");
+        model.put("Repositories", List.of());
+        model.put("Dependencies", List.of());
+        model.put("JibMavenPluginVersion", "3.5.1");
+
+        String result = TemplateHelper.processTemplate("quarkus-pom.ftl", model);
+
+        assertNoLicenseHeader(result);
+        assertTrue(result.contains("io.quarkus.platform"));
+        assertTrue(result.contains("quarkus-bom"));
+        assertTrue(result.contains("3.36.3"));
+        // Quarkus >= 3.31 should use quarkus-junit
+        assertTrue(result.contains("<artifactId>quarkus-junit</artifactId>"),
+                "Should use quarkus-junit for Quarkus >= 3.31");
+        assertFalse(result.contains("<artifactId>quarkus-junit5</artifactId>"),
+                "Should not use quarkus-junit5 for Quarkus >= 3.31");
     }
 
     @Test
