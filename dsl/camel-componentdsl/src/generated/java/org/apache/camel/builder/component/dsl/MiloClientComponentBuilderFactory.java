@@ -489,6 +489,40 @@ public interface MiloClientComponentBuilderFactory {
             doSetProperty("sessionTimeout", sessionTimeout);
             return this;
         }
+    
+        /**
+         * The password for authentication. Use this instead of embedding
+         * credentials in the endpoint URI when the password contains special
+         * characters (such as {code }, {code /}, {code }, {code &amp;}).
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param password the value to set
+         * @return the dsl builder
+         */
+        default MiloClientComponentBuilder password(java.lang.String password) {
+            doSetProperty("password", password);
+            return this;
+        }
+    
+        /**
+         * The username for authentication. Use this instead of embedding
+         * credentials in the endpoint URI when the username contains special
+         * characters (such as {code }, {code /}, {code }, {code &amp;}).
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param username the value to set
+         * @return the dsl builder
+         */
+        default MiloClientComponentBuilder username(java.lang.String username) {
+            doSetProperty("username", username);
+            return this;
+        }
     }
 
     class MiloClientComponentBuilderImpl
@@ -536,6 +570,8 @@ public interface MiloClientComponentBuilderFactory {
             case "requestTimeout": getOrCreateConfiguration((MiloClientComponent) component).setRequestTimeout((java.lang.Long) value); return true;
             case "sessionName": getOrCreateConfiguration((MiloClientComponent) component).setSessionName((java.lang.String) value); return true;
             case "sessionTimeout": getOrCreateConfiguration((MiloClientComponent) component).setSessionTimeout((java.lang.Long) value); return true;
+            case "password": getOrCreateConfiguration((MiloClientComponent) component).setPassword((java.lang.String) value); return true;
+            case "username": getOrCreateConfiguration((MiloClientComponent) component).setUsername((java.lang.String) value); return true;
             default: return false;
             }
         }
