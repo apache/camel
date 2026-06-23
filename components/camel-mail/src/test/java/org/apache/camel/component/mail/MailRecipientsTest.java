@@ -157,7 +157,8 @@ public class MailRecipientsTest extends CamelTestSupport {
                 from("direct:b").removeHeaders("*")
                         .to(you.uriPrefix(Protocol.smtp) + "&from=" + you.getEmail() + recipients);
                 from("direct:c").removeHeaders("cc")
-                        .to(you.uriPrefix(Protocol.smtp) + "&from=" + you.getEmail() + recipients);
+                        .to(you.uriPrefix(Protocol.smtp) + "&from=" + you.getEmail() + recipients
+                            + "&useHeaderRecipients=true");
                 // END SNIPPET: e1
             }
         };

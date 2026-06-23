@@ -48,7 +48,7 @@ public class MailHeaderOverrulePreConfigurationRecipientsTest extends CamelTestS
         headers.put("to", claus.getEmail());
         headers.put("cc", willem.getEmail());
 
-        template.sendBodyAndHeaders(claus.uriPrefix(Protocol.smtp), "Hello World", headers);
+        template.sendBodyAndHeaders(claus.uriPrefix(Protocol.smtp) + "&useHeaderRecipients=true", "Hello World", headers);
 
         mock.assertIsSatisfied();
         /* Bcc should be stripped by specs compliant SMTP servers */

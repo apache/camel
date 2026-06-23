@@ -56,7 +56,8 @@ public class MailSubjectTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 // START SNIPPET: e1
-                from("direct:a").setHeader("subject", constant(subject)).to(james2.uriPrefix(Protocol.smtp));
+                from("direct:a").setHeader("subject", constant(subject))
+                        .to(james2.uriPrefix(Protocol.smtp) + "&useHeaderSubject=true");
                 // END SNIPPET: e1
 
                 from(james2.uriPrefix(Protocol.imap) + "&initialDelay=100&delay=100").to("mock:result");

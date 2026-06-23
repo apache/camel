@@ -2027,7 +2027,20 @@ The following options have been added to the mail endpoint:
 * `useHeaderSubject`
 * `useHeaderReplyTo`
 
-These options default to `true` to maintain backward compatibility. Users who wish to prevent exchange headers from overriding pre-configured endpoint URI values can now set these to `false` to secure their routes against unintended header injection.
+These options default to `false` (secure by default) to prevent untrusted exchange headers
+from overriding pre-configured endpoint URI values. This follows the same secure-by-default
+pattern as `useJavaMailSessionPropertiesFromHeaders` (also default `false`).
+
+Routes that intentionally set mail headers (e.g. via `.setHeader("To", ...)`) should add the
+corresponding option to the endpoint URI or set it globally via component-level properties:
+
+[source,properties]
+----
+camel.component.smtp.useHeaderRecipients=true
+camel.component.smtp.useHeaderFrom=true
+camel.component.smtp.useHeaderSubject=true
+camel.component.smtp.useHeaderReplyTo=true
+----
 
 === camel-milo - potential breaking change
 
