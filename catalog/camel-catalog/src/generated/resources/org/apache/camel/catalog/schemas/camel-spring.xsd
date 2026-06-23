@@ -3663,7 +3663,7 @@ Sets the description of this node.
       <xs:annotation>
         <xs:documentation xml:lang="en">
 <![CDATA[
-Sets the id of this node.
+Sets the id of this node. Important: If you want to set the id of the route, then you must use routeId(String) instead.
 ]]>
         </xs:documentation>
       </xs:annotation>
@@ -12686,7 +12686,7 @@ Reference to the routes in the xml-dsl.
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Whether to auto start this route. Default value: true
+Sets the auto startup property on this route. Default value: true
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -12700,15 +12700,7 @@ Whether to slow down processing messages by a given delay in msec. Default value
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="errorHandlerRef" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Sets the bean ref name of the error handler builder to use on this route.
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
+        <xs:attribute name="errorHandlerRef" type="xs:string"/>
         <xs:attribute name="group" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en">
@@ -12769,8 +12761,7 @@ comma.
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Reference to custom org.apache.camel.spi.RoutePolicy to use by the route. Multiple policies can be configured by
-separating values using comma.
+Configures a route policy for this route.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -12806,7 +12797,7 @@ To configure the ordering of the routes being started.
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Whether stream caching is enabled on this route. Default value: false
+Enable or disables stream caching for this route. Default value: false
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -12815,7 +12806,7 @@ Whether stream caching is enabled on this route. Default value: false
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Whether tracing is enabled on this route. Default value: false
+Enables or disables tracing for this route. Default value: false
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -12856,43 +12847,10 @@ Adds a local bean the route template uses.
   </xs:complexType>
   <xs:complexType name="routeTemplateParameterDefinition">
     <xs:sequence/>
-    <xs:attribute name="name" type="xs:string" use="required">
-      <xs:annotation>
-        <xs:documentation xml:lang="en">
-<![CDATA[
-The name of the parameter.
-]]>
-        </xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-    <xs:attribute name="required" type="xs:boolean">
-      <xs:annotation>
-        <xs:documentation xml:lang="en">
-<![CDATA[
-Whether the parameter is required or not. A parameter is required unless this option is set to false or a default value
-has been configured. Default value: false
-]]>
-        </xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-    <xs:attribute name="defaultValue" type="xs:string">
-      <xs:annotation>
-        <xs:documentation xml:lang="en">
-<![CDATA[
-Default value of the parameter. If a default value is provided then the parameter is implied not to be required.
-]]>
-        </xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-    <xs:attribute name="description" type="xs:string">
-      <xs:annotation>
-        <xs:documentation xml:lang="en">
-<![CDATA[
-Description of the parameter.
-]]>
-        </xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
+    <xs:attribute name="name" type="xs:string" use="required"/>
+    <xs:attribute name="required" type="xs:boolean"/>
+    <xs:attribute name="defaultValue" type="xs:string"/>
+    <xs:attribute name="description" type="xs:string"/>
   </xs:complexType>
   <xs:complexType name="routeTemplatesDefinition">
     <xs:complexContent>
