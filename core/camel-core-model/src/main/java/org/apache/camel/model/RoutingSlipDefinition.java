@@ -40,13 +40,17 @@ public class RoutingSlipDefinition<Type extends ProcessorDefinition<Type>> exten
     public static final String DEFAULT_DELIMITER = ",";
 
     @XmlAttribute
-    @Metadata(defaultValue = ",")
+    @Metadata(defaultValue = ",",
+              description = "The delimiter used to separate endpoint URIs in the routing slip expression. Default is comma.")
     private String uriDelimiter;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean",
+              description = "If enabled then invalid endpoint URIs are ignored and logged instead of throwing an exception.")
     private String ignoreInvalidEndpoints;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Integer")
+    @Metadata(label = "advanced", javaType = "java.lang.Integer",
+              description = "Configures the cache size for ProducerCache which caches producers for reuse. The default cache size is 1000."
+                            + " Set to -1 to turn off caching.")
     private String cacheSize;
 
     public RoutingSlipDefinition() {

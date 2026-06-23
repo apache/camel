@@ -49,22 +49,28 @@ public class OnCompletionDefinition extends OutputDefinition<OnCompletionDefinit
 
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "org.apache.camel.model.OnCompletionMode", defaultValue = "AfterConsumer",
-              enums = "AfterConsumer,BeforeConsumer")
+              enums = "AfterConsumer,BeforeConsumer",
+              description = "Sets the on completion mode. The default value is AfterConsumer.")
     private String mode;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(javaType = "java.lang.Boolean",
+              description = "Will only synchronize when the Exchange completed successfully (no errors)")
     private String onCompleteOnly;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(javaType = "java.lang.Boolean",
+              description = "Will only synchronize when the Exchange ended with failure (exception or FAULT message)")
     private String onFailureOnly;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean",
+              description = "If enabled then the on completion process will run asynchronously by a separate thread from a thread pool. By default this is false, meaning the on completion process will run synchronously using the same caller thread as from the route.")
     private String parallelProcessing;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.util.concurrent.ExecutorService")
+    @Metadata(label = "advanced", javaType = "java.util.concurrent.ExecutorService",
+              description = "Refers to a custom Thread Pool to be used for parallel processing. Notice if you set this option, then parallel processing is automatically implied, and you do not have to enable that option as well.")
     private String executorService;
     @XmlAttribute(name = "useOriginalMessage")
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean",
+              description = "Will use the original input message when an Exchange for this on completion. By default this feature is off.")
     private String useOriginalMessage;
     @Metadata(description = "To use an expression to only trigger routing this completion steps in specific situations")
     @XmlElement

@@ -45,24 +45,30 @@ public class ThrottleDefinition extends ExpressionNode implements ExecutorServic
 
     @XmlAttribute
     @Metadata(javaType = "org.apache.camel.model.ThrottlingMode", defaultValue = "TotalRequests",
-              enums = "TotalRequests,ConcurrentRequests")
+              enums = "TotalRequests,ConcurrentRequests",
+              description = "Sets the throttling mode to one of the available modes enumerated in ThrottlingMode.")
     private String mode;
     @XmlElement(name = "correlationExpression")
     private ExpressionSubElementDefinition correlationExpression;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.util.concurrent.ExecutorService")
+    @Metadata(label = "advanced", javaType = "java.util.concurrent.ExecutorService",
+              description = "To use a custom thread pool (ScheduledExecutorService) by the throttler.")
     private String executorService;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean",
+              description = "Enables asynchronous delay which means the thread will not block while delaying.")
     private String asyncDelayed;
     @XmlAttribute
-    @Metadata(label = "advanced", defaultValue = "true", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", defaultValue = "true", javaType = "java.lang.Boolean",
+              description = "Whether or not the caller should run the task when it was rejected by the thread pool.")
     private String callerRunsWhenRejected;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean",
+              description = "Whether or not throttler throws the ThrottlerRejectedExecutionException when the exchange exceeds the request limit.")
     private String rejectExecution;
     @XmlAttribute
-    @Metadata(defaultValue = "1000", javaType = "java.time.Duration")
+    @Metadata(defaultValue = "1000", javaType = "java.time.Duration",
+              description = "Sets the time period during which the maximum request count is valid for.")
     private String timePeriodMillis;
 
     public ThrottleDefinition() {

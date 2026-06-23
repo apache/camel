@@ -36,11 +36,16 @@ import org.apache.camel.spi.annotations.DslArg;
 public class ToDefinition extends SendDefinition<ToDefinition> {
 
     @XmlAttribute
+    @Metadata(description = "To use a variable as the source for the message body to send."
+                            + " This makes it handy to use variables for user data and to easily control what data to use for sending and receiving.")
     private String variableSend;
     @XmlAttribute
+    @Metadata(description = "To use a variable to store the received message body (only body, not headers)."
+                            + " This makes it handy to use variables for user data and to easily control what data to use for sending and receiving.")
     private String variableReceive;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "org.apache.camel.ExchangePattern", enums = "InOnly,InOut")
+    @Metadata(label = "advanced", javaType = "org.apache.camel.ExchangePattern", enums = "InOnly,InOut",
+              description = "Sets the optional ExchangePattern to use. If not specified the default exchange pattern is used.")
     @DslArg(position = 0, renderType = "enumString", typeName = "ExchangePattern")
     private String pattern;
 

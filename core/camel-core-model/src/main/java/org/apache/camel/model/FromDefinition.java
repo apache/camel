@@ -43,9 +43,11 @@ public class FromDefinition extends OptionalIdentifiedDefinition<FromDefinition>
     private EndpointConsumerBuilder endpointConsumerBuilder;
 
     @XmlAttribute
-    @Metadata(required = true)
+    @Metadata(required = true, description = "The endpoint URI to consume from.")
     private String uri;
     @XmlAttribute
+    @Metadata(description = "To use a variable to store the received message body (only body, not headers)."
+                            + " This makes it handy to use variables for user data and to easily control what data to use for sending and receiving.")
     private String variableReceive;
 
     public FromDefinition() {

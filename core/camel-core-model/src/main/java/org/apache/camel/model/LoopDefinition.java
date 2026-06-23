@@ -40,16 +40,20 @@ public class LoopDefinition extends OutputExpressionNode {
     private Processor onPrepareProcessor;
 
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean",
+              description = "If enabled, a copy of the input Exchange is used for each iteration. That means each iteration will start from a copy of the same message.")
     private String copy;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean",
+              description = "Enables the while loop that loops until the predicate evaluates to false or null.")
     private String doWhile;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean",
+              description = "If enabled, the loop will not iterate until it reaches the end when Camel is shut down.")
     private String breakOnShutdown;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "org.apache.camel.Processor")
+    @Metadata(label = "advanced", javaType = "org.apache.camel.Processor",
+              description = "Uses a processor when preparing the exchange for each loop iteration. This can be used to deep-clone messages, or any custom logic needed before the looping executes.")
     private String onPrepare;
 
     public LoopDefinition() {

@@ -44,16 +44,20 @@ public class WireTapDefinition<Type extends ProcessorDefinition<Type>> extends T
     private Processor onPrepareProcessor;
 
     @XmlAttribute
-    @Metadata(label = "advanced", defaultValue = "true", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", defaultValue = "true", javaType = "java.lang.Boolean",
+              description = "Whether to use a copy of the original exchange.")
     private String copy;
     @XmlAttribute
-    @Metadata(label = "advanced", defaultValue = "true", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", defaultValue = "true", javaType = "java.lang.Boolean",
+              description = "Whether the uri is dynamic or static. If dynamic then the simple language is used to evaluate a dynamic uri to use as the wire-tap destination, for each incoming message.")
     private String dynamicUri;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "org.apache.camel.Processor")
+    @Metadata(label = "advanced", javaType = "org.apache.camel.Processor",
+              description = "Uses a processor when preparing the exchange to be sent. This can be used to deep-clone messages, or any custom logic needed before the exchange is sent.")
     private String onPrepare;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.util.concurrent.ExecutorService")
+    @Metadata(label = "advanced", javaType = "java.util.concurrent.ExecutorService",
+              description = "Uses a custom thread pool for sending tapped exchanges.")
     private String executorService;
 
     public WireTapDefinition() {

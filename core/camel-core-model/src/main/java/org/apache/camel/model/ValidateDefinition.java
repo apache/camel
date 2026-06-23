@@ -42,7 +42,8 @@ public class ValidateDefinition extends ExpressionNode {
     private PredicateExceptionFactory factory;
 
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "org.apache.camel.spi.PredicateExceptionFactory")
+    @Metadata(label = "advanced", javaType = "org.apache.camel.spi.PredicateExceptionFactory",
+              description = "Reference to a custom PredicateExceptionFactory for creating the exception when validation fails.")
     private String predicateExceptionFactory;
 
     public ValidateDefinition() {

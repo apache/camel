@@ -41,13 +41,16 @@ public class DelayDefinition extends ExpressionNode implements ExecutorServiceAw
     private ExecutorService executorServiceBean;
 
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "true")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "true",
+              description = "Enables asynchronous delay which means the thread will not block while delaying.")
     private String asyncDelayed;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "true")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "true",
+              description = "Whether or not the caller should run the task when it was rejected by the thread pool.")
     private String callerRunsWhenRejected;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.util.concurrent.ExecutorService")
+    @Metadata(label = "advanced", javaType = "java.util.concurrent.ExecutorService",
+              description = "To use a custom thread pool if asyncDelay has been enabled.")
     private String executorService;
 
     public DelayDefinition() {
