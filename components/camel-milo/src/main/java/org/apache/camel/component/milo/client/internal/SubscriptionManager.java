@@ -700,7 +700,9 @@ public class SubscriptionManager {
 
         // Extracting/removing user:password string from the full URL is error-prone with special characters,
         // because of that the discovery URL is rebuilt from URI parts.
-        discoveryUri = new URI(uri.getScheme(), null, uri.getHost(), uri.getPort(), uri.getPath(), uri.getQuery(), uri.getFragment()).toString();
+        discoveryUri
+                = new URI(uri.getScheme(), null, uri.getHost(), uri.getPort(), uri.getPath(), uri.getQuery(), uri.getFragment())
+                        .toString();
         final String user = uri.getUserInfo();
 
         LOG.debug("Discovering endpoints from: {}", discoveryUri);
