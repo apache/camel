@@ -110,6 +110,13 @@ The diagram rendering is used by the `camel cmd route-diagram` command in Camel 
 camel cmd route-diagram MyRoute.java
 ----
 
+=== Developer console
+
+When the developer console is enabled (for example with `camel run --console`), the `route-diagram`
+console renders the running routes using the interactive `<camel-route-diagram>` web component,
+fed by the `route-structure` console. Request `?format=png` to get the legacy inline PNG image
+instead, or use the `ascii` / `unicode` themes for plain-text output.
+
 == Color Themes
 
 The following built-in themes are available:

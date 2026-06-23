@@ -13,6 +13,18 @@ See the xref:camel-upgrade-recipes-tool.adoc[documentation] page for details.
 
 == Upgrading from 4.18.1 to 4.18.3
 
+=== camel-jackson - potential breaking change
+
+The `camel-jackson` data format now creates its default `ObjectMapper` with
+`MapperFeature.BLOCK_UNSAFE_POLYMORPHIC_BASE_TYPES` enabled, consistent with the mapper used by the
+component's JSON data-type transformer. This is defense-in-depth against gadget-chain deserialization: when
+polymorphic / default typing is enabled, Jackson refuses unsafe base types (such as `Object`, `Serializable`
+or `Comparable`).
+
+This only affects routes that enable polymorphic / default typing on an unsafe base type; ordinary
+marshalling and unmarshalling are unchanged. If you rely on that behaviour, supply your own `ObjectMapper`
+(via the `objectMapper` option or the registry) configured without this feature.
+
 === camel-oauth
 
 `UserProfile` token verification now fails closed when no JWK set is available: a signed token can no
@@ -1084,6 +1096,19 @@ Because a `dapr-pubsub` consumer subscribes to a single, fixed `pubSubName` / `t
 the removed headers were redundant with the endpoint configuration. Routes that relied
 on reading `CamelDaprPubSubName` / `CamelDaprTopic` from a consumed exchange should read
 the configured destination from the endpoint URI instead.
+
+=== camel-schematron - potential breaking change
+
+The Schematron rules-compilation `TransformerFactory` now runs with secure processing enabled
+(`FEATURE_SECURE_PROCESSING`) and with external DTD and external stylesheet access disabled
+(`accessExternalDTD` and `accessExternalStylesheet` set to empty), as defense-in-depth against XXE and
+external-resource resolution while compiling Schematron rules. This matches the hardening already applied
+to the component's `SAXParserFactory`. The bundled ISO Schematron skeleton stylesheets continue to be
+resolved from the classpath via the component's `URIResolver` and are therefore unaffected.
+
+If your Schematron rules legitimately reference an external DTD, external entity, or external stylesheet,
+those references will no longer be resolved and rule compilation will fail; inline the referenced content
+instead.
 
 == Upgrading from 4.18.0 to 4.18.1
 

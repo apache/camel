@@ -16,6 +16,9 @@
  */
 package org.apache.camel.test.infra.jaeger.common;
 
+/**
+ * @since 4.21
+ */
 public final class JaegerProperties {
     public static final String JAEGER_CONTAINER = "jaeger.container";
     public static final String HOST = "jaeger.host";

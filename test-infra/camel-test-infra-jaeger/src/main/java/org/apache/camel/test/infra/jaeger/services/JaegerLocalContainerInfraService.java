@@ -23,6 +23,9 @@ import org.apache.camel.test.infra.jaeger.common.JaegerProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * @since 4.21
+ */
 @InfraService(service = JaegerInfraService.class,
               description = "Jaeger is a distributed tracing backend with OTLP collector and UI",
               serviceAlias = { "jaeger" })

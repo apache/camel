@@ -19,7 +19,12 @@ package org.apache.camel.spi;
 import org.jspecify.annotations.Nullable;
 
 /**
- * To allow objects to be injected with an group.
+ * Marker for an object whose group can be injected.
+ * <p/>
+ * Extends {@link HasGroup} to add the ability to set the group an object belongs to (used for clustering, JMX, and
+ * similar group-based operations).
+ *
+ * @see HasGroup
  */
 public interface GroupAware extends HasGroup {
 

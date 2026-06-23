@@ -42,16 +42,12 @@ def jackson_format(data):
                 if not value:
                     formatted = "[ ]"
                 else:
-                    items = ", ".join(f'"{v}"' for v in value)
+                    items = ", ".join(json.dumps(v, ensure_ascii=False) for v in value)
                     formatted = f"[ {items} ]"
-            elif value is None:
-                formatted = "null"
-            elif isinstance(value, str):
-                formatted = f'"{value}"'
             else:
-                formatted = json.dumps(value)
+                formatted = json.dumps(value, ensure_ascii=False)
             comma = "," if j < len(keys) - 1 else ""
-            lines.append(f'  "{key}" : {formatted}{comma}')
+            lines.append(f"  {json.dumps(key, ensure_ascii=False)} : {formatted}{comma}")
     lines.append("} ]")
     return "\n".join(lines)
 
@@ -96,8 +92,18 @@ def main():
     new_version = sys.argv[3]
     metadata_files = sys.argv[4:]
 
+    failed_metadata_files = []
     for metadata_file in metadata_files:
-        update_metadata(artifact_id, old_version, new_version, metadata_file)
+        if not update_metadata(artifact_id, old_version, new_version, metadata_file):
+            failed_metadata_files.append(metadata_file)
+
+    if failed_metadata_files:
+        print(
+            "❌ No metadata target was updated in: "
+            + ", ".join(failed_metadata_files),
+            file=sys.stderr,
+        )
+        sys.exit(1)
 
 
 if __name__ == "__main__":

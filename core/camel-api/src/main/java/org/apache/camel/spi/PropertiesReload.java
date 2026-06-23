@@ -19,8 +19,17 @@ package org.apache.camel.spi;
 import java.util.Properties;
 
 /**
- * Listener for re-loading a {@link java.util.Properties} such as a Camel route.
+ * Listener notified when a {@link java.util.Properties} source is re-loaded at runtime, for example after a properties
+ * file changes.
+ * <p/>
+ * When live reloading is enabled, the {@link PropertiesComponent} invokes {@link #onReload(String, Properties)} with
+ * the resource name and the freshly loaded properties, allowing Camel to react to configuration changes without a
+ * restart.
+ * <p/>
+ * See <a href="https://camel.apache.org/manual/using-propertyplaceholder.html">Using PropertyPlaceholder</a> in the
+ * Camel user manual.
  *
+ * @see   PropertiesComponent
  * @since 4.0
  */
 @FunctionalInterface

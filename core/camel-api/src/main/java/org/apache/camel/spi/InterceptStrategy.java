@@ -22,15 +22,21 @@ import org.apache.camel.Processor;
 import org.jspecify.annotations.Nullable;
 
 /**
- * The purpose of this interface is to allow an implementation to wrap processors in a route with interceptors. For
- * example, a possible usecase is to gather performance statistics at the processor's level.
+ * Strategy that wraps the {@link Processor}s in a route with interceptors, for cross-cutting concerns such as gathering
+ * performance statistics at the processor level.
  * <p/>
- * Its <b>strongly</b> adviced to use an {@link org.apache.camel.AsyncProcessor} as the returned wrapped
- * {@link Processor} which ensures the interceptor works well with the asynchronous routing engine. You can use the
+ * Camel invokes {@link #wrapProcessorInInterceptors} for each processor while building a route, giving the strategy the
+ * chance to return a wrapping processor (or the original). Registered strategies are applied to every interceptable
+ * processor; a processor can opt out by implementing {@link InterceptableProcessor}.
+ * <p/>
+ * It is <b>strongly</b> advised to return an {@link org.apache.camel.AsyncProcessor} as the wrapper, which ensures the
+ * interceptor works well with the asynchronous routing engine. You can use
  * {@link org.apache.camel.support.processor.DelegateAsyncProcessor} to easily return an
- * {@link org.apache.camel.AsyncProcessor} and override the
+ * {@link org.apache.camel.AsyncProcessor} and override
  * {@link org.apache.camel.AsyncProcessor#process(org.apache.camel.Exchange, org.apache.camel.AsyncCallback)} to
- * implement your interceptor logic. And just invoke the super method to <b>continue</b> routing.
+ * implement your interceptor logic, then invoke the super method to <b>continue</b> routing.
+ *
+ * @see InterceptableProcessor
  */
 public interface InterceptStrategy {
 

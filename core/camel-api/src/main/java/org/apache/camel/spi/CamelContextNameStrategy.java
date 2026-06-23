@@ -17,7 +17,12 @@
 package org.apache.camel.spi;
 
 /**
- * Strategy for assigning name to a {@link org.apache.camel.CamelContext}.
+ * Strategy for assigning the name of a {@link org.apache.camel.CamelContext}.
+ * <p/>
+ * Camel uses the name strategy to determine the context's name, which appears in logs, management (JMX), and tooling. A
+ * strategy may return a fixed name or compute a fresh one each time (for example using a counter to keep names unique
+ * across multiple contexts in the same JVM); {@link #isFixedName()} reports which. {@link ManagementNameStrategy} is
+ * the related strategy for the JMX management name.
  *
  * @see ManagementNameStrategy
  */

@@ -20,9 +20,11 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.awaitility.Awaitility;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -53,12 +55,14 @@ public class FileProducerCharsetUTFOptimizedTest extends ContextTestSupport {
 
     @Test
     public void testFileProducerCharsetUTFOptimized() throws Exception {
-        oneExchangeDone.matchesWaitTime();
+        assertTrue(oneExchangeDone.matchesWaitTime());
 
-        assertTrue(Files.exists(testFile("output.txt")), "File should exist");
-
-        byte[] data = Files.readAllBytes(testFile("output.txt"));
-        assertArrayEquals(utf, data);
+        // The file may have been created but not yet fully flushed to disk
+        Awaitility.await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> {
+            assertTrue(Files.exists(testFile("output.txt")), "File should exist");
+            byte[] data = Files.readAllBytes(testFile("output.txt"));
+            assertArrayEquals(utf, data);
+        });
     }
 
     @Override

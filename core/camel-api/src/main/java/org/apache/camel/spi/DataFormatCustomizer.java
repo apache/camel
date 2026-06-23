@@ -26,7 +26,20 @@ import org.apache.camel.util.function.ThrowingConsumer;
 import org.jspecify.annotations.Nullable;
 
 /**
- * To apply custom configurations to {@link DataFormat} instances.
+ * Strategy for applying custom configuration to {@link DataFormat} instances as they are created.
+ * <p/>
+ * Customizers are discovered from the {@link Registry} and applied to each data format during bootstrap, with
+ * {@link #isEnabled(String, DataFormat)} (and an optional {@link Policy}) deciding whether a given data format is
+ * customized, and {@link Ordered} controlling the order. Use the {@link #builder()} /
+ * {@link #forType(Class, ThrowingConsumer)} helpers to target a concrete data format type. This is the
+ * data-format-level counterpart to {@link CamelContextCustomizer}.
+ * <p/>
+ * See <a href="https://camel.apache.org/manual/camelcontext-autoconfigure.html">CamelContext auto-configuration</a> in
+ * the Camel user manual.
+ *
+ * @see CamelContextCustomizer
+ * @see ComponentCustomizer
+ * @see LanguageCustomizer
  */
 @FunctionalInterface
 public interface DataFormatCustomizer extends Ordered {

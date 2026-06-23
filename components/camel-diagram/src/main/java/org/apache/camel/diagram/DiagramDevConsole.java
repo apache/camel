@@ -17,6 +17,9 @@
 package org.apache.camel.diagram;
 
 import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.StringJoiner;
 
@@ -69,6 +72,12 @@ public class DiagramDevConsole extends AbstractDevConsole {
      */
     public static final String MODE = "mode";
 
+    /**
+     * Output format: html (default, interactive web component), png (inline image), text or ascii (ASCII art), unicode
+     * (box-drawing characters).
+     */
+    public static final String FORMAT = "format";
+
     public DiagramDevConsole() {
         super("camel", "route-diagram", "Route Diagram", "Visual route diagrams");
     }
@@ -87,17 +96,20 @@ public class DiagramDevConsole extends AbstractDevConsole {
         String nodeLabel = (String) options.getOrDefault(NODE_LABEL, RouteDiagramDumper.NodeLabelMode.CODE.name());
         boolean metric = "true".equalsIgnoreCase((String) options.getOrDefault(METRIC, "true"));
         boolean refresh = "true".equalsIgnoreCase((String) options.getOrDefault(AUTO_REFRESH, "true"));
+        String format = (String) options.getOrDefault(FORMAT, "html");
 
         try {
             RouteDiagramDumper dumper = PluginHelper.getRouteDiagramDumper(getCamelContext());
+            boolean textFormat = isTextFormat(format);
             if ("topology".equalsIgnoreCase(mode)) {
                 sj.add(doCallTopologyText(dumper, theme, nodeWidth, metric, fontSize, refresh));
-            } else if (isTextTheme(theme)) {
+            } else if (isTextTheme(theme) || textFormat) {
+                boolean unicode = isUnicodeTheme(theme) || "unicode".equalsIgnoreCase(format);
                 String text = dumper.dumpRoutesAsAsciiArt(filter,
                         RouteDiagramDumper.NodeLabelMode.valueOf(nodeLabel.toUpperCase()),
-                        nodeWidth, isUnicodeTheme(theme));
+                        nodeWidth, unicode);
                 sj.add(text);
-            } else {
+            } else if ("png".equalsIgnoreCase(format)) {
                 BufferedImage image = dumper.dumpRoutesAsImage(filter,
                         RouteDiagramDumper.Theme.valueOf(theme.toUpperCase()),
                         metric, RouteDiagramDumper.NodeLabelMode.valueOf(nodeLabel.toUpperCase()), nodeWidth, fontSize);
@@ -110,6 +122,8 @@ public class DiagramDevConsole extends AbstractDevConsole {
                 }
                 html = "<html>\n" + html + "</html>\n";
                 sj.add(html);
+            } else {
+                sj.add(buildRouteWebComponentHtml(filter, metric, refresh));
             }
         } catch (Exception e) {
             // ignore
@@ -196,12 +210,50 @@ public class DiagramDevConsole extends AbstractDevConsole {
         return root;
     }
 
+    private static final String WEB_COMPONENT_JS = loadWebComponentJs();
+
+    private static String buildRouteWebComponentHtml(String filter, boolean metric, boolean refresh) {
+        String f = filter == null ? "*" : filter;
+        String metricAttr = metric ? "" : " metric=\"false\"";
+        String refreshAttr = refresh ? " refresh=\"5000\"" : "";
+        // inline the web component script: static resource serving is not available when only the developer
+        // console is enabled (camel run --console). route-structure is a sibling console on the same origin.
+        return "<html>\n"
+               + "  <head>\n"
+               + "    <meta charset=\"utf-8\">\n"
+               + "    <script type=\"module\">\n" + WEB_COMPONENT_JS + "\n    </script>\n"
+               + "  </head>\n"
+               + "  <body>\n"
+               + String.format(
+                       "    <camel-route-diagram src=\"route-structure\" filter=\"%s\"%s%s></camel-route-diagram>%n",
+                       escapeAttr(f), metricAttr, refreshAttr)
+               + "  </body>\n"
+               + "</html>\n";
+    }
+
+    private static String loadWebComponentJs() {
+        try (InputStream is = DiagramDevConsole.class.getResourceAsStream(
+                "/META-INF/resources/camel/diagram/camel-route-diagram.js")) {
+            return is != null ? new String(is.readAllBytes(), StandardCharsets.UTF_8) : "";
+        } catch (IOException e) {
+            return "";
+        }
+    }
+
+    private static String escapeAttr(String s) {
+        return s.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;").replace("\"", "&quot;");
+    }
+
     private static boolean isTextTheme(String theme) {
         return "ascii".equalsIgnoreCase(theme) || "unicode".equalsIgnoreCase(theme);
     }
 
     private static boolean isUnicodeTheme(String theme) {
         return "unicode".equalsIgnoreCase(theme);
+    }
+
+    private static boolean isTextFormat(String format) {
+        return "text".equalsIgnoreCase(format) || "ascii".equalsIgnoreCase(format) || "unicode".equalsIgnoreCase(format);
     }
 
 }
