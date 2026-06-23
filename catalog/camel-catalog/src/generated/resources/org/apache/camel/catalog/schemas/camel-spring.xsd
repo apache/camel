@@ -2809,142 +2809,21 @@ Whether to use a scheduled thread pool. Default value: false
     <xs:complexContent>
       <xs:extension base="tns:identifiedType">
         <xs:sequence/>
-        <xs:attribute name="disabled" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Disable JMI (default false). Default value: false
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="onlyRegisterProcessorWithCustomId" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Only register processor if a custom id was defined for it. Default value: false
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="mbeanServerDefaultDomain" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-MBean server default domain name (default org.apache.camel). Default value: org.apache.camel
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="mbeanObjectDomainName" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-MBean object domain name (default org.apache.camel). Default value: org.apache.camel
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="usePlatformMBeanServer" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-A flag that indicates whether the platform mbean server should be used. Default value: true
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="registerAlways" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-A flag that indicates whether to register mbeans always. Default value: false
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="registerNewRoutes" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-A flag that indicates whether to register mbeans when starting new routes. Default value: true
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="statisticsLevel" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Level of granularity for performance statistics enabled. Default value: Default
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="mbeansLevel" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Sets the mbeans registration level. The default value is Default. Default value: Default
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="loadStatisticsEnabled" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-A flag that indicates whether Load statistics is enabled. Default value: false
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="endpointRuntimeStatisticsEnabled" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-A flag that indicates whether endpoint runtime statistics is enabled. Default value: true
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="includeHostName" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-A flag that indicates whether to include hostname in JMX MBean names. Default value: false
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="useHostIPAddress" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-A flag that indicates whether to use hostname or IP Address in the service url. Default value: false
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="mask" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-A flag that indicates whether to remove detected sensitive information (such as passwords) from MBean names and
-attributes. Default value: true
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="updateRouteEnabled" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Sets whether updating routes via JMX is allowed (is default disabled). Default value: false
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
+        <xs:attribute name="disabled" type="xs:string"/>
+        <xs:attribute name="onlyRegisterProcessorWithCustomId" type="xs:string"/>
+        <xs:attribute name="mbeanServerDefaultDomain" type="xs:string"/>
+        <xs:attribute name="mbeanObjectDomainName" type="xs:string"/>
+        <xs:attribute name="usePlatformMBeanServer" type="xs:string"/>
+        <xs:attribute name="registerAlways" type="xs:string"/>
+        <xs:attribute name="registerNewRoutes" type="xs:string"/>
+        <xs:attribute name="statisticsLevel" type="xs:string"/>
+        <xs:attribute name="mbeansLevel" type="xs:string"/>
+        <xs:attribute name="loadStatisticsEnabled" type="xs:string"/>
+        <xs:attribute name="endpointRuntimeStatisticsEnabled" type="xs:string"/>
+        <xs:attribute name="includeHostName" type="xs:string"/>
+        <xs:attribute name="useHostIPAddress" type="xs:string"/>
+        <xs:attribute name="mask" type="xs:string"/>
+        <xs:attribute name="updateRouteEnabled" type="xs:string"/>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -2955,65 +2834,12 @@ Sets whether updating routes via JMX is allowed (is default disabled). Default v
           <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:propertiesFunction"/>
           <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:propertiesLocation"/>
         </xs:sequence>
-        <xs:attribute name="location" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-A list of locations to load properties. You can use comma to separate multiple locations. This option will override any
-default locations and only use the locations from this option.
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="encoding" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Encoding to use when loading properties file from the file system or classpath. If no encoding has been set, then the
-properties files is loaded using ISO-8859-1 encoding (latin-1) as documented by
-java.util.Properties#load(java.io.InputStream).
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="ignoreMissingLocation" type="xs:boolean">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Whether to silently ignore if a location cannot be located, such as a properties file not found. Default value: false
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="nestedPlaceholder" type="xs:boolean">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Whether to support nested property placeholders. A nested placeholder, means that a placeholder, has also a placeholder,
-that should be resolved (recursively). Default value: true
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="propertiesParserRef" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Reference to a custom PropertiesParser to be used.
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="defaultFallbackEnabled" type="xs:boolean">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-If false, the component does not attempt to find a default for the key by looking after the colon separator. Default
-value: true
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
+        <xs:attribute name="location" type="xs:string"/>
+        <xs:attribute name="encoding" type="xs:string"/>
+        <xs:attribute name="ignoreMissingLocation" type="xs:boolean"/>
+        <xs:attribute name="nestedPlaceholder" type="xs:boolean"/>
+        <xs:attribute name="propertiesParserRef" type="xs:string"/>
+        <xs:attribute name="defaultFallbackEnabled" type="xs:boolean"/>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -3021,15 +2847,7 @@ value: true
     <xs:complexContent>
       <xs:extension base="tns:identifiedType">
         <xs:sequence/>
-        <xs:attribute name="ref" type="xs:string" use="required">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Reference to the custom properties function to lookup in the registry.
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
+        <xs:attribute name="ref" type="xs:string" use="required"/>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -3037,33 +2855,9 @@ Reference to the custom properties function to lookup in the registry.
     <xs:complexContent>
       <xs:extension base="tns:identifiedType">
         <xs:sequence/>
-        <xs:attribute name="resolver" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-The resolver to use to locate the location. Default value: classpath
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="path" type="xs:string" use="required">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Property locations to use.
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="optional" type="xs:boolean">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-If the location is optional. Default value: false
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
+        <xs:attribute name="resolver" type="xs:string"/>
+        <xs:attribute name="path" type="xs:string" use="required"/>
+        <xs:attribute name="optional" type="xs:boolean"/>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -3071,143 +2865,19 @@ If the location is optional. Default value: false
     <xs:complexContent>
       <xs:extension base="tns:identifiedType">
         <xs:sequence/>
-        <xs:attribute name="supervising" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-To enable using supervising route controller which allows Camel to start up and then, the controller takes care of
-starting the routes in a safe manner. This can be used when you want to start up Camel despite a route may otherwise
-fail fast during startup and cause Camel to fail to start up as well. By delegating the route startup to the supervising
-route controller then its manages the startup using a background thread. The controller allows to be configured with
-various settings to attempt to restart failing routes. Default value: false
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="includeRoutes" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Pattern for filtering routes to be included as supervised. The pattern is matching on route id, and endpoint uri for the
-route. Multiple patterns can be separated by comma. For example to include all kafka routes, you can say kafka:. And to
-include routes with specific route ids myRoute,myOtherRoute. The pattern supports wildcards and uses the matcher from
-org.apache.camel.support.PatternHelper#matchPattern.
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="excludeRoutes" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Pattern for filtering routes to be excluded as supervised. The pattern is matching on route id, and endpoint uri for the
-route. Multiple patterns can be separated by comma. For example to exclude all JMS routes, you can say jms:. And to
-exclude routes with specific route ids mySpecialRoute,myOtherSpecialRoute. The pattern supports wildcards and uses the
-matcher from org.apache.camel.support.PatternHelper#matchPattern.
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="threadPoolSize" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-The number of threads used by the scheduled thread pool that are used for restarting routes. The pool uses 1 thread by
-default, but you can increase this to allow the controller to concurrently attempt to restart multiple routes in case
-more than one route has problems starting. Default value: 1
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="initialDelay" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Initial delay in milli seconds before the route controller starts, after CamelContext has been started.
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="backOffDelay" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Backoff delay in millis when restarting a route that failed to startup. Default value: 2000
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="backOffMaxDelay" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Backoff maximum delay in millis when restarting a route that failed to startup.
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="backOffMaxElapsedTime" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Backoff maximum elapsed time in millis, after which the backoff should be considered exhausted and no more attempts
-should be made.
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="backOffMaxAttempts" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Backoff maximum number of attempts to restart a route that failed to startup. When this threshold has been exceeded then
-the controller will give up attempting to restart the route, and the route will remain as stopped.
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="backOffMultiplier" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Backoff multiplier to use for exponential backoff. This is used to extend the delay between restart attempts. Default
-value: 1.0
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="unhealthyOnExhausted" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Whether to mark the route as unhealthy (down) when all restarting attempts (backoff) have failed and the route is not
-successfully started and the route manager is giving up. Setting this to true allows health checks to know about this
-and can report the Camel application as DOWN. Default value: false
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="unhealthyOnRestarting" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Whether to mark the route as unhealthy (down) when the route failed to initially start, and is being controlled for
-restarting (backoff). Setting this to true allows health checks to know about this and can report the Camel application
-as DOWN. Default value: false
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="loggingLevel" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Sets the logging level used for logging route activity (such as starting and stopping routes). The default logging level
-is DEBUG. Default value: DEBUG
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
+        <xs:attribute name="supervising" type="xs:string"/>
+        <xs:attribute name="includeRoutes" type="xs:string"/>
+        <xs:attribute name="excludeRoutes" type="xs:string"/>
+        <xs:attribute name="threadPoolSize" type="xs:string"/>
+        <xs:attribute name="initialDelay" type="xs:string"/>
+        <xs:attribute name="backOffDelay" type="xs:string"/>
+        <xs:attribute name="backOffMaxDelay" type="xs:string"/>
+        <xs:attribute name="backOffMaxElapsedTime" type="xs:string"/>
+        <xs:attribute name="backOffMaxAttempts" type="xs:string"/>
+        <xs:attribute name="backOffMultiplier" type="xs:string"/>
+        <xs:attribute name="unhealthyOnExhausted" type="xs:string"/>
+        <xs:attribute name="unhealthyOnRestarting" type="xs:string"/>
+        <xs:attribute name="loggingLevel" type="xs:string"/>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -3215,149 +2885,20 @@ is DEBUG. Default value: DEBUG
     <xs:complexContent>
       <xs:extension base="tns:identifiedType">
         <xs:sequence/>
-        <xs:attribute name="enabled" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Sets whether stream caching is enabled or not. While stream types (like StreamSource, InputStream and Reader) are
-commonly used in messaging for performance reasons, they also have an important drawback: they can only be read once. In
-order to be able to work with message content multiple times, the stream needs to be cached. Streams are cached in
-memory only (by default). If streamCachingSpoolEnabled=true, then, for large stream messages (over 128 KB by default)
-will be cached in a temporary file instead, and Camel will handle deleting the temporary file once the cached stream is
-no longer necessary. Default is true. Default value: true
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="spoolEnabled" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-To enable stream caching spooling to disk. This means, for large stream messages (over 128 KB by default) will be cached
-in a temporary file instead, and Camel will handle deleting the temporary file once the cached stream is no longer
-necessary. Default is false. Default value: false
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="allowClasses" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-To filter stream caching of a given set of allowed/denied classes. By default, all classes that are java.io.InputStream
-is allowed. Multiple class names can be separated by comma.
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="denyClasses" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-To filter stream caching of a given set of allowed/denied classes. By default, all classes that are java.io.InputStream
-is allowed. Multiple class names can be separated by comma.
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="spoolDirectory" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Sets the spool (temporary) directory to use for overflow and spooling to disk. If no spool directory has been explicit
-configured, then a temporary directory is created in the java.io.tmpdir directory.
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="spoolCipher" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Sets a cipher name to use when spooling to disk to write with encryption. By default the data is not encrypted.
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="spoolThreshold" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Threshold in bytes when overflow to disk is activated. The default threshold is
-org.apache.camel.StreamCache#DEFAULT_SPOOL_THRESHOLD bytes (eg 128kb). Use -1 to disable overflow to disk. Default
-value: 131072
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="spoolUsedHeapMemoryThreshold" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Sets a percentage (1-99) of used heap memory threshold to activate spooling to disk.
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="spoolUsedHeapMemoryLimit" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Sets what the upper bounds should be when spoolUsedHeapMemoryThreshold is in use.
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="spoolRules" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Reference to one or more custom org.apache.camel.spi.StreamCachingStrategy.SpoolRule to use. Multiple rules can be
-separated by comma.
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="bufferSize" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Sets the buffer size to use when allocating in-memory buffers used for in-memory stream caches. The default size is
-org.apache.camel.util.IOHelper#DEFAULT_BUFFER_SIZE. Default value: 16384
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="removeSpoolDirectoryWhenStopping" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Whether to remove the temporary directory when stopping. This option is default true. Default value: true
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="statisticsEnabled" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Sets whether statistics is enabled. Default value: false
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="anySpoolRules" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Sets whether if just any of the org.apache.camel.spi.StreamCachingStrategy.SpoolRule rules returns true then
-shouldSpoolCache(long) returns true. If this option is false, then all the
-org.apache.camel.spi.StreamCachingStrategy.SpoolRule must return true. The default value is false which means that all
-the rules must return true. Default value: false
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
+        <xs:attribute name="enabled" type="xs:string"/>
+        <xs:attribute name="spoolEnabled" type="xs:string"/>
+        <xs:attribute name="allowClasses" type="xs:string"/>
+        <xs:attribute name="denyClasses" type="xs:string"/>
+        <xs:attribute name="spoolDirectory" type="xs:string"/>
+        <xs:attribute name="spoolCipher" type="xs:string"/>
+        <xs:attribute name="spoolThreshold" type="xs:string"/>
+        <xs:attribute name="spoolUsedHeapMemoryThreshold" type="xs:string"/>
+        <xs:attribute name="spoolUsedHeapMemoryLimit" type="xs:string"/>
+        <xs:attribute name="spoolRules" type="xs:string"/>
+        <xs:attribute name="bufferSize" type="xs:string"/>
+        <xs:attribute name="removeSpoolDirectoryWhenStopping" type="xs:string"/>
+        <xs:attribute name="statisticsEnabled" type="xs:string"/>
+        <xs:attribute name="anySpoolRules" type="xs:string"/>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -12695,7 +12236,7 @@ Sets the auto startup property on this route. Default value: true
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Whether to slow down processing messages by a given delay in msec. Default value: advanced
+Enable delayer for this route. Default value: advanced
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -12714,7 +12255,7 @@ The group name for this route. Multiple routes can belong to the same group.
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Whether security mask for Logging is enabled on this route. Default value: false
+Sets whether security mask for logging is enabled on this route. Default value: false
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -12723,7 +12264,7 @@ Whether security mask for Logging is enabled on this route. Default value: false
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Whether message history is enabled on this route. Default value: false
+Enable message history for this route. Default value: false
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -12741,8 +12282,8 @@ Sets a prefix to use for all node ids (not route id).
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-The predicate of the precondition in simple language to evaluate in order to determine if this route should be included
-or not.
+Sets the predicate of the precondition in simple language to evaluate in order to determine if this route should be
+included or not.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -12770,7 +12311,7 @@ Configures a route policy for this route.
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-To control how to shutdown the route.
+Configures a shutdown route option.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -12779,7 +12320,7 @@ To control how to shutdown the route.
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-To control how to shut down the route.
+Configures a shutdown running task option.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -12788,7 +12329,8 @@ To control how to shut down the route.
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-To configure the ordering of the routes being started.
+Configures the startup order for this route Camel will reorder routes and star them ordered by 0..N where 0 is the
+lowest number and N the highest number. Camel will stop routes in reverse order when its stopping.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -17125,18 +16667,7 @@ URI of the Endpoint used for validation.
         <xs:sequence>
           <xs:element minOccurs="0" ref="tns:globalOptions"/>
           <xs:element minOccurs="0" ref="tns:propertyPlaceholder"/>
-          <xs:element maxOccurs="unbounded" minOccurs="0" name="package" type="xs:string">
-            <xs:annotation>
-              <xs:documentation xml:lang="en">
-<![CDATA[
-Sets the package names to be recursively searched for Java classes which extend org.apache.camel.builder.RouteBuilder to
-be auto-wired up to the CamelContext as a route. Note that classes are excluded if they are specifically configured in
-the spring.xml A more advanced configuration can be done using
-setPackageScan(org.apache.camel.model.PackageScanDefinition).
-]]>
-              </xs:documentation>
-            </xs:annotation>
-          </xs:element>
+          <xs:element maxOccurs="unbounded" minOccurs="0" name="package" type="xs:string"/>
           <xs:element minOccurs="0" ref="tns:packageScan"/>
           <xs:element minOccurs="0" ref="tns:contextScan"/>
           <xs:element minOccurs="0" ref="tns:streamCaching"/>
@@ -17148,34 +16679,10 @@ setPackageScan(org.apache.camel.model.PackageScanDefinition).
             <xs:element ref="tns:consumerTemplate"/>
           </xs:choice>
           <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:errorHandler"/>
-          <xs:element minOccurs="0" name="defaultResilience4jConfiguration" type="tns:resilience4JConfigurationDefinition">
-            <xs:annotation>
-              <xs:documentation xml:lang="en">
-<![CDATA[
-Resilience4j EIP default configuration.
-]]>
-              </xs:documentation>
-            </xs:annotation>
-          </xs:element>
+          <xs:element minOccurs="0" name="defaultResilience4jConfiguration" type="tns:resilience4JConfigurationDefinition"/>
           <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:resilience4jConfiguration"/>
-          <xs:element minOccurs="0" name="defaultFaultToleranceConfiguration" type="tns:faultToleranceConfigurationDefinition">
-            <xs:annotation>
-              <xs:documentation xml:lang="en">
-<![CDATA[
-MicroProfile Fault Tolerance EIP default configuration.
-]]>
-              </xs:documentation>
-            </xs:annotation>
-          </xs:element>
-          <xs:element maxOccurs="unbounded" minOccurs="0" name="faultToleranceConfiguration" type="tns:resilience4JConfigurationDefinition">
-            <xs:annotation>
-              <xs:documentation xml:lang="en">
-<![CDATA[
-MicroProfile Circuit Breaker EIP configurations.
-]]>
-              </xs:documentation>
-            </xs:annotation>
-          </xs:element>
+          <xs:element minOccurs="0" name="defaultFaultToleranceConfiguration" type="tns:faultToleranceConfigurationDefinition"/>
+          <xs:element maxOccurs="unbounded" minOccurs="0" name="faultToleranceConfiguration" type="tns:resilience4JConfigurationDefinition"/>
           <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:routeConfigurationContextRef"/>
           <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:routeTemplateContextRef"/>
           <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:routeBuilder"/>
@@ -17200,376 +16707,50 @@ MicroProfile Circuit Breaker EIP configurations.
           <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:templatedRoute"/>
           <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:route"/>
         </xs:sequence>
-        <xs:attribute name="depends-on" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-List of other bean id's this CamelContext depends up. Multiple bean id's can be separated by comma.
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="startupSummaryLevel" type="tns:startupSummaryLevel">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Controls the level of information logged during startup (and shutdown) of CamelContext. Default value: Default
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="trace" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Sets whether tracing is enabled or not. To use tracing then this must be enabled on startup to be installed in the
-CamelContext.
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="backlogTrace" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Sets whether backlog tracing is enabled or not. To use backlog tracing then this must be enabled on startup to be
-installed in the CamelContext.
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="tracePattern" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Tracing pattern to match which node EIPs to trace. For example to match all To EIP nodes, use to. The pattern matches by
-node and route id's Multiple patterns can be separated by comma.
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="traceLoggingFormat" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-To use a custom tracing logging format. The default format (arrow, routeId, label) is: %-4.4s %-12.12s %-33.33s.
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="debug" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Sets whether debugging is enabled or not. To use debugging then this must be enabled on startup to be installed in the
-CamelContext.
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="messageHistory" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Sets whether message history is enabled or not. Default value: false
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="sourceLocationEnabled" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Whether to capture precise source location:line-number for all EIPs in Camel routes. Enabling this will impact parsing
-Java based routes (also Groovy, etc.) on startup as this uses JDK StackTraceElement to calculate the location from the
-Camel route, which comes with a performance cost. This only impact startup, not the performance of the routes at
-runtime. Default value: false
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="logMask" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Sets whether security mask for Logging is enabled or not. Default value: false
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="logExhaustedMessageBody" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Sets whether to log exhausted message body with message history.
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="streamCache" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Sets whether stream caching is enabled or not.
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="delayer" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Sets a delay value in millis that a message is delayed at every step it takes in the route path, slowing the process
-down to better observe what is occurring.
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="errorHandlerRef" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Sets the name of the error handler object used to default the error handling strategy.
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="autoStartup" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Sets whether the object should automatically start when Camel starts. Important: Currently only routes can be disabled,
-as CamelContext s are always started. Note: When setting auto startup false on CamelContext then that takes precedence
-and no routes is started. You would need to start CamelContext explicit using the org.apache.camel.CamelContext#start()
-method, to start the context, and then you would need to start the routes manually using
-org.apache.camel.spi.RouteController#startRoute(String) . Default value: true
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="shutdownEager" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Whether to shutdown CamelContext eager when Spring is shutting down. This ensure a cleaner shutdown of Camel, as
-dependent bean's are not shutdown at this moment. The bean's will then be shutdown after camelContext. Default value:
-true
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="dumpRoutes" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-If dumping is enabled then Camel will during startup dump all loaded routes (incl rests and route templates) represented
-as XML DSL into the log. This is intended for trouble shooting or to assist during development. Sensitive information
-that may be configured in the route endpoints could potentially be included in the dump output and is therefore not
-recommended to be used for production usage. This requires to have camel-xml-jaxb on the classpath to be able to dump
-the routes as XML. Default value: false
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="useMDCLogging" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Set whether MDC is enabled.
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
+        <xs:attribute name="depends-on" type="xs:string"/>
+        <xs:attribute name="startupSummaryLevel" type="tns:startupSummaryLevel"/>
+        <xs:attribute name="trace" type="xs:string"/>
+        <xs:attribute name="backlogTrace" type="xs:string"/>
+        <xs:attribute name="tracePattern" type="xs:string"/>
+        <xs:attribute name="traceLoggingFormat" type="xs:string"/>
+        <xs:attribute name="debug" type="xs:string"/>
+        <xs:attribute name="messageHistory" type="xs:string"/>
+        <xs:attribute name="sourceLocationEnabled" type="xs:string"/>
+        <xs:attribute name="logMask" type="xs:string"/>
+        <xs:attribute name="logExhaustedMessageBody" type="xs:string"/>
+        <xs:attribute name="streamCache" type="xs:string"/>
+        <xs:attribute name="delayer" type="xs:string"/>
+        <xs:attribute name="errorHandlerRef" type="xs:string"/>
+        <xs:attribute name="autoStartup" type="xs:string"/>
+        <xs:attribute name="shutdownEager" type="xs:string"/>
+        <xs:attribute name="dumpRoutes" type="xs:string"/>
+        <xs:attribute name="useMDCLogging" type="xs:string"/>
         <xs:attribute name="mdcLoggingKeysPattern" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Deprecated: Sets the pattern used for determine which custom MDC keys to propagate during message routing when the
-routing engine continues routing asynchronously for the given message. Setting this pattern to will propagate all custom
-keys. Or setting the pattern to foo,bar will propagate any keys starting with either foo or bar. Notice that a set of
-standard Camel MDC keys are always propagated which starts with camel. as key name. The match rules are applied in this
-order (case insensitive): 1. exact match, returns true 2. wildcard match (pattern ends with a and the name starts with
-the pattern), returns true 3. regular expression match, returns true 4. otherwise returns false.
+Deprecated: .
 ]]>
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="useDataType" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Whether to enable using data type on Camel messages. Data type are automatic turned on if: one ore more routes has been
-explicit configured with input and output types when using rest-dsl with binding turned on Otherwise data type is
-default off.
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="useBreadcrumb" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Set whether breadcrumb is enabled.
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="beanPostProcessorEnabled" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Can be used to turn off bean post processing. Be careful to turn this off, as this means that beans that use Camel
-annotations such as org.apache.camel.EndpointInject , org.apache.camel.ProducerTemplate , org.apache.camel.Produce ,
-org.apache.camel.Consume etc will not be injected and in use. Turning this off should only be done if you are sure you
-do not use any of these Camel features. Not all runtimes allow turning this off. The default value is true (enabled).
-Default value: true
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="allowUseOriginalMessage" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Sets whether to allow access to the original message from Camel's error handler, or from
-org.apache.camel.spi.UnitOfWork#getOriginalInMessage() . Turning this off can optimize performance, as defensive copy of
-the original message is not needed.
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="caseInsensitiveHeaders" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Whether to use case sensitive or insensitive headers. Important: When using case sensitive (this is set to false). Then
-the map is case sensitive which means headers such as content-type and Content-Type are two different keys which can be
-a problem for some protocols such as HTTP based, which rely on case insensitive headers. However case sensitive
-implementations can yield faster performance. Therefore use case sensitive implementation with care. Default is true.
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="autowiredEnabled" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by
-looking up in the registry to find if there is a single instance of matching type, which then gets configured on the
-component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc.
-Default is true.
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="runtimeEndpointRegistryEnabled" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Sets whether org.apache.camel.spi.RuntimeEndpointRegistry is enabled.
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="managementNamePattern" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-The naming pattern for creating the CamelContext management name. Default value: #name#
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="threadNamePattern" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Sets the thread name pattern used for creating the full thread name. The default pattern is: Camel (#camelId#) thread
-##counter# - #name# Where #camelId# is the name of the org.apache.camel.CamelContext and #counter# is a unique
-incrementing counter. and #name# is the regular thread name. You can also use #longName# is the long thread name which
-can includes endpoint parameters etc. Default value: Camel (#camelId#) thread ##counter# - #name#
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="shutdownRoute" type="tns:shutdownRoute">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Sets the ShutdownRoute option for routes. Default value: Default
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="shutdownRunningTask" type="tns:shutdownRunningTask">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Sets the ShutdownRunningTask option to use when shutting down a route. Default value: CompleteCurrentTaskOnly
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="loadTypeConverters" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Whether to load custom type converters by scanning classpath. This is used for backwards compatibility with Camel 2.x.
-Its recommended to migrate to use fast type converter loading by setting Converter(loader = true) on your custom type
-converter classes. Default value: false
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="typeConverterStatisticsEnabled" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Sets whether or not type converter statistics is enabled. By default the type converter utilization statistics is
-disabled. Notice: If enabled then there is a slight performance impact under very heavy load.
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="loadHealthChecks" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Whether to load custom health checks by scanning classpath. Default value: false
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="inflightRepositoryBrowseEnabled" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Sets whether the inflight repository should allow browsing each inflight exchange. This is by default disabled as there
-is a very slight performance overhead when enabled.
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="typeConverterExists" type="tns:typeConverterExists">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-What should happen when attempting to add a duplicate type converter. The default behavior is to ignore the duplicate.
-Default value: Ignore
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="typeConverterExistsLoggingLevel" type="tns:loggingLevel">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-The logging level to use when logging that a type converter already exists when attempting to add a duplicate type
-converter. The default logging level is DEBUG. Default value: DEBUG
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
+        <xs:attribute name="useDataType" type="xs:string"/>
+        <xs:attribute name="useBreadcrumb" type="xs:string"/>
+        <xs:attribute name="beanPostProcessorEnabled" type="xs:string"/>
+        <xs:attribute name="allowUseOriginalMessage" type="xs:string"/>
+        <xs:attribute name="caseInsensitiveHeaders" type="xs:string"/>
+        <xs:attribute name="autowiredEnabled" type="xs:string"/>
+        <xs:attribute name="runtimeEndpointRegistryEnabled" type="xs:string"/>
+        <xs:attribute name="managementNamePattern" type="xs:string"/>
+        <xs:attribute name="threadNamePattern" type="xs:string"/>
+        <xs:attribute name="shutdownRoute" type="tns:shutdownRoute"/>
+        <xs:attribute name="shutdownRunningTask" type="tns:shutdownRunningTask"/>
+        <xs:attribute name="loadTypeConverters" type="xs:string"/>
+        <xs:attribute name="typeConverterStatisticsEnabled" type="xs:string"/>
+        <xs:attribute name="loadHealthChecks" type="xs:string"/>
+        <xs:attribute name="inflightRepositoryBrowseEnabled" type="xs:string"/>
+        <xs:attribute name="typeConverterExists" type="tns:typeConverterExists"/>
+        <xs:attribute name="typeConverterExistsLoggingLevel" type="tns:loggingLevel"/>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
