@@ -96,7 +96,14 @@ pipeline {
                         steps {
                             cleanWs()
                             sh 'rm -rvf /home/jenkins/.m2/repository/org/apache/camel'
-                            checkout scm
+                            checkout([
+                                $class: 'GitSCM',
+                                branches: scm.branches,
+                                extensions: [
+                                    [$class: 'CloneOption', depth: 1, noTags: true, shallow: true]
+                                ],
+                                userRemoteConfigs: scm.userRemoteConfigs
+                            ])
                         }
                     }
 
