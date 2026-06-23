@@ -78,7 +78,7 @@ public abstract class VerbDefinition extends OptionalIdentifiedDefinition<VerbDe
     @XmlTransient
     private Class<?> outTypeClass;
     @XmlAttribute
-    @Metadata(description = "Sets the binding mode to use. This option will override what may be configured on a parent level.",
+    @Metadata(description = "Sets the binding mode for automatic marshalling and unmarshalling of request and response bodies. off (default) disables binding. auto detects JSON or XML from the Content-Type header. json binds using a JSON data format only. xml binds using an XML data format only. json_xml supports both JSON and XML. This option will override what may be configured on a parent level.",
               defaultValue = "off", enums = "off,auto,json,xml,json_xml")
     private String bindingMode;
     @XmlAttribute

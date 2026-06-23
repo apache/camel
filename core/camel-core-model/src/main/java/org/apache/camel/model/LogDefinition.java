@@ -43,7 +43,7 @@ public class LogDefinition extends NoOutputDefinition<LogDefinition> {
     private String message;
     @XmlAttribute
     @Metadata(javaType = "org.apache.camel.LoggingLevel", defaultValue = "INFO", enums = "TRACE,DEBUG,INFO,WARN,ERROR,OFF",
-              description = "The logging level to use. Default is INFO.")
+              description = "Sets the logging level to use for the log message. Available levels: TRACE, DEBUG, INFO, WARN, ERROR, OFF.")
     @DslArg(position = 0, renderType = "enumString", typeName = "LoggingLevel")
     private String loggingLevel;
     @XmlAttribute

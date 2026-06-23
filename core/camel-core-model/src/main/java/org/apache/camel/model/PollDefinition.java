@@ -47,7 +47,8 @@ public class PollDefinition extends NoOutputDefinition<PollDefinition> implement
     @Metadata(description = "To use a variable to store the received message body (only body, not headers). This makes it handy to use variables for user data and to easily control what data to use for sending and receiving.")
     private String variableReceive;
     @XmlAttribute
-    @Metadata(required = true, description = "Sets the uri of the endpoint to poll from.")
+    @Metadata(required = true,
+              description = "The uri of the endpoint to poll a single message from. The result is stored in the original message body (or in a variable if variableReceive is set).")
     @DslArg
     private String uri;
     @XmlAttribute

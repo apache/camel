@@ -35,11 +35,12 @@ public class TransformDataTypeDefinition extends NoOutputDefinition<TransformDat
 
     @XmlAttribute
     @DslArg(position = 0)
-    @Metadata(description = "The source data type for the transformation.")
+    @Metadata(description = "The source data type URN in the format 'scheme:name' (e.g. 'java:com.example.MyClass'). If not specified, the current message body type is used.")
     private String fromType;
     @XmlAttribute(required = true)
     @DslArg(position = 1)
-    @Metadata(required = true, description = "The target data type for the transformation.")
+    @Metadata(required = true,
+              description = "The target data type URN in the format 'scheme:name' (e.g. 'json:JsonOrder') that the message body should be transformed into.")
     private String toType;
 
     public TransformDataTypeDefinition() {

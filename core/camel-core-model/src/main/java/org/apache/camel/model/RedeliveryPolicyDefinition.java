@@ -38,7 +38,7 @@ public class RedeliveryPolicyDefinition extends IdentifiedType implements Clonea
     private String maximumRedeliveries;
     @XmlAttribute
     @Metadata(javaType = "java.time.Duration", defaultValue = "1000",
-              description = "Sets the initial redelivery delay in milliseconds.")
+              description = "Sets the initial delay in milliseconds before the first redelivery attempt.")
     private String redeliveryDelay;
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean",
@@ -46,36 +46,36 @@ public class RedeliveryPolicyDefinition extends IdentifiedType implements Clonea
     private String asyncDelayedRedelivery;
     @XmlAttribute
     @Metadata(javaType = "java.lang.Double", defaultValue = "2.0",
-              description = "Sets the back off multiplier.")
+              description = "Sets the multiplier applied to the previous redelivery delay to compute the next delay when using exponential backoff.")
     private String backOffMultiplier;
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean",
-              description = "Turn on exponential back off.")
+              description = "Enables exponential backoff, so each subsequent redelivery delay is multiplied by the backOffMultiplier.")
     private String useExponentialBackOff;
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Double", defaultValue = "0.15",
-              description = "Sets the collision avoidance factor.")
+              description = "Sets the collision avoidance factor, which adds a random percentage of the delay to avoid thundering herd problems when multiple redeliveries happen simultaneously.")
     private String collisionAvoidanceFactor;
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean",
-              description = "Turn on collision avoidance.")
+              description = "Enables collision avoidance, which adds a random factor to redelivery delays to prevent multiple simultaneous redeliveries from colliding.")
     private String useCollisionAvoidance;
     @XmlAttribute
     @Metadata(javaType = "java.time.Duration", defaultValue = "60000",
-              description = "Sets the maximum delay between redelivery in milliseconds.")
+              description = "Sets the upper bound on redelivery delay in milliseconds when using exponential backoff, to prevent delays from growing unbounded.")
     private String maximumRedeliveryDelay;
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "org.apache.camel.LoggingLevel", defaultValue = "ERROR",
               enums = "TRACE,DEBUG,INFO,WARN,ERROR,OFF",
-              description = "Sets the logging level to use when retries have been exhausted.")
+              description = "Sets the logging level to use when all retries have been exhausted and the message is moved to the dead letter channel or failed.")
     private String retriesExhaustedLogLevel;
     @XmlAttribute
     @Metadata(javaType = "org.apache.camel.LoggingLevel", defaultValue = "DEBUG", enums = "TRACE,DEBUG,INFO,WARN,ERROR,OFF",
-              description = "Sets the logging level to use for logging retry attempts.")
+              description = "Sets the logging level to use when a redelivery attempt is made.")
     private String retryAttemptedLogLevel;
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Integer", defaultValue = "1",
-              description = "Sets the interval for logging retry attempts.")
+              description = "Sets how often to log redelivery attempts. For example, a value of 3 logs every 3rd redelivery attempt.")
     private String retryAttemptedLogInterval;
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "true",
@@ -119,7 +119,7 @@ public class RedeliveryPolicyDefinition extends IdentifiedType implements Clonea
     private String disableRedelivery;
     @XmlAttribute
     @Metadata(label = "advanced",
-              description = "Sets the delay pattern with delay intervals.")
+              description = "Sets the delay pattern for redeliveries using a pattern such as '0:1000;5:5000;10:30000' where each entry maps a redelivery count to a delay in milliseconds (e.g. redeliveries 0-4 use 1s delay, 5-9 use 5s, 10+ use 30s).")
     private String delayPattern;
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "true",

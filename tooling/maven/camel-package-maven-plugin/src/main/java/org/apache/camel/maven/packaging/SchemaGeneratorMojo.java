@@ -1467,7 +1467,21 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
 
     private String findJavaDoc(
             Field fieldElement, String fieldName, String name, Class<?> classElement, boolean builderPattern) {
-        // prefer @Metadata(description) on the field
+        // prefer @Metadata(description) on setter method as subclasses can override with specific descriptions
+        String setterName = "set" + Character.toUpperCase(fieldName.charAt(0)) + fieldName.substring(1);
+        for (Method method : classElement.getMethods()) {
+            if (method.getName().equals(setterName) && method.getParameterCount() == 1) {
+                Metadata md = method.getAnnotation(Metadata.class);
+                if (md != null) {
+                    String doc = md.description();
+                    if (!Strings.isNullOrEmpty(doc)) {
+                        return doc;
+                    }
+                }
+            }
+        }
+
+        // fallback to @Metadata(description) on the field
         if (fieldElement != null) {
             Metadata md = fieldElement.getAnnotation(Metadata.class);
             if (md != null) {
@@ -1478,7 +1492,7 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
             }
         }
 
-        // fallback to fluent builder javadoc (used by RouteDefinition properties that have no field)
+        // fallback to fluent builder javadoc
         if (builderPattern) {
             JavaClassSource source = javaClassSource(classElement.getName());
             if (name != null && !name.equals(fieldName)) {

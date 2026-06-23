@@ -175,6 +175,7 @@ public class LoopDefinition extends OutputExpressionNode {
     }
 
     @Override
+    @Metadata(description = "The expression that determines the number of times to loop. The result is converted to an integer.")
     public void setExpression(ExpressionDefinition expression) {
         // override to include javadoc what the expression is used for
         super.setExpression(expression);

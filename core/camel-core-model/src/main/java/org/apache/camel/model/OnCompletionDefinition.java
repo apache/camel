@@ -50,7 +50,7 @@ public class OnCompletionDefinition extends OutputDefinition<OnCompletionDefinit
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "org.apache.camel.model.OnCompletionMode", defaultValue = "AfterConsumer",
               enums = "AfterConsumer,BeforeConsumer",
-              description = "Sets the on completion mode. The default value is AfterConsumer.")
+              description = "Controls when the on-completion callback runs. AfterConsumer (default) runs after the consumer has written the response back to the caller. BeforeConsumer runs before the consumer writes the response, allowing the on-completion route to modify the Exchange before it is returned to the caller (e.g. in InOut mode).")
     private String mode;
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean",

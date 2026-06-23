@@ -32,12 +32,17 @@ import org.apache.camel.spi.Metadata;
 public class RouteTemplateParameterDefinition {
 
     @XmlAttribute(required = true)
+    @Metadata(description = "The name of the template parameter.")
     String name;
     @XmlAttribute
+    @Metadata(description = "Whether this template parameter is required. A required parameter must have a value provided when creating a route from the template.",
+              javaType = "java.lang.Boolean")
     Boolean required;
     @XmlAttribute
+    @Metadata(description = "The default value of the template parameter. Used when no explicit value is provided when creating a route from the template.")
     String defaultValue;
     @XmlAttribute
+    @Metadata(description = "Description of the template parameter for documentation purposes.")
     String description;
 
     public RouteTemplateParameterDefinition() {

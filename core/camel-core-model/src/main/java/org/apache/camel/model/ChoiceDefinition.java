@@ -48,10 +48,10 @@ public class ChoiceDefinition extends NoOutputDefinition<ChoiceDefinition> {
 
     @XmlElementRef(name = "when")
     @AsPredicate
-    @Metadata(description = "Sets the when nodes")
+    @Metadata(description = "The when clauses (predicates) to evaluate. The first when clause that matches determines which route branch to follow.")
     private List<WhenDefinition> whenClauses = new ArrayList<>();
     @XmlElement
-    @Metadata(description = "Sets the otherwise node")
+    @Metadata(description = "The otherwise clause to execute when none of the when predicates matched.")
     private OtherwiseDefinition otherwise;
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "false",

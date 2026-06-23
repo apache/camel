@@ -37,7 +37,8 @@ import org.apache.camel.spi.Metadata;
 public class InputTypeDefinition extends OptionalIdentifiedDefinition<InputTypeDefinition> {
 
     @XmlAttribute
-    @Metadata(required = true, description = "The input type URN.")
+    @Metadata(required = true,
+              description = "The input type URN in the format 'scheme:name' (e.g. 'java:com.example.MyClass' or 'json:JsonOrder'). Declares the expected data type for messages consumed by this route.")
     private String urn;
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean", defaultValue = "false",

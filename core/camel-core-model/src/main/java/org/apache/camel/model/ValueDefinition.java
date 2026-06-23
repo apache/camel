@@ -32,6 +32,7 @@ import org.apache.camel.spi.Metadata;
 public class ValueDefinition {
 
     @XmlValue
+    @Metadata(description = "The value.")
     private String value;
 
     public ValueDefinition() {

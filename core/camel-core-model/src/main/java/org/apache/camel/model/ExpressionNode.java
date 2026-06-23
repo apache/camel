@@ -45,7 +45,7 @@ public abstract class ExpressionNode extends ProcessorDefinition<ExpressionNode>
 
     @XmlElementRef
     @DslArg
-    @Metadata(description = "Expression to evaluate.")
+    @Metadata(description = "Expression to define the behavior of the EIP such as the value to set, the predicate to evaluate, the endpoint to resolve, or the body to split/transform.")
     private ExpressionDefinition expression;
 
     protected ExpressionNode() {

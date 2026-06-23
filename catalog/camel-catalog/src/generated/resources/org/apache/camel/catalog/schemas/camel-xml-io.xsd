@@ -2305,7 +2305,7 @@ later at runtime. Default value: false
       <xs:annotation>
         <xs:documentation xml:lang="en">
 <![CDATA[
-Sets the description of this node.
+The description for this node.
 ]]>
         </xs:documentation>
       </xs:annotation>
@@ -2314,7 +2314,7 @@ Sets the description of this node.
       <xs:annotation>
         <xs:documentation xml:lang="en">
 <![CDATA[
-Sets the id of this node. Important: If you want to set the id of the route, then you must use routeId(String) instead.
+The id of this node.
 ]]>
         </xs:documentation>
       </xs:annotation>
@@ -2323,7 +2323,7 @@ Sets the id of this node. Important: If you want to set the id of the route, the
       <xs:annotation>
         <xs:documentation xml:lang="en">
 <![CDATA[
-Sets the note of this node.
+The note for this node.
 ]]>
         </xs:documentation>
       </xs:annotation>
@@ -2737,7 +2737,7 @@ Whether to trim the source code to remove leading and trailing whitespaces and l
       <xs:annotation>
         <xs:documentation xml:lang="en">
 <![CDATA[
-Sets the maximum number of retries.
+Sets the maximum number of retries before giving up on acquiring the optimistic lock.
 ]]>
         </xs:documentation>
       </xs:annotation>
@@ -2746,7 +2746,7 @@ Sets the maximum number of retries.
       <xs:annotation>
         <xs:documentation xml:lang="en">
 <![CDATA[
-Sets the delay in millis between retries. Default value: 50
+Sets the delay in milliseconds between retry attempts when the optimistic lock fails. Default value: 50
 ]]>
         </xs:documentation>
       </xs:annotation>
@@ -2755,7 +2755,8 @@ Sets the delay in millis between retries. Default value: 50
       <xs:annotation>
         <xs:documentation xml:lang="en">
 <![CDATA[
-Sets the upper value of retry in millis between retries, when using exponential or random backoff. Default value: 1000
+Sets the upper bound on retry delay in milliseconds to prevent delays from growing unbounded when using exponential or
+random backoff. Default value: 1000
 ]]>
         </xs:documentation>
       </xs:annotation>
@@ -2764,7 +2765,8 @@ Sets the upper value of retry in millis between retries, when using exponential 
       <xs:annotation>
         <xs:documentation xml:lang="en">
 <![CDATA[
-Whether to enable exponential backoff. Default value: true
+Whether to enable exponential backoff, so each subsequent retry delay is doubled until the maximum retry delay is
+reached. Default value: true
 ]]>
         </xs:documentation>
       </xs:annotation>
@@ -2773,7 +2775,8 @@ Whether to enable exponential backoff. Default value: true
       <xs:annotation>
         <xs:documentation xml:lang="en">
 <![CDATA[
-Whether to enable random backoff. Default value: false
+Whether to enable random backoff, which uses a random delay between 0 and the computed retry delay to avoid thundering
+herd problems. Default value: false
 ]]>
         </xs:documentation>
       </xs:annotation>
@@ -4590,7 +4593,7 @@ Sets the maximum number of redeliveries. Use 0 for no redeliveries, or -1 to red
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Sets the initial redelivery delay in milliseconds. Default value: 1000
+Sets the initial delay in milliseconds before the first redelivery attempt. Default value: 1000
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -4609,7 +4612,8 @@ Routing Engine (e.g. seda). Default value: false
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Sets the back off multiplier. Default value: 2.0
+Sets the multiplier applied to the previous redelivery delay to compute the next delay when using exponential backoff.
+Default value: 2.0
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -4618,7 +4622,8 @@ Sets the back off multiplier. Default value: 2.0
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Turn on exponential back off. Default value: false
+Enables exponential backoff, so each subsequent redelivery delay is multiplied by the backOffMultiplier. Default value:
+false
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -4627,7 +4632,8 @@ Turn on exponential back off. Default value: false
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Sets the collision avoidance factor. Default value: 0.15
+Sets the collision avoidance factor, which adds a random percentage of the delay to avoid thundering herd problems when
+multiple redeliveries happen simultaneously. Default value: 0.15
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -4636,7 +4642,8 @@ Sets the collision avoidance factor. Default value: 0.15
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Turn on collision avoidance. Default value: false
+Enables collision avoidance, which adds a random factor to redelivery delays to prevent multiple simultaneous
+redeliveries from colliding. Default value: false
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -4645,7 +4652,8 @@ Turn on collision avoidance. Default value: false
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Sets the maximum delay between redelivery in milliseconds. Default value: 60000
+Sets the upper bound on redelivery delay in milliseconds when using exponential backoff, to prevent delays from growing
+unbounded. Default value: 60000
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -4654,7 +4662,8 @@ Sets the maximum delay between redelivery in milliseconds. Default value: 60000
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Sets the logging level to use when retries have been exhausted. Default value: ERROR
+Sets the logging level to use when all retries have been exhausted and the message is moved to the dead letter channel
+or failed. Default value: ERROR
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -4663,7 +4672,7 @@ Sets the logging level to use when retries have been exhausted. Default value: E
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Sets the logging level to use for logging retry attempts. Default value: DEBUG
+Sets the logging level to use when a redelivery attempt is made. Default value: DEBUG
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -4672,7 +4681,7 @@ Sets the logging level to use for logging retry attempts. Default value: DEBUG
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Sets the interval for logging retry attempts. Default value: 1
+Sets how often to log redelivery attempts. For example, a value of 3 logs every 3rd redelivery attempt. Default value: 1
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -4778,7 +4787,8 @@ Disables redelivery (same as setting maximum redeliveries to 0). Default value: 
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Sets the delay pattern with delay intervals.
+Sets the delay pattern for redeliveries using a pattern such as '0:1000;5:5000;10:30000' where each entry maps a
+redelivery count to a delay in milliseconds (e.g. redeliveries 0-4 use 1s delay, 5-9 use 5s, 10 use 30s).
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -5230,7 +5240,7 @@ Global option value.
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Sets the reference name of the message id repository.
+Sets the reference name of the message id repository to use for storing processed message ids to detect duplicates.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -5284,7 +5294,8 @@ true
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-The input type URN.
+The input type URN in the format 'scheme:name' (e.g. 'java:com.example.MyClass' or 'json:JsonOrder'). Declares the
+expected data type for messages consumed by this route.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -5862,7 +5873,8 @@ The log message to output. Supports simple language expressions.
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-The logging level to use. Default is INFO. Default value: INFO
+Sets the logging level to use for the log message. Available levels: TRACE, DEBUG, INFO, WARN, ERROR, OFF. Default
+value: INFO
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -9876,7 +9888,9 @@ own individual unit of work. Default value: false
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Sets the on completion mode. The default value is AfterConsumer. Default value: AfterConsumer
+Controls when the on-completion callback runs. AfterConsumer (default) runs after the consumer has written the response
+back to the caller. BeforeConsumer runs before the consumer writes the response, allowing the on-completion route to
+modify the Exchange before it is returned to the caller (e.g. in InOut mode). Default value: AfterConsumer
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -10378,7 +10392,8 @@ user data and to easily control what data to use for sending and receiving.
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Sets the uri of the endpoint to poll from.
+The uri of the endpoint to poll a single message from. The result is stored in the original message body (or in a
+variable if variableReceive is set).
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -11370,7 +11385,7 @@ Reference to the routes in the xml-dsl.
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Sets the auto startup property on this route. Default value: true
+Whether to auto start this route. Default value: true
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -11379,12 +11394,21 @@ Sets the auto startup property on this route. Default value: true
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Enable delayer for this route. Default value: advanced
+Whether to slow down processing messages by a given delay in msec. Default value: advanced
 ]]>
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="errorHandlerRef" type="xs:string"/>
+        <xs:attribute name="errorHandlerRef" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Sets a reference to a custom error handler to use for this route, referring to an error handler by its id in the
+registry.
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
         <xs:attribute name="group" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en">
@@ -11398,7 +11422,7 @@ The group name for this route. Multiple routes can belong to the same group.
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Sets whether security mask for logging is enabled on this route. Default value: false
+Whether security mask for logging is enabled on this route. Default value: false
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -11407,7 +11431,7 @@ Sets whether security mask for logging is enabled on this route. Default value: 
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Enable message history for this route. Default value: false
+Whether message history is enabled on this route. Default value: false
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -11425,8 +11449,8 @@ Sets a prefix to use for all node ids (not route id).
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Sets the predicate of the precondition in simple language to evaluate in order to determine if this route should be
-included or not.
+The predicate of the precondition in simple language to evaluate in order to determine if this route should be included
+or not.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -11454,7 +11478,8 @@ Configures a route policy for this route.
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Configures a shutdown route option.
+To control how to shutdown the route. Default shuts down the route normally. Defer delays the shutdown so that in-flight
+and pending messages are allowed to complete before the route is shutdown.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -11463,7 +11488,9 @@ Configures a shutdown route option.
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Configures a shutdown running task option.
+To control how to handle in-flight and pending messages during shutdown. CompleteCurrentTaskOnly (default) finishes only
+the current message. CompleteAllTasks finishes all pending messages (e.g. from a batch consumer or aggregator) before
+shutting down.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -11472,8 +11499,7 @@ Configures a shutdown running task option.
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Configures the startup order for this route Camel will reorder routes and star them ordered by 0..N where 0 is the
-lowest number and N the highest number. Camel will stop routes in reverse order when its stopping.
+To configure the ordering of the routes being started.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -11482,7 +11508,7 @@ lowest number and N the highest number. Camel will stop routes in reverse order 
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Enable or disables stream caching for this route. Default value: false
+Whether stream caching is enabled on this route. Default value: false
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -11491,7 +11517,7 @@ Enable or disables stream caching for this route. Default value: false
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Enables or disables tracing for this route. Default value: false
+Whether tracing is enabled on this route. Default value: false
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -11532,10 +11558,44 @@ Adds a local bean the route template uses.
   </xs:complexType>
   <xs:complexType name="routeTemplateParameterDefinition">
     <xs:sequence/>
-    <xs:attribute name="name" type="xs:string" use="required"/>
-    <xs:attribute name="required" type="xs:boolean"/>
-    <xs:attribute name="defaultValue" type="xs:string"/>
-    <xs:attribute name="description" type="xs:string"/>
+    <xs:attribute name="name" type="xs:string" use="required">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+<![CDATA[
+The name of the template parameter.
+]]>
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="required" type="xs:boolean">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+<![CDATA[
+Whether this template parameter is required. A required parameter must have a value provided when creating a route from
+the template. Default value: false
+]]>
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="defaultValue" type="xs:string">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+<![CDATA[
+The default value of the template parameter. Used when no explicit value is provided when creating a route from the
+template.
+]]>
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="description" type="xs:string">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+<![CDATA[
+Description of the template parameter for documentation purposes.
+]]>
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
   </xs:complexType>
   <xs:complexType name="routeTemplatesDefinition">
     <xs:complexContent>
@@ -11719,8 +11779,10 @@ Refers to the id to lookup in the registry for the specific CamelSagaService to 
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Set the Saga propagation mode (REQUIRED, REQUIRES_NEW, MANDATORY, SUPPORTS, NOT_SUPPORTED, NEVER). Default value:
-REQUIRED
+Set the Saga propagation mode. REQUIRED joins an existing saga or starts a new one. REQUIRES_NEW always starts a new
+saga, suspending any existing one. MANDATORY requires an existing saga and fails if none is active. SUPPORTS joins an
+existing saga if present but does not start a new one. NOT_SUPPORTED executes outside any saga, suspending an existing
+one. NEVER fails if a saga is already active. Default value: REQUIRED
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -12527,7 +12589,7 @@ Whether this profile is the default thread pool profile. Default value: false
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Sets the core pool size.
+Sets the core pool size (number of threads to keep in the pool, even if idle).
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -12536,7 +12598,7 @@ Sets the core pool size.
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Sets the maximum pool size.
+Sets the maximum pool size (the upper bound of threads in the pool).
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -12545,7 +12607,7 @@ Sets the maximum pool size.
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Sets the keep alive time for idle threads in the pool.
+Sets the keep alive time for idle threads before they are terminated. Only applies to threads above the core pool size.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -12607,7 +12669,7 @@ To refer to a custom thread pool or use a thread pool profile (as overlay).
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Sets the core pool size.
+Sets the core pool size (number of threads to keep in the pool, even if idle).
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -12616,7 +12678,7 @@ Sets the core pool size.
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Sets the maximum pool size.
+Sets the maximum pool size (the upper bound of threads in the pool).
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -12625,7 +12687,7 @@ Sets the maximum pool size.
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Sets the keep alive time for idle threads.
+Sets the keep alive time for idle threads before they are terminated. Only applies to threads above the core pool size.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -12634,7 +12696,7 @@ Sets the keep alive time for idle threads.
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Sets the keep alive time unit. By default SECONDS is used.
+Sets the time unit for the keep alive time. By default SECONDS is used.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -12662,7 +12724,7 @@ Default value: false
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Sets the thread name to use. Default value: Threads
+Sets the thread name pattern to use for naming threads created by this thread pool. Default value: Threads
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -12737,7 +12799,9 @@ The correlation expression to use for throttle grouping. Exchanges with the same
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Sets the throttling mode to one of the available modes enumerated in ThrottlingMode. Default value: TotalRequests
+Sets the throttling mode. TotalRequests limits the total number of requests within a time period. ConcurrentRequests
+uses a leaky-bucket algorithm to limit the number of concurrent requests being processed at the same time. Default
+value: TotalRequests
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -13141,7 +13205,8 @@ Reference to lookup a transacted policy in the registry.
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-The source data type for the transformation.
+The source data type URN in the format 'scheme:name' (e.g. 'java:com.example.MyClass'). If not specified, the current
+message body type is used.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -13150,7 +13215,8 @@ The source data type for the transformation.
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-The target data type for the transformation.
+The target data type URN in the format 'scheme:name' (e.g. 'json:JsonOrder') that the message body should be transformed
+into.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -13757,7 +13823,9 @@ using. Default value: allLocalIp
       <xs:annotation>
         <xs:documentation xml:lang="en">
 <![CDATA[
-Sets the binding mode to use. Default value: off
+Sets the binding mode for automatic marshalling and unmarshalling of request and response bodies. off (default) disables
+binding. auto detects JSON or XML from the Content-Type header. json binds using a JSON data format only. xml binds
+using an XML data format only. json_xml supports both JSON and XML. Default value: off
 ]]>
         </xs:documentation>
       </xs:annotation>
@@ -13940,7 +14008,10 @@ cannot be enabled later at runtime. Default value: false
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Sets the binding mode to use. This option will override what may be configured on a parent level. Default value: off
+Sets the binding mode for automatic marshalling and unmarshalling of request and response bodies. off (default) disables
+binding. auto detects JSON or XML from the Content-Type header. json binds using a JSON data format only. xml binds
+using an XML data format only. json_xml supports both JSON and XML. This option will override what may be configured on
+a parent level. Default value: off
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -14351,7 +14422,10 @@ configured on a parent level.
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Sets the binding mode to use. This option will override what may be configured on a parent level. Default value: off
+Sets the binding mode for automatic marshalling and unmarshalling of request and response bodies. off (default) disables
+binding. auto detects JSON or XML from the Content-Type header. json binds using a JSON data format only. xml binds
+using an XML data format only. json_xml supports both JSON and XML. This option will override what may be configured on
+a parent level. Default value: off
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -15408,7 +15482,9 @@ The content type the REST service produces (uses for output), such as applicatio
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Sets the binding mode to use. Default value: off
+Sets the binding mode for automatic marshalling and unmarshalling of request and response bodies. off (default) disables
+binding. auto detects JSON or XML from the Content-Type header. json binds using a JSON data format only. xml binds
+using an XML data format only. json_xml supports both JSON and XML. Default value: off
 ]]>
             </xs:documentation>
           </xs:annotation>

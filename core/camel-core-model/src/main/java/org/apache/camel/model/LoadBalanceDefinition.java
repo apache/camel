@@ -53,7 +53,7 @@ public class LoadBalanceDefinition extends OutputDefinition<LoadBalanceDefinitio
             @XmlElement(name = "stickyLoadBalancer", type = StickyLoadBalancerDefinition.class),
             @XmlElement(name = "topicLoadBalancer", type = TopicLoadBalancerDefinition.class),
             @XmlElement(name = "weightedLoadBalancer", type = WeightedLoadBalancerDefinition.class) })
-    @Metadata(description = "The load balancer to be used.")
+    @Metadata(description = "The load balancing strategy to use, such as round-robin, random, sticky, topic, failover, weighted, or a custom load balancer.")
     private LoadBalancerDefinition loadBalancerType;
 
     public LoadBalanceDefinition() {

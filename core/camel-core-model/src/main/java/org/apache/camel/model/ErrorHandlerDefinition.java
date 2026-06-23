@@ -46,7 +46,7 @@ public class ErrorHandlerDefinition extends IdentifiedType {
             @XmlElement(name = "refErrorHandler", type = RefErrorHandlerDefinition.class),
             @XmlElement(name = "jtaTransactionErrorHandler", type = JtaTransactionErrorHandlerDefinition.class),
             @XmlElement(name = "springTransactionErrorHandler", type = SpringTransactionErrorHandlerDefinition.class) })
-    @Metadata(description = "The specific error handler in use.")
+    @Metadata(description = "The error handler type to use, such as default error handler, dead letter channel, no error handler, or a transaction error handler.")
     private ErrorHandlerFactory errorHandlerType;
 
     public ErrorHandlerFactory getErrorHandlerType() {

@@ -315,7 +315,7 @@
           "description" : {
             "type" : "string",
             "title" : "Description",
-            "description" : "Sets the description of this node"
+            "description" : "The description for this node"
           },
           "disabled" : {
             "type" : "boolean",
@@ -347,12 +347,12 @@
           "id" : {
             "type" : "string",
             "title" : "Id",
-            "description" : "Sets the id of this node. Important: If you want to set the id of the route, then you must use routeId(String) instead."
+            "description" : "The id of this node"
           },
           "note" : {
             "type" : "string",
             "title" : "Note",
-            "description" : "Sets the note of this node"
+            "description" : "The note for this node"
           },
           "steps" : {
             "type" : "array",
@@ -461,7 +461,7 @@
           "description" : {
             "type" : "string",
             "title" : "Description",
-            "description" : "Sets the description of this node"
+            "description" : "The description for this node"
           },
           "disabled" : {
             "type" : "boolean",
@@ -501,7 +501,7 @@
           "id" : {
             "type" : "string",
             "title" : "Id",
-            "description" : "Sets the id of this node. Important: If you want to set the id of the route, then you must use routeId(String) instead."
+            "description" : "The id of this node"
           },
           "ignoreInvalidCorrelationKeys" : {
             "type" : "boolean",
@@ -512,7 +512,7 @@
           "note" : {
             "type" : "string",
             "title" : "Note",
-            "description" : "Sets the note of this node"
+            "description" : "The note for this node"
           },
           "optimisticLockRetryPolicy" : {
             "title" : "Optimistic Lock Retry Policy",
@@ -565,7 +565,7 @@
           "description" : {
             "type" : "string",
             "title" : "Description",
-            "description" : "Sets the description of this node"
+            "description" : "The description for this node"
           },
           "disabled" : {
             "type" : "boolean",
@@ -576,7 +576,7 @@
           "id" : {
             "type" : "string",
             "title" : "Id",
-            "description" : "Sets the id of this node. Important: If you want to set the id of the route, then you must use routeId(String) instead."
+            "description" : "The id of this node"
           },
           "method" : {
             "type" : "string",
@@ -586,7 +586,7 @@
           "note" : {
             "type" : "string",
             "title" : "Note",
-            "description" : "Sets the note of this node"
+            "description" : "The note for this node"
           },
           "ref" : {
             "type" : "string",
@@ -687,7 +687,7 @@
           "description" : {
             "type" : "string",
             "title" : "Description",
-            "description" : "Sets the description of this node"
+            "description" : "The description for this node"
           },
           "disabled" : {
             "type" : "boolean",
@@ -706,12 +706,12 @@
           "id" : {
             "type" : "string",
             "title" : "Id",
-            "description" : "Sets the id of this node. Important: If you want to set the id of the route, then you must use routeId(String) instead."
+            "description" : "The id of this node"
           },
           "note" : {
             "type" : "string",
             "title" : "Note",
-            "description" : "Sets the note of this node"
+            "description" : "The note for this node"
           },
           "onWhen" : {
             "title" : "On When",
@@ -735,7 +735,7 @@
           "description" : {
             "type" : "string",
             "title" : "Description",
-            "description" : "Sets the description of this node"
+            "description" : "The description for this node"
           },
           "disabled" : {
             "type" : "boolean",
@@ -746,16 +746,16 @@
           "id" : {
             "type" : "string",
             "title" : "Id",
-            "description" : "Sets the id of this node. Important: If you want to set the id of the route, then you must use routeId(String) instead."
+            "description" : "The id of this node"
           },
           "note" : {
             "type" : "string",
             "title" : "Note",
-            "description" : "Sets the note of this node"
+            "description" : "The note for this node"
           },
           "otherwise" : {
             "title" : "Otherwise",
-            "description" : "Sets the otherwise node",
+            "description" : "The otherwise clause to execute when none of the when predicates matched.",
             "$ref" : "#/items/definitions/org.apache.camel.model.OtherwiseDefinition"
           },
           "precondition" : {
@@ -767,7 +767,7 @@
           "when" : {
             "type" : "array",
             "title" : "When",
-            "description" : "Sets the when nodes",
+            "description" : "The when clauses (predicates) to evaluate. The first when clause that matches determines which route branch to follow.",
             "items" : {
               "$ref" : "#/items/definitions/org.apache.camel.model.WhenDefinition"
             }
@@ -788,7 +788,7 @@
           "description" : {
             "type" : "string",
             "title" : "Description",
-            "description" : "Sets the description of this node"
+            "description" : "The description for this node"
           },
           "disabled" : {
             "type" : "boolean",
@@ -804,12 +804,12 @@
           "id" : {
             "type" : "string",
             "title" : "Id",
-            "description" : "Sets the id of this node. Important: If you want to set the id of the route, then you must use routeId(String) instead."
+            "description" : "The id of this node"
           },
           "note" : {
             "type" : "string",
             "title" : "Note",
-            "description" : "Sets the note of this node"
+            "description" : "The note for this node"
           },
           "onFallback" : {
             "title" : "On Fallback",
@@ -848,7 +848,7 @@
           "description" : {
             "type" : "string",
             "title" : "Description",
-            "description" : "Sets the description of this node"
+            "description" : "The description for this node"
           },
           "disabled" : {
             "type" : "boolean",
@@ -864,7 +864,7 @@
           "id" : {
             "type" : "string",
             "title" : "Id",
-            "description" : "Sets the id of this node. Important: If you want to set the id of the route, then you must use routeId(String) instead."
+            "description" : "The id of this node"
           },
           "key" : {
             "type" : "string",
@@ -874,7 +874,7 @@
           "note" : {
             "type" : "string",
             "title" : "Note",
-            "description" : "Sets the note of this node"
+            "description" : "The note for this node"
           },
           "operation" : {
             "type" : "string",
@@ -928,7 +928,7 @@
           "description" : {
             "type" : "string",
             "title" : "Description",
-            "description" : "Sets the description of this node"
+            "description" : "The description for this node"
           },
           "disabled" : {
             "type" : "boolean",
@@ -939,7 +939,7 @@
           "id" : {
             "type" : "string",
             "title" : "Id",
-            "description" : "Sets the id of this node. Important: If you want to set the id of the route, then you must use routeId(String) instead."
+            "description" : "The id of this node"
           },
           "mandatory" : {
             "type" : "boolean",
@@ -950,7 +950,7 @@
           "note" : {
             "type" : "string",
             "title" : "Note",
-            "description" : "Sets the note of this node"
+            "description" : "The note for this node"
           },
           "type" : {
             "type" : "string",
@@ -974,7 +974,7 @@
           "description" : {
             "type" : "string",
             "title" : "Description",
-            "description" : "Sets the description of this node"
+            "description" : "The description for this node"
           },
           "disabled" : {
             "type" : "boolean",
@@ -985,7 +985,7 @@
           "id" : {
             "type" : "string",
             "title" : "Id",
-            "description" : "Sets the id of this node. Important: If you want to set the id of the route, then you must use routeId(String) instead."
+            "description" : "The id of this node"
           },
           "mandatory" : {
             "type" : "boolean",
@@ -1001,7 +1001,7 @@
           "note" : {
             "type" : "string",
             "title" : "Note",
-            "description" : "Sets the note of this node"
+            "description" : "The note for this node"
           },
           "toName" : {
             "type" : "string",
@@ -1030,7 +1030,7 @@
           "description" : {
             "type" : "string",
             "title" : "Description",
-            "description" : "Sets the description of this node"
+            "description" : "The description for this node"
           },
           "disabled" : {
             "type" : "boolean",
@@ -1041,7 +1041,7 @@
           "id" : {
             "type" : "string",
             "title" : "Id",
-            "description" : "Sets the id of this node. Important: If you want to set the id of the route, then you must use routeId(String) instead."
+            "description" : "The id of this node"
           },
           "mandatory" : {
             "type" : "boolean",
@@ -1057,7 +1057,7 @@
           "note" : {
             "type" : "string",
             "title" : "Note",
-            "description" : "Sets the note of this node"
+            "description" : "The note for this node"
           },
           "toName" : {
             "type" : "string",
@@ -1102,7 +1102,7 @@
           "description" : {
             "type" : "string",
             "title" : "Description",
-            "description" : "Sets the description of this node"
+            "description" : "The description for this node"
           },
           "disabled" : {
             "type" : "boolean",
@@ -1117,18 +1117,18 @@
           },
           "expression" : {
             "title" : "Expression",
-            "description" : "Expression to evaluate.",
+            "description" : "The expression that determines the delay duration in milliseconds.",
             "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
           },
           "id" : {
             "type" : "string",
             "title" : "Id",
-            "description" : "Sets the id of this node. Important: If you want to set the id of the route, then you must use routeId(String) instead."
+            "description" : "The id of this node"
           },
           "note" : {
             "type" : "string",
             "title" : "Note",
-            "description" : "Sets the note of this node"
+            "description" : "The note for this node"
           }
         }
       },
@@ -1146,7 +1146,7 @@
           "description" : {
             "type" : "string",
             "title" : "Description",
-            "description" : "Sets the description of this node"
+            "description" : "The description for this node"
           },
           "disabled" : {
             "type" : "boolean",
@@ -1156,13 +1156,13 @@
           },
           "expression" : {
             "title" : "Expression",
-            "description" : "Expression to evaluate.",
+            "description" : "The expression to compute the next endpoint URI to route to. The expression is called iteratively until it returns null to indicate the end of routing.",
             "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
           },
           "id" : {
             "type" : "string",
             "title" : "Id",
-            "description" : "Sets the id of this node. Important: If you want to set the id of the route, then you must use routeId(String) instead."
+            "description" : "The id of this node"
           },
           "ignoreInvalidEndpoints" : {
             "type" : "boolean",
@@ -1173,7 +1173,7 @@
           "note" : {
             "type" : "string",
             "title" : "Note",
-            "description" : "Sets the note of this node"
+            "description" : "The note for this node"
           },
           "uriDelimiter" : {
             "type" : "string",
@@ -1230,7 +1230,7 @@
           "description" : {
             "type" : "string",
             "title" : "Description",
-            "description" : "Sets the description of this node"
+            "description" : "The description for this node"
           },
           "disabled" : {
             "type" : "boolean",
@@ -1240,13 +1240,13 @@
           },
           "expression" : {
             "title" : "Expression",
-            "description" : "Expression to evaluate.",
+            "description" : "The expression to compute the endpoint URI to enrich from.",
             "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
           },
           "id" : {
             "type" : "string",
             "title" : "Id",
-            "description" : "Sets the id of this node. Important: If you want to set the id of the route, then you must use routeId(String) instead."
+            "description" : "The id of this node"
           },
           "ignoreInvalidEndpoint" : {
             "type" : "boolean",
@@ -1257,7 +1257,7 @@
           "note" : {
             "type" : "string",
             "title" : "Note",
-            "description" : "Sets the note of this node"
+            "description" : "The note for this node"
           },
           "shareUnitOfWork" : {
             "type" : "boolean",
@@ -1484,7 +1484,7 @@
           "description" : {
             "type" : "string",
             "title" : "Description",
-            "description" : "Sets the description of this node"
+            "description" : "The description for this node"
           },
           "disabled" : {
             "type" : "boolean",
@@ -1494,18 +1494,18 @@
           },
           "expression" : {
             "title" : "Expression",
-            "description" : "Expression to evaluate.",
+            "description" : "The predicate expression to evaluate. Messages where the predicate returns false are filtered out and not routed further.",
             "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
           },
           "id" : {
             "type" : "string",
             "title" : "Id",
-            "description" : "Sets the id of this node. Important: If you want to set the id of the route, then you must use routeId(String) instead."
+            "description" : "The id of this node"
           },
           "note" : {
             "type" : "string",
             "title" : "Note",
-            "description" : "Sets the note of this node"
+            "description" : "The note for this node"
           },
           "statusPropertyName" : {
             "type" : "string",
@@ -1529,7 +1529,7 @@
           "description" : {
             "type" : "string",
             "title" : "Description",
-            "description" : "Sets the description of this node"
+            "description" : "The description for this node"
           },
           "disabled" : {
             "type" : "boolean",
@@ -1540,12 +1540,12 @@
           "id" : {
             "type" : "string",
             "title" : "Id",
-            "description" : "Sets the id of this node. Important: If you want to set the id of the route, then you must use routeId(String) instead."
+            "description" : "The id of this node"
           },
           "note" : {
             "type" : "string",
             "title" : "Note",
-            "description" : "Sets the note of this node"
+            "description" : "The note for this node"
           },
           "steps" : {
             "type" : "array",
@@ -1636,7 +1636,7 @@
           "description" : {
             "type" : "string",
             "title" : "Description",
-            "description" : "Sets the description of this node"
+            "description" : "The description for this node"
           },
           "disabled" : {
             "type" : "boolean",
@@ -1652,23 +1652,23 @@
           },
           "expression" : {
             "title" : "Expression",
-            "description" : "Expression to evaluate.",
+            "description" : "The expression to compute the unique message ID used for duplicate detection. Messages with the same ID are treated as duplicates and skipped.",
             "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
           },
           "id" : {
             "type" : "string",
             "title" : "Id",
-            "description" : "Sets the id of this node. Important: If you want to set the id of the route, then you must use routeId(String) instead."
+            "description" : "The id of this node"
           },
           "idempotentRepository" : {
             "type" : "string",
             "title" : "Idempotent Repository",
-            "description" : "Sets the reference name of the message id repository"
+            "description" : "Sets the reference name of the message id repository to use for storing processed message ids to detect duplicates."
           },
           "note" : {
             "type" : "string",
             "title" : "Note",
-            "description" : "Sets the note of this node"
+            "description" : "The note for this node"
           },
           "removeOnFailure" : {
             "type" : "boolean",
@@ -1700,22 +1700,22 @@
           "description" : {
             "type" : "string",
             "title" : "Description",
-            "description" : "Sets the description of this node"
+            "description" : "The description for this node"
           },
           "id" : {
             "type" : "string",
             "title" : "Id",
-            "description" : "Sets the id of this node. Important: If you want to set the id of the route, then you must use routeId(String) instead."
+            "description" : "The id of this node"
           },
           "note" : {
             "type" : "string",
             "title" : "Note",
-            "description" : "Sets the note of this node"
+            "description" : "The note for this node"
           },
           "urn" : {
             "type" : "string",
             "title" : "Urn",
-            "description" : "The input type URN."
+            "description" : "The input type URN in the format 'scheme:name' (e.g. 'java:com.example.MyClass' or 'json:JsonOrder'). Declares the expected data type for messages consumed by this route."
           },
           "validate" : {
             "type" : "boolean",
@@ -1735,7 +1735,7 @@
           "description" : {
             "type" : "string",
             "title" : "Description",
-            "description" : "Sets the description of this node"
+            "description" : "The description for this node"
           },
           "disabled" : {
             "type" : "boolean",
@@ -1746,12 +1746,12 @@
           "id" : {
             "type" : "string",
             "title" : "Id",
-            "description" : "Sets the id of this node. Important: If you want to set the id of the route, then you must use routeId(String) instead."
+            "description" : "The id of this node"
           },
           "note" : {
             "type" : "string",
             "title" : "Note",
-            "description" : "Sets the note of this node"
+            "description" : "The note for this node"
           },
           "onWhen" : {
             "title" : "On When",
@@ -1775,7 +1775,7 @@
           "description" : {
             "type" : "string",
             "title" : "Description",
-            "description" : "Sets the description of this node"
+            "description" : "The description for this node"
           },
           "disabled" : {
             "type" : "boolean",
@@ -1786,12 +1786,12 @@
           "id" : {
             "type" : "string",
             "title" : "Id",
-            "description" : "Sets the id of this node. Important: If you want to set the id of the route, then you must use routeId(String) instead."
+            "description" : "The id of this node"
           },
           "note" : {
             "type" : "string",
             "title" : "Note",
-            "description" : "Sets the note of this node"
+            "description" : "The note for this node"
           },
           "onWhen" : {
             "title" : "On When",
@@ -1825,7 +1825,7 @@
           "description" : {
             "type" : "string",
             "title" : "Description",
-            "description" : "Sets the description of this node"
+            "description" : "The description for this node"
           },
           "disabled" : {
             "type" : "boolean",
@@ -1836,12 +1836,12 @@
           "id" : {
             "type" : "string",
             "title" : "Id",
-            "description" : "Sets the id of this node. Important: If you want to set the id of the route, then you must use routeId(String) instead."
+            "description" : "The id of this node"
           },
           "note" : {
             "type" : "string",
             "title" : "Note",
-            "description" : "Sets the note of this node"
+            "description" : "The note for this node"
           },
           "onWhen" : {
             "title" : "On When",
@@ -1899,7 +1899,7 @@
           "description" : {
             "type" : "string",
             "title" : "Description",
-            "description" : "Sets the description of this node"
+            "description" : "The description for this node"
           },
           "disabled" : {
             "type" : "boolean",
@@ -1913,12 +1913,12 @@
           "id" : {
             "type" : "string",
             "title" : "Id",
-            "description" : "Sets the id of this node. Important: If you want to set the id of the route, then you must use routeId(String) instead."
+            "description" : "The id of this node"
           },
           "note" : {
             "type" : "string",
             "title" : "Note",
-            "description" : "Sets the note of this node"
+            "description" : "The note for this node"
           },
           "randomLoadBalancer" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.loadbalancer.RandomLoadBalancerDefinition"
@@ -1952,7 +1952,7 @@
           "description" : {
             "type" : "string",
             "title" : "Description",
-            "description" : "Sets the description of this node"
+            "description" : "The description for this node"
           },
           "disabled" : {
             "type" : "boolean",
@@ -1963,7 +1963,7 @@
           "id" : {
             "type" : "string",
             "title" : "Id",
-            "description" : "Sets the id of this node. Important: If you want to set the id of the route, then you must use routeId(String) instead."
+            "description" : "The id of this node"
           },
           "logLanguage" : {
             "type" : "string",
@@ -1983,7 +1983,7 @@
           "loggingLevel" : {
             "type" : "string",
             "title" : "Logging Level",
-            "description" : "The logging level to use. Default is INFO.",
+            "description" : "Sets the logging level to use for the log message. Available levels: TRACE, DEBUG, INFO, WARN, ERROR, OFF.",
             "default" : "INFO",
             "enum" : [ "TRACE", "DEBUG", "INFO", "WARN", "ERROR", "OFF" ]
           },
@@ -2000,7 +2000,7 @@
           "note" : {
             "type" : "string",
             "title" : "Note",
-            "description" : "Sets the note of this node"
+            "description" : "The note for this node"
           }
         },
         "required" : [ "message" ]
@@ -2026,7 +2026,7 @@
           "description" : {
             "type" : "string",
             "title" : "Description",
-            "description" : "Sets the description of this node"
+            "description" : "The description for this node"
           },
           "disabled" : {
             "type" : "boolean",
@@ -2042,18 +2042,18 @@
           },
           "expression" : {
             "title" : "Expression",
-            "description" : "Expression to evaluate.",
+            "description" : "The expression that determines the number of times to loop. The result is converted to an integer.",
             "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
           },
           "id" : {
             "type" : "string",
             "title" : "Id",
-            "description" : "Sets the id of this node. Important: If you want to set the id of the route, then you must use routeId(String) instead."
+            "description" : "The id of this node"
           },
           "note" : {
             "type" : "string",
             "title" : "Note",
-            "description" : "Sets the note of this node"
+            "description" : "The note for this node"
           },
           "onPrepare" : {
             "type" : "string",
@@ -2107,7 +2107,7 @@
           "description" : {
             "type" : "string",
             "title" : "Description",
-            "description" : "Sets the description of this node"
+            "description" : "The description for this node"
           },
           "dfdl" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.DfdlDataFormat"
@@ -2151,7 +2151,7 @@
           "id" : {
             "type" : "string",
             "title" : "Id",
-            "description" : "Sets the id of this node. Important: If you want to set the id of the route, then you must use routeId(String) instead."
+            "description" : "The id of this node"
           },
           "iso8583" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.Iso8583DataFormat"
@@ -2177,7 +2177,7 @@
           "note" : {
             "type" : "string",
             "title" : "Note",
-            "description" : "Sets the note of this node"
+            "description" : "The note for this node"
           },
           "ocsf" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.OcsfDataFormat"
@@ -2276,7 +2276,7 @@
           "description" : {
             "type" : "string",
             "title" : "Description",
-            "description" : "Sets the description of this node"
+            "description" : "The description for this node"
           },
           "disabled" : {
             "type" : "boolean",
@@ -2292,12 +2292,12 @@
           "id" : {
             "type" : "string",
             "title" : "Id",
-            "description" : "Sets the id of this node. Important: If you want to set the id of the route, then you must use routeId(String) instead."
+            "description" : "The id of this node"
           },
           "note" : {
             "type" : "string",
             "title" : "Note",
-            "description" : "Sets the note of this node"
+            "description" : "The note for this node"
           },
           "onPrepare" : {
             "type" : "string",
@@ -2364,7 +2364,7 @@
           "description" : {
             "type" : "string",
             "title" : "Description",
-            "description" : "Sets the description of this node"
+            "description" : "The description for this node"
           },
           "disabled" : {
             "type" : "boolean",
@@ -2380,19 +2380,19 @@
           "id" : {
             "type" : "string",
             "title" : "Id",
-            "description" : "Sets the id of this node. Important: If you want to set the id of the route, then you must use routeId(String) instead."
+            "description" : "The id of this node"
           },
           "mode" : {
             "type" : "string",
             "title" : "Mode",
-            "description" : "Sets the on completion mode. The default value is AfterConsumer.",
+            "description" : "Controls when the on-completion callback runs. AfterConsumer (default) runs after the consumer has written the response back to the caller. BeforeConsumer runs before the consumer writes the response, allowing the on-completion route to modify the Exchange before it is returned to the caller (e.g. in InOut mode).",
             "default" : "AfterConsumer",
             "enum" : [ "AfterConsumer", "BeforeConsumer" ]
           },
           "note" : {
             "type" : "string",
             "title" : "Note",
-            "description" : "Sets the note of this node"
+            "description" : "The note for this node"
           },
           "onCompleteOnly" : {
             "type" : "boolean",
@@ -2445,7 +2445,7 @@
           "description" : {
             "type" : "string",
             "title" : "Description",
-            "description" : "Sets the description of this node"
+            "description" : "The description for this node"
           },
           "disabled" : {
             "type" : "boolean",
@@ -2469,12 +2469,12 @@
           "id" : {
             "type" : "string",
             "title" : "Id",
-            "description" : "Sets the id of this node. Important: If you want to set the id of the route, then you must use routeId(String) instead."
+            "description" : "The id of this node"
           },
           "note" : {
             "type" : "string",
             "title" : "Note",
-            "description" : "Sets the note of this node"
+            "description" : "The note for this node"
           },
           "onExceptionOccurredRef" : {
             "type" : "string",
@@ -2535,7 +2535,7 @@
           "description" : {
             "type" : "string",
             "title" : "Description",
-            "description" : "Sets the description of this node"
+            "description" : "The description for this node"
           },
           "fallbackViaNetwork" : {
             "type" : "boolean",
@@ -2546,12 +2546,12 @@
           "id" : {
             "type" : "string",
             "title" : "Id",
-            "description" : "Sets the id of this node. Important: If you want to set the id of the route, then you must use routeId(String) instead."
+            "description" : "The id of this node"
           },
           "note" : {
             "type" : "string",
             "title" : "Note",
-            "description" : "Sets the note of this node"
+            "description" : "The note for this node"
           },
           "steps" : {
             "type" : "array",
@@ -2570,7 +2570,7 @@
           "description" : {
             "type" : "string",
             "title" : "Description",
-            "description" : "Sets the description of this node"
+            "description" : "The description for this node"
           },
           "expression" : {
             "title" : "Expression",
@@ -2580,12 +2580,12 @@
           "id" : {
             "type" : "string",
             "title" : "Id",
-            "description" : "Sets the id of this node. Important: If you want to set the id of the route, then you must use routeId(String) instead."
+            "description" : "The id of this node"
           },
           "note" : {
             "type" : "string",
             "title" : "Note",
-            "description" : "Sets the note of this node"
+            "description" : "The note for this node"
           }
         }
       },
@@ -2598,30 +2598,30 @@
           "exponentialBackOff" : {
             "type" : "boolean",
             "title" : "Exponential Back Off",
-            "description" : "Whether to enable exponential backoff.",
+            "description" : "Whether to enable exponential backoff, so each subsequent retry delay is doubled until the maximum retry delay is reached.",
             "default" : true
           },
           "maximumRetries" : {
             "type" : "number",
             "title" : "Maximum Retries",
-            "description" : "Sets the maximum number of retries."
+            "description" : "Sets the maximum number of retries before giving up on acquiring the optimistic lock."
           },
           "maximumRetryDelay" : {
             "type" : "string",
             "title" : "Maximum Retry Delay",
-            "description" : "Sets the upper value of retry in millis between retries, when using exponential or random backoff.",
+            "description" : "Sets the upper bound on retry delay in milliseconds to prevent delays from growing unbounded when using exponential or random backoff.",
             "default" : "1000"
           },
           "randomBackOff" : {
             "type" : "boolean",
             "title" : "Random Back Off",
-            "description" : "Whether to enable random backoff.",
+            "description" : "Whether to enable random backoff, which uses a random delay between 0 and the computed retry delay to avoid thundering herd problems.",
             "default" : false
           },
           "retryDelay" : {
             "type" : "string",
             "title" : "Retry Delay",
-            "description" : "Sets the delay in millis between retries.",
+            "description" : "Sets the delay in milliseconds between retry attempts when the optimistic lock fails.",
             "default" : "50"
           }
         }
@@ -2635,7 +2635,7 @@
           "description" : {
             "type" : "string",
             "title" : "Description",
-            "description" : "Sets the description of this node"
+            "description" : "The description for this node"
           },
           "disabled" : {
             "type" : "boolean",
@@ -2646,12 +2646,12 @@
           "id" : {
             "type" : "string",
             "title" : "Id",
-            "description" : "Sets the id of this node. Important: If you want to set the id of the route, then you must use routeId(String) instead."
+            "description" : "The id of this node"
           },
           "note" : {
             "type" : "string",
             "title" : "Note",
-            "description" : "Sets the note of this node"
+            "description" : "The note for this node"
           },
           "steps" : {
             "type" : "array",
@@ -2694,17 +2694,17 @@
           "description" : {
             "type" : "string",
             "title" : "Description",
-            "description" : "Sets the description of this node"
+            "description" : "The description for this node"
           },
           "id" : {
             "type" : "string",
             "title" : "Id",
-            "description" : "Sets the id of this node. Important: If you want to set the id of the route, then you must use routeId(String) instead."
+            "description" : "The id of this node"
           },
           "note" : {
             "type" : "string",
             "title" : "Note",
-            "description" : "Sets the note of this node"
+            "description" : "The note for this node"
           },
           "urn" : {
             "type" : "string",
@@ -2766,7 +2766,7 @@
           "description" : {
             "type" : "string",
             "title" : "Description",
-            "description" : "Sets the description of this node"
+            "description" : "The description for this node"
           },
           "disabled" : {
             "type" : "boolean",
@@ -2777,12 +2777,12 @@
           "id" : {
             "type" : "string",
             "title" : "Id",
-            "description" : "Sets the id of this node. Important: If you want to set the id of the route, then you must use routeId(String) instead."
+            "description" : "The id of this node"
           },
           "note" : {
             "type" : "string",
             "title" : "Note",
-            "description" : "Sets the note of this node"
+            "description" : "The note for this node"
           },
           "untilCheck" : {
             "type" : "string",
@@ -2801,7 +2801,7 @@
           "description" : {
             "type" : "string",
             "title" : "Description",
-            "description" : "Sets the description of this node"
+            "description" : "The description for this node"
           },
           "disabled" : {
             "type" : "boolean",
@@ -2812,12 +2812,12 @@
           "id" : {
             "type" : "string",
             "title" : "Id",
-            "description" : "Sets the id of this node. Important: If you want to set the id of the route, then you must use routeId(String) instead."
+            "description" : "The id of this node"
           },
           "note" : {
             "type" : "string",
             "title" : "Note",
-            "description" : "Sets the note of this node"
+            "description" : "The note for this node"
           },
           "steps" : {
             "type" : "array",
@@ -2836,7 +2836,7 @@
           "description" : {
             "type" : "string",
             "title" : "Description",
-            "description" : "Sets the description of this node"
+            "description" : "The description for this node"
           },
           "disabled" : {
             "type" : "boolean",
@@ -2847,12 +2847,12 @@
           "id" : {
             "type" : "string",
             "title" : "Id",
-            "description" : "Sets the id of this node. Important: If you want to set the id of the route, then you must use routeId(String) instead."
+            "description" : "The id of this node"
           },
           "note" : {
             "type" : "string",
             "title" : "Note",
-            "description" : "Sets the note of this node"
+            "description" : "The note for this node"
           },
           "ref" : {
             "type" : "string",
@@ -2877,7 +2877,7 @@
           "description" : {
             "type" : "string",
             "title" : "Description",
-            "description" : "Sets the description of this node"
+            "description" : "The description for this node"
           },
           "disabled" : {
             "type" : "boolean",
@@ -2888,12 +2888,12 @@
           "id" : {
             "type" : "string",
             "title" : "Id",
-            "description" : "Sets the id of this node. Important: If you want to set the id of the route, then you must use routeId(String) instead."
+            "description" : "The id of this node"
           },
           "note" : {
             "type" : "string",
             "title" : "Note",
-            "description" : "Sets the note of this node"
+            "description" : "The note for this node"
           },
           "parameters" : {
             "type" : "object"
@@ -2907,7 +2907,7 @@
           "uri" : {
             "type" : "string",
             "title" : "Uri",
-            "description" : "Sets the uri of the endpoint to poll from."
+            "description" : "The uri of the endpoint to poll a single message from. The result is stored in the original message body (or in a variable if variableReceive is set)."
           },
           "variableReceive" : {
             "type" : "string",
@@ -2964,7 +2964,7 @@
           "description" : {
             "type" : "string",
             "title" : "Description",
-            "description" : "Sets the description of this node"
+            "description" : "The description for this node"
           },
           "disabled" : {
             "type" : "boolean",
@@ -2974,13 +2974,13 @@
           },
           "expression" : {
             "title" : "Expression",
-            "description" : "Expression to evaluate.",
+            "description" : "The expression to compute the endpoint URI to poll-enrich from.",
             "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
           },
           "id" : {
             "type" : "string",
             "title" : "Id",
-            "description" : "Sets the id of this node. Important: If you want to set the id of the route, then you must use routeId(String) instead."
+            "description" : "The id of this node"
           },
           "ignoreInvalidEndpoint" : {
             "type" : "boolean",
@@ -2991,7 +2991,7 @@
           "note" : {
             "type" : "string",
             "title" : "Note",
-            "description" : "Sets the note of this node"
+            "description" : "The note for this node"
           },
           "timeout" : {
             "type" : "string",
@@ -3015,7 +3015,7 @@
           "description" : {
             "type" : "string",
             "title" : "Description",
-            "description" : "Sets the description of this node"
+            "description" : "The description for this node"
           },
           "disabled" : {
             "type" : "boolean",
@@ -3026,12 +3026,12 @@
           "id" : {
             "type" : "string",
             "title" : "Id",
-            "description" : "Sets the id of this node. Important: If you want to set the id of the route, then you must use routeId(String) instead."
+            "description" : "The id of this node"
           },
           "note" : {
             "type" : "string",
             "title" : "Note",
-            "description" : "Sets the note of this node"
+            "description" : "The note for this node"
           },
           "ref" : {
             "type" : "string",
@@ -3115,7 +3115,7 @@
           "description" : {
             "type" : "string",
             "title" : "Description",
-            "description" : "Sets the description of this node"
+            "description" : "The description for this node"
           },
           "disabled" : {
             "type" : "boolean",
@@ -3130,13 +3130,13 @@
           },
           "expression" : {
             "title" : "Expression",
-            "description" : "Expression to evaluate.",
+            "description" : "The expression to compute the list of recipient endpoint URIs. The result can be a comma-separated string, a Collection, or an Iterator of endpoint URIs.",
             "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
           },
           "id" : {
             "type" : "string",
             "title" : "Id",
-            "description" : "Sets the id of this node. Important: If you want to set the id of the route, then you must use routeId(String) instead."
+            "description" : "The id of this node"
           },
           "ignoreInvalidEndpoints" : {
             "type" : "boolean",
@@ -3147,7 +3147,7 @@
           "note" : {
             "type" : "string",
             "title" : "Note",
-            "description" : "Sets the note of this node"
+            "description" : "The note for this node"
           },
           "onPrepare" : {
             "type" : "string",
@@ -3220,19 +3220,19 @@
           "backOffMultiplier" : {
             "type" : "number",
             "title" : "Back Off Multiplier",
-            "description" : "Sets the back off multiplier.",
+            "description" : "Sets the multiplier applied to the previous redelivery delay to compute the next delay when using exponential backoff.",
             "default" : 2.0
           },
           "collisionAvoidanceFactor" : {
             "type" : "number",
             "title" : "Collision Avoidance Factor",
-            "description" : "Sets the collision avoidance factor.",
+            "description" : "Sets the collision avoidance factor, which adds a random percentage of the delay to avoid thundering herd problems when multiple redeliveries happen simultaneously.",
             "default" : 0.15
           },
           "delayPattern" : {
             "type" : "string",
             "title" : "Delay Pattern",
-            "description" : "Sets the delay pattern with delay intervals."
+            "description" : "Sets the delay pattern for redeliveries using a pattern such as '0:1000;5:5000;10:30000' where each entry maps a redelivery count to a delay in milliseconds (e.g. redeliveries 0-4 use 1s delay, 5-9 use 5s, 10 use 30s)."
           },
           "disableRedelivery" : {
             "type" : "boolean",
@@ -3312,45 +3312,45 @@
           "maximumRedeliveryDelay" : {
             "type" : "string",
             "title" : "Maximum Redelivery Delay",
-            "description" : "Sets the maximum delay between redelivery in milliseconds.",
+            "description" : "Sets the upper bound on redelivery delay in milliseconds when using exponential backoff, to prevent delays from growing unbounded.",
             "default" : "60000"
           },
           "redeliveryDelay" : {
             "type" : "string",
             "title" : "Redelivery Delay",
-            "description" : "Sets the initial redelivery delay in milliseconds.",
+            "description" : "Sets the initial delay in milliseconds before the first redelivery attempt.",
             "default" : "1000"
           },
           "retriesExhaustedLogLevel" : {
             "type" : "string",
             "title" : "Retries Exhausted Log Level",
-            "description" : "Sets the logging level to use when retries have been exhausted.",
+            "description" : "Sets the logging level to use when all retries have been exhausted and the message is moved to the dead letter channel or failed.",
             "default" : "ERROR",
             "enum" : [ "TRACE", "DEBUG", "INFO", "WARN", "ERROR", "OFF" ]
           },
           "retryAttemptedLogInterval" : {
             "type" : "number",
             "title" : "Retry Attempted Log Interval",
-            "description" : "Sets the interval for logging retry attempts.",
+            "description" : "Sets how often to log redelivery attempts. For example, a value of 3 logs every 3rd redelivery attempt.",
             "default" : 1
           },
           "retryAttemptedLogLevel" : {
             "type" : "string",
             "title" : "Retry Attempted Log Level",
-            "description" : "Sets the logging level to use for logging retry attempts.",
+            "description" : "Sets the logging level to use when a redelivery attempt is made.",
             "default" : "DEBUG",
             "enum" : [ "TRACE", "DEBUG", "INFO", "WARN", "ERROR", "OFF" ]
           },
           "useCollisionAvoidance" : {
             "type" : "boolean",
             "title" : "Use Collision Avoidance",
-            "description" : "Turn on collision avoidance.",
+            "description" : "Enables collision avoidance, which adds a random factor to redelivery delays to prevent multiple simultaneous redeliveries from colliding.",
             "default" : false
           },
           "useExponentialBackOff" : {
             "type" : "boolean",
             "title" : "Use Exponential Back Off",
-            "description" : "Turn on exponential back off.",
+            "description" : "Enables exponential backoff, so each subsequent redelivery delay is multiplied by the backOffMultiplier.",
             "default" : false
           }
         }
@@ -3364,7 +3364,7 @@
           "description" : {
             "type" : "string",
             "title" : "Description",
-            "description" : "Sets the description of this node"
+            "description" : "The description for this node"
           },
           "disabled" : {
             "type" : "boolean",
@@ -3375,7 +3375,7 @@
           "id" : {
             "type" : "string",
             "title" : "Id",
-            "description" : "Sets the id of this node. Important: If you want to set the id of the route, then you must use routeId(String) instead."
+            "description" : "The id of this node"
           },
           "name" : {
             "type" : "string",
@@ -3385,7 +3385,7 @@
           "note" : {
             "type" : "string",
             "title" : "Note",
-            "description" : "Sets the note of this node"
+            "description" : "The note for this node"
           }
         },
         "required" : [ "name" ]
@@ -3399,7 +3399,7 @@
           "description" : {
             "type" : "string",
             "title" : "Description",
-            "description" : "Sets the description of this node"
+            "description" : "The description for this node"
           },
           "disabled" : {
             "type" : "boolean",
@@ -3415,12 +3415,12 @@
           "id" : {
             "type" : "string",
             "title" : "Id",
-            "description" : "Sets the id of this node. Important: If you want to set the id of the route, then you must use routeId(String) instead."
+            "description" : "The id of this node"
           },
           "note" : {
             "type" : "string",
             "title" : "Note",
-            "description" : "Sets the note of this node"
+            "description" : "The note for this node"
           },
           "pattern" : {
             "type" : "string",
@@ -3439,7 +3439,7 @@
           "description" : {
             "type" : "string",
             "title" : "Description",
-            "description" : "Sets the description of this node"
+            "description" : "The description for this node"
           },
           "disabled" : {
             "type" : "boolean",
@@ -3455,12 +3455,12 @@
           "id" : {
             "type" : "string",
             "title" : "Id",
-            "description" : "Sets the id of this node. Important: If you want to set the id of the route, then you must use routeId(String) instead."
+            "description" : "The id of this node"
           },
           "note" : {
             "type" : "string",
             "title" : "Note",
-            "description" : "Sets the note of this node"
+            "description" : "The note for this node"
           },
           "pattern" : {
             "type" : "string",
@@ -3479,7 +3479,7 @@
           "description" : {
             "type" : "string",
             "title" : "Description",
-            "description" : "Sets the description of this node"
+            "description" : "The description for this node"
           },
           "disabled" : {
             "type" : "boolean",
@@ -3490,7 +3490,7 @@
           "id" : {
             "type" : "string",
             "title" : "Id",
-            "description" : "Sets the id of this node. Important: If you want to set the id of the route, then you must use routeId(String) instead."
+            "description" : "The id of this node"
           },
           "name" : {
             "type" : "string",
@@ -3500,7 +3500,7 @@
           "note" : {
             "type" : "string",
             "title" : "Note",
-            "description" : "Sets the note of this node"
+            "description" : "The note for this node"
           }
         },
         "required" : [ "name" ]
@@ -3514,7 +3514,7 @@
           "description" : {
             "type" : "string",
             "title" : "Description",
-            "description" : "Sets the description of this node"
+            "description" : "The description for this node"
           },
           "disabled" : {
             "type" : "boolean",
@@ -3525,7 +3525,7 @@
           "id" : {
             "type" : "string",
             "title" : "Id",
-            "description" : "Sets the id of this node. Important: If you want to set the id of the route, then you must use routeId(String) instead."
+            "description" : "The id of this node"
           },
           "name" : {
             "type" : "string",
@@ -3535,7 +3535,7 @@
           "note" : {
             "type" : "string",
             "title" : "Note",
-            "description" : "Sets the note of this node"
+            "description" : "The note for this node"
           }
         },
         "required" : [ "name" ]
@@ -3552,7 +3552,7 @@
           "description" : {
             "type" : "string",
             "title" : "Description",
-            "description" : "Sets the description of this node"
+            "description" : "The description for this node"
           },
           "disabled" : {
             "type" : "boolean",
@@ -3568,12 +3568,12 @@
           "id" : {
             "type" : "string",
             "title" : "Id",
-            "description" : "Sets the id of this node. Important: If you want to set the id of the route, then you must use routeId(String) instead."
+            "description" : "The id of this node"
           },
           "note" : {
             "type" : "string",
             "title" : "Note",
-            "description" : "Sets the note of this node"
+            "description" : "The note for this node"
           },
           "steps" : {
             "type" : "array",
@@ -3762,7 +3762,7 @@
           "description" : {
             "type" : "string",
             "title" : "Description",
-            "description" : "Sets the description of this node"
+            "description" : "The description for this node"
           },
           "disabled" : {
             "type" : "boolean",
@@ -3773,7 +3773,7 @@
           "id" : {
             "type" : "string",
             "title" : "Id",
-            "description" : "Sets the id of this node. Important: If you want to set the id of the route, then you must use routeId(String) instead."
+            "description" : "The id of this node"
           },
           "intermittent" : {
             "type" : "boolean",
@@ -3791,7 +3791,7 @@
           "note" : {
             "type" : "string",
             "title" : "Note",
-            "description" : "Sets the note of this node"
+            "description" : "The note for this node"
           },
           "resumeStrategy" : {
             "type" : "string",
@@ -3810,7 +3810,7 @@
           "description" : {
             "type" : "string",
             "title" : "Description",
-            "description" : "Sets the description of this node"
+            "description" : "The description for this node"
           },
           "disabled" : {
             "type" : "boolean",
@@ -3821,7 +3821,7 @@
           "id" : {
             "type" : "string",
             "title" : "Id",
-            "description" : "Sets the id of this node. Important: If you want to set the id of the route, then you must use routeId(String) instead."
+            "description" : "The id of this node"
           },
           "markRollbackOnly" : {
             "type" : "boolean",
@@ -3843,7 +3843,7 @@
           "note" : {
             "type" : "string",
             "title" : "Note",
-            "description" : "Sets the note of this node"
+            "description" : "The note for this node"
           }
         }
       },
@@ -4090,19 +4090,23 @@
         "properties" : {
           "defaultValue" : {
             "type" : "string",
-            "title" : "Default Value"
+            "title" : "Default Value",
+            "description" : "The default value of the template parameter. Used when no explicit value is provided when creating a route from the template."
           },
           "description" : {
             "type" : "string",
-            "title" : "Description"
+            "title" : "Description",
+            "description" : "Description of the template parameter for documentation purposes."
           },
           "name" : {
             "type" : "string",
-            "title" : "Name"
+            "title" : "Name",
+            "description" : "The name of the template parameter."
           },
           "required" : {
             "type" : "boolean",
             "title" : "Required",
+            "description" : "Whether this template parameter is required. A required parameter must have a value provided when creating a route from the template.",
             "default" : false
           }
         },
@@ -4122,7 +4126,7 @@
           "description" : {
             "type" : "string",
             "title" : "Description",
-            "description" : "Sets the description of this node"
+            "description" : "The description for this node"
           },
           "disabled" : {
             "type" : "boolean",
@@ -4132,13 +4136,13 @@
           },
           "expression" : {
             "title" : "Expression",
-            "description" : "Expression to evaluate.",
+            "description" : "The expression to compute the routing slip of endpoint URIs. The result is a delimited list of endpoint URIs that defines the series of processing steps.",
             "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
           },
           "id" : {
             "type" : "string",
             "title" : "Id",
-            "description" : "Sets the id of this node. Important: If you want to set the id of the route, then you must use routeId(String) instead."
+            "description" : "The id of this node"
           },
           "ignoreInvalidEndpoints" : {
             "type" : "boolean",
@@ -4149,7 +4153,7 @@
           "note" : {
             "type" : "string",
             "title" : "Note",
-            "description" : "Sets the note of this node"
+            "description" : "The note for this node"
           },
           "uriDelimiter" : {
             "type" : "string",
@@ -4185,7 +4189,7 @@
           "description" : {
             "type" : "string",
             "title" : "Description",
-            "description" : "Sets the description of this node"
+            "description" : "The description for this node"
           },
           "disabled" : {
             "type" : "boolean",
@@ -4196,12 +4200,12 @@
           "id" : {
             "type" : "string",
             "title" : "Id",
-            "description" : "Sets the id of this node. Important: If you want to set the id of the route, then you must use routeId(String) instead."
+            "description" : "The id of this node"
           },
           "note" : {
             "type" : "string",
             "title" : "Note",
-            "description" : "Sets the note of this node"
+            "description" : "The note for this node"
           },
           "option" : {
             "type" : "array",
@@ -4214,7 +4218,7 @@
           "propagation" : {
             "type" : "string",
             "title" : "Propagation",
-            "description" : "Set the Saga propagation mode (REQUIRED, REQUIRES_NEW, MANDATORY, SUPPORTS, NOT_SUPPORTED, NEVER)",
+            "description" : "Set the Saga propagation mode. REQUIRED joins an existing saga or starts a new one. REQUIRES_NEW always starts a new saga, suspending any existing one. MANDATORY requires an existing saga and fails if none is active. SUPPORTS joins an existing saga if present but does not start a new one. NOT_SUPPORTED executes outside any saga, suspending an existing one. NEVER fails if a saga is already active.",
             "default" : "REQUIRED",
             "enum" : [ "REQUIRED", "REQUIRES_NEW", "MANDATORY", "SUPPORTS", "NOT_SUPPORTED", "NEVER" ]
           },
@@ -4245,7 +4249,7 @@
           "description" : {
             "type" : "string",
             "title" : "Description",
-            "description" : "Sets the description of this node"
+            "description" : "The description for this node"
           },
           "disabled" : {
             "type" : "boolean",
@@ -4256,7 +4260,7 @@
           "id" : {
             "type" : "string",
             "title" : "Id",
-            "description" : "Sets the id of this node. Important: If you want to set the id of the route, then you must use routeId(String) instead."
+            "description" : "The id of this node"
           },
           "messageFrequency" : {
             "type" : "number",
@@ -4266,7 +4270,7 @@
           "note" : {
             "type" : "string",
             "title" : "Note",
-            "description" : "Sets the note of this node"
+            "description" : "The note for this node"
           },
           "samplePeriod" : {
             "type" : "string",
@@ -4285,7 +4289,7 @@
           "description" : {
             "type" : "string",
             "title" : "Description",
-            "description" : "Sets the description of this node"
+            "description" : "The description for this node"
           },
           "disabled" : {
             "type" : "boolean",
@@ -4295,18 +4299,18 @@
           },
           "expression" : {
             "title" : "Expression",
-            "description" : "Expression to evaluate.",
+            "description" : "The expression to evaluate as a script. The script result does not change the message body (use transform instead if that is desired).",
             "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
           },
           "id" : {
             "type" : "string",
             "title" : "Id",
-            "description" : "Sets the id of this node. Important: If you want to set the id of the route, then you must use routeId(String) instead."
+            "description" : "The id of this node"
           },
           "note" : {
             "type" : "string",
             "title" : "Note",
-            "description" : "Sets the note of this node"
+            "description" : "The note for this node"
           }
         }
       },
@@ -4319,7 +4323,7 @@
           "description" : {
             "type" : "string",
             "title" : "Description",
-            "description" : "Sets the description of this node"
+            "description" : "The description for this node"
           },
           "disabled" : {
             "type" : "boolean",
@@ -4329,18 +4333,18 @@
           },
           "expression" : {
             "title" : "Expression",
-            "description" : "Expression to evaluate.",
+            "description" : "The expression whose result is used as the new message body.",
             "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
           },
           "id" : {
             "type" : "string",
             "title" : "Id",
-            "description" : "Sets the id of this node. Important: If you want to set the id of the route, then you must use routeId(String) instead."
+            "description" : "The id of this node"
           },
           "note" : {
             "type" : "string",
             "title" : "Note",
-            "description" : "Sets the note of this node"
+            "description" : "The note for this node"
           }
         }
       },
@@ -4353,7 +4357,7 @@
           "description" : {
             "type" : "string",
             "title" : "Description",
-            "description" : "Sets the description of this node"
+            "description" : "The description for this node"
           },
           "disabled" : {
             "type" : "boolean",
@@ -4364,12 +4368,12 @@
           "id" : {
             "type" : "string",
             "title" : "Id",
-            "description" : "Sets the id of this node. Important: If you want to set the id of the route, then you must use routeId(String) instead."
+            "description" : "The id of this node"
           },
           "note" : {
             "type" : "string",
             "title" : "Note",
-            "description" : "Sets the note of this node"
+            "description" : "The note for this node"
           },
           "pattern" : {
             "type" : "string",
@@ -4388,7 +4392,7 @@
           "description" : {
             "type" : "string",
             "title" : "Description",
-            "description" : "Sets the description of this node"
+            "description" : "The description for this node"
           },
           "disabled" : {
             "type" : "boolean",
@@ -4398,13 +4402,13 @@
           },
           "expression" : {
             "title" : "Expression",
-            "description" : "Expression to evaluate.",
+            "description" : "The expression whose result is used as the header value.",
             "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
           },
           "id" : {
             "type" : "string",
             "title" : "Id",
-            "description" : "Sets the id of this node. Important: If you want to set the id of the route, then you must use routeId(String) instead."
+            "description" : "The id of this node"
           },
           "name" : {
             "type" : "string",
@@ -4414,7 +4418,7 @@
           "note" : {
             "type" : "string",
             "title" : "Note",
-            "description" : "Sets the note of this node"
+            "description" : "The note for this node"
           }
         },
         "required" : [ "name" ]
@@ -4428,7 +4432,7 @@
           "description" : {
             "type" : "string",
             "title" : "Description",
-            "description" : "Sets the description of this node"
+            "description" : "The description for this node"
           },
           "disabled" : {
             "type" : "boolean",
@@ -4447,12 +4451,12 @@
           "id" : {
             "type" : "string",
             "title" : "Id",
-            "description" : "Sets the id of this node. Important: If you want to set the id of the route, then you must use routeId(String) instead."
+            "description" : "The id of this node"
           },
           "note" : {
             "type" : "string",
             "title" : "Note",
-            "description" : "Sets the note of this node"
+            "description" : "The note for this node"
           }
         }
       },
@@ -4465,7 +4469,7 @@
           "description" : {
             "type" : "string",
             "title" : "Description",
-            "description" : "Sets the description of this node"
+            "description" : "The description for this node"
           },
           "disabled" : {
             "type" : "boolean",
@@ -4475,13 +4479,13 @@
           },
           "expression" : {
             "title" : "Expression",
-            "description" : "Expression to evaluate.",
+            "description" : "The expression whose result is used as the exchange property value.",
             "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
           },
           "id" : {
             "type" : "string",
             "title" : "Id",
-            "description" : "Sets the id of this node. Important: If you want to set the id of the route, then you must use routeId(String) instead."
+            "description" : "The id of this node"
           },
           "name" : {
             "type" : "string",
@@ -4491,7 +4495,7 @@
           "note" : {
             "type" : "string",
             "title" : "Note",
-            "description" : "Sets the note of this node"
+            "description" : "The note for this node"
           }
         },
         "required" : [ "name" ]
@@ -4505,7 +4509,7 @@
           "description" : {
             "type" : "string",
             "title" : "Description",
-            "description" : "Sets the description of this node"
+            "description" : "The description for this node"
           },
           "disabled" : {
             "type" : "boolean",
@@ -4515,13 +4519,13 @@
           },
           "expression" : {
             "title" : "Expression",
-            "description" : "Expression to evaluate.",
+            "description" : "The expression whose result is used as the variable value.",
             "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
           },
           "id" : {
             "type" : "string",
             "title" : "Id",
-            "description" : "Sets the id of this node. Important: If you want to set the id of the route, then you must use routeId(String) instead."
+            "description" : "The id of this node"
           },
           "name" : {
             "type" : "string",
@@ -4531,7 +4535,7 @@
           "note" : {
             "type" : "string",
             "title" : "Note",
-            "description" : "Sets the note of this node"
+            "description" : "The note for this node"
           }
         },
         "required" : [ "name" ]
@@ -4545,7 +4549,7 @@
           "description" : {
             "type" : "string",
             "title" : "Description",
-            "description" : "Sets the description of this node"
+            "description" : "The description for this node"
           },
           "disabled" : {
             "type" : "boolean",
@@ -4556,12 +4560,12 @@
           "id" : {
             "type" : "string",
             "title" : "Id",
-            "description" : "Sets the id of this node. Important: If you want to set the id of the route, then you must use routeId(String) instead."
+            "description" : "The id of this node"
           },
           "note" : {
             "type" : "string",
             "title" : "Note",
-            "description" : "Sets the note of this node"
+            "description" : "The note for this node"
           },
           "variables" : {
             "type" : "array",
@@ -4587,7 +4591,7 @@
           "description" : {
             "type" : "string",
             "title" : "Description",
-            "description" : "Sets the description of this node"
+            "description" : "The description for this node"
           },
           "disabled" : {
             "type" : "boolean",
@@ -4597,18 +4601,18 @@
           },
           "expression" : {
             "title" : "Expression",
-            "description" : "Expression to evaluate.",
+            "description" : "The expression to use for sorting. The message body is split into a list, sorted using this expression as the comparator key, and then reassembled.",
             "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
           },
           "id" : {
             "type" : "string",
             "title" : "Id",
-            "description" : "Sets the id of this node. Important: If you want to set the id of the route, then you must use routeId(String) instead."
+            "description" : "The id of this node"
           },
           "note" : {
             "type" : "string",
             "title" : "Note",
-            "description" : "Sets the note of this node"
+            "description" : "The note for this node"
           }
         }
       },
@@ -4643,7 +4647,7 @@
           "description" : {
             "type" : "string",
             "title" : "Description",
-            "description" : "Sets the description of this node"
+            "description" : "The description for this node"
           },
           "disabled" : {
             "type" : "boolean",
@@ -4658,18 +4662,18 @@
           },
           "expression" : {
             "title" : "Expression",
-            "description" : "Expression to evaluate.",
+            "description" : "The expression that returns the value to use for splitting. The result can be an Iterator, Iterable, Array, Collection, Map, NodeList, or a delimited String.",
             "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
           },
           "id" : {
             "type" : "string",
             "title" : "Id",
-            "description" : "Sets the id of this node. Important: If you want to set the id of the route, then you must use routeId(String) instead."
+            "description" : "The id of this node"
           },
           "note" : {
             "type" : "string",
             "title" : "Note",
-            "description" : "Sets the note of this node"
+            "description" : "The note for this node"
           },
           "onPrepare" : {
             "type" : "string",
@@ -4736,7 +4740,7 @@
           "description" : {
             "type" : "string",
             "title" : "Description",
-            "description" : "Sets the description of this node"
+            "description" : "The description for this node"
           },
           "disabled" : {
             "type" : "boolean",
@@ -4747,12 +4751,12 @@
           "id" : {
             "type" : "string",
             "title" : "Id",
-            "description" : "Sets the id of this node. Important: If you want to set the id of the route, then you must use routeId(String) instead."
+            "description" : "The id of this node"
           },
           "note" : {
             "type" : "string",
             "title" : "Note",
-            "description" : "Sets the note of this node"
+            "description" : "The note for this node"
           },
           "steps" : {
             "type" : "array",
@@ -4771,7 +4775,7 @@
           "description" : {
             "type" : "string",
             "title" : "Description",
-            "description" : "Sets the description of this node"
+            "description" : "The description for this node"
           },
           "disabled" : {
             "type" : "boolean",
@@ -4782,12 +4786,12 @@
           "id" : {
             "type" : "string",
             "title" : "Id",
-            "description" : "Sets the id of this node. Important: If you want to set the id of the route, then you must use routeId(String) instead."
+            "description" : "The id of this node"
           },
           "note" : {
             "type" : "string",
             "title" : "Note",
-            "description" : "Sets the note of this node"
+            "description" : "The note for this node"
           }
         }
       },
@@ -4862,22 +4866,22 @@
           "description" : {
             "type" : "string",
             "title" : "Description",
-            "description" : "Sets the description of this node"
+            "description" : "The description for this node"
           },
           "id" : {
             "type" : "string",
             "title" : "Id",
-            "description" : "Sets the id of this node. Important: If you want to set the id of the route, then you must use routeId(String) instead."
+            "description" : "The id of this node"
           },
           "keepAliveTime" : {
             "type" : "number",
             "title" : "Keep Alive Time",
-            "description" : "Sets the keep alive time for idle threads in the pool"
+            "description" : "Sets the keep alive time for idle threads before they are terminated. Only applies to threads above the core pool size."
           },
           "maxPoolSize" : {
             "type" : "number",
             "title" : "Max Pool Size",
-            "description" : "Sets the maximum pool size"
+            "description" : "Sets the maximum pool size (the upper bound of threads in the pool)."
           },
           "maxQueueSize" : {
             "type" : "number",
@@ -4887,12 +4891,12 @@
           "note" : {
             "type" : "string",
             "title" : "Note",
-            "description" : "Sets the note of this node"
+            "description" : "The note for this node"
           },
           "poolSize" : {
             "type" : "number",
             "title" : "Pool Size",
-            "description" : "Sets the core pool size"
+            "description" : "Sets the core pool size (number of threads to keep in the pool, even if idle)."
           },
           "rejectedPolicy" : {
             "type" : "string",
@@ -4929,7 +4933,7 @@
           "description" : {
             "type" : "string",
             "title" : "Description",
-            "description" : "Sets the description of this node"
+            "description" : "The description for this node"
           },
           "disabled" : {
             "type" : "boolean",
@@ -4945,17 +4949,17 @@
           "id" : {
             "type" : "string",
             "title" : "Id",
-            "description" : "Sets the id of this node. Important: If you want to set the id of the route, then you must use routeId(String) instead."
+            "description" : "The id of this node"
           },
           "keepAliveTime" : {
             "type" : "number",
             "title" : "Keep Alive Time",
-            "description" : "Sets the keep alive time for idle threads"
+            "description" : "Sets the keep alive time for idle threads before they are terminated. Only applies to threads above the core pool size."
           },
           "maxPoolSize" : {
             "type" : "number",
             "title" : "Max Pool Size",
-            "description" : "Sets the maximum pool size"
+            "description" : "Sets the maximum pool size (the upper bound of threads in the pool)."
           },
           "maxQueueSize" : {
             "type" : "number",
@@ -4965,12 +4969,12 @@
           "note" : {
             "type" : "string",
             "title" : "Note",
-            "description" : "Sets the note of this node"
+            "description" : "The note for this node"
           },
           "poolSize" : {
             "type" : "number",
             "title" : "Pool Size",
-            "description" : "Sets the core pool size"
+            "description" : "Sets the core pool size (number of threads to keep in the pool, even if idle)."
           },
           "rejectedPolicy" : {
             "type" : "string",
@@ -4981,13 +4985,13 @@
           "threadName" : {
             "type" : "string",
             "title" : "Thread Name",
-            "description" : "Sets the thread name to use",
+            "description" : "Sets the thread name pattern to use for naming threads created by this thread pool.",
             "default" : "Threads"
           },
           "timeUnit" : {
             "type" : "string",
             "title" : "Time Unit",
-            "description" : "Sets the keep alive time unit. By default SECONDS is used.",
+            "description" : "Sets the time unit for the keep alive time. By default SECONDS is used.",
             "enum" : [ "NANOSECONDS", "MICROSECONDS", "MILLISECONDS", "SECONDS", "MINUTES", "HOURS", "DAYS" ]
           }
         }
@@ -5018,7 +5022,7 @@
           "description" : {
             "type" : "string",
             "title" : "Description",
-            "description" : "Sets the description of this node"
+            "description" : "The description for this node"
           },
           "disabled" : {
             "type" : "boolean",
@@ -5033,25 +5037,25 @@
           },
           "expression" : {
             "title" : "Expression",
-            "description" : "Expression to evaluate.",
+            "description" : "The expression to set the maximum request count (for TotalRequests mode) or the maximum number of concurrent requests (for ConcurrentRequests mode).",
             "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
           },
           "id" : {
             "type" : "string",
             "title" : "Id",
-            "description" : "Sets the id of this node. Important: If you want to set the id of the route, then you must use routeId(String) instead."
+            "description" : "The id of this node"
           },
           "mode" : {
             "type" : "string",
             "title" : "Mode",
-            "description" : "Sets the throttling mode to one of the available modes enumerated in ThrottlingMode.",
+            "description" : "Sets the throttling mode. TotalRequests limits the total number of requests within a time period. ConcurrentRequests uses a leaky-bucket algorithm to limit the number of concurrent requests being processed at the same time.",
             "default" : "TotalRequests",
             "enum" : [ "TotalRequests", "ConcurrentRequests" ]
           },
           "note" : {
             "type" : "string",
             "title" : "Note",
-            "description" : "Sets the note of this node"
+            "description" : "The note for this node"
           },
           "rejectExecution" : {
             "type" : "boolean",
@@ -5076,7 +5080,7 @@
           "description" : {
             "type" : "string",
             "title" : "Description",
-            "description" : "Sets the description of this node"
+            "description" : "The description for this node"
           },
           "disabled" : {
             "type" : "boolean",
@@ -5092,7 +5096,7 @@
           "id" : {
             "type" : "string",
             "title" : "Id",
-            "description" : "Sets the id of this node. Important: If you want to set the id of the route, then you must use routeId(String) instead."
+            "description" : "The id of this node"
           },
           "message" : {
             "type" : "string",
@@ -5102,7 +5106,7 @@
           "note" : {
             "type" : "string",
             "title" : "Note",
-            "description" : "Sets the note of this node"
+            "description" : "The note for this node"
           },
           "ref" : {
             "type" : "string",
@@ -5120,7 +5124,7 @@
           "description" : {
             "type" : "string",
             "title" : "Description",
-            "description" : "Sets the description of this node"
+            "description" : "The description for this node"
           },
           "disabled" : {
             "type" : "boolean",
@@ -5131,12 +5135,12 @@
           "id" : {
             "type" : "string",
             "title" : "Id",
-            "description" : "Sets the id of this node. Important: If you want to set the id of the route, then you must use routeId(String) instead."
+            "description" : "The id of this node"
           },
           "note" : {
             "type" : "string",
             "title" : "Note",
-            "description" : "Sets the note of this node"
+            "description" : "The note for this node"
           },
           "parameters" : {
             "type" : "object"
@@ -5191,7 +5195,7 @@
           "description" : {
             "type" : "string",
             "title" : "Description",
-            "description" : "Sets the description of this node"
+            "description" : "The description for this node"
           },
           "disabled" : {
             "type" : "boolean",
@@ -5202,7 +5206,7 @@
           "id" : {
             "type" : "string",
             "title" : "Id",
-            "description" : "Sets the id of this node. Important: If you want to set the id of the route, then you must use routeId(String) instead."
+            "description" : "The id of this node"
           },
           "ignoreInvalidEndpoint" : {
             "type" : "boolean",
@@ -5213,7 +5217,7 @@
           "note" : {
             "type" : "string",
             "title" : "Note",
-            "description" : "Sets the note of this node"
+            "description" : "The note for this node"
           },
           "parameters" : {
             "type" : "object"
@@ -5251,7 +5255,7 @@
           "description" : {
             "type" : "string",
             "title" : "Description",
-            "description" : "Sets the description of this node"
+            "description" : "The description for this node"
           },
           "disabled" : {
             "type" : "boolean",
@@ -5262,7 +5266,7 @@
           "id" : {
             "type" : "string",
             "title" : "Id",
-            "description" : "Sets the id of this node. Important: If you want to set the id of the route, then you must use routeId(String) instead."
+            "description" : "The id of this node"
           },
           "langChain4jCharacterTokenizer" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.tokenizer.LangChain4jCharacterTokenizerDefinition"
@@ -5282,7 +5286,7 @@
           "note" : {
             "type" : "string",
             "title" : "Note",
-            "description" : "Sets the note of this node"
+            "description" : "The note for this node"
           }
         }
       },
@@ -5304,7 +5308,7 @@
           "description" : {
             "type" : "string",
             "title" : "Description",
-            "description" : "Sets the description of this node"
+            "description" : "The description for this node"
           },
           "disabled" : {
             "type" : "boolean",
@@ -5315,12 +5319,12 @@
           "id" : {
             "type" : "string",
             "title" : "Id",
-            "description" : "Sets the id of this node. Important: If you want to set the id of the route, then you must use routeId(String) instead."
+            "description" : "The id of this node"
           },
           "note" : {
             "type" : "string",
             "title" : "Note",
-            "description" : "Sets the note of this node"
+            "description" : "The note for this node"
           },
           "ref" : {
             "type" : "string",
@@ -5344,7 +5348,7 @@
           "description" : {
             "type" : "string",
             "title" : "Description",
-            "description" : "Sets the description of this node"
+            "description" : "The description for this node"
           },
           "disabled" : {
             "type" : "boolean",
@@ -5355,22 +5359,22 @@
           "fromType" : {
             "type" : "string",
             "title" : "From Type",
-            "description" : "The source data type for the transformation."
+            "description" : "The source data type URN in the format 'scheme:name' (e.g. 'java:com.example.MyClass'). If not specified, the current message body type is used."
           },
           "id" : {
             "type" : "string",
             "title" : "Id",
-            "description" : "Sets the id of this node. Important: If you want to set the id of the route, then you must use routeId(String) instead."
+            "description" : "The id of this node"
           },
           "note" : {
             "type" : "string",
             "title" : "Note",
-            "description" : "Sets the note of this node"
+            "description" : "The note for this node"
           },
           "toType" : {
             "type" : "string",
             "title" : "To Type",
-            "description" : "The target data type for the transformation."
+            "description" : "The target data type URN in the format 'scheme:name' (e.g. 'json:JsonOrder') that the message body should be transformed into."
           }
         },
         "required" : [ "toType" ]
@@ -5384,7 +5388,7 @@
           "description" : {
             "type" : "string",
             "title" : "Description",
-            "description" : "Sets the description of this node"
+            "description" : "The description for this node"
           },
           "disabled" : {
             "type" : "boolean",
@@ -5394,18 +5398,18 @@
           },
           "expression" : {
             "title" : "Expression",
-            "description" : "Expression to evaluate.",
+            "description" : "The expression whose result replaces the message body.",
             "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
           },
           "id" : {
             "type" : "string",
             "title" : "Id",
-            "description" : "Sets the id of this node. Important: If you want to set the id of the route, then you must use routeId(String) instead."
+            "description" : "The id of this node"
           },
           "note" : {
             "type" : "string",
             "title" : "Note",
-            "description" : "Sets the note of this node"
+            "description" : "The note for this node"
           }
         }
       },
@@ -5418,7 +5422,7 @@
           "description" : {
             "type" : "string",
             "title" : "Description",
-            "description" : "Sets the description of this node"
+            "description" : "The description for this node"
           },
           "disabled" : {
             "type" : "boolean",
@@ -5442,12 +5446,12 @@
           "id" : {
             "type" : "string",
             "title" : "Id",
-            "description" : "Sets the id of this node. Important: If you want to set the id of the route, then you must use routeId(String) instead."
+            "description" : "The id of this node"
           },
           "note" : {
             "type" : "string",
             "title" : "Note",
-            "description" : "Sets the note of this node"
+            "description" : "The note for this node"
           },
           "steps" : {
             "type" : "array",
@@ -5502,7 +5506,7 @@
           "description" : {
             "type" : "string",
             "title" : "Description",
-            "description" : "Sets the description of this node"
+            "description" : "The description for this node"
           },
           "dfdl" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.DfdlDataFormat"
@@ -5546,7 +5550,7 @@
           "id" : {
             "type" : "string",
             "title" : "Id",
-            "description" : "Sets the id of this node. Important: If you want to set the id of the route, then you must use routeId(String) instead."
+            "description" : "The id of this node"
           },
           "iso8583" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.Iso8583DataFormat"
@@ -5572,7 +5576,7 @@
           "note" : {
             "type" : "string",
             "title" : "Note",
-            "description" : "Sets the note of this node"
+            "description" : "The note for this node"
           },
           "ocsf" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.OcsfDataFormat"
@@ -5656,7 +5660,7 @@
           "description" : {
             "type" : "string",
             "title" : "Description",
-            "description" : "Sets the description of this node"
+            "description" : "The description for this node"
           },
           "disabled" : {
             "type" : "boolean",
@@ -5666,18 +5670,18 @@
           },
           "expression" : {
             "title" : "Expression",
-            "description" : "Expression to evaluate.",
+            "description" : "The predicate expression to validate against the current message. If the predicate returns false, a PredicateValidationException is thrown.",
             "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
           },
           "id" : {
             "type" : "string",
             "title" : "Id",
-            "description" : "Sets the id of this node. Important: If you want to set the id of the route, then you must use routeId(String) instead."
+            "description" : "The id of this node"
           },
           "note" : {
             "type" : "string",
             "title" : "Note",
-            "description" : "Sets the note of this node"
+            "description" : "The note for this node"
           },
           "predicateExceptionFactory" : {
             "type" : "string",
@@ -5694,7 +5698,8 @@
         "properties" : {
           "value" : {
             "type" : "string",
-            "title" : "Value"
+            "title" : "Value",
+            "description" : "The value."
           }
         }
       },
@@ -5707,7 +5712,7 @@
           "description" : {
             "type" : "string",
             "title" : "Description",
-            "description" : "Sets the description of this node"
+            "description" : "The description for this node"
           },
           "disabled" : {
             "type" : "boolean",
@@ -5723,12 +5728,12 @@
           "id" : {
             "type" : "string",
             "title" : "Id",
-            "description" : "Sets the id of this node. Important: If you want to set the id of the route, then you must use routeId(String) instead."
+            "description" : "The id of this node"
           },
           "note" : {
             "type" : "string",
             "title" : "Note",
-            "description" : "Sets the note of this node"
+            "description" : "The note for this node"
           },
           "steps" : {
             "type" : "array",
@@ -5770,7 +5775,7 @@
           "description" : {
             "type" : "string",
             "title" : "Description",
-            "description" : "Sets the description of this node"
+            "description" : "The description for this node"
           },
           "disabled" : {
             "type" : "boolean",
@@ -5792,7 +5797,7 @@
           "id" : {
             "type" : "string",
             "title" : "Id",
-            "description" : "Sets the id of this node. Important: If you want to set the id of the route, then you must use routeId(String) instead."
+            "description" : "The id of this node"
           },
           "ignoreInvalidEndpoint" : {
             "type" : "boolean",
@@ -5803,7 +5808,7 @@
           "note" : {
             "type" : "string",
             "title" : "Note",
-            "description" : "Sets the note of this node"
+            "description" : "The note for this node"
           },
           "onPrepare" : {
             "type" : "string",
@@ -10731,7 +10736,7 @@
           "bindingMode" : {
             "type" : "string",
             "title" : "Binding Mode",
-            "description" : "Sets the binding mode to use. This option will override what may be configured on a parent level.",
+            "description" : "Sets the binding mode for automatic marshalling and unmarshalling of request and response bodies. off (default) disables binding. auto detects JSON or XML from the Content-Type header. json binds using a JSON data format only. xml binds using an XML data format only. json_xml supports both JSON and XML. This option will override what may be configured on a parent level.",
             "default" : "off",
             "enum" : [ "off", "auto", "json", "xml", "json_xml" ]
           },
@@ -10761,7 +10766,7 @@
           "description" : {
             "type" : "string",
             "title" : "Description",
-            "description" : "Sets the description of this node"
+            "description" : "The description for this node"
           },
           "disabled" : {
             "type" : "boolean",
@@ -10784,12 +10789,12 @@
           "id" : {
             "type" : "string",
             "title" : "Id",
-            "description" : "Sets the id of this node. Important: If you want to set the id of the route, then you must use routeId(String) instead."
+            "description" : "The id of this node"
           },
           "note" : {
             "type" : "string",
             "title" : "Note",
-            "description" : "Sets the note of this node"
+            "description" : "The note for this node"
           },
           "outType" : {
             "type" : "string",
@@ -10874,7 +10879,7 @@
           "bindingMode" : {
             "type" : "string",
             "title" : "Binding Mode",
-            "description" : "Sets the binding mode to use. This option will override what may be configured on a parent level.",
+            "description" : "Sets the binding mode for automatic marshalling and unmarshalling of request and response bodies. off (default) disables binding. auto detects JSON or XML from the Content-Type header. json binds using a JSON data format only. xml binds using an XML data format only. json_xml supports both JSON and XML. This option will override what may be configured on a parent level.",
             "default" : "off",
             "enum" : [ "off", "auto", "json", "xml", "json_xml" ]
           },
@@ -10904,7 +10909,7 @@
           "description" : {
             "type" : "string",
             "title" : "Description",
-            "description" : "Sets the description of this node"
+            "description" : "The description for this node"
           },
           "disabled" : {
             "type" : "boolean",
@@ -10927,12 +10932,12 @@
           "id" : {
             "type" : "string",
             "title" : "Id",
-            "description" : "Sets the id of this node. Important: If you want to set the id of the route, then you must use routeId(String) instead."
+            "description" : "The id of this node"
           },
           "note" : {
             "type" : "string",
             "title" : "Note",
-            "description" : "Sets the note of this node"
+            "description" : "The note for this node"
           },
           "outType" : {
             "type" : "string",
@@ -11017,7 +11022,7 @@
           "bindingMode" : {
             "type" : "string",
             "title" : "Binding Mode",
-            "description" : "Sets the binding mode to use. This option will override what may be configured on a parent level.",
+            "description" : "Sets the binding mode for automatic marshalling and unmarshalling of request and response bodies. off (default) disables binding. auto detects JSON or XML from the Content-Type header. json binds using a JSON data format only. xml binds using an XML data format only. json_xml supports both JSON and XML. This option will override what may be configured on a parent level.",
             "default" : "off",
             "enum" : [ "off", "auto", "json", "xml", "json_xml" ]
           },
@@ -11047,7 +11052,7 @@
           "description" : {
             "type" : "string",
             "title" : "Description",
-            "description" : "Sets the description of this node"
+            "description" : "The description for this node"
           },
           "disabled" : {
             "type" : "boolean",
@@ -11070,12 +11075,12 @@
           "id" : {
             "type" : "string",
             "title" : "Id",
-            "description" : "Sets the id of this node. Important: If you want to set the id of the route, then you must use routeId(String) instead."
+            "description" : "The id of this node"
           },
           "note" : {
             "type" : "string",
             "title" : "Note",
-            "description" : "Sets the note of this node"
+            "description" : "The note for this node"
           },
           "outType" : {
             "type" : "string",
@@ -11226,7 +11231,7 @@
           "description" : {
             "type" : "string",
             "title" : "Description",
-            "description" : "Sets the description of this node"
+            "description" : "The description for this node"
           },
           "disabled" : {
             "type" : "boolean",
@@ -11237,7 +11242,7 @@
           "id" : {
             "type" : "string",
             "title" : "Id",
-            "description" : "Sets the id of this node. Important: If you want to set the id of the route, then you must use routeId(String) instead."
+            "description" : "The id of this node"
           },
           "missingOperation" : {
             "type" : "string",
@@ -11255,7 +11260,7 @@
           "note" : {
             "type" : "string",
             "title" : "Note",
-            "description" : "Sets the note of this node"
+            "description" : "The note for this node"
           },
           "routeId" : {
             "type" : "string",
@@ -11386,7 +11391,7 @@
           "bindingMode" : {
             "type" : "string",
             "title" : "Binding Mode",
-            "description" : "Sets the binding mode to use. This option will override what may be configured on a parent level.",
+            "description" : "Sets the binding mode for automatic marshalling and unmarshalling of request and response bodies. off (default) disables binding. auto detects JSON or XML from the Content-Type header. json binds using a JSON data format only. xml binds using an XML data format only. json_xml supports both JSON and XML. This option will override what may be configured on a parent level.",
             "default" : "off",
             "enum" : [ "off", "auto", "json", "xml", "json_xml" ]
           },
@@ -11416,7 +11421,7 @@
           "description" : {
             "type" : "string",
             "title" : "Description",
-            "description" : "Sets the description of this node"
+            "description" : "The description for this node"
           },
           "disabled" : {
             "type" : "boolean",
@@ -11439,12 +11444,12 @@
           "id" : {
             "type" : "string",
             "title" : "Id",
-            "description" : "Sets the id of this node. Important: If you want to set the id of the route, then you must use routeId(String) instead."
+            "description" : "The id of this node"
           },
           "note" : {
             "type" : "string",
             "title" : "Note",
-            "description" : "Sets the note of this node"
+            "description" : "The note for this node"
           },
           "outType" : {
             "type" : "string",
@@ -11529,7 +11534,7 @@
           "bindingMode" : {
             "type" : "string",
             "title" : "Binding Mode",
-            "description" : "Sets the binding mode to use. This option will override what may be configured on a parent level.",
+            "description" : "Sets the binding mode for automatic marshalling and unmarshalling of request and response bodies. off (default) disables binding. auto detects JSON or XML from the Content-Type header. json binds using a JSON data format only. xml binds using an XML data format only. json_xml supports both JSON and XML. This option will override what may be configured on a parent level.",
             "default" : "off",
             "enum" : [ "off", "auto", "json", "xml", "json_xml" ]
           },
@@ -11559,7 +11564,7 @@
           "description" : {
             "type" : "string",
             "title" : "Description",
-            "description" : "Sets the description of this node"
+            "description" : "The description for this node"
           },
           "disabled" : {
             "type" : "boolean",
@@ -11582,12 +11587,12 @@
           "id" : {
             "type" : "string",
             "title" : "Id",
-            "description" : "Sets the id of this node. Important: If you want to set the id of the route, then you must use routeId(String) instead."
+            "description" : "The id of this node"
           },
           "note" : {
             "type" : "string",
             "title" : "Note",
-            "description" : "Sets the note of this node"
+            "description" : "The note for this node"
           },
           "outType" : {
             "type" : "string",
@@ -11672,7 +11677,7 @@
           "bindingMode" : {
             "type" : "string",
             "title" : "Binding Mode",
-            "description" : "Sets the binding mode to use. This option will override what may be configured on a parent level.",
+            "description" : "Sets the binding mode for automatic marshalling and unmarshalling of request and response bodies. off (default) disables binding. auto detects JSON or XML from the Content-Type header. json binds using a JSON data format only. xml binds using an XML data format only. json_xml supports both JSON and XML. This option will override what may be configured on a parent level.",
             "default" : "off",
             "enum" : [ "off", "auto", "json", "xml", "json_xml" ]
           },
@@ -11702,7 +11707,7 @@
           "description" : {
             "type" : "string",
             "title" : "Description",
-            "description" : "Sets the description of this node"
+            "description" : "The description for this node"
           },
           "disabled" : {
             "type" : "boolean",
@@ -11725,12 +11730,12 @@
           "id" : {
             "type" : "string",
             "title" : "Id",
-            "description" : "Sets the id of this node. Important: If you want to set the id of the route, then you must use routeId(String) instead."
+            "description" : "The id of this node"
           },
           "note" : {
             "type" : "string",
             "title" : "Note",
-            "description" : "Sets the note of this node"
+            "description" : "The note for this node"
           },
           "outType" : {
             "type" : "string",
@@ -11911,7 +11916,7 @@
           "bindingMode" : {
             "type" : "string",
             "title" : "Binding Mode",
-            "description" : "Sets the binding mode to use.",
+            "description" : "Sets the binding mode for automatic marshalling and unmarshalling of request and response bodies. off (default) disables binding. auto detects JSON or XML from the Content-Type header. json binds using a JSON data format only. xml binds using an XML data format only. json_xml supports both JSON and XML.",
             "default" : "off",
             "enum" : [ "off", "auto", "json", "xml", "json_xml" ]
           },
@@ -11940,7 +11945,7 @@
           "description" : {
             "type" : "string",
             "title" : "Description",
-            "description" : "Sets the description of this node"
+            "description" : "The description for this node"
           },
           "enableCORS" : {
             "type" : "boolean",
@@ -11957,12 +11962,12 @@
           "id" : {
             "type" : "string",
             "title" : "Id",
-            "description" : "Sets the id of this node. Important: If you want to set the id of the route, then you must use routeId(String) instead."
+            "description" : "The id of this node"
           },
           "note" : {
             "type" : "string",
             "title" : "Note",
-            "description" : "Sets the note of this node"
+            "description" : "The note for this node"
           },
           "outType" : {
             "type" : "string",
@@ -12031,7 +12036,7 @@
           "bindingMode" : {
             "type" : "string",
             "title" : "Binding Mode",
-            "description" : "Sets the binding mode to use.",
+            "description" : "Sets the binding mode for automatic marshalling and unmarshalling of request and response bodies. off (default) disables binding. auto detects JSON or XML from the Content-Type header. json binds using a JSON data format only. xml binds using an XML data format only. json_xml supports both JSON and XML.",
             "default" : "off",
             "enum" : [ "auto", "json", "json_xml", "off", "xml" ]
           },
@@ -12205,7 +12210,7 @@
           "bindingMode" : {
             "type" : "string",
             "title" : "Binding Mode",
-            "description" : "Sets the binding mode to use. This option will override what may be configured on a parent level.",
+            "description" : "Sets the binding mode for automatic marshalling and unmarshalling of request and response bodies. off (default) disables binding. auto detects JSON or XML from the Content-Type header. json binds using a JSON data format only. xml binds using an XML data format only. json_xml supports both JSON and XML. This option will override what may be configured on a parent level.",
             "default" : "off",
             "enum" : [ "off", "auto", "json", "xml", "json_xml" ]
           },
@@ -12235,7 +12240,7 @@
           "description" : {
             "type" : "string",
             "title" : "Description",
-            "description" : "Sets the description of this node"
+            "description" : "The description for this node"
           },
           "disabled" : {
             "type" : "boolean",
@@ -12270,12 +12275,12 @@
           "id" : {
             "type" : "string",
             "title" : "Id",
-            "description" : "Sets the id of this node. Important: If you want to set the id of the route, then you must use routeId(String) instead."
+            "description" : "The id of this node"
           },
           "note" : {
             "type" : "string",
             "title" : "Note",
-            "description" : "Sets the note of this node"
+            "description" : "The note for this node"
           },
           "openApi" : {
             "title" : "Open Api",
@@ -12390,17 +12395,17 @@
           "description" : {
             "type" : "string",
             "title" : "Description",
-            "description" : "Sets the description of this node"
+            "description" : "The description for this node"
           },
           "id" : {
             "type" : "string",
             "title" : "Id",
-            "description" : "Sets the id of this node. Important: If you want to set the id of the route, then you must use routeId(String) instead."
+            "description" : "The id of this node"
           },
           "note" : {
             "type" : "string",
             "title" : "Note",
-            "description" : "Sets the note of this node"
+            "description" : "The note for this node"
           },
           "rest" : {
             "type" : "array",

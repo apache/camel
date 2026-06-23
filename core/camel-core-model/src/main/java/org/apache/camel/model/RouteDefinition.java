@@ -904,6 +904,7 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition>
     }
 
     @XmlElementRef(required = false)
+    @Metadata(description = "The input (from) endpoint that starts this route and acts as the consumer that receives incoming messages.")
     public void setInput(FromDefinition input) {
         if (this.input != null && input != null && this.input != input) {
             throw new IllegalArgumentException("Only one input is allowed per route. Cannot accept input: " + input);
@@ -1081,6 +1082,7 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition>
     }
 
     @XmlAttribute
+    @Metadata(description = "Sets a reference to a custom error handler to use for this route, referring to an error handler by its id in the registry.")
     public void setErrorHandlerRef(String errorHandlerRef) {
         if (errorHandlerRef != null) {
             this.errorHandlerRef = errorHandlerRef;
@@ -1141,7 +1143,8 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition>
      */
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "org.apache.camel.ShutdownRoute", defaultValue = "Default",
-              enums = "Default,Defer", description = "To control how to shutdown the route.")
+              enums = "Default,Defer",
+              description = "To control how to shutdown the route. Default shuts down the route normally. Defer delays the shutdown so that in-flight and pending messages are allowed to complete before the route is shutdown.")
     public void setShutdownRoute(String shutdownRoute) {
         this.shutdownRoute = shutdownRoute;
     }
@@ -1155,7 +1158,8 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition>
      */
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "org.apache.camel.ShutdownRunningTask", defaultValue = "CompleteCurrentTaskOnly",
-              enums = "CompleteCurrentTaskOnly,CompleteAllTasks", description = "To control how to shut down the route.")
+              enums = "CompleteCurrentTaskOnly,CompleteAllTasks",
+              description = "To control how to handle in-flight and pending messages during shutdown. CompleteCurrentTaskOnly (default) finishes only the current message. CompleteAllTasks finishes all pending messages (e.g. from a batch consumer or aggregator) before shutting down.")
     public void setShutdownRunningTask(String shutdownRunningTask) {
         this.shutdownRunningTask = shutdownRunningTask;
     }

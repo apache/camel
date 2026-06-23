@@ -12,9 +12,9 @@
     "output": false
   },
   "properties": {
-    "description": { "index": 0, "kind": "attribute", "displayName": "Description", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false },
-    "name": { "index": 1, "kind": "attribute", "displayName": "Name", "group": "common", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false },
-    "required": { "index": 2, "kind": "attribute", "displayName": "Required", "group": "common", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false },
-    "defaultValue": { "index": 3, "kind": "attribute", "displayName": "Default Value", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false }
+    "description": { "index": 0, "kind": "attribute", "displayName": "Description", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Description of the template parameter for documentation purposes." },
+    "name": { "index": 1, "kind": "attribute", "displayName": "Name", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The name of the template parameter." },
+    "required": { "index": 2, "kind": "attribute", "displayName": "Required", "group": "common", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Whether this template parameter is required. A required parameter must have a value provided when creating a route from the template." },
+    "defaultValue": { "index": 3, "kind": "attribute", "displayName": "Default Value", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The default value of the template parameter. Used when no explicit value is provided when creating a route from the template." }
   }
 }

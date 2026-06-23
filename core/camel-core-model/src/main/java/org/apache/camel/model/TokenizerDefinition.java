@@ -45,6 +45,7 @@ public class TokenizerDefinition extends NoOutputDefinition<TokenizerDefinition>
             @XmlElement(name = "langChain4jSentenceTokenizer", type = LangChain4jSentenceTokenizerDefinition.class),
             @XmlElement(name = "langChain4jWordTokenizer", type = LangChain4jWordTokenizerDefinition.class),
     })
+    @Metadata(description = "The tokenizer implementation to use, such as LangChain4j character, line, paragraph, sentence, or word tokenizers.")
     private TokenizerImplementationDefinition tokenizerImplementation;
 
     @XmlTransient

@@ -59,7 +59,7 @@ public class SagaDefinition extends OutputDefinition<SagaDefinition> {
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "org.apache.camel.model.SagaPropagation", defaultValue = "REQUIRED",
               enums = "REQUIRED,REQUIRES_NEW,MANDATORY,SUPPORTS,NOT_SUPPORTED,NEVER",
-              description = "Set the Saga propagation mode (REQUIRED, REQUIRES_NEW, MANDATORY, SUPPORTS, NOT_SUPPORTED, NEVER)")
+              description = "Set the Saga propagation mode. REQUIRED joins an existing saga or starts a new one. REQUIRES_NEW always starts a new saga, suspending any existing one. MANDATORY requires an existing saga and fails if none is active. SUPPORTS joins an existing saga if present but does not start a new one. NOT_SUPPORTED executes outside any saga, suspending an existing one. NEVER fails if a saga is already active.")
     private String propagation;
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "org.apache.camel.model.SagaCompletionMode", defaultValue = "AUTO",

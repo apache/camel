@@ -183,6 +183,7 @@ public class DelayDefinition extends ExpressionNode implements ExecutorServiceAw
     }
 
     @Override
+    @Metadata(description = "The expression that determines the delay duration in milliseconds.")
     public void setExpression(ExpressionDefinition expression) {
         // override to include javadoc what the expression is used for
         super.setExpression(expression);

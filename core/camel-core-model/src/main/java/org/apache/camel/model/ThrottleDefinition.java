@@ -46,7 +46,7 @@ public class ThrottleDefinition extends ExpressionNode implements ExecutorServic
     @XmlAttribute
     @Metadata(javaType = "org.apache.camel.model.ThrottlingMode", defaultValue = "TotalRequests",
               enums = "TotalRequests,ConcurrentRequests",
-              description = "Sets the throttling mode to one of the available modes enumerated in ThrottlingMode.")
+              description = "Sets the throttling mode. TotalRequests limits the total number of requests within a time period. ConcurrentRequests uses a leaky-bucket algorithm to limit the number of concurrent requests being processed at the same time.")
     private String mode;
     @XmlElement(name = "correlationExpression")
     @Metadata(description = "The correlation expression to use for throttle grouping. Exchanges with the same correlation key are throttled together.")
@@ -361,6 +361,7 @@ public class ThrottleDefinition extends ExpressionNode implements ExecutorServic
     }
 
     @Override
+    @Metadata(description = "The expression to set the maximum request count (for TotalRequests mode) or the maximum number of concurrent requests (for ConcurrentRequests mode).")
     public void setExpression(ExpressionDefinition expression) {
         // override to include javadoc what the expression is used for
         super.setExpression(expression);

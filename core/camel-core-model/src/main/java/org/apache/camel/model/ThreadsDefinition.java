@@ -46,20 +46,23 @@ public class ThreadsDefinition extends NoOutputDefinition<ThreadsDefinition>
               description = "To refer to a custom thread pool or use a thread pool profile (as overlay)")
     private String executorService;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Integer", description = "Sets the core pool size")
+    @Metadata(javaType = "java.lang.Integer",
+              description = "Sets the core pool size (number of threads to keep in the pool, even if idle).")
     @DslArg(position = 0, renderType = "long")
     private String poolSize;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Integer", description = "Sets the maximum pool size")
+    @Metadata(javaType = "java.lang.Integer",
+              description = "Sets the maximum pool size (the upper bound of threads in the pool).")
     @DslArg(position = 1, renderType = "long")
     private String maxPoolSize;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Long", description = "Sets the keep alive time for idle threads")
+    @Metadata(javaType = "java.lang.Long",
+              description = "Sets the keep alive time for idle threads before they are terminated. Only applies to threads above the core pool size.")
     private String keepAliveTime;
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.util.concurrent.TimeUnit",
               enums = "NANOSECONDS,MICROSECONDS,MILLISECONDS,SECONDS,MINUTES,HOURS,DAYS",
-              description = "Sets the keep alive time unit. By default SECONDS is used.")
+              description = "Sets the time unit for the keep alive time. By default SECONDS is used.")
     private String timeUnit;
     @XmlAttribute
     @Metadata(javaType = "java.lang.Integer",
@@ -70,7 +73,8 @@ public class ThreadsDefinition extends NoOutputDefinition<ThreadsDefinition>
               description = "Whether idle core threads are allowed to timeout and therefore can shrink the pool size below the core pool size")
     private String allowCoreThreadTimeOut;
     @XmlAttribute
-    @Metadata(defaultValue = "Threads", description = "Sets the thread name to use")
+    @Metadata(defaultValue = "Threads",
+              description = "Sets the thread name pattern to use for naming threads created by this thread pool.")
     private String threadName;
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy",

@@ -84,6 +84,7 @@ public class SetPropertyDefinition extends ExpressionNode {
     }
 
     @Override
+    @Metadata(description = "The expression whose result is used as the exchange property value.")
     public void setExpression(ExpressionDefinition expression) {
         // override to include javadoc what the expression is used for
         super.setExpression(expression);

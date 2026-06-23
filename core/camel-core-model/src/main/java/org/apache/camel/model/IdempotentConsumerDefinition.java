@@ -40,7 +40,7 @@ public class IdempotentConsumerDefinition extends OutputExpressionNode {
 
     @XmlAttribute(required = true)
     @Metadata(javaType = "org.apache.camel.spi.IdempotentRepository",
-              description = "Sets the reference name of the message id repository")
+              description = "Sets the reference name of the message id repository to use for storing processed message ids to detect duplicates.")
     private String idempotentRepository;
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "true",
@@ -185,6 +185,7 @@ public class IdempotentConsumerDefinition extends OutputExpressionNode {
     }
 
     @Override
+    @Metadata(description = "The expression to compute the unique message ID used for duplicate detection. Messages with the same ID are treated as duplicates and skipped.")
     public void setExpression(ExpressionDefinition expression) {
         // override to include javadoc what the expression is used for
         super.setExpression(expression);

@@ -314,6 +314,7 @@ public class EnrichDefinition extends ExpressionNode
     }
 
     @Override
+    @Metadata(description = "The expression to compute the endpoint URI to enrich from.")
     public void setExpression(ExpressionDefinition expression) {
         // override to include javadoc what the expression is used for
         super.setExpression(expression);

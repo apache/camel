@@ -88,6 +88,7 @@ public class ValidateDefinition extends ExpressionNode {
     }
 
     @Override
+    @Metadata(description = "The predicate expression to validate against the current message. If the predicate returns false, a PredicateValidationException is thrown.")
     public void setExpression(ExpressionDefinition expression) {
         // override to include javadoc what the expression is used for
         super.setExpression(expression);

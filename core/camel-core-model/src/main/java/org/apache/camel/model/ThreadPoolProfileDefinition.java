@@ -39,13 +39,16 @@ public class ThreadPoolProfileDefinition extends OptionalIdentifiedDefinition<Th
               description = "Whether this profile is the default thread pool profile")
     private String defaultProfile;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Integer", description = "Sets the core pool size")
+    @Metadata(javaType = "java.lang.Integer",
+              description = "Sets the core pool size (number of threads to keep in the pool, even if idle).")
     private String poolSize;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Integer", description = "Sets the maximum pool size")
+    @Metadata(javaType = "java.lang.Integer",
+              description = "Sets the maximum pool size (the upper bound of threads in the pool).")
     private String maxPoolSize;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Long", description = "Sets the keep alive time for idle threads in the pool")
+    @Metadata(javaType = "java.lang.Long",
+              description = "Sets the keep alive time for idle threads before they are terminated. Only applies to threads above the core pool size.")
     private String keepAliveTime;
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.util.concurrent.TimeUnit",

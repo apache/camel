@@ -327,6 +327,7 @@ public class PollEnrichDefinition extends ExpressionNode
     // -------------------------------------------------------------------------
 
     @Override
+    @Metadata(description = "The expression to compute the endpoint URI to poll-enrich from.")
     public void setExpression(ExpressionDefinition expression) {
         // override to include javadoc what the expression is used for
         super.setExpression(expression);

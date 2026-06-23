@@ -60,7 +60,7 @@ public class RestBindingDefinition extends OptionalIdentifiedDefinition<RestBind
     @Metadata(description = "The content type the REST service produces (uses for output), such as application/xml or application/json.")
     private String produces;
     @XmlAttribute
-    @Metadata(description = "Sets the binding mode to use.",
+    @Metadata(description = "Sets the binding mode for automatic marshalling and unmarshalling of request and response bodies. off (default) disables binding. auto detects JSON or XML from the Content-Type header. json binds using a JSON data format only. xml binds using an XML data format only. json_xml supports both JSON and XML.",
               defaultValue = "off", enums = "off,auto,json,xml,json_xml")
     private String bindingMode;
     @XmlAttribute

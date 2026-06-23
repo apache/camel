@@ -64,6 +64,7 @@ public class ScriptDefinition extends ExpressionNode {
     }
 
     @Override
+    @Metadata(description = "The expression to evaluate as a script. The script result does not change the message body (use transform instead if that is desired).")
     public void setExpression(ExpressionDefinition expression) {
         // override to include javadoc what the expression is used for
         super.setExpression(expression);
