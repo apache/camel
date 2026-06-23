@@ -1064,7 +1064,8 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition>
      * Whether message history is enabled on this route.
      */
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean", description = "Whether message history is enabled on this route.")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean",
+              description = "Whether message history is enabled on this route.")
     public void setMessageHistory(String messageHistory) {
         this.messageHistory = messageHistory;
     }
@@ -1080,7 +1081,8 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition>
      * Whether security mask for Logging is enabled on this route.
      */
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean", description = "Whether security mask for logging is enabled on this route.")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean",
+              description = "Whether security mask for logging is enabled on this route.")
     public void setLogMask(String logMask) {
         this.logMask = logMask;
     }
@@ -1096,7 +1098,8 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition>
      * Whether to slow down processing messages by a given delay in msec.
      */
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Long", description = "Whether to slow down processing messages by a given delay in msec.")
+    @Metadata(label = "advanced", javaType = "java.lang.Long",
+              description = "Whether to slow down processing messages by a given delay in msec.")
     public void setDelayer(String delayer) {
         this.delayer = delayer;
     }
@@ -1131,7 +1134,8 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition>
      * included or not.
      */
     @XmlAttribute
-    @Metadata(label = "advanced", description = "The predicate of the precondition in simple language to evaluate in order to determine if this route should be included or not.")
+    @Metadata(label = "advanced",
+              description = "The predicate of the precondition in simple language to evaluate in order to determine if this route should be included or not.")
     @Override
     public void setPrecondition(String precondition) {
         this.precondition = precondition;
@@ -1148,7 +1152,8 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition>
      * To configure the ordering of the routes being started
      */
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Integer", description = "To configure the ordering of the routes being started.")
+    @Metadata(label = "advanced", javaType = "java.lang.Integer",
+              description = "To configure the ordering of the routes being started.")
     public void setStartupOrder(Integer startupOrder) {
         this.startupOrder = startupOrder;
     }
@@ -1346,7 +1351,8 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition>
     }
 
     @XmlElementRef(required = false)
-    @Metadata(label = "advanced", description = "Declare the expected data type of the input message. If the actual message type is different at runtime, camel looks for a required Transformer and applies if exists.")
+    @Metadata(label = "advanced",
+              description = "Declare the expected data type of the input message. If the actual message type is different at runtime, camel looks for a required Transformer and applies if exists.")
     public void setInputType(InputTypeDefinition inputType) {
         this.inputType = inputType;
     }
@@ -1356,7 +1362,8 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition>
     }
 
     @XmlElementRef(required = false)
-    @Metadata(label = "advanced", description = "Declare the expected data type of the output message. If the actual message type is different at runtime, camel looks for a required Transformer and applies if exists.")
+    @Metadata(label = "advanced",
+              description = "Declare the expected data type of the output message. If the actual message type is different at runtime, camel looks for a required Transformer and applies if exists.")
     public void setOutputType(OutputTypeDefinition outputType) {
         this.outputType = outputType;
     }

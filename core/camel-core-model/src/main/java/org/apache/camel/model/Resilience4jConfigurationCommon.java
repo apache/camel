@@ -50,8 +50,8 @@ public class Resilience4jConfigurationCommon extends IdentifiedType {
     private String permittedNumberOfCallsInHalfOpenState;
     @XmlAttribute
     @Metadata(defaultValue = "false", javaType = "java.lang.Boolean",
-              description = "Whether to throw io.github.resilience4j.circuitbreaker.CallNotPermittedException when the call is rejected due"
-                            + " circuit breaker is half open or open.")
+              description = "Whether to throw io.github.resilience4j.circuitbreaker.CallNotPermittedException when the call is rejected"
+                            + " because the circuit breaker is half open or open.")
     private String throwExceptionWhenHalfOpenOrOpenState;
     @XmlAttribute
     @Metadata(defaultValue = "100", javaType = "java.lang.Integer",

@@ -42,15 +42,15 @@ public class RestConfigurationDefinition {
 
     @XmlAttribute
     @Metadata(description = "The Camel Rest component to use for the REST transport (consumer), such as netty-http, jetty, servlet, undertow.",
-            enums = "platform-http,servlet,jetty,undertow,netty-http,coap")
+              enums = "platform-http,servlet,jetty,undertow,netty-http,coap")
     private String component;
     @XmlAttribute
     @Metadata(description = "The name of the Camel component to use as the REST API (such as OpenApi).",
-            label = "consumer,advanced", enums = "openapi,swagger")
+              label = "consumer,advanced", enums = "openapi,swagger")
     private String apiComponent;
     @XmlAttribute
     @Metadata(description = "Sets the name of the Camel component to use as the REST producer.",
-            label = "producer,advanced", enums = "vertx-http,http,undertow,netty-http")
+              label = "producer,advanced", enums = "vertx-http,http,undertow,netty-http")
     private String producerComponent;
     @XmlAttribute
     private String scheme;
@@ -60,103 +60,103 @@ public class RestConfigurationDefinition {
     private String port;
     @XmlAttribute
     @Metadata(description = "To use a specific hostname for the API documentation (such as swagger or openapi). This can be used to override the generated host with this configured hostname.",
-            label = "consumer,advanced")
+              label = "consumer,advanced")
     private String apiHost;
     @XmlAttribute
     @Metadata(description = "Whether to use X-Forward headers to set host etc. for OpenApi. This may be needed in special cases involving reverse-proxy and networking going from HTTP to HTTPS etc.",
-            label = "consumer,advanced", javaType = "java.lang.Boolean")
+              label = "consumer,advanced", javaType = "java.lang.Boolean")
     private String useXForwardHeaders;
     @XmlAttribute
     @Metadata(description = "Sets the location of the api document the REST producer will use to validate the REST uri and query parameters are valid accordingly to the api document.",
-            label = "producer,advanced")
+              label = "producer,advanced")
     private String producerApiDoc;
     @XmlAttribute
     @Metadata(description = "Sets a leading context-path the REST services will be using. This can be used when using components such as camel-servlet where the deployed web application is deployed using a context-path.",
-            label = "consumer")
+              label = "consumer")
     private String contextPath;
     @XmlAttribute
     @Metadata(description = "Sets a leading context-path the REST API will be using.",
-            label = "consumer")
+              label = "consumer")
     private String apiContextPath;
     @XmlAttribute
     @Metadata(description = "Sets the route id to use for the route that services the REST API. The route will by default use an auto assigned route id.",
-            label = "consumer,advanced")
+              label = "consumer,advanced")
     private String apiContextRouteId;
     @XmlAttribute
     @Metadata(description = "Whether vendor extension is enabled in the Rest APIs. If enabled then Camel will include additional information as vendor extension (eg keys starting with x-) such as route ids, class names etc.",
-            label = "consumer,advanced", javaType = "java.lang.Boolean", defaultValue = "false")
+              label = "consumer,advanced", javaType = "java.lang.Boolean", defaultValue = "false")
     private String apiVendorExtension;
     @XmlAttribute
     @Metadata(description = "If no hostname has been explicit configured, then this resolver is used to compute the hostname the REST service will be using.",
-            label = "consumer,advanced", defaultValue = "allLocalIp")
+              label = "consumer,advanced", defaultValue = "allLocalIp")
     private RestHostNameResolver hostNameResolver;
     @XmlAttribute
     @Metadata(description = "Sets the binding mode to use.",
-            defaultValue = "off", enums = "off,auto,json,xml,json_xml")
+              defaultValue = "off", enums = "off,auto,json,xml,json_xml")
     private RestBindingMode bindingMode;
     @XmlAttribute
     @Metadata(description = "Package name to use as base (offset) for classpath scanning of POJO classes are located when using binding mode is enabled for JSon or XML. Multiple package names can be separated by comma.",
-            label = "consumer,advanced")
+              label = "consumer,advanced")
     private String bindingPackageScan;
     @XmlAttribute
     @Metadata(description = "Whether to skip binding on output if there is a custom HTTP error code header. This allows to build custom error messages that do not bind to json / xml etc, as success messages otherwise will do.",
-            label = "advanced", javaType = "java.lang.Boolean", defaultValue = "false")
+              label = "advanced", javaType = "java.lang.Boolean", defaultValue = "false")
     private String skipBindingOnErrorCode;
     @XmlAttribute
     @Metadata(description = "Whether to enable validation of the client request to check whether Content-Type/Accept headers, required parameters, and message body are valid.",
-            label = "consumer,advanced", javaType = "java.lang.Boolean", defaultValue = "false")
+              label = "consumer,advanced", javaType = "java.lang.Boolean", defaultValue = "false")
     private String clientRequestValidation;
     @XmlAttribute
     @Metadata(description = "Whether to validate what Camel is returning as response to the client, such as checking status-code, Content-Type, and headers match the Rest DSL response definition.",
-            label = "consumer,advanced", javaType = "java.lang.Boolean", defaultValue = "false")
+              label = "consumer,advanced", javaType = "java.lang.Boolean", defaultValue = "false")
     private String clientResponseValidation;
     @XmlAttribute
     @Metadata(description = "Whether to enable CORS headers in the HTTP response.",
-            label = "consumer,advanced", javaType = "java.lang.Boolean", defaultValue = "false")
+              label = "consumer,advanced", javaType = "java.lang.Boolean", defaultValue = "false")
     private String enableCORS;
     @XmlAttribute
     @Metadata(description = "Whether to return HTTP 204 with an empty body when a response contains an empty JSON object or XML root object.",
-            label = "consumer,advanced", javaType = "java.lang.Boolean", defaultValue = "false")
+              label = "consumer,advanced", javaType = "java.lang.Boolean", defaultValue = "false")
     private String enableNoContentResponse;
     @XmlAttribute
     @Metadata(description = "Inline routes in rest-dsl which are linked using direct endpoints. By inlining, Camel can optimize and inline this as a single route, however this requires to use direct endpoints, which must be unique per service.",
-            label = "consumer", javaType = "java.lang.Boolean", defaultValue = "true")
+              label = "consumer", javaType = "java.lang.Boolean", defaultValue = "true")
     private String inlineRoutes;
     @XmlAttribute
     @Metadata(description = "Name of specific json data format to use. By default jackson will be used. Important: This option is only for setting a custom name of the data format, not to refer to an existing data format instance.",
-            label = "advanced", enums = "jackson,jsonb,fastjson,gson", defaultValue = "jackson")
+              label = "advanced", enums = "jackson,jsonb,fastjson,gson", defaultValue = "jackson")
     private String jsonDataFormat;
     @XmlAttribute
     @Metadata(description = "Name of specific XML data format to use. By default jaxb will be used. Important: This option is only for setting a custom name of the data format, not to refer to an existing data format instance.",
-            label = "advanced", enums = "jaxb,jacksonXml", defaultValue = "jaxb")
+              label = "advanced", enums = "jaxb,jacksonXml", defaultValue = "jaxb")
     private String xmlDataFormat;
     @XmlElement(name = "componentProperty")
     @Metadata(description = "Allows to configure as many additional properties for the rest component in use.",
-            label = "advanced")
+              label = "advanced")
     private List<RestPropertyDefinition> componentProperties = new ArrayList<>();
     @XmlElement(name = "endpointProperty")
     @Metadata(description = "Allows to configure as many additional properties for the rest endpoint in use.",
-            label = "advanced")
+              label = "advanced")
     private List<RestPropertyDefinition> endpointProperties = new ArrayList<>();
     @XmlElement(name = "consumerProperty")
     @Metadata(description = "Allows to configure as many additional properties for the rest consumer in use.",
-            label = "consumer,advanced")
+              label = "consumer,advanced")
     private List<RestPropertyDefinition> consumerProperties = new ArrayList<>();
     @XmlElement(name = "dataFormatProperty")
     @Metadata(description = "Allows to configure as many additional properties for the data formats in use. For example set property prettyPrint to true to have json outputted in pretty mode.",
-            label = "advanced")
+              label = "advanced")
     private List<RestPropertyDefinition> dataFormatProperties = new ArrayList<>();
     @XmlElement(name = "apiProperty")
     @Metadata(description = "Allows to configure as many additional properties for the api documentation.",
-            label = "consumer,advanced")
+              label = "consumer,advanced")
     private List<RestPropertyDefinition> apiProperties = new ArrayList<>();
     @XmlElement(name = "corsHeaders")
     @Metadata(description = "Allows to configure custom CORS headers.",
-            label = "consumer,advanced")
+              label = "consumer,advanced")
     private List<RestPropertyDefinition> corsHeaders = new ArrayList<>();
     @XmlElement(name = "validationLevels")
     @Metadata(description = "Allows to configure custom validation levels when using camel-openapi-validator with client request/response validator.",
-            label = "consumer,advanced")
+              label = "consumer,advanced")
     private List<RestPropertyDefinition> validationLevels = new ArrayList<>();
 
     public String getComponent() {

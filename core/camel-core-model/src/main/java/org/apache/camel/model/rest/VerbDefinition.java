@@ -57,55 +57,55 @@ public abstract class VerbDefinition extends OptionalIdentifiedDefinition<VerbDe
     private String produces;
     @XmlAttribute
     @Metadata(description = "Whether to disable this REST service from the route during build time. Once an REST service has been disabled then it cannot be enabled later at runtime.",
-            label = "advanced", javaType = "java.lang.Boolean")
+              label = "advanced", javaType = "java.lang.Boolean")
     private String disabled;
     @XmlAttribute
     @Metadata(description = "Sets the class name to use for binding from input to POJO for the incoming data. This option will override what may be configured on a parent level.",
-            label = "advanced")
+              label = "advanced")
     private String type;
     @XmlTransient
     private Class<?> typeClass;
     @XmlAttribute
     @Metadata(description = "Sets the class name to use for binding from POJO to output for the outgoing data. This option will override what may be configured on a parent level.",
-            label = "advanced")
+              label = "advanced")
     private String outType;
     @XmlTransient
     private Class<?> outTypeClass;
     @XmlAttribute
     @Metadata(description = "Sets the binding mode to use. This option will override what may be configured on a parent level.",
-            defaultValue = "off", enums = "off,auto,json,xml,json_xml")
+              defaultValue = "off", enums = "off,auto,json,xml,json_xml")
     private String bindingMode;
     @XmlAttribute
     @Metadata(description = "Whether to skip binding on output if there is a custom HTTP error code header. This allows to build custom error messages that do not bind to json / xml etc, as success messages otherwise will do. This option will override what may be configured on a parent level.",
-            label = "advanced", javaType = "java.lang.Boolean", defaultValue = "false")
+              label = "advanced", javaType = "java.lang.Boolean", defaultValue = "false")
     private String skipBindingOnErrorCode;
     @XmlAttribute
     @Metadata(description = "Whether to enable validation of the client request to check whether Content-Type/Accept headers, required parameters, and message body are valid.",
-            label = "advanced", javaType = "java.lang.Boolean", defaultValue = "false")
+              label = "advanced", javaType = "java.lang.Boolean", defaultValue = "false")
     private String clientRequestValidation;
     @XmlAttribute
     @Metadata(description = "Whether to validate what Camel is returning as response to the client, such as checking status-code, Content-Type, and headers match the Rest DSL response definition.",
-            label = "advanced", javaType = "java.lang.Boolean", defaultValue = "false")
+              label = "advanced", javaType = "java.lang.Boolean", defaultValue = "false")
     private String clientResponseValidation;
     @XmlAttribute
     @Metadata(description = "Whether to enable CORS headers in the HTTP response. This option will override what may be configured on a parent level.",
-            label = "advanced", javaType = "java.lang.Boolean", defaultValue = "false")
+              label = "advanced", javaType = "java.lang.Boolean", defaultValue = "false")
     private String enableCORS;
     @XmlAttribute
     @Metadata(description = "Whether to return HTTP 204 with an empty body when a response contains an empty JSON object or XML root object.",
-            label = "advanced", javaType = "java.lang.Boolean", defaultValue = "false")
+              label = "advanced", javaType = "java.lang.Boolean", defaultValue = "false")
     private String enableNoContentResponse;
     @XmlAttribute
     @Metadata(description = "Whether to include or exclude this rest operation in API documentation.",
-            label = "advanced", javaType = "java.lang.Boolean", defaultValue = "true")
+              label = "advanced", javaType = "java.lang.Boolean", defaultValue = "true")
     private String apiDocs;
     @XmlAttribute
     @Metadata(description = "Marks this rest operation as deprecated in OpenApi documentation.",
-            label = "advanced", javaType = "java.lang.Boolean", defaultValue = "false")
+              label = "advanced", javaType = "java.lang.Boolean", defaultValue = "false")
     private String deprecated;
     @XmlAttribute
     @Metadata(description = "Whether stream caching is enabled on this rest operation.",
-            label = "advanced", javaType = "java.lang.Boolean")
+              label = "advanced", javaType = "java.lang.Boolean")
     private String streamCache;
     @XmlAttribute
     private String routeId;

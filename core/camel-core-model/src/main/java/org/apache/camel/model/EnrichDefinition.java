@@ -72,7 +72,7 @@ public class EnrichDefinition extends ExpressionNode
     private String cacheSize;
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean",
-              description = "Ignore the invalidate endpoint exception when try to create a producer with that endpoint.")
+              description = "Whether to ignore an invalid endpoint URI when trying to create a producer with that endpoint.")
     private String ignoreInvalidEndpoint;
     @XmlAttribute
     @Metadata(label = "advanced", defaultValue = "true", javaType = "java.lang.Boolean",

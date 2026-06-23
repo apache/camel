@@ -42,7 +42,7 @@ public class ResponseMessageDefinition {
 
     @XmlAttribute
     @Metadata(description = "The response code such as a HTTP status code.",
-            defaultValue = "200")
+              defaultValue = "200")
     private String code;
     @XmlAttribute
     private String contentType;

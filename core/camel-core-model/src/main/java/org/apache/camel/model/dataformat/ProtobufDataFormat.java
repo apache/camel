@@ -40,7 +40,8 @@ public class ProtobufDataFormat extends DataFormatDefinition implements ContentT
     @XmlAttribute
     private String instanceClass;
     @XmlAttribute
-    @Metadata(label = "advanced", description = "Lookup and use the existing ObjectMapper with the given id when using Jackson.")
+    @Metadata(label = "advanced",
+              description = "Lookup and use the existing ObjectMapper with the given id when using Jackson.")
     private String objectMapper;
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean", defaultValue = "true",

@@ -49,7 +49,8 @@ public class AvroDataFormat extends DataFormatDefinition {
     @Metadata(defaultValue = "avroJackson", description = "Which Avro library to use.")
     private AvroLibrary library = AvroLibrary.Jackson;
     @XmlAttribute
-    @Metadata(label = "advanced", description = "Lookup and use the existing ObjectMapper with the given id when using Jackson.")
+    @Metadata(label = "advanced",
+              description = "Lookup and use the existing ObjectMapper with the given id when using Jackson.")
     private String objectMapper;
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean", defaultValue = "true",

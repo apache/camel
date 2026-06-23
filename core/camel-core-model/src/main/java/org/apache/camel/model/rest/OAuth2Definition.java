@@ -43,7 +43,7 @@ public class OAuth2Definition extends RestSecurityDefinition {
     private String refreshUrl;
     @XmlAttribute
     @Metadata(description = "The flow used by the OAuth2 security scheme. Valid values are implicit, password, application or accessCode.",
-            enums = "implicit,password,application,clientCredentials,accessCode,authorizationCode")
+              enums = "implicit,password,application,clientCredentials,accessCode,authorizationCode")
     private String flow;
     @XmlElement(name = "scopes")
     private List<RestPropertyDefinition> scopes = new ArrayList<>();

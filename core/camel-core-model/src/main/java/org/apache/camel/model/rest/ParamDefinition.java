@@ -48,7 +48,7 @@ public class ParamDefinition {
     private String name;
     @XmlAttribute(required = true)
     @Metadata(description = "Sets the parameter type such as body, form, header, path, or query.",
-            defaultValue = "path")
+              defaultValue = "path")
     private RestParamType type;
     @XmlAttribute
     private String description;
@@ -56,19 +56,19 @@ public class ParamDefinition {
     private String defaultValue;
     @XmlAttribute
     @Metadata(description = "Sets the parameter required flag.",
-            defaultValue = "true")
+              defaultValue = "true")
     private Boolean required;
     @XmlAttribute
     @Metadata(description = "Sets the parameter collection format.",
-            defaultValue = "csv")
+              defaultValue = "csv")
     private CollectionFormat collectionFormat;
     @XmlAttribute
     @Metadata(description = "Sets the parameter array type. Required if data type is array. Describes the type of items in the array.",
-            defaultValue = "string")
+              defaultValue = "string")
     private String arrayType;
     @XmlAttribute
     @Metadata(description = "Sets the parameter data type such as string, integer, or boolean.",
-            defaultValue = "string")
+              defaultValue = "string")
     private String dataType;
     @XmlAttribute
     private String dataFormat;

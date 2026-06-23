@@ -33,19 +33,19 @@ public class ApiKeyDefinition extends RestSecurityDefinition {
 
     @XmlAttribute(name = "name", required = true)
     @Metadata(description = "The name of the header or query parameter to be used.",
-            required = true)
+              required = true)
     private String name;
     @XmlAttribute(name = "inHeader")
     @Metadata(description = "To use header as the location of the API key.",
-            javaType = "java.lang.Boolean")
+              javaType = "java.lang.Boolean")
     private String inHeader;
     @XmlAttribute(name = "inQuery")
     @Metadata(description = "To use query parameter as the location of the API key.",
-            javaType = "java.lang.Boolean")
+              javaType = "java.lang.Boolean")
     private String inQuery;
     @XmlAttribute(name = "inCookie")
     @Metadata(description = "To use a cookie as the location of the API key.",
-            javaType = "java.lang.Boolean")
+              javaType = "java.lang.Boolean")
     private String inCookie;
 
     public ApiKeyDefinition() {

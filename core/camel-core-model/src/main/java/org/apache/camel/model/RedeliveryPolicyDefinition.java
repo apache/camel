@@ -79,19 +79,19 @@ public class RedeliveryPolicyDefinition extends IdentifiedType implements Clonea
     private String retryAttemptedLogInterval;
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "true",
-              description = "Whether retry attempts should be logged or not. Can be used to include or reduce verbose.")
+              description = "Whether retry attempts should be logged or not. Can be used to include or reduce verbose logging.")
     private String logRetryAttempted;
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "true",
-              description = "Whether stack traces should be logged. Can be used to include or reduce verbose.")
+              description = "Whether stack traces should be logged. Can be used to include or reduce verbose logging.")
     private String logStackTrace;
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean",
-              description = "Whether stack traces should be logged when a retry attempt failed. Can be used to include or reduce verbose.")
+              description = "Whether stack traces should be logged when a retry attempt failed. Can be used to include or reduce verbose logging.")
     private String logRetryStackTrace;
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean",
-              description = "Whether handled exceptions should be logged or not. Can be used to include or reduce verbose.")
+              description = "Whether handled exceptions should be logged or not. Can be used to include or reduce verbose logging.")
     private String logHandled;
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "true",
@@ -99,15 +99,15 @@ public class RedeliveryPolicyDefinition extends IdentifiedType implements Clonea
     private String logNewException;
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean",
-              description = "Whether continued exceptions should be logged or not. Can be used to include or reduce verbose.")
+              description = "Whether continued exceptions should be logged or not. Can be used to include or reduce verbose logging.")
     private String logContinued;
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "true",
-              description = "Whether exhausted exceptions should be logged or not. Can be used to include or reduce verbose.")
+              description = "Whether exhausted exceptions should be logged or not. Can be used to include or reduce verbose logging.")
     private String logExhausted;
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean",
-              description = "Whether exhausted exceptions should be logged including message history. Can be used to include or reduce verbose.")
+              description = "Whether exhausted exceptions should be logged including message history. Can be used to include or reduce verbose logging.")
     private String logExhaustedMessageHistory;
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean",
@@ -341,7 +341,7 @@ public class RedeliveryPolicyDefinition extends IdentifiedType implements Clonea
     }
 
     /**
-     * Sets whether stack traces should be logged. Can be used to include or reduce verbose.
+     * Sets whether stack traces should be logged. Can be used to include or reduce verbose logging.
      *
      * @param  logStackTrace whether stack traces should be logged or not
      * @return               the builder
@@ -386,7 +386,7 @@ public class RedeliveryPolicyDefinition extends IdentifiedType implements Clonea
     }
 
     /**
-     * Sets whether retry attempts should be logged or not. Can be used to include or reduce verbose.
+     * Sets whether retry attempts should be logged or not. Can be used to include or reduce verbose logging.
      *
      * @param  logRetryAttempted whether retry attempts should be logged or not
      * @return                   the builder
@@ -408,7 +408,7 @@ public class RedeliveryPolicyDefinition extends IdentifiedType implements Clonea
     }
 
     /**
-     * Sets whether handled exceptions should be logged or not. Can be used to include or reduce verbose.
+     * Sets whether handled exceptions should be logged or not. Can be used to include or reduce verbose logging.
      *
      * @param  logHandled whether handled exceptions should be logged or not
      * @return            the builder
@@ -430,7 +430,7 @@ public class RedeliveryPolicyDefinition extends IdentifiedType implements Clonea
     }
 
     /**
-     * Sets whether new exceptions should be logged or not. Can be used to include or reduce verbose.
+     * Sets whether new exceptions should be logged or not. Can be used to include or reduce verbose logging.
      * <p/>
      * A new exception is an exception that was thrown while handling a previous exception.
      *
@@ -456,7 +456,7 @@ public class RedeliveryPolicyDefinition extends IdentifiedType implements Clonea
     }
 
     /**
-     * Sets whether continued exceptions should be logged or not. Can be used to include or reduce verbose.
+     * Sets whether continued exceptions should be logged or not. Can be used to include or reduce verbose logging.
      *
      * @param  logContinued whether continued exceptions should be logged or not
      * @return              the builder
@@ -478,7 +478,7 @@ public class RedeliveryPolicyDefinition extends IdentifiedType implements Clonea
     }
 
     /**
-     * Sets whether exhausted exceptions should be logged or not. Can be used to include or reduce verbose.
+     * Sets whether exhausted exceptions should be logged or not. Can be used to include or reduce verbose logging.
      *
      * @param  logExhausted whether exhausted exceptions should be logged or not
      * @return              the builder
@@ -501,7 +501,7 @@ public class RedeliveryPolicyDefinition extends IdentifiedType implements Clonea
 
     /**
      * Sets whether exhausted exceptions should be logged including message history or not (supports property
-     * placeholders). Can be used to include or reduce verbose.
+     * placeholders). Can be used to include or reduce verbose logging.
      *
      * @param  logExhaustedMessageHistory whether exhausted exceptions should be logged with message history
      * @return                            the builder
@@ -513,7 +513,7 @@ public class RedeliveryPolicyDefinition extends IdentifiedType implements Clonea
 
     /**
      * Sets whether exhausted exceptions should be logged including message history or not (supports property
-     * placeholders). Can be used to include or reduce verbose.
+     * placeholders). Can be used to include or reduce verbose logging.
      *
      * @param  logExhaustedMessageHistory whether exhausted exceptions should be logged with message history
      * @return                            the builder
@@ -525,7 +525,7 @@ public class RedeliveryPolicyDefinition extends IdentifiedType implements Clonea
 
     /**
      * Sets whether exhausted message body should be logged including message history or not (supports property
-     * placeholders). Can be used to include or reduce verbose. Requires <tt>logExhaustedMessageHistory</tt> to be
+     * placeholders). Can be used to include or reduce verbose logging. Requires <tt>logExhaustedMessageHistory</tt> to be
      * enabled.
      *
      * @param  logExhaustedMessageBody whether exhausted message body should be logged with message history
@@ -538,7 +538,7 @@ public class RedeliveryPolicyDefinition extends IdentifiedType implements Clonea
 
     /**
      * Sets whether exhausted message body should be logged including message history or not (supports property
-     * placeholders). Can be used to include or reduce verbose. Requires <tt>logExhaustedMessageHistory</tt> to be
+     * placeholders). Can be used to include or reduce verbose logging. Requires <tt>logExhaustedMessageHistory</tt> to be
      * enabled.
      *
      * @param  logExhaustedMessageBody whether exhausted message body should be logged with message history

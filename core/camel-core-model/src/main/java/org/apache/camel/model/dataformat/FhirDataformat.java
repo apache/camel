@@ -33,7 +33,8 @@ public abstract class FhirDataformat extends DataFormatDefinition implements Con
               description = "The version of FHIR to use. Possible values are: DSTU2, DSTU2_HL7ORG, DSTU2_1, DSTU3, R4, R5.")
     private String fhirVersion;
     @XmlAttribute
-    @Metadata(label = "advanced", description = "To use a custom fhir context. Reference to object of type ca.uhn.fhir.context.FhirContext.")
+    @Metadata(label = "advanced",
+              description = "To use a custom fhir context. Reference to object of type ca.uhn.fhir.context.FhirContext.")
     private String fhirContext;
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean",

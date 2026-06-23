@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "doFinally",
     "title": "Do Finally",
-    "description": "Path traversed when a try, catch, finally block exits",
+    "description": "Steps to execute after a doTry block completes, regardless of whether an exception was thrown or caught",
     "deprecated": false,
     "label": "error",
     "javaType": "org.apache.camel.model.FinallyDefinition",

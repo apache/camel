@@ -51,13 +51,13 @@ public class CsvDataFormat extends DataFormatDefinition {
     private String delimiter;
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean",
-              description = "Use for disabling using escape character.")
+              description = "Whether to disable the escape character.")
     private String escapeDisabled;
     @XmlAttribute
     @Metadata(label = "advanced", description = "Sets the escape character to use.")
     private String escape;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean", description = "Use for disabling headers.")
+    @Metadata(javaType = "java.lang.Boolean", description = "Whether to disable headers.")
     private String headerDisabled;
     @XmlAttribute
     private String header;
@@ -72,13 +72,13 @@ public class CsvDataFormat extends DataFormatDefinition {
     private String ignoreSurroundingSpaces;
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean",
-              description = "Used to disable null strings.")
+              description = "Whether to disable null string handling.")
     private String nullStringDisabled;
     @XmlAttribute
     @Metadata(label = "advanced", description = "Sets the null string.")
     private String nullString;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean", description = "Used to disable quotes.")
+    @Metadata(javaType = "java.lang.Boolean", description = "Whether to disable quoting.")
     private String quoteDisabled;
     @XmlAttribute
     private String quote;

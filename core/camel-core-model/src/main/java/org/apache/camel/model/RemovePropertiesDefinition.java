@@ -43,7 +43,7 @@ public class RemovePropertiesDefinition extends NoOutputDefinition<RemovePropert
     private String pattern;
     @XmlAttribute
     @Metadata(label = "advanced",
-            description = "Name or pattern of properties to not remove. You can use comma to separate multiple patterns.")
+              description = "Name or pattern of properties to not remove. You can use comma to separate multiple patterns.")
     private String excludePattern;
 
     public RemovePropertiesDefinition() {

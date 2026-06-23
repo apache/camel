@@ -55,7 +55,8 @@ public class CryptoDataFormat extends DataFormatDefinition {
               description = "The size of the buffer used in the signature process.")
     private String bufferSize;
     @XmlAttribute
-    @Metadata(defaultValue = "HmacSHA1", description = "The JCE algorithm name indicating the Message Authentication algorithm.")
+    @Metadata(defaultValue = "HmacSHA1",
+              description = "The JCE algorithm name indicating the Message Authentication algorithm.")
     private String macAlgorithm = "HmacSHA1";
     @XmlAttribute
     @Metadata(defaultValue = "true", javaType = "java.lang.Boolean",

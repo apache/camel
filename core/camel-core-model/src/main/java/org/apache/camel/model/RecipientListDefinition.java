@@ -85,11 +85,11 @@ public class RecipientListDefinition<Type extends ProcessorDefinition<Type>> ext
     private String executorService;
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean",
-              description = "Will now stop further processing if an exception or failure occurred during processing of an exchange and the caused exception will be thrown. Will also stop if processing the exchange failed (has a fault message) or an exception was thrown and handled by the error handler (such as using onException).")
+              description = "Stops further processing if an exception or failure occurred during processing of an exchange and the caused exception will be thrown.")
     private String stopOnException;
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean",
-              description = "Ignore the invalidate endpoint exception when try to create a producer with that endpoint.")
+              description = "Whether to ignore an invalid endpoint URI when trying to create a producer with that endpoint.")
     private String ignoreInvalidEndpoints;
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean",

@@ -240,8 +240,8 @@ public class OnExceptionDefinition extends OutputDefinition<OnExceptionDefinitio
 
     /**
      * Sets whether the exception is handled. When true, the exception is suppressed and not sent back to the caller.
-     * The original route stops at the point of failure and only the steps in this onException block execute.
-     * The response returned to the caller is whatever this onException block produces.
+     * The original route stops at the point of failure and only the steps in this onException block execute. The
+     * response returned to the caller is whatever this onException block produces.
      *
      * @param  handled handled or not
      * @return         the builder
@@ -254,7 +254,8 @@ public class OnExceptionDefinition extends OutputDefinition<OnExceptionDefinitio
     /**
      * Sets whether the exception is handled using a predicate. When the predicate evaluates to true, the exception is
      * suppressed and not sent back to the caller. The original route stops at the point of failure and only the steps
-     * in this onException block execute. The response returned to the caller is whatever this onException block produces.
+     * in this onException block execute. The response returned to the caller is whatever this onException block
+     * produces.
      *
      * @param  handled predicate that determines true or false
      * @return         the builder
@@ -265,9 +266,10 @@ public class OnExceptionDefinition extends OutputDefinition<OnExceptionDefinitio
     }
 
     /**
-     * Sets whether the exception is handled using an expression. When the expression evaluates to true, the exception is
-     * suppressed and not sent back to the caller. The original route stops at the point of failure and only the steps
-     * in this onException block execute. The response returned to the caller is whatever this onException block produces.
+     * Sets whether the exception is handled using an expression. When the expression evaluates to true, the exception
+     * is suppressed and not sent back to the caller. The original route stops at the point of failure and only the
+     * steps in this onException block execute. The response returned to the caller is whatever this onException block
+     * produces.
      *
      * @param  handled expression that determines true or false
      * @return         the builder
@@ -291,10 +293,10 @@ public class OnExceptionDefinition extends OutputDefinition<OnExceptionDefinitio
     }
 
     /**
-     * Sets whether the exchange should continue routing from the point of failure using a predicate.
-     * When the predicate evaluates to true, the exception is handled and routing resumes from the point of failure.
-     * Unlike handled, which stops the original route, continued lets the remaining route steps execute.
-     * The exception is considered handled as well.
+     * Sets whether the exchange should continue routing from the point of failure using a predicate. When the predicate
+     * evaluates to true, the exception is handled and routing resumes from the point of failure. Unlike handled, which
+     * stops the original route, continued lets the remaining route steps execute. The exception is considered handled
+     * as well.
      *
      * @param  continued predicate that determines true or false
      * @return           the builder
@@ -305,10 +307,10 @@ public class OnExceptionDefinition extends OutputDefinition<OnExceptionDefinitio
     }
 
     /**
-     * Sets whether the exchange should continue routing from the point of failure using an expression.
-     * When the expression evaluates to true, the exception is handled and routing resumes from the point of failure.
-     * Unlike handled, which stops the original route, continued lets the remaining route steps execute.
-     * The exception is considered handled as well.
+     * Sets whether the exchange should continue routing from the point of failure using an expression. When the
+     * expression evaluates to true, the exception is handled and routing resumes from the point of failure. Unlike
+     * handled, which stops the original route, continued lets the remaining route steps execute. The exception is
+     * considered handled as well.
      *
      * @param  continued expression that determines true or false
      * @return           the builder

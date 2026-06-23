@@ -59,43 +59,43 @@ public class RestBindingDefinition extends OptionalIdentifiedDefinition<RestBind
     private String produces;
     @XmlAttribute
     @Metadata(description = "Sets the binding mode to use.",
-            defaultValue = "off", enums = "off,auto,json,xml,json_xml")
+              defaultValue = "off", enums = "off,auto,json,xml,json_xml")
     private String bindingMode;
     @XmlAttribute
     @Metadata(description = "Sets the class name to use for binding from input to POJO for the incoming data.",
-            label = "advanced")
+              label = "advanced")
     private String type;
     @XmlTransient
     private Class<?> typeClass;
     @XmlAttribute
     @Metadata(description = "Sets the class name to use for binding from POJO to output for the outgoing data.",
-            label = "advanced")
+              label = "advanced")
     private String outType;
     @XmlTransient
     private Class<?> outTypeClass;
     @XmlAttribute
     @Metadata(description = "Whether to skip binding on output if there is a custom HTTP error code header. This allows to build custom error messages that do not bind to json / xml etc, as success messages otherwise will do.",
-            label = "advanced", javaType = "java.lang.Boolean", defaultValue = "false")
+              label = "advanced", javaType = "java.lang.Boolean", defaultValue = "false")
     private String skipBindingOnErrorCode;
     @XmlAttribute
     @Metadata(description = "Whether to enable validation of the client request to check whether Content-Type/Accept headers, required parameters, and message body are valid.",
-            label = "advanced", javaType = "java.lang.Boolean", defaultValue = "false")
+              label = "advanced", javaType = "java.lang.Boolean", defaultValue = "false")
     private String clientRequestValidation;
     @XmlAttribute
     @Metadata(description = "Whether to validate what Camel is returning as response to the client, such as checking status-code, Content-Type, and headers match the Rest DSL response definition.",
-            label = "advanced", javaType = "java.lang.Boolean", defaultValue = "false")
+              label = "advanced", javaType = "java.lang.Boolean", defaultValue = "false")
     private String clientResponseValidation;
     @XmlAttribute
     @Metadata(description = "Whether to enable CORS headers in the HTTP response.",
-            label = "advanced", javaType = "java.lang.Boolean", defaultValue = "false")
+              label = "advanced", javaType = "java.lang.Boolean", defaultValue = "false")
     private String enableCORS;
     @XmlAttribute
     @Metadata(description = "Whether to return HTTP 204 with an empty body when a response contains an empty JSON object or XML root object.",
-            label = "advanced", javaType = "java.lang.Boolean", defaultValue = "false")
+              label = "advanced", javaType = "java.lang.Boolean", defaultValue = "false")
     private String enableNoContentResponse;
     @XmlAttribute
     @Metadata(description = "Sets the component name that this definition will apply to.",
-            label = "advanced")
+              label = "advanced")
     private String component;
 
     public RestBindingDefinition() {

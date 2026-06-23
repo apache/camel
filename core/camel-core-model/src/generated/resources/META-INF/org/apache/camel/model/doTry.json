@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "doTry",
     "title": "Do Try",
-    "description": "Marks the beginning of a try, catch, finally block",
+    "description": "Wraps route steps in a try-catch-finally block for fine-grained exception handling within the route",
     "deprecated": false,
     "label": "eip,routing,error",
     "javaType": "org.apache.camel.model.TryDefinition",

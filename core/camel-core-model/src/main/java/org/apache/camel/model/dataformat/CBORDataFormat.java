@@ -40,7 +40,8 @@ public class CBORDataFormat extends DataFormatDefinition {
     private Class<?> unmarshalType;
 
     @XmlAttribute
-    @Metadata(label = "advanced", description = "Lookup and use the existing CBOR ObjectMapper with the given id when using Jackson.")
+    @Metadata(label = "advanced",
+              description = "Lookup and use the existing CBOR ObjectMapper with the given id when using Jackson.")
     private String objectMapper;
     @XmlAttribute
     @Metadata(defaultValue = "true", javaType = "java.lang.Boolean",

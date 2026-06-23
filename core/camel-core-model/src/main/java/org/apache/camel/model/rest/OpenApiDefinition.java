@@ -44,15 +44,15 @@ public class OpenApiDefinition extends OptionalIdentifiedDefinition<OpenApiDefin
     private String routeId;
     @XmlAttribute
     @Metadata(description = "Whether to disable all the REST services from the OpenAPI contract from the route during build time. Once an REST service has been disabled then it cannot be enabled later at runtime.",
-            label = "advanced", javaType = "java.lang.Boolean")
+              label = "advanced", javaType = "java.lang.Boolean")
     private String disabled;
     @XmlAttribute
     @Metadata(description = "Whether to fail, ignore or return a mock response for OpenAPI operations that are not mapped to a corresponding route.",
-            enums = "fail,ignore,mock", defaultValue = "fail")
+              enums = "fail,ignore,mock", defaultValue = "fail")
     private String missingOperation;
     @XmlAttribute
     @Metadata(description = "Used for inclusive filtering of mock data from directories. The pattern is using Ant-path style pattern. Multiple patterns can be specified separated by comma.",
-            label = "advanced", defaultValue = "classpath:camel-mock/**")
+              label = "advanced", defaultValue = "classpath:camel-mock/**")
     private String mockIncludePattern;
 
     public void setRest(RestDefinition rest) {
