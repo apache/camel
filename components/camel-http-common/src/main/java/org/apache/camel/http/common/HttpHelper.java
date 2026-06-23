@@ -18,6 +18,7 @@ package org.apache.camel.http.common;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.ObjectInputFilter;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
@@ -40,8 +41,22 @@ import org.apache.camel.util.CollectionHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class HttpHelper {
+
+    /**
+     * Default {@link ObjectInputFilter} pattern applied when deserializing Java objects with Content-Type
+     * {@code application/x-java-serialized-object}. Allows standard Java and Apache Camel types, denies
+     * {@code java.net.**}, and applies JEP-290 graph-shape limits ({@code maxdepth}, {@code maxrefs}, {@code maxbytes})
+     * as defense-in-depth. Can be overridden per-component via the {@code deserializationFilter} option or globally via
+     * the JVM system property {@code jdk.serialFilter}.
+     */
+    static final String DEFAULT_DESERIALIZATION_FILTER
+            = "!java.net.**;java.**;javax.**;org.apache.camel.**;maxdepth=20;maxrefs=10000;maxbytes=10485760;!*";
+
+    private static final Logger LOG = LoggerFactory.getLogger(HttpHelper.class);
 
     private HttpHelper() {
         // Helper class
@@ -112,12 +127,31 @@ public final class HttpHelper {
      */
     public static Object deserializeJavaObjectFromStream(InputStream is, CamelContext context)
             throws ClassNotFoundException, IOException {
+        return deserializeJavaObjectFromStream(is, context, null);
+    }
+
+    /**
+     * Deserializes the input stream to a Java object, applying an {@link ObjectInputFilter} as a defense-in-depth
+     * measure against unsafe deserialization.
+     *
+     * @param  is                     input stream for the Java object
+     * @param  context                the camel context which could help us to apply the customer classloader
+     * @param  deserializationFilter  an {@link ObjectInputFilter} pattern (same syntax as {@code jdk.serialFilter}) to
+     *                                apply; when {@code null} or blank the JVM-wide {@code jdk.serialFilter} is used if
+     *                                present, otherwise {@link #DEFAULT_DESERIALIZATION_FILTER} is applied
+     * @return                        the java object, or <tt>null</tt> if input stream was <tt>null</tt>
+     * @throws ClassNotFoundException is thrown if class not found
+     * @throws IOException            can be thrown
+     */
+    public static Object deserializeJavaObjectFromStream(InputStream is, CamelContext context, String deserializationFilter)
+            throws ClassNotFoundException, IOException {
         if (is == null) {
             return null;
         }
 
         Object answer;
         ObjectInputStream ois = new CamelObjectInputStream(is, context);
+        ois.setObjectInputFilter(resolveDeserializationFilter(deserializationFilter));
         try {
             answer = ois.readObject();
         } finally {
@@ -125,6 +159,19 @@ public final class HttpHelper {
         }
 
         return answer;
+    }
+
+    private static ObjectInputFilter resolveDeserializationFilter(String configuredPattern) {
+        if (configuredPattern != null && !configuredPattern.isBlank()) {
+            return ObjectInputFilter.Config.createFilter(configuredPattern);
+        }
+        ObjectInputFilter jvmFilter = ObjectInputFilter.Config.getSerialFilter();
+        if (jvmFilter != null) {
+            return jvmFilter;
+        }
+        LOG.debug("No JVM-wide deserialization filter (jdk.serialFilter) is set; applying the default Camel filter: {}",
+                DEFAULT_DESERIALIZATION_FILTER);
+        return ObjectInputFilter.Config.createFilter(DEFAULT_DESERIALIZATION_FILTER);
     }
 
     /**

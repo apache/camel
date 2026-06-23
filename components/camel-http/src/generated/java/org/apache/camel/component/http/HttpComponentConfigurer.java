@@ -55,6 +55,8 @@ public class HttpComponentConfigurer extends PropertyConfigurerSupport implement
         case "copyHeaders": target.setCopyHeaders(property(camelContext, boolean.class, value)); return true;
         case "defaultuseragentdisabled":
         case "defaultUserAgentDisabled": target.setDefaultUserAgentDisabled(property(camelContext, boolean.class, value)); return true;
+        case "deserializationfilter":
+        case "deserializationFilter": target.setDeserializationFilter(property(camelContext, java.lang.String.class, value)); return true;
         case "followredirects":
         case "followRedirects": target.setFollowRedirects(property(camelContext, boolean.class, value)); return true;
         case "headerfilterstrategy":
@@ -167,6 +169,8 @@ public class HttpComponentConfigurer extends PropertyConfigurerSupport implement
         case "copyHeaders": return boolean.class;
         case "defaultuseragentdisabled":
         case "defaultUserAgentDisabled": return boolean.class;
+        case "deserializationfilter":
+        case "deserializationFilter": return java.lang.String.class;
         case "followredirects":
         case "followRedirects": return boolean.class;
         case "headerfilterstrategy":
@@ -275,6 +279,8 @@ public class HttpComponentConfigurer extends PropertyConfigurerSupport implement
         case "copyHeaders": return target.isCopyHeaders();
         case "defaultuseragentdisabled":
         case "defaultUserAgentDisabled": return target.isDefaultUserAgentDisabled();
+        case "deserializationfilter":
+        case "deserializationFilter": return target.getDeserializationFilter();
         case "followredirects":
         case "followRedirects": return target.isFollowRedirects();
         case "headerfilterstrategy":

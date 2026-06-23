@@ -37,6 +37,14 @@ public abstract class HttpCommonComponent extends HeaderFilterStrategyComponent 
                             + " This is by default turned off. "
                             + " If you enable this then be aware that Java will deserialize the incoming data from the request to Java and that can be a potential security risk.")
     protected boolean allowJavaSerializedObject;
+    @Metadata(label = "advanced,security",
+              description = "Sets an ObjectInputFilter pattern (jdk.serialFilter syntax) applied when deserializing"
+                            + " Java objects from requests or responses with Content-Type"
+                            + " application/x-java-serialized-object (only used when allowJavaSerializedObject or"
+                            + " transferException is enabled). When not set, the JVM-wide jdk.serialFilter is used if"
+                            + " present; otherwise a conservative default filter denying java.net.* and otherwise"
+                            + " allowing java.*, javax.* and org.apache.camel.* packages is applied.")
+    protected String deserializationFilter;
 
     protected HttpCommonComponent() {
     }
@@ -153,6 +161,21 @@ public abstract class HttpCommonComponent extends HeaderFilterStrategyComponent 
      */
     public void setAllowJavaSerializedObject(boolean allowJavaSerializedObject) {
         this.allowJavaSerializedObject = allowJavaSerializedObject;
+    }
+
+    public String getDeserializationFilter() {
+        return deserializationFilter;
+    }
+
+    /**
+     * Sets an {@link java.io.ObjectInputFilter} pattern (same syntax as {@code jdk.serialFilter}) applied when
+     * deserializing Java objects from requests or responses with Content-Type
+     * {@code application/x-java-serialized-object}, as a defense-in-depth measure on the opt-in
+     * {@code allowJavaSerializedObject} / {@code transferException} path. When not set, the JVM-wide
+     * {@code jdk.serialFilter} is used if present, otherwise a conservative default filter is applied.
+     */
+    public void setDeserializationFilter(String deserializationFilter) {
+        this.deserializationFilter = deserializationFilter;
     }
 
 }
