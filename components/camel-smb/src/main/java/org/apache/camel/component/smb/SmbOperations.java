@@ -340,9 +340,6 @@ public class SmbOperations implements SmbFileOperations {
 
             java.io.File localWorkDir = local;
             temp = new java.io.File(local, relativeName + ".inprogress");
-
-            // create directory to local work file
-            local.mkdirs();
             local = new java.io.File(local, relativeName);
 
             // ensure the local work file stays within the local work directory (CAMEL-23765)
@@ -350,6 +347,9 @@ public class SmbOperations implements SmbFileOperations {
                 GenericFileHelper.jailToLocalWorkDirectory(temp, localWorkDir);
                 GenericFileHelper.jailToLocalWorkDirectory(local, localWorkDir);
             }
+
+            // create directory to local work file
+            localWorkDir.mkdirs();
 
             // delete any existing files
             if (temp.exists()) {

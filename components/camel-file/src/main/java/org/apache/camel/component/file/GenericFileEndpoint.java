@@ -157,10 +157,12 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
                                                          + "will be thrown. If the `fileExist` option is set to 'Override', then the file will be truncated, and "
                                                          + "if set to `append` the file will remain unchanged.")
     protected boolean allowNullBody;
-    @UriParam(label = "producer", defaultValue = "true", description = "Used for jailing (restricting) writing files "
-                                                                       + "to the starting directory (and sub) only. This is enabled by default to not allow Camel to write files "
-                                                                       + "to outside directories (to be more secured out of the box). You can turn this off to allow writing "
-                                                                       + "files to directories outside the starting directory, such as parent or root folders.")
+    @UriParam(label = "common", defaultValue = "true", description = "Used for jailing (restricting) writing files "
+                                                                     + "to the starting directory (and sub) only. This is enabled by default to not allow Camel to write files "
+                                                                     + "to outside directories (to be more secured out of the box). You can turn this off to allow writing "
+                                                                     + "files to directories outside the starting directory, such as parent or root folders. For consumers "
+                                                                     + "that use a localWorkDirectory, this also restricts the downloaded files to stay within the configured "
+                                                                     + "localWorkDirectory.")
     protected boolean jailStartingDirectory = true;
     @UriParam(label = "producer", description = "Used to append characters (text) after writing files. This can for "
                                                 + "example be used to add new lines or other separators when writing and appending new files or existing files. <p/> "

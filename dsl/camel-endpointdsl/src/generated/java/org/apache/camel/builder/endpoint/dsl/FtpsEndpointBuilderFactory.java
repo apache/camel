@@ -187,6 +187,50 @@ public interface FtpsEndpointBuilderFactory {
             return this;
         }
         /**
+         * Used for jailing (restricting) writing files to the starting
+         * directory (and sub) only. This is enabled by default to not allow
+         * Camel to write files to outside directories (to be more secured out
+         * of the box). You can turn this off to allow writing files to
+         * directories outside the starting directory, such as parent or root
+         * folders. For consumers that use a localWorkDirectory, this also
+         * restricts the downloaded files to stay within the configured
+         * localWorkDirectory.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: common
+         * 
+         * @param jailStartingDirectory the value to set
+         * @return the dsl builder
+         */
+        default FtpsEndpointConsumerBuilder jailStartingDirectory(boolean jailStartingDirectory) {
+            doSetProperty("jailStartingDirectory", jailStartingDirectory);
+            return this;
+        }
+        /**
+         * Used for jailing (restricting) writing files to the starting
+         * directory (and sub) only. This is enabled by default to not allow
+         * Camel to write files to outside directories (to be more secured out
+         * of the box). You can turn this off to allow writing files to
+         * directories outside the starting directory, such as parent or root
+         * folders. For consumers that use a localWorkDirectory, this also
+         * restricts the downloaded files to stay within the configured
+         * localWorkDirectory.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: common
+         * 
+         * @param jailStartingDirectory the value to set
+         * @return the dsl builder
+         */
+        default FtpsEndpointConsumerBuilder jailStartingDirectory(String jailStartingDirectory) {
+            doSetProperty("jailStartingDirectory", jailStartingDirectory);
+            return this;
+        }
+        /**
          * Sets passive mode connections. Default is active mode connections.
          * 
          * The option is a: <code>boolean</code> type.
@@ -3563,6 +3607,50 @@ public interface FtpsEndpointBuilderFactory {
             return this;
         }
         /**
+         * Used for jailing (restricting) writing files to the starting
+         * directory (and sub) only. This is enabled by default to not allow
+         * Camel to write files to outside directories (to be more secured out
+         * of the box). You can turn this off to allow writing files to
+         * directories outside the starting directory, such as parent or root
+         * folders. For consumers that use a localWorkDirectory, this also
+         * restricts the downloaded files to stay within the configured
+         * localWorkDirectory.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: common
+         * 
+         * @param jailStartingDirectory the value to set
+         * @return the dsl builder
+         */
+        default FtpsEndpointProducerBuilder jailStartingDirectory(boolean jailStartingDirectory) {
+            doSetProperty("jailStartingDirectory", jailStartingDirectory);
+            return this;
+        }
+        /**
+         * Used for jailing (restricting) writing files to the starting
+         * directory (and sub) only. This is enabled by default to not allow
+         * Camel to write files to outside directories (to be more secured out
+         * of the box). You can turn this off to allow writing files to
+         * directories outside the starting directory, such as parent or root
+         * folders. For consumers that use a localWorkDirectory, this also
+         * restricts the downloaded files to stay within the configured
+         * localWorkDirectory.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: common
+         * 
+         * @param jailStartingDirectory the value to set
+         * @return the dsl builder
+         */
+        default FtpsEndpointProducerBuilder jailStartingDirectory(String jailStartingDirectory) {
+            doSetProperty("jailStartingDirectory", jailStartingDirectory);
+            return this;
+        }
+        /**
          * Sets passive mode connections. Default is active mode connections.
          * 
          * The option is a: <code>boolean</code> type.
@@ -3877,46 +3965,6 @@ public interface FtpsEndpointBuilderFactory {
          */
         default FtpsEndpointProducerBuilder flatten(String flatten) {
             doSetProperty("flatten", flatten);
-            return this;
-        }
-        /**
-         * Used for jailing (restricting) writing files to the starting
-         * directory (and sub) only. This is enabled by default to not allow
-         * Camel to write files to outside directories (to be more secured out
-         * of the box). You can turn this off to allow writing files to
-         * directories outside the starting directory, such as parent or root
-         * folders.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: producer
-         * 
-         * @param jailStartingDirectory the value to set
-         * @return the dsl builder
-         */
-        default FtpsEndpointProducerBuilder jailStartingDirectory(boolean jailStartingDirectory) {
-            doSetProperty("jailStartingDirectory", jailStartingDirectory);
-            return this;
-        }
-        /**
-         * Used for jailing (restricting) writing files to the starting
-         * directory (and sub) only. This is enabled by default to not allow
-         * Camel to write files to outside directories (to be more secured out
-         * of the box). You can turn this off to allow writing files to
-         * directories outside the starting directory, such as parent or root
-         * folders.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: producer
-         * 
-         * @param jailStartingDirectory the value to set
-         * @return the dsl builder
-         */
-        default FtpsEndpointProducerBuilder jailStartingDirectory(String jailStartingDirectory) {
-            doSetProperty("jailStartingDirectory", jailStartingDirectory);
             return this;
         }
         /**
@@ -5245,6 +5293,50 @@ public interface FtpsEndpointBuilderFactory {
          */
         default FtpsEndpointBuilder fileName(String fileName) {
             doSetProperty("fileName", fileName);
+            return this;
+        }
+        /**
+         * Used for jailing (restricting) writing files to the starting
+         * directory (and sub) only. This is enabled by default to not allow
+         * Camel to write files to outside directories (to be more secured out
+         * of the box). You can turn this off to allow writing files to
+         * directories outside the starting directory, such as parent or root
+         * folders. For consumers that use a localWorkDirectory, this also
+         * restricts the downloaded files to stay within the configured
+         * localWorkDirectory.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: common
+         * 
+         * @param jailStartingDirectory the value to set
+         * @return the dsl builder
+         */
+        default FtpsEndpointBuilder jailStartingDirectory(boolean jailStartingDirectory) {
+            doSetProperty("jailStartingDirectory", jailStartingDirectory);
+            return this;
+        }
+        /**
+         * Used for jailing (restricting) writing files to the starting
+         * directory (and sub) only. This is enabled by default to not allow
+         * Camel to write files to outside directories (to be more secured out
+         * of the box). You can turn this off to allow writing files to
+         * directories outside the starting directory, such as parent or root
+         * folders. For consumers that use a localWorkDirectory, this also
+         * restricts the downloaded files to stay within the configured
+         * localWorkDirectory.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: common
+         * 
+         * @param jailStartingDirectory the value to set
+         * @return the dsl builder
+         */
+        default FtpsEndpointBuilder jailStartingDirectory(String jailStartingDirectory) {
+            doSetProperty("jailStartingDirectory", jailStartingDirectory);
             return this;
         }
         /**

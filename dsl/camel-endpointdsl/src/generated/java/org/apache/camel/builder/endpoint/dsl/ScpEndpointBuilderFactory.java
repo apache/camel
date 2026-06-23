@@ -112,6 +112,79 @@ public interface ScpEndpointBuilderFactory {
             return this;
         }
         /**
+         * Use Expression such as File Language to dynamically set the filename.
+         * For consumers, it's used as a filename filter. For producers, it's
+         * used to evaluate the filename to write. If an expression is set, it
+         * take precedence over the CamelFileName header. (Note: The header
+         * itself can also be an Expression). The expression options support
+         * both String and Expression types. If the expression is a String type,
+         * it is always evaluated using the File Language. If the expression is
+         * an Expression type, the specified Expression type is used - this
+         * allows you, for instance, to use OGNL expressions. For the consumer,
+         * you can use it to filter filenames, so you can for instance consume
+         * today's file using the File Language syntax:
+         * mydata-${date:now:yyyyMMdd}.txt. The producers support the
+         * CamelOverruleFileName header which takes precedence over any existing
+         * CamelFileName header; the CamelOverruleFileName is a header that is
+         * used only once, and makes it easier as this avoids to temporary store
+         * CamelFileName and have to restore it afterwards.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param fileName the value to set
+         * @return the dsl builder
+         */
+        default ScpEndpointBuilder fileName(String fileName) {
+            doSetProperty("fileName", fileName);
+            return this;
+        }
+        /**
+         * Used for jailing (restricting) writing files to the starting
+         * directory (and sub) only. This is enabled by default to not allow
+         * Camel to write files to outside directories (to be more secured out
+         * of the box). You can turn this off to allow writing files to
+         * directories outside the starting directory, such as parent or root
+         * folders. For consumers that use a localWorkDirectory, this also
+         * restricts the downloaded files to stay within the configured
+         * localWorkDirectory.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: common
+         * 
+         * @param jailStartingDirectory the value to set
+         * @return the dsl builder
+         */
+        default ScpEndpointBuilder jailStartingDirectory(boolean jailStartingDirectory) {
+            doSetProperty("jailStartingDirectory", jailStartingDirectory);
+            return this;
+        }
+        /**
+         * Used for jailing (restricting) writing files to the starting
+         * directory (and sub) only. This is enabled by default to not allow
+         * Camel to write files to outside directories (to be more secured out
+         * of the box). You can turn this off to allow writing files to
+         * directories outside the starting directory, such as parent or root
+         * folders. For consumers that use a localWorkDirectory, this also
+         * restricts the downloaded files to stay within the configured
+         * localWorkDirectory.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: common
+         * 
+         * @param jailStartingDirectory the value to set
+         * @return the dsl builder
+         */
+        default ScpEndpointBuilder jailStartingDirectory(String jailStartingDirectory) {
+            doSetProperty("jailStartingDirectory", jailStartingDirectory);
+            return this;
+        }
+        /**
          * If checksumFileAlgorithm has been configured then this option
          * controls whether to write a checksum file as well or not. The
          * checksum file will always be written in the same folder as the
@@ -145,35 +218,6 @@ public interface ScpEndpointBuilderFactory {
          */
         default ScpEndpointBuilder checksumWriteFile(String checksumWriteFile) {
             doSetProperty("checksumWriteFile", checksumWriteFile);
-            return this;
-        }
-        /**
-         * Use Expression such as File Language to dynamically set the filename.
-         * For consumers, it's used as a filename filter. For producers, it's
-         * used to evaluate the filename to write. If an expression is set, it
-         * take precedence over the CamelFileName header. (Note: The header
-         * itself can also be an Expression). The expression options support
-         * both String and Expression types. If the expression is a String type,
-         * it is always evaluated using the File Language. If the expression is
-         * an Expression type, the specified Expression type is used - this
-         * allows you, for instance, to use OGNL expressions. For the consumer,
-         * you can use it to filter filenames, so you can for instance consume
-         * today's file using the File Language syntax:
-         * mydata-${date:now:yyyyMMdd}.txt. The producers support the
-         * CamelOverruleFileName header which takes precedence over any existing
-         * CamelFileName header; the CamelOverruleFileName is a header that is
-         * used only once, and makes it easier as this avoids to temporary store
-         * CamelFileName and have to restore it afterwards.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         * 
-         * @param fileName the value to set
-         * @return the dsl builder
-         */
-        default ScpEndpointBuilder fileName(String fileName) {
-            doSetProperty("fileName", fileName);
             return this;
         }
         /**
@@ -214,46 +258,6 @@ public interface ScpEndpointBuilderFactory {
          */
         default ScpEndpointBuilder flatten(String flatten) {
             doSetProperty("flatten", flatten);
-            return this;
-        }
-        /**
-         * Used for jailing (restricting) writing files to the starting
-         * directory (and sub) only. This is enabled by default to not allow
-         * Camel to write files to outside directories (to be more secured out
-         * of the box). You can turn this off to allow writing files to
-         * directories outside the starting directory, such as parent or root
-         * folders.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: producer
-         * 
-         * @param jailStartingDirectory the value to set
-         * @return the dsl builder
-         */
-        default ScpEndpointBuilder jailStartingDirectory(boolean jailStartingDirectory) {
-            doSetProperty("jailStartingDirectory", jailStartingDirectory);
-            return this;
-        }
-        /**
-         * Used for jailing (restricting) writing files to the starting
-         * directory (and sub) only. This is enabled by default to not allow
-         * Camel to write files to outside directories (to be more secured out
-         * of the box). You can turn this off to allow writing files to
-         * directories outside the starting directory, such as parent or root
-         * folders.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: producer
-         * 
-         * @param jailStartingDirectory the value to set
-         * @return the dsl builder
-         */
-        default ScpEndpointBuilder jailStartingDirectory(String jailStartingDirectory) {
-            doSetProperty("jailStartingDirectory", jailStartingDirectory);
             return this;
         }
         /**
