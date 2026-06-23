@@ -17,6 +17,6 @@
   },
   "properties": {
     "id": { "index": 0, "kind": "attribute", "displayName": "Id", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node" },
-    "instanceClassName": { "index": 1, "kind": "attribute", "displayName": "Instance Class Name", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Class name to use for marshal and unmarshalling" }
+    "instanceClassName": { "index": 1, "kind": "attribute", "displayName": "Instance Class Name", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Class name to use for marshal and unmarshalling." }
   }
 }

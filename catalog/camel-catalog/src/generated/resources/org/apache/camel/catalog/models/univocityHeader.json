@@ -13,6 +13,6 @@
   },
   "properties": {
     "name": { "index": 0, "kind": "value", "displayName": "Name", "group": "common", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Header name" },
-    "length": { "index": 1, "kind": "attribute", "displayName": "Length", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Header length" }
+    "length": { "index": 1, "kind": "attribute", "displayName": "Length", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Header length." }
   }
 }

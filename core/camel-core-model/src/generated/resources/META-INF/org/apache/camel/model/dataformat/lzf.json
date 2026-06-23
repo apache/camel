@@ -14,6 +14,6 @@
   },
   "properties": {
     "id": { "index": 0, "kind": "attribute", "displayName": "Id", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node" },
-    "usingParallelCompression": { "index": 1, "kind": "attribute", "displayName": "Using Parallel Compression", "group": "common", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Enable encoding (compress) using multiple processing cores." }
+    "usingParallelCompression": { "index": 1, "kind": "attribute", "displayName": "Using Parallel Compression", "group": "common", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Whether to enable encoding (compress) using multiple processing cores." }
   }
 }

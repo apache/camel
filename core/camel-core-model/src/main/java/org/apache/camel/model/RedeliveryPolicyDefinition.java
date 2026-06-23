@@ -525,8 +525,8 @@ public class RedeliveryPolicyDefinition extends IdentifiedType implements Clonea
 
     /**
      * Sets whether exhausted message body should be logged including message history or not (supports property
-     * placeholders). Can be used to include or reduce verbose logging. Requires <tt>logExhaustedMessageHistory</tt> to be
-     * enabled.
+     * placeholders). Can be used to include or reduce verbose logging. Requires <tt>logExhaustedMessageHistory</tt> to
+     * be enabled.
      *
      * @param  logExhaustedMessageBody whether exhausted message body should be logged with message history
      * @return                         the builder
@@ -538,8 +538,8 @@ public class RedeliveryPolicyDefinition extends IdentifiedType implements Clonea
 
     /**
      * Sets whether exhausted message body should be logged including message history or not (supports property
-     * placeholders). Can be used to include or reduce verbose logging. Requires <tt>logExhaustedMessageHistory</tt> to be
-     * enabled.
+     * placeholders). Can be used to include or reduce verbose logging. Requires <tt>logExhaustedMessageHistory</tt> to
+     * be enabled.
      *
      * @param  logExhaustedMessageBody whether exhausted message body should be logged with message history
      * @return                         the builder

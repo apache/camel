@@ -39,15 +39,15 @@ public class GrokDataFormat extends DataFormatDefinition {
     private String pattern;
     @XmlAttribute
     @Metadata(description = "Whether to use flattened mode. In flattened mode an exception is thrown when there are multiple pattern matches with the same key.",
-            javaType = "java.lang.Boolean")
+              javaType = "java.lang.Boolean")
     private String flattened;
     @XmlAttribute
     @Metadata(description = "Whether to allow multiple matches per line. If false, every line of input is matched for the pattern only once. Otherwise the line can be scanned multiple times when a non-terminal pattern is used.",
-            defaultValue = "true", javaType = "java.lang.Boolean")
+              defaultValue = "true", javaType = "java.lang.Boolean")
     private String allowMultipleMatchesPerLine;
     @XmlAttribute
     @Metadata(description = "Whether to capture named expressions only or not (i.e. %{IP:ip} but not ${IP}).",
-            javaType = "java.lang.Boolean")
+              javaType = "java.lang.Boolean")
     private String namedOnly;
 
     public GrokDataFormat() {

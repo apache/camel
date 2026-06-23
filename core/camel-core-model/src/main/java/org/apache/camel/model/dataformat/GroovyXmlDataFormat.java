@@ -36,7 +36,7 @@ public class GroovyXmlDataFormat extends DataFormatDefinition {
 
     @XmlAttribute
     @Metadata(description = "Whether to enable attribute mapping. When enabled, keys that start with _ or @ character will be mapped to an XML attribute, and vice versa.",
-            javaType = "java.lang.Boolean", defaultValue = "true")
+              javaType = "java.lang.Boolean", defaultValue = "true")
     private String attributeMapping;
 
     public GroovyXmlDataFormat() {

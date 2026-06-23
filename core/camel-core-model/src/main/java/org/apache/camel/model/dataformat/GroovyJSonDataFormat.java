@@ -36,7 +36,7 @@ public class GroovyJSonDataFormat extends DataFormatDefinition {
 
     @XmlAttribute
     @Metadata(description = "Whether to pretty print output nicely formatted.",
-            javaType = "java.lang.Boolean", defaultValue = "true")
+              javaType = "java.lang.Boolean", defaultValue = "true")
     private String prettyPrint;
 
     public GroovyJSonDataFormat() {

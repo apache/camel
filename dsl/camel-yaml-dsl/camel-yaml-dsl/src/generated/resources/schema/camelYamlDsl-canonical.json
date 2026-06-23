@@ -320,7 +320,7 @@
           "disabled" : {
             "type" : "boolean",
             "title" : "Disabled",
-            "description" : "Disables this EIP from the route.",
+            "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime.",
             "default" : false
           },
           "emitAfter" : {
@@ -455,7 +455,7 @@
           },
           "correlationExpression" : {
             "title" : "Correlation Expression",
-            "description" : "The expression used to calculate the correlation key to use for aggregation. The Exchange which has the same correlation key is aggregated together. If the correlation key could not be evaluated an Exception is thrown. You can disable this by using the ignoreBadCorrelationKeys option.",
+            "description" : "The expression used to calculate the correlation key to use for aggregation. Exchanges with the same correlation key are aggregated together. If the correlation key cannot be evaluated an Exception is thrown.",
             "$ref" : "#/items/definitions/org.apache.camel.model.ExpressionSubElementDefinition"
           },
           "description" : {
@@ -466,7 +466,7 @@
           "disabled" : {
             "type" : "boolean",
             "title" : "Disabled",
-            "description" : "Disables this EIP from the route.",
+            "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime.",
             "default" : false
           },
           "discardOnAggregationFailure" : {
@@ -560,7 +560,7 @@
           "beanType" : {
             "type" : "string",
             "title" : "Bean Type",
-            "description" : "Sets the class name (fully qualified) of the bean to use"
+            "description" : "The class name (fully qualified) of the bean to use."
           },
           "description" : {
             "type" : "string",
@@ -570,7 +570,7 @@
           "disabled" : {
             "type" : "boolean",
             "title" : "Disabled",
-            "description" : "Disables this EIP from the route.",
+            "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime.",
             "default" : false
           },
           "id" : {
@@ -581,7 +581,7 @@
           "method" : {
             "type" : "string",
             "title" : "Method",
-            "description" : "Sets the method name on the bean to use"
+            "description" : "The method name on the bean to invoke."
           },
           "note" : {
             "type" : "string",
@@ -591,7 +591,7 @@
           "ref" : {
             "type" : "string",
             "title" : "Ref",
-            "description" : "Sets a reference to an existing bean to use, which is looked up from the registry"
+            "description" : "A reference to an existing bean to use, which is looked up from the registry."
           },
           "scope" : {
             "type" : "string",
@@ -647,7 +647,7 @@
           "name" : {
             "type" : "string",
             "title" : "Name",
-            "description" : "The name of the bean (bean id)"
+            "description" : "The name of the bean (bean id)."
           },
           "properties" : {
             "type" : "object",
@@ -673,7 +673,7 @@
           "type" : {
             "type" : "string",
             "title" : "Type",
-            "description" : "The class name (fully qualified) of the bean"
+            "description" : "The class name (fully qualified) of the bean."
           }
         },
         "required" : [ "name", "type" ]
@@ -692,13 +692,13 @@
           "disabled" : {
             "type" : "boolean",
             "title" : "Disabled",
-            "description" : "Disables this EIP from the route.",
+            "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime.",
             "default" : false
           },
           "exception" : {
             "type" : "array",
             "title" : "Exception",
-            "description" : "The exception(s) to catch.",
+            "description" : "The exception class names (fully qualified) to catch.",
             "items" : {
               "type" : "string"
             }
@@ -740,7 +740,7 @@
           "disabled" : {
             "type" : "boolean",
             "title" : "Disabled",
-            "description" : "Disables this EIP from the route.",
+            "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime.",
             "default" : false
           },
           "id" : {
@@ -783,7 +783,7 @@
           "configuration" : {
             "type" : "string",
             "title" : "Configuration",
-            "description" : "Refers to a circuit breaker configuration (such as resillience4j, or microprofile-fault-tolerance) to use for configuring the circuit breaker EIP."
+            "description" : "Refers to a circuit breaker configuration to use for configuring the circuit breaker EIP."
           },
           "description" : {
             "type" : "string",
@@ -793,7 +793,7 @@
           "disabled" : {
             "type" : "boolean",
             "title" : "Disabled",
-            "description" : "Disables this EIP from the route.",
+            "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime.",
             "default" : false
           },
           "faultToleranceConfiguration" : {
@@ -813,7 +813,7 @@
           },
           "onFallback" : {
             "title" : "On Fallback",
-            "description" : "The fallback route path to execute that does not go over the network. This should be a static or cached result that can immediately be returned upon failure. If the fallback requires network connection then use onFallbackViaNetwork() .",
+            "description" : "The fallback route path to execute when the circuit breaker triggers.",
             "$ref" : "#/items/definitions/org.apache.camel.model.OnFallbackDefinition"
           },
           "resilience4jConfiguration" : {
@@ -853,7 +853,7 @@
           "disabled" : {
             "type" : "boolean",
             "title" : "Disabled",
-            "description" : "Disables this EIP from the route.",
+            "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime.",
             "default" : false
           },
           "filter" : {
@@ -901,7 +901,7 @@
           "includeNonSingletons" : {
             "type" : "boolean",
             "title" : "Include Non Singletons",
-            "description" : "Whether to include non-singleton beans (prototypes) By default only singleton beans is included in the context scan",
+            "description" : "Whether to include non-singleton beans (prototypes). By default only singleton beans are included in the context scan.",
             "default" : false
           },
           "includes" : {
@@ -933,7 +933,7 @@
           "disabled" : {
             "type" : "boolean",
             "title" : "Disabled",
-            "description" : "Disables this EIP from the route.",
+            "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime.",
             "default" : false
           },
           "id" : {
@@ -955,7 +955,7 @@
           "type" : {
             "type" : "string",
             "title" : "Type",
-            "description" : "The java type to convert to"
+            "description" : "The java type to convert to."
           }
         },
         "required" : [ "type" ]
@@ -979,7 +979,7 @@
           "disabled" : {
             "type" : "boolean",
             "title" : "Disabled",
-            "description" : "Disables this EIP from the route.",
+            "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime.",
             "default" : false
           },
           "id" : {
@@ -996,7 +996,7 @@
           "name" : {
             "type" : "string",
             "title" : "Name",
-            "description" : "Name of message header to convert its value The simple language can be used to define a dynamic evaluated header name to be used. Otherwise a constant name will be used."
+            "description" : "Name of message header to convert its value. The simple language can be used to define a dynamic evaluated header name."
           },
           "note" : {
             "type" : "string",
@@ -1006,12 +1006,12 @@
           "toName" : {
             "type" : "string",
             "title" : "To Name",
-            "description" : "To use another header to store the result. By default, the result is stored in the same header. This option allows to use another header. The simple language can be used to define a dynamic evaluated header name to be used. Otherwise a constant name will be used."
+            "description" : "To use another header to store the result. By default, the result is stored in the same header."
           },
           "type" : {
             "type" : "string",
             "title" : "Type",
-            "description" : "The java type to convert to"
+            "description" : "The java type to convert to."
           }
         },
         "required" : [ "name", "type" ]
@@ -1035,7 +1035,7 @@
           "disabled" : {
             "type" : "boolean",
             "title" : "Disabled",
-            "description" : "Disables this EIP from the route.",
+            "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime.",
             "default" : false
           },
           "id" : {
@@ -1052,7 +1052,7 @@
           "name" : {
             "type" : "string",
             "title" : "Name",
-            "description" : "Name of variable to convert its value The simple language can be used to define a dynamic evaluated header name to be used. Otherwise a constant name will be used."
+            "description" : "Name of variable to convert its value. The simple language can be used to define a dynamic evaluated variable name."
           },
           "note" : {
             "type" : "string",
@@ -1062,12 +1062,12 @@
           "toName" : {
             "type" : "string",
             "title" : "To Name",
-            "description" : "To use another variable to store the result. By default, the result is stored in the same variable. This option allows to use another variable. The simple language can be used to define a dynamic evaluated variable name to be used. Otherwise a constant name will be used."
+            "description" : "To use another variable to store the result. By default, the result is stored in the same variable."
           },
           "type" : {
             "type" : "string",
             "title" : "Type",
-            "description" : "The java type to convert to"
+            "description" : "The java type to convert to."
           }
         },
         "required" : [ "name", "type" ]
@@ -1107,7 +1107,7 @@
           "disabled" : {
             "type" : "boolean",
             "title" : "Disabled",
-            "description" : "Disables this EIP from the route.",
+            "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime.",
             "default" : false
           },
           "executorService" : {
@@ -1117,7 +1117,7 @@
           },
           "expression" : {
             "title" : "Expression",
-            "description" : "Expression to define how long time to wait (in millis)",
+            "description" : "Expression to evaluate.",
             "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
           },
           "id" : {
@@ -1151,12 +1151,12 @@
           "disabled" : {
             "type" : "boolean",
             "title" : "Disabled",
-            "description" : "Disables this EIP from the route.",
+            "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime.",
             "default" : false
           },
           "expression" : {
             "title" : "Expression",
-            "description" : "Expression to call that returns the endpoint(s) to route to in the dynamic routing. Important: The expression will be called in a while loop fashion, until the expression returns null which means the dynamic router is finished.",
+            "description" : "Expression to evaluate.",
             "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
           },
           "id" : {
@@ -1235,12 +1235,12 @@
           "disabled" : {
             "type" : "boolean",
             "title" : "Disabled",
-            "description" : "Disables this EIP from the route.",
+            "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime.",
             "default" : false
           },
           "expression" : {
             "title" : "Expression",
-            "description" : "Expression that computes the endpoint uri to use as the resource endpoint to enrich from",
+            "description" : "Expression to evaluate.",
             "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
           },
           "id" : {
@@ -1251,7 +1251,7 @@
           "ignoreInvalidEndpoint" : {
             "type" : "boolean",
             "title" : "Ignore Invalid Endpoint",
-            "description" : "Ignore the invalidate endpoint exception when try to create a producer with that endpoint.",
+            "description" : "Whether to ignore an invalid endpoint URI when trying to create a producer with that endpoint.",
             "default" : false
           },
           "note" : {
@@ -1268,12 +1268,12 @@
           "variableReceive" : {
             "type" : "string",
             "title" : "Variable Receive",
-            "description" : "To use a variable as the source for the message body to send. This makes it handy to use variables for user data and to easily control what data to use for sending and receiving. Important: When using send variable then the message body is taken from this variable instead of the current message, however the headers from the message will still be used as well. In other words, the variable is used instead of the message body, but everything else is as usual."
+            "description" : "To use a variable to store the received message body (only body, not headers). This makes it handy to use variables for user data and to easily control what data to use for sending and receiving."
           },
           "variableSend" : {
             "type" : "string",
             "title" : "Variable Send",
-            "description" : "To use a variable to store the received message body (only body, not headers). This makes it handy to use variables for user data and to easily control what data to use for sending and receiving. Important: When using receive variable then the received body is stored only in this variable and not on the current message."
+            "description" : "To use a variable as the source for the message body to send. When using send variable then the message body is taken from this variable instead of the current message, however the headers from the message will still be used as well."
           }
         }
       },
@@ -1489,12 +1489,12 @@
           "disabled" : {
             "type" : "boolean",
             "title" : "Disabled",
-            "description" : "Disables this EIP from the route.",
+            "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime.",
             "default" : false
           },
           "expression" : {
             "title" : "Expression",
-            "description" : "Expression to determine if the message should be filtered or not. If the expression returns an empty value or false then the message is filtered (dropped), otherwise the message is continued being routed.",
+            "description" : "Expression to evaluate.",
             "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
           },
           "id" : {
@@ -1534,7 +1534,7 @@
           "disabled" : {
             "type" : "boolean",
             "title" : "Disabled",
-            "description" : "Disables this EIP from the route.",
+            "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime.",
             "default" : false
           },
           "id" : {
@@ -1614,7 +1614,7 @@
           "globalOption" : {
             "type" : "array",
             "title" : "Global Option",
-            "description" : "A series of global options as key value pairs",
+            "description" : "A series of global options as key value pairs.",
             "items" : {
               "$ref" : "#/items/definitions/org.apache.camel.model.GlobalOptionDefinition"
             }
@@ -1641,7 +1641,7 @@
           "disabled" : {
             "type" : "boolean",
             "title" : "Disabled",
-            "description" : "Disables this EIP from the route.",
+            "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime.",
             "default" : false
           },
           "eager" : {
@@ -1652,7 +1652,7 @@
           },
           "expression" : {
             "title" : "Expression",
-            "description" : "Expression used to calculate the correlation key to use for duplicate check. The Exchange which has the same correlation key is regarded as a duplicate and will be rejected.",
+            "description" : "Expression to evaluate.",
             "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
           },
           "id" : {
@@ -1720,7 +1720,7 @@
           "validate" : {
             "type" : "boolean",
             "title" : "Validate",
-            "description" : "Whether if validation is required for this input type.",
+            "description" : "Whether validation is required for this input type.",
             "default" : false
           }
         },
@@ -1740,7 +1740,7 @@
           "disabled" : {
             "type" : "boolean",
             "title" : "Disabled",
-            "description" : "Disables this EIP from the route.",
+            "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime.",
             "default" : false
           },
           "id" : {
@@ -1780,7 +1780,7 @@
           "disabled" : {
             "type" : "boolean",
             "title" : "Disabled",
-            "description" : "Disables this EIP from the route.",
+            "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime.",
             "default" : false
           },
           "id" : {
@@ -1807,7 +1807,7 @@
           "uri" : {
             "type" : "string",
             "title" : "Uri",
-            "description" : "Intercept incoming messages from the uri or uri pattern. If this option is not configured, then all incoming messages is intercepted."
+            "description" : "Intercept incoming messages from the uri or uri pattern. If not configured, then all incoming messages are intercepted."
           }
         }
       },
@@ -1830,7 +1830,7 @@
           "disabled" : {
             "type" : "boolean",
             "title" : "Disabled",
-            "description" : "Disables this EIP from the route.",
+            "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime.",
             "default" : false
           },
           "id" : {
@@ -1849,9 +1849,10 @@
             "$ref" : "#/items/definitions/org.apache.camel.model.OnWhenDefinition"
           },
           "skipSendToOriginalEndpoint" : {
-            "type" : "string",
+            "type" : "boolean",
             "title" : "Skip Send To Original Endpoint",
-            "description" : "If set to true then the message is not sent to the original endpoint. By default (false) the message is both intercepted and then sent to the original endpoint."
+            "description" : "Whether to skip sending the message to the original endpoint. By default, the message is both intercepted and then sent to the original endpoint.",
+            "default" : false
           },
           "steps" : {
             "type" : "array",
@@ -1903,7 +1904,7 @@
           "disabled" : {
             "type" : "boolean",
             "title" : "Disabled",
-            "description" : "Disables this EIP from the route.",
+            "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime.",
             "default" : false
           },
           "failoverLoadBalancer" : {
@@ -1956,7 +1957,7 @@
           "disabled" : {
             "type" : "boolean",
             "title" : "Disabled",
-            "description" : "Disables this EIP from the route.",
+            "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime.",
             "default" : false
           },
           "id" : {
@@ -2030,7 +2031,7 @@
           "disabled" : {
             "type" : "boolean",
             "title" : "Disabled",
-            "description" : "Disables this EIP from the route.",
+            "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime.",
             "default" : false
           },
           "doWhile" : {
@@ -2041,7 +2042,7 @@
           },
           "expression" : {
             "title" : "Expression",
-            "description" : "Expression to define how many times we should loop. Notice the expression is only evaluated once, and should return a number as how many times to loop. A value of zero or negative means no looping. The loop is like a for-loop fashion, if you want a while loop, then the dynamic router may be a better choice.",
+            "description" : "Expression to evaluate.",
             "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
           },
           "id" : {
@@ -2114,7 +2115,7 @@
           "disabled" : {
             "type" : "boolean",
             "title" : "Disabled",
-            "description" : "Disables this EIP from the route.",
+            "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime.",
             "default" : false
           },
           "fhirJson" : {
@@ -2229,12 +2230,12 @@
           "variableReceive" : {
             "type" : "string",
             "title" : "Variable Receive",
-            "description" : "To use a variable to store the received message body (only body, not headers). This makes it handy to use variables for user data and to easily control what data to use for sending and receiving. Important: When using receive variable then the received body is stored only in this variable and not on the current message."
+            "description" : "To use a variable to store the received message body (only body, not headers). This makes it handy to use variables for user data and to easily control what data to use for sending and receiving."
           },
           "variableSend" : {
             "type" : "string",
             "title" : "Variable Send",
-            "description" : "To use a variable as the source for the message body to send. This makes it handy to use variables for user data and to easily control what data to use for sending and receiving. Important: When using send variable then the message body is taken from this variable instead of the current message, however the headers from the message will still be used as well. In other words, the variable is used instead of the message body, but everything else is as usual."
+            "description" : "To use a variable as the source for the message body to send. This makes it handy to use variables for user data and to easily control what data to use for sending and receiving."
           },
           "xmlSecurity" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.XMLSecurityDataFormat"
@@ -2280,7 +2281,7 @@
           "disabled" : {
             "type" : "boolean",
             "title" : "Disabled",
-            "description" : "Disables this EIP from the route.",
+            "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime.",
             "default" : false
           },
           "executorService" : {
@@ -2368,7 +2369,7 @@
           "disabled" : {
             "type" : "boolean",
             "title" : "Disabled",
-            "description" : "Disables this EIP from the route.",
+            "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime.",
             "default" : false
           },
           "executorService" : {
@@ -2449,13 +2450,13 @@
           "disabled" : {
             "type" : "boolean",
             "title" : "Disabled",
-            "description" : "Disables this EIP from the route.",
+            "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime.",
             "default" : false
           },
           "exception" : {
             "type" : "array",
             "title" : "Exception",
-            "description" : "A set of exceptions to react upon.",
+            "description" : "A list of exception class names to catch and handle.",
             "items" : {
               "type" : "string"
             }
@@ -2492,7 +2493,7 @@
           },
           "redeliveryPolicy" : {
             "title" : "Redelivery Policy",
-            "description" : "Used for configuring redelivery options",
+            "description" : "Configures redelivery options such as maximum redeliveries, delays, and logging behavior.",
             "$ref" : "#/items/definitions/org.apache.camel.model.RedeliveryPolicyDefinition"
           },
           "redeliveryPolicyRef" : {
@@ -2539,7 +2540,7 @@
           "fallbackViaNetwork" : {
             "type" : "boolean",
             "title" : "Fallback Via Network",
-            "description" : "Whether the fallback goes over the network. If the fallback will go over the network it is another possible point of failure. It is important to execute the fallback command on a separate thread-pool, otherwise if the main command were to become latent and fill the thread-pool this would prevent the fallback from running if the two commands share the same pool.",
+            "description" : "Whether the fallback goes over the network. If so, the fallback is executed on a separate thread-pool to avoid exhausting the main thread-pool.",
             "default" : false
           },
           "id" : {
@@ -2573,7 +2574,7 @@
           },
           "expression" : {
             "title" : "Expression",
-            "description" : "The predicate to use",
+            "description" : "The predicate expression to evaluate.",
             "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
           },
           "id" : {
@@ -2708,12 +2709,12 @@
           "urn" : {
             "type" : "string",
             "title" : "Urn",
-            "description" : "Set output type URN."
+            "description" : "The output type URN, such as java:fully.qualified.ClassName or json:SchemaName."
           },
           "validate" : {
             "type" : "boolean",
             "title" : "Validate",
-            "description" : "Whether if validation is required for this output type.",
+            "description" : "Whether to validate the output type.",
             "default" : false
           }
         },
@@ -2744,7 +2745,7 @@
           "package" : {
             "type" : "array",
             "title" : "Package",
-            "description" : "Sets the java package names to use for scanning for route builder classes",
+            "description" : "Java package names to use for scanning for route builder classes.",
             "items" : {
               "type" : "string"
             }
@@ -2770,7 +2771,7 @@
           "disabled" : {
             "type" : "boolean",
             "title" : "Disabled",
-            "description" : "Disables this EIP from the route.",
+            "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime.",
             "default" : false
           },
           "id" : {
@@ -2805,7 +2806,7 @@
           "disabled" : {
             "type" : "boolean",
             "title" : "Disabled",
-            "description" : "Disables this EIP from the route.",
+            "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime.",
             "default" : false
           },
           "id" : {
@@ -2840,7 +2841,7 @@
           "disabled" : {
             "type" : "boolean",
             "title" : "Disabled",
-            "description" : "Disables this EIP from the route.",
+            "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime.",
             "default" : false
           },
           "id" : {
@@ -2856,7 +2857,7 @@
           "ref" : {
             "type" : "string",
             "title" : "Ref",
-            "description" : "Sets a reference to use for lookup the policy in the registry."
+            "description" : "Reference to the policy to lookup in the registry."
           },
           "steps" : {
             "type" : "array",
@@ -2881,7 +2882,7 @@
           "disabled" : {
             "type" : "boolean",
             "title" : "Disabled",
-            "description" : "Disables this EIP from the route.",
+            "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime.",
             "default" : false
           },
           "id" : {
@@ -2911,7 +2912,7 @@
           "variableReceive" : {
             "type" : "string",
             "title" : "Variable Receive",
-            "description" : "To use a variable to store the received message body (only body, not headers). This makes it handy to use variables for user data and to easily control what data to use for sending and receiving. Important: When using receive variable then the received body is stored only in this variable and not on the current message."
+            "description" : "To use a variable to store the received message body (only body, not headers). This makes it handy to use variables for user data and to easily control what data to use for sending and receiving."
           }
         },
         "required" : [ "uri" ]
@@ -2968,12 +2969,12 @@
           "disabled" : {
             "type" : "boolean",
             "title" : "Disabled",
-            "description" : "Disables this EIP from the route.",
+            "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime.",
             "default" : false
           },
           "expression" : {
             "title" : "Expression",
-            "description" : "Expression that computes the endpoint uri to use as the resource endpoint to enrich from",
+            "description" : "Expression to evaluate.",
             "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
           },
           "id" : {
@@ -2984,7 +2985,7 @@
           "ignoreInvalidEndpoint" : {
             "type" : "boolean",
             "title" : "Ignore Invalid Endpoint",
-            "description" : "Ignore the invalidate endpoint exception when try to create a consumer with that endpoint.",
+            "description" : "Whether to ignore an invalid endpoint URI when trying to create a consumer with that endpoint.",
             "default" : false
           },
           "note" : {
@@ -3001,7 +3002,7 @@
           "variableReceive" : {
             "type" : "string",
             "title" : "Variable Receive",
-            "description" : "To use a variable to store the received message body (only body, not headers). This makes it handy to use variables for user data and to easily control what data to use for sending and receiving. Important: When using receive variable then the received body is stored only in this variable and not on the current message."
+            "description" : "To use a variable to store the received message body (only body, not headers). This makes it handy to use variables for user data and to easily control what data to use for sending and receiving."
           }
         }
       },
@@ -3019,7 +3020,7 @@
           "disabled" : {
             "type" : "boolean",
             "title" : "Disabled",
-            "description" : "Disables this EIP from the route.",
+            "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime.",
             "default" : false
           },
           "id" : {
@@ -3035,7 +3036,7 @@
           "ref" : {
             "type" : "string",
             "title" : "Ref",
-            "description" : "Reference to the Processor to lookup in the registry to use. A Processor is a class of type org.apache.camel.Processor, which can are to be called by this EIP. In this processor you have custom Java code, that can work with the message, such as to do custom business logic, special message manipulations and so on. By default, the ref, will lookup the bean in the Camel registry. The ref can use prefix that controls how the processor is obtained. You can use #bean:myBean where myBean is the id of the Camel processor (lookup). Can also be used for creating new beans by their class name by prefixing with #class, eg #class:com.foo.MyClassType. And it is also possible to refer to singleton beans by their type in the registry by prefixing with #type: syntax, eg #type:com.foo.MyClassType"
+            "description" : "Reference to the Processor to lookup in the registry to use. Can use prefixes such as #bean:, #class:, or #type: to control how the processor is obtained."
           }
         },
         "required" : [ "ref" ]
@@ -3049,7 +3050,7 @@
           "key" : {
             "type" : "string",
             "title" : "Key",
-            "description" : "The name of the property"
+            "description" : "The name of the property."
           },
           "value" : {
             "type" : "string",
@@ -3067,13 +3068,13 @@
         "properties" : {
           "expression" : {
             "title" : "Expression",
-            "description" : "Property values as an expression",
+            "description" : "The property value as an expression.",
             "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
           },
           "key" : {
             "type" : "string",
             "title" : "Key",
-            "description" : "Property key"
+            "description" : "The property key."
           }
         },
         "required" : [ "key" ]
@@ -3119,7 +3120,7 @@
           "disabled" : {
             "type" : "boolean",
             "title" : "Disabled",
-            "description" : "Disables this EIP from the route.",
+            "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime.",
             "default" : false
           },
           "executorService" : {
@@ -3129,7 +3130,7 @@
           },
           "expression" : {
             "title" : "Expression",
-            "description" : "Expression that returns which endpoints (url) to send the message to (the recipients). If the expression return an empty value then the message is not sent to any recipients.",
+            "description" : "Expression to evaluate.",
             "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
           },
           "id" : {
@@ -3140,7 +3141,7 @@
           "ignoreInvalidEndpoints" : {
             "type" : "boolean",
             "title" : "Ignore Invalid Endpoints",
-            "description" : "Ignore the invalidate endpoint exception when try to create a producer with that endpoint.",
+            "description" : "Whether to ignore an invalid endpoint URI when trying to create a producer with that endpoint.",
             "default" : false
           },
           "note" : {
@@ -3175,7 +3176,7 @@
           "stopOnException" : {
             "type" : "boolean",
             "title" : "Stop On Exception",
-            "description" : "Will now stop further processing if an exception or failure occurred during processing of an exchange and the caused exception will be thrown. Will also stop if processing the exchange failed (has a fault message) or an exception was thrown and handled by the error handler (such as using onException).",
+            "description" : "Stops further processing if an exception or failure occurred during processing of an exchange and the caused exception will be thrown.",
             "default" : false
           },
           "streaming" : {
@@ -3252,13 +3253,13 @@
           "logContinued" : {
             "type" : "boolean",
             "title" : "Log Continued",
-            "description" : "Whether continued exceptions should be logged or not. Can be used to include or reduce verbose.",
+            "description" : "Whether continued exceptions should be logged or not. Can be used to include or reduce verbose logging.",
             "default" : false
           },
           "logExhausted" : {
             "type" : "boolean",
             "title" : "Log Exhausted",
-            "description" : "Whether exhausted exceptions should be logged or not. Can be used to include or reduce verbose.",
+            "description" : "Whether exhausted exceptions should be logged or not. Can be used to include or reduce verbose logging.",
             "default" : true
           },
           "logExhaustedMessageBody" : {
@@ -3270,13 +3271,13 @@
           "logExhaustedMessageHistory" : {
             "type" : "boolean",
             "title" : "Log Exhausted Message History",
-            "description" : "Whether exhausted exceptions should be logged including message history. Can be used to include or reduce verbose.",
+            "description" : "Whether exhausted exceptions should be logged including message history. Can be used to include or reduce verbose logging.",
             "default" : false
           },
           "logHandled" : {
             "type" : "boolean",
             "title" : "Log Handled",
-            "description" : "Whether handled exceptions should be logged or not. Can be used to include or reduce verbose.",
+            "description" : "Whether handled exceptions should be logged or not. Can be used to include or reduce verbose logging.",
             "default" : false
           },
           "logNewException" : {
@@ -3288,19 +3289,19 @@
           "logRetryAttempted" : {
             "type" : "boolean",
             "title" : "Log Retry Attempted",
-            "description" : "Whether retry attempts should be logged or not. Can be used to include or reduce verbose.",
+            "description" : "Whether retry attempts should be logged or not. Can be used to include or reduce verbose logging.",
             "default" : true
           },
           "logRetryStackTrace" : {
             "type" : "boolean",
             "title" : "Log Retry Stack Trace",
-            "description" : "Whether stack traces should be logged when a retry attempt failed. Can be used to include or reduce verbose.",
+            "description" : "Whether stack traces should be logged when a retry attempt failed. Can be used to include or reduce verbose logging.",
             "default" : false
           },
           "logStackTrace" : {
             "type" : "boolean",
             "title" : "Log Stack Trace",
-            "description" : "Whether stack traces should be logged. Can be used to include or reduce verbose.",
+            "description" : "Whether stack traces should be logged. Can be used to include or reduce verbose logging.",
             "default" : true
           },
           "maximumRedeliveries" : {
@@ -3368,7 +3369,7 @@
           "disabled" : {
             "type" : "boolean",
             "title" : "Disabled",
-            "description" : "Disables this EIP from the route.",
+            "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime.",
             "default" : false
           },
           "id" : {
@@ -3379,7 +3380,7 @@
           "name" : {
             "type" : "string",
             "title" : "Name",
-            "description" : "Name of header to remove"
+            "description" : "Name of header to remove."
           },
           "note" : {
             "type" : "string",
@@ -3403,7 +3404,7 @@
           "disabled" : {
             "type" : "boolean",
             "title" : "Disabled",
-            "description" : "Disables this EIP from the route.",
+            "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime.",
             "default" : false
           },
           "excludePattern" : {
@@ -3424,7 +3425,7 @@
           "pattern" : {
             "type" : "string",
             "title" : "Pattern",
-            "description" : "Name or pattern of headers to remove. The pattern is matched in the following order: 1 = exact match 2 = wildcard (pattern ends with a and the name starts with the pattern) 3 = regular expression (all of above is case in-sensitive)."
+            "description" : "Name or pattern of headers to remove. The pattern supports exact match, wildcard (pattern ends with ), and regular expression (all case-insensitive)."
           }
         },
         "required" : [ "pattern" ]
@@ -3443,7 +3444,7 @@
           "disabled" : {
             "type" : "boolean",
             "title" : "Disabled",
-            "description" : "Disables this EIP from the route.",
+            "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime.",
             "default" : false
           },
           "excludePattern" : {
@@ -3464,7 +3465,7 @@
           "pattern" : {
             "type" : "string",
             "title" : "Pattern",
-            "description" : "Name or pattern of properties to remove. The pattern is matched in the following order: 1 = exact match 2 = wildcard (pattern ends with a and the name starts with the pattern) 3 = regular expression (all of above is case in-sensitive)."
+            "description" : "Name or pattern of properties to remove. Supports exact match, wildcard (ending with ), and regular expression (all case-insensitive)."
           }
         },
         "required" : [ "pattern" ]
@@ -3483,7 +3484,7 @@
           "disabled" : {
             "type" : "boolean",
             "title" : "Disabled",
-            "description" : "Disables this EIP from the route.",
+            "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime.",
             "default" : false
           },
           "id" : {
@@ -3494,7 +3495,7 @@
           "name" : {
             "type" : "string",
             "title" : "Name",
-            "description" : "Name of property to remove."
+            "description" : "Name of the exchange property to remove."
           },
           "note" : {
             "type" : "string",
@@ -3518,7 +3519,7 @@
           "disabled" : {
             "type" : "boolean",
             "title" : "Disabled",
-            "description" : "Disables this EIP from the route.",
+            "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime.",
             "default" : false
           },
           "id" : {
@@ -3529,7 +3530,7 @@
           "name" : {
             "type" : "string",
             "title" : "Name",
-            "description" : "Name of variable to remove."
+            "description" : "Name of the variable to remove."
           },
           "note" : {
             "type" : "string",
@@ -3556,7 +3557,7 @@
           "disabled" : {
             "type" : "boolean",
             "title" : "Disabled",
-            "description" : "Disables this EIP from the route.",
+            "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime.",
             "default" : false
           },
           "expression" : {
@@ -3698,7 +3699,7 @@
           "throwExceptionWhenHalfOpenOrOpenState" : {
             "type" : "boolean",
             "title" : "Throw Exception When Half Open Or Open State",
-            "description" : "Whether to throw io.github.resilience4j.circuitbreaker.CallNotPermittedException when the call is rejected due circuit breaker is half open or open.",
+            "description" : "Whether to throw io.github.resilience4j.circuitbreaker.CallNotPermittedException when the call is rejected because the circuit breaker is half open or open.",
             "default" : false
           },
           "timeoutCancelRunningFuture" : {
@@ -3747,7 +3748,7 @@
           "ref" : {
             "type" : "string",
             "title" : "Ref",
-            "description" : "Reference to the rest-dsl"
+            "description" : "Reference to the rest-dsl."
           }
         },
         "required" : [ "ref" ]
@@ -3766,7 +3767,7 @@
           "disabled" : {
             "type" : "boolean",
             "title" : "Disabled",
-            "description" : "Disables this EIP from the route.",
+            "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime.",
             "default" : false
           },
           "id" : {
@@ -3814,7 +3815,7 @@
           "disabled" : {
             "type" : "boolean",
             "title" : "Disabled",
-            "description" : "Disables this EIP from the route.",
+            "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime.",
             "default" : false
           },
           "id" : {
@@ -3860,7 +3861,7 @@
           "ref" : {
             "type" : "string",
             "title" : "Ref",
-            "description" : "Reference to the route builder instance"
+            "description" : "Reference to the RouteBuilder instance."
           }
         },
         "required" : [ "ref" ]
@@ -3874,7 +3875,7 @@
           "ref" : {
             "type" : "string",
             "title" : "Ref",
-            "description" : "Reference to the route templates in the xml dsl"
+            "description" : "Reference to the route configuration in the xml-dsl."
           }
         },
         "required" : [ "ref" ]
@@ -3966,7 +3967,7 @@
           "ref" : {
             "type" : "string",
             "title" : "Ref",
-            "description" : "Reference to the routes in the xml dsl"
+            "description" : "Reference to the routes in the xml-dsl."
           }
         },
         "required" : [ "ref" ]
@@ -4130,12 +4131,12 @@
           "disabled" : {
             "type" : "boolean",
             "title" : "Disabled",
-            "description" : "Disables this EIP from the route.",
+            "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime.",
             "default" : false
           },
           "expression" : {
             "title" : "Expression",
-            "description" : "Expression to define the routing slip, which defines which endpoints to route the message in a pipeline style. Notice the expression is evaluated once, if you want a more dynamic style, then the dynamic router eip is a better choice.",
+            "description" : "Expression to evaluate.",
             "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
           },
           "id" : {
@@ -4193,7 +4194,7 @@
           "disabled" : {
             "type" : "boolean",
             "title" : "Disabled",
-            "description" : "Disables this EIP from the route.",
+            "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime.",
             "default" : false
           },
           "id" : {
@@ -4253,7 +4254,7 @@
           "disabled" : {
             "type" : "boolean",
             "title" : "Disabled",
-            "description" : "Disables this EIP from the route.",
+            "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime.",
             "default" : false
           },
           "id" : {
@@ -4293,12 +4294,12 @@
           "disabled" : {
             "type" : "boolean",
             "title" : "Disabled",
-            "description" : "Disables this EIP from the route.",
+            "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime.",
             "default" : false
           },
           "expression" : {
             "title" : "Expression",
-            "description" : "Script to be executed.",
+            "description" : "Expression to evaluate.",
             "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
           },
           "id" : {
@@ -4327,12 +4328,12 @@
           "disabled" : {
             "type" : "boolean",
             "title" : "Disabled",
-            "description" : "Disables this EIP from the route.",
+            "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime.",
             "default" : false
           },
           "expression" : {
             "title" : "Expression",
-            "description" : "Expression that returns the new body to use",
+            "description" : "Expression to evaluate.",
             "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
           },
           "id" : {
@@ -4361,7 +4362,7 @@
           "disabled" : {
             "type" : "boolean",
             "title" : "Disabled",
-            "description" : "Disables this EIP from the route.",
+            "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime.",
             "default" : false
           },
           "id" : {
@@ -4377,7 +4378,7 @@
           "pattern" : {
             "type" : "string",
             "title" : "Pattern",
-            "description" : "Sets the new exchange pattern of the Exchange to be used from this point forward",
+            "description" : "The new exchange pattern to use from this point forward.",
             "enum" : [ "InOnly", "InOut" ]
           }
         }
@@ -4396,12 +4397,12 @@
           "disabled" : {
             "type" : "boolean",
             "title" : "Disabled",
-            "description" : "Disables this EIP from the route.",
+            "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime.",
             "default" : false
           },
           "expression" : {
             "title" : "Expression",
-            "description" : "Expression to return the value of the header",
+            "description" : "Expression to evaluate.",
             "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
           },
           "id" : {
@@ -4412,7 +4413,7 @@
           "name" : {
             "type" : "string",
             "title" : "Name",
-            "description" : "Name of message header to set a new value The simple language can be used to define a dynamic evaluated header name to be used. Otherwise a constant name will be used."
+            "description" : "Name of message header to set a new value. The simple language can be used to define a dynamic evaluated header name. Otherwise a constant name will be used."
           },
           "note" : {
             "type" : "string",
@@ -4436,7 +4437,7 @@
           "disabled" : {
             "type" : "boolean",
             "title" : "Disabled",
-            "description" : "Disables this EIP from the route.",
+            "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime.",
             "default" : false
           },
           "headers" : {
@@ -4473,12 +4474,12 @@
           "disabled" : {
             "type" : "boolean",
             "title" : "Disabled",
-            "description" : "Disables this EIP from the route.",
+            "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime.",
             "default" : false
           },
           "expression" : {
             "title" : "Expression",
-            "description" : "Expression to return the value of the message exchange property",
+            "description" : "Expression to evaluate.",
             "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
           },
           "id" : {
@@ -4489,7 +4490,7 @@
           "name" : {
             "type" : "string",
             "title" : "Name",
-            "description" : "Name of exchange property to set a new value. The simple language can be used to define a dynamic evaluated exchange property name to be used. Otherwise a constant name will be used."
+            "description" : "Name of exchange property to set a new value. The simple language can be used to define a dynamic evaluated property name. Otherwise a constant name will be used."
           },
           "note" : {
             "type" : "string",
@@ -4513,12 +4514,12 @@
           "disabled" : {
             "type" : "boolean",
             "title" : "Disabled",
-            "description" : "Disables this EIP from the route.",
+            "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime.",
             "default" : false
           },
           "expression" : {
             "title" : "Expression",
-            "description" : "Expression to return the value of the variable",
+            "description" : "Expression to evaluate.",
             "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
           },
           "id" : {
@@ -4529,7 +4530,7 @@
           "name" : {
             "type" : "string",
             "title" : "Name",
-            "description" : "Name of variable to set a new value The simple language can be used to define a dynamic evaluated variable name to be used. Otherwise a constant name will be used."
+            "description" : "Name of variable to set a new value. The simple language can be used to define a dynamic evaluated variable name. Otherwise a constant name will be used."
           },
           "note" : {
             "type" : "string",
@@ -4553,7 +4554,7 @@
           "disabled" : {
             "type" : "boolean",
             "title" : "Disabled",
-            "description" : "Disables this EIP from the route.",
+            "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime.",
             "default" : false
           },
           "id" : {
@@ -4595,12 +4596,12 @@
           "disabled" : {
             "type" : "boolean",
             "title" : "Disabled",
-            "description" : "Disables this EIP from the route.",
+            "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime.",
             "default" : false
           },
           "expression" : {
             "title" : "Expression",
-            "description" : "Optional expression to sort by something else than the message body",
+            "description" : "Expression to evaluate.",
             "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
           },
           "id" : {
@@ -4651,7 +4652,7 @@
           "disabled" : {
             "type" : "boolean",
             "title" : "Disabled",
-            "description" : "Disables this EIP from the route.",
+            "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime.",
             "default" : false
           },
           "executorService" : {
@@ -4661,7 +4662,7 @@
           },
           "expression" : {
             "title" : "Expression",
-            "description" : "Expression of how to split the message body, such as as-is, using a tokenizer, or using a xpath.",
+            "description" : "Expression to evaluate.",
             "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
           },
           "id" : {
@@ -4744,7 +4745,7 @@
           "disabled" : {
             "type" : "boolean",
             "title" : "Disabled",
-            "description" : "Disables this EIP from the route.",
+            "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime.",
             "default" : false
           },
           "id" : {
@@ -4779,7 +4780,7 @@
           "disabled" : {
             "type" : "boolean",
             "title" : "Disabled",
-            "description" : "Disables this EIP from the route.",
+            "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime.",
             "default" : false
           },
           "id" : {
@@ -4834,7 +4835,7 @@
           "name" : {
             "type" : "string",
             "title" : "Name",
-            "description" : "The name of the parameter"
+            "description" : "The name of the parameter."
           },
           "value" : {
             "type" : "string",
@@ -4937,7 +4938,7 @@
           "disabled" : {
             "type" : "boolean",
             "title" : "Disabled",
-            "description" : "Disables this EIP from the route.",
+            "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime.",
             "default" : false
           },
           "executorService" : {
@@ -5015,7 +5016,7 @@
           },
           "correlationExpression" : {
             "title" : "Correlation Expression",
-            "description" : "The expression used to calculate the correlation key to use for throttle grouping. The Exchange which has the same correlation key is throttled together.",
+            "description" : "The correlation expression to use for throttle grouping. Exchanges with the same correlation key are throttled together.",
             "$ref" : "#/items/definitions/org.apache.camel.model.ExpressionSubElementDefinition"
           },
           "description" : {
@@ -5026,7 +5027,7 @@
           "disabled" : {
             "type" : "boolean",
             "title" : "Disabled",
-            "description" : "Disables this EIP from the route.",
+            "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime.",
             "default" : false
           },
           "executorService" : {
@@ -5036,7 +5037,7 @@
           },
           "expression" : {
             "title" : "Expression",
-            "description" : "Expression to configure the maximum number of messages to throttle per request",
+            "description" : "Expression to evaluate.",
             "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
           },
           "id" : {
@@ -5084,7 +5085,7 @@
           "disabled" : {
             "type" : "boolean",
             "title" : "Disabled",
-            "description" : "Disables this EIP from the route.",
+            "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime.",
             "default" : false
           },
           "exceptionType" : {
@@ -5128,7 +5129,7 @@
           "disabled" : {
             "type" : "boolean",
             "title" : "Disabled",
-            "description" : "Disables this EIP from the route.",
+            "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime.",
             "default" : false
           },
           "id" : {
@@ -5153,7 +5154,7 @@
           "uri" : {
             "type" : "string",
             "title" : "Uri",
-            "description" : "Sets the uri of the endpoint to send to."
+            "description" : "The uri of the endpoint to send to."
           },
           "variableReceive" : {
             "type" : "string",
@@ -5199,7 +5200,7 @@
           "disabled" : {
             "type" : "boolean",
             "title" : "Disabled",
-            "description" : "Disables this EIP from the route.",
+            "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime.",
             "default" : false
           },
           "id" : {
@@ -5235,12 +5236,12 @@
           "variableReceive" : {
             "type" : "string",
             "title" : "Variable Receive",
-            "description" : "To use a variable as the source for the message body to send. This makes it handy to use variables for user data and to easily control what data to use for sending and receiving. Important: When using send variable then the message body is taken from this variable instead of the current Message , however the headers from the Message will still be used as well. In other words, the variable is used instead of the message body, but everything else is as usual."
+            "description" : "To use a variable to store the received message body (only body, not headers). This makes it handy to use variables for user data and to easily control what data to use for sending and receiving."
           },
           "variableSend" : {
             "type" : "string",
             "title" : "Variable Send",
-            "description" : "To use a variable as the source for the message body to send. This makes it handy to use variables for user data and to easily control what data to use for sending and receiving. Important: When using send variable then the message body is taken from this variable instead of the current message, however the headers from the message will still be used as well. In other words, the variable is used instead of the message body, but everything else is as usual."
+            "description" : "To use a variable as the source for the message body to send. This makes it handy to use variables for user data and to easily control what data to use for sending and receiving."
           }
         },
         "required" : [ "uri" ]
@@ -5259,7 +5260,7 @@
           "disabled" : {
             "type" : "boolean",
             "title" : "Disabled",
-            "description" : "Disables this EIP from the route.",
+            "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime.",
             "default" : false
           },
           "id" : {
@@ -5312,7 +5313,7 @@
           "disabled" : {
             "type" : "boolean",
             "title" : "Disabled",
-            "description" : "Disables this EIP from the route.",
+            "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime.",
             "default" : false
           },
           "id" : {
@@ -5328,7 +5329,7 @@
           "ref" : {
             "type" : "string",
             "title" : "Ref",
-            "description" : "Sets a reference to use for lookup the policy in the registry."
+            "description" : "Reference to lookup a transacted policy in the registry."
           },
           "steps" : {
             "type" : "array",
@@ -5352,13 +5353,13 @@
           "disabled" : {
             "type" : "boolean",
             "title" : "Disabled",
-            "description" : "Disables this EIP from the route.",
+            "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime.",
             "default" : false
           },
           "fromType" : {
             "type" : "string",
             "title" : "From Type",
-            "description" : "From type used in data type transformation."
+            "description" : "The source data type for the transformation."
           },
           "id" : {
             "type" : "string",
@@ -5373,7 +5374,7 @@
           "toType" : {
             "type" : "string",
             "title" : "To Type",
-            "description" : "To type used as a target data type in the transformation."
+            "description" : "The target data type for the transformation."
           }
         },
         "required" : [ "toType" ]
@@ -5392,12 +5393,12 @@
           "disabled" : {
             "type" : "boolean",
             "title" : "Disabled",
-            "description" : "Disables this EIP from the route.",
+            "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime.",
             "default" : false
           },
           "expression" : {
             "title" : "Expression",
-            "description" : "Expression to return the transformed message body (the new message body to use)",
+            "description" : "Expression to evaluate.",
             "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
           },
           "id" : {
@@ -5426,7 +5427,7 @@
           "disabled" : {
             "type" : "boolean",
             "title" : "Disabled",
-            "description" : "Disables this EIP from the route.",
+            "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime.",
             "default" : false
           },
           "doCatch" : {
@@ -5513,7 +5514,7 @@
           "disabled" : {
             "type" : "boolean",
             "title" : "Disabled",
-            "description" : "Disables this EIP from the route.",
+            "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime.",
             "default" : false
           },
           "fhirJson" : {
@@ -5628,12 +5629,12 @@
           "variableReceive" : {
             "type" : "string",
             "title" : "Variable Receive",
-            "description" : "To use a variable to store the received message body (only body, not headers). This makes it handy to use variables for user data and to easily control what data to use for sending and receiving. Important: When using receive variable then the received body is stored only in this variable and not on the current message."
+            "description" : "To use a variable to store the received message body (only body, not headers). This makes it handy to use variables for user data and to easily control what data to use for sending and receiving."
           },
           "variableSend" : {
             "type" : "string",
             "title" : "Variable Send",
-            "description" : "To use a variable as the source for the message body to send. This makes it handy to use variables for user data and to easily control what data to use for sending and receiving. Important: When using send variable then the message body is taken from this variable instead of the current message, however the headers from the message will still be used as well. In other words, the variable is used instead of the message body, but everything else is as usual."
+            "description" : "To use a variable as the source for the message body to send. This makes it handy to use variables for user data and to easily control what data to use for sending and receiving."
           },
           "xmlSecurity" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.XMLSecurityDataFormat"
@@ -5647,7 +5648,8 @@
           "zipFile" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.ZipFileDataFormat"
           }
-        }
+        },
+        "required" : [ "asn1", "avro", "barcode", "base64", "beanio", "bindy", "cbor", "crypto", "csv", "custom", "dfdl", "fhirJson", "fhirXml", "flatpack", "fory", "grok", "groovyJson", "groovyXml", "gzipDeflater", "hl7", "ical", "iso8583", "jacksonXml", "jaxb", "json", "jsonApi", "lzf", "mimeMultipart", "ocsf", "parquetAvro", "pgp", "pqc", "protobuf", "rss", "smooks", "soap", "swiftMt", "swiftMx", "syslog", "tarFile", "thrift", "univocityCsv", "univocityFixed", "univocityTsv", "xmlSecurity", "yaml", "zipDeflater", "zipFile" ]
       },
       "org.apache.camel.model.ValidateDefinition" : {
         "title" : "Validate",
@@ -5663,12 +5665,12 @@
           "disabled" : {
             "type" : "boolean",
             "title" : "Disabled",
-            "description" : "Disables this EIP from the route.",
+            "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime.",
             "default" : false
           },
           "expression" : {
             "title" : "Expression",
-            "description" : "Expression to use for validation as a predicate. The expression should return either true or false. If returning false the message is invalid and an exception is thrown.",
+            "description" : "Expression to evaluate.",
             "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
           },
           "id" : {
@@ -5778,7 +5780,7 @@
           "disabled" : {
             "type" : "boolean",
             "title" : "Disabled",
-            "description" : "Disables this EIP from the route.",
+            "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime.",
             "default" : false
           },
           "dynamicUri" : {
@@ -5824,12 +5826,12 @@
           "variableReceive" : {
             "type" : "string",
             "title" : "Variable Receive",
-            "description" : "To use a variable as the source for the message body to send. This makes it handy to use variables for user data and to easily control what data to use for sending and receiving. Important: When using send variable then the message body is taken from this variable instead of the current Message , however the headers from the Message will still be used as well. In other words, the variable is used instead of the message body, but everything else is as usual."
+            "description" : "To use a variable to store the received message body (only body, not headers). This makes it handy to use variables for user data and to easily control what data to use for sending and receiving."
           },
           "variableSend" : {
             "type" : "string",
             "title" : "Variable Send",
-            "description" : "To use a variable as the source for the message body to send. This makes it handy to use variables for user data and to easily control what data to use for sending and receiving. Important: When using send variable then the message body is taken from this variable instead of the current message, however the headers from the message will still be used as well. In other words, the variable is used instead of the message body, but everything else is as usual."
+            "description" : "To use a variable as the source for the message body to send. This makes it handy to use variables for user data and to easily control what data to use for sending and receiving."
           }
         },
         "required" : [ "uri" ]
@@ -6129,12 +6131,12 @@
           "disableFeatures" : {
             "type" : "string",
             "title" : "Disable Features",
-            "description" : "Set of features to disable on the Jackson com.fasterxml.jackson.databind.ObjectMapper. The features should be a name that matches a enum from com.fasterxml.jackson.databind.SerializationFeature, com.fasterxml.jackson.databind.DeserializationFeature, or com.fasterxml.jackson.databind.MapperFeature Multiple features can be separated by comma"
+            "description" : "Set of features to disable on the Jackson com.fasterxml.jackson.databind.ObjectMapper. Multiple features can be separated by comma."
           },
           "enableFeatures" : {
             "type" : "string",
             "title" : "Enable Features",
-            "description" : "Set of features to enable on the Jackson com.fasterxml.jackson.databind.ObjectMapper. The features should be a name that matches a enum from com.fasterxml.jackson.databind.SerializationFeature, com.fasterxml.jackson.databind.DeserializationFeature, or com.fasterxml.jackson.databind.MapperFeature Multiple features can be separated by comma"
+            "description" : "Set of features to enable on the Jackson com.fasterxml.jackson.databind.ObjectMapper. Multiple features can be separated by comma."
           },
           "id" : {
             "type" : "string",
@@ -6144,17 +6146,17 @@
           "include" : {
             "type" : "string",
             "title" : "Include",
-            "description" : "If you want to marshal a pojo to JSON, and the pojo has some fields with null values. And you want to skip these null values, you can set this option to NON_NULL"
+            "description" : "If you want to marshal a pojo to JSON, and the pojo has some fields with null values. And you want to skip these null values, you can set this option to NON_NULL."
           },
           "instanceClassName" : {
             "type" : "string",
             "title" : "Instance Class Name",
-            "description" : "Class name to use for marshal and unmarshalling"
+            "description" : "Class name to use for marshal and unmarshalling."
           },
           "jsonView" : {
             "type" : "string",
             "title" : "Json View",
-            "description" : "When marshalling a POJO to JSON you might want to exclude certain fields from the JSON output. With Jackson you can use JSON views to accomplish this. This option is to refer to the class which has JsonView annotations"
+            "description" : "When marshalling a POJO to JSON you might want to exclude certain fields from the JSON output. With Jackson you can use JSON views to accomplish this. This option is to refer to the class which has JsonView annotations."
           },
           "library" : {
             "type" : "string",
@@ -6191,7 +6193,7 @@
           "unmarshalType" : {
             "type" : "string",
             "title" : "Unmarshal Type",
-            "description" : "Class name of the java type to use when unmarshalling"
+            "description" : "Class name of the java type to use when unmarshalling."
           },
           "useDefaultObjectMapper" : {
             "type" : "boolean",
@@ -6407,12 +6409,12 @@
           "disableFeatures" : {
             "type" : "string",
             "title" : "Disable Features",
-            "description" : "Set of features to disable on the Jackson com.fasterxml.jackson.databind.ObjectMapper. The features should be a name that matches a enum from com.fasterxml.jackson.databind.SerializationFeature, com.fasterxml.jackson.databind.DeserializationFeature, or com.fasterxml.jackson.databind.MapperFeature Multiple features can be separated by comma"
+            "description" : "Set of features to disable on the Jackson ObjectMapper. Multiple features can be separated by comma."
           },
           "enableFeatures" : {
             "type" : "string",
             "title" : "Enable Features",
-            "description" : "Set of features to enable on the Jackson com.fasterxml.jackson.databind.ObjectMapper. The features should be a name that matches a enum from com.fasterxml.jackson.databind.SerializationFeature, com.fasterxml.jackson.databind.DeserializationFeature, or com.fasterxml.jackson.databind.MapperFeature Multiple features can be separated by comma"
+            "description" : "Set of features to enable on the Jackson ObjectMapper. Multiple features can be separated by comma."
           },
           "id" : {
             "type" : "string",
@@ -6433,7 +6435,7 @@
           "unmarshalType" : {
             "type" : "string",
             "title" : "Unmarshal Type",
-            "description" : "Class name of the java type to use when unmarshalling"
+            "description" : "Class name of the java type to use when unmarshalling."
           },
           "useDefaultObjectMapper" : {
             "type" : "boolean",
@@ -6543,7 +6545,7 @@
           "delimiter" : {
             "type" : "string",
             "title" : "Delimiter",
-            "description" : "Sets the delimiter to use. The default value is , (comma)"
+            "description" : "The delimiter to use. The default value is , (comma)."
           },
           "escape" : {
             "type" : "string",
@@ -6553,7 +6555,7 @@
           "escapeDisabled" : {
             "type" : "boolean",
             "title" : "Escape Disabled",
-            "description" : "Use for disabling using escape character.",
+            "description" : "Whether to disable the escape character.",
             "default" : false
           },
           "format" : {
@@ -6571,7 +6573,7 @@
           "headerDisabled" : {
             "type" : "boolean",
             "title" : "Header Disabled",
-            "description" : "Use for disabling headers.",
+            "description" : "Whether to disable headers.",
             "default" : false
           },
           "id" : {
@@ -6616,18 +6618,18 @@
           "nullStringDisabled" : {
             "type" : "boolean",
             "title" : "Null String Disabled",
-            "description" : "Used to disable null strings.",
+            "description" : "Whether to disable null string handling.",
             "default" : false
           },
           "quote" : {
             "type" : "string",
             "title" : "Quote",
-            "description" : "Sets the quote to use which by default is double-quote character"
+            "description" : "The quote character to use. The default is double-quote character."
           },
           "quoteDisabled" : {
             "type" : "boolean",
             "title" : "Quote Disabled",
-            "description" : "Used to disable quotes.",
+            "description" : "Whether to disable quoting.",
             "default" : false
           },
           "quoteMode" : {
@@ -6644,12 +6646,13 @@
           "recordSeparator" : {
             "type" : "string",
             "title" : "Record Separator",
-            "description" : "Sets the record separator (aka new line) which by default is new line characters (CRLF)"
+            "description" : "The record separator (aka new line) which by default is new line characters (CRLF)."
           },
           "recordSeparatorDisabled" : {
-            "type" : "string",
+            "type" : "boolean",
             "title" : "Record Separator Disabled",
-            "description" : "Used for disabling record separator"
+            "description" : "Whether to disable the record separator.",
+            "default" : false
           },
           "skipHeaderRecord" : {
             "type" : "boolean",
@@ -6697,7 +6700,7 @@
           "ref" : {
             "type" : "string",
             "title" : "Ref",
-            "description" : "Reference to the custom org.apache.camel.spi.DataFormat to lookup from the Camel registry."
+            "description" : "Reference to the custom DataFormat to lookup from the Camel registry."
           }
         },
         "required" : [ "ref" ]
@@ -7212,13 +7215,13 @@
           "allowMultipleMatchesPerLine" : {
             "type" : "boolean",
             "title" : "Allow Multiple Matches Per Line",
-            "description" : "If false, every line of input is matched for pattern only once. Otherwise the line can be scanned multiple times when non-terminal pattern is used.",
+            "description" : "Whether to allow multiple matches per line. If false, every line of input is matched for the pattern only once. Otherwise the line can be scanned multiple times when a non-terminal pattern is used.",
             "default" : true
           },
           "flattened" : {
             "type" : "boolean",
             "title" : "Flattened",
-            "description" : "Turns on flattened mode. In flattened mode the exception is thrown when there are multiple pattern matches with same key.",
+            "description" : "Whether to use flattened mode. In flattened mode an exception is thrown when there are multiple pattern matches with the same key.",
             "default" : false
           },
           "id" : {
@@ -7229,13 +7232,13 @@
           "namedOnly" : {
             "type" : "boolean",
             "title" : "Named Only",
-            "description" : "Whether to capture named expressions only or not (i.e. %{IP:ip} but not ${IP})",
+            "description" : "Whether to capture named expressions only or not (i.e. %{IP:ip} but not ${IP}).",
             "default" : false
           },
           "pattern" : {
             "type" : "string",
             "title" : "Pattern",
-            "description" : "The grok pattern to match lines of input"
+            "description" : "The grok pattern to match lines of input."
           }
         },
         "required" : [ "pattern" ]
@@ -7254,7 +7257,7 @@
           "prettyPrint" : {
             "type" : "boolean",
             "title" : "Pretty Print",
-            "description" : "To pretty printing output nicely formatted. Is by default true.",
+            "description" : "Whether to pretty print output nicely formatted.",
             "default" : true
           }
         }
@@ -7268,7 +7271,7 @@
           "attributeMapping" : {
             "type" : "boolean",
             "title" : "Attribute Mapping",
-            "description" : "To turn on or off attribute mapping. When enabled then keys that start with _ or character will be mapped to an XML attribute, and vise versa. This rule is what Jackson and other XML or JSon libraries uses.",
+            "description" : "Whether to enable attribute mapping. When enabled, keys that start with _ or character will be mapped to an XML attribute, and vice versa.",
             "default" : true
           },
           "id" : {
@@ -7305,18 +7308,18 @@
           "parser" : {
             "type" : "string",
             "title" : "Parser",
-            "description" : "To use a custom HL7 parser"
+            "description" : "To use a custom HL7 parser."
           },
           "targetFormat" : {
             "type" : "string",
             "title" : "Target Format",
-            "description" : "The target format for marshal output and unmarshal result type. By default, marshal encodes to HL7 ER7, and unmarshal returns a HAPI Message object. If this is set to XML, marshal encodes to HL7 XML, and unmarshal returns an XML DOM Document.",
+            "description" : "The target format for marshal output and unmarshal result type. By default, marshal encodes to HL7 ER7 and unmarshal returns a HAPI Message object. If set to XML, marshal encodes to HL7 XML and unmarshal returns an XML DOM Document.",
             "enum" : [ "XML" ]
           },
           "validate" : {
             "type" : "boolean",
             "title" : "Validate",
-            "description" : "Whether to validate the HL7 message Is by default true.",
+            "description" : "Whether to validate the HL7 message.",
             "default" : true
           }
         }
@@ -7335,7 +7338,7 @@
           "validating" : {
             "type" : "boolean",
             "title" : "Validating",
-            "description" : "Whether to validate.",
+            "description" : "Whether to validate the iCal document.",
             "default" : false
           }
         }
@@ -7379,19 +7382,19 @@
           "allowJmsType" : {
             "type" : "boolean",
             "title" : "Allow Jms Type",
-            "description" : "Used for JMS users to allow the JMSType header from the JMS spec to specify a FQN classname to use to unmarshal to.",
+            "description" : "Whether to allow the JMSType header from the JMS spec to specify a FQN classname to use to unmarshal to.",
             "default" : false
           },
           "allowUnmarshallType" : {
             "type" : "boolean",
             "title" : "Allow Unmarshall Type",
-            "description" : "If enabled then Jackson is allowed to attempt to use the CamelJacksonUnmarshalType header during the unmarshalling. This should only be enabled when desired to be used.",
+            "description" : "Whether to allow Jackson to use the CamelJacksonUnmarshalType header during unmarshalling. Should only be enabled when desired.",
             "default" : false
           },
           "collectionType" : {
             "type" : "string",
             "title" : "Collection Type",
-            "description" : "Refers to a custom collection type to lookup in the registry to use. This option should rarely be used, but allows to use different collection types than java.util.Collection based as default."
+            "description" : "Refers to a custom collection type to lookup in the registry to use. This option should rarely be used, but allows using different collection types than java.util.Collection based as default."
           },
           "contentTypeHeader" : {
             "type" : "boolean",
@@ -7402,17 +7405,17 @@
           "disableFeatures" : {
             "type" : "string",
             "title" : "Disable Features",
-            "description" : "Set of features to disable on the Jackson com.fasterxml.jackson.databind.ObjectMapper. The features should be a name that matches a enum from com.fasterxml.jackson.databind.SerializationFeature, com.fasterxml.jackson.databind.DeserializationFeature, or com.fasterxml.jackson.databind.MapperFeature Multiple features can be separated by comma"
+            "description" : "Set of features to disable on the Jackson com.fasterxml.jackson.databind.ObjectMapper. The features should be a name that matches a enum from SerializationFeature, DeserializationFeature, or MapperFeature. Multiple features can be separated by comma."
           },
           "enableFeatures" : {
             "type" : "string",
             "title" : "Enable Features",
-            "description" : "Set of features to enable on the Jackson com.fasterxml.jackson.databind.ObjectMapper. The features should be a name that matches a enum from com.fasterxml.jackson.databind.SerializationFeature, com.fasterxml.jackson.databind.DeserializationFeature, or com.fasterxml.jackson.databind.MapperFeature Multiple features can be separated by comma"
+            "description" : "Set of features to enable on the Jackson com.fasterxml.jackson.databind.ObjectMapper. The features should be a name that matches a enum from SerializationFeature, DeserializationFeature, or MapperFeature. Multiple features can be separated by comma."
           },
           "enableJaxbAnnotationModule" : {
             "type" : "boolean",
             "title" : "Enable Jaxb Annotation Module",
-            "description" : "Whether to enable the JAXB annotations module when using jackson. When enabled then JAXB annotations can be used by Jackson.",
+            "description" : "Whether to enable the JAXB annotations module when using Jackson. When enabled then JAXB annotations can be used by Jackson.",
             "default" : false
           },
           "id" : {
@@ -7423,17 +7426,17 @@
           "include" : {
             "type" : "string",
             "title" : "Include",
-            "description" : "If you want to marshal a pojo to JSON, and the pojo has some fields with null values. And you want to skip these null values, you can set this option to NON_NULL"
+            "description" : "If you want to marshal a POJO to JSON, and the POJO has some fields with null values. And you want to skip these null values, you can set this option to NON_NULL."
           },
           "jsonView" : {
             "type" : "string",
             "title" : "Json View",
-            "description" : "When marshalling a POJO to JSON you might want to exclude certain fields from the JSON output. With Jackson you can use JSON views to accomplish this. This option is to refer to the class which has JsonView annotations"
+            "description" : "When marshalling a POJO to JSON you might want to exclude certain fields from the JSON output. With Jackson you can use JSON views to accomplish this. This option is to refer to the class which has JsonView annotations."
           },
           "maxStringLength" : {
             "type" : "number",
             "title" : "Max String Length",
-            "description" : "Sets the maximum string length (in chars or bytes, depending on input context). The default is 20,000,000. This limit is not exact, the limit is applied when we increase internal buffer sizes and an exception will happen at sizes greater than this limit. Some text values that are a little bigger than the limit may be treated as valid but no text values with sizes less than or equal to this limit will be treated as invalid."
+            "description" : "Maximum allowed string length when deserializing (in chars or bytes, depending on input context). The default is 20,000,000."
           },
           "moduleClassNames" : {
             "type" : "string",
@@ -7448,7 +7451,7 @@
           "prettyPrint" : {
             "type" : "boolean",
             "title" : "Pretty Print",
-            "description" : "To enable pretty printing output nicely formatted. Is by default false.",
+            "description" : "Whether to enable pretty printing output nicely formatted. Is by default false.",
             "default" : false
           },
           "timezone" : {
@@ -7459,12 +7462,12 @@
           "unmarshalType" : {
             "type" : "string",
             "title" : "Unmarshal Type",
-            "description" : "Class name of the java type to use when unmarshalling"
+            "description" : "Class name of the java type to use when unmarshalling."
           },
           "useList" : {
             "type" : "boolean",
             "title" : "Use List",
-            "description" : "To unmarshal to a List of Map or a List of Pojo.",
+            "description" : "Whether to unmarshal to a List of Map or a List of Pojo.",
             "default" : false
           },
           "xmlMapper" : {
@@ -7505,7 +7508,7 @@
           "encoding" : {
             "type" : "string",
             "title" : "Encoding",
-            "description" : "To overrule and use a specific encoding"
+            "description" : "To overrule and use a specific encoding."
           },
           "filterNonXmlChars" : {
             "type" : "boolean",
@@ -7576,12 +7579,12 @@
           "schema" : {
             "type" : "string",
             "title" : "Schema",
-            "description" : "To validate against an existing schema. Your can use the prefix classpath:, file: or http: to specify how the resource should be resolved. You can separate multiple schema files by using the ',' character."
+            "description" : "To validate against an existing schema. You can use the prefix classpath:, file: or http: to specify how the resource should be resolved. You can separate multiple schema files by using the comma character."
           },
           "schemaLocation" : {
             "type" : "string",
             "title" : "Schema Location",
-            "description" : "To define the location of the schema"
+            "description" : "To define the location of the schema."
           },
           "schemaSeverityLevel" : {
             "type" : "string",
@@ -7749,7 +7752,7 @@
           "unmarshalType" : {
             "type" : "string",
             "title" : "Unmarshal Type",
-            "description" : "Class name of the java type to use when unmarshalling"
+            "description" : "Class name of the java type to use when unmarshalling."
           },
           "useDefaultObjectMapper" : {
             "type" : "boolean",
@@ -7779,7 +7782,7 @@
           "usingParallelCompression" : {
             "type" : "boolean",
             "title" : "Using Parallel Compression",
-            "description" : "Enable encoding (compress) using multiple processing cores.",
+            "description" : "Whether to enable encoding (compress) using multiple processing cores.",
             "default" : false
           }
         }
@@ -7793,13 +7796,13 @@
           "binaryContent" : {
             "type" : "boolean",
             "title" : "Binary Content",
-            "description" : "Defines whether the content of binary parts in the MIME multipart is binary (true) or Base-64 encoded (false) Default is false.",
+            "description" : "Whether the content of binary parts in the MIME multipart is binary (true) or Base-64 encoded (false).",
             "default" : false
           },
           "headersInline" : {
             "type" : "boolean",
             "title" : "Headers Inline",
-            "description" : "Defines whether the MIME-Multipart headers are part of the message body (true) or are set as Camel headers (false). Default is false.",
+            "description" : "Whether the MIME-Multipart headers are part of the message body (true) or are set as Camel headers (false).",
             "default" : false
           },
           "id" : {
@@ -7810,18 +7813,18 @@
           "includeHeaders" : {
             "type" : "string",
             "title" : "Include Headers",
-            "description" : "A regex that defines which Camel headers are also included as MIME headers into the MIME multipart. This will only work if headersInline is set to true. Default is to include no headers"
+            "description" : "A regex that defines which Camel headers are also included as MIME headers into the MIME multipart. This only works if headersInline is set to true."
           },
           "multipartSubType" : {
             "type" : "string",
             "title" : "Multipart Sub Type",
-            "description" : "Specify the subtype of the MIME Multipart. Default is mixed.",
+            "description" : "Specify the subtype of the MIME Multipart.",
             "default" : "mixed"
           },
           "multipartWithoutAttachment" : {
             "type" : "boolean",
             "title" : "Multipart Without Attachment",
-            "description" : "Defines whether a message without attachment is also marshaled into a MIME Multipart (with only one body part). Default is false.",
+            "description" : "Whether a message without attachment is also marshaled into a MIME Multipart (with only one body part).",
             "default" : false
           }
         }
@@ -7835,13 +7838,13 @@
           "allowUnmarshallType" : {
             "type" : "boolean",
             "title" : "Allow Unmarshall Type",
-            "description" : "If enabled then the unmarshal type can be specified via the CamelOcsfUnmarshalType header. This should only be enabled when desired to be used.",
+            "description" : "Whether to allow the unmarshal type to be specified via the CamelOcsfUnmarshalType header.",
             "default" : false
           },
           "collectionType" : {
             "type" : "string",
             "title" : "Collection Type",
-            "description" : "Refers to a custom collection type to lookup in the registry to use. This option should rarely be used, but allows to use different collection types than java.util.Collection based as default."
+            "description" : "Refers to a custom collection type to lookup in the registry to use. This option should rarely be used, but allows using different collection types than java.util.Collection based as default."
           },
           "id" : {
             "type" : "string",
@@ -7856,7 +7859,7 @@
           "prettyPrint" : {
             "type" : "boolean",
             "title" : "Pretty Print",
-            "description" : "To enable pretty printing output nicely formatted. Is by default false.",
+            "description" : "Whether to enable pretty printing output nicely formatted.",
             "default" : false
           },
           "unmarshalType" : {
@@ -7873,7 +7876,7 @@
           "useList" : {
             "type" : "boolean",
             "title" : "Use List",
-            "description" : "To unmarshal to a List of OCSF events.",
+            "description" : "Whether to unmarshal to a List of OCSF events.",
             "default" : false
           }
         }
@@ -7924,7 +7927,7 @@
           "keyUserid" : {
             "type" : "string",
             "title" : "Key Userid",
-            "description" : "The user ID of the key in the PGP keyring used during encryption. Can also be only a part of a user ID. For example, if the user ID is Test User then you can use the part Test User or to address the user ID."
+            "description" : "The user ID of the key in the PGP keyring used during encryption. Can also be only a part of a user ID."
           },
           "password" : {
             "type" : "string",
@@ -7934,7 +7937,7 @@
           "provider" : {
             "type" : "string",
             "title" : "Provider",
-            "description" : "Java Cryptography Extension (JCE) provider, default is Bouncy Castle (BC). Alternatively you can use, for example, the IAIK JCE provider; in this case the provider must be registered beforehand and the Bouncy Castle provider must not be registered beforehand. The Sun JCE provider does not work."
+            "description" : "Java Cryptography Extension (JCE) provider, default is Bouncy Castle (BC). Alternatively you can use, for example, the IAIK JCE provider."
           },
           "signatureKeyFileName" : {
             "type" : "string",
@@ -7944,12 +7947,12 @@
           "signatureKeyRing" : {
             "type" : "string",
             "title" : "Signature Key Ring",
-            "description" : "Keyring used for signing/verifying as byte array. You can not set the signatureKeyFileName and signatureKeyRing at the same time."
+            "description" : "Keyring used for signing/verifying as byte array. You cannot set the signatureKeyFileName and signatureKeyRing at the same time."
           },
           "signatureKeyUserid" : {
             "type" : "string",
             "title" : "Signature Key Userid",
-            "description" : "User ID of the key in the PGP keyring used for signing (during encryption) or signature verification (during decryption). During the signature verification process the specified User ID restricts the public keys from the public keyring which can be used for the verification. If no User ID is specified for the signature verficiation then any public key in the public keyring can be used for the verification. Can also be only a part of a user ID. For example, if the user ID is Test User then you can use the part Test User or to address the User ID."
+            "description" : "User ID of the key in the PGP keyring used for signing (during encryption) or signature verification (during decryption)."
           },
           "signaturePassword" : {
             "type" : "string",
@@ -7959,7 +7962,7 @@
           "signatureVerificationOption" : {
             "type" : "string",
             "title" : "Signature Verification Option",
-            "description" : "Controls the behavior for verifying the signature during unmarshaling. There are 4 values possible: optional: The PGP message may or may not contain signatures; if it does contain signatures, then a signature verification is executed. required: The PGP message must contain at least one signature; if this is not the case an exception (PGPException) is thrown. A signature verification is executed. ignore: Contained signatures in the PGP message are ignored; no signature verification is executed. no_signature_allowed: The PGP message must not contain a signature; otherwise an exception (PGPException) is thrown."
+            "description" : "Controls the behavior for verifying the signature during unmarshaling. Possible values: optional, required, ignore, no_signature_allowed."
           }
         }
       },
@@ -7983,19 +7986,19 @@
           "keyEncapsulationAlgorithm" : {
             "type" : "string",
             "title" : "Key Encapsulation Algorithm",
-            "description" : "The Post-Quantum KEM algorithm to use for key encapsulation. Supported values: MLKEM, BIKE, HQC, CMCE, SABER, FRODO, NTRU, NTRULPRime, SNTRUPrime, KYBER",
+            "description" : "The Post-Quantum KEM algorithm to use for key encapsulation.",
             "default" : "MLKEM",
             "enum" : [ "MLKEM", "BIKE", "HQC", "CMCE", "SABER", "FRODO", "NTRU", "NTRULPRime", "SNTRUPrime", "KYBER" ]
           },
           "keyGenerator" : {
             "type" : "string",
             "title" : "Key Generator",
-            "description" : "Refers to a custom KeyGenerator to lookup from the register for KEM operations."
+            "description" : "Refers to a custom KeyGenerator to lookup from the registry for KEM operations."
           },
           "keyPair" : {
             "type" : "string",
             "title" : "Key Pair",
-            "description" : "Refers to the KeyPair to lookup from the register to use for KEM operations."
+            "description" : "Refers to the KeyPair to lookup from the registry to use for KEM operations."
           },
           "provider" : {
             "type" : "string",
@@ -8005,7 +8008,7 @@
           "symmetricKeyAlgorithm" : {
             "type" : "string",
             "title" : "Symmetric Key Algorithm",
-            "description" : "The symmetric encryption algorithm to use with the shared secret. Supported values: AES, ARIA, RC2, RC5, CAMELLIA, CAST5, CAST6, CHACHA7539, etc.",
+            "description" : "The symmetric encryption algorithm to use with the shared secret.",
             "default" : "AES",
             "enum" : [ "AES", "ARIA", "RC2", "RC5", "CAMELLIA", "CAST5", "CAST6", "CHACHA7539", "DSTU7624", "GOST28147", "GOST3412_2015", "GRAIN128", "HC128", "HC256", "SALSA20", "SEED", "SM4", "DESEDE" ]
           },
@@ -8044,7 +8047,7 @@
           "unmarshalType" : {
             "type" : "string",
             "title" : "Unmarshal Type",
-            "description" : "Class to use when (un)marshalling. If omitted, parquet files are converted into Avro's GenericRecords for unmarshalling and input objects are assumed as GenericRecords for marshalling."
+            "description" : "Class to use when (un)marshalling. If omitted, parquet files are converted into Avro GenericRecords for unmarshalling and input objects are assumed as GenericRecords for marshalling."
           }
         }
       },
@@ -8081,7 +8084,7 @@
           "collectionType" : {
             "type" : "string",
             "title" : "Collection Type",
-            "description" : "Refers to a custom collection type to lookup in the registry to use. This option should rarely be used, but allows to use different collection types than java.util.Collection based as default."
+            "description" : "Refers to a custom collection type to lookup in the registry to use. This option should rarely be used, but allows using different collection types than java.util.Collection based as default."
           },
           "contentTypeFormat" : {
             "type" : "string",
@@ -8099,12 +8102,12 @@
           "disableFeatures" : {
             "type" : "string",
             "title" : "Disable Features",
-            "description" : "Set of features to disable on the Jackson com.fasterxml.jackson.databind.ObjectMapper. The features should be a name that matches a enum from com.fasterxml.jackson.databind.SerializationFeature, com.fasterxml.jackson.databind.DeserializationFeature, or com.fasterxml.jackson.databind.MapperFeature Multiple features can be separated by comma"
+            "description" : "Set of features to disable on the Jackson com.fasterxml.jackson.databind.ObjectMapper. Multiple features can be separated by comma."
           },
           "enableFeatures" : {
             "type" : "string",
             "title" : "Enable Features",
-            "description" : "Set of features to enable on the Jackson com.fasterxml.jackson.databind.ObjectMapper. The features should be a name that matches a enum from com.fasterxml.jackson.databind.SerializationFeature, com.fasterxml.jackson.databind.DeserializationFeature, or com.fasterxml.jackson.databind.MapperFeature Multiple features can be separated by comma"
+            "description" : "Set of features to enable on the Jackson com.fasterxml.jackson.databind.ObjectMapper. Multiple features can be separated by comma."
           },
           "id" : {
             "type" : "string",
@@ -8114,17 +8117,17 @@
           "include" : {
             "type" : "string",
             "title" : "Include",
-            "description" : "If you want to marshal a pojo to JSON, and the pojo has some fields with null values. And you want to skip these null values, you can set this option to NON_NULL"
+            "description" : "If you want to marshal a pojo to JSON, and the pojo has some fields with null values. And you want to skip these null values, you can set this option to NON_NULL."
           },
           "instanceClass" : {
             "type" : "string",
             "title" : "Instance Class",
-            "description" : "Name of class to use when unmarshalling"
+            "description" : "Name of class to use when unmarshalling."
           },
           "jsonView" : {
             "type" : "string",
             "title" : "Json View",
-            "description" : "When marshalling a POJO to JSON you might want to exclude certain fields from the JSON output. With Jackson you can use JSON views to accomplish this. This option is to refer to the class which has JsonView annotations"
+            "description" : "When marshalling a POJO to JSON you might want to exclude certain fields from the JSON output. With Jackson you can use JSON views to accomplish this. This option is to refer to the class which has JsonView annotations."
           },
           "library" : {
             "type" : "string",
@@ -8161,7 +8164,7 @@
           "unmarshalType" : {
             "type" : "string",
             "title" : "Unmarshal Type",
-            "description" : "Class name of the java type to use when unmarshalling"
+            "description" : "Class name of the java type to use when unmarshalling."
           },
           "useDefaultObjectMapper" : {
             "type" : "boolean",
@@ -8228,7 +8231,7 @@
           "encoding" : {
             "type" : "string",
             "title" : "Encoding",
-            "description" : "To overrule and use a specific encoding"
+            "description" : "To overrule and use a specific encoding."
           },
           "id" : {
             "type" : "string",
@@ -8249,7 +8252,7 @@
           "schema" : {
             "type" : "string",
             "title" : "Schema",
-            "description" : "To validate against an existing schema. Your can use the prefix classpath:, file: or http: to specify how the resource should be resolved. You can separate multiple schema files by using the ',' character."
+            "description" : "To validate against an existing schema. You can use the prefix classpath:, file: or http: to specify how the resource should be resolved. You can separate multiple schema files by using the ',' character."
           },
           "version" : {
             "type" : "string",
@@ -8275,7 +8278,7 @@
           "writeInJson" : {
             "type" : "boolean",
             "title" : "Write In Json",
-            "description" : "The flag indicating that messages must be marshalled in a JSON format.",
+            "description" : "Whether to marshal messages in JSON format.",
             "default" : false
           }
         }
@@ -8309,7 +8312,7 @@
           "writeInJson" : {
             "type" : "boolean",
             "title" : "Write In Json",
-            "description" : "The flag indicating that messages must be marshalled in a JSON format.",
+            "description" : "Whether to marshal messages in JSON format.",
             "default" : false
           }
         }
@@ -8336,7 +8339,7 @@
           "allowEmptyDirectory" : {
             "type" : "boolean",
             "title" : "Allow Empty Directory",
-            "description" : "If the tar file has more than one entry, setting this option to true, allows to get the iterator even if the directory is empty",
+            "description" : "Whether to allow getting the iterator even if the directory is empty, when the tar file has more than one entry.",
             "default" : false
           },
           "id" : {
@@ -8347,19 +8350,19 @@
           "maxDecompressedSize" : {
             "type" : "number",
             "title" : "Max Decompressed Size",
-            "description" : "Set the maximum decompressed size of a tar file (in bytes). The default value if not specified corresponds to 1 gigabyte. An IOException will be thrown if the decompressed size exceeds this amount. Set to -1 to disable setting a maximum decompressed size.",
+            "description" : "The maximum decompressed size of a tar file (in bytes). An IOException is thrown if the decompressed size exceeds this amount. Set to -1 to disable.",
             "default" : 1073741824
           },
           "preservePathElements" : {
             "type" : "boolean",
             "title" : "Preserve Path Elements",
-            "description" : "If the file name contains path elements, setting this option to true, allows the path to be maintained in the tar file.",
+            "description" : "Whether to preserve path elements when the file name contains path elements in the tar file.",
             "default" : false
           },
           "usingIterator" : {
             "type" : "boolean",
             "title" : "Using Iterator",
-            "description" : "If the tar file has more than one entry, the setting this option to true, allows working with the splitter EIP, to split the data using an iterator in a streaming mode.",
+            "description" : "Whether to use an iterator to split tar entries when the tar file has more than one entry, for use with the splitter EIP in streaming mode.",
             "default" : false
           }
         }
@@ -8373,7 +8376,7 @@
           "contentTypeFormat" : {
             "type" : "string",
             "title" : "Content Type Format",
-            "description" : "Defines a content type format in which thrift message will be serialized/deserialized from(to) the Java been. The format can either be native or json for either native binary thrift, json or simple json fields representation. The default value is binary.",
+            "description" : "The content type format in which thrift message will be serialized/deserialized. The format can be native binary, json, or simple json.",
             "default" : "binary",
             "enum" : [ "binary", "json", "sjson" ]
           },
@@ -8391,7 +8394,7 @@
           "instanceClass" : {
             "type" : "string",
             "title" : "Instance Class",
-            "description" : "Name of class to use when unmarshalling"
+            "description" : "Name of class to use when unmarshalling."
           }
         }
       },
@@ -8592,12 +8595,12 @@
           "padding" : {
             "type" : "string",
             "title" : "Padding",
-            "description" : "The padding character. The default value is a space"
+            "description" : "The padding character. The default value is a space."
           },
           "recordEndsOnNewline" : {
             "type" : "boolean",
             "title" : "Record Ends On Newline",
-            "description" : "Whether or not the record ends on new line. The default value is false",
+            "description" : "Whether the record ends on a new line.",
             "default" : false
           },
           "skipEmptyLines" : {
@@ -8609,7 +8612,7 @@
           "skipTrailingCharsUntilNewline" : {
             "type" : "boolean",
             "title" : "Skip Trailing Chars Until Newline",
-            "description" : "Whether or not the trailing characters until new line must be ignored. The default value is false",
+            "description" : "Whether to skip trailing characters until a new line is found.",
             "default" : false
           },
           "univocityHeader" : {
@@ -8629,7 +8632,7 @@
           "length" : {
             "type" : "string",
             "title" : "Length",
-            "description" : "Header length"
+            "description" : "Header length."
           },
           "name" : {
             "type" : "string",
@@ -8895,7 +8898,7 @@
           "unmarshalType" : {
             "type" : "string",
             "title" : "Unmarshal Type",
-            "description" : "Class name of the java type to use when unmarshalling"
+            "description" : "Class name of the java type to use when unmarshalling."
           },
           "useApplicationContextClassLoader" : {
             "type" : "boolean",
@@ -8914,7 +8917,7 @@
           "compressionLevel" : {
             "type" : "string",
             "title" : "Compression Level",
-            "description" : "To specify a specific compression between 0-9. -1 is default compression, 0 is no compression, and 9 is the best compression.",
+            "description" : "Compression level to use (0-9). -1 is default compression, 0 is no compression, and 9 is the best compression.",
             "default" : "-1",
             "enum" : [ "-1", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9" ]
           },
@@ -9023,7 +9026,7 @@
           },
           "redeliveryPolicy" : {
             "title" : "Redelivery Policy",
-            "description" : "Sets the redelivery settings",
+            "description" : "The redelivery settings for configuring retry attempts and delays when message processing fails.",
             "$ref" : "#/items/definitions/org.apache.camel.model.RedeliveryPolicyDefinition"
           },
           "redeliveryPolicyRef" : {
@@ -9101,7 +9104,7 @@
           },
           "redeliveryPolicy" : {
             "title" : "Redelivery Policy",
-            "description" : "Sets the redelivery settings",
+            "description" : "The redelivery settings for configuring retry attempts and delays when message processing fails.",
             "$ref" : "#/items/definitions/org.apache.camel.model.RedeliveryPolicyDefinition"
           },
           "redeliveryPolicyRef" : {
@@ -9178,7 +9181,7 @@
           },
           "redeliveryPolicy" : {
             "title" : "Redelivery Policy",
-            "description" : "Sets the redelivery settings",
+            "description" : "The redelivery settings for configuring retry attempts and delays when message processing fails.",
             "$ref" : "#/items/definitions/org.apache.camel.model.RedeliveryPolicyDefinition"
           },
           "redeliveryPolicyRef" : {
@@ -9194,7 +9197,7 @@
           "rollbackLoggingLevel" : {
             "type" : "string",
             "title" : "Rollback Logging Level",
-            "description" : "Sets the logging level to use for logging transactional rollback. This option is default WARN.",
+            "description" : "The logging level to use for logging transactional rollback. Default is WARN.",
             "default" : "WARN",
             "enum" : [ "TRACE", "DEBUG", "INFO", "WARN", "ERROR", "OFF" ]
           },
@@ -9244,7 +9247,7 @@
           "ref" : {
             "type" : "string",
             "title" : "Ref",
-            "description" : "References to an existing or custom error handler."
+            "description" : "Reference to an existing or custom error handler to lookup from the registry."
           }
         },
         "required" : [ "ref" ]
@@ -9299,7 +9302,7 @@
           },
           "redeliveryPolicy" : {
             "title" : "Redelivery Policy",
-            "description" : "Sets the redelivery settings",
+            "description" : "The redelivery settings for configuring retry attempts and delays when message processing fails.",
             "$ref" : "#/items/definitions/org.apache.camel.model.RedeliveryPolicyDefinition"
           },
           "redeliveryPolicyRef" : {
@@ -9315,7 +9318,7 @@
           "rollbackLoggingLevel" : {
             "type" : "string",
             "title" : "Rollback Logging Level",
-            "description" : "Sets the logging level to use for logging transactional rollback. This option is default WARN.",
+            "description" : "The logging level to use for logging transactional rollback. Default is WARN.",
             "default" : "WARN",
             "enum" : [ "TRACE", "DEBUG", "INFO", "WARN", "ERROR", "OFF" ]
           },
@@ -9353,7 +9356,7 @@
           "id" : {
             "type" : "string",
             "title" : "Id",
-            "description" : "Sets the id of this node"
+            "description" : "The id of this node."
           },
           "pretty" : {
             "type" : "boolean",
@@ -9364,7 +9367,7 @@
           "resultType" : {
             "type" : "string",
             "title" : "Result Type",
-            "description" : "Sets the class of the result type (type from output)"
+            "description" : "The class of the result type (type from output)."
           },
           "trim" : {
             "type" : "boolean",
@@ -9395,12 +9398,12 @@
           "id" : {
             "type" : "string",
             "title" : "Id",
-            "description" : "Sets the id of this node"
+            "description" : "The id of this node."
           },
           "resultType" : {
             "type" : "string",
             "title" : "Result Type",
-            "description" : "Sets the class of the result type (type from output)"
+            "description" : "The class of the result type (type from output)."
           },
           "trim" : {
             "type" : "boolean",
@@ -9420,7 +9423,7 @@
           "bodyMediaType" : {
             "type" : "string",
             "title" : "Body Media Type",
-            "description" : "The String representation of the message's body MediaType"
+            "description" : "The media type of the message body, such as application/json."
           },
           "expression" : {
             "type" : "string",
@@ -9430,17 +9433,17 @@
           "id" : {
             "type" : "string",
             "title" : "Id",
-            "description" : "Sets the id of this node"
+            "description" : "The id of this node."
           },
           "outputMediaType" : {
             "type" : "string",
             "title" : "Output Media Type",
-            "description" : "The String representation of the MediaType to output"
+            "description" : "The media type to use for the output result."
           },
           "resultType" : {
             "type" : "string",
             "title" : "Result Type",
-            "description" : "Sets the class of the result type (type from output)"
+            "description" : "The class of the result type (type from output)."
           },
           "source" : {
             "type" : "string",
@@ -9470,7 +9473,7 @@
           "id" : {
             "type" : "string",
             "title" : "Id",
-            "description" : "Sets the id of this node"
+            "description" : "The id of this node."
           },
           "trim" : {
             "type" : "boolean",
@@ -9579,12 +9582,12 @@
           "id" : {
             "type" : "string",
             "title" : "Id",
-            "description" : "Sets the id of this node"
+            "description" : "The id of this node."
           },
           "resultType" : {
             "type" : "string",
             "title" : "Result Type",
-            "description" : "Sets the class of the result type (type from output)"
+            "description" : "The class of the result type (type from output)."
           },
           "trim" : {
             "type" : "boolean",
@@ -9609,7 +9612,7 @@
           "id" : {
             "type" : "string",
             "title" : "Id",
-            "description" : "Sets the id of this node"
+            "description" : "The id of this node."
           },
           "trim" : {
             "type" : "boolean",
@@ -9634,12 +9637,12 @@
           "id" : {
             "type" : "string",
             "title" : "Id",
-            "description" : "Sets the id of this node"
+            "description" : "The id of this node."
           },
           "resultType" : {
             "type" : "string",
             "title" : "Result Type",
-            "description" : "Sets the class of the result type (type from output)"
+            "description" : "The class of the result type (type from output)."
           },
           "source" : {
             "type" : "string",
@@ -9669,7 +9672,7 @@
           "id" : {
             "type" : "string",
             "title" : "Id",
-            "description" : "Sets the id of this node"
+            "description" : "The id of this node."
           },
           "preCompile" : {
             "type" : "boolean",
@@ -9680,7 +9683,7 @@
           "resultType" : {
             "type" : "string",
             "title" : "Result Type",
-            "description" : "Sets the class of the result type (type from output)"
+            "description" : "The class of the result type (type from output)."
           },
           "singleQuotes" : {
             "type" : "boolean",
@@ -9711,12 +9714,12 @@
           "id" : {
             "type" : "string",
             "title" : "Id",
-            "description" : "Sets the id of this node"
+            "description" : "The id of this node."
           },
           "resultType" : {
             "type" : "string",
             "title" : "Result Type",
-            "description" : "Sets the class of the result type (type from output)"
+            "description" : "The class of the result type (type from output)."
           },
           "trim" : {
             "type" : "boolean",
@@ -9742,7 +9745,7 @@
           "id" : {
             "type" : "string",
             "title" : "Id",
-            "description" : "Sets the id of this node"
+            "description" : "The id of this node."
           },
           "preCompile" : {
             "type" : "boolean",
@@ -9753,7 +9756,7 @@
           "resultType" : {
             "type" : "string",
             "title" : "Result Type",
-            "description" : "Sets the class of the result type (type from output)"
+            "description" : "The class of the result type (type from output)."
           },
           "singleQuotes" : {
             "type" : "boolean",
@@ -9784,12 +9787,12 @@
           "id" : {
             "type" : "string",
             "title" : "Id",
-            "description" : "Sets the id of this node"
+            "description" : "The id of this node."
           },
           "resultType" : {
             "type" : "string",
             "title" : "Result Type",
-            "description" : "Sets the class of the result type (type from output)"
+            "description" : "The class of the result type (type from output)."
           },
           "source" : {
             "type" : "string",
@@ -9831,7 +9834,7 @@
           "id" : {
             "type" : "string",
             "title" : "Id",
-            "description" : "Sets the id of this node"
+            "description" : "The id of this node."
           },
           "option" : {
             "type" : "string",
@@ -9842,7 +9845,7 @@
           "resultType" : {
             "type" : "string",
             "title" : "Result Type",
-            "description" : "Sets the class of the result type (type from output)"
+            "description" : "The class of the result type (type from output)."
           },
           "source" : {
             "type" : "string",
@@ -9890,12 +9893,12 @@
           "id" : {
             "type" : "string",
             "title" : "Id",
-            "description" : "Sets the id of this node"
+            "description" : "The id of this node."
           },
           "language" : {
             "type" : "string",
             "title" : "Language",
-            "description" : "The name of the language to use"
+            "description" : "The name of the language to use."
           },
           "trim" : {
             "type" : "boolean",
@@ -9915,27 +9918,27 @@
           "beanType" : {
             "type" : "string",
             "title" : "Bean Type",
-            "description" : "Class name (fully qualified) of the bean to use Will lookup in registry and if there is a single instance of the same type, then the existing bean is used, otherwise a new bean is created (requires a default no-arg constructor)."
+            "description" : "Class name (fully qualified) of the bean to use. Will lookup in registry and if there is a single instance of the same type, then the existing bean is used, otherwise a new bean is created (requires a default no-arg constructor)."
           },
           "id" : {
             "type" : "string",
             "title" : "Id",
-            "description" : "Sets the id of this node"
+            "description" : "The id of this node."
           },
           "method" : {
             "type" : "string",
             "title" : "Method",
-            "description" : "Name of method to call"
+            "description" : "Name of method to call."
           },
           "ref" : {
             "type" : "string",
             "title" : "Ref",
-            "description" : "Reference to an existing bean (bean id) to lookup in the registry"
+            "description" : "Reference to an existing bean (bean id) to lookup in the registry."
           },
           "resultType" : {
             "type" : "string",
             "title" : "Result Type",
-            "description" : "Sets the class of the result type (type from output)"
+            "description" : "The class of the result type (type from output)."
           },
           "scope" : {
             "type" : "string",
@@ -9972,12 +9975,12 @@
           "id" : {
             "type" : "string",
             "title" : "Id",
-            "description" : "Sets the id of this node"
+            "description" : "The id of this node."
           },
           "resultType" : {
             "type" : "string",
             "title" : "Result Type",
-            "description" : "Sets the class of the result type (type from output)"
+            "description" : "The class of the result type (type from output)."
           },
           "trim" : {
             "type" : "boolean",
@@ -10003,12 +10006,12 @@
           "id" : {
             "type" : "string",
             "title" : "Id",
-            "description" : "Sets the id of this node"
+            "description" : "The id of this node."
           },
           "resultType" : {
             "type" : "string",
             "title" : "Result Type",
-            "description" : "Sets the class of the result type (type from output)"
+            "description" : "The class of the result type (type from output)."
           },
           "trim" : {
             "type" : "boolean",
@@ -10033,12 +10036,12 @@
           "id" : {
             "type" : "string",
             "title" : "Id",
-            "description" : "Sets the id of this node"
+            "description" : "The id of this node."
           },
           "resultType" : {
             "type" : "string",
             "title" : "Result Type",
-            "description" : "Sets the class of the result type (type from output)"
+            "description" : "The class of the result type (type from output)."
           },
           "trim" : {
             "type" : "boolean",
@@ -10063,12 +10066,12 @@
           "id" : {
             "type" : "string",
             "title" : "Id",
-            "description" : "Sets the id of this node"
+            "description" : "The id of this node."
           },
           "resultType" : {
             "type" : "string",
             "title" : "Result Type",
-            "description" : "Sets the class of the result type (type from output)"
+            "description" : "The class of the result type (type from output)."
           },
           "trim" : {
             "type" : "boolean",
@@ -10093,7 +10096,7 @@
           "id" : {
             "type" : "string",
             "title" : "Id",
-            "description" : "Sets the id of this node"
+            "description" : "The id of this node."
           },
           "nested" : {
             "type" : "boolean",
@@ -10110,7 +10113,7 @@
           "resultType" : {
             "type" : "string",
             "title" : "Result Type",
-            "description" : "Sets the class of the result type (type from output)"
+            "description" : "The class of the result type (type from output)."
           },
           "trim" : {
             "type" : "boolean",
@@ -10141,12 +10144,12 @@
           "id" : {
             "type" : "string",
             "title" : "Id",
-            "description" : "Sets the id of this node"
+            "description" : "The id of this node."
           },
           "resultType" : {
             "type" : "string",
             "title" : "Result Type",
-            "description" : "Sets the class of the result type (type from output)"
+            "description" : "The class of the result type (type from output)."
           },
           "trim" : {
             "type" : "boolean",
@@ -10181,7 +10184,7 @@
           "id" : {
             "type" : "string",
             "title" : "Id",
-            "description" : "Sets the id of this node"
+            "description" : "The id of this node."
           },
           "includeTokens" : {
             "type" : "boolean",
@@ -10203,7 +10206,7 @@
           "resultType" : {
             "type" : "string",
             "title" : "Result Type",
-            "description" : "Sets the class of the result type (type from output)"
+            "description" : "The class of the result type (type from output)."
           },
           "skipFirst" : {
             "type" : "boolean",
@@ -10250,7 +10253,7 @@
           "id" : {
             "type" : "string",
             "title" : "Id",
-            "description" : "Sets the id of this node"
+            "description" : "The id of this node."
           },
           "trim" : {
             "type" : "boolean",
@@ -10275,7 +10278,7 @@
           "id" : {
             "type" : "string",
             "title" : "Id",
-            "description" : "Sets the id of this node"
+            "description" : "The id of this node."
           },
           "module" : {
             "type" : "string",
@@ -10285,7 +10288,7 @@
           "resultType" : {
             "type" : "string",
             "title" : "Result Type",
-            "description" : "Sets the class of the result type (type from output)"
+            "description" : "The class of the result type (type from output)."
           },
           "trim" : {
             "type" : "boolean",
@@ -10315,7 +10318,7 @@
           "id" : {
             "type" : "string",
             "title" : "Id",
-            "description" : "Sets the id of this node"
+            "description" : "The id of this node."
           },
           "mode" : {
             "type" : "string",
@@ -10335,7 +10338,7 @@
           "resultType" : {
             "type" : "string",
             "title" : "Result Type",
-            "description" : "Sets the class of the result type (type from output)"
+            "description" : "The class of the result type (type from output)."
           },
           "source" : {
             "type" : "string",
@@ -10375,7 +10378,7 @@
           "id" : {
             "type" : "string",
             "title" : "Id",
-            "description" : "Sets the id of this node"
+            "description" : "The id of this node."
           },
           "logNamespaces" : {
             "type" : "boolean",
@@ -10412,7 +10415,7 @@
           "resultType" : {
             "type" : "string",
             "title" : "Result Type",
-            "description" : "Sets the class of the result type (type from output)"
+            "description" : "The class of the result type (type from output)."
           },
           "saxon" : {
             "type" : "boolean",
@@ -10459,7 +10462,7 @@
           "id" : {
             "type" : "string",
             "title" : "Id",
-            "description" : "Sets the id of this node"
+            "description" : "The id of this node."
           },
           "namespace" : {
             "type" : "array",
@@ -10472,7 +10475,7 @@
           "resultType" : {
             "type" : "string",
             "title" : "Result Type",
-            "description" : "Sets the class of the result type (type from output)"
+            "description" : "The class of the result type (type from output)."
           },
           "source" : {
             "type" : "string",
@@ -10502,7 +10505,7 @@
           "ref" : {
             "type" : "string",
             "title" : "Ref",
-            "description" : "Refers to the custom load balancer to lookup from the registry"
+            "description" : "Refers to the custom load balancer to lookup from the registry."
           }
         },
         "required" : [ "ref" ]
@@ -10516,7 +10519,7 @@
           "exception" : {
             "type" : "array",
             "title" : "Exception",
-            "description" : "A list of class names for specific exceptions to monitor. If no exceptions are configured then all exceptions are monitored",
+            "description" : "A list of class names for specific exceptions to monitor. If no exceptions are configured then all exceptions are monitored.",
             "items" : {
               "type" : "string"
             }
@@ -10529,19 +10532,19 @@
           "maximumFailoverAttempts" : {
             "type" : "string",
             "title" : "Maximum Failover Attempts",
-            "description" : "A value to indicate after X failover attempts we should exhaust (give up). Use -1 to indicate never give up and continuously try to failover. Use 0 to never failover. And use e.g. 3 to failover at most 3 times before giving up. This option can be used whether roundRobin is enabled or not.",
+            "description" : "A value to indicate after X failover attempts we should exhaust (give up). Use -1 to indicate never give up and continuously try to failover. Use 0 to never failover. Use e.g. 3 to failover at most 3 times before giving up.",
             "default" : "-1"
           },
           "roundRobin" : {
             "type" : "boolean",
             "title" : "Round Robin",
-            "description" : "Whether or not the failover load balancer should operate in round robin mode or not. If not, then it will always start from the first endpoint when a new message is to be processed. In other words it restart from the top for every message. If round robin is enabled, then it keeps state and will continue with the next endpoint in a round robin fashion. You can also enable sticky mode together with round robin, if so then it will pick the last known good endpoint to use when starting the load balancing (instead of using the next when starting).",
+            "description" : "Whether to use round robin mode. If enabled, the load balancer keeps state and continues with the next endpoint in a round robin fashion. If not, it always starts from the first endpoint for every message.",
             "default" : false
           },
           "sticky" : {
             "type" : "boolean",
             "title" : "Sticky",
-            "description" : "Whether or not the failover load balancer should operate in sticky mode or not. If not, then it will always start from the first endpoint when a new message is to be processed. In other words it restart from the top for every message. If sticky is enabled, then it keeps state and will continue with the last known good endpoint. You can also enable sticky mode together with round robin, if so then it will pick the last known good endpoint to use when starting the load balancing (instead of using the next when starting).",
+            "description" : "Whether to use sticky mode. If enabled, the load balancer keeps state and continues with the last known good endpoint.",
             "default" : false
           }
         }
@@ -10580,7 +10583,7 @@
         "properties" : {
           "correlationExpression" : {
             "title" : "Correlation Expression",
-            "description" : "The correlation expression to use to calculate the correlation key",
+            "description" : "The correlation expression to use to calculate the correlation key.",
             "$ref" : "#/items/definitions/org.apache.camel.model.ExpressionSubElementDefinition"
           },
           "id" : {
@@ -10612,12 +10615,12 @@
           "distributionRatio" : {
             "type" : "string",
             "title" : "Distribution Ratio",
-            "description" : "The distribution ratio is a delimited String consisting on integer weights separated by delimiters for example 2,3,5. The distributionRatio must match the number of endpoints and/or processors specified in the load balancer list."
+            "description" : "The distribution ratio is a delimited String consisting of integer weights separated by delimiters for example 2,3,5. The distributionRatio must match the number of endpoints and/or processors specified in the load balancer list."
           },
           "distributionRatioDelimiter" : {
             "type" : "string",
             "title" : "Distribution Ratio Delimiter",
-            "description" : "Delimiter used to specify the distribution ratio. The default value is , (comma)",
+            "description" : "Delimiter used to specify the distribution ratio. The default value is comma.",
             "default" : ","
           },
           "id" : {
@@ -10628,7 +10631,7 @@
           "roundRobin" : {
             "type" : "boolean",
             "title" : "Round Robin",
-            "description" : "To enable round robin mode. By default the weighted distribution mode is used. The default value is false.",
+            "description" : "Whether to enable round robin mode. By default the weighted distribution mode is used.",
             "default" : false
           }
         },
@@ -10643,7 +10646,7 @@
           "description" : {
             "type" : "string",
             "title" : "Description",
-            "description" : "A short description for security scheme."
+            "description" : "A short description for the security scheme."
           },
           "inCookie" : {
             "type" : "boolean",
@@ -10685,7 +10688,7 @@
           "description" : {
             "type" : "string",
             "title" : "Description",
-            "description" : "A short description for security scheme."
+            "description" : "A short description for the security scheme."
           },
           "key" : {
             "type" : "string",
@@ -10704,7 +10707,7 @@
           "description" : {
             "type" : "string",
             "title" : "Description",
-            "description" : "A short description for security scheme."
+            "description" : "A short description for the security scheme."
           },
           "format" : {
             "type" : "string",
@@ -10753,7 +10756,7 @@
           "consumes" : {
             "type" : "string",
             "title" : "Consumes",
-            "description" : "To define the content type what the REST service consumes (accept as input), such as application/xml or application/json. This option will override what may be configured on a parent level"
+            "description" : "The content type the REST service consumes (accept as input), such as application/xml or application/json. This option will override what may be configured on a parent level."
           },
           "deprecated" : {
             "type" : "boolean",
@@ -10815,7 +10818,7 @@
           "produces" : {
             "type" : "string",
             "title" : "Produces",
-            "description" : "To define the content type what the REST service produces (uses for output), such as application/xml or application/json This option will override what may be configured on a parent level"
+            "description" : "The content type the REST service produces (uses for output), such as application/xml or application/json. This option will override what may be configured on a parent level."
           },
           "responseMessage" : {
             "type" : "array",
@@ -10828,7 +10831,7 @@
           "routeId" : {
             "type" : "string",
             "title" : "Route Id",
-            "description" : "Sets the id of the route"
+            "description" : "The route id this REST service will refer to."
           },
           "security" : {
             "type" : "array",
@@ -10896,7 +10899,7 @@
           "consumes" : {
             "type" : "string",
             "title" : "Consumes",
-            "description" : "To define the content type what the REST service consumes (accept as input), such as application/xml or application/json. This option will override what may be configured on a parent level"
+            "description" : "The content type the REST service consumes (accept as input), such as application/xml or application/json. This option will override what may be configured on a parent level."
           },
           "deprecated" : {
             "type" : "boolean",
@@ -10958,7 +10961,7 @@
           "produces" : {
             "type" : "string",
             "title" : "Produces",
-            "description" : "To define the content type what the REST service produces (uses for output), such as application/xml or application/json This option will override what may be configured on a parent level"
+            "description" : "The content type the REST service produces (uses for output), such as application/xml or application/json. This option will override what may be configured on a parent level."
           },
           "responseMessage" : {
             "type" : "array",
@@ -10971,7 +10974,7 @@
           "routeId" : {
             "type" : "string",
             "title" : "Route Id",
-            "description" : "Sets the id of the route"
+            "description" : "The route id this REST service will refer to."
           },
           "security" : {
             "type" : "array",
@@ -11039,7 +11042,7 @@
           "consumes" : {
             "type" : "string",
             "title" : "Consumes",
-            "description" : "To define the content type what the REST service consumes (accept as input), such as application/xml or application/json. This option will override what may be configured on a parent level"
+            "description" : "The content type the REST service consumes (accept as input), such as application/xml or application/json. This option will override what may be configured on a parent level."
           },
           "deprecated" : {
             "type" : "boolean",
@@ -11101,7 +11104,7 @@
           "produces" : {
             "type" : "string",
             "title" : "Produces",
-            "description" : "To define the content type what the REST service produces (uses for output), such as application/xml or application/json This option will override what may be configured on a parent level"
+            "description" : "The content type the REST service produces (uses for output), such as application/xml or application/json. This option will override what may be configured on a parent level."
           },
           "responseMessage" : {
             "type" : "array",
@@ -11114,7 +11117,7 @@
           "routeId" : {
             "type" : "string",
             "title" : "Route Id",
-            "description" : "Sets the id of the route"
+            "description" : "The route id this REST service will refer to."
           },
           "security" : {
             "type" : "array",
@@ -11157,7 +11160,7 @@
           "description" : {
             "type" : "string",
             "title" : "Description",
-            "description" : "A short description for security scheme."
+            "description" : "A short description for the security scheme."
           },
           "key" : {
             "type" : "string",
@@ -11176,12 +11179,12 @@
           "authorizationUrl" : {
             "type" : "string",
             "title" : "Authorization Url",
-            "description" : "The authorization URL to be used for this flow. This SHOULD be in the form of a URL. Required for implicit and access code flows"
+            "description" : "The authorization URL to use for this flow. Required for implicit and access code flows."
           },
           "description" : {
             "type" : "string",
             "title" : "Description",
-            "description" : "A short description for security scheme."
+            "description" : "A short description for the security scheme."
           },
           "flow" : {
             "type" : "string",
@@ -11197,12 +11200,12 @@
           "refreshUrl" : {
             "type" : "string",
             "title" : "Refresh Url",
-            "description" : "The URL to be used for obtaining refresh tokens. This MUST be in the form of a URL."
+            "description" : "The URL to use for obtaining refresh tokens."
           },
           "scopes" : {
             "type" : "array",
             "title" : "Scopes",
-            "description" : "The available scopes for an OAuth2 security scheme",
+            "description" : "The available scopes for the OAuth2 security scheme.",
             "items" : {
               "$ref" : "#/items/definitions/org.apache.camel.model.rest.RestPropertyDefinition"
             }
@@ -11210,7 +11213,7 @@
           "tokenUrl" : {
             "type" : "string",
             "title" : "Token Url",
-            "description" : "The token URL to be used for this flow. This SHOULD be in the form of a URL. Required for password, application, and access code flows."
+            "description" : "The token URL to use for this flow. Required for password, application, and access code flows."
           }
         },
         "required" : [ "key" ]
@@ -11224,7 +11227,7 @@
           "apiContextPath" : {
             "type" : "string",
             "title" : "Api Context Path",
-            "description" : "Whether to enable api-doc that exposes the OpenAPI specification file as a REST endpoint. This allows clients to obtain the specification from the running Camel application."
+            "description" : "Context path for exposing the OpenAPI specification file as a REST endpoint, allowing clients to obtain the specification from the running application."
           },
           "description" : {
             "type" : "string",
@@ -11263,12 +11266,12 @@
           "routeId" : {
             "type" : "string",
             "title" : "Route Id",
-            "description" : "Sets the id of the route"
+            "description" : "The route id."
           },
           "specification" : {
             "type" : "string",
             "title" : "Specification",
-            "description" : "Path to the OpenApi specification file."
+            "description" : "Path to the OpenAPI specification file."
           }
         },
         "required" : [ "specification" ]
@@ -11282,7 +11285,7 @@
           "description" : {
             "type" : "string",
             "title" : "Description",
-            "description" : "A short description for security scheme."
+            "description" : "A short description for the security scheme."
           },
           "key" : {
             "type" : "string",
@@ -11292,7 +11295,7 @@
           "url" : {
             "type" : "string",
             "title" : "Url",
-            "description" : "OpenId Connect URL to discover OAuth2 configuration values."
+            "description" : "OpenID Connect URL to discover OAuth2 configuration values."
           }
         },
         "required" : [ "key", "url" ]
@@ -11306,7 +11309,7 @@
           "allowableValues" : {
             "type" : "array",
             "title" : "Allowable Values",
-            "description" : "Sets the parameter list of allowable values (enum).",
+            "description" : "List of allowable values for the parameter (enum).",
             "items" : {
               "$ref" : "#/items/definitions/org.apache.camel.model.ValueDefinition"
             }
@@ -11327,7 +11330,7 @@
           "dataFormat" : {
             "type" : "string",
             "title" : "Data Format",
-            "description" : "Sets the parameter data format."
+            "description" : "The data format of the parameter such as binary, date, date-time, or password."
           },
           "dataType" : {
             "type" : "string",
@@ -11338,17 +11341,17 @@
           "defaultValue" : {
             "type" : "string",
             "title" : "Default Value",
-            "description" : "Sets the parameter default value."
+            "description" : "The default value of the parameter."
           },
           "description" : {
             "type" : "string",
             "title" : "Description",
-            "description" : "Sets the parameter description."
+            "description" : "Description of the parameter."
           },
           "examples" : {
             "type" : "array",
             "title" : "Examples",
-            "description" : "Sets the parameter examples.",
+            "description" : "Examples of the parameter.",
             "items" : {
               "$ref" : "#/items/definitions/org.apache.camel.model.rest.RestPropertyDefinition"
             }
@@ -11356,7 +11359,7 @@
           "name" : {
             "type" : "string",
             "title" : "Name",
-            "description" : "Sets the parameter name."
+            "description" : "The parameter name."
           },
           "required" : {
             "type" : "boolean",
@@ -11408,7 +11411,7 @@
           "consumes" : {
             "type" : "string",
             "title" : "Consumes",
-            "description" : "To define the content type what the REST service consumes (accept as input), such as application/xml or application/json. This option will override what may be configured on a parent level"
+            "description" : "The content type the REST service consumes (accept as input), such as application/xml or application/json. This option will override what may be configured on a parent level."
           },
           "deprecated" : {
             "type" : "boolean",
@@ -11470,7 +11473,7 @@
           "produces" : {
             "type" : "string",
             "title" : "Produces",
-            "description" : "To define the content type what the REST service produces (uses for output), such as application/xml or application/json This option will override what may be configured on a parent level"
+            "description" : "The content type the REST service produces (uses for output), such as application/xml or application/json. This option will override what may be configured on a parent level."
           },
           "responseMessage" : {
             "type" : "array",
@@ -11483,7 +11486,7 @@
           "routeId" : {
             "type" : "string",
             "title" : "Route Id",
-            "description" : "Sets the id of the route"
+            "description" : "The route id this REST service will refer to."
           },
           "security" : {
             "type" : "array",
@@ -11551,7 +11554,7 @@
           "consumes" : {
             "type" : "string",
             "title" : "Consumes",
-            "description" : "To define the content type what the REST service consumes (accept as input), such as application/xml or application/json. This option will override what may be configured on a parent level"
+            "description" : "The content type the REST service consumes (accept as input), such as application/xml or application/json. This option will override what may be configured on a parent level."
           },
           "deprecated" : {
             "type" : "boolean",
@@ -11613,7 +11616,7 @@
           "produces" : {
             "type" : "string",
             "title" : "Produces",
-            "description" : "To define the content type what the REST service produces (uses for output), such as application/xml or application/json This option will override what may be configured on a parent level"
+            "description" : "The content type the REST service produces (uses for output), such as application/xml or application/json. This option will override what may be configured on a parent level."
           },
           "responseMessage" : {
             "type" : "array",
@@ -11626,7 +11629,7 @@
           "routeId" : {
             "type" : "string",
             "title" : "Route Id",
-            "description" : "Sets the id of the route"
+            "description" : "The route id this REST service will refer to."
           },
           "security" : {
             "type" : "array",
@@ -11694,7 +11697,7 @@
           "consumes" : {
             "type" : "string",
             "title" : "Consumes",
-            "description" : "To define the content type what the REST service consumes (accept as input), such as application/xml or application/json. This option will override what may be configured on a parent level"
+            "description" : "The content type the REST service consumes (accept as input), such as application/xml or application/json. This option will override what may be configured on a parent level."
           },
           "deprecated" : {
             "type" : "boolean",
@@ -11756,7 +11759,7 @@
           "produces" : {
             "type" : "string",
             "title" : "Produces",
-            "description" : "To define the content type what the REST service produces (uses for output), such as application/xml or application/json This option will override what may be configured on a parent level"
+            "description" : "The content type the REST service produces (uses for output), such as application/xml or application/json. This option will override what may be configured on a parent level."
           },
           "responseMessage" : {
             "type" : "array",
@@ -11769,7 +11772,7 @@
           "routeId" : {
             "type" : "string",
             "title" : "Route Id",
-            "description" : "Sets the id of the route"
+            "description" : "The route id this REST service will refer to."
           },
           "security" : {
             "type" : "array",
@@ -11812,7 +11815,7 @@
           "allowableValues" : {
             "type" : "array",
             "title" : "Allowable Values",
-            "description" : "Sets the parameter list of allowable values.",
+            "description" : "List of allowable values for the header (enum).",
             "items" : {
               "$ref" : "#/items/definitions/org.apache.camel.model.ValueDefinition"
             }
@@ -11833,7 +11836,7 @@
           "dataFormat" : {
             "type" : "string",
             "title" : "Data Format",
-            "description" : "Sets the parameter data format."
+            "description" : "The data format of the header such as binary, date, date-time, or password."
           },
           "dataType" : {
             "type" : "string",
@@ -11844,17 +11847,17 @@
           "description" : {
             "type" : "string",
             "title" : "Description",
-            "description" : "Description of the parameter."
+            "description" : "Description of the response header."
           },
           "example" : {
             "type" : "string",
             "title" : "Example",
-            "description" : "Sets the example"
+            "description" : "An example value of this response header."
           },
           "name" : {
             "type" : "string",
             "title" : "Name",
-            "description" : "Name of the parameter. This option is mandatory."
+            "description" : "Name of the response header."
           }
         },
         "required" : [ "name" ]
@@ -11874,12 +11877,12 @@
           "contentType" : {
             "type" : "string",
             "title" : "Content Type",
-            "description" : "The response content-type such as application/json."
+            "description" : "The response content type such as application/json."
           },
           "examples" : {
             "type" : "array",
             "title" : "Examples",
-            "description" : "Examples of response messages",
+            "description" : "Examples of response messages.",
             "items" : {
               "$ref" : "#/items/definitions/org.apache.camel.model.rest.RestPropertyDefinition"
             }
@@ -11887,7 +11890,7 @@
           "header" : {
             "type" : "array",
             "title" : "Header",
-            "description" : "Adds a response header",
+            "description" : "The response headers.",
             "items" : {
               "$ref" : "#/items/definitions/org.apache.camel.model.rest.ResponseHeaderDefinition"
             }
@@ -11895,12 +11898,12 @@
           "message" : {
             "type" : "string",
             "title" : "Message",
-            "description" : "The response message (description)"
+            "description" : "The response message (description)."
           },
           "responseModel" : {
             "type" : "string",
             "title" : "Response Model",
-            "description" : "The response model"
+            "description" : "The response model (class name)."
           }
         },
         "required" : [ "message" ]
@@ -11938,7 +11941,7 @@
           "consumes" : {
             "type" : "string",
             "title" : "Consumes",
-            "description" : "To define the content type what the REST service consumes (accept as input), such as application/xml or application/json"
+            "description" : "The content type the REST service accepts (consumes) as input, such as application/xml or application/json."
           },
           "description" : {
             "type" : "string",
@@ -11975,7 +11978,7 @@
           "produces" : {
             "type" : "string",
             "title" : "Produces",
-            "description" : "To define the content type what the REST service produces (uses for output), such as application/xml or application/json"
+            "description" : "The content type the REST service produces (uses for output), such as application/xml or application/json."
           },
           "skipBindingOnErrorCode" : {
             "type" : "boolean",
@@ -12146,7 +12149,7 @@
           "port" : {
             "type" : "string",
             "title" : "Port",
-            "description" : "The port number to use for exposing the REST service. Notice if you use servlet component then the port number configured here does not apply, as the port number in use is the actual port number the servlet component is using. eg if using Apache Tomcat its the tomcat http port, if using Apache Karaf its the HTTP service in Karaf that uses port 8181 by default etc. Though in those situations setting the port number here, allows tooling and JMX to know the port number, so its recommended to set the port number to the number that the servlet engine uses."
+            "description" : "The port number to use for exposing the REST service."
           },
           "producerApiDoc" : {
             "type" : "string",
@@ -12162,7 +12165,7 @@
           "scheme" : {
             "type" : "string",
             "title" : "Scheme",
-            "description" : "The scheme to use for exposing the REST service. Usually http or https is supported. The default value is http"
+            "description" : "The scheme to use for exposing the REST service. Usually http or https is supported."
           },
           "skipBindingOnErrorCode" : {
             "type" : "boolean",
@@ -12227,7 +12230,7 @@
           "consumes" : {
             "type" : "string",
             "title" : "Consumes",
-            "description" : "To define the content type what the REST service consumes (accept as input), such as application/xml or application/json. This option will override what may be configured on a parent level"
+            "description" : "The content type the REST service consumes (accept as input), such as application/xml or application/json. This option will override what may be configured on a parent level."
           },
           "delete" : {
             "type" : "array",
@@ -12294,7 +12297,7 @@
           "path" : {
             "type" : "string",
             "title" : "Path",
-            "description" : "Path of the rest service, such as /foo"
+            "description" : "Path of the rest service, such as /foo."
           },
           "post" : {
             "type" : "array",
@@ -12305,7 +12308,7 @@
           "produces" : {
             "type" : "string",
             "title" : "Produces",
-            "description" : "To define the content type what the REST service produces (uses for output), such as application/xml or application/json This option will override what may be configured on a parent level"
+            "description" : "The content type the REST service produces (uses for output), such as application/xml or application/json. This option will override what may be configured on a parent level."
           },
           "put" : {
             "type" : "array",
@@ -12348,12 +12351,12 @@
           "key" : {
             "type" : "string",
             "title" : "Key",
-            "description" : "Property key"
+            "description" : "Property key."
           },
           "value" : {
             "type" : "string",
             "title" : "Value",
-            "description" : "Property value"
+            "description" : "Property value."
           }
         },
         "required" : [ "key", "value" ]
@@ -12427,7 +12430,7 @@
           "scopes" : {
             "type" : "string",
             "title" : "Scopes",
-            "description" : "The scopes to allow (separate multiple scopes by comma)"
+            "description" : "The scopes to allow (separate multiple scopes by comma)."
           }
         },
         "required" : [ "key" ]
@@ -12446,22 +12449,22 @@
           "maxOverlap" : {
             "type" : "number",
             "title" : "Max Overlap",
-            "description" : "Sets the maximum number of tokens that can overlap in each segment"
+            "description" : "The maximum number of tokens that can overlap in each segment."
           },
           "maxTokens" : {
             "type" : "number",
             "title" : "Max Tokens",
-            "description" : "Sets the maximum number of tokens on each segment"
+            "description" : "The maximum number of tokens on each segment."
           },
           "modelName" : {
             "type" : "string",
             "title" : "Model Name",
-            "description" : "Sets the model name"
+            "description" : "The underlying model name used by the tokenizer. Providing this switches to computing segment sizes in terms of tokens."
           },
           "tokenizerType" : {
             "type" : "string",
             "title" : "Tokenizer Type",
-            "description" : "Sets the tokenizer type",
+            "description" : "The tokenizer type. Must be one of OPEN_AI, AZURE or QWEN.",
             "enum" : [ "OPEN_AI", "AZURE", "QWEN" ]
           }
         },
@@ -12481,22 +12484,22 @@
           "maxOverlap" : {
             "type" : "number",
             "title" : "Max Overlap",
-            "description" : "Sets the maximum number of tokens that can overlap in each segment"
+            "description" : "The maximum number of tokens that can overlap in each segment."
           },
           "maxTokens" : {
             "type" : "number",
             "title" : "Max Tokens",
-            "description" : "Sets the maximum number of tokens on each segment"
+            "description" : "The maximum number of tokens on each segment."
           },
           "modelName" : {
             "type" : "string",
             "title" : "Model Name",
-            "description" : "Sets the model name"
+            "description" : "The underlying model name used by the tokenizer. Providing this switches to computing segment sizes in terms of tokens."
           },
           "tokenizerType" : {
             "type" : "string",
             "title" : "Tokenizer Type",
-            "description" : "Sets the tokenizer type",
+            "description" : "The tokenizer type. Must be one of OPEN_AI, AZURE or QWEN.",
             "enum" : [ "OPEN_AI", "AZURE", "QWEN" ]
           }
         },
@@ -12516,22 +12519,22 @@
           "maxOverlap" : {
             "type" : "number",
             "title" : "Max Overlap",
-            "description" : "Sets the maximum number of tokens that can overlap in each segment"
+            "description" : "The maximum number of tokens that can overlap in each segment."
           },
           "maxTokens" : {
             "type" : "number",
             "title" : "Max Tokens",
-            "description" : "Sets the maximum number of tokens on each segment"
+            "description" : "The maximum number of tokens on each segment."
           },
           "modelName" : {
             "type" : "string",
             "title" : "Model Name",
-            "description" : "Sets the model name"
+            "description" : "The underlying model name used by the tokenizer. Providing this switches to computing segment sizes in terms of tokens."
           },
           "tokenizerType" : {
             "type" : "string",
             "title" : "Tokenizer Type",
-            "description" : "Sets the tokenizer type",
+            "description" : "The tokenizer type. Must be one of OPEN_AI, AZURE or QWEN.",
             "enum" : [ "OPEN_AI", "AZURE", "QWEN" ]
           }
         },
@@ -12551,22 +12554,22 @@
           "maxOverlap" : {
             "type" : "number",
             "title" : "Max Overlap",
-            "description" : "Sets the maximum number of tokens that can overlap in each segment"
+            "description" : "The maximum number of tokens that can overlap in each segment."
           },
           "maxTokens" : {
             "type" : "number",
             "title" : "Max Tokens",
-            "description" : "Sets the maximum number of tokens on each segment"
+            "description" : "The maximum number of tokens on each segment."
           },
           "modelName" : {
             "type" : "string",
             "title" : "Model Name",
-            "description" : "Sets the model name"
+            "description" : "The underlying model name used by the tokenizer. Providing this switches to computing segment sizes in terms of tokens."
           },
           "tokenizerType" : {
             "type" : "string",
             "title" : "Tokenizer Type",
-            "description" : "Sets the tokenizer type",
+            "description" : "The tokenizer type. Must be one of OPEN_AI, AZURE or QWEN.",
             "enum" : [ "OPEN_AI", "AZURE", "QWEN" ]
           }
         },
@@ -12609,22 +12612,22 @@
           "maxOverlap" : {
             "type" : "number",
             "title" : "Max Overlap",
-            "description" : "Sets the maximum number of tokens that can overlap in each segment"
+            "description" : "The maximum number of tokens that can overlap in each segment."
           },
           "maxTokens" : {
             "type" : "number",
             "title" : "Max Tokens",
-            "description" : "Sets the maximum number of tokens on each segment"
+            "description" : "The maximum number of tokens on each segment."
           },
           "modelName" : {
             "type" : "string",
             "title" : "Model Name",
-            "description" : "Sets the model name"
+            "description" : "The underlying model name used by the tokenizer. Providing this switches to computing segment sizes in terms of tokens."
           },
           "tokenizerType" : {
             "type" : "string",
             "title" : "Tokenizer Type",
-            "description" : "Sets the tokenizer type",
+            "description" : "The tokenizer type. Must be one of OPEN_AI, AZURE or QWEN.",
             "enum" : [ "OPEN_AI", "AZURE", "QWEN" ]
           }
         },
@@ -12639,32 +12642,32 @@
           "className" : {
             "type" : "string",
             "title" : "Class Name",
-            "description" : "Set a class name of the Transformer"
+            "description" : "Fully qualified class name of the custom Transformer implementation."
           },
           "fromType" : {
             "type" : "string",
             "title" : "From Type",
-            "description" : "Set the 'from' data type name. If you specify 'xml:XYZ', the transformer will be picked up if source type is 'xml:XYZ'. If you specify just 'xml', the transformer matches with all of 'xml' source type like 'xml:ABC' or 'xml:DEF'."
+            "description" : "The source (from) data type name. If you specify 'xml:XYZ', the transformer is picked up when source type matches. If you specify just 'xml', it matches all xml source types."
           },
           "name" : {
             "type" : "string",
             "title" : "Name",
-            "description" : "Set the transformer name under which the transformer gets referenced when specifying the input/output data type on routes. If you specify a transformer name that matches a data type scheme like 'csv' the transformer will be picked up for all of 'csv:' from/to Java transformation. Note that the scheme matching is performed only when no exactly matched transformer exists."
+            "description" : "Name under which the transformer gets referenced when specifying input/output data type on routes. If the name matches a data type scheme, the transformer will be picked up as a fallback."
           },
           "ref" : {
             "type" : "string",
             "title" : "Ref",
-            "description" : "Set a bean reference of the Transformer"
+            "description" : "Reference to a custom Transformer bean in the registry."
           },
           "scheme" : {
             "type" : "string",
             "title" : "Scheme",
-            "description" : "Set a scheme name supported by the transformer. If you specify 'csv', the transformer will be picked up for all of 'csv' from/to Java transformation. Note that the scheme matching is performed only when no exactly matched transformer exists."
+            "description" : "Scheme name supported by the transformer. If specified, the transformer will be picked up for all from/to transformation of this scheme. Scheme matching is performed only when no exactly matched transformer exists."
           },
           "toType" : {
             "type" : "string",
             "title" : "To Type",
-            "description" : "Set the 'to' data type name. If you specify 'json:XYZ', the transformer will be picked up if destination type is 'json:XYZ'. If you specify just 'json', the transformer matches with all of 'json' destination type like 'json:ABC' or 'json:DEF'."
+            "description" : "The destination (to) data type name. If you specify 'json:XYZ', the transformer is picked up when destination type matches. If you specify just 'json', it matches all json destination types."
           }
         }
       },
@@ -12722,7 +12725,7 @@
           "fromType" : {
             "type" : "string",
             "title" : "From Type",
-            "description" : "Set the 'from' data type name. If you specify 'xml:XYZ', the transformer will be picked up if source type is 'xml:XYZ'. If you specify just 'xml', the transformer matches with all of 'xml' source type like 'xml:ABC' or 'xml:DEF'."
+            "description" : "The source (from) data type name. If you specify 'xml:XYZ', the transformer is picked up when source type matches. If you specify just 'xml', it matches all xml source types."
           },
           "grok" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.GrokDataFormat"
@@ -12766,7 +12769,7 @@
           "name" : {
             "type" : "string",
             "title" : "Name",
-            "description" : "Set the transformer name under which the transformer gets referenced when specifying the input/output data type on routes. If you specify a transformer name that matches a data type scheme like 'csv' the transformer will be picked up for all of 'csv:' from/to Java transformation. Note that the scheme matching is performed only when no exactly matched transformer exists."
+            "description" : "Name under which the transformer gets referenced when specifying input/output data type on routes. If the name matches a data type scheme, the transformer will be picked up as a fallback."
           },
           "ocsf" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.OcsfDataFormat"
@@ -12789,7 +12792,7 @@
           "scheme" : {
             "type" : "string",
             "title" : "Scheme",
-            "description" : "Set a scheme name supported by the transformer. If you specify 'csv', the transformer will be picked up for all of 'csv' from/to Java transformation. Note that the scheme matching is performed only when no exactly matched transformer exists."
+            "description" : "Scheme name supported by the transformer. If specified, the transformer will be picked up for all from/to transformation of this scheme. Scheme matching is performed only when no exactly matched transformer exists."
           },
           "smooks" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.SmooksDataFormat"
@@ -12815,7 +12818,7 @@
           "toType" : {
             "type" : "string",
             "title" : "To Type",
-            "description" : "Set the 'to' data type name. If you specify 'json:XYZ', the transformer will be picked up if destination type is 'json:XYZ'. If you specify just 'json', the transformer matches with all of 'json' destination type like 'json:ABC' or 'json:DEF'."
+            "description" : "The destination (to) data type name. If you specify 'json:XYZ', the transformer is picked up when destination type matches. If you specify just 'json', it matches all json destination types."
           },
           "univocityCsv" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.UniVocityCsvDataFormat"
@@ -12849,32 +12852,32 @@
           "fromType" : {
             "type" : "string",
             "title" : "From Type",
-            "description" : "Set the 'from' data type name. If you specify 'xml:XYZ', the transformer will be picked up if source type is 'xml:XYZ'. If you specify just 'xml', the transformer matches with all of 'xml' source type like 'xml:ABC' or 'xml:DEF'."
+            "description" : "The source (from) data type name. If you specify 'xml:XYZ', the transformer is picked up when source type matches. If you specify just 'xml', it matches all xml source types."
           },
           "name" : {
             "type" : "string",
             "title" : "Name",
-            "description" : "Set the transformer name under which the transformer gets referenced when specifying the input/output data type on routes. If you specify a transformer name that matches a data type scheme like 'csv' the transformer will be picked up for all of 'csv:' from/to Java transformation. Note that the scheme matching is performed only when no exactly matched transformer exists."
+            "description" : "Name under which the transformer gets referenced when specifying input/output data type on routes. If the name matches a data type scheme, the transformer will be picked up as a fallback."
           },
           "ref" : {
             "type" : "string",
             "title" : "Ref",
-            "description" : "Set the reference of the Endpoint."
+            "description" : "Reference of the Endpoint used for transformation."
           },
           "scheme" : {
             "type" : "string",
             "title" : "Scheme",
-            "description" : "Set a scheme name supported by the transformer. If you specify 'csv', the transformer will be picked up for all of 'csv' from/to Java transformation. Note that the scheme matching is performed only when no exactly matched transformer exists."
+            "description" : "Scheme name supported by the transformer. If specified, the transformer will be picked up for all from/to transformation of this scheme. Scheme matching is performed only when no exactly matched transformer exists."
           },
           "toType" : {
             "type" : "string",
             "title" : "To Type",
-            "description" : "Set the 'to' data type name. If you specify 'json:XYZ', the transformer will be picked up if destination type is 'json:XYZ'. If you specify just 'json', the transformer matches with all of 'json' destination type like 'json:ABC' or 'json:DEF'."
+            "description" : "The destination (to) data type name. If you specify 'json:XYZ', the transformer is picked up when destination type matches. If you specify just 'json', it matches all json destination types."
           },
           "uri" : {
             "type" : "string",
             "title" : "Uri",
-            "description" : "Set the URI of the Endpoint."
+            "description" : "URI of the Endpoint used for transformation."
           }
         }
       },
@@ -12887,33 +12890,33 @@
           "defaults" : {
             "type" : "boolean",
             "title" : "Defaults",
-            "description" : "Enable loading of default transformers.",
+            "description" : "Whether to enable loading of default transformers.",
             "default" : false
           },
           "fromType" : {
             "type" : "string",
             "title" : "From Type",
-            "description" : "Set the 'from' data type name. If you specify 'xml:XYZ', the transformer will be picked up if source type is 'xml:XYZ'. If you specify just 'xml', the transformer matches with all of 'xml' source type like 'xml:ABC' or 'xml:DEF'."
+            "description" : "The source (from) data type name. If you specify 'xml:XYZ', the transformer is picked up when source type matches. If you specify just 'xml', it matches all xml source types."
           },
           "name" : {
             "type" : "string",
             "title" : "Name",
-            "description" : "Set the transformer name under which the transformer gets referenced when specifying the input/output data type on routes. If you specify a transformer name that matches a data type scheme like 'csv' the transformer will be picked up for all of 'csv:' from/to Java transformation. Note that the scheme matching is performed only when no exactly matched transformer exists."
+            "description" : "Name under which the transformer gets referenced when specifying input/output data type on routes. If the name matches a data type scheme, the transformer will be picked up as a fallback."
           },
           "packageScan" : {
             "type" : "string",
             "title" : "Package Scan",
-            "description" : "Set the classpath location to scan for annotated transformers."
+            "description" : "The classpath location to scan for annotated transformers."
           },
           "scheme" : {
             "type" : "string",
             "title" : "Scheme",
-            "description" : "Set a scheme name supported by the transformer. If you specify 'csv', the transformer will be picked up for all of 'csv' from/to Java transformation. Note that the scheme matching is performed only when no exactly matched transformer exists."
+            "description" : "Scheme name supported by the transformer. If specified, the transformer will be picked up for all from/to transformation of this scheme. Scheme matching is performed only when no exactly matched transformer exists."
           },
           "toType" : {
             "type" : "string",
             "title" : "To Type",
-            "description" : "Set the 'to' data type name. If you specify 'json:XYZ', the transformer will be picked up if destination type is 'json:XYZ'. If you specify just 'json', the transformer matches with all of 'json' destination type like 'json:ABC' or 'json:DEF'."
+            "description" : "The destination (to) data type name. If you specify 'json:XYZ', the transformer is picked up when destination type matches. If you specify just 'json', it matches all json destination types."
           }
         }
       },
@@ -12946,17 +12949,17 @@
           "className" : {
             "type" : "string",
             "title" : "Class Name",
-            "description" : "Set a class name of the Validator"
+            "description" : "Fully qualified class name of the custom Validator implementation."
           },
           "ref" : {
             "type" : "string",
             "title" : "Ref",
-            "description" : "Set a bean reference of the Validator"
+            "description" : "Reference to a custom Validator bean in the registry."
           },
           "type" : {
             "type" : "string",
             "title" : "Type",
-            "description" : "Set the data type name. If you specify 'xml:XYZ', the validator will be picked up if message type is 'xml:XYZ'. If you specify just 'xml', the validator matches with all of 'xml' message type like 'xml:ABC' or 'xml:DEF'."
+            "description" : "The data type name to validate. If you specify 'xml:XYZ', the validator is picked up when message type is 'xml:XYZ'. If you specify just 'xml', the validator matches all xml message types."
           }
         }
       },
@@ -12969,17 +12972,17 @@
           "ref" : {
             "type" : "string",
             "title" : "Ref",
-            "description" : "Set the reference of the Endpoint."
+            "description" : "Reference of the Endpoint used for validation."
           },
           "type" : {
             "type" : "string",
             "title" : "Type",
-            "description" : "Set the data type name. If you specify 'xml:XYZ', the validator will be picked up if message type is 'xml:XYZ'. If you specify just 'xml', the validator matches with all of 'xml' message type like 'xml:ABC' or 'xml:DEF'."
+            "description" : "The data type name to validate. If you specify 'xml:XYZ', the validator is picked up when message type is 'xml:XYZ'. If you specify just 'xml', the validator matches all xml message types."
           },
           "uri" : {
             "type" : "string",
             "title" : "Uri",
-            "description" : "Set the URI of the Endpoint."
+            "description" : "URI of the Endpoint used for validation."
           }
         }
       },
@@ -12991,13 +12994,13 @@
         "properties" : {
           "expression" : {
             "title" : "Expression",
-            "description" : "The predicate to use for validation.",
+            "description" : "The predicate expression to use for validation.",
             "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
           },
           "type" : {
             "type" : "string",
             "title" : "Type",
-            "description" : "Set the data type name. If you specify 'xml:XYZ', the validator will be picked up if message type is 'xml:XYZ'. If you specify just 'xml', the validator matches with all of 'xml' message type like 'xml:ABC' or 'xml:DEF'."
+            "description" : "The data type name to validate. If you specify 'xml:XYZ', the validator is picked up when message type is 'xml:XYZ'. If you specify just 'xml', the validator matches all xml message types."
           }
         }
       },

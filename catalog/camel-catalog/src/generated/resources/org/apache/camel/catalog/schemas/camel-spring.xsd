@@ -3638,7 +3638,8 @@ Whether to fail if the current Exchange does not have an active A2A task context
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Disables this EIP from the route. Default value: false
+Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled
+later at runtime. Default value: false
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -3685,9 +3686,8 @@ Sets the note of this node.
             <xs:annotation>
               <xs:documentation xml:lang="en">
 <![CDATA[
-The expression used to calculate the correlation key to use for aggregation. The Exchange which has the same correlation
-key is aggregated together. If the correlation key could not be evaluated an Exception is thrown. You can disable this
-by using the ignoreBadCorrelationKeys option.
+The expression used to calculate the correlation key to use for aggregation. Exchanges with the same correlation key are
+aggregated together. If the correlation key cannot be evaluated an Exception is thrown.
 ]]>
               </xs:documentation>
             </xs:annotation>
@@ -4063,7 +4063,7 @@ ensuring the aggregation repository is empty before shutdown. Default value: fal
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Sets the id of this node.
+The id of this node.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -4136,7 +4136,7 @@ Whether to enable random backoff. Default value: false
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Sets a reference to an existing bean to use, which is looked up from the registry.
+A reference to an existing bean to use, which is looked up from the registry.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -4145,7 +4145,7 @@ Sets a reference to an existing bean to use, which is looked up from the registr
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Sets the method name on the bean to use.
+The method name on the bean to invoke.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -4154,7 +4154,7 @@ Sets the method name on the bean to use.
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Sets the class name (fully qualified) of the bean to use.
+The class name (fully qualified) of the bean to use.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -4335,7 +4335,7 @@ Whether the script should support using Camel property placeholder syntax {{ }}.
             <xs:annotation>
               <xs:documentation xml:lang="en">
 <![CDATA[
-The exception(s) to catch.
+The exception class names (fully qualified) to catch.
 ]]>
               </xs:documentation>
             </xs:annotation>
@@ -4767,8 +4767,7 @@ Disables this EIP from the route. Default value: false
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Refers to a circuit breaker configuration (such as resillience4j, or microprofile-fault-tolerance) to use for
-configuring the circuit breaker EIP.
+Refers to a circuit breaker configuration to use for configuring the circuit breaker EIP.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -4862,8 +4861,8 @@ Configures the number of permitted calls when the CircuitBreaker is half open. D
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Whether to throw io.github.resilience4j.circuitbreaker.CallNotPermittedException when the call is rejected due circuit
-breaker is half open or open. Default value: false
+Whether to throw io.github.resilience4j.circuitbreaker.CallNotPermittedException when the call is rejected because the
+circuit breaker is half open or open. Default value: false
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -5231,10 +5230,8 @@ References a custom thread pool to use when offloading a guarded action to anoth
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Whether the fallback goes over the network. If the fallback will go over the network it is another possible point of
-failure. It is important to execute the fallback command on a separate thread-pool, otherwise if the main command were
-to become latent and fill the thread-pool this would prevent the fallback from running if the two commands share the
-same pool. Default value: false
+Whether the fallback goes over the network. If so, the fallback is executed on a separate thread-pool to avoid
+exhausting the main thread-pool. Default value: false
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -5324,7 +5321,7 @@ Include finding route builder from these java package names.
       <xs:annotation>
         <xs:documentation xml:lang="en">
 <![CDATA[
-Whether to include non-singleton beans (prototypes) By default only singleton beans is included in the context scan.
+Whether to include non-singleton beans (prototypes). By default only singleton beans are included in the context scan.
 Default value: false
 ]]>
         </xs:documentation>
@@ -5374,8 +5371,7 @@ To use a specific charset when converting.
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Name of message header to convert its value The simple language can be used to define a dynamic evaluated header name to
-be used. Otherwise a constant name will be used.
+Name of message header to convert its value. The simple language can be used to define a dynamic evaluated header name.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -5393,9 +5389,7 @@ The java type to convert to.
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-To use another header to store the result. By default, the result is stored in the same header. This option allows to
-use another header. The simple language can be used to define a dynamic evaluated header name to be used. Otherwise a
-constant name will be used.
+To use another header to store the result. By default, the result is stored in the same header.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -5430,8 +5424,7 @@ To use a specific charset when converting.
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Name of variable to convert its value The simple language can be used to define a dynamic evaluated header name to be
-used. Otherwise a constant name will be used.
+Name of variable to convert its value. The simple language can be used to define a dynamic evaluated variable name.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -5449,9 +5442,7 @@ The java type to convert to.
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-To use another variable to store the result. By default, the result is stored in the same variable. This option allows
-to use another variable. The simple language can be used to define a dynamic evaluated variable name to be used.
-Otherwise a constant name will be used.
+To use another variable to store the result. By default, the result is stored in the same variable.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -5647,9 +5638,8 @@ to turn off caching.
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-To use a variable to store the received message body (only body, not headers). This makes it handy to use variables for
-user data and to easily control what data to use for sending and receiving. Important: When using receive variable then
-the received body is stored only in this variable and not on the current message.
+To use a variable as the source for the message body to send. When using send variable then the message body is taken
+from this variable instead of the current message, however the headers from the message will still be used as well.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -5658,10 +5648,8 @@ the received body is stored only in this variable and not on the current message
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-To use a variable as the source for the message body to send. This makes it handy to use variables for user data and to
-easily control what data to use for sending and receiving. Important: When using send variable then the message body is
-taken from this variable instead of the current message, however the headers from the message will still be used as
-well. In other words, the variable is used instead of the message body, but everything else is as usual.
+To use a variable to store the received message body (only body, not headers). This makes it handy to use variables for
+user data and to easily control what data to use for sending and receiving.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -5731,7 +5719,7 @@ for default cache size, or -1 to turn cache off.
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Ignore the invalidate endpoint exception when try to create a producer with that endpoint. Default value: false
+Whether to ignore an invalid endpoint URI when trying to create a producer with that endpoint. Default value: false
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -6030,7 +6018,7 @@ Sets the interval for logging retry attempts. Default value: 1
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Whether retry attempts should be logged or not. Can be used to include or reduce verbose. Default value: true
+Whether retry attempts should be logged or not. Can be used to include or reduce verbose logging. Default value: true
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -6039,7 +6027,7 @@ Whether retry attempts should be logged or not. Can be used to include or reduce
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Whether stack traces should be logged. Can be used to include or reduce verbose. Default value: true
+Whether stack traces should be logged. Can be used to include or reduce verbose logging. Default value: true
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -6048,8 +6036,8 @@ Whether stack traces should be logged. Can be used to include or reduce verbose.
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Whether stack traces should be logged when a retry attempt failed. Can be used to include or reduce verbose. Default
-value: false
+Whether stack traces should be logged when a retry attempt failed. Can be used to include or reduce verbose logging.
+Default value: false
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -6058,7 +6046,8 @@ value: false
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Whether handled exceptions should be logged or not. Can be used to include or reduce verbose. Default value: false
+Whether handled exceptions should be logged or not. Can be used to include or reduce verbose logging. Default value:
+false
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -6077,7 +6066,8 @@ previous exception. Default value: true
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Whether continued exceptions should be logged or not. Can be used to include or reduce verbose. Default value: false
+Whether continued exceptions should be logged or not. Can be used to include or reduce verbose logging. Default value:
+false
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -6086,7 +6076,8 @@ Whether continued exceptions should be logged or not. Can be used to include or 
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Whether exhausted exceptions should be logged or not. Can be used to include or reduce verbose. Default value: true
+Whether exhausted exceptions should be logged or not. Can be used to include or reduce verbose logging. Default value:
+true
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -6095,8 +6086,8 @@ Whether exhausted exceptions should be logged or not. Can be used to include or 
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Whether exhausted exceptions should be logged including message history. Can be used to include or reduce verbose.
-Default value: false
+Whether exhausted exceptions should be logged including message history. Can be used to include or reduce verbose
+logging. Default value: false
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -6165,7 +6156,7 @@ Sets the reference of the instance of org.apache.camel.spi.ExchangeFormatter to 
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-References to an existing or custom error handler.
+Reference to an existing or custom error handler to lookup from the registry.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -6198,7 +6189,7 @@ configured then Camel will attempt to auto-discover.
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Sets the logging level to use for logging transactional rollback. This option is default WARN. Default value: WARN
+The logging level to use for logging transactional rollback. Default is WARN. Default value: WARN
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -6639,7 +6630,7 @@ The input type URN.
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Whether if validation is required for this input type. Default value: false
+Whether validation is required for this input type. Default value: false
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -6737,8 +6728,7 @@ Whether if validation is required for this input type. Default value: false
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Intercept incoming messages from the uri or uri pattern. If this option is not configured, then all incoming messages is
-intercepted.
+Intercept incoming messages from the uri or uri pattern. If not configured, then all incoming messages are intercepted.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -6838,8 +6828,8 @@ Intercept sending to the uri or uri pattern.
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-If set to true then the message is not sent to the original endpoint. By default (false) the message is both intercepted
-and then sent to the original endpoint.
+Whether to skip sending the message to the original endpoint. By default, the message is both intercepted and then sent
+to the original endpoint. Default value: false
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -7079,11 +7069,8 @@ monitored.
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Whether or not the failover load balancer should operate in round robin mode or not. If not, then it will always start
-from the first endpoint when a new message is to be processed. In other words it restart from the top for every message.
-If round robin is enabled, then it keeps state and will continue with the next endpoint in a round robin fashion. You
-can also enable sticky mode together with round robin, if so then it will pick the last known good endpoint to use when
-starting the load balancing (instead of using the next when starting). Default value: false
+Whether to use round robin mode. If enabled, the load balancer keeps state and continues with the next endpoint in a
+round robin fashion. If not, it always starts from the first endpoint for every message. Default value: false
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -7092,11 +7079,8 @@ starting the load balancing (instead of using the next when starting). Default v
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Whether or not the failover load balancer should operate in sticky mode or not. If not, then it will always start from
-the first endpoint when a new message is to be processed. In other words it restart from the top for every message. If
-sticky is enabled, then it keeps state and will continue with the last known good endpoint. You can also enable sticky
-mode together with round robin, if so then it will pick the last known good endpoint to use when starting the load
-balancing (instead of using the next when starting). Default value: false
+Whether to use sticky mode. If enabled, the load balancer keeps state and continues with the last known good endpoint.
+Default value: false
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -7106,8 +7090,8 @@ balancing (instead of using the next when starting). Default value: false
             <xs:documentation xml:lang="en">
 <![CDATA[
 A value to indicate after X failover attempts we should exhaust (give up). Use -1 to indicate never give up and
-continuously try to failover. Use 0 to never failover. And use e.g. 3 to failover at most 3 times before giving up. This
-option can be used whether roundRobin is enabled or not. Default value: -1
+continuously try to failover. Use 0 to never failover. Use e.g. 3 to failover at most 3 times before giving up. Default
+value: -1
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -7116,10 +7100,8 @@ option can be used whether roundRobin is enabled or not. Default value: -1
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-To turn off Camel error handling during load balancing. By default, Camel error handler will attempt calling a service,
-which means you can specify retires and other fine-grained settings. And only when Camel error handler have failed all
-attempts, then this load balancer will fail over to the next endpoint and try again. You can turn this off, and then
-this load balancer will fail over immediately on an error. Default value: true
+Whether to inherit the error handler. If turned off, the load balancer will fail over immediately on an error instead of
+waiting for Camel error handler to exhaust retries. Default value: true
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -7173,7 +7155,7 @@ The correlation expression to use to calculate the correlation key.
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-The distribution ratio is a delimited String consisting on integer weights separated by delimiters for example 2,3,5.
+The distribution ratio is a delimited String consisting of integer weights separated by delimiters for example 2,3,5.
 The distributionRatio must match the number of endpoints and/or processors specified in the load balancer list.
 ]]>
             </xs:documentation>
@@ -7183,7 +7165,7 @@ The distributionRatio must match the number of endpoints and/or processors speci
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Delimiter used to specify the distribution ratio. The default value is , (comma). Default value: ,
+Delimiter used to specify the distribution ratio. The default value is comma. Default value: ,
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -7192,8 +7174,7 @@ Delimiter used to specify the distribution ratio. The default value is , (comma)
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-To enable round robin mode. By default the weighted distribution mode is used. The default value is false. Default
-value: false
+Whether to enable round robin mode. By default the weighted distribution mode is used. Default value: false
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -7470,9 +7451,7 @@ custom logic needed before the looping executes.
             <xs:documentation xml:lang="en">
 <![CDATA[
 To use a variable as the source for the message body to send. This makes it handy to use variables for user data and to
-easily control what data to use for sending and receiving. Important: When using send variable then the message body is
-taken from this variable instead of the current message, however the headers from the message will still be used as
-well. In other words, the variable is used instead of the message body, but everything else is as usual.
+easily control what data to use for sending and receiving.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -7482,8 +7461,7 @@ well. In other words, the variable is used instead of the message body, but ever
             <xs:documentation xml:lang="en">
 <![CDATA[
 To use a variable to store the received message body (only body, not headers). This makes it handy to use variables for
-user data and to easily control what data to use for sending and receiving. Important: When using receive variable then
-the received body is stored only in this variable and not on the current message.
+user data and to easily control what data to use for sending and receiving.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -7637,10 +7615,8 @@ To use custom Jackson modules referred from the Camel registry. Multiple modules
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Set of features to enable on the Jackson com.fasterxml.jackson.databind.ObjectMapper. The features should be a name that
-matches a enum from com.fasterxml.jackson.databind.SerializationFeature,
-com.fasterxml.jackson.databind.DeserializationFeature, or com.fasterxml.jackson.databind.MapperFeature Multiple features
-can be separated by comma.
+Set of features to enable on the Jackson com.fasterxml.jackson.databind.ObjectMapper. Multiple features can be separated
+by comma.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -7649,10 +7625,8 @@ can be separated by comma.
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Set of features to disable on the Jackson com.fasterxml.jackson.databind.ObjectMapper. The features should be a name
-that matches a enum from com.fasterxml.jackson.databind.SerializationFeature,
-com.fasterxml.jackson.databind.DeserializationFeature, or com.fasterxml.jackson.databind.MapperFeature Multiple features
-can be separated by comma.
+Set of features to disable on the Jackson com.fasterxml.jackson.databind.ObjectMapper. Multiple features can be
+separated by comma.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -8022,10 +7996,7 @@ Default value: false
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Set of features to enable on the Jackson com.fasterxml.jackson.databind.ObjectMapper. The features should be a name that
-matches a enum from com.fasterxml.jackson.databind.SerializationFeature,
-com.fasterxml.jackson.databind.DeserializationFeature, or com.fasterxml.jackson.databind.MapperFeature Multiple features
-can be separated by comma.
+Set of features to enable on the Jackson ObjectMapper. Multiple features can be separated by comma.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -8034,10 +8005,7 @@ can be separated by comma.
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Set of features to disable on the Jackson com.fasterxml.jackson.databind.ObjectMapper. The features should be a name
-that matches a enum from com.fasterxml.jackson.databind.SerializationFeature,
-com.fasterxml.jackson.databind.DeserializationFeature, or com.fasterxml.jackson.databind.MapperFeature Multiple features
-can be separated by comma.
+Set of features to disable on the Jackson ObjectMapper. Multiple features can be separated by comma.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -8170,7 +8138,7 @@ Sets the comment marker of the reference format.
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Sets the delimiter to use. The default value is , (comma).
+The delimiter to use. The default value is , (comma).
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -8179,7 +8147,7 @@ Sets the delimiter to use. The default value is , (comma).
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Use for disabling using escape character. Default value: false
+Whether to disable the escape character. Default value: false
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -8197,7 +8165,7 @@ Sets the escape character to use.
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Use for disabling headers. Default value: false
+Whether to disable headers. Default value: false
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -8242,7 +8210,7 @@ Whether to ignore surrounding spaces. Default value: false
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Used to disable null strings. Default value: false
+Whether to disable null string handling. Default value: false
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -8260,7 +8228,7 @@ Sets the null string.
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Used to disable quotes. Default value: false
+Whether to disable quoting. Default value: false
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -8269,7 +8237,7 @@ Used to disable quotes. Default value: false
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Sets the quote to use which by default is double-quote character.
+The quote character to use. The default is double-quote character.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -8278,7 +8246,7 @@ Sets the quote to use which by default is double-quote character.
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Used for disabling record separator.
+Whether to disable the record separator. Default value: false
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -8287,7 +8255,7 @@ Used for disabling record separator.
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Sets the record separator (aka new line) which by default is new line characters (CRLF).
+The record separator (aka new line) which by default is new line characters (CRLF).
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -8406,7 +8374,7 @@ Whether the unmarshalling should capture the header record and store it in the m
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Reference to the custom org.apache.camel.spi.DataFormat to lookup from the Camel registry.
+Reference to the custom DataFormat to lookup from the Camel registry.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -8785,8 +8753,8 @@ The grok pattern to match lines of input.
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Turns on flattened mode. In flattened mode the exception is thrown when there are multiple pattern matches with same
-key. Default value: false
+Whether to use flattened mode. In flattened mode an exception is thrown when there are multiple pattern matches with the
+same key. Default value: false
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -8795,8 +8763,8 @@ key. Default value: false
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-If false, every line of input is matched for pattern only once. Otherwise the line can be scanned multiple times when
-non-terminal pattern is used. Default value: true
+Whether to allow multiple matches per line. If false, every line of input is matched for the pattern only once.
+Otherwise the line can be scanned multiple times when a non-terminal pattern is used. Default value: true
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -8821,7 +8789,7 @@ Whether to capture named expressions only or not (i.e. %{IP:ip} but not ${IP}). 
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-To pretty printing output nicely formatted. Is by default true. Default value: true
+Whether to pretty print output nicely formatted. Default value: true
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -8837,8 +8805,8 @@ To pretty printing output nicely formatted. Is by default true. Default value: t
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-To turn on or off attribute mapping. When enabled then keys that start with _ or character will be mapped to an XML
-attribute, and vise versa. This rule is what Jackson and other XML or JSon libraries uses. Default value: true
+Whether to enable attribute mapping. When enabled, keys that start with _ or character will be mapped to an XML
+attribute, and vice versa. Default value: true
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -8870,7 +8838,7 @@ To use a custom HL7 parser.
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Whether to validate the HL7 message Is by default true. Default value: true
+Whether to validate the HL7 message. Default value: true
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -8879,9 +8847,8 @@ Whether to validate the HL7 message Is by default true. Default value: true
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-The target format for marshal output and unmarshal result type. By default, marshal encodes to HL7 ER7, and unmarshal
-returns a HAPI Message object. If this is set to XML, marshal encodes to HL7 XML, and unmarshal returns an XML DOM
-Document.
+The target format for marshal output and unmarshal result type. By default, marshal encodes to HL7 ER7 and unmarshal
+returns a HAPI Message object. If set to XML, marshal encodes to HL7 XML and unmarshal returns an XML DOM Document.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -8897,7 +8864,7 @@ Document.
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Whether to validate. Default value: false
+Whether to validate the iCal document. Default value: false
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -8956,7 +8923,7 @@ Lookup and use the existing XmlMapper with the given id.
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-To enable pretty printing output nicely formatted. Is by default false. Default value: false
+Whether to enable pretty printing output nicely formatted. Is by default false. Default value: false
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -8974,8 +8941,8 @@ Class name of the java type to use when unmarshalling.
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-If enabled then Jackson is allowed to attempt to use the CamelJacksonUnmarshalType header during the unmarshalling. This
-should only be enabled when desired to be used. Default value: false
+Whether to allow Jackson to use the CamelJacksonUnmarshalType header during unmarshalling. Should only be enabled when
+desired. Default value: false
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -8994,7 +8961,7 @@ JSON views to accomplish this. This option is to refer to the class which has Js
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-If you want to marshal a pojo to JSON, and the pojo has some fields with null values. And you want to skip these null
+If you want to marshal a POJO to JSON, and the POJO has some fields with null values. And you want to skip these null
 values, you can set this option to NON_NULL.
 ]]>
             </xs:documentation>
@@ -9004,8 +8971,8 @@ values, you can set this option to NON_NULL.
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Used for JMS users to allow the JMSType header from the JMS spec to specify a FQN classname to use to unmarshal to.
-Default value: false
+Whether to allow the JMSType header from the JMS spec to specify a FQN classname to use to unmarshal to. Default value:
+false
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -9014,8 +8981,8 @@ Default value: false
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Refers to a custom collection type to lookup in the registry to use. This option should rarely be used, but allows to
-use different collection types than java.util.Collection based as default.
+Refers to a custom collection type to lookup in the registry to use. This option should rarely be used, but allows using
+different collection types than java.util.Collection based as default.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -9024,7 +8991,7 @@ use different collection types than java.util.Collection based as default.
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-To unmarshal to a List of Map or a List of Pojo. Default value: false
+Whether to unmarshal to a List of Map or a List of Pojo. Default value: false
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -9042,7 +9009,7 @@ If set then Jackson will use the Timezone when marshalling/unmarshalling.
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Whether to enable the JAXB annotations module when using jackson. When enabled then JAXB annotations can be used by
+Whether to enable the JAXB annotations module when using Jackson. When enabled then JAXB annotations can be used by
 Jackson. Default value: false
 ]]>
             </xs:documentation>
@@ -9072,9 +9039,8 @@ To use custom Jackson modules referred from the Camel registry. Multiple modules
             <xs:documentation xml:lang="en">
 <![CDATA[
 Set of features to enable on the Jackson com.fasterxml.jackson.databind.ObjectMapper. The features should be a name that
-matches a enum from com.fasterxml.jackson.databind.SerializationFeature,
-com.fasterxml.jackson.databind.DeserializationFeature, or com.fasterxml.jackson.databind.MapperFeature Multiple features
-can be separated by comma.
+matches a enum from SerializationFeature, DeserializationFeature, or MapperFeature. Multiple features can be separated
+by comma.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -9084,9 +9050,8 @@ can be separated by comma.
             <xs:documentation xml:lang="en">
 <![CDATA[
 Set of features to disable on the Jackson com.fasterxml.jackson.databind.ObjectMapper. The features should be a name
-that matches a enum from com.fasterxml.jackson.databind.SerializationFeature,
-com.fasterxml.jackson.databind.DeserializationFeature, or com.fasterxml.jackson.databind.MapperFeature Multiple features
-can be separated by comma.
+that matches a enum from SerializationFeature, DeserializationFeature, or MapperFeature. Multiple features can be
+separated by comma.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -9106,10 +9071,8 @@ value: true
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Sets the maximum string length (in chars or bytes, depending on input context). The default is 20,000,000. This limit is
-not exact, the limit is applied when we increase internal buffer sizes and an exception will happen at sizes greater
-than this limit. Some text values that are a little bigger than the limit may be treated as valid but no text values
-with sizes less than or equal to this limit will be treated as invalid.
+Maximum allowed string length when deserializing (in chars or bytes, depending on input context). The default is
+20,000,000.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -9144,8 +9107,8 @@ false
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-To validate against an existing schema. Your can use the prefix classpath:, file: or http: to specify how the resource
-should be resolved. You can separate multiple schema files by using the ',' character.
+To validate against an existing schema. You can use the prefix classpath:, file: or http: to specify how the resource
+should be resolved. You can separate multiple schema files by using the comma character.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -9583,7 +9546,7 @@ The class to take into account while unmarshalling.
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Enable encoding (compress) using multiple processing cores. Default value: false
+Whether to enable encoding (compress) using multiple processing cores. Default value: false
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -9599,7 +9562,7 @@ Enable encoding (compress) using multiple processing cores. Default value: false
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Specify the subtype of the MIME Multipart. Default is mixed. Default value: mixed
+Specify the subtype of the MIME Multipart. Default value: mixed
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -9608,8 +9571,8 @@ Specify the subtype of the MIME Multipart. Default is mixed. Default value: mixe
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Defines whether a message without attachment is also marshaled into a MIME Multipart (with only one body part). Default
-is false. Default value: false
+Whether a message without attachment is also marshaled into a MIME Multipart (with only one body part). Default value:
+false
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -9618,8 +9581,8 @@ is false. Default value: false
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Defines whether the MIME-Multipart headers are part of the message body (true) or are set as Camel headers (false).
-Default is false. Default value: false
+Whether the MIME-Multipart headers are part of the message body (true) or are set as Camel headers (false). Default
+value: false
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -9628,8 +9591,8 @@ Default is false. Default value: false
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-A regex that defines which Camel headers are also included as MIME headers into the MIME multipart. This will only work
-if headersInline is set to true. Default is to include no headers.
+A regex that defines which Camel headers are also included as MIME headers into the MIME multipart. This only works if
+headersInline is set to true.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -9638,8 +9601,8 @@ if headersInline is set to true. Default is to include no headers.
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Defines whether the content of binary parts in the MIME multipart is binary (true) or Base-64 encoded (false) Default is
-false. Default value: false
+Whether the content of binary parts in the MIME multipart is binary (true) or Base-64 encoded (false). Default value:
+false
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -9682,8 +9645,8 @@ Class name of the OCSF event type to use when unmarshalling. Defaults to OcsfEve
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Refers to a custom collection type to lookup in the registry to use. This option should rarely be used, but allows to
-use different collection types than java.util.Collection based as default.
+Refers to a custom collection type to lookup in the registry to use. This option should rarely be used, but allows using
+different collection types than java.util.Collection based as default.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -9692,7 +9655,7 @@ use different collection types than java.util.Collection based as default.
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-To unmarshal to a List of OCSF events. Default value: false
+Whether to unmarshal to a List of OCSF events. Default value: false
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -9701,8 +9664,7 @@ To unmarshal to a List of OCSF events. Default value: false
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-If enabled then the unmarshal type can be specified via the CamelOcsfUnmarshalType header. This should only be enabled
-when desired to be used. Default value: false
+Whether to allow the unmarshal type to be specified via the CamelOcsfUnmarshalType header. Default value: false
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -9711,7 +9673,7 @@ when desired to be used. Default value: false
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-To enable pretty printing output nicely formatted. Is by default false. Default value: false
+Whether to enable pretty printing output nicely formatted. Default value: false
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -9736,7 +9698,7 @@ Compression codec to use when marshalling. Default value: GZIP
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Class to use when (un)marshalling. If omitted, parquet files are converted into Avro's GenericRecords for unmarshalling
+Class to use when (un)marshalling. If omitted, parquet files are converted into Avro GenericRecords for unmarshalling
 and input objects are assumed as GenericRecords for marshalling.
 ]]>
             </xs:documentation>
@@ -9762,8 +9724,7 @@ Whether the unmarshalling should produce an iterator of records or read all the 
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-The user ID of the key in the PGP keyring used during encryption. Can also be only a part of a user ID. For example, if
-the user ID is Test User then you can use the part Test User or to address the user ID.
+The user ID of the key in the PGP keyring used during encryption. Can also be only a part of a user ID.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -9773,10 +9734,7 @@ the user ID is Test User then you can use the part Test User or to address the u
             <xs:documentation xml:lang="en">
 <![CDATA[
 User ID of the key in the PGP keyring used for signing (during encryption) or signature verification (during
-decryption). During the signature verification process the specified User ID restricts the public keys from the public
-keyring which can be used for the verification. If no User ID is specified for the signature verficiation then any
-public key in the public keyring can be used for the verification. Can also be only a part of a user ID. For example, if
-the user ID is Test User then you can use the part Test User or to address the User ID.
+decryption).
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -9823,7 +9781,7 @@ be accessible as a classpath resource (but you can specify a location in the fil
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Keyring used for signing/verifying as byte array. You can not set the signatureKeyFileName and signatureKeyRing at the
+Keyring used for signing/verifying as byte array. You cannot set the signatureKeyFileName and signatureKeyRing at the
 same time.
 ]]>
             </xs:documentation>
@@ -9853,8 +9811,7 @@ Adds an integrity check/sign into the encryption file. Default value: true
             <xs:documentation xml:lang="en">
 <![CDATA[
 Java Cryptography Extension (JCE) provider, default is Bouncy Castle (BC). Alternatively you can use, for example, the
-IAIK JCE provider; in this case the provider must be registered beforehand and the Bouncy Castle provider must not be
-registered beforehand. The Sun JCE provider does not work.
+IAIK JCE provider.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -9893,12 +9850,8 @@ signing.
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Controls the behavior for verifying the signature during unmarshaling. There are 4 values possible: optional: The PGP
-message may or may not contain signatures; if it does contain signatures, then a signature verification is executed.
-required: The PGP message must contain at least one signature; if this is not the case an exception (PGPException) is
-thrown. A signature verification is executed. ignore: Contained signatures in the PGP message are ignored; no signature
-verification is executed. no_signature_allowed: The PGP message must not contain a signature; otherwise an exception
-(PGPException) is thrown.
+Controls the behavior for verifying the signature during unmarshaling. Possible values: optional, required, ignore,
+no_signature_allowed.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -9914,8 +9867,7 @@ verification is executed. no_signature_allowed: The PGP message must not contain
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-The Post-Quantum KEM algorithm to use for key encapsulation. Supported values: MLKEM, BIKE, HQC, CMCE, SABER, FRODO,
-NTRU, NTRULPRime, SNTRUPrime, KYBER. Default value: MLKEM
+The Post-Quantum KEM algorithm to use for key encapsulation. Default value: MLKEM
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -9924,8 +9876,7 @@ NTRU, NTRULPRime, SNTRUPrime, KYBER. Default value: MLKEM
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-The symmetric encryption algorithm to use with the shared secret. Supported values: AES, ARIA, RC2, RC5, CAMELLIA,
-CAST5, CAST6, CHACHA7539, etc. Default value: AES
+The symmetric encryption algorithm to use with the shared secret. Default value: AES
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -9943,7 +9894,7 @@ The length (in bits) of the symmetric key. Default value: 128
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Refers to the KeyPair to lookup from the register to use for KEM operations.
+Refers to the KeyPair to lookup from the registry to use for KEM operations.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -9970,7 +9921,7 @@ The JCE security provider to use.
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Refers to a custom KeyGenerator to lookup from the register for KEM operations.
+Refers to a custom KeyGenerator to lookup from the registry for KEM operations.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -10070,8 +10021,8 @@ Default value: false
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Refers to a custom collection type to lookup in the registry to use. This option should rarely be used, but allows to
-use different collection types than java.util.Collection based as default.
+Refers to a custom collection type to lookup in the registry to use. This option should rarely be used, but allows using
+different collection types than java.util.Collection based as default.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -10108,10 +10059,8 @@ To use custom Jackson modules referred from the Camel registry. Multiple modules
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Set of features to enable on the Jackson com.fasterxml.jackson.databind.ObjectMapper. The features should be a name that
-matches a enum from com.fasterxml.jackson.databind.SerializationFeature,
-com.fasterxml.jackson.databind.DeserializationFeature, or com.fasterxml.jackson.databind.MapperFeature Multiple features
-can be separated by comma.
+Set of features to enable on the Jackson com.fasterxml.jackson.databind.ObjectMapper. Multiple features can be separated
+by comma.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -10120,10 +10069,8 @@ can be separated by comma.
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Set of features to disable on the Jackson com.fasterxml.jackson.databind.ObjectMapper. The features should be a name
-that matches a enum from com.fasterxml.jackson.databind.SerializationFeature,
-com.fasterxml.jackson.databind.DeserializationFeature, or com.fasterxml.jackson.databind.MapperFeature Multiple features
-can be separated by comma.
+Set of features to disable on the Jackson com.fasterxml.jackson.databind.ObjectMapper. Multiple features can be
+separated by comma.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -10266,7 +10213,7 @@ this mapping, Camel allows you to refer to a map which contains the desired mapp
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-To validate against an existing schema. Your can use the prefix classpath:, file: or http: to specify how the resource
+To validate against an existing schema. You can use the prefix classpath:, file: or http: to specify how the resource
 should be resolved. You can separate multiple schema files by using the ',' character.
 ]]>
             </xs:documentation>
@@ -10292,7 +10239,7 @@ Whether to ignore headers that were not unmarshalled. Default value: false
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-The flag indicating that messages must be marshalled in a JSON format. Default value: false
+Whether to marshal messages in JSON format. Default value: false
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -10308,7 +10255,7 @@ The flag indicating that messages must be marshalled in a JSON format. Default v
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-The flag indicating that messages must be marshalled in a JSON format. Default value: false
+Whether to marshal messages in JSON format. Default value: false
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -10359,8 +10306,8 @@ Refers to a specific configuration to use when marshalling a message to lookup f
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-If the tar file has more than one entry, the setting this option to true, allows working with the splitter EIP, to split
-the data using an iterator in a streaming mode. Default value: false
+Whether to use an iterator to split tar entries when the tar file has more than one entry, for use with the splitter EIP
+in streaming mode. Default value: false
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -10369,8 +10316,8 @@ the data using an iterator in a streaming mode. Default value: false
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-If the tar file has more than one entry, setting this option to true, allows to get the iterator even if the directory
-is empty. Default value: false
+Whether to allow getting the iterator even if the directory is empty, when the tar file has more than one entry. Default
+value: false
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -10379,8 +10326,7 @@ is empty. Default value: false
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-If the file name contains path elements, setting this option to true, allows the path to be maintained in the tar file.
-Default value: false
+Whether to preserve path elements when the file name contains path elements in the tar file. Default value: false
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -10389,9 +10335,8 @@ Default value: false
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Set the maximum decompressed size of a tar file (in bytes). The default value if not specified corresponds to 1
-gigabyte. An IOException will be thrown if the decompressed size exceeds this amount. Set to -1 to disable setting a
-maximum decompressed size. Default value: 1073741824
+The maximum decompressed size of a tar file (in bytes). An IOException is thrown if the decompressed size exceeds this
+amount. Set to -1 to disable. Default value: 1073741824
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -10416,9 +10361,8 @@ Name of class to use when unmarshalling.
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Defines a content type format in which thrift message will be serialized/deserialized from(to) the Java been. The format
-can either be native or json for either native binary thrift, json or simple json fields representation. The default
-value is binary. Default value: binary
+The content type format in which thrift message will be serialized/deserialized. The format can be native binary, json,
+or simple json. Default value: binary
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -10641,7 +10585,7 @@ The padding character. The default value is a space.
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Whether or not the trailing characters until new line must be ignored. The default value is false. Default value: false
+Whether to skip trailing characters until a new line is found. Default value: false
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -10650,7 +10594,7 @@ Whether or not the trailing characters until new line must be ignored. The defau
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Whether or not the record ends on new line. The default value is false. Default value: false
+Whether the record ends on a new line. Default value: false
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -10926,8 +10870,8 @@ Set whether recursive keys are allowed. Default value: false
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-To specify a specific compression between 0-9. -1 is default compression, 0 is no compression, and 9 is the best
-compression. Default value: -1
+Compression level to use (0-9). -1 is default compression, 0 is no compression, and 9 is the best compression. Default
+value: -1
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -11334,7 +11278,7 @@ value: false
             <xs:annotation>
               <xs:documentation xml:lang="en">
 <![CDATA[
-A set of exceptions to react upon.
+A list of exception class names to catch and handle.
 ]]>
               </xs:documentation>
             </xs:annotation>
@@ -11509,7 +11453,7 @@ the original body. Cannot be used together with useOriginalMessage. Default valu
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Set output type URN.
+The output type URN, such as java:fully.qualified.ClassName or json:SchemaName.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -11518,7 +11462,7 @@ Set output type URN.
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Whether if validation is required for this output type. Default value: false
+Whether to validate the output type. Default value: false
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -11532,7 +11476,7 @@ Whether if validation is required for this output type. Default value: false
         <xs:annotation>
           <xs:documentation xml:lang="en">
 <![CDATA[
-Sets the java package names to use for scanning for route builder classes.
+Java package names to use for scanning for route builder classes.
 ]]>
           </xs:documentation>
         </xs:annotation>
@@ -11745,7 +11689,7 @@ Predicate to evaluate whether the processing can resume. Returns true if consump
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Sets a reference to use for lookup the policy in the registry.
+Reference to the policy to lookup in the registry.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -11762,8 +11706,7 @@ Sets a reference to use for lookup the policy in the registry.
             <xs:documentation xml:lang="en">
 <![CDATA[
 To use a variable to store the received message body (only body, not headers). This makes it handy to use variables for
-user data and to easily control what data to use for sending and receiving. Important: When using receive variable then
-the received body is stored only in this variable and not on the current message.
+user data and to easily control what data to use for sending and receiving.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -11826,8 +11769,7 @@ Timeout in millis when polling from the external service. The default value is 2
             <xs:documentation xml:lang="en">
 <![CDATA[
 To use a variable to store the received message body (only body, not headers). This makes it handy to use variables for
-user data and to easily control what data to use for sending and receiving. Important: When using receive variable then
-the received body is stored only in this variable and not on the current message.
+user data and to easily control what data to use for sending and receiving.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -11897,7 +11839,7 @@ for default cache size, or -1 to turn cache off.
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Ignore the invalidate endpoint exception when try to create a consumer with that endpoint. Default value: false
+Whether to ignore an invalid endpoint URI when trying to create a consumer with that endpoint. Default value: false
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -11931,13 +11873,8 @@ Whether to auto startup components when poll enricher is starting up. Default va
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Reference to the Processor to lookup in the registry to use. A Processor is a class of type org.apache.camel.Processor,
-which can are to be called by this EIP. In this processor you have custom Java code, that can work with the message,
-such as to do custom business logic, special message manipulations and so on. By default, the ref, will lookup the bean
-in the Camel registry. The ref can use prefix that controls how the processor is obtained. You can use #bean:myBean
-where myBean is the id of the Camel processor (lookup). Can also be used for creating new beans by their class name by
-prefixing with #class, eg #class:com.foo.MyClassType. And it is also possible to refer to singleton beans by their type
-in the registry by prefixing with #type: syntax, eg #type:com.foo.MyClassType.
+Reference to the Processor to lookup in the registry to use. Can use prefixes such as #bean:, #class:, or #type: to
+control how the processor is obtained.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -11984,7 +11921,7 @@ in the registry by prefixing with #type: syntax, eg #type:com.foo.MyClassType.
       <xs:annotation>
         <xs:documentation xml:lang="en">
 <![CDATA[
-Property key.
+The property key.
 ]]>
         </xs:documentation>
       </xs:annotation>
@@ -12117,9 +12054,8 @@ processing is automatically implied, and you do not have to enable that option a
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Will now stop further processing if an exception or failure occurred during processing of an exchange and the caused
-exception will be thrown. Will also stop if processing the exchange failed (has a fault message) or an exception was
-thrown and handled by the error handler (such as using onException). Default value: false
+Stops further processing if an exception or failure occurred during processing of an exchange and the caused exception
+will be thrown. Default value: false
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -12128,7 +12064,7 @@ thrown and handled by the error handler (such as using onException). Default val
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Ignore the invalidate endpoint exception when try to create a producer with that endpoint. Default value: false
+Whether to ignore an invalid endpoint URI when trying to create a producer with that endpoint. Default value: false
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -12201,8 +12137,8 @@ Name of header to remove.
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Name or pattern of headers to remove. The pattern is matched in the following order: 1 = exact match 2 = wildcard
-(pattern ends with a and the name starts with the pattern) 3 = regular expression (all of above is case in-sensitive).
+Name or pattern of headers to remove. The pattern supports exact match, wildcard (pattern ends with ), and regular
+expression (all case-insensitive).
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -12227,8 +12163,8 @@ Name or pattern of headers to not remove. You can use comma to separate multiple
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Name or pattern of properties to remove. The pattern is matched in the following order: 1 = exact match 2 = wildcard
-(pattern ends with a and the name starts with the pattern) 3 = regular expression (all of above is case in-sensitive).
+Name or pattern of properties to remove. Supports exact match, wildcard (ending with ), and regular expression (all
+case-insensitive).
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -12253,7 +12189,7 @@ Name or pattern of properties to not remove. You can use comma to separate multi
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Name of property to remove.
+Name of the exchange property to remove.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -12269,7 +12205,7 @@ Name of property to remove.
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Name of variable to remove.
+Name of the variable to remove.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -12599,7 +12535,7 @@ rollbacks in nested transaction scenarios. Default value: false
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Reference to the route builder instance.
+Reference to the RouteBuilder instance.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -12613,7 +12549,7 @@ Reference to the route builder instance.
       <xs:annotation>
         <xs:documentation xml:lang="en">
 <![CDATA[
-Reference to the route templates in the xml dsl.
+Reference to the route configuration in the xml-dsl.
 ]]>
         </xs:documentation>
       </xs:annotation>
@@ -12634,8 +12570,7 @@ Reference to the route templates in the xml dsl.
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-The predicate of the precondition in simple language to evaluate in order to determine if this route configuration
-should be included or not.
+Predicate in simple language to evaluate whether this route configuration should be included or not.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -12658,7 +12593,7 @@ should be included or not.
       <xs:annotation>
         <xs:documentation xml:lang="en">
 <![CDATA[
-Reference to the routes in the xml dsl.
+Reference to the routes in the xml-dsl.
 ]]>
         </xs:documentation>
       </xs:annotation>
@@ -12894,7 +12829,7 @@ Whether tracing is enabled on this route. Default value: false
       <xs:annotation>
         <xs:documentation xml:lang="en">
 <![CDATA[
-Reference to the route templates in the xml dsl.
+Reference to the route templates in the xml-dsl.
 ]]>
         </xs:documentation>
       </xs:annotation>
@@ -13260,7 +13195,7 @@ The frequency of samples as a message count, using a message-frequency approach.
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Sets the uri of the endpoint to send to.
+The uri of the endpoint to send to.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -13311,7 +13246,7 @@ Sets the uri of the endpoint to send to.
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Sets the new exchange pattern of the Exchange to be used from this point forward.
+The new exchange pattern to use from this point forward.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -13355,8 +13290,8 @@ Sets the new exchange pattern of the Exchange to be used from this point forward
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Name of message header to set a new value The simple language can be used to define a dynamic evaluated header name to
-be used. Otherwise a constant name will be used.
+Name of message header to set a new value. The simple language can be used to define a dynamic evaluated header name.
+Otherwise a constant name will be used.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -13409,8 +13344,8 @@ be used. Otherwise a constant name will be used.
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Name of exchange property to set a new value. The simple language can be used to define a dynamic evaluated exchange
-property name to be used. Otherwise a constant name will be used.
+Name of exchange property to set a new value. The simple language can be used to define a dynamic evaluated property
+name. Otherwise a constant name will be used.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -13454,8 +13389,8 @@ property name to be used. Otherwise a constant name will be used.
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Name of variable to set a new value The simple language can be used to define a dynamic evaluated variable name to be
-used. Otherwise a constant name will be used.
+Name of variable to set a new value. The simple language can be used to define a dynamic evaluated variable name.
+Otherwise a constant name will be used.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -13869,7 +13804,7 @@ Adds a local bean as input of the template to build the route.
       <xs:annotation>
         <xs:documentation xml:lang="en">
 <![CDATA[
-Sets the id of the route template to use to build the route.
+The id of the route template to use to build the route.
 ]]>
         </xs:documentation>
       </xs:annotation>
@@ -13878,7 +13813,7 @@ Sets the id of the route template to use to build the route.
       <xs:annotation>
         <xs:documentation xml:lang="en">
 <![CDATA[
-Sets the id of the route built from the route template.
+The id of the route built from the route template.
 ]]>
         </xs:documentation>
       </xs:annotation>
@@ -14149,8 +14084,7 @@ handler. Default value: true
             <xs:annotation>
               <xs:documentation xml:lang="en">
 <![CDATA[
-The expression used to calculate the correlation key to use for throttle grouping. The Exchange which has the same
-correlation key is throttled together.
+The correlation expression to use for throttle grouping. Exchanges with the same correlation key are throttled together.
 ]]>
               </xs:documentation>
             </xs:annotation>
@@ -14302,9 +14236,7 @@ The uri of the endpoint to send to. The uri can be dynamic computed using the si
             <xs:documentation xml:lang="en">
 <![CDATA[
 To use a variable as the source for the message body to send. This makes it handy to use variables for user data and to
-easily control what data to use for sending and receiving. Important: When using send variable then the message body is
-taken from this variable instead of the current message, however the headers from the message will still be used as
-well. In other words, the variable is used instead of the message body, but everything else is as usual.
+easily control what data to use for sending and receiving.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -14313,10 +14245,8 @@ well. In other words, the variable is used instead of the message body, but ever
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-To use a variable as the source for the message body to send. This makes it handy to use variables for user data and to
-easily control what data to use for sending and receiving. Important: When using send variable then the message body is
-taken from this variable instead of the current Message , however the headers from the Message will still be used as
-well. In other words, the variable is used instead of the message body, but everything else is as usual.
+To use a variable to store the received message body (only body, not headers). This makes it handy to use variables for
+user data and to easily control what data to use for sending and receiving.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -14400,7 +14330,7 @@ Whether to auto startup components when toD is starting up. Default value: true
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Sets the tokenizer type.
+The tokenizer type. Must be one of OPEN_AI, AZURE or QWEN.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -14409,7 +14339,7 @@ Sets the tokenizer type.
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Sets the maximum number of tokens on each segment.
+The maximum number of tokens on each segment.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -14418,7 +14348,7 @@ Sets the maximum number of tokens on each segment.
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Sets the maximum number of tokens that can overlap in each segment.
+The maximum number of tokens that can overlap in each segment.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -14427,7 +14357,7 @@ Sets the maximum number of tokens that can overlap in each segment.
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Sets the model name.
+The underlying model name used by the tokenizer. Providing this switches to computing segment sizes in terms of tokens.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -14552,7 +14482,7 @@ Sets the model name.
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Sets a reference to use for lookup the policy in the registry.
+Reference to lookup a transacted policy in the registry.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -14568,7 +14498,7 @@ Sets a reference to use for lookup the policy in the registry.
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-From type used in data type transformation.
+The source data type for the transformation.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -14577,7 +14507,7 @@ From type used in data type transformation.
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-To type used as a target data type in the transformation.
+The target data type for the transformation.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -14761,9 +14691,7 @@ To type used as a target data type in the transformation.
             <xs:documentation xml:lang="en">
 <![CDATA[
 To use a variable as the source for the message body to send. This makes it handy to use variables for user data and to
-easily control what data to use for sending and receiving. Important: When using send variable then the message body is
-taken from this variable instead of the current message, however the headers from the message will still be used as
-well. In other words, the variable is used instead of the message body, but everything else is as usual.
+easily control what data to use for sending and receiving.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -14773,8 +14701,7 @@ well. In other words, the variable is used instead of the message body, but ever
             <xs:documentation xml:lang="en">
 <![CDATA[
 To use a variable to store the received message body (only body, not headers). This makes it handy to use variables for
-user data and to easily control what data to use for sending and receiving. Important: When using receive variable then
-the received body is stored only in this variable and not on the current message.
+user data and to easily control what data to use for sending and receiving.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -14905,7 +14832,7 @@ Component scanning that can auto-discover Camel route builders from the classpat
         <xs:annotation>
           <xs:documentation xml:lang="en">
 <![CDATA[
-List of bean.
+List of bean definitions to be registered in the Camel registry.
 ]]>
           </xs:documentation>
         </xs:annotation>
@@ -15081,7 +15008,7 @@ Sets the name of the Camel component to use as the REST producer.
       <xs:annotation>
         <xs:documentation xml:lang="en">
 <![CDATA[
-The scheme to use for exposing the REST service. Usually http or https is supported. The default value is http.
+The scheme to use for exposing the REST service. Usually http or https is supported.
 ]]>
         </xs:documentation>
       </xs:annotation>
@@ -15099,11 +15026,7 @@ The hostname to use for exposing the REST service.
       <xs:annotation>
         <xs:documentation xml:lang="en">
 <![CDATA[
-The port number to use for exposing the REST service. Notice if you use servlet component then the port number
-configured here does not apply, as the port number in use is the actual port number the servlet component is using. eg
-if using Apache Tomcat its the tomcat http port, if using Apache Karaf its the HTTP service in Karaf that uses port 8181
-by default etc. Though in those situations setting the port number here, allows tooling and JMX to know the port number,
-so its recommended to set the port number to the number that the servlet engine uses.
+The port number to use for exposing the REST service.
 ]]>
         </xs:documentation>
       </xs:annotation>
@@ -15344,8 +15267,8 @@ Path of the rest service, such as /foo.
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-To define the content type what the REST service consumes (accept as input), such as application/xml or
-application/json. This option will override what may be configured on a parent level.
+The content type the REST service consumes (accept as input), such as application/xml or application/json. This option
+will override what may be configured on a parent level.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -15354,8 +15277,8 @@ application/json. This option will override what may be configured on a parent l
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-To define the content type what the REST service produces (uses for output), such as application/xml or application/json
-This option will override what may be configured on a parent level.
+The content type the REST service produces (uses for output), such as application/xml or application/json. This option
+will override what may be configured on a parent level.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -15460,7 +15383,7 @@ To configure a special tag for the operations within this rest definition.
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Path to the OpenApi specification file.
+Path to the OpenAPI specification file.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -15469,8 +15392,8 @@ Path to the OpenApi specification file.
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Whether to enable api-doc that exposes the OpenAPI specification file as a REST endpoint. This allows clients to obtain
-the specification from the running Camel application.
+Context path for exposing the OpenAPI specification file as a REST endpoint, allowing clients to obtain the
+specification from the running application.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -15479,7 +15402,7 @@ the specification from the running Camel application.
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Sets the id of the route.
+The route id.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -15587,7 +15510,7 @@ Key used to refer to this security definition.
       <xs:annotation>
         <xs:documentation xml:lang="en">
 <![CDATA[
-A short description for security scheme.
+A short description for the security scheme.
 ]]>
         </xs:documentation>
       </xs:annotation>
@@ -15624,7 +15547,7 @@ A hint to the client to identify how the bearer token is formatted.
             <xs:annotation>
               <xs:documentation xml:lang="en">
 <![CDATA[
-The available scopes for an OAuth2 security scheme.
+The available scopes for the OAuth2 security scheme.
 ]]>
               </xs:documentation>
             </xs:annotation>
@@ -15634,8 +15557,7 @@ The available scopes for an OAuth2 security scheme.
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-The authorization URL to be used for this flow. This SHOULD be in the form of a URL. Required for implicit and access
-code flows.
+The authorization URL to use for this flow. Required for implicit and access code flows.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -15644,8 +15566,7 @@ code flows.
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-The token URL to be used for this flow. This SHOULD be in the form of a URL. Required for password, application, and
-access code flows.
+The token URL to use for this flow. Required for password, application, and access code flows.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -15654,7 +15575,7 @@ access code flows.
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-The URL to be used for obtaining refresh tokens. This MUST be in the form of a URL.
+The URL to use for obtaining refresh tokens.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -15679,7 +15600,7 @@ The flow used by the OAuth2 security scheme. Valid values are implicit, password
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-OpenId Connect URL to discover OAuth2 configuration values.
+OpenID Connect URL to discover OAuth2 configuration values.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -15737,8 +15658,8 @@ The path mapping URIs of this REST operation such as /{id}.
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-To define the content type what the REST service consumes (accept as input), such as application/xml or
-application/json. This option will override what may be configured on a parent level.
+The content type the REST service consumes (accept as input), such as application/xml or application/json. This option
+will override what may be configured on a parent level.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -15747,8 +15668,8 @@ application/json. This option will override what may be configured on a parent l
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-To define the content type what the REST service produces (uses for output), such as application/xml or application/json
-This option will override what may be configured on a parent level.
+The content type the REST service produces (uses for output), such as application/xml or application/json. This option
+will override what may be configured on a parent level.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -15874,7 +15795,7 @@ Whether stream caching is enabled on this rest operation. Default value: false
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Sets the id of the route.
+The route id this REST service will refer to.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -15888,7 +15809,7 @@ Sets the id of the route.
         <xs:annotation>
           <xs:documentation xml:lang="en">
 <![CDATA[
-Sets the parameter list of allowable values (enum).
+List of allowable values for the parameter (enum).
 ]]>
           </xs:documentation>
         </xs:annotation>
@@ -15902,7 +15823,7 @@ Sets the parameter list of allowable values (enum).
         <xs:annotation>
           <xs:documentation xml:lang="en">
 <![CDATA[
-Sets the parameter examples.
+Examples of the parameter.
 ]]>
           </xs:documentation>
         </xs:annotation>
@@ -15912,7 +15833,7 @@ Sets the parameter examples.
       <xs:annotation>
         <xs:documentation xml:lang="en">
 <![CDATA[
-Sets the parameter name.
+The parameter name.
 ]]>
         </xs:documentation>
       </xs:annotation>
@@ -15930,7 +15851,7 @@ Sets the parameter type such as body, form, header, path, or query. Default valu
       <xs:annotation>
         <xs:documentation xml:lang="en">
 <![CDATA[
-Sets the parameter description.
+Description of the parameter.
 ]]>
         </xs:documentation>
       </xs:annotation>
@@ -15939,7 +15860,7 @@ Sets the parameter description.
       <xs:annotation>
         <xs:documentation xml:lang="en">
 <![CDATA[
-Sets the parameter default value.
+The default value of the parameter.
 ]]>
         </xs:documentation>
       </xs:annotation>
@@ -15985,7 +15906,7 @@ Sets the parameter data type such as string, integer, or boolean. Default value:
       <xs:annotation>
         <xs:documentation xml:lang="en">
 <![CDATA[
-Sets the parameter data format.
+The data format of the parameter such as binary, date, date-time, or password.
 ]]>
         </xs:documentation>
       </xs:annotation>
@@ -15997,7 +15918,7 @@ Sets the parameter data format.
         <xs:annotation>
           <xs:documentation xml:lang="en">
 <![CDATA[
-Adds a response header.
+The response headers.
 ]]>
           </xs:documentation>
         </xs:annotation>
@@ -16025,7 +15946,7 @@ The response code such as a HTTP status code. Default value: 200
       <xs:annotation>
         <xs:documentation xml:lang="en">
 <![CDATA[
-The response content-type such as application/json.
+The response content type such as application/json.
 ]]>
         </xs:documentation>
       </xs:annotation>
@@ -16043,7 +15964,7 @@ The response message (description).
       <xs:annotation>
         <xs:documentation xml:lang="en">
 <![CDATA[
-The response model.
+The response model (class name).
 ]]>
         </xs:documentation>
       </xs:annotation>
@@ -16055,7 +15976,7 @@ The response model.
         <xs:annotation>
           <xs:documentation xml:lang="en">
 <![CDATA[
-Sets the parameter list of allowable values.
+List of allowable values for the header (enum).
 ]]>
           </xs:documentation>
         </xs:annotation>
@@ -16070,7 +15991,7 @@ Sets the parameter list of allowable values.
       <xs:annotation>
         <xs:documentation xml:lang="en">
 <![CDATA[
-Name of the parameter. This option is mandatory.
+Name of the response header.
 ]]>
         </xs:documentation>
       </xs:annotation>
@@ -16079,7 +16000,7 @@ Name of the parameter. This option is mandatory.
       <xs:annotation>
         <xs:documentation xml:lang="en">
 <![CDATA[
-Description of the parameter.
+Description of the response header.
 ]]>
         </xs:documentation>
       </xs:annotation>
@@ -16116,7 +16037,7 @@ Sets the header data type such as string, integer, or boolean. Default value: st
       <xs:annotation>
         <xs:documentation xml:lang="en">
 <![CDATA[
-Sets the parameter data format.
+The data format of the header such as binary, date, date-time, or password.
 ]]>
         </xs:documentation>
       </xs:annotation>
@@ -16125,7 +16046,7 @@ Sets the parameter data format.
       <xs:annotation>
         <xs:documentation xml:lang="en">
 <![CDATA[
-Sets the example.
+An example value of this response header.
 ]]>
         </xs:documentation>
       </xs:annotation>
@@ -16216,7 +16137,7 @@ To pretty format the output (only JSon or XML supported). Default value: false
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Sets the class of the result type (type from output).
+The class of the result type (type from output).
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -16236,7 +16157,7 @@ Sets the class of the result type (type from output).
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-The String representation of the message's body MediaType.
+The media type of the message body, such as application/json.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -16245,7 +16166,7 @@ The String representation of the message's body MediaType.
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-The String representation of the MediaType to output.
+The media type to use for the output result.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -16451,7 +16372,7 @@ Name of method to call.
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Class name (fully qualified) of the bean to use Will lookup in registry and if there is a single instance of the same
+Class name (fully qualified) of the bean to use. Will lookup in registry and if there is a single instance of the same
 type, then the existing bean is used, otherwise a new bean is created (requires a default no-arg constructor).
 ]]>
             </xs:documentation>
@@ -16826,8 +16747,7 @@ Reference to a saxon configuration instance in the registry to use for xquery (r
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-To define the content type what the REST service consumes (accept as input), such as application/xml or
-application/json.
+The content type the REST service accepts (consumes) as input, such as application/xml or application/json.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -16836,8 +16756,7 @@ application/json.
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-To define the content type what the REST service produces (uses for output), such as application/xml or
-application/json.
+The content type the REST service produces (uses for output), such as application/xml or application/json.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -16947,7 +16866,7 @@ Sets the component name that this definition will apply to.
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Set a bean reference of the Transformer.
+Reference to a custom Transformer bean in the registry.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -16956,7 +16875,7 @@ Set a bean reference of the Transformer.
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Set a class name of the Transformer.
+Fully qualified class name of the custom Transformer implementation.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -16970,8 +16889,8 @@ Set a class name of the Transformer.
       <xs:annotation>
         <xs:documentation xml:lang="en">
 <![CDATA[
-Set a scheme name supported by the transformer. If you specify 'csv', the transformer will be picked up for all of 'csv'
-from/to Java transformation. Note that the scheme matching is performed only when no exactly matched transformer exists.
+Scheme name supported by the transformer. If specified, the transformer will be picked up for all from/to transformation
+of this scheme. Scheme matching is performed only when no exactly matched transformer exists.
 ]]>
         </xs:documentation>
       </xs:annotation>
@@ -16980,10 +16899,8 @@ from/to Java transformation. Note that the scheme matching is performed only whe
       <xs:annotation>
         <xs:documentation xml:lang="en">
 <![CDATA[
-Set the transformer name under which the transformer gets referenced when specifying the input/output data type on
-routes. If you specify a transformer name that matches a data type scheme like 'csv' the transformer will be picked up
-for all of 'csv:' from/to Java transformation. Note that the scheme matching is performed only when no exactly matched
-transformer exists.
+Name under which the transformer gets referenced when specifying input/output data type on routes. If the name matches a
+data type scheme, the transformer will be picked up as a fallback.
 ]]>
         </xs:documentation>
       </xs:annotation>
@@ -16992,8 +16909,8 @@ transformer exists.
       <xs:annotation>
         <xs:documentation xml:lang="en">
 <![CDATA[
-Set the 'from' data type name. If you specify 'xml:XYZ', the transformer will be picked up if source type is 'xml:XYZ'.
-If you specify just 'xml', the transformer matches with all of 'xml' source type like 'xml:ABC' or 'xml:DEF'.
+The source (from) data type name. If you specify 'xml:XYZ', the transformer is picked up when source type matches. If
+you specify just 'xml', it matches all xml source types.
 ]]>
         </xs:documentation>
       </xs:annotation>
@@ -17002,9 +16919,8 @@ If you specify just 'xml', the transformer matches with all of 'xml' source type
       <xs:annotation>
         <xs:documentation xml:lang="en">
 <![CDATA[
-Set the 'to' data type name. If you specify 'json:XYZ', the transformer will be picked up if destination type is
-'json:XYZ'. If you specify just 'json', the transformer matches with all of 'json' destination type like 'json:ABC' or
-'json:DEF'.
+The destination (to) data type name. If you specify 'json:XYZ', the transformer is picked up when destination type
+matches. If you specify just 'json', it matches all json destination types.
 ]]>
         </xs:documentation>
       </xs:annotation>
@@ -17076,7 +16992,7 @@ Set the 'to' data type name. If you specify 'json:XYZ', the transformer will be 
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Set the reference of the Endpoint.
+Reference of the Endpoint used for transformation.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -17085,7 +17001,7 @@ Set the reference of the Endpoint.
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Set the URI of the Endpoint.
+URI of the Endpoint used for transformation.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -17101,7 +17017,7 @@ Set the URI of the Endpoint.
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Set the classpath location to scan for annotated transformers.
+The classpath location to scan for annotated transformers.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -17110,7 +17026,7 @@ Set the classpath location to scan for annotated transformers.
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Enable loading of default transformers. Default value: false
+Whether to enable loading of default transformers. Default value: false
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -17136,7 +17052,7 @@ Enable loading of default transformers. Default value: false
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Set a bean reference of the Validator.
+Reference to a custom Validator bean in the registry.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -17145,7 +17061,7 @@ Set a bean reference of the Validator.
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Set a class name of the Validator.
+Fully qualified class name of the custom Validator implementation.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -17159,8 +17075,8 @@ Set a class name of the Validator.
       <xs:annotation>
         <xs:documentation xml:lang="en">
 <![CDATA[
-Set the data type name. If you specify 'xml:XYZ', the validator will be picked up if message type is 'xml:XYZ'. If you
-specify just 'xml', the validator matches with all of 'xml' message type like 'xml:ABC' or 'xml:DEF'.
+The data type name to validate. If you specify 'xml:XYZ', the validator is picked up when message type is 'xml:XYZ'. If
+you specify just 'xml', the validator matches all xml message types.
 ]]>
         </xs:documentation>
       </xs:annotation>
@@ -17174,7 +17090,7 @@ specify just 'xml', the validator matches with all of 'xml' message type like 'x
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Set the reference of the Endpoint.
+Reference of the Endpoint used for validation.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -17183,7 +17099,7 @@ Set the reference of the Endpoint.
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Set the URI of the Endpoint.
+URI of the Endpoint used for validation.
 ]]>
             </xs:documentation>
           </xs:annotation>

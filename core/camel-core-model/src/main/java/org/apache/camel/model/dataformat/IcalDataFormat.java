@@ -36,7 +36,7 @@ public class IcalDataFormat extends DataFormatDefinition {
 
     @XmlAttribute
     @Metadata(description = "Whether to validate the iCal document.",
-            javaType = "java.lang.Boolean")
+              javaType = "java.lang.Boolean")
     private String validating;
 
     public IcalDataFormat() {
