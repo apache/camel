@@ -40,16 +40,18 @@ public class ProtobufDataFormat extends DataFormatDefinition implements ContentT
     @XmlAttribute
     private String instanceClass;
     @XmlAttribute
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced", description = "Lookup and use the existing ObjectMapper with the given id when using Jackson.")
     private String objectMapper;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean", defaultValue = "true")
+    @Metadata(javaType = "java.lang.Boolean", defaultValue = "true",
+              description = "Whether to lookup and use default Jackson ObjectMapper from the registry.")
     private String useDefaultObjectMapper;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean", defaultValue = "false")
+    @Metadata(javaType = "java.lang.Boolean", defaultValue = "false",
+              description = "If set to true then Jackson will lookup for an objectMapper into the registry.")
     private String autoDiscoverObjectMapper;
     @XmlAttribute
-    @Metadata(defaultValue = "GoogleProtobuf")
+    @Metadata(defaultValue = "GoogleProtobuf", description = "Which Protobuf library to use.")
     private ProtobufLibrary library = ProtobufLibrary.GoogleProtobuf;
     @XmlAttribute(name = "unmarshalType")
     private String unmarshalTypeName;
@@ -62,39 +64,46 @@ public class ProtobufDataFormat extends DataFormatDefinition implements ContentT
     @XmlAttribute
     private String include;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean",
+              description = "Used for JMS users to allow the JMSType header from the JMS spec to specify a FQN classname to use to unmarshal to.")
     private String allowJmsType;
     @XmlAttribute(name = "collectionType")
     private String collectionTypeName;
     @XmlTransient
     private Class<?> collectionType;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(javaType = "java.lang.Boolean", description = "To unmarshal to a List of Map or a List of Pojo.")
     private String useList;
     @XmlAttribute
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced",
+              description = "To use custom Jackson modules com.fasterxml.jackson.databind.Module specified as a String with FQN class names. Multiple classes can be separated by comma.")
     private String moduleClassNames;
     @XmlAttribute
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced",
+              description = "To use custom Jackson modules referred from the Camel registry. Multiple modules can be separated by comma.")
     private String moduleRefs;
     @XmlAttribute
     private String enableFeatures;
     @XmlAttribute
     private String disableFeatures;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(javaType = "java.lang.Boolean",
+              description = "If enabled then Jackson is allowed to attempt to use the CamelJacksonUnmarshalType header during the unmarshalling.")
     private String allowUnmarshallType;
     @XmlAttribute
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced", description = "If set then Jackson will use the Timezone when marshalling/unmarshalling.")
     private String timezone;
     @XmlAttribute
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced", description = "Optional schema resolver used to lookup schemas for the data in transit.")
     private String schemaResolver;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "true")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "true",
+              description = "When not disabled, the SchemaResolver will be looked up into the registry.")
     private String autoDiscoverSchemaResolver;
     @XmlAttribute
-    @Metadata(enums = "native,json", defaultValue = "native")
+    @Metadata(enums = "native,json", defaultValue = "native",
+              description = "Defines a content type format in which protobuf message will be serialized/deserialized from(to) the Java been."
+                            + " The format can either be native or json for either native protobuf or json fields representation.")
     private String contentTypeFormat;
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean", defaultValue = "true",

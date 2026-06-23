@@ -37,53 +37,67 @@ public class JaxbDataFormat extends DataFormatDefinition implements ContentTypeH
     @XmlAttribute(required = true)
     private String contextPath;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(javaType = "java.lang.Boolean",
+              description = "This can be set to true to mark that the contextPath is referring to a classname and not a package name.")
     private String contextPathIsClassName;
     @XmlAttribute
     private String schema;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Integer", enums = "0,1,2", defaultValue = "0")
+    @Metadata(javaType = "java.lang.Integer", enums = "0,1,2", defaultValue = "0",
+              description = "Sets the schema severity level to use when validating against a schema."
+                            + " The default value of 0 (warning) means that any error will trigger JAXB to stop. There are the following three levels: 0=warning, 1=error, 2=fatal error.")
     private String schemaSeverityLevel;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean", defaultValue = "true")
+    @Metadata(javaType = "java.lang.Boolean", defaultValue = "true",
+              description = "To enable pretty printing output nicely formatted. Is by default false.")
     private String prettyPrint;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "true")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "true",
+              description = "Whether to allow using ObjectFactory classes to create the POJO classes during marshalling.")
     private String objectFactory;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "true")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "true",
+              description = "Whether to ignore JAXBElement elements - only needed to be set to false in very special use-cases.")
     private String ignoreJAXBElement;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean",
+              description = "Whether marshalling must be java objects with JAXB annotations. And if not then it fails."
+                            + " This option can be set to false to relax that, such as when the data is already in XML format.")
     private String mustBeJAXBElement;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean",
+              description = "To ignore non xml characters and replace them with an empty space.")
     private String filterNonXmlChars;
     @XmlAttribute
     private String encoding;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean",
+              description = "To turn on marshalling XML fragment trees. This is useful when generated code does not have @XmlRootElement annotation"
+                            + " and you need to unmarshall only part of the tree.")
     private String fragment;
     // Partial encoding
     @XmlAttribute
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced", description = "Name of class used for fragment parsing.")
     private String partClass;
     @XmlAttribute
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced", description = "XML namespace to use for fragment parsing.")
     private String partNamespace;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.util.Map")
+    @Metadata(label = "advanced", javaType = "java.util.Map",
+              description = "When marshalling using JAXB or SOAP then the JAXB implementation will automatically assign namespace prefixes,"
+                            + " such as ns2, ns3, ns4 etc. To control this mapping, Camel allows you to refer to a map which contains the desired mapping.")
     private String namespacePrefix;
     @XmlAttribute
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced", description = "To use a custom xml stream writer.")
     private String xmlStreamWriterWrapper;
     @XmlAttribute
     private String schemaLocation;
     @XmlAttribute
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced", description = "To define the location of the namespaceless schema.")
     private String noNamespaceSchemaLocation;
     @XmlAttribute
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced",
+              description = "Refers to a custom java.util.Map to lookup in the registry containing custom JAXB provider properties to be used with the JAXB marshaller.")
     private String jaxbProviderProperties;
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean", defaultValue = "true",
@@ -91,7 +105,9 @@ public class JaxbDataFormat extends DataFormatDefinition implements ContentTypeH
                             + " For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSON")
     private String contentTypeHeader;
     @XmlAttribute
-    @Metadata(label = "security")
+    @Metadata(label = "security",
+              description = "Only in use if schema validation has been enabled."
+                            + " Restrict access to the protocols specified for external reference set by the schemaLocation attribute, Import and Include element.")
     private String accessExternalSchemaProtocols;
 
     public JaxbDataFormat() {

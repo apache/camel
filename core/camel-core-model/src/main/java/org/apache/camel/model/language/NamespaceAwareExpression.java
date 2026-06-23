@@ -41,7 +41,7 @@ import org.apache.camel.support.builder.Namespaces;
 public abstract class NamespaceAwareExpression extends SingleInputTypedExpressionDefinition implements NamespaceAware {
 
     @XmlElement(name = "namespace")
-    @Metadata(label = "common")
+    @Metadata(label = "common", description = "Injects the XML Namespaces of prefix to uri mappings.")
     private List<PropertyDefinition> namespace;
     @XmlTransient
     private Map<String, String> namespaces;

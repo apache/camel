@@ -31,73 +31,105 @@ import org.apache.camel.spi.Metadata;
 public class Resilience4jConfigurationCommon extends IdentifiedType {
 
     @XmlAttribute
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced",
+              description = "Refers to an existing io.github.resilience4j.circuitbreaker.CircuitBreaker instance to lookup and use from the registry."
+                            + " When using this, then any other circuit breaker options are not in use.")
     private String circuitBreaker;
     @XmlAttribute
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced",
+              description = "Refers to an existing io.github.resilience4j.circuitbreaker.CircuitBreakerConfig instance to lookup and use from the registry.")
     private String config;
     @XmlAttribute
-    @Metadata(defaultValue = "50", javaType = "java.lang.Float")
+    @Metadata(defaultValue = "50", javaType = "java.lang.Float",
+              description = "Configures the failure rate threshold in percentage."
+                            + " If the failure rate is equal or greater than the threshold the CircuitBreaker transitions to open and starts short-circuiting calls.")
     private String failureRateThreshold;
     @XmlAttribute
-    @Metadata(label = "advanced", defaultValue = "10", javaType = "java.lang.Integer")
+    @Metadata(label = "advanced", defaultValue = "10", javaType = "java.lang.Integer",
+              description = "Configures the number of permitted calls when the CircuitBreaker is half open.")
     private String permittedNumberOfCallsInHalfOpenState;
     @XmlAttribute
-    @Metadata(defaultValue = "false", javaType = "java.lang.Boolean")
+    @Metadata(defaultValue = "false", javaType = "java.lang.Boolean",
+              description = "Whether to throw io.github.resilience4j.circuitbreaker.CallNotPermittedException when the call is rejected due"
+                            + " circuit breaker is half open or open.")
     private String throwExceptionWhenHalfOpenOrOpenState;
     @XmlAttribute
-    @Metadata(defaultValue = "100", javaType = "java.lang.Integer")
+    @Metadata(defaultValue = "100", javaType = "java.lang.Integer",
+              description = "Configures the size of the sliding window which is used to record the outcome of calls when the CircuitBreaker is closed."
+                            + " Sliding window can either be count-based or time-based.")
     private String slidingWindowSize;
     @XmlAttribute
-    @Metadata(label = "advanced", defaultValue = "COUNT_BASED", enums = "TIME_BASED,COUNT_BASED")
+    @Metadata(label = "advanced", defaultValue = "COUNT_BASED", enums = "TIME_BASED,COUNT_BASED",
+              description = "Configures the type of the sliding window which is used to record the outcome of calls when the CircuitBreaker is closed."
+                            + " Sliding window can either be count-based or time-based.")
     private String slidingWindowType;
     @XmlAttribute
-    @Metadata(defaultValue = "100", javaType = "java.lang.Integer")
+    @Metadata(defaultValue = "100", javaType = "java.lang.Integer",
+              description = "Configures the minimum number of calls which are required (per sliding window period) before the CircuitBreaker can calculate the error rate.")
     private String minimumNumberOfCalls;
     @XmlAttribute
-    @Metadata(label = "advanced", defaultValue = "true", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", defaultValue = "true", javaType = "java.lang.Boolean",
+              description = "Enables writable stack traces. When set to false, Exception.getStackTrace returns a zero length array."
+                            + " This may be used to reduce log spam when the circuit breaker is open.")
     private String writableStackTraceEnabled;
     @XmlAttribute
-    @Metadata(label = "advanced", defaultValue = "60", javaType = "java.lang.Integer")
+    @Metadata(label = "advanced", defaultValue = "60", javaType = "java.lang.Integer",
+              description = "Configures the wait duration (in seconds) which specifies how long the CircuitBreaker should stay open, before it switches to half open.")
     private String waitDurationInOpenState;
     @XmlAttribute
-    @Metadata(label = "advanced", defaultValue = "false", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", defaultValue = "false", javaType = "java.lang.Boolean",
+              description = "Enables automatic transition from OPEN to HALF_OPEN state once the waitDurationInOpenState has passed.")
     private String automaticTransitionFromOpenToHalfOpenEnabled;
     @XmlAttribute
-    @Metadata(label = "advanced", defaultValue = "100", javaType = "java.lang.Float")
+    @Metadata(label = "advanced", defaultValue = "100", javaType = "java.lang.Float",
+              description = "Configures a threshold in percentage. The CircuitBreaker considers a call as slow when the call duration is greater than slowCallDurationThreshold."
+                            + " When the percentage of slow calls is equal or greater the threshold, the CircuitBreaker transitions to open and starts short-circuiting calls.")
     private String slowCallRateThreshold;
     @XmlAttribute
-    @Metadata(label = "advanced", defaultValue = "60", javaType = "java.lang.Integer")
+    @Metadata(label = "advanced", defaultValue = "60", javaType = "java.lang.Integer",
+              description = "Configures the duration threshold (seconds) above which calls are considered as slow and increase the slow calls percentage.")
     private String slowCallDurationThreshold;
     @XmlAttribute
-    @Metadata(defaultValue = "false", javaType = "java.lang.Boolean")
+    @Metadata(defaultValue = "false", javaType = "java.lang.Boolean",
+              description = "Whether bulkhead is enabled or not on the circuit breaker.")
     private String bulkheadEnabled;
     @XmlAttribute
-    @Metadata(defaultValue = "25", javaType = "java.lang.Integer")
+    @Metadata(defaultValue = "25", javaType = "java.lang.Integer",
+              description = "Configures the max amount of concurrent calls the bulkhead will support.")
     private String bulkheadMaxConcurrentCalls;
     @XmlAttribute
-    @Metadata(label = "advanced", defaultValue = "0", javaType = "java.lang.Integer")
+    @Metadata(label = "advanced", defaultValue = "0", javaType = "java.lang.Integer",
+              description = "Configures a maximum amount of time which the calling thread will wait to enter the bulkhead.")
     private String bulkheadMaxWaitDuration;
     @XmlAttribute
-    @Metadata(defaultValue = "false", javaType = "java.lang.Boolean")
+    @Metadata(defaultValue = "false", javaType = "java.lang.Boolean",
+              description = "Whether timeout is enabled or not on the circuit breaker.")
     private String timeoutEnabled;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.util.concurrent.ExecutorService")
+    @Metadata(label = "advanced", javaType = "java.util.concurrent.ExecutorService",
+              description = "References to a custom thread pool to use when timeout is enabled (uses ForkJoinPool.commonPool() by default).")
     private String timeoutExecutorService;
     @XmlAttribute
-    @Metadata(defaultValue = "1000", javaType = "java.lang.Integer")
+    @Metadata(defaultValue = "1000", javaType = "java.lang.Integer",
+              description = "Configures the thread execution timeout. Default value is 1 second.")
     private String timeoutDuration;
     @XmlAttribute
-    @Metadata(label = "advanced", defaultValue = "true", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", defaultValue = "true", javaType = "java.lang.Boolean",
+              description = "Configures whether cancel is called on the running future. Defaults to true.")
     private String timeoutCancelRunningFuture;
     @XmlAttribute
-    @Metadata(defaultValue = "false", javaType = "java.lang.Boolean")
+    @Metadata(defaultValue = "false", javaType = "java.lang.Boolean",
+              description = "Whether to enable collecting statistics using Micrometer. This requires adding camel-resilience4j-micrometer JAR to the classpath.")
     private String micrometerEnabled;
     @XmlElement(name = "recordException")
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced",
+              description = "Configure a list of exceptions that are recorded as a failure and thus increase the failure rate."
+                            + " Any exception matching or inheriting from one of the list counts as a failure, unless explicitly ignored via ignoreExceptions.")
     private List<String> recordExceptions = new ArrayList<>();
     @XmlElement(name = "ignoreException")
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced",
+              description = "Configure a list of exceptions that are ignored and neither count as a failure nor success."
+                            + " Any exception matching or inheriting from one of the list will not count as a failure nor success, even if the exception is part of recordExceptions.")
     private List<String> ignoreExceptions = new ArrayList<>();
 
     public Resilience4jConfigurationCommon() {

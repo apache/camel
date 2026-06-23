@@ -36,45 +36,55 @@ import org.apache.camel.spi.Metadata;
 public abstract class UniVocityAbstractDataFormat extends DataFormatDefinition {
 
     @XmlAttribute
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced", description = "The string representation of a null value.")
     protected String nullValue;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean", defaultValue = "true")
+    @Metadata(javaType = "java.lang.Boolean", defaultValue = "true",
+              description = "Whether or not the empty lines must be ignored.")
     protected String skipEmptyLines;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean", defaultValue = "true")
+    @Metadata(javaType = "java.lang.Boolean", defaultValue = "true",
+              description = "Whether or not the trailing white spaces must be ignored.")
     protected String ignoreTrailingWhitespaces;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean", defaultValue = "true")
+    @Metadata(javaType = "java.lang.Boolean", defaultValue = "true",
+              description = "Whether or not the leading white spaces must be ignored.")
     protected String ignoreLeadingWhitespaces;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(javaType = "java.lang.Boolean",
+              description = "Whether or not the headers are disabled. When defined, this option explicitly sets the headers as null which indicates that there is no header.")
     protected String headersDisabled;
     @XmlElementRef
     protected List<UniVocityHeader> headers;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(javaType = "java.lang.Boolean",
+              description = "Whether or not the header must be read in the first line of the test document.")
     protected String headerExtractionEnabled;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Integer")
+    @Metadata(label = "advanced", javaType = "java.lang.Integer",
+              description = "The maximum number of record to read.")
     protected String numberOfRecordsToRead;
     @XmlAttribute
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced", description = "The String representation of an empty value.")
     protected String emptyValue;
     @XmlAttribute
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced",
+              description = "The line separator of the files. The default value is to use the JVM platform line separator.")
     protected String lineSeparator;
     @XmlAttribute
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced",
+              description = "The normalized line separator of the files. The default value is a new line character.")
     protected String normalizedLineSeparator;
     @XmlAttribute
-    @Metadata(label = "advanced", defaultValue = "#")
+    @Metadata(label = "advanced", defaultValue = "#", description = "The comment symbol.")
     protected String comment;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(javaType = "java.lang.Boolean",
+              description = "Whether the unmarshalling should produce an iterator that reads the lines on the fly or if all the lines must be read at once.")
     protected String lazyLoad;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(javaType = "java.lang.Boolean",
+              description = "Whether the unmarshalling should produce maps for the lines values instead of lists. It requires to have header (either defined or collected).")
     protected String asMap;
 
     protected UniVocityAbstractDataFormat() {

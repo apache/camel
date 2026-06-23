@@ -46,13 +46,14 @@ public class AvroDataFormat extends DataFormatDefinition {
     @XmlAttribute
     private String instanceClassName;
     @XmlAttribute
-    @Metadata(defaultValue = "avroJackson")
+    @Metadata(defaultValue = "avroJackson", description = "Which Avro library to use.")
     private AvroLibrary library = AvroLibrary.Jackson;
     @XmlAttribute
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced", description = "Lookup and use the existing ObjectMapper with the given id when using Jackson.")
     private String objectMapper;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean", defaultValue = "true")
+    @Metadata(javaType = "java.lang.Boolean", defaultValue = "true",
+              description = "Whether to lookup and use default Jackson ObjectMapper from the registry.")
     private String useDefaultObjectMapper;
     @XmlAttribute(name = "unmarshalType")
     private String unmarshalTypeName;
@@ -61,32 +62,38 @@ public class AvroDataFormat extends DataFormatDefinition {
     @XmlAttribute
     private String include;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean",
+              description = "Used for JMS users to allow the JMSType header from the JMS spec to specify a FQN classname to use to unmarshal to.")
     private String allowJmsType;
     @XmlAttribute(name = "collectionType")
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced",
+              description = "Refers to a custom collection type to lookup in the registry to use.")
     private String collectionTypeName;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(javaType = "java.lang.Boolean", description = "To unmarshal to a List of Map or a List of Pojo.")
     private String useList;
     @XmlAttribute
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced",
+              description = "To use custom Jackson modules com.fasterxml.jackson.databind.Module specified as a String with FQN class names. Multiple classes can be separated by comma.")
     private String moduleClassNames;
     @XmlAttribute
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced",
+              description = "To use custom Jackson modules referred from the Camel registry. Multiple modules can be separated by comma.")
     private String moduleRefs;
     @XmlAttribute
     private String enableFeatures;
     @XmlAttribute
     private String disableFeatures;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(javaType = "java.lang.Boolean",
+              description = "If enabled then Jackson is allowed to attempt to use the CamelJacksonUnmarshalType header during the unmarshalling.")
     private String allowUnmarshallType;
     @XmlAttribute
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced", description = "If set then Jackson will use the Timezone when marshalling/unmarshalling.")
     private String timezone;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean",
+              description = "If set to true then Jackson will lookup for an objectMapper into the registry.")
     private String autoDiscoverObjectMapper;
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean", defaultValue = "true",
@@ -94,10 +101,11 @@ public class AvroDataFormat extends DataFormatDefinition {
                             + " For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSON")
     private String contentTypeHeader;
     @XmlAttribute
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced", description = "Optional schema resolver used to lookup schemas for the data in transit.")
     private String schemaResolver;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "true")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "true",
+              description = "When not disabled, the SchemaResolver will be looked up into the registry.")
     private String autoDiscoverSchemaResolver;
 
     public AvroDataFormat() {

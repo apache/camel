@@ -37,44 +37,48 @@ public class CsvDataFormat extends DataFormatDefinition {
     // Format options
     @XmlAttribute
     @Metadata(enums = "DEFAULT,EXCEL,INFORMIX_UNLOAD,INFORMIX_UNLOAD_CSV,MONGODB_CSV,MONGODB_TSV,MYSQL,ORACLE,POSTGRESQL_CSV,POSTGRESQL_TEXT,RFC4180",
-              defaultValue = "DEFAULT")
+              defaultValue = "DEFAULT",
+              description = "The format to use.")
     private String format;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean",
+              description = "Disables the comment marker of the reference format.")
     private String commentMarkerDisabled;
     @XmlAttribute
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced", description = "Sets the comment marker of the reference format.")
     private String commentMarker;
     @XmlAttribute
     private String delimiter;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean",
+              description = "Use for disabling using escape character.")
     private String escapeDisabled;
     @XmlAttribute
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced", description = "Sets the escape character to use.")
     private String escape;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(javaType = "java.lang.Boolean", description = "Use for disabling headers.")
     private String headerDisabled;
     @XmlAttribute
     private String header;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(javaType = "java.lang.Boolean", description = "Whether to allow missing column names.")
     private String allowMissingColumnNames;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(javaType = "java.lang.Boolean", description = "Whether to ignore empty lines.")
     private String ignoreEmptyLines;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(javaType = "java.lang.Boolean", description = "Whether to ignore surrounding spaces.")
     private String ignoreSurroundingSpaces;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean",
+              description = "Used to disable null strings.")
     private String nullStringDisabled;
     @XmlAttribute
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced", description = "Sets the null string.")
     private String nullString;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(javaType = "java.lang.Boolean", description = "Used to disable quotes.")
     private String quoteDisabled;
     @XmlAttribute
     private String quote;
@@ -83,39 +87,49 @@ public class CsvDataFormat extends DataFormatDefinition {
     @XmlAttribute
     private String recordSeparator;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(javaType = "java.lang.Boolean", description = "Whether to skip the header record in the output.")
     private String skipHeaderRecord;
     @XmlAttribute
-    @Metadata(enums = "ALL,ALL_NON_NULL,MINIMAL,NON_NUMERIC,NONE")
+    @Metadata(enums = "ALL,ALL_NON_NULL,MINIMAL,NON_NUMERIC,NONE",
+              description = "Sets the quote mode.")
     private String quoteMode;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(javaType = "java.lang.Boolean",
+              description = "Whether to ignore case when accessing header names.")
     private String ignoreHeaderCase;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(javaType = "java.lang.Boolean",
+              description = "Whether to trim leading and trailing blanks.")
     private String trim;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(javaType = "java.lang.Boolean",
+              description = "Whether to add a trailing delimiter.")
     private String trailingDelimiter;
     @XmlAttribute
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced",
+              description = "Sets the implementation of the CsvMarshallerFactory interface which is able to customize marshalling/unmarshalling behavior.")
     private String marshallerFactoryRef;
 
     // Unmarshall options
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean",
+              description = "Whether the unmarshalling should produce an iterator that reads the lines on the fly or if all the lines must be read at one.")
     private String lazyLoad;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(javaType = "java.lang.Boolean",
+              description = "Whether the unmarshalling should produce maps (HashMap) for the lines values instead of lists. It requires to have header (either defined or collected).")
     private String useMaps;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(javaType = "java.lang.Boolean",
+              description = "Whether the unmarshalling should produce ordered maps (LinkedHashMap) for the lines values instead of lists. It requires to have header (either defined or collected).")
     private String useOrderedMaps;
     @XmlAttribute
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced",
+              description = "Refers to a custom CsvRecordConverter to lookup from the registry to use.")
     private String recordConverterRef;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean",
+              description = "Whether the unmarshalling should capture the header record and store it in the message header.")
     private String captureHeaderRecord;
 
     public CsvDataFormat() {

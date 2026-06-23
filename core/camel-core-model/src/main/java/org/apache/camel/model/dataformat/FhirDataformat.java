@@ -29,55 +29,76 @@ import org.apache.camel.spi.Metadata;
 public abstract class FhirDataformat extends DataFormatDefinition implements ContentTypeHeaderAware {
 
     @XmlAttribute
-    @Metadata(enums = "DSTU2,DSTU2_HL7ORG,DSTU2_1,DSTU3,R4,R5", defaultValue = "R4")
+    @Metadata(enums = "DSTU2,DSTU2_HL7ORG,DSTU2_1,DSTU3,R4,R5", defaultValue = "R4",
+              description = "The version of FHIR to use. Possible values are: DSTU2, DSTU2_HL7ORG, DSTU2_1, DSTU3, R4, R5.")
     private String fhirVersion;
     @XmlAttribute
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced", description = "To use a custom fhir context. Reference to object of type ca.uhn.fhir.context.FhirContext.")
     private String fhirContext;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(javaType = "java.lang.Boolean",
+              description = "Sets the pretty print flag, meaning that the parser will encode resources with human-readable spacing and newlines between elements.")
     private String prettyPrint;
     @XmlAttribute
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced",
+              description = "Registers an error handler which will be invoked when any parse errors are found. Reference to object of type ca.uhn.fhir.parser.IParserErrorHandler.")
     private String parserErrorHandler;
     @XmlAttribute
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced",
+              description = "Sets the parser options object which will be used to supply default options to newly created parsers."
+                            + " Reference to object of type ca.uhn.fhir.context.ParserOptions.")
     private String parserOptions;
     @XmlAttribute
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced",
+              description = "If set (FQN class names), when parsing resources the parser will try to use the given types when possible."
+                            + " Multiple class names can be separated by comma.")
     private String preferTypes;
     @XmlAttribute
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced",
+              description = "When encoding, force this resource ID to be encoded as the resource ID. Reference to object of type org.hl7.fhir.instance.model.api.IIdType.")
     private String forceResourceId;
     @XmlAttribute
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced",
+              description = "Sets the server's base URL used by this parser. If a value is set, resource references will be turned into relative references"
+                            + " if they are provided as absolute URLs but have a base matching the given base.")
     private String serverBaseUrl;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean",
+              description = "If set to true (default is false) the ID of any resources being encoded will not be included in the output.")
     private String omitResourceId;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean",
+              description = "If set to true (default is false), the values supplied to setEncodeElements will not be applied to the root resource (typically a Bundle),"
+                            + " but will be applied to any sub-resources contained within it.")
     private String encodeElementsAppliesToChildResourcesOnly;
     @XmlAttribute
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced",
+              description = "If provided, specifies the elements which should be encoded, to the exclusion of all others. Multiple elements can be separated by comma.")
     private String encodeElements;
     @XmlAttribute
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced",
+              description = "If provided, specifies the elements which should NOT be encoded. Multiple elements can be separated by comma.")
     private String dontEncodeElements;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean",
+              description = "If set to true (which is the default), resource references containing a version will have the version removed when the resource is encoded.")
     private String stripVersionsFromReferences;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean",
+              description = "If set to true (which is the default), the Bundle.entry.fullUrl will override the Bundle.entry.resource's resource id if the fullUrl is defined.")
     private String overrideResourceIdWithBundleEntryFullUrl;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean",
+              description = "If set to true (default is false) only elements marked by the FHIR specification as being summary elements will be included.")
     private String summaryMode;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean",
+              description = "If set to true (default is false), narratives will not be included in the encoded values.")
     private String suppressNarratives;
     @XmlAttribute
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced",
+              description = "If supplied value(s), any resource references at the specified paths will have their resource versions encoded"
+                            + " instead of being automatically stripped during the encoding process. Multiple elements can be separated by comma.")
     private String dontStripVersionsFromReferencesAtPaths;
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean", defaultValue = "true",

@@ -35,10 +35,12 @@ import org.apache.camel.spi.Metadata;
 public class CSimpleExpression extends TypedExpressionDefinition {
 
     @XmlAttribute
-    @Metadata(defaultValue = "false", javaType = "java.lang.Boolean")
+    @Metadata(defaultValue = "false", javaType = "java.lang.Boolean",
+              description = "Whether to trim the returned values when this language is in use.")
     private String trimResult;
     @XmlAttribute
-    @Metadata(defaultValue = "false", javaType = "java.lang.Boolean")
+    @Metadata(defaultValue = "false", javaType = "java.lang.Boolean",
+              description = "To pretty format the output (only JSon or XML supported).")
     private String pretty;
 
     public CSimpleExpression() {

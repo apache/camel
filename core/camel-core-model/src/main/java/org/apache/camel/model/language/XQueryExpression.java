@@ -35,7 +35,8 @@ public class XQueryExpression extends NamespaceAwareExpression {
     @XmlTransient
     private Object configuration;
     @XmlAttribute
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced",
+              description = "Reference to a saxon configuration instance in the registry to use for xquery (requires camel-saxon).")
     private String configurationRef;
 
     public XQueryExpression() {

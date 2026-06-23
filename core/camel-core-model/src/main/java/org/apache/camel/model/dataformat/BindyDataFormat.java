@@ -40,21 +40,26 @@ public class BindyDataFormat extends DataFormatDefinition {
     private Class<?> classType;
 
     @XmlAttribute(required = true)
-    @Metadata(required = true, javaType = "org.apache.camel.model.dataformat.BindyType", enums = "Csv,Fixed,KeyValue")
+    @Metadata(required = true, javaType = "org.apache.camel.model.dataformat.BindyType", enums = "Csv,Fixed,KeyValue",
+              description = "Whether to use Csv, Fixed, or KeyValue.")
     private String type;
     @XmlAttribute(name = "classType")
     private String classTypeAsString;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(javaType = "java.lang.Boolean",
+              description = "To change the default value for string types to be null instead of an empty string.")
     private String defaultValueStringAsNull;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean", defaultValue = "false")
+    @Metadata(javaType = "java.lang.Boolean", defaultValue = "false",
+              description = "Whether to allow empty streams in the unmarshal process. If true, no exception will be thrown when a body without records is provided.")
     private String allowEmptyStream;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "true")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "true",
+              description = "When unmarshalling should a single instance be unwrapped and returned instead of wrapped in a java.util.List.")
     private String unwrapSingleInstance;
     @XmlAttribute
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced",
+              description = "To configure a default locale to use, such as us for united states. To use the JVM platform default locale then use the name default.")
     private String locale;
 
     public BindyDataFormat() {

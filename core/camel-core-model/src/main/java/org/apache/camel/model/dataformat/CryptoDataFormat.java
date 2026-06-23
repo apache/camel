@@ -37,28 +37,33 @@ public class CryptoDataFormat extends DataFormatDefinition {
     @XmlAttribute
     private String algorithm;
     @XmlAttribute
-    @Metadata(javaType = "java.security.Key")
+    @Metadata(javaType = "java.security.Key", description = "Refers to the secret key to lookup from the register to use.")
     private String key;
     @XmlAttribute
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced", description = "The name of the JCE Security Provider that should be used.")
     private String cryptoProvider;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "byte[]")
+    @Metadata(label = "advanced", javaType = "byte[]",
+              description = "Refers to a byte array containing the Initialization Vector that will be used to initialize the Cipher.")
     private String initVector;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.security.spec.AlgorithmParameterSpec")
+    @Metadata(label = "advanced", javaType = "java.security.spec.AlgorithmParameterSpec",
+              description = "A JCE AlgorithmParameterSpec used to initialize the Cipher.")
     private String algorithmParameterSpec;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Integer", defaultValue = "4096")
+    @Metadata(javaType = "java.lang.Integer", defaultValue = "4096",
+              description = "The size of the buffer used in the signature process.")
     private String bufferSize;
     @XmlAttribute
-    @Metadata(defaultValue = "HmacSHA1")
+    @Metadata(defaultValue = "HmacSHA1", description = "The JCE algorithm name indicating the Message Authentication algorithm.")
     private String macAlgorithm = "HmacSHA1";
     @XmlAttribute
-    @Metadata(defaultValue = "true", javaType = "java.lang.Boolean")
+    @Metadata(defaultValue = "true", javaType = "java.lang.Boolean",
+              description = "Flag indicating that a Message Authentication Code should be calculated and appended to the encrypted data.")
     private String shouldAppendHMAC;
     @XmlAttribute
-    @Metadata(label = "advanced", defaultValue = "false", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", defaultValue = "false", javaType = "java.lang.Boolean",
+              description = "Flag indicating that the configured IV should be inlined into the encrypted data stream. Is by default false.")
     private String inline;
 
     public CryptoDataFormat() {

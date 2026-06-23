@@ -42,28 +42,32 @@ public class XPathExpression extends NamespaceAwareExpression {
     private XPathFactory xpathFactory;
 
     @XmlAttribute(name = "documentType")
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced", description = "Name of class for document type. The default value is org.w3c.dom.Document.")
     private String documentTypeName;
     @XmlAttribute(name = "resultQName")
-    @Metadata(defaultValue = "NODESET", enums = "NUMBER,STRING,BOOLEAN,NODESET,NODE")
+    @Metadata(defaultValue = "NODESET", enums = "NUMBER,STRING,BOOLEAN,NODESET,NODE",
+              description = "Sets the output type supported by XPath.")
     private String resultQName;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean", description = "Whether to use Saxon.")
     private String saxon;
     @XmlAttribute
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced", description = "References to a custom XPathFactory to lookup in the registry.")
     private String factoryRef;
     @XmlAttribute
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced", description = "The XPath object model to use.")
     private String objectModel;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean",
+              description = "Whether to log namespaces which can assist during troubleshooting.")
     private String logNamespaces;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean",
+              description = "Whether to enable thread-safety for the returned result of the xpath expression. This applies to when using NODESET as the result type, and the returned set has multiple elements.")
     private String threadSafety;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "true")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "true",
+              description = "Whether to enable pre-compiling the xpath expression during initialization phase. pre-compile is enabled by default.")
     private String preCompile;
 
     public XPathExpression() {

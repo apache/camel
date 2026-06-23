@@ -50,21 +50,29 @@ public class PGPDataFormat extends DataFormatDefinition {
     @XmlAttribute
     private String signatureKeyRing;
     @XmlAttribute
-    @Metadata(defaultValue = "false", javaType = "java.lang.Boolean")
+    @Metadata(defaultValue = "false", javaType = "java.lang.Boolean",
+              description = "This option will cause PGP to base64 encode the encrypted text, making it available for copy/paste, etc.")
     private String armored;
     @XmlAttribute
-    @Metadata(defaultValue = "true", javaType = "java.lang.Boolean")
+    @Metadata(defaultValue = "true", javaType = "java.lang.Boolean",
+              description = "Adds an integrity check/sign into the encryption file.")
     private String integrity;
     @XmlAttribute
     private String provider;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Integer")
+    @Metadata(javaType = "java.lang.Integer",
+              description = "Symmetric key encryption algorithm; possible values are defined in org.bouncycastle.bcpg.SymmetricKeyAlgorithmTags."
+                            + " Only relevant for encrypting.")
     private String algorithm;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Integer")
+    @Metadata(javaType = "java.lang.Integer",
+              description = "Compression algorithm; possible values are defined in org.bouncycastle.bcpg.CompressionAlgorithmTags."
+                            + " Only relevant for encrypting.")
     private String compressionAlgorithm;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Integer")
+    @Metadata(javaType = "java.lang.Integer",
+              description = "Signature hash algorithm; possible values are defined in org.bouncycastle.bcpg.HashAlgorithmTags."
+                            + " Only relevant for signing.")
     private String hashAlgorithm;
     @XmlAttribute
     private String signatureVerificationOption;

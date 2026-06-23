@@ -38,25 +38,30 @@ public class FlatpackDataFormat extends DataFormatDefinition {
     @XmlAttribute
     private String definition;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(javaType = "java.lang.Boolean", description = "Delimited or fixed. Is by default false = delimited.")
     private String fixed;
     @XmlAttribute
-    @Metadata(defaultValue = ",")
+    @Metadata(defaultValue = ",", description = "The delimiter char (could be ; , or similar).")
     private String delimiter;
     @XmlAttribute
-    @Metadata(defaultValue = "true", javaType = "java.lang.Boolean")
+    @Metadata(defaultValue = "true", javaType = "java.lang.Boolean",
+              description = "Whether the first line is ignored for delimited files (for the column headers). Is by default true.")
     private String ignoreFirstRecord;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(javaType = "java.lang.Boolean",
+              description = "Allows for lines to be shorter than expected and ignores the extra characters.")
     private String allowShortLines;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(javaType = "java.lang.Boolean",
+              description = "Allows for lines to be longer than expected and ignores the extra characters.")
     private String ignoreExtraColumns;
     @XmlAttribute
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced",
+              description = "If the text is qualified with a character. Uses quote character by default.")
     private String textQualifier;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "net.sf.flatpack.ParserFactory")
+    @Metadata(label = "advanced", javaType = "net.sf.flatpack.ParserFactory",
+              description = "References to a custom parser factory to lookup in the registry.")
     private String parserFactory;
 
     public FlatpackDataFormat() {

@@ -40,7 +40,9 @@ public class ASN1DataFormat extends DataFormatDefinition {
     @XmlAttribute(name = "unmarshalType")
     private String unmarshalTypeName;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(javaType = "java.lang.Boolean",
+              description = "If the asn1 file has more than one entry, the setting this option to true allows working with the splitter EIP"
+                            + " to split each entry individually.")
     private String usingIterator;
 
     public ASN1DataFormat() {

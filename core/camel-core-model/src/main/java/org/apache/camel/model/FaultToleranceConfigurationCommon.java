@@ -26,40 +26,54 @@ import org.apache.camel.spi.Metadata;
 public class FaultToleranceConfigurationCommon extends IdentifiedType {
 
     @XmlAttribute
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced",
+              description = "Refers to an existing io.smallrye.faulttolerance.api.TypedGuard instance to lookup and use from the registry."
+                            + " When using this, then any other TypedGuard circuit breaker options are not in use.")
     private String typedGuard;
     @XmlAttribute
-    @Metadata(defaultValue = "5000", javaType = "java.time.Duration")
+    @Metadata(defaultValue = "5000", javaType = "java.time.Duration",
+              description = "Control how long the circuit breaker stays open. The default is 5 seconds.")
     private String delay;
     @XmlAttribute
-    @Metadata(defaultValue = "1", javaType = "java.lang.Integer")
+    @Metadata(defaultValue = "1", javaType = "java.lang.Integer",
+              description = "Controls the number of trial calls which are allowed when the circuit breaker is half-open.")
     private String successThreshold;
     @XmlAttribute
-    @Metadata(defaultValue = "20", javaType = "java.lang.Integer")
+    @Metadata(defaultValue = "20", javaType = "java.lang.Integer",
+              description = "Controls the size of the rolling window used when the circuit breaker is closed.")
     private String requestVolumeThreshold;
     @XmlAttribute
-    @Metadata(defaultValue = "50", javaType = "java.lang.Integer")
+    @Metadata(defaultValue = "50", javaType = "java.lang.Integer",
+              description = "Configures the failure rate threshold in percentage."
+                            + " If the failure rate is equal or greater than the threshold the CircuitBreaker transitions to open and starts short-circuiting calls.")
     private String failureRatio;
     @XmlAttribute
-    @Metadata(defaultValue = "false", javaType = "java.lang.Boolean")
+    @Metadata(defaultValue = "false", javaType = "java.lang.Boolean",
+              description = "Whether timeout is enabled or not on the circuit breaker.")
     private String timeoutEnabled;
     @XmlAttribute
-    @Metadata(defaultValue = "1000", javaType = "java.time.Duration")
+    @Metadata(defaultValue = "1000", javaType = "java.time.Duration",
+              description = "Configures the thread execution timeout. Default value is 1 second.")
     private String timeoutDuration;
     @XmlAttribute
-    @Metadata(label = "advanced", defaultValue = "10", javaType = "java.lang.Integer")
+    @Metadata(label = "advanced", defaultValue = "10", javaType = "java.lang.Integer",
+              description = "Configures the pool size of the thread pool when timeout is enabled.")
     private String timeoutPoolSize;
     @XmlAttribute
-    @Metadata(defaultValue = "false", javaType = "java.lang.Boolean")
+    @Metadata(defaultValue = "false", javaType = "java.lang.Boolean",
+              description = "Whether bulkhead is enabled or not on the circuit breaker.")
     private String bulkheadEnabled;
     @XmlAttribute
-    @Metadata(label = "advanced", defaultValue = "10", javaType = "java.lang.Integer")
+    @Metadata(label = "advanced", defaultValue = "10", javaType = "java.lang.Integer",
+              description = "Configures the max amount of concurrent calls the bulkhead will support.")
     private String bulkheadMaxConcurrentCalls;
     @XmlAttribute
-    @Metadata(label = "advanced", defaultValue = "10", javaType = "java.lang.Integer")
+    @Metadata(label = "advanced", defaultValue = "10", javaType = "java.lang.Integer",
+              description = "Configures the task queue size for holding waiting tasks to be processed by the bulkhead.")
     private String bulkheadWaitingTaskQueue;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.util.concurrent.ExecutorService")
+    @Metadata(label = "advanced", javaType = "java.util.concurrent.ExecutorService",
+              description = "References a custom thread pool to use when offloading a guarded action to another thread.")
     private String threadOffloadExecutorService;
 
     public FaultToleranceConfigurationCommon() {

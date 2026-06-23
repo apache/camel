@@ -42,18 +42,23 @@ public class SoapDataFormat extends DataFormatDefinition {
     @XmlAttribute
     private String encoding;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "org.apache.camel.dataformat.soap.name.ElementNameStrategy")
+    @Metadata(label = "advanced", javaType = "org.apache.camel.dataformat.soap.name.ElementNameStrategy",
+              description = "Refers to an element strategy to lookup from the registry.")
     private String elementNameStrategy;
     @XmlAttribute
-    @Metadata(defaultValue = "1.1", enums = "1.1,1.2")
+    @Metadata(defaultValue = "1.1", enums = "1.1,1.2",
+              description = "SOAP version should either be 1.1 or 1.2. Is by default 1.1.")
     private String version;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.util.Map")
+    @Metadata(label = "advanced", javaType = "java.util.Map",
+              description = "When marshalling using JAXB or SOAP then the JAXB implementation will automatic assign namespace prefixes."
+                            + " To control this mapping, Camel allows you to refer to a map which contains the desired mapping.")
     private String namespacePrefix;
     @XmlAttribute
     private String schema;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean",
+              description = "Whether to ignore headers that were not unmarshalled.")
     private String ignoreUnmarshalledHeaders;
 
     public SoapDataFormat() {

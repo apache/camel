@@ -40,27 +40,33 @@ public class CBORDataFormat extends DataFormatDefinition {
     private Class<?> unmarshalType;
 
     @XmlAttribute
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced", description = "Lookup and use the existing CBOR ObjectMapper with the given id when using Jackson.")
     private String objectMapper;
     @XmlAttribute
-    @Metadata(defaultValue = "true", javaType = "java.lang.Boolean")
+    @Metadata(defaultValue = "true", javaType = "java.lang.Boolean",
+              description = "Whether to lookup and use default Jackson CBOR ObjectMapper from the registry.")
     private String useDefaultObjectMapper;
     @XmlAttribute(name = "unmarshalType")
     private String unmarshalTypeName;
     @XmlAttribute(name = "collectionType")
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced",
+              description = "Refers to a custom collection type to lookup in the registry to use.")
     private String collectionTypeName;
     @XmlAttribute
-    @Metadata(defaultValue = "false", javaType = "java.lang.Boolean")
+    @Metadata(defaultValue = "false", javaType = "java.lang.Boolean",
+              description = "To unmarshal to a List of Map or a List of Pojo.")
     private String useList;
     @XmlAttribute
-    @Metadata(defaultValue = "false", javaType = "java.lang.Boolean")
+    @Metadata(defaultValue = "false", javaType = "java.lang.Boolean",
+              description = "If enabled then Jackson CBOR is allowed to attempt to use the CamelCBORUnmarshalType header during the unmarshalling.")
     private String allowUnmarshallType;
     @XmlAttribute
-    @Metadata(defaultValue = "false", javaType = "java.lang.Boolean")
+    @Metadata(defaultValue = "false", javaType = "java.lang.Boolean",
+              description = "To enable pretty printing output nicely formatted. Is by default false.")
     private String prettyPrint;
     @XmlAttribute
-    @Metadata(label = "advanced", defaultValue = "false", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", defaultValue = "false", javaType = "java.lang.Boolean",
+              description = "Used for JMS users to allow the JMSType header from the JMS spec to specify a FQN classname to use to unmarshal to.")
     private String allowJmsType;
     @XmlAttribute
     private String enableFeatures;

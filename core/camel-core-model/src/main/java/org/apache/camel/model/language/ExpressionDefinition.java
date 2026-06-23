@@ -64,10 +64,11 @@ public class ExpressionDefinition
     @XmlID
     private String id;
     @XmlValue
-    @Metadata(required = true)
+    @Metadata(required = true, description = "The expression value in your chosen language syntax.")
     private String expression;
     @XmlAttribute
-    @Metadata(label = "advanced", defaultValue = "true", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", defaultValue = "true", javaType = "java.lang.Boolean",
+              description = "Whether to trim the source code to remove leading and trailing whitespaces and line breaks.")
     private String trim;
 
     public ExpressionDefinition() {

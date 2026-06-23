@@ -49,13 +49,16 @@ public class ResponseHeaderDefinition {
     @XmlAttribute
     private String description;
     @XmlAttribute
-    @Metadata(defaultValue = "csv")
+    @Metadata(description = "Sets the parameter collection format.",
+            defaultValue = "csv")
     private CollectionFormat collectionFormat;
     @XmlAttribute
-    @Metadata(defaultValue = "string")
+    @Metadata(description = "Sets the parameter array type. Required if data type is array. Describes the type of items in the array.",
+            defaultValue = "string")
     private String arrayType;
     @XmlAttribute
-    @Metadata(defaultValue = "string")
+    @Metadata(description = "Sets the header data type such as string, integer, or boolean.",
+            defaultValue = "string")
     private String dataType;
     @XmlAttribute
     private String dataFormat;

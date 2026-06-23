@@ -37,23 +37,29 @@ import org.apache.camel.spi.Metadata;
 public class JsonPathExpression extends SingleInputTypedExpressionDefinition {
 
     @XmlAttribute
-    @Metadata(defaultValue = "false", javaType = "java.lang.Boolean")
+    @Metadata(defaultValue = "false", javaType = "java.lang.Boolean",
+              description = "Whether to suppress exceptions such as PathNotFoundException.")
     private String suppressExceptions;
     @XmlAttribute
-    @Metadata(label = "advanced", defaultValue = "true", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", defaultValue = "true", javaType = "java.lang.Boolean",
+              description = "Whether to allow in inlined Simple exceptions in the JSONPath expression.")
     private String allowSimple;
     @XmlAttribute
-    @Metadata(label = "advanced", defaultValue = "true", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", defaultValue = "true", javaType = "java.lang.Boolean",
+              description = "Whether to allow using the easy predicate parser to pre-parse predicates.")
     private String allowEasyPredicate;
     @XmlAttribute
-    @Metadata(defaultValue = "false", javaType = "java.lang.Boolean")
+    @Metadata(defaultValue = "false", javaType = "java.lang.Boolean",
+              description = "Whether to write the output of each row/element as a JSON String value instead of a Map/POJO value.")
     private String writeAsString;
     @XmlAttribute
-    @Metadata(defaultValue = "false", javaType = "java.lang.Boolean")
+    @Metadata(defaultValue = "false", javaType = "java.lang.Boolean",
+              description = "Whether to unpack a single element json-array into an object.")
     private String unpackArray;
     @XmlAttribute
     @Metadata(label = "advanced",
-              enums = "DEFAULT_PATH_LEAF_TO_NULL,ALWAYS_RETURN_LIST,AS_PATH_LIST,SUPPRESS_EXCEPTIONS,REQUIRE_PROPERTIES")
+              enums = "DEFAULT_PATH_LEAF_TO_NULL,ALWAYS_RETURN_LIST,AS_PATH_LIST,SUPPRESS_EXCEPTIONS,REQUIRE_PROPERTIES",
+              description = "To configure additional options on JSONPath. Multiple values can be separated by comma.")
     private String option;
 
     public JsonPathExpression() {

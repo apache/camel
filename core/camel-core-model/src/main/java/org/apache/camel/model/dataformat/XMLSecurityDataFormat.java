@@ -47,40 +47,52 @@ public class XMLSecurityDataFormat extends DataFormatDefinition implements Names
 
     @XmlAttribute
     @Metadata(defaultValue = "AES-256-GCM",
-              enums = "TRIPLEDES,AES_128,AES_128_GCM,AES_192,AES_192_GCM,AES_256,AES_256_GCM,SEED_128,CAMELLIA_128,CAMELLIA_192,CAMELLIA_256")
+              enums = "TRIPLEDES,AES_128,AES_128_GCM,AES_192,AES_192_GCM,AES_256,AES_256_GCM,SEED_128,CAMELLIA_128,CAMELLIA_192,CAMELLIA_256",
+              description = "The cipher algorithm to be used for encryption/decryption of the XML message content.")
     private String xmlCipherAlgorithm;
     @XmlAttribute
-    @Metadata(security = "secret")
+    @Metadata(security = "secret",
+              description = "A String used as passPhrase to encrypt/decrypt content.")
     private String passPhrase;
     @XmlAttribute
-    @Metadata(label = "advanced", security = "secret")
+    @Metadata(label = "advanced", security = "secret",
+              description = "A byte[] used as passPhrase to encrypt/decrypt content.")
     private byte[] passPhraseByte;
     @XmlAttribute
     private String secureTag;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(javaType = "java.lang.Boolean",
+              description = "A boolean value to specify whether the XML Element is to be encrypted or the contents of the XML Element."
+                            + " false = Element Level, true = Element Content Level.")
     private String secureTagContents;
     @XmlAttribute
-    @Metadata(defaultValue = "RSA_OAEP", enums = "RSA_v1dot5,RSA_OAEP,RSA_OAEP_11")
+    @Metadata(defaultValue = "RSA_OAEP", enums = "RSA_v1dot5,RSA_OAEP,RSA_OAEP_11",
+              description = "The cipher algorithm to be used for encryption/decryption of the asymmetric key.")
     private String keyCipherAlgorithm;
     @XmlAttribute
     private String recipientKeyAlias;
     @XmlAttribute
-    @Metadata(javaType = "org.apache.camel.support.jsse.KeyStoreParameters")
+    @Metadata(javaType = "org.apache.camel.support.jsse.KeyStoreParameters",
+              description = "Refers to a KeyStore instance to lookup in the registry, which is used for configuration options for creating and"
+                            + " loading a KeyStore instance that represents the sender's trustStore or recipient's keyStore.")
     private String keyOrTrustStoreParameters;
     @XmlAttribute
     private String keyPassword;
     @XmlAttribute
-    @Metadata(defaultValue = "SHA1", enums = "SHA1,SHA256,SHA512")
+    @Metadata(defaultValue = "SHA1", enums = "SHA1,SHA256,SHA512",
+              description = "The digest algorithm to use with the RSA OAEP algorithm.")
     private String digestAlgorithm;
     @XmlAttribute
-    @Metadata(defaultValue = "MGF1_SHA1", enums = "MGF1_SHA1,MGF1_SHA256,MGF1_SHA512")
+    @Metadata(defaultValue = "MGF1_SHA1", enums = "MGF1_SHA1,MGF1_SHA256,MGF1_SHA512",
+              description = "The MGF Algorithm to use with the RSA OAEP algorithm.")
     private String mgfAlgorithm;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean", defaultValue = "true")
+    @Metadata(javaType = "java.lang.Boolean", defaultValue = "true",
+              description = "Whether to add the public key used to encrypt the session key as a KeyValue in the EncryptedKey structure or not.")
     private String addKeyValueForEncryptedKey;
     @XmlAttribute(name = "namespace")
-    @Metadata(javaType = "java.util.Map")
+    @Metadata(javaType = "java.util.Map",
+              description = "Refers to a Map of XML Namespaces of prefix to uri mappings.")
     private String namespaceRef;
 
     public XMLSecurityDataFormat() {

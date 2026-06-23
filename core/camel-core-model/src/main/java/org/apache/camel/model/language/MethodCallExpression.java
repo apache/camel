@@ -45,10 +45,12 @@ public class MethodCallExpression extends TypedExpressionDefinition {
     @XmlAttribute(name = "beanType")
     private String beanTypeName;
     @XmlAttribute
-    @Metadata(label = "advanced", defaultValue = "Singleton", enums = "Singleton,Request,Prototype")
+    @Metadata(label = "advanced", defaultValue = "Singleton", enums = "Singleton,Request,Prototype",
+              description = "Scope of bean. When using singleton scope (default) the bean is created or looked up only once and reused for the lifetime of the endpoint.")
     private String scope;
     @XmlAttribute
-    @Metadata(label = "advanced", defaultValue = "true", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", defaultValue = "true", javaType = "java.lang.Boolean",
+              description = "Whether to validate the bean has the configured method.")
     private String validate;
 
     public MethodCallExpression() {

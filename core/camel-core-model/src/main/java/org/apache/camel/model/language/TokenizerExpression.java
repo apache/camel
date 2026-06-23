@@ -37,25 +37,32 @@ public class TokenizerExpression extends SingleInputTypedExpressionDefinition {
     @XmlAttribute
     private String endToken;
     @XmlAttribute
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced",
+              description = "To inherit namespaces from a root/parent tag name when using XML. You can use simple language as the tag name to support dynamic names.")
     private String inheritNamespaceTagName;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean",
+              description = "If the token is a regular expression pattern.")
     private String regex;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(javaType = "java.lang.Boolean",
+              description = "Whether the input is XML messages. This option must be set to true if working with XML payloads.")
     private String xml;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(javaType = "java.lang.Boolean",
+              description = "Whether to include the tokens in the parts when using pairs. When including tokens then the endToken property must also be configured (to use pair mode).")
     private String includeTokens;
     @XmlAttribute
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced",
+              description = "To group N parts together, for example to split big files into chunks of 1000 lines. You can use simple language as the group to support dynamic group sizes.")
     private String group;
     @XmlAttribute
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced",
+              description = "Sets the delimiter to use when grouping. If this has not been set then token will be used as the delimiter.")
     private String groupDelimiter;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean",
+              description = "To skip the very first element.")
     private String skipFirst;
 
     public TokenizerExpression() {

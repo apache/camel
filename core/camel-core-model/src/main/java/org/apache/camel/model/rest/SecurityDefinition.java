@@ -32,7 +32,8 @@ import org.apache.camel.spi.Metadata;
 public class SecurityDefinition {
 
     @XmlAttribute(required = true)
-    @Metadata(required = true)
+    @Metadata(description = "Key used to refer to this security definition.",
+            required = true)
     private String key;
     @XmlAttribute
     private String scopes;

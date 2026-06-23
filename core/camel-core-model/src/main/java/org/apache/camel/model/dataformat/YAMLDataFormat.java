@@ -42,39 +42,44 @@ public class YAMLDataFormat extends DataFormatDefinition {
     private Class<?> unmarshalType;
 
     @XmlAttribute
-    @Metadata(defaultValue = "SnakeYAML")
+    @Metadata(defaultValue = "SnakeYAML", description = "Which yaml library to use. By default it is SnakeYAML.")
     private YAMLLibrary library;
     @XmlAttribute(name = "unmarshalType")
     private String unmarshalTypeName;
     @XmlAttribute
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced", description = "BaseConstructor to construct incoming documents.")
     private String constructor;
     @XmlAttribute
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced", description = "Representer to emit outgoing objects.")
     private String representer;
     @XmlAttribute
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced", description = "DumperOptions to configure outgoing objects.")
     private String dumperOptions;
     @XmlAttribute
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced", description = "Resolver to detect implicit type.")
     private String resolver;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean", defaultValue = "true")
+    @Metadata(javaType = "java.lang.Boolean", defaultValue = "true",
+              description = "Use ApplicationContextClassLoader as custom ClassLoader.")
     private String useApplicationContextClassLoader;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(javaType = "java.lang.Boolean",
+              description = "Force the emitter to produce a pretty YAML document when using the flow style.")
     private String prettyFlow;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(javaType = "java.lang.Boolean", description = "Allow any class to be un-marshaled.")
     private String allowAnyType;
     @XmlAttribute
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced",
+              description = "Set the types SnakeYAML is allowed to un-marshall. Multiple types can be separated by comma.")
     private String typeFilter;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Integer", defaultValue = "50")
+    @Metadata(label = "advanced", javaType = "java.lang.Integer", defaultValue = "50",
+              description = "Set the maximum amount of aliases allowed for collections.")
     private String maxAliasesForCollections;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean",
+              description = "Set whether recursive keys are allowed.")
     private String allowRecursiveKeys;
 
     public YAMLDataFormat() {

@@ -76,39 +76,50 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
     @XmlAttribute
     private String produces;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
+    @Metadata(description = "Whether to disable this REST service from the route during build time. Once an REST service has been disabled then it cannot be enabled later at runtime.",
+            label = "advanced", javaType = "java.lang.Boolean")
     private String disabled;
     @XmlAttribute
-    @Metadata(defaultValue = "off", enums = "off,auto,json,xml,json_xml")
+    @Metadata(description = "Sets the binding mode to use. This option will override what may be configured on a parent level.",
+            defaultValue = "off", enums = "off,auto,json,xml,json_xml")
     private String bindingMode;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "false")
+    @Metadata(description = "Whether to skip binding on output if there is a custom HTTP error code header. This allows to build custom error messages that do not bind to json / xml etc, as success messages otherwise will do. This option will override what may be configured on a parent level.",
+            label = "advanced", javaType = "java.lang.Boolean", defaultValue = "false")
     private String skipBindingOnErrorCode;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "false")
+    @Metadata(description = "Whether to enable validation of the client request to check whether Content-Type/Accept headers, required parameters, and message body are valid.",
+            label = "advanced", javaType = "java.lang.Boolean", defaultValue = "false")
     private String clientRequestValidation;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "false")
+    @Metadata(description = "Whether to validate what Camel is returning as response to the client, such as checking status-code, Content-Type, and headers match the Rest DSL response definition.",
+            label = "advanced", javaType = "java.lang.Boolean", defaultValue = "false")
     private String clientResponseValidation;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "false")
+    @Metadata(description = "Whether to enable CORS headers in the HTTP response. This option will override what may be configured on a parent level.",
+            label = "advanced", javaType = "java.lang.Boolean", defaultValue = "false")
     private String enableCORS;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "false")
+    @Metadata(description = "Whether to return HTTP 204 with an empty body when a response contains an empty JSON object or XML root object.",
+            label = "advanced", javaType = "java.lang.Boolean", defaultValue = "false")
     private String enableNoContentResponse;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "true")
+    @Metadata(description = "Whether to include or exclude this rest operation in API documentation. This option will override what may be configured on a parent level.",
+            label = "advanced", javaType = "java.lang.Boolean", defaultValue = "true")
     private String apiDocs;
     @XmlAttribute
-    @Metadata(label = "advanced")
+    @Metadata(description = "To configure a special tag for the operations within this rest definition.",
+            label = "advanced")
     private String tag;
     @XmlElement
     private OpenApiDefinition openApi;
     @XmlElement(name = "securityDefinitions") // use the name Swagger/OpenAPI uses
-    @Metadata(label = "security")
+    @Metadata(description = "Sets the security definitions such as Basic, OAuth2 etc.",
+            label = "security")
     private RestSecuritiesDefinition securityDefinitions;
     @XmlElement
-    @Metadata(label = "security")
+    @Metadata(description = "Sets the security requirement(s) for all endpoints.",
+            label = "security")
     private List<SecurityDefinition> securityRequirements = new ArrayList<>();
     @XmlElementRef
     private List<VerbDefinition> verbs = new ArrayList<>();

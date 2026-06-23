@@ -39,22 +39,25 @@ public class BeanioDataFormat extends DataFormatDefinition {
     @XmlAttribute(required = true)
     private String streamName;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(javaType = "java.lang.Boolean", description = "Whether to ignore unidentified records.")
     private String ignoreUnidentifiedRecords;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(javaType = "java.lang.Boolean", description = "Whether to ignore unexpected records.")
     private String ignoreUnexpectedRecords;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(javaType = "java.lang.Boolean", description = "Whether to ignore invalid records.")
     private String ignoreInvalidRecords;
     @XmlAttribute
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced", description = "The charset to use. Is by default the JVM platform default charset.")
     private String encoding;
     @XmlAttribute
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced",
+              description = "To use a custom org.apache.camel.dataformat.beanio.BeanIOErrorHandler as error handler while parsing."
+                            + " Configure the fully qualified class name of the error handler.")
     private String beanReaderErrorHandlerType;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean",
+              description = "This option controls whether to unmarshal as a list of objects or as a single object only.")
     private String unmarshalSingleObject;
 
     public BeanioDataFormat() {
