@@ -1,0 +1,580 @@
+= Rest DSL - Binding and Configuration
+:tabs-sync-option:
+
+xref:rest-dsl.adoc[Back to Rest DSL]
+
+== Binding to POJOs using
+
+The Rest DSL supports automatic binding json/xml contents to/from POJOs using data formats.
+By default, the binding mode is off, meaning there is no automatic binding happening for
+incoming and outgoing messages.
+
+You may want to use binding if you develop POJOs that maps to your REST
+services request and response types. This allows you as a developer to
+work with the POJOs in Java code.
+
+The binding modes are:
+
+[width="100%",cols="10%,90%",options="header",]
+|===
+|Binding Mode |Description
+
+|`off` |Binding is turned off. This is the default option.
+|`auto` |Binding is enabled, and Camel is relaxed and supports JSON, XML or both if
+the necessary data formats are included in the classpath. Notice that if
+for example `camel-jaxb` is not on the classpath, then XML binding is
+not enabled. Notice that for XML then `jaxb` is default, and you must be explicit to set `xmlDataFormat=jacksonXml`
+if you want to use jackson XML instead.
+|`json` |Binding to/from JSON is enabled, and requires a JSON capable data
+format on the classpath. By default, Camel will use `jackson` as the data format.
+|`xm` |Binding to/from XML is enabled, and requires `camel-jaxb` or `camel-jacksonxml` on the classpath.
+|`json_xml` |Binding to/from JSON and XML is enabled and requires both data formats to be on the classpath.
+|===
+
+IMPORTANT: In `auto` binding mode, the `consumes` option is used as a *fallback* for format detection when the incoming request has no `Content-Type` header (or the header does not indicate JSON or XML). It does *not* reject requests whose `Content-Type` does not match `consumes`. For example, an endpoint configured with `.consumes("application/json").bindingMode(auto)` will still accept and deserialize an XML request if the client sends `Content-Type: application/xml` and an XML-capable data format (e.g., `camel-jaxb`) is on the classpath. If you need to enforce that the `Content-Type` matches the `consumes` declaration, enable <<Client Request and Response Validation>> with `clientRequestValidation(true)`, which returns HTTP 415 for mismatched content types. Alternatively, use an explicit binding mode (`json` or `xml`) to restrict which data formats are available.
+
+When using `camel-jaxb` for XML bindings, then
+you can use the option `mustBeJAXBElement` to relax the output message
+body must be a class with JAXB annotations. You can use this in
+situations where the message body is already in XML format, and you want
+to use the message body as-is as the output type. If that is the case,
+then set the dataFormatProperty option `mustBeJAXBElement` to `false`
+value.
+
+The binding from POJO to JSon/JAXB will only happen if the `content-type`
+header includes the word `json` or `xml` representatively. This allows you
+to specify a custom content-type if the message body should not attempt to be
+marshalled using the binding. For example, if the message body is a
+custom binary payload, etc.
+
+When automatic binding from POJO to JSON/JAXB takes place the existing `content-type` header will by default be replaced with either `application/json` or `application/xml`.
+To disable the default behavior and be able to produce JSON/JAXB responses with custom `content-type` headers (e.g. `application/user.v2+json`) you configure this as shown below:
+
+[tabs]
+====
+
+Java::
++
+[source,java]
+----
+restConfiguration().dataFormatProperty("contentTypeHeader", "false");
+----
+
+XML::
++
+[source,xml]
+----
+<restConfiguration>
+   <dataFormatProperty key="contentTypeHeader" value="false"/>
+</restConfiguration>
+----
+
+YAML::
++
+The `value` in `dataFormatProperty` must be defined as a string value, so we use `"false"` in string quotes.
++
+[source,yaml]
+----
+- restConfiguration:
+    dataFormatProperty:
+      - key: "contentTypeHeader"
+        value: "false"
+----
+====
+
+To use binding you must include the necessary data formats on the
+classpath, such as `camel-jaxb` / `camel-jacksonxml` and/or `camel-jackson`. And then enable
+the binding mode. You can configure the binding mode globally on the
+rest configuration, and then override per rest service as well.
+
+[NOTE]
+====
+To use Jackson XML for XML binding, then you must configure `xmlDataformat=jacksonXml` and include `camel-jacksonxml` on the classpath.
+====
+
+To enable binding, you configure this in Java DSL as shown below:
+
+[tabs]
+====
+
+Java::
++
+[source,java]
+----
+restConfiguration().component("netty-http").host("localhost").port(portNum).bindingMode(RestBindingMode.auto);
+----
+
+XML::
++
+[source,xml]
+----
+<restConfiguration bindingMode="auto" component="netty-http" port="8080"/>
+----
+
+YAML::
++
+[source,yaml]
+----
+- restConfiguration:
+    bindingMode: "auto"
+    component: "netty-http"
+    port: "8080"
+----
+====
+
+When binding is enabled, Camel will bind the incoming and outgoing
+messages automatic, accordingly to the content type of the message. If
+the message is JSON, then JSON binding happens; and so if the message is
+ XML, then XML binding happens. The binding happens for incoming and reply
+messages. The table below summaries what binding occurs for incoming and
+reply messages. 
+
+[width="100%",cols="25%,25%,25%,25%",options="header",]
+|===
+|Message Body |Direction |Binding Mode |Message Body
+|XML |Incoming |auto,xml,json_xml |POJO
+|POJO |Outgoing |auto,xml, json_xml |XML
+|JSON |Incoming |auto,json,json_xml |POJO
+|POJO |Outgoing |auto,json,json_xml |JSON
+|===
+ 
+When using binding, you must also configure what POJO type to map to.
+This is mandatory for incoming messages, and optional for outgoing.
+
+NOTE: When using binding mode `json`, `xml` or `json_xml` then Camel will automatically set `consumers` and `produces`
+on the rest endpoint (according to the mode), if not already explicit configured. For example, with binding mode `json`
+and setting the outType as `UserPojo` then Camel will define this rest endpoint as producing `application/json`.
+
+For example, to map from xml/json to a pojo class `UserPojo` you do this as shown below:
+
+[tabs]
+====
+
+Java::
++
+[source,java]
+----
+// configure to use netty-http on localhost with the given port
+// and enable auto binding mode
+restConfiguration().component("netty-http").host("localhost").port(portNum).bindingMode(RestBindingMode.auto);
+
+// use the rest DSL to define the rest services
+rest("/users/")
+    .post().type(UserPojo.class)
+        .to("direct:newUser");
+----
+
+XML::
++
+[source,xml]
+----
+<restConfiguration component="netty-http" host="localhost" port="{{portNum}}" bindingMode="auto"/>
+
+<rest>
+  <post path="/users" type="com.foo.UserPojo">
+    <to uri="direct:newUser"/>
+  </post>
+</rest>
+----
+
+YAML::
++
+[source,yaml]
+----
+- restConfiguration:
+    component: "netty-http"
+    host: "localhost"
+    port: "{{portNum}}"
+    bindingMode: "auto"
+- rest:
+    post:
+      - path: "/users"
+        to: "direct:newUser"
+        type: "com.foo.UserPojo"
+----
+====
+
+Notice we use `type` to define the incoming type. We can optionally
+define an outgoing type (which can be a good idea, to make it known from
+the DSL and also for tooling and JMX APIs to know both the incoming and
+outgoing types of the REST services). To define the outgoing type, we
+use `outType` as shown below:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+// configure to use netty-http on localhost with the given port
+// and enable auto binding mode
+restConfiguration().component("netty-http").host("localhost").port(portNum).bindingMode(RestBindingMode.auto);
+
+// use the rest DSL to define the rest services
+rest("/users/")
+    .post().type(UserPojo.class).outType(CountryPojo.class)
+        .to("direct:newUser");
+----
+
+XML::
++
+[source,xml]
+----
+<restConfiguration component="netty-http" host="localhost" port="{{portNum}}" bindingMode="auto"/>
+
+<rest>
+  <post path="/users" type="com.foo.UserPojo" outType="com.foo.CountryPojo">
+    <to uri="direct:newUser"/>
+  </post>
+</rest>
+----
+
+YAML::
++
+[source,yaml]
+----
+- restConfiguration:
+    component: "netty-http"
+    host: "localhost"
+    port: "{{portNum}}"
+    bindingMode: "auto"
+- rest:
+    post:
+      - path: "/users"
+        to: "direct:newUser"
+        type: "com.foo.UserPojo"
+        outType: "com.foo.CountryPojo"
+----
+====
+
+To specify input and/or output using an array, append `[]` to the end
+of the canonical class name as shown in the following:
+
+[tabs]
+====
+Java::
++
+Notice how we in Java declare this as an array class
++
+[source,java]
+----
+// configure to use netty-http on localhost with the given port
+// and enable auto binding mode
+restConfiguration().component("netty-http").host("localhost").port(portNum).bindingMode(RestBindingMode.auto);
+
+// use the rest DSL to define the rest services
+rest("/users/")
+    .post().type(UserPojo[].class).outType(CountryPojo[].class)
+        .to("direct:newUser");
+----
+
+XML::
++
+[source,xml]
+----
+<restConfiguration component="netty-http" host="localhost" port="{{portNum}}" bindingMode="auto"/>
+
+<rest>
+  <post path="/users" type="com.foo.UserPojo[]" outType="com.foo.CountryPojo[]">
+    <to uri="direct:newUser"/>
+  </post>
+</rest>
+----
+
+YAML::
++
+[source,yaml]
+----
+- restConfiguration:
+    component: "netty-http"
+    host: "localhost"
+    port: "{{portNum}}"
+    bindingMode: "auto"
+- rest:
+    post:
+      - path: "/users"
+        to: "direct:newUser"
+        type: "com.foo.UserPojo[]"
+        outType: "com.foo.CountryPojo[]"
+----
+====
+
+
+The `UserPojo` is just a plain pojo with getter/setter as shown:
+
+[source,java]
+----
+public class UserPojo {
+    private int id;
+    private String name;
+    public int getId() {
+        return id;
+    }
+    public void setId(int id) {
+        this.id = id;
+    }
+    public String getName() {
+        return name;
+    }
+    public void setName(String name) {
+        this.name = name;
+    }
+}
+----
+
+The `UserPojo` only supports JSON, as XML requires using JAXB
+annotations, so we can add those annotations if we want to support XML also
+
+[source,java]
+----
+@XmlRootElement(name = "user")
+@XmlAccessorType(XmlAccessType.FIELD)
+public class UserPojo {
+    @XmlAttribute
+    private int id;
+    @XmlAttribute
+    private String name;
+    public int getId() {
+        return id;
+    }
+    public void setId(int id) {
+        this.id = id;
+    }
+    public String getName() {
+        return name;
+    }
+    public void setName(String name) {
+        this.name = name;
+    }
+}
+----
+
+By having the JAXB annotations, the POJO supports both JSON and XML bindings.
+
+=== Camel Rest-DSL configurations
+
+The Rest DSL supports the following options:
+
+[width="100%",cols="2,1,1,4",options="header"]
+|===
+| Name | Default | Type | Description
+| *apiComponent*|| String| Sets the name of the Camel component to use as the REST API (such as swagger or openapi)
+| *apiContextPath*|| String| Sets a leading API context-path the REST API services will be using. This can be used when using components such as camel-servlet where the deployed web application is deployed using a context-path.
+| *apiHost*|| String| To use a specific hostname for the API documentation (such as swagger or openapi) This can be used to override the generated host with this configured hostname
+| *apiProperties*|| Map| Sets additional options on api level
+| *apiVendorExtension*| false| boolean| Whether a vendor extension is enabled in the Rest APIs. If enabled, then Camel will include additional information as a vendor extension (e.g., keys starting with `_x-_`) such as route ids, class names etc. Not all third party API gateways and tools support vendor-extensions when importing your API docs.
+| *bindingMode*| off| RestBindingMode| Sets the binding mode to be used by the REST consumer
+| *clientRequestValidation*| false| boolean| Whether to enable validation of the client request to check: 1) Content-Type header matches what the Rest DSL consumes; returns HTTP Status 415 if validation error. 2) Accept header matches what the Rest DSL produces; returns HTTP Status 406 if validation error. 3) Missing required data (query parameters, HTTP headers, body); returns HTTP Status 400 if validation error. 4) Parsing error of the message body (JSON, XML or Auto binding mode must be enabled); returns HTTP Status 400 if validation error.
+| *clientResponseValidation*| false| boolean| Whether to check what Camel is returning as response to the client: 1) Status-code and Content-Type matches Rest DSL response messages. 2) Check whether expected headers is included according to the Rest DSL repose message headers. 3) If the response body is JSon then check whether its valid JSon. Returns 500 if validation error detected.
+| *component*|| String| Sets the name of the Camel component to use as the REST consumer
+| *componentProperties*|| Map| Sets additional options on component level
+| *consumerProperties*|| Map| Sets additional options on consumer level
+| *contextPath*|| String| Sets a leading context-path the REST services will be using. This can be used when using components such as camel-servlet where the deployed web application is deployed using a context-path. Or for components such as camel-jetty or camel-netty-http that includes a HTTP server.
+| *corsHeaders*|| Map| Sets the CORS headers to use if CORS has been enabled.
+| *dataFormatProperties*|| Map| Sets additional options on data format level
+| *enableCORS*| false| boolean| To specify whether to enable CORS, which means Camel will automatically include CORS in the HTTP headers in the response. This option is default false
+| *enableNoContentResponse*| false| boolean| To specify whether to return HTTP 204 with an empty body when a response contains an empty JSON object or XML root object.
+| *endpointProperties*|| Map| Sets additional options on endpoint level
+| *host*|| String| Sets the hostname to use by the REST consumer
+| *hostNameResolver*| allLocalIp | RestHostNameResolver| Sets the resolver to use for resolving hostname
+| *inlineRoutes*| true| boolean| Inline routes in rest-dsl which are linked using direct endpoints. If disabling then each service in Rest DSL is an individual route, meaning that you would have at least two routes per service (rest-dsl, and the route linked from rest-dsl). By default, this allows Camel to optimize and inline this as a single route. However, this requires using direct endpoints, which must be unique per service.
+| *jsonDataFormat*|| String| Sets a custom JSON data format to be used Important: This option is only for setting a custom name of the data format, not to refer to an existing data format instance.
+| *port*|| int| Sets the port to use by the REST consumer
+| *producerApiDoc*|| String| Sets the location of the api document (swagger api) the REST producer will use to validate the REST uri and query parameters are valid accordingly to the api document...
+| *producerComponent*|| String| Sets the name of the Camel component to use as the REST producer
+| *scheme*|| String| Sets the scheme to use by the REST consumer
+| *skipBindingOnErrorCode*| true| boolean| Whether to skip binding output if there is a custom HTTP error code, and instead use the response body as-is. This option is default true.
+| *useXForwardHeaders*| true| boolean| Whether to use X-Forward headers to set host etc. for Swagger. This option is default true.
+| *xmlDataFormat*|| String| Sets a custom XML data format to be used. Important: This option is only for setting a custom name of the data format, not to refer to an existing data format instance.
+|===
+
+For example, to configure the requst buffer on the jetty component on port 9091, then we can do as follows:
+
+[tabs]
+====
+
+Java::
++
+[source,java]
+----
+restConfiguration().component("jetty").port(9091).componentProperty("requestBufferSize", "50000");
+----
+
+XML::
++
+[source,xml]
+----
+<restConfiguration component="jetty" port="9091">
+  <componentProperty key="requestBufferSize" value="50000"/>
+</restConfiguration>
+----
+
+YAML::
++
+[source,yaml]
+----
+- restConfiguration:
+    component: "jetty"
+    port: "9091"
+    componentProperty:
+      - key: "requestBufferSize"
+        value: "50000"
+----
+====
+
+
+If no component has been explicitly configured,
+then Camel will look up if there is a Camel component that integrates with the Rest DSL,
+or if a `org.apache.camel.spi.RestConsumerFactory` is registered in the registry.
+If either one is found, then that is being used.
+
+You can configure properties on these levels.
+
+* component - Is used to set any options on the Component class. You can
+also configure these directly on the component.
+* endpoint - Is used set any option on the endpoint level. Many of the
+Camel components has many options you can set on endpoint level.
+* consumer - Is used to set any option on the consumer level.
+* data format - Is used to set any option on the data formats. For
+example, to enable pretty print in the JSON data format.
+* cors headers - If cors is enabled, then custom CORS headers can be
+set. See below for the default values which are in used. If a custom
+header is set then that value takes precedence over the default value.
+
+You can set multiple options of the same level, so you can, for
+example, configure two component options, and three endpoint options, etc.
+
+=== OAuth Bearer token validation
+
+For HTTP consumer components that support OAuth Bearer token validation, such as
+`platform-http`, `servlet`, `jetty`, `netty-http`, and `undertow`, set the `oauthProfile` endpoint
+option with `endpointProperty`:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+restConfiguration()
+    .component("netty-http")
+    .endpointProperty("oauthProfile", "myprofile");
+----
+XML::
++
+[source,xml]
+----
+<restConfiguration component="netty-http">
+  <endpointProperty key="oauthProfile" value="myprofile"/>
+</restConfiguration>
+----
+YAML::
++
+[source,yaml]
+----
+- restConfiguration:
+    component: netty-http
+    endpointProperty:
+      - key: oauthProfile
+        value: myprofile
+----
+====
+
+When using the default validator implementation, add the xref:components:others:oauth.adoc[camel-oauth]
+component to the application classpath and configure the named profile with `camel.oauth.<profile>.*`
+properties. The OAuth check runs before route processors. Depending on the selected HTTP consumer,
+the transport may already have accepted, decoded, or bound parts of the inbound request.
+
+For valid tokens, route code can read the validation result from the exchange property:
+
+[source,java]
+----
+OAuthTokenValidationResult result = exchange.getProperty(
+    "CamelOAuthTokenValidationResult",
+    OAuthTokenValidationResult.class);
+----
+
+
+== Enabling or disabling Jackson JSON features
+
+When using JSON binding, you may want to turn specific Jackson features on or off.
+For example, to disable failing on unknown properties (e.g., JSON
+input has a property which cannot be mapped to a POJO) then configure
+this using the `dataFormatProperty` as shown below:
+
+[tabs]
+====
+
+Java::
++
+[source,java]
+----
+restConfiguration().component("jetty").host("localhost").port(getPort()).bindingMode(RestBindingMode.json)
+   .dataFormatProperty("json.in.disableFeatures", "FAIL_ON_UNKNOWN_PROPERTIES");
+----
++
+You can disable more features by separating the values using comma, such as:
++
+[source,java]
+----
+.dataFormatProperty("json.in.disableFeatures", "FAIL_ON_UNKNOWN_PROPERTIES,ADJUST_DATES_TO_CONTEXT_TIME_ZONE");
+----
++
+Likewise, you can enable features using the enableFeatures such as:
++
+[source,java]
+----
+restConfiguration().component("jetty").host("localhost").port(getPort()).bindingMode(RestBindingMode.json)
+   .dataFormatProperty("json.in.disableFeatures", "FAIL_ON_UNKNOWN_PROPERTIES,ADJUST_DATES_TO_CONTEXT_TIME_ZONE")
+   .dataFormatProperty("json.in.enableFeatures", "FAIL_ON_NUMBERS_FOR_ENUMS,USE_BIG_DECIMAL_FOR_FLOATS");
+----
+
+XML::
++
+[source,xml]
+----
+<restConfiguration component="jetty" host="localhost" port="9090" bindingMode="json">
+  <dataFormatProperty key="json.in.disableFeatures" value="FAIL_ON_UNKNOWN_PROPERTIES,ADJUST_DATES_TO_CONTEXT_TIME_ZONE"/>
+  <dataFormatProperty key="json.in.enableFeatures" value="FAIL_ON_NUMBERS_FOR_ENUMS,USE_BIG_DECIMAL_FOR_FLOATS"/>
+</restConfiguration>
+----
+
+YAML::
++
+[source,yaml]
+----
+- restConfiguration:
+    component: "jetty"
+    host: "localhost"
+    port: "9090"
+    bindingMode: "json"
+    dataFormatProperty:
+      - key: "json.in.disableFeatures"
+        value: "FAIL_ON_UNKNOWN_PROPERTIES,ADJUST_DATES_TO_CONTEXT_TIME_ZONE"
+      - key: json.in.enableFeatures
+        value: "FAIL_ON_NUMBERS_FOR_ENUMS,USE_BIG_DECIMAL_FOR_FLOATS"
+----
+====
+
+The values that can be used for enabling and disabling features on
+Jackson are the names of the enums from the following three Jackson 2.x classes
+
+* `com.fasterxml.jackson.databind.SerializationFeature`
+* `com.fasterxml.jackson.databind.DeserializationFeature`
+* `com.fasterxml.jackson.databind.MapperFeature`
+
+
+== Default CORS headers
+
+If CORS is enabled, then the _"follow headers"_ is in use by default.
+You can configure custom CORS headers that take precedence over the default
+value.
+
+[width="100%",cols="1,2",options="header",]
+|===
+|Key |Value
+|`Access-Control-Allow-Origin` |*
+|`Access-Control-Allow-Methods` |GET, HEAD, POST, PUT, DELETE, TRACE, OPTIONS, CONNECT, PATCH
+|`Access-Control-Allow-Headers` |Origin, Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers
+|`Access-Control-Max-Age` |3600
+|===

@@ -1,0 +1,186 @@
+= Exception Clause - Redelivery
+:tabs-sync-option:
+
+xref:exception-clause.adoc[Back to Exception Clause]
+
+== Configuring RedeliveryPolicy (redeliver options)
+
+https://www.javadoc.io/doc/org.apache.camel/camel-base/current/org/apache/camel/processor/errorhandler/RedeliveryPolicy.html[RedeliveryPolicy]
+requires to use the xref:components:eips:dead-letter-channel.adoc[Dead Letter Channel]
+as the xref:error-handler.adoc[Error Handler]. Dead Letter Channel
+supports attempting to redeliver the message exchange a number of times
+before sending it to a dead letter endpoint. See
+xref:components:eips:dead-letter-channel.adoc[Dead Letter Channel] for further
+information about redeliver and which redeliver options exists.
+
+=== No redelivery is default for onException
+
+By default, any xref:exception-clause.adoc[Exception Clause] will *not*
+redeliver! (as it sets the `maximumRedeliveries` option to 0).
+
+Sometimes you want to configure the redelivery policy on a per exception
+type basis. By default in the top examples, if an
+*`org.apache.camel.ValidationException`* occurs then the message will
+not be redelivered; however if some other exception occurs, e.g.,
+*`IOException`* or whatever, the route will be retried according to the
+settings from the xref:components:eips:dead-letter-channel.adoc[Dead Letter Channel].
+
+However if you want to customize any methods on the
+https://www.javadoc.io/doc/org.apache.camel/camel-base/current/org/apache/camel/processor/errorhandler/RedeliveryPolicy.html[RedeliveryPolicy]
+object, you can do this via the fluent API. So lets retry in case
+of *`org.apache.camel.ValidationException`* up till two times.
+
+
+[tabs]
+====
+
+Java::
++
+[source,java]
+----
+onException(ValidationException.class)
+    .maximumRedeliveries(2);
+----
+
+XML::
++
+[source,xml]
+----
+<onException>
+    <exception>com.mycompany.ValidationException</exception>
+    <redeliveryPolicy maximumRedeliveries="2"/>
+</onException>
+----
+
+YAML::
++
+[source,yaml]
+----
+- onException:
+    exception:
+      - org.apache.camel.ValidationException
+    redeliveryPolicy:
+      maximumRedeliveries: 2
+----
+====
+
+You can customize any of the `RedeliveryPolicy` options, for instance set a different delay of *`5000`* millis:
+
+[tabs]
+====
+
+Java::
++
+[source,java]
+----
+onException(ValidationException.class)
+    .maximumRedeliveries(2).redeliveryDelay(5000);
+----
+
+XML::
++
+[source,xml]
+----
+<onException>
+    <exception>com.mycompany.ValidationException</exception>
+    <redeliveryPolicy maximumRedeliveries="2" redeliveryDelay="5000"/>
+</onException>
+----
+
+YAML::
++
+[source,yaml]
+----
+- onException:
+    exception:
+      - org.apache.camel.ValidationException
+    redeliveryPolicy:
+      maximumRedeliveries: 2
+      redeliveryDelay: 5000
+----
+====
+
+
+== Point of Entry for Redelivery Attempts
+
+All redelivery attempts start at the point of the failure. So the route:
+
+._Java-only: redelivery starts at the point of failure_
+[source,java]
+----
+onException(ConnectException.class)
+    .from("direct:start")
+    .process("processor1")
+    .process("processor2") // <--- throws a ConnectException
+    .to("mock:theEnd")
+----
+
+Will retry from *`processor2`* - not the complete route.
+
+
+== Asynchronous Delayed Redelivery
+
+Camel has a feature to _not block_ while waiting for a
+delayed redelivery to occur. However, if you use transacted routes then
+Camel will block as it's mandated by the transaction manager to execute
+all the work in the same thread context. You can enable the non-blocking
+asynchronous behavior by the *`asyncDelayedRedelivery`* option. This
+option can be set on the *`errorHandler`*, *`onException`* or the
+redelivery policies.
+
+By default, the error handler will create and use a scheduled thread pool
+to trigger redelivery in the future. You can also configure
+the *`executorServiceRef`* on the xref:error-handler.adoc[Error Handler]
+to indicate a reference to either a shared thread pool you can enlist in
+the registry, or a thread pool profile in case you want to be able to
+control pool settings.
+
+== Catching Multiple Exceptions
+
+Multiple exception can be caught as shown:
+
+[tabs]
+====
+
+Java::
++
+In Java DSL you can add multiple exceptions separated by comma.
++
+[source,java]
+----
+onException(MyBusinessException.class, MyOtherBusinessException.class)
+    .maximumRedeliveries(2)
+    .to("activemq:businessFailed");
+----
+
+XML::
++
+And in XML DSL you just add another exception element:
++
+[source,xml]
+----
+<onException>
+    <exception>com.mycompany.MyBusinessException</exception>
+    <exception>com.mycompany.MyOtherBusinessException</exception>
+    <redeliveryPolicy maximumRedeliveries="2"/>
+    <to uri="activemq:businessFailed"/>
+</onException>
+----
+
+YAML::
++
+And in YAML DSL you just add another exception in the array:
++
+[source,yaml]
+----
+- onException:
+    exception:
+      - com.mycompany.MyBusinessException
+      - com.mycompany.MyOtherBusinessException
+    redeliveryPolicy:
+      maximumRedeliveries: 2
+    steps:
+      - to:
+          uri: activemq:businessFailed
+----
+====

@@ -670,7 +670,8 @@ public class PrepareDocSymlinksMojo extends AbstractMojo {
         DocGroup languages = new DocGroup("languages");
         languages.asciidoc = new KindSpec(
                 List.of("components/{*,*/*}/src/main/docs/*-language.adoc",
-                        "core/camel-core-languages/src/main/docs/modules/languages/pages/*-language.adoc"),
+                        "core/camel-core-languages/src/main/docs/modules/languages/pages/*-language.adoc",
+                        "core/camel-core-languages/src/main/docs/modules/languages/pages/simple-*.adoc"),
                 null, "docs/components/modules/languages/pages", null, null, null);
         languages.json = new KindSpec(
                 List.of("components/{*,*/*,*/*/*}/src/generated/resources/META-INF/org/apache/camel/*/{,**/}*.json",

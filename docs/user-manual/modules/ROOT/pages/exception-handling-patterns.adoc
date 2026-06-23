@@ -1,0 +1,768 @@
+= Exception Clause - Handling Patterns
+:tabs-sync-option:
+
+xref:exception-clause.adoc[Back to Exception Clause]
+
+== Using a Processor as a Failure Handler
+
+We want to handle certain exceptions in a specific way, so we add
+a *`onException`* clause for the particular exception.
+
+._Java-only: using a processor as failure handler_
+[source,java]
+----
+// here we register exception cause for MyFunctionException
+// when this exception occurs we want it to be processed by our
+// processor
+onException(MyFunctionalException.class)
+  .process(new MyFunctionFailureHandler())
+  .stop();
+----
+
+
+So what happens is that whenever a *`MyFunctionalException`* is thrown it
+is being routed to our processor *`MyFunctionFailureHandler`*. So you
+can say that the exchange is diverted when a *`MyFunctionalException`*
+is thrown during processing. It's important to distinct this as perfectly
+valid. The default redelivery policy from the
+xref:components:eips:dead-letter-channel.adoc[Dead Letter Channel] will not kick in, so
+our processor receives the Exchange directly, without any redeliver
+attempted. In our processor we need to determine what to do. Camel
+regards the Exchange as *failure handled*. So our processor is the end
+of the route. So lets look the code for our processor.
+
+._Java-only: custom failure handler processor_
+[source,java]
+----
+public static class MyFunctionFailureHandler implements Processor {
+
+    @Override
+    public void process(Exchange exchange) throws Exception {
+        // the caused by exception is stored in a property on the exchange
+        Throwable caused = exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Throwable.class);
+        assertNotNull(caused);
+        // here you can do what you want, but Camel regards this exception as
+        // handled, and this processor as a failure handler, so it won't do redeliveries.
+        // So this is the end of this route.
+    }
+}
+----
+
+Notice how we get the *caused by* exception using a property on the Exchange.
+This is where Camel stores any caught exception during processing. So
+you can fetch this property and check what the exception message and do
+what you want.
+
+== Marking Exceptions as Handled
+
+See also the section <<Handle and Continue Exceptions>> below.
+
+`handled(true)` tells Camel: _don't send the exception back to the caller — I'll provide the
+response myself in this `onException` block, and then we're done._
+
+Three things to keep in mind:
+
+* *The original route stops* — the exchange does not continue from where it failed in the main route.
+Only the steps in the `onException` block execute.
+* *The response is whatever the `onException` block produces* — use `transform`, `bean`, or `to` to
+build the response you want the caller to receive. If you don't set a response, the caller gets an
+empty body, not the exception.
+* *`exchange.getException()` is null* inside the `onException` block — use
+`exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class)` to access the original exception.
+
+This is different from `continued(true)`, which also suppresses the exception but then *resumes the
+original route* from the point of failure as if the exception never happened.
+
+Using *`onException`* to handle known exceptions is a very powerful
+feature in Camel. You can mark the exception as being handled with the *handle* DSL,
+so the caller will not receive the caused exception as a response. The handle is a
+xref:predicate.adoc[Predicate] that is overloaded to accept three types
+of parameters:
+
+* Boolean
+* xref:predicate.adoc[Predicate]
+* xref:expression.adoc[Expression] that will be evaluated as a
+xref:predicate.adoc[Predicate] using this rule set: If the expression
+returns a Boolean, it is used directly. For any other response, it is regarded
+as `true` if the response is `not null`.
+
+For instance to mark all *`ValidationException`* as being handled we can
+do this:
+
+[tabs]
+====
+
+Java::
++
+[source,java]
+----
+onException(ValidationException)
+    .handled(true);
+----
+
+XML::
++
+[source,xml]
+----
+<onException>
+    <exception>org.apache.camel.ValidationException</exception>
+    <handled>
+      <constant>true</constant>
+    </handled>
+</onException>
+----
+
+YAML::
++
+[source,yaml]
+----
+- onException:
+    exception:
+      - org.apache.camel.ValidationException
+    handled:
+      constant: "true"
+----
+====
+
+=== Example Using Handled in Java DSL
+
+In this route below we want to do special handling of
+all *`OrderFailedException`* as we want to return a customized response
+to the caller. First we set up our routing as:
+
+._Java-only: handling OrderFailedException with custom response_
+[source,java]
+----
+    // we do special error handling for when OrderFailedException is
+    // thrown
+    onException(OrderFailedException.class)
+        // we mark the exchange as handled so the caller doesn't
+        // receive the
+        // OrderFailedException but whatever we want to return
+        // instead
+        .handled(true)
+        // this bean handles the error handling where we can
+        // customize the error
+        // response using java code
+        .bean(OrderService.class, "orderFailed")
+        // and since this is an unit test we use mocks for testing
+        .to("mock:error");
+
+    // this is just the generic error handler where we set the
+    // destination
+    // and the number of redeliveries we want to try
+    errorHandler(deadLetterChannel("mock:error").maximumRedeliveries(1));
+
+    // this is our route where we handle orders
+    from("direct:start")
+        // this bean is our order service
+        .bean(OrderService.class, "handleOrder")
+        // this is the destination if the order is OK
+        .to("mock:result");
+----
+
+Then we have our service bean that is just a plain POJO demonstrating how you
+can use xref:bean-integration.adoc[Bean Integration] in Camel to avoid
+being tied to the Camel API:
+
+._Java-only: OrderService POJO using Bean Integration_
+[source,java]
+----
+    /**
+     * Order service as a plain POJO class
+     */
+    public static class OrderService {
+
+        /**
+         * This method handle our order input and return the order
+         */
+        public Object handleOrder(@Headers Map headers, @Body String payload) throws OrderFailedException {
+            headers.put("customerid", headers.get("customerid"));
+            if ("Order: kaboom".equals(payload)) {
+                throw new OrderFailedException("Cannot order: kaboom");
+            } else {
+                headers.put("orderid", "123");
+                return "Order OK";
+            }
+        }
+
+        /**
+         * This method creates the response to the caller if the order could not
+         * be processed
+         */
+        public Object orderFailed(@Headers Map headers, @Body String payload) {
+            headers.put("customerid", headers.get("customerid"));
+            headers.put("orderid", "failed");
+            return "Order ERROR";
+        }
+    }
+----
+
+And finally the exception that is being thrown is just a regular exception:
+
+._Java-only: custom exception class_
+[source,java]
+----
+    public static class OrderFailedException extends Exception {
+
+        public OrderFailedException(String message) {
+            super(message);
+        }
+
+    }
+----
+
+So what happens?
+
+If we sent an order that is being processed OK then the caller will
+receive an Exchange as reply containing *`Order OK`* as the payload and
+*`orderid=123`* in a header.
+
+If the order could *not* be processed and thus
+an *`OrderFailedException`* was thrown the caller will *not* receive
+this exception but our customized response that we have
+fabricated in the *`orderFailed`* method in our *`OrderService`*. So the
+caller receives an Exchange with the payload *`Order ERROR`* and a
+*`orderid=failed`* in a header.
+
+=== Using Handled with Spring XML DSL
+
+The same route as above in Spring XML DSL:
+
+._XML-only: handling OrderFailedException with custom response_
+[source,xml]
+----
+ <!-- setup our error handler as the deal letter channel -->
+<bean id="errorHandler" class="org.apache.camel.builder.DeadLetterChannelBuilder">
+    <property name="deadLetterUri" value="mock:error"/>
+</bean>
+
+<!-- this is our POJO bean with our business logic defined as a plain spring bean -->
+<bean id="orderService" class="org.apache.camel.spring.processor.onexception.OrderService" />
+
+<!-- this is the camel context where we define the routes -->
+<!-- define our error handler as a global error handler -->
+<camelContext errorHandlerRef="errorHandler" xmlns="http://camel.apache.org/schema/spring">
+
+  <onException>
+    <!-- the exception is full qualified names as plain strings -->
+    <!-- there can be more just add a 2nd, 3rd exception element (unbounded) -->
+    <exception>org.apache.camel.spring.processor.onexception.OrderFailedException</exception>
+    <!-- we can set the redelivery policy here as well -->
+    <redeliveryPolicy maximumRedeliveries="1" />
+    <!-- mark this as handled -->
+    <handled>
+      <constant>true</constant>
+    </handled>
+    <!-- let our order service handle this exception, call the orderFailed method -->
+    <bean ref="orderService" method="orderFailed" />
+    <!-- and since this is a unit test we use mock for assertions -->
+    <to uri="mock:error" />
+  </onException>
+
+  <route>
+    <!-- the route -->
+    <from uri="direct:start" />
+    <!-- in the normal route then route to our order service and call handleOrder method -->
+    <bean ref="orderService" method="handleOrder" />
+    <!-- and since this is a unit test we use mock for assertions -->
+    <to uri="mock:result" />
+  </route>
+
+</camelContext>
+----
+
+=== Using Handled with YAML DSL
+
+And the same example in YAML DSL
+
+._YAML-only: handling OrderFailedException with custom response_
+[source,yaml]
+----
+- beans:
+  - name: "orderService"
+    beanType: "org.apache.camel.spring.processor.onexception.OrderService"
+- errorHandler:
+    deadLetterChannel:
+      deadLetterUri: mock:error
+- onException:
+    exception:
+      - org.apache.camel.spring.processor.onexception.OrderFailedException
+    handled:
+      constant:
+        expression: "true"
+    steps:
+      - redeliveryPolicy:
+          maximumRedeliveries: 1
+      - bean:
+          ref: orderService
+          method: orderFailed
+      - to:
+          uri: mock:error
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - bean:
+            ref: orderService
+            method: handleOrder
+        - to:
+            uri: mock:result
+----
+
+== Why is the exception null when I use onException ?
+
+If you use `onException` to handle exceptions, and want to get the caused
+`Exception` from a `Processor` in Java code, such as shown below:
+
+._Java-only: exception is null in onException processor_
+[source,java]
+----
+.onException(Exception.class)
+    .handled(true)
+    .process(new Processor() {
+        @Override
+        public void process(Exchange exchange) throws Exception {
+            Exception cause = exchange.getException();
+            // why cause exception is null ???
+        }
+    })
+.end()
+----
+
+Then beware the caused exception is no longer available from `exchange.getException()`, because
+the message is processed by the `onException` block.
+
+Instead, you can access the caused exception from exchange property on the
+exchange with the key `Exchange.EXCEPTION_CAUGHT`, as follows:
+
+._Java-only: accessing the caught exception from a property_
+[source,java]
+----
+Exception cause = exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class);
+----
+
+The correct code to use in the example is there:
+
+._Java-only: correct way to get exception in onException_
+[source,java]
+----
+.onException(Exception.class).handled(true)
+    .process(new Processor() {
+        @Override
+        public void process(Exchange exchange) throws Exception {
+            Exception cause = exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class);
+            // we now have the caused exception
+        }
+    })
+.end()
+----
+
+== Handling and Sending a Fixed Response Back to the Client
+
+In the route above we handled the exception but routed it to a different
+endpoint. What if you need to alter the response and send a fixed
+response back to the original caller (the client). No secret here just
+do as you do in normal Camel routing, use
+xref:components:eips:message-translator.adoc[transform] to set the response, as shown in
+the sample below:
+
+._Java-only: returning a fixed response with transform_
+[source,java]
+----
+// we catch MyFunctionalException and want to mark it as handled
+// (= no failure returned to client)
+// but we want to return a fixed text response, so we transform
+// OUT body as Sorry.
+onException(MyFunctionalException.class)
+  .handled(true)
+  .transform().constant("Sorry");
+----
+
+We modify the sample slightly to return the original caused exception
+message instead of the fixed text `Sorry`:
+
+._Java-only: returning the exception message_
+[source,java]
+----
+// we catch MyFunctionalException and want to mark it as handled
+// (= no failure returned to client)
+// but we want to return a fixed text response, so we transform
+// OUT body and return the exception message
+onException(MyFunctionalException.class)
+  .handled(true)
+  .transform(exceptionMessage());
+----
+
+And we can use the xref:components:languages:simple-language.adoc[Simple] language to set a readable error
+message with the caused exception message:
+
+._Java-only: using Simple language in error response_
+[source,java]
+----
+// we catch MyFunctionalException and want to mark it as handled
+// (= no failure returned to client)
+// but we want to return a fixed text response, so we transform
+// OUT body and return a nice message
+// using the simple language where we want insert the exception
+// message
+onException(MyFunctionalException.class)
+  .handled(true)
+  .transform().simple("Error reported: ${exception.message} - cannot process this message.");
+----
+
+== Handle and Continue Exceptions
+
+The option `continued` allows you to
+both *`handle`* and *`continue`* routing in the original route as if the
+exception did not occur.
+
+For example: to ignore and continue when the *`IDontCareException`* was
+thrown we can do this:
+
+[tabs]
+====
+
+Java::
++
+[source,java]
+----
+onException(IDontCareException.class)
+    .continued(true);
+----
+
+XML::
++
+[source,xml]
+----
+<onException>
+    <exception>com.foo.IDontCareException</exception>
+    <continued>
+      <constant>true</constant>
+    </continued>
+</onException>
+----
+
+YAML::
++
+[source,yaml]
+----
+- onException:
+    exception:
+      - com.foo.IDontCareException
+    continued:
+      constant: "true"
+----
+====
+
+You can maybe compare continued with a having a *`try ... catch`* block
+around each step and then just ignore the exception. Using continued
+makes it easier in Camel as you otherwise had to use
+xref:try-catch-finally.adoc[Try Catch Finally] style for this kind of
+use case.
+
+=== Example Using continued
+
+In this route below we want to do special handling of
+all *`IllegalArgumentException`* as we just want to continue routing.
+
+[tabs]
+====
+
+Java::
++
+[source,java]
+----
+onException(IllegalArgumentException.class).continued(true);
+
+from("direct:start")
+  .to("mock:start")
+  .throwException(new IllegalArgumentException("Forced"))
+  .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<onException>
+    <exception>java.lang.IllegalArgumentException</exception>
+    <!-- tell Camel to handle and continue when this exception was thrown -->
+    <continued><constant>true</constant></continued>
+</onException>
+
+<route>
+    <from uri="direct:start"/>
+    <to uri="mock:start"/>
+    <throwException message="Forced" exceptionType="java.lang.IllegalArgumentException"/>
+    <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- onException:
+    exception:
+      - java.lang.IllegalArgumentException
+    continued:
+      constant:
+        expression: "true"
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: mock:start
+        - throwException:
+            message: Forced
+            exceptionType: java.lang.IllegalArgumentException
+        - to:
+            uri: mock:result
+----
+====
+
+
+=== What is the Difference Between Handled and Continued?
+
+If handled is true, then the thrown exception will be _handled_ and
+Camel will *not* continue routing in the original route, but break out.
+However you can configure a route in the *`onException`* which will be
+used instead. You use this route if you need to create some custom
+response message back to the caller, or do any other processing because
+that exception was thrown.
+
+If continued is true, then Camel will catch the exception and in fact
+just ignore it and continue routing in the original route. However if
+you have a route configured in the *`onException`* it will route that
+route first, before it will continue routing in the original route.
+
+
+== Using the original message with onException
+
+The option *`useOriginalMessage`* is used for routing the original input
+message instead of the current message that potential is modified during routing.
+
+For example: if you have this route:
+
+[tabs]
+====
+
+Java::
++
+[source,java]
+----
+from("jms:queue:order:input")
+    .to("bean:validateOrder")
+    .to("bean:transformOrder")
+    .to("bean:handleOrder");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="jms:queue:order:input"/>
+    <to uri="bean:validateOrder"/>
+    <to uri="bean:transformOrder"/>
+    <to uri="bean:handleOrder"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: jms:queue:order:input
+      steps:
+        - to:
+            uri: bean:validateOrder
+        - to:
+            uri: bean:transformOrder
+        - to:
+            uri: bean:handleOrder
+----
+====
+
+The route listen for JMS messages and validates, transforms and handle
+it. During this the xref:exchange.adoc[Exchange] payload is
+transformed/modified. So in case something goes wrong and we want to
+move the message to another JMS destination, then we can add an
+*`onException`*. But when we move the xref:exchange.adoc[Exchange] to
+this destination we do not know in which state the message is in. Did
+the error happen in before the *`transformOrder`* or after? So to be
+sure we want to move the original input message we received from
+`jms:queue:order:input`. So we can do this by enabling the
+*`useOriginalMessage`* option as shown below:
+
+[tabs]
+====
+
+Java::
++
+[source,java]
+----
+// will use original input message (body and headers)
+onException(MyOrderException.class)
+    .useOriginalMessage()
+    .handled(true)
+    .to("jms:queue:order:failed");
+
+from("jms:queue:order:input")
+    .to("bean:validateOrder")
+    .to("bean:transformOrder")
+    .to("bean:handleOrder");
+----
+
+XML::
++
+[source,xml]
+----
+<onException useOriginalMessage="true">
+    <exception>com.foo.MyOrderException</exception>
+    <handled>
+        <constant>true</constant>
+    </handled>
+    <to uri="jms:queue:order:failed"/>
+</onException>
+
+<route>
+    <from uri="jms:queue:order:input"/>
+    <to uri="bean:validateOrder"/>
+    <to uri="bean:transformOrder"/>
+    <to uri="bean:handleOrder"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- onException:
+    useOriginalMessage: "true"
+    exception:
+      - com.foo.MyOrderException
+    handled:
+      constant:
+        expression: "true"
+    steps:
+      - to:
+          uri: jms:queue:order:failed
+- route:
+    from:
+      uri: jms:queue:order:input
+      steps:
+        - to:
+            uri: bean:validateOrder
+        - to:
+            uri: bean:transformOrder
+        - to:
+            uri: bean:handleOrder
+----
+====
+
+Then the messages routed to the *`jms:queue:order:failed`* is the
+original input. If we want to manually retry we can move the JMS message
+from the failed to the input queue, with no problem as the message is
+the same as the original we received.
+
+=== Boundary of original message
+
+The original input means the input message that are bounded by the current unit of work. An unit of work typically spans one route, or multiple routes if they are connected 
+using internal endpoints such as direct or seda. When messages are passed via external
+endpoints such as JMS or HTTP then the consumer will create a new unit of work, with the
+message it received as input as the original input. Also, some EIP patterns such as splitter,
+multicast, will create a new unit of work boundary for the messages in their sub-route
+(i.e. the split message); however these EIPs have an option named shareUnitOfWork which
+allows combining with the parent unit of work in regard to error handling and therefore use
+the parent original message.
+
+=== Using the original body with onException
+
+The `useOriginalBody` is similar to `useOriginalMessage` as documented above.
+You may want to use `useOriginalBody` when you want to be able to enrich the message with custom headers and preserve the original message body before sending to an error handler or dead letter channel.
+
+For example: if you have this route:
+
+[tabs]
+====
+
+Java::
++
+[source,java]
+----
+// will use original input body
+onException(MyOrderException.class)
+    .useOriginalBody()
+    .handled(true)
+    .to("jms:queue:order:failed");
+
+from("jms:queue:order:input")
+    .setHeader("application", constant("OrderApp"))
+    .to("bean:validateOrder")
+    .to("bean:transformOrder")
+    .to("bean:handleOrder");
+----
+
+XML::
++
+[source,xml]
+----
+<onException useOriginalBody="true">
+    <exception>com.foo.MyOrderException</exception>
+    <handled>
+        <constant>true</constant>
+    </handled>
+    <to uri="jms:queue:order:failed"/>
+</onException>
+
+<route>
+    <from uri="jms:queue:order:input"/>
+    <setHeader name="application">
+        <constant>OrderApp</constant>
+    </setHeader>
+    <to uri="bean:validateOrder"/>
+    <to uri="bean:transformOrder"/>
+    <to uri="bean:handleOrder"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- onException:
+    useOriginalBody: "true"
+    exception:
+      - com.foo.MyOrderException
+    handled:
+      constant:
+        expression: "true"
+    steps:
+      - to:
+          uri: jms:queue:order:failed
+- route:
+    from:
+      uri: jms:queue:order:input
+      steps:
+        - setHeader:
+            name: application
+            expression:
+              constant:
+                expression: OrderApp
+        - to:
+            uri: bean:validateOrder
+        - to:
+            uri: bean:transformOrder
+        - to:
+            uri: bean:handleOrder
+----
+====
+
+Then the message has been enriched with a header named application after the original message was received by the JMS endpoint. And in case of an error `onException`
+will handle the exception and use the original message body and the headers from the current message as-is, which means the headers will include the application header.
+

@@ -1,0 +1,1169 @@
+= Simple - Built-in Functions
+:tabs-sync-option:
+
+xref:simple-language.adoc[Back to Simple Language]
+
+== Built-in Simple Functions
+
+The Simple language has many built-in functions which allows access to various part of Camel and the current `Exchange`, the message payload such as body and headers, and much more.
+
+NOTE: Some functions take 1 or more arguments enclosed in parentheses, and arguments separated by comma (ie `${replace('custID','customerId')}`.
+
+=== Inlined Result Type Function
+
+**Available as of Camel 4.21**
+
+The simple language, has many built-in functions, and each of them take different set of parameters, and some are more advanced than others, for example
+the functions working with JSon or XML payloads. Regards of that, you may have need for being able to easily specify that the function should return the value
+as an integer instead of _what it would otherwise do_. To make this easy we have built-in a fixed set of very common result types to make this easy.
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|====
+|Prefix |Response Type |Description
+|`int:` | `Integer` | To use `Integer` as a result type.
+|`integer:` | `Integer` | To use `Integer` as a result type.
+|`long:` | `Long` | To use `Long` as a result type.
+|`boolean:` | `Boolean` | To use `Boolean` as a result type.
+|`string:` | `String` | To use `String` (text) as a result type.
+|====
+
+You do this by prefixing the function with any of the above, such as `${int:header.age}` to return the age header as an integer.
+If you use XML then the XPath function can do this as well such as `${int:xpath(//food/quantity)}`.
+
+If you need to use a type that is not in the table above, then you can combine two functions together with the `${convertTo(type)}` function, as follows:
+
+`${xpath(//food[name='food1']/price/text())} ~> ${convertTo(java.math.BigDecimal)}`
+
+=== Core Camel Functions
+
+The Camel functions are as the name implies specific to Apache Camel and these functions are primary used
+to access Camel functionality and content of the message being routed.
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|====
+|Function |Response Type |Description
+|`bean(name.method)` | `Object` | Invoking a bean expression using the xref:components::bean-component.adoc[Bean] language. Specifying a method name, you must use dot as the separator. We also support the ?method=methodname syntax that is used by the xref:components::bean-component.adoc[Bean] component. Camel will by default lookup a bean by the given name. However, if you need to refer to a bean class (such as calling a static method), then you can prefix with the type, such as `bean:type:fqnClassName`.
+|`body._OGNL_` | `Object` | The body invoked using a Camel _OGNL syntax_. For example to invoke the `getCountryCode` on the message body, you can use `${body.getCountryCode()}`. In the message body is a POJO then you can use a short-hand syntax `${body.countryCode}`.
+|`bodyAs(type)` | `<T>` | Converts the body to the given type determined by its classname.
+|`bodyAs(type)._OGNL_` | `Object` | Converts the body to the given type determined by its classname and then invoke methods using a Camel _OGNL syntax_.
+|`bodyOneLine` | `String` | Converts the body to a String and removes all line-breaks, so the string is in one line.
+|`bodyType` | `Class` | The message body class.
+|`body` | `Object` | The message body
+|`camelContext._OGNL_` | `Object` | The CamelContext invoked using Camel _OGNL syntax_.
+|`camelId` | `String` | The name of the Camel application (ie `CamelContext`).
+|`convertTo(type)` | `<T>` | Converts the message body to the specified type.
+|`convertTo(exp,type)` | `<T>` | Converts the expression to the specified type.
+|`convertTo(exp,type)._OGNL_` | `Object` | Converts the expression to the specified type and then invoke methods using a Camel _OGNL syntax_.
+|`exception` | `Throwable` | The `Exception` object on the exchange, is `null` if no exception is set on the `Exchange`. Will fallback and grab any caught exceptions stored as exchange property (`Exchange.EXCEPTION_CAUGHT`)
+|`exception._OGNL_` | `Object` | Same as `exception` and then invoke Camel _OGNL syntax_.
+|`exception.message` | `String` | The message from the `Exchange` object. See `exception` for more details.
+|`exception.stacktrace` | `String` | The stacktrace from the `Exchange` object. See `exception` for more details.
+|`exchange._OGNL_` | `Object` | The current `Exchange` invoked using Camel _OGNL syntax_.
+|`exchangeId` | `String` | The id of the current `Exchange`.
+|`exchangeProperty.key` | `Object` | Returns the value of the exchange property with the given key. Returns `null` if the property does not exists.
+|`exchangeProperty.key._OGNL_` | `Object` | Same as `exchangeProperty.key` and then invoke Camel _OGNL syntax_.
+|`exchange` | `Exchange` | The current `Exchange` object.
+|`fromRouteId` | `String` | Returns the original route id where this `Exchange` was created.
+|`function(name,exp)` | `Object` | Invokes a custom function with the given name using the message body (or expression) as input parameter.
+|`header.key` | `Object` | The message header with the given key.
+|`header.key._OGNL_` | `Object` | Same as `header.key` and then invoke Camel _OGNL syntax_.
+|`header[key]` | `Object` | *Deprecated* The message header with the given key.
+|`header[key]._OGNL_` | `Object` | *Deprecated* Same as `header[key]` and then invoke Camel _OGNL syntax_.
+|`headerAs(key,type)` | `<T>` | The message header with the given key, converted to the given type.
+|`headers.key` | `Object` | *Deprecated* The message header with the given key.
+|`headers.size` | `int` | The number of headers
+|`headers:key` | `Object` | *Deprecated* The message header with the given key.
+|`headers[key]` | `Object` | *Deprecated* The message header with the given key.
+|`headers` | `Map` | All the message headers as a `java.util.Map`.
+|`id` | `String` | The message id
+|`kindOfType(exp)` | `String` | What kind of type is the value (null,number,string,boolean,array,object).
+|`length()` | `int` | The payload length (number of bytes) of the message body
+|`length(exp)` | `int` | The payload length (number of bytes) of the expression.
+|`logExchange` | `String` | Dumps the exchange for logging purpose (uses `ExchangeFormatter` to format the output).
+|`mandatoryBodyAs(type)` | `<T>` | Converts the message body to the given type determined by its classname. If the body is `null` then an exception is thrown.
+|`mandatoryBodyAs(type)._OGNL_` | `Object` | Same as `mandatoryBodyAs(type)` and then invoke Camel _OGNL syntax_.
+|`messageAs(type)` | `<T>` | Converts the message to the given type determined by its classname.
+|`messageAs(type)._OGNL_` | `Object` | Same as `messageAs(type)` and then invoke Camel _OGNL syntax_.
+|`messageHistory` | `String` | The message history of the current exchange (how it has been routed). This is similar to the route stack-trace message history the error handler logs in case of an unhandled exception.
+|`messageHistory(false)` | `String` | Same as `messageHistory` but without the exchange details (only includes the route stack-trace). This can be used if you do not want to log sensitive data from the message itself.
+|`messageTimestamp` | `long` | The message timestamp (millis since epoc) that this message originates from. Some systems like JMS, Kafka, AWS have a timestamp on the event/message that Camel received. This method returns the timestamp if a timestamp exists. The message timestamp and exchange created are different. An exchange always has a created timestamp which is the local timestamp when Camel created the exchange. The message timestamp is only available in some Camel components when the consumer is able to extract the timestamp from the source event. If the message has no timestamp, then 0 is returned.
+|`originalBody` | `Object` | The original incoming message body (only available if Camel has been configured with `allowUseOriginalMessage=true`).
+|`properties:key:default` | `String` | Lookup a property placeholder with the given key. If the key does not exist nor has a value, then an optional default value can be specified.
+|`propertiesExist:key` | `boolean` | Checks whether a property placeholder with the given key exists or not. The result can be negated by prefixing the key with `!`.
+|`ref:key` | `Object` | To look up a bean from the Camel xref:manual::registry.adoc[Registry] with the given key.
+|`routeGroup` | `String` | Returns the route group of the current route the `Exchange` is being routed. Not all routes have a group assigned, so this may be `null`.
+|`routeId` | `String` | Returns the route id of the current route the `Exchange` is being routed.
+|`setHeader(name,type,exp)` | `null` | Sets a message header with the given expression (optional converting to the given type).
+|`setVariable(name,type,exp)` | `null` | Sets a variable with the given expression (optional converting to the given type).
+|`stepId` | `String` | Returns the id of the current step the `Exchange` is being routed. Returns `null` if there are no steps.
+|`throwException(type,msg)` | `Exception` | Deliberately throws an error. Uses `IllegalArgumentException` by default if no type is specified (use fully qualified classname).
+|`type:name.field` | `Object` | To refer to a type or field by its fully qualified classname. For example: `type:org.apache.camel.Exchange.FILE_NAME`.
+|`val(exp)` | `Object` | Returns the expression as a constant value.
+|`variable.key` | `Object` | To look up the variable with the given key.
+|`variable.key._OGNL_` | `Object` | To look up the variable with the given key and then invoke Camel _OGNL syntax_.
+|`variable[key]` | `Object` | *Deprecated* To look up the variable with the given key.
+|`variableAs(key,type)` | `<T>` | To look up the variable with the given key, and convert the value to the given type determined by its classname
+|`variables` | `Map` | All the variables from the current `Exchange` as a `java.util.Map`.
+|`variables.size` | `int` | The number of `Exchange` variables
+|====
+
+The core functions are powerful to give easy access to the current `Exchange` / `Message` being routed so
+you can get the message body, headers, variables and exchange properties.
+
+The `body` function returns the message body as-is. If the body is a `String` with value `Hello World`, then `$\{body}` returns `Hello World`.
+
+The `bodyAs` function converts the body to the given type. For example if the body is the integer `42`, then `${bodyAs(String)}` returns `"42"` as a String.
+And `${mandatoryBodyAs(Integer)}` will throw an exception if the body is `null`, otherwise it converts and returns the value.
+
+The `bodyOneLine` function converts the body to a String and removes all line-breaks, so the string is in one line. This is useful for logging.
+
+The `bodyType` function returns the Java class of the message body. For example if the body is `"Hello"`, then the type is `java.lang.String`.
+
+The `convertTo` function converts the message body (or a given expression) to the specified type.
+For example `${convertTo(int)}` converts the body to an `Integer`, and `${convertTo(byte[])}` converts to a byte array.
+You can also convert a nested expression: `${convertTo($\{body},String)}`.
+
+The `headerAs` function returns a header value converted to the given type. For example if a header `num` contains the string `"42"`,
+then `${headerAs(num,Integer)}` returns the integer `42`.
+
+The `variableAs` function works similarly for variables. If a variable `num` contains `"99"`,
+then `${variableAs(num,Integer)}` returns the integer `99`.
+
+The `exchangeProperty` function returns an exchange property. You can use dot, colon, or bracket notation:
+`${exchangeProperty.color}`, `${exchangeProperty:color}`, or `${exchangeProperty[color]}` all return the same value.
+
+The `setHeader` function sets a message header from an expression. For example `${setHeader(foo,$\{body})}` sets the header `foo` to the current body.
+You can also specify a type: `${setHeader(bar,int,$\{body})}` converts the body to an `Integer` before setting the header.
+Setting a header to `null` removes it: `${setHeader(bar,$\{null})}`.
+
+The `setVariable` function works the same as `setHeader` but for exchange variables. For example `${setVariable(count,$\{body.length})}` stores
+the body length in a variable named `count`, which can later be used as `${variable.count}`.
+
+The `val` function returns its argument as a constant value (unchanged). For example `${val(abc)}` returns the string `abc`.
+When using a nested function `${val($\{body})}`, it captures the current body value at evaluation time.
+
+The `kindOfType` function returns a string describing the _kind_ of a value. It returns one of: `null`, `string`, `number`, `boolean`, `array`, or `object`.
+For example `${kindOfType('Hello')}` returns `string`, `${kindOfType(123)}` returns `number`,
+and if the body is a `List` then `${kindOfType()}` returns `array`.
+
+During routing, you can use the xref:eips:log-eip.adoc[LogEIP] to write to the log, for example:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:email")
+  .log("Sending welcome email to customer ${header.id} with status ${variable.level}");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="direct:email"/>
+    <log message="Sending welcome email to customer ${header.id} with status ${variable.level}"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- from:
+    uri: direct:email
+    steps:
+      - log:
+          message: "Sending welcome email to customer ${header.id} with status ${variable.level}"
+----
+====
+
+NOTE: The Camel functions are often also used for basic data mapping to easily get the part of the message payload you desire.
+
+The `length` function calculates the payload size in bytes (if possible). This is calculated by
+(if necessary) converting the payload into String to use for determine the byte length.
+For example `${length('Hello World')}` returns `11`. For larger payloads, then when using xref:manual::stream-caching.adoc[stream caching]
+the length is pre-computed and usually does not require to load the content into memory.
+
+The `throwException` function is used for throwing an exception.
+For example `${throwException('Invalid order')}` throws an `IllegalArgumentException` with the given message.
+You can also specify the exception type: `${throwException('Not found',java.io.FileNotFoundException)}`.
+
+The `exchangeId` function returns the unique identifier of the current exchange.
+This is commonly used for correlation in log messages: `$\{exchangeId}` returns a value like `ID-myhost-1234-1234567890-0-1`.
+
+The `routeId` function returns the id of the route currently processing the exchange.
+For example `$\{routeId}` returns `myRoute` when the exchange is inside a route with `routeId("myRoute")`.
+The `fromRouteId` function returns the route id where the exchange was _originally created_, which can differ from `routeId`
+when the exchange has been forwarded to another route via `direct` or `seda`.
+
+The `exception.message` function is commonly used in error handling to get the exception message.
+For example in an `onException` block you can log: `"Failed: ${exception.message}"`.
+If an `IllegalStateException("boom")` was thrown, then `${exception.message}` returns `boom`.
+Use `${exception.stacktrace}` if you need the full stack trace.
+
+The `properties:key:default` function looks up a property placeholder value from the Camel configuration.
+For example `${properties:myApp.greeting}` returns the value of the `myApp.greeting` property.
+You can also specify a default value: `${properties:myApp.greeting:Hello}` returns `Hello` if the property is not set.
+And `${propertiesExist:myApp.greeting}` returns `true` or `false` depending on whether the property exists.
+
+The `headers` function returns all message headers as a `java.util.Map`. This is useful when you need
+to pass all headers to a bean or processor. The `${headers.size}` returns the number of headers.
+
+The `messageTimestamp` function returns the timestamp from the source system (e.g., Kafka, JMS) if available.
+This is different from the exchange created timestamp, as it reflects when the original event occurred.
+Returns `0` if no timestamp is available.
+
+
+=== Array & List Functions
+
+The array and list functions are less commonly used as they are more advanced and require to work with data that are structured
+in arrays or lists.
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|====
+|Function |Response Type |Description
+|`collate(size)` | `Iterator<List>` | The collate function iterates the message body and groups the data into sub lists of specified size. This can be used with the Splitter EIP to split a message body and group/batch the split sub message into a group of N sub lists. This method works similar to the collate method in Groovy.
+|`distinct(val1,val2,...)` | `Set` | Returns a set of all the values with duplicates removed
+|`empty(kind)` | `<T>` | *Deprecated* Use `createEmpty` instead.
+|`forEach(exp,fun)` | `<List>` | Returns a List containing the values returned by the function when applied to each value from the input expression. This function is not supported when using csimple.
+|`list(val1,val2,...)` | `List` | The list function creates an `java.util.ArrayList` with the given set of values.
+|`listAdd(fun)` | `List` | Adds the result of the function to the message body as a list object.
+|`listAdd(source,fun)` | `List` | Adds the result of the function to the source expression as a list object.
+|`listRemove(fun)` | `List` | Removes the result of the function (use int to remove by position index) from the message body as a list object.
+|`listRemove(source,fun)` | `List` | Removes the result of the function (use int to remove by position index) from the source expression as a list object.
+|`map(key1,value1,...)` | `Map` | The map function creates a `java.util.LinkedHashMap` with the given set of pairs.
+|`mapAdd(key,fun)` | `List` | Adds the result of the function to the message body as a map object.
+|`mapAdd(source,key,fun)` | `List` | Adds the result of the function to the source expression as a map object.
+|`mapRemove(key)` | `List` | Removes the key from the message body as a map object.
+|`mapRemove(source,key)` | `List` | Removes the key from the source expression as a map object.
+|`createEmpty(kind)` | `<T>` | Creates a new empty object of the given kind. The `string` kind creates an empty `String` object. The `list` creates an empty `ArrayList`, and `map` creates an empty `LinkedHashMap` object. Use `set` to create an empty `java.util.LinkedHashSet`.
+|`filter(exp,fun)` | `List` | Returns a List containing only the values from the input expression for which the function evaluates to true. This function is not supported when using csimple.
+|`reverse(val1,val2,...)` | `List` | Returns a list of all the values, but in reverse order.
+|`shuffle(val1,val2,...)` | `List` | Returns a list of all the values shuffled in random order.
+|`size()` | `int` | Returns the number of elements in collection or array based message body. If the value is null then 0 is returned, otherwise 1.
+|`size(exp)` | `int` | Returns the number of elements in collection or array based value. If the value is null then 0 is returned, otherwise 1.
+|`skip(number)` | `Iterator` | The skip function iterates the message body and skips the first number of items. This can be used with the Splitter EIP to split a message body and skip the first N number of items.
+|`sort(exp,reverse)` | `List` | Sorts the message body or expression in natural order
+|`split(separator)` | `String[]` | Splits the message body as a `String` value using the separator into a `String` array. The separator is comma by default.
+|`split(exp,separator)` | `String[]` | Splits the expression as a `String` value using the separator into a `String` array. The separator is comma by default.
+|====
+
+The `collate` function is used for grouping together data into smaller subgroups. Suppose you have a message body containing a list of 9 elements.
+Then by using `${collate(2)}` will transform this into an `java.util.Iterator` that will return each sub list.
+As there are 9 elements as input then the output will be 5 sub lists with 2 2 2 2 and 1 element each.
+
+The `distinct` function takes one or more values as input and then returns a `Set` with only the unique values.
+The input values can single objects or arrays or lists as well. If no values is provided then the `${distinct()}` function will use the message body as input.
+For example `${distinct('Z','X','Z','A','B','A','C','D','B','E')}` will return a `Set` with values `[Z, X, A, B, C, D, E]`.
+
+The `forEach` function is like a for loop that loops the input values and apply the function to each item, and aggregates their responses into a `List` as result.
+
+For example suppose the message body contains a comma separated String with `Camel,World,Cheese` then
+executing `${forEach($\{body},'Hello $\{body}')}` will return a List with 3 values: `["Hello Camel", "Hello World", "Hello Cheese"]`.
+
+The `list` function is used for taking all input values and putting them into a single `List` as response.
+For example if the message body contains '4' then `${list(1,2,3,$\{body})}` will return a list with 4 elements. `[1,2,3,4]`.
+
+You can also add and remove from `java.util.List`(s). For example if the message body is a `List` then you can add
+something `${listAdd('Hello')}`. This will add to the message body. The source can also be an expression instead
+of the message body, such as a variable: `${listAdd(${variable.myVar},'Hello')}`.
+To remove from a list, you use `${listRemove('Hello')}`, or use a number to refer to the position `${listRemove(0)}`.
+Use _last_ as a special index to remove the last element: `${listRemove(last)}`.
+
+Besides adding to a `List` its also possible to add to a `java.util.Map` with the `mapAdd` function. For example if the message body is a `Map` then you can add
+something `${mapAdd('country','DK')}`. This will add to the message body. The source can also be an expression instead
+of the message body, such as a variable: `${mapAdd(${variable.myVar},'country','DK')}`.
+To remove from a list, you use `${mapRemove('country')}`.
+
+The `map` function is similar to the `list` function but for creating a `Map` instead where the values are grouped in pairs 2 by 2.
+For example `${map(1,a,2,b,3,c)}` will return a map with 3 elements `{1=a, 2=b, 3=c}`.
+
+The `createEmpty` function is for creating an empty object which can either be an empty `String` or a `List`, `Map` or `Set`.
+To create an empty `Map` use `${createEmpty(map)}`.
+
+The `reverse` function is to reverse the order of the values.
+For example `${reverse(1,2,3,4,5)}` will return a `List` with the values `5,4,3,2,1`.
+
+And the `shuffle` function will randomize the order of the values. The `sort` function will sort the order of the values (in natural order A...Z).
+
+The `size` functions is used to determine the number of elements, when using `Collection` or array based payloads.
+If not then either 0 or 1 is returned whether the body is `null` or not.
+For example if the message body contains a `List` with 7 elements then `${size()}` returns `7`.
+On the other hand if the message body contains a `InputStream` then the result is `1`, and when body is `null` then `0` is returned.
+And for String payloads such as `${size('Hello World')}` then `1` is always returned.
+
+TIP: Use the `length` function to return the payload length in bytes.
+
+The `skip` function is used for skipping the first number of elements. For example suppose you have a CSV file that contains a header line,
+and you want to skip this line, then you can use `${skip(1)}` that then returns an `Iterator` that starts at the 2nd line.
+
+The `split` function is as the name implies used for splitting the message body or the value (using a separator) into an array of sub elements.
+For example if the message body a CSV payload then using `${split(\\n)}` (you need to escape the new-line character) will split
+this into a `String[]` separated by new-line.
+If the body is `a:b:c` then `${split(:)}` returns a list `[a, b, c]`.
+You can also split a header or variable value: `${split($\{header.csv},-)}` splits the header value using `-` as separator.
+
+The `sort` function sorts values in natural order. If the body is a list `[b, a, c]` then `${sort()}` returns `[a, b, c]`.
+To sort in reverse (descending) order use `${sort(true)}` which returns `[c, b, a]`.
+
+The `createEmpty` function creates a new empty object. `${createEmpty(list)}` returns an empty `ArrayList`,
+`${createEmpty(map)}` returns an empty `LinkedHashMap`, `${createEmpty(set)}` returns an empty `LinkedHashSet`,
+and `${createEmpty(string)}` returns an empty `String`.
+
+The `filter` function filters elements from a collection based on a predicate.
+For example if the body is `Camel,Dog,Cheese` then `${filter($\{body},$\{length() > 4})}` returns a list with `[Camel, Cheese]`
+(only elements with more than 4 characters). You can also filter by content: `${filter($\{body},$\{contains(dog)})}` returns `[Dog]`.
+
+
+=== Boolean & Condition Functions
+
+The condition functions is small functions that mostly evaluates to a `boolean` value.
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|====
+|Function |Response Type |Description
+|`assert(exp,msg)` | `null` | Evaluates the expression and throws an exception with the message if the condition is false. This function is not supported when using csimple.
+|`contains(text)` | `boolean` | Returns true if the message body contains part of the text (ignore case)
+|`contains(exp,text)` | `boolean` | Returns true if the expression contains part of the text (ignore case)
+|`iif(predicate,trueExp,falseExp)` | `Object` | The inlined if function evaluates the predicate expression and returns the value of _trueExp_ if the predicate is `true`, otherwise the value of `falseExp` is returned. This function is similar to the ternary operator in Java.
+|`isEmpty` | `boolean` | Whether the message body is `null` or empty (list/map types are tested if they have 0 elements).
+|`isEmpty(exp)` | `boolean` | Whether the expression is `null` or empty (list/map types are tested if they have 0 elements).
+|`isAlpha()` | `boolean` | Whether the message body is alphabetic value (A..Z). For more advanced checks use the `regex` operator.
+|`isAlpha(exp)` | `boolean` | Whether the expression is alphabetic value (A..Z). For more advanced checks use the `regex` operator.
+|`isAlphaNumeric()` | `boolean` | Whether the message body is alphanumeric value (A..Z0-9). For more advanced checks use the `regex` operator.
+|`isAlphaNumeric(exp)` | `boolean` | Whether the expression is alphanumeric value (A..Z0-9). For more advanced checks use the `regex` operator.
+|`isNumeric()` | `boolean` | Whether the message body is numeric value (0..9). For more advanced checks use the `regex` operator.
+|`isNumeric(exp)` | `boolean` | Whether the expression is numeric value (0..9). For more advanced checks use the `regex` operator.
+|`not(predicate)` | `boolean` | Evaluates the predicate and returns the opposite.
+|====
+
+The `assert` function evaluates the expression and if its false or null, then an `SimpleAssertionException` is thrown with the given message.
+
+The `contains` function is a convenient function to check if a given expression contain partly a given text (ignore case).
+For example given the message body is `Hello big World` then `${contains(world)}` returns `true`, and `${contains(camel)}` returns `false`.
+
+The `iif` (_inlined if_) function is from Camel 4.18 also available as a ternary operator (predicate `?` trueExp `:` falseExp), see further below.
+An example with `iif` could be `${iif(${header.foo} > 0,'positive','negative')}`. This example is also used further below with the ternary operator.
+Instead of returning a fixed string as response, you can also use functions such as: `${iif(${header.foo} > 0,$\{body},$\{null})}`
+
+The remainder boolean functions are basic functions to check a value and return either `true` or `false`.
+
+The `isEmpty` is primary for checking if a value is either `null` or empty string or empty list/map/array types. For any other values then `false` is returned.
+
+The `isAlpha` / `isAlphaNumeric` and `isNumeric` is for checking if a value only contains `A..Z` or `A.Z0..9`, or `0..9` characters.
+Camel will use from the JDK `Character.isLetter` / `Character.isLetterOrDigit`, or `Character.isDigit` methods internally.
+
+So `${isAlpha('Hello World')}` will actually return `false` because there is a whitespace. However `${isAlpha('HelloWorld')}` returns `true`.
+
+TIP: You can use the `regex` operator to use regular expressions for more advanced tests.
+
+The `not` function inverts a boolean value. If the body is empty then `${not()}` returns `true`.
+If the body is `"Hello"` then `${not()}` returns `false`.
+You can also negate a predicate: `${not($\{body} == 'Hello')}` returns `false` when the body is `Hello`, and `true` otherwise.
+
+The `assert` function evaluates a condition and throws an exception if it fails.
+For example `${assert($\{body} == 'Hello', 'Must be Hello')}` will pass when the body is `Hello`,
+but throws a `SimpleAssertionException` with the message `Must be Hello` when the body is anything else.
+
+
+=== Date & Time Functions
+
+The date functions is used for parsing and formatting with date and times.
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|====
+|Function |Response Type |Description
+|`date:millis` | `long` | Returns the current timestamp as millis in unix epoch.
+|`date:command` | `Date` | Evaluates to a `java.util.Date` object. Supported commands are: `now` for current timestamp, `exchangeCreated` for the timestamp when the current exchange was created, `header.xxx` to use the `Long/Date` object in the header with the key xxx. `variable.xxx` to use the `Long/Date` in the variable with the key xxx. `exchangeProperty.xxx` to use the `Long/Date` object in the exchange property with the key xxx. `file` for the last modified timestamp of the file (only available with a File consumer). Command accepts offsets such as: `now-24h` or `header.xxx+1h` or `now+1h30m-100`.
+|`date:command:pattern` | `String` | Date formatting using `java.text.SimpleDateFormat` patterns. See `date:command` function for additional documentation on the commands.
+|`date-with-timezone:command:timezone:pattern` | `String` | Date formatting using `java.text.SimpleDateFormat` timezones and patterns. See `date:command` function for additional documentation on the commands.
+|====
+
+For example to get the current time use `${date:now}` which is returned as a `java.util.Date` object.
+And you can use `${date:millis}` to get unix epoch timestamp as a long value.
+
+If you want to format this to a String value, you can use the pattern command, such as `${date:now:hh:mm:ss}`.
+And to get the time 8 hours in the future `${date:now+8h:hh:mm:ss}`.
+
+There is also a timezone supported function so you can say `date-with-timezone:header.birthday:GMT+8:yyyy-MM-dd'T'HH:mm:ss:SSS`.
+This will get the `Date` object from the header with key birthday, and format that using the given pattern in the timezone GMT+8.
+
+You can also use date offsets with headers or exchange properties. For example `${date:header.birthday+24h:yyyyMMdd}` returns the date
+from the header shifted forward by 24 hours. And `${date:header.birthday-10s:yyyy-MM-dd'T'HH:mm:ss:SSS}` subtracts 10 seconds.
+
+Exchange properties work the same way: `${date:exchangeProperty.birthday:yyyyMMdd}` formats the property date.
+
+The `date:exchangeCreated` command returns the timestamp when the current exchange was created:
+`${date:exchangeCreated:hh:mm:ss a}` formats it as a 12-hour time with AM/PM marker.
+
+
+=== Math & Numeric Functions
+
+Various functions to work with numbers.
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|====
+|Function |Response Type |Description
+|`abs()` | `long` | Converts the message body to a long number and return the absolute value.
+|`abs(exp)` | `Long` | Converts the message body (or expression) to a long number and return the absolute value.
+|`average(val1,val2,...)` | `long` | Returns the average number from all the values  (integral numbers only).
+|`ceil()` | `int` | Converts the message body to a floating number and return the ceil value (rounded up to nearest integer).
+|`ceil(exp)` | `int` | Converts the expression to a floating number and return the ceil value (rounded up to nearest integer).
+|`floor()` | `int` | Converts the message body to a floating number and return the floor value (rounded down to nearest integer).
+|`floor(exp)` | `int` | Converts the expression to a floating number and return the floor value (rounded down to nearest integer).
+|`max(val1,val2,...)` | `long` | Returns the maximum number from all the values (integral numbers only).
+|`min(val1,val2,...)` | `long` | Returns the minimum number from all the values (integral numbers only).
+|`random(max)` | `int` | Returns a random `Integer` between 0 (included) and max (excluded).
+|`random(min,max)` | `int` | Returns a random `Integer` between min (included) and max (excluded).
+|`range(max)` | `List` | Returns a list of increasing integers between 0 (included) and max (excluded).
+|`range(min,max)` | `List` | Returns a list of increasing integers between min (included) and max (excluded).
+|`sum(val1,val2,...)` | `long` | Sums together all the values as integral numbers. This function can also be used to subtract by using negative numbers.
+|====
+
+The `abs` function returns the absolute value of a numeric value. It converts the input (either the message body or the result of an expression) to a long number and computes its absolute value.
+A few examples `${abs(-5)}` returns `5`, and `${abs(5)}` also returns `5`.
+
+The `average` function calculates the average (mean) of integral numbers (not floating point).
+Assume message body is `[10, 20, 30]` (as `List<Integer>` or similar) then `${average()}` results in `20`
+
+The `ceil` functions returns the value of number rounded up to the nearest integer that is greater than or equal to number.
+For example `${ceil(5.7)}` returns `6`, and `${ceil(5.1)}` also returns `6`.
+
+The `floor` functions returns the value of number rounded down to the nearest integer that is smaller or equal to number.
+For example `${floor(5.7)}` returns `5`, and `${floor(5.1)}` also returns `5`.
+
+The `max` and `min` functions in are used to find the maximum or minimum value among a set of numeric integral values.
+For example message body contains a list `[10, 5, 30, 15]` then `${max()}` returns `30` and `${min()}` returns `5`.
+
+The `random` functions returns a random number between min and max (exclusive).
+For example `${random(10)}` returns a random number 0..9. And `${random(18,50)}` returns a random number between 18..49.
+
+The `range` functions returns a list of increasing numbers between min and max (exclusive).
+For example `${range(10)}` returns the numbers `0..9`. And `${range(1,10)}` returns `1..9`.
+
+The `sum` function adds up numeric values (not floating point) and returns the result as a long.
+Assume message body is `[10, 20, 30]` (as `List<Integer>` or similar) then `${sum()}` results in `60`
+You can also use the `sum` function to add or subtract numbers. For example if you want to add 2 to a number, you can do
+`${sum($\{body},2)}`, and likewise to subtract you use negative number, such as `${sum($\{body},-2)}`.
+
+=== Other Functions
+
+Other kind of functions.
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|====
+|Function |Response Type |Description
+|`env.key` | `String` | Refers to the OS system environment variable with the given key. For example `env.HOME` to refer to the home directory.
+|`hash(exp,algorithm)` | `String` | Returns a hashed value (string in hex decimal) of the given expression. The algorithm can be `SHA-256` (default) or `SHA3-256`.
+|`hostname` | `String` | Returns the local hostname (may be `null` if not possible to resolve).
+|`load(file)` | `String` | Loads the content of the resource from classpath (cannot load from file-system to avoid dangerous situations).
+|`null` | `null` | Returns a `null` value.
+|`sys.key` | `String` | *Deprecated* To lookup the JVM system property with the given key.
+|`sysenv.key` | `String` | To lookup the OS environment variable with the given key.
+|`threadId` | `String` | Returns the id of the current thread.
+|`threadName` | `String` | Returns the name of the current thread.
+|`uuid(kind)` | `String` | Returns a UUID using the Camel `UuidGenerator`. You can choose kind between `default`, `classic`, `short`, `simple` and `random` as the kind. If no kind is given, then `default` is used. It is also possible to use a custom `UuidGenerator` and bind the bean to the xref:manual::registry.adoc[Registry] with an id. For example `${uuid(myGenerator)}` where the id is `myGenerator`.
+|====
+
+To use OS environment variables you use the `${env.key}` function, such as `${env.PATH}` or `${env.HOME}`, or `${env.JAVA_HOME}`.
+Notice how the key should be in uppercase, as required by OS environment variables.
+For example `${env.HOME}` returns the home directory path such as `/home/scott`.
+
+The `hash` function is used for calculating a hash value of the given value. The `${hash()}` would use the message body and SHA-256 as algorithm and
+return a hash value as String hex-decimal.
+For example if the body is `hello` then `${hash()}` returns the SHA-256 hash as a hex string.
+You can also specify the algorithm: `${hash($\{body},SHA3-256)}` uses SHA3-256 instead of the default SHA-256.
+To hash a specific expression: `${hash($\{header.apiKey})}` hashes the value of a header.
+
+The `hostname` function returns the OS hostname and does not require using parenthesis, so just use `$\{hostname}`.
+For example `$\{hostname}` returns the local machine hostname such as `myserver`.
+
+The `null` function returns a `null` value such as `$\{null}`. This is useful for setting a header or variable to null:
+`${setHeader(foo,$\{null})}` removes the header `foo`.
+
+To use OS environment variables you can also use the `${sysenv.key}` function (an alias for `${env.key}`), such as `${sysenv.PATH}` or `${sysenv.HOME}`.
+
+You can get the current thread id by the `$\{threadId}` function (returns a numeric id),
+and the name via `$\{threadName}` (returns the thread name such as `Camel (camel-1) thread #1 - direct://start`).
+
+And you can generate unique IDs with the xref:manual::uuidgenerator.adoc[Camel UUID Generator] by the `uuid` function.
+The generator supports different kinds `default`, `classic`, `short`, `simple` and `random`, such as `${uuid(random)}`.
+For example `$\{uuid}` returns a UUID like `ID-myhost-1234-1234567890-0-1`, and `${uuid(short)}` returns a shorter form.
+You can also bind a custom `UuidGenerator` to the registry and use it by name: `${uuid(myGenerator)}`.
+
+To load data from classpath, you can use the load function such as `$\{load(myrules.json)}`.
+If the file is not present on classpath, then an exception is thrown. However, you can mark the file as optional as follows:
+`$\{load(myrules.json?optional=true)}`, which will return `null` if the file does not exists.
+
+IMPORTANT: The load function can only load from classpath; and not the file-system in general. This is on purpose
+to avoid potential security risks by constructing dynamic simple expressions using the load function to attempt
+to load server files.
+
+
+=== String Functions
+
+The string functions is various functions to work with values that are String and text based.
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|====
+|Function |Response Type |Description
+|`capitalize()` | `String` | Capitalizes the message body as a String value (upper case every words)
+|`capitalize(exp)` | `String` | Capitalizes the expression as a String value (upper case every words)
+|`concat(exp,exp,separator)` | `String` | Performs a string concat using two expressions (message body as default) with optional separator.
+|`join(separator,prefix,exp)` | `String` | The join function iterates the message body (by default) and joins the data into a `String`. The separator is by default a comma. The prefix is optional. The join uses the message body as source by default. It is possible to refer to another source (simple language) such as a header via the exp parameter. For example `join('&','id=','$\{header.ids}')`
+|`lowercase()` | `String` | Lowercases the message body
+|`lowercase(exp)` | `String` | Lowercases the expression
+|`normalizeWhitespace()` | `String` | Normalizes the whitespace in the message body by cleaning up excess whitespaces.
+|`normalizeWhitespace(exp)` | `String` | Normalizes the whitespace in the expression by cleaning up excess whitespaces.
+|`pad(exp,width,separator)` | `String` | Pads the expression with extra padding if necessary, according the total width The separator is by default a space. If the width is negative then padding to the right, otherwise to the left.
+|`replace(from,to)` | `String` | Replace all the string values in the message body. To make it easier to replace single and double quotes, then you can use XML escaped values `\&quot;` as double quote, `\&apos;` as single quote, and `\&empty;` as empty value.
+|`replace(from,to,exp)` | `String` | Replace all the string values in the given expression. To make it easier to replace single and double quotes, then you can use XML escaped values `\&quot;` as double quote, `\&apos;` as single quote, and `\&empty;` as empty value.
+|`safeQuote()` | `String` | Returns the message body safely quoted if needed
+|`safeQuote(exp)` | `String` | Returns the expression safely quoted if needed
+|`substring(num1)` | `String` | Returns a substring of the message body. If the number is positive, then the returned string is clipped from the beginning. If the number is negative, then the returned string is clipped from the ending.
+|`substring(num1,num2)` | `String` | Returns a substring of the message body. `num1` clips from the beginning, `num2` clips from the ending. Negative values clip from the opposite end.
+|`substring(num1,num2,exp)` | `String` | Returns a substring of the given expression. `num1` clips from the beginning, `num2` clips from the ending. Negative values clip from the opposite end.
+|`substringAfter(after)` | `String` | Returns a substring of the message body that comes after. Returns `null` if nothing comes after.
+|`substringAfter(exp,after)` | `String` | Returns a substring of the expression that comes after. Returns `null` if nothing comes after.
+|`substringBefore(before)` | `String` | Returns a substring of the message body that comes before. Returns `null` if nothing comes before.
+|`substringBefore(exp,before)` | `String` | Returns a substring of the expression that comes before. Returns `null` if nothing comes before.
+|`substringBetween(after,before)` | `String` | Returns a substring of the message body that are between before and after. Returns `null` if nothing comes between.
+|`substringBetween(exp,after,before)` | `String` | Returns a substring of the expression that are between before and after. Returns `null` if nothing comes between.
+|`trim()` | `String` | The trim function trims the message body by removing all leading and trailing white spaces.
+|`trim(exp)` | `String` | The trim function trims the expression by removing all leading and trailing white spaces.
+|`unquote()` | `String` | Returns the message body with any leading/ending quotes removed
+|`unquote(exp)` | `String` | Returns the expression with any leading/ending quotes removed
+|`quote()` | `String` | Returns the message body as a double-quoted string
+|`quote(exp)` | `String` | Returns the expression as a double-quoted string
+|`uppercase()` | `String` | Uppercases the message body
+|`uppercase(exp)` | `String` | Uppercases the expression
+|====
+
+The `capitalize` function is used for _capitalizing_ words, by upper-casing the first letter in every words.
+For example `${capitalize('hello world')}` returns `Hello World`.
+
+The `concat` function is used for putting together two values as a single String result.
+In Java, you would use the `+` operator such as `String s = "Hello" + " world";`.
+
+The simple function works like `${concat('Hello ',$\{body})}`. Notice how you can use nested functions so the 2nd parameter is the `$\{body}` function.
+In the example we had to add a space after `"Hello "`, but you can also use the separator parameter, such as `${concat('Hello',$\{body},' ')}`.
+
+The `join` function is a more complex function to join together a set of values, separated by comma (by default) as a single combined String.
+For example if the message body contains a list of [A, B, C] then `${join()}` would return `A,B,C`.
+To use semicolon as separator you would use `${join(;)}`. The `prefix` argument can be used to prefix each value, so for example
+`${join(&,id=)}` would return `id=A&id=B&id=C`.
+
+The `lowercase` and `uppercase` functions are as the name implies used for lower and uppercasing.
+So `${lowercase('Hello World')}` returns `hello world` and `${uppercase('Hello World')}` returns `HELLO WORLD`.
+Without arguments, they operate on the message body: if the body is `HELLO` then `${lowercase()}` returns `hello`.
+
+You can use the `normalizeWhitespace` function to _clean up_ a value by removing extra whitespaces. This is done by ensuring that
+there are exactly only 1 whitespace between words. And as well trimming the value for empty whitespace
+in the beginning and end. Suppose the message body is a String value with `"   Hello  big   World      "`, then `${normalizeWhitespace()}` will return `Hello big World`.
+
+The `pad` function returns a copy of the string with extra padding, if necessary, so that its total number of characters is at least the absolute value of the width parameter.
+If width is a positive number, then the string is padded to the right; if negative, it is padded to the left.
+The optional separator specifies the padding character(s) to use. If not specified, it defaults to the space character.
+If the message body contains `foo` then `${pad($\{body},5)}` returns `"foo  "` and `${pad($\{body},-5)}` returns `"  foo"`, and `${pad($\{body},-5,'@')}` returns `@@foo`.
+
+The `replace` function is used for finding a given text in a string and replacing it with another.
+For example the message body contains `Hello a how are you`, then `${replace(a,b)}` returns `Hello b how bre you`.
+The replace function has special support for xref:_replacing_double_and_single_quotes[replacing double and single quotes].
+
+The `substring`, `substringBefore`, and `substringAfter` functions are all similar functions to return a substring of a given value.
+
+Suppose the message body contains `ABCDEFGHIJK` then `${substring(3)}` returns `DEFGHIJK`, and `${substring(-3)}` returns `ABCDEFGH`.
+If you want to clip the first and last character you can use `${substring(1,-1)}` returning `BCDEFGHIJ`.
+
+Now suppose the message body contains `Hello great big World how are you`.
+
+Then `${substringBefore('World')}` return `"Hello great big "`.
+And `${substringAfter('World')}` returns `" how are you"`.
+And `${substringBetween('great','how')}` would return `" big World "`.
+
+The `trim` function trims the value by removing leading and trailing whitespaces.
+So the previous example can also be trimmed by nesting the function as follows:
+`${trim(${substringBetween('great','how')})}` which would return `"big World"`.
+
+And of course `${trim('  hello world  ')}` returns `hello world`.
+Without arguments, `${trim()}` trims the message body. If the body is `"  hello  "` then `${trim()}` returns `hello`.
+
+The `length` function calculates the payload length in bytes. If the body is `Hello` then `${length()}` returns `5`.
+You can also pass a literal: `${length('Hello World')}` returns `11`.
+
+The `size` function returns the number of elements in a collection or array.
+If the body is a `List` with elements `[a, b, c]` then `${size()}` returns `3`.
+
+The `quote` function is making sure the returned value is enclosed in double quotes.
+If the value is currently in single quote, then this will be converted to double quotes.
+
+If the message body contains `Hello World` then `${quote()}` returns `"Hello World"`.
+And using `${quote('Hi from me')}` then `"Hi from me"` is returned.
+
+The `unquote` function removes any surrounding single or double quotes from a value.
+If the body contains `'hello'` then `${unquote()}` returns `hello` (without the quotes).
+
+The `safeQuote` function is quoting the value depending on the value type
+(uses the same logic as `kindOfType` function). In essence values that are null, boolean or numbers are not quoted,
+while everything else is. The `safeQuote` function is useful when working with JSON data.
+
+For example when doing JSON to JSON mapping you can extract values form the source document,
+to be included in the output, but the values may or may not need to be quoted. Then you can use the `~>` chain operator
+to call the `safeQuote` function as shown below:
+
+[source,text]
+----
+{
+   "id": ${jsonpath($.id)} ~> ${safeQuote()}
+   "total": ${jsonpath($.amount)} ~> ${safeQuote()}
+}
+----
+
+
+=== XML & JSON Functions
+
+Functions to work with XML and JSON payloads.
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|====
+|Function |Response Type |Description
+|`jq(exp)` | `Object` | When working with JSON data, then this allows using the JQ language, for example, to extract data from the message body (in JSON format). This requires having camel-jq JAR on the classpath.
+|`jq(input,exp)` | `Object` | Same as `jq(exp)` but to use the _input_ expression as the source of the JSON document.
+|`jsonpath(exp)` | `Object` | When working with JSON data, then this allows using the JsonPath language, for example, to extract data from the message body (in JSON format). This requires having camel-jsonpath JAR on the classpath.
+|`jsonpath(input,exp)` | `Object` | Same as `jsonpath(exp)` but to use the _input_ expression as the source of the JSON document.
+|`pretty(exp)` | `String` | Converts the expression to a `String`, and attempts to pretty print (if JSON or XML) otherwise return the value as-is.
+|`prettyBody` | `String` | Converts the message body to a `String`, and attempts to pretty print (if JSON or XML) otherwise return the value as-is.
+|`simpleJsonpath(exp)` | `Object` | When working with JSON data, then this allows using built-in Simple JsonPath, for example, to extract data from the message body (in JSON format).
+|`simpleJsonpath(input,exp)` | `Object` | Same as `simpleJsonpath(exp)` but to use the _input_ expression as the source of the JSON document.
+|`toJson(exp)` | `String` | Converts the expression to a JSON `String` representation. String values are returned as-is, null values return null, all other types are serialized to JSON.
+|`toJsonBody` | `String` | Converts the message body to a JSON `String` representation. String values are returned as-is, null values return null, all other types are serialized to JSON.
+|`toPrettyJson(exp)` | `String` | Converts the expression to a JSON `String` representation. String values are returned as-is, null values return null, all other types are serialized to JSON in pretty mode.
+|`toPrettyJsonBody` | `String` | Converts the message body to a JSON `String` representation. String values are returned as-is, null values return null, all other types are serialized to JSON in pretty mode.
+|`xpath(exp)` | `Object` | When working with XML data, then this allows using the XPath language, for example, to extract data from the message body (in XML format). This requires having camel-xpath JAR on the classpath.
+|`xpath(input,exp)` | `Object` | When working with XML data, then this allows using the XPath language, for example, to extract data from the message body (in XML format). This requires having camel-xpath JAR on the classpath. For input you can choose `header:key`, `exchangeProperty:key` or `variable:key` to use as input for the JSON payload instead of the message body.
+|====
+
+The simple language has support for working with XML and JSON data by offering functions that leverage the
+xref:languages:jsonpath-language.adoc[JSONPath], xref:languages:jq-language.adoc[JQ], xref:languages:xpath-language.adoc[XPath] languages.
+This also mean that you must include the required JARs on the classpath.
+
+The `jq` function (JSON Query) is used for using the JQ language to obtain data from an existing JSON payload.
+For example given this payload:
+
+[source,json]
+----
+{"id": 123, "age": 42, "name": "scott"}
+----
+
+Then `${jq(.id)}` will return `123`.
+
+You can also use this for basic data mapping such as:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:map")
+        .transform().simple("""
+            {
+              "roll": ${jq(.id)},
+              "country": "${jq(.country // constant(sweden))}",
+              "fullname": "${jq(.name)}"
+            }""")
+        .to("log:data");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:map"/>
+  <transform>
+    <simple>{
+              "roll": ${jq(.id)},
+              "country": "${jq(.country // constant(sweden))}",
+              "fullname": "${jq(.name)}"
+            }</simple>
+  </transform>
+  <to uri="log:data"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:map
+      steps:
+        - transform:
+            simple: |-
+              {
+                "roll": ${jq(.id)},
+                "country": "${jq(.country // constant(sweden))}",
+                "fullname": "${jq(.name)}"
+              }
+        - to:
+            uri: log:data
+----
+====
+
+The `jsonpath` function works similar to `jq` but uses JSONPath.
+When using `${jsonpath($.id)}` will also return `123`.
+
+And the data mapping can be done as follows with JSonPath instead of JQ:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:map")
+        .transform().simple("""
+            {
+              "roll": ${jsonpath($.id)},
+              "years": ${jsonpath($.age)},
+              "fullname": "${jsonpath($.name)}"
+            }""")
+        .to("log:data");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:map"/>
+  <transform>
+    <simple>{
+              "roll": ${jsonpath($.id)},
+              "years": ${jsonpath($.age)},
+              "fullname": "${jsonpath($.name)}"
+            }</simple>
+  </transform>
+  <to uri="log:data"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:map
+      steps:
+        - transform:
+            simple: |-
+              {
+                "roll": ${jsonpath($.id)},
+                "years": ${jsonpath($.age)},
+                "fullname": "${jsonpath($.name)}"
+              }
+        - to:
+            uri: log:data
+----
+====
+
+The `simpleJsonpath` function is using Camel's built in JSON library from `camel-util-json` that is a basic JSON parser.
+The syntax for the path is similar to Camel's bean OGNL syntax to use a dot notation to walk down a nested structure.
+
+Because the input JSON is not nested then the mapping example is just:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:map")
+        .transform().simple("""
+            {
+              "roll": ${simpleJsonpath(id)},
+              "years": ${simpleJsonpath(age)},
+              "fullname": "${simpleJsonpath(name)}"
+            }""")
+        .to("log:data");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:map"/>
+  <transform>
+    <simple>{
+              "roll": ${simpleJsonpath(id)},
+              "years": ${simpleJsonpath(age)},
+              "fullname": "${simpleJsonpath(name)}"
+            }</simple>
+  </transform>
+  <to uri="log:data"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:map
+      steps:
+        - transform:
+            simple: |-
+              {
+                "roll": ${simpleJsonpath(id)},
+                "years": ${simpleJsonpath(age)},
+                "fullname": "${simpleJsonpath(name)}"
+              }
+        - to:
+            uri: log:data
+----
+====
+
+However, if there are nested JSON such as:
+
+[source,json]
+----
+{
+    "library": {
+        "book": [
+            {
+                "title": "No Title",
+                "author": "F. Scott Fitzgerald",
+                "year": "1925",
+                "genre": "Classic",
+                "movie": false,
+                "id": "bk101"
+            },
+            {
+                "title": "1984",
+                "author": "George Orwell",
+                "year": "1949",
+                "genre": "Dystopian",
+                "movie": true,
+                "id": "bk102"
+            }
+        ]
+    }
+}
+----
+
+Then you can retrieve data from the JSON payload as follows:
+
+[source,text]
+----
+library.book[0].title
+library.book[0].author
+library.book[0].year
+
+library.book[1].title
+library.book[1].author
+library.book[1].year
+----
+
+TIP: You can use `[last]` to refer to the last element in an array.
+
+You can use `?.` to declare that the path is option, so if the node or attribute does not exist, then `null` is returned.
+Otherwise, Camel will throw an exception.
+
+For example, we attempt to refer to a non-existing attribute
+
+[source,text]
+----
+library.book[0]?.cheese
+----
+
+The optional marker can also be used sooner in the path, such as `foo?.bar.age` which will not fail if there are no nested _bar_ node in the JSON payload.
+
+The `toJson` function is to convert the payload to JSON as a `String` value. However, if the payload is already a `String` then no conversion happens.
+So suppose the payload is a `Map` object as follows:
+
+[source,java]
+----
+Map<String, Object> map = new LinkedHashMap<>();
+map.put("name", "Jack");
+map.put("id", 123);
+----
+
+Then `toJson` will output:
+
+[source,json]
+----
+{"name":"Jack","id":123}
+----
+
+
+There are also _pretty_ alternatives so when calling `toPrettyJson` will output:
+
+[source,json]
+----
+{
+  "name": "Jack",
+  "id": 123
+}
+----
+
+The `xpath` function is for working with XML and using XPath expressions to extract data from XML payloads.
+
+Given the following XML payload:
+
+[source,xml]
+----
+<order id="123">
+  <item>Brake</item>
+  <first>scott</first>
+  <last>jackson</last>
+  <address>
+    <co>sweden</co>
+    <zip>12345</zip>
+  </address>
+</order>
+----
+
+Then `${xpath(/order/@id)}` will return `123`.
+
+And the data mapping can be done with XPath as follows:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:map")
+    .transform().simple("""
+        {
+          "id": ${xpath(/order/@id)},
+          "item": "${xpath(/order/item)}",
+          "fullname": "${xpath(/order/first)} ${xpath(/order/last)}"
+        }""")
+    .to("log:data");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:map"/>
+  <transform>
+    <simple>{
+          "id": ${xpath(/order/@id)},
+          "item": "${xpath(/order/item)}",
+          "fullname": "${xpath(/order/first)} ${xpath(/order/last)}"
+        }</simple>
+  </transform>
+  <to uri="log:data"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:map
+      steps:
+        - transform:
+            simple: |-
+              {
+                "id": ${xpath(/order/@id)},
+                "item": "${xpath(/order/item)}",
+                "fullname": "${xpath(/order/first)} ${xpath(/order/last)}"
+              }
+        - to:
+            uri: log:data
+----
+====
+
+The `pretty` function is used for pretty printing JSON or XML data as a String value.
+For example given the following JSON payload (in a single line): `{"id": 123, "age": 42, "name": "scott"}`
+then `$\{pretty}` will output this nicely formatted:
+
+[source,json]
+----
+{
+  "id": 123,
+  "age": 42,
+  "name": "scott"
+}
+----
+
+
+=== Attachment Functions
+
+From *Camel 4.10* onwards then Camel has built-in attachment functions making it easy to obtain
+details from attachments stored on the Camel Message such as from HTTP file uploads, email with file attachments etc.
+
+This requires having `camel-attachments` JAR on the classpath.
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|====
+|Function |Response Type |Description
+|`attachment.key._OGNL_` | `Object` | Refer to the attachment with the given key on the `Exchange` and invoke its value using a Camel _OGNL syntax_.
+|`attachmentContent(key)` | `Object` | The content of the attachment.
+|`attachmentContentAs(key,type)` | `Object` | The content of the attachment, converted to the given type.
+|`attachmentContentAsText(key)` | `String` | The content of the attachment as text (ie `String`).
+|`attachmentHeader(key,name)` | `Object` | The attachment header with the given name.
+|`attachmentHeaderAs(key,name,type)` | `<T>` | The attachment header with the given name, converted to the given type.
+|`attachmentsKeys` | `Set` | All the attachment keys (filenames).
+|`attachment[key]` | `DataHandler` | The `jakarta.activation.DataHandler` for the given attachment.
+|`attachments.size` | `int` | The number of attachments. Is 0 if there are no attachments.
+|`attachments` | `Map` | All the attachments as a `Map<String,jakarta.activation.DataHandler>`.
+|`setAttachment(key,exp)` | `null` | Sets an attachment with payload from the message body/expression.
+|`clearAttachments` | `null` | Removes all existing attachments on the message.
+|====
+
+The attachment functions are only used with components that supports `javax.attachments` APIs
+such as `camel-cxf`, `camel-http`, `camel-mail`, `camel-platform-http`, `camel-spring-ws`, etc.
+
+NOTE: The _key_ is the attachment filename such as `mydata.xml` or an `int` to lookup by index (0 = first).
+
+Suppose you are using `camel-platform-http` to expose a HTTP endpoint that support file uploads via http multipart,
+then you can use `${attachments.size}` to know how many files are attached. The other functions are used
+to access attachment content, headers and metadata.
+
+The key is either the filename such as `${attachmentContent(mydata.xml)}` or by index (0 based) `${attachmentContent(0)}`.
+
+To know the names of the files you can use `$\{attachmentsKeys}` which returns a `Set` will all the keys.
+
+If the attached file is text based, you can access the payload via `${attachmentContentAsText(mydata.xml)}` or by index `${attachmentContentAsText(0)}`
+which returns the payload as a `String` value.
+
+For example if an XML file was uploaded as `mydata.xml`, then you can access metadata such as
+`${attachment[0].name` returns `mydata.xml`, and `${attachment[0].contentType` return `text/xml`, and
+`${attachment[0].content}` returns the XML payload.
+
+If the content is binary or other formats, you can use Camels xref:manual::type-converter.adoc[Type Converter] to
+convert the payload into the given Object of choice, for example as a byte array: `${attachmentContentAs(mydata.xml,byte[])}`
+
+The `setAttachment` function is used for adding,updating or removing attachments. If the expression is `null` then
+any existing attachment is removed, such as `${setAttachment(mydata.xml,null)}`.
+
+You can add an attachment such as `${setAttachment(mydata2.xml)}`, which then will use the current message body
+as the payload. You can also use an expression such as from a variable `${setAttachment(mydata2.xml,${variable.mydata})}`.
+
+TIP: Camel will automatically detect the content-type of the attachment.
+
+The payload of the attachment can also refer to resources from the file system, or classpath by prefixing with `resource:` as follows
+`${setAttachment(mydata2.xml,resource:file:/inbox/mydata2.xml)}`
+
+To make the file name dynamic you can store the name in a variable such as: `${setAttachment(mydata2.xml,resource:file:${variable.attchmentName})}`
+
+
+=== Base64 Functions
+
+From *Camel 4.18* onwards then Camel has built-in base64 functions to make it easy to encode/decode.
+
+This requires having `camel-base64` JAR on the classpath.
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|====
+|Function |Response Type |Description
+|`base64Decode()` | `byte[]` |Base64 decodes the message body
+|`base64Decode(exp)` | `byte[]` |Base64 decodes the expression
+|`base64Encode()` | `String` |Base64 encodes the message body
+|`base64Encode(exp)` | `String` |Base64 encodes the expression
+|====
+
+Camel comes with functions to use `camel-base64` JAR for base64 encoding and decoding.
+
+For example `${base64Encode(Camel)}` returns `Q2FtZWw=` and you can reverse
+this by `${base64Decode(Q2FtZWw=)}` which then returns `Camel`.
+
+If you want to encode the message body then use `${base64Encode()}`, but you can also
+provide a nested function such as `${base64Encode(${header.myKey})}` to encode a header.
+
+=== HTML Functions
+
+From *Camel 4.21* onwards then Camel has built-in HTML functions to make it easy to clean/parse and decode.
+
+This requires having `camel-jsoup` JAR on the classpath.
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|====
+|Function |Response Type |Description
+|`htmlClean()` | `String` |Cleans the HTML to remove unsafe links and JavaScripts from the message body
+|`htmlClean(exp)` | `String` |Cleans the HTML to remove unsafe links and JavaScripts from the expression
+|`htmlDecode()` | `String` |Decodes the HTML as plain text (removing all HTML tags) that is also suitable as input for AI and LLMs
+|`htmlDecode(exp)` | `String` |Decodes the HTML as plain text (removing all HTML tags) that is also suitable as input for AI and LLMs
+|`htmlParse()` | `org.jsoup.nodes.Document` |Parses the HTML as a JSoup object from the message body
+|`htmlParse(exp)` | `org.jsoup.nodes.Document` |Parses the HTML as a JSoup object from the expression
+|====
+
+Camel comes with functions to use `camel-jsoup` JAR for HTML cleaning and decoding.
+
+For example `${htmlDecode(${header.myHtml})}` will from the header with key `myHtml` decode
+the HTML (removing all tags) into a plain text, which can be fed into LLMs etc.
+
+The `${htmlClean()}` function can be used to remove unwanted tags from the HTML to
+https://jsoup.org/cookbook/cleaning-html/safelist-sanitizer[sanitize untrusted HTML].
+
+The `${htmlParse()`} is used to parse the HTML into a Java `org.jsoup.nodes.Document` structure which is similar to `org.w3c.Document`
+but uses the JSoup API instead.
+
+=== A2A Functions
+
+From *Camel 4.21* onwards, Camel has built-in Agent-to-Agent (A2A) functions to emit task progress and extract data
+from A2A messages, tasks, and agent cards.
+
+This requires having `camel-a2a` JAR on the classpath.
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|====
+|Function |Response Type |Description
+|`a2a:emit(message)` | `String` |Emits an A2A task progress update with `WORKING` state. Requires an active A2A task context.
+|`a2a:emit(state,message)` | `String` |Emits an A2A task progress update with the given task state, such as `WORKING`, `INPUT_REQUIRED`, `COMPLETED`, `FAILED`, `CANCELED`, `REJECTED`, or `AUTH_REQUIRED`.
+|`a2a:text` | `String` |Extracts `TextPart` content from an A2A Task or Message in the message body.
+|`a2a:text(expression)` | `String` |Extracts `TextPart` content from an A2A Task or Message returned by the expression.
+|`a2a:data` | `String` |Extracts `DataPart` content as a JSON string from an A2A Task or Message in the message body.
+|`a2a:data(expression)` | `String` |Extracts `DataPart` content as a JSON string from an A2A Task or Message returned by the expression.
+|`a2a:file` | `String` |Extracts `FilePart` content from an A2A Task or Message in the message body.
+|`a2a:file(expression)` | `String` |Extracts `FilePart` content from an A2A Task or Message returned by the expression.
+|`a2a:card` | `String` |Returns the resolved A2A agent card as a JSON string.
+|`a2a:card.name` | `String` |Returns the resolved A2A agent card name.
+|`a2a:card.description` | `String` |Returns the resolved A2A agent card description.
+|`a2a:card.url` | `String` |Returns the resolved A2A agent card URL.
+|`a2a:card.version` | `String` |Returns the resolved A2A agent card version.
+|`a2a:card.skills` | `String` |Returns the resolved A2A agent card skills as human-readable text.
+|`a2a:card.skills.json` | `String` |Returns the resolved A2A agent card skills as a JSON array string.
+|`a2a:card.iconUrl` | `String` |Returns the resolved A2A agent card icon URL.
+|`a2a:card.documentationUrl` | `String` |Returns the resolved A2A agent card documentation URL.
+|`a2a:card.provider` | `String` |Returns the resolved A2A agent card provider as a JSON string.
+|`a2a:card.capabilities` | `String` |Returns the resolved A2A agent card capabilities as a JSON string.
+|`a2a:card.supportedInterfaces` | `String` |Returns the resolved A2A agent card supported interfaces as a JSON array string.
+|`a2a:card.securitySchemes` | `String` |Returns the resolved A2A agent card security schemes as a JSON object string.
+|`a2a:card.securityRequirements` | `String` |Returns the resolved A2A agent card security requirements as a JSON array string.
+|`a2a:card.security` | `String` |Returns the resolved A2A agent card legacy security field as a JSON array string.
+|====
+
+For example, `${a2a:emit('Searching documents')}` emits a `WORKING` progress event for the current A2A task.
+Use `${a2a:emit(INPUT_REQUIRED,'Please provide your address')}` to emit progress with an explicit task state.
+
+== Built-in Symbols
+
+The following special symbols can be used when escaped with `\` as below:
+
+[width="100%",cols="50%,50%",options="header",]
+|====
+|Symbol |Description
+|`\\n` | To use newline character.
+|`\\t` | To use tab character.
+|`\\r` | To use carriage return character.
+|`\\}` | To use the `}` character as text. This may be needed when building a JSON structure with the simple language.
+|====
+
+For example to use a new-line character in the split function `${split(\\n)}`.
+
