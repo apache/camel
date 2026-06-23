@@ -59,7 +59,9 @@ public class FromFileSendMailTest extends CamelTestSupport {
                         .setHeader("Subject", constant("Hello World"))
                         .setHeader("To", constant("james@localhost"))
                         .setHeader("From", constant("claus@localhost"))
-                        .to(james.uriPrefix(Protocol.smtp) + "&initialDelay=100&delay=100", "mock:result");
+                        .to(james.uriPrefix(Protocol.smtp)
+                            + "&initialDelay=100&delay=100&useHeaderRecipients=true&useHeaderFrom=true&useHeaderSubject=true",
+                                "mock:result");
             }
         };
     }

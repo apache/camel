@@ -82,7 +82,7 @@ public class MailReplyToTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:a")
-                        .to(christian.uriPrefix(Protocol.smtp) + "&subject=Camel");
+                        .to(christian.uriPrefix(Protocol.smtp) + "&subject=Camel&useHeaderReplyTo=true");
 
                 from("direct:b")
                         .to(christian.uriPrefix(Protocol.smtp)

@@ -69,13 +69,15 @@ public class MailToMultipleEndpointsTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:a").to(james2.uriPrefix(Protocol.smtp) + "&to=" + a.getEmail() + "&from=me@me.com");
+                from("direct:a")
+                        .to(james2.uriPrefix(Protocol.smtp) + "&to=" + a.getEmail() + "&from=me@me.com&useHeaderSubject=true");
 
-                from("direct:b").to(james.uriPrefix(Protocol.smtp) + "&to=" + b.getEmail() + "&from=you@you.com");
+                from("direct:b")
+                        .to(james.uriPrefix(Protocol.smtp) + "&to=" + b.getEmail() + "&from=you@you.com&useHeaderSubject=true");
 
                 from("direct:c").to(
                         admin.uriPrefix(Protocol.smtp) + "&to=" + c.getEmail()
-                                    + "&from=me@me.com&cc=you@you.com,them@them.com");
+                                    + "&from=me@me.com&cc=you@you.com,them@them.com&useHeaderSubject=true");
             }
         };
     }

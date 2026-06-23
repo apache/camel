@@ -2111,7 +2111,7 @@ public interface MailEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
-         * Default: true
+         * Default: false
          * Group: producer
          * 
          * @param useHeaderFrom the value to set
@@ -2129,7 +2129,7 @@ public interface MailEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
-         * Default: true
+         * Default: false
          * Group: producer
          * 
          * @param useHeaderFrom the value to set
@@ -2147,7 +2147,7 @@ public interface MailEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
-         * Default: true
+         * Default: false
          * Group: producer
          * 
          * @param useHeaderRecipients the value to set
@@ -2165,7 +2165,7 @@ public interface MailEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
-         * Default: true
+         * Default: false
          * Group: producer
          * 
          * @param useHeaderRecipients the value to set
@@ -2182,7 +2182,7 @@ public interface MailEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
-         * Default: true
+         * Default: false
          * Group: producer
          * 
          * @param useHeaderReplyTo the value to set
@@ -2199,7 +2199,7 @@ public interface MailEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
-         * Default: true
+         * Default: false
          * Group: producer
          * 
          * @param useHeaderReplyTo the value to set
@@ -2216,7 +2216,7 @@ public interface MailEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
-         * Default: true
+         * Default: false
          * Group: producer
          * 
          * @param useHeaderSubject the value to set
@@ -2233,7 +2233,7 @@ public interface MailEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
-         * Default: true
+         * Default: false
          * Group: producer
          * 
          * @param useHeaderSubject the value to set

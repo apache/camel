@@ -78,8 +78,9 @@ public class RawMailMessageTest extends CamelTestSupport {
 
         getMockEndpoint("mock:mail").expectedMessageCount(1);
         template.sendBodyAndHeaders(
-                "smtp://davsclaus@localhost:" + Mailbox.getPort(Protocol.smtp) + "?password=" + davsclaus.getPassword(), body,
-                map);
+                "smtp://davsclaus@localhost:" + Mailbox.getPort(Protocol.smtp) + "?password=" + davsclaus.getPassword()
+                                    + "&useHeaderRecipients=true&useHeaderFrom=true&useHeaderSubject=true",
+                body, map);
         MockEndpoint.assertIsSatisfied(context);
 
         Exchange exchange = getMockEndpoint("mock:mail").getReceivedExchanges().get(0);

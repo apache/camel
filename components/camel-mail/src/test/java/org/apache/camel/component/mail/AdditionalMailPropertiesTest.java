@@ -52,7 +52,8 @@ public class AdditionalMailPropertiesTest extends CamelTestSupport {
 
         MockEndpoint mock = getMockEndpoint("mock:result");
 
-        template.sendBodyAndHeader(user.uriPrefix(Protocol.smtp), "Hello james how are you?\r\n", "subject", "Hello");
+        template.sendBodyAndHeader(user.uriPrefix(Protocol.smtp) + "&useHeaderSubject=true", "Hello james how are you?\r\n",
+                "subject", "Hello");
 
         mock.expectedBodiesReceived("Hello james how are you?\r\n");
         mock.expectedHeaderReceived("subject", "Hello");

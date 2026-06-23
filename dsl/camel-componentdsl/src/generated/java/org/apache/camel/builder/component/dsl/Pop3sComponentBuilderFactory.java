@@ -542,7 +542,7 @@ public interface Pop3sComponentBuilderFactory {
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
-         * Default: true
+         * Default: false
          * Group: producer
          * 
          * @param useHeaderFrom the value to set
@@ -562,7 +562,7 @@ public interface Pop3sComponentBuilderFactory {
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
-         * Default: true
+         * Default: false
          * Group: producer
          * 
          * @param useHeaderRecipients the value to set
@@ -581,7 +581,7 @@ public interface Pop3sComponentBuilderFactory {
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
-         * Default: true
+         * Default: false
          * Group: producer
          * 
          * @param useHeaderReplyTo the value to set
@@ -600,7 +600,7 @@ public interface Pop3sComponentBuilderFactory {
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
-         * Default: true
+         * Default: false
          * Group: producer
          * 
          * @param useHeaderSubject the value to set

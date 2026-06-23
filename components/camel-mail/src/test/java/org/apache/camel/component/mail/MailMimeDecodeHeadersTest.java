@@ -94,11 +94,13 @@ public class MailMimeDecodeHeadersTest extends CamelTestSupport {
             public void configure() {
                 from("direct:longSubject")
                         .setHeader("subject", constant(longSubject))
-                        .to(plain.uriPrefix(Protocol.smtp), decoded.uriPrefix(Protocol.smtp));
+                        .to(plain.uriPrefix(Protocol.smtp) + "&useHeaderSubject=true",
+                                decoded.uriPrefix(Protocol.smtp) + "&useHeaderSubject=true");
 
                 from("direct:nonAsciiSubject")
                         .setHeader("subject", constant(nonAsciiSubject))
-                        .to(plain.uriPrefix(Protocol.smtp), decoded.uriPrefix(Protocol.smtp));
+                        .to(plain.uriPrefix(Protocol.smtp) + "&useHeaderSubject=true",
+                                decoded.uriPrefix(Protocol.smtp) + "&useHeaderSubject=true");
 
                 from(plain.uriPrefix(Protocol.pop3) + "&initialDelay=100&delay=100")
                         .to("mock:plain");
