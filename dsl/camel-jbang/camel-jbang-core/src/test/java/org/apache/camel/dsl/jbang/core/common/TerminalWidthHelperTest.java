@@ -31,6 +31,63 @@ class TerminalWidthHelperTest {
         assertTrue(width >= 40, "Terminal width should be at least 40, got: " + width);
     }
 
+    // --- fillWidth ---
+
+    @Test
+    void fillWidthFillsRemainingSpaceWithoutCap() {
+        // 200 cols - 80 others - 6 borders = 114 available; no upper cap, so the last column keeps all 114
+        assertEquals(114, TerminalWidthHelper.fillWidth(200, 80, 6, 20));
+    }
+
+    @Test
+    void fillWidthFloorsAtMinOnNarrowTerminal() {
+        // 60 cols - 86 others - 6 borders = -32 available; floored at min 20
+        assertEquals(20, TerminalWidthHelper.fillWidth(60, 86, 6, 20));
+    }
+
+    // --- parseColumns (shared by stty size and Windows mode con) ---
+
+    @Test
+    void parseColumnsFromStty() {
+        // stty size prints "rows cols"; the column count is the second integer
+        assertEquals(80, TerminalWidthHelper.parseColumns("24 80"));
+        assertEquals(211, TerminalWidthHelper.parseColumns("51 211\n"));
+    }
+
+    @Test
+    void parseColumnsFromWindowsModeCon() {
+        String output = """
+                Status for device CON:
+                ----------------------
+                    Lines:          30
+                    Columns:        120
+                    Keyboard rate:  31
+                    Keyboard delay: 1
+                    Code page:      850
+                """;
+        assertEquals(120, TerminalWidthHelper.parseColumns(output));
+    }
+
+    @Test
+    void parseColumnsFromLocalizedModeCon() {
+        // Non-English Windows translates the labels; parsing the second integer positionally still works
+        String output = """
+                État du périphérique CON :
+                --------------------------
+                    Lignes :        30
+                    Colonnes :      120
+                """;
+        assertEquals(120, TerminalWidthHelper.parseColumns(output));
+    }
+
+    @Test
+    void parseColumnsReturnsNegativeWhenUndetermined() {
+        assertEquals(-1, TerminalWidthHelper.parseColumns(null));
+        assertEquals(-1, TerminalWidthHelper.parseColumns(""));
+        assertEquals(-1, TerminalWidthHelper.parseColumns("no numbers here"));
+        assertEquals(-1, TerminalWidthHelper.parseColumns("42")); // only one integer, no column value
+    }
+
     // --- flexWidth ---
 
     @Test

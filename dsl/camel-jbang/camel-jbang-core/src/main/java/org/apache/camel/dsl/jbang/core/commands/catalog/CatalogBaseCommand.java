@@ -20,18 +20,19 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import com.github.freva.asciitable.AsciiTable;
 import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
-import com.github.freva.asciitable.OverflowBehaviour;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.MavenResolverMixin;
 import org.apache.camel.dsl.jbang.core.commands.QuarkusPlatformMixin;
+import org.apache.camel.dsl.jbang.core.common.CamelTableColumns;
 import org.apache.camel.dsl.jbang.core.common.CatalogLoader;
 import org.apache.camel.dsl.jbang.core.common.RuntimeCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.RuntimeType;
@@ -159,27 +160,28 @@ public abstract class CatalogBaseCommand extends CamelCommand {
                                         .map(CatalogBaseDTO::toMap)
                                         .collect(Collectors.toList())));
             } else {
-                // Compute description width: terminal minus fixed columns and border overhead
-                int fixedWidth = nameWidth() + 12 + 8; // LEVEL ~12 chars, SINCE ~8 chars
-                if (RuntimeType.quarkus == runtime) {
-                    fixedWidth += 8; // NATIVE column
-                }
-                int descWidth = TerminalWidthHelper.flexWidth(
-                        terminalWidth(), fixedWidth, TerminalWidthHelper.noBorderOverhead(
-                                RuntimeType.quarkus == runtime ? 5 : 4),
-                        20, 80);
+                // Size the DESCRIPTION column to fill the terminal: measure the actual width of the other
+                // visible columns and give the remainder to DESCRIPTION (floored on narrow terminals).
+                boolean quarkus = RuntimeType.quarkus == runtime;
+                Function<Row, String> nameGetter = displayGav ? this::shortGav : r -> r.name;
+                int nameW = CamelTableColumns.measure(displayGav ? "ARTIFACT-ID" : "NAME",
+                        displayGav ? Integer.MAX_VALUE : CamelTableColumns.NAME_MAX, rows, nameGetter);
+                int levelW = CamelTableColumns.measure("LEVEL", Integer.MAX_VALUE, rows, this::level);
+                int sinceW = CamelTableColumns.measure("SINCE", Integer.MAX_VALUE, rows, r -> r.since);
+                int overhead = TerminalWidthHelper.noBorderOverhead(quarkus ? 5 : 4);
+                int descWidth = quarkus
+                        ? CamelTableColumns.lastColumnWidth(terminalWidth(), overhead, nameW, levelW, sinceW,
+                                CamelTableColumns.measure("NATIVE", Integer.MAX_VALUE, rows, this::nativeSupported))
+                        : CamelTableColumns.lastColumnWidth(terminalWidth(), overhead, nameW, levelW, sinceW);
                 printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
-                        new Column().header("NAME").visible(!displayGav).dataAlign(HorizontalAlign.LEFT).maxWidth(nameWidth())
-                                .with(r -> r.name),
+                        CamelTableColumns.name().visible(!displayGav).with(r -> r.name),
                         new Column().header("ARTIFACT-ID").visible(displayGav).dataAlign(HorizontalAlign.LEFT)
                                 .with(this::shortGav),
                         new Column().header("LEVEL").dataAlign(HorizontalAlign.LEFT).with(this::level),
                         new Column().header("NATIVE").dataAlign(HorizontalAlign.CENTER)
-                                .visible(RuntimeType.quarkus == runtime).with(this::nativeSupported),
-                        new Column().header("SINCE").dataAlign(HorizontalAlign.RIGHT).with(r -> r.since),
-                        new Column().header("DESCRIPTION").dataAlign(HorizontalAlign.LEFT)
-                                .maxWidth(descWidth, OverflowBehaviour.ELLIPSIS_RIGHT)
-                                .with(this::shortDescription))));
+                                .visible(quarkus).with(this::nativeSupported),
+                        CamelTableColumns.since().with(r -> r.since),
+                        CamelTableColumns.lastText("DESCRIPTION", descWidth).with(this::shortDescription))));
             }
         } else if (filterName != null) {
             // suggest similar names when filter returns no results
@@ -194,10 +196,6 @@ public abstract class CatalogBaseCommand extends CamelCommand {
         }
 
         return 0;
-    }
-
-    int nameWidth() {
-        return 30;
     }
 
     int sortRow(Row o1, Row o2) {
