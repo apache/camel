@@ -498,6 +498,22 @@ what you want.
 
 See also the section <<Handle and Continue Exceptions>> below.
 
+`handled(true)` tells Camel: _don't send the exception back to the caller — I'll provide the
+response myself in this `onException` block, and then we're done._
+
+Three things to keep in mind:
+
+* *The original route stops* — the exchange does not continue from where it failed in the main route.
+Only the steps in the `onException` block execute.
+* *The response is whatever the `onException` block produces* — use `transform`, `bean`, or `to` to
+build the response you want the caller to receive. If you don't set a response, the caller gets an
+empty body, not the exception.
+* *`exchange.getException()` is null* inside the `onException` block — use
+`exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class)` to access the original exception.
+
+This is different from `continued(true)`, which also suppresses the exception but then *resumes the
+original route* from the point of failure as if the exception never happened.
+
 Using *`onException`* to handle known exceptions is a very powerful
 feature in Camel. You can mark the exception as being handled with the *handle* DSL,
 so the caller will not receive the caused exception as a response. The handle is a
