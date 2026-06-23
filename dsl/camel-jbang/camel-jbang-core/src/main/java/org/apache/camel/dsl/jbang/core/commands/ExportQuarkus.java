@@ -386,6 +386,7 @@ class ExportQuarkus extends Export {
         model.put("QuarkusGroupId", quarkusCamelBom.getGroupId());
         model.put("QuarkusArtifactId", quarkusCamelBom.getArtifactId());
         model.put("QuarkusVersion", quarkusCamelBom.getVersion());
+        model.put("UseQuarkusJunit", VersionHelper.isGE(quarkusCamelBom.getVersion(), "3.31.0"));
         model.put("QuarkusPackageType", quarkusPackageType);
         model.put("JavaVersion", javaVersion);
         model.put("ProjectBuildOutputTimestamp", this.getBuildMavenProjectDate());
