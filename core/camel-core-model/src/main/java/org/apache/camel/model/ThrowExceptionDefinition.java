@@ -40,12 +40,15 @@ public class ThrowExceptionDefinition extends NoOutputDefinition<ThrowExceptionD
 
     @XmlAttribute
     @DslArg(position = 1)
+    @Metadata(description = "The message text for the exception to be thrown. Supports simple language expressions.")
     private String message;
     @XmlAttribute
     @DslArg(position = 0, renderType = "class")
+    @Metadata(description = "The fully qualified class name of the exception to throw. Used together with message.")
     private String exceptionType;
     @XmlAttribute
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced",
+              description = "Reference to an existing exception instance to lookup from the registry and throw.")
     private String ref;
 
     public ThrowExceptionDefinition() {

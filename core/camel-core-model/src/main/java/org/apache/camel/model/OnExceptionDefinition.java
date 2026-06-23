@@ -67,31 +67,53 @@ public class OnExceptionDefinition extends OutputDefinition<OnExceptionDefinitio
     private OnWhenDefinition onWhen;
     @XmlElement(name = "retryWhile")
     @AsPredicate
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced",
+              description = "Sets a predicate to control whether redelivery should continue."
+                            + " Redelivery continues as long as the predicate evaluates to true.")
     private ExpressionSubElementDefinition retryWhile;
     @XmlElement(name = "redeliveryPolicy")
     private RedeliveryPolicyDefinition redeliveryPolicyType;
     @XmlAttribute(name = "redeliveryPolicyRef")
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced",
+              description = "Sets a reference to a redelivery policy to lookup in the registry to be used.")
     private String redeliveryPolicyRef;
     @XmlElement(name = "handled")
     @AsPredicate
+    @Metadata(description = "When handled is set to true, the exception is suppressed and not sent back to the caller."
+                            + " The original route stops at the point of failure and only the steps in this onException block execute."
+                            + " The response returned to the caller is whatever this onException block produces."
+                            + " Use continued instead if you want to resume the original route from the point of failure.")
     private ExpressionSubElementDefinition handled;
     @XmlElement(name = "continued")
     @AsPredicate
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced",
+              description = "When continued is set to true, the exception is handled and routing continues from the point of failure."
+                            + " Unlike handled, which stops the original route and only runs the onException block,"
+                            + " continued resumes the original route after the onException steps complete."
+                            + " The exception is considered handled as well.")
     private ExpressionSubElementDefinition continued;
     @XmlAttribute(name = "onRedeliveryRef")
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced",
+              description = "Sets a reference to a processor that is invoked before each redelivery attempt."
+                            + " Can be used to change the exchange before it is redelivered.")
     private String onRedeliveryRef;
     @XmlAttribute(name = "onExceptionOccurredRef")
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced",
+              description = "Sets a reference to a processor that is invoked just after an exception occurred."
+                            + " Can be used to perform custom logging. Any exception thrown from this processor is ignored.")
     private String onExceptionOccurredRef;
     @XmlAttribute(name = "useOriginalMessage")
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean",
+              description = "If enabled, uses the original input message (body and headers) when the exchange"
+                            + " is moved to the dead letter queue after all redelivery attempts have been exhausted."
+                            + " Cannot be used together with useOriginalBody.")
     private String useOriginalMessage;
     @XmlAttribute(name = "useOriginalBody")
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean",
+              description = "If enabled, uses the original input message body (but not headers) when the exchange"
+                            + " is moved to the dead letter queue after all redelivery attempts have been exhausted."
+                            + " This allows enriching the message with custom headers while keeping the original body."
+                            + " Cannot be used together with useOriginalMessage.")
     private String useOriginalBody;
 
     public OnExceptionDefinition() {
@@ -217,7 +239,9 @@ public class OnExceptionDefinition extends OutputDefinition<OnExceptionDefinitio
     }
 
     /**
-     * Sets whether the exchange should be marked as handled or not.
+     * Sets whether the exception is handled. When true, the exception is suppressed and not sent back to the caller.
+     * The original route stops at the point of failure and only the steps in this onException block execute.
+     * The response returned to the caller is whatever this onException block produces.
      *
      * @param  handled handled or not
      * @return         the builder
@@ -228,7 +252,9 @@ public class OnExceptionDefinition extends OutputDefinition<OnExceptionDefinitio
     }
 
     /**
-     * Sets whether the exchange should be marked as handled or not.
+     * Sets whether the exception is handled using a predicate. When the predicate evaluates to true, the exception is
+     * suppressed and not sent back to the caller. The original route stops at the point of failure and only the steps
+     * in this onException block execute. The response returned to the caller is whatever this onException block produces.
      *
      * @param  handled predicate that determines true or false
      * @return         the builder
@@ -239,7 +265,9 @@ public class OnExceptionDefinition extends OutputDefinition<OnExceptionDefinitio
     }
 
     /**
-     * Sets whether the exchange should be marked as handled or not.
+     * Sets whether the exception is handled using an expression. When the expression evaluates to true, the exception is
+     * suppressed and not sent back to the caller. The original route stops at the point of failure and only the steps
+     * in this onException block execute. The response returned to the caller is whatever this onException block produces.
      *
      * @param  handled expression that determines true or false
      * @return         the builder
@@ -263,9 +291,10 @@ public class OnExceptionDefinition extends OutputDefinition<OnExceptionDefinitio
     }
 
     /**
-     * Sets whether the exchange should be marked as handled or not.
-     * <p/>
-     * If this option is enabled then its considered handled as well.
+     * Sets whether the exchange should continue routing from the point of failure using a predicate.
+     * When the predicate evaluates to true, the exception is handled and routing resumes from the point of failure.
+     * Unlike handled, which stops the original route, continued lets the remaining route steps execute.
+     * The exception is considered handled as well.
      *
      * @param  continued predicate that determines true or false
      * @return           the builder
@@ -276,9 +305,10 @@ public class OnExceptionDefinition extends OutputDefinition<OnExceptionDefinitio
     }
 
     /**
-     * Sets whether the exchange should be marked as handled or not.
-     * <p/>
-     * If this option is enabled then its considered handled as well.
+     * Sets whether the exchange should continue routing from the point of failure using an expression.
+     * When the expression evaluates to true, the exception is handled and routing resumes from the point of failure.
+     * Unlike handled, which stops the original route, continued lets the remaining route steps execute.
+     * The exception is considered handled as well.
      *
      * @param  continued expression that determines true or false
      * @return           the builder

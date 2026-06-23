@@ -64,38 +64,59 @@ public class DefaultErrorHandlerDefinition extends BaseErrorHandlerDefinition {
     @XmlElement
     private RedeliveryPolicyDefinition redeliveryPolicy;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(javaType = "java.lang.Boolean",
+              description = "If enabled, uses the original input message (body and headers) when the exchange is moved"
+                            + " to the dead letter queue after all redelivery attempts have been exhausted."
+                            + " Cannot be used together with useOriginalBody.")
     private String useOriginalMessage;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(javaType = "java.lang.Boolean",
+              description = "If enabled, uses the original input message body (but not headers) when the exchange is moved"
+                            + " to the dead letter queue after all redelivery attempts have been exhausted."
+                            + " This allows enriching the message with custom headers while keeping the original body."
+                            + " Cannot be used together with useOriginalMessage.")
     private String useOriginalBody;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "org.apache.camel.processor.errorhandler.RedeliveryPolicy")
+    @Metadata(label = "advanced", javaType = "org.apache.camel.processor.errorhandler.RedeliveryPolicy",
+              description = "Sets a reference to a redelivery policy to lookup in the registry to be used.")
     private String redeliveryPolicyRef;
     @XmlAttribute
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced",
+              description = "Sets a reference to a logger to use for logging error handler activity.")
     private String loggerRef;
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "org.apache.camel.LoggingLevel", defaultValue = "ERROR",
-              enums = "TRACE,DEBUG,INFO,WARN,ERROR,OFF")
+              enums = "TRACE,DEBUG,INFO,WARN,ERROR,OFF",
+              description = "The logging level to use when logging caught exceptions.")
     private String level;
     @XmlAttribute
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced",
+              description = "Name of the logger to use by the error handler.")
     private String logName;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "org.apache.camel.Processor")
+    @Metadata(label = "advanced", javaType = "org.apache.camel.Processor",
+              description = "Sets a reference to a processor that is invoked before each redelivery attempt."
+                            + " Can be used to change the exchange before it is redelivered.")
     private String onRedeliveryRef;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "org.apache.camel.Processor")
+    @Metadata(label = "advanced", javaType = "org.apache.camel.Processor",
+              description = "Sets a reference to a processor that is invoked just after an exception occurred."
+                            + " Can be used to perform custom logging. Any exception thrown from this processor is ignored.")
     private String onExceptionOccurredRef;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "org.apache.camel.Processor")
+    @Metadata(label = "advanced", javaType = "org.apache.camel.Processor",
+              description = "Sets a reference to a processor to prepare the exchange before handled by the failure"
+                            + " processor or dead letter channel. This allows for example to enrich the message before"
+                            + " sending to a dead letter queue.")
     private String onPrepareFailureRef;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "org.apache.camel.Processor")
+    @Metadata(label = "advanced", javaType = "org.apache.camel.Processor",
+              description = "Sets a reference to a retry while predicate."
+                            + " Redelivery continues as long as the predicate evaluates to true.")
     private String retryWhileRef;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.util.concurrent.ScheduledExecutorService")
+    @Metadata(label = "advanced", javaType = "java.util.concurrent.ScheduledExecutorService",
+              description = "Sets a reference to a thread pool to be used for asynchronous redelivery.")
     private String executorServiceRef;
 
     public DefaultErrorHandlerDefinition() {

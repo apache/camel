@@ -35,9 +35,13 @@ import org.apache.camel.spi.Metadata;
 public class DeadLetterChannelDefinition extends DefaultErrorHandlerDefinition {
 
     @XmlAttribute(required = true)
+    @Metadata(description = "The endpoint URI where failed exchanges are sent after all redelivery attempts have been exhausted (the dead letter queue).")
     private String deadLetterUri;
     @XmlAttribute
-    @Metadata(label = "advanced", defaultValue = "true", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", defaultValue = "true", javaType = "java.lang.Boolean",
+              description = "Whether the dead letter channel should handle (and ignore) any new exception thrown while sending"
+                            + " the exchange to the dead letter endpoint. Set to false to propagate the new exception back,"
+                            + " which is useful with transactions so the transaction can detect the failure and rollback.")
     private String deadLetterHandleNewException;
 
     public DeadLetterChannelDefinition() {
