@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.jackson.protobuf;
 
+import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.protobuf.ProtobufMapper;
 import org.apache.camel.component.jackson.JacksonDataFormat;
@@ -88,7 +89,12 @@ public class JacksonProtobufDataFormat extends JacksonDataFormat {
 
     @Override
     protected ProtobufMapper createNewObjectMapper() {
-        return new ProtobufMapper();
+        // Enable BLOCK_UNSAFE_POLYMORPHIC_BASE_TYPES by default as defense-in-depth against gadget-chain
+        // deserialization when polymorphic typing is enabled, consistent with camel-jackson (CAMEL-23786)
+        // and the transform/Protobuf.java mapper.
+        return ProtobufMapper.builder()
+                .enable(MapperFeature.BLOCK_UNSAFE_POLYMORPHIC_BASE_TYPES)
+                .build();
     }
 
     @Override
