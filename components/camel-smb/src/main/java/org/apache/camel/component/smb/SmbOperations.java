@@ -44,6 +44,7 @@ import org.apache.camel.component.file.FileComponent;
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.file.GenericFileEndpoint;
 import org.apache.camel.component.file.GenericFileExist;
+import org.apache.camel.component.file.GenericFileHelper;
 import org.apache.camel.component.file.GenericFileOperationFailedException;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
@@ -291,11 +292,18 @@ public class SmbOperations implements SmbFileOperations {
             // use relative filename in local work directory
             String relativeName = file.getRelativeFilePath();
 
+            java.io.File localWorkDir = local;
             temp = new java.io.File(local, relativeName + ".inprogress");
+            local = new java.io.File(local, relativeName);
+
+            // ensure the local work file stays within the local work directory (CAMEL-23765)
+            if (endpoint.isJailStartingDirectory()) {
+                GenericFileHelper.jailToLocalWorkDirectory(temp, localWorkDir);
+                GenericFileHelper.jailToLocalWorkDirectory(local, localWorkDir);
+            }
 
             // create directory to local work file
-            local.mkdirs();
-            local = new java.io.File(local, relativeName);
+            localWorkDir.mkdirs();
 
             // delete any existing files
             if (temp.exists()) {
