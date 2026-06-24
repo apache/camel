@@ -1,10 +1,11 @@
-= ThreadPoolFactory Vert.x Component
+= ThreadPoolFactory Vert.x Component (deprecated)
 :doctitle: ThreadPoolFactory Vert.x
 :shortname: threadpoolfactory-vertx
 :artifactid: camel-threadpoolfactory-vertx
 :description: ThreadPoolFactory for camel-core using Vert.x
 :since: 3.5
-:supportlevel: Experimental
+:supportlevel: Experimental-deprecated
+:deprecated: *deprecated*
 :tabs-sync-option:
 
 *Since Camel {since}*

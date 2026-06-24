@@ -4,7 +4,7 @@
     "name": "threadpoolfactory-vertx",
     "title": "ThreadPoolFactory Vert.x",
     "description": "ThreadPoolFactory for camel-core using Vert.x",
-    "deprecated": false,
+    "deprecated": true,
     "firstVersion": "3.5.0",
     "label": "reactive",
     "supportLevel": "Experimental",
