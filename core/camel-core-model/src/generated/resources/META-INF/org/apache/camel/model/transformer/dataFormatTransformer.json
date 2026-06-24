@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "dataFormatTransformer",
     "title": "Data Format Transformer",
-    "description": "Represents a org.apache.camel.processor.transformer.DataFormatTransformer which leverages org.apache.camel.spi.DataFormat to perform transformation. One of the DataFormat 'ref' or DataFormat 'type' needs to be specified.",
+    "description": "Uses a Camel data format to perform data type transformation between input and output types",
     "deprecated": false,
     "label": "dataformat,transformation",
     "javaType": "org.apache.camel.model.transformer.DataFormatTransformerDefinition",

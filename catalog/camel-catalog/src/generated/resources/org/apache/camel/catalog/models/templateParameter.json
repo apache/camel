@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "templateParameter",
     "title": "Template Parameter",
-    "description": "A route template parameter",
+    "description": "Defines a parameter for a route template, with an optional default value and description",
     "deprecated": false,
     "label": "configuration",
     "javaType": "org.apache.camel.model.RouteTemplateParameterDefinition",

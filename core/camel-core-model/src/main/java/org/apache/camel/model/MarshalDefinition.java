@@ -76,7 +76,8 @@ import org.apache.camel.spi.Metadata;
 /**
  * Marshals data into a specified format for transmission over a transport or component
  */
-@Metadata(label = "eip,dataformat,transformation")
+@Metadata(label = "eip,dataformat,transformation",
+          description = "Serializes the message body into a specific data format such as JSON, XML, CSV, or Protobuf for transmission or storage")
 @XmlRootElement(name = "marshal")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class MarshalDefinition extends NoOutputDefinition<MarshalDefinition> implements DataFormatDefinitionAware {

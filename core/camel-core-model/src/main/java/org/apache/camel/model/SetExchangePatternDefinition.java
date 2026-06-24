@@ -28,7 +28,8 @@ import org.apache.camel.spi.annotations.DslArg;
 /**
  * Sets the exchange pattern on the message exchange
  */
-@Metadata(label = "configuration")
+@Metadata(label = "configuration,messaging",
+          description = "Sets the message exchange pattern (MEP) on the exchange, such as InOnly for one-way or InOut for request-reply")
 @XmlRootElement(name = "setExchangePattern")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class SetExchangePatternDefinition extends NoOutputDefinition<SetExchangePatternDefinition> {

@@ -25,7 +25,7 @@ import org.apache.camel.spi.Metadata;
 /**
  * Rest security basic auth definition
  */
-@Metadata(label = "rest,security,configuration")
+@Metadata(label = "rest,security,configuration", description = "Configures HTTP Basic authentication for a REST service")
 @XmlRootElement(name = "basicAuth")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class BasicAuthDefinition extends RestSecurityDefinition {

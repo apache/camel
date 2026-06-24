@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "bearerToken",
     "title": "Bearer Token",
-    "description": "Rest security bearer token authentication definition",
+    "description": "Configures Bearer token authentication for a REST service",
     "deprecated": false,
     "label": "rest,security,configuration",
     "javaType": "org.apache.camel.model.rest.BearerTokenDefinition",

@@ -29,7 +29,8 @@ import org.apache.camel.spi.Metadata;
 /**
  * Transform strings to various 1D/2D barcode bitmap formats and back.
  */
-@Metadata(firstVersion = "2.14.0", label = "dataformat,transformation", title = "Barcode")
+@Metadata(firstVersion = "2.14.0", label = "dataformat,transformation", title = "Barcode",
+          description = "Transform strings to various 1D/2D barcode bitmap formats and back")
 @XmlRootElement(name = "barcode")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class BarcodeDataFormat extends DataFormatDefinition {

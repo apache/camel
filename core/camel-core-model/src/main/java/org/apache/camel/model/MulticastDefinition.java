@@ -35,7 +35,9 @@ import org.apache.camel.spi.Metadata;
 /**
  * Routes the same message to multiple paths either sequentially or in parallel.
  */
-@Metadata(label = "eip,routing")
+@Metadata(label = "eip,routing",
+          description = "Sends a copy of the message to multiple fixed endpoints, processing them sequentially or in parallel,"
+                        + " and optionally aggregating their replies")
 @XmlRootElement(name = "multicast")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class MulticastDefinition extends OutputDefinition<MulticastDefinition>

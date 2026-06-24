@@ -27,7 +27,8 @@ import org.apache.camel.spi.Metadata;
 /**
  * To configure re-delivery for error handling
  */
-@Metadata(label = "configuration")
+@Metadata(label = "configuration,errorhandling",
+          description = "Configures message redelivery for error handling, including maximum retries, delay patterns, and backoff settings")
 @XmlRootElement(name = "redeliveryPolicy")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RedeliveryPolicyDefinition extends IdentifiedType implements Cloneable {

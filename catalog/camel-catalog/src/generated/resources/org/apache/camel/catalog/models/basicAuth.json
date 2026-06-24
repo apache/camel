@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "basicAuth",
     "title": "Basic Auth",
-    "description": "Rest security basic auth definition",
+    "description": "Configures HTTP Basic authentication for a REST service",
     "deprecated": false,
     "label": "rest,security,configuration",
     "javaType": "org.apache.camel.model.rest.BasicAuthDefinition",

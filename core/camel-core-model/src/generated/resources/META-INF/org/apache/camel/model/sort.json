@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "sort",
     "title": "Sort",
-    "description": "Sorts the contents of the message",
+    "description": "Sorts the items in a message body that is a List, using a specified comparator or the default ordering",
     "deprecated": false,
     "label": "eip,transformation",
     "javaType": "org.apache.camel.model.SortDefinition",

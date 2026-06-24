@@ -36,7 +36,8 @@ import org.apache.camel.util.StringHelper;
 /**
  * To specify the rest operation parameters.
  */
-@Metadata(label = "rest")
+@Metadata(label = "rest",
+          description = "Defines a parameter for a REST operation, specifying its type, name, data type, and whether it is required")
 @XmlRootElement(name = "param")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ParamDefinition {

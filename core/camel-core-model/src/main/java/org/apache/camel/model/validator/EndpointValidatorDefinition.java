@@ -26,7 +26,8 @@ import org.apache.camel.spi.Metadata;
 /**
  * To use a Camel endpoint to perform validation on the route level.
  */
-@Metadata(label = "validation")
+@Metadata(label = "validation",
+          description = "Uses a Camel endpoint to perform data type validation by sending the message through the endpoint")
 @XmlRootElement(name = "endpointValidator")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class EndpointValidatorDefinition extends ValidatorDefinition {

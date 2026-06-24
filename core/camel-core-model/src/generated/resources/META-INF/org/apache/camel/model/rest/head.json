@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "head",
     "title": "Head",
-    "description": "Rest HEAD command",
+    "description": "Defines an HTTP HEAD operation in the REST DSL",
     "deprecated": false,
     "label": "rest",
     "javaType": "org.apache.camel.model.rest.HeadDefinition",

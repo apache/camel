@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "get",
     "title": "Get",
-    "description": "Rest GET command",
+    "description": "Defines an HTTP GET operation in the REST DSL",
     "deprecated": false,
     "label": "rest",
     "javaType": "org.apache.camel.model.rest.GetDefinition",

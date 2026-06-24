@@ -78,7 +78,8 @@ import org.apache.camel.spi.Metadata;
  * {@link org.apache.camel.spi.DataFormat} to perform transformation. One of the DataFormat 'ref' or DataFormat 'type'
  * needs to be specified.
  */
-@Metadata(label = "dataformat,transformation")
+@Metadata(label = "dataformat,transformation",
+          description = "Uses a Camel data format to perform data type transformation between input and output types")
 @XmlRootElement(name = "dataFormatTransformer")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class DataFormatTransformerDefinition extends TransformerDefinition {

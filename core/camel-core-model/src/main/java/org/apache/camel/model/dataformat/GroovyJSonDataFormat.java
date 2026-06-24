@@ -29,7 +29,8 @@ import org.apache.camel.spi.Metadata;
 /**
  * Transform between JSon and java.util.Map or java.util.List objects.
  */
-@Metadata(firstVersion = "4.19.0", label = "dataformat,transformation,json", title = "Groovy JSon")
+@Metadata(firstVersion = "4.19.0", label = "dataformat,transformation,json", title = "Groovy JSon",
+          description = "Transform between JSon and java.util.Map or java.util.List objects")
 @XmlRootElement(name = "groovyJson")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class GroovyJSonDataFormat extends DataFormatDefinition {

@@ -61,7 +61,8 @@ import static org.apache.camel.support.CamelContextHelper.parseText;
 /**
  * Defines a rest service using the rest-dsl
  */
-@Metadata(label = "rest")
+@Metadata(label = "rest",
+          description = "Defines a REST service with HTTP operations (GET, POST, PUT, DELETE, etc.) using the Camel REST DSL")
 @XmlRootElement(name = "rest")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition> implements ResourceAware {

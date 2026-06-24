@@ -26,7 +26,8 @@ import org.apache.camel.spi.Metadata;
 /**
  * Evaluates a Spring expression (SpEL).
  */
-@Metadata(firstVersion = "2.7.0", label = "language,spring", title = "SpEL")
+@Metadata(firstVersion = "2.7.0", label = "language,spring", title = "SpEL",
+          description = "Evaluates a Spring expression (SpEL)")
 @XmlRootElement(name = "spel")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class SpELExpression extends TypedExpressionDefinition {

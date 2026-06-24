@@ -32,7 +32,9 @@ import org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy;
 /**
  * Specifies that all steps after this node are processed asynchronously
  */
-@Metadata(label = "eip,routing")
+@Metadata(label = "eip,flowcontrol,routing",
+          description = "Offloads processing of subsequent steps in the route to a thread pool,"
+                        + " enabling asynchronous and concurrent message handling")
 @XmlRootElement(name = "threads")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ThreadsDefinition extends NoOutputDefinition<ThreadsDefinition>

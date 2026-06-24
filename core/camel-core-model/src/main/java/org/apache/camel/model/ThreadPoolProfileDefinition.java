@@ -29,7 +29,8 @@ import org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy;
 /**
  * To configure thread pools
  */
-@Metadata(label = "configuration")
+@Metadata(label = "configuration",
+          description = "Defines a named thread pool profile with pool size, queue size, and thread keep-alive settings for use by EIPs and components")
 @XmlRootElement(name = "threadPoolProfile")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ThreadPoolProfileDefinition extends OptionalIdentifiedDefinition<ThreadPoolProfileDefinition> {

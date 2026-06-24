@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "beanFactory",
     "title": "Bean Factory",
-    "description": "Define custom beans that can be used in your Camel routes and in general.",
+    "description": "Defines a custom bean that can be used in Camel routes and other beans. The bean is created by a factory class or method.",
     "deprecated": false,
     "label": "configuration",
     "javaType": "org.apache.camel.model.BeanFactoryDefinition",

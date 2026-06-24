@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "streamConfig",
     "title": "Stream Config",
-    "description": "Configures stream-processing resequence eip.",
+    "description": "Configures the stream-processing mode of the Resequence EIP, which continuously reorders messages as they arrive using a timeout",
     "deprecated": false,
     "label": "configuration,eip",
     "javaType": "org.apache.camel.model.config.StreamResequencerConfig",

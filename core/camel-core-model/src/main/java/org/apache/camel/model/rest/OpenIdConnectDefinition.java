@@ -26,7 +26,7 @@ import org.apache.camel.spi.Metadata;
 /**
  * Rest security OpenID Connect definition
  */
-@Metadata(label = "rest,security,configuration")
+@Metadata(label = "rest,security,configuration", description = "Configures OpenID Connect authentication for a REST service")
 @XmlRootElement(name = "openIdConnect")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class OpenIdConnectDefinition extends RestSecurityDefinition {

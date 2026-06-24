@@ -30,7 +30,8 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Calls a Camel processor
  */
-@Metadata(label = "eip,endpoint")
+@Metadata(label = "eip,endpoint",
+          description = "Invokes a custom Camel Processor for programmatic message processing in Java")
 @XmlRootElement(name = "process")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ProcessDefinition extends NoOutputDefinition<ProcessDefinition> {

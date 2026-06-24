@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "bean",
     "title": "Bean",
-    "description": "Calls a Java bean",
+    "description": "Invokes a method on a Java bean, with automatic parameter binding from the message body, headers, and exchange properties",
     "deprecated": false,
     "label": "eip,endpoint",
     "javaType": "org.apache.camel.model.BeanDefinition",

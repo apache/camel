@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "multicast",
     "title": "Multicast",
-    "description": "Routes the same message to multiple paths either sequentially or in parallel.",
+    "description": "Sends a copy of the message to multiple fixed endpoints, processing them sequentially or in parallel, and optionally aggregating their replies",
     "deprecated": false,
     "label": "eip,routing",
     "javaType": "org.apache.camel.model.MulticastDefinition",

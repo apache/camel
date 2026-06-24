@@ -28,7 +28,9 @@ import org.apache.camel.spi.annotations.DslArg;
 /**
  * Transforms the message body based on known data type transformers.
  */
-@Metadata(label = "eip,transformation")
+@Metadata(label = "eip,transformation",
+          description = "Transforms the message body between known data types (such as XML, JSON, Java objects)"
+                        + " using registered data type transformers")
 @XmlRootElement(name = "transformDataType")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class TransformDataTypeDefinition extends NoOutputDefinition<TransformDataTypeDefinition> {

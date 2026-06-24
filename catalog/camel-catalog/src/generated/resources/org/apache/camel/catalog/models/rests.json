@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "rests",
     "title": "Rests",
-    "description": "A series of rest services defined using the rest-dsl",
+    "description": "Container for a collection of REST service definitions",
     "deprecated": false,
     "label": "rest",
     "javaType": "org.apache.camel.model.rest.RestsDefinition",

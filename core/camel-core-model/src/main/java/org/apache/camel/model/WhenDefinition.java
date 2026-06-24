@@ -35,7 +35,8 @@ import org.apache.camel.spi.Metadata;
 /**
  * Triggers a route when the expression evaluates to true
  */
-@Metadata(label = "eip,routing")
+@Metadata(label = "eip,routing",
+          description = "Defines a conditional branch within a Choice EIP that executes when its predicate evaluates to true")
 @AsPredicate
 @XmlRootElement(name = "when")
 @XmlAccessorType(XmlAccessType.FIELD)

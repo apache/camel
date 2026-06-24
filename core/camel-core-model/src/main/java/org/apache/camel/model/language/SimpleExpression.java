@@ -28,7 +28,8 @@ import org.apache.camel.spi.Metadata;
 /**
  * Evaluates a Camel simple expression.
  */
-@Metadata(firstVersion = "1.1.0", label = "language,core,java", title = "Simple")
+@Metadata(firstVersion = "1.1.0", label = "language,core,java", title = "Simple",
+          description = "Evaluates a Camel simple expression")
 @XmlRootElement(name = "simple")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class SimpleExpression extends TypedExpressionDefinition {

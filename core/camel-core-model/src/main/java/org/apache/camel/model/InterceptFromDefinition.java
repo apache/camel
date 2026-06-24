@@ -27,7 +27,8 @@ import org.apache.camel.spi.annotations.DslArg;
 /**
  * Intercepts incoming messages
  */
-@Metadata(label = "configuration")
+@Metadata(label = "configuration",
+          description = "Intercepts incoming messages arriving from consumer endpoints, optionally filtering by endpoint URI pattern")
 @XmlRootElement(name = "interceptFrom")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class InterceptFromDefinition extends InterceptDefinition {

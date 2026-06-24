@@ -27,7 +27,8 @@ import org.apache.camel.spi.Metadata;
 /**
  * Evaluates an XQuery expressions against an XML payload.
  */
-@Metadata(firstVersion = "1.0.0", label = "language,xml", title = "XQuery")
+@Metadata(firstVersion = "1.0.0", label = "language,xml", title = "XQuery",
+          description = "Evaluates an XQuery expressions against an XML payload")
 @XmlRootElement(name = "xquery")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class XQueryExpression extends NamespaceAwareExpression {

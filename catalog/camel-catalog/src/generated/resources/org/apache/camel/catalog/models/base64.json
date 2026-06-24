@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "base64",
     "title": "Base64",
-    "description": "Encode and decode data using Base64.",
+    "description": "Encode and decode data using Base64",
     "deprecated": false,
     "firstVersion": "2.11.0",
     "label": "dataformat,transformation",

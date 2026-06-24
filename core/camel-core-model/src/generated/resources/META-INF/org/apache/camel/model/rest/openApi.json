@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "openApi",
     "title": "Open Api",
-    "description": "To use OpenApi as contract-first with Camel Rest DSL.",
+    "description": "Configures a contract-first REST service using an OpenAPI specification, where Camel auto-generates routes for each operation",
     "deprecated": false,
     "label": "rest",
     "javaType": "org.apache.camel.model.rest.OpenApiDefinition",

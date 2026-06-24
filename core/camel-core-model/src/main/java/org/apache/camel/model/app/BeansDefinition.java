@@ -48,7 +48,8 @@ import org.apache.camel.spi.annotations.ExternalSchemaElement;
  * Important this is only supported when using XML DSL with camel-xml-io-dsl. This is NOT for the classic old Spring XML
  * DSL used by Camel 1.x/2.x.
  */
-@Metadata(label = "configuration")
+@Metadata(label = "configuration",
+          description = "Container element for defining beans, routes, and other elements using XML DSL with camel-xml-io-dsl")
 @XmlRootElement(name = "beans")
 @XmlType(propOrder = {
         "componentScanning",

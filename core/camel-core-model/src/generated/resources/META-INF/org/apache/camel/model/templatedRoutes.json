@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "templatedRoutes",
     "title": "Templated Routes",
-    "description": "A series of templated routes",
+    "description": "Container for a collection of templated route definitions",
     "deprecated": false,
     "label": "configuration",
     "javaType": "org.apache.camel.model.TemplatedRoutesDefinition",

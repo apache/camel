@@ -27,7 +27,8 @@ import org.apache.camel.spi.Metadata;
  * Evaluates an OGNL expression (Apache Commons OGNL).
  */
 @Deprecated
-@Metadata(firstVersion = "1.1.0", label = "language,java", title = "OGNL")
+@Metadata(firstVersion = "1.1.0", label = "language,java", title = "OGNL",
+          description = "Evaluates an OGNL expression (Apache Commons OGNL)")
 @XmlRootElement(name = "ognl")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class OgnlExpression extends TypedExpressionDefinition {

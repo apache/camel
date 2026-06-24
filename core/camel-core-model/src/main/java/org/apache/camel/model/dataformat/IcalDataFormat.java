@@ -29,7 +29,8 @@ import org.apache.camel.spi.Metadata;
 /**
  * Marshal and unmarshal iCal (*.ics) documents to/from model objects.
  */
-@Metadata(firstVersion = "2.12.0", label = "dataformat,transformation", title = "iCal")
+@Metadata(firstVersion = "2.12.0", label = "dataformat,transformation", title = "iCal",
+          description = "Marshal and unmarshal iCal (*.ics) documents to/from model objects")
 @XmlRootElement(name = "ical")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class IcalDataFormat extends DataFormatDefinition {

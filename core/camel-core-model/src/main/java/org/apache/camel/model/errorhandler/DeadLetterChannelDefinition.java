@@ -29,7 +29,8 @@ import org.apache.camel.spi.Metadata;
 /**
  * Error handler with dead letter queue.
  */
-@Metadata(label = "configuration,error")
+@Metadata(label = "configuration,error,errorhandling",
+          description = "Error handler that moves failed messages to a dead letter endpoint after exhausting redelivery attempts")
 @XmlRootElement(name = "deadLetterChannel")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class DeadLetterChannelDefinition extends DefaultErrorHandlerDefinition {

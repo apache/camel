@@ -33,7 +33,8 @@ import org.apache.camel.spi.annotations.DslArg;
 /**
  * Defines a policy the route will use
  */
-@Metadata(label = "configuration")
+@Metadata(label = "configuration",
+          description = "Applies a policy to the route, such as a transactional policy or a custom policy for cross-cutting concerns")
 @XmlRootElement(name = "policy")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class PolicyDefinition extends OutputDefinition<PolicyDefinition> {

@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "unmarshal",
     "title": "Unmarshal",
-    "description": "Converts the message data received from the wire into a format that Apache Camel processors can consume",
+    "description": "Deserializes the message body from a specific data format such as JSON, XML, CSV, or Protobuf into a Java object",
     "deprecated": false,
     "label": "eip,dataformat,transformation",
     "javaType": "org.apache.camel.model.UnmarshalDefinition",

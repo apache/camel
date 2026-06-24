@@ -28,7 +28,8 @@ import org.apache.camel.spi.annotations.DslArg;
 /**
  * Throws an exception
  */
-@Metadata(label = "error")
+@Metadata(label = "error,errorhandling",
+          description = "Throws an exception during route processing, either creating a new exception instance or re-throwing an existing one")
 @XmlRootElement(name = "throwException")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ThrowExceptionDefinition extends NoOutputDefinition<ThrowExceptionDefinition> {

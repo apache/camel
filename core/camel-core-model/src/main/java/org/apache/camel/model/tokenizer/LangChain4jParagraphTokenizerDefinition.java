@@ -26,7 +26,8 @@ import org.apache.camel.spi.Metadata;
 /**
  * Camel AI: Tokenizer for splitting by paragraphs.
  */
-@Metadata(firstVersion = "4.8.0", label = "eip,transformation,ai", title = "LangChain4J Tokenizer with paragraph splitter")
+@Metadata(firstVersion = "4.8.0", label = "eip,transformation,ai", title = "LangChain4J Tokenizer with paragraph splitter",
+          description = "Splits text into chunks by paragraph boundaries, using LangChain4j's paragraph tokenizer for AI text processing")
 @XmlRootElement(name = "langChain4jParagraphTokenizer")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class LangChain4jParagraphTokenizerDefinition extends LangChain4jTokenizerDefinition {

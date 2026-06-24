@@ -26,7 +26,8 @@ import org.apache.camel.spi.Metadata;
 /**
  * To use a custom transformer on a route level.
  */
-@Metadata(label = "transformation")
+@Metadata(label = "transformation",
+          description = "References a custom data type transformer implementation from the registry for route-level transformations")
 @XmlRootElement(name = "customTransformer")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CustomTransformerDefinition extends TransformerDefinition {

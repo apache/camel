@@ -37,7 +37,8 @@ import org.apache.camel.spi.ResourceAware;
 /**
  * Define custom beans that can be used in your Camel routes and in general.
  */
-@Metadata(label = "configuration")
+@Metadata(label = "configuration",
+          description = "Defines a custom bean that can be used in Camel routes and other beans. The bean is created by a factory class or method.")
 @XmlRootElement(name = "beanFactory")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class BeanFactoryDefinition<P> implements ResourceAware {

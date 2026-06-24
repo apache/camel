@@ -26,7 +26,7 @@ import org.apache.camel.spi.Metadata;
 /**
  * Gets a variable
  */
-@Metadata(firstVersion = "4.4.0", label = "language,core", title = "Variable")
+@Metadata(firstVersion = "4.4.0", label = "language,core", title = "Variable", description = "Gets a variable")
 @XmlRootElement(name = "variable")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class VariableExpression extends ExpressionDefinition {

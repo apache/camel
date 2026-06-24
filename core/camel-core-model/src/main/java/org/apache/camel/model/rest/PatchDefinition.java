@@ -25,7 +25,7 @@ import org.apache.camel.spi.Metadata;
 /**
  * Rest PATCH command
  */
-@Metadata(label = "rest")
+@Metadata(label = "rest", description = "Defines an HTTP PATCH operation in the REST DSL")
 @XmlRootElement(name = "patch")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class PatchDefinition extends VerbDefinition {

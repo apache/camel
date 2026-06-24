@@ -26,7 +26,8 @@ import org.apache.camel.spi.Metadata;
 /**
  * To configure optimistic locking
  */
-@Metadata(label = "configuration")
+@Metadata(label = "configuration",
+          description = "Configures the retry policy for optimistic locking in the Aggregate EIP, controlling retry attempts and delays on version conflicts")
 @XmlRootElement(name = "optimisticLockRetryPolicy")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class OptimisticLockRetryPolicyDefinition {

@@ -26,7 +26,8 @@ import org.apache.camel.spi.Metadata;
 /**
  * To use a custom validator on the route level.
  */
-@Metadata(label = "validation")
+@Metadata(label = "validation",
+          description = "References a custom data type validator implementation from the registry for route-level validation")
 @XmlRootElement(name = "customValidator")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CustomValidatorDefinition extends ValidatorDefinition {

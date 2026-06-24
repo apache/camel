@@ -31,7 +31,8 @@ import org.apache.camel.spi.Metadata;
 /**
  * Sorts the contents of the message
  */
-@Metadata(label = "eip,transformation")
+@Metadata(label = "eip,transformation",
+          description = "Sorts the items in a message body that is a List, using a specified comparator or the default ordering")
 @XmlRootElement(name = "sort")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class SortDefinition<T> extends ExpressionNode {

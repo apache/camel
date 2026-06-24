@@ -29,7 +29,8 @@ import org.apache.camel.spi.Metadata;
 /**
  * Transform and bind XML as well as non-XML data, including EDI, CSV, JSON, and YAML using Smooks.
  */
-@Metadata(firstVersion = "4.9.0", label = "dataformat,transformation", title = "Smooks")
+@Metadata(firstVersion = "4.9.0", label = "dataformat,transformation", title = "Smooks",
+          description = "Transform and bind XML as well as non-XML data, including EDI, CSV, JSON, and YAML using Smooks")
 @XmlRootElement(name = "smooks")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class SmooksDataFormat extends DataFormatDefinition {

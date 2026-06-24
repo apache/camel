@@ -31,7 +31,8 @@ import org.apache.camel.spi.Metadata;
  * only scheme part, so that it works like a wildcard. If only 'xml' is specified, all the XML message matches. It's
  * handy to add only one transformer/validator for all the transformation from/to XML.
  */
-@Metadata(label = "configuration")
+@Metadata(label = "configuration",
+          description = "Declares the expected input data type for a route. Camel will apply a data type transformer if the actual message type differs at runtime.")
 @XmlRootElement(name = "inputType")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class InputTypeDefinition extends OptionalIdentifiedDefinition<InputTypeDefinition> {

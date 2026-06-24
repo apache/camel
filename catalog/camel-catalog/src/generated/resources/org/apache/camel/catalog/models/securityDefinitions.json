@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "securityDefinitions",
     "title": "Rest Security Definitions",
-    "description": "To configure rest security definitions.",
+    "description": "Container for security scheme definitions used by REST services",
     "deprecated": false,
     "label": "rest,security,configuration",
     "javaType": "org.apache.camel.model.rest.RestSecuritiesDefinition",

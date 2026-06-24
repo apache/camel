@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "choice",
     "title": "Choice",
-    "description": "Route messages based on a series of predicates",
+    "description": "Routes messages to different steps based on a series of conditions (predicates), similar to if-elseif-else in Java. Each condition is evaluated in order until one matches.",
     "deprecated": false,
     "label": "eip,routing",
     "javaType": "org.apache.camel.model.ChoiceDefinition",

@@ -26,7 +26,8 @@ import org.apache.camel.spi.Metadata;
 /**
  * An input parameter of a route template.
  */
-@Metadata(label = "configuration")
+@Metadata(label = "configuration",
+          description = "Provides a parameter value for a templated route, binding a value to a route template parameter")
 @XmlRootElement(name = "templatedRouteParameter")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class TemplatedRouteParameterDefinition {

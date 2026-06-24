@@ -31,7 +31,7 @@ import org.apache.camel.spi.Metadata;
  * Models a series of string key/value pairs for configuring some global options on a Camel context such as max debug
  * log length.
  */
-@Metadata(label = "configuration")
+@Metadata(label = "configuration", description = "Defines a collection of global configuration options for the CamelContext")
 @XmlRootElement(name = "globalOptions")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class GlobalOptionsDefinition {

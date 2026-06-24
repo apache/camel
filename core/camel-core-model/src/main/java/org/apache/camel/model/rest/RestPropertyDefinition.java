@@ -26,7 +26,8 @@ import org.apache.camel.spi.Metadata;
 /**
  * A key value pair
  */
-@Metadata(label = "rest")
+@Metadata(label = "rest",
+          description = "Defines a key/value property for REST configuration, used to pass component-specific settings")
 @XmlRootElement(name = "restProperty")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RestPropertyDefinition {

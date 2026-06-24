@@ -29,7 +29,8 @@ import org.apache.camel.spi.Metadata;
 /**
  * Groups route steps and emits A2A progress events before, after, or when the grouped work fails.
  */
-@Metadata(firstVersion = "4.21.0", label = "eip,routing,ai", title = "A2A Sub Task")
+@Metadata(firstVersion = "4.21.0", label = "eip,routing,ai", title = "A2A Sub Task",
+          description = "Groups route steps and emits A2A (Agent-to-Agent) protocol progress events before, after, or when the grouped work fails")
 @XmlRootElement(name = "a2aSubTask")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class A2ASubTaskDefinition extends OutputDefinition<A2ASubTaskDefinition> {

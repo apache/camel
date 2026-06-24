@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "patch",
     "title": "Patch",
-    "description": "Rest PATCH command",
+    "description": "Defines an HTTP PATCH operation in the REST DSL",
     "deprecated": false,
     "label": "rest",
     "javaType": "org.apache.camel.model.rest.PatchDefinition",

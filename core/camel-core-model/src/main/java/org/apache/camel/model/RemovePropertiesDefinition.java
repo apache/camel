@@ -28,7 +28,8 @@ import org.apache.camel.spi.annotations.DslArg;
 /**
  * Removes message exchange properties whose name matches a specified pattern
  */
-@Metadata(label = "eip,transformation")
+@Metadata(label = "eip,messaging,transformation",
+          description = "Removes all exchange properties whose names match a given pattern")
 @XmlRootElement(name = "removeProperties")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RemovePropertiesDefinition extends NoOutputDefinition<RemovePropertiesDefinition> {

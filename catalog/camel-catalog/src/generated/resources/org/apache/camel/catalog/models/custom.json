@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "custom",
     "title": "Custom",
-    "description": "Delegate to a custom org.apache.camel.spi.DataFormat implementation via Camel registry.",
+    "description": "Delegates to a custom DataFormat implementation looked up from the Camel registry by name",
     "deprecated": false,
     "label": "dataformat,transformation",
     "javaType": "org.apache.camel.model.dataformat.CustomDataFormat",

@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "templatedRoute",
     "title": "Templated Route",
-    "description": "Defines a templated route (a route built from a route template)",
+    "description": "Creates a route instance from a route template, binding specific parameter values to the template's parameters",
     "deprecated": false,
     "label": "configuration",
     "javaType": "org.apache.camel.model.TemplatedRouteDefinition",

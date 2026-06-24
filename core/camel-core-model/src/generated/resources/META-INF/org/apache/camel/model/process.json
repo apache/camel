@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "process",
     "title": "Process",
-    "description": "Calls a Camel processor",
+    "description": "Invokes a custom Camel Processor for programmatic message processing in Java",
     "deprecated": false,
     "label": "eip,endpoint",
     "javaType": "org.apache.camel.model.ProcessDefinition",

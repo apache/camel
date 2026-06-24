@@ -32,7 +32,8 @@ import org.apache.camel.spi.Metadata;
 /**
  * To use a predicate to determine when to trigger this.
  */
-@Metadata(label = "configuration")
+@Metadata(label = "configuration",
+          description = "Applies a predicate condition to filter when a parent definition (such as onException or onCompletion) should be triggered")
 @AsPredicate
 @XmlRootElement(name = "onWhen")
 @XmlAccessorType(XmlAccessType.FIELD)

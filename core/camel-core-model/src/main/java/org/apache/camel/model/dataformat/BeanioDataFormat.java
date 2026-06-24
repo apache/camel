@@ -29,7 +29,8 @@ import org.apache.camel.spi.Metadata;
 /**
  * Marshal and unmarshal Java beans to and from flat files (such as CSV, delimited, or fixed length formats).
  */
-@Metadata(firstVersion = "2.10.0", label = "dataformat,transformation,csv", title = "BeanIO")
+@Metadata(firstVersion = "2.10.0", label = "dataformat,transformation,csv", title = "BeanIO",
+          description = "Marshal and unmarshal Java beans to and from flat files (such as CSV, delimited, or fixed length formats)")
 @XmlRootElement(name = "beanio")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class BeanioDataFormat extends DataFormatDefinition {

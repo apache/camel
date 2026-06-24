@@ -28,7 +28,8 @@ import org.apache.camel.spi.annotations.DslArg;
 /**
  * Converts the variable to another type
  */
-@Metadata(label = "eip,transformation")
+@Metadata(label = "eip,messaging,transformation",
+          description = "Converts a variable value to a specified Java type using Camel's built-in type converters")
 @XmlRootElement(name = "convertVariableTo")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ConvertVariableDefinition extends NoOutputDefinition<ConvertVariableDefinition> {

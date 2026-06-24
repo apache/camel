@@ -29,7 +29,8 @@ import org.apache.camel.spi.Metadata;
 /**
  * Encrypt and decrypt messages using Java Cryptography Extension (JCE).
  */
-@Metadata(firstVersion = "2.3.0", label = "dataformat,transformation,security", title = "Crypto (Java Cryptographic Extension)")
+@Metadata(firstVersion = "2.3.0", label = "dataformat,transformation,security", title = "Crypto (Java Cryptographic Extension)",
+          description = "Encrypt and decrypt messages using Java Cryptography Extension (JCE)")
 @XmlRootElement(name = "crypto")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CryptoDataFormat extends DataFormatDefinition {

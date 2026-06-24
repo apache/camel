@@ -28,7 +28,7 @@ import org.apache.camel.spi.Metadata;
 /**
  * Tokenize XML payloads.
  */
-@Metadata(firstVersion = "2.14.0", label = "language,core,xml", title = "XML Tokenize")
+@Metadata(firstVersion = "2.14.0", label = "language,core,xml", title = "XML Tokenize", description = "Tokenize XML payloads")
 @XmlRootElement(name = "xtokenize")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class XMLTokenizerExpression extends NamespaceAwareExpression {

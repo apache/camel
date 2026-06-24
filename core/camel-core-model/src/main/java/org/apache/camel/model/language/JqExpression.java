@@ -26,7 +26,8 @@ import org.apache.camel.spi.Metadata;
 /**
  * Evaluates a JQ expression against a JSON message body.
  */
-@Metadata(firstVersion = "3.18.0", label = "language,json", title = "JQ")
+@Metadata(firstVersion = "3.18.0", label = "language,json", title = "JQ",
+          description = "Evaluates a JQ expression against a JSON message body")
 @XmlRootElement(name = "jq")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class JqExpression extends SingleInputTypedExpressionDefinition {

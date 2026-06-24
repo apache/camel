@@ -29,7 +29,8 @@ import org.apache.camel.spi.Metadata;
 /**
  * Serialize and deserialize Java objects using Google's Protocol buffers.
  */
-@Metadata(firstVersion = "2.2.0", label = "dataformat,transformation", title = "Protobuf")
+@Metadata(firstVersion = "2.2.0", label = "dataformat,transformation", title = "Protobuf",
+          description = "Serialize and deserialize Java objects using Google's Protocol buffers")
 @XmlRootElement(name = "protobuf")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ProtobufDataFormat extends DataFormatDefinition implements ContentTypeHeaderAware {

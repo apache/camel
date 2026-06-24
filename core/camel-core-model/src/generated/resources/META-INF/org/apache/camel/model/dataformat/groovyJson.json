@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "groovyJson",
     "title": "Groovy JSon",
-    "description": "Transform between JSon and java.util.Map or java.util.List objects.",
+    "description": "Transform between JSon and java.util.Map or java.util.List objects",
     "deprecated": false,
     "firstVersion": "4.19.0",
     "label": "dataformat,transformation,json",

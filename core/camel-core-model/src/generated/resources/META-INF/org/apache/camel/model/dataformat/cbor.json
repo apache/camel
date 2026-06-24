@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "cbor",
     "title": "CBOR",
-    "description": "Unmarshal a CBOR payload to POJO and back.",
+    "description": "Unmarshal a CBOR payload to POJO and back",
     "deprecated": false,
     "firstVersion": "3.0.0",
     "label": "dataformat,transformation,json",

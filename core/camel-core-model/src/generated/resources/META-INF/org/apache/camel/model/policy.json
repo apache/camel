@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "policy",
     "title": "Policy",
-    "description": "Defines a policy the route will use",
+    "description": "Applies a policy to the route, such as a transactional policy or a custom policy for cross-cutting concerns",
     "deprecated": false,
     "label": "configuration",
     "javaType": "org.apache.camel.model.PolicyDefinition",

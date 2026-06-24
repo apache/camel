@@ -33,7 +33,8 @@ import org.apache.camel.spi.annotations.DslArg;
 /**
  * Intercepts messages being sent to an endpoint
  */
-@Metadata(label = "configuration")
+@Metadata(label = "configuration",
+          description = "Intercepts messages being sent to a specific endpoint, allowing the message to be modified or the send to be skipped")
 @XmlRootElement(name = "interceptSendToEndpoint")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class InterceptSendToEndpointDefinition extends OutputDefinition<InterceptSendToEndpointDefinition> {

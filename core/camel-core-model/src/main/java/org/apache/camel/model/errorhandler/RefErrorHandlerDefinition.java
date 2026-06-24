@@ -27,7 +27,8 @@ import org.apache.camel.spi.Metadata;
 /**
  * References to an existing or custom error handler.
  */
-@Metadata(label = "configuration,error")
+@Metadata(label = "configuration,error,errorhandling",
+          description = "References a custom error handler bean from the registry by its name")
 @XmlRootElement(name = "refErrorHandler")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RefErrorHandlerDefinition extends BaseErrorHandlerDefinition {

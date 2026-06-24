@@ -27,7 +27,8 @@ import org.apache.camel.spi.Metadata;
 /**
  * Marshal and unmarshal Java objects from and to CSV (Comma Separated Values) using UniVocity Parsers.
  */
-@Metadata(firstVersion = "2.15.0", label = "dataformat,transformation,csv", title = "uniVocity CSV")
+@Metadata(firstVersion = "2.15.0", label = "dataformat,transformation,csv", title = "uniVocity CSV",
+          description = "Marshal and unmarshal Java objects from and to CSV (Comma Separated Values) using UniVocity Parsers")
 @XmlRootElement(name = "univocityCsv")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class UniVocityCsvDataFormat extends UniVocityAbstractDataFormat {

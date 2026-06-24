@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "routeConfigurations",
     "title": "Route Configurations",
-    "description": "A series of route configurations",
+    "description": "Container for a collection of route configuration definitions",
     "deprecated": false,
     "label": "configuration",
     "javaType": "org.apache.camel.model.RouteConfigurationsDefinition",

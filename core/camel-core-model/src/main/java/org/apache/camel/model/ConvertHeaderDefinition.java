@@ -28,7 +28,8 @@ import org.apache.camel.spi.annotations.DslArg;
 /**
  * Converts the message header to another type
  */
-@Metadata(label = "eip,transformation")
+@Metadata(label = "eip,messaging,transformation",
+          description = "Converts a message header value to a specified Java type using Camel's built-in type converters")
 @XmlRootElement(name = "convertHeaderTo")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ConvertHeaderDefinition extends NoOutputDefinition<ConvertHeaderDefinition> {

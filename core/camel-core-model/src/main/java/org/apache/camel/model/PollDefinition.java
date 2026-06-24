@@ -31,7 +31,9 @@ import org.apache.camel.util.URISupport;
 /**
  * Polls a message from a static endpoint
  */
-@Metadata(label = "eip,routing")
+@Metadata(label = "eip,enrichment,routing",
+          description = "Polls a single message from a consumer endpoint and sets it as the message body."
+                        + " Useful for fetching data on-demand from file, database, or messaging endpoints.")
 @XmlRootElement(name = "poll")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class PollDefinition extends NoOutputDefinition<PollDefinition> implements EndpointRequiredDefinition {

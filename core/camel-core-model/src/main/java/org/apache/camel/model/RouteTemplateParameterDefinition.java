@@ -26,7 +26,8 @@ import org.apache.camel.spi.Metadata;
 /**
  * A route template parameter
  */
-@Metadata(label = "configuration")
+@Metadata(label = "configuration",
+          description = "Defines a parameter for a route template, with an optional default value and description")
 @XmlRootElement(name = "templateParameter")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RouteTemplateParameterDefinition {

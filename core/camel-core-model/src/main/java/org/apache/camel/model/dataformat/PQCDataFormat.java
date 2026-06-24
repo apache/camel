@@ -29,7 +29,8 @@ import org.apache.camel.spi.Metadata;
 /**
  * Encrypt and decrypt messages using Post-Quantum Cryptography Key Encapsulation Mechanisms (KEM).
  */
-@Metadata(firstVersion = "4.16.0", label = "dataformat,transformation,security", title = "PQC (Post-Quantum Cryptography)")
+@Metadata(firstVersion = "4.16.0", label = "dataformat,transformation,security", title = "PQC (Post-Quantum Cryptography)",
+          description = "Encrypt and decrypt messages using Post-Quantum Cryptography Key Encapsulation Mechanisms (KEM)")
 @XmlRootElement(name = "pqc")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class PQCDataFormat extends DataFormatDefinition {

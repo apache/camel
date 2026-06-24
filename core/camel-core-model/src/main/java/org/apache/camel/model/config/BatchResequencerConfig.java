@@ -26,7 +26,8 @@ import org.apache.camel.spi.Metadata;
 /**
  * Configures batch-processing resequence eip.
  */
-@Metadata(label = "configuration,eip")
+@Metadata(label = "configuration,eip",
+          description = "Configures the batch-processing mode of the Resequence EIP, which collects messages into a batch and sorts them before releasing")
 @XmlRootElement(name = "batchConfig")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class BatchResequencerConfig extends ResequencerConfig {

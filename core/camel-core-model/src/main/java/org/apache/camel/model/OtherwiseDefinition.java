@@ -32,7 +32,8 @@ import org.apache.camel.spi.Metadata;
 /**
  * Route to be executed when all other choices evaluate to false
  */
-@Metadata(label = "eip,routing")
+@Metadata(label = "eip,routing",
+          description = "Defines the default branch within a Choice EIP that executes when no When condition matches")
 @XmlRootElement(name = "otherwise")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class OtherwiseDefinition extends OptionalIdentifiedDefinition<OtherwiseDefinition>

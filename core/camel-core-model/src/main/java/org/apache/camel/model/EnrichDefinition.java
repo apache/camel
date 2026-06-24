@@ -32,7 +32,9 @@ import org.apache.camel.spi.annotations.DslArg;
  *
  * @see org.apache.camel.processor.Enricher
  */
-@Metadata(label = "eip,transformation")
+@Metadata(label = "eip,enrichment,transformation",
+          description = "Enriches the message with additional data obtained by sending to another endpoint using request-reply."
+                        + " The reply is merged into the original message using an aggregation strategy.")
 @XmlRootElement(name = "enrich")
 @XmlAccessorType(XmlAccessType.FIELD)
 @DslArg(exclude = "expression")

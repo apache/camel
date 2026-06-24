@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "jsonpath",
     "title": "JSONPath",
-    "description": "Evaluates a JSONPath expression against a JSON message body.",
+    "description": "Evaluates a JSONPath expression against a JSON message body",
     "deprecated": false,
     "firstVersion": "2.13.0",
     "label": "language,json",

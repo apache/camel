@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "delete",
     "title": "Delete",
-    "description": "Rest DELETE command",
+    "description": "Defines an HTTP DELETE operation in the REST DSL",
     "deprecated": false,
     "label": "rest",
     "javaType": "org.apache.camel.model.rest.DeleteDefinition",

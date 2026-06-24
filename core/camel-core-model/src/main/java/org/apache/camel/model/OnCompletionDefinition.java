@@ -35,7 +35,8 @@ import org.apache.camel.spi.Metadata;
 /**
  * Route to be executed when normal route processing completes
  */
-@Metadata(label = "configuration")
+@Metadata(label = "configuration",
+          description = "Defines steps to execute when route processing completes, either on success, failure, or both")
 @XmlRootElement(name = "onCompletion")
 @XmlType(propOrder = { "onWhen", "outputs" })
 @XmlAccessorType(XmlAccessType.FIELD)

@@ -27,7 +27,7 @@ import org.apache.camel.spi.Metadata;
 /**
  * Call a wasm (web assembly) function.
  */
-@Metadata(firstVersion = "4.5.0", label = "language", title = "Wasm")
+@Metadata(firstVersion = "4.5.0", label = "language", title = "Wasm", description = "Call a wasm (web assembly) function")
 @XmlRootElement(name = "wasm")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class WasmExpression extends TypedExpressionDefinition {

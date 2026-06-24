@@ -28,7 +28,9 @@ import org.apache.camel.spi.annotations.DslArg;
 /**
  * Removes message headers whose name matches a specified pattern
  */
-@Metadata(label = "eip,transformation")
+@Metadata(label = "eip,messaging,transformation",
+          description = "Removes all message headers whose names match a given pattern."
+                        + " Useful for stripping internal Camel headers before sending to external systems.")
 @XmlRootElement(name = "removeHeaders")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RemoveHeadersDefinition extends NoOutputDefinition<RemoveHeadersDefinition> {

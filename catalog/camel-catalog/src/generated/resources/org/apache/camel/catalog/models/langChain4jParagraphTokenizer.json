@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "langChain4jParagraphTokenizer",
     "title": "LangChain4J Tokenizer with paragraph splitter",
-    "description": "Camel AI: Tokenizer for splitting by paragraphs.",
+    "description": "Splits text into chunks by paragraph boundaries, using LangChain4j's paragraph tokenizer for AI text processing",
     "deprecated": false,
     "firstVersion": "4.8.0",
     "label": "eip,transformation,ai",

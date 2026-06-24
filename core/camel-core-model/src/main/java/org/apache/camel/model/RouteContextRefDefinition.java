@@ -29,7 +29,8 @@ import org.apache.camel.spi.Metadata;
 /**
  * To refer to an XML file with routes defined using the xml-dsl
  */
-@Metadata(label = "configuration")
+@Metadata(label = "configuration",
+          description = "References an external XML file containing route definitions for inclusion in the current context")
 @XmlRootElement(name = "routeContextRef")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RouteContextRefDefinition {

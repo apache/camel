@@ -338,18 +338,23 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
             if (!Strings.isNullOrEmpty(metadata.firstVersion())) {
                 model.setFirstVersion(metadata.firstVersion());
             }
+            if (!Strings.isNullOrEmpty(metadata.description())) {
+                model.setDescription(metadata.description());
+            }
         }
 
-        // favor to use class javadoc of component as description
-        String doc = getDocComment(classElement);
-        if (doc != null) {
-            // need to sanitize the description first (we only want a
-            // summary)
-            doc = JavadocHelper.sanitizeDescription(doc, true);
-            // the javadoc may actually be empty, so only change the doc
-            // if we got something
-            if (!Strings.isNullOrEmpty(doc)) {
-                model.setDescription(doc);
+        // fallback to use class javadoc as description
+        if (Strings.isNullOrEmpty(model.getDescription())) {
+            String doc = getDocComment(classElement);
+            if (doc != null) {
+                // need to sanitize the description first (we only want a
+                // summary)
+                doc = JavadocHelper.sanitizeDescription(doc, true);
+                // the javadoc may actually be empty, so only change the doc
+                // if we got something
+                if (!Strings.isNullOrEmpty(doc)) {
+                    model.setDescription(doc);
+                }
             }
         }
 

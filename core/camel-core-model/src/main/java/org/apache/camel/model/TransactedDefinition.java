@@ -33,7 +33,8 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Enables transaction on the route
  */
-@Metadata(label = "configuration")
+@Metadata(label = "configuration",
+          description = "Wraps the route in a transaction, ensuring that all steps within the transacted block either complete together or roll back on failure")
 @XmlRootElement(name = "transacted")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class TransactedDefinition extends OutputDefinition<TransactedDefinition> {

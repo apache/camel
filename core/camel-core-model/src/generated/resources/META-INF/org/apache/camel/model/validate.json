@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "validate",
     "title": "Validate",
-    "description": "Validates a message based on an expression",
+    "description": "Validates the message against a predicate expression and throws a PredicateValidationException if the validation fails",
     "deprecated": false,
     "label": "eip,transformation",
     "javaType": "org.apache.camel.model.ValidateDefinition",

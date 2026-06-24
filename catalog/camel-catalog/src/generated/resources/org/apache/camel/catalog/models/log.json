@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "log",
     "title": "Logger",
-    "description": "Used for printing custom messages to the logger.",
+    "description": "Logs a message using an expression that can include message body, headers, and other exchange data",
     "deprecated": false,
     "label": "eip,routing",
     "javaType": "org.apache.camel.model.LogDefinition",

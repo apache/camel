@@ -29,7 +29,8 @@ import org.apache.camel.spi.Metadata;
 /**
  * Marshal and unmarshal OCSF (Open Cybersecurity Schema Framework) security events to/from JSON.
  */
-@Metadata(firstVersion = "4.18.0", label = "dataformat,transformation,json,security", title = "OCSF")
+@Metadata(firstVersion = "4.18.0", label = "dataformat,transformation,json,security", title = "OCSF",
+          description = "Marshal and unmarshal OCSF (Open Cybersecurity Schema Framework) security events to/from JSON")
 @XmlRootElement(name = "ocsf")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class OcsfDataFormat extends DataFormatDefinition {

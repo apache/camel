@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "customValidator",
     "title": "Custom Validator",
-    "description": "To use a custom validator on the route level.",
+    "description": "References a custom data type validator implementation from the registry for route-level validation",
     "deprecated": false,
     "label": "validation",
     "javaType": "org.apache.camel.model.validator.CustomValidatorDefinition",

@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "saga",
     "title": "Saga",
-    "description": "Enables Sagas on the route",
+    "description": "Defines a Saga (long-running action) that coordinates distributed services toward a consistent outcome. Unlike XA transactions, Sagas use compensating actions for rollback and work across heterogeneous services.",
     "deprecated": false,
     "label": "eip,routing",
     "javaType": "org.apache.camel.model.SagaDefinition",

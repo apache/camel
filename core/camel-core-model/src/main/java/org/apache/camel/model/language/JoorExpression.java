@@ -27,7 +27,8 @@ import org.apache.camel.spi.Metadata;
 /**
  * Evaluates a jOOR (Java compiled once at runtime) expression.
  */
-@Metadata(firstVersion = "3.7.0", label = "language", title = "jOOR")
+@Metadata(firstVersion = "3.7.0", label = "language", title = "jOOR",
+          description = "Evaluates a jOOR (Java compiled once at runtime) expression")
 @XmlRootElement(name = "joor")
 @XmlAccessorType(XmlAccessType.FIELD)
 @Deprecated(since = "4.3.0")

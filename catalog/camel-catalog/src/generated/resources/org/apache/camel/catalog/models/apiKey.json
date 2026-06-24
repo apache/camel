@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "apiKey",
     "title": "Api Key",
-    "description": "Rest security basic auth definition",
+    "description": "Configures API key authentication for a REST service",
     "deprecated": false,
     "label": "rest,security,configuration",
     "javaType": "org.apache.camel.model.rest.ApiKeyDefinition",

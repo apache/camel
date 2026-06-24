@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "xmlSecurity",
     "title": "XML Security",
-    "description": "Encrypt and decrypt XML payloads using Apache Santuario.",
+    "description": "Encrypt and decrypt XML payloads using Apache Santuario",
     "deprecated": false,
     "firstVersion": "2.0.0",
     "label": "dataformat,transformation,security,xml",

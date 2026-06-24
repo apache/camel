@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "restBinding",
     "title": "Rest Binding",
-    "description": "To configure rest binding",
+    "description": "Configures data binding for a REST service, controlling how request and response bodies are marshalled and unmarshalled",
     "deprecated": false,
     "label": "rest",
     "javaType": "org.apache.camel.model.rest.RestBindingDefinition",

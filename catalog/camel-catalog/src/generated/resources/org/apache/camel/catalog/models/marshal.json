@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "marshal",
     "title": "Marshal",
-    "description": "Marshals data into a specified format for transmission over a transport or component",
+    "description": "Serializes the message body into a specific data format such as JSON, XML, CSV, or Protobuf for transmission or storage",
     "deprecated": false,
     "label": "eip,dataformat,transformation",
     "javaType": "org.apache.camel.model.MarshalDefinition",

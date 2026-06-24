@@ -31,7 +31,8 @@ import org.apache.camel.spi.Metadata;
 /**
  * To configure transformers.
  */
-@Metadata(label = "transformation", title = "Transformations")
+@Metadata(label = "transformation", title = "Transformations",
+          description = "Container for defining data type transformer definitions")
 @XmlRootElement(name = "transformers")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class TransformersDefinition implements CopyableDefinition<TransformersDefinition> {

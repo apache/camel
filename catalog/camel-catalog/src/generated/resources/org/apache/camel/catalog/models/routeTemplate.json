@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "routeTemplate",
     "title": "Route Template",
-    "description": "Defines a route template (parameterized routes)",
+    "description": "Defines a parameterized route template that can be instantiated multiple times with different parameter values",
     "deprecated": false,
     "label": "configuration",
     "javaType": "org.apache.camel.model.RouteTemplateDefinition",

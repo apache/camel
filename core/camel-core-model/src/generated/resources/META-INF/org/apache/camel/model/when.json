@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "when",
     "title": "When",
-    "description": "Triggers a route when the expression evaluates to true",
+    "description": "Defines a conditional branch within a Choice EIP that executes when its predicate evaluates to true",
     "deprecated": false,
     "label": "eip,routing",
     "javaType": "org.apache.camel.model.WhenDefinition",

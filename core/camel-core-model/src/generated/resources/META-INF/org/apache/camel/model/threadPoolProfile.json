@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "threadPoolProfile",
     "title": "Thread Pool Profile",
-    "description": "To configure thread pools",
+    "description": "Defines a named thread pool profile with pool size, queue size, and thread keep-alive settings for use by EIPs and components",
     "deprecated": false,
     "label": "configuration",
     "javaType": "org.apache.camel.model.ThreadPoolProfileDefinition",

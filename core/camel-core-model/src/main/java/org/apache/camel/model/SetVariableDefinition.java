@@ -30,7 +30,8 @@ import org.apache.camel.spi.annotations.DslArg;
 /**
  * Sets the value of a variable
  */
-@Metadata(label = "eip,transformation")
+@Metadata(label = "eip,messaging,transformation",
+          description = "Sets a variable to a value computed by an expression")
 @XmlRootElement(name = "setVariable")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class SetVariableDefinition extends ExpressionNode {

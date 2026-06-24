@@ -26,7 +26,8 @@ import org.apache.camel.spi.Metadata;
 /**
  * Evaluates a JavaScript expression.
  */
-@Metadata(firstVersion = "3.20.0", label = "language,javascript", title = "JavaScript")
+@Metadata(firstVersion = "3.20.0", label = "language,javascript", title = "JavaScript",
+          description = "Evaluates a JavaScript expression")
 @XmlRootElement(name = "js")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class JavaScriptExpression extends TypedExpressionDefinition {

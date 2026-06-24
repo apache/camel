@@ -41,7 +41,9 @@ import org.apache.camel.spi.Metadata;
 /**
  * Balances message processing among a number of nodes
  */
-@Metadata(label = "eip,routing")
+@Metadata(label = "eip,loadbalancing,routing",
+          description = "Distributes messages across multiple endpoints using a load balancing strategy"
+                        + " such as round-robin, random, failover, or weighted")
 @XmlRootElement(name = "loadBalance")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class LoadBalanceDefinition extends OutputDefinition<LoadBalanceDefinition> {
