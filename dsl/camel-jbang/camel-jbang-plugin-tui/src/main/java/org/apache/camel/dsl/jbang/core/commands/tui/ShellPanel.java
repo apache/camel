@@ -26,6 +26,7 @@ import java.util.Collections;
 import java.util.List;
 
 import dev.tamboui.layout.Rect;
+import dev.tamboui.style.AnsiColor;
 import dev.tamboui.style.Color;
 import dev.tamboui.style.Overflow;
 import dev.tamboui.style.Style;
@@ -506,23 +507,63 @@ class ShellPanel {
 
         // Foreground color (if set)
         if ((y & 0x1) != 0) {
-            int fg = (int) ((attr >> 12) & 0xFFF);
-            int r = ((fg >> 8) & 0xF) * 17;
-            int g = ((fg >> 4) & 0xF) * 17;
-            int b = (fg & 0xF) * 17;
-            style = style.fg(Color.rgb(r, g, b));
+            style = style.fg(resolveColor((int) ((attr >> 12) & 0xFFF)));
         }
 
         // Background color (if set)
         if ((y & 0x2) != 0) {
-            int bg = (int) (attr & 0xFFF);
-            int r = ((bg >> 8) & 0xF) * 17;
-            int g = ((bg >> 4) & 0xF) * 17;
-            int b = (bg & 0xF) * 17;
-            style = style.bg(Color.rgb(r, g, b));
+            style = style.bg(resolveColor((int) (attr & 0xFFF)));
         }
 
         return style;
+    }
+
+    /**
+     * Converts a 12-bit (4-bit-per-channel) color value from the {@link ScreenTerminal} attribute word into a TamboUI
+     * {@link Color}.
+     * <p>
+     * When the value matches one of the 16 standard ANSI palette colors, a themed {@link Color#ansi(AnsiColor)} is
+     * returned so the host terminal applies its own scheme (keeping, for example, red error output and the command
+     * highlighter legible on dark backgrounds). Any other value is a true-color cell (such as the orange shell prompt)
+     * and is expanded to its literal RGB value.
+     */
+    static Color resolveColor(int rgb12) {
+        AnsiColor ansi = ansiColorFor(rgb12);
+        if (ansi != null) {
+            return Color.ansi(ansi);
+        }
+        // Expand each 4-bit channel back to 8 bits (0xN -> 0xNN, i.e. * 17).
+        int r = ((rgb12 >> 8) & 0xF) * 17;
+        int g = ((rgb12 >> 4) & 0xF) * 17;
+        int b = (rgb12 & 0xF) * 17;
+        return Color.rgb(r, g, b);
+    }
+
+    /**
+     * Maps a 12-bit color value to the standard ANSI palette color it encodes, or {@code null} if it does not match one
+     * of the 16 ANSI colors. The values are {@link ScreenTerminal}'s palette (xterm defaults) reduced to the top nibble
+     * of each channel, matching how {@code ScreenTerminal} stores them in the cell attribute.
+     */
+    static AnsiColor ansiColorFor(int rgb12) {
+        return switch (rgb12) {
+            case 0x000 -> AnsiColor.BLACK;
+            case 0x800 -> AnsiColor.RED;
+            case 0x080 -> AnsiColor.GREEN;
+            case 0x880 -> AnsiColor.YELLOW;
+            case 0x008 -> AnsiColor.BLUE;
+            case 0x808 -> AnsiColor.MAGENTA;
+            case 0x088 -> AnsiColor.CYAN;
+            case 0xccc -> AnsiColor.WHITE;
+            case 0x888 -> AnsiColor.BRIGHT_BLACK;
+            case 0xf00 -> AnsiColor.BRIGHT_RED;
+            case 0x0f0 -> AnsiColor.BRIGHT_GREEN;
+            case 0xff0 -> AnsiColor.BRIGHT_YELLOW;
+            case 0x00f -> AnsiColor.BRIGHT_BLUE;
+            case 0xf0f -> AnsiColor.BRIGHT_MAGENTA;
+            case 0x0ff -> AnsiColor.BRIGHT_CYAN;
+            case 0xfff -> AnsiColor.BRIGHT_WHITE;
+            default -> null;
+        };
     }
 
     private static byte[] encodeKeyEvent(KeyEvent ke) {
