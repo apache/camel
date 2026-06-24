@@ -1300,7 +1300,7 @@ Properties to use with properties placeholder
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-A key value pair where the value is a literal value
+Defines a key/value pair with a literal value, used for passing parameters in route templates and other configurations
 ]]>
       </xs:documentation>
     </xs:annotation>
