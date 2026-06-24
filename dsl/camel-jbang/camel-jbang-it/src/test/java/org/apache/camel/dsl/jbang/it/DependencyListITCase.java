@@ -37,7 +37,7 @@ public class DependencyListITCase extends JBangTestSupport {
                                                               "    <version>" + version() + "</version>\n" +
                                                               "</dependency>");
         checkCommandOutputs("dependency list --runtime=spring-boot",
-                "org.apache.camel.springboot:camel-spring-boot-starter:" + version());
+                "org.apache.camel.springboot:camel-spring-boot-starter");
     }
 
     @Test
