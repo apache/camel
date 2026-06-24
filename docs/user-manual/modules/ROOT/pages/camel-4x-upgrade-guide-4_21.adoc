@@ -649,6 +649,10 @@ keep the previous text behavior. XML and JSON files (`application/xml`, `applica
 
 The `sse` `transportType` is deprecated. it is recommended to switch to `streamableHttp`.
 
+=== camel-reactive-executor-vertx deprecated
+
+The `camel-reactive-executor-vertx` component has been deprecated. The component has been in an experimental state for a long time and no user feedback has been received to justify continued maintenance.
+
 === camel-stomp removal
 
 Camel stomp was deprecated with Camel 4.17. The stomp library didn't have any activities in the last 10 years. The component is now removed.

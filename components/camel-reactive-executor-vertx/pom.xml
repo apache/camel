@@ -28,7 +28,7 @@
 
     <artifactId>camel-reactive-executor-vertx</artifactId>
     <packaging>jar</packaging>
-    <name>Camel :: Reactive Executor :: Vert.x</name>
+    <name>Camel :: Reactive Executor :: Vert.x (deprecated)</name>
     <description>Reactive Executor for camel-core using Vert.x</description>
 
     <properties>
