@@ -72,13 +72,6 @@ public class MongoDbChangeStreamsConsumer extends DefaultConsumer implements Res
 
     @Override
     protected void doStop() throws Exception {
-
-        if (stopOffsetRepo) {
-            StateRepository<String, String> repo = endpoint.getChangeStreamTokenRepository();
-            LOG.debug("Stopping ChangeStreamTokenRepository: {}", repo);
-            ServiceHelper.stopAndShutdownService(repo);
-        }
-
         super.doStop();
 
         if (changeStreamsThread != null) {
@@ -87,6 +80,12 @@ public class MongoDbChangeStreamsConsumer extends DefaultConsumer implements Res
         if (executor != null) {
             endpoint.getCamelContext().getExecutorServiceManager().shutdown(executor);
             executor = null;
+        }
+
+        if (stopOffsetRepo) {
+            StateRepository<String, String> repo = endpoint.getChangeStreamTokenRepository();
+            LOG.debug("Stopping ChangeStreamTokenRepository: {}", repo);
+            ServiceHelper.stopAndShutdownService(repo);
         }
     }
 
