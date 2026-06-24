@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.jackson.avro;
 
+import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.avro.AvroMapper;
 import org.apache.camel.component.jackson.AbstractJacksonDataFormat;
@@ -87,7 +88,12 @@ public class JacksonAvroDataFormat extends AbstractJacksonDataFormat {
 
     @Override
     protected AvroMapper createNewObjectMapper() {
-        return new AvroMapper();
+        // Enable BLOCK_UNSAFE_POLYMORPHIC_BASE_TYPES by default as defense-in-depth against gadget-chain
+        // deserialization when polymorphic typing is enabled, consistent with camel-jackson (CAMEL-23786)
+        // and the transform/Avro.java mapper.
+        return AvroMapper.builder()
+                .enable(MapperFeature.BLOCK_UNSAFE_POLYMORPHIC_BASE_TYPES)
+                .build();
     }
 
     @Override
