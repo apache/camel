@@ -102,6 +102,7 @@ The maven plugin *validate* goal supports the following options which can be con
 | includes | | To filter the names of YAML files to only include files matching any of the given list of patterns (wildcard and regular expression). Multiple values can be separated by comma.
 | excludes | | To filter the names of YAML files to exclude files matching any of the given list of patterns (wildcard and regular expression). Multiple values can be separated by comma.
 | onlyCamelYamlExt | false | Whether to only accept files with xxx.camel.yaml as file name. By default, all .yaml files are accepted.
+| directories | | Additional directories to scan for YAML files. By default, only the project's resource directories are scanned.
 |===
 
 For example to excludes a specific file:
@@ -112,6 +113,34 @@ mvn camel-yaml-dsl-validator:validate -Dcamel.excludes=cheese.yaml
 ----
 
 Notice that you must prefix the `-D` command argument with `camel.`, eg `camel.excludes` as the option name.
+
+=== Validating with additional directories
+
+If your YAML route files are stored in a location outside the standard Maven resource directories, you can specify additional directories to scan:
+
+[source,xml]
+----
+<plugin>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-yaml-dsl-validate-maven-plugin</artifactId>
+  <executions>
+    <execution>
+      <configuration>
+        <directories>
+          <directory>src/main/routes</directory>
+          <directory>src/main/camel</directory>
+        </directories>
+      </configuration>
+      <phase>process-classes</phase>
+      <goals>
+        <goal>validate</goal>
+      </goals>
+    </execution>
+  </executions>
+</plugin>
+----
+
+Both relative and absolute paths are supported. Relative paths are resolved against the project base directory.
 
 === Validating include test
 
