@@ -181,10 +181,6 @@ class McpLogPopup {
         Block detailBlock = Block.builder()
                 .borderType(BorderType.ROUNDED)
                 .title(" Detail ")
-                .titleBottom(Title.from(Line.from(
-                        Span.styled(" ↑↓", MonitorContext.HINT_KEY_STYLE), Span.raw(" select │"),
-                        Span.styled(" PgUp/Dn", MonitorContext.HINT_KEY_STYLE), Span.raw(" scroll │"),
-                        Span.styled(" Esc", MonitorContext.HINT_KEY_STYLE), Span.raw(" back "))))
                 .build();
         frame.renderWidget(detailBlock, area);
         Rect inner = detailBlock.inner(area);

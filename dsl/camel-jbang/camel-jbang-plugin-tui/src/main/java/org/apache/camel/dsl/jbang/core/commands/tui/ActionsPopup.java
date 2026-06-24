@@ -845,12 +845,6 @@ class ActionsPopup {
                 .block(Block.builder()
                         .borderType(BorderType.ROUNDED)
                         .title(" Run an Example (" + exampleCatalog.size() + ") ")
-                        .titleBottom(Title.from(Line.from(
-                                Span.styled(" r", MonitorContext.HINT_KEY_STYLE), Span.raw(" run │"),
-                                Span.styled(" Enter", MonitorContext.HINT_KEY_STYLE), Span.raw(" run... │"),
-                                Span.styled(" d", MonitorContext.HINT_KEY_STYLE), Span.raw(" docs │"),
-                                Span.styled(" ↑↓", MonitorContext.HINT_KEY_STYLE), Span.raw(" navigate │"),
-                                Span.styled(" Esc", MonitorContext.HINT_KEY_STYLE), Span.raw(" back "))))
                         .build())
                 .build();
         frame.renderStatefulWidget(list, popup, exampleBrowserState);
@@ -917,9 +911,6 @@ class ActionsPopup {
         Block block = Block.builder()
                 .borderType(BorderType.ROUNDED)
                 .title(title)
-                .titleBottom(Title.from(Line.from(
-                        Span.styled(" ↑↓", MonitorContext.HINT_KEY_STYLE), Span.raw(" scroll │"),
-                        Span.styled(" Esc", MonitorContext.HINT_KEY_STYLE), Span.raw(" back "))))
                 .build();
         if (docLines != null) {
             frame.renderWidget(block, popup);
@@ -970,9 +961,6 @@ class ActionsPopup {
                 .block(Block.builder()
                         .borderType(BorderType.ROUNDED)
                         .title(" Show Integration Doc ")
-                        .titleBottom(Title.from(Line.from(
-                                Span.styled(" Enter", MonitorContext.HINT_KEY_STYLE), Span.raw(" view │"),
-                                Span.styled(" Esc", MonitorContext.HINT_KEY_STYLE), Span.raw(" back "))))
                         .build())
                 .build();
         frame.renderStatefulWidget(list, popup, docPickerState);
@@ -1341,20 +1329,9 @@ class ActionsPopup {
 
         frame.renderWidget(Clear.INSTANCE, popup);
 
-        List<Span> bottomSpans = new ArrayList<>();
-        if (!folderHistory.isEmpty()) {
-            bottomSpans.add(Span.styled(" ↑↓", MonitorContext.HINT_KEY_STYLE));
-            bottomSpans.add(Span.raw(" history │"));
-        }
-        bottomSpans.add(Span.styled(" Enter", MonitorContext.HINT_KEY_STYLE));
-        bottomSpans.add(Span.raw(" run... │"));
-        bottomSpans.add(Span.styled(" Esc", MonitorContext.HINT_KEY_STYLE));
-        bottomSpans.add(Span.raw(" back "));
-
         Block block = Block.builder()
                 .borderType(BorderType.ROUNDED)
                 .title(" Run from folder ")
-                .titleBottom(Title.from(Line.from(bottomSpans)))
                 .build();
         frame.renderWidget(block, popup);
         Rect inner = block.inner(popup);
@@ -1806,10 +1783,6 @@ class ActionsPopup {
                 .block(Block.builder()
                         .borderType(BorderType.ROUNDED)
                         .title(" Run Dev/Infra Service (" + available + "/" + infraCatalog.size() + ") ")
-                        .titleBottom(Title.from(Line.from(
-                                Span.styled(" Enter", MonitorContext.HINT_KEY_STYLE), Span.raw(" select │"),
-                                Span.styled(" ↑↓", MonitorContext.HINT_KEY_STYLE), Span.raw(" navigate │"),
-                                Span.styled(" Esc", MonitorContext.HINT_KEY_STYLE), Span.raw(" back "))))
                         .build())
                 .build();
         frame.renderStatefulWidget(list, popup, infraBrowserState);
@@ -1833,9 +1806,6 @@ class ActionsPopup {
         Block block = Block.builder()
                 .borderType(BorderType.ROUNDED)
                 .title(" Run " + selectedInfraService.alias + " ")
-                .titleBottom(Title.from(Line.from(
-                        Span.styled(" Enter", MonitorContext.HINT_KEY_STYLE), Span.raw(" run │"),
-                        Span.styled(" Esc", MonitorContext.HINT_KEY_STYLE), Span.raw(" back "))))
                 .build();
         frame.renderWidget(block, popup);
         Rect inner = block.inner(popup);

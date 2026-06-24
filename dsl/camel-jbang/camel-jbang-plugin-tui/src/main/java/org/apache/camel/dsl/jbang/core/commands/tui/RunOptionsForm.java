@@ -29,7 +29,6 @@ import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.widgets.Clear;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
-import dev.tamboui.widgets.block.Title;
 import dev.tamboui.widgets.input.TextInput;
 import dev.tamboui.widgets.input.TextInputState;
 import dev.tamboui.widgets.paragraph.Paragraph;
@@ -414,26 +413,9 @@ class RunOptionsForm {
             title += " ";
         }
 
-        List<Span> bottomSpans = new ArrayList<>();
-        bottomSpans.add(Span.styled(" Tab", MonitorContext.HINT_KEY_STYLE));
-        bottomSpans.add(Span.raw(" next"));
-        if (hasProperties()) {
-            bottomSpans.add(Span.raw(" │"));
-            bottomSpans.add(Span.styled(" →", MonitorContext.HINT_KEY_STYLE));
-            bottomSpans.add(Span.raw(" properties"));
-        }
-        bottomSpans.add(Span.raw(" │"));
-        bottomSpans.add(Span.styled(" Space", MonitorContext.HINT_KEY_STYLE));
-        bottomSpans.add(Span.raw(" toggle │"));
-        bottomSpans.add(Span.styled(" Enter", MonitorContext.HINT_KEY_STYLE));
-        bottomSpans.add(Span.raw(" launch │"));
-        bottomSpans.add(Span.styled(" Esc", MonitorContext.HINT_KEY_STYLE));
-        bottomSpans.add(Span.raw(" back "));
-
         Block block = Block.builder()
                 .borderType(BorderType.ROUNDED)
                 .title(title)
-                .titleBottom(Title.from(Line.from(bottomSpans)))
                 .build();
         frame.renderWidget(block, popup);
 
@@ -496,12 +478,6 @@ class RunOptionsForm {
         Block block = Block.builder()
                 .borderType(BorderType.ROUNDED)
                 .title(" Run: " + exampleTitle + " — Properties (2/2) ")
-                .titleBottom(Title.from(Line.from(
-                        Span.styled(" ←", MonitorContext.HINT_KEY_STYLE), Span.raw(" options │"),
-                        Span.styled(" ↑↓", MonitorContext.HINT_KEY_STYLE), Span.raw(" navigate │"),
-                        Span.styled(" +", MonitorContext.HINT_KEY_STYLE), Span.raw(" add │"),
-                        Span.styled(" Enter", MonitorContext.HINT_KEY_STYLE), Span.raw(" launch │"),
-                        Span.styled(" Esc", MonitorContext.HINT_KEY_STYLE), Span.raw(" back "))))
                 .build();
         frame.renderWidget(block, popup);
 

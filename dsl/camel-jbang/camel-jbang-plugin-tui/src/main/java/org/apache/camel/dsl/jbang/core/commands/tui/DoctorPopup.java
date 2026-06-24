@@ -33,7 +33,6 @@ import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.widgets.Clear;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
-import dev.tamboui.widgets.block.Title;
 import dev.tamboui.widgets.paragraph.Paragraph;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
@@ -94,8 +93,6 @@ class DoctorPopup {
                 .block(Block.builder()
                         .borderType(BorderType.ROUNDED)
                         .title(" 🩺 Doctor ")
-                        .titleBottom(Title.from(Line.from(
-                                Span.styled(" Esc", MonitorContext.HINT_KEY_STYLE), Span.raw(" back "))))
                         .build())
                 .build();
         frame.renderWidget(para, popup);
