@@ -52,6 +52,8 @@ class ExportMainJibTest {
         // force removing, since deleteOnExit is not removing.
         FileUtil.removeDir(workingDir);
         FileUtil.deleteFile(profile);
+        // clean up export work dir to prevent ENOENT race with docs gulp scanning ../dsl/**
+        FileUtil.removeDir(new File(".camel-jbang"));
     }
 
     private static Stream<Arguments> runtimeProvider() {

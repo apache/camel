@@ -196,9 +196,10 @@ public abstract class ExportBaseCommand extends CamelCommand {
                         defaultValue = "quarkus-bom")
     protected String quarkusArtifactId = "quarkus-bom";
 
-    @CommandLine.Option(names = { "--quarkus-version" }, description = "Quarkus Platform version",
-                        defaultValue = RuntimeType.QUARKUS_VERSION)
-    protected String quarkusVersion = RuntimeType.QUARKUS_VERSION;
+    @CommandLine.Option(names = { "--quarkus-version" },
+                        description = "Quarkus Platform version. If not set, resolves the latest from the Quarkus registry"
+                                      + " (when --download=true), otherwise defaults to " + RuntimeType.QUARKUS_VERSION)
+    protected String quarkusVersion;
 
     @CommandLine.Option(names = { "--quarkus-package-type" },
                         description = "Quarkus package type (uber-jar or fast-jar)",
