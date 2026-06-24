@@ -55,6 +55,14 @@ longer be accepted when the configured JWK set is missing or empty, since its si
 verified in that case. Deployments with a correctly resolved JWK set are unaffected; this aligns the
 legacy `UserProfile` path with the `JwtTokenValidator` SPI path.
 
+=== camel-ftp, camel-sftp, camel-azure-files, camel-smb
+
+When `localWorkDirectory` is used, the remote-file consumers now ensure the downloaded local work file
+stays within the configured work directory, so a remote file name containing `../` sequences can no longer
+resolve to a path outside it. The containment check honours the existing `jailStartingDirectory` option
+(default `true`); set `jailStartingDirectory=false` to disable it. A remote file that resolves outside the
+local work directory is rejected with a `GenericFileOperationFailedException`.
+
 === camel-spring-ws - potential breaking change
 
 The `spring-ws` consumer now applies a `HeaderFilterStrategy` to the SOAP headers it maps onto the
