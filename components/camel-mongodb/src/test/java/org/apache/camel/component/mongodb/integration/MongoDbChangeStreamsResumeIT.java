@@ -17,6 +17,7 @@
 package org.apache.camel.component.mongodb.integration;
 
 import com.mongodb.client.MongoCollection;
+import com.mongodb.client.model.CreateCollectionOptions;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -24,6 +25,7 @@ import org.apache.camel.support.processor.state.MemoryStateRepository;
 import org.apache.camel.test.infra.core.annotations.RouteFixture;
 import org.apache.camel.test.infra.core.api.ConfigurableRoute;
 import org.bson.Document;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -33,11 +35,24 @@ public class MongoDbChangeStreamsResumeIT extends AbstractMongoDbITSupport imple
 
     private final MemoryStateRepository resumeTokenRepository = new MemoryStateRepository();
     private static final String ROUTE_ID = "resumeChangeStreamConsumer";
+    private MongoCollection<Document> mongoCollection;
+
+    @AfterEach
+    protected void doPostSetup() {
+        super.doPostSetup();
+
+        mongoCollection = db.getCollection(AbstractMongoDbITSupport.testCollectionName, Document.class);
+        mongoCollection.drop();
+
+        CreateCollectionOptions collectionOptions = new CreateCollectionOptions();
+        db.createCollection(AbstractMongoDbITSupport.testCollectionName, collectionOptions);
+        mongoCollection = db.getCollection(AbstractMongoDbITSupport.testCollectionName, Document.class);
+    }
 
     @Test
     public void shouldResumeAfterRestartFromStoredResumeToken() throws Exception {
-        MongoCollection<Document> mongoCollection
-                = db.getCollection(AbstractMongoDbITSupport.testCollectionName, Document.class);
+        mongoCollection = db.getCollection(AbstractMongoDbITSupport.testCollectionName, Document.class);
+        resumeTokenRepository.start();
 
         MockEndpoint mock = contextExtension.getMockEndpoint("mock:test");
         mock.expectedMessageCount(2);
