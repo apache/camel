@@ -16,18 +16,12 @@
  */
 package org.apache.camel.component.mongodb;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.function.BiFunction;
-import java.util.function.Function;
-
 import org.apache.camel.CamelContext;
+import org.apache.camel.component.mongodb.support.InMemoryStringResumeCache;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.processor.resume.mongodb.MongoDbResumeStrategy;
 import org.apache.camel.processor.resume.mongodb.MongoDbResumeStrategyConfigurationBuilder;
 import org.apache.camel.resume.ResumeAdapter;
-import org.apache.camel.resume.cache.ResumeCache;
 import org.apache.camel.support.processor.state.MemoryStateRepository;
 import org.apache.camel.support.resume.ResumeStrategyHelper;
 import org.bson.BsonDocument;
@@ -37,59 +31,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class MongoDbResumeAdapterTest {
-
-    private static final class InMemoryStringResumeCache implements ResumeCache<String> {
-        private final Map<String, Object> data = new HashMap<>();
-
-        @Override
-        public Object computeIfAbsent(String key, Function<? super String, ? super Object> mapping) {
-            return data.computeIfAbsent(key, mapping::apply);
-        }
-
-        @Override
-        public Object computeIfPresent(String key, BiFunction<? super String, ? super Object, ? super Object> remapping) {
-            return data.computeIfPresent(key, remapping::apply);
-        }
-
-        @Override
-        public boolean contains(String key, Object entry) {
-            return Objects.equals(data.get(key), entry);
-        }
-
-        @Override
-        public void add(String key, Object offsetValue) {
-            data.put(key, offsetValue);
-        }
-
-        @Override
-        public boolean isFull() {
-            return false;
-        }
-
-        @Override
-        public long capacity() {
-            return Long.MAX_VALUE;
-        }
-
-        @Override
-        public <T> T get(String key, Class<T> clazz) {
-            return clazz.cast(data.get(key));
-        }
-
-        @Override
-        public Object get(String key) {
-            return data.get(key);
-        }
-
-        @Override
-        public void forEach(BiFunction<? super String, ? super Object, Boolean> action) {
-            for (Map.Entry<String, Object> entry : data.entrySet()) {
-                if (!action.apply(entry.getKey(), entry.getValue())) {
-                    break;
-                }
-            }
-        }
-    }
 
     private static MongoDbEndpoint createEndpoint(CamelContext context) {
         MongoDbComponent component = new MongoDbComponent(context);
