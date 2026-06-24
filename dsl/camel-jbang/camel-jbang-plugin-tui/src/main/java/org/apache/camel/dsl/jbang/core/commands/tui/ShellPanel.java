@@ -25,6 +25,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import dev.tamboui.layout.Constraint;
+import dev.tamboui.layout.Layout;
 import dev.tamboui.layout.Rect;
 import dev.tamboui.style.Color;
 import dev.tamboui.style.Overflow;
@@ -41,6 +43,8 @@ import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
 import dev.tamboui.widgets.block.Title;
 import dev.tamboui.widgets.paragraph.Paragraph;
+import dev.tamboui.widgets.scrollbar.Scrollbar;
+import dev.tamboui.widgets.scrollbar.ScrollbarState;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.EnvironmentHelper;
 import org.apache.camel.dsl.jbang.core.common.Printer;
@@ -89,6 +93,7 @@ class ShellPanel {
     private int lastHistorySize;
     private Rect lastArea;
     private volatile boolean shellExited;
+    private final ScrollbarState scrollbarState = new ScrollbarState();
 
     void setContext(MonitorContext ctx) {
         this.ctx = ctx;
@@ -206,8 +211,17 @@ class ShellPanel {
         frame.renderWidget(block, area);
         Rect inner = block.inner(area);
 
-        int innerWidth = inner.width();
-        int innerHeight = inner.height();
+        // Reserve a 1-column gutter on the right for the scrollbar so shell content is never clipped
+        // underneath it. The column is reserved permanently to keep the content width stable, which
+        // avoids extra ScreenTerminal resizes.
+        List<Rect> hChunks = Layout.horizontal()
+                .constraints(Constraint.fill(), Constraint.length(1))
+                .split(inner);
+        Rect contentArea = hChunks.get(0);
+        Rect scrollbarArea = hChunks.get(1);
+
+        int innerWidth = contentArea.width();
+        int innerHeight = contentArea.height();
 
         // Start shell on first render (we now know the size)
         if (screenTerminal == null && innerWidth > 2 && innerHeight > 2) {
@@ -229,7 +243,7 @@ class ShellPanel {
             frame.renderWidget(
                     Paragraph.from(Line.from(
                             Span.styled(startError, Style.EMPTY.fg(Color.LIGHT_RED)))),
-                    inner);
+                    contentArea);
             return;
         }
 
@@ -266,7 +280,17 @@ class ShellPanel {
                         .text(Text.from(lines))
                         .overflow(Overflow.CLIP)
                         .build(),
-                inner);
+                contentArea);
+
+        // Scrollbar reflects the viewport position within the combined scrollback history + live screen.
+        // Only shown when there is scrollback history to page through.
+        int totalLines = histSize + innerHeight;
+        if (totalLines > innerHeight) {
+            scrollbarState.contentLength(totalLines);
+            scrollbarState.viewportContentLength(innerHeight);
+            scrollbarState.position(scrollbarPosition(histSize, innerHeight, scrollOffset));
+            frame.renderStatefulWidget(Scrollbar.builder().build(), scrollbarArea, scrollbarState);
+        }
     }
 
     void renderFooter(List<Span> spans) {
@@ -290,8 +314,7 @@ class ShellPanel {
             return renderLiveView(screen, width, height);
         }
 
-        int totalLines = history.size() + height;
-        int viewStart = Math.max(0, totalLines - scrollOffset - height);
+        int viewStart = scrollbarPosition(history.size(), height, scrollOffset);
 
         List<Line> lines = new ArrayList<>(height);
         for (int i = 0; i < height; i++) {
@@ -309,6 +332,21 @@ class ShellPanel {
             }
         }
         return lines;
+    }
+
+    /**
+     * Computes the index of the first visible line within the combined scrollback history and live screen buffer, given
+     * the current scrollback offset. When {@code scrollOffset} is 0 (the live view) the viewport sits at the bottom; at
+     * the maximum offset it sits at the top of the history.
+     *
+     * @param  historySize    number of lines currently held in the scrollback history
+     * @param  viewportHeight number of visible rows in the shell viewport
+     * @param  scrollOffset   how many lines the user has scrolled back from the live view
+     * @return                the index of the first line to display (clamped to be non-negative)
+     */
+    static int scrollbarPosition(int historySize, int viewportHeight, int scrollOffset) {
+        int totalLines = historySize + viewportHeight;
+        return Math.max(0, totalLines - scrollOffset - viewportHeight);
     }
 
     private static Line convertRow(long[] buffer, int offset, int width) {
