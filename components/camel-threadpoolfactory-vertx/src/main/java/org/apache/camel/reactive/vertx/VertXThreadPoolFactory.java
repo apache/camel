@@ -38,6 +38,7 @@ import org.apache.camel.support.DefaultThreadPoolFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Deprecated(since = "4.21.0")
 @JdkService(ThreadPoolFactory.FACTORY)
 public class VertXThreadPoolFactory extends DefaultThreadPoolFactory implements ThreadPoolFactory {
 

@@ -28,7 +28,7 @@
 
     <artifactId>camel-threadpoolfactory-vertx</artifactId>
     <packaging>jar</packaging>
-    <name>Camel :: Thread Pool Factory :: Vert.x</name>
+    <name>Camel :: Thread Pool Factory :: Vert.x (deprecated)</name>
     <description>ThreadPoolFactory for camel-core using Vert.x</description>
 
     <properties>
