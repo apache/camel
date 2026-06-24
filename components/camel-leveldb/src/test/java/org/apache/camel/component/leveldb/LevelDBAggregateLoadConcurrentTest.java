@@ -62,8 +62,6 @@ public class LevelDBAggregateLoadConcurrentTest extends LevelDBTestSupport {
                     char id = KEYS[key];
                     LOG.debug("Sending {} with id {}", value, id);
                     template.sendBodyAndHeader("direct:start", value, "id", Character.toString(id));
-                    // simulate a little delay
-                    Thread.sleep(3);
                     return null;
                 }
             });

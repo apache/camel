@@ -63,8 +63,6 @@ public class LevelDBAggregateConcurrentDifferentGroupsTest extends LevelDBTestSu
                 public Object call() throws Exception {
                     String id = index % 2 == 0 ? "A" : "B";
                     template.sendBodyAndHeader("direct:start", index, "id", id);
-                    // simulate a little delay
-                    Thread.sleep(3);
                     return null;
                 }
             });
