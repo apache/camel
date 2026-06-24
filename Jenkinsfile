@@ -145,7 +145,7 @@ pipeline {
                                         $class: 'GitSCM',
                                         branches: scm.branches,
                                         extensions: [
-                                            [$class: 'CloneOption', depth: 1, noTags: true, shallow: true]
+                                            [$class: 'CloneOption', depth: 1, noTags: true, shallow: true, honorRefspec: true]
                                         ],
                                         userRemoteConfigs: scm.userRemoteConfigs
                                     ])
