@@ -1,7 +1,7 @@
 = Sample EIP
 :doctitle: Sample
 :shortname: sample
-:description: Extract a sample of the messages passing through a route
+:description: Samples a subset of messages passing through the route, either by frequency count or time interval, and discards the rest
 :since: 
 :supportlevel: Stable
 :tabs-sync-option:

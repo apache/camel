@@ -3,7 +3,7 @@
     "kind": "language",
     "name": "java",
     "title": "Java",
-    "description": "Evaluates a Java (Java compiled once at runtime) expression.",
+    "description": "Evaluates a Java (Java compiled once at runtime) expression",
     "deprecated": false,
     "firstVersion": "4.3.0",
     "label": "language",

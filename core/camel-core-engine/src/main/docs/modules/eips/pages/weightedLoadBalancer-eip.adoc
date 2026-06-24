@@ -1,7 +1,7 @@
 = Weighted Load Balancer EIP
 :doctitle: Weighted Load Balancer
 :shortname: weightedLoadBalancer
-:description: Uses a weighted load distribution ratio for each server with respect to others.
+:description: Load balancer that distributes messages across endpoints according to configured weight ratios
 :since: 
 :supportlevel: Stable
 :tabs-sync-option:

@@ -2,7 +2,7 @@
 :doctitle: BeanIO
 :shortname: beanio
 :artifactid: camel-beanio
-:description: Marshal and unmarshal Java beans to and from flat files (such as CSV, delimited, or fixed length formats).
+:description: Marshal and unmarshal Java beans to and from flat files (such as CSV, delimited, or fixed length formats)
 :since: 2.10
 :supportlevel: Stable
 :tabs-sync-option:

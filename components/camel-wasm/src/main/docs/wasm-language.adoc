@@ -2,7 +2,7 @@
 :doctitle: Wasm
 :shortname: wasm
 :artifactid: camel-wasm
-:description: Call a wasm (web assembly) function.
+:description: Call a wasm (web assembly) function
 :since: 4.5
 :supportlevel: Experimental
 :tabs-sync-option:

@@ -1,7 +1,7 @@
 = Set Variables EIP
 :doctitle: Set Variables
 :shortname: setVariables
-:description: Allows setting multiple variables at the same time.
+:description: Sets multiple variables at once, each computed by its own expression
 :since: 
 :supportlevel: Stable
 :tabs-sync-option:

@@ -2,7 +2,7 @@
 :doctitle: jOOR
 :shortname: joor
 :artifactid: camel-joor
-:description: Evaluates a jOOR (Java compiled once at runtime) expression.
+:description: Evaluates a jOOR (Java compiled once at runtime) expression
 :since: 3.7
 :supportlevel: Stable-deprecated
 :deprecated: *deprecated*

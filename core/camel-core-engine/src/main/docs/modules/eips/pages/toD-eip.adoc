@@ -1,7 +1,7 @@
 = To D EIP
 :doctitle: To D
 :shortname: toD
-:description: Sends the message to a dynamic endpoint
+:description: Sends the message to an endpoint URI computed dynamically from an expression, allowing the destination to vary per message
 :since: 
 :supportlevel: Stable
 :tabs-sync-option:

@@ -1,7 +1,7 @@
 = Recipient List EIP
 :doctitle: Recipient List
 :shortname: recipientList
-:description: Route messages to a number of dynamically specified recipients
+:description: Routes a message to a list of dynamically calculated endpoints, determined at runtime from an expression. Each recipient receives a copy of the message.
 :since: 
 :supportlevel: Stable
 :tabs-sync-option:

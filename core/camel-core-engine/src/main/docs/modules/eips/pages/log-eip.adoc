@@ -1,7 +1,7 @@
 = Logger EIP
 :doctitle: Logger
 :shortname: log
-:description: Used for printing custom messages to the logger.
+:description: Logs a message using an expression that can include message body, headers, and other exchange data
 :since: 
 :supportlevel: Stable
 :tabs-sync-option:

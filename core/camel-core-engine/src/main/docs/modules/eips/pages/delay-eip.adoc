@@ -1,7 +1,7 @@
 = Delay EIP
 :doctitle: Delay
 :shortname: delay
-:description: Delays processing for a specified length of time
+:description: Delays message processing for a specified duration, which can be a fixed value or computed dynamically per message
 :since: 
 :supportlevel: Stable
 :tabs-sync-option:

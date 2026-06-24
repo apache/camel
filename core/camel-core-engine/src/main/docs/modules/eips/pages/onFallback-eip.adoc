@@ -1,7 +1,7 @@
 = On Fallback EIP
 :doctitle: On Fallback
 :shortname: onFallback
-:description: Route to be executed when Circuit Breaker EIP executes fallback
+:description: Defines the fallback route that executes when the Circuit Breaker trips or the primary route fails
 :since: 
 :supportlevel: Stable
 :tabs-sync-option:

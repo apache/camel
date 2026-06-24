@@ -2,7 +2,7 @@
 :doctitle: uniVocity TSV
 :shortname: univocityTsv
 :artifactid: camel-univocity-parsers
-:description: Marshal and unmarshal Java objects from and to TSV (Tab-Separated Values) records using UniVocity Parsers.
+:description: Marshal and unmarshal Java objects from and to TSV (Tab-Separated Values) records using UniVocity Parsers
 :since: 2.15
 :supportlevel: Stable
 :tabs-sync-option:

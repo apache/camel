@@ -2,7 +2,7 @@
 :doctitle: XPath
 :shortname: xpath
 :artifactid: camel-xpath
-:description: Evaluates an XPath expression against an XML payload.
+:description: Evaluates an XPath expression against an XML payload
 :since: 1.1
 :supportlevel: Stable
 :tabs-sync-option:

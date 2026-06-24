@@ -3,7 +3,7 @@
     "kind": "dataformat",
     "name": "pqc",
     "title": "PQC (Post-Quantum Cryptography)",
-    "description": "Encrypt and decrypt messages using Post-Quantum Cryptography Key Encapsulation Mechanisms (KEM).",
+    "description": "Encrypt and decrypt messages using Post-Quantum Cryptography Key Encapsulation Mechanisms (KEM)",
     "deprecated": false,
     "firstVersion": "4.16.0",
     "label": "dataformat,transformation,security",

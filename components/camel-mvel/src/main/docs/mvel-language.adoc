@@ -2,7 +2,7 @@
 :doctitle: MVEL
 :shortname: mvel
 :artifactid: camel-mvel
-:description: Evaluates a MVEL template.
+:description: Evaluates a MVEL template
 :since: 2.0
 :supportlevel: Stable
 :tabs-sync-option:

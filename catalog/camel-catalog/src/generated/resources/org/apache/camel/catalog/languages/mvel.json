@@ -3,7 +3,7 @@
     "kind": "language",
     "name": "mvel",
     "title": "MVEL",
-    "description": "Evaluates a MVEL template.",
+    "description": "Evaluates a MVEL template",
     "deprecated": false,
     "firstVersion": "2.0.0",
     "label": "language,java",

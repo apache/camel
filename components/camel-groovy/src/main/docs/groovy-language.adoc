@@ -2,7 +2,7 @@
 :doctitle: Groovy
 :shortname: groovy
 :artifactid: camel-groovy
-:description: Evaluates a Groovy script.
+:description: Evaluates a Groovy script
 :since: 1.3
 :supportlevel: Stable
 :tabs-sync-option:

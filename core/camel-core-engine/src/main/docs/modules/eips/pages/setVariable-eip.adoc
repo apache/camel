@@ -1,7 +1,7 @@
 = Set Variable EIP
 :doctitle: Set Variable
 :shortname: setVariable
-:description: Sets the value of a variable
+:description: Sets a variable to a value computed by an expression
 :since: 
 :supportlevel: Stable
 :tabs-sync-option:

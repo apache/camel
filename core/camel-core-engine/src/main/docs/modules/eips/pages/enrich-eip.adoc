@@ -1,7 +1,7 @@
 = Enrich EIP
 :doctitle: Enrich
 :shortname: enrich
-:description: Enriches a message with data from a secondary resource
+:description: Enriches the message with additional data obtained by sending to another endpoint using request-reply. The reply is merged into the original message using an aggregation strategy.
 :since: 
 :supportlevel: Stable
 :tabs-sync-option:

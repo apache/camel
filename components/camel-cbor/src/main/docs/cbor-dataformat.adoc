@@ -2,7 +2,7 @@
 :doctitle: CBOR
 :shortname: cbor
 :artifactid: camel-cbor
-:description: Unmarshal a CBOR payload to POJO and back.
+:description: Unmarshal a CBOR payload to POJO and back
 :since: 3.0
 :supportlevel: Stable
 :tabs-sync-option:

@@ -273,7 +273,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.A2ASubTaskDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "A2A Sub Task",
-            description = "Groups route steps and emits A2A progress events before, after, or when the grouped work fails.",
+            description = "Groups route steps and emits A2A (Agent-to-Agent) protocol progress events before, after, or when the grouped work fails",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "description", type = "string", description = "The description for this node", displayName = "Description"),
@@ -360,7 +360,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.dataformat.ASN1DataFormat.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "ASN.1 File",
-            description = "Encode and decode data structures using Abstract Syntax Notation One (ASN.1).",
+            description = "Encode and decode data structures using Abstract Syntax Notation One (ASN.1)",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id"),
@@ -416,7 +416,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.AggregateDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Aggregate",
-            description = "Aggregates many messages into a single message",
+            description = "Collects and combines related messages into a single message using a correlation expression and an aggregation strategy. Messages are grouped into buckets by correlation key and released when a completion condition is met.",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "aggregateController", type = "string", description = "Reference to an AggregateController to allow external sources to control this aggregator.", displayName = "Aggregate Controller"),
@@ -646,7 +646,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.rest.ApiKeyDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Api Key",
-            description = "Rest security basic auth definition",
+            description = "Configures API key authentication for a REST service",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "description", type = "string", description = "A short description for the security scheme.", displayName = "Description"),
@@ -716,7 +716,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.dataformat.AvroDataFormat.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Avro",
-            description = "Serialize and deserialize messages using Apache Avro binary data format.",
+            description = "Serialize and deserialize messages using Apache Avro binary data format",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "allowJmsType", type = "boolean", defaultValue = "false", description = "Used for JMS users to allow the JMSType header from the JMS spec to specify a FQN classname to use to unmarshal to.", displayName = "Allow Jms Type"),
@@ -879,7 +879,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.dataformat.BarcodeDataFormat.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Barcode",
-            description = "Transform strings to various 1D/2D barcode bitmap formats and back.",
+            description = "Transform strings to various 1D/2D barcode bitmap formats and back",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "barcodeFormat", type = "enum:AZTEC,CODABAR,CODE_39,CODE_93,CODE_128,DATA_MATRIX,EAN_8,EAN_13,ITF,MAXICODE,PDF_417,QR_CODE,RSS_14,RSS_EXPANDED,UPC_A,UPC_E,UPC_EAN_EXTENSION", defaultValue = "QR_CODE", description = "Barcode format such as QR-Code.", displayName = "Barcode Format"),
@@ -942,7 +942,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.dataformat.Base64DataFormat.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Base64",
-            description = "Encode and decode data using Base64.",
+            description = "Encode and decode data using Base64",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id"),
@@ -999,7 +999,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.rest.BasicAuthDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Basic Auth",
-            description = "Rest security basic auth definition",
+            description = "Configures HTTP Basic authentication for a REST service",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "description", type = "string", description = "A short description for the security scheme.", displayName = "Description"),
@@ -1044,7 +1044,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.config.BatchResequencerConfig.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Batch Config",
-            description = "Configures batch-processing resequence eip.",
+            description = "Configures the batch-processing mode of the Resequence EIP, which collects messages into a batch and sorts them before releasing",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "allowDuplicates", type = "boolean", defaultValue = "false", description = "Whether to allow duplicates.", displayName = "Allow Duplicates"),
@@ -1182,7 +1182,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.BeanDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Bean",
-            description = "Calls a Java bean",
+            description = "Invokes a method on a Java bean, with automatic parameter binding from the message body, headers, and exchange properties",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "beanType", type = "string", description = "The class name (fully qualified) of the bean to use.", displayName = "Bean Type"),
@@ -1268,7 +1268,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.BeanFactoryDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Bean Factory",
-            description = "Define custom beans that can be used in your Camel routes and in general.",
+            description = "Defines a custom bean that can be used in Camel routes and other beans. The bean is created by a factory class or method.",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "builderClass", type = "string", description = "Fully qualified class name of builder class to use for creating and configuring the bean. The builder will use the properties values to configure the bean.", displayName = "Builder Class"),
@@ -1459,7 +1459,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.dataformat.BeanioDataFormat.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "BeanIO",
-            description = "Marshal and unmarshal Java beans to and from flat files (such as CSV, delimited, or fixed length formats).",
+            description = "Marshal and unmarshal Java beans to and from flat files (such as CSV, delimited, or fixed length formats)",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "beanReaderErrorHandlerType", type = "string", description = "To use a custom org.apache.camel.dataformat.beanio.BeanIOErrorHandler as error handler while parsing. Configure the fully qualified class name of the error handler.", displayName = "Bean Reader Error Handler Type"),
@@ -1546,7 +1546,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.rest.BearerTokenDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Bearer Token",
-            description = "Rest security bearer token authentication definition",
+            description = "Configures Bearer token authentication for a REST service",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "description", type = "string", description = "A short description for the security scheme.", displayName = "Description"),
@@ -1597,7 +1597,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.dataformat.BindyDataFormat.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Bindy",
-            description = "Marshal and unmarshal Java beans from and to flat payloads (such as CSV, delimited, fixed length formats, or FIX messages).",
+            description = "Marshal and unmarshal Java beans from and to flat payloads (such as CSV, delimited, fixed length formats, or FIX messages)",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "allowEmptyStream", type = "boolean", defaultValue = "false", description = "Whether to allow empty streams in the unmarshal process. If true, no exception will be thrown when a body without records is provided.", displayName = "Allow Empty Stream"),
@@ -1672,7 +1672,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.dataformat.CBORDataFormat.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "CBOR",
-            description = "Unmarshal a CBOR payload to POJO and back.",
+            description = "Unmarshal a CBOR payload to POJO and back",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "allowJmsType", type = "boolean", defaultValue = "false", description = "Used for JMS users to allow the JMSType header from the JMS spec to specify a FQN classname to use to unmarshal to.", displayName = "Allow Jms Type"),
@@ -1772,7 +1772,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.language.CSimpleExpression.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "CSimple",
-            description = "Evaluate a compiled simple expression.",
+            description = "Evaluate a compiled simple expression",
             deprecated = true,
             properties = {
                     @YamlProperty(name = "expression", type = "string", required = true, description = "The expression value in your chosen language syntax.", displayName = "Expression"),
@@ -1855,7 +1855,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.CatchDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Do Catch",
-            description = "Catches exceptions as part of a try, catch, finally block",
+            description = "Catches specific exceptions within a doTry block, allowing fine-grained exception handling within the route",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "description", type = "string", description = "The description for this node", displayName = "Description"),
@@ -1929,7 +1929,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.ChoiceDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Choice",
-            description = "Route messages based on a series of predicates",
+            description = "Routes messages to different steps based on a series of conditions (predicates), similar to if-elseif-else in Java. Each condition is evaluated in order until one matches.",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "description", type = "string", description = "The description for this node", displayName = "Description"),
@@ -2004,7 +2004,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.CircuitBreakerDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Circuit Breaker",
-            description = "Route messages in a fault tolerance way using Circuit Breaker",
+            description = "Wraps message processing with a circuit breaker for fault tolerance. Prevents cascading failures by short-circuiting calls to an unhealthy service and routing to a fallback",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "configuration", type = "string", description = "Refers to a circuit breaker configuration to use for configuring the circuit breaker EIP.", displayName = "Configuration"),
@@ -2096,7 +2096,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.ClaimCheckDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Claim Check",
-            description = "The Claim Check EIP allows you to replace message content with a claim check (a unique key), which can be used to retrieve the message content at a later time.",
+            description = "Temporarily stores the message content and replaces it with a claim check key, allowing the content to be retrieved later in the route. Useful for reducing memory when large payloads pass through processing steps that don't need them.",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "aggregationStrategy", type = "string", description = "Reference to a custom AggregationStrategy to use for merging data back from the claim check repository.", displayName = "Aggregation Strategy"),
@@ -2217,7 +2217,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.language.ConstantExpression.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Constant",
-            description = "A fixed value set only once during the route startup.",
+            description = "A fixed value set only once during the route startup",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "expression", type = "string", required = true, description = "The expression value in your chosen language syntax.", displayName = "Expression"),
@@ -2288,7 +2288,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.ContextScanDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Context Scan",
-            description = "Scans for Java org.apache.camel.builder.RouteBuilder instances in the context org.apache.camel.spi.Registry .",
+            description = "Scans for RouteBuilder instances in the Camel registry to auto-discover and register routes",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "excludes", type = "array:string", description = "Exclude finding route builder from these java package names.", displayName = "Excludes"),
@@ -2340,7 +2340,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.ConvertBodyDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Convert Body To",
-            description = "Converts the message body to another type",
+            description = "Converts the message body to a specified Java type using Camel's built-in type converters",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "charset", type = "string", description = "To use a specific charset when converting.", displayName = "Charset"),
@@ -2420,7 +2420,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.ConvertHeaderDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Convert Header To",
-            description = "Converts the message header to another type",
+            description = "Converts a message header value to a specified Java type using Camel's built-in type converters",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "charset", type = "string", description = "To use a specific charset when converting.", displayName = "Charset"),
@@ -2507,7 +2507,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.ConvertVariableDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Convert Variable To",
-            description = "Converts the variable to another type",
+            description = "Converts a variable value to a specified Java type using Camel's built-in type converters",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "charset", type = "string", description = "To use a specific charset when converting.", displayName = "Charset"),
@@ -2594,7 +2594,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.dataformat.CryptoDataFormat.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Crypto (Java Cryptographic Extension)",
-            description = "Encrypt and decrypt messages using Java Cryptography Extension (JCE).",
+            description = "Encrypt and decrypt messages using Java Cryptography Extension (JCE)",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "algorithm", type = "string", description = "The JCE algorithm name indicating the cryptographic algorithm that will be used.", displayName = "Algorithm"),
@@ -2688,7 +2688,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.dataformat.CsvDataFormat.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "CSV",
-            description = "Handle CSV (Comma Separated Values) payloads.",
+            description = "Handle CSV (Comma Separated Values) payloads",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "allowMissingColumnNames", type = "boolean", defaultValue = "false", description = "Whether to allow missing column names.", displayName = "Allow Missing Column Names"),
@@ -2901,7 +2901,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.dataformat.CustomDataFormat.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Custom",
-            description = "Delegate to a custom org.apache.camel.spi.DataFormat implementation via Camel registry.",
+            description = "Delegates to a custom DataFormat implementation looked up from the Camel registry by name",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id"),
@@ -2952,7 +2952,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.loadbalancer.CustomLoadBalancerDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Custom Load Balancer",
-            description = "To use a custom load balancer implementation.",
+            description = "References a custom load balancer implementation from the registry",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id"),
@@ -3002,7 +3002,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.transformer.CustomTransformerDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Custom Transformer",
-            description = "To use a custom transformer on a route level.",
+            description = "References a custom data type transformer implementation from the registry for route-level transformations",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "className", type = "string", description = "Fully qualified class name of the custom Transformer implementation.", displayName = "Class Name"),
@@ -3071,7 +3071,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.validator.CustomValidatorDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Custom Validator",
-            description = "To use a custom validator on the route level.",
+            description = "References a custom data type validator implementation from the registry for route-level validation",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "className", type = "string", description = "Fully qualified class name of the custom Validator implementation.", displayName = "Class Name"),
@@ -3155,7 +3155,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.transformer.DataFormatTransformerDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Data Format Transformer",
-            description = "Represents a org.apache.camel.processor.transformer.DataFormatTransformer which leverages org.apache.camel.spi.DataFormat to perform transformation. One of the DataFormat 'ref' or DataFormat 'type' needs to be specified.",
+            description = "Uses a Camel data format to perform data type transformation between input and output types",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "asn1", type = "object:org.apache.camel.model.dataformat.ASN1DataFormat", oneOf = "dataFormatType"),
@@ -3505,7 +3505,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.dataformat.DataFormatsDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Data formats",
-            description = "Configure data formats.",
+            description = "Container for defining data format configurations",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "asn1", type = "object:org.apache.camel.model.dataformat.ASN1DataFormat"),
@@ -4072,7 +4072,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.language.DatasonnetExpression.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "DataSonnet",
-            description = "To use DataSonnet scripts for message transformations.",
+            description = "To use DataSonnet scripts for message transformations",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "bodyMediaType", type = "string", description = "The media type of the message body, such as application/json.", displayName = "Body Media Type"),
@@ -4161,7 +4161,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.errorhandler.DeadLetterChannelDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Dead Letter Channel",
-            description = "Error handler with dead letter queue.",
+            description = "Error handler that moves failed messages to a dead letter endpoint after exhausting redelivery attempts",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "deadLetterHandleNewException", type = "boolean", defaultValue = "true", description = "Whether the dead letter channel should handle (and ignore) any new exception thrown while sending the exchange to the dead letter endpoint. Set to false to propagate the new exception back, which is useful with transactions so the transaction can detect the failure and rollback.", displayName = "Dead Letter Handle New Exception"),
@@ -4284,7 +4284,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.errorhandler.DefaultErrorHandlerDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Default Error Handler",
-            description = "The default error handler.",
+            description = "The default error handler that supports redelivery with configurable retry policies and delay patterns",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "executorServiceRef", type = "string", description = "Sets a reference to a thread pool to be used for asynchronous redelivery.", displayName = "Executor Service Ref"),
@@ -4395,7 +4395,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.DelayDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Delay",
-            description = "Delays processing for a specified length of time",
+            description = "Delays message processing for a specified duration, which can be a fixed value or computed dynamically per message",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "__extends", type = "object:org.apache.camel.model.language.ExpressionDefinition", oneOf = "expression"),
@@ -4486,7 +4486,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.rest.DeleteDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Delete",
-            description = "Rest DELETE command",
+            description = "Defines an HTTP DELETE operation in the REST DSL",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "apiDocs", type = "boolean", defaultValue = "true", description = "Whether to include or exclude this rest operation in API documentation.", displayName = "Api Docs"),
@@ -4658,7 +4658,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.dataformat.DfdlDataFormat.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "DFDL",
-            description = "Transforms fixed format data such as EDI message from/to XML using a Data Format Description Language (DFDL).",
+            description = "Transforms fixed format data such as EDI message from/to XML using a Data Format Description Language (DFDL)",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id"),
@@ -4720,7 +4720,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.DynamicRouterDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Dynamic Router",
-            description = "Route messages based on dynamic rules",
+            description = "Routes a message step-by-step through a series of endpoints, determined dynamically by calling an expression repeatedly. The expression is called after each hop and returns the next endpoint, or null to stop.",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "__extends", type = "object:org.apache.camel.model.language.ExpressionDefinition", oneOf = "expression"),
@@ -4811,7 +4811,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.transformer.EndpointTransformerDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Endpoint Transformer",
-            description = "To use a Camel endpoint to perform transformation on the route level.",
+            description = "Uses a Camel endpoint to perform data type transformation by sending the message through the endpoint",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "fromType", type = "string", description = "The source (from) data type name. If you specify 'xml:XYZ', the transformer is picked up when source type matches. If you specify just 'xml', it matches all xml source types.", displayName = "From Type"),
@@ -4880,7 +4880,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.validator.EndpointValidatorDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Endpoint Validator",
-            description = "To use a Camel endpoint to perform validation on the route level.",
+            description = "Uses a Camel endpoint to perform data type validation by sending the message through the endpoint",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "ref", type = "string", description = "Reference of the Endpoint used for validation.", displayName = "Ref"),
@@ -4931,7 +4931,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.EnrichDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Enrich",
-            description = "Enriches a message with data from a secondary resource",
+            description = "Enriches the message with additional data obtained by sending to another endpoint using request-reply. The reply is merged into the original message using an aggregation strategy.",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "__extends", type = "object:org.apache.camel.model.language.ExpressionDefinition", oneOf = "expression"),
@@ -5070,7 +5070,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.ErrorHandlerDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Error Handler",
-            description = "Camel error handling.",
+            description = "Configures error handling strategy for routes, controlling how failed exchanges are handled and redelivered",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "deadLetterChannel", type = "object:org.apache.camel.model.errorhandler.DeadLetterChannelDefinition", oneOf = "errorHandlerType"),
@@ -5151,7 +5151,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.language.ExchangePropertyExpression.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "ExchangeProperty",
-            description = "Gets a property from the Exchange.",
+            description = "Gets a property from the Exchange",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "expression", type = "string", required = true, description = "The expression value in your chosen language syntax.", displayName = "Expression"),
@@ -5216,7 +5216,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.loadbalancer.FailoverLoadBalancerDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Failover Load Balancer",
-            description = "In case of failures the exchange will be tried on the next endpoint.",
+            description = "Load balancer that tries the next endpoint in case of failure, cycling through available endpoints until one succeeds",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "exception", type = "array:string", description = "A list of class names for specific exceptions to monitor. If no exceptions are configured then all exceptions are monitored.", displayName = "Exception"),
@@ -5285,7 +5285,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.FaultToleranceConfigurationDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Fault Tolerance Configuration",
-            description = "MicroProfile Fault Tolerance Circuit Breaker EIP configuration",
+            description = "Configures MicroProfile Fault Tolerance settings for the Circuit Breaker EIP, such as timeout, bulkhead, and retry parameters",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "bulkheadEnabled", type = "boolean", defaultValue = "false", description = "Whether bulkhead is enabled or not on the circuit breaker.", displayName = "Bulkhead Enabled"),
@@ -5396,7 +5396,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.dataformat.FhirJsonDataFormat.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "FHIR JSon",
-            description = "Marshall and unmarshall FHIR objects to/from JSON.",
+            description = "Marshall and unmarshall FHIR objects to/from JSON",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "contentTypeHeader", type = "boolean", defaultValue = "true", description = "Whether the data format should set the Content-Type header with the type from the data format. For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSON", displayName = "Content Type Header"),
@@ -5543,7 +5543,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.dataformat.FhirXmlDataFormat.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "FHIR XML",
-            description = "Marshall and unmarshall FHIR objects to/from XML.",
+            description = "Marshall and unmarshall FHIR objects to/from XML",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "contentTypeHeader", type = "boolean", defaultValue = "true", description = "Whether the data format should set the Content-Type header with the type from the data format. For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSON", displayName = "Content Type Header"),
@@ -5690,7 +5690,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.FilterDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Filter",
-            description = "Filter out messages based using a predicate",
+            description = "Filters messages using a predicate expression. Messages matching the predicate continue processing; non-matching messages are skipped.",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "__extends", type = "object:org.apache.camel.model.language.ExpressionDefinition", oneOf = "expression"),
@@ -5774,7 +5774,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.FinallyDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Do Finally",
-            description = "Steps to execute after a doTry block completes, regardless of whether an exception was thrown or caught",
+            description = "Defines steps to always execute after a doTry block completes, regardless of whether an exception was thrown or caught",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "description", type = "string", description = "The description for this node", displayName = "Description"),
@@ -5836,7 +5836,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.dataformat.FlatpackDataFormat.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Flatpack",
-            description = "Marshal and unmarshal Java lists and maps to/from flat files (such as CSV, delimited, or fixed length formats) using Flatpack library.",
+            description = "Marshal and unmarshal Java lists and maps to/from flat files (such as CSV, delimited, or fixed length formats) using Flatpack library",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "allowShortLines", type = "boolean", defaultValue = "false", description = "Allows for lines to be shorter than expected and ignores the extra characters.", displayName = "Allow Short Lines"),
@@ -5986,7 +5986,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.rest.GetDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Get",
-            description = "Rest GET command",
+            description = "Defines an HTTP GET operation in the REST DSL",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "apiDocs", type = "boolean", defaultValue = "true", description = "Whether to include or exclude this rest operation in API documentation.", displayName = "Api Docs"),
@@ -6157,7 +6157,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.GlobalOptionDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Global Option",
-            description = "Models a string key/value pair for configuring some global options on a Camel context such as max debug log length.",
+            description = "Defines a single global configuration option as a key/value pair for the CamelContext",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "key", type = "string", required = true, description = "Global option key", displayName = "Key"),
@@ -6202,7 +6202,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.GlobalOptionsDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Global Options",
-            description = "Models a series of string key/value pairs for configuring some global options on a Camel context such as max debug log length.",
+            description = "Defines a collection of global configuration options for the CamelContext",
             deprecated = false,
             properties = @YamlProperty(name = "globalOption", type = "array:org.apache.camel.model.GlobalOptionDefinition", description = "A series of global options as key value pairs.", displayName = "Global Option")
     )
@@ -6239,7 +6239,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.dataformat.GrokDataFormat.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Grok",
-            description = "Unmarshal unstructured data to objects using Logstash based Grok patterns.",
+            description = "Unmarshal unstructured data to objects using Logstash based Grok patterns",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "allowMultipleMatchesPerLine", type = "boolean", defaultValue = "true", description = "Whether to allow multiple matches per line. If false, every line of input is matched for the pattern only once. Otherwise the line can be scanned multiple times when a non-terminal pattern is used.", displayName = "Allow Multiple Matches Per Line"),
@@ -6303,7 +6303,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.language.GroovyExpression.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Groovy",
-            description = "Evaluates a Groovy script.",
+            description = "Evaluates a Groovy script",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "expression", type = "string", required = true, description = "The expression value in your chosen language syntax.", displayName = "Expression"),
@@ -6374,7 +6374,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.dataformat.GroovyJSonDataFormat.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Groovy JSon",
-            description = "Transform between JSon and java.util.Map or java.util.List objects.",
+            description = "Transform between JSon and java.util.Map or java.util.List objects",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id"),
@@ -6419,7 +6419,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.dataformat.GroovyXmlDataFormat.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Groovy XML",
-            description = "Transform between XML and Groovy Node (Map structure) objects.",
+            description = "Transform between XML and Groovy Node (Map structure) objects",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "attributeMapping", type = "boolean", defaultValue = "true", description = "Whether to enable attribute mapping. When enabled, keys that start with _ or character will be mapped to an XML attribute, and vice versa.", displayName = "Attribute Mapping"),
@@ -6464,7 +6464,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.dataformat.GzipDeflaterDataFormat.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "GZip Deflater",
-            description = "Compress and decompress messages using java.util.zip.GZIPStream.",
+            description = "Compress and decompress messages using java.util.zip.GZIP*Stream",
             deprecated = false,
             properties = @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id")
     )
@@ -6501,7 +6501,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.dataformat.HL7DataFormat.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "HL7",
-            description = "Marshal and unmarshal HL7 (Health Care) model objects using the HL7 MLLP codec.",
+            description = "Marshal and unmarshal HL7 (Health Care) model objects using the HL7 MLLP codec",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id"),
@@ -6558,7 +6558,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.rest.HeadDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Head",
-            description = "Rest HEAD command",
+            description = "Defines an HTTP HEAD operation in the REST DSL",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "apiDocs", type = "boolean", defaultValue = "true", description = "Whether to include or exclude this rest operation in API documentation.", displayName = "Api Docs"),
@@ -6730,7 +6730,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.language.HeaderExpression.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Header",
-            description = "Gets a header from the Exchange.",
+            description = "Gets a header from the Exchange",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "expression", type = "string", required = true, description = "The expression value in your chosen language syntax.", displayName = "Expression"),
@@ -6796,7 +6796,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.language.Hl7TerserExpression.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "HL7 Terser",
-            description = "Get the value of a HL7 message field specified by terse location specification syntax.",
+            description = "Get the value of a HL7 message field specified by terse location specification syntax",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "expression", type = "string", required = true, description = "The expression value in your chosen language syntax.", displayName = "Expression"),
@@ -6873,7 +6873,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.dataformat.IcalDataFormat.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "iCal",
-            description = "Marshal and unmarshal iCal (.ics) documents to/from model objects.",
+            description = "Marshal and unmarshal iCal (*.ics) documents to/from model objects",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id"),
@@ -6918,7 +6918,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.IdempotentConsumerDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Idempotent Consumer",
-            description = "Filters out duplicate messages",
+            description = "Filters out duplicate messages based on a unique message identifier and an idempotent repository that tracks previously seen IDs",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "__extends", type = "object:org.apache.camel.model.language.ExpressionDefinition", oneOf = "expression"),
@@ -7026,7 +7026,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.InputTypeDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Input Type",
-            description = "Set the expected data type of the input message. If the actual message type is different at runtime, camel look for a required Transformer and apply if exists. If validate attribute is true then camel applies Validator as well. Type name consists of two parts, 'scheme' and 'name' connected with ':'. For Java type 'name' is a fully qualified class name. For example {code java:java.lang.String} , {code json:ABCOrder} . It's also possible to specify only scheme part, so that it works like a wildcard. If only 'xml' is specified, all the XML message matches. It's handy to add only one transformer/validator for all the transformation from/to XML.",
+            description = "Declares the expected input data type for a route. Camel will apply a data type transformer if the actual message type differs at runtime.",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "description", type = "string", description = "The description for this node", displayName = "Description"),
@@ -7090,7 +7090,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.InterceptDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Intercept",
-            description = "Intercepts a message at each step in the route",
+            description = "Intercepts each message at every processing step in the route, allowing cross-cutting logic such as logging or auditing",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "description", type = "string", description = "The description for this node", displayName = "Description"),
@@ -7160,7 +7160,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.InterceptFromDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Intercept From",
-            description = "Intercepts incoming messages",
+            description = "Intercepts incoming messages arriving from consumer endpoints, optionally filtering by endpoint URI pattern",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "description", type = "string", description = "The description for this node", displayName = "Description"),
@@ -7241,7 +7241,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.InterceptSendToEndpointDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Intercept Send To Endpoint",
-            description = "Intercepts messages being sent to an endpoint",
+            description = "Intercepts messages being sent to a specific endpoint, allowing the message to be modified or the send to be skipped",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "afterUri", type = "string", description = "After sending to the endpoint then send the message to this uri which allows to process its result.", displayName = "After Uri"),
@@ -7332,7 +7332,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.dataformat.Iso8583DataFormat.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "ISO-8583",
-            description = "Create, edit and read ISO-8583 messages.",
+            description = "Create, edit and read ISO-8583 messages",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "allowAutoWiredMessageFormat", type = "boolean", defaultValue = "true", description = "Whether to auto-discover com.solab.iso8583.MessageFactory from the registry", displayName = "Allow Auto Wired Message Format"),
@@ -7389,7 +7389,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.dataformat.JacksonXMLDataFormat.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Jackson XML",
-            description = "Unmarshal an XML payloads to POJOs and back using XMLMapper extension of Jackson.",
+            description = "Unmarshal an XML payloads to POJOs and back using XMLMapper extension of Jackson",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "allowJmsType", type = "boolean", defaultValue = "false", description = "Whether to allow the JMSType header from the JMS spec to specify a FQN classname to use to unmarshal to.", displayName = "Allow Jms Type"),
@@ -7531,7 +7531,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.language.JavaExpression.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Java",
-            description = "Evaluates a Java (Java compiled once at runtime) expression.",
+            description = "Evaluates a Java (Java compiled once at runtime) expression",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "expression", type = "string", required = true, description = "The expression value in your chosen language syntax.", displayName = "Expression"),
@@ -7615,7 +7615,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.language.JavaScriptExpression.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "JavaScript",
-            description = "Evaluates a JavaScript expression.",
+            description = "Evaluates a JavaScript expression",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "expression", type = "string", required = true, description = "The expression value in your chosen language syntax.", displayName = "Expression"),
@@ -7686,7 +7686,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.dataformat.JaxbDataFormat.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "JAXB",
-            description = "Unmarshal XML payloads to POJOs and back using JAXB2 XML marshalling standard.",
+            description = "Unmarshal XML payloads to POJOs and back using JAXB2 XML marshalling standard",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "accessExternalSchemaProtocols", type = "string", description = "Only in use if schema validation has been enabled. Restrict access to the protocols specified for external reference set by the schemaLocation attribute, Import and Include element.", displayName = "Access External Schema Protocols"),
@@ -7846,7 +7846,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.language.JoorExpression.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "jOOR",
-            description = "Evaluates a jOOR (Java compiled once at runtime) expression.",
+            description = "Evaluates a jOOR (Java compiled once at runtime) expression",
             deprecated = true,
             properties = {
                     @YamlProperty(name = "expression", type = "string", required = true, description = "The expression value in your chosen language syntax.", displayName = "Expression"),
@@ -7930,7 +7930,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.language.JqExpression.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "JQ",
-            description = "Evaluates a JQ expression against a JSON message body.",
+            description = "Evaluates a JQ expression against a JSON message body",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "expression", type = "string", required = true, description = "The expression value in your chosen language syntax.", displayName = "Expression"),
@@ -8007,7 +8007,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.dataformat.JsonApiDataFormat.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "JSonApi",
-            description = "Marshal and unmarshal JSON:API resources using JSONAPI-Converter library.",
+            description = "Marshal and unmarshal JSON:API resources using JSONAPI-Converter library",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "dataFormatTypes", type = "string", description = "The classes to take into account for the marshalling. Multiple classes can be separated by comma.", displayName = "Data Format Types"),
@@ -8058,7 +8058,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.dataformat.JsonDataFormat.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "JSon",
-            description = "Marshal POJOs to JSON and back.",
+            description = "Marshal POJOs to JSON and back",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "allowJmsType", type = "boolean", defaultValue = "false", description = "Used for JMS users to allow the JMSType header from the JMS spec to specify a FQN classname to use to unmarshal to.", displayName = "Allow Jms Type"),
@@ -8241,7 +8241,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.language.JsonPathExpression.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "JSONPath",
-            description = "Evaluates a JSONPath expression against a JSON message body.",
+            description = "Evaluates a JSONPath expression against a JSON message body",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "allowEasyPredicate", type = "boolean", defaultValue = "true", description = "Whether to allow using the easy predicate parser to pre-parse predicates.", displayName = "Allow Easy Predicate"),
@@ -8354,7 +8354,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.errorhandler.JtaTransactionErrorHandlerDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Jta Transaction Error Handler",
-            description = "JTA based transactional error handler (requires camel-jta).",
+            description = "Transactional error handler using JTA (Java Transaction API) that marks the transaction for rollback on failure",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "executorServiceRef", type = "string", description = "Sets a reference to a thread pool to be used for asynchronous redelivery.", displayName = "Executor Service Ref"),
@@ -8477,7 +8477,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.dataformat.LZFDataFormat.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "LZF Deflate Compression",
-            description = "Compress and decompress streams using LZF deflate algorithm.",
+            description = "Compress and decompress streams using LZF deflate algorithm",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id"),
@@ -8522,7 +8522,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.tokenizer.LangChain4jCharacterTokenizerDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "LangChain4J Tokenizer with character splitter",
-            description = "Camel AI: Tokenizer for splitting by character.",
+            description = "Splits text into chunks by character count, using LangChain4j's character tokenizer for AI text processing",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id"),
@@ -8585,7 +8585,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.tokenizer.LangChain4jLineTokenizerDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "LangChain4J Tokenizer with line splitter",
-            description = "Camel AI: Tokenizer for splitting line by line.",
+            description = "Splits text into chunks line by line, using LangChain4j's line tokenizer for AI text processing",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id"),
@@ -8648,7 +8648,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.tokenizer.LangChain4jParagraphTokenizerDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "LangChain4J Tokenizer with paragraph splitter",
-            description = "Camel AI: Tokenizer for splitting by paragraphs.",
+            description = "Splits text into chunks by paragraph boundaries, using LangChain4j's paragraph tokenizer for AI text processing",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id"),
@@ -8711,7 +8711,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.tokenizer.LangChain4jSentenceTokenizerDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "LangChain4J Tokenizer with sentence splitter",
-            description = "Camel AI: Tokenizer for splitting by sentences.",
+            description = "Splits text into chunks by sentence boundaries, using LangChain4j's sentence tokenizer for AI text processing",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id"),
@@ -8833,7 +8833,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.tokenizer.LangChain4jWordTokenizerDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "LangChain4J Tokenizer with word splitter",
-            description = "Camel AI: Tokenizer for splitting by word.",
+            description = "Splits text into chunks by word boundaries, using LangChain4j's word tokenizer for AI text processing",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id"),
@@ -8896,7 +8896,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.language.LanguageExpression.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Language",
-            description = "Evaluates a custom language.",
+            description = "Evaluates a custom language",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "expression", type = "string", required = true, description = "The expression value in your chosen language syntax.", displayName = "Expression"),
@@ -8962,7 +8962,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.LoadBalanceDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Load Balance",
-            description = "Balances message processing among a number of nodes",
+            description = "Distributes messages across multiple endpoints using a load balancing strategy such as round-robin, random, failover, or weighted",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "customLoadBalancer", type = "object:org.apache.camel.model.loadbalancer.CustomLoadBalancerDefinition", oneOf = "loadBalancerType"),
@@ -9071,7 +9071,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.transformer.LoadTransformerDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Load Transformer",
-            description = "To load custom transformers from classpath scanning to be used for route level transformations.",
+            description = "Auto-discovers and loads data type transformers from the classpath via scanning",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "defaults", type = "boolean", defaultValue = "false", description = "Whether to enable loading of default transformers.", displayName = "Defaults"),
@@ -9141,7 +9141,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.LogDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Logger",
-            description = "Used for printing custom messages to the logger.",
+            description = "Logs a message using an expression that can include message body, headers, and other exchange data",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "description", type = "string", description = "The description for this node", displayName = "Description"),
@@ -9239,7 +9239,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.LoopDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Loop",
-            description = "Processes a message multiple times",
+            description = "Processes the message body repeatedly for a specified number of iterations, or until a condition is met",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "__extends", type = "object:org.apache.camel.model.language.ExpressionDefinition", oneOf = "expression"),
@@ -9341,7 +9341,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.MarshalDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Marshal",
-            description = "Marshals data into a specified format for transmission over a transport or component",
+            description = "Serializes the message body into a specific data format such as JSON, XML, CSV, or Protobuf for transmission or storage",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "asn1", type = "object:org.apache.camel.model.dataformat.ASN1DataFormat", oneOf = "dataFormatType"),
@@ -9704,7 +9704,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.language.MethodCallExpression.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Bean Method",
-            description = "Calls a Java bean method.",
+            description = "Calls a Java bean method",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "beanType", type = "string", description = "Class name (fully qualified) of the bean to use. Will lookup in registry and if there is a single instance of the same type, then the existing bean is used, otherwise a new bean is created (requires a default no-arg constructor).", displayName = "Bean Type"),
@@ -9799,7 +9799,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.dataformat.MimeMultipartDataFormat.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "MIME Multipart",
-            description = "Marshal Camel messages with attachments into MIME-Multipart messages and back.",
+            description = "Marshal Camel messages with attachments into MIME-Multipart messages and back",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "binaryContent", type = "boolean", defaultValue = "false", description = "Whether the content of binary parts in the MIME multipart is binary (true) or Base-64 encoded (false).", displayName = "Binary Content"),
@@ -9868,7 +9868,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.MulticastDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Multicast",
-            description = "Routes the same message to multiple paths either sequentially or in parallel.",
+            description = "Sends a copy of the message to multiple fixed endpoints, processing them sequentially or in parallel, and optionally aggregating their replies",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "aggregationStrategy", type = "string", description = "Reference to the AggregationStrategy to assemble the replies from the multicasts into a single outgoing message. By default Camel uses the last reply as the outgoing message.", displayName = "Aggregation Strategy"),
@@ -10002,7 +10002,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.rest.MutualTLSDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Mutual TLS",
-            description = "Rest security mutual TLS authentication definition",
+            description = "Configures mutual TLS (mTLS) client certificate authentication for a REST service",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "description", type = "string", description = "A short description for the security scheme.", displayName = "Description"),
@@ -10048,7 +10048,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.language.MvelExpression.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "MVEL",
-            description = "Evaluates a MVEL template.",
+            description = "Evaluates a MVEL template",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "expression", type = "string", required = true, description = "The expression value in your chosen language syntax.", displayName = "Expression"),
@@ -10119,7 +10119,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.errorhandler.NoErrorHandlerDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "No Error Handler",
-            description = "To not use an error handler.",
+            description = "Disables error handling for a route, causing exceptions to propagate immediately to the caller",
             deprecated = false,
             properties = @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id")
     )
@@ -10156,7 +10156,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.rest.OAuth2Definition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Oauth2",
-            description = "Rest security OAuth2 definition",
+            description = "Configures OAuth2 authentication for a REST service",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "authorizationUrl", type = "string", description = "The authorization URL to use for this flow. Required for implicit and access code flows.", displayName = "Authorization Url"),
@@ -10231,7 +10231,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.dataformat.OcsfDataFormat.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "OCSF",
-            description = "Marshal and unmarshal OCSF (Open Cybersecurity Schema Framework) security events to/from JSON.",
+            description = "Marshal and unmarshal OCSF (Open Cybersecurity Schema Framework) security events to/from JSON",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "allowUnmarshallType", type = "boolean", defaultValue = "false", description = "Whether to allow the unmarshal type to be specified via the CamelOcsfUnmarshalType header.", displayName = "Allow Unmarshall Type"),
@@ -10313,7 +10313,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.language.OgnlExpression.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "OGNL",
-            description = "Evaluates an OGNL expression (Apache Commons OGNL).",
+            description = "Evaluates an OGNL expression (Apache Commons OGNL)",
             deprecated = true,
             properties = {
                     @YamlProperty(name = "expression", type = "string", required = true, description = "The expression value in your chosen language syntax.", displayName = "Expression"),
@@ -10385,7 +10385,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.OnCompletionDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "On Completion",
-            description = "Route to be executed when normal route processing completes",
+            description = "Defines steps to execute when route processing completes, either on success, failure, or both",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "description", type = "string", description = "The description for this node", displayName = "Description"),
@@ -10490,7 +10490,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.OnExceptionDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "On Exception",
-            description = "Route to be executed when an exception is thrown",
+            description = "Defines exception handling for specific exception types, with options for redelivery, logging, and routing to error endpoints",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "continued", type = "object:org.apache.camel.model.ExpressionSubElementDefinition", description = "When continued is set to true, the exception is handled and routing continues from the point of failure. Unlike handled, which stops the original route and only runs the onException block, continued resumes the original route after the onException steps complete. The exception is considered handled as well.", displayName = "Continued"),
@@ -10618,7 +10618,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.OnFallbackDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "On Fallback",
-            description = "Route to be executed when Circuit Breaker EIP executes fallback",
+            description = "Defines the fallback route that executes when the Circuit Breaker trips or the primary route fails",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "description", type = "string", description = "The description for this node", displayName = "Description"),
@@ -10680,7 +10680,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.OnWhenDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "On When",
-            description = "To use a predicate to determine when to trigger this.",
+            description = "Applies a predicate condition to filter when a parent definition (such as onException or onCompletion) should be triggered",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "__extends", type = "object:org.apache.camel.model.language.ExpressionDefinition", oneOf = "expression"),
@@ -10747,7 +10747,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.rest.OpenApiDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Open Api",
-            description = "To use OpenApi as contract-first with Camel Rest DSL.",
+            description = "Configures a contract-first REST service using an OpenAPI specification, where Camel auto-generates routes for each operation",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "apiContextPath", type = "string", description = "Context path for exposing the OpenAPI specification file as a REST endpoint, allowing clients to obtain the specification from the running application.", displayName = "Api Context Path"),
@@ -10834,7 +10834,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.rest.OpenIdConnectDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Open Id Connect",
-            description = "Rest security OpenID Connect definition",
+            description = "Configures OpenID Connect authentication for a REST service",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "description", type = "string", description = "A short description for the security scheme.", displayName = "Description"),
@@ -10885,7 +10885,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.OptimisticLockRetryPolicyDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Optimistic Lock Retry Policy",
-            description = "To configure optimistic locking",
+            description = "Configures the retry policy for optimistic locking in the Aggregate EIP, controlling retry attempts and delays on version conflicts",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "exponentialBackOff", type = "boolean", defaultValue = "true", description = "Whether to enable exponential backoff, so each subsequent retry delay is doubled until the maximum retry delay is reached.", displayName = "Exponential Back Off"),
@@ -10948,7 +10948,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.OtherwiseDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Otherwise",
-            description = "Route to be executed when all other choices evaluate to false",
+            description = "Defines the default branch within a Choice EIP that executes when no When condition matches",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "description", type = "string", description = "The description for this node", displayName = "Description"),
@@ -11068,7 +11068,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.OutputTypeDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Output Type",
-            description = "Set the expected data type of the output message. If the actual message type is different at runtime, camel look for a required Transformer and apply if exists. If validate attribute is true then camel applies Validator as well. Type name consists of two parts, 'scheme' and 'name' connected with ':'. For Java type 'name' is a fully qualified class name. For example {code java:java.lang.String} , {code json:ABCOrder} . It's also possible to specify only scheme part, so that it works like a wildcard. If only 'xml' is specified, all the XML message matches. It's handy to add only one transformer/validator for all the XML-Java transformation.",
+            description = "Declares the expected output data type for a route. Camel will apply a data type transformer if the actual message type differs at runtime.",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "description", type = "string", description = "The description for this node", displayName = "Description"),
@@ -11131,7 +11131,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.dataformat.PGPDataFormat.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "PGP (Pretty Good Privacy Cryptographic)",
-            description = "Encrypt and decrypt messages using Java Cryptographic Extension (JCE) and PGP.",
+            description = "Encrypt and decrypt messages using Java Cryptographic Extension (JCE) and PGP",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "algorithm", type = "number", description = "Symmetric key encryption algorithm; possible values are defined in org.bouncycastle.bcpg.SymmetricKeyAlgorithmTags. Only relevant for encrypting.", displayName = "Algorithm"),
@@ -11254,7 +11254,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.dataformat.PQCDataFormat.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "PQC (Post-Quantum Cryptography)",
-            description = "Encrypt and decrypt messages using Post-Quantum Cryptography Key Encapsulation Mechanisms (KEM).",
+            description = "Encrypt and decrypt messages using Post-Quantum Cryptography Key Encapsulation Mechanisms (KEM)",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "bufferSize", type = "number", defaultValue = "4096", description = "The size of the buffer used for streaming encryption/decryption.", displayName = "Buffer Size"),
@@ -11335,7 +11335,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.PackageScanDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Package Scan",
-            description = "Scans for Java org.apache.camel.builder.RouteBuilder classes in java packages",
+            description = "Scans Java packages on the classpath for RouteBuilder classes to auto-discover and register routes",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "excludes", type = "array:string", description = "Exclude finding route builder from these java package names.", displayName = "Excludes"),
@@ -11386,7 +11386,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.rest.ParamDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Param",
-            description = "To specify the rest operation parameters.",
+            description = "Defines a parameter for a REST operation, specifying its type, name, data type, and whether it is required",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "allowableValues", type = "array:org.apache.camel.model.ValueDefinition", description = "List of allowable values for the parameter (enum).", displayName = "Allowable Values"),
@@ -11484,7 +11484,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.dataformat.ParquetAvroDataFormat.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Parquet File",
-            description = "Parquet Avro serialization and de-serialization.",
+            description = "Parquet Avro serialization and de-serialization",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "compressionCodecName", type = "enum:UNCOMPRESSED,SNAPPY,GZIP,LZO,BROTLI,LZ4,ZSTD,LZ4_RAW", defaultValue = "GZIP", description = "Compression codec to use when marshalling.", displayName = "Compression Codec Name"),
@@ -11546,7 +11546,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.rest.PatchDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Patch",
-            description = "Rest PATCH command",
+            description = "Defines an HTTP PATCH operation in the REST DSL",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "apiDocs", type = "boolean", defaultValue = "true", description = "Whether to include or exclude this rest operation in API documentation.", displayName = "Api Docs"),
@@ -11717,7 +11717,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.PausableDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Pausable",
-            description = "Pausable EIP to support resuming processing from last known offset.",
+            description = "Pauses a consumer based on a condition, allowing it to be resumed later from the last known offset. Useful for controlling ingestion rate on polling consumers.",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "consumerListener", type = "string", required = true, description = "The consumer listener to use for pausing and resuming the consumer.", displayName = "Consumer Listener"),
@@ -11786,7 +11786,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.PipelineDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Pipeline",
-            description = "Routes the message to a sequence of processors.",
+            description = "Processes the message through a sequence of steps where the output of each step becomes the input of the next",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "description", type = "string", description = "The description for this node", displayName = "Description"),
@@ -11848,7 +11848,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.PolicyDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Policy",
-            description = "Defines a policy the route will use",
+            description = "Applies a policy to the route, such as a transactional policy or a custom policy for cross-cutting concerns",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "description", type = "string", description = "The description for this node", displayName = "Description"),
@@ -11917,7 +11917,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.PollDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Poll",
-            description = "Polls a message from a static endpoint",
+            description = "Polls a single message from a consumer endpoint and sets it as the message body. Useful for fetching data on-demand from file, database, or messaging endpoints.",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "description", type = "string", description = "The description for this node", displayName = "Description"),
@@ -12004,7 +12004,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.PollEnrichDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Poll Enrich",
-            description = "Enriches messages with data polled from a secondary resource",
+            description = "Enriches the message with additional data obtained by polling a consumer endpoint (such as a file or message queue). The polled data is merged using an aggregation strategy.",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "__extends", type = "object:org.apache.camel.model.language.ExpressionDefinition", oneOf = "expression"),
@@ -12137,7 +12137,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.rest.PostDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Post",
-            description = "Rest POST command",
+            description = "Defines an HTTP POST operation in the REST DSL",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "apiDocs", type = "boolean", defaultValue = "true", description = "Whether to include or exclude this rest operation in API documentation.", displayName = "Api Docs"),
@@ -12308,7 +12308,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.validator.PredicateValidatorDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Predicate Validator",
-            description = "To use a predicate to perform validation on the route level.",
+            description = "Uses a predicate expression to validate message data types at the route level",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "expression", type = "object:org.apache.camel.model.language.ExpressionDefinition", description = "The predicate expression to use for validation.", displayName = "Expression", oneOf = "expression"),
@@ -12353,7 +12353,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.ProcessDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Process",
-            description = "Calls a Camel processor",
+            description = "Invokes a custom Camel Processor for programmatic message processing in Java",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "description", type = "string", description = "The description for this node", displayName = "Description"),
@@ -12416,7 +12416,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.PropertyDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Property",
-            description = "A key value pair where the value is a literal value",
+            description = "Defines a key/value pair with a literal value, used for passing parameters in route templates and other configurations",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "key", type = "string", required = true, description = "The name of the property.", displayName = "Key"),
@@ -12461,7 +12461,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.PropertyExpressionDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Property Expression",
-            description = "A key value pair where the value is an expression.",
+            description = "Defines a key/value pair where the value is computed by an expression, used for passing dynamic parameters",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "__extends", type = "object:org.apache.camel.model.language.ExpressionDefinition", oneOf = "expression"),
@@ -12517,7 +12517,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.dataformat.ProtobufDataFormat.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Protobuf",
-            description = "Serialize and deserialize Java objects using Google's Protocol buffers.",
+            description = "Serialize and deserialize Java objects using Google's Protocol buffers",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "allowJmsType", type = "boolean", defaultValue = "false", description = "Used for JMS users to allow the JMSType header from the JMS spec to specify a FQN classname to use to unmarshal to.", displayName = "Allow Jms Type"),
@@ -12686,7 +12686,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.rest.PutDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Put",
-            description = "Rest PUT command",
+            description = "Defines an HTTP PUT operation in the REST DSL",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "apiDocs", type = "boolean", defaultValue = "true", description = "Whether to include or exclude this rest operation in API documentation.", displayName = "Api Docs"),
@@ -12858,7 +12858,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.language.PythonExpression.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Python",
-            description = "Evaluates a Python expression.",
+            description = "Evaluates a Python expression",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "expression", type = "string", required = true, description = "The expression value in your chosen language syntax.", displayName = "Expression"),
@@ -12929,7 +12929,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.loadbalancer.RandomLoadBalancerDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Random Load Balancer",
-            description = "The destination endpoints are selected randomly.",
+            description = "Load balancer that randomly selects a destination endpoint for each message",
             deprecated = false,
             properties = @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id")
     )
@@ -12966,7 +12966,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.RecipientListDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Recipient List",
-            description = "Route messages to a number of dynamically specified recipients",
+            description = "Routes a message to a list of dynamically calculated endpoints, determined at runtime from an expression. Each recipient receives a copy of the message.",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "__extends", type = "object:org.apache.camel.model.language.ExpressionDefinition", oneOf = "expression"),
@@ -13129,7 +13129,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.RedeliveryPolicyDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Redelivery Policy",
-            description = "To configure re-delivery for error handling",
+            description = "Configures message redelivery for error handling, including maximum retries, delay patterns, and backoff settings",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "allowRedeliveryWhileStopping", type = "boolean", defaultValue = "true", description = "Controls whether to allow redelivery while stopping/shutting down a route that uses error handling.", displayName = "Allow Redelivery While Stopping"),
@@ -13313,7 +13313,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.errorhandler.RefErrorHandlerDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Ref Error Handler",
-            description = "References to an existing or custom error handler.",
+            description = "References a custom error handler bean from the registry by its name",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id"),
@@ -13364,7 +13364,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.language.RefExpression.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Ref",
-            description = "Uses an existing expression from the registry.",
+            description = "Uses an existing expression from the registry",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "expression", type = "string", required = true, description = "The expression value in your chosen language syntax.", displayName = "Expression"),
@@ -13436,7 +13436,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.RemoveHeaderDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Remove Header",
-            description = "Removes a named header from the message",
+            description = "Removes a specific header from the message by name",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "description", type = "string", description = "The description for this node", displayName = "Description"),
@@ -13505,7 +13505,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.RemoveHeadersDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Remove Headers",
-            description = "Removes message headers whose name matches a specified pattern",
+            description = "Removes all message headers whose names match a given pattern. Useful for stripping internal Camel headers before sending to external systems.",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "description", type = "string", description = "The description for this node", displayName = "Description"),
@@ -13580,7 +13580,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.RemovePropertiesDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Remove Properties",
-            description = "Removes message exchange properties whose name matches a specified pattern",
+            description = "Removes all exchange properties whose names match a given pattern",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "description", type = "string", description = "The description for this node", displayName = "Description"),
@@ -13655,7 +13655,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.RemovePropertyDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Remove Property",
-            description = "Removes a named property from the message exchange",
+            description = "Removes a specific exchange property by name",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "description", type = "string", description = "The description for this node", displayName = "Description"),
@@ -13724,7 +13724,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.RemoveVariableDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Remove Variable",
-            description = "Removes a named variable",
+            description = "Removes a specific variable by name",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "description", type = "string", description = "The description for this node", displayName = "Description"),
@@ -13792,7 +13792,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.ResequenceDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Resequence",
-            description = "Resequences (re-order) messages based on an expression",
+            description = "Reorders messages based on a sequence expression, either in batch mode (collect and sort) or stream mode (continuous reordering with a timeout)",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "__extends", type = "object:org.apache.camel.model.language.ExpressionDefinition", oneOf = "expression"),
@@ -13887,7 +13887,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.Resilience4jConfigurationDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Resilience4j Configuration",
-            description = "Resilience4j Circuit Breaker EIP configuration",
+            description = "Configures Resilience4j settings for the Circuit Breaker EIP, such as failure rate threshold, wait duration, and sliding window parameters",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "automaticTransitionFromOpenToHalfOpenEnabled", type = "boolean", defaultValue = "false", description = "Enables automatic transition from OPEN to HALF_OPEN state once the waitDurationInOpenState has passed.", displayName = "Automatic Transition From Open To Half Open Enabled"),
@@ -14064,7 +14064,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.rest.ResponseHeaderDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Response Header",
-            description = "To specify the rest operation response headers.",
+            description = "Defines a response header for a REST operation, used for API documentation and OpenAPI spec generation",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "allowableValues", type = "array:org.apache.camel.model.ValueDefinition", description = "List of allowable values for the header (enum).", displayName = "Allowable Values"),
@@ -14144,7 +14144,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.rest.ResponseMessageDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Response Message",
-            description = "To specify the rest operation response messages.",
+            description = "Defines a response message for a REST operation, including HTTP status code and description for API documentation",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "code", type = "string", defaultValue = "200", description = "The response code such as a HTTP status code.", displayName = "Code"),
@@ -14213,7 +14213,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.rest.RestBindingDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Rest Binding",
-            description = "To configure rest binding",
+            description = "Configures data binding for a REST service, controlling how request and response bodies are marshalled and unmarshalled",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "bindingMode", type = "enum:off,auto,json,xml,json_xml", defaultValue = "off", description = "Sets the binding mode for automatic marshalling and unmarshalling of request and response bodies. off (default) disables binding. auto detects JSON or XML from the Content-Type header. json binds using a JSON data format only. xml binds using an XML data format only. json_xml supports both JSON and XML.", displayName = "Binding Mode"),
@@ -14331,7 +14331,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.rest.RestConfigurationDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Rest Configuration",
-            description = "To configure rest",
+            description = "Configures global settings for the REST DSL, such as host, port, context path, binding mode, and the underlying HTTP component to use",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "apiComponent", type = "enum:openapi,swagger", description = "The name of the Camel component to use as the REST API (such as OpenApi).", displayName = "Api Component"),
@@ -14549,7 +14549,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.RestContextRefDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Rest Context Ref",
-            description = "To refer to an XML file with rest services defined using the rest-dsl",
+            description = "References an external XML file containing REST service definitions for inclusion in the current context",
             deprecated = false,
             properties = @YamlProperty(name = "ref", type = "string", required = true, description = "Reference to the rest-dsl.", displayName = "Ref")
     )
@@ -14592,7 +14592,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.rest.RestDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Rest",
-            description = "Defines a rest service using the rest-dsl",
+            description = "Defines a REST service with HTTP operations (GET, POST, PUT, DELETE, etc.) using the Camel REST DSL",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "apiDocs", type = "boolean", defaultValue = "true", description = "Whether to include or exclude this rest operation in API documentation. This option will override what may be configured on a parent level.", displayName = "Api Docs"),
@@ -14799,7 +14799,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.rest.RestPropertyDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Rest Property",
-            description = "A key value pair",
+            description = "Defines a key/value property for REST configuration, used to pass component-specific settings",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "key", type = "string", required = true, description = "Property key.", displayName = "Key"),
@@ -14844,7 +14844,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.rest.RestSecuritiesDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Rest Security Definitions",
-            description = "To configure rest security definitions.",
+            description = "Container for security scheme definitions used by REST services",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "apiKey", type = "object:org.apache.camel.model.rest.ApiKeyDefinition"),
@@ -14948,7 +14948,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.rest.RestsDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Rests",
-            description = "A series of rest services defined using the rest-dsl",
+            description = "Container for a collection of REST service definitions",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "description", type = "string", description = "The description for this node", displayName = "Description"),
@@ -15005,7 +15005,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.ResumableDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Resumable",
-            description = "Resume EIP to support resuming processing from last known offset.",
+            description = "Enables resuming processing from the last known offset after a restart, using a resume strategy to track and restore position",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "description", type = "string", description = "The description for this node", displayName = "Description"),
@@ -15081,7 +15081,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.RollbackDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Rollback",
-            description = "Forces a rollback by stopping routing the message",
+            description = "Forces a rollback of the current transaction and stops routing the message. Can set a custom message on the exception.",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "description", type = "string", description = "The description for this node", displayName = "Description"),
@@ -15161,7 +15161,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.loadbalancer.RoundRobinLoadBalancerDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Round Robin Load Balancer",
-            description = "The destination endpoints are selected in a round-robin fashion. This is a well-known and classic policy, which spreads the load evenly.",
+            description = "Load balancer that cycles through destination endpoints in sequential order, distributing the load evenly",
             deprecated = false,
             properties = @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id")
     )
@@ -15199,7 +15199,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.RouteBuilderDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Route Builder",
-            description = "To refer to a Java org.apache.camel.builder.RouteBuilder instance to use.",
+            description = "References a Java RouteBuilder class to include its routes in the current CamelContext",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id"),
@@ -15250,7 +15250,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.RouteConfigurationContextRefDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Route Configuration Context Ref",
-            description = "To refer to an XML file with route configuration defined using the xml-dsl",
+            description = "References an external XML file containing route configuration definitions for inclusion in the current context",
             deprecated = false,
             properties = @YamlProperty(name = "ref", type = "string", required = true, description = "Reference to the route configuration in the xml-dsl.", displayName = "Ref")
     )
@@ -15293,7 +15293,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.RouteContextRefDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Route Context Ref",
-            description = "To refer to an XML file with routes defined using the xml-dsl",
+            description = "References an external XML file containing route definitions for inclusion in the current context",
             deprecated = false,
             properties = @YamlProperty(name = "ref", type = "string", required = true, description = "Reference to the routes in the xml-dsl.", displayName = "Ref")
     )
@@ -15336,7 +15336,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.RouteDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Route",
-            description = "A Camel route",
+            description = "Defines a Camel route that specifies the processing steps a message goes through from a consumer endpoint to one or more producer endpoints",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "description", type = "string", description = "The description for this node", displayName = "Description"),
@@ -15403,7 +15403,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.RouteTemplateParameterDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Template Parameter",
-            description = "A route template parameter",
+            description = "Defines a parameter for a route template, with an optional default value and description",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "defaultValue", type = "string", description = "The default value of the template parameter. Used when no explicit value is provided when creating a route from the template.", displayName = "Default Value"),
@@ -15461,7 +15461,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.RoutingSlipDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Routing Slip",
-            description = "Routes a message through a series of steps that are pre-determined (the slip)",
+            description = "Routes a message through a pre-determined sequence of endpoints defined in a header or expression (the routing slip). The list of endpoints is evaluated once upfront.",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "__extends", type = "object:org.apache.camel.model.language.ExpressionDefinition", oneOf = "expression"),
@@ -15557,7 +15557,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.dataformat.RssDataFormat.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "RSS",
-            description = "Transform from ROME SyndFeed Java Objects to XML and vice-versa.",
+            description = "Transform from ROME SyndFeed Java Objects to XML and vice-versa",
             deprecated = false,
             properties = @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id")
     )
@@ -15781,7 +15781,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.SagaDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Saga",
-            description = "Enables Sagas on the route",
+            description = "Defines a Saga (long-running action) that coordinates distributed services toward a consistent outcome. Unlike XA transactions, Sagas use compensating actions for rollback and work across heterogeneous services.",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "compensation", type = "string", description = "The compensation endpoint URI that must be called to compensate all changes done in the route. The route corresponding to the compensation URI must perform compensation and complete without error.", displayName = "Compensation"),
@@ -15886,7 +15886,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.SamplingDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Sample",
-            description = "Extract a sample of the messages passing through a route",
+            description = "Samples a subset of messages passing through the route, either by frequency count or time interval, and discards the rest",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "description", type = "string", description = "The description for this node", displayName = "Description"),
@@ -15960,7 +15960,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.ScriptDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Script",
-            description = "Executes a script from a language which does not change the message body.",
+            description = "Executes an expression or script in a chosen language for side effects without modifying the message body",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "__extends", type = "object:org.apache.camel.model.language.ExpressionDefinition", oneOf = "expression"),
@@ -16033,7 +16033,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.rest.SecurityDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Rest Security",
-            description = "Rest security definition",
+            description = "Applies a security requirement to a REST operation, referencing a security scheme defined at the service level",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "key", type = "string", required = true, description = "Key used to refer to this security definition.", displayName = "Key"),
@@ -16078,7 +16078,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.SetBodyDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Set Body",
-            description = "Sets the contents of the message body",
+            description = "Sets the message body to a value computed by an expression",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "__extends", type = "object:org.apache.camel.model.language.ExpressionDefinition", oneOf = "expression"),
@@ -16152,7 +16152,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.SetExchangePatternDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Set Exchange Pattern",
-            description = "Sets the exchange pattern on the message exchange",
+            description = "Sets the message exchange pattern (MEP) on the exchange, such as InOnly for one-way or InOut for request-reply",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "description", type = "string", description = "The description for this node", displayName = "Description"),
@@ -16220,7 +16220,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.SetHeaderDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Set Header",
-            description = "Sets the value of a message header",
+            description = "Sets a message header to a value computed by an expression",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "__extends", type = "object:org.apache.camel.model.language.ExpressionDefinition", oneOf = "expression"),
@@ -16299,7 +16299,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.SetHeadersDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Set Headers",
-            description = "Allows setting multiple headers on the message at the same time.",
+            description = "Sets multiple message headers at once, each computed by its own expression",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "description", type = "string", description = "The description for this node", displayName = "Description"),
@@ -16362,7 +16362,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.SetPropertyDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Set Property",
-            description = "Sets a named property on the message exchange",
+            description = "Sets an exchange property to a value computed by an expression",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "__extends", type = "object:org.apache.camel.model.language.ExpressionDefinition", oneOf = "expression"),
@@ -16441,7 +16441,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.SetVariableDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Set Variable",
-            description = "Sets the value of a variable",
+            description = "Sets a variable to a value computed by an expression",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "__extends", type = "object:org.apache.camel.model.language.ExpressionDefinition", oneOf = "expression"),
@@ -16520,7 +16520,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.SetVariablesDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Set Variables",
-            description = "Allows setting multiple variables at the same time.",
+            description = "Sets multiple variables at once, each computed by its own expression",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "description", type = "string", description = "The description for this node", displayName = "Description"),
@@ -16584,7 +16584,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.language.SimpleExpression.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Simple",
-            description = "Evaluates a Camel simple expression.",
+            description = "Evaluates a Camel simple expression",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "expression", type = "string", required = true, description = "The expression value in your chosen language syntax.", displayName = "Expression"),
@@ -16673,7 +16673,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.dataformat.SmooksDataFormat.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Smooks",
-            description = "Transform and bind XML as well as non-XML data, including EDI, CSV, JSON, and YAML using Smooks.",
+            description = "Transform and bind XML as well as non-XML data, including EDI, CSV, JSON, and YAML using Smooks",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id"),
@@ -16719,7 +16719,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.dataformat.SoapDataFormat.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "SOAP",
-            description = "Marshal Java objects to SOAP messages and back.",
+            description = "Marshal Java objects to SOAP messages and back",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "contextPath", type = "string", required = true, description = "Package name where your JAXB classes are located.", displayName = "Context Path"),
@@ -16805,7 +16805,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.SortDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Sort",
-            description = "Sorts the contents of the message",
+            description = "Sorts the items in a message body that is a List, using a specified comparator or the default ordering",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "__extends", type = "object:org.apache.camel.model.language.ExpressionDefinition", oneOf = "expression"),
@@ -16885,7 +16885,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.language.SpELExpression.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "SpEL",
-            description = "Evaluates a Spring expression (SpEL).",
+            description = "Evaluates a Spring expression (SpEL)",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "expression", type = "string", required = true, description = "The expression value in your chosen language syntax.", displayName = "Expression"),
@@ -16956,7 +16956,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.SplitDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Split",
-            description = "Splits a single message into many sub-messages.",
+            description = "Splits a message into multiple sub-messages using an expression, and processes each one individually. Supports parallel processing and result aggregation.",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "__extends", type = "object:org.apache.camel.model.language.ExpressionDefinition", oneOf = "expression"),
@@ -17112,7 +17112,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.errorhandler.SpringTransactionErrorHandlerDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Spring Transaction Error Handler",
-            description = "Spring based transactional error handler (requires camel-spring).",
+            description = "Transactional error handler using Spring Transaction Manager that marks the transaction for rollback on failure",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "executorServiceRef", type = "string", description = "Sets a reference to a thread pool to be used for asynchronous redelivery.", displayName = "Executor Service Ref"),
@@ -17235,7 +17235,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.StepDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Step",
-            description = "Routes the message to a sequence of processors which is grouped together as one logical name",
+            description = "Groups a sequence of processing steps under a single logical name for improved monitoring, management, and tracing visibility",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "description", type = "string", description = "The description for this node", displayName = "Description"),
@@ -17297,7 +17297,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.loadbalancer.StickyLoadBalancerDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Sticky Load Balancer",
-            description = "Sticky load balancing using an expression to calculate a correlation key to perform the sticky load balancing.",
+            description = "Load balancer that routes messages to the same endpoint based on a correlation expression, ensuring session affinity",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "correlationExpression", type = "object:org.apache.camel.model.ExpressionSubElementDefinition", description = "The correlation expression to use to calculate the correlation key.", displayName = "Correlation Expression"),
@@ -17342,7 +17342,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.StopDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Stop",
-            description = "Stops the processing of the current message",
+            description = "Stops processing of the current message and marks the exchange as completed without sending it to any further steps",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "description", type = "string", description = "The description for this node", displayName = "Description"),
@@ -17399,7 +17399,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.config.StreamResequencerConfig.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Stream Config",
-            description = "Configures stream-processing resequence eip.",
+            description = "Configures the stream-processing mode of the Resequence EIP, which continuously reorders messages as they arrive using a timeout",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "capacity", type = "number", defaultValue = "1000", description = "Sets the capacity of the resequencer inbound queue.", displayName = "Capacity"),
@@ -17469,7 +17469,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.dataformat.SwiftMtDataFormat.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "SWIFT MT",
-            description = "Encode and decode SWIFT MT messages.",
+            description = "Encode and decode SWIFT MT messages",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id"),
@@ -17519,7 +17519,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.dataformat.SwiftMxDataFormat.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "SWIFT MX",
-            description = "Encode and decode SWIFT MX messages.",
+            description = "Encode and decode SWIFT MX messages",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id"),
@@ -17582,7 +17582,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.dataformat.SyslogDataFormat.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Syslog",
-            description = "Marshall SyslogMessages to RFC3164 and RFC5424 messages and back.",
+            description = "Marshall SyslogMessages to RFC3164 and RFC5424 messages and back",
             deprecated = false,
             properties = @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id")
     )
@@ -17619,7 +17619,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.dataformat.TarFileDataFormat.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Tar File",
-            description = "Archive files into tarballs or extract files from tarballs.",
+            description = "Archive files into tarballs or extract files from tarballs",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "allowEmptyDirectory", type = "boolean", defaultValue = "false", description = "Whether to allow getting the iterator even if the directory is empty, when the tar file has more than one entry.", displayName = "Allow Empty Directory"),
@@ -17682,7 +17682,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.TemplatedRouteParameterDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Templated Route Parameter",
-            description = "An input parameter of a route template.",
+            description = "Provides a parameter value for a templated route, binding a value to a route template parameter",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "name", type = "string", required = true, description = "The name of the parameter.", displayName = "Name"),
@@ -17727,7 +17727,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.ThreadPoolProfileDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Thread Pool Profile",
-            description = "To configure thread pools",
+            description = "Defines a named thread pool profile with pool size, queue size, and thread keep-alive settings for use by EIPs and components",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "allowCoreThreadTimeOut", type = "boolean", defaultValue = "false", description = "Whether idle core threads are allowed to timeout and therefore can shrink the pool size below the core pool size", displayName = "Allow Core Thread Time Out"),
@@ -17826,7 +17826,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.ThreadsDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Threads",
-            description = "Specifies that all steps after this node are processed asynchronously",
+            description = "Offloads processing of subsequent steps in the route to a thread pool, enabling asynchronous and concurrent message handling",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "allowCoreThreadTimeOut", type = "boolean", defaultValue = "false", description = "Whether idle core threads are allowed to timeout and therefore can shrink the pool size below the core pool size", displayName = "Allow Core Thread Time Out"),
@@ -17944,7 +17944,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.dataformat.ThriftDataFormat.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Thrift",
-            description = "Serialize and deserialize messages using Apache Thrift binary data format.",
+            description = "Serialize and deserialize messages using Apache Thrift binary data format",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "contentTypeFormat", type = "enum:binary,json,sjson", defaultValue = "binary", description = "The content type format in which thrift message will be serialized/deserialized. The format can be native binary, json, or simple json.", displayName = "Content Type Format"),
@@ -18006,7 +18006,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.ThrottleDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Throttle",
-            description = "Controls the rate at which messages are passed to the next node in the route",
+            description = "Limits the message throughput to a maximum number of messages per time period to avoid overloading downstream systems",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "__extends", type = "object:org.apache.camel.model.language.ExpressionDefinition", oneOf = "expression"),
@@ -18121,7 +18121,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.ThrowExceptionDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Throw Exception",
-            description = "Throws an exception",
+            description = "Throws an exception during route processing, either creating a new exception instance or re-throwing an existing one",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "description", type = "string", description = "The description for this node", displayName = "Description"),
@@ -18197,7 +18197,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.ToDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "To",
-            description = "Sends the message to a static endpoint",
+            description = "Sends the message to a fixed endpoint URI",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "description", type = "string", description = "The description for this node", displayName = "Description"),
@@ -18291,7 +18291,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.ToDynamicDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "To D",
-            description = "Sends the message to a dynamic endpoint",
+            description = "Sends the message to an endpoint URI computed dynamically from an expression, allowing the destination to vary per message",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "allowOptimisedComponents", type = "boolean", defaultValue = "true", description = "Whether to allow components to optimise toD if they are SendDynamicAware.", displayName = "Allow Optimised Components"),
@@ -18408,7 +18408,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.TokenizerDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Specialized tokenizer for AI applications",
-            description = "Represents a Camel tokenizer for AI.",
+            description = "Tokenizes the message body for AI processing, splitting text into chunks suitable for embedding or LLM input",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "description", type = "string", description = "The description for this node", displayName = "Description"),
@@ -18501,7 +18501,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.language.TokenizerExpression.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Tokenize",
-            description = "Tokenize text payloads using delimiter patterns.",
+            description = "Tokenize text payloads using delimiter patterns",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "endToken", type = "string", description = "The end token to use as tokenizer if using start/end token pairs. You can use simple language as the token to support dynamic tokens.", displayName = "End Token"),
@@ -18659,7 +18659,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.loadbalancer.TopicLoadBalancerDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Topic Load Balancer",
-            description = "Topic which sends to all destinations.",
+            description = "Load balancer that sends every message to all destination endpoints, similar to a publish-subscribe pattern",
             deprecated = false,
             properties = @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id")
     )
@@ -18696,7 +18696,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.TransactedDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Transacted",
-            description = "Enables transaction on the route",
+            description = "Wraps the route in a transaction, ensuring that all steps within the transacted block either complete together or roll back on failure",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "description", type = "string", description = "The description for this node", displayName = "Description"),
@@ -18764,7 +18764,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.TransformDataTypeDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Transform Data Type",
-            description = "Transforms the message body based on known data type transformers.",
+            description = "Transforms the message body between known data types (such as XML, JSON, Java objects) using registered data type transformers",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "description", type = "string", description = "The description for this node", displayName = "Description"),
@@ -18833,7 +18833,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.TransformDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Transform",
-            description = "Transforms the message body based on an expression",
+            description = "Sets the message body using an expression. Unlike setBody, transform also sets the OUT message body in InOut exchanges",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "__extends", type = "object:org.apache.camel.model.language.ExpressionDefinition", oneOf = "expression"),
@@ -18907,7 +18907,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.transformer.TransformersDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Transformations",
-            description = "To configure transformers.",
+            description = "Container for defining data type transformer definitions",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "customTransformer", type = "object:org.apache.camel.model.transformer.CustomTransformerDefinition"),
@@ -19063,7 +19063,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.dataformat.UniVocityCsvDataFormat.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "uniVocity CSV",
-            description = "Marshal and unmarshal Java objects from and to CSV (Comma Separated Values) using UniVocity Parsers.",
+            description = "Marshal and unmarshal Java objects from and to CSV (Comma Separated Values) using UniVocity Parsers",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "asMap", type = "boolean", defaultValue = "false", description = "Whether the unmarshalling should produce maps for the lines values instead of lists. It requires to have header (either defined or collected).", displayName = "As Map"),
@@ -19210,7 +19210,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.dataformat.UniVocityFixedDataFormat.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "uniVocity Fixed Length",
-            description = "Marshal and unmarshal Java objects from and to fixed length records using UniVocity Parsers.",
+            description = "Marshal and unmarshal Java objects from and to fixed length records using UniVocity Parsers",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "asMap", type = "boolean", defaultValue = "false", description = "Whether the unmarshalling should produce maps for the lines values instead of lists. It requires to have header (either defined or collected).", displayName = "As Map"),
@@ -19351,7 +19351,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.dataformat.UniVocityHeader.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "uniVocity Header",
-            description = "To configure headers for UniVocity data formats.",
+            description = "Defines a column header for UniVocity data format configuration",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "length", type = "string", description = "Header length.", displayName = "Length"),
@@ -19396,7 +19396,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.dataformat.UniVocityTsvDataFormat.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "uniVocity TSV",
-            description = "Marshal and unmarshal Java objects from and to TSV (Tab-Separated Values) records using UniVocity Parsers.",
+            description = "Marshal and unmarshal Java objects from and to TSV (Tab-Separated Values) records using UniVocity Parsers",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "asMap", type = "boolean", defaultValue = "false", description = "Whether the unmarshalling should produce maps for the lines values instead of lists. It requires to have header (either defined or collected).", displayName = "As Map"),
@@ -19525,7 +19525,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.UnmarshalDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Unmarshal",
-            description = "Converts the message data received from the wire into a format that Apache Camel processors can consume",
+            description = "Deserializes the message body from a specific data format such as JSON, XML, CSV, or Protobuf into a Java object",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "allowNullBody", type = "boolean", defaultValue = "false", description = "Indicates whether null is allowed as value of a body to unmarshall.", displayName = "Allow Null Body"),
@@ -19893,7 +19893,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.ValidateDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Validate",
-            description = "Validates a message based on an expression",
+            description = "Validates the message against a predicate expression and throws a PredicateValidationException if the validation fails",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "__extends", type = "object:org.apache.camel.model.language.ExpressionDefinition", oneOf = "expression"),
@@ -19973,7 +19973,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.validator.ValidatorsDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Validations",
-            description = "To configure validators.",
+            description = "Container for defining data type validator definitions",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "customValidator", type = "object:org.apache.camel.model.validator.CustomValidatorDefinition"),
@@ -20045,7 +20045,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.ValueDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Value",
-            description = "A single value",
+            description = "Holds a single value, typically used as a child element in collection-based configurations",
             deprecated = false,
             properties = @YamlProperty(name = "value", type = "string", description = "The value.", displayName = "Value")
     )
@@ -20154,7 +20154,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.language.WasmExpression.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Wasm",
-            description = "Call a wasm (web assembly) function.",
+            description = "Call a wasm (web assembly) function",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "expression", type = "string", required = true, description = "The expression value in your chosen language syntax.", displayName = "Expression"),
@@ -20231,7 +20231,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.loadbalancer.WeightedLoadBalancerDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Weighted Load Balancer",
-            description = "Uses a weighted load distribution ratio for each server with respect to others.",
+            description = "Load balancer that distributes messages across endpoints according to configured weight ratios",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "distributionRatio", type = "string", required = true, description = "The distribution ratio is a delimited String consisting of integer weights separated by delimiters for example 2,3,5. The distributionRatio must match the number of endpoints and/or processors specified in the load balancer list.", displayName = "Distribution Ratio"),
@@ -20288,7 +20288,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.WhenDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "When",
-            description = "Triggers a route when the expression evaluates to true",
+            description = "Defines a conditional branch within a Choice EIP that executes when its predicate evaluates to true",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "__extends", type = "object:org.apache.camel.model.language.ExpressionDefinition", oneOf = "expression"),
@@ -20366,7 +20366,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.WireTapDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Wire Tap",
-            description = "Routes a copy of a message (or creates a new message) to a secondary destination while continue routing the original message.",
+            description = "Sends a copy of the message to a secondary endpoint without affecting the original route flow. The tapped message is sent asynchronously in a separate thread",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "allowOptimisedComponents", type = "boolean", defaultValue = "true", description = "Whether to allow components to optimise toD if they are SendDynamicAware.", displayName = "Allow Optimised Components"),
@@ -20496,7 +20496,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.dataformat.XMLSecurityDataFormat.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "XML Security",
-            description = "Encrypt and decrypt XML payloads using Apache Santuario.",
+            description = "Encrypt and decrypt XML payloads using Apache Santuario",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "addKeyValueForEncryptedKey", type = "boolean", defaultValue = "true", description = "Whether to add the public key used to encrypt the session key as a KeyValue in the EncryptedKey structure or not.", displayName = "Add Key Value For Encrypted Key"),
@@ -20614,7 +20614,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.language.XMLTokenizerExpression.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "XML Tokenize",
-            description = "Tokenize XML payloads.",
+            description = "Tokenize XML payloads",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "expression", type = "string", required = true, description = "The expression value in your chosen language syntax.", displayName = "Expression"),
@@ -20710,7 +20710,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.language.XPathExpression.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "XPath",
-            description = "Evaluates an XPath expression against an XML payload.",
+            description = "Evaluates an XPath expression against an XML payload",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "documentType", type = "string", description = "Name of class for document type. The default value is org.w3c.dom.Document.", displayName = "Document Type"),
@@ -20842,7 +20842,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.language.XQueryExpression.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "XQuery",
-            description = "Evaluates an XQuery expressions against an XML payload.",
+            description = "Evaluates an XQuery expressions against an XML payload",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "configurationRef", type = "string", description = "Reference to a saxon configuration instance in the registry to use for xquery (requires camel-saxon).", displayName = "Configuration Ref"),
@@ -20931,7 +20931,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.dataformat.YAMLDataFormat.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "YAML",
-            description = "Marshal and unmarshal Java objects to and from YAML.",
+            description = "Marshal and unmarshal Java objects to and from YAML",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "allowAnyType", type = "boolean", defaultValue = "false", description = "Allow any class to be un-marshaled.", displayName = "Allow Any Type"),
@@ -21041,7 +21041,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.dataformat.ZipDeflaterDataFormat.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Zip Deflater",
-            description = "Compress and decompress streams using java.util.zip.Deflater and java.util.zip.Inflater.",
+            description = "Compress and decompress streams using java.util.zip.Deflater and java.util.zip.Inflater",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "compressionLevel", type = "enum:-1,0,1,2,3,4,5,6,7,8,9", defaultValue = "-1", description = "Compression level to use (0-9). -1 is default compression, 0 is no compression, and 9 is the best compression.", displayName = "Compression Level"),
@@ -21086,7 +21086,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.dataformat.ZipFileDataFormat.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Zip File",
-            description = "Compression and decompress streams using java.util.zip.ZipStream.",
+            description = "Compression and decompress streams using java.util.zip.Zip*Stream",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "allowEmptyDirectory", type = "boolean", defaultValue = "false", description = "If the zip file has more than one entry, setting this option to true, allows to get the iterator even if the directory is empty.", displayName = "Allow Empty Directory"),

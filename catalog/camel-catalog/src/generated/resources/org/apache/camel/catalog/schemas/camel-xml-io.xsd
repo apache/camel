@@ -3,7 +3,7 @@
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Groups route steps and emits A2A progress events before, after, or when the grouped work fails.
+Groups route steps and emits A2A (Agent-to-Agent) protocol progress events before, after, or when the grouped work fails
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -12,7 +12,8 @@ Groups route steps and emits A2A progress events before, after, or when the grou
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Aggregates many messages into a single message
+Collects and combines related messages into a single message using a correlation expression and an aggregation strategy.
+Messages are grouped into buckets by correlation key and released when a completion condition is met.
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -21,7 +22,7 @@ Aggregates many messages into a single message
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Rest security basic auth definition
+Configures API key authentication for a REST service
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -30,7 +31,7 @@ Rest security basic auth definition
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Encode and decode data structures using Abstract Syntax Notation One (ASN.1).
+Encode and decode data structures using Abstract Syntax Notation One (ASN.1)
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -39,7 +40,7 @@ Encode and decode data structures using Abstract Syntax Notation One (ASN.1).
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Serialize and deserialize messages using Apache Avro binary data format.
+Serialize and deserialize messages using Apache Avro binary data format
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -48,7 +49,7 @@ Serialize and deserialize messages using Apache Avro binary data format.
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Transform strings to various 1D/2D barcode bitmap formats and back.
+Transform strings to various 1D/2D barcode bitmap formats and back
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -57,7 +58,7 @@ Transform strings to various 1D/2D barcode bitmap formats and back.
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Encode and decode data using Base64.
+Encode and decode data using Base64
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -66,7 +67,7 @@ Encode and decode data using Base64.
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Rest security basic auth definition
+Configures HTTP Basic authentication for a REST service
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -75,7 +76,8 @@ Rest security basic auth definition
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Configures batch-processing resequence eip.
+Configures the batch-processing mode of the Resequence EIP, which collects messages into a batch and sorts them before
+releasing
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -84,7 +86,8 @@ Configures batch-processing resequence eip.
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Calls a Java bean
+Invokes a method on a Java bean, with automatic parameter binding from the message body, headers, and exchange
+properties
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -93,7 +96,8 @@ Calls a Java bean
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Define custom beans that can be used in your Camel routes and in general.
+Defines a custom bean that can be used in Camel routes and other beans. The bean is created by a factory class or
+method.
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -102,7 +106,7 @@ Define custom beans that can be used in your Camel routes and in general.
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Marshal and unmarshal Java beans to and from flat files (such as CSV, delimited, or fixed length formats).
+Marshal and unmarshal Java beans to and from flat files (such as CSV, delimited, or fixed length formats)
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -111,8 +115,7 @@ Marshal and unmarshal Java beans to and from flat files (such as CSV, delimited,
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Container for beans, routes, and more. Important this is only supported when using XML DSL with camel-xml-io-dsl. This
-is NOT for the classic old Spring XML DSL used by Camel 1.x/2.x.
+Container element for defining beans, routes, and other elements using XML DSL with camel-xml-io-dsl
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -121,7 +124,7 @@ is NOT for the classic old Spring XML DSL used by Camel 1.x/2.x.
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Rest security bearer token authentication definition
+Configures Bearer token authentication for a REST service
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -131,7 +134,7 @@ Rest security bearer token authentication definition
       <xs:documentation xml:lang="en">
 <![CDATA[
 Marshal and unmarshal Java beans from and to flat payloads (such as CSV, delimited, fixed length formats, or FIX
-messages).
+messages)
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -140,8 +143,8 @@ messages).
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Root tag for Camel application, that can contain beans, routes, and more. Important this is only supported when using
-XML DSL with camel-xml-io-dsl. This is NOT for the classic old Spring XML DSL used by Camel 1.x/2.x.
+Root element for a Camel application defined using XML DSL with camel-xml-io-dsl, containing beans, routes, and
+configuration
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -150,7 +153,7 @@ XML DSL with camel-xml-io-dsl. This is NOT for the classic old Spring XML DSL us
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Unmarshal a CBOR payload to POJO and back.
+Unmarshal a CBOR payload to POJO and back
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -159,7 +162,8 @@ Unmarshal a CBOR payload to POJO and back.
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Route messages based on a series of predicates
+Routes messages to different steps based on a series of conditions (predicates), similar to if-elseif-else in Java. Each
+condition is evaluated in order until one matches.
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -168,7 +172,8 @@ Route messages based on a series of predicates
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Route messages in a fault tolerance way using Circuit Breaker
+Wraps message processing with a circuit breaker for fault tolerance. Prevents cascading failures by short-circuiting
+calls to an unhealthy service and routing to a fallback
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -177,8 +182,8 @@ Route messages in a fault tolerance way using Circuit Breaker
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-The Claim Check EIP allows you to replace message content with a claim check (a unique key), which can be used to
-retrieve the message content at a later time.
+Temporarily stores the message content and replaces it with a claim check key, allowing the content to be retrieved
+later in the route. Useful for reducing memory when large payloads pass through processing steps that don't need them.
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -187,7 +192,7 @@ retrieve the message content at a later time.
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-A fixed value set only once during the route startup.
+A fixed value set only once during the route startup
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -196,7 +201,7 @@ A fixed value set only once during the route startup.
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Scans for Java org.apache.camel.builder.RouteBuilder instances in the context org.apache.camel.spi.Registry .
+Scans for RouteBuilder instances in the Camel registry to auto-discover and register routes
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -205,7 +210,7 @@ Scans for Java org.apache.camel.builder.RouteBuilder instances in the context or
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Converts the message body to another type
+Converts the message body to a specified Java type using Camel's built-in type converters
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -214,7 +219,7 @@ Converts the message body to another type
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Converts the message header to another type
+Converts a message header value to a specified Java type using Camel's built-in type converters
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -223,7 +228,7 @@ Converts the message header to another type
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Converts the variable to another type
+Converts a variable value to a specified Java type using Camel's built-in type converters
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -232,7 +237,7 @@ Converts the variable to another type
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Encrypt and decrypt messages using Java Cryptography Extension (JCE).
+Encrypt and decrypt messages using Java Cryptography Extension (JCE)
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -241,7 +246,7 @@ Encrypt and decrypt messages using Java Cryptography Extension (JCE).
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Deprecated: Evaluate a compiled simple expression.
+Deprecated: Evaluate a compiled simple expression
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -250,7 +255,7 @@ Deprecated: Evaluate a compiled simple expression.
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Handle CSV (Comma Separated Values) payloads.
+Handle CSV (Comma Separated Values) payloads
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -259,7 +264,7 @@ Handle CSV (Comma Separated Values) payloads.
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Delegate to a custom org.apache.camel.spi.DataFormat implementation via Camel registry.
+Delegates to a custom DataFormat implementation looked up from the Camel registry by name
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -268,7 +273,7 @@ Delegate to a custom org.apache.camel.spi.DataFormat implementation via Camel re
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-To use a custom load balancer implementation.
+References a custom load balancer implementation from the registry
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -277,7 +282,7 @@ To use a custom load balancer implementation.
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-To use a custom transformer on a route level.
+References a custom data type transformer implementation from the registry for route-level transformations
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -286,7 +291,7 @@ To use a custom transformer on a route level.
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-To use a custom validator on the route level.
+References a custom data type validator implementation from the registry for route-level validation
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -295,9 +300,7 @@ To use a custom validator on the route level.
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Represents a org.apache.camel.processor.transformer.DataFormatTransformer which leverages
-org.apache.camel.spi.DataFormat to perform transformation. One of the DataFormat 'ref' or DataFormat 'type' needs to be
-specified.
+Uses a Camel data format to perform data type transformation between input and output types
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -306,7 +309,7 @@ specified.
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Configure data formats.
+Container for defining data format configurations
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -315,7 +318,7 @@ Configure data formats.
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-To use DataSonnet scripts for message transformations.
+To use DataSonnet scripts for message transformations
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -324,7 +327,7 @@ To use DataSonnet scripts for message transformations.
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Error handler with dead letter queue.
+Error handler that moves failed messages to a dead letter endpoint after exhausting redelivery attempts
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -333,7 +336,7 @@ Error handler with dead letter queue.
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-The default error handler.
+The default error handler that supports redelivery with configurable retry policies and delay patterns
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -342,7 +345,7 @@ The default error handler.
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Delays processing for a specified length of time
+Delays message processing for a specified duration, which can be a fixed value or computed dynamically per message
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -351,7 +354,7 @@ Delays processing for a specified length of time
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Rest DELETE command
+Defines an HTTP DELETE operation in the REST DSL
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -360,7 +363,7 @@ Rest DELETE command
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Transforms fixed format data such as EDI message from/to XML using a Data Format Description Language (DFDL).
+Transforms fixed format data such as EDI message from/to XML using a Data Format Description Language (DFDL)
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -369,7 +372,7 @@ Transforms fixed format data such as EDI message from/to XML using a Data Format
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Catches exceptions as part of a try, catch, finally block
+Catches specific exceptions within a doTry block, allowing fine-grained exception handling within the route
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -378,7 +381,7 @@ Catches exceptions as part of a try, catch, finally block
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Steps to execute after a doTry block completes, regardless of whether an exception was thrown or caught
+Defines steps to always execute after a doTry block completes, regardless of whether an exception was thrown or caught
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -396,7 +399,8 @@ Wraps route steps in a try-catch-finally block for fine-grained exception handli
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Route messages based on dynamic rules
+Routes a message step-by-step through a series of endpoints, determined dynamically by calling an expression repeatedly.
+The expression is called after each hop and returns the next endpoint, or null to stop.
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -405,7 +409,7 @@ Route messages based on dynamic rules
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-To use a Camel endpoint to perform transformation on the route level.
+Uses a Camel endpoint to perform data type transformation by sending the message through the endpoint
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -414,7 +418,7 @@ To use a Camel endpoint to perform transformation on the route level.
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-To use a Camel endpoint to perform validation on the route level.
+Uses a Camel endpoint to perform data type validation by sending the message through the endpoint
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -423,7 +427,8 @@ To use a Camel endpoint to perform validation on the route level.
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Enriches a message with data from a secondary resource
+Enriches the message with additional data obtained by sending to another endpoint using request-reply. The reply is
+merged into the original message using an aggregation strategy.
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -432,7 +437,7 @@ Enriches a message with data from a secondary resource
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Camel error handling.
+Configures error handling strategy for routes, controlling how failed exchanges are handled and redelivered
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -441,7 +446,7 @@ Camel error handling.
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Gets a property from the Exchange.
+Gets a property from the Exchange
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -460,7 +465,7 @@ A useful base class for an expression
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-In case of failures the exchange will be tried on the next endpoint.
+Load balancer that tries the next endpoint in case of failure, cycling through available endpoints until one succeeds
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -469,7 +474,8 @@ In case of failures the exchange will be tried on the next endpoint.
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-MicroProfile Fault Tolerance Circuit Breaker EIP configuration
+Configures MicroProfile Fault Tolerance settings for the Circuit Breaker EIP, such as timeout, bulkhead, and retry
+parameters
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -478,7 +484,7 @@ MicroProfile Fault Tolerance Circuit Breaker EIP configuration
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Marshall and unmarshall FHIR objects to/from JSON.
+Marshall and unmarshall FHIR objects to/from JSON
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -487,7 +493,7 @@ Marshall and unmarshall FHIR objects to/from JSON.
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Marshall and unmarshall FHIR objects to/from XML.
+Marshall and unmarshall FHIR objects to/from XML
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -496,7 +502,8 @@ Marshall and unmarshall FHIR objects to/from XML.
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Filter out messages based using a predicate
+Filters messages using a predicate expression. Messages matching the predicate continue processing; non-matching
+messages are skipped.
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -506,7 +513,7 @@ Filter out messages based using a predicate
       <xs:documentation xml:lang="en">
 <![CDATA[
 Marshal and unmarshal Java lists and maps to/from flat files (such as CSV, delimited, or fixed length formats) using
-Flatpack library.
+Flatpack library
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -524,7 +531,7 @@ Serialize and deserialize messages using Apache Fory
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Act as a message source as input to a route
+Defines the consumer endpoint that acts as the input source for a route
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -533,7 +540,7 @@ Act as a message source as input to a route
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Rest GET command
+Defines an HTTP GET operation in the REST DSL
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -542,7 +549,7 @@ Rest GET command
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Models a string key/value pair for configuring some global options on a Camel context such as max debug log length.
+Defines a single global configuration option as a key/value pair for the CamelContext
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -551,8 +558,7 @@ Models a string key/value pair for configuring some global options on a Camel co
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Models a series of string key/value pairs for configuring some global options on a Camel context such as max debug log
-length.
+Defines a collection of global configuration options for the CamelContext
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -561,7 +567,7 @@ length.
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Unmarshal unstructured data to objects using Logstash based Grok patterns.
+Unmarshal unstructured data to objects using Logstash based Grok patterns
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -570,7 +576,7 @@ Unmarshal unstructured data to objects using Logstash based Grok patterns.
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Evaluates a Groovy script.
+Evaluates a Groovy script
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -579,7 +585,7 @@ Evaluates a Groovy script.
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Transform between JSon and java.util.Map or java.util.List objects.
+Transform between JSon and java.util.Map or java.util.List objects
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -588,7 +594,7 @@ Transform between JSon and java.util.Map or java.util.List objects.
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Transform between XML and Groovy Node (Map structure) objects.
+Transform between XML and Groovy Node (Map structure) objects
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -597,7 +603,7 @@ Transform between XML and Groovy Node (Map structure) objects.
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Compress and decompress messages using java.util.zip.GZIPStream.
+Compress and decompress messages using java.util.zip.GZIP*Stream
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -606,7 +612,7 @@ Compress and decompress messages using java.util.zip.GZIPStream.
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Rest HEAD command
+Defines an HTTP HEAD operation in the REST DSL
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -615,7 +621,7 @@ Rest HEAD command
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Gets a header from the Exchange.
+Gets a header from the Exchange
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -624,7 +630,7 @@ Gets a header from the Exchange.
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Marshal and unmarshal HL7 (Health Care) model objects using the HL7 MLLP codec.
+Marshal and unmarshal HL7 (Health Care) model objects using the HL7 MLLP codec
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -633,7 +639,7 @@ Marshal and unmarshal HL7 (Health Care) model objects using the HL7 MLLP codec.
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Get the value of a HL7 message field specified by terse location specification syntax.
+Get the value of a HL7 message field specified by terse location specification syntax
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -642,7 +648,7 @@ Get the value of a HL7 message field specified by terse location specification s
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Marshal and unmarshal iCal (.ics) documents to/from model objects.
+Marshal and unmarshal iCal (*.ics) documents to/from model objects
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -651,7 +657,8 @@ Marshal and unmarshal iCal (.ics) documents to/from model objects.
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Filters out duplicate messages
+Filters out duplicate messages based on a unique message identifier and an idempotent repository that tracks previously
+seen IDs
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -660,12 +667,8 @@ Filters out duplicate messages
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Set the expected data type of the input message. If the actual message type is different at runtime, camel look for a
-required Transformer and apply if exists. If validate attribute is true then camel applies Validator as well. Type name
-consists of two parts, 'scheme' and 'name' connected with ':'. For Java type 'name' is a fully qualified class name. For
-example {code java:java.lang.String} , {code json:ABCOrder} . It's also possible to specify only scheme part, so that it
-works like a wildcard. If only 'xml' is specified, all the XML message matches. It's handy to add only one
-transformer/validator for all the transformation from/to XML.
+Declares the expected input data type for a route. Camel will apply a data type transformer if the actual message type
+differs at runtime.
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -674,7 +677,7 @@ transformer/validator for all the transformation from/to XML.
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Intercepts a message at each step in the route
+Intercepts each message at every processing step in the route, allowing cross-cutting logic such as logging or auditing
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -683,7 +686,7 @@ Intercepts a message at each step in the route
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Intercepts incoming messages
+Intercepts incoming messages arriving from consumer endpoints, optionally filtering by endpoint URI pattern
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -692,7 +695,7 @@ Intercepts incoming messages
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Intercepts messages being sent to an endpoint
+Intercepts messages being sent to a specific endpoint, allowing the message to be modified or the send to be skipped
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -701,7 +704,7 @@ Intercepts messages being sent to an endpoint
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Create, edit and read ISO-8583 messages.
+Create, edit and read ISO-8583 messages
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -710,7 +713,7 @@ Create, edit and read ISO-8583 messages.
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Unmarshal an XML payloads to POJOs and back using XMLMapper extension of Jackson.
+Unmarshal an XML payloads to POJOs and back using XMLMapper extension of Jackson
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -719,7 +722,7 @@ Unmarshal an XML payloads to POJOs and back using XMLMapper extension of Jackson
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Evaluates a Java (Java compiled once at runtime) expression.
+Evaluates a Java (Java compiled once at runtime) expression
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -728,7 +731,7 @@ Evaluates a Java (Java compiled once at runtime) expression.
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Unmarshal XML payloads to POJOs and back using JAXB2 XML marshalling standard.
+Unmarshal XML payloads to POJOs and back using JAXB2 XML marshalling standard
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -737,7 +740,7 @@ Unmarshal XML payloads to POJOs and back using JAXB2 XML marshalling standard.
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Deprecated: Evaluates a jOOR (Java compiled once at runtime) expression.
+Deprecated: Evaluates a jOOR (Java compiled once at runtime) expression
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -746,7 +749,7 @@ Deprecated: Evaluates a jOOR (Java compiled once at runtime) expression.
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Evaluates a JQ expression against a JSON message body.
+Evaluates a JQ expression against a JSON message body
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -755,7 +758,7 @@ Evaluates a JQ expression against a JSON message body.
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Evaluates a JavaScript expression.
+Evaluates a JavaScript expression
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -764,7 +767,7 @@ Evaluates a JavaScript expression.
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Marshal POJOs to JSON and back.
+Marshal POJOs to JSON and back
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -773,7 +776,7 @@ Marshal POJOs to JSON and back.
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Marshal and unmarshal JSON:API resources using JSONAPI-Converter library.
+Marshal and unmarshal JSON:API resources using JSONAPI-Converter library
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -782,7 +785,7 @@ Marshal and unmarshal JSON:API resources using JSONAPI-Converter library.
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Evaluates a JSONPath expression against a JSON message body.
+Evaluates a JSONPath expression against a JSON message body
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -791,7 +794,7 @@ Evaluates a JSONPath expression against a JSON message body.
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-JTA based transactional error handler (requires camel-jta).
+Transactional error handler using JTA (Java Transaction API) that marks the transaction for rollback on failure
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -800,11 +803,8 @@ JTA based transactional error handler (requires camel-jta).
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-To call Kamelets in special situations. By default, calling kamelets should be done as endpoints with the kamelet
-component, such as to(kamelet:mykamelet). When a Kamelet is designed for a special use-case such as aggregating
-messages, and returning a response message only when a group of aggregated messages is completed. In other words,
-kamelet does not return a response message for every incoming message. In special situations like these, then you must
-use this Kamelet EIP instead of using the kamelet component.
+Calls a Kamelet (reusable route template) as a step in the route. Normally Kamelets are invoked via kamelet: endpoint
+URIs; this EIP is for special cases where direct invocation is needed.
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -813,7 +813,7 @@ use this Kamelet EIP instead of using the kamelet component.
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Camel AI: Tokenizer for splitting by character.
+Splits text into chunks by character count, using LangChain4j's character tokenizer for AI text processing
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -822,7 +822,7 @@ Camel AI: Tokenizer for splitting by character.
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Camel AI: Tokenizer for splitting line by line.
+Splits text into chunks line by line, using LangChain4j's line tokenizer for AI text processing
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -831,7 +831,7 @@ Camel AI: Tokenizer for splitting line by line.
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Camel AI: Tokenizer for splitting by paragraphs.
+Splits text into chunks by paragraph boundaries, using LangChain4j's paragraph tokenizer for AI text processing
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -840,7 +840,7 @@ Camel AI: Tokenizer for splitting by paragraphs.
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Camel AI: Tokenizer for splitting by sentences.
+Splits text into chunks by sentence boundaries, using LangChain4j's sentence tokenizer for AI text processing
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -849,7 +849,7 @@ Camel AI: Tokenizer for splitting by sentences.
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Camel AI: Tokenizer for splitting by word.
+Splits text into chunks by word boundaries, using LangChain4j's word tokenizer for AI text processing
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -858,7 +858,7 @@ Camel AI: Tokenizer for splitting by word.
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Evaluates a custom language.
+Evaluates a custom language
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -867,7 +867,8 @@ Evaluates a custom language.
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Balances message processing among a number of nodes
+Distributes messages across multiple endpoints using a load balancing strategy such as round-robin, random, failover, or
+weighted
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -876,7 +877,7 @@ Balances message processing among a number of nodes
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-To load custom transformers from classpath scanning to be used for route level transformations.
+Auto-discovers and loads data type transformers from the classpath via scanning
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -885,7 +886,7 @@ To load custom transformers from classpath scanning to be used for route level t
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Used for printing custom messages to the logger.
+Logs a message using an expression that can include message body, headers, and other exchange data
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -894,7 +895,7 @@ Used for printing custom messages to the logger.
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Processes a message multiple times
+Processes the message body repeatedly for a specified number of iterations, or until a condition is met
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -903,7 +904,7 @@ Processes a message multiple times
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Compress and decompress streams using LZF deflate algorithm.
+Compress and decompress streams using LZF deflate algorithm
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -912,7 +913,7 @@ Compress and decompress streams using LZF deflate algorithm.
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Marshals data into a specified format for transmission over a transport or component
+Serializes the message body into a specific data format such as JSON, XML, CSV, or Protobuf for transmission or storage
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -921,7 +922,7 @@ Marshals data into a specified format for transmission over a transport or compo
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Calls a Java bean method.
+Calls a Java bean method
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -930,7 +931,7 @@ Calls a Java bean method.
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Marshal Camel messages with attachments into MIME-Multipart messages and back.
+Marshal Camel messages with attachments into MIME-Multipart messages and back
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -939,7 +940,8 @@ Marshal Camel messages with attachments into MIME-Multipart messages and back.
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Routes the same message to multiple paths either sequentially or in parallel.
+Sends a copy of the message to multiple fixed endpoints, processing them sequentially or in parallel, and optionally
+aggregating their replies
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -948,7 +950,7 @@ Routes the same message to multiple paths either sequentially or in parallel.
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Rest security mutual TLS authentication definition
+Configures mutual TLS (mTLS) client certificate authentication for a REST service
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -957,7 +959,7 @@ Rest security mutual TLS authentication definition
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Evaluates a MVEL template.
+Evaluates a MVEL template
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -966,7 +968,7 @@ Evaluates a MVEL template.
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-To not use an error handler.
+Disables error handling for a route, causing exceptions to propagate immediately to the caller
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -975,7 +977,7 @@ To not use an error handler.
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Rest security OAuth2 definition
+Configures OAuth2 authentication for a REST service
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -984,7 +986,7 @@ Rest security OAuth2 definition
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Marshal and unmarshal OCSF (Open Cybersecurity Schema Framework) security events to/from JSON.
+Marshal and unmarshal OCSF (Open Cybersecurity Schema Framework) security events to/from JSON
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -993,7 +995,7 @@ Marshal and unmarshal OCSF (Open Cybersecurity Schema Framework) security events
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Deprecated: Evaluates an OGNL expression (Apache Commons OGNL).
+Deprecated: Evaluates an OGNL expression (Apache Commons OGNL)
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -1002,7 +1004,7 @@ Deprecated: Evaluates an OGNL expression (Apache Commons OGNL).
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Route to be executed when normal route processing completes
+Defines steps to execute when route processing completes, either on success, failure, or both
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -1011,7 +1013,8 @@ Route to be executed when normal route processing completes
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Route to be executed when an exception is thrown
+Defines exception handling for specific exception types, with options for redelivery, logging, and routing to error
+endpoints
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -1020,7 +1023,7 @@ Route to be executed when an exception is thrown
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Route to be executed when Circuit Breaker EIP executes fallback
+Defines the fallback route that executes when the Circuit Breaker trips or the primary route fails
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -1029,7 +1032,8 @@ Route to be executed when Circuit Breaker EIP executes fallback
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-To use a predicate to determine when to trigger this.
+Applies a predicate condition to filter when a parent definition (such as onException or onCompletion) should be
+triggered
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -1038,7 +1042,8 @@ To use a predicate to determine when to trigger this.
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-To use OpenApi as contract-first with Camel Rest DSL.
+Configures a contract-first REST service using an OpenAPI specification, where Camel auto-generates routes for each
+operation
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -1047,7 +1052,7 @@ To use OpenApi as contract-first with Camel Rest DSL.
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Rest security OpenID Connect definition
+Configures OpenID Connect authentication for a REST service
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -1056,7 +1061,8 @@ Rest security OpenID Connect definition
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-To configure optimistic locking
+Configures the retry policy for optimistic locking in the Aggregate EIP, controlling retry attempts and delays on
+version conflicts
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -1065,7 +1071,7 @@ To configure optimistic locking
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Route to be executed when all other choices evaluate to false
+Defines the default branch within a Choice EIP that executes when no When condition matches
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -1074,12 +1080,8 @@ Route to be executed when all other choices evaluate to false
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Set the expected data type of the output message. If the actual message type is different at runtime, camel look for a
-required Transformer and apply if exists. If validate attribute is true then camel applies Validator as well. Type name
-consists of two parts, 'scheme' and 'name' connected with ':'. For Java type 'name' is a fully qualified class name. For
-example {code java:java.lang.String} , {code json:ABCOrder} . It's also possible to specify only scheme part, so that it
-works like a wildcard. If only 'xml' is specified, all the XML message matches. It's handy to add only one
-transformer/validator for all the XML-Java transformation.
+Declares the expected output data type for a route. Camel will apply a data type transformer if the actual message type
+differs at runtime.
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -1088,7 +1090,7 @@ transformer/validator for all the XML-Java transformation.
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Scans for Java org.apache.camel.builder.RouteBuilder classes in java packages
+Scans Java packages on the classpath for RouteBuilder classes to auto-discover and register routes
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -1097,7 +1099,7 @@ Scans for Java org.apache.camel.builder.RouteBuilder classes in java packages
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-To specify the rest operation parameters.
+Defines a parameter for a REST operation, specifying its type, name, data type, and whether it is required
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -1106,7 +1108,7 @@ To specify the rest operation parameters.
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Parquet Avro serialization and de-serialization.
+Parquet Avro serialization and de-serialization
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -1115,7 +1117,7 @@ Parquet Avro serialization and de-serialization.
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Rest PATCH command
+Defines an HTTP PATCH operation in the REST DSL
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -1124,7 +1126,8 @@ Rest PATCH command
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Pausable EIP to support resuming processing from last known offset.
+Pauses a consumer based on a condition, allowing it to be resumed later from the last known offset. Useful for
+controlling ingestion rate on polling consumers.
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -1133,7 +1136,7 @@ Pausable EIP to support resuming processing from last known offset.
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Encrypt and decrypt messages using Java Cryptographic Extension (JCE) and PGP.
+Encrypt and decrypt messages using Java Cryptographic Extension (JCE) and PGP
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -1142,7 +1145,7 @@ Encrypt and decrypt messages using Java Cryptographic Extension (JCE) and PGP.
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Routes the message to a sequence of processors.
+Processes the message through a sequence of steps where the output of each step becomes the input of the next
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -1151,7 +1154,7 @@ Routes the message to a sequence of processors.
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Defines a policy the route will use
+Applies a policy to the route, such as a transactional policy or a custom policy for cross-cutting concerns
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -1160,7 +1163,8 @@ Defines a policy the route will use
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Polls a message from a static endpoint
+Polls a single message from a consumer endpoint and sets it as the message body. Useful for fetching data on-demand from
+file, database, or messaging endpoints.
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -1169,7 +1173,8 @@ Polls a message from a static endpoint
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Enriches messages with data polled from a secondary resource
+Enriches the message with additional data obtained by polling a consumer endpoint (such as a file or message queue). The
+polled data is merged using an aggregation strategy.
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -1178,7 +1183,7 @@ Enriches messages with data polled from a secondary resource
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Rest POST command
+Defines an HTTP POST operation in the REST DSL
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -1187,7 +1192,7 @@ Rest POST command
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Encrypt and decrypt messages using Post-Quantum Cryptography Key Encapsulation Mechanisms (KEM).
+Encrypt and decrypt messages using Post-Quantum Cryptography Key Encapsulation Mechanisms (KEM)
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -1196,7 +1201,7 @@ Encrypt and decrypt messages using Post-Quantum Cryptography Key Encapsulation M
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-To use a predicate to perform validation on the route level.
+Uses a predicate expression to validate message data types at the route level
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -1205,7 +1210,7 @@ To use a predicate to perform validation on the route level.
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Calls a Camel processor
+Invokes a custom Camel Processor for programmatic message processing in Java
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -1214,7 +1219,7 @@ Calls a Camel processor
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-A key value pair where the value is a literal value
+Defines a key/value pair with a literal value, used for passing parameters in route templates and other configurations
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -1223,7 +1228,7 @@ A key value pair where the value is a literal value
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-A key value pair where the value is an expression.
+Defines a key/value pair where the value is computed by an expression, used for passing dynamic parameters
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -1232,7 +1237,7 @@ A key value pair where the value is an expression.
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Serialize and deserialize Java objects using Google's Protocol buffers.
+Serialize and deserialize Java objects using Google's Protocol buffers
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -1241,7 +1246,7 @@ Serialize and deserialize Java objects using Google's Protocol buffers.
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Rest PUT command
+Defines an HTTP PUT operation in the REST DSL
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -1250,7 +1255,7 @@ Rest PUT command
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Evaluates a Python expression.
+Evaluates a Python expression
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -1259,7 +1264,7 @@ Evaluates a Python expression.
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-The destination endpoints are selected randomly.
+Load balancer that randomly selects a destination endpoint for each message
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -1268,7 +1273,8 @@ The destination endpoints are selected randomly.
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Route messages to a number of dynamically specified recipients
+Routes a message to a list of dynamically calculated endpoints, determined at runtime from an expression. Each recipient
+receives a copy of the message.
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -1277,7 +1283,7 @@ Route messages to a number of dynamically specified recipients
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-To configure re-delivery for error handling
+Configures message redelivery for error handling, including maximum retries, delay patterns, and backoff settings
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -1286,7 +1292,7 @@ To configure re-delivery for error handling
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Uses an existing expression from the registry.
+Uses an existing expression from the registry
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -1295,7 +1301,7 @@ Uses an existing expression from the registry.
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-References to an existing or custom error handler.
+References a custom error handler bean from the registry by its name
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -1304,7 +1310,7 @@ References to an existing or custom error handler.
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Removes a named header from the message
+Removes a specific header from the message by name
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -1313,7 +1319,8 @@ Removes a named header from the message
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Removes message headers whose name matches a specified pattern
+Removes all message headers whose names match a given pattern. Useful for stripping internal Camel headers before
+sending to external systems.
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -1322,7 +1329,7 @@ Removes message headers whose name matches a specified pattern
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Removes message exchange properties whose name matches a specified pattern
+Removes all exchange properties whose names match a given pattern
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -1331,7 +1338,7 @@ Removes message exchange properties whose name matches a specified pattern
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Removes a named property from the message exchange
+Removes a specific exchange property by name
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -1340,7 +1347,7 @@ Removes a named property from the message exchange
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Removes a named variable
+Removes a specific variable by name
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -1349,7 +1356,8 @@ Removes a named variable
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Resequences (re-order) messages based on an expression
+Reorders messages based on a sequence expression, either in batch mode (collect and sort) or stream mode (continuous
+reordering with a timeout)
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -1358,7 +1366,8 @@ Resequences (re-order) messages based on an expression
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Resilience4j Circuit Breaker EIP configuration
+Configures Resilience4j settings for the Circuit Breaker EIP, such as failure rate threshold, wait duration, and sliding
+window parameters
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -1367,7 +1376,7 @@ Resilience4j Circuit Breaker EIP configuration
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-To specify the rest operation response headers.
+Defines a response header for a REST operation, used for API documentation and OpenAPI spec generation
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -1376,7 +1385,7 @@ To specify the rest operation response headers.
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-To specify the rest operation response messages.
+Defines a response message for a REST operation, including HTTP status code and description for API documentation
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -1385,7 +1394,7 @@ To specify the rest operation response messages.
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Defines a rest service using the rest-dsl
+Defines a REST service with HTTP operations (GET, POST, PUT, DELETE, etc.) using the Camel REST DSL
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -1394,7 +1403,7 @@ Defines a rest service using the rest-dsl
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-To configure rest binding
+Configures data binding for a REST service, controlling how request and response bodies are marshalled and unmarshalled
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -1403,7 +1412,8 @@ To configure rest binding
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-To configure rest
+Configures global settings for the REST DSL, such as host, port, context path, binding mode, and the underlying HTTP
+component to use
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -1412,7 +1422,7 @@ To configure rest
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-To refer to an XML file with rest services defined using the rest-dsl
+References an external XML file containing REST service definitions for inclusion in the current context
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -1421,7 +1431,7 @@ To refer to an XML file with rest services defined using the rest-dsl
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-A key value pair
+Defines a key/value property for REST configuration, used to pass component-specific settings
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -1430,7 +1440,7 @@ A key value pair
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-A series of rest services defined using the rest-dsl
+Container for a collection of REST service definitions
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -1439,7 +1449,8 @@ A series of rest services defined using the rest-dsl
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Resume EIP to support resuming processing from last known offset.
+Enables resuming processing from the last known offset after a restart, using a resume strategy to track and restore
+position
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -1448,7 +1459,7 @@ Resume EIP to support resuming processing from last known offset.
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Forces a rollback by stopping routing the message
+Forces a rollback of the current transaction and stops routing the message. Can set a custom message on the exception.
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -1457,8 +1468,7 @@ Forces a rollback by stopping routing the message
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-The destination endpoints are selected in a round-robin fashion. This is a well-known and classic policy, which spreads
-the load evenly.
+Load balancer that cycles through destination endpoints in sequential order, distributing the load evenly
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -1467,7 +1477,8 @@ the load evenly.
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-A Camel route
+Defines a Camel route that specifies the processing steps a message goes through from a consumer endpoint to one or more
+producer endpoints
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -1476,7 +1487,7 @@ A Camel route
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-To refer to a Java org.apache.camel.builder.RouteBuilder instance to use.
+References a Java RouteBuilder class to include its routes in the current CamelContext
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -1485,7 +1496,8 @@ To refer to a Java org.apache.camel.builder.RouteBuilder instance to use.
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Reusable configuration for Camel route(s).
+Defines reusable configuration that is automatically applied to matching routes, such as shared error handling or
+interceptors
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -1494,7 +1506,7 @@ Reusable configuration for Camel route(s).
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-To refer to an XML file with route configuration defined using the xml-dsl
+References an external XML file containing route configuration definitions for inclusion in the current context
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -1503,7 +1515,7 @@ To refer to an XML file with route configuration defined using the xml-dsl
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-A series of route configurations
+Container for a collection of route configuration definitions
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -1512,7 +1524,7 @@ A series of route configurations
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-To refer to an XML file with routes defined using the xml-dsl
+References an external XML file containing route definitions for inclusion in the current context
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -1521,7 +1533,7 @@ To refer to an XML file with routes defined using the xml-dsl
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Defines a route template (parameterized routes)
+Defines a parameterized route template that can be instantiated multiple times with different parameter values
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -1530,7 +1542,7 @@ Defines a route template (parameterized routes)
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-To refer to an XML file with route templates defined using the xml-dsl
+References an external XML file containing route template definitions for inclusion in the current context
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -1539,7 +1551,7 @@ To refer to an XML file with route templates defined using the xml-dsl
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-A series of route templates
+Container for a collection of route template definitions
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -1548,7 +1560,7 @@ A series of route templates
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-A series of Camel routes
+Container for a collection of route definitions
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -1557,7 +1569,8 @@ A series of Camel routes
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Routes a message through a series of steps that are pre-determined (the slip)
+Routes a message through a pre-determined sequence of endpoints defined in a header or expression (the routing slip).
+The list of endpoints is evaluated once upfront.
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -1566,7 +1579,7 @@ Routes a message through a series of steps that are pre-determined (the slip)
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Transform from ROME SyndFeed Java Objects to XML and vice-versa.
+Transform from ROME SyndFeed Java Objects to XML and vice-versa
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -1575,7 +1588,8 @@ Transform from ROME SyndFeed Java Objects to XML and vice-versa.
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Enables Sagas on the route
+Defines a Saga (long-running action) that coordinates distributed services toward a consistent outcome. Unlike XA
+transactions, Sagas use compensating actions for rollback and work across heterogeneous services.
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -1584,7 +1598,8 @@ Enables Sagas on the route
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Extract a sample of the messages passing through a route
+Samples a subset of messages passing through the route, either by frequency count or time interval, and discards the
+rest
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -1593,7 +1608,7 @@ Extract a sample of the messages passing through a route
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Executes a script from a language which does not change the message body.
+Executes an expression or script in a chosen language for side effects without modifying the message body
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -1602,7 +1617,7 @@ Executes a script from a language which does not change the message body.
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Rest security definition
+Applies a security requirement to a REST operation, referencing a security scheme defined at the service level
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -1611,7 +1626,7 @@ Rest security definition
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-To configure rest security definitions.
+Container for security scheme definitions used by REST services
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -1620,7 +1635,7 @@ To configure rest security definitions.
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Sets the contents of the message body
+Sets the message body to a value computed by an expression
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -1629,7 +1644,7 @@ Sets the contents of the message body
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Sets the exchange pattern on the message exchange
+Sets the message exchange pattern (MEP) on the exchange, such as InOnly for one-way or InOut for request-reply
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -1638,7 +1653,7 @@ Sets the exchange pattern on the message exchange
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Sets the value of a message header
+Sets a message header to a value computed by an expression
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -1647,7 +1662,7 @@ Sets the value of a message header
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Allows setting multiple headers on the message at the same time.
+Sets multiple message headers at once, each computed by its own expression
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -1656,7 +1671,7 @@ Allows setting multiple headers on the message at the same time.
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Sets a named property on the message exchange
+Sets an exchange property to a value computed by an expression
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -1665,7 +1680,7 @@ Sets a named property on the message exchange
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Sets the value of a variable
+Sets a variable to a value computed by an expression
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -1674,7 +1689,7 @@ Sets the value of a variable
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Allows setting multiple variables at the same time.
+Sets multiple variables at once, each computed by its own expression
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -1683,7 +1698,7 @@ Allows setting multiple variables at the same time.
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Evaluates a Camel simple expression.
+Evaluates a Camel simple expression
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -1692,7 +1707,7 @@ Evaluates a Camel simple expression.
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Transform and bind XML as well as non-XML data, including EDI, CSV, JSON, and YAML using Smooks.
+Transform and bind XML as well as non-XML data, including EDI, CSV, JSON, and YAML using Smooks
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -1701,7 +1716,7 @@ Transform and bind XML as well as non-XML data, including EDI, CSV, JSON, and YA
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Marshal Java objects to SOAP messages and back.
+Marshal Java objects to SOAP messages and back
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -1710,7 +1725,7 @@ Marshal Java objects to SOAP messages and back.
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Sorts the contents of the message
+Sorts the items in a message body that is a List, using a specified comparator or the default ordering
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -1719,7 +1734,7 @@ Sorts the contents of the message
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Evaluates a Spring expression (SpEL).
+Evaluates a Spring expression (SpEL)
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -1728,7 +1743,8 @@ Evaluates a Spring expression (SpEL).
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Splits a single message into many sub-messages.
+Splits a message into multiple sub-messages using an expression, and processes each one individually. Supports parallel
+processing and result aggregation.
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -1737,7 +1753,7 @@ Splits a single message into many sub-messages.
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Spring based transactional error handler (requires camel-spring).
+Transactional error handler using Spring Transaction Manager that marks the transaction for rollback on failure
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -1746,7 +1762,8 @@ Spring based transactional error handler (requires camel-spring).
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Routes the message to a sequence of processors which is grouped together as one logical name
+Groups a sequence of processing steps under a single logical name for improved monitoring, management, and tracing
+visibility
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -1755,7 +1772,7 @@ Routes the message to a sequence of processors which is grouped together as one 
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Sticky load balancing using an expression to calculate a correlation key to perform the sticky load balancing.
+Load balancer that routes messages to the same endpoint based on a correlation expression, ensuring session affinity
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -1764,7 +1781,7 @@ Sticky load balancing using an expression to calculate a correlation key to perf
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Stops the processing of the current message
+Stops processing of the current message and marks the exchange as completed without sending it to any further steps
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -1773,7 +1790,8 @@ Stops the processing of the current message
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Configures stream-processing resequence eip.
+Configures the stream-processing mode of the Resequence EIP, which continuously reorders messages as they arrive using a
+timeout
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -1782,7 +1800,7 @@ Configures stream-processing resequence eip.
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Encode and decode SWIFT MT messages.
+Encode and decode SWIFT MT messages
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -1791,7 +1809,7 @@ Encode and decode SWIFT MT messages.
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Encode and decode SWIFT MX messages.
+Encode and decode SWIFT MX messages
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -1800,7 +1818,7 @@ Encode and decode SWIFT MX messages.
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Marshall SyslogMessages to RFC3164 and RFC5424 messages and back.
+Marshall SyslogMessages to RFC3164 and RFC5424 messages and back
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -1809,7 +1827,7 @@ Marshall SyslogMessages to RFC3164 and RFC5424 messages and back.
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Archive files into tarballs or extract files from tarballs.
+Archive files into tarballs or extract files from tarballs
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -1818,7 +1836,7 @@ Archive files into tarballs or extract files from tarballs.
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-A route template parameter
+Defines a parameter for a route template, with an optional default value and description
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -1827,7 +1845,7 @@ A route template parameter
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Defines a templated route (a route built from a route template)
+Creates a route instance from a route template, binding specific parameter values to the template's parameters
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -1836,7 +1854,7 @@ Defines a templated route (a route built from a route template)
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-An input parameter of a route template.
+Provides a parameter value for a templated route, binding a value to a route template parameter
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -1845,7 +1863,7 @@ An input parameter of a route template.
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-A series of templated routes
+Container for a collection of templated route definitions
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -1854,7 +1872,8 @@ A series of templated routes
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-To configure thread pools
+Defines a named thread pool profile with pool size, queue size, and thread keep-alive settings for use by EIPs and
+components
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -1863,7 +1882,8 @@ To configure thread pools
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Specifies that all steps after this node are processed asynchronously
+Offloads processing of subsequent steps in the route to a thread pool, enabling asynchronous and concurrent message
+handling
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -1872,7 +1892,7 @@ Specifies that all steps after this node are processed asynchronously
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Serialize and deserialize messages using Apache Thrift binary data format.
+Serialize and deserialize messages using Apache Thrift binary data format
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -1881,7 +1901,7 @@ Serialize and deserialize messages using Apache Thrift binary data format.
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Controls the rate at which messages are passed to the next node in the route
+Limits the message throughput to a maximum number of messages per time period to avoid overloading downstream systems
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -1890,7 +1910,7 @@ Controls the rate at which messages are passed to the next node in the route
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Throws an exception
+Throws an exception during route processing, either creating a new exception instance or re-throwing an existing one
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -1899,7 +1919,7 @@ Throws an exception
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Sends the message to a static endpoint
+Sends the message to a fixed endpoint URI
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -1908,7 +1928,8 @@ Sends the message to a static endpoint
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Sends the message to a dynamic endpoint
+Sends the message to an endpoint URI computed dynamically from an expression, allowing the destination to vary per
+message
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -1917,7 +1938,7 @@ Sends the message to a dynamic endpoint
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Tokenize text payloads using delimiter patterns.
+Tokenize text payloads using delimiter patterns
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -1926,7 +1947,7 @@ Tokenize text payloads using delimiter patterns.
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Represents a Camel tokenizer for AI.
+Tokenizes the message body for AI processing, splitting text into chunks suitable for embedding or LLM input
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -1935,7 +1956,7 @@ Represents a Camel tokenizer for AI.
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Topic which sends to all destinations.
+Load balancer that sends every message to all destination endpoints, similar to a publish-subscribe pattern
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -1944,7 +1965,8 @@ Topic which sends to all destinations.
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Enables transaction on the route
+Wraps the route in a transaction, ensuring that all steps within the transacted block either complete together or roll
+back on failure
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -1953,7 +1975,7 @@ Enables transaction on the route
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Transforms the message body based on an expression
+Sets the message body using an expression. Unlike setBody, transform also sets the OUT message body in InOut exchanges
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -1962,7 +1984,8 @@ Transforms the message body based on an expression
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Transforms the message body based on known data type transformers.
+Transforms the message body between known data types (such as XML, JSON, Java objects) using registered data type
+transformers
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -1971,7 +1994,7 @@ Transforms the message body based on known data type transformers.
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-To configure transformers.
+Container for defining data type transformer definitions
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -1980,7 +2003,7 @@ To configure transformers.
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Marshal and unmarshal Java objects from and to CSV (Comma Separated Values) using UniVocity Parsers.
+Marshal and unmarshal Java objects from and to CSV (Comma Separated Values) using UniVocity Parsers
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -1989,7 +2012,7 @@ Marshal and unmarshal Java objects from and to CSV (Comma Separated Values) usin
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Marshal and unmarshal Java objects from and to fixed length records using UniVocity Parsers.
+Marshal and unmarshal Java objects from and to fixed length records using UniVocity Parsers
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -1998,7 +2021,7 @@ Marshal and unmarshal Java objects from and to fixed length records using UniVoc
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-To configure headers for UniVocity data formats.
+Defines a column header for UniVocity data format configuration
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -2007,7 +2030,7 @@ To configure headers for UniVocity data formats.
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Marshal and unmarshal Java objects from and to TSV (Tab-Separated Values) records using UniVocity Parsers.
+Marshal and unmarshal Java objects from and to TSV (Tab-Separated Values) records using UniVocity Parsers
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -2016,7 +2039,7 @@ Marshal and unmarshal Java objects from and to TSV (Tab-Separated Values) record
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Converts the message data received from the wire into a format that Apache Camel processors can consume
+Deserializes the message body from a specific data format such as JSON, XML, CSV, or Protobuf into a Java object
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -2025,7 +2048,7 @@ Converts the message data received from the wire into a format that Apache Camel
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Validates a message based on an expression
+Validates the message against a predicate expression and throws a PredicateValidationException if the validation fails
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -2034,7 +2057,7 @@ Validates a message based on an expression
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-To configure validators.
+Container for defining data type validator definitions
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -2043,7 +2066,7 @@ To configure validators.
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-A single value
+Holds a single value, typically used as a child element in collection-based configurations
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -2061,7 +2084,7 @@ Gets a variable
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Call a wasm (web assembly) function.
+Call a wasm (web assembly) function
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -2070,7 +2093,7 @@ Call a wasm (web assembly) function.
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Uses a weighted load distribution ratio for each server with respect to others.
+Load balancer that distributes messages across endpoints according to configured weight ratios
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -2079,7 +2102,7 @@ Uses a weighted load distribution ratio for each server with respect to others.
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Triggers a route when the expression evaluates to true
+Defines a conditional branch within a Choice EIP that executes when its predicate evaluates to true
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -2088,8 +2111,8 @@ Triggers a route when the expression evaluates to true
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Routes a copy of a message (or creates a new message) to a secondary destination while continue routing the original
-message.
+Sends a copy of the message to a secondary endpoint without affecting the original route flow. The tapped message is
+sent asynchronously in a separate thread
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -2098,7 +2121,7 @@ message.
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Encrypt and decrypt XML payloads using Apache Santuario.
+Encrypt and decrypt XML payloads using Apache Santuario
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -2107,7 +2130,7 @@ Encrypt and decrypt XML payloads using Apache Santuario.
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Evaluates an XPath expression against an XML payload.
+Evaluates an XPath expression against an XML payload
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -2116,7 +2139,7 @@ Evaluates an XPath expression against an XML payload.
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Evaluates an XQuery expressions against an XML payload.
+Evaluates an XQuery expressions against an XML payload
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -2125,7 +2148,7 @@ Evaluates an XQuery expressions against an XML payload.
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Tokenize XML payloads.
+Tokenize XML payloads
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -2134,7 +2157,7 @@ Tokenize XML payloads.
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Marshal and unmarshal Java objects to and from YAML.
+Marshal and unmarshal Java objects to and from YAML
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -2143,7 +2166,7 @@ Marshal and unmarshal Java objects to and from YAML.
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Compress and decompress streams using java.util.zip.Deflater and java.util.zip.Inflater.
+Compress and decompress streams using java.util.zip.Deflater and java.util.zip.Inflater
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -2152,7 +2175,7 @@ Compress and decompress streams using java.util.zip.Deflater and java.util.zip.I
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Compression and decompress streams using java.util.zip.ZipStream.
+Compression and decompress streams using java.util.zip.Zip*Stream
 ]]>
       </xs:documentation>
     </xs:annotation>

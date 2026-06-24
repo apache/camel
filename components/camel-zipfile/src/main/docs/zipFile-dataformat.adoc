@@ -2,7 +2,7 @@
 :doctitle: Zip File
 :shortname: zipFile
 :artifactid: camel-zipfile
-:description: Compression and decompress streams using java.util.zip.ZipStream.
+:description: Compression and decompress streams using java.util.zip.Zip*Stream
 :since: 2.11
 :supportlevel: Stable
 :tabs-sync-option:

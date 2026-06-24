@@ -308,7 +308,7 @@
       },
       "org.apache.camel.model.A2ASubTaskDefinition" : {
         "title" : "A2A Sub Task",
-        "description" : "Groups route steps and emits A2A progress events before, after, or when the grouped work fails.",
+        "description" : "Groups route steps and emits A2A (Agent-to-Agent) protocol progress events before, after, or when the grouped work fails",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -364,7 +364,7 @@
       },
       "org.apache.camel.model.AggregateDefinition" : {
         "title" : "Aggregate",
-        "description" : "Aggregates many messages into a single message",
+        "description" : "Collects and combines related messages into a single message using a correlation expression and an aggregation strategy. Messages are grouped into buckets by correlation key and released when a completion condition is met.",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -553,7 +553,7 @@
       },
       "org.apache.camel.model.BeanDefinition" : {
         "title" : "Bean",
-        "description" : "Calls a Java bean",
+        "description" : "Invokes a method on a Java bean, with automatic parameter binding from the message body, headers, and exchange properties",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -604,7 +604,7 @@
       },
       "org.apache.camel.model.BeanFactoryDefinition" : {
         "title" : "Bean Factory",
-        "description" : "Define custom beans that can be used in your Camel routes and in general.",
+        "description" : "Defines a custom bean that can be used in Camel routes and other beans. The bean is created by a factory class or method.",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -680,7 +680,7 @@
       },
       "org.apache.camel.model.CatchDefinition" : {
         "title" : "Do Catch",
-        "description" : "Catches exceptions as part of a try, catch, finally block",
+        "description" : "Catches specific exceptions within a doTry block, allowing fine-grained exception handling within the route",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -728,7 +728,7 @@
       },
       "org.apache.camel.model.ChoiceDefinition" : {
         "title" : "Choice",
-        "description" : "Route messages based on a series of predicates",
+        "description" : "Routes messages to different steps based on a series of conditions (predicates), similar to if-elseif-else in Java. Each condition is evaluated in order until one matches.",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -776,7 +776,7 @@
       },
       "org.apache.camel.model.CircuitBreakerDefinition" : {
         "title" : "Circuit Breaker",
-        "description" : "Route messages in a fault tolerance way using Circuit Breaker",
+        "description" : "Wraps message processing with a circuit breaker for fault tolerance. Prevents cascading failures by short-circuiting calls to an unhealthy service and routing to a fallback",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -831,7 +831,7 @@
       },
       "org.apache.camel.model.ClaimCheckDefinition" : {
         "title" : "Claim Check",
-        "description" : "The Claim Check EIP allows you to replace message content with a claim check (a unique key), which can be used to retrieve the message content at a later time.",
+        "description" : "Temporarily stores the message content and replaces it with a claim check key, allowing the content to be retrieved later in the route. Useful for reducing memory when large payloads pass through processing steps that don't need them.",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -886,7 +886,7 @@
       },
       "org.apache.camel.model.ContextScanDefinition" : {
         "title" : "Context Scan",
-        "description" : "Scans for Java org.apache.camel.builder.RouteBuilder instances in the context org.apache.camel.spi.Registry .",
+        "description" : "Scans for RouteBuilder instances in the Camel registry to auto-discover and register routes",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -916,7 +916,7 @@
       },
       "org.apache.camel.model.ConvertBodyDefinition" : {
         "title" : "Convert Body To",
-        "description" : "Converts the message body to another type",
+        "description" : "Converts the message body to a specified Java type using Camel's built-in type converters",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -962,7 +962,7 @@
       },
       "org.apache.camel.model.ConvertHeaderDefinition" : {
         "title" : "Convert Header To",
-        "description" : "Converts the message header to another type",
+        "description" : "Converts a message header value to a specified Java type using Camel's built-in type converters",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -1018,7 +1018,7 @@
       },
       "org.apache.camel.model.ConvertVariableDefinition" : {
         "title" : "Convert Variable To",
-        "description" : "Converts the variable to another type",
+        "description" : "Converts a variable value to a specified Java type using Camel's built-in type converters",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -1083,7 +1083,7 @@
       },
       "org.apache.camel.model.DelayDefinition" : {
         "title" : "Delay",
-        "description" : "Delays processing for a specified length of time",
+        "description" : "Delays message processing for a specified duration, which can be a fixed value or computed dynamically per message",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -1134,7 +1134,7 @@
       },
       "org.apache.camel.model.DynamicRouterDefinition" : {
         "title" : "Dynamic Router",
-        "description" : "Route messages based on dynamic rules",
+        "description" : "Routes a message step-by-step through a series of endpoints, determined dynamically by calling an expression repeatedly. The expression is called after each hop and returns the next endpoint, or null to stop.",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -1185,7 +1185,7 @@
       },
       "org.apache.camel.model.EnrichDefinition" : {
         "title" : "Enrich",
-        "description" : "Enriches a message with data from a secondary resource",
+        "description" : "Enriches the message with additional data obtained by sending to another endpoint using request-reply. The reply is merged into the original message using an aggregation strategy.",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -1279,7 +1279,7 @@
       },
       "org.apache.camel.model.ErrorHandlerDefinition" : {
         "title" : "Error Handler",
-        "description" : "Camel error handling.",
+        "description" : "Configures error handling strategy for routes, controlling how failed exchanges are handled and redelivered",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -1394,7 +1394,7 @@
       },
       "org.apache.camel.model.FaultToleranceConfigurationDefinition" : {
         "title" : "Fault Tolerance Configuration",
-        "description" : "MicroProfile Fault Tolerance Circuit Breaker EIP configuration",
+        "description" : "Configures MicroProfile Fault Tolerance settings for the Circuit Breaker EIP, such as timeout, bulkhead, and retry parameters",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -1477,7 +1477,7 @@
       },
       "org.apache.camel.model.FilterDefinition" : {
         "title" : "Filter",
-        "description" : "Filter out messages based using a predicate",
+        "description" : "Filters messages using a predicate expression. Messages matching the predicate continue processing; non-matching messages are skipped.",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -1522,7 +1522,7 @@
       },
       "org.apache.camel.model.FinallyDefinition" : {
         "title" : "Do Finally",
-        "description" : "Steps to execute after a doTry block completes, regardless of whether an exception was thrown or caught",
+        "description" : "Defines steps to always execute after a doTry block completes, regardless of whether an exception was thrown or caught",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -1588,7 +1588,7 @@
       },
       "org.apache.camel.model.GlobalOptionDefinition" : {
         "title" : "Global Option",
-        "description" : "Models a string key/value pair for configuring some global options on a Camel context such as max debug log length.",
+        "description" : "Defines a single global configuration option as a key/value pair for the CamelContext",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -1607,7 +1607,7 @@
       },
       "org.apache.camel.model.GlobalOptionsDefinition" : {
         "title" : "Global Options",
-        "description" : "Models a series of string key/value pairs for configuring some global options on a Camel context such as max debug log length.",
+        "description" : "Defines a collection of global configuration options for the CamelContext",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -1623,7 +1623,7 @@
       },
       "org.apache.camel.model.IdempotentConsumerDefinition" : {
         "title" : "Idempotent Consumer",
-        "description" : "Filters out duplicate messages",
+        "description" : "Filters out duplicate messages based on a unique message identifier and an idempotent repository that tracks previously seen IDs",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -1693,7 +1693,7 @@
       },
       "org.apache.camel.model.InputTypeDefinition" : {
         "title" : "Input Type",
-        "description" : "Set the expected data type of the input message. If the actual message type is different at runtime, camel look for a required Transformer and apply if exists. If validate attribute is true then camel applies Validator as well. Type name consists of two parts, 'scheme' and 'name' connected with ':'. For Java type 'name' is a fully qualified class name. For example {code java:java.lang.String} , {code json:ABCOrder} . It's also possible to specify only scheme part, so that it works like a wildcard. If only 'xml' is specified, all the XML message matches. It's handy to add only one transformer/validator for all the transformation from/to XML.",
+        "description" : "Declares the expected input data type for a route. Camel will apply a data type transformer if the actual message type differs at runtime.",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -1728,7 +1728,7 @@
       },
       "org.apache.camel.model.InterceptDefinition" : {
         "title" : "Intercept",
-        "description" : "Intercepts a message at each step in the route",
+        "description" : "Intercepts each message at every processing step in the route, allowing cross-cutting logic such as logging or auditing",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -1768,7 +1768,7 @@
       },
       "org.apache.camel.model.InterceptFromDefinition" : {
         "title" : "Intercept From",
-        "description" : "Intercepts incoming messages",
+        "description" : "Intercepts incoming messages arriving from consumer endpoints, optionally filtering by endpoint URI pattern",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -1813,7 +1813,7 @@
       },
       "org.apache.camel.model.InterceptSendToEndpointDefinition" : {
         "title" : "Intercept Send To Endpoint",
-        "description" : "Intercepts messages being sent to an endpoint",
+        "description" : "Intercepts messages being sent to a specific endpoint, allowing the message to be modified or the send to be skipped",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -1889,7 +1889,7 @@
       },
       "org.apache.camel.model.LoadBalanceDefinition" : {
         "title" : "Load Balance",
-        "description" : "Balances message processing among a number of nodes",
+        "description" : "Distributes messages across multiple endpoints using a load balancing strategy such as round-robin, random, failover, or weighted",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -1945,7 +1945,7 @@
       },
       "org.apache.camel.model.LogDefinition" : {
         "title" : "Logger",
-        "description" : "Used for printing custom messages to the logger.",
+        "description" : "Logs a message using an expression that can include message body, headers, and other exchange data",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -2007,7 +2007,7 @@
       },
       "org.apache.camel.model.LoopDefinition" : {
         "title" : "Loop",
-        "description" : "Processes a message multiple times",
+        "description" : "Processes the message body repeatedly for a specified number of iterations, or until a condition is met",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -2070,7 +2070,7 @@
       },
       "org.apache.camel.model.MarshalDefinition" : {
         "title" : "Marshal",
-        "description" : "Marshals data into a specified format for transmission over a transport or component",
+        "description" : "Serializes the message body into a specific data format such as JSON, XML, CSV, or Protobuf for transmission or storage",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -2253,7 +2253,7 @@
       },
       "org.apache.camel.model.MulticastDefinition" : {
         "title" : "Multicast",
-        "description" : "Routes the same message to multiple paths either sequentially or in parallel.",
+        "description" : "Sends a copy of the message to multiple fixed endpoints, processing them sequentially or in parallel, and optionally aggregating their replies",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -2357,7 +2357,7 @@
       },
       "org.apache.camel.model.OnCompletionDefinition" : {
         "title" : "On Completion",
-        "description" : "Route to be executed when normal route processing completes",
+        "description" : "Defines steps to execute when route processing completes, either on success, failure, or both",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -2433,7 +2433,7 @@
       },
       "org.apache.camel.model.OnExceptionDefinition" : {
         "title" : "On Exception",
-        "description" : "Route to be executed when an exception is thrown",
+        "description" : "Defines exception handling for specific exception types, with options for redelivery, logging, and routing to error endpoints",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -2528,7 +2528,7 @@
       },
       "org.apache.camel.model.OnFallbackDefinition" : {
         "title" : "On Fallback",
-        "description" : "Route to be executed when Circuit Breaker EIP executes fallback",
+        "description" : "Defines the fallback route that executes when the Circuit Breaker trips or the primary route fails",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -2563,7 +2563,7 @@
       },
       "org.apache.camel.model.OnWhenDefinition" : {
         "title" : "On When",
-        "description" : "To use a predicate to determine when to trigger this.",
+        "description" : "Applies a predicate condition to filter when a parent definition (such as onException or onCompletion) should be triggered",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -2591,7 +2591,7 @@
       },
       "org.apache.camel.model.OptimisticLockRetryPolicyDefinition" : {
         "title" : "Optimistic Lock Retry Policy",
-        "description" : "To configure optimistic locking",
+        "description" : "Configures the retry policy for optimistic locking in the Aggregate EIP, controlling retry attempts and delays on version conflicts",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -2628,7 +2628,7 @@
       },
       "org.apache.camel.model.OtherwiseDefinition" : {
         "title" : "Otherwise",
-        "description" : "Route to be executed when all other choices evaluate to false",
+        "description" : "Defines the default branch within a Choice EIP that executes when no When condition matches",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -2687,7 +2687,7 @@
       },
       "org.apache.camel.model.OutputTypeDefinition" : {
         "title" : "Output Type",
-        "description" : "Set the expected data type of the output message. If the actual message type is different at runtime, camel look for a required Transformer and apply if exists. If validate attribute is true then camel applies Validator as well. Type name consists of two parts, 'scheme' and 'name' connected with ':'. For Java type 'name' is a fully qualified class name. For example {code java:java.lang.String} , {code json:ABCOrder} . It's also possible to specify only scheme part, so that it works like a wildcard. If only 'xml' is specified, all the XML message matches. It's handy to add only one transformer/validator for all the XML-Java transformation.",
+        "description" : "Declares the expected output data type for a route. Camel will apply a data type transformer if the actual message type differs at runtime.",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -2722,7 +2722,7 @@
       },
       "org.apache.camel.model.PackageScanDefinition" : {
         "title" : "Package Scan",
-        "description" : "Scans for Java org.apache.camel.builder.RouteBuilder classes in java packages",
+        "description" : "Scans Java packages on the classpath for RouteBuilder classes to auto-discover and register routes",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -2754,7 +2754,7 @@
       },
       "org.apache.camel.model.PausableDefinition" : {
         "title" : "Pausable",
-        "description" : "Pausable EIP to support resuming processing from last known offset.",
+        "description" : "Pauses a consumer based on a condition, allowing it to be resumed later from the last known offset. Useful for controlling ingestion rate on polling consumers.",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -2794,7 +2794,7 @@
       },
       "org.apache.camel.model.PipelineDefinition" : {
         "title" : "Pipeline",
-        "description" : "Routes the message to a sequence of processors.",
+        "description" : "Processes the message through a sequence of steps where the output of each step becomes the input of the next",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -2829,7 +2829,7 @@
       },
       "org.apache.camel.model.PolicyDefinition" : {
         "title" : "Policy",
-        "description" : "Defines a policy the route will use",
+        "description" : "Applies a policy to the route, such as a transactional policy or a custom policy for cross-cutting concerns",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -2870,7 +2870,7 @@
       },
       "org.apache.camel.model.PollDefinition" : {
         "title" : "Poll",
-        "description" : "Polls a message from a static endpoint",
+        "description" : "Polls a single message from a consumer endpoint and sets it as the message body. Useful for fetching data on-demand from file, database, or messaging endpoints.",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -2919,7 +2919,7 @@
       },
       "org.apache.camel.model.PollEnrichDefinition" : {
         "title" : "Poll Enrich",
-        "description" : "Enriches messages with data polled from a secondary resource",
+        "description" : "Enriches the message with additional data obtained by polling a consumer endpoint (such as a file or message queue). The polled data is merged using an aggregation strategy.",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -3008,7 +3008,7 @@
       },
       "org.apache.camel.model.ProcessDefinition" : {
         "title" : "Process",
-        "description" : "Calls a Camel processor",
+        "description" : "Invokes a custom Camel Processor for programmatic message processing in Java",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -3043,7 +3043,7 @@
       },
       "org.apache.camel.model.PropertyDefinition" : {
         "title" : "Property",
-        "description" : "A key value pair where the value is a literal value",
+        "description" : "Defines a key/value pair with a literal value, used for passing parameters in route templates and other configurations",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -3062,7 +3062,7 @@
       },
       "org.apache.camel.model.PropertyExpressionDefinition" : {
         "title" : "Property Expression",
-        "description" : "A key value pair where the value is an expression.",
+        "description" : "Defines a key/value pair where the value is computed by an expression, used for passing dynamic parameters",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -3081,7 +3081,7 @@
       },
       "org.apache.camel.model.RecipientListDefinition" : {
         "title" : "Recipient List",
-        "description" : "Route messages to a number of dynamically specified recipients",
+        "description" : "Routes a message to a list of dynamically calculated endpoints, determined at runtime from an expression. Each recipient receives a copy of the message.",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -3201,7 +3201,7 @@
       },
       "org.apache.camel.model.RedeliveryPolicyDefinition" : {
         "title" : "Redelivery Policy",
-        "description" : "To configure re-delivery for error handling",
+        "description" : "Configures message redelivery for error handling, including maximum retries, delay patterns, and backoff settings",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -3357,7 +3357,7 @@
       },
       "org.apache.camel.model.RemoveHeaderDefinition" : {
         "title" : "Remove Header",
-        "description" : "Removes a named header from the message",
+        "description" : "Removes a specific header from the message by name",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -3392,7 +3392,7 @@
       },
       "org.apache.camel.model.RemoveHeadersDefinition" : {
         "title" : "Remove Headers",
-        "description" : "Removes message headers whose name matches a specified pattern",
+        "description" : "Removes all message headers whose names match a given pattern. Useful for stripping internal Camel headers before sending to external systems.",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -3432,7 +3432,7 @@
       },
       "org.apache.camel.model.RemovePropertiesDefinition" : {
         "title" : "Remove Properties",
-        "description" : "Removes message exchange properties whose name matches a specified pattern",
+        "description" : "Removes all exchange properties whose names match a given pattern",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -3472,7 +3472,7 @@
       },
       "org.apache.camel.model.RemovePropertyDefinition" : {
         "title" : "Remove Property",
-        "description" : "Removes a named property from the message exchange",
+        "description" : "Removes a specific exchange property by name",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -3507,7 +3507,7 @@
       },
       "org.apache.camel.model.RemoveVariableDefinition" : {
         "title" : "Remove Variable",
-        "description" : "Removes a named variable",
+        "description" : "Removes a specific variable by name",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -3542,7 +3542,7 @@
       },
       "org.apache.camel.model.ResequenceDefinition" : {
         "title" : "Resequence",
-        "description" : "Resequences (re-order) messages based on an expression",
+        "description" : "Reorders messages based on a sequence expression, either in batch mode (collect and sort) or stream mode (continuous reordering with a timeout)",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -3588,7 +3588,7 @@
       },
       "org.apache.camel.model.Resilience4jConfigurationDefinition" : {
         "title" : "Resilience4j Configuration",
-        "description" : "Resilience4j Circuit Breaker EIP configuration",
+        "description" : "Configures Resilience4j settings for the Circuit Breaker EIP, such as failure rate threshold, wait duration, and sliding window parameters",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -3741,7 +3741,7 @@
       },
       "org.apache.camel.model.RestContextRefDefinition" : {
         "title" : "Rest Context Ref",
-        "description" : "To refer to an XML file with rest services defined using the rest-dsl",
+        "description" : "References an external XML file containing REST service definitions for inclusion in the current context",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -3755,7 +3755,7 @@
       },
       "org.apache.camel.model.ResumableDefinition" : {
         "title" : "Resumable",
-        "description" : "Resume EIP to support resuming processing from last known offset.",
+        "description" : "Enables resuming processing from the last known offset after a restart, using a resume strategy to track and restore position",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -3803,7 +3803,7 @@
       },
       "org.apache.camel.model.RollbackDefinition" : {
         "title" : "Rollback",
-        "description" : "Forces a rollback by stopping routing the message",
+        "description" : "Forces a rollback of the current transaction and stops routing the message. Can set a custom message on the exception.",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -3849,7 +3849,7 @@
       },
       "org.apache.camel.model.RouteBuilderDefinition" : {
         "title" : "Route Builder",
-        "description" : "To refer to a Java org.apache.camel.builder.RouteBuilder instance to use.",
+        "description" : "References a Java RouteBuilder class to include its routes in the current CamelContext",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -3868,7 +3868,7 @@
       },
       "org.apache.camel.model.RouteConfigurationContextRefDefinition" : {
         "title" : "Route Configuration Context Ref",
-        "description" : "To refer to an XML file with route configuration defined using the xml-dsl",
+        "description" : "References an external XML file containing route configuration definitions for inclusion in the current context",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -3960,7 +3960,7 @@
       },
       "org.apache.camel.model.RouteContextRefDefinition" : {
         "title" : "Route Context Ref",
-        "description" : "To refer to an XML file with routes defined using the xml-dsl",
+        "description" : "References an external XML file containing route definitions for inclusion in the current context",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -4084,7 +4084,7 @@
       },
       "org.apache.camel.model.RouteTemplateParameterDefinition" : {
         "title" : "Template Parameter",
-        "description" : "A route template parameter",
+        "description" : "Defines a parameter for a route template, with an optional default value and description",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -4114,7 +4114,7 @@
       },
       "org.apache.camel.model.RoutingSlipDefinition" : {
         "title" : "Routing Slip",
-        "description" : "Routes a message through a series of steps that are pre-determined (the slip)",
+        "description" : "Routes a message through a pre-determined sequence of endpoints defined in a header or expression (the routing slip). The list of endpoints is evaluated once upfront.",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -4165,7 +4165,7 @@
       },
       "org.apache.camel.model.SagaDefinition" : {
         "title" : "Saga",
-        "description" : "Enables Sagas on the route",
+        "description" : "Defines a Saga (long-running action) that coordinates distributed services toward a consistent outcome. Unlike XA transactions, Sagas use compensating actions for rollback and work across heterogeneous services.",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -4242,7 +4242,7 @@
       },
       "org.apache.camel.model.SamplingDefinition" : {
         "title" : "Sample",
-        "description" : "Extract a sample of the messages passing through a route",
+        "description" : "Samples a subset of messages passing through the route, either by frequency count or time interval, and discards the rest",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -4282,7 +4282,7 @@
       },
       "org.apache.camel.model.ScriptDefinition" : {
         "title" : "Script",
-        "description" : "Executes a script from a language which does not change the message body.",
+        "description" : "Executes an expression or script in a chosen language for side effects without modifying the message body",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -4316,7 +4316,7 @@
       },
       "org.apache.camel.model.SetBodyDefinition" : {
         "title" : "Set Body",
-        "description" : "Sets the contents of the message body",
+        "description" : "Sets the message body to a value computed by an expression",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -4350,7 +4350,7 @@
       },
       "org.apache.camel.model.SetExchangePatternDefinition" : {
         "title" : "Set Exchange Pattern",
-        "description" : "Sets the exchange pattern on the message exchange",
+        "description" : "Sets the message exchange pattern (MEP) on the exchange, such as InOnly for one-way or InOut for request-reply",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -4385,7 +4385,7 @@
       },
       "org.apache.camel.model.SetHeaderDefinition" : {
         "title" : "Set Header",
-        "description" : "Sets the value of a message header",
+        "description" : "Sets a message header to a value computed by an expression",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -4425,7 +4425,7 @@
       },
       "org.apache.camel.model.SetHeadersDefinition" : {
         "title" : "Set Headers",
-        "description" : "Allows setting multiple headers on the message at the same time.",
+        "description" : "Sets multiple message headers at once, each computed by its own expression",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -4462,7 +4462,7 @@
       },
       "org.apache.camel.model.SetPropertyDefinition" : {
         "title" : "Set Property",
-        "description" : "Sets a named property on the message exchange",
+        "description" : "Sets an exchange property to a value computed by an expression",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -4502,7 +4502,7 @@
       },
       "org.apache.camel.model.SetVariableDefinition" : {
         "title" : "Set Variable",
-        "description" : "Sets the value of a variable",
+        "description" : "Sets a variable to a value computed by an expression",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -4542,7 +4542,7 @@
       },
       "org.apache.camel.model.SetVariablesDefinition" : {
         "title" : "Set Variables",
-        "description" : "Allows setting multiple variables at the same time.",
+        "description" : "Sets multiple variables at once, each computed by its own expression",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -4579,7 +4579,7 @@
       },
       "org.apache.camel.model.SortDefinition" : {
         "title" : "Sort",
-        "description" : "Sorts the contents of the message",
+        "description" : "Sorts the items in a message body that is a List, using a specified comparator or the default ordering",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -4618,7 +4618,7 @@
       },
       "org.apache.camel.model.SplitDefinition" : {
         "title" : "Split",
-        "description" : "Splits a single message into many sub-messages.",
+        "description" : "Splits a message into multiple sub-messages using an expression, and processes each one individually. Supports parallel processing and result aggregation.",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -4733,7 +4733,7 @@
       },
       "org.apache.camel.model.StepDefinition" : {
         "title" : "Step",
-        "description" : "Routes the message to a sequence of processors which is grouped together as one logical name",
+        "description" : "Groups a sequence of processing steps under a single logical name for improved monitoring, management, and tracing visibility",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -4768,7 +4768,7 @@
       },
       "org.apache.camel.model.StopDefinition" : {
         "title" : "Stop",
-        "description" : "Stops the processing of the current message",
+        "description" : "Stops processing of the current message and marks the exchange as completed without sending it to any further steps",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -4828,7 +4828,7 @@
       },
       "org.apache.camel.model.TemplatedRouteParameterDefinition" : {
         "title" : "Templated Route Parameter",
-        "description" : "An input parameter of a route template.",
+        "description" : "Provides a parameter value for a templated route, binding a value to a route template parameter",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -4847,7 +4847,7 @@
       },
       "org.apache.camel.model.ThreadPoolProfileDefinition" : {
         "title" : "Thread Pool Profile",
-        "description" : "To configure thread pools",
+        "description" : "Defines a named thread pool profile with pool size, queue size, and thread keep-alive settings for use by EIPs and components",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -4914,7 +4914,7 @@
       },
       "org.apache.camel.model.ThreadsDefinition" : {
         "title" : "Threads",
-        "description" : "Specifies that all steps after this node are processed asynchronously",
+        "description" : "Offloads processing of subsequent steps in the route to a thread pool, enabling asynchronous and concurrent message handling",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -4998,7 +4998,7 @@
       },
       "org.apache.camel.model.ThrottleDefinition" : {
         "title" : "Throttle",
-        "description" : "Controls the rate at which messages are passed to the next node in the route",
+        "description" : "Limits the message throughput to a maximum number of messages per time period to avoid overloading downstream systems",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -5073,7 +5073,7 @@
       },
       "org.apache.camel.model.ThrowExceptionDefinition" : {
         "title" : "Throw Exception",
-        "description" : "Throws an exception",
+        "description" : "Throws an exception during route processing, either creating a new exception instance or re-throwing an existing one",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -5117,7 +5117,7 @@
       },
       "org.apache.camel.model.ToDefinition" : {
         "title" : "To",
-        "description" : "Sends the message to a static endpoint",
+        "description" : "Sends the message to a fixed endpoint URI",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -5171,7 +5171,7 @@
       },
       "org.apache.camel.model.ToDynamicDefinition" : {
         "title" : "To D",
-        "description" : "Sends the message to a dynamic endpoint",
+        "description" : "Sends the message to an endpoint URI computed dynamically from an expression, allowing the destination to vary per message",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -5248,7 +5248,7 @@
       },
       "org.apache.camel.model.TokenizerDefinition" : {
         "title" : "Specialized tokenizer for AI applications",
-        "description" : "Represents a Camel tokenizer for AI.",
+        "description" : "Tokenizes the message body for AI processing, splitting text into chunks suitable for embedding or LLM input",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -5301,7 +5301,7 @@
       },
       "org.apache.camel.model.TransactedDefinition" : {
         "title" : "Transacted",
-        "description" : "Enables transaction on the route",
+        "description" : "Wraps the route in a transaction, ensuring that all steps within the transacted block either complete together or roll back on failure",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -5341,7 +5341,7 @@
       },
       "org.apache.camel.model.TransformDataTypeDefinition" : {
         "title" : "Transform Data Type",
-        "description" : "Transforms the message body based on known data type transformers.",
+        "description" : "Transforms the message body between known data types (such as XML, JSON, Java objects) using registered data type transformers",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -5381,7 +5381,7 @@
       },
       "org.apache.camel.model.TransformDefinition" : {
         "title" : "Transform",
-        "description" : "Transforms the message body based on an expression",
+        "description" : "Sets the message body using an expression. Unlike setBody, transform also sets the OUT message body in InOut exchanges",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -5463,7 +5463,7 @@
       },
       "org.apache.camel.model.UnmarshalDefinition" : {
         "title" : "Unmarshal",
-        "description" : "Converts the message data received from the wire into a format that Apache Camel processors can consume",
+        "description" : "Deserializes the message body from a specific data format such as JSON, XML, CSV, or Protobuf into a Java object",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -5653,7 +5653,7 @@
       },
       "org.apache.camel.model.ValidateDefinition" : {
         "title" : "Validate",
-        "description" : "Validates a message based on an expression",
+        "description" : "Validates the message against a predicate expression and throws a PredicateValidationException if the validation fails",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -5692,7 +5692,7 @@
       },
       "org.apache.camel.model.ValueDefinition" : {
         "title" : "Value",
-        "description" : "A single value",
+        "description" : "Holds a single value, typically used as a child element in collection-based configurations",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -5705,7 +5705,7 @@
       },
       "org.apache.camel.model.WhenDefinition" : {
         "title" : "When",
-        "description" : "Triggers a route when the expression evaluates to true",
+        "description" : "Defines a conditional branch within a Choice EIP that executes when its predicate evaluates to true",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -5745,7 +5745,7 @@
       },
       "org.apache.camel.model.WireTapDefinition" : {
         "title" : "Wire Tap",
-        "description" : "Routes a copy of a message (or creates a new message) to a secondary destination while continue routing the original message.",
+        "description" : "Sends a copy of the message to a secondary endpoint without affecting the original route flow. The tapped message is sent asynchronously in a separate thread",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -5984,7 +5984,7 @@
       },
       "org.apache.camel.model.config.BatchResequencerConfig" : {
         "title" : "Batch Config",
-        "description" : "Configures batch-processing resequence eip.",
+        "description" : "Configures the batch-processing mode of the Resequence EIP, which collects messages into a batch and sorts them before releasing",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -6022,7 +6022,7 @@
       },
       "org.apache.camel.model.config.StreamResequencerConfig" : {
         "title" : "Stream Config",
-        "description" : "Configures stream-processing resequence eip.",
+        "description" : "Configures the stream-processing mode of the Resequence EIP, which continuously reorders messages as they arrive using a timeout",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -6065,7 +6065,7 @@
       },
       "org.apache.camel.model.dataformat.ASN1DataFormat" : {
         "title" : "ASN.1 File",
-        "description" : "Encode and decode data structures using Abstract Syntax Notation One (ASN.1).",
+        "description" : "Encode and decode data structures using Abstract Syntax Notation One (ASN.1)",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -6089,7 +6089,7 @@
       },
       "org.apache.camel.model.dataformat.AvroDataFormat" : {
         "title" : "Avro",
-        "description" : "Serialize and deserialize messages using Apache Avro binary data format.",
+        "description" : "Serialize and deserialize messages using Apache Avro binary data format",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -6211,7 +6211,7 @@
       },
       "org.apache.camel.model.dataformat.BarcodeDataFormat" : {
         "title" : "Barcode",
-        "description" : "Transform strings to various 1D/2D barcode bitmap formats and back.",
+        "description" : "Transform strings to various 1D/2D barcode bitmap formats and back",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -6250,7 +6250,7 @@
       },
       "org.apache.camel.model.dataformat.Base64DataFormat" : {
         "title" : "Base64",
-        "description" : "Encode and decode data using Base64.",
+        "description" : "Encode and decode data using Base64",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -6280,7 +6280,7 @@
       },
       "org.apache.camel.model.dataformat.BeanioDataFormat" : {
         "title" : "BeanIO",
-        "description" : "Marshal and unmarshal Java beans to and from flat files (such as CSV, delimited, or fixed length formats).",
+        "description" : "Marshal and unmarshal Java beans to and from flat files (such as CSV, delimited, or fixed length formats)",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -6338,7 +6338,7 @@
       },
       "org.apache.camel.model.dataformat.BindyDataFormat" : {
         "title" : "Bindy",
-        "description" : "Marshal and unmarshal Java beans from and to flat payloads (such as CSV, delimited, fixed length formats, or FIX messages).",
+        "description" : "Marshal and unmarshal Java beans from and to flat payloads (such as CSV, delimited, fixed length formats, or FIX messages)",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -6385,7 +6385,7 @@
       },
       "org.apache.camel.model.dataformat.CBORDataFormat" : {
         "title" : "CBOR",
-        "description" : "Unmarshal a CBOR payload to POJO and back.",
+        "description" : "Unmarshal a CBOR payload to POJO and back",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -6453,7 +6453,7 @@
       },
       "org.apache.camel.model.dataformat.CryptoDataFormat" : {
         "title" : "Crypto (Java Cryptographic Extension)",
-        "description" : "Encrypt and decrypt messages using Java Cryptography Extension (JCE).",
+        "description" : "Encrypt and decrypt messages using Java Cryptography Extension (JCE)",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -6515,7 +6515,7 @@
       },
       "org.apache.camel.model.dataformat.CsvDataFormat" : {
         "title" : "CSV",
-        "description" : "Handle CSV (Comma Separated Values) payloads.",
+        "description" : "Handle CSV (Comma Separated Values) payloads",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -6688,7 +6688,7 @@
       },
       "org.apache.camel.model.dataformat.CustomDataFormat" : {
         "title" : "Custom",
-        "description" : "Delegate to a custom org.apache.camel.spi.DataFormat implementation via Camel registry.",
+        "description" : "Delegates to a custom DataFormat implementation looked up from the Camel registry by name",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -6707,7 +6707,7 @@
       },
       "org.apache.camel.model.dataformat.DataFormatsDefinition" : {
         "title" : "Data formats",
-        "description" : "Configure data formats.",
+        "description" : "Container for defining data format configurations",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -6859,7 +6859,7 @@
       },
       "org.apache.camel.model.dataformat.DfdlDataFormat" : {
         "title" : "DFDL",
-        "description" : "Transforms fixed format data such as EDI message from/to XML using a Data Format Description Language (DFDL).",
+        "description" : "Transforms fixed format data such as EDI message from/to XML using a Data Format Description Language (DFDL)",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -6888,7 +6888,7 @@
       },
       "org.apache.camel.model.dataformat.FhirJsonDataFormat" : {
         "title" : "FHIR JSon",
-        "description" : "Marshall and unmarshall FHIR objects to/from JSON.",
+        "description" : "Marshall and unmarshall FHIR objects to/from JSON",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -7001,7 +7001,7 @@
       },
       "org.apache.camel.model.dataformat.FhirXmlDataFormat" : {
         "title" : "FHIR XML",
-        "description" : "Marshall and unmarshall FHIR objects to/from XML.",
+        "description" : "Marshall and unmarshall FHIR objects to/from XML",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -7114,7 +7114,7 @@
       },
       "org.apache.camel.model.dataformat.FlatpackDataFormat" : {
         "title" : "Flatpack",
-        "description" : "Marshal and unmarshal Java lists and maps to/from flat files (such as CSV, delimited, or fixed length formats) using Flatpack library.",
+        "description" : "Marshal and unmarshal Java lists and maps to/from flat files (such as CSV, delimited, or fixed length formats) using Flatpack library",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -7208,7 +7208,7 @@
       },
       "org.apache.camel.model.dataformat.GrokDataFormat" : {
         "title" : "Grok",
-        "description" : "Unmarshal unstructured data to objects using Logstash based Grok patterns.",
+        "description" : "Unmarshal unstructured data to objects using Logstash based Grok patterns",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -7245,7 +7245,7 @@
       },
       "org.apache.camel.model.dataformat.GroovyJSonDataFormat" : {
         "title" : "Groovy JSon",
-        "description" : "Transform between JSon and java.util.Map or java.util.List objects.",
+        "description" : "Transform between JSon and java.util.Map or java.util.List objects",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -7264,7 +7264,7 @@
       },
       "org.apache.camel.model.dataformat.GroovyXmlDataFormat" : {
         "title" : "Groovy XML",
-        "description" : "Transform between XML and Groovy Node (Map structure) objects.",
+        "description" : "Transform between XML and Groovy Node (Map structure) objects",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -7283,7 +7283,7 @@
       },
       "org.apache.camel.model.dataformat.GzipDeflaterDataFormat" : {
         "title" : "GZip Deflater",
-        "description" : "Compress and decompress messages using java.util.zip.GZIPStream.",
+        "description" : "Compress and decompress messages using java.util.zip.GZIP*Stream",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -7296,7 +7296,7 @@
       },
       "org.apache.camel.model.dataformat.HL7DataFormat" : {
         "title" : "HL7",
-        "description" : "Marshal and unmarshal HL7 (Health Care) model objects using the HL7 MLLP codec.",
+        "description" : "Marshal and unmarshal HL7 (Health Care) model objects using the HL7 MLLP codec",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -7326,7 +7326,7 @@
       },
       "org.apache.camel.model.dataformat.IcalDataFormat" : {
         "title" : "iCal",
-        "description" : "Marshal and unmarshal iCal (.ics) documents to/from model objects.",
+        "description" : "Marshal and unmarshal iCal (*.ics) documents to/from model objects",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -7345,7 +7345,7 @@
       },
       "org.apache.camel.model.dataformat.Iso8583DataFormat" : {
         "title" : "ISO-8583",
-        "description" : "Create, edit and read ISO-8583 messages.",
+        "description" : "Create, edit and read ISO-8583 messages",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -7375,7 +7375,7 @@
       },
       "org.apache.camel.model.dataformat.JacksonXMLDataFormat" : {
         "title" : "Jackson XML",
-        "description" : "Unmarshal an XML payloads to POJOs and back using XMLMapper extension of Jackson.",
+        "description" : "Unmarshal an XML payloads to POJOs and back using XMLMapper extension of Jackson",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -7479,7 +7479,7 @@
       },
       "org.apache.camel.model.dataformat.JaxbDataFormat" : {
         "title" : "JAXB",
-        "description" : "Unmarshal XML payloads to POJOs and back using JAXB2 XML marshalling standard.",
+        "description" : "Unmarshal XML payloads to POJOs and back using JAXB2 XML marshalling standard",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -7603,7 +7603,7 @@
       },
       "org.apache.camel.model.dataformat.JsonApiDataFormat" : {
         "title" : "JSonApi",
-        "description" : "Marshal and unmarshal JSON:API resources using JSONAPI-Converter library.",
+        "description" : "Marshal and unmarshal JSON:API resources using JSONAPI-Converter library",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -7626,7 +7626,7 @@
       },
       "org.apache.camel.model.dataformat.JsonDataFormat" : {
         "title" : "JSon",
-        "description" : "Marshal POJOs to JSON and back.",
+        "description" : "Marshal POJOs to JSON and back",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -7770,7 +7770,7 @@
       },
       "org.apache.camel.model.dataformat.LZFDataFormat" : {
         "title" : "LZF Deflate Compression",
-        "description" : "Compress and decompress streams using LZF deflate algorithm.",
+        "description" : "Compress and decompress streams using LZF deflate algorithm",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -7789,7 +7789,7 @@
       },
       "org.apache.camel.model.dataformat.MimeMultipartDataFormat" : {
         "title" : "MIME Multipart",
-        "description" : "Marshal Camel messages with attachments into MIME-Multipart messages and back.",
+        "description" : "Marshal Camel messages with attachments into MIME-Multipart messages and back",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -7831,7 +7831,7 @@
       },
       "org.apache.camel.model.dataformat.OcsfDataFormat" : {
         "title" : "OCSF",
-        "description" : "Marshal and unmarshal OCSF (Open Cybersecurity Schema Framework) security events to/from JSON.",
+        "description" : "Marshal and unmarshal OCSF (Open Cybersecurity Schema Framework) security events to/from JSON",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -7883,7 +7883,7 @@
       },
       "org.apache.camel.model.dataformat.PGPDataFormat" : {
         "title" : "PGP (Pretty Good Privacy Cryptographic)",
-        "description" : "Encrypt and decrypt messages using Java Cryptographic Extension (JCE) and PGP.",
+        "description" : "Encrypt and decrypt messages using Java Cryptographic Extension (JCE) and PGP",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -7968,7 +7968,7 @@
       },
       "org.apache.camel.model.dataformat.PQCDataFormat" : {
         "title" : "PQC (Post-Quantum Cryptography)",
-        "description" : "Encrypt and decrypt messages using Post-Quantum Cryptography Key Encapsulation Mechanisms (KEM).",
+        "description" : "Encrypt and decrypt messages using Post-Quantum Cryptography Key Encapsulation Mechanisms (KEM)",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -8022,7 +8022,7 @@
       },
       "org.apache.camel.model.dataformat.ParquetAvroDataFormat" : {
         "title" : "Parquet File",
-        "description" : "Parquet Avro serialization and de-serialization.",
+        "description" : "Parquet Avro serialization and de-serialization",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -8053,7 +8053,7 @@
       },
       "org.apache.camel.model.dataformat.ProtobufDataFormat" : {
         "title" : "Protobuf",
-        "description" : "Serialize and deserialize Java objects using Google's Protocol buffers.",
+        "description" : "Serialize and deserialize Java objects using Google's Protocol buffers",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -8182,7 +8182,7 @@
       },
       "org.apache.camel.model.dataformat.RssDataFormat" : {
         "title" : "RSS",
-        "description" : "Transform from ROME SyndFeed Java Objects to XML and vice-versa.",
+        "description" : "Transform from ROME SyndFeed Java Objects to XML and vice-versa",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -8195,7 +8195,7 @@
       },
       "org.apache.camel.model.dataformat.SmooksDataFormat" : {
         "title" : "Smooks",
-        "description" : "Transform and bind XML as well as non-XML data, including EDI, CSV, JSON, and YAML using Smooks.",
+        "description" : "Transform and bind XML as well as non-XML data, including EDI, CSV, JSON, and YAML using Smooks",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -8214,7 +8214,7 @@
       },
       "org.apache.camel.model.dataformat.SoapDataFormat" : {
         "title" : "SOAP",
-        "description" : "Marshal Java objects to SOAP messages and back.",
+        "description" : "Marshal Java objects to SOAP messages and back",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -8266,7 +8266,7 @@
       },
       "org.apache.camel.model.dataformat.SwiftMtDataFormat" : {
         "title" : "SWIFT MT",
-        "description" : "Encode and decode SWIFT MT messages.",
+        "description" : "Encode and decode SWIFT MT messages",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -8285,7 +8285,7 @@
       },
       "org.apache.camel.model.dataformat.SwiftMxDataFormat" : {
         "title" : "SWIFT MX",
-        "description" : "Encode and decode SWIFT MX messages.",
+        "description" : "Encode and decode SWIFT MX messages",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -8319,7 +8319,7 @@
       },
       "org.apache.camel.model.dataformat.SyslogDataFormat" : {
         "title" : "Syslog",
-        "description" : "Marshall SyslogMessages to RFC3164 and RFC5424 messages and back.",
+        "description" : "Marshall SyslogMessages to RFC3164 and RFC5424 messages and back",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -8332,7 +8332,7 @@
       },
       "org.apache.camel.model.dataformat.TarFileDataFormat" : {
         "title" : "Tar File",
-        "description" : "Archive files into tarballs or extract files from tarballs.",
+        "description" : "Archive files into tarballs or extract files from tarballs",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -8369,7 +8369,7 @@
       },
       "org.apache.camel.model.dataformat.ThriftDataFormat" : {
         "title" : "Thrift",
-        "description" : "Serialize and deserialize messages using Apache Thrift binary data format.",
+        "description" : "Serialize and deserialize messages using Apache Thrift binary data format",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -8400,7 +8400,7 @@
       },
       "org.apache.camel.model.dataformat.UniVocityCsvDataFormat" : {
         "title" : "uniVocity CSV",
-        "description" : "Marshal and unmarshal Java objects from and to CSV (Comma Separated Values) using UniVocity Parsers.",
+        "description" : "Marshal and unmarshal Java objects from and to CSV (Comma Separated Values) using UniVocity Parsers",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -8516,7 +8516,7 @@
       },
       "org.apache.camel.model.dataformat.UniVocityFixedDataFormat" : {
         "title" : "uniVocity Fixed Length",
-        "description" : "Marshal and unmarshal Java objects from and to fixed length records using UniVocity Parsers.",
+        "description" : "Marshal and unmarshal Java objects from and to fixed length records using UniVocity Parsers",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -8625,7 +8625,7 @@
       },
       "org.apache.camel.model.dataformat.UniVocityHeader" : {
         "title" : "uniVocity Header",
-        "description" : "To configure headers for UniVocity data formats.",
+        "description" : "Defines a column header for UniVocity data format configuration",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -8642,7 +8642,7 @@
       },
       "org.apache.camel.model.dataformat.UniVocityTsvDataFormat" : {
         "title" : "uniVocity TSV",
-        "description" : "Marshal and unmarshal Java objects from and to TSV (Tab-Separated Values) records using UniVocity Parsers.",
+        "description" : "Marshal and unmarshal Java objects from and to TSV (Tab-Separated Values) records using UniVocity Parsers",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -8740,7 +8740,7 @@
       },
       "org.apache.camel.model.dataformat.XMLSecurityDataFormat" : {
         "title" : "XML Security",
-        "description" : "Encrypt and decrypt XML payloads using Apache Santuario.",
+        "description" : "Encrypt and decrypt XML payloads using Apache Santuario",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -8829,7 +8829,7 @@
       },
       "org.apache.camel.model.dataformat.YAMLDataFormat" : {
         "title" : "YAML",
-        "description" : "Marshal and unmarshal Java objects to and from YAML.",
+        "description" : "Marshal and unmarshal Java objects to and from YAML",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -8909,7 +8909,7 @@
       },
       "org.apache.camel.model.dataformat.ZipDeflaterDataFormat" : {
         "title" : "Zip Deflater",
-        "description" : "Compress and decompress streams using java.util.zip.Deflater and java.util.zip.Inflater.",
+        "description" : "Compress and decompress streams using java.util.zip.Deflater and java.util.zip.Inflater",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -8929,7 +8929,7 @@
       },
       "org.apache.camel.model.dataformat.ZipFileDataFormat" : {
         "title" : "Zip File",
-        "description" : "Compression and decompress streams using java.util.zip.ZipStream.",
+        "description" : "Compression and decompress streams using java.util.zip.Zip*Stream",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -8966,7 +8966,7 @@
       },
       "org.apache.camel.model.errorhandler.DeadLetterChannelDefinition" : {
         "title" : "Dead Letter Channel",
-        "description" : "Error handler with dead letter queue.",
+        "description" : "Error handler that moves failed messages to a dead letter endpoint after exhausting redelivery attempts",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -9055,7 +9055,7 @@
       },
       "org.apache.camel.model.errorhandler.DefaultErrorHandlerDefinition" : {
         "title" : "Default Error Handler",
-        "description" : "The default error handler.",
+        "description" : "The default error handler that supports redelivery with configurable retry policies and delay patterns",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -9132,7 +9132,7 @@
       },
       "org.apache.camel.model.errorhandler.JtaTransactionErrorHandlerDefinition" : {
         "title" : "Jta Transaction Error Handler",
-        "description" : "JTA based transactional error handler (requires camel-jta).",
+        "description" : "Transactional error handler using JTA (Java Transaction API) that marks the transaction for rollback on failure",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -9221,7 +9221,7 @@
       },
       "org.apache.camel.model.errorhandler.NoErrorHandlerDefinition" : {
         "title" : "No Error Handler",
-        "description" : "To not use an error handler.",
+        "description" : "Disables error handling for a route, causing exceptions to propagate immediately to the caller",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -9234,7 +9234,7 @@
       },
       "org.apache.camel.model.errorhandler.RefErrorHandlerDefinition" : {
         "title" : "Ref Error Handler",
-        "description" : "References to an existing or custom error handler.",
+        "description" : "References a custom error handler bean from the registry by its name",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -9253,7 +9253,7 @@
       },
       "org.apache.camel.model.errorhandler.SpringTransactionErrorHandlerDefinition" : {
         "title" : "Spring Transaction Error Handler",
-        "description" : "Spring based transactional error handler (requires camel-spring).",
+        "description" : "Transactional error handler using Spring Transaction Manager that marks the transaction for rollback on failure",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -9342,7 +9342,7 @@
       },
       "org.apache.camel.model.language.CSimpleExpression" : {
         "title" : "CSimple",
-        "description" : "Evaluate a compiled simple expression.",
+        "description" : "Evaluate a compiled simple expression",
         "deprecated" : true,
         "type" : "object",
         "additionalProperties" : false,
@@ -9385,7 +9385,7 @@
       },
       "org.apache.camel.model.language.ConstantExpression" : {
         "title" : "Constant",
-        "description" : "A fixed value set only once during the route startup.",
+        "description" : "A fixed value set only once during the route startup",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -9415,7 +9415,7 @@
       },
       "org.apache.camel.model.language.DatasonnetExpression" : {
         "title" : "DataSonnet",
-        "description" : "To use DataSonnet scripts for message transformations.",
+        "description" : "To use DataSonnet scripts for message transformations",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -9460,7 +9460,7 @@
       },
       "org.apache.camel.model.language.ExchangePropertyExpression" : {
         "title" : "ExchangeProperty",
-        "description" : "Gets a property from the Exchange.",
+        "description" : "Gets a property from the Exchange",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -9569,7 +9569,7 @@
       },
       "org.apache.camel.model.language.GroovyExpression" : {
         "title" : "Groovy",
-        "description" : "Evaluates a Groovy script.",
+        "description" : "Evaluates a Groovy script",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -9599,7 +9599,7 @@
       },
       "org.apache.camel.model.language.HeaderExpression" : {
         "title" : "Header",
-        "description" : "Gets a header from the Exchange.",
+        "description" : "Gets a header from the Exchange",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -9624,7 +9624,7 @@
       },
       "org.apache.camel.model.language.Hl7TerserExpression" : {
         "title" : "HL7 Terser",
-        "description" : "Get the value of a HL7 message field specified by terse location specification syntax.",
+        "description" : "Get the value of a HL7 message field specified by terse location specification syntax",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -9659,7 +9659,7 @@
       },
       "org.apache.camel.model.language.JavaExpression" : {
         "title" : "Java",
-        "description" : "Evaluates a Java (Java compiled once at runtime) expression.",
+        "description" : "Evaluates a Java (Java compiled once at runtime) expression",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -9701,7 +9701,7 @@
       },
       "org.apache.camel.model.language.JavaScriptExpression" : {
         "title" : "JavaScript",
-        "description" : "Evaluates a JavaScript expression.",
+        "description" : "Evaluates a JavaScript expression",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -9731,7 +9731,7 @@
       },
       "org.apache.camel.model.language.JoorExpression" : {
         "title" : "jOOR",
-        "description" : "Evaluates a jOOR (Java compiled once at runtime) expression.",
+        "description" : "Evaluates a jOOR (Java compiled once at runtime) expression",
         "deprecated" : true,
         "type" : "object",
         "additionalProperties" : false,
@@ -9774,7 +9774,7 @@
       },
       "org.apache.camel.model.language.JqExpression" : {
         "title" : "JQ",
-        "description" : "Evaluates a JQ expression against a JSON message body.",
+        "description" : "Evaluates a JQ expression against a JSON message body",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -9809,7 +9809,7 @@
       },
       "org.apache.camel.model.language.JsonPathExpression" : {
         "title" : "JSONPath",
-        "description" : "Evaluates a JSONPath expression against a JSON message body.",
+        "description" : "Evaluates a JSONPath expression against a JSON message body",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -9880,7 +9880,7 @@
       },
       "org.apache.camel.model.language.LanguageExpression" : {
         "title" : "Language",
-        "description" : "Evaluates a custom language.",
+        "description" : "Evaluates a custom language",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -9910,7 +9910,7 @@
       },
       "org.apache.camel.model.language.MethodCallExpression" : {
         "title" : "Bean Method",
-        "description" : "Calls a Java bean method.",
+        "description" : "Calls a Java bean method",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -9962,7 +9962,7 @@
       },
       "org.apache.camel.model.language.MvelExpression" : {
         "title" : "MVEL",
-        "description" : "Evaluates a MVEL template.",
+        "description" : "Evaluates a MVEL template",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -9992,7 +9992,7 @@
       },
       "org.apache.camel.model.language.OgnlExpression" : {
         "title" : "OGNL",
-        "description" : "Evaluates an OGNL expression (Apache Commons OGNL).",
+        "description" : "Evaluates an OGNL expression (Apache Commons OGNL)",
         "deprecated" : true,
         "type" : "object",
         "additionalProperties" : false,
@@ -10023,7 +10023,7 @@
       },
       "org.apache.camel.model.language.PythonExpression" : {
         "title" : "Python",
-        "description" : "Evaluates a Python expression.",
+        "description" : "Evaluates a Python expression",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -10053,7 +10053,7 @@
       },
       "org.apache.camel.model.language.RefExpression" : {
         "title" : "Ref",
-        "description" : "Uses an existing expression from the registry.",
+        "description" : "Uses an existing expression from the registry",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -10083,7 +10083,7 @@
       },
       "org.apache.camel.model.language.SimpleExpression" : {
         "title" : "Simple",
-        "description" : "Evaluates a Camel simple expression.",
+        "description" : "Evaluates a Camel simple expression",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -10131,7 +10131,7 @@
       },
       "org.apache.camel.model.language.SpELExpression" : {
         "title" : "SpEL",
-        "description" : "Evaluates a Spring expression (SpEL).",
+        "description" : "Evaluates a Spring expression (SpEL)",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -10161,7 +10161,7 @@
       },
       "org.apache.camel.model.language.TokenizerExpression" : {
         "title" : "Tokenize",
-        "description" : "Tokenize text payloads using delimiter patterns.",
+        "description" : "Tokenize text payloads using delimiter patterns",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -10265,7 +10265,7 @@
       },
       "org.apache.camel.model.language.WasmExpression" : {
         "title" : "Wasm",
-        "description" : "Call a wasm (web assembly) function.",
+        "description" : "Call a wasm (web assembly) function",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -10300,7 +10300,7 @@
       },
       "org.apache.camel.model.language.XMLTokenizerExpression" : {
         "title" : "XML Tokenize",
-        "description" : "Tokenize XML payloads.",
+        "description" : "Tokenize XML payloads",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -10355,7 +10355,7 @@
       },
       "org.apache.camel.model.language.XPathExpression" : {
         "title" : "XPath",
-        "description" : "Evaluates an XPath expression against an XML payload.",
+        "description" : "Evaluates an XPath expression against an XML payload",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -10444,7 +10444,7 @@
       },
       "org.apache.camel.model.language.XQueryExpression" : {
         "title" : "XQuery",
-        "description" : "Evaluates an XQuery expressions against an XML payload.",
+        "description" : "Evaluates an XQuery expressions against an XML payload",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -10492,7 +10492,7 @@
       },
       "org.apache.camel.model.loadbalancer.CustomLoadBalancerDefinition" : {
         "title" : "Custom Load Balancer",
-        "description" : "To use a custom load balancer implementation.",
+        "description" : "References a custom load balancer implementation from the registry",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -10511,7 +10511,7 @@
       },
       "org.apache.camel.model.loadbalancer.FailoverLoadBalancerDefinition" : {
         "title" : "Failover Load Balancer",
-        "description" : "In case of failures the exchange will be tried on the next endpoint.",
+        "description" : "Load balancer that tries the next endpoint in case of failure, cycling through available endpoints until one succeeds",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -10550,7 +10550,7 @@
       },
       "org.apache.camel.model.loadbalancer.RandomLoadBalancerDefinition" : {
         "title" : "Random Load Balancer",
-        "description" : "The destination endpoints are selected randomly.",
+        "description" : "Load balancer that randomly selects a destination endpoint for each message",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -10563,7 +10563,7 @@
       },
       "org.apache.camel.model.loadbalancer.RoundRobinLoadBalancerDefinition" : {
         "title" : "Round Robin Load Balancer",
-        "description" : "The destination endpoints are selected in a round-robin fashion. This is a well-known and classic policy, which spreads the load evenly.",
+        "description" : "Load balancer that cycles through destination endpoints in sequential order, distributing the load evenly",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -10576,7 +10576,7 @@
       },
       "org.apache.camel.model.loadbalancer.StickyLoadBalancerDefinition" : {
         "title" : "Sticky Load Balancer",
-        "description" : "Sticky load balancing using an expression to calculate a correlation key to perform the sticky load balancing.",
+        "description" : "Load balancer that routes messages to the same endpoint based on a correlation expression, ensuring session affinity",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -10594,7 +10594,7 @@
       },
       "org.apache.camel.model.loadbalancer.TopicLoadBalancerDefinition" : {
         "title" : "Topic Load Balancer",
-        "description" : "Topic which sends to all destinations.",
+        "description" : "Load balancer that sends every message to all destination endpoints, similar to a publish-subscribe pattern",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -10607,7 +10607,7 @@
       },
       "org.apache.camel.model.loadbalancer.WeightedLoadBalancerDefinition" : {
         "title" : "Weighted Load Balancer",
-        "description" : "Uses a weighted load distribution ratio for each server with respect to others.",
+        "description" : "Load balancer that distributes messages across endpoints according to configured weight ratios",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -10638,7 +10638,7 @@
       },
       "org.apache.camel.model.rest.ApiKeyDefinition" : {
         "title" : "Api Key",
-        "description" : "Rest security basic auth definition",
+        "description" : "Configures API key authentication for a REST service",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -10680,7 +10680,7 @@
       },
       "org.apache.camel.model.rest.BasicAuthDefinition" : {
         "title" : "Basic Auth",
-        "description" : "Rest security basic auth definition",
+        "description" : "Configures HTTP Basic authentication for a REST service",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -10699,7 +10699,7 @@
       },
       "org.apache.camel.model.rest.BearerTokenDefinition" : {
         "title" : "Bearer Token",
-        "description" : "Rest security bearer token authentication definition",
+        "description" : "Configures Bearer token authentication for a REST service",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -10723,7 +10723,7 @@
       },
       "org.apache.camel.model.rest.DeleteDefinition" : {
         "title" : "Delete",
-        "description" : "Rest DELETE command",
+        "description" : "Defines an HTTP DELETE operation in the REST DSL",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -10866,7 +10866,7 @@
       },
       "org.apache.camel.model.rest.GetDefinition" : {
         "title" : "Get",
-        "description" : "Rest GET command",
+        "description" : "Defines an HTTP GET operation in the REST DSL",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -11009,7 +11009,7 @@
       },
       "org.apache.camel.model.rest.HeadDefinition" : {
         "title" : "Head",
-        "description" : "Rest HEAD command",
+        "description" : "Defines an HTTP HEAD operation in the REST DSL",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -11152,7 +11152,7 @@
       },
       "org.apache.camel.model.rest.MutualTLSDefinition" : {
         "title" : "Mutual TLS",
-        "description" : "Rest security mutual TLS authentication definition",
+        "description" : "Configures mutual TLS (mTLS) client certificate authentication for a REST service",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -11171,7 +11171,7 @@
       },
       "org.apache.camel.model.rest.OAuth2Definition" : {
         "title" : "Oauth2",
-        "description" : "Rest security OAuth2 definition",
+        "description" : "Configures OAuth2 authentication for a REST service",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -11219,7 +11219,7 @@
       },
       "org.apache.camel.model.rest.OpenApiDefinition" : {
         "title" : "Open Api",
-        "description" : "To use OpenApi as contract-first with Camel Rest DSL.",
+        "description" : "Configures a contract-first REST service using an OpenAPI specification, where Camel auto-generates routes for each operation",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -11277,7 +11277,7 @@
       },
       "org.apache.camel.model.rest.OpenIdConnectDefinition" : {
         "title" : "Open Id Connect",
-        "description" : "Rest security OpenID Connect definition",
+        "description" : "Configures OpenID Connect authentication for a REST service",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -11301,7 +11301,7 @@
       },
       "org.apache.camel.model.rest.ParamDefinition" : {
         "title" : "Param",
-        "description" : "To specify the rest operation parameters.",
+        "description" : "Defines a parameter for a REST operation, specifying its type, name, data type, and whether it is required",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -11378,7 +11378,7 @@
       },
       "org.apache.camel.model.rest.PatchDefinition" : {
         "title" : "Patch",
-        "description" : "Rest PATCH command",
+        "description" : "Defines an HTTP PATCH operation in the REST DSL",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -11521,7 +11521,7 @@
       },
       "org.apache.camel.model.rest.PostDefinition" : {
         "title" : "Post",
-        "description" : "Rest POST command",
+        "description" : "Defines an HTTP POST operation in the REST DSL",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -11664,7 +11664,7 @@
       },
       "org.apache.camel.model.rest.PutDefinition" : {
         "title" : "Put",
-        "description" : "Rest PUT command",
+        "description" : "Defines an HTTP PUT operation in the REST DSL",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -11807,7 +11807,7 @@
       },
       "org.apache.camel.model.rest.ResponseHeaderDefinition" : {
         "title" : "Response Header",
-        "description" : "To specify the rest operation response headers.",
+        "description" : "Defines a response header for a REST operation, used for API documentation and OpenAPI spec generation",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -11863,7 +11863,7 @@
       },
       "org.apache.camel.model.rest.ResponseMessageDefinition" : {
         "title" : "Response Message",
-        "description" : "To specify the rest operation response messages.",
+        "description" : "Defines a response message for a REST operation, including HTTP status code and description for API documentation",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -11909,7 +11909,7 @@
       },
       "org.apache.camel.model.rest.RestBindingDefinition" : {
         "title" : "Rest Binding",
-        "description" : "To configure rest binding",
+        "description" : "Configures data binding for a REST service, controlling how request and response bodies are marshalled and unmarshalled",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -11994,7 +11994,7 @@
       },
       "org.apache.camel.model.rest.RestConfigurationDefinition" : {
         "title" : "Rest Configuration",
-        "description" : "To configure rest",
+        "description" : "Configures global settings for the REST DSL, such as host, port, context path, binding mode, and the underlying HTTP component to use",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -12197,7 +12197,7 @@
       },
       "org.apache.camel.model.rest.RestDefinition" : {
         "title" : "Rest",
-        "description" : "Defines a rest service using the rest-dsl",
+        "description" : "Defines a REST service with HTTP operations (GET, POST, PUT, DELETE, etc.) using the Camel REST DSL",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -12343,7 +12343,7 @@
       },
       "org.apache.camel.model.rest.RestPropertyDefinition" : {
         "title" : "Rest Property",
-        "description" : "A key value pair",
+        "description" : "Defines a key/value property for REST configuration, used to pass component-specific settings",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -12362,7 +12362,7 @@
       },
       "org.apache.camel.model.rest.RestSecuritiesDefinition" : {
         "title" : "Rest Security Definitions",
-        "description" : "To configure rest security definitions.",
+        "description" : "Container for security scheme definitions used by REST services",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -12388,7 +12388,7 @@
       },
       "org.apache.camel.model.rest.RestsDefinition" : {
         "title" : "Rests",
-        "description" : "A series of rest services defined using the rest-dsl",
+        "description" : "Container for a collection of REST service definitions",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -12417,7 +12417,7 @@
       },
       "org.apache.camel.model.rest.SecurityDefinition" : {
         "title" : "Rest Security",
-        "description" : "Rest security definition",
+        "description" : "Applies a security requirement to a REST operation, referencing a security scheme defined at the service level",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -12436,7 +12436,7 @@
       },
       "org.apache.camel.model.tokenizer.LangChain4jCharacterTokenizerDefinition" : {
         "title" : "LangChain4J Tokenizer with character splitter",
-        "description" : "Camel AI: Tokenizer for splitting by character.",
+        "description" : "Splits text into chunks by character count, using LangChain4j's character tokenizer for AI text processing",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -12471,7 +12471,7 @@
       },
       "org.apache.camel.model.tokenizer.LangChain4jLineTokenizerDefinition" : {
         "title" : "LangChain4J Tokenizer with line splitter",
-        "description" : "Camel AI: Tokenizer for splitting line by line.",
+        "description" : "Splits text into chunks line by line, using LangChain4j's line tokenizer for AI text processing",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -12506,7 +12506,7 @@
       },
       "org.apache.camel.model.tokenizer.LangChain4jParagraphTokenizerDefinition" : {
         "title" : "LangChain4J Tokenizer with paragraph splitter",
-        "description" : "Camel AI: Tokenizer for splitting by paragraphs.",
+        "description" : "Splits text into chunks by paragraph boundaries, using LangChain4j's paragraph tokenizer for AI text processing",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -12541,7 +12541,7 @@
       },
       "org.apache.camel.model.tokenizer.LangChain4jSentenceTokenizerDefinition" : {
         "title" : "LangChain4J Tokenizer with sentence splitter",
-        "description" : "Camel AI: Tokenizer for splitting by sentences.",
+        "description" : "Splits text into chunks by sentence boundaries, using LangChain4j's sentence tokenizer for AI text processing",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -12599,7 +12599,7 @@
       },
       "org.apache.camel.model.tokenizer.LangChain4jWordTokenizerDefinition" : {
         "title" : "LangChain4J Tokenizer with word splitter",
-        "description" : "Camel AI: Tokenizer for splitting by word.",
+        "description" : "Splits text into chunks by word boundaries, using LangChain4j's word tokenizer for AI text processing",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -12634,7 +12634,7 @@
       },
       "org.apache.camel.model.transformer.CustomTransformerDefinition" : {
         "title" : "Custom Transformer",
-        "description" : "To use a custom transformer on a route level.",
+        "description" : "References a custom data type transformer implementation from the registry for route-level transformations",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -12672,7 +12672,7 @@
       },
       "org.apache.camel.model.transformer.DataFormatTransformerDefinition" : {
         "title" : "Data Format Transformer",
-        "description" : "Represents a org.apache.camel.processor.transformer.DataFormatTransformer which leverages org.apache.camel.spi.DataFormat to perform transformation. One of the DataFormat 'ref' or DataFormat 'type' needs to be specified.",
+        "description" : "Uses a Camel data format to perform data type transformation between input and output types",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -12844,7 +12844,7 @@
       },
       "org.apache.camel.model.transformer.EndpointTransformerDefinition" : {
         "title" : "Endpoint Transformer",
-        "description" : "To use a Camel endpoint to perform transformation on the route level.",
+        "description" : "Uses a Camel endpoint to perform data type transformation by sending the message through the endpoint",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -12882,7 +12882,7 @@
       },
       "org.apache.camel.model.transformer.LoadTransformerDefinition" : {
         "title" : "Load Transformer",
-        "description" : "To load custom transformers from classpath scanning to be used for route level transformations.",
+        "description" : "Auto-discovers and loads data type transformers from the classpath via scanning",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -12921,7 +12921,7 @@
       },
       "org.apache.camel.model.transformer.TransformersDefinition" : {
         "title" : "Transformations",
-        "description" : "To configure transformers.",
+        "description" : "Container for defining data type transformer definitions",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -12941,7 +12941,7 @@
       },
       "org.apache.camel.model.validator.CustomValidatorDefinition" : {
         "title" : "Custom Validator",
-        "description" : "To use a custom validator on the route level.",
+        "description" : "References a custom data type validator implementation from the registry for route-level validation",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -12964,7 +12964,7 @@
       },
       "org.apache.camel.model.validator.EndpointValidatorDefinition" : {
         "title" : "Endpoint Validator",
-        "description" : "To use a Camel endpoint to perform validation on the route level.",
+        "description" : "Uses a Camel endpoint to perform data type validation by sending the message through the endpoint",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -12987,7 +12987,7 @@
       },
       "org.apache.camel.model.validator.PredicateValidatorDefinition" : {
         "title" : "Predicate Validator",
-        "description" : "To use a predicate to perform validation on the route level.",
+        "description" : "Uses a predicate expression to validate message data types at the route level",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -13005,7 +13005,7 @@
       },
       "org.apache.camel.model.validator.ValidatorsDefinition" : {
         "title" : "Validations",
-        "description" : "To configure validators.",
+        "description" : "Container for defining data type validator definitions",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {

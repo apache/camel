@@ -2,7 +2,7 @@
 :doctitle: XML Security
 :shortname: xmlSecurity
 :artifactid: camel-xmlsecurity
-:description: Encrypt and decrypt XML payloads using Apache Santuario.
+:description: Encrypt and decrypt XML payloads using Apache Santuario
 :since: 2.0
 :supportlevel: Stable
 :tabs-sync-option:

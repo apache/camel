@@ -2,7 +2,7 @@
 :doctitle: CSimple
 :shortname: csimple
 :artifactid: camel-core-languages
-:description: Evaluate a compiled simple expression.
+:description: Evaluate a compiled simple expression
 :since: 3.7
 :supportlevel: Stable-deprecated
 :deprecated: *deprecated*

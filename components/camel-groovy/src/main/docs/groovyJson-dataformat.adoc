@@ -2,7 +2,7 @@
 :doctitle: Groovy JSon
 :shortname: groovyJson
 :artifactid: camel-groovy
-:description: Transform between JSon and java.util.Map or java.util.List objects.
+:description: Transform between JSon and java.util.Map or java.util.List objects
 :since: 4.19
 :supportlevel: Preview
 :tabs-sync-option:

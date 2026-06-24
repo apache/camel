@@ -2,7 +2,7 @@
 :doctitle: ExchangeProperty
 :shortname: exchangeProperty
 :artifactid: camel-core-languages
-:description: Gets a property from the Exchange.
+:description: Gets a property from the Exchange
 :since: 2.0
 :supportlevel: Stable
 :tabs-sync-option:

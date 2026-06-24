@@ -3,7 +3,7 @@
     "kind": "language",
     "name": "joor",
     "title": "jOOR",
-    "description": "Evaluates a jOOR (Java compiled once at runtime) expression.",
+    "description": "Evaluates a jOOR (Java compiled once at runtime) expression",
     "deprecated": true,
     "firstVersion": "3.7.0",
     "label": "language",

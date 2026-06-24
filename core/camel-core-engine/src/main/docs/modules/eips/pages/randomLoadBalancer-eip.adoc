@@ -1,7 +1,7 @@
 = Random Load Balancer EIP
 :doctitle: Random Load Balancer
 :shortname: randomLoadBalancer
-:description: The destination endpoints are selected randomly.
+:description: Load balancer that randomly selects a destination endpoint for each message
 :since: 
 :supportlevel: Stable
 :tabs-sync-option:

@@ -1,7 +1,7 @@
 = Rollback EIP
 :doctitle: Rollback
 :shortname: rollback
-:description: Forces a rollback by stopping routing the message
+:description: Forces a rollback of the current transaction and stops routing the message. Can set a custom message on the exception.
 :since: 
 :supportlevel: Stable
 :tabs-sync-option:

@@ -2,7 +2,7 @@
 :doctitle: SWIFT MX
 :shortname: swiftMx
 :artifactid: camel-swift
-:description: Encode and decode SWIFT MX messages.
+:description: Encode and decode SWIFT MX messages
 :since: 3.20
 :supportlevel: Stable
 :tabs-sync-option:

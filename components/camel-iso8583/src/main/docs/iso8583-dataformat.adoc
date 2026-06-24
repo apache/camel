@@ -2,7 +2,7 @@
 :doctitle: ISO-8583
 :shortname: iso8583
 :artifactid: camel-iso8583
-:description: Create, edit and read ISO-8583 messages.
+:description: Create, edit and read ISO-8583 messages
 :since: 4.14
 :supportlevel: Stable
 :tabs-sync-option:
