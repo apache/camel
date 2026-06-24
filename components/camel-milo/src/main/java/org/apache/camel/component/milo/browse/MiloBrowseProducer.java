@@ -112,6 +112,7 @@ public class MiloBrowseProducer extends DefaultAsyncProducer {
 
                     final List<String> expandedNodes = browseResults.values().stream()
                             .map(BrowseResult::getReferences)
+                            .filter(Objects::nonNull)
                             .flatMap(Stream::of)
                             .map(ReferenceDescription::getNodeId)
                             .map(ExpandedNodeId::toParseableString)
