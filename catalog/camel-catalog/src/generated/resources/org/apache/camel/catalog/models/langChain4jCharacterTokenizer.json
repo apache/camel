@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "langChain4jCharacterTokenizer",
     "title": "LangChain4J Tokenizer with character splitter",
-    "description": "Camel AI: Tokenizer for splitting by character.",
+    "description": "Splits text into chunks by character count, using LangChain4j's character tokenizer for AI text processing",
     "deprecated": false,
     "firstVersion": "4.8.0",
     "label": "eip,transformation,ai",

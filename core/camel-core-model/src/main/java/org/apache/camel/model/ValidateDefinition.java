@@ -32,7 +32,9 @@ import org.apache.camel.spi.PredicateExceptionFactory;
 /**
  * Validates a message based on an expression
  */
-@Metadata(label = "eip,transformation")
+@Metadata(label = "eip,transformation",
+          description = "Validates the message against a predicate expression"
+                        + " and throws a PredicateValidationException if the validation fails")
 @AsPredicate
 @XmlRootElement(name = "validate")
 @XmlAccessorType(XmlAccessType.FIELD)

@@ -30,7 +30,8 @@ import org.apache.camel.util.TimeUtils;
 /**
  * Extract a sample of the messages passing through a route
  */
-@Metadata(label = "eip,routing")
+@Metadata(label = "eip,flowcontrol,routing",
+          description = "Samples a subset of messages passing through the route, either by frequency count or time interval, and discards the rest")
 @XmlRootElement(name = "sample")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class SamplingDefinition extends NoOutputDefinition<SamplingDefinition> {

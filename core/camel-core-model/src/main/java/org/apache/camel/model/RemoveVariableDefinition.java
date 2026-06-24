@@ -27,7 +27,8 @@ import org.apache.camel.spi.annotations.DslArg;
 /**
  * Removes a named variable
  */
-@Metadata(label = "eip,transformation")
+@Metadata(label = "eip,messaging,transformation",
+          description = "Removes a specific variable by name")
 @XmlRootElement(name = "removeVariable")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RemoveVariableDefinition extends NoOutputDefinition<RemoveVariableDefinition> {

@@ -31,7 +31,8 @@ import org.apache.camel.spi.Metadata;
  *
  * @see PropertyDefinition
  */
-@Metadata(label = "configuration")
+@Metadata(label = "configuration",
+          description = "Defines a key/value pair where the value is computed by an expression, used for passing dynamic parameters")
 @XmlRootElement(name = "propertyExpression")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class PropertyExpressionDefinition implements HasExpressionType {

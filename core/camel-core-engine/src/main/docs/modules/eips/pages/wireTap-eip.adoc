@@ -1,7 +1,7 @@
 = Wire Tap EIP
 :doctitle: Wire Tap
 :shortname: wireTap
-:description: Routes a copy of a message (or creates a new message) to a secondary destination while continue routing the original message.
+:description: Sends a copy of the message to a secondary endpoint without affecting the original route flow. The tapped message is sent asynchronously in a separate thread
 :since: 
 :supportlevel: Stable
 :tabs-sync-option:

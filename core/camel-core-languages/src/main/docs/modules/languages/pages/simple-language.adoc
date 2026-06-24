@@ -2,7 +2,7 @@
 :doctitle: Simple
 :shortname: simple
 :artifactid: camel-core-languages
-:description: Evaluates a Camel simple expression.
+:description: Evaluates a Camel simple expression
 :since: 1.1
 :supportlevel: Stable
 :tabs-sync-option:

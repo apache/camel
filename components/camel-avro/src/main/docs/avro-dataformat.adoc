@@ -2,7 +2,7 @@
 :doctitle: Avro
 :shortname: avro
 :artifactid: camel-avro
-:description: Serialize and deserialize messages using Apache Avro binary data format.
+:description: Serialize and deserialize messages using Apache Avro binary data format
 :since: 2.14
 :supportlevel: Stable
 :tabs-sync-option:

@@ -30,7 +30,7 @@ import org.apache.camel.spi.Metadata;
 /**
  * To configure validators.
  */
-@Metadata(label = "validation", title = "Validations")
+@Metadata(label = "validation", title = "Validations", description = "Container for defining data type validator definitions")
 @XmlRootElement(name = "validators")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ValidatorsDefinition {

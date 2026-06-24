@@ -1,7 +1,7 @@
 = Set Headers EIP
 :doctitle: Set Headers
 :shortname: setHeaders
-:description: Allows setting multiple headers on the message at the same time.
+:description: Sets multiple message headers at once, each computed by its own expression
 :since: 
 :supportlevel: Stable
 :tabs-sync-option:

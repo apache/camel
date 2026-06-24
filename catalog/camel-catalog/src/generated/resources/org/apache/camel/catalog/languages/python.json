@@ -3,7 +3,7 @@
     "kind": "language",
     "name": "python",
     "title": "Python",
-    "description": "Evaluates a Python expression.",
+    "description": "Evaluates a Python expression",
     "deprecated": false,
     "firstVersion": "3.19.0",
     "label": "language,python",

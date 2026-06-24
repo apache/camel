@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "responseHeader",
     "title": "Response Header",
-    "description": "To specify the rest operation response headers.",
+    "description": "Defines a response header for a REST operation, used for API documentation and OpenAPI spec generation",
     "deprecated": false,
     "label": "rest",
     "javaType": "org.apache.camel.model.rest.ResponseHeaderDefinition",

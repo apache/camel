@@ -1,7 +1,7 @@
 = Transform EIP
 :doctitle: Transform
 :shortname: transform
-:description: Transforms the message body based on an expression
+:description: Sets the message body using an expression. Unlike setBody, transform also sets the OUT message body in InOut exchanges
 :since: 
 :supportlevel: Stable
 :tabs-sync-option:

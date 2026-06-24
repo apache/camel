@@ -2,7 +2,7 @@
 :doctitle: Ref
 :shortname: ref
 :artifactid: camel-core-languages
-:description: Uses an existing expression from the registry.
+:description: Uses an existing expression from the registry
 :since: 2.8
 :supportlevel: Stable
 :tabs-sync-option:

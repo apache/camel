@@ -27,7 +27,7 @@ import org.apache.camel.spi.Metadata;
 /**
  * Evaluates a custom language.
  */
-@Metadata(label = "language,core", title = "Language")
+@Metadata(label = "language,core", title = "Language", description = "Evaluates a custom language")
 @XmlRootElement(name = "language")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class LanguageExpression extends ExpressionDefinition {

@@ -1,7 +1,7 @@
 = Remove Variable EIP
 :doctitle: Remove Variable
 :shortname: removeVariable
-:description: Removes a named variable
+:description: Removes a specific variable by name
 :since: 
 :supportlevel: Stable
 :tabs-sync-option:

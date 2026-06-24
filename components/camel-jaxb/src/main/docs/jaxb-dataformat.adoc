@@ -2,7 +2,7 @@
 :doctitle: JAXB
 :shortname: jaxb
 :artifactid: camel-jaxb
-:description: Unmarshal XML payloads to POJOs and back using JAXB2 XML marshalling standard.
+:description: Unmarshal XML payloads to POJOs and back using JAXB2 XML marshalling standard
 :since: 1.0
 :supportlevel: Stable
 :tabs-sync-option:

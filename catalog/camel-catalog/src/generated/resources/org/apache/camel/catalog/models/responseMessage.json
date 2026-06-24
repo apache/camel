@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "responseMessage",
     "title": "Response Message",
-    "description": "To specify the rest operation response messages.",
+    "description": "Defines a response message for a REST operation, including HTTP status code and description for API documentation",
     "deprecated": false,
     "label": "rest",
     "javaType": "org.apache.camel.model.rest.ResponseMessageDefinition",

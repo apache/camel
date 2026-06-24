@@ -1,7 +1,7 @@
 = Poll EIP
 :doctitle: Poll
 :shortname: poll
-:description: Polls a message from a static endpoint
+:description: Polls a single message from a consumer endpoint and sets it as the message body. Useful for fetching data on-demand from file, database, or messaging endpoints.
 :since: 
 :supportlevel: Stable
 :tabs-sync-option:

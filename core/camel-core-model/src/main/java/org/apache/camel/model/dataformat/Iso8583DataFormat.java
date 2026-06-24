@@ -29,7 +29,8 @@ import org.apache.camel.spi.Metadata;
 /**
  * Create, edit and read ISO-8583 messages.
  */
-@Metadata(firstVersion = "4.14.0", label = "dataformat,transformation,finance", title = "ISO-8583")
+@Metadata(firstVersion = "4.14.0", label = "dataformat,transformation,finance", title = "ISO-8583",
+          description = "Create, edit and read ISO-8583 messages")
 @XmlRootElement(name = "iso8583")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Iso8583DataFormat extends DataFormatDefinition {

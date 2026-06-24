@@ -28,7 +28,8 @@ import org.apache.camel.spi.Metadata;
 /**
  * Configures stream-processing resequence eip.
  */
-@Metadata(label = "configuration,eip")
+@Metadata(label = "configuration,eip",
+          description = "Configures the stream-processing mode of the Resequence EIP, which continuously reorders messages as they arrive using a timeout")
 @XmlRootElement(name = "streamConfig")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class StreamResequencerConfig extends ResequencerConfig {

@@ -29,7 +29,8 @@ import org.slf4j.Logger;
 /**
  * Used for printing custom messages to the logger.
  */
-@Metadata(label = "eip,routing", title = "Logger")
+@Metadata(label = "eip,routing", title = "Logger",
+          description = "Logs a message using an expression that can include message body, headers, and other exchange data")
 @XmlRootElement(name = "log")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class LogDefinition extends NoOutputDefinition<LogDefinition> {

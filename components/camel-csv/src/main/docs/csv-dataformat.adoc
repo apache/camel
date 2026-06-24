@@ -2,7 +2,7 @@
 :doctitle: CSV
 :shortname: csv
 :artifactid: camel-csv
-:description: Handle CSV (Comma Separated Values) payloads.
+:description: Handle CSV (Comma Separated Values) payloads
 :since: 1.3
 :supportlevel: Stable
 :tabs-sync-option:

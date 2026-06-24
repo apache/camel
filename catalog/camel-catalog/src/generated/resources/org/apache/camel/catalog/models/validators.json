@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "validators",
     "title": "Validations",
-    "description": "To configure validators.",
+    "description": "Container for defining data type validator definitions",
     "deprecated": false,
     "label": "validation",
     "javaType": "org.apache.camel.model.validator.ValidatorsDefinition",

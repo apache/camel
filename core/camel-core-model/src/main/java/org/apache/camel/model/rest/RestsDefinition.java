@@ -33,7 +33,7 @@ import org.apache.camel.spi.ResourceAware;
 /**
  * A series of rest services defined using the rest-dsl
  */
-@Metadata(label = "rest")
+@Metadata(label = "rest", description = "Container for a collection of REST service definitions")
 @XmlRootElement(name = "rests")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RestsDefinition extends OptionalIdentifiedDefinition<RestsDefinition> implements RestContainer, ResourceAware {

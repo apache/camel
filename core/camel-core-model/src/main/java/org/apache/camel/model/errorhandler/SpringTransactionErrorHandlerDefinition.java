@@ -26,7 +26,8 @@ import org.apache.camel.spi.Metadata;
 /**
  * Spring based transactional error handler (requires camel-spring).
  */
-@Metadata(label = "configuration,error")
+@Metadata(label = "configuration,error,errorhandling",
+          description = "Transactional error handler using Spring Transaction Manager that marks the transaction for rollback on failure")
 @XmlRootElement(name = "springTransactionErrorHandler")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class SpringTransactionErrorHandlerDefinition extends TransactionErrorHandlerDefinition {

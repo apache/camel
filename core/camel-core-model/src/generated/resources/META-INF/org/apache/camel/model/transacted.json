@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "transacted",
     "title": "Transacted",
-    "description": "Enables transaction on the route",
+    "description": "Wraps the route in a transaction, ensuring that all steps within the transacted block either complete together or roll back on failure",
     "deprecated": false,
     "label": "configuration",
     "javaType": "org.apache.camel.model.TransactedDefinition",

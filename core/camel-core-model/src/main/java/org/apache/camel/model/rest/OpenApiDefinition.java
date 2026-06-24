@@ -28,7 +28,8 @@ import org.apache.camel.spi.Metadata;
 /**
  * To use OpenApi as contract-first with Camel Rest DSL.
  */
-@Metadata(label = "rest")
+@Metadata(label = "rest",
+          description = "Configures a contract-first REST service using an OpenAPI specification, where Camel auto-generates routes for each operation")
 @XmlRootElement(name = "openApi")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class OpenApiDefinition extends OptionalIdentifiedDefinition<OpenApiDefinition> {

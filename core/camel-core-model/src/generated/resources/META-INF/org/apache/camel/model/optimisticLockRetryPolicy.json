@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "optimisticLockRetryPolicy",
     "title": "Optimistic Lock Retry Policy",
-    "description": "To configure optimistic locking",
+    "description": "Configures the retry policy for optimistic locking in the Aggregate EIP, controlling retry attempts and delays on version conflicts",
     "deprecated": false,
     "label": "configuration",
     "javaType": "org.apache.camel.model.OptimisticLockRetryPolicyDefinition",

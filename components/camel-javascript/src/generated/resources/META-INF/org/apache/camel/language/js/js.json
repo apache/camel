@@ -3,7 +3,7 @@
     "kind": "language",
     "name": "js",
     "title": "JavaScript",
-    "description": "Evaluates a JavaScript expression.",
+    "description": "Evaluates a JavaScript expression",
     "deprecated": false,
     "firstVersion": "3.20.0",
     "label": "language,javascript",

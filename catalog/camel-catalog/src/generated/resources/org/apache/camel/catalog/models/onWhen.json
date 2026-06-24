@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "onWhen",
     "title": "On When",
-    "description": "To use a predicate to determine when to trigger this.",
+    "description": "Applies a predicate condition to filter when a parent definition (such as onException or onCompletion) should be triggered",
     "deprecated": false,
     "label": "configuration",
     "javaType": "org.apache.camel.model.OnWhenDefinition",

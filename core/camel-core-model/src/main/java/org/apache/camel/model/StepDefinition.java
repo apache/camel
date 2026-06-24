@@ -28,7 +28,9 @@ import org.apache.camel.spi.Metadata;
 /**
  * Routes the message to a sequence of processors which is grouped together as one logical name
  */
-@Metadata(label = "eip,routing")
+@Metadata(label = "eip,routing",
+          description = "Groups a sequence of processing steps under a single logical name"
+                        + " for improved monitoring, management, and tracing visibility")
 @XmlRootElement(name = "step")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class StepDefinition extends OutputDefinition<StepDefinition> {

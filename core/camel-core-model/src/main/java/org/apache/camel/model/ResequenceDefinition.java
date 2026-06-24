@@ -39,7 +39,9 @@ import org.apache.camel.util.TimeUtils;
 /**
  * Resequences (re-order) messages based on an expression
  */
-@Metadata(label = "eip,routing")
+@Metadata(label = "eip,flowcontrol,routing",
+          description = "Reorders messages based on a sequence expression,"
+                        + " either in batch mode (collect and sort) or stream mode (continuous reordering with a timeout)")
 @XmlRootElement(name = "resequence")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ResequenceDefinition extends OutputDefinition<ResequenceDefinition> implements HasExpressionType {

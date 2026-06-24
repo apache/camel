@@ -29,6 +29,7 @@ import org.apache.camel.spi.Metadata;
 /**
  * Represents an expression sub element
  */
+@Metadata(description = "Represents an expression sub-element that can be embedded within other EIP definitions")
 @XmlRootElement(name = "expression") // must be named expression
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ExpressionSubElementDefinition implements HasExpressionType {

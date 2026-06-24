@@ -30,7 +30,10 @@ import org.apache.camel.spi.annotations.DslArg;
  * The Claim Check EIP allows you to replace message content with a claim check (a unique key), which can be used to
  * retrieve the message content at a later time.
  */
-@Metadata(label = "eip,routing")
+@Metadata(label = "eip,enrichment,routing",
+          description = "Temporarily stores the message content and replaces it with a claim check key,"
+                        + " allowing the content to be retrieved later in the route."
+                        + " Useful for reducing memory when large payloads pass through processing steps that don't need them.")
 @XmlRootElement(name = "claimCheck")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ClaimCheckDefinition extends NoOutputDefinition<ClaimCheckDefinition> {

@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "route",
     "title": "Route",
-    "description": "A Camel route",
+    "description": "Defines a Camel route that specifies the processing steps a message goes through from a consumer endpoint to one or more producer endpoints",
     "deprecated": false,
     "label": "configuration",
     "javaType": "org.apache.camel.model.RouteDefinition",

@@ -26,7 +26,8 @@ import org.apache.camel.spi.Metadata;
 /**
  * A key value pair where the value is a literal value
  */
-@Metadata(label = "configuration")
+@Metadata(label = "configuration",
+          description = "Defines a key/value pair with a literal value, used for passing parameters in route templates and other configurations")
 @XmlRootElement(name = "property")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class PropertyDefinition {

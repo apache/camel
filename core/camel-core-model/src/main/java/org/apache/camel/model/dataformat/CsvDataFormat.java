@@ -29,7 +29,8 @@ import org.apache.camel.spi.Metadata;
 /**
  * Handle CSV (Comma Separated Values) payloads.
  */
-@Metadata(firstVersion = "1.3.0", label = "dataformat,transformation,csv", title = "CSV")
+@Metadata(firstVersion = "1.3.0", label = "dataformat,transformation,csv", title = "CSV",
+          description = "Handle CSV (Comma Separated Values) payloads")
 @XmlRootElement(name = "csv")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CsvDataFormat extends DataFormatDefinition {

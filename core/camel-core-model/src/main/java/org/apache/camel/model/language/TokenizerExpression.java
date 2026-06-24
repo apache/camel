@@ -27,7 +27,8 @@ import org.apache.camel.spi.Metadata;
 /**
  * Tokenize text payloads using delimiter patterns.
  */
-@Metadata(firstVersion = "2.0.0", label = "language,core", title = "Tokenize")
+@Metadata(firstVersion = "2.0.0", label = "language,core", title = "Tokenize",
+          description = "Tokenize text payloads using delimiter patterns")
 @XmlRootElement(name = "tokenize")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class TokenizerExpression extends SingleInputTypedExpressionDefinition {

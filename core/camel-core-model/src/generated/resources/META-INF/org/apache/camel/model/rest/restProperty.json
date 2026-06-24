@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "restProperty",
     "title": "Rest Property",
-    "description": "A key value pair",
+    "description": "Defines a key\/value property for REST configuration, used to pass component-specific settings",
     "deprecated": false,
     "label": "rest",
     "javaType": "org.apache.camel.model.rest.RestPropertyDefinition",

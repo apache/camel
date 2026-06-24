@@ -29,7 +29,8 @@ import org.apache.camel.spi.Metadata;
 /**
  * Compress and decompress streams using LZF deflate algorithm.
  */
-@Metadata(firstVersion = "2.17.0", label = "dataformat,transformation", title = "LZF Deflate Compression")
+@Metadata(firstVersion = "2.17.0", label = "dataformat,transformation", title = "LZF Deflate Compression",
+          description = "Compress and decompress streams using LZF deflate algorithm")
 @XmlRootElement(name = "lzf")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class LZFDataFormat extends DataFormatDefinition {

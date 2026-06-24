@@ -34,7 +34,7 @@ import org.apache.camel.spi.ResourceAware;
 /**
  * A series of route templates
  */
-@Metadata(label = "configuration")
+@Metadata(label = "configuration", description = "Container for a collection of route template definitions")
 @XmlRootElement(name = "routeTemplates")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RouteTemplatesDefinition extends OptionalIdentifiedDefinition<RouteTemplatesDefinition>

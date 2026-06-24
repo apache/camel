@@ -30,7 +30,8 @@ import org.apache.camel.spi.annotations.DslArg;
 /**
  * Sets the value of a message header
  */
-@Metadata(label = "eip,transformation")
+@Metadata(label = "eip,messaging,transformation",
+          description = "Sets a message header to a value computed by an expression")
 @XmlRootElement(name = "setHeader")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class SetHeaderDefinition extends ExpressionNode {

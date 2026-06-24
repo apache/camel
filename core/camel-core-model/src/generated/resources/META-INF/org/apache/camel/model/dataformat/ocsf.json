@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "ocsf",
     "title": "OCSF",
-    "description": "Marshal and unmarshal OCSF (Open Cybersecurity Schema Framework) security events to\/from JSON.",
+    "description": "Marshal and unmarshal OCSF (Open Cybersecurity Schema Framework) security events to\/from JSON",
     "deprecated": false,
     "firstVersion": "4.18.0",
     "label": "dataformat,transformation,json,security",

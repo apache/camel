@@ -29,7 +29,7 @@ import org.apache.camel.spi.Metadata;
 /**
  * Marshal POJOs to JSON and back.
  */
-@Metadata(label = "dataformat,transformation,json", title = "JSon")
+@Metadata(label = "dataformat,transformation,json", title = "JSon", description = "Marshal POJOs to JSON and back")
 @XmlRootElement(name = "json")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class JsonDataFormat extends DataFormatDefinition implements ContentTypeHeaderAware {

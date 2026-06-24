@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "json",
     "title": "JSon",
-    "description": "Marshal POJOs to JSON and back.",
+    "description": "Marshal POJOs to JSON and back",
     "deprecated": false,
     "label": "dataformat,transformation,json",
     "javaType": "org.apache.camel.model.dataformat.JsonDataFormat",

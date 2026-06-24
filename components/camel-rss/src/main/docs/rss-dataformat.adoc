@@ -2,7 +2,7 @@
 :doctitle: RSS
 :shortname: rss
 :artifactid: camel-rss
-:description: Transform from ROME SyndFeed Java Objects to XML and vice-versa.
+:description: Transform from ROME SyndFeed Java Objects to XML and vice-versa
 :since: 2.1
 :supportlevel: Stable
 :tabs-sync-option:

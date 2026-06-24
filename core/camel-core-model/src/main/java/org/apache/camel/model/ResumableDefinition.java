@@ -31,7 +31,9 @@ import org.apache.camel.spi.Metadata;
 /**
  * Resume EIP to support resuming processing from last known offset.
  */
-@Metadata(label = "eip,routing")
+@Metadata(label = "eip,routing",
+          description = "Enables resuming processing from the last known offset after a restart,"
+                        + " using a resume strategy to track and restore position")
 @XmlRootElement(name = "resumable")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ResumableDefinition extends NoOutputDefinition<ResumableDefinition> {

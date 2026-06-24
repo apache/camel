@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "loadTransformer",
     "title": "Load Transformer",
-    "description": "To load custom transformers from classpath scanning to be used for route level transformations.",
+    "description": "Auto-discovers and loads data type transformers from the classpath via scanning",
     "deprecated": false,
     "label": "transformation",
     "javaType": "org.apache.camel.model.transformer.LoadTransformerDefinition",

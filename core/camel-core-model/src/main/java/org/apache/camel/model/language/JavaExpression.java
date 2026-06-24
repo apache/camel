@@ -27,7 +27,8 @@ import org.apache.camel.spi.Metadata;
 /**
  * Evaluates a Java (Java compiled once at runtime) expression.
  */
-@Metadata(firstVersion = "4.3.0", label = "language", title = "Java")
+@Metadata(firstVersion = "4.3.0", label = "language", title = "Java",
+          description = "Evaluates a Java (Java compiled once at runtime) expression")
 @XmlRootElement(name = "java")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class JavaExpression extends TypedExpressionDefinition {

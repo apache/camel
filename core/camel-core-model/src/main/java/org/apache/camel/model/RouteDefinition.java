@@ -53,7 +53,8 @@ import org.apache.camel.spi.RoutePolicy;
 /**
  * A Camel route
  */
-@Metadata(label = "configuration")
+@Metadata(label = "configuration",
+          description = "Defines a Camel route that specifies the processing steps a message goes through from a consumer endpoint to one or more producer endpoints")
 @XmlRootElement(name = "route")
 @XmlType(propOrder = { "routeProperties", "errorHandler", "input", "inputType", "outputType", "outputs" })
 @XmlAccessorType(XmlAccessType.PROPERTY)

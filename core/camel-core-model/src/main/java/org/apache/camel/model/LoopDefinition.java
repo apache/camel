@@ -31,7 +31,8 @@ import org.apache.camel.spi.Metadata;
 /**
  * Processes a message multiple times
  */
-@Metadata(label = "eip,routing")
+@Metadata(label = "eip,flowcontrol,routing",
+          description = "Processes the message body repeatedly for a specified number of iterations, or until a condition is met")
 @XmlRootElement(name = "loop")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class LoopDefinition extends OutputExpressionNode {

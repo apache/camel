@@ -28,7 +28,8 @@ import org.apache.camel.spi.Metadata;
 /**
  * To use DataSonnet scripts for message transformations.
  */
-@Metadata(firstVersion = "3.7.0", label = "language,transformation", title = "DataSonnet")
+@Metadata(firstVersion = "3.7.0", label = "language,transformation", title = "DataSonnet",
+          description = "To use DataSonnet scripts for message transformations")
 @XmlRootElement(name = "datasonnet")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class DatasonnetExpression extends SingleInputTypedExpressionDefinition {

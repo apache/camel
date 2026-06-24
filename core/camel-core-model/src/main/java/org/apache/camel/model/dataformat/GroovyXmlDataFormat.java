@@ -29,7 +29,8 @@ import org.apache.camel.spi.Metadata;
 /**
  * Transform between XML and Groovy Node (Map structure) objects.
  */
-@Metadata(firstVersion = "4.15.0", label = "dataformat,transformation,xml", title = "Groovy XML")
+@Metadata(firstVersion = "4.15.0", label = "dataformat,transformation,xml", title = "Groovy XML",
+          description = "Transform between XML and Groovy Node (Map structure) objects")
 @XmlRootElement(name = "groovyXml")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class GroovyXmlDataFormat extends DataFormatDefinition {

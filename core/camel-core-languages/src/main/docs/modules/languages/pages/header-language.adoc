@@ -2,7 +2,7 @@
 :doctitle: Header
 :shortname: header
 :artifactid: camel-core-languages
-:description: Gets a header from the Exchange.
+:description: Gets a header from the Exchange
 :since: 1.5
 :supportlevel: Stable
 :tabs-sync-option:

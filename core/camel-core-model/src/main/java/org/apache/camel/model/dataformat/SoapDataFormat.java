@@ -29,7 +29,8 @@ import org.apache.camel.spi.Metadata;
 /**
  * Marshal Java objects to SOAP messages and back.
  */
-@Metadata(firstVersion = "2.3.0", label = "dataformat,transformation,xml", title = "SOAP")
+@Metadata(firstVersion = "2.3.0", label = "dataformat,transformation,xml", title = "SOAP",
+          description = "Marshal Java objects to SOAP messages and back")
 @XmlRootElement(name = "soap")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class SoapDataFormat extends DataFormatDefinition {

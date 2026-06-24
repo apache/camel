@@ -27,7 +27,8 @@ import org.apache.camel.spi.Metadata;
 /**
  * MicroProfile Fault Tolerance Circuit Breaker EIP configuration
  */
-@Metadata(label = "configuration,eip,error")
+@Metadata(label = "configuration,eip,error,resilience",
+          description = "Configures MicroProfile Fault Tolerance settings for the Circuit Breaker EIP, such as timeout, bulkhead, and retry parameters")
 @XmlRootElement(name = "faultToleranceConfiguration")
 @XmlAccessorType(XmlAccessType.FIELD)
 @Configurer(extended = true)

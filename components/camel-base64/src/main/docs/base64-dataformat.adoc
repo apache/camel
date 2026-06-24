@@ -2,7 +2,7 @@
 :doctitle: Base64
 :shortname: base64
 :artifactid: camel-base64
-:description: Encode and decode data using Base64.
+:description: Encode and decode data using Base64
 :since: 2.11
 :supportlevel: Stable
 :tabs-sync-option:

@@ -27,7 +27,8 @@ import org.apache.camel.spi.Metadata;
 /**
  * Marshal and unmarshal Java objects from and to fixed length records using UniVocity Parsers.
  */
-@Metadata(firstVersion = "2.15.0", label = "dataformat,transformation,csv", title = "uniVocity Fixed Length")
+@Metadata(firstVersion = "2.15.0", label = "dataformat,transformation,csv", title = "uniVocity Fixed Length",
+          description = "Marshal and unmarshal Java objects from and to fixed length records using UniVocity Parsers")
 @XmlRootElement(name = "univocityFixed")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class UniVocityFixedDataFormat extends UniVocityAbstractDataFormat {

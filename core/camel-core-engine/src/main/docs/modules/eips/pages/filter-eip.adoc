@@ -1,7 +1,7 @@
 = Filter EIP
 :doctitle: Filter
 :shortname: filter
-:description: Filter out messages based using a predicate
+:description: Filters messages using a predicate expression. Messages matching the predicate continue processing; non-matching messages are skipped.
 :since: 
 :supportlevel: Stable
 :tabs-sync-option:

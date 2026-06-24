@@ -32,7 +32,9 @@ import org.apache.camel.spi.Metadata;
 /**
  * Routes a message through a series of steps that are pre-determined (the slip)
  */
-@Metadata(label = "eip,routing")
+@Metadata(label = "eip,routing",
+          description = "Routes a message through a pre-determined sequence of endpoints defined in a header or expression (the routing slip)."
+                        + " The list of endpoints is evaluated once upfront.")
 @XmlRootElement(name = "routingSlip")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RoutingSlipDefinition<Type extends ProcessorDefinition<Type>> extends ExpressionNode {

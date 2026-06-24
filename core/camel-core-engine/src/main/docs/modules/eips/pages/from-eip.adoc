@@ -1,7 +1,7 @@
 = From EIP
 :doctitle: From
 :shortname: from
-:description: Act as a message source as input to a route
+:description: Defines the consumer endpoint that acts as the input source for a route
 :since: 
 :supportlevel: Stable
 :tabs-sync-option:

@@ -30,7 +30,9 @@ import org.apache.camel.spi.Metadata;
 /**
  * Filters out duplicate messages
  */
-@Metadata(label = "eip,routing")
+@Metadata(label = "eip,flowcontrol,routing",
+          description = "Filters out duplicate messages based on a unique message identifier"
+                        + " and an idempotent repository that tracks previously seen IDs")
 @XmlRootElement(name = "idempotentConsumer")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class IdempotentConsumerDefinition extends OutputExpressionNode {

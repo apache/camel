@@ -76,7 +76,8 @@ import org.apache.camel.spi.Metadata;
 /**
  * Converts the message data received from the wire into a format that Apache Camel processors can consume
  */
-@Metadata(label = "eip,dataformat,transformation")
+@Metadata(label = "eip,dataformat,transformation",
+          description = "Deserializes the message body from a specific data format such as JSON, XML, CSV, or Protobuf into a Java object")
 @XmlRootElement(name = "unmarshal")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class UnmarshalDefinition extends NoOutputDefinition<UnmarshalDefinition> implements DataFormatDefinitionAware {

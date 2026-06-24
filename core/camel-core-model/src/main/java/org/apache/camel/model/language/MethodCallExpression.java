@@ -28,7 +28,7 @@ import org.apache.camel.util.StringHelper;
 /**
  * Calls a Java bean method.
  */
-@Metadata(firstVersion = "1.3.0", label = "language,core,java", title = "Bean Method")
+@Metadata(firstVersion = "1.3.0", label = "language,core,java", title = "Bean Method", description = "Calls a Java bean method")
 @XmlRootElement(name = "method")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class MethodCallExpression extends TypedExpressionDefinition {

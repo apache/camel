@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "pausable",
     "title": "Pausable",
-    "description": "Pausable EIP to support resuming processing from last known offset.",
+    "description": "Pauses a consumer based on a condition, allowing it to be resumed later from the last known offset. Useful for controlling ingestion rate on polling consumers.",
     "deprecated": false,
     "label": "eip,routing",
     "javaType": "org.apache.camel.model.PausableDefinition",

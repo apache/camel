@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "param",
     "title": "Param",
-    "description": "To specify the rest operation parameters.",
+    "description": "Defines a parameter for a REST operation, specifying its type, name, data type, and whether it is required",
     "deprecated": false,
     "label": "rest",
     "javaType": "org.apache.camel.model.rest.ParamDefinition",

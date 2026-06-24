@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "transformers",
     "title": "Transformations",
-    "description": "To configure transformers.",
+    "description": "Container for defining data type transformer definitions",
     "deprecated": false,
     "label": "transformation",
     "javaType": "org.apache.camel.model.transformer.TransformersDefinition",

@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "routeBuilder",
     "title": "Route Builder",
-    "description": "To refer to a Java org.apache.camel.builder.RouteBuilder instance to use.",
+    "description": "References a Java RouteBuilder class to include its routes in the current CamelContext",
     "deprecated": false,
     "label": "configuration",
     "javaType": "org.apache.camel.model.RouteBuilderDefinition",

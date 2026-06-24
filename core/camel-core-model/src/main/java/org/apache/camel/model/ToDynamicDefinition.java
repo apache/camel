@@ -32,7 +32,9 @@ import org.apache.camel.spi.annotations.DslArg;
 /**
  * Sends the message to a dynamic endpoint
  */
-@Metadata(label = "eip,routing")
+@Metadata(label = "eip,endpoint,routing",
+          description = "Sends the message to an endpoint URI computed dynamically from an expression,"
+                        + " allowing the destination to vary per message")
 @XmlRootElement(name = "toD")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ToDynamicDefinition extends NoOutputDefinition<ToDynamicDefinition> {

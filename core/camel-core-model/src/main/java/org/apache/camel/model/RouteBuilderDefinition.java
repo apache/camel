@@ -31,7 +31,8 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * To refer to a Java {@link org.apache.camel.builder.RouteBuilder} instance to use.
  */
-@Metadata(label = "configuration")
+@Metadata(label = "configuration",
+          description = "References a Java RouteBuilder class to include its routes in the current CamelContext")
 @XmlRootElement(name = "routeBuilder")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RouteBuilderDefinition extends IdentifiedType {

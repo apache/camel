@@ -26,7 +26,8 @@ import org.apache.camel.spi.Metadata;
 /**
  * Get the value of a HL7 message field specified by terse location specification syntax.
  */
-@Metadata(firstVersion = "2.11.0", label = "language,hl7", title = "HL7 Terser")
+@Metadata(firstVersion = "2.11.0", label = "language,hl7", title = "HL7 Terser",
+          description = "Get the value of a HL7 message field specified by terse location specification syntax")
 @XmlRootElement(name = "hl7terser")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Hl7TerserExpression extends SingleInputTypedExpressionDefinition {

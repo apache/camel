@@ -27,7 +27,8 @@ import org.apache.camel.spi.annotations.DslArg;
 /**
  * Removes a named header from the message
  */
-@Metadata(label = "eip,transformation")
+@Metadata(label = "eip,messaging,transformation",
+          description = "Removes a specific header from the message by name")
 @XmlRootElement(name = "removeHeader")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RemoveHeaderDefinition extends NoOutputDefinition<RemoveHeaderDefinition> {

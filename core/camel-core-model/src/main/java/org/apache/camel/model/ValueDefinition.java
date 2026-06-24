@@ -26,7 +26,8 @@ import org.apache.camel.spi.Metadata;
 /**
  * A single value
  */
-@Metadata(label = "configuration")
+@Metadata(label = "configuration",
+          description = "Holds a single value, typically used as a child element in collection-based configurations")
 @XmlRootElement(name = "value")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ValueDefinition {

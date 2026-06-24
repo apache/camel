@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "restConfiguration",
     "title": "Rest Configuration",
-    "description": "To configure rest",
+    "description": "Configures global settings for the REST DSL, such as host, port, context path, binding mode, and the underlying HTTP component to use",
     "deprecated": false,
     "label": "rest",
     "javaType": "org.apache.camel.model.rest.RestConfigurationDefinition",

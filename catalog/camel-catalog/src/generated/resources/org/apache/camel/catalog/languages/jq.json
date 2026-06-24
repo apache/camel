@@ -3,7 +3,7 @@
     "kind": "language",
     "name": "jq",
     "title": "JQ",
-    "description": "Evaluates a JQ expression against a JSON message body.",
+    "description": "Evaluates a JQ expression against a JSON message body",
     "deprecated": false,
     "firstVersion": "3.18.0",
     "label": "language,json",

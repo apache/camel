@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "mutualTLS",
     "title": "Mutual TLS",
-    "description": "Rest security mutual TLS authentication definition",
+    "description": "Configures mutual TLS (mTLS) client certificate authentication for a REST service",
     "deprecated": false,
     "label": "rest,security,configuration",
     "javaType": "org.apache.camel.model.rest.MutualTLSDefinition",

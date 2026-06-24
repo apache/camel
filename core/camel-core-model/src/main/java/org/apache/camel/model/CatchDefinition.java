@@ -36,7 +36,8 @@ import org.apache.camel.spi.annotations.DslArg;
 /**
  * Catches exceptions as part of a try, catch, finally block
  */
-@Metadata(label = "error")
+@Metadata(label = "error,errorhandling",
+          description = "Catches specific exceptions within a doTry block, allowing fine-grained exception handling within the route")
 @XmlRootElement(name = "doCatch")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CatchDefinition extends OutputDefinition<CatchDefinition> {

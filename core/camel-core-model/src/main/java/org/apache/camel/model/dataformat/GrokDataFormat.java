@@ -29,7 +29,8 @@ import org.apache.camel.spi.Metadata;
 /**
  * Unmarshal unstructured data to objects using Logstash based Grok patterns.
  */
-@Metadata(label = "dataformat,transformation", title = "Grok", firstVersion = "3.0.0")
+@Metadata(label = "dataformat,transformation", title = "Grok", firstVersion = "3.0.0",
+          description = "Unmarshal unstructured data to objects using Logstash based Grok patterns")
 @XmlRootElement(name = "grok")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class GrokDataFormat extends DataFormatDefinition {

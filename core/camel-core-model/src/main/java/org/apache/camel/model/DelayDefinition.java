@@ -32,7 +32,8 @@ import org.apache.camel.spi.Metadata;
 /**
  * Delays processing for a specified length of time
  */
-@Metadata(label = "eip,routing")
+@Metadata(label = "eip,flowcontrol,routing",
+          description = "Delays message processing for a specified duration, which can be a fixed value or computed dynamically per message")
 @XmlRootElement(name = "delay")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class DelayDefinition extends ExpressionNode implements ExecutorServiceAwareDefinition<DelayDefinition> {

@@ -2,7 +2,7 @@
 :doctitle: Tar File
 :shortname: tarFile
 :artifactid: camel-tarfile
-:description: Archive files into tarballs or extract files from tarballs.
+:description: Archive files into tarballs or extract files from tarballs
 :since: 2.16
 :supportlevel: Stable
 :tabs-sync-option:

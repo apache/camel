@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "routeConfiguration",
     "title": "Route Configuration",
-    "description": "Reusable configuration for Camel route(s).",
+    "description": "Defines reusable configuration that is automatically applied to matching routes, such as shared error handling or interceptors",
     "deprecated": false,
     "label": "configuration",
     "javaType": "org.apache.camel.model.RouteConfigurationDefinition",

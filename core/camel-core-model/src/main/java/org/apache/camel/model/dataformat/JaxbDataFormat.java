@@ -29,7 +29,8 @@ import org.apache.camel.spi.Metadata;
 /**
  * Unmarshal XML payloads to POJOs and back using JAXB2 XML marshalling standard.
  */
-@Metadata(firstVersion = "1.0.0", label = "dataformat,transformation,xml", title = "JAXB")
+@Metadata(firstVersion = "1.0.0", label = "dataformat,transformation,xml", title = "JAXB",
+          description = "Unmarshal XML payloads to POJOs and back using JAXB2 XML marshalling standard")
 @XmlRootElement(name = "jaxb")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class JaxbDataFormat extends DataFormatDefinition implements ContentTypeHeaderAware {

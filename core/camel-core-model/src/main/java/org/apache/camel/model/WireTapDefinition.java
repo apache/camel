@@ -32,7 +32,9 @@ import org.apache.camel.spi.Metadata;
  * Routes a copy of a message (or creates a new message) to a secondary destination while continue routing the original
  * message.
  */
-@Metadata(label = "eip,routing", excludeProperties = "pattern")
+@Metadata(label = "eip,endpoint,routing", excludeProperties = "pattern",
+          description = "Sends a copy of the message to a secondary endpoint without affecting the original route flow."
+                        + " The tapped message is sent asynchronously in a separate thread")
 @XmlRootElement(name = "wireTap")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class WireTapDefinition<Type extends ProcessorDefinition<Type>> extends ToDynamicDefinition

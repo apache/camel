@@ -3,7 +3,7 @@
     "kind": "dataformat",
     "name": "asn1",
     "title": "ASN.1 File",
-    "description": "Encode and decode data structures using Abstract Syntax Notation One (ASN.1).",
+    "description": "Encode and decode data structures using Abstract Syntax Notation One (ASN.1)",
     "deprecated": false,
     "firstVersion": "2.20.0",
     "label": "dataformat,transformation,file",

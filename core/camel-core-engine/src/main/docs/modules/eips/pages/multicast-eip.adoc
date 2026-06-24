@@ -1,7 +1,7 @@
 = Multicast EIP
 :doctitle: Multicast
 :shortname: multicast
-:description: Routes the same message to multiple paths either sequentially or in parallel.
+:description: Sends a copy of the message to multiple fixed endpoints, processing them sequentially or in parallel, and optionally aggregating their replies
 :since: 
 :supportlevel: Stable
 :tabs-sync-option:

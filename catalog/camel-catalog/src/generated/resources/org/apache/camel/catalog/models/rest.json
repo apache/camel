@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "rest",
     "title": "Rest",
-    "description": "Defines a rest service using the rest-dsl",
+    "description": "Defines a REST service with HTTP operations (GET, POST, PUT, DELETE, etc.) using the Camel REST DSL",
     "deprecated": false,
     "label": "rest",
     "javaType": "org.apache.camel.model.rest.RestDefinition",

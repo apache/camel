@@ -37,7 +37,8 @@ import org.apache.camel.spi.ResourceAware;
 /**
  * Configure data formats.
  */
-@Metadata(label = "dataformat,transformation", title = "Data formats")
+@Metadata(label = "dataformat,transformation", title = "Data formats",
+          description = "Container for defining data format configurations")
 @XmlRootElement(name = "dataFormats")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class DataFormatsDefinition implements CopyableDefinition<DataFormatsDefinition>, ResourceAware {

@@ -34,7 +34,8 @@ import org.apache.camel.spi.Resource;
 /**
  * Route to be executed when Circuit Breaker EIP executes fallback
  */
-@Metadata(label = "eip,routing,error")
+@Metadata(label = "eip,error,resilience,routing",
+          description = "Defines the fallback route that executes when the Circuit Breaker trips or the primary route fails")
 @XmlRootElement(name = "onFallback")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class OnFallbackDefinition extends OptionalIdentifiedDefinition<OnFallbackDefinition>

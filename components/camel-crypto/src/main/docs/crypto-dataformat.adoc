@@ -2,7 +2,7 @@
 :doctitle: Crypto (Java Cryptographic Extension)
 :shortname: crypto
 :artifactid: camel-crypto
-:description: Encrypt and decrypt messages using Java Cryptography Extension (JCE).
+:description: Encrypt and decrypt messages using Java Cryptography Extension (JCE)
 :since: 2.3
 :supportlevel: Stable
 :tabs-sync-option:

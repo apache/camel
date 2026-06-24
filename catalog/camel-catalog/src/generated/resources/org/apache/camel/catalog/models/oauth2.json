@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "oauth2",
     "title": "Oauth2",
-    "description": "Rest security OAuth2 definition",
+    "description": "Configures OAuth2 authentication for a REST service",
     "deprecated": false,
     "label": "rest,security,configuration",
     "javaType": "org.apache.camel.model.rest.OAuth2Definition",

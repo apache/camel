@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "put",
     "title": "Put",
-    "description": "Rest PUT command",
+    "description": "Defines an HTTP PUT operation in the REST DSL",
     "deprecated": false,
     "label": "rest",
     "javaType": "org.apache.camel.model.rest.PutDefinition",

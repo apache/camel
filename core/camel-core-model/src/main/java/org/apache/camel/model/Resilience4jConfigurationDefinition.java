@@ -29,7 +29,8 @@ import org.apache.camel.spi.Metadata;
 /**
  * Resilience4j Circuit Breaker EIP configuration
  */
-@Metadata(label = "configuration,eip,error")
+@Metadata(label = "configuration,eip,error,resilience",
+          description = "Configures Resilience4j settings for the Circuit Breaker EIP, such as failure rate threshold, wait duration, and sliding window parameters")
 @XmlRootElement(name = "resilience4jConfiguration")
 @XmlAccessorType(XmlAccessType.FIELD)
 @Configurer(extended = true)

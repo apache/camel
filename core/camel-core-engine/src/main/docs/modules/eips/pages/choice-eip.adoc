@@ -1,7 +1,7 @@
 = Choice EIP
 :doctitle: Choice
 :shortname: choice
-:description: Route messages based on a series of predicates
+:description: Routes messages to different steps based on a series of conditions (predicates), similar to if-elseif-else in Java. Each condition is evaluated in order until one matches.
 :since: 
 :supportlevel: Stable
 :tabs-sync-option:

@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "customTransformer",
     "title": "Custom Transformer",
-    "description": "To use a custom transformer on a route level.",
+    "description": "References a custom data type transformer implementation from the registry for route-level transformations",
     "deprecated": false,
     "label": "transformation",
     "javaType": "org.apache.camel.model.transformer.CustomTransformerDefinition",

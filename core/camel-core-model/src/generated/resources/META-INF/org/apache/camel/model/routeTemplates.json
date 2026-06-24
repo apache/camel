@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "routeTemplates",
     "title": "Route Templates",
-    "description": "A series of route templates",
+    "description": "Container for a collection of route template definitions",
     "deprecated": false,
     "label": "configuration",
     "javaType": "org.apache.camel.model.RouteTemplatesDefinition",

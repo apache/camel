@@ -31,7 +31,9 @@ import org.apache.camel.spi.Metadata;
 /**
  * Route messages based on dynamic rules
  */
-@Metadata(label = "eip,routing")
+@Metadata(label = "eip,routing",
+          description = "Routes a message step-by-step through a series of endpoints, determined dynamically by calling an expression repeatedly."
+                        + " The expression is called after each hop and returns the next endpoint, or null to stop.")
 @XmlRootElement(name = "dynamicRouter")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class DynamicRouterDefinition<Type extends ProcessorDefinition<Type>> extends ExpressionNode {

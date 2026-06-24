@@ -29,7 +29,8 @@ import org.apache.camel.spi.Metadata;
 /**
  * Encode and decode SWIFT MT messages.
  */
-@Metadata(firstVersion = "3.20.0", label = "dataformat,transformation,finance", title = "SWIFT MT")
+@Metadata(firstVersion = "3.20.0", label = "dataformat,transformation,finance", title = "SWIFT MT",
+          description = "Encode and decode SWIFT MT messages")
 @XmlRootElement(name = "swiftMt")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class SwiftMtDataFormat extends DataFormatDefinition {

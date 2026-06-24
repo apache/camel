@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "pipeline",
     "title": "Pipeline",
-    "description": "Routes the message to a sequence of processors.",
+    "description": "Processes the message through a sequence of steps where the output of each step becomes the input of the next",
     "deprecated": false,
     "label": "eip,routing",
     "javaType": "org.apache.camel.model.PipelineDefinition",

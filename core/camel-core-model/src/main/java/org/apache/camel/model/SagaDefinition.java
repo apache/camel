@@ -40,7 +40,9 @@ import org.apache.camel.util.TimeUtils;
 /**
  * Enables Sagas on the route
  */
-@Metadata(label = "eip,routing")
+@Metadata(label = "eip,routing",
+          description = "Defines a Saga (long-running action) that coordinates distributed services toward a consistent outcome."
+                        + " Unlike XA transactions, Sagas use compensating actions for rollback and work across heterogeneous services.")
 @XmlRootElement(name = "saga")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class SagaDefinition extends OutputDefinition<SagaDefinition> {

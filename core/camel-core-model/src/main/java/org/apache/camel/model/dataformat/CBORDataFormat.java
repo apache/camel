@@ -29,7 +29,8 @@ import org.apache.camel.spi.Metadata;
 /**
  * Unmarshal a CBOR payload to POJO and back.
  */
-@Metadata(firstVersion = "3.0.0", label = "dataformat,transformation,json", title = "CBOR")
+@Metadata(firstVersion = "3.0.0", label = "dataformat,transformation,json", title = "CBOR",
+          description = "Unmarshal a CBOR payload to POJO and back")
 @XmlRootElement(name = "cbor")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CBORDataFormat extends DataFormatDefinition {

@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "templatedRouteParameter",
     "title": "Templated Route Parameter",
-    "description": "An input parameter of a route template.",
+    "description": "Provides a parameter value for a templated route, binding a value to a route template parameter",
     "deprecated": false,
     "label": "configuration",
     "javaType": "org.apache.camel.model.TemplatedRouteParameterDefinition",

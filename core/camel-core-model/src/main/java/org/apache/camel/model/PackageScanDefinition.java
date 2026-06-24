@@ -29,7 +29,8 @@ import org.apache.camel.spi.Metadata;
 /**
  * Scans for Java {@link org.apache.camel.builder.RouteBuilder} classes in java packages
  */
-@Metadata(label = "configuration")
+@Metadata(label = "configuration",
+          description = "Scans Java packages on the classpath for RouteBuilder classes to auto-discover and register routes")
 @XmlRootElement(name = "packageScan")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class PackageScanDefinition {

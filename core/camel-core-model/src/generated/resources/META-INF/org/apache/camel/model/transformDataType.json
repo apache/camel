@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "transformDataType",
     "title": "Transform Data Type",
-    "description": "Transforms the message body based on known data type transformers.",
+    "description": "Transforms the message body between known data types (such as XML, JSON, Java objects) using registered data type transformers",
     "deprecated": false,
     "label": "eip,transformation",
     "javaType": "org.apache.camel.model.TransformDataTypeDefinition",

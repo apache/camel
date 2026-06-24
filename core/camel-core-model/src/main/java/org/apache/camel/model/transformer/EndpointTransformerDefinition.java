@@ -26,7 +26,8 @@ import org.apache.camel.spi.Metadata;
 /**
  * To use a Camel endpoint to perform transformation on the route level.
  */
-@Metadata(label = "transformation")
+@Metadata(label = "transformation",
+          description = "Uses a Camel endpoint to perform data type transformation by sending the message through the endpoint")
 @XmlRootElement(name = "endpointTransformer")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class EndpointTransformerDefinition extends TransformerDefinition {

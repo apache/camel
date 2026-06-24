@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "intercept",
     "title": "Intercept",
-    "description": "Intercepts a message at each step in the route",
+    "description": "Intercepts each message at every processing step in the route, allowing cross-cutting logic such as logging or auditing",
     "deprecated": false,
     "label": "configuration",
     "javaType": "org.apache.camel.model.InterceptDefinition",

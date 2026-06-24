@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "wasm",
     "title": "Wasm",
-    "description": "Call a wasm (web assembly) function.",
+    "description": "Call a wasm (web assembly) function",
     "deprecated": false,
     "firstVersion": "4.5.0",
     "label": "language",

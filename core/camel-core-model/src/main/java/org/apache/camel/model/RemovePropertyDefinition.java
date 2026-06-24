@@ -27,7 +27,8 @@ import org.apache.camel.spi.annotations.DslArg;
 /**
  * Removes a named property from the message exchange
  */
-@Metadata(label = "eip,transformation")
+@Metadata(label = "eip,messaging,transformation",
+          description = "Removes a specific exchange property by name")
 @XmlRootElement(name = "removeProperty")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RemovePropertyDefinition extends NoOutputDefinition<RemovePropertyDefinition> {

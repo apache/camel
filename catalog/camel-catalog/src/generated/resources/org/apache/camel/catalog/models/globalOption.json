@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "globalOption",
     "title": "Global Option",
-    "description": "Models a string key\/value pair for configuring some global options on a Camel context such as max debug log length.",
+    "description": "Defines a single global configuration option as a key\/value pair for the CamelContext",
     "deprecated": false,
     "label": "configuration",
     "javaType": "org.apache.camel.model.GlobalOptionDefinition",

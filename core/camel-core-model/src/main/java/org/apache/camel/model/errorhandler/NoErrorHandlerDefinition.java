@@ -26,7 +26,8 @@ import org.apache.camel.spi.Metadata;
 /**
  * To not use an error handler.
  */
-@Metadata(label = "configuration,error")
+@Metadata(label = "configuration,error,errorhandling",
+          description = "Disables error handling for a route, causing exceptions to propagate immediately to the caller")
 @XmlRootElement(name = "noErrorHandler")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class NoErrorHandlerDefinition extends BaseErrorHandlerDefinition {

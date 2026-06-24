@@ -29,7 +29,8 @@ import org.apache.camel.spi.Metadata;
 /**
  * Compression and decompress streams using java.util.zip.Zip*Stream.
  */
-@Metadata(firstVersion = "2.11.0", label = "dataformat,transformation,file", title = "Zip File")
+@Metadata(firstVersion = "2.11.0", label = "dataformat,transformation,file", title = "Zip File",
+          description = "Compression and decompress streams using java.util.zip.Zip*Stream")
 @XmlRootElement(name = "zipFile")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ZipFileDataFormat extends DataFormatDefinition {

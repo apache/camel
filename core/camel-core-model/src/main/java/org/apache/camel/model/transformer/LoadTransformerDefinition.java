@@ -26,7 +26,8 @@ import org.apache.camel.spi.Metadata;
 /**
  * To load custom transformers from classpath scanning to be used for route level transformations.
  */
-@Metadata(label = "transformation")
+@Metadata(label = "transformation",
+          description = "Auto-discovers and loads data type transformers from the classpath via scanning")
 @XmlRootElement(name = "loadTransformer")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class LoadTransformerDefinition extends TransformerDefinition {

@@ -2,7 +2,7 @@
 :doctitle: Barcode
 :shortname: barcode
 :artifactid: camel-barcode
-:description: Transform strings to various 1D/2D barcode bitmap formats and back.
+:description: Transform strings to various 1D/2D barcode bitmap formats and back
 :since: 2.14
 :supportlevel: Stable
 :tabs-sync-option:

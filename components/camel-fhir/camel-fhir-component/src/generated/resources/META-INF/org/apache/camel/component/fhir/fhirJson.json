@@ -3,7 +3,7 @@
     "kind": "dataformat",
     "name": "fhirJson",
     "title": "FHIR JSon",
-    "description": "Marshall and unmarshall FHIR objects to\/from JSON.",
+    "description": "Marshall and unmarshall FHIR objects to\/from JSON",
     "deprecated": false,
     "firstVersion": "2.21.0",
     "label": "dataformat,transformation,health,json",

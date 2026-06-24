@@ -1,7 +1,7 @@
 = Resequence EIP
 :doctitle: Resequence
 :shortname: resequence
-:description: Resequences (re-order) messages based on an expression
+:description: Reorders messages based on a sequence expression, either in batch mode (collect and sort) or stream mode (continuous reordering with a timeout)
 :since: 
 :supportlevel: Stable
 :tabs-sync-option:

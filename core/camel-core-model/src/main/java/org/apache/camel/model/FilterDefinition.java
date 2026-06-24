@@ -29,7 +29,9 @@ import org.apache.camel.spi.Metadata;
 /**
  * Filter out messages based using a predicate
  */
-@Metadata(label = "eip,routing")
+@Metadata(label = "eip,routing",
+          description = "Filters messages using a predicate expression."
+                        + " Messages matching the predicate continue processing; non-matching messages are skipped.")
 @AsPredicate
 @XmlRootElement(name = "filter")
 @XmlAccessorType(XmlAccessType.FIELD)

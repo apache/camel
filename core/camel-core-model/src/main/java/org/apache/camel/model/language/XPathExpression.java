@@ -31,7 +31,8 @@ import org.apache.camel.spi.Metadata;
 /**
  * Evaluates an XPath expression against an XML payload.
  */
-@Metadata(firstVersion = "1.1.0", label = "language,core,xml", title = "XPath")
+@Metadata(firstVersion = "1.1.0", label = "language,core,xml", title = "XPath",
+          description = "Evaluates an XPath expression against an XML payload")
 @XmlRootElement(name = "xpath")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class XPathExpression extends NamespaceAwareExpression {

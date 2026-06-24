@@ -29,7 +29,8 @@ import org.apache.camel.spi.Metadata;
 /**
  * Serialize and deserialize messages using Apache Avro binary data format.
  */
-@Metadata(firstVersion = "2.14.0", label = "dataformat,transformation", title = "Avro")
+@Metadata(firstVersion = "2.14.0", label = "dataformat,transformation", title = "Avro",
+          description = "Serialize and deserialize messages using Apache Avro binary data format")
 @XmlRootElement(name = "avro")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class AvroDataFormat extends DataFormatDefinition {

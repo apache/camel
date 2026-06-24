@@ -28,7 +28,7 @@ import org.apache.camel.spi.Metadata;
  * Evaluate a compiled simple expression.
  */
 @Metadata(firstVersion = "3.7.0", label = "language,java", title = "CSimple",
-          deprecationNote = "Use the Simple language instead")
+          deprecationNote = "Use the Simple language instead", description = "Evaluate a compiled simple expression")
 @XmlRootElement(name = "csimple")
 @XmlAccessorType(XmlAccessType.FIELD)
 @Deprecated(since = "4.19")

@@ -2,7 +2,7 @@
 :doctitle: FHIR JSon
 :shortname: fhirJson
 :artifactid: camel-fhir
-:description: Marshall and unmarshall FHIR objects to/from JSON.
+:description: Marshall and unmarshall FHIR objects to/from JSON
 :since: 2.21
 :supportlevel: Stable
 :tabs-sync-option:

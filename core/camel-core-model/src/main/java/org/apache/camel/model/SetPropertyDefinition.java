@@ -30,7 +30,8 @@ import org.apache.camel.spi.annotations.DslArg;
 /**
  * Sets a named property on the message exchange
  */
-@Metadata(label = "eip,transformation")
+@Metadata(label = "eip,messaging,transformation",
+          description = "Sets an exchange property to a value computed by an expression")
 @XmlRootElement(name = "setProperty")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class SetPropertyDefinition extends ExpressionNode {

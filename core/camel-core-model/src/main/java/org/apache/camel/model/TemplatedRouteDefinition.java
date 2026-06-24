@@ -39,7 +39,8 @@ import org.apache.camel.spi.ResourceAware;
 /**
  * Defines a templated route (a route built from a route template)
  */
-@Metadata(label = "configuration")
+@Metadata(label = "configuration",
+          description = "Creates a route instance from a route template, binding specific parameter values to the template's parameters")
 @XmlRootElement(name = "templatedRoute")
 @XmlType(propOrder = { "parameters", "beans" })
 @XmlAccessorType(XmlAccessType.FIELD)

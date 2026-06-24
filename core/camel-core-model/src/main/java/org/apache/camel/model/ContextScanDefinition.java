@@ -31,7 +31,8 @@ import org.apache.camel.spi.Metadata;
  * Scans for Java {@link org.apache.camel.builder.RouteBuilder} instances in the context
  * {@link org.apache.camel.spi.Registry}.
  */
-@Metadata(label = "configuration")
+@Metadata(label = "configuration",
+          description = "Scans for RouteBuilder instances in the Camel registry to auto-discover and register routes")
 @XmlRootElement(name = "contextScan")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ContextScanDefinition {

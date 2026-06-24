@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "swiftMx",
     "title": "SWIFT MX",
-    "description": "Encode and decode SWIFT MX messages.",
+    "description": "Encode and decode SWIFT MX messages",
     "deprecated": false,
     "firstVersion": "3.20.0",
     "label": "dataformat,transformation,finance",

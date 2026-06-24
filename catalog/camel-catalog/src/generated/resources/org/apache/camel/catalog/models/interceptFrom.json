@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "interceptFrom",
     "title": "Intercept From",
-    "description": "Intercepts incoming messages",
+    "description": "Intercepts incoming messages arriving from consumer endpoints, optionally filtering by endpoint URI pattern",
     "deprecated": false,
     "label": "configuration",
     "javaType": "org.apache.camel.model.InterceptFromDefinition",

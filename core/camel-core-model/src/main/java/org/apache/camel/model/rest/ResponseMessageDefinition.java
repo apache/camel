@@ -32,7 +32,8 @@ import org.apache.camel.util.StringHelper;
 /**
  * To specify the rest operation response messages.
  */
-@Metadata(label = "rest")
+@Metadata(label = "rest",
+          description = "Defines a response message for a REST operation, including HTTP status code and description for API documentation")
 @XmlRootElement(name = "responseMessage")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ResponseMessageDefinition {

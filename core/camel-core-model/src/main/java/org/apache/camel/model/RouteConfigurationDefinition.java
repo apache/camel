@@ -36,7 +36,8 @@ import org.apache.camel.spi.ResourceAware;
 /**
  * Reusable configuration for Camel route(s).
  */
-@Metadata(label = "configuration")
+@Metadata(label = "configuration",
+          description = "Defines reusable configuration that is automatically applied to matching routes, such as shared error handling or interceptors")
 @XmlRootElement(name = "routeConfiguration")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RouteConfigurationDefinition extends OptionalIdentifiedDefinition<RouteConfigurationDefinition>

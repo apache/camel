@@ -1,7 +1,7 @@
 = Poll Enrich EIP
 :doctitle: Poll Enrich
 :shortname: pollEnrich
-:description: Enriches messages with data polled from a secondary resource
+:description: Enriches the message with additional data obtained by polling a consumer endpoint (such as a file or message queue). The polled data is merged using an aggregation strategy.
 :since: 
 :supportlevel: Stable
 :tabs-sync-option:

@@ -33,7 +33,8 @@ import org.apache.camel.spi.Metadata;
 /**
  * To configure rest binding
  */
-@Metadata(label = "rest")
+@Metadata(label = "rest",
+          description = "Configures data binding for a REST service, controlling how request and response bodies are marshalled and unmarshalled")
 @XmlRootElement(name = "restBinding")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RestBindingDefinition extends OptionalIdentifiedDefinition<RestBindingDefinition> {

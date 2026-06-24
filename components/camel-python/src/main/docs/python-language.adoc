@@ -2,7 +2,7 @@
 :doctitle: Python
 :shortname: python
 :artifactid: camel-python
-:description: Evaluates a Python expression.
+:description: Evaluates a Python expression
 :since: 3.19
 :supportlevel: Experimental
 :tabs-sync-option:

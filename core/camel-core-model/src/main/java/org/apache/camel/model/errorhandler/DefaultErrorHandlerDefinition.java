@@ -42,7 +42,8 @@ import org.slf4j.LoggerFactory;
 /**
  * The default error handler.
  */
-@Metadata(label = "configuration,error")
+@Metadata(label = "configuration,error,errorhandling",
+          description = "The default error handler that supports redelivery with configurable retry policies and delay patterns")
 @XmlRootElement(name = "defaultErrorHandler")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class DefaultErrorHandlerDefinition extends BaseErrorHandlerDefinition {

@@ -35,7 +35,8 @@ import org.apache.camel.spi.Metadata;
 /**
  * Allows setting multiple variables at the same time.
  */
-@Metadata(label = "eip,transformation")
+@Metadata(label = "eip,messaging,transformation",
+          description = "Sets multiple variables at once, each computed by its own expression")
 @XmlRootElement(name = "setVariables")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class SetVariablesDefinition extends ProcessorDefinition<SetVariablesDefinition> {

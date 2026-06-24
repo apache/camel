@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "value",
     "title": "Value",
-    "description": "A single value",
+    "description": "Holds a single value, typically used as a child element in collection-based configurations",
     "deprecated": false,
     "label": "configuration",
     "javaType": "org.apache.camel.model.ValueDefinition",

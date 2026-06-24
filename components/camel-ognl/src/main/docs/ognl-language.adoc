@@ -2,7 +2,7 @@
 :doctitle: OGNL
 :shortname: ognl
 :artifactid: camel-ognl
-:description: Evaluates an OGNL expression (Apache Commons OGNL).
+:description: Evaluates an OGNL expression (Apache Commons OGNL)
 :since: 1.1
 :supportlevel: Stable-deprecated
 :deprecated: *deprecated*

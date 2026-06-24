@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "openIdConnect",
     "title": "Open Id Connect",
-    "description": "Rest security OpenID Connect definition",
+    "description": "Configures OpenID Connect authentication for a REST service",
     "deprecated": false,
     "label": "rest,security,configuration",
     "javaType": "org.apache.camel.model.rest.OpenIdConnectDefinition",

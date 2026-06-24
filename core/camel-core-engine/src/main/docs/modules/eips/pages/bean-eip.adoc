@@ -1,7 +1,7 @@
 = Bean EIP
 :doctitle: Bean
 :shortname: bean
-:description: Calls a Java bean
+:description: Invokes a method on a Java bean, with automatic parameter binding from the message body, headers, and exchange properties
 :since: 
 :supportlevel: Stable
 :tabs-sync-option:

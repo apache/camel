@@ -30,7 +30,7 @@ import org.apache.camel.spi.Metadata;
 /**
  * Rest security OAuth2 definition
  */
-@Metadata(label = "rest,security,configuration")
+@Metadata(label = "rest,security,configuration", description = "Configures OAuth2 authentication for a REST service")
 @XmlRootElement(name = "oauth2")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class OAuth2Definition extends RestSecurityDefinition {

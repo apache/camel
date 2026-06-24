@@ -2,7 +2,7 @@
 :doctitle: PGP (Pretty Good Privacy Cryptographic)
 :shortname: pgp
 :artifactid: camel-crypto-pgp
-:description: Encrypt and decrypt messages using Java Cryptographic Extension (JCE) and PGP.
+:description: Encrypt and decrypt messages using Java Cryptographic Extension (JCE) and PGP
 :since: 2.9
 :supportlevel: Stable
 :tabs-sync-option:

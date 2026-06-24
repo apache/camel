@@ -31,7 +31,8 @@ import org.apache.camel.spi.Metadata;
 /**
  * Evaluates a JSONPath expression against a JSON message body.
  */
-@Metadata(firstVersion = "2.13.0", label = "language,json", title = "JSONPath")
+@Metadata(firstVersion = "2.13.0", label = "language,json", title = "JSONPath",
+          description = "Evaluates a JSONPath expression against a JSON message body")
 @XmlRootElement(name = "jsonpath")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class JsonPathExpression extends SingleInputTypedExpressionDefinition {

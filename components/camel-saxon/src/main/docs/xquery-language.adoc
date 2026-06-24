@@ -2,7 +2,7 @@
 :doctitle: XQuery
 :shortname: xquery
 :artifactid: camel-saxon
-:description: Evaluates an XQuery expressions against an XML payload.
+:description: Evaluates an XQuery expressions against an XML payload
 :since: 1.0
 :supportlevel: Stable
 :tabs-sync-option:

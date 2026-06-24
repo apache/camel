@@ -31,7 +31,9 @@ import org.apache.camel.spi.Metadata;
 /**
  * Pausable EIP to support resuming processing from last known offset.
  */
-@Metadata(label = "eip,routing")
+@Metadata(label = "eip,routing",
+          description = "Pauses a consumer based on a condition, allowing it to be resumed later from the last known offset."
+                        + " Useful for controlling ingestion rate on polling consumers.")
 @XmlRootElement(name = "pausable")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class PausableDefinition extends NoOutputDefinition<PausableDefinition> {

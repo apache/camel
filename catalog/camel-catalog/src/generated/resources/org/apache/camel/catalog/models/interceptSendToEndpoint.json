@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "interceptSendToEndpoint",
     "title": "Intercept Send To Endpoint",
-    "description": "Intercepts messages being sent to an endpoint",
+    "description": "Intercepts messages being sent to a specific endpoint, allowing the message to be modified or the send to be skipped",
     "deprecated": false,
     "label": "configuration",
     "javaType": "org.apache.camel.model.InterceptSendToEndpointDefinition",

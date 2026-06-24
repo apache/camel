@@ -1,7 +1,7 @@
 = Process EIP
 :doctitle: Process
 :shortname: process
-:description: Calls a Camel processor
+:description: Invokes a custom Camel Processor for programmatic message processing in Java
 :since: 
 :supportlevel: Stable
 :tabs-sync-option:

@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "batchConfig",
     "title": "Batch Config",
-    "description": "Configures batch-processing resequence eip.",
+    "description": "Configures the batch-processing mode of the Resequence EIP, which collects messages into a batch and sorts them before releasing",
     "deprecated": false,
     "label": "configuration,eip",
     "javaType": "org.apache.camel.model.config.BatchResequencerConfig",

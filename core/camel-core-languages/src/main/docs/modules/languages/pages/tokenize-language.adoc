@@ -2,7 +2,7 @@
 :doctitle: Tokenize
 :shortname: tokenize
 :artifactid: camel-core-languages
-:description: Tokenize text payloads using delimiter patterns.
+:description: Tokenize text payloads using delimiter patterns
 :since: 2.0
 :supportlevel: Stable
 :tabs-sync-option:

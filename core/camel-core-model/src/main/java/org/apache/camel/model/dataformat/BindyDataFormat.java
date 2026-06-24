@@ -32,7 +32,8 @@ import org.apache.camel.spi.Metadata;
  * Marshal and unmarshal Java beans from and to flat payloads (such as CSV, delimited, fixed length formats, or FIX
  * messages).
  */
-@Metadata(firstVersion = "2.0.0", label = "dataformat,transformation,csv", title = "Bindy")
+@Metadata(firstVersion = "2.0.0", label = "dataformat,transformation,csv", title = "Bindy",
+          description = "Marshal and unmarshal Java beans from and to flat payloads (such as CSV, delimited, fixed length formats, or FIX messages)")
 @XmlRootElement(name = "bindy")
 @XmlAccessorType(XmlAccessType.NONE)
 public class BindyDataFormat extends DataFormatDefinition {

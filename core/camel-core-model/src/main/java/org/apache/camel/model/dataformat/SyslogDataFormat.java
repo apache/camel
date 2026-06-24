@@ -28,7 +28,8 @@ import org.apache.camel.spi.Metadata;
 /**
  * Marshall SyslogMessages to RFC3164 and RFC5424 messages and back.
  */
-@Metadata(firstVersion = "2.6.0", label = "dataformat,transformation,monitoring", title = "Syslog")
+@Metadata(firstVersion = "2.6.0", label = "dataformat,transformation,monitoring", title = "Syslog",
+          description = "Marshall SyslogMessages to RFC3164 and RFC5424 messages and back")
 @XmlRootElement(name = "syslog")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class SyslogDataFormat extends DataFormatDefinition {

@@ -34,7 +34,8 @@ import org.apache.camel.spi.Metadata;
 /**
  * Camel error handling.
  */
-@Metadata(label = "configuration,error")
+@Metadata(label = "configuration,error,errorhandling",
+          description = "Configures error handling strategy for routes, controlling how failed exchanges are handled and redelivered")
 @XmlRootElement(name = "errorHandler")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ErrorHandlerDefinition extends IdentifiedType {

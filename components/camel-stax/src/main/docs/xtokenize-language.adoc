@@ -2,7 +2,7 @@
 :doctitle: XML Tokenize
 :shortname: xtokenize
 :artifactid: camel-stax
-:description: Tokenize XML payloads.
+:description: Tokenize XML payloads
 :since: 2.14
 :supportlevel: Stable
 :tabs-sync-option:

@@ -29,7 +29,8 @@ import org.apache.camel.spi.Metadata;
 /**
  * To use a custom load balancer implementation.
  */
-@Metadata(label = "eip,routing")
+@Metadata(label = "eip,loadbalancing,routing",
+          description = "References a custom load balancer implementation from the registry")
 @XmlRootElement(name = "customLoadBalancer")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CustomLoadBalancerDefinition extends LoadBalancerDefinition {

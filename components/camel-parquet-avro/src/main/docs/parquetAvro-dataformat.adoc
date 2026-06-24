@@ -2,7 +2,7 @@
 :doctitle: Parquet File
 :shortname: parquetAvro
 :artifactid: camel-parquet-avro
-:description: Parquet Avro serialization and de-serialization.
+:description: Parquet Avro serialization and de-serialization
 :since: 4.0
 :supportlevel: Stable
 :tabs-sync-option:

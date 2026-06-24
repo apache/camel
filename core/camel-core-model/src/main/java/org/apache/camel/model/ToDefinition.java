@@ -30,7 +30,8 @@ import org.apache.camel.spi.annotations.DslArg;
 /**
  * Sends the message to a static endpoint
  */
-@Metadata(label = "eip,routing")
+@Metadata(label = "eip,endpoint,routing",
+          description = "Sends the message to a fixed endpoint URI")
 @XmlRootElement(name = "to")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ToDefinition extends SendDefinition<ToDefinition> {

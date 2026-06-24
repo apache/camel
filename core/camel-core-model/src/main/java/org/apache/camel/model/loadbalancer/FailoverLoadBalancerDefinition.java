@@ -32,7 +32,8 @@ import org.apache.camel.spi.Metadata;
 /**
  * In case of failures the exchange will be tried on the next endpoint.
  */
-@Metadata(label = "eip,routing")
+@Metadata(label = "eip,loadbalancing,routing",
+          description = "Load balancer that tries the next endpoint in case of failure, cycling through available endpoints until one succeeds")
 @XmlRootElement(name = "failoverLoadBalancer")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class FailoverLoadBalancerDefinition extends LoadBalancerDefinition {

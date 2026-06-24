@@ -30,7 +30,8 @@ import org.apache.camel.spi.Metadata;
  * Marshal and unmarshal <a href="http://jsonapi.org/format/">JSON:API resources</a> using
  * <a href="https://github.com/jasminb/jsonapi-converter">JSONAPI-Converter library</a>.
  */
-@Metadata(firstVersion = "3.0.0", label = "dataformat,transformation", title = "JSonApi")
+@Metadata(firstVersion = "3.0.0", label = "dataformat,transformation", title = "JSonApi",
+          description = "Marshal and unmarshal JSON:API resources using JSONAPI-Converter library")
 @XmlRootElement(name = "jsonApi")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class JsonApiDataFormat extends DataFormatDefinition {

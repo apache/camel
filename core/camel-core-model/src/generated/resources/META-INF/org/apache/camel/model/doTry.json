@@ -5,7 +5,7 @@
     "title": "Do Try",
     "description": "Wraps route steps in a try-catch-finally block for fine-grained exception handling within the route",
     "deprecated": false,
-    "label": "eip,routing,error",
+    "label": "eip,error,errorhandling,routing",
     "javaType": "org.apache.camel.model.TryDefinition",
     "abstract": false,
     "input": true,

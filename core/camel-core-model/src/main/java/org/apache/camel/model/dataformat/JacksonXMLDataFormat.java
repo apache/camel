@@ -29,7 +29,8 @@ import org.apache.camel.spi.Metadata;
 /**
  * Unmarshal an XML payloads to POJOs and back using XMLMapper extension of Jackson.
  */
-@Metadata(firstVersion = "2.16.0", label = "dataformat,transformation,xml", title = "Jackson XML")
+@Metadata(firstVersion = "2.16.0", label = "dataformat,transformation,xml", title = "Jackson XML",
+          description = "Unmarshal an XML payloads to POJOs and back using XMLMapper extension of Jackson")
 @XmlRootElement(name = "jacksonXml")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class JacksonXMLDataFormat extends DataFormatDefinition implements ContentTypeHeaderAware {

@@ -2,7 +2,7 @@
 :doctitle: Zip Deflater
 :shortname: zipDeflater
 :artifactid: camel-zip-deflater
-:description: Compress and decompress streams using java.util.zip.Deflater and java.util.zip.Inflater.
+:description: Compress and decompress streams using java.util.zip.Deflater and java.util.zip.Inflater
 :since: 2.12
 :supportlevel: Stable
 :tabs-sync-option:

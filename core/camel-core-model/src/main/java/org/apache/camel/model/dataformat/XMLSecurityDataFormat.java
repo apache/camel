@@ -35,7 +35,8 @@ import org.apache.camel.support.jsse.KeyStoreParameters;
 /**
  * Encrypt and decrypt XML payloads using Apache Santuario.
  */
-@Metadata(firstVersion = "2.0.0", label = "dataformat,transformation,security,xml", title = "XML Security")
+@Metadata(firstVersion = "2.0.0", label = "dataformat,transformation,security,xml", title = "XML Security",
+          description = "Encrypt and decrypt XML payloads using Apache Santuario")
 @XmlRootElement(name = "xmlSecurity")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class XMLSecurityDataFormat extends DataFormatDefinition implements NamespaceAware {

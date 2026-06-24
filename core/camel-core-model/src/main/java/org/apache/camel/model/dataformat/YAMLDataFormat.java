@@ -31,7 +31,8 @@ import org.apache.camel.spi.Metadata;
 /**
  * Marshal and unmarshal Java objects to and from YAML.
  */
-@Metadata(firstVersion = "2.17.0", label = "dataformat,transformation,yaml", title = "YAML")
+@Metadata(firstVersion = "2.17.0", label = "dataformat,transformation,yaml", title = "YAML",
+          description = "Marshal and unmarshal Java objects to and from YAML")
 @XmlRootElement(name = "yaml")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class YAMLDataFormat extends DataFormatDefinition {

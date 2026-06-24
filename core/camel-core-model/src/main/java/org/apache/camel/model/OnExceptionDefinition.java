@@ -40,7 +40,8 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Route to be executed when an exception is thrown
  */
-@Metadata(label = "error")
+@Metadata(label = "error,errorhandling",
+          description = "Defines exception handling for specific exception types, with options for redelivery, logging, and routing to error endpoints")
 @XmlRootElement(name = "onException")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class OnExceptionDefinition extends OutputDefinition<OnExceptionDefinition> {

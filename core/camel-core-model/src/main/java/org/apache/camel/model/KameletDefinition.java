@@ -34,7 +34,10 @@ import org.apache.camel.spi.annotations.DslArg;
  * kamelet does not return a response message for every incoming message. In special situations like these, then you
  * must use this Kamelet EIP instead of using the kamelet component.
  */
-@Metadata(label = "eip,routing")
+@Metadata(label = "eip,endpoint,routing",
+          description = "Calls a Kamelet (reusable route template) as a step in the route."
+                        + " Normally Kamelets are invoked via kamelet: endpoint URIs;"
+                        + " this EIP is for special cases where direct invocation is needed.")
 @XmlRootElement(name = "kamelet")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class KameletDefinition extends OutputDefinition<KameletDefinition> {

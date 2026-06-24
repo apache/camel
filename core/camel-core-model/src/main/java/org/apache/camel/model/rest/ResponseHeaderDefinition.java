@@ -36,7 +36,8 @@ import org.apache.camel.util.StringHelper;
 /**
  * To specify the rest operation response headers.
  */
-@Metadata(label = "rest")
+@Metadata(label = "rest",
+          description = "Defines a response header for a REST operation, used for API documentation and OpenAPI spec generation")
 @XmlRootElement(name = "responseHeader")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ResponseHeaderDefinition {

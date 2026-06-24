@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "filter",
     "title": "Filter",
-    "description": "Filter out messages based using a predicate",
+    "description": "Filters messages using a predicate expression. Messages matching the predicate continue processing; non-matching messages are skipped.",
     "deprecated": false,
     "label": "eip,routing",
     "javaType": "org.apache.camel.model.FilterDefinition",

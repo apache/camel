@@ -1,7 +1,7 @@
 = Failover Load Balancer EIP
 :doctitle: Failover Load Balancer
 :shortname: failoverLoadBalancer
-:description: In case of failures the exchange will be tried on the next endpoint.
+:description: Load balancer that tries the next endpoint in case of failure, cycling through available endpoints until one succeeds
 :since: 
 :supportlevel: Stable
 :tabs-sync-option:

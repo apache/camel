@@ -1621,7 +1621,7 @@ public class CamelCatalogTest {
 
         am = catalog.modelFromMavenGAV("org.apache.camel", "camel-ognl", catalog.getCatalogVersion());
         Assertions.assertInstanceOf(LanguageModel.class, am);
-        Assertions.assertEquals("Evaluates an OGNL expression (Apache Commons OGNL).", am.getDescription());
+        Assertions.assertEquals("Evaluates an OGNL expression (Apache Commons OGNL)", am.getDescription());
 
         am = catalog.modelFromMavenGAV("org.apache.camel", "camel-bindy", catalog.getCatalogVersion());
         Assertions.assertInstanceOf(DataFormatModel.class, am);

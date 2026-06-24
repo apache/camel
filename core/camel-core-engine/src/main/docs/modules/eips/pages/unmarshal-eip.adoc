@@ -1,7 +1,7 @@
 = Unmarshal EIP
 :doctitle: Unmarshal
 :shortname: unmarshal
-:description: Converts the message data received from the wire into a format that Apache Camel processors can consume
+:description: Deserializes the message body from a specific data format such as JSON, XML, CSV, or Protobuf into a Java object
 :since: 
 :supportlevel: Stable
 :tabs-sync-option:

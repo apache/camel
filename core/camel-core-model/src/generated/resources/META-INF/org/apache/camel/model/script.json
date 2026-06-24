@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "script",
     "title": "Script",
-    "description": "Executes a script from a language which does not change the message body.",
+    "description": "Executes an expression or script in a chosen language for side effects without modifying the message body",
     "deprecated": false,
     "label": "eip,transformation",
     "javaType": "org.apache.camel.model.ScriptDefinition",

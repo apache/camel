@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "otherwise",
     "title": "Otherwise",
-    "description": "Route to be executed when all other choices evaluate to false",
+    "description": "Defines the default branch within a Choice EIP that executes when no When condition matches",
     "deprecated": false,
     "label": "eip,routing",
     "javaType": "org.apache.camel.model.OtherwiseDefinition",

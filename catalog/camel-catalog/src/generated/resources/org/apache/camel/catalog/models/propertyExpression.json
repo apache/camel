@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "propertyExpression",
     "title": "Property Expression",
-    "description": "A key value pair where the value is an expression.",
+    "description": "Defines a key\/value pair where the value is computed by an expression, used for passing dynamic parameters",
     "deprecated": false,
     "label": "configuration",
     "javaType": "org.apache.camel.model.PropertyExpressionDefinition",

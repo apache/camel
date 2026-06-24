@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "security",
     "title": "Rest Security",
-    "description": "Rest security definition",
+    "description": "Applies a security requirement to a REST operation, referencing a security scheme defined at the service level",
     "deprecated": false,
     "label": "rest,security,configuration",
     "javaType": "org.apache.camel.model.rest.SecurityDefinition",

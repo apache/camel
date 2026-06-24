@@ -3,7 +3,7 @@
     "kind": "dataformat",
     "name": "zipDeflater",
     "title": "Zip Deflater",
-    "description": "Compress and decompress streams using java.util.zip.Deflater and java.util.zip.Inflater.",
+    "description": "Compress and decompress streams using java.util.zip.Deflater and java.util.zip.Inflater",
     "deprecated": false,
     "firstVersion": "2.12.0",
     "label": "dataformat,transformation",

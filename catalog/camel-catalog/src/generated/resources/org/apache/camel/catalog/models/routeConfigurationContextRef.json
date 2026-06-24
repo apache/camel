@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "routeConfigurationContextRef",
     "title": "Route Configuration Context Ref",
-    "description": "To refer to an XML file with route configuration defined using the xml-dsl",
+    "description": "References an external XML file containing route configuration definitions for inclusion in the current context",
     "deprecated": false,
     "label": "configuration",
     "javaType": "org.apache.camel.model.RouteConfigurationContextRefDefinition",

@@ -31,7 +31,8 @@ import org.apache.camel.spi.Metadata;
 /**
  * To configure rest security definitions.
  */
-@Metadata(label = "rest,security,configuration", title = "Rest Security Definitions")
+@Metadata(label = "rest,security,configuration", title = "Rest Security Definitions",
+          description = "Container for security scheme definitions used by REST services")
 @XmlRootElement(name = "securityDefinitions")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RestSecuritiesDefinition {

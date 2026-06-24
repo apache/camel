@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "endpointTransformer",
     "title": "Endpoint Transformer",
-    "description": "To use a Camel endpoint to perform transformation on the route level.",
+    "description": "Uses a Camel endpoint to perform data type transformation by sending the message through the endpoint",
     "deprecated": false,
     "label": "transformation",
     "javaType": "org.apache.camel.model.transformer.EndpointTransformerDefinition",

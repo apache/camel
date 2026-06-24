@@ -27,7 +27,8 @@ import org.apache.camel.spi.Metadata;
 /**
  * Executes a script from a language which does not change the message body.
  */
-@Metadata(label = "eip,transformation")
+@Metadata(label = "eip,transformation",
+          description = "Executes an expression or script in a chosen language for side effects without modifying the message body")
 @XmlRootElement(name = "script")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ScriptDefinition extends ExpressionNode {

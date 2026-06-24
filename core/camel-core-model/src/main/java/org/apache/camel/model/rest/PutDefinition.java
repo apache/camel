@@ -25,7 +25,7 @@ import org.apache.camel.spi.Metadata;
 /**
  * Rest PUT command
  */
-@Metadata(label = "rest")
+@Metadata(label = "rest", description = "Defines an HTTP PUT operation in the REST DSL")
 @XmlRootElement(name = "put")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class PutDefinition extends VerbDefinition {

@@ -3,7 +3,7 @@
     "kind": "language",
     "name": "datasonnet",
     "title": "DataSonnet",
-    "description": "To use DataSonnet scripts for message transformations.",
+    "description": "To use DataSonnet scripts for message transformations",
     "deprecated": false,
     "firstVersion": "3.7.0",
     "label": "language,transformation",

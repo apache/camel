@@ -2,7 +2,7 @@
 :doctitle: FHIR XML
 :shortname: fhirXml
 :artifactid: camel-fhir
-:description: Marshall and unmarshall FHIR objects to/from XML.
+:description: Marshall and unmarshall FHIR objects to/from XML
 :since: 2.21
 :supportlevel: Stable
 :tabs-sync-option:

@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "constant",
     "title": "Constant",
-    "description": "A fixed value set only once during the route startup.",
+    "description": "A fixed value set only once during the route startup",
     "deprecated": false,
     "firstVersion": "1.5.0",
     "label": "language,core",
