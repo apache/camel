@@ -102,7 +102,7 @@
         <jta-api-1.2-version>1.2</jta-api-1.2-version>
         <chicory-version>1.7.5</chicory-version>
         <chunk-templates-version>3.6.2</chunk-templates-version>
-        <citrus-version>4.10.1</citrus-version>
+        <citrus-version>5.0.0-M2</citrus-version>
         <classgraph-version>4.8.184</classgraph-version>
         <cloudant-version>0.10.19</cloudant-version>
         <com-ibm-mq-jakarta-client-version>9.4.5.1</com-ibm-mq-jakarta-client-version>
