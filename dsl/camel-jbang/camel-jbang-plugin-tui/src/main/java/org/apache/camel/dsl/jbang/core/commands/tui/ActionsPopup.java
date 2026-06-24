@@ -767,16 +767,19 @@ class ActionsPopup {
 
         frame.renderWidget(Clear.INSTANCE, popup);
         String divider = "  ─────────────────────────────────";
-        // extra space after ⌨️ because it renders narrower than other emoji
+        // CAMEL-23818: use unambiguous 2-wide emoji for these three labels. The text-default
+        // base glyphs U+2328/U+23F9/U+23FA + VS16 (U+FE0F) render 2-wide but TamboUI measures
+        // them as 1-wide, drifting the buffer and leaving stray characters when scrolling.
+        // Revert once a TamboUI release with https://github.com/tamboui/tamboui/pull/388 is adopted.
         String keystrokeLabel = keystrokesEnabled.get()
-                ? "  ⌨️  Hide Keystrokes"
-                : "  ⌨️  Show Keystrokes";
+                ? "  🔤 Hide Keystrokes"
+                : "  🔤 Show Keystrokes";
         String stopLabel = stopAllPopup.hasBothGroups()
                 ? "  🛑 Stop All..."
                 : "  🛑 Stop All";
         String tapeLabel = tapeRecordingActive.get()
-                ? "  ⏹️  Stop Tape Recording (Ctrl+R)"
-                : "  ⏺️  Start Tape Recording (Ctrl+R)";
+                ? "  ⬛ Stop Tape Recording (Ctrl+R)"
+                : "  🔴 Start Tape Recording (Ctrl+R)";
 
         List<ListItem> items = new ArrayList<>();
         // Group 1: User Actions
