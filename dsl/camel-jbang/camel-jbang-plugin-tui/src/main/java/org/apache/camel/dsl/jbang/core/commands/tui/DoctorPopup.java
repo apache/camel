@@ -84,7 +84,7 @@ class DoctorPopup {
         int popupW = Math.min(62, area.width() - 4);
         int popupH = Math.min(lines.size() + 2, area.height() - 4);
         int x = area.left() + Math.max(0, (area.width() - popupW) / 2);
-        int y = area.top() + Math.max(0, (area.height() - popupH) / 2);
+        int y = area.top() + 2;
         Rect popup = new Rect(x, y, Math.min(popupW, area.width()), Math.min(popupH, area.height()));
 
         frame.renderWidget(Clear.INSTANCE, popup);
