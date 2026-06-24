@@ -239,6 +239,11 @@
             <groupId>org.jolokia</groupId>
             <artifactId>jolokia-agent-jvm</artifactId>
             <version>${jolokia-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jolokia</groupId>
+            <artifactId>jolokia-agent-jvm</artifactId>
+            <version>${jolokia-version}</version>
             <classifier>javaagent</classifier>
             <scope>provided</scope>
         </dependency>
