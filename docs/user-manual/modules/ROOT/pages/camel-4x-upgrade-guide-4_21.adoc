@@ -1046,6 +1046,15 @@ its signature because no `validateSigningCertificateChain` is configured. A new 
 unverifiable signed messages with an `insufficient-message-security` error instead of delivering them
 unverified. The default behaviour is otherwise unchanged.
 
+=== camel-ftp, camel-sftp, camel-mina-sftp, camel-azure-files, camel-smb
+
+When `localWorkDirectory` is used, the remote-file consumers now ensure the downloaded local work file
+stays within the configured work directory, so a remote file name containing `../` sequences can no longer
+resolve to a path outside it. The containment check honours the existing `jailStartingDirectory` option
+(default `true`), consistent with the file producer; set `jailStartingDirectory=false` to disable it. A
+remote file that resolves outside the local work directory is now rejected with a
+`GenericFileOperationFailedException`.
+
 === camel-oauth
 
 `OAuthTokenRequest.refreshTokenGrant(...)` now sends the RFC 6749 `refresh_token` form parameter for

@@ -16,14 +16,37 @@
  */
 package org.apache.camel.component.file;
 
+import java.io.File;
 import java.util.function.Supplier;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.support.MessageHelper;
+import org.apache.camel.util.FileUtil;
 
 public final class GenericFileHelper {
 
     private GenericFileHelper() {
+    }
+
+    /**
+     * Ensures the resolved local work file stays within the configured local work directory. The remote file name used
+     * to build the local work file path may contain {@code ../} sequences that would otherwise resolve to a path
+     * outside the work directory.
+     *
+     * @param  target                              the resolved local work file (or its in-progress temp file)
+     * @param  localWorkDirectory                  the local work directory the file must stay within
+     * @throws GenericFileOperationFailedException if the target resolves outside the local work directory
+     */
+    public static void jailToLocalWorkDirectory(File target, File localWorkDirectory) {
+        // compact first as the remote relative name can use ../ etc
+        String compactTarget = FileUtil.compactPath(target.getPath());
+        String compactWork = FileUtil.compactPath(localWorkDirectory.getPath());
+        if (!compactTarget.startsWith(compactWork)) {
+            throw new GenericFileOperationFailedException(
+                    "Cannot retrieve file to local work file: " + compactTarget
+                                                          + " as it is jailed to the local work directory: "
+                                                          + compactWork);
+        }
     }
 
     public static String asExclusiveReadLockKey(GenericFile file, String key) {
