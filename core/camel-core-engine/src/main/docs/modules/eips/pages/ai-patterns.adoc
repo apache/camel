@@ -82,7 +82,7 @@ See also the full xref:enterprise-integration-patterns.adoc[Enterprise Integrati
 |Term |Camel EIP |Description
 
 |Retry
-|xref:error-handler.adoc[Error Handler]
+|xref:manual::error-handler.adoc[Error Handler]
 |Automatically retry failed message processing with configurable backoff.
 
 |Circuit Breaker
@@ -90,8 +90,8 @@ See also the full xref:enterprise-integration-patterns.adoc[Enterprise Integrati
 |Stop calling a failing service and provide a fallback response.
 
 |Fallback
-|xref:onFallback-eip.adoc[On Fallback]
-|Define an alternative route when the primary processing fails.
+|xref:manual::exception-clause.adoc[On Exception], xref:onFallback-eip.adoc[On Fallback]
+|Handle exceptions with onException (general), or define a Circuit Breaker fallback with onFallback.
 
 |Dead Letter / Poison Pill
 |xref:dead-letter-channel.adoc[Dead Letter Channel]
@@ -213,6 +213,6 @@ See also the full xref:enterprise-integration-patterns.adoc[Enterprise Integrati
 |Google's Agent-to-Agent protocol for communication between AI agents.
 
 |Tokenize / Chunk (for LLM)
-|xref:ROOT:langchain4j-tokenizer.adoc[LangChain4j Tokenizer]
+|xref:others:langchain4j-tokenizer.adoc[LangChain4j Tokenizer]
 |Split text into tokens or chunks sized for LLM context windows, using LangChain4j tokenizer strategies.
 |===

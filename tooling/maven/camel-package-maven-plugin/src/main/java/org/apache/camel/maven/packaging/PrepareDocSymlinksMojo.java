@@ -705,7 +705,8 @@ public class PrepareDocSymlinksMojo extends AbstractMojo {
         eips.asciidoc = new KindSpec(
                 Collections.emptyList(), null,
                 "core/camel-core-engine/src/main/docs/modules/eips/pages", null, null,
-                path -> !path.endsWith("enterprise-integration-patterns.adoc"));
+                path -> !path.endsWith("enterprise-integration-patterns.adoc")
+                        && !path.endsWith("ai-patterns.adoc"));
         eips.json = new KindSpec(
                 List.of("core/camel-core-model/src/generated/resources/META-INF/org/apache/camel/model/{,**/}*.json"),
                 null, "core/camel-core-engine/src/main/docs/modules/eips/examples/json", null, "eip", null);
