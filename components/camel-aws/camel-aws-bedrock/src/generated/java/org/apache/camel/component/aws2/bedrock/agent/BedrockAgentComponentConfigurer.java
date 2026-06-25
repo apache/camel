@@ -51,8 +51,6 @@ public class BedrockAgentComponentConfigurer extends PropertyConfigurerSupport i
         case "knowledgeBaseId": getOrCreateConfiguration(target).setKnowledgeBaseId(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "modelid":
-        case "modelId": getOrCreateConfiguration(target).setModelId(property(camelContext, java.lang.String.class, value)); return true;
         case "operation": getOrCreateConfiguration(target).setOperation(property(camelContext, org.apache.camel.component.aws2.bedrock.agent.BedrockAgentOperations.class, value)); return true;
         case "overrideendpoint":
         case "overrideEndpoint": getOrCreateConfiguration(target).setOverrideEndpoint(property(camelContext, boolean.class, value)); return true;
@@ -114,8 +112,6 @@ public class BedrockAgentComponentConfigurer extends PropertyConfigurerSupport i
         case "knowledgeBaseId": return java.lang.String.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
-        case "modelid":
-        case "modelId": return java.lang.String.class;
         case "operation": return org.apache.camel.component.aws2.bedrock.agent.BedrockAgentOperations.class;
         case "overrideendpoint":
         case "overrideEndpoint": return boolean.class;
@@ -173,8 +169,6 @@ public class BedrockAgentComponentConfigurer extends PropertyConfigurerSupport i
         case "knowledgeBaseId": return getOrCreateConfiguration(target).getKnowledgeBaseId();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
-        case "modelid":
-        case "modelId": return getOrCreateConfiguration(target).getModelId();
         case "operation": return getOrCreateConfiguration(target).getOperation();
         case "overrideendpoint":
         case "overrideEndpoint": return getOrCreateConfiguration(target).isOverrideEndpoint();

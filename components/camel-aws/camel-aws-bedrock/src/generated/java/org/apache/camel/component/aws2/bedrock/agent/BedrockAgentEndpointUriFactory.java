@@ -24,7 +24,7 @@ public class BedrockAgentEndpointUriFactory extends org.apache.camel.support.com
     private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(42);
+        Set<String> props = new HashSet<>(41);
         props.add("accessKey");
         props.add("backoffErrorThreshold");
         props.add("backoffIdleThreshold");
@@ -41,7 +41,6 @@ public class BedrockAgentEndpointUriFactory extends org.apache.camel.support.com
         props.add("knowledgeBaseId");
         props.add("label");
         props.add("lazyStartProducer");
-        props.add("modelId");
         props.add("operation");
         props.add("overrideEndpoint");
         props.add("pojoRequest");
