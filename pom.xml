@@ -261,6 +261,7 @@
                                     ${maven.multiModuleProjectDirectory}/buildingtools/src/main/resources/header.txt
                                 </header>
                                 <excludes>
+                                    <exclude>**/.rewrite-enabled</exclude>
                                     <exclude>release.properties</exclude>
                                     <exclude>**/pom.xml.tag</exclude>
                                     <exclude>**/pom.xml.releaseBackup</exclude>

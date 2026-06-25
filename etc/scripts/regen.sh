@@ -25,6 +25,24 @@ cd `dirname "$0"`/../..
 git clean -fdx
 rm -Rf **/src/generated/
 
+# Enable OpenRewrite only for modules with changed Java files.
+# Maven's file-activated profile (<exists>.rewrite-enabled</exists>) checks
+# per-module, so OpenRewrite runs only where needed — no -Prewrite flag required.
+# We only need --deepen=1 (depth 1 -> 2) since we compare adjacent commits:
+# for PRs, HEAD~1 is the base branch tip (first parent of the merge commit);
+# for main builds, HEAD~1 is the previous squash-merged commit.
+if ! git rev-parse HEAD~1 >/dev/null 2>&1; then
+  git fetch --deepen=1 --quiet 2>/dev/null || true
+fi
+
+if git rev-parse HEAD~1 >/dev/null 2>&1; then
+  git diff HEAD~1 HEAD --name-only -- '*.java' ':!*/src/generated/*' \
+    | sed 's|/src/.*||' | sort -u \
+    | while read module; do
+        [ -d "$module" ] && touch "$module/.rewrite-enabled"
+      done
+fi
+
 # Regenerate everything
 if ./mvnw --batch-mode -Pregen -DskipTests ${MAVEN_EXTRA_ARGS} install >> build.log 2>&1; then
   echo "✅ mvn -Pregen succeeded."
