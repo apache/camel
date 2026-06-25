@@ -61,7 +61,6 @@ public class ThrottlingExceptionRoutePolicyKeepOpenOnInitTest extends ContextTes
         log.debug("---- sending some messages");
         for (int i = 0; i < size; i++) {
             template.sendBody(url, "Message " + i);
-            Thread.sleep(3);
         }
 
         // gives time for policy half open check to run every second
@@ -80,7 +79,6 @@ public class ThrottlingExceptionRoutePolicyKeepOpenOnInitTest extends ContextTes
 
         for (int i = 0; i < size; i++) {
             template.sendBody(url, "Message " + i);
-            Thread.sleep(3);
         }
 
         // gives time for policy half open check to run every second

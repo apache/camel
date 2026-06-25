@@ -18,6 +18,7 @@ package org.apache.camel.component.validator;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -39,6 +40,9 @@ import org.slf4j.LoggerFactory;
 public class ValidatorEndpointClearCachedSchemaTest extends ContextTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(ValidatorEndpointClearCachedSchemaTest.class);
+
+    private CountDownLatch sendersStarted = new CountDownLatch(3);
+    private CountDownLatch clearCacheReady = new CountDownLatch(1);
 
     @Test
     public void testClearCachedSchema() throws Exception {
@@ -104,7 +108,14 @@ public class ValidatorEndpointClearCachedSchemaTest extends ContextTestSupport {
             // send up to 5 messages
             for (int j = 0; j < 5; j++) {
                 try {
-                    Thread.sleep(100);
+                    // Signal that this sender has started (first 3 senders)
+                    if (j == 0) {
+                        sendersStarted.countDown();
+                    }
+                    // Wait for clear cache to be ready before continuing
+                    if (j == 1) {
+                        clearCacheReady.await(2, TimeUnit.SECONDS);
+                    }
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
@@ -119,10 +130,11 @@ public class ValidatorEndpointClearCachedSchemaTest extends ContextTestSupport {
         @Override
         public void run() {
             try {
-                // start later after the first sender
-                // threads are running
-                Thread.sleep(200);
+                // start later after the first 3 sender threads have started
+                sendersStarted.await(2, TimeUnit.SECONDS);
                 clearCachedSchema();
+                // Signal that cache has been cleared
+                clearCacheReady.countDown();
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
