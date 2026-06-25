@@ -36,6 +36,7 @@ import org.apache.camel.dsl.jbang.core.common.CatalogLoader;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.PathUtils;
 import org.apache.camel.dsl.jbang.core.common.QuarkusHelper;
+import org.apache.camel.dsl.jbang.core.common.RuntimeType;
 import org.apache.camel.dsl.jbang.core.common.RuntimeUtil;
 import org.apache.camel.dsl.jbang.core.common.VersionHelper;
 import org.apache.camel.tooling.maven.MavenGav;
@@ -72,6 +73,17 @@ class ExportQuarkus extends Export {
 
         exportBaseDir = exportBaseDir != null ? exportBaseDir : Path.of(".");
         Path profile = exportBaseDir.resolve("application.properties");
+
+        // resolve Quarkus platform version from registry (only when no explicit version was provided)
+        if (quarkusVersion == null) {
+            quarkusVersion = RuntimeType.QUARKUS_VERSION;
+            if (download) {
+                String resolved = QuarkusHelper.resolveQuarkusPlatformVersion(quarkusVersion);
+                if (resolved != null) {
+                    quarkusVersion = resolved;
+                }
+            }
+        }
 
         // the settings file has information what to export
         Path settings = CommandLineHelper.getWorkDir().resolve(Run.RUN_SETTINGS_FILE);
@@ -145,13 +157,6 @@ class ExportQuarkus extends Export {
             appJar = "target" + File.separator + ids[1] + "-" + ids[2] + ".jar";
         }
         copyReadme(BUILD_DIR, appJar);
-        // resolve Quarkus platform version from registry (when download is true)
-        if (download) {
-            String resolved = QuarkusHelper.resolveQuarkusPlatformVersion(quarkusVersion);
-            if (resolved != null) {
-                quarkusVersion = resolved;
-            }
-        }
         // gather dependencies
         Set<String> deps = resolveDependencies(settings, profile);
         // copy local lib JARs

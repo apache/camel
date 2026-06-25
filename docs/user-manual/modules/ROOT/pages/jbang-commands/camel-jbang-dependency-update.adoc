@@ -61,7 +61,7 @@ camel dependency update [options]
 | `--quarkus-artifact-id` | Quarkus Platform Maven artifactId | quarkus-bom | String
 | `--quarkus-group-id` | Quarkus Platform Maven groupId | io.quarkus.platform | String
 | `--quarkus-package-type` | Quarkus package type (uber-jar or fast-jar) | fast-jar | String
-| `--quarkus-version` | Quarkus Platform version | RuntimeType.QUARKUS_VERSION | String
+| `--quarkus-version` | Quarkus Platform version. If not set, resolves the latest from the Quarkus registry (when --download=true), otherwise defaults to RuntimeType.QUARKUS_VERSION |  | String
 | `--quiet` | Will be quiet, only print when error occurs | false | boolean
 | `--repo,--repos` | Additional maven repositories (Use commas to separate multiple repositories) |  | String
 | `--runtime` | Runtime () |  | RuntimeType

@@ -64,6 +64,8 @@ class ExportTest {
     public void end() throws IOException {
         // force removing, since deleteOnExit is not removing.
         org.apache.camel.util.FileUtil.removeDir(workingDir);
+        // clean up export work dir to prevent ENOENT race with docs gulp scanning ../dsl/**
+        org.apache.camel.util.FileUtil.removeDir(new File(".camel-jbang"));
     }
 
     private static Stream<Arguments> runtimeProvider() {
@@ -810,6 +812,34 @@ class ExportTest {
                     assertThat(dep.getArtifactId()).isEqualTo("camel-spring-boot-bom");
                     assertThat(dep.getVersion()).isEqualTo("4.17.0");
                 });
+    }
+
+    @Test
+    public void shouldHonorExplicitQuarkusVersion() throws Exception {
+        LOG.info("shouldHonorExplicitQuarkusVersion");
+
+        Export command = createCommand(RuntimeType.quarkus, new String[] { "classpath:route.yaml" },
+                "--gav=examples:route:1.0.0", "--dir=" + workingDir, "--quiet", "--quarkus-version=3.27.0");
+        int exit = command.doCall();
+
+        Assertions.assertEquals(0, exit);
+
+        Model model = readMavenModel();
+        assertThat(model.getProperties()).containsEntry("quarkus.platform.version", "3.27.0");
+    }
+
+    @Test
+    public void shouldUseDefaultQuarkusVersionWhenNotSpecified() throws Exception {
+        LOG.info("shouldUseDefaultQuarkusVersionWhenNotSpecified");
+
+        Export command = createCommand(RuntimeType.quarkus, new String[] { "classpath:route.yaml" },
+                "--gav=examples:route:1.0.0", "--dir=" + workingDir, "--quiet", "--download=false");
+        int exit = command.doCall();
+
+        Assertions.assertEquals(0, exit);
+
+        Model model = readMavenModel();
+        assertThat(model.getProperties()).containsEntry("quarkus.platform.version", RuntimeType.QUARKUS_VERSION);
     }
 
     @Test
