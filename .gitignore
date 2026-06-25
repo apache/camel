@@ -30,6 +30,7 @@ node_modules/
 mvnd.zip*
 .camel-jbang
 .camel-jbang-run
+.citrus-jbang
 .mvn/.develocity/develocity-workspace-id
 backlog
 .claude
