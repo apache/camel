@@ -292,7 +292,7 @@
         <jetty-runner-groupId>org.eclipse.jetty</jetty-runner-groupId>
         <jettison-version>1.5.6</jettison-version>
         <jgit-version>7.7.0.202606012155-r</jgit-version>
-        <jgroups-version>5.5.5.Final</jgroups-version>
+        <jgroups-version>5.5.6.Final</jgroups-version>
         <jgroups-raft-version>1.1.4.Final</jgroups-raft-version>
         <jira-rest-client-api-version>6.0.2</jira-rest-client-api-version>
         <jira-sal-api-version>7.2.1</jira-sal-api-version>
