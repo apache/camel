@@ -301,10 +301,8 @@ runScalpelDetection() {
   # - Modules Scalpel skip-tests mode would test (testsSkipped != true)
   # - Modules Scalpel would skip (testsSkipped == true, from skipTestsForDownstreamModules)
   # - Breakdown by category (DIRECT, DOWNSTREAM)
-  # Only count DIRECT and DOWNSTREAM modules — other categories (e.g., parent POM
-  # children) inflate the total without being meaningfully affected (scalpel#28).
-  scalpel_would_test=$(jq -r '[.affectedModules[] | select((.category == "DIRECT" or .category == "DOWNSTREAM") and .testsSkipped != true)] | map(.artifactId) | sort | join(",")' "$report" 2>/dev/null || true)
-  scalpel_would_skip=$(jq -r '[.affectedModules[] | select((.category == "DIRECT" or .category == "DOWNSTREAM") and .testsSkipped == true)] | map(.artifactId) | sort | join(",")' "$report" 2>/dev/null || true)
+  scalpel_would_test=$(jq -r '[.affectedModules[] | select(.testsSkipped != true)] | map(.artifactId) | sort | join(",")' "$report" 2>/dev/null || true)
+  scalpel_would_skip=$(jq -r '[.affectedModules[] | select(.testsSkipped == true)] | map(.artifactId) | sort | join(",")' "$report" 2>/dev/null || true)
   scalpel_direct_count=$(jq '[.affectedModules[] | select(.category == "DIRECT")] | length' "$report" 2>/dev/null || echo "0")
   scalpel_downstream_tested=$(jq '[.affectedModules[] | select(.category == "DOWNSTREAM" and .testsSkipped != true)] | length' "$report" 2>/dev/null || echo "0")
   scalpel_downstream_skipped=$(jq '[.affectedModules[] | select(.category == "DOWNSTREAM" and .testsSkipped == true)] | length' "$report" 2>/dev/null || echo "0")
@@ -441,8 +439,7 @@ writeScalpelComparison() {
   echo "" >> "$comment_file"
   echo "<details><summary>:microscope: Scalpel shadow comparison (skip-tests mode)</summary>" >> "$comment_file"
   echo "" >> "$comment_file"
-  local scalpel_targeted_count=$((scalpel_direct_count + scalpel_downstream_tested))
-  echo "**Scalpel skip-tests mode would test ${scalpel_targeted_count} modules** (${scalpel_direct_count} direct + ${scalpel_downstream_tested} downstream)" >> "$comment_file"
+  echo "**Scalpel skip-tests mode would test ${scalpel_test_count} modules** (${scalpel_direct_count} direct + ${scalpel_downstream_tested} downstream)" >> "$comment_file"
 
   if [ "$scalpel_downstream_skipped" -gt 0 ]; then
     echo "" >> "$comment_file"
@@ -452,7 +449,7 @@ writeScalpelComparison() {
   # Show which modules Scalpel would test
   if [ -n "$scalpel_would_test" ]; then
     echo "" >> "$comment_file"
-    echo "<details><summary>Modules Scalpel would test (${scalpel_targeted_count})</summary>" >> "$comment_file"
+    echo "<details><summary>Modules Scalpel would test (${scalpel_test_count})</summary>" >> "$comment_file"
     echo "" >> "$comment_file"
     echo "$scalpel_would_test" | tr ',' '\n' | while read -r m; do
       [ -n "$m" ] && echo "- \`$m\`" >> "$comment_file"
