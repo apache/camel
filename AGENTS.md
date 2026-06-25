@@ -313,6 +313,9 @@ camel/
 
 ## Build
 
+For project build commands, code style restrictions and other standards, check
+[`.oss-ai-helper-rules/project-standards.md`](.oss-ai-helper-rules/project-standards.md).
+
 ```bash
 mvn clean install -Dquickly          # fast build, no tests
 mvn clean install                     # full build
