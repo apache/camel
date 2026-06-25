@@ -44,8 +44,7 @@ public class InfraGet extends InfraBaseCommand {
         int i = 0;
         for (var e : pids.entrySet()) {
             Path pidFile = e.getValue();
-            String fn = pidFile.getFileName().toString();
-            String sn = fn.substring(fn.indexOf("-") + 1, fn.lastIndexOf('-'));
+            String sn = serviceNameFromPidFile(pidFile.getFileName().toString());
             if (i > 0) {
                 printer().println("");
             }
