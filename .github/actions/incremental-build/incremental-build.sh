@@ -106,19 +106,27 @@ hasLabel() {
     "https://api.github.com/repos/${repository}/issues/${issueNumber}/labels" | jq -r '.[].name' | { grep -c "$label" || true; }
 }
 
-# Compute the diff between the current HEAD and the base branch using local git.
-# Requires the base branch to be fetched (see pr-build-main.yml "Fetch base branch" step).
+# Fetch the PR diff from the GitHub API.  Returns the full unified diff.
 fetchDiff() {
-  local base_ref="${GITHUB_BASE_REF:-main}"
-  local merge_base
-  merge_base=$(git merge-base "origin/${base_ref}" HEAD 2>/dev/null) || true
+  local prId="$1"
+  local repository="$2"
 
-  if [ -z "$merge_base" ]; then
-    echo "WARNING: Could not find merge-base with origin/${base_ref}. Falling back to full build." >&2
+  local diff_output
+  diff_output=$(curl -s -w "\n%{http_code}" \
+    -H "Authorization: Bearer ${GITHUB_TOKEN}" \
+    -H "Accept: application/vnd.github.v3.diff" \
+    "https://api.github.com/repos/${repository}/pulls/${prId}")
+
+  local http_code
+  http_code=$(echo "$diff_output" | tail -n 1)
+  local diff_body
+  diff_body=$(echo "$diff_output" | sed '$d')
+
+  if [[ "$http_code" -lt 200 || "$http_code" -ge 300 || -z "$diff_body" ]]; then
+    echo "WARNING: Failed to fetch PR diff (HTTP $http_code). Falling back to full build." >&2
     return
   fi
-
-  git diff "${merge_base}" HEAD 2>/dev/null || true
+  echo "$diff_body"
 }
 
 # ── POM dependency analysis (previously detect-dependencies) ───────────
@@ -243,9 +251,11 @@ runScalpelDetection() {
   # - mode=report: write JSON report without trimming the reactor
   # - fullBuildTriggers="": override .mvn/** default (Scalpel lives in .mvn/extensions.xml)
   # - fetchBaseBranch=false: base branch is pre-fetched by the CI workflow
-  # - skipTestsForDownstreamModules: mirrors EXCLUSION_LIST — tells Scalpel which
+  # - skipTestsForDownstreamModules: derived from EXCLUSION_LIST — tells Scalpel which
   #   downstream modules should not run tests in skip-tests mode (for shadow comparison)
-  local skip_downstream="camel-allcomponents,camel-catalog,camel-catalog-console,camel-catalog-lucene,camel-catalog-maven,camel-catalog-suggest,camel-endpointdsl,camel-componentdsl,camel-endpointdsl-support,camel-yaml-dsl,camel-kamelet-main,camel-yaml-dsl-deserializers,camel-yaml-dsl-maven-plugin,camel-jbang-core,camel-jbang-main,camel-jbang-plugin-generate,camel-jbang-plugin-edit,camel-jbang-plugin-kubernetes,camel-jbang-plugin-test,camel-launcher,camel-jbang-it,camel-itest,docs,apache-camel,coverage,dummy-component,camel-csimple-maven-plugin,camel-report-maven-plugin,camel-route-parser"
+  # Strip the Maven "!:" prefix from each entry to get bare artifact IDs for Scalpel.
+  local skip_downstream
+  skip_downstream=$(echo "$EXCLUSION_LIST" | sed 's/!://g')
   local scalpel_args="-Dscalpel.enabled=true -Dscalpel.mode=report -Dscalpel.fullBuildTriggers= -Dscalpel.fetchBaseBranch=false -Dscalpel.excludePaths=.github/** -Dscalpel.skipTestsForDownstreamModules=${skip_downstream}"
   # For workflow_dispatch, GITHUB_BASE_REF may not be set
   if [ -z "${GITHUB_BASE_REF:-}" ]; then
@@ -548,11 +558,11 @@ main() {
     fi
   fi
 
-  # Compute the diff using local git history (merge-base for PRs, HEAD~1 for push builds)
+  # Fetch the diff (PR diff via API, or git diff for push builds)
   local diff_body
   if [ -n "$prId" ]; then
-    echo "Computing diff against origin/${GITHUB_BASE_REF:-main}..."
-    diff_body=$(fetchDiff)
+    echo "Fetching PR #${prId} diff..."
+    diff_body=$(fetchDiff "$prId" "$repository")
   else
     echo "No PR ID, using git diff HEAD~1..."
     diff_body=$(git diff HEAD~1 2>/dev/null || true)
