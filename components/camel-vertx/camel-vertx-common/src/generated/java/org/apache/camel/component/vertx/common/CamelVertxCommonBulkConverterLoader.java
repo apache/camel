@@ -41,7 +41,7 @@ public final class CamelVertxCommonBulkConverterLoader implements TypeConverterL
 
     @Override
     public int size() {
-        return 30;
+        return 27;
     }
 
     @Override
@@ -77,9 +77,6 @@ public final class CamelVertxCommonBulkConverterLoader implements TypeConverterL
             if (value instanceof byte[]) {
                 return org.apache.camel.component.vertx.common.VertxBufferConverter.toBuffer((byte[]) value);
             }
-            if (value instanceof io.netty.buffer.ByteBuf) {
-                return org.apache.camel.component.vertx.common.VertxBufferConverter.toBuffer((io.netty.buffer.ByteBuf) value);
-            }
             if (value instanceof io.vertx.core.json.JsonArray) {
                 return org.apache.camel.component.vertx.common.VertxJsonArrayConverter.toBuffer((io.vertx.core.json.JsonArray) value);
             }
@@ -96,9 +93,6 @@ public final class CamelVertxCommonBulkConverterLoader implements TypeConverterL
             if (value instanceof byte[]) {
                 return org.apache.camel.component.vertx.common.VertxJsonArrayConverter.toJsonArray((byte[]) value);
             }
-            if (value instanceof io.netty.buffer.ByteBuf) {
-                return org.apache.camel.component.vertx.common.VertxJsonArrayConverter.toJsonArray((io.netty.buffer.ByteBuf) value);
-            }
             if (value instanceof io.vertx.core.buffer.Buffer) {
                 return org.apache.camel.component.vertx.common.VertxJsonArrayConverter.toJsonArray((io.vertx.core.buffer.Buffer) value);
             }
@@ -114,9 +108,6 @@ public final class CamelVertxCommonBulkConverterLoader implements TypeConverterL
         } else if (to == io.vertx.core.json.JsonObject.class) {
             if (value instanceof byte[]) {
                 return org.apache.camel.component.vertx.common.VertxJsonObjectConverter.toJsonObject((byte[]) value);
-            }
-            if (value instanceof io.netty.buffer.ByteBuf) {
-                return org.apache.camel.component.vertx.common.VertxJsonObjectConverter.toJsonObject((io.netty.buffer.ByteBuf) value);
             }
             if (value instanceof io.vertx.core.buffer.Buffer) {
                 return org.apache.camel.component.vertx.common.VertxJsonObjectConverter.toJsonObject((io.vertx.core.buffer.Buffer) value);
@@ -171,19 +162,16 @@ public final class CamelVertxCommonBulkConverterLoader implements TypeConverterL
         registry.addConverter(new TypeConvertible<>(io.vertx.core.json.JsonArray.class, byte[].class), this);
         registry.addConverter(new TypeConvertible<>(io.vertx.core.json.JsonObject.class, byte[].class), this);
         registry.addConverter(new TypeConvertible<>(byte[].class, io.vertx.core.buffer.Buffer.class), this);
-        registry.addConverter(new TypeConvertible<>(io.netty.buffer.ByteBuf.class, io.vertx.core.buffer.Buffer.class), this);
         registry.addConverter(new TypeConvertible<>(io.vertx.core.json.JsonArray.class, io.vertx.core.buffer.Buffer.class), this);
         registry.addConverter(new TypeConvertible<>(io.vertx.core.json.JsonObject.class, io.vertx.core.buffer.Buffer.class), this);
         registry.addConverter(new TypeConvertible<>(java.io.InputStream.class, io.vertx.core.buffer.Buffer.class), this);
         registry.addConverter(new TypeConvertible<>(java.lang.String.class, io.vertx.core.buffer.Buffer.class), this);
         registry.addConverter(new TypeConvertible<>(byte[].class, io.vertx.core.json.JsonArray.class), this);
-        registry.addConverter(new TypeConvertible<>(io.netty.buffer.ByteBuf.class, io.vertx.core.json.JsonArray.class), this);
         registry.addConverter(new TypeConvertible<>(io.vertx.core.buffer.Buffer.class, io.vertx.core.json.JsonArray.class), this);
         registry.addConverter(new TypeConvertible<>(java.io.InputStream.class, io.vertx.core.json.JsonArray.class), this);
         registry.addConverter(new TypeConvertible<>(java.lang.String.class, io.vertx.core.json.JsonArray.class), this);
         registry.addConverter(new TypeConvertible<>(java.util.List.class, io.vertx.core.json.JsonArray.class), this);
         registry.addConverter(new TypeConvertible<>(byte[].class, io.vertx.core.json.JsonObject.class), this);
-        registry.addConverter(new TypeConvertible<>(io.netty.buffer.ByteBuf.class, io.vertx.core.json.JsonObject.class), this);
         registry.addConverter(new TypeConvertible<>(io.vertx.core.buffer.Buffer.class, io.vertx.core.json.JsonObject.class), this);
         registry.addConverter(new TypeConvertible<>(java.io.InputStream.class, io.vertx.core.json.JsonObject.class), this);
         registry.addConverter(new TypeConvertible<>(java.lang.String.class, io.vertx.core.json.JsonObject.class), this);
@@ -214,9 +202,6 @@ public final class CamelVertxCommonBulkConverterLoader implements TypeConverterL
             if (from == byte[].class) {
                 return this;
             }
-            if (from == io.netty.buffer.ByteBuf.class) {
-                return this;
-            }
             if (from == io.vertx.core.json.JsonArray.class) {
                 return this;
             }
@@ -233,9 +218,6 @@ public final class CamelVertxCommonBulkConverterLoader implements TypeConverterL
             if (from == byte[].class) {
                 return this;
             }
-            if (from == io.netty.buffer.ByteBuf.class) {
-                return this;
-            }
             if (from == io.vertx.core.buffer.Buffer.class) {
                 return this;
             }
@@ -250,9 +232,6 @@ public final class CamelVertxCommonBulkConverterLoader implements TypeConverterL
             }
         } else if (to == io.vertx.core.json.JsonObject.class) {
             if (from == byte[].class) {
-                return this;
-            }
-            if (from == io.netty.buffer.ByteBuf.class) {
                 return this;
             }
             if (from == io.vertx.core.buffer.Buffer.class) {
