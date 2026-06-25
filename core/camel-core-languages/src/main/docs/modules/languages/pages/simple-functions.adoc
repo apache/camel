@@ -571,7 +571,7 @@ If the message body contains `foo` then `${pad($\{body},5)}` returns `"foo  "` a
 
 The `replace` function is used for finding a given text in a string and replacing it with another.
 For example the message body contains `Hello a how are you`, then `${replace(a,b)}` returns `Hello b how bre you`.
-The replace function has special support for xref:_replacing_double_and_single_quotes[replacing double and single quotes].
+The replace function has special support for xref:simple-advanced.adoc#_replacing_double_and_single_quotes[replacing double and single quotes].
 
 The `substring`, `substringBefore`, and `substringAfter` functions are all similar functions to return a substring of a given value.
 
