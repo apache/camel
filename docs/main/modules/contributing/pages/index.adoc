@@ -345,6 +345,15 @@ As part of our https://ci-builds.apache.org/job/Camel/[Continuous Integration], 
 
 Apache Camel Committers and contributors are encouraged to analyze the quality reports and suggest fixes and improvements.
 
+== AI-assisted contributions
+
+Contributors using AI coding assistants (such as https://github.com/anthropics/claude-code[Claude Code] or similar tools) can take advantage of the project rules in the `.oss-ai-helper-rules/` directory and the `CLAUDE.md` file at the repository root.
+
+These files provide AI agents with project-specific context such as build commands, code style restrictions, branching conventions, issue tracker details, and contribution guidelines.
+They are maintained as part of the repository so that AI-assisted contributions follow the same standards as manual ones.
+
+The `.oss-ai-helper-rules/` files are designed for use with the https://github.com/Open-Harness-Engineering/ai-agents-oss-helper[OSS Helper] toolset, which provides ready-made skills for common contribution tasks (fixing issues, creating PRs, running CI checks, and more).
+
 == Becoming a committer
 
 Once you have become sufficiently involved with the community, we may well invite you to be a committer. See xref:manual:faq:how-do-i-become-a-committer.adoc[How do I become a committer] for more details.
