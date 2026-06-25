@@ -142,6 +142,9 @@ public class BedrockProducer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 setResponseText(result, message);
+            } else {
+                throw new IllegalArgumentException(
+                        "InvokeTextModel operation requires InvokeModelRequest in POJO mode");
             }
         } else {
             InvokeModelRequest.Builder builder = InvokeModelRequest.builder();
@@ -186,6 +189,9 @@ public class BedrockProducer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
+            } else {
+                throw new IllegalArgumentException(
+                        "InvokeImageModel operation requires InvokeModelRequest in POJO mode");
             }
         } else {
             InvokeModelRequest.Builder builder = InvokeModelRequest.builder();
@@ -235,6 +241,9 @@ public class BedrockProducer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
+            } else {
+                throw new IllegalArgumentException(
+                        "InvokeEmbeddingsModel operation requires InvokeModelRequest in POJO mode");
             }
         } else {
             InvokeModelRequest.Builder builder = InvokeModelRequest.builder();
@@ -466,6 +475,9 @@ public class BedrockProducer extends DefaultProducer {
             Object payload = exchange.getMessage().getMandatoryBody();
             if (payload instanceof InvokeModelWithResponseStreamRequest streamRequest) {
                 processStreamingRequest(streamRequest, exchange);
+            } else {
+                throw new IllegalArgumentException(
+                        "Streaming invoke operations require InvokeModelWithResponseStreamRequest in POJO mode");
             }
         } else {
             InvokeModelWithResponseStreamRequest.Builder builder = InvokeModelWithResponseStreamRequest.builder();
