@@ -17,6 +17,7 @@
 package org.apache.camel.impl;
 
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.impl.engine.DefaultAsyncProcessorAwaitManager;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
@@ -24,6 +25,7 @@ import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Isolated;
 
+import static org.awaitility.Awaitility.await;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.nullValue;
@@ -81,10 +83,9 @@ public class DefaultAsyncProcessorAwaitManagerTest {
         waitForEndOfAsyncProcess();
     }
 
-    private void waitForEndOfAsyncProcess() {
+    private void waitForEndOfAsyncProcess() throws InterruptedException {
         latch.countDown();
-        while (thread.isAlive()) {
-        }
+        thread.join(1000);
     }
 
     private void startAsyncProcess() throws InterruptedException {
@@ -94,7 +95,8 @@ public class DefaultAsyncProcessorAwaitManagerTest {
         exchange = new DefaultExchange(new DefaultCamelContext());
         thread = new Thread(backgroundAwait);
         thread.start();
-        Thread.sleep(100);
+        await().atMost(500, TimeUnit.MILLISECONDS)
+                .until(() -> !defaultAsyncProcessorAwaitManager.browse().isEmpty());
     }
 
     private class BackgroundAwait implements Runnable {

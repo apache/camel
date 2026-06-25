@@ -16,8 +16,10 @@
  */
 package org.apache.camel.component.direct;
 
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.CamelExecutionException;
@@ -74,12 +76,14 @@ public class DirectProducerBlockingTest extends ContextTestSupport {
     public void testProducerBlocksResumeTest() throws Exception {
         context.getRouteController().suspendRoute("foo");
 
+        CountDownLatch producerReady = new CountDownLatch(1);
         ExecutorService executor = Executors.newSingleThreadExecutor();
         executor.submit(new Runnable() {
             @Override
             public void run() {
                 try {
-                    Thread.sleep(200);
+                    // Wait for producer to start blocking
+                    assertTrue(producerReady.await(2, TimeUnit.SECONDS));
                     log.info("Resuming consumer");
                     context.getRouteController().resumeRoute("foo");
                 } catch (Exception e) {
@@ -90,6 +94,8 @@ public class DirectProducerBlockingTest extends ContextTestSupport {
 
         getMockEndpoint("mock:result").expectedMessageCount(1);
 
+        // Signal that we're about to send (producer will block)
+        producerReady.countDown();
         template.sendBody("direct:suspended?block=true&timeout=1000", "hello world");
 
         assertMockEndpointsSatisfied();

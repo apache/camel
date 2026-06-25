@@ -49,8 +49,6 @@ public class ShutdownDeferTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        Thread.sleep(50);
-
         context.stop();
 
         assertFalse(CONSUMER_SUSPENDED.get(), "Should not have been suspended");

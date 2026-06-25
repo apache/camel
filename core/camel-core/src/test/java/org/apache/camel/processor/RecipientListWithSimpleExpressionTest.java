@@ -55,7 +55,6 @@ public class RecipientListWithSimpleExpressionTest extends ContextTestSupport {
                     for (int i = 0; i < 10; i++) {
                         try {
                             template.sendBodyAndHeader("direct:start", "Hello " + i, "queue", i);
-                            Thread.sleep(5);
                         } catch (Exception e) {
                             // ignore
                         }

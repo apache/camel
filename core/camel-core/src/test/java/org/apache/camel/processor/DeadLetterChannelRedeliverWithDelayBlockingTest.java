@@ -17,7 +17,9 @@
 package org.apache.camel.processor;
 
 import java.util.concurrent.Callable;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -27,6 +29,8 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.api.parallel.Isolated;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Unit test to verify that using DLC with redelivery and delays with blocking threads. As threads comes cheap these
@@ -54,8 +58,11 @@ public class DeadLetterChannelRedeliverWithDelayBlockingTest extends ContextTest
 
         // use executors to simulate two different clients sending
         // a request to Camel
+        CountDownLatch task1Started = new CountDownLatch(1);
+
         Callable<?> task1 = Executors.callable(new Runnable() {
             public void run() {
+                task1Started.countDown();
                 template.sendBody("direct:start", "Message 1");
             }
         });
@@ -68,7 +75,7 @@ public class DeadLetterChannelRedeliverWithDelayBlockingTest extends ContextTest
 
         Executors.newCachedThreadPool().submit(task1);
         // give task 1 a head start, even though it comes last
-        Thread.sleep(100);
+        assertTrue(task1Started.await(1, TimeUnit.SECONDS));
         Executors.newCachedThreadPool().submit(task2);
 
         assertMockEndpointsSatisfied();

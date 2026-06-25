@@ -39,8 +39,6 @@ public class PollEnricherNoResourceTest extends ContextTestSupport {
     public void testResourceA() throws Exception {
         template.sendBody("seda:foo", "Bye World");
 
-        Thread.sleep(250);
-
         // there should be a message body
         getMockEndpoint("mock:result").expectedBodiesReceived("Bye World");
 
