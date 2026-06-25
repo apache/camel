@@ -28,7 +28,9 @@ Camel Observability services unifies all the different types of observability, a
 
 === Installation
 
-All you need to do is to add the `camel-observability-services` dependency:
+==== Camel Main / Camel JBang
+
+Add the `camel-observability-services` dependency:
 
 ```xml
 <!-- https://mvnrepository.com/artifact/org.apache.camel/camel-observability-services -->
@@ -51,6 +53,26 @@ NOTE: mind that we're using the `camel-opentelemetry2` implementation which has 
 There's no need to add any further configuration.
 Each component will be configured using each own default setting,
 except the endpoint which will be exposed in `/observe/<service>` by default.
+
+==== Spring Boot
+
+Add the `camel-observability-services-starter` dependency:
+
+```xml
+<dependency>
+    <groupId>org.apache.camel.springboot</groupId>
+    <artifactId>camel-observability-services-starter</artifactId>
+</dependency>
+```
+
+The starter provides the same observability features but adapted to the Spring Boot runtime:
+
+* camel-health (via Spring Boot Actuator health indicators)
+* camel-management
+* camel-micrometer-starter + micrometer-registry-prometheus (via Spring Boot Actuator instead of camel-micrometer-prometheus)
+* camel-opentelemetry2-starter
+
+In Spring Boot, the metrics scrape endpoint is provided by Spring Boot Actuator and the Prometheus registry, not by `camel-micrometer-prometheus` which is designed for Camel Main's embedded management server. The starter's default configuration remaps the Actuator endpoints to the same `/observe/` paths, so the exposed endpoints remain the same.
 
 === Endpoints
 
