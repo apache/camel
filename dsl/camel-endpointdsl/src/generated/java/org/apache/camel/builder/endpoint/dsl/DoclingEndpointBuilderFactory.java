@@ -1742,6 +1742,18 @@ public interface DoclingEndpointBuilderFactory {
             return "CamelDoclingMetadataPageCount";
         }
         /**
+         * Document title.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code DoclingMetadataTitle}.
+         */
+        public String doclingMetadataTitle() {
+            return "CamelDoclingMetadataTitle";
+        }
+        /**
          * Document language code.
          * 
          * The option is a: {@code String} type.
