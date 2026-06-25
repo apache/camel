@@ -974,6 +974,7 @@ public class CamelMonitor extends CamelCommand {
         renderTabs(frame, mainChunks.get(2));
         // mainChunks.get(3) is the empty spacer row between tabs and content
         Rect contentArea = mainChunks.get(4);
+        ctx.shellPercent = shellPanel.isOpen() ? shellPanel.panelPercent() : 0;
         if (shellPanel.isOpen()) {
             List<Rect> splitChunks = Layout.vertical()
                     .constraints(Constraint.percentage(100 - shellPanel.panelPercent()),

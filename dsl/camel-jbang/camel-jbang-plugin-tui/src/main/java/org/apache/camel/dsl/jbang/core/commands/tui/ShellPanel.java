@@ -73,7 +73,7 @@ import org.jline.utils.ScreenTerminalOutputStream;
  */
 class ShellPanel {
 
-    private static final int[] SPLIT_PERCENTS = { 25, 50, 75 };
+    private static final int[] SPLIT_PERCENTS = { 25, 50, 75, 100 };
     private static final int MOUSE_SCROLL_LINES = 3;
 
     private boolean visible;
@@ -272,8 +272,7 @@ class ShellPanel {
 
     void renderFooter(List<Span> spans) {
         MonitorContext.hint(spans, "F6", "close");
-        int nextPct = SPLIT_PERCENTS[(splitIndex + 1) % SPLIT_PERCENTS.length];
-        MonitorContext.hint(spans, "Shift+F6", nextPct + "%");
+        MonitorContext.hint(spans, "Shift+F6", SPLIT_PERCENTS[splitIndex] + "%");
         MonitorContext.hint(spans, "Shift+PgUp/Dn", "scroll");
     }
 

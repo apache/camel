@@ -158,7 +158,8 @@ class OverviewTab implements MonitorTab {
             }
         }
 
-        boolean hasSparkline = chartMode != CHART_OFF && !throughputHistory.isEmpty() && !ctx.isInfraSelected();
+        boolean hasSparkline = chartMode != CHART_OFF && !throughputHistory.isEmpty() && !ctx.isInfraSelected()
+                && ctx.shellPercent < 50;
         boolean showInfoPanel = ctx.isInfraSelected() && ctx.findSelectedInfra() != null && !hasSparkline;
         List<Constraint> constraints = new ArrayList<>();
         constraints.add(Constraint.fill());

@@ -235,7 +235,7 @@ class EndpointsTab implements MonitorTab {
         boolean hasSizeHistory = !endpointInSizeHistory.isEmpty()
                 && endpointInSizeHistory.values().stream().anyMatch(h -> h.stream().anyMatch(v -> v > 0));
 
-        boolean showChart = chartMode != CHART_OFF;
+        boolean showChart = chartMode != CHART_OFF && ctx.shellPercent < 50;
         List<Rect> chunks = showChart
                 ? Layout.vertical().constraints(Constraint.fill(), Constraint.length(16)).split(area)
                 : List.of(area);
