@@ -325,9 +325,11 @@ public class CatalogTools {
      */
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = "List Camel Enterprise Integration Patterns (EIPs) like split, aggregate, " +
-                        "filter, choice, multicast, circuit-breaker, etc.")
+                        "filter, choice, multicast, circuit-breaker, etc. " +
+                        "EIPs have aliases for common AI/modern terms (e.g., fan-out, scatter-gather, retry, dedup). " +
+                        "Filter also matches aliases with dash normalization (fan-out, fanout, fanOut all match).")
     public EipListResult camel_catalog_eips(
-            @ToolArg(description = "Filter by name") String filter,
+            @ToolArg(description = "Filter by name, title, description, or alias (e.g., fan-out, dedup, rate-limit)") String filter,
             @ToolArg(description = "Filter by category (e.g., routing, transformation, error handling)") String label,
             @ToolArg(description = ToolArgDocs.RUNTIME) String runtime,
             @ToolArg(description = ToolArgDocs.CAMEL_VERSION) String camelVersion,
