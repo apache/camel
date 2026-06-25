@@ -31,6 +31,8 @@ public class ServletComponentConfigurer extends PropertyConfigurerSupport implem
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "deserializationfilter":
+        case "deserializationFilter": target.setDeserializationFilter(property(camelContext, java.lang.String.class, value)); return true;
         case "filenameextwhitelist":
         case "fileNameExtWhitelist": target.setFileNameExtWhitelist(property(camelContext, java.lang.String.class, value)); return true;
         case "headerfilterstrategy":
@@ -60,6 +62,8 @@ public class ServletComponentConfigurer extends PropertyConfigurerSupport implem
         case "autowiredEnabled": return boolean.class;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
+        case "deserializationfilter":
+        case "deserializationFilter": return java.lang.String.class;
         case "filenameextwhitelist":
         case "fileNameExtWhitelist": return java.lang.String.class;
         case "headerfilterstrategy":
@@ -90,6 +94,8 @@ public class ServletComponentConfigurer extends PropertyConfigurerSupport implem
         case "autowiredEnabled": return target.isAutowiredEnabled();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
+        case "deserializationfilter":
+        case "deserializationFilter": return target.getDeserializationFilter();
         case "filenameextwhitelist":
         case "fileNameExtWhitelist": return target.getFileNameExtWhitelist();
         case "headerfilterstrategy":

@@ -1055,6 +1055,18 @@ resolve to a path outside it. The containment check honours the existing `jailSt
 remote file that resolves outside the local work directory is now rejected with a
 `GenericFileOperationFailedException`.
 
+=== camel-http, camel-jetty, camel-servlet, camel-atmosphere-websocket
+
+The HTTP components (which share `camel-http-common`) now apply a Java deserialization filter
+(`ObjectInputFilter`) when deserializing `application/x-java-serialized-object` payloads on the opt-in
+`allowJavaSerializedObject` / `transferException` path, aligning them with `camel-netty-http`, `camel-jms`
+and `camel-vertx-http`. A new `deserializationFilter` component option (same syntax as `jdk.serialFilter`)
+can be set to customise it; when unset, the JVM-wide `jdk.serialFilter` is used if present, otherwise a
+conservative default filter (denying `java.net.**`, allowing `java.**` / `javax.**` /
+`org.apache.camel.**`, with JEP-290 graph-shape limits) is applied. This is a defense-in-depth measure on
+an already opt-in path; a serialized payload that was accepted before may now be rejected if it references
+a denied class.
+
 === camel-oauth
 
 `OAuthTokenRequest.refreshTokenGrant(...)` now sends the RFC 6749 `refresh_token` form parameter for

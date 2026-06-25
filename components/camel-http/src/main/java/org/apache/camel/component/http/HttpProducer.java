@@ -572,7 +572,8 @@ public class HttpProducer extends DefaultProducer implements LineNumberAware {
         if (contentType != null && contentType.equals(HttpConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT)) {
             // only deserialize java if allowed
             if (getEndpoint().getComponent().isAllowJavaSerializedObject() || getEndpoint().isTransferException()) {
-                return HttpHelper.deserializeJavaObjectFromStream(is, exchange.getContext());
+                return HttpHelper.deserializeJavaObjectFromStream(is, exchange.getContext(),
+                        getEndpoint().getComponent().getDeserializationFilter());
             } else {
                 // empty response
                 return null;

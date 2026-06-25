@@ -288,6 +288,27 @@ public interface AtmosphereWebsocketComponentBuilderFactory {
             doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
+    
+        /**
+         * Sets an ObjectInputFilter pattern (jdk.serialFilter syntax) applied
+         * when deserializing Java objects from requests or responses with
+         * Content-Type application/x-java-serialized-object (only used when
+         * allowJavaSerializedObject or transferException is enabled). When not
+         * set, the JVM-wide jdk.serialFilter is used if present; otherwise a
+         * conservative default filter denying java.net. and otherwise allowing
+         * java., javax. and org.apache.camel. packages is applied.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param deserializationFilter the value to set
+         * @return the dsl builder
+         */
+        default AtmosphereWebsocketComponentBuilder deserializationFilter(java.lang.String deserializationFilter) {
+            doSetProperty("deserializationFilter", deserializationFilter);
+            return this;
+        }
     }
 
     class AtmosphereWebsocketComponentBuilderImpl
@@ -315,6 +336,7 @@ public interface AtmosphereWebsocketComponentBuilderFactory {
             case "httpBinding": ((WebsocketComponent) component).setHttpBinding((org.apache.camel.http.common.HttpBinding) value); return true;
             case "httpConfiguration": ((WebsocketComponent) component).setHttpConfiguration((org.apache.camel.http.common.HttpConfiguration) value); return true;
             case "headerFilterStrategy": ((WebsocketComponent) component).setHeaderFilterStrategy((org.apache.camel.spi.HeaderFilterStrategy) value); return true;
+            case "deserializationFilter": ((WebsocketComponent) component).setDeserializationFilter((java.lang.String) value); return true;
             default: return false;
             }
         }

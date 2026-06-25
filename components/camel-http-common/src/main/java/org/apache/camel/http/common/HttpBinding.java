@@ -209,6 +209,26 @@ public interface HttpBinding {
     void setAllowJavaSerializedObject(boolean allowJavaSerializedObject);
 
     /**
+     * The {@link java.io.ObjectInputFilter} pattern ({@code jdk.serialFilter} syntax) applied when deserializing Java
+     * objects from {@code application/x-java-serialized-object} payloads, or {@code null} to fall back to the JVM-wide
+     * filter or the default Camel filter.
+     */
+    default String getDeserializationFilter() {
+        return null;
+    }
+
+    /**
+     * Sets an {@link java.io.ObjectInputFilter} pattern ({@code jdk.serialFilter} syntax) applied as a defense-in-depth
+     * measure when deserializing Java objects from {@code application/x-java-serialized-object} payloads on the opt-in
+     * {@code allowJavaSerializedObject} / {@code transferException} path.
+     *
+     * @param deserializationFilter the filter pattern, or {@code null} to use the JVM-wide or default filter
+     */
+    default void setDeserializationFilter(String deserializationFilter) {
+        // no-op by default for backward compatibility with external HttpBinding implementations
+    }
+
+    /**
      * Gets the header filter strategy
      *
      * @return the strategy
