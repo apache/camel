@@ -781,6 +781,15 @@ previous code path silently produced `null` whenever a route mixed `converse` an
 calls. If you were not setting the guardrail identifier via header, the endpoint-level
 `guardrailIdentifier` option continues to work without changes.
 
+The `aws-bedrock-agent` component no longer exposes the `modelId` endpoint option. It was an unused copy
+of the option from the sibling `aws-bedrock-agent-runtime` component: none of the operations served by
+`aws-bedrock-agent` (`startIngestionJob`, `listIngestionJobs`, `getIngestionJob`) ever read it, yet it
+was incorrectly marked as required and listed a stale enum of retired Anthropic Claude model ids. Routes
+that previously set `modelId` on an `aws-bedrock-agent` endpoint (where it had no effect) must remove it
+from the endpoint URI. The unused `CamelAwsBedrockAgentRuntimeModelId` header constant
+(`BedrockAgentConstants.MODEL_ID`) has also been removed. This does not affect `aws-bedrock-agent-runtime`,
+where `modelId` remains a valid and functional option.
+
 === camel-jgroups - potential breaking change
 
 The Exchange header constants in `JGroupsConstants` have been renamed to follow

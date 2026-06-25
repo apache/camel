@@ -72,21 +72,6 @@ public interface BedrockAgentEndpointBuilderFactory {
             return this;
         }
         /**
-         * Define the model Id we are going to use.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Required: true
-         * Group: common
-         * 
-         * @param modelId the value to set
-         * @return the dsl builder
-         */
-        default BedrockAgentEndpointConsumerBuilder modelId(String modelId) {
-            doSetProperty("modelId", modelId);
-            return this;
-        }
-        /**
          * The operation to perform.
          * 
          * The option is a:
@@ -1218,21 +1203,6 @@ public interface BedrockAgentEndpointBuilderFactory {
             return this;
         }
         /**
-         * Define the model Id we are going to use.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Required: true
-         * Group: common
-         * 
-         * @param modelId the value to set
-         * @return the dsl builder
-         */
-        default BedrockAgentEndpointProducerBuilder modelId(String modelId) {
-            doSetProperty("modelId", modelId);
-            return this;
-        }
-        /**
          * The operation to perform.
          * 
          * The option is a:
@@ -1751,21 +1721,6 @@ public interface BedrockAgentEndpointBuilderFactory {
          */
         default BedrockAgentEndpointBuilder knowledgeBaseId(String knowledgeBaseId) {
             doSetProperty("knowledgeBaseId", knowledgeBaseId);
-            return this;
-        }
-        /**
-         * Define the model Id we are going to use.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Required: true
-         * Group: common
-         * 
-         * @param modelId the value to set
-         * @return the dsl builder
-         */
-        default BedrockAgentEndpointBuilder modelId(String modelId) {
-            doSetProperty("modelId", modelId);
             return this;
         }
         /**

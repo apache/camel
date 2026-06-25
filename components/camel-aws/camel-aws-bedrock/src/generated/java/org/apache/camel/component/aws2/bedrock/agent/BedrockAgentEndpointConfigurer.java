@@ -51,8 +51,6 @@ public class BedrockAgentEndpointConfigurer extends PropertyConfigurerSupport im
         case "knowledgeBaseId": target.getConfiguration().setKnowledgeBaseId(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "modelid":
-        case "modelId": target.getConfiguration().setModelId(property(camelContext, java.lang.String.class, value)); return true;
         case "operation": target.getConfiguration().setOperation(property(camelContext, org.apache.camel.component.aws2.bedrock.agent.BedrockAgentOperations.class, value)); return true;
         case "overrideendpoint":
         case "overrideEndpoint": target.getConfiguration().setOverrideEndpoint(property(camelContext, boolean.class, value)); return true;
@@ -140,8 +138,6 @@ public class BedrockAgentEndpointConfigurer extends PropertyConfigurerSupport im
         case "knowledgeBaseId": return java.lang.String.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
-        case "modelid":
-        case "modelId": return java.lang.String.class;
         case "operation": return org.apache.camel.component.aws2.bedrock.agent.BedrockAgentOperations.class;
         case "overrideendpoint":
         case "overrideEndpoint": return boolean.class;
@@ -225,8 +221,6 @@ public class BedrockAgentEndpointConfigurer extends PropertyConfigurerSupport im
         case "knowledgeBaseId": return target.getConfiguration().getKnowledgeBaseId();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
-        case "modelid":
-        case "modelId": return target.getConfiguration().getModelId();
         case "operation": return target.getConfiguration().getOperation();
         case "overrideendpoint":
         case "overrideEndpoint": return target.getConfiguration().isOverrideEndpoint();

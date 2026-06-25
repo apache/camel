@@ -25,10 +25,6 @@ public interface BedrockAgentConstants {
     @Metadata(description = "The operation we want to perform", javaType = "String", label = "producer")
     String OPERATION = "CamelAwsBedrockAgentOperation";
 
-    @Metadata(description = "The header could be used to set up a model Id dynamically while performing operation",
-              javaType = "String", label = "producer")
-    String MODEL_ID = "CamelAwsBedrockAgentRuntimeModelId";
-
     @Metadata(description = "The header could be used to set up a data source Id dynamically while performing operation",
               javaType = "String", label = "producer")
     String DATASOURCE_ID = "CamelAwsBedrockAgentDataSourceId";

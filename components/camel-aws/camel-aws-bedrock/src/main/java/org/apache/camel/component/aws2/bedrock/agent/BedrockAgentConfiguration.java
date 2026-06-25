@@ -40,9 +40,6 @@ public class BedrockAgentConfiguration implements Cloneable, AwsCommonConfigurat
     private String secretKey;
     @UriParam(label = "security", security = "secret")
     private String sessionToken;
-    @UriParam(enums = "anthropic.claude-instant-v1,anthropic.claude-v2,anthropic.claude-v2:1")
-    @Metadata(required = true)
-    private String modelId;
     @UriParam
     @Metadata
     private String knowledgeBaseId;
@@ -269,17 +266,6 @@ public class BedrockAgentConfiguration implements Cloneable, AwsCommonConfigurat
      */
     public void setProfileCredentialsName(String profileCredentialsName) {
         this.profileCredentialsName = profileCredentialsName;
-    }
-
-    public String getModelId() {
-        return modelId;
-    }
-
-    /**
-     * Define the model Id we are going to use
-     */
-    public void setModelId(String modelId) {
-        this.modelId = modelId;
     }
 
     public String getKnowledgeBaseId() {
