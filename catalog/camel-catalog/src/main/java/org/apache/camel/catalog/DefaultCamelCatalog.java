@@ -316,21 +316,35 @@ public class DefaultCamelCatalog extends AbstractCachingCamelCatalog implements 
         for (String name : names) {
             BaseModel<?> model = modelLoader.apply(name);
             if (model != null) {
-                String label = model.getLabel();
-                String[] parts = label.split(",");
-                for (String part : parts) {
-                    try {
-                        if (part.equalsIgnoreCase(filter) || CatalogHelper.matchWildcard(part, filter)
-                                || part.matches(filter)) {
-                            answer.add(name);
-                        }
-                    } catch (PatternSyntaxException e) {
-                        // ignore as filter is maybe not a pattern
-                    }
+                if (matchesFilter(model, filter)) {
+                    answer.add(name);
                 }
             }
         }
         return answer;
+    }
+
+    private static boolean matchesFilter(BaseModel<?> model, String filter) {
+        String label = model.getLabel();
+        String[] parts = label.split(",");
+        for (String part : parts) {
+            try {
+                if (part.equalsIgnoreCase(filter) || CatalogHelper.matchWildcard(part, filter)
+                        || part.matches(filter)) {
+                    return true;
+                }
+            } catch (PatternSyntaxException e) {
+                // ignore as filter is maybe not a pattern
+            }
+        }
+        String normalized = filter.toLowerCase().replace("-", "").replace("_", "");
+        for (String alias : model.getAliases()) {
+            if (alias.equalsIgnoreCase(filter)
+                    || alias.toLowerCase().replace("-", "").replace("_", "").equals(normalized)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override

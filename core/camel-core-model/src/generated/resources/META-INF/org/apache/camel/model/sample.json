@@ -7,6 +7,7 @@
     "deprecated": false,
     "label": "eip,flowcontrol,routing",
     "javaType": "org.apache.camel.model.SamplingDefinition",
+    "aliases": [ "sample" ],
     "abstract": false,
     "input": true,
     "output": false

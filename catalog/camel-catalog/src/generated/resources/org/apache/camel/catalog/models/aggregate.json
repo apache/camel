@@ -7,6 +7,7 @@
     "deprecated": false,
     "label": "aggregate,eip,routing",
     "javaType": "org.apache.camel.model.AggregateDefinition",
+    "aliases": [ "fan-in", "reduce", "join", "merge" ],
     "abstract": false,
     "input": true,
     "output": true

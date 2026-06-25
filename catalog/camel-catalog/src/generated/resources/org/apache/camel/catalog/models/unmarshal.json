@@ -7,6 +7,7 @@
     "deprecated": false,
     "label": "eip,dataformat,transformation",
     "javaType": "org.apache.camel.model.UnmarshalDefinition",
+    "aliases": [ "deserialize" ],
     "abstract": false,
     "input": true,
     "output": false

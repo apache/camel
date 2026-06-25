@@ -339,7 +339,7 @@ public class CatalogTools {
             List<EipInfo> eips = cat.findModelNames().stream()
                     .map(cat::eipModel)
                     .filter(m -> m != null)
-                    .filter(m -> matchesFilter(m.getName(), m.getTitle(), m.getDescription(), filter))
+                    .filter(m -> matchesFilter(m.getName(), m.getTitle(), m.getDescription(), m.getAliases(), filter))
                     .filter(m -> matchesLabel(m.getLabel(), label))
                     .map(this::toEipInfo)
                     .collect(Collectors.toList());
@@ -396,13 +396,32 @@ public class CatalogTools {
     // Helper methods
 
     private boolean matchesFilter(String name, String title, String description, String filter) {
+        return matchesFilter(name, title, description, null, filter);
+    }
+
+    private boolean matchesFilter(String name, String title, String description, List<String> aliases, String filter) {
         if (filter == null || filter.isBlank()) {
             return true;
         }
         String lowerFilter = filter.toLowerCase();
-        return (name != null && name.toLowerCase().contains(lowerFilter))
+        if ((name != null && name.toLowerCase().contains(lowerFilter))
                 || (title != null && title.toLowerCase().contains(lowerFilter))
-                || (description != null && description.toLowerCase().contains(lowerFilter));
+                || (description != null && description.toLowerCase().contains(lowerFilter))) {
+            return true;
+        }
+        if (aliases != null) {
+            String normalized = normalize(filter);
+            for (String alias : aliases) {
+                if (alias.toLowerCase().contains(lowerFilter) || normalize(alias).contains(normalized)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private static String normalize(String text) {
+        return text.toLowerCase().replace("-", "").replace("_", "");
     }
 
     private boolean matchesLabel(String labels, String labelFilter) {
@@ -541,7 +560,8 @@ public class CatalogTools {
         return new EipInfo(
                 model.getName(),
                 model.getTitle(),
-                model.getLabel());
+                model.getLabel(),
+                model.getAliases().isEmpty() ? null : model.getAliases());
     }
 
     private EipDetailResult toEipDetailResult(EipModel model) {
@@ -561,6 +581,7 @@ public class CatalogTools {
                 model.getTitle(),
                 model.getDescription(),
                 model.getLabel(),
+                model.getAliases().isEmpty() ? null : model.getAliases(),
                 options);
     }
 
@@ -685,11 +706,11 @@ public class CatalogTools {
     public record EipListResult(int count, List<EipInfo> eips) {
     }
 
-    public record EipInfo(String name, String title, String label) {
+    public record EipInfo(String name, String title, String label, List<String> aliases) {
     }
 
     public record EipDetailResult(String name, String title, String description, String label,
-            List<OptionInfo> options) {
+            List<String> aliases, List<OptionInfo> options) {
     }
 
     public record DataFormatDetailResult(String name, String title, String description, String label,

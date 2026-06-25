@@ -28,6 +28,7 @@ import org.apache.camel.spi.Metadata;
  * Transforms the message body based on an expression
  */
 @Metadata(label = "eip,transformation",
+          aliases = { "map", "transform" },
           description = "Sets the message body using an expression."
                         + " Unlike setBody, transform also sets the OUT message body in InOut exchanges")
 @XmlRootElement(name = "transform")

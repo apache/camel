@@ -216,4 +216,12 @@ public @interface Metadata {
      */
     String[] examples() default {};
 
+    /**
+     * Alternative names or common aliases for this entity.
+     *
+     * Used for AI and search tooling to discover EIPs by common terminology (e.g., "fan-out" for Multicast, "retry" for
+     * Error Handler). Aliases are descriptive names only — they cannot be used in the DSL.
+     */
+    String[] aliases() default {};
+
 }

@@ -7,6 +7,7 @@
     "deprecated": false,
     "label": "eip,error,resilience,routing",
     "javaType": "org.apache.camel.model.OnFallbackDefinition",
+    "aliases": [ "fallback" ],
     "abstract": false,
     "input": true,
     "output": true

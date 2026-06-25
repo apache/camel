@@ -7,6 +7,7 @@
     "deprecated": false,
     "label": "eip,enrichment,routing",
     "javaType": "org.apache.camel.model.PollDefinition",
+    "aliases": [ "poll", "pull" ],
     "abstract": false,
     "input": true,
     "output": false

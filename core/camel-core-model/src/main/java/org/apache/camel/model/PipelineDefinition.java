@@ -29,6 +29,7 @@ import org.apache.camel.spi.Metadata;
  * Routes the message to a sequence of processors.
  */
 @Metadata(label = "eip,routing",
+          aliases = { "pipeline", "chain" },
           description = "Processes the message through a sequence of steps where the output of each step becomes the input of the next")
 @XmlRootElement(name = "pipeline")
 @XmlAccessorType(XmlAccessType.FIELD)

@@ -7,6 +7,7 @@
     "deprecated": false,
     "label": "eip,errorhandling,routing",
     "javaType": "org.apache.camel.model.RollbackDefinition",
+    "aliases": [ "rollback" ],
     "abstract": false,
     "input": true,
     "output": false

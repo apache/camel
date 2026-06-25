@@ -32,6 +32,7 @@ import org.apache.camel.spi.Metadata;
  * Route messages in a fault tolerance way using Circuit Breaker
  */
 @Metadata(label = "eip,error,resilience,routing",
+          aliases = { "circuit-breaker" },
           description = "Wraps message processing with a circuit breaker for fault tolerance."
                         + " Prevents cascading failures by short-circuiting calls to an unhealthy service and routing to a fallback")
 @XmlRootElement(name = "circuitBreaker")

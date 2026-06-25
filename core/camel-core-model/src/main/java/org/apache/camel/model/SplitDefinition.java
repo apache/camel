@@ -34,6 +34,7 @@ import org.apache.camel.spi.Metadata;
  * Splits a single message into many sub-messages.
  */
 @Metadata(label = "aggregate,eip,routing",
+          aliases = { "split", "chunk" },
           description = "Splits a message into multiple sub-messages using an expression, and processes each one individually."
                         + " Supports parallel processing and result aggregation.")
 @XmlRootElement(name = "split")

@@ -559,6 +559,9 @@ public final class JsonMapper {
         if (model.isNativeSupported()) {
             obj.put("nativeSupported", model.isNativeSupported());
         }
+        if (!model.getAliases().isEmpty()) {
+            obj.put("aliases", model.getAliases());
+        }
         if (!model.getMetadata().isEmpty()) {
             obj.put("metadata", model.getMetadata());
         }
@@ -582,6 +585,10 @@ public final class JsonMapper {
         model.setJavaType(mobj.getString("javaType"));
         model.setSupportLevel(SupportLevel.safeValueOf(mobj.getString("supportLevel")));
         model.setNativeSupported(mobj.getBooleanOrDefault("nativeSupported", false));
+        Collection<String> aliases = mobj.getCollection("aliases");
+        if (aliases != null) {
+            model.setAliases(aliases.stream().collect(Collectors.toList()));
+        }
         model.setMetadata(mobj.getMapOrDefault("metadata", new JsonObject()));
     }
 
