@@ -599,6 +599,8 @@
                             <!-- Maven Wrapper -->
                             <exclude>.mvn/**/*</exclude>
                             <exclude>**/maven-wrapper/*</exclude>
+                            <exclude>**/THIRD-PARTY-NOTICES.txt</exclude>
+                            <exclude>**/camel-shell-banner.txt</exclude>
                         </excludes>
                     </configuration>
                 </plugin>
