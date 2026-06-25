@@ -31,6 +31,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.tooling.model.ArtifactModel;
 import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.model.DataFormatModel;
+import org.apache.camel.tooling.model.EipModel;
 import org.apache.camel.tooling.model.JsonMapper;
 import org.apache.camel.tooling.model.Kind;
 import org.apache.camel.tooling.model.LanguageModel;
@@ -177,6 +178,73 @@ public class CamelCatalogTest {
         assertTrue(names.contains("loadBalance"));
         assertTrue(names.contains("circuitBreaker"));
         assertTrue(names.contains("saga"));
+    }
+
+    @Test
+    public void testEipModelAliases() {
+        // verify aliases are present in the EIP model
+        EipModel multicast = catalog.eipModel("multicast");
+        assertNotNull(multicast);
+        assertNotNull(multicast.getAliases());
+        assertTrue(multicast.getAliases().contains("fan-out"));
+        assertTrue(multicast.getAliases().contains("broadcast"));
+
+        EipModel aggregate = catalog.eipModel("aggregate");
+        assertNotNull(aggregate);
+        assertTrue(aggregate.getAliases().contains("fan-in"));
+        assertTrue(aggregate.getAliases().contains("reduce"));
+
+        EipModel choice = catalog.eipModel("choice");
+        assertNotNull(choice);
+        assertTrue(choice.getAliases().contains("router"));
+        assertTrue(choice.getAliases().contains("dispatch"));
+    }
+
+    @Test
+    public void testFindModelNamesByAlias() {
+        // searching by alias should find the EIP
+        List<String> names = catalog.findModelNames("fan-out");
+        assertTrue(names.contains("multicast"), "fan-out should find multicast");
+
+        names = catalog.findModelNames("fan-in");
+        assertTrue(names.contains("aggregate"), "fan-in should find aggregate");
+
+        names = catalog.findModelNames("circuit-breaker");
+        assertTrue(names.contains("circuitBreaker"), "circuit-breaker should find circuitBreaker");
+
+        names = catalog.findModelNames("dedup");
+        assertTrue(names.contains("idempotentConsumer"), "dedup should find idempotentConsumer");
+
+        names = catalog.findModelNames("sink");
+        assertTrue(names.contains("to"), "sink should find to");
+        assertTrue(names.contains("toD"), "sink should find toD");
+    }
+
+    @Test
+    public void testFindModelNamesByAliasDashNormalized() {
+        // fan-out, fanout, fanOut should all match
+        List<String> names1 = catalog.findModelNames("fan-out");
+        List<String> names2 = catalog.findModelNames("fanout");
+        List<String> names3 = catalog.findModelNames("fanOut");
+        assertTrue(names1.contains("multicast"));
+        assertTrue(names2.contains("multicast"));
+        assertTrue(names3.contains("multicast"));
+
+        // circuit-breaker, circuitbreaker, circuitBreaker
+        names1 = catalog.findModelNames("circuit-breaker");
+        names2 = catalog.findModelNames("circuitbreaker");
+        names3 = catalog.findModelNames("circuitBreaker");
+        assertTrue(names1.contains("circuitBreaker"));
+        assertTrue(names2.contains("circuitBreaker"));
+        assertTrue(names3.contains("circuitBreaker"));
+
+        // rate-limit, ratelimit, rateLimit
+        names1 = catalog.findModelNames("rate-limit");
+        names2 = catalog.findModelNames("ratelimit");
+        names3 = catalog.findModelNames("rateLimit");
+        assertTrue(names1.contains("throttle"));
+        assertTrue(names2.contains("throttle"));
+        assertTrue(names3.contains("throttle"));
     }
 
     @Test

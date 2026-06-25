@@ -47,6 +47,7 @@ import org.apache.camel.spi.annotations.DslArg;
  * Aggregates many messages into a single message
  */
 @Metadata(label = "aggregate,eip,routing",
+          aliases = { "fan-in", "reduce", "join", "merge" },
           description = "Collects and combines related messages into a single message using a correlation expression and an aggregation strategy."
                         + " Messages are grouped into buckets by correlation key and released when a completion condition is met.")
 @XmlRootElement(name = "aggregate")

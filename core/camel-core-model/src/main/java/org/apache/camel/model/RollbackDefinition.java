@@ -28,6 +28,7 @@ import org.apache.camel.spi.annotations.DslArg;
  * Forces a rollback by stopping routing the message
  */
 @Metadata(label = "eip,errorhandling,routing",
+          aliases = { "rollback" },
           description = "Forces a rollback of the current transaction and stops routing the message."
                         + " Can set a custom message on the exception.")
 @XmlRootElement(name = "rollback")

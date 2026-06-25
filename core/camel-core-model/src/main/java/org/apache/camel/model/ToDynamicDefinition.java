@@ -33,6 +33,7 @@ import org.apache.camel.spi.annotations.DslArg;
  * Sends the message to a dynamic endpoint
  */
 @Metadata(label = "eip,endpoint,routing",
+          aliases = { "sink", "egress" },
           description = "Sends the message to an endpoint URI computed dynamically from an expression,"
                         + " allowing the destination to vary per message")
 @XmlRootElement(name = "toD")

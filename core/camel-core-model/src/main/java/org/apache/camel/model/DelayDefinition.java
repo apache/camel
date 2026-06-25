@@ -33,6 +33,7 @@ import org.apache.camel.spi.Metadata;
  * Delays processing for a specified length of time
  */
 @Metadata(label = "eip,flowcontrol,routing",
+          aliases = { "debounce", "delay" },
           description = "Delays message processing for a specified duration, which can be a fixed value or computed dynamically per message")
 @XmlRootElement(name = "delay")
 @XmlAccessorType(XmlAccessType.FIELD)

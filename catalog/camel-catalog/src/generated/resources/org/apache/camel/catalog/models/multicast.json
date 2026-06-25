@@ -7,6 +7,7 @@
     "deprecated": false,
     "label": "eip,routing",
     "javaType": "org.apache.camel.model.MulticastDefinition",
+    "aliases": [ "fan-out", "broadcast" ],
     "abstract": false,
     "input": true,
     "output": true

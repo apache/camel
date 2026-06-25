@@ -31,6 +31,7 @@ import org.apache.camel.spi.Metadata;
  * Filters out duplicate messages
  */
 @Metadata(label = "eip,flowcontrol,routing",
+          aliases = { "dedup", "deduplicate" },
           description = "Filters out duplicate messages based on a unique message identifier"
                         + " and an idempotent repository that tracks previously seen IDs")
 @XmlRootElement(name = "idempotentConsumer")

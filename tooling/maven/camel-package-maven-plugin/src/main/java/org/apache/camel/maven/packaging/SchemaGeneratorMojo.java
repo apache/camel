@@ -341,6 +341,11 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
             if (!Strings.isNullOrEmpty(metadata.description())) {
                 model.setDescription(metadata.description());
             }
+            if (metadata.aliases().length > 0) {
+                ArrayList<String> aliases = new ArrayList<>();
+                Collections.addAll(aliases, metadata.aliases());
+                model.setAliases(aliases);
+            }
         }
 
         // fallback to use class javadoc as description

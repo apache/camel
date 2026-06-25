@@ -41,6 +41,7 @@ import org.apache.camel.spi.Resource;
  * Route messages based on a series of predicates
  */
 @Metadata(label = "eip,routing",
+          aliases = { "router", "dispatch" },
           description = "Routes messages to different steps based on a series of conditions (predicates),"
                         + " similar to if-elseif-else in Java. Each condition is evaluated in order until one matches.")
 @XmlRootElement(name = "choice")

@@ -7,6 +7,7 @@
     "deprecated": false,
     "label": "eip,enrichment,routing",
     "javaType": "org.apache.camel.model.ClaimCheckDefinition",
+    "aliases": [ "claim-check", "stash" ],
     "abstract": false,
     "input": true,
     "output": false

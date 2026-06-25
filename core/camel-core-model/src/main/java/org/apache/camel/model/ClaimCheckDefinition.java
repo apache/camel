@@ -31,6 +31,7 @@ import org.apache.camel.spi.annotations.DslArg;
  * retrieve the message content at a later time.
  */
 @Metadata(label = "eip,enrichment,routing",
+          aliases = { "claim-check", "stash" },
           description = "Temporarily stores the message content and replaces it with a claim check key,"
                         + " allowing the content to be retrieved later in the route."
                         + " Useful for reducing memory when large payloads pass through processing steps that don't need them.")

@@ -35,6 +35,7 @@ import org.apache.camel.spi.Metadata;
  * Controls the rate at which messages are passed to the next node in the route
  */
 @Metadata(label = "eip,flowcontrol,routing",
+          aliases = { "rate-limit", "throttle" },
           description = "Limits the message throughput to a maximum number of messages per time period to avoid overloading downstream systems")
 @XmlRootElement(name = "throttle")
 @XmlAccessorType(XmlAccessType.FIELD)

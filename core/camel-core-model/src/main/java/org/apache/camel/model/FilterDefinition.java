@@ -30,6 +30,7 @@ import org.apache.camel.spi.Metadata;
  * Filter out messages based using a predicate
  */
 @Metadata(label = "eip,routing",
+          aliases = { "filter" },
           description = "Filters messages using a predicate expression."
                         + " Messages matching the predicate continue processing; non-matching messages are skipped.")
 @AsPredicate

@@ -33,6 +33,7 @@ import org.apache.camel.spi.annotations.DslArg;
  * @see org.apache.camel.processor.Enricher
  */
 @Metadata(label = "eip,enrichment,transformation",
+          aliases = { "enrich", "hydrate" },
           description = "Enriches the message with additional data obtained by polling a consumer endpoint (such as a file or message queue)."
                         + " The polled data is merged using an aggregation strategy.")
 @XmlRootElement(name = "pollEnrich")

@@ -33,6 +33,7 @@ import org.apache.camel.spi.PredicateExceptionFactory;
  * Validates a message based on an expression
  */
 @Metadata(label = "eip,transformation",
+          aliases = { "validate", "guard" },
           description = "Validates the message against a predicate expression"
                         + " and throws a PredicateValidationException if the validation fails")
 @AsPredicate

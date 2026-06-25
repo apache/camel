@@ -33,6 +33,7 @@ import org.apache.camel.spi.Metadata;
  * message.
  */
 @Metadata(label = "eip,endpoint,routing", excludeProperties = "pattern",
+          aliases = { "tap", "observe" },
           description = "Sends a copy of the message to a secondary endpoint without affecting the original route flow."
                         + " The tapped message is sent asynchronously in a separate thread")
 @XmlRootElement(name = "wireTap")

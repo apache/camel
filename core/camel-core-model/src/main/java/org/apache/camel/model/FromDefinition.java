@@ -31,6 +31,7 @@ import org.apache.camel.spi.Metadata;
  * Act as a message source as input to a route
  */
 @Metadata(label = "eip,endpoint,routing",
+          aliases = { "source", "ingress" },
           description = "Defines the consumer endpoint that acts as the input source for a route")
 @XmlRootElement(name = "from")
 @XmlAccessorType(XmlAccessType.FIELD)
