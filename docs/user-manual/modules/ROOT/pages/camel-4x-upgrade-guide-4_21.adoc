@@ -2648,3 +2648,18 @@ It is theme-agnostic, respects `prefers-color-scheme` for automatic dark/light m
 exposes CSS custom properties for full visual control.
 
 See the `camel-diagram` component documentation for usage instructions and theming options.
+
+=== camel-vertx
+
+Some deprecated API usage has been removed from the camel-vertx components to help make the future transition to Vert.x 5 simpler.
+
+==== camel-vertx-websocket clientOptions type changed from HttpClientOptions to WebSocketClientOptions
+
+The `clientOptions` configuration property on the `vertx-websocket` endpoint has changed type from `io.vertx.core.http.HttpClientOptions` to `io.vertx.core.http.WebSocketClientOptions`. 
+Both classes share the same base class (`ClientOptionsBase`) so SSL, proxy, and timeout options carry over. 
+Applications that set `clientOptions` programmatically must update the type. Endpoint URI options are unaffected.
+
+==== ByteBuf type converters removed
+
+The type converters for Netty `ByteBuf` to Vert.x `Buffer`, `JsonObject`, and `JsonArray` have been removed from `camel-vertx-common`. 
+These converters used the `Buffer.buffer(ByteBuf)` API which is deprecated in Vert.x 4.x and removed in Vert.x 5.

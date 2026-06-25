@@ -24,7 +24,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import jakarta.activation.DataHandler;
@@ -1160,9 +1159,11 @@ public class VertxPlatformHttpEngineTest {
                                 assertEquals(1, message.getRequest().cookieCount());
                                 message.getRequest().response()
                                         .addCookie(Cookie.cookie("XSRF-TOKEN", "88533580000c314").setPath("/"));
-                                Map<String, Cookie> deprecatedMap = message.getRequest().cookieMap();
-                                assertFalse(((ServerCookie) deprecatedMap.get("XSRF-TOKEN")).isFromUserAgent());
-                                assertEquals("/", deprecatedMap.get("XSRF-TOKEN").getPath());
+                                Cookie xsrfCookie = message.getRequest().cookies().stream()
+                                        .filter(c -> "XSRF-TOKEN".equals(c.getName()))
+                                        .findFirst().orElseThrow();
+                                assertFalse(((ServerCookie) xsrfCookie).isFromUserAgent());
+                                assertEquals("/", xsrfCookie.getPath());
                             })
                             .setBody().constant("replace");
                 }

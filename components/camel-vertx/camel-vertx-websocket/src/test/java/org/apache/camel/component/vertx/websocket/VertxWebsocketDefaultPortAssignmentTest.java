@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.vertx.websocket;
 
-import io.vertx.core.http.HttpClientOptions;
+import io.vertx.core.http.WebSocketClientOptions;
 import io.vertx.core.http.WebSocketConnectOptions;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -32,7 +32,7 @@ public class VertxWebsocketDefaultPortAssignmentTest extends VertxWebSocketTestS
     void testDefaultPortAssignment(String wsScheme) {
         String uri = "vertx-websocket:" + wsScheme + "localhost/test";
         VertxWebsocketEndpoint endpoint = context.getEndpoint(uri, VertxWebsocketEndpoint.class);
-        WebSocketConnectOptions connectOptions = endpoint.getWebSocketConnectOptions(new HttpClientOptions());
+        WebSocketConnectOptions connectOptions = endpoint.getWebSocketConnectOptions(new WebSocketClientOptions());
 
         int expectedPort = wsScheme.startsWith("wss") ? DEFAULT_VERTX_CLIENT_WSS_PORT : DEFAULT_VERTX_CLIENT_WS_PORT;
         assertEquals(expectedPort, connectOptions.getPort());

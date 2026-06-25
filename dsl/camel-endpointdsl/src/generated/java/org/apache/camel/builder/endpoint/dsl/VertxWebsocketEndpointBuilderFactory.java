@@ -770,15 +770,15 @@ public interface VertxWebsocketEndpointBuilderFactory {
          * Sets customized options for configuring the WebSocket client used in
          * the producer.
          * 
-         * The option is a: <code>io.vertx.core.http.HttpClientOptions</code>
-         * type.
+         * The option is a:
+         * <code>io.vertx.core.http.WebSocketClientOptions</code> type.
          * 
          * Group: producer (advanced)
          * 
          * @param clientOptions the value to set
          * @return the dsl builder
          */
-        default AdvancedVertxWebsocketEndpointProducerBuilder clientOptions(io.vertx.core.http.HttpClientOptions clientOptions) {
+        default AdvancedVertxWebsocketEndpointProducerBuilder clientOptions(io.vertx.core.http.WebSocketClientOptions clientOptions) {
             doSetProperty("clientOptions", clientOptions);
             return this;
         }
@@ -787,7 +787,7 @@ public interface VertxWebsocketEndpointBuilderFactory {
          * the producer.
          * 
          * The option will be converted to a
-         * <code>io.vertx.core.http.HttpClientOptions</code> type.
+         * <code>io.vertx.core.http.WebSocketClientOptions</code> type.
          * 
          * Group: producer (advanced)
          * 

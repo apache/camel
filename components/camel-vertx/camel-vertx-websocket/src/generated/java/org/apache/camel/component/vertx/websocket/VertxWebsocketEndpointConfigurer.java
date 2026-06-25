@@ -30,7 +30,7 @@ public class VertxWebsocketEndpointConfigurer extends PropertyConfigurerSupport 
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "clientoptions":
-        case "clientOptions": target.getConfiguration().setClientOptions(property(camelContext, io.vertx.core.http.HttpClientOptions.class, value)); return true;
+        case "clientOptions": target.getConfiguration().setClientOptions(property(camelContext, io.vertx.core.http.WebSocketClientOptions.class, value)); return true;
         case "clientsubprotocols":
         case "clientSubProtocols": target.getConfiguration().setClientSubProtocols(property(camelContext, java.lang.String.class, value)); return true;
         case "consumeasclient":
@@ -76,7 +76,7 @@ public class VertxWebsocketEndpointConfigurer extends PropertyConfigurerSupport 
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
         case "clientoptions":
-        case "clientOptions": return io.vertx.core.http.HttpClientOptions.class;
+        case "clientOptions": return io.vertx.core.http.WebSocketClientOptions.class;
         case "clientsubprotocols":
         case "clientSubProtocols": return java.lang.String.class;
         case "consumeasclient":
