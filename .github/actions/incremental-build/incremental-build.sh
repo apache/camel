@@ -266,6 +266,7 @@ runScalpelDetection() {
   ./mvnw -B -q validate $scalpel_args ${MAVEN_EXTRA_ARGS:-} -l /tmp/scalpel-validate.log 2>/dev/null || {
     echo "  WARNING: Scalpel detection failed (exit $?), skipping"
     grep -i "scalpel" /tmp/scalpel-validate.log 2>/dev/null | head -5 || true
+    scalpel_failure_reason="Scalpel detection failed (mvn validate exited with error)"
     return
   }
 
@@ -274,6 +275,7 @@ runScalpelDetection() {
   if [ ! -f "$report" ]; then
     echo "  WARNING: Scalpel report not found at $report"
     grep -i "scalpel" /tmp/scalpel-validate.log 2>/dev/null | head -5 || true
+    scalpel_failure_reason="Scalpel report not found (merge-base may be unreachable in shallow clone)"
     return
   fi
 
@@ -284,6 +286,7 @@ runScalpelDetection() {
     local trigger_file
     trigger_file=$(jq -r '.triggerFile // "unknown"' "$report")
     echo "  Scalpel: Full build triggered by change to $trigger_file"
+    scalpel_failure_reason="Scalpel triggered a full build (changed file: $trigger_file)"
     return
   fi
 
@@ -406,7 +409,20 @@ checkManualItTests() {
 writeScalpelComparison() {
   local comment_file="$1"
 
-  # Skip if no Scalpel data
+  # If Scalpel failed, show why in the PR comment
+  if [ -n "$scalpel_failure_reason" ]; then
+    echo "" >> "$comment_file"
+    echo "<details><summary>:microscope: Scalpel shadow comparison (skip-tests mode)</summary>" >> "$comment_file"
+    echo "" >> "$comment_file"
+    echo ":warning: $scalpel_failure_reason" >> "$comment_file"
+    echo "" >> "$comment_file"
+    echo "> :information_source: Shadow mode — Scalpel observes but does not affect test execution. [Learn more](https://github.com/maveniverse/scalpel)" >> "$comment_file"
+    echo "" >> "$comment_file"
+    echo "</details>" >> "$comment_file"
+    return
+  fi
+
+  # Skip if no Scalpel data (Scalpel was not invoked for this PR)
   if [ -z "$scalpel_would_test" ] && [ -z "$scalpel_would_skip" ]; then
     return
   fi
@@ -623,6 +639,7 @@ main() {
   scalpel_direct_count="0"
   scalpel_downstream_tested="0"
   scalpel_downstream_skipped="0"
+  scalpel_failure_reason=""
 
   # Step 2a: Grep-based detection (existing approach)
   if [ -n "$pom_files" ]; then
