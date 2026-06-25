@@ -448,12 +448,12 @@ from("file:///data/documents?include=.*\\.pdf")
 
         // Access metadata fields
         String title = metadata.getTitle();
-        String author = metadata.getAuthor();
+        String documentType = metadata.getDocumentType();
         Integer pageCount = metadata.getPageCount();
-        Instant creationDate = metadata.getCreationDate();
+        String format = metadata.getFormat();
 
-        log.info("Document: {} by {}, Pages: {}, Created: {}",
-            title, author, pageCount, creationDate);
+        log.info("Document: {} ({}), Pages: {}, Format: {}",
+            title, documentType, pageCount, format);
 
         // Metadata is also available in headers
         String titleFromHeader = exchange.getIn().getHeader("CamelDoclingMetadataTitle", String.class);
@@ -473,7 +473,7 @@ YAML::
       - to:
           uri: docling:EXTRACT_METADATA
       - log:
-          message: "Document: ${header.CamelDoclingMetadataTitle} by ${header.CamelDoclingMetadataAuthor}"
+          message: "Document: ${header.CamelDoclingMetadataTitle} (${header.CamelDoclingMetadataDocumentType})"
       - log:
           message: "Pages: ${header.CamelDoclingMetadataPageCount}"
       - process:
