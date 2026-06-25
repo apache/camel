@@ -1,0 +1,218 @@
+= AI Patterns
+:doctitle: AI Patterns
+:shortname: ai-patterns
+:description: Common AI and modern software design pattern terms mapped to Camel EIPs
+
+If you come from an AI, data engineering, or modern distributed systems background,
+you may know integration patterns by different names. This page maps common
+terms to the corresponding Camel EIPs.
+
+See also the full xref:enterprise-integration-patterns.adoc[Enterprise Integration Patterns] index.
+
+== Data Flow
+
+[width="100%",cols="20%,30%,50%"]
+|===
+|Term |Camel EIP |Description
+
+|Pipeline / Chain
+|xref:pipeline-eip.adoc[Pipes and Filters]
+|Process a message through a sequence of steps.
+
+|Fan-out / Broadcast
+|xref:multicast-eip.adoc[Multicast]
+|Send the same message to multiple destinations in parallel.
+
+|Fan-in / Reduce / Join
+|xref:aggregate-eip.adoc[Aggregator]
+|Combine multiple related messages into a single message.
+
+|Scatter-Gather
+|xref:scatter-gather.adoc[Scatter-Gather]
+|Send a message to multiple recipients and aggregate their replies.
+
+|Map / Transform
+|xref:transform-eip.adoc[Transform], xref:setBody-eip.adoc[Set Body]
+|Transform or replace the message content.
+
+|Split / Chunk
+|xref:split-eip.adoc[Splitter]
+|Break a message into smaller pieces for individual processing.
+
+|Merge
+|xref:aggregate-eip.adoc[Aggregator]
+|Merge multiple messages into one using a correlation key and aggregation strategy.
+
+|Filter
+|xref:filter-eip.adoc[Message Filter]
+|Discard messages that do not match a predicate.
+
+|Router / Dispatch
+|xref:choice-eip.adoc[Content-Based Router], xref:dynamicRouter-eip.adoc[Dynamic Router]
+|Route messages to different destinations based on content or rules.
+|===
+
+== Enrichment and Context
+
+[width="100%",cols="20%,30%,50%"]
+|===
+|Term |Camel EIP |Description
+
+|Enrich / Hydrate / Augment
+|xref:enrich-eip.adoc[Enrich], xref:pollEnrich-eip.adoc[Poll Enrich]
+|Fetch additional data from an external source and merge it into the message.
+
+|Validate / Guard
+|xref:validate-eip.adoc[Validate]
+|Check that a message satisfies a condition before further processing.
+
+|Normalize
+|xref:normalizer.adoc[Normalizer]
+|Convert messages from different formats into a single canonical format.
+
+|Serialize / Deserialize
+|xref:marshal-eip.adoc[Marshal], xref:unmarshal-eip.adoc[Unmarshal]
+|Convert between objects and wire formats (JSON, XML, Avro, Protobuf, etc.).
+|===
+
+== Resilience and Error Handling
+
+[width="100%",cols="20%,30%,50%"]
+|===
+|Term |Camel EIP |Description
+
+|Retry
+|xref:error-handler.adoc[Error Handler]
+|Automatically retry failed message processing with configurable backoff.
+
+|Circuit Breaker
+|xref:circuitBreaker-eip.adoc[Circuit Breaker]
+|Stop calling a failing service and provide a fallback response.
+
+|Fallback
+|xref:onFallback-eip.adoc[On Fallback]
+|Define an alternative route when the primary processing fails.
+
+|Dead Letter / Poison Pill
+|xref:dead-letter-channel.adoc[Dead Letter Channel]
+|Move messages that cannot be processed to a separate channel for investigation.
+
+|Compensate / Rollback
+|xref:saga-eip.adoc[Saga], xref:rollback-eip.adoc[Rollback]
+|Undo or compensate for completed steps when a multi-step process fails.
+|===
+
+== Rate Control and Scheduling
+
+[width="100%",cols="20%,30%,50%"]
+|===
+|Term |Camel EIP |Description
+
+|Rate Limit / Throttle
+|xref:throttle-eip.adoc[Throttler]
+|Limit the number of messages processed per time period.
+
+|Debounce / Delay
+|xref:delay-eip.adoc[Delayer]
+|Introduce a delay before processing a message.
+
+|Poll / Pull
+|xref:polling-consumer.adoc[Polling Consumer], xref:poll-eip.adoc[Poll]
+|Consume messages on demand rather than being pushed.
+
+|Loop / Iterate
+|xref:loop-eip.adoc[Loop]
+|Repeat processing a message a fixed number of times or until a condition is met.
+
+|Sample
+|xref:sample-eip.adoc[Sampling]
+|Pick one message out of many in a time period to reduce volume.
+|===
+
+== Load Distribution
+
+[width="100%",cols="20%,30%,50%"]
+|===
+|Term |Camel EIP |Description
+
+|Load Balance
+|xref:loadBalance-eip.adoc[Load Balancer]
+|Distribute messages across multiple endpoints.
+
+|Round Robin
+|xref:roundRobinLoadBalancer-eip.adoc[Round Robin Load Balancer]
+|Distribute messages evenly in rotation.
+
+|Failover
+|xref:failoverLoadBalancer-eip.adoc[Failover Load Balancer]
+|Try the next endpoint when the current one fails.
+
+|Weighted
+|xref:weightedLoadBalancer-eip.adoc[Weighted Load Balancer]
+|Distribute messages according to weighted ratios.
+
+|Sticky / Affinity
+|xref:stickyLoadBalancer-eip.adoc[Sticky Load Balancer]
+|Route related messages to the same endpoint based on a correlation key.
+|===
+
+== Deduplication and Idempotency
+
+[width="100%",cols="20%,30%,50%"]
+|===
+|Term |Camel EIP |Description
+
+|Dedup / Deduplicate
+|xref:idempotentConsumer-eip.adoc[Idempotent Consumer]
+|Detect and discard duplicate messages based on a unique identifier.
+
+|Claim Check / Stash
+|xref:claimCheck-eip.adoc[Claim Check]
+|Temporarily store message data and retrieve it later to reduce payload size.
+|===
+
+== Connectivity
+
+[width="100%",cols="20%,30%,50%"]
+|===
+|Term |Camel EIP |Description
+
+|Source / Ingress
+|xref:from-eip.adoc[From]
+|Define the input endpoint that feeds messages into a route.
+
+|Sink / Egress
+|xref:to-eip.adoc[To], xref:toD-eip.adoc[To D]
+|Send messages to a fixed or dynamically computed endpoint.
+
+|Connector / Adapter
+|xref:channel-adapter.adoc[Channel Adapter]
+|Connect an application to a messaging system.
+
+|Webhook / Event-Driven
+|xref:eventDrivenConsumer-eip.adoc[Event Driven Consumer]
+|React to messages as they arrive without polling.
+
+|Gateway
+|xref:messaging-gateway.adoc[Messaging Gateway]
+|Encapsulate access to the messaging system behind a clean interface.
+
+|Wire Tap / Tap / Observe
+|xref:wireTap-eip.adoc[Wire Tap]
+|Send a copy of the message to a secondary destination for monitoring.
+|===
+
+== AI and Agent Integration
+
+[width="100%",cols="20%,30%,50%"]
+|===
+|Term |Camel Component / EIP |Description
+
+|Agent-to-Agent / A2A
+|xref:ROOT:a2a-component.adoc[A2A]
+|Google's Agent-to-Agent protocol for communication between AI agents.
+
+|Tokenize / Chunk (for LLM)
+|xref:ROOT:langchain4j-tokenizer.adoc[LangChain4j Tokenizer]
+|Split text into tokens or chunks sized for LLM context windows, using LangChain4j tokenizer strategies.
+|===

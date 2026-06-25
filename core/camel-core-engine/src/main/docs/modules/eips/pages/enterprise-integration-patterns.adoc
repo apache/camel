@@ -7,6 +7,10 @@ Camel supports most of the
 http://www.eaipatterns.com/toc.html[Enterprise Integration Patterns]
 from the excellent book by Gregor Hohpe and Bobby Woolf.
 
+TIP: If you come from an AI, data engineering, or modern distributed systems background,
+see xref:ai-patterns.adoc[AI Patterns] for a mapping of common terms
+like fan-out, scatter-gather, and retry to the corresponding Camel EIPs.
+
 == Messaging Systems
 
 [width="100%",cols="10%,10%,80%",]

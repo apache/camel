@@ -2,4 +2,5 @@
 ** xref:components::index.adoc[Components]
 ** xref:components:dataformats:index.adoc[Data Formats]
 ** xref:components:languages:index.adoc[Languages]
-** xref:components:eips:enterprise-integration-patterns.adoc[EIPs]
+** xref:components:eips:enterprise-integration-patterns.adoc[EIP Patterns]
+** xref:components:eips:ai-patterns.adoc[AI Patterns]
