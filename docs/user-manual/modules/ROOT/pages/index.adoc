@@ -32,7 +32,7 @@ For a deeper and better understanding of Apache Camel, an xref:faq:what-is-camel
 * xref:examples.adoc[Examples]
 * xref:architecture.adoc[Architecture]
 * xref:components:eips:enterprise-integration-patterns.adoc[EIP Patterns]
-* xref:components:eips:ai-patterns.adoc[AI Patterns]
+* xref:next@components:eips:ai-patterns.adoc[AI Patterns]
 * xref:component-dsl.adoc[Component DSL]
 * xref:Endpoint-dsl.adoc[Endpoint DSL]
 * xref:dataformat-dsl.adoc[DataFormat DSL]
