@@ -77,6 +77,49 @@ class WebComponentBundleTest {
     }
 
     @Test
+    void topologyBundledJsExistsInClasspath() {
+        URL url = getClass().getClassLoader()
+                .getResource("META-INF/resources/camel/diagram/camel-topology-diagram.js");
+        assertThat(url).as("camel-topology-diagram.js must be bundled").isNotNull();
+    }
+
+    @Test
+    void topologyBundledJsIsNonEmpty() throws IOException {
+        try (InputStream is = getClass().getClassLoader()
+                .getResourceAsStream("META-INF/resources/camel/diagram/camel-topology-diagram.js")) {
+            assertThat(is).isNotNull();
+            assertThat(is.readAllBytes().length).isGreaterThan(1000);
+        }
+    }
+
+    @Test
+    void topologyBundledJsContainsCustomElementRegistration() throws IOException {
+        try (InputStream is = getClass().getClassLoader()
+                .getResourceAsStream("META-INF/resources/camel/diagram/camel-topology-diagram.js")) {
+            assertThat(is).isNotNull();
+            String content = new String(is.readAllBytes(), StandardCharsets.UTF_8);
+            assertThat(content)
+                    .as("bundle must register the camel-topology-diagram custom element")
+                    .contains("customElements.define")
+                    .contains("camel-topology-diagram");
+        }
+    }
+
+    @Test
+    void topologyBundledJsContainsLayoutEngine() throws IOException {
+        try (InputStream is = getClass().getClassLoader()
+                .getResourceAsStream("META-INF/resources/camel/diagram/camel-topology-diagram.js")) {
+            assertThat(is).isNotNull();
+            String content = new String(is.readAllBytes(), StandardCharsets.UTF_8);
+            assertThat(content)
+                    .as("topology bundle must contain Sugiyama layout engine and external endpoint helpers")
+                    .contains("layoutTopology")
+                    .contains("addExternalEndpoints")
+                    .contains("expandExternalEdges");
+        }
+    }
+
+    @Test
     void thirdPartyNoticesMentionsLucide() throws IOException {
         try (InputStream is = getClass().getClassLoader()
                 .getResourceAsStream("META-INF/resources/camel/diagram/THIRD-PARTY-NOTICES.txt")) {

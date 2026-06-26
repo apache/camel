@@ -209,16 +209,21 @@ public class DefaultRouteDiagramDumper extends ServiceSupport implements CamelCo
     }
 
     @Override
-    public String dumpTopologyAsAsciiArt(int nodeWidth, boolean unicode) {
+    public String dumpTopologyAsAsciiArt(int nodeWidth, boolean unicode, boolean external) {
         DevConsole dc = getCamelContext().getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class)
                 .resolveById("route-topology");
         if (dc == null) {
             return "";
         }
-        JsonObject root = (JsonObject) dc.call(DevConsole.MediaType.JSON);
+        JsonObject root
+                = (JsonObject) dc.call(DevConsole.MediaType.JSON, Map.of("external", String.valueOf(external)));
 
         var nodes = TopologyHelper.parseNodes(root);
         var edges = TopologyHelper.parseEdges(root);
+        if (external) {
+            TopologyHelper.addExternalEndpoints(nodes, edges, root);
+            TopologyHelper.expandExternalEdges(nodes, edges);
+        }
 
         TopologyLayoutEngine engine = new TopologyLayoutEngine(nodeWidth);
         TopologyLayoutEngine.TopologyLayoutResult result = engine.layout(nodes, edges);
@@ -229,16 +234,21 @@ public class DefaultRouteDiagramDumper extends ServiceSupport implements CamelCo
     }
 
     @Override
-    public BufferedImage dumpTopologyAsImage(Theme theme, boolean metrics, int nodeWidth, int fontSize) {
+    public BufferedImage dumpTopologyAsImage(Theme theme, boolean metrics, int nodeWidth, int fontSize, boolean external) {
         DevConsole dc = getCamelContext().getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class)
                 .resolveById("route-topology");
         if (dc == null) {
             return null;
         }
-        JsonObject root = (JsonObject) dc.call(DevConsole.MediaType.JSON);
+        JsonObject root
+                = (JsonObject) dc.call(DevConsole.MediaType.JSON, Map.of("external", String.valueOf(external)));
 
         var nodes = TopologyHelper.parseNodes(root);
         var edges = TopologyHelper.parseEdges(root);
+        if (external) {
+            TopologyHelper.addExternalEndpoints(nodes, edges, root);
+            TopologyHelper.expandExternalEdges(nodes, edges);
+        }
 
         // Enrich with metrics from route-structure console
         if (metrics) {
