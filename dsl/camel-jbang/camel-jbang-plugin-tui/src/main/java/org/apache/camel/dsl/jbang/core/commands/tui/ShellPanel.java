@@ -255,6 +255,12 @@ class ShellPanel {
         }
         lastHistorySize = histSize;
 
+        // Show a block cursor by toggling the reversed attribute on the cell at the cursor position
+        if (scrollOffset == 0 && cursor[1] >= 0 && cursor[1] < innerHeight
+                && cursor[0] >= 0 && cursor[0] < innerWidth) {
+            screen[cursor[1] * innerWidth + cursor[0]] ^= (1L << 57);
+        }
+
         List<Line> lines;
         if (scrollOffset > 0) {
             lines = renderScrolledView(screen, innerWidth, innerHeight);
