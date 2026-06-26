@@ -18,12 +18,16 @@ package org.apache.camel.dsl.jbang.launcher;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.lang.reflect.Field;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.dsl.jbang.core.common.Printer;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import picocli.CommandLine;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -85,6 +89,38 @@ public class CamelLauncherTest {
 
         String output = baos.toString();
         assertTrue(output.contains("Camel CLI version:"), "Output should contain version information");
+    }
+
+    @Test
+    public void testEmbeddedTuiPluginReceivesClassLoader() throws Exception {
+        // Regression for the launcher TUI failure "No BackendProvider found on classpath".
+        // The launcher installs embedded plugins directly in postAddCommands. Each plugin must be
+        // given the fat-jar classloader so that the TUI can install it as the thread-context
+        // classloader for tamboui's ServiceLoader-based terminal backend discovery. Without it the
+        // discovery falls back to the system classloader, which cannot see the nested BOOT-INF/lib
+        // jars of the Spring Boot fat-jar.
+        CamelLauncherMain main = new CamelLauncherMain();
+
+        CommandLine commandLine = new CommandLine(main);
+        main.postAddCommands(commandLine, new String[] { "tui" });
+
+        CommandLine tui = commandLine.getSubcommands().get("tui");
+        assertNotNull(tui, "tui command should be registered by the launcher");
+        CommandLine monitor = tui.getSubcommands().get("monitor");
+        assertNotNull(monitor, "tui monitor subcommand should be registered");
+
+        ClassLoader pluginClassLoader = readClassLoaderField(monitor.getCommand());
+        assertNotNull(pluginClassLoader,
+                "embedded TUI plugin must receive a non-null classloader (else tamboui ServiceLoader breaks in the fat-jar)");
+        // The classloader handed to the plugin must be able to resolve tamboui's backend SPI.
+        assertDoesNotThrow(() -> pluginClassLoader.loadClass("dev.tamboui.terminal.BackendProvider"),
+                "the plugin classloader must be able to load tamboui's BackendProvider");
+    }
+
+    private static ClassLoader readClassLoaderField(Object command) throws Exception {
+        Field field = command.getClass().getDeclaredField("classLoader");
+        field.setAccessible(true);
+        return (ClassLoader) field.get(command);
     }
 
     @Test
