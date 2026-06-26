@@ -428,7 +428,7 @@ class ShellPanel {
                     .groups(registry, new PosixCommandGroup(), new InteractiveCommandGroup())
                     .historyCommands(true)
                     .helpCommands(true)
-                    .commandHighlighter(true)
+                    .commandHighlighter(false)
                     .variable(LineReader.LIST_MAX, 50)
                     .onReaderReady((reader, dispatcher) -> {
                         if (dispatcher instanceof DefaultCommandDispatcher dcd) {
