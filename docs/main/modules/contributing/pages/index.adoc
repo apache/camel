@@ -354,6 +354,14 @@ They are maintained as part of the repository so that AI-assisted contributions 
 
 The `.oss-ai-helper-rules/` files are designed for use with the https://github.com/Open-Harness-Engineering/ai-agents-oss-helper[OSS Helper] toolset, which provides ready-made skills for common contribution tasks (fixing issues, creating PRs, running CI checks, and more).
 
+=== Attribution
+
+Pull requests that include AI-generated code **must** provide proper attribution.
+AI coding agents should be configured to add co-authorship trailers to commits (e.g., `Co-authored-by`).
+For example, Claude Code supports this via its https://code.claude.com/docs/en/settings#attribution-settings[attribution settings].
+
+PR descriptions for AI-assisted contributions should also clearly identify the AI tool used.
+
 == Becoming a committer
 
 Once you have become sufficiently involved with the community, we may well invite you to be a committer. See xref:manual:faq:how-do-i-become-a-committer.adoc[How do I become a committer] for more details.
