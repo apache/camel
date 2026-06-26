@@ -1,0 +1,627 @@
+<!--
+
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+
+         http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<!DOCTYPE html>
+<!--
+  Local smoke test for the camel-topology-diagram web component.
+
+  Browsers block ES module imports from file:// URLs (CORS/null-origin).
+  Serve from the src/ directory:
+
+    cd components/camel-diagram/src/
+    python3 -m http.server 8080
+    open http://localhost:8080/test/resources/smoke-test-topology.html
+
+  All data is mocked — no running Camel instance needed.
+-->
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>camel-topology-diagram · Smoke Test</title>
+  <script type="module">
+    import '../../main/resources/META-INF/resources/camel/diagram/camel-topology-diagram.js';
+  </script>
+  <script>
+    /* eslint-disable */
+
+    /* ──────────────────────────────────────────────────────────────────────
+     * Mock data registry — each key is a URL path used as src="…" below.
+     *
+     * Topology payload shape (what the dev console serves at /route-topology):
+     *   nodes: [{ routeId, description?, from, fromScheme?, nodeType, exchangesTotal?, exchangesFailed? }]
+     *   edges: [{ fromRouteId, toRouteId, endpoint?, connectionType? }]
+     *   externalEndpoints: [{ id, routeId, uri, scheme, direction:'in'|'out', exchangesTotal?, exchangesFailed? }]
+     *
+     * nodeType drives the node color: 'trigger' → orange, 'external*' → gray, else → purple.
+     * ────────────────────────────────────────────────────────────────────── */
+    const MOCK = {
+
+      /* 1. Minimal linear pipeline — used in the three theme-comparison cards.
+       *    Short labels keep the focus on color, not truncation. */
+      '/mock/topology/simple': {
+        nodes: [
+          { routeId: 'generator', from: 'timer:tick',       fromScheme: 'timer',  nodeType: 'trigger' },
+          { routeId: 'processor', from: 'direct:process',   fromScheme: 'direct',  nodeType: 'route' },
+          { routeId: 'validator', from: 'direct:validate',  fromScheme: 'direct',  nodeType: 'route' },
+        ],
+        edges: [
+          { fromRouteId: 'generator', toRouteId: 'processor', endpoint: 'direct:process' },
+          { fromRouteId: 'processor', toRouteId: 'validator', endpoint: 'direct:validate' },
+        ],
+      },
+
+      /* 2. Route pipeline with a disconnected route.
+       *    Mirrors TopologyDumperTest: generator → processor → validator, plus an isolated route. */
+      '/mock/topology/pipeline': {
+        nodes: [
+          { routeId: 'generator', from: 'timer:tick?period=5000', fromScheme: 'timer',  nodeType: 'trigger' },
+          { routeId: 'processor', from: 'direct:process',         fromScheme: 'direct',  nodeType: 'route' },
+          { routeId: 'validator', from: 'direct:validate',        fromScheme: 'direct',  nodeType: 'route' },
+          { routeId: 'isolated',  from: 'direct:isolated',        fromScheme: 'direct',  nodeType: 'route' },
+        ],
+        edges: [
+          { fromRouteId: 'generator', toRouteId: 'processor', endpoint: 'direct:process' },
+          { fromRouteId: 'processor', toRouteId: 'validator', endpoint: 'direct:validate' },
+        ],
+      },
+
+      /* 3. External endpoints — in/out boundary nodes (dashed, gray) added when external="true". */
+      '/mock/topology/external': {
+        nodes: [
+          { routeId: 'orders-api',  from: 'platform-http:/api/orders', fromScheme: 'platform-http',
+            description: 'Receives orders from external systems', nodeType: 'route' },
+          { routeId: 'fulfilment',  from: 'direct:fulfil',            fromScheme: 'direct',
+            description: 'Fans out orders to fulfilment services',  nodeType: 'route' },
+        ],
+        edges: [
+          { fromRouteId: 'orders-api', toRouteId: 'fulfilment', endpoint: 'direct:fulfil' },
+        ],
+        externalEndpoints: [
+          { id: 'ext-http-in',   routeId: 'orders-api', uri: 'platform-http:/api/orders', scheme: 'platform-http', direction: 'in' },
+          { id: 'ext-kafka-out', routeId: 'fulfilment', uri: 'kafka:shipped-orders',      scheme: 'kafka',         direction: 'out' },
+        ],
+      },
+
+      /* 4. Interlinked shared endpoint — two producers publishing to the same broker topic.
+       *    With external="true" interlink="true" the shared kafka:shared endpoint collapses to one node. */
+      '/mock/topology/interlink': {
+        nodes: [
+          { routeId: 'producer-a', from: 'timer:a',      fromScheme: 'timer', nodeType: 'trigger' },
+          { routeId: 'producer-b', from: 'timer:b',      fromScheme: 'timer', nodeType: 'trigger' },
+          { routeId: 'consumer',   from: 'kafka:shared', fromScheme: 'kafka', nodeType: 'route' },
+        ],
+        edges: [
+          { fromRouteId: 'producer-a', toRouteId: 'consumer', endpoint: 'kafka:shared', connectionType: 'external' },
+          { fromRouteId: 'producer-b', toRouteId: 'consumer', endpoint: 'kafka:shared', connectionType: 'external' },
+        ],
+      },
+
+      /* 5. Live metrics — per-route exchange counters rendered top-right of each box (metric="true").
+       *    Long descriptions exercise the ellipsis truncation and the hover tooltip. */
+      '/mock/topology/metrics': {
+        nodes: [
+          { routeId: 'orders-api',      from: 'platform-http:/api/orders', fromScheme: 'platform-http',
+            description: 'Receives orders from external systems', nodeType: 'route',
+            exchangesTotal: 1234, exchangesFailed: 7 },
+          { routeId: 'order-generator', from: 'timer:orders?period=5s',    fromScheme: 'timer',
+            description: 'Generate a new order every 5 seconds',  nodeType: 'trigger',
+            exchangesTotal: 96, exchangesFailed: 0 },
+          { routeId: 'processor',       from: 'direct:process-order',      fromScheme: 'direct',
+            description: 'Validates and publishes orders to the broker', nodeType: 'route',
+            exchangesTotal: 1227, exchangesFailed: 7 },
+          { routeId: 'fulfilment',      from: 'kafka:orders',             fromScheme: 'kafka',
+            description: 'Fans out orders to fulfilment services', nodeType: 'route',
+            exchangesTotal: 1220, exchangesFailed: 0 },
+        ],
+        edges: [
+          { fromRouteId: 'orders-api',      toRouteId: 'processor',  endpoint: 'direct:process-order' },
+          { fromRouteId: 'order-generator', toRouteId: 'processor',  endpoint: 'direct:process-order' },
+          { fromRouteId: 'processor',       toRouteId: 'fulfilment', endpoint: 'kafka:orders' },
+        ],
+      },
+    };
+
+    window.fetch = url => {
+      const path = new URL(url, location.href).pathname;
+      const data = MOCK[path];
+      if (!data) return Promise.resolve({ ok: false, status: 404, statusText: 'Not Found' });
+      return Promise.resolve({ ok: true, json: () => Promise.resolve(data) });
+    };
+  </script>
+  <style>
+    /* ─── Camel design tokens (mirrored from camel.apache.org) ─── */
+    :root {
+      --camel-orange:      #e97826;
+      --camel-orange-dark: #cf7428;
+      --camel-navy:        #303284;
+      --camel-purple:      #4f51ae;
+      --camel-light:       #f5f5f5;
+      --camel-border:      #e1e1e1;
+      --camel-text:        #333;
+      --camel-muted:       #5d5d5d;
+      --camel-white:       #fff;
+      --radius:            6px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: system-ui, 'Open Sans', sans-serif;
+      font-size: 14px;
+      line-height: 1.6;
+      color: var(--camel-text);
+      background: var(--camel-light);
+      min-height: 100vh;
+    }
+
+    /* ─── Top nav bar ─── */
+    .site-nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: var(--camel-navy);
+      color: var(--camel-white);
+      height: 52px;
+      display: flex;
+      align-items: center;
+      padding: 0 1.5rem;
+      gap: 1rem;
+      box-shadow: 0 2px 10px rgba(0,0,0,.35);
+    }
+    .site-nav .logo-mark {
+      width: 30px;
+      height: 30px;
+      background: var(--camel-orange);
+      border-radius: 5px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 16px;
+      flex-shrink: 0;
+      letter-spacing: -1px;
+    }
+    .site-nav .brand-name  { font-weight: 700; font-size: .95rem; }
+    .site-nav .brand-sub   { font-size: .7rem; opacity: .65; }
+    .site-nav .nav-spacer  { flex: 1; }
+    .site-nav .nav-links   { display: flex; gap: 1.25rem; }
+    .site-nav .nav-links a {
+      color: rgba(255,255,255,.75);
+      text-decoration: none;
+      font-size: .8rem;
+      font-weight: 600;
+      transition: color .15s;
+    }
+    .site-nav .nav-links a:hover { color: var(--camel-orange); }
+    .badge-pill {
+      background: var(--camel-orange);
+      color: var(--camel-white);
+      font-size: .65rem;
+      font-weight: 700;
+      padding: 2px 9px;
+      border-radius: 99px;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+    }
+
+    /* ─── Theme switch (segmented control) ─── */
+    .theme-switch {
+      display: inline-flex;
+      gap: 2px;
+      padding: 2px;
+      background: rgba(255,255,255,.1);
+      border: 1px solid rgba(255,255,255,.18);
+      border-radius: 99px;
+    }
+    .theme-switch button {
+      appearance: none;
+      border: 0;
+      background: transparent;
+      color: rgba(255,255,255,.75);
+      font: inherit;
+      font-size: .72rem;
+      font-weight: 600;
+      padding: 3px 11px;
+      border-radius: 99px;
+      cursor: pointer;
+      transition: background .15s, color .15s;
+    }
+    .theme-switch button:hover { color: var(--camel-white); }
+    .theme-switch button.active {
+      background: var(--camel-orange);
+      color: var(--camel-white);
+    }
+
+    /* ─── Hero ─── */
+    .hero {
+      background: var(--camel-navy);
+      color: var(--camel-white);
+      padding: 2.5rem 1.5rem 2.75rem;
+      border-bottom: 4px solid var(--camel-orange);
+    }
+    .hero-inner { max-width: 900px; margin: 0 auto; }
+    .hero h1 {
+      font-size: 1.75rem;
+      font-weight: 800;
+      margin-bottom: .4rem;
+      letter-spacing: -.5px;
+    }
+    .hero h1 code {
+      color: var(--camel-orange);
+      font-family: 'Courier New', monospace;
+      font-size: 1.55rem;
+    }
+    .hero p {
+      opacity: .8;
+      max-width: 640px;
+      font-size: .9rem;
+      margin-bottom: .75rem;
+    }
+    .hero-hint {
+      display: inline-block;
+      background: rgba(255,255,255,.07);
+      border: 1px solid rgba(255,255,255,.15);
+      border-radius: var(--radius);
+      padding: .5rem .9rem;
+      font-family: 'Courier New', monospace;
+      font-size: .78rem;
+      color: #9db8d2;
+      line-height: 1.7;
+    }
+
+    /* ─── Layout ─── */
+    .content {
+      max-width: 1140px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem 3rem;
+    }
+
+    /* ─── Sections ─── */
+    .section { margin-bottom: 3rem; }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: .65rem;
+      margin-bottom: 1rem;
+      padding-bottom: .6rem;
+      border-bottom: 2px solid var(--camel-border);
+    }
+    .section-header h2 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--camel-navy);
+    }
+    .section-tag {
+      font-size: .65rem;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 99px;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+    .tag-theme    { background: #e8eaf6; color: #303284; }
+    .tag-pipeline { background: #e3f2fd; color: #0d47a1; }
+    .tag-external { background: #eceff1; color: #37474f; }
+    .tag-interlink{ background: #f3e5f5; color: #4a148c; }
+    .tag-metrics  { background: #e8f5e9; color: #1b5e20; }
+
+    /* ─── Cards ─── */
+    .card {
+      background: var(--camel-white);
+      border: 1px solid var(--camel-border);
+      border-top: 3px solid var(--camel-orange);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+    .card-header {
+      padding: .7rem 1rem .55rem;
+      border-bottom: 1px solid var(--camel-border);
+    }
+    .card-header h3 {
+      font-size: .9rem;
+      font-weight: 700;
+      color: var(--camel-navy);
+      margin-bottom: .15rem;
+    }
+    .card-header h3 code {
+      font-size: .85rem;
+      background: #f0f0f0;
+      border-radius: 3px;
+      padding: 0 3px;
+    }
+    .card-header p {
+      font-size: .78rem;
+      color: var(--camel-muted);
+    }
+    .card-body         { padding: 1rem; }
+    .card-body.dark-bg { background: #0f172a; padding: .75rem; }
+
+    /* ─── Header-driven theme override ───
+       Drives the diagram sections that are not the self-documenting demo cards.
+       "os" sets nothing, so the component falls back to prefers-color-scheme. */
+    body[data-theme="light"] .themed-diagram {
+      --ctd-bg: #ffffff; --ctd-fg: #1e293b; --ctd-edge: #94a3b8;
+    }
+    body[data-theme="dark"] .themed-diagram {
+      --ctd-bg: #0f172a; --ctd-fg: #e2e8f0; --ctd-edge: #475569;
+    }
+    body[data-theme="dark"] .card-body.themed-diagram { background: #0f172a; }
+
+    /* ─── Grids ─── */
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+    .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; }
+
+    /* ─── Scrollable diagrams ─── */
+    .diagram-scroll { overflow-x: auto; }
+
+    /* ─── Footer ─── */
+    .site-footer {
+      background: var(--camel-navy);
+      color: rgba(255,255,255,.55);
+      text-align: center;
+      padding: 1.5rem;
+      font-size: .78rem;
+    }
+    .site-footer a { color: var(--camel-orange); text-decoration: none; }
+    .site-footer a:hover { text-decoration: underline; }
+
+    /* ─── Responsive ─── */
+    @media (max-width: 800px) {
+      .grid-3, .grid-2 { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body data-theme="os">
+
+<!-- ─── Navigation ─── -->
+<nav class="site-nav" aria-label="Site navigation">
+  <div class="logo-mark" aria-hidden="true">C</div>
+  <div>
+    <div class="brand-name">Apache Camel</div>
+    <div class="brand-sub">camel-topology-diagram</div>
+  </div>
+  <div class="nav-spacer"></div>
+  <nav class="nav-links" aria-label="Jump to section">
+    <a href="#themes">Themes</a>
+    <a href="#pipeline">Pipeline</a>
+    <a href="#external">External</a>
+    <a href="#interlink">Interlink</a>
+    <a href="#metrics">Metrics</a>
+  </nav>
+  <div class="theme-switch" role="group" aria-label="Diagram theme">
+    <button type="button" data-theme="light" aria-pressed="false">Light</button>
+    <button type="button" data-theme="dark" aria-pressed="false">Dark</button>
+    <button type="button" data-theme="os" class="active" aria-pressed="true">OS</button>
+  </div>
+  <span class="badge-pill">Smoke Test</span>
+</nav>
+
+<!-- ─── Hero ─── -->
+<header class="hero">
+  <div class="hero-inner">
+    <h1><code>&lt;camel-topology-diagram&gt;</code></h1>
+    <p>
+      A local verification page for the topology-diagram web component — the inter-route view served by the
+      dev console at <code>?mode=topology</code>. Each section exercises a different rendering feature or
+      edge case. All data is mocked — no running Camel instance required.
+    </p>
+    <span class="hero-hint">
+      cd components/camel-diagram/src/<br>
+      python3 -m http.server 8080 &amp;&amp; open http://localhost:8080/test/resources/smoke-test-topology.html
+    </span>
+  </div>
+</header>
+
+<!-- ─── Main content ─── -->
+<main class="content">
+
+  <!-- ══════════════════════════════════════════════════════
+       SECTION 1 — Theme variants
+       ══════════════════════════════════════════════════════ -->
+  <section id="themes" class="section">
+    <div class="section-header">
+      <h2>Theme Variants</h2>
+      <span class="section-tag tag-theme">Theming</span>
+    </div>
+    <div class="grid-3">
+
+      <div class="card">
+        <div class="card-header">
+          <h3>Auto (OS preference)</h3>
+          <p>
+            Follows <code>prefers-color-scheme</code>. No <code>--ctd-*</code> variables
+            are set — the component picks light or dark based on your OS setting.
+          </p>
+        </div>
+        <div class="card-body diagram-scroll">
+          <camel-topology-diagram src="/mock/topology/simple" external="false" metric="false"></camel-topology-diagram>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <h3>Light (forced)</h3>
+          <p>
+            Override via inline <code>style="--ctd-bg:#fff; --ctd-fg:#1e293b; --ctd-edge:#94a3b8"</code>
+            to pin the light palette regardless of OS setting.
+          </p>
+        </div>
+        <div class="card-body diagram-scroll">
+          <camel-topology-diagram src="/mock/topology/simple" external="false" metric="false"
+            style="--ctd-bg:#ffffff; --ctd-fg:#1e293b; --ctd-edge:#94a3b8;">
+          </camel-topology-diagram>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <h3>Dark (forced)</h3>
+          <p>
+            Override via <code>style="--ctd-bg:#0f172a; --ctd-fg:#e2e8f0; --ctd-edge:#475569"</code>
+            to pin the dark palette regardless of OS setting. The node-box fill tracks
+            <code>--ctd-bg</code> so labels never land light-on-light.
+          </p>
+        </div>
+        <div class="card-body diagram-scroll dark-bg">
+          <camel-topology-diagram src="/mock/topology/simple" external="false" metric="false"
+            style="--ctd-bg:#0f172a; --ctd-fg:#e2e8f0; --ctd-edge:#475569;">
+          </camel-topology-diagram>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════
+       SECTION 2 — Route pipeline
+       ══════════════════════════════════════════════════════ -->
+  <section id="pipeline" class="section">
+    <div class="section-header">
+      <h2>Route Pipeline</h2>
+      <span class="section-tag tag-pipeline">Multiple Routes</span>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <h3>Generator → Processor → Validator, plus a disconnected route</h3>
+        <p>
+          A timer <strong>generator</strong> (orange <code>trigger</code> node) hands off to
+          <strong>processor</strong> via <code>direct:process</code>, which forwards to
+          <strong>validator</strong> via <code>direct:validate</code>. The <strong>isolated</strong> route
+          has no inbound or outbound links, verifying that disconnected routes still render standalone.
+          Mirrors the topology in <code>TopologyDumperTest</code>.
+        </p>
+      </div>
+      <div class="card-body diagram-scroll themed-diagram">
+        <camel-topology-diagram src="/mock/topology/pipeline" external="false" metric="false"></camel-topology-diagram>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════
+       SECTION 3 — External endpoints
+       ══════════════════════════════════════════════════════ -->
+  <section id="external" class="section">
+    <div class="section-header">
+      <h2>External Endpoints</h2>
+      <span class="section-tag tag-external">external="true"</span>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <h3>In/out boundary nodes around the route graph</h3>
+        <p>
+          With <code>external="true"</code> the component reads <code>externalEndpoints</code> and adds
+          dashed gray boundary nodes: an inbound <code>platform-http</code> endpoint feeding
+          <strong>orders-api</strong>, and an outbound <code>kafka:shipped-orders</code> endpoint that
+          <strong>fulfilment</strong> publishes to. Verifies the three-band layout (external-in / routes /
+          external-out) and the dashed external edges.
+        </p>
+      </div>
+      <div class="card-body diagram-scroll themed-diagram">
+        <camel-topology-diagram src="/mock/topology/external" external="true" metric="false"></camel-topology-diagram>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════
+       SECTION 4 — Interlinked shared endpoint
+       ══════════════════════════════════════════════════════ -->
+  <section id="interlink" class="section">
+    <div class="section-header">
+      <h2>Interlinked Shared Endpoint</h2>
+      <span class="section-tag tag-interlink">interlink="true"</span>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <h3>Two producers collapsing onto one shared broker node</h3>
+        <p>
+          <strong>producer-a</strong> and <strong>producer-b</strong> both publish to
+          <code>kafka:shared</code>. With <code>external="true" interlink="true"</code> the shared endpoint
+          is hoisted into a single intermediate node both producers connect through, rather than drawing two
+          independent edges. Verifies <code>expandExternalEdges</code> shared-endpoint collapsing.
+        </p>
+      </div>
+      <div class="card-body diagram-scroll themed-diagram">
+        <camel-topology-diagram src="/mock/topology/interlink" external="true" interlink="true" metric="false"></camel-topology-diagram>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════
+       SECTION 5 — Live metrics
+       ══════════════════════════════════════════════════════ -->
+  <section id="metrics" class="section">
+    <div class="section-header">
+      <h2>Live Metrics</h2>
+      <span class="section-tag tag-metrics">metric="true"</span>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <h3>Per-route exchange counters with long, truncated labels</h3>
+        <p>
+          With <code>metric="true"</code> each route box shows
+          <em>✓&nbsp;successes&nbsp;/&nbsp;✗&nbsp;failures</em> in the top-right corner
+          (green successes, red failures). The descriptions are deliberately long: they are trimmed to a
+          clean ellipsis that reserves room for the metric badge, and hovering a trimmed box reveals the
+          full text and underlying URI via a native tooltip. Reproduces the route-topology blog screenshot.
+        </p>
+      </div>
+      <div class="card-body diagram-scroll themed-diagram">
+        <camel-topology-diagram src="/mock/topology/metrics" external="false" metric="true"></camel-topology-diagram>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- ─── Footer ─── -->
+<footer class="site-footer">
+  <p>
+    <a href="https://camel.apache.org/" rel="noopener noreferrer">Apache Camel</a>
+    &nbsp;·&nbsp;
+    <code>camel-topology-diagram</code> web component
+    &nbsp;·&nbsp;
+    Local smoke test — not a production page.
+  </p>
+</footer>
+
+<script>
+  /* eslint-disable */
+  /* Header theme switch: light/dark force --ctd-* on the body; "os" clears them
+   * so the component falls back to prefers-color-scheme. */
+  (function () {
+    const sw = document.querySelector('.theme-switch');
+    sw.addEventListener('click', function (e) {
+      const btn = e.target.closest('button[data-theme]');
+      if (!btn) return;
+      document.body.dataset.theme = btn.dataset.theme;
+      sw.querySelectorAll('button').forEach(function (b) {
+        const on = b === btn;
+        b.classList.toggle('active', on);
+        b.setAttribute('aria-pressed', String(on));
+      });
+    });
+  })();
+</script>
+
+</body>
+</html>

@@ -275,10 +275,35 @@ function isExternal(nodeType) {
     return nodeType === 'external-in' || nodeType === 'external-out' || nodeType === 'external';
 }
 
-function truncate(text, maxLen = 28) {
+// Measure text with an offscreen 2D canvas using the same font the SVG inherits. Returns null when no canvas
+// context is available so callers can fall back to a character-count estimate.
+let measureCtx = null;
+function measureWidth(text, fontSize) {
+    if (measureCtx === null) {
+        measureCtx = document.createElement('canvas').getContext('2d') || false;
+    }
+    if (!measureCtx) return null;
+    measureCtx.font = `${fontSize}px system-ui, sans-serif`;
+    return measureCtx.measureText(String(text)).width;
+}
+
+// Trim a label so it fits a pixel width. SVG <text> is proportional, so a fixed character budget cannot
+// guarantee a label stays inside its node; drop trailing characters until the text plus an ellipsis fits.
+// When `paren` is set the surrounding parentheses are part of the measurement so the ellipsis lands inside them.
+function fitText(text, maxWidth, fontSize = 11, paren = false) {
     if (!text) return '';
-    const clean = text.replace(/^\.+/, '');
-    return clean.length > maxLen ? clean.slice(0, maxLen - 1) + '…' : clean;
+    const wrap = paren ? (v) => `(${v})` : (v) => v;
+    let s = String(text).replace(/^\.+/, '');
+    let w = measureWidth(wrap(s), fontSize);
+    if (w === null) {
+        const maxLen = Math.max(1, Math.floor(maxWidth / (fontSize * 0.6)) - (paren ? 2 : 0));
+        return s.length > maxLen ? wrap(s.slice(0, maxLen - 1) + '…') : wrap(s);
+    }
+    if (w <= maxWidth) return wrap(s);
+    while (s.length > 0 && measureWidth(wrap(s + '…'), fontSize) > maxWidth) {
+        s = s.slice(0, -1);
+    }
+    return wrap(s.replace(/\s+$/, '') + '…');
 }
 
 function esc(s) {
@@ -306,10 +331,15 @@ const COMPONENT_STYLE = `
     align-items: flex-start;
     justify-content: center;
     background: var(--ctd-bg, transparent);
+    /* Node-box fill tracks the theme so light text never lands on a light box (and vice versa). */
+    --ctd-node-bg: var(--ctd-bg, #ffffff);
     padding: 12px;
   }
   @media (prefers-color-scheme: dark) {
-    .wrap { background: var(--ctd-bg, #0f172a); }
+    .wrap {
+      background: var(--ctd-bg, #0f172a);
+      --ctd-node-bg: var(--ctd-bg, #0f172a);
+    }
   }
   .error   { color: #ef4444; padding: 8px; }
   .loading { opacity: .6; padding: 8px; }
@@ -348,7 +378,7 @@ function nodeColor(nodeType) {
  *   interlink - show intermediary nodes for routes connected via shared externals (default: true)
  *
  * CSS custom properties (all optional):
- *   --ctd-bg, --ctd-fg, --ctd-edge, --ctd-font, --ctd-font-size
+ *   --ctd-bg, --ctd-node-bg, --ctd-fg, --ctd-edge, --ctd-font, --ctd-font-size
  *   --ctd-color-route, --ctd-color-trigger, --ctd-color-external
  *
  * @since 4.21
@@ -537,11 +567,30 @@ class CamelTopologyDiagram extends HTMLElement {
         const fill = nodeColor(node.nodeType);
         const dashAttr = ext ? ' stroke-dasharray="4 3"' : '';
 
-        const label = ext ? truncate(node.from, 28) : truncate(node.description ?? node.routeId, 28);
-        const subLabel = ext ? null : `(${truncate(node.from, 24)})`;
-
         const stat = this.#metric && node.exchangesTotal > 0
             ? { total: node.exchangesTotal, failed: node.exchangesFailed } : null;
+
+        // Labels start 30px in (icon zone); keep an 8px margin before the right border. When a metric badge is
+        // shown in the top-right corner, reserve its measured width on the first line so the label cannot run
+        // under it. The sub-label sits lower and never collides with the badge, so it uses the full width.
+        let labelMax = NODE_W - 38;
+        if (stat) {
+            const metricText = stat.failed > 0 ? `${stat.total - stat.failed}  ${stat.failed}` : `${stat.total - stat.failed}`;
+            const metricWidth = measureWidth(metricText, 9) ?? 36;
+            labelMax = Math.max(40, NODE_W - 8 - metricWidth - 6 - 30);
+        }
+        const fullLabel = ext ? node.from : (node.description ?? node.routeId);
+        const label = fitText(fullLabel, labelMax);
+        const subLabel = ext ? null : fitText(node.from, NODE_W - 38, 9, true);
+
+        // Only attach a hover tooltip when text was actually trimmed (the label ends with the ellipsis, or the
+        // parenthesised sub-label ends with one). Show the full description and the full from-uri.
+        const trimmed = label.endsWith('…') || (!!subLabel && subLabel.endsWith('…)'));
+        let titleText = trimmed ? (fullLabel ?? '') : null;
+        if (titleText != null && !ext && node.from) {
+            titleText += `\n(${node.from})`;
+        }
+        const title = titleText != null ? `<title>${esc(titleText)}</title>` : '';
 
         const textX = node.x + 30;
         const baseY = node.y + NODE_H / 2;
@@ -557,8 +606,9 @@ class CamelTopologyDiagram extends HTMLElement {
 
         return `
       <g role="img" aria-label="${esc(node.routeId)}: ${esc(label)}">
+        ${title}
         <rect x="${node.x}" y="${node.y}" width="${NODE_W}" height="${NODE_H}"
-              rx="6" ry="6" fill="var(--ctd-bg, #ffffff)"/>
+              rx="6" ry="6" fill="var(--ctd-node-bg, #ffffff)"/>
         <rect x="${node.x}" y="${node.y}" width="${NODE_W}" height="${NODE_H}"
               rx="6" ry="6"
               fill="${fill}" fill-opacity="${ext ? '0.08' : '0.15'}"
