@@ -225,7 +225,8 @@ public class SmbOperations implements SmbFileOperations {
     public boolean atomicRenameFile(File src, String to)
             throws GenericFileOperationFailedException {
         try {
-            src.rename(to);
+            // SMB protocol requires backslashes as path separators
+            src.rename(to.replace('/', '\\'));
             LOG.debug("Renamed file: {} to: {} using atomic rename", src.getUncPath(), to);
             return true;
         } catch (SMBRuntimeException e) {
