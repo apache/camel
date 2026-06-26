@@ -256,7 +256,7 @@ runScalpelDetection() {
   # Strip the Maven "!:" prefix from each entry to get bare artifact IDs for Scalpel.
   local skip_downstream
   skip_downstream=$(echo "$EXCLUSION_LIST" | sed 's/!://g')
-  local scalpel_args="-Dscalpel.enabled=true -Dscalpel.mode=report -Dscalpel.fullBuildTriggers= -Dscalpel.fetchBaseBranch=false -Dscalpel.excludePaths=.github/** -Dscalpel.skipTestsForDownstreamModules=${skip_downstream}"
+  local scalpel_args="-Dscalpel.enabled=true -Dscalpel.mode=report -Dscalpel.fullBuildTriggers= -Dscalpel.fetchBaseBranch=false -Dscalpel.excludePaths=.github/**,.mvn/** -Dscalpel.skipTestsForDownstreamModules=${skip_downstream}"
   # For workflow_dispatch, GITHUB_BASE_REF may not be set
   if [ -z "${GITHUB_BASE_REF:-}" ]; then
     scalpel_args="$scalpel_args -Dscalpel.baseBranch=origin/main"
