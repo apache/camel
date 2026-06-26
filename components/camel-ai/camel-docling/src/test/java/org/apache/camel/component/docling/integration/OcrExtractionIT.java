@@ -41,6 +41,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -178,10 +179,15 @@ class OcrExtractionIT extends CamelTestSupport {
         assertTrue(foundFirst && foundSecond,
                 "OCR should extract at least some of the expected text. Got: " + result);
 
-        // TODO: footer is not found by the ocr by Camel docling
-        //        boolean foundFooter = resultLower.contains("footer");
-        //        assertTrue(foundFooter,
-        //                "OCR should extract at least some of the expected text from the footer. Got: " + result);
+        // The footer is recognized by OCR, but docling classifies it as a page_footer, which lives in the
+        // FURNITURE content layer. docling's default body export (Markdown/text/HTML) excludes that layer, and
+        // docling-serve exposes no option to include it (upstream: https://github.com/docling-project/docling-serve/issues/271).
+        // The footer text is therefore absent from the result. See the "OCR and page headers/footers" note in
+        // docling-component.adoc. This assertion documents and pins that behavior; it will start failing if a
+        // future docling release includes page furniture in the body export, prompting us to revisit the limitation.
+        boolean foundFooter = resultLower.contains("footer");
+        assertFalse(foundFooter,
+                "Footer text is page furniture and is excluded from the docling body export. Got: " + result);
 
         LOG.info("OCR extraction with multiple text blocks result:\n{}", result);
         LOG.info("Successfully extracted text from image with multiple text blocks");

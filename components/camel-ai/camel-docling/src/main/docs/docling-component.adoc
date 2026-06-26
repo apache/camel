@@ -298,6 +298,22 @@ YAML::
 ----
 ====
 
+=== OCR and page headers/footers
+
+Docling recognizes page headers and footers (page numbers, copyright lines, running titles, footnotes, and similar
+content) during OCR, but it classifies them as page _furniture_: they are assigned to docling's `FURNITURE` content
+layer rather than the document `BODY`. Docling's Markdown, text and HTML exports include only the `BODY` layer by
+default, so header and footer text is omitted from the converted output even though the OCR engine read it correctly.
+
+When using `useDoclingServe=true`, the component cannot currently change this, because the docling-serve API does not
+expose an option to choose which content layers are included in the export — even though docling's Python library can
+include the `FURNITURE` layer. This is tracked upstream in
+https://github.com/docling-project/docling-serve/issues/271[docling-serve#271]. The docling CLI
+(`useDoclingServe=false`) has the same limitation.
+
+If you need header or footer content in the output, restructure the source document so the text is part of the body,
+or track the upstream issue for a future option to include the furniture layer.
+
 === Using headers to control processing
 
 [tabs]
