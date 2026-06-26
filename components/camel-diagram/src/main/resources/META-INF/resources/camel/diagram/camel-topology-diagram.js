@@ -278,29 +278,29 @@ function isExternal(nodeType) {
 // Measure text with an offscreen 2D canvas using the same font the SVG inherits. Returns null when no canvas
 // context is available so callers can fall back to a character-count estimate.
 let measureCtx = null;
-function measureWidth(text, fontSize) {
+function measureWidth(text, fontSize, fontFamily = 'system-ui, sans-serif') {
     if (measureCtx === null) {
         measureCtx = document.createElement('canvas').getContext('2d') || false;
     }
     if (!measureCtx) return null;
-    measureCtx.font = `${fontSize}px system-ui, sans-serif`;
+    measureCtx.font = `${fontSize}px ${fontFamily}`;
     return measureCtx.measureText(String(text)).width;
 }
 
 // Trim a label so it fits a pixel width. SVG <text> is proportional, so a fixed character budget cannot
 // guarantee a label stays inside its node; drop trailing characters until the text plus an ellipsis fits.
 // When `paren` is set the surrounding parentheses are part of the measurement so the ellipsis lands inside them.
-function fitText(text, maxWidth, fontSize = 11, paren = false) {
+function fitText(text, maxWidth, fontSize = 11, paren = false, fontFamily = 'system-ui, sans-serif') {
     if (!text) return '';
     const wrap = paren ? (v) => `(${v})` : (v) => v;
     let s = String(text).replace(/^\.+/, '');
-    let w = measureWidth(wrap(s), fontSize);
+    let w = measureWidth(wrap(s), fontSize, fontFamily);
     if (w === null) {
         const maxLen = Math.max(1, Math.floor(maxWidth / (fontSize * 0.6)) - (paren ? 2 : 0));
         return s.length > maxLen ? wrap(s.slice(0, maxLen - 1) + '…') : wrap(s);
     }
     if (w <= maxWidth) return wrap(s);
-    while (s.length > 0 && measureWidth(wrap(s + '…'), fontSize) > maxWidth) {
+    while (s.length > 0 && measureWidth(wrap(s + '…'), fontSize, fontFamily) > maxWidth) {
         s = s.slice(0, -1);
     }
     return wrap(s.replace(/\s+$/, '') + '…');
@@ -501,6 +501,7 @@ class CamelTopologyDiagram extends HTMLElement {
 
     #topologyHTML() {
         const data = this.#data;
+        const fontFamily = getComputedStyle(this).getPropertyValue('--ctd-font').trim() || 'system-ui, sans-serif';
 
         // Parse nodes and edges
         const nodes = (data.nodes ?? []).map(n => ({
@@ -530,7 +531,7 @@ class CamelTopologyDiagram extends HTMLElement {
         if (!layoutNodes.length) return '<p class="loading">No routes</p>';
 
         const edgeSvg = layoutEdges.map(e => this.#edgeHTML(e)).join('');
-        const nodeSvg = layoutNodes.map(n => this.#nodeHTML(n)).join('');
+        const nodeSvg = layoutNodes.map(n => this.#nodeHTML(n, fontFamily)).join('');
 
         return `<svg width="${totalWidth}" height="${totalHeight}" viewBox="0 0 ${totalWidth} ${totalHeight}"
                      aria-label="Route topology diagram">
@@ -562,7 +563,7 @@ class CamelTopologyDiagram extends HTMLElement {
         fill="var(--ctd-edge, #94a3b8)"/>`;
     }
 
-    #nodeHTML(node) {
+    #nodeHTML(node, fontFamily) {
         const ext = isExternal(node.nodeType);
         const fill = nodeColor(node.nodeType);
         const dashAttr = ext ? ' stroke-dasharray="4 3"' : '';
@@ -576,12 +577,12 @@ class CamelTopologyDiagram extends HTMLElement {
         let labelMax = NODE_W - 38;
         if (stat) {
             const metricText = stat.failed > 0 ? `${stat.total - stat.failed}  ${stat.failed}` : `${stat.total - stat.failed}`;
-            const metricWidth = measureWidth(metricText, 9) ?? 36;
-            labelMax = Math.max(40, NODE_W - 8 - metricWidth - 6 - 30);
+            const metricWidth = measureWidth(metricText, 9, fontFamily) ?? 36;
+            labelMax = NODE_W - 8 - metricWidth - 6 - 30;
         }
         const fullLabel = ext ? node.from : (node.description ?? node.routeId);
-        const label = fitText(fullLabel, labelMax);
-        const subLabel = ext ? null : fitText(node.from, NODE_W - 38, 9, true);
+        const label = fitText(fullLabel, labelMax, 11, false, fontFamily);
+        const subLabel = ext ? null : fitText(node.from, NODE_W - 38, 9, true, fontFamily);
 
         // Only attach a hover tooltip when text was actually trimmed (the label ends with the ellipsis, or the
         // parenthesised sub-label ends with one). Show the full description and the full from-uri.

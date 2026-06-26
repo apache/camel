@@ -135,6 +135,21 @@
           { fromRouteId: 'processor',       toRouteId: 'fulfilment', endpoint: 'kafka:orders' },
         ],
       },
+
+      /* 6. Badge stress — large counters reserve width for the metric text and leave only a sliver for the label. */
+      '/mock/topology/metrics-heavy': {
+        nodes: [
+          { routeId: 'ingress', from: 'platform-http:/api/orders', fromScheme: 'platform-http',
+            description: 'Accepts incoming orders from external systems and validates them', nodeType: 'route',
+            exchangesTotal: 1234567890, exchangesFailed: 987654321 },
+          { routeId: 'fanout', from: 'direct:fanout', fromScheme: 'direct',
+            description: 'Distributes the order to fulfillment, notification, and archive routes', nodeType: 'route',
+            exchangesTotal: 987654321, exchangesFailed: 12345678 },
+        ],
+        edges: [
+          { fromRouteId: 'ingress', toRouteId: 'fanout', endpoint: 'direct:fanout' },
+        ],
+      },
     };
 
     window.fetch = url => {
@@ -369,6 +384,7 @@
 
     /* ─── Grids ─── */
     .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+    .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; }
     .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; }
 
     /* ─── Scrollable diagrams ─── */
@@ -443,7 +459,7 @@
       <h2>Theme Variants</h2>
       <span class="section-tag tag-theme">Theming</span>
     </div>
-    <div class="grid-3">
+    <div class="grid-4">
 
       <div class="card">
         <div class="card-header">
@@ -485,6 +501,21 @@
         <div class="card-body diagram-scroll dark-bg">
           <camel-topology-diagram src="/mock/topology/simple" external="false" metric="false"
             style="--ctd-bg:#0f172a; --ctd-fg:#e2e8f0; --ctd-edge:#475569;">
+          </camel-topology-diagram>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <h3>Custom font</h3>
+          <p>
+            Override via <code>style="--ctd-font: Georgia, serif"</code> to verify that text measurement
+            matches the font actually used by the SVG.
+          </p>
+        </div>
+        <div class="card-body diagram-scroll">
+          <camel-topology-diagram src="/mock/topology/simple" external="false" metric="false"
+            style="--ctd-font: Georgia, serif;">
           </camel-topology-diagram>
         </div>
       </div>
@@ -587,6 +618,18 @@
       </div>
       <div class="card-body diagram-scroll themed-diagram">
         <camel-topology-diagram src="/mock/topology/metrics" external="false" metric="true"></camel-topology-diagram>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <h3>Large counters reserve room for the badge</h3>
+        <p>
+          This case keeps the default theme but pushes the exchange counters into multiple digits, so the
+          first-line label must shrink enough to stay out from under the metric badge.
+        </p>
+      </div>
+      <div class="card-body diagram-scroll themed-diagram">
+        <camel-topology-diagram src="/mock/topology/metrics-heavy" external="false" metric="true"></camel-topology-diagram>
       </div>
     </div>
   </section>

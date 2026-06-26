@@ -224,7 +224,7 @@ function nodeColor(type) {
 // the SVG inherits) and drop trailing characters until the text plus an ellipsis fits. Falls back to a coarse
 // character budget when a 2D canvas context is unavailable.
 let measureCtx = null;
-function fitText(text, maxWidth, fontSize = 11) {
+function fitText(text, maxWidth, fontSize = 11, fontFamily = 'system-ui, sans-serif') {
     if (!text) return '';
     let s = String(text).replace(/^\.+/, '');
     if (measureCtx === null) {
@@ -234,7 +234,7 @@ function fitText(text, maxWidth, fontSize = 11) {
         const maxLen = Math.max(1, Math.floor(maxWidth / (fontSize * 0.6)));
         return s.length > maxLen ? s.slice(0, maxLen - 1) + '\u2026' : s;
     }
-    measureCtx.font = `${fontSize}px system-ui, sans-serif`;
+    measureCtx.font = `${fontSize}px ${fontFamily}`;
     if (measureCtx.measureText(s).width <= maxWidth) {
         return s;
     }
@@ -442,6 +442,7 @@ class CamelRouteDiagram extends HTMLElement {
 
     #routeHTML(route, routeIdx) {
         const { positions, width, height } = layoutRoute(route);
+        const fontFamily = getComputedStyle(this).getPropertyValue('--crd-font').trim() || 'system-ui, sans-serif';
         const ids = Object.keys(positions);
         const pfx  = `t${this.#uid}r${routeIdx}`;
         const defs = ids.map(id => {
@@ -455,7 +456,7 @@ class CamelRouteDiagram extends HTMLElement {
            aria-label="Route diagram for ${esc(route.routeId)}">
         <defs>${defs}</defs>
         ${ids.map(id => this.#edgeHTML(id, positions)).join('')}
-        ${ids.map(id => this.#nodeHTML(positions[id], `${pfx}${safeId(id)}`)).join('')}
+        ${ids.map(id => this.#nodeHTML(positions[id], `${pfx}${safeId(id)}`, fontFamily)).join('')}
       </svg>
     </div>`;
     }
@@ -488,10 +489,10 @@ class CamelRouteDiagram extends HTMLElement {
         fill="var(--crd-edge, #94a3b8)"/>`;
     }
 
-    #nodeHTML(pos, clipId) {
+    #nodeHTML(pos, clipId, fontFamily) {
         // Label starts 30px in (icon zone); keep an 8px margin before the right border.
         const full   = pos.description ?? pos.code;
-        const label  = fitText(full, NODE_W - 38);
+        const label  = fitText(full, NODE_W - 38, 11, fontFamily);
         const stat   = formatStat(pos.statistics);
         const fill   = nodeColor(pos.type);
         const textX  = pos.x + 30;
