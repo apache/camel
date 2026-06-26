@@ -27,7 +27,10 @@ import org.junit.jupiter.api.AfterEach;
 public class BaseConfigTestSupport extends CamelCommandBaseTestSupport {
 
     @AfterEach
-    void removeLocalConfigFile() throws IOException {
+    void removeConfigFiles() throws IOException {
         Files.deleteIfExists(Paths.get(CommandLineHelper.LOCAL_USER_CONFIG));
+        // remove the global config file written under target by UserConfigHelper.createUserConfig, so it does not
+        // leak into later tests in the same JVM. Target the build directory explicitly to never touch the real home.
+        Files.deleteIfExists(Paths.get("target", CommandLineHelper.USER_CONFIG));
     }
 }
