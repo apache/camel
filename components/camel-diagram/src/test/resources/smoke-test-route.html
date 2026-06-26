@@ -462,7 +462,6 @@
 
     /* ─── Grids ─── */
     .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
-    .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; }
     .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; }
 
     /* ─── Scrollable diagrams ─── */
@@ -538,7 +537,7 @@
       <h2>Theme Variants</h2>
       <span class="section-tag tag-theme">Theming</span>
     </div>
-    <div class="grid-4">
+    <div class="grid-3">
 
       <div class="card">
         <div class="card-header">
@@ -583,19 +582,19 @@
         </div>
       </div>
 
-      <div class="card">
-        <div class="card-header">
-          <h3>Custom font</h3>
-          <p>
-            Override via <code>style="--crd-font: Georgia, serif"</code> to verify that text measurement
-            matches the font actually used by the SVG.
-          </p>
-        </div>
-        <div class="card-body diagram-scroll">
-          <camel-route-diagram src="/mock/simple" style="--crd-font: Georgia, serif;"></camel-route-diagram>
-        </div>
-      </div>
+    </div>
 
+    <div class="card" style="margin-top: 1rem;">
+      <div class="card-header">
+        <h3>Custom font</h3>
+        <p>
+          Override via <code>style="--crd-font: 'Courier New', monospace"</code> to verify that text measurement
+          matches the font actually used by the SVG.
+        </p>
+      </div>
+      <div class="card-body diagram-scroll">
+        <camel-route-diagram src="/mock/simple" style="--crd-font: 'Courier New', monospace;"></camel-route-diagram>
+      </div>
     </div>
   </section>
 
