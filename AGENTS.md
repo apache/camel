@@ -19,6 +19,9 @@ These rules apply to ALL AI agents working on this codebase.
 - All AI-generated content (GitHub PR descriptions, review comments, JIRA comments) MUST clearly
   identify itself as AI-generated and mention the human operator.
   Example: "_Claude Code on behalf of [Human Name]_"
+- AI coding agents MUST be configured to add co-authorship trailers to commits
+  (e.g., `Co-authored-by`). For Claude Code, enable this via the
+  [attribution settings](https://code.claude.com/docs/en/settings#attribution-settings).
 
 ### PR Volume
 
@@ -312,6 +315,9 @@ camel/
 ```
 
 ## Build
+
+For project build commands, code style restrictions and other standards, check
+[`.oss-ai-helper-rules/project-standards.md`](.oss-ai-helper-rules/project-standards.md).
 
 ```bash
 mvn clean install -Dquickly          # fast build, no tests
