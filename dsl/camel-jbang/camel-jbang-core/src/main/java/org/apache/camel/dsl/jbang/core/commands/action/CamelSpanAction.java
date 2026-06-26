@@ -208,7 +208,7 @@ public class CamelSpanAction extends ActionBaseCommand {
                 tableTraces(summaries);
             }
         } else {
-            printer().printErr("Response from running Camel with PID " + pid + " not received within 5 seconds");
+            printer().printErr("Response from running Camel with PID " + pid + " not received within 10 seconds");
             return 1;
         }
 

@@ -41,7 +41,7 @@ abstract class ActionBaseCommand extends CamelCommand {
     }
 
     protected static JsonObject getJsonObject(Path outputFile) {
-        return getJsonObject(outputFile, 5000);
+        return getJsonObject(outputFile, 10000);
     }
 
     protected static JsonObject getJsonObject(Path outputFile, long timeout) {
