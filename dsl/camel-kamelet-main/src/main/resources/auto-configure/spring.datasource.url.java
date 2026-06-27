@@ -17,7 +17,7 @@
 
 var registry = context.getRegistry();
 
-var p = new org.springframework.boot.autoconfigure.jdbc.DataSourceProperties();
+var p = new org.springframework.boot.jdbc.autoconfigure.DataSourceProperties();
 p.setBeanClassLoader(context.getApplicationContextClassLoader());
 
 var set = new org.apache.camel.util.OrderedLocationProperties();
