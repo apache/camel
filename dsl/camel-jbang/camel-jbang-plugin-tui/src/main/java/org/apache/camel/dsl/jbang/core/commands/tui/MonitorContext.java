@@ -18,6 +18,7 @@ package org.apache.camel.dsl.jbang.core.commands.tui;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -32,6 +33,7 @@ import dev.tamboui.tui.TuiRunner;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
 import dev.tamboui.widgets.block.Borders;
+import dev.tamboui.widgets.block.Title;
 import dev.tamboui.widgets.paragraph.Paragraph;
 import dev.tamboui.widgets.table.Cell;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
@@ -44,6 +46,14 @@ import org.apache.camel.util.json.Jsoner;
 class MonitorContext {
 
     static final Style HINT_KEY_STYLE = Style.EMPTY.fg(Color.BLACK).bg(Color.rgb(0xF6, 0x91, 0x23)).bold();
+
+    /** Small flat-orange placeholder camel for empty / no-selection states (user refines later). */
+    static final String[] SMALL_CAMEL = {
+            "   ,,__",
+            "  /o.  \\___",
+            "  \\__/     \\",
+            "     |  |--|",
+    };
 
     final AtomicReference<List<IntegrationInfo>> data;
     final AtomicReference<List<InfraInfo>> infraData;
@@ -138,13 +148,25 @@ class MonitorContext {
     }
 
     static void renderNoSelection(Frame frame, Rect area) {
+        List<Line> lines = new ArrayList<>();
+        lines.add(Line.from(Span.raw("")));
+        for (String row : SMALL_CAMEL) {
+            lines.add(Line.from(Span.styled("   " + row, Style.EMPTY.fg(Theme.accent()))));
+        }
+        lines.add(Line.from(Span.raw("")));
+        List<Span> hintSpans = new ArrayList<>();
+        hintSpans.add(Span.raw("   No integration selected.  "));
+        hint(hintSpans, "1", "Overview");
+        hint(hintSpans, "?", "Help");
+        lines.add(Line.from(hintSpans));
+
         frame.renderWidget(
                 Paragraph.builder()
-                        .text(Text.from(Line.from(
-                                Span.styled(" Select an integration from the Overview tab (press 1)",
-                                        Style.EMPTY.dim()))))
+                        .text(Text.from(lines))
                         .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
-                                .title(" No integration selected ").build())
+                                .title(Title.from(Line.from(
+                                        Span.styled(" No integration selected ", Theme.title()))))
+                                .build())
                         .build(),
                 area);
     }
