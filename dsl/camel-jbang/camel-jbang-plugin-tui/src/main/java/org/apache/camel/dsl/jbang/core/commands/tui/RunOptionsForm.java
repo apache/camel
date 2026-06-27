@@ -45,12 +45,12 @@ class RunOptionsForm {
     private static final int ROW_NAME = 0;
     private static final int ROW_PORT = 1;
     private static final int ROW_MAX = 2;
-    private static final int ROW_DEV = 3;
-    private static final int ROW_OBSERVE = 4;
-    private static final int ROW_TRACE = 5;
-    private static final int ROW_STUB = 6;
-    private static final int ROW_OTEL_AGENT = 7;
-    private static final int ROW_CONSOLE = 8;
+    private static final int ROW_CONSOLE = 3;
+    private static final int ROW_DEV = 4;
+    private static final int ROW_OBSERVE = 5;
+    private static final int ROW_TRACE = 6;
+    private static final int ROW_STUB = 7;
+    private static final int ROW_OTEL_AGENT = 8;
     private static final int ROW_COUNT = 9;
 
     private boolean visible;
@@ -160,7 +160,7 @@ class RunOptionsForm {
             } else {
                 hint(spans, "Tab", "next");
             }
-            if (selectedRow >= ROW_DEV) {
+            if (selectedRow >= ROW_CONSOLE) {
                 hint(spans, "Space", "toggle");
             }
             if (hasProperties()) {
@@ -235,7 +235,7 @@ class RunOptionsForm {
             return true;
         }
         if (ke.isDown()) {
-            if (selectedRow == ROW_CONSOLE && hasProperties()) {
+            if (selectedRow == ROW_OTEL_AGENT && hasProperties()) {
                 page = PAGE_PROPERTIES;
                 selectedProperty = 0;
             } else {
@@ -244,7 +244,7 @@ class RunOptionsForm {
             return true;
         }
         if (ke.isFocusNext()) {
-            if (selectedRow == ROW_CONSOLE && hasProperties()) {
+            if (selectedRow == ROW_OTEL_AGENT && hasProperties()) {
                 page = PAGE_PROPERTIES;
                 selectedProperty = 0;
             } else {
@@ -270,7 +270,7 @@ class RunOptionsForm {
             return true;
         }
 
-        if (ke.isChar('+') && selectedRow >= ROW_DEV) {
+        if (ke.isChar('+') && selectedRow >= ROW_CONSOLE) {
             page = PAGE_PROPERTIES;
             addCustomProperty();
             return true;
@@ -283,7 +283,7 @@ class RunOptionsForm {
         }
 
         // Checkbox rows: Space toggles
-        if (ke.isChar(' ') && selectedRow >= ROW_DEV) {
+        if (ke.isChar(' ') && selectedRow >= ROW_CONSOLE) {
             switch (selectedRow) {
                 case ROW_DEV -> devMode = !devMode;
                 case ROW_OBSERVE -> observe = !observe;
@@ -318,7 +318,7 @@ class RunOptionsForm {
             editingKey = false;
             if (selectedProperty == 0) {
                 page = PAGE_OPTIONS;
-                selectedRow = ROW_CONSOLE;
+                selectedRow = ROW_OTEL_AGENT;
             } else {
                 selectedProperty--;
             }
@@ -348,7 +348,7 @@ class RunOptionsForm {
             } else if (selectedProperty == 0) {
                 editingKey = false;
                 page = PAGE_OPTIONS;
-                selectedRow = ROW_CONSOLE;
+                selectedRow = ROW_OTEL_AGENT;
             } else {
                 editingKey = false;
                 selectedProperty--;
@@ -364,7 +364,7 @@ class RunOptionsForm {
                     return true;
                 }
                 page = PAGE_OPTIONS;
-                selectedRow = ROW_CONSOLE;
+                selectedRow = ROW_OTEL_AGENT;
                 editingKey = false;
                 return true;
             }
@@ -379,7 +379,7 @@ class RunOptionsForm {
                     }
                     if (properties.isEmpty()) {
                         page = PAGE_OPTIONS;
-                        selectedRow = ROW_STUB;
+                        selectedRow = ROW_OTEL_AGENT;
                     }
                     return true;
                 }
@@ -445,6 +445,9 @@ class RunOptionsForm {
         renderTextInput(frame, innerX + labelW, rowY, fieldW, maxInput, selectedRow == ROW_MAX);
         rowY++;
 
+        renderCheckbox(frame, innerX, rowY, innerW, "Web console (/q/dev)", webConsole, selectedRow == ROW_CONSOLE);
+        rowY++;
+
         renderCheckbox(frame, innerX, rowY, innerW, "Dev mode (live reload)", devMode, selectedRow == ROW_DEV);
         rowY++;
 
@@ -471,13 +474,10 @@ class RunOptionsForm {
                     Span.styled(" ", Style.EMPTY),
                     Span.styled(jaegerLabel, jaegerStyle))), exportArea);
         }
-        rowY++;
-
-        renderCheckbox(frame, innerX, rowY, innerW, "Web console", webConsole, selectedRow == ROW_CONSOLE);
     }
 
     private void renderPropertiesPage(Frame frame, Rect area) {
-        int popupW = Math.min(70, area.width() - 4);
+        int popupW = Math.min(100, area.width() - 4);
         int propCount = properties != null ? properties.size() : 0;
         int popupH = Math.min(propCount + 2, Math.min(20, area.height() - 4));
         int x = area.left() + Math.max(0, (area.width() - popupW) / 2);
@@ -498,7 +498,7 @@ class RunOptionsForm {
         for (PropertyEntry pe : properties) {
             maxKeyLen = Math.max(maxKeyLen, pe.key().length());
         }
-        int labelW = Math.min(maxKeyLen + 2, innerW / 2);
+        int labelW = Math.min(maxKeyLen + 2, innerW * 3 / 5);
         int fieldW = innerW - labelW;
 
         int rowY = popup.top() + 1;
