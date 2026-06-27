@@ -939,12 +939,12 @@ public class CamelMonitor extends CamelCommand {
             // Infra mode: only Overview and Log tabs
             Line[] labels = compact
                     ? new Line[] {
-                            Line.from("1 Overview"),
-                            Line.from("2 Log"),
+                            Line.from("📊 1 Overview"),
+                            Line.from("📝 2 Log"),
                     }
                     : new Line[] {
-                            Line.from(" 1 Overview "),
-                            Line.from(" 2 Log "),
+                            Line.from(" 📊 1 Overview "),
+                            Line.from(" 📝 2 Log "),
                     };
 
             // Map real tab index to infra tab index for highlight
@@ -953,7 +953,7 @@ public class CamelMonitor extends CamelCommand {
 
             Tabs tabs = Tabs.builder()
                     .titles(labels)
-                    .highlightStyle(Style.EMPTY.fg(Color.rgb(0xF6, 0x91, 0x23)).bold())
+                    .highlightStyle(Style.EMPTY.fg(Color.WHITE).bg(Color.rgb(0xF6, 0x91, 0x23)).bold())
                     .divider(divider)
                     .build();
 
@@ -966,28 +966,28 @@ public class CamelMonitor extends CamelCommand {
 
         Line[] labels = compact
                 ? new Line[] {
-                        Line.from("1 Overview"),
-                        Line.from("2 Log"),
-                        Line.from("3 Diagram"),
-                        Line.from(tabRegistry.routesTab().isTopMode() ? "4  Top " : "4 Route"),
-                        Line.from("5 Endpoint"),
-                        Line.from("6 HTTP"),
-                        Line.from("7 Health"),
-                        Line.from("8 Inspect"),
-                        Line.from("9 Errors"),
-                        Line.from("0 More▾"),
+                        Line.from("📊 1 Overview"),
+                        Line.from("📝 2 Log"),
+                        Line.from("🎨 3 Diagram"),
+                        Line.from(tabRegistry.routesTab().isTopMode() ? "📈 4 Top " : "4 Route"),
+                        Line.from("🔌 5 Endpoint"),
+                        Line.from("🌐 6 HTTP"),
+                        Line.from("❤️ 7 Health"),
+                        Line.from("🔍 8 Inspect"),
+                        Line.from("⚠️ 9 Errors"),
+                        Line.from("➕ 0 More▾"),
                 }
                 : new Line[] {
-                        Line.from(" 1 Overview "),
-                        Line.from(" 2 Log "),
-                        Line.from(" 3 Diagram "),
-                        Line.from(tabRegistry.routesTab().isTopMode() ? " 4  Top  " : " 4 Route "),
-                        Line.from(" 5 Endpoint "),
-                        Line.from(" 6 HTTP "),
-                        Line.from(" 7 Health "),
-                        Line.from(" 8 Inspect "),
-                        Line.from(" 9 Errors "),
-                        Line.from(" 0 More▾ "),
+                        Line.from(" 📊 1 Overview "),
+                        Line.from(" 📝 2 Log "),
+                        Line.from(" 🎨 3 Diagram "),
+                        Line.from(tabRegistry.routesTab().isTopMode() ? " 📈 4  Top  " : " 4 Route "),
+                        Line.from(" 🔌 5 Endpoint "),
+                        Line.from(" 🌐 6 HTTP "),
+                        Line.from(" ❤️ 7 Health "),
+                        Line.from(" 🔍 8 Inspect "),
+                        Line.from(" ⚠️ 9 Errors "),
+                        Line.from(" ➕ 0 More▾ "),
                 };
         popupManager.setCurrentTabLabels(labels);
 

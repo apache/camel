@@ -43,7 +43,7 @@ import org.apache.camel.util.json.Jsoner;
  */
 class MonitorContext {
 
-    static final Style HINT_KEY_STYLE = Style.EMPTY.fg(Color.YELLOW).bold();
+    static final Style HINT_KEY_STYLE = Style.EMPTY.fg(Color.BLACK).bg(Color.rgb(0xF6, 0x91, 0x23)).bold();
 
     final AtomicReference<List<IntegrationInfo>> data;
     final AtomicReference<List<InfraInfo>> infraData;
@@ -128,12 +128,12 @@ class MonitorContext {
     }
 
     static void hint(List<Span> spans, String key, String label) {
-        spans.add(Span.styled(" " + key, HINT_KEY_STYLE));
+        spans.add(Span.styled(" " + key + " ", HINT_KEY_STYLE));
         spans.add(Span.raw(" " + label + "  "));
     }
 
     static void hintLast(List<Span> spans, String key, String label) {
-        spans.add(Span.styled(" " + key, HINT_KEY_STYLE));
+        spans.add(Span.styled(" " + key + " ", HINT_KEY_STYLE));
         spans.add(Span.raw(" " + label));
     }
 
