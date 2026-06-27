@@ -590,10 +590,22 @@ class OverviewTab implements MonitorTab {
             if (key.startsWith("get") && key.length() > 3) {
                 key = key.substring(3);
             }
-            String value = String.valueOf(e.getValue());
-            lines.add(Line.from(
-                    Span.styled(key + ": ", dim),
-                    Span.raw(TuiHelper.truncate(value, inner.width() - key.length() - 2))));
+            Object val = e.getValue();
+            if (val instanceof Map<?, ?> map) {
+                lines.add(Line.from(Span.styled(key + ":", dim)));
+                for (Map.Entry<?, ?> me : map.entrySet()) {
+                    String mk = String.valueOf(me.getKey());
+                    String mv = String.valueOf(me.getValue());
+                    lines.add(Line.from(
+                            Span.styled("  " + mk + ": ", dim),
+                            Span.raw(TuiHelper.truncate(mv, inner.width() - mk.length() - 4))));
+                }
+            } else {
+                String value = String.valueOf(val);
+                lines.add(Line.from(
+                        Span.styled(key + ": ", dim),
+                        Span.raw(TuiHelper.truncate(value, inner.width() - key.length() - 2))));
+            }
         }
         frame.renderWidget(Paragraph.builder().text(Text.from(lines)).build(), inner);
     }
