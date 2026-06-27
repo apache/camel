@@ -383,6 +383,7 @@ and expose CSS custom properties so the host application can override every visu
 ----
 camel-route-diagram {
   --crd-bg:                   #ffffff;   /* canvas background */
+  --crd-node-bg:              #ffffff;   /* node fill colour (defaults to --crd-bg) */
   --crd-fg:                   #1e293b;   /* text colour */
   --crd-edge:                 #94a3b8;   /* edge/arrow colour */
   --crd-stat:                 #64748b;   /* metric overlay text */
@@ -410,6 +411,7 @@ camel-route-diagram {
 ----
 camel-topology-diagram {
   --ctd-bg:                   #ffffff;   /* canvas background */
+  --ctd-node-bg:              #ffffff;   /* node fill colour (defaults to --ctd-bg) */
   --ctd-fg:                   #1e293b;   /* text colour */
   --ctd-edge:                 #94a3b8;   /* edge/arrow colour */
   --ctd-stat:                 #64748b;   /* metric overlay text */
