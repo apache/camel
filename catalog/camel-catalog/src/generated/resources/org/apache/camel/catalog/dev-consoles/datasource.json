@@ -1,0 +1,15 @@
+{
+  "console": {
+    "kind": "console",
+    "group": "camel",
+    "name": "datasource",
+    "title": "DataSource",
+    "description": "Displays DataSource connection pool metrics",
+    "deprecated": false,
+    "javaType": "org.apache.camel.impl.console.DataSourceDevConsole",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-console",
+    "version": "4.21.0-SNAPSHOT"
+  }
+}
+
