@@ -94,7 +94,7 @@ class HelpOverlay {
                 .borderType(BorderType.ROUNDED)
                 .title(" Help ")
                 .titleBottom(Title.from(Line.from(
-                        Span.styled(" F1", MonitorContext.HINT_KEY_STYLE), Span.raw(" close "),
+                        Span.styled(" F1/?", MonitorContext.HINT_KEY_STYLE), Span.raw(" close "),
                         Span.styled(" ↑↓", MonitorContext.HINT_KEY_STYLE), Span.raw(" scroll "))))
                 .build();
 
