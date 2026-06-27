@@ -224,6 +224,7 @@ public class CamelMonitor extends CamelCommand {
     private SpansTab spansTab;
     private ProcessTab processTab;
     private OverviewTab overviewTab;
+    private DataSourceTab dataSourceTab;
 
     // "Switch integration" popup state
     private boolean showSwitchPopup;
@@ -277,6 +278,7 @@ public class CamelMonitor extends CamelCommand {
         diagramTab = new DiagramTab(ctx);
         routesTab = new RoutesTab(ctx);
         consumersTab = new ConsumersTab(ctx);
+        dataSourceTab = new DataSourceTab(ctx);
         endpointsTab = new EndpointsTab(ctx, metrics);
         httpTab = new HttpTab(ctx);
         healthTab = new HealthTab(ctx);
@@ -436,7 +438,7 @@ public class CamelMonitor extends CamelCommand {
                 return true;
             }
             if (ke.isDown()) {
-                morePopupState.selectNext(13);
+                morePopupState.selectNext(14);
                 return true;
             }
             int shortcutSel = morePopupShortcut(ke);
@@ -455,13 +457,14 @@ public class CamelMonitor extends CamelCommand {
                         case 3 -> classpathTab;
                         case 4 -> configurationTab;
                         case 5 -> consumersTab;
-                        case 6 -> inflightTab;
-                        case 7 -> memoryTab;
-                        case 8 -> metricsTab;
-                        case 9 -> spansTab;
-                        case 10 -> processTab;
-                        case 11 -> startupTab;
-                        case 12 -> threadsTab;
+                        case 6 -> dataSourceTab;
+                        case 7 -> inflightTab;
+                        case 8 -> memoryTab;
+                        case 9 -> metricsTab;
+                        case 10 -> spansTab;
+                        case 11 -> processTab;
+                        case 12 -> startupTab;
+                        case 13 -> threadsTab;
                         default -> null;
                     };
                     if (activeMoreTab != null) {
@@ -932,6 +935,7 @@ public class CamelMonitor extends CamelCommand {
         startupTab.onIntegrationChanged();
         configurationTab.onIntegrationChanged();
         consumersTab.onIntegrationChanged();
+        dataSourceTab.onIntegrationChanged();
         circuitBreakerTab.onIntegrationChanged();
         inflightTab.onIntegrationChanged();
         spansTab.onIntegrationChanged();
@@ -1234,7 +1238,7 @@ public class CamelMonitor extends CamelCommand {
 
     private void renderMorePopup(Frame frame, Rect area) {
         int popupW = 22;
-        int popupH = 15;
+        int popupH = 16;
         // Position just below the "0 More▾" tab label
         int dividerW = CharWidth.of(" | ");
         int tabBarX = 0;
@@ -1262,6 +1266,7 @@ public class CamelMonitor extends CamelCommand {
                 ListItem.from(Line.from(Span.raw("  Cl"), Span.styled("a", keyStyle), Span.raw("sspath"))),
                 ListItem.from(Line.from(Span.raw("  Confi"), Span.styled("g", keyStyle), Span.raw("uration"))),
                 ListItem.from(Line.from(Span.raw("  Co"), Span.styled("n", keyStyle), Span.raw("sumers"))),
+                ListItem.from(Line.from(Span.raw("  "), Span.styled("D", keyStyle), Span.raw("ataSource"))),
                 ListItem.from(Line.from(Span.raw("  "), Span.styled("I", keyStyle), Span.raw("nflight"))),
                 ListItem.from(Line.from(Span.raw("  "), Span.styled("M", keyStyle), Span.raw("emory"))),
                 ListItem.from(Line.from(Span.raw("  M"), Span.styled("e", keyStyle), Span.raw("trics"))),
@@ -1364,26 +1369,29 @@ public class CamelMonitor extends CamelCommand {
         if (ke.isChar('n')) {
             return 5;
         }
-        if (ke.isChar('i')) {
+        if (ke.isChar('d')) {
             return 6;
         }
-        if (ke.isChar('m')) {
+        if (ke.isChar('i')) {
             return 7;
         }
-        if (ke.isChar('e')) {
+        if (ke.isChar('m')) {
             return 8;
         }
-        if (ke.isChar('o')) {
+        if (ke.isChar('e')) {
             return 9;
         }
-        if (ke.isChar('p')) {
+        if (ke.isChar('o')) {
             return 10;
         }
-        if (ke.isChar('s')) {
+        if (ke.isChar('p')) {
             return 11;
         }
-        if (ke.isChar('t')) {
+        if (ke.isChar('s')) {
             return 12;
+        }
+        if (ke.isChar('t')) {
+            return 13;
         }
         return -1;
     }
@@ -2464,7 +2472,7 @@ public class CamelMonitor extends CamelCommand {
 
     private static final String[] MORE_TAB_NAMES = {
             "Beans", "Browse", "Circuit Breaker", "Classpath", "Configuration",
-            "Consumers", "Inflight", "Memory", "Metrics", "Spans", "Process", "Startup", "Threads"
+            "Consumers", "DataSource", "Inflight", "Memory", "Metrics", "Spans", "Process", "Startup", "Threads"
     };
 
     String navigateToTab(String tabName) {
@@ -2486,13 +2494,14 @@ public class CamelMonitor extends CamelCommand {
                     case 3 -> classpathTab;
                     case 4 -> configurationTab;
                     case 5 -> consumersTab;
-                    case 6 -> inflightTab;
-                    case 7 -> memoryTab;
-                    case 8 -> metricsTab;
-                    case 9 -> spansTab;
-                    case 10 -> processTab;
-                    case 11 -> startupTab;
-                    case 12 -> threadsTab;
+                    case 6 -> dataSourceTab;
+                    case 7 -> inflightTab;
+                    case 8 -> memoryTab;
+                    case 9 -> metricsTab;
+                    case 10 -> spansTab;
+                    case 11 -> processTab;
+                    case 12 -> startupTab;
+                    case 13 -> threadsTab;
                     default -> null;
                 };
                 if (activeMoreTab != null) {
