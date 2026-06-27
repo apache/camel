@@ -228,6 +228,10 @@ public class CamelJBangMain implements Callable<Integer> {
                 .addSubcommand("wrapper", new CommandLine(new WrapperCommand(this)))
                 .setParameterExceptionHandler(new MissingPluginParameterExceptionHandler());
 
+        commandLine.getHelpSectionMap().put(
+                CommandLine.Model.UsageMessageSpec.SECTION_KEY_COMMAND_LIST,
+                new GroupedCommandHelpRenderer());
+
         postAddCommands(commandLine, args);
 
         if (discoverPlugins && PluginHelper.shouldDiscoverPlugins(commandLine, args)) {
