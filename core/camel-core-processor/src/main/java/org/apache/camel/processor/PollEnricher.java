@@ -168,7 +168,7 @@ public class PollEnricher extends BaseProcessorSupport implements IdAware, Route
     }
 
     public EndpointUtilizationStatistics getEndpointUtilizationStatistics() {
-        return consumerCache.getEndpointUtilizationStatistics();
+        return consumerCache != null ? consumerCache.getEndpointUtilizationStatistics() : null;
     }
 
     public AggregationStrategy getAggregationStrategy() {
@@ -313,8 +313,13 @@ public class PollEnricher extends BaseProcessorSupport implements IdAware, Route
                 prototype = false;
             }
 
-            // acquire the consumer from the cache
-            consumer = consumerCache.acquirePollingConsumer(endpoint);
+            // acquire the consumer, either from cache or create a new one
+            if (consumerCache != null) {
+                consumer = consumerCache.acquirePollingConsumer(endpoint);
+            } else {
+                consumer = endpoint.createPollingConsumer();
+                ServiceHelper.startService(consumer);
+            }
         } catch (Exception e) {
             if (isIgnoreInvalidEndpoint()) {
                 if (LOG.isDebugEnabled()) {
@@ -361,8 +366,13 @@ public class PollEnricher extends BaseProcessorSupport implements IdAware, Route
             callback.done(true);
             return true;
         } finally {
-            // return the consumer back to the cache
-            consumerCache.releasePollingConsumer(endpoint, consumer);
+            if (consumerCache != null) {
+                // return the consumer back to the cache
+                consumerCache.releasePollingConsumer(endpoint, consumer);
+            } else {
+                // consumer cache disabled, stop the consumer immediately
+                ServiceHelper.stopAndShutdownService(consumer);
+            }
             // and stop prototype endpoints
             if (prototype) {
                 ServiceHelper.stopAndShutdownService(endpoint);
@@ -543,7 +553,7 @@ public class PollEnricher extends BaseProcessorSupport implements IdAware, Route
 
     @Override
     protected void doBuild() throws Exception {
-        if (consumerCache == null) {
+        if (consumerCache == null && cacheSize >= 0) {
             // create consumer cache if we use dynamic expressions for computing the endpoints to poll
             consumerCache = new DefaultConsumerCache(this, camelContext, cacheSize);
             LOG.debug("PollEnrich {} using ConsumerCache with cacheSize={}", this, cacheSize);
