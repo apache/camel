@@ -904,6 +904,7 @@ class OverviewTab implements MonitorTab {
                 - `S` — reverse sort order
                 - `F2` — actions menu
                 - `F3` — switch integration
+                - `F4` — toggle light/dark theme
                 """;
     }
 

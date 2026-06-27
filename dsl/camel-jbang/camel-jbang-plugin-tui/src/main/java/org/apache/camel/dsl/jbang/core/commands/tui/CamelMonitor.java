@@ -594,6 +594,10 @@ public class CamelMonitor extends CamelCommand {
             }
             return true;
         }
+        if (!textEditing && ke.isChar('T')) {
+            Theme.toggle();
+            return true;
+        }
         if (ke.isKey(KeyCode.F5) && ke.hasShift()) {
             recordingManager.takeScreenshot();
             return true;
@@ -850,28 +854,28 @@ public class CamelMonitor extends CamelCommand {
         long activeCount = infos.stream().filter(i -> !i.vanishing).count();
 
         List<Span> titleSpans = new ArrayList<>();
-        titleSpans.add(Span.styled(" Camel TUI", Style.EMPTY.fg(Color.rgb(0xF6, 0x91, 0x23)).bold()));
+        titleSpans.add(Span.styled(" Camel TUI", Theme.title()));
         titleSpans.add(Span.raw("  "));
-        titleSpans.add(Span.styled(camelVersion != null ? "v" + camelVersion : "", Style.EMPTY.fg(Color.GREEN)));
+        titleSpans.add(Span.styled(camelVersion != null ? "v" + camelVersion : "", Theme.success()));
         titleSpans.add(Span.raw("  "));
-        titleSpans.add(Span.styled(activeCount + " integration(s)", Style.EMPTY.fg(Color.CYAN)));
+        titleSpans.add(Span.styled(activeCount + " integration(s)", Theme.info()));
         long activeInfra = dataService.infraData().get().stream().filter(i -> !i.vanishing).count();
         if (activeInfra > 0) {
             titleSpans.add(Span.raw("  "));
-            titleSpans.add(Span.styled(activeInfra + " infra(s)", Style.EMPTY.fg(Color.MAGENTA)));
+            titleSpans.add(Span.styled(activeInfra + " infra(s)", Theme.notice()));
         }
         if (ctx.selectedPid != null) {
             titleSpans.add(Span.raw("  "));
             InfraInfo selInfra = findSelectedInfra();
             if (selInfra != null) {
-                titleSpans.add(Span.styled("selected: " + selectedName(), Style.EMPTY.fg(Color.MAGENTA)));
+                titleSpans.add(Span.styled("selected: " + selectedName(), Theme.notice()));
             } else {
-                titleSpans.add(Span.styled("selected: " + selectedName(), Style.EMPTY.fg(Color.YELLOW)));
+                titleSpans.add(Span.styled("selected: " + selectedName(), Theme.warning()));
             }
         }
         if (actionsPopup.notification() != null) {
             titleSpans.add(Span.raw("  "));
-            Style style = actionsPopup.notificationError() ? Style.EMPTY.fg(Color.RED) : Style.EMPTY.fg(Color.GREEN);
+            Style style = actionsPopup.notificationError() ? Theme.error() : Theme.success();
             titleSpans.add(Span.styled(actionsPopup.notification(), style));
         }
         if (monitorNotification != null) {
@@ -879,7 +883,7 @@ public class CamelMonitor extends CamelCommand {
                 monitorNotification = null;
             } else {
                 titleSpans.add(Span.raw("  "));
-                Style style = monitorNotificationError ? Style.EMPTY.fg(Color.RED) : Style.EMPTY.fg(Color.GREEN);
+                Style style = monitorNotificationError ? Theme.error() : Theme.success();
                 titleSpans.add(Span.styled(monitorNotification, style));
             }
         }
@@ -932,7 +936,7 @@ public class CamelMonitor extends CamelCommand {
     private void renderTabs(Frame frame, Rect area) {
         boolean compact = area.width() < TABS_FULL_MIN_WIDTH;
         String dividerStr = compact ? "|" : " | ";
-        Span divider = Span.styled(dividerStr, Style.EMPTY.dim());
+        Span divider = Span.styled(dividerStr, Theme.muted());
         boolean infraSelected = isInfraSelected();
 
         if (infraSelected) {
@@ -953,7 +957,7 @@ public class CamelMonitor extends CamelCommand {
 
             Tabs tabs = Tabs.builder()
                     .titles(labels)
-                    .highlightStyle(Style.EMPTY.fg(Color.WHITE).bg(Color.rgb(0xF6, 0x91, 0x23)).bold())
+                    .highlightStyle(Theme.accentBg())
                     .divider(divider)
                     .build();
 
@@ -993,7 +997,7 @@ public class CamelMonitor extends CamelCommand {
 
         Tabs tabs = Tabs.builder()
                 .titles(labels)
-                .highlightStyle(Style.EMPTY.fg(Color.rgb(0xF6, 0x91, 0x23)).bold())
+                .highlightStyle(Theme.accentBg())
                 .divider(divider)
                 .build();
 
@@ -1345,7 +1349,7 @@ public class CamelMonitor extends CamelCommand {
         String msg = recordingManager.screenshotFlashMessage();
         if (msg != null) {
             frame.renderWidget(
-                    Paragraph.from(Line.from(Span.styled(" " + msg, Style.EMPTY.fg(Color.GREEN)))),
+                    Paragraph.from(Line.from(Span.styled(" " + msg, Theme.success()))),
                     area);
             return;
         }
@@ -1400,8 +1404,8 @@ public class CamelMonitor extends CamelCommand {
             for (RecordingManager.KeyRecord kr : visible) {
                 long age = now - kr.timestamp();
                 Style style = age < 1000
-                        ? Style.EMPTY.fg(Color.WHITE).bold().onBlue()
-                        : Style.EMPTY.dim();
+                        ? Theme.selectionBg()
+                        : Theme.muted();
                 rightSpans.add(Span.styled(" " + kr.label() + " ", style));
             }
         }
@@ -1419,17 +1423,17 @@ public class CamelMonitor extends CamelCommand {
             if (client != null) {
                 suffix = active ? " ●" : " ○";
                 mcpLabel += " (" + client + ")";
-                labelStyle = Style.EMPTY.fg(Color.GREEN);
+                labelStyle = Theme.success();
                 suffixStyle = Style.EMPTY.fg(active ? Color.GREEN : Color.DARK_GRAY);
             } else {
                 suffix = " ✗";
-                labelStyle = Style.EMPTY.dim();
-                suffixStyle = Style.EMPTY.fg(Color.RED);
+                labelStyle = Theme.muted();
+                suffixStyle = Theme.error();
             }
             rightSpans.add(Span.styled(mcpLabel, labelStyle));
             rightSpans.add(Span.styled(suffix, suffixStyle));
             if (client == null) {
-                rightSpans.add(Span.styled("  F2 → Setup AI", Style.EMPTY.dim()));
+                rightSpans.add(Span.styled("  F2 → Setup AI", Theme.muted()));
             }
         }
 
@@ -1475,6 +1479,7 @@ public class CamelMonitor extends CamelCommand {
         }
         hint(fKeySpans, "F6", "shell");
         hint(fKeySpans, "F8", "AI");
+        hint(fKeySpans, "⇧T", "theme");
         spans.addAll(insertPos, fKeySpans);
         // Return total F-key span count. The footer drop loop uses this to remove pairs from
         // the tail (F6, then F3, F2), stopping before the first pair (F1 help when present).
