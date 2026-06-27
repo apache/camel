@@ -29,8 +29,7 @@
       uri: timer
       parameters:
         timerName: select
-        repeatCount: 1
-        delay: 2000
+        delay: 5000
       steps:
         - to:
             uri: sql

@@ -504,6 +504,7 @@
         "files": [
             "README.md",
             "application.properties",
+            "compose.yaml",
             "sql.camel.yaml"
         ],
         "infraServices": [
