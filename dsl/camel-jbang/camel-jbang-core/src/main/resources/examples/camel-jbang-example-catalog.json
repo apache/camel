@@ -144,7 +144,6 @@
         "files": [
             "README.md",
             "application.properties",
-            "compose.yaml",
             "docling-langchain4j-rag.yaml",
             "sample.md"
         ],
@@ -197,7 +196,6 @@
         "files": [
             "README.md",
             "application.properties",
-            "compose.yaml",
             "ftp.camel.yaml",
             "jbang.properties"
         ],
@@ -305,7 +303,6 @@
         "files": [
             "README.md",
             "application.properties",
-            "compose.yaml",
             "infra/mosquitto.conf",
             "mqtt.camel.yaml",
             "start.sh"
@@ -460,7 +457,6 @@
             "analyzer/error-analyzer.camel.yaml",
             "containers/caches/infinispan-events-config.json",
             "containers/caches/infinispan-events-to-process-config.json",
-            "containers/docker-compose.yaml",
             "containers/otel-collector-config.yaml",
             "correlator/application-dev.properties",
             "correlator/correlated-log-schema.json",
@@ -504,7 +500,6 @@
         "files": [
             "README.md",
             "application.properties",
-            "compose.yaml",
             "sql.camel.yaml"
         ],
         "infraServices": [
