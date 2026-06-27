@@ -495,7 +495,7 @@ class ActionsPopup {
             } else if (ke.isConfirm()) {
                 selectInfraService();
             } else if (ke.code() == KeyCode.CHAR) {
-                jumpToInfraService(ke.character());
+                jumpToInfraService(ke.string().charAt(0));
             }
             return true;
         }
@@ -1344,7 +1344,7 @@ class ActionsPopup {
         } else if (ke.isEnd()) {
             folderInputState.moveCursorToEnd();
         } else if (ke.code() == KeyCode.CHAR) {
-            folderInputState.insert(ke.character());
+            folderInputState.insert(ke.string().charAt(0));
         }
     }
 
@@ -1885,8 +1885,8 @@ class ActionsPopup {
             infraPortState.moveCursorToStart();
         } else if (ke.isEnd()) {
             infraPortState.moveCursorToEnd();
-        } else if (ke.code() == KeyCode.CHAR && Character.isDigit(ke.character())) {
-            infraPortState.insert(ke.character());
+        } else if (ke.code() == KeyCode.CHAR && Character.isDigit(ke.string().charAt(0))) {
+            infraPortState.insert(ke.string().charAt(0));
         }
     }
 

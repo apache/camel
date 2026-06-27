@@ -213,7 +213,7 @@ class OverviewTab implements MonitorTab {
             }
             for (int i = 0; i < infraInfos.size(); i++) {
                 if (ctx.selectedPid.equals(infraInfos.get(i).pid)) {
-                    int tableIndex = integrationCount + (dividerIndex >= 0 ? 1 : 0) + i;
+                    int tableIndex = integrationCount + 1 + i;
                     tableState.select(tableIndex);
                     break;
                 }

@@ -433,7 +433,6 @@ class McpFacade {
         return tabRegistry.diagramTab().getTopologyDataAsJson();
     }
 
-    @SuppressWarnings("unchecked")
     JsonObject getSpanData(String traceId, int limit) {
         String pid = ctx.selectedPid;
         if (pid == null) {
@@ -465,8 +464,8 @@ class McpFacade {
                     JsonArray all = response.getCollection("spans");
                     if (all != null) {
                         JsonArray filtered = new JsonArray();
-                        for (int i = 0; i < all.size(); i++) {
-                            JsonObject span = (JsonObject) all.get(i);
+                        for (Object o : all) {
+                            JsonObject span = (JsonObject) o;
                             String tid = span.getString("traceId");
                             if (tid != null && tid.contains(traceId)) {
                                 filtered.add(span);

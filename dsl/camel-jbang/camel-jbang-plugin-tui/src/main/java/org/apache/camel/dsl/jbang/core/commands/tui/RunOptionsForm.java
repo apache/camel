@@ -657,11 +657,11 @@ class RunOptionsForm {
             active.moveCursorToEnd();
         } else if (ke.code() == KeyCode.CHAR) {
             if (digitsOnly) {
-                if (Character.isDigit(ke.character())) {
-                    active.insert(ke.character());
+                if (Character.isDigit(ke.string().charAt(0))) {
+                    active.insert(ke.string().charAt(0));
                 }
             } else {
-                active.insert(ke.character());
+                active.insert(ke.string().charAt(0));
             }
         }
     }

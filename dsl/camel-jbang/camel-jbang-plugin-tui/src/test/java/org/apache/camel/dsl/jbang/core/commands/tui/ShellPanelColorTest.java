@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 class ShellPanelColorTest {
 
     // ScreenTerminal stores colors as the top nibble of each channel of its xterm palette. The 16 standard
-    // ANSI colors must be recognised and mapped to terminal-themed colors, otherwise (for example) ANSI red
+    // ANSI colors must be recognized and mapped to terminal-themed colors, otherwise (for example) ANSI red
     // is reconstructed as a literal RGB(136,0,0) that is unreadable on dark backgrounds.
 
     @Test

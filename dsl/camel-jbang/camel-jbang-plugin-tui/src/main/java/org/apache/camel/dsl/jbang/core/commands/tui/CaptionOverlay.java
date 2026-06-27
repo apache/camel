@@ -107,7 +107,7 @@ class CaptionOverlay {
                     inlineLastKeystroke = System.currentTimeMillis();
                 }
             } else if (ke.code() == KeyCode.CHAR) {
-                inlineBuffer.append(ke.character());
+                inlineBuffer.append(ke.string());
                 captionText = inlineBuffer.toString();
                 inlineLastKeystroke = System.currentTimeMillis();
             }

@@ -131,7 +131,7 @@ public class CamelMonitor extends CamelCommand {
     private final FilesBrowser filesBrowser = new FilesBrowser();
     private PopupManager popupManager;
 
-    private ClassLoader classLoader;
+    private final ClassLoader classLoader;
 
     public CamelMonitor(CamelJBangMain main, ClassLoader classLoader) {
         super(main);
@@ -1252,8 +1252,8 @@ public class CamelMonitor extends CamelCommand {
                     if (cmdOpt.isPresent() && argsOpt.isPresent() && argsOpt.get().length > 0) {
                         cmd.add(cmdOpt.get());
                         Collections.addAll(cmd, argsOpt.get());
-                    } else if (cmdLineOpt.isPresent()) {
-                        cmd.addAll(parseCommandLine(cmdLineOpt.get()));
+                    } else {
+                        cmdLineOpt.ifPresent(s -> cmd.addAll(parseCommandLine(s)));
                     }
 
                     if (cmd.isEmpty()) {
@@ -1600,14 +1600,16 @@ public class CamelMonitor extends CamelCommand {
     private static Path writeMcpJson(int port) {
         Path path = Path.of(".mcp.json");
         try {
-            String json = "{\n"
-                          + "  \"mcpServers\": {\n"
-                          + "    \"camel-tui\": {\n"
-                          + "      \"type\": \"http\",\n"
-                          + "      \"url\": \"http://localhost:" + port + "/mcp\"\n"
-                          + "    }\n"
-                          + "  }\n"
-                          + "}\n";
+            String json = """
+                    {
+                      "mcpServers": {
+                        "camel-tui": {
+                          "type": "http",
+                          "url": "http://localhost:%d/mcp"
+                        }
+                      }
+                    }
+                    """.formatted(port);
             Files.writeString(path, json);
             return path;
         } catch (IOException e) {
