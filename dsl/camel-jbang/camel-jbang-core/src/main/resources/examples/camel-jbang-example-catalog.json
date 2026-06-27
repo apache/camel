@@ -10,7 +10,7 @@
             "artemis"
         ],
         "bundled": false,
-        "requiresDocker": false,
+        "requiresDocker": true,
         "hasCitrusTests": false,
         "files": [
             "README.md",
@@ -79,7 +79,7 @@
             "tribute"
         ],
         "bundled": true,
-        "requiresDocker": false,
+        "requiresDocker": true,
         "hasCitrusTests": false,
         "files": [
             "README.md",
@@ -165,7 +165,7 @@
             "finance"
         ],
         "bundled": false,
-        "requiresDocker": false,
+        "requiresDocker": true,
         "hasCitrusTests": false,
         "files": [
             "README.md",
@@ -237,7 +237,7 @@
             "oauth"
         ],
         "bundled": false,
-        "requiresDocker": false,
+        "requiresDocker": true,
         "hasCitrusTests": false,
         "files": [
             "README.md",
@@ -260,7 +260,7 @@
             "oauth"
         ],
         "bundled": false,
-        "requiresDocker": false,
+        "requiresDocker": true,
         "hasCitrusTests": false,
         "files": [
             "README.md",
@@ -408,7 +408,7 @@
             "timer"
         ],
         "bundled": true,
-        "requiresDocker": false,
+        "requiresDocker": true,
         "hasCitrusTests": false,
         "files": [
             "README.md",
