@@ -212,10 +212,11 @@ class ShellPanel {
 
         lastArea = area;
 
-        // Render border matching other tabs
+        // Focused pane: orange border + themed title (an open shell holds input focus)
         Block block = Block.builder()
                 .borderType(BorderType.ROUNDED).borders(Borders.ALL)
-                .title(Title.from(Line.from(Span.styled(" Shell ", Style.EMPTY.bold()))))
+                .borderStyle(Theme.borderFocused())
+                .title(Title.from(Line.from(Span.styled(" Shell ", Theme.title()))))
                 .build();
         frame.renderWidget(block, area);
         Rect inner = block.inner(area);
