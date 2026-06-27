@@ -1,0 +1,17 @@
+/* Camel TUI dark theme (default). Single source of color truth for Theme tokens. */
+
+$brand: #F69123;
+
+#accent         { color: $brand; }
+#accent-bg      { color: white; background: $brand; text-style: bold; }
+#border         { color: dark-gray; }
+#border-focused { color: $brand; }
+#title          { color: $brand; text-style: bold; }
+#success        { color: light-green; }
+#warning        { color: light-yellow; }
+#error          { color: light-red; }
+#muted          { text-style: dim; }
+#selection      { color: white; background: blue; text-style: bold; }
+#info           { color: cyan; }
+#notice         { color: magenta; }
+#row-alt        { background: #1C1C1C; }
