@@ -1,0 +1,41 @@
+- route:
+    from:
+      uri: timer
+      parameters:
+        timerName: create
+        repeatCount: 1
+        delay: 500
+      steps:
+        - to:
+            uri: sql
+            parameters:
+              query: "CREATE TABLE IF NOT EXISTS users(id integer PRIMARY KEY, name\
+                \ varchar(20), byear integer);"
+- route:
+    from:
+      uri: timer
+      parameters:
+        timerName: insert
+        repeatCount: 1
+        delay: 1000
+      steps:
+        - to:
+            uri: sql
+            parameters:
+              query: "INSERT INTO users(id, name, byear) VALUES(1, 'Camel', 2025)\
+                \ ON CONFLICT DO NOTHING;"
+- route:
+    from:
+      uri: timer
+      parameters:
+        timerName: select
+        repeatCount: 1
+        delay: 2000
+      steps:
+        - to:
+            uri: sql
+            parameters:
+              query: SELECT * FROM users
+        - log:
+            message: "${body}"
+

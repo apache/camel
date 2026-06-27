@@ -498,13 +498,12 @@
             "sql",
             "postgres"
         ],
-        "bundled": false,
+        "bundled": true,
         "requiresDocker": true,
         "hasCitrusTests": false,
         "files": [
             "README.md",
             "application.properties",
-            "compose.yaml",
             "sql.camel.yaml"
         ],
         "infraServices": [

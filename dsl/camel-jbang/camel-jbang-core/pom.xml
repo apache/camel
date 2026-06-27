@@ -322,6 +322,10 @@
                                         <sync-example name="routes" file="application.properties"/>
                                         <sync-example name="routes" file="beans.yaml"/>
                                         <sync-example name="routes" file="routes.camel.yaml"/>
+                                        <!-- sql -->
+                                        <sync-example name="sql" file="README.md"/>
+                                        <sync-example name="sql" file="application.properties"/>
+                                        <sync-example name="sql" file="sql.camel.yaml"/>
                                         <!-- timer-log -->
                                         <sync-example name="timer-log" file="README.md"/>
                                         <sync-example name="timer-log" file="application.properties"/>
