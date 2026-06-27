@@ -113,9 +113,15 @@ camel cmd route-diagram MyRoute.java
 === Developer console
 
 When the developer console is enabled (for example with `camel run --console`), the `route-diagram`
-console renders the running routes using the interactive `<camel-route-diagram>` web component,
-fed by the `route-structure` console. Request `?format=png` to get the legacy inline PNG image
-instead, or use the `ascii` / `unicode` themes for plain-text output.
+console provides two diagram modes:
+
+* **Route mode** (default): Renders individual route diagrams using the `<camel-route-diagram>` web component,
+  fed by the `route-structure` console. Shows the step-by-step flow within each route.
+* **Topology mode**: Renders inter-route topology using the `<camel-topology-diagram>` web component,
+  fed by the `route-topology` console. Shows how routes connect through shared endpoints.
+
+Access topology mode with `?mode=topology`. For both modes, request `?format=png` to get the legacy
+inline PNG image instead, or use the `ascii` / `unicode` themes for plain-text output.
 
 == Color Themes
 
@@ -284,14 +290,24 @@ RouteDiagramRenderer pngRenderer = new RouteDiagramRenderer(nodeWidth, fontSize)
 BufferedImage image = pngRenderer.renderDiagram(layoutRoutes, totalHeight, colors, highlightedNodes, style);
 ----
 
-== Embeddable Web Component
+== Embeddable Web Components
 
-`camel-diagram` ships a lightweight `<camel-route-diagram>` web component that renders
-interactive route diagrams as SVG directly in the browser.
-Any application with `camel-diagram` on the classpath automatically serves the component
-as a static resource — no extra server configuration needed.
+`camel-diagram` ships two lightweight web components that render interactive diagrams
+as SVG directly in the browser. Any application with `camel-diagram` on the classpath
+automatically serves the components as static resources — no extra server configuration needed.
 
-=== Usage
+=== Route Diagram Component
+
+The `<camel-route-diagram>` web component renders individual route diagrams showing
+the step-by-step flow within a single route, including EIP patterns, processors, and endpoints.
+
+=== Topology Diagram Component
+
+The `<camel-topology-diagram>` web component renders inter-route topology diagrams showing
+how multiple routes connect to each other through shared endpoints, providing a high-level
+view of message flow across the entire application.
+
+=== Route Diagram Usage
 
 Include the bundled script served from `META-INF/resources/camel/diagram/camel-route-diagram.js`
 (automatically exposed by Servlet 3 containers and Quarkus/Spring Boot static-resource mechanisms):
@@ -312,7 +328,28 @@ The `src` attribute must point to an endpoint returning the `route-structure` de
 The component automatically appends `?metric=true` so that per-processor exchange statistics
 are included in the diagram.
 
-=== Attributes
+=== Topology Diagram Usage
+
+Include the bundled script served from `META-INF/resources/camel/diagram/camel-topology-diagram.js`:
+
+[source,html]
+----
+<script type="module" src="/camel/diagram/camel-topology-diagram.js"></script>
+
+<camel-topology-diagram
+  src="/q/dev/route-topology"
+  refresh="5000"
+  external="true"
+  interlink="true"
+  metric="true">
+</camel-topology-diagram>
+----
+
+The `src` attribute must point to an endpoint returning the `route-topology` dev console JSON
+(for example the Quarkus Dev UI endpoint `/q/dev/route-topology`).
+This provides a high-level view showing how routes connect through shared endpoints.
+
+=== Route Diagram Attributes
 
 [width="100%",cols="2,5,2",options="header"]
 |===
@@ -322,16 +359,31 @@ are included in the diagram.
 | `filter` | Route ID filter, forwarded as `?filter=` query parameter | (all routes)
 |===
 
+=== Topology Diagram Attributes
+
+[width="100%",cols="2,5,2",options="header"]
+|===
+| Attribute | Description | Default
+| `src` | URL to fetch the route-topology JSON from (required) | —
+| `refresh` | Polling interval in milliseconds; `0` disables polling | `0`
+| `external` | Include external endpoints as boundary nodes | `false`
+| `interlink` | Collapse shared endpoints into intermediate nodes | `false`
+| `metric` | Include exchange counters from route metrics | `false`
+|===
+
 === Theming
 
-The component is theme-agnostic.
-It respects `prefers-color-scheme` automatically for dark/light mode,
-and exposes CSS custom properties so the host application can override every visual aspect:
+Both components are theme-agnostic.
+They respect `prefers-color-scheme` automatically for dark/light mode,
+and expose CSS custom properties so the host application can override every visual aspect.
+
+==== Route Diagram Theming
 
 [source,css]
 ----
 camel-route-diagram {
   --crd-bg:                   #ffffff;   /* canvas background */
+  --crd-node-bg:              #ffffff;   /* node fill colour (defaults to --crd-bg) */
   --crd-fg:                   #1e293b;   /* text colour */
   --crd-edge:                 #94a3b8;   /* edge/arrow colour */
   --crd-stat:                 #64748b;   /* metric overlay text */
@@ -350,5 +402,25 @@ camel-route-diagram {
   --crd-color-multicast:      #8b5cf6;   /* "multicast" node */
   --crd-color-circuitBreaker: #ef4444;   /* "circuitBreaker" node */
   --crd-color-default:        #6366f1;   /* all other EIP nodes */
+}
+----
+
+==== Topology Diagram Theming
+
+[source,css]
+----
+camel-topology-diagram {
+  --ctd-bg:                   #ffffff;   /* canvas background */
+  --ctd-node-bg:              #ffffff;   /* node fill colour (defaults to --ctd-bg) */
+  --ctd-fg:                   #1e293b;   /* text colour */
+  --ctd-edge:                 #94a3b8;   /* edge/arrow colour */
+  --ctd-stat:                 #64748b;   /* metric overlay text */
+  --ctd-font:                 system-ui; /* font family */
+  --ctd-font-size:            12px;      /* base font size */
+  --ctd-color-route:          #6366f1;   /* route nodes */
+  --ctd-color-trigger:        #f59e0b;   /* trigger/timer routes */
+  --ctd-color-external-in:    #6b7280;   /* external input endpoints */
+  --ctd-color-external-out:   #6b7280;   /* external output endpoints */
+  --ctd-color-external-shared: #8b5cf6;  /* shared external endpoints */
 }
 ----

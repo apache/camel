@@ -219,10 +219,29 @@ function nodeColor(type) {
     return TYPE_COLORS[type] ?? 'var(--crd-color-default, #6366f1)';
 }
 
-function truncate(text, maxLen = 28) {
+// Trim a label so it fits a pixel width. SVG <text> is proportional, so a fixed character budget cannot
+// guarantee a label stays inside its node; measure candidate strings with an offscreen 2D canvas (same font
+// the SVG inherits) and drop trailing characters until the text plus an ellipsis fits. Falls back to a coarse
+// character budget when a 2D canvas context is unavailable.
+let measureCtx = null;
+function fitText(text, maxWidth, fontSize = 11, fontFamily = 'system-ui, sans-serif') {
     if (!text) return '';
-    const clean = text.replace(/^\.+/, '');
-    return clean.length > maxLen ? clean.slice(0, maxLen - 1) + '\u2026' : clean;
+    let s = String(text).replace(/^\.+/, '');
+    if (measureCtx === null) {
+        measureCtx = document.createElement('canvas').getContext('2d') || false;
+    }
+    if (!measureCtx) {
+        const maxLen = Math.max(1, Math.floor(maxWidth / (fontSize * 0.6)));
+        return s.length > maxLen ? s.slice(0, maxLen - 1) + '\u2026' : s;
+    }
+    measureCtx.font = `${fontSize}px ${fontFamily}`;
+    if (measureCtx.measureText(s).width <= maxWidth) {
+        return s;
+    }
+    while (s.length > 0 && measureCtx.measureText(s + '\u2026').width > maxWidth) {
+        s = s.slice(0, -1);
+    }
+    return s.replace(/\s+$/, '') + '\u2026';
 }
 
 function formatStat(stats) {
@@ -423,6 +442,7 @@ class CamelRouteDiagram extends HTMLElement {
 
     #routeHTML(route, routeIdx) {
         const { positions, width, height } = layoutRoute(route);
+        const fontFamily = getComputedStyle(this).getPropertyValue('--crd-font').trim() || 'system-ui, sans-serif';
         const ids = Object.keys(positions);
         const pfx  = `t${this.#uid}r${routeIdx}`;
         const defs = ids.map(id => {
@@ -436,7 +456,7 @@ class CamelRouteDiagram extends HTMLElement {
            aria-label="Route diagram for ${esc(route.routeId)}">
         <defs>${defs}</defs>
         ${ids.map(id => this.#edgeHTML(id, positions)).join('')}
-        ${ids.map(id => this.#nodeHTML(positions[id], `${pfx}${safeId(id)}`)).join('')}
+        ${ids.map(id => this.#nodeHTML(positions[id], `${pfx}${safeId(id)}`, fontFamily)).join('')}
       </svg>
     </div>`;
     }
@@ -469,15 +489,20 @@ class CamelRouteDiagram extends HTMLElement {
         fill="var(--crd-edge, #94a3b8)"/>`;
     }
 
-    #nodeHTML(pos, clipId) {
-        const label  = truncate(pos.description ?? pos.code);
+    #nodeHTML(pos, clipId, fontFamily) {
+        // Label starts 30px in (icon zone); keep an 8px margin before the right border.
+        const full   = pos.description ?? pos.code;
+        const label  = fitText(full, NODE_W - 38, 11, fontFamily);
         const stat   = formatStat(pos.statistics);
         const fill   = nodeColor(pos.type);
         const textX  = pos.x + 30;
         const textY  = pos.y + NODE_H / 2 + 4;
+        // Only attach a hover tooltip when the label was actually trimmed (ends with the ellipsis).
+        const title  = label.endsWith('…') ? `<title>${esc(full)}</title>` : '';
 
         return `
       <g role="img" aria-label="${esc(pos.type)}: ${esc(label)}">
+        ${title}
         <rect x="${pos.x}" y="${pos.y}" width="${NODE_W}" height="${NODE_H}"
               rx="6" ry="6" fill="var(--crd-node-bg, #ffffff)"/>
         <rect x="${pos.x}" y="${pos.y}" width="${NODE_W}" height="${NODE_H}"

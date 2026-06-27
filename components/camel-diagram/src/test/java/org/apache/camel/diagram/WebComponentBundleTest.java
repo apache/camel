@@ -77,6 +77,19 @@ class WebComponentBundleTest {
     }
 
     @Test
+    void bundledRouteJsMeasuresTextWithTheConfiguredFont() throws IOException {
+        try (InputStream is = getClass().getClassLoader()
+                .getResourceAsStream("META-INF/resources/camel/diagram/camel-route-diagram.js")) {
+            assertThat(is).isNotNull();
+            String content = new String(is.readAllBytes(), StandardCharsets.UTF_8);
+            assertThat(content)
+                    .as("route labels must be measured with the host font configuration")
+                    .contains("getComputedStyle(this).getPropertyValue('--crd-font')")
+                    .contains("fitText(full, NODE_W - 38, 11, fontFamily)");
+        }
+    }
+
+    @Test
     void topologyBundledJsExistsInClasspath() {
         URL url = getClass().getClassLoader()
                 .getResource("META-INF/resources/camel/diagram/camel-topology-diagram.js");
@@ -116,6 +129,20 @@ class WebComponentBundleTest {
                     .contains("layoutTopology")
                     .contains("addExternalEndpoints")
                     .contains("expandExternalEdges");
+        }
+    }
+
+    @Test
+    void topologyBundledJsMeasuresTextWithTheConfiguredFontAndAllowsBadgeShrinking() throws IOException {
+        try (InputStream is = getClass().getClassLoader()
+                .getResourceAsStream("META-INF/resources/camel/diagram/camel-topology-diagram.js")) {
+            assertThat(is).isNotNull();
+            String content = new String(is.readAllBytes(), StandardCharsets.UTF_8);
+            assertThat(content)
+                    .as("topology labels and metric badges must use the configured font and reserve enough space")
+                    .contains("getComputedStyle(this).getPropertyValue('--ctd-font')")
+                    .contains("measureWidth(metricText, 9, fontFamily)")
+                    .contains("labelMax = NODE_W - 8 - metricWidth - 6 - 30;");
         }
     }
 
