@@ -610,7 +610,7 @@ public class CamelMonitor extends CamelCommand {
             takeScreenshot();
             return true;
         }
-        if (ke.isKey(KeyCode.F1)) {
+        if (ke.isKey(KeyCode.F1) || (!textEditing && ke.isChar('?'))) {
             if (helpOverlay.isVisible()) {
                 helpOverlay.close();
             } else {

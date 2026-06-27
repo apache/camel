@@ -59,7 +59,7 @@ class HelpOverlay {
         if (!visible) {
             return false;
         }
-        if (ke.isCancel() || ke.isChar('q') || ke.isKey(KeyCode.F1)) {
+        if (ke.isCancel() || ke.isChar('q') || ke.isChar('?') || ke.isKey(KeyCode.F1)) {
             close();
             return true;
         }
