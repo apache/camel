@@ -32,11 +32,14 @@ import dev.tamboui.text.Span;
 import dev.tamboui.text.Text;
 import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
+import dev.tamboui.widgets.Clear;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
 import dev.tamboui.widgets.block.Title;
 import dev.tamboui.widgets.input.TextArea;
 import dev.tamboui.widgets.input.TextAreaState;
+import dev.tamboui.widgets.input.TextInput;
+import dev.tamboui.widgets.input.TextInputState;
 import dev.tamboui.widgets.paragraph.Paragraph;
 import dev.tamboui.widgets.table.Cell;
 import dev.tamboui.widgets.table.Row;
@@ -63,6 +66,7 @@ class SqlQueryTab implements MonitorTab {
 
     // results
     private String[] columnNames;
+    private boolean[] columnIsPk;
     private List<JsonObject> resultRows;
     private int rowCount;
     private boolean truncated;
@@ -70,16 +74,38 @@ class SqlQueryTab implements MonitorTab {
     private String errorMessage;
     private Integer updateCount;
 
+    // editability metadata from response
+    private String tableName;
+    private String[] primaryKeys;
+
+    // edit row state
+    private boolean editMode;
+    private int editField;
+    private int editScrollOffset;
+    private TextInputState[] editInputs;
+    private String[] editOriginalValues;
+    private int editRowIndex;
+    private String editUpdateMessage;
+
+    // store last query for re-execution after update
+    private String lastSql;
+    private String lastDsName;
+
     SqlQueryTab(MonitorContext ctx) {
         this.ctx = ctx;
     }
 
     boolean isInputActive() {
-        return focusOnInput;
+        return editMode || focusOnInput;
     }
 
     void handlePaste(String text) {
-        if (focusOnInput) {
+        if (editMode) {
+            if (editInputs != null && editField >= 0 && editField < editInputs.length
+                    && !columnIsPk[editField]) {
+                FormHelper.handlePaste(text, editInputs[editField]);
+            }
+        } else if (focusOnInput) {
             sqlInput.insert(text);
         }
     }
@@ -95,6 +121,7 @@ class SqlQueryTab implements MonitorTab {
             }
         }
         clearResults();
+        closeEditMode();
     }
 
     @Override
@@ -107,6 +134,11 @@ class SqlQueryTab implements MonitorTab {
     public boolean handleKeyEvent(KeyEvent ke) {
         if (executing.get()) {
             return true;
+        }
+
+        // edit mode takes priority
+        if (editMode) {
+            return handleEditKeyEvent(ke);
         }
 
         // history popup takes priority
@@ -146,11 +178,15 @@ class SqlQueryTab implements MonitorTab {
             return true;
         }
 
-        // Enter adds newline in input mode
+        // Enter: newline in input, or open edit in results
         if (ke.isConfirm()) {
             if (focusOnInput) {
                 sqlInput.insert('\n');
                 return true;
+            }
+            // results mode: open edit if editable
+            if (isEditable()) {
+                openEditMode();
             }
             return true;
         }
@@ -222,8 +258,53 @@ class SqlQueryTab implements MonitorTab {
         return true;
     }
 
+    private boolean handleEditKeyEvent(KeyEvent ke) {
+        if (ke.isCancel()) {
+            closeEditMode();
+            return true;
+        }
+
+        // F5 to save changes
+        if (ke.code() == KeyCode.F5) {
+            saveEditedRow();
+            return true;
+        }
+
+        // navigate fields
+        if (ke.isUp()) {
+            moveEditField(-1);
+            return true;
+        }
+        if (ke.isDown() || ke.code() == KeyCode.TAB) {
+            moveEditField(1);
+            return true;
+        }
+
+        // edit current field (only non-PK)
+        if (editField >= 0 && editField < editInputs.length && !columnIsPk[editField]) {
+            FormHelper.handleTextInput(ke, editInputs[editField]);
+        }
+        return true;
+    }
+
+    private void moveEditField(int direction) {
+        int count = columnNames.length;
+        int next = editField;
+        for (int i = 0; i < count; i++) {
+            next = (next + direction + count) % count;
+            if (!columnIsPk[next]) {
+                editField = next;
+                return;
+            }
+        }
+    }
+
     @Override
     public boolean handleEscape() {
+        if (editMode) {
+            closeEditMode();
+            return true;
+        }
         if (sqlHistory.isPopupVisible()) {
             sqlHistory.hidePopup();
             return true;
@@ -268,6 +349,10 @@ class SqlQueryTab implements MonitorTab {
         renderResults(frame, parts.get(1));
 
         sqlHistory.renderPopup(frame, area, "Query History");
+
+        if (editMode) {
+            renderEditPopup(frame, area);
+        }
     }
 
     private void renderInputArea(Frame frame, Rect area, int dsBarH) {
@@ -421,7 +506,11 @@ class SqlQueryTab implements MonitorTab {
     private Cell[] buildHeaderCells() {
         Cell[] cells = new Cell[columnNames.length];
         for (int i = 0; i < columnNames.length; i++) {
-            cells[i] = Cell.from(Span.styled(columnNames[i], Style.EMPTY.fg(Color.YELLOW)));
+            String label = columnNames[i];
+            if (columnIsPk != null && columnIsPk[i]) {
+                label = label + " 🔑";
+            }
+            cells[i] = Cell.from(Span.styled(label, Style.EMPTY.fg(Color.YELLOW)));
         }
         return cells;
     }
@@ -432,6 +521,9 @@ class SqlQueryTab implements MonitorTab {
 
         for (int i = 0; i < colCount; i++) {
             widths[i] = columnNames[i].length();
+            if (columnIsPk != null && columnIsPk[i]) {
+                widths[i] += 3;
+            }
         }
         if (resultRows != null) {
             for (JsonObject row : resultRows) {
@@ -451,9 +543,253 @@ class SqlQueryTab implements MonitorTab {
         return widths;
     }
 
+    // ---- Edit row popup ----
+
+    private boolean isEditable() {
+        return tableName != null && primaryKeys != null && primaryKeys.length > 0
+                && resultRows != null && !resultRows.isEmpty();
+    }
+
+    private void openEditMode() {
+        Integer sel = tableState.selected();
+        if (sel == null || sel < 0 || sel >= resultRows.size()) {
+            return;
+        }
+        editRowIndex = sel;
+        JsonObject row = resultRows.get(sel);
+
+        editInputs = new TextInputState[columnNames.length];
+        editOriginalValues = new String[columnNames.length];
+        for (int i = 0; i < columnNames.length; i++) {
+            Object val = row.get(columnNames[i]);
+            String strVal = val != null ? String.valueOf(val) : "";
+            editOriginalValues[i] = strVal;
+            editInputs[i] = new TextInputState(strVal);
+        }
+
+        // focus on first non-PK field
+        editField = 0;
+        for (int i = 0; i < columnNames.length; i++) {
+            if (!columnIsPk[i]) {
+                editField = i;
+                break;
+            }
+        }
+        editScrollOffset = 0;
+        editUpdateMessage = null;
+        editMode = true;
+    }
+
+    private void closeEditMode() {
+        editMode = false;
+        editInputs = null;
+        editOriginalValues = null;
+        editUpdateMessage = null;
+    }
+
+    private void saveEditedRow() {
+        if (!editMode || editInputs == null || executing.get()) {
+            return;
+        }
+
+        // build changed columns
+        JsonObject colValues = new JsonObject();
+        for (int i = 0; i < columnNames.length; i++) {
+            if (columnIsPk[i]) {
+                continue;
+            }
+            String newVal = editInputs[i].text();
+            if (!newVal.equals(editOriginalValues[i])) {
+                if (newVal.isEmpty()) {
+                    colValues.put(columnNames[i], null);
+                } else {
+                    colValues.put(columnNames[i], newVal);
+                }
+            }
+        }
+
+        if (colValues.isEmpty()) {
+            editUpdateMessage = "No changes";
+            return;
+        }
+
+        // build PK values from the original row
+        JsonObject pkValues = new JsonObject();
+        JsonObject row = resultRows.get(editRowIndex);
+        for (String pk : primaryKeys) {
+            Object val = row.get(pk);
+            if (val != null) {
+                pkValues.put(pk, val);
+            } else {
+                pkValues.put(pk, null);
+            }
+        }
+
+        if (!executing.compareAndSet(false, true)) {
+            return;
+        }
+
+        String dsName = dsNames.isEmpty() ? null : dsNames.get(selectedDs);
+        String pkJson = pkValues.toJson();
+        String colJson = colValues.toJson();
+        String savedSql = lastSql;
+        String savedDs = lastDsName;
+
+        ctx.runner.scheduler().execute(() -> {
+            try {
+                Path outputFile = ctx.getOutputFile(ctx.selectedPid);
+                PathUtils.deleteFile(outputFile);
+
+                JsonObject action = new JsonObject();
+                action.put("action", "sql-update-row");
+                action.put("table", tableName);
+                if (dsName != null) {
+                    action.put("datasource", dsName);
+                }
+                action.put("primaryKeyValues", pkJson);
+                action.put("columnValues", colJson);
+
+                Path actionFile = ctx.getActionFile(ctx.selectedPid);
+                PathUtils.writeTextSafely(action.toJson(), actionFile);
+
+                JsonObject jo = pollJsonResponse(outputFile, 15000);
+                PathUtils.deleteFile(outputFile);
+
+                if (jo == null) {
+                    if (ctx.runner != null) {
+                        ctx.runner.runOnRenderThread(() -> editUpdateMessage = "Timeout");
+                    }
+                    return;
+                }
+
+                String status = jo.getString("status");
+                if ("error".equals(status)) {
+                    String msg = jo.getString("message");
+                    if (ctx.runner != null) {
+                        ctx.runner.runOnRenderThread(() -> editUpdateMessage = "Error: " + msg);
+                    }
+                    return;
+                }
+
+                int uc = jo.getIntegerOrDefault("updateCount", 0);
+                if (ctx.runner != null) {
+                    ctx.runner.runOnRenderThread(() -> {
+                        editUpdateMessage = uc + " row(s) updated";
+                        closeEditMode();
+                    });
+                }
+
+                // re-execute the original query to refresh results
+                if (savedSql != null) {
+                    executeInBackground(ctx.selectedPid, savedSql, savedDs);
+                }
+            } finally {
+                executing.set(false);
+            }
+        });
+    }
+
+    private void renderEditPopup(Frame frame, Rect area) {
+        int colCount = columnNames.length;
+        int labelW = 0;
+        for (String col : columnNames) {
+            labelW = Math.max(labelW, col.length());
+        }
+        labelW += 4;
+
+        int popupW = Math.min(area.width() - 4, Math.max(50, labelW + 30));
+        int visibleRows = Math.min(colCount, area.height() - 6);
+        int popupH = visibleRows + 4;
+        int x = area.left() + Math.max(0, (area.width() - popupW) / 2);
+        int y = area.top() + Math.max(1, (area.height() - popupH) / 2);
+        Rect popup = new Rect(x, y, popupW, popupH);
+
+        frame.renderWidget(Clear.INSTANCE, popup);
+
+        String title = " Edit Row — " + tableName + " ";
+        if (editUpdateMessage != null) {
+            title = " " + editUpdateMessage + " ";
+        }
+
+        Block block = Block.builder()
+                .borderType(BorderType.ROUNDED)
+                .title(Title.from(Line.from(Span.styled(title, Style.EMPTY.fg(Color.YELLOW).bold()))))
+                .build();
+        Rect inner = block.inner(popup);
+        frame.renderWidget(block, popup);
+
+        // adjust scroll to keep focused field visible
+        if (editField < editScrollOffset) {
+            editScrollOffset = editField;
+        } else if (editField >= editScrollOffset + visibleRows) {
+            editScrollOffset = editField - visibleRows + 1;
+        }
+
+        int fieldW = inner.width() - labelW - 1;
+        int end = Math.min(editScrollOffset + visibleRows, colCount);
+        for (int i = editScrollOffset; i < end; i++) {
+            int row = inner.top() + (i - editScrollOffset);
+            boolean isPk = columnIsPk[i];
+            boolean isFocused = (i == editField);
+
+            // column label
+            String label = columnNames[i] + (isPk ? " *" : "  ");
+            Style labelStyle;
+            if (isPk) {
+                labelStyle = Style.EMPTY.fg(Color.DARK_GRAY);
+            } else if (isFocused) {
+                labelStyle = Style.EMPTY.fg(Color.CYAN).bold();
+            } else {
+                labelStyle = Style.EMPTY;
+            }
+            Rect labelArea = new Rect(inner.left(), row, labelW, 1);
+            frame.renderWidget(Paragraph.from(Line.from(
+                    Span.styled(String.format("%" + (labelW - 1) + "s", label) + " ", labelStyle))), labelArea);
+
+            // value field
+            Rect valArea = new Rect(inner.left() + labelW, row, fieldW, 1);
+            if (isPk) {
+                String val = editOriginalValues[i];
+                frame.renderWidget(Paragraph.from(Line.from(
+                        Span.styled(val.isEmpty() ? "null" : val, Style.EMPTY.fg(Color.DARK_GRAY)))), valArea);
+            } else if (isFocused) {
+                boolean changed = !editInputs[i].text().equals(editOriginalValues[i]);
+                Style cursorStyle = changed ? Style.EMPTY.reversed().fg(Color.GREEN) : Style.EMPTY.reversed();
+                TextInput input = TextInput.builder()
+                        .cursorStyle(cursorStyle)
+                        .build();
+                frame.renderStatefulWidget(input, valArea, editInputs[i]);
+            } else {
+                String val = editInputs[i].text();
+                boolean changed = !val.equals(editOriginalValues[i]);
+                Style valStyle = changed ? Style.EMPTY.fg(Color.GREEN) : Style.EMPTY;
+                frame.renderWidget(Paragraph.from(Line.from(
+                        Span.styled(val.isEmpty() ? "null" : val, valStyle))), valArea);
+            }
+        }
+
+        // footer hint inside popup
+        int footerY = inner.top() + visibleRows + 1;
+        if (footerY < popup.bottom() - 1) {
+            Rect footerArea = new Rect(inner.left(), footerY, inner.width(), 1);
+            frame.renderWidget(Paragraph.from(Line.from(
+                    Span.styled(" F5", Style.EMPTY.fg(Color.YELLOW)),
+                    Span.styled("=Save  ", Style.EMPTY.fg(Color.DARK_GRAY)),
+                    Span.styled("Esc", Style.EMPTY.fg(Color.YELLOW)),
+                    Span.styled("=Cancel  ", Style.EMPTY.fg(Color.DARK_GRAY)),
+                    Span.styled("*", Style.EMPTY.fg(Color.DARK_GRAY)),
+                    Span.styled("=Primary Key", Style.EMPTY.fg(Color.DARK_GRAY)))), footerArea);
+        }
+    }
+
     @Override
     public void renderFooter(List<Span> spans) {
-        if (focusOnInput) {
+        if (editMode) {
+            spans.add(Span.styled(" F5", Style.EMPTY.fg(Color.YELLOW)));
+            spans.add(Span.styled("=Save ", Style.EMPTY.fg(Color.DARK_GRAY)));
+            spans.add(Span.styled(" Esc", Style.EMPTY.fg(Color.YELLOW)));
+            spans.add(Span.styled("=Cancel ", Style.EMPTY.fg(Color.DARK_GRAY)));
+        } else if (focusOnInput) {
             spans.add(Span.styled(" F5", Style.EMPTY.fg(Color.YELLOW)));
             spans.add(Span.styled("=Execute ", Style.EMPTY.fg(Color.DARK_GRAY)));
             if (!sqlHistory.isEmpty()) {
@@ -473,6 +809,10 @@ class SqlQueryTab implements MonitorTab {
             spans.add(Span.styled("=Input ", Style.EMPTY.fg(Color.DARK_GRAY)));
             spans.add(Span.styled(" ↑↓", Style.EMPTY.fg(Color.YELLOW)));
             spans.add(Span.styled("=Navigate ", Style.EMPTY.fg(Color.DARK_GRAY)));
+            if (isEditable()) {
+                spans.add(Span.styled(" Enter", Style.EMPTY.fg(Color.YELLOW)));
+                spans.add(Span.styled("=Edit ", Style.EMPTY.fg(Color.DARK_GRAY)));
+            }
         }
     }
 
@@ -492,6 +832,14 @@ class SqlQueryTab implements MonitorTab {
                 - Use **Tab** to toggle focus between input and results table
                 - Use **Esc** to return focus to the input field from results
                 - Use **Ctrl+Left/Right** to switch between DataSources (when multiple exist)
+
+                ## Inline Editing
+                - For simple single-table SELECT queries, press **Enter** on a result row to edit
+                - Primary key columns (marked with *) are read-only
+                - Changed values are highlighted in green
+                - Press **F5** to save changes (executes an UPDATE statement)
+                - Press **Esc** to cancel editing
+                - The query is automatically re-executed after a successful update
 
                 ## Supported Queries
                 - SELECT queries return a result table
@@ -518,6 +866,10 @@ class SqlQueryTab implements MonitorTab {
             root.put("rowCount", rowCount);
             root.put("truncated", truncated);
             root.put("elapsed", elapsed);
+            if (tableName != null) {
+                root.put("tableName", tableName);
+                root.put("editable", true);
+            }
         }
         if (errorMessage != null) {
             root.put("error", errorMessage);
@@ -542,6 +894,8 @@ class SqlQueryTab implements MonitorTab {
         sqlHistory.add(sql);
         String pid = ctx.selectedPid;
         String dsName = dsNames.isEmpty() ? null : dsNames.get(selectedDs);
+        lastSql = sql;
+        lastDsName = dsName;
 
         ctx.runner.scheduler().execute(() -> {
             try {
@@ -614,9 +968,11 @@ class SqlQueryTab implements MonitorTab {
         }
 
         String[] cols = new String[columns.size()];
+        boolean[] isPk = new boolean[columns.size()];
         for (int i = 0; i < columns.size(); i++) {
             JsonObject col = (JsonObject) columns.get(i);
             cols[i] = col.getString("name");
+            isPk[i] = col.getBooleanOrDefault("primaryKey", false);
         }
 
         List<JsonObject> parsedRows = new ArrayList<>();
@@ -628,13 +984,30 @@ class SqlQueryTab implements MonitorTab {
         boolean trunc = jo.getBooleanOrDefault("truncated", false);
         long el = jo.getLongOrDefault("elapsed", 0);
 
+        // editability metadata
+        String tblName = jo.getString("tableName");
+        String[] pks = null;
+        if (tblName != null) {
+            JsonArray pkArr = jo.getCollection("primaryKeys");
+            if (pkArr != null && !pkArr.isEmpty()) {
+                pks = new String[pkArr.size()];
+                for (int i = 0; i < pkArr.size(); i++) {
+                    pks[i] = String.valueOf(pkArr.get(i));
+                }
+            }
+        }
+
+        String[] finalPks = pks;
         if (ctx.runner != null) {
             ctx.runner.runOnRenderThread(() -> {
                 columnNames = cols;
+                columnIsPk = isPk;
                 resultRows = parsedRows;
                 rowCount = rc;
                 truncated = trunc;
                 elapsed = el;
+                tableName = tblName;
+                primaryKeys = finalPks;
                 tableState.select(0);
                 focusOnInput = true;
             });
@@ -643,12 +1016,15 @@ class SqlQueryTab implements MonitorTab {
 
     private void clearResults() {
         columnNames = null;
+        columnIsPk = null;
         resultRows = null;
         rowCount = 0;
         truncated = false;
         elapsed = 0;
         errorMessage = null;
         updateCount = null;
+        tableName = null;
+        primaryKeys = null;
         tableState.select(0);
     }
 }

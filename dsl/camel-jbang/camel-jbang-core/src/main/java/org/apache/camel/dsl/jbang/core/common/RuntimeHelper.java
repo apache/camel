@@ -276,6 +276,25 @@ public final class RuntimeHelper {
         }
     }
 
+    public static JsonObject executeRowUpdate(
+            long pid, String table, String datasource, String pkValuesJson, String colValuesJson) {
+        String result = executeAction(pid, "sql-update-row", root -> {
+            root.put("table", table);
+            if (datasource != null) {
+                root.put("datasource", datasource);
+            }
+            root.put("primaryKeyValues", pkValuesJson);
+            root.put("columnValues", colValuesJson);
+        });
+        try {
+            return (JsonObject) Jsoner.deserialize(result);
+        } catch (Exception e) {
+            JsonObject wrapper = new JsonObject();
+            wrapper.put("result", result);
+            return wrapper;
+        }
+    }
+
     public static JsonObject executeSqlQuery(long pid, String sql, String datasource, int maxRows, int queryTimeout) {
         long timeout = (queryTimeout + 10) * 1000L;
         String result = executeAction(pid, "sql-query", root -> {

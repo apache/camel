@@ -373,6 +373,8 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                 doActionReadmeTask(root);
             } else if ("sql-query".equals(action)) {
                 doActionSqlQueryTask(root);
+            } else if ("sql-update-row".equals(action)) {
+                doActionSqlUpdateRowTask(root);
             } else if ("cli-debug".equals(action)) {
                 doActionCliDebug(root);
             }
@@ -1029,6 +1031,27 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
             }
             args.put("maxRows", String.valueOf(maxRows));
             args.put("queryTimeout", String.valueOf(queryTimeout));
+            JsonObject json = (JsonObject) dc.call(DevConsole.MediaType.JSON, args);
+            LOG.trace("Updating output file: {}", outputFile);
+            IOHelper.writeText(json.toJson(), outputFile);
+        } else {
+            IOHelper.writeText("{}", outputFile);
+        }
+    }
+
+    private void doActionSqlUpdateRowTask(JsonObject root) throws Exception {
+        DevConsole dc = camelContext.getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class)
+                .resolveById("sql-query");
+        if (dc != null) {
+            Map<String, Object> args = new HashMap<>();
+            args.put("actionType", "update-row");
+            args.put("table", root.getString("table"));
+            String datasource = root.getString("datasource");
+            if (datasource != null) {
+                args.put("datasource", datasource);
+            }
+            args.put("primaryKeyValues", root.getString("primaryKeyValues"));
+            args.put("columnValues", root.getString("columnValues"));
             JsonObject json = (JsonObject) dc.call(DevConsole.MediaType.JSON, args);
             LOG.trace("Updating output file: {}", outputFile);
             IOHelper.writeText(json.toJson(), outputFile);

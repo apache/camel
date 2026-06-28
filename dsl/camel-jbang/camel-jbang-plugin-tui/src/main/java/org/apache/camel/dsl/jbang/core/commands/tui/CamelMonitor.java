@@ -3138,6 +3138,19 @@ public class CamelMonitor extends CamelCommand {
         return RuntimeHelper.executeSqlQuery(pid, sql, datasource, maxRows, queryTimeout);
     }
 
+    JsonObject updateRow(String table, String datasource, String pkValuesJson, String colValuesJson) {
+        if (ctx.selectedPid == null) {
+            return null;
+        }
+        long pid;
+        try {
+            pid = Long.parseLong(ctx.selectedPid);
+        } catch (NumberFormatException e) {
+            return null;
+        }
+        return RuntimeHelper.executeRowUpdate(pid, table, datasource, pkValuesJson, colValuesJson);
+    }
+
     String controlIntegration(String action) {
         if (action == null || action.isBlank()) {
             return "Error: action is required";

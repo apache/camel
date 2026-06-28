@@ -458,6 +458,19 @@ class TuiMcpServer {
                                 "Query timeout in seconds (default 30)")),
                 List.of("query")));
         toolList.add(toolDef(
+                "tui_update_row",
+                "Updates a single row in a database table. Use after tui_execute_sql returns "
+                                  + "editable=true with tableName and primaryKeys. Builds and executes "
+                                  + "an UPDATE statement using PreparedStatement for safety.",
+                Map.of("table", propDef("string", "The table name to update"),
+                        "primaryKeyValues", propDef("string",
+                                "JSON object of primary key column-value pairs, e.g. {\"id\": 1}"),
+                        "columnValues", propDef("string",
+                                "JSON object of column-value pairs to update, e.g. {\"name\": \"new\"}"),
+                        "datasource", propDef("string",
+                                "Name of the DataSource bean (auto-detected if only one exists)")),
+                List.of("table", "primaryKeyValues", "columnValues")));
+        toolList.add(toolDef(
                 "tui_set_log_level",
                 "Changes the runtime log level of the selected integration. "
                                      + "This sends a command to the running Camel application to change "
@@ -580,6 +593,7 @@ class TuiMcpServer {
                 case "tui_get_topology" -> callGetTopology();
                 case "tui_send_message" -> callSendMessage(args);
                 case "tui_execute_sql" -> callExecuteSql(args);
+                case "tui_update_row" -> callUpdateRow(args);
                 case "tui_set_log_level" -> callSetLogLevel(args);
                 case "tui_filter" -> callFilter(args);
                 case "tui_toggle_trace_display" -> callToggleTraceDisplay(args);
@@ -1210,6 +1224,27 @@ class TuiMcpServer {
         int maxRows = args.get("maxRows") instanceof Number n ? n.intValue() : 100;
         int queryTimeout = args.get("queryTimeout") instanceof Number n ? n.intValue() : 30;
         JsonObject response = monitor.executeSql(query, datasource, maxRows, queryTimeout);
+        if (response == null) {
+            return "Error: no integration selected or PID unavailable";
+        }
+        return Jsoner.serialize(response);
+    }
+
+    private String callUpdateRow(Map<String, Object> args) {
+        String table = (String) args.get("table");
+        if (table == null || table.isBlank()) {
+            return "Error: table is required";
+        }
+        String pkValues = (String) args.get("primaryKeyValues");
+        if (pkValues == null || pkValues.isBlank()) {
+            return "Error: primaryKeyValues is required (JSON object)";
+        }
+        String colValues = (String) args.get("columnValues");
+        if (colValues == null || colValues.isBlank()) {
+            return "Error: columnValues is required (JSON object)";
+        }
+        String datasource = args.get("datasource") instanceof String s ? s : null;
+        JsonObject response = monitor.updateRow(table, datasource, pkValues, colValues);
         if (response == null) {
             return "Error: no integration selected or PID unavailable";
         }
