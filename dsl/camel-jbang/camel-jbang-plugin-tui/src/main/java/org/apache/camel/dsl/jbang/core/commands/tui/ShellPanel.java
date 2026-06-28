@@ -317,7 +317,7 @@ class ShellPanel {
         return lines;
     }
 
-    private static Line convertRow(long[] buffer, int offset, int width) {
+    static Line convertRow(long[] buffer, int offset, int width) {
         List<Span> spans = new ArrayList<>();
         int col = 0;
         while (col < width) {
@@ -488,7 +488,7 @@ class ShellPanel {
     //   Y: Bit 0=FG set, Bit 1=BG set, Bit 2=Dim, Bit 3=Italic
     //   F: Foreground r-g-b (3 hex nibbles)
     //   B: Background r-g-b (3 hex nibbles)
-    private static Style convertAttrToStyle(long attr) {
+    static Style convertAttrToStyle(long attr) {
         Style style = Style.EMPTY;
 
         int x = (int) ((attr >> 24) & 0xF);
@@ -571,7 +571,7 @@ class ShellPanel {
         };
     }
 
-    private static byte[] encodeKeyEvent(KeyEvent ke) {
+    static byte[] encodeKeyEvent(KeyEvent ke) {
         if (ke.code() == KeyCode.CHAR) {
             char ch = ke.character();
             if (ke.hasCtrl()) {
