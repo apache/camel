@@ -160,13 +160,15 @@ class OverviewTab implements MonitorTab {
 
         boolean hasSparkline = chartMode != CHART_OFF && !throughputHistory.isEmpty() && !ctx.isInfraSelected()
                 && ctx.shellPercent < 50;
-        boolean showInfoPanel = ctx.isInfraSelected() && ctx.findSelectedInfra() != null && !hasSparkline;
+        InfraInfo infraSel = ctx.isInfraSelected() ? ctx.findSelectedInfra() : null;
+        boolean showInfoPanel = infraSel != null && !hasSparkline;
         List<Constraint> constraints = new ArrayList<>();
         constraints.add(Constraint.fill());
         if (hasSparkline) {
             constraints.add(Constraint.length(14));
         } else if (showInfoPanel) {
-            constraints.add(Constraint.length(10));
+            int panelH = countInfraLines(infraSel) + 2;
+            constraints.add(Constraint.length(Math.min(panelH, area.height() / 2)));
         }
         List<Rect> chunks = Layout.vertical()
                 .constraints(constraints)
@@ -573,6 +575,18 @@ class OverviewTab implements MonitorTab {
             lines.add(Line.from(Span.raw("-")));
         }
         frame.renderWidget(Paragraph.builder().text(Text.from(lines)).build(), inner);
+    }
+
+    private static int countInfraLines(InfraInfo infra) {
+        int count = 2; // "Service: ..." + blank line
+        for (Map.Entry<String, Object> e : infra.properties.entrySet()) {
+            if (e.getValue() instanceof Map<?, ?> map) {
+                count += 1 + map.size();
+            } else {
+                count++;
+            }
+        }
+        return count;
     }
 
     private void renderInfraInfoPanel(Frame frame, Rect area, InfraInfo infra) {

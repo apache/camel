@@ -24,6 +24,7 @@ camel get [options]
 | xref:jbang-commands/camel-jbang-get-consumer.adoc[consumer] | Get status of Camel consumers
 | xref:jbang-commands/camel-jbang-get-context.adoc[context] | Get status of Camel integrations
 | xref:jbang-commands/camel-jbang-get-count.adoc[count] | Get total and failed exchanges
+| xref:jbang-commands/camel-jbang-get-datasource.adoc[datasource] | Get status of DataSource connection pools
 | xref:jbang-commands/camel-jbang-get-endpoint.adoc[endpoint] | Get usage of Camel endpoints
 | xref:jbang-commands/camel-jbang-get-error.adoc[error] | Get captured routing errors of Camel integrations
 | xref:jbang-commands/camel-jbang-get-event.adoc[event] | Get latest events of Camel integrations

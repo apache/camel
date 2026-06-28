@@ -82,6 +82,7 @@ class IntegrationInfo {
     final List<MicrometerMeterInfo> meters = new ArrayList<>();
     final List<HttpEndpointInfo> httpEndpoints = new ArrayList<>();
     final List<ConfigurationTab.ConfigProperty> configProperties = new ArrayList<>();
+    final List<DataSourceInfo> dataSources = new ArrayList<>();
     String httpServer;
     String readmeFiles;
 }
