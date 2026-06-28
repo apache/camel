@@ -1731,7 +1731,7 @@ public class CamelMonitor extends CamelCommand {
         screenshotMessage = null;
 
         List<Span> spans = new ArrayList<>();
-        int secondaryFKey = 0;
+        int fKeyTotal = 0;
 
         if (helpOverlay.isVisible()) {
             helpOverlay.renderFooter(spans);
@@ -1761,10 +1761,10 @@ public class CamelMonitor extends CamelCommand {
             MonitorTab tab = activeTab();
 
             if (tabsState.selected() == TAB_OVERVIEW) {
-                secondaryFKey = renderOverviewFooter(spans);
+                fKeyTotal = renderOverviewFooter(spans);
             } else {
                 tab.renderFooter(spans);
-                secondaryFKey = insertFKeyHints(spans);
+                fKeyTotal = insertFKeyHints(spans);
             }
         }
 
@@ -1820,15 +1820,7 @@ public class CamelMonitor extends CamelCommand {
             rightWidth = 0;
             minGap = 0;
             // Drop secondary F-key hints (F2/F3/F6) before tab-specific action hints.
-            // They are inserted at position 2 (after the first tab hint), so the last
-            // secondary F-key pair sits at index (2 + secondaryFKey - 2).
-            while (secondaryFKey > 0 && hintsWidth > area.width()) {
-                int dropIdx = 2 + secondaryFKey - 2;
-                Span labelSpan = spans.remove(dropIdx + 1);
-                Span keySpan = spans.remove(dropIdx);
-                hintsWidth -= keySpan.width() + labelSpan.width();
-                secondaryFKey -= 2;
-            }
+            hintsWidth = dropFKeyHints(spans, fKeyTotal, hintsWidth, area.width());
             // Then drop tab-specific hints from the tail, keeping at least 4 spans
             while (spans.size() > 4 && hintsWidth > area.width()) {
                 Span labelSpan = spans.remove(spans.size() - 1);
@@ -1860,8 +1852,31 @@ public class CamelMonitor extends CamelCommand {
         }
         hint(fKeySpans, "F6", "shell");
         spans.addAll(insertPos, fKeySpans);
-        // Return count of secondary (droppable) spans: F2/F3/F6 only, not F1
-        return fKeySpans.size() - (hasHelp ? 2 : 0);
+        // Return total F-key span count. The footer drop loop uses this to remove pairs from
+        // the tail (F6, then F3, F2), stopping before the first pair (F1 help when present).
+        return fKeySpans.size();
+    }
+
+    /**
+     * Drops secondary F-key hint pairs from an overflowing footer. The F-key pairs are inserted at position 2 (after
+     * the first tab hint), so the last pair's key span sits at index {@code fKeyTotal}. Pairs are removed from the
+     * tail, so F6 goes first, then F3, then F2, and the loop stops at 2 so the first pair (F1 help when present) is
+     * always preserved.
+     *
+     * @param  spans      the footer spans, mutated in place by removing dropped pairs
+     * @param  fKeyTotal  total number of F-key spans that were inserted (e.g. 8 for F1/F2/F3/F6)
+     * @param  hintsWidth the current rendered width of {@code spans}
+     * @param  available  the available footer width
+     * @return            the rendered width of {@code spans} after dropping
+     */
+    static int dropFKeyHints(List<Span> spans, int fKeyTotal, int hintsWidth, int available) {
+        while (fKeyTotal > 2 && hintsWidth > available) {
+            Span labelSpan = spans.remove(fKeyTotal + 1);
+            Span keySpan = spans.remove(fKeyTotal);
+            hintsWidth -= keySpan.width() + labelSpan.width();
+            fKeyTotal -= 2;
+        }
+        return hintsWidth;
     }
 
     private int renderOverviewFooter(List<Span> spans) {
@@ -1870,7 +1885,7 @@ public class CamelMonitor extends CamelCommand {
             return 0;
         }
         overviewTab.renderFooter(spans);
-        int secondaryFKey = insertFKeyHints(spans);
+        int fKeyTotal = insertFKeyHints(spans);
         // Process action hints
         if (ctx.selectedPid != null && !isInfraSelected()) {
             IntegrationInfo selInfo = findSelectedIntegration();
@@ -1891,7 +1906,7 @@ public class CamelMonitor extends CamelCommand {
             hint(spans, "x", "stop");
             hint(spans, "X", "kill");
         }
-        return secondaryFKey;
+        return fKeyTotal;
     }
 
     // ---- Data Loading ----
