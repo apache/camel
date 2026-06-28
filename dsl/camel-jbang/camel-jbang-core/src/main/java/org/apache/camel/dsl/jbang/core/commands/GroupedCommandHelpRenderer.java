@@ -58,7 +58,11 @@ public class GroupedCommandHelpRenderer implements CommandLine.IHelpSectionRende
             for (String name : entry.getValue()) {
                 CommandLine sub = subcommands.get(name);
                 if (sub != null) {
-                    present.add(sub);
+                    // don't print hidden commands (picocli hides them too), but still
+                    // count them as assigned so they don't pop up under "Other"
+                    if (!sub.getCommandSpec().usageMessage().hidden()) {
+                        present.add(sub);
+                    }
                     assigned.add(name);
                 }
             }
@@ -72,7 +76,8 @@ public class GroupedCommandHelpRenderer implements CommandLine.IHelpSectionRende
 
         List<CommandLine> ungrouped = new ArrayList<>();
         for (Map.Entry<String, CommandLine> entry : subcommands.entrySet()) {
-            if (!assigned.contains(entry.getKey())) {
+            if (!assigned.contains(entry.getKey())
+                    && !entry.getValue().getCommandSpec().usageMessage().hidden()) {
                 ungrouped.add(entry.getValue());
             }
         }
