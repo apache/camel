@@ -846,6 +846,16 @@ class SqlQueryTab implements MonitorTab {
     }
 
     @Override
+    public boolean setInputValue(String field, String value) {
+        if ("sql".equals(field)) {
+            sqlInput.setText(value != null ? value : "");
+            focusOnInput = true;
+            return true;
+        }
+        return false;
+    }
+
+    @Override
     public JsonObject getTableDataAsJson() {
         JsonObject root = new JsonObject();
 

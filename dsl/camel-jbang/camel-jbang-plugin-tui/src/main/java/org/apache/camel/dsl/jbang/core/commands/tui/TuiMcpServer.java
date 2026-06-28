@@ -489,6 +489,20 @@ class TuiMcpServer {
                                 "Tab name to filter (e.g. 'Classpath'). If omitted, uses the active tab.")),
                 List.of("filter")));
         toolList.add(toolDef(
+                "tui_set_input",
+                "Sets the value of a text input field on a TUI tab directly, without simulating keystrokes. "
+                                 + "The text appears in the TUI input widget so the user can see it. "
+                                 + "Supported fields by tab: SQL Query (field='sql'), "
+                                 + "HTTP probe (field='path' or 'body'), "
+                                 + "Spans (field='filter'), Classpath (field='filter').",
+                Map.of("field", propDef("string",
+                        "Field name to set: 'sql', 'path', 'body', or 'filter'"),
+                        "value", propDef("string",
+                                "The text value to set in the input field"),
+                        "tab", propDef("string",
+                                "Tab name (e.g. 'SQL Query', 'HTTP'). If omitted, uses the active tab.")),
+                List.of("field", "value")));
+        toolList.add(toolDef(
                 "tui_toggle_trace_display",
                 "Toggles which sections are visible in the History tab's detail view. "
                                             + "Controls what data is shown when inspecting trace steps or history entries.",
@@ -596,6 +610,7 @@ class TuiMcpServer {
                 case "tui_update_row" -> callUpdateRow(args);
                 case "tui_set_log_level" -> callSetLogLevel(args);
                 case "tui_filter" -> callFilter(args);
+                case "tui_set_input" -> callSetInput(args);
                 case "tui_toggle_trace_display" -> callToggleTraceDisplay(args);
                 case "tui_get_readme" -> callGetReadme(args);
                 case "tui_control" -> callControl(args);
@@ -1273,6 +1288,20 @@ class TuiMcpServer {
             return "This tab does not support text filtering";
         }
         return filter.isEmpty() ? "Filter cleared" : "Filter set to: " + filter;
+    }
+
+    private String callSetInput(Map<String, Object> args) {
+        String field = (String) args.get("field");
+        if (field == null || field.isBlank()) {
+            return "Error: field is required";
+        }
+        String value = args.get("value") instanceof String s ? s : "";
+        String tab = args.get("tab") instanceof String s ? s : null;
+        boolean applied = monitor.setTabInputValue(tab, field, value);
+        if (!applied) {
+            return "Error: field '" + field + "' not found on " + (tab != null ? tab : "active") + " tab";
+        }
+        return "Input set: " + field + " = " + (value.length() > 80 ? value.substring(0, 80) + "..." : value);
     }
 
     private String callToggleTraceDisplay(Map<String, Object> args) {

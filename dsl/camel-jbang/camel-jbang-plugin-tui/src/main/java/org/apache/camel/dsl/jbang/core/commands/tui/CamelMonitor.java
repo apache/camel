@@ -3108,6 +3108,14 @@ public class CamelMonitor extends CamelCommand {
         return tab != null && tab.setFilter(filter);
     }
 
+    boolean setTabInputValue(String tabName, String field, String value) {
+        if (tabName != null) {
+            navigateToTab(tabName);
+        }
+        MonitorTab tab = activeTab();
+        return tab != null && tab.setInputValue(field, value);
+    }
+
     String toggleTraceDisplay(String section, Boolean enabled) {
         return historyTab.toggleDisplaySection(section, enabled);
     }

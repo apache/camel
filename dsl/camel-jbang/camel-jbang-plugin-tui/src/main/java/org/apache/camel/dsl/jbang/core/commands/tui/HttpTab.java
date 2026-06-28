@@ -1627,6 +1627,23 @@ class HttpTab implements MonitorTab {
     }
 
     @Override
+    public boolean setInputValue(String field, String value) {
+        if (!probeMode) {
+            return false;
+        }
+        String v = value != null ? value : "";
+        if ("path".equals(field)) {
+            probePathState.setText(v);
+            return true;
+        }
+        if ("body".equals(field)) {
+            probeBodyState.setText(v);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
     public JsonObject getTableDataAsJson() {
         IntegrationInfo info = ctx.findSelectedIntegration();
         if (info == null) {
