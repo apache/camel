@@ -38,6 +38,7 @@ import dev.tamboui.widgets.barchart.BarChart;
 import dev.tamboui.widgets.barchart.BarGroup;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
+import dev.tamboui.widgets.block.Borders;
 import dev.tamboui.widgets.block.Title;
 import dev.tamboui.widgets.paragraph.Paragraph;
 import dev.tamboui.widgets.table.Cell;
@@ -326,7 +327,7 @@ class OverviewTab implements MonitorTab {
                         Constraint.length(12))
                 .highlightStyle(overviewHighlight)
                 .highlightSpacing(Table.HighlightSpacing.ALWAYS)
-                .block(Block.builder().borderType(BorderType.ROUNDED).title(" Overview ").build())
+                .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(" Overview ").build())
                 .build();
 
         frame.renderStatefulWidget(table, chunks.get(0), tableState);
@@ -421,7 +422,7 @@ class OverviewTab implements MonitorTab {
                     .barWidth(1)
                     .barGap(0)
                     .groupGap(0)
-                    .block(Block.builder().borderType(BorderType.ROUNDED)
+                    .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
                             .title(Title.from(titleLine)).build())
                     .build();
 
@@ -485,7 +486,7 @@ class OverviewTab implements MonitorTab {
                 sel = active.get(0);
             }
         }
-        Block infoBlock = Block.builder().borderType(BorderType.ROUNDED).build();
+        Block infoBlock = Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).build();
         frame.renderWidget(infoBlock, area);
         Rect inner = infoBlock.inner(area);
         List<Line> lines = new ArrayList<>();
@@ -590,7 +591,7 @@ class OverviewTab implements MonitorTab {
     }
 
     private void renderInfraInfoPanel(Frame frame, Rect area, InfraInfo infra) {
-        Block infoBlock = Block.builder().borderType(BorderType.ROUNDED).build();
+        Block infoBlock = Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).build();
         frame.renderWidget(infoBlock, area);
         Rect inner = infoBlock.inner(area);
         List<Line> lines = new ArrayList<>();

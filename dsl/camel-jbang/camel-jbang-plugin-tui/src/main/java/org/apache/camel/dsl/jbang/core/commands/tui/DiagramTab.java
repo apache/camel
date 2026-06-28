@@ -33,6 +33,7 @@ import dev.tamboui.text.Text;
 import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
+import dev.tamboui.widgets.block.Borders;
 import dev.tamboui.widgets.paragraph.Paragraph;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonArray;
@@ -376,7 +377,7 @@ class DiagramTab implements MonitorTab {
                         .text(Text.from(Line.from(Span.styled(
                                 "Loading diagram...",
                                 Style.EMPTY.dim()))))
-                        .block(Block.builder().borderType(BorderType.ROUNDED)
+                        .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
                                 .title(" Diagram ").build())
                         .build(),
                 area);
@@ -511,7 +512,7 @@ class DiagramTab implements MonitorTab {
 
         Paragraph paragraph = Paragraph.builder()
                 .text(Text.from(lines))
-                .block(Block.builder().borderType(BorderType.ROUNDED)
+                .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
                         .title(" Info ").build())
                 .build();
         frame.renderWidget(paragraph, area);
@@ -615,7 +616,7 @@ class DiagramTab implements MonitorTab {
 
         Paragraph paragraph = Paragraph.builder()
                 .text(Text.from(lines))
-                .block(Block.builder().borderType(BorderType.ROUNDED)
+                .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
                         .title(" Info ").build())
                 .build();
         frame.renderWidget(paragraph, area);

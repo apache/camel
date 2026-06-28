@@ -35,6 +35,7 @@ import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
+import dev.tamboui.widgets.block.Borders;
 import dev.tamboui.widgets.paragraph.Paragraph;
 import dev.tamboui.widgets.scrollbar.Scrollbar;
 import dev.tamboui.widgets.scrollbar.ScrollbarState;
@@ -143,7 +144,7 @@ class StartupTab implements MonitorTab {
             frame.renderWidget(
                     Paragraph.builder()
                             .text(Text.from(Line.from(Span.styled("  Loading startup data...", LABEL))))
-                            .block(Block.builder().borderType(BorderType.ROUNDED)
+                            .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
                                     .title(" Startup Timeline ").build())
                             .build(),
                     area);
@@ -155,7 +156,7 @@ class StartupTab implements MonitorTab {
                     Paragraph.builder()
                             .text(Text.from(Line.from(
                                     Span.styled("  " + errorMessage, Style.EMPTY.fg(Color.LIGHT_RED)))))
-                            .block(Block.builder().borderType(BorderType.ROUNDED)
+                            .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
                                     .title(" Startup Timeline ").build())
                             .build(),
                     area);
@@ -169,7 +170,7 @@ class StartupTab implements MonitorTab {
                                     Span.styled(
                                             "  No startup data available. The integration may not have a startup recorder enabled.",
                                             LABEL))))
-                            .block(Block.builder().borderType(BorderType.ROUNDED)
+                            .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
                                     .title(" Startup Timeline ").build())
                             .build(),
                     area);
@@ -178,7 +179,7 @@ class StartupTab implements MonitorTab {
 
         String title = String.format(" Startup Timeline — Total: %dms, Steps: %d ", totalDuration, steps.size());
         Block block = Block.builder()
-                .borderType(BorderType.ROUNDED)
+                .borderType(BorderType.ROUNDED).borders(Borders.ALL)
                 .title(title)
                 .build();
         Rect inner = block.inner(area);

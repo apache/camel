@@ -31,6 +31,7 @@ import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.widgets.Clear;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
+import dev.tamboui.widgets.block.Borders;
 import dev.tamboui.widgets.paragraph.Paragraph;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.PathUtils;
@@ -156,7 +157,7 @@ class StopAllPopup {
         Paragraph para = Paragraph.builder()
                 .text(Text.from(Line.from(""), intLine, infraLine))
                 .block(Block.builder()
-                        .borderType(BorderType.ROUNDED)
+                        .borderType(BorderType.ROUNDED).borders(Borders.ALL)
                         .title(" 🛑 Stop All ")
                         .build())
                 .build();

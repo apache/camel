@@ -33,6 +33,7 @@ import dev.tamboui.text.Text;
 import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
+import dev.tamboui.widgets.block.Borders;
 import dev.tamboui.widgets.block.Title;
 import dev.tamboui.widgets.paragraph.Paragraph;
 import dev.tamboui.widgets.sparkline.DualSparkline;
@@ -193,7 +194,7 @@ class CircuitBreakerTab implements MonitorTab {
                         Constraint.fill())
                 .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
                 .highlightSpacing(Table.HighlightSpacing.ALWAYS)
-                .block(Block.builder().borderType(BorderType.ROUNDED).title(" Circuit Breaker ").build())
+                .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(" Circuit Breaker ").build())
                 .build();
 
         frame.renderStatefulWidget(table, chunks.get(0), tableState);
@@ -314,7 +315,7 @@ class CircuitBreakerTab implements MonitorTab {
 
         frame.renderWidget(Paragraph.builder()
                 .text(Text.from(lines))
-                .block(Block.builder().borderType(BorderType.ROUNDED).title(title).build())
+                .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(title).build())
                 .build(), area);
     }
 
@@ -346,7 +347,7 @@ class CircuitBreakerTab implements MonitorTab {
                 Span.styled("░".repeat(empty), Style.EMPTY.dim()));
         frame.renderWidget(Paragraph.builder()
                 .text(Text.from(barLine))
-                .block(Block.builder().borderType(BorderType.ROUNDED).title(" Failure Rate ").build())
+                .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(" Failure Rate ").build())
                 .build(), vSplit.get(0));
 
         LinkedList<Long> successHist = cbSuccessHistory.get(key);
@@ -384,7 +385,7 @@ class CircuitBreakerTab implements MonitorTab {
                 .bottomStyle(Style.EMPTY.fg(Color.LIGHT_RED))
                 .showYAxis(true)
                 .xLabels("-60s", "-45s", "-30s", "-15s", "now")
-                .block(Block.builder().borderType(BorderType.ROUNDED)
+                .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
                         .title(Title.from(chartTitle)).build())
                 .build(), vSplit.get(1));
 
@@ -408,7 +409,7 @@ class CircuitBreakerTab implements MonitorTab {
                 Span.styled("fail:", dim), Span.raw(" " + lastFail));
         frame.renderWidget(Paragraph.builder()
                 .text(Text.from(Line.from(Span.raw("")), metricsLine1, metricsLine2))
-                .block(Block.builder().borderType(BorderType.ROUNDED).build())
+                .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).build())
                 .build(), vSplit.get(2));
     }
 

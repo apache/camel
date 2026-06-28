@@ -40,6 +40,7 @@ import dev.tamboui.tui.event.MouseEvent;
 import dev.tamboui.tui.event.MouseEventKind;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
+import dev.tamboui.widgets.block.Borders;
 import dev.tamboui.widgets.block.Title;
 import dev.tamboui.widgets.paragraph.Paragraph;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
@@ -201,7 +202,7 @@ class ShellPanel {
 
         // Render border matching other tabs
         Block block = Block.builder()
-                .borderType(BorderType.ROUNDED)
+                .borderType(BorderType.ROUNDED).borders(Borders.ALL)
                 .title(Title.from(Line.from(Span.styled(" Shell ", Style.EMPTY.bold()))))
                 .build();
         frame.renderWidget(block, area);

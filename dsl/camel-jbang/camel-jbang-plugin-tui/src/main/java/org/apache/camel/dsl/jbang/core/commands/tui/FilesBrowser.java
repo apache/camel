@@ -36,6 +36,7 @@ import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.widgets.Clear;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
+import dev.tamboui.widgets.block.Borders;
 import dev.tamboui.widgets.block.Title;
 import dev.tamboui.widgets.list.ListItem;
 import dev.tamboui.widgets.list.ListState;
@@ -192,7 +193,7 @@ class FilesBrowser {
                 .highlightSymbol("")
                 .scrollMode(ScrollMode.NONE)
                 .block(Block.builder()
-                        .borderType(BorderType.ROUNDED)
+                        .borderType(BorderType.ROUNDED).borders(Borders.ALL)
                         .title(Title.from(Line
                                 .from(Span.styled(" Files: " + title + " ", Style.EMPTY.fg(Color.YELLOW).bold()))))
                         .build())

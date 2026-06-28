@@ -45,6 +45,7 @@ import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
+import dev.tamboui.widgets.block.Borders;
 import dev.tamboui.widgets.block.Title;
 import dev.tamboui.widgets.paragraph.Paragraph;
 import dev.tamboui.widgets.scrollbar.Scrollbar;
@@ -739,7 +740,7 @@ class HistoryTab implements MonitorTab {
             frame.renderWidget(
                     Paragraph.builder()
                             .text(Text.from(Line.from(Span.styled("No step selected", Style.EMPTY.dim()))))
-                            .block(Block.builder().borderType(BorderType.ROUNDED).title(" Info ").build())
+                            .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(" Info ").build())
                             .build(),
                     area);
             return;
@@ -855,7 +856,7 @@ class HistoryTab implements MonitorTab {
         boolean wordWrap = !diagramTraceSteps.isEmpty() ? traceWordWrap : historyWordWrap;
         Paragraph.Builder pb = Paragraph.builder()
                 .text(Text.from(lines))
-                .block(Block.builder().borderType(BorderType.ROUNDED).title(" Info ").build());
+                .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(" Info ").build());
         if (wordWrap) {
             pb.overflow(Overflow.WRAP_WORD);
         }
@@ -1067,7 +1068,7 @@ class HistoryTab implements MonitorTab {
                         Constraint.fill())
                 .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
                 .highlightSpacing(Table.HighlightSpacing.ALWAYS)
-                .block(Block.builder().borderType(BorderType.ROUNDED).title(traceTitle).build())
+                .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(traceTitle).build())
                 .build();
 
         frame.renderStatefulWidget(table, area, traceTableState);
@@ -1114,7 +1115,7 @@ class HistoryTab implements MonitorTab {
                             .text(Text.from(Line.from(
                                     Span.styled(" Select a trace step to view details",
                                             Style.EMPTY.dim()))))
-                            .block(Block.builder().borderType(BorderType.ROUNDED).build())
+                            .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).build())
                             .build(),
                     area);
             return;
@@ -1219,7 +1220,7 @@ class HistoryTab implements MonitorTab {
                     Paragraph.builder()
                             .text(Text.from(Line.from(
                                     Span.styled("  No steps to display.", Style.EMPTY.dim()))))
-                            .block(Block.builder().borderType(BorderType.ROUNDED)
+                            .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
                                     .title(" Waterfall ").build())
                             .build(),
                     area);
@@ -1242,7 +1243,7 @@ class HistoryTab implements MonitorTab {
 
         String title = String.format(" Waterfall — %d steps ", forward.size());
         Block block = Block.builder()
-                .borderType(BorderType.ROUNDED)
+                .borderType(BorderType.ROUNDED).borders(Borders.ALL)
                 .title(title)
                 .build();
         Rect inner = block.inner(area);
@@ -1384,7 +1385,7 @@ class HistoryTab implements MonitorTab {
                             .text(Text.from(Line.from(
                                     Span.styled(" Select a history entry to view details",
                                             Style.EMPTY.dim()))))
-                            .block(Block.builder().borderType(BorderType.ROUNDED)
+                            .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
                                     .title(" Detail ").build())
                             .build(),
                     area);
@@ -1789,8 +1790,8 @@ class HistoryTab implements MonitorTab {
                 Cell.from(Span.styled("BHPV", Style.EMPTY.bold())),
                 rightCell("ELAPSED", 10, Style.EMPTY.bold()));
         Block block = title instanceof Title t
-                ? Block.builder().borderType(BorderType.ROUNDED).title(t).build()
-                : Block.builder().borderType(BorderType.ROUNDED).title(title.toString()).build();
+                ? Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(t).build()
+                : Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(title.toString()).build();
         return Table.builder()
                 .rows(rows)
                 .header(header)
@@ -1977,7 +1978,7 @@ class HistoryTab implements MonitorTab {
     static void renderDetailPanel(
             Frame frame, Rect area, List<Line> lines,
             boolean wordWrap, int[] hScroll, int[] scroll, ScrollbarState scrollState) {
-        Block block = Block.builder().borderType(BorderType.ROUNDED).build();
+        Block block = Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).build();
         frame.renderWidget(block, area);
 
         Rect inner = block.inner(area);

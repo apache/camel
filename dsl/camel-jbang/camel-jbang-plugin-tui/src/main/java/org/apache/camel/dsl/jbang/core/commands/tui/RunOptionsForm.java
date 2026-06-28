@@ -29,6 +29,7 @@ import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.widgets.Clear;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
+import dev.tamboui.widgets.block.Borders;
 import dev.tamboui.widgets.input.TextInput;
 import dev.tamboui.widgets.input.TextInputState;
 import dev.tamboui.widgets.paragraph.Paragraph;
@@ -422,7 +423,7 @@ class RunOptionsForm {
         }
 
         Block block = Block.builder()
-                .borderType(BorderType.ROUNDED)
+                .borderType(BorderType.ROUNDED).borders(Borders.ALL)
                 .title(title)
                 .build();
         frame.renderWidget(block, popup);
@@ -487,7 +488,7 @@ class RunOptionsForm {
         frame.renderWidget(Clear.INSTANCE, popup);
 
         Block block = Block.builder()
-                .borderType(BorderType.ROUNDED)
+                .borderType(BorderType.ROUNDED).borders(Borders.ALL)
                 .title(" Run: " + exampleTitle + " — Properties (2/2) ")
                 .build();
         frame.renderWidget(block, popup);

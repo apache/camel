@@ -65,6 +65,7 @@ import dev.tamboui.tui.event.TickEvent;
 import dev.tamboui.widgets.Clear;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
+import dev.tamboui.widgets.block.Borders;
 import dev.tamboui.widgets.block.Title;
 import dev.tamboui.widgets.list.ListItem;
 import dev.tamboui.widgets.list.ListState;
@@ -1374,7 +1375,7 @@ public class CamelMonitor extends CamelCommand {
                 .highlightSymbol("")
                 .scrollMode(ScrollMode.NONE)
                 .block(Block.builder()
-                        .borderType(BorderType.ROUNDED)
+                        .borderType(BorderType.ROUNDED).borders(Borders.ALL)
                         .title(Title.from(Line.from(Span.styled(" More Tabs ", Style.EMPTY.fg(Color.YELLOW).bold()))))
                         .build())
                 .build();
@@ -1422,7 +1423,7 @@ public class CamelMonitor extends CamelCommand {
                 .highlightSymbol("")
                 .scrollMode(ScrollMode.NONE)
                 .block(Block.builder()
-                        .borderType(BorderType.ROUNDED)
+                        .borderType(BorderType.ROUNDED).borders(Borders.ALL)
                         .title(Title.from(Line.from(Span.styled(" Switch Integration ", Style.EMPTY.fg(Color.YELLOW).bold()))))
                         .build())
                 .build();
@@ -1711,7 +1712,7 @@ public class CamelMonitor extends CamelCommand {
 
         frame.renderWidget(Clear.INSTANCE, popup);
         Block block = Block.builder()
-                .borderType(BorderType.ROUNDED)
+                .borderType(BorderType.ROUNDED).borders(Borders.ALL)
                 .borderStyle(Style.EMPTY.fg(Color.LIGHT_RED))
                 .title(" Confirm Kill ")
                 .build();

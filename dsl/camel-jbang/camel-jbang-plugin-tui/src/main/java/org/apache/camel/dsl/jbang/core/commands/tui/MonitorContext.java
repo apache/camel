@@ -31,6 +31,7 @@ import dev.tamboui.text.Text;
 import dev.tamboui.tui.TuiRunner;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
+import dev.tamboui.widgets.block.Borders;
 import dev.tamboui.widgets.paragraph.Paragraph;
 import dev.tamboui.widgets.table.Cell;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
@@ -142,7 +143,7 @@ class MonitorContext {
                         .text(Text.from(Line.from(
                                 Span.styled(" Select an integration from the Overview tab (press 1)",
                                         Style.EMPTY.dim()))))
-                        .block(Block.builder().borderType(BorderType.ROUNDED)
+                        .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
                                 .title(" No integration selected ").build())
                         .build(),
                 area);

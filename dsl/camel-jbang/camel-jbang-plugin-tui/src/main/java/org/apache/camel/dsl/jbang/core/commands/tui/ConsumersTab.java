@@ -30,6 +30,7 @@ import dev.tamboui.text.Span;
 import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
+import dev.tamboui.widgets.block.Borders;
 import dev.tamboui.widgets.table.Cell;
 import dev.tamboui.widgets.table.Row;
 import dev.tamboui.widgets.table.Table;
@@ -148,7 +149,7 @@ class ConsumersTab implements MonitorTab {
                         Constraint.length(22),
                         Constraint.length(22),
                         Constraint.fill())
-                .block(Block.builder().borderType(BorderType.ROUNDED)
+                .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
                         .title(" Consumers sort:" + sort + " ").build())
                 .build();
 

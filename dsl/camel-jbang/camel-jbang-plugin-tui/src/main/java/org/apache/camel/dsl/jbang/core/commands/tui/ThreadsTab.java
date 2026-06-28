@@ -35,6 +35,7 @@ import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
+import dev.tamboui.widgets.block.Borders;
 import dev.tamboui.widgets.paragraph.Paragraph;
 import dev.tamboui.widgets.table.Cell;
 import dev.tamboui.widgets.table.Row;
@@ -189,7 +190,8 @@ class ThreadsTab implements MonitorTab {
             frame.renderWidget(
                     Paragraph.builder()
                             .text(Text.from(Line.from(Span.styled(" Loading threads...", Style.EMPTY.dim()))))
-                            .block(Block.builder().borderType(BorderType.ROUNDED).title(" Threads ").build())
+                            .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(" Threads ")
+                                    .build())
                             .build(),
                     area);
             return;
@@ -269,7 +271,7 @@ class ThreadsTab implements MonitorTab {
                         Constraint.length(14))
                 .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
                 .highlightSpacing(Table.HighlightSpacing.ALWAYS)
-                .block(Block.builder().borderType(BorderType.ROUNDED).title(title).build())
+                .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(title).build())
                 .build();
 
         frame.renderStatefulWidget(table, area, tableState);
@@ -281,7 +283,8 @@ class ThreadsTab implements MonitorTab {
             frame.renderWidget(
                     Paragraph.builder()
                             .text(Text.from(Line.from(Span.styled(" Select a thread", Style.EMPTY.dim()))))
-                            .block(Block.builder().borderType(BorderType.ROUNDED).title(" Stack Trace ").build())
+                            .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(" Stack Trace ")
+                                    .build())
                             .build(),
                     area);
             return;
@@ -295,7 +298,7 @@ class ThreadsTab implements MonitorTab {
             frame.renderWidget(
                     Paragraph.builder()
                             .text(Text.from(Line.from(Span.styled(" No stack trace available", Style.EMPTY.dim()))))
-                            .block(Block.builder().borderType(BorderType.ROUNDED).title(title).build())
+                            .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(title).build())
                             .build(),
                     area);
             return;
@@ -322,7 +325,7 @@ class ThreadsTab implements MonitorTab {
         frame.renderWidget(
                 Paragraph.builder()
                         .text(Text.from(lines))
-                        .block(Block.builder().borderType(BorderType.ROUNDED).title(title).build())
+                        .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(title).build())
                         .build(),
                 area);
     }

@@ -42,6 +42,7 @@ import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.widgets.Clear;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
+import dev.tamboui.widgets.block.Borders;
 import dev.tamboui.widgets.block.Title;
 import dev.tamboui.widgets.paragraph.Paragraph;
 import dev.tamboui.widgets.scrollbar.Scrollbar;
@@ -736,7 +737,7 @@ class DiagramSupport {
 
     void renderNativeDiagram(Frame frame, Rect area, Line title, boolean metrics) {
         Block block = Block.builder()
-                .borderType(BorderType.ROUNDED)
+                .borderType(BorderType.ROUNDED).borders(Borders.ALL)
                 .title(Title.from(title))
                 .build();
         frame.renderWidget(block, area);
@@ -830,7 +831,7 @@ class DiagramSupport {
         frame.renderWidget(Clear.INSTANCE, previewRect);
 
         Block previewBlock = Block.builder()
-                .borderType(BorderType.ROUNDED)
+                .borderType(BorderType.ROUNDED).borders(Borders.ALL)
                 .title(Title.from(Line.from(Span.styled(" Route ", Style.EMPTY.dim()))))
                 .build();
         frame.renderWidget(previewBlock, previewRect);
@@ -1209,7 +1210,7 @@ class DiagramSupport {
             Frame frame, Rect area, Line title, boolean metrics,
             String currentRouteId, RouteDiagramLayoutEngine.LayoutRoute routeLayout) {
         Block block = Block.builder()
-                .borderType(BorderType.ROUNDED)
+                .borderType(BorderType.ROUNDED).borders(Borders.ALL)
                 .title(Title.from(title))
                 .build();
         frame.renderWidget(block, area);
@@ -1294,7 +1295,7 @@ class DiagramSupport {
         frame.renderWidget(Clear.INSTANCE, mapRect);
 
         Block mapBlock = Block.builder()
-                .borderType(BorderType.ROUNDED)
+                .borderType(BorderType.ROUNDED).borders(Borders.ALL)
                 .title(Title.from(Line.from(Span.styled(" Map ", Style.EMPTY.dim()))))
                 .build();
         frame.renderWidget(mapBlock, mapRect);
@@ -1652,7 +1653,7 @@ class DiagramSupport {
         }
 
         Block block = Block.builder()
-                .borderType(BorderType.ROUNDED)
+                .borderType(BorderType.ROUNDED).borders(Borders.ALL)
                 .title(Title.from(title))
                 .build();
         frame.renderWidget(block, area);
@@ -1725,7 +1726,7 @@ class DiagramSupport {
         }
 
         Block block = Block.builder()
-                .borderType(BorderType.ROUNDED)
+                .borderType(BorderType.ROUNDED).borders(Borders.ALL)
                 .title(Title.from(title))
                 .build();
         frame.renderWidget(block, area);

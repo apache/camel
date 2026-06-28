@@ -40,6 +40,7 @@ import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
+import dev.tamboui.widgets.block.Borders;
 import dev.tamboui.widgets.input.TextInputState;
 import dev.tamboui.widgets.paragraph.Paragraph;
 import dev.tamboui.widgets.scrollbar.Scrollbar;
@@ -276,7 +277,7 @@ class SpansTab implements MonitorTab {
                             .text(Text.from(Line.from(
                                     Span.styled("  No OTel spans captured. Use --observe flag when running.",
                                             Style.EMPTY.dim()))))
-                            .block(Block.builder().borderType(BorderType.ROUNDED)
+                            .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
                                     .title(" OTel Spans ").build())
                             .build(),
                     area);
@@ -382,7 +383,7 @@ class SpansTab implements MonitorTab {
                         Constraint.length(12),
                         Constraint.length(7))
                 .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
-                .block(Block.builder().borderType(BorderType.ROUNDED).title(title).build())
+                .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(title).build())
                 .build();
         frame.renderStatefulWidget(table, area, traceListState);
     }
@@ -427,7 +428,7 @@ class SpansTab implements MonitorTab {
         String title = String.format(" Trace %s — %d spans, %dms ",
                 shortId(selectedTraceId), nodes.size(), traceDuration);
         Block block = Block.builder()
-                .borderType(BorderType.ROUNDED)
+                .borderType(BorderType.ROUNDED).borders(Borders.ALL)
                 .title(title)
                 .build();
         Rect inner = block.inner(area);
@@ -598,7 +599,7 @@ class SpansTab implements MonitorTab {
         frame.renderWidget(
                 Paragraph.builder()
                         .text(Text.from(lines))
-                        .block(Block.builder().borderType(BorderType.ROUNDED)
+                        .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
                                 .title(dev.tamboui.widgets.block.Title.from(
                                         Line.from(Span.styled(" " + spanLabel(span) + " ", titleStyle))))
                                 .build())

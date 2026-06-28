@@ -35,6 +35,7 @@ import dev.tamboui.text.Text;
 import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
+import dev.tamboui.widgets.block.Borders;
 import dev.tamboui.widgets.paragraph.Paragraph;
 import org.apache.camel.dsl.jbang.core.common.PathUtils;
 import org.apache.camel.util.TimeUtils;
@@ -218,7 +219,7 @@ class MemoryTab implements MonitorTab {
 
         Paragraph paragraph = Paragraph.builder()
                 .text(Text.from(lines))
-                .block(Block.builder().borderType(BorderType.ROUNDED).title(" Memory ").build())
+                .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(" Memory ").build())
                 .build();
 
         frame.renderWidget(paragraph, area);
@@ -233,7 +234,7 @@ class MemoryTab implements MonitorTab {
         if (hist == null || hist.isEmpty()) {
             Paragraph p = Paragraph.builder()
                     .text(Text.from(Line.from(Span.styled("  Collecting heap data...", Style.EMPTY.dim()))))
-                    .block(Block.builder().borderType(BorderType.ROUNDED).title(" Heap Usage ").build())
+                    .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(" Heap Usage ").build())
                     .build();
             frame.renderWidget(p, area);
             return;
@@ -252,7 +253,7 @@ class MemoryTab implements MonitorTab {
         String title = String.format(" Heap Usage (%s / %s committed) ", formatBytes(info.heapMemUsed), formatBytes(ceiling));
 
         // Render the block border first
-        Block block = Block.builder().borderType(BorderType.ROUNDED).title(title).build();
+        Block block = Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(title).build();
         frame.renderWidget(block, area);
         Rect inner = block.inner(area);
 

@@ -35,6 +35,7 @@ import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
+import dev.tamboui.widgets.block.Borders;
 import dev.tamboui.widgets.paragraph.Paragraph;
 import dev.tamboui.widgets.table.Cell;
 import dev.tamboui.widgets.table.Row;
@@ -185,7 +186,7 @@ class BeansTab implements MonitorTab {
             frame.renderWidget(
                     Paragraph.builder()
                             .text(Text.from(Line.from(Span.styled(" Loading beans...", Style.EMPTY.dim()))))
-                            .block(Block.builder().borderType(BorderType.ROUNDED).title(" Beans ").build())
+                            .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(" Beans ").build())
                             .build(),
                     area);
             return;
@@ -240,7 +241,7 @@ class BeansTab implements MonitorTab {
                         Constraint.fill())
                 .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
                 .highlightSpacing(Table.HighlightSpacing.ALWAYS)
-                .block(Block.builder().borderType(BorderType.ROUNDED).title(title).build())
+                .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(title).build())
                 .build();
 
         frame.renderStatefulWidget(table, area, tableState);
@@ -252,7 +253,8 @@ class BeansTab implements MonitorTab {
             frame.renderWidget(
                     Paragraph.builder()
                             .text(Text.from(Line.from(Span.styled(" Select a bean", Style.EMPTY.dim()))))
-                            .block(Block.builder().borderType(BorderType.ROUNDED).title(" Properties ").build())
+                            .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(" Properties ")
+                                    .build())
                             .build(),
                     area);
             return;
@@ -265,7 +267,7 @@ class BeansTab implements MonitorTab {
             frame.renderWidget(
                     Paragraph.builder()
                             .text(Text.from(Line.from(Span.styled(" No properties", Style.EMPTY.dim()))))
-                            .block(Block.builder().borderType(BorderType.ROUNDED).title(title).build())
+                            .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(title).build())
                             .build(),
                     area);
             return;
@@ -297,7 +299,7 @@ class BeansTab implements MonitorTab {
         frame.renderWidget(
                 Paragraph.builder()
                         .text(Text.from(lines))
-                        .block(Block.builder().borderType(BorderType.ROUNDED).title(title).build())
+                        .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(title).build())
                         .build(),
                 area);
     }

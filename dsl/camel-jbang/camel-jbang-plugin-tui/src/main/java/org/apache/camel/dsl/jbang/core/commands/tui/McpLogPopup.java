@@ -32,6 +32,7 @@ import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.widgets.Clear;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
+import dev.tamboui.widgets.block.Borders;
 import dev.tamboui.widgets.block.Title;
 import dev.tamboui.widgets.list.ListItem;
 import dev.tamboui.widgets.list.ListState;
@@ -100,7 +101,7 @@ class McpLogPopup {
 
         if (entries == null || entries.isEmpty()) {
             Block block = Block.builder()
-                    .borderType(BorderType.ROUNDED)
+                    .borderType(BorderType.ROUNDED).borders(Borders.ALL)
                     .title(" MCP Log ")
                     .titleBottom(Title.from(Line.from(
                             Span.styled(" Esc", MonitorContext.HINT_KEY_STYLE), Span.raw(" back "))))
@@ -155,7 +156,7 @@ class McpLogPopup {
                 .highlightSymbol("▸ ")
                 .scrollMode(ScrollMode.AUTO_SCROLL)
                 .block(Block.builder()
-                        .borderType(BorderType.ROUNDED)
+                        .borderType(BorderType.ROUNDED).borders(Borders.ALL)
                         .title(" MCP Log ")
                         .build())
                 .build();
@@ -179,7 +180,7 @@ class McpLogPopup {
         }
 
         Block detailBlock = Block.builder()
-                .borderType(BorderType.ROUNDED)
+                .borderType(BorderType.ROUNDED).borders(Borders.ALL)
                 .title(" Detail ")
                 .build();
         frame.renderWidget(detailBlock, area);

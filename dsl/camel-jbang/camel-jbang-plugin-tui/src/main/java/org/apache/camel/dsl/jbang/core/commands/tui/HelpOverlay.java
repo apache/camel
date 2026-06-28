@@ -28,6 +28,7 @@ import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.widgets.Clear;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
+import dev.tamboui.widgets.block.Borders;
 import dev.tamboui.widgets.block.Title;
 
 import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.hint;
@@ -91,7 +92,7 @@ class HelpOverlay {
         Rect popup = new Rect(area.left() + 2, area.top() + 1, area.width() - 4, area.height() - 2);
 
         Block block = Block.builder()
-                .borderType(BorderType.ROUNDED)
+                .borderType(BorderType.ROUNDED).borders(Borders.ALL)
                 .title(" Help ")
                 .titleBottom(Title.from(Line.from(
                         Span.styled(" F1/?", MonitorContext.HINT_KEY_STYLE), Span.raw(" close "),

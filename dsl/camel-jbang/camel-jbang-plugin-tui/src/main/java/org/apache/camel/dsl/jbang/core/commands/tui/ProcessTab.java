@@ -32,6 +32,7 @@ import dev.tamboui.text.Text;
 import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
+import dev.tamboui.widgets.block.Borders;
 import dev.tamboui.widgets.paragraph.Paragraph;
 import dev.tamboui.widgets.scrollbar.Scrollbar;
 import dev.tamboui.widgets.scrollbar.ScrollbarState;
@@ -136,7 +137,7 @@ class ProcessTab implements MonitorTab {
             }
         }
 
-        Block block = Block.builder().borderType(BorderType.ROUNDED).title(" Process ").build();
+        Block block = Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(" Process ").build();
         frame.renderWidget(block, area);
 
         Rect inner = block.inner(area);
