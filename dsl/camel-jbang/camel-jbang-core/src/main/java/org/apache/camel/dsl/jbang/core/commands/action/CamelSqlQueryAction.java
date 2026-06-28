@@ -32,7 +32,8 @@ import picocli.CommandLine;
                      footer = {
                              "%nExamples:",
                              "  camel cmd sql myApp --query=\"SELECT * FROM orders\"",
-                             "  camel cmd sql myApp --query=\"SELECT * FROM users\" --datasource=myDS --max-rows=50" })
+                             "  camel cmd sql myApp --query=\"SELECT * FROM users\" --datasource=myDS --max-rows=50",
+                             "  camel cmd sql myApp --query=\"file:query.sql\"" })
 public class CamelSqlQueryAction extends ActionBaseCommand {
 
     @CommandLine.Parameters(description = "Name or pid of running Camel integration",
@@ -40,7 +41,7 @@ public class CamelSqlQueryAction extends ActionBaseCommand {
     String name;
 
     @CommandLine.Option(names = { "--query", "--sql" }, required = true,
-                        description = "The SQL query to execute")
+                        description = "The SQL query to execute, or file:<path> to load from a file")
     String query;
 
     @CommandLine.Option(names = { "--datasource" },

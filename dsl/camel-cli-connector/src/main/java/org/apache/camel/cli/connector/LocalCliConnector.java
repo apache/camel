@@ -1021,6 +1021,12 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                 .resolveById("sql-query");
         if (dc != null) {
             String sql = root.getStringOrDefault("sql", "");
+            if (sql.startsWith("file:")) {
+                File f = new File(sql.substring(5));
+                if (f.exists() && f.isFile()) {
+                    sql = Files.readString(f.toPath()).trim();
+                }
+            }
             String datasource = root.getString("datasource");
             int maxRows = root.getIntegerOrDefault("maxRows", 100);
             int queryTimeout = root.getIntegerOrDefault("queryTimeout", 30);

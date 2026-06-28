@@ -16,8 +16,6 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
-import java.io.File;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -904,40 +902,21 @@ class SqlQueryTab implements MonitorTab {
             return;
         }
 
-        // load SQL from file if prefixed with file:
-        if (sql.startsWith("file:")) {
-            String path = sql.substring(5).trim();
-            try {
-                File f = new File(path);
-                if (f.exists() && f.isFile()) {
-                    sql = Files.readString(f.toPath()).trim();
-                    sqlInput.clear();
-                    sqlInput.insert(sql);
-                } else {
-                    errorMessage = "File not found: " + path;
-                    return;
-                }
-            } catch (Exception e) {
-                errorMessage = "Failed to read file: " + e.getMessage();
-                return;
-            }
-        }
         if (!executing.compareAndSet(false, true)) {
             return;
         }
 
         clearResults();
 
-        String finalSql = sql;
-        sqlHistory.add(finalSql);
+        sqlHistory.add(sql);
         String pid = ctx.selectedPid;
         String dsName = dsNames.isEmpty() ? null : dsNames.get(selectedDs);
-        lastSql = finalSql;
+        lastSql = sql;
         lastDsName = dsName;
 
         ctx.runner.scheduler().execute(() -> {
             try {
-                executeInBackground(pid, finalSql, dsName);
+                executeInBackground(pid, sql, dsName);
             } finally {
                 executing.set(false);
             }
