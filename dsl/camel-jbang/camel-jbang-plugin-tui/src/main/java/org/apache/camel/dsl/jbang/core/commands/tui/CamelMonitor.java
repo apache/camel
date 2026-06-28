@@ -610,16 +610,14 @@ public class CamelMonitor extends CamelCommand {
             takeScreenshot();
             return true;
         }
-        if (ke.isKey(KeyCode.F1)) {
-            if (helpOverlay.isVisible()) {
-                helpOverlay.close();
-            } else {
-                MonitorTab tab = activeTab();
-                if (tab != null) {
-                    String help = tab.getHelpText();
-                    if (help != null) {
-                        helpOverlay.open(help);
-                    }
+        if (opensHelp(ke, textEditing)) {
+            // Only opens the overlay: while it is visible, dispatch delegates to
+            // helpOverlay.handleKeyEvent (which handles F1/?/q/Esc to close) before reaching here.
+            MonitorTab tab = activeTab();
+            if (tab != null) {
+                String help = tab.getHelpText();
+                if (help != null) {
+                    helpOverlay.open(help);
                 }
             }
             return true;
@@ -653,6 +651,14 @@ public class CamelMonitor extends CamelCommand {
             return true;
         }
         return false;
+    }
+
+    /**
+     * Whether the key event should open the help overlay. F1 always opens it; '?' opens it too, but only when no text
+     * input is focused, so the character is not swallowed while the user is typing in a search or probe field.
+     */
+    static boolean opensHelp(KeyEvent ke, boolean textEditing) {
+        return ke.isKey(KeyCode.F1) || (!textEditing && ke.isChar('?'));
     }
 
     private boolean handleTabKeys(KeyEvent ke) {

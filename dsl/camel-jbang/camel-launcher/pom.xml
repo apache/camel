@@ -54,7 +54,27 @@
         <httpcore-version>4.4.16</httpcore-version>
         <commons-codec-version>1.22.0</commons-codec-version>
         <jcl-over-slf4j-version>${slf4j-version}</jcl-over-slf4j-version>
+        <commonmark-version>0.28.0</commonmark-version>
     </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <!--
+                This launcher bundles both camel-jbang-plugin-generate and camel-jbang-plugin-tui on a
+                single flat classpath. The generate plugin drags in commonmark 0.21.0 (via openapi-generator),
+                while the tui plugin (via tamboui-markdown) needs commonmark 0.28.0 and its renderer.markdown
+                classes that do not exist in 0.21.0. Without this pin Maven mediation keeps the older 0.21.0
+                core next to the 0.28.0 extensions, which makes the TUI markdown help throw NoClassDefFoundError.
+                Pin the core to 0.28.0 so it matches the commonmark-ext-* modules; openapi-generator only uses
+                the stable Parser/HtmlRenderer APIs, which are unchanged in 0.28.0.
+            -->
+            <dependency>
+                <groupId>org.commonmark</groupId>
+                <artifactId>commonmark</artifactId>
+                <version>${commonmark-version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <dependencies>
         <dependency>

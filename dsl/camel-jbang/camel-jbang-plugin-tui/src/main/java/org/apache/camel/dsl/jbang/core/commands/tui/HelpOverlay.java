@@ -59,7 +59,7 @@ class HelpOverlay {
         if (!visible) {
             return false;
         }
-        if (ke.isCancel() || ke.isChar('q') || ke.isKey(KeyCode.F1)) {
+        if (ke.isCancel() || ke.isChar('q') || ke.isChar('?') || ke.isKey(KeyCode.F1)) {
             close();
             return true;
         }
@@ -94,7 +94,7 @@ class HelpOverlay {
                 .borderType(BorderType.ROUNDED)
                 .title(" Help ")
                 .titleBottom(Title.from(Line.from(
-                        Span.styled(" F1", MonitorContext.HINT_KEY_STYLE), Span.raw(" close "),
+                        Span.styled(" F1/?", MonitorContext.HINT_KEY_STYLE), Span.raw(" close "),
                         Span.styled(" ↑↓", MonitorContext.HINT_KEY_STYLE), Span.raw(" scroll "))))
                 .build();
 
