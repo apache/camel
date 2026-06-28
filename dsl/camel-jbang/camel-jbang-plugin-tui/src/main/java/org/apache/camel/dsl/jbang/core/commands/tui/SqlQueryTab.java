@@ -785,33 +785,24 @@ class SqlQueryTab implements MonitorTab {
     @Override
     public void renderFooter(List<Span> spans) {
         if (editMode) {
-            spans.add(Span.styled(" F5", Style.EMPTY.fg(Color.YELLOW)));
-            spans.add(Span.styled("=Save ", Style.EMPTY.fg(Color.DARK_GRAY)));
-            spans.add(Span.styled(" Esc", Style.EMPTY.fg(Color.YELLOW)));
-            spans.add(Span.styled("=Cancel ", Style.EMPTY.fg(Color.DARK_GRAY)));
+            hint(spans, "F5", "save");
+            hint(spans, "Esc", "cancel");
         } else if (focusOnInput) {
-            spans.add(Span.styled(" F5", Style.EMPTY.fg(Color.YELLOW)));
-            spans.add(Span.styled("=Execute ", Style.EMPTY.fg(Color.DARK_GRAY)));
+            hint(spans, "F5", "execute");
             if (!sqlHistory.isEmpty()) {
-                spans.add(Span.styled(" C-e", Style.EMPTY.fg(Color.YELLOW)));
-                spans.add(Span.styled("=History ", Style.EMPTY.fg(Color.DARK_GRAY)));
+                hint(spans, "C-e", "history");
             }
             if (dsNames.size() > 1) {
-                spans.add(Span.styled(" C-←→", Style.EMPTY.fg(Color.YELLOW)));
-                spans.add(Span.styled("=DataSource ", Style.EMPTY.fg(Color.DARK_GRAY)));
+                hint(spans, "C-←→", "datasource");
             }
             if (resultRows != null && !resultRows.isEmpty()) {
-                spans.add(Span.styled(" Tab", Style.EMPTY.fg(Color.YELLOW)));
-                spans.add(Span.styled("=Results ", Style.EMPTY.fg(Color.DARK_GRAY)));
+                hint(spans, "Tab", "results");
             }
         } else {
-            spans.add(Span.styled(" Tab", Style.EMPTY.fg(Color.YELLOW)));
-            spans.add(Span.styled("=Input ", Style.EMPTY.fg(Color.DARK_GRAY)));
-            spans.add(Span.styled(" ↑↓", Style.EMPTY.fg(Color.YELLOW)));
-            spans.add(Span.styled("=Navigate ", Style.EMPTY.fg(Color.DARK_GRAY)));
+            hint(spans, "Tab", "input");
+            hint(spans, "↑↓", "navigate");
             if (isEditable()) {
-                spans.add(Span.styled(" Enter", Style.EMPTY.fg(Color.YELLOW)));
-                spans.add(Span.styled("=Edit ", Style.EMPTY.fg(Color.DARK_GRAY)));
+                hint(spans, "Enter", "edit");
             }
         }
     }
