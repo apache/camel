@@ -34,6 +34,7 @@ camel cmd [options]
 | xref:jbang-commands/camel-jbang-cmd-route-topology.adoc[route-topology] | Display inter-route topology connections
 | xref:jbang-commands/camel-jbang-cmd-send.adoc[send] | Send messages to endpoints
 | xref:jbang-commands/camel-jbang-cmd-span.adoc[span] | Display OpenTelemetry spans from running Camel integrations
+| xref:jbang-commands/camel-jbang-cmd-sql.adoc[sql] | Execute SQL query on a DataSource
 | xref:jbang-commands/camel-jbang-cmd-start-group.adoc[start-group] | Start Camel route groups
 | xref:jbang-commands/camel-jbang-cmd-start-route.adoc[start-route] | Start Camel routes
 | xref:jbang-commands/camel-jbang-cmd-stop-group.adoc[stop-group] | Stop Camel route groups

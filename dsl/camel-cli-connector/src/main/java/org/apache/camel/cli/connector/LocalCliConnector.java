@@ -371,6 +371,8 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                 doActionReceiveTask(root);
             } else if ("readme".equals(action)) {
                 doActionReadmeTask(root);
+            } else if ("sql-query".equals(action)) {
+                doActionSqlQueryTask(root);
             } else if ("cli-debug".equals(action)) {
                 doActionCliDebug(root);
             }
@@ -1005,6 +1007,29 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
             }
             JsonObject json = (JsonObject) dc.call(DevConsole.MediaType.JSON,
                     Map.of("language", lan, "predicate", predicate, "template", template, "body", body, "headers", map));
+            LOG.trace("Updating output file: {}", outputFile);
+            IOHelper.writeText(json.toJson(), outputFile);
+        } else {
+            IOHelper.writeText("{}", outputFile);
+        }
+    }
+
+    private void doActionSqlQueryTask(JsonObject root) throws Exception {
+        DevConsole dc = camelContext.getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class)
+                .resolveById("sql-query");
+        if (dc != null) {
+            String sql = root.getStringOrDefault("sql", "");
+            String datasource = root.getString("datasource");
+            int maxRows = root.getIntegerOrDefault("maxRows", 100);
+            int queryTimeout = root.getIntegerOrDefault("queryTimeout", 30);
+            Map<String, Object> args = new HashMap<>();
+            args.put("sql", sql);
+            if (datasource != null) {
+                args.put("datasource", datasource);
+            }
+            args.put("maxRows", String.valueOf(maxRows));
+            args.put("queryTimeout", String.valueOf(queryTimeout));
+            JsonObject json = (JsonObject) dc.call(DevConsole.MediaType.JSON, args);
             LOG.trace("Updating output file: {}", outputFile);
             IOHelper.writeText(json.toJson(), outputFile);
         } else {

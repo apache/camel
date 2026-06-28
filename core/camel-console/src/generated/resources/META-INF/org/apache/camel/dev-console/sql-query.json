@@ -1,0 +1,15 @@
+{
+  "console": {
+    "kind": "console",
+    "group": "camel",
+    "name": "sql-query",
+    "title": "SQL Query",
+    "description": "Execute SQL queries on DataSource beans",
+    "deprecated": false,
+    "javaType": "org.apache.camel.impl.console.SqlQueryDevConsole",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-console",
+    "version": "4.21.0-SNAPSHOT"
+  }
+}
+

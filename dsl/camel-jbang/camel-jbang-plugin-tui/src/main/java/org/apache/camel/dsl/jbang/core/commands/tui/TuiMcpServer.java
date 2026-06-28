@@ -444,6 +444,20 @@ class TuiMcpServer {
                         "headers", propDef("string", "Message headers as key=value pairs separated by newlines")),
                 List.of("endpoint")));
         toolList.add(toolDef(
+                "tui_execute_sql",
+                "Executes a SQL query against a DataSource in the selected integration. "
+                                   + "Returns structured JSON with columns, rows, and metadata for SELECT queries, "
+                                   + "or an update count for INSERT/UPDATE/DELETE. "
+                                   + "Requires dev console to be enabled in the running application.",
+                Map.of("query", propDef("string", "The SQL query to execute"),
+                        "datasource", propDef("string",
+                                "Name of the DataSource bean (auto-detected if only one exists)"),
+                        "maxRows", propDef("integer",
+                                "Maximum number of rows to return (default 100)"),
+                        "queryTimeout", propDef("integer",
+                                "Query timeout in seconds (default 30)")),
+                List.of("query")));
+        toolList.add(toolDef(
                 "tui_set_log_level",
                 "Changes the runtime log level of the selected integration. "
                                      + "This sends a command to the running Camel application to change "
@@ -565,6 +579,7 @@ class TuiMcpServer {
                 case "tui_get_history" -> callGetHistory(args);
                 case "tui_get_topology" -> callGetTopology();
                 case "tui_send_message" -> callSendMessage(args);
+                case "tui_execute_sql" -> callExecuteSql(args);
                 case "tui_set_log_level" -> callSetLogLevel(args);
                 case "tui_filter" -> callFilter(args);
                 case "tui_toggle_trace_display" -> callToggleTraceDisplay(args);
@@ -1180,6 +1195,21 @@ class TuiMcpServer {
         String body = args.get("body") instanceof String s ? s : null;
         String headers = args.get("headers") instanceof String s ? s : null;
         JsonObject response = monitor.sendMessage(endpoint, body, headers);
+        if (response == null) {
+            return "Error: no integration selected or PID unavailable";
+        }
+        return Jsoner.serialize(response);
+    }
+
+    private String callExecuteSql(Map<String, Object> args) {
+        String query = (String) args.get("query");
+        if (query == null || query.isBlank()) {
+            return "Error: query is required";
+        }
+        String datasource = args.get("datasource") instanceof String s ? s : null;
+        int maxRows = args.get("maxRows") instanceof Number n ? n.intValue() : 100;
+        int queryTimeout = args.get("queryTimeout") instanceof Number n ? n.intValue() : 30;
+        JsonObject response = monitor.executeSql(query, datasource, maxRows, queryTimeout);
         if (response == null) {
             return "Error: no integration selected or PID unavailable";
         }

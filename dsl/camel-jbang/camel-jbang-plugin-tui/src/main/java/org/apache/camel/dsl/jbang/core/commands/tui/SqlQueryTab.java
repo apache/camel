@@ -1,0 +1,654 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.apache.camel.dsl.jbang.core.commands.tui;
+
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
+
+import dev.tamboui.layout.Constraint;
+import dev.tamboui.layout.Layout;
+import dev.tamboui.layout.Rect;
+import dev.tamboui.style.Color;
+import dev.tamboui.style.Style;
+import dev.tamboui.terminal.Frame;
+import dev.tamboui.text.Line;
+import dev.tamboui.text.Span;
+import dev.tamboui.text.Text;
+import dev.tamboui.tui.event.KeyCode;
+import dev.tamboui.tui.event.KeyEvent;
+import dev.tamboui.widgets.block.Block;
+import dev.tamboui.widgets.block.BorderType;
+import dev.tamboui.widgets.block.Title;
+import dev.tamboui.widgets.input.TextArea;
+import dev.tamboui.widgets.input.TextAreaState;
+import dev.tamboui.widgets.paragraph.Paragraph;
+import dev.tamboui.widgets.table.Cell;
+import dev.tamboui.widgets.table.Row;
+import dev.tamboui.widgets.table.Table;
+import dev.tamboui.widgets.table.TableState;
+import org.apache.camel.dsl.jbang.core.common.PathUtils;
+import org.apache.camel.util.json.JsonArray;
+import org.apache.camel.util.json.JsonObject;
+
+import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.*;
+
+class SqlQueryTab implements MonitorTab {
+
+    private final MonitorContext ctx;
+    private final TextAreaState sqlInput = new TextAreaState();
+    private final TableState tableState = new TableState();
+    private final AtomicBoolean executing = new AtomicBoolean();
+    private final InputHistory sqlHistory = new InputHistory();
+
+    // datasource selection
+    private List<String> dsNames = new ArrayList<>();
+    private int selectedDs;
+    private boolean focusOnInput = true;
+
+    // results
+    private String[] columnNames;
+    private List<JsonObject> resultRows;
+    private int rowCount;
+    private boolean truncated;
+    private long elapsed;
+    private String errorMessage;
+    private Integer updateCount;
+
+    SqlQueryTab(MonitorContext ctx) {
+        this.ctx = ctx;
+    }
+
+    boolean isInputActive() {
+        return focusOnInput;
+    }
+
+    void handlePaste(String text) {
+        if (focusOnInput) {
+            sqlInput.insert(text);
+        }
+    }
+
+    @Override
+    public void onIntegrationChanged() {
+        IntegrationInfo info = ctx.findSelectedIntegration();
+        dsNames.clear();
+        selectedDs = 0;
+        if (info != null) {
+            for (DataSourceInfo ds : info.dataSources) {
+                dsNames.add(ds.name);
+            }
+        }
+        clearResults();
+    }
+
+    @Override
+    public void onTabSelected() {
+        focusOnInput = true;
+        onIntegrationChanged();
+    }
+
+    @Override
+    public boolean handleKeyEvent(KeyEvent ke) {
+        if (executing.get()) {
+            return true;
+        }
+
+        // history popup takes priority
+        if (sqlHistory.isPopupVisible()) {
+            sqlHistory.handleKeyEvent(ke);
+            String selected = sqlHistory.takeSelected();
+            if (selected != null) {
+                sqlInput.clear();
+                sqlInput.insert(selected);
+            }
+            return true;
+        }
+
+        if (ke.isCancel()) {
+            if (!focusOnInput && resultRows != null) {
+                focusOnInput = true;
+                return true;
+            }
+            return false;
+        }
+
+        // F5 to execute query
+        if (focusOnInput && ke.code() == KeyCode.F5) {
+            executeQuery();
+            return true;
+        }
+
+        // Tab to toggle focus between input and results
+        if (ke.code() == KeyCode.TAB && resultRows != null && !resultRows.isEmpty()) {
+            focusOnInput = !focusOnInput;
+            return true;
+        }
+
+        // Ctrl+E to open history popup
+        if (focusOnInput && ke.hasCtrl() && ke.isCharIgnoreCase('e') && !sqlHistory.isEmpty()) {
+            sqlHistory.showPopup();
+            return true;
+        }
+
+        // Enter adds newline in input mode
+        if (ke.isConfirm()) {
+            if (focusOnInput) {
+                sqlInput.insert('\n');
+                return true;
+            }
+            return true;
+        }
+
+        if (focusOnInput) {
+            // datasource cycling with Ctrl+Left/Right
+            if (ke.hasCtrl() && ke.isLeft() && dsNames.size() > 1) {
+                selectedDs = (selectedDs - 1 + dsNames.size()) % dsNames.size();
+                return true;
+            }
+            if (ke.hasCtrl() && ke.isRight() && dsNames.size() > 1) {
+                selectedDs = (selectedDs + 1) % dsNames.size();
+                return true;
+            }
+
+            // cursor movement
+            if (ke.isUp()) {
+                sqlInput.moveCursorUp();
+                return true;
+            }
+            if (ke.isDown()) {
+                sqlInput.moveCursorDown();
+                return true;
+            }
+            if (ke.isLeft()) {
+                sqlInput.moveCursorLeft();
+                return true;
+            }
+            if (ke.isRight()) {
+                sqlInput.moveCursorRight();
+                return true;
+            }
+            if (ke.isHome()) {
+                sqlInput.moveCursorToLineStart();
+                return true;
+            }
+            if (ke.isEnd()) {
+                sqlInput.moveCursorToLineEnd();
+                return true;
+            }
+            if (ke.isDeleteBackward()) {
+                sqlInput.deleteBackward();
+                return true;
+            }
+            if (ke.isDeleteForward()) {
+                sqlInput.deleteForward();
+                return true;
+            }
+
+            // typed character
+            if (ke.code() == KeyCode.CHAR) {
+                sqlInput.insert(ke.character());
+                return true;
+            }
+
+            return true;
+        }
+
+        // results navigation
+        if (ke.isUp()) {
+            navigateUp();
+            return true;
+        }
+        if (ke.isDown()) {
+            navigateDown();
+            return true;
+        }
+
+        return true;
+    }
+
+    @Override
+    public boolean handleEscape() {
+        if (sqlHistory.isPopupVisible()) {
+            sqlHistory.hidePopup();
+            return true;
+        }
+        if (!focusOnInput && resultRows != null) {
+            focusOnInput = true;
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public void navigateUp() {
+        if (!focusOnInput) {
+            tableState.selectPrevious();
+        }
+    }
+
+    @Override
+    public void navigateDown() {
+        if (!focusOnInput && resultRows != null) {
+            tableState.selectNext(resultRows.size());
+        }
+    }
+
+    @Override
+    public void render(Frame frame, Rect area) {
+        if (area.height() < 4) {
+            return;
+        }
+
+        // layout: datasource bar (1 line) + SQL input (5 lines) + results (rest)
+        int inputH = 5;
+        int dsBarH = dsNames.size() > 1 ? 1 : 0;
+        int topH = dsBarH + inputH;
+
+        List<Rect> parts = Layout.vertical()
+                .constraints(Constraint.length(topH), Constraint.min(3))
+                .split(area);
+
+        renderInputArea(frame, parts.get(0), dsBarH);
+        renderResults(frame, parts.get(1));
+
+        sqlHistory.renderPopup(frame, area, "Query History");
+    }
+
+    private void renderInputArea(Frame frame, Rect area, int dsBarH) {
+        if (dsBarH > 0 && area.height() > 0) {
+            Rect dsBar = new Rect(area.x(), area.y(), area.width(), 1);
+            StringBuilder sb = new StringBuilder(" DataSource: ");
+            for (int i = 0; i < dsNames.size(); i++) {
+                if (i == selectedDs) {
+                    sb.append("[").append(dsNames.get(i)).append("]");
+                } else {
+                    sb.append(" ").append(dsNames.get(i)).append(" ");
+                }
+                if (i < dsNames.size() - 1) {
+                    sb.append("  ");
+                }
+            }
+            Style style = focusOnInput ? Style.EMPTY.fg(Color.CYAN) : Style.EMPTY.fg(Color.DARK_GRAY);
+            Paragraph dsLabel = Paragraph.builder()
+                    .text(Text.from(Line.from(Span.styled(sb.toString(), style))))
+                    .build();
+            frame.renderWidget(dsLabel, dsBar);
+        }
+
+        Rect inputRect = new Rect(area.x(), area.y() + dsBarH, area.width(), area.height() - dsBarH);
+
+        String title;
+        if (executing.get()) {
+            title = " Executing... ";
+        } else if (errorMessage != null) {
+            title = " SQL Query (error) ";
+        } else if (updateCount != null) {
+            title = String.format(" SQL Query (%d updated, %dms) ", updateCount, elapsed);
+        } else if (resultRows != null) {
+            title = String.format(" SQL Query (%d row(s), %dms) ", rowCount, elapsed);
+        } else {
+            title = " SQL Query (F5 to execute) ";
+        }
+        Style borderStyle = focusOnInput ? Style.EMPTY.fg(Color.CYAN) : Style.EMPTY.fg(Color.DARK_GRAY);
+        Block inputBlock = Block.builder()
+                .title(Title.from(title))
+                .borderType(BorderType.ROUNDED)
+                .borderStyle(borderStyle)
+                .build();
+        Rect inner = inputBlock.inner(inputRect);
+        frame.renderWidget(inputBlock, inputRect);
+
+        TextArea textArea = TextArea.builder()
+                .cursorStyle(Style.EMPTY.reversed())
+                .placeholder("Type SQL query here...")
+                .build();
+        if (focusOnInput) {
+            textArea.renderWithCursor(inner, frame.buffer(), sqlInput, frame);
+        } else {
+            textArea.render(inner, frame.buffer(), sqlInput);
+        }
+    }
+
+    private void renderResults(Frame frame, Rect area) {
+        if (errorMessage != null) {
+            Block errBlock = Block.builder()
+                    .title(Title.from(" Error "))
+                    .borderType(BorderType.ROUNDED)
+                    .borderStyle(Style.EMPTY.fg(Color.RED))
+                    .build();
+            Rect inner = errBlock.inner(area);
+            frame.renderWidget(errBlock, area);
+            Paragraph errText = Paragraph.builder()
+                    .text(Text.from(Line.from(Span.styled(errorMessage, Style.EMPTY.fg(Color.RED)))))
+                    .build();
+            frame.renderWidget(errText, inner);
+            return;
+        }
+
+        if (updateCount != null) {
+            Block ucBlock = Block.builder()
+                    .title(Title.from(" Result "))
+                    .borderType(BorderType.ROUNDED)
+                    .borderStyle(Style.EMPTY.fg(Color.GREEN))
+                    .build();
+            Rect inner = ucBlock.inner(area);
+            frame.renderWidget(ucBlock, area);
+            String msg = String.format("Update count: %d  (%dms)", updateCount, elapsed);
+            Paragraph ucText = Paragraph.builder()
+                    .text(Text.from(Line.from(Span.styled(msg, Style.EMPTY.fg(Color.GREEN)))))
+                    .build();
+            frame.renderWidget(ucText, inner);
+            return;
+        }
+
+        if (columnNames == null || resultRows == null) {
+            Block emptyBlock = Block.builder()
+                    .title(Title.from(" Results "))
+                    .borderType(BorderType.ROUNDED)
+                    .borderStyle(Style.EMPTY.fg(Color.DARK_GRAY))
+                    .build();
+            Rect inner = emptyBlock.inner(area);
+            frame.renderWidget(emptyBlock, area);
+
+            String hint = dsNames.isEmpty()
+                    ? "No DataSource available"
+                    : "Type a SQL query and press F5 to execute";
+            Paragraph hintText = Paragraph.builder()
+                    .text(Text.from(Line.from(Span.styled(hint, Style.EMPTY.fg(Color.DARK_GRAY)))))
+                    .build();
+            frame.renderWidget(hintText, inner);
+            return;
+        }
+
+        // build result table
+        String resultTitle = String.format(" %d row(s)%s  %dms ",
+                rowCount, truncated ? " (truncated)" : "", elapsed);
+        Style tableBorderStyle = !focusOnInput ? Style.EMPTY.fg(Color.CYAN) : Style.EMPTY.fg(Color.DARK_GRAY);
+        Block tableBlock = Block.builder()
+                .title(Title.from(resultTitle))
+                .borderType(BorderType.ROUNDED)
+                .borderStyle(tableBorderStyle)
+                .build();
+
+        int[] widths = computeColumnWidths(area.width() - 2);
+
+        Row header = Row.from(buildHeaderCells());
+        header.style(Style.EMPTY.fg(Color.YELLOW));
+
+        List<Row> dataRows = new ArrayList<>();
+        for (JsonObject row : resultRows) {
+            List<Cell> cells = new ArrayList<>();
+            for (String col : columnNames) {
+                Object val = row.get(col);
+                String s = val != null ? String.valueOf(val) : "null";
+                Style style = val == null ? Style.EMPTY.fg(Color.DARK_GRAY) : Style.EMPTY.fg(Color.WHITE);
+                cells.add(Cell.from(Span.styled(s, style)));
+            }
+            dataRows.add(Row.from(cells));
+        }
+
+        Constraint[] colConstraints = new Constraint[widths.length];
+        for (int i = 0; i < widths.length; i++) {
+            colConstraints[i] = Constraint.length(widths[i]);
+        }
+
+        Table table = Table.builder()
+                .header(header)
+                .rows(dataRows)
+                .widths(colConstraints)
+                .block(tableBlock)
+                .highlightStyle(Style.EMPTY.bg(Color.DARK_GRAY))
+                .build();
+        frame.renderStatefulWidget(table, area, tableState);
+    }
+
+    private Cell[] buildHeaderCells() {
+        Cell[] cells = new Cell[columnNames.length];
+        for (int i = 0; i < columnNames.length; i++) {
+            cells[i] = Cell.from(Span.styled(columnNames[i], Style.EMPTY.fg(Color.YELLOW)));
+        }
+        return cells;
+    }
+
+    private int[] computeColumnWidths(int availableWidth) {
+        int colCount = columnNames.length;
+        int[] widths = new int[colCount];
+
+        for (int i = 0; i < colCount; i++) {
+            widths[i] = columnNames[i].length();
+        }
+        if (resultRows != null) {
+            for (JsonObject row : resultRows) {
+                for (int i = 0; i < colCount; i++) {
+                    Object val = row.get(columnNames[i]);
+                    int len = val != null ? String.valueOf(val).length() : 4;
+                    widths[i] = Math.max(widths[i], len);
+                }
+            }
+        }
+
+        // cap each column to reasonable max
+        int maxColWidth = Math.max(10, availableWidth / Math.max(1, colCount));
+        for (int i = 0; i < colCount; i++) {
+            widths[i] = Math.min(widths[i] + 2, maxColWidth);
+        }
+        return widths;
+    }
+
+    @Override
+    public void renderFooter(List<Span> spans) {
+        if (focusOnInput) {
+            spans.add(Span.styled(" F5", Style.EMPTY.fg(Color.YELLOW)));
+            spans.add(Span.styled("=Execute ", Style.EMPTY.fg(Color.DARK_GRAY)));
+            if (!sqlHistory.isEmpty()) {
+                spans.add(Span.styled(" C-e", Style.EMPTY.fg(Color.YELLOW)));
+                spans.add(Span.styled("=History ", Style.EMPTY.fg(Color.DARK_GRAY)));
+            }
+            if (dsNames.size() > 1) {
+                spans.add(Span.styled(" C-←→", Style.EMPTY.fg(Color.YELLOW)));
+                spans.add(Span.styled("=DataSource ", Style.EMPTY.fg(Color.DARK_GRAY)));
+            }
+            if (resultRows != null && !resultRows.isEmpty()) {
+                spans.add(Span.styled(" Tab", Style.EMPTY.fg(Color.YELLOW)));
+                spans.add(Span.styled("=Results ", Style.EMPTY.fg(Color.DARK_GRAY)));
+            }
+        } else {
+            spans.add(Span.styled(" Tab", Style.EMPTY.fg(Color.YELLOW)));
+            spans.add(Span.styled("=Input ", Style.EMPTY.fg(Color.DARK_GRAY)));
+            spans.add(Span.styled(" ↑↓", Style.EMPTY.fg(Color.YELLOW)));
+            spans.add(Span.styled("=Navigate ", Style.EMPTY.fg(Color.DARK_GRAY)));
+        }
+    }
+
+    @Override
+    public String getHelpText() {
+        return """
+                # SQL Query
+
+                Execute SQL queries against DataSource beans registered in the Camel application.
+
+                ## Usage
+                - Type a SQL query in the input field and press **F5** to execute
+                - Use **Enter** for new lines in the query
+                - Use **Up/Down** arrows to move cursor within the query
+                - Paste multi-line queries from clipboard
+                - Use **Ctrl+E** to open query history (select with Enter, dismiss with Esc)
+                - Use **Tab** to toggle focus between input and results table
+                - Use **Esc** to return focus to the input field from results
+                - Use **Ctrl+Left/Right** to switch between DataSources (when multiple exist)
+
+                ## Supported Queries
+                - SELECT queries return a result table
+                - INSERT, UPDATE, DELETE return an update count
+                - Any valid SQL supported by the underlying database
+
+                ## Safety
+                - Results are limited to 100 rows by default
+                - Query timeout is 30 seconds by default
+                - This feature is only available when dev console is enabled (dev profile)
+                """;
+    }
+
+    @Override
+    public JsonObject getTableDataAsJson() {
+        JsonObject root = new JsonObject();
+        if (columnNames != null && resultRows != null) {
+            JsonArray cols = new JsonArray();
+            for (String col : columnNames) {
+                cols.add(col);
+            }
+            root.put("columns", cols);
+            root.put("rows", new JsonArray(resultRows));
+            root.put("rowCount", rowCount);
+            root.put("truncated", truncated);
+            root.put("elapsed", elapsed);
+        }
+        if (errorMessage != null) {
+            root.put("error", errorMessage);
+        }
+        if (updateCount != null) {
+            root.put("updateCount", updateCount);
+        }
+        return root;
+    }
+
+    private void executeQuery() {
+        String sql = sqlInput.text().trim();
+        if (sql.isEmpty() || ctx.selectedPid == null || ctx.runner == null) {
+            return;
+        }
+        if (!executing.compareAndSet(false, true)) {
+            return;
+        }
+
+        clearResults();
+
+        sqlHistory.add(sql);
+        String pid = ctx.selectedPid;
+        String dsName = dsNames.isEmpty() ? null : dsNames.get(selectedDs);
+
+        ctx.runner.scheduler().execute(() -> {
+            try {
+                executeInBackground(pid, sql, dsName);
+            } finally {
+                executing.set(false);
+            }
+        });
+    }
+
+    private void executeInBackground(String pid, String sql, String dsName) {
+        Path outputFile = ctx.getOutputFile(pid);
+        PathUtils.deleteFile(outputFile);
+
+        JsonObject root = new JsonObject();
+        root.put("action", "sql-query");
+        root.put("sql", sql);
+        if (dsName != null) {
+            root.put("datasource", dsName);
+        }
+        root.put("maxRows", 100);
+        root.put("queryTimeout", 30);
+
+        Path actionFile = ctx.getActionFile(pid);
+        PathUtils.writeTextSafely(root.toJson(), actionFile);
+
+        JsonObject jo = pollJsonResponse(outputFile, 35000);
+        PathUtils.deleteFile(outputFile);
+
+        if (jo == null) {
+            if (ctx.runner != null) {
+                ctx.runner.runOnRenderThread(() -> {
+                    errorMessage = "Timeout waiting for query response";
+                });
+            }
+            return;
+        }
+
+        String status = jo.getString("status");
+        if ("error".equals(status)) {
+            String msg = jo.getString("message");
+            if (ctx.runner != null) {
+                ctx.runner.runOnRenderThread(() -> {
+                    errorMessage = msg;
+                    elapsed = jo.getLongOrDefault("elapsed", 0);
+                });
+            }
+            return;
+        }
+
+        // update count result
+        if (jo.containsKey("updateCount")) {
+            int uc = jo.getInteger("updateCount");
+            long el = jo.getLongOrDefault("elapsed", 0);
+            if (ctx.runner != null) {
+                ctx.runner.runOnRenderThread(() -> {
+                    updateCount = uc;
+                    elapsed = el;
+                    focusOnInput = true;
+                });
+            }
+            return;
+        }
+
+        // SELECT result
+        JsonArray columns = jo.getCollection("columns");
+        JsonArray rows = jo.getCollection("rows");
+        if (columns == null || rows == null) {
+            return;
+        }
+
+        String[] cols = new String[columns.size()];
+        for (int i = 0; i < columns.size(); i++) {
+            JsonObject col = (JsonObject) columns.get(i);
+            cols[i] = col.getString("name");
+        }
+
+        List<JsonObject> parsedRows = new ArrayList<>();
+        for (Object rowObj : rows) {
+            parsedRows.add((JsonObject) rowObj);
+        }
+
+        int rc = jo.getIntegerOrDefault("rowCount", parsedRows.size());
+        boolean trunc = jo.getBooleanOrDefault("truncated", false);
+        long el = jo.getLongOrDefault("elapsed", 0);
+
+        if (ctx.runner != null) {
+            ctx.runner.runOnRenderThread(() -> {
+                columnNames = cols;
+                resultRows = parsedRows;
+                rowCount = rc;
+                truncated = trunc;
+                elapsed = el;
+                tableState.select(0);
+                focusOnInput = true;
+            });
+        }
+    }
+
+    private void clearResults() {
+        columnNames = null;
+        resultRows = null;
+        rowCount = 0;
+        truncated = false;
+        elapsed = 0;
+        errorMessage = null;
+        updateCount = null;
+        tableState.select(0);
+    }
+}
