@@ -49,6 +49,7 @@ import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.support.EventDrivenPollingConsumer;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.cache.DefaultConsumerCache;
+import org.apache.camel.support.cache.EmptyConsumerCache;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
@@ -168,7 +169,7 @@ public class PollEnricher extends BaseProcessorSupport implements IdAware, Route
     }
 
     public EndpointUtilizationStatistics getEndpointUtilizationStatistics() {
-        return consumerCache != null ? consumerCache.getEndpointUtilizationStatistics() : null;
+        return consumerCache.getEndpointUtilizationStatistics();
     }
 
     public AggregationStrategy getAggregationStrategy() {
@@ -313,13 +314,8 @@ public class PollEnricher extends BaseProcessorSupport implements IdAware, Route
                 prototype = false;
             }
 
-            // acquire the consumer, either from cache or create a new one
-            if (consumerCache != null) {
-                consumer = consumerCache.acquirePollingConsumer(endpoint);
-            } else {
-                consumer = endpoint.createPollingConsumer();
-                ServiceHelper.startService(consumer);
-            }
+            // acquire the consumer from the cache
+            consumer = consumerCache.acquirePollingConsumer(endpoint);
         } catch (Exception e) {
             if (isIgnoreInvalidEndpoint()) {
                 if (LOG.isDebugEnabled()) {
@@ -366,13 +362,8 @@ public class PollEnricher extends BaseProcessorSupport implements IdAware, Route
             callback.done(true);
             return true;
         } finally {
-            if (consumerCache != null) {
-                // return the consumer back to the cache
-                consumerCache.releasePollingConsumer(endpoint, consumer);
-            } else {
-                // consumer cache disabled, stop the consumer immediately
-                ServiceHelper.stopAndShutdownService(consumer);
-            }
+            // return the consumer back to the cache
+            consumerCache.releasePollingConsumer(endpoint, consumer);
             // and stop prototype endpoints
             if (prototype) {
                 ServiceHelper.stopAndShutdownService(endpoint);
@@ -553,10 +544,15 @@ public class PollEnricher extends BaseProcessorSupport implements IdAware, Route
 
     @Override
     protected void doBuild() throws Exception {
-        if (consumerCache == null && cacheSize >= 0) {
-            // create consumer cache if we use dynamic expressions for computing the endpoints to poll
-            consumerCache = new DefaultConsumerCache(this, camelContext, cacheSize);
-            LOG.debug("PollEnrich {} using ConsumerCache with cacheSize={}", this, cacheSize);
+        if (consumerCache == null) {
+            if (cacheSize < 0) {
+                consumerCache = new EmptyConsumerCache(this, camelContext);
+                LOG.debug("PollEnrich {} is not using ConsumerCache", this);
+            } else {
+                // create consumer cache if we use dynamic expressions for computing the endpoints to poll
+                consumerCache = new DefaultConsumerCache(this, camelContext, cacheSize);
+                LOG.debug("PollEnrich {} using ConsumerCache with cacheSize={}", this, cacheSize);
+            }
         }
         if (aggregationStrategy == null) {
             aggregationStrategy = new CopyAggregationStrategy();
