@@ -856,6 +856,16 @@ class SqlQueryTab implements MonitorTab {
     @Override
     public JsonObject getTableDataAsJson() {
         JsonObject root = new JsonObject();
+
+        // current input state
+        String sql = sqlInput.text().trim();
+        if (!sql.isEmpty()) {
+            root.put("sql", sql);
+        }
+        if (!dsNames.isEmpty()) {
+            root.put("datasource", dsNames.get(selectedDs));
+        }
+
         if (columnNames != null && resultRows != null) {
             JsonArray cols = new JsonArray();
             for (String col : columnNames) {
@@ -866,9 +876,20 @@ class SqlQueryTab implements MonitorTab {
             root.put("rowCount", rowCount);
             root.put("truncated", truncated);
             root.put("elapsed", elapsed);
+            Integer sel = tableState.selected();
+            if (sel != null && sel >= 0 && sel < resultRows.size()) {
+                root.put("selectedIndex", sel);
+            }
             if (tableName != null) {
                 root.put("tableName", tableName);
                 root.put("editable", true);
+                if (primaryKeys != null) {
+                    JsonArray pkArr = new JsonArray();
+                    for (String pk : primaryKeys) {
+                        pkArr.add(pk);
+                    }
+                    root.put("primaryKeys", pkArr);
+                }
             }
         }
         if (errorMessage != null) {
@@ -876,6 +897,9 @@ class SqlQueryTab implements MonitorTab {
         }
         if (updateCount != null) {
             root.put("updateCount", updateCount);
+        }
+        if (executing.get()) {
+            root.put("executing", true);
         }
         return root;
     }
