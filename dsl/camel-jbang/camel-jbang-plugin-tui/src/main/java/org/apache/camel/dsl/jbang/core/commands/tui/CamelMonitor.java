@@ -979,6 +979,11 @@ public class CamelMonitor extends CamelCommand {
             return;
         }
 
+        if (area.width() < MIN_WIDTH || area.height() < MIN_HEIGHT) {
+            renderTooSmall(frame, area);
+            return;
+        }
+
         // Layout: header (1 row) + spacer (1 row) + tabs (2 rows) + spacer (1 row) + content (fill) + footer (1 row)
         List<Rect> mainChunks = Layout.vertical()
                 .constraints(
