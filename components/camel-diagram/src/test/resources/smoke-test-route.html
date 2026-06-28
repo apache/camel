@@ -25,7 +25,7 @@
 
     cd components/camel-diagram/src/
     python3 -m http.server 8080
-    open http://localhost:8080/test/resources/smoke-test.html
+    open http://localhost:8080/test/resources/smoke-test-route.html
 
   All data is mocked — no running Camel instance needed.
 -->
@@ -313,6 +313,34 @@
       text-transform: uppercase;
     }
 
+    /* ─── Theme switch (segmented control) ─── */
+    .theme-switch {
+      display: inline-flex;
+      gap: 2px;
+      padding: 2px;
+      background: rgba(255,255,255,.1);
+      border: 1px solid rgba(255,255,255,.18);
+      border-radius: 99px;
+    }
+    .theme-switch button {
+      appearance: none;
+      border: 0;
+      background: transparent;
+      color: rgba(255,255,255,.75);
+      font: inherit;
+      font-size: .72rem;
+      font-weight: 600;
+      padding: 3px 11px;
+      border-radius: 99px;
+      cursor: pointer;
+      transition: background .15s, color .15s;
+    }
+    .theme-switch button:hover { color: var(--camel-white); }
+    .theme-switch button.active {
+      background: var(--camel-orange);
+      color: var(--camel-white);
+    }
+
     /* ─── Hero ─── */
     .hero {
       background: var(--camel-navy);
@@ -421,6 +449,17 @@
     .card-body         { padding: 1rem; }
     .card-body.dark-bg { background: #0f172a; padding: .75rem; }
 
+    /* ─── Header-driven theme override ───
+       Drives the diagram sections that are not the self-documenting demo cards.
+       "os" sets nothing, so the component falls back to prefers-color-scheme. */
+    body[data-theme="light"] .themed-diagram {
+      --crd-bg: #ffffff; --crd-fg: #1e293b; --crd-edge: #94a3b8;
+    }
+    body[data-theme="dark"] .themed-diagram {
+      --crd-bg: #0f172a; --crd-fg: #e2e8f0; --crd-edge: #475569;
+    }
+    body[data-theme="dark"] .card-body.themed-diagram { background: #0f172a; }
+
     /* ─── Grids ─── */
     .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
     .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; }
@@ -445,7 +484,7 @@
     }
   </style>
 </head>
-<body>
+<body data-theme="os">
 
 <!-- ─── Navigation ─── -->
 <nav class="site-nav" aria-label="Site navigation">
@@ -464,6 +503,11 @@
     <a href="#kafka">Long URI</a>
     <a href="#multi">Multi-Route</a>
   </nav>
+  <div class="theme-switch" role="group" aria-label="Diagram theme">
+    <button type="button" data-theme="light" aria-pressed="false">Light</button>
+    <button type="button" data-theme="dark" aria-pressed="false">Dark</button>
+    <button type="button" data-theme="os" class="active" aria-pressed="true">OS</button>
+  </div>
   <span class="badge-pill">Smoke Test</span>
 </nav>
 
@@ -477,7 +521,7 @@
     </p>
     <span class="hero-hint">
       cd components/camel-diagram/src/<br>
-      python3 -m http.server 8080 &amp;&amp; open http://localhost:8080/test/resources/smoke-test.html
+      python3 -m http.server 8080 &amp;&amp; open http://localhost:8080/test/resources/smoke-test-route.html
     </span>
   </div>
 </header>
@@ -539,6 +583,19 @@
       </div>
 
     </div>
+
+    <div class="card" style="margin-top: 1rem;">
+      <div class="card-header">
+        <h3>Custom font</h3>
+        <p>
+          Override via <code>style="--crd-font: 'Courier New', monospace"</code> to verify that text measurement
+          matches the font actually used by the SVG.
+        </p>
+      </div>
+      <div class="card-body diagram-scroll">
+        <camel-route-diagram src="/mock/simple" style="--crd-font: 'Courier New', monospace;"></camel-route-diagram>
+      </div>
+    </div>
   </section>
 
   <!-- ══════════════════════════════════════════════════════
@@ -558,7 +615,7 @@
           and that the post-choice <code>log</code> node reconnects from the <code>choice</code> merge point.
         </p>
       </div>
-      <div class="card-body diagram-scroll">
+      <div class="card-body diagram-scroll themed-diagram">
         <camel-route-diagram src="/mock/content-router"></camel-route-diagram>
       </div>
     </div>
@@ -583,7 +640,7 @@
           Mirrors the <code>testChoiceInsideDoTryNoSpuriousMergeConnection</code> layout-engine test.
         </p>
       </div>
-      <div class="card-body diagram-scroll">
+      <div class="card-body diagram-scroll themed-diagram">
         <camel-route-diagram src="/mock/error-handling"></camel-route-diagram>
       </div>
     </div>
@@ -609,7 +666,7 @@
             post-multicast <code>log</code> reconnects from the <code>multicast</code> merge point.
           </p>
         </div>
-        <div class="card-body diagram-scroll">
+        <div class="card-body diagram-scroll themed-diagram">
           <camel-route-diagram src="/mock/multicast"></camel-route-diagram>
         </div>
       </div>
@@ -623,7 +680,7 @@
             from the <code>circuitBreaker</code> merge point.
           </p>
         </div>
-        <div class="card-body diagram-scroll">
+        <div class="card-body diagram-scroll themed-diagram">
           <camel-route-diagram src="/mock/circuit-breaker"></camel-route-diagram>
         </div>
       </div>
@@ -649,7 +706,7 @@
           exchanges — spot the error rate at a glance.
         </p>
       </div>
-      <div class="card-body diagram-scroll">
+      <div class="card-body diagram-scroll themed-diagram">
         <camel-route-diagram src="/mock/metrics"></camel-route-diagram>
       </div>
     </div>
@@ -673,7 +730,7 @@
           Mirrors <code>testTextWrappingLongLabel</code>.
         </p>
       </div>
-      <div class="card-body diagram-scroll">
+      <div class="card-body diagram-scroll themed-diagram">
         <camel-route-diagram src="/mock/kafka-long-uri"></camel-route-diagram>
       </div>
     </div>
@@ -697,7 +754,7 @@
           Nodes in the generator route use the <code>description</code> field for human-readable labels.
         </p>
       </div>
-      <div class="card-body diagram-scroll">
+      <div class="card-body diagram-scroll themed-diagram">
         <camel-route-diagram src="/mock/multi-route"></camel-route-diagram>
       </div>
     </div>
@@ -715,6 +772,25 @@
     Local smoke test — not a production page.
   </p>
 </footer>
+
+<script>
+  /* eslint-disable */
+  /* Header theme switch: light/dark force --crd-* on the body; "os" clears them
+   * so the component falls back to prefers-color-scheme. */
+  (function () {
+    const sw = document.querySelector('.theme-switch');
+    sw.addEventListener('click', function (e) {
+      const btn = e.target.closest('button[data-theme]');
+      if (!btn) return;
+      document.body.dataset.theme = btn.dataset.theme;
+      sw.querySelectorAll('button').forEach(function (b) {
+        const on = b === btn;
+        b.classList.toggle('active', on);
+        b.setAttribute('aria-pressed', String(on));
+      });
+    });
+  })();
+</script>
 
 </body>
 </html>
