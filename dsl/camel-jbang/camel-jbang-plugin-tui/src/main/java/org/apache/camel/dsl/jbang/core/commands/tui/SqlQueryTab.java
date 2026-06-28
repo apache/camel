@@ -16,6 +16,8 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
+import java.io.File;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -401,7 +403,7 @@ class SqlQueryTab implements MonitorTab {
 
         TextArea textArea = TextArea.builder()
                 .cursorStyle(Style.EMPTY.reversed())
-                .placeholder("Type SQL query here...")
+                .placeholder("Type SQL query or file:query.sql ...")
                 .build();
         if (focusOnInput) {
             textArea.renderWithCursor(inner, frame.buffer(), sqlInput, frame);
@@ -816,6 +818,7 @@ class SqlQueryTab implements MonitorTab {
 
                 ## Usage
                 - Type a SQL query in the input field and press **F5** to execute
+                - Type **file:query.sql** to load SQL from a file
                 - Use **Enter** for new lines in the query
                 - Use **Up/Down** arrows to move cursor within the query
                 - Paste multi-line queries from clipboard
@@ -900,21 +903,41 @@ class SqlQueryTab implements MonitorTab {
         if (sql.isEmpty() || ctx.selectedPid == null || ctx.runner == null) {
             return;
         }
+
+        // load SQL from file if prefixed with file:
+        if (sql.startsWith("file:")) {
+            String path = sql.substring(5).trim();
+            try {
+                File f = new File(path);
+                if (f.exists() && f.isFile()) {
+                    sql = Files.readString(f.toPath()).trim();
+                    sqlInput.clear();
+                    sqlInput.insert(sql);
+                } else {
+                    errorMessage = "File not found: " + path;
+                    return;
+                }
+            } catch (Exception e) {
+                errorMessage = "Failed to read file: " + e.getMessage();
+                return;
+            }
+        }
         if (!executing.compareAndSet(false, true)) {
             return;
         }
 
         clearResults();
 
-        sqlHistory.add(sql);
+        String finalSql = sql;
+        sqlHistory.add(finalSql);
         String pid = ctx.selectedPid;
         String dsName = dsNames.isEmpty() ? null : dsNames.get(selectedDs);
-        lastSql = sql;
+        lastSql = finalSql;
         lastDsName = dsName;
 
         ctx.runner.scheduler().execute(() -> {
             try {
-                executeInBackground(pid, sql, dsName);
+                executeInBackground(pid, finalSql, dsName);
             } finally {
                 executing.set(false);
             }
