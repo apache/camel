@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.direct;
 
-import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -29,6 +28,7 @@ import org.apache.camel.util.StopWatch;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -74,29 +74,32 @@ public class DirectProducerBlockingTest extends ContextTestSupport {
 
     @Test
     public void testProducerBlocksResumeTest() throws Exception {
+        getMockEndpoint("mock:result").expectedMessageCount(1);
+
         context.getRouteController().suspendRoute("foo");
 
-        CountDownLatch producerReady = new CountDownLatch(1);
+        Thread mainThread = Thread.currentThread();
         ExecutorService executor = Executors.newSingleThreadExecutor();
         executor.submit(new Runnable() {
             @Override
             public void run() {
                 try {
-                    // Wait for producer to start blocking
-                    assertTrue(producerReady.await(2, TimeUnit.SECONDS));
+                    // Wait for the main thread to enter TIMED_WAITING state
+                    // (blocked on condition in DirectComponent.getConsumer)
+                    await().atMost(2, TimeUnit.SECONDS)
+                            .pollInterval(10, TimeUnit.MILLISECONDS)
+                            .until(() -> mainThread.getState() == Thread.State.TIMED_WAITING);
+
                     log.info("Resuming consumer");
                     context.getRouteController().resumeRoute("foo");
                 } catch (Exception e) {
-                    // ignore
+                    log.error("Error in background thread", e);
                 }
             }
         });
 
-        getMockEndpoint("mock:result").expectedMessageCount(1);
-
-        // Signal that we're about to send (producer will block)
-        producerReady.countDown();
-        template.sendBody("direct:suspended?block=true&timeout=1000", "hello world");
+        // This call will block until the route is resumed by the background thread
+        template.sendBody("direct:suspended?block=true&timeout=2000", "hello world");
 
         assertMockEndpointsSatisfied();
 
