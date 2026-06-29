@@ -29,7 +29,7 @@ class CamelMonitorParseKeyTest {
 
     @Test
     void parseKeySingleChar() {
-        KeyEvent ke = CamelMonitor.parseKey("a");
+        KeyEvent ke = McpFacade.parseKey("a");
         assertNotNull(ke);
         assertEquals(KeyCode.CHAR, ke.code());
         assertEquals('a', ke.character());
@@ -37,92 +37,92 @@ class CamelMonitorParseKeyTest {
 
     @Test
     void parseKeyEnter() {
-        KeyEvent ke = CamelMonitor.parseKey("enter");
+        KeyEvent ke = McpFacade.parseKey("enter");
         assertNotNull(ke);
         assertEquals(KeyCode.ENTER, ke.code());
     }
 
     @Test
     void parseKeyReturn() {
-        KeyEvent ke = CamelMonitor.parseKey("return");
+        KeyEvent ke = McpFacade.parseKey("return");
         assertNotNull(ke);
         assertEquals(KeyCode.ENTER, ke.code());
     }
 
     @Test
     void parseKeyEscape() {
-        KeyEvent ke = CamelMonitor.parseKey("esc");
+        KeyEvent ke = McpFacade.parseKey("esc");
         assertNotNull(ke);
         assertEquals(KeyCode.ESCAPE, ke.code());
     }
 
     @Test
     void parseKeyEscapeFull() {
-        KeyEvent ke = CamelMonitor.parseKey("escape");
+        KeyEvent ke = McpFacade.parseKey("escape");
         assertNotNull(ke);
         assertEquals(KeyCode.ESCAPE, ke.code());
     }
 
     @Test
     void parseKeyTab() {
-        KeyEvent ke = CamelMonitor.parseKey("tab");
+        KeyEvent ke = McpFacade.parseKey("tab");
         assertNotNull(ke);
         assertEquals(KeyCode.TAB, ke.code());
     }
 
     @Test
     void parseKeyBackspace() {
-        KeyEvent ke = CamelMonitor.parseKey("backspace");
+        KeyEvent ke = McpFacade.parseKey("backspace");
         assertNotNull(ke);
         assertEquals(KeyCode.BACKSPACE, ke.code());
     }
 
     @Test
     void parseKeyDelete() {
-        KeyEvent ke = CamelMonitor.parseKey("delete");
+        KeyEvent ke = McpFacade.parseKey("delete");
         assertNotNull(ke);
         assertEquals(KeyCode.DELETE, ke.code());
     }
 
     @Test
     void parseKeyDeleteShort() {
-        KeyEvent ke = CamelMonitor.parseKey("del");
+        KeyEvent ke = McpFacade.parseKey("del");
         assertNotNull(ke);
         assertEquals(KeyCode.DELETE, ke.code());
     }
 
     @Test
     void parseKeyArrows() {
-        assertEquals(KeyCode.UP, CamelMonitor.parseKey("up").code());
-        assertEquals(KeyCode.DOWN, CamelMonitor.parseKey("down").code());
-        assertEquals(KeyCode.LEFT, CamelMonitor.parseKey("left").code());
-        assertEquals(KeyCode.RIGHT, CamelMonitor.parseKey("right").code());
+        assertEquals(KeyCode.UP, McpFacade.parseKey("up").code());
+        assertEquals(KeyCode.DOWN, McpFacade.parseKey("down").code());
+        assertEquals(KeyCode.LEFT, McpFacade.parseKey("left").code());
+        assertEquals(KeyCode.RIGHT, McpFacade.parseKey("right").code());
     }
 
     @Test
     void parseKeyHomeEnd() {
-        assertEquals(KeyCode.HOME, CamelMonitor.parseKey("home").code());
-        assertEquals(KeyCode.END, CamelMonitor.parseKey("end").code());
+        assertEquals(KeyCode.HOME, McpFacade.parseKey("home").code());
+        assertEquals(KeyCode.END, McpFacade.parseKey("end").code());
     }
 
     @Test
     void parseKeyPageUpDown() {
-        assertEquals(KeyCode.PAGE_UP, CamelMonitor.parseKey("pageup").code());
-        assertEquals(KeyCode.PAGE_UP, CamelMonitor.parseKey("pgup").code());
-        assertEquals(KeyCode.PAGE_DOWN, CamelMonitor.parseKey("pagedown").code());
-        assertEquals(KeyCode.PAGE_DOWN, CamelMonitor.parseKey("pgdn").code());
+        assertEquals(KeyCode.PAGE_UP, McpFacade.parseKey("pageup").code());
+        assertEquals(KeyCode.PAGE_UP, McpFacade.parseKey("pgup").code());
+        assertEquals(KeyCode.PAGE_DOWN, McpFacade.parseKey("pagedown").code());
+        assertEquals(KeyCode.PAGE_DOWN, McpFacade.parseKey("pgdn").code());
     }
 
     @Test
     void parseKeyFKeys() {
-        assertEquals(KeyCode.F1, CamelMonitor.parseKey("f1").code());
-        assertEquals(KeyCode.F6, CamelMonitor.parseKey("f6").code());
-        assertEquals(KeyCode.F12, CamelMonitor.parseKey("f12").code());
+        assertEquals(KeyCode.F1, McpFacade.parseKey("f1").code());
+        assertEquals(KeyCode.F6, McpFacade.parseKey("f6").code());
+        assertEquals(KeyCode.F12, McpFacade.parseKey("f12").code());
     }
 
     @Test
     void parseKeySpace() {
-        KeyEvent ke = CamelMonitor.parseKey("space");
+        KeyEvent ke = McpFacade.parseKey("space");
         assertNotNull(ke);
         assertEquals(KeyCode.CHAR, ke.code());
         assertEquals(' ', ke.character());
@@ -130,7 +130,7 @@ class CamelMonitorParseKeyTest {
 
     @Test
     void parseKeyCtrlModifier() {
-        KeyEvent ke = CamelMonitor.parseKey("Ctrl+c");
+        KeyEvent ke = McpFacade.parseKey("Ctrl+c");
         assertNotNull(ke);
         assertEquals(KeyCode.CHAR, ke.code());
         assertEquals('c', ke.character());
@@ -139,7 +139,7 @@ class CamelMonitorParseKeyTest {
 
     @Test
     void parseKeyShiftModifier() {
-        KeyEvent ke = CamelMonitor.parseKey("Shift+F6");
+        KeyEvent ke = McpFacade.parseKey("Shift+F6");
         assertNotNull(ke);
         assertEquals(KeyCode.F6, ke.code());
         assertTrue(ke.hasShift());
@@ -147,7 +147,7 @@ class CamelMonitorParseKeyTest {
 
     @Test
     void parseKeyCtrlAndShift() {
-        KeyEvent ke = CamelMonitor.parseKey("Ctrl+Shift+a");
+        KeyEvent ke = McpFacade.parseKey("Ctrl+Shift+a");
         assertNotNull(ke);
         assertTrue(ke.hasCtrl());
         assertTrue(ke.hasShift());
@@ -155,21 +155,21 @@ class CamelMonitorParseKeyTest {
 
     @Test
     void parseKeyNullReturnsNull() {
-        assertNull(CamelMonitor.parseKey(null));
+        assertNull(McpFacade.parseKey(null));
     }
 
     @Test
     void parseKeyEmptyReturnsNull() {
-        assertNull(CamelMonitor.parseKey(""));
+        assertNull(McpFacade.parseKey(""));
     }
 
     @Test
     void parseKeyCaseInsensitive() {
-        KeyEvent ke1 = CamelMonitor.parseKey("ENTER");
+        KeyEvent ke1 = McpFacade.parseKey("ENTER");
         assertNotNull(ke1);
         assertEquals(KeyCode.ENTER, ke1.code());
 
-        KeyEvent ke2 = CamelMonitor.parseKey("Enter");
+        KeyEvent ke2 = McpFacade.parseKey("Enter");
         assertNotNull(ke2);
         assertEquals(KeyCode.ENTER, ke2.code());
     }
@@ -177,6 +177,6 @@ class CamelMonitorParseKeyTest {
     @Test
     void parseKeyUnknownMultiCharReturnsNull() {
         // Multi-character string that is not a known key name
-        assertNull(CamelMonitor.parseKey("xyz"));
+        assertNull(McpFacade.parseKey("xyz"));
     }
 }
