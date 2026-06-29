@@ -35,6 +35,7 @@ import dev.tamboui.text.Span;
 import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
+import dev.tamboui.widgets.block.Borders;
 import dev.tamboui.widgets.block.Title;
 import dev.tamboui.widgets.paragraph.Paragraph;
 import dev.tamboui.widgets.sparkline.DualSparkline;
@@ -225,7 +226,7 @@ class EndpointsTab implements MonitorTab {
                 .widths(widths.toArray(Constraint[]::new))
                 .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
                 .highlightSpacing(Table.HighlightSpacing.ALWAYS)
-                .block(Block.builder().borderType(BorderType.ROUNDED)
+                .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
                         .title(" Endpoints sort:" + sort
                                + (filter == 1 ? " filter:remote" : filter == 2 ? " filter:remote+stub" : "")
                                + " ")
@@ -409,7 +410,7 @@ class EndpointsTab implements MonitorTab {
 
         frame.renderWidget(Paragraph.builder()
                 .text(dev.tamboui.text.Text.from(flowLines))
-                .block(Block.builder().borderType(BorderType.ROUNDED).title(" Flow ").build())
+                .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(" Flow ").build())
                 .build(), hSplit.get(0));
 
         Map<String, LinkedList<Long>> inHistMap = switch (filter) {
@@ -456,7 +457,7 @@ class EndpointsTab implements MonitorTab {
                 .showYAxis(true)
                 .xLabels("-" + renderPoints + "s", "-" + (renderPoints * 3 / 4) + "s",
                         "-" + (renderPoints / 2) + "s", "-" + (renderPoints / 4) + "s", "now")
-                .block(Block.builder().borderType(BorderType.ROUNDED)
+                .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
                         .title(Title.from(chartTitle)).build())
                 .build(), rightArea);
     }
@@ -520,7 +521,7 @@ class EndpointsTab implements MonitorTab {
 
         frame.renderWidget(Paragraph.builder()
                 .text(dev.tamboui.text.Text.from(flowLines))
-                .block(Block.builder().borderType(BorderType.ROUNDED).title(" Flow ").build())
+                .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(" Flow ").build())
                 .build(), hSplit.get(0));
 
         // Per-endpoint sparkline
@@ -566,7 +567,7 @@ class EndpointsTab implements MonitorTab {
                 .showYAxis(true)
                 .xLabels("-" + renderPoints + "s", "-" + (renderPoints * 3 / 4) + "s",
                         "-" + (renderPoints / 2) + "s", "-" + (renderPoints / 4) + "s", "now")
-                .block(Block.builder().borderType(BorderType.ROUNDED)
+                .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
                         .title(Title.from(chartTitle)).build())
                 .build(), hSplit.get(1));
     }
@@ -605,7 +606,7 @@ class EndpointsTab implements MonitorTab {
                 .showYAxis(true)
                 .xLabels("-" + renderPoints + "s", "-" + (renderPoints * 3 / 4) + "s",
                         "-" + (renderPoints / 2) + "s", "-" + (renderPoints / 4) + "s", "now")
-                .block(Block.builder().borderType(BorderType.ROUNDED)
+                .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
                         .title(Title.from(chartTitle)).build())
                 .build(), area);
     }

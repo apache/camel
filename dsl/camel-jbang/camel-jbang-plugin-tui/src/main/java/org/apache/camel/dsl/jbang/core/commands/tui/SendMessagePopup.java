@@ -37,6 +37,7 @@ import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.widgets.Clear;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
+import dev.tamboui.widgets.block.Borders;
 import dev.tamboui.widgets.block.Title;
 import dev.tamboui.widgets.input.TextInput;
 import dev.tamboui.widgets.input.TextInputState;
@@ -692,7 +693,7 @@ class SendMessagePopup {
         title += " ";
 
         Block block = Block.builder()
-                .borderType(BorderType.ROUNDED)
+                .borderType(BorderType.ROUNDED).borders(Borders.ALL)
                 .title(Title.from(Line.from(Span.styled(title, Style.EMPTY.fg(Color.YELLOW).bold()))))
                 .build();
         frame.renderWidget(block, area);
@@ -843,7 +844,7 @@ class SendMessagePopup {
             frame.renderWidget(
                     Paragraph.builder()
                             .text(Text.from(Line.from(Span.styled(placeholder, Style.EMPTY.dim()))))
-                            .block(Block.builder().borderType(BorderType.ROUNDED).title(title).build())
+                            .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(title).build())
                             .build(),
                     area);
             return;
@@ -876,7 +877,7 @@ class SendMessagePopup {
         frame.renderWidget(
                 Paragraph.builder()
                         .text(Text.from(lines))
-                        .block(Block.builder().borderType(BorderType.ROUNDED).title(title).build())
+                        .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(title).build())
                         .build(),
                 area);
     }
@@ -889,7 +890,7 @@ class SendMessagePopup {
                     Paragraph.builder()
                             .text(Text.from(Line.from(
                                     Span.styled(" No messages sent yet", Style.EMPTY.dim()))))
-                            .block(Block.builder().borderType(BorderType.ROUNDED).title(title).build())
+                            .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(title).build())
                             .build(),
                     area);
             return;
@@ -937,7 +938,7 @@ class SendMessagePopup {
         frame.renderWidget(
                 Paragraph.builder()
                         .text(Text.from(lines))
-                        .block(Block.builder().borderType(BorderType.ROUNDED).title(title).build())
+                        .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(title).build())
                         .build(),
                 area);
     }

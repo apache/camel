@@ -417,7 +417,7 @@ public class CamelCatalogTui extends CamelCommand {
                         Style.EMPTY.fg(Color.CYAN)));
 
         Block headerBlock = Block.builder()
-                .borderType(BorderType.ROUNDED)
+                .borderType(BorderType.ROUNDED).borders(Borders.ALL)
                 .title(" Apache Camel ")
                 .build();
 
@@ -468,7 +468,7 @@ public class CamelCatalogTui extends CamelCommand {
                 .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
                 .highlightSpacing(Table.HighlightSpacing.ALWAYS)
                 .block(Block.builder()
-                        .borderType(BorderType.ROUNDED)
+                        .borderType(BorderType.ROUNDED).borders(Borders.ALL)
                         .borderStyle(borderStyle)
                         .title(listTitle)
                         .build())
@@ -494,7 +494,7 @@ public class CamelCatalogTui extends CamelCommand {
                             .text(Text.from(Line.from(
                                     Span.styled(emptyMsg, Style.EMPTY.dim()))))
                             .block(Block.builder()
-                                    .borderType(BorderType.ROUNDED)
+                                    .borderType(BorderType.ROUNDED).borders(Borders.ALL)
                                     .borderStyle(borderStyle)
                                     .title(optTitle)
                                     .build())
@@ -527,7 +527,7 @@ public class CamelCatalogTui extends CamelCommand {
                 .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
                 .highlightSpacing(Table.HighlightSpacing.ALWAYS)
                 .block(Block.builder()
-                        .borderType(BorderType.ROUNDED)
+                        .borderType(BorderType.ROUNDED).borders(Borders.ALL)
                         .borderStyle(borderStyle)
                         .title(optTitle)
                         .build())
@@ -617,7 +617,7 @@ public class CamelCatalogTui extends CamelCommand {
                         .overflow(Overflow.WRAP_WORD)
                         .scroll(descriptionScroll)
                         .block(Block.builder()
-                                .borderType(BorderType.ROUNDED)
+                                .borderType(BorderType.ROUNDED).borders(Borders.ALL)
                                 .title(title)
                                 .build())
                         .build(),

@@ -65,6 +65,7 @@ import dev.tamboui.tui.event.TickEvent;
 import dev.tamboui.widgets.Clear;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
+import dev.tamboui.widgets.block.Borders;
 import dev.tamboui.widgets.block.Title;
 import dev.tamboui.widgets.list.ListItem;
 import dev.tamboui.widgets.list.ListState;
@@ -989,27 +990,18 @@ public class CamelMonitor extends CamelCommand {
             return;
         }
 
-        if (area.width() < MIN_WIDTH || area.height() < MIN_HEIGHT) {
-            renderTooSmall(frame, area);
-            return;
-        }
-
-        // Layout: header (1 row) + spacer (1 row) + tabs (2 rows) + spacer (1 row) + content (fill) + footer (1 row)
+        // Layout: header (1 row) + tabs (2 rows) + content (fill) + footer (1 row)
         List<Rect> mainChunks = Layout.vertical()
                 .constraints(
                         Constraint.length(1),
-                        Constraint.length(1),
                         Constraint.length(2),
-                        Constraint.length(1),
                         Constraint.fill(),
                         Constraint.length(1))
                 .split(area);
 
         renderHeader(frame, mainChunks.get(0));
-        // mainChunks.get(1) is the empty spacer row
-        renderTabs(frame, mainChunks.get(2));
-        // mainChunks.get(3) is the empty spacer row between tabs and content
-        Rect contentArea = mainChunks.get(4);
+        renderTabs(frame, mainChunks.get(1));
+        Rect contentArea = mainChunks.get(2);
         ctx.shellPercent = shellPanel.isOpen() ? shellPanel.panelPercent() : 0;
         if (shellPanel.isOpen()) {
             List<Rect> splitChunks = Layout.vertical()
@@ -1035,7 +1027,7 @@ public class CamelMonitor extends CamelCommand {
         if (helpOverlay.isVisible()) {
             helpOverlay.render(frame, contentArea);
         }
-        renderFooter(frame, mainChunks.get(5));
+        renderFooter(frame, mainChunks.get(3));
 
         lastBuffer = frame.buffer();
         renderGeneration++;
@@ -1374,7 +1366,7 @@ public class CamelMonitor extends CamelCommand {
                 .highlightSymbol("")
                 .scrollMode(ScrollMode.NONE)
                 .block(Block.builder()
-                        .borderType(BorderType.ROUNDED)
+                        .borderType(BorderType.ROUNDED).borders(Borders.ALL)
                         .title(Title.from(Line.from(Span.styled(" More Tabs ", Style.EMPTY.fg(Color.YELLOW).bold()))))
                         .build())
                 .build();
@@ -1422,7 +1414,7 @@ public class CamelMonitor extends CamelCommand {
                 .highlightSymbol("")
                 .scrollMode(ScrollMode.NONE)
                 .block(Block.builder()
-                        .borderType(BorderType.ROUNDED)
+                        .borderType(BorderType.ROUNDED).borders(Borders.ALL)
                         .title(Title.from(Line.from(Span.styled(" Switch Integration ", Style.EMPTY.fg(Color.YELLOW).bold()))))
                         .build())
                 .build();
@@ -1711,7 +1703,7 @@ public class CamelMonitor extends CamelCommand {
 
         frame.renderWidget(Clear.INSTANCE, popup);
         Block block = Block.builder()
-                .borderType(BorderType.ROUNDED)
+                .borderType(BorderType.ROUNDED).borders(Borders.ALL)
                 .borderStyle(Style.EMPTY.fg(Color.LIGHT_RED))
                 .title(" Confirm Kill ")
                 .build();

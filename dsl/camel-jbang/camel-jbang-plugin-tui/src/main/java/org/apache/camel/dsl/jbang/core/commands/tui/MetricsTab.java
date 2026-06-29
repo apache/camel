@@ -40,6 +40,7 @@ import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
+import dev.tamboui.widgets.block.Borders;
 import dev.tamboui.widgets.paragraph.Paragraph;
 import dev.tamboui.widgets.scrollbar.Scrollbar;
 import dev.tamboui.widgets.scrollbar.ScrollbarState;
@@ -327,7 +328,7 @@ class MetricsTab implements MonitorTab {
 
         Paragraph paragraph = Paragraph.builder()
                 .text(Text.from(lines))
-                .block(Block.builder().borderType(BorderType.ROUNDED).title(" Camel ").build())
+                .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(" Camel ").build())
                 .build();
         frame.renderWidget(paragraph, area);
     }
@@ -425,7 +426,7 @@ class MetricsTab implements MonitorTab {
 
         Paragraph paragraph = Paragraph.builder()
                 .text(Text.from(lines))
-                .block(Block.builder().borderType(BorderType.ROUNDED).title(" JVM ").build())
+                .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(" JVM ").build())
                 .build();
         frame.renderWidget(paragraph, area);
     }
@@ -488,7 +489,7 @@ class MetricsTab implements MonitorTab {
                         Constraint.percentage(30),
                         Constraint.fill())
                 .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
-                .block(Block.builder().borderType(BorderType.ROUNDED)
+                .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
                         .title(title).build())
                 .build();
 
@@ -512,7 +513,7 @@ class MetricsTab implements MonitorTab {
         String title = " Raw Metrics (" + rawLines.size() + " lines)" + ct + " [" + (rawTitle != null ? rawTitle : "") + "] ";
 
         Block block = Block.builder()
-                .borderType(BorderType.ROUNDED)
+                .borderType(BorderType.ROUNDED).borders(Borders.ALL)
                 .title(title)
                 .build();
         Rect inner = block.inner(area);

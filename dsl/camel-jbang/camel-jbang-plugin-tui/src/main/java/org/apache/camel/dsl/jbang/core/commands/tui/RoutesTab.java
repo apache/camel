@@ -34,6 +34,7 @@ import dev.tamboui.text.Text;
 import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
+import dev.tamboui.widgets.block.Borders;
 import dev.tamboui.widgets.paragraph.Paragraph;
 import dev.tamboui.widgets.table.Cell;
 import dev.tamboui.widgets.table.Row;
@@ -484,7 +485,7 @@ class RoutesTab implements MonitorTab {
                             .text(Text.from(Line.from(Span.styled(
                                     "Loading diagram...",
                                     Style.EMPTY.dim()))))
-                            .block(Block.builder().borderType(BorderType.ROUNDED)
+                            .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
                                     .title(" Diagram ").build())
                             .build(),
                     area);
@@ -556,7 +557,7 @@ class RoutesTab implements MonitorTab {
                             Constraint.length(12))
                     .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
                     .highlightSpacing(Table.HighlightSpacing.ALWAYS)
-                    .block(Block.builder().borderType(BorderType.ROUNDED)
+                    .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
                             .title(" Top Routes sort:" + routeTopSort + " ").build())
                     .build();
         } else {
@@ -616,7 +617,7 @@ class RoutesTab implements MonitorTab {
                             Constraint.length(12))
                     .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
                     .highlightSpacing(Table.HighlightSpacing.ALWAYS)
-                    .block(Block.builder().borderType(BorderType.ROUNDED)
+                    .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
                             .title(" Routes sort:" + routeSort + " ").build())
                     .build();
         }
@@ -634,7 +635,8 @@ class RoutesTab implements MonitorTab {
             frame.renderWidget(
                     Paragraph.builder()
                             .text(Text.from(Line.from(Span.styled("No routes", Style.EMPTY.dim()))))
-                            .block(Block.builder().borderType(BorderType.ROUNDED).title(" Processors ").build())
+                            .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(" Processors ")
+                                    .build())
                             .build(),
                     chunks.get(1));
         }
@@ -886,7 +888,7 @@ class RoutesTab implements MonitorTab {
 
         Paragraph paragraph = Paragraph.builder()
                 .text(Text.from(lines))
-                .block(Block.builder().borderType(BorderType.ROUNDED)
+                .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
                         .title(" Info ").build())
                 .build();
         frame.renderWidget(paragraph, area);
@@ -990,7 +992,7 @@ class RoutesTab implements MonitorTab {
 
         Paragraph paragraph = Paragraph.builder()
                 .text(Text.from(lines))
-                .block(Block.builder().borderType(BorderType.ROUNDED)
+                .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
                         .title(" Info ").build())
                 .build();
         frame.renderWidget(paragraph, area);
@@ -1087,7 +1089,7 @@ class RoutesTab implements MonitorTab {
                             Constraint.length(8),
                             Constraint.length(6),
                             Constraint.length(8))
-                    .block(Block.builder().borderType(BorderType.ROUNDED)
+                    .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
                             .title(" Top Processors [" + route.routeId + "] sort:" + routeTopSort + " ").build())
                     .build();
         } else {
@@ -1149,7 +1151,7 @@ class RoutesTab implements MonitorTab {
                             Constraint.length(8),
                             Constraint.length(14),
                             Constraint.length(12))
-                    .block(Block.builder().borderType(BorderType.ROUNDED)
+                    .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
                             .title(" Processors [" + route.routeId + "] ").build())
                     .build();
         }

@@ -33,6 +33,7 @@ import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
+import dev.tamboui.widgets.block.Borders;
 import dev.tamboui.widgets.list.ListItem;
 import dev.tamboui.widgets.list.ListState;
 import dev.tamboui.widgets.list.ListWidget;
@@ -148,7 +149,7 @@ class ClasspathTab implements MonitorTab {
             frame.renderWidget(
                     Paragraph.builder()
                             .text(Text.from(Line.from(Span.styled("  Loading classpath...", Style.EMPTY.dim()))))
-                            .block(Block.builder().borderType(BorderType.ROUNDED)
+                            .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
                                     .title(" Classpath ").build())
                             .build(),
                     area);
@@ -160,7 +161,7 @@ class ClasspathTab implements MonitorTab {
                     Paragraph.builder()
                             .text(Text.from(Line.from(
                                     Span.styled("  " + errorMessage, Style.EMPTY.fg(Color.LIGHT_RED)))))
-                            .block(Block.builder().borderType(BorderType.ROUNDED)
+                            .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
                                     .title(" Classpath ").build())
                             .build(),
                     area);
@@ -197,7 +198,7 @@ class ClasspathTab implements MonitorTab {
                 .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
                 .highlightSymbol("")
                 .scrollMode(ScrollMode.AUTO_SCROLL)
-                .block(Block.builder().borderType(BorderType.ROUNDED).title(title).build())
+                .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(title).build())
                 .build();
         frame.renderStatefulWidget(list, area, listState);
     }

@@ -30,6 +30,7 @@ import dev.tamboui.text.Text;
 import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
+import dev.tamboui.widgets.block.Borders;
 import dev.tamboui.widgets.paragraph.Paragraph;
 import dev.tamboui.widgets.table.Cell;
 import dev.tamboui.widgets.table.Row;
@@ -159,7 +160,7 @@ class InflightTab implements MonitorTab {
                         Constraint.fill(),
                         Constraint.length(14),
                         Constraint.length(22))
-                .block(Block.builder().borderType(BorderType.ROUNDED).title(title).build())
+                .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(title).build())
                 .build();
 
         frame.renderStatefulWidget(table, area, tableState);
@@ -179,7 +180,7 @@ class InflightTab implements MonitorTab {
         frame.renderWidget(
                 Paragraph.builder()
                         .text(text)
-                        .block(Block.builder().borderType(BorderType.ROUNDED).title(" Inflight ").build())
+                        .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(" Inflight ").build())
                         .build(),
                 area);
     }

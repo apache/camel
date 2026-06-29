@@ -32,6 +32,7 @@ import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
+import dev.tamboui.widgets.block.Borders;
 import dev.tamboui.widgets.paragraph.Paragraph;
 import dev.tamboui.widgets.scrollbar.Scrollbar;
 import dev.tamboui.widgets.scrollbar.ScrollbarState;
@@ -114,7 +115,7 @@ class ConfigurationTab implements MonitorTab {
                     Paragraph.builder()
                             .text(Text.from(Line.from(
                                     Span.styled("  No configuration properties available.", Style.EMPTY.dim()))))
-                            .block(Block.builder().borderType(BorderType.ROUNDED)
+                            .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
                                     .title(" Configuration ").build())
                             .build(),
                     area);
@@ -134,7 +135,7 @@ class ConfigurationTab implements MonitorTab {
 
         String title = String.format(" Configuration — %d properties ", props.size());
         Block block = Block.builder()
-                .borderType(BorderType.ROUNDED)
+                .borderType(BorderType.ROUNDED).borders(Borders.ALL)
                 .title(title)
                 .build();
         Rect inner = block.inner(area);

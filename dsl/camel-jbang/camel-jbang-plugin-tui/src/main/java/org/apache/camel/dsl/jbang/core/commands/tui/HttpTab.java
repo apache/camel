@@ -46,6 +46,7 @@ import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.widgets.Clear;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
+import dev.tamboui.widgets.block.Borders;
 import dev.tamboui.widgets.block.Title;
 import dev.tamboui.widgets.input.TextInput;
 import dev.tamboui.widgets.input.TextInputState;
@@ -883,7 +884,7 @@ class HttpTab implements MonitorTab {
                 Span.styled(method, methodStyle(method).bold()),
                 Span.raw(" " + probePathState.text() + " ")));
 
-        Block block = Block.builder().borderType(BorderType.ROUNDED).title(title).build();
+        Block block = Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(title).build();
         frame.renderWidget(block, area);
 
         int innerX = area.left() + 2;
@@ -1018,7 +1019,7 @@ class HttpTab implements MonitorTab {
             frame.renderWidget(
                     Paragraph.builder()
                             .text(Text.from(Line.from(Span.styled(placeholder, Style.EMPTY.dim()))))
-                            .block(Block.builder().borderType(BorderType.ROUNDED).title(title).build())
+                            .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(title).build())
                             .build(),
                     area);
             return;
@@ -1052,7 +1053,7 @@ class HttpTab implements MonitorTab {
         frame.renderWidget(
                 Paragraph.builder()
                         .text(Text.from(lines))
-                        .block(Block.builder().borderType(BorderType.ROUNDED).title(title).build())
+                        .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(title).build())
                         .build(),
                 area);
     }
@@ -1065,7 +1066,7 @@ class HttpTab implements MonitorTab {
                     Paragraph.builder()
                             .text(Text.from(Line.from(
                                     Span.styled(" No requests yet", Style.EMPTY.dim()))))
-                            .block(Block.builder().borderType(BorderType.ROUNDED).title(title).build())
+                            .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(title).build())
                             .build(),
                     area);
             return;
@@ -1108,7 +1109,7 @@ class HttpTab implements MonitorTab {
         frame.renderWidget(
                 Paragraph.builder()
                         .text(Text.from(lines))
-                        .block(Block.builder().borderType(BorderType.ROUNDED).title(title).build())
+                        .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(title).build())
                         .build(),
                 area);
     }
@@ -1277,7 +1278,7 @@ class HttpTab implements MonitorTab {
                         Constraint.length(8))
                 .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
                 .highlightSpacing(Table.HighlightSpacing.ALWAYS)
-                .block(Block.builder().borderType(BorderType.ROUNDED).title(title).build())
+                .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(title).build())
                 .build();
 
         frame.renderStatefulWidget(table, area, tableState);
@@ -1291,7 +1292,7 @@ class HttpTab implements MonitorTab {
                             .text(Text.from(Line.from(
                                     Span.styled(" Select an endpoint to view details",
                                             Style.EMPTY.dim()))))
-                            .block(Block.builder().borderType(BorderType.ROUNDED)
+                            .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
                                     .title(" Detail ").build())
                             .build(),
                     area);
@@ -1350,7 +1351,7 @@ class HttpTab implements MonitorTab {
         frame.renderWidget(
                 Paragraph.builder()
                         .text(Text.from(lines))
-                        .block(Block.builder().borderType(BorderType.ROUNDED).title(detailTitle).build())
+                        .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(detailTitle).build())
                         .build(),
                 area);
     }
@@ -1523,7 +1524,7 @@ class HttpTab implements MonitorTab {
         frame.renderWidget(
                 Paragraph.builder()
                         .text(Text.from(visible))
-                        .block(Block.builder().borderType(BorderType.ROUNDED).title(title).build())
+                        .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(title).build())
                         .build(),
                 area);
     }

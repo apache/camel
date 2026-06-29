@@ -46,6 +46,7 @@ import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.widgets.Clear;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
+import dev.tamboui.widgets.block.Borders;
 import dev.tamboui.widgets.block.Title;
 import dev.tamboui.widgets.input.TextInput;
 import dev.tamboui.widgets.input.TextInputState;
@@ -818,7 +819,7 @@ class ActionsPopup {
                 .highlightSymbol("")
                 .scrollMode(ScrollMode.NONE)
                 .block(Block.builder()
-                        .borderType(BorderType.ROUNDED)
+                        .borderType(BorderType.ROUNDED).borders(Borders.ALL)
                         .title(" Actions ")
                         .build())
                 .build();
@@ -844,7 +845,7 @@ class ActionsPopup {
                 .highlightSymbol("")
                 .scrollMode(ScrollMode.AUTO_SCROLL)
                 .block(Block.builder()
-                        .borderType(BorderType.ROUNDED)
+                        .borderType(BorderType.ROUNDED).borders(Borders.ALL)
                         .title(" Run an Example (" + exampleCatalog.size() + ") ")
                         .build())
                 .build();
@@ -910,7 +911,7 @@ class ActionsPopup {
             title = Title.from(" " + docTitle + " ");
         }
         Block block = Block.builder()
-                .borderType(BorderType.ROUNDED)
+                .borderType(BorderType.ROUNDED).borders(Borders.ALL)
                 .title(title)
                 .build();
         if (docLines != null) {
@@ -960,7 +961,7 @@ class ActionsPopup {
                 .highlightSymbol("")
                 .scrollMode(ScrollMode.AUTO_SCROLL)
                 .block(Block.builder()
-                        .borderType(BorderType.ROUNDED)
+                        .borderType(BorderType.ROUNDED).borders(Borders.ALL)
                         .title(" Show Integration Doc ")
                         .build())
                 .build();
@@ -1331,7 +1332,7 @@ class ActionsPopup {
         frame.renderWidget(Clear.INSTANCE, popup);
 
         Block block = Block.builder()
-                .borderType(BorderType.ROUNDED)
+                .borderType(BorderType.ROUNDED).borders(Borders.ALL)
                 .title(" Run from folder ")
                 .build();
         frame.renderWidget(block, popup);
@@ -1782,7 +1783,7 @@ class ActionsPopup {
                 .highlightSymbol("")
                 .scrollMode(ScrollMode.AUTO_SCROLL)
                 .block(Block.builder()
-                        .borderType(BorderType.ROUNDED)
+                        .borderType(BorderType.ROUNDED).borders(Borders.ALL)
                         .title(" Run Dev/Infra Service (" + available + "/" + infraCatalog.size() + ") ")
                         .build())
                 .build();
@@ -1805,7 +1806,7 @@ class ActionsPopup {
         frame.renderWidget(Clear.INSTANCE, popup);
 
         Block block = Block.builder()
-                .borderType(BorderType.ROUNDED)
+                .borderType(BorderType.ROUNDED).borders(Borders.ALL)
                 .title(" Run " + selectedInfraService.alias + " ")
                 .build();
         frame.renderWidget(block, popup);

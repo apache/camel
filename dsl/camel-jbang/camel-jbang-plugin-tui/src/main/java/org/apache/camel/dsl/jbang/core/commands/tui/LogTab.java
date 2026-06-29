@@ -42,6 +42,7 @@ import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.widgets.Clear;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
+import dev.tamboui.widgets.block.Borders;
 import dev.tamboui.widgets.block.Title;
 import dev.tamboui.widgets.list.ListItem;
 import dev.tamboui.widgets.list.ListState;
@@ -256,7 +257,7 @@ class LogTab implements MonitorTab {
 
         if (logLoading && filteredLogEntries.isEmpty()) {
             Block loadingBlock = Block.builder()
-                    .borderType(BorderType.ROUNDED)
+                    .borderType(BorderType.ROUNDED).borders(Borders.ALL)
                     .title(" Log ")
                     .build();
             frame.renderWidget(loadingBlock, area);
@@ -290,7 +291,7 @@ class LogTab implements MonitorTab {
             titleLine = Line.from(Span.raw(logLabel + " "));
         }
         Block block = Block.builder()
-                .borderType(BorderType.ROUNDED)
+                .borderType(BorderType.ROUNDED).borders(Borders.ALL)
                 .title(Title.from(titleLine))
                 .build();
         frame.renderWidget(block, area);
@@ -424,7 +425,7 @@ class LogTab implements MonitorTab {
                 .highlightSymbol("")
                 .scrollMode(ScrollMode.NONE)
                 .block(Block.builder()
-                        .borderType(BorderType.ROUNDED)
+                        .borderType(BorderType.ROUNDED).borders(Borders.ALL)
                         .title(" Set Log Level ")
                         .build())
                 .build();
