@@ -238,7 +238,7 @@
         <ibm-watson-sdk-version>16.2.0</ibm-watson-sdk-version>
         <ibm-watsonx-ai-sdk-version>0.21.0</ibm-watsonx-ai-sdk-version>
         <ibm-watsonx-data-sdk-version>0.9.0</ibm-watsonx-data-sdk-version>
-        <ical4j-version>4.2.5</ical4j-version>
+        <ical4j-version>4.3.0</ical4j-version>
         <icu4j-version>78.3</icu4j-version>
         <iggy-version>0.8.0</iggy-version>
         <ignite-version>2.18.0</ignite-version>
