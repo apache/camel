@@ -341,9 +341,11 @@ class OverviewTab implements MonitorTab {
             Rect chartArea = chartHSplit.get(0);
             Rect infoArea = chartHSplit.get(1);
 
+            Rect chartInner = Block.builder().borders(Borders.ALL).build().inner(chartArea);
+
             List<Rect> vChunks = Layout.vertical()
                     .constraints(Constraint.fill(), Constraint.length(1))
-                    .split(chartArea);
+                    .split(chartInner);
 
             List<Rect> hChunks = Layout.horizontal()
                     .constraints(Constraint.length(4), Constraint.fill())
@@ -351,7 +353,7 @@ class OverviewTab implements MonitorTab {
 
             Rect barChartArea = hChunks.get(1);
 
-            int innerBarCols = Math.max(2, barChartArea.width() - 2);
+            int innerBarCols = Math.max(2, barChartArea.width());
             int renderPoints = Math.min(MAX_SPARKLINE_POINTS, innerBarCols / 2);
 
             long[] mergedTotal = new long[renderPoints];
@@ -406,6 +408,10 @@ class OverviewTab implements MonitorTab {
                         Span.raw(String.format(" fail:%d ", curFailed)));
             }
 
+            Block chartBlock = Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
+                    .title(Title.from(titleLine)).build();
+            frame.renderWidget(chartBlock, chartArea);
+
             List<BarGroup> groups = new ArrayList<>();
             for (int i = 0; i < renderPoints; i++) {
                 long failed = Math.min(mergedFailed[i], mergedTotal[i]);
@@ -422,22 +428,19 @@ class OverviewTab implements MonitorTab {
                     .barWidth(1)
                     .barGap(0)
                     .groupGap(0)
-                    .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
-                            .title(Title.from(titleLine)).build())
                     .build();
 
             frame.renderWidget(barChart, barChartArea);
 
-            int barRows = vChunks.get(0).height() - 2;
+            int barRows = vChunks.get(0).height();
             List<Line> yLines = new ArrayList<>();
             Style dimStyle = Style.EMPTY.dim();
-            for (int row = 0; row < vChunks.get(0).height(); row++) {
-                int barRow = row - 1;
-                if (barRow == 0) {
+            for (int row = 0; row < barRows; row++) {
+                if (row == 0) {
                     yLines.add(Line.from(Span.styled(String.format("%3d", maxTp), dimStyle)));
-                } else if (barRows > 4 && barRow == barRows / 2) {
+                } else if (barRows > 4 && row == barRows / 2) {
                     yLines.add(Line.from(Span.styled(String.format("%3d", maxTp / 2), dimStyle)));
-                } else if (barRow == barRows - 1) {
+                } else if (row == barRows - 1) {
                     yLines.add(Line.from(Span.styled("  0", dimStyle)));
                 } else {
                     yLines.add(Line.from(""));
@@ -446,7 +449,7 @@ class OverviewTab implements MonitorTab {
             frame.renderWidget(Paragraph.builder().text(Text.from(yLines)).build(), hChunks.get(0));
 
             if (!vChunks.get(1).isEmpty()) {
-                int barInnerStartX = barChartArea.x() + 1;
+                int barInnerStartX = barChartArea.x();
                 int xAxisY = vChunks.get(1).y();
                 int[][] markerIndices = {
                         { 0, renderPoints },
