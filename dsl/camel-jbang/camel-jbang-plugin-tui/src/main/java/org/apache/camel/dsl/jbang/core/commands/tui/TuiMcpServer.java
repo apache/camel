@@ -67,16 +67,16 @@ class TuiMcpServer {
     }
 
     private final int port;
-    private final CamelMonitor monitor;
+    private final McpFacade facade;
     private HttpServer server;
     private volatile String clientName;
     private volatile long lastActivity;
     private volatile long lastToolCallTime;
     private final List<LogEntry> activityLog = new ArrayList<>();
 
-    TuiMcpServer(int port, CamelMonitor monitor) {
+    TuiMcpServer(int port, McpFacade facade) {
         this.port = port;
-        this.monitor = monitor;
+        this.facade = facade;
     }
 
     void start() throws IOException {
@@ -645,7 +645,7 @@ class TuiMcpServer {
     }
 
     private void addSelectionContext(JsonObject result) {
-        SelectionContext ctx = monitor.getSelectionContext();
+        SelectionContext ctx = facade.getSelectionContext();
         if (ctx != null) {
             JsonObject sel = new JsonObject();
             sel.put("type", ctx.type());
@@ -660,14 +660,14 @@ class TuiMcpServer {
     }
 
     private void addFooterActions(JsonObject result) {
-        JsonArray actions = monitor.getFooterActionsAsJson();
+        JsonArray actions = facade.getFooterActionsAsJson();
         if (actions != null && !actions.isEmpty()) {
             result.put("actions", actions);
         }
     }
 
     private String callGetScreen(Map<String, Object> args) {
-        Buffer buf = monitor.getLastBuffer();
+        Buffer buf = facade.getLastBuffer();
         if (buf == null) {
             return "Screen not yet available";
         }
@@ -691,7 +691,7 @@ class TuiMcpServer {
             limit = n.intValue();
         }
 
-        TuiEventLog eventLog = monitor.getEventLog();
+        TuiEventLog eventLog = facade.getEventLog();
         List<TuiEventLog.Event> events = eventLog.getRecent(limit);
 
         JsonArray eventsArray = new JsonArray();
@@ -711,23 +711,23 @@ class TuiMcpServer {
 
     private String callGetState() {
         JsonObject result = new JsonObject();
-        result.put("activeTab", monitor.getActiveTabName());
-        result.put("tabIndex", monitor.getActiveTabIndex());
+        result.put("activeTab", facade.getActiveTabName());
+        result.put("tabIndex", facade.getActiveTabIndex());
 
-        String pid = monitor.getSelectedPid();
+        String pid = facade.getSelectedPid();
         if (pid != null) {
             result.put("selectedPid", pid);
         }
-        String name = monitor.getSelectedIntegrationName();
+        String name = facade.getSelectedIntegrationName();
         if (name != null) {
             result.put("selectedIntegration", name);
         }
-        result.put("integrationCount", monitor.getIntegrationCount());
-        result.put("keystrokesVisible", monitor.isKeystrokesVisible());
-        result.put("captionVisible", monitor.isCaptionVisible());
+        result.put("integrationCount", facade.getIntegrationCount());
+        result.put("keystrokesVisible", facade.isKeystrokesVisible());
+        result.put("captionVisible", facade.isCaptionVisible());
         addSelectionContext(result);
         addFooterActions(result);
-        JsonObject diagramState = monitor.getDiagramState();
+        JsonObject diagramState = facade.getDiagramState();
         if (diagramState != null) {
             result.put("diagram", diagramState);
         }
@@ -745,17 +745,17 @@ class TuiMcpServer {
             duration = n.intValue();
         }
 
-        TapeRecorder recorder = monitor.getTapeRecorder();
+        TapeRecorder recorder = facade.getTapeRecorder();
         if (recorder != null && recorder.isActive()) {
             recorder.resetClock();
             recorder.recordCaption(text, Math.max(duration, 0));
         }
 
         if (duration > 0) {
-            monitor.showCaption(text, duration);
+            facade.showCaption(text, duration);
             return "Caption displayed (auto-dismiss in " + duration + "s): " + text;
         }
-        monitor.showCaption(text);
+        facade.showCaption(text);
         return "Caption displayed: " + text;
     }
 
@@ -768,42 +768,42 @@ class TuiMcpServer {
 
         if (tab == null && integration == null && route == null && node == null) {
             result.put("error", "Provide at least one of: tab, integration, route, node");
-            result.put("availableTabs", toJsonArray(monitor.getTabNames()));
-            result.put("availableIntegrations", toJsonArray(monitor.getIntegrationNames()));
+            result.put("availableTabs", toJsonArray(facade.getTabNames()));
+            result.put("availableIntegrations", toJsonArray(facade.getIntegrationNames()));
             return Jsoner.serialize(result);
         }
 
         if (integration != null) {
-            String selected = monitor.selectIntegration(integration);
+            String selected = facade.selectIntegration(integration);
             if (selected != null) {
                 result.put("selectedIntegration", selected);
             } else {
                 result.put("integrationError", "Not found: " + integration);
-                result.put("availableIntegrations", toJsonArray(monitor.getIntegrationNames()));
+                result.put("availableIntegrations", toJsonArray(facade.getIntegrationNames()));
             }
         }
 
         if (tab != null) {
-            String switched = monitor.navigateToTab(tab);
+            String switched = facade.navigateToTab(tab);
             if (switched != null) {
                 result.put("activeTab", switched);
-                TapeRecorder recorder = monitor.getTapeRecorder();
+                TapeRecorder recorder = facade.getTapeRecorder();
                 if (recorder != null && recorder.isActive()) {
                     recorder.resetClock();
-                    int tabIndex = monitor.getTabNames().indexOf(switched);
+                    int tabIndex = facade.getTabNames().indexOf(switched);
                     if (tabIndex >= 0 && tabIndex < 9) {
                         recorder.recordKey(String.valueOf(tabIndex + 1));
                     }
                 }
             } else {
                 result.put("tabError", "Unknown tab: " + tab);
-                result.put("availableTabs", toJsonArray(monitor.getTabNames()));
+                result.put("availableTabs", toJsonArray(facade.getTabNames()));
             }
         }
 
         // Diagram route/node navigation (route selection in topology doesn't need render wait)
         if (node == null && route != null) {
-            String selected = monitor.navigateDiagramToRoute(route);
+            String selected = facade.navigateDiagramToRoute(route);
             if (selected != null) {
                 result.put("selectedRoute", route);
             } else {
@@ -816,14 +816,14 @@ class TuiMcpServer {
         if (node != null) {
             // Drill into the route first (sets topologyMode=false)
             if (route != null) {
-                monitor.navigateDiagramToNode(route, null);
+                facade.navigateDiagramToNode(route, null);
             }
         }
 
-        long beforeGen = monitor.getRenderGeneration();
+        long beforeGen = facade.getRenderGeneration();
         long deadline = System.currentTimeMillis() + 2000;
         while (System.currentTimeMillis() < deadline) {
-            if (monitor.getRenderGeneration() >= beforeGen + 2) {
+            if (facade.getRenderGeneration() >= beforeGen + 2) {
                 break;
             }
             try {
@@ -836,7 +836,7 @@ class TuiMcpServer {
 
         // Now that the render has populated EIP node boxes, select the node
         if (node != null) {
-            String selected = monitor.navigateDiagramToNode(null, node);
+            String selected = facade.navigateDiagramToNode(null, node);
             if (selected != null) {
                 result.put("selectedNode", node);
                 if (route != null) {
@@ -847,7 +847,7 @@ class TuiMcpServer {
                                         + (route != null ? " in route " + route : ""));
             }
         }
-        Buffer buf = monitor.getLastBuffer();
+        Buffer buf = facade.getLastBuffer();
         if (buf != null) {
             result.put("screen", ExportRequest.export(buf).text().toString());
         }
@@ -873,15 +873,15 @@ class TuiMcpServer {
         if (delayArg instanceof Number n) {
             delay = Math.max(80, n.intValue());
         }
-        TapeRecorder recorder = monitor.getTapeRecorder();
+        TapeRecorder recorder = facade.getTapeRecorder();
         if (recorder != null && recorder.isActive()) {
             recorder.resetClock();
             recorder.recordKeys(keys, delay);
         }
 
         boolean wait = Boolean.TRUE.equals(args.get("wait"));
-        long beforeGen = wait ? monitor.getRenderGeneration() : 0;
-        int sent = monitor.injectKeys(keys, delay);
+        long beforeGen = wait ? facade.getRenderGeneration() : 0;
+        int sent = facade.injectKeys(keys, delay);
 
         if (!wait) {
             return "Queued " + sent + " key(s) with " + delay + "ms delay";
@@ -894,7 +894,7 @@ class TuiMcpServer {
         while (System.currentTimeMillis() < deadline) {
             long now = System.currentTimeMillis();
             if (now >= lastKeyFireAt) {
-                long gen = monitor.getRenderGeneration();
+                long gen = facade.getRenderGeneration();
                 if (gen >= beforeGen + sent + 2) {
                     break;
                 }
@@ -907,7 +907,7 @@ class TuiMcpServer {
             }
         }
 
-        Buffer buf = monitor.getLastBuffer();
+        Buffer buf = facade.getLastBuffer();
         JsonObject result = new JsonObject();
         result.put("sent", sent);
         result.put("delay", delay);
@@ -922,17 +922,17 @@ class TuiMcpServer {
 
     private String callGetOptions() {
         JsonObject result = new JsonObject();
-        result.put("tabs", toJsonArray(monitor.getTabNames()));
-        result.put("activeTab", monitor.getActiveTabName());
-        result.put("activeTabIndex", monitor.getActiveTabIndex());
-        result.put("integrations", toJsonArray(monitor.getIntegrationNames()));
-        String selected = monitor.getSelectedIntegrationName();
+        result.put("tabs", toJsonArray(facade.getTabNames()));
+        result.put("activeTab", facade.getActiveTabName());
+        result.put("activeTabIndex", facade.getActiveTabIndex());
+        result.put("integrations", toJsonArray(facade.getIntegrationNames()));
+        String selected = facade.getSelectedIntegrationName();
         if (selected != null) {
             result.put("selectedIntegration", selected);
         }
-        result.put("integrationCount", monitor.getIntegrationCount());
+        result.put("integrationCount", facade.getIntegrationCount());
 
-        List<String> actions = monitor.getActionLabels();
+        List<String> actions = facade.getActionLabels();
         JsonArray actionsArray = new JsonArray();
         for (int i = 0; i < actions.size(); i++) {
             JsonObject action = new JsonObject();
@@ -969,14 +969,14 @@ class TuiMcpServer {
             requiredFrames = Math.max(1, Math.min(10, n.intValue()));
         }
 
-        long startGeneration = monitor.getRenderGeneration();
+        long startGeneration = facade.getRenderGeneration();
         long start = System.currentTimeMillis();
         long deadline = start + timeout;
 
         while (System.currentTimeMillis() < deadline) {
-            long current = monitor.getRenderGeneration();
+            long current = facade.getRenderGeneration();
             if (current >= startGeneration + requiredFrames) {
-                Buffer buf = monitor.getLastBuffer();
+                Buffer buf = facade.getLastBuffer();
                 JsonObject result = new JsonObject();
                 result.put("settled", true);
                 result.put("waitedMs", System.currentTimeMillis() - start);
@@ -1003,23 +1003,23 @@ class TuiMcpServer {
     }
 
     private String callTapeStart(Map<String, Object> args) {
-        if (monitor.isTapeRecording()) {
+        if (facade.isTapeRecording()) {
             return "Tape recording is already active. Stop it first with tui_tape_stop.";
         }
         String title = args.get("title") instanceof String s ? s : null;
-        monitor.startTapeRecording(title);
+        facade.startTapeRecording(title);
         return "Tape recording started" + (title != null ? ": " + title : "");
     }
 
     private String callTapeStop(Map<String, Object> args) {
-        if (!monitor.isTapeRecording()) {
+        if (!facade.isTapeRecording()) {
             return "No tape recording is active. Start one with tui_tape_start.";
         }
-        TapeRecorder recorder = monitor.getTapeRecorder();
+        TapeRecorder recorder = facade.getTapeRecorder();
         String tape = recorder.stop();
         int keyCount = recorder.getKeyCount();
         long durationMs = recorder.getDurationMs();
-        monitor.clearTapeRecorder();
+        facade.clearTapeRecorder();
 
         JsonObject result = new JsonObject();
         result.put("tape", tape);
@@ -1047,7 +1047,7 @@ class TuiMcpServer {
         int seconds = secArg instanceof Number n ? n.intValue() : 3;
         seconds = Math.max(1, Math.min(30, seconds));
 
-        TapeRecorder recorder = monitor.getTapeRecorder();
+        TapeRecorder recorder = facade.getTapeRecorder();
         if (recorder != null && recorder.isActive()) {
             recorder.resetClock();
             recorder.recordSleep(seconds * 1000L);
@@ -1116,9 +1116,9 @@ class TuiMcpServer {
         }
 
         if (append) {
-            monitor.appendDrawing(drawCells);
+            facade.appendDrawing(drawCells);
         } else {
-            monitor.setDrawing(drawCells, duration);
+            facade.setDrawing(drawCells, duration);
         }
 
         return "Drawing " + drawCells.size() + " cell(s)"
@@ -1127,13 +1127,13 @@ class TuiMcpServer {
     }
 
     private String callDrawClear() {
-        monitor.clearDrawing();
+        facade.clearDrawing();
         return "Drawing cleared";
     }
 
     private String callGetTable(Map<String, Object> args) {
         String tab = args.get("tab") instanceof String s ? s : null;
-        JsonObject data = monitor.getTableData(tab);
+        JsonObject data = facade.getTableData(tab);
         if (data == null) {
             return "No table data available" + (tab != null ? " for tab: " + tab : "");
         }
@@ -1145,7 +1145,7 @@ class TuiMcpServer {
         if (action == null || action.isBlank()) {
             return "Error: action is required";
         }
-        boolean executed = monitor.executeAction(action);
+        boolean executed = facade.executeAction(action);
         if (executed) {
             return "Action '" + action + "' executed";
         }
@@ -1161,12 +1161,12 @@ class TuiMcpServer {
         }
         String filter = args.get("filter") instanceof String s ? s : null;
         String level = args.get("level") instanceof String s ? s : null;
-        JsonObject data = monitor.getLogData(limit, filter, level);
+        JsonObject data = facade.getLogData(limit, filter, level);
         return Jsoner.serialize(data);
     }
 
     private String callGetErrors() {
-        JsonObject data = monitor.getTableData("Errors");
+        JsonObject data = facade.getTableData("Errors");
         if (data == null) {
             JsonObject empty = new JsonObject();
             empty.put("tab", "Errors");
@@ -1178,7 +1178,7 @@ class TuiMcpServer {
     }
 
     private String callGetDiagram() {
-        JsonObject data = monitor.getDiagramData();
+        JsonObject data = facade.getDiagramData();
         if (data == null) {
             return "No diagram available. Navigate to the Diagram tab first.";
         }
@@ -1188,10 +1188,10 @@ class TuiMcpServer {
     private String callGetHistory(Map<String, Object> args) {
         String exchangeId = args.get("exchangeId") instanceof String s ? s : null;
         if (exchangeId != null && !exchangeId.isBlank()) {
-            monitor.navigateToTab("History");
-            monitor.selectTraceExchange(exchangeId);
+            facade.navigateToTab("History");
+            facade.selectTraceExchange(exchangeId);
         }
-        JsonObject data = monitor.getTableData("History");
+        JsonObject data = facade.getTableData("History");
         if (data == null) {
             return "No history data available. Ensure the History tab has data.";
         }
@@ -1199,7 +1199,7 @@ class TuiMcpServer {
     }
 
     private String callGetTopology() {
-        JsonObject data = monitor.getTopologyData();
+        JsonObject data = facade.getTopologyData();
         if (data == null) {
             return "No topology data available. The Diagram tab may not have loaded yet.";
         }
@@ -1212,7 +1212,7 @@ class TuiMcpServer {
         if (args.get("limit") instanceof Number n) {
             limit = n.intValue();
         }
-        JsonObject data = monitor.getSpanData(traceId, limit);
+        JsonObject data = facade.getSpanData(traceId, limit);
         return Jsoner.serialize(data);
     }
 
@@ -1223,7 +1223,7 @@ class TuiMcpServer {
         }
         String body = args.get("body") instanceof String s ? s : null;
         String headers = args.get("headers") instanceof String s ? s : null;
-        JsonObject response = monitor.sendMessage(endpoint, body, headers);
+        JsonObject response = facade.sendMessage(endpoint, body, headers);
         if (response == null) {
             return "Error: no integration selected or PID unavailable";
         }
@@ -1238,7 +1238,7 @@ class TuiMcpServer {
         String datasource = args.get("datasource") instanceof String s ? s : null;
         int maxRows = args.get("maxRows") instanceof Number n ? n.intValue() : 100;
         int queryTimeout = args.get("queryTimeout") instanceof Number n ? n.intValue() : 30;
-        JsonObject response = monitor.executeSql(query, datasource, maxRows, queryTimeout);
+        JsonObject response = facade.executeSql(query, datasource, maxRows, queryTimeout);
         if (response == null) {
             return "Error: no integration selected or PID unavailable";
         }
@@ -1259,7 +1259,7 @@ class TuiMcpServer {
             return "Error: columnValues is required (JSON object)";
         }
         String datasource = args.get("datasource") instanceof String s ? s : null;
-        JsonObject response = monitor.updateRow(table, datasource, pkValues, colValues);
+        JsonObject response = facade.updateRow(table, datasource, pkValues, colValues);
         if (response == null) {
             return "Error: no integration selected or PID unavailable";
         }
@@ -1276,14 +1276,14 @@ class TuiMcpServer {
                 && !"DEBUG".equals(level) && !"TRACE".equals(level)) {
             return "Error: invalid level '" + level + "'. Must be ERROR, WARN, INFO, DEBUG, or TRACE";
         }
-        monitor.setLogLevel(level);
+        facade.setLogLevel(level);
         return "Log level set to " + level;
     }
 
     private String callFilter(Map<String, Object> args) {
         String filter = args.get("filter") instanceof String s ? s : "";
         String tab = args.get("tab") instanceof String s ? s : null;
-        boolean applied = monitor.setTabFilter(tab, filter);
+        boolean applied = facade.setTabFilter(tab, filter);
         if (!applied) {
             return "This tab does not support text filtering";
         }
@@ -1297,7 +1297,7 @@ class TuiMcpServer {
         }
         String value = args.get("value") instanceof String s ? s : "";
         String tab = args.get("tab") instanceof String s ? s : null;
-        boolean applied = monitor.setTabInputValue(tab, field, value);
+        boolean applied = facade.setTabInputValue(tab, field, value);
         if (!applied) {
             return "Error: field '" + field + "' not found on " + (tab != null ? tab : "active") + " tab";
         }
@@ -1310,7 +1310,7 @@ class TuiMcpServer {
             return "Error: section is required (headers, properties, variables, body, wrap)";
         }
         Boolean enabled = args.get("enabled") instanceof Boolean b ? b : null;
-        String result = monitor.toggleTraceDisplay(section, enabled);
+        String result = facade.toggleTraceDisplay(section, enabled);
         if (result == null) {
             return "Error: unknown section '" + section + "'. Must be headers, properties, variables, body, or wrap";
         }
@@ -1319,7 +1319,7 @@ class TuiMcpServer {
 
     private String callGetReadme(Map<String, Object> args) {
         String name = args.get("name") instanceof String s ? s : null;
-        JsonObject response = monitor.getReadme(name);
+        JsonObject response = facade.getReadme(name);
         if (response == null) {
             return name != null
                     ? "No README found for integration '" + name + "'"
@@ -1338,13 +1338,13 @@ class TuiMcpServer {
         if (action == null || action.isBlank()) {
             return "Error: action is required";
         }
-        return monitor.controlIntegration(action);
+        return facade.controlIntegration(action);
     }
 
     private String callGetFiles(Map<String, Object> args) {
         String name = args.get("name") instanceof String s ? s : null;
         String file = args.get("file") instanceof String s ? s : null;
-        JsonObject response = monitor.getFiles(name, file);
+        JsonObject response = facade.getFiles(name, file);
         if (response == null) {
             return name != null
                     ? "No source files found for integration '" + name + "'"
@@ -1364,11 +1364,11 @@ class TuiMcpServer {
         JsonObject result = new JsonObject();
 
         if (text != null) {
-            JsonArray matches = monitor.locateText(text);
+            JsonArray matches = facade.locateText(text);
             result.put("matches", matches);
         } else if (node != null || nodes != null) {
             List<String> ids = nodes != null ? nodes : List.of(node);
-            JsonObject located = monitor.locateNodes(ids);
+            JsonObject located = facade.locateNodes(ids);
             if (located != null) {
                 result.put("matches", located.get("matches"));
                 if (located.containsKey("bounds")) {
@@ -1421,9 +1421,9 @@ class TuiMcpServer {
 
         boolean append = args.get("append") instanceof Boolean b && b;
         if (append) {
-            monitor.appendDrawing(cells);
+            facade.appendDrawing(cells);
         } else {
-            monitor.setDrawing(cells, duration);
+            facade.setDrawing(cells, duration);
         }
         return "Drew " + shape + " at (" + x + "," + y + ")";
     }
