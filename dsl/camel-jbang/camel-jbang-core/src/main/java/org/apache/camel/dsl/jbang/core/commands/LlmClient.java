@@ -42,7 +42,7 @@ import org.apache.camel.util.json.Jsoner;
 /**
  * Shared LLM HTTP client supporting Ollama, OpenAI-compatible, and Anthropic (including Vertex AI) APIs.
  */
-class LlmClient {
+public class LlmClient {
 
     private static final String DEFAULT_OLLAMA_URL = "http://localhost:11434";
     private static final String DEFAULT_ANTHROPIC_URL = "https://api.anthropic.com";
@@ -58,7 +58,7 @@ class LlmClient {
             "claude-opus-4-5", "claude-opus-4-5@20251101",
             "claude-haiku-4-5", "claude-haiku-4-5@20251001");
 
-    enum ApiType {
+    public enum ApiType {
         ollama,
         openai,
         anthropic
@@ -66,31 +66,31 @@ class LlmClient {
 
     // -- Unified abstractions for tool-calling across API formats --
 
-    record ToolDef(String name, String description, JsonObject parameters) {
+    public record ToolDef(String name, String description, JsonObject parameters) {
     }
 
-    record ToolCall(String id, String name, JsonObject arguments) {
+    public record ToolCall(String id, String name, JsonObject arguments) {
     }
 
-    record ToolResult(String toolCallId, String content) {
+    public record ToolResult(String toolCallId, String content) {
     }
 
-    record Message(String role, String content, List<ToolCall> toolCalls, List<ToolResult> toolResults) {
+    public record Message(String role, String content, List<ToolCall> toolCalls, List<ToolResult> toolResults) {
 
-        static Message user(String text) {
+        public static Message user(String text) {
             return new Message("user", text, null, null);
         }
 
-        static Message assistantWithToolCalls(String text, List<ToolCall> calls) {
+        public static Message assistantWithToolCalls(String text, List<ToolCall> calls) {
             return new Message("assistant", text, calls, null);
         }
 
-        static Message toolResults(List<ToolResult> results) {
+        public static Message toolResults(List<ToolResult> results) {
             return new Message("tool", null, null, results);
         }
     }
 
-    record ChatResponse(String text, List<ToolCall> toolCalls, String stopReason, boolean streamed) {
+    public record ChatResponse(String text, List<ToolCall> toolCalls, String stopReason, boolean streamed) {
     }
 
     // -- Configuration --
@@ -104,7 +104,23 @@ class LlmClient {
     boolean stream;
     int maxTokens;
     boolean verbose;
-    Printer printer;
+    Printer printer = new Printer() {
+        @Override
+        public void println() {
+        }
+
+        @Override
+        public void println(String line) {
+        }
+
+        @Override
+        public void print(String output) {
+        }
+
+        @Override
+        public void printf(String format, Object... args) {
+        }
+    };
 
     private final HttpClient httpClient = HttpClient.newBuilder()
             .connectTimeout(Duration.ofSeconds(CONNECT_TIMEOUT_SECONDS))
@@ -116,63 +132,63 @@ class LlmClient {
 
     // -- Builder --
 
-    static LlmClient create() {
+    public static LlmClient create() {
         return new LlmClient();
     }
 
-    LlmClient withApiType(ApiType apiType) {
+    public LlmClient withApiType(ApiType apiType) {
         this.apiType = apiType;
         return this;
     }
 
-    LlmClient withUrl(String url) {
+    public LlmClient withUrl(String url) {
         this.url = url;
         return this;
     }
 
-    LlmClient withApiKey(String apiKey) {
+    public LlmClient withApiKey(String apiKey) {
         this.apiKey = apiKey;
         return this;
     }
 
-    LlmClient withModel(String model) {
+    public LlmClient withModel(String model) {
         this.model = model;
         return this;
     }
 
-    LlmClient withTimeout(int timeout) {
+    public LlmClient withTimeout(int timeout) {
         this.timeout = timeout;
         return this;
     }
 
-    LlmClient withTemperature(double temperature) {
+    public LlmClient withTemperature(double temperature) {
         this.temperature = temperature;
         return this;
     }
 
-    LlmClient withStream(boolean stream) {
+    public LlmClient withStream(boolean stream) {
         this.stream = stream;
         return this;
     }
 
-    LlmClient withMaxTokens(int maxTokens) {
+    public LlmClient withMaxTokens(int maxTokens) {
         this.maxTokens = maxTokens;
         return this;
     }
 
-    LlmClient withVerbose(boolean verbose) {
+    public LlmClient withVerbose(boolean verbose) {
         this.verbose = verbose;
         return this;
     }
 
-    LlmClient withPrinter(Printer printer) {
+    public LlmClient withPrinter(Printer printer) {
         this.printer = printer;
         return this;
     }
 
     // -- Auto-detection --
 
-    boolean detectEndpoint() {
+    public boolean detectEndpoint() {
         boolean found;
         if (tryExplicitUrl()) {
             found = true;
@@ -232,7 +248,7 @@ class LlmClient {
 
     // -- Chat with tools (for ask) --
 
-    ChatResponse chatWithTools(String systemPrompt, List<Message> messages, List<ToolDef> tools) {
+    public ChatResponse chatWithTools(String systemPrompt, List<Message> messages, List<ToolDef> tools) {
         return switch (apiType) {
             case ollama -> chatOllamaFormat(systemPrompt, messages, tools);
             case openai -> chatOpenAiFormat(systemPrompt, messages, tools);
