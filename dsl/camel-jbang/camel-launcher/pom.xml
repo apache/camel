@@ -54,7 +54,7 @@
         <httpcore-version>4.4.16</httpcore-version>
         <commons-codec-version>1.22.0</commons-codec-version>
         <jcl-over-slf4j-version>${slf4j-version}</jcl-over-slf4j-version>
-        <commonmark-version>0.28.0</commonmark-version>
+        <commonmark-version>0.29.0</commonmark-version>
     </properties>
 
     <dependencyManagement>
