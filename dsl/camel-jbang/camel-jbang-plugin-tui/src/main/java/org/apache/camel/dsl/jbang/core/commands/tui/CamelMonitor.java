@@ -1195,6 +1195,91 @@ public class CamelMonitor extends CamelCommand {
             return;
         }
 
+        String platform = info.platform;
+        boolean isSpringBoot = "Spring Boot".equals(platform);
+        boolean isQuarkus = "Quarkus".equals(platform);
+
+        if (isSpringBoot || isQuarkus) {
+            restartMavenBasedProcess(ph, info, isSpringBoot);
+        } else {
+            restartCamelMainProcess(ph, info);
+        }
+    }
+
+    private void restartMavenBasedProcess(ProcessHandle ph, IntegrationInfo info, boolean springBoot) {
+        String directory = info.directory;
+        if (directory == null || directory.isEmpty()) {
+            setNotification("Cannot restart: directory not available", true);
+            return;
+        }
+
+        Path dirPath = Path.of(directory);
+        boolean windows = System.getProperty("os.name", "").toLowerCase(Locale.ROOT).contains("win");
+        String mvnw = windows ? "mvnw.cmd" : "mvnw";
+        Path mvnwPath = dirPath.resolve(mvnw);
+        if (!Files.isRegularFile(mvnwPath)) {
+            setNotification("Cannot restart: Maven wrapper not found", true);
+            return;
+        }
+
+        String name = info.name;
+        ctx.lastSelectedName = name;
+
+        // kill the process (Maven parent will also exit)
+        ph.destroy();
+        setNotification("Restarting: " + name, false);
+
+        if (runner != null) {
+            runner.scheduler().execute(() -> {
+                try {
+                    // wait for process termination
+                    try {
+                        ph.onExit().toCompletableFuture().get(10, TimeUnit.SECONDS);
+                    } catch (Exception e) {
+                        ph.destroyForcibly();
+                        Thread.sleep(500);
+                    }
+                    // also wait for parent (Maven) to exit
+                    ProcessHandle parent = ph.parent().orElse(null);
+                    if (parent != null && parent.isAlive()) {
+                        try {
+                            parent.onExit().toCompletableFuture().get(5, TimeUnit.SECONDS);
+                        } catch (Exception e) {
+                            parent.destroyForcibly();
+                        }
+                    }
+
+                    // re-launch via Maven wrapper
+                    List<String> cmd = new ArrayList<>();
+                    cmd.add(mvnwPath.toString());
+                    cmd.add("--quiet");
+                    cmd.add("--file");
+                    cmd.add(dirPath.resolve("pom.xml").toString());
+                    if (springBoot) {
+                        cmd.add("spring-boot:run");
+                    } else {
+                        cmd.add("package");
+                        cmd.add("quarkus:dev");
+                    }
+
+                    ProcessBuilder pb = new ProcessBuilder(cmd);
+                    pb.directory(dirPath.toFile());
+                    pb.redirectErrorStream(true);
+                    Path outputFile = Files.createTempFile("camel-restart-", ".log");
+                    outputFile.toFile().deleteOnExit();
+                    pb.redirectOutput(outputFile.toFile());
+                    pb.start();
+
+                    runner.runOnRenderThread(() -> setNotification("Restarted: " + name, false));
+                } catch (Exception e) {
+                    runner.runOnRenderThread(
+                            () -> setNotification("Restart failed: " + e.getMessage(), true));
+                }
+            });
+        }
+    }
+
+    private void restartCamelMainProcess(ProcessHandle ph, IntegrationInfo info) {
         // capture command line before stopping
         Optional<String> cmdOpt = ph.info().command();
         Optional<String[]> argsOpt = ph.info().arguments();
