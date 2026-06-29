@@ -1,20 +1,250 @@
 = Camel MCP Server
 
-The Camel MCP Server exposes the Apache Camel Catalog and runtime introspection tools through the
-https://modelcontextprotocol.io/[Model Context Protocol (MCP)]. AI coding assistants (Claude Code, OpenAI Codex,
-GitHub Copilot, JetBrains AI) can query catalog data, validate endpoints, analyze routes, and inspect running applications.
+The Camel MCP Server gives AI coding assistants deep knowledge of Apache Camel.
+It exposes the full Camel Catalog — components, EIPs, data formats, Kamelets, examples — plus
+runtime introspection tools for live Camel applications, all through the
+https://modelcontextprotocol.io/[Model Context Protocol (MCP)].
 
-Built on https://quarkus.io/[Quarkus] with the https://docs.quarkiverse.io/quarkus-mcp-server/dev/index.html[quarkus-mcp-server] extension, launched via https://www.jbang.dev/[JBang].
+With the MCP server running, your AI assistant can look up component documentation, validate
+endpoints and routes, generate test scaffolds, diagnose errors from stack traces, check
+dependencies, plan migrations, review routes for security concerns, and interact with running
+Camel applications — without you having to copy-paste anything.
 
-NOTE: This module is in *Preview* status as of Camel 4.18.
+Built on https://quarkus.io/[Quarkus] with the
+https://docs.quarkiverse.io/quarkus-mcp-server/dev/index.html[quarkus-mcp-server] extension.
+
+NOTE: This module is in *Preview* status since Camel 4.18.
+
+== Getting Started
+
+The quickest way to get started:
+
+1. Install https://www.jbang.dev/[JBang] (one-time)
+2. Run `camel mcp` (or `jbang org.apache.camel:camel-jbang-mcp:LATEST:runner`)
+3. Connect your AI assistant (see <<Setup>> below)
+
+That's it — the MCP server starts with STDIO transport and your AI assistant can immediately
+query the Camel Catalog, validate routes, and more.
+
+== Running the MCP Server
+
+There are three ways to run the MCP server.
+
+=== Using the Camel CLI (recommended)
+
+The `camel mcp` command launches the MCP server as a first-class CLI command:
+
+[source,bash]
+----
+camel mcp
+----
+
+This starts the MCP server with STDIO transport (the default). To enable HTTP transport:
+
+[source,bash]
+----
+camel mcp --http
+camel mcp --http --port 9090
+----
+
+See <<Options>> for all available flags.
+
+=== Using JBang directly
+
+If you have https://www.jbang.dev/[JBang] installed:
+
+[source,bash]
+----
+# STDIO transport (default)
+jbang org.apache.camel:camel-jbang-mcp:LATEST:runner
+
+# HTTP transport
+jbang -Dquarkus.http.host-enabled=true -Dquarkus.http.port=8080 org.apache.camel:camel-jbang-mcp:LATEST:runner
+----
+
+=== Using java -jar (no JBang needed)
+
+Download the MCP server uber-JAR from Maven Central and run it directly:
+
+[source,bash]
+----
+# Download (replace VERSION with the desired Camel version, e.g., 4.21.0)
+curl -O https://repo1.maven.org/maven2/org/apache/camel/camel-jbang-mcp/VERSION/camel-jbang-mcp-VERSION-runner.jar
+
+# Run with STDIO transport
+java -jar camel-jbang-mcp-VERSION-runner.jar
+
+# Run with HTTP transport
+java -Dquarkus.http.host-enabled=true -Dquarkus.http.port=8080 -jar camel-jbang-mcp-VERSION-runner.jar
+----
 
 == Transport
 
 * **STDIO** (default) -- communicates over stdin/stdout. Logging goes to stderr.
-* **HTTP/SSE** -- for web-based clients and remote/shared access. Enable with `quarkus.http.host-enabled=true`.
+* **HTTP/SSE** -- for web-based clients and remote/shared access. Enable with `--http` flag or `-Dquarkus.http.host-enabled=true`.
   Supports two variants: SSE (`/mcp/sse`, protocol `2024-11-05`) and Streamable HTTP (`/mcp`, protocol `2025-03-26`, recommended for new integrations).
 
 IMPORTANT: The MCP server does **not** expose REST endpoints — all communication uses JSON-RPC over the MCP protocol.
+
+[[Setup]]
+== Setup
+
+=== Claude Code (plugin install, recommended)
+
+[source,bash]
+----
+claude plugin marketplace add apache/camel
+claude plugin install camel-mcp@camel-marketplace
+----
+
+=== Manual configuration (all AI tools)
+
+Add the server to your MCP configuration file. The JSON is the same for all tools — only the file location differs:
+
+[cols="1,2",options="header"]
+|===
+| Tool | Configuration file
+
+| Claude Code | `.mcp.json` (project) or `~/.claude/mcp.json` (global)
+| OpenAI Codex | MCP configuration file
+| VS Code / Copilot | `.vscode/mcp.json` (use `"servers"` instead of `"mcpServers"` as the top-level key)
+| JetBrains IDEs (2025.1+) | Settings > Tools > AI Assistant > MCP Servers, or `.junie/mcp.json`
+|===
+
+[source,json]
+----
+{
+  "mcpServers": {
+    "camel": {
+      "command": "jbang",
+      "args": [
+        "-Dquarkus.log.level=WARN",
+        "org.apache.camel:camel-jbang-mcp:LATEST:runner"
+      ]
+    }
+  }
+}
+----
+
+NOTE: For VS Code, the top-level key is `"servers"` instead of `"mcpServers"`.
+
+=== Inspecting with MCP Inspector
+
+Start the server with HTTP enabled, then:
+
+[source,bash]
+----
+npx @modelcontextprotocol/inspector
+----
+
+Open http://localhost:6274/, set Transport Type to `SSE`, URL to `http://localhost:8080/mcp/sse`, Connection to `Via Proxy`.
+
+[[Options]]
+== `camel mcp` Options
+
+[cols="1,1,3",options="header"]
+|===
+| Option | Default | Description
+
+| `--http`
+| `false`
+| Enable HTTP transport (Streamable HTTP and SSE). Without this flag, the server uses STDIO transport.
+
+| `--port`
+| `8080`
+| HTTP server port (only used with `--http`).
+
+| `--log-level`
+| `WARN`
+| Log level: `ERROR`, `WARN`, `INFO`, `DEBUG`, `TRACE`.
+
+| `--version`
+| _(current Camel version)_
+| Camel MCP server version to use. Defaults to the version of the Camel CLI.
+|===
+
+== Examples
+
+Here are example prompts you can give your AI assistant. The assistant automatically selects the right MCP tools.
+
+=== Catalog exploration
+
+* _"List all Camel components in the messaging category"_ — uses `camel_catalog_components`
+* _"Show me the Kafka component documentation with all options"_ — uses `camel_catalog_component_doc`
+* _"Show me all AWS source kamelets"_ — uses `camel_catalog_kamelets`
+* _"What options does aws-s3-source accept?"_ — uses `camel_catalog_kamelet_doc`
+* _"Show me beginner REST examples"_ — uses `camel_catalog_examples`
+
+=== Building routes
+
+Ask the assistant to build a route from requirements:
+
+----
+Build me a Camel route that generates a message every 5 seconds with a random number,
+logs it, and sends it to a SEDA queue called "numbers".
+----
+
+The assistant discovers components, looks up documentation, builds a YAML route, and validates it with `camel_validate_yaml_dsl`. Use the `camel_build_integration` prompt for a structured multi-step workflow.
+
+=== Validation
+
+* _"Validate this endpoint: `kafka:myTopic?brkers=localhost:9092`"_ — detects the typo and suggests `brokers`
+* _"Validate this YAML route"_ — checks against the YAML DSL JSON schema, reports invalid elements
+
+=== Understanding, security, and testing
+
+* _"Explain what this route does"_ — uses `camel_route_context` for catalog-enriched analysis
+* _"Analyze this route for security concerns"_ — uses `camel_route_harden_context` to detect hardcoded credentials, plain-text protocols, etc.
+* _"Generate a JUnit 5 test for this route"_ — uses `camel_route_test_scaffold` to produce test class with mock endpoints and test-infra stubs
+
+=== Error diagnosis
+
+Paste a stack trace:
+
+----
+org.apache.camel.FailedToCreateRouteException: Failed to create route route1 at: >>> To[kafka:myTopic] <<<
+Caused by: org.apache.camel.NoSuchEndpointException: No endpoint could be found for: kafka:myTopic
+----
+
+The assistant uses `camel_error_diagnose` to identify the exception chain, extract components, and suggest fixes (e.g., missing `camel-kafka` dependency).
+
+=== Dependencies and versions
+
+* _"Check my pom.xml for missing or outdated dependencies"_ — uses `camel_dependency_check`
+* _"What are the latest LTS versions for Spring Boot?"_ — uses `camel_version_list`
+
+=== Migration
+
+* _"Migrate my project to the latest version (here's my pom.xml)"_ — uses `camel_migration_analyze` → `camel_migration_compatibility` → `camel_migration_recipes`
+* _"What changed with direct-vm in Camel 4?"_ — uses `camel_migration_guide_search`
+* _"Migrate from WildFly to Quarkus"_ — uses `camel_migration_wildfly_karaf` for archetype commands and steps
+* Use the `camel_migrate_project` prompt for an orchestrated multi-step workflow
+
+=== OpenAPI contract-first
+
+* _"Validate this OpenAPI spec for Camel compatibility"_ — uses `camel_openapi_validate`
+* _"Generate a Camel YAML scaffold with mock mode"_ — uses `camel_openapi_scaffold`
+* _"Show me the mock directory structure"_ — uses `camel_openapi_mock_guidance`
+
+Combine all three for a complete prototyping workflow: validate, scaffold, then implement routes one at a time while Camel mocks the rest.
+
+=== Runtime introspection
+
+Start a route with `camel run my-route.yaml`, then ask:
+
+* _"Show me running Camel processes and route statistics"_ — uses `camel_runtime_processes` and `camel_runtime_routes`
+* _"Enable tracing and show me the traced messages"_ — uses `camel_runtime_trace`
+* _"Send a test message to direct:start"_ — uses `camel_runtime_send`
+* _"Which processors are the slowest?"_ — uses `camel_runtime_top`
+* _"Browse messages in seda:numbers"_ — uses `camel_runtime_browse`
+
+=== Prompts (structured workflows)
+
+MCP clients that support prompts expose these as selectable workflows:
+
+* `camel_build_integration` — 7-step guided workflow: discover components → select EIPs → build → validate → security review
+* `camel_migrate_project` — 6-step migration: analyze → compatibility → recipes → guide search → summary
+* `camel_security_review` — 3-step audit: analyze vulnerabilities → understand data flow → produce checklist
 
 == Available Tools
 
@@ -435,153 +665,3 @@ instructions and executes each step by calling the referenced tools.
   produce an actionable audit checklist organized into critical issues, warnings, positive findings,
   recommendations, and compliance notes.
 |===
-
-== Setup
-
-The MCP server requires https://www.jbang.dev/[JBang] installed and on your PATH.
-
-=== Claude Code (plugin install, recommended)
-
-[source,bash]
-----
-claude plugin marketplace add apache/camel
-claude plugin install camel-mcp@camel-marketplace
-----
-
-=== Manual configuration (all AI tools)
-
-Add the server to your MCP configuration file. The JSON is the same for all tools — only the file location differs:
-
-[cols="1,2",options="header"]
-|===
-| Tool | Configuration file
-
-| Claude Code | `.mcp.json` (project) or `~/.claude/mcp.json` (global)
-| OpenAI Codex | MCP configuration file
-| VS Code / Copilot | `.vscode/mcp.json` (use `"servers"` instead of `"mcpServers"` as the top-level key)
-| JetBrains IDEs (2025.1+) | Settings > Tools > AI Assistant > MCP Servers, or `.junie/mcp.json`
-|===
-
-[source,json]
-----
-{
-  "mcpServers": {
-    "camel": {
-      "command": "jbang",
-      "args": [
-        "-Dquarkus.log.level=WARN",
-        "org.apache.camel:camel-jbang-mcp:LATEST:runner"
-      ]
-    }
-  }
-}
-----
-
-NOTE: For VS Code, the top-level key is `"servers"` instead of `"mcpServers"`.
-
-=== Generic STDIO or HTTP/SSE
-
-[source,bash]
-----
-# STDIO (any MCP client)
-jbang org.apache.camel:camel-jbang-mcp:LATEST:runner
-
-# HTTP/SSE transport
-jbang -Dquarkus.http.host-enabled=true -Dquarkus.http.port=8080 org.apache.camel:camel-jbang-mcp:LATEST:runner
-----
-
-HTTP endpoints: `/mcp/sse` (SSE, legacy) and `/mcp` (Streamable HTTP, recommended).
-
-=== Inspecting with MCP Inspector
-
-Start the server with HTTP enabled, then:
-
-[source,bash]
-----
-npx @modelcontextprotocol/inspector
-----
-
-Open http://localhost:6274/, set Transport Type to `SSE`, URL to `http://localhost:8080/mcp/sse`, Connection to `Via Proxy`.
-
-== Examples
-
-Here are example prompts you can give your AI assistant. The assistant automatically selects the right MCP tools.
-
-=== Catalog exploration
-
-* _"List all Camel components in the messaging category"_ — uses `camel_catalog_components`
-* _"Show me the Kafka component documentation with all options"_ — uses `camel_catalog_component_doc`
-* _"Show me all AWS source kamelets"_ — uses `camel_catalog_kamelets`
-* _"What options does aws-s3-source accept?"_ — uses `camel_catalog_kamelet_doc`
-* _"Show me beginner REST examples"_ — uses `camel_catalog_examples`
-
-=== Building routes
-
-Ask the assistant to build a route from requirements:
-
-----
-Build me a Camel route that generates a message every 5 seconds with a random number,
-logs it, and sends it to a SEDA queue called "numbers".
-----
-
-The assistant discovers components, looks up documentation, builds a YAML route, and validates it with `camel_validate_yaml_dsl`. Use the `camel_build_integration` prompt for a structured multi-step workflow.
-
-=== Validation
-
-* _"Validate this endpoint: `kafka:myTopic?brkers=localhost:9092`"_ — detects the typo and suggests `brokers`
-* _"Validate this YAML route"_ — checks against the YAML DSL JSON schema, reports invalid elements
-
-=== Understanding, security, and testing
-
-* _"Explain what this route does"_ — uses `camel_route_context` for catalog-enriched analysis
-* _"Analyze this route for security concerns"_ — uses `camel_route_harden_context` to detect hardcoded credentials, plain-text protocols, etc.
-* _"Generate a JUnit 5 test for this route"_ — uses `camel_route_test_scaffold` to produce test class with mock endpoints and test-infra stubs
-
-=== Error diagnosis
-
-Paste a stack trace:
-
-----
-org.apache.camel.FailedToCreateRouteException: Failed to create route route1 at: >>> To[kafka:myTopic] <<<
-Caused by: org.apache.camel.NoSuchEndpointException: No endpoint could be found for: kafka:myTopic
-----
-
-The assistant uses `camel_error_diagnose` to identify the exception chain, extract components, and suggest fixes (e.g., missing `camel-kafka` dependency).
-
-=== Dependencies and versions
-
-* _"Check my pom.xml for missing or outdated dependencies"_ — uses `camel_dependency_check`
-* _"What are the latest LTS versions for Spring Boot?"_ — uses `camel_version_list`
-
-=== Migration
-
-* _"Migrate my project to the latest version (here's my pom.xml)"_ — uses `camel_migration_analyze` → `camel_migration_compatibility` → `camel_migration_recipes`
-* _"What changed with direct-vm in Camel 4?"_ — uses `camel_migration_guide_search`
-* _"Migrate from WildFly to Quarkus"_ — uses `camel_migration_wildfly_karaf` for archetype commands and steps
-* Use the `camel_migrate_project` prompt for an orchestrated multi-step workflow
-
-=== OpenAPI contract-first
-
-* _"Validate this OpenAPI spec for Camel compatibility"_ — uses `camel_openapi_validate`
-* _"Generate a Camel YAML scaffold with mock mode"_ — uses `camel_openapi_scaffold`
-* _"Show me the mock directory structure"_ — uses `camel_openapi_mock_guidance`
-
-Combine all three for a complete prototyping workflow: validate, scaffold, then implement routes one at a time while Camel mocks the rest.
-
-=== Runtime introspection
-
-Start a route with `camel run my-route.yaml`, then ask:
-
-* _"Show me running Camel processes and route statistics"_ — uses `camel_runtime_processes` and `camel_runtime_routes`
-* _"Enable tracing and show me the traced messages"_ — uses `camel_runtime_trace`
-* _"Send a test message to direct:start"_ — uses `camel_runtime_send`
-* _"Which processors are the slowest?"_ — uses `camel_runtime_top`
-* _"Browse messages in seda:numbers"_ — uses `camel_runtime_browse`
-
-=== Prompts (structured workflows)
-
-MCP clients that support prompts expose these as selectable workflows:
-
-* `camel_build_integration` — 7-step guided workflow: discover components → select EIPs → build → validate → security review
-* `camel_migrate_project` — 6-step migration: analyze → compatibility → recipes → guide search → summary
-* `camel_security_review` — 3-step audit: analyze vulnerabilities → understand data flow → produce checklist

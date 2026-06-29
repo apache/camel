@@ -30,6 +30,7 @@ public enum PluginType {
     TEST("test", "test", "Manage tests for Camel applications", "4.14.0", null, "ASF"),
     ROUTE_PARSER("route-parser", "route-parser", "Parses Java route and dumps route structure", "4.17.0", null, "ASF"),
     VALIDATE("validate", "validate", "Validate Camel routes", "4.18.0", null, "ASF"),
+    MCP("mcp", "mcp", "MCP server for AI coding assistants", "4.21.0", null, "ASF"),
     TUI("tui", "tui", "Camel Dashboard", "4.20.0", null, "ASF");
 
     private final String name;
