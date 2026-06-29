@@ -49,6 +49,7 @@ import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.support.EventDrivenPollingConsumer;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.cache.DefaultConsumerCache;
+import org.apache.camel.support.cache.EmptyConsumerCache;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
@@ -544,9 +545,14 @@ public class PollEnricher extends BaseProcessorSupport implements IdAware, Route
     @Override
     protected void doBuild() throws Exception {
         if (consumerCache == null) {
-            // create consumer cache if we use dynamic expressions for computing the endpoints to poll
-            consumerCache = new DefaultConsumerCache(this, camelContext, cacheSize);
-            LOG.debug("PollEnrich {} using ConsumerCache with cacheSize={}", this, cacheSize);
+            if (cacheSize < 0) {
+                consumerCache = new EmptyConsumerCache(this, camelContext);
+                LOG.debug("PollEnrich {} is not using ConsumerCache", this);
+            } else {
+                // create consumer cache if we use dynamic expressions for computing the endpoints to poll
+                consumerCache = new DefaultConsumerCache(this, camelContext, cacheSize);
+                LOG.debug("PollEnrich {} using ConsumerCache with cacheSize={}", this, cacheSize);
+            }
         }
         if (aggregationStrategy == null) {
             aggregationStrategy = new CopyAggregationStrategy();
