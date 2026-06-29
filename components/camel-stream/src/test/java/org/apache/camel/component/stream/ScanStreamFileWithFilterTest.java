@@ -50,24 +50,17 @@ public class ScanStreamFileWithFilterTest extends CamelTestSupport {
 
         FileOutputStream fos = new FileOutputStream(file);
         fos.write("Hello\n".getBytes());
-        Thread.sleep(150);
         fos.write("World\n".getBytes());
-        Thread.sleep(150);
         fos.write("Hello\n".getBytes());
-        Thread.sleep(150);
         fos.write("World\n".getBytes());
-        Thread.sleep(150);
         fos.write("Hello\n".getBytes());
-        Thread.sleep(150);
         fos.write("World\n".getBytes());
-        Thread.sleep(150);
         fos.write("Hello Boy\n".getBytes());
-        Thread.sleep(150);
         fos.write("World\n".getBytes());
+        fos.flush();
+        fos.close();
 
         MockEndpoint.assertIsSatisfied(context);
-
-        fos.close();
     }
 
     @Override
