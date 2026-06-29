@@ -185,6 +185,7 @@ public class CamelMonitor extends CamelCommand {
     private final DrawOverlay drawOverlay = new DrawOverlay();
     private final HelpOverlay helpOverlay = new HelpOverlay();
     private final ShellPanel shellPanel = new ShellPanel();
+    private final AiPanel aiPanel = new AiPanel();
 
     private final ActionsPopup actionsPopup = new ActionsPopup(
             () -> data.get().stream()
@@ -280,6 +281,7 @@ public class CamelMonitor extends CamelCommand {
         actionsPopup.setContext(ctx);
         actionsPopup.setResetStatsAction(this::resetStats);
         shellPanel.setContext(ctx);
+        aiPanel.setContext(ctx);
         actionsPopup.setOpenShellAction(shellPanel::open);
         actionsPopup.setBrowseFilesAction(this::openFilesPopup);
         logTab = new LogTab(ctx);
@@ -317,6 +319,7 @@ public class CamelMonitor extends CamelCommand {
 
         eventLog = new TuiEventLog(500);
         Path mcpJsonFile = null;
+        actionsPopup.setAiActivityLog(aiPanel::getActivityLog);
         if (mcp) {
             mcpServer = new TuiMcpServer(mcpPort, this);
             try {
@@ -347,6 +350,7 @@ public class CamelMonitor extends CamelCommand {
                     this::render);
         } finally {
             shellPanel.destroy();
+            aiPanel.destroy();
             if (mcpServer != null) {
                 mcpServer.stop();
             }
@@ -405,6 +409,13 @@ public class CamelMonitor extends CamelCommand {
                     return true;
                 }
                 return shellPanel.handleKeyEvent(ke);
+            }
+            if (aiPanel.isOpen()) {
+                if (ke.isKey(KeyCode.F8) && ke.hasShift()) {
+                    aiPanel.cycleHeight();
+                    return true;
+                }
+                return aiPanel.handleKeyEvent(ke);
             }
             if (actionsPopup.isVisible()) {
                 return actionsPopup.handleKeyEvent(ke);
@@ -641,7 +652,21 @@ public class CamelMonitor extends CamelCommand {
             if (shellPanel.isOpen()) {
                 shellPanel.close();
             } else {
+                if (aiPanel.isOpen()) {
+                    aiPanel.close();
+                }
                 shellPanel.open();
+            }
+            return true;
+        }
+        if (ke.isKey(KeyCode.F8)) {
+            if (aiPanel.isOpen()) {
+                aiPanel.close();
+            } else {
+                if (shellPanel.isOpen()) {
+                    shellPanel.close();
+                }
+                aiPanel.open();
             }
             return true;
         }
@@ -1002,7 +1027,8 @@ public class CamelMonitor extends CamelCommand {
         renderHeader(frame, mainChunks.get(0));
         renderTabs(frame, mainChunks.get(1));
         Rect contentArea = mainChunks.get(2);
-        ctx.shellPercent = shellPanel.isOpen() ? shellPanel.panelPercent() : 0;
+        ctx.shellPercent = shellPanel.isOpen() ? shellPanel.panelPercent()
+                : aiPanel.isOpen() ? aiPanel.panelPercent() : 0;
         if (shellPanel.isOpen()) {
             List<Rect> splitChunks = Layout.vertical()
                     .constraints(Constraint.percentage(100 - shellPanel.panelPercent()),
@@ -1010,6 +1036,13 @@ public class CamelMonitor extends CamelCommand {
                     .split(contentArea);
             renderContent(frame, splitChunks.get(0));
             shellPanel.render(frame, splitChunks.get(1));
+        } else if (aiPanel.isOpen()) {
+            List<Rect> splitChunks = Layout.vertical()
+                    .constraints(Constraint.percentage(100 - aiPanel.panelPercent()),
+                            Constraint.percentage(aiPanel.panelPercent()))
+                    .split(contentArea);
+            renderContent(frame, splitChunks.get(0));
+            aiPanel.render(frame, splitChunks.get(1));
         } else {
             renderContent(frame, contentArea);
         }
@@ -1763,6 +1796,8 @@ public class CamelMonitor extends CamelCommand {
             hint(spans, "Esc", "close");
         } else if (shellPanel.isOpen()) {
             shellPanel.renderFooter(spans);
+        } else if (aiPanel.isOpen()) {
+            aiPanel.renderFooter(spans);
         } else {
             MonitorTab tab = activeTab();
 
@@ -1857,6 +1892,7 @@ public class CamelMonitor extends CamelCommand {
             hint(fKeySpans, "F3", "switch");
         }
         hint(fKeySpans, "F6", "shell");
+        hint(fKeySpans, "F8", "AI");
         spans.addAll(insertPos, fKeySpans);
         // Return total F-key span count. The footer drop loop uses this to remove pairs from
         // the tail (F6, then F3, F2), stopping before the first pair (F1 help when present).

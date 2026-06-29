@@ -18,7 +18,7 @@ package org.apache.camel.dsl.jbang.core.commands.tui;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.lang.reflect.Method;
+import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -138,13 +138,13 @@ class ShellPanel {
             return true;
         }
 
-        // Shift+PageUp/Down for scrollback through history
-        if (ke.isKey(KeyCode.PAGE_UP) && ke.hasShift()) {
+        // PageUp/Down for scrollback through history
+        if (ke.isKey(KeyCode.PAGE_UP)) {
             int histSize = screenTerminal != null ? getHistorySize(screenTerminal) : 0;
             scrollOffset = Math.min(scrollOffset + lastHeight, histSize);
             return true;
         }
-        if (ke.isKey(KeyCode.PAGE_DOWN) && ke.hasShift()) {
+        if (ke.isKey(KeyCode.PAGE_DOWN)) {
             scrollOffset = Math.max(0, scrollOffset - lastHeight);
             return true;
         }
@@ -280,7 +280,7 @@ class ShellPanel {
     void renderFooter(List<Span> spans) {
         MonitorContext.hint(spans, "F6", "close");
         MonitorContext.hint(spans, "Shift+F6", SPLIT_PERCENTS[splitIndex] + "%");
-        MonitorContext.hint(spans, "Shift+PgUp/Dn", "scroll");
+        MonitorContext.hint(spans, "PgUp/Dn", "scroll");
     }
 
     private List<Line> renderLiveView(long[] screen, int width, int height) {
@@ -619,20 +619,17 @@ class ShellPanel {
     @SuppressWarnings("unchecked")
     private static List<long[]> getHistory(ScreenTerminal st) {
         try {
-            Method m = ScreenTerminal.class.getMethod("getHistory");
-            return (List<long[]>) m.invoke(st);
+            Field f = ScreenTerminal.class.getDeclaredField("history");
+            f.setAccessible(true);
+            List<long[]> history = (List<long[]>) f.get(st);
+            return history != null ? history : Collections.emptyList();
         } catch (Exception e) {
             return Collections.emptyList();
         }
     }
 
     private static int getHistorySize(ScreenTerminal st) {
-        try {
-            Method m = ScreenTerminal.class.getMethod("getHistorySize");
-            return (int) m.invoke(st);
-        } catch (Exception e) {
-            return 0;
-        }
+        return getHistory(st).size();
     }
 
     private static class DelegateOutputStream extends OutputStream {

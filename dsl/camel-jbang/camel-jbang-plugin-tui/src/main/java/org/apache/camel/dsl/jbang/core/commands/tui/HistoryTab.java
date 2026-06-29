@@ -1078,7 +1078,7 @@ class HistoryTab implements MonitorTab {
         List<TraceEntry> steps = getTraceStepsDepthFirst(traceSelectedExchangeId);
 
         List<Rect> chunks = Layout.vertical()
-                .constraints(Constraint.length(10), Constraint.length(1), Constraint.fill())
+                .constraints(Constraint.length(10), Constraint.fill())
                 .split(area);
 
         Map<String, String> descMap = showDescription ? getRouteDescriptions() : Collections.emptyMap();
@@ -1099,10 +1099,10 @@ class HistoryTab implements MonitorTab {
 
         if (showWaterfall) {
             Integer sel = traceStepTableState.selected();
-            renderWaterfall(frame, chunks.get(2), steps.stream().map(WaterfallStep::fromTrace).toList(),
+            renderWaterfall(frame, chunks.get(1), steps.stream().map(WaterfallStep::fromTrace).toList(),
                     sel != null ? sel : -1);
         } else {
-            renderTraceStepDetail(frame, chunks.get(2), steps);
+            renderTraceStepDetail(frame, chunks.get(1), steps);
         }
     }
 
@@ -1348,7 +1348,7 @@ class HistoryTab implements MonitorTab {
         List<HistoryEntry> current = reorderHistoryDepthFirst(historyEntries);
 
         List<Rect> chunks = Layout.vertical()
-                .constraints(Constraint.length(10), Constraint.length(1), Constraint.fill())
+                .constraints(Constraint.length(10), Constraint.fill())
                 .split(area);
 
         Map<String, String> descMap = showDescription ? getRouteDescriptions() : Collections.emptyMap();
@@ -1369,10 +1369,10 @@ class HistoryTab implements MonitorTab {
 
         if (showWaterfall) {
             Integer sel = historyTableState.selected();
-            renderWaterfall(frame, chunks.get(2), current.stream().map(WaterfallStep::fromHistory).toList(),
+            renderWaterfall(frame, chunks.get(1), current.stream().map(WaterfallStep::fromHistory).toList(),
                     sel != null ? sel : -1);
         } else {
-            renderHistoryDetail(frame, chunks.get(2), current);
+            renderHistoryDetail(frame, chunks.get(1), current);
         }
     }
 
