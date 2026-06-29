@@ -319,12 +319,12 @@ public class CamelMonitor extends CamelCommand {
 
         eventLog = new TuiEventLog(500);
         Path mcpJsonFile = null;
+        actionsPopup.setAiActivityLog(aiPanel::getActivityLog);
         if (mcp) {
             mcpServer = new TuiMcpServer(mcpPort, this);
             try {
                 mcpServer.start();
                 actionsPopup.setMcpEnabled(true, mcpPort, mcpServer::getConnectedClient, mcpServer::getActivityLog);
-                actionsPopup.setAiActivityLog(aiPanel::getActivityLog);
                 mcpJsonFile = writeMcpJson(mcpPort);
             } catch (java.net.BindException e) {
                 System.err.println("MCP server failed to start: port " + mcpPort + " is already in use.");
@@ -659,7 +659,7 @@ public class CamelMonitor extends CamelCommand {
             }
             return true;
         }
-        if (ke.isKey(KeyCode.F8) && mcp) {
+        if (ke.isKey(KeyCode.F8)) {
             if (aiPanel.isOpen()) {
                 aiPanel.close();
             } else {
@@ -1892,9 +1892,7 @@ public class CamelMonitor extends CamelCommand {
             hint(fKeySpans, "F3", "switch");
         }
         hint(fKeySpans, "F6", "shell");
-        if (mcp) {
-            hint(fKeySpans, "F8", "AI");
-        }
+        hint(fKeySpans, "F8", "AI");
         spans.addAll(insertPos, fKeySpans);
         // Return total F-key span count. The footer drop loop uses this to remove pairs from
         // the tail (F6, then F3, F2), stopping before the first pair (F1 help when present).
