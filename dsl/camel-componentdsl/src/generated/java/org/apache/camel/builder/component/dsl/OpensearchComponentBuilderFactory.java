@@ -203,6 +203,22 @@ public interface OpensearchComponentBuilderFactory {
             return this;
         }
     
+        /**
+         * To use a custom configured OpenSearchClient instance.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.opensearch.client.opensearch.OpenSearchClient&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param openSearchClient the value to set
+         * @return the dsl builder
+         */
+        default OpensearchComponentBuilder openSearchClient(org.opensearch.client.opensearch.OpenSearchClient openSearchClient) {
+            doSetProperty("openSearchClient", openSearchClient);
+            return this;
+        }
+    
         
         /**
          * The delay of a sniff execution scheduled after a failure (in
@@ -343,6 +359,7 @@ public interface OpensearchComponentBuilderFactory {
             case "autowiredEnabled": ((OpensearchComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "client": ((OpensearchComponent) component).setClient((org.opensearch.client.RestClient) value); return true;
             case "enableSniffer": ((OpensearchComponent) component).setEnableSniffer((boolean) value); return true;
+            case "openSearchClient": ((OpensearchComponent) component).setOpenSearchClient((org.opensearch.client.opensearch.OpenSearchClient) value); return true;
             case "sniffAfterFailureDelay": ((OpensearchComponent) component).setSniffAfterFailureDelay((int) value); return true;
             case "snifferInterval": ((OpensearchComponent) component).setSnifferInterval((int) value); return true;
             case "enableSSL": ((OpensearchComponent) component).setEnableSSL((boolean) value); return true;
