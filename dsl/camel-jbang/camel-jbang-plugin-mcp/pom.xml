@@ -18,36 +18,33 @@
 
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
         <groupId>org.apache.camel</groupId>
-        <artifactId>dsl</artifactId>
+        <artifactId>camel-jbang-parent</artifactId>
         <version>4.21.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <artifactId>camel-jbang-parent</artifactId>
-    <packaging>pom</packaging>
+    <artifactId>camel-jbang-plugin-mcp</artifactId>
 
-    <name>Camel :: JBang :: Parent</name>
-    <description>Camel CLI Modules (parent)</description>
+    <name>Camel :: JBang :: Plugin :: MCP</name>
+    <description>Camel CLI MCP Plugin - Launches the Camel MCP server for AI coding assistants</description>
 
-    <modules>
-        <module>camel-jbang-console</module>
-        <module>camel-jbang-core</module>
-        <module>camel-jbang-main</module>
-        <module>camel-jbang-mcp</module>
-        <module>camel-jbang-plugin-generate</module>
-        <module>camel-jbang-plugin-edit</module>
-        <module>camel-jbang-plugin-kubernetes</module>
-        <module>camel-jbang-plugin-mcp</module>
-        <module>camel-jbang-plugin-route-parser</module>
-        <module>camel-jbang-plugin-test</module>
-        <module>camel-jbang-plugin-tui</module>
-        <module>camel-jbang-plugin-validate</module>
-        <module>camel-jbang-it</module>
-        <module>camel-launcher</module>
-        <module>camel-launcher-container</module>
-    </modules>
+    <properties>
+        <firstVersion>4.21.0</firstVersion>
+        <label>jbang,mcp,ai</label>
+        <supportLevel>Preview</supportLevel>
+        <camel-prepare-component>false</camel-prepare-component>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-jbang-core</artifactId>
+        </dependency>
+    </dependencies>
+
 </project>
