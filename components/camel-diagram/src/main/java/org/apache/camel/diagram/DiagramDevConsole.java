@@ -122,10 +122,16 @@ public class DiagramDevConsole extends AbstractDevConsole {
                         metric, RouteDiagramDumper.NodeLabelMode.valueOf(nodeLabel.toUpperCase()), nodeWidth, fontSize);
                 String base64 = dumper.imageToBase64(image);
                 String html = String.format(
-                        "  <body>\n    <img src=\"data:image/png;base64,%s\" alt=\"Route Diagram\">\n  </body>\n",
+                        """
+                                  <body>
+                                    <img src="data:image/png;base64,%s" alt="Route Diagram">
+                                  </body>
+                                """,
                         base64);
                 if (refresh) {
-                    html = "<head><meta http-equiv=\"refresh\" content=\"5\"></head>\n" + html;
+                    html = """
+                            <head><meta http-equiv="refresh" content="5"></head>
+                            %s""".formatted(html);
                 }
                 html = "<html>\n" + html + "</html>\n";
                 sj.add(html);
@@ -192,7 +198,11 @@ public class DiagramDevConsole extends AbstractDevConsole {
             }
             String base64 = dumper.imageToBase64(image);
             String html = String.format(
-                    "  <body>\n    <img src=\"data:image/png;base64,%s\" alt=\"Route Topology\">\n  </body>\n",
+                    """
+                              <body>
+                                <img src="data:image/png;base64,%s" alt="Route Topology">
+                              </body>
+                            """,
                     base64);
             if (refresh) {
                 html = "<head><meta http-equiv=\"refresh\" content=\"5\"></head>\n" + html;
@@ -229,17 +239,23 @@ public class DiagramDevConsole extends AbstractDevConsole {
         String metricAttr = metric ? "" : " metric=\"false\"";
         String refreshAttr = refresh ? " refresh=\"5000\"" : "";
         String externalAttr = external ? "" : " external=\"false\"";
-        return "<html>\n"
-               + "  <head>\n"
-               + "    <meta charset=\"utf-8\">\n"
-               + "    <script type=\"module\">\n" + TOPOLOGY_WEB_COMPONENT_JS + "\n    </script>\n"
-               + "  </head>\n"
-               + "  <body>\n"
-               + String.format(
-                       "    <camel-topology-diagram src=\"route-topology\"%s%s%s></camel-topology-diagram>%n",
-                       metricAttr, refreshAttr, externalAttr)
-               + "  </body>\n"
-               + "</html>\n";
+        return """
+                <html>
+                  <head>
+                    <meta charset="utf-8">
+                    <script type="module">
+                %s
+                    </script>
+                  </head>
+                  <body>
+                %s  </body>
+                </html>
+                """.formatted(
+                TOPOLOGY_WEB_COMPONENT_JS, String.format(
+                        """
+                                    <camel-topology-diagram src="route-topology"%s%s%s></camel-topology-diagram>%n\
+                                """,
+                        metricAttr, refreshAttr, externalAttr));
     }
 
     private static String buildRouteWebComponentHtml(String filter, boolean metric, boolean refresh) {
@@ -248,17 +264,21 @@ public class DiagramDevConsole extends AbstractDevConsole {
         String refreshAttr = refresh ? " refresh=\"5000\"" : "";
         // inline the web component script: static resource serving is not available when only the developer
         // console is enabled (camel run --console). route-structure is a sibling console on the same origin.
-        return "<html>\n"
-               + "  <head>\n"
-               + "    <meta charset=\"utf-8\">\n"
-               + "    <script type=\"module\">\n" + WEB_COMPONENT_JS + "\n    </script>\n"
-               + "  </head>\n"
-               + "  <body>\n"
-               + String.format(
-                       "    <camel-route-diagram src=\"route-structure\" filter=\"%s\"%s%s></camel-route-diagram>%n",
-                       escapeAttr(f), metricAttr, refreshAttr)
-               + "  </body>\n"
-               + "</html>\n";
+        return """
+                <html>
+                  <head>
+                    <meta charset="utf-8">
+                    <script type="module">
+                %s
+                    </script>
+                  </head>
+                  <body>
+                %s  </body>
+                </html>
+                """.formatted(
+                WEB_COMPONENT_JS, String.format(
+                        "    <camel-route-diagram src=\"route-structure\" filter=\"%s\"%s%s></camel-route-diagram>%n",
+                        escapeAttr(f), metricAttr, refreshAttr));
     }
 
     private static String loadWebComponentJs(String filename) {
