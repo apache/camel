@@ -85,11 +85,15 @@ class AiPanel {
     private final AtomicBoolean thinking = new AtomicBoolean();
     private volatile Thread agentThread;
     private String initError;
+    private long thinkingStartTime;
 
     // Activity log for AI Log popup
     private final List<LogEntry> activityLog = new ArrayList<>();
 
-    record ConversationEntry(String role, String text) {
+    record ConversationEntry(String role, String text, long elapsedSeconds) {
+        ConversationEntry(String role, String text) {
+            this(role, text, -1);
+        }
     }
 
     void setContext(MonitorContext ctx) {
@@ -241,6 +245,7 @@ class AiPanel {
 
         conversation.add(new ConversationEntry("user", question));
         log(LogLevel.QUESTION, "Question", question);
+        thinkingStartTime = System.currentTimeMillis();
         thinking.set(true);
 
         // rebuild tools if target process changed
@@ -312,8 +317,9 @@ class AiPanel {
             } else {
                 String text = response.text();
                 if (text != null && !text.isBlank()) {
-                    conversation.add(new ConversationEntry("assistant", text));
-                    log(LogLevel.RESPONSE, "Response", text);
+                    long elapsed = (System.currentTimeMillis() - thinkingStartTime) / 1000;
+                    conversation.add(new ConversationEntry("assistant", text, elapsed));
+                    log(LogLevel.RESPONSE, "Response (" + elapsed + "s)", text);
                 } else {
                     String err = "Empty response from LLM.";
                     conversation.add(new ConversationEntry("error", err));
@@ -386,38 +392,62 @@ class AiPanel {
         }
 
         if (thinking.get()) {
+            long elapsed = (System.currentTimeMillis() - thinkingStartTime) / 1000;
             long dots = (System.currentTimeMillis() / 500) % 4;
-            md.append("*🤔 thinking").append(".".repeat((int) dots + 1)).append("*\n");
+            md.append("*🤔 thinking");
+            if (elapsed > 0) {
+                md.append(" (").append(elapsed).append("s)");
+            }
+            md.append(".".repeat((int) dots + 1)).append("*\n");
+        }
+
+        // Show elapsed time as a dimmed line below the markdown when at the bottom
+        long lastElapsed = -1;
+        if (!thinking.get() && !conversation.isEmpty()) {
+            ConversationEntry last = conversation.get(conversation.size() - 1);
+            if ("assistant".equals(last.role()) && last.elapsedSeconds() >= 0) {
+                lastElapsed = last.elapsedSeconds();
+            }
+        }
+
+        // Reserve 1 row for dimmed elapsed time when we have one to show
+        Rect mdArea = area;
+        Rect elapsedArea = null;
+        if (lastElapsed >= 0 && area.height() > 2) {
+            List<Rect> vParts = Layout.vertical()
+                    .constraints(Constraint.fill(), Constraint.length(1))
+                    .split(area);
+            mdArea = vParts.get(0);
+            elapsedArea = vParts.get(1);
         }
 
         String source = md.toString();
 
         // Estimate total rendered lines (accounting for word wrap)
-        int contentWidth = Math.max(1, area.width());
+        int contentWidth = Math.max(1, mdArea.width());
         int estimatedLines = 0;
         for (String l : source.split("\n", -1)) {
             estimatedLines += Math.max(1, (l.length() / contentWidth) + 1);
         }
 
-        boolean overflow = estimatedLines > area.height();
-        Rect contentArea = area;
+        boolean overflow = estimatedLines > mdArea.height();
+        Rect contentArea = mdArea;
         Rect scrollbarArea = null;
         if (overflow) {
             List<Rect> hParts = Layout.horizontal()
                     .constraints(Constraint.fill(), Constraint.length(1))
-                    .split(area);
+                    .split(mdArea);
             contentArea = hParts.get(0);
             scrollbarArea = hParts.get(1);
         }
 
         // scrollOffset=0 means auto-scroll to bottom (most recent content visible)
         // scrollOffset>0 means user scrolled up by that many lines
-        int scroll;
-        if (scrollOffset == 0) {
-            scroll = estimatedLines;
-        } else {
-            scroll = Math.max(0, estimatedLines - contentArea.height() - scrollOffset);
-        }
+        // Clamp so PgDn always has immediate effect after scrolling past the top
+        int maxScrollOffset = Math.max(0, estimatedLines - contentArea.height());
+        scrollOffset = Math.min(scrollOffset, maxScrollOffset);
+
+        int scroll = Math.max(0, maxScrollOffset - scrollOffset);
 
         MarkdownView view = MarkdownView.builder()
                 .source(source)
@@ -427,6 +457,12 @@ class AiPanel {
 
         if (overflow && scrollbarArea != null) {
             renderScrollbar(frame, scrollbarArea, estimatedLines, contentArea.height(), scroll);
+        }
+
+        if (elapsedArea != null && lastElapsed >= 0) {
+            frame.renderWidget(
+                    Paragraph.from(Line.from(Span.styled("(" + lastElapsed + "s)", Style.EMPTY.dim()))),
+                    elapsedArea);
         }
     }
 
