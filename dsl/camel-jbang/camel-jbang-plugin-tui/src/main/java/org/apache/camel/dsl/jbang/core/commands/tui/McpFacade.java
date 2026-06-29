@@ -93,8 +93,6 @@ class McpFacade {
             "Threads"
     };
 
-    private static final int TAB_OVERVIEW = 0;
-
     private final MonitorContext ctx;
     private final AtomicReference<List<IntegrationInfo>> data;
     private final TabsState tabsState;
@@ -546,7 +544,7 @@ class McpFacade {
             }
         } else {
             MonitorTab tab = bridge.activeTab();
-            if (tabsState.selected() == TAB_OVERVIEW) {
+            if (tabsState.selected() == TabRegistry.TAB_OVERVIEW) {
                 bridge.renderOverviewFooter(spans);
             } else if (tab != null) {
                 tab.renderFooter(spans);

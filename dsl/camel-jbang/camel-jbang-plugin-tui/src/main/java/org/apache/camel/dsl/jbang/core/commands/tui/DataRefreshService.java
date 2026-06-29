@@ -99,9 +99,6 @@ class DataRefreshService {
     private final Function<String, Path> statusFileResolver;
     private final Function<String, Path> errorFileResolver;
 
-    // Tab index constants (mirrored from CamelMonitor to avoid coupling)
-    private static final int TAB_OVERVIEW = 0;
-
     DataRefreshService(
                        String name,
                        RefreshContext refreshCtx,
@@ -227,7 +224,7 @@ class DataRefreshService {
     private boolean scanIntegrations() {
         List<IntegrationInfo> infos = new ArrayList<>();
         long now = System.currentTimeMillis();
-        boolean wantFullScan = refreshCtx.selectedTab() == TAB_OVERVIEW || refreshCtx.isSwitchPopupVisible()
+        boolean wantFullScan = refreshCtx.selectedTab() == TabRegistry.TAB_OVERVIEW || refreshCtx.isSwitchPopupVisible()
                 || cachedPids.isEmpty();
         long scanInterval = isBurstMode() ? 1000 : 2000;
         boolean fullScan = wantFullScan && (now - lastFullScanTime >= scanInterval);
