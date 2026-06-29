@@ -119,6 +119,14 @@ class AiPanel {
         return SPLIT_PERCENTS[splitIndex];
     }
 
+    private long lastResponseElapsed() {
+        if (thinking.get() || conversation.isEmpty()) {
+            return -1;
+        }
+        ConversationEntry last = conversation.get(conversation.size() - 1);
+        return "assistant".equals(last.role()) ? last.elapsedSeconds() : -1;
+    }
+
     void cycleHeight() {
         splitIndex = (splitIndex + 1) % SPLIT_PERCENTS.length;
     }
@@ -336,10 +344,21 @@ class AiPanel {
     }
 
     void render(Frame frame, Rect area) {
+        // At 25% show elapsed in the title bar to save space
+        long titleElapsed = lastResponseElapsed();
+        Line titleLine;
+        if (splitIndex == 0 && titleElapsed >= 0) {
+            titleLine = Line.from(
+                    Span.styled(" AI ", Style.EMPTY.bold()),
+                    Span.styled("(" + titleElapsed + "s) ", Style.EMPTY.dim()));
+        } else {
+            titleLine = Line.from(Span.styled(" AI ", Style.EMPTY.bold()));
+        }
+
         Block block = Block.builder()
                 .borders(Borders.ALL)
                 .borderType(BorderType.ROUNDED)
-                .title(Title.from(Line.from(Span.styled(" AI ", Style.EMPTY.bold()))))
+                .title(Title.from(titleLine))
                 .build();
         frame.renderWidget(block, area);
         Rect inner = block.inner(area);
@@ -347,14 +366,13 @@ class AiPanel {
             return;
         }
 
-        // Split inner area: conversation (fill) + separator (1 row) + input (1 row) + padding (1 row)
+        // Split inner area: conversation (fill) + separator (1 row) + input (1 row)
         List<Rect> parts = Layout.vertical()
-                .constraints(Constraint.fill(), Constraint.length(1), Constraint.length(1), Constraint.length(1))
+                .constraints(Constraint.fill(), Constraint.length(1), Constraint.length(1))
                 .split(inner);
         Rect conversationArea = parts.get(0);
         Rect separatorArea = parts.get(1);
         Rect inputArea = parts.get(2);
-        // parts.get(3) is empty padding row above the bottom border
 
         renderConversation(frame, conversationArea);
         // horizontal line separator
@@ -410,10 +428,10 @@ class AiPanel {
             }
         }
 
-        // Reserve 1 row for dimmed elapsed time when we have one to show
+        // Reserve 1 row for dimmed elapsed time (skip at 25% — shown in title bar instead)
         Rect mdArea = area;
         Rect elapsedArea = null;
-        if (lastElapsed >= 0 && area.height() > 2) {
+        if (lastElapsed >= 0 && splitIndex > 0 && area.height() > 2) {
             List<Rect> vParts = Layout.vertical()
                     .constraints(Constraint.fill(), Constraint.length(1))
                     .split(area);
