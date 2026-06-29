@@ -53,6 +53,23 @@ import static org.apache.camel.dsl.jbang.core.common.CamelCommandHelper.extractS
 
 class OverviewTab implements MonitorTab {
 
+    /**
+     * Callback interface for process control actions triggered from overview key shortcuts.
+     */
+    interface OverviewActions {
+        void sendRouteCommand(String pid, String routeId, String command);
+
+        void stopSelectedProcess(boolean forceKill);
+
+        void restartSelectedProcess();
+
+        void showKillConfirm();
+
+        void openDoc(IntegrationInfo info);
+
+        void openFilesPopup();
+    }
+
     private static final long VANISH_DURATION_MS = 6000;
     private static final int MAX_SPARKLINE_POINTS = 60;
     private static final String[] SORT_COLUMNS = { "pid", "name", "version", "status", "total", "fail" };
@@ -67,6 +84,7 @@ class OverviewTab implements MonitorTab {
     private final Map<String, LoadAvg> cpuLoadAvg;
     private final Set<String> stoppingPids;
     private final Runnable onPidChanged;
+    private OverviewActions actions;
 
     final TableState tableState = new TableState();
     int dividerIndex = -1;
@@ -89,6 +107,10 @@ class OverviewTab implements MonitorTab {
         this.onPidChanged = onPidChanged;
     }
 
+    void setActions(OverviewActions actions) {
+        this.actions = actions;
+    }
+
     @Override
     public boolean handleKeyEvent(KeyEvent ke) {
         if (ke.isChar('s')) {
@@ -104,6 +126,40 @@ class OverviewTab implements MonitorTab {
         if (ke.isCharIgnoreCase('a')) {
             chartMode = (chartMode + 1) % 3;
             return true;
+        }
+        // Process control keys
+        if (actions != null) {
+            if (ke.isChar('p') && ctx.selectedPid != null && !ctx.isInfraSelected()) {
+                IntegrationInfo selInfo = ctx.findSelectedIntegration();
+                if (selInfo != null) {
+                    String cmd = selInfo.routeStarted > 0 ? "stop" : "start";
+                    actions.sendRouteCommand(ctx.selectedPid, "*", cmd);
+                }
+                return true;
+            }
+            if (ke.isChar('x') && ctx.selectedPid != null) {
+                actions.stopSelectedProcess(false);
+                return true;
+            }
+            if (ke.isChar('X') && ctx.selectedPid != null) {
+                actions.showKillConfirm();
+                return true;
+            }
+            if (ke.isChar('r') && ctx.selectedPid != null && !ctx.isInfraSelected()) {
+                actions.restartSelectedProcess();
+                return true;
+            }
+            if (ke.isChar('d') && ctx.selectedPid != null && !ctx.isInfraSelected()) {
+                IntegrationInfo selInfo = ctx.findSelectedIntegration();
+                if (selInfo != null && selInfo.readmeFiles != null && !selInfo.readmeFiles.isEmpty()) {
+                    actions.openDoc(selInfo);
+                    return true;
+                }
+            }
+            if (ke.isChar('f') && ctx.selectedPid != null && !ctx.isInfraSelected()) {
+                actions.openFilesPopup();
+                return true;
+            }
         }
         return false;
     }

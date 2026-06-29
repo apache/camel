@@ -62,12 +62,6 @@ class McpFacade {
 
         MonitorTab activeTab();
 
-        Buffer lastBuffer();
-
-        long renderGeneration();
-
-        boolean isKeystrokesVisible();
-
         void handleTabKey(int tabIndex);
 
         void selectMoreTab(int moreIndex);
@@ -104,7 +98,7 @@ class McpFacade {
     private final MonitorContext ctx;
     private final AtomicReference<List<IntegrationInfo>> data;
     private final TabsState tabsState;
-    private final TuiEventLog eventLog;
+    private final RecordingManager recordingManager;
     private final CaptionOverlay captionOverlay;
     private final DrawOverlay drawOverlay;
     private final HelpOverlay helpOverlay;
@@ -113,7 +107,6 @@ class McpFacade {
     private final LogTab logTab;
     private final DiagramTab diagramTab;
     private final HistoryTab historyTab;
-    private final AtomicReference<TapeRecorder> tapeRecorderRef;
     private final Queue<PendingKey> pendingKeys;
     private final MonitorBridge bridge;
 
@@ -121,7 +114,7 @@ class McpFacade {
               MonitorContext ctx,
               AtomicReference<List<IntegrationInfo>> data,
               TabsState tabsState,
-              TuiEventLog eventLog,
+              RecordingManager recordingManager,
               CaptionOverlay captionOverlay,
               DrawOverlay drawOverlay,
               HelpOverlay helpOverlay,
@@ -130,13 +123,12 @@ class McpFacade {
               LogTab logTab,
               DiagramTab diagramTab,
               HistoryTab historyTab,
-              AtomicReference<TapeRecorder> tapeRecorderRef,
               Queue<PendingKey> pendingKeys,
               MonitorBridge bridge) {
         this.ctx = ctx;
         this.data = data;
         this.tabsState = tabsState;
-        this.eventLog = eventLog;
+        this.recordingManager = recordingManager;
         this.captionOverlay = captionOverlay;
         this.drawOverlay = drawOverlay;
         this.helpOverlay = helpOverlay;
@@ -145,7 +137,6 @@ class McpFacade {
         this.logTab = logTab;
         this.diagramTab = diagramTab;
         this.historyTab = historyTab;
-        this.tapeRecorderRef = tapeRecorderRef;
         this.pendingKeys = pendingKeys;
         this.bridge = bridge;
     }
@@ -153,40 +144,37 @@ class McpFacade {
     // ---- Screen state ----
 
     Buffer getLastBuffer() {
-        return bridge.lastBuffer();
+        return recordingManager.getLastBuffer();
     }
 
     long getRenderGeneration() {
-        return bridge.renderGeneration();
+        return recordingManager.getRenderGeneration();
     }
 
     // ---- Recording / events ----
 
     boolean isKeystrokesVisible() {
-        return bridge.isKeystrokesVisible();
+        return recordingManager.isRecording();
     }
 
     TapeRecorder getTapeRecorder() {
-        return tapeRecorderRef.get();
+        return recordingManager.getTapeRecorder();
     }
 
     boolean isTapeRecording() {
-        TapeRecorder rec = tapeRecorderRef.get();
-        return rec != null && rec.isActive();
+        return recordingManager.isTapeRecording();
     }
 
     void startTapeRecording(String title) {
-        TapeRecorder rec = new TapeRecorder();
-        rec.start(title);
-        tapeRecorderRef.set(rec);
+        recordingManager.startTapeRecording(title);
     }
 
     void clearTapeRecorder() {
-        tapeRecorderRef.set(null);
+        recordingManager.clearTapeRecorder();
     }
 
     TuiEventLog getEventLog() {
-        return eventLog;
+        return recordingManager.getEventLog();
     }
 
     // ---- Navigation state ----
@@ -499,7 +487,7 @@ class McpFacade {
     // ---- Screen location ----
 
     JsonArray locateText(String search) {
-        Buffer buf = bridge.lastBuffer();
+        Buffer buf = recordingManager.getLastBuffer();
         if (buf == null || search == null || search.isEmpty()) {
             return new JsonArray();
         }

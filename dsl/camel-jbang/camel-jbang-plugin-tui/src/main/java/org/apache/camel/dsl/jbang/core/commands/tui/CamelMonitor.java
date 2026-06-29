@@ -22,8 +22,6 @@ import java.io.RandomAccessFile;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -41,8 +39,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
-import dev.tamboui.buffer.Buffer;
-import dev.tamboui.export.ExportRequest;
 import dev.tamboui.layout.Constraint;
 import dev.tamboui.layout.Layout;
 import dev.tamboui.layout.Rect;
@@ -60,15 +56,6 @@ import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.tui.event.MouseEvent;
 import dev.tamboui.tui.event.PasteEvent;
 import dev.tamboui.tui.event.TickEvent;
-import dev.tamboui.widgets.Clear;
-import dev.tamboui.widgets.block.Block;
-import dev.tamboui.widgets.block.BorderType;
-import dev.tamboui.widgets.block.Borders;
-import dev.tamboui.widgets.block.Title;
-import dev.tamboui.widgets.list.ListItem;
-import dev.tamboui.widgets.list.ListState;
-import dev.tamboui.widgets.list.ListWidget;
-import dev.tamboui.widgets.list.ScrollMode;
 import dev.tamboui.widgets.paragraph.Paragraph;
 import dev.tamboui.widgets.tabs.Tabs;
 import dev.tamboui.widgets.tabs.TabsState;
@@ -162,24 +149,15 @@ public class CamelMonitor extends CamelCommand {
     // selectedPid is stored on ctx (MonitorContext) so tabs can access it
 
     private volatile long lastRefresh;
-    private boolean showKillConfirm;
     private String monitorNotification;
     private boolean monitorNotificationError;
     private long monitorNotificationExpiry;
-    private volatile Buffer lastBuffer;
-    private volatile long renderGeneration;
-    private volatile String screenshotMessage;
-    private volatile long screenshotMessageTime;
-    private volatile boolean pendingScreenshot;
-    private boolean recording;
-    private final AtomicReference<TapeRecorder> tapeRecorderRef = new AtomicReference<>();
     private boolean mcpInjectedKey;
-    private TuiEventLog eventLog;
     private TuiMcpServer mcpServer;
     private McpFacade mcpFacade;
     private final Queue<McpFacade.PendingKey> pendingKeys = new ConcurrentLinkedQueue<>();
-    private final List<KeyRecord> recentKeys = new ArrayList<>();
     private final CaptionOverlay captionOverlay = new CaptionOverlay();
+    private final RecordingManager recordingManager = new RecordingManager(captionOverlay);
     private final DrawOverlay drawOverlay = new DrawOverlay();
     private final HelpOverlay helpOverlay = new HelpOverlay();
     private final ShellPanel shellPanel = new ShellPanel();
@@ -196,14 +174,11 @@ public class CamelMonitor extends CamelCommand {
                     .filter(i -> !i.vanishing)
                     .collect(Collectors.toList()),
             captionOverlay,
-            () -> pendingScreenshot = true,
-            () -> recording = !recording,
-            () -> recording,
-            this::toggleTapeRecording,
-            () -> {
-                TapeRecorder r = tapeRecorderRef.get();
-                return r != null && r.isActive();
-            },
+            () -> recordingManager.requestScreenshot(),
+            () -> recordingManager.toggleRecording(),
+            () -> recordingManager.isRecording(),
+            () -> recordingManager.toggleTapeRecording(),
+            () -> recordingManager.isTapeRecording(),
             this::enableBurstMode, stoppingPids);
 
     private final AtomicBoolean refreshInProgress = new AtomicBoolean(false);
@@ -235,18 +210,9 @@ public class CamelMonitor extends CamelCommand {
     private DataSourceTab dataSourceTab;
     private SqlQueryTab sqlQueryTab;
 
-    // "Switch integration" popup state
-    private boolean showSwitchPopup;
-    private final ListState switchPopupState = new ListState();
-
     private final FilesBrowser filesBrowser = new FilesBrowser();
-
-    // "More" dropdown state
-    private boolean showMorePopup;
-    private final ListState morePopupState = new ListState();
+    private PopupManager popupManager;
     private MonitorTab activeMoreTab;
-    private int lastMoreSelection;
-    private Line[] currentTabLabels;
 
     private ClassLoader classLoader;
 
@@ -271,7 +237,7 @@ public class CamelMonitor extends CamelCommand {
             System.setProperty("tamboui.record.fps", "10");
         }
 
-        recording = record != null;
+        recordingManager.init(record != null);
 
         // to make ServiceLoader work with tamboui for downloaded JARs
         Thread.currentThread().setContextClassLoader(classLoader);
@@ -309,6 +275,61 @@ public class CamelMonitor extends CamelCommand {
         overviewTab = new OverviewTab(
                 ctx, metrics, stoppingPids,
                 this::resetIntegrationTabState);
+        popupManager = new PopupManager(
+                ctx, this::getNonVanishingIntegrations, filesBrowser,
+                new PopupManager.PopupCallbacks() {
+                    @Override
+                    public void selectMoreTab(int index) {
+                        CamelMonitor.this.selectMoreTab(index);
+                    }
+
+                    @Override
+                    public void resetIntegrationTabState() {
+                        CamelMonitor.this.resetIntegrationTabState();
+                    }
+
+                    @Override
+                    public void refreshLogData() {
+                        CamelMonitor.this.refreshLogData();
+                    }
+
+                    @Override
+                    public void stopSelectedProcess(boolean forceKill) {
+                        CamelMonitor.this.stopSelectedProcess(forceKill);
+                    }
+                });
+
+        overviewTab.setActions(new OverviewTab.OverviewActions() {
+            @Override
+            public void sendRouteCommand(String pid, String routeId, String command) {
+                CamelMonitor.this.sendRouteCommand(pid, routeId, command);
+            }
+
+            @Override
+            public void stopSelectedProcess(boolean forceKill) {
+                CamelMonitor.this.stopSelectedProcess(forceKill);
+            }
+
+            @Override
+            public void restartSelectedProcess() {
+                CamelMonitor.this.restartSelectedProcess();
+            }
+
+            @Override
+            public void showKillConfirm() {
+                popupManager.showKillConfirm();
+            }
+
+            @Override
+            public void openDoc(IntegrationInfo info) {
+                actionsPopup.openDoc(info);
+            }
+
+            @Override
+            public void openFilesPopup() {
+                CamelMonitor.this.openFilesPopup();
+            }
+        });
 
         // Initial data load (synchronous before TUI starts)
         refreshDataSync();
@@ -316,32 +337,16 @@ public class CamelMonitor extends CamelCommand {
         // Auto-select if there's exactly one integration running
         overviewTab.selectCurrentIntegration();
 
-        eventLog = new TuiEventLog(500);
         mcpFacade = new McpFacade(
-                ctx, data, tabsState, eventLog,
+                ctx, data, tabsState, recordingManager,
                 captionOverlay, drawOverlay, helpOverlay,
                 actionsPopup, filesBrowser,
                 logTab, diagramTab, historyTab,
-                tapeRecorderRef, pendingKeys,
+                pendingKeys,
                 new McpFacade.MonitorBridge() {
                     @Override
                     public MonitorTab activeTab() {
                         return CamelMonitor.this.activeTab();
-                    }
-
-                    @Override
-                    public Buffer lastBuffer() {
-                        return lastBuffer;
-                    }
-
-                    @Override
-                    public long renderGeneration() {
-                        return renderGeneration;
-                    }
-
-                    @Override
-                    public boolean isKeystrokesVisible() {
-                        return recording;
                     }
 
                     @Override
@@ -356,12 +361,12 @@ public class CamelMonitor extends CamelCommand {
 
                     @Override
                     public boolean isSwitchPopupVisible() {
-                        return showSwitchPopup;
+                        return popupManager.isSwitchPopupVisible();
                     }
 
                     @Override
                     public boolean isMorePopupVisible() {
-                        return showMorePopup;
+                        return popupManager.isMorePopupVisible();
                     }
 
                     @Override
@@ -433,28 +438,10 @@ public class CamelMonitor extends CamelCommand {
 
     private boolean handleEvent(Event event, TuiRunner runner) {
         if (event instanceof KeyEvent ke) {
-            if (eventLog != null) {
-                String elabel = keyLabel(ke);
-                if (elabel != null) {
-                    eventLog.record(elabel, elabel);
-                }
-            }
-            if (recording) {
-                String label = keyLabel(ke);
-                if (label != null) {
-                    recentKeys.add(new KeyRecord(label, System.currentTimeMillis()));
-                }
-            }
+            recordingManager.recordKey(ke, mcpInjectedKey);
             if (ke.hasCtrl() && ke.isChar('r')) {
-                toggleTapeRecording();
+                recordingManager.toggleTapeRecording();
                 return true;
-            }
-            TapeRecorder tr = tapeRecorderRef.get();
-            if (tr != null && tr.isActive() && !mcpInjectedKey) {
-                String label = keyLabel(ke);
-                if (label != null) {
-                    tr.recordKey(label);
-                }
             }
             if (captionOverlay.isVisible()) {
                 if (captionOverlay.handleKeyEvent(ke)) {
@@ -462,7 +449,7 @@ public class CamelMonitor extends CamelCommand {
                 }
             }
             if (ke.hasCtrl() && ke.isChar('k')) {
-                recording = !recording;
+                recordingManager.toggleRecording();
                 return true;
             }
             if (ke.hasCtrl() && ke.isChar('t')) {
@@ -483,7 +470,7 @@ public class CamelMonitor extends CamelCommand {
             if (actionsPopup.isVisible()) {
                 return actionsPopup.handleKeyEvent(ke);
             }
-            if (handlePopupKeys(ke)) {
+            if (popupManager.handleKeyEvent(ke, tabsState.selected(), TAB_LOG)) {
                 return true;
             }
             if (handleGlobalKeys(ke, runner)) {
@@ -503,79 +490,6 @@ public class CamelMonitor extends CamelCommand {
         }
         if (event instanceof TickEvent) {
             return handleTickEvent(runner);
-        }
-        return false;
-    }
-
-    private boolean handlePopupKeys(KeyEvent ke) {
-        if (filesBrowser.isVisible()) {
-            return filesBrowser.handleKeyEvent(ke);
-        }
-        if (showMorePopup) {
-            if (ke.isCancel()) {
-                showMorePopup = false;
-                return true;
-            }
-            if (ke.isUp()) {
-                morePopupState.selectPrevious();
-                return true;
-            }
-            if (ke.isDown()) {
-                morePopupState.selectNext(15);
-                return true;
-            }
-            int shortcutSel = morePopupShortcut(ke);
-            if (shortcutSel >= 0) {
-                morePopupState.select(shortcutSel);
-            }
-            if (ke.isConfirm() || shortcutSel >= 0) {
-                showMorePopup = false;
-                Integer sel = shortcutSel >= 0 ? shortcutSel : morePopupState.selected();
-                if (sel != null) {
-                    selectMoreTab(sel);
-                }
-                return true;
-            }
-            return true;
-        }
-        if (showSwitchPopup) {
-            if (ke.isCancel()) {
-                showSwitchPopup = false;
-                return true;
-            }
-            List<IntegrationInfo> switchList = getNonVanishingIntegrations();
-            if (ke.isUp()) {
-                switchPopupState.selectPrevious();
-                return true;
-            }
-            if (ke.isDown()) {
-                switchPopupState.selectNext(switchList.size());
-                return true;
-            }
-            if (ke.isConfirm()) {
-                showSwitchPopup = false;
-                Integer sel = switchPopupState.selected();
-                if (sel != null && sel >= 0 && sel < switchList.size()) {
-                    IntegrationInfo chosen = switchList.get(sel);
-                    ctx.selectedPid = chosen.pid;
-                    ctx.lastSelectedName = chosen.name;
-                    resetIntegrationTabState();
-                    if (tabsState.selected() == TAB_LOG) {
-                        refreshLogData();
-                    }
-                }
-                return true;
-            }
-            return true;
-        }
-        if (showKillConfirm) {
-            if (ke.isConfirm()) {
-                showKillConfirm = false;
-                stopSelectedProcess(true);
-            } else {
-                showKillConfirm = false;
-            }
-            return true;
         }
         return false;
     }
@@ -673,7 +587,7 @@ public class CamelMonitor extends CamelCommand {
             return true;
         }
         if (ke.isKey(KeyCode.F5) && ke.hasShift()) {
-            takeScreenshot();
+            recordingManager.takeScreenshot();
             return true;
         }
         if (opensHelp(ke, textEditing)) {
@@ -704,16 +618,7 @@ public class CamelMonitor extends CamelCommand {
             return true;
         }
         if (ke.isKey(KeyCode.F3)) {
-            List<IntegrationInfo> switchList = getNonVanishingIntegrations();
-            if (switchList.size() > 1) {
-                showSwitchPopup = true;
-                for (int i = 0; i < switchList.size(); i++) {
-                    if (switchList.get(i).pid.equals(ctx.selectedPid)) {
-                        switchPopupState.select(i);
-                        break;
-                    }
-                }
-            }
+            popupManager.openSwitchPopup(ctx.selectedPid, getNonVanishingIntegrations());
             return true;
         }
         return false;
@@ -786,37 +691,6 @@ public class CamelMonitor extends CamelCommand {
             }
             return true;
         }
-        if (tab == TAB_OVERVIEW && ke.isChar('p') && ctx.selectedPid != null && !isInfraSelected()) {
-            IntegrationInfo selInfo = findSelectedIntegration();
-            if (selInfo != null) {
-                String cmd = selInfo.routeStarted > 0 ? "stop" : "start";
-                sendRouteCommand(ctx.selectedPid, "*", cmd);
-            }
-            return true;
-        }
-        if (tab == TAB_OVERVIEW && ke.isChar('x') && ctx.selectedPid != null) {
-            stopSelectedProcess(false);
-            return true;
-        }
-        if (tab == TAB_OVERVIEW && ke.isChar('X') && ctx.selectedPid != null) {
-            showKillConfirm = true;
-            return true;
-        }
-        if (tab == TAB_OVERVIEW && ke.isChar('r') && ctx.selectedPid != null && !isInfraSelected()) {
-            restartSelectedProcess();
-            return true;
-        }
-        if (tab == TAB_OVERVIEW && ke.isChar('d') && ctx.selectedPid != null && !isInfraSelected()) {
-            IntegrationInfo selInfo = findSelectedIntegration();
-            if (selInfo != null && selInfo.readmeFiles != null && !selInfo.readmeFiles.isEmpty()) {
-                actionsPopup.openDoc(selInfo);
-                return true;
-            }
-        }
-        if (tab == TAB_OVERVIEW && ke.isChar('f') && ctx.selectedPid != null && !isInfraSelected()) {
-            openFilesPopup();
-            return true;
-        }
         if (activeTab != null && activeTab.handleKeyEvent(ke)) {
             return true;
         }
@@ -864,10 +738,7 @@ public class CamelMonitor extends CamelCommand {
         actionsPopup.tick(now);
         drawOverlay.tick(now);
         captionOverlay.tick(now);
-        if (recording && !recentKeys.isEmpty()) {
-            long cutoff = now - 2000;
-            recentKeys.removeIf(k -> k.timestamp() < cutoff);
-        }
+        recordingManager.tickRecentKeys(now);
         boolean anyDiagramShowing = routesTab.isShowDiagram() || diagramTab.isShowDiagram();
         long interval = anyDiagramShowing ? Math.max(refreshInterval, 1000) : refreshInterval;
         if (now - lastRefresh >= interval) {
@@ -877,65 +748,6 @@ public class CamelMonitor extends CamelCommand {
             return true;
         }
         return true;
-    }
-
-    private String keyLabel(KeyEvent ke) {
-        if (ke.isKey(KeyCode.ENTER)) {
-            return "Enter";
-        }
-        if (ke.isKey(KeyCode.ESCAPE)) {
-            return "Esc";
-        }
-        if (ke.isKey(KeyCode.TAB)) {
-            return ke.hasShift() ? "⇧Tab" : "Tab";
-        }
-        if (ke.isKey(KeyCode.UP)) {
-            return "↑";
-        }
-        if (ke.isKey(KeyCode.DOWN)) {
-            return "↓";
-        }
-        if (ke.isKey(KeyCode.LEFT)) {
-            return "←";
-        }
-        if (ke.isKey(KeyCode.RIGHT)) {
-            return "→";
-        }
-        if (ke.isKey(KeyCode.PAGE_UP)) {
-            return "PgUp";
-        }
-        if (ke.isKey(KeyCode.PAGE_DOWN)) {
-            return "PgDn";
-        }
-        if (ke.isKey(KeyCode.HOME)) {
-            return "Home";
-        }
-        if (ke.isKey(KeyCode.END)) {
-            return "End";
-        }
-        if (ke.isKey(KeyCode.BACKSPACE)) {
-            return "⌫";
-        }
-        for (int i = 1; i <= 12; i++) {
-            try {
-                KeyCode fKey = KeyCode.valueOf("F" + i);
-                if (ke.isKey(fKey)) {
-                    return "F" + i;
-                }
-            } catch (IllegalArgumentException e) {
-                break;
-            }
-        }
-        if (ke.code() == KeyCode.CHAR) {
-            String s = ke.string();
-            if (" ".equals(s)) {
-                return "Space";
-            }
-            if (!s.isEmpty()) {
-                return s;
-            }
-        }
-        return null;
     }
 
     private boolean handleTabKey(int tab) {
@@ -974,20 +786,16 @@ public class CamelMonitor extends CamelCommand {
             errorsTab.onTabSelected();
         }
         if (tab == TAB_MORE) {
-            showMorePopup = !showMorePopup;
-            if (showMorePopup) {
-                morePopupState.select(lastMoreSelection);
-            }
+            popupManager.openMorePopup();
             return true;
         }
-        showMorePopup = false;
+        popupManager.closeMorePopup();
         tabsState.select(tab);
         return true;
     }
 
     void selectMoreTab(int index) {
-        morePopupState.select(index);
-        lastMoreSelection = index;
+        popupManager.selectMorePopupEntry(index);
         activeMoreTab = switch (index) {
             case 0 -> beansTab;
             case 1 -> browseTab;
@@ -1096,8 +904,8 @@ public class CamelMonitor extends CamelCommand {
         if (drawOverlay.isVisible()) {
             drawOverlay.render(frame, contentArea);
         }
-        if (showKillConfirm) {
-            renderKillConfirm(frame, contentArea);
+        if (popupManager.isKillConfirmVisible()) {
+            popupManager.renderKillConfirm(frame, contentArea);
         }
         actionsPopup.render(frame, contentArea);
         if (captionOverlay.isCaptionVisible()) {
@@ -1108,13 +916,8 @@ public class CamelMonitor extends CamelCommand {
         }
         renderFooter(frame, mainChunks.get(3));
 
-        lastBuffer = frame.buffer();
-        renderGeneration++;
-
-        if (pendingScreenshot) {
-            pendingScreenshot = false;
-            takeScreenshot();
-        }
+        recordingManager.updateBuffer(frame.buffer());
+        recordingManager.processPendingScreenshot();
     }
 
     private void renderHeader(Frame frame, Rect area) {
@@ -1262,7 +1065,7 @@ public class CamelMonitor extends CamelCommand {
                         Line.from(" 9 Errors "),
                         Line.from(" 0 More▾ "),
                 };
-        currentTabLabels = labels;
+        popupManager.setCurrentTabLabels(labels);
 
         Tabs tabs = Tabs.builder()
                 .titles(labels)
@@ -1306,12 +1109,12 @@ public class CamelMonitor extends CamelCommand {
         MonitorTab tab = activeTab();
         tab.render(frame, area);
         // Render "More" popup overlay when visible
-        if (showMorePopup) {
-            renderMorePopup(frame, area);
+        if (popupManager.isMorePopupVisible()) {
+            popupManager.renderMorePopup(frame, area);
         }
         // Render "Switch integration" popup overlay when visible
-        if (showSwitchPopup) {
-            renderSwitchPopup(frame, area);
+        if (popupManager.isSwitchPopupVisible()) {
+            popupManager.renderSwitchPopup(frame, area);
         }
         // Render "Files" popup overlay when visible
         if (filesBrowser.isVisible()) {
@@ -1399,107 +1202,6 @@ public class CamelMonitor extends CamelCommand {
         }
     }
 
-    private void renderMorePopup(Frame frame, Rect area) {
-        int popupW = 22;
-        int popupH = 17;
-        // Position just below the "0 More▾" tab label
-        int dividerW = CharWidth.of(" | ");
-        int tabBarX = 0;
-        Line[] tabLabels = currentTabLabels;
-        if (tabLabels != null) {
-            for (int i = 0; i < tabLabels.length - 1; i++) {
-                tabBarX += tabLabels[i].width();
-                tabBarX += dividerW;
-            }
-        }
-        int x = area.left() + tabBarX;
-        int y = area.top();
-        if (x + popupW > area.right()) {
-            x = Math.max(area.left(), area.right() - popupW);
-        }
-        Rect popup = new Rect(x, y, Math.min(popupW, area.width() - (x - area.left())), Math.min(popupH, area.height()));
-
-        frame.renderWidget(Clear.INSTANCE, popup);
-
-        Style keyStyle = Style.EMPTY.fg(Color.YELLOW).bold();
-        ListItem[] items = {
-                ListItem.from(Line.from(Span.raw("  "), Span.styled("B", keyStyle), Span.raw("eans"))),
-                ListItem.from(Line.from(Span.raw("  Bro"), Span.styled("w", keyStyle), Span.raw("se"))),
-                ListItem.from(Line.from(Span.raw("  "), Span.styled("C", keyStyle), Span.raw("ircuit Breaker"))),
-                ListItem.from(Line.from(Span.raw("  Cl"), Span.styled("a", keyStyle), Span.raw("sspath"))),
-                ListItem.from(Line.from(Span.raw("  Confi"), Span.styled("g", keyStyle), Span.raw("uration"))),
-                ListItem.from(Line.from(Span.raw("  Co"), Span.styled("n", keyStyle), Span.raw("sumers"))),
-                ListItem.from(Line.from(Span.raw("  "), Span.styled("D", keyStyle), Span.raw("ataSource"))),
-                ListItem.from(Line.from(Span.raw("  "), Span.styled("I", keyStyle), Span.raw("nflight"))),
-                ListItem.from(Line.from(Span.raw("  "), Span.styled("M", keyStyle), Span.raw("emory"))),
-                ListItem.from(Line.from(Span.raw("  M"), Span.styled("e", keyStyle), Span.raw("trics"))),
-                ListItem.from(Line.from(Span.raw("  S"), Span.styled("Q", keyStyle), Span.raw("L Query"))),
-                ListItem.from(Line.from(Span.raw("  "), Span.styled("O", keyStyle), Span.raw("Tel Spans"))),
-                ListItem.from(Line.from(Span.raw("  "), Span.styled("P", keyStyle), Span.raw("rocess"))),
-                ListItem.from(Line.from(Span.raw("  "), Span.styled("S", keyStyle), Span.raw("tartup"))),
-                ListItem.from(Line.from(Span.raw("  "), Span.styled("T", keyStyle), Span.raw("hreads"))),
-        };
-        ListWidget list = ListWidget.builder()
-                .items(items)
-                .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
-                .highlightSymbol("")
-                .scrollMode(ScrollMode.NONE)
-                .block(Block.builder()
-                        .borderType(BorderType.ROUNDED).borders(Borders.ALL)
-                        .title(Title.from(Line.from(Span.styled(" More Tabs ", Style.EMPTY.fg(Color.YELLOW).bold()))))
-                        .build())
-                .build();
-        frame.renderStatefulWidget(list, popup, morePopupState);
-    }
-
-    private void renderSwitchPopup(Frame frame, Rect area) {
-        List<IntegrationInfo> integrations = getNonVanishingIntegrations();
-        if (integrations.isEmpty()) {
-            showSwitchPopup = false;
-            return;
-        }
-
-        int maxLabelLen = integrations.stream()
-                .mapToInt(i -> {
-                    String n = i.name != null ? i.name : "?";
-                    return n.length() + i.pid.length() + 14;
-                })
-                .max().orElse(30);
-        int popupW = Math.min(area.width() - 4, Math.max(40, maxLabelLen + 4));
-        int popupH = Math.min(area.height() - 4, integrations.size() + 2);
-
-        int x = area.left() + Math.max(0, (area.width() - popupW) / 2);
-        int y = area.top() + 2;
-        Rect popup = new Rect(x, y, Math.min(popupW, area.width()), Math.min(popupH, area.height() - 2));
-
-        frame.renderWidget(Clear.INSTANCE, popup);
-
-        ListItem[] items = new ListItem[integrations.size()];
-        for (int i = 0; i < integrations.size(); i++) {
-            IntegrationInfo info = integrations.get(i);
-            String name = info.name != null ? info.name : "?";
-            boolean current = info.pid.equals(ctx.selectedPid);
-            String label = String.format("  🐪 %s (pid:%s)%s", name, info.pid, current ? " ●" : "");
-            if (current) {
-                items[i] = ListItem.from(Line.from(Span.styled(label, Style.EMPTY.fg(Color.CYAN))));
-            } else {
-                items[i] = ListItem.from(label);
-            }
-        }
-
-        ListWidget list = ListWidget.builder()
-                .items(items)
-                .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
-                .highlightSymbol("")
-                .scrollMode(ScrollMode.NONE)
-                .block(Block.builder()
-                        .borderType(BorderType.ROUNDED).borders(Borders.ALL)
-                        .title(Title.from(Line.from(Span.styled(" Switch Integration ", Style.EMPTY.fg(Color.YELLOW).bold()))))
-                        .build())
-                .build();
-        frame.renderStatefulWidget(list, popup, switchPopupState);
-    }
-
     private void openFilesPopup() {
         IntegrationInfo info = findSelectedIntegration();
         if (info != null) {
@@ -1512,55 +1214,6 @@ public class CamelMonitor extends CamelCommand {
                 .filter(i -> !i.vanishing && i.name != null)
                 .sorted(Comparator.comparing(i -> i.name, String.CASE_INSENSITIVE_ORDER))
                 .collect(Collectors.toList());
-    }
-
-    private static int morePopupShortcut(KeyEvent ke) {
-        if (ke.isChar('b')) {
-            return 0;
-        }
-        if (ke.isChar('w')) {
-            return 1;
-        }
-        if (ke.isChar('c')) {
-            return 2;
-        }
-        if (ke.isChar('a')) {
-            return 3;
-        }
-        if (ke.isChar('g')) {
-            return 4;
-        }
-        if (ke.isChar('n')) {
-            return 5;
-        }
-        if (ke.isChar('d')) {
-            return 6;
-        }
-        if (ke.isChar('i')) {
-            return 7;
-        }
-        if (ke.isChar('m')) {
-            return 8;
-        }
-        if (ke.isChar('e')) {
-            return 9;
-        }
-        if (ke.isChar('q')) {
-            return 10;
-        }
-        if (ke.isChar('o')) {
-            return 11;
-        }
-        if (ke.isChar('p')) {
-            return 12;
-        }
-        if (ke.isChar('s')) {
-            return 13;
-        }
-        if (ke.isChar('t')) {
-            return 14;
-        }
-        return -1;
     }
 
     private MonitorTab activeTab() {
@@ -1771,49 +1424,15 @@ public class CamelMonitor extends CamelCommand {
         PathUtils.writeTextSafely(root.toJson(), actionFile);
     }
 
-    private void renderKillConfirm(Frame frame, Rect area) {
-        String name = selectedName();
-        String msg = " Kill " + name + " (PID: " + ctx.selectedPid + ")? ";
-        int popupW = Math.max(34, msg.length() + 4);
-        int popupH = 6;
-        int x = area.left() + Math.max(0, (area.width() - popupW) / 2);
-        int y = area.top() + Math.max(0, (area.height() - popupH) / 2);
-        Rect popup = new Rect(x, y, Math.min(popupW, area.width()), Math.min(popupH, area.height()));
-
-        frame.renderWidget(Clear.INSTANCE, popup);
-        Block block = Block.builder()
-                .borderType(BorderType.ROUNDED).borders(Borders.ALL)
-                .borderStyle(Style.EMPTY.fg(Color.LIGHT_RED))
-                .title(" Confirm Kill ")
-                .build();
-        frame.renderWidget(block, popup);
-        Rect inner = block.inner(popup);
-        frame.renderWidget(
-                Paragraph.builder()
-                        .text(Text.from(
-                                Line.from(Span.raw("")),
-                                Line.from(Span.styled(msg, Style.EMPTY.fg(Color.LIGHT_RED).bold())),
-                                Line.from(Span.raw("")),
-                                Line.from(
-                                        Span.raw("  "),
-                                        Span.styled("Enter", Style.EMPTY.bold()),
-                                        Span.raw(" confirm  "),
-                                        Span.styled("Esc", Style.EMPTY.bold()),
-                                        Span.raw(" cancel"))))
-                        .build(),
-                inner);
-    }
-
     private void renderFooter(Frame frame, Rect area) {
         // Show screenshot flash message briefly
-        String msg = screenshotMessage;
-        if (msg != null && System.currentTimeMillis() - screenshotMessageTime < 5000) {
+        String msg = recordingManager.screenshotFlashMessage();
+        if (msg != null) {
             frame.renderWidget(
                     Paragraph.from(Line.from(Span.styled(" " + msg, Style.EMPTY.fg(Color.GREEN)))),
                     area);
             return;
         }
-        screenshotMessage = null;
 
         List<Span> spans = new ArrayList<>();
         int fKeyTotal = 0;
@@ -1832,11 +1451,11 @@ public class CamelMonitor extends CamelCommand {
 
         if (filesBrowser.isVisible()) {
             filesBrowser.renderFooter(spans);
-        } else if (showSwitchPopup) {
+        } else if (popupManager.isSwitchPopupVisible()) {
             hint(spans, "Up/Down", "select");
             hint(spans, "Enter", "switch");
             hint(spans, "Esc", "close");
-        } else if (showMorePopup) {
+        } else if (popupManager.isMorePopupVisible()) {
             hint(spans, "Up/Down", "select");
             hint(spans, "Enter", "open");
             hint(spans, "Esc", "close");
@@ -1855,11 +1474,12 @@ public class CamelMonitor extends CamelCommand {
 
         List<Span> rightSpans = new ArrayList<>();
 
-        if (recording && !recentKeys.isEmpty()) {
+        if (recordingManager.isRecording() && !recordingManager.getRecentKeys().isEmpty()) {
             long now = System.currentTimeMillis();
+            List<RecordingManager.KeyRecord> recentKeys = recordingManager.getRecentKeys();
             int maxKeys = Math.min(recentKeys.size(), 8);
-            List<KeyRecord> visible = recentKeys.subList(recentKeys.size() - maxKeys, recentKeys.size());
-            for (KeyRecord kr : visible) {
+            List<RecordingManager.KeyRecord> visible = recentKeys.subList(recentKeys.size() - maxKeys, recentKeys.size());
+            for (RecordingManager.KeyRecord kr : visible) {
                 long age = now - kr.timestamp();
                 Style style = age < 1000
                         ? Style.EMPTY.fg(Color.WHITE).bold().onBlue()
@@ -1932,7 +1552,7 @@ public class CamelMonitor extends CamelCommand {
             hint(fKeySpans, "F1", "help");
         }
         hint(fKeySpans, "F2", "actions");
-        if (getNonVanishingIntegrations().size() > 1) {
+        if (popupManager.getNonVanishingIntegrations().size() > 1) {
             hint(fKeySpans, "F3", "switch");
         }
         hint(fKeySpans, "F6", "shell");
@@ -2053,7 +1673,8 @@ public class CamelMonitor extends CamelCommand {
     private boolean scanIntegrations() {
         List<IntegrationInfo> infos = new ArrayList<>();
         long now = System.currentTimeMillis();
-        boolean wantFullScan = tabsState.selected() == TAB_OVERVIEW || showSwitchPopup || cachedPids.isEmpty();
+        boolean wantFullScan = tabsState.selected() == TAB_OVERVIEW || popupManager.isSwitchPopupVisible()
+                || cachedPids.isEmpty();
         long scanInterval = isBurstMode() ? 1000 : 2000;
         boolean fullScan = wantFullScan && (now - lastFullScanTime >= scanInterval);
         List<Long> pids;
@@ -2507,31 +2128,6 @@ public class CamelMonitor extends CamelCommand {
         return TuiHelper.loadStatus(pid, this::getStatusFile);
     }
 
-    private void takeScreenshot() {
-        Buffer buf = lastBuffer;
-        if (buf == null) {
-            return;
-        }
-        try {
-            String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd-HHmmss"));
-            String baseName = "camel-tui-screenshot-" + timestamp;
-            Path svgPath = Path.of(baseName + ".svg");
-            Path txtPath = Path.of(baseName + ".txt");
-            Path ansPath = Path.of(baseName + ".ans");
-            ExportRequest.export(buf).svg().toFile(svgPath);
-            ExportRequest.export(buf).text().toFile(txtPath);
-            ExportRequest.export(buf).text().options(o -> o.styles(true)).toFile(ansPath);
-            screenshotMessage = "Screenshot saved to " + svgPath.toAbsolutePath() + " (and .txt, .ans)";
-            screenshotMessageTime = System.currentTimeMillis();
-        } catch (IOException e) {
-            screenshotMessage = "Screenshot failed: " + e.getMessage();
-            screenshotMessageTime = System.currentTimeMillis();
-        }
-    }
-
-    record KeyRecord(String label, long timestamp) {
-    }
-
     record VanishingInfo(IntegrationInfo info, long startTime) {
     }
 
@@ -2565,28 +2161,6 @@ public class CamelMonitor extends CamelCommand {
             } catch (IOException e) {
                 // best effort
             }
-        }
-    }
-
-    private void toggleTapeRecording() {
-        TapeRecorder rec = tapeRecorderRef.get();
-        if (rec != null && rec.isActive()) {
-            String tape = rec.stop();
-            tapeRecorderRef.set(null);
-            String timestamp = java.time.LocalDateTime.now()
-                    .format(java.time.format.DateTimeFormatter.ofPattern("yyyyMMdd-HHmmss"));
-            String filename = "camel-tui-tape-" + timestamp + ".tape";
-            try {
-                java.nio.file.Files.writeString(java.nio.file.Path.of(filename), tape);
-                captionOverlay.showCaption("Tape saved: " + filename, 5);
-            } catch (java.io.IOException e) {
-                captionOverlay.showCaption("Failed to save tape: " + e.getMessage(), 5);
-            }
-        } else {
-            rec = new TapeRecorder();
-            rec.start(null);
-            tapeRecorderRef.set(rec);
-            captionOverlay.showCaption("Tape recording started", 3);
         }
     }
 
