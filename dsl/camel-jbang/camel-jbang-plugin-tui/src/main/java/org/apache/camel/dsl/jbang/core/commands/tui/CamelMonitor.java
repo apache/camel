@@ -99,6 +99,12 @@ public class CamelMonitor extends CamelCommand {
     private static final int MAX_TRACES = 200;
     private static final int NUM_TABS = 10;
 
+    // Compact tab bar (10 labels + 9 "|" dividers) needs 88 chars — that is the true minimum
+    private static final int MIN_WIDTH = 88;
+    private static final int MIN_HEIGHT = 24;
+    // Full tab bar (10 labels + 9 " | " dividers) needs 126 chars; use compact below that
+    private static final int TABS_FULL_MIN_WIDTH = 126;
+
     // Tab indices
     private static final int TAB_OVERVIEW = 0;
     private static final int TAB_LOG = 1;
@@ -968,6 +974,16 @@ public class CamelMonitor extends CamelCommand {
     private void render(Frame frame) {
         Rect area = frame.area();
 
+        if (area.width() < MIN_WIDTH || area.height() < MIN_HEIGHT) {
+            renderTooSmall(frame, area);
+            return;
+        }
+
+        if (area.width() < MIN_WIDTH || area.height() < MIN_HEIGHT) {
+            renderTooSmall(frame, area);
+            return;
+        }
+
         // Layout: header (1 row) + spacer (1 row) + tabs (2 rows) + spacer (1 row) + content (fill) + footer (1 row)
         List<Rect> mainChunks = Layout.vertical()
                 .constraints(
@@ -1066,15 +1082,62 @@ public class CamelMonitor extends CamelCommand {
                 area);
     }
 
+    private void renderTooSmall(Frame frame, Rect area) {
+        Style orange = Style.EMPTY.fg(Color.rgb(0xF6, 0x91, 0x23));
+        Style normal = Style.EMPTY;
+        Style bold = Style.EMPTY.bold();
+
+        String line1 = "Terminal size too small:";
+        String wLabel = " Width = ";
+        String wVal = String.valueOf(area.width());
+        String hLabel = "  Height = ";
+        String hVal = String.valueOf(area.height());
+        String line2 = wLabel + wVal + hLabel + hVal;
+
+        String line4 = "Needed for current config:";
+        String line5 = " Width = " + MIN_WIDTH + "  Height = " + MIN_HEIGHT;
+
+        // 5 content lines (2 + blank + 2 + blank), center vertically
+        int startY = area.y() + Math.max(0, (area.height() - 5) / 2);
+
+        int x1 = area.x() + Math.max(0, (area.width() - CharWidth.of(line1)) / 2);
+        frame.buffer().setString(x1, startY, line1, bold);
+
+        int x2 = area.x() + Math.max(0, (area.width() - CharWidth.of(line2)) / 2);
+        int wLabelW = CharWidth.of(wLabel);
+        int wValW = CharWidth.of(wVal);
+        int hLabelW = CharWidth.of(hLabel);
+        frame.buffer().setString(x2, startY + 1, wLabel, normal);
+        frame.buffer().setString(x2 + wLabelW, startY + 1, wVal,
+                area.width() < MIN_WIDTH ? orange : normal);
+        frame.buffer().setString(x2 + wLabelW + wValW, startY + 1, hLabel, normal);
+        frame.buffer().setString(x2 + wLabelW + wValW + hLabelW, startY + 1, hVal,
+                area.height() < MIN_HEIGHT ? orange : normal);
+
+        int x4 = area.x() + Math.max(0, (area.width() - CharWidth.of(line4)) / 2);
+        frame.buffer().setString(x4, startY + 3, line4, bold);
+
+        int x5 = area.x() + Math.max(0, (area.width() - CharWidth.of(line5)) / 2);
+        frame.buffer().setString(x5, startY + 4, line5, normal);
+    }
+
     private void renderTabs(Frame frame, Rect area) {
+        boolean compact = area.width() < TABS_FULL_MIN_WIDTH;
+        String dividerStr = compact ? "|" : " | ";
+        Span divider = Span.styled(dividerStr, Style.EMPTY.dim());
         boolean infraSelected = isInfraSelected();
 
         if (infraSelected) {
             // Infra mode: only Overview and Log tabs
-            Line[] labels = {
-                    Line.from(" 1 Overview "),
-                    Line.from(" 2 Log "),
-            };
+            Line[] labels = compact
+                    ? new Line[] {
+                            Line.from("1 Overview"),
+                            Line.from("2 Log"),
+                    }
+                    : new Line[] {
+                            Line.from(" 1 Overview "),
+                            Line.from(" 2 Log "),
+                    };
 
             // Map real tab index to infra tab index for highlight
             int infraTabIdx = tabsState.selected() == TAB_LOG ? 1 : 0;
@@ -1083,7 +1146,7 @@ public class CamelMonitor extends CamelCommand {
             Tabs tabs = Tabs.builder()
                     .titles(labels)
                     .highlightStyle(Style.EMPTY.fg(Color.rgb(0xF6, 0x91, 0x23)).bold())
-                    .divider(Span.styled(" | ", Style.EMPTY.dim()))
+                    .divider(divider)
                     .build();
 
             Rect labelsArea = area.height() >= 2
@@ -1093,24 +1156,37 @@ public class CamelMonitor extends CamelCommand {
             return;
         }
 
-        Line[] labels = {
-                Line.from(" 1 Overview "),
-                Line.from(" 2 Log "),
-                Line.from(" 3 Diagram "),
-                Line.from(routesTab.isTopMode() ? " 4  Top  " : " 4 Route "),
-                Line.from(" 5 Endpoint "),
-                Line.from(" 6 HTTP "),
-                Line.from(" 7 Health "),
-                Line.from(" 8 Inspect "),
-                Line.from(" 9 Errors "),
-                Line.from(" 0 More▾ "),
-        };
+        Line[] labels = compact
+                ? new Line[] {
+                        Line.from("1 Overview"),
+                        Line.from("2 Log"),
+                        Line.from("3 Diagram"),
+                        Line.from(routesTab.isTopMode() ? "4  Top " : "4 Route"),
+                        Line.from("5 Endpoint"),
+                        Line.from("6 HTTP"),
+                        Line.from("7 Health"),
+                        Line.from("8 Inspect"),
+                        Line.from("9 Errors"),
+                        Line.from("0 More▾"),
+                }
+                : new Line[] {
+                        Line.from(" 1 Overview "),
+                        Line.from(" 2 Log "),
+                        Line.from(" 3 Diagram "),
+                        Line.from(routesTab.isTopMode() ? " 4  Top  " : " 4 Route "),
+                        Line.from(" 5 Endpoint "),
+                        Line.from(" 6 HTTP "),
+                        Line.from(" 7 Health "),
+                        Line.from(" 8 Inspect "),
+                        Line.from(" 9 Errors "),
+                        Line.from(" 0 More▾ "),
+                };
         currentTabLabels = labels;
 
         Tabs tabs = Tabs.builder()
                 .titles(labels)
                 .highlightStyle(Style.EMPTY.fg(Color.rgb(0xF6, 0x91, 0x23)).bold())
-                .divider(Span.styled(" | ", Style.EMPTY.dim()))
+                .divider(divider)
                 .build();
 
         Rect labelsArea = area.height() >= 2
@@ -1124,7 +1200,7 @@ public class CamelMonitor extends CamelCommand {
             computeTabBadges(badgeTexts, badgeStyles);
 
             int badgeY = area.y();
-            int dividerW = CharWidth.of(" | ");
+            int dividerW = CharWidth.of(dividerStr);
             int tabX = 0;
             for (int i = 0; i < labels.length; i++) {
                 if (i > 0) {
@@ -1655,6 +1731,7 @@ public class CamelMonitor extends CamelCommand {
         screenshotMessage = null;
 
         List<Span> spans = new ArrayList<>();
+        int fKeyTotal = 0;
 
         if (helpOverlay.isVisible()) {
             helpOverlay.renderFooter(spans);
@@ -1684,10 +1761,10 @@ public class CamelMonitor extends CamelCommand {
             MonitorTab tab = activeTab();
 
             if (tabsState.selected() == TAB_OVERVIEW) {
-                renderOverviewFooter(spans);
+                fKeyTotal = renderOverviewFooter(spans);
             } else {
                 tab.renderFooter(spans);
-                insertFKeyHints(spans);
+                fKeyTotal = insertFKeyHints(spans);
             }
         }
 
@@ -1733,9 +1810,26 @@ public class CamelMonitor extends CamelCommand {
             }
         }
 
+        int hintsWidth = spans.stream().mapToInt(Span::width).sum();
+        int rightWidth = rightSpans.stream().mapToInt(Span::width).sum();
+        int minGap = rightSpans.isEmpty() ? 0 : 1;
+
+        if (hintsWidth + rightWidth + minGap > area.width()) {
+            // Drop decorative right-side content first
+            rightSpans.clear();
+            rightWidth = 0;
+            minGap = 0;
+            // Drop secondary F-key hints (F2/F3/F6) before tab-specific action hints.
+            hintsWidth = dropFKeyHints(spans, fKeyTotal, hintsWidth, area.width());
+            // Then drop tab-specific hints from the tail, keeping at least 4 spans
+            while (spans.size() > 4 && hintsWidth > area.width()) {
+                Span labelSpan = spans.remove(spans.size() - 1);
+                Span keySpan = spans.remove(spans.size() - 1);
+                hintsWidth -= keySpan.width() + labelSpan.width();
+            }
+        }
+
         if (!rightSpans.isEmpty()) {
-            int hintsWidth = spans.stream().mapToInt(s -> s.width()).sum();
-            int rightWidth = rightSpans.stream().mapToInt(s -> s.width()).sum();
             int gap = Math.max(1, area.width() - hintsWidth - rightWidth);
             spans.add(Span.raw(" ".repeat(gap)));
             spans.addAll(rightSpans);
@@ -1744,11 +1838,12 @@ public class CamelMonitor extends CamelCommand {
         frame.renderWidget(Paragraph.from(Line.from(spans)), area);
     }
 
-    private void insertFKeyHints(List<Span> spans) {
+    private int insertFKeyHints(List<Span> spans) {
         int insertPos = Math.min(2, spans.size());
         List<Span> fKeySpans = new ArrayList<>();
         MonitorTab tab = activeTab();
-        if (tab != null && tab.getHelpText() != null) {
+        boolean hasHelp = tab != null && tab.getHelpText() != null;
+        if (hasHelp) {
             hint(fKeySpans, "F1", "help");
         }
         hint(fKeySpans, "F2", "actions");
@@ -1757,15 +1852,40 @@ public class CamelMonitor extends CamelCommand {
         }
         hint(fKeySpans, "F6", "shell");
         spans.addAll(insertPos, fKeySpans);
+        // Return total F-key span count. The footer drop loop uses this to remove pairs from
+        // the tail (F6, then F3, F2), stopping before the first pair (F1 help when present).
+        return fKeySpans.size();
     }
 
-    private void renderOverviewFooter(List<Span> spans) {
+    /**
+     * Drops secondary F-key hint pairs from an overflowing footer. The F-key pairs are inserted at position 2 (after
+     * the first tab hint), so the last pair's key span sits at index {@code fKeyTotal}. Pairs are removed from the
+     * tail, so F6 goes first, then F3, then F2, and the loop stops at 2 so the first pair (F1 help when present) is
+     * always preserved.
+     *
+     * @param  spans      the footer spans, mutated in place by removing dropped pairs
+     * @param  fKeyTotal  total number of F-key spans that were inserted (e.g. 8 for F1/F2/F3/F6)
+     * @param  hintsWidth the current rendered width of {@code spans}
+     * @param  available  the available footer width
+     * @return            the rendered width of {@code spans} after dropping
+     */
+    static int dropFKeyHints(List<Span> spans, int fKeyTotal, int hintsWidth, int available) {
+        while (fKeyTotal > 2 && hintsWidth > available) {
+            Span labelSpan = spans.remove(fKeyTotal + 1);
+            Span keySpan = spans.remove(fKeyTotal);
+            hintsWidth -= keySpan.width() + labelSpan.width();
+            fKeyTotal -= 2;
+        }
+        return hintsWidth;
+    }
+
+    private int renderOverviewFooter(List<Span> spans) {
         if (actionsPopup.isVisible()) {
             actionsPopup.renderFooter(spans);
-            return;
+            return 0;
         }
         overviewTab.renderFooter(spans);
-        insertFKeyHints(spans);
+        int fKeyTotal = insertFKeyHints(spans);
         // Process action hints
         if (ctx.selectedPid != null && !isInfraSelected()) {
             IntegrationInfo selInfo = findSelectedIntegration();
@@ -1786,6 +1906,7 @@ public class CamelMonitor extends CamelCommand {
             hint(spans, "x", "stop");
             hint(spans, "X", "kill");
         }
+        return fKeyTotal;
     }
 
     // ---- Data Loading ----
