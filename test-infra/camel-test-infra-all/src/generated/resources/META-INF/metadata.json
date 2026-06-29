@@ -587,7 +587,7 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-consul",
   "version" : "4.21.0-SNAPSHOT",
-  "serviceVersion" : "2.0.0"
+  "serviceVersion" : "2.0.1"
 }, {
   "service" : "org.apache.camel.test.infra.qdrant.services.QdrantInfraService",
   "description" : "Qdrant is a vector similarity search engine and database",
