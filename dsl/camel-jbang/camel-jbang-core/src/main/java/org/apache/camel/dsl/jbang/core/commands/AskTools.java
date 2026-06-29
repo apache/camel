@@ -112,6 +112,26 @@ public class AskTools {
                 "get_properties",
                 "Show configuration properties of the running Camel application.",
                 emptyParams()));
+        tools.add(new LlmClient.ToolDef(
+                "get_memory",
+                "Show JVM memory usage (heap/non-heap), garbage collection stats, and thread counts.",
+                emptyParams()));
+        tools.add(new LlmClient.ToolDef(
+                "get_errors",
+                "Get captured routing errors from the running Camel application. Returns error details including exception, exchange context, and route information.",
+                emptyParams()));
+        tools.add(new LlmClient.ToolDef(
+                "get_history",
+                "Get the message history trace of the last completed exchange. Shows the route path, processors visited, headers, body, and timing.",
+                emptyParams()));
+        tools.add(new LlmClient.ToolDef(
+                "get_variables",
+                "Show exchange variables in the Camel context.",
+                emptyParams()));
+        tools.add(new LlmClient.ToolDef(
+                "get_services",
+                "Show services registered in the Camel service registry.",
+                emptyParams()));
 
         tools.add(new LlmClient.ToolDef(
                 "get_route_source",
@@ -134,10 +154,38 @@ public class AskTools {
                 "Show top processor statistics: which processors are slowest and most active.",
                 emptyParams()));
         tools.add(new LlmClient.ToolDef(
+                "get_route_topology",
+                "Get the inter-route topology showing how routes connect to each other and to external endpoints.",
+                emptyParams()));
+        tools.add(new LlmClient.ToolDef(
                 "trace_control",
                 "Enable, disable, or dump message tracing.",
                 objectParams(Map.of(
                         "action", stringProp("Action: enable, disable, or dump")))));
+
+        tools.add(new LlmClient.ToolDef(
+                "send_message",
+                "Send a test message to a Camel endpoint in the running application.",
+                objectParams(Map.of(
+                        "endpoint", stringProp("Endpoint URI to send to (e.g., direct:myRoute, seda:queue)"),
+                        "body", stringProp("Message body to send"),
+                        "headers", stringProp("Message headers as key=value pairs separated by newlines")))));
+        tools.add(new LlmClient.ToolDef(
+                "eval_expression",
+                "Evaluate a Camel expression in the given language (e.g., simple, jsonpath, xpath) against the running context.",
+                objectParams(Map.of(
+                        "language", stringProp("Expression language (e.g., simple, jsonpath, xpath, jq)"),
+                        "expression", stringProp("Expression to evaluate")))));
+        tools.add(new LlmClient.ToolDef(
+                "browse_endpoint",
+                "Browse messages in a Camel endpoint (e.g., browse messages queued in a SEDA endpoint).",
+                objectParams(Map.of(
+                        "endpoint", stringProp("Endpoint URI to browse (e.g., seda:queue)"),
+                        "limit", stringProp("Maximum number of messages to return (default: 50)")))));
+        tools.add(new LlmClient.ToolDef(
+                "get_thread_dump",
+                "Get a JVM thread dump showing thread names, states, and stack traces.",
+                emptyParams()));
 
         tools.add(new LlmClient.ToolDef(
                 "stop_route",
@@ -255,12 +303,30 @@ public class AskTools {
                     targetPid < 0 ? NO_PROCESS : RuntimeHelper.readStatusSection(targetPid, "consumers");
                 case "get_properties" ->
                     targetPid < 0 ? NO_PROCESS : RuntimeHelper.readStatusSection(targetPid, "properties");
+                case "get_memory" ->
+                    targetPid < 0 ? NO_PROCESS : RuntimeHelper.readStatusSection(targetPid, "memory");
+                case "get_errors" -> targetPid < 0 ? NO_PROCESS : executeGetErrors();
+                case "get_history" -> targetPid < 0 ? NO_PROCESS : executeGetHistory();
+                case "get_variables" ->
+                    targetPid < 0 ? NO_PROCESS : RuntimeHelper.readStatusSection(targetPid, "variables");
+                case "get_services" ->
+                    targetPid < 0 ? NO_PROCESS : RuntimeHelper.readStatusSection(targetPid, "services");
                 case "get_route_source" -> targetPid < 0 ? NO_PROCESS : executeRouteSource(args);
                 case "get_route_dump" -> targetPid < 0 ? NO_PROCESS : executeRouteDump(args);
                 case "get_route_structure" -> targetPid < 0 ? NO_PROCESS : executeRouteStructure(args);
                 case "get_top_processors" ->
                     targetPid < 0 ? NO_PROCESS : RuntimeHelper.executeAction(targetPid, "top-processors", null);
+                case "get_route_topology" ->
+                    targetPid < 0 ? NO_PROCESS : RuntimeHelper.executeAction(targetPid, "route-topology", root -> {
+                        root.put("metric", "true");
+                        root.put("external", "true");
+                    });
                 case "trace_control" -> targetPid < 0 ? NO_PROCESS : executeTraceControl(args);
+                case "send_message" -> targetPid < 0 ? NO_PROCESS : executeSendMessage(args);
+                case "eval_expression" -> targetPid < 0 ? NO_PROCESS : executeEvalExpression(args);
+                case "browse_endpoint" -> targetPid < 0 ? NO_PROCESS : executeBrowseEndpoint(args);
+                case "get_thread_dump" ->
+                    targetPid < 0 ? NO_PROCESS : RuntimeHelper.executeAction(targetPid, "thread-dump", null);
                 case "stop_route" -> targetPid < 0 ? NO_PROCESS : executeRouteCommand(args, "stop");
                 case "start_route" -> targetPid < 0 ? NO_PROCESS : executeRouteCommand(args, "start");
                 case "suspend_route" -> targetPid < 0 ? NO_PROCESS : executeRouteCommand(args, "suspend");
@@ -411,6 +477,70 @@ public class AskTools {
         return RuntimeHelper.executeAction(targetPid, "route", root -> {
             root.put("id", routeId);
             root.put("command", command);
+        });
+    }
+
+    private String executeGetErrors() {
+        JsonObject errors = RuntimeHelper.readErrorFile(targetPid);
+        if (errors == null) {
+            return "No errors captured.";
+        }
+        return errors.toJson();
+    }
+
+    private String executeGetHistory() {
+        JsonObject history = RuntimeHelper.readHistoryFile(targetPid);
+        if (history == null) {
+            return "No message history available.";
+        }
+        return history.toJson();
+    }
+
+    private String executeSendMessage(JsonObject args) {
+        String endpoint = args.getString("endpoint");
+        if (endpoint == null || endpoint.isBlank()) {
+            return "Error: endpoint is required";
+        }
+        String body = args.getString("body");
+        String headers = args.getString("headers");
+        JsonObject result = RuntimeHelper.sendMessage(targetPid, endpoint, body, headers);
+        return result.toJson();
+    }
+
+    private String executeEvalExpression(JsonObject args) {
+        String language = args.getString("language");
+        String expression = args.getString("expression");
+        if (language == null || language.isBlank()) {
+            return "Error: language is required";
+        }
+        if (expression == null || expression.isBlank()) {
+            return "Error: expression is required";
+        }
+        return RuntimeHelper.executeAction(targetPid, "eval", root -> {
+            root.put("language", language);
+            root.put("predicate", "false");
+            root.put("template", Jsoner.escape(expression));
+        });
+    }
+
+    private String executeBrowseEndpoint(JsonObject args) {
+        String endpoint = args.getString("endpoint");
+        if (endpoint == null || endpoint.isBlank()) {
+            return "Error: endpoint is required";
+        }
+        String limitStr = args.getString("limit");
+        int limit = 50;
+        if (limitStr != null && !limitStr.isBlank()) {
+            try {
+                limit = Integer.parseInt(limitStr);
+            } catch (NumberFormatException e) {
+                // use default
+            }
+        }
+        int browseLimit = limit;
+        return RuntimeHelper.executeAction(targetPid, "browse", root -> {
+            root.put("filter", endpoint);
+            root.put("limit", browseLimit);
         });
     }
 
