@@ -25,6 +25,9 @@ import io.weaviate.client6.v1.api.WeaviateClient;
 import io.weaviate.client6.v1.api.collections.CollectionHandle;
 import io.weaviate.client6.v1.api.collections.Vectors;
 import io.weaviate.client6.v1.api.collections.WeaviateObject;
+import io.weaviate.client6.v1.api.collections.aggregate.AggregateResponse;
+import io.weaviate.client6.v1.api.collections.data.InsertManyResponse;
+import io.weaviate.client6.v1.api.collections.query.NearVector;
 import io.weaviate.client6.v1.api.collections.query.QueryResponse;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -68,6 +71,9 @@ public class WeaviateVectorDbProducer extends DefaultProducer {
                 case CREATE:
                     create(exchange);
                     break;
+                case BATCH_CREATE:
+                    batchCreate(exchange);
+                    break;
                 case UPDATE_BY_ID:
                     updateById(exchange);
                     break;
@@ -82,6 +88,15 @@ public class WeaviateVectorDbProducer extends DefaultProducer {
                     break;
                 case QUERY_BY_ID:
                     queryById(exchange);
+                    break;
+                case HYBRID_QUERY:
+                    hybridQuery(exchange);
+                    break;
+                case BM25_QUERY:
+                    bm25Query(exchange);
+                    break;
+                case AGGREGATE:
+                    aggregate(exchange);
                     break;
                 default:
                     throw new UnsupportedOperationException("Unsupported action: " + action.name());
@@ -216,6 +231,92 @@ public class WeaviateVectorDbProducer extends DefaultProducer {
         CollectionHandle<Map<String, Object>> collection = client.collections.use(collectionName);
 
         Optional<WeaviateObject<Map<String, Object>>> result = collection.query.fetchObjectById(indexId);
+
+        populateResponse(result, exchange);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void batchCreate(Exchange exchange) throws Exception {
+        final Message in = exchange.getMessage();
+        List<WeaviateObject<Map<String, Object>>> objects = in.getMandatoryBody(List.class);
+
+        String collectionName = resolveCollectionName(in);
+
+        CollectionHandle<Map<String, Object>> collection = client.collections.use(collectionName);
+
+        InsertManyResponse result = collection.data.insertMany(objects);
+        populateResponse(result, exchange);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void hybridQuery(Exchange exchange) throws Exception {
+        final Message in = exchange.getMessage();
+        String queryText = in.getMandatoryBody(String.class);
+
+        int topK = in.getHeader(WeaviateVectorDbHeaders.QUERY_TOP_K, 10, Integer.class);
+        Float alpha = in.getHeader(WeaviateVectorDbHeaders.HYBRID_ALPHA, Float.class);
+        List<Float> queryVector = in.getHeader(WeaviateVectorDbHeaders.QUERY_VECTOR, List.class);
+
+        String collectionName = resolveCollectionName(in);
+
+        CollectionHandle<Map<String, Object>> collection = client.collections.use(collectionName);
+
+        HashMap<String, Object> fieldToSearch = in.getHeader(WeaviateVectorDbHeaders.FIELDS, HashMap.class);
+
+        QueryResponse<Map<String, Object>> result = (QueryResponse<Map<String, Object>>) collection.query.hybrid(
+                queryText, h -> {
+                    h.limit(topK);
+                    if (alpha != null) {
+                        h.alpha(alpha);
+                    }
+                    if (queryVector != null) {
+                        float[] primitiveVector = toPrimitiveFloatArray(queryVector.toArray(new Float[0]));
+                        h.nearVector(NearVector.of(primitiveVector));
+                    }
+                    if (fieldToSearch != null) {
+                        h.returnProperties(fieldToSearch.keySet().toArray(new String[0]));
+                    }
+                    return h;
+                });
+
+        populateResponse(result, exchange);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void bm25Query(Exchange exchange) throws Exception {
+        final Message in = exchange.getMessage();
+        String queryText = in.getMandatoryBody(String.class);
+
+        int topK = in.getHeader(WeaviateVectorDbHeaders.QUERY_TOP_K, 10, Integer.class);
+
+        String collectionName = resolveCollectionName(in);
+
+        CollectionHandle<Map<String, Object>> collection = client.collections.use(collectionName);
+
+        HashMap<String, Object> fieldToSearch = in.getHeader(WeaviateVectorDbHeaders.FIELDS, HashMap.class);
+
+        QueryResponse<Map<String, Object>> result;
+        if (fieldToSearch != null) {
+            String[] returnProps = fieldToSearch.keySet().toArray(new String[0]);
+            result = (QueryResponse<Map<String, Object>>) collection.query.bm25(queryText,
+                    b -> b.limit(topK).returnProperties(returnProps));
+        } else {
+            result = (QueryResponse<Map<String, Object>>) collection.query.bm25(queryText,
+                    b -> b.limit(topK));
+        }
+
+        populateResponse(result, exchange);
+    }
+
+    private void aggregate(Exchange exchange) throws Exception {
+        final Message in = exchange.getMessage();
+
+        String collectionName = resolveCollectionName(in);
+
+        CollectionHandle<Map<String, Object>> collection = client.collections.use(collectionName);
+
+        AggregateResponse result = (AggregateResponse) collection.aggregate.overAll(
+                a -> a.includeTotalCount(true));
 
         populateResponse(result, exchange);
     }
