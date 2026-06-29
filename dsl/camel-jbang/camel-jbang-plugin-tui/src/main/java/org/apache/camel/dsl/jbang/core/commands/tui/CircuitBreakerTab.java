@@ -49,7 +49,7 @@ import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.*;
 class CircuitBreakerTab implements MonitorTab {
 
     private static final String[] SORT_COLUMNS = { "route", "id", "component", "state" };
-    private static final int MAX_CHART_POINTS = 60;
+    private static final int MAX_CHART_POINTS = 300;
 
     private final MonitorContext ctx;
     private final TableState tableState = new TableState();
@@ -352,7 +352,7 @@ class CircuitBreakerTab implements MonitorTab {
 
         LinkedList<Long> successHist = cbSuccessHistory.get(key);
         LinkedList<Long> failHist = cbFailHistory.get(key);
-        int renderPoints = MAX_CHART_POINTS;
+        int renderPoints = Math.min(MAX_CHART_POINTS, Math.max(2, vSplit.get(1).width() - 6));
         long[] successArr = new long[renderPoints];
         long[] failArr = new long[renderPoints];
         if (successHist != null) {
@@ -384,7 +384,8 @@ class CircuitBreakerTab implements MonitorTab {
                 .topStyle(Style.EMPTY.fg(Color.GREEN))
                 .bottomStyle(Style.EMPTY.fg(Color.LIGHT_RED))
                 .showYAxis(true)
-                .xLabels("-60s", "-45s", "-30s", "-15s", "now")
+                .xLabels("-" + renderPoints + "s", "-" + (renderPoints * 3 / 4) + "s",
+                        "-" + (renderPoints / 2) + "s", "-" + (renderPoints / 4) + "s", "now")
                 .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
                         .title(Title.from(chartTitle)).build())
                 .build(), vSplit.get(1));
