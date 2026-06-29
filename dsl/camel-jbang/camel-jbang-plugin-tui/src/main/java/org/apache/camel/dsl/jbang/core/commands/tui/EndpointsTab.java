@@ -51,7 +51,7 @@ import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.*;
 class EndpointsTab implements MonitorTab {
 
     private static final String[] SORT_COLUMNS = { "component", "route", "dir", "total", "body", "hdr", "uri" };
-    private static final int MAX_CHART_POINTS = 60;
+    private static final int MAX_CHART_POINTS = 300;
     private static final int CHART_ALL = 0;
     private static final int CHART_SINGLE = 1;
     private static final int CHART_OFF = 2;
@@ -426,7 +426,7 @@ class EndpointsTab implements MonitorTab {
         LinkedList<Long> inHist = inHistMap.getOrDefault(pid, new LinkedList<>());
         LinkedList<Long> outHist = outHistMap.getOrDefault(pid, new LinkedList<>());
 
-        int renderPoints = MAX_CHART_POINTS;
+        int renderPoints = Math.min(MAX_CHART_POINTS, Math.max(2, hSplit.get(1).width() - 6));
         long[] inArr = new long[renderPoints];
         long[] outArr = new long[renderPoints];
         for (int i = 0; i < renderPoints; i++) {
@@ -529,7 +529,7 @@ class EndpointsTab implements MonitorTab {
         LinkedList<Long> inHist = perEndpointInHistory.getOrDefault(key, new LinkedList<>());
         LinkedList<Long> outHist = perEndpointOutHistory.getOrDefault(key, new LinkedList<>());
 
-        int renderPoints = MAX_CHART_POINTS;
+        int renderPoints = Math.min(MAX_CHART_POINTS, Math.max(2, hSplit.get(1).width() - 6));
         long[] inArr = new long[renderPoints];
         long[] outArr = new long[renderPoints];
         for (int i = 0; i < renderPoints; i++) {
@@ -576,7 +576,7 @@ class EndpointsTab implements MonitorTab {
         LinkedList<Long> inHist = endpointInSizeHistory.getOrDefault(pid, new LinkedList<>());
         LinkedList<Long> outHist = endpointOutSizeHistory.getOrDefault(pid, new LinkedList<>());
 
-        int renderPoints = MAX_CHART_POINTS;
+        int renderPoints = Math.min(MAX_CHART_POINTS, Math.max(2, area.width() - 6));
         long[] inArr = new long[renderPoints];
         long[] outArr = new long[renderPoints];
         for (int i = 0; i < renderPoints; i++) {

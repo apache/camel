@@ -71,7 +71,7 @@ class OverviewTab implements MonitorTab {
     }
 
     private static final long VANISH_DURATION_MS = 6000;
-    private static final int MAX_SPARKLINE_POINTS = 60;
+    private static final int MAX_SPARKLINE_POINTS = 300;
     private static final String[] SORT_COLUMNS = { "pid", "name", "version", "status", "total", "fail" };
 
     static final int CHART_ALL = 0;
