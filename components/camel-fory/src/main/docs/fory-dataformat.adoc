@@ -15,6 +15,9 @@ https://fory.apache.org/[Fory Library]
 [NOTE]
 Apache Fory is not supporting architecture using Big Endian (s390x, for instance).
 
+[NOTE]
+With JDK 25+, the JVM parameter `--add-opens java.base/java.lang.invoke=ALL-UNNAMED` must be provided to be able to use this dataformat.
+
 == Fory Options
 
 
