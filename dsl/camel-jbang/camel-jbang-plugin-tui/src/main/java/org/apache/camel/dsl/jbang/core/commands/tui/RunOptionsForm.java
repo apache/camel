@@ -45,15 +45,16 @@ class RunOptionsForm {
     // Row indices for page 0
     private static final int ROW_NAME = 0;
     private static final int ROW_RUNTIME = 1;
-    private static final int ROW_PORT = 2;
-    private static final int ROW_MAX = 3;
-    private static final int ROW_CONSOLE = 4;
-    private static final int ROW_DEV = 5;
-    private static final int ROW_OBSERVE = 6;
-    private static final int ROW_TRACE = 7;
-    private static final int ROW_STUB = 8;
-    private static final int ROW_OTEL_AGENT = 9;
-    private static final int ROW_COUNT = 10;
+    private static final int ROW_PROFILE = 2;
+    private static final int ROW_PORT = 3;
+    private static final int ROW_MAX = 4;
+    private static final int ROW_CONSOLE = 5;
+    private static final int ROW_DEV = 6;
+    private static final int ROW_OBSERVE = 7;
+    private static final int ROW_TRACE = 8;
+    private static final int ROW_STUB = 9;
+    private static final int ROW_OTEL_AGENT = 10;
+    private static final int ROW_COUNT = 11;
 
     private boolean visible;
     private int page;
@@ -63,6 +64,7 @@ class RunOptionsForm {
     private static final String[] MAX_FLAGS = { "--max-seconds=", "--max-messages=", "--max-idle-seconds=" };
     private static final String[] RUNTIME_LABELS = { "Camel Main", "Spring Boot", "Quarkus" };
     private static final String[] RUNTIME_VALUES = { "camel-main", "spring-boot", "quarkus" };
+    private static final String[] PROFILE_LABELS = { "dev", "prod" };
 
     // Text fields
     private TextInputState nameInput;
@@ -70,6 +72,7 @@ class RunOptionsForm {
     private TextInputState maxInput;
     private int maxMode;
     private int runtimeMode;
+    private int profileMode;
 
     // Checkboxes
     private boolean devMode;
@@ -101,6 +104,7 @@ class RunOptionsForm {
         maxInput = new TextInputState("");
         maxMode = 0;
         runtimeMode = 0;
+        profileMode = 0;
         devMode = dev;
         observe = false;
         backlogTrace = false;
@@ -166,7 +170,7 @@ class RunOptionsForm {
             } else {
                 hint(spans, "Tab", "next");
             }
-            if (selectedRow == ROW_RUNTIME || selectedRow == ROW_MAX) {
+            if (selectedRow == ROW_RUNTIME || selectedRow == ROW_PROFILE || selectedRow == ROW_MAX) {
                 hint(spans, "Space", "cycle");
             } else if (selectedRow >= ROW_CONSOLE) {
                 hint(spans, "Space", "toggle");
@@ -194,6 +198,7 @@ class RunOptionsForm {
         if (runtimeMode > 0) {
             args.add("--runtime=" + RUNTIME_VALUES[runtimeMode]);
         }
+        args.add("--profile=" + PROFILE_LABELS[profileMode]);
         String port = portInput.text().trim();
         if (!port.isEmpty()) {
             args.add("--port=" + port);
@@ -299,6 +304,14 @@ class RunOptionsForm {
             }
         }
 
+        // Profile row: Space or Left/Right cycles
+        if (selectedRow == ROW_PROFILE) {
+            if (ke.isChar(' ') || ke.isRight() || ke.isLeft()) {
+                profileMode = (profileMode + 1) % PROFILE_LABELS.length;
+                return true;
+            }
+        }
+
         // Max row: Space cycles mode
         if (ke.isChar(' ') && selectedRow == ROW_MAX) {
             maxMode = (maxMode + 1) % MAX_MODES.length;
@@ -319,7 +332,7 @@ class RunOptionsForm {
         }
 
         // Text field rows: delegate to active input (skip runtime row — it uses cycling)
-        if (selectedRow <= ROW_MAX && selectedRow != ROW_RUNTIME) {
+        if (selectedRow <= ROW_MAX && selectedRow != ROW_RUNTIME && selectedRow != ROW_PROFILE) {
             TextInputState active = activeInput();
             if (active != null) {
                 handleTextInput(ke, active, selectedRow == ROW_PORT || selectedRow == ROW_MAX);
@@ -430,7 +443,7 @@ class RunOptionsForm {
 
     private void renderOptionsPage(Frame frame, Rect area) {
         int popupW = Math.min(56, area.width() - 4);
-        int popupH = 14;
+        int popupH = 15;
         int x = area.left() + Math.max(0, (area.width() - popupW) / 2);
         int y = area.top() + Math.max(0, (area.height() - popupH) / 4);
         Rect popup = new Rect(x, y, Math.min(popupW, area.width()), Math.min(popupH, area.height()));
@@ -462,6 +475,10 @@ class RunOptionsForm {
 
         renderLabel(frame, innerX, rowY, labelW, "Runtime:", selectedRow == ROW_RUNTIME);
         renderCycler(frame, innerX + labelW, rowY, fieldW, RUNTIME_LABELS, runtimeMode, selectedRow == ROW_RUNTIME);
+        rowY++;
+
+        renderLabel(frame, innerX, rowY, labelW, "Profile:", selectedRow == ROW_PROFILE);
+        renderCycler(frame, innerX + labelW, rowY, fieldW, PROFILE_LABELS, profileMode, selectedRow == ROW_PROFILE);
         rowY++;
 
         renderLabel(frame, innerX, rowY, labelW, "Port:", selectedRow == ROW_PORT);
