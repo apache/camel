@@ -18,25 +18,17 @@ package org.apache.camel.dsl.jbang.core.commands.tui;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.RandomAccessFile;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.Queue;
-import java.util.Set;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 import dev.tamboui.layout.Constraint;
@@ -64,43 +56,26 @@ import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.PathUtils;
 import org.apache.camel.dsl.jbang.core.common.VersionHelper;
-import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
-import org.apache.camel.util.json.Jsoner;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import sun.misc.Signal;
 
 import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.*;
+import static org.apache.camel.dsl.jbang.core.commands.tui.TabRegistry.*;
 
 @Command(name = "monitor",
          description = "Live dashboard for monitoring Camel integrations",
          sortOptions = false)
 public class CamelMonitor extends CamelCommand {
 
-    private static final long VANISH_DURATION_MS = 6000;
     private static final long DEFAULT_REFRESH_MS = 100;
-
-    private static final int MAX_TRACES = 200;
-    private static final int NUM_TABS = 10;
 
     // Compact tab bar (10 labels + 9 "|" dividers) needs 88 chars — that is the true minimum
     private static final int MIN_WIDTH = 88;
     private static final int MIN_HEIGHT = 24;
     // Full tab bar (10 labels + 9 " | " dividers) needs 126 chars; use compact below that
     private static final int TABS_FULL_MIN_WIDTH = 126;
-
-    // Tab indices
-    private static final int TAB_OVERVIEW = 0;
-    private static final int TAB_LOG = 1;
-    private static final int TAB_DIAGRAM = 2;
-    private static final int TAB_ROUTES = 3;
-    private static final int TAB_ENDPOINTS = 4;
-    private static final int TAB_HTTP = 5;
-    private static final int TAB_HEALTH = 6;
-    private static final int TAB_HISTORY = 7;
-    private static final int TAB_ERRORS = 8;
-    private static final int TAB_MORE = 9;
 
     @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
     String name = "*";
@@ -125,30 +100,12 @@ public class CamelMonitor extends CamelCommand {
     int mcpPort = 8123;
 
     // State
-    private final AtomicReference<List<IntegrationInfo>> data = new AtomicReference<>(Collections.emptyList());
-    private final AtomicReference<List<InfraInfo>> infraData = new AtomicReference<>(Collections.emptyList());
-    private final Map<String, VanishingInfo> vanishing = new ConcurrentHashMap<>();
-    private final Map<String, VanishingInfraInfo> vanishingInfra = new ConcurrentHashMap<>();
     private final TabsState tabsState = new TabsState(TAB_OVERVIEW);
-
-    // Sparkline/chart history for all metric families
-    private final MetricsCollector metrics = new MetricsCollector();
-
-    // Cached PID list — full process scan throttled to every 2 seconds (1 second in burst mode)
-    private volatile List<Long> cachedPids = Collections.emptyList();
-    private volatile long lastFullScanTime;
-    private volatile long burstModeUntil;
-    final Set<String> stoppingPids = ConcurrentHashMap.newKeySet();
-
-    // Trace/history data — shared between CamelMonitor and tabs
-    private final AtomicReference<List<TraceEntry>> traces = new AtomicReference<>(Collections.emptyList());
-    private final Map<String, Long> traceFilePositions = new ConcurrentHashMap<>();
-    // OTel span data — shared between CamelMonitor and SpansTab
-    private final AtomicReference<List<SpanEntry>> otelSpans = new AtomicReference<>(List.of());
+    private TabRegistry tabRegistry;
 
     // selectedPid is stored on ctx (MonitorContext) so tabs can access it
 
-    private volatile long lastRefresh;
+    private DataRefreshService dataService;
     private String monitorNotification;
     private boolean monitorNotificationError;
     private long monitorNotificationExpiry;
@@ -162,57 +119,13 @@ public class CamelMonitor extends CamelCommand {
     private final HelpOverlay helpOverlay = new HelpOverlay();
     private final ShellPanel shellPanel = new ShellPanel();
 
-    private final ActionsPopup actionsPopup = new ActionsPopup(
-            () -> data.get().stream()
-                    .filter(i -> !i.vanishing && i.name != null)
-                    .map(i -> i.name)
-                    .collect(Collectors.toSet()),
-            () -> data.get().stream()
-                    .filter(i -> !i.vanishing)
-                    .collect(Collectors.toList()),
-            () -> infraData.get().stream()
-                    .filter(i -> !i.vanishing)
-                    .collect(Collectors.toList()),
-            captionOverlay,
-            () -> recordingManager.requestScreenshot(),
-            () -> recordingManager.toggleRecording(),
-            () -> recordingManager.isRecording(),
-            () -> recordingManager.toggleTapeRecording(),
-            () -> recordingManager.isTapeRecording(),
-            this::enableBurstMode, stoppingPids);
-
-    private final AtomicBoolean refreshInProgress = new AtomicBoolean(false);
+    private ActionsPopup actionsPopup;
     private TuiRunner runner;
 
     private MonitorContext ctx;
-    private LogTab logTab;
-    private DiagramTab diagramTab;
-    private RoutesTab routesTab;
-    private ConsumersTab consumersTab;
-    private EndpointsTab endpointsTab;
-    private HttpTab httpTab;
-    private HealthTab healthTab;
-    private HistoryTab historyTab;
-    private CircuitBreakerTab circuitBreakerTab;
-    private ErrorsTab errorsTab;
-    private MetricsTab metricsTab;
-    private StartupTab startupTab;
-    private ConfigurationTab configurationTab;
-    private BeansTab beansTab;
-    private BrowseTab browseTab;
-    private ClasspathTab classpathTab;
-    private InflightTab inflightTab;
-    private MemoryTab memoryTab;
-    private ThreadsTab threadsTab;
-    private SpansTab spansTab;
-    private ProcessTab processTab;
-    private OverviewTab overviewTab;
-    private DataSourceTab dataSourceTab;
-    private SqlQueryTab sqlQueryTab;
 
     private final FilesBrowser filesBrowser = new FilesBrowser();
     private PopupManager popupManager;
-    private MonitorTab activeMoreTab;
 
     private ClassLoader classLoader;
 
@@ -242,45 +155,122 @@ public class CamelMonitor extends CamelCommand {
         // to make ServiceLoader work with tamboui for downloaded JARs
         Thread.currentThread().setContextClassLoader(classLoader);
 
+        // Create data refresh service first — tabs and popups reference its state
+        dataService = new DataRefreshService(
+                name,
+                new DataRefreshService.RefreshContext() {
+                    @Override
+                    public int selectedTab() {
+                        return tabRegistry != null ? tabRegistry.selectedTabIndex() : tabsState.selected();
+                    }
+
+                    @Override
+                    public boolean isSwitchPopupVisible() {
+                        return popupManager != null && popupManager.isSwitchPopupVisible();
+                    }
+
+                    @Override
+                    public String getPendingAutoSelect() {
+                        return actionsPopup != null ? actionsPopup.getPendingAutoSelect() : null;
+                    }
+
+                    @Override
+                    public void clearPendingAutoSelect() {
+                        if (actionsPopup != null) {
+                            actionsPopup.clearPendingAutoSelect();
+                        }
+                    }
+
+                    @Override
+                    public void onInfraAutoSelected(int tableIndex, String pid) {
+                        if (tabRegistry != null) {
+                            tabRegistry.overviewTab().tableState.select(tableIndex);
+                        }
+                        ctx.selectedPid = pid;
+                    }
+
+                    @Override
+                    public boolean isInfraSelected() {
+                        return CamelMonitor.this.isInfraSelected();
+                    }
+                },
+                this::getStatusFile,
+                this::getErrorFile);
+
         // Create shared context and tab instances
-        ctx = new MonitorContext(data, infraData);
+        ctx = new MonitorContext(dataService.data(), dataService.infraData());
+        dataService.setContext(ctx);
+
+        actionsPopup = new ActionsPopup(
+                () -> dataService.data().get().stream()
+                        .filter(i -> !i.vanishing && i.name != null)
+                        .map(i -> i.name)
+                        .collect(Collectors.toSet()),
+                () -> dataService.data().get().stream()
+                        .filter(i -> !i.vanishing)
+                        .collect(Collectors.toList()),
+                () -> dataService.infraData().get().stream()
+                        .filter(i -> !i.vanishing)
+                        .collect(Collectors.toList()),
+                captionOverlay,
+                () -> recordingManager.requestScreenshot(),
+                () -> recordingManager.toggleRecording(),
+                () -> recordingManager.isRecording(),
+                () -> recordingManager.toggleTapeRecording(),
+                () -> recordingManager.isTapeRecording(),
+                dataService::enableBurstMode, dataService.stoppingPids());
+
         actionsPopup.setContext(ctx);
         actionsPopup.setResetStatsAction(this::resetStats);
         shellPanel.setContext(ctx);
         actionsPopup.setOpenShellAction(shellPanel::open);
         actionsPopup.setBrowseFilesAction(this::openFilesPopup);
-        logTab = new LogTab(ctx);
-        diagramTab = new DiagramTab(ctx);
-        routesTab = new RoutesTab(ctx);
-        consumersTab = new ConsumersTab(ctx);
-        dataSourceTab = new DataSourceTab(ctx);
-        sqlQueryTab = new SqlQueryTab(ctx);
-        endpointsTab = new EndpointsTab(ctx, metrics);
-        httpTab = new HttpTab(ctx);
-        healthTab = new HealthTab(ctx);
-        historyTab = new HistoryTab(ctx, traces, traceFilePositions);
-        circuitBreakerTab = new CircuitBreakerTab(ctx, metrics);
-        errorsTab = new ErrorsTab(ctx);
-        metricsTab = new MetricsTab(ctx);
-        startupTab = new StartupTab(ctx);
-        configurationTab = new ConfigurationTab(ctx);
-        beansTab = new BeansTab(ctx);
-        browseTab = new BrowseTab(ctx);
-        classpathTab = new ClasspathTab(ctx);
-        inflightTab = new InflightTab(ctx);
-        memoryTab = new MemoryTab(ctx, metrics);
-        threadsTab = new ThreadsTab(ctx);
-        spansTab = new SpansTab(ctx, otelSpans);
-        processTab = new ProcessTab(ctx);
-        overviewTab = new OverviewTab(
-                ctx, metrics, stoppingPids,
-                this::resetIntegrationTabState);
+
+        tabRegistry = new TabRegistry(tabsState);
+        tabRegistry.initTabs(ctx, dataService, this::resetIntegrationTabState);
+        tabRegistry.setCallbacks(new TabRegistry.TabCallbacks() {
+            @Override
+            public void refreshLogData() {
+                CamelMonitor.this.refreshLogData();
+            }
+
+            @Override
+            public void refreshHistoryData(List<Long> pids) {
+                dataService.loadHistoryData(pids);
+            }
+
+            @Override
+            public void refreshTraceData(List<Long> pids) {
+                dataService.refreshTraceData(pids);
+            }
+
+            @Override
+            public void refreshErrorData(List<Long> pids) {
+                dataService.refreshErrorData(pids);
+            }
+
+            @Override
+            public void openMorePopup() {
+                popupManager.openMorePopup();
+            }
+
+            @Override
+            public void closeMorePopup() {
+                popupManager.closeMorePopup();
+            }
+
+            @Override
+            public void selectMorePopupEntry(int index) {
+                popupManager.selectMorePopupEntry(index);
+            }
+        });
+
         popupManager = new PopupManager(
                 ctx, this::getNonVanishingIntegrations, filesBrowser,
                 new PopupManager.PopupCallbacks() {
                     @Override
                     public void selectMoreTab(int index) {
-                        CamelMonitor.this.selectMoreTab(index);
+                        tabRegistry.selectMoreTab(index);
                     }
 
                     @Override
@@ -299,7 +289,7 @@ public class CamelMonitor extends CamelCommand {
                     }
                 });
 
-        overviewTab.setActions(new OverviewTab.OverviewActions() {
+        tabRegistry.overviewTab().setActions(new OverviewTab.OverviewActions() {
             @Override
             public void sendRouteCommand(String pid, String routeId, String command) {
                 CamelMonitor.this.sendRouteCommand(pid, routeId, command);
@@ -332,31 +322,31 @@ public class CamelMonitor extends CamelCommand {
         });
 
         // Initial data load (synchronous before TUI starts)
-        refreshDataSync();
+        dataService.refreshSync(this::refreshLogData, this::refreshConditionalData);
 
         // Auto-select if there's exactly one integration running
-        overviewTab.selectCurrentIntegration();
+        tabRegistry.overviewTab().selectCurrentIntegration();
 
         mcpFacade = new McpFacade(
-                ctx, data, tabsState, recordingManager,
+                ctx, dataService.data(), tabsState, recordingManager,
                 captionOverlay, drawOverlay, helpOverlay,
                 actionsPopup, filesBrowser,
-                logTab, diagramTab, historyTab,
+                tabRegistry,
                 pendingKeys,
                 new McpFacade.MonitorBridge() {
                     @Override
                     public MonitorTab activeTab() {
-                        return CamelMonitor.this.activeTab();
+                        return tabRegistry.activeTab();
                     }
 
                     @Override
                     public void handleTabKey(int tabIndex) {
-                        CamelMonitor.this.handleTabKey(tabIndex);
+                        tabRegistry.handleTabKey(tabIndex, ctx, dataService);
                     }
 
                     @Override
                     public void selectMoreTab(int moreIndex) {
-                        CamelMonitor.this.selectMoreTab(moreIndex);
+                        tabRegistry.selectMoreTab(moreIndex);
                     }
 
                     @Override
@@ -415,8 +405,8 @@ public class CamelMonitor extends CamelCommand {
             actionsPopup.setScheduler(tui.scheduler());
             actionsPopup.setResetScreenAction(() -> tui.terminal().clear());
             // Preload diagram data if an integration was auto-selected
-            routesTab.preloadDiagram();
-            diagramTab.preloadDiagram();
+            tabRegistry.routesTab().preloadDiagram();
+            tabRegistry.diagramTab().preloadDiagram();
             // Intercept Ctrl+C: quit the TUI cleanly instead of letting
             // the JVM tear down the classloader while we're still running
             Signal.handle(new Signal("INT"), sig -> tui.quit());
@@ -470,7 +460,7 @@ public class CamelMonitor extends CamelCommand {
             if (actionsPopup.isVisible()) {
                 return actionsPopup.handleKeyEvent(ke);
             }
-            if (popupManager.handleKeyEvent(ke, tabsState.selected(), TAB_LOG)) {
+            if (popupManager.handleKeyEvent(ke, tabRegistry.selectedTabIndex(), TAB_LOG)) {
                 return true;
             }
             if (handleGlobalKeys(ke, runner)) {
@@ -496,11 +486,11 @@ public class CamelMonitor extends CamelCommand {
 
     private boolean handleGlobalKeys(KeyEvent ke, TuiRunner runner) {
         if (ke.isCancel()) {
-            MonitorTab tab = activeTab();
+            MonitorTab tab = tabRegistry.activeTab();
             if (tab != null && tab.handleEscape()) {
                 return true;
             }
-            if (tabsState.selected() != TAB_OVERVIEW) {
+            if (tabRegistry.selectedTabIndex() != TAB_OVERVIEW) {
                 tabsState.select(TAB_OVERVIEW);
                 return true;
             }
@@ -511,12 +501,16 @@ public class CamelMonitor extends CamelCommand {
             }
             return true;
         }
-        boolean probeEditing = tabsState.selected() == TAB_HTTP && httpTab.isProbeMode();
-        boolean logSearchActive = tabsState.selected() == TAB_LOG && logTab.isSearchInputActive();
-        boolean spanFilterActive = tabsState.selected() == TAB_MORE && activeMoreTab == spansTab
-                && spansTab.isFilterInputActive();
-        boolean sqlInputActive = tabsState.selected() == TAB_MORE && activeMoreTab == sqlQueryTab
-                && sqlQueryTab.isInputActive();
+        boolean probeEditing = tabRegistry.selectedTabIndex() == TAB_HTTP
+                && tabRegistry.httpTab().isProbeMode();
+        boolean logSearchActive = tabRegistry.selectedTabIndex() == TAB_LOG
+                && tabRegistry.logTab().isSearchInputActive();
+        boolean spanFilterActive = tabRegistry.selectedTabIndex() == TAB_MORE
+                && tabRegistry.getActiveMoreTab() == tabRegistry.spansTab()
+                && tabRegistry.spansTab().isFilterInputActive();
+        boolean sqlInputActive = tabRegistry.selectedTabIndex() == TAB_MORE
+                && tabRegistry.getActiveMoreTab() == tabRegistry.sqlQueryTab()
+                && tabRegistry.sqlQueryTab().isInputActive();
         boolean textEditing = probeEditing || logSearchActive || spanFilterActive || sqlInputActive;
         if (!textEditing && (ke.isCharIgnoreCase('q') || ke.isCtrlC())) {
             runner.quit();
@@ -528,46 +522,46 @@ public class CamelMonitor extends CamelCommand {
         }
         if (!textEditing) {
             if (ke.isChar('1')) {
-                return handleTabKey(TAB_OVERVIEW);
+                return tabRegistry.handleTabKey(TAB_OVERVIEW, ctx, dataService);
             }
             if (ke.isChar('2')) {
-                return handleTabKey(TAB_LOG);
+                return tabRegistry.handleTabKey(TAB_LOG, ctx, dataService);
             }
             if (!isInfraSelected()) {
                 if (ke.isChar('3')) {
-                    return handleTabKey(TAB_DIAGRAM);
+                    return tabRegistry.handleTabKey(TAB_DIAGRAM, ctx, dataService);
                 }
                 if (ke.isChar('4')) {
-                    return handleTabKey(TAB_ROUTES);
+                    return tabRegistry.handleTabKey(TAB_ROUTES, ctx, dataService);
                 }
                 if (ke.isChar('5')) {
-                    return handleTabKey(TAB_ENDPOINTS);
+                    return tabRegistry.handleTabKey(TAB_ENDPOINTS, ctx, dataService);
                 }
                 if (ke.isChar('6')) {
-                    return handleTabKey(TAB_HTTP);
+                    return tabRegistry.handleTabKey(TAB_HTTP, ctx, dataService);
                 }
                 if (ke.isChar('7')) {
-                    return handleTabKey(TAB_HEALTH);
+                    return tabRegistry.handleTabKey(TAB_HEALTH, ctx, dataService);
                 }
                 if (ke.isChar('8')) {
-                    return handleTabKey(TAB_HISTORY);
+                    return tabRegistry.handleTabKey(TAB_HISTORY, ctx, dataService);
                 }
                 if (ke.isChar('9')) {
-                    return handleTabKey(TAB_ERRORS);
+                    return tabRegistry.handleTabKey(TAB_ERRORS, ctx, dataService);
                 }
                 if (ke.isChar('0')) {
-                    return handleTabKey(TAB_MORE);
+                    return tabRegistry.handleTabKey(TAB_MORE, ctx, dataService);
                 }
             }
         }
         if (ke.isFocusPrevious() && !textEditing) {
             if (isInfraSelected()) {
-                int prev = tabsState.selected() == TAB_OVERVIEW ? TAB_LOG : TAB_OVERVIEW;
+                int prev = tabRegistry.selectedTabIndex() == TAB_OVERVIEW ? TAB_LOG : TAB_OVERVIEW;
                 tabsState.select(prev);
             } else {
-                int prev = (tabsState.selected() - 1 + NUM_TABS) % NUM_TABS;
+                int prev = (tabRegistry.selectedTabIndex() - 1 + NUM_TABS) % NUM_TABS;
                 if (prev != TAB_OVERVIEW) {
-                    overviewTab.selectCurrentIntegration();
+                    tabRegistry.overviewTab().selectCurrentIntegration();
                 }
                 tabsState.select(prev);
             }
@@ -575,12 +569,12 @@ public class CamelMonitor extends CamelCommand {
         }
         if (ke.isFocusNext() && !textEditing) {
             if (isInfraSelected()) {
-                int next = tabsState.selected() == TAB_OVERVIEW ? TAB_LOG : TAB_OVERVIEW;
+                int next = tabRegistry.selectedTabIndex() == TAB_OVERVIEW ? TAB_LOG : TAB_OVERVIEW;
                 tabsState.select(next);
             } else {
-                int next = (tabsState.selected() + 1) % NUM_TABS;
+                int next = (tabRegistry.selectedTabIndex() + 1) % NUM_TABS;
                 if (next != TAB_OVERVIEW) {
-                    overviewTab.selectCurrentIntegration();
+                    tabRegistry.overviewTab().selectCurrentIntegration();
                 }
                 tabsState.select(next);
             }
@@ -593,7 +587,7 @@ public class CamelMonitor extends CamelCommand {
         if (opensHelp(ke, textEditing)) {
             // Only opens the overlay: while it is visible, dispatch delegates to
             // helpOverlay.handleKeyEvent (which handles F1/?/q/Esc to close) before reaching here.
-            MonitorTab tab = activeTab();
+            MonitorTab tab = tabRegistry.activeTab();
             if (tab != null) {
                 String help = tab.getHelpText();
                 if (help != null) {
@@ -611,8 +605,8 @@ public class CamelMonitor extends CamelCommand {
             return true;
         }
         if (ke.isKey(KeyCode.F2)) {
-            if (tabsState.selected() == TAB_ROUTES && routesTab != null) {
-                actionsPopup.setPreSelectedRouteId(routesTab.selectedRouteId());
+            if (tabRegistry.selectedTabIndex() == TAB_ROUTES && tabRegistry.routesTab() != null) {
+                actionsPopup.setPreSelectedRouteId(tabRegistry.routesTab().selectedRouteId());
             }
             actionsPopup.open();
             return true;
@@ -633,20 +627,20 @@ public class CamelMonitor extends CamelCommand {
     }
 
     private boolean handleTabKeys(KeyEvent ke) {
-        MonitorTab activeTab = activeTab();
+        MonitorTab activeTab = tabRegistry.activeTab();
 
         if (ke.isUp()) {
             if (activeTab != null && activeTab.handleKeyEvent(ke)) {
                 return true;
             }
-            navigateUp();
+            tabRegistry.navigateUp();
             return true;
         }
         if (ke.isDown()) {
             if (activeTab != null && activeTab.handleKeyEvent(ke)) {
                 return true;
             }
-            navigateDown();
+            tabRegistry.navigateDown();
             return true;
         }
         if (ke.isPageUp() || ke.isKey(KeyCode.PAGE_UP)) {
@@ -682,9 +676,9 @@ public class CamelMonitor extends CamelCommand {
             }
         }
 
-        int tab = tabsState.selected();
+        int tab = tabRegistry.selectedTabIndex();
         if (ke.isConfirm() && tab == TAB_OVERVIEW) {
-            overviewTab.selectCurrentIntegration();
+            tabRegistry.overviewTab().selectCurrentIntegration();
             if (ctx.selectedPid != null) {
                 tabsState.select(TAB_LOG);
                 refreshLogData();
@@ -702,20 +696,21 @@ public class CamelMonitor extends CamelCommand {
             actionsPopup.handlePaste(pe.text());
             return true;
         }
-        if (httpTab.isProbeMode()) {
-            httpTab.handlePaste(pe.text());
+        if (tabRegistry.httpTab().isProbeMode()) {
+            tabRegistry.httpTab().handlePaste(pe.text());
             return true;
         }
-        if (logTab.isSearchInputActive()) {
-            logTab.handlePaste(pe.text());
+        if (tabRegistry.logTab().isSearchInputActive()) {
+            tabRegistry.logTab().handlePaste(pe.text());
             return true;
         }
         if (filesBrowser.isSourceViewerPasteActive()) {
             filesBrowser.handlePaste(pe.text());
             return true;
         }
-        if (activeMoreTab == sqlQueryTab && sqlQueryTab.isInputActive()) {
-            sqlQueryTab.handlePaste(pe.text());
+        if (tabRegistry.getActiveMoreTab() == tabRegistry.sqlQueryTab()
+                && tabRegistry.sqlQueryTab().isInputActive()) {
+            tabRegistry.sqlQueryTab().handlePaste(pe.text());
             return true;
         }
         return false;
@@ -739,132 +734,20 @@ public class CamelMonitor extends CamelCommand {
         drawOverlay.tick(now);
         captionOverlay.tick(now);
         recordingManager.tickRecentKeys(now);
-        boolean anyDiagramShowing = routesTab.isShowDiagram() || diagramTab.isShowDiagram();
+        boolean anyDiagramShowing = tabRegistry.routesTab().isShowDiagram()
+                || tabRegistry.diagramTab().isShowDiagram();
         long interval = anyDiagramShowing ? Math.max(refreshInterval, 1000) : refreshInterval;
-        if (now - lastRefresh >= interval) {
-            refreshData();
-            routesTab.refreshDiagramIfNeeded();
-            diagramTab.refreshDiagramIfNeeded();
+        if (now - dataService.lastRefresh() >= interval) {
+            dataService.refresh(runner, this::refreshLogData, this::refreshConditionalData);
+            tabRegistry.routesTab().refreshDiagramIfNeeded();
+            tabRegistry.diagramTab().refreshDiagramIfNeeded();
             return true;
         }
         return true;
-    }
-
-    private boolean handleTabKey(int tab) {
-        if (tab != TAB_OVERVIEW) {
-            overviewTab.selectCurrentIntegration();
-            routesTab.preloadDiagram();
-            diagramTab.preloadDiagram();
-        }
-        if (tab == TAB_LOG) {
-            refreshLogData();
-            logTab.onTabSelected();
-        }
-        if (tab == TAB_ROUTES && routesTab != null && routesTab.isShowDiagram()) {
-            routesTab.closeDiagram();
-        }
-        if (tab == TAB_DIAGRAM) {
-            diagramTab.onTabSelected();
-        }
-        if (tab == TAB_HISTORY && ctx.selectedPid != null) {
-            try {
-                long pid = Long.parseLong(ctx.selectedPid);
-                refreshHistoryData(List.of(pid));
-                refreshTraceData(List.of(pid));
-            } catch (NumberFormatException e) {
-                // ignore
-            }
-            historyTab.onTabSelected();
-        }
-        if (tab == TAB_ERRORS && ctx.selectedPid != null) {
-            try {
-                long pid = Long.parseLong(ctx.selectedPid);
-                refreshErrorData(List.of(pid));
-            } catch (NumberFormatException e) {
-                // ignore
-            }
-            errorsTab.onTabSelected();
-        }
-        if (tab == TAB_MORE) {
-            popupManager.openMorePopup();
-            return true;
-        }
-        popupManager.closeMorePopup();
-        tabsState.select(tab);
-        return true;
-    }
-
-    void selectMoreTab(int index) {
-        popupManager.selectMorePopupEntry(index);
-        activeMoreTab = switch (index) {
-            case 0 -> beansTab;
-            case 1 -> browseTab;
-            case 2 -> circuitBreakerTab;
-            case 3 -> classpathTab;
-            case 4 -> configurationTab;
-            case 5 -> consumersTab;
-            case 6 -> dataSourceTab;
-            case 7 -> inflightTab;
-            case 8 -> memoryTab;
-            case 9 -> metricsTab;
-            case 10 -> sqlQueryTab;
-            case 11 -> spansTab;
-            case 12 -> processTab;
-            case 13 -> startupTab;
-            case 14 -> threadsTab;
-            default -> null;
-        };
-        if (activeMoreTab != null) {
-            overviewTab.selectCurrentIntegration();
-            tabsState.select(TAB_MORE);
-            activeMoreTab.onTabSelected();
-        }
-    }
-
-    private List<Long> selectedPidAsList() {
-        if (ctx.selectedPid == null) {
-            return Collections.emptyList();
-        }
-        try {
-            return List.of(Long.parseLong(ctx.selectedPid));
-        } catch (NumberFormatException e) {
-            return Collections.emptyList();
-        }
     }
 
     private void resetIntegrationTabState() {
-        diagramTab.onIntegrationChanged();
-        routesTab.onIntegrationChanged();
-        httpTab.onIntegrationChanged();
-        logTab.onIntegrationChanged();
-        historyTab.onIntegrationChanged();
-        beansTab.onIntegrationChanged();
-        browseTab.onIntegrationChanged();
-        threadsTab.onIntegrationChanged();
-        startupTab.onIntegrationChanged();
-        configurationTab.onIntegrationChanged();
-        consumersTab.onIntegrationChanged();
-        dataSourceTab.onIntegrationChanged();
-        sqlQueryTab.onIntegrationChanged();
-        circuitBreakerTab.onIntegrationChanged();
-        inflightTab.onIntegrationChanged();
-        spansTab.onIntegrationChanged();
-        processTab.onIntegrationChanged();
-        otelSpans.set(List.of());
-
-        filesBrowser.reset();
-
-        // Preload diagram data in background so it's ready when the user switches tabs
-        routesTab.preloadDiagram();
-        diagramTab.preloadDiagram();
-    }
-
-    private void navigateUp() {
-        activeTab().navigateUp();
-    }
-
-    private void navigateDown() {
-        activeTab().navigateDown();
+        tabRegistry.resetIntegrationTabState(dataService, filesBrowser);
     }
 
     // ---- Rendering ----
@@ -921,7 +804,7 @@ public class CamelMonitor extends CamelCommand {
     }
 
     private void renderHeader(Frame frame, Rect area) {
-        List<IntegrationInfo> infos = data.get();
+        List<IntegrationInfo> infos = dataService.data().get();
         String camelVersion = VersionHelper.extractCamelVersion();
         long activeCount = infos.stream().filter(i -> !i.vanishing).count();
 
@@ -931,7 +814,7 @@ public class CamelMonitor extends CamelCommand {
         titleSpans.add(Span.styled(camelVersion != null ? "v" + camelVersion : "", Style.EMPTY.fg(Color.GREEN)));
         titleSpans.add(Span.raw("  "));
         titleSpans.add(Span.styled(activeCount + " integration(s)", Style.EMPTY.fg(Color.CYAN)));
-        long activeInfra = infraData.get().stream().filter(i -> !i.vanishing).count();
+        long activeInfra = dataService.infraData().get().stream().filter(i -> !i.vanishing).count();
         if (activeInfra > 0) {
             titleSpans.add(Span.raw("  "));
             titleSpans.add(Span.styled(activeInfra + " infra(s)", Style.EMPTY.fg(Color.MAGENTA)));
@@ -1045,7 +928,7 @@ public class CamelMonitor extends CamelCommand {
                         Line.from("1 Overview"),
                         Line.from("2 Log"),
                         Line.from("3 Diagram"),
-                        Line.from(routesTab.isTopMode() ? "4  Top " : "4 Route"),
+                        Line.from(tabRegistry.routesTab().isTopMode() ? "4  Top " : "4 Route"),
                         Line.from("5 Endpoint"),
                         Line.from("6 HTTP"),
                         Line.from("7 Health"),
@@ -1057,7 +940,7 @@ public class CamelMonitor extends CamelCommand {
                         Line.from(" 1 Overview "),
                         Line.from(" 2 Log "),
                         Line.from(" 3 Diagram "),
-                        Line.from(routesTab.isTopMode() ? " 4  Top  " : " 4 Route "),
+                        Line.from(tabRegistry.routesTab().isTopMode() ? " 4  Top  " : " 4 Route "),
                         Line.from(" 5 Endpoint "),
                         Line.from(" 6 HTTP "),
                         Line.from(" 7 Health "),
@@ -1106,7 +989,7 @@ public class CamelMonitor extends CamelCommand {
         // from the previous tab (e.g. RED error text in the log detail) can bleed through when
         // switching tabs if TamboUI's buffer diff does not reset every cell in the region.
         frame.buffer().clear(area);
-        MonitorTab tab = activeTab();
+        MonitorTab tab = tabRegistry.activeTab();
         tab.render(frame, area);
         // Render "More" popup overlay when visible
         if (popupManager.isMorePopupVisible()) {
@@ -1131,7 +1014,7 @@ public class CamelMonitor extends CamelCommand {
             badgeStyles[j] = yellow;
         }
 
-        List<IntegrationInfo> infos = data.get();
+        List<IntegrationInfo> infos = dataService.data().get();
         long activeCount = infos.stream().filter(i -> !i.vanishing).count();
         IntegrationInfo sel = findSelectedIntegration();
         boolean hasSelection = ctx.selectedPid != null && sel != null;
@@ -1163,13 +1046,13 @@ public class CamelMonitor extends CamelCommand {
                 badgeTexts[TAB_HEALTH] = "(" + healthCount + ")";
             }
         }
-        boolean hasTraces = hasSelection && !traces.get().isEmpty();
+        boolean hasTraces = hasSelection && !dataService.traces().get().isEmpty();
         if (hasTraces) {
             badgeTexts[TAB_HISTORY] = "(*)";
             badgeStyles[TAB_HISTORY] = cyan;
         } else {
             long historyCount = hasSelection
-                    ? historyTab.historyEntries.stream()
+                    ? tabRegistry.historyTab().historyEntries.stream()
                             .map(e -> {
                                 if (e.headers != null) {
                                     Object bid = e.headers.get("breadcrumbId");
@@ -1210,30 +1093,14 @@ public class CamelMonitor extends CamelCommand {
     }
 
     private List<IntegrationInfo> getNonVanishingIntegrations() {
-        return data.get().stream()
+        return dataService.data().get().stream()
                 .filter(i -> !i.vanishing && i.name != null)
                 .sorted(Comparator.comparing(i -> i.name, String.CASE_INSENSITIVE_ORDER))
                 .collect(Collectors.toList());
     }
 
-    private MonitorTab activeTab() {
-        return switch (tabsState.selected()) {
-            case TAB_OVERVIEW -> overviewTab;
-            case TAB_LOG -> logTab;
-            case TAB_DIAGRAM -> diagramTab;
-            case TAB_ROUTES -> routesTab;
-            case TAB_ENDPOINTS -> endpointsTab;
-            case TAB_HEALTH -> healthTab;
-            case TAB_HISTORY -> historyTab;
-            case TAB_HTTP -> httpTab;
-            case TAB_ERRORS -> errorsTab;
-            case TAB_MORE -> activeMoreTab;
-            default -> null;
-        };
-    }
-
     private void stopSelectedProcess(boolean forceKill) {
-        enableBurstMode();
+        dataService.enableBurstMode();
         if (ctx.selectedPid == null) {
             return;
         }
@@ -1268,7 +1135,7 @@ public class CamelMonitor extends CamelCommand {
                     PathUtils.deleteFile(camelDir.resolve(pidStr + "-debug.json"));
                     PathUtils.deleteFile(camelDir.resolve(pidStr + "-receive.json"));
                 } else {
-                    stoppingPids.add(pidStr);
+                    dataService.stoppingPids().add(pidStr);
                     ph.destroy();
                 }
             });
@@ -1276,7 +1143,7 @@ public class CamelMonitor extends CamelCommand {
     }
 
     private void restartSelectedProcess() {
-        enableBurstMode();
+        dataService.enableBurstMode();
         if (ctx.selectedPid == null || isInfraSelected()) {
             return;
         }
@@ -1357,14 +1224,6 @@ public class CamelMonitor extends CamelCommand {
         }
     }
 
-    private void enableBurstMode() {
-        burstModeUntil = System.currentTimeMillis() + 20_000;
-    }
-
-    private boolean isBurstMode() {
-        return System.currentTimeMillis() < burstModeUntil;
-    }
-
     private void setNotification(String message, boolean error) {
         monitorNotification = message;
         monitorNotificationError = error;
@@ -1411,11 +1270,11 @@ public class CamelMonitor extends CamelCommand {
         root.put("action", "reset-stats");
         Path actionFile = ctx.getActionFile(pid);
         PathUtils.writeTextSafely(root.toJson(), actionFile);
-        metrics.resetStats(pid);
+        dataService.metrics().resetStats(pid);
     }
 
     private void sendRouteCommand(String pid, String routeId, String command) {
-        enableBurstMode();
+        dataService.enableBurstMode();
         JsonObject root = new JsonObject();
         root.put("action", "route");
         root.put("id", routeId);
@@ -1462,9 +1321,9 @@ public class CamelMonitor extends CamelCommand {
         } else if (shellPanel.isOpen()) {
             shellPanel.renderFooter(spans);
         } else {
-            MonitorTab tab = activeTab();
+            MonitorTab tab = tabRegistry.activeTab();
 
-            if (tabsState.selected() == TAB_OVERVIEW) {
+            if (tabRegistry.selectedTabIndex() == TAB_OVERVIEW) {
                 fKeyTotal = renderOverviewFooter(spans);
             } else {
                 tab.renderFooter(spans);
@@ -1546,7 +1405,7 @@ public class CamelMonitor extends CamelCommand {
     private int insertFKeyHints(List<Span> spans) {
         int insertPos = Math.min(2, spans.size());
         List<Span> fKeySpans = new ArrayList<>();
-        MonitorTab tab = activeTab();
+        MonitorTab tab = tabRegistry.activeTab();
         boolean hasHelp = tab != null && tab.getHelpText() != null;
         if (hasHelp) {
             hint(fKeySpans, "F1", "help");
@@ -1589,7 +1448,7 @@ public class CamelMonitor extends CamelCommand {
             actionsPopup.renderFooter(spans);
             return 0;
         }
-        overviewTab.renderFooter(spans);
+        tabRegistry.overviewTab().renderFooter(spans);
         int fKeyTotal = insertFKeyHints(spans);
         // Process action hints
         if (ctx.selectedPid != null && !isInfraSelected()) {
@@ -1617,7 +1476,7 @@ public class CamelMonitor extends CamelCommand {
     // ---- Data Loading ----
 
     private void refreshLogData() {
-        if (tabsState.selected() != TAB_LOG) {
+        if (tabRegistry.selectedTabIndex() != TAB_LOG) {
             return;
         }
         String logPid = null;
@@ -1634,471 +1493,27 @@ public class CamelMonitor extends CamelCommand {
             }
         }
         if (logPid != null) {
-            logTab.refreshFromFile(logPid, logFileName);
-        }
-    }
-
-    private void refreshData() {
-        if (runner == null) {
-            refreshDataSync();
-            return;
-        }
-        if (!refreshInProgress.compareAndSet(false, true)) {
-            return;
-        }
-        lastRefresh = System.currentTimeMillis();
-        String currentSelectedPid = ctx.selectedPid;
-        runner.scheduler().execute(() -> {
-            try {
-                refreshDataSync();
-            } finally {
-                refreshInProgress.set(false);
-            }
-        });
-    }
-
-    private void refreshDataSync() {
-        lastRefresh = System.currentTimeMillis();
-        try {
-            refreshLogData();
-            boolean fullScan = scanIntegrations();
-            List<IntegrationInfo> infos = data.get();
-            handleAutoSelect(infos, fullScan);
-            refreshConditionalData();
-        } catch (Exception e) {
-            // ignore refresh errors
-        }
-    }
-
-    private boolean scanIntegrations() {
-        List<IntegrationInfo> infos = new ArrayList<>();
-        long now = System.currentTimeMillis();
-        boolean wantFullScan = tabsState.selected() == TAB_OVERVIEW || popupManager.isSwitchPopupVisible()
-                || cachedPids.isEmpty();
-        long scanInterval = isBurstMode() ? 1000 : 2000;
-        boolean fullScan = wantFullScan && (now - lastFullScanTime >= scanInterval);
-        List<Long> pids;
-        if (fullScan) {
-            pids = findPids(name);
-            cachedPids = pids;
-            lastFullScanTime = now;
-        } else {
-            pids = cachedPids;
-        }
-
-        List<Long> refreshPids;
-        if (!fullScan && ctx.selectedPid != null) {
-            try {
-                refreshPids = List.of(Long.parseLong(ctx.selectedPid));
-            } catch (NumberFormatException e) {
-                refreshPids = pids;
-            }
-        } else {
-            refreshPids = pids;
-        }
-        for (Long pid : refreshPids) {
-            JsonObject root = loadStatus(pid);
-            if (root != null) {
-                ProcessHandle ph = ProcessHandle.of(pid).orElse(null);
-                if (ph == null) {
-                    continue;
-                }
-                IntegrationInfo info = StatusParser.parseIntegration(ph, root);
-                if (info != null) {
-                    infos.add(info);
-                    metrics.updateThroughputHistory(info);
-                    metrics.updateEndpointHistory(info);
-                    metrics.updateCbHistory(info);
-                    metrics.updateHeapHistory(info);
-                    metrics.updateLoadMetrics(ph, info);
-                }
-            }
-        }
-        if (!fullScan && ctx.selectedPid != null) {
-            List<IntegrationInfo> previous = data.get();
-            for (IntegrationInfo prev : previous) {
-                if (!prev.vanishing && !ctx.selectedPid.equals(prev.pid)) {
-                    infos.add(prev);
-                }
-            }
-        }
-
-        handleVanishing(infos, now);
-        data.set(infos);
-        return fullScan;
-    }
-
-    private void handleVanishing(List<IntegrationInfo> infos, long now) {
-        Set<String> livePids = infos.stream().map(i -> i.pid).collect(Collectors.toSet());
-        List<IntegrationInfo> previous = data.get();
-        for (IntegrationInfo prev : previous) {
-            if (!prev.vanishing && !livePids.contains(prev.pid) && !vanishing.containsKey(prev.pid)) {
-                boolean wasExplicitStop = stoppingPids.remove(prev.pid);
-                if (wasExplicitStop) {
-                    metrics.removeVanished(prev.pid);
-                } else {
-                    vanishing.put(prev.pid, new VanishingInfo(prev, System.currentTimeMillis()));
-                }
-            }
-        }
-
-        Iterator<Map.Entry<String, VanishingInfo>> it = vanishing.entrySet().iterator();
-        while (it.hasNext()) {
-            Map.Entry<String, VanishingInfo> entry = it.next();
-            if (now - entry.getValue().startTime > VANISH_DURATION_MS) {
-                it.remove();
-                metrics.removeVanished(entry.getKey());
-            } else if (!livePids.contains(entry.getKey())) {
-                IntegrationInfo ghost = entry.getValue().info;
-                ghost.vanishing = true;
-                ghost.vanishStart = entry.getValue().startTime;
-                infos.add(ghost);
-            } else {
-                it.remove();
-            }
-        }
-    }
-
-    private void handleAutoSelect(List<IntegrationInfo> infos, boolean fullScan) {
-        if (ctx.selectedPid != null && !isInfraSelected()) {
-            boolean stillAlive = infos.stream()
-                    .anyMatch(i -> ctx.selectedPid.equals(i.pid) && !i.vanishing);
-            if (!stillAlive) {
-                IntegrationInfo gone = infos.stream()
-                        .filter(i -> ctx.selectedPid.equals(i.pid))
-                        .findFirst().orElse(null);
-                if (gone != null) {
-                    ctx.lastSelectedName = gone.name;
-                }
-                ctx.selectedPid = null;
-            }
-        }
-
-        String autoSelect = actionsPopup.getPendingAutoSelect();
-        if (autoSelect != null) {
-            for (IntegrationInfo info : infos) {
-                if (!info.vanishing && autoSelect.equalsIgnoreCase(info.name)) {
-                    ctx.selectedPid = info.pid;
-                    ctx.lastSelectedName = null;
-                    actionsPopup.clearPendingAutoSelect();
-                    break;
-                }
-            }
-        }
-
-        if (ctx.selectedPid == null && ctx.lastSelectedName != null && !isInfraSelected()) {
-            for (IntegrationInfo info : infos) {
-                if (!info.vanishing && ctx.lastSelectedName.equalsIgnoreCase(info.name)) {
-                    ctx.selectedPid = info.pid;
-                    ctx.lastSelectedName = null;
-                    break;
-                }
-            }
-        }
-
-        if (fullScan) {
-            refreshInfraData();
-        }
-
-        if (ctx.selectedPid == null && !infraData.get().isEmpty()
-                && infos.stream().noneMatch(i -> !i.vanishing)) {
-            List<InfraInfo> infras = infraData.get();
-            if (!infras.isEmpty()) {
-                int firstInfraIndex = infos.size() + (infras.size() > 0 ? 1 : 0);
-                overviewTab.tableState.select(firstInfraIndex);
-                ctx.selectedPid = infras.get(0).pid;
-            }
+            tabRegistry.logTab().refreshFromFile(logPid, logFileName);
         }
     }
 
     private void refreshConditionalData() {
-        List<Long> selectedPids = selectedPidAsList();
-        if (tabsState.selected() == TAB_ERRORS && !selectedPids.isEmpty()) {
-            refreshErrorData(selectedPids);
+        List<Long> selectedPids = dataService.selectedPidAsList();
+        if (tabRegistry.selectedTabIndex() == TAB_ERRORS && !selectedPids.isEmpty()) {
+            dataService.refreshErrorData(selectedPids);
         }
-        if (tabsState.selected() == TAB_HISTORY && !selectedPids.isEmpty()) {
-            if (historyTab.historyRefreshRequested) {
-                historyTab.historyRefreshRequested = false;
-                refreshHistoryData(selectedPids);
+        if (tabRegistry.selectedTabIndex() == TAB_HISTORY && !selectedPids.isEmpty()) {
+            if (tabRegistry.historyTab().historyRefreshRequested) {
+                tabRegistry.historyTab().historyRefreshRequested = false;
+                tabRegistry.historyTab().historyEntries = dataService.loadHistoryData(selectedPids);
             }
-            refreshTraceData(selectedPids);
+            dataService.refreshTraceData(selectedPids);
         }
-        if (tabsState.selected() == TAB_MORE && activeMoreTab == spansTab
-                && ctx.selectedPid != null && spansTab.spanRefreshRequested) {
-            spansTab.spanRefreshRequested = false;
-            refreshSpanData();
-        }
-    }
-
-    @SuppressWarnings("unchecked")
-    private void refreshSpanData() {
-        String pid = ctx.selectedPid;
-        if (pid == null) {
-            return;
-        }
-        try {
-            // Send action to request span data
-            Path outputFile = ctx.getOutputFile(pid);
-            PathUtils.deleteFile(outputFile);
-
-            JsonObject action = new JsonObject();
-            action.put("action", "span");
-            action.put("dump", "true");
-            action.put("limit", "500");
-            Path actionFile = ctx.getActionFile(pid);
-            PathUtils.writeTextSafely(action.toJson(), actionFile);
-
-            // Poll for response
-            JsonObject response = MonitorContext.pollJsonResponse(outputFile, 3000);
-            if (response != null) {
-                Boolean enabled = response.getBoolean("enabled");
-                if (enabled != null && enabled) {
-                    JsonArray arr = response.getCollection("spans");
-                    if (arr != null) {
-                        List<SpanEntry> entries = new ArrayList<>();
-                        for (int i = 0; i < arr.size(); i++) {
-                            JsonObject spanObj = (JsonObject) arr.get(i);
-                            entries.add(SpanEntry.fromJson(spanObj));
-                        }
-                        otelSpans.set(entries);
-                    }
-                }
-                PathUtils.deleteFile(outputFile);
-            }
-        } catch (Exception e) {
-            // ignore
-        }
-    }
-
-    @SuppressWarnings("unchecked")
-    private void refreshInfraData() {
-        List<InfraInfo> infraInfos = new ArrayList<>();
-        try {
-            Path camelDir = CommandLineHelper.getCamelDir();
-            if (Files.isDirectory(camelDir)) {
-                try (var files = Files.list(camelDir)) {
-                    List<Path> jsonFiles = files
-                            .filter(p -> {
-                                String n = p.getFileName().toString();
-                                return n.startsWith("infra-") && n.endsWith(".json");
-                            })
-                            .toList();
-                    for (Path jsonFile : jsonFiles) {
-                        String fn = jsonFile.getFileName().toString();
-                        // Format: infra-{alias}-{pid}.json
-                        String withoutExt = fn.substring(0, fn.lastIndexOf('.'));
-                        int lastDash = withoutExt.lastIndexOf('-');
-                        if (lastDash <= 6) {
-                            continue;
-                        }
-                        String alias = withoutExt.substring(6, lastDash);
-                        String pidStr = withoutExt.substring(lastDash + 1);
-                        long pid;
-                        try {
-                            pid = Long.parseLong(pidStr);
-                        } catch (NumberFormatException e) {
-                            continue;
-                        }
-                        boolean alive = ProcessHandle.of(pid).map(ProcessHandle::isAlive).orElse(false);
-
-                        InfraInfo info = new InfraInfo();
-                        info.pid = pidStr;
-                        info.alias = alias;
-                        info.alive = alive;
-                        try {
-                            String json = Files.readString(jsonFile);
-                            Object parsed = Jsoner.deserialize(json);
-                            if (parsed instanceof Map<?, ?> map) {
-                                for (Map.Entry<?, ?> e : map.entrySet()) {
-                                    info.properties.put(String.valueOf(e.getKey()), e.getValue());
-                                }
-                            }
-                        } catch (Exception e) {
-                            // ignore parse errors
-                        }
-                        info.serviceVersion = StatusParser.objToString(info.properties.get("serviceVersion"));
-                        infraInfos.add(info);
-                    }
-                }
-            }
-        } catch (IOException e) {
-            // ignore
-        }
-
-        // Handle vanishing infra services
-        Set<String> liveInfraPids = infraInfos.stream().map(i -> i.pid).collect(Collectors.toSet());
-        List<InfraInfo> previousInfra = infraData.get();
-        for (InfraInfo prev : previousInfra) {
-            if (!prev.vanishing && !liveInfraPids.contains(prev.pid) && !vanishingInfra.containsKey(prev.pid)) {
-                vanishingInfra.put(prev.pid, new VanishingInfraInfo(prev, System.currentTimeMillis()));
-            }
-        }
-        long now = System.currentTimeMillis();
-        Iterator<Map.Entry<String, VanishingInfraInfo>> infraIt = vanishingInfra.entrySet().iterator();
-        while (infraIt.hasNext()) {
-            Map.Entry<String, VanishingInfraInfo> entry = infraIt.next();
-            if (now - entry.getValue().startTime > VANISH_DURATION_MS) {
-                infraIt.remove();
-            } else if (!liveInfraPids.contains(entry.getKey())) {
-                InfraInfo ghost = entry.getValue().info;
-                ghost.vanishing = true;
-                ghost.vanishStart = entry.getValue().startTime;
-                infraInfos.add(ghost);
-            } else {
-                infraIt.remove();
-            }
-        }
-
-        infraInfos.sort((a, b) -> a.alias.compareToIgnoreCase(b.alias));
-        infraData.set(infraInfos);
-    }
-
-    // ---- Trace Data Loading ----
-
-    private void refreshTraceData(List<Long> pids) {
-        List<TraceEntry> allTraces = new ArrayList<>(traces.get());
-
-        for (Long pid : pids) {
-            readTraceFile(Long.toString(pid), allTraces);
-        }
-
-        // Sort by timestamp
-        allTraces.sort((a, b) -> {
-            if (a.timestamp == null && b.timestamp == null) {
-                return 0;
-            }
-            if (a.timestamp == null) {
-                return -1;
-            }
-            if (b.timestamp == null) {
-                return 1;
-            }
-            return a.timestamp.compareTo(b.timestamp);
-        });
-
-        // Keep only last MAX_TRACES
-        if (allTraces.size() > MAX_TRACES) {
-            allTraces = new ArrayList<>(allTraces.subList(allTraces.size() - MAX_TRACES, allTraces.size()));
-        }
-
-        traces.set(allTraces);
-    }
-
-    @SuppressWarnings("unchecked")
-    private void readTraceFile(String pid, List<TraceEntry> allTraces) {
-        Path traceFile = CommandLineHelper.getCamelDir().resolve(pid + "-trace.json");
-        if (!Files.exists(traceFile)) {
-            return;
-        }
-
-        long lastPos = traceFilePositions.getOrDefault(pid, 0L);
-
-        try (RandomAccessFile raf = new RandomAccessFile(traceFile.toFile(), "r")) {
-            long length = raf.length();
-            if (length <= lastPos) {
-                return; // no new data
-            }
-
-            raf.seek(lastPos);
-            // If we're resuming mid-file, skip any partial line
-            if (lastPos > 0) {
-                raf.readLine();
-            }
-
-            // Read remaining bytes
-            long startPos = raf.getFilePointer();
-            byte[] remaining = new byte[(int) (length - startPos)];
-            raf.readFully(remaining);
-            String content = new String(remaining, StandardCharsets.UTF_8);
-
-            traceFilePositions.put(pid, length);
-
-            // Each line is a JSON object: {"enabled":true,"traces":[...]}
-            String[] lines = content.split("\n");
-            for (String line : lines) {
-                line = line.trim();
-                if (line.isEmpty()) {
-                    continue;
-                }
-                try {
-                    JsonObject json = (JsonObject) Jsoner.deserialize(line);
-                    Object tracesArray = json.get("traces");
-                    if (tracesArray instanceof List<?> traceList) {
-                        for (Object traceObj : traceList) {
-                            if (traceObj instanceof JsonObject traceJson) {
-                                TraceEntry entry = StatusParser.parseTraceEntry(traceJson, pid);
-                                if (entry != null) {
-                                    allTraces.add(entry);
-                                }
-                            }
-                        }
-                    } else {
-                        // Fallback: try parsing the line itself as a trace entry
-                        TraceEntry entry = StatusParser.parseTraceEntry(json, pid);
-                        if (entry != null) {
-                            allTraces.add(entry);
-                        }
-                    }
-                } catch (Exception e) {
-                    // skip malformed lines
-                }
-            }
-        } catch (IOException e) {
-            // ignore
-        }
-    }
-
-    private JsonObject loadErrorFile(long pid) {
-        return TuiHelper.loadStatus(pid, this::getErrorFile);
-    }
-
-    @SuppressWarnings("unchecked")
-    private void refreshHistoryData(List<Long> pids) {
-        List<HistoryEntry> allEntries = new ArrayList<>();
-        for (Long pid : pids) {
-            Path historyFile = CommandLineHelper.getCamelDir().resolve(pid + "-history.json");
-            if (!Files.exists(historyFile)) {
-                continue;
-            }
-            try {
-                String content = Files.readString(historyFile);
-                if (content == null || content.isBlank()) {
-                    continue;
-                }
-                JsonObject json = (JsonObject) Jsoner.deserialize(content);
-                Object tracesArray = json.get("traces");
-                if (tracesArray instanceof List<?> traceList) {
-                    for (Object traceObj : traceList) {
-                        if (traceObj instanceof JsonObject traceJson) {
-                            HistoryEntry entry = StatusParser.parseHistoryEntry(traceJson, Long.toString(pid));
-                            if (entry != null) {
-                                allEntries.add(entry);
-                            }
-                        }
-                    }
-                }
-            } catch (Exception e) {
-                // ignore
-            }
-        }
-        historyTab.historyEntries = allEntries;
-    }
-
-    private void refreshErrorData(List<Long> pids) {
-        IntegrationInfo sel = findSelectedIntegration();
-        if (sel == null) {
-            return;
-        }
-        try {
-            long pid = Long.parseLong(sel.pid);
-            JsonObject root = loadErrorFile(pid);
-            if (root != null) {
-                List<ErrorInfo> parsed = StatusParser.parseErrors(root);
-                sel.errors.clear();
-                sel.errors.addAll(parsed);
-            }
-        } catch (Exception e) {
-            // ignore
+        if (tabRegistry.selectedTabIndex() == TAB_MORE
+                && tabRegistry.getActiveMoreTab() == tabRegistry.spansTab()
+                && ctx.selectedPid != null && tabRegistry.spansTab().spanRefreshRequested) {
+            tabRegistry.spansTab().spanRefreshRequested = false;
+            dataService.refreshSpanData();
         }
     }
 
@@ -2118,20 +1533,6 @@ public class CamelMonitor extends CamelCommand {
 
     private String selectedName() {
         return ctx.selectedName();
-    }
-
-    private List<Long> findPids(String name) {
-        return TuiHelper.findPids(name, this::getStatusFile);
-    }
-
-    private JsonObject loadStatus(long pid) {
-        return TuiHelper.loadStatus(pid, this::getStatusFile);
-    }
-
-    record VanishingInfo(IntegrationInfo info, long startTime) {
-    }
-
-    record VanishingInfraInfo(InfraInfo info, long startTime) {
     }
 
     // ---- MCP .mcp.json lifecycle ----

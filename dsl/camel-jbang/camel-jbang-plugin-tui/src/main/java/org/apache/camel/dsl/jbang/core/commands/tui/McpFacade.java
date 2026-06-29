@@ -104,9 +104,7 @@ class McpFacade {
     private final HelpOverlay helpOverlay;
     private final ActionsPopup actionsPopup;
     private final FilesBrowser filesBrowser;
-    private final LogTab logTab;
-    private final DiagramTab diagramTab;
-    private final HistoryTab historyTab;
+    private final TabRegistry tabRegistry;
     private final Queue<PendingKey> pendingKeys;
     private final MonitorBridge bridge;
 
@@ -120,9 +118,7 @@ class McpFacade {
               HelpOverlay helpOverlay,
               ActionsPopup actionsPopup,
               FilesBrowser filesBrowser,
-              LogTab logTab,
-              DiagramTab diagramTab,
-              HistoryTab historyTab,
+              TabRegistry tabRegistry,
               Queue<PendingKey> pendingKeys,
               MonitorBridge bridge) {
         this.ctx = ctx;
@@ -134,9 +130,7 @@ class McpFacade {
         this.helpOverlay = helpOverlay;
         this.actionsPopup = actionsPopup;
         this.filesBrowser = filesBrowser;
-        this.logTab = logTab;
-        this.diagramTab = diagramTab;
-        this.historyTab = historyTab;
+        this.tabRegistry = tabRegistry;
         this.pendingKeys = pendingKeys;
         this.bridge = bridge;
     }
@@ -389,7 +383,7 @@ class McpFacade {
     }
 
     JsonObject getLogData(int limit, String filter, String level) {
-        return logTab.getLogDataAsJson(limit, filter, level);
+        return tabRegistry.logTab().getLogDataAsJson(limit, filter, level);
     }
 
     JsonObject getDiagramData() {
@@ -397,15 +391,15 @@ class McpFacade {
         if (tab instanceof DiagramTab dt) {
             return dt.getTableDataAsJson();
         }
-        return diagramTab.getTableDataAsJson();
+        return tabRegistry.diagramTab().getTableDataAsJson();
     }
 
     void selectTraceExchange(String exchangeId) {
-        historyTab.selectTraceExchange(exchangeId);
+        tabRegistry.historyTab().selectTraceExchange(exchangeId);
     }
 
     JsonObject getTopologyData() {
-        return diagramTab.getTopologyDataAsJson();
+        return tabRegistry.diagramTab().getTopologyDataAsJson();
     }
 
     @SuppressWarnings("unchecked")
@@ -466,7 +460,7 @@ class McpFacade {
 
     String navigateDiagramToRoute(String routeId) {
         navigateToTab("Diagram");
-        if (diagramTab.selectRoute(routeId)) {
+        if (tabRegistry.diagramTab().selectRoute(routeId)) {
             return routeId;
         }
         return null;
@@ -474,14 +468,14 @@ class McpFacade {
 
     String navigateDiagramToNode(String routeId, String nodeId) {
         navigateToTab("Diagram");
-        if (diagramTab.selectNode(routeId, nodeId)) {
+        if (tabRegistry.diagramTab().selectNode(routeId, nodeId)) {
             return nodeId;
         }
         return null;
     }
 
     JsonObject getDiagramState() {
-        return diagramTab.getDiagramStateAsJson();
+        return tabRegistry.diagramTab().getDiagramStateAsJson();
     }
 
     // ---- Screen location ----
@@ -527,7 +521,7 @@ class McpFacade {
     }
 
     JsonObject locateNodes(List<String> nodeIds) {
-        return diagramTab.locateNodes(nodeIds);
+        return tabRegistry.diagramTab().locateNodes(nodeIds);
     }
 
     // ---- Footer actions ----
@@ -602,7 +596,7 @@ class McpFacade {
     // ---- Tab filter / input ----
 
     void setLogLevel(String level) {
-        logTab.setLogLevel(level);
+        tabRegistry.logTab().setLogLevel(level);
     }
 
     boolean setTabFilter(String tabName, String filter) {
@@ -622,7 +616,7 @@ class McpFacade {
     }
 
     String toggleTraceDisplay(String section, Boolean enabled) {
-        return historyTab.toggleDisplaySection(section, enabled);
+        return tabRegistry.historyTab().toggleDisplaySection(section, enabled);
     }
 
     // ---- Integration data ----
