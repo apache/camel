@@ -228,6 +228,14 @@ class SpansTab implements MonitorTab {
     }
 
     @Override
+    public boolean setInputValue(String field, String value) {
+        if ("filter".equals(field)) {
+            return setFilter(value);
+        }
+        return false;
+    }
+
+    @Override
     public void navigateUp() {
         if (!waterfallView) {
             traceListState.selectPrevious();

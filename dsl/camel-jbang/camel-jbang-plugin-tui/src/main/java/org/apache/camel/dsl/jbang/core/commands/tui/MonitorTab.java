@@ -62,4 +62,8 @@ interface MonitorTab {
     default boolean setFilter(String filter) {
         return false;
     }
+
+    default boolean setInputValue(String field, String value) {
+        return false;
+    }
 }

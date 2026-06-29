@@ -444,6 +444,33 @@ class TuiMcpServer {
                         "headers", propDef("string", "Message headers as key=value pairs separated by newlines")),
                 List.of("endpoint")));
         toolList.add(toolDef(
+                "tui_execute_sql",
+                "Executes a SQL query against a DataSource in the selected integration. "
+                                   + "Returns structured JSON with columns, rows, and metadata for SELECT queries, "
+                                   + "or an update count for INSERT/UPDATE/DELETE. "
+                                   + "Requires dev console to be enabled in the running application.",
+                Map.of("query", propDef("string", "The SQL query to execute"),
+                        "datasource", propDef("string",
+                                "Name of the DataSource bean (auto-detected if only one exists)"),
+                        "maxRows", propDef("integer",
+                                "Maximum number of rows to return (default 100)"),
+                        "queryTimeout", propDef("integer",
+                                "Query timeout in seconds (default 30)")),
+                List.of("query")));
+        toolList.add(toolDef(
+                "tui_update_row",
+                "Updates a single row in a database table. Use after tui_execute_sql returns "
+                                  + "editable=true with tableName and primaryKeys. Builds and executes "
+                                  + "an UPDATE statement using PreparedStatement for safety.",
+                Map.of("table", propDef("string", "The table name to update"),
+                        "primaryKeyValues", propDef("string",
+                                "JSON object of primary key column-value pairs, e.g. {\"id\": 1}"),
+                        "columnValues", propDef("string",
+                                "JSON object of column-value pairs to update, e.g. {\"name\": \"new\"}"),
+                        "datasource", propDef("string",
+                                "Name of the DataSource bean (auto-detected if only one exists)")),
+                List.of("table", "primaryKeyValues", "columnValues")));
+        toolList.add(toolDef(
                 "tui_set_log_level",
                 "Changes the runtime log level of the selected integration. "
                                      + "This sends a command to the running Camel application to change "
@@ -461,6 +488,20 @@ class TuiMcpServer {
                         "tab", propDef("string",
                                 "Tab name to filter (e.g. 'Classpath'). If omitted, uses the active tab.")),
                 List.of("filter")));
+        toolList.add(toolDef(
+                "tui_set_input",
+                "Sets the value of a text input field on a TUI tab directly, without simulating keystrokes. "
+                                 + "The text appears in the TUI input widget so the user can see it. "
+                                 + "Supported fields by tab: SQL Query (field='sql'), "
+                                 + "HTTP probe (field='path' or 'body'), "
+                                 + "Spans (field='filter'), Classpath (field='filter').",
+                Map.of("field", propDef("string",
+                        "Field name to set: 'sql', 'path', 'body', or 'filter'"),
+                        "value", propDef("string",
+                                "The text value to set in the input field"),
+                        "tab", propDef("string",
+                                "Tab name (e.g. 'SQL Query', 'HTTP'). If omitted, uses the active tab.")),
+                List.of("field", "value")));
         toolList.add(toolDef(
                 "tui_toggle_trace_display",
                 "Toggles which sections are visible in the History tab's detail view. "
@@ -565,8 +606,11 @@ class TuiMcpServer {
                 case "tui_get_history" -> callGetHistory(args);
                 case "tui_get_topology" -> callGetTopology();
                 case "tui_send_message" -> callSendMessage(args);
+                case "tui_execute_sql" -> callExecuteSql(args);
+                case "tui_update_row" -> callUpdateRow(args);
                 case "tui_set_log_level" -> callSetLogLevel(args);
                 case "tui_filter" -> callFilter(args);
+                case "tui_set_input" -> callSetInput(args);
                 case "tui_toggle_trace_display" -> callToggleTraceDisplay(args);
                 case "tui_get_readme" -> callGetReadme(args);
                 case "tui_control" -> callControl(args);
@@ -1186,6 +1230,42 @@ class TuiMcpServer {
         return Jsoner.serialize(response);
     }
 
+    private String callExecuteSql(Map<String, Object> args) {
+        String query = (String) args.get("query");
+        if (query == null || query.isBlank()) {
+            return "Error: query is required";
+        }
+        String datasource = args.get("datasource") instanceof String s ? s : null;
+        int maxRows = args.get("maxRows") instanceof Number n ? n.intValue() : 100;
+        int queryTimeout = args.get("queryTimeout") instanceof Number n ? n.intValue() : 30;
+        JsonObject response = monitor.executeSql(query, datasource, maxRows, queryTimeout);
+        if (response == null) {
+            return "Error: no integration selected or PID unavailable";
+        }
+        return Jsoner.serialize(response);
+    }
+
+    private String callUpdateRow(Map<String, Object> args) {
+        String table = (String) args.get("table");
+        if (table == null || table.isBlank()) {
+            return "Error: table is required";
+        }
+        String pkValues = (String) args.get("primaryKeyValues");
+        if (pkValues == null || pkValues.isBlank()) {
+            return "Error: primaryKeyValues is required (JSON object)";
+        }
+        String colValues = (String) args.get("columnValues");
+        if (colValues == null || colValues.isBlank()) {
+            return "Error: columnValues is required (JSON object)";
+        }
+        String datasource = args.get("datasource") instanceof String s ? s : null;
+        JsonObject response = monitor.updateRow(table, datasource, pkValues, colValues);
+        if (response == null) {
+            return "Error: no integration selected or PID unavailable";
+        }
+        return Jsoner.serialize(response);
+    }
+
     private String callSetLogLevel(Map<String, Object> args) {
         String level = (String) args.get("level");
         if (level == null || level.isBlank()) {
@@ -1208,6 +1288,20 @@ class TuiMcpServer {
             return "This tab does not support text filtering";
         }
         return filter.isEmpty() ? "Filter cleared" : "Filter set to: " + filter;
+    }
+
+    private String callSetInput(Map<String, Object> args) {
+        String field = (String) args.get("field");
+        if (field == null || field.isBlank()) {
+            return "Error: field is required";
+        }
+        String value = args.get("value") instanceof String s ? s : "";
+        String tab = args.get("tab") instanceof String s ? s : null;
+        boolean applied = monitor.setTabInputValue(tab, field, value);
+        if (!applied) {
+            return "Error: field '" + field + "' not found on " + (tab != null ? tab : "active") + " tab";
+        }
+        return "Input set: " + field + " = " + (value.length() > 80 ? value.substring(0, 80) + "..." : value);
     }
 
     private String callToggleTraceDisplay(Map<String, Object> args) {

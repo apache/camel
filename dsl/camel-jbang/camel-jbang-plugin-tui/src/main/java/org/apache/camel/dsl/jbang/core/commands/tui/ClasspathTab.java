@@ -359,6 +359,14 @@ class ClasspathTab implements MonitorTab {
     }
 
     @Override
+    public boolean setInputValue(String field, String value) {
+        if ("filter".equals(field)) {
+            return setFilter(value);
+        }
+        return false;
+    }
+
+    @Override
     public SelectionContext getSelectionContext() {
         return null;
     }
