@@ -33,6 +33,7 @@
 
     <properties>
         <skipTests.s390x>true</skipTests.s390x>
+        <camel.surefire.fork.vmargs>--add-opens java.base/java.lang.invoke=ALL-UNNAMED</camel.surefire.fork.vmargs>
     </properties>
 
     <dependencies>
