@@ -16,6 +16,9 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -47,6 +50,20 @@ class AiPanel {
 
     private static final int[] SPLIT_PERCENTS = { 25, 50, 75, 100 };
     private static final int MAX_ITERATIONS = 10;
+    private static final int MAX_LOG_ENTRIES = 200;
+    private static final DateTimeFormatter TIME_FMT
+            = DateTimeFormatter.ofPattern("HH:mm:ss").withZone(ZoneId.systemDefault());
+
+    enum LogLevel {
+        QUESTION,
+        TOOL,
+        RESULT,
+        RESPONSE,
+        ERROR
+    }
+
+    record LogEntry(String timestamp, LogLevel level, String message, String detail) {
+    }
 
     private boolean visible;
     private int splitIndex = 1; // default 50%
@@ -69,11 +86,25 @@ class AiPanel {
     private volatile Thread agentThread;
     private String initError;
 
+    // Activity log for AI Log popup
+    private final List<LogEntry> activityLog = new ArrayList<>();
+
     record ConversationEntry(String role, String text) {
     }
 
     void setContext(MonitorContext ctx) {
         this.ctx = ctx;
+    }
+
+    synchronized List<LogEntry> getActivityLog() {
+        return new ArrayList<>(activityLog);
+    }
+
+    private synchronized void log(LogLevel level, String message, String detail) {
+        activityLog.add(new LogEntry(TIME_FMT.format(Instant.now()), level, message, detail));
+        if (activityLog.size() > MAX_LOG_ENTRIES) {
+            activityLog.remove(0);
+        }
     }
 
     boolean isOpen() {
@@ -209,6 +240,7 @@ class AiPanel {
         scrollOffset = 0;
 
         conversation.add(new ConversationEntry("user", question));
+        log(LogLevel.QUESTION, "Question", question);
         thinking.set(true);
 
         // rebuild tools if target process changed
@@ -247,7 +279,9 @@ class AiPanel {
 
             LlmClient.ChatResponse response = client.chatWithTools(systemPrompt, messages, tools);
             if (response == null) {
-                conversation.add(new ConversationEntry("error", "No response from LLM"));
+                String err = "No response from LLM";
+                conversation.add(new ConversationEntry("error", err));
+                log(LogLevel.ERROR, "Error", err);
                 return;
             }
 
@@ -255,7 +289,9 @@ class AiPanel {
             if ("error".equals(response.stopReason())
                     && (response.toolCalls() == null || response.toolCalls().isEmpty())
                     && response.text() == null) {
-                conversation.add(new ConversationEntry("error", "LLM request failed. Check API key and endpoint."));
+                String err = "LLM request failed. Check API key and endpoint.";
+                conversation.add(new ConversationEntry("error", err));
+                log(LogLevel.ERROR, "Error", err);
                 return;
             }
 
@@ -267,7 +303,9 @@ class AiPanel {
                     if (Thread.interrupted()) {
                         throw new InterruptedException();
                     }
+                    log(LogLevel.TOOL, toolCall.name(), toolCall.arguments().toJson());
                     String result = askTools.executeTool(toolCall.name(), toolCall.arguments());
+                    log(LogLevel.RESULT, toolCall.name(), result);
                     results.add(new LlmClient.ToolResult(toolCall.id(), result));
                 }
                 messages.add(LlmClient.Message.toolResults(results));
@@ -275,9 +313,13 @@ class AiPanel {
                 String text = response.text();
                 if (text != null && !text.isBlank()) {
                     conversation.add(new ConversationEntry("assistant", text));
+                    log(LogLevel.RESPONSE, "Response", text);
                 } else {
-                    conversation.add(new ConversationEntry("error", "Empty response from LLM."));
+                    String err = "Empty response from LLM.";
+                    conversation.add(new ConversationEntry("error", err));
+                    log(LogLevel.ERROR, "Error", err);
                 }
+                scrollOffset = 0;
                 messages.add(LlmClient.Message.assistantWithToolCalls(text, List.of()));
                 return;
             }
@@ -326,13 +368,16 @@ class AiPanel {
         if (initError != null) {
             md.append("**Error:** ").append(initError).append("\n\n");
         } else if (conversation.isEmpty() && !thinking.get()) {
-            md.append("*Ask a question about your Camel application...*\n");
+            frame.renderWidget(
+                    Paragraph.from(Line.from(Span.styled("Ask a question about your Camel application...", Style.EMPTY.dim()))),
+                    area);
+            return;
         }
 
         for (ConversationEntry entry : conversation) {
             switch (entry.role()) {
                 case "user" -> md.append("**You:** ").append(entry.text()).append("\n\n");
-                case "assistant" -> md.append(entry.text()).append("\n\n");
+                case "assistant" -> md.append(toHardBreaks(entry.text())).append("\n\n");
                 case "error" -> md.append("**Error:** ").append(entry.text()).append("\n\n");
                 case "system" -> md.append("*").append(entry.text()).append("*\n\n");
                 default -> {
@@ -345,11 +390,44 @@ class AiPanel {
             md.append("*🤔 thinking").append(".".repeat((int) dots + 1)).append("*\n");
         }
 
+        String source = md.toString();
+
+        // Estimate total rendered lines (accounting for word wrap)
+        int contentWidth = Math.max(1, area.width());
+        int estimatedLines = 0;
+        for (String l : source.split("\n", -1)) {
+            estimatedLines += Math.max(1, (l.length() / contentWidth) + 1);
+        }
+
+        boolean overflow = estimatedLines > area.height();
+        Rect contentArea = area;
+        Rect scrollbarArea = null;
+        if (overflow) {
+            List<Rect> hParts = Layout.horizontal()
+                    .constraints(Constraint.fill(), Constraint.length(1))
+                    .split(area);
+            contentArea = hParts.get(0);
+            scrollbarArea = hParts.get(1);
+        }
+
+        // scrollOffset=0 means auto-scroll to bottom (most recent content visible)
+        // scrollOffset>0 means user scrolled up by that many lines
+        int scroll;
+        if (scrollOffset == 0) {
+            scroll = estimatedLines;
+        } else {
+            scroll = Math.max(0, estimatedLines - contentArea.height() - scrollOffset);
+        }
+
         MarkdownView view = MarkdownView.builder()
-                .source(md.toString())
-                .scroll(scrollOffset)
+                .source(source)
+                .scroll(scroll)
                 .build();
-        frame.renderWidget(view, area);
+        frame.renderWidget(view, contentArea);
+
+        if (overflow && scrollbarArea != null) {
+            renderScrollbar(frame, scrollbarArea, estimatedLines, contentArea.height(), scroll);
+        }
     }
 
     private void renderInput(Frame frame, Rect area) {
@@ -401,6 +479,32 @@ class AiPanel {
         } else {
             MonitorContext.hint(spans, "Ctrl+C", "cancel");
         }
+    }
+
+    private void renderScrollbar(Frame frame, Rect area, int totalLines, int visibleHeight, int scroll) {
+        int thumbSize = Math.max(1, visibleHeight * visibleHeight / Math.max(1, totalLines));
+        int maxScroll = Math.max(1, totalLines - visibleHeight);
+        int thumbPos = (int) ((long) Math.min(scroll, maxScroll) * (visibleHeight - thumbSize) / maxScroll);
+
+        List<Line> lines = new ArrayList<>();
+        for (int i = 0; i < area.height(); i++) {
+            if (i >= thumbPos && i < thumbPos + thumbSize) {
+                lines.add(Line.from(Span.styled("▐", Style.EMPTY.fg(Color.CYAN))));
+            } else {
+                lines.add(Line.from(Span.styled("│", Style.EMPTY.dim())));
+            }
+        }
+        frame.renderWidget(Paragraph.from(new dev.tamboui.text.Text(lines, dev.tamboui.layout.Alignment.LEFT)), area);
+    }
+
+    private static String toHardBreaks(String text) {
+        if (text == null) {
+            return "";
+        }
+        // Convert single newlines to markdown hard breaks (two trailing spaces + newline)
+        // so the LLM's line-by-line formatting is preserved in MarkdownView.
+        // Double newlines (paragraph breaks) are left as-is.
+        return text.replaceAll("(?<!\n)\n(?!\n)", "  \n");
     }
 
 }

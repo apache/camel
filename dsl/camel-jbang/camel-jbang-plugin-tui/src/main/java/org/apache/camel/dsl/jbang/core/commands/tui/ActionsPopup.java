@@ -87,11 +87,12 @@ class ActionsPopup {
         SETUP_AI,
         MCP_INFO,
         MCP_LOG,
+        AI_LOG,
         SHELL
     }
 
     private static final int[] GROUP_SIZES = { 5, 4, 5 };
-    private static final int MCP_GROUP_SIZE = 3;
+    private static final int MCP_GROUP_SIZE = 4;
     private static final int SHELL_GROUP_SIZE = 1;
 
     private final Supplier<Set<String>> runningNames;
@@ -148,6 +149,7 @@ class ActionsPopup {
     private String selectedFolder;
 
     private final McpLogPopup mcpLogPopup = new McpLogPopup();
+    private final AiLogPopup aiLogPopup = new AiLogPopup();
 
     private final DoctorPopup doctorPopup = new DoctorPopup();
     private final SendMessagePopup sendMessagePopup = new SendMessagePopup();
@@ -218,6 +220,10 @@ class ActionsPopup {
         mcpLogPopup.setActivityLog(activityLog);
     }
 
+    void setAiActivityLog(Supplier<List<AiPanel.LogEntry>> activityLog) {
+        aiLogPopup.setActivityLog(activityLog);
+    }
+
     private int visualActionCount() {
         int total = 0;
         for (int gs : GROUP_SIZES) {
@@ -273,7 +279,7 @@ class ActionsPopup {
                 Action.SHOW_KEYSTROKES));
         if (mcpEnabled) {
             flat.add(null);
-            flat.addAll(List.of(Action.SETUP_AI, Action.MCP_INFO, Action.MCP_LOG));
+            flat.addAll(List.of(Action.SETUP_AI, Action.MCP_INFO, Action.MCP_LOG, Action.AI_LOG));
         }
         flat.add(null);
         flat.add(Action.SHELL);
@@ -298,7 +304,7 @@ class ActionsPopup {
         return showActionsMenu || showExampleBrowser || showFolderInput || runOptionsForm.isVisible()
                 || showDocPicker || showDocViewer
                 || showInfraBrowser || showInfraPortDialog
-                || mcpLogPopup.isVisible() || doctorPopup.isVisible()
+                || mcpLogPopup.isVisible() || aiLogPopup.isVisible() || doctorPopup.isVisible()
                 || sendMessagePopup.isVisible() || stopAllPopup.isVisible() || captionOverlay.isInlineMode();
     }
 
@@ -366,6 +372,7 @@ class ActionsPopup {
             labels.add("Setup AI...");
             labels.add("MCP Info");
             labels.add("MCP Log");
+            labels.add("AI Log");
         }
         labels.add("───");
         labels.add("Shell");
@@ -387,6 +394,7 @@ class ActionsPopup {
         showInfraBrowser = false;
         showInfraPortDialog = false;
         mcpLogPopup.close();
+        aiLogPopup.close();
         doctorPopup.close();
         sendMessagePopup.close();
         stopAllPopup.close();
@@ -417,6 +425,9 @@ class ActionsPopup {
             return true;
         }
         if (mcpLogPopup.handleKeyEvent(ke)) {
+            return true;
+        }
+        if (aiLogPopup.handleKeyEvent(ke)) {
             return true;
         }
         if (showDocViewer) {
@@ -608,6 +619,9 @@ class ActionsPopup {
                     } else if (action == Action.MCP_LOG) {
                         showActionsMenu = false;
                         openMcpLog();
+                    } else if (action == Action.AI_LOG) {
+                        showActionsMenu = false;
+                        openAiLog();
                     } else if (action == Action.SEND_MESSAGE) {
                         showActionsMenu = false;
                         openSendMessage();
@@ -664,6 +678,9 @@ class ActionsPopup {
         if (mcpLogPopup.isVisible()) {
             mcpLogPopup.render(frame, area);
         }
+        if (aiLogPopup.isVisible()) {
+            aiLogPopup.render(frame, area);
+        }
         if (doctorPopup.isVisible()) {
             doctorPopup.render(frame, area);
         }
@@ -693,6 +710,10 @@ class ActionsPopup {
         }
         if (doctorPopup.isVisible()) {
             doctorPopup.renderFooter(spans);
+            return;
+        }
+        if (aiLogPopup.isVisible()) {
+            aiLogPopup.renderFooter(spans);
             return;
         }
         if (mcpLogPopup.isVisible()) {
@@ -809,6 +830,7 @@ class ActionsPopup {
             items.add(ListItem.from("  🧠 Setup AI..."));
             items.add(ListItem.from("  🤖 MCP Info"));
             items.add(ListItem.from("  📋 MCP Log"));
+            items.add(ListItem.from("  💬 AI Log"));
         }
         // Group 5: Shell
         items.add(ListItem.from(divider).style(Style.EMPTY.dim()));
@@ -1243,6 +1265,10 @@ class ActionsPopup {
 
     private void openMcpLog() {
         mcpLogPopup.open();
+    }
+
+    private void openAiLog() {
+        aiLogPopup.open();
     }
 
     // ---- Folder Input ----
@@ -2171,6 +2197,7 @@ class ActionsPopup {
             case SETUP_AI -> openSetupAI();
             case MCP_INFO -> openMcpInfo();
             case MCP_LOG -> openMcpLog();
+            case AI_LOG -> openAiLog();
             default -> {
                 return false;
             }
