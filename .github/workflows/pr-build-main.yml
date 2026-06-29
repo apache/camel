@@ -155,8 +155,11 @@ jobs:
           name: incremental-test-java-${{ matrix.java }}.log
           path: incremental-test.log
       # All non-experimental JDK matrix entries upload with overwrite: true.
-      # This ensures a comment is posted even if one JDK build fails — the
-      # content is identical across JDKs (same modules tested), so last writer wins.
+      # The comment content is identical across JDKs (same modules tested),
+      # so last writer wins. However, we only upload (and overwrite) when the
+      # comment file actually exists — a cancelled build (e.g., JDK 25 killed
+      # while JDK 17 fails) won't have the file and must not overwrite an
+      # artifact from a matrix entry that did produce it.
       - name: Save PR number and test comment for commenter workflow
         if: always() && !matrix.experimental
         shell: bash
@@ -174,7 +177,9 @@ jobs:
             echo ":gear: [View full build and test results](${RUN_URL})" >> ci-comment-artifact/incremental-test-comment.md
           fi
       - name: Upload CI comment artifact
-        if: always() && !matrix.experimental
+        if: >
+          always() && !matrix.experimental &&
+          hashFiles('ci-comment-artifact/incremental-test-comment.md') != ''
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: ci-comment
