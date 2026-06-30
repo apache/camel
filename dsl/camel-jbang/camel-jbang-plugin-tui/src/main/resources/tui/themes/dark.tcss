@@ -31,3 +31,6 @@ $brand: #F69123;
 #info           { color: cyan; }
 #notice         { color: magenta; }
 #row-alt        { background: #1C1C1C; }
+#mcp-active     { color: light-green; }
+#mcp-idle       { color: dark-gray; }
+#mcp-down       { color: light-red; }

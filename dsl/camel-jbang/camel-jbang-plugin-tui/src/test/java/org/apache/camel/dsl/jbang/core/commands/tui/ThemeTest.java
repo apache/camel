@@ -72,6 +72,9 @@ class ThemeTest {
         assertEquals(Style.EMPTY.fg(Color.WHITE).bold().onBlue(), Theme.selectionBg());
         assertEquals(Style.EMPTY.fg(Color.CYAN), Theme.info());
         assertEquals(Style.EMPTY.fg(Color.MAGENTA), Theme.notice());
+        assertEquals(Style.EMPTY.fg(Color.LIGHT_GREEN), Theme.mcpActive());
+        assertEquals(Style.EMPTY.fg(Color.DARK_GRAY), Theme.mcpIdle());
+        assertEquals(Style.EMPTY.fg(Color.LIGHT_RED), Theme.mcpDown());
         assertEquals(Color.rgb(0x1C, 0x1C, 0x1C), Theme.zebra());
     }
 
@@ -82,6 +85,10 @@ class ThemeTest {
         assertEquals(Color.rgb(0xF6, 0x91, 0x23), Theme.accent());
         assertEquals(Style.EMPTY.fg(Color.rgb(0x00, 0x77, 0x00)), Theme.success());
         assertEquals(Style.EMPTY.fg(Color.rgb(0x88, 0x88, 0x88)), Theme.border());
+        // MCP indicator hues track the light palette: idle gray and down red differ from the dark ANSI variants.
+        assertEquals(Style.EMPTY.fg(Color.rgb(0x00, 0x77, 0x00)), Theme.mcpActive());
+        assertEquals(Style.EMPTY.fg(Color.rgb(0x88, 0x88, 0x88)), Theme.mcpIdle());
+        assertEquals(Style.EMPTY.fg(Color.rgb(0xcc, 0x00, 0x00)), Theme.mcpDown());
         // Zebra background is theme-aware: light gray on light, unlike the dark gray used on dark.
         assertEquals(Color.rgb(0xEB, 0xEB, 0xEB), Theme.zebra());
     }
@@ -128,6 +135,9 @@ class ThemeTest {
         assertNotNull(Theme.selectionBg());
         assertNotNull(Theme.info());
         assertNotNull(Theme.notice());
+        assertNotNull(Theme.mcpActive());
+        assertNotNull(Theme.mcpIdle());
+        assertNotNull(Theme.mcpDown());
         assertNotNull(Theme.zebra());
     }
 }

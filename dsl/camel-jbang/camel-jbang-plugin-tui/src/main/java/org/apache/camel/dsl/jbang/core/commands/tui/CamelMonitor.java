@@ -1424,11 +1424,11 @@ public class CamelMonitor extends CamelCommand {
                 suffix = active ? " ●" : " ○";
                 mcpLabel += " (" + client + ")";
                 labelStyle = Theme.success();
-                suffixStyle = Style.EMPTY.fg(active ? Color.GREEN : Color.DARK_GRAY);
+                suffixStyle = active ? Theme.mcpActive() : Theme.mcpIdle();
             } else {
                 suffix = " ✗";
                 labelStyle = Theme.muted();
-                suffixStyle = Theme.error();
+                suffixStyle = Theme.mcpDown();
             }
             rightSpans.add(Span.styled(mcpLabel, labelStyle));
             rightSpans.add(Span.styled(suffix, suffixStyle));

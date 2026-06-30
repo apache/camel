@@ -31,3 +31,6 @@ $brand: #F69123;
 #info           { color: #006688; }
 #notice         { color: #884488; }
 #row-alt        { background: #EBEBEB; }
+#mcp-active     { color: #007700; }
+#mcp-idle       { color: #888888; }
+#mcp-down       { color: #cc0000; }

@@ -64,6 +64,9 @@ final class Theme {
     private static final Style FALLBACK_SELECTION = Style.EMPTY.fg(Color.WHITE).bold().onBlue();
     private static final Style FALLBACK_INFO = Style.EMPTY.fg(Color.CYAN);
     private static final Style FALLBACK_NOTICE = Style.EMPTY.fg(Color.MAGENTA);
+    private static final Style FALLBACK_MCP_ACTIVE = Style.EMPTY.fg(Color.LIGHT_GREEN);
+    private static final Style FALLBACK_MCP_IDLE = Style.EMPTY.fg(Color.DARK_GRAY);
+    private static final Style FALLBACK_MCP_DOWN = Style.EMPTY.fg(Color.LIGHT_RED);
     private static final Color FALLBACK_ZEBRA = Color.rgb(0x1C, 0x1C, 0x1C);
 
     private static final Map<String, Style> CACHE = new HashMap<>();
@@ -155,6 +158,21 @@ final class Theme {
     /** Secondary accent (header infra / selected). */
     static Style notice() {
         return style("notice", FALLBACK_NOTICE);
+    }
+
+    /** MCP indicator: connected with recent activity. */
+    static Style mcpActive() {
+        return style("mcp-active", FALLBACK_MCP_ACTIVE);
+    }
+
+    /** MCP indicator: connected but idle. */
+    static Style mcpIdle() {
+        return style("mcp-idle", FALLBACK_MCP_IDLE);
+    }
+
+    /** MCP indicator: not connected. */
+    static Style mcpDown() {
+        return style("mcp-down", FALLBACK_MCP_DOWN);
     }
 
     /** The active theme mode: {@code "dark"} or {@code "light"}. */
