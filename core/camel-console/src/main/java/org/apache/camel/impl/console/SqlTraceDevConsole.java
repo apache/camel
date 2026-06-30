@@ -274,6 +274,14 @@ public class SqlTraceDevConsole extends AbstractDevConsole {
                     jo.put("timestamp", event.getTimestamp());
                     jo.put("exchangeId", exchange.getExchangeId());
                     jo.put("routeId", exchange.getFromRouteId());
+                    String nodeId = exchange.getExchangeExtension().getHistoryNodeId();
+                    if (nodeId != null) {
+                        jo.put("nodeId", nodeId);
+                    }
+                    String nodeSource = exchange.getExchangeExtension().getHistoryNodeSource();
+                    if (nodeSource != null) {
+                        jo.put("location", nodeSource);
+                    }
                     jo.put("endpoint", uri);
                     if (query != null) {
                         jo.put("query", query);

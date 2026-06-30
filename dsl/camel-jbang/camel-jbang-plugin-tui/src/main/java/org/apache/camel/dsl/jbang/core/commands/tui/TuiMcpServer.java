@@ -922,7 +922,17 @@ class TuiMcpServer {
 
     private String callGetOptions() {
         JsonObject result = new JsonObject();
-        result.put("tabs", toJsonArray(facade.getTabNames()));
+        JsonArray tabsArray = new JsonArray();
+        for (String name : facade.getTabNames()) {
+            JsonObject tab = new JsonObject();
+            tab.put("name", name);
+            String desc = McpFacade.TAB_DESCRIPTIONS.get(name);
+            if (desc != null) {
+                tab.put("description", desc);
+            }
+            tabsArray.add(tab);
+        }
+        result.put("tabs", tabsArray);
         result.put("activeTab", facade.getActiveTabName());
         result.put("activeTabIndex", facade.getActiveTabIndex());
         result.put("integrations", toJsonArray(facade.getIntegrationNames()));

@@ -19,6 +19,8 @@ package org.apache.camel.dsl.jbang.core.commands.tui;
 class SqlTraceInfo {
     String exchangeId;
     String routeId;
+    String nodeId;
+    String location;
     String query;
     String category;
     String endpoint;

@@ -329,6 +329,16 @@ class SqlTraceTab implements MonitorTab {
         lines.add(Line.from(
                 Span.styled(" Route: ", labelStyle),
                 Span.styled(si.routeId != null ? si.routeId : "", valueStyle)));
+        if (si.nodeId != null) {
+            List<Span> nodeSpans = new ArrayList<>();
+            nodeSpans.add(Span.styled(" Node: ", labelStyle));
+            nodeSpans.add(Span.styled(si.nodeId, valueStyle));
+            if (si.location != null) {
+                nodeSpans.add(Span.styled("  Source: ", labelStyle));
+                nodeSpans.add(Span.styled(si.location, valueStyle));
+            }
+            lines.add(Line.from(nodeSpans));
+        }
         lines.add(Line.from(
                 Span.styled(" Exchange: ", labelStyle),
                 Span.styled(si.exchangeId != null ? si.exchangeId : "", valueStyle)));

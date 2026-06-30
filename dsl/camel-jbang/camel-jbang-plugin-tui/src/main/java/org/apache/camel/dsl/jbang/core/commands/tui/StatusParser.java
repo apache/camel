@@ -540,6 +540,8 @@ final class StatusParser {
                     SqlTraceInfo si = new SqlTraceInfo();
                     si.exchangeId = sj.getString("exchangeId");
                     si.routeId = sj.getString("routeId");
+                    si.nodeId = sj.getString("nodeId");
+                    si.location = sj.getString("location");
                     si.query = sj.getString("query");
                     si.category = sj.getString("category");
                     si.endpoint = sj.getString("endpoint");

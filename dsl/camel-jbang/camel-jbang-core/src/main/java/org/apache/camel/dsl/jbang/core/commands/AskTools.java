@@ -183,6 +183,24 @@ public class AskTools {
                         "endpoint", stringProp("Endpoint URI to browse (e.g., seda:queue)"),
                         "limit", stringProp("Maximum number of messages to return (default: 50)")))));
         tools.add(new LlmClient.ToolDef(
+                "get_sql_trace",
+                "Get traced SQL query executions flowing through camel-sql and camel-jdbc components. "
+                                 + "Returns per-query timing, row counts, category (SELECT/INSERT/UPDATE/DELETE), "
+                                 + "route ID, and failure status. Includes summary statistics: total queries, "
+                                 + "average time, slowest time, slow count (>=100ms), and failed count. "
+                                 + "Use to identify slow queries, fastest queries, most frequent queries, "
+                                 + "and failed SQL executions.",
+                emptyParams()));
+        tools.add(new LlmClient.ToolDef(
+                "execute_sql",
+                "Execute a SQL query against a DataSource in the running Camel application. "
+                               + "Returns structured JSON with columns, rows, and metadata for SELECT queries, "
+                               + "or an update count for INSERT/UPDATE/DELETE.",
+                objectParams(Map.of(
+                        "query", stringProp("The SQL query to execute"),
+                        "datasource", stringProp("Name of the DataSource bean (auto-detected if only one exists)"),
+                        "maxRows", stringProp("Maximum number of rows to return (default: 100)")))));
+        tools.add(new LlmClient.ToolDef(
                 "get_thread_dump",
                 "Get a JVM thread dump showing thread names, states, and stack traces.",
                 emptyParams()));
@@ -325,6 +343,9 @@ public class AskTools {
                 case "send_message" -> targetPid < 0 ? NO_PROCESS : executeSendMessage(args);
                 case "eval_expression" -> targetPid < 0 ? NO_PROCESS : executeEvalExpression(args);
                 case "browse_endpoint" -> targetPid < 0 ? NO_PROCESS : executeBrowseEndpoint(args);
+                case "get_sql_trace" ->
+                    targetPid < 0 ? NO_PROCESS : RuntimeHelper.readStatusSection(targetPid, "sqlTrace");
+                case "execute_sql" -> targetPid < 0 ? NO_PROCESS : executeSQL(args);
                 case "get_thread_dump" ->
                     targetPid < 0 ? NO_PROCESS : RuntimeHelper.executeAction(targetPid, "thread-dump", null);
                 case "stop_route" -> targetPid < 0 ? NO_PROCESS : executeRouteCommand(args, "stop");
@@ -542,6 +563,25 @@ public class AskTools {
             root.put("filter", endpoint);
             root.put("limit", browseLimit);
         });
+    }
+
+    private String executeSQL(JsonObject args) {
+        String sql = args.getString("query");
+        if (sql == null || sql.isBlank()) {
+            return "Error: 'query' parameter is required";
+        }
+        String datasource = args.getString("datasource");
+        int maxRows = 100;
+        String maxRowsStr = args.getString("maxRows");
+        if (maxRowsStr != null) {
+            try {
+                maxRows = Integer.parseInt(maxRowsStr);
+            } catch (NumberFormatException e) {
+                // use default
+            }
+        }
+        JsonObject result = RuntimeHelper.executeSqlQuery(targetPid, sql, datasource, maxRows, 30);
+        return Jsoner.serialize(result);
     }
 
     // ---- Catalog tools ----
