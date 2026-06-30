@@ -268,7 +268,7 @@ class SqlTraceTab implements MonitorTab {
                 .rows(rows)
                 .header(Row.from(
                         Cell.from(Span.styled(sortLabel("TIME", "time"), sortStyle("time"))),
-                        Cell.from(Span.styled(sortLabel("CAT", "category"), sortStyle("category"))),
+                        Cell.from(Span.styled(sortLabel("TYPE", "category"), sortStyle("category"))),
                         Cell.from(Span.styled(sortLabel("SQL", "sql"), sortStyle("sql"))),
                         Cell.from(Span.styled(sortLabel("ROUTE", "route"), sortStyle("route"))),
                         rightCell(sortLabel("DURATION", "duration"), 10, sortStyle("duration")),
@@ -438,7 +438,7 @@ class SqlTraceTab implements MonitorTab {
                 ## Table Columns
 
                 - **TIME** — Timestamp of the execution
-                - **CAT** — SQL category: SELECT, INSERT, UPDATE, DELETE, CALL, or OTHER
+                - **TYPE** — SQL type: SELECT, INSERT, UPDATE, DELETE, CALL, or OTHER
                 - **SQL** — The SQL query text
                 - **ROUTE** — The Camel route ID that executed the query
                 - **DURATION** — Execution time in ms (yellow when >= 100ms)
