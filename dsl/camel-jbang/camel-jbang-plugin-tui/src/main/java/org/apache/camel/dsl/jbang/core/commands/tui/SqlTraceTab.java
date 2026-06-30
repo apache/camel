@@ -22,6 +22,7 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 import dev.tamboui.layout.Constraint;
 import dev.tamboui.layout.Layout;
@@ -49,7 +50,7 @@ import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.*;
 
 class SqlTraceTab implements MonitorTab {
 
-    private static final String[] SORT_COLUMNS = { "time", "category", "sql", "route", "duration", "rows" };
+    private static final String[] SORT_COLUMNS = { "time", "type", "sql", "route", "duration", "rows" };
     private static final DateTimeFormatter TIME_FMT = DateTimeFormatter.ofPattern("HH:mm:ss.SSS");
 
     private final MonitorContext ctx;
@@ -61,9 +62,14 @@ class SqlTraceTab implements MonitorTab {
     private int detailScroll;
     private boolean wordWrap = true;
     private String selectedKey;
+    private Consumer<String> editSqlAction;
 
     SqlTraceTab(MonitorContext ctx) {
         this.ctx = ctx;
+    }
+
+    void setEditSqlAction(Consumer<String> editSqlAction) {
+        this.editSqlAction = editSqlAction;
     }
 
     @Override
@@ -89,6 +95,13 @@ class SqlTraceTab implements MonitorTab {
         if (ke.isCharIgnoreCase('w')) {
             wordWrap = !wordWrap;
             return true;
+        }
+        if (ke.isCharIgnoreCase('e') && editSqlAction != null) {
+            String sql = getSelectedQuery();
+            if (sql != null) {
+                editSqlAction.accept(sql);
+                return true;
+            }
         }
         if (ke.isHome()) {
             detailScroll = 0;
@@ -183,6 +196,20 @@ class SqlTraceTab implements MonitorTab {
         frame.renderWidget(kpi, area);
     }
 
+    private String getSelectedQuery() {
+        IntegrationInfo info = ctx.findSelectedIntegration();
+        if (info == null) {
+            return null;
+        }
+        List<SqlTraceInfo> sorted = new ArrayList<>(info.sqlTraceStatements);
+        sorted.sort(this::sortTrace);
+        Integer sel = tableState.selected();
+        if (sel != null && sel >= 0 && sel < sorted.size()) {
+            return sorted.get(sel).query;
+        }
+        return null;
+    }
+
     private static String traceKey(SqlTraceInfo si) {
         return si.exchangeId + "@" + si.timestamp;
     }
@@ -268,7 +295,7 @@ class SqlTraceTab implements MonitorTab {
                 .rows(rows)
                 .header(Row.from(
                         Cell.from(Span.styled(sortLabel("TIME", "time"), sortStyle("time"))),
-                        Cell.from(Span.styled(sortLabel("TYPE", "category"), sortStyle("category"))),
+                        Cell.from(Span.styled(sortLabel("TYPE", "type"), sortStyle("type"))),
                         Cell.from(Span.styled(sortLabel("SQL", "sql"), sortStyle("sql"))),
                         Cell.from(Span.styled(sortLabel("ROUTE", "route"), sortStyle("route"))),
                         rightCell(sortLabel("DURATION", "duration"), 10, sortStyle("duration")),
@@ -362,6 +389,7 @@ class SqlTraceTab implements MonitorTab {
         hint(spans, "↑↓", "navigate");
         hint(spans, "Home/End", "top/end");
         hint(spans, "PgUp/Dn", "scroll detail");
+        hint(spans, "e", "edit SQL");
         hint(spans, "s", "sort");
         hint(spans, "w", "wrap [" + (wordWrap ? "on" : "off") + "]");
     }
@@ -376,7 +404,7 @@ class SqlTraceTab implements MonitorTab {
 
     private int sortTrace(SqlTraceInfo a, SqlTraceInfo b) {
         int result = switch (sort) {
-            case "category" -> {
+            case "type" -> {
                 String ca = a.category != null ? a.category : "";
                 String cb = b.category != null ? b.category : "";
                 yield ca.compareToIgnoreCase(cb);
@@ -476,7 +504,7 @@ class SqlTraceTab implements MonitorTab {
             row.put("exchangeId", si.exchangeId);
             row.put("routeId", si.routeId);
             row.put("query", si.query);
-            row.put("category", si.category);
+            row.put("type", si.category);
             row.put("endpoint", si.endpoint);
             row.put("duration", si.duration);
             row.put("rowCount", si.rowCount);

@@ -127,6 +127,11 @@ class TabRegistry {
         overviewTab = new OverviewTab(
                 ctx, dataService.metrics(), dataService.stoppingPids(),
                 resetIntegrationTabState);
+
+        sqlTraceTab.setEditSqlAction(sql -> {
+            selectMoreTab(10); // switch to SQL Query tab
+            sqlQueryTab.setInputValue("sql", sql);
+        });
     }
 
     // ---- Tab access ----
