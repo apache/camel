@@ -171,6 +171,12 @@ class FilesBrowser {
                 listState.selectNext(entries.size());
                 return true;
             }
+            if (ke.isDeleteBackward()) {
+                if (currentDir != null && !currentDir.equals(rootDir)) {
+                    loadDirectory(currentDir.getParent());
+                }
+                return true;
+            }
             if (ke.isConfirm()) {
                 Integer sel = listState.selected();
                 if (sel != null && sel < entries.size()) {
@@ -198,13 +204,20 @@ class FilesBrowser {
             return;
         }
 
+        String popupTitle = " Files: " + title;
+        if (rootDir != null && currentDir != null && !currentDir.equals(rootDir)) {
+            popupTitle += "/" + rootDir.relativize(currentDir);
+        }
+        popupTitle += " ";
+
         int nameWidth = entries.stream().mapToInt(e -> e.name().length()).max().orElse(10);
         int sizeWidth = entries.stream()
                 .filter(e -> !e.directory())
                 .mapToInt(e -> formatFileSize(e.size()).length()).max().orElse(4);
         int itemWidth = 4 + nameWidth + 2 + sizeWidth + 2;
-        int popupW = Math.min(area.width() - 4, Math.max(30, itemWidth + 4));
-        int popupH = Math.min(area.height() - 4, entries.size() + 2);
+        int titleWidth = popupTitle.length() + 4;
+        int popupW = Math.min(area.width() - 4, Math.max(50, Math.max(itemWidth + 4, titleWidth)));
+        int popupH = Math.min(area.height() - 4, Math.max(12, entries.size() + 2));
 
         int x = area.left() + Math.max(0, (area.width() - popupW) / 2);
         int y = area.top() + 2;
@@ -212,24 +225,25 @@ class FilesBrowser {
 
         frame.renderWidget(Clear.INSTANCE, popup);
 
+        int innerWidth = popupW - 2;
         ListItem[] items = new ListItem[entries.size()];
         for (int i = 0; i < entries.size(); i++) {
             FileEntry entry = entries.get(i);
             if (entry.directory()) {
                 String label = String.format("  %s %-" + nameWidth + "s", entry.emoji(), entry.name());
-                items[i] = ListItem.from(label);
+                boolean dimDir = entry.name().startsWith(".") || "target".equals(entry.name());
+                Style dirStyle = dimDir ? Style.EMPTY.fg(Color.CYAN).dim() : Style.EMPTY.fg(Color.CYAN);
+                items[i] = ListItem.from(Line.from(Span.styled(label, dirStyle)));
             } else {
                 String sizeStr = formatFileSize(entry.size());
-                String label = String.format("  %s %-" + nameWidth + "s  %s", entry.emoji(), entry.name(), sizeStr);
-                items[i] = ListItem.from(label);
+                String nameLabel = String.format("  %s %s", entry.emoji(), entry.name());
+                int gap = Math.max(1, innerWidth - nameLabel.length() - sizeStr.length() - 1);
+                String padding = " ".repeat(gap);
+                items[i] = ListItem.from(Line.from(
+                        Span.raw(nameLabel + padding),
+                        Span.styled(sizeStr + " ", Style.EMPTY.dim())));
             }
         }
-
-        String popupTitle = " Files: " + title;
-        if (rootDir != null && currentDir != null && !currentDir.equals(rootDir)) {
-            popupTitle += "/" + rootDir.relativize(currentDir);
-        }
-        popupTitle += " ";
 
         ListWidget list = ListWidget.builder()
                 .items(items)
