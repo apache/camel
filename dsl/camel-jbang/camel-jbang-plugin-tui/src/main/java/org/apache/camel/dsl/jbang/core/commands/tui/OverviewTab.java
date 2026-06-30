@@ -273,13 +273,12 @@ class OverviewTab implements MonitorTab {
                     stateText = "Stopped";
                 }
                 Style statusStyle = switch (stateText) {
-                    case "Started", "Running" -> Style.EMPTY.fg(Color.GREEN);
-                    case "Stopping" -> Style.EMPTY.fg(Color.YELLOW);
-                    case "Stopped" -> Style.EMPTY.fg(Color.LIGHT_RED);
-                    default -> Style.EMPTY.fg(Color.YELLOW);
+                    case "Started", "Running" -> Theme.success();
+                    case "Stopped" -> Theme.error();
+                    default -> Theme.warning();
                 };
 
-                Style failStyle = info.failed > 0 ? Style.EMPTY.fg(Color.LIGHT_RED).bold() : Style.EMPTY;
+                Style failStyle = info.failed > 0 ? Theme.error().bold() : Style.EMPTY;
 
                 String sinceLastDisplay = formatSinceLast(info);
 
@@ -336,7 +335,7 @@ class OverviewTab implements MonitorTab {
         for (InfraInfo info : infraInfos) {
             boolean isEven = (rowIndex++ % 2 == 0);
             Style rowBg = isEven ? Style.EMPTY.bg(Theme.zebra()) : Style.EMPTY;
-            Style statusStyle = info.alive ? Style.EMPTY.fg(Color.GREEN) : Style.EMPTY.fg(Color.LIGHT_RED);
+            Style statusStyle = info.alive ? Theme.success() : Theme.error();
 
             if (info.vanishing) {
                 long elapsed = System.currentTimeMillis() - info.vanishStart;
