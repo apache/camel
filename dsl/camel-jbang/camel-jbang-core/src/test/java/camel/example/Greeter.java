@@ -20,9 +20,13 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 
 /**
- * Test fixture mirroring {@code examples/routes/Greeter.java}, which the CLI compiles at runtime. It is needed on the
- * test classpath so {@code examples/routes/beans.yaml} can resolve its bean type while being parsed by
- * {@link org.apache.camel.dsl.jbang.core.common.ExampleRoutesLoadTest}.
+ * Test fixture mirroring {@code src/main/resources/examples/routes/Greeter.java}, which the CLI compiles at runtime. A
+ * compiled copy is needed on the test classpath so that {@code examples/routes/beans.yaml} can instantiate its
+ * {@code greeter} bean while {@link org.apache.camel.dsl.jbang.core.common.ExampleRoutesLoadTest} pre-parses it.
+ *
+ * Keep this in sync with the example source. Only the type and its {@code message} property are load-bearing for the
+ * test: a missing property fails bean binding loudly, whereas the {@link #process} behavior is never exercised (the
+ * test does not start the context), so behavioral drift would go unnoticed.
  */
 public class Greeter implements Processor {
 
