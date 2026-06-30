@@ -50,6 +50,7 @@ import org.apache.camel.util.json.Jsoner;
 class DataRefreshService {
 
     private static final long VANISH_DURATION_MS = 6000;
+    private static final long LIVENESS_CHECK_INTERVAL_MS = 30_000;
     private static final int MAX_TRACES = 200;
 
     /**
@@ -81,6 +82,7 @@ class DataRefreshService {
     // Cached PID list -- full process scan throttled to every 2 seconds (1 second in burst mode)
     private volatile List<Long> cachedPids = Collections.emptyList();
     private volatile long lastFullScanTime;
+    private volatile long lastLivenessCheckTime;
     private volatile long burstModeUntil;
     final Set<String> stoppingPids = ConcurrentHashMap.newKeySet();
 
@@ -266,9 +268,23 @@ class DataRefreshService {
             }
         }
         if (!fullScan && ctx.selectedPid != null) {
+            boolean checkLiveness = now - lastLivenessCheckTime >= LIVENESS_CHECK_INTERVAL_MS;
+            if (checkLiveness) {
+                lastLivenessCheckTime = now;
+            }
             List<IntegrationInfo> previous = data.get();
             for (IntegrationInfo prev : previous) {
                 if (!prev.vanishing && !ctx.selectedPid.equals(prev.pid)) {
+                    if (checkLiveness) {
+                        try {
+                            long pid = Long.parseLong(prev.pid);
+                            if (!ProcessHandle.of(pid).map(ProcessHandle::isAlive).orElse(false)) {
+                                continue;
+                            }
+                        } catch (NumberFormatException e) {
+                            // keep it
+                        }
+                    }
                     infos.add(prev);
                 }
             }
