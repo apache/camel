@@ -47,12 +47,14 @@ class MonitorContext {
 
     static final Style HINT_KEY_STYLE = Style.EMPTY.fg(Color.BLACK).bg(Color.rgb(0xF6, 0x91, 0x23)).bold();
 
-    /** Small flat-orange placeholder camel for empty / no-selection states (user refines later). */
+    /** Small flat-orange camel for empty / no-selection states. */
     static final String[] SMALL_CAMEL = {
-            "   ,,__",
-            "  /o.  \\___",
-            "  \\__/     \\",
-            "     |  |--|",
+            " ,,__",
+            "/o.  \\___/\\",
+            "\\__/       \\",
+            "   |   |   |",
+            "   |   |   |~",
+            "  (_) (_) (_)",
     };
 
     final AtomicReference<List<IntegrationInfo>> data;
