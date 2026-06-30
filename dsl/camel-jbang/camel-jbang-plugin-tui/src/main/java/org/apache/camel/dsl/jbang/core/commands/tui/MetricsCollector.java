@@ -29,8 +29,8 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 class MetricsCollector {
 
-    static final int MAX_SPARKLINE_POINTS = 60;
-    static final int MAX_ENDPOINT_CHART_POINTS = 60;
+    static final int MAX_SPARKLINE_POINTS = 300;
+    static final int MAX_ENDPOINT_CHART_POINTS = 300;
     static final int MAX_HEAP_HISTORY_POINTS = 120;
     static final long HEAP_SAMPLE_INTERVAL_MS = 5000;
 
