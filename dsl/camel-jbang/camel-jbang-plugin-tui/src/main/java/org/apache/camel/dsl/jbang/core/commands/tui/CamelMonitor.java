@@ -1195,6 +1195,20 @@ public class CamelMonitor extends CamelCommand {
             return;
         }
 
+        String platform = info.platform;
+        boolean isSpringBoot = "Spring Boot".equals(platform);
+        boolean isQuarkus = "Quarkus".equals(platform);
+
+        // TODO: restart for Spring Boot and Quarkus is not yet reliable
+        if (isSpringBoot || isQuarkus) {
+            setNotification("Restart not supported for " + platform, true);
+            return;
+        }
+
+        restartCamelMainProcess(ph, info);
+    }
+
+    private void restartCamelMainProcess(ProcessHandle ph, IntegrationInfo info) {
         // capture command line before stopping
         Optional<String> cmdOpt = ph.info().command();
         Optional<String[]> argsOpt = ph.info().arguments();
@@ -1260,7 +1274,7 @@ public class CamelMonitor extends CamelCommand {
     private void setNotification(String message, boolean error) {
         monitorNotification = message;
         monitorNotificationError = error;
-        monitorNotificationExpiry = System.currentTimeMillis() + 5000;
+        monitorNotificationExpiry = System.currentTimeMillis() + (error ? 15000 : 5000);
     }
 
     static List<String> parseCommandLine(String commandLine) {

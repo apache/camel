@@ -34,6 +34,8 @@ public abstract class DefaultConfigurationProperties<T> {
 
     private String name;
     private String description;
+    @Metadata(enums = "dev,test,prod")
+    private String profile;
     @Metadata(defaultValue = "Default", enums = "Verbose,Default,Brief,Oneline,Off")
     private StartupSummaryLevel startupSummaryLevel;
     private int durationMaxSeconds;
@@ -188,6 +190,23 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getProfile() {
+        return profile;
+    }
+
+    /**
+     * Camel profile to use when running.
+     *
+     * The dev profile is for development, which enables a set of additional developer focus functionality, tracing,
+     * debugging, and gathering additional runtime statistics that are useful during development. However, those
+     * additional features has a slight overhead cost, and are not enabled for production profile.
+     *
+     * The default profile is prod.
+     */
+    public void setProfile(String profile) {
+        this.profile = profile;
     }
 
     public StartupSummaryLevel getStartupSummaryLevel() {
@@ -1773,6 +1792,20 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public T withDescription(String description) {
         this.description = description;
+        return (T) this;
+    }
+
+    /**
+     * Camel profile to use when running.
+     *
+     * The dev profile is for development, which enables a set of additional developer focus functionality, tracing,
+     * debugging, and gathering additional runtime statistics that are useful during development. However, those
+     * additional features has a slight overhead cost, and are not enabled for production profile.
+     *
+     * The default profile is prod.
+     */
+    public T withProfile(String profile) {
+        this.profile = profile;
         return (T) this;
     }
 

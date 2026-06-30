@@ -1011,6 +1011,11 @@ public abstract class ExportBaseCommand extends CamelCommand {
             customize.apply(profileProps);
         }
 
+        // include camel profile if set (so exported runtimes like Spring Boot and Quarkus know the profile)
+        if (this.profile != null && !profileProps.containsKey("camel.main.profile")) {
+            profileProps.put("camel.main.profile", this.profile);
+        }
+
         StringBuilder content = new StringBuilder();
         for (Map.Entry<Object, Object> entry : profileProps.entrySet()) {
             String k = entry.getKey().toString();

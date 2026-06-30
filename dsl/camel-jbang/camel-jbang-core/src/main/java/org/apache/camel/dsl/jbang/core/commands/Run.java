@@ -1326,6 +1326,7 @@ public class Run extends CamelCommand {
 
         // export to hidden folder
         ExportQuarkus eq = new ExportQuarkus(getMain());
+        eq.exportBaseDir = this.exportBaseDir;
         eq.javaLiveReload = this.dev;
         eq.symbolicLink = this.dev;
         eq.mavenWrapper = true;
@@ -1361,6 +1362,7 @@ public class Run extends CamelCommand {
         eq.loggingLevel = "off";
         eq.ignoreLoadingError = this.ignoreLoadingError;
         eq.lazyBean = this.lazyBean;
+        eq.profile = this.profile;
         eq.applicationProperties = this.property;
 
         printer().println("Running using Quarkus (preparing and downloading files)");
@@ -1431,6 +1433,7 @@ public class Run extends CamelCommand {
 
         // export to hidden folder
         ExportSpringBoot eq = new ExportSpringBoot(getMain());
+        eq.exportBaseDir = this.exportBaseDir;
         // the code reload is not supported, since we use symlink, spring-boot devtools doesn't support symlink
         if (this.dev) {
             printer().println("WARN: Code reload is not supported with Spring Boot.");
@@ -1476,6 +1479,7 @@ public class Run extends CamelCommand {
         eq.loggingLevel = "off";
         eq.ignoreLoadingError = this.ignoreLoadingError;
         eq.lazyBean = this.lazyBean;
+        eq.profile = this.profile;
         eq.applicationProperties = this.property;
 
         printer().println("Running using Spring Boot (preparing and downloading files)");
@@ -1623,6 +1627,9 @@ public class Run extends CamelCommand {
             kameletsVersion = answer.getProperty(KAMELETS_VERSION, kameletsVersion);
             springBootVersion = answer.getProperty(SPRING_BOOT_VERSION, springBootVersion);
             javaVersion = answer.getProperty(JAVA_VERSION, javaVersion);
+            if (quarkusPlatform == null) {
+                quarkusPlatform = new QuarkusPlatformMixin();
+            }
             quarkusPlatform = QuarkusPlatformMixin.of(answer, quarkusPlatform);
             gav = answer.getProperty(GAV, gav);
             stub = answer.getProperty(STUB, stub);
