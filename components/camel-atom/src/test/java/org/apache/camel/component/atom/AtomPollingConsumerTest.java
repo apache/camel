@@ -75,10 +75,12 @@ public class AtomPollingConsumerTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("atom:file:src/test/data/feed.atom?splitEntries=false").to("mock:result");
+                // not split: a single poll delivers the whole feed; repeatCount=1 keeps it to exactly one message
+                from("atom:file:src/test/data/feed.atom?splitEntries=false&initialDelay=0&repeatCount=1").to("mock:result");
 
                 // this is a bit weird syntax that normally is not using the feedUri parameter
-                from("atom:?feedUri=file:src/test/data/feed.atom&splitEntries=false").to("mock:result2");
+                from("atom:?feedUri=file:src/test/data/feed.atom&splitEntries=false&initialDelay=0&repeatCount=1")
+                        .to("mock:result2");
             }
         };
     }

@@ -16,12 +16,9 @@
  */
 package org.apache.camel.component.atom;
 
-import java.time.Duration;
-
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit6.CamelTestSupport;
-import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
@@ -36,15 +33,16 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 public class AtomPollingConsumerIdleMessageTest extends CamelTestSupport {
 
     @Test
-    void testConsumeIdleMessages() {
-        Awaitility.await().atMost(Duration.ofMillis(500)).untilAsserted(() -> {
-            MockEndpoint mock = getMockEndpoint("mock:result");
-            mock.expectedMinimumMessageCount(2);
-            MockEndpoint.assertIsSatisfied(context);
+    void testConsumeIdleMessages() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        // an empty feed polled with sendEmptyMessageWhenIdle=true emits one idle exchange per poll;
+        // let assertIsSatisfied do the waiting (default result wait time) instead of a fixed deadline
+        mock.expectedMinimumMessageCount(2);
+        mock.assertIsSatisfied();
 
-            assertNull(mock.getExchanges().get(0).getIn().getBody());
-            assertNull(mock.getExchanges().get(1).getIn().getBody());
-        });
+        // idle exchanges carry no body
+        assertNull(mock.getExchanges().get(0).getIn().getBody());
+        assertNull(mock.getExchanges().get(1).getIn().getBody());
     }
 
     @Override
