@@ -59,10 +59,13 @@ public class PgReplicationSlotCamelIT extends PgReplicationITSupport {
             @Override
             public void configure() {
 
+                // poll quickly: this consumer delivers one decoded message per poll, so the default
+                // 1s initial delay + 500ms cadence makes 6 messages take ~3.5s and race the timeout
                 String uriFormat
                         = "pg-replication-slot://{{postgres.service.address}}/camel/camel_test_slot:test_decoding?"
                           + "user={{postgres.user.name}}&password={{postgres.user.password}}"
-                          + "&slotOptions.skip-empty-xacts=true&slotOptions.include-xids=false";
+                          + "&slotOptions.skip-empty-xacts=true&slotOptions.include-xids=false"
+                          + "&initialDelay=200&delay=200";
 
                 from(uriFormat).to(mockEndpoint);
             }
@@ -71,10 +74,9 @@ public class PgReplicationSlotCamelIT extends PgReplicationITSupport {
 
     @Test
     public void canReceiveFromSlot() throws InterruptedException, SQLException {
-        mockEndpoint.expectedMessageCount(1);
-
         // test_decoding plugin writes each change in a separate message. Some other plugins can have different behaviour,
         // wal2json default behaviour is to write the whole transaction in one message.
+        // expectedBodiesReceived pins the exact count (6), order and content.
         mockEndpoint.expectedBodiesReceived("BEGIN", "table public.camel_test_table: INSERT: id[integer]:1984", "COMMIT",
                 "BEGIN", "table public.camel_test_table: INSERT: id[integer]:1998", "COMMIT");
 
@@ -83,6 +85,6 @@ public class PgReplicationSlotCamelIT extends PgReplicationITSupport {
             statement.execute("INSERT INTO camel_test_table(id) VALUES(1998);");
         }
 
-        mockEndpoint.assertIsSatisfied(5000);
+        mockEndpoint.assertIsSatisfied();
     }
 }
