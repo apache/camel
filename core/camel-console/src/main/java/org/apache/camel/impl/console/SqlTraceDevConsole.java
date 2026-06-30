@@ -16,6 +16,8 @@
  */
 package org.apache.camel.impl.console;
 
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -182,11 +184,17 @@ public class SqlTraceDevConsole extends AbstractDevConsole {
         if (endpointUri.startsWith("sql:")) {
             String query = StringHelper.after(endpointUri, "sql:");
             if (query != null) {
+                // strip :// scheme separator if present
+                if (query.startsWith("//")) {
+                    query = query.substring(2);
+                }
                 // remove query parameters
                 int idx = query.indexOf('?');
                 if (idx > 0) {
                     query = query.substring(0, idx);
                 }
+                // URI path is URL-encoded, decode it
+                query = URLDecoder.decode(query, StandardCharsets.UTF_8);
                 return query;
             }
         } else if (endpointUri.startsWith("jdbc:")) {
@@ -235,13 +243,14 @@ public class SqlTraceDevConsole extends AbstractDevConsole {
                 if (uri.startsWith("sql:") || uri.startsWith("jdbc:")) {
                     Exchange exchange = ese.getExchange();
 
-                    String query = extractQuery(uri);
-                    // for jdbc component, try to get query from exchange header
+                    // prefer the CamelSqlQuery header (runtime override) over the URI
+                    String query = null;
+                    Object headerQuery = exchange.getMessage().getHeader("CamelSqlQuery");
+                    if (headerQuery != null) {
+                        query = headerQuery.toString();
+                    }
                     if (query == null) {
-                        Object headerQuery = exchange.getMessage().getHeader("CamelSqlQuery");
-                        if (headerQuery != null) {
-                            query = headerQuery.toString();
-                        }
+                        query = extractQuery(uri);
                     }
 
                     JsonObject jo = new JsonObject();
