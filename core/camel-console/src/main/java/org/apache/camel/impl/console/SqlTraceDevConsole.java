@@ -16,6 +16,7 @@
  */
 package org.apache.camel.impl.console;
 
+import java.io.InputStream;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -31,6 +32,7 @@ import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.EventNotifierSupport;
+import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.support.console.AbstractDevConsole;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.json.JsonArray;
@@ -204,6 +206,17 @@ public class SqlTraceDevConsole extends AbstractDevConsole {
         return null;
     }
 
+    private String resolveResource(String uri) {
+        try (InputStream is = ResourceHelper.resolveResourceAsInputStream(getCamelContext(), uri)) {
+            if (is != null) {
+                return new String(is.readAllBytes(), StandardCharsets.UTF_8).strip();
+            }
+        } catch (Exception e) {
+            // ignore
+        }
+        return "resource:" + uri;
+    }
+
     private static String detectCategory(String query) {
         if (query != null && !query.isEmpty()) {
             String upper = query.stripLeading().toUpperCase(Locale.ENGLISH);
@@ -251,6 +264,10 @@ public class SqlTraceDevConsole extends AbstractDevConsole {
                     }
                     if (query == null) {
                         query = extractQuery(uri);
+                    }
+                    // resolve resource: references to actual SQL content
+                    if (query != null && query.startsWith("resource:")) {
+                        query = resolveResource(query.substring("resource:".length()));
                     }
 
                     JsonObject jo = new JsonObject();
