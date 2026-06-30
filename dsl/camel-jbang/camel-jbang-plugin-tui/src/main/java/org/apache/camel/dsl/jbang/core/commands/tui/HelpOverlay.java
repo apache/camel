@@ -95,8 +95,8 @@ class HelpOverlay {
                 .borderType(BorderType.ROUNDED).borders(Borders.ALL)
                 .title(" Help ")
                 .titleBottom(Title.from(Line.from(
-                        Span.styled(" F1/?", MonitorContext.HINT_KEY_STYLE), Span.raw(" close "),
-                        Span.styled(" ↑↓", MonitorContext.HINT_KEY_STYLE), Span.raw(" scroll "))))
+                        Span.styled(" F1/? ", MonitorContext.HINT_KEY_STYLE), Span.raw(" close "),
+                        Span.styled(" ↑↓ ", MonitorContext.HINT_KEY_STYLE), Span.raw(" scroll "))))
                 .build();
 
         MarkdownView view = MarkdownView.builder()
