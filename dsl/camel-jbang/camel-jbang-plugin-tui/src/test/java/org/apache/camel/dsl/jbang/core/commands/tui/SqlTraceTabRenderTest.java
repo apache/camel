@@ -75,7 +75,7 @@ class SqlTraceTabRenderTest {
         String rendered = TuiTestHelper.renderToString(tab, 140, 25);
 
         assertTrue(rendered.contains("TIME"), "Should show TIME header");
-        assertTrue(rendered.contains("CAT"), "Should show CAT header");
+        assertTrue(rendered.contains("TYPE"), "Should show TYPE header");
         assertTrue(rendered.contains("SQL"), "Should show SQL header");
         assertTrue(rendered.contains("ROUTE"), "Should show ROUTE header");
         assertTrue(rendered.contains("DURATION"), "Should show DURATION header");
@@ -150,7 +150,7 @@ class SqlTraceTabRenderTest {
         tab.handleKeyEvent(KeyEvent.ofChar('s', KeyModifiers.NONE));
         String rendered = TuiTestHelper.renderToString(tab, 140, 25);
 
-        assertTrue(rendered.contains("sort:category"), "Sort should cycle to 'category' after pressing 's'");
+        assertTrue(rendered.contains("sort:type"), "Sort should cycle to 'type' after pressing 's'");
     }
 
     @Test

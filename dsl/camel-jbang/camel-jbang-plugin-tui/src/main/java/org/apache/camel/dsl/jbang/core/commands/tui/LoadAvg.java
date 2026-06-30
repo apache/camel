@@ -16,6 +16,8 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
+import java.util.Locale;
+
 class LoadAvg {
     private static final double EXP_1 = Math.exp(-1 / 60.0);
     private static final double EXP_5 = Math.exp(-1 / (60.0 * 5.0));
@@ -32,6 +34,6 @@ class LoadAvg {
     }
 
     synchronized String format(String fmt) {
-        return Double.isNaN(load1) ? "-" : String.format(fmt, load1, load5, load15);
+        return Double.isNaN(load1) ? "-" : String.format(Locale.US, fmt, load1, load5, load15);
     }
 }
