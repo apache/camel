@@ -35,6 +35,10 @@ public class WeaviateVectorDbComponentConfigurer extends PropertyConfigurerSuppo
         case "autowiredenabled":
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.weaviate.WeaviateVectorDbConfiguration.class, value)); return true;
+        case "grpchost":
+        case "grpcHost": getOrCreateConfiguration(target).setGrpcHost(property(camelContext, java.lang.String.class, value)); return true;
+        case "grpcport":
+        case "grpcPort": getOrCreateConfiguration(target).setGrpcPort(property(camelContext, java.lang.Integer.class, value)); return true;
         case "host": getOrCreateConfiguration(target).setHost(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
@@ -57,6 +61,10 @@ public class WeaviateVectorDbComponentConfigurer extends PropertyConfigurerSuppo
         case "autowiredenabled":
         case "autowiredEnabled": return boolean.class;
         case "configuration": return org.apache.camel.component.weaviate.WeaviateVectorDbConfiguration.class;
+        case "grpchost":
+        case "grpcHost": return java.lang.String.class;
+        case "grpcport":
+        case "grpcPort": return java.lang.Integer.class;
         case "host": return java.lang.String.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
@@ -80,6 +88,10 @@ public class WeaviateVectorDbComponentConfigurer extends PropertyConfigurerSuppo
         case "autowiredenabled":
         case "autowiredEnabled": return target.isAutowiredEnabled();
         case "configuration": return target.getConfiguration();
+        case "grpchost":
+        case "grpcHost": return getOrCreateConfiguration(target).getGrpcHost();
+        case "grpcport":
+        case "grpcPort": return getOrCreateConfiguration(target).getGrpcPort();
         case "host": return getOrCreateConfiguration(target).getHost();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();

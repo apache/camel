@@ -82,6 +82,38 @@ public interface WeaviateComponentBuilderFactory {
         }
     
         /**
+         * gRPC host for Weaviate server connection.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param grpcHost the value to set
+         * @return the dsl builder
+         */
+        default WeaviateComponentBuilder grpcHost(java.lang.String grpcHost) {
+            doSetProperty("grpcHost", grpcHost);
+            return this;
+        }
+    
+        
+        /**
+         * gRPC port for Weaviate server connection.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Default: 50051
+         * Group: producer
+         * 
+         * @param grpcPort the value to set
+         * @return the dsl builder
+         */
+        default WeaviateComponentBuilder grpcPort(java.lang.Integer grpcPort) {
+            doSetProperty("grpcPort", grpcPort);
+            return this;
+        }
+    
+        /**
          * Weaviate server host to connect to.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -131,6 +163,7 @@ public interface WeaviateComponentBuilderFactory {
          * @param proxyHost the value to set
          * @return the dsl builder
          */
+        @Deprecated
         default WeaviateComponentBuilder proxyHost(java.lang.String proxyHost) {
             doSetProperty("proxyHost", proxyHost);
             return this;
@@ -146,6 +179,7 @@ public interface WeaviateComponentBuilderFactory {
          * @param proxyPort the value to set
          * @return the dsl builder
          */
+        @Deprecated
         default WeaviateComponentBuilder proxyPort(java.lang.Integer proxyPort) {
             doSetProperty("proxyPort", proxyPort);
             return this;
@@ -161,16 +195,19 @@ public interface WeaviateComponentBuilderFactory {
          * @param proxyScheme the value to set
          * @return the dsl builder
          */
+        @Deprecated
         default WeaviateComponentBuilder proxyScheme(java.lang.String proxyScheme) {
             doSetProperty("proxyScheme", proxyScheme);
             return this;
         }
     
+        
         /**
          * Scheme used to connect to weaviate.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
+         * Default: http
          * Group: producer
          * 
          * @param scheme the value to set
@@ -225,6 +262,8 @@ public interface WeaviateComponentBuilderFactory {
             switch (name) {
             case "apiKey": getOrCreateConfiguration((WeaviateVectorDbComponent) component).setApiKey((java.lang.String) value); return true;
             case "configuration": ((WeaviateVectorDbComponent) component).setConfiguration((org.apache.camel.component.weaviate.WeaviateVectorDbConfiguration) value); return true;
+            case "grpcHost": getOrCreateConfiguration((WeaviateVectorDbComponent) component).setGrpcHost((java.lang.String) value); return true;
+            case "grpcPort": getOrCreateConfiguration((WeaviateVectorDbComponent) component).setGrpcPort((java.lang.Integer) value); return true;
             case "host": getOrCreateConfiguration((WeaviateVectorDbComponent) component).setHost((java.lang.String) value); return true;
             case "lazyStartProducer": ((WeaviateVectorDbComponent) component).setLazyStartProducer((boolean) value); return true;
             case "proxyHost": getOrCreateConfiguration((WeaviateVectorDbComponent) component).setProxyHost((java.lang.String) value); return true;

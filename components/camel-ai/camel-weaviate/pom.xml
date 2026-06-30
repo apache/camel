@@ -35,7 +35,7 @@
         <camel.surefire.parallel>true</camel.surefire.parallel>
         <camel.surefire.parallel.factor>4</camel.surefire.parallel.factor>
 
-        <!-- Milvus is not available on these platforms -->
+        <!-- Weaviate is not available on these platforms -->
         <skipITs.s390x>true</skipITs.s390x>
         <skipTests.s390x>true</skipTests.s390x>
     </properties>
@@ -52,10 +52,12 @@
             <version>${langchain4j-version}</version>
         </dependency>
 
+        <!-- classifier=all is required: without it, gRPC's ServiceLoader breaks in fat JARs -->
         <dependency>
             <groupId>io.weaviate</groupId>
-            <artifactId>client</artifactId>
+            <artifactId>client6</artifactId>
             <version>${weaviate-client-version}</version>
+            <classifier>all</classifier>
         </dependency>
 
         <!-- test infra -->

@@ -25,7 +25,11 @@ public class WeaviateVectorDbConfigurationConfigurer extends org.apache.camel.su
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "apikey":
         case "apiKey": target.setApiKey(property(camelContext, java.lang.String.class, value)); return true;
-        case "client": target.setClient(property(camelContext, io.weaviate.client.WeaviateClient.class, value)); return true;
+        case "client": target.setClient(property(camelContext, io.weaviate.client6.v1.api.WeaviateClient.class, value)); return true;
+        case "grpchost":
+        case "grpcHost": target.setGrpcHost(property(camelContext, java.lang.String.class, value)); return true;
+        case "grpcport":
+        case "grpcPort": target.setGrpcPort(property(camelContext, java.lang.Integer.class, value)); return true;
         case "host": target.setHost(property(camelContext, java.lang.String.class, value)); return true;
         case "proxyhost":
         case "proxyHost": target.setProxyHost(property(camelContext, java.lang.String.class, value)); return true;
@@ -43,7 +47,11 @@ public class WeaviateVectorDbConfigurationConfigurer extends org.apache.camel.su
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "apikey":
         case "apiKey": return java.lang.String.class;
-        case "client": return io.weaviate.client.WeaviateClient.class;
+        case "client": return io.weaviate.client6.v1.api.WeaviateClient.class;
+        case "grpchost":
+        case "grpcHost": return java.lang.String.class;
+        case "grpcport":
+        case "grpcPort": return java.lang.Integer.class;
         case "host": return java.lang.String.class;
         case "proxyhost":
         case "proxyHost": return java.lang.String.class;
@@ -63,6 +71,10 @@ public class WeaviateVectorDbConfigurationConfigurer extends org.apache.camel.su
         case "apikey":
         case "apiKey": return target.getApiKey();
         case "client": return target.getClient();
+        case "grpchost":
+        case "grpcHost": return target.getGrpcHost();
+        case "grpcport":
+        case "grpcPort": return target.getGrpcPort();
         case "host": return target.getHost();
         case "proxyhost":
         case "proxyHost": return target.getProxyHost();
