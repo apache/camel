@@ -60,6 +60,7 @@ class SqlTraceTab implements MonitorTab {
     private boolean sortReversed;
     private int detailScroll;
     private boolean wordWrap = true;
+    private String selectedKey;
 
     SqlTraceTab(MonitorContext ctx) {
         this.ctx = ctx;
@@ -91,10 +92,17 @@ class SqlTraceTab implements MonitorTab {
         }
         if (ke.isHome()) {
             detailScroll = 0;
+            selectedKey = null;
+            tableState.select(0);
             return true;
         }
         if (ke.isEnd()) {
-            detailScroll = Integer.MAX_VALUE;
+            detailScroll = 0;
+            selectedKey = null;
+            IntegrationInfo ei = ctx.findSelectedIntegration();
+            if (ei != null && !ei.sqlTraceStatements.isEmpty()) {
+                tableState.select(ei.sqlTraceStatements.size() - 1);
+            }
             return true;
         }
         if (ke.isPageUp()) {
@@ -116,12 +124,14 @@ class SqlTraceTab implements MonitorTab {
     @Override
     public void navigateUp() {
         detailScroll = 0;
+        selectedKey = null;
         tableState.selectPrevious();
     }
 
     @Override
     public void navigateDown() {
         detailScroll = 0;
+        selectedKey = null;
         IntegrationInfo info = ctx.findSelectedIntegration();
         if (info != null) {
             tableState.selectNext(info.sqlTraceStatements.size());
@@ -173,9 +183,23 @@ class SqlTraceTab implements MonitorTab {
         frame.renderWidget(kpi, area);
     }
 
+    private static String traceKey(SqlTraceInfo si) {
+        return si.exchangeId + "@" + si.timestamp;
+    }
+
     private void renderMasterDetail(Frame frame, Rect area, IntegrationInfo info) {
         List<SqlTraceInfo> sorted = new ArrayList<>(info.sqlTraceStatements);
         sorted.sort(this::sortTrace);
+
+        // follow the previously selected row when new data shifts indices
+        if (selectedKey != null) {
+            for (int i = 0; i < sorted.size(); i++) {
+                if (selectedKey.equals(traceKey(sorted.get(i)))) {
+                    tableState.select(i);
+                    break;
+                }
+            }
+        }
 
         // auto-select first row when data arrives
         if (!sorted.isEmpty() && tableState.selected() == null) {
@@ -186,6 +210,7 @@ class SqlTraceTab implements MonitorTab {
         Integer sel = tableState.selected();
         if (sel != null && sel >= 0 && sel < sorted.size()) {
             selected = sorted.get(sel);
+            selectedKey = traceKey(selected);
         }
         boolean showDetail = selected != null;
 
@@ -335,8 +360,8 @@ class SqlTraceTab implements MonitorTab {
     public void renderFooter(List<Span> spans) {
         hint(spans, "Esc", "back");
         hint(spans, "↑↓", "navigate");
-        hint(spans, "PgUp/Dn", "scroll detail");
         hint(spans, "Home/End", "top/end");
+        hint(spans, "PgUp/Dn", "scroll detail");
         hint(spans, "s", "sort");
         hint(spans, "w", "wrap [" + (wordWrap ? "on" : "off") + "]");
     }
