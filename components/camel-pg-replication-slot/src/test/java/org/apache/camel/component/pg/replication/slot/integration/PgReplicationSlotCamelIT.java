@@ -60,7 +60,7 @@ public class PgReplicationSlotCamelIT extends PgReplicationITSupport {
             public void configure() {
 
                 // poll quickly: this consumer delivers one decoded message per poll, so the default
-                // 1s initial delay + 500ms cadence makes 6 messages take ~3.5s and race the timeout
+                // 1s initial delay + 500ms cadence can take ~3.5s for 6 messages and race the 5s timeout under CI load
                 String uriFormat
                         = "pg-replication-slot://{{postgres.service.address}}/camel/camel_test_slot:test_decoding?"
                           + "user={{postgres.user.name}}&password={{postgres.user.password}}"
