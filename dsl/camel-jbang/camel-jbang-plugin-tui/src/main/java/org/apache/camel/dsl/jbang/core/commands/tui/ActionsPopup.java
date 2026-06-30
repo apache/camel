@@ -1851,9 +1851,9 @@ class ActionsPopup {
             String impl = selectedInfraService.implementations.get(infraImplIndex);
             Rect implArea = new Rect(ix + labelW, row, fieldW, 1);
             frame.renderWidget(Paragraph.from(Line.from(
-                    Span.styled("◀ ", MonitorContext.HINT_KEY_STYLE),
+                    Span.styled("◀ ", Theme.hintKey()),
                     Span.raw(impl),
-                    Span.styled(" ▶", MonitorContext.HINT_KEY_STYLE))), implArea);
+                    Span.styled(" ▶", Theme.hintKey()))), implArea);
             row++;
         }
 

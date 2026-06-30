@@ -104,7 +104,7 @@ class AiLogPopup {
                     .borderType(BorderType.ROUNDED).borders(Borders.ALL)
                     .title(" AI Log ")
                     .titleBottom(Title.from(Line.from(
-                            Span.styled(" Esc", MonitorContext.HINT_KEY_STYLE), Span.raw(" back "))))
+                            Span.styled(" Esc", Theme.hintKey()), Span.raw(" back "))))
                     .build();
             frame.renderWidget(block, popup);
             Rect inner = block.inner(popup);

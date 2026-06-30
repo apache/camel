@@ -20,6 +20,7 @@ $brand: #F69123;
 
 #accent         { color: $brand; }
 #accent-bg      { color: white; background: $brand; text-style: bold; }
+#hint-key       { color: black; background: $brand; text-style: bold; }
 #border         { color: #888888; }
 #border-focused { color: $brand; }
 #title          { color: $brand; text-style: bold; }

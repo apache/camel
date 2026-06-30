@@ -955,15 +955,15 @@ class OverviewTab implements MonitorTab {
         lines.add(Line.from(Span.styled("  💻 Or use the embedded JLine shell panel:", Style.EMPTY.bold())));
         lines.add(Line.from(List.of(
                 Span.raw("     Press "),
-                Span.styled(" F6 ", MonitorContext.HINT_KEY_STYLE),
+                Span.styled(" F6 ", Theme.hintKey()),
                 Span.raw(" to open the shell and run commands directly, e.g.:"))));
         lines.add(Line.from(Span.styled("     camel> run examples/demo.java", Theme.success())));
         lines.add(Line.from(Span.raw("")));
         lines.add(Line.from(List.of(
                 Span.styled("  ❔ For shortcut keys and documentation, press ", Theme.muted()),
-                Span.styled(" ? ", MonitorContext.HINT_KEY_STYLE),
+                Span.styled(" ? ", Theme.hintKey()),
                 Span.styled(" or ", Theme.muted()),
-                Span.styled(" F1 ", MonitorContext.HINT_KEY_STYLE),
+                Span.styled(" F1 ", Theme.hintKey()),
                 Span.styled(".", Theme.muted()))));
 
         frame.renderWidget(

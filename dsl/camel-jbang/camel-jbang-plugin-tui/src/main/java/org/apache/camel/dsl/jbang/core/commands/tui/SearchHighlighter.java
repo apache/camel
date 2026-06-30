@@ -248,14 +248,14 @@ class SearchHighlighter {
 
     void renderFooterHints(List<Span> spans) {
         if (findInputActive) {
-            spans.add(Span.styled(" /", HINT_KEY_STYLE));
+            spans.add(Span.styled(" /", Theme.hintKey()));
             spans.add(Span.raw(searchInputState.text() + "█  "));
             hint(spans, "Enter", "search");
             hintLast(spans, "Esc", "cancel");
             return;
         }
         if (highlightInputActive) {
-            spans.add(Span.styled(" h:", HINT_KEY_STYLE));
+            spans.add(Span.styled(" h:", Theme.hintKey()));
             spans.add(Span.raw(searchInputState.text() + "█  "));
             hint(spans, "Enter", "set");
             hintLast(spans, "Esc", "cancel");
@@ -271,7 +271,7 @@ class SearchHighlighter {
             String pos = findMatches.isEmpty()
                     ? "0/0"
                     : (findMatchIndex + 1) + "/" + findMatches.size();
-            spans.add(Span.styled("  /", HINT_KEY_STYLE));
+            spans.add(Span.styled("  /", Theme.hintKey()));
             spans.add(Span.raw("\"" + findTerm + "\" [" + pos + "]  "));
         }
     }

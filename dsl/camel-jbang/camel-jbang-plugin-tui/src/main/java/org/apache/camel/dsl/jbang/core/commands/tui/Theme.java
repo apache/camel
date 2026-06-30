@@ -54,6 +54,7 @@ final class Theme {
 
     // Fallback palette mirrors the dark stylesheet, used when CSS is unavailable.
     private static final Style FALLBACK_ACCENT_BG = Style.EMPTY.fg(Color.WHITE).bg(ACCENT).bold();
+    private static final Style FALLBACK_HINT_KEY = Style.EMPTY.fg(Color.BLACK).bg(ACCENT).bold();
     private static final Style FALLBACK_BORDER = Style.EMPTY.fg(Color.DARK_GRAY);
     private static final Style FALLBACK_BORDER_FOCUSED = Style.EMPTY.fg(ACCENT);
     private static final Style FALLBACK_TITLE = Style.EMPTY.fg(ACCENT).bold();
@@ -109,9 +110,14 @@ final class Theme {
         }
     }
 
-    /** White-on-orange: active tab highlight and hint keys. */
+    /** White-on-orange: active tab highlight. */
     static Style accentBg() {
         return style("accent-bg", FALLBACK_ACCENT_BG);
+    }
+
+    /** Black-on-orange chip: key hints in footers and prompts. */
+    static Style hintKey() {
+        return style("hint-key", FALLBACK_HINT_KEY);
     }
 
     /** Dim border for unfocused panels. */

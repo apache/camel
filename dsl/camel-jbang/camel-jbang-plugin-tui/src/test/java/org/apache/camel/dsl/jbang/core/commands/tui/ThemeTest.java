@@ -62,6 +62,7 @@ class ThemeTest {
         // not merely that the accessor exists.
         Theme.setMode("dark");
         assertEquals(Style.EMPTY.fg(Color.WHITE).bg(Theme.ACCENT).bold(), Theme.accentBg());
+        assertEquals(Style.EMPTY.fg(Color.BLACK).bg(Theme.ACCENT).bold(), Theme.hintKey());
         assertEquals(Style.EMPTY.fg(Color.DARK_GRAY), Theme.border());
         assertEquals(Style.EMPTY.fg(Theme.ACCENT), Theme.borderFocused());
         assertEquals(Style.EMPTY.fg(Theme.ACCENT).bold(), Theme.title());
@@ -125,6 +126,7 @@ class ThemeTest {
         // Resilience: even when resolution is exercised the palette is always usable.
         Theme.setMode("dark");
         assertNotNull(Theme.accentBg());
+        assertNotNull(Theme.hintKey());
         assertNotNull(Theme.border());
         assertNotNull(Theme.borderFocused());
         assertNotNull(Theme.title());
