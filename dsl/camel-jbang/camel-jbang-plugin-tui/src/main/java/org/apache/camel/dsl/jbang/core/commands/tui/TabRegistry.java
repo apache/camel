@@ -87,6 +87,7 @@ class TabRegistry {
     private OverviewTab overviewTab;
     private DataSourceTab dataSourceTab;
     private SqlQueryTab sqlQueryTab;
+    private SqlTraceTab sqlTraceTab;
 
     private MonitorTab activeMoreTab;
 
@@ -105,6 +106,7 @@ class TabRegistry {
         consumersTab = new ConsumersTab(ctx);
         dataSourceTab = new DataSourceTab(ctx);
         sqlQueryTab = new SqlQueryTab(ctx);
+        sqlTraceTab = new SqlTraceTab(ctx);
         endpointsTab = new EndpointsTab(ctx, dataService.metrics());
         httpTab = new HttpTab(ctx);
         healthTab = new HealthTab(ctx);
@@ -213,10 +215,11 @@ class TabRegistry {
             case 8 -> memoryTab;
             case 9 -> metricsTab;
             case 10 -> sqlQueryTab;
-            case 11 -> spansTab;
-            case 12 -> processTab;
-            case 13 -> startupTab;
-            case 14 -> threadsTab;
+            case 11 -> sqlTraceTab;
+            case 12 -> spansTab;
+            case 13 -> processTab;
+            case 14 -> startupTab;
+            case 15 -> threadsTab;
             default -> null;
         };
         if (activeMoreTab != null) {
@@ -240,6 +243,7 @@ class TabRegistry {
         consumersTab.onIntegrationChanged();
         dataSourceTab.onIntegrationChanged();
         sqlQueryTab.onIntegrationChanged();
+        sqlTraceTab.onIntegrationChanged();
         circuitBreakerTab.onIntegrationChanged();
         inflightTab.onIntegrationChanged();
         spansTab.onIntegrationChanged();

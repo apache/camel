@@ -89,8 +89,8 @@ class McpFacade {
 
     static final String[] MORE_TAB_NAMES = {
             "Beans", "Browse", "Circuit Breaker", "Classpath", "Configuration",
-            "Consumers", "DataSource", "Inflight", "Memory", "Metrics", "SQL Query", "Spans", "Process", "Startup",
-            "Threads"
+            "Consumers", "DataSource", "Inflight", "Memory", "Metrics", "SQL Query", "SQL Trace", "Spans", "Process",
+            "Startup", "Threads"
     };
 
     private final MonitorContext ctx;

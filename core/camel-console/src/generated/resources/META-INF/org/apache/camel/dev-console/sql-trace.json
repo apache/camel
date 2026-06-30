@@ -1,0 +1,15 @@
+{
+  "console": {
+    "kind": "console",
+    "group": "camel",
+    "name": "sql-trace",
+    "title": "SQL Trace",
+    "description": "Trace SQL query executions",
+    "deprecated": false,
+    "javaType": "org.apache.camel.impl.console.SqlTraceDevConsole",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-console",
+    "version": "4.21.0-SNAPSHOT"
+  }
+}
+

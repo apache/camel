@@ -180,6 +180,7 @@ public class CamelJBangMain implements Callable<Integer> {
                         .addSubcommand("route-controller", new CommandLine(new RouteControllerAction(this)))
                         .addSubcommand("service", new CommandLine(new ListService(this)))
                         .addSubcommand("source", new CommandLine(new CamelSourceAction(this)))
+                        .addSubcommand("sql-trace", new CommandLine(new ListSqlTrace(this)))
                         .addSubcommand("startup-recorder", new CommandLine(new CamelStartupRecorderAction(this)))
                         .addSubcommand("transformer", new CommandLine(new ListTransformer(this)))
                         .addSubcommand("variable", new CommandLine(new ListVariable(this)))
