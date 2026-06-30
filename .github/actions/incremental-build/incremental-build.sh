@@ -256,13 +256,20 @@ runScalpelDetection() {
   # Strip the Maven "!:" prefix from each entry to get bare artifact IDs for Scalpel.
   local skip_downstream
   skip_downstream=$(echo "$EXCLUSION_LIST" | sed 's/!://g')
-  local scalpel_args="-Dscalpel.enabled=true -Dscalpel.mode=report -Dscalpel.fullBuildTriggers= -Dscalpel.fetchBaseBranch=false -Dscalpel.excludePaths=.github/** -Dscalpel.skipTestsForDownstreamModules=${skip_downstream}"
-  # For workflow_dispatch, GITHUB_BASE_REF may not be set
-  if [ -z "${GITHUB_BASE_REF:-}" ]; then
-    scalpel_args="$scalpel_args -Dscalpel.baseBranch=origin/main"
+  # Always pass baseBranch explicitly — relying on Scalpel's env.GITHUB_BASE_REF
+  # auto-detection is fragile across Maven wrappers and CI rerun contexts.
+  local base_branch="origin/${GITHUB_BASE_REF:-main}"
+  local scalpel_args="-Dscalpel.enabled=true -Dscalpel.mode=report -Dscalpel.fullBuildTriggers= -Dscalpel.fetchBaseBranch=false -Dscalpel.baseBranch=${base_branch} -Dscalpel.excludePaths=.github/** -Dscalpel.skipTestsForDownstreamModules=${skip_downstream}"
+
+  # Verify merge base is reachable before running Scalpel
+  if ! git merge-base HEAD "${base_branch}" >/dev/null 2>&1; then
+    echo "  WARNING: merge base between HEAD and ${base_branch} is not reachable"
+    echo "  HEAD=$(git rev-parse HEAD 2>/dev/null), ${base_branch}=$(git rev-parse ${base_branch} 2>/dev/null || echo 'NOT FOUND')"
+    scalpel_failure_reason="Merge base not reachable between HEAD and ${base_branch} (shallow clone too shallow?)"
+    return
   fi
 
-  echo "  Scalpel: running mvn validate (report mode)..."
+  echo "  Scalpel: running mvn validate (report mode, base=${base_branch})..."
   ./mvnw -B -q validate $scalpel_args ${MAVEN_EXTRA_ARGS:-} -l /tmp/scalpel-validate.log 2>/dev/null || {
     echo "  WARNING: Scalpel detection failed (exit $?), skipping"
     grep -i "scalpel" /tmp/scalpel-validate.log 2>/dev/null | head -5 || true
@@ -274,7 +281,10 @@ runScalpelDetection() {
   local report="target/scalpel-report.json"
   if [ ! -f "$report" ]; then
     echo "  WARNING: Scalpel report not found at $report"
-    grep -i "scalpel" /tmp/scalpel-validate.log 2>/dev/null | head -5 || true
+    echo "  Scalpel log (last 10 lines):"
+    tail -10 /tmp/scalpel-validate.log 2>/dev/null || true
+    echo "  Scalpel-specific messages:"
+    grep -i "scalpel\|merge.base\|JGit\|no changes" /tmp/scalpel-validate.log 2>/dev/null | head -10 || true
     scalpel_failure_reason="Scalpel report not found (merge-base may be unreachable in shallow clone)"
     return
   fi
