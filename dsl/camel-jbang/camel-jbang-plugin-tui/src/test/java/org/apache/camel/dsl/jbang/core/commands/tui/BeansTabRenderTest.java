@@ -20,10 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
-import dev.tamboui.buffer.Buffer;
-import dev.tamboui.layout.Rect;
-import dev.tamboui.style.Color;
-import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.Span;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -56,7 +52,7 @@ class BeansTabRenderTest {
         ctx.selectedPid = null;
 
         BeansTab tab = new BeansTab(ctx);
-        String rendered = renderToString(tab, 100, 10);
+        String rendered = TuiTestHelper.renderToString(tab, 100, 10);
 
         assertTrue(rendered.contains("No integration selected") || rendered.contains("Select an integration"),
                 "Should show selection prompt when no integration selected");
@@ -65,7 +61,7 @@ class BeansTabRenderTest {
     @Test
     void renderShowsBlockTitle() {
         BeansTab tab = new BeansTab(ctx);
-        String rendered = renderToString(tab, 100, 20);
+        String rendered = TuiTestHelper.renderToString(tab, 100, 20);
 
         assertTrue(rendered.contains("Beans"), "Should show 'Beans' in the block title");
     }
@@ -73,7 +69,7 @@ class BeansTabRenderTest {
     @Test
     void renderShowsNoBeans() {
         BeansTab tab = new BeansTab(ctx);
-        String rendered = renderToString(tab, 100, 20);
+        String rendered = TuiTestHelper.renderToString(tab, 100, 20);
 
         assertTrue(rendered.contains("No beans"), "Should show 'No beans' when no bean data is loaded");
     }
@@ -95,28 +91,4 @@ class BeansTabRenderTest {
         assertTrue(footer.contains("detail"), "Footer should contain detail hint");
     }
 
-    // ---- Helper methods ----
-
-    private static String renderToString(MonitorTab tab, int width, int height) {
-        Rect area = new Rect(0, 0, width, height);
-        Buffer buffer = Buffer.empty(area);
-        Frame frame = Frame.forTesting(buffer);
-        tab.render(frame, area);
-        return HealthTabRenderTest.bufferToString(buffer);
-    }
-
-    private static boolean findCellWithColor(Buffer buffer, String symbol, Color expectedFg) {
-        for (int y = 0; y < buffer.height(); y++) {
-            for (int x = 0; x < buffer.width(); x++) {
-                var cell = buffer.get(x, y);
-                if (symbol.equals(cell.symbol())) {
-                    var fg = cell.style().fg().orElse(null);
-                    if (expectedFg.equals(fg)) {
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
-    }
 }

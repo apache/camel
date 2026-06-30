@@ -20,10 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
-import dev.tamboui.buffer.Buffer;
-import dev.tamboui.layout.Rect;
-import dev.tamboui.style.Color;
-import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.Span;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -55,7 +51,7 @@ class MemoryTabRenderTest {
     void renderNoSelectionShowsPrompt() {
         ctx.selectedPid = null;
         MemoryTab tab = new MemoryTab(ctx, new MetricsCollector());
-        String rendered = renderToString(tab, 120, 30);
+        String rendered = TuiTestHelper.renderToString(tab, 120, 30);
         assertTrue(rendered.contains("No integration selected") || rendered.contains("Select an integration"),
                 "Should show selection prompt when no integration selected");
     }
@@ -63,7 +59,7 @@ class MemoryTabRenderTest {
     @Test
     void renderShowsMemoryTitle() {
         MemoryTab tab = new MemoryTab(ctx, new MetricsCollector());
-        String rendered = renderToString(tab, 120, 30);
+        String rendered = TuiTestHelper.renderToString(tab, 120, 30);
         assertTrue(rendered.contains("Memory"), "Should show Memory in the block title");
     }
 
@@ -74,7 +70,7 @@ class MemoryTabRenderTest {
         info.heapMemMax = 1_000_000_000L;
 
         MemoryTab tab = new MemoryTab(ctx, new MetricsCollector());
-        String rendered = renderToString(tab, 120, 30);
+        String rendered = TuiTestHelper.renderToString(tab, 120, 30);
         assertTrue(rendered.contains("Heap"), "Should show Heap memory section header");
     }
 
@@ -84,7 +80,7 @@ class MemoryTabRenderTest {
         info.peakThreadCount = 50;
 
         MemoryTab tab = new MemoryTab(ctx, new MetricsCollector());
-        String rendered = renderToString(tab, 120, 30);
+        String rendered = TuiTestHelper.renderToString(tab, 120, 30);
         assertTrue(rendered.contains("42") || rendered.contains("Thread"),
                 "Should show thread count or thread section");
     }
@@ -95,7 +91,7 @@ class MemoryTabRenderTest {
         info.nonHeapMemCommitted = 70_000_000L;
 
         MemoryTab tab = new MemoryTab(ctx, new MetricsCollector());
-        String rendered = renderToString(tab, 120, 30);
+        String rendered = TuiTestHelper.renderToString(tab, 120, 30);
         assertTrue(rendered.contains("Non-Heap") || rendered.contains("Non"),
                 "Should show Non-Heap memory section");
     }
@@ -116,7 +112,7 @@ class MemoryTabRenderTest {
         info.heapMemMax = 1_000_000_000L;
 
         MemoryTab tab = new MemoryTab(ctx, new MetricsCollector());
-        String rendered = renderToString(tab, 120, 30);
+        String rendered = TuiTestHelper.renderToString(tab, 120, 30);
 
         assertTrue(rendered.contains("Heap") || rendered.contains("Memory"),
                 "Should show heap memory section");
@@ -128,34 +124,10 @@ class MemoryTabRenderTest {
         info.peakThreadCount = 50;
 
         MemoryTab tab = new MemoryTab(ctx, new MetricsCollector());
-        String rendered = renderToString(tab, 120, 30);
+        String rendered = TuiTestHelper.renderToString(tab, 120, 30);
 
         assertTrue(rendered.contains("42") || rendered.contains("Thread"),
                 "Should show thread count or thread section");
     }
 
-    // ---- Helper methods ----
-
-    private static String renderToString(MonitorTab tab, int width, int height) {
-        Rect area = new Rect(0, 0, width, height);
-        Buffer buffer = Buffer.empty(area);
-        Frame frame = Frame.forTesting(buffer);
-        tab.render(frame, area);
-        return HealthTabRenderTest.bufferToString(buffer);
-    }
-
-    private static boolean findCellWithColor(Buffer buffer, String symbol, Color expectedFg) {
-        for (int y = 0; y < buffer.height(); y++) {
-            for (int x = 0; x < buffer.width(); x++) {
-                var cell = buffer.get(x, y);
-                if (symbol.equals(cell.symbol())) {
-                    var fg = cell.style().fg().orElse(null);
-                    if (expectedFg.equals(fg)) {
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
-    }
 }

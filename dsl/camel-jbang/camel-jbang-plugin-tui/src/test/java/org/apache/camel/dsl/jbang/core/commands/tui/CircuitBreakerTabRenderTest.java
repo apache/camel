@@ -58,7 +58,7 @@ class CircuitBreakerTabRenderTest {
         addCircuitBreaker("route1", "cb1", "resilience4j", "closed");
 
         CircuitBreakerTab tab = new CircuitBreakerTab(ctx, new MetricsCollector());
-        String rendered = renderToString(tab, 160, 30);
+        String rendered = TuiTestHelper.renderToString(tab, 160, 30);
 
         assertTrue(rendered.contains("ROUTE"), "Should show ROUTE header");
         assertTrue(rendered.contains("ID"), "Should show ID header");
@@ -71,7 +71,7 @@ class CircuitBreakerTabRenderTest {
         addCircuitBreaker("my-route", "cb-main", "resilience4j", "closed");
 
         CircuitBreakerTab tab = new CircuitBreakerTab(ctx, new MetricsCollector());
-        String rendered = renderToString(tab, 160, 30);
+        String rendered = TuiTestHelper.renderToString(tab, 160, 30);
 
         assertTrue(rendered.contains("my-route"), "Should render route ID");
         assertTrue(rendered.contains("cb-main"), "Should render circuit breaker ID");
@@ -89,7 +89,7 @@ class CircuitBreakerTabRenderTest {
         Frame frame = Frame.forTesting(buffer);
         tab.render(frame, area);
 
-        boolean foundCyan = findCellWithColor(buffer, "m", Color.CYAN);
+        boolean foundCyan = TuiTestHelper.findCellWithColor(buffer, "m", Color.CYAN);
         assertTrue(foundCyan, "Route ID should use CYAN color");
     }
 
@@ -104,7 +104,7 @@ class CircuitBreakerTabRenderTest {
         Frame frame = Frame.forTesting(buffer);
         tab.render(frame, area);
 
-        boolean foundGreen = findCellWithColor(buffer, "c", Color.GREEN);
+        boolean foundGreen = TuiTestHelper.findCellWithColor(buffer, "c", Color.GREEN);
         assertTrue(foundGreen, "closed state should be rendered in GREEN");
     }
 
@@ -119,7 +119,7 @@ class CircuitBreakerTabRenderTest {
         Frame frame = Frame.forTesting(buffer);
         tab.render(frame, area);
 
-        boolean foundRed = findCellWithColor(buffer, "o", Color.LIGHT_RED);
+        boolean foundRed = TuiTestHelper.findCellWithColor(buffer, "o", Color.LIGHT_RED);
         assertTrue(foundRed, "open state should be rendered in LIGHT_RED");
     }
 
@@ -134,7 +134,7 @@ class CircuitBreakerTabRenderTest {
         Frame frame = Frame.forTesting(buffer);
         tab.render(frame, area);
 
-        boolean foundYellow = findCellWithColor(buffer, "h", Color.YELLOW);
+        boolean foundYellow = TuiTestHelper.findCellWithColor(buffer, "h", Color.YELLOW);
         assertTrue(foundYellow, "half_open state should be rendered in YELLOW");
     }
 
@@ -144,7 +144,7 @@ class CircuitBreakerTabRenderTest {
         addCircuitBreaker("route-beta", "cb-beta", "fault-tolerance", "open");
 
         CircuitBreakerTab tab = new CircuitBreakerTab(ctx, new MetricsCollector());
-        String rendered = renderToString(tab, 160, 30);
+        String rendered = TuiTestHelper.renderToString(tab, 160, 30);
 
         assertTrue(rendered.contains("cb-alpha"), "Should render first circuit breaker");
         assertTrue(rendered.contains("cb-beta"), "Should render second circuit breaker");
@@ -153,7 +153,7 @@ class CircuitBreakerTabRenderTest {
     @Test
     void renderEmptyShowsPlaceholder() {
         CircuitBreakerTab tab = new CircuitBreakerTab(ctx, new MetricsCollector());
-        String rendered = renderToString(tab, 160, 20);
+        String rendered = TuiTestHelper.renderToString(tab, 160, 20);
 
         assertTrue(rendered.contains("No circuit breakers"),
                 "Should show placeholder when no circuit breakers exist");
@@ -164,7 +164,7 @@ class CircuitBreakerTabRenderTest {
         ctx.selectedPid = null;
 
         CircuitBreakerTab tab = new CircuitBreakerTab(ctx, new MetricsCollector());
-        String rendered = renderToString(tab, 120, 15);
+        String rendered = TuiTestHelper.renderToString(tab, 120, 15);
 
         assertTrue(rendered.contains("No integration selected") || rendered.contains("Select an integration"),
                 "Should show selection prompt when no integration selected");
@@ -177,13 +177,13 @@ class CircuitBreakerTabRenderTest {
         CircuitBreakerTab tab = new CircuitBreakerTab(ctx, new MetricsCollector());
 
         // Default sort is "route" — header should have a sort indicator on ROUTE
-        String rendered1 = renderToString(tab, 160, 30);
+        String rendered1 = TuiTestHelper.renderToString(tab, 160, 30);
         assertTrue(rendered1.contains("ROUTE▼") || rendered1.contains("ROUTE▲"),
                 "Default sort should show indicator on ROUTE column");
 
         // Press 's' to cycle to next sort column (id)
         tab.handleKeyEvent(KeyEvent.ofChar('s', KeyModifiers.NONE));
-        String rendered2 = renderToString(tab, 160, 30);
+        String rendered2 = TuiTestHelper.renderToString(tab, 160, 30);
         assertTrue(rendered2.contains("ID▼") || rendered2.contains("ID▲"),
                 "After one sort cycle, indicator should move to ID");
     }
@@ -212,28 +212,5 @@ class CircuitBreakerTabRenderTest {
         cb.state = state;
         info.circuitBreakers.add(cb);
         return cb;
-    }
-
-    private static String renderToString(MonitorTab tab, int width, int height) {
-        Rect area = new Rect(0, 0, width, height);
-        Buffer buffer = Buffer.empty(area);
-        Frame frame = Frame.forTesting(buffer);
-        tab.render(frame, area);
-        return HealthTabRenderTest.bufferToString(buffer);
-    }
-
-    private static boolean findCellWithColor(Buffer buffer, String symbol, Color expectedFg) {
-        for (int y = 0; y < buffer.height(); y++) {
-            for (int x = 0; x < buffer.width(); x++) {
-                var cell = buffer.get(x, y);
-                if (symbol.equals(cell.symbol())) {
-                    var fg = cell.style().fg().orElse(null);
-                    if (expectedFg.equals(fg)) {
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
     }
 }

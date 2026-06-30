@@ -58,7 +58,7 @@ class MetricsTabRenderTest {
         ctx.selectedPid = null;
 
         MetricsTab tab = new MetricsTab(ctx);
-        String rendered = renderToString(tab, 100, 10);
+        String rendered = TuiTestHelper.renderToString(tab, 100, 10);
 
         assertTrue(rendered.contains("No integration selected") || rendered.contains("Select an integration"),
                 "Should show selection prompt when no integration selected");
@@ -67,7 +67,7 @@ class MetricsTabRenderTest {
     @Test
     void renderEmptyShowsPlaceholder() {
         MetricsTab tab = new MetricsTab(ctx);
-        String rendered = renderToString(tab, 140, 10);
+        String rendered = TuiTestHelper.renderToString(tab, 140, 10);
 
         assertTrue(rendered.contains("No metrics") || rendered.contains("--observe"),
                 "Should show placeholder when no metrics exist");
@@ -80,7 +80,7 @@ class MetricsTabRenderTest {
         MetricsTab tab = new MetricsTab(ctx);
         // Switch to table mode to see individual metrics
         tab.handleKeyEvent(KeyEvent.ofChar('d', KeyModifiers.NONE));
-        String rendered = renderToString(tab, 140, 20);
+        String rendered = TuiTestHelper.renderToString(tab, 140, 20);
 
         assertTrue(rendered.contains("camel.exchanges.total"),
                 "Should render the metric name");
@@ -93,7 +93,7 @@ class MetricsTabRenderTest {
         MetricsTab tab = new MetricsTab(ctx);
         // Switch to table mode
         tab.handleKeyEvent(KeyEvent.ofChar('d', KeyModifiers.NONE));
-        String rendered = renderToString(tab, 140, 20);
+        String rendered = TuiTestHelper.renderToString(tab, 140, 20);
 
         assertTrue(rendered.contains("TYPE"), "Should show TYPE header");
         assertTrue(rendered.contains("NAME"), "Should show NAME header");
@@ -117,7 +117,7 @@ class MetricsTabRenderTest {
 
         // Use "." which only appears in the metric name (e.g., "camel.exchanges.total"),
         // not in the type label "counter".
-        boolean foundCyan = findCellWithColor(buffer, ".", Color.CYAN);
+        boolean foundCyan = TuiTestHelper.findCellWithColor(buffer, ".", Color.CYAN);
         assertTrue(foundCyan, "Metric name should use CYAN color");
     }
 
@@ -129,7 +129,7 @@ class MetricsTabRenderTest {
         MetricsTab tab = new MetricsTab(ctx);
         // Switch to table mode
         tab.handleKeyEvent(KeyEvent.ofChar('d', KeyModifiers.NONE));
-        String rendered = renderToString(tab, 140, 20);
+        String rendered = TuiTestHelper.renderToString(tab, 140, 20);
 
         assertTrue(rendered.contains("camel.exchanges.total"), "Should render first metric name");
         assertTrue(rendered.contains("jvm.memory.used"), "Should render second metric name");
@@ -156,7 +156,7 @@ class MetricsTabRenderTest {
         MetricsTab tab = new MetricsTab(ctx);
         // Switch to table mode
         tab.handleKeyEvent(KeyEvent.ofChar('d', KeyModifiers.NONE));
-        String rendered = renderToString(tab, 140, 20);
+        String rendered = TuiTestHelper.renderToString(tab, 140, 20);
 
         assertTrue(rendered.contains("counter"), "Should render the metric type 'counter'");
     }
@@ -172,26 +172,4 @@ class MetricsTabRenderTest {
         return m;
     }
 
-    private static String renderToString(MonitorTab tab, int width, int height) {
-        Rect area = new Rect(0, 0, width, height);
-        Buffer buffer = Buffer.empty(area);
-        Frame frame = Frame.forTesting(buffer);
-        tab.render(frame, area);
-        return HealthTabRenderTest.bufferToString(buffer);
-    }
-
-    private static boolean findCellWithColor(Buffer buffer, String symbol, Color expectedFg) {
-        for (int y = 0; y < buffer.height(); y++) {
-            for (int x = 0; x < buffer.width(); x++) {
-                var cell = buffer.get(x, y);
-                if (symbol.equals(cell.symbol())) {
-                    var fg = cell.style().fg().orElse(null);
-                    if (expectedFg.equals(fg)) {
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
-    }
 }

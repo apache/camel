@@ -54,7 +54,7 @@ class ConfigurationTabRenderTest {
         addProperty("camel.main.name", "my-app", "application.properties");
 
         ConfigurationTab tab = new ConfigurationTab(ctx);
-        String rendered = renderToString(tab, 120, 20);
+        String rendered = TuiTestHelper.renderToString(tab, 120, 20);
 
         assertTrue(rendered.contains("camel.main.name"), "Should render property key");
         assertTrue(rendered.contains("my-app"), "Should render property value");
@@ -71,14 +71,14 @@ class ConfigurationTabRenderTest {
         Frame frame = Frame.forTesting(buffer);
         tab.render(frame, area);
 
-        assertTrue(findCellWithColor(buffer, "c", Color.CYAN),
+        assertTrue(TuiTestHelper.findCellWithColor(buffer, "c", Color.CYAN),
                 "Property key should be rendered in CYAN");
     }
 
     @Test
     void renderEmptyShowsPlaceholder() {
         ConfigurationTab tab = new ConfigurationTab(ctx);
-        String rendered = renderToString(tab, 120, 10);
+        String rendered = TuiTestHelper.renderToString(tab, 120, 10);
 
         assertTrue(rendered.contains("No configuration properties available"),
                 "Should show placeholder when no properties exist");
@@ -89,7 +89,7 @@ class ConfigurationTabRenderTest {
         ctx.selectedPid = null;
 
         ConfigurationTab tab = new ConfigurationTab(ctx);
-        String rendered = renderToString(tab, 100, 10);
+        String rendered = TuiTestHelper.renderToString(tab, 100, 10);
 
         assertTrue(rendered.contains("No integration selected") || rendered.contains("Select an integration"),
                 "Should show selection prompt when no integration selected");
@@ -101,7 +101,7 @@ class ConfigurationTabRenderTest {
         addProperty("camel.main.shutdownTimeout", "30", "application.properties");
 
         ConfigurationTab tab = new ConfigurationTab(ctx);
-        String rendered = renderToString(tab, 120, 20);
+        String rendered = TuiTestHelper.renderToString(tab, 120, 20);
 
         assertTrue(rendered.contains("2 properties"), "Title should show property count");
     }
@@ -112,7 +112,7 @@ class ConfigurationTabRenderTest {
         addProperty("camel.main.shutdownTimeout", "30", "application.properties");
 
         ConfigurationTab tab = new ConfigurationTab(ctx);
-        String rendered = renderToString(tab, 120, 20);
+        String rendered = TuiTestHelper.renderToString(tab, 120, 20);
 
         assertTrue(rendered.contains("camel.main.name"), "Should render first property key");
         assertTrue(rendered.contains("my-app"), "Should render first property value");
@@ -131,7 +131,7 @@ class ConfigurationTabRenderTest {
         Frame frame = Frame.forTesting(buffer);
         tab.render(frame, area);
 
-        assertTrue(findCellWithColor(buffer, "x", Color.DARK_GRAY),
+        assertTrue(TuiTestHelper.findCellWithColor(buffer, "x", Color.DARK_GRAY),
                 "Secret value 'xxxxxx' should be rendered in DARK_GRAY");
     }
 
@@ -144,28 +144,5 @@ class ConfigurationTabRenderTest {
         prop.source = source;
         info.configProperties.add(prop);
         return prop;
-    }
-
-    private static String renderToString(MonitorTab tab, int width, int height) {
-        Rect area = new Rect(0, 0, width, height);
-        Buffer buffer = Buffer.empty(area);
-        Frame frame = Frame.forTesting(buffer);
-        tab.render(frame, area);
-        return HealthTabRenderTest.bufferToString(buffer);
-    }
-
-    private static boolean findCellWithColor(Buffer buffer, String symbol, Color expectedFg) {
-        for (int y = 0; y < buffer.height(); y++) {
-            for (int x = 0; x < buffer.width(); x++) {
-                var cell = buffer.get(x, y);
-                if (symbol.equals(cell.symbol())) {
-                    var fg = cell.style().fg().orElse(null);
-                    if (expectedFg.equals(fg)) {
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
     }
 }

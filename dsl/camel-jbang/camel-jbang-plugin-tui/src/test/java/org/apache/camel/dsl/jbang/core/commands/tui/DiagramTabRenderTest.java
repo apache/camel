@@ -20,10 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
-import dev.tamboui.buffer.Buffer;
-import dev.tamboui.layout.Rect;
-import dev.tamboui.style.Color;
-import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.Span;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -56,7 +52,7 @@ class DiagramTabRenderTest {
         ctx.selectedPid = null;
 
         DiagramTab tab = new DiagramTab(ctx);
-        String rendered = renderToString(tab, 100, 20);
+        String rendered = TuiTestHelper.renderToString(tab, 100, 20);
 
         assertTrue(rendered.contains("No integration selected") || rendered.contains("Select an integration"),
                 "Should show selection prompt when no integration selected");
@@ -65,7 +61,7 @@ class DiagramTabRenderTest {
     @Test
     void renderShowsBlockTitle() {
         DiagramTab tab = new DiagramTab(ctx);
-        String rendered = renderToString(tab, 100, 20);
+        String rendered = TuiTestHelper.renderToString(tab, 100, 20);
 
         assertTrue(rendered.contains("Diagram") || rendered.contains("Topology"),
                 "Should show Diagram or Topology in the block title");
@@ -76,7 +72,7 @@ class DiagramTabRenderTest {
         addRoute("my-route", "timer://tick", "Started");
 
         DiagramTab tab = new DiagramTab(ctx);
-        String rendered = renderToString(tab, 100, 20);
+        String rendered = TuiTestHelper.renderToString(tab, 100, 20);
 
         assertTrue(rendered.contains("Diagram") || rendered.contains("Loading diagram"),
                 "Should show diagram area or loading placeholder when routes exist");
@@ -101,7 +97,7 @@ class DiagramTabRenderTest {
     @Test
     void renderShowsLoadingWhenNoRoutes() {
         DiagramTab tab = new DiagramTab(ctx);
-        String rendered = renderToString(tab, 100, 20);
+        String rendered = TuiTestHelper.renderToString(tab, 100, 20);
 
         assertTrue(rendered.contains("Loading diagram") || rendered.contains("Diagram"),
                 "Should show loading placeholder or diagram title when no diagram data is loaded");
@@ -119,26 +115,4 @@ class DiagramTabRenderTest {
         return route;
     }
 
-    private static String renderToString(MonitorTab tab, int width, int height) {
-        Rect area = new Rect(0, 0, width, height);
-        Buffer buffer = Buffer.empty(area);
-        Frame frame = Frame.forTesting(buffer);
-        tab.render(frame, area);
-        return HealthTabRenderTest.bufferToString(buffer);
-    }
-
-    private static boolean findCellWithColor(Buffer buffer, String symbol, Color expectedFg) {
-        for (int y = 0; y < buffer.height(); y++) {
-            for (int x = 0; x < buffer.width(); x++) {
-                var cell = buffer.get(x, y);
-                if (symbol.equals(cell.symbol())) {
-                    var fg = cell.style().fg().orElse(null);
-                    if (expectedFg.equals(fg)) {
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
-    }
 }

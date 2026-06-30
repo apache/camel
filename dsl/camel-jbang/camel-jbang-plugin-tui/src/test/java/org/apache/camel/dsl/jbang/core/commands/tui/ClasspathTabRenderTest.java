@@ -20,10 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
-import dev.tamboui.buffer.Buffer;
-import dev.tamboui.layout.Rect;
-import dev.tamboui.style.Color;
-import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.Span;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -55,7 +51,7 @@ class ClasspathTabRenderTest {
     void renderNoSelectionShowsPrompt() {
         ctx.selectedPid = null;
         ClasspathTab tab = new ClasspathTab(ctx);
-        String rendered = renderToString(tab, 120, 20);
+        String rendered = TuiTestHelper.renderToString(tab, 120, 20);
         assertTrue(rendered.contains("No integration selected") || rendered.contains("Select an integration"),
                 "Should show selection prompt when no integration selected");
     }
@@ -63,14 +59,14 @@ class ClasspathTabRenderTest {
     @Test
     void renderShowsBlockTitle() {
         ClasspathTab tab = new ClasspathTab(ctx);
-        String rendered = renderToString(tab, 120, 20);
+        String rendered = TuiTestHelper.renderToString(tab, 120, 20);
         assertTrue(rendered.contains("Classpath"), "Should show Classpath in the block title");
     }
 
     @Test
     void renderShowsLoadingOrEmpty() {
         ClasspathTab tab = new ClasspathTab(ctx);
-        String rendered = renderToString(tab, 120, 20);
+        String rendered = TuiTestHelper.renderToString(tab, 120, 20);
         assertTrue(rendered.contains("Loading") || rendered.contains("No classpath") || rendered.contains("Classpath"),
                 "Should show loading or empty state");
     }
@@ -84,28 +80,4 @@ class ClasspathTabRenderTest {
         assertTrue(footer.contains("Esc"), "Footer should contain Esc hint");
     }
 
-    // ---- Helper methods ----
-
-    private static String renderToString(MonitorTab tab, int width, int height) {
-        Rect area = new Rect(0, 0, width, height);
-        Buffer buffer = Buffer.empty(area);
-        Frame frame = Frame.forTesting(buffer);
-        tab.render(frame, area);
-        return HealthTabRenderTest.bufferToString(buffer);
-    }
-
-    private static boolean findCellWithColor(Buffer buffer, String symbol, Color expectedFg) {
-        for (int y = 0; y < buffer.height(); y++) {
-            for (int x = 0; x < buffer.width(); x++) {
-                var cell = buffer.get(x, y);
-                if (symbol.equals(cell.symbol())) {
-                    var fg = cell.style().fg().orElse(null);
-                    if (expectedFg.equals(fg)) {
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
-    }
 }

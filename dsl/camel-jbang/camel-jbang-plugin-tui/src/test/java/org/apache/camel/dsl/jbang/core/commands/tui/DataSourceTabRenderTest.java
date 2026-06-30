@@ -58,7 +58,7 @@ class DataSourceTabRenderTest {
         addDataSource("myDS", "com.zaxxer.hikari.HikariDataSource", 3, 7, 10, 10);
 
         DataSourceTab tab = new DataSourceTab(ctx);
-        String rendered = renderToString(tab, 140, 20);
+        String rendered = TuiTestHelper.renderToString(tab, 140, 20);
 
         assertTrue(rendered.contains("NAME"), "Should show NAME header");
         assertTrue(rendered.contains("POOL"), "Should show POOL header");
@@ -72,7 +72,7 @@ class DataSourceTabRenderTest {
         addDataSource("orderDB", "com.zaxxer.hikari.HikariDataSource", 2, 8, 10, 10);
 
         DataSourceTab tab = new DataSourceTab(ctx);
-        String rendered = renderToString(tab, 140, 20);
+        String rendered = TuiTestHelper.renderToString(tab, 140, 20);
 
         assertTrue(rendered.contains("orderDB"), "Should render datasource name");
         assertTrue(rendered.contains("HikariDataSource"), "Should render datasource type");
@@ -89,7 +89,7 @@ class DataSourceTabRenderTest {
         Frame frame = Frame.forTesting(buffer);
         tab.render(frame, area);
 
-        boolean foundCyan = findCellWithColor(buffer, "m", Color.CYAN);
+        boolean foundCyan = TuiTestHelper.findCellWithColor(buffer, "m", Color.CYAN);
         assertTrue(foundCyan, "DataSource name should be rendered in CYAN");
     }
 
@@ -105,7 +105,7 @@ class DataSourceTabRenderTest {
         tab.render(frame, area);
 
         // active (10) >= maxPoolSize (10), so active column should be LIGHT_RED
-        boolean foundRed = findCellWithColor(buffer, "1", Color.LIGHT_RED);
+        boolean foundRed = TuiTestHelper.findCellWithColor(buffer, "1", Color.LIGHT_RED);
         assertTrue(foundRed, "Exhausted pool active count should be rendered in LIGHT_RED");
     }
 
@@ -115,7 +115,7 @@ class DataSourceTabRenderTest {
         addDataSource("userDB", "io.agroal.pool.DataSource", 1, 4, 5, 5);
 
         DataSourceTab tab = new DataSourceTab(ctx);
-        String rendered = renderToString(tab, 140, 20);
+        String rendered = TuiTestHelper.renderToString(tab, 140, 20);
 
         assertTrue(rendered.contains("orderDB"), "Should render first datasource name");
         assertTrue(rendered.contains("userDB"), "Should render second datasource name");
@@ -125,7 +125,7 @@ class DataSourceTabRenderTest {
     void renderEmptyShowsPlaceholder() {
         // No datasources added
         DataSourceTab tab = new DataSourceTab(ctx);
-        String rendered = renderToString(tab, 140, 20);
+        String rendered = TuiTestHelper.renderToString(tab, 140, 20);
 
         assertTrue(rendered.contains("No DataSources"), "Should show placeholder when no datasources exist");
     }
@@ -135,7 +135,7 @@ class DataSourceTabRenderTest {
         ctx.selectedPid = null;
 
         DataSourceTab tab = new DataSourceTab(ctx);
-        String rendered = renderToString(tab, 100, 20);
+        String rendered = TuiTestHelper.renderToString(tab, 100, 20);
 
         assertTrue(rendered.contains("No integration selected") || rendered.contains("Select an integration"),
                 "Should show selection prompt when no integration selected");
@@ -149,7 +149,7 @@ class DataSourceTabRenderTest {
 
         // Press 's' to cycle sort from "name" to "pool"
         tab.handleKeyEvent(KeyEvent.ofChar('s', KeyModifiers.NONE));
-        String rendered = renderToString(tab, 140, 20);
+        String rendered = TuiTestHelper.renderToString(tab, 140, 20);
 
         assertTrue(rendered.contains("sort:pool"), "Sort should cycle to 'pool' after pressing 's'");
     }
@@ -180,28 +180,5 @@ class DataSourceTabRenderTest {
         ds.maxPoolSize = maxPoolSize;
         info.dataSources.add(ds);
         return ds;
-    }
-
-    private static String renderToString(MonitorTab tab, int width, int height) {
-        Rect area = new Rect(0, 0, width, height);
-        Buffer buffer = Buffer.empty(area);
-        Frame frame = Frame.forTesting(buffer);
-        tab.render(frame, area);
-        return HealthTabRenderTest.bufferToString(buffer);
-    }
-
-    private static boolean findCellWithColor(Buffer buffer, String symbol, Color expectedFg) {
-        for (int y = 0; y < buffer.height(); y++) {
-            for (int x = 0; x < buffer.width(); x++) {
-                var cell = buffer.get(x, y);
-                if (symbol.equals(cell.symbol())) {
-                    var fg = cell.style().fg().orElse(null);
-                    if (expectedFg.equals(fg)) {
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
     }
 }

@@ -58,7 +58,7 @@ class ConsumersTabRenderTest {
         addConsumer("route1", "timer://hello", "Started", "org.apache.camel.component.timer.TimerConsumer");
 
         ConsumersTab tab = new ConsumersTab(ctx);
-        String rendered = renderToString(tab, 120, 20);
+        String rendered = TuiTestHelper.renderToString(tab, 120, 20);
 
         assertTrue(rendered.contains("ROUTE"), "Should show ROUTE header");
         assertTrue(rendered.contains("STATUS"), "Should show STATUS header");
@@ -72,7 +72,7 @@ class ConsumersTabRenderTest {
                 "org.apache.camel.component.timer.TimerConsumer");
 
         ConsumersTab tab = new ConsumersTab(ctx);
-        String rendered = renderToString(tab, 160, 20);
+        String rendered = TuiTestHelper.renderToString(tab, 160, 20);
 
         assertTrue(rendered.contains("timer-route"), "Should render consumer route id");
         assertTrue(rendered.contains("timer://hello"), "Should render consumer URI");
@@ -90,7 +90,7 @@ class ConsumersTabRenderTest {
         Frame frame = Frame.forTesting(buffer);
         tab.render(frame, area);
 
-        assertTrue(findCellWithColor(buffer, "m", Color.CYAN),
+        assertTrue(TuiTestHelper.findCellWithColor(buffer, "m", Color.CYAN),
                 "Route id should be rendered in CYAN");
     }
 
@@ -106,7 +106,7 @@ class ConsumersTabRenderTest {
         Frame frame = Frame.forTesting(buffer);
         tab.render(frame, area);
 
-        assertTrue(findCellWithColor(buffer, "S", Color.GREEN),
+        assertTrue(TuiTestHelper.findCellWithColor(buffer, "S", Color.GREEN),
                 "Started status should be rendered in GREEN");
     }
 
@@ -122,7 +122,7 @@ class ConsumersTabRenderTest {
         Frame frame = Frame.forTesting(buffer);
         tab.render(frame, area);
 
-        assertTrue(findCellWithColor(buffer, "S", Color.LIGHT_RED),
+        assertTrue(TuiTestHelper.findCellWithColor(buffer, "S", Color.LIGHT_RED),
                 "Stopped status should be rendered in LIGHT_RED");
     }
 
@@ -134,7 +134,7 @@ class ConsumersTabRenderTest {
                 "org.apache.camel.component.seda.SedaConsumer");
 
         ConsumersTab tab = new ConsumersTab(ctx);
-        String rendered = renderToString(tab, 120, 20);
+        String rendered = TuiTestHelper.renderToString(tab, 120, 20);
 
         assertTrue(rendered.contains("route-alpha"), "Should render first consumer");
         assertTrue(rendered.contains("route-beta"), "Should render second consumer");
@@ -144,7 +144,7 @@ class ConsumersTabRenderTest {
     void renderEmptyShowsPlaceholder() {
         // No consumers added
         ConsumersTab tab = new ConsumersTab(ctx);
-        String rendered = renderToString(tab, 140, 10);
+        String rendered = TuiTestHelper.renderToString(tab, 140, 10);
 
         assertTrue(rendered.contains("No consumers"),
                 "Should show placeholder when no consumers exist");
@@ -155,7 +155,7 @@ class ConsumersTabRenderTest {
         ctx.selectedPid = null;
 
         ConsumersTab tab = new ConsumersTab(ctx);
-        String rendered = renderToString(tab, 100, 10);
+        String rendered = TuiTestHelper.renderToString(tab, 100, 10);
 
         assertTrue(rendered.contains("No integration selected") || rendered.contains("Select an integration"),
                 "Should show selection prompt when no integration selected");
@@ -167,7 +167,7 @@ class ConsumersTabRenderTest {
                 "org.apache.camel.component.timer.TimerConsumer");
 
         ConsumersTab tab = new ConsumersTab(ctx);
-        String rendered = renderToString(tab, 120, 20);
+        String rendered = TuiTestHelper.renderToString(tab, 120, 20);
 
         assertTrue(rendered.contains("sort:id"), "Block title should contain default sort column 'sort:id'");
     }
@@ -180,13 +180,13 @@ class ConsumersTabRenderTest {
         ConsumersTab tab = new ConsumersTab(ctx);
 
         // Default sort is "id" — header should have a sort indicator on ROUTE
-        String rendered1 = renderToString(tab, 120, 20);
+        String rendered1 = TuiTestHelper.renderToString(tab, 120, 20);
         assertTrue(rendered1.contains("ROUTE▼") || rendered1.contains("ROUTE▲"),
                 "Default sort should show indicator on ROUTE column");
 
         // Press 's' to cycle to next sort column (status)
         tab.handleKeyEvent(KeyEvent.ofChar('s', KeyModifiers.NONE));
-        String rendered2 = renderToString(tab, 120, 20);
+        String rendered2 = TuiTestHelper.renderToString(tab, 120, 20);
         assertTrue(rendered2.contains("STATUS▼") || rendered2.contains("STATUS▲"),
                 "After one sort cycle, indicator should move to STATUS");
     }
@@ -215,31 +215,5 @@ class ConsumersTabRenderTest {
         ci.className = className;
         info.consumers.add(ci);
         return ci;
-    }
-
-    /**
-     * Renders a tab into a virtual buffer and extracts the full text content.
-     */
-    private static String renderToString(MonitorTab tab, int width, int height) {
-        Rect area = new Rect(0, 0, width, height);
-        Buffer buffer = Buffer.empty(area);
-        Frame frame = Frame.forTesting(buffer);
-        tab.render(frame, area);
-        return HealthTabRenderTest.bufferToString(buffer);
-    }
-
-    private static boolean findCellWithColor(Buffer buffer, String symbol, Color expectedFg) {
-        for (int y = 0; y < buffer.height(); y++) {
-            for (int x = 0; x < buffer.width(); x++) {
-                var cell = buffer.get(x, y);
-                if (symbol.equals(cell.symbol())) {
-                    var fg = cell.style().fg().orElse(null);
-                    if (expectedFg.equals(fg)) {
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
     }
 }

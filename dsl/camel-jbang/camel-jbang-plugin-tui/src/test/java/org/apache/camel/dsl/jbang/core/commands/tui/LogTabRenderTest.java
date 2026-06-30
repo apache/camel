@@ -20,9 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
-import dev.tamboui.buffer.Buffer;
-import dev.tamboui.layout.Rect;
-import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.Span;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -54,7 +51,7 @@ class LogTabRenderTest {
     void renderNoSelectionShowsPrompt() {
         ctx.selectedPid = null;
         LogTab tab = new LogTab(ctx);
-        String rendered = renderToString(tab, 120, 20);
+        String rendered = TuiTestHelper.renderToString(tab, 120, 20);
         assertTrue(rendered.contains("No integration selected") || rendered.contains("Select an integration"),
                 "Should show selection prompt when no integration selected");
     }
@@ -62,14 +59,14 @@ class LogTabRenderTest {
     @Test
     void renderShowsBlockTitle() {
         LogTab tab = new LogTab(ctx);
-        String rendered = renderToString(tab, 120, 20);
+        String rendered = TuiTestHelper.renderToString(tab, 120, 20);
         assertTrue(rendered.contains("Log"), "Should show Log in the block title");
     }
 
     @Test
     void renderShowsLoadingOrEmpty() {
         LogTab tab = new LogTab(ctx);
-        String rendered = renderToString(tab, 120, 20);
+        String rendered = TuiTestHelper.renderToString(tab, 120, 20);
         assertTrue(rendered.contains("Loading") || rendered.contains("Log"),
                 "Should show loading state or Log title");
     }
@@ -84,13 +81,4 @@ class LogTabRenderTest {
                 "Footer should contain find hint");
     }
 
-    // ---- Helper methods ----
-
-    private static String renderToString(MonitorTab tab, int width, int height) {
-        Rect area = new Rect(0, 0, width, height);
-        Buffer buffer = Buffer.empty(area);
-        Frame frame = Frame.forTesting(buffer);
-        tab.render(frame, area);
-        return HealthTabRenderTest.bufferToString(buffer);
-    }
 }

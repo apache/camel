@@ -58,7 +58,7 @@ class HttpTabRenderTest {
         addHttpEndpoint("GET", "/api/users", "http://localhost:8080/api/users");
 
         HttpTab tab = new HttpTab(ctx);
-        String rendered = renderToString(tab, 140, 30);
+        String rendered = TuiTestHelper.renderToString(tab, 140, 30);
 
         assertTrue(rendered.contains("METHOD"), "Should show METHOD header");
         assertTrue(rendered.contains("PATH"), "Should show PATH header");
@@ -70,7 +70,7 @@ class HttpTabRenderTest {
         addHttpEndpoint("GET", "/api/orders", "http://localhost:8080/api/orders");
 
         HttpTab tab = new HttpTab(ctx);
-        String rendered = renderToString(tab, 140, 30);
+        String rendered = TuiTestHelper.renderToString(tab, 140, 30);
 
         assertTrue(rendered.contains("/api/orders"), "Should render endpoint path");
     }
@@ -86,7 +86,7 @@ class HttpTabRenderTest {
         Frame frame = Frame.forTesting(buffer);
         tab.render(frame, area);
 
-        boolean foundGreen = findCellWithColor(buffer, "G", Color.GREEN);
+        boolean foundGreen = TuiTestHelper.findCellWithColor(buffer, "G", Color.GREEN);
         assertTrue(foundGreen, "GET method should be rendered in GREEN");
     }
 
@@ -101,7 +101,7 @@ class HttpTabRenderTest {
         Frame frame = Frame.forTesting(buffer);
         tab.render(frame, area);
 
-        boolean foundYellow = findCellWithColor(buffer, "P", Color.YELLOW);
+        boolean foundYellow = TuiTestHelper.findCellWithColor(buffer, "P", Color.YELLOW);
         assertTrue(foundYellow, "POST method should be rendered in YELLOW");
     }
 
@@ -116,7 +116,7 @@ class HttpTabRenderTest {
         Frame frame = Frame.forTesting(buffer);
         tab.render(frame, area);
 
-        boolean foundRed = findCellWithColor(buffer, "D", Color.LIGHT_RED);
+        boolean foundRed = TuiTestHelper.findCellWithColor(buffer, "D", Color.LIGHT_RED);
         assertTrue(foundRed, "DELETE method should be rendered in LIGHT_RED");
     }
 
@@ -126,7 +126,7 @@ class HttpTabRenderTest {
         addHttpEndpoint("POST", "/api/orders", "http://localhost:8080/api/orders");
 
         HttpTab tab = new HttpTab(ctx);
-        String rendered = renderToString(tab, 140, 30);
+        String rendered = TuiTestHelper.renderToString(tab, 140, 30);
 
         assertTrue(rendered.contains("/api/users"), "Should render first endpoint path");
         assertTrue(rendered.contains("/api/orders"), "Should render second endpoint path");
@@ -137,7 +137,7 @@ class HttpTabRenderTest {
         ctx.selectedPid = null;
 
         HttpTab tab = new HttpTab(ctx);
-        String rendered = renderToString(tab, 100, 20);
+        String rendered = TuiTestHelper.renderToString(tab, 100, 20);
 
         assertTrue(rendered.contains("No integration selected") || rendered.contains("Select an integration"),
                 "Should show selection prompt when no integration selected");
@@ -148,7 +148,7 @@ class HttpTabRenderTest {
         addHttpEndpoint("GET", "/api/users", "http://localhost:8080/api/users");
 
         HttpTab tab = new HttpTab(ctx);
-        String rendered = renderToString(tab, 140, 30);
+        String rendered = TuiTestHelper.renderToString(tab, 140, 30);
 
         assertTrue(rendered.contains("sort:method"), "Title should show default sort column 'method'");
     }
@@ -161,7 +161,7 @@ class HttpTabRenderTest {
 
         // Press 's' to cycle sort from "method" to "path"
         tab.handleKeyEvent(KeyEvent.ofChar('s', KeyModifiers.NONE));
-        String rendered = renderToString(tab, 140, 30);
+        String rendered = TuiTestHelper.renderToString(tab, 140, 30);
 
         assertTrue(rendered.contains("sort:path"), "Sort should cycle to 'path' after pressing 's'");
     }
@@ -186,7 +186,7 @@ class HttpTabRenderTest {
         addHttpEndpoint("GET", "/api/users", "http://localhost:8080/api/users");
 
         HttpTab tab = new HttpTab(ctx);
-        String rendered = renderToString(tab, 140, 30);
+        String rendered = TuiTestHelper.renderToString(tab, 140, 30);
 
         assertTrue(rendered.contains("[1]"), "Title should contain endpoint count '[1]'");
     }
@@ -201,28 +201,5 @@ class HttpTabRenderTest {
         ep.state = "Started";
         info.httpEndpoints.add(ep);
         return ep;
-    }
-
-    private static String renderToString(MonitorTab tab, int width, int height) {
-        Rect area = new Rect(0, 0, width, height);
-        Buffer buffer = Buffer.empty(area);
-        Frame frame = Frame.forTesting(buffer);
-        tab.render(frame, area);
-        return HealthTabRenderTest.bufferToString(buffer);
-    }
-
-    private static boolean findCellWithColor(Buffer buffer, String symbol, Color expectedFg) {
-        for (int y = 0; y < buffer.height(); y++) {
-            for (int x = 0; x < buffer.width(); x++) {
-                var cell = buffer.get(x, y);
-                if (symbol.equals(cell.symbol())) {
-                    var fg = cell.style().fg().orElse(null);
-                    if (expectedFg.equals(fg)) {
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
     }
 }

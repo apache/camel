@@ -59,7 +59,7 @@ class InflightTabRenderTest {
         addInflight("ID-001", "route1", "route1", "to1", 500, false);
 
         InflightTab tab = new InflightTab(ctx);
-        String rendered = renderToString(tab, 160, 20);
+        String rendered = TuiTestHelper.renderToString(tab, 160, 20);
 
         assertTrue(rendered.contains("STATUS"), "Should show STATUS header");
         assertTrue(rendered.contains("EXCHANGE ID"), "Should show EXCHANGE ID header");
@@ -71,7 +71,7 @@ class InflightTabRenderTest {
         addInflight("ID-myhost-1234", "my-route", "my-route", "to1", 500, false);
 
         InflightTab tab = new InflightTab(ctx);
-        String rendered = renderToString(tab, 160, 20);
+        String rendered = TuiTestHelper.renderToString(tab, 160, 20);
 
         assertTrue(rendered.contains("ID-myhost-1234"), "Should render the exchange ID");
         assertTrue(rendered.contains("my-route"), "Should render the route ID");
@@ -88,7 +88,7 @@ class InflightTabRenderTest {
         Frame frame = Frame.forTesting(buffer);
         tab.render(frame, area);
 
-        boolean foundGreen = findCellWithColor(buffer, "i", Color.GREEN);
+        boolean foundGreen = TuiTestHelper.findCellWithColor(buffer, "i", Color.GREEN);
         assertTrue(foundGreen, "Inflight status should be rendered in GREEN");
     }
 
@@ -103,7 +103,7 @@ class InflightTabRenderTest {
         Frame frame = Frame.forTesting(buffer);
         tab.render(frame, area);
 
-        boolean foundRed = findCellWithColor(buffer, "b", Color.LIGHT_RED);
+        boolean foundRed = TuiTestHelper.findCellWithColor(buffer, "b", Color.LIGHT_RED);
         assertTrue(foundRed, "Blocked status should be rendered in LIGHT_RED");
     }
 
@@ -118,7 +118,7 @@ class InflightTabRenderTest {
         Frame frame = Frame.forTesting(buffer);
         tab.render(frame, area);
 
-        boolean foundCyan = findCellWithColor(buffer, "I", Color.CYAN);
+        boolean foundCyan = TuiTestHelper.findCellWithColor(buffer, "I", Color.CYAN);
         assertTrue(foundCyan, "Exchange ID should use CYAN color");
     }
 
@@ -128,7 +128,7 @@ class InflightTabRenderTest {
         addInflight("ID-BBB", "route-b", "route-b", "to2", 1500, false);
 
         InflightTab tab = new InflightTab(ctx);
-        String rendered = renderToString(tab, 160, 20);
+        String rendered = TuiTestHelper.renderToString(tab, 160, 20);
 
         assertTrue(rendered.contains("ID-AAA"), "Should render first exchange");
         assertTrue(rendered.contains("ID-BBB"), "Should render second exchange");
@@ -137,7 +137,7 @@ class InflightTabRenderTest {
     @Test
     void renderEmptyShowsPlaceholder() {
         InflightTab tab = new InflightTab(ctx);
-        String rendered = renderToString(tab, 160, 20);
+        String rendered = TuiTestHelper.renderToString(tab, 160, 20);
 
         // The placeholder text is placed in the first column (width 10),
         // so the full text gets truncated. Check for the visible portion.
@@ -150,7 +150,7 @@ class InflightTabRenderTest {
         ctx.selectedPid = null;
 
         InflightTab tab = new InflightTab(ctx);
-        String rendered = renderToString(tab, 120, 15);
+        String rendered = TuiTestHelper.renderToString(tab, 120, 15);
 
         assertTrue(rendered.contains("No integration selected") || rendered.contains("Select an integration"),
                 "Should show selection prompt when no integration selected");
@@ -161,7 +161,7 @@ class InflightTabRenderTest {
         info.inflightBrowseEnabled = false;
 
         InflightTab tab = new InflightTab(ctx);
-        String rendered = renderToString(tab, 160, 20);
+        String rendered = TuiTestHelper.renderToString(tab, 160, 20);
 
         assertTrue(rendered.contains("Inflight browse is not enabled"),
                 "Should show browse disabled message when inflightBrowseEnabled is false");
@@ -172,7 +172,7 @@ class InflightTabRenderTest {
         addInflight("ID-001", "route1", "route1", "to1", 500, false);
 
         InflightTab tab = new InflightTab(ctx);
-        String rendered = renderToString(tab, 160, 20);
+        String rendered = TuiTestHelper.renderToString(tab, 160, 20);
 
         assertTrue(rendered.contains("sort:duration"), "Title should show current sort column");
     }
@@ -186,7 +186,7 @@ class InflightTabRenderTest {
         // Press 's' to cycle sort — default is "duration" (index 3), next is "status" (index 0)
         tab.handleKeyEvent(KeyEvent.ofChar('s', KeyModifiers.NONE));
 
-        String rendered = renderToString(tab, 160, 20);
+        String rendered = TuiTestHelper.renderToString(tab, 160, 20);
         assertTrue(rendered.contains("sort:status"), "Sort should cycle to 'status'");
     }
 
@@ -218,28 +218,5 @@ class InflightTabRenderTest {
         ii.blocked = blocked;
         info.inflightExchanges.add(ii);
         return ii;
-    }
-
-    private static String renderToString(MonitorTab tab, int width, int height) {
-        Rect area = new Rect(0, 0, width, height);
-        Buffer buffer = Buffer.empty(area);
-        Frame frame = Frame.forTesting(buffer);
-        tab.render(frame, area);
-        return HealthTabRenderTest.bufferToString(buffer);
-    }
-
-    private static boolean findCellWithColor(Buffer buffer, String symbol, Color expectedFg) {
-        for (int y = 0; y < buffer.height(); y++) {
-            for (int x = 0; x < buffer.width(); x++) {
-                var cell = buffer.get(x, y);
-                if (symbol.equals(cell.symbol())) {
-                    var fg = cell.style().fg().orElse(null);
-                    if (expectedFg.equals(fg)) {
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
     }
 }

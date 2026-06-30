@@ -59,7 +59,7 @@ class EndpointsTabRenderTest {
         addEndpoint("timer", "timer://tick?period=1000", "in", "route1", 10);
 
         EndpointsTab tab = new EndpointsTab(ctx, new MetricsCollector());
-        String rendered = renderToString(tab, 140, 30);
+        String rendered = TuiTestHelper.renderToString(tab, 140, 30);
 
         assertTrue(rendered.contains("COMPONENT"), "Should show COMPONENT header");
         assertTrue(rendered.contains("ROUTE"), "Should show ROUTE header");
@@ -73,7 +73,7 @@ class EndpointsTabRenderTest {
         addEndpoint("kafka", "kafka://my-topic", "in", "kafka-route", 42);
 
         EndpointsTab tab = new EndpointsTab(ctx, new MetricsCollector());
-        String rendered = renderToString(tab, 140, 30);
+        String rendered = TuiTestHelper.renderToString(tab, 140, 30);
 
         assertTrue(rendered.contains("kafka://my-topic"), "Should render endpoint URI");
         assertTrue(rendered.contains("kafka"), "Should render component name");
@@ -91,7 +91,7 @@ class EndpointsTabRenderTest {
         Frame frame = Frame.forTesting(buffer);
         tab.render(frame, area);
 
-        boolean foundCyan = findCellWithColor(buffer, "h", Color.CYAN);
+        boolean foundCyan = TuiTestHelper.findCellWithColor(buffer, "h", Color.CYAN);
         assertTrue(foundCyan, "Component name should be rendered in CYAN");
     }
 
@@ -106,7 +106,7 @@ class EndpointsTabRenderTest {
         Frame frame = Frame.forTesting(buffer);
         tab.render(frame, area);
 
-        boolean foundBrightGreen = findCellWithColor(buffer, "→", Color.ansi(AnsiColor.BRIGHT_GREEN));
+        boolean foundBrightGreen = TuiTestHelper.findCellWithColor(buffer, "→", Color.ansi(AnsiColor.BRIGHT_GREEN));
         assertTrue(foundBrightGreen, "In-direction arrow should be rendered in BRIGHT_GREEN");
     }
 
@@ -121,7 +121,7 @@ class EndpointsTabRenderTest {
         Frame frame = Frame.forTesting(buffer);
         tab.render(frame, area);
 
-        boolean foundCyanArrow = findCellWithColor(buffer, "←", Color.CYAN);
+        boolean foundCyanArrow = TuiTestHelper.findCellWithColor(buffer, "←", Color.CYAN);
         assertTrue(foundCyanArrow, "Out-direction arrow should be rendered in CYAN");
     }
 
@@ -131,7 +131,7 @@ class EndpointsTabRenderTest {
         addEndpoint("log", "log://output", "out", "route1", 10);
 
         EndpointsTab tab = new EndpointsTab(ctx, new MetricsCollector());
-        String rendered = renderToString(tab, 140, 30);
+        String rendered = TuiTestHelper.renderToString(tab, 140, 30);
 
         assertTrue(rendered.contains("timer://tick"), "Should render first endpoint URI");
         assertTrue(rendered.contains("log://output"), "Should render second endpoint URI");
@@ -141,7 +141,7 @@ class EndpointsTabRenderTest {
     void renderEmptyShowsPlaceholder() {
         // No endpoints added
         EndpointsTab tab = new EndpointsTab(ctx, new MetricsCollector());
-        String rendered = renderToString(tab, 140, 30);
+        String rendered = TuiTestHelper.renderToString(tab, 140, 30);
 
         assertTrue(rendered.contains("No endpoints"), "Should show placeholder when no endpoints exist");
     }
@@ -151,7 +151,7 @@ class EndpointsTabRenderTest {
         ctx.selectedPid = null;
 
         EndpointsTab tab = new EndpointsTab(ctx, new MetricsCollector());
-        String rendered = renderToString(tab, 100, 20);
+        String rendered = TuiTestHelper.renderToString(tab, 100, 20);
 
         assertTrue(rendered.contains("No integration selected") || rendered.contains("Select an integration"),
                 "Should show selection prompt when no integration selected");
@@ -162,7 +162,7 @@ class EndpointsTabRenderTest {
         addEndpoint("timer", "timer://tick", "in", "route1", 10);
 
         EndpointsTab tab = new EndpointsTab(ctx, new MetricsCollector());
-        String rendered = renderToString(tab, 140, 30);
+        String rendered = TuiTestHelper.renderToString(tab, 140, 30);
 
         assertTrue(rendered.contains("sort:route"), "Title should show default sort column 'route'");
     }
@@ -175,7 +175,7 @@ class EndpointsTabRenderTest {
 
         // Press 's' to cycle sort from "route" to "dir"
         tab.handleKeyEvent(KeyEvent.ofChar('s', KeyModifiers.NONE));
-        String rendered = renderToString(tab, 140, 30);
+        String rendered = TuiTestHelper.renderToString(tab, 140, 30);
 
         assertTrue(rendered.contains("sort:dir"), "Sort should cycle to 'dir' after pressing 's'");
     }
@@ -206,31 +206,5 @@ class EndpointsTabRenderTest {
         ep.hits = hits;
         info.endpoints.add(ep);
         return ep;
-    }
-
-    private static String renderToString(MonitorTab tab, int width, int height) {
-        Rect area = new Rect(0, 0, width, height);
-        Buffer buffer = Buffer.empty(area);
-        Frame frame = Frame.forTesting(buffer);
-        tab.render(frame, area);
-        return HealthTabRenderTest.bufferToString(buffer);
-    }
-
-    /**
-     * Search the buffer for any cell containing the given symbol text rendered with the specified foreground color.
-     */
-    private static boolean findCellWithColor(Buffer buffer, String symbol, Color expectedFg) {
-        for (int y = 0; y < buffer.height(); y++) {
-            for (int x = 0; x < buffer.width(); x++) {
-                var cell = buffer.get(x, y);
-                if (symbol.equals(cell.symbol())) {
-                    var fg = cell.style().fg().orElse(null);
-                    if (expectedFg.equals(fg)) {
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
     }
 }

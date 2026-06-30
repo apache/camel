@@ -60,7 +60,7 @@ class OverviewTabRenderTest {
 
         OverviewTab tab = new OverviewTab(ctx, new MetricsCollector(), new HashSet<>(), () -> {
         });
-        String rendered = renderToString(tab, 160, 30);
+        String rendered = TuiTestHelper.renderToString(tab, 160, 30);
 
         assertTrue(rendered.contains("PID"), "Should show PID header");
         assertTrue(rendered.contains("NAME"), "Should show NAME header");
@@ -74,7 +74,7 @@ class OverviewTabRenderTest {
 
         OverviewTab tab = new OverviewTab(ctx, new MetricsCollector(), new HashSet<>(), () -> {
         });
-        String rendered = renderToString(tab, 160, 30);
+        String rendered = TuiTestHelper.renderToString(tab, 160, 30);
 
         assertTrue(rendered.contains("1234"), "Should render PID");
         assertTrue(rendered.contains("test-app"), "Should render integration name");
@@ -95,7 +95,7 @@ class OverviewTabRenderTest {
         Frame frame = Frame.forTesting(buffer);
         tab.render(frame, area);
 
-        boolean foundCyan = findCellWithColor(buffer, "t", Color.CYAN);
+        boolean foundCyan = TuiTestHelper.findCellWithColor(buffer, "t", Color.CYAN);
         assertTrue(foundCyan, "Name should be rendered in CYAN");
     }
 
@@ -114,7 +114,7 @@ class OverviewTabRenderTest {
         Frame frame = Frame.forTesting(buffer);
         tab.render(frame, area);
 
-        boolean foundGreen = findCellWithColor(buffer, "R", Color.GREEN);
+        boolean foundGreen = TuiTestHelper.findCellWithColor(buffer, "R", Color.GREEN);
         assertTrue(foundGreen, "Running status should be rendered in GREEN");
     }
 
@@ -133,7 +133,7 @@ class OverviewTabRenderTest {
         Frame frame = Frame.forTesting(buffer);
         tab.render(frame, area);
 
-        boolean foundRed = findCellWithColor(buffer, "S", Color.LIGHT_RED);
+        boolean foundRed = TuiTestHelper.findCellWithColor(buffer, "S", Color.LIGHT_RED);
         assertTrue(foundRed, "Stopped status should be rendered in LIGHT_RED");
     }
 
@@ -150,7 +150,7 @@ class OverviewTabRenderTest {
 
         OverviewTab tab = new OverviewTab(ctx2, new MetricsCollector(), new HashSet<>(), () -> {
         });
-        String rendered = renderToString(tab, 160, 30);
+        String rendered = TuiTestHelper.renderToString(tab, 160, 30);
 
         assertTrue(rendered.contains("test-app"), "Should render first integration");
         assertTrue(rendered.contains("other-app"), "Should render second integration");
@@ -162,7 +162,7 @@ class OverviewTabRenderTest {
 
         OverviewTab tab = new OverviewTab(ctx, new MetricsCollector(), new HashSet<>(), () -> {
         });
-        String rendered = renderToString(tab, 160, 30);
+        String rendered = TuiTestHelper.renderToString(tab, 160, 30);
 
         assertTrue(rendered.contains("NAME▼") || rendered.contains("NAME▲"),
                 "Default sort should show indicator on NAME column");
@@ -176,7 +176,7 @@ class OverviewTabRenderTest {
         });
 
         tab.handleKeyEvent(KeyEvent.ofChar('s', KeyModifiers.NONE));
-        String rendered = renderToString(tab, 160, 30);
+        String rendered = TuiTestHelper.renderToString(tab, 160, 30);
         assertTrue(rendered.contains("VERSION▼") || rendered.contains("VERSION▲"),
                 "After one sort cycle, indicator should move to VERSION");
     }
@@ -212,32 +212,8 @@ class OverviewTabRenderTest {
         Frame frame = Frame.forTesting(buffer);
         tab.render(frame, area);
 
-        boolean foundRed = findCellWithColor(buffer, "4", Color.LIGHT_RED);
+        boolean foundRed = TuiTestHelper.findCellWithColor(buffer, "4", Color.LIGHT_RED);
         assertTrue(foundRed, "Failed count should be rendered in LIGHT_RED");
     }
 
-    // ---- Helper methods ----
-
-    private static String renderToString(MonitorTab tab, int width, int height) {
-        Rect area = new Rect(0, 0, width, height);
-        Buffer buffer = Buffer.empty(area);
-        Frame frame = Frame.forTesting(buffer);
-        tab.render(frame, area);
-        return HealthTabRenderTest.bufferToString(buffer);
-    }
-
-    private static boolean findCellWithColor(Buffer buffer, String symbol, Color expectedFg) {
-        for (int y = 0; y < buffer.height(); y++) {
-            for (int x = 0; x < buffer.width(); x++) {
-                var cell = buffer.get(x, y);
-                if (symbol.equals(cell.symbol())) {
-                    var fg = cell.style().fg().orElse(null);
-                    if (expectedFg.equals(fg)) {
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
-    }
 }

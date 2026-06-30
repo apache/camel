@@ -58,7 +58,7 @@ class HistoryTabRenderTest {
     void renderNoSelectionShowsPrompt() {
         ctx.selectedPid = null;
         HistoryTab tab = new HistoryTab(ctx, traces, new HashMap<>());
-        String rendered = renderToString(tab, 120, 20);
+        String rendered = TuiTestHelper.renderToString(tab, 120, 20);
         assertTrue(rendered.contains("No integration selected") || rendered.contains("Select an integration"),
                 "Should show selection prompt when no integration selected");
     }
@@ -66,7 +66,7 @@ class HistoryTabRenderTest {
     @Test
     void renderShowsBlockTitle() {
         HistoryTab tab = new HistoryTab(ctx, traces, new HashMap<>());
-        String rendered = renderToString(tab, 120, 20);
+        String rendered = TuiTestHelper.renderToString(tab, 120, 20);
         assertTrue(rendered.contains("History") || rendered.contains("Trace"),
                 "Should show History or Trace in the block title");
     }
@@ -74,7 +74,7 @@ class HistoryTabRenderTest {
     @Test
     void renderEmptyShowsPlaceholder() {
         HistoryTab tab = new HistoryTab(ctx, traces, new HashMap<>());
-        String rendered = renderToString(tab, 120, 20);
+        String rendered = TuiTestHelper.renderToString(tab, 120, 20);
         assertTrue(rendered.contains("Select a history entry") || rendered.contains("History of last completed"),
                 "Should show placeholder or title when traces are empty");
     }
@@ -84,7 +84,7 @@ class HistoryTabRenderTest {
         TraceEntry te = createTrace("EX-001", "route1", "Done", true, true);
         traces.set(List.of(te));
         HistoryTab tab = new HistoryTab(ctx, traces, new HashMap<>());
-        String rendered = renderToString(tab, 120, 30);
+        String rendered = TuiTestHelper.renderToString(tab, 120, 30);
         assertTrue(rendered.contains("EX-001"), "Should show the exchange ID in the rendered output");
     }
 
@@ -99,7 +99,7 @@ class HistoryTabRenderTest {
         Frame frame = Frame.forTesting(buffer);
         tab.render(frame, area);
 
-        assertTrue(findCellWithColor(buffer, "D", Color.GREEN),
+        assertTrue(TuiTestHelper.findCellWithColor(buffer, "D", Color.GREEN),
                 "Done status should contain a cell rendered in GREEN");
     }
 
@@ -115,7 +115,7 @@ class HistoryTabRenderTest {
         Frame frame = Frame.forTesting(buffer);
         tab.render(frame, area);
 
-        assertTrue(findCellWithColor(buffer, "F", Color.LIGHT_RED),
+        assertTrue(TuiTestHelper.findCellWithColor(buffer, "F", Color.LIGHT_RED),
                 "Failed status should contain a cell rendered in LIGHT_RED");
     }
 
@@ -130,7 +130,7 @@ class HistoryTabRenderTest {
         Frame frame = Frame.forTesting(buffer);
         tab.render(frame, area);
 
-        assertTrue(findCellWithColor(buffer, "m", Color.CYAN),
+        assertTrue(TuiTestHelper.findCellWithColor(buffer, "m", Color.CYAN),
                 "Route ID should contain a cell rendered in CYAN");
     }
 
@@ -140,7 +140,7 @@ class HistoryTabRenderTest {
         TraceEntry te2 = createTrace("EX-020", "route2", "Done", true, true);
         traces.set(List.of(te1, te2));
         HistoryTab tab = new HistoryTab(ctx, traces, new HashMap<>());
-        String rendered = renderToString(tab, 140, 30);
+        String rendered = TuiTestHelper.renderToString(tab, 140, 30);
         assertTrue(rendered.contains("EX-010"), "First trace entry should appear");
         assertTrue(rendered.contains("EX-020"), "Second trace entry should appear");
     }
@@ -160,7 +160,7 @@ class HistoryTabRenderTest {
         TraceEntry te = createTrace("EX-005", "route1", "Done", true, true);
         traces.set(List.of(te));
         HistoryTab tab = new HistoryTab(ctx, traces, new HashMap<>());
-        String rendered = renderToString(tab, 140, 30);
+        String rendered = TuiTestHelper.renderToString(tab, 140, 30);
         assertTrue(rendered.contains("TIME"), "Should show TIME header");
         assertTrue(rendered.contains("ROUTE"), "Should show ROUTE header");
         assertTrue(rendered.contains("STATUS"), "Should show STATUS header");
@@ -186,26 +186,4 @@ class HistoryTabRenderTest {
         return te;
     }
 
-    private static String renderToString(MonitorTab tab, int width, int height) {
-        Rect area = new Rect(0, 0, width, height);
-        Buffer buffer = Buffer.empty(area);
-        Frame frame = Frame.forTesting(buffer);
-        tab.render(frame, area);
-        return HealthTabRenderTest.bufferToString(buffer);
-    }
-
-    private static boolean findCellWithColor(Buffer buffer, String symbol, Color expectedFg) {
-        for (int y = 0; y < buffer.height(); y++) {
-            for (int x = 0; x < buffer.width(); x++) {
-                var cell = buffer.get(x, y);
-                if (symbol.equals(cell.symbol())) {
-                    var fg = cell.style().fg().orElse(null);
-                    if (expectedFg.equals(fg)) {
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
-    }
 }

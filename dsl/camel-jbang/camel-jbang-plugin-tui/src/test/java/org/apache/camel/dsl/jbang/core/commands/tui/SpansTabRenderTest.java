@@ -59,7 +59,7 @@ class SpansTabRenderTest {
         ctx.selectedPid = null;
 
         SpansTab tab = new SpansTab(ctx, spans);
-        String rendered = renderToString(tab, 100, 10);
+        String rendered = TuiTestHelper.renderToString(tab, 100, 10);
 
         assertTrue(rendered.contains("No integration selected") || rendered.contains("Select an integration"),
                 "Should show selection prompt when no integration selected");
@@ -68,7 +68,7 @@ class SpansTabRenderTest {
     @Test
     void renderShowsBlockTitle() {
         SpansTab tab = new SpansTab(ctx, spans);
-        String rendered = renderToString(tab, 120, 20);
+        String rendered = TuiTestHelper.renderToString(tab, 120, 20);
 
         assertTrue(rendered.contains("Spans") || rendered.contains("Traces"),
                 "Should show 'Spans' or 'Traces' in the block title");
@@ -77,7 +77,7 @@ class SpansTabRenderTest {
     @Test
     void renderEmptyShowsPlaceholder() {
         SpansTab tab = new SpansTab(ctx, spans);
-        String rendered = renderToString(tab, 140, 10);
+        String rendered = TuiTestHelper.renderToString(tab, 140, 10);
 
         assertTrue(rendered.contains("No OTel") || rendered.contains("No spans") || rendered.contains("--observe"),
                 "Should show placeholder when no spans exist");
@@ -88,7 +88,7 @@ class SpansTabRenderTest {
         spans.get().add(createSpan("abcd1234efgh5678", "span001", "timer:orders", "OK", 42));
 
         SpansTab tab = new SpansTab(ctx, spans);
-        String rendered = renderToString(tab, 140, 20);
+        String rendered = TuiTestHelper.renderToString(tab, 140, 20);
 
         assertTrue(rendered.contains("abcd1234"),
                 "Should render the trace ID (or its short form)");
@@ -108,7 +108,7 @@ class SpansTabRenderTest {
         Frame frame = Frame.forTesting(buffer);
         tab.render(frame, area);
 
-        boolean foundRed = findCellWithColor(buffer, "E", Color.LIGHT_RED);
+        boolean foundRed = TuiTestHelper.findCellWithColor(buffer, "E", Color.LIGHT_RED);
         assertTrue(foundRed, "ERROR status should be rendered in LIGHT_RED");
     }
 
@@ -117,7 +117,7 @@ class SpansTabRenderTest {
         spans.get().add(createSpan("trace0001", "span001", "timer:tick", "OK", 10));
 
         SpansTab tab = new SpansTab(ctx, spans);
-        String rendered = renderToString(tab, 140, 20);
+        String rendered = TuiTestHelper.renderToString(tab, 140, 20);
 
         assertTrue(rendered.contains("TRACE-ID"), "Should show TRACE-ID header");
         assertTrue(rendered.contains("STATUS"), "Should show STATUS header");
@@ -144,7 +144,7 @@ class SpansTabRenderTest {
         spans.get().add(createSpan("cccc3333dddd4444", "span002", "timer:b", "OK", 20));
 
         SpansTab tab = new SpansTab(ctx, spans);
-        String rendered = renderToString(tab, 140, 20);
+        String rendered = TuiTestHelper.renderToString(tab, 140, 20);
 
         assertTrue(rendered.contains("aaaa1111"), "Should render first trace ID");
         assertTrue(rendered.contains("cccc3333"), "Should render second trace ID");
@@ -159,26 +159,4 @@ class SpansTabRenderTest {
                 "route1", null, "camel", Map.of());
     }
 
-    private static String renderToString(MonitorTab tab, int width, int height) {
-        Rect area = new Rect(0, 0, width, height);
-        Buffer buffer = Buffer.empty(area);
-        Frame frame = Frame.forTesting(buffer);
-        tab.render(frame, area);
-        return HealthTabRenderTest.bufferToString(buffer);
-    }
-
-    private static boolean findCellWithColor(Buffer buffer, String symbol, Color expectedFg) {
-        for (int y = 0; y < buffer.height(); y++) {
-            for (int x = 0; x < buffer.width(); x++) {
-                var cell = buffer.get(x, y);
-                if (symbol.equals(cell.symbol())) {
-                    var fg = cell.style().fg().orElse(null);
-                    if (expectedFg.equals(fg)) {
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
-    }
 }
