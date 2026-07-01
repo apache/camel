@@ -19,6 +19,7 @@ package org.apache.camel.dsl.jbang.core.commands.tui;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -222,7 +223,7 @@ class OverviewTab implements MonitorTab {
         List<Constraint> constraints = new ArrayList<>();
         constraints.add(Constraint.fill());
         if (hasSparkline) {
-            constraints.add(Constraint.length(14));
+            constraints.add(Constraint.length(17));
         } else if (showInfoPanel) {
             int panelH = countInfraLines(infraSel) + 2;
             constraints.add(Constraint.length(Math.min(panelH, area.height() / 2)));
@@ -404,7 +405,7 @@ class OverviewTab implements MonitorTab {
                     .split(chartInner);
 
             List<Rect> hChunks = Layout.horizontal()
-                    .constraints(Constraint.length(4), Constraint.fill())
+                    .constraints(Constraint.length(5), Constraint.fill())
                     .split(vChunks.get(0));
 
             Rect barChartArea = hChunks.get(1);
@@ -438,9 +439,15 @@ class OverviewTab implements MonitorTab {
             for (long v : mergedTotal) {
                 maxTp = Math.max(maxTp, v);
             }
+            maxTp = niceMax(maxTp);
             long curTp = mergedTotal[renderPoints - 1];
             long curFailed = mergedFailed[renderPoints - 1];
             long curOk = Math.max(0, curTp - curFailed);
+
+            // Format throughput values unscaled for display
+            String curTpFmt = formatThroughput(curTp);
+            String curOkFmt = formatThroughput(curOk);
+            String curFailFmt = formatThroughput(curFailed);
 
             Line titleLine;
             if (chartMode == CHART_SINGLE && ctx.selectedPid != null) {
@@ -450,18 +457,18 @@ class OverviewTab implements MonitorTab {
                 titleLine = Line.from(
                         Span.raw(" ["),
                         Span.styled(chartName, Style.EMPTY.fg(Color.YELLOW)),
-                        Span.raw(String.format("] Throughput: %d msg/s  ", curTp)),
+                        Span.raw(String.format("] Throughput: %s msg/s  ", curTpFmt)),
                         Span.styled("■", Style.EMPTY.fg(Color.ansi(AnsiColor.BRIGHT_GREEN))),
-                        Span.raw(String.format(" ok:%d  ", curOk)),
+                        Span.raw(String.format(" ok:%s  ", curOkFmt)),
                         Span.styled("■", Style.EMPTY.fg(Color.RED)),
-                        Span.raw(String.format(" fail:%d ", curFailed)));
+                        Span.raw(String.format(" fail:%s ", curFailFmt)));
             } else {
                 titleLine = Line.from(
-                        Span.raw(String.format(" [All] Throughput: %d msg/s  ", curTp)),
+                        Span.raw(String.format(" [All] Throughput: %s msg/s  ", curTpFmt)),
                         Span.styled("■", Style.EMPTY.fg(Color.ansi(AnsiColor.BRIGHT_GREEN))),
-                        Span.raw(String.format(" ok:%d  ", curOk)),
+                        Span.raw(String.format(" ok:%s  ", curOkFmt)),
                         Span.styled("■", Style.EMPTY.fg(Color.RED)),
-                        Span.raw(String.format(" fail:%d ", curFailed)));
+                        Span.raw(String.format(" fail:%s ", curFailFmt)));
             }
 
             Block chartBlock = Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
@@ -480,7 +487,7 @@ class OverviewTab implements MonitorTab {
 
             BarChart barChart = BarChart.builder()
                     .data(groups)
-                    .max(maxTp > 0 ? maxTp + 2 : 2)
+                    .max(maxTp)
                     .barWidth(1)
                     .barGap(0)
                     .groupGap(0)
@@ -493,11 +500,11 @@ class OverviewTab implements MonitorTab {
             Style dimStyle = Style.EMPTY.dim();
             for (int row = 0; row < barRows; row++) {
                 if (row == 0) {
-                    yLines.add(Line.from(Span.styled(String.format("%3d", maxTp), dimStyle)));
+                    yLines.add(Line.from(Span.styled(String.format("%4s", formatThroughput(maxTp)), dimStyle)));
                 } else if (barRows > 4 && row == barRows / 2) {
-                    yLines.add(Line.from(Span.styled(String.format("%3d", maxTp / 2), dimStyle)));
+                    yLines.add(Line.from(Span.styled(String.format("%4s", formatThroughput(maxTp / 2)), dimStyle)));
                 } else if (row == barRows - 1) {
-                    yLines.add(Line.from(Span.styled("  0", dimStyle)));
+                    yLines.add(Line.from(Span.styled("   0", dimStyle)));
                 } else {
                     yLines.add(Line.from(""));
                 }
@@ -635,6 +642,34 @@ class OverviewTab implements MonitorTab {
             lines.add(Line.from(Span.raw("-")));
         }
         frame.renderWidget(Paragraph.builder().text(Text.from(lines)).build(), inner);
+    }
+
+    /**
+     * Snap to a nice Y-axis ceiling using a 1-2-5 sequence (scaled by THROUGHPUT_SCALE). For example with scale=100:
+     * 0.20 → 1, 1.5 → 2, 3 → 5, 7 → 10, 15 → 20, 35 → 50, 80 → 100, etc.
+     */
+    private static long niceMax(long rawMax) {
+        long s = MetricsCollector.THROUGHPUT_SCALE;
+        long[] steps = { s, 2 * s, 5 * s, 10 * s, 20 * s, 50 * s, 100 * s, 200 * s, 500 * s, 1000 * s };
+        for (long step : steps) {
+            if (rawMax <= step) {
+                return step;
+            }
+        }
+        return rawMax;
+    }
+
+    private static String formatThroughput(long scaledValue) {
+        double v = scaledValue / (double) MetricsCollector.THROUGHPUT_SCALE;
+        if (v >= 10) {
+            return String.valueOf(Math.round(v));
+        } else if (v >= 1) {
+            return String.format(Locale.US, "%.1f", v);
+        } else if (scaledValue > 0) {
+            return String.format(Locale.US, "%.2f", v);
+        } else {
+            return "0";
+        }
     }
 
     private static int countInfraLines(InfraInfo infra) {
