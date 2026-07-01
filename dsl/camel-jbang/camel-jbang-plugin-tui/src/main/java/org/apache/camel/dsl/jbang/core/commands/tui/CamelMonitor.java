@@ -47,6 +47,7 @@ import dev.tamboui.tui.TuiRunner;
 import dev.tamboui.tui.event.Event;
 import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
+import dev.tamboui.tui.event.KeyModifiers;
 import dev.tamboui.tui.event.MouseEvent;
 import dev.tamboui.tui.event.PasteEvent;
 import dev.tamboui.tui.event.TickEvent;
@@ -130,6 +131,19 @@ public class CamelMonitor extends CamelCommand {
 
     private final FilesBrowser filesBrowser = new FilesBrowser();
     private PopupManager popupManager;
+
+    // Mouse hit-testing geometry, captured during render() for use in dispatch()
+    private Rect lastContentArea;
+    private int tabBarRowY = -1;
+    private int[] tabBarStartX;
+    private int[] tabBarWidth;
+    private int[] tabBarTarget;
+    // Footer key-binding hit-testing: each clickable hint records its [startX, endX) column range on
+    // the footer row and the KeyEvent to synthesize when clicked.
+    private int footerRowY = -1;
+    private int[] footerRegionStartX = new int[0];
+    private int[] footerRegionEndX = new int[0];
+    private KeyEvent[] footerRegionKey = new KeyEvent[0];
 
     private final ClassLoader classLoader;
 
@@ -489,6 +503,22 @@ public class CamelMonitor extends CamelCommand {
             if (shellPanel.isOpen() && shellPanel.handleMouseEvent(me)) {
                 return true;
             }
+            if (actionsPopup.isVisible() && actionsPopup.handleMouseEvent(me)) {
+                return true;
+            }
+            if (popupManager.handleMouseEvent(me)) {
+                return true;
+            }
+            if (me.isClick() && handleTabBarClick(me)) {
+                return true;
+            }
+            if (me.isClick() && handleFooterClick(me, runner)) {
+                return true;
+            }
+            MonitorTab tab = tabRegistry.activeTab();
+            if (tab != null && lastContentArea != null && tab.handleMouseEvent(me, lastContentArea)) {
+                return true;
+            }
         }
         if (event instanceof PasteEvent pe) {
             return handlePasteEvent(pe);
@@ -497,6 +527,182 @@ public class CamelMonitor extends CamelCommand {
             return handleTickEvent(runner);
         }
         return false;
+    }
+
+    /**
+     * Hit-tests a click against the tab bar labels captured during the last render and, when it lands on a tab,
+     * activates it exactly as pressing the tab's number key would.
+     */
+    private boolean handleTabBarClick(MouseEvent me) {
+        if (tabBarRowY < 0 || me.y() != tabBarRowY) {
+            return false;
+        }
+        int idx = tabIndexAt(tabBarStartX, tabBarWidth, me.x());
+        if (idx < 0) {
+            return false;
+        }
+        return tabRegistry.handleTabKey(tabBarTarget[idx], ctx, dataService);
+    }
+
+    /**
+     * Returns the index of the tab whose label column contains {@code mouseX}, or {@code -1} when the click lands on a
+     * divider gap or outside every label. Each column spans the half-open range
+     * {@code [startX[i], startX[i] + width[i])}.
+     */
+    static int tabIndexAt(int[] startX, int[] width, int mouseX) {
+        if (startX == null) {
+            return -1;
+        }
+        for (int i = 0; i < startX.length; i++) {
+            if (mouseX >= startX[i] && mouseX < startX[i] + width[i]) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    /**
+     * Computes the starting x of each tab label given its width and the divider width between labels, matching the
+     * layout used to draw the tab bar. The first label starts at {@code originX}; each following label is offset by the
+     * previous label width plus one divider.
+     */
+    static int[] tabStartPositions(int originX, int[] labelWidths, int dividerWidth) {
+        int[] startX = new int[labelWidths.length];
+        int tabX = 0;
+        for (int i = 0; i < labelWidths.length; i++) {
+            if (i > 0) {
+                tabX += dividerWidth;
+            }
+            startX[i] = originX + tabX;
+            tabX += labelWidths[i];
+        }
+        return startX;
+    }
+
+    /**
+     * Records the on-screen position and width of each tab label (mirroring the layout used to draw them) so a later
+     * click can be mapped back to the tab it landed on. {@code targets} holds the real tab index for each label.
+     */
+    private void captureTabBarGeometry(Rect labelsArea, Line[] labels, String dividerStr, int[] targets) {
+        int[] labelWidths = new int[labels.length];
+        for (int i = 0; i < labels.length; i++) {
+            labelWidths[i] = labels[i].width();
+        }
+        tabBarRowY = labelsArea.y();
+        tabBarWidth = labelWidths;
+        tabBarStartX = tabStartPositions(labelsArea.x(), labelWidths, CharWidth.of(dividerStr));
+        tabBarTarget = targets;
+    }
+
+    /**
+     * Records the clickable footer key-binding regions from the final list of footer spans. A hint is drawn by
+     * {@link MonitorContext#hint} as a key span styled with {@link Theme#hintKey()} immediately followed by its label
+     * span, so each key span styled that way (whose token maps to an unambiguous single key) contributes a clickable
+     * region covering both the key and its label. {@code area} is the single footer row.
+     */
+    private void captureFooterRegions(Rect area, List<Span> spans) {
+        List<int[]> bounds = new ArrayList<>();
+        List<KeyEvent> keys = new ArrayList<>();
+        Style hintKeyStyle = Theme.hintKey();
+        int x = area.x();
+        for (int i = 0; i < spans.size(); i++) {
+            Span s = spans.get(i);
+            int w = s.width();
+            if (hintKeyStyle.equals(s.style())) {
+                KeyEvent ke = footerKeyEvent(s.content());
+                if (ke != null) {
+                    // Extend the region over the following label span so clicking the label works too.
+                    int end = x + w + (i + 1 < spans.size() ? spans.get(i + 1).width() : 0);
+                    bounds.add(new int[] { x, end });
+                    keys.add(ke);
+                }
+            }
+            x += w;
+        }
+        footerRowY = area.y();
+        footerRegionStartX = bounds.stream().mapToInt(b -> b[0]).toArray();
+        footerRegionEndX = bounds.stream().mapToInt(b -> b[1]).toArray();
+        footerRegionKey = keys.toArray(new KeyEvent[0]);
+    }
+
+    /**
+     * Hit-tests a click against the footer key-binding regions captured during the last render and, when it lands on a
+     * hint, feeds the synthesized key back through the normal key path so it acts exactly like pressing that key.
+     */
+    private boolean handleFooterClick(MouseEvent me, TuiRunner runner) {
+        if (footerRowY < 0 || me.y() != footerRowY) {
+            return false;
+        }
+        int idx = footerRegionAt(footerRegionStartX, footerRegionEndX, me.x());
+        if (idx < 0) {
+            return false;
+        }
+        return handleEvent(footerRegionKey[idx], runner);
+    }
+
+    /**
+     * Returns the index of the footer hint region whose column range contains {@code mouseX}, or {@code -1} when the
+     * click is outside every region. Each region spans the half-open range {@code [startX[i], endX[i])}.
+     */
+    static int footerRegionAt(int[] startX, int[] endX, int mouseX) {
+        if (startX == null) {
+            return -1;
+        }
+        for (int i = 0; i < startX.length; i++) {
+            if (mouseX >= startX[i] && mouseX < endX[i]) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    /**
+     * Maps a footer hint key token (the trimmed content of a {@link Theme#hintKey()} span) to the {@link KeyEvent} that
+     * pressing it would produce, or {@code null} when the token is not an unambiguous single key. Recognizes the
+     * function keys {@code F1}-{@code F12}, {@code Enter}, {@code Esc}, {@code Tab} and any single character; ambiguous
+     * multi-key hints such as {@code Up/Down}, {@code PgUp/PgDn} or arrow glyphs are left non-clickable.
+     */
+    static KeyEvent footerKeyEvent(String token) {
+        if (token == null) {
+            return null;
+        }
+        String t = token.trim();
+        if (t.isEmpty()) {
+            return null;
+        }
+        if (t.length() >= 2 && (t.charAt(0) == 'F' || t.charAt(0) == 'f')
+                && t.chars().skip(1).allMatch(Character::isDigit)) {
+            KeyCode fkey = functionKeyCode(Integer.parseInt(t.substring(1)));
+            return fkey != null ? KeyEvent.ofKey(fkey) : null;
+        }
+        switch (t) {
+            case "Enter":
+                return KeyEvent.ofKey(KeyCode.ENTER);
+            case "Esc":
+                return KeyEvent.ofKey(KeyCode.ESCAPE);
+            case "Tab":
+                return KeyEvent.ofKey(KeyCode.TAB);
+            default:
+                return t.length() == 1 ? KeyEvent.ofChar(t.charAt(0), KeyModifiers.NONE) : null;
+        }
+    }
+
+    private static KeyCode functionKeyCode(int n) {
+        return switch (n) {
+            case 1 -> KeyCode.F1;
+            case 2 -> KeyCode.F2;
+            case 3 -> KeyCode.F3;
+            case 4 -> KeyCode.F4;
+            case 5 -> KeyCode.F5;
+            case 6 -> KeyCode.F6;
+            case 7 -> KeyCode.F7;
+            case 8 -> KeyCode.F8;
+            case 9 -> KeyCode.F9;
+            case 10 -> KeyCode.F10;
+            case 11 -> KeyCode.F11;
+            case 12 -> KeyCode.F12;
+            default -> null;
+        };
     }
 
     private boolean handleGlobalKeys(KeyEvent ke, TuiRunner runner) {
@@ -966,6 +1172,7 @@ public class CamelMonitor extends CamelCommand {
                     ? new Rect(area.x(), area.y() + 1, area.width(), 1)
                     : area;
             frame.renderStatefulWidget(tabs, labelsArea, infraTabsState);
+            captureTabBarGeometry(labelsArea, labels, dividerStr, new int[] { TAB_OVERVIEW, TAB_LOG });
             return;
         }
 
@@ -1007,6 +1214,12 @@ public class CamelMonitor extends CamelCommand {
                 : area;
         frame.renderStatefulWidget(tabs, labelsArea, tabsState);
 
+        int[] targets = new int[labels.length];
+        for (int i = 0; i < labels.length; i++) {
+            targets[i] = i;
+        }
+        captureTabBarGeometry(labelsArea, labels, dividerStr, targets);
+
         if (area.height() >= 2) {
             String[] badgeTexts = new String[labels.length];
             Style[] badgeStyles = new Style[labels.length];
@@ -1031,6 +1244,8 @@ public class CamelMonitor extends CamelCommand {
     }
 
     private void renderContent(Frame frame, Rect area) {
+        // Remember the area the active tab renders into so mouse events can be forwarded to it.
+        lastContentArea = area;
         // Clear the content area before rendering the active tab. Without this, styled cells
         // from the previous tab (e.g. RED error text in the log detail) can bleed through when
         // switching tabs if TamboUI's buffer diff does not reset every cell in the region.
@@ -1346,6 +1561,10 @@ public class CamelMonitor extends CamelCommand {
     }
 
     private void renderFooter(Frame frame, Rect area) {
+        // Disable footer key-binding clicks until the normal path below re-captures the hint regions.
+        // Overlay/early-return states (screenshot flash, help, caption) leave the footer non-clickable.
+        footerRowY = -1;
+
         // Show screenshot flash message briefly
         String msg = recordingManager.screenshotFlashMessage();
         if (msg != null) {
@@ -1463,6 +1682,7 @@ public class CamelMonitor extends CamelCommand {
             spans.addAll(rightSpans);
         }
 
+        captureFooterRegions(area, spans);
         frame.renderWidget(Paragraph.from(Line.from(spans)), area);
     }
 

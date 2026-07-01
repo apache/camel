@@ -33,6 +33,8 @@ import dev.tamboui.text.Line;
 import dev.tamboui.text.Span;
 import dev.tamboui.text.Text;
 import dev.tamboui.tui.event.KeyEvent;
+import dev.tamboui.tui.event.MouseEvent;
+import dev.tamboui.tui.event.MouseEventKind;
 import dev.tamboui.widgets.barchart.Bar;
 import dev.tamboui.widgets.barchart.BarChart;
 import dev.tamboui.widgets.barchart.BarGroup;
@@ -88,8 +90,8 @@ class OverviewTab implements MonitorTab {
 
     final TableState tableState = new TableState();
     int dividerIndex = -1;
+    private Rect lastTableArea;
     int chartMode = CHART_SINGLE;
-
     private String sort = "name";
     private int sortIndex = 1;
     private boolean sortReversed;
@@ -105,6 +107,51 @@ class OverviewTab implements MonitorTab {
         this.cpuLoadAvg = metrics.getCpuLoadAvg();
         this.stoppingPids = stoppingPids;
         this.onPidChanged = onPidChanged;
+    }
+
+    @Override
+    public TableState getTableState() {
+        return tableState;
+    }
+
+    @Override
+    public int getTableRowCount() {
+        return totalRows();
+    }
+
+    @Override
+    public Rect getTableArea() {
+        return lastTableArea;
+    }
+
+    @Override
+    public boolean handleMouseEvent(MouseEvent me, Rect area) {
+        if (!area.contains(me.x(), me.y())) {
+            return false;
+        }
+        // Reuse the keyboard navigation for the wheel so the divider row is skipped and the selected
+        // pid is synced (which drives the render-time selection restore and fires onPidChanged).
+        if (me.kind() == MouseEventKind.SCROLL_UP) {
+            navigateUp();
+            return true;
+        }
+        if (me.kind() == MouseEventKind.SCROLL_DOWN) {
+            navigateDown();
+            return true;
+        }
+        if (me.isClick()) {
+            int row = MonitorTab.tableRowAt(lastTableArea, tableState.offset(), totalRows(), me.x(), me.y());
+            if (row < 0) {
+                return false;
+            }
+            // The divider row between integrations and infra is not selectable.
+            if (row != dividerIndex) {
+                tableState.select(row);
+                syncSelectedPid();
+            }
+            return true;
+        }
+        return false;
     }
 
     void setActions(OverviewActions actions) {
@@ -192,6 +239,7 @@ class OverviewTab implements MonitorTab {
 
     @Override
     public void render(Frame frame, Rect area) {
+        lastTableArea = null;
         List<IntegrationInfo> infos = sortedInfos();
         List<InfraInfo> infraInfos = ctx.infraData.get();
 
@@ -398,6 +446,7 @@ class OverviewTab implements MonitorTab {
                 .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(" Overview ").build())
                 .build();
 
+        lastTableArea = chunks.get(0);
         frame.renderStatefulWidget(table, chunks.get(0), tableState);
 
         if (hasSparkline && chunks.size() > 1) {

@@ -58,9 +58,25 @@ class InflightTab implements MonitorTab {
     private String sort = "duration";
     private int sortIndex = 3;
     private boolean sortReversed;
+    private Rect lastTableArea;
 
     InflightTab(MonitorContext ctx) {
         this.ctx = ctx;
+    }
+
+    @Override
+    public TableState getTableState() {
+        return tableState;
+    }
+
+    @Override
+    public int getTableRowCount() {
+        return getInflightExchanges().size();
+    }
+
+    @Override
+    public Rect getTableArea() {
+        return lastTableArea;
     }
 
     @Override
@@ -98,6 +114,7 @@ class InflightTab implements MonitorTab {
 
     @Override
     public void render(Frame frame, Rect area) {
+        lastTableArea = null;
         IntegrationInfo info = ctx.findSelectedIntegration();
         if (info == null) {
             renderNoSelection(frame, area);
@@ -163,6 +180,7 @@ class InflightTab implements MonitorTab {
                 .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(title).build())
                 .build();
 
+        lastTableArea = area;
         frame.renderStatefulWidget(table, area, tableState);
     }
 

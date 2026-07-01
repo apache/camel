@@ -59,11 +59,28 @@ class CircuitBreakerTab implements MonitorTab {
     private String sort = "route";
     private int sortIndex;
     private boolean sortReversed;
+    private Rect lastTableArea;
 
     CircuitBreakerTab(MonitorContext ctx, MetricsCollector metrics) {
         this.ctx = ctx;
         this.cbSuccessHistory = metrics.getCbSuccessHistory();
         this.cbFailHistory = metrics.getCbFailHistory();
+    }
+
+    @Override
+    public TableState getTableState() {
+        return tableState;
+    }
+
+    @Override
+    public int getTableRowCount() {
+        IntegrationInfo info = ctx.findSelectedIntegration();
+        return info != null ? info.circuitBreakers.size() : 0;
+    }
+
+    @Override
+    public Rect getTableArea() {
+        return lastTableArea;
     }
 
     @Override
@@ -107,6 +124,7 @@ class CircuitBreakerTab implements MonitorTab {
 
     @Override
     public void render(Frame frame, Rect area) {
+        lastTableArea = null;
         IntegrationInfo info = ctx.findSelectedIntegration();
         if (info == null) {
             renderNoSelection(frame, area);
@@ -197,6 +215,7 @@ class CircuitBreakerTab implements MonitorTab {
                 .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(" Circuit Breaker ").build())
                 .build();
 
+        lastTableArea = chunks.get(0);
         frame.renderStatefulWidget(table, chunks.get(0), tableState);
 
         if (showDiagram) {

@@ -26,9 +26,12 @@ import dev.tamboui.layout.Rect;
 import dev.tamboui.style.Color;
 import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.Span;
+import dev.tamboui.tui.event.MouseButton;
+import dev.tamboui.tui.event.MouseEvent;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -150,7 +153,38 @@ class SpansTabRenderTest {
         assertTrue(rendered.contains("cccc3333"), "Should render second trace ID");
     }
 
+    @Test
+    void clickingATraceRowSelectsItAndSurvivesReRender() {
+        // Two traces so the clicked (second) row differs from the auto-selected first row.
+        spans.get().add(createSpan("aaaa1111bbbb2222", "span001", "timer:a", "OK", 10));
+        spans.get().add(createSpan("cccc3333dddd4444", "span002", "timer:b", "OK", 20));
+
+        SpansTab tab = new SpansTab(ctx, spans);
+        Rect area = new Rect(0, 0, 140, 20);
+
+        // First render captures the table geometry and auto-selects the first trace.
+        renderOnce(tab, area);
+        assertEquals(Integer.valueOf(0), tab.getTableState().selected(), "the first trace is auto-selected initially");
+
+        // Click the second data row. The border and header put the first data row at y = 2.
+        assertTrue(tab.handleMouseEvent(MouseEvent.press(MouseButton.LEFT, 5, 3), area),
+                "a click on a trace row is consumed");
+        assertEquals(Integer.valueOf(1), tab.getTableState().selected(), "clicking the second row selects it");
+
+        // The next render restores the selection from selectedListTraceId; because the click synced that
+        // field (as keyboard navigation does), the clicked row must survive instead of snapping back to row 0.
+        renderOnce(tab, area);
+        assertEquals(Integer.valueOf(1), tab.getTableState().selected(),
+                "the clicked selection survives the next render");
+    }
+
     // ---- Helper methods ----
+
+    private void renderOnce(SpansTab tab, Rect area) {
+        Buffer buffer = Buffer.empty(area);
+        Frame frame = Frame.forTesting(buffer);
+        tab.render(frame, area);
+    }
 
     private SpanEntry createSpan(String traceId, String spanId, String name, String status, long durationMs) {
         return new SpanEntry(

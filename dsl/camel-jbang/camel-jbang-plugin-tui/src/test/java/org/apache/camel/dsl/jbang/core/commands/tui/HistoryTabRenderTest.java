@@ -26,9 +26,13 @@ import dev.tamboui.layout.Rect;
 import dev.tamboui.style.Color;
 import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.Span;
+import dev.tamboui.tui.event.MouseButton;
+import dev.tamboui.tui.event.MouseEvent;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -166,7 +170,67 @@ class HistoryTabRenderTest {
         assertTrue(rendered.contains("STATUS"), "Should show STATUS header");
     }
 
+    @Test
+    void clickingATraceRowSelectsItInTheTraceList() {
+        traces.set(List.of(
+                createTrace("EX-100", "route1", "Done", true, true),
+                createTrace("EX-200", "route2", "Done", true, true)));
+        HistoryTab tab = new HistoryTab(ctx, traces, new HashMap<>());
+
+        Rect area = new Rect(0, 0, 140, 30);
+        renderOnce(tab, area);
+
+        // The trace list is the active table when the tracer is active. Border + header put the first data row
+        // at tableArea.y() + 2, so the second row is one below.
+        Rect tableArea = tab.getTableArea();
+        assertNotNull(tableArea, "the trace list must expose a clickable table area");
+        int secondRowY = tableArea.y() + 3;
+        assertTrue(tab.handleMouseEvent(MouseEvent.press(MouseButton.LEFT, tableArea.x() + 2, secondRowY), area),
+                "a click on a trace row is consumed");
+        assertEquals(Integer.valueOf(1), tab.getTableState().selected(), "clicking the second trace row selects it");
+    }
+
+    @Test
+    void clickingAHistoryRowSelectsItWhenTracerIsInactive() {
+        // With no live traces the Inspect tab shows the history list, backed by a different table state and area
+        // than the trace list. This is the regression: the mouse handler must target the history table here.
+        HistoryTab tab = new HistoryTab(ctx, traces, new HashMap<>());
+        tab.historyEntries = List.of(historyEntry("route1", "n1"), historyEntry("route2", "n2"));
+
+        Rect area = new Rect(0, 0, 140, 30);
+        renderOnce(tab, area);
+
+        Rect tableArea = tab.getTableArea();
+        assertNotNull(tableArea, "the history list must expose a clickable table area when the tracer is inactive");
+        int secondRowY = tableArea.y() + 3;
+        assertTrue(tab.handleMouseEvent(MouseEvent.press(MouseButton.LEFT, tableArea.x() + 2, secondRowY), area),
+                "a click on a history row is consumed");
+        assertEquals(Integer.valueOf(1), tab.getTableState().selected(), "clicking the second history row selects it");
+    }
+
     // ---- Helper methods ----
+
+    private void renderOnce(HistoryTab tab, Rect area) {
+        Buffer buffer = Buffer.empty(area);
+        Frame frame = Frame.forTesting(buffer);
+        tab.render(frame, area);
+    }
+
+    private HistoryEntry historyEntry(String routeId, String nodeId) {
+        HistoryEntry he = new HistoryEntry();
+        he.pid = "1234";
+        he.exchangeId = "EX-" + nodeId;
+        he.timestamp = "12:00:00.000";
+        he.epochMs = System.currentTimeMillis();
+        he.routeId = routeId;
+        he.nodeId = nodeId;
+        he.processor = "log";
+        he.direction = "in";
+        he.first = true;
+        he.last = true;
+        he.elapsed = 10;
+        return he;
+    }
 
     private TraceEntry createTrace(String exchangeId, String routeId, String status, boolean first, boolean last) {
         TraceEntry te = new TraceEntry();

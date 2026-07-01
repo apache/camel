@@ -66,6 +66,8 @@ class RoutesTab implements MonitorTab {
     // Table states
     private final TableState routeTableState = new TableState();
     private final TableState processorTableState = new TableState();
+    // Bounds of the route table as last rendered; null while a non-table view (diagram, source) is showing.
+    private Rect lastTableArea;
 
     // Diagram support (shared rendering/loading logic)
     private final DiagramSupport diagram = new DiagramSupport();
@@ -80,6 +82,22 @@ class RoutesTab implements MonitorTab {
 
     RoutesTab(MonitorContext ctx) {
         this.ctx = ctx;
+    }
+
+    @Override
+    public TableState getTableState() {
+        return routeTableState;
+    }
+
+    @Override
+    public int getTableRowCount() {
+        IntegrationInfo info = ctx.findSelectedIntegration();
+        return info != null ? info.routes.size() : 0;
+    }
+
+    @Override
+    public Rect getTableArea() {
+        return lastTableArea;
     }
 
     boolean isTopMode() {
@@ -419,6 +437,9 @@ class RoutesTab implements MonitorTab {
 
     @Override
     public void render(Frame frame, Rect area) {
+        // Reset each frame; only set when the route table is actually drawn below, so clicks in the diagram or source
+        // views do not select hidden rows.
+        lastTableArea = null;
         IntegrationInfo info = ctx.findSelectedIntegration();
         if (info == null) {
             renderNoSelection(frame, area);
@@ -622,6 +643,7 @@ class RoutesTab implements MonitorTab {
                     .build();
         }
 
+        lastTableArea = chunks.get(0);
         frame.renderStatefulWidget(routeTable, chunks.get(0), routeTableState);
 
         // Bottom panel: processors

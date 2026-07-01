@@ -79,9 +79,28 @@ class BrowseTab implements MonitorTab {
     private EndpointData selectedEndpoint;
     private List<MessageData> messages = Collections.emptyList();
     private String lastPid;
+    private Rect lastTableArea;
 
     BrowseTab(MonitorContext ctx) {
         this.ctx = ctx;
+    }
+
+    @Override
+    public TableState getTableState() {
+        return view == VIEW_MESSAGES ? messageTableState : endpointTableState;
+    }
+
+    @Override
+    public int getTableRowCount() {
+        if (view == VIEW_MESSAGES) {
+            return messages.size();
+        }
+        return sortedEndpoints().size();
+    }
+
+    @Override
+    public Rect getTableArea() {
+        return lastTableArea;
     }
 
     @Override
@@ -239,6 +258,7 @@ class BrowseTab implements MonitorTab {
 
     @Override
     public void render(Frame frame, Rect area) {
+        lastTableArea = null;
         IntegrationInfo info = ctx.findSelectedIntegration();
         if (info == null) {
             renderNoSelection(frame, area);
@@ -301,6 +321,7 @@ class BrowseTab implements MonitorTab {
                 .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(title).build())
                 .build();
 
+        lastTableArea = area;
         frame.renderStatefulWidget(table, area, endpointTableState);
     }
 
@@ -354,6 +375,7 @@ class BrowseTab implements MonitorTab {
                 .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(title).build())
                 .build();
 
+        lastTableArea = area;
         frame.renderStatefulWidget(table, area, messageTableState);
     }
 

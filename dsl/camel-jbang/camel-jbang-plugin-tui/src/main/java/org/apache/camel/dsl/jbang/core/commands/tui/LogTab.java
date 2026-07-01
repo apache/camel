@@ -39,6 +39,8 @@ import dev.tamboui.text.Line;
 import dev.tamboui.text.Span;
 import dev.tamboui.text.Text;
 import dev.tamboui.tui.event.KeyEvent;
+import dev.tamboui.tui.event.MouseEvent;
+import dev.tamboui.tui.event.MouseEventKind;
 import dev.tamboui.widgets.Clear;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
@@ -240,6 +242,23 @@ class LogTab implements MonitorTab {
 
     void pageDown() {
         scroll += 20;
+    }
+
+    @Override
+    public boolean handleMouseEvent(MouseEvent me, Rect area) {
+        if (!area.contains(me.x(), me.y())) {
+            return false;
+        }
+        if (me.kind() == MouseEventKind.SCROLL_UP) {
+            followMode = false;
+            scroll = Math.max(0, scroll - 3);
+            return true;
+        }
+        if (me.kind() == MouseEventKind.SCROLL_DOWN) {
+            scroll += 3;
+            return true;
+        }
+        return false;
     }
 
     boolean isShowLogLevelPopup() {

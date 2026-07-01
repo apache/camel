@@ -52,6 +52,7 @@ class ErrorsTab implements MonitorTab {
 
     private final MonitorContext ctx;
     private final TableState tableState = new TableState();
+    private Rect lastTableArea;
     private final ScrollbarState detailScrollState = new ScrollbarState();
     private String sort = "id";
     private int sortIndex;
@@ -76,6 +77,21 @@ class ErrorsTab implements MonitorTab {
 
     ErrorsTab(MonitorContext ctx) {
         this.ctx = ctx;
+    }
+
+    @Override
+    public TableState getTableState() {
+        return tableState;
+    }
+
+    @Override
+    public int getTableRowCount() {
+        return filteredSize();
+    }
+
+    @Override
+    public Rect getTableArea() {
+        return lastTableArea;
     }
 
     @Override
@@ -368,6 +384,7 @@ class ErrorsTab implements MonitorTab {
                         .title(" Errors (" + sorted.size() + ") sort:" + sort + " ").build())
                 .build();
 
+        lastTableArea = chunks.get(0);
         frame.renderStatefulWidget(table, chunks.get(0), tableState);
 
         if (showDetail) {

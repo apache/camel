@@ -49,9 +49,26 @@ class ConsumersTab implements MonitorTab {
     private String sort = "id";
     private int sortIndex;
     private boolean sortReversed;
+    private Rect lastTableArea;
 
     ConsumersTab(MonitorContext ctx) {
         this.ctx = ctx;
+    }
+
+    @Override
+    public TableState getTableState() {
+        return tableState;
+    }
+
+    @Override
+    public int getTableRowCount() {
+        IntegrationInfo info = ctx.findSelectedIntegration();
+        return info != null ? info.consumers.size() : 0;
+    }
+
+    @Override
+    public Rect getTableArea() {
+        return lastTableArea;
     }
 
     @Override
@@ -84,6 +101,7 @@ class ConsumersTab implements MonitorTab {
 
     @Override
     public void render(Frame frame, Rect area) {
+        lastTableArea = null;
         IntegrationInfo info = ctx.findSelectedIntegration();
         if (info == null) {
             renderNoSelection(frame, area);
@@ -153,6 +171,7 @@ class ConsumersTab implements MonitorTab {
                         .title(" Consumers sort:" + sort + " ").build())
                 .build();
 
+        lastTableArea = area;
         frame.renderStatefulWidget(table, area, tableState);
     }
 

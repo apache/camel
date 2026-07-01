@@ -28,9 +28,13 @@ import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.Span;
 import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.tui.event.KeyModifiers;
+import dev.tamboui.tui.event.MouseButton;
+import dev.tamboui.tui.event.MouseEvent;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -197,6 +201,64 @@ class OverviewTabRenderTest {
     }
 
     @Test
+    void clickingAnIntegrationRowSelectsItAndFiresPidChange() {
+        info.state = 5;
+        IntegrationInfo info2 = new IntegrationInfo();
+        info2.pid = "5678";
+        info2.name = "other-app";
+        info2.state = 5;
+
+        AtomicReference<List<IntegrationInfo>> data = new AtomicReference<>(List.of(info, info2));
+        AtomicReference<List<InfraInfo>> infraData = new AtomicReference<>(List.of());
+        MonitorContext ctx2 = new MonitorContext(data, infraData);
+        // The default sort is by name, so the rows are ordered other-app (5678), test-app (1234).
+        // Start with test-app selected so that clicking the first row (other-app) changes the selection.
+        ctx2.selectedPid = "1234";
+
+        boolean[] pidChanged = { false };
+        OverviewTab tab = new OverviewTab(ctx2, new MetricsCollector(), new HashSet<>(), () -> pidChanged[0] = true);
+
+        Rect area = new Rect(0, 0, 160, 30);
+        renderOnce(tab, area);
+
+        // The border and header put the first data row at tableArea.y() + 2.
+        Rect tableArea = tab.getTableArea();
+        int firstRowY = tableArea.y() + 2;
+        assertTrue(tab.handleMouseEvent(MouseEvent.press(MouseButton.LEFT, tableArea.x() + 2, firstRowY), area),
+                "a click on an integration row is consumed");
+        assertEquals("5678", ctx2.selectedPid, "clicking the first row (other-app) selects that integration");
+        assertTrue(pidChanged[0], "selecting a different integration fires the pid-changed callback");
+    }
+
+    @Test
+    void clickingTheDividerRowSelectsNothing() {
+        info.state = 5;
+        InfraInfo infra = new InfraInfo();
+        infra.pid = "9999";
+        infra.alias = "kafka";
+        infra.alive = true;
+
+        AtomicReference<List<IntegrationInfo>> data = new AtomicReference<>(List.of(info));
+        AtomicReference<List<InfraInfo>> infraData = new AtomicReference<>(List.of(infra));
+        MonitorContext ctx2 = new MonitorContext(data, infraData);
+        ctx2.selectedPid = "1234";
+
+        boolean[] pidChanged = { false };
+        OverviewTab tab = new OverviewTab(ctx2, new MetricsCollector(), new HashSet<>(), () -> pidChanged[0] = true);
+
+        Rect area = new Rect(0, 0, 160, 30);
+        renderOnce(tab, area);
+
+        // Rows: 0 = the integration, 1 = the "Dev/Infra Services" divider, 2 = the infra service.
+        Rect tableArea = tab.getTableArea();
+        int dividerRowY = tableArea.y() + 3;
+        assertTrue(tab.handleMouseEvent(MouseEvent.press(MouseButton.LEFT, tableArea.x() + 2, dividerRowY), area),
+                "a click on the divider row is consumed");
+        assertEquals("1234", ctx2.selectedPid, "the divider row is not selectable, so the selection is unchanged");
+        assertFalse(pidChanged[0], "clicking the divider does not fire the pid-changed callback");
+    }
+
+    @Test
     void renderFailedCountInRed() {
         info.state = 5;
         info.failed = 42;
@@ -214,6 +276,14 @@ class OverviewTabRenderTest {
 
         boolean foundRed = TuiTestHelper.findCellWithColor(buffer, "4", Color.LIGHT_RED);
         assertTrue(foundRed, "Failed count should be rendered in LIGHT_RED");
+    }
+
+    // ---- Helper methods ----
+
+    private void renderOnce(OverviewTab tab, Rect area) {
+        Buffer buffer = Buffer.empty(area);
+        Frame frame = Frame.forTesting(buffer);
+        tab.render(frame, area);
     }
 
 }

@@ -20,10 +20,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
+import dev.tamboui.layout.Rect;
 import dev.tamboui.text.Span;
+import dev.tamboui.tui.event.MouseEvent;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -79,6 +82,35 @@ class LogTabRenderTest {
         String footer = footerSpans.stream().map(Span::content).reduce("", String::concat);
         assertTrue(footer.contains("find") || footer.contains("/"),
                 "Footer should contain find hint");
+    }
+
+    // Scrolling the log with the wheel breaks follow mode so the pinned view stays put while the user reads history.
+    // The footer "follow [on]"/"follow [off]" hint reflects that state.
+
+    @Test
+    void scrollUpTurnsFollowModeOff() {
+        LogTab tab = new LogTab(ctx);
+        Rect area = new Rect(0, 0, 120, 20);
+
+        assertTrue(footer(tab).contains("follow [on]"), "follow mode is on by default");
+
+        assertTrue(tab.handleMouseEvent(MouseEvent.scrollUp(10, 10), area), "a wheel scroll inside the log is consumed");
+        assertTrue(footer(tab).contains("follow [off]"), "scrolling up disables follow mode");
+    }
+
+    @Test
+    void scrollOutsideLogAreaLeavesFollowModeOn() {
+        LogTab tab = new LogTab(ctx);
+        Rect area = new Rect(0, 0, 120, 20);
+
+        assertFalse(tab.handleMouseEvent(MouseEvent.scrollUp(500, 500), area), "a scroll outside the log area is ignored");
+        assertTrue(footer(tab).contains("follow [on]"), "follow mode stays on when the scroll misses the log area");
+    }
+
+    private static String footer(LogTab tab) {
+        List<Span> spans = new ArrayList<>();
+        tab.renderFooter(spans);
+        return spans.stream().map(Span::content).reduce("", String::concat);
     }
 
 }

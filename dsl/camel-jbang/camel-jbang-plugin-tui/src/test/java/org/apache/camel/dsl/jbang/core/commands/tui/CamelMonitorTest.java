@@ -25,8 +25,10 @@ import dev.tamboui.tui.event.KeyEvent;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.hint;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class CamelMonitorTest {
@@ -129,6 +131,105 @@ class CamelMonitorTest {
         assertEquals(width, newWidth, "no spans dropped when the footer already fits");
         assertTrue(containsKey(spans, "F1"));
         assertTrue(containsKey(spans, "F2"));
+    }
+
+    // Tab-bar click support maps a click x-coordinate back to the tab under it. The geometry mirrors how the tab bar
+    // is drawn: labels laid out left to right, each separated by a divider. tabStartPositions computes where each label
+    // begins; tabIndexAt resolves a click to the owning label (or -1 for a divider gap / outside).
+
+    @Test
+    void tabStartPositionsAccumulatesWidthsAndDividers() {
+        // Three labels of width 12, 7, 10 separated by a 3-wide " | " divider, starting at column 0.
+        int[] starts = CamelMonitor.tabStartPositions(0, new int[] { 12, 7, 10 }, 3);
+        // 0; 0+12+3; 15+7+3
+        assertArrayEquals(new int[] { 0, 15, 25 }, starts, "each label starts after the previous label plus one divider");
+    }
+
+    @Test
+    void tabStartPositionsHonorsOriginOffset() {
+        int[] starts = CamelMonitor.tabStartPositions(5, new int[] { 12, 7, 10 }, 3);
+        assertArrayEquals(new int[] { 5, 20, 30 }, starts, "the first label starts at originX and the rest shift with it");
+    }
+
+    @Test
+    void tabIndexAtResolvesClicksToTheOwningLabel() {
+        int[] starts = { 0, 15, 25 };
+        int[] widths = { 12, 7, 10 };
+        assertEquals(0, CamelMonitor.tabIndexAt(starts, widths, 0), "left edge of the first label");
+        assertEquals(0, CamelMonitor.tabIndexAt(starts, widths, 11), "right edge (inclusive) of the first label");
+        assertEquals(1, CamelMonitor.tabIndexAt(starts, widths, 15), "left edge of the second label");
+        assertEquals(2, CamelMonitor.tabIndexAt(starts, widths, 34), "right edge (inclusive) of the third label");
+    }
+
+    @Test
+    void tabIndexAtReturnsMinusOneForGapsAndOutOfRange() {
+        int[] starts = { 0, 15, 25 };
+        int[] widths = { 12, 7, 10 };
+        assertEquals(-1, CamelMonitor.tabIndexAt(starts, widths, 12),
+                "column 12 falls in the divider gap after the first label");
+        assertEquals(-1, CamelMonitor.tabIndexAt(starts, widths, 22),
+                "column 22 falls in the divider gap after the second label");
+        assertEquals(-1, CamelMonitor.tabIndexAt(starts, widths, 35), "column 35 is past the last label");
+        assertEquals(-1, CamelMonitor.tabIndexAt(starts, widths, -1), "negative column is outside every label");
+        assertEquals(-1, CamelMonitor.tabIndexAt(null, widths, 5), "no captured geometry yet");
+    }
+
+    @Test
+    void tabStartPositionsAndTabIndexAtRoundTrip() {
+        // Build geometry the way captureTabBarGeometry does, then confirm a click in the middle of a label resolves back
+        // to that label while a click on the divider between two labels resolves to nothing.
+        int[] widths = { 12, 7, 10 };
+        int[] starts = CamelMonitor.tabStartPositions(0, widths, 3);
+        int midOfSecond = starts[1] + widths[1] / 2;
+        assertEquals(1, CamelMonitor.tabIndexAt(starts, widths, midOfSecond), "a click inside label 1 maps to index 1");
+        int dividerBetweenFirstAndSecond = starts[0] + widths[0]; // first cell after label 0, before label 1
+        assertEquals(-1, CamelMonitor.tabIndexAt(starts, widths, dividerBetweenFirstAndSecond),
+                "a click on the divider maps to no tab");
+    }
+
+    // Footer key bindings are clickable only when the hint token maps to an unambiguous single key.
+    // footerKeyEvent parses the token; footerRegionAt maps a click x back to the region under it.
+
+    @Test
+    void footerKeyEventParsesFunctionKeys() {
+        assertTrue(CamelMonitor.footerKeyEvent("F1").isKey(KeyCode.F1), "F1 maps to the F1 key");
+        assertTrue(CamelMonitor.footerKeyEvent(" F5 ").isKey(KeyCode.F5), "surrounding spaces are trimmed");
+        assertTrue(CamelMonitor.footerKeyEvent("F12").isKey(KeyCode.F12), "F12 is the highest function key");
+    }
+
+    @Test
+    void footerKeyEventParsesNamedAndSingleCharKeys() {
+        assertTrue(CamelMonitor.footerKeyEvent("Enter").isKey(KeyCode.ENTER), "Enter maps to the Enter key");
+        assertTrue(CamelMonitor.footerKeyEvent("Esc").isKey(KeyCode.ESCAPE), "Esc maps to the Escape key");
+        assertTrue(CamelMonitor.footerKeyEvent("Tab").isKey(KeyCode.TAB), "Tab maps to the Tab key");
+        assertTrue(CamelMonitor.footerKeyEvent("d").isChar('d'), "a single letter maps to that character");
+        assertTrue(CamelMonitor.footerKeyEvent("?").isChar('?'), "'?' (help) maps to that character");
+        assertTrue(CamelMonitor.footerKeyEvent("1").isChar('1'), "a digit maps to that character");
+    }
+
+    @Test
+    void footerKeyEventRejectsAmbiguousAndInvalidTokens() {
+        assertNull(CamelMonitor.footerKeyEvent("Up/Down"), "a two-key hint is not clickable");
+        assertNull(CamelMonitor.footerKeyEvent("PgUp/PgDn"), "a paging hint is not clickable");
+        assertNull(CamelMonitor.footerKeyEvent("↑↓"), "arrow glyphs are not a single key");
+        assertNull(CamelMonitor.footerKeyEvent("F13"), "there is no F13 key");
+        assertNull(CamelMonitor.footerKeyEvent(""), "an empty token is not clickable");
+        assertNull(CamelMonitor.footerKeyEvent(null), "a null token is not clickable");
+    }
+
+    @Test
+    void footerRegionAtResolvesClicksToTheOwningRegion() {
+        // Two half-open regions [0, 5) and [10, 18) with a gap between them.
+        int[] startX = { 0, 10 };
+        int[] endX = { 5, 18 };
+        assertEquals(0, CamelMonitor.footerRegionAt(startX, endX, 0), "left edge of the first region");
+        assertEquals(0, CamelMonitor.footerRegionAt(startX, endX, 4), "last cell of the first region");
+        assertEquals(-1, CamelMonitor.footerRegionAt(startX, endX, 5), "column 5 is past the first region (exclusive end)");
+        assertEquals(-1, CamelMonitor.footerRegionAt(startX, endX, 7), "column 7 is in the gap between regions");
+        assertEquals(1, CamelMonitor.footerRegionAt(startX, endX, 10), "left edge of the second region");
+        assertEquals(1, CamelMonitor.footerRegionAt(startX, endX, 17), "last cell of the second region");
+        assertEquals(-1, CamelMonitor.footerRegionAt(startX, endX, 18), "column 18 is past the second region");
+        assertEquals(-1, CamelMonitor.footerRegionAt(null, endX, 3), "no captured geometry yet");
     }
 
     private static List<Span> footer(String key, String label) {
