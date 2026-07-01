@@ -40,8 +40,10 @@ import dev.langchain4j.model.chat.request.json.JsonStringSchema;
 import dev.langchain4j.model.chat.response.ChatResponse;
 import dev.langchain4j.model.output.FinishReason;
 import dev.langchain4j.model.output.Response;
+import dev.langchain4j.model.output.TokenUsage;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
+import org.apache.camel.Message;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.component.langchain4j.tools.spec.CamelToolExecutorCache;
 import org.apache.camel.component.langchain4j.tools.spec.CamelToolSpecification;
@@ -122,12 +124,37 @@ public class LangChain4jToolsProducer extends DefaultProducer {
 
         final Exchange baseline = ExchangeHelper.createCopy(exchange, true);
 
+        int totalInputTokens = 0;
+        int totalOutputTokens = 0;
+        int totalTokens = 0;
+        FinishReason lastFinishReason = null;
+
         // First talk to the model to get the tools to be called
         int i = 0;
         do {
             LOG.debug("Starting iteration {}", i);
-            final Response<AiMessage> response = chatWithLLM(chatMessages, toolPair, exchange);
+            final ChatResponse chatResponse = chatWithLLM(chatMessages, toolPair, exchange);
+
+            // Accumulate token usage across iterations
+            if (chatResponse.tokenUsage() != null) {
+                TokenUsage usage = chatResponse.tokenUsage();
+                if (usage.inputTokenCount() != null) {
+                    totalInputTokens += usage.inputTokenCount();
+                }
+                if (usage.outputTokenCount() != null) {
+                    totalOutputTokens += usage.outputTokenCount();
+                }
+                if (usage.totalTokenCount() != null) {
+                    totalTokens += usage.totalTokenCount();
+                }
+            }
+            if (chatResponse.finishReason() != null) {
+                lastFinishReason = chatResponse.finishReason();
+            }
+
+            final Response<AiMessage> response = Response.from(chatResponse.aiMessage());
             if (isDoneExecuting(response)) {
+                populateTokenUsageHeaders(lastFinishReason, totalInputTokens, totalOutputTokens, totalTokens, exchange);
                 return extractAiResponse(response);
             }
 
@@ -136,6 +163,21 @@ public class LangChain4jToolsProducer extends DefaultProducer {
             LOG.debug("Finished iteration {}", i);
             i++;
         } while (true);
+    }
+
+    private void populateTokenUsageHeaders(
+            FinishReason finishReason, int inputTokens, int outputTokens, int totalTokens, Exchange exchange) {
+        Message message = exchange.getMessage();
+
+        if (finishReason != null) {
+            message.setHeader(LangChain4jToolsHeaders.FINISH_REASON, finishReason);
+        }
+
+        if (inputTokens > 0 || outputTokens > 0 || totalTokens > 0) {
+            message.setHeader(LangChain4jToolsHeaders.INPUT_TOKEN_COUNT, inputTokens);
+            message.setHeader(LangChain4jToolsHeaders.OUTPUT_TOKEN_COUNT, outputTokens);
+            message.setHeader(LangChain4jToolsHeaders.TOTAL_TOKEN_COUNT, totalTokens);
+        }
     }
 
     private boolean isDoneExecuting(Response<AiMessage> response) {
@@ -297,7 +339,7 @@ public class LangChain4jToolsProducer extends DefaultProducer {
      * @param  toolPair     the toolPair containing the available tools to be called
      * @return              the response provided by the model
      */
-    private Response<AiMessage> chatWithLLM(List<ChatMessage> chatMessages, ToolPair toolPair, Exchange exchange) {
+    private ChatResponse chatWithLLM(List<ChatMessage> chatMessages, ToolPair toolPair, Exchange exchange) {
 
         ChatRequest.Builder requestBuilder = ChatRequest.builder()
                 .messages(chatMessages);
@@ -313,17 +355,15 @@ public class LangChain4jToolsProducer extends DefaultProducer {
         // generate response
         ChatResponse chatResponse = this.chatModel.chat(chatRequest);
 
-        // Convert ChatResponse to Response<AiMessage> for compatibility
         AiMessage aiMessage = chatResponse.aiMessage();
-        Response<AiMessage> response = Response.from(aiMessage);
 
-        if (!response.content().hasToolExecutionRequests()) {
+        if (!aiMessage.hasToolExecutionRequests()) {
             exchange.getMessage().setHeader(LangChain4jTools.NO_TOOLS_CALLED_HEADER, Boolean.TRUE);
-            return response;
+            return chatResponse;
         }
 
-        chatMessages.add(response.content());
-        return response;
+        chatMessages.add(aiMessage);
+        return chatResponse;
     }
 
     /**

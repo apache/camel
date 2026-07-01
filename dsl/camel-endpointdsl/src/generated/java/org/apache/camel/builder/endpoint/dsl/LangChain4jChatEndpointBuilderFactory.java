@@ -262,6 +262,58 @@ public interface LangChain4jChatEndpointBuilderFactory {
         public String langChain4jChatAugmentedData() {
             return "CamelLangChain4jChatAugmentedData";
         }
+        /**
+         * The Finish Reason.
+         * 
+         * The option is a: {@code dev.langchain4j.model.output.FinishReason}
+         * type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code LangChain4jChatFinishReason}.
+         */
+        public String langChain4jChatFinishReason() {
+            return "CamelLangChain4jChatFinishReason";
+        }
+        /**
+         * The Input Token Count.
+         * 
+         * The option is a: {@code int} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * LangChain4jChatInputTokenCount}.
+         */
+        public String langChain4jChatInputTokenCount() {
+            return "CamelLangChain4jChatInputTokenCount";
+        }
+        /**
+         * The Output Token Count.
+         * 
+         * The option is a: {@code int} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * LangChain4jChatOutputTokenCount}.
+         */
+        public String langChain4jChatOutputTokenCount() {
+            return "CamelLangChain4jChatOutputTokenCount";
+        }
+        /**
+         * The Total Token Count.
+         * 
+         * The option is a: {@code int} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * LangChain4jChatTotalTokenCount}.
+         */
+        public String langChain4jChatTotalTokenCount() {
+            return "CamelLangChain4jChatTotalTokenCount";
+        }
     }
     static LangChain4jChatEndpointBuilder endpointBuilder(String componentName, String path) {
         class LangChain4jChatEndpointBuilderImpl extends AbstractEndpointBuilder implements LangChain4jChatEndpointBuilder, AdvancedLangChain4jChatEndpointBuilder {

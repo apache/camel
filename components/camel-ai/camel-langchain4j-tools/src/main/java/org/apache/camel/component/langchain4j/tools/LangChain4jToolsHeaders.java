@@ -14,26 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.langchain4j.chat;
+package org.apache.camel.component.langchain4j.tools;
 
 import org.apache.camel.spi.Metadata;
 
-public class LangChain4jChatHeaders {
-    @Metadata(description = "The prompt Template.", javaType = "String")
-    public static final String PROMPT_TEMPLATE = "CamelLangChain4jChatPromptTemplate";
-
-    @Metadata(description = "Augmented Data for RAG", javaType = "String")
-    public static final String AUGMENTED_DATA = "CamelLangChain4jChatAugmentedData";
+public class LangChain4jToolsHeaders {
 
     @Metadata(description = "The Finish Reason.", javaType = "dev.langchain4j.model.output.FinishReason")
-    public static final String FINISH_REASON = "CamelLangChain4jChatFinishReason";
+    public static final String FINISH_REASON = "CamelLangChain4jToolsFinishReason";
 
     @Metadata(description = "The Input Token Count.", javaType = "int")
-    public static final String INPUT_TOKEN_COUNT = "CamelLangChain4jChatInputTokenCount";
+    public static final String INPUT_TOKEN_COUNT = "CamelLangChain4jToolsInputTokenCount";
 
     @Metadata(description = "The Output Token Count.", javaType = "int")
-    public static final String OUTPUT_TOKEN_COUNT = "CamelLangChain4jChatOutputTokenCount";
+    public static final String OUTPUT_TOKEN_COUNT = "CamelLangChain4jToolsOutputTokenCount";
 
     @Metadata(description = "The Total Token Count.", javaType = "int")
-    public static final String TOTAL_TOKEN_COUNT = "CamelLangChain4jChatTotalTokenCount";
+    public static final String TOTAL_TOKEN_COUNT = "CamelLangChain4jToolsTotalTokenCount";
 }
