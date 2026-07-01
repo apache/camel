@@ -138,32 +138,31 @@ class HistoryTab implements MonitorTab {
 
     @Override
     public TableState getTableState() {
-        if (traceDetailView) {
-            return !historyEntries.isEmpty() ? historyTableState : traceStepTableState;
+        // Match the active table that keyboard navigation drives (see navigateUp / navigateDown): the trace step
+        // table in the trace detail view, the trace list when the tracer is active, otherwise the history list.
+        if (traces.get().isEmpty()) {
+            return historyTableState;
         }
-        return traceTableState;
+        return traceDetailView ? traceStepTableState : traceTableState;
     }
 
     @Override
     public Rect getTableArea() {
         // Mirror getTableState(): return the bounds of whichever table is currently the active/selectable one.
-        if (traceDetailView) {
-            return !historyEntries.isEmpty() ? historyTableArea : stepTableArea;
+        if (traces.get().isEmpty()) {
+            return historyTableArea;
         }
-        return traceTableArea;
+        return traceDetailView ? stepTableArea : traceTableArea;
     }
 
     @Override
     public int getTableRowCount() {
+        // Mirror getTableState(): count the rows of the active table so scroll and click stay in bounds.
+        if (traces.get().isEmpty()) {
+            return historyEntries.size();
+        }
         if (traceDetailView) {
-            if (!historyEntries.isEmpty()) {
-                return historyEntries.size();
-            }
-            List<TraceEntry> all = traces.get();
-            if (all != null && traceSelectedExchangeId != null) {
-                return (int) all.stream().filter(t -> traceSelectedExchangeId.equals(t.exchangeId)).count();
-            }
-            return 0;
+            return getTraceStepsDepthFirst(traceSelectedExchangeId).size();
         }
         return traceSortedExchangeIds.size();
     }
