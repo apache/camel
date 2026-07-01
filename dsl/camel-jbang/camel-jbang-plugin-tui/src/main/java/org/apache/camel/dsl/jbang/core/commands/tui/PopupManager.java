@@ -28,6 +28,8 @@ import dev.tamboui.text.Line;
 import dev.tamboui.text.Span;
 import dev.tamboui.text.Text;
 import dev.tamboui.tui.event.KeyEvent;
+import dev.tamboui.tui.event.MouseEvent;
+import dev.tamboui.tui.event.MouseEventKind;
 import dev.tamboui.widgets.Clear;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
@@ -68,10 +70,14 @@ class PopupManager {
     private final ListState switchPopupState = new ListState();
 
     // "More" dropdown state
+    /** Number of entries in the "More" dropdown; must match the items rendered in {@link #renderMorePopup}. */
+    private static final int MORE_ITEM_COUNT = 17;
     private boolean showMorePopup;
     private final ListState morePopupState = new ListState();
     private int lastMoreSelection;
     private Line[] currentTabLabels;
+    // Absolute bounds of the "More" dropdown captured during render, used to hit-test clicks.
+    private Rect morePopupRect;
 
     // Kill confirm
     private boolean showKillConfirm;
@@ -176,7 +182,7 @@ class PopupManager {
             return true;
         }
         if (ke.isDown()) {
-            morePopupState.selectNext(17);
+            morePopupState.selectNext(MORE_ITEM_COUNT);
             return true;
         }
         int shortcutSel = morePopupShortcut(ke);
@@ -235,6 +241,66 @@ class PopupManager {
         return true;
     }
 
+    // ---- Mouse handling ----
+
+    /**
+     * Handles a mouse event while the "More" dropdown is open. The dropdown is modal (like the keyboard path), so every
+     * mouse event is consumed while it is visible: a click on an entry activates that tab, a click outside dismisses
+     * the dropdown, and the wheel moves the highlight. Returns {@code false} when no dropdown is open so the caller can
+     * fall back to its normal mouse routing.
+     */
+    boolean handleMouseEvent(MouseEvent me) {
+        if (showMorePopup) {
+            return handleMorePopupMouse(me);
+        }
+        return false;
+    }
+
+    private boolean handleMorePopupMouse(MouseEvent me) {
+        if (me.kind() == MouseEventKind.SCROLL_UP) {
+            morePopupState.selectPrevious();
+            return true;
+        }
+        if (me.kind() == MouseEventKind.SCROLL_DOWN) {
+            morePopupState.selectNext(MORE_ITEM_COUNT);
+            return true;
+        }
+        if (me.isClick()) {
+            int idx = morePopupItemAt(morePopupRect, MORE_ITEM_COUNT, me.x(), me.y());
+            showMorePopup = false;
+            if (idx >= 0) {
+                callbacks.selectMoreTab(idx);
+            }
+            return true;
+        }
+        // Consume any other mouse event so the dropdown stays modal, mirroring handleMorePopupKeys.
+        return true;
+    }
+
+    /**
+     * Returns the index of the "More" dropdown entry at {@code (mouseX, mouseY)}, or {@code -1} when the click is on
+     * the border, outside the popup, or below the last entry. The popup is drawn with a one-cell border on every side,
+     * so the first entry sits at {@code popup.y() + 1} and the interior spans
+     * {@code [popup.x() + 1, popup.x() + width - 1)}.
+     */
+    static int morePopupItemAt(Rect popup, int itemCount, int mouseX, int mouseY) {
+        if (popup == null) {
+            return -1;
+        }
+        int innerLeft = popup.x() + 1;
+        int innerRight = popup.x() + popup.width() - 1; // exclusive: last column is the right border
+        int firstRow = popup.y() + 1;
+        int lastRow = popup.y() + popup.height() - 1; // exclusive: last row is the bottom border
+        if (mouseX < innerLeft || mouseX >= innerRight) {
+            return -1;
+        }
+        if (mouseY < firstRow || mouseY >= lastRow) {
+            return -1;
+        }
+        int idx = mouseY - firstRow;
+        return idx < itemCount ? idx : -1;
+    }
+
     // ---- Rendering ----
 
     void renderMorePopup(Frame frame, Rect area) {
@@ -256,6 +322,7 @@ class PopupManager {
             x = Math.max(area.left(), area.right() - popupW);
         }
         Rect popup = new Rect(x, y, Math.min(popupW, area.width() - (x - area.left())), Math.min(popupH, area.height()));
+        this.morePopupRect = popup;
 
         frame.renderWidget(Clear.INSTANCE, popup);
 
