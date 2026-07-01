@@ -952,6 +952,14 @@ class OverviewTab implements MonitorTab {
         lines.add(Line.from(Span.raw("     Run a route or integration in another terminal window:")));
         lines.add(Line.from(Span.styled("     > camel run my-route.yaml", Theme.success())));
         lines.add(Line.from(Span.raw("")));
+        lines.add(Line.from(Span.styled("  🐪 Or run a bundled example:", Style.EMPTY.bold())));
+        lines.add(Line.from(List.of(
+                Span.raw("     Press "),
+                Span.styled(" F2 ", Theme.hintKey()),
+                Span.raw(" to open Actions and select "),
+                Span.styled("Run Example", Style.EMPTY.bold()),
+                Span.raw("."))));
+        lines.add(Line.from(Span.raw("")));
         lines.add(Line.from(Span.styled("  💻 Or use the embedded JLine shell panel:", Style.EMPTY.bold())));
         lines.add(Line.from(List.of(
                 Span.raw("     Press "),
