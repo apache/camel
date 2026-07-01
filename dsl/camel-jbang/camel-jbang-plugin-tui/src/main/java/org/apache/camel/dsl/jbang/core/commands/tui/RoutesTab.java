@@ -411,7 +411,7 @@ class RoutesTab extends AbstractTab {
         if (!diagram.isShowDiagram()) {
             IntegrationInfo info = ctx.findSelectedIntegration();
             if (info != null) {
-                if (AbstractTableTab.handleTableClick(me, lastRouteTableArea, routeTableState, info.routes.size())) {
+                if (handleTableClick(me, lastRouteTableArea, routeTableState, info.routes.size())) {
                     return true;
                 }
             }
@@ -682,7 +682,7 @@ class RoutesTab extends AbstractTab {
         lastRouteTableArea = chunks.get(0);
         vSplit.setBorderPos(chunks.get(1).y());
         frame.renderStatefulWidget(routeTable, chunks.get(0), routeTableState);
-        AbstractTableTab.renderTableScrollbar(frame, lastRouteTableArea, routeTableState, routeTableScrollState,
+        renderTableScrollbar(frame, lastRouteTableArea, routeTableState, routeTableScrollState,
                 info.routes.size());
 
         // Bottom panel: processors
@@ -1219,7 +1219,7 @@ class RoutesTab extends AbstractTab {
 
         frame.renderStatefulWidget(table, area, processorTableState);
         int processorRowCount = routeTopMode ? route.processors.size() : route.processors.size() + 1;
-        AbstractTableTab.renderTableScrollbar(frame, area, processorTableState, processorTableScrollState,
+        renderTableScrollbar(frame, area, processorTableState, processorTableScrollState,
                 processorRowCount);
     }
 

@@ -508,19 +508,19 @@ class HistoryTab extends AbstractTab {
 
         boolean tracerActive = !traces.get().isEmpty();
         if (tracerActive && !traceDetailView) {
-            if (AbstractTableTab.handleTableClick(me, lastTraceTableArea, traceTableState, traceSortedExchangeIds.size())) {
+            if (handleTableClick(me, lastTraceTableArea, traceTableState, traceSortedExchangeIds.size())) {
                 return true;
             }
         }
         if (tracerActive && traceDetailView) {
             List<TraceEntry> steps = getTraceStepsDepthFirst(traceSelectedExchangeId);
-            if (AbstractTableTab.handleTableClick(me, lastTraceStepArea, traceStepTableState, steps.size())) {
+            if (handleTableClick(me, lastTraceStepArea, traceStepTableState, steps.size())) {
                 traceDetailScroll = 0;
                 return true;
             }
         }
         if (!tracerActive) {
-            if (AbstractTableTab.handleTableClick(me, lastHistoryTableArea, historyTableState, historyEntries.size())) {
+            if (handleTableClick(me, lastHistoryTableArea, historyTableState, historyEntries.size())) {
                 historyDetailScroll = 0;
                 return true;
             }
@@ -1211,7 +1211,7 @@ class HistoryTab extends AbstractTab {
 
         lastTraceTableArea = area;
         frame.renderStatefulWidget(table, area, traceTableState);
-        AbstractTableTab.renderTableScrollbar(frame, lastTraceTableArea, traceTableState, tableScrollState,
+        renderTableScrollbar(frame, lastTraceTableArea, traceTableState, tableScrollState,
                 traceSortedExchangeIds.size());
     }
 
@@ -1240,7 +1240,7 @@ class HistoryTab extends AbstractTab {
         detailSplit.setBorderPos(chunks.get(1).y());
         frame.renderStatefulWidget(
                 buildStepTable(rows, stepTitle, showDescription), chunks.get(0), traceStepTableState);
-        AbstractTableTab.renderTableScrollbar(frame, lastTraceStepArea, traceStepTableState, traceStepScrollState,
+        renderTableScrollbar(frame, lastTraceStepArea, traceStepTableState, traceStepScrollState,
                 steps.size());
 
         if (showWaterfall) {
@@ -1515,7 +1515,7 @@ class HistoryTab extends AbstractTab {
         vSplit.setBorderPos(chunks.get(1).y());
         frame.renderStatefulWidget(
                 buildStepTable(rows, historyTitle, showDescription), chunks.get(0), historyTableState);
-        AbstractTableTab.renderTableScrollbar(frame, lastHistoryTableArea, historyTableState, historyTableScrollState,
+        renderTableScrollbar(frame, lastHistoryTableArea, historyTableState, historyTableScrollState,
                 current.size());
 
         if (showWaterfall) {

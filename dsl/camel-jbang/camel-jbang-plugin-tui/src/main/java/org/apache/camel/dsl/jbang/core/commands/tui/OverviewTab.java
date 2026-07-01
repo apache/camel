@@ -178,7 +178,7 @@ class OverviewTab extends AbstractTab {
             }
             return true;
         }
-        if (AbstractTableTab.handleTableClick(me, lastTableArea, tableState, totalRows())) {
+        if (handleTableClick(me, lastTableArea, tableState, totalRows())) {
             syncSelectedPid();
             return true;
         }
@@ -423,7 +423,7 @@ class OverviewTab extends AbstractTab {
 
         lastTableArea = chunks.get(0);
         frame.renderStatefulWidget(table, chunks.get(0), tableState);
-        AbstractTableTab.renderTableScrollbar(frame, lastTableArea, tableState, tableScrollState, totalRows());
+        renderTableScrollbar(frame, lastTableArea, tableState, tableScrollState, totalRows());
 
         if (hasSparkline && chunks.size() > 1) {
             Rect chartTotalArea = chunks.get(chunks.size() - 1);

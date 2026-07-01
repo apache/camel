@@ -18,7 +18,13 @@ package org.apache.camel.dsl.jbang.core.commands.tui;
 
 import java.util.List;
 
+import dev.tamboui.layout.Rect;
+import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.Span;
+import dev.tamboui.tui.event.MouseEvent;
+import dev.tamboui.widgets.scrollbar.Scrollbar;
+import dev.tamboui.widgets.scrollbar.ScrollbarState;
+import dev.tamboui.widgets.table.TableState;
 
 abstract class AbstractTab implements MonitorTab {
 
@@ -43,5 +49,46 @@ abstract class AbstractTab implements MonitorTab {
 
     @Override
     public void renderFooter(List<Span> spans) {
+    }
+
+    static void renderTableScrollbar(
+            Frame frame, Rect tableArea, TableState tableState, ScrollbarState scrollState, int rowCount) {
+        if (tableArea == null || tableState == null || scrollState == null) {
+            return;
+        }
+        int visibleRows = tableArea.height() - 3;
+        if (visibleRows <= 0 || rowCount <= visibleRows) {
+            return;
+        }
+        Rect scrollRect = new Rect(
+                tableArea.x() + tableArea.width() - 1,
+                tableArea.y() + 2,
+                1,
+                visibleRows);
+        scrollState.contentLength(rowCount);
+        scrollState.viewportContentLength(visibleRows);
+        scrollState.position(tableState.offset());
+        frame.renderStatefulWidget(Scrollbar.builder().build(), scrollRect, scrollState);
+    }
+
+    static boolean handleTableClick(MouseEvent me, Rect tableArea, TableState tableState, int rowCount) {
+        if (tableArea == null || tableState == null || rowCount <= 0) {
+            return false;
+        }
+        if (!me.isClick()) {
+            return false;
+        }
+        int mx = me.x();
+        int my = me.y();
+        if (mx < tableArea.x() || mx >= tableArea.x() + tableArea.width()
+                || my < tableArea.y() || my >= tableArea.y() + tableArea.height()) {
+            return false;
+        }
+        int rowIndex = tableState.offset() + (my - tableArea.y() - 2);
+        if (rowIndex >= 0 && rowIndex < rowCount) {
+            tableState.select(rowIndex);
+            return true;
+        }
+        return false;
     }
 }
