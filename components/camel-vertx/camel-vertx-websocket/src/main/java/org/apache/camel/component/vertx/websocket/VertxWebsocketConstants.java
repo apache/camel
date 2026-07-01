@@ -44,6 +44,12 @@ public final class VertxWebsocketConstants {
               javaType = "org.apache.camel.component.vertx.websocket.VertxWebsocketEvent")
     public static final String EVENT = "CamelVertxWebsocket.event";
 
+    /**
+     * Internal routing context key for storing the HTTP upgrade span context.
+     * Used to link WebSocket message spans back to the HTTP upgrade request span.
+     */
+    static final String HANDSHAKE_SPAN_CONTEXT_KEY = "CamelVertxWebsocketHandshakeSpanContext";
+
     private VertxWebsocketConstants() {
     }
 }

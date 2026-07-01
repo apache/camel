@@ -34,6 +34,7 @@ import io.vertx.core.http.ServerWebSocket;
 import io.vertx.core.net.SocketAddress;
 import io.vertx.ext.web.Route;
 import io.vertx.ext.web.Router;
+import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.CorsHandler;
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.vertx.common.VertxHelper;
@@ -85,6 +86,10 @@ public class VertxWebsocketHost {
         }
 
         route.handler(routingContext -> {
+            // Capture HTTP request span context BEFORE WebSocket upgrade
+            // This is the only time when the HTTP span is still active
+            captureHttpUpgradeSpanContext(routingContext);
+
             HttpServerRequest request = routingContext.request();
             String connectionHeader = request.headers().get(HttpHeaders.CONNECTION);
             if (connectionHeader == null || !connectionHeader.toLowerCase().contains("upgrade")) {
@@ -111,6 +116,13 @@ public class VertxWebsocketHost {
                         SocketAddress remote = webSocket.remoteAddress();
 
                         VertxWebsocketPeer peer = new VertxWebsocketPeer(webSocket, websocketURI.getPath());
+
+                        // Store the HTTP upgrade span context in the peer for producer span links
+                        Object spanContext = routingContext.get(VertxWebsocketConstants.HANDSHAKE_SPAN_CONTEXT_KEY);
+                        if (spanContext != null) {
+                            peer.setHandshakeSpanContext(spanContext);
+                        }
+
                         connectedPeers.add(peer);
 
                         if (LOG.isDebugEnabled()) {
@@ -273,5 +285,48 @@ public class VertxWebsocketHost {
      */
     public boolean isManagedPort(int port) {
         return getPort() == port;
+    }
+
+    /**
+     * Captures the current OpenTelemetry span context from the HTTP upgrade request and stores it in the
+     * RoutingContext. This allows WebSocket consumers to create span links back to the original HTTP upgrade request.
+     * <p>
+     * This method uses reflection to avoid a hard dependency on OpenTelemetry. If OpenTelemetry is not available, this
+     * method does nothing.
+     *
+     * @param routingContext the Vert.x routing context
+     */
+    private void captureHttpUpgradeSpanContext(RoutingContext routingContext) {
+        try {
+            // Use reflection to avoid compile-time dependency on OpenTelemetry
+            // Equivalent to:
+            //   Context otelContext = Context.current();
+            //   Span currentSpan = Span.fromContext(otelContext);
+            //   SpanContext spanContext = currentSpan.getSpanContext();
+            //   if (spanContext.isValid()) { ... }
+
+            Class<?> contextClass = Class.forName("io.opentelemetry.context.Context");
+            Object otelContext = contextClass.getMethod("current").invoke(null);
+
+            Class<?> spanClass = Class.forName("io.opentelemetry.api.trace.Span");
+            Object currentSpan = spanClass.getMethod("fromContext", contextClass).invoke(null, otelContext);
+
+            if (currentSpan != null) {
+                Object spanContext = spanClass.getMethod("getSpanContext").invoke(currentSpan);
+
+                if (spanContext != null) {
+                    Class<?> spanContextClass = Class.forName("io.opentelemetry.api.trace.SpanContext");
+                    Boolean isValid = (Boolean) spanContextClass.getMethod("isValid").invoke(spanContext);
+
+                    if (Boolean.TRUE.equals(isValid)) {
+                        routingContext.put(VertxWebsocketConstants.HANDSHAKE_SPAN_CONTEXT_KEY, spanContext);
+                    }
+                }
+            }
+        } catch (ClassNotFoundException e) {
+            LOG.trace("OpenTelemetry not available, skipping span context capture");
+        } catch (Exception e) {
+            LOG.debug("Failed to capture HTTP upgrade span context: {}", e.getMessage(), e);
+        }
     }
 }
