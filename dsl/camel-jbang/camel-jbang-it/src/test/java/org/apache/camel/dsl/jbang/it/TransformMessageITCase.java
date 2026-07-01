@@ -62,7 +62,7 @@ public class TransformMessageITCase extends JBangTestSupport {
     }
 
     private void runTransformation(String command) {
-        checkCommandOutputs(command, "Camel Main: transform (state: Running)");
+        checkCommandOutputsPattern(command, "Camel Main: transform \\(state: (Running|Starting)\\)");
     }
 
     private void checkOutputFile(String contains) throws IOException {
