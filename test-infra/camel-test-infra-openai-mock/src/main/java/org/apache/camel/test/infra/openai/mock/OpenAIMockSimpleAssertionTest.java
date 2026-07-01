@@ -53,59 +53,55 @@ public class OpenAIMockSimpleAssertionTest {
             .end()
             .build();
 
+    // HttpClient does not implement AutoCloseable before Java 21
+    @SuppressWarnings("java:S2095")
     @Test
     public void testBothAssertionsExecuted() throws Exception {
         HttpClient client = HttpClient.newHttpClient();
-        try {
-            // First request
-            HttpRequest request1 = HttpRequest.newBuilder()
-                    .uri(URI.create(openAIMock.getBaseUrl() + "/v1/chat/completions"))
-                    .header("Content-Type", "application/json")
-                    .POST(HttpRequest.BodyPublishers
-                            .ofString("{\"messages\": [{\"role\": \"user\", \"content\": \"first message\"}]}"))
-                    .build();
+        // First request
+        HttpRequest request1 = HttpRequest.newBuilder()
+                .uri(URI.create(openAIMock.getBaseUrl() + "/v1/chat/completions"))
+                .header("Content-Type", "application/json")
+                .POST(HttpRequest.BodyPublishers
+                        .ofString("{\"messages\": [{\"role\": \"user\", \"content\": \"first message\"}]}"))
+                .build();
 
-            HttpResponse<String> response1 = client.send(request1, HttpResponse.BodyHandlers.ofString());
-            String responseBody1 = response1.body();
+        HttpResponse<String> response1 = client.send(request1, HttpResponse.BodyHandlers.ofString());
+        String responseBody1 = response1.body();
 
-            ObjectMapper objectMapper = new ObjectMapper();
-            JsonNode responseJson1 = objectMapper.readTree(responseBody1);
+        ObjectMapper objectMapper = new ObjectMapper();
+        JsonNode responseJson1 = objectMapper.readTree(responseBody1);
 
-            JsonNode choice1 = responseJson1.path("choices").get(0);
-            JsonNode message1 = choice1.path("message");
+        JsonNode choice1 = responseJson1.path("choices").get(0);
+        JsonNode message1 = choice1.path("message");
 
-            assertEquals("assistant", message1.path("role").asText());
-            assertEquals("first response", message1.path("content").asText());
+        assertEquals("assistant", message1.path("role").asText());
+        assertEquals("first response", message1.path("content").asText());
 
-            // Verify first assertion was executed
-            assertTrue(firstAssertionExecuted.get(), "First assertion should have been executed");
+        // Verify first assertion was executed
+        assertTrue(firstAssertionExecuted.get(), "First assertion should have been executed");
 
-            // Second request
-            HttpRequest request2 = HttpRequest.newBuilder()
-                    .uri(URI.create(openAIMock.getBaseUrl() + "/v1/chat/completions"))
-                    .header("Content-Type", "application/json")
-                    .POST(HttpRequest.BodyPublishers
-                            .ofString("{\"messages\": [{\"role\": \"user\", \"content\": \"second message\"}]}"))
-                    .build();
+        // Second request
+        HttpRequest request2 = HttpRequest.newBuilder()
+                .uri(URI.create(openAIMock.getBaseUrl() + "/v1/chat/completions"))
+                .header("Content-Type", "application/json")
+                .POST(HttpRequest.BodyPublishers
+                        .ofString("{\"messages\": [{\"role\": \"user\", \"content\": \"second message\"}]}"))
+                .build();
 
-            HttpResponse<String> response2 = client.send(request2, HttpResponse.BodyHandlers.ofString());
-            String responseBody2 = response2.body();
+        HttpResponse<String> response2 = client.send(request2, HttpResponse.BodyHandlers.ofString());
+        String responseBody2 = response2.body();
 
-            ObjectMapper objectMapper2 = new ObjectMapper();
-            JsonNode responseJson2 = objectMapper2.readTree(responseBody2);
+        ObjectMapper objectMapper2 = new ObjectMapper();
+        JsonNode responseJson2 = objectMapper2.readTree(responseBody2);
 
-            JsonNode choice2 = responseJson2.path("choices").get(0);
-            JsonNode message2 = choice2.path("message");
+        JsonNode choice2 = responseJson2.path("choices").get(0);
+        JsonNode message2 = choice2.path("message");
 
-            assertEquals("assistant", message2.path("role").asText());
-            assertEquals("second response", message2.path("content").asText());
+        assertEquals("assistant", message2.path("role").asText());
+        assertEquals("second response", message2.path("content").asText());
 
-            // Verify second assertion was executed
-            assertTrue(secondAssertionExecuted.get(), "Second assertion should have been executed");
-        } finally {
-            if (client instanceof AutoCloseable ac) {
-                ac.close();
-            }
-        }
+        // Verify second assertion was executed
+        assertTrue(secondAssertionExecuted.get(), "Second assertion should have been executed");
     }
 }
