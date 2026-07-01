@@ -125,7 +125,10 @@ public class KafkaBatchingIntervalResetAfterIdleIT extends BatchingProcessingITS
 
         // Idle for longer than batchingIntervalMs so that intervalWatch expires while the
         // queue is empty. This is the precondition that triggers the bug on the next cycle.
-        Thread.sleep(BATCHING_INTERVAL_MS + 600);
+        await().pollDelay(BATCHING_INTERVAL_MS + 600, TimeUnit.MILLISECONDS)
+                .atMost(5, TimeUnit.SECONDS)
+                .untilAsserted(() -> assertEquals(0, to.getReceivedCounter(),
+                        "No new messages should arrive during idle period"));
 
         // Reset the poll counter before starting the post-idle phase.
         POST_IDLE_POLLS.set(0);
