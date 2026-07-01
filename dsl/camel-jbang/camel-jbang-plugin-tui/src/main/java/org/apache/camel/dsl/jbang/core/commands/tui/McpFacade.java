@@ -90,8 +90,8 @@ class McpFacade {
 
     static final String[] MORE_TAB_NAMES = {
             "Beans", "Browse", "Circuit Breaker", "Classpath", "Configuration",
-            "Consumers", "DataSource", "Inflight", "Memory", "Metrics", "SQL Query", "SQL Trace", "Spans", "Process",
-            "Startup", "Threads"
+            "Consumers", "DataSource", "Heap Histogram", "Inflight", "Memory", "Memory Leak", "Metrics",
+            "SQL Query", "SQL Trace", "Spans", "Process", "Startup", "Threads"
     };
 
     static final Map<String, String> TAB_DESCRIPTIONS = Map.ofEntries(
@@ -111,8 +111,13 @@ class McpFacade {
             Map.entry("Configuration", "Application configuration properties"),
             Map.entry("Consumers", "Consumer statistics (polling and event-driven consumers)"),
             Map.entry("DataSource", "JDBC DataSource pool statistics (active, idle, max connections)"),
+            Map.entry("Heap Histogram", "JVM heap histogram showing top classes by instance count and memory usage"),
             Map.entry("Inflight", "Currently in-flight exchanges being processed"),
             Map.entry("Memory", "JVM memory usage (heap/non-heap), GC stats, and thread counts"),
+            Map.entry("Memory Leak",
+                    "Diagnose memory leaks using JFR Old Object Sample events. "
+                                   + "Records which objects survive GC and traces reference chains keeping them alive. "
+                                   + "Dual mode runs two recordings to detect growing trends."),
             Map.entry("Metrics", "Micrometer metrics (counters, gauges, timers, distribution summaries)"),
             Map.entry("SQL Query",
                     "Execute SQL queries against DataSources in the running application and browse results"),

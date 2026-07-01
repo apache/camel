@@ -1,0 +1,15 @@
+{
+  "console": {
+    "kind": "console",
+    "group": "camel",
+    "name": "jfr-old-objects",
+    "title": "JFR Old Object Samples",
+    "description": "JFR-based old object sampling for memory leak diagnosis",
+    "deprecated": false,
+    "javaType": "org.apache.camel.impl.console.JfrOldObjectSampleDevConsole",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-console",
+    "version": "4.21.0-SNAPSHOT"
+  }
+}
+

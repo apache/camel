@@ -342,6 +342,28 @@ public class RuntimeTools {
         return delegateToRegistry("get_heap_histogram", nameOrPid, Map.of());
     }
 
+    @Tool(annotations = @Tool.Annotations(readOnlyHint = false, destructiveHint = false, openWorldHint = false),
+          description = """
+                  Manage JFR OldObjectSample recording for memory leak diagnosis. \
+                  Captures objects surviving multiple GC cycles and their reference chains back to GC roots. \
+                  Use command 'start' to begin recording, 'stop' to stop and get results, \
+                  'status' to check recording state, and 'query' to retrieve cached results from the last recording.""")
+    public JsonObject camel_runtime_jfr_old_objects(
+            @ToolArg(description = NAME_OR_PID_DESC) String nameOrPid,
+            @ToolArg(description = "Command: start, stop, status, or query") String command,
+            @ToolArg(description = "Recording duration in seconds (only for start command, 0 = manual stop)") String duration) {
+        if (command == null || command.isBlank()) {
+            throw new ToolCallException("command is required (start, stop, status, or query)", null);
+        }
+        RuntimeService.ProcessInfo p = runtimeService.findSingleProcess(nameOrPid);
+        return runtimeService.executeAction(p.pid(), "jfr-old-objects", root -> {
+            root.put("command", command);
+            if ("start".equals(command) && duration != null && !duration.isBlank()) {
+                root.put("duration", duration);
+            }
+        });
+    }
+
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = """
                   Get the message history trace of the last completed exchange. \
