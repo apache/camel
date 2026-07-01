@@ -356,7 +356,7 @@ class McpFacade {
 
         KeyModifiers mods = KeyModifiers.of(ctrl, false, shift);
 
-        KeyCode code = switch (remainder.toLowerCase(Locale.ROOT)) {
+        KeyCode code = switch (remainder.toLowerCase(Locale.US)) {
             case "enter", "return" -> KeyCode.ENTER;
             case "esc", "escape" -> KeyCode.ESCAPE;
             case "tab" -> KeyCode.TAB;

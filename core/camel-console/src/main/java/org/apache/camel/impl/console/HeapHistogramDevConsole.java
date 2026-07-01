@@ -128,7 +128,7 @@ public class HeapHistogramDevConsole extends AbstractDevConsole {
             String className = parts[3];
 
             if (limit > 0 && count >= limit) {
-                break;
+                continue;
             }
 
             JsonObject jo = new JsonObject();

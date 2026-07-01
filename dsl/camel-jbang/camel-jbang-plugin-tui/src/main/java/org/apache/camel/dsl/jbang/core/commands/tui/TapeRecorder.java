@@ -170,7 +170,7 @@ class TapeRecorder {
                 default -> null;
             };
         }
-        String lower = key.toLowerCase(Locale.ROOT);
+        String lower = key.toLowerCase(Locale.US);
 
         if (lower.startsWith("ctrl+")) {
             return "Ctrl+" + key.substring(5);
@@ -189,14 +189,14 @@ class TapeRecorder {
         }
 
         if (lower.matches("f\\d{1,2}")) {
-            return key.toUpperCase(Locale.ROOT);
+            return key.toUpperCase(Locale.US);
         }
 
         return null;
     }
 
     private static String capitalize(String s) {
-        return s.substring(0, 1).toUpperCase(Locale.ROOT) + s.substring(1);
+        return s.substring(0, 1).toUpperCase(Locale.US) + s.substring(1);
     }
 
     static String formatSleep(long ms) {
@@ -205,7 +205,7 @@ class TapeRecorder {
         }
         if (ms >= 1000) {
             double seconds = ms / 1000.0;
-            String formatted = String.format(Locale.ROOT, "%.1f", seconds);
+            String formatted = String.format(Locale.US, "%.1f", seconds);
             return formatted + "s";
         }
         long rounded = (ms / 100) * 100;

@@ -312,7 +312,7 @@ class FilesBrowser {
 
     static String fileType(Path path) {
         String name = path.getFileName().toString();
-        String lower = name.toLowerCase(Locale.ROOT);
+        String lower = name.toLowerCase(Locale.US);
         if (lower.endsWith(".kamelet.yaml") || lower.endsWith(".kamelet.yml")) {
             return "camel";
         }
@@ -336,7 +336,7 @@ class FilesBrowser {
 
     private static String fileEmoji(Path path) {
         String name = path.getFileName().toString();
-        String lower = name.toLowerCase(Locale.ROOT);
+        String lower = name.toLowerCase(Locale.US);
         if (lower.endsWith(".kamelet.yaml") || lower.endsWith(".kamelet.yml")) {
             return "🐪";
         }
