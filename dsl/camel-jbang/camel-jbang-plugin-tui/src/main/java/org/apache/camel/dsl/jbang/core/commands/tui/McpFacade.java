@@ -112,7 +112,7 @@ class McpFacade {
             Map.entry("Consumers", "Consumer statistics (polling and event-driven consumers)"),
             Map.entry("DataSource", "JDBC DataSource pool statistics (active, idle, max connections)"),
             Map.entry("Heap Histogram",
-                    "Class-level heap memory analysis showing instance counts and byte usage per class"),
+                    "Class-level heap memory analysis showing instance counts, byte usage, package summary, and JAR origin per class"),
             Map.entry("Inflight", "Currently in-flight exchanges being processed"),
             Map.entry("Memory", "JVM memory usage (heap/non-heap), GC stats, and thread counts"),
             Map.entry("Metrics", "Micrometer metrics (counters, gauges, timers, distribution summaries)"),
