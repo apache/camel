@@ -147,7 +147,7 @@
         <djl-python-version>0.34.0</djl-python-version>
         <docling-java-version>0.6.0</docling-java-version>
         <docker-java-version>3.7.1</docker-java-version>
-        <dropbox-version>7.1.0</dropbox-version>
+        <dropbox-version>7.1.1</dropbox-version>
         <ehcache3-version>3.12.0</ehcache3-version>
         <!-- github-api (kohsuke) for camel-github2 -->
         <github-api-version>1.330</github-api-version>
