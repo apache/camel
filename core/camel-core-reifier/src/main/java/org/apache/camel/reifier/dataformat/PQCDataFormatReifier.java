@@ -34,7 +34,6 @@ public class PQCDataFormatReifier extends DataFormatReifier<PQCDataFormat> {
         properties.put("symmetricKeyAlgorithm", definition.getSymmetricKeyAlgorithm());
         properties.put("symmetricKeyLength", definition.getSymmetricKeyLength());
         properties.put("keyPair", asRef(definition.getKeyPair()));
-        properties.put("bufferSize", definition.getBufferSize());
         properties.put("provider", definition.getProvider());
         properties.put("keyGenerator", asRef(definition.getKeyGenerator()));
     }

@@ -7972,12 +7972,6 @@
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
-          "bufferSize" : {
-            "type" : "number",
-            "title" : "Buffer Size",
-            "description" : "The size of the buffer used for streaming encryption/decryption.",
-            "default" : 4096
-          },
           "id" : {
             "type" : "string",
             "title" : "Id",

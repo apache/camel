@@ -127,7 +127,6 @@ public class PQCDataFormat extends ServiceSupport implements DataFormat, DataFor
     private String symmetricKeyAlgorithm = "AES";
     private int symmetricKeyLength = 128;
     private KeyPair keyPair;
-    private int bufferSize = 4096;
     private String provider;
     private KeyGenerator keyGenerator;
 
@@ -410,17 +409,6 @@ public class PQCDataFormat extends ServiceSupport implements DataFormat, DataFor
      */
     public void setKeyPair(KeyPair keyPair) {
         this.keyPair = keyPair;
-    }
-
-    public int getBufferSize() {
-        return bufferSize;
-    }
-
-    /**
-     * Sets the buffer size for streaming encryption/decryption. Default is 4096 bytes.
-     */
-    public void setBufferSize(int bufferSize) {
-        this.bufferSize = bufferSize;
     }
 
     public String getProvider() {

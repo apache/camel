@@ -2563,7 +2563,6 @@ public class ModelWriter extends BaseWriter {
         doWriteAttribute("symmetricKeyAlgorithm", def.getSymmetricKeyAlgorithm(), "AES");
         doWriteAttribute("symmetricKeyLength", def.getSymmetricKeyLength(), "128");
         doWriteAttribute("keyPair", def.getKeyPair(), null);
-        doWriteAttribute("bufferSize", def.getBufferSize(), "4096");
         doWriteAttribute("provider", def.getProvider(), null);
         doWriteAttribute("keyGenerator", def.getKeyGenerator(), null);
         endElement(name);

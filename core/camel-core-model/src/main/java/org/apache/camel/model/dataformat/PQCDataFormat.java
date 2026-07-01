@@ -55,10 +55,6 @@ public class PQCDataFormat extends DataFormatDefinition {
               description = "Refers to the KeyPair to lookup from the registry to use for KEM operations.")
     private String keyPair;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Integer", defaultValue = "4096",
-              description = "The size of the buffer used for streaming encryption/decryption.")
-    private String bufferSize;
-    @XmlAttribute
     @Metadata(label = "advanced",
               description = "The JCE security provider to use.")
     private String provider;
@@ -77,7 +73,6 @@ public class PQCDataFormat extends DataFormatDefinition {
         this.symmetricKeyAlgorithm = source.symmetricKeyAlgorithm;
         this.symmetricKeyLength = source.symmetricKeyLength;
         this.keyPair = source.keyPair;
-        this.bufferSize = source.bufferSize;
         this.provider = source.provider;
         this.keyGenerator = source.keyGenerator;
     }
@@ -88,7 +83,6 @@ public class PQCDataFormat extends DataFormatDefinition {
         this.symmetricKeyAlgorithm = builder.symmetricKeyAlgorithm;
         this.symmetricKeyLength = builder.symmetricKeyLength;
         this.keyPair = builder.keyPair;
-        this.bufferSize = builder.bufferSize;
         this.provider = builder.provider;
         this.keyGenerator = builder.keyGenerator;
     }
@@ -130,14 +124,6 @@ public class PQCDataFormat extends DataFormatDefinition {
         this.keyPair = keyPair;
     }
 
-    public String getBufferSize() {
-        return bufferSize;
-    }
-
-    public void setBufferSize(String bufferSize) {
-        this.bufferSize = bufferSize;
-    }
-
     public String getProvider() {
         return provider;
     }
@@ -164,7 +150,6 @@ public class PQCDataFormat extends DataFormatDefinition {
         private String symmetricKeyAlgorithm = "AES";
         private String symmetricKeyLength;
         private String keyPair;
-        private String bufferSize;
         private String provider;
         private String keyGenerator;
 
@@ -178,8 +163,8 @@ public class PQCDataFormat extends DataFormatDefinition {
         }
 
         /**
-         * The symmetric encryption algorithm to use with the shared secret. Supported values: AES, ARIA, RC2, RC5,
-         * CAMELLIA, CAST5, CAST6, CHACHA7539, etc.
+         * The symmetric encryption algorithm to use with the shared secret. Only AEAD-capable algorithms are allowed:
+         * AES, ARIA, CAMELLIA, CAST6, DSTU7624, GOST3412_2015, SEED, SM4 (GCM) and CHACHA7539 (ChaCha20-Poly1305).
          */
         public Builder symmetricKeyAlgorithm(String symmetricKeyAlgorithm) {
             this.symmetricKeyAlgorithm = symmetricKeyAlgorithm;
@@ -207,22 +192,6 @@ public class PQCDataFormat extends DataFormatDefinition {
          */
         public Builder keyPair(String keyPair) {
             this.keyPair = keyPair;
-            return this;
-        }
-
-        /**
-         * The size of the buffer used for streaming encryption/decryption.
-         */
-        public Builder bufferSize(String bufferSize) {
-            this.bufferSize = bufferSize;
-            return this;
-        }
-
-        /**
-         * The size of the buffer used for streaming encryption/decryption.
-         */
-        public Builder bufferSize(int bufferSize) {
-            this.bufferSize = Integer.toString(bufferSize);
             return this;
         }
 

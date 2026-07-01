@@ -41,3 +41,10 @@ later. Re-encrypt any data at rest with the new version.
 `GOST3412-2015`, `SEED`, `SM4` (GCM) and `CHACHA7539` (ChaCha20-Poly1305). The previously accepted `RC2`, `RC5`,
 `CAST5`, `GOST28147`, `DESEDE` and the unauthenticated stream ciphers `GRAIN128`, `HC128`, `HC256` and `SALSA20`
 are no longer supported and are rejected when the route starts. The default (`AES`) is unchanged.
+
+* The message is now processed in memory rather than streamed: the authenticated cipher must verify the authentication
+tag before releasing any plaintext, so the whole payload is held in memory during marshal and unmarshal. For very large
+payloads, enable stream caching on the route.
+
+* The `bufferSize` option has been removed. It only configured the previous streaming implementation and no longer has
+any effect with authenticated encryption.

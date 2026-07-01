@@ -132,11 +132,6 @@ from("file:encrypted")
 |null
 |KeyPair to use for encryption/decryption. Can also be provided via header.
 
-|bufferSize
-|int
-|4096
-|Buffer size for streaming encryption/decryption
-
 |provider
 |String
 |null
@@ -413,18 +408,7 @@ The DataFormat approach is significantly simpler and handles all KEM operations 
 
 == Performance Considerations
 
-**1. Buffer Size**
-
-Adjust bufferSize based on message size:
-
-._Java-only: configuring PQCDataFormat buffer size_
-[source,java]
-----
-PQCDataFormat pqcFormat = new PQCDataFormat();
-pqcFormat.setBufferSize(8192);  // Larger buffer for big files
-----
-
-**2. Caching KeyGenerator**
+**1. Caching KeyGenerator**
 
 Configure a KeyGenerator once to avoid repeated initialization:
 
@@ -440,7 +424,7 @@ PQCDataFormat pqcFormat = new PQCDataFormat();
 pqcFormat.setKeyGenerator(kemKeyGenerator);
 ----
 
-**3. Large Payloads**
+**2. Large Payloads**
 
 To guarantee integrity, the authenticated (AEAD) cipher verifies the authentication tag before releasing any plaintext, so the payload is processed as a whole rather than incrementally. Enable stream caching to let Camel spill large bodies to disk on the route:
 
@@ -506,13 +490,11 @@ Security.addProvider(new BouncyCastlePQCProvider());
 
 **Issue**: OutOfMemoryError with large files
 
-* **Solution**: Increase buffer size or enable stream caching:
+* **Solution**: Authenticated (AEAD) encryption processes the payload as a whole; enable stream caching so Camel spills large bodies to disk:
 +
-._Java-only: increasing buffer size or enabling stream caching_
+._Java-only: enabling stream caching for large files_
 [source,java]
 ----
-pqcFormat.setBufferSize(16384);
-// or
 from("file:large-files?noop=true").streamCache(true).marshal(pqcFormat)...
 ----
 

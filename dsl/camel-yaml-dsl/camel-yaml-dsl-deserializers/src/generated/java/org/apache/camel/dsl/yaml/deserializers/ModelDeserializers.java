@@ -11257,7 +11257,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             description = "Encrypt and decrypt messages using Post-Quantum Cryptography Key Encapsulation Mechanisms (KEM)",
             deprecated = false,
             properties = {
-                    @YamlProperty(name = "bufferSize", type = "number", defaultValue = "4096", description = "The size of the buffer used for streaming encryption/decryption.", displayName = "Buffer Size"),
                     @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id"),
                     @YamlProperty(name = "keyEncapsulationAlgorithm", type = "enum:MLKEM,BIKE,HQC,CMCE,SABER,FRODO,NTRU,NTRULPRime,SNTRUPrime,KYBER", defaultValue = "MLKEM", description = "The Post-Quantum KEM algorithm to use for key encapsulation.", displayName = "Key Encapsulation Algorithm"),
                     @YamlProperty(name = "keyGenerator", type = "string", description = "Refers to a custom KeyGenerator to lookup from the registry for KEM operations.", displayName = "Key Generator"),
@@ -11282,11 +11281,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 Node node) {
             propertyKey = org.apache.camel.util.StringHelper.dashToCamelCase(propertyKey);
             switch(propertyKey) {
-                case "bufferSize": {
-                    String val = asText(node);
-                    target.setBufferSize(val);
-                    break;
-                }
                 case "id": {
                     String val = asText(node);
                     target.setId(val);
