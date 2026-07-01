@@ -497,7 +497,7 @@ class ActionsPopup {
             } else if (ke.isConfirm()) {
                 selectInfraService();
             } else if (ke.code() == KeyCode.CHAR) {
-                jumpToInfraService(ke.character());
+                jumpToInfraService(ke.string().charAt(0));
             }
             return true;
         }
@@ -1346,7 +1346,7 @@ class ActionsPopup {
         } else if (ke.isEnd()) {
             folderInputState.moveCursorToEnd();
         } else if (ke.code() == KeyCode.CHAR) {
-            folderInputState.insert(ke.character());
+            folderInputState.insert(ke.string().charAt(0));
         }
     }
 
@@ -1853,9 +1853,9 @@ class ActionsPopup {
             String impl = selectedInfraService.implementations.get(infraImplIndex);
             Rect implArea = new Rect(ix + labelW, row, fieldW, 1);
             frame.renderWidget(Paragraph.from(Line.from(
-                    Span.styled("◀ ", MonitorContext.HINT_KEY_STYLE),
+                    Span.styled("◀ ", Theme.hintKey()),
                     Span.raw(impl),
-                    Span.styled(" ▶", MonitorContext.HINT_KEY_STYLE))), implArea);
+                    Span.styled(" ▶", Theme.hintKey()))), implArea);
             row++;
         }
 
@@ -1887,8 +1887,8 @@ class ActionsPopup {
             infraPortState.moveCursorToStart();
         } else if (ke.isEnd()) {
             infraPortState.moveCursorToEnd();
-        } else if (ke.code() == KeyCode.CHAR && Character.isDigit(ke.character())) {
-            infraPortState.insert(ke.character());
+        } else if (ke.code() == KeyCode.CHAR && Character.isDigit(ke.string().charAt(0))) {
+            infraPortState.insert(ke.string().charAt(0));
         }
     }
 

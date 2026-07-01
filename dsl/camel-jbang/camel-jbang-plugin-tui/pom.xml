@@ -60,6 +60,11 @@
         </dependency>
         <dependency>
             <groupId>dev.tamboui</groupId>
+            <artifactId>tamboui-css</artifactId>
+            <version>${tamboui-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>dev.tamboui</groupId>
             <artifactId>tamboui-widgets</artifactId>
             <version>${tamboui-version}</version>
         </dependency>

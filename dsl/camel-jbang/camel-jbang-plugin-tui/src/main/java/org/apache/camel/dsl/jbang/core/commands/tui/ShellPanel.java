@@ -212,10 +212,11 @@ class ShellPanel {
 
         lastArea = area;
 
-        // Render border matching other tabs
+        // Focused pane: orange border + themed title (an open shell holds input focus)
         Block block = Block.builder()
                 .borderType(BorderType.ROUNDED).borders(Borders.ALL)
-                .title(Title.from(Line.from(Span.styled(" Shell ", Style.EMPTY.bold()))))
+                .borderStyle(Theme.borderFocused())
+                .title(Title.from(Line.from(Span.styled(" Shell ", Theme.title()))))
                 .build();
         frame.renderWidget(block, area);
         Rect inner = block.inner(area);
@@ -230,9 +231,9 @@ class ShellPanel {
 
         // Handle resize
         if (screenTerminal != null && (innerWidth != lastWidth || innerHeight != lastHeight)) {
-            screenTerminal.setSize(innerWidth, innerHeight);
+            screenTerminal.setSize(Size.of(innerWidth, innerHeight));
             if (virtualTerminal != null) {
-                virtualTerminal.setSize(new Size(innerWidth, innerHeight));
+                virtualTerminal.setSize(Size.of(innerWidth, innerHeight));
             }
             lastWidth = innerWidth;
             lastHeight = innerHeight;
@@ -403,7 +404,7 @@ class ShellPanel {
             DelegateOutputStream delegateOut = new DelegateOutputStream();
             virtualTerminal = new LineDisciplineTerminal(
                     "tui-shell", "screen-256color", delegateOut, StandardCharsets.UTF_8);
-            virtualTerminal.setSize(new Size(width, height));
+            virtualTerminal.setSize(Size.of(width, height));
 
             // Feedback loop: VT100 responses go back as terminal input
             OutputStream feedbackOutput = new OutputStream() {
@@ -603,9 +604,10 @@ class ShellPanel {
 
     static byte[] encodeKeyEvent(KeyEvent ke) {
         if (ke.code() == KeyCode.CHAR) {
-            char ch = ke.character();
-            if (ke.hasCtrl()) {
+            String s = ke.string();
+            if (ke.hasCtrl() && s.length() == 1) {
                 // Ctrl+letter → control character
+                char ch = s.charAt(0);
                 if (ch >= 'a' && ch <= 'z') {
                     return new byte[] { (byte) (ch - 'a' + 1) };
                 }
@@ -613,7 +615,7 @@ class ShellPanel {
                     return new byte[] { (byte) (ch - 'A' + 1) };
                 }
             }
-            return Character.toString(ch).getBytes(StandardCharsets.UTF_8);
+            return s.getBytes(StandardCharsets.UTF_8);
         }
 
         return switch (ke.code()) {

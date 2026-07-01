@@ -346,7 +346,7 @@ class SendMessagePopup {
             return true;
         }
         if (ke.code() == KeyCode.CHAR) {
-            activeInput.insert(ke.character());
+            activeInput.insert(ke.string().charAt(0));
             return true;
         }
         return true;

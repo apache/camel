@@ -199,6 +199,11 @@ class OverviewTab implements MonitorTab {
         int infraCount = infraInfos.size();
         dividerIndex = infraCount > 0 ? integrationCount : -1;
 
+        if (integrationCount == 0 && infraCount == 0) {
+            renderEmptyState(frame, area);
+            return;
+        }
+
         if (ctx.selectedPid != null) {
             for (int i = 0; i < infos.size(); i++) {
                 if (ctx.selectedPid.equals(infos.get(i).pid)) {
@@ -208,7 +213,7 @@ class OverviewTab implements MonitorTab {
             }
             for (int i = 0; i < infraInfos.size(); i++) {
                 if (ctx.selectedPid.equals(infraInfos.get(i).pid)) {
-                    int tableIndex = integrationCount + (dividerIndex >= 0 ? 1 : 0) + i;
+                    int tableIndex = integrationCount + 1 + i;
                     tableState.select(tableIndex);
                     break;
                 }
@@ -232,7 +237,12 @@ class OverviewTab implements MonitorTab {
                 .split(area);
 
         List<Row> rows = new ArrayList<>();
+        int rowIndex = 0;
         for (IntegrationInfo info : infos) {
+            boolean isEven = (rowIndex++ % 2 == 0);
+            // Zebra striping at the row level so the selection highlight (patched on top) always wins.
+            Style rowBg = isEven ? Style.EMPTY.bg(Theme.zebra()) : Style.EMPTY;
+
             if (info.vanishing) {
                 long elapsed = System.currentTimeMillis() - info.vanishStart;
                 float fade = 1.0f - Math.min(1.0f, (float) elapsed / VANISH_DURATION_MS);
@@ -252,7 +262,7 @@ class OverviewTab implements MonitorTab {
                         Cell.from(Span.styled("", dimStyle)),
                         Cell.from(Span.styled("", dimStyle)),
                         Cell.from(Span.styled("", dimStyle)),
-                        Cell.from(Span.styled("", dimStyle))));
+                        Cell.from(Span.styled("", dimStyle))).style(rowBg));
             } else {
                 String stateText = extractState(info.state);
                 if (stoppingPids.contains(info.pid) || "Terminating".equals(stateText)) {
@@ -263,13 +273,12 @@ class OverviewTab implements MonitorTab {
                     stateText = "Stopped";
                 }
                 Style statusStyle = switch (stateText) {
-                    case "Started", "Running" -> Style.EMPTY.fg(Color.GREEN);
-                    case "Stopping" -> Style.EMPTY.fg(Color.YELLOW);
-                    case "Stopped" -> Style.EMPTY.fg(Color.LIGHT_RED);
-                    default -> Style.EMPTY.fg(Color.YELLOW);
+                    case "Started", "Running" -> Theme.success();
+                    case "Stopped" -> Theme.error();
+                    default -> Theme.warning();
                 };
 
-                Style failStyle = info.failed > 0 ? Style.EMPTY.fg(Color.LIGHT_RED).bold() : Style.EMPTY;
+                Style failStyle = info.failed > 0 ? Theme.error().bold() : Style.EMPTY;
 
                 String sinceLastDisplay = formatSinceLast(info);
 
@@ -296,7 +305,7 @@ class OverviewTab implements MonitorTab {
                         rightCell(String.valueOf(info.exchangesTotal), 8),
                         rightCell(String.valueOf(info.failed), 6, failStyle),
                         rightCell(String.valueOf(info.inflight), 8),
-                        Cell.from(sinceLastDisplay)));
+                        Cell.from(sinceLastDisplay)).style(rowBg));
             }
         }
 
@@ -324,6 +333,10 @@ class OverviewTab implements MonitorTab {
         }
 
         for (InfraInfo info : infraInfos) {
+            boolean isEven = (rowIndex++ % 2 == 0);
+            Style rowBg = isEven ? Style.EMPTY.bg(Theme.zebra()) : Style.EMPTY;
+            Style statusStyle = info.alive ? Theme.success() : Theme.error();
+
             if (info.vanishing) {
                 long elapsed = System.currentTimeMillis() - info.vanishStart;
                 float fade = 1.0f - Math.min(1.0f, (float) elapsed / VANISH_DURATION_MS);
@@ -342,9 +355,8 @@ class OverviewTab implements MonitorTab {
                         Cell.from(Span.styled("", dimStyle)),
                         Cell.from(Span.styled("", dimStyle)),
                         Cell.from(Span.styled("", dimStyle)),
-                        Cell.from(Span.styled("", dimStyle))));
+                        Cell.from(Span.styled("", dimStyle))).style(rowBg));
             } else {
-                Style statusStyle = info.alive ? Style.EMPTY.fg(Color.GREEN) : Style.EMPTY.fg(Color.LIGHT_RED);
                 String statusText = info.alive ? "Running" : "Stopped";
                 String infraAlias = "🔧  " + info.alias;
                 String version = info.serviceVersion != null ? info.serviceVersion : "";
@@ -360,7 +372,7 @@ class OverviewTab implements MonitorTab {
                         Cell.from(""),
                         Cell.from(""),
                         Cell.from(""),
-                        Cell.from("")));
+                        Cell.from("")).style(rowBg));
             }
         }
 
@@ -891,6 +903,7 @@ class OverviewTab implements MonitorTab {
                 - `S` — reverse sort order
                 - `F2` — actions menu
                 - `F3` — switch integration
+                - `F4` — toggle light/dark theme
                 """;
     }
 
@@ -925,5 +938,43 @@ class OverviewTab implements MonitorTab {
         Integer sel = tableState.selected();
         result.put("selectedIndex", sel != null ? sel : -1);
         return result;
+    }
+
+    private void renderEmptyState(Frame frame, Rect area) {
+        List<Line> lines = new ArrayList<>();
+        lines.add(Line.from(Span.raw("")));
+        for (String row : MonitorContext.SMALL_CAMEL) {
+            lines.add(Line.from(Span.styled("     " + row, Style.EMPTY.fg(Theme.accent()).bold())));
+        }
+        lines.add(Line.from(Span.styled("     No Active Camel Integrations Found", Theme.title())));
+        lines.add(Line.from(Span.raw("")));
+        lines.add(Line.from(Span.styled("  💡 How to monitor integrations:", Style.EMPTY.bold())));
+        lines.add(Line.from(Span.raw("     Run a route or integration in another terminal window:")));
+        lines.add(Line.from(Span.styled("     > camel run my-route.yaml", Theme.success())));
+        lines.add(Line.from(Span.raw("")));
+        lines.add(Line.from(Span.styled("  💻 Or use the embedded JLine shell panel:", Style.EMPTY.bold())));
+        lines.add(Line.from(List.of(
+                Span.raw("     Press "),
+                Span.styled(" F6 ", Theme.hintKey()),
+                Span.raw(" to open the shell and run commands directly, e.g.:"))));
+        lines.add(Line.from(Span.styled("     camel> run examples/demo.java", Theme.success())));
+        lines.add(Line.from(Span.raw("")));
+        lines.add(Line.from(List.of(
+                Span.styled("  ❔ For shortcut keys and documentation, press ", Theme.muted()),
+                Span.styled(" ? ", Theme.hintKey()),
+                Span.styled(" or ", Theme.muted()),
+                Span.styled(" F1 ", Theme.hintKey()),
+                Span.styled(".", Theme.muted()))));
+
+        frame.renderWidget(
+                Paragraph.builder()
+                        .text(Text.from(lines))
+                        .block(Block.builder()
+                                .borderType(BorderType.ROUNDED).borders(Borders.ALL)
+                                .title(Title.from(Line.from(
+                                        Span.styled(" Camel JBang TUI ", Theme.title()))))
+                                .build())
+                        .build(),
+                area);
     }
 }

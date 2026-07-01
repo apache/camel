@@ -671,7 +671,7 @@ class ErrorsTab implements MonitorTab {
     }
 
     private static void hintShowBhpv(List<Span> spans, boolean body, boolean headers, boolean props, boolean vars) {
-        spans.add(Span.styled(" show", HINT_KEY_STYLE));
+        spans.add(Span.styled(" show", Theme.hintKey()));
         spans.add(Span.raw(" "));
         spans.add(Span.styled(body ? "B" : "b", body ? Style.EMPTY.fg(Color.WHITE).bold() : Style.EMPTY.dim()));
         spans.add(Span.styled(headers ? "H" : "h", headers ? Style.EMPTY.fg(Color.WHITE).bold() : Style.EMPTY.dim()));

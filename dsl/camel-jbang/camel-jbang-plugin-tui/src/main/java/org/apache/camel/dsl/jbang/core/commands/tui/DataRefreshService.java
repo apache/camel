@@ -331,12 +331,9 @@ class DataRefreshService {
             boolean stillAlive = infos.stream()
                     .anyMatch(i -> ctx.selectedPid.equals(i.pid) && !i.vanishing);
             if (!stillAlive) {
-                IntegrationInfo gone = infos.stream()
+                infos.stream()
                         .filter(i -> ctx.selectedPid.equals(i.pid))
-                        .findFirst().orElse(null);
-                if (gone != null) {
-                    ctx.lastSelectedName = gone.name;
-                }
+                        .findFirst().ifPresent(gone -> ctx.lastSelectedName = gone.name);
                 ctx.selectedPid = null;
             }
         }
@@ -368,10 +365,10 @@ class DataRefreshService {
         }
 
         if (ctx.selectedPid == null && !infraData.get().isEmpty()
-                && infos.stream().noneMatch(i -> !i.vanishing)) {
+                && infos.stream().allMatch(i -> i.vanishing)) {
             List<InfraInfo> infras = infraData.get();
             if (!infras.isEmpty()) {
-                int firstInfraIndex = infos.size() + (infras.size() > 0 ? 1 : 0);
+                int firstInfraIndex = infos.size() + 1;
                 refreshCtx.onInfraAutoSelected(firstInfraIndex, infras.get(0).pid);
             }
         }
@@ -379,7 +376,6 @@ class DataRefreshService {
 
     // ---- Infra data ----
 
-    @SuppressWarnings("unchecked")
     private void refreshInfraData() {
         List<InfraInfo> infraInfos = new ArrayList<>();
         try {
@@ -493,7 +489,6 @@ class DataRefreshService {
         traces.set(allTraces);
     }
 
-    @SuppressWarnings("unchecked")
     private void readTraceFile(String pid, List<TraceEntry> allTraces) {
         Path traceFile = CommandLineHelper.getCamelDir().resolve(pid + "-trace.json");
         if (!Files.exists(traceFile)) {
@@ -531,6 +526,9 @@ class DataRefreshService {
                 }
                 try {
                     JsonObject json = (JsonObject) Jsoner.deserialize(line);
+                    if (json == null) {
+                        continue;
+                    }
                     Object tracesArray = json.get("traces");
                     if (tracesArray instanceof List<?> traceList) {
                         for (Object traceObj : traceList) {
@@ -559,7 +557,6 @@ class DataRefreshService {
 
     // ---- Span data ----
 
-    @SuppressWarnings("unchecked")
     void refreshSpanData() {
         String pid = ctx.selectedPid;
         if (pid == null) {
@@ -585,8 +582,8 @@ class DataRefreshService {
                     JsonArray arr = response.getCollection("spans");
                     if (arr != null) {
                         List<SpanEntry> entries = new ArrayList<>();
-                        for (int i = 0; i < arr.size(); i++) {
-                            JsonObject spanObj = (JsonObject) arr.get(i);
+                        for (Object o : arr) {
+                            JsonObject spanObj = (JsonObject) o;
                             entries.add(SpanEntry.fromJson(spanObj));
                         }
                         otelSpans.set(entries);
@@ -625,7 +622,6 @@ class DataRefreshService {
      * Load history data for the given PIDs and return the parsed entries. The caller is responsible for storing the
      * entries (e.g. on HistoryTab).
      */
-    @SuppressWarnings("unchecked")
     List<HistoryEntry> loadHistoryData(List<Long> pids) {
         List<HistoryEntry> allEntries = new ArrayList<>();
         for (Long pid : pids) {

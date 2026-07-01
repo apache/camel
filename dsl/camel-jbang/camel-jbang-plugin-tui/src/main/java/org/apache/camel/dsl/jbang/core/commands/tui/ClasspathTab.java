@@ -110,7 +110,7 @@ class ClasspathTab implements MonitorTab {
             return true;
         }
         if (ke.code() == KeyCode.CHAR) {
-            fuzzyFilter.appendChar(ke.character());
+            fuzzyFilter.appendChar(ke.string().charAt(0));
             refilter();
             return true;
         }
