@@ -105,6 +105,7 @@ class HeapHistogramTab implements MonitorTab {
         }
         if (ke.isCharIgnoreCase('f')) {
             filter = (filter + 1) % FILTER_LABELS.length;
+            tableState.select(0);
             return true;
         }
         if (ke.isKey(KeyCode.F5)) {
