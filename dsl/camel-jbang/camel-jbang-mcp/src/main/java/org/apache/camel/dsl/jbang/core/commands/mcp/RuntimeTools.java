@@ -29,6 +29,7 @@ import io.quarkiverse.mcp.server.ToolCallException;
 import org.apache.camel.dsl.jbang.core.commands.ai.ToolContext;
 import org.apache.camel.dsl.jbang.core.commands.ai.ToolExecutionException;
 import org.apache.camel.dsl.jbang.core.commands.ai.ToolRegistry;
+import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
 
@@ -351,17 +352,64 @@ public class RuntimeTools {
     public JsonObject camel_runtime_jfr_old_objects(
             @ToolArg(description = NAME_OR_PID_DESC) String nameOrPid,
             @ToolArg(description = "Command: start, stop, status, or query") String command,
-            @ToolArg(description = "Recording duration in seconds (only for start command, 0 = manual stop)") String duration) {
+            @ToolArg(description = "Recording duration in seconds (only for start command, 0 = manual stop)") String duration,
+            @ToolArg(description = "Include allocation stack traces in results (default false, set true for detailed analysis)") String stacktrace,
+            @ToolArg(description = "Minimum total size in bytes to include a sample (e.g. 1024 for 1KB). Filters out small allocations to reduce noise") String minSize) {
         if (command == null || command.isBlank()) {
             throw new ToolCallException("command is required (start, stop, status, or query)", null);
         }
         RuntimeService.ProcessInfo p = runtimeService.findSingleProcess(nameOrPid);
-        return runtimeService.executeAction(p.pid(), "jfr-old-objects", root -> {
+        JsonObject result = runtimeService.executeAction(p.pid(), "jfr-old-objects", root -> {
             root.put("command", command);
             if ("start".equals(command) && duration != null && !duration.isBlank()) {
                 root.put("duration", duration);
             }
         });
+        boolean includeStacktrace = "true".equalsIgnoreCase(stacktrace);
+        long minBytes = parseMinSize(minSize);
+        filterSamples(result, includeStacktrace, minBytes);
+        return result;
+    }
+
+    private static void filterSamples(JsonObject result, boolean includeStacktrace, long minBytes) {
+        Object samplesObj = result.get("samples");
+        if (samplesObj instanceof JsonArray samples) {
+            for (int i = samples.size() - 1; i >= 0; i--) {
+                Object obj = samples.get(i);
+                if (obj instanceof JsonObject sample) {
+                    if (minBytes > 0 && sample.getLongOrDefault("totalSize", 0) < minBytes) {
+                        samples.remove(i);
+                        continue;
+                    }
+                    if (!includeStacktrace) {
+                        sample.remove("stackTrace");
+                    }
+                }
+            }
+        }
+    }
+
+    private static long parseMinSize(String value) {
+        if (value == null || value.isBlank() || "0".equals(value)) {
+            return 0;
+        }
+        String v = value.trim().toUpperCase(java.util.Locale.US);
+        long multiplier = 1;
+        if (v.endsWith("GB") || v.endsWith("G")) {
+            multiplier = 1024L * 1024 * 1024;
+            v = v.replaceAll("[GMK]B?$", "");
+        } else if (v.endsWith("MB") || v.endsWith("M")) {
+            multiplier = 1024L * 1024;
+            v = v.replaceAll("[GMK]B?$", "");
+        } else if (v.endsWith("KB") || v.endsWith("K")) {
+            multiplier = 1024;
+            v = v.replaceAll("[GMK]B?$", "");
+        }
+        try {
+            return (long) (Double.parseDouble(v) * multiplier);
+        } catch (NumberFormatException e) {
+            return 0;
+        }
     }
 
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
