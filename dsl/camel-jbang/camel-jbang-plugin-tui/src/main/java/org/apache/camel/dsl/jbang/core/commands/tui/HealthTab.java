@@ -48,6 +48,7 @@ class HealthTab implements MonitorTab {
     private String sort = "name";
     private int sortIndex = 1;
     private boolean sortReversed;
+    private Rect lastTableArea;
 
     HealthTab(MonitorContext ctx) {
         this.ctx = ctx;
@@ -62,6 +63,11 @@ class HealthTab implements MonitorTab {
     public int getTableRowCount() {
         IntegrationInfo info = ctx.findSelectedIntegration();
         return info != null ? info.healthChecks.size() : 0;
+    }
+
+    @Override
+    public Rect getTableArea() {
+        return lastTableArea;
     }
 
     @Override
@@ -98,6 +104,7 @@ class HealthTab implements MonitorTab {
 
     @Override
     public void render(Frame frame, Rect area) {
+        lastTableArea = null;
         IntegrationInfo info = ctx.findSelectedIntegration();
         if (info == null) {
             MonitorContext.renderNoSelection(frame, area);
@@ -169,6 +176,7 @@ class HealthTab implements MonitorTab {
                 .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(title).build())
                 .build();
 
+        lastTableArea = area;
         frame.renderStatefulWidget(table, area, tableState);
     }
 
