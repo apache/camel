@@ -1,10 +1,12 @@
 - rest:
     path: /api
-    steps:
-      - get:
-          path: /hello
-      - get:
-          path: "/hello/{name}"
+    get:
+      - path: /hello
+        to:
+          uri: direct:hello
+      - path: "/hello/{name}"
+        to:
+          uri: direct:hello-name
 - route:
     id: hello
     from:
