@@ -91,6 +91,11 @@ public class Ask extends CamelCommand {
             description = "Show tool calls and results as they happen")
     boolean showTools;
 
+    @Option(names = { "--show-stats" },
+            description = "Show token usage and elapsed time after response",
+            defaultValue = "true")
+    boolean showStats = true;
+
     @Option(names = { "--verbose" },
             description = "Print debug information: HTTP requests, responses, and parsed results")
     boolean verbose;
@@ -195,6 +200,7 @@ public class Ask extends CamelCommand {
             String userQuestion) {
         messages.add(LlmClient.Message.user(userQuestion));
 
+        long startTime = System.currentTimeMillis();
         LlmClient.TokenUsage totalUsage = LlmClient.TokenUsage.EMPTY;
         for (int i = 0; i < maxIterations; i++) {
             LlmClient.ChatResponse response = client.chatWithTools(systemPrompt, messages, tools);
@@ -224,23 +230,31 @@ public class Ask extends CamelCommand {
                     printer().println(response.text());
                 }
                 messages.add(LlmClient.Message.assistantWithToolCalls(response.text(), List.of()));
-                printTokenUsage(totalUsage);
+                printStats(totalUsage, startTime);
                 return 0;
             }
         }
 
-        printTokenUsage(totalUsage);
+        printStats(totalUsage, startTime);
         printer().printErr("Reached maximum iterations (" + maxIterations + ") without a final answer.");
         return 1;
     }
 
-    private void printTokenUsage(LlmClient.TokenUsage usage) {
-        if (usage.totalTokens() > 0) {
-            printer().println();
-            printer().println("Tokens: " + usage.inputTokens() + " input / "
-                              + usage.outputTokens() + " output / "
-                              + usage.totalTokens() + " total");
+    private void printStats(LlmClient.TokenUsage usage, long startTime) {
+        if (!showStats) {
+            return;
         }
+        long elapsed = (System.currentTimeMillis() - startTime) / 1000;
+        StringBuilder sb = new StringBuilder();
+        sb.append("(").append(elapsed).append("s");
+        if (usage.totalTokens() > 0) {
+            sb.append(", ").append(usage.inputTokens()).append(" input / ")
+                    .append(usage.outputTokens()).append(" output / ")
+                    .append(usage.totalTokens()).append(" total tokens");
+        }
+        sb.append(")");
+        printer().println();
+        printer().println(sb.toString());
     }
 
     // ---- Process discovery (delegates to RuntimeHelper) ----
