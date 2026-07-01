@@ -2561,7 +2561,6 @@ public class YamlModelWriter extends YamlModelWriterSupport {
         doWriteAttribute(jo, "symmetricKeyAlgorithm", def.getSymmetricKeyAlgorithm(), "AES");
         doWriteAttribute(jo, "symmetricKeyLength", def.getSymmetricKeyLength(), "128");
         doWriteAttribute(jo, "keyPair", def.getKeyPair(), null);
-        doWriteAttribute(jo, "bufferSize", def.getBufferSize(), "4096");
         doWriteAttribute(jo, "provider", def.getProvider(), null);
         doWriteAttribute(jo, "keyGenerator", def.getKeyGenerator(), null);
         return jo;

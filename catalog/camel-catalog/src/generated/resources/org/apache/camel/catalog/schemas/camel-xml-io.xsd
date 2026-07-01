@@ -8574,7 +8574,9 @@ The Post-Quantum KEM algorithm to use for key encapsulation. Default value: MLKE
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-The symmetric encryption algorithm to use with the shared secret. Default value: AES
+The symmetric encryption algorithm to use with the shared secret. Only algorithms that support authenticated encryption
+(AEAD) are allowed: AES, ARIA, CAMELLIA, CAST6, DSTU7624, GOST3412_2015, SEED and SM4 are encrypted with GCM, and
+CHACHA7539 with ChaCha20-Poly1305. Default value: AES
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -8593,15 +8595,6 @@ The length (in bits) of the symmetric key. Default value: 128
             <xs:documentation xml:lang="en">
 <![CDATA[
 Refers to the KeyPair to lookup from the registry to use for KEM operations.
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="bufferSize" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-The size of the buffer used for streaming encryption/decryption. Default value: 4096
 ]]>
             </xs:documentation>
           </xs:annotation>

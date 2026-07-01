@@ -34,3 +34,34 @@ Result<String> chat(AiAgentBody<?> aiAgentBody, ToolProvider toolProvider);
 
 Due to new requirements from Apache Fory, when using Apache Fory Dataformat, the JVM parameter `--add-opens java.base/java.lang.invoke=ALL-UNNAMED` must be provided.
 
+=== camel-pqc - potential breaking change
+
+The `pqc` data format now encrypts the message payload with *authenticated encryption (AEAD)* instead of the
+previous unauthenticated ECB mode. 128-bit block ciphers are encrypted with GCM and the ChaCha20 stream cipher is
+encrypted with ChaCha20-Poly1305, so both the confidentiality and the integrity of the data are now protected, and
+tampered or corrupted messages are detected and rejected on decryption.
+
+As a consequence:
+
+* The wire format changed. A 12-byte AEAD nonce is now written between the encapsulation and the ciphertext, and the
+ciphertext carries an authentication tag:
++
+[source,text]
+----
+[4 bytes: encapsulation length] [N bytes: encapsulation] [12 bytes: AEAD nonce] [M bytes: ciphertext + auth tag]
+----
++
+Data encrypted by Camel 4.21 or earlier (unauthenticated ECB, no nonce) *cannot be decrypted* by Camel 4.22 or
+later. Re-encrypt any data at rest with the new version.
+
+* Only symmetric algorithms that support AEAD are accepted: `AES`, `ARIA`, `CAMELLIA`, `CAST6`, `DSTU7624`,
+`GOST3412-2015`, `SEED`, `SM4` (GCM) and `CHACHA7539` (ChaCha20-Poly1305). The previously accepted `RC2`, `RC5`,
+`CAST5`, `GOST28147`, `DESEDE` and the unauthenticated stream ciphers `GRAIN128`, `HC128`, `HC256` and `SALSA20`
+are no longer supported and are rejected when the route starts. The default (`AES`) is unchanged.
+
+* The message is now processed in memory rather than streamed: the authenticated cipher must verify the authentication
+tag before releasing any plaintext, so the whole payload is held in memory during marshal and unmarshal. For very large
+payloads, enable stream caching on the route.
+
+* The `bufferSize` option has been removed. It only configured the previous streaming implementation and no longer has
+any effect with authenticated encryption.
