@@ -49,34 +49,39 @@ public class OpenAIMockConversationHistoryTest {
     @Test
     public void testConversationHistoryAssertion() throws Exception {
         HttpClient client = HttpClient.newHttpClient();
+        try {
+            // Send request with conversation history
+            String requestBody = "{\"messages\": [" +
+                                 "{\"role\": \"user\", \"content\": \"Hi! Can you look up user 123 and tell me about our rental policies?\"},"
+                                 +
+                                 "{\"role\": \"assistant\", \"content\": \"Previous response\"}," +
+                                 "{\"role\": \"user\", \"content\": \"What's his preferred vehicle type?\"}" +
+                                 "]}";
 
-        // Send request with conversation history
-        String requestBody = "{\"messages\": [" +
-                             "{\"role\": \"user\", \"content\": \"Hi! Can you look up user 123 and tell me about our rental policies?\"},"
-                             +
-                             "{\"role\": \"assistant\", \"content\": \"Previous response\"}," +
-                             "{\"role\": \"user\", \"content\": \"What's his preferred vehicle type?\"}" +
-                             "]}";
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(openAIMock.getBaseUrl() + "/v1/chat/completions"))
+                    .header("Content-Type", "application/json")
+                    .POST(HttpRequest.BodyPublishers.ofString(requestBody))
+                    .build();
 
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(openAIMock.getBaseUrl() + "/v1/chat/completions"))
-                .header("Content-Type", "application/json")
-                .POST(HttpRequest.BodyPublishers.ofString(requestBody))
-                .build();
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            String responseBody = response.body();
 
-        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        String responseBody = response.body();
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode responseJson = objectMapper.readTree(responseBody);
 
-        ObjectMapper objectMapper = new ObjectMapper();
-        JsonNode responseJson = objectMapper.readTree(responseBody);
+            JsonNode choice = responseJson.path("choices").get(0);
+            JsonNode message = choice.path("message");
 
-        JsonNode choice = responseJson.path("choices").get(0);
-        JsonNode message = choice.path("message");
+            assertEquals("assistant", message.path("role").asText());
+            assertEquals("SUV", message.path("content").asText());
 
-        assertEquals("assistant", message.path("role").asText());
-        assertEquals("SUV", message.path("content").asText());
-
-        // Verify assertion was executed
-        assertTrue(secondAssertionExecuted.get(), "Second assertion should have been executed");
+            // Verify assertion was executed
+            assertTrue(secondAssertionExecuted.get(), "Second assertion should have been executed");
+        } finally {
+            if (client instanceof AutoCloseable ac) {
+                ac.close();
+            }
+        }
     }
 }

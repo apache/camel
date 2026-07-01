@@ -35,29 +35,41 @@ public class OpenAIMockFailuresTest {
     @Test
     public void testBadRequest() throws Exception {
         HttpClient client = HttpClient.newHttpClient();
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(openAIMock.getBaseUrl() + "/v1/chat/completions"))
-                .header("Content-Type", "application/json")
-                .POST(HttpRequest.BodyPublishers
-                        .ofString("{\"messages\": [{\"role\": \"assistant\", \"content\": \"any sentence\"}]}"))
-                .build();
+        try {
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(openAIMock.getBaseUrl() + "/v1/chat/completions"))
+                    .header("Content-Type", "application/json")
+                    .POST(HttpRequest.BodyPublishers
+                            .ofString("{\"messages\": [{\"role\": \"assistant\", \"content\": \"any sentence\"}]}"))
+                    .build();
 
-        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        Assertions.assertEquals(500, response.statusCode());
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            Assertions.assertEquals(500, response.statusCode());
+        } finally {
+            if (client instanceof AutoCloseable ac) {
+                ac.close();
+            }
+        }
     }
 
     @Test
     public void testNotFound() throws Exception {
         HttpClient client = HttpClient.newHttpClient();
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(openAIMock.getBaseUrl() + "/v1/chat/completions"))
-                .header("Content-Type", "application/json")
-                .POST(HttpRequest.BodyPublishers
-                        .ofString("{\"messages\": [{\"role\": \"user\", \"content\": \"not found sentence\"}]}"))
-                .build();
+        try {
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(openAIMock.getBaseUrl() + "/v1/chat/completions"))
+                    .header("Content-Type", "application/json")
+                    .POST(HttpRequest.BodyPublishers
+                            .ofString("{\"messages\": [{\"role\": \"user\", \"content\": \"not found sentence\"}]}"))
+                    .build();
 
-        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        Assertions.assertEquals(500, response.statusCode());
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            Assertions.assertEquals(500, response.statusCode());
+        } finally {
+            if (client instanceof AutoCloseable ac) {
+                ac.close();
+            }
+        }
     }
 
     @Test
