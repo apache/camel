@@ -63,9 +63,25 @@ class BeansTab implements MonitorTab {
     private boolean showDetail;
     private int detailScroll;
     private String lastPid;
+    private Rect lastTableArea;
 
     BeansTab(MonitorContext ctx) {
         this.ctx = ctx;
+    }
+
+    @Override
+    public TableState getTableState() {
+        return tableState;
+    }
+
+    @Override
+    public int getTableRowCount() {
+        return sortedBeans().size();
+    }
+
+    @Override
+    public Rect getTableArea() {
+        return lastTableArea;
     }
 
     @Override
@@ -176,6 +192,7 @@ class BeansTab implements MonitorTab {
 
     @Override
     public void render(Frame frame, Rect area) {
+        lastTableArea = null;
         IntegrationInfo info = ctx.findSelectedIntegration();
         if (info == null) {
             renderNoSelection(frame, area);
@@ -244,6 +261,7 @@ class BeansTab implements MonitorTab {
                 .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(title).build())
                 .build();
 
+        lastTableArea = area;
         frame.renderStatefulWidget(table, area, tableState);
     }
 

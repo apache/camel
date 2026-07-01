@@ -80,8 +80,8 @@ class HttpTab implements MonitorTab {
 
     private final MonitorContext ctx;
     private final TableState tableState = new TableState();
+    private Rect lastTableArea;
     private final AtomicBoolean specLoading = new AtomicBoolean(false);
-
     private String sort = "method";
     private int sortIndex;
     private boolean sortReversed;
@@ -118,6 +118,21 @@ class HttpTab implements MonitorTab {
 
     HttpTab(MonitorContext ctx) {
         this.ctx = ctx;
+    }
+
+    @Override
+    public TableState getTableState() {
+        return tableState;
+    }
+
+    @Override
+    public int getTableRowCount() {
+        return sortedVisibleEndpoints(ctx.findSelectedIntegration()).size();
+    }
+
+    @Override
+    public Rect getTableArea() {
+        return lastTableArea;
     }
 
     boolean isProbeMode() {
@@ -1281,6 +1296,7 @@ class HttpTab implements MonitorTab {
                 .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(title).build())
                 .build();
 
+        lastTableArea = area;
         frame.renderStatefulWidget(table, area, tableState);
     }
 

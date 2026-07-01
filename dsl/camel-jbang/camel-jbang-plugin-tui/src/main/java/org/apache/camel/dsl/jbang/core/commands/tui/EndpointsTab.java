@@ -58,6 +58,7 @@ class EndpointsTab implements MonitorTab {
 
     private final MonitorContext ctx;
     private final TableState tableState = new TableState();
+    private Rect lastTableArea;
     private final Map<String, LinkedList<Long>> endpointInHistory;
     private final Map<String, LinkedList<Long>> endpointOutHistory;
     private final Map<String, LinkedList<Long>> endpointRemoteInHistory;
@@ -87,6 +88,22 @@ class EndpointsTab implements MonitorTab {
         this.endpointOutSizeHistory = metrics.getEndpointOutSizeHistory();
         this.perEndpointInHistory = metrics.getPerEndpointInHistory();
         this.perEndpointOutHistory = metrics.getPerEndpointOutHistory();
+    }
+
+    @Override
+    public TableState getTableState() {
+        return tableState;
+    }
+
+    @Override
+    public int getTableRowCount() {
+        IntegrationInfo info = ctx.findSelectedIntegration();
+        return info != null ? info.endpoints.size() : 0;
+    }
+
+    @Override
+    public Rect getTableArea() {
+        return lastTableArea;
     }
 
     @Override
@@ -241,6 +258,7 @@ class EndpointsTab implements MonitorTab {
                 ? Layout.vertical().constraints(Constraint.fill(), Constraint.length(16)).split(area)
                 : List.of(area);
 
+        lastTableArea = chunks.get(0);
         frame.renderStatefulWidget(table, chunks.get(0), tableState);
 
         if (showChart) {

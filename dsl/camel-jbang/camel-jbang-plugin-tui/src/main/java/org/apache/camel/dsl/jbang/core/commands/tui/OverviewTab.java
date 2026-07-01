@@ -89,7 +89,6 @@ class OverviewTab implements MonitorTab {
     final TableState tableState = new TableState();
     int dividerIndex = -1;
     int chartMode = CHART_SINGLE;
-
     private String sort = "name";
     private int sortIndex = 1;
     private boolean sortReversed;
@@ -105,6 +104,16 @@ class OverviewTab implements MonitorTab {
         this.cpuLoadAvg = metrics.getCpuLoadAvg();
         this.stoppingPids = stoppingPids;
         this.onPidChanged = onPidChanged;
+    }
+
+    @Override
+    public TableState getTableState() {
+        return tableState;
+    }
+
+    @Override
+    public int getTableRowCount() {
+        return totalRows();
     }
 
     void setActions(OverviewActions actions) {

@@ -55,7 +55,6 @@ class ThreadsTab implements MonitorTab {
     private final MonitorContext ctx;
     private final TableState tableState = new TableState();
     private final AtomicBoolean loading = new AtomicBoolean(false);
-
     private String sort = "id";
     private int sortIndex;
     private boolean sortReversed;
@@ -66,9 +65,25 @@ class ThreadsTab implements MonitorTab {
     private boolean showTrace;
     private int traceScroll;
     private String lastPid;
+    private Rect lastTableArea;
 
     ThreadsTab(MonitorContext ctx) {
         this.ctx = ctx;
+    }
+
+    @Override
+    public TableState getTableState() {
+        return tableState;
+    }
+
+    @Override
+    public int getTableRowCount() {
+        return sortedThreads().size();
+    }
+
+    @Override
+    public Rect getTableArea() {
+        return lastTableArea;
     }
 
     @Override
@@ -180,6 +195,7 @@ class ThreadsTab implements MonitorTab {
 
     @Override
     public void render(Frame frame, Rect area) {
+        lastTableArea = null;
         IntegrationInfo info = ctx.findSelectedIntegration();
         if (info == null) {
             renderNoSelection(frame, area);
@@ -274,6 +290,7 @@ class ThreadsTab implements MonitorTab {
                 .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(title).build())
                 .build();
 
+        lastTableArea = area;
         frame.renderStatefulWidget(table, area, tableState);
     }
 

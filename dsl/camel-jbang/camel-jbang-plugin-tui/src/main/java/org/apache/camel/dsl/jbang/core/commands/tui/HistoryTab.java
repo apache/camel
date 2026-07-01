@@ -83,7 +83,6 @@ class HistoryTab implements MonitorTab {
     private final TableState traceStepTableState = new TableState();
     private final ScrollbarState traceDetailScrollState = new ScrollbarState();
     private final ScrollbarState historyDetailScrollState = new ScrollbarState();
-
     private String traceSort = "time";
     private int traceSortIndex;
     private boolean traceSortReversed;
@@ -116,6 +115,10 @@ class HistoryTab implements MonitorTab {
 
     volatile List<HistoryEntry> historyEntries = Collections.emptyList();
     private final TableState historyTableState = new TableState();
+    // Bounds of each table as last rendered; reset every frame and set only when the matching table is drawn.
+    private Rect traceTableArea;
+    private Rect stepTableArea;
+    private Rect historyTableArea;
     private boolean showHistoryProperties;
     private boolean showHistoryVariables;
     private boolean showHistoryHeaders = true;
@@ -131,6 +134,38 @@ class HistoryTab implements MonitorTab {
         this.ctx = ctx;
         this.traces = traces;
         this.traceFilePositions = traceFilePositions;
+    }
+
+    @Override
+    public TableState getTableState() {
+        if (traceDetailView) {
+            return !historyEntries.isEmpty() ? historyTableState : traceStepTableState;
+        }
+        return traceTableState;
+    }
+
+    @Override
+    public Rect getTableArea() {
+        // Mirror getTableState(): return the bounds of whichever table is currently the active/selectable one.
+        if (traceDetailView) {
+            return !historyEntries.isEmpty() ? historyTableArea : stepTableArea;
+        }
+        return traceTableArea;
+    }
+
+    @Override
+    public int getTableRowCount() {
+        if (traceDetailView) {
+            if (!historyEntries.isEmpty()) {
+                return historyEntries.size();
+            }
+            List<TraceEntry> all = traces.get();
+            if (all != null && traceSelectedExchangeId != null) {
+                return (int) all.stream().filter(t -> traceSelectedExchangeId.equals(t.exchangeId)).count();
+            }
+            return 0;
+        }
+        return traceSortedExchangeIds.size();
     }
 
     @Override
@@ -507,6 +542,10 @@ class HistoryTab implements MonitorTab {
 
     @Override
     public void render(Frame frame, Rect area) {
+        // Reset each frame; only the table actually drawn below sets its area, so getTableArea() tracks the active view.
+        traceTableArea = null;
+        stepTableArea = null;
+        historyTableArea = null;
         IntegrationInfo info = ctx.findSelectedIntegration();
         if (info == null) {
             renderNoSelection(frame, area);
@@ -1071,6 +1110,7 @@ class HistoryTab implements MonitorTab {
                 .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(traceTitle).build())
                 .build();
 
+        traceTableArea = area;
         frame.renderStatefulWidget(table, area, traceTableState);
     }
 
@@ -1094,6 +1134,7 @@ class HistoryTab implements MonitorTab {
         }
 
         String stepTitle = String.format(" Trace [%s] — %d steps ", truncate(traceSelectedExchangeId, 30), steps.size());
+        stepTableArea = chunks.get(0);
         frame.renderStatefulWidget(
                 buildStepTable(rows, stepTitle, showDescription), chunks.get(0), traceStepTableState);
 
@@ -1364,6 +1405,7 @@ class HistoryTab implements MonitorTab {
         }
 
         Title historyTitle = buildHistoryTitle(current);
+        historyTableArea = chunks.get(0);
         frame.renderStatefulWidget(
                 buildStepTable(rows, historyTitle, showDescription), chunks.get(0), historyTableState);
 

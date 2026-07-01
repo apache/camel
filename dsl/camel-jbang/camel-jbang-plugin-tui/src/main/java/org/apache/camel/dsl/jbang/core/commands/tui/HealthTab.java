@@ -54,6 +54,17 @@ class HealthTab implements MonitorTab {
     }
 
     @Override
+    public TableState getTableState() {
+        return tableState;
+    }
+
+    @Override
+    public int getTableRowCount() {
+        IntegrationInfo info = ctx.findSelectedIntegration();
+        return info != null ? info.healthChecks.size() : 0;
+    }
+
+    @Override
     public boolean handleKeyEvent(KeyEvent ke) {
         if (ke.isChar('s')) {
             sortIndex = (sortIndex + 1) % SORT_COLUMNS.length;

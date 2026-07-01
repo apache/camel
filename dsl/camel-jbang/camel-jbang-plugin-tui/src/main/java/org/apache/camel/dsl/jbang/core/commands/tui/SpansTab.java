@@ -38,6 +38,7 @@ import dev.tamboui.text.Span;
 import dev.tamboui.text.Text;
 import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
+import dev.tamboui.tui.event.MouseEvent;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
 import dev.tamboui.widgets.block.Borders;
@@ -61,7 +62,7 @@ class SpansTab implements MonitorTab {
 
     private final TableState traceListState = new TableState();
     private final ScrollbarState waterfallScrollState = new ScrollbarState();
-
+    private Rect lastTableArea;
     private boolean waterfallView;
     private String selectedTraceId;
     private String selectedListTraceId;
@@ -81,6 +82,36 @@ class SpansTab implements MonitorTab {
     SpansTab(MonitorContext ctx, AtomicReference<List<SpanEntry>> spans) {
         this.ctx = ctx;
         this.spans = spans;
+    }
+
+    @Override
+    public TableState getTableState() {
+        return traceListState;
+    }
+
+    @Override
+    public int getTableRowCount() {
+        return buildFilteredTraceSummaries().size();
+    }
+
+    @Override
+    public Rect getTableArea() {
+        return lastTableArea;
+    }
+
+    @Override
+    public boolean handleMouseEvent(MouseEvent me, Rect area) {
+        // Only the trace list is selectable; the waterfall view has no row table.
+        if (waterfallView) {
+            return false;
+        }
+        // The default handler selects the row (or scrolls); mirror keyboard navigation by keeping
+        // selectedListTraceId in sync so the render-time restore does not revert the new selection.
+        boolean handled = MonitorTab.super.handleMouseEvent(me, area);
+        if (handled) {
+            syncSelectedListTraceId();
+        }
+        return handled;
     }
 
     @Override
@@ -264,6 +295,7 @@ class SpansTab implements MonitorTab {
 
     @Override
     public void render(Frame frame, Rect area) {
+        lastTableArea = null;
         IntegrationInfo info = ctx.findSelectedIntegration();
         if (info == null) {
             MonitorContext.renderNoSelection(frame, area);
@@ -385,6 +417,7 @@ class SpansTab implements MonitorTab {
                 .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
                 .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(title).build())
                 .build();
+        lastTableArea = area;
         frame.renderStatefulWidget(table, area, traceListState);
     }
 

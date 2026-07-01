@@ -70,6 +70,7 @@ class MetricsTab implements MonitorTab {
     private final ScrollbarState rawScrollbarState = new ScrollbarState();
     private boolean tableMode;
     private int lastRowCount;
+    private Rect lastTableArea;
     private String sort = "name";
     private int sortIndex = 1;
     private boolean sortReversed;
@@ -86,6 +87,21 @@ class MetricsTab implements MonitorTab {
 
     MetricsTab(MonitorContext ctx) {
         this.ctx = ctx;
+    }
+
+    @Override
+    public TableState getTableState() {
+        return tableState;
+    }
+
+    @Override
+    public int getTableRowCount() {
+        return lastRowCount;
+    }
+
+    @Override
+    public Rect getTableArea() {
+        return lastTableArea;
     }
 
     @Override
@@ -205,6 +221,7 @@ class MetricsTab implements MonitorTab {
 
     @Override
     public void render(Frame frame, Rect area) {
+        lastTableArea = null;
         IntegrationInfo info = ctx.findSelectedIntegration();
         if (info == null) {
             renderNoSelection(frame, area);
@@ -493,6 +510,7 @@ class MetricsTab implements MonitorTab {
                         .title(title).build())
                 .build();
 
+        lastTableArea = area;
         frame.renderStatefulWidget(table, area, tableState);
 
         int visibleRows = Math.max(1, area.height() - 4);
