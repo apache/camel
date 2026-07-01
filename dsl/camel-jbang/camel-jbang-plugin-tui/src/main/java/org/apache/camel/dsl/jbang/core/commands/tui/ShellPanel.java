@@ -95,6 +95,8 @@ class ShellPanel {
     private int lastHeight;
     private int scrollOffset;
     private int lastHistorySize;
+    private int lastCursorX = -1;
+    private int lastCursorY = -1;
     private Rect lastArea;
     private volatile boolean shellExited;
 
@@ -302,11 +304,20 @@ class ShellPanel {
                         .build(),
                 contentArea);
 
+        // Position the hardware cursor only when it has moved, so the terminal's
+        // blink timer is not reset on every frame.
         if (scrollOffset == 0 && cursor[1] >= 0 && cursor[1] < innerHeight
                 && cursor[0] >= 0 && cursor[0] < innerWidth) {
             int cx = contentArea.x() + cursor[0];
             int cy = contentArea.y() + cursor[1];
-            frame.setCursorPosition(cx, cy);
+            if (cx != lastCursorX || cy != lastCursorY) {
+                frame.setCursorPosition(cx, cy);
+                lastCursorX = cx;
+                lastCursorY = cy;
+            }
+        } else {
+            lastCursorX = -1;
+            lastCursorY = -1;
         }
     }
 
