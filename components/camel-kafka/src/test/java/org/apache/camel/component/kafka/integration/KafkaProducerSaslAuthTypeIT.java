@@ -19,6 +19,7 @@ package org.apache.camel.component.kafka.integration;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -178,6 +179,8 @@ public class KafkaProducerSaslAuthTypeIT {
                     assertEquals(5, received.size(), "Should have received 5 messages");
                 });
 
+        // Sort by key to avoid relying on cross-partition delivery order
+        received.sort(Comparator.comparing(ConsumerRecord::key));
         for (int i = 0; i < received.size(); i++) {
             assertNotNull(received.get(i).value());
             assertEquals("test-message-" + i, received.get(i).value());
