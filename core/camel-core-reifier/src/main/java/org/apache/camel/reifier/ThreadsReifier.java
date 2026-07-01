@@ -34,6 +34,8 @@ public class ThreadsReifier extends ProcessorReifier<ThreadsDefinition> {
         super(route, (ThreadsDefinition) definition);
     }
 
+    // ExecutorService lifecycle is managed by ThreadsProcessor via shutdownThreadPool flag
+    @SuppressWarnings("java:S2095")
     @Override
     public Processor createProcessor() throws Exception {
         // the threads name
@@ -43,8 +45,6 @@ public class ThreadsReifier extends ProcessorReifier<ThreadsDefinition> {
         }
         // prefer any explicit configured executor service
         boolean shutdownThreadPool = willCreateNewThreadPool(definition, true);
-        // ExecutorService lifecycle is managed by ThreadsProcessor via shutdownThreadPool flag
-        @SuppressWarnings("java:S2095")
         ExecutorService threadPool = getConfiguredExecutorService(name, definition, false);
 
         // resolve what rejected policy to use

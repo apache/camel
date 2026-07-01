@@ -391,6 +391,8 @@ class ShellPanel {
 
     private String startError;
 
+    // DelegateOutputStream and feedbackOutput are owned by the virtualTerminal; closed in stopShell()
+    @SuppressWarnings("java:S2095")
     private void startShell(int width, int height) {
         try {
             screenTerminal = new ScreenTerminal(width, height);
