@@ -17,6 +17,8 @@
 package org.apache.camel.component.stream;
 
 import java.io.File;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit6.CamelTestSupport;
@@ -45,7 +47,7 @@ public class ScanStreamFileManualTest extends CamelTestSupport {
 
     @Test
     public void testScanFile() throws Exception {
-        Thread.sleep(60000);
+        new CountDownLatch(1).await(60, TimeUnit.SECONDS);
     }
 
     @Override
