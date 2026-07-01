@@ -344,26 +344,26 @@ class ShellPanelTest {
     // ---- renderFooter tests ----
 
     @Test
-    void renderFooterShowsNextPercentage() {
+    void renderFooterShowsCurrentPercentage() {
         ShellPanel panel = new ShellPanel();
-        // Default split is 50%, so next is 75%
+        // Default split is 50%
         List<Span> spans = new ArrayList<>();
         panel.renderFooter(spans);
 
         String footer = spansToString(spans);
-        assertTrue(footer.contains("75%"), "Footer should show next percentage (75%)");
+        assertTrue(footer.contains("resize (50%)"), "Footer should show 'resize (50%)'");
     }
 
     @Test
     void renderFooterUpdatesAfterCycleHeight() {
         ShellPanel panel = new ShellPanel();
-        panel.cycleHeight(); // now 75%, so next is 100%
+        panel.cycleHeight(); // now 75%
 
         List<Span> spans = new ArrayList<>();
         panel.renderFooter(spans);
 
         String footer = spansToString(spans);
-        assertTrue(footer.contains("100%"), "Footer should show 100% after cycling once");
+        assertTrue(footer.contains("resize (75%)"), "Footer should show 'resize (75%)' after cycling once");
     }
 
     @Test
@@ -376,6 +376,7 @@ class ShellPanelTest {
         assertTrue(footer.contains("F6"), "Footer should contain F6 hint");
         assertTrue(footer.contains("close"), "Footer should contain 'close' label for F6");
         assertTrue(footer.contains("Shift+F6"), "Footer should contain Shift+F6 hint");
+        assertTrue(footer.contains("resize"), "Footer should contain 'resize' action label");
         assertTrue(footer.contains("PgUp/Dn"), "Footer should contain PgUp/Dn hint");
         assertTrue(footer.contains("scroll"), "Footer should contain 'scroll' label");
     }

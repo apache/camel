@@ -323,7 +323,7 @@ class ShellPanel {
 
     void renderFooter(List<Span> spans) {
         MonitorContext.hint(spans, "F6", "close");
-        MonitorContext.hint(spans, "Shift+F6", SPLIT_PERCENTS[(splitIndex + 1) % SPLIT_PERCENTS.length] + "%");
+        MonitorContext.hint(spans, "Shift+F6", "resize (" + SPLIT_PERCENTS[splitIndex] + "%)");
         MonitorContext.hint(spans, "PgUp/Dn", "scroll");
     }
 
