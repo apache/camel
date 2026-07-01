@@ -51,7 +51,7 @@ abstract class AbstractTab implements MonitorTab {
     public void renderFooter(List<Span> spans) {
     }
 
-    static void renderTableScrollbar(
+    protected static void renderTableScrollbar(
             Frame frame, Rect tableArea, TableState tableState, ScrollbarState scrollState, int rowCount) {
         if (tableArea == null || tableState == null || scrollState == null) {
             return;
@@ -84,7 +84,7 @@ abstract class AbstractTab implements MonitorTab {
         return a.compareToIgnoreCase(b);
     }
 
-    static boolean handleTableClick(MouseEvent me, Rect tableArea, TableState tableState, int rowCount) {
+    protected static boolean handleTableClick(MouseEvent me, Rect tableArea, TableState tableState, int rowCount) {
         if (tableArea == null || tableState == null || rowCount <= 0) {
             return false;
         }
