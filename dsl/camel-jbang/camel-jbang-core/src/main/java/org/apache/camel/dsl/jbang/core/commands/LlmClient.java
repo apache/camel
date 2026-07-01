@@ -111,7 +111,7 @@ public class LlmClient {
             if (k == (int) k) {
                 return (int) k + "k";
             }
-            return String.format("%.1fk", k);
+            return String.format(java.util.Locale.ROOT, "%.1fk", k);
         }
         return String.valueOf(tokens);
     }
