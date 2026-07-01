@@ -154,11 +154,29 @@ Both methods run in parallel. Results are merged (union) before testing. This le
 2. **No regression** — If Scalpel fails, grep results are still used
 3. **Gradual migration** — Once Scalpel is validated, grep can be removed
 
-Scalpel is configured permanently in `.mvn/extensions.xml` (version `0.1.0`). On developer machines it is a no-op — without CI environment variables (`GITHUB_BASE_REF`), no base branch is detected and Scalpel returns immediately. The `mvn validate` with report mode adds ~60-90 seconds in CI.
-
-Note: the script overrides `fullBuildTriggers` to empty (`-Dscalpel.fullBuildTriggers=`) because Scalpel's default (`.mvn/**`) would trigger a full build whenever `.mvn/extensions.xml` itself changes (e.g., Dependabot bumping Scalpel).
+Scalpel is configured permanently in `.mvn/extensions.xml`. On developer machines it is a no-op (disabled via `-Dscalpel.enabled=false` in `.mvn/maven.config`). The CI script overrides this with `-Dscalpel.enabled=true`. The `mvn validate` with report mode adds ~60-90 seconds in CI.
 
 Scalpel is only invoked when a **subdirectory** `pom.xml` is changed (e.g. `parent/pom.xml`, `components/camel-kafka/pom.xml`). Changes to the **root** `pom.xml` are excluded because it contains build-infrastructure config (license plugin, checkstyle, etc.) that does not affect module compilation or test behavior. Without this filter, Scalpel would report every module as affected since they all inherit from the root POM.
+
+#### Scalpel features used for shadow comparison
+
+- **Source-set-aware propagation**: Distinguishes test-jar dependencies from regular dependencies. A module that depends only on another module's test-jar (e.g., `camel-core`'s test-jar with test utilities) is propagated through the `TEST` source set, not the `MAIN` source set. This prevents a change to test utilities from triggering tests in all ~500 modules that depend on `camel-core`.
+- **`skipTestsForDownstreamModules`**: Allows specifying modules whose tests should be skipped when they appear as downstream dependents (mirrors the `EXCLUSION_LIST` in `incremental-build.sh`). This gives Scalpel an accurate picture of what skip-tests mode would actually test.
+
+#### Shadow comparison
+
+Scalpel runs in **shadow mode**: it observes what skip-tests mode *would* have done and reports it in a collapsible section of the PR comment, without affecting actual test execution. This allows the team to validate Scalpel's decisions across many PRs before switching to Scalpel-driven test execution.
+
+The shadow comparison section shows:
+- How many modules Scalpel would test (direct + downstream)
+- How many downstream modules would have tests skipped (generated code, meta-modules)
+- The full list of modules in each category
+
+#### Configuration notes
+
+The script overrides `fullBuildTriggers` to empty (`-Dscalpel.fullBuildTriggers=`) because Scalpel's default (`.mvn/**`) would trigger a full build whenever `.mvn/extensions.xml` itself changes (e.g., Dependabot bumping Scalpel).
+
+The grep-based script fetches the PR diff via the GitHub REST API (unchanged). Scalpel uses local git history to compare effective POM models — the CI workflow pre-fetches the base branch (`git fetch --deepen=200` + fetch of `origin/main`) so Scalpel's JGit can find the merge-base. Scalpel disables its built-in JGit fetch (`-Dscalpel.fetchBaseBranch=false`) to avoid JGit issues in shallow CI clones. The `--deepen=200` fetches only commit metadata (not file blobs), adding ~2-3 seconds to the job.
 
 ## Manual Integration Test Advisories
 
