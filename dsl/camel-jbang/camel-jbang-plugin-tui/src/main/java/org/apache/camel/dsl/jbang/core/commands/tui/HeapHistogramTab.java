@@ -30,6 +30,7 @@ import dev.tamboui.style.Style;
 import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.Line;
 import dev.tamboui.text.Span;
+import dev.tamboui.text.Text;
 import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.widgets.block.Block;
@@ -58,11 +59,12 @@ class HeapHistogramTab implements MonitorTab {
     private String sort = "bytes";
     private int sortIndex = 2;
     private boolean sortReversed;
-    private int filter; // 0=all, 1=camel
+    private int filter;
     private List<HeapEntry> allEntries = Collections.emptyList();
     private long totalInstances;
     private long totalBytes;
     private String lastPid;
+    private List<ClasspathTab.JarEntry> classpathEntries = Collections.emptyList();
 
     HeapHistogramTab(MonitorContext ctx) {
         this.ctx = ctx;
@@ -74,6 +76,7 @@ class HeapHistogramTab implements MonitorTab {
         if (pid != null && !pid.equals(lastPid)) {
             lastPid = pid;
             allEntries = Collections.emptyList();
+            classpathEntries = Collections.emptyList();
         }
         if (allEntries.isEmpty()) {
             loadHeapHistogram();
@@ -83,6 +86,7 @@ class HeapHistogramTab implements MonitorTab {
     @Override
     public void onIntegrationChanged() {
         allEntries = Collections.emptyList();
+        classpathEntries = Collections.emptyList();
         lastPid = null;
         loadHeapHistogram();
     }
@@ -150,7 +154,7 @@ class HeapHistogramTab implements MonitorTab {
         if (loading.get() && allEntries.isEmpty()) {
             frame.renderWidget(
                     Paragraph.builder()
-                            .text(dev.tamboui.text.Text.from(
+                            .text(Text.from(
                                     Line.from(Span.styled(" Loading heap histogram...", Style.EMPTY.dim()))))
                             .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
                                     .title(" Heap Histogram ").build())
@@ -162,10 +166,11 @@ class HeapHistogramTab implements MonitorTab {
         List<HeapEntry> visible = sortedEntries();
 
         List<Rect> chunks = Layout.vertical()
-                .constraints(Constraint.length(1), Constraint.fill())
+                .constraints(Constraint.length(1), Constraint.percentage(60), Constraint.fill())
                 .split(area);
         renderSummary(frame, chunks.get(0), visible);
         renderTable(frame, chunks.get(1), visible);
+        renderDetail(frame, chunks.get(2), visible);
     }
 
     private void renderSummary(Frame frame, Rect area, List<HeapEntry> visible) {
@@ -225,6 +230,103 @@ class HeapHistogramTab implements MonitorTab {
                 .build();
 
         frame.renderStatefulWidget(table, area, tableState);
+    }
+
+    private void renderDetail(Frame frame, Rect area, List<HeapEntry> visible) {
+        Integer sel = tableState.selected();
+        if (sel == null || sel < 0 || sel >= visible.size()) {
+            frame.renderWidget(
+                    Paragraph.builder()
+                            .text(Text.from(Line.from(Span.styled(" Select a class to see details", Style.EMPTY.dim()))))
+                            .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
+                                    .title(" Detail ").build())
+                            .build(),
+                    area);
+            return;
+        }
+
+        HeapEntry entry = visible.get(sel);
+        String className = entry.className != null ? entry.className : "";
+        String pkg = extractPackage(className);
+
+        List<Line> lines = new ArrayList<>();
+
+        // Class info
+        lines.add(Line.from(
+                Span.styled("  Class:      ", Style.EMPTY.fg(Color.YELLOW).bold()),
+                Span.styled(className, Style.EMPTY.fg(Color.CYAN))));
+        lines.add(Line.from(
+                Span.styled("  Package:    ", Style.EMPTY.fg(Color.YELLOW).bold()),
+                Span.styled(pkg.isEmpty() ? "(none)" : pkg, Style.EMPTY.fg(Color.WHITE))));
+        lines.add(Line.from(
+                Span.styled("  Instances:  ", Style.EMPTY.fg(Color.YELLOW).bold()),
+                Span.styled(formatNumber(entry.instances), Style.EMPTY.fg(Color.WHITE)),
+                Span.styled("          Bytes: ", Style.EMPTY.fg(Color.YELLOW).bold()),
+                Span.styled(formatBytes(entry.bytes), Style.EMPTY.fg(Color.WHITE))));
+
+        // Package summary
+        if (!pkg.isEmpty()) {
+            long pkgInstances = 0;
+            long pkgBytes = 0;
+            int pkgClasses = 0;
+            for (HeapEntry e : allEntries) {
+                if (e.className != null && extractPackage(e.className).equals(pkg)) {
+                    pkgInstances += e.instances;
+                    pkgBytes += e.bytes;
+                    pkgClasses++;
+                }
+            }
+            lines.add(Line.from(Span.raw("")));
+            lines.add(Line.from(
+                    Span.styled("  Package Summary ", Style.EMPTY.fg(Color.YELLOW).bold()),
+                    Span.styled("(" + pkg + ")", Style.EMPTY.dim())));
+            lines.add(Line.from(
+                    Span.styled("    Classes: ", Style.EMPTY.fg(Color.YELLOW)),
+                    Span.styled(formatNumber(pkgClasses), Style.EMPTY.fg(Color.WHITE)),
+                    Span.styled("     Instances: ", Style.EMPTY.fg(Color.YELLOW)),
+                    Span.styled(formatNumber(pkgInstances), Style.EMPTY.fg(Color.WHITE)),
+                    Span.styled("     Bytes: ", Style.EMPTY.fg(Color.YELLOW)),
+                    Span.styled(formatBytes(pkgBytes), Style.EMPTY.fg(Color.WHITE))));
+        }
+
+        // JAR info
+        ClasspathTab.JarEntry jar = findJar(className);
+        if (jar != null) {
+            lines.add(Line.from(Span.raw("")));
+            if (jar.groupId() != null) {
+                lines.add(Line.from(
+                        Span.styled("  JAR:        ", Style.EMPTY.fg(Color.YELLOW).bold()),
+                        Span.styled(jar.groupId() + ":" + jar.artifactId() + ":" + jar.version(),
+                                Style.EMPTY.fg(Color.GREEN))));
+            } else {
+                lines.add(Line.from(
+                        Span.styled("  JAR:        ", Style.EMPTY.fg(Color.YELLOW).bold()),
+                        Span.styled(jar.display(), Style.EMPTY.fg(Color.GREEN))));
+            }
+            if (jar.fullPath() != null) {
+                String path = jar.fullPath();
+                int maxW = area.width() - 18;
+                if (maxW > 0 && path.length() > maxW) {
+                    path = "..." + path.substring(path.length() - maxW + 3);
+                }
+                lines.add(Line.from(
+                        Span.styled("                ", Style.EMPTY),
+                        Span.styled(path, Style.EMPTY.dim())));
+            }
+        } else if (isBuiltinClass(className)) {
+            lines.add(Line.from(Span.raw("")));
+            lines.add(Line.from(
+                    Span.styled("  JAR:        ", Style.EMPTY.fg(Color.YELLOW).bold()),
+                    Span.styled("JDK (built-in)", Style.EMPTY.fg(Color.GREEN))));
+        }
+
+        String title = " Detail: " + TuiHelper.truncate(className, area.width() - 14) + " ";
+        frame.renderWidget(
+                Paragraph.builder()
+                        .text(Text.from(lines))
+                        .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(title).build())
+                        .build(),
+                area);
     }
 
     @Override
@@ -291,28 +393,18 @@ class HeapHistogramTab implements MonitorTab {
                 - **INSTANCES** — Number of live instances of this class on the heap
                 - **BYTES** — Total bytes consumed by all instances of this class
 
-                ## Example Screen
+                ## Detail Panel
 
-                ```
-                 #     CLASS NAME                                        INSTANCES         BYTES
-                 1     [B                                                   45,230      12.5 MB
-                 2     [C                                                   38,100       8.2 MB
-                 3     java.lang.String                                     38,050       1.8 MB
-                 4     java.util.HashMap$Node                               12,400     595.0 KB
-                 5     java.lang.Object[]                                    8,200     450.2 KB
-                ```
+                The detail panel below the table shows additional context for the selected class:
+
+                - **Package Summary** — Total classes, instances, and bytes for all classes in the same package
+                - **JAR** — The Maven artifact (groupId:artifactId:version) and file path of the JAR containing the class
 
                 ## Filter Modes
 
                 - **all** (default) — Show all classes
+                - **non-jdk** — Exclude JDK classes (java.*, javax.*, jdk.*, sun.*, com.sun.*, arrays)
                 - **camel** — Show only classes from `org.apache.camel` packages
-
-                ## What To Look For
-
-                - **Large byte counts at the top**: Normal for byte arrays (`[B`) and char arrays (`[C`) — these back Strings and buffers
-                - **Unexpected classes with high counts**: May indicate a memory leak — objects being created but not released
-                - **Growing instance counts on refresh**: Press F5 repeatedly to spot classes whose instance counts keep growing, which suggests a leak
-                - **Camel-specific classes**: Use the `camel` filter to focus on Camel's own objects. High counts of Exchange, Message, or Endpoint objects may indicate route issues
 
                 ## Keys
 
@@ -321,7 +413,7 @@ class HeapHistogramTab implements MonitorTab {
                 | Up/Down | Select class |
                 | s | Cycle sort column (bytes, instances, className) |
                 | S | Reverse sort order |
-                | f | Toggle filter (all / camel) |
+                | f | Toggle filter (all / non-jdk / camel) |
                 | F5 | Refresh heap histogram |
                 | PgUp/PgDn | Scroll by page |
                 | Esc | Back |
@@ -364,6 +456,60 @@ class HeapHistogramTab implements MonitorTab {
 
     private static boolean isCamelClass(HeapEntry e) {
         return e.className != null && e.className.contains("org.apache.camel");
+    }
+
+    private static boolean isBuiltinClass(String className) {
+        if (className == null || className.isEmpty()) {
+            return false;
+        }
+        return className.startsWith("java.")
+                || className.startsWith("javax.")
+                || className.startsWith("jdk.")
+                || className.startsWith("sun.")
+                || className.startsWith("com.sun.")
+                || className.startsWith("[");
+    }
+
+    private static String extractPackage(String className) {
+        if (className == null || className.isEmpty()) {
+            return "";
+        }
+        if (className.startsWith("[")) {
+            // array type — extract element class if object array
+            int idx = className.lastIndexOf('L');
+            if (idx >= 0) {
+                String element = className.substring(idx + 1).replace(";", "");
+                int dot = element.lastIndexOf('.');
+                return dot >= 0 ? element.substring(0, dot) : "";
+            }
+            return "";
+        }
+        int dot = className.lastIndexOf('.');
+        return dot >= 0 ? className.substring(0, dot) : "";
+    }
+
+    private ClasspathTab.JarEntry findJar(String className) {
+        if (classpathEntries.isEmpty() || className == null || className.isEmpty()) {
+            return null;
+        }
+        String pkg = extractPackage(className);
+        if (pkg.isEmpty()) {
+            return null;
+        }
+        // try progressively shorter prefixes of the package against groupId
+        ClasspathTab.JarEntry best = null;
+        int bestLen = -1;
+        for (ClasspathTab.JarEntry jar : classpathEntries) {
+            if (jar.groupId() == null) {
+                continue;
+            }
+            String gid = jar.groupId();
+            if (pkg.startsWith(gid) && gid.length() > bestLen) {
+                best = jar;
+                bestLen = gid.length();
+            }
+        }
+        return best;
     }
 
     private static int compareStr(String a, String b) {
@@ -440,14 +586,58 @@ class HeapHistogramTab implements MonitorTab {
             result.add(entry);
         }
 
+        // load classpath if not already loaded
+        List<ClasspathTab.JarEntry> cpEntries = classpathEntries;
+        if (cpEntries.isEmpty()) {
+            cpEntries = loadClasspathEntries(pid);
+        }
+
+        List<ClasspathTab.JarEntry> finalCp = cpEntries;
         if (ctx.runner != null) {
             ctx.runner.runOnRenderThread(() -> {
                 allEntries = result;
                 totalInstances = ti;
                 totalBytes = tb;
+                classpathEntries = finalCp;
                 lastPid = pid;
             });
         }
+    }
+
+    private List<ClasspathTab.JarEntry> loadClasspathEntries(String pid) {
+        Path outputFile = ctx.getOutputFile(pid);
+        PathUtils.deleteFile(outputFile);
+
+        JsonObject action = new JsonObject();
+        action.put("action", "jvm");
+
+        Path actionFile = ctx.getActionFile(pid);
+        PathUtils.writeTextSafely(action.toJson(), actionFile);
+
+        JsonObject response = pollJsonResponse(outputFile, 5000);
+        PathUtils.deleteFile(outputFile);
+
+        if (response == null) {
+            return Collections.emptyList();
+        }
+
+        Object cp = response.get("classpath");
+        List<String> paths = new ArrayList<>();
+        if (cp instanceof JsonArray jArr) {
+            for (Object item : jArr) {
+                paths.add(String.valueOf(item));
+            }
+        }
+
+        if (paths.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        List<ClasspathTab.JarEntry> parsed = new ArrayList<>();
+        for (String path : paths) {
+            parsed.add(ClasspathTab.parseJarEntry(path));
+        }
+        return parsed;
     }
 
     static String formatBytes(long bytes) {
