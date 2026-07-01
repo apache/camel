@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.function.IntPredicate;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -43,6 +44,8 @@ import dev.tamboui.text.Span;
 import dev.tamboui.text.Text;
 import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
+import dev.tamboui.tui.event.MouseEvent;
+import dev.tamboui.tui.event.MouseEventKind;
 import dev.tamboui.widgets.Clear;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
@@ -116,6 +119,9 @@ class ActionsPopup {
 
     private boolean showActionsMenu;
     private final ListState actionsMenuState = new ListState();
+    // Absolute bounds of the single-line list popups captured during render, used to hit-test clicks.
+    private Rect actionsMenuRect;
+    private Rect docPickerRect;
 
     private boolean showExampleBrowser;
     private final ListState exampleBrowserState = new ListState();
@@ -652,6 +658,79 @@ class ActionsPopup {
         return false;
     }
 
+    // ---- Mouse handling ----
+
+    /**
+     * Handles a mouse event while an Actions sub-popup is open. The Actions menu and the doc picker (both single-line
+     * lists) accept clicks: a click on an entry selects it and activates it via a synthetic Enter (reusing the keyboard
+     * activation path), a click outside goes back one level via a synthetic Esc, and the wheel moves the highlight.
+     * Every other sub-popup stays modal for the mouse (events are consumed but not acted on). Returns {@code false}
+     * only when no Actions popup is open, so the caller can fall back to its normal routing.
+     */
+    boolean handleMouseEvent(MouseEvent me) {
+        if (!isVisible()) {
+            return false;
+        }
+        if (showActionsMenu) {
+            return handleListPopupMouse(me, actionsMenuRect, actionsMenuState, visualActionCount(), this::isDividerIndex);
+        }
+        if (showDocPicker && docPickerIntegrations != null) {
+            return handleListPopupMouse(me, docPickerRect, docPickerState, docPickerIntegrations.size(), i -> false);
+        }
+        // Other sub-popups (forms, browsers, viewers) stay modal: consume the event without acting on it.
+        return true;
+    }
+
+    private boolean handleListPopupMouse(MouseEvent me, Rect rect, ListState state, int itemCount, IntPredicate separator) {
+        if (me.kind() == MouseEventKind.SCROLL_UP) {
+            handleKeyEvent(KeyEvent.ofKey(KeyCode.UP));
+            return true;
+        }
+        if (me.kind() == MouseEventKind.SCROLL_DOWN) {
+            handleKeyEvent(KeyEvent.ofKey(KeyCode.DOWN));
+            return true;
+        }
+        if (me.isClick()) {
+            if (rect != null && rect.contains(me.x(), me.y())) {
+                int idx = listItemAt(rect, state.offset(), itemCount, me.x(), me.y());
+                if (idx >= 0 && !separator.test(idx)) {
+                    state.select(idx);
+                    handleKeyEvent(KeyEvent.ofKey(KeyCode.ENTER));
+                }
+                // A click on the border or a divider inside the popup is consumed without acting.
+                return true;
+            }
+            // A click outside the popup dismisses it (one level back), mirroring Esc.
+            handleKeyEvent(KeyEvent.ofKey(KeyCode.ESCAPE));
+            return true;
+        }
+        // Consume any other mouse event so the popup stays modal.
+        return true;
+    }
+
+    /**
+     * Returns the index of the single-line list entry at {@code (mouseX, mouseY)} for a bordered list popup, or
+     * {@code -1} when the click is on the border, outside the popup, or past the last entry. {@code offset} is the
+     * index of the first visible entry (from {@code ListState.offset()}) for scrolled lists.
+     */
+    static int listItemAt(Rect popup, int offset, int itemCount, int mouseX, int mouseY) {
+        if (popup == null) {
+            return -1;
+        }
+        int innerLeft = popup.x() + 1;
+        int innerRight = popup.x() + popup.width() - 1; // exclusive: last column is the right border
+        int firstRow = popup.y() + 1;
+        int lastRow = popup.y() + popup.height() - 1; // exclusive: last row is the bottom border
+        if (mouseX < innerLeft || mouseX >= innerRight) {
+            return -1;
+        }
+        if (mouseY < firstRow || mouseY >= lastRow) {
+            return -1;
+        }
+        int idx = offset + (mouseY - firstRow);
+        return idx >= 0 && idx < itemCount ? idx : -1;
+    }
+
     void render(Frame frame, Rect area) {
         if (showActionsMenu) {
             renderActionsMenu(frame, area);
@@ -788,6 +867,7 @@ class ActionsPopup {
         int x = area.left() + Math.max(0, (area.width() - popupW) / 2);
         int y = area.top() + 2;
         Rect popup = new Rect(x, y, Math.min(popupW, area.width()), Math.min(popupH, area.height() - 2));
+        this.actionsMenuRect = popup;
 
         frame.renderWidget(Clear.INSTANCE, popup);
         String divider = "  ─────────────────────────────────";
@@ -972,6 +1052,7 @@ class ActionsPopup {
         int x = area.left() + Math.max(0, (area.width() - popupW) / 2);
         int y = area.top() + 2;
         Rect popup = new Rect(x, y, Math.min(popupW, area.width()), Math.min(popupH, area.height() - 2));
+        this.docPickerRect = popup;
 
         frame.renderWidget(Clear.INSTANCE, popup);
         List<ListItem> items = new ArrayList<>();
