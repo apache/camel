@@ -32,12 +32,14 @@ import dev.langchain4j.model.chat.request.ResponseFormatType;
 import dev.langchain4j.model.chat.request.json.JsonObjectSchema;
 import dev.langchain4j.model.chat.request.json.JsonRawSchema;
 import dev.langchain4j.model.chat.request.json.JsonSchema;
+import dev.langchain4j.service.Result;
 import dev.langchain4j.service.output.JsonSchemas;
 import dev.langchain4j.service.tool.ToolExecutor;
 import dev.langchain4j.service.tool.ToolProvider;
 import dev.langchain4j.service.tool.ToolProviderRequest;
 import dev.langchain4j.service.tool.ToolProviderResult;
 import org.apache.camel.Exchange;
+import org.apache.camel.Message;
 import org.apache.camel.component.langchain4j.agent.api.AbstractAgent;
 import org.apache.camel.component.langchain4j.agent.api.Agent;
 import org.apache.camel.component.langchain4j.agent.api.AgentConfiguration;
@@ -124,8 +126,23 @@ public class LangChain4jAgentProducer extends DefaultProducer {
         AiAgentBody<?> aiAgentBody = exchange.getMessage().getMandatoryBody(AiAgentBody.class);
 
         ToolProvider toolProvider = createComposedToolProvider(tags, exchange);
-        String response = agent.chat(aiAgentBody, toolProvider);
-        exchange.getMessage().setBody(response);
+        Result<String> result = agent.chat(aiAgentBody, toolProvider);
+        exchange.getMessage().setBody(result.content());
+        populateTokenUsageHeaders(result, exchange);
+    }
+
+    private void populateTokenUsageHeaders(Result<String> result, Exchange exchange) {
+        Message message = exchange.getMessage();
+
+        if (result.finishReason() != null) {
+            message.setHeader(Headers.FINISH_REASON, result.finishReason());
+        }
+
+        if (result.tokenUsage() != null) {
+            message.setHeader(Headers.INPUT_TOKEN_COUNT, result.tokenUsage().inputTokenCount());
+            message.setHeader(Headers.OUTPUT_TOKEN_COUNT, result.tokenUsage().outputTokenCount());
+            message.setHeader(Headers.TOTAL_TOKEN_COUNT, result.tokenUsage().totalTokenCount());
+        }
     }
 
     /**

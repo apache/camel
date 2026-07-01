@@ -13,6 +13,23 @@ See the xref:camel-upgrade-recipes-tool.adoc[documentation] page for details.
 
 == Upgrading Camel 4.21 to 4.22
 
+=== camel-langchain4j-agent
+
+The `Agent.chat()` method return type has changed from `String` to `Result<String>` (from `dev.langchain4j.service.Result`).
+This allows the agent producer to expose token usage (input, output, total token count) and finish reason as exchange headers,
+consistent with the chat, tools, and embeddings components.
+
+If you have a custom `Agent` implementation, update the `chat` method signature:
+
+[source,java]
+----
+// Before
+String chat(AiAgentBody<?> aiAgentBody, ToolProvider toolProvider);
+
+// After
+Result<String> chat(AiAgentBody<?> aiAgentBody, ToolProvider toolProvider);
+----
+
 === camel-fory with JDK 25+ - Breaking change
 
 Due to new requirements from Apache Fory, when using Apache Fory Dataformat, the JVM parameter `--add-opens java.base/java.lang.invoke=ALL-UNNAMED` must be provided.
