@@ -131,6 +131,13 @@ public class CamelMonitor extends CamelCommand {
     private final FilesBrowser filesBrowser = new FilesBrowser();
     private PopupManager popupManager;
 
+    // Mouse hit-testing geometry, captured during render() for use in dispatch()
+    private Rect lastContentArea;
+    private int tabBarRowY = -1;
+    private int[] tabBarStartX;
+    private int[] tabBarWidth;
+    private int[] tabBarTarget;
+
     private final ClassLoader classLoader;
 
     public CamelMonitor(CamelJBangMain main, ClassLoader classLoader) {
@@ -489,6 +496,19 @@ public class CamelMonitor extends CamelCommand {
             if (shellPanel.isOpen() && shellPanel.handleMouseEvent(me)) {
                 return true;
             }
+            if (actionsPopup.isVisible() && actionsPopup.handleMouseEvent(me)) {
+                return true;
+            }
+            if (popupManager.handleMouseEvent(me)) {
+                return true;
+            }
+            if (me.isClick() && handleTabBarClick(me)) {
+                return true;
+            }
+            MonitorTab tab = tabRegistry.activeTab();
+            if (tab != null && lastContentArea != null && tab.handleMouseEvent(me, lastContentArea)) {
+                return true;
+            }
         }
         if (event instanceof PasteEvent pe) {
             return handlePasteEvent(pe);
@@ -497,6 +517,71 @@ public class CamelMonitor extends CamelCommand {
             return handleTickEvent(runner);
         }
         return false;
+    }
+
+    /**
+     * Hit-tests a click against the tab bar labels captured during the last render and, when it lands on a tab,
+     * activates it exactly as pressing the tab's number key would.
+     */
+    private boolean handleTabBarClick(MouseEvent me) {
+        if (tabBarRowY < 0 || me.y() != tabBarRowY) {
+            return false;
+        }
+        int idx = tabIndexAt(tabBarStartX, tabBarWidth, me.x());
+        if (idx < 0) {
+            return false;
+        }
+        return tabRegistry.handleTabKey(tabBarTarget[idx], ctx, dataService);
+    }
+
+    /**
+     * Returns the index of the tab whose label column contains {@code mouseX}, or {@code -1} when the click lands on a
+     * divider gap or outside every label. Each column spans the half-open range
+     * {@code [startX[i], startX[i] + width[i])}.
+     */
+    static int tabIndexAt(int[] startX, int[] width, int mouseX) {
+        if (startX == null) {
+            return -1;
+        }
+        for (int i = 0; i < startX.length; i++) {
+            if (mouseX >= startX[i] && mouseX < startX[i] + width[i]) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    /**
+     * Computes the starting x of each tab label given its width and the divider width between labels, matching the
+     * layout used to draw the tab bar. The first label starts at {@code originX}; each following label is offset by the
+     * previous label width plus one divider.
+     */
+    static int[] tabStartPositions(int originX, int[] labelWidths, int dividerWidth) {
+        int[] startX = new int[labelWidths.length];
+        int tabX = 0;
+        for (int i = 0; i < labelWidths.length; i++) {
+            if (i > 0) {
+                tabX += dividerWidth;
+            }
+            startX[i] = originX + tabX;
+            tabX += labelWidths[i];
+        }
+        return startX;
+    }
+
+    /**
+     * Records the on-screen position and width of each tab label (mirroring the layout used to draw them) so a later
+     * click can be mapped back to the tab it landed on. {@code targets} holds the real tab index for each label.
+     */
+    private void captureTabBarGeometry(Rect labelsArea, Line[] labels, String dividerStr, int[] targets) {
+        int[] labelWidths = new int[labels.length];
+        for (int i = 0; i < labels.length; i++) {
+            labelWidths[i] = labels[i].width();
+        }
+        tabBarRowY = labelsArea.y();
+        tabBarWidth = labelWidths;
+        tabBarStartX = tabStartPositions(labelsArea.x(), labelWidths, CharWidth.of(dividerStr));
+        tabBarTarget = targets;
     }
 
     private boolean handleGlobalKeys(KeyEvent ke, TuiRunner runner) {
@@ -966,6 +1051,7 @@ public class CamelMonitor extends CamelCommand {
                     ? new Rect(area.x(), area.y() + 1, area.width(), 1)
                     : area;
             frame.renderStatefulWidget(tabs, labelsArea, infraTabsState);
+            captureTabBarGeometry(labelsArea, labels, dividerStr, new int[] { TAB_OVERVIEW, TAB_LOG });
             return;
         }
 
@@ -1007,6 +1093,12 @@ public class CamelMonitor extends CamelCommand {
                 : area;
         frame.renderStatefulWidget(tabs, labelsArea, tabsState);
 
+        int[] targets = new int[labels.length];
+        for (int i = 0; i < labels.length; i++) {
+            targets[i] = i;
+        }
+        captureTabBarGeometry(labelsArea, labels, dividerStr, targets);
+
         if (area.height() >= 2) {
             String[] badgeTexts = new String[labels.length];
             Style[] badgeStyles = new Style[labels.length];
@@ -1031,6 +1123,8 @@ public class CamelMonitor extends CamelCommand {
     }
 
     private void renderContent(Frame frame, Rect area) {
+        // Remember the area the active tab renders into so mouse events can be forwarded to it.
+        lastContentArea = area;
         // Clear the content area before rendering the active tab. Without this, styled cells
         // from the previous tab (e.g. RED error text in the log detail) can bleed through when
         // switching tabs if TamboUI's buffer diff does not reset every cell in the region.

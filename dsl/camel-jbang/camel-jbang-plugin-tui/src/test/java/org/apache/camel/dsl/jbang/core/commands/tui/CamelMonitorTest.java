@@ -25,6 +25,7 @@ import dev.tamboui.tui.event.KeyEvent;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.hint;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -129,6 +130,60 @@ class CamelMonitorTest {
         assertEquals(width, newWidth, "no spans dropped when the footer already fits");
         assertTrue(containsKey(spans, "F1"));
         assertTrue(containsKey(spans, "F2"));
+    }
+
+    // Tab-bar click support maps a click x-coordinate back to the tab under it. The geometry mirrors how the tab bar
+    // is drawn: labels laid out left to right, each separated by a divider. tabStartPositions computes where each label
+    // begins; tabIndexAt resolves a click to the owning label (or -1 for a divider gap / outside).
+
+    @Test
+    void tabStartPositionsAccumulatesWidthsAndDividers() {
+        // Three labels of width 12, 7, 10 separated by a 3-wide " | " divider, starting at column 0.
+        int[] starts = CamelMonitor.tabStartPositions(0, new int[] { 12, 7, 10 }, 3);
+        // 0; 0+12+3; 15+7+3
+        assertArrayEquals(new int[] { 0, 15, 25 }, starts, "each label starts after the previous label plus one divider");
+    }
+
+    @Test
+    void tabStartPositionsHonorsOriginOffset() {
+        int[] starts = CamelMonitor.tabStartPositions(5, new int[] { 12, 7, 10 }, 3);
+        assertArrayEquals(new int[] { 5, 20, 30 }, starts, "the first label starts at originX and the rest shift with it");
+    }
+
+    @Test
+    void tabIndexAtResolvesClicksToTheOwningLabel() {
+        int[] starts = { 0, 15, 25 };
+        int[] widths = { 12, 7, 10 };
+        assertEquals(0, CamelMonitor.tabIndexAt(starts, widths, 0), "left edge of the first label");
+        assertEquals(0, CamelMonitor.tabIndexAt(starts, widths, 11), "right edge (inclusive) of the first label");
+        assertEquals(1, CamelMonitor.tabIndexAt(starts, widths, 15), "left edge of the second label");
+        assertEquals(2, CamelMonitor.tabIndexAt(starts, widths, 34), "right edge (inclusive) of the third label");
+    }
+
+    @Test
+    void tabIndexAtReturnsMinusOneForGapsAndOutOfRange() {
+        int[] starts = { 0, 15, 25 };
+        int[] widths = { 12, 7, 10 };
+        assertEquals(-1, CamelMonitor.tabIndexAt(starts, widths, 12),
+                "column 12 falls in the divider gap after the first label");
+        assertEquals(-1, CamelMonitor.tabIndexAt(starts, widths, 22),
+                "column 22 falls in the divider gap after the second label");
+        assertEquals(-1, CamelMonitor.tabIndexAt(starts, widths, 35), "column 35 is past the last label");
+        assertEquals(-1, CamelMonitor.tabIndexAt(starts, widths, -1), "negative column is outside every label");
+        assertEquals(-1, CamelMonitor.tabIndexAt(null, widths, 5), "no captured geometry yet");
+    }
+
+    @Test
+    void tabStartPositionsAndTabIndexAtRoundTrip() {
+        // Build geometry the way captureTabBarGeometry does, then confirm a click in the middle of a label resolves back
+        // to that label while a click on the divider between two labels resolves to nothing.
+        int[] widths = { 12, 7, 10 };
+        int[] starts = CamelMonitor.tabStartPositions(0, widths, 3);
+        int midOfSecond = starts[1] + widths[1] / 2;
+        assertEquals(1, CamelMonitor.tabIndexAt(starts, widths, midOfSecond), "a click inside label 1 maps to index 1");
+        int dividerBetweenFirstAndSecond = starts[0] + widths[0]; // first cell after label 0, before label 1
+        assertEquals(-1, CamelMonitor.tabIndexAt(starts, widths, dividerBetweenFirstAndSecond),
+                "a click on the divider maps to no tab");
     }
 
     private static List<Span> footer(String key, String label) {
