@@ -41,8 +41,10 @@ public class PQCDataFormat extends DataFormatDefinition {
     private String keyEncapsulationAlgorithm;
     @XmlAttribute
     @Metadata(defaultValue = "AES",
-              enums = "AES,ARIA,RC2,RC5,CAMELLIA,CAST5,CAST6,CHACHA7539,DSTU7624,GOST28147,GOST3412_2015,GRAIN128,HC128,HC256,SALSA20,SEED,SM4,DESEDE",
-              description = "The symmetric encryption algorithm to use with the shared secret.")
+              enums = "AES,ARIA,CAMELLIA,CAST6,DSTU7624,GOST3412_2015,SEED,SM4,CHACHA7539",
+              description = "The symmetric encryption algorithm to use with the shared secret. Only algorithms that support"
+                            + " authenticated encryption (AEAD) are allowed: AES, ARIA, CAMELLIA, CAST6, DSTU7624, GOST3412_2015,"
+                            + " SEED and SM4 are encrypted with GCM, and CHACHA7539 with ChaCha20-Poly1305.")
     private String symmetricKeyAlgorithm;
     @XmlAttribute
     @Metadata(javaType = "java.lang.Integer", defaultValue = "128",

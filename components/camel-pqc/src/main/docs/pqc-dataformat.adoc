@@ -32,25 +32,26 @@ This approach provides **defense-in-depth**: even if the symmetric algorithm is 
 == Benefits
 
 * **Simplified API** - Single marshal/unmarshal operation instead of multiple KEM steps
-* **Streaming Support** - Efficient encryption/decryption of large payloads
+* **Authenticated Encryption** - AEAD (GCM or ChaCha20-Poly1305) protects both confidentiality and integrity
 * **Header-based Configuration** - Dynamic algorithm and key selection per message
 * **Standards-based** - Uses NIST-standardized ML-KEM and other PQC algorithms
 * **Drop-in Replacement** - Compatible with existing Camel DataFormat patterns
 
 == Wire Format
 
-Since Camel 4.19, the PQC DataFormat uses wire format v2 which includes magic bytes, version, and algorithm identifiers (see xref:others:pqc-hybrid.adoc#_wire_format_v2_and_algorithm_identification[Wire Format v2 and Algorithm Identification]). The v1 format `[4 bytes: encapsulation length][N bytes: encapsulation][M bytes: encrypted data]` is still accepted on input for backward compatibility.
-
-The v2 encrypted message format is:
+The encrypted message produced by the PQC DataFormat is:
 
 [source,text]
 ----
-[2 bytes: magic "PQ"] [1 byte: version] [1 byte: format type]
-[2 bytes: KEM algorithm ID] [2 bytes: symmetric algorithm ID]
-[4 bytes: encapsulation length] [N bytes: encapsulation] [M bytes: encrypted data]
+[4 bytes: encapsulation length] [N bytes: encapsulation] [12 bytes: AEAD nonce] [M bytes: ciphertext + auth tag]
 ----
 
-This format allows the receiver to identify the algorithms used, extract the encapsulation, decapsulate the shared secret using their private key, and decrypt the data.
+The KEM encapsulation allows the receiver to decapsulate the shared secret using their private key. The payload is then encrypted with an authenticated cipher (AEAD): 128-bit block ciphers use GCM and the ChaCha20 stream cipher uses ChaCha20-Poly1305, so both confidentiality and integrity are protected. Decryption fails if the ciphertext or its authentication tag has been modified.
+
+[NOTE]
+====
+The authenticated wire format was introduced in Camel 4.22. Data encrypted by earlier versions used unauthenticated ECB and did not include a nonce, and cannot be decrypted by Camel 4.22 or later. See the Camel 4.x upgrade guide for details.
+====
 
 == Basic Usage
 
@@ -119,7 +120,7 @@ from("file:encrypted")
 |symmetricKeyAlgorithm
 |String
 |AES
-|Symmetric encryption algorithm (AES, ARIA, RC2, RC5, CAMELLIA, CAST5, CAST6, CHACHA7539, DSTU7624, GOST28147, GRAIN128, SEED, SM4, DESEDE)
+|Symmetric encryption algorithm. Only AEAD-capable algorithms are supported: AES, ARIA, CAMELLIA, CAST6, DSTU7624, GOST3412-2015, SEED, SM4 (GCM) and CHACHA7539 (ChaCha20-Poly1305)
 
 |symmetricKeyLength
 |int
@@ -221,18 +222,19 @@ from("direct:encrypt")
 
 === Symmetric Encryption Algorithms
 
+Only algorithms that support authenticated encryption (AEAD) are supported. All except CHACHA7539 are encrypted with GCM; CHACHA7539 is encrypted with ChaCha20-Poly1305 and requires a 256-bit key.
+
 * AES - Advanced Encryption Standard (recommended)
 * ARIA - Korean standard
-* RC2, RC5 - Rivest ciphers
 * CAMELLIA - Japanese standard
-* CAST5, CAST6 - CAST ciphers
-* CHACHA7539 - ChaCha stream cipher
-* DSTU7624 - Ukrainian standard
-* GOST28147 - Russian standard
-* GRAIN128 - Stream cipher
+* CAST6 - CAST-256
+* DSTU7624 - Ukrainian standard (Kalyna)
+* GOST3412-2015 - Russian standard (Kuznyechik)
 * SEED - Korean standard
 * SM4 - Chinese standard
-* DESEDE - Triple DES
+* CHACHA7539 - ChaCha20 (ChaCha20-Poly1305)
+
+The legacy ciphers RC2, RC5, CAST5, GOST28147 and DESEDE, and the unauthenticated stream ciphers GRAIN128, HC128, HC256 and SALSA20, cannot provide AEAD and are no longer supported.
 
 == Advanced Examples
 
@@ -401,13 +403,13 @@ The DataFormat approach is significantly simpler and handles all KEM operations 
 **3. Symmetric Algorithm**
 
 * **Recommended**: AES-256 or AES-128
-* **Avoid**: RC2, GOST28147 (legacy algorithms)
+* **Not supported**: legacy ciphers without AEAD (RC2, RC5, CAST5, GOST28147, DESEDE) and unauthenticated stream ciphers (GRAIN128, HC128, HC256, SALSA20) are rejected at startup
 
 **4. Wire Format Security**
 
 * The encapsulation is not secret and can be transmitted in the clear
 * The encrypted data is protected by the symmetric key
-* Use authenticated encryption modes (GCM) when available
+* The symmetric layer always uses authenticated encryption (GCM or ChaCha20-Poly1305), protecting integrity as well as confidentiality
 
 == Performance Considerations
 
@@ -438,11 +440,11 @@ PQCDataFormat pqcFormat = new PQCDataFormat();
 pqcFormat.setKeyGenerator(kemKeyGenerator);
 ----
 
-**3. Streaming**
+**3. Large Payloads**
 
-The DataFormat supports streaming for large payloads, avoiding memory issues:
+To guarantee integrity, the authenticated (AEAD) cipher verifies the authentication tag before releasing any plaintext, so the payload is processed as a whole rather than incrementally. Enable stream caching to let Camel spill large bodies to disk on the route:
 
-._Java-only: streaming large files with PQCDataFormat_
+._Java-only: stream caching large files with PQCDataFormat_
 [source,java]
 ----
 from("file:large-files?noop=true")
