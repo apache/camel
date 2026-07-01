@@ -153,6 +153,14 @@ public class LlmClient {
     private String vertexRegion;
     private String vertexProjectId;
 
+    public String model() {
+        return model;
+    }
+
+    public ApiType apiType() {
+        return apiType;
+    }
+
     // -- Builder --
 
     public static LlmClient create() {
