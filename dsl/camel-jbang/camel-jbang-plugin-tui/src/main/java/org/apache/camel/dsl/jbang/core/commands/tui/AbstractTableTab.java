@@ -28,6 +28,8 @@ import dev.tamboui.tui.event.MouseEvent;
 import dev.tamboui.widgets.scrollbar.ScrollbarState;
 import dev.tamboui.widgets.table.TableState;
 
+import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.*;
+
 abstract class AbstractTableTab extends AbstractTab {
 
     protected final TableState tableState = new TableState();
@@ -114,7 +116,7 @@ abstract class AbstractTableTab extends AbstractTab {
     public void render(Frame frame, Rect area) {
         IntegrationInfo info = ctx.findSelectedIntegration();
         if (info == null) {
-            MonitorContext.renderNoSelection(frame, area);
+            renderNoSelection(frame, area);
             return;
         }
         renderContent(frame, area, info);
@@ -122,18 +124,18 @@ abstract class AbstractTableTab extends AbstractTab {
 
     @Override
     public void renderFooter(List<Span> spans) {
-        MonitorContext.hint(spans, "Esc", "back");
+        hint(spans, "Esc", "back");
         if (sortColumns != null) {
-            MonitorContext.hint(spans, "s", "sort");
+            hint(spans, "s", "sort");
         }
     }
 
     protected String sortLabel(String label, String column) {
-        return MonitorContext.sortLabel(label, column, sort, sortReversed);
+        return sortLabel(label, column, sort, sortReversed);
     }
 
     protected Style sortStyle(String column) {
-        return MonitorContext.sortStyle(column, sort);
+        return sortStyle(column, sort);
     }
 
     protected void renderScrollbar(Frame frame, int rowCount) {

@@ -64,8 +64,8 @@ import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
 
-import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.hint;
-import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.hintLast;
+import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.hint;
+import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.hintLast;
 
 class ActionsPopup {
 
@@ -1038,7 +1038,7 @@ class ActionsPopup {
             JsonObject action = new JsonObject();
             action.put("action", "readme");
             PathUtils.writeTextSafely(action.toJson(), ctx.getActionFile(info.pid));
-            JsonObject response = MonitorContext.pollJsonResponse(outputFile, 5000);
+            JsonObject response = TuiHelper.pollJsonResponse(outputFile, 5000);
             if (response != null && response.getString("content") != null) {
                 String raw = response.getString("content");
                 String file = response.getStringOrDefault("file", "README");

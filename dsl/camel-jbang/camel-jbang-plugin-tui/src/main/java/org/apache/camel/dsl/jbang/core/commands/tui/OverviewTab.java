@@ -51,7 +51,7 @@ import dev.tamboui.widgets.table.TableState;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 
-import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.*;
+import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.*;
 import static org.apache.camel.dsl.jbang.core.common.CamelCommandHelper.extractState;
 
 class OverviewTab extends AbstractTab {
@@ -838,11 +838,11 @@ class OverviewTab extends AbstractTab {
     }
 
     private String sortLabel(String label, String column) {
-        return MonitorContext.sortLabel(label, column, sort, sortReversed);
+        return sortLabel(label, column, sort, sortReversed);
     }
 
     private Style sortStyle(String column) {
-        return MonitorContext.sortStyle(column, sort);
+        return sortStyle(column, sort);
     }
 
     @Override
@@ -967,7 +967,7 @@ class OverviewTab extends AbstractTab {
     private void renderEmptyState(Frame frame, Rect area) {
         List<Line> lines = new ArrayList<>();
         lines.add(Line.from(Span.raw("")));
-        for (String row : MonitorContext.SMALL_CAMEL) {
+        for (String row : TuiHelper.SMALL_CAMEL) {
             lines.add(Line.from(Span.styled("     " + row, Style.EMPTY.fg(Theme.accent()).bold())));
         }
         lines.add(Line.from(Span.styled("     No Active Camel Integrations Found", Theme.title())));

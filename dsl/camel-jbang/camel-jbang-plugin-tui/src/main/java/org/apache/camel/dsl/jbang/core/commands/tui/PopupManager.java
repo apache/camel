@@ -258,7 +258,7 @@ class PopupManager {
         if (lastMorePopupRect == null) {
             return false;
         }
-        boolean inside = AbstractTab.contains(lastMorePopupRect, me.x(), me.y());
+        boolean inside = TuiHelper.contains(lastMorePopupRect, me.x(), me.y());
 
         // Click outside the popup closes it
         if (me.isClick() && !inside) {
@@ -299,7 +299,7 @@ class PopupManager {
             return false;
         }
         List<IntegrationInfo> switchList = nonVanishingIntegrationsSupplier.get();
-        boolean inside = AbstractTab.contains(lastSwitchPopupRect, me.x(), me.y());
+        boolean inside = TuiHelper.contains(lastSwitchPopupRect, me.x(), me.y());
 
         if (me.isClick() && !inside) {
             showSwitchPopup = false;

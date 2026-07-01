@@ -43,15 +43,20 @@ interface MonitorTab {
         return false;
     }
 
-    boolean handleEscape();
+    default boolean handleEscape() {
+        return false;
+    }
 
-    void navigateUp();
+    default void navigateUp() {
+    }
 
-    void navigateDown();
+    default void navigateDown() {
+    }
 
     void render(Frame frame, Rect area);
 
-    void renderFooter(List<Span> spans);
+    default void renderFooter(List<Span> spans) {
+    }
 
     default void onTabSelected() {
     }

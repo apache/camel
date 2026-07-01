@@ -40,7 +40,7 @@ import org.apache.camel.dsl.jbang.core.common.RuntimeHelper;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 
-import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.hint;
+import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.hint;
 
 /**
  * Facade that exposes monitor state and actions to the MCP server.
@@ -451,7 +451,7 @@ class McpFacade {
             Path actionFile = ctx.getActionFile(pid);
             PathUtils.writeTextSafely(action.toJson(), actionFile);
 
-            JsonObject response = MonitorContext.pollJsonResponse(outputFile, 3000);
+            JsonObject response = TuiHelper.pollJsonResponse(outputFile, 3000);
             if (response != null) {
                 PathUtils.deleteFile(outputFile);
                 Boolean enabled = response.getBoolean("enabled");
@@ -676,7 +676,7 @@ class McpFacade {
             JsonObject action = new JsonObject();
             action.put("action", "readme");
             PathUtils.writeTextSafely(action.toJson(), ctx.getActionFile(target.pid));
-            return MonitorContext.pollJsonResponse(outputFile, 5000);
+            return TuiHelper.pollJsonResponse(outputFile, 5000);
         } catch (Exception e) {
             return null;
         }

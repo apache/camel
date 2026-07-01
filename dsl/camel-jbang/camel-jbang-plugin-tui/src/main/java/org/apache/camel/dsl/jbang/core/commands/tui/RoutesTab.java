@@ -48,7 +48,7 @@ import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 
-import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.*;
+import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.*;
 
 class RoutesTab extends AbstractTab {
 
@@ -1285,19 +1285,19 @@ class RoutesTab extends AbstractTab {
     }
 
     private String routeSortLabel(String label, String column) {
-        return MonitorContext.sortLabel(label, column, routeSort, routeSortReversed);
+        return sortLabel(label, column, routeSort, routeSortReversed);
     }
 
     private Style routeSortStyle(String column) {
-        return MonitorContext.sortStyle(column, routeSort);
+        return sortStyle(column, routeSort);
     }
 
     private String routeTopSortLabel(String label, String column) {
-        return MonitorContext.sortLabel(label, column, routeTopSort, routeTopSortReversed);
+        return sortLabel(label, column, routeTopSort, routeTopSortReversed);
     }
 
     private Style routeTopSortStyle(String column) {
-        return MonitorContext.sortStyle(column, routeTopSort);
+        return sortStyle(column, routeTopSort);
     }
 
     // ---- Route actions ----

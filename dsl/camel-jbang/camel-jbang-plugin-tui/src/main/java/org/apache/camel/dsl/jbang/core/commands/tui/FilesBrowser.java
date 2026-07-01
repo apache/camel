@@ -263,9 +263,9 @@ class FilesBrowser {
         if (sourceViewer.isVisible()) {
             sourceViewer.renderFooter(spans);
         } else {
-            MonitorContext.hint(spans, "↑↓", "navigate");
-            MonitorContext.hint(spans, "Enter", "open");
-            MonitorContext.hint(spans, "Esc", "close");
+            TuiHelper.hint(spans, "↑↓", "navigate");
+            TuiHelper.hint(spans, "Enter", "open");
+            TuiHelper.hint(spans, "Esc", "close");
         }
     }
 

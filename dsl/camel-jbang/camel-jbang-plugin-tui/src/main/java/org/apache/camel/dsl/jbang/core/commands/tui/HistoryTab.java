@@ -61,7 +61,7 @@ import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
 
-import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.*;
+import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.*;
 
 class HistoryTab extends AbstractTab {
 
@@ -1174,9 +1174,9 @@ class HistoryTab extends AbstractTab {
                 default -> Style.EMPTY;
             };
             rows.add(Row.from(
-                    Cell.from(s.timestamp != null ? truncate(s.timestamp, 12) : ""),
+                    Cell.from(s.timestamp != null ? TuiHelper.truncate(s.timestamp, 12) : ""),
                     Cell.from(Span.styled(
-                            s.routeId != null ? truncate(s.routeId, 25) : "",
+                            s.routeId != null ? TuiHelper.truncate(s.routeId, 25) : "",
                             Style.EMPTY.fg(Color.CYAN))),
                     Cell.from(Span.styled(s.status, statusStyle)),
                     rightCell(s.elapsed + "ms", 10),
@@ -1235,7 +1235,8 @@ class HistoryTab extends AbstractTab {
                     entry.timestamp, entry.routeId, entry.nodeId, entry.processor, desc, entry.elapsed, changes));
         }
 
-        String stepTitle = String.format(" Trace [%s] — %d steps ", truncate(traceSelectedExchangeId, 30), steps.size());
+        String stepTitle
+                = String.format(" Trace [%s] — %d steps ", TuiHelper.truncate(traceSelectedExchangeId, 30), steps.size());
         lastTraceStepArea = chunks.get(0);
         detailSplit.setBorderPos(chunks.get(1).y());
         frame.renderStatefulWidget(
@@ -1857,11 +1858,11 @@ class HistoryTab extends AbstractTab {
     }
 
     private String traceSortLabel(String label, String column) {
-        return MonitorContext.sortLabel(label, column, traceSort, traceSortReversed);
+        return sortLabel(label, column, traceSort, traceSortReversed);
     }
 
     private Style traceSortStyle(String column) {
-        return MonitorContext.sortStyle(column, traceSort);
+        return sortStyle(column, traceSort);
     }
 
     private static Row buildStepRow(
@@ -1882,9 +1883,9 @@ class HistoryTab extends AbstractTab {
         return Row.from(
                 rightCell(String.valueOf(stepNumber), 3),
                 Cell.from(Span.styled(direction, dirStyle)),
-                Cell.from(timestamp != null ? truncate(timestamp, 12) : ""),
-                Cell.from(Span.styled(routeId != null ? truncate(routeId, 25) : "", Style.EMPTY.fg(Color.CYAN))),
-                Cell.from(indent + (nodeId != null ? truncate(nodeId, 25) : "")),
+                Cell.from(timestamp != null ? TuiHelper.truncate(timestamp, 12) : ""),
+                Cell.from(Span.styled(routeId != null ? TuiHelper.truncate(routeId, 25) : "", Style.EMPTY.fg(Color.CYAN))),
+                Cell.from(indent + (nodeId != null ? TuiHelper.truncate(nodeId, 25) : "")),
                 Cell.from(indent + display),
                 Cell.from(Line.from(changeSpans)),
                 rightCell(elapsedStr, 10));

@@ -224,7 +224,7 @@ class AiPanel {
         if (!visible || lastArea == null) {
             return false;
         }
-        if (!AbstractTab.contains(lastArea, me.x(), me.y())) {
+        if (!TuiHelper.contains(lastArea, me.x(), me.y())) {
             return false;
         }
         if (me.kind() == MouseEventKind.SCROLL_UP) {
@@ -642,19 +642,19 @@ class AiPanel {
     }
 
     void renderFooter(List<Span> spans) {
-        MonitorContext.hint(spans, "F8", "close");
+        TuiHelper.hint(spans, "F8", "close");
         if (statsView) {
-            MonitorContext.hint(spans, "Ctrl+U", "chat");
+            TuiHelper.hint(spans, "Ctrl+U", "chat");
         } else {
-            MonitorContext.hint(spans, "Ctrl+U", "usage");
+            TuiHelper.hint(spans, "Ctrl+U", "usage");
         }
-        MonitorContext.hint(spans, "Shift+F8", "resize (" + anim.cyclePercent() + "%)");
-        MonitorContext.hint(spans, "PgUp/Dn", "scroll");
+        TuiHelper.hint(spans, "Shift+F8", "resize (" + anim.cyclePercent() + "%)");
+        TuiHelper.hint(spans, "PgUp/Dn", "scroll");
         if (!statsView) {
             if (!thinking.get()) {
-                MonitorContext.hint(spans, "Enter", "send");
+                TuiHelper.hint(spans, "Enter", "send");
             } else {
-                MonitorContext.hint(spans, "Ctrl+C", "cancel");
+                TuiHelper.hint(spans, "Ctrl+C", "cancel");
             }
         }
     }

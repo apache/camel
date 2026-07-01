@@ -54,6 +54,8 @@ import dev.tamboui.widgets.table.TableState;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 
+import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.*;
+
 class SpansTab extends AbstractTab {
 
     private static final int MOUSE_SCROLL_LINES = 3;
@@ -295,7 +297,7 @@ class SpansTab extends AbstractTab {
     public void render(Frame frame, Rect area) {
         IntegrationInfo info = ctx.findSelectedIntegration();
         if (info == null) {
-            MonitorContext.renderNoSelection(frame, area);
+            renderNoSelection(frame, area);
             return;
         }
 
@@ -374,12 +376,12 @@ class SpansTab extends AbstractTab {
                     Cell.from(shortId(ts.traceId)),
                     Cell.from(ts.rootRouteId != null ? ts.rootRouteId : ""),
                     Cell.from(ts.rootName != null ? ts.rootName : "?"),
-                    MonitorContext.rightCell(String.valueOf(ts.spanCount), 5),
-                    MonitorContext.rightCell(String.valueOf(ts.routeCount), 5),
+                    rightCell(String.valueOf(ts.spanCount), 5),
+                    rightCell(String.valueOf(ts.routeCount), 5),
                     Cell.from(ts.remoteComponents.isEmpty() ? "-" : ts.remoteComponents),
                     Cell.from(Span.styled(ts.hasError ? "ERROR" : "OK", statusStyle)),
                     Cell.from(ts.totalDurationMs + "ms"),
-                    MonitorContext.rightCell(String.valueOf(ts.maxDepth), 5)));
+                    rightCell(String.valueOf(ts.maxDepth), 5)));
         }
 
         String title;
@@ -641,28 +643,28 @@ class SpansTab extends AbstractTab {
     @Override
     public void renderFooter(List<Span> spans) {
         if (waterfallView) {
-            MonitorContext.hint(spans, "Esc", "back");
-            MonitorContext.hint(spans, "F5", "refresh");
-            MonitorContext.hint(spans, "c", camelOnly ? "camel-only [on]" : "camel-only [off]");
-            MonitorContext.hint(spans, "p", showProcessors ? "processors [on]" : "processors [off]");
-            MonitorContext.hint(spans, "↑↓", "navigate");
-            MonitorContext.hintLast(spans, "PgUp/Dn", "page");
+            hint(spans, "Esc", "back");
+            hint(spans, "F5", "refresh");
+            hint(spans, "c", camelOnly ? "camel-only [on]" : "camel-only [off]");
+            hint(spans, "p", showProcessors ? "processors [on]" : "processors [off]");
+            hint(spans, "↑↓", "navigate");
+            hintLast(spans, "PgUp/Dn", "page");
         } else if (filterInputActive) {
             spans.add(Span.styled(" /", Style.EMPTY.fg(Color.YELLOW).bold()));
             spans.add(Span.raw(filterInputState.text() + "█  "));
-            MonitorContext.hint(spans, "Enter", "filter");
-            MonitorContext.hintLast(spans, "Esc", "cancel");
+            hint(spans, "Enter", "filter");
+            hintLast(spans, "Esc", "cancel");
         } else {
-            MonitorContext.hint(spans, "Esc", filterTerm != null ? "clear" : "back");
-            MonitorContext.hint(spans, "F5", "refresh");
-            MonitorContext.hint(spans, "Enter", "waterfall");
+            hint(spans, "Esc", filterTerm != null ? "clear" : "back");
+            hint(spans, "F5", "refresh");
+            hint(spans, "Enter", "waterfall");
             if (filterTerm != null) {
                 spans.add(Span.styled("  /", Style.EMPTY.fg(Color.YELLOW).bold()));
                 spans.add(Span.raw("\"" + filterTerm + "\"  "));
             } else {
-                MonitorContext.hint(spans, "/", "filter");
+                hint(spans, "/", "filter");
             }
-            MonitorContext.hintLast(spans, "↑↓", "navigate");
+            hintLast(spans, "↑↓", "navigate");
         }
     }
 
@@ -949,7 +951,7 @@ class SpansTab extends AbstractTab {
     }
 
     private String sortLabel(String label, String column) {
-        return MonitorContext.sortLabel(label, column, sortColumn, sortReversed);
+        return sortLabel(label, column, sortColumn, sortReversed);
     }
 
     private Style sortStyle(String column) {

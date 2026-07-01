@@ -197,7 +197,7 @@ class ShellPanel {
         if (!visible || lastArea == null) {
             return false;
         }
-        if (!AbstractTab.contains(lastArea, me.x(), me.y())) {
+        if (!TuiHelper.contains(lastArea, me.x(), me.y())) {
             return false;
         }
         if (me.kind() == MouseEventKind.SCROLL_UP) {
@@ -335,9 +335,9 @@ class ShellPanel {
     }
 
     void renderFooter(List<Span> spans) {
-        MonitorContext.hint(spans, "F6", "close");
-        MonitorContext.hint(spans, "Shift+F6", "resize (" + anim.cyclePercent() + "%)");
-        MonitorContext.hint(spans, "PgUp/Dn", "scroll");
+        TuiHelper.hint(spans, "F6", "close");
+        TuiHelper.hint(spans, "Shift+F6", "resize (" + anim.cyclePercent() + "%)");
+        TuiHelper.hint(spans, "PgUp/Dn", "scroll");
     }
 
     private List<Line> renderLiveView(long[] screen, int width, int height) {

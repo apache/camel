@@ -52,7 +52,7 @@ import dev.tamboui.widgets.table.Table;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 
-import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.*;
+import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.*;
 
 class MetricsTab extends AbstractTableTab {
 

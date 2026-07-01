@@ -64,8 +64,9 @@ import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import sun.misc.Signal;
 
-import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.*;
 import static org.apache.camel.dsl.jbang.core.commands.tui.TabRegistry.*;
+import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.*;
+import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.hint;
 
 @Command(name = "monitor",
          description = "Live dashboard for monitoring Camel integrations",
@@ -773,7 +774,7 @@ public class CamelMonitor extends CamelCommand {
         // Tab bar clicks: detect which tab was clicked and switch to it
         if (me.isClick() && lastTabsArea != null && lastTabLabels != null) {
             int tabsY = lastTabsArea.height() >= 2 ? lastTabsArea.y() + 1 : lastTabsArea.y();
-            if (me.y() == tabsY && AbstractTab.contains(lastTabsArea, me.x(), me.y())) {
+            if (me.y() == tabsY && TuiHelper.contains(lastTabsArea, me.x(), me.y())) {
                 int clickedTab = findClickedTab(me.x() - lastTabsArea.x());
                 if (clickedTab >= 0) {
                     if (isInfraSelected()) {
@@ -789,7 +790,7 @@ public class CamelMonitor extends CamelCommand {
         }
 
         // Mouse events in the content area: delegate to the active tab
-        if (AbstractTab.contains(lastContentArea, me.x(), me.y())) {
+        if (TuiHelper.contains(lastContentArea, me.x(), me.y())) {
             if (popupManager.isMorePopupVisible() || popupManager.isSwitchPopupVisible()) {
                 return popupManager.handleMouseEvent(me, tabRegistry.selectedTabIndex(), TAB_LOG);
             }

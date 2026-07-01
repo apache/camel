@@ -42,7 +42,7 @@ import dev.tamboui.widgets.table.Table;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 
-import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.*;
+import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.*;
 
 class CircuitBreakerTab extends AbstractTableTab {
 
@@ -164,9 +164,9 @@ class CircuitBreakerTab extends AbstractTableTab {
 
     @Override
     public void renderFooter(List<Span> spans) {
-        MonitorContext.hint(spans, "Esc", "back");
-        MonitorContext.hint(spans, "↑↓", "navigate");
-        MonitorContext.hint(spans, "s", "sort");
+        hint(spans, "Esc", "back");
+        hint(spans, "↑↓", "navigate");
+        hint(spans, "s", "sort");
     }
 
     private int sortCb(CircuitBreakerInfo a, CircuitBreakerInfo b) {

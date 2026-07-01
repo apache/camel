@@ -54,7 +54,7 @@ import org.apache.camel.dsl.jbang.core.common.PathUtils;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 
-import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.*;
+import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.*;
 
 class BrowseTab extends AbstractTab {
 
@@ -515,11 +515,11 @@ class BrowseTab extends AbstractTab {
     }
 
     private String sortLabel(String label, String column) {
-        return MonitorContext.sortLabel(label, column, sort, sortReversed);
+        return sortLabel(label, column, sort, sortReversed);
     }
 
     private Style sortStyle(String column) {
-        return MonitorContext.sortStyle(column, sort);
+        return sortStyle(column, sort);
     }
 
     private static String formatTimestamp(long ts) {
