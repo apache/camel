@@ -92,9 +92,8 @@ public class Ask extends CamelCommand {
     boolean showTools;
 
     @Option(names = { "--show-stats" },
-            description = "Show token usage and elapsed time after response",
-            defaultValue = "true")
-    boolean showStats = true;
+            description = "Show token usage and elapsed time after response")
+    boolean showStats;
 
     @Option(names = { "--verbose" },
             description = "Print debug information: HTTP requests, responses, and parsed results")
