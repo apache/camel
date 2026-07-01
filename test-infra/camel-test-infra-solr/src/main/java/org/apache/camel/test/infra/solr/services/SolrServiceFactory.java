@@ -17,8 +17,26 @@
 package org.apache.camel.test.infra.solr.services;
 
 import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
+import org.apache.camel.test.infra.common.services.SingletonService;
 
 public final class SolrServiceFactory {
+
+    private static class SingletonSolrService extends SingletonService<SolrService> implements SolrService {
+        public SingletonSolrService(SolrService service, String name) {
+            super(service, name);
+        }
+
+        @Override
+        public int getPort() {
+            return getService().getPort();
+        }
+
+        @Override
+        public String getSolrHost() {
+            return getService().getSolrHost();
+        }
+    }
+
     private SolrServiceFactory() {
 
     }
@@ -32,6 +50,21 @@ public final class SolrServiceFactory {
                 .addLocalMapping(SolrLocalContainerService::new)
                 .addRemoteMapping(SolrRemoteService::new)
                 .build();
+    }
+
+    public static SolrService createSingletonService() {
+        return SingletonServiceHolder.INSTANCE;
+    }
+
+    private static class SingletonServiceHolder {
+        static final SolrService INSTANCE;
+        static {
+            SimpleTestServiceBuilder<SolrService> instance = builder();
+            instance.addLocalMapping(
+                    () -> new SingletonSolrService(new SolrLocalContainerService(), SolrContainer.CONTAINER_NAME))
+                    .addRemoteMapping(SolrRemoteService::new);
+            INSTANCE = instance.build();
+        }
     }
 
     public static class SolrRemoteService extends SolrRemoteInfraService implements SolrService {

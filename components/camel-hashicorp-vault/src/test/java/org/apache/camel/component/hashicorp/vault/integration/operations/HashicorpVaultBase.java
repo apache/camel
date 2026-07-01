@@ -24,11 +24,15 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 
 public class HashicorpVaultBase extends CamelTestSupport {
     @RegisterExtension
-    public static HashicorpVaultService service = HashicorpServiceFactory.createService();
+    public static HashicorpVaultService service = HashicorpServiceFactory.createSingletonService();
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
         return context;
+    }
+
+    protected String secretPath() {
+        return getClass().getSimpleName() + "-test";
     }
 }

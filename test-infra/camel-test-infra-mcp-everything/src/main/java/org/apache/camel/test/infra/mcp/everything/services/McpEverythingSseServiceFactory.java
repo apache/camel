@@ -17,8 +17,26 @@
 package org.apache.camel.test.infra.mcp.everything.services;
 
 import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
+import org.apache.camel.test.infra.common.services.SingletonService;
 
 public final class McpEverythingSseServiceFactory {
+
+    private static class SingletonMcpEverythingSseService extends SingletonService<McpEverythingSseService>
+            implements McpEverythingSseService {
+        public SingletonMcpEverythingSseService(McpEverythingSseService service, String name) {
+            super(service, name);
+        }
+
+        @Override
+        public String host() {
+            return getService().host();
+        }
+
+        @Override
+        public int port() {
+            return getService().port();
+        }
+    }
 
     private McpEverythingSseServiceFactory() {
     }
@@ -31,6 +49,22 @@ public final class McpEverythingSseServiceFactory {
         return builder()
                 .addLocalMapping(McpEverythingSseLocalContainerService::new)
                 .build();
+    }
+
+    public static McpEverythingSseService createSingletonService() {
+        return SingletonServiceHolder.INSTANCE;
+    }
+
+    private static class SingletonServiceHolder {
+        static final McpEverythingSseService INSTANCE;
+        static {
+            SimpleTestServiceBuilder<McpEverythingSseService> instance = builder();
+            instance.addLocalMapping(
+                    () -> new SingletonMcpEverythingSseService(
+                            new McpEverythingSseLocalContainerService(),
+                            "mcp-everything-sse"));
+            INSTANCE = instance.build();
+        }
     }
 
     public static class McpEverythingSseLocalContainerService extends McpEverythingSseLocalContainerInfraService

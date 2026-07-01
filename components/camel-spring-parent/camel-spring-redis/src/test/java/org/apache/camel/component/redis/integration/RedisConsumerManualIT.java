@@ -33,7 +33,7 @@ import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 public class RedisConsumerManualIT extends RedisTestSupport {
 
     @RegisterExtension
-    static RedisService service = RedisServiceFactory.createService();
+    static RedisService service = RedisServiceFactory.createSingletonService();
 
     private static final RedisMessageListenerContainer LISTENER_CONTAINER = new RedisMessageListenerContainer();
     private static JedisConnectionFactory jedisConnectionFactory;

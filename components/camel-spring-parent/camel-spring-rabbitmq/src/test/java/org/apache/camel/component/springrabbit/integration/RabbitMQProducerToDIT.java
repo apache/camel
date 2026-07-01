@@ -35,26 +35,26 @@ public class RabbitMQProducerToDIT extends RabbitMQITSupport {
     public void testToD() throws Exception {
         ConnectionFactory cf = context.getRegistry().lookupByNameAndType("myCF", ConnectionFactory.class);
 
-        Queue q = new Queue("myqueue");
-        TopicExchange t = new TopicExchange("foo");
+        Queue q = new Queue(uniqueName("myqueue"));
+        TopicExchange t = new TopicExchange(uniqueName("foo"));
 
         AmqpAdmin admin = new RabbitAdmin(cf);
         admin.declareQueue(q);
         admin.declareExchange(t);
         admin.declareBinding(BindingBuilder.bind(q).to(t).with("foo.bar.#"));
 
-        fluentTemplate.to("direct:start").withBody("Hello World").withHeader("whereTo", "foo").withHeader("myKey", "foo.bar")
-                .send();
+        fluentTemplate.to("direct:start").withBody("Hello World").withHeader("whereTo", uniqueName("foo"))
+                .withHeader("myKey", "foo.bar").send();
 
         AmqpTemplate template = new RabbitTemplate(cf);
-        String out = (String) template.receiveAndConvert("myqueue");
+        String out = (String) template.receiveAndConvert(uniqueName("myqueue"));
         Assertions.assertEquals("Hello World", out);
 
-        fluentTemplate.to("direct:start").withBody("Bye World").withHeader("whereTo", "foo").withHeader("myKey", "foo.bar.baz")
-                .send();
+        fluentTemplate.to("direct:start").withBody("Bye World").withHeader("whereTo", uniqueName("foo"))
+                .withHeader("myKey", "foo.bar.baz").send();
 
         template = new RabbitTemplate(cf);
-        out = (String) template.receiveAndConvert("myqueue");
+        out = (String) template.receiveAndConvert(uniqueName("myqueue"));
         Assertions.assertEquals("Bye World", out);
 
         // there should only be 1 rabbit endpoint

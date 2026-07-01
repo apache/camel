@@ -27,7 +27,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -69,23 +68,23 @@ public class HashicorpProducerListSecretsIT extends HashicorpVaultBase {
         MockEndpoint.assertIsSatisfied(context);
         Exchange ret = mockRead.getExchanges().get(0);
         assertNotNull(ret);
-        assertTrue(ret.getMessage().getBody(List.class).contains("test"));
-        assertEquals(1, ret.getMessage().getBody(List.class).size());
+        assertTrue(ret.getMessage().getBody(List.class).contains(secretPath()));
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() {
+        final String path = secretPath();
         return new RouteBuilder() {
             @Override
             public void configure() {
                 from("direct:createSecret")
-                        .toF("hashicorp-vault://secret?operation=createSecret&token=RAW(%s)&host=%s&port=%s&scheme=http&secretPath=test",
-                                service.token(), service.host(), service.port())
+                        .toF("hashicorp-vault://secret?operation=createSecret&token=RAW(%s)&host=%s&port=%s&scheme=http&secretPath=%s",
+                                service.token(), service.host(), service.port(), path)
                         .to("mock:result-write");
 
                 from("direct:listSecrets")
-                        .toF("hashicorp-vault://secret?operation=listSecrets&token=RAW(%s)&host=%s&port=%s&scheme=http&secretPath=test",
-                                service.token(), service.host(), service.port())
+                        .toF("hashicorp-vault://secret?operation=listSecrets&token=RAW(%s)&host=%s&port=%s&scheme=http&secretPath=%s",
+                                service.token(), service.host(), service.port(), path)
                         .to("mock:result-list");
             }
         };

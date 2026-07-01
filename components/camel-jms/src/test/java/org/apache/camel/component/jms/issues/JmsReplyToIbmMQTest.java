@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class JmsReplyToIbmMQTest extends CamelTestSupport {
 
     @RegisterExtension
-    public static IbmMQService service = IbmMQServiceFactory.createService();
+    public static IbmMQService service = IbmMQServiceFactory.createSingletonService();
 
     @Test
     public void testCustomJMSReplyToInOut() {
