@@ -111,7 +111,7 @@ public class LlmClient {
             if (k == (int) k) {
                 return (int) k + "k";
             }
-            return String.format("%.1fk", k);
+            return String.format(java.util.Locale.ROOT, "%.1fk", k);
         }
         return String.valueOf(tokens);
     }
@@ -152,6 +152,14 @@ public class LlmClient {
     // Vertex AI specific
     private String vertexRegion;
     private String vertexProjectId;
+
+    public String model() {
+        return model;
+    }
+
+    public ApiType apiType() {
+        return apiType;
+    }
 
     // -- Builder --
 

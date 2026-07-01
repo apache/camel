@@ -20,7 +20,9 @@ import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import dev.tamboui.layout.Constraint;
@@ -34,11 +36,18 @@ import dev.tamboui.text.Line;
 import dev.tamboui.text.Span;
 import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
+import dev.tamboui.widgets.barchart.Bar;
+import dev.tamboui.widgets.barchart.BarChart;
+import dev.tamboui.widgets.barchart.BarGroup;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
 import dev.tamboui.widgets.block.Borders;
 import dev.tamboui.widgets.block.Title;
 import dev.tamboui.widgets.paragraph.Paragraph;
+import dev.tamboui.widgets.table.Cell;
+import dev.tamboui.widgets.table.Row;
+import dev.tamboui.widgets.table.Table;
+import dev.tamboui.widgets.table.TableState;
 import org.apache.camel.dsl.jbang.core.commands.AskTools;
 import org.apache.camel.dsl.jbang.core.commands.LlmClient;
 
@@ -91,10 +100,20 @@ class AiPanel {
     // Activity log for AI Log popup
     private final List<LogEntry> activityLog = new ArrayList<>();
 
+    // AI usage stats
+    private final List<AiUsageEntry> usageHistory = new ArrayList<>();
+    private final TableState statsTableState = new TableState();
+    private boolean statsView;
+    private int statsScrollOffset;
+
     record ConversationEntry(String role, String text, long elapsedSeconds, int totalTokens) {
         ConversationEntry(String role, String text) {
             this(role, text, -1, 0);
         }
+    }
+
+    record AiUsageEntry(String model, String provider, int inputTokens, int outputTokens,
+            int totalTokens, long latencyMs, String stopReason, Instant timestamp) {
     }
 
     void setContext(MonitorContext ctx) {
@@ -187,12 +206,25 @@ class AiPanel {
             close();
             return true;
         }
+        if (ke.hasCtrl() && ke.isCharIgnoreCase('u')) {
+            statsView = !statsView;
+            statsScrollOffset = 0;
+            return true;
+        }
         if (ke.isKey(KeyCode.PAGE_UP)) {
-            scrollOffset += 5;
+            if (statsView) {
+                statsScrollOffset += 5;
+            } else {
+                scrollOffset += 5;
+            }
             return true;
         }
         if (ke.isKey(KeyCode.PAGE_DOWN)) {
-            scrollOffset = Math.max(0, scrollOffset - 5);
+            if (statsView) {
+                statsScrollOffset = Math.max(0, statsScrollOffset - 5);
+            } else {
+                scrollOffset = Math.max(0, scrollOffset - 5);
+            }
             return true;
         }
         if (thinking.get()) {
@@ -300,7 +332,9 @@ class AiPanel {
                 throw new InterruptedException();
             }
 
+            long callStart = System.currentTimeMillis();
             LlmClient.ChatResponse response = client.chatWithTools(systemPrompt, messages, tools);
+            long callLatency = System.currentTimeMillis() - callStart;
             if (response == null) {
                 String err = "No response from LLM";
                 conversation.add(new ConversationEntry("error", err));
@@ -308,6 +342,7 @@ class AiPanel {
                 return;
             }
             totalUsage = totalUsage.add(response.usage());
+            recordUsage(response, callLatency);
 
             // check for error response (null text, no tool calls, error stop reason)
             if ("error".equals(response.stopReason())
@@ -358,12 +393,27 @@ class AiPanel {
                 "Reached maximum iterations (" + MAX_ITERATIONS + ") without a final answer."));
     }
 
+    private void recordUsage(LlmClient.ChatResponse response, long latencyMs) {
+        if (client == null || response.usage().totalTokens() == 0) {
+            return;
+        }
+        String model = client.model() != null ? client.model() : "unknown";
+        String provider = client.apiType() != null ? client.apiType().name() : "unknown";
+        usageHistory.add(new AiUsageEntry(
+                model, provider,
+                response.usage().inputTokens(), response.usage().outputTokens(),
+                response.usage().totalTokens(), latencyMs,
+                response.stopReason(), Instant.now()));
+    }
+
     void render(Frame frame, Rect area) {
         // At 25% show elapsed and tokens in the title bar to save space
         long titleElapsed = lastResponseElapsed();
         int titleTokens = lastResponseTokens();
         Line titleLine;
-        if (splitIndex == 0 && titleElapsed >= 0) {
+        if (statsView) {
+            titleLine = Line.from(Span.styled(" AI Usage ", Style.EMPTY.bold()));
+        } else if (splitIndex == 0 && titleElapsed >= 0) {
             String tokenSuffix = titleTokens > 0 ? ", " + LlmClient.formatTokens(titleTokens) + " tokens" : "";
             titleLine = Line.from(
                     Span.styled(" AI ", Style.EMPTY.bold()),
@@ -384,6 +434,11 @@ class AiPanel {
         frame.renderWidget(block, area);
         Rect inner = block.inner(area);
         if (inner.height() < 2) {
+            return;
+        }
+
+        if (statsView) {
+            renderStats(frame, inner);
             return;
         }
 
@@ -550,12 +605,183 @@ class AiPanel {
 
     void renderFooter(List<Span> spans) {
         MonitorContext.hint(spans, "F8", "close");
+        if (statsView) {
+            MonitorContext.hint(spans, "Ctrl+U", "chat");
+        } else {
+            MonitorContext.hint(spans, "Ctrl+U", "usage");
+        }
         MonitorContext.hint(spans, "Shift+F8", "resize (" + SPLIT_PERCENTS[splitIndex] + "%)");
         MonitorContext.hint(spans, "PgUp/Dn", "scroll");
-        if (!thinking.get()) {
-            MonitorContext.hint(spans, "Enter", "send");
-        } else {
-            MonitorContext.hint(spans, "Ctrl+C", "cancel");
+        if (!statsView) {
+            if (!thinking.get()) {
+                MonitorContext.hint(spans, "Enter", "send");
+            } else {
+                MonitorContext.hint(spans, "Ctrl+C", "cancel");
+            }
+        }
+    }
+
+    private void renderStats(Frame frame, Rect area) {
+        if (area.height() < 3) {
+            return;
+        }
+
+        if (usageHistory.isEmpty()) {
+            frame.renderWidget(
+                    Paragraph.from(Line.from(Span.styled("No AI usage data yet. Ask a question first.", Style.EMPTY.dim()))),
+                    area);
+            return;
+        }
+
+        // Compute aggregates
+        int totalInput = 0;
+        int totalOutput = 0;
+        int totalTokens = 0;
+        long totalLatency = 0;
+        for (AiUsageEntry e : usageHistory) {
+            totalInput += e.inputTokens();
+            totalOutput += e.outputTokens();
+            totalTokens += e.totalTokens();
+            totalLatency += e.latencyMs();
+        }
+        int requestCount = usageHistory.size();
+
+        // Per-model aggregation
+        Map<String, int[]> perModel = new LinkedHashMap<>();
+        for (AiUsageEntry e : usageHistory) {
+            String key = e.model() + " (" + e.provider() + ")";
+            int[] stats = perModel.computeIfAbsent(key, k -> new int[4]);
+            stats[0]++; // requests
+            stats[1] += e.inputTokens();
+            stats[2] += e.outputTokens();
+            stats[3] += e.totalTokens();
+        }
+
+        // Per-conversation token totals (group by consecutive runs between user questions)
+        List<Integer> turnTokens = new ArrayList<>();
+        int currentTurn = 0;
+        int turnIndex = 0;
+        for (AiUsageEntry e : usageHistory) {
+            if (turnIndex > 0) {
+                AiUsageEntry prev = usageHistory.get(turnIndex - 1);
+                long gap = e.timestamp().toEpochMilli() - prev.timestamp().toEpochMilli();
+                if (gap > 30_000) {
+                    turnTokens.add(currentTurn);
+                    currentTurn = 0;
+                }
+            }
+            currentTurn += e.totalTokens();
+            turnIndex++;
+        }
+        if (currentTurn > 0) {
+            turnTokens.add(currentTurn);
+        }
+
+        // Layout: summary (2 rows) + model table (header + models + 1 blank) + chart (fill)
+        int tableRows = perModel.size() + 1;
+        int summaryRows = 2;
+        int chartMinRows = 4;
+        boolean hasChart = area.height() > summaryRows + tableRows + chartMinRows + 1;
+
+        List<Constraint> constraints = new ArrayList<>();
+        constraints.add(Constraint.length(summaryRows));
+        constraints.add(Constraint.length(tableRows + 1));
+        if (hasChart) {
+            constraints.add(Constraint.fill());
+        }
+        List<Rect> sections = Layout.vertical()
+                .constraints(constraints)
+                .split(area);
+
+        // --- Summary ---
+        Rect summaryArea = sections.get(0);
+        Style dimStyle = Style.EMPTY.dim();
+        Style cyanStyle = Style.EMPTY.fg(Color.CYAN);
+        List<Line> summaryLines = new ArrayList<>();
+        summaryLines.add(Line.from(
+                Span.styled("Requests: ", dimStyle),
+                Span.styled(String.valueOf(requestCount), cyanStyle),
+                Span.styled("   Total tokens: ", dimStyle),
+                Span.styled(LlmClient.formatTokens(totalTokens), cyanStyle),
+                Span.styled(" (in: ", dimStyle),
+                Span.styled(LlmClient.formatTokens(totalInput), Style.EMPTY.fg(Color.GREEN)),
+                Span.styled(" / out: ", dimStyle),
+                Span.styled(LlmClient.formatTokens(totalOutput), Style.EMPTY.fg(Color.YELLOW)),
+                Span.styled(")", dimStyle)));
+        summaryLines.add(Line.from(
+                Span.styled("Avg latency: ", dimStyle),
+                Span.styled((totalLatency / requestCount / 1000) + "s", cyanStyle),
+                Span.styled("   Total time: ", dimStyle),
+                Span.styled((totalLatency / 1000) + "s", cyanStyle)));
+        frame.renderWidget(
+                Paragraph.from(new dev.tamboui.text.Text(summaryLines, dev.tamboui.layout.Alignment.LEFT)),
+                summaryArea);
+
+        // --- Per-model table ---
+        Rect tableArea = sections.get(1);
+        List<Row> rows = new ArrayList<>();
+        for (Map.Entry<String, int[]> entry : perModel.entrySet()) {
+            int[] s = entry.getValue();
+            rows.add(Row.from(
+                    Cell.from(Span.styled(entry.getKey(), cyanStyle)),
+                    Cell.from(String.valueOf(s[0])),
+                    Cell.from(LlmClient.formatTokens(s[1])),
+                    Cell.from(LlmClient.formatTokens(s[2])),
+                    Cell.from(LlmClient.formatTokens(s[3]))));
+        }
+        Table table = Table.builder()
+                .rows(rows)
+                .header(Row.from(
+                        Cell.from(Span.styled("MODEL", Style.EMPTY.bold())),
+                        Cell.from(Span.styled("REQS", Style.EMPTY.bold())),
+                        Cell.from(Span.styled("INPUT", Style.EMPTY.bold())),
+                        Cell.from(Span.styled("OUTPUT", Style.EMPTY.bold())),
+                        Cell.from(Span.styled("TOTAL", Style.EMPTY.bold()))))
+                .widths(
+                        Constraint.fill(),
+                        Constraint.length(6),
+                        Constraint.length(8),
+                        Constraint.length(8),
+                        Constraint.length(8))
+                .build();
+        frame.renderStatefulWidget(table, tableArea, statsTableState);
+
+        // --- Token bar chart per turn ---
+        if (hasChart && turnTokens.size() > 1) {
+            Rect chartArea = sections.get(2);
+
+            // Title row + chart
+            List<Rect> chartParts = Layout.vertical()
+                    .constraints(Constraint.length(1), Constraint.fill())
+                    .split(chartArea);
+            frame.renderWidget(
+                    Paragraph.from(Line.from(Span.styled("Tokens per question:", Style.EMPTY.bold()))),
+                    chartParts.get(0));
+
+            Rect barArea = chartParts.get(1);
+            int maxTokensInTurn = turnTokens.stream().mapToInt(Integer::intValue).max().orElse(1);
+
+            // Limit bars to available width
+            int maxBars = Math.max(1, barArea.width() / 2);
+            int startIdx = Math.max(0, turnTokens.size() - maxBars);
+            List<BarGroup> groups = new ArrayList<>();
+            for (int i = startIdx; i < turnTokens.size(); i++) {
+                groups.add(BarGroup.of(
+                        Bar.builder()
+                                .value(turnTokens.get(i))
+                                .textValue("")
+                                .style(Style.EMPTY.fg(Color.CYAN))
+                                .build()));
+            }
+
+            BarChart barChart = BarChart.builder()
+                    .data(groups)
+                    .max(maxTokensInTurn + 2)
+                    .barWidth(1)
+                    .barGap(1)
+                    .groupGap(0)
+                    .build();
+            frame.renderWidget(barChart, barArea);
         }
     }
 
