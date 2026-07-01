@@ -117,7 +117,7 @@ class ConsumersTab extends AbstractTableTab {
 
         lastTableArea = area;
         frame.renderStatefulWidget(table, area, tableState);
-        MonitorTab.renderTableScrollbar(frame, lastTableArea, tableState, tableScrollState, sorted.size());
+        renderTableScrollbar(frame, lastTableArea, tableState, tableScrollState, sorted.size());
     }
 
     private int sortConsumer(ConsumerInfo a, ConsumerInfo b) {

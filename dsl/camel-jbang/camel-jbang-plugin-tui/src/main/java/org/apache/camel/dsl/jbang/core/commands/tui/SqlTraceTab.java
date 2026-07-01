@@ -293,14 +293,14 @@ class SqlTraceTab extends AbstractTableTab {
 
         lastTableArea = area;
         frame.renderStatefulWidget(table, area, tableState);
-        MonitorTab.renderTableScrollbar(frame, lastTableArea, tableState, tableScrollState, sorted.size());
+        renderTableScrollbar(frame, lastTableArea, tableState, tableScrollState, sorted.size());
     }
 
     @Override
     public boolean handleMouseEvent(MouseEvent me, Rect area) {
         IntegrationInfo info = ctx.findSelectedIntegration();
         if (info != null) {
-            if (MonitorTab.handleTableClick(me, lastTableArea, tableState, info.sqlTraceStatements.size())) {
+            if (handleTableClick(me, lastTableArea, tableState, info.sqlTraceStatements.size())) {
                 detailScroll = 0;
                 selectedKey = null;
                 return true;

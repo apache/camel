@@ -189,7 +189,7 @@ class HttpTab extends AbstractTableTab {
         }
         if (!probeMode && !showSpec) {
             List<HttpEndpointInfo> visible = sortedVisibleEndpoints(ctx.findSelectedIntegration());
-            if (MonitorTab.handleTableClick(me, lastTableArea, tableState, visible.size())) {
+            if (handleTableClick(me, lastTableArea, tableState, visible.size())) {
                 return true;
             }
         }
@@ -1315,7 +1315,7 @@ class HttpTab extends AbstractTableTab {
 
         lastTableArea = area;
         frame.renderStatefulWidget(table, area, tableState);
-        MonitorTab.renderTableScrollbar(frame, lastTableArea, tableState, tableScrollState, visible.size());
+        renderTableScrollbar(frame, lastTableArea, tableState, tableScrollState, visible.size());
     }
 
     private void renderDetail(Frame frame, Rect area, List<HttpEndpointInfo> visible) {

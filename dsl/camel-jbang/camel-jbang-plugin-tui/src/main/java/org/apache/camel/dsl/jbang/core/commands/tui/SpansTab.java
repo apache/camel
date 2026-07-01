@@ -207,7 +207,7 @@ class SpansTab extends AbstractTab {
     public boolean handleMouseEvent(MouseEvent me, Rect area) {
         if (!waterfallView) {
             List<TraceSummary> summaries = buildFilteredTraceSummaries();
-            if (MonitorTab.handleTableClick(me, lastTableArea, traceListState, summaries.size())) {
+            if (AbstractTableTab.handleTableClick(me, lastTableArea, traceListState, summaries.size())) {
                 syncSelectedListTraceId();
                 return true;
             }
@@ -416,7 +416,7 @@ class SpansTab extends AbstractTab {
                 .build();
         lastTableArea = area;
         frame.renderStatefulWidget(table, area, traceListState);
-        MonitorTab.renderTableScrollbar(frame, lastTableArea, traceListState, tableScrollState, summaries.size());
+        AbstractTableTab.renderTableScrollbar(frame, lastTableArea, traceListState, tableScrollState, summaries.size());
     }
 
     private void renderWaterfallView(Frame frame, Rect area) {

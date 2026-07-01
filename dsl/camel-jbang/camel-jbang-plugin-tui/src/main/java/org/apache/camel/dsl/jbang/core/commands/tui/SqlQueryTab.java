@@ -516,7 +516,7 @@ class SqlQueryTab extends AbstractTab {
                 .build();
         lastTableArea = area;
         frame.renderStatefulWidget(table, area, tableState);
-        MonitorTab.renderTableScrollbar(frame, lastTableArea, tableState, tableScrollState, resultRows.size());
+        AbstractTableTab.renderTableScrollbar(frame, lastTableArea, tableState, tableScrollState, resultRows.size());
     }
 
     @Override
@@ -528,7 +528,7 @@ class SqlQueryTab extends AbstractTab {
             return true;
         }
         if (resultRows != null && !resultRows.isEmpty()) {
-            if (MonitorTab.handleTableClick(me, lastTableArea, tableState, resultRows.size())) {
+            if (AbstractTableTab.handleTableClick(me, lastTableArea, tableState, resultRows.size())) {
                 focusOnInput = false;
                 return true;
             }

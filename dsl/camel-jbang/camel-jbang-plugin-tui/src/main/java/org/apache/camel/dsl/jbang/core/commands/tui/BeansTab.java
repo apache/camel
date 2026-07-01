@@ -146,7 +146,7 @@ class BeansTab extends AbstractTableTab {
     public boolean handleMouseEvent(MouseEvent me, Rect area) {
         if (!showDetail) {
             List<BeanData> visible = sortedBeans();
-            return MonitorTab.handleTableClick(me, lastTableArea, tableState, visible.size());
+            return handleTableClick(me, lastTableArea, tableState, visible.size());
         }
         return false;
     }
@@ -241,7 +241,7 @@ class BeansTab extends AbstractTableTab {
 
         lastTableArea = area;
         frame.renderStatefulWidget(table, area, tableState);
-        MonitorTab.renderTableScrollbar(frame, lastTableArea, tableState, tableScrollState, visible.size());
+        renderTableScrollbar(frame, lastTableArea, tableState, tableScrollState, visible.size());
     }
 
     private void renderDetail(Frame frame, Rect area, List<BeanData> visible) {

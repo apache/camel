@@ -23,9 +23,6 @@ import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.Span;
 import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.tui.event.MouseEvent;
-import dev.tamboui.widgets.scrollbar.Scrollbar;
-import dev.tamboui.widgets.scrollbar.ScrollbarState;
-import dev.tamboui.widgets.table.TableState;
 import org.apache.camel.util.json.JsonObject;
 
 /**
@@ -79,70 +76,6 @@ interface MonitorTab {
     }
 
     default boolean setInputValue(String field, String value) {
-        return false;
-    }
-
-    /**
-     * Utility: render a vertical scrollbar on the right border of a table. The scrollbar overlays the table's right
-     * border column, covering the data row area (skipping top border, header, and bottom border). Only renders when the
-     * total row count exceeds the visible row count.
-     *
-     * @param frame       the rendering frame
-     * @param tableArea   the area where the table was rendered
-     * @param tableState  the table's state (provides scroll offset)
-     * @param scrollState the scrollbar state to update
-     * @param rowCount    the total number of data rows in the table
-     */
-    static void renderTableScrollbar(
-            Frame frame, Rect tableArea, TableState tableState, ScrollbarState scrollState, int rowCount) {
-        if (tableArea == null || tableState == null || scrollState == null) {
-            return;
-        }
-        // visible data rows = area height - border top(1) - header(1) - border bottom(1)
-        int visibleRows = tableArea.height() - 3;
-        if (visibleRows <= 0 || rowCount <= visibleRows) {
-            return;
-        }
-        Rect scrollRect = new Rect(
-                tableArea.x() + tableArea.width() - 1,
-                tableArea.y() + 2,
-                1,
-                visibleRows);
-        scrollState.contentLength(rowCount);
-        scrollState.viewportContentLength(visibleRows);
-        scrollState.position(tableState.offset());
-        frame.renderStatefulWidget(Scrollbar.builder().build(), scrollRect, scrollState);
-    }
-
-    /**
-     * Utility: handle a mouse click on a table rendered with a Block (Borders.ALL) and a header row. Accounts for
-     * border (1 row) + header (1 row) = 2 rows before data, and the table scroll offset.
-     *
-     * @param  me         the mouse event
-     * @param  tableArea  the area where the table was rendered (null-safe)
-     * @param  tableState the table's state (null-safe)
-     * @param  rowCount   the total number of data rows in the table
-     * @return            true if a row was selected
-     */
-    static boolean handleTableClick(MouseEvent me, Rect tableArea, TableState tableState, int rowCount) {
-        if (tableArea == null || tableState == null || rowCount <= 0) {
-            return false;
-        }
-        if (!me.isClick()) {
-            return false;
-        }
-        int mx = me.x();
-        int my = me.y();
-        if (mx < tableArea.x() || mx >= tableArea.x() + tableArea.width()
-                || my < tableArea.y() || my >= tableArea.y() + tableArea.height()) {
-            return false;
-        }
-        // 2 = border top (1) + header row (1); data rows start at y + 2
-        int rowIndex = tableState.offset() + (my - tableArea.y() - 2);
-        if (rowIndex >= 0 && rowIndex < rowCount) {
-            tableState.select(rowIndex);
-            return true;
-        }
         return false;
     }
 }

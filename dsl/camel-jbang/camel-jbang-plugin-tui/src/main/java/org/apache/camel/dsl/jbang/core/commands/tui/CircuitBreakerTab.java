@@ -159,7 +159,7 @@ class CircuitBreakerTab extends AbstractTableTab {
 
         lastTableArea = chunks.get(0);
         frame.renderStatefulWidget(table, chunks.get(0), tableState);
-        MonitorTab.renderTableScrollbar(frame, lastTableArea, tableState, tableScrollState, info.circuitBreakers.size());
+        renderTableScrollbar(frame, lastTableArea, tableState, tableScrollState, info.circuitBreakers.size());
 
         if (showDiagram) {
             renderDiagram(frame, chunks.get(1), selectedCb, info.pid);

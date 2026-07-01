@@ -195,7 +195,7 @@ class MetricsTab extends AbstractTableTab {
             return true;
         }
         if (!showRaw && tableMode) {
-            if (MonitorTab.handleTableClick(me, lastTableArea, tableState, lastRowCount)) {
+            if (handleTableClick(me, lastTableArea, tableState, lastRowCount)) {
                 return true;
             }
         }
@@ -517,7 +517,7 @@ class MetricsTab extends AbstractTableTab {
 
         lastTableArea = area;
         frame.renderStatefulWidget(table, area, tableState);
-        MonitorTab.renderTableScrollbar(frame, lastTableArea, tableState, tableScrollState, lastRowCount);
+        renderTableScrollbar(frame, lastTableArea, tableState, tableScrollState, lastRowCount);
 
         int visibleRows = Math.max(1, area.height() - 4);
         if (lastRowCount > visibleRows) {

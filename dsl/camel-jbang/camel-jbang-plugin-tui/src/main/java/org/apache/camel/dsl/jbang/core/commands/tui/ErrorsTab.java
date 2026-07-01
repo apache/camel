@@ -245,7 +245,7 @@ class ErrorsTab extends AbstractTableTab {
     @Override
     public boolean handleMouseEvent(MouseEvent me, Rect area) {
         if (!diagram.isShowDiagram()) {
-            if (MonitorTab.handleTableClick(me, lastTableArea, tableState, filteredSize())) {
+            if (handleTableClick(me, lastTableArea, tableState, filteredSize())) {
                 detailScroll = 0;
                 return true;
             }
@@ -393,7 +393,7 @@ class ErrorsTab extends AbstractTableTab {
 
         lastTableArea = chunks.get(0);
         frame.renderStatefulWidget(table, chunks.get(0), tableState);
-        MonitorTab.renderTableScrollbar(frame, lastTableArea, tableState, tableScrollState, filteredSize());
+        renderTableScrollbar(frame, lastTableArea, tableState, tableScrollState, filteredSize());
 
         if (showDetail) {
             renderDetail(frame, chunks.get(2), selectedError);

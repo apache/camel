@@ -130,7 +130,7 @@ class EndpointsTab extends AbstractTableTab {
             } else if (filter == 2) {
                 filtered.removeIf(ep -> !ep.remote && !ep.stub);
             }
-            if (MonitorTab.handleTableClick(me, lastTableArea, tableState, filtered.size())) {
+            if (handleTableClick(me, lastTableArea, tableState, filtered.size())) {
                 return true;
             }
         }
@@ -265,7 +265,7 @@ class EndpointsTab extends AbstractTableTab {
 
         lastTableArea = chunks.get(0);
         frame.renderStatefulWidget(table, chunks.get(0), tableState);
-        MonitorTab.renderTableScrollbar(frame, lastTableArea, tableState, tableScrollState, sortedEndpoints.size());
+        renderTableScrollbar(frame, lastTableArea, tableState, tableScrollState, sortedEndpoints.size());
 
         if (showChart) {
             // Determine selected endpoint URI for single-endpoint chart

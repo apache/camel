@@ -212,11 +212,11 @@ class BrowseTab extends AbstractTab {
     public boolean handleMouseEvent(MouseEvent me, Rect area) {
         if (view == VIEW_ENDPOINTS) {
             List<EndpointData> sorted = sortedEndpoints();
-            if (MonitorTab.handleTableClick(me, lastEndpointTableArea, endpointTableState, sorted.size())) {
+            if (AbstractTableTab.handleTableClick(me, lastEndpointTableArea, endpointTableState, sorted.size())) {
                 return true;
             }
         } else if (view == VIEW_MESSAGES) {
-            if (MonitorTab.handleTableClick(me, lastMessageTableArea, messageTableState, messages.size())) {
+            if (AbstractTableTab.handleTableClick(me, lastMessageTableArea, messageTableState, messages.size())) {
                 return true;
             }
         }
@@ -323,7 +323,7 @@ class BrowseTab extends AbstractTab {
 
         lastEndpointTableArea = area;
         frame.renderStatefulWidget(table, area, endpointTableState);
-        MonitorTab.renderTableScrollbar(frame, lastEndpointTableArea, endpointTableState, endpointTableScrollState,
+        AbstractTableTab.renderTableScrollbar(frame, lastEndpointTableArea, endpointTableState, endpointTableScrollState,
                 sorted.size());
     }
 
@@ -379,7 +379,7 @@ class BrowseTab extends AbstractTab {
 
         lastMessageTableArea = area;
         frame.renderStatefulWidget(table, area, messageTableState);
-        MonitorTab.renderTableScrollbar(frame, lastMessageTableArea, messageTableState, messageTableScrollState,
+        AbstractTableTab.renderTableScrollbar(frame, lastMessageTableArea, messageTableState, messageTableScrollState,
                 messages.size());
     }
 
