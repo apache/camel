@@ -130,20 +130,6 @@ class ThreadsTab extends AbstractTableTab {
             loadThreads();
             return true;
         }
-        if (ke.isPageUp() || ke.isKey(KeyCode.PAGE_UP)) {
-            List<ThreadData> visible = sortedThreads();
-            for (int i = 0; i < 20 && tableState.selected() != null && tableState.selected() > 0; i++) {
-                tableState.selectPrevious();
-            }
-            return true;
-        }
-        if (ke.isPageDown() || ke.isKey(KeyCode.PAGE_DOWN)) {
-            List<ThreadData> visible = sortedThreads();
-            for (int i = 0; i < 20; i++) {
-                tableState.selectNext(visible.size());
-            }
-            return true;
-        }
         return false;
     }
 
@@ -270,7 +256,7 @@ class ThreadsTab extends AbstractTableTab {
 
         lastTableArea = area;
         frame.renderStatefulWidget(table, area, tableState);
-        renderTableScrollbar(frame, lastTableArea, tableState, tableScrollState, visible.size());
+        renderScrollbar(frame, visible.size());
     }
 
     private void renderTrace(Frame frame, Rect area, List<ThreadData> visible) {
@@ -375,19 +361,6 @@ class ThreadsTab extends AbstractTableTab {
         }
         String lower = t.name.toLowerCase();
         return lower.contains("camel") || lower.contains("vertx") || lower.contains("netty");
-    }
-
-    private static int compareStr(String a, String b) {
-        if (a == null && b == null) {
-            return 0;
-        }
-        if (a == null) {
-            return -1;
-        }
-        if (b == null) {
-            return 1;
-        }
-        return a.compareToIgnoreCase(b);
     }
 
     private static Style stateStyle(String state) {

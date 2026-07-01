@@ -1315,7 +1315,7 @@ class HttpTab extends AbstractTableTab {
 
         lastTableArea = area;
         frame.renderStatefulWidget(table, area, tableState);
-        renderTableScrollbar(frame, lastTableArea, tableState, tableScrollState, visible.size());
+        renderScrollbar(frame, visible.size());
     }
 
     private void renderDetail(Frame frame, Rect area, List<HttpEndpointInfo> visible) {

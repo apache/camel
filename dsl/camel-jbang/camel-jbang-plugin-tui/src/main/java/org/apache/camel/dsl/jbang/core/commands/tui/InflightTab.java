@@ -124,7 +124,7 @@ class InflightTab extends AbstractTableTab {
 
         lastTableArea = area;
         frame.renderStatefulWidget(table, area, tableState);
-        renderTableScrollbar(frame, lastTableArea, tableState, tableScrollState, sorted.size());
+        renderScrollbar(frame, sorted.size());
     }
 
     private void renderBrowseDisabled(Frame frame, Rect area) {

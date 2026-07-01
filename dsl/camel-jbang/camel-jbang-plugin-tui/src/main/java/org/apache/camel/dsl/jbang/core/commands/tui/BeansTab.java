@@ -126,19 +126,6 @@ class BeansTab extends AbstractTableTab {
             loadBeans();
             return true;
         }
-        if (ke.isPageUp() || ke.isKey(KeyCode.PAGE_UP)) {
-            for (int i = 0; i < 20 && tableState.selected() != null && tableState.selected() > 0; i++) {
-                tableState.selectPrevious();
-            }
-            return true;
-        }
-        if (ke.isPageDown() || ke.isKey(KeyCode.PAGE_DOWN)) {
-            List<BeanData> visible = sortedBeans();
-            for (int i = 0; i < 20; i++) {
-                tableState.selectNext(visible.size());
-            }
-            return true;
-        }
         return false;
     }
 
@@ -241,7 +228,7 @@ class BeansTab extends AbstractTableTab {
 
         lastTableArea = area;
         frame.renderStatefulWidget(table, area, tableState);
-        renderTableScrollbar(frame, lastTableArea, tableState, tableScrollState, visible.size());
+        renderScrollbar(frame, visible.size());
     }
 
     private void renderDetail(Frame frame, Rect area, List<BeanData> visible) {
@@ -340,19 +327,6 @@ class BeansTab extends AbstractTableTab {
             return sortReversed ? -cmp : cmp;
         });
         return result;
-    }
-
-    private static int compareStr(String a, String b) {
-        if (a == null && b == null) {
-            return 0;
-        }
-        if (a == null) {
-            return -1;
-        }
-        if (b == null) {
-            return 1;
-        }
-        return a.compareToIgnoreCase(b);
     }
 
     private void loadBeans() {

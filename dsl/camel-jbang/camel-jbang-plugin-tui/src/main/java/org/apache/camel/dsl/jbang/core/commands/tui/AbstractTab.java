@@ -71,6 +71,19 @@ abstract class AbstractTab implements MonitorTab {
         frame.renderStatefulWidget(Scrollbar.builder().build(), scrollRect, scrollState);
     }
 
+    protected static int compareStr(String a, String b) {
+        if (a == null && b == null) {
+            return 0;
+        }
+        if (a == null) {
+            return -1;
+        }
+        if (b == null) {
+            return 1;
+        }
+        return a.compareToIgnoreCase(b);
+    }
+
     static boolean handleTableClick(MouseEvent me, Rect tableArea, TableState tableState, int rowCount) {
         if (tableArea == null || tableState == null || rowCount <= 0) {
             return false;

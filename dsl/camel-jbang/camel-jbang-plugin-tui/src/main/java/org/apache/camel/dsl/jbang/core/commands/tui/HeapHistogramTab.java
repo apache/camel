@@ -102,19 +102,6 @@ class HeapHistogramTab extends AbstractTableTab {
             loadHeapHistogram();
             return true;
         }
-        if (ke.isPageUp() || ke.isKey(KeyCode.PAGE_UP)) {
-            for (int i = 0; i < 20 && tableState.selected() != null && tableState.selected() > 0; i++) {
-                tableState.selectPrevious();
-            }
-            return true;
-        }
-        if (ke.isPageDown() || ke.isKey(KeyCode.PAGE_DOWN)) {
-            List<HeapEntry> visible = sortedEntries();
-            for (int i = 0; i < 20; i++) {
-                tableState.selectNext(visible.size());
-            }
-            return true;
-        }
         return false;
     }
 
@@ -477,19 +464,6 @@ class HeapHistogramTab extends AbstractTableTab {
             }
         }
         return best;
-    }
-
-    private static int compareStr(String a, String b) {
-        if (a == null && b == null) {
-            return 0;
-        }
-        if (a == null) {
-            return -1;
-        }
-        if (b == null) {
-            return 1;
-        }
-        return a.compareToIgnoreCase(b);
     }
 
     private void loadHeapHistogram() {

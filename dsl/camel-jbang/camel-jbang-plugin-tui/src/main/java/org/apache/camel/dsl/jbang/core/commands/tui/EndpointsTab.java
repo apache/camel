@@ -265,7 +265,7 @@ class EndpointsTab extends AbstractTableTab {
 
         lastTableArea = chunks.get(0);
         frame.renderStatefulWidget(table, chunks.get(0), tableState);
-        renderTableScrollbar(frame, lastTableArea, tableState, tableScrollState, sortedEndpoints.size());
+        renderScrollbar(frame, sortedEndpoints.size());
 
         if (showChart) {
             // Determine selected endpoint URI for single-endpoint chart

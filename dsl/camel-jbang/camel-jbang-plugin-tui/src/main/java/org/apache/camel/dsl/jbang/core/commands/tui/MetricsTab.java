@@ -517,7 +517,7 @@ class MetricsTab extends AbstractTableTab {
 
         lastTableArea = area;
         frame.renderStatefulWidget(table, area, tableState);
-        renderTableScrollbar(frame, lastTableArea, tableState, tableScrollState, lastRowCount);
+        renderScrollbar(frame, lastRowCount);
 
         int visibleRows = Math.max(1, area.height() - 4);
         if (lastRowCount > visibleRows) {

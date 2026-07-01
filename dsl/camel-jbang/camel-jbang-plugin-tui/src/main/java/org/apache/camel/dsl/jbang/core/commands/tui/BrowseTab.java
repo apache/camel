@@ -514,19 +514,6 @@ class BrowseTab extends AbstractTab {
         return result;
     }
 
-    private static int compareStr(String a, String b) {
-        if (a == null && b == null) {
-            return 0;
-        }
-        if (a == null) {
-            return -1;
-        }
-        if (b == null) {
-            return 1;
-        }
-        return a.compareToIgnoreCase(b);
-    }
-
     private String sortLabel(String label, String column) {
         return MonitorContext.sortLabel(label, column, sort, sortReversed);
     }

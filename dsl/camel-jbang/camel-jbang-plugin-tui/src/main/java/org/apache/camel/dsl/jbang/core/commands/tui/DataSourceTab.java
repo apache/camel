@@ -110,7 +110,7 @@ class DataSourceTab extends AbstractTableTab {
 
         lastTableArea = area;
         frame.renderStatefulWidget(table, area, tableState);
-        renderTableScrollbar(frame, lastTableArea, tableState, tableScrollState, sorted.size());
+        renderScrollbar(frame, sorted.size());
     }
 
     private int sortDataSource(DataSourceInfo a, DataSourceInfo b) {

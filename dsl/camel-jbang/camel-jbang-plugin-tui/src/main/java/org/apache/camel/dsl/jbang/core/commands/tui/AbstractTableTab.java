@@ -22,6 +22,7 @@ import dev.tamboui.layout.Rect;
 import dev.tamboui.style.Style;
 import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.Span;
+import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.tui.event.MouseEvent;
 import dev.tamboui.widgets.scrollbar.ScrollbarState;
@@ -64,7 +65,30 @@ abstract class AbstractTableTab extends AbstractTab {
                 return true;
             }
         }
-        return handleTabKeyEvent(ke);
+        if (handleTabKeyEvent(ke)) {
+            return true;
+        }
+        if (ke.isPageUp() || ke.isKey(KeyCode.PAGE_UP)) {
+            for (int i = 0; i < 20 && tableState.selected() != null && tableState.selected() > 0; i++) {
+                tableState.selectPrevious();
+            }
+            return true;
+        }
+        if (ke.isPageDown() || ke.isKey(KeyCode.PAGE_DOWN)) {
+            for (int i = 0; i < 20; i++) {
+                tableState.selectNext(getRowCount());
+            }
+            return true;
+        }
+        if (ke.isHome()) {
+            tableState.selectFirst();
+            return true;
+        }
+        if (ke.isEnd()) {
+            tableState.selectLast(getRowCount());
+            return true;
+        }
+        return false;
     }
 
     protected boolean handleTabKeyEvent(KeyEvent ke) {
