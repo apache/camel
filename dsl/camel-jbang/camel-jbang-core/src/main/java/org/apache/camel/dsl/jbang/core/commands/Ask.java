@@ -247,24 +247,13 @@ public class Ask extends CamelCommand {
         StringBuilder sb = new StringBuilder();
         sb.append("(").append(elapsed).append("s");
         if (usage.totalTokens() > 0) {
-            sb.append(", ").append(formatTokens(usage.inputTokens())).append(" input / ")
-                    .append(formatTokens(usage.outputTokens())).append(" output / ")
-                    .append(formatTokens(usage.totalTokens())).append(" total tokens");
+            sb.append(", ").append(LlmClient.formatTokens(usage.inputTokens())).append(" input / ")
+                    .append(LlmClient.formatTokens(usage.outputTokens())).append(" output / ")
+                    .append(LlmClient.formatTokens(usage.totalTokens())).append(" total tokens");
         }
         sb.append(")");
         printer().println();
         printer().println(sb.toString());
-    }
-
-    static String formatTokens(int tokens) {
-        if (tokens >= 1000) {
-            double k = tokens / 1000.0;
-            if (k == (int) k) {
-                return (int) k + "k";
-            }
-            return String.format("%.1fk", k);
-        }
-        return String.valueOf(tokens);
     }
 
     // ---- Process discovery (delegates to RuntimeHelper) ----

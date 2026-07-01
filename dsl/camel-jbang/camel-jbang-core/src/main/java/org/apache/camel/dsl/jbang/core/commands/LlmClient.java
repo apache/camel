@@ -105,6 +105,17 @@ public class LlmClient {
             TokenUsage usage) {
     }
 
+    public static String formatTokens(int tokens) {
+        if (tokens >= 1000) {
+            double k = tokens / 1000.0;
+            if (k == (int) k) {
+                return (int) k + "k";
+            }
+            return String.format("%.1fk", k);
+        }
+        return String.valueOf(tokens);
+    }
+
     // -- Configuration --
 
     ApiType apiType;

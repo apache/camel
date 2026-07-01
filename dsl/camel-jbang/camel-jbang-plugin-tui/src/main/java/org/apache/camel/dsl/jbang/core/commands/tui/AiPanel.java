@@ -86,7 +86,7 @@ class AiPanel {
     private volatile Thread agentThread;
     private String initError;
     private long thinkingStartTime;
-    private int sessionTotalTokens;
+    private volatile int sessionTotalTokens;
 
     // Activity log for AI Log popup
     private final List<LogEntry> activityLog = new ArrayList<>();
@@ -340,7 +340,7 @@ class AiPanel {
                     long elapsed = (System.currentTimeMillis() - thinkingStartTime) / 1000;
                     conversation.add(new ConversationEntry("assistant", text, elapsed, totalUsage.totalTokens()));
                     String tokenInfo = totalUsage.totalTokens() > 0
-                            ? ", " + formatTokens(totalUsage.totalTokens()) + " tokens"
+                            ? ", " + LlmClient.formatTokens(totalUsage.totalTokens()) + " tokens"
                             : "";
                     log(LogLevel.RESPONSE, "Response (" + elapsed + "s" + tokenInfo + ")", text);
                 } else {
@@ -364,14 +364,14 @@ class AiPanel {
         int titleTokens = lastResponseTokens();
         Line titleLine;
         if (splitIndex == 0 && titleElapsed >= 0) {
-            String tokenSuffix = titleTokens > 0 ? ", " + formatTokens(titleTokens) + " tokens" : "";
+            String tokenSuffix = titleTokens > 0 ? ", " + LlmClient.formatTokens(titleTokens) + " tokens" : "";
             titleLine = Line.from(
                     Span.styled(" AI ", Style.EMPTY.bold()),
                     Span.styled("(" + titleElapsed + "s" + tokenSuffix + ") ", Style.EMPTY.dim()));
         } else if (sessionTotalTokens > 0) {
             titleLine = Line.from(
                     Span.styled(" AI ", Style.EMPTY.bold()),
-                    Span.styled("(total: " + formatTokens(sessionTotalTokens) + " tokens) ", Style.EMPTY.dim()));
+                    Span.styled("(total: " + LlmClient.formatTokens(sessionTotalTokens) + " tokens) ", Style.EMPTY.dim()));
         } else {
             titleLine = Line.from(Span.styled(" AI ", Style.EMPTY.bold()));
         }
@@ -501,7 +501,7 @@ class AiPanel {
         }
 
         if (elapsedArea != null && lastElapsed >= 0) {
-            String tokenSuffix = lastTokens > 0 ? ", " + formatTokens(lastTokens) + " tokens" : "";
+            String tokenSuffix = lastTokens > 0 ? ", " + LlmClient.formatTokens(lastTokens) + " tokens" : "";
             frame.renderWidget(
                     Paragraph.from(Line.from(Span.styled("(" + lastElapsed + "s" + tokenSuffix + ")", Style.EMPTY.dim()))),
                     elapsedArea);
@@ -583,17 +583,6 @@ class AiPanel {
         // so the LLM's line-by-line formatting is preserved in MarkdownView.
         // Double newlines (paragraph breaks) are left as-is.
         return text.replaceAll("(?<!\n)\n(?!\n)", "  \n");
-    }
-
-    static String formatTokens(int tokens) {
-        if (tokens >= 1000) {
-            double k = tokens / 1000.0;
-            if (k == (int) k) {
-                return (int) k + "k";
-            }
-            return String.format("%.1fk", k);
-        }
-        return String.valueOf(tokens);
     }
 
 }
