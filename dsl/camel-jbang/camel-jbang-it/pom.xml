@@ -17,15 +17,13 @@
     limitations under the License.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-jbang-parent</artifactId>
-        <version>4.21.0-SNAPSHOT</version>
+        <version>4.21.1-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -209,15 +207,15 @@
                 <cli.jbang.version>${project.version}</cli.jbang.version>
                 <cli.jbang.repo>apache/camel</cli.jbang.repo>
                 <cli.jbang.branch>main</cli.jbang.branch>
-                <cli.jbang.docker.file/>
+                <cli.jbang.docker.file />
                 <cli.service.command>camel</cli.service.command>
-                <export.runtime/>
+                <export.runtime />
                 <maven.test.skip>false</maven.test.skip>
                 <shared.data.folder>target/data</shared.data.folder>
                 <shared.maven.local.repo>${settings.localRepository}</shared.maven.local.repo>
                 <failsafe.forkCount>1C</failsafe.forkCount>
                 <x11.display>:0</x11.display>
-                <failsafe.excludedGroups/>
+                <failsafe.excludedGroups />
             </properties>
             <build>
                 <plugins>
@@ -230,8 +228,8 @@
                                 <phase>pre-integration-test</phase>
                                 <configuration>
                                     <target>
-                                        <mkdir dir="${shared.data.folder}"/>
-                                        <mkdir dir="${shared.maven.local.repo}"/>
+                                        <mkdir dir="${shared.data.folder}" />
+                                        <mkdir dir="${shared.maven.local.repo}" />
                                     </target>
                                 </configuration>
                                 <goals>
@@ -243,7 +241,7 @@
                                 <phase>post-integration-test</phase>
                                 <configuration>
                                     <target>
-                                        <delete dir="${shared.data.folder}"/>
+                                        <delete dir="${shared.data.folder}" />
                                     </target>
                                 </configuration>
                                 <goals>

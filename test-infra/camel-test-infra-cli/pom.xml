@@ -22,7 +22,7 @@
         <artifactId>camel-test-infra-parent</artifactId>
         <groupId>org.apache.camel</groupId>
         <relativePath>../camel-test-infra-parent/pom.xml</relativePath>
-        <version>4.21.0-SNAPSHOT</version>
+        <version>4.21.1-SNAPSHOT</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -103,8 +103,8 @@
                                 <phase>pre-integration-test</phase>
                                 <configuration>
                                     <target>
-                                        <mkdir dir="target/tmp-repo"/>
-                                        <mkdir dir="target/data"/>
+                                        <mkdir dir="target/tmp-repo" />
+                                        <mkdir dir="target/data" />
                                     </target>
                                 </configuration>
                                 <goals>
