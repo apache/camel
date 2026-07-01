@@ -86,6 +86,7 @@ class AiPanel {
     private volatile Thread agentThread;
     private String initError;
     private long thinkingStartTime;
+    private int sessionTotalTokens;
 
     // Activity log for AI Log popup
     private final List<LogEntry> activityLog = new ArrayList<>();
@@ -334,6 +335,7 @@ class AiPanel {
                 messages.add(LlmClient.Message.toolResults(results));
             } else {
                 String text = response.text();
+                sessionTotalTokens += totalUsage.totalTokens();
                 if (text != null && !text.isBlank()) {
                     long elapsed = (System.currentTimeMillis() - thinkingStartTime) / 1000;
                     conversation.add(new ConversationEntry("assistant", text, elapsed, totalUsage.totalTokens()));
@@ -366,6 +368,10 @@ class AiPanel {
             titleLine = Line.from(
                     Span.styled(" AI ", Style.EMPTY.bold()),
                     Span.styled("(" + titleElapsed + "s" + tokenSuffix + ") ", Style.EMPTY.dim()));
+        } else if (sessionTotalTokens > 0) {
+            titleLine = Line.from(
+                    Span.styled(" AI ", Style.EMPTY.bold()),
+                    Span.styled("(total: " + formatTokens(sessionTotalTokens) + " tokens) ", Style.EMPTY.dim()));
         } else {
             titleLine = Line.from(Span.styled(" AI ", Style.EMPTY.bold()));
         }
