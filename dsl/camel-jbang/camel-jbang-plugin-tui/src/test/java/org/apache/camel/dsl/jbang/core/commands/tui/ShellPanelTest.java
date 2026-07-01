@@ -344,26 +344,26 @@ class ShellPanelTest {
     // ---- renderFooter tests ----
 
     @Test
-    void renderFooterShowsCurrentPercentage() {
+    void renderFooterShowsNextPercentage() {
         ShellPanel panel = new ShellPanel();
-        // Default split is 50%
+        // Default split is 50%, so next is 75%
         List<Span> spans = new ArrayList<>();
         panel.renderFooter(spans);
 
         String footer = spansToString(spans);
-        assertTrue(footer.contains("50%"), "Footer should show current percentage (50%)");
+        assertTrue(footer.contains("75%"), "Footer should show next percentage (75%)");
     }
 
     @Test
     void renderFooterUpdatesAfterCycleHeight() {
         ShellPanel panel = new ShellPanel();
-        panel.cycleHeight(); // now 75%
+        panel.cycleHeight(); // now 75%, so next is 100%
 
         List<Span> spans = new ArrayList<>();
         panel.renderFooter(spans);
 
         String footer = spansToString(spans);
-        assertTrue(footer.contains("75%"), "Footer should show 75% after cycling once");
+        assertTrue(footer.contains("100%"), "Footer should show 100% after cycling once");
     }
 
     @Test
