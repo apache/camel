@@ -212,12 +212,14 @@ class ActionsPopup {
     }
 
     void setMcpEnabled(
-            boolean enabled, int port, Supplier<String> connectedClient, Supplier<List<TuiMcpServer.LogEntry>> activityLog) {
+            boolean enabled, int port, Supplier<String> connectedClient,
+            Supplier<List<TuiMcpServer.LogEntry>> activityLog, Supplier<Integer> toolCallCount) {
         this.mcpEnabled = enabled;
         this.mcpPort = port;
         this.mcpConnectedClient = connectedClient;
         this.mcpActivityLog = activityLog;
         mcpLogPopup.setActivityLog(activityLog);
+        mcpLogPopup.setToolCallCount(toolCallCount);
     }
 
     void setAiActivityLog(Supplier<List<AiPanel.LogEntry>> activityLog) {

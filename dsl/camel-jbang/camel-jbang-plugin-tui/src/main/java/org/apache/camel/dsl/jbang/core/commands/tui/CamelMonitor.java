@@ -395,7 +395,8 @@ public class CamelMonitor extends CamelCommand {
             mcpServer = new TuiMcpServer(mcpPort, mcpFacade);
             try {
                 mcpServer.start();
-                actionsPopup.setMcpEnabled(true, mcpPort, mcpServer::getConnectedClient, mcpServer::getActivityLog);
+                actionsPopup.setMcpEnabled(true, mcpPort, mcpServer::getConnectedClient,
+                        mcpServer::getActivityLog, mcpServer::getToolCallCount);
                 mcpJsonFile = writeMcpJson(mcpPort);
             } catch (java.net.BindException e) {
                 System.err.println("MCP server failed to start: port " + mcpPort + " is already in use.");

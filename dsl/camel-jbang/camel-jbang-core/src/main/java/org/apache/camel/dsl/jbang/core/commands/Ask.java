@@ -195,12 +195,14 @@ public class Ask extends CamelCommand {
             String userQuestion) {
         messages.add(LlmClient.Message.user(userQuestion));
 
+        LlmClient.TokenUsage totalUsage = LlmClient.TokenUsage.EMPTY;
         for (int i = 0; i < maxIterations; i++) {
             LlmClient.ChatResponse response = client.chatWithTools(systemPrompt, messages, tools);
             if (response == null) {
                 printer().printErr("Failed to get response from LLM");
                 return 1;
             }
+            totalUsage = totalUsage.add(response.usage());
 
             if (response.toolCalls() != null && !response.toolCalls().isEmpty()) {
                 messages.add(LlmClient.Message.assistantWithToolCalls(response.text(), response.toolCalls()));
@@ -222,12 +224,23 @@ public class Ask extends CamelCommand {
                     printer().println(response.text());
                 }
                 messages.add(LlmClient.Message.assistantWithToolCalls(response.text(), List.of()));
+                printTokenUsage(totalUsage);
                 return 0;
             }
         }
 
+        printTokenUsage(totalUsage);
         printer().printErr("Reached maximum iterations (" + maxIterations + ") without a final answer.");
         return 1;
+    }
+
+    private void printTokenUsage(LlmClient.TokenUsage usage) {
+        if (usage.totalTokens() > 0) {
+            printer().println();
+            printer().println("Tokens: " + usage.inputTokens() + " input / "
+                              + usage.outputTokens() + " output / "
+                              + usage.totalTokens() + " total");
+        }
     }
 
     // ---- Process discovery (delegates to RuntimeHelper) ----

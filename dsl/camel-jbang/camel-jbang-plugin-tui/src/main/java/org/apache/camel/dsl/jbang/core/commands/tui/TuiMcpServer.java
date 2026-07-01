@@ -72,6 +72,7 @@ class TuiMcpServer {
     private volatile String clientName;
     private volatile long lastActivity;
     private volatile long lastToolCallTime;
+    private volatile int toolCallCount;
     private final List<LogEntry> activityLog = new ArrayList<>();
 
     TuiMcpServer(int port, McpFacade facade) {
@@ -117,6 +118,10 @@ class TuiMcpServer {
 
     boolean isRecentActivity() {
         return System.currentTimeMillis() - lastToolCallTime < 2000;
+    }
+
+    int getToolCallCount() {
+        return toolCallCount;
     }
 
     String getConnectedClient() {
@@ -580,6 +585,7 @@ class TuiMcpServer {
         }
 
         lastToolCallTime = System.currentTimeMillis();
+        toolCallCount++;
 
         String text;
         boolean isError = false;
