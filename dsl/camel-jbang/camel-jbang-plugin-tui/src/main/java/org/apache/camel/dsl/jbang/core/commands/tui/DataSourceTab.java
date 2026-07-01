@@ -78,10 +78,7 @@ class DataSourceTab extends AbstractTableTab {
         }
 
         if (rows.isEmpty()) {
-            rows.add(Row.from(
-                    Cell.from(Span.styled("No DataSources", Style.EMPTY.dim())),
-                    Cell.from(""), Cell.from(""), Cell.from(""),
-                    Cell.from(""), Cell.from(""), Cell.from(""), Cell.from("")));
+            rows.add(emptyRow("No DataSources", 8));
         }
 
         Table table = Table.builder()

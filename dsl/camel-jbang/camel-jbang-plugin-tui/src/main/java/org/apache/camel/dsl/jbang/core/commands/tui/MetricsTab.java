@@ -486,10 +486,7 @@ class MetricsTab extends AbstractTableTab {
         }
 
         if (rows.isEmpty()) {
-            String msg = "No " + filterType + " metrics";
-            rows.add(Row.from(
-                    Cell.from(Span.styled(msg, Style.EMPTY.dim())),
-                    Cell.from(""), Cell.from(""), Cell.from("")));
+            rows.add(emptyRow("No " + filterType + " metrics", 4));
         }
 
         String title = " Metrics";
@@ -510,7 +507,7 @@ class MetricsTab extends AbstractTableTab {
                         Constraint.length(40),
                         Constraint.percentage(30),
                         Constraint.fill())
-                .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
+                .highlightStyle(Theme.selectionBg())
                 .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
                         .title(title).build())
                 .build();

@@ -167,7 +167,7 @@ class McpLogPopup {
         masterState.select(selected);
         ListWidget list = ListWidget.builder()
                 .items(items.toArray(ListItem[]::new))
-                .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
+                .highlightStyle(Theme.selectionBg())
                 .highlightSymbol("▸ ")
                 .scrollMode(ScrollMode.AUTO_SCROLL)
                 .block(Block.builder()

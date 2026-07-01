@@ -132,17 +132,11 @@ class ClasspathTab extends AbstractTab {
             listState.selectNext(filteredEntries.size());
             return true;
         }
-        if (me.isClick() && lastArea != null) {
-            int mx = me.x();
-            int my = me.y();
-            if (mx >= lastArea.x() && mx < lastArea.x() + lastArea.width()
-                    && my >= lastArea.y() && my < lastArea.y() + lastArea.height()) {
-                // Items start at y+1 (after top border); no separate header row
-                int itemIndex = listState.offset() + (my - lastArea.y() - 1);
-                if (itemIndex >= 0 && itemIndex < filteredEntries.size()) {
-                    listState.select(itemIndex);
-                    return true;
-                }
+        if (me.isClick() && contains(lastArea, me.x(), me.y())) {
+            int itemIndex = listState.offset() + (me.y() - lastArea.y() - 1);
+            if (itemIndex >= 0 && itemIndex < filteredEntries.size()) {
+                listState.select(itemIndex);
+                return true;
             }
         }
         return false;
@@ -226,7 +220,7 @@ class ClasspathTab extends AbstractTab {
 
         ListWidget list = ListWidget.builder()
                 .items(items.toArray(ListItem[]::new))
-                .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
+                .highlightStyle(Theme.selectionBg())
                 .highlightSymbol("")
                 .scrollMode(ScrollMode.AUTO_SCROLL)
                 .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(title).build())

@@ -349,10 +349,7 @@ class ErrorsTab extends AbstractTableTab {
         }
 
         if (rows.isEmpty()) {
-            rows.add(Row.from(
-                    Cell.from(Span.styled("No errors captured", Style.EMPTY.dim())),
-                    Cell.from(""), Cell.from(""), Cell.from(""),
-                    Cell.from(""), Cell.from(""), Cell.from("")));
+            rows.add(emptyRow("No errors captured", 7));
         }
 
         ErrorInfo selectedError = null;
@@ -385,7 +382,7 @@ class ErrorsTab extends AbstractTableTab {
                         Constraint.length(8),
                         Constraint.length(30),
                         Constraint.fill())
-                .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
+                .highlightStyle(Theme.selectionBg())
                 .highlightSpacing(Table.HighlightSpacing.ALWAYS)
                 .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
                         .title(" Errors (" + sorted.size() + ") sort:" + sort + " ").build())

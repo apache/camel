@@ -1204,7 +1204,7 @@ class HistoryTab extends AbstractTab {
                         Constraint.length(10),
                         Constraint.length(6),
                         Constraint.fill())
-                .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
+                .highlightStyle(Theme.selectionBg())
                 .highlightSpacing(Table.HighlightSpacing.ALWAYS)
                 .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(traceTitle).build())
                 .build();
@@ -1955,7 +1955,7 @@ class HistoryTab extends AbstractTab {
                         Constraint.fill(),
                         Constraint.length(4),
                         Constraint.length(10))
-                .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
+                .highlightStyle(Theme.selectionBg())
                 .highlightSpacing(Table.HighlightSpacing.ALWAYS)
                 .block(block)
                 .build();

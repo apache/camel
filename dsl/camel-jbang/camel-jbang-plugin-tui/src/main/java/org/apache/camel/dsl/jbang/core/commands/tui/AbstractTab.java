@@ -84,6 +84,12 @@ abstract class AbstractTab implements MonitorTab {
         return a.compareToIgnoreCase(b);
     }
 
+    protected static boolean contains(Rect rect, int x, int y) {
+        return rect != null
+                && x >= rect.x() && x < rect.x() + rect.width()
+                && y >= rect.y() && y < rect.y() + rect.height();
+    }
+
     protected static boolean handleTableClick(MouseEvent me, Rect tableArea, TableState tableState, int rowCount) {
         if (tableArea == null || tableState == null || rowCount <= 0) {
             return false;
@@ -91,13 +97,10 @@ abstract class AbstractTab implements MonitorTab {
         if (!me.isClick()) {
             return false;
         }
-        int mx = me.x();
-        int my = me.y();
-        if (mx < tableArea.x() || mx >= tableArea.x() + tableArea.width()
-                || my < tableArea.y() || my >= tableArea.y() + tableArea.height()) {
+        if (!contains(tableArea, me.x(), me.y())) {
             return false;
         }
-        int rowIndex = tableState.offset() + (my - tableArea.y() - 2);
+        int rowIndex = tableState.offset() + (me.y() - tableArea.y() - 2);
         if (rowIndex >= 0 && rowIndex < rowCount) {
             tableState.select(rowIndex);
             return true;

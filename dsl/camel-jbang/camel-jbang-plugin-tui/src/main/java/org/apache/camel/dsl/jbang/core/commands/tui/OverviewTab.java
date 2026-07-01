@@ -399,7 +399,6 @@ class OverviewTab extends AbstractTab {
             }
         }
 
-        Style overviewHighlight = Style.EMPTY.fg(Color.WHITE).bold().onBlue();
         Table table = Table.builder()
                 .rows(rows)
                 .header(header)
@@ -416,7 +415,7 @@ class OverviewTab extends AbstractTab {
                         Constraint.length(6),
                         Constraint.length(8),
                         Constraint.length(12))
-                .highlightStyle(overviewHighlight)
+                .highlightStyle(Theme.selectionBg())
                 .highlightSpacing(Table.HighlightSpacing.ALWAYS)
                 .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(" Overview ").build())
                 .build();

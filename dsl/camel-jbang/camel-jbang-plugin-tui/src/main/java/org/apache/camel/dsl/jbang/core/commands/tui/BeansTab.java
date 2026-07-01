@@ -201,9 +201,7 @@ class BeansTab extends AbstractTableTab {
         }
 
         if (rows.isEmpty()) {
-            rows.add(Row.from(
-                    Cell.from(Span.styled("No beans", Style.EMPTY.dim())),
-                    Cell.from(""), Cell.from("")));
+            rows.add(emptyRow("No beans", 3));
         }
 
         String title = String.format(" Beans [%d] sort:%s ", visible.size(), sort);
@@ -221,7 +219,7 @@ class BeansTab extends AbstractTableTab {
                         Constraint.length(30),
                         Constraint.length(30),
                         Constraint.fill())
-                .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
+                .highlightStyle(Theme.selectionBg())
                 .highlightSpacing(Table.HighlightSpacing.ALWAYS)
                 .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(title).build())
                 .build();

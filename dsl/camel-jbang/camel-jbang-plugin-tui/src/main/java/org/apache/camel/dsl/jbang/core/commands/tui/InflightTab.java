@@ -98,9 +98,7 @@ class InflightTab extends AbstractTableTab {
         }
 
         if (rows.isEmpty()) {
-            rows.add(Row.from(
-                    Cell.from(Span.styled("No inflight or blocked exchanges", Style.EMPTY.dim())),
-                    Cell.from(""), Cell.from(""), Cell.from(""), Cell.from("")));
+            rows.add(emptyRow("No inflight or blocked exchanges", 5));
         }
 
         String title = " Inflight (" + sorted.size() + ") sort:" + sort + " ";

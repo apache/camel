@@ -195,12 +195,7 @@ class EndpointsTab extends AbstractTableTab {
 
         int emptyCols = hasSize ? 9 : 7;
         if (rows.isEmpty()) {
-            List<Cell> emptyCells = new ArrayList<>();
-            emptyCells.add(Cell.from(Span.styled("No endpoints", Style.EMPTY.dim())));
-            for (int i = 1; i < emptyCols; i++) {
-                emptyCells.add(Cell.from(""));
-            }
-            rows.add(Row.from(emptyCells));
+            rows.add(emptyRow("No endpoints", emptyCols));
         }
 
         List<Cell> headerCells = new ArrayList<>();
@@ -233,7 +228,7 @@ class EndpointsTab extends AbstractTableTab {
                 .rows(rows)
                 .header(Row.from(headerCells))
                 .widths(widths.toArray(Constraint[]::new))
-                .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
+                .highlightStyle(Theme.selectionBg())
                 .highlightSpacing(Table.HighlightSpacing.ALWAYS)
                 .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
                         .title(" Endpoints sort:" + sort

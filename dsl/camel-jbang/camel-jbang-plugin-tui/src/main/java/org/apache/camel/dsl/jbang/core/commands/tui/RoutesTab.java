@@ -612,7 +612,7 @@ class RoutesTab extends AbstractTab {
                             Constraint.length(8),
                             Constraint.length(8),
                             Constraint.length(12))
-                    .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
+                    .highlightStyle(Theme.selectionBg())
                     .highlightSpacing(Table.HighlightSpacing.ALWAYS)
                     .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
                             .title(" Top Routes sort:" + routeTopSort + " ").build())
@@ -672,7 +672,7 @@ class RoutesTab extends AbstractTab {
                             Constraint.length(8),
                             Constraint.length(14),
                             Constraint.length(12))
-                    .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
+                    .highlightStyle(Theme.selectionBg())
                     .highlightSpacing(Table.HighlightSpacing.ALWAYS)
                     .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
                             .title(" Routes sort:" + routeSort + " ").build())

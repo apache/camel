@@ -228,9 +228,7 @@ class ThreadsTab extends AbstractTableTab {
         }
 
         if (rows.isEmpty()) {
-            rows.add(Row.from(
-                    Cell.from(Span.styled("No threads", Style.EMPTY.dim())),
-                    Cell.from(""), Cell.from(""), Cell.from(""), Cell.from("")));
+            rows.add(emptyRow("No threads", 5));
         }
 
         String title = String.format(" Threads [%d] sort:%s filter:%s ", visible.size(), sort, FILTER_LABELS[filter]);
@@ -249,7 +247,7 @@ class ThreadsTab extends AbstractTableTab {
                         Constraint.length(16),
                         Constraint.length(14),
                         Constraint.length(14))
-                .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
+                .highlightStyle(Theme.selectionBg())
                 .highlightSpacing(Table.HighlightSpacing.ALWAYS)
                 .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(title).build())
                 .build();

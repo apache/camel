@@ -139,9 +139,7 @@ class HeapHistogramTab extends AbstractTableTab {
         }
 
         if (rows.isEmpty()) {
-            rows.add(Row.from(
-                    Cell.from(Span.styled("No data", Style.EMPTY.dim())),
-                    Cell.from(""), Cell.from(""), Cell.from("")));
+            rows.add(emptyRow("No data", 4));
         }
 
         long visibleInstances = 0;
@@ -167,7 +165,7 @@ class HeapHistogramTab extends AbstractTableTab {
                         Constraint.fill(),
                         Constraint.length(14),
                         Constraint.length(14))
-                .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
+                .highlightStyle(Theme.selectionBg())
                 .highlightSpacing(Table.HighlightSpacing.ALWAYS)
                 .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(title).build())
                 .build();

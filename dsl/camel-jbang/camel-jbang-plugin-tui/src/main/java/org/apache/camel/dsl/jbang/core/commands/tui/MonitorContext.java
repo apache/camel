@@ -36,6 +36,7 @@ import dev.tamboui.widgets.block.Borders;
 import dev.tamboui.widgets.block.Title;
 import dev.tamboui.widgets.paragraph.Paragraph;
 import dev.tamboui.widgets.table.Cell;
+import dev.tamboui.widgets.table.Row;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
@@ -195,6 +196,15 @@ class MonitorContext {
         int padding = Math.max(0, width - len);
         int leftPad = padding / 2;
         return Cell.from(Span.styled(" ".repeat(leftPad) + text, style));
+    }
+
+    static Row emptyRow(String message, int columnCount) {
+        Cell[] cells = new Cell[columnCount];
+        cells[0] = Cell.from(Span.styled(message, Style.EMPTY.dim()));
+        for (int i = 1; i < columnCount; i++) {
+            cells[i] = Cell.from("");
+        }
+        return Row.from(cells);
     }
 
     static String sortLabel(String label, String column, String currentSort, boolean reversed) {

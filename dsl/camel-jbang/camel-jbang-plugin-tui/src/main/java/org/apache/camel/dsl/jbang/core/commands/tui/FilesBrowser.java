@@ -247,7 +247,7 @@ class FilesBrowser {
 
         ListWidget list = ListWidget.builder()
                 .items(items)
-                .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
+                .highlightStyle(Theme.selectionBg())
                 .highlightSymbol("")
                 .scrollMode(ScrollMode.NONE)
                 .block(Block.builder()

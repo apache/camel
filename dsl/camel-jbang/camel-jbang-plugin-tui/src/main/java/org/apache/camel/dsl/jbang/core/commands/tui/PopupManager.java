@@ -258,10 +258,7 @@ class PopupManager {
         if (lastMorePopupRect == null) {
             return false;
         }
-        int mx = me.x();
-        int my = me.y();
-        boolean inside = mx >= lastMorePopupRect.x() && mx < lastMorePopupRect.x() + lastMorePopupRect.width()
-                && my >= lastMorePopupRect.y() && my < lastMorePopupRect.y() + lastMorePopupRect.height();
+        boolean inside = AbstractTab.contains(lastMorePopupRect, me.x(), me.y());
 
         // Click outside the popup closes it
         if (me.isClick() && !inside) {
@@ -272,7 +269,7 @@ class PopupManager {
             return true; // consume but ignore drags/scrolls outside
         }
         // Inside the popup: items start at y+1 (after border top row) and each is 1 row
-        int itemIndex = my - lastMorePopupRect.y() - 1; // -1 for top border
+        int itemIndex = me.y() - lastMorePopupRect.y() - 1; // -1 for top border
         if (itemIndex < 0 || itemIndex >= MORE_POPUP_ITEM_COUNT) {
             return true; // click on border area
         }
@@ -302,10 +299,7 @@ class PopupManager {
             return false;
         }
         List<IntegrationInfo> switchList = nonVanishingIntegrationsSupplier.get();
-        int mx = me.x();
-        int my = me.y();
-        boolean inside = mx >= lastSwitchPopupRect.x() && mx < lastSwitchPopupRect.x() + lastSwitchPopupRect.width()
-                && my >= lastSwitchPopupRect.y() && my < lastSwitchPopupRect.y() + lastSwitchPopupRect.height();
+        boolean inside = AbstractTab.contains(lastSwitchPopupRect, me.x(), me.y());
 
         if (me.isClick() && !inside) {
             showSwitchPopup = false;
@@ -314,7 +308,7 @@ class PopupManager {
         if (!inside) {
             return true;
         }
-        int itemIndex = my - lastSwitchPopupRect.y() - 1; // -1 for top border
+        int itemIndex = me.y() - lastSwitchPopupRect.y() - 1; // -1 for top border
         if (itemIndex < 0 || itemIndex >= switchList.size()) {
             return true;
         }
@@ -390,7 +384,7 @@ class PopupManager {
         };
         ListWidget list = ListWidget.builder()
                 .items(items)
-                .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
+                .highlightStyle(Theme.selectionBg())
                 .highlightSymbol("")
                 .scrollMode(ScrollMode.NONE)
                 .block(Block.builder()
@@ -439,7 +433,7 @@ class PopupManager {
 
         ListWidget listWidget = ListWidget.builder()
                 .items(items)
-                .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
+                .highlightStyle(Theme.selectionBg())
                 .highlightSymbol("")
                 .scrollMode(ScrollMode.NONE)
                 .block(Block.builder()

@@ -772,12 +772,9 @@ public class CamelMonitor extends CamelCommand {
 
         // Tab bar clicks: detect which tab was clicked and switch to it
         if (me.isClick() && lastTabsArea != null && lastTabLabels != null) {
-            int mx = me.x();
-            int my = me.y();
-            // Tabs render on the second row of the tabs area (y+1)
             int tabsY = lastTabsArea.height() >= 2 ? lastTabsArea.y() + 1 : lastTabsArea.y();
-            if (my == tabsY && mx >= lastTabsArea.x() && mx < lastTabsArea.x() + lastTabsArea.width()) {
-                int clickedTab = findClickedTab(mx - lastTabsArea.x());
+            if (me.y() == tabsY && AbstractTab.contains(lastTabsArea, me.x(), me.y())) {
+                int clickedTab = findClickedTab(me.x() - lastTabsArea.x());
                 if (clickedTab >= 0) {
                     if (isInfraSelected()) {
                         // Infra mode: map 0→Overview, 1→Log
@@ -792,31 +789,24 @@ public class CamelMonitor extends CamelCommand {
         }
 
         // Mouse events in the content area: delegate to the active tab
-        if (lastContentArea != null) {
-            int mx = me.x();
-            int my = me.y();
-            if (mx >= lastContentArea.x() && mx < lastContentArea.x() + lastContentArea.width()
-                    && my >= lastContentArea.y() && my < lastContentArea.y() + lastContentArea.height()) {
-                // Popups intercept mouse events before the tab
-                if (popupManager.isMorePopupVisible() || popupManager.isSwitchPopupVisible()) {
-                    return popupManager.handleMouseEvent(me, tabRegistry.selectedTabIndex(), TAB_LOG);
-                }
-                if (filesBrowser.isVisible() || actionsPopup.isVisible()) {
-                    return false;
-                }
-                MonitorTab activeTab = tabRegistry.activeTab();
-                if (activeTab != null && activeTab.handleMouseEvent(me, lastContentArea)) {
-                    return true;
-                }
-                // Scroll events that the tab did not handle: map to navigateUp/Down
-                if (me.kind() == MouseEventKind.SCROLL_UP) {
-                    tabRegistry.navigateUp();
-                    return true;
-                }
-                if (me.kind() == MouseEventKind.SCROLL_DOWN) {
-                    tabRegistry.navigateDown();
-                    return true;
-                }
+        if (AbstractTab.contains(lastContentArea, me.x(), me.y())) {
+            if (popupManager.isMorePopupVisible() || popupManager.isSwitchPopupVisible()) {
+                return popupManager.handleMouseEvent(me, tabRegistry.selectedTabIndex(), TAB_LOG);
+            }
+            if (filesBrowser.isVisible() || actionsPopup.isVisible()) {
+                return false;
+            }
+            MonitorTab activeTab = tabRegistry.activeTab();
+            if (activeTab != null && activeTab.handleMouseEvent(me, lastContentArea)) {
+                return true;
+            }
+            if (me.kind() == MouseEventKind.SCROLL_UP) {
+                tabRegistry.navigateUp();
+                return true;
+            }
+            if (me.kind() == MouseEventKind.SCROLL_DOWN) {
+                tabRegistry.navigateDown();
+                return true;
             }
         }
         return false;

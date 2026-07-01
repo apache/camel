@@ -285,7 +285,7 @@ class SqlTraceTab extends AbstractTableTab {
                         Constraint.length(10),
                         Constraint.length(8),
                         Constraint.length(8))
-                .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
+                .highlightStyle(Theme.selectionBg())
                 .highlightSpacing(Table.HighlightSpacing.ALWAYS)
                 .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
                         .title(" Statements sort:" + sort + " ").build())

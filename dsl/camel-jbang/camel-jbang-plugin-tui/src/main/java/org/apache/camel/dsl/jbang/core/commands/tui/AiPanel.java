@@ -224,10 +224,7 @@ class AiPanel {
         if (!visible || lastArea == null) {
             return false;
         }
-        int mx = me.x();
-        int my = me.y();
-        if (mx < lastArea.x() || mx >= lastArea.x() + lastArea.width()
-                || my < lastArea.y() || my >= lastArea.y() + lastArea.height()) {
+        if (!AbstractTab.contains(lastArea, me.x(), me.y())) {
             return false;
         }
         if (me.kind() == MouseEventKind.SCROLL_UP) {

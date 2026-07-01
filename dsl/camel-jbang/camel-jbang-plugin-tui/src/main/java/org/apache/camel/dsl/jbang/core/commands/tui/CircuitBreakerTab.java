@@ -107,11 +107,7 @@ class CircuitBreakerTab extends AbstractTableTab {
         }
 
         if (rows.isEmpty()) {
-            rows.add(Row.from(
-                    Cell.from(Span.styled("No circuit breakers", Style.EMPTY.dim())),
-                    Cell.from(""), Cell.from(""), Cell.from(""),
-                    Cell.from(""), Cell.from(""), Cell.from(""), Cell.from(""), Cell.from(""),
-                    Cell.from(""), Cell.from("")));
+            rows.add(emptyRow("No circuit breakers", 11));
         }
 
         CircuitBreakerInfo selectedCb = null;
@@ -152,7 +148,7 @@ class CircuitBreakerTab extends AbstractTableTab {
                         Constraint.length(6),
                         Constraint.length(8),
                         Constraint.fill())
-                .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
+                .highlightStyle(Theme.selectionBg())
                 .highlightSpacing(Table.HighlightSpacing.ALWAYS)
                 .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(" Circuit Breaker ").build())
                 .build();
