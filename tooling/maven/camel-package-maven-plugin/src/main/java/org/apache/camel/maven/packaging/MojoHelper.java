@@ -71,6 +71,8 @@ public final class MojoHelper {
                 return Collections.singletonList(dir.resolve("camel-fhir-component"));
             case "camel-infinispan":
                 return Arrays.asList(dir.resolve("camel-infinispan"), dir.resolve("camel-infinispan-embedded"));
+            case "camel-state-store":
+                return Collections.singletonList(dir.resolve("camel-state-store"));
             case "camel-azure":
                 return Arrays.asList(dir.resolve("camel-azure-eventhubs"), dir.resolve("camel-azure-storage-blob"),
                         dir.resolve("camel-azure-storage-datalake"), dir.resolve("camel-azure-cosmosdb"),

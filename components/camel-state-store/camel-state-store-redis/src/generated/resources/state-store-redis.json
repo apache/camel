@@ -1,0 +1,14 @@
+{
+  "other": {
+    "kind": "other",
+    "name": "state-store-redis",
+    "title": "State Store Redis",
+    "description": "Camel State Store backend using Redisson (Redis)",
+    "deprecated": false,
+    "firstVersion": "4.19.0",
+    "supportLevel": "Preview",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-state-store-redis",
+    "version": "4.19.0-SNAPSHOT"
+  }
+}
