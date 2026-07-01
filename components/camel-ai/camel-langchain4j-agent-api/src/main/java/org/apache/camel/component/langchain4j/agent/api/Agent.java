@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.langchain4j.agent.api;
 
+import dev.langchain4j.service.Result;
 import dev.langchain4j.service.tool.ToolProvider;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadRuntimeException;
@@ -129,10 +130,10 @@ public interface Agent {
      *                          (for stateful agents)
      * @param  toolProvider     the tool provider that enables the agent to execute functions and interact with external
      *                          systems; may be {@code null} if no tools are needed
-     * @return                  the AI agent's response as a string
+     * @return                  the AI agent's response with token usage metadata
      * @throws RuntimeException if the chat interaction fails due to model errors, configuration issues, or tool
      *                          execution failures
      */
-    String chat(AiAgentBody<?> aiAgentBody, ToolProvider toolProvider);
+    Result<String> chat(AiAgentBody<?> aiAgentBody, ToolProvider toolProvider);
 
 }

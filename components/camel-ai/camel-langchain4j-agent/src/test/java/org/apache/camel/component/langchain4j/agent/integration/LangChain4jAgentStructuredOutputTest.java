@@ -18,6 +18,7 @@ package org.apache.camel.component.langchain4j.agent.integration;
 
 import java.io.FileNotFoundException;
 
+import dev.langchain4j.service.Result;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -190,7 +191,7 @@ public class LangChain4jAgentStructuredOutputTest {
     void testOutputClassWithUserProvidedAgentThrowsIllegalArgumentException() throws Exception {
         try (DefaultCamelContext context = new DefaultCamelContext()) {
             AgentConfiguration config = new AgentConfiguration();
-            Agent stubAgent = (aiAgentBody, toolProvider) -> "stub";
+            Agent stubAgent = (aiAgentBody, toolProvider) -> Result.<String> builder().content("stub").build();
             context.getRegistry().bind("myConfig", config);
             context.getRegistry().bind("myAgent", stubAgent);
 
@@ -213,7 +214,7 @@ public class LangChain4jAgentStructuredOutputTest {
     void testOutputClassWithAgentFactoryThrowsIllegalArgumentException() throws Exception {
         try (DefaultCamelContext context = new DefaultCamelContext()) {
             AgentConfiguration config = new AgentConfiguration();
-            Agent stubAgent = (aiAgentBody, toolProvider) -> "stub";
+            Agent stubAgent = (aiAgentBody, toolProvider) -> Result.<String> builder().content("stub").build();
             AgentFactory stubFactory = new AgentFactory() {
                 @Override
                 public Agent createAgent(Exchange exchange) {

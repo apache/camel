@@ -504,6 +504,58 @@ public interface LangChain4jAgentEndpointBuilderFactory {
         public String langChain4jAgentExcludeMcpServers() {
             return "CamelLangChain4jAgentExcludeMcpServers";
         }
+        /**
+         * The Finish Reason.
+         * 
+         * The option is a: {@code dev.langchain4j.model.output.FinishReason}
+         * type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code LangChain4jAgentFinishReason}.
+         */
+        public String langChain4jAgentFinishReason() {
+            return "CamelLangChain4jAgentFinishReason";
+        }
+        /**
+         * The Input Token Count.
+         * 
+         * The option is a: {@code int} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * LangChain4jAgentInputTokenCount}.
+         */
+        public String langChain4jAgentInputTokenCount() {
+            return "CamelLangChain4jAgentInputTokenCount";
+        }
+        /**
+         * The Output Token Count.
+         * 
+         * The option is a: {@code int} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * LangChain4jAgentOutputTokenCount}.
+         */
+        public String langChain4jAgentOutputTokenCount() {
+            return "CamelLangChain4jAgentOutputTokenCount";
+        }
+        /**
+         * The Total Token Count.
+         * 
+         * The option is a: {@code int} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * LangChain4jAgentTotalTokenCount}.
+         */
+        public String langChain4jAgentTotalTokenCount() {
+            return "CamelLangChain4jAgentTotalTokenCount";
+        }
     }
     static LangChain4jAgentEndpointBuilder endpointBuilder(String componentName, String path) {
         class LangChain4jAgentEndpointBuilderImpl extends AbstractEndpointBuilder implements LangChain4jAgentEndpointBuilder, AdvancedLangChain4jAgentEndpointBuilder {
