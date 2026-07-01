@@ -169,18 +169,22 @@ class HeapHistogramTab implements MonitorTab {
     }
 
     private void renderSummary(Frame frame, Rect area, List<HeapEntry> visible) {
+        long visibleInstances = 0;
+        long visibleBytes = 0;
+        for (HeapEntry e : visible) {
+            visibleInstances += e.instances;
+            visibleBytes += e.bytes;
+        }
+
         List<Span> spans = new ArrayList<>();
         spans.add(Span.styled(" Classes: ", Style.EMPTY.fg(Color.YELLOW).bold()));
-        spans.add(Span.styled(String.valueOf(allEntries.size()), Style.EMPTY.fg(Color.WHITE)));
-        spans.add(Span.raw("    "));
-        spans.add(Span.styled("Showing: ", Style.EMPTY.fg(Color.YELLOW).bold()));
         spans.add(Span.styled(String.valueOf(visible.size()), Style.EMPTY.fg(Color.WHITE)));
         spans.add(Span.raw("    "));
-        spans.add(Span.styled("Total Instances: ", Style.EMPTY.fg(Color.YELLOW).bold()));
-        spans.add(Span.styled(formatNumber(totalInstances), Style.EMPTY.fg(Color.WHITE)));
+        spans.add(Span.styled("Instances: ", Style.EMPTY.fg(Color.YELLOW).bold()));
+        spans.add(Span.styled(formatNumber(visibleInstances), Style.EMPTY.fg(Color.WHITE)));
         spans.add(Span.raw("    "));
-        spans.add(Span.styled("Total Bytes: ", Style.EMPTY.fg(Color.YELLOW).bold()));
-        spans.add(Span.styled(formatBytes(totalBytes), Style.EMPTY.fg(Color.WHITE)));
+        spans.add(Span.styled("Bytes: ", Style.EMPTY.fg(Color.YELLOW).bold()));
+        spans.add(Span.styled(formatBytes(visibleBytes), Style.EMPTY.fg(Color.WHITE)));
         frame.renderWidget(Paragraph.from(Line.from(spans)), area);
     }
 

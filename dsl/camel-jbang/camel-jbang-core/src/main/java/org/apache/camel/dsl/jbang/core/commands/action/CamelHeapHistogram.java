@@ -137,9 +137,15 @@ public class CamelHeapHistogram extends ActionWatchCommand {
                 clearScreen();
             }
             if (!rows.isEmpty()) {
-                printer().printf("PID: %s\tClasses: %d\tTotal Instances: %s\tTotal Bytes: %s\tDisplay: %d%n",
-                        pid, arr != null ? arr.size() : 0,
-                        formatNumber(totalInstances), formatBytes(totalBytes), rows.size());
+                long visibleInstances = 0;
+                long visibleBytes = 0;
+                for (Row r : rows) {
+                    visibleInstances += r.instances;
+                    visibleBytes += r.bytes;
+                }
+                printer().printf("PID: %s\tClasses: %d\tInstances: %s\tBytes: %s%n",
+                        pid, rows.size(),
+                        formatNumber(visibleInstances), formatBytes(visibleBytes));
                 printTable(rows);
             }
         } else {
