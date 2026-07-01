@@ -42,55 +42,61 @@ public class OpenAIMockReplyWithAfterToolTest {
     @Test
     public void testReplyWithAfterTool() throws Exception {
         HttpClient client = HttpClient.newHttpClient();
+        try {
+            // First request - should trigger tool call
+            HttpRequest request1 = HttpRequest.newBuilder()
+                    .uri(URI.create(openAIMock.getBaseUrl() + "/v1/chat/completions"))
+                    .header("Content-Type", "application/json")
+                    .POST(HttpRequest.BodyPublishers
+                            .ofString(
+                                    "{\"messages\": [{\"role\": \"user\", \"content\": \"What is the weather in london?\"}]}"))
+                    .build();
 
-        // First request - should trigger tool call
-        HttpRequest request1 = HttpRequest.newBuilder()
-                .uri(URI.create(openAIMock.getBaseUrl() + "/v1/chat/completions"))
-                .header("Content-Type", "application/json")
-                .POST(HttpRequest.BodyPublishers
-                        .ofString("{\"messages\": [{\"role\": \"user\", \"content\": \"What is the weather in london?\"}]}"))
-                .build();
+            HttpResponse<String> response1 = client.send(request1, HttpResponse.BodyHandlers.ofString());
+            String responseBody1 = response1.body();
 
-        HttpResponse<String> response1 = client.send(request1, HttpResponse.BodyHandlers.ofString());
-        String responseBody1 = response1.body();
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode responseJson1 = objectMapper.readTree(responseBody1);
 
-        ObjectMapper objectMapper = new ObjectMapper();
-        JsonNode responseJson1 = objectMapper.readTree(responseBody1);
+            JsonNode choice1 = responseJson1.path("choices").get(0);
+            JsonNode message1 = choice1.path("message");
 
-        JsonNode choice1 = responseJson1.path("choices").get(0);
-        JsonNode message1 = choice1.path("message");
+            assertEquals("assistant", message1.path("role").asText());
+            assertEquals("tool_calls", choice1.path("finish_reason").asText());
 
-        assertEquals("assistant", message1.path("role").asText());
-        assertEquals("tool_calls", choice1.path("finish_reason").asText());
+            JsonNode toolCalls = message1.path("tool_calls");
+            assertEquals(1, toolCalls.size());
 
-        JsonNode toolCalls = message1.path("tool_calls");
-        assertEquals(1, toolCalls.size());
+            JsonNode toolCall = toolCalls.get(0);
+            String toolCallId = toolCall.path("id").asText();
+            assertEquals("function", toolCall.path("type").asText());
+            assertEquals("FindsTheLatitudeAndLongitudeOfAGivenCity", toolCall.path("function").path("name").asText());
+            assertEquals("{\"name\":\"London\"}", toolCall.path("function").path("arguments").asText());
 
-        JsonNode toolCall = toolCalls.get(0);
-        String toolCallId = toolCall.path("id").asText();
-        assertEquals("function", toolCall.path("type").asText());
-        assertEquals("FindsTheLatitudeAndLongitudeOfAGivenCity", toolCall.path("function").path("name").asText());
-        assertEquals("{\"name\":\"London\"}", toolCall.path("function").path("arguments").asText());
+            // Second request with tool result - should return custom reply
+            String secondRequestBody = String.format(
+                    "{\"messages\": [{\"role\": \"user\", \"content\": \"What is the weather in london?\"}, {\"role\":\"tool\", \"tool_call_id\":\"%s\", \"content\":\"{\\\"latitude\\\": \\\"51.5074\\\", \\\"longitude\\\": \\\"-0.1278\\\"}\"}]}",
+                    toolCallId);
+            HttpRequest request2 = HttpRequest.newBuilder()
+                    .uri(URI.create(openAIMock.getBaseUrl() + "/v1/chat/completions"))
+                    .header("Content-Type", "application/json")
+                    .POST(HttpRequest.BodyPublishers.ofString(secondRequestBody))
+                    .build();
 
-        // Second request with tool result - should return custom reply
-        String secondRequestBody = String.format(
-                "{\"messages\": [{\"role\": \"user\", \"content\": \"What is the weather in london?\"}, {\"role\":\"tool\", \"tool_call_id\":\"%s\", \"content\":\"{\\\"latitude\\\": \\\"51.5074\\\", \\\"longitude\\\": \\\"-0.1278\\\"}\"}]}",
-                toolCallId);
-        HttpRequest request2 = HttpRequest.newBuilder()
-                .uri(URI.create(openAIMock.getBaseUrl() + "/v1/chat/completions"))
-                .header("Content-Type", "application/json")
-                .POST(HttpRequest.BodyPublishers.ofString(secondRequestBody))
-                .build();
+            HttpResponse<String> response2 = client.send(request2, HttpResponse.BodyHandlers.ofString());
+            String responseBody2 = response2.body();
+            JsonNode responseJson2 = objectMapper.readTree(responseBody2);
 
-        HttpResponse<String> response2 = client.send(request2, HttpResponse.BodyHandlers.ofString());
-        String responseBody2 = response2.body();
-        JsonNode responseJson2 = objectMapper.readTree(responseBody2);
+            JsonNode choice2 = responseJson2.path("choices").get(0);
+            JsonNode message2 = choice2.path("message");
 
-        JsonNode choice2 = responseJson2.path("choices").get(0);
-        JsonNode message2 = choice2.path("message");
-
-        assertEquals("assistant", message2.path("role").asText());
-        assertEquals("stop", choice2.path("finish_reason").asText());
-        assertEquals("the latitude of london is 1", message2.path("content").asText());
+            assertEquals("assistant", message2.path("role").asText());
+            assertEquals("stop", choice2.path("finish_reason").asText());
+            assertEquals("the latitude of london is 1", message2.path("content").asText());
+        } finally {
+            if (client instanceof AutoCloseable ac) {
+                ac.close();
+            }
+        }
     }
 }
