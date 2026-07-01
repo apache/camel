@@ -80,7 +80,7 @@ public class Shell extends CamelCommand {
 
         // org.jline.shell.Shell is used via FQCN to avoid clash with this class name
         ShellBuilder builder = org.jline.shell.Shell.builder()
-                .prompt(() -> buildPrompt(camelVersion, colorEnabled))
+                .prompt(() -> buildPrompt(colorEnabled))
                 .rightPrompt(() -> buildRightPrompt(colorEnabled))
                 .groups(registry, new PosixCommandGroup(), new InteractiveCommandGroup())
                 .historyFile(history)
@@ -114,16 +114,12 @@ public class Shell extends CamelCommand {
         return 0;
     }
 
-    private static String buildPrompt(String camelVersion, boolean colorEnabled) {
+    private static String buildPrompt(boolean colorEnabled) {
         if (!colorEnabled) {
-            return camelVersion != null ? "camel " + camelVersion + "> " : "camel> ";
+            return "camel> ";
         }
         AttributedStringBuilder sb = new AttributedStringBuilder();
         sb.append("camel", AttributedStyle.DEFAULT.bold().foregroundRgb(CAMEL_ORANGE));
-        if (camelVersion != null) {
-            sb.append(" ");
-            sb.append(camelVersion, AttributedStyle.DEFAULT.foreground(AttributedStyle.GREEN));
-        }
         sb.append("> ", AttributedStyle.DEFAULT);
         return sb.toAnsi();
     }

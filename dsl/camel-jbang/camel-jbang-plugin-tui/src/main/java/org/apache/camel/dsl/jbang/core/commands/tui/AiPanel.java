@@ -526,7 +526,7 @@ class AiPanel {
 
     void renderFooter(List<Span> spans) {
         MonitorContext.hint(spans, "F8", "close");
-        MonitorContext.hint(spans, "Shift+F8", panelPercent() + "%");
+        MonitorContext.hint(spans, "Shift+F8", "resize (" + SPLIT_PERCENTS[splitIndex] + "%)");
         MonitorContext.hint(spans, "PgUp/Dn", "scroll");
         if (!thinking.get()) {
             MonitorContext.hint(spans, "Enter", "send");

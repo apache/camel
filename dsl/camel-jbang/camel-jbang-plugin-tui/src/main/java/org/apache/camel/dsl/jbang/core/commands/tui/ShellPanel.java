@@ -18,13 +18,15 @@ package org.apache.camel.dsl.jbang.core.commands.tui;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.lang.reflect.Field;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
+import dev.tamboui.layout.Constraint;
+import dev.tamboui.layout.Layout;
 import dev.tamboui.layout.Rect;
 import dev.tamboui.style.AnsiColor;
 import dev.tamboui.style.Color;
@@ -43,10 +45,11 @@ import dev.tamboui.widgets.block.BorderType;
 import dev.tamboui.widgets.block.Borders;
 import dev.tamboui.widgets.block.Title;
 import dev.tamboui.widgets.paragraph.Paragraph;
+import dev.tamboui.widgets.scrollbar.Scrollbar;
+import dev.tamboui.widgets.scrollbar.ScrollbarState;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.EnvironmentHelper;
 import org.apache.camel.dsl.jbang.core.common.Printer;
-import org.apache.camel.dsl.jbang.core.common.VersionHelper;
 import org.jline.builtins.InteractiveCommandGroup;
 import org.jline.builtins.PosixCommandGroup;
 import org.jline.picocli.PicocliCommandRegistry;
@@ -74,6 +77,7 @@ import org.jline.utils.ScreenTerminalOutputStream;
  */
 class ShellPanel {
 
+    private static final Logger LOG = System.getLogger(ShellPanel.class.getName());
     private static final int[] SPLIT_PERCENTS = { 25, 50, 75, 100 };
     private static final int MOUSE_SCROLL_LINES = 3;
 
@@ -85,10 +89,14 @@ class ShellPanel {
     private LineDisciplineTerminal virtualTerminal;
     private Thread shellThread;
 
+    private final ScrollbarState scrollbarState = new ScrollbarState();
+
     private int lastWidth;
     private int lastHeight;
     private int scrollOffset;
     private int lastHistorySize;
+    private int lastCursorX = -1;
+    private int lastCursorY = -1;
     private Rect lastArea;
     private volatile boolean shellExited;
 
@@ -140,7 +148,7 @@ class ShellPanel {
 
         // PageUp/Down for scrollback through history
         if (ke.isKey(KeyCode.PAGE_UP)) {
-            int histSize = screenTerminal != null ? getHistorySize(screenTerminal) : 0;
+            int histSize = screenTerminal != null ? screenTerminal.getHistorySize() : 0;
             scrollOffset = Math.min(scrollOffset + lastHeight, histSize);
             return true;
         }
@@ -159,8 +167,12 @@ class ShellPanel {
                 if (bytes != null && bytes.length > 0) {
                     virtualTerminal.processInputBytes(bytes);
                 }
-            } catch (IOException | ArrayIndexOutOfBoundsException e) {
-                // terminal closed or buffer resized concurrently
+            } catch (IOException e) {
+                // terminal closed — expected during shutdown
+                LOG.log(Level.DEBUG, "Terminal I/O error forwarding key event", e);
+            } catch (ArrayIndexOutOfBoundsException e) {
+                // ScreenTerminal buffer resized concurrently
+                LOG.log(Level.DEBUG, "Buffer resize race during key forwarding", e);
             }
         }
         return true;
@@ -177,7 +189,7 @@ class ShellPanel {
             return false;
         }
         if (me.kind() == MouseEventKind.SCROLL_UP) {
-            int histSize = screenTerminal != null ? getHistorySize(screenTerminal) : 0;
+            int histSize = screenTerminal != null ? screenTerminal.getHistorySize() : 0;
             scrollOffset = Math.min(scrollOffset + MOUSE_SCROLL_LINES, histSize);
             return true;
         }
@@ -246,21 +258,16 @@ class ShellPanel {
             screenTerminal.dump(screen, cursor);
         } catch (ArrayIndexOutOfBoundsException e) {
             // buffer resized concurrently — skip this frame
+            LOG.log(Level.DEBUG, "Buffer resize race during screen dump — skipping frame", e);
             return;
         }
 
         // Auto-follow: reset scroll when new history appears
-        int histSize = getHistorySize(screenTerminal);
+        int histSize = screenTerminal.getHistorySize();
         if (histSize > lastHistorySize && scrollOffset > 0) {
             scrollOffset = 0;
         }
         lastHistorySize = histSize;
-
-        // Show a block cursor by toggling the reversed attribute on the cell at the cursor position
-        if (scrollOffset == 0 && cursor[1] >= 0 && cursor[1] < innerHeight
-                && cursor[0] >= 0 && cursor[0] < innerWidth) {
-            screen[cursor[1] * innerWidth + cursor[0]] ^= (1L << 57);
-        }
 
         List<Line> lines;
         if (scrollOffset > 0) {
@@ -269,17 +276,54 @@ class ShellPanel {
             lines = renderLiveView(screen, innerWidth, innerHeight);
         }
 
+        // Split the inner area: content (fill) + scrollbar (1 col) when history exists
+        int totalLines = histSize + innerHeight;
+        boolean showScrollbar = totalLines > innerHeight;
+        Rect contentArea;
+        if (showScrollbar) {
+            List<Rect> hChunks = Layout.horizontal()
+                    .constraints(Constraint.fill(), Constraint.length(1))
+                    .split(inner);
+            contentArea = hChunks.get(0);
+
+            // Map scrollOffset (lines-from-bottom) to top-down position for ScrollbarState
+            int viewStart = Math.max(0, totalLines - scrollOffset - innerHeight);
+            scrollbarState
+                    .contentLength(totalLines)
+                    .viewportContentLength(innerHeight)
+                    .position(viewStart);
+            frame.renderStatefulWidget(Scrollbar.builder().build(), hChunks.get(1), scrollbarState);
+        } else {
+            contentArea = inner;
+        }
+
         frame.renderWidget(
                 Paragraph.builder()
                         .text(Text.from(lines))
                         .overflow(Overflow.CLIP)
                         .build(),
-                inner);
+                contentArea);
+
+        // Position the hardware cursor only when it has moved, so the terminal's
+        // blink timer is not reset on every frame.
+        if (scrollOffset == 0 && cursor[1] >= 0 && cursor[1] < innerHeight
+                && cursor[0] >= 0 && cursor[0] < innerWidth) {
+            int cx = contentArea.x() + cursor[0];
+            int cy = contentArea.y() + cursor[1];
+            if (cx != lastCursorX || cy != lastCursorY) {
+                frame.setCursorPosition(cx, cy);
+                lastCursorX = cx;
+                lastCursorY = cy;
+            }
+        } else {
+            lastCursorX = -1;
+            lastCursorY = -1;
+        }
     }
 
     void renderFooter(List<Span> spans) {
         MonitorContext.hint(spans, "F6", "close");
-        MonitorContext.hint(spans, "Shift+F6", SPLIT_PERCENTS[splitIndex] + "%");
+        MonitorContext.hint(spans, "Shift+F6", "resize (" + SPLIT_PERCENTS[splitIndex] + "%)");
         MonitorContext.hint(spans, "PgUp/Dn", "scroll");
     }
 
@@ -292,7 +336,7 @@ class ShellPanel {
     }
 
     private List<Line> renderScrolledView(long[] screen, int width, int height) {
-        List<long[]> history = getHistory(screenTerminal);
+        List<long[]> history = screenTerminal.getHistory();
         if (history.isEmpty()) {
             return renderLiveView(screen, width, height);
         }
@@ -323,20 +367,19 @@ class ShellPanel {
         int col = 0;
         while (col < width) {
             long cell = buffer[offset + col];
-            int ch = (int) (cell & 0xffffffffL);
-            long attr = cell >>> 32;
-            Style style = convertAttrToStyle(attr);
+            int ch = ScreenTerminal.cellCodePoint(cell);
+            long attr = ScreenTerminal.cellAttr(cell);
+            Style style = convertCellToStyle(cell);
 
             StringBuilder sb = new StringBuilder();
             sb.appendCodePoint(ch == 0 ? ' ' : ch);
             int nextCol = col + 1;
             while (nextCol < width) {
                 long nextCell = buffer[offset + nextCol];
-                long nextAttr = nextCell >>> 32;
-                if (nextAttr != attr) {
+                if (ScreenTerminal.cellAttr(nextCell) != attr) {
                     break;
                 }
-                int nextCh = (int) (nextCell & 0xffffffffL);
+                int nextCh = ScreenTerminal.cellCodePoint(nextCell);
                 sb.appendCodePoint(nextCh == 0 ? ' ' : nextCh);
                 nextCol++;
             }
@@ -391,8 +434,6 @@ class ShellPanel {
                     return "Camel";
                 }
             };
-            String camelVersion = VersionHelper.extractCamelVersion();
-
             // Redirect command output (printer()) through the virtual terminal
             // so it renders in the shell panel instead of the TUI's real terminal
             CamelJBangMain main = (CamelJBangMain) CamelJBangMain.getCommandLine().getCommand();
@@ -431,7 +472,7 @@ class ShellPanel {
 
             try (Shell shell = Shell.builder()
                     .terminal(terminal)
-                    .prompt(() -> buildPrompt(camelVersion))
+                    .prompt(ShellPanel::buildPrompt)
                     .groups(registry, new PosixCommandGroup(), new InteractiveCommandGroup())
                     .historyCommands(true)
                     .helpCommands(true)
@@ -456,13 +497,9 @@ class ShellPanel {
         }
     }
 
-    private static String buildPrompt(String camelVersion) {
+    private static String buildPrompt() {
         AttributedStringBuilder sb = new AttributedStringBuilder();
         sb.append("camel", AttributedStyle.DEFAULT.bold().foregroundRgb(0xF69123));
-        if (camelVersion != null) {
-            sb.append(" ");
-            sb.append(camelVersion, AttributedStyle.DEFAULT.foreground(AttributedStyle.GREEN));
-        }
         sb.append("> ", AttributedStyle.DEFAULT);
         return sb.toAnsi();
     }
@@ -476,49 +513,41 @@ class ShellPanel {
             try {
                 virtualTerminal.close();
             } catch (IOException e) {
-                // ignore
+                LOG.log(Level.DEBUG, "Error closing virtual terminal during shutdown", e);
             }
             virtualTerminal = null;
         }
         screenTerminal = null;
     }
 
-    // Attribute mask from ScreenTerminal:
-    //   0xYXFFFBBB00000000L
-    //   X: Bit 0=Underline, Bit 1=Negative, Bit 2=Concealed, Bit 3=Bold
-    //   Y: Bit 0=FG set, Bit 1=BG set, Bit 2=Dim, Bit 3=Italic
-    //   F: Foreground r-g-b (3 hex nibbles)
-    //   B: Background r-g-b (3 hex nibbles)
-    static Style convertAttrToStyle(long attr) {
+    /**
+     * Converts a {@link ScreenTerminal} 64-bit cell value into a TamboUI {@link Style}, using JLine's public
+     * cell-decoding helpers.
+     */
+    static Style convertCellToStyle(long cell) {
         Style style = Style.EMPTY;
 
-        int x = (int) ((attr >> 24) & 0xF);
-        int y = (int) ((attr >> 28) & 0xF);
-
-        if ((x & 0x8) != 0) {
+        if (ScreenTerminal.cellBold(cell)) {
             style = style.bold();
         }
-        if ((x & 0x1) != 0) {
+        if (ScreenTerminal.cellUnderline(cell)) {
             style = style.underlined();
         }
-        if ((x & 0x2) != 0) {
+        if (ScreenTerminal.cellInverse(cell)) {
             style = style.reversed();
         }
-        if ((y & 0x4) != 0) {
+        if (ScreenTerminal.cellDim(cell)) {
             style = style.dim();
         }
-        if ((y & 0x8) != 0) {
+        if (ScreenTerminal.cellItalic(cell)) {
             style = style.italic();
         }
 
-        // Foreground color (if set)
-        if ((y & 0x1) != 0) {
-            style = style.fg(resolveColor((int) ((attr >> 12) & 0xFFF)));
+        if (ScreenTerminal.cellHasForeground(cell)) {
+            style = style.fg(resolveColor(ScreenTerminal.cellForeground(cell)));
         }
-
-        // Background color (if set)
-        if ((y & 0x2) != 0) {
-            style = style.bg(resolveColor((int) (attr & 0xFFF)));
+        if (ScreenTerminal.cellHasBackground(cell)) {
+            style = style.bg(resolveColor(ScreenTerminal.cellBackground(cell)));
         }
 
         return style;
@@ -616,22 +645,6 @@ class ShellPanel {
         };
     }
 
-    @SuppressWarnings("unchecked")
-    private static List<long[]> getHistory(ScreenTerminal st) {
-        try {
-            Field f = ScreenTerminal.class.getDeclaredField("history");
-            f.setAccessible(true);
-            List<long[]> history = (List<long[]>) f.get(st);
-            return history != null ? history : Collections.emptyList();
-        } catch (Exception e) {
-            return Collections.emptyList();
-        }
-    }
-
-    private static int getHistorySize(ScreenTerminal st) {
-        return getHistory(st).size();
-    }
-
     private static class DelegateOutputStream extends OutputStream {
         volatile OutputStream delegate;
 
@@ -642,6 +655,7 @@ class ShellPanel {
                     delegate.write(b);
                 } catch (ArrayIndexOutOfBoundsException e) {
                     // ScreenTerminal buffer resized concurrently — safe to ignore
+                    LOG.log(Level.TRACE, "Buffer resize race in write(int)", e);
                 }
             }
         }
@@ -653,6 +667,7 @@ class ShellPanel {
                     delegate.write(b, off, len);
                 } catch (ArrayIndexOutOfBoundsException e) {
                     // ScreenTerminal buffer resized concurrently — safe to ignore
+                    LOG.log(Level.TRACE, "Buffer resize race in write(byte[])", e);
                 }
             }
         }
@@ -664,6 +679,7 @@ class ShellPanel {
                     delegate.flush();
                 } catch (ArrayIndexOutOfBoundsException e) {
                     // ScreenTerminal buffer resized concurrently — safe to ignore
+                    LOG.log(Level.TRACE, "Buffer resize race in flush()", e);
                 }
             }
         }
