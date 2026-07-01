@@ -167,31 +167,10 @@ class HeapHistogramTab implements MonitorTab {
         List<HeapEntry> visible = sortedEntries();
 
         List<Rect> chunks = Layout.vertical()
-                .constraints(Constraint.length(1), Constraint.percentage(60), Constraint.fill())
+                .constraints(Constraint.percentage(60), Constraint.fill())
                 .split(area);
-        renderSummary(frame, chunks.get(0), visible);
-        renderTable(frame, chunks.get(1), visible);
-        renderDetail(frame, chunks.get(2), visible);
-    }
-
-    private void renderSummary(Frame frame, Rect area, List<HeapEntry> visible) {
-        long visibleInstances = 0;
-        long visibleBytes = 0;
-        for (HeapEntry e : visible) {
-            visibleInstances += e.instances;
-            visibleBytes += e.bytes;
-        }
-
-        List<Span> spans = new ArrayList<>();
-        spans.add(Span.styled(" Classes: ", Style.EMPTY.fg(Color.YELLOW).bold()));
-        spans.add(Span.styled(String.valueOf(visible.size()), Style.EMPTY.fg(Color.WHITE)));
-        spans.add(Span.raw("    "));
-        spans.add(Span.styled("Instances: ", Style.EMPTY.fg(Color.YELLOW).bold()));
-        spans.add(Span.styled(formatNumber(visibleInstances), Style.EMPTY.fg(Color.WHITE)));
-        spans.add(Span.raw("    "));
-        spans.add(Span.styled("Bytes: ", Style.EMPTY.fg(Color.YELLOW).bold()));
-        spans.add(Span.styled(formatBytes(visibleBytes), Style.EMPTY.fg(Color.WHITE)));
-        frame.renderWidget(Paragraph.from(Line.from(spans)), area);
+        renderTable(frame, chunks.get(0), visible);
+        renderDetail(frame, chunks.get(1), visible);
     }
 
     private void renderTable(Frame frame, Rect area, List<HeapEntry> visible) {
@@ -210,8 +189,16 @@ class HeapHistogramTab implements MonitorTab {
                     Cell.from(""), Cell.from(""), Cell.from("")));
         }
 
-        String title = String.format(" Heap Histogram [%d] sort:%s filter:%s ",
-                visible.size(), sort, FILTER_LABELS[filter]);
+        long visibleInstances = 0;
+        long visibleBytes = 0;
+        for (HeapEntry e : visible) {
+            visibleInstances += e.instances;
+            visibleBytes += e.bytes;
+        }
+
+        String title = String.format(" Heap Histogram [%d] instances:%s bytes:%s sort:%s filter:%s ",
+                visible.size(), formatNumber(visibleInstances), formatBytes(visibleBytes),
+                sort, FILTER_LABELS[filter]);
 
         Table table = Table.builder()
                 .rows(rows)
