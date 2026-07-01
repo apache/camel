@@ -67,6 +67,7 @@ class BrowseTab implements MonitorTab {
     private final TableState endpointTableState = new TableState();
     private final TableState messageTableState = new TableState();
     private final AtomicBoolean loading = new AtomicBoolean(false);
+
     private String sort = "uri";
     private int sortIndex;
     private boolean sortReversed;

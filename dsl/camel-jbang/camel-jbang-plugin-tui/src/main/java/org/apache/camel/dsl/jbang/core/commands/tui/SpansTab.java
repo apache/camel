@@ -63,6 +63,7 @@ class SpansTab implements MonitorTab {
     private final TableState traceListState = new TableState();
     private final ScrollbarState waterfallScrollState = new ScrollbarState();
     private Rect lastTableArea;
+
     private boolean waterfallView;
     private String selectedTraceId;
     private String selectedListTraceId;

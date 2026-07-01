@@ -55,6 +55,7 @@ class ThreadsTab implements MonitorTab {
     private final MonitorContext ctx;
     private final TableState tableState = new TableState();
     private final AtomicBoolean loading = new AtomicBoolean(false);
+
     private String sort = "id";
     private int sortIndex;
     private boolean sortReversed;

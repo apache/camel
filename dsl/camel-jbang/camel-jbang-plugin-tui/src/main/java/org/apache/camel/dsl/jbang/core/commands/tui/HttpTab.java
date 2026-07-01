@@ -82,6 +82,7 @@ class HttpTab implements MonitorTab {
     private final TableState tableState = new TableState();
     private Rect lastTableArea;
     private final AtomicBoolean specLoading = new AtomicBoolean(false);
+
     private String sort = "method";
     private int sortIndex;
     private boolean sortReversed;

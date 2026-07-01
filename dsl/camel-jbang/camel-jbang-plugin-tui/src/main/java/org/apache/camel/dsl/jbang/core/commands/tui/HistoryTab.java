@@ -83,6 +83,7 @@ class HistoryTab implements MonitorTab {
     private final TableState traceStepTableState = new TableState();
     private final ScrollbarState traceDetailScrollState = new ScrollbarState();
     private final ScrollbarState historyDetailScrollState = new ScrollbarState();
+
     private String traceSort = "time";
     private int traceSortIndex;
     private boolean traceSortReversed;

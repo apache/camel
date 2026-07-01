@@ -70,8 +70,8 @@ class PopupManager {
     private final ListState switchPopupState = new ListState();
 
     // "More" dropdown state
-    /** Number of entries in the "More" dropdown; must match the items rendered in {@link #renderMorePopup}. */
-    private static final int MORE_ITEM_COUNT = 17;
+    /** Number of entries in the "More" dropdown; derived from {@link #moreItems()} so it can never go stale. */
+    private static final int MORE_ITEM_COUNT = moreItems().length;
     private boolean showMorePopup;
     private final ListState morePopupState = new ListState();
     private int lastMoreSelection;
@@ -303,9 +303,37 @@ class PopupManager {
 
     // ---- Rendering ----
 
+    /**
+     * The entries of the "More" dropdown, in display order. Shared between {@link #renderMorePopup} and
+     * {@link #MORE_ITEM_COUNT} so the rendered list and the hit-testing/navigation bounds stay in sync.
+     */
+    private static ListItem[] moreItems() {
+        Style keyStyle = Style.EMPTY.fg(Color.YELLOW).bold();
+        return new ListItem[] {
+                ListItem.from(Line.from(Span.raw("  "), Span.styled("B", keyStyle), Span.raw("eans"))),
+                ListItem.from(Line.from(Span.raw("  Bro"), Span.styled("w", keyStyle), Span.raw("se"))),
+                ListItem.from(Line.from(Span.raw("  "), Span.styled("C", keyStyle), Span.raw("ircuit Breaker"))),
+                ListItem.from(Line.from(Span.raw("  Cl"), Span.styled("a", keyStyle), Span.raw("sspath"))),
+                ListItem.from(Line.from(Span.raw("  Confi"), Span.styled("g", keyStyle), Span.raw("uration"))),
+                ListItem.from(Line.from(Span.raw("  Co"), Span.styled("n", keyStyle), Span.raw("sumers"))),
+                ListItem.from(Line.from(Span.raw("  "), Span.styled("D", keyStyle), Span.raw("ataSource"))),
+                ListItem.from(Line.from(Span.raw("  "), Span.styled("H", keyStyle), Span.raw("eap Histogram"))),
+                ListItem.from(Line.from(Span.raw("  "), Span.styled("I", keyStyle), Span.raw("nflight"))),
+                ListItem.from(Line.from(Span.raw("  "), Span.styled("M", keyStyle), Span.raw("emory"))),
+                ListItem.from(Line.from(Span.raw("  M"), Span.styled("e", keyStyle), Span.raw("trics"))),
+                ListItem.from(Line.from(Span.raw("  S"), Span.styled("Q", keyStyle), Span.raw("L Query"))),
+                ListItem.from(Line.from(Span.raw("  SQL T"), Span.styled("r", keyStyle), Span.raw("ace"))),
+                ListItem.from(Line.from(Span.raw("  "), Span.styled("O", keyStyle), Span.raw("Tel Spans"))),
+                ListItem.from(Line.from(Span.raw("  "), Span.styled("P", keyStyle), Span.raw("rocess"))),
+                ListItem.from(Line.from(Span.raw("  "), Span.styled("S", keyStyle), Span.raw("tartup"))),
+                ListItem.from(Line.from(Span.raw("  "), Span.styled("T", keyStyle), Span.raw("hreads"))),
+        };
+    }
+
     void renderMorePopup(Frame frame, Rect area) {
         int popupW = 22;
-        int popupH = 19;
+        // items plus the top and bottom border rows
+        int popupH = MORE_ITEM_COUNT + 2;
         // Position just below the "0 More▾" tab label
         int dividerW = CharWidth.of(" | ");
         int tabBarX = 0;
@@ -326,28 +354,8 @@ class PopupManager {
 
         frame.renderWidget(Clear.INSTANCE, popup);
 
-        Style keyStyle = Style.EMPTY.fg(Color.YELLOW).bold();
-        ListItem[] items = {
-                ListItem.from(Line.from(Span.raw("  "), Span.styled("B", keyStyle), Span.raw("eans"))),
-                ListItem.from(Line.from(Span.raw("  Bro"), Span.styled("w", keyStyle), Span.raw("se"))),
-                ListItem.from(Line.from(Span.raw("  "), Span.styled("C", keyStyle), Span.raw("ircuit Breaker"))),
-                ListItem.from(Line.from(Span.raw("  Cl"), Span.styled("a", keyStyle), Span.raw("sspath"))),
-                ListItem.from(Line.from(Span.raw("  Confi"), Span.styled("g", keyStyle), Span.raw("uration"))),
-                ListItem.from(Line.from(Span.raw("  Co"), Span.styled("n", keyStyle), Span.raw("sumers"))),
-                ListItem.from(Line.from(Span.raw("  "), Span.styled("D", keyStyle), Span.raw("ataSource"))),
-                ListItem.from(Line.from(Span.raw("  "), Span.styled("H", keyStyle), Span.raw("eap Histogram"))),
-                ListItem.from(Line.from(Span.raw("  "), Span.styled("I", keyStyle), Span.raw("nflight"))),
-                ListItem.from(Line.from(Span.raw("  "), Span.styled("M", keyStyle), Span.raw("emory"))),
-                ListItem.from(Line.from(Span.raw("  M"), Span.styled("e", keyStyle), Span.raw("trics"))),
-                ListItem.from(Line.from(Span.raw("  S"), Span.styled("Q", keyStyle), Span.raw("L Query"))),
-                ListItem.from(Line.from(Span.raw("  SQL T"), Span.styled("r", keyStyle), Span.raw("ace"))),
-                ListItem.from(Line.from(Span.raw("  "), Span.styled("O", keyStyle), Span.raw("Tel Spans"))),
-                ListItem.from(Line.from(Span.raw("  "), Span.styled("P", keyStyle), Span.raw("rocess"))),
-                ListItem.from(Line.from(Span.raw("  "), Span.styled("S", keyStyle), Span.raw("tartup"))),
-                ListItem.from(Line.from(Span.raw("  "), Span.styled("T", keyStyle), Span.raw("hreads"))),
-        };
         ListWidget list = ListWidget.builder()
-                .items(items)
+                .items(moreItems())
                 .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
                 .highlightSymbol("")
                 .scrollMode(ScrollMode.NONE)
