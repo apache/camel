@@ -28,9 +28,11 @@ import dev.tamboui.style.Style;
 import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.Span;
 import dev.tamboui.tui.event.KeyEvent;
+import dev.tamboui.tui.event.MouseEvent;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
 import dev.tamboui.widgets.block.Borders;
+import dev.tamboui.widgets.scrollbar.ScrollbarState;
 import dev.tamboui.widgets.table.Cell;
 import dev.tamboui.widgets.table.Row;
 import dev.tamboui.widgets.table.Table;
@@ -46,6 +48,8 @@ class ConsumersTab implements MonitorTab {
 
     private final MonitorContext ctx;
     private final TableState tableState = new TableState();
+    private final ScrollbarState tableScrollState = new ScrollbarState();
+    private Rect lastTableArea;
     private String sort = "id";
     private int sortIndex;
     private boolean sortReversed;
@@ -70,16 +74,28 @@ class ConsumersTab implements MonitorTab {
     }
 
     @Override
+    public boolean handleMouseEvent(MouseEvent me, Rect area) {
+        IntegrationInfo info = ctx.findSelectedIntegration();
+        if (info == null) {
+            return false;
+        }
+        return MonitorTab.handleTableClick(me, lastTableArea, tableState, info.consumers.size());
+    }
+
+    @Override
     public boolean handleEscape() {
         return false;
     }
 
     @Override
     public void navigateUp() {
+        tableState.selectPrevious();
     }
 
     @Override
     public void navigateDown() {
+        IntegrationInfo info = ctx.findSelectedIntegration();
+        tableState.selectNext(info != null ? info.consumers.size() : 0);
     }
 
     @Override
@@ -153,7 +169,9 @@ class ConsumersTab implements MonitorTab {
                         .title(" Consumers sort:" + sort + " ").build())
                 .build();
 
+        lastTableArea = area;
         frame.renderStatefulWidget(table, area, tableState);
+        MonitorTab.renderTableScrollbar(frame, lastTableArea, tableState, tableScrollState, sorted.size());
     }
 
     @Override

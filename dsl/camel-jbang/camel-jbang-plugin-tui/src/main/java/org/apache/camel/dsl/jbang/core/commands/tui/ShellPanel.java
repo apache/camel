@@ -78,11 +78,10 @@ import org.jline.utils.ScreenTerminalOutputStream;
 class ShellPanel {
 
     private static final Logger LOG = System.getLogger(ShellPanel.class.getName());
-    private static final int[] SPLIT_PERCENTS = { 25, 50, 75, 100 };
     private static final int MOUSE_SCROLL_LINES = 3;
 
     private boolean visible;
-    private int splitIndex = 1; // default 50%
+    private final PanelAnimation anim = new PanelAnimation();
     private MonitorContext ctx;
 
     private ScreenTerminal screenTerminal;
@@ -108,12 +107,28 @@ class ShellPanel {
         return visible;
     }
 
-    int panelPercent() {
-        return SPLIT_PERCENTS[splitIndex];
+    int panelHeight() {
+        return anim.panelHeight();
     }
 
-    void cycleHeight() {
-        splitIndex = (splitIndex + 1) % SPLIT_PERCENTS.length;
+    boolean isAnimating() {
+        return anim.isAnimating();
+    }
+
+    void tickAnimation() {
+        anim.tickAnimation();
+    }
+
+    void initHeight(int contentHeight) {
+        anim.initHeight(contentHeight);
+    }
+
+    void cycleHeight(int contentHeight) {
+        anim.cycleHeight(contentHeight);
+    }
+
+    void setPanelHeight(int height) {
+        anim.setPanelHeight(height);
     }
 
     void open() {
@@ -324,7 +339,7 @@ class ShellPanel {
 
     void renderFooter(List<Span> spans) {
         MonitorContext.hint(spans, "F6", "close");
-        MonitorContext.hint(spans, "Shift+F6", "resize (" + SPLIT_PERCENTS[splitIndex] + "%)");
+        MonitorContext.hint(spans, "Shift+F6", "resize (" + anim.cyclePercent() + "%)");
         MonitorContext.hint(spans, "PgUp/Dn", "scroll");
     }
 

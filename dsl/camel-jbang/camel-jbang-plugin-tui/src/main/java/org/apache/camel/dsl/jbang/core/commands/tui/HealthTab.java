@@ -26,9 +26,11 @@ import dev.tamboui.style.Style;
 import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.Span;
 import dev.tamboui.tui.event.KeyEvent;
+import dev.tamboui.tui.event.MouseEvent;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
 import dev.tamboui.widgets.block.Borders;
+import dev.tamboui.widgets.scrollbar.ScrollbarState;
 import dev.tamboui.widgets.table.Cell;
 import dev.tamboui.widgets.table.Row;
 import dev.tamboui.widgets.table.Table;
@@ -44,6 +46,8 @@ class HealthTab implements MonitorTab {
 
     private final MonitorContext ctx;
     private final TableState tableState = new TableState();
+    private final ScrollbarState tableScrollState = new ScrollbarState();
+    private Rect lastTableArea;
     private boolean showOnlyDown;
     private String sort = "name";
     private int sortIndex = 1;
@@ -73,16 +77,28 @@ class HealthTab implements MonitorTab {
     }
 
     @Override
+    public boolean handleMouseEvent(MouseEvent me, Rect area) {
+        IntegrationInfo info = ctx.findSelectedIntegration();
+        if (info == null) {
+            return false;
+        }
+        return MonitorTab.handleTableClick(me, lastTableArea, tableState, getFilteredHealthChecks(info).size());
+    }
+
+    @Override
     public boolean handleEscape() {
         return false;
     }
 
     @Override
     public void navigateUp() {
+        tableState.selectPrevious();
     }
 
     @Override
     public void navigateDown() {
+        IntegrationInfo info = ctx.findSelectedIntegration();
+        tableState.selectNext(info != null ? getFilteredHealthChecks(info).size() : 0);
     }
 
     @Override
@@ -158,7 +174,9 @@ class HealthTab implements MonitorTab {
                 .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(title).build())
                 .build();
 
+        lastTableArea = area;
         frame.renderStatefulWidget(table, area, tableState);
+        MonitorTab.renderTableScrollbar(frame, lastTableArea, tableState, tableScrollState, healthChecks.size());
     }
 
     @Override

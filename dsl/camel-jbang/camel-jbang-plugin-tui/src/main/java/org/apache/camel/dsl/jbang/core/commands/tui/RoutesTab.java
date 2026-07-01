@@ -32,10 +32,13 @@ import dev.tamboui.text.Line;
 import dev.tamboui.text.Span;
 import dev.tamboui.text.Text;
 import dev.tamboui.tui.event.KeyEvent;
+import dev.tamboui.tui.event.MouseEvent;
+import dev.tamboui.tui.event.MouseEventKind;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
 import dev.tamboui.widgets.block.Borders;
 import dev.tamboui.widgets.paragraph.Paragraph;
+import dev.tamboui.widgets.scrollbar.ScrollbarState;
 import dev.tamboui.widgets.table.Cell;
 import dev.tamboui.widgets.table.Row;
 import dev.tamboui.widgets.table.Table;
@@ -65,7 +68,14 @@ class RoutesTab implements MonitorTab {
 
     // Table states
     private final TableState routeTableState = new TableState();
+    private final ScrollbarState routeTableScrollState = new ScrollbarState();
     private final TableState processorTableState = new TableState();
+    private final ScrollbarState processorTableScrollState = new ScrollbarState();
+    private Rect lastRouteTableArea;
+    private int topPanelHeight = -1;
+    private final DragSplit vSplit = new DragSplit();
+    private int infoPanelWidth = 30;
+    private final DragSplit hSplit = new DragSplit();
 
     // Diagram support (shared rendering/loading logic)
     private final DiagramSupport diagram = new DiagramSupport();
@@ -387,6 +397,49 @@ class RoutesTab implements MonitorTab {
     }
 
     @Override
+    public boolean handleMouseEvent(MouseEvent me, Rect area) {
+        if (!diagram.isShowDiagram() && vSplit.handleMouse(me, me.y())) {
+            if (vSplit.isDragging() && me.kind() == MouseEventKind.DRAG) {
+                topPanelHeight = Math.max(3, Math.min(me.y() - area.y(), area.height() - 5));
+            }
+            return true;
+        }
+        if (diagram.isShowDiagram() && hSplit.handleMouse(me, me.x())) {
+            if (hSplit.isDragging() && me.kind() == MouseEventKind.DRAG) {
+                infoPanelWidth = Math.max(10, Math.min(me.x() - area.x(), area.width() - 20));
+            }
+            return true;
+        }
+        if (!diagram.isShowDiagram()) {
+            IntegrationInfo info = ctx.findSelectedIntegration();
+            if (info != null) {
+                if (MonitorTab.handleTableClick(me, lastRouteTableArea, routeTableState, info.routes.size())) {
+                    return true;
+                }
+            }
+        }
+        if (diagram.isShowDiagram()) {
+            if (diagram.handleMouseScroll(me)) {
+                return true;
+            }
+            if (me.isClick()) {
+                if (topologyMode) {
+                    int clicked = diagram.handleNodeClick(me);
+                    if (clicked >= 0) {
+                        return true;
+                    }
+                } else {
+                    int clicked = diagram.handleEipNodeClick(me);
+                    if (clicked >= 0) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    @Override
     public void navigateUp() {
         if (!diagram.isShowDiagram()) {
             routeTableState.selectPrevious();
@@ -451,10 +504,11 @@ class RoutesTab implements MonitorTab {
                     title = Line.from(Span.raw(" Topology "));
                 }
                 if (selectedRouteId != null && area.width() > 60) {
-                    int panelWidth = 30;
+                    infoPanelWidth = Math.max(10, Math.min(infoPanelWidth, area.width() - 20));
                     List<Rect> hChunks = Layout.horizontal()
-                            .constraints(Constraint.length(panelWidth), Constraint.fill())
+                            .constraints(Constraint.length(infoPanelWidth), Constraint.fill())
                             .split(area);
+                    hSplit.setBorderPos(hChunks.get(1).x());
                     renderInfoPanel(frame, hChunks.get(0), info, selectedRouteId);
                     diagram.renderNativeDiagram(frame, hChunks.get(1), title, diagramMetrics);
                 } else {
@@ -466,10 +520,11 @@ class RoutesTab implements MonitorTab {
                 Line title = buildBreadcrumbTitle();
                 var routeLayout = diagram.getRouteLayout(drillDownRouteId);
                 if (area.width() > 60) {
-                    int panelWidth = 30;
+                    infoPanelWidth = Math.max(10, Math.min(infoPanelWidth, area.width() - 20));
                     List<Rect> hChunks = Layout.horizontal()
-                            .constraints(Constraint.length(panelWidth), Constraint.fill())
+                            .constraints(Constraint.length(infoPanelWidth), Constraint.fill())
                             .split(area);
+                    hSplit.setBorderPos(hChunks.get(1).x());
                     renderEipInfoPanel(frame, hChunks.get(0));
                     diagram.renderNativeRouteDiagram(
                             frame, hChunks.get(1), title, diagramMetrics, drillDownRouteId, routeLayout);
@@ -496,8 +551,12 @@ class RoutesTab implements MonitorTab {
         List<RouteInfo> sortedRoutes = new ArrayList<>(info.routes);
         sortedRoutes.sort(this::sortRoute);
 
+        if (topPanelHeight < 0) {
+            topPanelHeight = area.height() * 45 / 100;
+        }
+        topPanelHeight = Math.max(3, Math.min(topPanelHeight, area.height() - 5));
         List<Rect> chunks = Layout.vertical()
-                .constraints(Constraint.percentage(45), Constraint.percentage(55))
+                .constraints(Constraint.length(topPanelHeight), Constraint.fill())
                 .split(area);
 
         // Routes table
@@ -622,7 +681,11 @@ class RoutesTab implements MonitorTab {
                     .build();
         }
 
+        lastRouteTableArea = chunks.get(0);
+        vSplit.setBorderPos(chunks.get(1).y());
         frame.renderStatefulWidget(routeTable, chunks.get(0), routeTableState);
+        MonitorTab.renderTableScrollbar(frame, lastRouteTableArea, routeTableState, routeTableScrollState,
+                info.routes.size());
 
         // Bottom panel: processors
         Integer selectedRoute = routeTableState.selected();
@@ -1157,6 +1220,9 @@ class RoutesTab implements MonitorTab {
         }
 
         frame.renderStatefulWidget(table, area, processorTableState);
+        int processorRowCount = routeTopMode ? route.processors.size() : route.processors.size() + 1;
+        MonitorTab.renderTableScrollbar(frame, area, processorTableState, processorTableScrollState,
+                processorRowCount);
     }
 
     // ---- Sorting ----

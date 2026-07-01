@@ -38,6 +38,8 @@ import dev.tamboui.text.Span;
 import dev.tamboui.text.Text;
 import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
+import dev.tamboui.tui.event.MouseEvent;
+import dev.tamboui.tui.event.MouseEventKind;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
 import dev.tamboui.widgets.block.Borders;
@@ -54,6 +56,7 @@ import org.apache.camel.util.json.JsonObject;
 
 class SpansTab implements MonitorTab {
 
+    private static final int MOUSE_SCROLL_LINES = 3;
     private static final String[] SORT_COLUMNS = { "trace-id", "route", "from", "spans", "routes", "status", "duration" };
 
     private final MonitorContext ctx;
@@ -61,6 +64,8 @@ class SpansTab implements MonitorTab {
 
     private final TableState traceListState = new TableState();
     private final ScrollbarState waterfallScrollState = new ScrollbarState();
+    private final ScrollbarState tableScrollState = new ScrollbarState();
+    private Rect lastTableArea;
 
     private boolean waterfallView;
     private String selectedTraceId;
@@ -195,6 +200,31 @@ class SpansTab implements MonitorTab {
         if (ke.isKey(KeyCode.F5)) {
             spanRefreshRequested = true;
             return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean handleMouseEvent(MouseEvent me, Rect area) {
+        if (!waterfallView) {
+            List<TraceSummary> summaries = buildFilteredTraceSummaries();
+            if (MonitorTab.handleTableClick(me, lastTableArea, traceListState, summaries.size())) {
+                syncSelectedListTraceId();
+                return true;
+            }
+        }
+        if (waterfallView) {
+            if (me.kind() == MouseEventKind.SCROLL_UP) {
+                if (waterfallSelected > 0) {
+                    waterfallSelected = Math.max(0, waterfallSelected - MOUSE_SCROLL_LINES);
+                }
+                return true;
+            }
+            if (me.kind() == MouseEventKind.SCROLL_DOWN) {
+                List<WaterfallNode> nodes = buildWaterfallNodes(selectedTraceId);
+                waterfallSelected = Math.min(nodes.size() - 1, waterfallSelected + MOUSE_SCROLL_LINES);
+                return true;
+            }
         }
         return false;
     }
@@ -385,7 +415,9 @@ class SpansTab implements MonitorTab {
                 .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
                 .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(title).build())
                 .build();
+        lastTableArea = area;
         frame.renderStatefulWidget(table, area, traceListState);
+        MonitorTab.renderTableScrollbar(frame, lastTableArea, traceListState, tableScrollState, summaries.size());
     }
 
     private void renderWaterfallView(Frame frame, Rect area) {

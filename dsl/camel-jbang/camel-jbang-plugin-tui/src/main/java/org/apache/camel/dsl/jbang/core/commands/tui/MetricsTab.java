@@ -38,6 +38,8 @@ import dev.tamboui.text.Span;
 import dev.tamboui.text.Text;
 import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
+import dev.tamboui.tui.event.MouseEvent;
+import dev.tamboui.tui.event.MouseEventKind;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
 import dev.tamboui.widgets.block.Borders;
@@ -58,6 +60,8 @@ class MetricsTab implements MonitorTab {
     private static final String[] SORT_COLUMNS = { "type", "name", "value" };
     private static final String[] FILTER_TYPES = { "all", "counter", "gauge", "timer", "longTaskTimer", "distribution" };
 
+    private static final int MOUSE_SCROLL_LINES = 3;
+
     private static final Style LABEL = Style.EMPTY.dim();
     private static final Style VALUE = Style.EMPTY.fg(Color.WHITE).bold();
     private static final Style HEADER = Style.EMPTY.fg(Color.YELLOW).bold();
@@ -68,6 +72,7 @@ class MetricsTab implements MonitorTab {
     private final TableState tableState = new TableState();
     private final ScrollbarState scrollbarState = new ScrollbarState();
     private final ScrollbarState rawScrollbarState = new ScrollbarState();
+    private final ScrollbarState tableScrollState = new ScrollbarState();
     private boolean tableMode;
     private int lastRowCount;
     private String sort = "name";
@@ -75,6 +80,10 @@ class MetricsTab implements MonitorTab {
     private boolean sortReversed;
     private String filterType = "all";
     private int filterIndex;
+
+    private Rect lastTableArea;
+    private int camelPanelWidth = -1;
+    private final DragSplit hSplit = new DragSplit();
 
     // raw metrics view
     private boolean showRaw;
@@ -190,6 +199,32 @@ class MetricsTab implements MonitorTab {
     }
 
     @Override
+    public boolean handleMouseEvent(MouseEvent me, Rect area) {
+        if (hSplit.handleMouse(me, me.x())) {
+            if (hSplit.isDragging()) {
+                camelPanelWidth = Math.max(20, Math.min(me.x() - area.x(), area.width() - 20));
+            }
+            return true;
+        }
+        if (!showRaw && tableMode) {
+            if (MonitorTab.handleTableClick(me, lastTableArea, tableState, lastRowCount)) {
+                return true;
+            }
+        }
+        if (showRaw) {
+            if (me.kind() == MouseEventKind.SCROLL_UP) {
+                rawScroll = Math.max(0, rawScroll - MOUSE_SCROLL_LINES);
+                return true;
+            }
+            if (me.kind() == MouseEventKind.SCROLL_DOWN) {
+                rawScroll += MOUSE_SCROLL_LINES;
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
     public void navigateUp() {
         if (tableMode) {
             tableState.selectPrevious();
@@ -219,8 +254,10 @@ class MetricsTab implements MonitorTab {
         }
 
         if (showRaw) {
+            hSplit.clearBorderPos();
             renderRaw(frame, area);
         } else if (tableMode) {
+            hSplit.clearBorderPos();
             renderTable(frame, area, info);
         } else {
             renderDashboard(frame, area, info);
@@ -242,9 +279,12 @@ class MetricsTab implements MonitorTab {
             panelArea = vParts.get(1);
         }
 
+        int cpw = camelPanelWidth >= 0 ? camelPanelWidth : panelArea.width() / 2;
+        cpw = Math.max(20, Math.min(cpw, panelArea.width() - 20));
         List<Rect> panels = Layout.horizontal()
-                .constraints(Constraint.percentage(50), Constraint.percentage(50))
+                .constraints(Constraint.length(cpw), Constraint.fill())
                 .split(panelArea);
+        hSplit.setBorderPos(panels.get(1).x());
 
         renderCamelPanel(frame, panels.get(0), info.meters);
         renderJvmPanel(frame, panels.get(1), info.meters);
@@ -493,7 +533,9 @@ class MetricsTab implements MonitorTab {
                         .title(title).build())
                 .build();
 
+        lastTableArea = area;
         frame.renderStatefulWidget(table, area, tableState);
+        MonitorTab.renderTableScrollbar(frame, lastTableArea, tableState, tableScrollState, lastRowCount);
 
         int visibleRows = Math.max(1, area.height() - 4);
         if (lastRowCount > visibleRows) {

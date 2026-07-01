@@ -43,6 +43,8 @@ import dev.tamboui.text.Span;
 import dev.tamboui.text.Text;
 import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
+import dev.tamboui.tui.event.MouseEvent;
+import dev.tamboui.tui.event.MouseEventKind;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
 import dev.tamboui.widgets.block.Borders;
@@ -64,6 +66,7 @@ import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.*;
 class HistoryTab implements MonitorTab {
 
     private static final String[] TRACE_SORT_COLUMNS = { "time", "route", "elapsed", "exchange" };
+    private static final int MOUSE_SCROLL_LINES = 1;
 
     private static final Comparator<TraceEntry> UID_COMPARATOR = (a, b) -> {
         String ua = a.uid != null ? a.uid : "";
@@ -80,9 +83,15 @@ class HistoryTab implements MonitorTab {
     private final Map<String, Long> traceFilePositions;
 
     private final TableState traceTableState = new TableState();
+    private Rect lastTraceTableArea;
+    private Rect lastHistoryTableArea;
+    private Rect lastTraceStepArea;
     private final TableState traceStepTableState = new TableState();
     private final ScrollbarState traceDetailScrollState = new ScrollbarState();
     private final ScrollbarState historyDetailScrollState = new ScrollbarState();
+    private final ScrollbarState tableScrollState = new ScrollbarState();
+    private final ScrollbarState traceStepScrollState = new ScrollbarState();
+    private final ScrollbarState historyTableScrollState = new ScrollbarState();
 
     private String traceSort = "time";
     private int traceSortIndex;
@@ -113,6 +122,12 @@ class HistoryTab implements MonitorTab {
     private List<TraceEntry> diagramTraceSteps = Collections.emptyList();
     private List<HistoryEntry> diagramHistorySteps = Collections.emptyList();
     private int infoPanelSize = INFO_NARROW;
+
+    private int traceTopPanelHeight = 12;
+    private int traceDetailTopHeight = 10;
+    private int historyTopPanelHeight = 10;
+    private final DragSplit vSplit = new DragSplit();
+    private final DragSplit detailSplit = new DragSplit();
 
     volatile List<HistoryEntry> historyEntries = Collections.emptyList();
     private final TableState historyTableState = new TableState();
@@ -450,6 +465,128 @@ class HistoryTab implements MonitorTab {
     }
 
     @Override
+    public boolean handleMouseEvent(MouseEvent me, Rect area) {
+        if (!diagram.isShowDiagram()) {
+            if (detailSplit.handleMouse(me, me.y())) {
+                if (detailSplit.isDragging() && me.kind() == MouseEventKind.DRAG) {
+                    boolean tracerActive = !traces.get().isEmpty();
+                    int detailAreaY = area.y() + (tracerActive ? traceTopPanelHeight : historyTopPanelHeight);
+                    int detailAreaHeight = area.height() - (tracerActive ? traceTopPanelHeight : historyTopPanelHeight);
+                    int newHeight = me.y() - detailAreaY;
+                    traceDetailTopHeight = Math.max(3, Math.min(newHeight, detailAreaHeight - 5));
+                }
+                return true;
+            }
+            if (vSplit.handleMouse(me, me.y())) {
+                if (vSplit.isDragging() && me.kind() == MouseEventKind.DRAG) {
+                    int newHeight = me.y() - area.y();
+                    newHeight = Math.max(3, Math.min(newHeight, area.height() - 5));
+                    boolean tracerActive = !traces.get().isEmpty();
+                    if (tracerActive) {
+                        traceTopPanelHeight = newHeight;
+                    } else {
+                        historyTopPanelHeight = newHeight;
+                    }
+                }
+                return true;
+            }
+        }
+
+        if (diagram.isShowDiagram()) {
+            if (diagram.handleMouseScroll(me)) {
+                return true;
+            }
+            if (me.isClick()) {
+                if (diagram.isHistoryMode() && diagram.isHistoryTopologyMode()) {
+                    int clicked = diagram.handleNodeClick(me);
+                    if (clicked >= 0) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        boolean tracerActive = !traces.get().isEmpty();
+        if (tracerActive && !traceDetailView) {
+            if (MonitorTab.handleTableClick(me, lastTraceTableArea, traceTableState, traceSortedExchangeIds.size())) {
+                return true;
+            }
+        }
+        if (tracerActive && traceDetailView) {
+            List<TraceEntry> steps = getTraceStepsDepthFirst(traceSelectedExchangeId);
+            if (MonitorTab.handleTableClick(me, lastTraceStepArea, traceStepTableState, steps.size())) {
+                traceDetailScroll = 0;
+                return true;
+            }
+        }
+        if (!tracerActive) {
+            if (MonitorTab.handleTableClick(me, lastHistoryTableArea, historyTableState, historyEntries.size())) {
+                historyDetailScroll = 0;
+                return true;
+            }
+        }
+        if (me.kind() == MouseEventKind.SCROLL_UP) {
+            if (tracerActive && traceDetailView) {
+                if (isInArea(me, lastTraceTableArea)) {
+                    traceTableState.selectPrevious();
+                } else if (isInArea(me, lastTraceStepArea) || showWaterfall) {
+                    traceStepTableState.selectPrevious();
+                    traceDetailScroll = 0;
+                } else {
+                    traceDetailScroll = Math.max(0, traceDetailScroll - MOUSE_SCROLL_LINES);
+                }
+            } else if (tracerActive) {
+                if (isInArea(me, lastTraceTableArea)) {
+                    traceTableState.selectPrevious();
+                } else {
+                    historyDetailScroll = Math.max(0, historyDetailScroll - MOUSE_SCROLL_LINES);
+                }
+            } else {
+                if (isInArea(me, lastHistoryTableArea) || showWaterfall) {
+                    historyTableState.selectPrevious();
+                    historyDetailScroll = 0;
+                } else {
+                    historyDetailScroll = Math.max(0, historyDetailScroll - MOUSE_SCROLL_LINES);
+                }
+            }
+            return true;
+        }
+        if (me.kind() == MouseEventKind.SCROLL_DOWN) {
+            if (tracerActive && traceDetailView) {
+                if (isInArea(me, lastTraceTableArea)) {
+                    traceTableState.selectNext(traceSortedExchangeIds.size());
+                } else if (isInArea(me, lastTraceStepArea) || showWaterfall) {
+                    List<TraceEntry> steps = getTraceStepsDepthFirst(traceSelectedExchangeId);
+                    traceStepTableState.selectNext(steps.size());
+                    traceDetailScroll = 0;
+                } else {
+                    traceDetailScroll += MOUSE_SCROLL_LINES;
+                }
+            } else if (tracerActive) {
+                if (isInArea(me, lastTraceTableArea)) {
+                    traceTableState.selectNext(traceSortedExchangeIds.size());
+                } else {
+                    historyDetailScroll += MOUSE_SCROLL_LINES;
+                }
+            } else {
+                if (isInArea(me, lastHistoryTableArea) || showWaterfall) {
+                    historyTableState.selectNext(historyEntries.size());
+                    historyDetailScroll = 0;
+                } else {
+                    historyDetailScroll += MOUSE_SCROLL_LINES;
+                }
+            }
+            return true;
+        }
+        return false;
+    }
+
+    private static boolean isInArea(MouseEvent me, Rect area) {
+        return area != null && me.y() >= area.y() && me.y() < area.y() + area.height();
+    }
+
+    @Override
     public void navigateUp() {
         if (!traces.get().isEmpty()) {
             if (traceDetailView) {
@@ -552,11 +689,13 @@ class HistoryTab implements MonitorTab {
             return;
         }
 
+        traceTopPanelHeight = Math.max(3, Math.min(traceTopPanelHeight, area.height() - 5));
         List<Rect> chunks = Layout.vertical()
-                .constraints(Constraint.length(12), Constraint.fill())
+                .constraints(Constraint.length(traceTopPanelHeight), Constraint.fill())
                 .split(area);
 
         renderTraceExchangeList(frame, chunks.get(0));
+        vSplit.setBorderPos(chunks.get(1).y());
 
         if (traceDetailView && traceSelectedExchangeId != null) {
             renderTraceExchangeDetail(frame, chunks.get(1));
@@ -1071,14 +1210,18 @@ class HistoryTab implements MonitorTab {
                 .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(traceTitle).build())
                 .build();
 
+        lastTraceTableArea = area;
         frame.renderStatefulWidget(table, area, traceTableState);
+        MonitorTab.renderTableScrollbar(frame, lastTraceTableArea, traceTableState, tableScrollState,
+                traceSortedExchangeIds.size());
     }
 
     private void renderTraceExchangeDetail(Frame frame, Rect area) {
         List<TraceEntry> steps = getTraceStepsDepthFirst(traceSelectedExchangeId);
 
+        traceDetailTopHeight = Math.max(3, Math.min(traceDetailTopHeight, area.height() - 5));
         List<Rect> chunks = Layout.vertical()
-                .constraints(Constraint.length(10), Constraint.fill())
+                .constraints(Constraint.length(traceDetailTopHeight), Constraint.fill())
                 .split(area);
 
         Map<String, String> descMap = showDescription ? getRouteDescriptions() : Collections.emptyMap();
@@ -1094,8 +1237,12 @@ class HistoryTab implements MonitorTab {
         }
 
         String stepTitle = String.format(" Trace [%s] — %d steps ", truncate(traceSelectedExchangeId, 30), steps.size());
+        lastTraceStepArea = chunks.get(0);
+        detailSplit.setBorderPos(chunks.get(1).y());
         frame.renderStatefulWidget(
                 buildStepTable(rows, stepTitle, showDescription), chunks.get(0), traceStepTableState);
+        MonitorTab.renderTableScrollbar(frame, lastTraceStepArea, traceStepTableState, traceStepScrollState,
+                steps.size());
 
         if (showWaterfall) {
             Integer sel = traceStepTableState.selected();
@@ -1347,8 +1494,9 @@ class HistoryTab implements MonitorTab {
 
         List<HistoryEntry> current = reorderHistoryDepthFirst(historyEntries);
 
+        historyTopPanelHeight = Math.max(3, Math.min(historyTopPanelHeight, area.height() - 5));
         List<Rect> chunks = Layout.vertical()
-                .constraints(Constraint.length(10), Constraint.fill())
+                .constraints(Constraint.length(historyTopPanelHeight), Constraint.fill())
                 .split(area);
 
         Map<String, String> descMap = showDescription ? getRouteDescriptions() : Collections.emptyMap();
@@ -1364,8 +1512,12 @@ class HistoryTab implements MonitorTab {
         }
 
         Title historyTitle = buildHistoryTitle(current);
+        lastHistoryTableArea = chunks.get(0);
+        vSplit.setBorderPos(chunks.get(1).y());
         frame.renderStatefulWidget(
                 buildStepTable(rows, historyTitle, showDescription), chunks.get(0), historyTableState);
+        MonitorTab.renderTableScrollbar(frame, lastHistoryTableArea, historyTableState, historyTableScrollState,
+                current.size());
 
         if (showWaterfall) {
             Integer sel = historyTableState.selected();

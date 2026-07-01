@@ -33,6 +33,8 @@ import dev.tamboui.text.Line;
 import dev.tamboui.text.Span;
 import dev.tamboui.text.Text;
 import dev.tamboui.tui.event.KeyEvent;
+import dev.tamboui.tui.event.MouseEvent;
+import dev.tamboui.tui.event.MouseEventKind;
 import dev.tamboui.widgets.barchart.Bar;
 import dev.tamboui.widgets.barchart.BarChart;
 import dev.tamboui.widgets.barchart.BarGroup;
@@ -41,6 +43,7 @@ import dev.tamboui.widgets.block.BorderType;
 import dev.tamboui.widgets.block.Borders;
 import dev.tamboui.widgets.block.Title;
 import dev.tamboui.widgets.paragraph.Paragraph;
+import dev.tamboui.widgets.scrollbar.ScrollbarState;
 import dev.tamboui.widgets.table.Cell;
 import dev.tamboui.widgets.table.Row;
 import dev.tamboui.widgets.table.Table;
@@ -87,8 +90,12 @@ class OverviewTab implements MonitorTab {
     private OverviewActions actions;
 
     final TableState tableState = new TableState();
+    private final ScrollbarState tableScrollState = new ScrollbarState();
+    private Rect lastTableArea;
     int dividerIndex = -1;
     int chartMode = CHART_SINGLE;
+    private int bottomPanelHeight = 14;
+    private final DragSplit vSplit = new DragSplit();
 
     private String sort = "name";
     private int sortIndex = 1;
@@ -165,6 +172,21 @@ class OverviewTab implements MonitorTab {
     }
 
     @Override
+    public boolean handleMouseEvent(MouseEvent me, Rect area) {
+        if (vSplit.handleMouse(me, me.y())) {
+            if (vSplit.isDragging() && me.kind() == MouseEventKind.DRAG) {
+                bottomPanelHeight = Math.max(5, Math.min(area.y() + area.height() - me.y(), area.height() - 5));
+            }
+            return true;
+        }
+        if (MonitorTab.handleTableClick(me, lastTableArea, tableState, totalRows())) {
+            syncSelectedPid();
+            return true;
+        }
+        return false;
+    }
+
+    @Override
     public boolean handleEscape() {
         return false;
     }
@@ -227,14 +249,21 @@ class OverviewTab implements MonitorTab {
         List<Constraint> constraints = new ArrayList<>();
         constraints.add(Constraint.fill());
         if (hasSparkline) {
-            constraints.add(Constraint.length(17));
+            bottomPanelHeight = Math.max(5, Math.min(bottomPanelHeight, area.height() - 5));
+            constraints.add(Constraint.length(bottomPanelHeight));
         } else if (showInfoPanel) {
             int panelH = countInfraLines(infraSel) + 2;
-            constraints.add(Constraint.length(Math.min(panelH, area.height() / 2)));
+            bottomPanelHeight = Math.max(5, Math.min(Math.min(panelH, bottomPanelHeight), area.height() / 2));
+            constraints.add(Constraint.length(bottomPanelHeight));
         }
         List<Rect> chunks = Layout.vertical()
                 .constraints(constraints)
                 .split(area);
+        if (chunks.size() > 1) {
+            vSplit.setBorderPos(chunks.get(1).y());
+        } else {
+            vSplit.clearBorderPos();
+        }
 
         List<Row> rows = new ArrayList<>();
         int rowIndex = 0;
@@ -398,7 +427,9 @@ class OverviewTab implements MonitorTab {
                 .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(" Overview ").build())
                 .build();
 
+        lastTableArea = chunks.get(0);
         frame.renderStatefulWidget(table, chunks.get(0), tableState);
+        MonitorTab.renderTableScrollbar(frame, lastTableArea, tableState, tableScrollState, totalRows());
 
         if (hasSparkline && chunks.size() > 1) {
             Rect chartTotalArea = chunks.get(chunks.size() - 1);
@@ -416,7 +447,7 @@ class OverviewTab implements MonitorTab {
                     .split(chartInner);
 
             List<Rect> hChunks = Layout.horizontal()
-                    .constraints(Constraint.length(5), Constraint.fill())
+                    .constraints(Constraint.length(4), Constraint.fill())
                     .split(vChunks.get(0));
 
             Rect barChartArea = hChunks.get(1);
@@ -450,15 +481,9 @@ class OverviewTab implements MonitorTab {
             for (long v : mergedTotal) {
                 maxTp = Math.max(maxTp, v);
             }
-            maxTp = MetricsCollector.niceMax(maxTp);
             long curTp = mergedTotal[renderPoints - 1];
             long curFailed = mergedFailed[renderPoints - 1];
             long curOk = Math.max(0, curTp - curFailed);
-
-            // Format throughput values unscaled for display
-            String curTpFmt = MetricsCollector.formatThroughput(curTp);
-            String curOkFmt = MetricsCollector.formatThroughput(curOk);
-            String curFailFmt = MetricsCollector.formatThroughput(curFailed);
 
             Line titleLine;
             if (chartMode == CHART_SINGLE && ctx.selectedPid != null) {
@@ -468,18 +493,18 @@ class OverviewTab implements MonitorTab {
                 titleLine = Line.from(
                         Span.raw(" ["),
                         Span.styled(chartName, Style.EMPTY.fg(Color.YELLOW)),
-                        Span.raw(String.format("] Throughput: %s msg/s  ", curTpFmt)),
+                        Span.raw(String.format("] Throughput: %d msg/s  ", curTp)),
                         Span.styled("■", Style.EMPTY.fg(Color.ansi(AnsiColor.BRIGHT_GREEN))),
-                        Span.raw(String.format(" ok:%s  ", curOkFmt)),
+                        Span.raw(String.format(" ok:%d  ", curOk)),
                         Span.styled("■", Style.EMPTY.fg(Color.RED)),
-                        Span.raw(String.format(" fail:%s ", curFailFmt)));
+                        Span.raw(String.format(" fail:%d ", curFailed)));
             } else {
                 titleLine = Line.from(
-                        Span.raw(String.format(" [All] Throughput: %s msg/s  ", curTpFmt)),
+                        Span.raw(String.format(" [All] Throughput: %d msg/s  ", curTp)),
                         Span.styled("■", Style.EMPTY.fg(Color.ansi(AnsiColor.BRIGHT_GREEN))),
-                        Span.raw(String.format(" ok:%s  ", curOkFmt)),
+                        Span.raw(String.format(" ok:%d  ", curOk)),
                         Span.styled("■", Style.EMPTY.fg(Color.RED)),
-                        Span.raw(String.format(" fail:%s ", curFailFmt)));
+                        Span.raw(String.format(" fail:%d ", curFailed)));
             }
 
             Block chartBlock = Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
@@ -498,7 +523,7 @@ class OverviewTab implements MonitorTab {
 
             BarChart barChart = BarChart.builder()
                     .data(groups)
-                    .max(maxTp)
+                    .max(maxTp > 0 ? maxTp + 2 : 2)
                     .barWidth(1)
                     .barGap(0)
                     .groupGap(0)
@@ -511,13 +536,11 @@ class OverviewTab implements MonitorTab {
             Style dimStyle = Style.EMPTY.dim();
             for (int row = 0; row < barRows; row++) {
                 if (row == 0) {
-                    yLines.add(
-                            Line.from(Span.styled(String.format("%4s", MetricsCollector.formatThroughput(maxTp)), dimStyle)));
+                    yLines.add(Line.from(Span.styled(String.format("%3d", maxTp), dimStyle)));
                 } else if (barRows > 4 && row == barRows / 2) {
-                    yLines.add(Line
-                            .from(Span.styled(String.format("%4s", MetricsCollector.formatThroughput(maxTp / 2)), dimStyle)));
+                    yLines.add(Line.from(Span.styled(String.format("%3d", maxTp / 2), dimStyle)));
                 } else if (row == barRows - 1) {
-                    yLines.add(Line.from(Span.styled("   0", dimStyle)));
+                    yLines.add(Line.from(Span.styled("  0", dimStyle)));
                 } else {
                     yLines.add(Line.from(""));
                 }

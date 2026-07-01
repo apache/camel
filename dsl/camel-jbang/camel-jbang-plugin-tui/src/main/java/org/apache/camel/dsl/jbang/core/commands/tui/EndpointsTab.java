@@ -33,11 +33,13 @@ import dev.tamboui.text.CharWidth;
 import dev.tamboui.text.Line;
 import dev.tamboui.text.Span;
 import dev.tamboui.tui.event.KeyEvent;
+import dev.tamboui.tui.event.MouseEvent;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
 import dev.tamboui.widgets.block.Borders;
 import dev.tamboui.widgets.block.Title;
 import dev.tamboui.widgets.paragraph.Paragraph;
+import dev.tamboui.widgets.scrollbar.ScrollbarState;
 import dev.tamboui.widgets.sparkline.DualSparkline;
 import dev.tamboui.widgets.table.Cell;
 import dev.tamboui.widgets.table.Row;
@@ -58,6 +60,8 @@ class EndpointsTab implements MonitorTab {
 
     private final MonitorContext ctx;
     private final TableState tableState = new TableState();
+    private final ScrollbarState tableScrollState = new ScrollbarState();
+    private Rect lastTableArea;
     private final Map<String, LinkedList<Long>> endpointInHistory;
     private final Map<String, LinkedList<Long>> endpointOutHistory;
     private final Map<String, LinkedList<Long>> endpointRemoteInHistory;
@@ -74,6 +78,10 @@ class EndpointsTab implements MonitorTab {
     private boolean sortReversed;
     private int filter;
     private int chartMode = CHART_ALL;
+    private int chartPanelHeight = 16;
+    private final DragSplit vSplit = new DragSplit();
+    private int flowPanelWidth = 38;
+    private final DragSplit hSplit = new DragSplit();
 
     EndpointsTab(MonitorContext ctx, MetricsCollector metrics) {
         this.ctx = ctx;
@@ -108,6 +116,35 @@ class EndpointsTab implements MonitorTab {
         if (ke.isCharIgnoreCase('a')) {
             chartMode = (chartMode + 1) % 3;
             return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean handleMouseEvent(MouseEvent me, Rect area) {
+        if (vSplit.handleMouse(me, me.y())) {
+            if (vSplit.isDragging()) {
+                chartPanelHeight = Math.max(5, Math.min(area.y() + area.height() - me.y(), area.height() - 5));
+            }
+            return true;
+        }
+        if (hSplit.handleMouse(me, me.x())) {
+            if (hSplit.isDragging()) {
+                flowPanelWidth = Math.max(20, Math.min(me.x() - area.x(), area.width() - 20));
+            }
+            return true;
+        }
+        IntegrationInfo info = ctx.findSelectedIntegration();
+        if (info != null) {
+            List<EndpointInfo> filtered = new ArrayList<>(info.endpoints);
+            if (filter == 1) {
+                filtered.removeIf(ep -> !ep.remote);
+            } else if (filter == 2) {
+                filtered.removeIf(ep -> !ep.remote && !ep.stub);
+            }
+            if (MonitorTab.handleTableClick(me, lastTableArea, tableState, filtered.size())) {
+                return true;
+            }
         }
         return false;
     }
@@ -233,15 +270,30 @@ class EndpointsTab implements MonitorTab {
                         .build())
                 .build();
 
-        boolean hasSizeHistory = !endpointInSizeHistory.isEmpty()
-                && endpointInSizeHistory.values().stream().anyMatch(h -> h.stream().anyMatch(v -> v > 0));
+        boolean hasSizeHistory;
+        try {
+            hasSizeHistory = !endpointInSizeHistory.isEmpty()
+                    && endpointInSizeHistory.values().stream()
+                            .anyMatch(h -> new ArrayList<>(h).stream().anyMatch(v -> v > 0));
+        } catch (java.util.ConcurrentModificationException e) {
+            hasSizeHistory = false;
+        }
 
         boolean showChart = chartMode != CHART_OFF && ctx.shellPercent < 50;
-        List<Rect> chunks = showChart
-                ? Layout.vertical().constraints(Constraint.fill(), Constraint.length(16)).split(area)
-                : List.of(area);
+        List<Rect> chunks;
+        if (showChart) {
+            chartPanelHeight = Math.max(5, Math.min(chartPanelHeight, area.height() - 5));
+            chunks = Layout.vertical().constraints(Constraint.fill(), Constraint.length(chartPanelHeight)).split(area);
+            vSplit.setBorderPos(chunks.get(1).y());
+        } else {
+            chunks = List.of(area);
+            vSplit.clearBorderPos();
+            hSplit.clearBorderPos();
+        }
 
+        lastTableArea = chunks.get(0);
         frame.renderStatefulWidget(table, chunks.get(0), tableState);
+        MonitorTab.renderTableScrollbar(frame, lastTableArea, tableState, tableScrollState, sortedEndpoints.size());
 
         if (showChart) {
             // Determine selected endpoint URI for single-endpoint chart
@@ -357,11 +409,13 @@ class EndpointsTab implements MonitorTab {
 
     private void renderEndpointFlow(
             Frame frame, Rect area, long inTotal, long outTotal, String name, String pid) {
-        List<Rect> hSplit = Layout.horizontal()
-                .constraints(Constraint.length(38), Constraint.fill())
+        flowPanelWidth = Math.max(20, Math.min(flowPanelWidth, area.width() - 20));
+        List<Rect> hParts = Layout.horizontal()
+                .constraints(Constraint.length(flowPanelWidth), Constraint.fill())
                 .split(area);
+        hSplit.setBorderPos(hParts.get(1).x());
 
-        int w = Math.max(10, hSplit.get(0).width() - 2);
+        int w = Math.max(10, hParts.get(0).width() - 2);
 
         String label = name != null ? name : "INTEGRATION";
         if (CharWidth.of(label) > 20) {
@@ -411,7 +465,7 @@ class EndpointsTab implements MonitorTab {
         frame.renderWidget(Paragraph.builder()
                 .text(dev.tamboui.text.Text.from(flowLines))
                 .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(" Flow ").build())
-                .build(), hSplit.get(0));
+                .build(), hParts.get(0));
 
         Map<String, LinkedList<Long>> inHistMap = switch (filter) {
             case 1 -> endpointRemoteInHistory;
@@ -426,7 +480,7 @@ class EndpointsTab implements MonitorTab {
         LinkedList<Long> inHist = inHistMap.getOrDefault(pid, new LinkedList<>());
         LinkedList<Long> outHist = outHistMap.getOrDefault(pid, new LinkedList<>());
 
-        int renderPoints = Math.min(MAX_CHART_POINTS, Math.max(2, hSplit.get(1).width() - 6));
+        int renderPoints = Math.min(MAX_CHART_POINTS, Math.max(2, hParts.get(1).width() - 6));
         long[] inArr = new long[renderPoints];
         long[] outArr = new long[renderPoints];
         for (int i = 0; i < renderPoints; i++) {
@@ -444,19 +498,17 @@ class EndpointsTab implements MonitorTab {
 
         Line chartTitle = Line.from(
                 Span.styled("▬", Style.EMPTY.fg(Color.ansi(AnsiColor.BRIGHT_GREEN))),
-                Span.raw(String.format(" in:%-4s ", MetricsCollector.formatThroughput(curIn))),
+                Span.raw(String.format(" in:%-4d ", curIn)),
                 Span.styled("▬", Style.EMPTY.fg(Color.CYAN)),
-                Span.raw(String.format(" out:%-4s msg/s", MetricsCollector.formatThroughput(curOut))));
+                Span.raw(String.format(" out:%-4d msg/s", curOut)));
 
-        Rect rightArea = hSplit.get(1);
-        long maxEp = MetricsCollector.niceMax(Math.max(maxOf(inArr), maxOf(outArr)));
+        Rect rightArea = hParts.get(1);
         frame.renderWidget(DualSparkline.builder()
                 .topData(inArr)
                 .bottomData(outArr)
-                .max(maxEp)
                 .topStyle(Style.EMPTY.fg(Color.ansi(AnsiColor.BRIGHT_GREEN)))
                 .bottomStyle(Style.EMPTY.fg(Color.CYAN))
-                .showYAxis(false)
+                .showYAxis(true)
                 .xLabels("-" + renderPoints + "s", "-" + (renderPoints * 3 / 4) + "s",
                         "-" + (renderPoints / 2) + "s", "-" + (renderPoints / 4) + "s", "now")
                 .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
@@ -474,12 +526,14 @@ class EndpointsTab implements MonitorTab {
                 .mapToLong(ep -> ep.hits)
                 .sum();
 
-        List<Rect> hSplit = Layout.horizontal()
-                .constraints(Constraint.length(38), Constraint.fill())
+        flowPanelWidth = Math.max(20, Math.min(flowPanelWidth, area.width() - 20));
+        List<Rect> hParts = Layout.horizontal()
+                .constraints(Constraint.length(flowPanelWidth), Constraint.fill())
                 .split(area);
+        hSplit.setBorderPos(hParts.get(1).x());
 
         // Flow diagram with endpoint URI as label
-        int w = Math.max(10, hSplit.get(0).width() - 2);
+        int w = Math.max(10, hParts.get(0).width() - 2);
         String label = selectedUri;
         if (CharWidth.of(label) > 20) {
             label = CharWidth.truncateWithEllipsis(label, 20, CharWidth.TruncatePosition.END);
@@ -524,14 +578,14 @@ class EndpointsTab implements MonitorTab {
         frame.renderWidget(Paragraph.builder()
                 .text(dev.tamboui.text.Text.from(flowLines))
                 .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(" Flow ").build())
-                .build(), hSplit.get(0));
+                .build(), hParts.get(0));
 
         // Per-endpoint sparkline
         String key = info.pid + "|" + selectedUri;
         LinkedList<Long> inHist = perEndpointInHistory.getOrDefault(key, new LinkedList<>());
         LinkedList<Long> outHist = perEndpointOutHistory.getOrDefault(key, new LinkedList<>());
 
-        int renderPoints = Math.min(MAX_CHART_POINTS, Math.max(2, hSplit.get(1).width() - 6));
+        int renderPoints = Math.min(MAX_CHART_POINTS, Math.max(2, hParts.get(1).width() - 6));
         long[] inArr = new long[renderPoints];
         long[] outArr = new long[renderPoints];
         for (int i = 0; i < renderPoints; i++) {
@@ -557,25 +611,21 @@ class EndpointsTab implements MonitorTab {
                 Span.styled(uriLabel, Style.EMPTY.fg(Color.YELLOW)),
                 Span.raw("] "),
                 Span.styled("▬", Style.EMPTY.fg(Color.ansi(AnsiColor.BRIGHT_GREEN))),
-                Span.raw(String.format(" in:%-4s ", MetricsCollector.formatThroughput(curIn))),
+                Span.raw(String.format(" in:%-4d ", curIn)),
                 Span.styled("▬", Style.EMPTY.fg(Color.CYAN)),
-                Span.raw(String.format(" out:%-4s msg/s", MetricsCollector.formatThroughput(curOut))));
+                Span.raw(String.format(" out:%-4d msg/s", curOut)));
 
-        // TODO: use .showYAxis(true).yAxisFormatter(MetricsCollector::formatThroughput) when tamboui 0.5.0 is released
-        //  see https://github.com/tamboui/tamboui/pull/396
-        long maxEpSingle = MetricsCollector.niceMax(Math.max(maxOf(inArr), maxOf(outArr)));
         frame.renderWidget(DualSparkline.builder()
                 .topData(inArr)
                 .bottomData(outArr)
-                .max(maxEpSingle)
                 .topStyle(Style.EMPTY.fg(Color.ansi(AnsiColor.BRIGHT_GREEN)))
                 .bottomStyle(Style.EMPTY.fg(Color.CYAN))
-                .showYAxis(false)
+                .showYAxis(true)
                 .xLabels("-" + renderPoints + "s", "-" + (renderPoints * 3 / 4) + "s",
                         "-" + (renderPoints / 2) + "s", "-" + (renderPoints / 4) + "s", "now")
                 .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
                         .title(Title.from(chartTitle)).build())
-                .build(), hSplit.get(1));
+                .build(), hParts.get(1));
     }
 
     private void renderPayloadSizeChart(Frame frame, Rect area, String pid) {
@@ -776,15 +826,4 @@ class EndpointsTab implements MonitorTab {
         result.put("selectedIndex", sel != null ? sel : -1);
         return result;
     }
-
-    private static long maxOf(long[] arr) {
-        long max = 0;
-        for (long v : arr) {
-            if (v > max) {
-                max = v;
-            }
-        }
-        return max;
-    }
-
 }

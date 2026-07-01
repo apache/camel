@@ -33,10 +33,12 @@ import dev.tamboui.text.Span;
 import dev.tamboui.text.Text;
 import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
+import dev.tamboui.tui.event.MouseEvent;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
 import dev.tamboui.widgets.block.Borders;
 import dev.tamboui.widgets.paragraph.Paragraph;
+import dev.tamboui.widgets.scrollbar.ScrollbarState;
 import dev.tamboui.widgets.table.Cell;
 import dev.tamboui.widgets.table.Row;
 import dev.tamboui.widgets.table.Table;
@@ -53,7 +55,9 @@ class BeansTab implements MonitorTab {
 
     private final MonitorContext ctx;
     private final TableState tableState = new TableState();
+    private final ScrollbarState tableScrollState = new ScrollbarState();
     private final AtomicBoolean loading = new AtomicBoolean(false);
+    private Rect lastTableArea;
 
     private String sort = "name";
     private int sortIndex;
@@ -146,6 +150,15 @@ class BeansTab implements MonitorTab {
                 tableState.selectNext(visible.size());
             }
             return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean handleMouseEvent(MouseEvent me, Rect area) {
+        if (!showDetail) {
+            List<BeanData> visible = sortedBeans();
+            return MonitorTab.handleTableClick(me, lastTableArea, tableState, visible.size());
         }
         return false;
     }
@@ -244,7 +257,9 @@ class BeansTab implements MonitorTab {
                 .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(title).build())
                 .build();
 
+        lastTableArea = area;
         frame.renderStatefulWidget(table, area, tableState);
+        MonitorTab.renderTableScrollbar(frame, lastTableArea, tableState, tableScrollState, visible.size());
     }
 
     private void renderDetail(Frame frame, Rect area, List<BeanData> visible) {

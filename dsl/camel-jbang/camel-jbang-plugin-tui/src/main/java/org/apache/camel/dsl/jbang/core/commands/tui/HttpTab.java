@@ -43,6 +43,8 @@ import dev.tamboui.text.Span;
 import dev.tamboui.text.Text;
 import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
+import dev.tamboui.tui.event.MouseEvent;
+import dev.tamboui.tui.event.MouseEventKind;
 import dev.tamboui.widgets.Clear;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
@@ -51,6 +53,7 @@ import dev.tamboui.widgets.block.Title;
 import dev.tamboui.widgets.input.TextInput;
 import dev.tamboui.widgets.input.TextInputState;
 import dev.tamboui.widgets.paragraph.Paragraph;
+import dev.tamboui.widgets.scrollbar.ScrollbarState;
 import dev.tamboui.widgets.table.Cell;
 import dev.tamboui.widgets.table.Row;
 import dev.tamboui.widgets.table.Table;
@@ -64,6 +67,7 @@ import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.*;
 
 class HttpTab implements MonitorTab {
 
+    private static final int MOUSE_SCROLL_LINES = 3;
     private static final String[] SORT_COLUMNS = { "method", "path", "total", "consumes", "produces", "source" };
     private static final Set<String> OPENAPI_HTTP_VERBS
             = Set.of("get", "post", "put", "delete", "patch", "options", "head", "trace");
@@ -115,6 +119,11 @@ class HttpTab implements MonitorTab {
     private boolean probePrettyPrint;
     private String probeResponseRawBody;
     private List<String> probeResponseHeaderLines;
+
+    private Rect lastTableArea;
+    private final ScrollbarState tableScrollState = new ScrollbarState();
+    private int detailPanelHeight = 10;
+    private final DragSplit vSplit = new DragSplit();
 
     HttpTab(MonitorContext ctx) {
         this.ctx = ctx;
@@ -176,6 +185,43 @@ class HttpTab implements MonitorTab {
         if (ke.isChar('c')) {
             loadSpecForSelectedEndpoint();
             return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean handleMouseEvent(MouseEvent me, Rect area) {
+        if (!probeMode && !showSpec && vSplit.handleMouse(me, me.y())) {
+            if (vSplit.isDragging() && me.kind() == MouseEventKind.DRAG) {
+                detailPanelHeight = Math.max(3, Math.min(area.y() + area.height() - me.y(), area.height() - 5));
+            }
+            return true;
+        }
+        if (!probeMode && !showSpec) {
+            List<HttpEndpointInfo> visible = sortedVisibleEndpoints(ctx.findSelectedIntegration());
+            if (MonitorTab.handleTableClick(me, lastTableArea, tableState, visible.size())) {
+                return true;
+            }
+        }
+        if (showSpec) {
+            if (me.kind() == MouseEventKind.SCROLL_UP) {
+                specScroll = Math.max(0, specScroll - MOUSE_SCROLL_LINES);
+                return true;
+            }
+            if (me.kind() == MouseEventKind.SCROLL_DOWN) {
+                specScroll += MOUSE_SCROLL_LINES;
+                return true;
+            }
+        }
+        if (probeMode) {
+            if (me.kind() == MouseEventKind.SCROLL_UP) {
+                probeResponseScroll = Math.max(0, probeResponseScroll - MOUSE_SCROLL_LINES);
+                return true;
+            }
+            if (me.kind() == MouseEventKind.SCROLL_DOWN) {
+                probeResponseScroll += MOUSE_SCROLL_LINES;
+                return true;
+            }
         }
         return false;
     }
@@ -245,12 +291,14 @@ class HttpTab implements MonitorTab {
 
         List<HttpEndpointInfo> visible = sortedVisibleEndpoints(info);
 
+        detailPanelHeight = Math.max(3, Math.min(detailPanelHeight, area.height() - 5));
         List<Rect> chunks = Layout.vertical()
-                .constraints(Constraint.length(1), Constraint.fill(), Constraint.length(10))
+                .constraints(Constraint.length(1), Constraint.fill(), Constraint.length(detailPanelHeight))
                 .split(area);
 
         renderServerInfo(frame, chunks.get(0), info, visible);
         renderTable(frame, chunks.get(1), visible);
+        vSplit.setBorderPos(chunks.get(2).y());
         renderDetail(frame, chunks.get(2), visible);
     }
 
@@ -1281,7 +1329,9 @@ class HttpTab implements MonitorTab {
                 .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(title).build())
                 .build();
 
+        lastTableArea = area;
         frame.renderStatefulWidget(table, area, tableState);
+        MonitorTab.renderTableScrollbar(frame, lastTableArea, tableState, tableScrollState, visible.size());
     }
 
     private void renderDetail(Frame frame, Rect area, List<HttpEndpointInfo> visible) {

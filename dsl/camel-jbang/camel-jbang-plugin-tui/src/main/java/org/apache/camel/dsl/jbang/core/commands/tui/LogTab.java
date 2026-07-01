@@ -39,6 +39,8 @@ import dev.tamboui.text.Line;
 import dev.tamboui.text.Span;
 import dev.tamboui.text.Text;
 import dev.tamboui.tui.event.KeyEvent;
+import dev.tamboui.tui.event.MouseEvent;
+import dev.tamboui.tui.event.MouseEventKind;
 import dev.tamboui.widgets.Clear;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
@@ -60,6 +62,7 @@ import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.*;
 class LogTab implements MonitorTab {
 
     private static final int MAX_LOG_LINES = 3000;
+    private static final int MOUSE_SCROLL_LINES = 3;
     private static final String[] LOG_LEVELS = { "ERROR", "WARN", "INFO", "DEBUG", "TRACE" };
 
     private static final Pattern LOG_PATTERN = Pattern.compile(
@@ -205,6 +208,21 @@ class LogTab implements MonitorTab {
         }
         if (ke.isEnd()) {
             followMode = true;
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean handleMouseEvent(MouseEvent me, Rect area) {
+        if (me.kind() == MouseEventKind.SCROLL_UP) {
+            followMode = false;
+            scroll = Math.max(0, scroll - MOUSE_SCROLL_LINES);
+            return true;
+        }
+        if (me.kind() == MouseEventKind.SCROLL_DOWN) {
+            followMode = false;
+            scroll += MOUSE_SCROLL_LINES;
             return true;
         }
         return false;

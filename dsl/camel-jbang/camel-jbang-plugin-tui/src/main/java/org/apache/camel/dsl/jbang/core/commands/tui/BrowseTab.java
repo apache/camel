@@ -39,10 +39,12 @@ import dev.tamboui.text.Span;
 import dev.tamboui.text.Text;
 import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
+import dev.tamboui.tui.event.MouseEvent;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
 import dev.tamboui.widgets.block.Borders;
 import dev.tamboui.widgets.paragraph.Paragraph;
+import dev.tamboui.widgets.scrollbar.ScrollbarState;
 import dev.tamboui.widgets.table.Cell;
 import dev.tamboui.widgets.table.Row;
 import dev.tamboui.widgets.table.Table;
@@ -65,7 +67,11 @@ class BrowseTab implements MonitorTab {
 
     private final MonitorContext ctx;
     private final TableState endpointTableState = new TableState();
+    private final ScrollbarState endpointTableScrollState = new ScrollbarState();
+    private Rect lastEndpointTableArea;
     private final TableState messageTableState = new TableState();
+    private final ScrollbarState messageTableScrollState = new ScrollbarState();
+    private Rect lastMessageTableArea;
     private final AtomicBoolean loading = new AtomicBoolean(false);
 
     private String sort = "uri";
@@ -204,6 +210,21 @@ class BrowseTab implements MonitorTab {
     }
 
     @Override
+    public boolean handleMouseEvent(MouseEvent me, Rect area) {
+        if (view == VIEW_ENDPOINTS) {
+            List<EndpointData> sorted = sortedEndpoints();
+            if (MonitorTab.handleTableClick(me, lastEndpointTableArea, endpointTableState, sorted.size())) {
+                return true;
+            }
+        } else if (view == VIEW_MESSAGES) {
+            if (MonitorTab.handleTableClick(me, lastMessageTableArea, messageTableState, messages.size())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
     public boolean handleEscape() {
         if (view == VIEW_DETAIL) {
             view = VIEW_MESSAGES;
@@ -301,7 +322,10 @@ class BrowseTab implements MonitorTab {
                 .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(title).build())
                 .build();
 
+        lastEndpointTableArea = area;
         frame.renderStatefulWidget(table, area, endpointTableState);
+        MonitorTab.renderTableScrollbar(frame, lastEndpointTableArea, endpointTableState, endpointTableScrollState,
+                sorted.size());
     }
 
     private void renderMessages(Frame frame, Rect area) {
@@ -354,7 +378,10 @@ class BrowseTab implements MonitorTab {
                 .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(title).build())
                 .build();
 
+        lastMessageTableArea = area;
         frame.renderStatefulWidget(table, area, messageTableState);
+        MonitorTab.renderTableScrollbar(frame, lastMessageTableArea, messageTableState, messageTableScrollState,
+                messages.size());
     }
 
     private void renderDetail(Frame frame, Rect area) {

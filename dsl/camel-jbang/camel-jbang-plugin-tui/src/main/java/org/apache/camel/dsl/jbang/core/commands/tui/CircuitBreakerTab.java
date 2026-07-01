@@ -31,11 +31,13 @@ import dev.tamboui.text.Line;
 import dev.tamboui.text.Span;
 import dev.tamboui.text.Text;
 import dev.tamboui.tui.event.KeyEvent;
+import dev.tamboui.tui.event.MouseEvent;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
 import dev.tamboui.widgets.block.Borders;
 import dev.tamboui.widgets.block.Title;
 import dev.tamboui.widgets.paragraph.Paragraph;
+import dev.tamboui.widgets.scrollbar.ScrollbarState;
 import dev.tamboui.widgets.sparkline.DualSparkline;
 import dev.tamboui.widgets.table.Cell;
 import dev.tamboui.widgets.table.Row;
@@ -53,6 +55,8 @@ class CircuitBreakerTab implements MonitorTab {
 
     private final MonitorContext ctx;
     private final TableState tableState = new TableState();
+    private final ScrollbarState tableScrollState = new ScrollbarState();
+    private Rect lastTableArea;
     private final Map<String, LinkedList<Long>> cbSuccessHistory;
     private final Map<String, LinkedList<Long>> cbFailHistory;
 
@@ -85,6 +89,17 @@ class CircuitBreakerTab implements MonitorTab {
         if (ke.isChar('S')) {
             sortReversed = !sortReversed;
             return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean handleMouseEvent(MouseEvent me, Rect area) {
+        IntegrationInfo info = ctx.findSelectedIntegration();
+        if (info != null) {
+            if (MonitorTab.handleTableClick(me, lastTableArea, tableState, info.circuitBreakers.size())) {
+                return true;
+            }
         }
         return false;
     }
@@ -197,7 +212,9 @@ class CircuitBreakerTab implements MonitorTab {
                 .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(" Circuit Breaker ").build())
                 .build();
 
+        lastTableArea = chunks.get(0);
         frame.renderStatefulWidget(table, chunks.get(0), tableState);
+        MonitorTab.renderTableScrollbar(frame, lastTableArea, tableState, tableScrollState, info.circuitBreakers.size());
 
         if (showDiagram) {
             renderDiagram(frame, chunks.get(1), selectedCb, info.pid);

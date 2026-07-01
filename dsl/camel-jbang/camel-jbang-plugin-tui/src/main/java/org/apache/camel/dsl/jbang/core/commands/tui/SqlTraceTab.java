@@ -34,6 +34,7 @@ import dev.tamboui.text.Line;
 import dev.tamboui.text.Span;
 import dev.tamboui.text.Text;
 import dev.tamboui.tui.event.KeyEvent;
+import dev.tamboui.tui.event.MouseEvent;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
 import dev.tamboui.widgets.block.Borders;
@@ -55,6 +56,7 @@ class SqlTraceTab implements MonitorTab {
 
     private final MonitorContext ctx;
     private final TableState tableState = new TableState();
+    private final ScrollbarState tableScrollState = new ScrollbarState();
     private final ScrollbarState detailScrollState = new ScrollbarState();
     private String sort = "time";
     private int sortIndex;
@@ -63,6 +65,7 @@ class SqlTraceTab implements MonitorTab {
     private boolean wordWrap = true;
     private String selectedKey;
     private Consumer<String> editSqlAction;
+    private Rect lastTableArea;
 
     SqlTraceTab(MonitorContext ctx) {
         this.ctx = ctx;
@@ -315,7 +318,22 @@ class SqlTraceTab implements MonitorTab {
                         .title(" Statements sort:" + sort + " ").build())
                 .build();
 
+        lastTableArea = area;
         frame.renderStatefulWidget(table, area, tableState);
+        MonitorTab.renderTableScrollbar(frame, lastTableArea, tableState, tableScrollState, sorted.size());
+    }
+
+    @Override
+    public boolean handleMouseEvent(MouseEvent me, Rect area) {
+        IntegrationInfo info = ctx.findSelectedIntegration();
+        if (info != null) {
+            if (MonitorTab.handleTableClick(me, lastTableArea, tableState, info.sqlTraceStatements.size())) {
+                detailScroll = 0;
+                selectedKey = null;
+                return true;
+            }
+        }
+        return false;
     }
 
     private void renderDetail(Frame frame, Rect area, SqlTraceInfo si) {

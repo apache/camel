@@ -33,6 +33,8 @@ import dev.tamboui.text.Span;
 import dev.tamboui.text.Text;
 import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
+import dev.tamboui.tui.event.MouseEvent;
+import dev.tamboui.tui.event.MouseEventKind;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
 import dev.tamboui.widgets.block.Borders;
@@ -47,6 +49,7 @@ import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.*;
 
 class StartupTab implements MonitorTab {
 
+    private static final int MOUSE_SCROLL_LINES = 3;
     private static final Style LABEL = Style.EMPTY.dim();
     private static final Style VALUE = Style.EMPTY.fg(Color.WHITE).bold();
     private static final Style HEADER = Style.EMPTY.fg(Color.YELLOW).bold();
@@ -103,6 +106,19 @@ class StartupTab implements MonitorTab {
         }
         if (ke.isKey(KeyCode.F5)) {
             loadStartupData();
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean handleMouseEvent(MouseEvent me, Rect area) {
+        if (me.kind() == MouseEventKind.SCROLL_UP) {
+            scrollOffset = Math.max(0, scrollOffset - MOUSE_SCROLL_LINES);
+            return true;
+        }
+        if (me.kind() == MouseEventKind.SCROLL_DOWN) {
+            scrollOffset += MOUSE_SCROLL_LINES;
             return true;
         }
         return false;

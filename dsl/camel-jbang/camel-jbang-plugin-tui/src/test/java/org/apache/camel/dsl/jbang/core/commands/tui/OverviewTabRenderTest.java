@@ -114,8 +114,8 @@ class OverviewTabRenderTest {
         Frame frame = Frame.forTesting(buffer);
         tab.render(frame, area);
 
-        boolean foundGreen = TuiTestHelper.findCellWithColor(buffer, "R", Color.LIGHT_GREEN);
-        assertTrue(foundGreen, "Running status should be rendered in LIGHT_GREEN");
+        boolean foundGreen = TuiTestHelper.findCellWithColor(buffer, "R", Color.GREEN);
+        assertTrue(foundGreen, "Running status should be rendered in GREEN");
     }
 
     @Test

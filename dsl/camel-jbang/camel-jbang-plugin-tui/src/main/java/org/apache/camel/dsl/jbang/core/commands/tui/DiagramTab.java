@@ -31,6 +31,7 @@ import dev.tamboui.text.Line;
 import dev.tamboui.text.Span;
 import dev.tamboui.text.Text;
 import dev.tamboui.tui.event.KeyEvent;
+import dev.tamboui.tui.event.MouseEvent;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
 import dev.tamboui.widgets.block.Borders;
@@ -52,6 +53,8 @@ class DiagramTab implements MonitorTab {
     private boolean topologyMode = true;
     private String drillDownRouteId;
     private final Deque<String> routeNavigationStack = new ArrayDeque<>();
+    private int infoPanelWidth = 30;
+    private final DragSplit hSplit = new DragSplit();
 
     DiagramTab(MonitorContext ctx) {
         this.ctx = ctx;
@@ -245,6 +248,33 @@ class DiagramTab implements MonitorTab {
     }
 
     @Override
+    public boolean handleMouseEvent(MouseEvent me, Rect area) {
+        if (hSplit.handleMouse(me, me.x())) {
+            if (hSplit.isDragging()) {
+                infoPanelWidth = Math.max(10, Math.min(me.x() - area.x(), area.width() - 20));
+            }
+            return true;
+        }
+        if (diagram.handleMouseScroll(me)) {
+            return true;
+        }
+        if (me.isClick()) {
+            if (topologyMode) {
+                int clicked = diagram.handleNodeClick(me);
+                if (clicked >= 0) {
+                    return true;
+                }
+            } else {
+                int clicked = diagram.handleEipNodeClick(me);
+                if (clicked >= 0) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    @Override
     public boolean handleEscape() {
         if (sourceViewer.isVisible()) {
             sourceViewer.hide();
@@ -342,10 +372,11 @@ class DiagramTab implements MonitorTab {
                     title = Line.from(Span.raw(" Topology "));
                 }
                 if (selectedRouteId != null && area.width() > 60) {
-                    int panelWidth = 30;
+                    infoPanelWidth = Math.max(10, Math.min(infoPanelWidth, area.width() - 20));
                     List<Rect> hChunks = Layout.horizontal()
-                            .constraints(Constraint.length(panelWidth), Constraint.fill())
+                            .constraints(Constraint.length(infoPanelWidth), Constraint.fill())
                             .split(area);
+                    hSplit.setBorderPos(hChunks.get(1).x());
                     renderInfoPanel(frame, hChunks.get(0), info, selectedRouteId);
                     diagram.renderNativeDiagram(frame, hChunks.get(1), title, diagramMetrics);
                 } else {
@@ -357,10 +388,11 @@ class DiagramTab implements MonitorTab {
                 Line title = buildBreadcrumbTitle();
                 var routeLayout = diagram.getRouteLayout(drillDownRouteId);
                 if (area.width() > 60) {
-                    int panelWidth = 30;
+                    infoPanelWidth = Math.max(10, Math.min(infoPanelWidth, area.width() - 20));
                     List<Rect> hChunks = Layout.horizontal()
-                            .constraints(Constraint.length(panelWidth), Constraint.fill())
+                            .constraints(Constraint.length(infoPanelWidth), Constraint.fill())
                             .split(area);
+                    hSplit.setBorderPos(hChunks.get(1).x());
                     renderEipInfoPanel(frame, hChunks.get(0));
                     diagram.renderNativeRouteDiagram(
                             frame, hChunks.get(1), title, diagramMetrics, drillDownRouteId, routeLayout);

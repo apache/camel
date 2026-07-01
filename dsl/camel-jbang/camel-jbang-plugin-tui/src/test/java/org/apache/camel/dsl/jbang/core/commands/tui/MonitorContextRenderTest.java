@@ -46,6 +46,8 @@ class MonitorContextRenderTest {
         String rendered = HealthTabRenderTest.bufferToString(buffer);
         assertTrue(rendered.contains("No integration selected"),
                 "Should render 'No integration selected' in the block title");
+        assertTrue(rendered.contains("Select an integration"),
+                "Should render the selection prompt text");
     }
 
     @Test
@@ -57,21 +59,38 @@ class MonitorContextRenderTest {
         MonitorContext.renderNoSelection(frame, area);
 
         String rendered = HealthTabRenderTest.bufferToString(buffer);
+        // The block title should appear in the buffer
         assertTrue(rendered.contains("No integration selected"),
                 "Should render the block title");
+        // The prompt text should appear somewhere in the buffer
+        assertTrue(rendered.contains("Select an integration"),
+                "Should render the prompt text");
     }
 
     @Test
-    void renderNoSelectionShowsHintKeys() {
-        Rect area = new Rect(0, 0, 80, 20);
+    void renderNoSelectionPromptIsDimmed() {
+        Rect area = new Rect(0, 0, 80, 10);
         Buffer buffer = Buffer.empty(area);
         Frame frame = Frame.forTesting(buffer);
 
         MonitorContext.renderNoSelection(frame, area);
 
-        String rendered = HealthTabRenderTest.bufferToString(buffer);
-        assertTrue(rendered.contains("Overview"), "Should render the Overview hint");
-        assertTrue(rendered.contains("Help"), "Should render the Help hint");
+        // Check that the "Select" text cell has DIM modifier
+        boolean foundDim = false;
+        for (int y = 0; y < buffer.height(); y++) {
+            for (int x = 0; x < buffer.width(); x++) {
+                var cell = buffer.get(x, y);
+                if ("S".equals(cell.symbol()) && cell.style().effectiveModifiers()
+                        .contains(dev.tamboui.style.Modifier.DIM)) {
+                    foundDim = true;
+                    break;
+                }
+            }
+            if (foundDim) {
+                break;
+            }
+        }
+        assertTrue(foundDim, "Prompt text should use DIM modifier");
     }
 
     @Test
@@ -85,12 +104,13 @@ class MonitorContextRenderTest {
     }
 
     @Test
-    void hintKeyIsBoldStyled() {
+    void hintKeyUsesYellowBoldStyle() {
         List<Span> spans = new ArrayList<>();
         MonitorContext.hint(spans, "s", "sort");
 
         Span keySpan = spans.get(0);
         assertTrue(keySpan.style().fg().isPresent(), "Key span should have a foreground color");
+        assertEquals(Color.YELLOW, keySpan.style().fg().get(), "Key span should be YELLOW");
         assertTrue(keySpan.style().effectiveModifiers().contains(dev.tamboui.style.Modifier.BOLD),
                 "Key span should be BOLD");
     }

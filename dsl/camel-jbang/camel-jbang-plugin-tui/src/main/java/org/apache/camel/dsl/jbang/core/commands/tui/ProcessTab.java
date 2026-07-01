@@ -30,6 +30,8 @@ import dev.tamboui.text.Line;
 import dev.tamboui.text.Span;
 import dev.tamboui.text.Text;
 import dev.tamboui.tui.event.KeyEvent;
+import dev.tamboui.tui.event.MouseEvent;
+import dev.tamboui.tui.event.MouseEventKind;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
 import dev.tamboui.widgets.block.Borders;
@@ -41,6 +43,8 @@ import org.apache.camel.util.json.JsonObject;
 import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.*;
 
 class ProcessTab implements MonitorTab {
+
+    private static final int MOUSE_SCROLL_LINES = 3;
 
     private final MonitorContext ctx;
     private boolean wrap;
@@ -71,6 +75,19 @@ class ProcessTab implements MonitorTab {
 
     @Override
     public boolean handleEscape() {
+        return false;
+    }
+
+    @Override
+    public boolean handleMouseEvent(MouseEvent me, Rect area) {
+        if (me.kind() == MouseEventKind.SCROLL_UP) {
+            scroll = Math.max(0, scroll - MOUSE_SCROLL_LINES);
+            return true;
+        }
+        if (me.kind() == MouseEventKind.SCROLL_DOWN) {
+            scroll += MOUSE_SCROLL_LINES;
+            return true;
+        }
         return false;
     }
 

@@ -31,6 +31,8 @@ import dev.tamboui.text.Line;
 import dev.tamboui.text.Span;
 import dev.tamboui.text.Text;
 import dev.tamboui.tui.event.KeyEvent;
+import dev.tamboui.tui.event.MouseEvent;
+import dev.tamboui.tui.event.MouseEventKind;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
 import dev.tamboui.widgets.block.Borders;
@@ -52,7 +54,9 @@ class ErrorsTab implements MonitorTab {
 
     private final MonitorContext ctx;
     private final TableState tableState = new TableState();
+    private Rect lastTableArea;
     private final ScrollbarState detailScrollState = new ScrollbarState();
+    private final ScrollbarState tableScrollState = new ScrollbarState();
     private String sort = "id";
     private int sortIndex;
     private boolean sortReversed;
@@ -66,6 +70,8 @@ class ErrorsTab implements MonitorTab {
     private boolean showVariables;
     private boolean showHeaders = true;
     private boolean showBody = true;
+
+    private static final int MOUSE_SCROLL_LINES = 3;
 
     private static final int INFO_NARROW = 0;
     private static final int INFO_WIDE = 1;
@@ -252,6 +258,44 @@ class ErrorsTab implements MonitorTab {
     }
 
     @Override
+    public boolean handleMouseEvent(MouseEvent me, Rect area) {
+        if (!diagram.isShowDiagram()) {
+            if (MonitorTab.handleTableClick(me, lastTableArea, tableState, filteredSize())) {
+                detailScroll = 0;
+                return true;
+            }
+        }
+        if (diagram.isShowDiagram()) {
+            if (diagram.handleMouseScroll(me)) {
+                return true;
+            }
+            if (me.isClick()) {
+                if (diagram.isHistoryMode() && diagram.isHistoryTopologyMode()) {
+                    int clicked = diagram.handleNodeClick(me);
+                    if (clicked >= 0) {
+                        return true;
+                    }
+                } else {
+                    int clicked = diagram.handleEipNodeClick(me);
+                    if (clicked >= 0) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+        if (me.kind() == MouseEventKind.SCROLL_UP) {
+            detailScroll = Math.max(0, detailScroll - MOUSE_SCROLL_LINES);
+            return true;
+        }
+        if (me.kind() == MouseEventKind.SCROLL_DOWN) {
+            detailScroll += MOUSE_SCROLL_LINES;
+            return true;
+        }
+        return false;
+    }
+
+    @Override
     public void navigateUp() {
         detailScroll = 0;
         tableState.selectPrevious();
@@ -368,7 +412,9 @@ class ErrorsTab implements MonitorTab {
                         .title(" Errors (" + sorted.size() + ") sort:" + sort + " ").build())
                 .build();
 
+        lastTableArea = chunks.get(0);
         frame.renderStatefulWidget(table, chunks.get(0), tableState);
+        MonitorTab.renderTableScrollbar(frame, lastTableArea, tableState, tableScrollState, filteredSize());
 
         if (showDetail) {
             renderDetail(frame, chunks.get(2), selectedError);

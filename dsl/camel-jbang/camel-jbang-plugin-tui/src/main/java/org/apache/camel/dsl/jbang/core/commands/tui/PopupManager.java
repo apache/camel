@@ -28,6 +28,8 @@ import dev.tamboui.text.Line;
 import dev.tamboui.text.Span;
 import dev.tamboui.text.Text;
 import dev.tamboui.tui.event.KeyEvent;
+import dev.tamboui.tui.event.MouseEvent;
+import dev.tamboui.tui.event.MouseEventKind;
 import dev.tamboui.widgets.Clear;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
@@ -75,6 +77,11 @@ class PopupManager {
 
     // Kill confirm
     private boolean showKillConfirm;
+
+    // Last rendered popup rects for mouse hit-testing
+    private Rect lastMorePopupRect;
+    private Rect lastSwitchPopupRect;
+    private static final int MORE_POPUP_ITEM_COUNT = 16;
 
     PopupManager(MonitorContext ctx, Supplier<List<IntegrationInfo>> nonVanishingIntegrationsSupplier,
                  FilesBrowser filesBrowser, PopupCallbacks callbacks) {
@@ -176,7 +183,7 @@ class PopupManager {
             return true;
         }
         if (ke.isDown()) {
-            morePopupState.selectNext(17);
+            morePopupState.selectNext(16);
             return true;
         }
         int shortcutSel = morePopupShortcut(ke);
@@ -235,11 +242,113 @@ class PopupManager {
         return true;
     }
 
+    // ---- Mouse handling ----
+
+    boolean handleMouseEvent(MouseEvent me, int selectedTab, int tabLog) {
+        if (showMorePopup) {
+            return handleMorePopupMouse(me);
+        }
+        if (showSwitchPopup) {
+            return handleSwitchPopupMouse(me, selectedTab, tabLog);
+        }
+        return false;
+    }
+
+    private boolean handleMorePopupMouse(MouseEvent me) {
+        if (lastMorePopupRect == null) {
+            return false;
+        }
+        int mx = me.x();
+        int my = me.y();
+        boolean inside = mx >= lastMorePopupRect.x() && mx < lastMorePopupRect.x() + lastMorePopupRect.width()
+                && my >= lastMorePopupRect.y() && my < lastMorePopupRect.y() + lastMorePopupRect.height();
+
+        // Click outside the popup closes it
+        if (me.isClick() && !inside) {
+            showMorePopup = false;
+            return true;
+        }
+        if (!inside) {
+            return true; // consume but ignore drags/scrolls outside
+        }
+        // Inside the popup: items start at y+1 (after border top row) and each is 1 row
+        int itemIndex = my - lastMorePopupRect.y() - 1; // -1 for top border
+        if (itemIndex < 0 || itemIndex >= MORE_POPUP_ITEM_COUNT) {
+            return true; // click on border area
+        }
+        if (me.kind() == MouseEventKind.SCROLL_UP) {
+            morePopupState.selectPrevious();
+            return true;
+        }
+        if (me.kind() == MouseEventKind.SCROLL_DOWN) {
+            morePopupState.selectNext(MORE_POPUP_ITEM_COUNT);
+            return true;
+        }
+        if (me.isClick()) {
+            showMorePopup = false;
+            callbacks.selectMoreTab(itemIndex);
+            return true;
+        }
+        // Hover/move: highlight the item under the cursor
+        if (me.kind() == MouseEventKind.MOVE || me.kind() == MouseEventKind.DRAG) {
+            morePopupState.select(itemIndex);
+            return true;
+        }
+        return true;
+    }
+
+    private boolean handleSwitchPopupMouse(MouseEvent me, int selectedTab, int tabLog) {
+        if (lastSwitchPopupRect == null) {
+            return false;
+        }
+        List<IntegrationInfo> switchList = nonVanishingIntegrationsSupplier.get();
+        int mx = me.x();
+        int my = me.y();
+        boolean inside = mx >= lastSwitchPopupRect.x() && mx < lastSwitchPopupRect.x() + lastSwitchPopupRect.width()
+                && my >= lastSwitchPopupRect.y() && my < lastSwitchPopupRect.y() + lastSwitchPopupRect.height();
+
+        if (me.isClick() && !inside) {
+            showSwitchPopup = false;
+            return true;
+        }
+        if (!inside) {
+            return true;
+        }
+        int itemIndex = my - lastSwitchPopupRect.y() - 1; // -1 for top border
+        if (itemIndex < 0 || itemIndex >= switchList.size()) {
+            return true;
+        }
+        if (me.kind() == MouseEventKind.SCROLL_UP) {
+            switchPopupState.selectPrevious();
+            return true;
+        }
+        if (me.kind() == MouseEventKind.SCROLL_DOWN) {
+            switchPopupState.selectNext(switchList.size());
+            return true;
+        }
+        if (me.isClick()) {
+            showSwitchPopup = false;
+            IntegrationInfo chosen = switchList.get(itemIndex);
+            ctx.selectedPid = chosen.pid;
+            ctx.lastSelectedName = chosen.name;
+            callbacks.resetIntegrationTabState();
+            if (selectedTab == tabLog) {
+                callbacks.refreshLogData();
+            }
+            return true;
+        }
+        if (me.kind() == MouseEventKind.MOVE || me.kind() == MouseEventKind.DRAG) {
+            switchPopupState.select(itemIndex);
+            return true;
+        }
+        return true;
+    }
+
     // ---- Rendering ----
 
     void renderMorePopup(Frame frame, Rect area) {
         int popupW = 22;
-        int popupH = 19;
+        int popupH = 18;
         // Position just below the "0 More▾" tab label
         int dividerW = CharWidth.of(" | ");
         int tabBarX = 0;
@@ -256,6 +365,7 @@ class PopupManager {
             x = Math.max(area.left(), area.right() - popupW);
         }
         Rect popup = new Rect(x, y, Math.min(popupW, area.width() - (x - area.left())), Math.min(popupH, area.height()));
+        lastMorePopupRect = popup;
 
         frame.renderWidget(Clear.INSTANCE, popup);
 
@@ -268,7 +378,6 @@ class PopupManager {
                 ListItem.from(Line.from(Span.raw("  Confi"), Span.styled("g", keyStyle), Span.raw("uration"))),
                 ListItem.from(Line.from(Span.raw("  Co"), Span.styled("n", keyStyle), Span.raw("sumers"))),
                 ListItem.from(Line.from(Span.raw("  "), Span.styled("D", keyStyle), Span.raw("ataSource"))),
-                ListItem.from(Line.from(Span.raw("  "), Span.styled("H", keyStyle), Span.raw("eap Histogram"))),
                 ListItem.from(Line.from(Span.raw("  "), Span.styled("I", keyStyle), Span.raw("nflight"))),
                 ListItem.from(Line.from(Span.raw("  "), Span.styled("M", keyStyle), Span.raw("emory"))),
                 ListItem.from(Line.from(Span.raw("  M"), Span.styled("e", keyStyle), Span.raw("trics"))),
@@ -311,6 +420,7 @@ class PopupManager {
         int x = area.left() + Math.max(0, (area.width() - popupW) / 2);
         int y = area.top() + 2;
         Rect popup = new Rect(x, y, Math.min(popupW, area.width()), Math.min(popupH, area.height() - 2));
+        lastSwitchPopupRect = popup;
 
         frame.renderWidget(Clear.INSTANCE, popup);
 
@@ -398,35 +508,32 @@ class PopupManager {
         if (ke.isChar('d')) {
             return 6;
         }
-        if (ke.isChar('h')) {
+        if (ke.isChar('i')) {
             return 7;
         }
-        if (ke.isChar('i')) {
+        if (ke.isChar('m')) {
             return 8;
         }
-        if (ke.isChar('m')) {
+        if (ke.isChar('e')) {
             return 9;
         }
-        if (ke.isChar('e')) {
+        if (ke.isChar('q')) {
             return 10;
         }
-        if (ke.isChar('q')) {
+        if (ke.isChar('r')) {
             return 11;
         }
-        if (ke.isChar('r')) {
+        if (ke.isChar('o')) {
             return 12;
         }
-        if (ke.isChar('o')) {
+        if (ke.isChar('p')) {
             return 13;
         }
-        if (ke.isChar('p')) {
+        if (ke.isChar('s')) {
             return 14;
         }
-        if (ke.isChar('s')) {
-            return 15;
-        }
         if (ke.isChar('t')) {
-            return 16;
+            return 15;
         }
         return -1;
     }
