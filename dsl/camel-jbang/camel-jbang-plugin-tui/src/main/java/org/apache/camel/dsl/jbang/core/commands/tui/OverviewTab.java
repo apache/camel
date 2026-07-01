@@ -54,7 +54,7 @@ import org.apache.camel.util.json.JsonObject;
 import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.*;
 import static org.apache.camel.dsl.jbang.core.common.CamelCommandHelper.extractState;
 
-class OverviewTab implements MonitorTab {
+class OverviewTab extends AbstractTab {
 
     /**
      * Callback interface for process control actions triggered from overview key shortcuts.
@@ -81,7 +81,6 @@ class OverviewTab implements MonitorTab {
     static final int CHART_SINGLE = 1;
     static final int CHART_OFF = 2;
 
-    private final MonitorContext ctx;
     private final Map<String, LinkedList<Long>> throughputHistory;
     private final Map<String, LinkedList<Long>> failedHistory;
     private final Map<String, LoadAvg> cpuLoadAvg;
@@ -106,7 +105,7 @@ class OverviewTab implements MonitorTab {
                 MetricsCollector metrics,
                 Set<String> stoppingPids,
                 Runnable onPidChanged) {
-        this.ctx = ctx;
+        super(ctx);
         this.throughputHistory = metrics.getThroughputHistory();
         this.failedHistory = metrics.getFailedHistory();
         this.cpuLoadAvg = metrics.getCpuLoadAvg();
@@ -183,11 +182,6 @@ class OverviewTab implements MonitorTab {
             syncSelectedPid();
             return true;
         }
-        return false;
-    }
-
-    @Override
-    public boolean handleEscape() {
         return false;
     }
 

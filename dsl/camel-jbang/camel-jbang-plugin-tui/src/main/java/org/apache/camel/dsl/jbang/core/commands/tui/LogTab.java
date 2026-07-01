@@ -59,7 +59,7 @@ import org.apache.camel.util.json.JsonObject;
 
 import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.*;
 
-class LogTab implements MonitorTab {
+class LogTab extends AbstractTab {
 
     private static final int MAX_LOG_LINES = 3000;
     private static final int MOUSE_SCROLL_LINES = 3;
@@ -72,7 +72,6 @@ class LogTab implements MonitorTab {
                                                                + "\\[([^]]*)]\\s+"
                                                                + "(\\S+)\\s*:\\s*(.*)$");
 
-    private final MonitorContext ctx;
     private final ScrollbarState scrollState = new ScrollbarState();
     private final ListState logLevelListState = new ListState();
 
@@ -100,7 +99,7 @@ class LogTab implements MonitorTab {
     private final SearchHighlighter search = new SearchHighlighter();
 
     LogTab(MonitorContext ctx) {
-        this.ctx = ctx;
+        super(ctx);
     }
 
     @Override

@@ -54,9 +54,8 @@ import org.apache.camel.util.json.JsonObject;
 
 import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.*;
 
-class SqlQueryTab implements MonitorTab {
+class SqlQueryTab extends AbstractTab {
 
-    private final MonitorContext ctx;
     private final TextAreaState sqlInput = new TextAreaState();
     private final TableState tableState = new TableState();
     private final ScrollbarState tableScrollState = new ScrollbarState();
@@ -100,7 +99,7 @@ class SqlQueryTab implements MonitorTab {
     private final DragSplit vSplit = new DragSplit();
 
     SqlQueryTab(MonitorContext ctx) {
-        this.ctx = ctx;
+        super(ctx);
     }
 
     boolean isInputActive() {

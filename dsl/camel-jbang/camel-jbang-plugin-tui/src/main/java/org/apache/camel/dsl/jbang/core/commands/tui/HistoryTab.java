@@ -63,7 +63,7 @@ import org.apache.camel.util.json.Jsoner;
 
 import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.*;
 
-class HistoryTab implements MonitorTab {
+class HistoryTab extends AbstractTab {
 
     private static final String[] TRACE_SORT_COLUMNS = { "time", "route", "elapsed", "exchange" };
     private static final int MOUSE_SCROLL_LINES = 1;
@@ -78,7 +78,6 @@ class HistoryTab implements MonitorTab {
         }
     };
 
-    private final MonitorContext ctx;
     private final AtomicReference<List<TraceEntry>> traces;
     private final Map<String, Long> traceFilePositions;
 
@@ -143,7 +142,7 @@ class HistoryTab implements MonitorTab {
     HistoryTab(MonitorContext ctx,
                AtomicReference<List<TraceEntry>> traces,
                Map<String, Long> traceFilePositions) {
-        this.ctx = ctx;
+        super(ctx);
         this.traces = traces;
         this.traceFilePositions = traceFilePositions;
     }

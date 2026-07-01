@@ -38,31 +38,21 @@ import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
 import dev.tamboui.widgets.block.Borders;
 import dev.tamboui.widgets.paragraph.Paragraph;
-import dev.tamboui.widgets.scrollbar.ScrollbarState;
 import dev.tamboui.widgets.table.Cell;
 import dev.tamboui.widgets.table.Row;
 import dev.tamboui.widgets.table.Table;
-import dev.tamboui.widgets.table.TableState;
 import org.apache.camel.dsl.jbang.core.common.PathUtils;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 
 import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.*;
 
-class ThreadsTab implements MonitorTab {
+class ThreadsTab extends AbstractTableTab {
 
-    private static final String[] SORT_COLUMNS = { "id", "name", "state" };
     private static final String[] FILTER_LABELS = { "camel", "all" };
 
-    private final MonitorContext ctx;
-    private final TableState tableState = new TableState();
-    private final ScrollbarState tableScrollState = new ScrollbarState();
     private final AtomicBoolean loading = new AtomicBoolean(false);
-    private Rect lastTableArea;
 
-    private String sort = "id";
-    private int sortIndex;
-    private boolean sortReversed;
     private int filter; // 0=camel, 1=all
     private List<ThreadData> allThreads = Collections.emptyList();
     private int threadCount;
@@ -72,7 +62,12 @@ class ThreadsTab implements MonitorTab {
     private String lastPid;
 
     ThreadsTab(MonitorContext ctx) {
-        this.ctx = ctx;
+        super(ctx, "id", "name", "state");
+    }
+
+    @Override
+    protected int getRowCount() {
+        return sortedThreads().size();
     }
 
     @Override
@@ -117,20 +112,14 @@ class ThreadsTab implements MonitorTab {
             }
             return false;
         }
+        return super.handleKeyEvent(ke);
+    }
 
+    @Override
+    protected boolean handleTabKeyEvent(KeyEvent ke) {
         if (ke.isConfirm()) {
             showTrace = !showTrace;
             traceScroll = 0;
-            return true;
-        }
-        if (ke.isChar('s')) {
-            sortIndex = (sortIndex + 1) % SORT_COLUMNS.length;
-            sort = SORT_COLUMNS[sortIndex];
-            sortReversed = false;
-            return true;
-        }
-        if (ke.isChar('S')) {
-            sortReversed = !sortReversed;
             return true;
         }
         if (ke.isCharIgnoreCase('f')) {
@@ -161,8 +150,7 @@ class ThreadsTab implements MonitorTab {
     @Override
     public boolean handleMouseEvent(MouseEvent me, Rect area) {
         if (!showTrace) {
-            List<ThreadData> visible = sortedThreads();
-            return MonitorTab.handleTableClick(me, lastTableArea, tableState, visible.size());
+            return super.handleMouseEvent(me, area);
         }
         return false;
     }
@@ -179,26 +167,19 @@ class ThreadsTab implements MonitorTab {
     @Override
     public void navigateUp() {
         if (!showTrace) {
-            tableState.selectPrevious();
+            super.navigateUp();
         }
     }
 
     @Override
     public void navigateDown() {
         if (!showTrace) {
-            List<ThreadData> visible = sortedThreads();
-            tableState.selectNext(visible.size());
+            super.navigateDown();
         }
     }
 
     @Override
-    public void render(Frame frame, Rect area) {
-        IntegrationInfo info = ctx.findSelectedIntegration();
-        if (info == null) {
-            renderNoSelection(frame, area);
-            return;
-        }
-
+    protected void renderContent(Frame frame, Rect area, IntegrationInfo info) {
         if (loading.get() && allThreads.isEmpty()) {
             frame.renderWidget(
                     Paragraph.builder()
@@ -420,14 +401,6 @@ class ThreadsTab implements MonitorTab {
             case "TIMED_WAITING" -> Style.EMPTY.fg(Color.CYAN);
             default -> Style.EMPTY;
         };
-    }
-
-    private String sortLabel(String label, String column) {
-        return MonitorContext.sortLabel(label, column, sort, sortReversed);
-    }
-
-    private Style sortStyle(String column) {
-        return MonitorContext.sortStyle(column, sort);
     }
 
     private void loadThreads() {

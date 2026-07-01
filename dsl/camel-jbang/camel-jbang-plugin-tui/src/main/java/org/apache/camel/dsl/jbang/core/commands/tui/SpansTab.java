@@ -54,12 +54,11 @@ import dev.tamboui.widgets.table.TableState;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 
-class SpansTab implements MonitorTab {
+class SpansTab extends AbstractTab {
 
     private static final int MOUSE_SCROLL_LINES = 3;
     private static final String[] SORT_COLUMNS = { "trace-id", "route", "from", "spans", "routes", "status", "duration" };
 
-    private final MonitorContext ctx;
     private final AtomicReference<List<SpanEntry>> spans;
 
     private final TableState traceListState = new TableState();
@@ -84,7 +83,7 @@ class SpansTab implements MonitorTab {
     boolean spanRefreshRequested;
 
     SpansTab(MonitorContext ctx, AtomicReference<List<SpanEntry>> spans) {
-        this.ctx = ctx;
+        super(ctx);
         this.spans = spans;
     }
 

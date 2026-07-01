@@ -49,15 +49,13 @@ import dev.tamboui.widgets.scrollbar.ScrollbarState;
 import dev.tamboui.widgets.table.Cell;
 import dev.tamboui.widgets.table.Row;
 import dev.tamboui.widgets.table.Table;
-import dev.tamboui.widgets.table.TableState;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 
 import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.*;
 
-class MetricsTab implements MonitorTab {
+class MetricsTab extends AbstractTableTab {
 
-    private static final String[] SORT_COLUMNS = { "type", "name", "value" };
     private static final String[] FILTER_TYPES = { "all", "counter", "gauge", "timer", "longTaskTimer", "distribution" };
 
     private static final int MOUSE_SCROLL_LINES = 3;
@@ -68,20 +66,13 @@ class MetricsTab implements MonitorTab {
     private static final Style GOOD = Style.EMPTY.fg(Color.GREEN);
     private static final Style BAD = Style.EMPTY.fg(Color.LIGHT_RED);
 
-    private final MonitorContext ctx;
-    private final TableState tableState = new TableState();
     private final ScrollbarState scrollbarState = new ScrollbarState();
     private final ScrollbarState rawScrollbarState = new ScrollbarState();
-    private final ScrollbarState tableScrollState = new ScrollbarState();
     private boolean tableMode;
     private int lastRowCount;
-    private String sort = "name";
-    private int sortIndex = 1;
-    private boolean sortReversed;
     private String filterType = "all";
     private int filterIndex;
 
-    private Rect lastTableArea;
     private int camelPanelWidth = -1;
     private final DragSplit hSplit = new DragSplit();
 
@@ -94,12 +85,18 @@ class MetricsTab implements MonitorTab {
     private final AtomicBoolean rawLoading = new AtomicBoolean(false);
 
     MetricsTab(MonitorContext ctx) {
-        this.ctx = ctx;
+        super(ctx, "type", "name", "value");
+        sortIndex = 1;
+        sort = "name";
+    }
+
+    @Override
+    protected int getRowCount() {
+        return lastRowCount;
     }
 
     @Override
     public boolean handleKeyEvent(KeyEvent ke) {
-        // raw view scrolling
         if (showRaw) {
             if (ke.isUp()) {
                 rawScroll = Math.max(0, rawScroll - 1);
@@ -166,21 +163,12 @@ class MetricsTab implements MonitorTab {
                 tableState.selectLast(lastRowCount);
                 return true;
             }
-            if (ke.isChar('s')) {
-                sortIndex = (sortIndex + 1) % SORT_COLUMNS.length;
-                sort = SORT_COLUMNS[sortIndex];
-                sortReversed = false;
-                return true;
-            }
-            if (ke.isChar('S')) {
-                sortReversed = !sortReversed;
-                return true;
-            }
             if (ke.isChar('f')) {
                 filterIndex = (filterIndex + 1) % FILTER_TYPES.length;
                 filterType = FILTER_TYPES[filterIndex];
                 return true;
             }
+            return super.handleKeyEvent(ke);
         }
         return false;
     }
@@ -239,13 +227,7 @@ class MetricsTab implements MonitorTab {
     }
 
     @Override
-    public void render(Frame frame, Rect area) {
-        IntegrationInfo info = ctx.findSelectedIntegration();
-        if (info == null) {
-            renderNoSelection(frame, area);
-            return;
-        }
-
+    protected void renderContent(Frame frame, Rect area, IntegrationInfo info) {
         if (info.meters.isEmpty()) {
             Paragraph p = Paragraph.from(Line.from(
                     Span.styled("No metrics available. Run with --observe to enable micrometer.", LABEL)));
@@ -808,16 +790,6 @@ class MetricsTab implements MonitorTab {
         double ratio = Math.min(1.0, used / max);
         int filled = (int) Math.round(ratio * width);
         return "[" + "▓".repeat(filled) + "░".repeat(width - filled) + "]";
-    }
-
-    // ---- Table mode helpers ----
-
-    private String sortLabel(String label, String column) {
-        return MonitorContext.sortLabel(label, column, sort, sortReversed);
-    }
-
-    private Style sortStyle(String column) {
-        return MonitorContext.sortStyle(column, sort);
     }
 
     private int sortMeter(MicrometerMeterInfo a, MicrometerMeterInfo b) {

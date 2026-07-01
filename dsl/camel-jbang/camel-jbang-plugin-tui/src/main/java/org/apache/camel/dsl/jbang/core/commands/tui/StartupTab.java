@@ -47,14 +47,13 @@ import org.apache.camel.util.json.JsonObject;
 
 import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.*;
 
-class StartupTab implements MonitorTab {
+class StartupTab extends AbstractTab {
 
     private static final int MOUSE_SCROLL_LINES = 3;
     private static final Style LABEL = Style.EMPTY.dim();
     private static final Style VALUE = Style.EMPTY.fg(Color.WHITE).bold();
     private static final Style HEADER = Style.EMPTY.fg(Color.YELLOW).bold();
 
-    private final MonitorContext ctx;
     private final ScrollbarState scrollbarState = new ScrollbarState();
     private final AtomicBoolean loading = new AtomicBoolean(false);
 
@@ -68,7 +67,7 @@ class StartupTab implements MonitorTab {
     private boolean dataLoaded;
 
     StartupTab(MonitorContext ctx) {
-        this.ctx = ctx;
+        super(ctx);
     }
 
     @Override
@@ -121,11 +120,6 @@ class StartupTab implements MonitorTab {
             scrollOffset += MOUSE_SCROLL_LINES;
             return true;
         }
-        return false;
-    }
-
-    @Override
-    public boolean handleEscape() {
         return false;
     }
 

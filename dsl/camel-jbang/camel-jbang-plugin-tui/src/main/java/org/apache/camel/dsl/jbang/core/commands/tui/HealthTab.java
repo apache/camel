@@ -26,49 +26,35 @@ import dev.tamboui.style.Style;
 import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.Span;
 import dev.tamboui.tui.event.KeyEvent;
-import dev.tamboui.tui.event.MouseEvent;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
 import dev.tamboui.widgets.block.Borders;
-import dev.tamboui.widgets.scrollbar.ScrollbarState;
 import dev.tamboui.widgets.table.Cell;
 import dev.tamboui.widgets.table.Row;
 import dev.tamboui.widgets.table.Table;
-import dev.tamboui.widgets.table.TableState;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 
 import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.*;
 
-class HealthTab implements MonitorTab {
+class HealthTab extends AbstractTableTab {
 
-    private static final String[] SORT_COLUMNS = { "group", "name", "status" };
-
-    private final MonitorContext ctx;
-    private final TableState tableState = new TableState();
-    private final ScrollbarState tableScrollState = new ScrollbarState();
-    private Rect lastTableArea;
     private boolean showOnlyDown;
-    private String sort = "name";
-    private int sortIndex = 1;
-    private boolean sortReversed;
 
     HealthTab(MonitorContext ctx) {
-        this.ctx = ctx;
+        super(ctx, "group", "name", "status");
+        sortIndex = 1;
+        sort = "name";
     }
 
     @Override
-    public boolean handleKeyEvent(KeyEvent ke) {
-        if (ke.isChar('s')) {
-            sortIndex = (sortIndex + 1) % SORT_COLUMNS.length;
-            sort = SORT_COLUMNS[sortIndex];
-            sortReversed = false;
-            return true;
-        }
-        if (ke.isChar('S')) {
-            sortReversed = !sortReversed;
-            return true;
-        }
+    protected int getRowCount() {
+        IntegrationInfo info = ctx.findSelectedIntegration();
+        return info != null ? getFilteredHealthChecks(info).size() : 0;
+    }
+
+    @Override
+    protected boolean handleTabKeyEvent(KeyEvent ke) {
         if (ke.isCharIgnoreCase('d')) {
             showOnlyDown = !showOnlyDown;
             return true;
@@ -77,38 +63,7 @@ class HealthTab implements MonitorTab {
     }
 
     @Override
-    public boolean handleMouseEvent(MouseEvent me, Rect area) {
-        IntegrationInfo info = ctx.findSelectedIntegration();
-        if (info == null) {
-            return false;
-        }
-        return MonitorTab.handleTableClick(me, lastTableArea, tableState, getFilteredHealthChecks(info).size());
-    }
-
-    @Override
-    public boolean handleEscape() {
-        return false;
-    }
-
-    @Override
-    public void navigateUp() {
-        tableState.selectPrevious();
-    }
-
-    @Override
-    public void navigateDown() {
-        IntegrationInfo info = ctx.findSelectedIntegration();
-        tableState.selectNext(info != null ? getFilteredHealthChecks(info).size() : 0);
-    }
-
-    @Override
-    public void render(Frame frame, Rect area) {
-        IntegrationInfo info = ctx.findSelectedIntegration();
-        if (info == null) {
-            MonitorContext.renderNoSelection(frame, area);
-            return;
-        }
-
+    protected void renderContent(Frame frame, Rect area, IntegrationInfo info) {
         List<HealthCheckInfo> healthChecks = new ArrayList<>(getFilteredHealthChecks(info));
         healthChecks.sort(this::sortHealth);
 
@@ -160,9 +115,9 @@ class HealthTab implements MonitorTab {
         Table table = Table.builder()
                 .rows(rows)
                 .header(Row.from(
-                        Cell.from(Span.styled(sortLabel("GROUP", "group", sort, sortReversed), sortStyle("group", sort))),
-                        Cell.from(Span.styled(sortLabel("NAME", "name", sort, sortReversed), sortStyle("name", sort))),
-                        Cell.from(Span.styled(sortLabel("STATUS", "status", sort, sortReversed), sortStyle("status", sort))),
+                        Cell.from(Span.styled(sortLabel("GROUP", "group"), sortStyle("group"))),
+                        Cell.from(Span.styled(sortLabel("NAME", "name"), sortStyle("name"))),
+                        Cell.from(Span.styled(sortLabel("STATUS", "status"), sortStyle("status"))),
                         Cell.from(Span.styled("KIND", Style.EMPTY.bold())),
                         Cell.from(Span.styled("MESSAGE", Style.EMPTY.bold()))))
                 .widths(
@@ -181,9 +136,8 @@ class HealthTab implements MonitorTab {
 
     @Override
     public void renderFooter(List<Span> spans) {
-        hint(spans, "Esc", "back");
-        hint(spans, "s", "sort");
-        hint(spans, "d", "toggle DOWN");
+        super.renderFooter(spans);
+        MonitorContext.hint(spans, "d", "toggle DOWN");
     }
 
     boolean isShowOnlyDown() {

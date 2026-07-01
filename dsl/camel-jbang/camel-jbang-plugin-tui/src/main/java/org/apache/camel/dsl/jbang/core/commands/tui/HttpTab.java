@@ -53,11 +53,9 @@ import dev.tamboui.widgets.block.Title;
 import dev.tamboui.widgets.input.TextInput;
 import dev.tamboui.widgets.input.TextInputState;
 import dev.tamboui.widgets.paragraph.Paragraph;
-import dev.tamboui.widgets.scrollbar.ScrollbarState;
 import dev.tamboui.widgets.table.Cell;
 import dev.tamboui.widgets.table.Row;
 import dev.tamboui.widgets.table.Table;
-import dev.tamboui.widgets.table.TableState;
 import org.apache.camel.dsl.jbang.core.common.CamelCommandHelper;
 import org.apache.camel.dsl.jbang.core.common.PathUtils;
 import org.apache.camel.util.json.JsonArray;
@@ -65,10 +63,9 @@ import org.apache.camel.util.json.JsonObject;
 
 import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.*;
 
-class HttpTab implements MonitorTab {
+class HttpTab extends AbstractTableTab {
 
     private static final int MOUSE_SCROLL_LINES = 3;
-    private static final String[] SORT_COLUMNS = { "method", "path", "total", "consumes", "produces", "source" };
     private static final Set<String> OPENAPI_HTTP_VERBS
             = Set.of("get", "post", "put", "delete", "patch", "options", "head", "trace");
 
@@ -82,13 +79,8 @@ class HttpTab implements MonitorTab {
     private static final String[] PROBE_METHODS = { "GET", "POST", "PUT", "DELETE", "PATCH", "HEAD", "OPTIONS" };
     private static final int MAX_PROBE_HISTORY = 20;
 
-    private final MonitorContext ctx;
-    private final TableState tableState = new TableState();
     private final AtomicBoolean specLoading = new AtomicBoolean(false);
 
-    private String sort = "method";
-    private int sortIndex;
-    private boolean sortReversed;
     private int filter;
     private boolean showManagement;
 
@@ -120,13 +112,16 @@ class HttpTab implements MonitorTab {
     private String probeResponseRawBody;
     private List<String> probeResponseHeaderLines;
 
-    private Rect lastTableArea;
-    private final ScrollbarState tableScrollState = new ScrollbarState();
     private int detailPanelHeight = 10;
     private final DragSplit vSplit = new DragSplit();
 
     HttpTab(MonitorContext ctx) {
-        this.ctx = ctx;
+        super(ctx, "method", "path", "total", "consumes", "produces", "source");
+    }
+
+    @Override
+    protected int getRowCount() {
+        return sortedVisibleEndpoints(ctx.findSelectedIntegration()).size();
     }
 
     boolean isProbeMode() {
@@ -160,18 +155,13 @@ class HttpTab implements MonitorTab {
             return true;
         }
 
+        return super.handleKeyEvent(ke);
+    }
+
+    @Override
+    protected boolean handleTabKeyEvent(KeyEvent ke) {
         if (ke.isConfirm()) {
             enterProbeModeFromTable();
-            return true;
-        }
-        if (ke.isChar('s')) {
-            sortIndex = (sortIndex + 1) % SORT_COLUMNS.length;
-            sort = SORT_COLUMNS[sortIndex];
-            sortReversed = false;
-            return true;
-        }
-        if (ke.isChar('S')) {
-            sortReversed = !sortReversed;
             return true;
         }
         if (ke.isCharIgnoreCase('f')) {
@@ -272,13 +262,7 @@ class HttpTab implements MonitorTab {
     }
 
     @Override
-    public void render(Frame frame, Rect area) {
-        IntegrationInfo info = ctx.findSelectedIntegration();
-        if (info == null) {
-            renderNoSelection(frame, area);
-            return;
-        }
-
+    protected void renderContent(Frame frame, Rect area, IntegrationInfo info) {
         if (probeMode) {
             renderProbe(frame, area);
             return;
@@ -1577,14 +1561,6 @@ class HttpTab implements MonitorTab {
                         .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(title).build())
                         .build(),
                 area);
-    }
-
-    private String sortLabel(String label, String column) {
-        return MonitorContext.sortLabel(label, column, sort, sortReversed);
-    }
-
-    private Style sortStyle(String column) {
-        return MonitorContext.sortStyle(column, sort);
     }
 
     @Override

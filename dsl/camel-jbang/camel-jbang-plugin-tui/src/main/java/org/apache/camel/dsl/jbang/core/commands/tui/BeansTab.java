@@ -38,30 +38,19 @@ import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
 import dev.tamboui.widgets.block.Borders;
 import dev.tamboui.widgets.paragraph.Paragraph;
-import dev.tamboui.widgets.scrollbar.ScrollbarState;
 import dev.tamboui.widgets.table.Cell;
 import dev.tamboui.widgets.table.Row;
 import dev.tamboui.widgets.table.Table;
-import dev.tamboui.widgets.table.TableState;
 import org.apache.camel.dsl.jbang.core.common.PathUtils;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 
 import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.*;
 
-class BeansTab implements MonitorTab {
+class BeansTab extends AbstractTableTab {
 
-    private static final String[] SORT_COLUMNS = { "name", "type" };
-
-    private final MonitorContext ctx;
-    private final TableState tableState = new TableState();
-    private final ScrollbarState tableScrollState = new ScrollbarState();
     private final AtomicBoolean loading = new AtomicBoolean(false);
-    private Rect lastTableArea;
 
-    private String sort = "name";
-    private int sortIndex;
-    private boolean sortReversed;
     private boolean showInternal;
     private List<BeanData> allBeans = Collections.emptyList();
     private boolean showDetail;
@@ -69,7 +58,12 @@ class BeansTab implements MonitorTab {
     private String lastPid;
 
     BeansTab(MonitorContext ctx) {
-        this.ctx = ctx;
+        super(ctx, "name", "type");
+    }
+
+    @Override
+    protected int getRowCount() {
+        return sortedBeans().size();
     }
 
     @Override
@@ -114,20 +108,14 @@ class BeansTab implements MonitorTab {
             }
             return false;
         }
+        return super.handleKeyEvent(ke);
+    }
 
+    @Override
+    protected boolean handleTabKeyEvent(KeyEvent ke) {
         if (ke.isConfirm()) {
             showDetail = !showDetail;
             detailScroll = 0;
-            return true;
-        }
-        if (ke.isChar('s')) {
-            sortIndex = (sortIndex + 1) % SORT_COLUMNS.length;
-            sort = SORT_COLUMNS[sortIndex];
-            sortReversed = false;
-            return true;
-        }
-        if (ke.isChar('S')) {
-            sortReversed = !sortReversed;
             return true;
         }
         if (ke.isCharIgnoreCase('i')) {
@@ -188,13 +176,7 @@ class BeansTab implements MonitorTab {
     }
 
     @Override
-    public void render(Frame frame, Rect area) {
-        IntegrationInfo info = ctx.findSelectedIntegration();
-        if (info == null) {
-            renderNoSelection(frame, area);
-            return;
-        }
-
+    protected void renderContent(Frame frame, Rect area, IntegrationInfo info) {
         if (loading.get() && allBeans.isEmpty()) {
             frame.renderWidget(
                     Paragraph.builder()
@@ -321,8 +303,7 @@ class BeansTab implements MonitorTab {
 
     @Override
     public void renderFooter(List<Span> spans) {
-        hint(spans, "Esc", "back");
-        hint(spans, "s", "sort");
+        super.renderFooter(spans);
         hint(spans, "i", "internal" + (showInternal ? " [on]" : ""));
         hint(spans, "r", "refresh");
         if (showDetail) {
@@ -372,14 +353,6 @@ class BeansTab implements MonitorTab {
             return 1;
         }
         return a.compareToIgnoreCase(b);
-    }
-
-    private String sortLabel(String label, String column) {
-        return MonitorContext.sortLabel(label, column, sort, sortReversed);
-    }
-
-    private Style sortStyle(String column) {
-        return MonitorContext.sortStyle(column, sort);
     }
 
     private void loadBeans() {

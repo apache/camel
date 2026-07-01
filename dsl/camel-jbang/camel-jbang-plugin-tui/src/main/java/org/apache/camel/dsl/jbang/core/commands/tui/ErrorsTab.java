@@ -41,25 +41,15 @@ import dev.tamboui.widgets.scrollbar.ScrollbarState;
 import dev.tamboui.widgets.table.Cell;
 import dev.tamboui.widgets.table.Row;
 import dev.tamboui.widgets.table.Table;
-import dev.tamboui.widgets.table.TableState;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
 
 import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.*;
 
-class ErrorsTab implements MonitorTab {
+class ErrorsTab extends AbstractTableTab {
 
-    private static final String[] SORT_COLUMNS = { "id", "age", "route", "node", "exception" };
-
-    private final MonitorContext ctx;
-    private final TableState tableState = new TableState();
-    private Rect lastTableArea;
     private final ScrollbarState detailScrollState = new ScrollbarState();
-    private final ScrollbarState tableScrollState = new ScrollbarState();
-    private String sort = "id";
-    private int sortIndex;
-    private boolean sortReversed;
     private static final String[] HANDLED_FILTER = { "all", "true", "false" };
     private int handledIndex;
     private String handledFilter = "all";
@@ -81,7 +71,12 @@ class ErrorsTab implements MonitorTab {
     private int infoPanelSize = INFO_NARROW;
 
     ErrorsTab(MonitorContext ctx) {
-        this.ctx = ctx;
+        super(ctx, "id", "age", "route", "node", "exception");
+    }
+
+    @Override
+    protected int getRowCount() {
+        return filteredSize();
     }
 
     @Override
@@ -93,7 +88,7 @@ class ErrorsTab implements MonitorTab {
     }
 
     @Override
-    public boolean handleKeyEvent(KeyEvent ke) {
+    protected boolean handleTabKeyEvent(KeyEvent ke) {
         if (diagram.isShowDiagram() && diagram.isHistoryMode() && diagram.hasHistoryData()) {
             if (diagram.isHistoryTopologyMode()) {
                 if (ke.isUp()) {
@@ -186,16 +181,6 @@ class ErrorsTab implements MonitorTab {
             return true;
         }
 
-        if (ke.isChar('s')) {
-            sortIndex = (sortIndex + 1) % SORT_COLUMNS.length;
-            sort = SORT_COLUMNS[sortIndex];
-            sortReversed = false;
-            return true;
-        }
-        if (ke.isChar('S')) {
-            sortReversed = !sortReversed;
-            return true;
-        }
         if (ke.isCharIgnoreCase('w')) {
             wordWrap = !wordWrap;
             return true;
@@ -308,13 +293,7 @@ class ErrorsTab implements MonitorTab {
     }
 
     @Override
-    public void render(Frame frame, Rect area) {
-        IntegrationInfo info = ctx.findSelectedIntegration();
-        if (info == null) {
-            renderNoSelection(frame, area);
-            return;
-        }
-
+    protected void renderContent(Frame frame, Rect area, IntegrationInfo info) {
         if (diagram.isShowDiagram() && diagram.isHistoryMode() && diagram.hasHistoryData()) {
             if (infoPanelSize == INFO_FULL) {
                 renderDiagramInfoPanel(frame, area, info);
@@ -530,14 +509,6 @@ class ErrorsTab implements MonitorTab {
         HistoryTab.renderDetailPanel(frame, area, lines, wordWrap, hScroll, scroll, detailScrollState);
         detailScroll = scroll[0];
         detailHScroll = hScroll[0];
-    }
-
-    private String sortLabel(String label, String column) {
-        return MonitorContext.sortLabel(label, column, sort, sortReversed);
-    }
-
-    private Style sortStyle(String column) {
-        return MonitorContext.sortStyle(column, sort);
     }
 
     private int sortError(ErrorInfo a, ErrorInfo b) {

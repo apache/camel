@@ -40,25 +40,18 @@ import dev.tamboui.widgets.paragraph.Paragraph;
 import dev.tamboui.widgets.table.Cell;
 import dev.tamboui.widgets.table.Row;
 import dev.tamboui.widgets.table.Table;
-import dev.tamboui.widgets.table.TableState;
 import org.apache.camel.dsl.jbang.core.common.PathUtils;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 
 import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.*;
 
-class HeapHistogramTab implements MonitorTab {
+class HeapHistogramTab extends AbstractTableTab {
 
-    private static final String[] SORT_COLUMNS = { "className", "instances", "bytes" };
     private static final String[] FILTER_LABELS = { "all", "non-jdk", "camel" };
 
-    private final MonitorContext ctx;
-    private final TableState tableState = new TableState();
     private final AtomicBoolean loading = new AtomicBoolean(false);
 
-    private String sort = "bytes";
-    private int sortIndex = 2;
-    private boolean sortReversed;
     private int filter;
     private List<HeapEntry> allEntries = Collections.emptyList();
     private long totalInstances;
@@ -67,7 +60,14 @@ class HeapHistogramTab implements MonitorTab {
     private List<ClasspathTab.JarEntry> classpathEntries = Collections.emptyList();
 
     HeapHistogramTab(MonitorContext ctx) {
-        this.ctx = ctx;
+        super(ctx, "className", "instances", "bytes");
+        sortIndex = 2;
+        sort = "bytes";
+    }
+
+    @Override
+    protected int getRowCount() {
+        return sortedEntries().size();
     }
 
     @Override
@@ -92,17 +92,7 @@ class HeapHistogramTab implements MonitorTab {
     }
 
     @Override
-    public boolean handleKeyEvent(KeyEvent ke) {
-        if (ke.isChar('s')) {
-            sortIndex = (sortIndex + 1) % SORT_COLUMNS.length;
-            sort = SORT_COLUMNS[sortIndex];
-            sortReversed = false;
-            return true;
-        }
-        if (ke.isChar('S')) {
-            sortReversed = !sortReversed;
-            return true;
-        }
+    protected boolean handleTabKeyEvent(KeyEvent ke) {
         if (ke.isCharIgnoreCase('f')) {
             filter = (filter + 1) % FILTER_LABELS.length;
             tableState.select(0);
@@ -129,29 +119,7 @@ class HeapHistogramTab implements MonitorTab {
     }
 
     @Override
-    public boolean handleEscape() {
-        return false;
-    }
-
-    @Override
-    public void navigateUp() {
-        tableState.selectPrevious();
-    }
-
-    @Override
-    public void navigateDown() {
-        List<HeapEntry> visible = sortedEntries();
-        tableState.selectNext(visible.size());
-    }
-
-    @Override
-    public void render(Frame frame, Rect area) {
-        IntegrationInfo info = ctx.findSelectedIntegration();
-        if (info == null) {
-            renderNoSelection(frame, area);
-            return;
-        }
-
+    protected void renderContent(Frame frame, Rect area, IntegrationInfo info) {
         if (loading.get() && allEntries.isEmpty()) {
             frame.renderWidget(
                     Paragraph.builder()
@@ -522,14 +490,6 @@ class HeapHistogramTab implements MonitorTab {
             return 1;
         }
         return a.compareToIgnoreCase(b);
-    }
-
-    private String sortLabel(String label, String column) {
-        return MonitorContext.sortLabel(label, column, sort, sortReversed);
-    }
-
-    private Style sortStyle(String column) {
-        return MonitorContext.sortStyle(column, sort);
     }
 
     private void loadHeapHistogram() {

@@ -42,17 +42,16 @@ import org.apache.camel.util.json.JsonObject;
 
 import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.*;
 
-class ProcessTab implements MonitorTab {
+class ProcessTab extends AbstractTab {
 
     private static final int MOUSE_SCROLL_LINES = 3;
 
-    private final MonitorContext ctx;
     private boolean wrap;
     private int scroll;
     private final ScrollbarState scrollState = new ScrollbarState();
 
     ProcessTab(MonitorContext ctx) {
-        this.ctx = ctx;
+        super(ctx);
     }
 
     @Override
@@ -70,11 +69,6 @@ class ProcessTab implements MonitorTab {
             scroll += 5;
             return true;
         }
-        return false;
-    }
-
-    @Override
-    public boolean handleEscape() {
         return false;
     }
 

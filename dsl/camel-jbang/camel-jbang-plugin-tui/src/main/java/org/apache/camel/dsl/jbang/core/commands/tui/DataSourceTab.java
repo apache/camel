@@ -25,84 +25,30 @@ import dev.tamboui.style.Color;
 import dev.tamboui.style.Style;
 import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.Span;
-import dev.tamboui.tui.event.KeyEvent;
-import dev.tamboui.tui.event.MouseEvent;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
-import dev.tamboui.widgets.scrollbar.ScrollbarState;
 import dev.tamboui.widgets.table.Cell;
 import dev.tamboui.widgets.table.Row;
 import dev.tamboui.widgets.table.Table;
-import dev.tamboui.widgets.table.TableState;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 
 import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.*;
 
-class DataSourceTab implements MonitorTab {
-
-    private static final String[] SORT_COLUMNS = { "name", "pool", "active", "idle", "total", "max", "waiting" };
-
-    private final MonitorContext ctx;
-    private final TableState tableState = new TableState();
-    private final ScrollbarState tableScrollState = new ScrollbarState();
-    private Rect lastTableArea;
-    private String sort = "name";
-    private int sortIndex;
-    private boolean sortReversed;
+class DataSourceTab extends AbstractTableTab {
 
     DataSourceTab(MonitorContext ctx) {
-        this.ctx = ctx;
+        super(ctx, "name", "pool", "active", "idle", "total", "max", "waiting");
     }
 
     @Override
-    public boolean handleKeyEvent(KeyEvent ke) {
-        if (ke.isChar('s')) {
-            sortIndex = (sortIndex + 1) % SORT_COLUMNS.length;
-            sort = SORT_COLUMNS[sortIndex];
-            sortReversed = false;
-            return true;
-        }
-        if (ke.isChar('S')) {
-            sortReversed = !sortReversed;
-            return true;
-        }
-        return false;
-    }
-
-    @Override
-    public boolean handleMouseEvent(MouseEvent me, Rect area) {
+    protected int getRowCount() {
         IntegrationInfo info = ctx.findSelectedIntegration();
-        if (info == null) {
-            return false;
-        }
-        return MonitorTab.handleTableClick(me, lastTableArea, tableState, info.dataSources.size());
+        return info != null ? info.dataSources.size() : 0;
     }
 
     @Override
-    public boolean handleEscape() {
-        return false;
-    }
-
-    @Override
-    public void navigateUp() {
-        tableState.selectPrevious();
-    }
-
-    @Override
-    public void navigateDown() {
-        IntegrationInfo info = ctx.findSelectedIntegration();
-        tableState.selectNext(info != null ? info.dataSources.size() : 0);
-    }
-
-    @Override
-    public void render(Frame frame, Rect area) {
-        IntegrationInfo info = ctx.findSelectedIntegration();
-        if (info == null) {
-            renderNoSelection(frame, area);
-            return;
-        }
-
+    protected void renderContent(Frame frame, Rect area, IntegrationInfo info) {
         List<DataSourceInfo> sorted = new ArrayList<>(info.dataSources);
         sorted.sort(this::sortDataSource);
 
@@ -165,20 +111,6 @@ class DataSourceTab implements MonitorTab {
         lastTableArea = area;
         frame.renderStatefulWidget(table, area, tableState);
         MonitorTab.renderTableScrollbar(frame, lastTableArea, tableState, tableScrollState, sorted.size());
-    }
-
-    @Override
-    public void renderFooter(List<Span> spans) {
-        hint(spans, "Esc", "back");
-        hint(spans, "s", "sort");
-    }
-
-    private String sortLabel(String label, String column) {
-        return MonitorContext.sortLabel(label, column, sort, sortReversed);
-    }
-
-    private Style sortStyle(String column) {
-        return MonitorContext.sortStyle(column, sort);
     }
 
     private int sortDataSource(DataSourceInfo a, DataSourceInfo b) {

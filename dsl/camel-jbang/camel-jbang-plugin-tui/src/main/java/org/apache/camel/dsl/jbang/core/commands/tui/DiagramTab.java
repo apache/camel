@@ -42,9 +42,8 @@ import org.apache.camel.util.json.JsonObject;
 
 import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.*;
 
-class DiagramTab implements MonitorTab {
+class DiagramTab extends AbstractTab {
 
-    private final MonitorContext ctx;
     private final DiagramSupport diagram = new DiagramSupport();
     private final SourceViewer sourceViewer = new SourceViewer();
     private boolean diagramMetrics = true;
@@ -57,7 +56,7 @@ class DiagramTab implements MonitorTab {
     private final DragSplit hSplit = new DragSplit();
 
     DiagramTab(MonitorContext ctx) {
-        this.ctx = ctx;
+        super(ctx);
     }
 
     boolean isShowDiagram() {

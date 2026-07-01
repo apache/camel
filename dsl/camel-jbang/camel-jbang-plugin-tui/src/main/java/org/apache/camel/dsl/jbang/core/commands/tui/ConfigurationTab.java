@@ -44,7 +44,7 @@ import org.apache.camel.util.json.JsonObject;
 
 import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.*;
 
-class ConfigurationTab implements MonitorTab {
+class ConfigurationTab extends AbstractTab {
 
     private static final int MOUSE_SCROLL_LINES = 3;
     private static final Style KEY_STYLE = Style.EMPTY.fg(Color.CYAN);
@@ -52,12 +52,11 @@ class ConfigurationTab implements MonitorTab {
     private static final Style SECRET_STYLE = Style.EMPTY.fg(Color.DARK_GRAY);
     private static final Style SOURCE_STYLE = Style.EMPTY.dim();
 
-    private final MonitorContext ctx;
     private final ScrollbarState scrollbarState = new ScrollbarState();
     private int scrollOffset;
 
     ConfigurationTab(MonitorContext ctx) {
-        this.ctx = ctx;
+        super(ctx);
     }
 
     @Override
@@ -99,11 +98,6 @@ class ConfigurationTab implements MonitorTab {
             scrollOffset += MOUSE_SCROLL_LINES;
             return true;
         }
-        return false;
-    }
-
-    @Override
-    public boolean handleEscape() {
         return false;
     }
 

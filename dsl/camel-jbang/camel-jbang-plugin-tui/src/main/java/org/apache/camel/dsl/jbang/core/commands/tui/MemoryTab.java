@@ -44,19 +44,18 @@ import org.apache.camel.util.json.JsonObject;
 
 import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.*;
 
-class MemoryTab implements MonitorTab {
+class MemoryTab extends AbstractTab {
 
     // Unicode block characters for gauge bar
     private static final String GAUGE_FILLED = "█";
     private static final String GAUGE_EMPTY = "░";
 
-    private final MonitorContext ctx;
     private final Map<String, LinkedList<Long>> heapMemHistory;
     private int statsPanelHeight = -1;
     private final DragSplit vSplit = new DragSplit();
 
     MemoryTab(MonitorContext ctx, MetricsCollector metrics) {
-        this.ctx = ctx;
+        super(ctx);
         this.heapMemHistory = metrics.getHeapMemHistory();
     }
 
@@ -77,11 +76,6 @@ class MemoryTab implements MonitorTab {
             }
             return true;
         }
-        return false;
-    }
-
-    @Override
-    public boolean handleEscape() {
         return false;
     }
 

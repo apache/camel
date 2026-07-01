@@ -39,29 +39,22 @@ import dev.tamboui.widgets.block.BorderType;
 import dev.tamboui.widgets.block.Borders;
 import dev.tamboui.widgets.block.Title;
 import dev.tamboui.widgets.paragraph.Paragraph;
-import dev.tamboui.widgets.scrollbar.ScrollbarState;
 import dev.tamboui.widgets.sparkline.DualSparkline;
 import dev.tamboui.widgets.table.Cell;
 import dev.tamboui.widgets.table.Row;
 import dev.tamboui.widgets.table.Table;
-import dev.tamboui.widgets.table.TableState;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 
 import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.*;
 
-class EndpointsTab implements MonitorTab {
+class EndpointsTab extends AbstractTableTab {
 
-    private static final String[] SORT_COLUMNS = { "component", "route", "dir", "total", "body", "hdr", "uri" };
     private static final int MAX_CHART_POINTS = 300;
     private static final int CHART_ALL = 0;
     private static final int CHART_SINGLE = 1;
     private static final int CHART_OFF = 2;
 
-    private final MonitorContext ctx;
-    private final TableState tableState = new TableState();
-    private final ScrollbarState tableScrollState = new ScrollbarState();
-    private Rect lastTableArea;
     private final Map<String, LinkedList<Long>> endpointInHistory;
     private final Map<String, LinkedList<Long>> endpointOutHistory;
     private final Map<String, LinkedList<Long>> endpointRemoteInHistory;
@@ -73,9 +66,6 @@ class EndpointsTab implements MonitorTab {
     private final Map<String, LinkedList<Long>> perEndpointInHistory;
     private final Map<String, LinkedList<Long>> perEndpointOutHistory;
 
-    private String sort = "route";
-    private int sortIndex = 1;
-    private boolean sortReversed;
     private int filter;
     private int chartMode = CHART_ALL;
     private int chartPanelHeight = 16;
@@ -84,7 +74,9 @@ class EndpointsTab implements MonitorTab {
     private final DragSplit hSplit = new DragSplit();
 
     EndpointsTab(MonitorContext ctx, MetricsCollector metrics) {
-        this.ctx = ctx;
+        super(ctx, "component", "route", "dir", "total", "body", "hdr", "uri");
+        sortIndex = 1;
+        sort = "route";
         this.endpointInHistory = metrics.getEndpointInHistory();
         this.endpointOutHistory = metrics.getEndpointOutHistory();
         this.endpointRemoteInHistory = metrics.getEndpointRemoteInHistory();
@@ -98,17 +90,13 @@ class EndpointsTab implements MonitorTab {
     }
 
     @Override
-    public boolean handleKeyEvent(KeyEvent ke) {
-        if (ke.isChar('s')) {
-            sortIndex = (sortIndex + 1) % SORT_COLUMNS.length;
-            sort = SORT_COLUMNS[sortIndex];
-            sortReversed = false;
-            return true;
-        }
-        if (ke.isChar('S')) {
-            sortReversed = !sortReversed;
-            return true;
-        }
+    protected int getRowCount() {
+        IntegrationInfo info = ctx.findSelectedIntegration();
+        return info != null ? info.endpoints.size() : 0;
+    }
+
+    @Override
+    protected boolean handleTabKeyEvent(KeyEvent ke) {
         if (ke.isCharIgnoreCase('f')) {
             filter = (filter + 1) % 3;
             return true;
@@ -150,16 +138,6 @@ class EndpointsTab implements MonitorTab {
     }
 
     @Override
-    public boolean handleEscape() {
-        return false;
-    }
-
-    @Override
-    public void navigateUp() {
-        tableState.selectPrevious();
-    }
-
-    @Override
     public void navigateDown() {
         IntegrationInfo info = ctx.findSelectedIntegration();
         if (info != null) {
@@ -174,13 +152,7 @@ class EndpointsTab implements MonitorTab {
     }
 
     @Override
-    public void render(Frame frame, Rect area) {
-        IntegrationInfo info = ctx.findSelectedIntegration();
-        if (info == null) {
-            renderNoSelection(frame, area);
-            return;
-        }
-
+    protected void renderContent(Frame frame, Rect area, IntegrationInfo info) {
         List<EndpointInfo> sortedEndpoints = new ArrayList<>(info.endpoints);
         if (filter == 1) {
             sortedEndpoints.removeIf(ep -> !ep.remote);
@@ -355,14 +327,6 @@ class EndpointsTab implements MonitorTab {
             case 2 -> ep.remote || ep.stub;
             default -> true;
         };
-    }
-
-    private String sortLabel(String label, String column) {
-        return MonitorContext.sortLabel(label, column, sort, sortReversed);
-    }
-
-    private Style sortStyle(String column) {
-        return MonitorContext.sortStyle(column, sort);
     }
 
     private int sortEndpoint(EndpointInfo a, EndpointInfo b) {

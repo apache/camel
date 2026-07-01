@@ -49,11 +49,10 @@ import org.apache.camel.util.json.JsonObject;
 
 import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.*;
 
-class ClasspathTab implements MonitorTab {
+class ClasspathTab extends AbstractTab {
 
     private static final Style MATCH_STYLE = Style.EMPTY.fg(Color.YELLOW).bold();
 
-    private final MonitorContext ctx;
     private final ListState listState = new ListState();
     private final ScrollbarState listScrollState = new ScrollbarState();
     private final FuzzyFilter fuzzyFilter = new FuzzyFilter();
@@ -67,7 +66,7 @@ class ClasspathTab implements MonitorTab {
     private boolean dataLoaded;
 
     ClasspathTab(MonitorContext ctx) {
-        this.ctx = ctx;
+        super(ctx);
     }
 
     @Override

@@ -50,12 +50,10 @@ import org.apache.camel.util.json.JsonObject;
 
 import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.*;
 
-class RoutesTab implements MonitorTab {
+class RoutesTab extends AbstractTab {
 
     private static final String[] ROUTE_SORT_COLUMNS = { "name", "from", "status", "total", "failed" };
     private static final String[] ROUTE_TOP_SORT_COLUMNS = { "mean", "max", "min", "last", "delta" };
-
-    private final MonitorContext ctx;
 
     // Route sort state
     private String routeSort = "name";
@@ -89,7 +87,7 @@ class RoutesTab implements MonitorTab {
     private final Deque<String> routeNavigationStack = new ArrayDeque<>();
 
     RoutesTab(MonitorContext ctx) {
-        this.ctx = ctx;
+        super(ctx);
     }
 
     boolean isTopMode() {

@@ -56,7 +56,7 @@ import org.apache.camel.util.json.JsonObject;
 
 import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.*;
 
-class BrowseTab implements MonitorTab {
+class BrowseTab extends AbstractTab {
 
     private static final String[] SORT_COLUMNS = { "uri", "size" };
     private static final DateTimeFormatter TIME_FMT = DateTimeFormatter.ofPattern("HH:mm:ss");
@@ -65,7 +65,6 @@ class BrowseTab implements MonitorTab {
     private static final int VIEW_MESSAGES = 1;
     private static final int VIEW_DETAIL = 2;
 
-    private final MonitorContext ctx;
     private final TableState endpointTableState = new TableState();
     private final ScrollbarState endpointTableScrollState = new ScrollbarState();
     private Rect lastEndpointTableArea;
@@ -87,7 +86,7 @@ class BrowseTab implements MonitorTab {
     private String lastPid;
 
     BrowseTab(MonitorContext ctx) {
-        this.ctx = ctx;
+        super(ctx);
     }
 
     @Override
