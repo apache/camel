@@ -444,12 +444,12 @@ class EndpointsTab implements MonitorTab {
 
         Line chartTitle = Line.from(
                 Span.styled("▬", Style.EMPTY.fg(Color.ansi(AnsiColor.BRIGHT_GREEN))),
-                Span.raw(String.format(" in:%-4s ", formatThroughput(curIn))),
+                Span.raw(String.format(" in:%-4s ", MetricsCollector.formatThroughput(curIn))),
                 Span.styled("▬", Style.EMPTY.fg(Color.CYAN)),
-                Span.raw(String.format(" out:%-4s msg/s", formatThroughput(curOut))));
+                Span.raw(String.format(" out:%-4s msg/s", MetricsCollector.formatThroughput(curOut))));
 
         Rect rightArea = hSplit.get(1);
-        long maxEp = niceMax(Math.max(maxOf(inArr), maxOf(outArr)));
+        long maxEp = MetricsCollector.niceMax(Math.max(maxOf(inArr), maxOf(outArr)));
         frame.renderWidget(DualSparkline.builder()
                 .topData(inArr)
                 .bottomData(outArr)
@@ -557,13 +557,13 @@ class EndpointsTab implements MonitorTab {
                 Span.styled(uriLabel, Style.EMPTY.fg(Color.YELLOW)),
                 Span.raw("] "),
                 Span.styled("▬", Style.EMPTY.fg(Color.ansi(AnsiColor.BRIGHT_GREEN))),
-                Span.raw(String.format(" in:%-4s ", formatThroughput(curIn))),
+                Span.raw(String.format(" in:%-4s ", MetricsCollector.formatThroughput(curIn))),
                 Span.styled("▬", Style.EMPTY.fg(Color.CYAN)),
-                Span.raw(String.format(" out:%-4s msg/s", formatThroughput(curOut))));
+                Span.raw(String.format(" out:%-4s msg/s", MetricsCollector.formatThroughput(curOut))));
 
-        // TODO: use .showYAxis(true).yAxisFormatter(EndpointsTab::formatThroughput) when tamboui 0.5.0 is released
+        // TODO: use .showYAxis(true).yAxisFormatter(MetricsCollector::formatThroughput) when tamboui 0.5.0 is released
         //  see https://github.com/tamboui/tamboui/pull/396
-        long maxEpSingle = niceMax(Math.max(maxOf(inArr), maxOf(outArr)));
+        long maxEpSingle = MetricsCollector.niceMax(Math.max(maxOf(inArr), maxOf(outArr)));
         frame.renderWidget(DualSparkline.builder()
                 .topData(inArr)
                 .bottomData(outArr)
@@ -787,34 +787,4 @@ class EndpointsTab implements MonitorTab {
         return max;
     }
 
-    private static long niceMax(long rawMax) {
-        if (rawMax <= 0) {
-            return MetricsCollector.THROUGHPUT_SCALE;
-        }
-        long scale = MetricsCollector.THROUGHPUT_SCALE;
-        int[] steps = { 1, 2, 5 };
-        long multiplier = scale;
-        while (true) {
-            for (int s : steps) {
-                long candidate = s * multiplier;
-                if (candidate >= rawMax) {
-                    return candidate;
-                }
-            }
-            multiplier *= 10;
-        }
-    }
-
-    private static String formatThroughput(long scaledValue) {
-        double v = scaledValue / (double) MetricsCollector.THROUGHPUT_SCALE;
-        if (v >= 10) {
-            return String.valueOf(Math.round(v));
-        } else if (v >= 1) {
-            return String.format(Locale.US, "%.1f", v);
-        } else if (scaledValue > 0) {
-            return String.format(Locale.US, "%.2f", v);
-        } else {
-            return "0";
-        }
-    }
 }

@@ -48,7 +48,7 @@ public final class LoadThroughput {
             if (time > 0) {
                 long delta = currentReading - last;
                 // instantaneous rate in exchanges/second for this interval
-                double instantRate = (1000d / time) * delta;
+                double instantRate = Math.max(0, (1000d / time) * delta);
                 // apply EWMA smoothing
                 thp = instantRate + EXP_1 * (thp - instantRate);
             }
@@ -61,6 +61,7 @@ public final class LoadThroughput {
     }
 
     public void reset() {
+        watch.stop();
         last = 0;
         thp = 0;
     }

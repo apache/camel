@@ -19,6 +19,7 @@ package org.apache.camel.dsl.jbang.core.commands.tui;
 import java.time.Duration;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
@@ -416,6 +417,38 @@ class MetricsCollector {
     private void removeByPrefix(String prefix, Map<String, ?>... maps) {
         for (Map<String, ?> map : maps) {
             map.keySet().removeIf(k -> k.startsWith(prefix));
+        }
+    }
+
+    // --- Shared throughput formatting utilities ---
+
+    static long niceMax(long rawMax) {
+        if (rawMax <= 0) {
+            return THROUGHPUT_SCALE;
+        }
+        int[] steps = { 1, 2, 5 };
+        long multiplier = THROUGHPUT_SCALE;
+        while (true) {
+            for (int s : steps) {
+                long candidate = s * multiplier;
+                if (candidate >= rawMax) {
+                    return candidate;
+                }
+            }
+            multiplier *= 10;
+        }
+    }
+
+    static String formatThroughput(long scaledValue) {
+        double v = scaledValue / (double) THROUGHPUT_SCALE;
+        if (v >= 10) {
+            return String.valueOf(Math.round(v));
+        } else if (v >= 1) {
+            return String.format(Locale.US, "%.1f", v);
+        } else if (scaledValue > 0) {
+            return String.format(Locale.US, "%.2f", v);
+        } else {
+            return "0";
         }
     }
 }

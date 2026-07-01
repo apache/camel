@@ -30,6 +30,16 @@ String chat(AiAgentBody<?> aiAgentBody, ToolProvider toolProvider);
 Result<String> chat(AiAgentBody<?> aiAgentBody, ToolProvider toolProvider);
 ----
 
+=== camel-management - Throughput MBean attribute uses EWMA smoothing
+
+The `Throughput` attribute on the `ManagedPerformanceCounter` JMX MBean now reports an EWMA
+(exponentially weighted moving average) value with a 1-minute decay window, instead of the
+previous raw instantaneous rate. This produces a smoother, more stable reading that converges
+to the true average throughput rather than oscillating between zero and spike values.
+
+If you have tooling that consumes the JMX throughput value and expects the old instantaneous
+behavior, be aware that the reported value will now ramp up and decay gradually.
+
 === camel-fory with JDK 25+ - Breaking change
 
 Due to new requirements from Apache Fory, when using Apache Fory Dataformat, the JVM parameter `--add-opens java.base/java.lang.invoke=ALL-UNNAMED` must be provided.
