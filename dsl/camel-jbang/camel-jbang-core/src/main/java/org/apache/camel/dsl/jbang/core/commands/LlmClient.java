@@ -90,7 +90,30 @@ public class LlmClient {
         }
     }
 
-    public record ChatResponse(String text, List<ToolCall> toolCalls, String stopReason, boolean streamed) {
+    public record TokenUsage(int inputTokens, int outputTokens, int totalTokens) {
+        public static final TokenUsage EMPTY = new TokenUsage(0, 0, 0);
+
+        public TokenUsage add(TokenUsage other) {
+            return new TokenUsage(
+                    inputTokens + other.inputTokens,
+                    outputTokens + other.outputTokens,
+                    totalTokens + other.totalTokens);
+        }
+    }
+
+    public record ChatResponse(String text, List<ToolCall> toolCalls, String stopReason, boolean streamed,
+            TokenUsage usage) {
+    }
+
+    public static String formatTokens(int tokens) {
+        if (tokens >= 1000) {
+            double k = tokens / 1000.0;
+            if (k == (int) k) {
+                return (int) k + "k";
+            }
+            return String.format("%.1fk", k);
+        }
+        return String.valueOf(tokens);
     }
 
     // -- Configuration --
@@ -388,12 +411,13 @@ public class LlmClient {
             if (response.statusCode() != 200) {
                 String errorBody = response.body().collect(Collectors.joining("\n"));
                 handleErrorStatus(response.statusCode(), errorBody);
-                return new ChatResponse(null, List.of(), "error", false);
+                return new ChatResponse(null, List.of(), "error", false, TokenUsage.EMPTY);
             }
 
             StringBuilder fullText = new StringBuilder();
             List<ToolCall> toolCalls = new ArrayList<>();
             String[] doneReasonHolder = { null };
+            int[] tokenHolder = { 0, 0 };
 
             response.body().forEach(line -> {
                 if (line.isBlank()) {
@@ -443,6 +467,8 @@ public class LlmClient {
 
                     if (Boolean.TRUE.equals(chunk.get("done"))) {
                         doneReasonHolder[0] = chunk.getString("done_reason");
+                        tokenHolder[0] = getIntValue(chunk, "prompt_eval_count");
+                        tokenHolder[1] = getIntValue(chunk, "eval_count");
                     }
                 } catch (Exception e) {
                     // skip malformed chunks
@@ -457,17 +483,19 @@ public class LlmClient {
             String stopReason
                     = !toolCalls.isEmpty() ? "tool_calls" : (doneReasonHolder[0] != null ? doneReasonHolder[0] : "stop");
 
+            TokenUsage usage = new TokenUsage(tokenHolder[0], tokenHolder[1], tokenHolder[0] + tokenHolder[1]);
             if (verbose) {
                 printer.println("[verbose] Streamed Ollama: text=" + (text != null ? truncateVerbose(text) : "null")
-                                + ", toolCalls=" + toolCalls.size() + ", doneReason=" + doneReasonHolder[0]);
+                                + ", toolCalls=" + toolCalls.size() + ", doneReason=" + doneReasonHolder[0]
+                                + ", tokens=" + usage.totalTokens());
             }
-            return new ChatResponse(text, toolCalls, stopReason, true);
+            return new ChatResponse(text, toolCalls, stopReason, true, usage);
         } catch (HttpTimeoutException e) {
             printer.println("\nRequest timed out after " + timeout + " seconds.");
-            return new ChatResponse(null, List.of(), "error", false);
+            return new ChatResponse(null, List.of(), "error", false, TokenUsage.EMPTY);
         } catch (Exception e) {
             printer.println("\nError during streaming: " + e.getMessage());
-            return new ChatResponse(null, List.of(), "error", false);
+            return new ChatResponse(null, List.of(), "error", false, TokenUsage.EMPTY);
         }
     }
 
@@ -699,20 +727,21 @@ public class LlmClient {
             if (verbose) {
                 printer.println("[verbose] parseOpenAiChatResponse: response is null");
             }
-            return new ChatResponse(null, List.of(), "error", false);
+            return new ChatResponse(null, List.of(), "error", false, TokenUsage.EMPTY);
         }
+        TokenUsage usage = extractOpenAiUsage(response);
         JsonArray choices = (JsonArray) response.get("choices");
         if (choices == null || choices.isEmpty()) {
             if (verbose) {
                 printer.println("[verbose] parseOpenAiChatResponse: no choices in response. Keys: " + response.keySet());
             }
-            return new ChatResponse(null, List.of(), "error", false);
+            return new ChatResponse(null, List.of(), "error", false, usage);
         }
         JsonObject firstChoice = (JsonObject) choices.get(0);
         String finishReason = firstChoice.getString("finish_reason");
         JsonObject message = (JsonObject) firstChoice.get("message");
         if (message == null) {
-            return new ChatResponse(null, List.of(), finishReason, false);
+            return new ChatResponse(null, List.of(), finishReason, false, usage);
         }
 
         String content = message.getString("content");
@@ -746,7 +775,7 @@ public class LlmClient {
             printer.println("[verbose] Parsed: text=" + (content != null ? truncateVerbose(content) : "null")
                             + ", toolCalls=" + toolCalls.size() + ", finishReason=" + finishReason);
         }
-        return new ChatResponse(content, toolCalls, finishReason, false);
+        return new ChatResponse(content, toolCalls, finishReason, false, usage);
     }
 
     private ChatResponse parseOllamaChatResponse(JsonObject response) {
@@ -754,14 +783,14 @@ public class LlmClient {
             if (verbose) {
                 printer.println("[verbose] parseOllamaChatResponse: response is null");
             }
-            return new ChatResponse(null, List.of(), "error", false);
+            return new ChatResponse(null, List.of(), "error", false, TokenUsage.EMPTY);
         }
         JsonObject message = (JsonObject) response.get("message");
         if (message == null) {
             if (verbose) {
                 printer.println("[verbose] parseOllamaChatResponse: no message in response. Keys: " + response.keySet());
             }
-            return new ChatResponse(null, List.of(), "error", false);
+            return new ChatResponse(null, List.of(), "error", false, TokenUsage.EMPTY);
         }
 
         String content = message.getString("content");
@@ -796,21 +825,27 @@ public class LlmClient {
 
         String stopReason = !toolCalls.isEmpty() ? "tool_calls" : (doneReason != null ? doneReason : "stop");
 
+        int inputTokens = getIntValue(response, "prompt_eval_count");
+        int outputTokens = getIntValue(response, "eval_count");
+        TokenUsage usage = new TokenUsage(inputTokens, outputTokens, inputTokens + outputTokens);
+
         if (verbose) {
             printer.println("[verbose] Parsed Ollama: text=" + (content != null ? truncateVerbose(content) : "null")
-                            + ", toolCalls=" + toolCalls.size() + ", doneReason=" + doneReason);
+                            + ", toolCalls=" + toolCalls.size() + ", doneReason=" + doneReason
+                            + ", tokens=" + usage.totalTokens());
         }
-        return new ChatResponse(content, toolCalls, stopReason, false);
+        return new ChatResponse(content, toolCalls, stopReason, false, usage);
     }
 
     private ChatResponse parseAnthropicChatResponse(JsonObject response) {
         if (response == null) {
-            return new ChatResponse(null, List.of(), "error", false);
+            return new ChatResponse(null, List.of(), "error", false, TokenUsage.EMPTY);
         }
         String stopReason = response.getString("stop_reason");
+        TokenUsage usage = extractAnthropicUsage(response);
         JsonArray contentBlocks = (JsonArray) response.get("content");
         if (contentBlocks == null) {
-            return new ChatResponse(null, List.of(), stopReason, false);
+            return new ChatResponse(null, List.of(), stopReason, false, usage);
         }
 
         StringBuilder text = new StringBuilder();
@@ -828,7 +863,41 @@ public class LlmClient {
             }
         }
         String textContent = text.length() > 0 ? text.toString() : null;
-        return new ChatResponse(textContent, toolCalls, stopReason, false);
+        return new ChatResponse(textContent, toolCalls, stopReason, false, usage);
+    }
+
+    // ---- Token usage extraction ----
+
+    private TokenUsage extractOpenAiUsage(JsonObject response) {
+        JsonObject usage = (JsonObject) response.get("usage");
+        if (usage == null) {
+            return TokenUsage.EMPTY;
+        }
+        int prompt = getIntValue(usage, "prompt_tokens");
+        int completion = getIntValue(usage, "completion_tokens");
+        int total = getIntValue(usage, "total_tokens");
+        if (total == 0) {
+            total = prompt + completion;
+        }
+        return new TokenUsage(prompt, completion, total);
+    }
+
+    private TokenUsage extractAnthropicUsage(JsonObject response) {
+        JsonObject usage = (JsonObject) response.get("usage");
+        if (usage == null) {
+            return TokenUsage.EMPTY;
+        }
+        int input = getIntValue(usage, "input_tokens");
+        int output = getIntValue(usage, "output_tokens");
+        return new TokenUsage(input, output, input + output);
+    }
+
+    private static int getIntValue(JsonObject obj, String key) {
+        Object val = obj.get(key);
+        if (val instanceof Number n) {
+            return n.intValue();
+        }
+        return 0;
     }
 
     private String extractOpenAiContent(JsonObject response) {

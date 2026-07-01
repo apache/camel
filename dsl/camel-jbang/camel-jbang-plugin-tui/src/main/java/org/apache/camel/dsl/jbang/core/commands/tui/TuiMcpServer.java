@@ -27,6 +27,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpServer;
@@ -72,6 +73,7 @@ class TuiMcpServer {
     private volatile String clientName;
     private volatile long lastActivity;
     private volatile long lastToolCallTime;
+    private final AtomicInteger toolCallCount = new AtomicInteger();
     private final List<LogEntry> activityLog = new ArrayList<>();
 
     TuiMcpServer(int port, McpFacade facade) {
@@ -117,6 +119,10 @@ class TuiMcpServer {
 
     boolean isRecentActivity() {
         return System.currentTimeMillis() - lastToolCallTime < 2000;
+    }
+
+    int getToolCallCount() {
+        return toolCallCount.get();
     }
 
     String getConnectedClient() {
@@ -580,6 +586,7 @@ class TuiMcpServer {
         }
 
         lastToolCallTime = System.currentTimeMillis();
+        toolCallCount.incrementAndGet();
 
         String text;
         boolean isError = false;

@@ -48,12 +48,17 @@ class McpLogPopup {
 
     private boolean visible;
     private Supplier<List<TuiMcpServer.LogEntry>> activityLog;
+    private Supplier<Integer> toolCallCount;
     private List<TuiMcpServer.LogEntry> entries;
     private int selected;
     private int detailScroll;
 
     void setActivityLog(Supplier<List<TuiMcpServer.LogEntry>> activityLog) {
         this.activityLog = activityLog;
+    }
+
+    void setToolCallCount(Supplier<Integer> toolCallCount) {
+        this.toolCallCount = toolCallCount;
     }
 
     boolean isVisible() {
@@ -148,6 +153,16 @@ class McpLogPopup {
                     Span.raw(entry.message()))));
         }
 
+        int count = toolCallCount != null ? toolCallCount.get() : 0;
+        Line titleLine;
+        if (count > 0) {
+            titleLine = Line.from(
+                    Span.styled(" MCP Log ", Style.EMPTY.bold()),
+                    Span.styled("(" + count + " calls) ", Style.EMPTY.dim()));
+        } else {
+            titleLine = Line.from(Span.styled(" MCP Log ", Style.EMPTY.bold()));
+        }
+
         ListState masterState = new ListState();
         masterState.select(selected);
         ListWidget list = ListWidget.builder()
@@ -157,7 +172,7 @@ class McpLogPopup {
                 .scrollMode(ScrollMode.AUTO_SCROLL)
                 .block(Block.builder()
                         .borderType(BorderType.ROUNDED).borders(Borders.ALL)
-                        .title(" MCP Log ")
+                        .title(Title.from(titleLine))
                         .build())
                 .build();
         frame.renderStatefulWidget(list, area, masterState);

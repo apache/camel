@@ -86,13 +86,14 @@ class AiPanel {
     private volatile Thread agentThread;
     private String initError;
     private long thinkingStartTime;
+    private volatile int sessionTotalTokens;
 
     // Activity log for AI Log popup
     private final List<LogEntry> activityLog = new ArrayList<>();
 
-    record ConversationEntry(String role, String text, long elapsedSeconds) {
+    record ConversationEntry(String role, String text, long elapsedSeconds, int totalTokens) {
         ConversationEntry(String role, String text) {
-            this(role, text, -1);
+            this(role, text, -1, 0);
         }
     }
 
@@ -125,6 +126,14 @@ class AiPanel {
         }
         ConversationEntry last = conversation.get(conversation.size() - 1);
         return "assistant".equals(last.role()) ? last.elapsedSeconds() : -1;
+    }
+
+    private int lastResponseTokens() {
+        if (thinking.get() || conversation.isEmpty()) {
+            return 0;
+        }
+        ConversationEntry last = conversation.get(conversation.size() - 1);
+        return "assistant".equals(last.role()) ? last.totalTokens() : 0;
     }
 
     void cycleHeight() {
@@ -285,6 +294,7 @@ class AiPanel {
         }
         messages.add(LlmClient.Message.user(question));
 
+        LlmClient.TokenUsage totalUsage = LlmClient.TokenUsage.EMPTY;
         for (int i = 0; i < MAX_ITERATIONS; i++) {
             if (Thread.interrupted()) {
                 throw new InterruptedException();
@@ -297,6 +307,7 @@ class AiPanel {
                 log(LogLevel.ERROR, "Error", err);
                 return;
             }
+            totalUsage = totalUsage.add(response.usage());
 
             // check for error response (null text, no tool calls, error stop reason)
             if ("error".equals(response.stopReason())
@@ -324,10 +335,14 @@ class AiPanel {
                 messages.add(LlmClient.Message.toolResults(results));
             } else {
                 String text = response.text();
+                sessionTotalTokens += totalUsage.totalTokens();
                 if (text != null && !text.isBlank()) {
                     long elapsed = (System.currentTimeMillis() - thinkingStartTime) / 1000;
-                    conversation.add(new ConversationEntry("assistant", text, elapsed));
-                    log(LogLevel.RESPONSE, "Response (" + elapsed + "s)", text);
+                    conversation.add(new ConversationEntry("assistant", text, elapsed, totalUsage.totalTokens()));
+                    String tokenInfo = totalUsage.totalTokens() > 0
+                            ? ", " + LlmClient.formatTokens(totalUsage.totalTokens()) + " tokens"
+                            : "";
+                    log(LogLevel.RESPONSE, "Response (" + elapsed + "s" + tokenInfo + ")", text);
                 } else {
                     String err = "Empty response from LLM.";
                     conversation.add(new ConversationEntry("error", err));
@@ -344,13 +359,19 @@ class AiPanel {
     }
 
     void render(Frame frame, Rect area) {
-        // At 25% show elapsed in the title bar to save space
+        // At 25% show elapsed and tokens in the title bar to save space
         long titleElapsed = lastResponseElapsed();
+        int titleTokens = lastResponseTokens();
         Line titleLine;
         if (splitIndex == 0 && titleElapsed >= 0) {
+            String tokenSuffix = titleTokens > 0 ? ", " + LlmClient.formatTokens(titleTokens) + " tokens" : "";
             titleLine = Line.from(
                     Span.styled(" AI ", Style.EMPTY.bold()),
-                    Span.styled("(" + titleElapsed + "s) ", Style.EMPTY.dim()));
+                    Span.styled("(" + titleElapsed + "s" + tokenSuffix + ") ", Style.EMPTY.dim()));
+        } else if (sessionTotalTokens > 0) {
+            titleLine = Line.from(
+                    Span.styled(" AI ", Style.EMPTY.bold()),
+                    Span.styled("(total: " + LlmClient.formatTokens(sessionTotalTokens) + " tokens) ", Style.EMPTY.dim()));
         } else {
             titleLine = Line.from(Span.styled(" AI ", Style.EMPTY.bold()));
         }
@@ -419,12 +440,14 @@ class AiPanel {
             md.append(".".repeat((int) dots + 1)).append("*\n");
         }
 
-        // Show elapsed time as a dimmed line below the markdown when at the bottom
+        // Show elapsed time and token count as a dimmed line below the markdown when at the bottom
         long lastElapsed = -1;
+        int lastTokens = 0;
         if (!thinking.get() && !conversation.isEmpty()) {
             ConversationEntry last = conversation.get(conversation.size() - 1);
             if ("assistant".equals(last.role()) && last.elapsedSeconds() >= 0) {
                 lastElapsed = last.elapsedSeconds();
+                lastTokens = last.totalTokens();
             }
         }
 
@@ -478,8 +501,9 @@ class AiPanel {
         }
 
         if (elapsedArea != null && lastElapsed >= 0) {
+            String tokenSuffix = lastTokens > 0 ? ", " + LlmClient.formatTokens(lastTokens) + " tokens" : "";
             frame.renderWidget(
-                    Paragraph.from(Line.from(Span.styled("(" + lastElapsed + "s)", Style.EMPTY.dim()))),
+                    Paragraph.from(Line.from(Span.styled("(" + lastElapsed + "s" + tokenSuffix + ")", Style.EMPTY.dim()))),
                     elapsedArea);
         }
     }

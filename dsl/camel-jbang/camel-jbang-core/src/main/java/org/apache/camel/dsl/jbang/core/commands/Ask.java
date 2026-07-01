@@ -91,6 +91,10 @@ public class Ask extends CamelCommand {
             description = "Show tool calls and results as they happen")
     boolean showTools;
 
+    @Option(names = { "--show-stats" },
+            description = "Show token usage and elapsed time after response")
+    boolean showStats;
+
     @Option(names = { "--verbose" },
             description = "Print debug information: HTTP requests, responses, and parsed results")
     boolean verbose;
@@ -195,12 +199,15 @@ public class Ask extends CamelCommand {
             String userQuestion) {
         messages.add(LlmClient.Message.user(userQuestion));
 
+        long startTime = System.currentTimeMillis();
+        LlmClient.TokenUsage totalUsage = LlmClient.TokenUsage.EMPTY;
         for (int i = 0; i < maxIterations; i++) {
             LlmClient.ChatResponse response = client.chatWithTools(systemPrompt, messages, tools);
             if (response == null) {
                 printer().printErr("Failed to get response from LLM");
                 return 1;
             }
+            totalUsage = totalUsage.add(response.usage());
 
             if (response.toolCalls() != null && !response.toolCalls().isEmpty()) {
                 messages.add(LlmClient.Message.assistantWithToolCalls(response.text(), response.toolCalls()));
@@ -222,12 +229,31 @@ public class Ask extends CamelCommand {
                     printer().println(response.text());
                 }
                 messages.add(LlmClient.Message.assistantWithToolCalls(response.text(), List.of()));
+                printStats(totalUsage, startTime);
                 return 0;
             }
         }
 
+        printStats(totalUsage, startTime);
         printer().printErr("Reached maximum iterations (" + maxIterations + ") without a final answer.");
         return 1;
+    }
+
+    private void printStats(LlmClient.TokenUsage usage, long startTime) {
+        if (!showStats) {
+            return;
+        }
+        long elapsed = (System.currentTimeMillis() - startTime) / 1000;
+        StringBuilder sb = new StringBuilder();
+        sb.append("(").append(elapsed).append("s");
+        if (usage.totalTokens() > 0) {
+            sb.append(", ").append(LlmClient.formatTokens(usage.inputTokens())).append(" input / ")
+                    .append(LlmClient.formatTokens(usage.outputTokens())).append(" output / ")
+                    .append(LlmClient.formatTokens(usage.totalTokens())).append(" total tokens");
+        }
+        sb.append(")");
+        printer().println();
+        printer().println(sb.toString());
     }
 
     // ---- Process discovery (delegates to RuntimeHelper) ----
