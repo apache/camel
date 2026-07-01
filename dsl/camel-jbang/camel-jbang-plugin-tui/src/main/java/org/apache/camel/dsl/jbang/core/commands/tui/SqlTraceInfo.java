@@ -16,24 +16,17 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
-import java.util.Locale;
-
-class LoadAvg {
-    private static final double EXP_1 = Math.exp(-1 / 60.0);
-    private static final double EXP_5 = Math.exp(-1 / (60.0 * 5.0));
-    private static final double EXP_15 = Math.exp(-1 / (60.0 * 15.0));
-
-    private double load1 = Double.NaN;
-    private double load5 = Double.NaN;
-    private double load15 = Double.NaN;
-
-    synchronized void update(double value) {
-        load1 = Double.isNaN(load1) ? value : value + EXP_1 * (load1 - value);
-        load5 = Double.isNaN(load5) ? value : value + EXP_5 * (load5 - value);
-        load15 = Double.isNaN(load15) ? value : value + EXP_15 * (load15 - value);
-    }
-
-    synchronized String format(String fmt) {
-        return Double.isNaN(load1) ? "-" : String.format(Locale.US, fmt, load1, load5, load15);
-    }
+class SqlTraceInfo {
+    String exchangeId;
+    String routeId;
+    String nodeId;
+    String location;
+    String query;
+    String category;
+    String endpoint;
+    long timestamp;
+    long duration;
+    int rowCount;
+    int updateCount;
+    boolean failed;
 }

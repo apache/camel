@@ -176,7 +176,7 @@ class PopupManager {
             return true;
         }
         if (ke.isDown()) {
-            morePopupState.selectNext(15);
+            morePopupState.selectNext(16);
             return true;
         }
         int shortcutSel = morePopupShortcut(ke);
@@ -239,7 +239,7 @@ class PopupManager {
 
     void renderMorePopup(Frame frame, Rect area) {
         int popupW = 22;
-        int popupH = 17;
+        int popupH = 18;
         // Position just below the "0 More▾" tab label
         int dividerW = CharWidth.of(" | ");
         int tabBarX = 0;
@@ -272,6 +272,7 @@ class PopupManager {
                 ListItem.from(Line.from(Span.raw("  "), Span.styled("M", keyStyle), Span.raw("emory"))),
                 ListItem.from(Line.from(Span.raw("  M"), Span.styled("e", keyStyle), Span.raw("trics"))),
                 ListItem.from(Line.from(Span.raw("  S"), Span.styled("Q", keyStyle), Span.raw("L Query"))),
+                ListItem.from(Line.from(Span.raw("  SQL T"), Span.styled("r", keyStyle), Span.raw("ace"))),
                 ListItem.from(Line.from(Span.raw("  "), Span.styled("O", keyStyle), Span.raw("Tel Spans"))),
                 ListItem.from(Line.from(Span.raw("  "), Span.styled("P", keyStyle), Span.raw("rocess"))),
                 ListItem.from(Line.from(Span.raw("  "), Span.styled("S", keyStyle), Span.raw("tartup"))),
@@ -408,17 +409,20 @@ class PopupManager {
         if (ke.isChar('q')) {
             return 10;
         }
-        if (ke.isChar('o')) {
+        if (ke.isChar('r')) {
             return 11;
         }
-        if (ke.isChar('p')) {
+        if (ke.isChar('o')) {
             return 12;
         }
-        if (ke.isChar('s')) {
+        if (ke.isChar('p')) {
             return 13;
         }
-        if (ke.isChar('t')) {
+        if (ke.isChar('s')) {
             return 14;
+        }
+        if (ke.isChar('t')) {
+            return 15;
         }
         return -1;
     }

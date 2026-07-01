@@ -23,6 +23,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -89,9 +90,41 @@ class McpFacade {
 
     static final String[] MORE_TAB_NAMES = {
             "Beans", "Browse", "Circuit Breaker", "Classpath", "Configuration",
-            "Consumers", "DataSource", "Inflight", "Memory", "Metrics", "SQL Query", "Spans", "Process", "Startup",
-            "Threads"
+            "Consumers", "DataSource", "Inflight", "Memory", "Metrics", "SQL Query", "SQL Trace", "Spans", "Process",
+            "Startup", "Threads"
     };
+
+    static final Map<String, String> TAB_DESCRIPTIONS = Map.ofEntries(
+            Map.entry("Overview", "Running integrations with PID, uptime, and exchange statistics"),
+            Map.entry("Log", "Live application log with ANSI color support and filtering"),
+            Map.entry("Diagram", "Route topology diagram showing how routes connect to each other and external systems"),
+            Map.entry("Routes", "Route list with state, message counts, throughput, and failure statistics"),
+            Map.entry("Endpoints", "Registered endpoints with usage statistics (hits, direction)"),
+            Map.entry("HTTP", "HTTP endpoint probe — send requests and inspect responses"),
+            Map.entry("Health", "Health check status for readiness and liveness probes"),
+            Map.entry("Inspect", "Message history trace showing route path, headers, body, and timing"),
+            Map.entry("Errors", "Routing errors with exception details, stack traces, and exchange context"),
+            Map.entry("Beans", "Registered beans in the Camel registry"),
+            Map.entry("Browse", "Browse messages queued in browsable endpoints (e.g. SEDA)"),
+            Map.entry("Circuit Breaker", "Circuit breaker state and statistics (Resilience4j)"),
+            Map.entry("Classpath", "JVM classpath entries with filtering"),
+            Map.entry("Configuration", "Application configuration properties"),
+            Map.entry("Consumers", "Consumer statistics (polling and event-driven consumers)"),
+            Map.entry("DataSource", "JDBC DataSource pool statistics (active, idle, max connections)"),
+            Map.entry("Inflight", "Currently in-flight exchanges being processed"),
+            Map.entry("Memory", "JVM memory usage (heap/non-heap), GC stats, and thread counts"),
+            Map.entry("Metrics", "Micrometer metrics (counters, gauges, timers, distribution summaries)"),
+            Map.entry("SQL Query",
+                    "Execute SQL queries against DataSources in the running application and browse results"),
+            Map.entry("SQL Trace",
+                    "Trace SQL query executions through camel-sql and camel-jdbc components. "
+                                   + "Shows per-query timing, row counts, and failure status. "
+                                   + "Use to identify slow queries, fastest queries, most frequent queries, "
+                                   + "and failed SQL executions. Sortable by time, type, duration, and rows."),
+            Map.entry("Spans", "OpenTelemetry spans with trace/span IDs, timing, and attributes"),
+            Map.entry("Process", "OS process information (PID, CPU, memory, file descriptors)"),
+            Map.entry("Startup", "Startup step recorder showing initialization timing"),
+            Map.entry("Threads", "JVM thread dump with thread names, states, and stack traces"));
 
     private final MonitorContext ctx;
     private final AtomicReference<List<IntegrationInfo>> data;

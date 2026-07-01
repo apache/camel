@@ -1504,6 +1504,13 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                         root.put("dataSources", json);
                     }
                 }
+                DevConsole dc28 = dcr.resolveById("sql-trace");
+                if (dc28 != null) {
+                    JsonObject json = (JsonObject) dc28.call(DevConsole.MediaType.JSON);
+                    if (json != null && !json.isEmpty()) {
+                        root.put("sqlTrace", json);
+                    }
+                }
             }
             // various details
             JsonObject mem = collectMemory();

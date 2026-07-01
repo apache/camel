@@ -16,6 +16,7 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -28,6 +29,7 @@ import dev.tamboui.style.Style;
 import dev.tamboui.text.CharWidth;
 import dev.tamboui.text.Line;
 import dev.tamboui.text.Span;
+import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
 import org.apache.camel.support.PatternHelper;
 import org.apache.camel.util.FileUtil;
@@ -43,7 +45,8 @@ final class TuiHelper {
     }
 
     /**
-     * Find PIDs of running Camel integrations matching the given name pattern.
+     * Find PIDs of running Camel integrations matching the given name pattern. Scans the {@code ~/.camel/} directory
+     * for status files rather than iterating all OS processes, which is significantly faster.
      */
     static List<Long> findPids(String name, Function<String, Path> statusFileResolver) {
         List<Long> pids = new ArrayList<>();
@@ -53,29 +56,65 @@ final class TuiHelper {
             pattern = pattern + "*";
         }
         final String pat = pattern;
-        ProcessHandle.allProcesses()
-                .filter(ph -> ph.pid() != cur)
-                .forEach(ph -> {
-                    JsonObject root = loadStatus(ph.pid(), statusFileResolver);
-                    if (root != null) {
-                        String pName = ProcessHelper.extractName(root, ph);
-                        pName = FileUtil.onlyName(pName);
+
+        for (long pid : findCandidatePids()) {
+            if (pid == cur) {
+                continue;
+            }
+            // check process is still alive
+            if (!ProcessHandle.of(pid).map(ProcessHandle::isAlive).orElse(false)) {
+                continue;
+            }
+            JsonObject root = loadStatus(pid, statusFileResolver);
+            if (root != null) {
+                ProcessHandle ph = ProcessHandle.of(pid).orElse(null);
+                String pName = ProcessHelper.extractName(root, ph);
+                pName = FileUtil.onlyName(pName);
+                if (pName != null && !pName.isEmpty() && PatternHelper.matchPattern(pName, pat)) {
+                    pids.add(pid);
+                } else {
+                    JsonObject context = (JsonObject) root.get("context");
+                    if (context != null) {
+                        pName = context.getString("name");
+                        if ("CamelJBang".equals(pName)) {
+                            pName = null;
+                        }
                         if (pName != null && !pName.isEmpty() && PatternHelper.matchPattern(pName, pat)) {
-                            pids.add(ph.pid());
-                        } else {
-                            JsonObject context = (JsonObject) root.get("context");
-                            if (context != null) {
-                                pName = context.getString("name");
-                                if ("CamelJBang".equals(pName)) {
-                                    pName = null;
-                                }
-                                if (pName != null && !pName.isEmpty() && PatternHelper.matchPattern(pName, pat)) {
-                                    pids.add(ph.pid());
-                                }
-                            }
+                            pids.add(pid);
                         }
                     }
-                });
+                }
+            }
+        }
+        return pids;
+    }
+
+    /**
+     * List candidate PIDs by scanning {@code ~/.camel/} for {@code *-status.json} files. This is O(number of status
+     * files) rather than O(total OS processes).
+     */
+    static List<Long> findCandidatePids() {
+        List<Long> pids = new ArrayList<>();
+        try {
+            Path camelDir = CommandLineHelper.getCamelDir();
+            if (Files.isDirectory(camelDir)) {
+                try (var files = Files.list(camelDir)) {
+                    files.forEach(p -> {
+                        String fn = p.getFileName().toString();
+                        if (fn.endsWith("-status.json")) {
+                            try {
+                                long pid = Long.parseLong(fn.substring(0, fn.length() - "-status.json".length()));
+                                pids.add(pid);
+                            } catch (NumberFormatException e) {
+                                // not a PID-based status file
+                            }
+                        }
+                    });
+                }
+            }
+        } catch (IOException e) {
+            // ignore
+        }
         return pids;
     }
 
