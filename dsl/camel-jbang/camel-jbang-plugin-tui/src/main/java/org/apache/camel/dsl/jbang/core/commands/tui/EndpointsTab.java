@@ -444,17 +444,19 @@ class EndpointsTab implements MonitorTab {
 
         Line chartTitle = Line.from(
                 Span.styled("▬", Style.EMPTY.fg(Color.ansi(AnsiColor.BRIGHT_GREEN))),
-                Span.raw(String.format(" in:%-4d ", curIn)),
+                Span.raw(String.format(" in:%-4s ", MetricsCollector.formatThroughput(curIn))),
                 Span.styled("▬", Style.EMPTY.fg(Color.CYAN)),
-                Span.raw(String.format(" out:%-4d msg/s", curOut)));
+                Span.raw(String.format(" out:%-4s msg/s", MetricsCollector.formatThroughput(curOut))));
 
         Rect rightArea = hSplit.get(1);
+        long maxEp = MetricsCollector.niceMax(Math.max(maxOf(inArr), maxOf(outArr)));
         frame.renderWidget(DualSparkline.builder()
                 .topData(inArr)
                 .bottomData(outArr)
+                .max(maxEp)
                 .topStyle(Style.EMPTY.fg(Color.ansi(AnsiColor.BRIGHT_GREEN)))
                 .bottomStyle(Style.EMPTY.fg(Color.CYAN))
-                .showYAxis(true)
+                .showYAxis(false)
                 .xLabels("-" + renderPoints + "s", "-" + (renderPoints * 3 / 4) + "s",
                         "-" + (renderPoints / 2) + "s", "-" + (renderPoints / 4) + "s", "now")
                 .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
@@ -555,16 +557,20 @@ class EndpointsTab implements MonitorTab {
                 Span.styled(uriLabel, Style.EMPTY.fg(Color.YELLOW)),
                 Span.raw("] "),
                 Span.styled("▬", Style.EMPTY.fg(Color.ansi(AnsiColor.BRIGHT_GREEN))),
-                Span.raw(String.format(" in:%-4d ", curIn)),
+                Span.raw(String.format(" in:%-4s ", MetricsCollector.formatThroughput(curIn))),
                 Span.styled("▬", Style.EMPTY.fg(Color.CYAN)),
-                Span.raw(String.format(" out:%-4d msg/s", curOut)));
+                Span.raw(String.format(" out:%-4s msg/s", MetricsCollector.formatThroughput(curOut))));
 
+        // TODO: use .showYAxis(true).yAxisFormatter(MetricsCollector::formatThroughput) when tamboui 0.5.0 is released
+        //  see https://github.com/tamboui/tamboui/pull/396
+        long maxEpSingle = MetricsCollector.niceMax(Math.max(maxOf(inArr), maxOf(outArr)));
         frame.renderWidget(DualSparkline.builder()
                 .topData(inArr)
                 .bottomData(outArr)
+                .max(maxEpSingle)
                 .topStyle(Style.EMPTY.fg(Color.ansi(AnsiColor.BRIGHT_GREEN)))
                 .bottomStyle(Style.EMPTY.fg(Color.CYAN))
-                .showYAxis(true)
+                .showYAxis(false)
                 .xLabels("-" + renderPoints + "s", "-" + (renderPoints * 3 / 4) + "s",
                         "-" + (renderPoints / 2) + "s", "-" + (renderPoints / 4) + "s", "now")
                 .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
@@ -770,4 +776,15 @@ class EndpointsTab implements MonitorTab {
         result.put("selectedIndex", sel != null ? sel : -1);
         return result;
     }
+
+    private static long maxOf(long[] arr) {
+        long max = 0;
+        for (long v : arr) {
+            if (v > max) {
+                max = v;
+            }
+        }
+        return max;
+    }
+
 }

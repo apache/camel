@@ -19,18 +19,25 @@ package org.apache.camel.management.mbean;
 import org.apache.camel.util.StopWatch;
 
 /**
- * Holds the load throughput messages/second
+ * Holds the throughput (messages/second) using EWMA (exponentially weighted moving average) smoothing, modeled after
+ * Unix load averages (same approach as {@link LoadTriplet}).
+ *
+ * The instantaneous rate from each 1-second sampling interval is smoothed with a 1-minute decay window so that the
+ * reported value converges to the true average rate instead of oscillating between 0 and spike values.
  */
 public final class LoadThroughput {
+
+    // EWMA exponent for a 1-minute decay window, sampled every 1 second
+    private static final double EXP_1 = Math.exp(-1.0 / 60.0);
 
     private final StopWatch watch = new StopWatch(false);
     private long last;
     private double thp;
 
     /**
-     * Update the load statistics
+     * Update the throughput statistics
      *
-     * @param currentReading the current reading
+     * @param currentReading the current cumulative exchange count
      */
     public void update(long currentReading) {
         if (!watch.isStarted()) {
@@ -40,14 +47,10 @@ public final class LoadThroughput {
             long time = watch.takenAndRestart();
             if (time > 0) {
                 long delta = currentReading - last;
-                if (delta > 0) {
-                    // need to calculate with fractions
-                    thp = (1000d / time) * delta;
-                } else {
-                    thp = 0;
-                }
-            } else {
-                thp = 0;
+                // instantaneous rate in exchanges/second for this interval
+                double instantRate = Math.max(0, (1000d / time) * delta);
+                // apply EWMA smoothing
+                thp = instantRate + EXP_1 * (thp - instantRate);
             }
         }
         last = currentReading;
@@ -58,6 +61,7 @@ public final class LoadThroughput {
     }
 
     public void reset() {
+        watch.stop();
         last = 0;
         thp = 0;
     }
