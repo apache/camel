@@ -1,0 +1,15 @@
+{
+  "console": {
+    "kind": "console",
+    "group": "camel",
+    "name": "heap-histogram",
+    "title": "Heap Histogram",
+    "description": "Displays class-level heap memory usage",
+    "deprecated": false,
+    "javaType": "org.apache.camel.impl.console.HeapHistogramDevConsole",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-console",
+    "version": "4.21.0-SNAPSHOT"
+  }
+}
+

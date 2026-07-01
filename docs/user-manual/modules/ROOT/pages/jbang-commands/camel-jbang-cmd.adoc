@@ -22,6 +22,7 @@ camel cmd [options]
 | xref:jbang-commands/camel-jbang-cmd-disable-processor.adoc[disable-processor] | Disable Camel processor
 | xref:jbang-commands/camel-jbang-cmd-enable-processor.adoc[enable-processor] | Enable Camel processor
 | xref:jbang-commands/camel-jbang-cmd-gc.adoc[gc] | Trigger Java Memory Garbage Collector
+| xref:jbang-commands/camel-jbang-cmd-heap-histogram.adoc[heap-histogram] | Display class-level heap memory usage in a running Camel integration
 | xref:jbang-commands/camel-jbang-cmd-load.adoc[load] | Loads new source files into an existing Camel
 | xref:jbang-commands/camel-jbang-cmd-logger.adoc[logger] | List or change logging levels
 | xref:jbang-commands/camel-jbang-cmd-receive.adoc[receive] | Receive and dump messages from remote endpoints

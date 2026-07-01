@@ -319,6 +319,16 @@ public class RuntimeTools {
 
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = """
+                  Get a class-level heap histogram showing instance counts and byte usage per class. \
+                  Useful for diagnosing memory leaks and understanding which classes dominate heap usage.""")
+    public JsonObject camel_runtime_heap_histogram(
+            @ToolArg(description = NAME_OR_PID_DESC) String nameOrPid) {
+        RuntimeService.ProcessInfo p = runtimeService.findSingleProcess(nameOrPid);
+        return runtimeService.executeAction(p.pid(), "heap-histogram", null);
+    }
+
+    @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
+          description = """
                   Get the message history trace of the last completed exchange. \
                   This is always captured (no need to enable tracing) and shows the single most recent exchange \
                   with its route path, processors visited, headers, body, and timing.""")

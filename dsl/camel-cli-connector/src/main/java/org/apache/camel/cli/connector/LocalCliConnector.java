@@ -335,6 +335,8 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                 doActionJvmTask();
             } else if ("thread-dump".equals(action)) {
                 doActionThreadDumpTask();
+            } else if ("heap-histogram".equals(action)) {
+                doActionHeapHistogramTask();
             } else if ("top-processors".equals(action)) {
                 doActionTopProcessorsTask();
             } else if ("source".equals(action)) {
@@ -829,6 +831,18 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                 .resolveById("thread");
         if (dc != null) {
             JsonObject json = (JsonObject) dc.call(DevConsole.MediaType.JSON, Map.of("stackTrace", "true"));
+            LOG.trace("Updating output file: {}", outputFile);
+            IOHelper.writeText(json.toJson(), outputFile);
+        } else {
+            IOHelper.writeText("{}", outputFile);
+        }
+    }
+
+    private void doActionHeapHistogramTask() throws IOException {
+        DevConsole dc = camelContext.getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class)
+                .resolveById("heap-histogram");
+        if (dc != null) {
+            JsonObject json = (JsonObject) dc.call(DevConsole.MediaType.JSON);
             LOG.trace("Updating output file: {}", outputFile);
             IOHelper.writeText(json.toJson(), outputFile);
         } else {

@@ -176,7 +176,7 @@ class PopupManager {
             return true;
         }
         if (ke.isDown()) {
-            morePopupState.selectNext(16);
+            morePopupState.selectNext(17);
             return true;
         }
         int shortcutSel = morePopupShortcut(ke);
@@ -239,7 +239,7 @@ class PopupManager {
 
     void renderMorePopup(Frame frame, Rect area) {
         int popupW = 22;
-        int popupH = 18;
+        int popupH = 19;
         // Position just below the "0 More▾" tab label
         int dividerW = CharWidth.of(" | ");
         int tabBarX = 0;
@@ -268,6 +268,7 @@ class PopupManager {
                 ListItem.from(Line.from(Span.raw("  Confi"), Span.styled("g", keyStyle), Span.raw("uration"))),
                 ListItem.from(Line.from(Span.raw("  Co"), Span.styled("n", keyStyle), Span.raw("sumers"))),
                 ListItem.from(Line.from(Span.raw("  "), Span.styled("D", keyStyle), Span.raw("ataSource"))),
+                ListItem.from(Line.from(Span.raw("  "), Span.styled("H", keyStyle), Span.raw("eap Histogram"))),
                 ListItem.from(Line.from(Span.raw("  "), Span.styled("I", keyStyle), Span.raw("nflight"))),
                 ListItem.from(Line.from(Span.raw("  "), Span.styled("M", keyStyle), Span.raw("emory"))),
                 ListItem.from(Line.from(Span.raw("  M"), Span.styled("e", keyStyle), Span.raw("trics"))),
@@ -397,32 +398,35 @@ class PopupManager {
         if (ke.isChar('d')) {
             return 6;
         }
-        if (ke.isChar('i')) {
+        if (ke.isChar('h')) {
             return 7;
         }
-        if (ke.isChar('m')) {
+        if (ke.isChar('i')) {
             return 8;
         }
-        if (ke.isChar('e')) {
+        if (ke.isChar('m')) {
             return 9;
         }
-        if (ke.isChar('q')) {
+        if (ke.isChar('e')) {
             return 10;
         }
-        if (ke.isChar('r')) {
+        if (ke.isChar('q')) {
             return 11;
         }
-        if (ke.isChar('o')) {
+        if (ke.isChar('r')) {
             return 12;
         }
-        if (ke.isChar('p')) {
+        if (ke.isChar('o')) {
             return 13;
         }
-        if (ke.isChar('s')) {
+        if (ke.isChar('p')) {
             return 14;
         }
-        if (ke.isChar('t')) {
+        if (ke.isChar('s')) {
             return 15;
+        }
+        if (ke.isChar('t')) {
+            return 16;
         }
         return -1;
     }

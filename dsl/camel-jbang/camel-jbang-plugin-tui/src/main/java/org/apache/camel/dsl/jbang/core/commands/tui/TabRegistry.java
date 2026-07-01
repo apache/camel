@@ -86,6 +86,7 @@ class TabRegistry {
     private ProcessTab processTab;
     private OverviewTab overviewTab;
     private DataSourceTab dataSourceTab;
+    private HeapHistogramTab heapHistogramTab;
     private SqlQueryTab sqlQueryTab;
     private SqlTraceTab sqlTraceTab;
 
@@ -105,6 +106,7 @@ class TabRegistry {
         routesTab = new RoutesTab(ctx);
         consumersTab = new ConsumersTab(ctx);
         dataSourceTab = new DataSourceTab(ctx);
+        heapHistogramTab = new HeapHistogramTab(ctx);
         sqlQueryTab = new SqlQueryTab(ctx);
         sqlTraceTab = new SqlTraceTab(ctx);
         endpointsTab = new EndpointsTab(ctx, dataService.metrics());
@@ -129,7 +131,7 @@ class TabRegistry {
                 resetIntegrationTabState);
 
         sqlTraceTab.setEditSqlAction(sql -> {
-            selectMoreTab(10); // switch to SQL Query tab
+            selectMoreTab(11); // switch to SQL Query tab
             sqlQueryTab.setInputValue("sql", sql);
         });
     }
@@ -216,15 +218,16 @@ class TabRegistry {
             case 4 -> configurationTab;
             case 5 -> consumersTab;
             case 6 -> dataSourceTab;
-            case 7 -> inflightTab;
-            case 8 -> memoryTab;
-            case 9 -> metricsTab;
-            case 10 -> sqlQueryTab;
-            case 11 -> sqlTraceTab;
-            case 12 -> spansTab;
-            case 13 -> processTab;
-            case 14 -> startupTab;
-            case 15 -> threadsTab;
+            case 7 -> heapHistogramTab;
+            case 8 -> inflightTab;
+            case 9 -> memoryTab;
+            case 10 -> metricsTab;
+            case 11 -> sqlQueryTab;
+            case 12 -> sqlTraceTab;
+            case 13 -> spansTab;
+            case 14 -> processTab;
+            case 15 -> startupTab;
+            case 16 -> threadsTab;
             default -> null;
         };
         if (activeMoreTab != null) {
@@ -247,6 +250,7 @@ class TabRegistry {
         configurationTab.onIntegrationChanged();
         consumersTab.onIntegrationChanged();
         dataSourceTab.onIntegrationChanged();
+        heapHistogramTab.onIntegrationChanged();
         sqlQueryTab.onIntegrationChanged();
         sqlTraceTab.onIntegrationChanged();
         circuitBreakerTab.onIntegrationChanged();
