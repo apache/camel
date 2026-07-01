@@ -18,6 +18,8 @@ package org.apache.camel.dsl.jbang.core.commands.tui;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -69,6 +71,7 @@ import static org.apache.camel.dsl.jbang.core.commands.tui.TabRegistry.*;
          sortOptions = false)
 public class CamelMonitor extends CamelCommand {
 
+    private static final Logger LOG = System.getLogger(CamelMonitor.class.getName());
     private static final long DEFAULT_REFRESH_MS = 100;
 
     // Compact tab bar (10 labels + 9 "|" dividers) needs 88 chars — that is the true minimum
@@ -800,12 +803,17 @@ public class CamelMonitor extends CamelCommand {
         ctx.shellPercent = shellPanel.isOpen() ? shellPanel.panelPercent()
                 : aiPanel.isOpen() ? aiPanel.panelPercent() : 0;
         if (shellPanel.isOpen()) {
-            List<Rect> splitChunks = Layout.vertical()
-                    .constraints(Constraint.percentage(100 - shellPanel.panelPercent()),
-                            Constraint.percentage(shellPanel.panelPercent()))
-                    .split(contentArea);
-            renderContent(frame, splitChunks.get(0));
-            shellPanel.render(frame, splitChunks.get(1));
+            if (shellPanel.panelPercent() >= 100) {
+                // At 100% the shell fills the entire content area
+                shellPanel.render(frame, contentArea);
+            } else {
+                List<Rect> splitChunks = Layout.vertical()
+                        .constraints(Constraint.percentage(100 - shellPanel.panelPercent()),
+                                Constraint.percentage(shellPanel.panelPercent()))
+                        .split(contentArea);
+                renderContent(frame, splitChunks.get(0));
+                shellPanel.render(frame, splitChunks.get(1));
+            }
         } else if (aiPanel.isOpen()) {
             List<Rect> splitChunks = Layout.vertical()
                     .constraints(Constraint.percentage(100 - aiPanel.panelPercent()),
@@ -1141,6 +1149,7 @@ public class CamelMonitor extends CamelCommand {
         try {
             pid = Long.parseLong(ctx.selectedPid);
         } catch (NumberFormatException e) {
+            LOG.log(Level.DEBUG, "Cannot parse selected PID: {0}", ctx.selectedPid);
             return;
         }
         if (isInfraSelected()) {
@@ -1184,6 +1193,7 @@ public class CamelMonitor extends CamelCommand {
         try {
             pid = Long.parseLong(ctx.selectedPid);
         } catch (NumberFormatException e) {
+            LOG.log(Level.DEBUG, "Cannot parse selected PID for restart: {0}", ctx.selectedPid);
             return;
         }
         IntegrationInfo info = findSelectedIntegration();
@@ -1601,6 +1611,7 @@ public class CamelMonitor extends CamelCommand {
             Files.writeString(path, json);
             return path;
         } catch (IOException e) {
+            LOG.log(Level.WARNING, "Failed to write .mcp.json: {0}", e.getMessage());
             return null;
         }
     }
@@ -1610,7 +1621,7 @@ public class CamelMonitor extends CamelCommand {
             try {
                 Files.deleteIfExists(path);
             } catch (IOException e) {
-                // best effort
+                LOG.log(Level.DEBUG, "Failed to delete .mcp.json: {0}", e.getMessage());
             }
         }
     }
