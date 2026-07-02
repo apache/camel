@@ -44,7 +44,7 @@ public class JmsComponentIbmMQTest extends CamelTestSupport {
         resultEndpoint.message(0).header("cheese").isEqualTo(123);
         resultEndpoint.message(0).body().isEqualTo("Hello there!");
 
-        AbstractJMSTest.waitForJmsConsumerRoutes(context, "producer", "consumer");
+        AbstractJMSTest.waitForJmsConsumerRoutes(context, "consumer");
 
         template.sendBodyAndHeader("direct:start", "Hello world", "cheese", 123);
 
@@ -57,7 +57,6 @@ public class JmsComponentIbmMQTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from("direct:start")
-                        .routeId("producer")
                         .to("jms:queue:DEV.QUEUE.1");
 
                 from("jms:queue:DEV.QUEUE.1")

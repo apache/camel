@@ -22,6 +22,7 @@ import java.util.concurrent.TimeUnit;
 import jakarta.jms.ConnectionFactory;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Route;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.infra.artemis.common.ConnectionFactoryHelper;
 import org.apache.camel.test.infra.artemis.services.ArtemisService;
@@ -50,17 +51,32 @@ public abstract class AbstractJMSTest implements CamelTestSupportHelper, Configu
     public static ArtemisService service = ArtemisServiceFactory.createSingletonVMService();
 
     /**
-     * Wait until JMS consumer routes have been running long enough that listener registration on the broker is expected
-     * to be complete.
+     * Wait until the given routes have been running for {@link #JMS_CONSUMER_ROUTE_UPTIME_MILLIS} milliseconds. Route
+     * uptime is only a heuristic for JMS listener registration on the broker: once a consumer route has been up for a
+     * short while its listener is expected to be subscribed, so tests can send without racing an unregistered listener.
+     *
+     * @param context  the Camel context owning the routes
+     * @param routeIds the ids of the consumer routes to wait for
      */
     public static void waitForJmsConsumerRoutes(CamelContext context, String... routeIds) {
         waitForJmsConsumerRoutes(context, JMS_CONSUMER_ROUTE_UPTIME_MILLIS, routeIds);
     }
 
+    /**
+     * Wait until the given routes have been running for at least {@code minUptimeMillis} milliseconds, giving up after
+     * {@link #JMS_CONSUMER_ROUTE_WAIT_AT_MOST_MILLIS} milliseconds. A missing route (unknown id, or one already removed
+     * from the context) is treated as not-yet-ready rather than throwing, so a misconfigured route id surfaces as a
+     * clear timeout instead of a {@link NullPointerException}.
+     *
+     * @param context         the Camel context owning the routes
+     * @param minUptimeMillis the minimum route uptime, in milliseconds, before a route is considered ready
+     * @param routeIds        the ids of the consumer routes to wait for
+     */
     public static void waitForJmsConsumerRoutes(CamelContext context, long minUptimeMillis, String... routeIds) {
         Awaitility.await().atMost(JMS_CONSUMER_ROUTE_WAIT_AT_MOST_MILLIS, TimeUnit.MILLISECONDS).until(() -> {
             for (String routeId : routeIds) {
-                if (context.getRoute(routeId).getUptimeMillis() <= minUptimeMillis) {
+                Route route = context.getRoute(routeId);
+                if (route == null || route.getUptimeMillis() <= minUptimeMillis) {
                     return false;
                 }
             }

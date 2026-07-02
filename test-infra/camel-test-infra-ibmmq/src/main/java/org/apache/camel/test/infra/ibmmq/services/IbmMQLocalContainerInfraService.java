@@ -32,6 +32,7 @@ import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.output.Slf4jLogConsumer;
 import org.testcontainers.containers.wait.strategy.Wait;
+import org.testcontainers.containers.wait.strategy.WaitAllStrategy;
 import org.testcontainers.utility.DockerImageName;
 
 @InfraService(service = IbmMQInfraService.class,
@@ -67,9 +68,13 @@ public class IbmMQLocalContainerInfraService implements IbmMQInfraService, Conta
                         .withEnv("MQ_QMGR_NAME", IbmMQProperties.DEFAULT_QMGR_NAME)
                         .withEnv("MQ_APP_PASSWORD", IbmMQProperties.DEFAULT_APP_PASSWORD)
                         .withLogConsumer(new Slf4jLogConsumer(LOG))
-                        .waitingFor(Wait.forListeningPort())
-                        .waitingFor(Wait.forLogMessage(
-                                ".*Queued Publish/Subscribe Daemon started for queue manager.*", 1));
+                        // AND the listener-port and log-message checks; a plain chained waitingFor() would replace,
+                        // not combine, the strategies. WITH_INDIVIDUAL_TIMEOUTS_ONLY keeps each strategy's own timeout
+                        // instead of the 30s outer cap the default WaitAllStrategy mode would impose.
+                        .waitingFor(new WaitAllStrategy(WaitAllStrategy.Mode.WITH_INDIVIDUAL_TIMEOUTS_ONLY)
+                                .withStrategy(Wait.forListeningPort())
+                                .withStrategy(Wait.forLogMessage(
+                                        ".*Queued Publish/Subscribe Daemon started for queue manager.*", 1)));
 
                 ContainerEnvironmentUtil.configurePorts(this,
                         ContainerEnvironmentUtil.isFixedPort(IbmMQLocalContainerInfraService.class),

@@ -30,10 +30,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class SingleMessageSameTopicIT extends AbstractPersistentJMSTest {
 
+    // topic subscriptions take a little longer to register than queue consumers, so keep the longer 200ms threshold
+    private static final long TOPIC_ROUTE_UPTIME_MILLIS = 200;
+
     @Order(1)
     @BeforeEach
     void waitForConnections() {
-        waitForJmsConsumerRoutes("a", "b");
+        waitForJmsConsumerRoutes(TOPIC_ROUTE_UPTIME_MILLIS, "a", "b");
     }
 
     @Order(2)
@@ -65,7 +68,7 @@ public class SingleMessageSameTopicIT extends AbstractPersistentJMSTest {
         getMockEndpoint("mock:a").expectedMessageCount(0);
         getMockEndpoint("mock:b").expectedBodiesReceived("Bye World");
 
-        waitForJmsConsumerRoutes("b");
+        waitForJmsConsumerRoutes(TOPIC_ROUTE_UPTIME_MILLIS, "b");
         template.sendBody("activemq:topic:SingleMessageSameTopicIT", "Bye World");
 
         MockEndpoint.assertIsSatisfied(context);
@@ -79,7 +82,7 @@ public class SingleMessageSameTopicIT extends AbstractPersistentJMSTest {
         getMockEndpoint("mock:a").expectedBodiesReceived("Hello World");
         getMockEndpoint("mock:b").expectedBodiesReceived("Hello World");
 
-        waitForJmsConsumerRoutes("a", "b");
+        waitForJmsConsumerRoutes(TOPIC_ROUTE_UPTIME_MILLIS, "a", "b");
         template.sendBody("activemq:topic:SingleMessageSameTopicIT", "Hello World");
     }
 
@@ -98,7 +101,7 @@ public class SingleMessageSameTopicIT extends AbstractPersistentJMSTest {
         getMockEndpoint("mock:a").expectedMessageCount(0);
         getMockEndpoint("mock:b").expectedBodiesReceived("Bye World");
 
-        waitForJmsConsumerRoutes("b");
+        waitForJmsConsumerRoutes(TOPIC_ROUTE_UPTIME_MILLIS, "b");
         template.sendBody("activemq:topic:SingleMessageSameTopicIT", "Bye World");
 
         MockEndpoint.assertIsSatisfied(context);

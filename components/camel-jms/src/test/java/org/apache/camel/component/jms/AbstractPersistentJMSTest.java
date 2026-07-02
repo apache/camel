@@ -52,4 +52,8 @@ public abstract class AbstractPersistentJMSTest extends CamelTestSupport {
     protected void waitForJmsConsumerRoutes(String... routeIds) {
         AbstractJMSTest.waitForJmsConsumerRoutes(context, routeIds);
     }
+
+    protected void waitForJmsConsumerRoutes(long minUptimeMillis, String... routeIds) {
+        AbstractJMSTest.waitForJmsConsumerRoutes(context, minUptimeMillis, routeIds);
+    }
 }
