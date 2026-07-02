@@ -46,9 +46,9 @@ import org.apache.camel.dsl.jbang.core.common.PathUtils;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 
-import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.*;
+import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.*;
 
-class MemoryLeakTab implements MonitorTab {
+class MemoryLeakTab extends AbstractTab {
 
     private enum State {
         IDLE,
@@ -68,7 +68,6 @@ class MemoryLeakTab implements MonitorTab {
     private static final String[] MIN_SIZE_LABELS = {
             "off", "1 KB", "10 KB", "100 KB", "1 MB", "10 MB", "100 MB" };
 
-    private final MonitorContext ctx;
     private final TableState tableState = new TableState();
     private final AtomicBoolean loading = new AtomicBoolean(false);
 
@@ -102,7 +101,7 @@ class MemoryLeakTab implements MonitorTab {
     private int currentGcCount;
 
     MemoryLeakTab(MonitorContext ctx) {
-        this.ctx = ctx;
+        super(ctx);
     }
 
     @Override
@@ -1563,11 +1562,11 @@ class MemoryLeakTab implements MonitorTab {
     }
 
     private String sortLabel(String label, String column) {
-        return MonitorContext.sortLabel(label, column, sort, sortReversed);
+        return AbstractTab.sortLabel(label, column, sort, sortReversed);
     }
 
     private Style sortStyle(String column) {
-        return MonitorContext.sortStyle(column, sort);
+        return AbstractTab.sortStyle(column, sort);
     }
 
     private static int compareStr(String a, String b) {

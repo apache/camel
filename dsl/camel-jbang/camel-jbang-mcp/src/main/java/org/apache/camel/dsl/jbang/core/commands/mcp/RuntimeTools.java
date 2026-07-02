@@ -29,7 +29,6 @@ import io.quarkiverse.mcp.server.ToolCallException;
 import org.apache.camel.dsl.jbang.core.commands.ai.ToolContext;
 import org.apache.camel.dsl.jbang.core.commands.ai.ToolExecutionException;
 import org.apache.camel.dsl.jbang.core.commands.ai.ToolRegistry;
-import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
 
