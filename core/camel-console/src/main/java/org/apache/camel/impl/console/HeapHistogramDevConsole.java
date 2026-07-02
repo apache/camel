@@ -25,6 +25,7 @@ import javax.management.ObjectName;
 import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.console.AbstractDevConsole;
+import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 
@@ -135,7 +136,7 @@ public class HeapHistogramDevConsole extends AbstractDevConsole {
             jo.put("num", num);
             jo.put("instances", instances);
             jo.put("bytes", bytes);
-            jo.put("className", className);
+            jo.put("className", StringHelper.readableClassName(className));
             arr.add(jo);
             count++;
         }

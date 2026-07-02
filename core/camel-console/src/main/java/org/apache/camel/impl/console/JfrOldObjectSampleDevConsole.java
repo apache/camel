@@ -39,6 +39,7 @@ import jdk.jfr.consumer.RecordingFile;
 import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.console.AbstractDevConsole;
+import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.slf4j.Logger;
@@ -510,7 +511,7 @@ public class JfrOldObjectSampleDevConsole extends AbstractDevConsole {
             try {
                 RecordedClass type = objectRef.getClass("type");
                 if (type != null) {
-                    sample.put("allocationClass", readableClassName(type.getName()));
+                    sample.put("allocationClass", StringHelper.readableClassName(type.getName()));
                 }
             } catch (Exception e) {
                 // ignore
@@ -520,7 +521,7 @@ public class JfrOldObjectSampleDevConsole extends AbstractDevConsole {
             try {
                 RecordedClass objectClass = event.getClass("objectClass");
                 if (objectClass != null) {
-                    sample.put("allocationClass", readableClassName(objectClass.getName()));
+                    sample.put("allocationClass", StringHelper.readableClassName(objectClass.getName()));
                 }
             } catch (Exception e) {
                 // ignore
@@ -599,7 +600,7 @@ public class JfrOldObjectSampleDevConsole extends AbstractDevConsole {
                     try {
                         RecordedClass type = obj.getClass("type");
                         if (type != null) {
-                            link.put("type", readableClassName(type.getName()));
+                            link.put("type", StringHelper.readableClassName(type.getName()));
                         }
                     } catch (Exception e) {
                         // ignore
@@ -670,7 +671,7 @@ public class JfrOldObjectSampleDevConsole extends AbstractDevConsole {
             if (root.hasField("type")) {
                 RecordedClass type = root.getClass("type");
                 if (type != null) {
-                    link.put("type", readableClassName(type.getName()));
+                    link.put("type", StringHelper.readableClassName(type.getName()));
                 }
             }
             if (root.hasField("description")) {
@@ -696,38 +697,6 @@ public class JfrOldObjectSampleDevConsole extends AbstractDevConsole {
         } catch (Exception e) {
             LOG.debug("Error extracting GC root: {}", e.getMessage());
         }
-    }
-
-    static String readableClassName(String name) {
-        if (name == null) {
-            return null;
-        }
-        // JVM array descriptors → human-readable
-        if (name.startsWith("[")) {
-            int dims = 0;
-            int i = 0;
-            while (i < name.length() && name.charAt(i) == '[') {
-                dims++;
-                i++;
-            }
-            String suffix = "[]".repeat(dims);
-            if (i < name.length()) {
-                String element = switch (name.charAt(i)) {
-                    case 'B' -> "byte";
-                    case 'C' -> "char";
-                    case 'D' -> "double";
-                    case 'F' -> "float";
-                    case 'I' -> "int";
-                    case 'J' -> "long";
-                    case 'S' -> "short";
-                    case 'Z' -> "boolean";
-                    case 'L' -> name.substring(i + 1, name.endsWith(";") ? name.length() - 1 : name.length());
-                    default -> name.substring(i);
-                };
-                return element + suffix;
-            }
-        }
-        return name;
     }
 
     private void cancelAutoStop() {

@@ -564,7 +564,7 @@ class JfrOldObjectSampleTab implements MonitorTab {
         if (baselineGcCount > 0 || currentGcCount > 0) {
             gcLabel = String.format(" gc:%d/%d", baselineGcCount, currentGcCount);
         }
-        String title = String.format(" Comparison [%d] run1:%s run2:%s ratio:%.1fx%s ",
+        String title = String.format(Locale.US, " Comparison [%d] run1:%s run2:%s ratio:%.1fx%s ",
                 comparisons.size(), formatDuration(baselineDurationMs),
                 formatDuration(currentDurationMs), durationRatio, gcLabel);
 
@@ -1490,7 +1490,7 @@ class JfrOldObjectSampleTab implements MonitorTab {
         } else {
             long min = ms / 60000;
             long sec = (ms % 60000) / 1000;
-            return min + "m " + sec + "s";
+            return sec > 0 ? min + "m" + sec + "s" : min + "m";
         }
     }
 
