@@ -37,6 +37,7 @@ import jdk.jfr.consumer.RecordedObject;
 import jdk.jfr.consumer.RecordedStackTrace;
 import jdk.jfr.consumer.RecordingFile;
 import org.apache.camel.spi.Configurer;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.console.AbstractDevConsole;
 import org.apache.camel.util.StringHelper;
@@ -55,6 +56,26 @@ import org.slf4j.LoggerFactory;
 public class JfrMemoryLeakDevConsole extends AbstractDevConsole {
 
     private static final Logger LOG = LoggerFactory.getLogger(JfrMemoryLeakDevConsole.class);
+
+    @Metadata(label = "query", description = "Command to execute", javaType = "java.lang.String",
+              defaultValue = "status", enums = "start,stop,status,query,compare")
+    public static final String COMMAND = "command";
+
+    @Metadata(label = "query", description = "Recording duration in seconds (0 means manual stop)",
+              javaType = "java.lang.Integer", defaultValue = "0")
+    public static final String DURATION = "duration";
+
+    @Metadata(label = "query", description = "Limits the number of entries displayed",
+              javaType = "java.lang.Integer", defaultValue = "100")
+    public static final String LIMIT = "limit";
+
+    @Metadata(label = "query", description = "Minimum object size in bytes to include in results",
+              javaType = "java.lang.Long", defaultValue = "0")
+    public static final String MIN_SIZE = "minSize";
+
+    @Metadata(label = "query", description = "Whether to include stack traces in the output",
+              javaType = "java.lang.Boolean", defaultValue = "false")
+    public static final String STACKTRACE = "stacktrace";
 
     private static final int DEFAULT_LIMIT = 100;
     private static final int MAX_STACK_FRAMES = 10;
@@ -81,7 +102,7 @@ public class JfrMemoryLeakDevConsole extends AbstractDevConsole {
 
     @Override
     protected JsonObject doCallJson(Map<String, Object> options) {
-        String command = optionString(options, "command");
+        String command = optionString(options, COMMAND);
         if (command == null) {
             command = "status";
         }
@@ -107,7 +128,7 @@ public class JfrMemoryLeakDevConsole extends AbstractDevConsole {
             rec.enable("jdk.OldObjectSample").withStackTrace().withPeriod(Duration.ofSeconds(1));
             rec.enable("jdk.GarbageCollection");
 
-            int duration = optionInt(options, "duration", 0);
+            int duration = optionInt(options, DURATION, 0);
             requestedDurationSeconds = duration;
             if (duration > 0) {
                 rec.setMaxAge(Duration.ofSeconds(duration + 10));
@@ -158,7 +179,7 @@ public class JfrMemoryLeakDevConsole extends AbstractDevConsole {
         }
 
         cancelAutoStop();
-        int limit = optionInt(options, "limit", DEFAULT_LIMIT);
+        int limit = optionInt(options, LIMIT, DEFAULT_LIMIT);
 
         try {
             JsonObject result = doStopRecordingAndParse(limit);
@@ -259,7 +280,7 @@ public class JfrMemoryLeakDevConsole extends AbstractDevConsole {
             return errorJson("Need two recordings to compare. Run two recordings first.");
         }
 
-        long minSize = optionLong(options, "minSize", 1024);
+        long minSize = optionLong(options, MIN_SIZE, 0);
 
         long baselineDurationMs = previousResults.getLongOrDefault("recordingDurationMs", 1);
         long currentDurationMs = cachedResults.getLongOrDefault("recordingDurationMs", 1);
@@ -397,9 +418,9 @@ public class JfrMemoryLeakDevConsole extends AbstractDevConsole {
         return result;
     }
 
-    private static JsonObject applyFilters(JsonObject original, Map<String, Object> options) {
-        long minSize = optionLong(options, "minSize", 0);
-        boolean includeStacktrace = "true".equalsIgnoreCase(optionString(options, "stacktrace"));
+    private JsonObject applyFilters(JsonObject original, Map<String, Object> options) {
+        long minSize = optionLong(options, MIN_SIZE, 0);
+        boolean includeStacktrace = optionBoolean(options, STACKTRACE, false);
 
         if (minSize <= 0 && includeStacktrace) {
             return original;
@@ -773,35 +794,6 @@ public class JfrMemoryLeakDevConsole extends AbstractDevConsole {
             scheduler.shutdownNow();
             scheduler = null;
         }
-    }
-
-    private static String optionString(Map<String, Object> options, String key) {
-        Object val = options.get(key);
-        return val != null ? val.toString() : null;
-    }
-
-    private static int optionInt(Map<String, Object> options, String key, int defaultValue) {
-        Object val = options.get(key);
-        if (val != null) {
-            try {
-                return Integer.parseInt(val.toString());
-            } catch (NumberFormatException e) {
-                // use default
-            }
-        }
-        return defaultValue;
-    }
-
-    private static long optionLong(Map<String, Object> options, String key, long defaultValue) {
-        Object val = options.get(key);
-        if (val != null) {
-            try {
-                return Long.parseLong(val.toString());
-            } catch (NumberFormatException e) {
-                // use default
-            }
-        }
-        return defaultValue;
     }
 
     private static JsonObject errorJson(String message) {

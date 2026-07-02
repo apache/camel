@@ -37,14 +37,12 @@ public class TraceDevConsole extends AbstractDevConsole {
               description = "Maximum capacity of last number of messages to capture (capacity must be between 50 and 1000)")
     private int capacity = 100;
 
-    /**
-     * Whether to enable or disable tracing
-     */
+    @Metadata(label = "query", description = "Whether to enable or disable tracing",
+              javaType = "java.lang.String", enums = "true,false")
     public static final String ENABLED = "enabled";
 
-    /**
-     * Whether to dump trace messages
-     */
+    @Metadata(label = "query", description = "Whether to dump trace messages",
+              javaType = "java.lang.String", enums = "true,false")
     public static final String DUMP = "dump";
 
     private Queue<BacklogTracerEventMessage> queue;
@@ -71,8 +69,8 @@ public class TraceDevConsole extends AbstractDevConsole {
 
     protected String doCallText(Map<String, Object> options) {
         StringBuilder sb = new StringBuilder();
-        String enabled = (String) options.get(ENABLED);
-        String dump = (String) options.get(DUMP);
+        String enabled = optionString(options, ENABLED);
+        String dump = optionString(options, DUMP);
 
         BacklogTracer tracer = getCamelContext().getCamelContextExtension().getContextPlugin(BacklogTracer.class);
         if (tracer != null) {
@@ -129,8 +127,8 @@ public class TraceDevConsole extends AbstractDevConsole {
 
     protected JsonObject doCallJson(Map<String, Object> options) {
         JsonObject root = new JsonObject();
-        String enabled = (String) options.get(ENABLED);
-        String dump = (String) options.get(DUMP);
+        String enabled = optionString(options, ENABLED);
+        String dump = optionString(options, DUMP);
 
         BacklogTracer tracer = getCamelContext().getCamelContextExtension().getContextPlugin(BacklogTracer.class);
         if (tracer != null) {

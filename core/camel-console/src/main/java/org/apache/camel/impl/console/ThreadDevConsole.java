@@ -23,6 +23,7 @@ import java.util.Arrays;
 import java.util.Map;
 
 import org.apache.camel.spi.Configurer;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.console.AbstractDevConsole;
 import org.apache.camel.util.json.JsonArray;
@@ -32,6 +33,10 @@ import org.apache.camel.util.json.JsonObject;
 @Configurer(extended = true)
 public class ThreadDevConsole extends AbstractDevConsole {
 
+    @Metadata(label = "query", description = "Whether to include thread stack traces",
+              defaultValue = "false", javaType = "java.lang.Boolean")
+    public static final String STACK_TRACE = "stackTrace";
+
     public ThreadDevConsole() {
         super("jvm", "thread", "Thread", "Displays JVM Threads information");
     }
@@ -40,7 +45,7 @@ public class ThreadDevConsole extends AbstractDevConsole {
     protected String doCallText(Map<String, Object> options) {
         StringBuilder sb = new StringBuilder();
 
-        boolean st = "true".equals(options.getOrDefault("stackTrace", "false"));
+        boolean st = optionBoolean(options, STACK_TRACE, false);
         ThreadMXBean tb = ManagementFactory.getThreadMXBean();
         if (tb != null) {
             sb.append(String.format("Threads: %s%n", tb.getThreadCount()));
@@ -72,7 +77,7 @@ public class ThreadDevConsole extends AbstractDevConsole {
     protected JsonObject doCallJson(Map<String, Object> options) {
         JsonObject root = new JsonObject();
 
-        boolean st = "true".equals(options.getOrDefault("stackTrace", "false"));
+        boolean st = optionBoolean(options, STACK_TRACE, false);
         ThreadMXBean tb = ManagementFactory.getThreadMXBean();
         if (tb != null) {
             root.put("threadCount", tb.getThreadCount());

@@ -495,6 +495,15 @@ public final class JsonMapper {
         parseModel(mobj, model);
         model.setGroup(mobj.getString("group"));
         parseArtifact(mobj, model);
+        JsonObject options = (JsonObject) obj.get("options");
+        if (options != null) {
+            for (Map.Entry<String, Object> entry : options.entrySet()) {
+                JsonObject mp = (JsonObject) entry.getValue();
+                DevConsoleModel.DevConsoleOptionModel option = new DevConsoleModel.DevConsoleOptionModel();
+                parseOption(mp, option, entry.getKey());
+                model.addOption(option);
+            }
+        }
         return model;
     }
 
@@ -511,6 +520,9 @@ public final class JsonMapper {
         obj.entrySet().removeIf(e -> e.getValue() == null);
         JsonObject wrapper = new JsonObject();
         wrapper.put("console", obj);
+        if (!model.getOptions().isEmpty()) {
+            wrapper.put("options", asJsonObject(model.getOptions()));
+        }
         return wrapper;
     }
 

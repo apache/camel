@@ -30,6 +30,7 @@ import org.apache.camel.api.management.ManagedCamelContext;
 import org.apache.camel.api.management.mbean.ManagedPerformanceCounterMBean;
 import org.apache.camel.api.management.mbean.ManagedProcessorMBean;
 import org.apache.camel.api.management.mbean.ManagedRouteMBean;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.LoggerHelper;
@@ -46,14 +47,13 @@ import org.apache.camel.util.json.Jsoner;
 @DevConsole(name = "top", displayName = "Top Routes", description = "Display the top routes")
 public class TopDevConsole extends AbstractDevConsole {
 
-    /**
-     * Filters the routes and processors matching by route id, route uri, processor id, and source location
-     */
+    @Metadata(label = "query",
+              description = "Filters the routes and processors matching by route id, route uri, processor id, and source location",
+              javaType = "java.lang.String")
     public static final String FILTER = "filter";
 
-    /**
-     * Limits the number of entries displayed
-     */
+    @Metadata(label = "query", description = "Limits the number of entries displayed",
+              javaType = "java.lang.Integer")
     public static final String LIMIT = "limit";
 
     public TopDevConsole() {
@@ -62,11 +62,10 @@ public class TopDevConsole extends AbstractDevConsole {
 
     @Override
     protected String doCallText(Map<String, Object> options) {
-        String path = (String) options.get(Exchange.HTTP_PATH);
+        String path = optionString(options, Exchange.HTTP_PATH);
         String subPath = path != null ? StringHelper.after(path, "/") : null;
-        String filter = (String) options.get(FILTER);
-        String limit = (String) options.get(LIMIT);
-        final int max = limit == null ? Integer.MAX_VALUE : Integer.parseInt(limit);
+        String filter = optionString(options, FILTER);
+        final int max = optionInt(options, LIMIT, Integer.MAX_VALUE);
 
         final StringBuilder sb = new StringBuilder();
         ManagedCamelContext mcc = getCamelContext().getCamelContextExtension().getContextPlugin(ManagedCamelContext.class);
@@ -161,11 +160,10 @@ public class TopDevConsole extends AbstractDevConsole {
 
     @Override
     protected JsonObject doCallJson(Map<String, Object> options) {
-        String path = (String) options.get(Exchange.HTTP_PATH);
+        String path = optionString(options, Exchange.HTTP_PATH);
         String subPath = path != null ? StringHelper.after(path, "/") : null;
-        String filter = (String) options.get(FILTER);
-        String limit = (String) options.get(LIMIT);
-        final int max = limit == null ? Integer.MAX_VALUE : Integer.parseInt(limit);
+        String filter = optionString(options, FILTER);
+        final int max = optionInt(options, LIMIT, Integer.MAX_VALUE);
 
         final JsonObject root = new JsonObject();
         final JsonArray list = new JsonArray();

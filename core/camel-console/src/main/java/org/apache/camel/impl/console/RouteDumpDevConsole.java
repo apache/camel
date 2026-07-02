@@ -30,6 +30,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Route;
 import org.apache.camel.api.management.ManagedCamelContext;
 import org.apache.camel.api.management.mbean.ManagedRouteMBean;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.LoggerHelper;
 import org.apache.camel.support.PatternHelper;
@@ -46,24 +47,19 @@ public class RouteDumpDevConsole extends AbstractDevConsole {
     private static final Pattern XML_SOURCE_LOCATION_PATTERN = Pattern.compile("(\\ssourceLocation=\"(.*?)\")");
     private static final Pattern XML_SOURCE_LINE_PATTERN = Pattern.compile("(\\ssourceLineNumber=\"(.*?)\")");
 
-    /**
-     * To output in either xml, yaml, or text format
-     */
+    @Metadata(label = "query", description = "To output in either xml, yaml, or java format", javaType = "java.lang.String",
+              enums = "xml,yaml,java")
     public static final String FORMAT = "format";
 
-    /**
-     * Filters the routes matching by route id, route uri, and source location
-     */
+    @Metadata(label = "query", description = "Filters the routes matching by route id, route uri, and source location",
+              javaType = "java.lang.String")
     public static final String FILTER = "filter";
 
-    /**
-     * Limits the number of entries displayed
-     */
+    @Metadata(label = "query", description = "Limits the number of entries displayed", javaType = "java.lang.Integer")
     public static final String LIMIT = "limit";
 
-    /**
-     * Whether to expand URIs into separated key/value parameters
-     */
+    @Metadata(label = "query", description = "Whether to expand URIs into separated key/value parameters",
+              javaType = "java.lang.Boolean", defaultValue = "false")
     public static final String URI_AS_PARAMETERS = "uriAsParameters";
 
     public RouteDumpDevConsole() {
@@ -72,17 +68,17 @@ public class RouteDumpDevConsole extends AbstractDevConsole {
 
     @Override
     protected String doCallText(Map<String, Object> options) {
-        final String uriAsParameters = (String) options.getOrDefault(URI_AS_PARAMETERS, "false");
+        final boolean uriAsParameters = optionBoolean(options, URI_AS_PARAMETERS, false);
 
         final StringBuilder sb = new StringBuilder();
         Function<ManagedRouteMBean, Object> task = mrb -> {
             String dump = null;
             try {
-                String format = (String) options.get(FORMAT);
+                String format = optionString(options, FORMAT);
                 if (format == null || "xml".equals(format)) {
                     dump = mrb.dumpRouteAsXml(true);
                 } else if ("yaml".equals(format)) {
-                    dump = mrb.dumpRouteAsYaml(true, "true".equals(uriAsParameters));
+                    dump = mrb.dumpRouteAsYaml(true, uriAsParameters);
                 } else if ("java".equals(format)) {
                     dump = mrb.dumpRouteAsJava(true, false);
                 }
@@ -110,7 +106,7 @@ public class RouteDumpDevConsole extends AbstractDevConsole {
 
     @Override
     protected JsonObject doCallJson(Map<String, Object> options) {
-        final String uriAsParameters = (String) options.getOrDefault(URI_AS_PARAMETERS, "false");
+        final boolean uriAsParameters = optionBoolean(options, URI_AS_PARAMETERS, false);
 
         final JsonObject root = new JsonObject();
         final JsonArray list = new JsonArray();
@@ -127,13 +123,13 @@ public class RouteDumpDevConsole extends AbstractDevConsole {
 
             try {
                 String dump = null;
-                String format = (String) options.get(FORMAT);
+                String format = optionString(options, FORMAT);
                 if (format == null || "xml".equals(format)) {
                     jo.put("format", "xml");
                     dump = mrb.dumpRouteAsXml(true, false, true);
                 } else if ("yaml".equals(format)) {
                     jo.put("format", "yaml");
-                    dump = mrb.dumpRouteAsYaml(true, "true".equals(uriAsParameters), false, true);
+                    dump = mrb.dumpRouteAsYaml(true, uriAsParameters, false, true);
                 } else if ("java".equals(format)) {
                     jo.put("format", "java");
                     dump = mrb.dumpRouteAsJava(true, false);
@@ -162,9 +158,8 @@ public class RouteDumpDevConsole extends AbstractDevConsole {
     protected void doCall(Map<String, Object> options, Function<ManagedRouteMBean, Object> task) {
         String path = (String) options.get(Exchange.HTTP_PATH);
         String subPath = path != null ? StringHelper.after(path, "/") : null;
-        String filter = (String) options.get(FILTER);
-        String limit = (String) options.get(LIMIT);
-        final int max = limit == null ? Integer.MAX_VALUE : Integer.parseInt(limit);
+        String filter = optionString(options, FILTER);
+        final int max = optionInt(options, LIMIT, Integer.MAX_VALUE);
 
         ManagedCamelContext mcc = getCamelContext().getCamelContextExtension().getContextPlugin(ManagedCamelContext.class);
         if (mcc != null) {

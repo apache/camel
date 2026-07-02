@@ -10,6 +10,98 @@
     "groupId": "org.apache.camel",
     "artifactId": "camel-console",
     "version": "4.21.0-SNAPSHOT"
+  },
+  "options": {
+    "body": {
+      "index": 0,
+      "kind": "option",
+      "displayName": "Body",
+      "group": "query",
+      "label": "query",
+      "required": false,
+      "type": "string",
+      "javaType": "java.lang.String",
+      "deprecated": false,
+      "autowired": false,
+      "secret": false,
+      "description": "The message body to send. Can refer to files using file: prefix"
+    },
+    "bodyMaxChars": {
+      "index": 1,
+      "kind": "option",
+      "displayName": "Body Max Chars",
+      "group": "query",
+      "label": "query",
+      "required": false,
+      "type": "integer",
+      "javaType": "java.lang.Integer",
+      "deprecated": false,
+      "autowired": false,
+      "secret": false,
+      "defaultValue": 32768,
+      "description": "Maximum size of the message body to include in the dump"
+    },
+    "endpoint": {
+      "index": 2,
+      "kind": "option",
+      "displayName": "Endpoint",
+      "group": "query",
+      "label": "query",
+      "required": false,
+      "type": "string",
+      "javaType": "java.lang.String",
+      "deprecated": false,
+      "autowired": false,
+      "secret": false,
+      "description": "Endpoint for where to send messages (can also refer to a route id, endpoint pattern)"
+    },
+    "exchangePattern": {
+      "index": 3,
+      "kind": "option",
+      "displayName": "Exchange Pattern",
+      "group": "query",
+      "label": "query",
+      "required": false,
+      "type": "string",
+      "javaType": "java.lang.String",
+      "enum": [
+        "InOnly",
+        "InOut"
+      ],
+      "deprecated": false,
+      "autowired": false,
+      "secret": false,
+      "description": "Exchange pattern when sending"
+    },
+    "poll": {
+      "index": 4,
+      "kind": "option",
+      "displayName": "Poll",
+      "group": "query",
+      "label": "query",
+      "required": false,
+      "type": "boolean",
+      "javaType": "java.lang.Boolean",
+      "deprecated": false,
+      "autowired": false,
+      "secret": false,
+      "description": "Whether to poll message from the endpoint instead of sending"
+    },
+    "pollTimeout": {
+      "index": 5,
+      "kind": "option",
+      "displayName": "Poll Timeout",
+      "group": "query",
+      "label": "query",
+      "required": false,
+      "type": "integer",
+      "javaType": "java.lang.Integer",
+      "deprecated": false,
+      "autowired": false,
+      "secret": false,
+      "defaultValue": 20000,
+      "description": "Timeout when using poll mode"
+    }
   }
 }
 

@@ -10,6 +10,93 @@
     "groupId": "org.apache.camel",
     "artifactId": "camel-console",
     "version": "4.21.0-SNAPSHOT"
+  },
+  "options": {
+    "ago": {
+      "index": 0,
+      "kind": "option",
+      "displayName": "Ago",
+      "group": "query",
+      "label": "query",
+      "required": false,
+      "type": "string",
+      "javaType": "java.lang.String",
+      "deprecated": false,
+      "autowired": false,
+      "secret": false,
+      "description": "Filter by time window as duration string (e.g. 60s, 5m, 1h). Only entries within this window are included."
+    },
+    "exception": {
+      "index": 1,
+      "kind": "option",
+      "displayName": "Exception",
+      "group": "query",
+      "label": "query",
+      "required": false,
+      "type": "string",
+      "javaType": "java.lang.String",
+      "deprecated": false,
+      "autowired": false,
+      "secret": false,
+      "description": "Filter by exception type (case-insensitive substring match)"
+    },
+    "handled": {
+      "index": 2,
+      "kind": "option",
+      "displayName": "Handled",
+      "group": "query",
+      "label": "query",
+      "required": false,
+      "type": "boolean",
+      "javaType": "java.lang.Boolean",
+      "deprecated": false,
+      "autowired": false,
+      "secret": false,
+      "description": "Filter by handled status"
+    },
+    "limit": {
+      "index": 3,
+      "kind": "option",
+      "displayName": "Limit",
+      "group": "query",
+      "label": "query",
+      "required": false,
+      "type": "integer",
+      "javaType": "java.lang.Integer",
+      "deprecated": false,
+      "autowired": false,
+      "secret": false,
+      "description": "Limits the number of entries displayed"
+    },
+    "routeId": {
+      "index": 4,
+      "kind": "option",
+      "displayName": "Route Id",
+      "group": "query",
+      "label": "query",
+      "required": false,
+      "type": "string",
+      "javaType": "java.lang.String",
+      "deprecated": false,
+      "autowired": false,
+      "secret": false,
+      "description": "Filter by route id"
+    },
+    "stackTrace": {
+      "index": 5,
+      "kind": "option",
+      "displayName": "Stack Trace",
+      "group": "query",
+      "label": "query",
+      "required": false,
+      "type": "boolean",
+      "javaType": "java.lang.Boolean",
+      "deprecated": false,
+      "autowired": false,
+      "secret": false,
+      "defaultValue": false,
+      "description": "Whether to include stack traces"
+    }
   }
 }
 
