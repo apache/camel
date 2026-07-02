@@ -432,7 +432,7 @@ public class GenericFileProducer<T> extends DefaultAsyncProducer {
         // first as the name can be using relative paths via ../ etc)
         String compatchAnswer = FileUtil.compactPath(answer);
         String compatchBaseDir = FileUtil.compactPath(baseDir);
-        if (!compatchAnswer.startsWith(compatchBaseDir)) {
+        if (!GenericFileHelper.isWithinDirectory(compatchAnswer, compatchBaseDir)) {
             throw new IllegalArgumentException(
                     "Cannot write file with name: " + compatchAnswer
                                                + " as the filename is jailed to the starting directory: "
