@@ -23,6 +23,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.StringJoiner;
 
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteDiagramDumper;
 import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.PluginHelper;
@@ -32,55 +33,45 @@ import org.apache.camel.util.json.JsonObject;
 @DevConsole(name = "route-diagram", group = "camel", displayName = "Route Diagram", description = "Visual route diagrams")
 public class DiagramDevConsole extends AbstractDevConsole {
 
-    /**
-     * Filters the routes matching by route id, route uri, and source location
-     */
+    @Metadata(label = "query", description = "Filters the routes matching by route id, route uri, and source location",
+              defaultValue = "*", javaType = "java.lang.String")
     public static final String FILTER = "filter";
 
-    /**
-     * Theme to use: dark, light, transparent, ascii, or unicode
-     */
+    @Metadata(label = "query", description = "Theme to use: dark, light, transparent, ascii, or unicode",
+              defaultValue = "transparent", javaType = "java.lang.String", enums = "dark,light,transparent,ascii,unicode")
     public static final String THEME = "theme";
 
-    /**
-     * The size of the font (default 12)
-     */
+    @Metadata(label = "query", description = "The size of the font", defaultValue = "12",
+              javaType = "java.lang.Integer")
     public static final String FONT_SIZE = "fontSize";
 
-    /**
-     * The node width (default 180 pixels)
-     */
+    @Metadata(label = "query", description = "The node width in pixels", defaultValue = "180",
+              javaType = "java.lang.Integer")
     public static final String NODE_WIDTH = "nodeWidth";
 
-    /**
-     * Node label mode (code, description, both). Is default code.
-     */
+    @Metadata(label = "query", description = "Node label mode", defaultValue = "code",
+              javaType = "java.lang.String", enums = "code,description,both")
     public static final String NODE_LABEL = "nodeLabel";
 
-    /**
-     * Whether to include live metric counters. Is default true.
-     */
+    @Metadata(label = "query", description = "Whether to include live metric counters", defaultValue = "true",
+              javaType = "java.lang.Boolean")
     public static final String METRIC = "metric";
 
-    /**
-     * Whether to auto-refresh page every 5 seconds
-     */
+    @Metadata(label = "query", description = "Whether to auto-refresh page every 5 seconds", defaultValue = "true",
+              javaType = "java.lang.Boolean")
     public static final String AUTO_REFRESH = "autoRefresh";
 
-    /**
-     * Diagram mode: route (default) or topology
-     */
+    @Metadata(label = "query", description = "Diagram mode: route or topology", defaultValue = "route",
+              javaType = "java.lang.String", enums = "route,topology")
     public static final String MODE = "mode";
 
-    /**
-     * Output format: html (default, interactive web component), png (inline image), text or ascii (ASCII art), unicode
-     * (box-drawing characters).
-     */
+    @Metadata(label = "query",
+              description = "Output format: html (interactive web component), png (inline image), text or ascii (ASCII art), unicode (box-drawing characters)",
+              defaultValue = "html", javaType = "java.lang.String", enums = "html,png,text,ascii,unicode")
     public static final String FORMAT = "format";
 
-    /**
-     * Whether to include external systems (kafka, http, etc.) in topology mode. Is default true.
-     */
+    @Metadata(label = "query", description = "Whether to include external systems (kafka, http, etc.) in topology mode",
+              defaultValue = "true", javaType = "java.lang.Boolean")
     public static final String EXTERNAL = "external";
 
     public DiagramDevConsole() {
@@ -91,19 +82,31 @@ public class DiagramDevConsole extends AbstractDevConsole {
     protected String doCallText(Map<String, Object> options) {
         final StringJoiner sj = new StringJoiner("\n");
 
-        String mode = (String) options.getOrDefault(MODE, "route");
-        String filter = (String) options.getOrDefault(FILTER, "*");
-        String theme = (String) options.getOrDefault(THEME, RouteDiagramDumper.Theme.TRANSPARENT.name());
-        int fontSize
-                = Integer.parseInt(options.getOrDefault(FONT_SIZE, "" + RouteDiagramLayoutEngine.DEFAULT_FONT_SIZE).toString());
-        int nodeWidth = Integer
-                .parseInt(options.getOrDefault(NODE_WIDTH, "" + RouteDiagramLayoutEngine.DEFAULT_BOX_WIDTH).toString());
-        String nodeLabel = (String) options.getOrDefault(NODE_LABEL, RouteDiagramDumper.NodeLabelMode.CODE.name());
-        boolean metric = "true".equalsIgnoreCase((String) options.getOrDefault(METRIC, "true"));
-        boolean refresh = "true".equalsIgnoreCase((String) options.getOrDefault(AUTO_REFRESH, "true"));
-        String format = (String) options.getOrDefault(FORMAT, "html");
-
-        boolean external = "true".equalsIgnoreCase((String) options.getOrDefault(EXTERNAL, "true"));
+        String mode = optionString(options, MODE);
+        if (mode == null) {
+            mode = "route";
+        }
+        String filter = optionString(options, FILTER);
+        if (filter == null) {
+            filter = "*";
+        }
+        String theme = optionString(options, THEME);
+        if (theme == null) {
+            theme = RouteDiagramDumper.Theme.TRANSPARENT.name();
+        }
+        int fontSize = optionInt(options, FONT_SIZE, RouteDiagramLayoutEngine.DEFAULT_FONT_SIZE);
+        int nodeWidth = optionInt(options, NODE_WIDTH, RouteDiagramLayoutEngine.DEFAULT_BOX_WIDTH);
+        String nodeLabel = optionString(options, NODE_LABEL);
+        if (nodeLabel == null) {
+            nodeLabel = RouteDiagramDumper.NodeLabelMode.CODE.name();
+        }
+        boolean metric = optionBoolean(options, METRIC, true);
+        boolean refresh = optionBoolean(options, AUTO_REFRESH, true);
+        String format = optionString(options, FORMAT);
+        if (format == null) {
+            format = "html";
+        }
+        boolean external = optionBoolean(options, EXTERNAL, true);
 
         try {
             RouteDiagramDumper dumper = PluginHelper.getRouteDiagramDumper(getCamelContext());
@@ -147,16 +150,26 @@ public class DiagramDevConsole extends AbstractDevConsole {
 
     @Override
     protected Map<String, Object> doCallJson(Map<String, Object> options) {
-        String mode = (String) options.getOrDefault(MODE, "route");
-        String filter = (String) options.getOrDefault(FILTER, "*");
-        String theme = (String) options.getOrDefault(THEME, RouteDiagramDumper.Theme.TRANSPARENT.name());
-        int fontSize
-                = Integer.parseInt(options.getOrDefault(FONT_SIZE, "" + RouteDiagramLayoutEngine.DEFAULT_FONT_SIZE).toString());
-        int nodeWidth = Integer
-                .parseInt(options.getOrDefault(NODE_WIDTH, "" + RouteDiagramLayoutEngine.DEFAULT_BOX_WIDTH).toString());
-        String nodeLabel = (String) options.getOrDefault(NODE_LABEL, RouteDiagramDumper.NodeLabelMode.CODE.name());
-        boolean metric = "true".equalsIgnoreCase((String) options.getOrDefault(METRIC, "true"));
-        boolean external = "true".equalsIgnoreCase((String) options.getOrDefault(EXTERNAL, "true"));
+        String mode = optionString(options, MODE);
+        if (mode == null) {
+            mode = "route";
+        }
+        String filter = optionString(options, FILTER);
+        if (filter == null) {
+            filter = "*";
+        }
+        String theme = optionString(options, THEME);
+        if (theme == null) {
+            theme = RouteDiagramDumper.Theme.TRANSPARENT.name();
+        }
+        int fontSize = optionInt(options, FONT_SIZE, RouteDiagramLayoutEngine.DEFAULT_FONT_SIZE);
+        int nodeWidth = optionInt(options, NODE_WIDTH, RouteDiagramLayoutEngine.DEFAULT_BOX_WIDTH);
+        String nodeLabel = optionString(options, NODE_LABEL);
+        if (nodeLabel == null) {
+            nodeLabel = RouteDiagramDumper.NodeLabelMode.CODE.name();
+        }
+        boolean metric = optionBoolean(options, METRIC, true);
+        boolean external = optionBoolean(options, EXTERNAL, true);
 
         JsonObject root = new JsonObject();
         try {

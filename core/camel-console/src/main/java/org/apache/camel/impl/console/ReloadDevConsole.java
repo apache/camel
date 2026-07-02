@@ -23,6 +23,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.ReloadStrategy;
 import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.ExceptionHelper;
@@ -33,14 +34,12 @@ import org.apache.camel.util.json.JsonObject;
 @DevConsole(name = "reload", description = "Console for reloading running Camel")
 public class ReloadDevConsole extends AbstractDevConsole {
 
-    /**
-     * Option to trigger reloading
-     */
+    @Metadata(label = "query", description = "Option to trigger reloading", javaType = "java.lang.Boolean",
+              defaultValue = "false")
     public static final String RELOAD = "reload";
 
-    /**
-     * Option to wait for reloading to complete
-     */
+    @Metadata(label = "query", description = "Option to wait for reloading to complete", javaType = "java.lang.Boolean",
+              defaultValue = "false")
     public static final String RELOAD_WAIT = "wait";
 
     // reload on demand should run async to avoid blocking
@@ -51,8 +50,8 @@ public class ReloadDevConsole extends AbstractDevConsole {
     }
 
     protected String doCallText(Map<String, Object> options) {
-        boolean trigger = "true".equals(options.getOrDefault(RELOAD, "false"));
-        boolean wait = "true".equals(options.getOrDefault(RELOAD_WAIT, "false"));
+        boolean trigger = optionBoolean(options, RELOAD, false);
+        boolean wait = optionBoolean(options, RELOAD_WAIT, false);
         StringBuilder sb = new StringBuilder();
 
         Set<ReloadStrategy> rs = getCamelContext().hasServices(ReloadStrategy.class);
@@ -99,8 +98,8 @@ public class ReloadDevConsole extends AbstractDevConsole {
     }
 
     protected JsonObject doCallJson(Map<String, Object> options) {
-        boolean trigger = "true".equals(options.getOrDefault(RELOAD, "false"));
-        boolean wait = "true".equals(options.getOrDefault(RELOAD_WAIT, "false"));
+        boolean trigger = optionBoolean(options, RELOAD, false);
+        boolean wait = optionBoolean(options, RELOAD_WAIT, false);
         JsonObject root = new JsonObject();
 
         JsonArray arr = new JsonArray();

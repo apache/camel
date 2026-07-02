@@ -19,6 +19,7 @@ package org.apache.camel.impl.console;
 import java.util.Map;
 
 import org.apache.camel.spi.InflightRepository;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.console.AbstractDevConsole;
 import org.apache.camel.util.TimeUtils;
@@ -28,14 +29,11 @@ import org.apache.camel.util.json.JsonObject;
 @DevConsole(name = "inflight", displayName = "Inflight Exchanges", description = "Display inflight exchanges")
 public class InflightConsole extends AbstractDevConsole {
 
-    /**
-     * Filters the routes matching by route id, route uri
-     */
+    @Metadata(label = "query", description = "Filters the routes matching by route id, route uri",
+              javaType = "java.lang.String")
     public static final String FILTER = "filter";
 
-    /**
-     * Limits the number of entries displayed
-     */
+    @Metadata(label = "query", description = "Limits the number of entries displayed", javaType = "java.lang.Integer")
     public static final String LIMIT = "limit";
 
     public InflightConsole() {
@@ -44,9 +42,8 @@ public class InflightConsole extends AbstractDevConsole {
 
     @Override
     protected String doCallText(Map<String, Object> options) {
-        String filter = (String) options.get(FILTER);
-        String limit = (String) options.get(LIMIT);
-        int max = limit == null ? Integer.MAX_VALUE : Integer.parseInt(limit);
+        String filter = optionString(options, FILTER);
+        int max = optionInt(options, LIMIT, Integer.MAX_VALUE);
 
         StringBuilder sb = new StringBuilder();
 
@@ -67,9 +64,8 @@ public class InflightConsole extends AbstractDevConsole {
 
     @Override
     protected JsonObject doCallJson(Map<String, Object> options) {
-        String filter = (String) options.get(FILTER);
-        String limit = (String) options.get(LIMIT);
-        int max = limit == null ? Integer.MAX_VALUE : Integer.parseInt(limit);
+        String filter = optionString(options, FILTER);
+        int max = optionInt(options, LIMIT, Integer.MAX_VALUE);
 
         JsonObject root = new JsonObject();
 

@@ -17,6 +17,8 @@
 package org.apache.camel.maven.packaging;
 
 import java.io.File;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -25,6 +27,10 @@ import java.util.StringJoiner;
 import javax.inject.Inject;
 
 import org.apache.camel.maven.packaging.generics.PackagePluginUtils;
+import org.apache.camel.spi.Metadata;
+import org.apache.camel.tooling.model.BaseOptionModel;
+import org.apache.camel.tooling.model.DevConsoleModel.DevConsoleOptionModel;
+import org.apache.camel.tooling.model.JsonMapper;
 import org.apache.camel.tooling.util.PackageHelper;
 import org.apache.camel.tooling.util.Strings;
 import org.apache.camel.util.json.JsonObject;
@@ -77,6 +83,7 @@ public class GenerateDevConsoleMojo extends AbstractGeneratorMojo {
         private String displayName;
         private String description;
         private boolean deprecated;
+        private final List<DevConsoleOptionModel> options = new ArrayList<>();
 
         public String getClassName() {
             return className;
@@ -125,6 +132,10 @@ public class GenerateDevConsoleMojo extends AbstractGeneratorMojo {
         public void setDeprecated(boolean deprecated) {
             this.deprecated = deprecated;
         }
+
+        public List<DevConsoleOptionModel> getOptions() {
+            return options;
+        }
     }
 
     @Override
@@ -161,6 +172,7 @@ public class GenerateDevConsoleMojo extends AbstractGeneratorMojo {
             // skip default registry
             boolean skip = "default-registry".equals(model.getName());
             if (!skip) {
+                extractQueryOptions(model);
                 models.add(model);
             }
         });
@@ -222,7 +234,109 @@ public class GenerateDevConsoleMojo extends AbstractGeneratorMojo {
         jo.put("version", project.getVersion());
         JsonObject root = new JsonObject();
         root.put("console", jo);
+        if (!model.getOptions().isEmpty()) {
+            root.put("options", JsonMapper.asJsonObject(model.getOptions()));
+        }
         return root;
+    }
+
+    private void extractQueryOptions(DevConsoleModel model) {
+        Class<?> clazz;
+        try {
+            clazz = loadClass(model.getClassName());
+        } catch (NoClassDefFoundError e) {
+            getLog().debug("Cannot load class: " + model.getClassName());
+            return;
+        }
+        for (Field field : clazz.getDeclaredFields()) {
+            if (!Modifier.isStatic(field.getModifiers()) || !Modifier.isFinal(field.getModifiers())
+                    || field.getType() != String.class) {
+                continue;
+            }
+            if (!field.isAnnotationPresent(Metadata.class)) {
+                continue;
+            }
+            Metadata metadata = field.getAnnotation(Metadata.class);
+            String labels = metadata.label();
+            if (labels == null || !labels.contains("query")) {
+                continue;
+            }
+            String optionName;
+            try {
+                field.setAccessible(true);
+                optionName = (String) field.get(null);
+            } catch (IllegalAccessException e) {
+                getLog().debug("Cannot read field value: " + field.getName());
+                continue;
+            }
+            DevConsoleOptionModel o = new DevConsoleOptionModel();
+            o.setName(optionName);
+            o.setKind("option");
+            o.setGroup("query");
+            o.setLabel(labels);
+            o.setRequired(metadata.required());
+            o.setDescription(metadata.description());
+            o.setDeprecated(field.isAnnotationPresent(Deprecated.class));
+            if (!metadata.deprecationNote().isEmpty()) {
+                o.setDeprecationNote(metadata.deprecationNote());
+            }
+            if (!metadata.displayName().isEmpty()) {
+                o.setDisplayName(metadata.displayName());
+            } else {
+                o.setDisplayName(Strings.asTitle(optionName));
+            }
+            String javaType = metadata.javaType();
+            if (!javaType.isEmpty()) {
+                o.setJavaType(javaType);
+                o.setType(javaTypeToType(javaType));
+            } else {
+                o.setJavaType("java.lang.String");
+                o.setType("string");
+            }
+            if (!metadata.defaultValue().isEmpty()) {
+                o.setDefaultValue(resolveDefaultValue(metadata.defaultValue(), o.getType()));
+            }
+            if (!metadata.enums().isEmpty()) {
+                o.setEnums(List.of(metadata.enums().split(",")));
+            }
+            model.getOptions().add(o);
+        }
+        model.getOptions().sort(Comparator.comparing(BaseOptionModel::getName));
+    }
+
+    private static String javaTypeToType(String javaType) {
+        return switch (javaType) {
+            case "java.lang.String" -> "string";
+            case "java.lang.Integer", "int" -> "integer";
+            case "java.lang.Long", "long" -> "integer";
+            case "java.lang.Boolean", "boolean" -> "boolean";
+            case "java.lang.Double", "double", "java.lang.Float", "float" -> "number";
+            default -> "object";
+        };
+    }
+
+    private static Object resolveDefaultValue(String defaultValue, String type) {
+        if (defaultValue == null || defaultValue.isEmpty()) {
+            return null;
+        }
+        return switch (type) {
+            case "boolean" -> Boolean.parseBoolean(defaultValue);
+            case "integer" -> {
+                try {
+                    yield Long.parseLong(defaultValue);
+                } catch (NumberFormatException e) {
+                    yield defaultValue;
+                }
+            }
+            case "number" -> {
+                try {
+                    yield Double.parseDouble(defaultValue);
+                } catch (NumberFormatException e) {
+                    yield defaultValue;
+                }
+            }
+            default -> defaultValue;
+        };
     }
 
     private String sanitizeFileName(String fileName) {

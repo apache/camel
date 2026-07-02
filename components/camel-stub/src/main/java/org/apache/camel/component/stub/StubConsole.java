@@ -24,6 +24,7 @@ import java.util.Queue;
 import java.util.Set;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.MessageHelper;
 import org.apache.camel.support.PatternHelper;
@@ -34,24 +35,20 @@ import org.apache.camel.util.json.JsonObject;
 @DevConsole(name = "stub", description = "Browse messages on stub endpoints")
 public class StubConsole extends AbstractDevConsole {
 
-    /**
-     * Filters the routes matching by queue name
-     */
+    @Metadata(label = "query", description = "Filters the routes matching by queue name",
+              javaType = "java.lang.String")
     public static final String FILTER = "filter";
 
-    /**
-     * Limits the number of messages dumped
-     */
+    @Metadata(label = "query", description = "Limits the number of messages dumped",
+              javaType = "java.lang.Integer")
     public static final String LIMIT = "limit";
 
-    /**
-     * To use either xml or json output format
-     */
+    @Metadata(label = "query", description = "To use either xml or json output format",
+              javaType = "java.lang.String", enums = "xml,json")
     public static final String FORMAT = "format";
 
-    /**
-     * Whether to browse messages
-     */
+    @Metadata(label = "query", description = "Whether to browse messages", defaultValue = "false",
+              javaType = "java.lang.Boolean")
     public static final String BROWSE = "browse";
 
     public StubConsole() {
@@ -60,11 +57,9 @@ public class StubConsole extends AbstractDevConsole {
 
     @Override
     protected String doCallText(Map<String, Object> options) {
-        String filter = (String) options.get(FILTER);
-        String limit = (String) options.get(LIMIT);
-        String browse = (String) options.get(BROWSE);
-        final int max = limit == null ? Integer.MAX_VALUE : Integer.parseInt(limit);
-        final boolean dump = browse == null ? Boolean.FALSE : Boolean.parseBoolean(browse);
+        String filter = optionString(options, FILTER);
+        final int max = optionInt(options, LIMIT, Integer.MAX_VALUE);
+        final boolean dump = optionBoolean(options, BROWSE, false);
 
         StringBuilder sb = new StringBuilder();
 
@@ -98,7 +93,7 @@ public class StubConsole extends AbstractDevConsole {
                 for (Exchange exchange : copy) {
                     // dump to xml or json
                     try {
-                        String format = (String) options.get(FORMAT);
+                        String format = optionString(options, FORMAT);
                         String msg = null;
                         if (format == null || "xml".equals(format)) {
                             msg = MessageHelper.dumpAsXml(exchange.getMessage(), true, 4);
@@ -120,11 +115,9 @@ public class StubConsole extends AbstractDevConsole {
 
     @Override
     protected JsonObject doCallJson(Map<String, Object> options) {
-        String filter = (String) options.get(FILTER);
-        String limit = (String) options.get(LIMIT);
-        String browse = (String) options.get(BROWSE);
-        final int max = limit == null ? Integer.MAX_VALUE : Integer.parseInt(limit);
-        final boolean dump = browse == null ? Boolean.FALSE : Boolean.parseBoolean(browse);
+        String filter = optionString(options, FILTER);
+        final int max = optionInt(options, LIMIT, Integer.MAX_VALUE);
+        final boolean dump = optionBoolean(options, BROWSE, false);
 
         JsonObject root = new JsonObject();
         JsonArray queues = new JsonArray();
