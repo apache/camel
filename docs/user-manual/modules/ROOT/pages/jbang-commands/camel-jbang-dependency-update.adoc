@@ -26,6 +26,7 @@ camel dependency update [options]
 | `--clean-dir` | If exporting to current directory (default) then all existing files are preserved. Enabling this option will force cleaning current directory including all sub dirs (use this with care) | false | boolean
 | `--dep,--dependency` | Add additional dependencies |  | List
 | `--dir,--directory` | Directory where the project will be exported | . | String
+| `--docker` | Include Docker files in exported project | true | boolean
 | `--download` | Whether to allow automatic downloading JAR dependencies (over the internet) | true | boolean
 | `--dry-run` | Preview export without writing files | false | boolean
 | `--exclude` | Exclude files by name or pattern |  | List
