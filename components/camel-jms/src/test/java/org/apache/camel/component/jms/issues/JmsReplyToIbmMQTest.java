@@ -20,6 +20,7 @@ import jakarta.jms.ConnectionFactory;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.jms.AbstractJMSTest;
 import org.apache.camel.test.infra.ibmmq.common.ConnectionFactoryHelper;
 import org.apache.camel.test.infra.ibmmq.services.IbmMQService;
 import org.apache.camel.test.infra.ibmmq.services.IbmMQServiceFactory;
@@ -37,10 +38,12 @@ public class JmsReplyToIbmMQTest extends CamelTestSupport {
 
     @Test
     public void testCustomJMSReplyToInOut() {
+        AbstractJMSTest.waitForJmsConsumerRoutes(context, "request");
+
         template.sendBody("jms:queue:DEV.QUEUE.1", "What is your name?");
 
         String reply
-                = consumer.receiveBody("jms:queue:DEV.QUEUE.2", 5000, String.class);
+                = consumer.receiveBody("jms:queue:DEV.QUEUE.2", 20000, String.class);
         assertEquals("My name is Camel", reply);
     }
 
@@ -50,6 +53,7 @@ public class JmsReplyToIbmMQTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from("jms:queue:DEV.QUEUE.1?replyTo=queue:DEV.QUEUE.2")
+                        .routeId("request")
                         .to("log:hello")
                         .transform(constant("My name is Camel"));
             }

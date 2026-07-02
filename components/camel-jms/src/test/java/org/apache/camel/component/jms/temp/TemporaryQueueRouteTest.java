@@ -43,6 +43,8 @@ public class TemporaryQueueRouteTest extends AbstractJMSTest {
         MockEndpoint endpoint = getMockEndpoint("mock:result");
         endpoint.expectedBodiesReceived("Hello World");
 
+        AbstractJMSTest.waitForJmsConsumerRoutes(context, "consumer");
+
         template.sendBody(endpointUri, "Hello World");
 
         endpoint.assertIsSatisfied();
@@ -57,7 +59,7 @@ public class TemporaryQueueRouteTest extends AbstractJMSTest {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from(endpointUri).to("mock:result");
+                from(endpointUri).routeId("consumer").to("mock:result");
             }
         };
     }

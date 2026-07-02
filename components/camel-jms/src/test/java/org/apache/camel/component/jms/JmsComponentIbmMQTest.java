@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.jms;
 
+import java.util.concurrent.TimeUnit;
+
 import jakarta.jms.ConnectionFactory;
 
 import org.apache.camel.CamelContext;
@@ -42,9 +44,11 @@ public class JmsComponentIbmMQTest extends CamelTestSupport {
         resultEndpoint.message(0).header("cheese").isEqualTo(123);
         resultEndpoint.message(0).body().isEqualTo("Hello there!");
 
+        AbstractJMSTest.waitForJmsConsumerRoutes(context, "producer", "consumer");
+
         template.sendBodyAndHeader("direct:start", "Hello world", "cheese", 123);
 
-        MockEndpoint.assertIsSatisfied(context);
+        MockEndpoint.assertIsSatisfied(context, 20, TimeUnit.SECONDS);
     }
 
     @Override
@@ -53,9 +57,11 @@ public class JmsComponentIbmMQTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from("direct:start")
+                        .routeId("producer")
                         .to("jms:queue:DEV.QUEUE.1");
 
                 from("jms:queue:DEV.QUEUE.1")
+                        .routeId("consumer")
                         .process(exchange -> exchange.getIn().setBody("Hello there!"))
                         .to("mock:result");
             }

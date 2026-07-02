@@ -44,14 +44,16 @@ public class JmsReplyToLoopIssueTest extends AbstractJMSTest {
     protected ConsumerTemplate consumer;
 
     @Test
-    public void testReplyToLoopIssue() {
+    public void testReplyToLoopIssue() throws Exception {
         getMockEndpoint("mock:foo").expectedBodiesReceived("World");
         getMockEndpoint("mock:bar").expectedBodiesReceived("Bye World");
         getMockEndpoint("mock:done").expectedBodiesReceived("World");
 
+        AbstractJMSTest.waitForJmsConsumerRoutes(context, "foo", "bar");
+
         template.sendBodyAndHeader("direct:start", "World", "JMSReplyTo", "queue:JmsReplyToLoopIssueTest.bar");
 
-        // sleep a little to ensure we do not do endless loop
+        // fail fast if an endless reply loop keeps producing messages
         Awaitility.await().atMost(250, TimeUnit.MILLISECONDS).untilAsserted(() -> MockEndpoint.assertIsSatisfied(context));
     }
 
@@ -70,11 +72,11 @@ public class JmsReplyToLoopIssueTest extends AbstractJMSTest {
                         .to("activemq:queue:JmsReplyToLoopIssueTest.foo?preserveMessageQos=true")
                         .to("mock:done");
 
-                from("activemq:queue:JmsReplyToLoopIssueTest.foo")
+                from("activemq:queue:JmsReplyToLoopIssueTest.foo").routeId("foo")
                         .to("log:foo?showAll=true", "mock:foo")
                         .transform(body().prepend("Bye "));
 
-                from("activemq:queue:JmsReplyToLoopIssueTest.bar")
+                from("activemq:queue:JmsReplyToLoopIssueTest.bar").routeId("bar")
                         .to("log:bar?showAll=true", "mock:bar");
             }
         };

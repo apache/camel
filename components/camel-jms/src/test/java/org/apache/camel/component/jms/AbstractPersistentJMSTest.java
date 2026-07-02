@@ -48,4 +48,8 @@ public abstract class AbstractPersistentJMSTest extends CamelTestSupport {
         ConnectionFactory connectionFactory = ConnectionFactoryHelper.createConnectionFactory(service);
         camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
     }
+
+    protected void waitForJmsConsumerRoutes(String... routeIds) {
+        AbstractJMSTest.waitForJmsConsumerRoutes(context, routeIds);
+    }
 }

@@ -17,6 +17,8 @@
 
 package org.apache.camel.component.jms;
 
+import java.util.concurrent.TimeUnit;
+
 import jakarta.jms.ConnectionFactory;
 
 import org.apache.camel.CamelContext;
@@ -29,6 +31,7 @@ import org.apache.camel.test.infra.core.annotations.RouteFixture;
 import org.apache.camel.test.infra.core.api.CamelTestSupportHelper;
 import org.apache.camel.test.infra.core.api.ConfigurableContext;
 import org.apache.camel.test.infra.core.api.ConfigurableRoute;
+import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Tags;
@@ -39,9 +42,31 @@ import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknow
 @Tags({ @Tag("jms") })
 public abstract class AbstractJMSTest implements CamelTestSupportHelper, ConfigurableRoute, ConfigurableContext {
 
+    public static final long JMS_CONSUMER_ROUTE_UPTIME_MILLIS = 100;
+    public static final long JMS_CONSUMER_ROUTE_WAIT_AT_MOST_MILLIS = 30_000;
+
     @Order(1)
     @RegisterExtension
     public static ArtemisService service = ArtemisServiceFactory.createSingletonVMService();
+
+    /**
+     * Wait until JMS consumer routes have been running long enough that listener registration on the broker is expected
+     * to be complete.
+     */
+    public static void waitForJmsConsumerRoutes(CamelContext context, String... routeIds) {
+        waitForJmsConsumerRoutes(context, JMS_CONSUMER_ROUTE_UPTIME_MILLIS, routeIds);
+    }
+
+    public static void waitForJmsConsumerRoutes(CamelContext context, long minUptimeMillis, String... routeIds) {
+        Awaitility.await().atMost(JMS_CONSUMER_ROUTE_WAIT_AT_MOST_MILLIS, TimeUnit.MILLISECONDS).until(() -> {
+            for (String routeId : routeIds) {
+                if (context.getRoute(routeId).getUptimeMillis() <= minUptimeMillis) {
+                    return false;
+                }
+            }
+            return true;
+        });
+    }
 
     public static String queueNameForClass(String desiredName, Class<?> requestingClass) {
         return desiredName + "." + requestingClass.getSimpleName();
