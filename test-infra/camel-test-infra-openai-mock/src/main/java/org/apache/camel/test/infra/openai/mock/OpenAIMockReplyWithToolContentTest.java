@@ -40,8 +40,6 @@ public class OpenAIMockReplyWithToolContentTest {
             .end()
             .build();
 
-    // HttpClient does not implement AutoCloseable before Java 21
-    @SuppressWarnings("java:S2095")
     @Test
     public void testReplyWithToolContent() throws Exception {
         HttpClient client = HttpClient.newHttpClient();
