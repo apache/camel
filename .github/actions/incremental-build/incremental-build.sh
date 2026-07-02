@@ -419,7 +419,7 @@ checkManualItTests() {
 # Args: $1=comment_file, $2=grep_dep_module_ids (colon-prefixed, comma-separated)
 writeScalpelComparison() {
   local comment_file="$1"
-  local grep_dep_ids="${2:-}"
+  local current_reactor_ids="${2:-}"
 
   # If Scalpel failed, show why in the PR comment
   if [ -n "$scalpel_failure_reason" ]; then
@@ -455,75 +455,69 @@ writeScalpelComparison() {
     scalpel_skip_count=$(echo "$scalpel_would_skip" | tr ',' '\n' | grep -c . || true)
   fi
 
-  # Compute diff vs grep-based detection using set operations.
-  # Strip colon prefix for uniform comparison.
-  local scalpel_sorted
-  scalpel_sorted=$(echo "$scalpel_module_ids" | tr ',' '\n' | sed 's/^://' | sort)
-  local grep_sorted=""
-  if [ -n "$grep_dep_ids" ]; then
-    grep_sorted=$(echo "$grep_dep_ids" | tr ',' '\n' | sed 's/^://' | sort)
+  # Compare Scalpel vs current reactor (file-path + grep + -amd expansion)
+  local current_total=0
+  local current_sorted=""
+  if [ -n "$current_reactor_ids" ]; then
+    current_sorted=$(echo "$current_reactor_ids" | sort)
+    current_total=$(echo "$current_sorted" | grep -c . || true)
   fi
-  # scalpel_would_test has no colon prefix
-  local scalpel_test_sorted=""
-  if [ -n "$scalpel_would_test" ]; then
-    scalpel_test_sorted=$(echo "$scalpel_would_test" | tr ',' '\n' | sort)
+  local scalpel_sorted=""
+  if [ -n "$scalpel_module_ids" ]; then
+    scalpel_sorted=$(echo "$scalpel_module_ids" | tr ',' '\n' | sed 's/^://' | sort)
   fi
 
-  # compile diff: modules in Scalpel but not grep (+), and vice versa (-)
-  local compile_added=0 compile_removed=0
-  if [ -n "$grep_sorted" ]; then
-    compile_added=$(comm -23 <(echo "$scalpel_sorted") <(echo "$grep_sorted") | grep -c . || true)
-    compile_removed=$(comm -13 <(echo "$scalpel_sorted") <(echo "$grep_sorted") | grep -c . || true)
-  else
-    compile_added=$scalpel_total
+  # Set differences: modules Scalpel found that current missed, and vice versa
+  local only_in_scalpel="" only_in_current=""
+  local only_scalpel_count=0 only_current_count=0
+  if [ -n "$scalpel_sorted" ] && [ -n "$current_sorted" ]; then
+    only_in_scalpel=$(comm -23 <(echo "$scalpel_sorted") <(echo "$current_sorted") || true)
+    only_in_current=$(comm -13 <(echo "$scalpel_sorted") <(echo "$current_sorted") || true)
+    only_scalpel_count=$(echo "$only_in_scalpel" | grep -c . || true)
+    only_current_count=$(echo "$only_in_current" | grep -c . || true)
+  elif [ -n "$scalpel_sorted" ]; then
+    only_in_scalpel="$scalpel_sorted"
+    only_scalpel_count=$scalpel_total
+  elif [ -n "$current_sorted" ]; then
+    only_in_current="$current_sorted"
+    only_current_count=$current_total
   fi
 
-  # test diff: modules Scalpel would test vs what grep found
-  # (current mechanism tests all grep-found modules)
-  local test_added=0 test_removed=0
-  if [ -n "$grep_sorted" ]; then
-    test_added=$(comm -23 <(echo "$scalpel_test_sorted") <(echo "$grep_sorted") | grep -c . || true)
-    test_removed=$(comm -13 <(echo "$scalpel_test_sorted") <(echo "$grep_sorted") | grep -c . || true)
-  else
-    test_added=$scalpel_test_count
-  fi
-
-  # Build one-line diff summary
-  local compile_summary=""
-  if [ "$compile_added" -gt 0 ] && [ "$compile_removed" -gt 0 ]; then
-    compile_summary="compile: +${compile_added} −${compile_removed}"
-  elif [ "$compile_added" -gt 0 ]; then
-    compile_summary="compile: +${compile_added}"
-  elif [ "$compile_removed" -gt 0 ]; then
-    compile_summary="compile: −${compile_removed}"
-  else
-    compile_summary="compile: same"
-  fi
-
-  local test_summary=""
-  if [ "$test_added" -gt 0 ] && [ "$test_removed" -gt 0 ]; then
-    test_summary="test: +${test_added} −${test_removed}"
-  elif [ "$test_added" -gt 0 ]; then
-    test_summary="test: +${test_added}"
-  elif [ "$test_removed" -gt 0 ]; then
-    test_summary="test: −${test_removed}"
-  else
-    test_summary="test: same"
-  fi
+  # One-line summary: what Scalpel would change
+  local summary="Scalpel: ${scalpel_test_count} tested, ${scalpel_skip_count} compile-only — current: ${current_total} all tested"
 
   echo "" >> "$comment_file"
   echo "---" >> "$comment_file"
   echo "" >> "$comment_file"
-  echo "<details><summary>:microscope: Scalpel shadow comparison — ${compile_summary}, ${test_summary}</summary>" >> "$comment_file"
+  echo "<details><summary>:microscope: Scalpel shadow comparison — ${summary}</summary>" >> "$comment_file"
   echo "" >> "$comment_file"
 
-  # Context line: total counts
-  local grep_count=0
-  if [ -n "$grep_dep_ids" ]; then
-    grep_count=$(echo "$grep_dep_ids" | tr ',' '\n' | grep -c . || true)
-  fi
-  echo "[Maveniverse Scalpel](https://github.com/maveniverse/scalpel) detected **${scalpel_total} affected modules** via effective POM comparison (vs ${grep_count} from grep-based detection)." >> "$comment_file"
+  echo "[Maveniverse Scalpel](https://github.com/maveniverse/scalpel) detected **${scalpel_total} affected modules** (current approach: ${current_total})." >> "$comment_file"
   echo "" >> "$comment_file"
+
+  # Show modules only Scalpel found (current approach missed)
+  if [ "$only_scalpel_count" -gt 0 ]; then
+    echo "<details><summary>:warning: Modules only Scalpel found (${only_scalpel_count}) — current approach missed these</summary>" >> "$comment_file"
+    echo "" >> "$comment_file"
+    echo "$only_in_scalpel" | while read -r m; do
+      [ -n "$m" ] && echo "- \`$m\`" >> "$comment_file"
+    done
+    echo "" >> "$comment_file"
+    echo "</details>" >> "$comment_file"
+    echo "" >> "$comment_file"
+  fi
+
+  # Show modules only current approach found (Scalpel missed)
+  if [ "$only_current_count" -gt 0 ]; then
+    echo "<details><summary>Modules only current approach found (${only_current_count}) — Scalpel missed these</summary>" >> "$comment_file"
+    echo "" >> "$comment_file"
+    echo "$only_in_current" | while read -r m; do
+      [ -n "$m" ] && echo "- \`$m\`" >> "$comment_file"
+    done
+    echo "" >> "$comment_file"
+    echo "</details>" >> "$comment_file"
+    echo "" >> "$comment_file"
+  fi
 
   # Show Scalpel-detected change details
   if [ -n "$scalpel_props" ]; then
@@ -949,7 +943,10 @@ main() {
   writeComment "$comment_file" "$pl" "$grep_dep_module_ids" "$grep_changed_props" "$testedDependents" "$extraModules"
 
   # Scalpel shadow comparison (observation only — after separator)
-  writeScalpelComparison "$comment_file" "$grep_dep_module_ids"
+  # Pass reactor_ids (artifact IDs of all modules in the -amd reactor) so
+  # Scalpel can compare against the current detection and show modules it
+  # found that the current approach missed.
+  writeScalpelComparison "$comment_file" "$reactor_ids"
 
   # Check for tests disabled in CI via @DisabledIfSystemProperty(named = "ci.env.name")
   local disabled_tests
@@ -966,7 +963,7 @@ main() {
   # Append reactor module list from build log
   if [[ -f "$log" ]]; then
     local reactor_modules
-    reactor_modules=$(grep '^\[INFO\] Camel ::' "$log" | sed 's/\[INFO\] //' | sed 's/ \..*$//' | sed 's/  *\[.*\]$//' | sort -u || true)
+    reactor_modules=$(grep '^\[INFO\] Camel ::' "$log" | sed 's/\[INFO\] //' | sed 's/ \..*$//' | sed 's/  *\[.*\]$//' | sed 's/ SUCCESS$//' | sed 's/ FAILURE$//' | sed 's/ SKIPPED$//' | sed 's/  *$//' | sort -u || true)
     if [[ -n "$reactor_modules" ]]; then
       local count
       count=$(echo "$reactor_modules" | wc -l | tr -d ' ')
