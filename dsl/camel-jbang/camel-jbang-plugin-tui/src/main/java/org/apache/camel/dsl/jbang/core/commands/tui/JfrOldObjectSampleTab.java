@@ -292,8 +292,9 @@ class JfrOldObjectSampleTab implements MonitorTab {
     }
 
     private void renderRecording(Frame frame, Rect area) {
-        long elapsed = System.currentTimeMillis() - recordingStartTime;
-        long remaining = Math.max(0, (currentRecordingDuration * 1000L) - elapsed);
+        long elapsedMs = System.currentTimeMillis() - recordingStartTime;
+        long elapsedSec = Math.min(elapsedMs / 1000, currentRecordingDuration);
+        long remainingSec = currentRecordingDuration - elapsedSec;
 
         List<Line> lines = new ArrayList<>();
         lines.add(Line.from(Span.raw("")));
@@ -312,10 +313,10 @@ class JfrOldObjectSampleTab implements MonitorTab {
         lines.add(Line.from(Span.raw("")));
         lines.add(Line.from(
                 Span.styled("  Elapsed:    ", Style.EMPTY.fg(Color.YELLOW).bold()),
-                Span.styled(formatDuration(elapsed), Style.EMPTY.fg(Color.WHITE))));
+                Span.styled(elapsedSec + "s", Style.EMPTY.fg(Color.WHITE))));
         lines.add(Line.from(
                 Span.styled("  Remaining:  ", Style.EMPTY.fg(Color.YELLOW).bold()),
-                Span.styled(formatDuration(remaining), Style.EMPTY.fg(Color.WHITE))));
+                Span.styled(remainingSec + "s", Style.EMPTY.fg(Color.WHITE))));
         lines.add(Line.from(
                 Span.styled("  Duration:   ", Style.EMPTY.fg(Color.YELLOW).bold()),
                 Span.styled(currentRecordingDuration + "s", Style.EMPTY.fg(Color.WHITE))));
@@ -328,7 +329,7 @@ class JfrOldObjectSampleTab implements MonitorTab {
         // progress bar
         int barWidth = Math.max(10, area.width() - 6);
         double pct = currentRecordingDuration > 0
-                ? Math.min(1.0, elapsed / (currentRecordingDuration * 1000.0))
+                ? Math.min(1.0, elapsedMs / (currentRecordingDuration * 1000.0))
                 : 0;
         int filled = (int) (pct * barWidth);
         StringBuilder bar = new StringBuilder("  ");
