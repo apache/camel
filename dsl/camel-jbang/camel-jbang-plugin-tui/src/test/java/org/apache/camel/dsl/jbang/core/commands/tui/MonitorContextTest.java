@@ -96,7 +96,7 @@ class MonitorContextTest {
     void formatMemoryBothPositive() {
         // 512MB used, 1GB max
         String result = TuiHelper.formatMemory(536870912L, 1073741824L);
-        assertEquals("512M/1024M", result);
+        assertEquals("512M/1G", result);
     }
 
     @Test
