@@ -198,7 +198,7 @@ class HeapHistogramTab extends AbstractTableTab {
                 Span.styled(className, Style.EMPTY.fg(Color.CYAN))));
         lines.add(Line.from(
                 Span.styled("  Package:    ", Style.EMPTY.fg(Color.YELLOW).bold()),
-                Span.styled(pkg.isEmpty() ? "(none)" : pkg, Style.EMPTY.fg(Color.WHITE))));
+                Span.styled(pkg.isEmpty() ? "(none)" : pkg, pkg.isEmpty() ? Style.EMPTY.dim() : Style.EMPTY.fg(Color.WHITE))));
         lines.add(Line.from(
                 Span.styled("  Instances:  ", Style.EMPTY.fg(Color.YELLOW).bold()),
                 Span.styled(formatNumber(entry.instances), Style.EMPTY.fg(Color.WHITE)),
