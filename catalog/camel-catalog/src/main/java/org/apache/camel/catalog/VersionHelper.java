@@ -31,46 +31,11 @@ public class VersionHelper {
             return version;
         }
         // First, try to load from maven properties
-        InputStream is = null;
-        try {
-            Properties p = new Properties();
-            is = getClass().getResourceAsStream("/META-INF/maven/org.apache.camel/camel-catalog/pom.properties");
-            if (is != null) {
-                p.load(is);
-                version = p.getProperty("version", "");
-            }
-        } catch (Exception e) {
-            // ignore
-        } finally {
-            if (is != null) {
-                try {
-                    is.close();
-                } catch (Exception e) {
-                    // ignore
-                }
-            }
-        }
+        version = getVersionFromProperties("/META-INF/maven/org.apache.camel/camel-catalog/pom.properties");
 
         // Next, try to load from version.properties
         if (version == null) {
-            try {
-                Properties p = new Properties();
-                is = getClass().getResourceAsStream("/META-INF/version.properties");
-                if (is != null) {
-                    p.load(is);
-                    version = p.getProperty("version", "");
-                }
-            } catch (Exception e) {
-                // ignore
-            } finally {
-                if (is != null) {
-                    try {
-                        is.close();
-                    } catch (Exception e) {
-                        // ignore
-                    }
-                }
-            }
+            version = getVersionFromProperties("/META-INF/version.properties");
         }
 
         // Fallback to using Java API
@@ -92,4 +57,17 @@ public class VersionHelper {
         return version;
     }
 
+    private String getVersionFromProperties(String properties) {
+        try (InputStream is = getClass().getResourceAsStream(properties)) {
+            Properties p = new Properties();
+            if (is != null) {
+                p.load(is);
+                return p.getProperty("version", "");
+            }
+        } catch (Exception e) {
+            // ignore
+        }
+
+        return null;
+    }
 }
