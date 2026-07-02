@@ -40,6 +40,8 @@ import java.util.Locale;
  */
 final class SelfSignedCertificateGenerator {
 
+    private static final SecureRandom RANDOM = new SecureRandom();
+
     private SelfSignedCertificateGenerator() {
     }
 
@@ -73,21 +75,20 @@ final class SelfSignedCertificateGenerator {
         String type = keyType == null || keyType.isBlank()
                 ? DEFAULT_KEY_TYPE : keyType.trim().toUpperCase(Locale.ROOT);
 
-        SecureRandom random = new SecureRandom();
         KeyPairGenerator keyGen;
         if ("EC".equals(type)) {
             keyGen = KeyPairGenerator.getInstance("EC");
-            keyGen.initialize(new ECGenParameterSpec("secp256r1"), random);
+            keyGen.initialize(new ECGenParameterSpec("secp256r1"), RANDOM);
         } else if ("RSA".equals(type)) {
             keyGen = KeyPairGenerator.getInstance("RSA");
-            keyGen.initialize(2048, random);
+            keyGen.initialize(2048, RANDOM);
         } else {
             throw new IllegalArgumentException(
                     "Unsupported self-signed certificate key type: " + keyType + " (supported: EC, RSA)");
         }
         KeyPair keyPair = keyGen.generateKeyPair();
 
-        X509Certificate cert = generateCertificate(keyPair, type, random);
+        X509Certificate cert = generateCertificate(keyPair, type, RANDOM);
 
         KeyStore ks = KeyStore.getInstance("PKCS12");
         ks.load(null, password.toCharArray());
