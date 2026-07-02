@@ -46,8 +46,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import org.apache.camel.component.pqc.PQCKeyEncapsulationAlgorithms;
-import org.apache.camel.component.pqc.PQCSecureRandom;
 import org.apache.camel.component.pqc.PQCSignatureAlgorithms;
+import org.apache.camel.util.SecureRandomHelper;
 import org.bouncycastle.pqc.crypto.lms.LMOtsParameters;
 import org.bouncycastle.pqc.crypto.lms.LMSigParameters;
 import org.bouncycastle.pqc.jcajce.spec.*;
@@ -101,17 +101,17 @@ public class FileBasedKeyLifecycleManager implements KeyLifecycleManager {
         // Initialize with parameter spec if provided
         if (parameterSpec != null) {
             if (parameterSpec instanceof AlgorithmParameterSpec algorithmParamSpec) {
-                generator.initialize(algorithmParamSpec, PQCSecureRandom.RANDOM);
+                generator.initialize(algorithmParamSpec, SecureRandomHelper.getSecureRandom());
             } else if (parameterSpec instanceof Integer keySize) {
-                generator.initialize(keySize, PQCSecureRandom.RANDOM);
+                generator.initialize(keySize, SecureRandomHelper.getSecureRandom());
             }
         } else {
             // Use default parameter spec for the algorithm
             AlgorithmParameterSpec defaultSpec = getDefaultParameterSpec(algorithm);
             if (defaultSpec != null) {
-                generator.initialize(defaultSpec, PQCSecureRandom.RANDOM);
+                generator.initialize(defaultSpec, SecureRandomHelper.getSecureRandom());
             } else {
-                generator.initialize(getDefaultKeySize(algorithm), PQCSecureRandom.RANDOM);
+                generator.initialize(getDefaultKeySize(algorithm), SecureRandomHelper.getSecureRandom());
             }
         }
 

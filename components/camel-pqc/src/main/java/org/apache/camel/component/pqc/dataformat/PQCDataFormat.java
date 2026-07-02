@@ -35,13 +35,13 @@ import javax.crypto.spec.SecretKeySpec;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.component.pqc.PQCKeyEncapsulationAlgorithms;
-import org.apache.camel.component.pqc.PQCSecureRandom;
 import org.apache.camel.component.pqc.PQCSymmetricAlgorithms;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatName;
 import org.apache.camel.spi.annotations.Dataformat;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.service.ServiceSupport;
+import org.apache.camel.util.SecureRandomHelper;
 import org.bouncycastle.jcajce.SecretKeyWithEncapsulation;
 import org.bouncycastle.jcajce.spec.KEMExtractSpec;
 import org.bouncycastle.jcajce.spec.KEMGenerateSpec;
@@ -163,13 +163,13 @@ public class PQCDataFormat extends ServiceSupport implements DataFormat, DataFor
         try {
             // Generate KEM encapsulation and the fresh shared secret
             KeyGenerator kg = getOrCreateKeyGenerator(kemAlg);
-            kg.init(new KEMGenerateSpec(kp.getPublic(), symAlg, symmetricKeyLength), PQCSecureRandom.RANDOM);
+            kg.init(new KEMGenerateSpec(kp.getPublic(), symAlg, symmetricKeyLength), SecureRandomHelper.getSecureRandom());
             SecretKeyWithEncapsulation secretKey = (SecretKeyWithEncapsulation) kg.generateKey();
             byte[] encapsulation = secretKey.getEncapsulation();
 
             // Encrypt the payload with an authenticated cipher using a fresh random nonce
             byte[] nonce = new byte[NONCE_LENGTH_BYTES];
-            PQCSecureRandom.RANDOM.nextBytes(nonce);
+            SecureRandomHelper.getSecureRandom().nextBytes(nonce);
             Cipher cipher = initAeadCipher(Cipher.ENCRYPT_MODE, symAlg, secretKey.getEncoded(), nonce);
             byte[] ciphertext = cipher.doFinal(plaintext);
 
@@ -221,7 +221,8 @@ public class PQCDataFormat extends ServiceSupport implements DataFormat, DataFor
 
             // Extract the shared secret from the encapsulation
             KeyGenerator kg = getOrCreateKeyGenerator(kemAlg);
-            kg.init(new KEMExtractSpec(kp.getPrivate(), encapsulation, symAlg, symmetricKeyLength), PQCSecureRandom.RANDOM);
+            kg.init(new KEMExtractSpec(kp.getPrivate(), encapsulation, symAlg, symmetricKeyLength),
+                    SecureRandomHelper.getSecureRandom());
             SecretKeyWithEncapsulation secretKey = (SecretKeyWithEncapsulation) kg.generateKey();
 
             // Decrypt. doFinal() verifies the authentication tag and throws on tampering; this must not be done with

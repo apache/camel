@@ -237,6 +237,51 @@ Key files in the implementation:
 - `tooling/maven/camel-package-maven-plugin/.../UpdateSensitizeHelper.java` — code generation
   from component JSONs
 
+== Shared SecureRandom
+
+=== Rationale
+
+`java.security.SecureRandom` is thread-safe but heavyweight to instantiate: each `new SecureRandom()`
+call gathers OS entropy (reads from `/dev/urandom` on Linux, `CryptGenRandom` on Windows). Creating
+a fresh instance per call is wasteful and measurably slows down startup when many components
+initialize cryptographic material (e.g., `camel-pqc` had ~40 separate allocations).
+
+Since Java 9, the default `SecureRandom` implementation uses DRBG (Deterministic Random Bit
+Generator) which handles concurrent access efficiently. A single shared instance is both safe and
+performant.
+
+=== Usage
+
+`SecureRandomHelper` in `camel-util` provides a shared instance via a static getter:
+
+[source,java]
+----
+import org.apache.camel.util.SecureRandomHelper;
+
+// Use the shared instance instead of new SecureRandom()
+keygen.init(SecureRandomHelper.getSecureRandom());
+kpGen.initialize(paramSpec, SecureRandomHelper.getSecureRandom());
+SecureRandomHelper.getSecureRandom().nextBytes(nonce);
+----
+
+=== When to use
+
+- **Internal Camel code** that needs cryptographic randomness with the platform default algorithm:
+  key generation, nonce creation, certificate serial numbers, cipher initialization.
+- **Component and data format implementations** that call JCA APIs (`KeyPairGenerator.initialize()`,
+  `KeyGenerator.init()`, `KEMGenerateSpec`, etc.).
+
+=== When NOT to use
+
+- **User-configurable secure random**: when the user needs to pick a specific algorithm or provider
+  (e.g., FIPS-certified PRNG), use `SecureRandomParameters` from the JSSE utility
+  (`org.apache.camel.support.jsse.SecureRandomParameters`) instead.
+- **`SecureRandom.getInstanceStrong()`**: for cases requiring the strongest available entropy source
+  (may block on Linux), create a dedicated instance — the shared one uses the platform default, which
+  is non-blocking.
+- **Test code**: if deterministic randomness is needed for reproducible tests, inject a seeded
+  `SecureRandom` directly rather than using the shared instance.
+
 === Future Work
 
 - **Broader annotation audit**: Systematically audit all 300+ components for missing `secret=true`

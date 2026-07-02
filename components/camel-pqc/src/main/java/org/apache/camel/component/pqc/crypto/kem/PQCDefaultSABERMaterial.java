@@ -21,7 +21,7 @@ import java.security.*;
 import javax.crypto.KeyGenerator;
 
 import org.apache.camel.component.pqc.PQCKeyEncapsulationAlgorithms;
-import org.apache.camel.component.pqc.PQCSecureRandom;
+import org.apache.camel.util.SecureRandomHelper;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
 import org.bouncycastle.pqc.jcajce.spec.SABERParameterSpec;
@@ -52,7 +52,7 @@ public class PQCDefaultSABERMaterial {
             throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException {
         KeyPairGenerator kpg = KeyPairGenerator.getInstance(PQCKeyEncapsulationAlgorithms.SABER.getAlgorithm(),
                 PQCKeyEncapsulationAlgorithms.SABER.getBcProvider());
-        kpg.initialize(SABERParameterSpec.lightsaberkem256r3, PQCSecureRandom.RANDOM);
+        kpg.initialize(SABERParameterSpec.lightsaberkem256r3, SecureRandomHelper.getSecureRandom());
         return kpg;
     }
 
