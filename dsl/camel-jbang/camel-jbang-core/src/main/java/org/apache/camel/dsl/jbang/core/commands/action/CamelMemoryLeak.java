@@ -143,7 +143,7 @@ public class CamelMemoryLeak extends ActionBaseCommand {
             return 1;
         }
 
-        Thread.sleep((dur1 + 3) * 1000L);
+        waitForRecordingComplete(pid, dur1);
 
         JsonObject stopResp = sendAction(pid, "stop", 0);
         if (stopResp == null || !"completed".equals(stopResp.getString("status"))) {
@@ -159,7 +159,7 @@ public class CamelMemoryLeak extends ActionBaseCommand {
             return 1;
         }
 
-        Thread.sleep((dur2 + 3) * 1000L);
+        waitForRecordingComplete(pid, dur2);
 
         stopResp = sendAction(pid, "stop", 0);
         if (stopResp == null || !"completed".equals(stopResp.getString("status"))) {
@@ -175,6 +175,17 @@ public class CamelMemoryLeak extends ActionBaseCommand {
         }
 
         return handleResponse(pid, cmpResp);
+    }
+
+    private void waitForRecordingComplete(long pid, int dur) throws Exception {
+        long deadline = System.currentTimeMillis() + (dur + 30) * 1000L;
+        while (System.currentTimeMillis() < deadline) {
+            Thread.sleep(3000);
+            JsonObject status = sendAction(pid, "status", 0);
+            if (status != null && !"recording".equals(status.getString("status"))) {
+                break;
+            }
+        }
     }
 
     private JsonObject sendAction(long pid, String command, int dur) {

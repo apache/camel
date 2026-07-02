@@ -412,12 +412,7 @@ public class RuntimeTools {
             throw new ToolCallException("Failed to start recording 1", null);
         }
 
-        try {
-            Thread.sleep((dur1 + 3) * 1000L);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            throw new ToolCallException("Interrupted during recording 1", null);
-        }
+        waitForJfrRecordingComplete(pid, dur1);
 
         JsonObject s1 = runtimeService.executeAction(pid, "jfr-memory-leak", root -> {
             root.put("command", "stop");
@@ -447,12 +442,7 @@ public class RuntimeTools {
             throw new ToolCallException("Failed to start recording 2", null);
         }
 
-        try {
-            Thread.sleep((dur2 + 3) * 1000L);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            throw new ToolCallException("Interrupted during recording 2", null);
-        }
+        waitForJfrRecordingComplete(pid, dur2);
 
         JsonObject s2 = runtimeService.executeAction(pid, "jfr-memory-leak", root -> {
             root.put("command", "stop");
@@ -477,6 +467,24 @@ public class RuntimeTools {
                 root.put("minSize", minSize);
             }
         });
+    }
+
+    private void waitForJfrRecordingComplete(long pid, int dur) {
+        long deadline = System.currentTimeMillis() + (dur + 30) * 1000L;
+        while (System.currentTimeMillis() < deadline) {
+            try {
+                Thread.sleep(3000);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                throw new ToolCallException("Interrupted while waiting for recording", null);
+            }
+            JsonObject status = runtimeService.executeAction(pid, "jfr-memory-leak", root -> {
+                root.put("command", "status");
+            });
+            if (status != null && !"recording".equals(status.getString("status"))) {
+                break;
+            }
+        }
     }
 
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),

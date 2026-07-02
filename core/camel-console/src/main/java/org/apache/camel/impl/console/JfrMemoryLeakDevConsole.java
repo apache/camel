@@ -96,7 +96,7 @@ public class JfrMemoryLeakDevConsole extends AbstractDevConsole {
         };
     }
 
-    private JsonObject doStart(Map<String, Object> options) {
+    private synchronized JsonObject doStart(Map<String, Object> options) {
         if (activeRecording != null) {
             return errorJson("A JFR recording is already active. Stop it first.");
         }

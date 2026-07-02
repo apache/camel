@@ -1123,11 +1123,20 @@ class MemoryLeakTab implements MonitorTab {
             return;
         }
         startDaemonThread("jfr-poll-" + pid, () -> {
-            try {
-                Thread.sleep((dur + 3) * 1000L);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                return;
+            long deadline = System.currentTimeMillis() + (dur + 30) * 1000L;
+            while (System.currentTimeMillis() < deadline) {
+                try {
+                    Thread.sleep(3000);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    return;
+                }
+                if (state != State.RECORDING) {
+                    return;
+                }
+                if (!isRecordingActive(pid)) {
+                    break;
+                }
             }
             if (state != State.RECORDING) {
                 return;
@@ -1189,6 +1198,23 @@ class MemoryLeakTab implements MonitorTab {
                 loading.set(false);
             }
         });
+    }
+
+    private boolean isRecordingActive(String pid) {
+        Path outputFile = ctx.getOutputFile(pid);
+        PathUtils.deleteFile(outputFile);
+
+        JsonObject root = new JsonObject();
+        root.put("action", "jfr-memory-leak");
+        root.put("command", "status");
+
+        Path actionFile = ctx.getActionFile(pid);
+        PathUtils.writeTextSafely(root.toJson(), actionFile);
+
+        JsonObject jo = pollJsonResponse(outputFile, 5000);
+        PathUtils.deleteFile(outputFile);
+
+        return jo == null || "recording".equals(jo.getString("status"));
     }
 
     private void sendStatusCommand(String pid) {
