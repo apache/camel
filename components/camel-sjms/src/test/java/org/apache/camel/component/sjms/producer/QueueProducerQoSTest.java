@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.sjms.producer;
 
+import java.util.concurrent.TimeUnit;
+
 import jakarta.jms.Connection;
 import jakarta.jms.Session;
 
@@ -35,6 +37,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.parallel.Isolated;
 
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -93,8 +96,10 @@ public class QueueProducerQoSTest extends CamelTestSupport {
 
         mockExpiredAdvisory.assertIsSatisfied(10_000);
 
-        assertEquals(0, service.countMessages(TEST_INOUT_DESTINATION_NAME),
-                "There were unexpected messages left in the queue: " + TEST_INOUT_DESTINATION_NAME);
+        // The broker may need a moment to finish removing the expired message from the original queue
+        await().atMost(10, TimeUnit.SECONDS).untilAsserted(
+                () -> assertEquals(0, service.countMessages(TEST_INOUT_DESTINATION_NAME),
+                        "There were unexpected messages left in the queue: " + TEST_INOUT_DESTINATION_NAME));
     }
 
     @Test
@@ -106,8 +111,10 @@ public class QueueProducerQoSTest extends CamelTestSupport {
 
         mockExpiredAdvisory.assertIsSatisfied(10_000);
 
-        assertEquals(0, service.countMessages(TEST_INONLY_DESTINATION_NAME),
-                "There were unexpected messages left in the queue: " + TEST_INONLY_DESTINATION_NAME);
+        // The broker may need a moment to finish removing the expired message from the original queue
+        await().atMost(10, TimeUnit.SECONDS).untilAsserted(
+                () -> assertEquals(0, service.countMessages(TEST_INONLY_DESTINATION_NAME),
+                        "There were unexpected messages left in the queue: " + TEST_INONLY_DESTINATION_NAME));
     }
 
     private static Configuration configureArtemis(Configuration configuration) {

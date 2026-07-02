@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.sjms.consumer;
 
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
@@ -46,9 +48,7 @@ public class InOnlyConsumerAsyncFalseTest extends JmsTestSupport {
         // the reason is that the first message is processed asynchronously
         // and it takes 2 sec to complete, so in between we have time to
         // process the 2nd message on the queue
-        Thread.sleep(3000);
-
-        MockEndpoint.assertIsSatisfied(context);
+        MockEndpoint.assertIsSatisfied(context, 20, TimeUnit.SECONDS);
         assertEquals(beforeThreadName, afterThreadName);
     }
 
