@@ -18,6 +18,7 @@ package org.apache.camel.component.pqc.crypto;
 
 import java.security.*;
 
+import org.apache.camel.component.pqc.PQCSecureRandom;
 import org.apache.camel.component.pqc.PQCSignatureAlgorithms;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
@@ -49,7 +50,7 @@ public class PQCDefaultSPHINCSPLUSMaterial {
             throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException {
         KeyPairGenerator kpGen = KeyPairGenerator.getInstance(PQCSignatureAlgorithms.SPHINCSPLUS.getAlgorithm(),
                 PQCSignatureAlgorithms.SPHINCSPLUS.getBcProvider());
-        kpGen.initialize(SPHINCSPlusParameterSpec.haraka_256s, new SecureRandom());
+        kpGen.initialize(SPHINCSPlusParameterSpec.haraka_256s, PQCSecureRandom.RANDOM);
         return kpGen;
     }
 }

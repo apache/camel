@@ -18,6 +18,7 @@ package org.apache.camel.component.pqc.crypto;
 
 import java.security.*;
 
+import org.apache.camel.component.pqc.PQCSecureRandom;
 import org.apache.camel.component.pqc.PQCSignatureAlgorithms;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
@@ -49,7 +50,7 @@ public class PQCDefaultXMSSMTMaterial {
             throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException {
         KeyPairGenerator kpGen = KeyPairGenerator.getInstance(PQCSignatureAlgorithms.XMSSMT.getAlgorithm(),
                 PQCSignatureAlgorithms.XMSSMT.getBcProvider());
-        kpGen.initialize(XMSSMTParameterSpec.XMSSMT_SHA2_20d2_256, new SecureRandom());
+        kpGen.initialize(XMSSMTParameterSpec.XMSSMT_SHA2_20d2_256, PQCSecureRandom.RANDOM);
         return kpGen;
     }
 }

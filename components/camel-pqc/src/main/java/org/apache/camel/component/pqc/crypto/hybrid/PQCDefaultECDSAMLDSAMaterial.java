@@ -19,6 +19,7 @@ package org.apache.camel.component.pqc.crypto.hybrid;
 import java.security.*;
 import java.security.spec.ECGenParameterSpec;
 
+import org.apache.camel.component.pqc.PQCSecureRandom;
 import org.apache.camel.component.pqc.PQCSignatureAlgorithms;
 import org.bouncycastle.jcajce.spec.MLDSAParameterSpec;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
@@ -49,7 +50,7 @@ public class PQCDefaultECDSAMLDSAMaterial {
         try {
             // Generate ECDSA P-256 key pair
             KeyPairGenerator ecKpg = KeyPairGenerator.getInstance("EC", "BC");
-            ecKpg.initialize(new ECGenParameterSpec("secp256r1"), new SecureRandom());
+            ecKpg.initialize(new ECGenParameterSpec("secp256r1"), PQCSecureRandom.RANDOM);
             classicalKeyPair = ecKpg.generateKeyPair();
             classicalSigner = Signature.getInstance("SHA256withECDSA", "BC");
 
@@ -57,7 +58,7 @@ public class PQCDefaultECDSAMLDSAMaterial {
             KeyPairGenerator mldsaKpg = KeyPairGenerator.getInstance(
                     PQCSignatureAlgorithms.MLDSA.getAlgorithm(),
                     PQCSignatureAlgorithms.MLDSA.getBcProvider());
-            mldsaKpg.initialize(MLDSAParameterSpec.ml_dsa_65, new SecureRandom());
+            mldsaKpg.initialize(MLDSAParameterSpec.ml_dsa_65, PQCSecureRandom.RANDOM);
             pqcKeyPair = mldsaKpg.generateKeyPair();
             pqcSigner = Signature.getInstance(
                     PQCSignatureAlgorithms.MLDSA.getAlgorithm(),

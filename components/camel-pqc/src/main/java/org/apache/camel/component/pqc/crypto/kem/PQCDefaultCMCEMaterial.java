@@ -21,6 +21,7 @@ import java.security.*;
 import javax.crypto.KeyGenerator;
 
 import org.apache.camel.component.pqc.PQCKeyEncapsulationAlgorithms;
+import org.apache.camel.component.pqc.PQCSecureRandom;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
 import org.bouncycastle.pqc.jcajce.spec.CMCEParameterSpec;
@@ -51,7 +52,7 @@ public class PQCDefaultCMCEMaterial {
             throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException {
         KeyPairGenerator kpg = KeyPairGenerator.getInstance(PQCKeyEncapsulationAlgorithms.CMCE.getAlgorithm(),
                 PQCKeyEncapsulationAlgorithms.CMCE.getBcProvider());
-        kpg.initialize(CMCEParameterSpec.mceliece8192128f, new SecureRandom());
+        kpg.initialize(CMCEParameterSpec.mceliece8192128f, PQCSecureRandom.RANDOM);
         return kpg;
     }
 
