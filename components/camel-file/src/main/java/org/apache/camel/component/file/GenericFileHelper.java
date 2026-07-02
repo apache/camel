@@ -41,12 +41,36 @@ public final class GenericFileHelper {
         // compact first as the remote relative name can use ../ etc
         String compactTarget = FileUtil.compactPath(target.getPath());
         String compactWork = FileUtil.compactPath(localWorkDirectory.getPath());
-        if (!compactTarget.startsWith(compactWork)) {
+        if (!isWithinDirectory(compactTarget, compactWork)) {
             throw new GenericFileOperationFailedException(
                     "Cannot retrieve file to local work file: " + compactTarget
                                                           + " as it is jailed to the local work directory: "
                                                           + compactWork);
         }
+    }
+
+    /**
+     * Determines whether a compacted target path is contained within a compacted directory path, using a path-segment
+     * boundary comparison. Unlike a bare string prefix test, a sibling directory whose name merely extends the
+     * directory name (for example {@code /work} versus {@code /workspace}) is not considered contained. A trailing
+     * separator on the directory is tolerated, and an empty directory imposes no boundary.
+     *
+     * @param  compactTarget the compacted target path (see {@link FileUtil#compactPath(String)})
+     * @param  compactDir    the compacted directory the target must stay within
+     * @return               {@code true} if the target is the directory itself or a path inside it
+     */
+    public static boolean isWithinDirectory(String compactTarget, String compactDir) {
+        if (compactDir.isEmpty()) {
+            // no directory boundary configured
+            return true;
+        }
+        // drop a trailing separator (if any) so the boundary comparison is exact, regardless of whether the
+        // directory path was supplied with or without one
+        String dir = compactDir;
+        if (dir.charAt(dir.length() - 1) == File.separatorChar) {
+            dir = dir.substring(0, dir.length() - 1);
+        }
+        return compactTarget.equals(dir) || compactTarget.startsWith(dir + File.separator);
     }
 
     public static String asExclusiveReadLockKey(GenericFile file, String key) {

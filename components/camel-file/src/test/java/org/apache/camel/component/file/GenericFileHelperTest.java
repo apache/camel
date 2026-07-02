@@ -21,7 +21,9 @@ import java.io.File;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class GenericFileHelperTest {
 
@@ -44,5 +46,29 @@ public class GenericFileHelperTest {
                 () -> GenericFileHelper.jailToLocalWorkDirectory(new File(workDir, "../../etc/passwd"), workDir));
         assertThrows(GenericFileOperationFailedException.class,
                 () -> GenericFileHelper.jailToLocalWorkDirectory(new File(workDir, "sub/../../escape.txt"), workDir));
+        // a sibling directory whose name merely extends the work directory name must also be rejected
+        assertThrows(GenericFileOperationFailedException.class,
+                () -> GenericFileHelper.jailToLocalWorkDirectory(new File(workDir, "../localworkEVIL/file.txt"), workDir));
+    }
+
+    @Test
+    public void isWithinDirectoryRespectsPathBoundaries() {
+        String sep = File.separator;
+        String work = sep + "data" + sep + "work";
+
+        // the directory itself and real children are contained
+        assertTrue(GenericFileHelper.isWithinDirectory(work, work));
+        assertTrue(GenericFileHelper.isWithinDirectory(work + sep + "a.txt", work));
+        assertTrue(GenericFileHelper.isWithinDirectory(work + sep + "sub" + sep + "a.txt", work));
+
+        // a trailing separator on the directory (as supplied by the file producer) is tolerated
+        assertTrue(GenericFileHelper.isWithinDirectory(work + sep + "a.txt", work + sep));
+
+        // a sibling whose name merely extends the directory name is NOT contained
+        assertFalse(GenericFileHelper.isWithinDirectory(sep + "data" + sep + "workspace" + sep + "a.txt", work));
+        assertFalse(GenericFileHelper.isWithinDirectory(sep + "data" + sep + "workspace" + sep + "a.txt", work + sep));
+
+        // an empty directory imposes no boundary
+        assertTrue(GenericFileHelper.isWithinDirectory("anything.txt", ""));
     }
 }
