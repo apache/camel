@@ -289,7 +289,7 @@ class JfrOldObjectSampleTab implements MonitorTab {
                 Paragraph.builder()
                         .text(Text.from(lines))
                         .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
-                                .title(" JFR Old Object Samples ").build())
+                                .title(" Memory Leak ").build())
                         .build(),
                 area);
     }
@@ -361,7 +361,7 @@ class JfrOldObjectSampleTab implements MonitorTab {
                                 Line.from(Span.styled(" Stopping recording and analyzing results...",
                                         Style.EMPTY.dim()))))
                         .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
-                                .title(" JFR Old Object Samples ").build())
+                                .title(" Memory Leak ").build())
                         .build(),
                 area);
     }
@@ -412,7 +412,7 @@ class JfrOldObjectSampleTab implements MonitorTab {
             }
         }
         String gcLabel = gcCount > 0 ? " gc:" + gcCount : "";
-        String title = String.format(" JFR Old Objects [%d] duration:%s%s sort:%s%s%s ",
+        String title = String.format(" Memory Leak [%d] duration:%s%s sort:%s%s%s ",
                 visible.size(), formatDuration(recordingDurationMs), gcLabel, sort, minLabel, agoLabel);
 
         Table table = Table.builder()
@@ -749,7 +749,7 @@ class JfrOldObjectSampleTab implements MonitorTab {
         Integer sel = tableState.selected();
         return new SelectionContext(
                 "table", items, sel != null ? sel : -1, items.size(),
-                comparisons != null ? "JFR Comparison" : "JFR Old Objects");
+                comparisons != null ? "Memory Leak Comparison" : "Memory Leak");
     }
 
     @Override
@@ -765,7 +765,7 @@ class JfrOldObjectSampleTab implements MonitorTab {
         }
         List<SampleEntry> visible = sortedSamples();
         JsonObject result = new JsonObject();
-        result.put("tab", "JFR Old Objects");
+        result.put("tab", "Memory Leak");
         JsonArray rows = new JsonArray();
         for (SampleEntry e : visible) {
             JsonObject row = new JsonObject();
@@ -805,7 +805,7 @@ class JfrOldObjectSampleTab implements MonitorTab {
 
     private JsonObject getComparisonDataAsJson() {
         JsonObject result = new JsonObject();
-        result.put("tab", "JFR Comparison");
+        result.put("tab", "Memory Leak Comparison");
         result.put("baselineDurationMs", baselineDurationMs);
         result.put("currentDurationMs", currentDurationMs);
         result.put("durationRatio", durationRatio);
@@ -831,19 +831,26 @@ class JfrOldObjectSampleTab implements MonitorTab {
     @Override
     public String getHelpText() {
         return """
-                # JFR Old Object Samples
+                # Memory Leak
 
-                The JFR Old Object Samples tab uses Java Flight Recorder to capture objects
-                that have survived multiple GC cycles (long-lived objects) and traces their
-                reference chains back to GC roots. This helps diagnose memory leaks by
-                answering "why is this object still alive?"
+                This tab helps diagnose memory leaks by recording which objects
+                survive garbage collection and tracing why they are still alive.
+
+                It uses Java Flight Recorder (JFR) under the hood to sample
+                long-lived objects and capture their reference chains back to
+                GC roots. The recording is lightweight and safe for production.
+
+                For deep heap analysis, use traditional tools such as
+                **jmap** (heap dump), **jhat**, or **Eclipse MAT** alongside
+                this tab. This tab is for quick, in-place triage — those tools
+                give you the full picture.
 
                 ## How To Use
 
-                1. Press **R** to start a JFR recording (default 60 seconds)
+                1. Press **R** to start a recording (default 60 seconds)
                 2. Use **+**/**-** to adjust the duration before starting
                 3. Wait for the recording to complete (or press **X** to stop early)
-                4. Browse the samples table and select entries to see reference chains
+                4. Browse the results table and select entries to see details
 
                 ## Table Columns
 
@@ -858,8 +865,7 @@ class JfrOldObjectSampleTab implements MonitorTab {
 
                 ## Detail Panel
 
-                The detail panel shows the full reference chain and allocation stack trace
-                for the selected sample:
+                Select an entry to see its reference chain and allocation stack trace:
 
                 - **Reference Chain** — Path from the object to its GC root, showing
                   each referencing type and field name
@@ -869,10 +875,8 @@ class JfrOldObjectSampleTab implements MonitorTab {
 
                 The SAMPLED column shows the sum of allocation sizes that JFR captured
                 during the recording window — it is NOT the total heap footprint of
-                that class. A 60-second recording will show roughly twice the size of
-                a 30-second one for the same leak. Use the values to compare classes
-                relative to each other and to spot trends across recordings, not as
-                absolute heap usage numbers.
+                that class. Use the values to compare classes relative to each other
+                and to spot trends, not as absolute heap usage numbers.
 
                 ## What To Look For
 
@@ -881,23 +885,21 @@ class JfrOldObjectSampleTab implements MonitorTab {
                   static fields that prevent garbage collection
                 - **Growing collections**: HashMap, ArrayList, ConcurrentHashMap entries
                   that keep accumulating
-                - **Thread-local references**: Objects held by thread-local variables
 
                 ## Dual Recording Mode (Default)
 
-                Dual mode is the default because it is the most effective way to
-                detect memory leaks. Press **d** to toggle between **dual** and
-                **single** mode. If a previous dual recording exists, the TUI
-                automatically loads the comparison results on startup.
+                Dual mode runs two sequential recordings and compares them,
+                which is the most effective way to detect leaks. Press **d**
+                to toggle between **dual** and **single** mode.
 
-                In **dual** mode, pressing **R** runs two sequential recordings:
+                In **dual** mode, pressing **R** runs:
                 - **Run 1** at the configured duration (e.g. 60s)
                 - **Run 2** at 2x the duration (e.g. 120s)
 
-                After both complete, a comparison table shows how each class behaved
-                across the two runs. The **GROWTH** column is the normalized growth
-                ratio: (size₂ / size₁) / durationRatio. Entries under 1KB in both
-                runs are filtered out as noise.
+                After both complete, a comparison table shows how each class
+                behaved across the two runs. The **GROWTH** column is the
+                normalized growth ratio. Entries under 1KB in both runs are
+                filtered out as noise.
 
                 ### Trend Indicators
 
@@ -910,16 +912,17 @@ class JfrOldObjectSampleTab implements MonitorTab {
 
                 ## Comparison With Heap Histogram
 
-                The Heap Histogram tab shows WHAT is using memory (class instance counts
-                and sizes). This tab shows WHY objects are still alive (reference chains
-                to GC roots). Use both together: find suspicious classes in Heap Histogram,
-                then use JFR Old Objects to trace why they are not being collected.
+                The **Heap Histogram** tab shows WHAT is using memory (class instance
+                counts and total sizes). This tab shows WHY objects are still alive
+                (reference chains to GC roots). Use both together: find suspicious
+                classes in Heap Histogram, then use Memory Leak to trace why they
+                are not being collected.
 
                 ## Keys
 
                 | Key | Action |
                 |-----|--------|
-                | R | Start/restart JFR recording |
+                | R | Start/restart recording |
                 | X | Stop recording early |
                 | d | Toggle single/dual recording mode |
                 | +/- | Adjust recording duration |

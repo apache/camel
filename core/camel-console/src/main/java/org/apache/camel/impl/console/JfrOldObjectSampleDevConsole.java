@@ -482,12 +482,22 @@ public class JfrOldObjectSampleDevConsole extends AbstractDevConsole {
     private static String sampleGroupKey(JsonObject sample) {
         StringBuilder sb = new StringBuilder();
         sb.append(sample.getStringOrDefault("allocationClass", ""));
+        // use only the top 3 stack frames to avoid JIT-induced key drift between runs;
+        // normalize lambda class names (strip address/hash after $$Lambda)
         JsonArray st = (JsonArray) sample.get("stackTrace");
         if (st != null) {
-            for (int i = 0; i < st.size(); i++) {
+            int limit = Math.min(3, st.size());
+            for (int i = 0; i < limit; i++) {
                 JsonObject frame = (JsonObject) st.get(i);
-                sb.append('|').append(frame.getStringOrDefault("method", ""))
-                        .append(':').append(frame.getIntegerOrDefault("line", 0));
+                String method = frame.getStringOrDefault("method", "");
+                int lambdaIdx = method.indexOf("$$Lambda");
+                if (lambdaIdx > 0) {
+                    // keep class name up to $$Lambda + the method name after the last dot
+                    int lastDot = method.lastIndexOf('.');
+                    method = method.substring(0, lambdaIdx) + "$$Lambda."
+                             + (lastDot > lambdaIdx ? method.substring(lastDot + 1) : "apply");
+                }
+                sb.append('|').append(method);
             }
         }
         return sb.toString();
