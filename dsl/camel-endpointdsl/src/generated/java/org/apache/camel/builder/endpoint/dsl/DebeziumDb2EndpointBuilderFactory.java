@@ -1033,6 +1033,44 @@ public interface DebeziumDb2EndpointBuilderFactory {
             return this;
         }
         /**
+         * The fully-qualified class name of the storage implementation for
+         * schema metadata. The class must implement
+         * io.debezium.relational.TableMappingStorage. Defaults to
+         * io.debezium.relational.ConcurrentMapTableMappingStorage for in-memory
+         * storage.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: io.debezium.relational.ConcurrentMapTableMappingStorage
+         * Group: db2
+         * 
+         * @param memoryManagementSchemasClass the value to set
+         * @return the dsl builder
+         */
+        default DebeziumDb2EndpointBuilder memoryManagementSchemasClass(String memoryManagementSchemasClass) {
+            doSetProperty("memoryManagementSchemasClass", memoryManagementSchemasClass);
+            return this;
+        }
+        /**
+         * The fully-qualified class name of the storage implementation for
+         * table metadata. The class must implement
+         * io.debezium.relational.TableMappingStorage. Defaults to
+         * io.debezium.relational.ConcurrentMapTableMappingStorage for in-memory
+         * storage.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: io.debezium.relational.ConcurrentMapTableMappingStorage
+         * Group: db2
+         * 
+         * @param memoryManagementTablesClass the value to set
+         * @return the dsl builder
+         */
+        default DebeziumDb2EndpointBuilder memoryManagementTablesClass(String memoryManagementTablesClass) {
+            doSetProperty("memoryManagementTablesClass", memoryManagementTablesClass);
+            return this;
+        }
+        /**
          * A semicolon-separated list of expressions that match fully-qualified
          * tables and column(s) to be used as message key. Each expression must
          * match the pattern ':', where the table names could be defined as
@@ -2018,6 +2056,40 @@ public interface DebeziumDb2EndpointBuilderFactory {
             return this;
         }
         /**
+         * Enable to collect various kind of statistics, like latencies in
+         * record processing, and derived data like quantiles. By default
+         * collecting statistics is enabled.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: db2
+         * 
+         * @param statisticsMetricsEnabled the value to set
+         * @return the dsl builder
+         */
+        default DebeziumDb2EndpointBuilder statisticsMetricsEnabled(boolean statisticsMetricsEnabled) {
+            doSetProperty("statisticsMetricsEnabled", statisticsMetricsEnabled);
+            return this;
+        }
+        /**
+         * Enable to collect various kind of statistics, like latencies in
+         * record processing, and derived data like quantiles. By default
+         * collecting statistics is enabled.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: db2
+         * 
+         * @param statisticsMetricsEnabled the value to set
+         * @return the dsl builder
+         */
+        default DebeziumDb2EndpointBuilder statisticsMetricsEnabled(String statisticsMetricsEnabled) {
+            doSetProperty("statisticsMetricsEnabled", statisticsMetricsEnabled);
+            return this;
+        }
+        /**
          * A delay period after the snapshot is completed and the streaming
          * begins, given in milliseconds. Defaults to 0 ms.
          * 
@@ -2116,7 +2188,12 @@ public interface DebeziumDb2EndpointBuilderFactory {
          * TIME fields always use microseconds precision; 'connect' always
          * represents time, date, and timestamp values using Kafka Connect's
          * built-in representations for Time, Date, and Timestamp, which uses
-         * millisecond precision regardless of the database columns' precision.
+         * millisecond precision regardless of the database columns' precision;
+         * 'isostring' represents time, date, and timestamp values as ISO-8601
+         * formatted strings at the UTC time zone; 'microseconds' always
+         * represents time, date, and timestamp values using microsecond
+         * precision; 'nanoseconds' always represents time, date, and timestamp
+         * values using nanosecond precision.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
