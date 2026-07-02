@@ -495,9 +495,9 @@ writeScalpelComparison() {
   echo "[Maveniverse Scalpel](https://github.com/maveniverse/scalpel) detected **${scalpel_total} affected modules** (current approach: ${current_total})." >> "$comment_file"
   echo "" >> "$comment_file"
 
-  # Show modules only Scalpel found (current approach missed)
+  # Show modules only Scalpel found (not in current reactor)
   if [ "$only_scalpel_count" -gt 0 ]; then
-    echo "<details><summary>:warning: Modules only Scalpel found (${only_scalpel_count}) — current approach missed these</summary>" >> "$comment_file"
+    echo "<details><summary>:warning: Modules only in Scalpel (${only_scalpel_count})</summary>" >> "$comment_file"
     echo "" >> "$comment_file"
     echo "$only_in_scalpel" | while read -r m; do
       [ -n "$m" ] && echo "- \`$m\`" >> "$comment_file"
@@ -507,9 +507,9 @@ writeScalpelComparison() {
     echo "" >> "$comment_file"
   fi
 
-  # Show modules only current approach found (Scalpel missed)
+  # Show modules only current approach found (not in Scalpel)
   if [ "$only_current_count" -gt 0 ]; then
-    echo "<details><summary>Modules only current approach found (${only_current_count}) — Scalpel missed these</summary>" >> "$comment_file"
+    echo "<details><summary>Modules only in current approach (${only_current_count})</summary>" >> "$comment_file"
     echo "" >> "$comment_file"
     echo "$only_in_current" | while read -r m; do
       [ -n "$m" ] && echo "- \`$m\`" >> "$comment_file"
