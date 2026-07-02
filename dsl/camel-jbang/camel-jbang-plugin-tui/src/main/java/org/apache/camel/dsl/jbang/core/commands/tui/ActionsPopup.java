@@ -64,8 +64,8 @@ import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
 
-import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.hint;
-import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.hintLast;
+import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.hint;
+import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.hintLast;
 
 class ActionsPopup {
 
@@ -839,7 +839,7 @@ class ActionsPopup {
         items.add(ListItem.from("  >_ Shell"));
         ListWidget list = ListWidget.builder()
                 .items(items.toArray(ListItem[]::new))
-                .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
+                .highlightStyle(Theme.selectionBg())
                 .highlightSymbol("")
                 .scrollMode(ScrollMode.NONE)
                 .block(Block.builder()
@@ -865,7 +865,7 @@ class ActionsPopup {
         List<ListItem> items = buildExampleListItems(popupW - 4);
         ListWidget list = ListWidget.builder()
                 .items(items.toArray(ListItem[]::new))
-                .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
+                .highlightStyle(Theme.selectionBg())
                 .highlightSymbol("")
                 .scrollMode(ScrollMode.AUTO_SCROLL)
                 .block(Block.builder()
@@ -981,7 +981,7 @@ class ActionsPopup {
         }
         ListWidget list = ListWidget.builder()
                 .items(items.toArray(ListItem[]::new))
-                .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
+                .highlightStyle(Theme.selectionBg())
                 .highlightSymbol("")
                 .scrollMode(ScrollMode.AUTO_SCROLL)
                 .block(Block.builder()
@@ -1038,7 +1038,7 @@ class ActionsPopup {
             JsonObject action = new JsonObject();
             action.put("action", "readme");
             PathUtils.writeTextSafely(action.toJson(), ctx.getActionFile(info.pid));
-            JsonObject response = MonitorContext.pollJsonResponse(outputFile, 5000);
+            JsonObject response = TuiHelper.pollJsonResponse(outputFile, 5000);
             if (response != null && response.getString("content") != null) {
                 String raw = response.getString("content");
                 String file = response.getStringOrDefault("file", "README");
@@ -1807,7 +1807,7 @@ class ActionsPopup {
         long available = infraCatalog.stream().filter(e -> !e.running).count();
         ListWidget list = ListWidget.builder()
                 .items(items.toArray(ListItem[]::new))
-                .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
+                .highlightStyle(Theme.selectionBg())
                 .highlightSymbol("")
                 .scrollMode(ScrollMode.AUTO_SCROLL)
                 .block(Block.builder()

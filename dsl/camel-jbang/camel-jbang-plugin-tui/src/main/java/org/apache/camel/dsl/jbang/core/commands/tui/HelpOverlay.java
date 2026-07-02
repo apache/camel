@@ -31,8 +31,8 @@ import dev.tamboui.widgets.block.BorderType;
 import dev.tamboui.widgets.block.Borders;
 import dev.tamboui.widgets.block.Title;
 
-import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.hint;
-import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.hintLast;
+import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.hint;
+import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.hintLast;
 
 class HelpOverlay {
 

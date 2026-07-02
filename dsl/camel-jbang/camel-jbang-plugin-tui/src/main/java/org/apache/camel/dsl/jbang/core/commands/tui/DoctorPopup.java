@@ -41,7 +41,7 @@ import org.apache.camel.dsl.jbang.core.common.VersionHelper;
 import org.apache.camel.tooling.maven.MavenDownloaderImpl;
 import org.apache.camel.tooling.maven.MavenResolutionException;
 
-import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.hintLast;
+import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.hintLast;
 
 class DoctorPopup {
 

@@ -36,6 +36,8 @@ import dev.tamboui.text.Line;
 import dev.tamboui.text.Span;
 import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
+import dev.tamboui.tui.event.MouseEvent;
+import dev.tamboui.tui.event.MouseEventKind;
 import dev.tamboui.widgets.barchart.Bar;
 import dev.tamboui.widgets.barchart.BarChart;
 import dev.tamboui.widgets.barchart.BarGroup;
@@ -57,7 +59,6 @@ import org.apache.camel.dsl.jbang.core.commands.LlmClient;
  */
 class AiPanel {
 
-    private static final int[] SPLIT_PERCENTS = { 25, 50, 75, 100 };
     private static final int MAX_ITERATIONS = 10;
     private static final int MAX_LOG_ENTRIES = 200;
     private static final DateTimeFormatter TIME_FMT
@@ -75,7 +76,7 @@ class AiPanel {
     }
 
     private boolean visible;
-    private int splitIndex = 1; // default 50%
+    private final PanelAnimation anim = new PanelAnimation();
     private MonitorContext ctx;
 
     // Input state
@@ -99,6 +100,8 @@ class AiPanel {
 
     // Activity log for AI Log popup
     private final List<LogEntry> activityLog = new ArrayList<>();
+    private static final int MOUSE_SCROLL_LINES = 3;
+    private Rect lastArea;
 
     // AI usage stats
     private final List<AiUsageEntry> usageHistory = new ArrayList<>();
@@ -135,8 +138,20 @@ class AiPanel {
         return visible;
     }
 
-    int panelPercent() {
-        return SPLIT_PERCENTS[splitIndex];
+    int panelHeight() {
+        return anim.panelHeight();
+    }
+
+    boolean isAnimating() {
+        return anim.isAnimating();
+    }
+
+    void tickAnimation() {
+        anim.tickAnimation();
+    }
+
+    void initHeight(int contentHeight) {
+        anim.initHeight(contentHeight);
     }
 
     private long lastResponseElapsed() {
@@ -155,8 +170,12 @@ class AiPanel {
         return "assistant".equals(last.role()) ? last.totalTokens() : 0;
     }
 
-    void cycleHeight() {
-        splitIndex = (splitIndex + 1) % SPLIT_PERCENTS.length;
+    void cycleHeight(int contentHeight) {
+        anim.cycleHeight(contentHeight);
+    }
+
+    void setPanelHeight(int height) {
+        anim.setPanelHeight(height);
     }
 
     void open() {
@@ -199,6 +218,24 @@ class AiPanel {
             initError = "Failed to initialize AI: " + e.getMessage();
             client = null;
         }
+    }
+
+    boolean handleMouseEvent(MouseEvent me) {
+        if (!visible || lastArea == null) {
+            return false;
+        }
+        if (!TuiHelper.contains(lastArea, me.x(), me.y())) {
+            return false;
+        }
+        if (me.kind() == MouseEventKind.SCROLL_UP) {
+            scrollOffset += MOUSE_SCROLL_LINES;
+            return true;
+        }
+        if (me.kind() == MouseEventKind.SCROLL_DOWN) {
+            scrollOffset = Math.max(0, scrollOffset - MOUSE_SCROLL_LINES);
+            return true;
+        }
+        return false;
     }
 
     boolean handleKeyEvent(KeyEvent ke) {
@@ -407,13 +444,14 @@ class AiPanel {
     }
 
     void render(Frame frame, Rect area) {
+        lastArea = area;
         // At 25% show elapsed and tokens in the title bar to save space
         long titleElapsed = lastResponseElapsed();
         int titleTokens = lastResponseTokens();
         Line titleLine;
         if (statsView) {
             titleLine = Line.from(Span.styled(" AI Usage ", Style.EMPTY.bold()));
-        } else if (splitIndex == 0 && titleElapsed >= 0) {
+        } else if (anim.cyclePercent() == 25 && titleElapsed >= 0) {
             String tokenSuffix = titleTokens > 0 ? ", " + LlmClient.formatTokens(titleTokens) + " tokens" : "";
             titleLine = Line.from(
                     Span.styled(" AI ", Style.EMPTY.bold()),
@@ -509,7 +547,7 @@ class AiPanel {
         // Reserve 1 row for dimmed elapsed time (skip at 25% — shown in title bar instead)
         Rect mdArea = area;
         Rect elapsedArea = null;
-        if (lastElapsed >= 0 && splitIndex > 0 && area.height() > 2) {
+        if (lastElapsed >= 0 && anim.cyclePercent() > 25 && area.height() > 2) {
             List<Rect> vParts = Layout.vertical()
                     .constraints(Constraint.fill(), Constraint.length(1))
                     .split(area);
@@ -604,19 +642,19 @@ class AiPanel {
     }
 
     void renderFooter(List<Span> spans) {
-        MonitorContext.hint(spans, "F8", "close");
+        TuiHelper.hint(spans, "F8", "close");
         if (statsView) {
-            MonitorContext.hint(spans, "Ctrl+U", "chat");
+            TuiHelper.hint(spans, "Ctrl+U", "chat");
         } else {
-            MonitorContext.hint(spans, "Ctrl+U", "usage");
+            TuiHelper.hint(spans, "Ctrl+U", "usage");
         }
-        MonitorContext.hint(spans, "Shift+F8", "resize (" + SPLIT_PERCENTS[splitIndex] + "%)");
-        MonitorContext.hint(spans, "PgUp/Dn", "scroll");
+        TuiHelper.hint(spans, "Shift+F8", "resize (" + anim.cyclePercent() + "%)");
+        TuiHelper.hint(spans, "PgUp/Dn", "scroll");
         if (!statsView) {
             if (!thinking.get()) {
-                MonitorContext.hint(spans, "Enter", "send");
+                TuiHelper.hint(spans, "Enter", "send");
             } else {
-                MonitorContext.hint(spans, "Ctrl+C", "cancel");
+                TuiHelper.hint(spans, "Ctrl+C", "cancel");
             }
         }
     }

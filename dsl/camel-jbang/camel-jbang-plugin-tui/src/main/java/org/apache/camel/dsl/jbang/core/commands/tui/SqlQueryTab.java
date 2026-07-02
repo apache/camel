@@ -32,15 +32,18 @@ import dev.tamboui.text.Span;
 import dev.tamboui.text.Text;
 import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
+import dev.tamboui.tui.event.MouseEvent;
 import dev.tamboui.widgets.Clear;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
+import dev.tamboui.widgets.block.Borders;
 import dev.tamboui.widgets.block.Title;
 import dev.tamboui.widgets.input.TextArea;
 import dev.tamboui.widgets.input.TextAreaState;
 import dev.tamboui.widgets.input.TextInput;
 import dev.tamboui.widgets.input.TextInputState;
 import dev.tamboui.widgets.paragraph.Paragraph;
+import dev.tamboui.widgets.scrollbar.ScrollbarState;
 import dev.tamboui.widgets.table.Cell;
 import dev.tamboui.widgets.table.Row;
 import dev.tamboui.widgets.table.Table;
@@ -49,13 +52,13 @@ import org.apache.camel.dsl.jbang.core.common.PathUtils;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 
-import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.*;
+import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.*;
 
-class SqlQueryTab implements MonitorTab {
+class SqlQueryTab extends AbstractTab {
 
-    private final MonitorContext ctx;
     private final TextAreaState sqlInput = new TextAreaState();
     private final TableState tableState = new TableState();
+    private final ScrollbarState tableScrollState = new ScrollbarState();
     private final AtomicBoolean executing = new AtomicBoolean();
     private final InputHistory sqlHistory = new InputHistory();
 
@@ -91,8 +94,12 @@ class SqlQueryTab implements MonitorTab {
     private String lastSql;
     private String lastDsName;
 
+    private Rect lastTableArea;
+    private int inputPanelHeight = -1;
+    private final DragSplit vSplit = new DragSplit();
+
     SqlQueryTab(MonitorContext ctx) {
-        this.ctx = ctx;
+        super(ctx);
     }
 
     boolean isInputActive() {
@@ -336,16 +343,18 @@ class SqlQueryTab implements MonitorTab {
             return;
         }
 
-        // layout: datasource bar (1 line) + SQL input (5 lines) + results (rest)
-        int inputH = 5;
         int dsBarH = dsNames.size() > 1 ? 1 : 0;
-        int topH = dsBarH + inputH;
+        if (inputPanelHeight < 0) {
+            inputPanelHeight = dsBarH + 5;
+        }
+        inputPanelHeight = Math.max(3, Math.min(inputPanelHeight, area.height() - 5));
 
         List<Rect> parts = Layout.vertical()
-                .constraints(Constraint.length(topH), Constraint.min(3))
+                .constraints(Constraint.length(inputPanelHeight), Constraint.fill())
                 .split(area);
 
         renderInputArea(frame, parts.get(0), dsBarH);
+        vSplit.setBorderPos(parts.get(1).y());
         renderResults(frame, parts.get(1));
 
         sqlHistory.renderPopup(frame, area, "Query History");
@@ -393,6 +402,7 @@ class SqlQueryTab implements MonitorTab {
         Style borderStyle = focusOnInput ? Style.EMPTY.fg(Color.CYAN) : Style.EMPTY.fg(Color.DARK_GRAY);
         Block inputBlock = Block.builder()
                 .title(Title.from(title))
+                .borders(Borders.ALL)
                 .borderType(BorderType.ROUNDED)
                 .borderStyle(borderStyle)
                 .build();
@@ -414,6 +424,7 @@ class SqlQueryTab implements MonitorTab {
         if (errorMessage != null) {
             Block errBlock = Block.builder()
                     .title(Title.from(" Error "))
+                    .borders(Borders.ALL)
                     .borderType(BorderType.ROUNDED)
                     .borderStyle(Style.EMPTY.fg(Color.RED))
                     .build();
@@ -429,6 +440,7 @@ class SqlQueryTab implements MonitorTab {
         if (updateCount != null) {
             Block ucBlock = Block.builder()
                     .title(Title.from(" Result "))
+                    .borders(Borders.ALL)
                     .borderType(BorderType.ROUNDED)
                     .borderStyle(Style.EMPTY.fg(Color.GREEN))
                     .build();
@@ -445,6 +457,7 @@ class SqlQueryTab implements MonitorTab {
         if (columnNames == null || resultRows == null) {
             Block emptyBlock = Block.builder()
                     .title(Title.from(" Results "))
+                    .borders(Borders.ALL)
                     .borderType(BorderType.ROUNDED)
                     .borderStyle(Style.EMPTY.fg(Color.DARK_GRAY))
                     .build();
@@ -467,6 +480,7 @@ class SqlQueryTab implements MonitorTab {
         Style tableBorderStyle = !focusOnInput ? Style.EMPTY.fg(Color.CYAN) : Style.EMPTY.fg(Color.DARK_GRAY);
         Block tableBlock = Block.builder()
                 .title(Title.from(resultTitle))
+                .borders(Borders.ALL)
                 .borderType(BorderType.ROUNDED)
                 .borderStyle(tableBorderStyle)
                 .build();
@@ -500,7 +514,26 @@ class SqlQueryTab implements MonitorTab {
                 .block(tableBlock)
                 .highlightStyle(Style.EMPTY.bg(Color.DARK_GRAY))
                 .build();
+        lastTableArea = area;
         frame.renderStatefulWidget(table, area, tableState);
+        renderTableScrollbar(frame, lastTableArea, tableState, tableScrollState, resultRows.size());
+    }
+
+    @Override
+    public boolean handleMouseEvent(MouseEvent me, Rect area) {
+        if (vSplit.handleMouse(me, me.y())) {
+            if (vSplit.isDragging()) {
+                inputPanelHeight = Math.max(3, Math.min(me.y() - area.y(), area.height() - 5));
+            }
+            return true;
+        }
+        if (resultRows != null && !resultRows.isEmpty()) {
+            if (handleTableClick(me, lastTableArea, tableState, resultRows.size())) {
+                focusOnInput = false;
+                return true;
+            }
+        }
+        return false;
     }
 
     private Cell[] buildHeaderCells() {

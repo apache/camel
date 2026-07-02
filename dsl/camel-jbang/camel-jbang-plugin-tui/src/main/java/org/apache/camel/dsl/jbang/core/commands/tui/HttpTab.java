@@ -43,6 +43,8 @@ import dev.tamboui.text.Span;
 import dev.tamboui.text.Text;
 import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
+import dev.tamboui.tui.event.MouseEvent;
+import dev.tamboui.tui.event.MouseEventKind;
 import dev.tamboui.widgets.Clear;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
@@ -54,17 +56,16 @@ import dev.tamboui.widgets.paragraph.Paragraph;
 import dev.tamboui.widgets.table.Cell;
 import dev.tamboui.widgets.table.Row;
 import dev.tamboui.widgets.table.Table;
-import dev.tamboui.widgets.table.TableState;
 import org.apache.camel.dsl.jbang.core.common.CamelCommandHelper;
 import org.apache.camel.dsl.jbang.core.common.PathUtils;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 
-import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.*;
+import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.*;
 
-class HttpTab implements MonitorTab {
+class HttpTab extends AbstractTableTab {
 
-    private static final String[] SORT_COLUMNS = { "method", "path", "total", "consumes", "produces", "source" };
+    private static final int MOUSE_SCROLL_LINES = 3;
     private static final Set<String> OPENAPI_HTTP_VERBS
             = Set.of("get", "post", "put", "delete", "patch", "options", "head", "trace");
 
@@ -78,13 +79,8 @@ class HttpTab implements MonitorTab {
     private static final String[] PROBE_METHODS = { "GET", "POST", "PUT", "DELETE", "PATCH", "HEAD", "OPTIONS" };
     private static final int MAX_PROBE_HISTORY = 20;
 
-    private final MonitorContext ctx;
-    private final TableState tableState = new TableState();
     private final AtomicBoolean specLoading = new AtomicBoolean(false);
 
-    private String sort = "method";
-    private int sortIndex;
-    private boolean sortReversed;
     private int filter;
     private boolean showManagement;
 
@@ -116,8 +112,16 @@ class HttpTab implements MonitorTab {
     private String probeResponseRawBody;
     private List<String> probeResponseHeaderLines;
 
+    private int detailPanelHeight = 10;
+    private final DragSplit vSplit = new DragSplit();
+
     HttpTab(MonitorContext ctx) {
-        this.ctx = ctx;
+        super(ctx, "method", "path", "total", "consumes", "produces", "source");
+    }
+
+    @Override
+    protected int getRowCount() {
+        return sortedVisibleEndpoints(ctx.findSelectedIntegration()).size();
     }
 
     boolean isProbeMode() {
@@ -151,18 +155,13 @@ class HttpTab implements MonitorTab {
             return true;
         }
 
+        return super.handleKeyEvent(ke);
+    }
+
+    @Override
+    protected boolean handleTabKeyEvent(KeyEvent ke) {
         if (ke.isConfirm()) {
             enterProbeModeFromTable();
-            return true;
-        }
-        if (ke.isChar('s')) {
-            sortIndex = (sortIndex + 1) % SORT_COLUMNS.length;
-            sort = SORT_COLUMNS[sortIndex];
-            sortReversed = false;
-            return true;
-        }
-        if (ke.isChar('S')) {
-            sortReversed = !sortReversed;
             return true;
         }
         if (ke.isCharIgnoreCase('f')) {
@@ -176,6 +175,43 @@ class HttpTab implements MonitorTab {
         if (ke.isChar('c')) {
             loadSpecForSelectedEndpoint();
             return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean handleMouseEvent(MouseEvent me, Rect area) {
+        if (!probeMode && !showSpec && vSplit.handleMouse(me, me.y())) {
+            if (vSplit.isDragging() && me.kind() == MouseEventKind.DRAG) {
+                detailPanelHeight = Math.max(3, Math.min(area.y() + area.height() - me.y(), area.height() - 5));
+            }
+            return true;
+        }
+        if (!probeMode && !showSpec) {
+            List<HttpEndpointInfo> visible = sortedVisibleEndpoints(ctx.findSelectedIntegration());
+            if (handleTableClick(me, lastTableArea, tableState, visible.size())) {
+                return true;
+            }
+        }
+        if (showSpec) {
+            if (me.kind() == MouseEventKind.SCROLL_UP) {
+                specScroll = Math.max(0, specScroll - MOUSE_SCROLL_LINES);
+                return true;
+            }
+            if (me.kind() == MouseEventKind.SCROLL_DOWN) {
+                specScroll += MOUSE_SCROLL_LINES;
+                return true;
+            }
+        }
+        if (probeMode) {
+            if (me.kind() == MouseEventKind.SCROLL_UP) {
+                probeResponseScroll = Math.max(0, probeResponseScroll - MOUSE_SCROLL_LINES);
+                return true;
+            }
+            if (me.kind() == MouseEventKind.SCROLL_DOWN) {
+                probeResponseScroll += MOUSE_SCROLL_LINES;
+                return true;
+            }
         }
         return false;
     }
@@ -226,13 +262,7 @@ class HttpTab implements MonitorTab {
     }
 
     @Override
-    public void render(Frame frame, Rect area) {
-        IntegrationInfo info = ctx.findSelectedIntegration();
-        if (info == null) {
-            renderNoSelection(frame, area);
-            return;
-        }
-
+    protected void renderContent(Frame frame, Rect area, IntegrationInfo info) {
         if (probeMode) {
             renderProbe(frame, area);
             return;
@@ -245,12 +275,14 @@ class HttpTab implements MonitorTab {
 
         List<HttpEndpointInfo> visible = sortedVisibleEndpoints(info);
 
+        detailPanelHeight = Math.max(3, Math.min(detailPanelHeight, area.height() - 5));
         List<Rect> chunks = Layout.vertical()
-                .constraints(Constraint.length(1), Constraint.fill(), Constraint.length(10))
+                .constraints(Constraint.length(1), Constraint.fill(), Constraint.length(detailPanelHeight))
                 .split(area);
 
         renderServerInfo(frame, chunks.get(0), info, visible);
         renderTable(frame, chunks.get(1), visible);
+        vSplit.setBorderPos(chunks.get(2).y());
         renderDetail(frame, chunks.get(2), visible);
     }
 
@@ -1276,12 +1308,14 @@ class HttpTab implements MonitorTab {
                         Constraint.length(30),
                         Constraint.length(15),
                         Constraint.length(8))
-                .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
+                .highlightStyle(Theme.selectionBg())
                 .highlightSpacing(Table.HighlightSpacing.ALWAYS)
                 .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(title).build())
                 .build();
 
+        lastTableArea = area;
         frame.renderStatefulWidget(table, area, tableState);
+        renderScrollbar(frame, visible.size());
     }
 
     private void renderDetail(Frame frame, Rect area, List<HttpEndpointInfo> visible) {
@@ -1527,14 +1561,6 @@ class HttpTab implements MonitorTab {
                         .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(title).build())
                         .build(),
                 area);
-    }
-
-    private String sortLabel(String label, String column) {
-        return MonitorContext.sortLabel(label, column, sort, sortReversed);
-    }
-
-    private Style sortStyle(String column) {
-        return MonitorContext.sortStyle(column, sort);
     }
 
     @Override

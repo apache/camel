@@ -19,7 +19,6 @@ package org.apache.camel.dsl.jbang.core.commands.tui;
 import java.time.Duration;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
@@ -34,8 +33,6 @@ class MetricsCollector {
     static final int MAX_ENDPOINT_CHART_POINTS = 300;
     static final int MAX_HEAP_HISTORY_POINTS = 120;
     static final long HEAP_SAMPLE_INTERVAL_MS = 5000;
-    // Throughput values are stored scaled by this factor so sub-1.0 msg/s rates are preserved as longs
-    static final long THROUGHPUT_SCALE = 100;
 
     // Throughput history per PID (one point per second)
     private final Map<String, LinkedList<Long>> throughputHistory = new ConcurrentHashMap<>();
@@ -167,28 +164,15 @@ class MetricsCollector {
             samples.remove(0);
         }
 
-        // Use the EWMA throughput from the status JSON (already smoothed in camel-core)
-        // and store scaled by 100 so sub-1.0 rates (e.g. 0.20 msg/s) are preserved as integers
-        long tp = 0;
-        if (info.throughput != null) {
-            try {
-                tp = Math.round(Double.parseDouble(info.throughput) * THROUGHPUT_SCALE);
-            } catch (NumberFormatException e) {
-                // ignore
-            }
-        }
-
-        // Failed throughput still computed from delta (no EWMA source for failed-only)
-        long fp = 0;
         if (samples.size() >= 2) {
             long[] oldest = samples.get(0);
             long[] newest = samples.get(samples.size() - 1);
+            long deltaTotal = newest[1] - oldest[1];
             long deltaFailed = newest[2] - oldest[2];
             long deltaTimeMs = newest[0] - oldest[0];
-            fp = deltaTimeMs > 0 ? (deltaFailed * 1000 * THROUGHPUT_SCALE) / deltaTimeMs : 0;
-        }
+            long tp = deltaTimeMs > 0 ? (deltaTotal * 1000) / deltaTimeMs : 0;
+            long fp = deltaTimeMs > 0 ? (deltaFailed * 1000) / deltaTimeMs : 0;
 
-        {
             Long lastTime = previousExchangesTime.get(pid);
             if (lastTime == null || now - lastTime >= 1000) {
                 previousExchangesTime.put(pid, now);
@@ -278,8 +262,8 @@ class MetricsCollector {
             long[] oldest = samples.get(0);
             long[] newest = samples.get(samples.size() - 1);
             long deltaMs = newest[0] - oldest[0];
-            long inRate = deltaMs > 0 ? (newest[1] - oldest[1]) * 1000 * THROUGHPUT_SCALE / deltaMs : 0;
-            long outRate = deltaMs > 0 ? (newest[2] - oldest[2]) * 1000 * THROUGHPUT_SCALE / deltaMs : 0;
+            long inRate = deltaMs > 0 ? (newest[1] - oldest[1]) * 1000 / deltaMs : 0;
+            long outRate = deltaMs > 0 ? (newest[2] - oldest[2]) * 1000 / deltaMs : 0;
             Long lastTime = prevTimeMap.get(pid);
             if (lastTime == null || now - lastTime >= 1000) {
                 prevTimeMap.put(pid, now);
@@ -417,38 +401,6 @@ class MetricsCollector {
     private void removeByPrefix(String prefix, Map<String, ?>... maps) {
         for (Map<String, ?> map : maps) {
             map.keySet().removeIf(k -> k.startsWith(prefix));
-        }
-    }
-
-    // --- Shared throughput formatting utilities ---
-
-    static long niceMax(long rawMax) {
-        if (rawMax <= 0) {
-            return THROUGHPUT_SCALE;
-        }
-        int[] steps = { 1, 2, 5 };
-        long multiplier = THROUGHPUT_SCALE;
-        while (true) {
-            for (int s : steps) {
-                long candidate = s * multiplier;
-                if (candidate >= rawMax) {
-                    return candidate;
-                }
-            }
-            multiplier *= 10;
-        }
-    }
-
-    static String formatThroughput(long scaledValue) {
-        double v = scaledValue / (double) THROUGHPUT_SCALE;
-        if (v >= 10) {
-            return String.valueOf(Math.round(v));
-        } else if (v >= 1) {
-            return String.format(Locale.US, "%.1f", v);
-        } else if (scaledValue > 0) {
-            return String.format(Locale.US, "%.2f", v);
-        } else {
-            return "0";
         }
     }
 }

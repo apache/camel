@@ -30,6 +30,8 @@ import dev.tamboui.text.Span;
 import dev.tamboui.text.Text;
 import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
+import dev.tamboui.tui.event.MouseEvent;
+import dev.tamboui.tui.event.MouseEventKind;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
 import dev.tamboui.widgets.block.Borders;
@@ -40,21 +42,21 @@ import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 
-import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.*;
+import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.*;
 
-class ConfigurationTab implements MonitorTab {
+class ConfigurationTab extends AbstractTab {
 
+    private static final int MOUSE_SCROLL_LINES = 3;
     private static final Style KEY_STYLE = Style.EMPTY.fg(Color.CYAN);
     private static final Style VALUE_STYLE = Style.EMPTY.fg(Color.WHITE);
     private static final Style SECRET_STYLE = Style.EMPTY.fg(Color.DARK_GRAY);
     private static final Style SOURCE_STYLE = Style.EMPTY.dim();
 
-    private final MonitorContext ctx;
     private final ScrollbarState scrollbarState = new ScrollbarState();
     private int scrollOffset;
 
     ConfigurationTab(MonitorContext ctx) {
-        this.ctx = ctx;
+        super(ctx);
     }
 
     @Override
@@ -87,7 +89,15 @@ class ConfigurationTab implements MonitorTab {
     }
 
     @Override
-    public boolean handleEscape() {
+    public boolean handleMouseEvent(MouseEvent me, Rect area) {
+        if (me.kind() == MouseEventKind.SCROLL_UP) {
+            scrollOffset = Math.max(0, scrollOffset - MOUSE_SCROLL_LINES);
+            return true;
+        }
+        if (me.kind() == MouseEventKind.SCROLL_DOWN) {
+            scrollOffset += MOUSE_SCROLL_LINES;
+            return true;
+        }
         return false;
     }
 

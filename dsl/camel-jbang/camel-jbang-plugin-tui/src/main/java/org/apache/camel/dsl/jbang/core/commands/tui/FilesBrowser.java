@@ -247,7 +247,7 @@ class FilesBrowser {
 
         ListWidget list = ListWidget.builder()
                 .items(items)
-                .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
+                .highlightStyle(Theme.selectionBg())
                 .highlightSymbol("")
                 .scrollMode(ScrollMode.NONE)
                 .block(Block.builder()
@@ -263,9 +263,9 @@ class FilesBrowser {
         if (sourceViewer.isVisible()) {
             sourceViewer.renderFooter(spans);
         } else {
-            MonitorContext.hint(spans, "↑↓", "navigate");
-            MonitorContext.hint(spans, "Enter", "open");
-            MonitorContext.hint(spans, "Esc", "close");
+            TuiHelper.hint(spans, "↑↓", "navigate");
+            TuiHelper.hint(spans, "Enter", "open");
+            TuiHelper.hint(spans, "Esc", "close");
         }
     }
 
@@ -312,7 +312,7 @@ class FilesBrowser {
 
     static String fileType(Path path) {
         String name = path.getFileName().toString();
-        String lower = name.toLowerCase(Locale.US);
+        String lower = name.toLowerCase(Locale.ROOT);
         if (lower.endsWith(".kamelet.yaml") || lower.endsWith(".kamelet.yml")) {
             return "camel";
         }
@@ -336,7 +336,7 @@ class FilesBrowser {
 
     private static String fileEmoji(Path path) {
         String name = path.getFileName().toString();
-        String lower = name.toLowerCase(Locale.US);
+        String lower = name.toLowerCase(Locale.ROOT);
         if (lower.endsWith(".kamelet.yaml") || lower.endsWith(".kamelet.yml")) {
             return "🐪";
         }

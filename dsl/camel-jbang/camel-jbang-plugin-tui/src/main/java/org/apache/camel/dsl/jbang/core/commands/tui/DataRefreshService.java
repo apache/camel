@@ -575,7 +575,7 @@ class DataRefreshService {
             PathUtils.writeTextSafely(action.toJson(), actionFile);
 
             // Poll for response
-            JsonObject response = MonitorContext.pollJsonResponse(outputFile, 3000);
+            JsonObject response = TuiHelper.pollJsonResponse(outputFile, 3000);
             if (response != null) {
                 Boolean enabled = response.getBoolean("enabled");
                 if (enabled != null && enabled) {

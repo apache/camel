@@ -41,8 +41,8 @@ import dev.tamboui.widgets.list.ScrollMode;
 import dev.tamboui.widgets.paragraph.Paragraph;
 import org.apache.camel.util.json.Jsoner;
 
-import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.hint;
-import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.hintLast;
+import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.hint;
+import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.hintLast;
 
 class McpLogPopup {
 
@@ -167,7 +167,7 @@ class McpLogPopup {
         masterState.select(selected);
         ListWidget list = ListWidget.builder()
                 .items(items.toArray(ListItem[]::new))
-                .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
+                .highlightStyle(Theme.selectionBg())
                 .highlightSymbol("▸ ")
                 .scrollMode(ScrollMode.AUTO_SCROLL)
                 .block(Block.builder()

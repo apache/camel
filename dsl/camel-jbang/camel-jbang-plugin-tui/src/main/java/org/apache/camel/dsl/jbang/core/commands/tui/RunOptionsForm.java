@@ -34,8 +34,8 @@ import dev.tamboui.widgets.input.TextInput;
 import dev.tamboui.widgets.input.TextInputState;
 import dev.tamboui.widgets.paragraph.Paragraph;
 
-import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.hint;
-import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.hintLast;
+import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.hint;
+import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.hintLast;
 
 class RunOptionsForm {
 

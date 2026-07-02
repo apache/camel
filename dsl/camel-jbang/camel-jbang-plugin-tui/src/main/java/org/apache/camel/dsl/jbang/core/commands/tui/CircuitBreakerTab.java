@@ -30,7 +30,6 @@ import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.Line;
 import dev.tamboui.text.Span;
 import dev.tamboui.text.Text;
-import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
 import dev.tamboui.widgets.block.Borders;
@@ -40,30 +39,28 @@ import dev.tamboui.widgets.sparkline.DualSparkline;
 import dev.tamboui.widgets.table.Cell;
 import dev.tamboui.widgets.table.Row;
 import dev.tamboui.widgets.table.Table;
-import dev.tamboui.widgets.table.TableState;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 
-import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.*;
+import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.*;
 
-class CircuitBreakerTab implements MonitorTab {
+class CircuitBreakerTab extends AbstractTableTab {
 
-    private static final String[] SORT_COLUMNS = { "route", "id", "component", "state" };
     private static final int MAX_CHART_POINTS = 300;
 
-    private final MonitorContext ctx;
-    private final TableState tableState = new TableState();
     private final Map<String, LinkedList<Long>> cbSuccessHistory;
     private final Map<String, LinkedList<Long>> cbFailHistory;
 
-    private String sort = "route";
-    private int sortIndex;
-    private boolean sortReversed;
-
     CircuitBreakerTab(MonitorContext ctx, MetricsCollector metrics) {
-        this.ctx = ctx;
+        super(ctx, "route", "id", "component", "state");
         this.cbSuccessHistory = metrics.getCbSuccessHistory();
         this.cbFailHistory = metrics.getCbFailHistory();
+    }
+
+    @Override
+    protected int getRowCount() {
+        IntegrationInfo info = ctx.findSelectedIntegration();
+        return info != null ? info.circuitBreakers.size() : 0;
     }
 
     @Override
@@ -75,44 +72,7 @@ class CircuitBreakerTab implements MonitorTab {
     }
 
     @Override
-    public boolean handleKeyEvent(KeyEvent ke) {
-        if (ke.isChar('s')) {
-            sortIndex = (sortIndex + 1) % SORT_COLUMNS.length;
-            sort = SORT_COLUMNS[sortIndex];
-            sortReversed = false;
-            return true;
-        }
-        if (ke.isChar('S')) {
-            sortReversed = !sortReversed;
-            return true;
-        }
-        return false;
-    }
-
-    @Override
-    public boolean handleEscape() {
-        return false;
-    }
-
-    @Override
-    public void navigateUp() {
-        tableState.selectPrevious();
-    }
-
-    @Override
-    public void navigateDown() {
-        IntegrationInfo info = ctx.findSelectedIntegration();
-        tableState.selectNext(info != null ? info.circuitBreakers.size() : 0);
-    }
-
-    @Override
-    public void render(Frame frame, Rect area) {
-        IntegrationInfo info = ctx.findSelectedIntegration();
-        if (info == null) {
-            renderNoSelection(frame, area);
-            return;
-        }
-
+    protected void renderContent(Frame frame, Rect area, IntegrationInfo info) {
         List<CircuitBreakerInfo> sorted = new ArrayList<>(info.circuitBreakers);
         sorted.sort(this::sortCb);
 
@@ -147,11 +107,7 @@ class CircuitBreakerTab implements MonitorTab {
         }
 
         if (rows.isEmpty()) {
-            rows.add(Row.from(
-                    Cell.from(Span.styled("No circuit breakers", Style.EMPTY.dim())),
-                    Cell.from(""), Cell.from(""), Cell.from(""),
-                    Cell.from(""), Cell.from(""), Cell.from(""), Cell.from(""), Cell.from(""),
-                    Cell.from(""), Cell.from("")));
+            rows.add(emptyRow("No circuit breakers", 11));
         }
 
         CircuitBreakerInfo selectedCb = null;
@@ -192,12 +148,14 @@ class CircuitBreakerTab implements MonitorTab {
                         Constraint.length(6),
                         Constraint.length(8),
                         Constraint.fill())
-                .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
+                .highlightStyle(Theme.selectionBg())
                 .highlightSpacing(Table.HighlightSpacing.ALWAYS)
                 .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(" Circuit Breaker ").build())
                 .build();
 
+        lastTableArea = chunks.get(0);
         frame.renderStatefulWidget(table, chunks.get(0), tableState);
+        renderScrollbar(frame, info.circuitBreakers.size());
 
         if (showDiagram) {
             renderDiagram(frame, chunks.get(1), selectedCb, info.pid);
@@ -209,14 +167,6 @@ class CircuitBreakerTab implements MonitorTab {
         hint(spans, "Esc", "back");
         hint(spans, "↑↓", "navigate");
         hint(spans, "s", "sort");
-    }
-
-    private String sortLabel(String label, String column) {
-        return MonitorContext.sortLabel(label, column, sort, sortReversed);
-    }
-
-    private Style sortStyle(String column) {
-        return MonitorContext.sortStyle(column, sort);
     }
 
     private int sortCb(CircuitBreakerInfo a, CircuitBreakerInfo b) {

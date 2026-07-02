@@ -48,6 +48,7 @@ import dev.tamboui.tui.event.Event;
 import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.tui.event.MouseEvent;
+import dev.tamboui.tui.event.MouseEventKind;
 import dev.tamboui.tui.event.PasteEvent;
 import dev.tamboui.tui.event.TickEvent;
 import dev.tamboui.widgets.paragraph.Paragraph;
@@ -63,8 +64,9 @@ import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import sun.misc.Signal;
 
-import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.*;
 import static org.apache.camel.dsl.jbang.core.commands.tui.TabRegistry.*;
+import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.*;
+import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.hint;
 
 @Command(name = "monitor",
          description = "Live dashboard for monitoring Camel integrations",
@@ -130,6 +132,14 @@ public class CamelMonitor extends CamelCommand {
 
     private final FilesBrowser filesBrowser = new FilesBrowser();
     private PopupManager popupManager;
+
+    // Mouse support: last rendered areas for hit-testing
+    private Rect lastTabsArea;
+    private Rect lastContentArea;
+    private Line[] lastTabLabels;
+    private String lastTabDivider;
+    // Panel resize drag state
+    private final DragSplit panelSplit = new DragSplit();
 
     private final ClassLoader classLoader;
 
@@ -460,14 +470,18 @@ public class CamelMonitor extends CamelCommand {
             if (shellPanel.isOpen()) {
                 // Shift+F6 cycles shell height — handle before delegating to shell
                 if (ke.isKey(KeyCode.F6) && ke.hasShift()) {
-                    shellPanel.cycleHeight();
+                    if (lastContentArea != null) {
+                        shellPanel.cycleHeight(lastContentArea.height());
+                    }
                     return true;
                 }
                 return shellPanel.handleKeyEvent(ke);
             }
             if (aiPanel.isOpen()) {
                 if (ke.isKey(KeyCode.F8) && ke.hasShift()) {
-                    aiPanel.cycleHeight();
+                    if (lastContentArea != null) {
+                        aiPanel.cycleHeight(lastContentArea.height());
+                    }
                     return true;
                 }
                 return aiPanel.handleKeyEvent(ke);
@@ -487,6 +501,12 @@ public class CamelMonitor extends CamelCommand {
         }
         if (event instanceof MouseEvent me) {
             if (shellPanel.isOpen() && shellPanel.handleMouseEvent(me)) {
+                return true;
+            }
+            if (aiPanel.isOpen() && aiPanel.handleMouseEvent(me)) {
+                return true;
+            }
+            if (handleMouseEvent(me)) {
                 return true;
             }
         }
@@ -574,7 +594,11 @@ public class CamelMonitor extends CamelCommand {
                 int prev = tabRegistry.selectedTabIndex() == TAB_OVERVIEW ? TAB_LOG : TAB_OVERVIEW;
                 tabsState.select(prev);
             } else {
+                // Skip TAB_MORE when cycling – it is a popup trigger, not a renderable tab
                 int prev = (tabRegistry.selectedTabIndex() - 1 + NUM_TABS) % NUM_TABS;
+                if (prev == TAB_MORE) {
+                    prev = (prev - 1 + NUM_TABS) % NUM_TABS;
+                }
                 if (prev != TAB_OVERVIEW) {
                     tabRegistry.overviewTab().selectCurrentIntegration();
                 }
@@ -587,7 +611,11 @@ public class CamelMonitor extends CamelCommand {
                 int next = tabRegistry.selectedTabIndex() == TAB_OVERVIEW ? TAB_LOG : TAB_OVERVIEW;
                 tabsState.select(next);
             } else {
+                // Skip TAB_MORE when cycling – it is a popup trigger, not a renderable tab
                 int next = (tabRegistry.selectedTabIndex() + 1) % NUM_TABS;
+                if (next == TAB_MORE) {
+                    next = (next + 1) % NUM_TABS;
+                }
                 if (next != TAB_OVERVIEW) {
                     tabRegistry.overviewTab().selectCurrentIntegration();
                 }
@@ -724,6 +752,94 @@ public class CamelMonitor extends CamelCommand {
         return false;
     }
 
+    private boolean handleMouseEvent(MouseEvent me) {
+        // Panel border drag resize: detect press on the border row, then track drag
+        if (lastContentArea != null && (shellPanel.isOpen() || aiPanel.isOpen())
+                && panelSplit.handleMouse(me, me.y())) {
+            if (panelSplit.isDragging() && me.kind() == MouseEventKind.DRAG) {
+                int contentHeight = lastContentArea.height();
+                if (contentHeight > 0) {
+                    int newHeight = lastContentArea.y() + contentHeight - me.y();
+                    newHeight = Math.max(3, Math.min(contentHeight - 3, newHeight));
+                    if (shellPanel.isOpen()) {
+                        shellPanel.setPanelHeight(newHeight);
+                    } else {
+                        aiPanel.setPanelHeight(newHeight);
+                    }
+                }
+            }
+            return true;
+        }
+
+        // Tab bar clicks: detect which tab was clicked and switch to it
+        if (me.isClick() && lastTabsArea != null && lastTabLabels != null) {
+            int tabsY = lastTabsArea.height() >= 2 ? lastTabsArea.y() + 1 : lastTabsArea.y();
+            if (me.y() == tabsY && TuiHelper.contains(lastTabsArea, me.x(), me.y())) {
+                int clickedTab = findClickedTab(me.x() - lastTabsArea.x());
+                if (clickedTab >= 0) {
+                    if (isInfraSelected()) {
+                        // Infra mode: map 0→Overview, 1→Log
+                        int realTab = clickedTab == 1 ? TAB_LOG : TAB_OVERVIEW;
+                        tabsState.select(realTab);
+                    } else {
+                        tabRegistry.handleTabKey(clickedTab, ctx, dataService);
+                    }
+                    return true;
+                }
+            }
+        }
+
+        // Mouse events in the content area: delegate to the active tab
+        if (TuiHelper.contains(lastContentArea, me.x(), me.y())) {
+            if (popupManager.isMorePopupVisible() || popupManager.isSwitchPopupVisible()) {
+                return popupManager.handleMouseEvent(me, tabRegistry.selectedTabIndex(), TAB_LOG);
+            }
+            if (filesBrowser.isVisible() || actionsPopup.isVisible()) {
+                return false;
+            }
+            MonitorTab activeTab = tabRegistry.activeTab();
+            if (activeTab != null && activeTab.handleMouseEvent(me, lastContentArea)) {
+                return true;
+            }
+            if (me.kind() == MouseEventKind.SCROLL_UP) {
+                tabRegistry.navigateUp();
+                return true;
+            }
+            if (me.kind() == MouseEventKind.SCROLL_DOWN) {
+                tabRegistry.navigateDown();
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Given a click x-offset within the tab bar, determine which tab index was clicked. Returns -1 if the click falls
+     * on a divider or outside tab labels.
+     */
+    private int findClickedTab(int xOffset) {
+        if (lastTabLabels == null || lastTabDivider == null) {
+            return -1;
+        }
+        int dividerW = CharWidth.of(lastTabDivider);
+        int x = 0;
+        for (int i = 0; i < lastTabLabels.length; i++) {
+            if (i > 0) {
+                // Skip divider region
+                if (xOffset >= x && xOffset < x + dividerW) {
+                    return -1;
+                }
+                x += dividerW;
+            }
+            int tabW = lastTabLabels[i].width();
+            if (xOffset >= x && xOffset < x + tabW) {
+                return i;
+            }
+            x += tabW;
+        }
+        return -1;
+    }
+
     private boolean handlePasteEvent(PasteEvent pe) {
         if (actionsPopup.isVisible()) {
             actionsPopup.handlePaste(pe.text());
@@ -804,30 +920,40 @@ public class CamelMonitor extends CamelCommand {
 
         renderHeader(frame, mainChunks.get(0));
         renderTabs(frame, mainChunks.get(1));
+        lastTabsArea = mainChunks.get(1);
         Rect contentArea = mainChunks.get(2);
-        ctx.shellPercent = shellPanel.isOpen() ? shellPanel.panelPercent()
-                : aiPanel.isOpen() ? aiPanel.panelPercent() : 0;
+        lastContentArea = contentArea;
+        shellPanel.tickAnimation();
+        aiPanel.tickAnimation();
         if (shellPanel.isOpen()) {
-            if (shellPanel.panelPercent() >= 100) {
-                // At 100% the shell fills the entire content area
+            shellPanel.initHeight(contentArea.height());
+            int ph = shellPanel.panelHeight();
+            ctx.shellPercent = ph * 100 / Math.max(1, contentArea.height());
+            if (ph >= contentArea.height()) {
                 shellPanel.render(frame, contentArea);
+                panelSplit.setBorderPos(contentArea.y());
             } else {
                 List<Rect> splitChunks = Layout.vertical()
-                        .constraints(Constraint.percentage(100 - shellPanel.panelPercent()),
-                                Constraint.percentage(shellPanel.panelPercent()))
+                        .constraints(Constraint.fill(), Constraint.length(ph))
                         .split(contentArea);
                 renderContent(frame, splitChunks.get(0));
                 shellPanel.render(frame, splitChunks.get(1));
+                panelSplit.setBorderPos(splitChunks.get(1).y());
             }
         } else if (aiPanel.isOpen()) {
+            aiPanel.initHeight(contentArea.height());
+            int ph = aiPanel.panelHeight();
+            ctx.shellPercent = ph * 100 / Math.max(1, contentArea.height());
             List<Rect> splitChunks = Layout.vertical()
-                    .constraints(Constraint.percentage(100 - aiPanel.panelPercent()),
-                            Constraint.percentage(aiPanel.panelPercent()))
+                    .constraints(Constraint.fill(), Constraint.length(ph))
                     .split(contentArea);
             renderContent(frame, splitChunks.get(0));
             aiPanel.render(frame, splitChunks.get(1));
+            panelSplit.setBorderPos(splitChunks.get(1).y());
         } else {
+            ctx.shellPercent = 0;
             renderContent(frame, contentArea);
+            panelSplit.clearBorderPos();
         }
         // Overlays render on top of the full content area regardless of shell state
         if (drawOverlay.isVisible()) {
@@ -966,6 +1092,8 @@ public class CamelMonitor extends CamelCommand {
                     ? new Rect(area.x(), area.y() + 1, area.width(), 1)
                     : area;
             frame.renderStatefulWidget(tabs, labelsArea, infraTabsState);
+            lastTabLabels = labels;
+            lastTabDivider = dividerStr;
             return;
         }
 
@@ -995,6 +1123,8 @@ public class CamelMonitor extends CamelCommand {
                         Line.from(" 0 More▾ "),
                 };
         popupManager.setCurrentTabLabels(labels);
+        lastTabLabels = labels;
+        lastTabDivider = dividerStr;
 
         Tabs tabs = Tabs.builder()
                 .titles(labels)
@@ -1036,7 +1166,9 @@ public class CamelMonitor extends CamelCommand {
         // switching tabs if TamboUI's buffer diff does not reset every cell in the region.
         frame.buffer().clear(area);
         MonitorTab tab = tabRegistry.activeTab();
-        tab.render(frame, area);
+        if (tab != null) {
+            tab.render(frame, area);
+        }
         // Render "More" popup overlay when visible
         if (popupManager.isMorePopupVisible()) {
             popupManager.renderMorePopup(frame, area);

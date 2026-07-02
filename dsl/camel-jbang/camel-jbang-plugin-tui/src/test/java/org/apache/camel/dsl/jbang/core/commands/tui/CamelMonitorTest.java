@@ -24,7 +24,7 @@ import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.hint;
+import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.hint;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;

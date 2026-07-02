@@ -39,6 +39,8 @@ import dev.tamboui.text.Line;
 import dev.tamboui.text.Span;
 import dev.tamboui.text.Text;
 import dev.tamboui.tui.event.KeyEvent;
+import dev.tamboui.tui.event.MouseEvent;
+import dev.tamboui.tui.event.MouseEventKind;
 import dev.tamboui.widgets.Clear;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
@@ -55,11 +57,12 @@ import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 
-import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.*;
+import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.*;
 
-class LogTab implements MonitorTab {
+class LogTab extends AbstractTab {
 
     private static final int MAX_LOG_LINES = 3000;
+    private static final int MOUSE_SCROLL_LINES = 3;
     private static final String[] LOG_LEVELS = { "ERROR", "WARN", "INFO", "DEBUG", "TRACE" };
 
     private static final Pattern LOG_PATTERN = Pattern.compile(
@@ -69,7 +72,6 @@ class LogTab implements MonitorTab {
                                                                + "\\[([^]]*)]\\s+"
                                                                + "(\\S+)\\s*:\\s*(.*)$");
 
-    private final MonitorContext ctx;
     private final ScrollbarState scrollState = new ScrollbarState();
     private final ListState logLevelListState = new ListState();
 
@@ -97,7 +99,7 @@ class LogTab implements MonitorTab {
     private final SearchHighlighter search = new SearchHighlighter();
 
     LogTab(MonitorContext ctx) {
-        this.ctx = ctx;
+        super(ctx);
     }
 
     @Override
@@ -205,6 +207,21 @@ class LogTab implements MonitorTab {
         }
         if (ke.isEnd()) {
             followMode = true;
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean handleMouseEvent(MouseEvent me, Rect area) {
+        if (me.kind() == MouseEventKind.SCROLL_UP) {
+            followMode = false;
+            scroll = Math.max(0, scroll - MOUSE_SCROLL_LINES);
+            return true;
+        }
+        if (me.kind() == MouseEventKind.SCROLL_DOWN) {
+            followMode = false;
+            scroll += MOUSE_SCROLL_LINES;
             return true;
         }
         return false;
@@ -421,7 +438,7 @@ class LogTab implements MonitorTab {
                         ListItem.from("  INFO   ").style(Style.EMPTY),
                         ListItem.from("  DEBUG  ").style(Style.EMPTY.fg(Color.CYAN)),
                         ListItem.from("  TRACE  ").style(Style.EMPTY.dim()))
-                .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
+                .highlightStyle(Theme.selectionBg())
                 .highlightSymbol("")
                 .scrollMode(ScrollMode.NONE)
                 .block(Block.builder()

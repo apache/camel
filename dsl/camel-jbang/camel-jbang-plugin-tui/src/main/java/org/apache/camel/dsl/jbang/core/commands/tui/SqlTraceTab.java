@@ -34,6 +34,7 @@ import dev.tamboui.text.Line;
 import dev.tamboui.text.Span;
 import dev.tamboui.text.Text;
 import dev.tamboui.tui.event.KeyEvent;
+import dev.tamboui.tui.event.MouseEvent;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
 import dev.tamboui.widgets.block.Borders;
@@ -42,30 +43,29 @@ import dev.tamboui.widgets.scrollbar.ScrollbarState;
 import dev.tamboui.widgets.table.Cell;
 import dev.tamboui.widgets.table.Row;
 import dev.tamboui.widgets.table.Table;
-import dev.tamboui.widgets.table.TableState;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 
-import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.*;
+import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.*;
 
-class SqlTraceTab implements MonitorTab {
+class SqlTraceTab extends AbstractTableTab {
 
-    private static final String[] SORT_COLUMNS = { "time", "type", "sql", "route", "duration", "rows" };
     private static final DateTimeFormatter TIME_FMT = DateTimeFormatter.ofPattern("HH:mm:ss.SSS");
 
-    private final MonitorContext ctx;
-    private final TableState tableState = new TableState();
     private final ScrollbarState detailScrollState = new ScrollbarState();
-    private String sort = "time";
-    private int sortIndex;
-    private boolean sortReversed;
     private int detailScroll;
     private boolean wordWrap = true;
     private String selectedKey;
     private Consumer<String> editSqlAction;
 
     SqlTraceTab(MonitorContext ctx) {
-        this.ctx = ctx;
+        super(ctx, "time", "type", "sql", "route", "duration", "rows");
+    }
+
+    @Override
+    protected int getRowCount() {
+        IntegrationInfo info = ctx.findSelectedIntegration();
+        return info != null ? info.sqlTraceStatements.size() : 0;
     }
 
     void setEditSqlAction(Consumer<String> editSqlAction) {
@@ -81,17 +81,7 @@ class SqlTraceTab implements MonitorTab {
     }
 
     @Override
-    public boolean handleKeyEvent(KeyEvent ke) {
-        if (ke.isChar('s')) {
-            sortIndex = (sortIndex + 1) % SORT_COLUMNS.length;
-            sort = SORT_COLUMNS[sortIndex];
-            sortReversed = false;
-            return true;
-        }
-        if (ke.isChar('S')) {
-            sortReversed = !sortReversed;
-            return true;
-        }
+    protected boolean handleTabKeyEvent(KeyEvent ke) {
         if (ke.isCharIgnoreCase('w')) {
             wordWrap = !wordWrap;
             return true;
@@ -130,35 +120,21 @@ class SqlTraceTab implements MonitorTab {
     }
 
     @Override
-    public boolean handleEscape() {
-        return false;
-    }
-
-    @Override
     public void navigateUp() {
         detailScroll = 0;
         selectedKey = null;
-        tableState.selectPrevious();
+        super.navigateUp();
     }
 
     @Override
     public void navigateDown() {
         detailScroll = 0;
         selectedKey = null;
-        IntegrationInfo info = ctx.findSelectedIntegration();
-        if (info != null) {
-            tableState.selectNext(info.sqlTraceStatements.size());
-        }
+        super.navigateDown();
     }
 
     @Override
-    public void render(Frame frame, Rect area) {
-        IntegrationInfo info = ctx.findSelectedIntegration();
-        if (info == null) {
-            renderNoSelection(frame, area);
-            return;
-        }
-
+    protected void renderContent(Frame frame, Rect area, IntegrationInfo info) {
         List<Rect> layout = Layout.vertical()
                 .constraints(Constraint.length(3), Constraint.fill())
                 .split(area);
@@ -309,13 +285,28 @@ class SqlTraceTab implements MonitorTab {
                         Constraint.length(10),
                         Constraint.length(8),
                         Constraint.length(8))
-                .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
+                .highlightStyle(Theme.selectionBg())
                 .highlightSpacing(Table.HighlightSpacing.ALWAYS)
                 .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
                         .title(" Statements sort:" + sort + " ").build())
                 .build();
 
+        lastTableArea = area;
         frame.renderStatefulWidget(table, area, tableState);
+        renderScrollbar(frame, sorted.size());
+    }
+
+    @Override
+    public boolean handleMouseEvent(MouseEvent me, Rect area) {
+        IntegrationInfo info = ctx.findSelectedIntegration();
+        if (info != null) {
+            if (handleTableClick(me, lastTableArea, tableState, info.sqlTraceStatements.size())) {
+                detailScroll = 0;
+                selectedKey = null;
+                return true;
+            }
+        }
+        return false;
     }
 
     private void renderDetail(Frame frame, Rect area, SqlTraceInfo si) {
@@ -402,14 +393,6 @@ class SqlTraceTab implements MonitorTab {
         hint(spans, "e", "edit SQL");
         hint(spans, "s", "sort");
         hint(spans, "w", "wrap [" + (wordWrap ? "on" : "off") + "]");
-    }
-
-    private String sortLabel(String label, String column) {
-        return MonitorContext.sortLabel(label, column, sort, sortReversed);
-    }
-
-    private Style sortStyle(String column) {
-        return MonitorContext.sortStyle(column, sort);
     }
 
     private int sortTrace(SqlTraceInfo a, SqlTraceInfo b) {

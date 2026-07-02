@@ -33,6 +33,7 @@ import dev.tamboui.text.Line;
 import dev.tamboui.text.Span;
 import dev.tamboui.text.Text;
 import dev.tamboui.tui.event.KeyEvent;
+import dev.tamboui.tui.event.MouseEvent;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
 import dev.tamboui.widgets.block.Borders;
@@ -41,19 +42,20 @@ import org.apache.camel.dsl.jbang.core.common.PathUtils;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonObject;
 
-import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.*;
+import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.*;
 
-class MemoryTab implements MonitorTab {
+class MemoryTab extends AbstractTab {
 
     // Unicode block characters for gauge bar
     private static final String GAUGE_FILLED = "█";
     private static final String GAUGE_EMPTY = "░";
 
-    private final MonitorContext ctx;
     private final Map<String, LinkedList<Long>> heapMemHistory;
+    private int statsPanelHeight = -1;
+    private final DragSplit vSplit = new DragSplit();
 
     MemoryTab(MonitorContext ctx, MetricsCollector metrics) {
-        this.ctx = ctx;
+        super(ctx);
         this.heapMemHistory = metrics.getHeapMemHistory();
     }
 
@@ -67,7 +69,13 @@ class MemoryTab implements MonitorTab {
     }
 
     @Override
-    public boolean handleEscape() {
+    public boolean handleMouseEvent(MouseEvent me, Rect area) {
+        if (vSplit.handleMouse(me, me.y())) {
+            if (vSplit.isDragging()) {
+                statsPanelHeight = Math.max(5, Math.min(me.y() - area.y(), area.height() - 5));
+            }
+            return true;
+        }
         return false;
     }
 
@@ -87,7 +95,6 @@ class MemoryTab implements MonitorTab {
             return;
         }
 
-        // Layout: stats panel + chart row (14 + 1 for axis)
         int statsHeight = 11;
         if (info.oldGenUsed > 0) {
             statsHeight += 2;
@@ -98,20 +105,17 @@ class MemoryTab implements MonitorTab {
         if (info.threadCount > 0) {
             statsHeight += 2;
         }
+        int statsH = statsPanelHeight >= 0 ? statsPanelHeight : statsHeight;
         List<Rect> chunks = Layout.vertical()
-                .constraints(Constraint.length(statsHeight), Constraint.length(15))
+                .constraints(Constraint.length(statsH), Constraint.fill())
                 .split(area);
+        vSplit.setBorderPos(chunks.get(1).y());
 
         renderStats(frame, chunks.get(0), info);
 
-        // Limit chart width: use ~2/3 of area, leave right side empty
-        int chartWidth = Math.max(40, area.width() * 2 / 3);
-        List<Rect> hChunks = Layout.horizontal()
-                .constraints(Constraint.length(chartWidth), Constraint.fill())
-                .split(chunks.get(1));
         List<Rect> vChunks = Layout.vertical()
-                .constraints(Constraint.length(14), Constraint.length(1))
-                .split(hChunks.get(0));
+                .constraints(Constraint.fill(), Constraint.length(1))
+                .split(chunks.get(1));
 
         renderSparkline(frame, vChunks.get(0), info);
         renderTimeAxis(frame, vChunks.get(1), info);

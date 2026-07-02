@@ -31,6 +31,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -314,39 +315,84 @@ class ShellPanelTest {
         assertTrue(style.bg().isPresent());
     }
 
-    // ---- panelPercent / cycleHeight tests ----
+    // ---- panelHeight / cycleHeight tests ----
 
     @Test
-    void panelPercentDefaultIs50() {
+    void panelHeightDefaultIsUninitialized() {
         ShellPanel panel = new ShellPanel();
-        assertEquals(50, panel.panelPercent());
+        assertEquals(-1, panel.panelHeight());
+    }
+
+    @Test
+    void initHeightSetsTo50Percent() {
+        ShellPanel panel = new ShellPanel();
+        panel.initHeight(40);
+        assertEquals(20, panel.panelHeight());
     }
 
     @Test
     void cycleHeightCyclesThroughPercents() {
         ShellPanel panel = new ShellPanel();
-        // Default is 50% (index 1)
-        assertEquals(50, panel.panelPercent());
+        int contentHeight = 40;
+        panel.initHeight(contentHeight);
+        assertEquals(20, panel.panelHeight()); // 50%
 
-        panel.cycleHeight();
-        assertEquals(75, panel.panelPercent());
+        panel.cycleHeight(contentHeight);
+        runAnimationToCompletion(panel);
+        assertEquals(30, panel.panelHeight()); // 75%
 
-        panel.cycleHeight();
-        assertEquals(100, panel.panelPercent());
+        panel.cycleHeight(contentHeight);
+        runAnimationToCompletion(panel);
+        assertEquals(40, panel.panelHeight()); // 100%
 
-        panel.cycleHeight();
-        assertEquals(25, panel.panelPercent());
+        panel.cycleHeight(contentHeight);
+        runAnimationToCompletion(panel);
+        assertEquals(10, panel.panelHeight()); // 25%
 
-        panel.cycleHeight();
-        assertEquals(50, panel.panelPercent()); // wraps around
+        panel.cycleHeight(contentHeight);
+        runAnimationToCompletion(panel);
+        assertEquals(20, panel.panelHeight()); // wraps to 50%
+    }
+
+    @Test
+    void cycleHeightAnimates() {
+        ShellPanel panel = new ShellPanel();
+        panel.initHeight(60);
+        assertEquals(30, panel.panelHeight()); // 50% of 60
+
+        panel.cycleHeight(60); // target = 75% = 45
+        assertTrue(panel.isAnimating());
+        assertEquals(30, panel.panelHeight()); // not yet moved
+
+        panel.tickAnimation();
+        assertTrue(panel.panelHeight() > 30); // moved toward target
+        assertTrue(panel.panelHeight() < 45); // not yet at target
+
+        runAnimationToCompletion(panel);
+        assertEquals(45, panel.panelHeight());
+        assertFalse(panel.isAnimating());
+    }
+
+    @Test
+    void setPanelHeightSetsDirectly() {
+        ShellPanel panel = new ShellPanel();
+        panel.setPanelHeight(15);
+        assertEquals(15, panel.panelHeight());
+        assertFalse(panel.isAnimating());
+    }
+
+    private void runAnimationToCompletion(ShellPanel panel) {
+        for (int i = 0; i < 100 && panel.isAnimating(); i++) {
+            panel.tickAnimation();
+        }
     }
 
     // ---- renderFooter tests ----
 
     @Test
-    void renderFooterShowsCurrentPercentage() {
+    void renderFooterShowsResizePercent() {
         ShellPanel panel = new ShellPanel();
-        // Default split is 50%
+        panel.initHeight(40);
         List<Span> spans = new ArrayList<>();
         panel.renderFooter(spans);
 
@@ -357,7 +403,9 @@ class ShellPanelTest {
     @Test
     void renderFooterUpdatesAfterCycleHeight() {
         ShellPanel panel = new ShellPanel();
-        panel.cycleHeight(); // now 75%
+        panel.initHeight(40);
+        panel.cycleHeight(40); // cycles to 75%
+        runAnimationToCompletion(panel);
 
         List<Span> spans = new ArrayList<>();
         panel.renderFooter(spans);
