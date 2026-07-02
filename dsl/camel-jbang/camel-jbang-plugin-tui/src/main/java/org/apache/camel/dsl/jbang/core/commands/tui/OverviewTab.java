@@ -947,9 +947,8 @@ class OverviewTab extends AbstractTab {
                 - `Enter` — view routes for selected integration
                 - `s` — cycle sort column
                 - `S` — reverse sort order
-                - `F2` — actions menu
+                - `F2` — actions menu (includes theme toggle, go to tab, etc.)
                 - `F3` — switch integration
-                - `F4` — toggle light/dark theme
                 """;
     }
 

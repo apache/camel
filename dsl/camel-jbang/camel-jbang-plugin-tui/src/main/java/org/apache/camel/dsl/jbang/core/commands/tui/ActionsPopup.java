@@ -82,6 +82,7 @@ class ActionsPopup {
         DOCTOR,
         RESET_STATS,
         RESET_SCREEN,
+        TOGGLE_THEME,
         STOP_ALL,
         SCREENSHOT,
         TAPE_RECORDING,
@@ -95,7 +96,7 @@ class ActionsPopup {
         SHELL
     }
 
-    private static final int[] GROUP_SIZES = { 1, 5, 4, 5 };
+    private static final int[] GROUP_SIZES = { 1, 5, 5, 5 };
     private static final int MCP_GROUP_SIZE = 4;
     private static final int SHELL_GROUP_SIZE = 1;
 
@@ -296,7 +297,7 @@ class ActionsPopup {
         flat.addAll(List.of(
                 Action.SEND_MESSAGE, Action.RUN_EXAMPLE, Action.RUN_FOLDER, Action.RUN_INFRA, Action.BROWSE_FILES));
         flat.add(null);
-        flat.addAll(List.of(Action.DOCTOR, Action.RESET_STATS, Action.RESET_SCREEN, Action.STOP_ALL));
+        flat.addAll(List.of(Action.DOCTOR, Action.RESET_STATS, Action.RESET_SCREEN, Action.TOGGLE_THEME, Action.STOP_ALL));
         flat.add(null);
         flat.addAll(List.of(
                 Action.SCREENSHOT, Action.TAPE_RECORDING, Action.TAPE_INSTRUCTIONS, Action.CAPTION,
@@ -385,6 +386,7 @@ class ActionsPopup {
         labels.add("Run Doctor");
         labels.add("Reset Stats");
         labels.add("Reset Screen");
+        labels.add("dark".equals(Theme.mode()) ? "Light Theme" : "Dark Theme");
         labels.add("Stop All");
         labels.add("───");
         // Group 3: Recording & Presentation
@@ -693,6 +695,9 @@ class ActionsPopup {
                         if (resetScreenAction != null) {
                             resetScreenAction.run();
                         }
+                    } else if (action == Action.TOGGLE_THEME) {
+                        showActionsMenu = false;
+                        Theme.toggle();
                     } else if (action == Action.STOP_ALL) {
                         showActionsMenu = false;
                         stopAllPopup.open();
@@ -964,6 +969,8 @@ class ActionsPopup {
         items.add(ListItem.from("  🩺 Run Doctor"));
         items.add(ListItem.from("  🔄 Reset Stats"));
         items.add(ListItem.from("  🧹 Reset Screen"));
+        String themeLabel = "dark".equals(Theme.mode()) ? "  🌞 Light Theme" : "  🌙 Dark Theme";
+        items.add(ListItem.from(themeLabel));
         items.add(ListItem.from(stopLabel));
         items.add(ListItem.from(divider).style(Style.EMPTY.dim()));
         // Group 3: Recording & Presentation
@@ -2338,6 +2345,7 @@ class ActionsPopup {
                     resetScreenAction.run();
                 }
             }
+            case TOGGLE_THEME -> Theme.toggle();
             case SCREENSHOT -> screenshotAction.run();
             case SHOW_KEYSTROKES -> toggleKeystrokes.run();
             case TAPE_RECORDING -> toggleTapeRecording.run();

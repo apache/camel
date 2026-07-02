@@ -399,7 +399,7 @@ class TuiMcpServer {
                 "tui_action",
                 "Invokes a TUI action by name, bypassing fragile key sequences. "
                               + "Actions: reset-stats, reset-screen, screenshot, show-keystrokes, "
-                              + "tape-recording, doctor, caption, mcp-info, mcp-log.",
+                              + "tape-recording, doctor, caption, mcp-info, mcp-log, toggle-theme.",
                 Map.of("action", propDef("string", "Action name in kebab-case (e.g. 'reset-stats', 'screenshot')")),
                 List.of("action")));
         toolList.add(toolDef(
@@ -1167,7 +1167,7 @@ class TuiMcpServer {
         }
         return "Unknown or unsupported action: " + action
                + ". Available: reset-stats, reset-screen, screenshot, show-keystrokes, "
-               + "tape-recording, doctor, caption, mcp-info, mcp-log";
+               + "tape-recording, doctor, caption, mcp-info, mcp-log, toggle-theme";
     }
 
     private String callGetLog(Map<String, Object> args) {

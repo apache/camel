@@ -641,10 +641,6 @@ public class CamelMonitor extends CamelCommand {
             }
             return true;
         }
-        if (!textEditing && ke.isKey(KeyCode.F4)) {
-            Theme.toggle();
-            return true;
-        }
         if (ke.isKey(KeyCode.F5) && ke.hasShift()) {
             recordingManager.takeScreenshot();
             return true;
@@ -1754,7 +1750,6 @@ public class CamelMonitor extends CamelCommand {
         }
         hint(fKeySpans, "F6", "shell");
         hint(fKeySpans, "F8", "AI");
-        hint(fKeySpans, "F4", "theme");
         spans.addAll(insertPos, fKeySpans);
         // Return total F-key span count. The footer drop loop uses this to remove pairs from
         // the tail (F6, then F3, F2), stopping before the first pair (F1 help when present).
