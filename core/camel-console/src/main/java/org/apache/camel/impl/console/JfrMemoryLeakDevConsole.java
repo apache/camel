@@ -482,25 +482,35 @@ public class JfrMemoryLeakDevConsole extends AbstractDevConsole {
     private static String sampleGroupKey(JsonObject sample) {
         StringBuilder sb = new StringBuilder();
         sb.append(sample.getStringOrDefault("allocationClass", ""));
-        // use only the top 3 stack frames to avoid JIT-induced key drift between runs;
-        // normalize lambda class names (strip address/hash after $$Lambda)
+        // find the first user-code frame (skip JDK internals and Camel framework frames)
+        // this gives stable keys across JFR runs since user code frames don't shift
         JsonArray st = (JsonArray) sample.get("stackTrace");
         if (st != null) {
-            int limit = Math.min(3, st.size());
-            for (int i = 0; i < limit; i++) {
+            for (int i = 0; i < st.size(); i++) {
                 JsonObject frame = (JsonObject) st.get(i);
                 String method = frame.getStringOrDefault("method", "");
-                int lambdaIdx = method.indexOf("$$Lambda");
-                if (lambdaIdx > 0) {
-                    // keep class name up to $$Lambda + the method name after the last dot
-                    int lastDot = method.lastIndexOf('.');
-                    method = method.substring(0, lambdaIdx) + "$$Lambda."
-                             + (lastDot > lambdaIdx ? method.substring(lastDot + 1) : "apply");
+                if (isUserFrame(method)) {
+                    int lambdaIdx = method.indexOf("$$Lambda");
+                    if (lambdaIdx > 0) {
+                        int lastDot = method.lastIndexOf('.');
+                        method = method.substring(0, lambdaIdx) + "$$Lambda."
+                                 + (lastDot > lambdaIdx ? method.substring(lastDot + 1) : "apply");
+                    }
+                    sb.append('|').append(method);
+                    break;
                 }
-                sb.append('|').append(method);
             }
         }
         return sb.toString();
+    }
+
+    private static boolean isUserFrame(String method) {
+        return !method.startsWith("java.")
+                && !method.startsWith("javax.")
+                && !method.startsWith("jakarta.")
+                && !method.startsWith("jdk.")
+                && !method.startsWith("sun.")
+                && !method.startsWith("org.apache.camel.");
     }
 
     private JsonObject parseOldObjectSampleEvent(RecordedEvent event) {

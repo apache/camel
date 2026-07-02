@@ -232,12 +232,17 @@ class MemoryLeakTab implements MonitorTab {
                     Span.styled("  Checking for existing JFR results...", Style.EMPTY.dim())));
         } else {
             lines.add(Line.from(
-                    Span.styled("  No JFR recording active.", Style.EMPTY.dim())));
+                    Span.styled("  Diagnose memory leaks by recording which objects survive", Style.EMPTY.dim())));
+            lines.add(Line.from(
+                    Span.styled("  garbage collection and tracing why they are still alive.", Style.EMPTY.dim())));
+            lines.add(Line.from(
+                    Span.styled("  Uses JFR (Java Flight Recorder) — lightweight and safe for production.",
+                            Style.EMPTY.dim())));
             lines.add(Line.from(Span.raw("")));
             lines.add(Line.from(
                     Span.styled("  Press ", Style.EMPTY.dim()),
                     Span.styled("R", Style.EMPTY.fg(Color.YELLOW).bold()),
-                    Span.styled(" to start recording OldObjectSample events.", Style.EMPTY.dim())));
+                    Span.styled(" to start a recording.", Style.EMPTY.dim())));
             lines.add(Line.from(Span.raw("")));
             lines.add(Line.from(
                     Span.styled("  Duration: ", Style.EMPTY.fg(Color.YELLOW).bold()),
@@ -310,7 +315,7 @@ class MemoryLeakTab implements MonitorTab {
                     Span.styled("  " + recLabel, Style.EMPTY.fg(Color.GREEN).bold())));
         } else {
             lines.add(Line.from(
-                    Span.styled("  JFR recording in progress...", Style.EMPTY.fg(Color.GREEN).bold())));
+                    Span.styled("  Memory leak recording in progress...", Style.EMPTY.fg(Color.GREEN).bold())));
         }
 
         lines.add(Line.from(Span.raw("")));
@@ -343,8 +348,8 @@ class MemoryLeakTab implements MonitorTab {
         lines.add(Line.from(Span.styled(bar.toString(), Style.EMPTY.fg(Color.GREEN))));
 
         String title = recordingMode == RecordingMode.DUAL
-                ? " JFR Recording [dual] "
-                : " JFR Recording ";
+                ? " Memory Leak Recording [dual] "
+                : " Memory Leak Recording ";
         frame.renderWidget(
                 Paragraph.builder()
                         .text(Text.from(lines))
