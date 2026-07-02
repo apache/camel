@@ -17,7 +17,6 @@
 package org.apache.camel.test.infra.openai.mock;
 
 import java.net.URI;
-import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
@@ -34,30 +33,32 @@ public class OpenAIMockFailuresTest {
 
     @Test
     public void testBadRequest() throws Exception {
-        HttpClient client = HttpClient.newHttpClient();
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(openAIMock.getBaseUrl() + "/v1/chat/completions"))
-                .header("Content-Type", "application/json")
-                .POST(HttpRequest.BodyPublishers
-                        .ofString("{\"messages\": [{\"role\": \"assistant\", \"content\": \"any sentence\"}]}"))
-                .build();
+        try (CloseableHttpClient hc = new CloseableHttpClient()) {
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(openAIMock.getBaseUrl() + "/v1/chat/completions"))
+                    .header("Content-Type", "application/json")
+                    .POST(HttpRequest.BodyPublishers
+                            .ofString("{\"messages\": [{\"role\": \"assistant\", \"content\": \"any sentence\"}]}"))
+                    .build();
 
-        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        Assertions.assertEquals(500, response.statusCode());
+            HttpResponse<String> response = hc.httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            Assertions.assertEquals(500, response.statusCode());
+        }
     }
 
     @Test
     public void testNotFound() throws Exception {
-        HttpClient client = HttpClient.newHttpClient();
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(openAIMock.getBaseUrl() + "/v1/chat/completions"))
-                .header("Content-Type", "application/json")
-                .POST(HttpRequest.BodyPublishers
-                        .ofString("{\"messages\": [{\"role\": \"user\", \"content\": \"not found sentence\"}]}"))
-                .build();
+        try (CloseableHttpClient hc = new CloseableHttpClient()) {
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(openAIMock.getBaseUrl() + "/v1/chat/completions"))
+                    .header("Content-Type", "application/json")
+                    .POST(HttpRequest.BodyPublishers
+                            .ofString("{\"messages\": [{\"role\": \"user\", \"content\": \"not found sentence\"}]}"))
+                    .build();
 
-        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        Assertions.assertEquals(500, response.statusCode());
+            HttpResponse<String> response = hc.httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            Assertions.assertEquals(500, response.statusCode());
+        }
     }
 
     @Test
