@@ -58,8 +58,6 @@ public class OpenAIMockTest {
             .replyWith("Request asserted successfully")
             .build();
 
-    // HttpClient does not implement AutoCloseable before Java 21
-    @SuppressWarnings("java:S2095")
     @Test
     public void testToolResponse() throws Exception {
         HttpClient client = HttpClient.newHttpClient();
@@ -92,8 +90,6 @@ public class OpenAIMockTest {
         assertEquals("{\"param1\":\"value1\"}", toolCall.path("function").path("arguments").asText());
     }
 
-    // HttpClient does not implement AutoCloseable before Java 21
-    @SuppressWarnings("java:S2095")
     @Test
     public void testChatResponse() throws Exception {
         HttpClient client = HttpClient.newHttpClient();
@@ -119,8 +115,6 @@ public class OpenAIMockTest {
         assertEquals(true, message.path("tool_calls").isMissingNode());
     }
 
-    // HttpClient does not implement AutoCloseable before Java 21
-    @SuppressWarnings("java:S2095")
     @Test
     public void testMultipleToolCallsResponse() throws Exception {
         HttpClient client = HttpClient.newHttpClient();
@@ -158,8 +152,6 @@ public class OpenAIMockTest {
         assertEquals("{\"p2\":\"v2\",\"p3\":\"v3\"}", toolCall2.path("function").path("arguments").asText());
     }
 
-    // HttpClient does not implement AutoCloseable before Java 21
-    @SuppressWarnings("java:S2095")
     @Test
     public void testCustomResponse() throws Exception {
         HttpClient client = HttpClient.newHttpClient();
@@ -176,8 +168,6 @@ public class OpenAIMockTest {
         assertEquals("Custom response for: custom response", responseBody);
     }
 
-    // HttpClient does not implement AutoCloseable before Java 21
-    @SuppressWarnings("java:S2095")
     @Test
     public void testToolResponseAndStop() throws Exception {
         HttpClient client = HttpClient.newHttpClient();

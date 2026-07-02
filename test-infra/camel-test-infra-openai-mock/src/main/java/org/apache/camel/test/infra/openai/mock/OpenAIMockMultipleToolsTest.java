@@ -39,8 +39,6 @@ public class OpenAIMockMultipleToolsTest {
             .withParam("longitude", "-0.13388057363742217")
             .build();
 
-    // HttpClient does not implement AutoCloseable before Java 21
-    @SuppressWarnings("java:S2095")
     @Test
     void testInvokeToolAndThenInvokeTool() throws Exception {
         HttpClient client = HttpClient.newHttpClient();

@@ -46,8 +46,6 @@ public class OpenAIMockConversationHistoryTest {
             .end()
             .build();
 
-    // HttpClient does not implement AutoCloseable before Java 21
-    @SuppressWarnings("java:S2095")
     @Test
     public void testConversationHistoryAssertion() throws Exception {
         HttpClient client = HttpClient.newHttpClient();
