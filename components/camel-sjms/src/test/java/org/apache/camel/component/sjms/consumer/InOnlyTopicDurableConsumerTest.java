@@ -36,9 +36,6 @@ public class InOnlyTopicDurableConsumerTest extends JmsTestSupport {
         MockEndpoint mock2 = getMockEndpoint("mock:result2");
         mock2.expectedBodiesReceived("Hello World");
 
-        // wait a bit and send the message
-        Thread.sleep(1000);
-
         template.sendBody("sjms:topic:foo.topic.InOnlyTopicDurableConsumerTest", "Hello World");
 
         MockEndpoint.assertIsSatisfied(context);

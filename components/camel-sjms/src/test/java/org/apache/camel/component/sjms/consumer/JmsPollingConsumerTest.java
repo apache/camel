@@ -17,6 +17,8 @@
 package org.apache.camel.component.sjms.consumer;
 
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -24,6 +26,7 @@ import org.apache.camel.component.sjms.support.JmsTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class JmsPollingConsumerTest extends JmsTestSupport {
 
@@ -34,14 +37,19 @@ public class JmsPollingConsumerTest extends JmsTestSupport {
 
         // use another thread for polling consumer to demonstrate that we can wait before
         // the message is sent to the queue
+        CountDownLatch consumerReady = new CountDownLatch(1);
 
         CompletableFuture.runAsync(() -> {
+            consumerReady.countDown();
             String body = consumer.receiveBody("sjms:queue.start.JmsPollingConsumerTest", String.class);
             template.sendBody("sjms:queue.foo.JmsPollingConsumerTest", body + " Claus");
         });
 
-        // wait a little to demonstrate we can start poll before we have a msg on the queue
-        Thread.sleep(500);
+        // wait for async thread to signal it's ready, then add small delay
+        // for blocking call consumer.receiveBody() to start
+        assertTrue(consumerReady.await(2, TimeUnit.SECONDS), "Consumer should be ready");
+        // additional small delay to ensure receiveBody() has started blocking
+        Thread.sleep(100);
 
         template.sendBody("direct:start", "Hello");
 
@@ -53,17 +61,23 @@ public class JmsPollingConsumerTest extends JmsTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello Claus");
 
-        // use another thread for polling consumer to demonstrate that we can wait before
-        // the message is sent to the queue
+        // use another thread for polling consumer to demonstrate that we can
+        // wait before the message is sent to the queue
+        CountDownLatch consumerReady = new CountDownLatch(1);
+
         CompletableFuture.runAsync(() -> {
+            consumerReady.countDown();
             String body = consumer.receiveBodyNoWait("sjms:queue.start.JmsPollingConsumerTest", String.class);
             assertNull(body, "Should be null");
 
             template.sendBody("sjms:queue.foo.JmsPollingConsumerTest", "Hello Claus");
         });
 
-        // wait a little to demonstrate we can start poll before we have a msg on the queue
-        Thread.sleep(500);
+        // wait for async thread to signal it's ready, then add small delay
+        // for blocking call consumer.receiveBody() to start
+        assertTrue(consumerReady.await(2, TimeUnit.SECONDS), "Consumer should be ready");
+        // additional small delay to ensure receiveBody() has executed
+        Thread.sleep(100);
 
         template.sendBody("direct:start", "Hello");
 
@@ -80,15 +94,21 @@ public class JmsPollingConsumerTest extends JmsTestSupport {
 
         // use another thread for polling consumer to demonstrate that we can wait before
         // the message is sent to the queue
+        CountDownLatch consumerReady = new CountDownLatch(1);
+
         CompletableFuture.runAsync(() -> {
+            consumerReady.countDown();
             String body = consumer.receiveBody("sjms:queue.start.JmsPollingConsumerTest", 100, String.class);
             assertNull(body, "Should be null");
 
             template.sendBody("sjms:queue.foo.JmsPollingConsumerTest", "Hello Claus");
         });
 
-        // wait a little to demonstrate we can start poll before we have a msg on the queue
-        Thread.sleep(500);
+        // wait for async thread to signal it's ready, then add small delay
+        // for blocking call consumer.receiveBody() to start
+        assertTrue(consumerReady.await(2, TimeUnit.SECONDS), "Consumer should be ready");
+        // additional small delay to ensure receiveBody() has executed
+        Thread.sleep(200);
 
         template.sendBody("direct:start", "Hello");
 
@@ -105,13 +125,19 @@ public class JmsPollingConsumerTest extends JmsTestSupport {
 
         // use another thread for polling consumer to demonstrate that we can wait before
         // the message is sent to the queue
+        CountDownLatch consumerReady = new CountDownLatch(1);
+
         CompletableFuture.runAsync(() -> {
+            consumerReady.countDown();
             String body = consumer.receiveBody("sjms:queue.start.JmsPollingConsumerTest", 3000, String.class);
             template.sendBody("sjms:queue.foo.JmsPollingConsumerTest", body + " Claus");
         });
 
-        // wait a little to demonstrate we can start poll before we have a msg on the queue
-        Thread.sleep(500);
+        // wait for async thread to signal it's ready, then add small delay
+        // for blocking call consumer.receiveBody() to start
+        assertTrue(consumerReady.await(2, TimeUnit.SECONDS), "Consumer should be ready");
+        // additional small delay to ensure receiveBody() has executed
+        Thread.sleep(100);
 
         template.sendBody("direct:start", "Hello");
 
