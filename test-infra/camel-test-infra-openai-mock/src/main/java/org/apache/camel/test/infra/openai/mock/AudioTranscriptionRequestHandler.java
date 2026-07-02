@@ -17,6 +17,7 @@
 package org.apache.camel.test.infra.openai.mock;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -43,7 +44,9 @@ public class AudioTranscriptionRequestHandler {
     public String handleRequest(HttpExchange exchange) throws IOException {
         try {
             // consume the request body
-            exchange.getRequestBody().readAllBytes();
+            try (InputStream requestBody = exchange.getRequestBody()) {
+                requestBody.readAllBytes();
+            }
             LOG.debug("Processing audio transcription request (call #{})", callIndex);
 
             if (expectations.isEmpty()) {

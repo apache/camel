@@ -17,7 +17,6 @@
 package org.apache.camel.test.infra.openai.mock;
 
 import java.net.URI;
-import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
@@ -42,61 +41,63 @@ public class OpenAIMockReplyWithToolContentTest {
 
     @Test
     public void testReplyWithToolContent() throws Exception {
-        HttpClient client = HttpClient.newHttpClient();
+        try (CloseableHttpClient hc = new CloseableHttpClient()) {
+            // First request - should trigger tool call
+            HttpRequest request1 = HttpRequest.newBuilder()
+                    .uri(URI.create(openAIMock.getBaseUrl() + "/v1/chat/completions"))
+                    .header("Content-Type", "application/json")
+                    .POST(HttpRequest.BodyPublishers
+                            .ofString(
+                                    "{\"messages\": [{\"role\": \"user\", \"content\": \"Get location coordinates\"}]}"))
+                    .build();
 
-        // First request - should trigger tool call
-        HttpRequest request1 = HttpRequest.newBuilder()
-                .uri(URI.create(openAIMock.getBaseUrl() + "/v1/chat/completions"))
-                .header("Content-Type", "application/json")
-                .POST(HttpRequest.BodyPublishers
-                        .ofString("{\"messages\": [{\"role\": \"user\", \"content\": \"Get location coordinates\"}]}"))
-                .build();
+            HttpResponse<String> response1 = hc.send(request1, HttpResponse.BodyHandlers.ofString());
+            String responseBody1 = response1.body();
 
-        HttpResponse<String> response1 = client.send(request1, HttpResponse.BodyHandlers.ofString());
-        String responseBody1 = response1.body();
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode responseJson1 = objectMapper.readTree(responseBody1);
 
-        ObjectMapper objectMapper = new ObjectMapper();
-        JsonNode responseJson1 = objectMapper.readTree(responseBody1);
+            JsonNode choice1 = responseJson1.path("choices").get(0);
+            JsonNode message1 = choice1.path("message");
 
-        JsonNode choice1 = responseJson1.path("choices").get(0);
-        JsonNode message1 = choice1.path("message");
+            assertEquals("assistant", message1.path("role").asText());
+            assertEquals("tool_calls", choice1.path("finish_reason").asText());
 
-        assertEquals("assistant", message1.path("role").asText());
-        assertEquals("tool_calls", choice1.path("finish_reason").asText());
+            JsonNode toolCalls = message1.path("tool_calls");
+            assertEquals(1, toolCalls.size());
 
-        JsonNode toolCalls = message1.path("tool_calls");
-        assertEquals(1, toolCalls.size());
+            JsonNode toolCall = toolCalls.get(0);
+            String toolCallId = toolCall.path("id").asText();
+            assertEquals("function", toolCall.path("type").asText());
+            assertEquals("GetCoordinates", toolCall.path("function").path("name").asText());
+            assertEquals("{\"location\":\"Paris\"}", toolCall.path("function").path("arguments").asText());
 
-        JsonNode toolCall = toolCalls.get(0);
-        String toolCallId = toolCall.path("id").asText();
-        assertEquals("function", toolCall.path("type").asText());
-        assertEquals("GetCoordinates", toolCall.path("function").path("name").asText());
-        assertEquals("{\"location\":\"Paris\"}", toolCall.path("function").path("arguments").asText());
+            // Second request with tool result - should return tool content + custom message
+            String secondRequestBody = String.format(
+                    "{\"messages\": [{\"role\": \"user\", \"content\": \"Get location coordinates\"}, {\"role\":\"tool\", \"tool_call_id\":\"%s\", \"content\":\"{\\\"latitude\\\": \\\"48.8566\\\", \\\"longitude\\\": \\\"2.3522\\\"}\"}]}",
+                    toolCallId);
+            HttpRequest request2 = HttpRequest.newBuilder()
+                    .uri(URI.create(openAIMock.getBaseUrl() + "/v1/chat/completions"))
+                    .header("Content-Type", "application/json")
+                    .POST(HttpRequest.BodyPublishers.ofString(secondRequestBody))
+                    .build();
 
-        // Second request with tool result - should return tool content + custom message
-        String secondRequestBody = String.format(
-                "{\"messages\": [{\"role\": \"user\", \"content\": \"Get location coordinates\"}, {\"role\":\"tool\", \"tool_call_id\":\"%s\", \"content\":\"{\\\"latitude\\\": \\\"48.8566\\\", \\\"longitude\\\": \\\"2.3522\\\"}\"}]}",
-                toolCallId);
-        HttpRequest request2 = HttpRequest.newBuilder()
-                .uri(URI.create(openAIMock.getBaseUrl() + "/v1/chat/completions"))
-                .header("Content-Type", "application/json")
-                .POST(HttpRequest.BodyPublishers.ofString(secondRequestBody))
-                .build();
+            HttpResponse<String> response2 = hc.send(request2, HttpResponse.BodyHandlers.ofString());
+            String responseBody2 = response2.body();
+            JsonNode responseJson2 = objectMapper.readTree(responseBody2);
 
-        HttpResponse<String> response2 = client.send(request2, HttpResponse.BodyHandlers.ofString());
-        String responseBody2 = response2.body();
-        JsonNode responseJson2 = objectMapper.readTree(responseBody2);
+            JsonNode choice2 = responseJson2.path("choices").get(0);
+            JsonNode message2 = choice2.path("message");
 
-        JsonNode choice2 = responseJson2.path("choices").get(0);
-        JsonNode message2 = choice2.path("message");
+            assertEquals("assistant", message2.path("role").asText());
+            assertEquals("stop", choice2.path("finish_reason").asText());
 
-        assertEquals("assistant", message2.path("role").asText());
-        assertEquals("stop", choice2.path("finish_reason").asText());
-
-        String content = message2.path("content").asText();
-        // Should contain both the tool content and the custom message
-        assertTrue(content.contains("{\"latitude\": \"48.8566\", \"longitude\": \"2.3522\"}"));
-        assertTrue(content.contains("- This is the location data I found."));
-        assertEquals("{\"latitude\": \"48.8566\", \"longitude\": \"2.3522\"} - This is the location data I found.", content);
+            String content = message2.path("content").asText();
+            // Should contain both the tool content and the custom message
+            assertTrue(content.contains("{\"latitude\": \"48.8566\", \"longitude\": \"2.3522\"}"));
+            assertTrue(content.contains("- This is the location data I found."));
+            assertEquals("{\"latitude\": \"48.8566\", \"longitude\": \"2.3522\"} - This is the location data I found.",
+                    content);
+        }
     }
 }
