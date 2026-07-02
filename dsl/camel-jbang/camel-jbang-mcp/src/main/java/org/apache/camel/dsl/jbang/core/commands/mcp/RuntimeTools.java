@@ -349,24 +349,125 @@ public class RuntimeTools {
                   Captures objects surviving multiple GC cycles and their reference chains back to GC roots. \
                   Use command 'start' to begin recording, 'stop' to stop and get results, \
                   'status' to check recording state, and 'query' to retrieve cached results from the last recording. \
+                  Use mode 'dual' with 'start' to run two sequential recordings (Xs then 2Xs) and automatically \
+                  compare trends — returns growth ratios and trend classifications (growing, stable, shrinking, new, gone). \
                   Note: sizes are sampled during the recording window, not total heap usage — \
                   a longer recording captures more samples and shows larger totals for the same leak. \
                   Use values to compare classes relative to each other, not as absolute heap numbers.""")
     public JsonObject camel_runtime_jfr_old_objects(
             @ToolArg(description = NAME_OR_PID_DESC) String nameOrPid,
             @ToolArg(description = "Command: start, stop, status, or query") String command,
-            @ToolArg(description = "Recording duration in seconds (only for start command, 0 = manual stop)") String duration,
+            @ToolArg(description = "Recording duration in seconds (only for start command, default 30, use 0 for manual stop)") String duration,
+            @ToolArg(description = "Recording mode: single (default, one recording) or dual (two recordings at Xs and 2Xs with trend comparison)") String mode,
             @ToolArg(description = "Include allocation stack traces in results (default false, set true for detailed analysis)") String stacktrace,
             @ToolArg(description = "Minimum total size in bytes to include a sample (e.g. 1024 for 1KB). Filters out small allocations to reduce noise") String minSize) {
         if (command == null || command.isBlank()) {
             throw new ToolCallException("command is required (start, stop, status, or query)", null);
         }
         RuntimeService.ProcessInfo p = runtimeService.findSingleProcess(nameOrPid);
+
+        if ("start".equals(command) && "dual".equalsIgnoreCase(mode)) {
+            return doDualJfrRecording(p.pid(), duration, stacktrace, minSize);
+        }
+
         return runtimeService.executeAction(p.pid(), "jfr-old-objects", root -> {
             root.put("command", command);
             if ("start".equals(command) && duration != null && !duration.isBlank()) {
                 root.put("duration", duration);
             }
+            if (stacktrace != null) {
+                root.put("stacktrace", stacktrace);
+            }
+            if (minSize != null && !minSize.isBlank()) {
+                root.put("minSize", minSize);
+            }
+        });
+    }
+
+    private JsonObject doDualJfrRecording(long pid, String duration, String stacktrace, String minSize) {
+        int dur = 30;
+        if (duration != null && !duration.isBlank()) {
+            dur = Integer.parseInt(duration);
+        }
+        if (dur <= 0) {
+            dur = 30;
+        }
+        int dur1 = dur;
+        int dur2 = dur * 2;
+
+        // run 1
+        JsonObject r1 = runtimeService.executeAction(pid, "jfr-old-objects", root -> {
+            root.put("command", "start");
+            root.put("duration", String.valueOf(dur1));
+            if (stacktrace != null) {
+                root.put("stacktrace", stacktrace);
+            }
+            if (minSize != null && !minSize.isBlank()) {
+                root.put("minSize", minSize);
+            }
+        });
+        if (r1 == null || !"recording".equals(r1.getString("status"))) {
+            throw new ToolCallException("Failed to start recording 1", null);
+        }
+
+        try {
+            Thread.sleep((dur1 + 3) * 1000L);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new ToolCallException("Interrupted during recording 1", null);
+        }
+
+        JsonObject s1 = runtimeService.executeAction(pid, "jfr-old-objects", root -> {
+            root.put("command", "stop");
+            if (stacktrace != null) {
+                root.put("stacktrace", stacktrace);
+            }
+            if (minSize != null && !minSize.isBlank()) {
+                root.put("minSize", minSize);
+            }
+        });
+        if (s1 == null || !"completed".equals(s1.getString("status"))) {
+            throw new ToolCallException("Recording 1 did not complete", null);
+        }
+
+        // run 2
+        JsonObject r2 = runtimeService.executeAction(pid, "jfr-old-objects", root -> {
+            root.put("command", "start");
+            root.put("duration", String.valueOf(dur2));
+            if (stacktrace != null) {
+                root.put("stacktrace", stacktrace);
+            }
+            if (minSize != null && !minSize.isBlank()) {
+                root.put("minSize", minSize);
+            }
+        });
+        if (r2 == null || !"recording".equals(r2.getString("status"))) {
+            throw new ToolCallException("Failed to start recording 2", null);
+        }
+
+        try {
+            Thread.sleep((dur2 + 3) * 1000L);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new ToolCallException("Interrupted during recording 2", null);
+        }
+
+        JsonObject s2 = runtimeService.executeAction(pid, "jfr-old-objects", root -> {
+            root.put("command", "stop");
+            if (stacktrace != null) {
+                root.put("stacktrace", stacktrace);
+            }
+            if (minSize != null && !minSize.isBlank()) {
+                root.put("minSize", minSize);
+            }
+        });
+        if (s2 == null || !"completed".equals(s2.getString("status"))) {
+            throw new ToolCallException("Recording 2 did not complete", null);
+        }
+
+        // compare
+        return runtimeService.executeAction(pid, "jfr-old-objects", root -> {
+            root.put("command", "compare");
             if (stacktrace != null) {
                 root.put("stacktrace", stacktrace);
             }

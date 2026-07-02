@@ -61,6 +61,7 @@ public class JfrOldObjectSampleDevConsole extends AbstractDevConsole {
 
     private volatile Recording activeRecording;
     private volatile JsonObject cachedResults;
+    private volatile JsonObject previousResults;
     private volatile long recordingStartTime;
     private volatile int requestedDurationSeconds;
     private ScheduledExecutorService scheduler;
@@ -89,6 +90,7 @@ public class JfrOldObjectSampleDevConsole extends AbstractDevConsole {
             case "stop" -> doStop(options);
             case "status" -> doStatus();
             case "query" -> doQuery(options);
+            case "compare" -> doCompare(options);
             default -> errorJson("Unknown command: " + command);
         };
     }
@@ -107,6 +109,14 @@ public class JfrOldObjectSampleDevConsole extends AbstractDevConsole {
             requestedDurationSeconds = duration;
             if (duration > 0) {
                 rec.setMaxAge(Duration.ofSeconds(duration + 10));
+            }
+
+            // trigger GC before starting to establish a cleaner baseline
+            System.gc();
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
             }
 
             rec.start();
@@ -168,6 +178,11 @@ public class JfrOldObjectSampleDevConsole extends AbstractDevConsole {
             tempFile = Files.createTempFile("camel-jfr-old-objects-", ".jfr");
             // trigger GC before stopping to flush objects into the recording
             System.gc();
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
             rec.stop();
             rec.dump(tempFile);
 
@@ -178,6 +193,7 @@ public class JfrOldObjectSampleDevConsole extends AbstractDevConsole {
             result.put("recordingDurationMs", durationMs);
             result.put("recordingEndTime", endTime);
 
+            previousResults = cachedResults;
             cachedResults = result;
             return result;
         } catch (IOException e) {
@@ -232,6 +248,129 @@ public class JfrOldObjectSampleDevConsole extends AbstractDevConsole {
         result.put("sampleCount", 0);
         result.put("samples", new JsonArray());
         result.put("note", "No results available. Start a recording first.");
+        return result;
+    }
+
+    private JsonObject doCompare(Map<String, Object> options) {
+        if (previousResults == null || cachedResults == null) {
+            return errorJson("Need two recordings to compare. Run two recordings first.");
+        }
+
+        long minSize = optionLong(options, "minSize", 0);
+
+        long baselineDurationMs = previousResults.getLongOrDefault("recordingDurationMs", 1);
+        long currentDurationMs = cachedResults.getLongOrDefault("recordingDurationMs", 1);
+        double durationRatio = baselineDurationMs > 0 ? (double) currentDurationMs / baselineDurationMs : 1.0;
+
+        // index baseline samples by group key
+        Map<String, JsonObject> baselineMap = new LinkedHashMap<>();
+        JsonArray baselineSamples = (JsonArray) previousResults.get("samples");
+        if (baselineSamples != null) {
+            for (int i = 0; i < baselineSamples.size(); i++) {
+                JsonObject s = (JsonObject) baselineSamples.get(i);
+                baselineMap.put(sampleGroupKey(s), s);
+            }
+        }
+
+        // index current samples by group key
+        Map<String, JsonObject> currentMap = new LinkedHashMap<>();
+        JsonArray currentSamples = (JsonArray) cachedResults.get("samples");
+        if (currentSamples != null) {
+            for (int i = 0; i < currentSamples.size(); i++) {
+                JsonObject s = (JsonObject) currentSamples.get(i);
+                currentMap.put(sampleGroupKey(s), s);
+            }
+        }
+
+        // collect all keys preserving order (current first, then baseline-only)
+        Map<String, JsonObject> allKeys = new LinkedHashMap<>(currentMap);
+        for (String key : baselineMap.keySet()) {
+            allKeys.putIfAbsent(key, baselineMap.get(key));
+        }
+
+        JsonArray comparisons = new JsonArray();
+        for (String key : allKeys.keySet()) {
+            JsonObject baseline = baselineMap.get(key);
+            JsonObject current = currentMap.get(key);
+
+            JsonObject comp = new JsonObject();
+            String className = current != null
+                    ? current.getStringOrDefault("allocationClass", "unknown")
+                    : baseline.getStringOrDefault("allocationClass", "unknown");
+            comp.put("allocationClass", className);
+
+            long baseSize = baseline != null ? baseline.getLongOrDefault("sampledSize", 0) : 0;
+            int baseCount = baseline != null ? baseline.getIntegerOrDefault("count", 0) : 0;
+            long curSize = current != null ? current.getLongOrDefault("sampledSize", 0) : 0;
+            int curCount = current != null ? current.getIntegerOrDefault("count", 0) : 0;
+
+            if (minSize > 0 && baseSize < minSize && curSize < minSize) {
+                continue;
+            }
+
+            comp.put("baselineSampledSize", baseSize);
+            comp.put("baselineCount", baseCount);
+            comp.put("currentSampledSize", curSize);
+            comp.put("currentCount", curCount);
+
+            String trend;
+            double growthRatio = 0;
+            if (baseline == null) {
+                trend = "new";
+            } else if (current == null) {
+                trend = "gone";
+            } else if (baseSize == 0) {
+                trend = curSize > 0 ? "new" : "stable";
+            } else {
+                growthRatio = ((double) curSize / baseSize) / durationRatio;
+                if (growthRatio > 1.3) {
+                    trend = "growing";
+                } else if (growthRatio < 0.7) {
+                    trend = "shrinking";
+                } else {
+                    trend = "stable";
+                }
+            }
+            comp.put("growthRatio", Math.round(growthRatio * 100.0) / 100.0);
+            comp.put("trend", trend);
+
+            // carry forward reference chain and stack trace from current (or baseline if gone)
+            JsonObject source = current != null ? current : baseline;
+            if (source.containsKey("referenceChain")) {
+                comp.put("referenceChain", source.get("referenceChain"));
+            }
+            if (source.containsKey("stackTrace")) {
+                comp.put("stackTrace", source.get("stackTrace"));
+            }
+
+            comparisons.add(comp);
+        }
+
+        // sort by growth ratio descending (leaks first)
+        List<Object> sorted = new ArrayList<>(comparisons);
+        sorted.sort((a, b) -> {
+            double ra = ((JsonObject) a).getDoubleOrDefault("growthRatio", 0);
+            double rb = ((JsonObject) b).getDoubleOrDefault("growthRatio", 0);
+            return Double.compare(rb, ra);
+        });
+        JsonArray sortedArr = new JsonArray();
+        sortedArr.addAll(sorted);
+
+        JsonObject result = new JsonObject();
+        result.put("status", "compared");
+
+        JsonObject baselineInfo = new JsonObject();
+        baselineInfo.put("recordingDurationMs", baselineDurationMs);
+        baselineInfo.put("sampleCount", previousResults.getIntegerOrDefault("sampleCount", 0));
+        result.put("baseline", baselineInfo);
+
+        JsonObject currentInfo = new JsonObject();
+        currentInfo.put("recordingDurationMs", currentDurationMs);
+        currentInfo.put("sampleCount", cachedResults.getIntegerOrDefault("sampleCount", 0));
+        result.put("current", currentInfo);
+
+        result.put("durationRatio", Math.round(durationRatio * 100.0) / 100.0);
+        result.put("comparisons", sortedArr);
         return result;
     }
 

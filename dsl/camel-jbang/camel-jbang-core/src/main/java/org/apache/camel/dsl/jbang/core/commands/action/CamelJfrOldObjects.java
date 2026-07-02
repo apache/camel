@@ -49,7 +49,8 @@ import picocli.CommandLine.Command;
                  "  camel cmd jfr-old-objects --status",
                  "  camel cmd jfr-old-objects --query",
                  "  camel cmd jfr-old-objects --query --min-size 1MB",
-                 "  camel cmd jfr-old-objects --query --stacktrace" })
+                 "  camel cmd jfr-old-objects --query --stacktrace",
+                 "  camel cmd jfr-old-objects --start --mode dual" })
 public class CamelJfrOldObjects extends ActionBaseCommand {
 
     @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
@@ -67,8 +68,13 @@ public class CamelJfrOldObjects extends ActionBaseCommand {
     @CommandLine.Option(names = { "--query" }, description = "Query cached results from the last recording")
     boolean query;
 
+    @CommandLine.Option(names = { "--mode" },
+                        description = "Recording mode: single (one recording) or dual (two recordings with trend comparison)",
+                        defaultValue = "single")
+    String mode;
+
     @CommandLine.Option(names = { "--duration" },
-                        description = "Recording duration in seconds (auto-stops after this time)", defaultValue = "0")
+                        description = "Recording duration in seconds (auto-stops after this time)", defaultValue = "30")
     int duration;
 
     @CommandLine.Option(names = { "--top" },
@@ -101,6 +107,10 @@ public class CamelJfrOldObjects extends ActionBaseCommand {
 
         long pid = pids.get(0);
 
+        if (start && "dual".equalsIgnoreCase(mode)) {
+            return doDualRecording(pid);
+        }
+
         String command;
         if (start) {
             command = "start";
@@ -112,14 +122,70 @@ public class CamelJfrOldObjects extends ActionBaseCommand {
             command = "status";
         }
 
+        JsonObject jo = sendAction(pid, command, start ? duration : 0);
+        if (jo == null) {
+            printer().println("Response from running Camel with PID " + pid + " not received within timeout");
+            return 1;
+        }
+
+        return handleResponse(pid, jo);
+    }
+
+    private int doDualRecording(long pid) throws Exception {
+        int dur1 = duration;
+        int dur2 = duration * 2;
+
+        // run 1
+        printer().printf("Recording 1 of 2 (%ds)...%n", dur1);
+        JsonObject startResp = sendAction(pid, "start", dur1);
+        if (startResp == null || !"recording".equals(startResp.getString("status"))) {
+            printer().println("Error: Failed to start recording 1");
+            return 1;
+        }
+
+        Thread.sleep((dur1 + 3) * 1000L);
+
+        JsonObject stopResp = sendAction(pid, "stop", 0);
+        if (stopResp == null || !"completed".equals(stopResp.getString("status"))) {
+            printer().println("Error: Recording 1 did not complete");
+            return 1;
+        }
+
+        // run 2
+        printer().printf("Recording 2 of 2 (%ds)...%n", dur2);
+        startResp = sendAction(pid, "start", dur2);
+        if (startResp == null || !"recording".equals(startResp.getString("status"))) {
+            printer().println("Error: Failed to start recording 2");
+            return 1;
+        }
+
+        Thread.sleep((dur2 + 3) * 1000L);
+
+        stopResp = sendAction(pid, "stop", 0);
+        if (stopResp == null || !"completed".equals(stopResp.getString("status"))) {
+            printer().println("Error: Recording 2 did not complete");
+            return 1;
+        }
+
+        // compare
+        JsonObject cmpResp = sendAction(pid, "compare", 0);
+        if (cmpResp == null) {
+            printer().println("Error: Failed to get comparison data");
+            return 1;
+        }
+
+        return handleResponse(pid, cmpResp);
+    }
+
+    private JsonObject sendAction(long pid, String command, int dur) {
         Path outputFile = getOutputFile(Long.toString(pid));
         PathUtils.deleteFile(outputFile);
 
         JsonObject root = new JsonObject();
         root.put("action", "jfr-old-objects");
         root.put("command", command);
-        if (start && duration > 0) {
-            root.put("duration", String.valueOf(duration));
+        if ("start".equals(command) && dur > 0) {
+            root.put("duration", String.valueOf(dur));
         }
         if (stacktrace) {
             root.put("stacktrace", "true");
@@ -136,86 +202,120 @@ public class CamelJfrOldObjects extends ActionBaseCommand {
             // ignore
         }
 
-        JsonObject jo = getJsonObject(outputFile, start ? 15000 : 30000);
-        if (jo != null) {
-            String responseStatus = jo.getString("status");
+        int timeout = "start".equals(command) ? 15000 : 30000;
+        JsonObject jo = getJsonObject(outputFile, timeout);
+        PathUtils.deleteFile(outputFile);
+        return jo;
+    }
 
-            if ("error".equals(responseStatus)) {
-                printer().println("Error: " + jo.getString("error"));
-                return 1;
-            }
+    private int handleResponse(long pid, JsonObject jo) {
+        String responseStatus = jo.getString("status");
 
-            if ("recording".equals(responseStatus)) {
-                printer().println("JFR recording started for PID: " + pid);
-                if (jo.containsKey("durationSeconds")) {
-                    printer().println("Duration: " + jo.getInteger("durationSeconds") + " seconds (auto-stop)");
-                } else {
-                    printer().println("Duration: manual (use --stop to end recording)");
-                }
-                return 0;
-            }
-
-            if ("idle".equals(responseStatus)) {
-                printer().println("No active JFR recording for PID: " + pid);
-                if (jo.containsKey("note")) {
-                    printer().println(jo.getString("note"));
-                }
-                return 0;
-            }
-
-            if ("completed".equals(responseStatus)) {
-                int sampleCount = jo.getIntegerOrDefault("sampleCount", 0);
-                long durationMs = jo.getLongOrDefault("recordingDurationMs", 0);
-                printer().printf("PID: %s\tSamples: %d\tRecording duration: %s%n",
-                        pid, sampleCount, formatDuration(durationMs));
-
-                JsonArray samples = (JsonArray) jo.get("samples");
-                if (samples != null && !samples.isEmpty()) {
-                    List<Row> rows = new ArrayList<>();
-                    int num = 0;
-                    for (int i = 0; i < samples.size(); i++) {
-                        JsonObject sample = (JsonObject) samples.get(i);
-                        long sampledSize = sample.getLongOrDefault("sampledSize", 0);
-                        num++;
-                        if (num > top) {
-                            break;
-                        }
-                        Row row = new Row();
-                        row.num = num;
-                        row.className = sample.getStringOrDefault("allocationClass", "unknown");
-                        row.count = sample.getIntegerOrDefault("count", 1);
-                        row.sampledSize = sampledSize;
-                        row.objectAge = sample.getLongOrDefault("objectAge", 0);
-                        row.chainSummary = buildChainSummary(sample);
-                        row.stackTrace = (JsonArray) sample.get("stackTrace");
-                        rows.add(row);
-                    }
-                    printTable(rows);
-                } else {
-                    printer().println("No old object samples captured.");
-                    printer().println("Tip: Try a longer recording duration or ensure GC occurs during recording.");
-                }
-                return 0;
-            }
-
-            // status response with cached results info
-            if (jo.containsKey("hasCachedResults") && jo.getBooleanOrDefault("hasCachedResults", false)) {
-                printer().println("JFR recording completed. Use --query to view results.");
-                printer().println("Cached samples: " + jo.getIntegerOrDefault("sampleCount", 0));
-            } else if (jo.containsKey("elapsedMs")) {
-                long elapsed = jo.getLongOrDefault("elapsedMs", 0);
-                printer().println("JFR recording in progress for PID: " + pid);
-                printer().println("Elapsed: " + formatDuration(elapsed));
-                if (jo.containsKey("remainingMs")) {
-                    printer().println("Remaining: " + formatDuration(jo.getLongOrDefault("remainingMs", 0)));
-                }
-            }
-        } else {
-            printer().println("Response from running Camel with PID " + pid + " not received within timeout");
+        if ("error".equals(responseStatus)) {
+            printer().println("Error: " + jo.getString("error"));
             return 1;
         }
 
-        PathUtils.deleteFile(outputFile);
+        if ("recording".equals(responseStatus)) {
+            printer().println("JFR recording started for PID: " + pid);
+            if (jo.containsKey("durationSeconds")) {
+                printer().println("Duration: " + jo.getInteger("durationSeconds") + " seconds (auto-stop)");
+            } else {
+                printer().println("Duration: manual (use --stop to end recording)");
+            }
+            return 0;
+        }
+
+        if ("idle".equals(responseStatus)) {
+            printer().println("No active JFR recording for PID: " + pid);
+            if (jo.containsKey("note")) {
+                printer().println(jo.getString("note"));
+            }
+            return 0;
+        }
+
+        if ("completed".equals(responseStatus)) {
+            int sampleCount = jo.getIntegerOrDefault("sampleCount", 0);
+            long durationMs = jo.getLongOrDefault("recordingDurationMs", 0);
+            printer().printf("PID: %s\tSamples: %d\tRecording duration: %s%n",
+                    pid, sampleCount, formatDuration(durationMs));
+
+            JsonArray samples = (JsonArray) jo.get("samples");
+            if (samples != null && !samples.isEmpty()) {
+                List<Row> rows = new ArrayList<>();
+                int num = 0;
+                for (int i = 0; i < samples.size(); i++) {
+                    JsonObject sample = (JsonObject) samples.get(i);
+                    long sampledSize = sample.getLongOrDefault("sampledSize", 0);
+                    num++;
+                    if (num > top) {
+                        break;
+                    }
+                    Row row = new Row();
+                    row.num = num;
+                    row.className = sample.getStringOrDefault("allocationClass", "unknown");
+                    row.count = sample.getIntegerOrDefault("count", 1);
+                    row.sampledSize = sampledSize;
+                    row.objectAge = sample.getLongOrDefault("objectAge", 0);
+                    row.chainSummary = buildChainSummary(sample);
+                    row.stackTrace = (JsonArray) sample.get("stackTrace");
+                    rows.add(row);
+                }
+                printTable(rows);
+            } else {
+                printer().println("No old object samples captured.");
+                printer().println("Tip: Try a longer recording duration or ensure GC occurs during recording.");
+            }
+            return 0;
+        }
+
+        if ("compared".equals(responseStatus)) {
+            JsonObject baselineInfo = (JsonObject) jo.get("baseline");
+            JsonObject currentInfo = (JsonObject) jo.get("current");
+            long baseDur = baselineInfo != null ? baselineInfo.getLongOrDefault("recordingDurationMs", 0) : 0;
+            long curDur = currentInfo != null ? currentInfo.getLongOrDefault("recordingDurationMs", 0) : 0;
+            double durRatio = jo.getDoubleOrDefault("durationRatio", 1.0);
+            printer().printf("PID: %s\tRun 1: %s\tRun 2: %s\tDuration ratio: %.1fx%n",
+                    pid, formatDuration(baseDur), formatDuration(curDur), durRatio);
+
+            JsonArray comps = (JsonArray) jo.get("comparisons");
+            if (comps != null && !comps.isEmpty()) {
+                List<CompRow> compRows = new ArrayList<>();
+                int num = 0;
+                for (int i = 0; i < comps.size(); i++) {
+                    JsonObject comp = (JsonObject) comps.get(i);
+                    num++;
+                    if (num > top) {
+                        break;
+                    }
+                    CompRow cr = new CompRow();
+                    cr.num = num;
+                    cr.className = comp.getStringOrDefault("allocationClass", "unknown");
+                    cr.baselineSampledSize = comp.getLongOrDefault("baselineSampledSize", 0);
+                    cr.currentSampledSize = comp.getLongOrDefault("currentSampledSize", 0);
+                    cr.growthRatio = comp.getDoubleOrDefault("growthRatio", 0);
+                    cr.trend = comp.getStringOrDefault("trend", "stable");
+                    compRows.add(cr);
+                }
+                printComparisonTable(compRows);
+            } else {
+                printer().println("No comparison data available.");
+            }
+            return 0;
+        }
+
+        // status response with cached results info
+        if (jo.containsKey("hasCachedResults") && jo.getBooleanOrDefault("hasCachedResults", false)) {
+            printer().println("JFR recording completed. Use --query to view results.");
+            printer().println("Cached samples: " + jo.getIntegerOrDefault("sampleCount", 0));
+        } else if (jo.containsKey("elapsedMs")) {
+            long elapsed = jo.getLongOrDefault("elapsedMs", 0);
+            printer().println("JFR recording in progress for PID: " + pid);
+            printer().println("Elapsed: " + formatDuration(elapsed));
+            if (jo.containsKey("remainingMs")) {
+                printer().println("Remaining: " + formatDuration(jo.getLongOrDefault("remainingMs", 0)));
+            }
+        }
 
         return 0;
     }
@@ -344,6 +444,51 @@ public class CamelJfrOldObjects extends ActionBaseCommand {
         } catch (NumberFormatException e) {
             return 0;
         }
+    }
+
+    private void printComparisonTable(List<CompRow> rows) {
+        int tw = terminalWidth();
+        int fixedWidth = 6 + 12 + 12 + 10 + 10;
+        int borderOverhead = TerminalWidthHelper.noBorderOverhead(6);
+        int classWidth = TerminalWidthHelper.flexWidth(tw, fixedWidth, borderOverhead, 20, 50);
+
+        printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
+                new Column().header("#").headerAlign(HorizontalAlign.RIGHT).dataAlign(HorizontalAlign.RIGHT)
+                        .with(r -> Integer.toString(r.num)),
+                new Column().header("CLASS").dataAlign(HorizontalAlign.LEFT)
+                        .maxWidth(classWidth, OverflowBehaviour.ELLIPSIS_LEFT)
+                        .with(r -> r.className),
+                new Column().header("RUN1").headerAlign(HorizontalAlign.RIGHT).dataAlign(HorizontalAlign.RIGHT)
+                        .with(r -> r.baselineSampledSize > 0 ? formatBytes(r.baselineSampledSize) : "-"),
+                new Column().header("RUN2").headerAlign(HorizontalAlign.RIGHT).dataAlign(HorizontalAlign.RIGHT)
+                        .with(r -> r.currentSampledSize > 0 ? formatBytes(r.currentSampledSize) : "-"),
+                new Column().header("GROWTH").headerAlign(HorizontalAlign.RIGHT).dataAlign(HorizontalAlign.RIGHT)
+                        .with(r -> r.growthRatio > 0 ? String.format(Locale.US, "%.1fx", r.growthRatio) : "-"),
+                new Column().header("TREND").dataAlign(HorizontalAlign.LEFT)
+                        .with(r -> trendLabel(r.trend)))));
+    }
+
+    private static String trendLabel(String trend) {
+        if (trend == null) {
+            return "-";
+        }
+        return switch (trend) {
+            case "growing" -> "↑ leak?";
+            case "stable" -> "→ stable";
+            case "shrinking" -> "↓";
+            case "new" -> "new";
+            case "gone" -> "gone";
+            default -> trend;
+        };
+    }
+
+    private static class CompRow {
+        int num;
+        String className;
+        long baselineSampledSize;
+        long currentSampledSize;
+        double growthRatio;
+        String trend;
     }
 
     private static class Row {

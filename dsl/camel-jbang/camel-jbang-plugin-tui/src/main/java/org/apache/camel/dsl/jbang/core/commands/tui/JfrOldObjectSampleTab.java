@@ -57,6 +57,11 @@ class JfrOldObjectSampleTab implements MonitorTab {
         HAS_RESULTS
     }
 
+    private enum RecordingMode {
+        SINGLE,
+        DUAL
+    }
+
     private static final String[] SORT_COLUMNS = { "allocationClass", "sampledSize", "count", "objectAge" };
     private static final long[] MIN_SIZE_PRESETS = {
             0, 1024, 10 * 1024, 100 * 1024, 1024 * 1024, 10 * 1024 * 1024, 100 * 1024 * 1024 };
@@ -68,8 +73,10 @@ class JfrOldObjectSampleTab implements MonitorTab {
     private final AtomicBoolean loading = new AtomicBoolean(false);
 
     private State state = State.IDLE;
+    private RecordingMode recordingMode = RecordingMode.SINGLE;
     private int duration = 30;
     private long recordingStartTime;
+    private int currentRecordingDuration;
 
     private String sort = "sampledSize";
     private int sortIndex = 1;
@@ -82,6 +89,14 @@ class JfrOldObjectSampleTab implements MonitorTab {
     private String lastPid;
     private int detailScroll;
     private int minSizeIndex;
+
+    // dual recording mode state
+    private boolean dualFirstDone;
+    private int dualRecordingNumber;
+    private List<ComparisonEntry> comparisons;
+    private long baselineDurationMs;
+    private long currentDurationMs;
+    private double durationRatio;
 
     JfrOldObjectSampleTab(MonitorContext ctx) {
         this.ctx = ctx;
@@ -104,6 +119,8 @@ class JfrOldObjectSampleTab implements MonitorTab {
     public void onIntegrationChanged() {
         state = State.IDLE;
         samples = Collections.emptyList();
+        comparisons = null;
+        dualFirstDone = false;
         lastPid = null;
     }
 
@@ -112,6 +129,12 @@ class JfrOldObjectSampleTab implements MonitorTab {
         if (state == State.IDLE || state == State.HAS_RESULTS) {
             if (ke.isCharIgnoreCase('r')) {
                 startRecording();
+                return true;
+            }
+        }
+        if (state == State.IDLE || state == State.HAS_RESULTS) {
+            if (ke.isCharIgnoreCase('d')) {
+                recordingMode = recordingMode == RecordingMode.SINGLE ? RecordingMode.DUAL : RecordingMode.SINGLE;
                 return true;
             }
         }
@@ -175,8 +198,8 @@ class JfrOldObjectSampleTab implements MonitorTab {
     @Override
     public void navigateDown() {
         if (state == State.HAS_RESULTS) {
-            List<SampleEntry> visible = sortedSamples();
-            tableState.selectNext(visible.size());
+            int size = comparisons != null ? comparisons.size() : sortedSamples().size();
+            tableState.selectNext(size);
             detailScroll = 0;
         }
     }
@@ -221,6 +244,19 @@ class JfrOldObjectSampleTab implements MonitorTab {
                     Span.styled("/", Style.EMPTY.dim()),
                     Span.styled("-", Style.EMPTY.fg(Color.YELLOW).bold()),
                     Span.styled(" to adjust)", Style.EMPTY.dim())));
+            String modeLabel = recordingMode == RecordingMode.DUAL ? "dual" : "single";
+            lines.add(Line.from(
+                    Span.styled("  Mode:     ", Style.EMPTY.fg(Color.YELLOW).bold()),
+                    Span.styled("[" + modeLabel + "]", Style.EMPTY.fg(Color.WHITE)),
+                    Span.styled("  (press ", Style.EMPTY.dim()),
+                    Span.styled("d", Style.EMPTY.fg(Color.YELLOW).bold()),
+                    Span.styled(" to toggle)", Style.EMPTY.dim())));
+            if (recordingMode == RecordingMode.DUAL) {
+                lines.add(Line.from(
+                        Span.styled("            Runs two recordings (" + duration + "s + " + (duration * 2) + "s)"
+                                    + " and compares trends",
+                                Style.EMPTY.dim())));
+            }
             lines.add(Line.from(Span.raw("")));
             lines.add(Line.from(
                     Span.styled("  JFR OldObjectSample tracks objects surviving multiple GC cycles",
@@ -243,12 +279,22 @@ class JfrOldObjectSampleTab implements MonitorTab {
 
     private void renderRecording(Frame frame, Rect area) {
         long elapsed = System.currentTimeMillis() - recordingStartTime;
-        long remaining = Math.max(0, (duration * 1000L) - elapsed);
+        long remaining = Math.max(0, (currentRecordingDuration * 1000L) - elapsed);
 
         List<Line> lines = new ArrayList<>();
         lines.add(Line.from(Span.raw("")));
-        lines.add(Line.from(
-                Span.styled("  JFR recording in progress...", Style.EMPTY.fg(Color.GREEN).bold())));
+
+        if (recordingMode == RecordingMode.DUAL) {
+            String recLabel = dualFirstDone
+                    ? "Recording 2 of 2 (" + currentRecordingDuration + "s)..."
+                    : "Recording 1 of 2 (" + currentRecordingDuration + "s)...";
+            lines.add(Line.from(
+                    Span.styled("  " + recLabel, Style.EMPTY.fg(Color.GREEN).bold())));
+        } else {
+            lines.add(Line.from(
+                    Span.styled("  JFR recording in progress...", Style.EMPTY.fg(Color.GREEN).bold())));
+        }
+
         lines.add(Line.from(Span.raw("")));
         lines.add(Line.from(
                 Span.styled("  Elapsed:    ", Style.EMPTY.fg(Color.YELLOW).bold()),
@@ -258,7 +304,7 @@ class JfrOldObjectSampleTab implements MonitorTab {
                 Span.styled(formatDuration(remaining), Style.EMPTY.fg(Color.WHITE))));
         lines.add(Line.from(
                 Span.styled("  Duration:   ", Style.EMPTY.fg(Color.YELLOW).bold()),
-                Span.styled(duration + "s", Style.EMPTY.fg(Color.WHITE))));
+                Span.styled(currentRecordingDuration + "s", Style.EMPTY.fg(Color.WHITE))));
         lines.add(Line.from(Span.raw("")));
         lines.add(Line.from(
                 Span.styled("  Press ", Style.EMPTY.dim()),
@@ -267,7 +313,9 @@ class JfrOldObjectSampleTab implements MonitorTab {
 
         // progress bar
         int barWidth = Math.max(10, area.width() - 6);
-        double pct = duration > 0 ? Math.min(1.0, elapsed / (duration * 1000.0)) : 0;
+        double pct = currentRecordingDuration > 0
+                ? Math.min(1.0, elapsed / (currentRecordingDuration * 1000.0))
+                : 0;
         int filled = (int) (pct * barWidth);
         StringBuilder bar = new StringBuilder("  ");
         for (int i = 0; i < barWidth; i++) {
@@ -276,11 +324,14 @@ class JfrOldObjectSampleTab implements MonitorTab {
         lines.add(Line.from(Span.raw("")));
         lines.add(Line.from(Span.styled(bar.toString(), Style.EMPTY.fg(Color.GREEN))));
 
+        String title = recordingMode == RecordingMode.DUAL
+                ? " JFR Recording [dual] "
+                : " JFR Recording ";
         frame.renderWidget(
                 Paragraph.builder()
                         .text(Text.from(lines))
                         .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
-                                .title(" JFR Recording ").build())
+                                .title(title).build())
                         .build(),
                 area);
     }
@@ -298,13 +349,20 @@ class JfrOldObjectSampleTab implements MonitorTab {
     }
 
     private void renderResults(Frame frame, Rect area) {
-        List<SampleEntry> visible = sortedSamples();
-
-        List<Rect> chunks = Layout.vertical()
-                .constraints(Constraint.percentage(40), Constraint.fill())
-                .split(area);
-        renderSampleTable(frame, chunks.get(0), visible);
-        renderDetail(frame, chunks.get(1), visible);
+        if (comparisons != null) {
+            List<Rect> chunks = Layout.vertical()
+                    .constraints(Constraint.percentage(40), Constraint.fill())
+                    .split(area);
+            renderComparisonTable(frame, chunks.get(0));
+            renderComparisonDetail(frame, chunks.get(1));
+        } else {
+            List<SampleEntry> visible = sortedSamples();
+            List<Rect> chunks = Layout.vertical()
+                    .constraints(Constraint.percentage(40), Constraint.fill())
+                    .split(area);
+            renderSampleTable(frame, chunks.get(0), visible);
+            renderDetail(frame, chunks.get(1), visible);
+        }
     }
 
     private void renderSampleTable(Frame frame, Rect area, List<SampleEntry> visible) {
@@ -459,11 +517,169 @@ class JfrOldObjectSampleTab implements MonitorTab {
                 area);
     }
 
+    private void renderComparisonTable(Frame frame, Rect area) {
+        List<Row> rows = new ArrayList<>();
+        for (int i = 0; i < comparisons.size(); i++) {
+            ComparisonEntry e = comparisons.get(i);
+            String run1 = e.baselineSampledSize > 0 ? formatBytes(e.baselineSampledSize) : "-";
+            String run2 = e.currentSampledSize > 0 ? formatBytes(e.currentSampledSize) : "-";
+            String growth = e.growthRatio > 0 ? String.format(Locale.US, "%.1fx", e.growthRatio) : "-";
+            Span trendSpan = trendSpan(e.trend);
+
+            rows.add(Row.from(
+                    rightCell(String.valueOf(i + 1), 4),
+                    Cell.from(Span.styled(e.className != null ? e.className : "", Style.EMPTY.fg(Color.CYAN))),
+                    rightCell(run1, 10),
+                    rightCell(run2, 10),
+                    rightCell(growth, 8),
+                    Cell.from(trendSpan)));
+        }
+
+        if (rows.isEmpty()) {
+            rows.add(Row.from(
+                    Cell.from(""), Cell.from(Span.styled("No comparison data", Style.EMPTY.dim())),
+                    Cell.from(""), Cell.from(""), Cell.from(""), Cell.from("")));
+        }
+
+        String title = String.format(" Comparison [%d] run1:%s run2:%s ratio:%.1fx ",
+                comparisons.size(), formatDuration(baselineDurationMs),
+                formatDuration(currentDurationMs), durationRatio);
+
+        Table table = Table.builder()
+                .rows(rows)
+                .header(Row.from(
+                        rightCell("#", 4, Style.EMPTY.bold()),
+                        Cell.from(Span.styled("CLASS", Style.EMPTY.bold())),
+                        rightCell("RUN1", 10, Style.EMPTY.bold()),
+                        rightCell("RUN2", 10, Style.EMPTY.bold()),
+                        rightCell("GROWTH", 8, Style.EMPTY.bold()),
+                        Cell.from(Span.styled("TREND", Style.EMPTY.bold()))))
+                .widths(
+                        Constraint.length(4),
+                        Constraint.fill(),
+                        Constraint.length(10),
+                        Constraint.length(10),
+                        Constraint.length(8),
+                        Constraint.length(10))
+                .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
+                .highlightSpacing(Table.HighlightSpacing.ALWAYS)
+                .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(title).build())
+                .build();
+
+        frame.renderStatefulWidget(table, area, tableState);
+    }
+
+    private void renderComparisonDetail(Frame frame, Rect area) {
+        Integer sel = tableState.selected();
+        if (sel == null || sel < 0 || sel >= comparisons.size()) {
+            frame.renderWidget(
+                    Paragraph.builder()
+                            .text(Text.from(Line.from(
+                                    Span.styled(" Select an entry to see details", Style.EMPTY.dim()))))
+                            .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
+                                    .title(" Detail ").build())
+                            .build(),
+                    area);
+            return;
+        }
+
+        ComparisonEntry entry = comparisons.get(sel);
+        List<Line> lines = new ArrayList<>();
+
+        lines.add(Line.from(
+                Span.styled("  Class:   ", Style.EMPTY.fg(Color.YELLOW).bold()),
+                Span.styled(entry.className != null ? entry.className : "unknown", Style.EMPTY.fg(Color.CYAN))));
+        lines.add(Line.from(
+                Span.styled("  Trend:   ", Style.EMPTY.fg(Color.YELLOW).bold()),
+                trendSpan(entry.trend)));
+        lines.add(Line.from(
+                Span.styled("  Run 1:   ", Style.EMPTY.fg(Color.YELLOW).bold()),
+                Span.styled(formatBytes(entry.baselineSampledSize) + " (" + entry.baselineCount + " samples)",
+                        Style.EMPTY.fg(Color.WHITE))));
+        lines.add(Line.from(
+                Span.styled("  Run 2:   ", Style.EMPTY.fg(Color.YELLOW).bold()),
+                Span.styled(formatBytes(entry.currentSampledSize) + " (" + entry.currentCount + " samples)",
+                        Style.EMPTY.fg(Color.WHITE))));
+        if (entry.growthRatio > 0) {
+            lines.add(Line.from(
+                    Span.styled("  Growth:  ", Style.EMPTY.fg(Color.YELLOW).bold()),
+                    Span.styled(String.format(Locale.US, "%.2fx", entry.growthRatio),
+                            entry.growthRatio > 1.3 ? Style.EMPTY.fg(Color.RED).bold() : Style.EMPTY.fg(Color.WHITE))));
+        }
+
+        // reference chain from the entry
+        if (entry.referenceChain != null && !entry.referenceChain.isEmpty()) {
+            lines.add(Line.from(Span.raw("")));
+            lines.add(Line.from(
+                    Span.styled("  Reference Chain (Object -> GC Root):", Style.EMPTY.fg(Color.YELLOW).bold())));
+            for (int i = 0; i < entry.referenceChain.size(); i++) {
+                ChainLink link = entry.referenceChain.get(i);
+                String prefix = i == entry.referenceChain.size() - 1 ? "  └─ " : "  ├─ ";
+                String typeName = link.type != null ? abbreviateType(link.type) : "?";
+                String fieldInfo = link.field != null ? " (field: " + link.field + ")" : "";
+                String descInfo = link.description != null ? " [" + link.description + "]" : "";
+                lines.add(Line.from(
+                        Span.styled(prefix, Style.EMPTY.fg(Color.BLUE)),
+                        Span.styled(typeName, Style.EMPTY.fg(Color.CYAN)),
+                        Span.styled(fieldInfo, Style.EMPTY.fg(Color.GREEN)),
+                        Span.styled(descInfo, Style.EMPTY.dim())));
+            }
+        }
+
+        // stack trace
+        if (entry.stackTrace != null && !entry.stackTrace.isEmpty()) {
+            lines.add(Line.from(Span.raw("")));
+            lines.add(Line.from(
+                    Span.styled("  Allocation Stack Trace:", Style.EMPTY.fg(Color.YELLOW).bold())));
+            for (StackEntry se : entry.stackTrace) {
+                Style methodStyle = isJdkFrame(se.method) ? Style.EMPTY.dim() : Style.EMPTY.fg(Color.WHITE);
+                lines.add(Line.from(
+                        Span.styled("    at ", Style.EMPTY.dim()),
+                        Span.styled(se.method, methodStyle),
+                        Span.styled(":" + se.line, Style.EMPTY.dim())));
+            }
+        }
+
+        // apply scroll offset
+        if (detailScroll > 0 && detailScroll < lines.size()) {
+            lines = new ArrayList<>(lines.subList(detailScroll, lines.size()));
+        } else if (detailScroll >= lines.size()) {
+            detailScroll = Math.max(0, lines.size() - 1);
+            if (!lines.isEmpty()) {
+                lines = new ArrayList<>(lines.subList(detailScroll, lines.size()));
+            }
+        }
+
+        frame.renderWidget(
+                Paragraph.builder()
+                        .text(Text.from(lines))
+                        .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
+                                .title(" Detail ").build())
+                        .build(),
+                area);
+    }
+
+    private static Span trendSpan(String trend) {
+        if (trend == null) {
+            return Span.styled("-", Style.EMPTY.dim());
+        }
+        return switch (trend) {
+            case "growing" -> Span.styled("↑ leak?", Style.EMPTY.fg(Color.RED).bold());
+            case "stable" -> Span.styled("→ stable", Style.EMPTY.fg(Color.GREEN));
+            case "shrinking" -> Span.styled("↓", Style.EMPTY.dim());
+            case "new" -> Span.styled("new", Style.EMPTY.fg(Color.YELLOW));
+            case "gone" -> Span.styled("gone", Style.EMPTY.dim());
+            default -> Span.styled(trend, Style.EMPTY.dim());
+        };
+    }
+
     @Override
     public void renderFooter(List<Span> spans) {
+        String modeLabel = recordingMode == RecordingMode.DUAL ? "dual" : "single";
         switch (state) {
             case IDLE -> {
                 hint(spans, "R", "record");
+                hint(spans, "d", "mode [" + modeLabel + "]");
                 hint(spans, "+/-", "duration [" + duration + "s]");
                 hintLast(spans, "Esc", "back");
             }
@@ -473,9 +689,12 @@ class JfrOldObjectSampleTab implements MonitorTab {
             }
             case HAS_RESULTS -> {
                 hint(spans, "Esc", "back");
-                hint(spans, "s", "sort");
-                hint(spans, "m", "min-size [" + MIN_SIZE_LABELS[minSizeIndex] + "]");
+                if (comparisons == null) {
+                    hint(spans, "s", "sort");
+                    hint(spans, "m", "min-size [" + MIN_SIZE_LABELS[minSizeIndex] + "]");
+                }
                 hint(spans, "R", "new recording");
+                hint(spans, "d", "mode [" + modeLabel + "]");
                 hint(spans, "+/-", "duration [" + duration + "s]");
                 hintLast(spans, "PgUp/Dn", "scroll detail");
             }
@@ -488,19 +707,36 @@ class JfrOldObjectSampleTab implements MonitorTab {
         if (state != State.HAS_RESULTS) {
             return null;
         }
-        List<SampleEntry> visible = sortedSamples();
-        if (visible.isEmpty()) {
-            return null;
+        List<String> items;
+        if (comparisons != null) {
+            if (comparisons.isEmpty()) {
+                return null;
+            }
+            items = comparisons.stream()
+                    .map(e -> e.className != null ? e.className : "").toList();
+        } else {
+            List<SampleEntry> visible = sortedSamples();
+            if (visible.isEmpty()) {
+                return null;
+            }
+            items = visible.stream()
+                    .map(e -> e.className != null ? e.className : "").toList();
         }
-        List<String> items = visible.stream()
-                .map(e -> e.className != null ? e.className : "").toList();
         Integer sel = tableState.selected();
-        return new SelectionContext("table", items, sel != null ? sel : -1, items.size(), "JFR Old Objects");
+        return new SelectionContext(
+                "table", items, sel != null ? sel : -1, items.size(),
+                comparisons != null ? "JFR Comparison" : "JFR Old Objects");
     }
 
     @Override
     public JsonObject getTableDataAsJson() {
-        if (state != State.HAS_RESULTS || samples.isEmpty()) {
+        if (state != State.HAS_RESULTS) {
+            return null;
+        }
+        if (comparisons != null) {
+            return getComparisonDataAsJson();
+        }
+        if (samples.isEmpty()) {
             return null;
         }
         List<SampleEntry> visible = sortedSamples();
@@ -538,6 +774,31 @@ class JfrOldObjectSampleTab implements MonitorTab {
         result.put("rows", rows);
         result.put("totalRows", sampleCount);
         result.put("recordingDurationMs", recordingDurationMs);
+        Integer sel = tableState.selected();
+        result.put("selectedIndex", sel != null ? sel : -1);
+        return result;
+    }
+
+    private JsonObject getComparisonDataAsJson() {
+        JsonObject result = new JsonObject();
+        result.put("tab", "JFR Comparison");
+        result.put("baselineDurationMs", baselineDurationMs);
+        result.put("currentDurationMs", currentDurationMs);
+        result.put("durationRatio", durationRatio);
+        JsonArray rows = new JsonArray();
+        for (ComparisonEntry e : comparisons) {
+            JsonObject row = new JsonObject();
+            row.put("className", e.className);
+            row.put("baselineSampledSize", e.baselineSampledSize);
+            row.put("baselineCount", e.baselineCount);
+            row.put("currentSampledSize", e.currentSampledSize);
+            row.put("currentCount", e.currentCount);
+            row.put("growthRatio", e.growthRatio);
+            row.put("trend", e.trend);
+            rows.add(row);
+        }
+        result.put("rows", rows);
+        result.put("totalRows", comparisons.size());
         Integer sel = tableState.selected();
         result.put("selectedIndex", sel != null ? sel : -1);
         return result;
@@ -598,6 +859,27 @@ class JfrOldObjectSampleTab implements MonitorTab {
                   that keep accumulating
                 - **Thread-local references**: Objects held by thread-local variables
 
+                ## Dual Recording Mode
+
+                Press **d** to toggle between **single** and **dual** mode.
+
+                In **dual** mode, pressing **R** runs two sequential recordings:
+                - **Run 1** at the configured duration (e.g. 30s)
+                - **Run 2** at 2x the duration (e.g. 60s)
+
+                After both complete, a comparison table shows how each class behaved
+                across the two runs. The **GROWTH** column is the normalized growth
+                ratio: (size₂ / size₁) / durationRatio. A value above 1.3 means the
+                class is growing faster than expected — a likely memory leak.
+
+                ### Trend Indicators
+
+                - **↑ leak?** (red) — Growth ratio > 1.3, leak suspect
+                - **→ stable** (green) — Growth ratio 0.7–1.3, normal
+                - **↓** (dim) — Growth ratio < 0.7, shrinking
+                - **new** (yellow) — Only appeared in Run 2
+                - **gone** (dim) — Only appeared in Run 1
+
                 ## Comparison With Heap Histogram
 
                 The Heap Histogram tab shows WHAT is using memory (class instance counts
@@ -611,6 +893,7 @@ class JfrOldObjectSampleTab implements MonitorTab {
                 |-----|--------|
                 | R | Start/restart JFR recording |
                 | X | Stop recording early |
+                | d | Toggle single/dual recording mode |
                 | +/- | Adjust recording duration |
                 | Up/Down | Select sample |
                 | s | Cycle sort column (class, size, age) |
@@ -632,6 +915,10 @@ class JfrOldObjectSampleTab implements MonitorTab {
         }
         state = State.RECORDING;
         recordingStartTime = System.currentTimeMillis();
+        comparisons = null;
+        dualFirstDone = false;
+        dualRecordingNumber = 1;
+        currentRecordingDuration = duration;
 
         String pid = ctx.selectedPid;
         int dur = duration;
@@ -684,13 +971,44 @@ class JfrOldObjectSampleTab implements MonitorTab {
         state = State.LOADING_RESULTS;
 
         String pid = ctx.selectedPid;
-        startDaemonThread("jfr-stop-" + pid, () -> {
-            try {
-                sendStopAndLoadResults(pid);
-            } finally {
-                loading.set(false);
-            }
-        });
+        if (recordingMode == RecordingMode.DUAL && dualFirstDone) {
+            // user stopped second recording early — load comparison
+            startDaemonThread("jfr-stop-" + pid, () -> {
+                try {
+                    sendStopAndLoadComparison(pid);
+                } finally {
+                    loading.set(false);
+                }
+            });
+        } else if (recordingMode == RecordingMode.DUAL && !dualFirstDone) {
+            // user stopped first recording early — stop it and auto-start second
+            int dur2 = duration * 2;
+            startDaemonThread("jfr-stop-" + pid, () -> {
+                try {
+                    sendStopAndLoadResults(pid);
+                    if (state == State.HAS_RESULTS && ctx.runner != null) {
+                        ctx.runner.runOnRenderThread(() -> {
+                            dualFirstDone = true;
+                            dualRecordingNumber = 2;
+                            currentRecordingDuration = dur2;
+                            state = State.RECORDING;
+                            recordingStartTime = System.currentTimeMillis();
+                        });
+                        sendStartCommand(pid, dur2);
+                    }
+                } finally {
+                    loading.set(false);
+                }
+            });
+        } else {
+            startDaemonThread("jfr-stop-" + pid, () -> {
+                try {
+                    sendStopAndLoadResults(pid);
+                } finally {
+                    loading.set(false);
+                }
+            });
+        }
     }
 
     private void sendStopAndLoadResults(String pid) {
@@ -745,10 +1063,47 @@ class JfrOldObjectSampleTab implements MonitorTab {
             if (state != State.RECORDING) {
                 return;
             }
-            if (ctx.runner != null) {
-                ctx.runner.runOnRenderThread(() -> state = State.LOADING_RESULTS);
+
+            if (recordingMode == RecordingMode.DUAL && !dualFirstDone) {
+                // first recording done — stop it, then auto-start the second at 2x duration
+                if (ctx.runner != null) {
+                    ctx.runner.runOnRenderThread(() -> state = State.LOADING_RESULTS);
+                }
+                sendStopAndLoadResults(pid);
+                // now start the second recording at 2x
+                if (state == State.HAS_RESULTS && ctx.runner != null) {
+                    int dur2 = dur * 2;
+                    if (ctx.runner != null) {
+                        ctx.runner.runOnRenderThread(() -> {
+                            dualFirstDone = true;
+                            dualRecordingNumber = 2;
+                            currentRecordingDuration = dur2;
+                            state = State.RECORDING;
+                            recordingStartTime = System.currentTimeMillis();
+                        });
+                    }
+                    if (!loading.compareAndSet(false, true)) {
+                        return;
+                    }
+                    try {
+                        sendStartCommand(pid, dur2);
+                    } finally {
+                        loading.set(false);
+                    }
+                }
+            } else if (recordingMode == RecordingMode.DUAL && dualFirstDone) {
+                // second recording done — stop it and load comparison
+                if (ctx.runner != null) {
+                    ctx.runner.runOnRenderThread(() -> state = State.LOADING_RESULTS);
+                }
+                sendStopAndLoadComparison(pid);
+            } else {
+                // single mode
+                if (ctx.runner != null) {
+                    ctx.runner.runOnRenderThread(() -> state = State.LOADING_RESULTS);
+                }
+                loadQueryResults(pid);
             }
-            loadQueryResults(pid);
         });
     }
 
@@ -845,6 +1200,113 @@ class JfrOldObjectSampleTab implements MonitorTab {
                 });
             }
         }
+    }
+
+    private void sendStopAndLoadComparison(String pid) {
+        // stop the second recording
+        Path outputFile = ctx.getOutputFile(pid);
+        PathUtils.deleteFile(outputFile);
+
+        JsonObject root = new JsonObject();
+        root.put("action", "jfr-old-objects");
+        root.put("command", "stop");
+
+        Path actionFile = ctx.getActionFile(pid);
+        PathUtils.writeTextSafely(root.toJson(), actionFile);
+
+        JsonObject jo = pollJsonResponse(outputFile, 30000);
+        PathUtils.deleteFile(outputFile);
+
+        if (jo == null || !"completed".equals(jo.getString("status"))) {
+            if (ctx.runner != null) {
+                ctx.runner.runOnRenderThread(() -> state = State.IDLE);
+            }
+            return;
+        }
+
+        // now send the compare command
+        PathUtils.deleteFile(outputFile);
+        JsonObject cmpRoot = new JsonObject();
+        cmpRoot.put("action", "jfr-old-objects");
+        cmpRoot.put("command", "compare");
+        PathUtils.writeTextSafely(cmpRoot.toJson(), actionFile);
+
+        JsonObject cmpResult = pollJsonResponse(outputFile, 10000);
+        PathUtils.deleteFile(outputFile);
+
+        if (cmpResult != null && "compared".equals(cmpResult.getString("status"))) {
+            List<ComparisonEntry> entries = parseComparisons(cmpResult);
+            JsonObject baselineInfo = (JsonObject) cmpResult.get("baseline");
+            JsonObject currentInfo = (JsonObject) cmpResult.get("current");
+            long bDur = baselineInfo != null ? baselineInfo.getLongOrDefault("recordingDurationMs", 0) : 0;
+            long cDur = currentInfo != null ? currentInfo.getLongOrDefault("recordingDurationMs", 0) : 0;
+            double dRatio = cmpResult.getDoubleOrDefault("durationRatio", 1.0);
+
+            if (ctx.runner != null) {
+                ctx.runner.runOnRenderThread(() -> {
+                    comparisons = entries;
+                    baselineDurationMs = bDur;
+                    currentDurationMs = cDur;
+                    durationRatio = dRatio;
+                    state = State.HAS_RESULTS;
+                    tableState.select(0);
+                    lastPid = pid;
+                });
+            }
+        } else {
+            if (ctx.runner != null) {
+                ctx.runner.runOnRenderThread(() -> state = State.IDLE);
+            }
+        }
+    }
+
+    private List<ComparisonEntry> parseComparisons(JsonObject jo) {
+        JsonArray arr = (JsonArray) jo.get("comparisons");
+        if (arr == null) {
+            return Collections.emptyList();
+        }
+        List<ComparisonEntry> result = new ArrayList<>();
+        for (int i = 0; i < arr.size(); i++) {
+            JsonObject cj = (JsonObject) arr.get(i);
+            ComparisonEntry entry = new ComparisonEntry();
+            entry.className = cj.getStringOrDefault("allocationClass", "unknown");
+            entry.baselineSampledSize = cj.getLongOrDefault("baselineSampledSize", 0);
+            entry.baselineCount = cj.getIntegerOrDefault("baselineCount", 0);
+            entry.currentSampledSize = cj.getLongOrDefault("currentSampledSize", 0);
+            entry.currentCount = cj.getIntegerOrDefault("currentCount", 0);
+            entry.growthRatio = cj.getDoubleOrDefault("growthRatio", 0);
+            entry.trend = cj.getStringOrDefault("trend", "stable");
+
+            // reference chain
+            JsonArray chain = (JsonArray) cj.get("referenceChain");
+            if (chain != null && !chain.isEmpty()) {
+                entry.referenceChain = new ArrayList<>();
+                for (int j = 0; j < chain.size(); j++) {
+                    JsonObject linkJson = (JsonObject) chain.get(j);
+                    ChainLink link = new ChainLink();
+                    link.type = linkJson.getString("type");
+                    link.field = linkJson.getString("field");
+                    link.description = linkJson.getString("description");
+                    entry.referenceChain.add(link);
+                }
+            }
+
+            // stack trace
+            JsonArray st = (JsonArray) cj.get("stackTrace");
+            if (st != null && !st.isEmpty()) {
+                entry.stackTrace = new ArrayList<>();
+                for (int j = 0; j < st.size(); j++) {
+                    JsonObject fj = (JsonObject) st.get(j);
+                    StackEntry se = new StackEntry();
+                    se.method = fj.getStringOrDefault("method", "?");
+                    se.line = fj.getIntegerOrDefault("line", 0);
+                    entry.stackTrace.add(se);
+                }
+            }
+
+            result.add(entry);
+        }
+        return result;
     }
 
     // ---- Sorting ----
@@ -1035,5 +1497,17 @@ class JfrOldObjectSampleTab implements MonitorTab {
     static class StackEntry {
         String method;
         int line;
+    }
+
+    static class ComparisonEntry {
+        String className;
+        long baselineSampledSize;
+        int baselineCount;
+        long currentSampledSize;
+        int currentCount;
+        double growthRatio;
+        String trend;
+        List<ChainLink> referenceChain;
+        List<StackEntry> stackTrace;
     }
 }

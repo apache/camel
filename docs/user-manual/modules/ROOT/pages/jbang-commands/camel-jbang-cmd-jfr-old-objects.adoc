@@ -19,8 +19,9 @@ camel cmd jfr-old-objects [options]
 [cols="2,5,1,2",options="header"]
 |===
 | Option | Description | Default | Type
-| `--duration` | Recording duration in seconds (auto-stops after this time) | 0 | int
+| `--duration` | Recording duration in seconds (auto-stops after this time) | 30 | int
 | `--min-size` | Only show samples with total size above this value (e.g. 1024, 10KB, 1MB) | 0 | String
+| `--mode` | Recording mode: single (one recording) or dual (two recordings with trend comparison) | single | String
 | `--query` | Query cached results from the last recording |  | boolean
 | `--stacktrace` | Show allocation stack trace for each sample |  | boolean
 | `--start` | Start a JFR recording for OldObjectSample events |  | boolean
