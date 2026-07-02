@@ -21,6 +21,7 @@ import java.security.*;
 import javax.crypto.KeyGenerator;
 
 import org.apache.camel.component.pqc.PQCKeyEncapsulationAlgorithms;
+import org.apache.camel.component.pqc.PQCSecureRandom;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
 import org.bouncycastle.pqc.jcajce.spec.NTRUParameterSpec;
@@ -51,7 +52,7 @@ public class PQCDefaultNTRUMaterial {
             throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException {
         KeyPairGenerator kpg = KeyPairGenerator.getInstance(PQCKeyEncapsulationAlgorithms.NTRU.getAlgorithm(),
                 PQCKeyEncapsulationAlgorithms.NTRU.getBcProvider());
-        kpg.initialize(NTRUParameterSpec.ntruhps2048509, new SecureRandom());
+        kpg.initialize(NTRUParameterSpec.ntruhps2048509, PQCSecureRandom.RANDOM);
         return kpg;
     }
 

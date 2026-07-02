@@ -22,7 +22,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.security.KeyPair;
-import java.security.SecureRandom;
 import java.security.spec.AlgorithmParameterSpec;
 import java.util.Set;
 
@@ -36,6 +35,7 @@ import javax.crypto.spec.SecretKeySpec;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.component.pqc.PQCKeyEncapsulationAlgorithms;
+import org.apache.camel.component.pqc.PQCSecureRandom;
 import org.apache.camel.component.pqc.PQCSymmetricAlgorithms;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatName;
@@ -127,7 +127,6 @@ public class PQCDataFormat extends ServiceSupport implements DataFormat, DataFor
     private String symmetricKeyAlgorithm = "AES";
     private int symmetricKeyLength = 128;
     private KeyPair keyPair;
-    private final SecureRandom random = new SecureRandom();
     private String provider;
     private KeyGenerator keyGenerator;
 
@@ -164,13 +163,13 @@ public class PQCDataFormat extends ServiceSupport implements DataFormat, DataFor
         try {
             // Generate KEM encapsulation and the fresh shared secret
             KeyGenerator kg = getOrCreateKeyGenerator(kemAlg);
-            kg.init(new KEMGenerateSpec(kp.getPublic(), symAlg, symmetricKeyLength), random);
+            kg.init(new KEMGenerateSpec(kp.getPublic(), symAlg, symmetricKeyLength), PQCSecureRandom.RANDOM);
             SecretKeyWithEncapsulation secretKey = (SecretKeyWithEncapsulation) kg.generateKey();
             byte[] encapsulation = secretKey.getEncapsulation();
 
             // Encrypt the payload with an authenticated cipher using a fresh random nonce
             byte[] nonce = new byte[NONCE_LENGTH_BYTES];
-            random.nextBytes(nonce);
+            PQCSecureRandom.RANDOM.nextBytes(nonce);
             Cipher cipher = initAeadCipher(Cipher.ENCRYPT_MODE, symAlg, secretKey.getEncoded(), nonce);
             byte[] ciphertext = cipher.doFinal(plaintext);
 
@@ -222,7 +221,7 @@ public class PQCDataFormat extends ServiceSupport implements DataFormat, DataFor
 
             // Extract the shared secret from the encapsulation
             KeyGenerator kg = getOrCreateKeyGenerator(kemAlg);
-            kg.init(new KEMExtractSpec(kp.getPrivate(), encapsulation, symAlg, symmetricKeyLength), random);
+            kg.init(new KEMExtractSpec(kp.getPrivate(), encapsulation, symAlg, symmetricKeyLength), PQCSecureRandom.RANDOM);
             SecretKeyWithEncapsulation secretKey = (SecretKeyWithEncapsulation) kg.generateKey();
 
             // Decrypt. doFinal() verifies the authentication tag and throws on tampering; this must not be done with

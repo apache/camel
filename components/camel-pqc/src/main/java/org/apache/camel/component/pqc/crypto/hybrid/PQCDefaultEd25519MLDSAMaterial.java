@@ -18,6 +18,7 @@ package org.apache.camel.component.pqc.crypto.hybrid;
 
 import java.security.*;
 
+import org.apache.camel.component.pqc.PQCSecureRandom;
 import org.apache.camel.component.pqc.PQCSignatureAlgorithms;
 import org.bouncycastle.jcajce.spec.MLDSAParameterSpec;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
@@ -53,7 +54,7 @@ public class PQCDefaultEd25519MLDSAMaterial {
             KeyPairGenerator mldsaKpg = KeyPairGenerator.getInstance(
                     PQCSignatureAlgorithms.MLDSA.getAlgorithm(),
                     PQCSignatureAlgorithms.MLDSA.getBcProvider());
-            mldsaKpg.initialize(MLDSAParameterSpec.ml_dsa_65, new SecureRandom());
+            mldsaKpg.initialize(MLDSAParameterSpec.ml_dsa_65, PQCSecureRandom.RANDOM);
             pqcKeyPair = mldsaKpg.generateKeyPair();
             pqcSigner = Signature.getInstance(
                     PQCSignatureAlgorithms.MLDSA.getAlgorithm(),

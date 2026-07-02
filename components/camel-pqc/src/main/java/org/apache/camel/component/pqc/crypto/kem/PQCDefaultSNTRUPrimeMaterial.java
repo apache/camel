@@ -21,6 +21,7 @@ import java.security.*;
 import javax.crypto.KeyGenerator;
 
 import org.apache.camel.component.pqc.PQCKeyEncapsulationAlgorithms;
+import org.apache.camel.component.pqc.PQCSecureRandom;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
 import org.bouncycastle.pqc.jcajce.spec.SNTRUPrimeParameterSpec;
@@ -51,7 +52,7 @@ public class PQCDefaultSNTRUPrimeMaterial {
             throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException {
         KeyPairGenerator kpg = KeyPairGenerator.getInstance(PQCKeyEncapsulationAlgorithms.SNTRUPrime.getAlgorithm(),
                 PQCKeyEncapsulationAlgorithms.SNTRUPrime.getBcProvider());
-        kpg.initialize(SNTRUPrimeParameterSpec.sntrup761, new SecureRandom());
+        kpg.initialize(SNTRUPrimeParameterSpec.sntrup761, PQCSecureRandom.RANDOM);
         return kpg;
     }
 

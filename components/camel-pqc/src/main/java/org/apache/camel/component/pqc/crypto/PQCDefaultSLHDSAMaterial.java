@@ -18,6 +18,7 @@ package org.apache.camel.component.pqc.crypto;
 
 import java.security.*;
 
+import org.apache.camel.component.pqc.PQCSecureRandom;
 import org.apache.camel.component.pqc.PQCSignatureAlgorithms;
 import org.bouncycastle.jcajce.spec.SLHDSAParameterSpec;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
@@ -49,7 +50,7 @@ public class PQCDefaultSLHDSAMaterial {
             throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException {
         KeyPairGenerator kpGen = KeyPairGenerator.getInstance(PQCSignatureAlgorithms.SLHDSA.getAlgorithm(),
                 PQCSignatureAlgorithms.SLHDSA.getBcProvider());
-        kpGen.initialize(SLHDSAParameterSpec.slh_dsa_sha2_128s, new SecureRandom());
+        kpGen.initialize(SLHDSAParameterSpec.slh_dsa_sha2_128s, PQCSecureRandom.RANDOM);
         return kpGen;
     }
 }
