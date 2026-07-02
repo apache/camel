@@ -96,7 +96,7 @@ class ActionsPopup {
         SHELL
     }
 
-    private static final int[] GROUP_SIZES = { 1, 5, 5, 5 };
+    private static final int[] GROUP_SIZES = { 1, 6, 4, 5 };
     private static final int MCP_GROUP_SIZE = 4;
     private static final int SHELL_GROUP_SIZE = 1;
 
@@ -295,16 +295,17 @@ class ActionsPopup {
         flat.add(Action.GOTO_TAB);
         flat.add(null);
         flat.addAll(List.of(
-                Action.SEND_MESSAGE, Action.RUN_EXAMPLE, Action.RUN_FOLDER, Action.RUN_INFRA, Action.BROWSE_FILES));
+                Action.SEND_MESSAGE, Action.RUN_EXAMPLE, Action.RUN_FOLDER, Action.RUN_INFRA, Action.BROWSE_FILES,
+                Action.STOP_ALL));
         flat.add(null);
-        flat.addAll(List.of(Action.DOCTOR, Action.RESET_STATS, Action.RESET_SCREEN, Action.TOGGLE_THEME, Action.STOP_ALL));
+        flat.addAll(List.of(Action.DOCTOR, Action.RESET_STATS, Action.RESET_SCREEN, Action.TOGGLE_THEME));
         flat.add(null);
         flat.addAll(List.of(
                 Action.SCREENSHOT, Action.TAPE_RECORDING, Action.TAPE_INSTRUCTIONS, Action.CAPTION,
                 Action.SHOW_KEYSTROKES));
         if (mcpEnabled) {
             flat.add(null);
-            flat.addAll(List.of(Action.SETUP_AI, Action.MCP_INFO, Action.MCP_LOG, Action.AI_LOG));
+            flat.addAll(List.of(Action.SETUP_AI, Action.AI_LOG, Action.MCP_INFO, Action.MCP_LOG));
         }
         flat.add(null);
         flat.add(Action.SHELL);
@@ -381,13 +382,13 @@ class ActionsPopup {
         labels.add("Run from folder...");
         labels.add("Run Dev/Infra Service...");
         labels.add("Browse Files...");
+        labels.add("Stop All");
         labels.add("───");
         // Group 2: Diagnostics
         labels.add("Run Doctor");
         labels.add("Reset Stats");
         labels.add("Reset Screen");
         labels.add("dark".equals(Theme.mode()) ? "Light Theme" : "Dark Theme");
-        labels.add("Stop All");
         labels.add("───");
         // Group 3: Recording & Presentation
         labels.add("Take Screenshot");
@@ -398,10 +399,10 @@ class ActionsPopup {
         // Group 4: MCP
         if (mcpEnabled) {
             labels.add("───");
-            labels.add("Setup AI...");
+            labels.add("Setup MCP");
+            labels.add("AI Log");
             labels.add("MCP Info");
             labels.add("MCP Log");
-            labels.add("AI Log");
         }
         labels.add("───");
         labels.add("Shell");
@@ -683,8 +684,10 @@ class ActionsPopup {
                         showActionsMenu = false;
                         openAiLog();
                     } else if (action == Action.SEND_MESSAGE) {
-                        showActionsMenu = false;
-                        openSendMessage();
+                        if (ctx != null && ctx.selectedPid != null && !ctx.isInfraSelected()) {
+                            showActionsMenu = false;
+                            openSendMessage();
+                        }
                     } else if (action == Action.RESET_STATS) {
                         showActionsMenu = false;
                         if (resetStatsAction != null) {
@@ -956,14 +959,17 @@ class ActionsPopup {
         items.add(ListItem.from("  🔍 Go to..."));
         items.add(ListItem.from(divider).style(Style.EMPTY.dim()));
         // Group 1: User Actions
-        items.add(ListItem.from("  📩 Send Message"));
+        boolean hasSelection = ctx != null && ctx.selectedPid != null && !ctx.isInfraSelected();
+        items.add(hasSelection
+                ? ListItem.from("  📩 Send Message")
+                : ListItem.from("  📩 Send Message").style(Style.EMPTY.dim()));
         items.add(ListItem.from("  🐪 Run an example..."));
         items.add(ListItem.from("  📂 Run from folder..."));
         items.add(ListItem.from("  🔧 Run Dev/Infra Service..."));
-        boolean hasSelection = ctx != null && ctx.selectedPid != null && !ctx.isInfraSelected();
         items.add(hasSelection
                 ? ListItem.from("  📁 Browse Files...")
                 : ListItem.from("  📁 Browse Files...").style(Style.EMPTY.dim()));
+        items.add(ListItem.from(stopLabel));
         items.add(ListItem.from(divider).style(Style.EMPTY.dim()));
         // Group 2: Diagnostics
         items.add(ListItem.from("  🩺 Run Doctor"));
@@ -971,7 +977,6 @@ class ActionsPopup {
         items.add(ListItem.from("  🧹 Reset Screen"));
         String themeLabel = "dark".equals(Theme.mode()) ? "  🌞 Light Theme" : "  🌙 Dark Theme";
         items.add(ListItem.from(themeLabel));
-        items.add(ListItem.from(stopLabel));
         items.add(ListItem.from(divider).style(Style.EMPTY.dim()));
         // Group 3: Recording & Presentation
         items.add(ListItem.from("  📸 Take Screenshot"));
@@ -982,10 +987,10 @@ class ActionsPopup {
         // Group 4: MCP
         if (mcpEnabled) {
             items.add(ListItem.from(divider).style(Style.EMPTY.dim()));
-            items.add(ListItem.from("  🧠 Setup AI..."));
+            items.add(ListItem.from("  🧠 Setup MCP"));
+            items.add(ListItem.from("  💬 AI Log"));
             items.add(ListItem.from("  🤖 MCP Info"));
             items.add(ListItem.from("  📋 MCP Log"));
-            items.add(ListItem.from("  💬 AI Log"));
         }
         // Group 5: Shell
         items.add(ListItem.from(divider).style(Style.EMPTY.dim()));
@@ -1338,7 +1343,7 @@ class ActionsPopup {
         String status = client != null
                 ? "**Connected:** " + client + "\n\nYour AI agent is already connected and ready to use."
                 : "**Status:** Waiting for connection";
-        docContent = "# Setup AI Agent\n\n"
+        docContent = "# Setup MCP\n\n"
                      + status + "\n\n"
                      + "## Connect Claude Code\n\n"
                      + "Run this command in your terminal:\n\n"
@@ -1357,7 +1362,7 @@ class ActionsPopup {
                      + "- Send test messages to endpoints\n"
                      + "- Record VHS tapes for documentation\n\n"
                      + "Try asking: *\"What's on my Camel TUI screen right now?\"*\n";
-        docTitle = "Setup AI";
+        docTitle = "Setup MCP";
         docScroll = 0;
         showDocViewer = true;
         docViewerFromExampleBrowser = false;
