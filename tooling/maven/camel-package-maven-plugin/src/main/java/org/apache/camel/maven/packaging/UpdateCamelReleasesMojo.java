@@ -117,8 +117,6 @@ public class UpdateCamelReleasesMojo extends AbstractGeneratorMojo {
         return Jsoner.deserialize(json, new JsonArray());
     }
 
-    // HttpClient does not implement AutoCloseable before Java 21; nothing to close on the target JDK
-    @SuppressWarnings("java:S2095")
     private List<ReleaseModel> processReleases(List<String> urls) throws Exception {
         List<ReleaseModel> answer = new ArrayList<>();
 
@@ -161,8 +159,6 @@ public class UpdateCamelReleasesMojo extends AbstractGeneratorMojo {
         return answer;
     }
 
-    // HttpClient does not implement AutoCloseable before Java 21; nothing to close on the target JDK
-    @SuppressWarnings("java:S2095")
     private List<String> fetchCamelReleaseLinks(String gitUrl) throws Exception {
         List<String> answer = new ArrayList<>();
 
