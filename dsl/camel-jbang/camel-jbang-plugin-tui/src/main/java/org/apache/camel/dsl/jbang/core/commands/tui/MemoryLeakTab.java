@@ -548,7 +548,11 @@ class MemoryLeakTab implements MonitorTab {
             String run1 = e.baselineSampledSize > 0 ? formatBytes(e.baselineSampledSize) : "-";
             String run2 = e.currentSampledSize > 0 ? formatBytes(e.currentSampledSize) : "-";
             String growth = e.growthRatio > 0 ? formatGrowthPercent(e.growthRatio) : "-";
+            if (e.lowConfidence && e.growthRatio > 0) {
+                growth = "~" + growth;
+            }
             Span trendSpan = trendSpan(e.trend);
+            String warn = e.lowConfidence ? " ⚠" : "";
 
             rows.add(Row.from(
                     rightCell(String.valueOf(i + 1), 4),
@@ -556,7 +560,7 @@ class MemoryLeakTab implements MonitorTab {
                     rightCell(run1, 10),
                     rightCell(run2, 10),
                     rightCell(growth, 8),
-                    Cell.from(trendSpan)));
+                    Cell.from(Line.from(trendSpan, Span.styled(warn, Style.EMPTY.fg(Color.YELLOW))))));
         }
 
         if (rows.isEmpty()) {
@@ -587,8 +591,8 @@ class MemoryLeakTab implements MonitorTab {
                         Constraint.fill(),
                         Constraint.length(10),
                         Constraint.length(10),
-                        Constraint.length(8),
-                        Constraint.length(10))
+                        Constraint.length(9),
+                        Constraint.length(12))
                 .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
                 .highlightSpacing(Table.HighlightSpacing.ALWAYS)
                 .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(title).build())
@@ -629,10 +633,22 @@ class MemoryLeakTab implements MonitorTab {
                 Span.styled(formatBytes(entry.currentSampledSize) + " (" + entry.currentCount + " samples)",
                         Style.EMPTY.fg(Color.WHITE))));
         if (entry.growthRatio > 0) {
+            String growthLabel = entry.lowConfidence
+                    ? "~" + formatGrowthPercent(entry.growthRatio)
+                    : formatGrowthPercent(entry.growthRatio);
             lines.add(Line.from(
                     Span.styled("  Growth:  ", Style.EMPTY.fg(Color.YELLOW).bold()),
-                    Span.styled(formatGrowthPercent(entry.growthRatio),
+                    Span.styled(growthLabel,
                             entry.growthRatio > 1.3 ? Style.EMPTY.fg(Color.RED).bold() : Style.EMPTY.fg(Color.WHITE))));
+        }
+        if (entry.lowConfidence) {
+            lines.add(Line.from(
+                    Span.styled("  ⚠ Low confidence: ", Style.EMPTY.fg(Color.YELLOW)),
+                    Span.styled("sample counts are too low or diverge significantly", Style.EMPTY.dim())));
+            lines.add(Line.from(
+                    Span.styled("    between runs. The growth percentage may not be reliable.", Style.EMPTY.dim())));
+            lines.add(Line.from(
+                    Span.styled("    Re-run with a longer duration to collect more samples.", Style.EMPTY.dim())));
         }
 
         // reference chain from the entry
@@ -916,6 +932,16 @@ class MemoryLeakTab implements MonitorTab {
                 - **↓** (dim) — Growth < -20%, shrinking
                 - **new** (yellow) — Only appeared in Run 2
                 - **gone** (dim) — Only appeared in Run 1
+
+                ### Low Confidence ⚠
+
+                A **⚠** warning appears when sample counts are too low
+                (fewer than 5 in either run) or diverge significantly from
+                the expected duration ratio. The growth percentage is shown
+                with a **~** prefix (e.g. ~+53%) to indicate the value may
+                not be reliable. JFR sampling is statistical — low sample
+                counts produce noisy results. Re-run with a longer duration
+                to collect more samples.
 
                 ## Comparison With Heap Histogram
 
@@ -1341,6 +1367,7 @@ class MemoryLeakTab implements MonitorTab {
             entry.currentCount = cj.getIntegerOrDefault("currentCount", 0);
             entry.growthRatio = cj.getDoubleOrDefault("growthRatio", 0);
             entry.trend = cj.getStringOrDefault("trend", "stable");
+            entry.lowConfidence = cj.getBooleanOrDefault("lowConfidence", false);
 
             // reference chain
             JsonArray chain = (JsonArray) cj.get("referenceChain");
@@ -1577,6 +1604,7 @@ class MemoryLeakTab implements MonitorTab {
         int currentCount;
         double growthRatio;
         String trend;
+        boolean lowConfidence;
         List<ChainLink> referenceChain;
         List<StackEntry> stackTrace;
     }

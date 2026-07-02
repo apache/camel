@@ -339,6 +339,22 @@ public class JfrMemoryLeakDevConsole extends AbstractDevConsole {
             comp.put("growthRatio", Math.round(growthRatio * 100.0) / 100.0);
             comp.put("trend", trend);
 
+            // flag low confidence when sample counts are too low or diverge
+            // significantly from the expected duration ratio
+            boolean lowConfidence = false;
+            if (baseCount > 0 && curCount > 0) {
+                if (baseCount < 5 || curCount < 5) {
+                    lowConfidence = true;
+                } else {
+                    double countRatio = (double) curCount / baseCount;
+                    double deviation = countRatio / durationRatio;
+                    if (deviation < 0.3 || deviation > 3.0) {
+                        lowConfidence = true;
+                    }
+                }
+            }
+            comp.put("lowConfidence", lowConfidence);
+
             // carry forward reference chain and stack trace from current (or baseline if gone)
             JsonObject source = current != null ? current : baseline;
             if (source.containsKey("referenceChain")) {

@@ -295,6 +295,7 @@ public class CamelMemoryLeak extends ActionBaseCommand {
                     cr.currentSampledSize = comp.getLongOrDefault("currentSampledSize", 0);
                     cr.growthRatio = comp.getDoubleOrDefault("growthRatio", 0);
                     cr.trend = comp.getStringOrDefault("trend", "stable");
+                    cr.lowConfidence = comp.getBooleanOrDefault("lowConfidence", false);
                     cr.chainSummary = buildChainSummary(comp);
                     cr.stackTrace = (JsonArray) comp.get("stackTrace");
                     compRows.add(cr);
@@ -469,18 +470,19 @@ public class CamelMemoryLeak extends ActionBaseCommand {
                 new Column().header("RUN2").headerAlign(HorizontalAlign.RIGHT).dataAlign(HorizontalAlign.RIGHT)
                         .with(r -> r.currentSampledSize > 0 ? formatBytes(r.currentSampledSize) : "-"),
                 new Column().header("GROWTH").headerAlign(HorizontalAlign.RIGHT).dataAlign(HorizontalAlign.RIGHT)
-                        .with(r -> r.growthRatio > 0 ? String.format(Locale.US, "%.1fx", r.growthRatio) : "-"),
+                        .with(r -> formatGrowth(r)),
                 new Column().header("TREND").dataAlign(HorizontalAlign.LEFT)
-                        .with(r -> trendLabel(r.trend)))));
+                        .with(r -> trendLabel(r.trend) + (r.lowConfidence ? " ⚠" : "")))));
     }
 
     private void printComparisonTableWithStacktrace(List<CompRow> rows) {
         for (CompRow r : rows) {
             String run1 = r.baselineSampledSize > 0 ? formatBytes(r.baselineSampledSize) : "-";
             String run2 = r.currentSampledSize > 0 ? formatBytes(r.currentSampledSize) : "-";
-            String growth = r.growthRatio > 0 ? String.format(Locale.US, "%.1fx", r.growthRatio) : "-";
-            printer().printf("%d) %s  run1:%s  run2:%s  growth:%s  %s%n",
-                    r.num, r.className, run1, run2, growth, trendLabel(r.trend));
+            String growth = formatGrowth(r);
+            String warn = r.lowConfidence ? " ⚠" : "";
+            printer().printf("%d) %s  run1:%s  run2:%s  growth:%s  %s%s%n",
+                    r.num, r.className, run1, run2, growth, trendLabel(r.trend), warn);
             if (r.chainSummary != null && !r.chainSummary.isEmpty()) {
                 printer().println("   chain: " + r.chainSummary);
             }
@@ -494,6 +496,15 @@ public class CamelMemoryLeak extends ActionBaseCommand {
             }
             printer().println();
         }
+    }
+
+    private static String formatGrowth(CompRow r) {
+        if (r.growthRatio <= 0) {
+            return "-";
+        }
+        int pct = (int) Math.round((r.growthRatio - 1.0) * 100);
+        String label = (pct >= 0 ? "+" : "") + pct + "%";
+        return r.lowConfidence ? "~" + label : label;
     }
 
     private static String trendLabel(String trend) {
@@ -518,6 +529,7 @@ public class CamelMemoryLeak extends ActionBaseCommand {
         long currentSampledSize;
         double growthRatio;
         String trend;
+        boolean lowConfidence;
         String chainSummary;
         JsonArray stackTrace;
     }

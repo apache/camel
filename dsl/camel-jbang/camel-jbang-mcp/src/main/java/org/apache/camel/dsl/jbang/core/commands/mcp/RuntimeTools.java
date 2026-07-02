@@ -353,7 +353,9 @@ public class RuntimeTools {
                   Use command 'start' to begin recording, 'stop' to stop and get results, \
                   'status' to check recording state, and 'query' to retrieve cached results from the last recording. \
                   Use mode 'dual' with 'start' to run two sequential recordings (Xs then 2Xs) and automatically \
-                  compare trends — returns growth ratios and trend classifications (growing, stable, shrinking, new, gone).""")
+                  compare trends — returns growth ratios and trend classifications (growing, stable, shrinking, new, gone). \
+                  Entries with lowConfidence=true have unreliable growth percentages due to low sample counts or \
+                  sample counts that diverge significantly between runs — recommend a longer recording duration.""")
     public JsonObject camel_runtime_memory_leak(
             @ToolArg(description = NAME_OR_PID_DESC) String nameOrPid,
             @ToolArg(description = "Command: start, stop, status, or query") String command,
