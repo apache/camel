@@ -503,7 +503,7 @@
         <swagger-openapi3-java-parser-version>2.1.45</swagger-openapi3-java-parser-version>
         <swagger-request-validator-version>2.46.1</swagger-request-validator-version>
         <stringtemplate-version>4.3.4</stringtemplate-version>
-        <tahu-version>1.0.19</tahu-version>
+        <tahu-version>1.0.20</tahu-version>
         <tamboui-version>0.4.0</tamboui-version>
         <testcontainers-version>2.0.5</testcontainers-version>
         <thymeleaf-version>3.1.5.RELEASE</thymeleaf-version>
