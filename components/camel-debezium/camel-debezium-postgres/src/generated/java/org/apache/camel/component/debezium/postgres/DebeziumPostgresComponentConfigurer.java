@@ -130,6 +130,10 @@ public class DebeziumPostgresComponentConfigurer extends PropertyConfigurerSuppo
         case "maxQueueSize": getOrCreateConfiguration(target).setMaxQueueSize(property(camelContext, int.class, value)); return true;
         case "maxqueuesizeinbytes":
         case "maxQueueSizeInBytes": getOrCreateConfiguration(target).setMaxQueueSizeInBytes(property(camelContext, long.class, value)); return true;
+        case "memorymanagementschemasclass":
+        case "memoryManagementSchemasClass": getOrCreateConfiguration(target).setMemoryManagementSchemasClass(property(camelContext, java.lang.String.class, value)); return true;
+        case "memorymanagementtablesclass":
+        case "memoryManagementTablesClass": getOrCreateConfiguration(target).setMemoryManagementTablesClass(property(camelContext, java.lang.String.class, value)); return true;
         case "messagekeycolumns":
         case "messageKeyColumns": getOrCreateConfiguration(target).setMessageKeyColumns(property(camelContext, java.lang.String.class, value)); return true;
         case "messageprefixexcludelist":
@@ -262,6 +266,8 @@ public class DebeziumPostgresComponentConfigurer extends PropertyConfigurerSuppo
         case "snapshotTablesOrderByRowCount": getOrCreateConfiguration(target).setSnapshotTablesOrderByRowCount(property(camelContext, java.lang.String.class, value)); return true;
         case "sourceinfostructmaker":
         case "sourceinfoStructMaker": getOrCreateConfiguration(target).setSourceinfoStructMaker(property(camelContext, java.lang.String.class, value)); return true;
+        case "statisticsmetricsenabled":
+        case "statisticsMetricsEnabled": getOrCreateConfiguration(target).setStatisticsMetricsEnabled(property(camelContext, boolean.class, value)); return true;
         case "statusupdateintervalms":
         case "statusUpdateIntervalMs": getOrCreateConfiguration(target).setStatusUpdateIntervalMs(property(camelContext, int.class, value)); return true;
         case "streamingdelayms":
@@ -393,6 +399,10 @@ public class DebeziumPostgresComponentConfigurer extends PropertyConfigurerSuppo
         case "maxQueueSize": return int.class;
         case "maxqueuesizeinbytes":
         case "maxQueueSizeInBytes": return long.class;
+        case "memorymanagementschemasclass":
+        case "memoryManagementSchemasClass": return java.lang.String.class;
+        case "memorymanagementtablesclass":
+        case "memoryManagementTablesClass": return java.lang.String.class;
         case "messagekeycolumns":
         case "messageKeyColumns": return java.lang.String.class;
         case "messageprefixexcludelist":
@@ -525,6 +535,8 @@ public class DebeziumPostgresComponentConfigurer extends PropertyConfigurerSuppo
         case "snapshotTablesOrderByRowCount": return java.lang.String.class;
         case "sourceinfostructmaker":
         case "sourceinfoStructMaker": return java.lang.String.class;
+        case "statisticsmetricsenabled":
+        case "statisticsMetricsEnabled": return boolean.class;
         case "statusupdateintervalms":
         case "statusUpdateIntervalMs": return int.class;
         case "streamingdelayms":
@@ -657,6 +669,10 @@ public class DebeziumPostgresComponentConfigurer extends PropertyConfigurerSuppo
         case "maxQueueSize": return getOrCreateConfiguration(target).getMaxQueueSize();
         case "maxqueuesizeinbytes":
         case "maxQueueSizeInBytes": return getOrCreateConfiguration(target).getMaxQueueSizeInBytes();
+        case "memorymanagementschemasclass":
+        case "memoryManagementSchemasClass": return getOrCreateConfiguration(target).getMemoryManagementSchemasClass();
+        case "memorymanagementtablesclass":
+        case "memoryManagementTablesClass": return getOrCreateConfiguration(target).getMemoryManagementTablesClass();
         case "messagekeycolumns":
         case "messageKeyColumns": return getOrCreateConfiguration(target).getMessageKeyColumns();
         case "messageprefixexcludelist":
@@ -789,6 +805,8 @@ public class DebeziumPostgresComponentConfigurer extends PropertyConfigurerSuppo
         case "snapshotTablesOrderByRowCount": return getOrCreateConfiguration(target).getSnapshotTablesOrderByRowCount();
         case "sourceinfostructmaker":
         case "sourceinfoStructMaker": return getOrCreateConfiguration(target).getSourceinfoStructMaker();
+        case "statisticsmetricsenabled":
+        case "statisticsMetricsEnabled": return getOrCreateConfiguration(target).isStatisticsMetricsEnabled();
         case "statusupdateintervalms":
         case "statusUpdateIntervalMs": return getOrCreateConfiguration(target).getStatusUpdateIntervalMs();
         case "streamingdelayms":
