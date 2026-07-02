@@ -104,6 +104,7 @@ public class JfrOldObjectSampleDevConsole extends AbstractDevConsole {
             Recording rec = new Recording();
             rec.setName("Camel OldObjectSample");
             rec.enable("jdk.OldObjectSample").withStackTrace().withPeriod(Duration.ofSeconds(1));
+            rec.enable("jdk.GarbageCollection");
 
             int duration = optionInt(options, "duration", 0);
             requestedDurationSeconds = duration;
@@ -365,11 +366,13 @@ public class JfrOldObjectSampleDevConsole extends AbstractDevConsole {
         JsonObject baselineInfo = new JsonObject();
         baselineInfo.put("recordingDurationMs", baselineDurationMs);
         baselineInfo.put("sampleCount", previousResults.getIntegerOrDefault("sampleCount", 0));
+        baselineInfo.put("gcCount", previousResults.getIntegerOrDefault("gcCount", 0));
         result.put("baseline", baselineInfo);
 
         JsonObject currentInfo = new JsonObject();
         currentInfo.put("recordingDurationMs", currentDurationMs);
         currentInfo.put("sampleCount", cachedResults.getIntegerOrDefault("sampleCount", 0));
+        currentInfo.put("gcCount", cachedResults.getIntegerOrDefault("gcCount", 0));
         result.put("current", currentInfo);
 
         result.put("durationRatio", Math.round(durationRatio * 100.0) / 100.0);
@@ -413,12 +416,18 @@ public class JfrOldObjectSampleDevConsole extends AbstractDevConsole {
     }
 
     private JsonObject parseRecordingFile(Path file, int limit) throws IOException {
-        // parse all raw samples first
+        // parse all raw samples and count GC events
         List<JsonObject> rawSamples = new ArrayList<>();
+        int gcCount = 0;
         try (RecordingFile rf = new RecordingFile(file)) {
             while (rf.hasMoreEvents()) {
                 RecordedEvent event = rf.readEvent();
-                if (!"jdk.OldObjectSample".equals(event.getEventType().getName())) {
+                String eventName = event.getEventType().getName();
+                if ("jdk.GarbageCollection".equals(eventName)) {
+                    gcCount++;
+                    continue;
+                }
+                if (!"jdk.OldObjectSample".equals(eventName)) {
                     continue;
                 }
                 JsonObject sample = parseOldObjectSampleEvent(event);
@@ -465,6 +474,7 @@ public class JfrOldObjectSampleDevConsole extends AbstractDevConsole {
         root.put("samples", samples);
         root.put("sampleCount", count);
         root.put("rawSampleCount", rawSamples.size());
+        root.put("gcCount", gcCount);
         return root;
     }
 

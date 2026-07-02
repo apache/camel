@@ -84,6 +84,7 @@ class JfrOldObjectSampleTab implements MonitorTab {
 
     private List<SampleEntry> samples = Collections.emptyList();
     private int sampleCount;
+    private int gcCount;
     private long recordingDurationMs;
     private long recordingEndTime;
     private String lastPid;
@@ -97,6 +98,8 @@ class JfrOldObjectSampleTab implements MonitorTab {
     private long baselineDurationMs;
     private long currentDurationMs;
     private double durationRatio;
+    private int baselineGcCount;
+    private int currentGcCount;
 
     JfrOldObjectSampleTab(MonitorContext ctx) {
         this.ctx = ctx;
@@ -408,8 +411,9 @@ class JfrOldObjectSampleTab implements MonitorTab {
                 agoLabel = " (" + agoMin + "m ago)";
             }
         }
-        String title = String.format(" JFR Old Objects [%d] duration:%s sort:%s%s%s ",
-                visible.size(), formatDuration(recordingDurationMs), sort, minLabel, agoLabel);
+        String gcLabel = gcCount > 0 ? " gc:" + gcCount : "";
+        String title = String.format(" JFR Old Objects [%d] duration:%s%s sort:%s%s%s ",
+                visible.size(), formatDuration(recordingDurationMs), gcLabel, sort, minLabel, agoLabel);
 
         Table table = Table.builder()
                 .rows(rows)
@@ -556,9 +560,13 @@ class JfrOldObjectSampleTab implements MonitorTab {
                     Cell.from(""), Cell.from(""), Cell.from(""), Cell.from("")));
         }
 
-        String title = String.format(" Comparison [%d] run1:%s run2:%s ratio:%.1fx ",
+        String gcLabel = "";
+        if (baselineGcCount > 0 || currentGcCount > 0) {
+            gcLabel = String.format(" gc:%d/%d", baselineGcCount, currentGcCount);
+        }
+        String title = String.format(" Comparison [%d] run1:%s run2:%s ratio:%.1fx%s ",
                 comparisons.size(), formatDuration(baselineDurationMs),
-                formatDuration(currentDurationMs), durationRatio);
+                formatDuration(currentDurationMs), durationRatio, gcLabel);
 
         Table table = Table.builder()
                 .rows(rows)
@@ -1049,6 +1057,7 @@ class JfrOldObjectSampleTab implements MonitorTab {
         if (jo != null && "completed".equals(jo.getString("status"))) {
             List<SampleEntry> result = parseSamples(jo);
             int count = jo.getIntegerOrDefault("sampleCount", 0);
+            int gc = jo.getIntegerOrDefault("gcCount", 0);
             long durationMs = jo.getLongOrDefault("recordingDurationMs", 0);
             long endTime = jo.getLongOrDefault("recordingEndTime", System.currentTimeMillis());
 
@@ -1056,6 +1065,7 @@ class JfrOldObjectSampleTab implements MonitorTab {
                 ctx.runner.runOnRenderThread(() -> {
                     samples = result;
                     sampleCount = count;
+                    gcCount = gc;
                     recordingDurationMs = durationMs;
                     recordingEndTime = endTime;
                     state = State.HAS_RESULTS;
@@ -1206,6 +1216,7 @@ class JfrOldObjectSampleTab implements MonitorTab {
         if (jo != null && "completed".equals(jo.getString("status"))) {
             List<SampleEntry> result = parseSamples(jo);
             int count = jo.getIntegerOrDefault("sampleCount", 0);
+            int gc = jo.getIntegerOrDefault("gcCount", 0);
             long durationMs = jo.getLongOrDefault("recordingDurationMs", 0);
             long endTime = jo.getLongOrDefault("recordingEndTime", System.currentTimeMillis());
 
@@ -1213,6 +1224,7 @@ class JfrOldObjectSampleTab implements MonitorTab {
                 ctx.runner.runOnRenderThread(() -> {
                     samples = result;
                     sampleCount = count;
+                    gcCount = gc;
                     recordingDurationMs = durationMs;
                     recordingEndTime = endTime;
                     state = State.HAS_RESULTS;
@@ -1279,6 +1291,8 @@ class JfrOldObjectSampleTab implements MonitorTab {
             JsonObject currentInfo = (JsonObject) cmpResult.get("current");
             long bDur = baselineInfo != null ? baselineInfo.getLongOrDefault("recordingDurationMs", 0) : 0;
             long cDur = currentInfo != null ? currentInfo.getLongOrDefault("recordingDurationMs", 0) : 0;
+            int bGc = baselineInfo != null ? baselineInfo.getIntegerOrDefault("gcCount", 0) : 0;
+            int cGc = currentInfo != null ? currentInfo.getIntegerOrDefault("gcCount", 0) : 0;
             double dRatio = cmpResult.getDoubleOrDefault("durationRatio", 1.0);
 
             if (ctx.runner != null) {
@@ -1286,6 +1300,8 @@ class JfrOldObjectSampleTab implements MonitorTab {
                     comparisons = entries;
                     baselineDurationMs = bDur;
                     currentDurationMs = cDur;
+                    baselineGcCount = bGc;
+                    currentGcCount = cGc;
                     durationRatio = dRatio;
                     state = State.HAS_RESULTS;
                     tableState.select(0);
