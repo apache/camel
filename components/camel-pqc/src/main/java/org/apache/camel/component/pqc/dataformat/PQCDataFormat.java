@@ -127,6 +127,7 @@ public class PQCDataFormat extends ServiceSupport implements DataFormat, DataFor
     private String symmetricKeyAlgorithm = "AES";
     private int symmetricKeyLength = 128;
     private KeyPair keyPair;
+    private final SecureRandom random = new SecureRandom();
     private String provider;
     private KeyGenerator keyGenerator;
 
@@ -161,8 +162,6 @@ public class PQCDataFormat extends ServiceSupport implements DataFormat, DataFor
         byte[] plaintext = ExchangeHelper.convertToMandatoryType(exchange, byte[].class, graph);
 
         try {
-            SecureRandom random = new SecureRandom();
-
             // Generate KEM encapsulation and the fresh shared secret
             KeyGenerator kg = getOrCreateKeyGenerator(kemAlg);
             kg.init(new KEMGenerateSpec(kp.getPublic(), symAlg, symmetricKeyLength), random);
@@ -223,7 +222,7 @@ public class PQCDataFormat extends ServiceSupport implements DataFormat, DataFor
 
             // Extract the shared secret from the encapsulation
             KeyGenerator kg = getOrCreateKeyGenerator(kemAlg);
-            kg.init(new KEMExtractSpec(kp.getPrivate(), encapsulation, symAlg, symmetricKeyLength), new SecureRandom());
+            kg.init(new KEMExtractSpec(kp.getPrivate(), encapsulation, symAlg, symmetricKeyLength), random);
             SecretKeyWithEncapsulation secretKey = (SecretKeyWithEncapsulation) kg.generateKey();
 
             // Decrypt. doFinal() verifies the authentication tag and throws on tampering; this must not be done with
