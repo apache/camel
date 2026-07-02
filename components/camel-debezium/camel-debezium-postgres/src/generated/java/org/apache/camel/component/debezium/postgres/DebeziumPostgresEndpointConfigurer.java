@@ -124,6 +124,10 @@ public class DebeziumPostgresEndpointConfigurer extends PropertyConfigurerSuppor
         case "maxQueueSize": target.getConfiguration().setMaxQueueSize(property(camelContext, int.class, value)); return true;
         case "maxqueuesizeinbytes":
         case "maxQueueSizeInBytes": target.getConfiguration().setMaxQueueSizeInBytes(property(camelContext, long.class, value)); return true;
+        case "memorymanagementschemasclass":
+        case "memoryManagementSchemasClass": target.getConfiguration().setMemoryManagementSchemasClass(property(camelContext, java.lang.String.class, value)); return true;
+        case "memorymanagementtablesclass":
+        case "memoryManagementTablesClass": target.getConfiguration().setMemoryManagementTablesClass(property(camelContext, java.lang.String.class, value)); return true;
         case "messagekeycolumns":
         case "messageKeyColumns": target.getConfiguration().setMessageKeyColumns(property(camelContext, java.lang.String.class, value)); return true;
         case "messageprefixexcludelist":
@@ -256,6 +260,8 @@ public class DebeziumPostgresEndpointConfigurer extends PropertyConfigurerSuppor
         case "snapshotTablesOrderByRowCount": target.getConfiguration().setSnapshotTablesOrderByRowCount(property(camelContext, java.lang.String.class, value)); return true;
         case "sourceinfostructmaker":
         case "sourceinfoStructMaker": target.getConfiguration().setSourceinfoStructMaker(property(camelContext, java.lang.String.class, value)); return true;
+        case "statisticsmetricsenabled":
+        case "statisticsMetricsEnabled": target.getConfiguration().setStatisticsMetricsEnabled(property(camelContext, boolean.class, value)); return true;
         case "statusupdateintervalms":
         case "statusUpdateIntervalMs": target.getConfiguration().setStatusUpdateIntervalMs(property(camelContext, int.class, value)); return true;
         case "streamingdelayms":
@@ -388,6 +394,10 @@ public class DebeziumPostgresEndpointConfigurer extends PropertyConfigurerSuppor
         case "maxQueueSize": return int.class;
         case "maxqueuesizeinbytes":
         case "maxQueueSizeInBytes": return long.class;
+        case "memorymanagementschemasclass":
+        case "memoryManagementSchemasClass": return java.lang.String.class;
+        case "memorymanagementtablesclass":
+        case "memoryManagementTablesClass": return java.lang.String.class;
         case "messagekeycolumns":
         case "messageKeyColumns": return java.lang.String.class;
         case "messageprefixexcludelist":
@@ -520,6 +530,8 @@ public class DebeziumPostgresEndpointConfigurer extends PropertyConfigurerSuppor
         case "snapshotTablesOrderByRowCount": return java.lang.String.class;
         case "sourceinfostructmaker":
         case "sourceinfoStructMaker": return java.lang.String.class;
+        case "statisticsmetricsenabled":
+        case "statisticsMetricsEnabled": return boolean.class;
         case "statusupdateintervalms":
         case "statusUpdateIntervalMs": return int.class;
         case "streamingdelayms":
@@ -653,6 +665,10 @@ public class DebeziumPostgresEndpointConfigurer extends PropertyConfigurerSuppor
         case "maxQueueSize": return target.getConfiguration().getMaxQueueSize();
         case "maxqueuesizeinbytes":
         case "maxQueueSizeInBytes": return target.getConfiguration().getMaxQueueSizeInBytes();
+        case "memorymanagementschemasclass":
+        case "memoryManagementSchemasClass": return target.getConfiguration().getMemoryManagementSchemasClass();
+        case "memorymanagementtablesclass":
+        case "memoryManagementTablesClass": return target.getConfiguration().getMemoryManagementTablesClass();
         case "messagekeycolumns":
         case "messageKeyColumns": return target.getConfiguration().getMessageKeyColumns();
         case "messageprefixexcludelist":
@@ -785,6 +801,8 @@ public class DebeziumPostgresEndpointConfigurer extends PropertyConfigurerSuppor
         case "snapshotTablesOrderByRowCount": return target.getConfiguration().getSnapshotTablesOrderByRowCount();
         case "sourceinfostructmaker":
         case "sourceinfoStructMaker": return target.getConfiguration().getSourceinfoStructMaker();
+        case "statisticsmetricsenabled":
+        case "statisticsMetricsEnabled": return target.getConfiguration().isStatisticsMetricsEnabled();
         case "statusupdateintervalms":
         case "statusUpdateIntervalMs": return target.getConfiguration().getStatusUpdateIntervalMs();
         case "streamingdelayms":

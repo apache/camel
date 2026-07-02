@@ -24,7 +24,7 @@ public class DebeziumPostgresEndpointUriFactory extends org.apache.camel.support
     private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(130);
+        Set<String> props = new HashSet<>(133);
         props.add("additionalProperties");
         props.add("binaryHandlingMode");
         props.add("bridgeErrorHandler");
@@ -76,6 +76,8 @@ public class DebeziumPostgresEndpointUriFactory extends org.apache.camel.support
         props.add("maxBatchSize");
         props.add("maxQueueSize");
         props.add("maxQueueSizeInBytes");
+        props.add("memoryManagementSchemasClass");
+        props.add("memoryManagementTablesClass");
         props.add("messageKeyColumns");
         props.add("messagePrefixExcludeList");
         props.add("messagePrefixIncludeList");
@@ -143,6 +145,7 @@ public class DebeziumPostgresEndpointUriFactory extends org.apache.camel.support
         props.add("snapshotSelectStatementOverrides");
         props.add("snapshotTablesOrderByRowCount");
         props.add("sourceinfoStructMaker");
+        props.add("statisticsMetricsEnabled");
         props.add("statusUpdateIntervalMs");
         props.add("streamingDelayMs");
         props.add("tableExcludeList");
