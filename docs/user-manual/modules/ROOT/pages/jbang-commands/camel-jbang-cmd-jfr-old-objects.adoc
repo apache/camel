@@ -20,7 +20,7 @@ camel cmd jfr-old-objects [options]
 |===
 | Option | Description | Default | Type
 | `--duration` | Recording duration in seconds (auto-stops after this time) | 30 | int
-| `--min-size` | Only show samples with total size above this value (e.g. 1024, 10KB, 1MB) | 0 | String
+| `--min-size` | Only show samples with total size above this value (e.g. 1024, 10KB, 1MB). Default 1KB in dual mode to filter noise | 0 | String
 | `--mode` | Recording mode: single (one recording) or dual (two recordings with trend comparison) | single | String
 | `--query` | Query cached results from the last recording |  | boolean
 | `--stacktrace` | Show allocation stack trace for each sample |  | boolean

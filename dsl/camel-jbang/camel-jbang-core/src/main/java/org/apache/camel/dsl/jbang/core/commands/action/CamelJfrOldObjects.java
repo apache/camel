@@ -82,7 +82,7 @@ public class CamelJfrOldObjects extends ActionBaseCommand {
     int top;
 
     @CommandLine.Option(names = { "--min-size" },
-                        description = "Only show samples with total size above this value (e.g. 1024, 10KB, 1MB)",
+                        description = "Only show samples with total size above this value (e.g. 1024, 10KB, 1MB). Default 1KB in dual mode to filter noise",
                         defaultValue = "0")
     String minSize;
 
@@ -295,9 +295,15 @@ public class CamelJfrOldObjects extends ActionBaseCommand {
                     cr.currentSampledSize = comp.getLongOrDefault("currentSampledSize", 0);
                     cr.growthRatio = comp.getDoubleOrDefault("growthRatio", 0);
                     cr.trend = comp.getStringOrDefault("trend", "stable");
+                    cr.chainSummary = buildChainSummary(comp);
+                    cr.stackTrace = (JsonArray) comp.get("stackTrace");
                     compRows.add(cr);
                 }
-                printComparisonTable(compRows);
+                if (stacktrace) {
+                    printComparisonTableWithStacktrace(compRows);
+                } else {
+                    printComparisonTable(compRows);
+                }
             } else {
                 printer().println("No comparison data available.");
             }
@@ -468,12 +474,35 @@ public class CamelJfrOldObjects extends ActionBaseCommand {
                         .with(r -> trendLabel(r.trend)))));
     }
 
+    private void printComparisonTableWithStacktrace(List<CompRow> rows) {
+        for (CompRow r : rows) {
+            String run1 = r.baselineSampledSize > 0 ? formatBytes(r.baselineSampledSize) : "-";
+            String run2 = r.currentSampledSize > 0 ? formatBytes(r.currentSampledSize) : "-";
+            String growth = r.growthRatio > 0 ? String.format(Locale.US, "%.1fx", r.growthRatio) : "-";
+            printer().printf("%d) %s  run1:%s  run2:%s  growth:%s  %s%n",
+                    r.num, r.className, run1, run2, growth, trendLabel(r.trend));
+            if (r.chainSummary != null && !r.chainSummary.isEmpty()) {
+                printer().println("   chain: " + r.chainSummary);
+            }
+            if (r.stackTrace != null) {
+                for (int i = 0; i < r.stackTrace.size(); i++) {
+                    JsonObject frame = (JsonObject) r.stackTrace.get(i);
+                    printer().printf("     at %s:%s%n",
+                            frame.getStringOrDefault("method", "?"),
+                            frame.getIntegerOrDefault("line", 0));
+                }
+            }
+            printer().println();
+        }
+    }
+
     private static String trendLabel(String trend) {
         if (trend == null) {
             return "-";
         }
         return switch (trend) {
-            case "growing" -> "↑ leak?";
+            case "growing" -> "↑ leak!";
+            case "suspicious" -> "↑ leak?";
             case "stable" -> "→ stable";
             case "shrinking" -> "↓";
             case "new" -> "new";
@@ -489,6 +518,8 @@ public class CamelJfrOldObjects extends ActionBaseCommand {
         long currentSampledSize;
         double growthRatio;
         String trend;
+        String chainSummary;
+        JsonArray stackTrace;
     }
 
     private static class Row {

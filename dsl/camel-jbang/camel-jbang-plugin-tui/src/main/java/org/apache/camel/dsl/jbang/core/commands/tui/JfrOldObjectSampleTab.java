@@ -664,7 +664,8 @@ class JfrOldObjectSampleTab implements MonitorTab {
             return Span.styled("-", Style.EMPTY.dim());
         }
         return switch (trend) {
-            case "growing" -> Span.styled("↑ leak?", Style.EMPTY.fg(Color.RED).bold());
+            case "growing" -> Span.styled("↑ leak!", Style.EMPTY.fg(Color.RED).bold());
+            case "suspicious" -> Span.styled("↑ leak?", Style.EMPTY.fg(Color.YELLOW).bold());
             case "stable" -> Span.styled("→ stable", Style.EMPTY.fg(Color.GREEN));
             case "shrinking" -> Span.styled("↓", Style.EMPTY.dim());
             case "new" -> Span.styled("new", Style.EMPTY.fg(Color.YELLOW));
@@ -874,9 +875,10 @@ class JfrOldObjectSampleTab implements MonitorTab {
 
                 ### Trend Indicators
 
-                - **↑ leak?** (red) — Growth ratio > 1.3, leak suspect
-                - **→ stable** (green) — Growth ratio 0.7–1.3, normal
-                - **↓** (dim) — Growth ratio < 0.7, shrinking
+                - **↑ leak!** (red) — Growth ratio >= 1.2, very likely leak
+                - **↑ leak?** (yellow) — Growth ratio 1.1–1.2, suspicious
+                - **→ stable** (green) — Growth ratio 0.8–1.1, normal
+                - **↓** (dim) — Growth ratio < 0.8, shrinking
                 - **new** (yellow) — Only appeared in Run 2
                 - **gone** (dim) — Only appeared in Run 1
 

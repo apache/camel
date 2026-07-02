@@ -256,7 +256,7 @@ public class JfrOldObjectSampleDevConsole extends AbstractDevConsole {
             return errorJson("Need two recordings to compare. Run two recordings first.");
         }
 
-        long minSize = optionLong(options, "minSize", 0);
+        long minSize = optionLong(options, "minSize", 1024);
 
         long baselineDurationMs = previousResults.getLongOrDefault("recordingDurationMs", 1);
         long currentDurationMs = cachedResults.getLongOrDefault("recordingDurationMs", 1);
@@ -323,9 +323,11 @@ public class JfrOldObjectSampleDevConsole extends AbstractDevConsole {
                 trend = curSize > 0 ? "new" : "stable";
             } else {
                 growthRatio = ((double) curSize / baseSize) / durationRatio;
-                if (growthRatio > 1.3) {
+                if (growthRatio >= 1.2) {
                     trend = "growing";
-                } else if (growthRatio < 0.7) {
+                } else if (growthRatio >= 1.1) {
+                    trend = "suspicious";
+                } else if (growthRatio < 0.8) {
                     trend = "shrinking";
                 } else {
                     trend = "stable";
