@@ -34,8 +34,6 @@ public class ThreadsReifier extends ProcessorReifier<ThreadsDefinition> {
         super(route, (ThreadsDefinition) definition);
     }
 
-    // ExecutorService lifecycle is managed by ThreadsProcessor via shutdownThreadPool flag
-    @SuppressWarnings("java:S2095")
     @Override
     public Processor createProcessor() throws Exception {
         // the threads name

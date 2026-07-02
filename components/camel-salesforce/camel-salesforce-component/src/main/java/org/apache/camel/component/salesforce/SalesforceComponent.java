@@ -958,8 +958,6 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
         return new DefaultRawClient(httpClient, "", session, loginConfig);
     }
 
-    // ExecutorService lifecycle is managed by SalesforceHttpClient
-    @SuppressWarnings("java:S2095")
     static SalesforceHttpClient createHttpClient(
             Object source, final SslContextFactory.Client sslContextFactory, final CamelContext context, int workerPoolSize,
             int workerPoolMaxSize) {

@@ -391,8 +391,6 @@ class ShellPanel {
 
     private String startError;
 
-    // Streams are owned by virtualTerminal, which is closed in stopShell() via virtualTerminal.close()
-    @SuppressWarnings("java:S2095")
     private void startShell(int width, int height) {
         try {
             screenTerminal = new ScreenTerminal(width, height);

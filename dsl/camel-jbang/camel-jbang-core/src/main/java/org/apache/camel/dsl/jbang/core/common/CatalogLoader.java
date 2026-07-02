@@ -184,8 +184,6 @@ public final class CatalogLoader {
         return answer;
     }
 
-    // ClassLoader is intentionally kept open; it becomes the version manager's classloader
-    @SuppressWarnings("java:S2095")
     public static CamelCatalog loadQuarkusCatalog(MavenGav quarkusCamelBom, Function<MavenGav, MavenArtifact> downloader)
             throws Exception {
         String camelQuarkusVersion = null;

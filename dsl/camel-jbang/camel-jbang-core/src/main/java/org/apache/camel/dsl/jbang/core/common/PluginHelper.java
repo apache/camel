@@ -281,8 +281,6 @@ public final class PluginHelper {
         return new ResolveResult(dr.plugin(), cacheWritten);
     }
 
-    // URLClassLoader is intentionally kept open; it becomes the plugin's classloader via setClassLoader()
-    @SuppressWarnings("java:S2095")
     private static Optional<Plugin> loadFromCache(JsonObject entry, String camelVersion, String gav, String repos) {
         if (entry == null) {
             return Optional.empty();
