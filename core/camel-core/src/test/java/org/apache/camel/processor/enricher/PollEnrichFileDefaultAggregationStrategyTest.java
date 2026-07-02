@@ -16,11 +16,16 @@
  */
 package org.apache.camel.processor.enricher;
 
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
+import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
+
+import static org.awaitility.Awaitility.await;
 
 public class PollEnrichFileDefaultAggregationStrategyTest extends ContextTestSupport {
 
@@ -38,8 +43,11 @@ public class PollEnrichFileDefaultAggregationStrategyTest extends ContextTestSup
 
         context.getRouteController().startAllRoutes();
 
-        log.info("Sleeping for 0.25 sec before writing enrichdata file");
-        Thread.sleep(250);
+        // wait for the route to be fully started before writing enrichdata file
+        await().atMost(5, TimeUnit.SECONDS)
+                .until(() -> context.getRoutes().stream()
+                        .allMatch(r -> context.getRouteController()
+                                .getRouteStatus(r.getRouteId()) == ServiceStatus.Started));
         template.sendBodyAndHeader(fileUri("enrichdata"), "Big file",
                 Exchange.FILE_NAME, "AAA.dat");
         log.info("... write done");
