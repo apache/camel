@@ -4,7 +4,7 @@
 :artifactid: camel-jackson3xml
 :description: Unmarshal an XML payloads to POJOs and back using XMLMapper extension of Jackson
 :since: 4.19
-:supportlevel: Preview
+:supportlevel: Stable
 :tabs-sync-option:
 
 *Since Camel {since}*

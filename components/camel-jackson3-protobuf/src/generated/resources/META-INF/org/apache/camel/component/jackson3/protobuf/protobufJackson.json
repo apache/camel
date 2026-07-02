@@ -8,7 +8,7 @@
     "firstVersion": "4.19.0",
     "label": "dataformat,transformation",
     "javaType": "org.apache.camel.component.jackson3.protobuf.JacksonProtobufDataFormat",
-    "supportLevel": "Preview",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-jackson3-protobuf",
     "version": "4.22.0-SNAPSHOT",

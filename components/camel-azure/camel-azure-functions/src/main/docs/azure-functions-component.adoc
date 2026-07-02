@@ -4,7 +4,7 @@
 :artifactid: camel-azure-functions
 :description: Invoke and manage Azure Functions.
 :since: 4.19
-:supportlevel: Preview
+:supportlevel: Stable
 :tabs-sync-option:
 :component-header: Only producer is supported
 //Manually maintained attributes
@@ -451,4 +451,3 @@ YAML::
             message: "Created function app: ${header.CamelAzureFunctionsResourceId}"
 ----
 ====
-

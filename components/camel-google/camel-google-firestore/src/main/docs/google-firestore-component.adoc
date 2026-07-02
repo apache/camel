@@ -4,7 +4,7 @@
 :artifactid: camel-google-firestore
 :description: Store and retrieve data from Google Cloud Firestore NoSQL database.
 :since: 4.19
-:supportlevel: Preview
+:supportlevel: Stable
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
 //Manually maintained attributes
@@ -1173,5 +1173,3 @@ The component uses the following headers:
 | `CamelGoogleFirestoreResponseReadTime` | `Timestamp` | Document read time
 | `CamelGoogleFirestoreChangeType` | `String` | Change type for real-time updates (ADDED, MODIFIED, REMOVED)
 |===
-
-

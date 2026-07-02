@@ -4,7 +4,7 @@
 :artifactid: camel-event
 :description: Subscribe to Camel internal events such as route started/stopped and exchange completed/failed.
 :since: 4.19
-:supportlevel: Preview
+:supportlevel: Stable
 :tabs-sync-option:
 :component-header: Only consumer is supported
 :core:
