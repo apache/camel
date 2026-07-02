@@ -261,7 +261,7 @@ runScalpelDetection() {
   local base_branch="origin/${GITHUB_BASE_REF:-main}"
   local scalpel_args="-Dscalpel.enabled=true -Dscalpel.mode=report -Dscalpel.fullBuildTriggers= -Dscalpel.fetchBaseBranch=false -Dscalpel.baseBranch=${base_branch} -Dscalpel.excludePaths=.github/** -Dscalpel.skipTestsForDownstreamModules=${skip_downstream}"
 
-  # Verify merge base is reachable before running Scalpel
+  # Verify merge base is reachable (pre-fetched by the CI workflow step)
   if ! git merge-base HEAD "${base_branch}" >/dev/null 2>&1; then
     echo "  WARNING: merge base between HEAD and ${base_branch} is not reachable"
     echo "  HEAD=$(git rev-parse HEAD 2>/dev/null), ${base_branch}=$(git rev-parse ${base_branch} 2>/dev/null || echo 'NOT FOUND')"
@@ -744,18 +744,16 @@ main() {
     done <<< "$pom_files"
   fi
 
-  # Step 2b: Scalpel detection (for parent or module pom.xml changes)
-  # Scalpel uses effective POM model comparison — catches managed deps,
-  # plugin changes, and transitive impacts that grep misses.
-  # Skip when only the root pom.xml changed — it contains build-infrastructure
-  # config (license plugin, checkstyle, etc.) that doesn't affect module
-  # compilation or test behavior. Without this filter, Scalpel reports every
-  # module as affected because they all inherit from the root POM.
-  if echo "$diff_body" | sed -n 's|^diff --git a/\(.*\) b/.*|\1|p' | grep -q '.*/pom\.xml$'; then
-    echo ""
-    echo "Running Scalpel POM analysis..."
-    runScalpelDetection
-  fi
+  # Step 2b: Scalpel detection (all PRs)
+  # Scalpel uses effective POM model comparison and source-set analysis —
+  # catches managed deps, plugin changes, transitive impacts, and
+  # distinguishes main vs test-only source changes.
+  # Runs in report (shadow) mode: observes what it would do, does not
+  # affect actual test execution. Results appear in the PR comment for
+  # comparison with the grep-based approach.
+  echo ""
+  echo "Running Scalpel change detection..."
+  runScalpelDetection
 
   # Save grep-only results for comment attribution (before merging with Scalpel).
   # The comment's top section shows only what the current grep mechanism detected;
