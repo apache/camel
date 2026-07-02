@@ -74,7 +74,7 @@ class JfrOldObjectSampleTab implements MonitorTab {
 
     private State state = State.IDLE;
     private RecordingMode recordingMode = RecordingMode.DUAL;
-    private int duration = 30;
+    private int duration = 60;
     private long recordingStartTime;
     private int currentRecordingDuration;
 
@@ -832,7 +832,7 @@ class JfrOldObjectSampleTab implements MonitorTab {
 
                 ## How To Use
 
-                1. Press **R** to start a JFR recording (default 30 seconds)
+                1. Press **R** to start a JFR recording (default 60 seconds)
                 2. Use **+**/**-** to adjust the duration before starting
                 3. Wait for the recording to complete (or press **X** to stop early)
                 4. Browse the samples table and select entries to see reference chains
@@ -883,8 +883,8 @@ class JfrOldObjectSampleTab implements MonitorTab {
                 automatically loads the comparison results on startup.
 
                 In **dual** mode, pressing **R** runs two sequential recordings:
-                - **Run 1** at the configured duration (e.g. 30s)
-                - **Run 2** at 2x the duration (e.g. 60s)
+                - **Run 1** at the configured duration (e.g. 60s)
+                - **Run 2** at 2x the duration (e.g. 120s)
 
                 After both complete, a comparison table shows how each class behaved
                 across the two runs. The **GROWTH** column is the normalized growth

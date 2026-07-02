@@ -357,7 +357,7 @@ public class RuntimeTools {
     public JsonObject camel_runtime_jfr_old_objects(
             @ToolArg(description = NAME_OR_PID_DESC) String nameOrPid,
             @ToolArg(description = "Command: start, stop, status, or query") String command,
-            @ToolArg(description = "Recording duration in seconds (only for start command, default 30, use 0 for manual stop)") String duration,
+            @ToolArg(description = "Recording duration in seconds (only for start command, default 60, use 0 for manual stop)") String duration,
             @ToolArg(description = "Recording mode: dual (default, two recordings at Xs and 2Xs with trend comparison) or single (one recording)") String mode,
             @ToolArg(description = "Include allocation stack traces in results (default false, set true for detailed analysis)") String stacktrace,
             @ToolArg(description = "Minimum total size in bytes to include a sample (e.g. 1024 for 1KB). Filters out small allocations to reduce noise. Default 1024 (1KB) in dual mode") String minSize) {

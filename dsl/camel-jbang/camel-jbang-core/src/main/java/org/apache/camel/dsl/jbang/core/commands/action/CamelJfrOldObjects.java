@@ -74,7 +74,7 @@ public class CamelJfrOldObjects extends ActionBaseCommand {
     String mode;
 
     @CommandLine.Option(names = { "--duration" },
-                        description = "Recording duration in seconds (auto-stops after this time)", defaultValue = "30")
+                        description = "Recording duration in seconds (auto-stops after this time)", defaultValue = "60")
     int duration;
 
     @CommandLine.Option(names = { "--top" },
