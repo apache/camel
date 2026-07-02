@@ -238,6 +238,6 @@ public class TestPluginExporter implements PluginExporter {
     }
 
     private String asDependency(String artifactName) {
-        return "mvn@test:org.citrusframework:%s:\\$\\{citrus.version}".formatted(artifactName);
+        return "mvn@test:org.citrusframework:%s:${citrus.version}".formatted(artifactName);
     }
 }
