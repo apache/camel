@@ -81,6 +81,8 @@ class TabRegistry {
     private ClasspathTab classpathTab;
     private InflightTab inflightTab;
     private MemoryTab memoryTab;
+    private HeapHistogramTab heapHistogramTab;
+    private MemoryLeakTab memoryLeakTab;
     private ThreadsTab threadsTab;
     private SpansTab spansTab;
     private ProcessTab processTab;
@@ -105,6 +107,8 @@ class TabRegistry {
         routesTab = new RoutesTab(ctx);
         consumersTab = new ConsumersTab(ctx);
         dataSourceTab = new DataSourceTab(ctx);
+        heapHistogramTab = new HeapHistogramTab(ctx);
+        memoryLeakTab = new MemoryLeakTab(ctx);
         sqlQueryTab = new SqlQueryTab(ctx);
         sqlTraceTab = new SqlTraceTab(ctx);
         endpointsTab = new EndpointsTab(ctx, dataService.metrics());
@@ -129,7 +133,7 @@ class TabRegistry {
                 resetIntegrationTabState);
 
         sqlTraceTab.setEditSqlAction(sql -> {
-            selectMoreTab(10); // switch to SQL Query tab
+            selectMoreTab(12); // switch to SQL Query tab
             sqlQueryTab.setInputValue("sql", sql);
         });
     }
@@ -216,15 +220,17 @@ class TabRegistry {
             case 4 -> configurationTab;
             case 5 -> consumersTab;
             case 6 -> dataSourceTab;
-            case 7 -> inflightTab;
-            case 8 -> memoryTab;
-            case 9 -> metricsTab;
-            case 10 -> sqlQueryTab;
-            case 11 -> sqlTraceTab;
-            case 12 -> spansTab;
-            case 13 -> processTab;
-            case 14 -> startupTab;
-            case 15 -> threadsTab;
+            case 7 -> heapHistogramTab;
+            case 8 -> inflightTab;
+            case 9 -> memoryTab;
+            case 10 -> memoryLeakTab;
+            case 11 -> metricsTab;
+            case 12 -> sqlQueryTab;
+            case 13 -> sqlTraceTab;
+            case 14 -> spansTab;
+            case 15 -> processTab;
+            case 16 -> startupTab;
+            case 17 -> threadsTab;
             default -> null;
         };
         if (activeMoreTab != null) {
@@ -247,6 +253,8 @@ class TabRegistry {
         configurationTab.onIntegrationChanged();
         consumersTab.onIntegrationChanged();
         dataSourceTab.onIntegrationChanged();
+        heapHistogramTab.onIntegrationChanged();
+        memoryLeakTab.onIntegrationChanged();
         sqlQueryTab.onIntegrationChanged();
         sqlTraceTab.onIntegrationChanged();
         circuitBreakerTab.onIntegrationChanged();

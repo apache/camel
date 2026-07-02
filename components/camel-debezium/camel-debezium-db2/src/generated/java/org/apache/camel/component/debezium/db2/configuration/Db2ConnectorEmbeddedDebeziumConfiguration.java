@@ -111,6 +111,8 @@ public class Db2ConnectorEmbeddedDebeziumConfiguration
     private long retriableRestartConnectorWaitMs = 10000;
     @UriParam(label = LABEL_NAME, defaultValue = "0ms", javaType = "java.time.Duration")
     private long snapshotDelayMs = 0;
+    @UriParam(label = LABEL_NAME, defaultValue = "io.debezium.relational.ConcurrentMapTableMappingStorage")
+    private String memoryManagementTablesClass = "io.debezium.relational.ConcurrentMapTableMappingStorage";
     @UriParam(label = LABEL_NAME, defaultValue = "4s", javaType = "java.time.Duration")
     private long executorShutdownTimeoutMs = 4000;
     @UriParam(label = LABEL_NAME, defaultValue = "false")
@@ -144,6 +146,8 @@ public class Db2ConnectorEmbeddedDebeziumConfiguration
     private String snapshotIncludeCollectionList;
     @UriParam(label = LABEL_NAME, defaultValue = "false")
     private boolean snapshotModeConfigurationBasedStartStream = false;
+    @UriParam(label = LABEL_NAME, defaultValue = "true")
+    private boolean statisticsMetricsEnabled = true;
     @UriParam(label = LABEL_NAME, defaultValue = "0")
     private long maxQueueSizeInBytes = 0;
     @UriParam(label = LABEL_NAME, defaultValue = "false")
@@ -172,6 +176,8 @@ public class Db2ConnectorEmbeddedDebeziumConfiguration
     private String databaseHostname;
     @UriParam(label = LABEL_NAME, defaultValue = "none")
     private String schemaNameAdjustmentMode = "none";
+    @UriParam(label = LABEL_NAME, defaultValue = "io.debezium.relational.ConcurrentMapTableMappingStorage")
+    private String memoryManagementSchemasClass = "io.debezium.relational.ConcurrentMapTableMappingStorage";
     @UriParam(label = LABEL_NAME)
     private String tableIncludeList;
     @UriParam(label = LABEL_NAME, defaultValue = "1m", javaType = "java.time.Duration")
@@ -807,6 +813,22 @@ public class Db2ConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
+     * The fully-qualified class name of the storage implementation for table
+     * metadata. The class must implement
+     * io.debezium.relational.TableMappingStorage<io.debezium.relational.Table>.
+     * Defaults to io.debezium.relational.ConcurrentMapTableMappingStorage for
+     * in-memory storage.
+     */
+    public void setMemoryManagementTablesClass(
+            String memoryManagementTablesClass) {
+        this.memoryManagementTablesClass = memoryManagementTablesClass;
+    }
+
+    public String getMemoryManagementTablesClass() {
+        return memoryManagementTablesClass;
+    }
+
+    /**
      * The maximum time in milliseconds to wait for task executor to shut down.
      */
     public void setExecutorShutdownTimeoutMs(long executorShutdownTimeoutMs) {
@@ -1017,6 +1039,19 @@ public class Db2ConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
+     * Enable to collect various kind of statistics, like latencies in record
+     * processing, and derived data like quantiles. By default collecting
+     * statistics is enabled.
+     */
+    public void setStatisticsMetricsEnabled(boolean statisticsMetricsEnabled) {
+        this.statisticsMetricsEnabled = statisticsMetricsEnabled;
+    }
+
+    public boolean isStatisticsMetricsEnabled() {
+        return statisticsMetricsEnabled;
+    }
+
+    /**
      * Maximum size of the queue in bytes for change events read from the
      * database log but not yet recorded or forwarded. Defaults to 0. Mean the
      * feature is not enabled
@@ -1050,7 +1085,11 @@ public class Db2ConnectorEmbeddedDebeziumConfiguration
      * use microseconds precision; 'connect' always represents time, date, and
      * timestamp values using Kafka Connect's built-in representations for Time,
      * Date, and Timestamp, which uses millisecond precision regardless of the
-     * database columns' precision.
+     * database columns' precision; 'isostring' represents time, date, and
+     * timestamp values as ISO-8601 formatted strings at the UTC time zone;
+     * 'microseconds' always represents time, date, and timestamp values using
+     * microsecond precision; 'nanoseconds' always represents time, date, and
+     * timestamp values using nanosecond precision.
      */
     public void setTimePrecisionMode(String timePrecisionMode) {
         this.timePrecisionMode = timePrecisionMode;
@@ -1204,6 +1243,20 @@ public class Db2ConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
+     * The fully-qualified class name of the storage implementation for schema
+     * metadata. The class must implement
+     * io.debezium.relational.TableMappingStorage<io.debezium.relational.TableSchema>. Defaults to io.debezium.relational.ConcurrentMapTableMappingStorage for in-memory storage.
+     */
+    public void setMemoryManagementSchemasClass(
+            String memoryManagementSchemasClass) {
+        this.memoryManagementSchemasClass = memoryManagementSchemasClass;
+    }
+
+    public String getMemoryManagementSchemasClass() {
+        return memoryManagementSchemasClass;
+    }
+
+    /**
      * The tables for which changes are to be captured
      */
     public void setTableIncludeList(String tableIncludeList) {
@@ -1291,6 +1344,7 @@ public class Db2ConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "openlineage.integration.config.file.path", openlineageIntegrationConfigFilePath);
         addPropertyIfNotNull(configBuilder, "retriable.restart.connector.wait.ms", retriableRestartConnectorWaitMs);
         addPropertyIfNotNull(configBuilder, "snapshot.delay.ms", snapshotDelayMs);
+        addPropertyIfNotNull(configBuilder, "memory.management.tables.class", memoryManagementTablesClass);
         addPropertyIfNotNull(configBuilder, "executor.shutdown.timeout.ms", executorShutdownTimeoutMs);
         addPropertyIfNotNull(configBuilder, "provide.transaction.metadata", provideTransactionMetadata);
         addPropertyIfNotNull(configBuilder, "schema.history.internal.store.only.captured.tables.ddl", schemaHistoryInternalStoreOnlyCapturedTablesDdl);
@@ -1307,6 +1361,7 @@ public class Db2ConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "openlineage.integration.enabled", openlineageIntegrationEnabled);
         addPropertyIfNotNull(configBuilder, "snapshot.include.collection.list", snapshotIncludeCollectionList);
         addPropertyIfNotNull(configBuilder, "snapshot.mode.configuration.based.start.stream", snapshotModeConfigurationBasedStartStream);
+        addPropertyIfNotNull(configBuilder, "statistics.metrics.enabled", statisticsMetricsEnabled);
         addPropertyIfNotNull(configBuilder, "max.queue.size.in.bytes", maxQueueSizeInBytes);
         addPropertyIfNotNull(configBuilder, "snapshot.mode.configuration.based.snapshot.schema", snapshotModeConfigurationBasedSnapshotSchema);
         addPropertyIfNotNull(configBuilder, "time.precision.mode", timePrecisionMode);
@@ -1321,6 +1376,7 @@ public class Db2ConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "column.exclude.list", columnExcludeList);
         addPropertyIfNotNull(configBuilder, "database.hostname", databaseHostname);
         addPropertyIfNotNull(configBuilder, "schema.name.adjustment.mode", schemaNameAdjustmentMode);
+        addPropertyIfNotNull(configBuilder, "memory.management.schemas.class", memoryManagementSchemasClass);
         addPropertyIfNotNull(configBuilder, "table.include.list", tableIncludeList);
         addPropertyIfNotNull(configBuilder, "connection.validation.timeout.ms", connectionValidationTimeoutMs);
         addPropertyIfNotNull(configBuilder, "db2.platform", db2Platform);

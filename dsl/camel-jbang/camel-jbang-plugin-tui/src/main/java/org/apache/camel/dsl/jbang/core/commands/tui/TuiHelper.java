@@ -21,6 +21,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.function.Function;
 
 import dev.tamboui.layout.Rect;
@@ -542,7 +543,16 @@ final class TuiHelper {
         if (bytes < 1024 * 1024) {
             return (bytes / 1024) + "K";
         }
-        return (bytes / (1024 * 1024)) + "M";
+        long mb = bytes / (1024 * 1024);
+        if (mb >= 1024) {
+            long gb = mb / 1024;
+            long rem = mb % 1024;
+            if (rem == 0) {
+                return gb + "G";
+            }
+            return String.format(Locale.US, "%.1fG", mb / 1024.0);
+        }
+        return mb + "M";
     }
 
     static String formatThreads(int count, int peak) {

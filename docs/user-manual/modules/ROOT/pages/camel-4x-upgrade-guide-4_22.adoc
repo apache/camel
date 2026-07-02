@@ -40,6 +40,25 @@ to the true average throughput rather than oscillating between zero and spike va
 If you have tooling that consumes the JMX throughput value and expects the old instantaneous
 behavior, be aware that the reported value will now ramp up and decay gradually.
 
+=== camel-debezium
+
+The `camel-debezium` component has upgraded from Debezium 3.5.2 to 3.6.0.
+
+The following 10 Oracle connector options have been removed by Debezium 3.6.0 and are no longer available:
+
+* `logMiningBatchSizeDefault`
+* `logMiningBatchSizeIncrement`
+* `logMiningBatchSizeMax`
+* `logMiningBatchSizeMin`
+* `logMiningSleepTimeDefaultMs`
+* `logMiningSleepTimeIncrementMs`
+* `logMiningSleepTimeMaxMs`
+* `logMiningSleepTimeMinMs`
+* `logMiningScnGapDetectionGapSizeMin`
+* `logMiningScnGapDetectionTimeIntervalMaxMs`
+
+If you use any of these options, remove them from your configuration as they will cause errors.
+
 === camel-fory with JDK 25+ - Breaking change
 
 Due to new requirements from Apache Fory, when using Apache Fory Dataformat, the JVM parameter `--add-opens java.base/java.lang.invoke=ALL-UNNAMED` must be provided.

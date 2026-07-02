@@ -1,0 +1,15 @@
+{
+  "console": {
+    "kind": "console",
+    "group": "camel",
+    "name": "jfr-memory-leak",
+    "title": "JFR Memory Leak",
+    "description": "JFR-based old object sampling for memory leak diagnosis",
+    "deprecated": false,
+    "javaType": "org.apache.camel.impl.console.JfrMemoryLeakDevConsole",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-console",
+    "version": "4.21.0-SNAPSHOT"
+  }
+}
+
