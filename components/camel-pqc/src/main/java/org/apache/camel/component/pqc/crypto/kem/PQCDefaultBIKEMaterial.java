@@ -21,6 +21,7 @@ import java.security.*;
 import javax.crypto.KeyGenerator;
 
 import org.apache.camel.component.pqc.PQCKeyEncapsulationAlgorithms;
+import org.apache.camel.util.SecureRandomHelper;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
 import org.bouncycastle.pqc.jcajce.spec.BIKEParameterSpec;
@@ -51,7 +52,7 @@ public class PQCDefaultBIKEMaterial {
             throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException {
         KeyPairGenerator kpg = KeyPairGenerator.getInstance(PQCKeyEncapsulationAlgorithms.BIKE.getAlgorithm(),
                 PQCKeyEncapsulationAlgorithms.BIKE.getBcProvider());
-        kpg.initialize(BIKEParameterSpec.bike192, new SecureRandom());
+        kpg.initialize(BIKEParameterSpec.bike192, SecureRandomHelper.getSecureRandom());
         return kpg;
     }
 
