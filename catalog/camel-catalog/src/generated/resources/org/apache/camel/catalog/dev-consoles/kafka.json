@@ -10,6 +10,23 @@
     "groupId": "org.apache.camel",
     "artifactId": "camel-kafka",
     "version": "4.21.0-SNAPSHOT"
+  },
+  "options": {
+    "committed": {
+      "index": 0,
+      "kind": "option",
+      "displayName": "Committed",
+      "group": "query",
+      "label": "query",
+      "required": false,
+      "type": "boolean",
+      "javaType": "java.lang.Boolean",
+      "deprecated": false,
+      "autowired": false,
+      "secret": false,
+      "defaultValue": false,
+      "description": "Whether to include committed offset (sync operation to Kafka broker)"
+    }
   }
 }
 

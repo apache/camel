@@ -29,6 +29,7 @@ import java.util.stream.Stream;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.console.ConsoleHelper;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.PatternHelper;
 import org.apache.camel.support.RouteOnDemandReloadStrategy;
@@ -42,9 +43,8 @@ import org.apache.camel.util.json.JsonObject;
             description = "Information about Camel CLI source files")
 public class SourceDirDevConsole extends AbstractDevConsole {
 
-    /**
-     * Whether to show the source in the output
-     */
+    @Metadata(label = "query", description = "Whether to show the source in the output",
+              javaType = "java.lang.Boolean")
     public static final String SOURCE = "source";
 
     public SourceDirDevConsole() {
@@ -55,7 +55,7 @@ public class SourceDirDevConsole extends AbstractDevConsole {
     protected String doCallText(Map<String, Object> options) {
         String path = (String) options.get(Exchange.HTTP_PATH);
         String subPath = path != null ? StringHelper.after(path, "/") : null;
-        String source = (String) options.get(SOURCE);
+        boolean source = optionBoolean(options, SOURCE, false);
 
         final StringBuilder sb = new StringBuilder();
 
@@ -84,7 +84,7 @@ public class SourceDirDevConsole extends AbstractDevConsole {
                                 long ts = Files.getLastModifiedTime(f).toMillis();
                                 String age = ts > 0 ? TimeUtils.printSince(ts) : "n/a";
                                 sb.append(String.format("    %s (size: %d age: %s)%n", fileName, size, age));
-                                if ("true".equals(source)) {
+                                if (source) {
                                     StringBuilder code = new StringBuilder();
                                     try (Reader fileReader = Files.newBufferedReader(f, StandardCharsets.UTF_8);
                                          LineNumberReader reader = new LineNumberReader(fileReader)) {
@@ -122,7 +122,7 @@ public class SourceDirDevConsole extends AbstractDevConsole {
     protected Map<String, Object> doCallJson(Map<String, Object> options) {
         String path = (String) options.get(Exchange.HTTP_PATH);
         String subPath = path != null ? StringHelper.after(path, "/") : null;
-        String source = (String) options.get(SOURCE);
+        boolean source = optionBoolean(options, SOURCE, false);
 
         JsonObject root = new JsonObject();
 
@@ -152,7 +152,7 @@ public class SourceDirDevConsole extends AbstractDevConsole {
                                 jo.put("name", fileName);
                                 jo.put("size", Files.size(f));
                                 jo.put("lastModified", Files.getLastModifiedTime(f).toMillis());
-                                if ("true".equals(source)) {
+                                if (source) {
                                     try (Reader fileReader = Files.newBufferedReader(f, StandardCharsets.UTF_8)) {
                                         JsonArray code = ConsoleHelper.loadSourceAsJson(fileReader, null);
                                         if (code != null) {

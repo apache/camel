@@ -16,7 +16,7 @@
  */
 package org.apache.camel.tooling.model;
 
-public class DevConsoleModel extends ArtifactModel<BaseOptionModel> {
+public class DevConsoleModel extends ArtifactModel<DevConsoleModel.DevConsoleOptionModel> {
 
     protected String group;
 
@@ -34,6 +34,9 @@ public class DevConsoleModel extends ArtifactModel<BaseOptionModel> {
     @Override
     public Kind getKind() {
         return Kind.console;
+    }
+
+    public static class DevConsoleOptionModel extends BaseOptionModel {
     }
 
 }

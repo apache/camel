@@ -44,44 +44,36 @@ import org.apache.camel.util.json.Jsoner;
 @Configurer(extended = true)
 public class SqlQueryDevConsole extends AbstractDevConsole {
 
-    /**
-     * The SQL query to execute
-     */
+    @Metadata(label = "query", description = "The SQL query to execute",
+              javaType = "java.lang.String")
     public static final String SQL = "sql";
 
-    /**
-     * Name of the DataSource bean in the registry (auto-detected if only one exists)
-     */
+    @Metadata(label = "query", description = "Name of the DataSource bean in the registry (auto-detected if only one exists)",
+              javaType = "java.lang.String")
     public static final String DATASOURCE = "datasource";
 
-    /**
-     * Maximum number of rows to return
-     */
+    @Metadata(label = "query", description = "Maximum number of rows to return",
+              defaultValue = "100", javaType = "java.lang.Integer")
     public static final String MAX_ROWS = "maxRows";
 
-    /**
-     * Query timeout in seconds
-     */
+    @Metadata(label = "query", description = "Query timeout in seconds",
+              defaultValue = "30", javaType = "java.lang.Integer")
     public static final String QUERY_TIMEOUT = "queryTimeout";
 
-    /**
-     * Action type: "query" (default) or "update-row"
-     */
+    @Metadata(label = "query", description = "Action type: query (default) or update-row",
+              defaultValue = "query", javaType = "java.lang.String", enums = "query,update-row")
     public static final String ACTION_TYPE = "actionType";
 
-    /**
-     * Table name for update-row action
-     */
+    @Metadata(label = "query", description = "Table name for update-row action",
+              javaType = "java.lang.String")
     public static final String TABLE = "table";
 
-    /**
-     * Primary key column-value pairs as JSON string for update-row action
-     */
+    @Metadata(label = "query", description = "Primary key column-value pairs as JSON string for update-row action",
+              javaType = "java.lang.String")
     public static final String PRIMARY_KEY_VALUES = "primaryKeyValues";
 
-    /**
-     * Changed column-value pairs as JSON string for update-row action
-     */
+    @Metadata(label = "query", description = "Changed column-value pairs as JSON string for update-row action",
+              javaType = "java.lang.String")
     public static final String COLUMN_VALUES = "columnValues";
 
     @Metadata(defaultValue = "100",
@@ -116,15 +108,15 @@ public class SqlQueryDevConsole extends AbstractDevConsole {
     protected String doCallText(Map<String, Object> options) {
         StringBuilder sb = new StringBuilder();
 
-        String sql = (String) options.get(SQL);
+        String sql = optionString(options, SQL);
         if (sql == null || sql.isBlank()) {
             sb.append("No SQL query provided\n");
             return sb.toString();
         }
 
-        String dsName = (String) options.get(DATASOURCE);
-        int maxRows = parseIntOption(options, MAX_ROWS, defaultMaxRows);
-        int queryTimeout = parseIntOption(options, QUERY_TIMEOUT, defaultQueryTimeout);
+        String dsName = optionString(options, DATASOURCE);
+        int maxRows = optionInt(options, MAX_ROWS, defaultMaxRows);
+        int queryTimeout = optionInt(options, QUERY_TIMEOUT, defaultQueryTimeout);
 
         DataSource ds;
         String resolvedName;
@@ -212,7 +204,7 @@ public class SqlQueryDevConsole extends AbstractDevConsole {
 
     @Override
     protected JsonObject doCallJson(Map<String, Object> options) {
-        String actionType = (String) options.get(ACTION_TYPE);
+        String actionType = optionString(options, ACTION_TYPE);
         if ("update-row".equals(actionType)) {
             return doUpdateRow(options);
         }
@@ -222,16 +214,16 @@ public class SqlQueryDevConsole extends AbstractDevConsole {
     private JsonObject doQuery(Map<String, Object> options) {
         JsonObject root = new JsonObject();
 
-        String sql = (String) options.get(SQL);
+        String sql = optionString(options, SQL);
         if (sql == null || sql.isBlank()) {
             root.put("status", "error");
             root.put("message", "No SQL query provided");
             return root;
         }
 
-        String dsName = (String) options.get(DATASOURCE);
-        int maxRows = parseIntOption(options, MAX_ROWS, defaultMaxRows);
-        int queryTimeout = parseIntOption(options, QUERY_TIMEOUT, defaultQueryTimeout);
+        String dsName = optionString(options, DATASOURCE);
+        int maxRows = optionInt(options, MAX_ROWS, defaultMaxRows);
+        int queryTimeout = optionInt(options, QUERY_TIMEOUT, defaultQueryTimeout);
 
         DataSource ds = resolveDataSource(dsName, root);
         if (ds == null) {
@@ -366,15 +358,15 @@ public class SqlQueryDevConsole extends AbstractDevConsole {
     private JsonObject doUpdateRow(Map<String, Object> options) {
         JsonObject root = new JsonObject();
 
-        String tableName = (String) options.get(TABLE);
+        String tableName = optionString(options, TABLE);
         if (tableName == null || tableName.isBlank()) {
             root.put("status", "error");
             root.put("message", "No table name provided");
             return root;
         }
 
-        String pkJson = (String) options.get(PRIMARY_KEY_VALUES);
-        String colJson = (String) options.get(COLUMN_VALUES);
+        String pkJson = optionString(options, PRIMARY_KEY_VALUES);
+        String colJson = optionString(options, COLUMN_VALUES);
         if (pkJson == null || colJson == null) {
             root.put("status", "error");
             root.put("message", "Missing primaryKeyValues or columnValues");
@@ -398,7 +390,7 @@ public class SqlQueryDevConsole extends AbstractDevConsole {
             return root;
         }
 
-        String dsName = (String) options.get(DATASOURCE);
+        String dsName = optionString(options, DATASOURCE);
         DataSource ds = resolveDataSource(dsName, root);
         if (ds == null) {
             return root;
@@ -514,18 +506,4 @@ public class SqlQueryDevConsole extends AbstractDevConsole {
         }
     }
 
-    private static int parseIntOption(Map<String, Object> options, String key, int defaultValue) {
-        Object val = options.get(key);
-        if (val instanceof Number n) {
-            return n.intValue();
-        }
-        if (val instanceof String s && !s.isBlank()) {
-            try {
-                return Integer.parseInt(s);
-            } catch (NumberFormatException e) {
-                // ignore
-            }
-        }
-        return defaultValue;
-    }
 }

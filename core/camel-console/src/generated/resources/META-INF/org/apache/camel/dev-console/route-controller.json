@@ -10,6 +10,38 @@
     "groupId": "org.apache.camel",
     "artifactId": "camel-console",
     "version": "4.21.0-SNAPSHOT"
+  },
+  "options": {
+    "error": {
+      "index": 0,
+      "kind": "option",
+      "displayName": "Error",
+      "group": "query",
+      "label": "query",
+      "required": false,
+      "type": "boolean",
+      "javaType": "java.lang.Boolean",
+      "deprecated": false,
+      "autowired": false,
+      "secret": false,
+      "defaultValue": true,
+      "description": "Whether to include error details"
+    },
+    "stacktrace": {
+      "index": 1,
+      "kind": "option",
+      "displayName": "Stacktrace",
+      "group": "query",
+      "label": "query",
+      "required": false,
+      "type": "boolean",
+      "javaType": "java.lang.Boolean",
+      "deprecated": false,
+      "autowired": false,
+      "secret": false,
+      "defaultValue": true,
+      "description": "Whether to include stack traces"
+    }
   }
 }
 

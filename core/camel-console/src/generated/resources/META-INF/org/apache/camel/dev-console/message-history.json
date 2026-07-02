@@ -10,6 +10,23 @@
     "groupId": "org.apache.camel",
     "artifactId": "camel-console",
     "version": "4.21.0-SNAPSHOT"
+  },
+  "options": {
+    "codeLimit": {
+      "index": 0,
+      "kind": "option",
+      "displayName": "Code Limit",
+      "group": "query",
+      "label": "query",
+      "required": false,
+      "type": "integer",
+      "javaType": "java.lang.Integer",
+      "deprecated": false,
+      "autowired": false,
+      "secret": false,
+      "defaultValue": 5,
+      "description": "Number of source code lines around the location to include"
+    }
   }
 }
 

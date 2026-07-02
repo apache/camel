@@ -25,6 +25,7 @@ import java.util.stream.Collectors;
 import io.vertx.core.http.ServerWebSocket;
 import io.vertx.core.net.SocketAddress;
 import org.apache.camel.Route;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.console.AbstractDevConsole;
 import org.apache.camel.util.json.JsonArray;
@@ -32,9 +33,8 @@ import org.apache.camel.util.json.JsonObject;
 
 @DevConsole(name = "vertx-websocket", displayName = "Vert.x WebSocket", description = "Vert.x WebSocket consumer details")
 public class VertxWebsocketDevConsole extends AbstractDevConsole {
-    /**
-     * Whether to include WebSocket peer connection header details in the output
-     */
+    @Metadata(label = "query", description = "Whether to include WebSocket peer connection header details in the output",
+              defaultValue = "true", javaType = "java.lang.Boolean")
     public static final String INCLUDE_HEADERS = "includeHeaders";
 
     public VertxWebsocketDevConsole() {
@@ -43,7 +43,7 @@ public class VertxWebsocketDevConsole extends AbstractDevConsole {
 
     @Override
     protected String doCallText(Map<String, Object> options) {
-        boolean includeHeaders = "true".equals(options.getOrDefault(INCLUDE_HEADERS, "true"));
+        boolean includeHeaders = optionBoolean(options, INCLUDE_HEADERS, true);
 
         StringBuilder sb = new StringBuilder();
 
@@ -93,7 +93,7 @@ public class VertxWebsocketDevConsole extends AbstractDevConsole {
 
     @Override
     protected Map<String, Object> doCallJson(Map<String, Object> options) {
-        boolean includeHeaders = "true".equals(options.getOrDefault(INCLUDE_HEADERS, "true"));
+        boolean includeHeaders = optionBoolean(options, INCLUDE_HEADERS, true);
 
         JsonObject root = new JsonObject();
         JsonArray hosts = new JsonArray();

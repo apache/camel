@@ -22,6 +22,7 @@ import java.util.TreeMap;
 import org.apache.camel.model.BeanFactoryDefinition;
 import org.apache.camel.model.Model;
 import org.apache.camel.spi.BeanIntrospection;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.PatternHelper;
 import org.apache.camel.support.PluginHelper;
@@ -33,19 +34,16 @@ import org.apache.camel.util.json.Jsoner;
 @DevConsole(name = "bean-model", description = "Displays beans from the DSL model")
 public class BeanModelDevConsole extends AbstractDevConsole {
 
-    /**
-     * Filters the beans matching by name
-     */
+    @Metadata(label = "query", description = "Filters the beans matching by name",
+              javaType = "java.lang.String")
     public static final String FILTER = "filter";
 
-    /**
-     * Whether to include bean properties
-     */
+    @Metadata(label = "query", description = "Whether to include bean properties", defaultValue = "true",
+              javaType = "java.lang.Boolean")
     public static final String PROPERTIES = "properties";
 
-    /**
-     * Whether to include null values
-     */
+    @Metadata(label = "query", description = "Whether to include null values", defaultValue = "true",
+              javaType = "java.lang.Boolean")
     public static final String NULLS = "nulls";
 
     public BeanModelDevConsole() {
@@ -54,9 +52,9 @@ public class BeanModelDevConsole extends AbstractDevConsole {
 
     @Override
     protected String doCallText(Map<String, Object> options) {
-        String filter = (String) options.get(FILTER);
-        boolean properties = "true".equals(options.getOrDefault(PROPERTIES, "true"));
-        boolean nulls = "true".equals(options.getOrDefault(NULLS, "true"));
+        String filter = optionString(options, FILTER);
+        boolean properties = optionBoolean(options, PROPERTIES, true);
+        boolean nulls = optionBoolean(options, NULLS, true);
 
         StringBuilder sb = new StringBuilder(256);
 
@@ -103,9 +101,9 @@ public class BeanModelDevConsole extends AbstractDevConsole {
 
     @Override
     protected JsonObject doCallJson(Map<String, Object> options) {
-        String filter = (String) options.get(FILTER);
-        boolean properties = "true".equals(options.getOrDefault(PROPERTIES, "true"));
-        boolean nulls = "true".equals(options.getOrDefault(NULLS, "true"));
+        String filter = optionString(options, FILTER);
+        boolean properties = optionBoolean(options, PROPERTIES, true);
+        boolean nulls = optionBoolean(options, NULLS, true);
 
         JsonObject root = new JsonObject();
 

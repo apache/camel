@@ -10,6 +10,37 @@
     "groupId": "org.apache.camel",
     "artifactId": "camel-opentelemetry2",
     "version": "4.21.0-SNAPSHOT"
+  },
+  "options": {
+    "dump": {
+      "index": 0,
+      "kind": "option",
+      "displayName": "Dump",
+      "group": "query",
+      "label": "query",
+      "required": false,
+      "type": "boolean",
+      "javaType": "java.lang.Boolean",
+      "deprecated": false,
+      "autowired": false,
+      "secret": false,
+      "description": "Whether to dump span data"
+    },
+    "limit": {
+      "index": 1,
+      "kind": "option",
+      "displayName": "Limit",
+      "group": "query",
+      "label": "query",
+      "required": false,
+      "type": "integer",
+      "javaType": "java.lang.Integer",
+      "deprecated": false,
+      "autowired": false,
+      "secret": false,
+      "defaultValue": 100,
+      "description": "Limits the number of spans dumped"
+    }
   }
 }
 

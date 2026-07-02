@@ -21,6 +21,7 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.RestRegistry;
 import org.apache.camel.spi.annotations.DevConsole;
@@ -35,9 +36,8 @@ import org.apache.camel.util.json.JsonObject;
             description = "OpenAPI specification content for contract-first REST services")
 public class RestSpecDevConsole extends AbstractDevConsole {
 
-    /**
-     * Filters specifications matching the given URI pattern (e.g. {@code *.yaml}, {@code petstore*})
-     */
+    @Metadata(label = "query", description = "Filters specifications matching the given URI pattern",
+              javaType = "java.lang.String")
     public static final String FILTER = "filter";
 
     public RestSpecDevConsole() {
@@ -46,7 +46,7 @@ public class RestSpecDevConsole extends AbstractDevConsole {
 
     @Override
     protected String doCallText(Map<String, Object> options) {
-        String filter = (String) options.get(FILTER);
+        String filter = optionString(options, FILTER);
         StringBuilder sb = new StringBuilder();
 
         for (SpecEntry entry : collectSpecs(filter)) {
@@ -71,7 +71,7 @@ public class RestSpecDevConsole extends AbstractDevConsole {
 
     @Override
     protected Map<String, Object> doCallJson(Map<String, Object> options) {
-        String filter = (String) options.get(FILTER);
+        String filter = optionString(options, FILTER);
         JsonObject root = new JsonObject();
         JsonArray list = new JsonArray();
         root.put("specs", list);

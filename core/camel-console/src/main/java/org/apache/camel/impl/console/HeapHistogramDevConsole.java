@@ -23,6 +23,7 @@ import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
 import org.apache.camel.spi.Configurer;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.console.AbstractDevConsole;
 import org.apache.camel.util.StringHelper;
@@ -32,6 +33,10 @@ import org.apache.camel.util.json.JsonObject;
 @DevConsole(name = "heap-histogram", displayName = "Heap Histogram", description = "Displays class-level heap memory usage")
 @Configurer(extended = true)
 public class HeapHistogramDevConsole extends AbstractDevConsole {
+
+    @Metadata(label = "query", description = "Limits the number of classes displayed",
+              defaultValue = "100", javaType = "java.lang.Integer")
+    public static final String LIMIT = "limit";
 
     public HeapHistogramDevConsole() {
         super("jvm", "heap-histogram", "Heap Histogram", "Displays class-level heap memory usage");
@@ -66,16 +71,8 @@ public class HeapHistogramDevConsole extends AbstractDevConsole {
         return parseHistogram(histogram, limit);
     }
 
-    private static int getLimit(Map<String, Object> options) {
-        Object val = options.get("limit");
-        if (val != null) {
-            try {
-                return Integer.parseInt(val.toString());
-            } catch (NumberFormatException e) {
-                // use default
-            }
-        }
-        return 100;
+    private int getLimit(Map<String, Object> options) {
+        return optionInt(options, LIMIT, 100);
     }
 
     private static String invokeGcClassHistogram() {

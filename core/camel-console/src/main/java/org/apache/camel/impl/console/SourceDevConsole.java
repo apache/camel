@@ -26,6 +26,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Route;
 import org.apache.camel.api.management.ManagedCamelContext;
 import org.apache.camel.api.management.mbean.ManagedRouteMBean;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.LoggerHelper;
@@ -40,14 +41,12 @@ import org.apache.camel.util.json.JsonObject;
 @DevConsole(name = "source", description = "Dump route source code")
 public class SourceDevConsole extends AbstractDevConsole {
 
-    /**
-     * Filters the routes matching by route id, route uri, and source location
-     */
+    @Metadata(label = "query", description = "Filters the routes matching by route id, route uri, and source location",
+              javaType = "java.lang.String")
     public static final String FILTER = "filter";
 
-    /**
-     * Limits the number of entries displayed
-     */
+    @Metadata(label = "query", description = "Limits the number of entries displayed",
+              javaType = "java.lang.Integer")
     public static final String LIMIT = "limit";
 
     public SourceDevConsole() {
@@ -129,11 +128,10 @@ public class SourceDevConsole extends AbstractDevConsole {
     }
 
     protected void doCall(Map<String, Object> options, Function<ManagedRouteMBean, Object> task) {
-        String path = (String) options.get(Exchange.HTTP_PATH);
+        String path = optionString(options, Exchange.HTTP_PATH);
         String subPath = path != null ? StringHelper.after(path, "/") : null;
-        String filter = (String) options.get(FILTER);
-        String limit = (String) options.get(LIMIT);
-        final int max = limit == null ? Integer.MAX_VALUE : Integer.parseInt(limit);
+        String filter = optionString(options, FILTER);
+        final int max = optionInt(options, LIMIT, Integer.MAX_VALUE);
 
         ManagedCamelContext mcc = getCamelContext().getCamelContextExtension().getContextPlugin(ManagedCamelContext.class);
         if (mcc != null) {

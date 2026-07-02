@@ -10,6 +10,52 @@
     "groupId": "org.apache.camel",
     "artifactId": "camel-core-model",
     "version": "4.21.0-SNAPSHOT"
+  },
+  "options": {
+    "filter": {
+      "index": 0,
+      "kind": "option",
+      "displayName": "Filter",
+      "group": "query",
+      "label": "query",
+      "required": false,
+      "type": "string",
+      "javaType": "java.lang.String",
+      "deprecated": false,
+      "autowired": false,
+      "secret": false,
+      "description": "Filters the beans matching by name"
+    },
+    "nulls": {
+      "index": 1,
+      "kind": "option",
+      "displayName": "Nulls",
+      "group": "query",
+      "label": "query",
+      "required": false,
+      "type": "boolean",
+      "javaType": "java.lang.Boolean",
+      "deprecated": false,
+      "autowired": false,
+      "secret": false,
+      "defaultValue": true,
+      "description": "Whether to include null values"
+    },
+    "properties": {
+      "index": 2,
+      "kind": "option",
+      "displayName": "Properties",
+      "group": "query",
+      "label": "query",
+      "required": false,
+      "type": "boolean",
+      "javaType": "java.lang.Boolean",
+      "deprecated": false,
+      "autowired": false,
+      "secret": false,
+      "defaultValue": true,
+      "description": "Whether to include bean properties"
+    }
   }
 }
 

@@ -23,6 +23,7 @@ import java.util.Map;
 import io.opentelemetry.api.common.AttributeKey;
 import io.opentelemetry.sdk.trace.data.SpanData;
 import org.apache.camel.Route;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.console.AbstractDevConsole;
@@ -33,7 +34,12 @@ import org.apache.camel.util.json.JsonObject;
             description = "OpenTelemetry span data captured in dev mode")
 public class OpenTelemetryDevConsole extends AbstractDevConsole {
 
+    @Metadata(label = "query", description = "Whether to dump span data",
+              javaType = "java.lang.Boolean")
     public static final String DUMP = "dump";
+
+    @Metadata(label = "query", description = "Limits the number of spans dumped", defaultValue = "100",
+              javaType = "java.lang.Integer")
     public static final String LIMIT = "limit";
 
     public OpenTelemetryDevConsole() {
@@ -48,9 +54,9 @@ public class OpenTelemetryDevConsole extends AbstractDevConsole {
             return "OpenTelemetry in-memory exporter is not enabled (requires dev profile)\n";
         }
 
-        String dump = (String) options.get(DUMP);
+        String dump = optionString(options, DUMP);
         if (dump != null) {
-            int limit = Integer.parseInt((String) options.getOrDefault(LIMIT, "100"));
+            int limit = optionInt(options, LIMIT, 100);
             List<SpanData> spans = exporter.getFinishedSpans();
             int start = Math.max(0, spans.size() - limit);
             StringBuilder sb = new StringBuilder();
@@ -83,9 +89,9 @@ public class OpenTelemetryDevConsole extends AbstractDevConsole {
 
         root.put("enabled", true);
 
-        String dump = (String) options.get(DUMP);
+        String dump = optionString(options, DUMP);
         if (dump != null) {
-            int limit = Integer.parseInt((String) options.getOrDefault(LIMIT, "100"));
+            int limit = optionInt(options, LIMIT, 100);
             List<SpanData> spans = exporter.getFinishedSpans();
             int start = Math.max(0, spans.size() - limit);
 
