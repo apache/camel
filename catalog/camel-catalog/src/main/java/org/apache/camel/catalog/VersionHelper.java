@@ -57,8 +57,8 @@ public class VersionHelper {
         return version;
     }
 
-    private String getVersionFromProperties(String properties) {
-        try (InputStream is = getClass().getResourceAsStream(properties)) {
+    private String getVersionFromProperties(String resourcePath) {
+        try (InputStream is = getClass().getResourceAsStream(resourcePath)) {
             Properties p = new Properties();
             if (is != null) {
                 p.load(is);
