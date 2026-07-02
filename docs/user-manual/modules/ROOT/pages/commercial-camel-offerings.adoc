@@ -22,6 +22,12 @@ Software. We specialize in helping our clients to realize new projects
 and support the delivery of the project from end to end.
 
 
+== https://digitalchange.eu[Digital Change]
+
+https://digitalchange.eu[Digital Change] is an Austrian consultancy and ISV specializing in system integration
+with Apache Camel and modern middleware.
+
+
 == https://fluxygen.com[Fluxygen]
 
 https://fluxygen.com[Fluxygen] is a company based in the Netherlands.
