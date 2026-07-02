@@ -99,8 +99,9 @@ class OverviewTabRenderTest {
         Frame frame = Frame.forTesting(buffer);
         tab.render(frame, area);
 
-        boolean foundCyan = TuiTestHelper.findCellWithColor(buffer, "t", Color.CYAN);
-        assertTrue(foundCyan, "Name should be rendered in CYAN");
+        Color infoFg = Theme.info().fg().orElse(Color.CYAN);
+        boolean foundCyan = TuiTestHelper.findCellWithColor(buffer, "t", infoFg);
+        assertTrue(foundCyan, "Name should be rendered in Theme.info() color");
     }
 
     @Test
@@ -118,8 +119,9 @@ class OverviewTabRenderTest {
         Frame frame = Frame.forTesting(buffer);
         tab.render(frame, area);
 
-        boolean foundGreen = TuiTestHelper.findCellWithColor(buffer, "R", Color.LIGHT_GREEN);
-        assertTrue(foundGreen, "Running status should be rendered in LIGHT_GREEN (Theme.success())");
+        Color successFg = Theme.success().fg().orElse(Color.LIGHT_GREEN);
+        boolean foundGreen = TuiTestHelper.findCellWithColor(buffer, "R", successFg);
+        assertTrue(foundGreen, "Running status should be rendered in Theme.success() color");
     }
 
     @Test
@@ -137,8 +139,9 @@ class OverviewTabRenderTest {
         Frame frame = Frame.forTesting(buffer);
         tab.render(frame, area);
 
-        boolean foundRed = TuiTestHelper.findCellWithColor(buffer, "S", Color.LIGHT_RED);
-        assertTrue(foundRed, "Stopped status should be rendered in LIGHT_RED");
+        Color errorFg = Theme.error().fg().orElse(Color.LIGHT_RED);
+        boolean foundRed = TuiTestHelper.findCellWithColor(buffer, "S", errorFg);
+        assertTrue(foundRed, "Stopped status should be rendered in Theme.error() color");
     }
 
     @Test
@@ -216,8 +219,9 @@ class OverviewTabRenderTest {
         Frame frame = Frame.forTesting(buffer);
         tab.render(frame, area);
 
-        boolean foundRed = TuiTestHelper.findCellWithColor(buffer, "4", Color.LIGHT_RED);
-        assertTrue(foundRed, "Failed count should be rendered in LIGHT_RED");
+        Color errorFg = Theme.error().fg().orElse(Color.LIGHT_RED);
+        boolean foundRed = TuiTestHelper.findCellWithColor(buffer, "4", errorFg);
+        assertTrue(foundRed, "Failed count should be rendered in Theme.error() color");
     }
 
     @Test
