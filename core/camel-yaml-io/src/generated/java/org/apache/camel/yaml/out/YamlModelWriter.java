@@ -1765,6 +1765,12 @@ public class YamlModelWriter extends YamlModelWriterSupport {
         doWriteAttribute(jo, "executorService", def.getExecutorService(), null);
         doWriteAttribute(jo, "onPrepare", def.getOnPrepare(), null);
         doWriteAttribute(jo, "shareUnitOfWork", def.getShareUnitOfWork(), null);
+        doWriteAttribute(jo, "group", def.getGroup(), null);
+        doWriteAttribute(jo, "errorThreshold", def.getErrorThreshold(), null);
+        doWriteAttribute(jo, "maxFailedRecords", def.getMaxFailedRecords(), null);
+        doWriteAttribute(jo, "resumeStrategy", def.getResumeStrategy(), null);
+        doWriteAttribute(jo, "watermarkKey", def.getWatermarkKey(), null);
+        doWriteAttribute(jo, "watermarkExpression", def.getWatermarkExpression(), null);
         doWriteOutputExpressionNodeElements(jo, def);
         return jo;
     }

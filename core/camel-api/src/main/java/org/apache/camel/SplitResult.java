@@ -24,6 +24,8 @@ import java.util.List;
  * when error thresholds ({@code errorThreshold} or {@code maxFailedRecords}) are configured.
  * <p/>
  * This result is available as an exchange property ({@link Exchange#SPLIT_RESULT}) after the split operation completes.
+ *
+ * @since 4.21
  */
 public final class SplitResult {
 
@@ -32,6 +34,7 @@ public final class SplitResult {
      *
      * @param index     the 0-based index of the failed item in the split sequence
      * @param exception the exception that caused the failure
+     * @since           4.21
      */
     public record Failure(int index, Exception exception) {
     }
