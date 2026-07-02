@@ -305,6 +305,9 @@
                                         <sync-example name="groovy" file="README.md"/>
                                         <sync-example name="groovy" file="application.properties"/>
                                         <sync-example name="groovy" file="groovy.camel.yaml"/>
+                                        <!-- memory-leak -->
+                                        <sync-example name="memory-leak" file="README.md"/>
+                                        <sync-example name="memory-leak" file="memory-leak.java"/>
                                         <!-- message-size -->
                                         <sync-example name="message-size" file="README.md"/>
                                         <sync-example name="message-size" file="orders.camel.yaml"/>

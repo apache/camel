@@ -270,6 +270,25 @@
         ]
     },
     {
+        "name": "memory-leak",
+        "title": "Memory Leak",
+        "description": "Simulates a memory leak for testing JFR Old Object Sample diagnostics",
+        "level": "beginner",
+        "tags": [
+            "observability",
+            "jfr",
+            "diagnostics",
+            "tui"
+        ],
+        "bundled": true,
+        "requiresDocker": false,
+        "hasCitrusTests": false,
+        "files": [
+            "README.md",
+            "memory-leak.java"
+        ]
+    },
+    {
         "name": "message-size",
         "title": "Message Size",
         "description": "Track message body and header sizes per endpoint",
