@@ -73,7 +73,7 @@ class JfrOldObjectSampleTab implements MonitorTab {
     private final AtomicBoolean loading = new AtomicBoolean(false);
 
     private State state = State.IDLE;
-    private RecordingMode recordingMode = RecordingMode.SINGLE;
+    private RecordingMode recordingMode = RecordingMode.DUAL;
     private int duration = 30;
     private long recordingStartTime;
     private int currentRecordingDuration;
@@ -251,21 +251,35 @@ class JfrOldObjectSampleTab implements MonitorTab {
                     Span.styled("  (press ", Style.EMPTY.dim()),
                     Span.styled("d", Style.EMPTY.fg(Color.YELLOW).bold()),
                     Span.styled(" to toggle)", Style.EMPTY.dim())));
+            lines.add(Line.from(Span.raw("")));
             if (recordingMode == RecordingMode.DUAL) {
                 lines.add(Line.from(
-                        Span.styled("            Runs two recordings (" + duration + "s + " + (duration * 2) + "s)"
-                                    + " and compares trends",
-                                Style.EMPTY.dim())));
+                        Span.styled("  Dual mode ", Style.EMPTY.dim()),
+                        Span.styled("(recommended)", Style.EMPTY.fg(Color.GREEN))));
+                lines.add(Line.from(
+                        Span.styled("  Runs two sequential JFR recordings:", Style.EMPTY.dim())));
+                lines.add(Line.from(
+                        Span.styled("    Run 1: ", Style.EMPTY.fg(Color.CYAN)),
+                        Span.styled(duration + "s", Style.EMPTY.fg(Color.WHITE)),
+                        Span.styled(" baseline recording", Style.EMPTY.dim())));
+                lines.add(Line.from(
+                        Span.styled("    Run 2: ", Style.EMPTY.fg(Color.CYAN)),
+                        Span.styled((duration * 2) + "s", Style.EMPTY.fg(Color.WHITE)),
+                        Span.styled(" comparison recording (2x duration)", Style.EMPTY.dim())));
+                lines.add(Line.from(
+                        Span.styled("  Compares trends to detect leaks: classes growing faster", Style.EMPTY.dim())));
+                lines.add(Line.from(
+                        Span.styled("  than the duration ratio are flagged as leak suspects.", Style.EMPTY.dim())));
+            } else {
+                lines.add(Line.from(
+                        Span.styled("  Single mode", Style.EMPTY.dim())));
+                lines.add(Line.from(
+                        Span.styled("  Runs one JFR recording and shows captured old objects.", Style.EMPTY.dim())));
+                lines.add(Line.from(
+                        Span.styled("  Shows what is retained, but cannot detect trends.", Style.EMPTY.dim())));
+                lines.add(Line.from(
+                        Span.styled("  Use dual mode for leak detection.", Style.EMPTY.dim())));
             }
-            lines.add(Line.from(Span.raw("")));
-            lines.add(Line.from(
-                    Span.styled("  JFR OldObjectSample tracks objects surviving multiple GC cycles",
-                            Style.EMPTY.dim())));
-            lines.add(Line.from(
-                    Span.styled("  and captures reference chains back to GC roots, helping",
-                            Style.EMPTY.dim())));
-            lines.add(Line.from(
-                    Span.styled("  diagnose memory leaks.", Style.EMPTY.dim())));
         }
 
         frame.renderWidget(
@@ -860,9 +874,12 @@ class JfrOldObjectSampleTab implements MonitorTab {
                   that keep accumulating
                 - **Thread-local references**: Objects held by thread-local variables
 
-                ## Dual Recording Mode
+                ## Dual Recording Mode (Default)
 
-                Press **d** to toggle between **single** and **dual** mode.
+                Dual mode is the default because it is the most effective way to
+                detect memory leaks. Press **d** to toggle between **dual** and
+                **single** mode. If a previous dual recording exists, the TUI
+                automatically loads the comparison results on startup.
 
                 In **dual** mode, pressing **R** runs two sequential recordings:
                 - **Run 1** at the configured duration (e.g. 30s)
@@ -870,8 +887,8 @@ class JfrOldObjectSampleTab implements MonitorTab {
 
                 After both complete, a comparison table shows how each class behaved
                 across the two runs. The **GROWTH** column is the normalized growth
-                ratio: (size₂ / size₁) / durationRatio. A value above 1.3 means the
-                class is growing faster than expected — a likely memory leak.
+                ratio: (size₂ / size₁) / durationRatio. Entries under 1KB in both
+                runs are filtered out as noise.
 
                 ### Trend Indicators
 
@@ -987,8 +1004,8 @@ class JfrOldObjectSampleTab implements MonitorTab {
             int dur2 = duration * 2;
             startDaemonThread("jfr-stop-" + pid, () -> {
                 try {
-                    sendStopAndLoadResults(pid);
-                    if (state == State.HAS_RESULTS && ctx.runner != null) {
+                    boolean ok = sendStopAndLoadResults(pid);
+                    if (ok && ctx.runner != null) {
                         ctx.runner.runOnRenderThread(() -> {
                             dualFirstDone = true;
                             dualRecordingNumber = 2;
@@ -1013,13 +1030,14 @@ class JfrOldObjectSampleTab implements MonitorTab {
         }
     }
 
-    private void sendStopAndLoadResults(String pid) {
+    private boolean sendStopAndLoadResults(String pid) {
         Path outputFile = ctx.getOutputFile(pid);
         PathUtils.deleteFile(outputFile);
 
         JsonObject root = new JsonObject();
         root.put("action", "jfr-old-objects");
         root.put("command", "stop");
+        root.put("stacktrace", "true");
 
         Path actionFile = ctx.getActionFile(pid);
         PathUtils.writeTextSafely(root.toJson(), actionFile);
@@ -1044,10 +1062,12 @@ class JfrOldObjectSampleTab implements MonitorTab {
                     lastPid = pid;
                 });
             }
+            return true;
         } else {
             if (ctx.runner != null) {
                 ctx.runner.runOnRenderThread(() -> state = State.IDLE);
             }
+            return false;
         }
     }
 
@@ -1071,19 +1091,17 @@ class JfrOldObjectSampleTab implements MonitorTab {
                 if (ctx.runner != null) {
                     ctx.runner.runOnRenderThread(() -> state = State.LOADING_RESULTS);
                 }
-                sendStopAndLoadResults(pid);
+                boolean ok = sendStopAndLoadResults(pid);
                 // now start the second recording at 2x
-                if (state == State.HAS_RESULTS && ctx.runner != null) {
+                if (ok && ctx.runner != null) {
                     int dur2 = dur * 2;
-                    if (ctx.runner != null) {
-                        ctx.runner.runOnRenderThread(() -> {
-                            dualFirstDone = true;
-                            dualRecordingNumber = 2;
-                            currentRecordingDuration = dur2;
-                            state = State.RECORDING;
-                            recordingStartTime = System.currentTimeMillis();
-                        });
-                    }
+                    ctx.runner.runOnRenderThread(() -> {
+                        dualFirstDone = true;
+                        dualRecordingNumber = 2;
+                        currentRecordingDuration = dur2;
+                        state = State.RECORDING;
+                        recordingStartTime = System.currentTimeMillis();
+                    });
                     if (!loading.compareAndSet(false, true)) {
                         return;
                     }
@@ -1157,8 +1175,15 @@ class JfrOldObjectSampleTab implements MonitorTab {
                 });
             }
         } else if ("completed".equals(status) && jo.getBooleanOrDefault("hasCachedResults", false)) {
-            // there are cached results, load them
-            loadQueryResults(pid);
+            if (jo.getBooleanOrDefault("hasComparisonData", false)) {
+                // two recordings available, load comparison and switch to dual mode
+                if (ctx.runner != null) {
+                    ctx.runner.runOnRenderThread(() -> recordingMode = RecordingMode.DUAL);
+                }
+                loadComparisonResults(pid);
+            } else {
+                loadQueryResults(pid);
+            }
         }
     }
 
@@ -1169,6 +1194,7 @@ class JfrOldObjectSampleTab implements MonitorTab {
         JsonObject root = new JsonObject();
         root.put("action", "jfr-old-objects");
         root.put("command", "query");
+        root.put("stacktrace", "true");
 
         Path actionFile = ctx.getActionFile(pid);
         PathUtils.writeTextSafely(root.toJson(), actionFile);
@@ -1212,6 +1238,7 @@ class JfrOldObjectSampleTab implements MonitorTab {
         JsonObject root = new JsonObject();
         root.put("action", "jfr-old-objects");
         root.put("command", "stop");
+        root.put("stacktrace", "true");
 
         Path actionFile = ctx.getActionFile(pid);
         PathUtils.writeTextSafely(root.toJson(), actionFile);
@@ -1227,10 +1254,19 @@ class JfrOldObjectSampleTab implements MonitorTab {
         }
 
         // now send the compare command
+        loadComparisonResults(pid);
+    }
+
+    private void loadComparisonResults(String pid) {
+        Path outputFile = ctx.getOutputFile(pid);
         PathUtils.deleteFile(outputFile);
+
         JsonObject cmpRoot = new JsonObject();
         cmpRoot.put("action", "jfr-old-objects");
         cmpRoot.put("command", "compare");
+        cmpRoot.put("stacktrace", "true");
+
+        Path actionFile = ctx.getActionFile(pid);
         PathUtils.writeTextSafely(cmpRoot.toJson(), actionFile);
 
         JsonObject cmpResult = pollJsonResponse(outputFile, 10000);
@@ -1431,9 +1467,9 @@ class JfrOldObjectSampleTab implements MonitorTab {
 
     static String formatDuration(long ms) {
         if (ms < 1000) {
-            return ms + "ms";
+            return "0s";
         } else if (ms < 60000) {
-            return String.format(Locale.US, "%.1fs", ms / 1000.0);
+            return (ms / 1000) + "s";
         } else {
             long min = ms / 60000;
             long sec = (ms % 60000) / 1000;

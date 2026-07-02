@@ -229,6 +229,7 @@ public class JfrOldObjectSampleDevConsole extends AbstractDevConsole {
         } else if (cachedResults != null) {
             result.put("status", "completed");
             result.put("hasCachedResults", true);
+            result.put("hasComparisonData", previousResults != null);
             result.put("sampleCount", cachedResults.getIntegerOrDefault("sampleCount", 0));
         } else {
             result.put("status", "idle");

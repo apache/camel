@@ -69,8 +69,8 @@ public class CamelJfrOldObjects extends ActionBaseCommand {
     boolean query;
 
     @CommandLine.Option(names = { "--mode" },
-                        description = "Recording mode: single (one recording) or dual (two recordings with trend comparison)",
-                        defaultValue = "single")
+                        description = "Recording mode: dual (default, two recordings with trend comparison) or single (one recording)",
+                        defaultValue = "dual")
     String mode;
 
     @CommandLine.Option(names = { "--duration" },
