@@ -20,9 +20,13 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
 
+import com.github.freva.asciitable.AsciiTable;
+import com.github.freva.asciitable.Column;
+import com.github.freva.asciitable.HorizontalAlign;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class CamelTableColumnsTest {
 
@@ -70,5 +74,37 @@ class CamelTableColumnsTest {
     void lastColumnWidthFloorsAtLastMinOnNarrowTerminal() {
         // remainder would be negative, so it is floored at LAST_MIN
         assertEquals(CamelTableColumns.LAST_MIN, CamelTableColumns.lastColumnWidth(40, 6, 30, 12, 10));
+    }
+
+    // --- rendering: a table sized with lastColumnWidth must fit the terminal ---
+
+    @Test
+    void lastColumnWidthKeepsRenderedTableWithinTerminal() {
+        // The whole point of filling the terminal is that the rendered line still fits inside it. A single-line
+        // description longer than the last column exercises the exact-fit case where an off-by-one in the border
+        // overhead would overflow the terminal by a couple of columns.
+        int terminalWidth = 100;
+        List<String[]> rows = List.of(
+                new String[] {
+                        "ftp", "Stable", "4.0",
+                        "A very long component description that definitely exceeds the remaining width and must be truncated" },
+                new String[] { "salesforce-streaming", "Preview", "3.1", "short" });
+
+        int nameW = CamelTableColumns.measure("NAME", CamelTableColumns.NAME_MAX, rows, r -> r[0]);
+        int levelW = CamelTableColumns.measure("LEVEL", Integer.MAX_VALUE, rows, r -> r[1]);
+        int sinceW = CamelTableColumns.measure("SINCE", Integer.MAX_VALUE, rows, r -> r[2]);
+        int descWidth = CamelTableColumns.lastColumnWidth(
+                terminalWidth, TerminalWidthHelper.noBorderOverhead(4), nameW, levelW, sinceW);
+
+        String table = AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
+                CamelTableColumns.name().with(r -> r[0]),
+                new Column().header("LEVEL").dataAlign(HorizontalAlign.LEFT).with(r -> r[1]),
+                CamelTableColumns.since().with(r -> r[2]),
+                CamelTableColumns.lastText("DESCRIPTION", descWidth).with(r -> r[3])));
+
+        for (String line : table.split("\n")) {
+            assertTrue(line.length() <= terminalWidth,
+                    "Rendered line width %d exceeds terminal %d: [%s]".formatted(line.length(), terminalWidth, line));
+        }
     }
 }

@@ -175,10 +175,11 @@ public final class TerminalWidthHelper {
     }
 
     /**
-     * Border overhead for NO_BORDERS tables: 2 spaces between each column pair.
+     * Border overhead for NO_BORDERS tables. AsciiTable pads every column with one leading and one trailing space (no
+     * separator characters), so the overhead is exactly {@code 2 * columnCount} regardless of the number of columns.
      */
     public static int noBorderOverhead(int columnCount) {
-        return (columnCount - 1) * 2;
+        return columnCount * 2;
     }
 
     /**
