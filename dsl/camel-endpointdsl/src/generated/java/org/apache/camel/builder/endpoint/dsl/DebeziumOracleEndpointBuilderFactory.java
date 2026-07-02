@@ -382,6 +382,25 @@ public interface DebeziumOracleEndpointBuilderFactory {
             return this;
         }
         /**
+         * Specifies the capture mode used to capture streaming changes from
+         * Oracle'primary' (the default) captures changes from the primary,
+         * specified by database. configurations, 'physical_standby' captures
+         * changes from a read-only physical standby, specified by secondary.
+         * configurations.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: primary
+         * Group: oracle
+         * 
+         * @param captureMode the value to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleEndpointBuilder captureMode(String captureMode) {
+            doSetProperty("captureMode", captureMode);
+            return this;
+        }
+        /**
          * Regular expressions matching columns to exclude from change events.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -1224,131 +1243,79 @@ public interface DebeziumOracleEndpointBuilderFactory {
             return this;
         }
         /**
-         * The starting SCN interval size that the connector will use for
-         * reading data from redo/archive logs.
+         * Duration in milliseconds to retain deferred transaction metadata for
+         * transactions that never emit a DML event. By default, deferred
+         * transaction metadata is retained for 24 hours. This is independent of
+         * log.mining.transaction.retention.ms which governs cached transactions
+         * with events.
          * 
          * The option is a: <code>long</code> type.
          * 
-         * Default: 20000
+         * Default: 1d
          * Group: oracle
          * 
-         * @param logMiningBatchSizeDefault the value to set
+         * @param logMiningBufferDeferredTransactionRetentionMs the value to set
          * @return the dsl builder
          */
-        default DebeziumOracleEndpointBuilder logMiningBatchSizeDefault(long logMiningBatchSizeDefault) {
-            doSetProperty("logMiningBatchSizeDefault", logMiningBatchSizeDefault);
+        default DebeziumOracleEndpointBuilder logMiningBufferDeferredTransactionRetentionMs(long logMiningBufferDeferredTransactionRetentionMs) {
+            doSetProperty("logMiningBufferDeferredTransactionRetentionMs", logMiningBufferDeferredTransactionRetentionMs);
             return this;
         }
         /**
-         * The starting SCN interval size that the connector will use for
-         * reading data from redo/archive logs.
+         * Duration in milliseconds to retain deferred transaction metadata for
+         * transactions that never emit a DML event. By default, deferred
+         * transaction metadata is retained for 24 hours. This is independent of
+         * log.mining.transaction.retention.ms which governs cached transactions
+         * with events.
          * 
          * The option will be converted to a <code>long</code> type.
          * 
-         * Default: 20000
+         * Default: 1d
          * Group: oracle
          * 
-         * @param logMiningBatchSizeDefault the value to set
+         * @param logMiningBufferDeferredTransactionRetentionMs the value to set
          * @return the dsl builder
          */
-        default DebeziumOracleEndpointBuilder logMiningBatchSizeDefault(String logMiningBatchSizeDefault) {
-            doSetProperty("logMiningBatchSizeDefault", logMiningBatchSizeDefault);
+        default DebeziumOracleEndpointBuilder logMiningBufferDeferredTransactionRetentionMs(String logMiningBufferDeferredTransactionRetentionMs) {
+            doSetProperty("logMiningBufferDeferredTransactionRetentionMs", logMiningBufferDeferredTransactionRetentionMs);
             return this;
         }
         /**
-         * Active batch size will be also increased/decreased by this amount for
-         * tuning connector throughput when needed.
+         * Controls whether transaction start events are deferred when using
+         * buffered LogMiner. When enabled, transaction start events are stored
+         * in a lightweight metadata map. Transactions are only promoted to the
+         * transaction cache when a DML event is observed. The mining window is
+         * not pinned by transactions, allowing a block-by-block sliding window.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: <code>boolean</code> type.
          * 
-         * Default: 20000
+         * Default: false
          * Group: oracle
          * 
-         * @param logMiningBatchSizeIncrement the value to set
+         * @param logMiningBufferDeferredTransactionStart the value to set
          * @return the dsl builder
          */
-        default DebeziumOracleEndpointBuilder logMiningBatchSizeIncrement(long logMiningBatchSizeIncrement) {
-            doSetProperty("logMiningBatchSizeIncrement", logMiningBatchSizeIncrement);
+        default DebeziumOracleEndpointBuilder logMiningBufferDeferredTransactionStart(boolean logMiningBufferDeferredTransactionStart) {
+            doSetProperty("logMiningBufferDeferredTransactionStart", logMiningBufferDeferredTransactionStart);
             return this;
         }
         /**
-         * Active batch size will be also increased/decreased by this amount for
-         * tuning connector throughput when needed.
+         * Controls whether transaction start events are deferred when using
+         * buffered LogMiner. When enabled, transaction start events are stored
+         * in a lightweight metadata map. Transactions are only promoted to the
+         * transaction cache when a DML event is observed. The mining window is
+         * not pinned by transactions, allowing a block-by-block sliding window.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
-         * Default: 20000
+         * Default: false
          * Group: oracle
          * 
-         * @param logMiningBatchSizeIncrement the value to set
+         * @param logMiningBufferDeferredTransactionStart the value to set
          * @return the dsl builder
          */
-        default DebeziumOracleEndpointBuilder logMiningBatchSizeIncrement(String logMiningBatchSizeIncrement) {
-            doSetProperty("logMiningBatchSizeIncrement", logMiningBatchSizeIncrement);
-            return this;
-        }
-        /**
-         * The maximum SCN interval size that this connector will use when
-         * reading from redo/archive logs.
-         * 
-         * The option is a: <code>long</code> type.
-         * 
-         * Default: 100000
-         * Group: oracle
-         * 
-         * @param logMiningBatchSizeMax the value to set
-         * @return the dsl builder
-         */
-        default DebeziumOracleEndpointBuilder logMiningBatchSizeMax(long logMiningBatchSizeMax) {
-            doSetProperty("logMiningBatchSizeMax", logMiningBatchSizeMax);
-            return this;
-        }
-        /**
-         * The maximum SCN interval size that this connector will use when
-         * reading from redo/archive logs.
-         * 
-         * The option will be converted to a <code>long</code> type.
-         * 
-         * Default: 100000
-         * Group: oracle
-         * 
-         * @param logMiningBatchSizeMax the value to set
-         * @return the dsl builder
-         */
-        default DebeziumOracleEndpointBuilder logMiningBatchSizeMax(String logMiningBatchSizeMax) {
-            doSetProperty("logMiningBatchSizeMax", logMiningBatchSizeMax);
-            return this;
-        }
-        /**
-         * The minimum SCN interval size that this connector will try to read
-         * from redo/archive logs.
-         * 
-         * The option is a: <code>long</code> type.
-         * 
-         * Default: 1000
-         * Group: oracle
-         * 
-         * @param logMiningBatchSizeMin the value to set
-         * @return the dsl builder
-         */
-        default DebeziumOracleEndpointBuilder logMiningBatchSizeMin(long logMiningBatchSizeMin) {
-            doSetProperty("logMiningBatchSizeMin", logMiningBatchSizeMin);
-            return this;
-        }
-        /**
-         * The minimum SCN interval size that this connector will try to read
-         * from redo/archive logs.
-         * 
-         * The option will be converted to a <code>long</code> type.
-         * 
-         * Default: 1000
-         * Group: oracle
-         * 
-         * @param logMiningBatchSizeMin the value to set
-         * @return the dsl builder
-         */
-        default DebeziumOracleEndpointBuilder logMiningBatchSizeMin(String logMiningBatchSizeMin) {
-            doSetProperty("logMiningBatchSizeMin", logMiningBatchSizeMin);
+        default DebeziumOracleEndpointBuilder logMiningBufferDeferredTransactionStart(String logMiningBufferDeferredTransactionStart) {
+            doSetProperty("logMiningBufferDeferredTransactionStart", logMiningBufferDeferredTransactionStart);
             return this;
         }
         /**
@@ -1572,10 +1539,127 @@ public interface DebeziumOracleEndpointBuilderFactory {
             return this;
         }
         /**
+         * Controls whether transaction start events are deferred when using
+         * buffered LogMiner. When enabled, transaction start events are stored
+         * in a lightweight metadata map. Transactions are only promoted to the
+         * transaction cache when a DML event is observed. The mining window is
+         * not pinned by transactions, allowing a block-by-block sliding window.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: oracle
+         * 
+         * @param logMiningBufferMemoryLegacyTransactionStart the value to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleEndpointBuilder logMiningBufferMemoryLegacyTransactionStart(boolean logMiningBufferMemoryLegacyTransactionStart) {
+            doSetProperty("logMiningBufferMemoryLegacyTransactionStart", logMiningBufferMemoryLegacyTransactionStart);
+            return this;
+        }
+        /**
+         * Controls whether transaction start events are deferred when using
+         * buffered LogMiner. When enabled, transaction start events are stored
+         * in a lightweight metadata map. Transactions are only promoted to the
+         * transaction cache when a DML event is observed. The mining window is
+         * not pinned by transactions, allowing a block-by-block sliding window.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: oracle
+         * 
+         * @param logMiningBufferMemoryLegacyTransactionStart the value to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleEndpointBuilder logMiningBufferMemoryLegacyTransactionStart(String logMiningBufferMemoryLegacyTransactionStart) {
+            doSetProperty("logMiningBufferMemoryLegacyTransactionStart", logMiningBufferMemoryLegacyTransactionStart);
+            return this;
+        }
+        /**
+         * This controls whether the 'CLIENT_ID' column values are tracked. When
+         * set to true (the default), the 'CLIENT_ID' values are buffered and
+         * provided in events when available. When set to false, the 'CLIENT_ID'
+         * column is excluded from the LogMiner query and its values are not
+         * buffered, reducing both the memory footprint and query bandwidth.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: oracle
+         * 
+         * @param logMiningBufferTrackClientId the value to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleEndpointBuilder logMiningBufferTrackClientId(boolean logMiningBufferTrackClientId) {
+            doSetProperty("logMiningBufferTrackClientId", logMiningBufferTrackClientId);
+            return this;
+        }
+        /**
+         * This controls whether the 'CLIENT_ID' column values are tracked. When
+         * set to true (the default), the 'CLIENT_ID' values are buffered and
+         * provided in events when available. When set to false, the 'CLIENT_ID'
+         * column is excluded from the LogMiner query and its values are not
+         * buffered, reducing both the memory footprint and query bandwidth.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: oracle
+         * 
+         * @param logMiningBufferTrackClientId the value to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleEndpointBuilder logMiningBufferTrackClientId(String logMiningBufferTrackClientId) {
+            doSetProperty("logMiningBufferTrackClientId", logMiningBufferTrackClientId);
+            return this;
+        }
+        /**
+         * This controls whether the 'COMMIT_TIMESTAMP' column values are
+         * tracked. When set to true (the default), the 'COMMIT_TIMESTAMP'
+         * values are buffered and provided in events when available. When set
+         * to false, the 'COMMIT_TIMESTAMP' column is excluded from the LogMiner
+         * query and its values are not buffered, reducing both the memory
+         * footprint and query bandwidth.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: oracle
+         * 
+         * @param logMiningBufferTrackCommitTimestamp the value to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleEndpointBuilder logMiningBufferTrackCommitTimestamp(boolean logMiningBufferTrackCommitTimestamp) {
+            doSetProperty("logMiningBufferTrackCommitTimestamp", logMiningBufferTrackCommitTimestamp);
+            return this;
+        }
+        /**
+         * This controls whether the 'COMMIT_TIMESTAMP' column values are
+         * tracked. When set to true (the default), the 'COMMIT_TIMESTAMP'
+         * values are buffered and provided in events when available. When set
+         * to false, the 'COMMIT_TIMESTAMP' column is excluded from the LogMiner
+         * query and its values are not buffered, reducing both the memory
+         * footprint and query bandwidth.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: oracle
+         * 
+         * @param logMiningBufferTrackCommitTimestamp the value to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleEndpointBuilder logMiningBufferTrackCommitTimestamp(String logMiningBufferTrackCommitTimestamp) {
+            doSetProperty("logMiningBufferTrackCommitTimestamp", logMiningBufferTrackCommitTimestamp);
+            return this;
+        }
+        /**
          * This controls whether the 'RS_ID' column values are tracked. When set
          * to true (the default), the 'RS_ID' values are buffered and provided
-         * in events when available. When set to false, the 'RS_ID' values are
-         * not buffered and can reduce the memory footprint.
+         * in events when available. When set to false, the 'RS_ID' column is
+         * excluded from the LogMiner query and its values are not buffered,
+         * reducing both the memory footprint and query bandwidth.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -1592,8 +1676,9 @@ public interface DebeziumOracleEndpointBuilderFactory {
         /**
          * This controls whether the 'RS_ID' column values are tracked. When set
          * to true (the default), the 'RS_ID' values are buffered and provided
-         * in events when available. When set to false, the 'RS_ID' values are
-         * not buffered and can reduce the memory footprint.
+         * in events when available. When set to false, the 'RS_ID' column is
+         * excluded from the LogMiner query and its values are not buffered,
+         * reducing both the memory footprint and query bandwidth.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -1605,6 +1690,84 @@ public interface DebeziumOracleEndpointBuilderFactory {
          */
         default DebeziumOracleEndpointBuilder logMiningBufferTrackRsId(String logMiningBufferTrackRsId) {
             doSetProperty("logMiningBufferTrackRsId", logMiningBufferTrackRsId);
+            return this;
+        }
+        /**
+         * This controls whether the 'START_TIMESTAMP' column values are
+         * tracked. When set to true (the default), the 'START_TIMESTAMP' values
+         * are buffered and provided in events when available. When set to
+         * false, the 'START_TIMESTAMP' column is excluded from the LogMiner
+         * query and its values are not buffered, reducing both the memory
+         * footprint and query bandwidth.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: oracle
+         * 
+         * @param logMiningBufferTrackStartTimestamp the value to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleEndpointBuilder logMiningBufferTrackStartTimestamp(boolean logMiningBufferTrackStartTimestamp) {
+            doSetProperty("logMiningBufferTrackStartTimestamp", logMiningBufferTrackStartTimestamp);
+            return this;
+        }
+        /**
+         * This controls whether the 'START_TIMESTAMP' column values are
+         * tracked. When set to true (the default), the 'START_TIMESTAMP' values
+         * are buffered and provided in events when available. When set to
+         * false, the 'START_TIMESTAMP' column is excluded from the LogMiner
+         * query and its values are not buffered, reducing both the memory
+         * footprint and query bandwidth.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: oracle
+         * 
+         * @param logMiningBufferTrackStartTimestamp the value to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleEndpointBuilder logMiningBufferTrackStartTimestamp(String logMiningBufferTrackStartTimestamp) {
+            doSetProperty("logMiningBufferTrackStartTimestamp", logMiningBufferTrackStartTimestamp);
+            return this;
+        }
+        /**
+         * This controls whether the 'USERNAME' column values are tracked. When
+         * set to true (the default), the 'USERNAME' values are buffered and
+         * provided in events when available. When set to false, the 'USERNAME'
+         * column is excluded from the LogMiner query and its values are not
+         * buffered, reducing both the memory footprint and query bandwidth.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: oracle
+         * 
+         * @param logMiningBufferTrackUsername the value to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleEndpointBuilder logMiningBufferTrackUsername(boolean logMiningBufferTrackUsername) {
+            doSetProperty("logMiningBufferTrackUsername", logMiningBufferTrackUsername);
+            return this;
+        }
+        /**
+         * This controls whether the 'USERNAME' column values are tracked. When
+         * set to true (the default), the 'USERNAME' values are buffered and
+         * provided in events when available. When set to false, the 'USERNAME'
+         * column is excluded from the LogMiner query and its values are not
+         * buffered, reducing both the memory footprint and query bandwidth.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: oracle
+         * 
+         * @param logMiningBufferTrackUsername the value to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleEndpointBuilder logMiningBufferTrackUsername(String logMiningBufferTrackUsername) {
+            doSetProperty("logMiningBufferTrackUsername", logMiningBufferTrackUsername);
             return this;
         }
         /**
@@ -1743,6 +1906,40 @@ public interface DebeziumOracleEndpointBuilderFactory {
             return this;
         }
         /**
+         * Specifies the minimum number of logs to mine per redo thread. Setting
+         * this to 0 disables the cap, and all available logs are mined in a
+         * single pass.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 2
+         * Group: oracle
+         * 
+         * @param logMiningLogCountMin the value to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleEndpointBuilder logMiningLogCountMin(int logMiningLogCountMin) {
+            doSetProperty("logMiningLogCountMin", logMiningLogCountMin);
+            return this;
+        }
+        /**
+         * Specifies the minimum number of logs to mine per redo thread. Setting
+         * this to 0 disables the cap, and all available logs are mined in a
+         * single pass.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 2
+         * Group: oracle
+         * 
+         * @param logMiningLogCountMin the value to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleEndpointBuilder logMiningLogCountMin(String logMiningLogCountMin) {
+            doSetProperty("logMiningLogCountMin", logMiningLogCountMin);
+            return this;
+        }
+        /**
          * This is required when using the connector against a read-only
          * database replica.
          * 
@@ -1778,8 +1975,39 @@ public interface DebeziumOracleEndpointBuilderFactory {
             return this;
         }
         /**
-         * The hostname the connector will use to connect and perform read-only
-         * operations for the the replica.
+         * When set to 'true', the connector will not attempt to flush the LGWR
+         * buffer to disk, allowing connecting to read-only databases.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: oracle
+         * 
+         * @param logMiningReadOnly the value to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleEndpointBuilder logMiningReadOnly(boolean logMiningReadOnly) {
+            doSetProperty("logMiningReadOnly", logMiningReadOnly);
+            return this;
+        }
+        /**
+         * When set to 'true', the connector will not attempt to flush the LGWR
+         * buffer to disk, allowing connecting to read-only databases.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: oracle
+         * 
+         * @param logMiningReadOnly the value to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleEndpointBuilder logMiningReadOnly(String logMiningReadOnly) {
+            doSetProperty("logMiningReadOnly", logMiningReadOnly);
+            return this;
+        }
+        /**
+         * The secondary Oracle instance where changes will be streamed.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1833,82 +2061,6 @@ public interface DebeziumOracleEndpointBuilderFactory {
             return this;
         }
         /**
-         * Used for SCN gap detection, if the difference between current SCN and
-         * previous end SCN is bigger than this value, and the time difference
-         * of current SCN and previous end SCN is smaller than
-         * log.mining.scn.gap.detection.time.interval.max.ms, consider it a SCN
-         * gap.
-         * 
-         * The option is a: <code>long</code> type.
-         * 
-         * Default: 1000000
-         * Group: oracle
-         * 
-         * @param logMiningScnGapDetectionGapSizeMin the value to set
-         * @return the dsl builder
-         */
-        default DebeziumOracleEndpointBuilder logMiningScnGapDetectionGapSizeMin(long logMiningScnGapDetectionGapSizeMin) {
-            doSetProperty("logMiningScnGapDetectionGapSizeMin", logMiningScnGapDetectionGapSizeMin);
-            return this;
-        }
-        /**
-         * Used for SCN gap detection, if the difference between current SCN and
-         * previous end SCN is bigger than this value, and the time difference
-         * of current SCN and previous end SCN is smaller than
-         * log.mining.scn.gap.detection.time.interval.max.ms, consider it a SCN
-         * gap.
-         * 
-         * The option will be converted to a <code>long</code> type.
-         * 
-         * Default: 1000000
-         * Group: oracle
-         * 
-         * @param logMiningScnGapDetectionGapSizeMin the value to set
-         * @return the dsl builder
-         */
-        default DebeziumOracleEndpointBuilder logMiningScnGapDetectionGapSizeMin(String logMiningScnGapDetectionGapSizeMin) {
-            doSetProperty("logMiningScnGapDetectionGapSizeMin", logMiningScnGapDetectionGapSizeMin);
-            return this;
-        }
-        /**
-         * Used for SCN gap detection, if the difference between current SCN and
-         * previous end SCN is bigger than
-         * log.mining.scn.gap.detection.gap.size.min, and the time difference of
-         * current SCN and previous end SCN is smaller than this value, consider
-         * it a SCN gap.
-         * 
-         * The option is a: <code>long</code> type.
-         * 
-         * Default: 20s
-         * Group: oracle
-         * 
-         * @param logMiningScnGapDetectionTimeIntervalMaxMs the value to set
-         * @return the dsl builder
-         */
-        default DebeziumOracleEndpointBuilder logMiningScnGapDetectionTimeIntervalMaxMs(long logMiningScnGapDetectionTimeIntervalMaxMs) {
-            doSetProperty("logMiningScnGapDetectionTimeIntervalMaxMs", logMiningScnGapDetectionTimeIntervalMaxMs);
-            return this;
-        }
-        /**
-         * Used for SCN gap detection, if the difference between current SCN and
-         * previous end SCN is bigger than
-         * log.mining.scn.gap.detection.gap.size.min, and the time difference of
-         * current SCN and previous end SCN is smaller than this value, consider
-         * it a SCN gap.
-         * 
-         * The option will be converted to a <code>long</code> type.
-         * 
-         * Default: 20s
-         * Group: oracle
-         * 
-         * @param logMiningScnGapDetectionTimeIntervalMaxMs the value to set
-         * @return the dsl builder
-         */
-        default DebeziumOracleEndpointBuilder logMiningScnGapDetectionTimeIntervalMaxMs(String logMiningScnGapDetectionTimeIntervalMaxMs) {
-            doSetProperty("logMiningScnGapDetectionTimeIntervalMaxMs", logMiningScnGapDetectionTimeIntervalMaxMs);
-            return this;
-        }
-        /**
          * The maximum number of milliseconds that a LogMiner session lives for
          * before being restarted. Defaults to 0 (indefinite until a log switch
          * occurs).
@@ -1943,145 +2095,13 @@ public interface DebeziumOracleEndpointBuilderFactory {
             return this;
         }
         /**
-         * The amount of time that the connector will sleep after reading data
-         * from redo/archive logs and before starting reading data again. Value
-         * is in milliseconds.
-         * 
-         * The option is a: <code>long</code> type.
-         * 
-         * Default: 1s
-         * Group: oracle
-         * 
-         * @param logMiningSleepTimeDefaultMs the value to set
-         * @return the dsl builder
-         */
-        default DebeziumOracleEndpointBuilder logMiningSleepTimeDefaultMs(long logMiningSleepTimeDefaultMs) {
-            doSetProperty("logMiningSleepTimeDefaultMs", logMiningSleepTimeDefaultMs);
-            return this;
-        }
-        /**
-         * The amount of time that the connector will sleep after reading data
-         * from redo/archive logs and before starting reading data again. Value
-         * is in milliseconds.
-         * 
-         * The option will be converted to a <code>long</code> type.
-         * 
-         * Default: 1s
-         * Group: oracle
-         * 
-         * @param logMiningSleepTimeDefaultMs the value to set
-         * @return the dsl builder
-         */
-        default DebeziumOracleEndpointBuilder logMiningSleepTimeDefaultMs(String logMiningSleepTimeDefaultMs) {
-            doSetProperty("logMiningSleepTimeDefaultMs", logMiningSleepTimeDefaultMs);
-            return this;
-        }
-        /**
-         * The maximum amount of time that the connector will use to tune the
-         * optimal sleep time when reading data from LogMiner. Value is in
-         * milliseconds.
-         * 
-         * The option is a: <code>long</code> type.
-         * 
-         * Default: 200ms
-         * Group: oracle
-         * 
-         * @param logMiningSleepTimeIncrementMs the value to set
-         * @return the dsl builder
-         */
-        default DebeziumOracleEndpointBuilder logMiningSleepTimeIncrementMs(long logMiningSleepTimeIncrementMs) {
-            doSetProperty("logMiningSleepTimeIncrementMs", logMiningSleepTimeIncrementMs);
-            return this;
-        }
-        /**
-         * The maximum amount of time that the connector will use to tune the
-         * optimal sleep time when reading data from LogMiner. Value is in
-         * milliseconds.
-         * 
-         * The option will be converted to a <code>long</code> type.
-         * 
-         * Default: 200ms
-         * Group: oracle
-         * 
-         * @param logMiningSleepTimeIncrementMs the value to set
-         * @return the dsl builder
-         */
-        default DebeziumOracleEndpointBuilder logMiningSleepTimeIncrementMs(String logMiningSleepTimeIncrementMs) {
-            doSetProperty("logMiningSleepTimeIncrementMs", logMiningSleepTimeIncrementMs);
-            return this;
-        }
-        /**
-         * The maximum amount of time that the connector will sleep after
-         * reading data from redo/archive logs and before starting reading data
-         * again. Value is in milliseconds.
-         * 
-         * The option is a: <code>long</code> type.
-         * 
-         * Default: 3s
-         * Group: oracle
-         * 
-         * @param logMiningSleepTimeMaxMs the value to set
-         * @return the dsl builder
-         */
-        default DebeziumOracleEndpointBuilder logMiningSleepTimeMaxMs(long logMiningSleepTimeMaxMs) {
-            doSetProperty("logMiningSleepTimeMaxMs", logMiningSleepTimeMaxMs);
-            return this;
-        }
-        /**
-         * The maximum amount of time that the connector will sleep after
-         * reading data from redo/archive logs and before starting reading data
-         * again. Value is in milliseconds.
-         * 
-         * The option will be converted to a <code>long</code> type.
-         * 
-         * Default: 3s
-         * Group: oracle
-         * 
-         * @param logMiningSleepTimeMaxMs the value to set
-         * @return the dsl builder
-         */
-        default DebeziumOracleEndpointBuilder logMiningSleepTimeMaxMs(String logMiningSleepTimeMaxMs) {
-            doSetProperty("logMiningSleepTimeMaxMs", logMiningSleepTimeMaxMs);
-            return this;
-        }
-        /**
-         * The minimum amount of time that the connector will sleep after
-         * reading data from redo/archive logs and before starting reading data
-         * again. Value is in milliseconds.
-         * 
-         * The option is a: <code>long</code> type.
-         * 
-         * Default: 0ms
-         * Group: oracle
-         * 
-         * @param logMiningSleepTimeMinMs the value to set
-         * @return the dsl builder
-         */
-        default DebeziumOracleEndpointBuilder logMiningSleepTimeMinMs(long logMiningSleepTimeMinMs) {
-            doSetProperty("logMiningSleepTimeMinMs", logMiningSleepTimeMinMs);
-            return this;
-        }
-        /**
-         * The minimum amount of time that the connector will sleep after
-         * reading data from redo/archive logs and before starting reading data
-         * again. Value is in milliseconds.
-         * 
-         * The option will be converted to a <code>long</code> type.
-         * 
-         * Default: 0ms
-         * Group: oracle
-         * 
-         * @param logMiningSleepTimeMinMs the value to set
-         * @return the dsl builder
-         */
-        default DebeziumOracleEndpointBuilder logMiningSleepTimeMinMs(String logMiningSleepTimeMinMs) {
-            doSetProperty("logMiningSleepTimeMinMs", logMiningSleepTimeMinMs);
-            return this;
-        }
-        /**
-         * There are strategies: Online catalog with faster mining but no
-         * captured DDL. Another - with data dictionary loaded into REDO LOG
-         * files.
+         * Defines the mining strategy and LogMiner session characteristics:
+         * 'redo_log_catalog' writes the data dictionary to the redo logs, is
+         * deprecated and will be removed in 3.7, 'online_catalog' uses the
+         * existing data dictionary and operates faster than 'redo_log_catalog'
+         * but requires schema changes in lock-step, 'hybrid' uses the existing
+         * data dictionary, operates faster than 'redo_log_catalog', and
+         * supports interleaved schema changes.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -2289,6 +2309,44 @@ public interface DebeziumOracleEndpointBuilderFactory {
          */
         default DebeziumOracleEndpointBuilder maxQueueSizeInBytes(String maxQueueSizeInBytes) {
             doSetProperty("maxQueueSizeInBytes", maxQueueSizeInBytes);
+            return this;
+        }
+        /**
+         * The fully-qualified class name of the storage implementation for
+         * schema metadata. The class must implement
+         * io.debezium.relational.TableMappingStorage. Defaults to
+         * io.debezium.relational.ConcurrentMapTableMappingStorage for in-memory
+         * storage.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: io.debezium.relational.ConcurrentMapTableMappingStorage
+         * Group: oracle
+         * 
+         * @param memoryManagementSchemasClass the value to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleEndpointBuilder memoryManagementSchemasClass(String memoryManagementSchemasClass) {
+            doSetProperty("memoryManagementSchemasClass", memoryManagementSchemasClass);
+            return this;
+        }
+        /**
+         * The fully-qualified class name of the storage implementation for
+         * table metadata. The class must implement
+         * io.debezium.relational.TableMappingStorage. Defaults to
+         * io.debezium.relational.ConcurrentMapTableMappingStorage for in-memory
+         * storage.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: io.debezium.relational.ConcurrentMapTableMappingStorage
+         * Group: oracle
+         * 
+         * @param memoryManagementTablesClass the value to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleEndpointBuilder memoryManagementTablesClass(String memoryManagementTablesClass) {
+            doSetProperty("memoryManagementTablesClass", memoryManagementTablesClass);
             return this;
         }
         /**
@@ -2843,6 +2901,80 @@ public interface DebeziumOracleEndpointBuilderFactory {
          */
         default DebeziumOracleEndpointBuilder schemaNameAdjustmentMode(String schemaNameAdjustmentMode) {
             doSetProperty("schemaNameAdjustmentMode", schemaNameAdjustmentMode);
+            return this;
+        }
+        /**
+         * The secondary Oracle instance database name, if different from
+         * primary.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: oracle
+         * 
+         * @param secondaryDbname the value to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleEndpointBuilder secondaryDbname(String secondaryDbname) {
+            doSetProperty("secondaryDbname", secondaryDbname);
+            return this;
+        }
+        /**
+         * The secondary Oracle instance where changes will be streamed.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: oracle
+         * 
+         * @param secondaryHostname the value to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleEndpointBuilder secondaryHostname(String secondaryHostname) {
+            doSetProperty("secondaryHostname", secondaryHostname);
+            return this;
+        }
+        /**
+         * The secondary Oracle instance port where changes will be streamed.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 1528
+         * Group: oracle
+         * 
+         * @param secondaryPort the value to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleEndpointBuilder secondaryPort(int secondaryPort) {
+            doSetProperty("secondaryPort", secondaryPort);
+            return this;
+        }
+        /**
+         * The secondary Oracle instance port where changes will be streamed.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 1528
+         * Group: oracle
+         * 
+         * @param secondaryPort the value to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleEndpointBuilder secondaryPort(String secondaryPort) {
+            doSetProperty("secondaryPort", secondaryPort);
+            return this;
+        }
+        /**
+         * The secondary Oracle instance connection string URL where changes
+         * will be streamed.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: oracle
+         * 
+         * @param secondaryUrl the value to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleEndpointBuilder secondaryUrl(String secondaryUrl) {
+            doSetProperty("secondaryUrl", secondaryUrl);
             return this;
         }
         /**
@@ -3450,6 +3582,40 @@ public interface DebeziumOracleEndpointBuilderFactory {
             return this;
         }
         /**
+         * Enable to collect various kind of statistics, like latencies in
+         * record processing, and derived data like quantiles. By default
+         * collecting statistics is enabled.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: oracle
+         * 
+         * @param statisticsMetricsEnabled the value to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleEndpointBuilder statisticsMetricsEnabled(boolean statisticsMetricsEnabled) {
+            doSetProperty("statisticsMetricsEnabled", statisticsMetricsEnabled);
+            return this;
+        }
+        /**
+         * Enable to collect various kind of statistics, like latencies in
+         * record processing, and derived data like quantiles. By default
+         * collecting statistics is enabled.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: oracle
+         * 
+         * @param statisticsMetricsEnabled the value to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleEndpointBuilder statisticsMetricsEnabled(String statisticsMetricsEnabled) {
+            doSetProperty("statisticsMetricsEnabled", statisticsMetricsEnabled);
+            return this;
+        }
+        /**
          * A delay period after the snapshot is completed and the streaming
          * begins, given in milliseconds. Defaults to 0 ms.
          * 
@@ -3518,7 +3684,12 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * TIME fields always use microseconds precision; 'connect' always
          * represents time, date, and timestamp values using Kafka Connect's
          * built-in representations for Time, Date, and Timestamp, which uses
-         * millisecond precision regardless of the database columns' precision.
+         * millisecond precision regardless of the database columns' precision;
+         * 'isostring' represents time, date, and timestamp values as ISO-8601
+         * formatted strings at the UTC time zone; 'microseconds' always
+         * represents time, date, and timestamp values using microsecond
+         * precision; 'nanoseconds' always represents time, date, and timestamp
+         * values using nanosecond precision.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 

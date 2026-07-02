@@ -1542,6 +1542,25 @@ public interface DebeziumMongodbComponentBuilderFactory {
     
         
         /**
+         * Enable to collect various kind of statistics, like latencies in
+         * record processing, and derived data like quantiles. By default
+         * collecting statistics is enabled.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: mongodb
+         * 
+         * @param statisticsMetricsEnabled the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMongodbComponentBuilder statisticsMetricsEnabled(boolean statisticsMetricsEnabled) {
+            doSetProperty("statisticsMetricsEnabled", statisticsMetricsEnabled);
+            return this;
+        }
+    
+        
+        /**
          * A delay period after the snapshot is completed and the streaming
          * begins, given in milliseconds. Defaults to 0 ms.
          * 
@@ -1739,6 +1758,7 @@ public interface DebeziumMongodbComponentBuilderFactory {
             case "snapshotModeConfigurationBasedStartStream": getOrCreateConfiguration((DebeziumMongodbComponent) component).setSnapshotModeConfigurationBasedStartStream((boolean) value); return true;
             case "snapshotModeCustomName": getOrCreateConfiguration((DebeziumMongodbComponent) component).setSnapshotModeCustomName((java.lang.String) value); return true;
             case "sourceinfoStructMaker": getOrCreateConfiguration((DebeziumMongodbComponent) component).setSourceinfoStructMaker((java.lang.String) value); return true;
+            case "statisticsMetricsEnabled": getOrCreateConfiguration((DebeziumMongodbComponent) component).setStatisticsMetricsEnabled((boolean) value); return true;
             case "streamingDelayMs": getOrCreateConfiguration((DebeziumMongodbComponent) component).setStreamingDelayMs((long) value); return true;
             case "tombstonesOnDelete": getOrCreateConfiguration((DebeziumMongodbComponent) component).setTombstonesOnDelete((boolean) value); return true;
             case "topicNamingStrategy": getOrCreateConfiguration((DebeziumMongodbComponent) component).setTopicNamingStrategy((java.lang.String) value); return true;
