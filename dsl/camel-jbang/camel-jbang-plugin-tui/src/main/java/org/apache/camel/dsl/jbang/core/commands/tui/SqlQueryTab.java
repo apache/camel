@@ -841,6 +841,11 @@ class SqlQueryTab extends AbstractTab {
     }
 
     @Override
+    public String description() {
+        return "Execute SQL queries against DataSources in the running application and browse results";
+    }
+
+    @Override
     public String getHelpText() {
         return """
                 # SQL Query

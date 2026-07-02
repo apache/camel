@@ -280,6 +280,11 @@ class ConsumersTab extends AbstractTableTab {
     }
 
     @Override
+    public String description() {
+        return "Consumer statistics (polling and event-driven consumers)";
+    }
+
+    @Override
     public String getHelpText() {
         return """
                 # Consumers

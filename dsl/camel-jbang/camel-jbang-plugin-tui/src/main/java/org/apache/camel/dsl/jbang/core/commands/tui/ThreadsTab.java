@@ -468,6 +468,11 @@ class ThreadsTab extends AbstractTableTab {
     }
 
     @Override
+    public String description() {
+        return "JVM thread dump with thread names, states, and stack traces";
+    }
+
+    @Override
     public String getHelpText() {
         return """
                 # Threads

@@ -863,6 +863,11 @@ class OverviewTab extends AbstractTab {
     }
 
     @Override
+    public String description() {
+        return "Running integrations with PID, uptime, and exchange statistics";
+    }
+
+    @Override
     public String getHelpText() {
         return """
                 # Overview

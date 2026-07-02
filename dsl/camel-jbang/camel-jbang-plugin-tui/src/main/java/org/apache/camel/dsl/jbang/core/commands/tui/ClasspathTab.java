@@ -425,6 +425,11 @@ class ClasspathTab extends AbstractTab {
     }
 
     @Override
+    public String description() {
+        return "JVM classpath entries with filtering";
+    }
+
+    @Override
     public String getHelpText() {
         return """
                 # Classpath

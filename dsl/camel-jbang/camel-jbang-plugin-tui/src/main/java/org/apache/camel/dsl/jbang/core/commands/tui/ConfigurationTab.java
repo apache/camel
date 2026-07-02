@@ -259,6 +259,11 @@ class ConfigurationTab extends AbstractTab {
     }
 
     @Override
+    public String description() {
+        return "Application configuration properties";
+    }
+
+    @Override
     public String getHelpText() {
         return """
                 # Configuration

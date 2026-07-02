@@ -697,6 +697,11 @@ class BrowseTab extends AbstractTab {
     }
 
     @Override
+    public String description() {
+        return "Browse messages queued in browsable endpoints (e.g. SEDA)";
+    }
+
+    @Override
     public String getHelpText() {
         return """
                 # Browse

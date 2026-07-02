@@ -986,6 +986,11 @@ class SpansTab extends AbstractTab {
     }
 
     @Override
+    public String description() {
+        return "OpenTelemetry spans with trace/span IDs, timing, and attributes";
+    }
+
+    @Override
     public String getHelpText() {
         return """
                 # OTel Spans

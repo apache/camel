@@ -439,6 +439,11 @@ class SqlTraceTab extends AbstractTableTab {
     }
 
     @Override
+    public String description() {
+        return "Trace SQL query executions through camel-sql and camel-jdbc components";
+    }
+
+    @Override
     public String getHelpText() {
         return """
                 # SQL Trace

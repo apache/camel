@@ -930,12 +930,11 @@ class TuiMcpServer {
     private String callGetOptions() {
         JsonObject result = new JsonObject();
         JsonArray tabsArray = new JsonArray();
-        for (String name : facade.getTabNames()) {
+        for (TabRegistry.TabEntry entry : facade.getTabEntries()) {
             JsonObject tab = new JsonObject();
-            tab.put("name", name);
-            String desc = McpFacade.TAB_DESCRIPTIONS.get(name);
-            if (desc != null) {
-                tab.put("description", desc);
+            tab.put("name", entry.name());
+            if (entry.description() != null) {
+                tab.put("description", entry.description());
             }
             tabsArray.add(tab);
         }

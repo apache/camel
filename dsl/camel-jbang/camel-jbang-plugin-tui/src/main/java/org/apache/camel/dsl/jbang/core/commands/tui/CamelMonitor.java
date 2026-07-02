@@ -287,6 +287,17 @@ public class CamelMonitor extends CamelCommand {
             }
         });
 
+        actionsPopup.setGotoTabSupport(tabRegistry.allTabEntries(), () -> {
+            TabRegistry.TabEntry entry = actionsPopup.consumePendingGotoEntry();
+            if (entry != null) {
+                if (entry.moreIndex() >= 0) {
+                    tabRegistry.selectMoreTab(entry.moreIndex());
+                } else {
+                    tabRegistry.handleTabKey(entry.tabIndex(), ctx, dataService);
+                }
+            }
+        });
+
         popupManager = new PopupManager(
                 ctx, this::getNonVanishingIntegrations, filesBrowser,
                 new PopupManager.PopupCallbacks() {

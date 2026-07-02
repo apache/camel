@@ -316,6 +316,11 @@ class HeapHistogramTab extends AbstractTableTab {
     }
 
     @Override
+    public String description() {
+        return "Class-level heap memory analysis showing instance counts, byte usage, package summary, and JAR origin per class";
+    }
+
+    @Override
     public String getHelpText() {
         return """
                 # Heap Histogram

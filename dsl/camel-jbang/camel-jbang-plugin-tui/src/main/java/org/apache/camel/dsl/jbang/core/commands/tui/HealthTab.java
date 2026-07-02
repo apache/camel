@@ -177,6 +177,11 @@ class HealthTab extends AbstractTableTab {
     }
 
     @Override
+    public String description() {
+        return "Health check status for readiness and liveness probes";
+    }
+
+    @Override
     public String getHelpText() {
         return """
                 # Health

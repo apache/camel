@@ -1585,6 +1585,11 @@ class HttpTab extends AbstractTableTab {
     }
 
     @Override
+    public String description() {
+        return "HTTP endpoint probe — send requests and inspect responses";
+    }
+
+    @Override
     public String getHelpText() {
         return """
                 # HTTP

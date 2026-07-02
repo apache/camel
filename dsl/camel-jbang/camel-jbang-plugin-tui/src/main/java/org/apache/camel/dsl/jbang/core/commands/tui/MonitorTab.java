@@ -68,6 +68,8 @@ interface MonitorTab {
         return null;
     }
 
+    String description();
+
     default String getHelpText() {
         return null;
     }

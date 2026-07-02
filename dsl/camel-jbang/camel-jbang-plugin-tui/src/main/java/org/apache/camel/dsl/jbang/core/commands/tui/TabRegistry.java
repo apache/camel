@@ -16,6 +16,7 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import dev.tamboui.widgets.tabs.TabsState;
@@ -318,5 +319,44 @@ class TabRegistry {
 
     SqlQueryTab sqlQueryTab() {
         return sqlQueryTab;
+    }
+
+    // ---- Tab entries for Go-to and MCP ----
+
+    record TabEntry(String name, String description, String shortcut, int tabIndex, int moreIndex) {
+    }
+
+    private static final String[] MORE_SHORTCUTS = {
+            "B", "W", "C", "A", "G", "N", "D", "H", "I", "M", "K", "E", "Q", "R", "O", "P", "S", "T"
+    };
+
+    List<TabEntry> allTabEntries() {
+        List<TabEntry> entries = new ArrayList<>();
+        entries.add(new TabEntry("Overview", overviewTab.description(), "1", TAB_OVERVIEW, -1));
+        entries.add(new TabEntry("Log", logTab.description(), "2", TAB_LOG, -1));
+        entries.add(new TabEntry("Diagram", diagramTab.description(), "3", TAB_DIAGRAM, -1));
+        entries.add(new TabEntry("Routes", routesTab.description(), "4", TAB_ROUTES, -1));
+        entries.add(new TabEntry("Endpoints", endpointsTab.description(), "5", TAB_ENDPOINTS, -1));
+        entries.add(new TabEntry("HTTP", httpTab.description(), "6", TAB_HTTP, -1));
+        entries.add(new TabEntry("Health", healthTab.description(), "7", TAB_HEALTH, -1));
+        entries.add(new TabEntry("Inspect", historyTab.description(), "8", TAB_HISTORY, -1));
+        entries.add(new TabEntry("Errors", errorsTab.description(), "9", TAB_ERRORS, -1));
+        // More sub-tabs
+        MonitorTab[] moreTabs = {
+                beansTab, browseTab, circuitBreakerTab, classpathTab, configurationTab,
+                consumersTab, dataSourceTab, heapHistogramTab, inflightTab, memoryTab,
+                memoryLeakTab, metricsTab, sqlQueryTab, sqlTraceTab, spansTab,
+                processTab, startupTab, threadsTab
+        };
+        String[] moreNames = {
+                "Beans", "Browse", "Circuit Breaker", "Classpath", "Configuration",
+                "Consumers", "DataSource", "Heap Histogram", "Inflight", "Memory",
+                "Memory Leak", "Metrics", "SQL Query", "SQL Trace", "Spans",
+                "Process", "Startup", "Threads"
+        };
+        for (int i = 0; i < moreTabs.length; i++) {
+            entries.add(new TabEntry(moreNames[i], moreTabs[i].description(), MORE_SHORTCUTS[i], TAB_MORE, i));
+        }
+        return entries;
     }
 }

@@ -360,6 +360,11 @@ class StartupTab extends AbstractTab {
     }
 
     @Override
+    public String description() {
+        return "Startup step recorder showing initialization timing";
+    }
+
+    @Override
     public String getHelpText() {
         return """
                 # Startup

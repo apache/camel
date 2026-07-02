@@ -902,6 +902,11 @@ class MetricsTab extends AbstractTableTab {
     }
 
     @Override
+    public String description() {
+        return "Micrometer metrics (counters, gauges, timers, distribution summaries)";
+    }
+
+    @Override
     public String getHelpText() {
         return """
                 # Metrics

@@ -736,6 +736,11 @@ class ErrorsTab extends AbstractTableTab {
     }
 
     @Override
+    public String description() {
+        return "Routing errors with exception details, stack traces, and exchange context";
+    }
+
+    @Override
     public String getHelpText() {
         return """
                 # Errors

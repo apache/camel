@@ -849,6 +849,11 @@ class MemoryLeakTab extends AbstractTab {
     }
 
     @Override
+    public String description() {
+        return "Memory leak diagnosis using JFR recording";
+    }
+
+    @Override
     public String getHelpText() {
         return """
                 # Memory Leak

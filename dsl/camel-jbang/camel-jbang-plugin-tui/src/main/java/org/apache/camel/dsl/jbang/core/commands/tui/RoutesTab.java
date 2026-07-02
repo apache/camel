@@ -1562,6 +1562,11 @@ class RoutesTab extends AbstractTab {
     }
 
     @Override
+    public String description() {
+        return "Route list with state, message counts, throughput, and failure statistics";
+    }
+
+    @Override
     public String getHelpText() {
         return """
                 # Routes

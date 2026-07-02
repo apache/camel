@@ -55,6 +55,11 @@ class ProcessTab extends AbstractTab {
     }
 
     @Override
+    public String description() {
+        return "OS process information (PID, CPU, memory, file descriptors)";
+    }
+
+    @Override
     public boolean handleKeyEvent(KeyEvent ke) {
         if (ke.isChar('w')) {
             wrap = !wrap;

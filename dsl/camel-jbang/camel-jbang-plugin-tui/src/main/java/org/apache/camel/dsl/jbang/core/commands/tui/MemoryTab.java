@@ -404,6 +404,11 @@ class MemoryTab extends AbstractTab {
     }
 
     @Override
+    public String description() {
+        return "JVM memory usage (heap/non-heap), GC stats, and thread counts";
+    }
+
+    @Override
     public String getHelpText() {
         return """
                 # Memory

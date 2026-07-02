@@ -665,6 +665,11 @@ class EndpointsTab extends AbstractTableTab {
     }
 
     @Override
+    public String description() {
+        return "Registered endpoints with usage statistics (hits, direction)";
+    }
+
+    @Override
     public String getHelpText() {
         return """
                 # Endpoints

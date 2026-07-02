@@ -2252,6 +2252,11 @@ class HistoryTab extends AbstractTab {
     }
 
     @Override
+    public String description() {
+        return "Message history trace showing route path, headers, body, and timing";
+    }
+
+    @Override
     public String getHelpText() {
         return """
                 # Inspect

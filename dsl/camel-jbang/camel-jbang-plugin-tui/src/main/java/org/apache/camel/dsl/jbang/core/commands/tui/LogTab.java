@@ -646,6 +646,11 @@ class LogTab extends AbstractTab {
     }
 
     @Override
+    public String description() {
+        return "Live application log with ANSI color support and filtering";
+    }
+
+    @Override
     public String getHelpText() {
         return """
                 # Log

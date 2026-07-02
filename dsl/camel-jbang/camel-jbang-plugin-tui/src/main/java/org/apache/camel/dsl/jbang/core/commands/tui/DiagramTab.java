@@ -729,6 +729,11 @@ class DiagramTab extends AbstractTab {
     }
 
     @Override
+    public String description() {
+        return "Route topology diagram showing how routes connect to each other and external systems";
+    }
+
+    @Override
     public String getHelpText() {
         return """
                                 # Diagram

@@ -428,6 +428,11 @@ class BeansTab extends AbstractTableTab {
     }
 
     @Override
+    public String description() {
+        return "Registered beans in the Camel registry";
+    }
+
+    @Override
     public String getHelpText() {
         return """
                 # Beans

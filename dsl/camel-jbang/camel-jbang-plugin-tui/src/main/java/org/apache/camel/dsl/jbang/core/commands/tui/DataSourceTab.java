@@ -153,6 +153,11 @@ class DataSourceTab extends AbstractTableTab {
     }
 
     @Override
+    public String description() {
+        return "JDBC DataSource pool statistics (active, idle, max connections)";
+    }
+
+    @Override
     public String getHelpText() {
         return """
                 # DataSource

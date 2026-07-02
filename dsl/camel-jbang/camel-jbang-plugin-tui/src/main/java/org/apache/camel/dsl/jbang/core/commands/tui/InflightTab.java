@@ -200,6 +200,11 @@ class InflightTab extends AbstractTableTab {
     }
 
     @Override
+    public String description() {
+        return "Currently in-flight exchanges being processed";
+    }
+
+    @Override
     public String getHelpText() {
         return """
                 # Inflight

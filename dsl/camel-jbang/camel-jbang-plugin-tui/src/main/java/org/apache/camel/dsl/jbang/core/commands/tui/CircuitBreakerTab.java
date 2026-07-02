@@ -378,6 +378,11 @@ class CircuitBreakerTab extends AbstractTableTab {
     }
 
     @Override
+    public String description() {
+        return "Circuit breaker state and statistics (Resilience4j)";
+    }
+
+    @Override
     public String getHelpText() {
         return """
                 # Circuit Breakers

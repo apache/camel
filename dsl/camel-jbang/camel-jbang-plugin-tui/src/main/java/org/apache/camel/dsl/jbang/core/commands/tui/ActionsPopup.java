@@ -73,6 +73,7 @@ import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.hintLast;
 class ActionsPopup {
 
     enum Action {
+        GOTO_TAB,
         SEND_MESSAGE,
         RUN_EXAMPLE,
         RUN_FOLDER,
@@ -94,7 +95,7 @@ class ActionsPopup {
         SHELL
     }
 
-    private static final int[] GROUP_SIZES = { 5, 4, 5 };
+    private static final int[] GROUP_SIZES = { 1, 5, 4, 5 };
     private static final int MCP_GROUP_SIZE = 4;
     private static final int SHELL_GROUP_SIZE = 1;
 
@@ -122,6 +123,14 @@ class ActionsPopup {
     // Absolute bounds of the single-line list popups captured during render, used to hit-test clicks.
     private Rect actionsMenuRect;
     private Rect docPickerRect;
+
+    private boolean showGotoPopup;
+    private final FuzzyFilter gotoFilter = new FuzzyFilter();
+    private final ListState gotoListState = new ListState();
+    private List<TabRegistry.TabEntry> allTabEntries;
+    private List<TabRegistry.TabEntry> filteredTabEntries;
+    private Rect gotoPopupRect;
+    private Runnable gotoTabCallback;
 
     private boolean showExampleBrowser;
     private final ListState exampleBrowserState = new ListState();
@@ -217,6 +226,11 @@ class ActionsPopup {
         this.browseFilesAction = browseFilesAction;
     }
 
+    void setGotoTabSupport(List<TabRegistry.TabEntry> entries, Runnable callback) {
+        this.allTabEntries = entries;
+        this.gotoTabCallback = callback;
+    }
+
     void setMcpEnabled(
             boolean enabled, int port, Supplier<String> connectedClient,
             Supplier<List<TuiMcpServer.LogEntry>> activityLog, Supplier<Integer> toolCallCount) {
@@ -277,6 +291,8 @@ class ActionsPopup {
 
     private List<Action> buildVisualActionList() {
         List<Action> flat = new ArrayList<>();
+        flat.add(Action.GOTO_TAB);
+        flat.add(null);
         flat.addAll(List.of(
                 Action.SEND_MESSAGE, Action.RUN_EXAMPLE, Action.RUN_FOLDER, Action.RUN_INFRA, Action.BROWSE_FILES));
         flat.add(null);
@@ -309,7 +325,7 @@ class ActionsPopup {
     }
 
     boolean isVisible() {
-        return showActionsMenu || showExampleBrowser || showFolderInput || runOptionsForm.isVisible()
+        return showActionsMenu || showGotoPopup || showExampleBrowser || showFolderInput || runOptionsForm.isVisible()
                 || showDocPicker || showDocViewer
                 || showInfraBrowser || showInfraPortDialog
                 || mcpLogPopup.isVisible() || aiLogPopup.isVisible() || doctorPopup.isVisible()
@@ -355,6 +371,9 @@ class ActionsPopup {
 
     List<String> getActionLabels() {
         List<String> labels = new ArrayList<>();
+        // Group 0: Go to
+        labels.add("Go to...");
+        labels.add("───");
         // Group 1: User Actions
         labels.add("Send Message");
         labels.add("Run an example...");
@@ -394,6 +413,8 @@ class ActionsPopup {
 
     void close() {
         showActionsMenu = false;
+        showGotoPopup = false;
+        gotoFilter.clearFilter();
         showExampleBrowser = false;
         showFolderInput = false;
         runOptionsForm.close();
@@ -572,6 +593,32 @@ class ActionsPopup {
         if (doctorPopup.handleKeyEvent(ke)) {
             return true;
         }
+        if (showGotoPopup) {
+            if (ke.isCancel()) {
+                showGotoPopup = false;
+                gotoFilter.clearFilter();
+                showActionsMenu = true;
+            } else if (ke.isUp()) {
+                gotoListState.selectPrevious();
+            } else if (ke.isDown()) {
+                gotoListState.selectNext(filteredTabEntries != null ? filteredTabEntries.size() : 0);
+            } else if (ke.isConfirm()) {
+                Integer sel = gotoListState.selected();
+                if (sel != null && filteredTabEntries != null && sel < filteredTabEntries.size()) {
+                    TabRegistry.TabEntry entry = filteredTabEntries.get(sel);
+                    showGotoPopup = false;
+                    gotoFilter.clearFilter();
+                    navigateToTabEntry(entry);
+                }
+            } else if (ke.isKey(KeyCode.BACKSPACE)) {
+                gotoFilter.deleteChar();
+                rebuildGotoList();
+            } else if (ke.code() == KeyCode.CHAR && !ke.hasCtrl() && !ke.hasAlt()) {
+                gotoFilter.appendChar(ke.string().charAt(0));
+                rebuildGotoList();
+            }
+            return true;
+        }
         if (showActionsMenu) {
             if (ke.isCancel()) {
                 showActionsMenu = false;
@@ -585,6 +632,9 @@ class ActionsPopup {
                     Action action = resolveAction(sel);
                     if (action == null) {
                         // divider selected, ignore
+                    } else if (action == Action.GOTO_TAB) {
+                        showActionsMenu = false;
+                        openGotoPopup();
                     } else if (action == Action.SHELL) {
                         showActionsMenu = false;
                         if (openShellAction != null) {
@@ -671,6 +721,9 @@ class ActionsPopup {
         if (!isVisible()) {
             return false;
         }
+        if (showGotoPopup) {
+            return handleGotoPopupMouse(me);
+        }
         if (showActionsMenu) {
             return handleListPopupMouse(me, actionsMenuRect, actionsMenuState, visualActionCount(), this::isDividerIndex);
         }
@@ -732,6 +785,9 @@ class ActionsPopup {
     }
 
     void render(Frame frame, Rect area) {
+        if (showGotoPopup) {
+            renderGotoPopup(frame, area);
+        }
         if (showActionsMenu) {
             renderActionsMenu(frame, area);
         }
@@ -843,6 +899,13 @@ class ActionsPopup {
             hintLast(spans, "Esc", "back");
             return;
         }
+        if (showGotoPopup) {
+            hint(spans, "type", "filter");
+            hint(spans, "↑↓", "navigate");
+            hint(spans, "Enter", "go to");
+            hintLast(spans, "Esc", "back");
+            return;
+        }
         if (showActionsMenu) {
             hint(spans, "↑↓", "navigate");
             hint(spans, "Enter", "select");
@@ -884,6 +947,9 @@ class ActionsPopup {
                 : "  🔴 Start Tape Recording (Ctrl+R)";
 
         List<ListItem> items = new ArrayList<>();
+        // Group 0: Go to
+        items.add(ListItem.from("  🔍 Go to..."));
+        items.add(ListItem.from(divider).style(Style.EMPTY.dim()));
         // Group 1: User Actions
         items.add(ListItem.from("  📩 Send Message"));
         items.add(ListItem.from("  🐪 Run an example..."));
@@ -2284,6 +2350,196 @@ class ActionsPopup {
             default -> {
                 return false;
             }
+        }
+        return true;
+    }
+
+    // ---- Go-to tab popup ----
+
+    private void openGotoPopup() {
+        showGotoPopup = true;
+        gotoFilter.clearFilter();
+        rebuildGotoList();
+    }
+
+    private void rebuildGotoList() {
+        if (allTabEntries == null) {
+            filteredTabEntries = List.of();
+            return;
+        }
+        if (!gotoFilter.hasFilter()) {
+            filteredTabEntries = new ArrayList<>(allTabEntries);
+        } else {
+            filteredTabEntries = new ArrayList<>();
+            String filter = gotoFilter.filter();
+            for (TabRegistry.TabEntry entry : allTabEntries) {
+                // 1 char: starts-with on name only; 2+ chars: fuzzy name + substring description
+                boolean nameMatch;
+                if (filter.length() == 1) {
+                    nameMatch = entry.name().toLowerCase().startsWith(filter);
+                } else {
+                    nameMatch = gotoFilter.match(entry.name()) != null;
+                }
+                boolean descMatch = filter.length() >= 2 && entry.description() != null
+                        && entry.description().toLowerCase().contains(filter);
+                if (nameMatch || descMatch) {
+                    filteredTabEntries.add(entry);
+                }
+            }
+        }
+        gotoListState.select(filteredTabEntries.isEmpty() ? null : 0);
+    }
+
+    private void navigateToTabEntry(TabRegistry.TabEntry entry) {
+        if (entry.moreIndex() >= 0) {
+            // More sub-tab — use selectMoreTab callback
+            if (gotoTabCallback != null) {
+                // Store the entry info for the callback to use
+                pendingGotoEntry = entry;
+                gotoTabCallback.run();
+            }
+        } else {
+            // Primary tab — use handleTabKey callback
+            if (gotoTabCallback != null) {
+                pendingGotoEntry = entry;
+                gotoTabCallback.run();
+            }
+        }
+    }
+
+    private TabRegistry.TabEntry pendingGotoEntry;
+
+    TabRegistry.TabEntry consumePendingGotoEntry() {
+        TabRegistry.TabEntry e = pendingGotoEntry;
+        pendingGotoEntry = null;
+        return e;
+    }
+
+    private void renderGotoPopup(Frame frame, Rect area) {
+        if (filteredTabEntries == null) {
+            return;
+        }
+        int nameColWidth = 18;
+        int popupW = Math.min(100, area.width() - 4);
+        int descColWidth = popupW - nameColWidth - 8; // 2 border + 3 key col + 3 padding
+        int listH = Math.min(filteredTabEntries.size(), Math.min(28, area.height() - 8));
+        int popupH = listH + 4; // borders + filter row + separator
+        int x = area.left() + Math.max(0, (area.width() - popupW) / 2);
+        int y = area.top() + 2;
+        Rect popup = new Rect(x, y, Math.min(popupW, area.width()), Math.min(popupH, area.height() - 2));
+        this.gotoPopupRect = popup;
+
+        frame.renderWidget(Clear.INSTANCE, popup);
+
+        // Build filter display line
+        String filterText = gotoFilter.hasFilter() ? gotoFilter.filter() : "";
+        String prompt = "> " + filterText + "█";
+
+        List<ListItem> items = new ArrayList<>();
+        // Filter input row
+        items.add(ListItem.from(Line.from(Span.styled(prompt, Theme.info()))));
+        // Separator
+        String sep = "─".repeat(Math.max(1, popupW - 2));
+        items.add(ListItem.from(Line.from(Span.styled(sep, Style.EMPTY.dim()))));
+
+        // Tab entries
+        Style normalStyle = Style.EMPTY;
+        Style matchStyle = Style.EMPTY.fg(Color.YELLOW).bold();
+        Style dimStyle = Style.EMPTY.dim();
+        for (TabRegistry.TabEntry entry : filteredTabEntries) {
+            List<Span> spans = new ArrayList<>();
+            // Shortcut key column
+            String key = String.format(" %-2s ", entry.shortcut());
+            spans.add(Span.styled(key, dimStyle));
+            // Name column with fuzzy highlight
+            String name = entry.name();
+            if (name.length() > nameColWidth) {
+                name = name.substring(0, nameColWidth);
+            } else {
+                name = String.format("%-" + nameColWidth + "s", name);
+            }
+            if (gotoFilter.hasFilter()) {
+                int[] nameMatch = FuzzyFilter.fuzzyMatch(name, gotoFilter.filter());
+                if (nameMatch != null) {
+                    Line hl = FuzzyFilter.highlightLine(name, nameMatch, normalStyle, matchStyle);
+                    spans.addAll(hl.spans());
+                } else {
+                    spans.add(Span.styled(name, normalStyle));
+                }
+            } else {
+                spans.add(Span.styled(name, normalStyle));
+            }
+            // Description column (dimmed, with substring highlight)
+            String desc = entry.description();
+            if (desc != null) {
+                if (desc.length() > descColWidth) {
+                    desc = desc.substring(0, Math.max(0, descColWidth - 1)) + "…";
+                }
+                spans.add(Span.styled(" ", dimStyle));
+                if (gotoFilter.hasFilter() && gotoFilter.filter().length() >= 2) {
+                    String filter = gotoFilter.filter();
+                    int idx = desc.toLowerCase().indexOf(filter);
+                    if (idx >= 0) {
+                        if (idx > 0) {
+                            spans.add(Span.styled(desc.substring(0, idx), dimStyle));
+                        }
+                        spans.add(Span.styled(desc.substring(idx, idx + filter.length()), matchStyle));
+                        if (idx + filter.length() < desc.length()) {
+                            spans.add(Span.styled(desc.substring(idx + filter.length()), dimStyle));
+                        }
+                    } else {
+                        spans.add(Span.styled(desc, dimStyle));
+                    }
+                } else {
+                    spans.add(Span.styled(desc, dimStyle));
+                }
+            }
+            items.add(ListItem.from(Line.from(spans)));
+        }
+
+        // The list has 2 header items (filter + separator) + entries
+        // We need to offset the selection by 2 to account for the header
+        ListState renderState = new ListState();
+        Integer sel = gotoListState.selected();
+        if (sel != null) {
+            renderState.select(sel + 2); // offset for filter row + separator
+        }
+
+        ListWidget list = ListWidget.builder()
+                .items(items.toArray(ListItem[]::new))
+                .highlightStyle(Theme.selectionBg())
+                .highlightSymbol("")
+                .scrollMode(ScrollMode.AUTO_SCROLL)
+                .block(Block.builder()
+                        .borderType(BorderType.ROUNDED).borders(Borders.ALL)
+                        .title(" Go to Tab ")
+                        .build())
+                .build();
+        frame.renderStatefulWidget(list, popup, renderState);
+    }
+
+    private boolean handleGotoPopupMouse(MouseEvent me) {
+        if (me.kind() == MouseEventKind.SCROLL_UP) {
+            handleKeyEvent(KeyEvent.ofKey(KeyCode.UP));
+            return true;
+        }
+        if (me.kind() == MouseEventKind.SCROLL_DOWN) {
+            handleKeyEvent(KeyEvent.ofKey(KeyCode.DOWN));
+            return true;
+        }
+        if (me.isClick()) {
+            if (gotoPopupRect != null && gotoPopupRect.contains(me.x(), me.y())) {
+                int idx = listItemAt(gotoPopupRect, 0,
+                        (filteredTabEntries != null ? filteredTabEntries.size() : 0) + 2,
+                        me.x(), me.y());
+                if (idx >= 2 && filteredTabEntries != null && idx - 2 < filteredTabEntries.size()) {
+                    gotoListState.select(idx - 2);
+                    handleKeyEvent(KeyEvent.ofKey(KeyCode.ENTER));
+                }
+                return true;
+            }
+            handleKeyEvent(KeyEvent.ofKey(KeyCode.ESCAPE));
+            return true;
         }
         return true;
     }
