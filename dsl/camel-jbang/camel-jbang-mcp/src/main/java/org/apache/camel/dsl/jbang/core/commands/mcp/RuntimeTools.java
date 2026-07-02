@@ -16,7 +16,9 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.mcp;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -24,13 +26,21 @@ import jakarta.inject.Inject;
 import io.quarkiverse.mcp.server.Tool;
 import io.quarkiverse.mcp.server.ToolArg;
 import io.quarkiverse.mcp.server.ToolCallException;
+import org.apache.camel.dsl.jbang.core.commands.ai.ToolContext;
+import org.apache.camel.dsl.jbang.core.commands.ai.ToolExecutionException;
+import org.apache.camel.dsl.jbang.core.commands.ai.ToolRegistry;
 import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.Jsoner;
 
 /**
  * MCP tools for inspecting and interacting with running Camel applications.
  * <p>
- * These tools communicate with running Camel processes via the file-based IPC protocol in ~/.camel/. Status data is
- * read from periodic snapshots; interactive commands use the multi-client action file protocol.
+ * These tools are thin MCP wrappers that delegate to the shared {@link ToolRegistry}. Each method resolves the
+ * {@code nameOrPid} parameter (an MCP-specific concern for multi-process discovery) and then delegates to the
+ * corresponding {@link ToolRegistry} tool for the actual logic.
+ * <p>
+ * The {@code @Tool} and {@code @ToolArg} annotations are required by the Quarkus MCP server for protocol discovery but
+ * all tool logic lives in {@link ToolRegistry}, ensuring a single source of truth shared with the Agent REPL.
  */
 @ApplicationScoped
 public class RuntimeTools {
@@ -41,7 +51,55 @@ public class RuntimeTools {
     @Inject
     RuntimeService runtimeService;
 
-    // ---- Process discovery ----
+    // ---- Delegation helpers ----
+
+    /**
+     * Resolve nameOrPid via {@link RuntimeService}, create a {@link ToolContext} with the resolved PID, and delegate to
+     * the shared {@link ToolRegistry}.
+     *
+     * @param  registryToolName the tool name in ToolRegistry (e.g., "get_context")
+     * @param  nameOrPid        MCP process selector (name, PID, or empty for auto-detect)
+     * @param  args             tool arguments as a String map
+     * @return                  the tool result as a JsonObject suitable for MCP responses
+     */
+    private JsonObject delegateToRegistry(String registryToolName, String nameOrPid, Map<String, String> args) {
+        RuntimeService.ProcessInfo p = runtimeService.findSingleProcess(nameOrPid);
+        ToolContext ctx = new ToolContext();
+        ctx.selectProcess(p.pid());
+        try {
+            Object result = ToolRegistry.execute(registryToolName, ctx, args);
+            return toJsonObject(result);
+        } catch (ToolExecutionException e) {
+            throw new ToolCallException(e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Convert a {@link ToolRegistry} result (typically a JSON String or JsonObject) into a {@link JsonObject} for MCP
+     * serialization.
+     */
+    static JsonObject toJsonObject(Object result) {
+        if (result instanceof JsonObject jo) {
+            return jo;
+        }
+        if (result == null) {
+            return new JsonObject();
+        }
+        String str = result.toString();
+        try {
+            Object parsed = Jsoner.deserialize(str);
+            if (parsed instanceof JsonObject jo) {
+                return jo;
+            }
+        } catch (Exception e) {
+            // not a valid JSON object — wrap as plain text
+        }
+        JsonObject wrapper = new JsonObject();
+        wrapper.put("result", str);
+        return wrapper;
+    }
+
+    // ---- Process discovery (MCP-specific, not in ToolRegistry) ----
 
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = """
@@ -51,121 +109,94 @@ public class RuntimeTools {
         return runtimeService.discoverProcesses();
     }
 
-    // ---- Read-only tools (from status file) ----
+    // ---- Read-only status tools ----
 
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = "Get Camel context information: name, version, state, uptime, route count, exchange statistics.")
     public JsonObject camel_runtime_context(
             @ToolArg(description = NAME_OR_PID_DESC) String nameOrPid) {
-        RuntimeService.ProcessInfo p = runtimeService.findSingleProcess(nameOrPid);
-        return runtimeService.readStatusSection(p.pid(), "context");
+        return delegateToRegistry("get_context", nameOrPid, Map.of());
     }
 
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = "List Camel routes with their state, uptime, messages processed, last error, and throughput statistics.")
     public JsonObject camel_runtime_routes(
             @ToolArg(description = NAME_OR_PID_DESC) String nameOrPid) {
-        RuntimeService.ProcessInfo p = runtimeService.findSingleProcess(nameOrPid);
-        return runtimeService.readStatusSection(p.pid(), "routes");
+        return delegateToRegistry("get_routes", nameOrPid, Map.of());
     }
 
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = "Get health check status for the Camel application.")
     public JsonObject camel_runtime_health(
             @ToolArg(description = NAME_OR_PID_DESC) String nameOrPid) {
-        RuntimeService.ProcessInfo p = runtimeService.findSingleProcess(nameOrPid);
-        return runtimeService.readStatusSection(p.pid(), "healthChecks");
+        return delegateToRegistry("get_health", nameOrPid, Map.of());
     }
 
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = "List all endpoints registered in the Camel context with their URIs and usage statistics.")
     public JsonObject camel_runtime_endpoints(
             @ToolArg(description = NAME_OR_PID_DESC) String nameOrPid) {
-        RuntimeService.ProcessInfo p = runtimeService.findSingleProcess(nameOrPid);
-        return runtimeService.readStatusSection(p.pid(), "endpoints");
+        return delegateToRegistry("get_endpoints", nameOrPid, Map.of());
     }
 
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = "Show currently in-flight exchanges (messages being processed).")
     public JsonObject camel_runtime_inflight(
             @ToolArg(description = NAME_OR_PID_DESC) String nameOrPid) {
-        RuntimeService.ProcessInfo p = runtimeService.findSingleProcess(nameOrPid);
-        return runtimeService.readStatusSection(p.pid(), "inflight");
+        return delegateToRegistry("get_inflight", nameOrPid, Map.of());
     }
 
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = "Show blocked exchanges that are stuck or waiting.")
     public JsonObject camel_runtime_blocked(
             @ToolArg(description = NAME_OR_PID_DESC) String nameOrPid) {
-        RuntimeService.ProcessInfo p = runtimeService.findSingleProcess(nameOrPid);
-        return runtimeService.readStatusSection(p.pid(), "blocked");
+        return delegateToRegistry("get_blocked", nameOrPid, Map.of());
     }
 
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = "Show exchange variables in the Camel context.")
     public JsonObject camel_runtime_variables(
             @ToolArg(description = NAME_OR_PID_DESC) String nameOrPid) {
-        RuntimeService.ProcessInfo p = runtimeService.findSingleProcess(nameOrPid);
-        return runtimeService.readStatusSection(p.pid(), "variables");
+        return delegateToRegistry("get_variables", nameOrPid, Map.of());
     }
 
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = "Show consumer statistics (polling consumers, event-driven consumers).")
     public JsonObject camel_runtime_consumers(
             @ToolArg(description = NAME_OR_PID_DESC) String nameOrPid) {
-        RuntimeService.ProcessInfo p = runtimeService.findSingleProcess(nameOrPid);
-        return runtimeService.readStatusSection(p.pid(), "consumers");
+        return delegateToRegistry("get_consumers", nameOrPid, Map.of());
     }
 
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = "Show configuration properties of the running Camel application.")
     public JsonObject camel_runtime_properties(
             @ToolArg(description = NAME_OR_PID_DESC) String nameOrPid) {
-        RuntimeService.ProcessInfo p = runtimeService.findSingleProcess(nameOrPid);
-        return runtimeService.readStatusSection(p.pid(), "properties");
+        return delegateToRegistry("get_properties", nameOrPid, Map.of());
     }
 
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = "Show services registered in the Camel service registry.")
     public JsonObject camel_runtime_services(
             @ToolArg(description = NAME_OR_PID_DESC) String nameOrPid) {
-        RuntimeService.ProcessInfo p = runtimeService.findSingleProcess(nameOrPid);
-        return runtimeService.readStatusSection(p.pid(), "services");
+        return delegateToRegistry("get_services", nameOrPid, Map.of());
     }
 
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = "Show JVM memory usage (heap/non-heap), garbage collection stats, and thread counts.")
     public JsonObject camel_runtime_memory(
             @ToolArg(description = NAME_OR_PID_DESC) String nameOrPid) {
-        RuntimeService.ProcessInfo p = runtimeService.findSingleProcess(nameOrPid);
-        JsonObject status = runtimeService.readStatus(p.pid());
-        if (status == null) {
-            return new JsonObject();
-        }
-        JsonObject result = new JsonObject();
-        if (status.containsKey("memory")) {
-            result.put("memory", status.get("memory"));
-        }
-        if (status.containsKey("gc")) {
-            result.put("gc", status.get("gc"));
-        }
-        if (status.containsKey("threads")) {
-            result.put("threads", status.get("threads"));
-        }
-        return result;
+        return delegateToRegistry("get_memory", nameOrPid, Map.of());
     }
 
-    // ---- Interactive tools (via action file IPC) ----
+    // ---- Interactive action tools ----
 
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = "Get the source code of routes in the running Camel application.")
     public JsonObject camel_runtime_route_source(
             @ToolArg(description = NAME_OR_PID_DESC) String nameOrPid,
             @ToolArg(description = "Filter source files by name (supports wildcards)") String filter) {
-        RuntimeService.ProcessInfo p = runtimeService.findSingleProcess(nameOrPid);
-        return runtimeService.executeAction(p.pid(), "source", root -> {
-            root.put("filter", filter != null ? filter : "*");
-        });
+        return delegateToRegistry("get_route_source", nameOrPid,
+                Map.of("filter", filter != null ? filter : "*"));
     }
 
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
@@ -174,11 +205,10 @@ public class RuntimeTools {
             @ToolArg(description = NAME_OR_PID_DESC) String nameOrPid,
             @ToolArg(description = "Route ID to dump (use * for all routes)") String routeId,
             @ToolArg(description = "Output format: xml, yaml, or java (default: yaml)") String format) {
-        RuntimeService.ProcessInfo p = runtimeService.findSingleProcess(nameOrPid);
-        return runtimeService.executeAction(p.pid(), "route-dump", root -> {
-            root.put("id", routeId != null ? routeId : "*");
-            root.put("format", format != null ? format : "yaml");
-        });
+        Map<String, String> args = new HashMap<>();
+        args.put("routeId", routeId != null ? routeId : "*");
+        args.put("format", format != null ? format : "yaml");
+        return delegateToRegistry("get_route_dump", nameOrPid, args);
     }
 
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
@@ -186,10 +216,8 @@ public class RuntimeTools {
     public JsonObject camel_runtime_route_structure(
             @ToolArg(description = NAME_OR_PID_DESC) String nameOrPid,
             @ToolArg(description = "Route ID to inspect (use * for all routes)") String routeId) {
-        RuntimeService.ProcessInfo p = runtimeService.findSingleProcess(nameOrPid);
-        return runtimeService.executeAction(p.pid(), "route-structure", root -> {
-            root.put("id", routeId != null ? routeId : "*");
-        });
+        return delegateToRegistry("get_route_structure", nameOrPid,
+                Map.of("routeId", routeId != null ? routeId : "*"));
     }
 
     @Tool(annotations = @Tool.Annotations(readOnlyHint = false, destructiveHint = true, openWorldHint = false),
@@ -204,11 +232,16 @@ public class RuntimeTools {
         if (command == null || command.isBlank()) {
             throw new ToolCallException("command is required (start, stop, suspend, resume)", null);
         }
-        RuntimeService.ProcessInfo p = runtimeService.findSingleProcess(nameOrPid);
-        return runtimeService.executeAction(p.pid(), "route", root -> {
-            root.put("id", routeId);
-            root.put("command", command);
-        });
+        // Map the MCP command to the corresponding ToolRegistry tool
+        String toolName = switch (command.toLowerCase()) {
+            case "start" -> "start_route";
+            case "stop" -> "stop_route";
+            case "suspend" -> "suspend_route";
+            case "resume" -> "resume_route";
+            default -> throw new ToolCallException(
+                    "Unknown command: " + command + ". Use start, stop, suspend, or resume.", null);
+        };
+        return delegateToRegistry(toolName, nameOrPid, Map.of("routeId", routeId));
     }
 
     @Tool(annotations = @Tool.Annotations(readOnlyHint = false, destructiveHint = true, openWorldHint = false),
@@ -221,16 +254,15 @@ public class RuntimeTools {
         if (endpoint == null || endpoint.isBlank()) {
             throw new ToolCallException("endpoint is required", null);
         }
-        RuntimeService.ProcessInfo p = runtimeService.findSingleProcess(nameOrPid);
-        return runtimeService.executeAction(p.pid(), "send", root -> {
-            root.put("endpoint", endpoint);
-            if (body != null) {
-                root.put("body", body);
-            }
-            if (headers != null) {
-                root.put("headers", headers);
-            }
-        });
+        Map<String, String> args = new HashMap<>();
+        args.put("endpoint", endpoint);
+        if (body != null) {
+            args.put("body", body);
+        }
+        if (headers != null) {
+            args.put("headers", headers);
+        }
+        return delegateToRegistry("send_message", nameOrPid, args);
     }
 
     @Tool(annotations = @Tool.Annotations(readOnlyHint = false, destructiveHint = false, openWorldHint = false),
@@ -241,26 +273,14 @@ public class RuntimeTools {
         if (action == null || action.isBlank()) {
             throw new ToolCallException("action is required (enable, disable, dump)", null);
         }
-        RuntimeService.ProcessInfo p = runtimeService.findSingleProcess(nameOrPid);
-        return runtimeService.executeAction(p.pid(), "trace", root -> {
-            switch (action.toLowerCase()) {
-                case "enable" -> root.put("enabled", "true");
-                case "disable" -> root.put("enabled", "false");
-                case "dump" -> root.put("dump", "true");
-                default -> throw new ToolCallException(
-                        "Unknown trace action: " + action
-                                                       + ". Use 'enable', 'disable', or 'dump'.",
-                        null);
-            }
-        });
+        return delegateToRegistry("trace_control", nameOrPid, Map.of("action", action));
     }
 
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = "Show top processor statistics: which processors are slowest and most active.")
     public JsonObject camel_runtime_top(
             @ToolArg(description = NAME_OR_PID_DESC) String nameOrPid) {
-        RuntimeService.ProcessInfo p = runtimeService.findSingleProcess(nameOrPid);
-        return runtimeService.executeAction(p.pid(), "top-processors", null);
+        return delegateToRegistry("get_top_processors", nameOrPid, Map.of());
     }
 
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
@@ -277,11 +297,10 @@ public class RuntimeTools {
         if (expression == null || expression.isBlank()) {
             throw new ToolCallException("expression is required", null);
         }
-        RuntimeService.ProcessInfo p = runtimeService.findSingleProcess(nameOrPid);
-        return runtimeService.executeAction(p.pid(), "eval", root -> {
-            root.put("language", language);
-            root.put("expression", expression);
-        });
+        Map<String, String> args = new HashMap<>();
+        args.put("language", language);
+        args.put("expression", expression);
+        return delegateToRegistry("eval_expression", nameOrPid, args);
     }
 
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
@@ -292,11 +311,10 @@ public class RuntimeTools {
             @ToolArg(description = NAME_OR_PID_DESC) String nameOrPid,
             @ToolArg(description = "Include live metrics (message counts, throughput) on nodes and edges") Boolean metric,
             @ToolArg(description = "Include external systems (databases, messaging brokers, etc.) as nodes") Boolean external) {
-        RuntimeService.ProcessInfo p = runtimeService.findSingleProcess(nameOrPid);
-        return runtimeService.executeAction(p.pid(), "route-topology", root -> {
-            root.put("metric", metric != null && metric ? "true" : "false");
-            root.put("external", external != null && external ? "true" : "false");
-        });
+        Map<String, String> args = new HashMap<>();
+        args.put("metric", metric == null || metric ? "true" : "false");
+        args.put("external", external == null || external ? "true" : "false");
+        return delegateToRegistry("get_route_topology", nameOrPid, args);
     }
 
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
@@ -305,16 +323,14 @@ public class RuntimeTools {
                   Returns error details including exception, exchange context, and route information.""")
     public JsonObject camel_runtime_errors(
             @ToolArg(description = NAME_OR_PID_DESC) String nameOrPid) {
-        RuntimeService.ProcessInfo p = runtimeService.findSingleProcess(nameOrPid);
-        return runtimeService.readErrorFile(p.pid());
+        return delegateToRegistry("get_errors", nameOrPid, Map.of());
     }
 
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = "Get a JVM thread dump showing thread names, states, and stack traces.")
     public JsonObject camel_runtime_thread_dump(
             @ToolArg(description = NAME_OR_PID_DESC) String nameOrPid) {
-        RuntimeService.ProcessInfo p = runtimeService.findSingleProcess(nameOrPid);
-        return runtimeService.executeAction(p.pid(), "thread-dump", null);
+        return delegateToRegistry("get_thread_dump", nameOrPid, Map.of());
     }
 
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
@@ -323,8 +339,7 @@ public class RuntimeTools {
                   Useful for diagnosing memory leaks and understanding which classes dominate heap usage.""")
     public JsonObject camel_runtime_heap_histogram(
             @ToolArg(description = NAME_OR_PID_DESC) String nameOrPid) {
-        RuntimeService.ProcessInfo p = runtimeService.findSingleProcess(nameOrPid);
-        return runtimeService.executeAction(p.pid(), "heap-histogram", null);
+        return delegateToRegistry("get_heap_histogram", nameOrPid, Map.of());
     }
 
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
@@ -334,8 +349,7 @@ public class RuntimeTools {
                   with its route path, processors visited, headers, body, and timing.""")
     public JsonObject camel_runtime_history(
             @ToolArg(description = NAME_OR_PID_DESC) String nameOrPid) {
-        RuntimeService.ProcessInfo p = runtimeService.findSingleProcess(nameOrPid);
-        return runtimeService.readHistoryFile(p.pid());
+        return delegateToRegistry("get_history", nameOrPid, Map.of());
     }
 
     @Tool(annotations = @Tool.Annotations(readOnlyHint = false, destructiveHint = true, openWorldHint = false),
@@ -344,11 +358,7 @@ public class RuntimeTools {
                   The application will finish processing in-flight exchanges before stopping.""")
     public JsonObject camel_runtime_stop(
             @ToolArg(description = NAME_OR_PID_DESC) String nameOrPid) {
-        RuntimeService.ProcessInfo p = runtimeService.findSingleProcess(nameOrPid);
-        String result = runtimeService.stopApplication(p.pid());
-        JsonObject response = new JsonObject();
-        response.put("result", result);
-        return response;
+        return delegateToRegistry("stop_application", nameOrPid, Map.of());
     }
 
     @Tool(annotations = @Tool.Annotations(readOnlyHint = false, destructiveHint = false, openWorldHint = false),
@@ -361,6 +371,7 @@ public class RuntimeTools {
         if (endpoint == null || endpoint.isBlank()) {
             throw new ToolCallException("endpoint is required", null);
         }
+        // receive is MCP-only (no ToolRegistry equivalent) — call RuntimeService directly
         RuntimeService.ProcessInfo p = runtimeService.findSingleProcess(nameOrPid);
         return runtimeService.executeAction(p.pid(), "receive", root -> {
             root.put("enabled", "true");
@@ -377,10 +388,11 @@ public class RuntimeTools {
         if (endpoint == null || endpoint.isBlank()) {
             throw new ToolCallException("endpoint is required", null);
         }
-        RuntimeService.ProcessInfo p = runtimeService.findSingleProcess(nameOrPid);
-        return runtimeService.executeAction(p.pid(), "browse", root -> {
-            root.put("endpoint", endpoint);
-            root.put("limit", limit != null ? limit : 50);
-        });
+        Map<String, String> args = new HashMap<>();
+        args.put("endpoint", endpoint);
+        if (limit != null) {
+            args.put("limit", limit.toString());
+        }
+        return delegateToRegistry("browse_endpoint", nameOrPid, args);
     }
 }

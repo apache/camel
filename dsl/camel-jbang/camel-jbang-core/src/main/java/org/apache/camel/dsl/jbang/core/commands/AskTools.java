@@ -27,15 +27,13 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.apache.camel.catalog.CamelCatalog;
-import org.apache.camel.catalog.DefaultCamelCatalog;
-import org.apache.camel.dsl.jbang.core.common.ExampleHelper;
+import org.apache.camel.dsl.jbang.core.commands.ai.ToolContext;
+import org.apache.camel.dsl.jbang.core.commands.ai.ToolDescriptor;
+import org.apache.camel.dsl.jbang.core.commands.ai.ToolRegistry;
 import org.apache.camel.dsl.jbang.core.common.Printer;
 import org.apache.camel.dsl.jbang.core.common.RuntimeHelper;
-import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
@@ -43,18 +41,24 @@ import org.apache.camel.util.json.Jsoner;
 /**
  * Shared tool definitions and execution logic for the Camel AI assistant. Used by both the {@code camel ask} CLI
  * command and the TUI AI panel.
+ *
+ * <p>
+ * Delegates shared tool execution (process discovery, runtime inspection, catalog, examples) to
+ * {@link ToolRegistry}/{@link ToolContext}. CLI-specific and file-system tools remain here because they depend on
+ * {@link CamelJBangMain} and direct filesystem access.
  */
 public class AskTools {
 
-    private static final String NO_PROCESS
-            = "No running Camel process connected. Start one with: camel run <file>";
-
     private long targetPid;
-    private CamelCatalog catalog;
+    private final ToolContext ctx;
     private volatile List<JsonObject> commandMetadataCache;
 
     public AskTools(long targetPid) {
         this.targetPid = targetPid;
+        this.ctx = new ToolContext();
+        if (targetPid >= 0) {
+            ctx.selectProcess(targetPid);
+        }
     }
 
     public long getTargetPid() {
@@ -63,6 +67,9 @@ public class AskTools {
 
     public void setTargetPid(long targetPid) {
         this.targetPid = targetPid;
+        if (targetPid >= 0) {
+            ctx.selectProcess(targetPid);
+        }
     }
 
     // ---- Tool definitions ----
@@ -70,197 +77,22 @@ public class AskTools {
     public List<LlmClient.ToolDef> buildToolDefinitions() {
         List<LlmClient.ToolDef> tools = new ArrayList<>();
 
-        tools.add(new LlmClient.ToolDef(
-                "list_processes",
-                "List all running Camel processes with their PID and name. Use this to discover available processes before selecting one.",
-                emptyParams()));
-        tools.add(new LlmClient.ToolDef(
-                "select_process",
-                "Select a running Camel process by name or PID to inspect. Required when multiple processes are running. After selection, all runtime tools (get_routes, get_context, etc.) will target this process.",
-                objectParams(Map.of(
-                        "name", stringProp("Name or PID of the Camel process to connect to")))));
+        // Build definitions from the shared registry
+        for (ToolDescriptor td : ToolRegistry.allTools()) {
+            JsonObject params;
+            if (td.params().isEmpty()) {
+                params = emptyParams();
+            } else {
+                Map<String, JsonObject> props = new LinkedHashMap<>();
+                for (ToolDescriptor.Param p : td.params()) {
+                    props.put(p.name(), stringProp(p.description()));
+                }
+                params = objectParams(props);
+            }
+            tools.add(new LlmClient.ToolDef(td.name(), td.description(), params));
+        }
 
-        tools.add(new LlmClient.ToolDef(
-                "get_context",
-                "Get Camel context info: name, version, state, uptime, route count, exchange statistics.",
-                emptyParams()));
-        tools.add(new LlmClient.ToolDef(
-                "get_routes",
-                "List all routes with their state, uptime, messages processed, last error, and throughput.",
-                emptyParams()));
-        tools.add(new LlmClient.ToolDef(
-                "get_health",
-                "Get health check status for the Camel application.",
-                emptyParams()));
-        tools.add(new LlmClient.ToolDef(
-                "get_endpoints",
-                "List all endpoints registered in the Camel context with URIs and usage stats.",
-                emptyParams()));
-        tools.add(new LlmClient.ToolDef(
-                "get_inflight",
-                "Show currently in-flight exchanges (messages being processed).",
-                emptyParams()));
-        tools.add(new LlmClient.ToolDef(
-                "get_blocked",
-                "Show blocked exchanges that are stuck or waiting.",
-                emptyParams()));
-        tools.add(new LlmClient.ToolDef(
-                "get_consumers",
-                "Show consumer statistics (polling and event-driven consumers).",
-                emptyParams()));
-        tools.add(new LlmClient.ToolDef(
-                "get_properties",
-                "Show configuration properties of the running Camel application.",
-                emptyParams()));
-        tools.add(new LlmClient.ToolDef(
-                "get_memory",
-                "Show JVM memory usage (heap/non-heap), garbage collection stats, and thread counts.",
-                emptyParams()));
-        tools.add(new LlmClient.ToolDef(
-                "get_errors",
-                "Get captured routing errors from the running Camel application. Returns error details including exception, exchange context, and route information.",
-                emptyParams()));
-        tools.add(new LlmClient.ToolDef(
-                "get_history",
-                "Get the message history trace of the last completed exchange. Shows the route path, processors visited, headers, body, and timing.",
-                emptyParams()));
-        tools.add(new LlmClient.ToolDef(
-                "get_variables",
-                "Show exchange variables in the Camel context.",
-                emptyParams()));
-        tools.add(new LlmClient.ToolDef(
-                "get_services",
-                "Show services registered in the Camel service registry.",
-                emptyParams()));
-
-        tools.add(new LlmClient.ToolDef(
-                "get_route_source",
-                "Get the source code of routes. Use filter to limit by filename (supports wildcards).",
-                objectParams(Map.of(
-                        "filter", stringProp("Filter source files by name (supports wildcards). Use * for all.")))));
-        tools.add(new LlmClient.ToolDef(
-                "get_route_dump",
-                "Dump route definitions in XML or YAML format.",
-                objectParams(Map.of(
-                        "routeId", stringProp("Route ID to dump (use * for all routes)"),
-                        "format", stringProp("Output format: xml or yaml (default: yaml)")))));
-        tools.add(new LlmClient.ToolDef(
-                "get_route_structure",
-                "Show the route structure as a tree of processors.",
-                objectParams(Map.of(
-                        "routeId", stringProp("Route ID to inspect (use * for all routes)")))));
-        tools.add(new LlmClient.ToolDef(
-                "get_top_processors",
-                "Show top processor statistics: which processors are slowest and most active.",
-                emptyParams()));
-        tools.add(new LlmClient.ToolDef(
-                "get_route_topology",
-                "Get the inter-route topology showing how routes connect to each other and to external endpoints.",
-                emptyParams()));
-        tools.add(new LlmClient.ToolDef(
-                "trace_control",
-                "Enable, disable, or dump message tracing.",
-                objectParams(Map.of(
-                        "action", stringProp("Action: enable, disable, or dump")))));
-
-        tools.add(new LlmClient.ToolDef(
-                "send_message",
-                "Send a test message to a Camel endpoint in the running application.",
-                objectParams(Map.of(
-                        "endpoint", stringProp("Endpoint URI to send to (e.g., direct:myRoute, seda:queue)"),
-                        "body", stringProp("Message body to send"),
-                        "headers", stringProp("Message headers as key=value pairs separated by newlines")))));
-        tools.add(new LlmClient.ToolDef(
-                "eval_expression",
-                "Evaluate a Camel expression in the given language (e.g., simple, jsonpath, xpath) against the running context.",
-                objectParams(Map.of(
-                        "language", stringProp("Expression language (e.g., simple, jsonpath, xpath, jq)"),
-                        "expression", stringProp("Expression to evaluate")))));
-        tools.add(new LlmClient.ToolDef(
-                "browse_endpoint",
-                "Browse messages in a Camel endpoint (e.g., browse messages queued in a SEDA endpoint).",
-                objectParams(Map.of(
-                        "endpoint", stringProp("Endpoint URI to browse (e.g., seda:queue)"),
-                        "limit", stringProp("Maximum number of messages to return (default: 50)")))));
-        tools.add(new LlmClient.ToolDef(
-                "get_sql_trace",
-                "Get traced SQL query executions flowing through camel-sql and camel-jdbc components. "
-                                 + "Returns per-query timing, row counts, category (SELECT/INSERT/UPDATE/DELETE), "
-                                 + "route ID, and failure status. Includes summary statistics: total queries, "
-                                 + "average time, slowest time, slow count (>=100ms), and failed count. "
-                                 + "Use to identify slow queries, fastest queries, most frequent queries, "
-                                 + "and failed SQL executions.",
-                emptyParams()));
-        tools.add(new LlmClient.ToolDef(
-                "execute_sql",
-                "Execute a SQL query against a DataSource in the running Camel application. "
-                               + "Returns structured JSON with columns, rows, and metadata for SELECT queries, "
-                               + "or an update count for INSERT/UPDATE/DELETE.",
-                objectParams(Map.of(
-                        "query", stringProp("The SQL query to execute"),
-                        "datasource", stringProp("Name of the DataSource bean (auto-detected if only one exists)"),
-                        "maxRows", stringProp("Maximum number of rows to return (default: 100)")))));
-        tools.add(new LlmClient.ToolDef(
-                "get_thread_dump",
-                "Get a JVM thread dump showing thread names, states, and stack traces.",
-                emptyParams()));
-
-        tools.add(new LlmClient.ToolDef(
-                "stop_route",
-                "Gracefully stop a route. The route will finish processing in-flight exchanges before stopping.",
-                objectParams(Map.of(
-                        "routeId", stringProp("The ID of the route to stop")))));
-        tools.add(new LlmClient.ToolDef(
-                "start_route",
-                "Start a stopped route.",
-                objectParams(Map.of(
-                        "routeId", stringProp("The ID of the route to start")))));
-        tools.add(new LlmClient.ToolDef(
-                "suspend_route",
-                "Suspend a route (pauses the consumer but keeps the route loaded).",
-                objectParams(Map.of(
-                        "routeId", stringProp("The ID of the route to suspend")))));
-        tools.add(new LlmClient.ToolDef(
-                "resume_route",
-                "Resume a suspended route.",
-                objectParams(Map.of(
-                        "routeId", stringProp("The ID of the route to resume")))));
-
-        tools.add(new LlmClient.ToolDef(
-                "stop_application",
-                "Gracefully stop the Camel application. The application will finish processing in-flight exchanges and shut down cleanly. Use this instead of kill.",
-                emptyParams()));
-
-        tools.add(new LlmClient.ToolDef(
-                "catalog_components",
-                "Search the Camel component catalog by name or label. Returns component name, title, description, and labels.",
-                objectParams(Map.of(
-                        "filter", stringProp("Filter by name, title, or description (case-insensitive substring)"),
-                        "label", stringProp("Filter by category label (e.g., cloud, messaging, database, file)")))));
-        tools.add(new LlmClient.ToolDef(
-                "catalog_component_doc",
-                "Get detailed documentation for a Camel component: URI syntax and endpoint options.",
-                objectParams(Map.of(
-                        "component", stringProp("Component name (e.g., kafka, http, file, timer)")))));
-        tools.add(new LlmClient.ToolDef(
-                "catalog_eips",
-                "Search EIPs (Enterprise Integration Patterns) like split, aggregate, filter, choice, multicast.",
-                objectParams(Map.of(
-                        "filter", stringProp("Filter by name, title, or description (case-insensitive substring)")))));
-
-        tools.add(new LlmClient.ToolDef(
-                "list_examples",
-                "List available Camel CLI examples. Returns name, title, description, difficulty level, and tags.",
-                objectParams(Map.of(
-                        "filter", stringProp("Filter by name, description, or tag (case-insensitive)"),
-                        "level", stringProp("Filter by difficulty: beginner, intermediate, or advanced")))));
-        tools.add(new LlmClient.ToolDef(
-                "get_example_file",
-                "Get the content of a file from a bundled Camel CLI example. Use list_examples first to find available examples.",
-                objectParams(Map.of(
-                        "example", stringProp("Example name (e.g., timer-log, rest-api, circuit-breaker)"),
-                        "file", stringProp("File name within the example (e.g., route.camel.yaml)")))));
-
+        // CLI tools (AskTools-specific, depend on CamelJBangMain)
         tools.add(new LlmClient.ToolDef(
                 "cli_list_commands",
                 "List available Camel CLI commands. Returns command names and descriptions. Use filter to narrow results.",
@@ -278,6 +110,7 @@ public class AskTools {
                         "command", stringProp(
                                 "The full command line to execute (e.g., 'get error --diagram', 'catalog component --filter=kafka')")))));
 
+        // File tools (AskTools-specific, depend on filesystem access)
         tools.add(new LlmClient.ToolDef(
                 "list_files",
                 "List files in a directory (up to 2 levels deep). Defaults to current working directory.",
@@ -302,62 +135,31 @@ public class AskTools {
 
     public String executeTool(String name, JsonObject args) {
         try {
+            // Try shared registry first
+            ToolDescriptor td = ToolRegistry.findTool(name);
+            if (td != null) {
+                // Convert JsonObject args to Map<String, String> for the registry
+                Map<String, String> argMap = new LinkedHashMap<>();
+                if (args != null) {
+                    for (String key : args.keySet()) {
+                        Object val = args.get(key);
+                        if (val != null) {
+                            argMap.put(key, val.toString());
+                        }
+                    }
+                }
+
+                // Special handling: select_process must also update our targetPid
+                Object result = ToolRegistry.execute(name, ctx, argMap);
+                if ("select_process".equals(name) && ctx.hasProcess()) {
+                    this.targetPid = ctx.pid();
+                }
+
+                return result != null ? result.toString() : "";
+            }
+
+            // Fall through to CLI and file tools
             return switch (name) {
-                case "list_processes" -> executeListProcesses();
-                case "select_process" -> executeSelectProcess(args);
-                case "get_context" ->
-                    targetPid < 0 ? NO_PROCESS : RuntimeHelper.readStatusSection(targetPid, "context");
-                case "get_routes" ->
-                    targetPid < 0 ? NO_PROCESS : RuntimeHelper.readStatusSection(targetPid, "routes");
-                case "get_health" ->
-                    targetPid < 0 ? NO_PROCESS : RuntimeHelper.readStatusSection(targetPid, "healthChecks");
-                case "get_endpoints" ->
-                    targetPid < 0 ? NO_PROCESS : RuntimeHelper.readStatusSection(targetPid, "endpoints");
-                case "get_inflight" ->
-                    targetPid < 0 ? NO_PROCESS : RuntimeHelper.readStatusSection(targetPid, "inflight");
-                case "get_blocked" ->
-                    targetPid < 0 ? NO_PROCESS : RuntimeHelper.readStatusSection(targetPid, "blocked");
-                case "get_consumers" ->
-                    targetPid < 0 ? NO_PROCESS : RuntimeHelper.readStatusSection(targetPid, "consumers");
-                case "get_properties" ->
-                    targetPid < 0 ? NO_PROCESS : RuntimeHelper.readStatusSection(targetPid, "properties");
-                case "get_memory" ->
-                    targetPid < 0 ? NO_PROCESS : RuntimeHelper.readStatusSection(targetPid, "memory");
-                case "get_errors" -> targetPid < 0 ? NO_PROCESS : executeGetErrors();
-                case "get_history" -> targetPid < 0 ? NO_PROCESS : executeGetHistory();
-                case "get_variables" ->
-                    targetPid < 0 ? NO_PROCESS : RuntimeHelper.readStatusSection(targetPid, "variables");
-                case "get_services" ->
-                    targetPid < 0 ? NO_PROCESS : RuntimeHelper.readStatusSection(targetPid, "services");
-                case "get_route_source" -> targetPid < 0 ? NO_PROCESS : executeRouteSource(args);
-                case "get_route_dump" -> targetPid < 0 ? NO_PROCESS : executeRouteDump(args);
-                case "get_route_structure" -> targetPid < 0 ? NO_PROCESS : executeRouteStructure(args);
-                case "get_top_processors" ->
-                    targetPid < 0 ? NO_PROCESS : RuntimeHelper.executeAction(targetPid, "top-processors", null);
-                case "get_route_topology" ->
-                    targetPid < 0 ? NO_PROCESS : RuntimeHelper.executeAction(targetPid, "route-topology", root -> {
-                        root.put("metric", "true");
-                        root.put("external", "true");
-                    });
-                case "trace_control" -> targetPid < 0 ? NO_PROCESS : executeTraceControl(args);
-                case "send_message" -> targetPid < 0 ? NO_PROCESS : executeSendMessage(args);
-                case "eval_expression" -> targetPid < 0 ? NO_PROCESS : executeEvalExpression(args);
-                case "browse_endpoint" -> targetPid < 0 ? NO_PROCESS : executeBrowseEndpoint(args);
-                case "get_sql_trace" ->
-                    targetPid < 0 ? NO_PROCESS : RuntimeHelper.readStatusSection(targetPid, "sqlTrace");
-                case "execute_sql" -> targetPid < 0 ? NO_PROCESS : executeSQL(args);
-                case "get_thread_dump" ->
-                    targetPid < 0 ? NO_PROCESS : RuntimeHelper.executeAction(targetPid, "thread-dump", null);
-                case "stop_route" -> targetPid < 0 ? NO_PROCESS : executeRouteCommand(args, "stop");
-                case "start_route" -> targetPid < 0 ? NO_PROCESS : executeRouteCommand(args, "start");
-                case "suspend_route" -> targetPid < 0 ? NO_PROCESS : executeRouteCommand(args, "suspend");
-                case "resume_route" -> targetPid < 0 ? NO_PROCESS : executeRouteCommand(args, "resume");
-                case "stop_application" -> targetPid < 0 ? NO_PROCESS : RuntimeHelper.stopApplication(targetPid);
-                case "catalog_components" -> executeCatalogComponents(args);
-                case "catalog_component_doc" -> executeCatalogComponentDoc(args);
-                case "catalog_eips" -> executeCatalogEips(args);
-                case "list_examples" -> executeListExamples(args);
-                case "get_example_file" -> executeGetExampleFile(args);
                 case "cli_list_commands" -> executeCliListCommands(args);
                 case "cli_command_help" -> executeCliCommandHelp(args);
                 case "cli_exec" -> executeCliExec(args);
@@ -411,349 +213,7 @@ public class AskTools {
         return sb.toString();
     }
 
-    // ---- Runtime tool execution ----
-
-    private String executeListProcesses() {
-        List<RuntimeHelper.ProcessInfo> processes = RuntimeHelper.discoverProcesses();
-        if (processes.isEmpty()) {
-            return "No running Camel processes found. Start one with: camel run <file>";
-        }
-        JsonObject response = new JsonObject();
-        response.put("count", processes.size());
-        List<JsonObject> list = new ArrayList<>();
-        for (RuntimeHelper.ProcessInfo p : processes) {
-            JsonObject entry = new JsonObject();
-            entry.put("pid", p.pid());
-            entry.put("name", p.name());
-            entry.put("selected", p.pid() == targetPid);
-            list.add(entry);
-        }
-        response.put("processes", list);
-        if (targetPid < 0) {
-            response.put("hint", "No process selected. Use select_process to connect to one.");
-        }
-        return response.toJson();
-    }
-
-    private String executeSelectProcess(JsonObject args) {
-        String name = args.getString("name");
-        if (name == null || name.isBlank()) {
-            return "Error: name or PID is required";
-        }
-        RuntimeHelper.ProcessInfo found = RuntimeHelper.findProcess(name);
-        if (found == null) {
-            List<RuntimeHelper.ProcessInfo> processes = RuntimeHelper.discoverProcesses();
-            if (processes.isEmpty()) {
-                return "No running Camel processes found.";
-            }
-            StringBuilder sb = new StringBuilder("No process found matching: " + name + ". Available:\n");
-            processes.forEach(p -> sb.append("  ").append(p.name()).append(" (PID ").append(p.pid()).append(")\n"));
-            return sb.toString();
-        }
-        targetPid = found.pid();
-        return "Connected to " + found.name() + " (PID " + found.pid() + "). Runtime tools are now active.";
-    }
-
-    private String executeRouteSource(JsonObject args) {
-        String filter = args.getString("filter");
-        return RuntimeHelper.executeAction(targetPid, "source",
-                root -> root.put("filter", filter != null ? filter : "*"));
-    }
-
-    private String executeRouteDump(JsonObject args) {
-        String routeId = args.getString("routeId");
-        String format = args.getString("format");
-        return RuntimeHelper.executeAction(targetPid, "route-dump", root -> {
-            root.put("id", routeId != null ? routeId : "*");
-            root.put("format", format != null ? format : "yaml");
-        });
-    }
-
-    private String executeRouteStructure(JsonObject args) {
-        String routeId = args.getString("routeId");
-        return RuntimeHelper.executeAction(targetPid, "route-structure",
-                root -> root.put("id", routeId != null ? routeId : "*"));
-    }
-
-    private String executeTraceControl(JsonObject args) {
-        String action = args.getString("action");
-        if (action == null) {
-            return "Error: action is required (enable, disable, dump)";
-        }
-        return RuntimeHelper.executeAction(targetPid, "trace", root -> {
-            switch (action.toLowerCase()) {
-                case "enable" -> root.put("enabled", "true");
-                case "disable" -> root.put("enabled", "false");
-                case "dump" -> root.put("dump", "true");
-                default -> root.put("enabled", action);
-            }
-        });
-    }
-
-    private String executeRouteCommand(JsonObject args, String command) {
-        String routeId = args.getString("routeId");
-        if (routeId == null || routeId.isBlank()) {
-            return "Error: routeId is required";
-        }
-        return RuntimeHelper.executeAction(targetPid, "route", root -> {
-            root.put("id", routeId);
-            root.put("command", command);
-        });
-    }
-
-    private String executeGetErrors() {
-        JsonObject errors = RuntimeHelper.readErrorFile(targetPid);
-        if (errors == null) {
-            return "No errors captured.";
-        }
-        return errors.toJson();
-    }
-
-    private String executeGetHistory() {
-        JsonObject history = RuntimeHelper.readHistoryFile(targetPid);
-        if (history == null) {
-            return "No message history available.";
-        }
-        return history.toJson();
-    }
-
-    private String executeSendMessage(JsonObject args) {
-        String endpoint = args.getString("endpoint");
-        if (endpoint == null || endpoint.isBlank()) {
-            return "Error: endpoint is required";
-        }
-        String body = args.getString("body");
-        String headers = args.getString("headers");
-        JsonObject result = RuntimeHelper.sendMessage(targetPid, endpoint, body, headers);
-        return result.toJson();
-    }
-
-    private String executeEvalExpression(JsonObject args) {
-        String language = args.getString("language");
-        String expression = args.getString("expression");
-        if (language == null || language.isBlank()) {
-            return "Error: language is required";
-        }
-        if (expression == null || expression.isBlank()) {
-            return "Error: expression is required";
-        }
-        return RuntimeHelper.executeAction(targetPid, "eval", root -> {
-            root.put("language", language);
-            root.put("predicate", "false");
-            root.put("template", Jsoner.escape(expression));
-        });
-    }
-
-    private String executeBrowseEndpoint(JsonObject args) {
-        String endpoint = args.getString("endpoint");
-        if (endpoint == null || endpoint.isBlank()) {
-            return "Error: endpoint is required";
-        }
-        String limitStr = args.getString("limit");
-        int limit = 50;
-        if (limitStr != null && !limitStr.isBlank()) {
-            try {
-                limit = Integer.parseInt(limitStr);
-            } catch (NumberFormatException e) {
-                // use default
-            }
-        }
-        int browseLimit = limit;
-        return RuntimeHelper.executeAction(targetPid, "browse", root -> {
-            root.put("filter", endpoint);
-            root.put("limit", browseLimit);
-        });
-    }
-
-    private String executeSQL(JsonObject args) {
-        String sql = args.getString("query");
-        if (sql == null || sql.isBlank()) {
-            return "Error: 'query' parameter is required";
-        }
-        String datasource = args.getString("datasource");
-        int maxRows = 100;
-        String maxRowsStr = args.getString("maxRows");
-        if (maxRowsStr != null) {
-            try {
-                maxRows = Integer.parseInt(maxRowsStr);
-            } catch (NumberFormatException e) {
-                // use default
-            }
-        }
-        JsonObject result = RuntimeHelper.executeSqlQuery(targetPid, sql, datasource, maxRows, 30);
-        return Jsoner.serialize(result);
-    }
-
-    // ---- Catalog tools ----
-
-    private String executeCatalogComponents(JsonObject args) {
-        String filter = args.getString("filter");
-        String label = args.getString("label");
-        CamelCatalog cat = getCatalog();
-
-        List<JsonObject> results = cat.findComponentNames().stream()
-                .map(cat::componentModel)
-                .filter(m -> m != null)
-                .filter(m -> matchesFilter(m.getScheme(), m.getTitle(), m.getDescription(), filter))
-                .filter(m -> label == null || label.isBlank()
-                        || (m.getLabel() != null && m.getLabel().toLowerCase().contains(label.toLowerCase())))
-                .limit(20)
-                .map(m -> {
-                    JsonObject jo = new JsonObject();
-                    jo.put("name", m.getScheme());
-                    jo.put("title", m.getTitle());
-                    jo.put("description", m.getDescription());
-                    jo.put("label", m.getLabel());
-                    return jo;
-                })
-                .collect(Collectors.toList());
-
-        JsonObject response = new JsonObject();
-        response.put("count", results.size());
-        response.put("components", results);
-        return response.toJson();
-    }
-
-    private String executeCatalogComponentDoc(JsonObject args) {
-        String component = args.getString("component");
-        if (component == null || component.isBlank()) {
-            return "Error: component name is required";
-        }
-        CamelCatalog cat = getCatalog();
-        ComponentModel model = cat.componentModel(component);
-        if (model == null) {
-            return "Component not found: " + component;
-        }
-
-        JsonObject response = new JsonObject();
-        response.put("name", model.getScheme());
-        response.put("title", model.getTitle());
-        response.put("description", model.getDescription());
-        response.put("syntax", model.getSyntax());
-        response.put("consumerOnly", model.isConsumerOnly());
-        response.put("producerOnly", model.isProducerOnly());
-
-        List<JsonObject> options = new ArrayList<>();
-        if (model.getEndpointOptions() != null) {
-            model.getEndpointOptions().stream()
-                    .filter(opt -> !opt.isDeprecated())
-                    .forEach(opt -> {
-                        JsonObject jo = new JsonObject();
-                        jo.put("name", opt.getName());
-                        jo.put("description", opt.getDescription());
-                        jo.put("type", opt.getType());
-                        jo.put("required", opt.isRequired());
-                        if (opt.getDefaultValue() != null) {
-                            jo.put("defaultValue", opt.getDefaultValue().toString());
-                        }
-                        options.add(jo);
-                    });
-        }
-        response.put("options", options);
-        return response.toJson();
-    }
-
-    private String executeCatalogEips(JsonObject args) {
-        String filter = args.getString("filter");
-        CamelCatalog cat = getCatalog();
-
-        List<JsonObject> results = cat.findModelNames().stream()
-                .map(cat::eipModel)
-                .filter(m -> m != null)
-                .filter(m -> matchesFilter(m.getName(), m.getTitle(), m.getDescription(), filter))
-                .limit(20)
-                .map(m -> {
-                    JsonObject jo = new JsonObject();
-                    jo.put("name", m.getName());
-                    jo.put("title", m.getTitle());
-                    jo.put("description", m.getDescription());
-                    jo.put("label", m.getLabel());
-                    return jo;
-                })
-                .collect(Collectors.toList());
-
-        JsonObject response = new JsonObject();
-        response.put("count", results.size());
-        response.put("eips", results);
-        return response.toJson();
-    }
-
-    // ---- Example tools ----
-
-    @SuppressWarnings("unchecked")
-    private String executeListExamples(JsonObject args) {
-        String filter = args.getString("filter");
-        String level = args.getString("level");
-
-        List<JsonObject> catalog2 = ExampleHelper.loadCatalog();
-        List<JsonObject> filtered = ExampleHelper.filterExamples(catalog2, filter);
-
-        List<JsonObject> results = new ArrayList<>();
-        for (JsonObject entry : filtered) {
-            if (level != null && !level.isBlank()) {
-                String entryLevel = entry.getString("level");
-                if (entryLevel == null || !entryLevel.equalsIgnoreCase(level)) {
-                    continue;
-                }
-            }
-            JsonObject jo = new JsonObject();
-            jo.put("name", entry.getString("name"));
-            jo.put("title", entry.getString("title"));
-            jo.put("description", entry.getString("description"));
-            jo.put("level", entry.getString("level"));
-            jo.put("tags", entry.get("tags"));
-            jo.put("bundled", ExampleHelper.isBundled(entry));
-            jo.put("files", ExampleHelper.getFiles(entry));
-            results.add(jo);
-
-            if (results.size() >= 20) {
-                break;
-            }
-        }
-
-        JsonObject response = new JsonObject();
-        response.put("count", results.size());
-        response.put("examples", results);
-        return response.toJson();
-    }
-
-    private String executeGetExampleFile(JsonObject args) {
-        String example = args.getString("example");
-        String file = args.getString("file");
-        if (example == null || example.isBlank()) {
-            return "Error: example name is required";
-        }
-        if (file == null || file.isBlank()) {
-            return "Error: file name is required";
-        }
-
-        List<JsonObject> catalog2 = ExampleHelper.loadCatalog();
-        JsonObject entry = ExampleHelper.findExample(catalog2, example);
-        if (entry == null) {
-            return "Example not found: " + example;
-        }
-
-        List<String> files = ExampleHelper.getFiles(entry);
-        if (!files.contains(file)) {
-            return "File '" + file + "' not found in example '" + example + "'. Available files: " + files;
-        }
-
-        if (ExampleHelper.isBundled(entry)) {
-            String resourcePath = "examples/" + example + "/" + file;
-            try (InputStream is = ExampleHelper.class.getClassLoader().getResourceAsStream(resourcePath)) {
-                if (is != null) {
-                    return IOHelper.loadText(is);
-                }
-            } catch (Exception e) {
-                return "Error reading file: " + e.getMessage();
-            }
-            return "Could not read bundled file: " + resourcePath;
-        } else {
-            return "This example is not bundled. View it on GitHub: " + ExampleHelper.getGithubUrl(entry) + "/" + file;
-        }
-    }
-
-    // ---- CLI tools ----
+    // ---- CLI tools (AskTools-specific) ----
 
     @SuppressWarnings("unchecked")
     private List<JsonObject> loadCommandMetadata() {
@@ -914,7 +374,7 @@ public class AskTools {
         }
     }
 
-    // ---- File tools ----
+    // ---- File tools (AskTools-specific) ----
 
     private String executeListFiles(JsonObject args) throws IOException {
         String pathStr = args.getString("path");
@@ -988,13 +448,6 @@ public class AskTools {
         return "File written: " + cwd.relativize(filePath);
     }
 
-    private CamelCatalog getCatalog() {
-        if (catalog == null) {
-            catalog = new DefaultCamelCatalog();
-        }
-        return catalog;
-    }
-
     // ---- JSON schema helpers ----
 
     public static JsonObject emptyParams() {
@@ -1021,15 +474,5 @@ public class AskTools {
         prop.put("type", "string");
         prop.put("description", description);
         return prop;
-    }
-
-    static boolean matchesFilter(String name, String title, String description, String filter) {
-        if (filter == null || filter.isBlank()) {
-            return true;
-        }
-        String lf = filter.toLowerCase();
-        return (name != null && name.toLowerCase().contains(lf))
-                || (title != null && title.toLowerCase().contains(lf))
-                || (description != null && description.toLowerCase().contains(lf));
     }
 }
