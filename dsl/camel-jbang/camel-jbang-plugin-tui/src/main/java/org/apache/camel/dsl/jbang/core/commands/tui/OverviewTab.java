@@ -170,6 +170,14 @@ class OverviewTab extends AbstractTab {
         return false;
     }
 
+    /**
+     * Returns the table area captured during the last render, or {@code null} before the first render. Package-private
+     * for click hit-testing in tests.
+     */
+    Rect getTableArea() {
+        return lastTableArea;
+    }
+
     @Override
     public boolean handleMouseEvent(MouseEvent me, Rect area) {
         if (vSplit.handleMouse(me, me.y())) {
@@ -178,8 +186,17 @@ class OverviewTab extends AbstractTab {
             }
             return true;
         }
+        Integer before = tableState.selected();
         if (handleTableClick(me, lastTableArea, tableState, totalRows())) {
-            syncSelectedPid();
+            // The Dev/Infra divider row is not selectable; restore the prior selection when it is clicked.
+            Integer sel = tableState.selected();
+            if (sel != null && dividerIndex >= 0 && sel == dividerIndex) {
+                if (before != null) {
+                    tableState.select(before);
+                }
+            } else {
+                syncSelectedPid();
+            }
             return true;
         }
         return false;
