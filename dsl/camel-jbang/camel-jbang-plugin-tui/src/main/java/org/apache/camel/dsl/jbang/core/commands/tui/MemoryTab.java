@@ -128,6 +128,11 @@ class MemoryTab extends AbstractTab {
         if (info.heapMemUsed > 0) {
             lines.add(Line.from(
                     Span.styled("  Heap Memory", Style.EMPTY.fg(Color.CYAN).bold())));
+
+            // Compute heap trend from history
+            LinkedList<Long> hist = heapMemHistory.get(info.pid);
+            Span trendSpan = computeTrendSpan(hist);
+
             lines.add(Line.from(
                     Span.styled("  used:      ", Style.EMPTY.dim()),
                     Span.styled(formatBytes(info.heapMemUsed), Style.EMPTY.fg(Color.WHITE).bold())));
@@ -136,21 +141,31 @@ class MemoryTab extends AbstractTab {
                 long pctComm = info.heapMemUsed * 100 / info.heapMemCommitted;
                 String gaugeComm = buildGaugeBar(pctComm, 30);
                 Color colorComm = pctComm >= 80 ? Color.LIGHT_RED : pctComm >= 60 ? Color.YELLOW : Color.GREEN;
-                lines.add(Line.from(
-                        Span.styled("  committed: ", Style.EMPTY.dim()),
-                        Span.styled(String.format("%-10s", formatBytes(info.heapMemCommitted)), Style.EMPTY),
-                        Span.styled(gaugeComm, Style.EMPTY.fg(colorComm)),
-                        Span.styled(String.format("  %d%%", pctComm), Style.EMPTY.fg(colorComm).bold())));
+                List<Span> commSpans = new ArrayList<>();
+                commSpans.add(Span.styled("  committed: ", Style.EMPTY.dim()));
+                commSpans.add(Span.styled(String.format("%-10s", formatBytes(info.heapMemCommitted)), Style.EMPTY));
+                commSpans.add(Span.styled(gaugeComm, Style.EMPTY.fg(colorComm)));
+                commSpans.add(Span.styled(String.format("  %d%%", pctComm), Style.EMPTY.fg(colorComm).bold()));
+                if (info.heapMemMax <= 0 && trendSpan != null) {
+                    commSpans.add(Span.raw("    "));
+                    commSpans.add(trendSpan);
+                }
+                lines.add(Line.from(commSpans));
             }
             if (info.heapMemMax > 0) {
                 long pctMax = info.heapMemUsed * 100 / info.heapMemMax;
                 String gaugeMax = buildGaugeBar(pctMax, 30);
                 Color colorMax = pctMax >= 80 ? Color.LIGHT_RED : pctMax >= 60 ? Color.YELLOW : Color.GREEN;
-                lines.add(Line.from(
-                        Span.styled("  max:       ", Style.EMPTY.dim()),
-                        Span.styled(String.format("%-10s", formatBytes(info.heapMemMax)), Style.EMPTY),
-                        Span.styled(gaugeMax, Style.EMPTY.fg(colorMax)),
-                        Span.styled(String.format("  %d%%", pctMax), Style.EMPTY.fg(colorMax).bold())));
+                List<Span> maxSpans = new ArrayList<>();
+                maxSpans.add(Span.styled("  max:       ", Style.EMPTY.dim()));
+                maxSpans.add(Span.styled(String.format("%-10s", formatBytes(info.heapMemMax)), Style.EMPTY));
+                maxSpans.add(Span.styled(gaugeMax, Style.EMPTY.fg(colorMax)));
+                maxSpans.add(Span.styled(String.format("  %d%%", pctMax), Style.EMPTY.fg(colorMax).bold()));
+                if (trendSpan != null) {
+                    maxSpans.add(Span.raw("    "));
+                    maxSpans.add(trendSpan);
+                }
+                lines.add(Line.from(maxSpans));
             }
         }
 
@@ -326,6 +341,49 @@ class MemoryTab extends AbstractTab {
                 Span.styled(right, Style.EMPTY.dim()));
 
         frame.renderWidget(Paragraph.builder().text(Text.from(line)).build(), area);
+    }
+
+    private static Span computeTrendSpan(LinkedList<Long> hist) {
+        // need at least 30 samples (~2.5 min at 5s intervals) for a meaningful trend
+        if (hist == null || hist.size() < 30) {
+            return null;
+        }
+        int size = hist.size();
+        int third = size / 3;
+
+        // average the first and last thirds to smooth out GC sawtooth noise
+        long oldSum = 0;
+        for (int i = 0; i < third; i++) {
+            oldSum += hist.get(i);
+        }
+        long newSum = 0;
+        for (int i = size - third; i < size; i++) {
+            newSum += hist.get(i);
+        }
+        double oldAvg = (double) oldSum / third;
+        double newAvg = (double) newSum / third;
+        if (oldAvg <= 0) {
+            return null;
+        }
+
+        long diff = (long) (newAvg - oldAvg);
+        double change = (newAvg - oldAvg) / oldAvg;
+        int pct = (int) Math.round(change * 100);
+        // each sample is taken every 5 seconds (HEAP_SAMPLE_INTERVAL_MS)
+        long seconds = size * 5L;
+        String period = seconds >= 60 ? (seconds / 60) + "m" : seconds + "s";
+        if (change > 0.05) {
+            return Span.styled(
+                    String.format("  ↑ growing by %d%% (%s) over last %s", pct, formatBytes(diff), period),
+                    Style.EMPTY.fg(Color.LIGHT_RED).bold());
+        } else if (change < -0.05) {
+            return Span.styled(
+                    String.format("  ↓ shrinking by %d%% (%s) over last %s",
+                            Math.abs(pct), formatBytes(Math.abs(diff)), period),
+                    Style.EMPTY.fg(Color.GREEN));
+        } else {
+            return Span.styled("  → stable over last " + period, Style.EMPTY.fg(Color.GREEN));
+        }
     }
 
     @Override

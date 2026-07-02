@@ -342,6 +342,150 @@ public class RuntimeTools {
         return delegateToRegistry("get_heap_histogram", nameOrPid, Map.of());
     }
 
+    @Tool(annotations = @Tool.Annotations(readOnlyHint = false, destructiveHint = false, openWorldHint = false),
+          description = """
+                  Diagnose memory leaks in a running Camel integration using Java Flight Recorder (JFR). \
+                  JFR samples objects that survive multiple GC cycles and captures their reference chains back to GC roots. \
+                  This is lightweight and safe for production, but shows sampled sizes not total heap — \
+                  use values to compare classes relative to each other and spot trends, not as absolute numbers. \
+                  For deep analysis, use a full heap dump (jmap -dump:live) with tools like Eclipse MAT or jhat. \
+                  Use command 'start' to begin recording, 'stop' to stop and get results, \
+                  'status' to check recording state, and 'query' to retrieve cached results from the last recording. \
+                  Use mode 'dual' with 'start' to run two sequential recordings (Xs then 2Xs) and automatically \
+                  compare trends — returns growth ratios and trend classifications (growing, stable, shrinking, new, gone). \
+                  Entries with lowConfidence=true have unreliable growth percentages due to low sample counts or \
+                  sample counts that diverge significantly between runs — recommend a longer recording duration.""")
+    public JsonObject camel_runtime_memory_leak(
+            @ToolArg(description = NAME_OR_PID_DESC) String nameOrPid,
+            @ToolArg(description = "Command: start, stop, status, or query") String command,
+            @ToolArg(description = "Recording duration in seconds (only for start command, default 60, use 0 for manual stop)") String duration,
+            @ToolArg(description = "Recording mode: dual (default, two recordings at Xs and 2Xs with trend comparison) or single (one recording)") String mode,
+            @ToolArg(description = "Include allocation stack traces in results (default false, set true for detailed analysis)") String stacktrace,
+            @ToolArg(description = "Minimum total size in bytes to include a sample (e.g. 1024 for 1KB). Filters out small allocations to reduce noise. Default 1024 (1KB) in dual mode") String minSize) {
+        if (command == null || command.isBlank()) {
+            throw new ToolCallException("command is required (start, stop, status, or query)", null);
+        }
+        RuntimeService.ProcessInfo p = runtimeService.findSingleProcess(nameOrPid);
+
+        if ("start".equals(command) && "dual".equalsIgnoreCase(mode)) {
+            return doDualJfrRecording(p.pid(), duration, stacktrace, minSize);
+        }
+
+        return runtimeService.executeAction(p.pid(), "jfr-memory-leak", root -> {
+            root.put("command", command);
+            if ("start".equals(command) && duration != null && !duration.isBlank()) {
+                root.put("duration", duration);
+            }
+            if (stacktrace != null) {
+                root.put("stacktrace", stacktrace);
+            }
+            if (minSize != null && !minSize.isBlank()) {
+                root.put("minSize", minSize);
+            }
+        });
+    }
+
+    private JsonObject doDualJfrRecording(long pid, String duration, String stacktrace, String minSize) {
+        int dur = 30;
+        if (duration != null && !duration.isBlank()) {
+            dur = Integer.parseInt(duration);
+        }
+        if (dur <= 0) {
+            dur = 30;
+        }
+        int dur1 = dur;
+        int dur2 = dur * 2;
+
+        // run 1
+        JsonObject r1 = runtimeService.executeAction(pid, "jfr-memory-leak", root -> {
+            root.put("command", "start");
+            root.put("duration", String.valueOf(dur1));
+            if (stacktrace != null) {
+                root.put("stacktrace", stacktrace);
+            }
+            if (minSize != null && !minSize.isBlank()) {
+                root.put("minSize", minSize);
+            }
+        });
+        if (r1 == null || !"recording".equals(r1.getString("status"))) {
+            throw new ToolCallException("Failed to start recording 1", null);
+        }
+
+        waitForJfrRecordingComplete(pid, dur1);
+
+        JsonObject s1 = runtimeService.executeAction(pid, "jfr-memory-leak", root -> {
+            root.put("command", "stop");
+            if (stacktrace != null) {
+                root.put("stacktrace", stacktrace);
+            }
+            if (minSize != null && !minSize.isBlank()) {
+                root.put("minSize", minSize);
+            }
+        });
+        if (s1 == null || !"completed".equals(s1.getString("status"))) {
+            throw new ToolCallException("Recording 1 did not complete", null);
+        }
+
+        // run 2
+        JsonObject r2 = runtimeService.executeAction(pid, "jfr-memory-leak", root -> {
+            root.put("command", "start");
+            root.put("duration", String.valueOf(dur2));
+            if (stacktrace != null) {
+                root.put("stacktrace", stacktrace);
+            }
+            if (minSize != null && !minSize.isBlank()) {
+                root.put("minSize", minSize);
+            }
+        });
+        if (r2 == null || !"recording".equals(r2.getString("status"))) {
+            throw new ToolCallException("Failed to start recording 2", null);
+        }
+
+        waitForJfrRecordingComplete(pid, dur2);
+
+        JsonObject s2 = runtimeService.executeAction(pid, "jfr-memory-leak", root -> {
+            root.put("command", "stop");
+            if (stacktrace != null) {
+                root.put("stacktrace", stacktrace);
+            }
+            if (minSize != null && !minSize.isBlank()) {
+                root.put("minSize", minSize);
+            }
+        });
+        if (s2 == null || !"completed".equals(s2.getString("status"))) {
+            throw new ToolCallException("Recording 2 did not complete", null);
+        }
+
+        // compare
+        return runtimeService.executeAction(pid, "jfr-memory-leak", root -> {
+            root.put("command", "compare");
+            if (stacktrace != null) {
+                root.put("stacktrace", stacktrace);
+            }
+            if (minSize != null && !minSize.isBlank()) {
+                root.put("minSize", minSize);
+            }
+        });
+    }
+
+    private void waitForJfrRecordingComplete(long pid, int dur) {
+        long deadline = System.currentTimeMillis() + (dur + 30) * 1000L;
+        while (System.currentTimeMillis() < deadline) {
+            try {
+                Thread.sleep(3000);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                throw new ToolCallException("Interrupted while waiting for recording", null);
+            }
+            JsonObject status = runtimeService.executeAction(pid, "jfr-memory-leak", root -> {
+                root.put("command", "status");
+            });
+            if (status != null && !"recording".equals(status.getString("status"))) {
+                break;
+            }
+        }
+    }
+
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = """
                   Get the message history trace of the last completed exchange. \

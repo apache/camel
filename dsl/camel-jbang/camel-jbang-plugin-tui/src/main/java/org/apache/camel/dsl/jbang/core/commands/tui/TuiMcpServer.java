@@ -127,7 +127,7 @@ class TuiMcpServer {
 
     String getConnectedClient() {
         if (System.currentTimeMillis() - lastActivity < CLIENT_TIMEOUT_MS) {
-            return clientName != null ? clientName : "unknown";
+            return clientName != null ? clientName : "connected";
         }
         return null;
     }

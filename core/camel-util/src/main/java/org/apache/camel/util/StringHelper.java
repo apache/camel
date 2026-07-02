@@ -1066,6 +1066,46 @@ public final class StringHelper {
     }
 
     /**
+     * Converts JVM internal class name descriptors to human-readable form.
+     * <p>
+     * For example {@code [B} becomes {@code byte[]}, {@code [Ljava.util.HashMap$Node;} becomes
+     * {@code java.util.HashMap$Node[]}, and {@code [[I} becomes {@code int[][]}.
+     *
+     * @param  name the JVM internal class name
+     * @return      human-readable class name, or the input unchanged if not an array descriptor
+     */
+    public static String readableClassName(String name) {
+        if (name == null) {
+            return null;
+        }
+        if (name.startsWith("[")) {
+            int dims = 0;
+            int i = 0;
+            while (i < name.length() && name.charAt(i) == '[') {
+                dims++;
+                i++;
+            }
+            String suffix = "[]".repeat(dims);
+            if (i < name.length()) {
+                String element = switch (name.charAt(i)) {
+                    case 'B' -> "byte";
+                    case 'C' -> "char";
+                    case 'D' -> "double";
+                    case 'F' -> "float";
+                    case 'I' -> "int";
+                    case 'J' -> "long";
+                    case 'S' -> "short";
+                    case 'Z' -> "boolean";
+                    case 'L' -> name.substring(i + 1, name.endsWith(";") ? name.length() - 1 : name.length());
+                    default -> name.substring(i);
+                };
+                return element + suffix;
+            }
+        }
+        return name;
+    }
+
+    /**
      * Compares old and new text content and report back which lines are changed
      *
      * @param  oldText the old text
