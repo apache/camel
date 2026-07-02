@@ -123,7 +123,7 @@ public class UpdateCamelReleasesMojo extends AbstractGeneratorMojo {
         try (CloseableHttpClient hc = new CloseableHttpClient()) {
             for (String url : urls) {
                 HttpResponse<String> res
-                        = hc.httpClient.send(HttpRequest.newBuilder(new URI(url)).timeout(Duration.ofSeconds(20)).build(),
+                        = hc.send(HttpRequest.newBuilder(new URI(url)).timeout(Duration.ofSeconds(20)).build(),
                                 HttpResponse.BodyHandlers.ofString());
 
                 if (res.statusCode() == 200) {
@@ -167,14 +167,14 @@ public class UpdateCamelReleasesMojo extends AbstractGeneratorMojo {
         // use JDK http client to call github api
         try (CloseableHttpClient hc = new CloseableHttpClient()) {
             HttpResponse<String> res
-                    = hc.httpClient.send(HttpRequest.newBuilder(new URI(gitUrl)).timeout(Duration.ofSeconds(20)).build(),
+                    = hc.send(HttpRequest.newBuilder(new URI(gitUrl)).timeout(Duration.ofSeconds(20)).build(),
                             HttpResponse.BodyHandlers.ofString());
 
             // follow redirect
             if (res.statusCode() == 302) {
                 String loc = res.headers().firstValue("location").orElse(null);
                 if (loc != null) {
-                    res = hc.httpClient.send(HttpRequest.newBuilder(new URI(loc)).timeout(Duration.ofSeconds(20)).build(),
+                    res = hc.send(HttpRequest.newBuilder(new URI(loc)).timeout(Duration.ofSeconds(20)).build(),
                             HttpResponse.BodyHandlers.ofString());
                 }
             }
@@ -202,7 +202,12 @@ public class UpdateCamelReleasesMojo extends AbstractGeneratorMojo {
      * AutoCloseable natively; the instanceof check future-proofs us for when the minimum JDK is raised.
      */
     private static final class CloseableHttpClient implements AutoCloseable {
-        final HttpClient httpClient = HttpClient.newHttpClient();
+        private final HttpClient httpClient = HttpClient.newHttpClient();
+
+        <T> HttpResponse<T> send(HttpRequest request, HttpResponse.BodyHandler<T> responseBodyHandler)
+                throws java.io.IOException, InterruptedException {
+            return httpClient.send(request, responseBodyHandler);
+        }
 
         @Override
         public void close() throws Exception {

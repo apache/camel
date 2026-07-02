@@ -41,7 +41,7 @@ public class OpenAIMockFailuresTest {
                             .ofString("{\"messages\": [{\"role\": \"assistant\", \"content\": \"any sentence\"}]}"))
                     .build();
 
-            HttpResponse<String> response = hc.httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            HttpResponse<String> response = hc.send(request, HttpResponse.BodyHandlers.ofString());
             Assertions.assertEquals(500, response.statusCode());
         }
     }
@@ -56,7 +56,7 @@ public class OpenAIMockFailuresTest {
                             .ofString("{\"messages\": [{\"role\": \"user\", \"content\": \"not found sentence\"}]}"))
                     .build();
 
-            HttpResponse<String> response = hc.httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            HttpResponse<String> response = hc.send(request, HttpResponse.BodyHandlers.ofString());
             Assertions.assertEquals(500, response.statusCode());
         }
     }

@@ -50,7 +50,7 @@ public class OpenAIMockReplyWithAfterToolTest {
                                     "{\"messages\": [{\"role\": \"user\", \"content\": \"What is the weather in london?\"}]}"))
                     .build();
 
-            HttpResponse<String> response1 = hc.httpClient.send(request1, HttpResponse.BodyHandlers.ofString());
+            HttpResponse<String> response1 = hc.send(request1, HttpResponse.BodyHandlers.ofString());
             String responseBody1 = response1.body();
 
             ObjectMapper objectMapper = new ObjectMapper();
@@ -81,7 +81,7 @@ public class OpenAIMockReplyWithAfterToolTest {
                     .POST(HttpRequest.BodyPublishers.ofString(secondRequestBody))
                     .build();
 
-            HttpResponse<String> response2 = hc.httpClient.send(request2, HttpResponse.BodyHandlers.ofString());
+            HttpResponse<String> response2 = hc.send(request2, HttpResponse.BodyHandlers.ofString());
             String responseBody2 = response2.body();
             JsonNode responseJson2 = objectMapper.readTree(responseBody2);
 

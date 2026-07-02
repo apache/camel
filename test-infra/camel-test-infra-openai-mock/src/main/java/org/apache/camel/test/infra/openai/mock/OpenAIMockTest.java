@@ -67,7 +67,7 @@ public class OpenAIMockTest {
                             .ofString("{\"messages\": [{\"role\": \"user\", \"content\": \"any sentence\"}]}"))
                     .build();
 
-            HttpResponse<String> response = hc.httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            HttpResponse<String> response = hc.send(request, HttpResponse.BodyHandlers.ofString());
             String responseBody = response.body();
 
             ObjectMapper objectMapper = new ObjectMapper();
@@ -100,7 +100,7 @@ public class OpenAIMockTest {
                             .ofString("{\"messages\": [{\"role\": \"user\", \"content\": \"another sentence\"}]}"))
                     .build();
 
-            HttpResponse<String> response = hc.httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            HttpResponse<String> response = hc.send(request, HttpResponse.BodyHandlers.ofString());
             String responseBody = response.body();
 
             ObjectMapper objectMapper = new ObjectMapper();
@@ -126,7 +126,7 @@ public class OpenAIMockTest {
                             .ofString("{\"messages\": [{\"role\": \"user\", \"content\": \"multiple tools\"}]}"))
                     .build();
 
-            HttpResponse<String> response = hc.httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            HttpResponse<String> response = hc.send(request, HttpResponse.BodyHandlers.ofString());
             String responseBody = response.body();
 
             ObjectMapper objectMapper = new ObjectMapper();
@@ -164,7 +164,7 @@ public class OpenAIMockTest {
                             .ofString("{\"messages\": [{\"role\": \"user\", \"content\": \"custom response\"}]}"))
                     .build();
 
-            HttpResponse<String> response = hc.httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            HttpResponse<String> response = hc.send(request, HttpResponse.BodyHandlers.ofString());
             String responseBody = response.body();
 
             assertEquals("Custom response for: custom response", responseBody);
@@ -181,7 +181,7 @@ public class OpenAIMockTest {
                             .ofString("{\"messages\": [{\"role\": \"user\", \"content\": \"any sentence\"}]}"))
                     .build();
 
-            HttpResponse<String> response1 = hc.httpClient.send(request1, HttpResponse.BodyHandlers.ofString());
+            HttpResponse<String> response1 = hc.send(request1, HttpResponse.BodyHandlers.ofString());
             String responseBody1 = response1.body();
 
             ObjectMapper objectMapper = new ObjectMapper();
@@ -212,7 +212,7 @@ public class OpenAIMockTest {
                     .header("Content-Type", "application/json")
                     .POST(HttpRequest.BodyPublishers.ofString(secondRequestBody))
                     .build();
-            HttpResponse<String> response2 = hc.httpClient.send(request2, HttpResponse.BodyHandlers.ofString());
+            HttpResponse<String> response2 = hc.send(request2, HttpResponse.BodyHandlers.ofString());
             String responseBody2 = response2.body();
             JsonNode responseJson2 = objectMapper.readTree(responseBody2);
 

@@ -66,7 +66,7 @@ public interface QdrantInfraService extends InfrastructureService {
                 .build();
 
         try (CloseableHttpClient hc = new CloseableHttpClient()) {
-            return hc.httpClient.send(request, HttpResponse.BodyHandlers.ofByteArray());
+            return hc.send(request, HttpResponse.BodyHandlers.ofByteArray());
         }
     }
 }

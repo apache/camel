@@ -63,7 +63,7 @@ public class OpenAIMockSimpleAssertionTest {
                             .ofString("{\"messages\": [{\"role\": \"user\", \"content\": \"first message\"}]}"))
                     .build();
 
-            HttpResponse<String> response1 = hc.httpClient.send(request1, HttpResponse.BodyHandlers.ofString());
+            HttpResponse<String> response1 = hc.send(request1, HttpResponse.BodyHandlers.ofString());
             String responseBody1 = response1.body();
 
             ObjectMapper objectMapper = new ObjectMapper();
@@ -86,7 +86,7 @@ public class OpenAIMockSimpleAssertionTest {
                             .ofString("{\"messages\": [{\"role\": \"user\", \"content\": \"second message\"}]}"))
                     .build();
 
-            HttpResponse<String> response2 = hc.httpClient.send(request2, HttpResponse.BodyHandlers.ofString());
+            HttpResponse<String> response2 = hc.send(request2, HttpResponse.BodyHandlers.ofString());
             String responseBody2 = response2.body();
 
             ObjectMapper objectMapper2 = new ObjectMapper();

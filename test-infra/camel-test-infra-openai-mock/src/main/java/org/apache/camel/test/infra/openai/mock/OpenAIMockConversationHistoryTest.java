@@ -62,7 +62,7 @@ public class OpenAIMockConversationHistoryTest {
                     .POST(HttpRequest.BodyPublishers.ofString(requestBody))
                     .build();
 
-            HttpResponse<String> response = hc.httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            HttpResponse<String> response = hc.send(request, HttpResponse.BodyHandlers.ofString());
             String responseBody = response.body();
 
             ObjectMapper objectMapper = new ObjectMapper();

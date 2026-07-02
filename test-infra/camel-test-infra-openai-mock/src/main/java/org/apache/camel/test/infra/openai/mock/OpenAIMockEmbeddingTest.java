@@ -59,7 +59,7 @@ public class OpenAIMockEmbeddingTest {
                             .ofString("{\"input\": \"What is Apache Camel?\", \"model\": \"text-embedding-ada-002\"}"))
                     .build();
 
-            HttpResponse<String> response = hc.httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            HttpResponse<String> response = hc.send(request, HttpResponse.BodyHandlers.ofString());
             String responseBody = response.body();
 
             ObjectMapper objectMapper = new ObjectMapper();
@@ -99,7 +99,7 @@ public class OpenAIMockEmbeddingTest {
                             .ofString("{\"input\": \"Hello world\", \"model\": \"text-embedding-ada-002\"}"))
                     .build();
 
-            HttpResponse<String> response = hc.httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            HttpResponse<String> response = hc.send(request, HttpResponse.BodyHandlers.ofString());
             String responseBody = response.body();
 
             ObjectMapper objectMapper = new ObjectMapper();
@@ -131,7 +131,7 @@ public class OpenAIMockEmbeddingTest {
                                     "{\"input\": [\"What is Apache Camel?\"], \"model\": \"text-embedding-ada-002\"}"))
                     .build();
 
-            HttpResponse<String> response = hc.httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            HttpResponse<String> response = hc.send(request, HttpResponse.BodyHandlers.ofString());
             String responseBody = response.body();
 
             ObjectMapper objectMapper = new ObjectMapper();
@@ -156,7 +156,7 @@ public class OpenAIMockEmbeddingTest {
                             .ofString("{\"input\": \"Test input\", \"model\": \"text-embedding-ada-002\"}"))
                     .build();
 
-            HttpResponse<String> response1 = hc.httpClient.send(request1, HttpResponse.BodyHandlers.ofString());
+            HttpResponse<String> response1 = hc.send(request1, HttpResponse.BodyHandlers.ofString());
 
             // Second request with same input
             HttpRequest request2 = HttpRequest.newBuilder()
@@ -166,7 +166,7 @@ public class OpenAIMockEmbeddingTest {
                             .ofString("{\"input\": \"Test input\", \"model\": \"text-embedding-ada-002\"}"))
                     .build();
 
-            HttpResponse<String> response2 = hc.httpClient.send(request2, HttpResponse.BodyHandlers.ofString());
+            HttpResponse<String> response2 = hc.send(request2, HttpResponse.BodyHandlers.ofString());
 
             ObjectMapper objectMapper = new ObjectMapper();
             JsonNode json1 = objectMapper.readTree(response1.body());
@@ -196,7 +196,7 @@ public class OpenAIMockEmbeddingTest {
                                     "{\"input\": [\"First text\", \"Second text\"], \"model\": \"text-embedding-ada-002\"}"))
                     .build();
 
-            HttpResponse<String> response = hc.httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            HttpResponse<String> response = hc.send(request, HttpResponse.BodyHandlers.ofString());
             String responseBody = response.body();
 
             ObjectMapper objectMapper = new ObjectMapper();

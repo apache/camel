@@ -16,14 +16,22 @@
  */
 package org.apache.camel.test.infra.qdrant.services;
 
+import java.io.IOException;
 import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 
 /**
  * Wrapper that makes {@link HttpClient} usable in try-with-resources. On Java 21+ HttpClient implements AutoCloseable
  * natively; the instanceof check future-proofs us for when the minimum JDK is raised.
  */
 final class CloseableHttpClient implements AutoCloseable {
-    final HttpClient httpClient = HttpClient.newHttpClient();
+    private final HttpClient httpClient = HttpClient.newHttpClient();
+
+    <T> HttpResponse<T> send(HttpRequest request, HttpResponse.BodyHandler<T> responseBodyHandler)
+            throws IOException, InterruptedException {
+        return httpClient.send(request, responseBodyHandler);
+    }
 
     @Override
     public void close() throws Exception {
