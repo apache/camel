@@ -27,6 +27,7 @@ import org.junit.jupiter.api.Test;
 import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.hint;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class CamelMonitorTest {
@@ -152,5 +153,50 @@ class CamelMonitorTest {
             }
         }
         throw new IllegalArgumentException("no hint pair for key " + key);
+    }
+
+    // Footer key bindings are clickable only when the hint token maps to an unambiguous single key.
+    // footerKeyEvent parses the token; footerRegionAt maps a click x back to the region under it.
+
+    @Test
+    void footerKeyEventParsesFunctionKeys() {
+        assertTrue(CamelMonitor.footerKeyEvent("F1").isKey(KeyCode.F1), "F1 maps to the F1 key");
+        assertTrue(CamelMonitor.footerKeyEvent(" F5 ").isKey(KeyCode.F5), "surrounding spaces are trimmed");
+        assertTrue(CamelMonitor.footerKeyEvent("F12").isKey(KeyCode.F12), "F12 is the highest function key");
+    }
+
+    @Test
+    void footerKeyEventParsesNamedAndSingleCharKeys() {
+        assertTrue(CamelMonitor.footerKeyEvent("Enter").isKey(KeyCode.ENTER), "Enter maps to the Enter key");
+        assertTrue(CamelMonitor.footerKeyEvent("Esc").isKey(KeyCode.ESCAPE), "Esc maps to the Escape key");
+        assertTrue(CamelMonitor.footerKeyEvent("Tab").isKey(KeyCode.TAB), "Tab maps to the Tab key");
+        assertTrue(CamelMonitor.footerKeyEvent("d").isChar('d'), "a single letter maps to that character");
+        assertTrue(CamelMonitor.footerKeyEvent("?").isChar('?'), "'?' (help) maps to that character");
+        assertTrue(CamelMonitor.footerKeyEvent("1").isChar('1'), "a digit maps to that character");
+    }
+
+    @Test
+    void footerKeyEventRejectsAmbiguousAndInvalidTokens() {
+        assertNull(CamelMonitor.footerKeyEvent("Up/Down"), "a two-key hint is not clickable");
+        assertNull(CamelMonitor.footerKeyEvent("PgUp/PgDn"), "a paging hint is not clickable");
+        assertNull(CamelMonitor.footerKeyEvent("↑↓"), "arrow glyphs are not a single key");
+        assertNull(CamelMonitor.footerKeyEvent("F13"), "there is no F13 key");
+        assertNull(CamelMonitor.footerKeyEvent(""), "an empty token is not clickable");
+        assertNull(CamelMonitor.footerKeyEvent(null), "a null token is not clickable");
+    }
+
+    @Test
+    void footerRegionAtResolvesClicksToTheOwningRegion() {
+        // Two half-open regions [0, 5) and [10, 18) with a gap between them.
+        int[] startX = { 0, 10 };
+        int[] endX = { 5, 18 };
+        assertEquals(0, CamelMonitor.footerRegionAt(startX, endX, 0), "left edge of the first region");
+        assertEquals(0, CamelMonitor.footerRegionAt(startX, endX, 4), "last cell of the first region");
+        assertEquals(-1, CamelMonitor.footerRegionAt(startX, endX, 5), "column 5 is past the first region (exclusive end)");
+        assertEquals(-1, CamelMonitor.footerRegionAt(startX, endX, 7), "column 7 is in the gap between regions");
+        assertEquals(1, CamelMonitor.footerRegionAt(startX, endX, 10), "left edge of the second region");
+        assertEquals(1, CamelMonitor.footerRegionAt(startX, endX, 17), "last cell of the second region");
+        assertEquals(-1, CamelMonitor.footerRegionAt(startX, endX, 18), "column 18 is past the second region");
+        assertEquals(-1, CamelMonitor.footerRegionAt(null, endX, 3), "no captured geometry yet");
     }
 }
