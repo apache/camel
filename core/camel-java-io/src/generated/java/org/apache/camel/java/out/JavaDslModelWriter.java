@@ -2516,6 +2516,12 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
         doWriteAttribute(sb, "executorService", def.getExecutorService(), null);
         doWriteAttribute(sb, "onPrepare", def.getOnPrepare(), null);
         doWriteAttribute(sb, "shareUnitOfWork", def.getShareUnitOfWork(), null);
+        doWriteAttribute(sb, "group", def.getGroup(), null);
+        doWriteAttribute(sb, "errorThreshold", def.getErrorThreshold(), null);
+        doWriteAttribute(sb, "maxFailedRecords", def.getMaxFailedRecords(), null);
+        doWriteAttribute(sb, "resumeStrategy", def.getResumeStrategy(), null);
+        doWriteAttribute(sb, "watermarkKey", def.getWatermarkKey(), null);
+        doWriteAttribute(sb, "watermarkExpression", def.getWatermarkExpression(), null);
         doWriteOutputExpressionNodeElements(sb, def);
     }
     protected void doWriteStepDefinition(StringBuilder sb, StepDefinition def) {
