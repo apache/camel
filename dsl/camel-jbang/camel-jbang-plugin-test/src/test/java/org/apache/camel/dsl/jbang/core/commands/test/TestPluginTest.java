@@ -17,11 +17,15 @@
 
 package org.apache.camel.dsl.jbang.core.commands.test;
 
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Set;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.Printer;
+import org.apache.camel.dsl.jbang.core.common.RuntimeType;
 import org.apache.camel.dsl.jbang.core.common.StringPrinter;
 import org.apache.camel.dsl.jbang.core.common.VersionHelper;
 import org.citrusframework.spi.Resources;
@@ -105,6 +109,25 @@ class TestPluginTest {
                   ]
                 }
                 """.trim(), printer.getOutput().trim());
+    }
+
+    @Test
+    public void shouldProduceValidMavenPropertyReferences() throws IOException {
+        Path testDir = Path.of(".").resolve("test");
+        Files.createDirectories(testDir);
+        try {
+            TestPluginExporter exporter = new TestPluginExporter();
+            Set<String> deps = exporter.getDependencies(RuntimeType.quarkus);
+            Assertions.assertFalse(deps.isEmpty());
+            for (String dep : deps) {
+                Assertions.assertFalse(dep.contains("\\"),
+                        "Dependency should not contain backslash escapes: " + dep);
+                Assertions.assertTrue(dep.contains("${citrus.version}"),
+                        "Dependency should contain valid Maven property reference: " + dep);
+            }
+        } finally {
+            Files.deleteIfExists(testDir);
+        }
     }
 
     /**
