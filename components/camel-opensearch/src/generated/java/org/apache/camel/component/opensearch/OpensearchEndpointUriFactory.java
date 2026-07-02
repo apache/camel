@@ -24,7 +24,7 @@ public class OpensearchEndpointUriFactory extends org.apache.camel.support.compo
     private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(22);
+        Set<String> props = new HashSet<>(23);
         props.add("certificatePath");
         props.add("clusterName");
         props.add("connectionTimeout");
@@ -38,6 +38,7 @@ public class OpensearchEndpointUriFactory extends org.apache.camel.support.compo
         props.add("indexName");
         props.add("lazyStartProducer");
         props.add("maxRetryTimeout");
+        props.add("openSearchClient");
         props.add("operation");
         props.add("scrollKeepAliveMs");
         props.add("size");

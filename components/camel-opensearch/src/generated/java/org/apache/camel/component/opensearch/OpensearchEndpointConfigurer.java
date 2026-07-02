@@ -45,6 +45,8 @@ public class OpensearchEndpointConfigurer extends PropertyConfigurerSupport impl
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "maxretrytimeout":
         case "maxRetryTimeout": target.getConfiguration().setMaxRetryTimeout(property(camelContext, int.class, value)); return true;
+        case "opensearchclient":
+        case "openSearchClient": target.setOpenSearchClient(property(camelContext, org.opensearch.client.opensearch.OpenSearchClient.class, value)); return true;
         case "operation": target.getConfiguration().setOperation(property(camelContext, org.apache.camel.component.opensearch.OpensearchOperation.class, value)); return true;
         case "scrollkeepalivems":
         case "scrollKeepAliveMs": target.getConfiguration().setScrollKeepAliveMs(property(camelContext, int.class, value)); return true;
@@ -63,6 +65,11 @@ public class OpensearchEndpointConfigurer extends PropertyConfigurerSupport impl
         case "waitForActiveShards": target.getConfiguration().setWaitForActiveShards(property(camelContext, int.class, value)); return true;
         default: return false;
         }
+    }
+
+    @Override
+    public String[] getAutowiredNames() {
+        return new String[]{"openSearchClient"};
     }
 
     @Override
@@ -90,6 +97,8 @@ public class OpensearchEndpointConfigurer extends PropertyConfigurerSupport impl
         case "lazyStartProducer": return boolean.class;
         case "maxretrytimeout":
         case "maxRetryTimeout": return int.class;
+        case "opensearchclient":
+        case "openSearchClient": return org.opensearch.client.opensearch.OpenSearchClient.class;
         case "operation": return org.apache.camel.component.opensearch.OpensearchOperation.class;
         case "scrollkeepalivems":
         case "scrollKeepAliveMs": return int.class;
@@ -136,6 +145,8 @@ public class OpensearchEndpointConfigurer extends PropertyConfigurerSupport impl
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "maxretrytimeout":
         case "maxRetryTimeout": return target.getConfiguration().getMaxRetryTimeout();
+        case "opensearchclient":
+        case "openSearchClient": return target.getOpenSearchClient();
         case "operation": return target.getConfiguration().getOperation();
         case "scrollkeepalivems":
         case "scrollKeepAliveMs": return target.getConfiguration().getScrollKeepAliveMs();
