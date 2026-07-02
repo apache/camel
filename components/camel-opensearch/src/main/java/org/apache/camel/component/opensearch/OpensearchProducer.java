@@ -97,20 +97,7 @@ class OpensearchProducer extends DefaultAsyncProducer {
         super(endpoint);
         this.configuration = configuration;
         this.client = endpoint.getClient();
-        if (endpoint.getOpenSearchClient() == null) {
-            this.openSearchClient = createDefaultOpenSearchClient();
-        } else {
-            this.openSearchClient = endpoint.getOpenSearchClient();
-        }
-    }
-
-    private OpenSearchClient createDefaultOpenSearchClient() {
-        if (configuration.isDisconnect() && client == null) {
-            startClient();
-        }
-        final ObjectMapper mapper = new ObjectMapper();
-        mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
-        return new OpenSearchClient(new RestClientTransport(client, new JacksonJsonpMapper(mapper)));
+        this.openSearchClient = endpoint.getOpenSearchClient();
     }
 
     private OpensearchOperation resolveOperation(Exchange exchange) {
@@ -169,7 +156,17 @@ class OpensearchProducer extends DefaultAsyncProducer {
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
         try {
-            OpenSearchTransport transport = openSearchClient._transport();
+            OpenSearchTransport transport;
+            if (openSearchClient == null) {
+              if (configuration.isDisconnect() && client == null) {
+                startClient();
+              }
+              final ObjectMapper mapper = new ObjectMapper();
+              mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+              transport = new RestClientTransport(client, new JacksonJsonpMapper(mapper));
+            } else {
+                transport = openSearchClient._transport();
+            }
             // 2. Index and type will be set by:
             // a. If the incoming body is already an action request
             // b. If the body is not an action request we will use headers if they
