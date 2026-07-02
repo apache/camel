@@ -32,6 +32,8 @@ import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.Locale;
 
+import org.apache.camel.util.SecureRandomHelper;
+
 /**
  * Generates a self-signed certificate for development use. This allows enabling HTTPS with minimal configuration when
  * no keystore is provided.
@@ -40,7 +42,7 @@ import java.util.Locale;
  */
 final class SelfSignedCertificateGenerator {
 
-    private static final SecureRandom RANDOM = new SecureRandom();
+    private static final SecureRandom RANDOM = SecureRandomHelper.getSecureRandom();
 
     private SelfSignedCertificateGenerator() {
     }

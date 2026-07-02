@@ -26,7 +26,7 @@ import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
-import org.apache.camel.component.pqc.PQCSecureRandom;
+import org.apache.camel.util.SecureRandomHelper;
 import org.bouncycastle.crypto.digests.SHA256Digest;
 import org.bouncycastle.crypto.digests.SHA384Digest;
 import org.bouncycastle.crypto.digests.SHA512Digest;
@@ -97,7 +97,7 @@ public final class HybridKEM {
         // Perform PQC KEM encapsulation
         pqcKemGenerator.init(
                 new KEMGenerateSpec(pqcPublicKey, symmetricAlgorithm, keyLength),
-                PQCSecureRandom.RANDOM);
+                SecureRandomHelper.getSecureRandom());
         SecretKeyWithEncapsulation pqcResult = (SecretKeyWithEncapsulation) pqcKemGenerator.generateKey();
         byte[] pqcSharedSecret = pqcResult.getEncoded();
         byte[] pqcEncapsulation = pqcResult.getEncapsulation();
@@ -168,7 +168,7 @@ public final class HybridKEM {
         // Perform PQC KEM extraction
         pqcKemGenerator.init(
                 new KEMExtractSpec(pqcPrivateKey, components.pqcEncapsulation(), symmetricAlgorithm, keyLength),
-                PQCSecureRandom.RANDOM);
+                SecureRandomHelper.getSecureRandom());
         SecretKeyWithEncapsulation pqcResult = (SecretKeyWithEncapsulation) pqcKemGenerator.generateKey();
         byte[] pqcSharedSecret = pqcResult.getEncoded();
 
@@ -276,7 +276,7 @@ public final class HybridKEM {
         if ("EC".equals(algorithm)) {
             kpg = KeyPairGenerator.getInstance("EC");
             // Default to P-256
-            kpg.initialize(new ECGenParameterSpec("secp256r1"), PQCSecureRandom.RANDOM);
+            kpg.initialize(new ECGenParameterSpec("secp256r1"), SecureRandomHelper.getSecureRandom());
         } else if ("X25519".equals(algorithm) || "XDH".equals(algorithm)) {
             kpg = KeyPairGenerator.getInstance("X25519");
         } else if ("X448".equals(algorithm)) {

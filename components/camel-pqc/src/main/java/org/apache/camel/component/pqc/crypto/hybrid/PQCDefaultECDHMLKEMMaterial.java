@@ -23,7 +23,7 @@ import javax.crypto.KeyAgreement;
 import javax.crypto.KeyGenerator;
 
 import org.apache.camel.component.pqc.PQCKeyEncapsulationAlgorithms;
-import org.apache.camel.component.pqc.PQCSecureRandom;
+import org.apache.camel.util.SecureRandomHelper;
 import org.bouncycastle.jcajce.spec.MLKEMParameterSpec;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
@@ -51,7 +51,7 @@ public class PQCDefaultECDHMLKEMMaterial {
         try {
             // Generate ECDH P-256 key pair
             KeyPairGenerator ecKpg = KeyPairGenerator.getInstance("EC", "BC");
-            ecKpg.initialize(new ECGenParameterSpec("secp256r1"), PQCSecureRandom.RANDOM);
+            ecKpg.initialize(new ECGenParameterSpec("secp256r1"), SecureRandomHelper.getSecureRandom());
             classicalKeyPair = ecKpg.generateKeyPair();
             classicalKeyAgreement = KeyAgreement.getInstance("ECDH", "BC");
 
@@ -59,7 +59,7 @@ public class PQCDefaultECDHMLKEMMaterial {
             KeyPairGenerator mlkemKpg = KeyPairGenerator.getInstance(
                     PQCKeyEncapsulationAlgorithms.MLKEM.getAlgorithm(),
                     PQCKeyEncapsulationAlgorithms.MLKEM.getBcProvider());
-            mlkemKpg.initialize(MLKEMParameterSpec.ml_kem_768, PQCSecureRandom.RANDOM);
+            mlkemKpg.initialize(MLKEMParameterSpec.ml_kem_768, SecureRandomHelper.getSecureRandom());
             pqcKeyPair = mlkemKpg.generateKeyPair();
             pqcKeyGenerator = KeyGenerator.getInstance(
                     PQCKeyEncapsulationAlgorithms.MLKEM.getAlgorithm(),
