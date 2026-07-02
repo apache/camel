@@ -35,22 +35,22 @@ import org.apache.camel.util.json.JsonObject;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
-@Command(name = "jfr-old-objects",
-         description = "Diagnose memory leaks using JFR OldObjectSample events in a running Camel integration",
+@Command(name = "memory-leak",
+         description = "Diagnose memory leaks in a running Camel integration",
          sortOptions = false, showDefaultValues = true,
          footer = {
                  "%nNote: Sizes are sampled during the recording window, not total heap usage.",
                  "A longer recording captures more samples and shows larger totals for the same leak.",
                  "Use values to compare classes relative to each other, not as absolute heap numbers.",
                  "%nExamples:",
-                 "  camel cmd jfr-old-objects --start",
-                 "  camel cmd jfr-old-objects --start --duration 60",
-                 "  camel cmd jfr-old-objects --stop",
-                 "  camel cmd jfr-old-objects --status",
-                 "  camel cmd jfr-old-objects --query",
-                 "  camel cmd jfr-old-objects --query --min-size 1MB",
-                 "  camel cmd jfr-old-objects --query --stacktrace",
-                 "  camel cmd jfr-old-objects --start --mode dual" })
+                 "  camel cmd memory-leak --start",
+                 "  camel cmd memory-leak --start --duration 60",
+                 "  camel cmd memory-leak --stop",
+                 "  camel cmd memory-leak --status",
+                 "  camel cmd memory-leak --query",
+                 "  camel cmd memory-leak --query --min-size 1MB",
+                 "  camel cmd memory-leak --query --stacktrace",
+                 "  camel cmd memory-leak --start --mode dual" })
 public class CamelJfrOldObjects extends ActionBaseCommand {
 
     @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")

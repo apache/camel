@@ -345,16 +345,16 @@ public class RuntimeTools {
 
     @Tool(annotations = @Tool.Annotations(readOnlyHint = false, destructiveHint = false, openWorldHint = false),
           description = """
-                  Manage JFR OldObjectSample recording for memory leak diagnosis. \
-                  Captures objects surviving multiple GC cycles and their reference chains back to GC roots. \
+                  Diagnose memory leaks in a running Camel integration using Java Flight Recorder (JFR). \
+                  JFR samples objects that survive multiple GC cycles and captures their reference chains back to GC roots. \
+                  This is lightweight and safe for production, but shows sampled sizes not total heap — \
+                  use values to compare classes relative to each other and spot trends, not as absolute numbers. \
+                  For deep analysis, use a full heap dump (jmap -dump:live) with tools like Eclipse MAT or jhat. \
                   Use command 'start' to begin recording, 'stop' to stop and get results, \
                   'status' to check recording state, and 'query' to retrieve cached results from the last recording. \
                   Use mode 'dual' with 'start' to run two sequential recordings (Xs then 2Xs) and automatically \
-                  compare trends — returns growth ratios and trend classifications (growing, stable, shrinking, new, gone). \
-                  Note: sizes are sampled during the recording window, not total heap usage — \
-                  a longer recording captures more samples and shows larger totals for the same leak. \
-                  Use values to compare classes relative to each other, not as absolute heap numbers.""")
-    public JsonObject camel_runtime_jfr_old_objects(
+                  compare trends — returns growth ratios and trend classifications (growing, stable, shrinking, new, gone).""")
+    public JsonObject camel_runtime_memory_leak(
             @ToolArg(description = NAME_OR_PID_DESC) String nameOrPid,
             @ToolArg(description = "Command: start, stop, status, or query") String command,
             @ToolArg(description = "Recording duration in seconds (only for start command, default 60, use 0 for manual stop)") String duration,

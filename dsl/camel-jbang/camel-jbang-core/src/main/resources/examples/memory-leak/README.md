@@ -1,6 +1,6 @@
 ## Memory Leak
 
-This example simulates a memory leak for testing the JFR Old Object Sample diagnostic tool.
+This example simulates a memory leak for testing the Memory Leak diagnostic tool.
 
 It runs three routes:
 - **cache-leak** — adds a 64 KB entry to a HashMap every 200ms (never evicts)
@@ -15,10 +15,10 @@ It runs three routes:
 
     camel tui
 
-Navigate to the **JFR Old Objects** tab and press **R** to start a dual recording.
+Navigate to the **Memory Leak** tab and press **R** to start a dual recording.
 After both runs complete, the comparison table will flag `byte[]` and `HashMap$Node`
 as `growing` with high growth ratios, confirming the leak.
 
 ### Diagnose with CLI
 
-    camel cmd jfr-old-objects
+    camel cmd memory-leak
