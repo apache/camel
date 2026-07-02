@@ -44,7 +44,8 @@ public class BrowseDevConsole extends AbstractDevConsole {
               javaType = "java.lang.String")
     public static final String FILTER = "filter";
 
-    @Metadata(label = "query", description = "Limits the number of entries per endpoint", javaType = "java.lang.Integer")
+    @Metadata(label = "query", description = "Limits the number of entries per endpoint", javaType = "java.lang.Integer",
+              defaultValue = "100")
     public static final String LIMIT = "limit";
 
     @Metadata(label = "query", description = "To receive N last messages from the tail", javaType = "java.lang.Integer")
@@ -63,7 +64,7 @@ public class BrowseDevConsole extends AbstractDevConsole {
     public static final String FRESH_SIZE = "freshSize";
 
     @Metadata(label = "query", description = "Maximum size of the message body to include in the dump",
-              javaType = "java.lang.Integer")
+              javaType = "java.lang.Integer", defaultValue = "32768")
     public static final String BODY_MAX_CHARS = "bodyMaxChars";
 
     @Metadata(defaultValue = "32768",

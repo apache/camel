@@ -38,11 +38,11 @@ public class TraceDevConsole extends AbstractDevConsole {
     private int capacity = 100;
 
     @Metadata(label = "query", description = "Whether to enable or disable tracing",
-              javaType = "java.lang.Boolean")
+              javaType = "java.lang.String", enums = "true,false")
     public static final String ENABLED = "enabled";
 
     @Metadata(label = "query", description = "Whether to dump trace messages",
-              javaType = "java.lang.Boolean")
+              javaType = "java.lang.String", enums = "true,false")
     public static final String DUMP = "dump";
 
     private Queue<BacklogTracerEventMessage> queue;

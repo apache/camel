@@ -19,8 +19,12 @@
       "group": "query",
       "label": "query",
       "required": false,
-      "type": "boolean",
-      "javaType": "java.lang.Boolean",
+      "type": "string",
+      "javaType": "java.lang.String",
+      "enum": [
+        "true",
+        "false"
+      ],
       "deprecated": false,
       "autowired": false,
       "secret": false,
@@ -33,8 +37,12 @@
       "group": "query",
       "label": "query",
       "required": false,
-      "type": "boolean",
-      "javaType": "java.lang.Boolean",
+      "type": "string",
+      "javaType": "java.lang.String",
+      "enum": [
+        "true",
+        "false"
+      ],
       "deprecated": false,
       "autowired": false,
       "secret": false,

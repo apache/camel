@@ -38,6 +38,7 @@
       "deprecated": false,
       "autowired": false,
       "secret": false,
+      "defaultValue": 32768,
       "description": "Maximum size of the message body to include in the dump"
     },
     "endpoint": {
@@ -98,6 +99,7 @@
       "deprecated": false,
       "autowired": false,
       "secret": false,
+      "defaultValue": 20000,
       "description": "Timeout when using poll mode"
     }
   }

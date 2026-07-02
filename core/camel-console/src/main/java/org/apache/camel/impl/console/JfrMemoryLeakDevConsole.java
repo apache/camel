@@ -280,7 +280,7 @@ public class JfrMemoryLeakDevConsole extends AbstractDevConsole {
             return errorJson("Need two recordings to compare. Run two recordings first.");
         }
 
-        long minSize = optionLong(options, MIN_SIZE, 1024);
+        long minSize = optionLong(options, MIN_SIZE, 0);
 
         long baselineDurationMs = previousResults.getLongOrDefault("recordingDurationMs", 1);
         long currentDurationMs = cachedResults.getLongOrDefault("recordingDurationMs", 1);

@@ -127,12 +127,12 @@ public class ErrorRegistryConsole extends AbstractDevConsole {
         return root;
     }
 
-    private static List<BacklogErrorEventMessage> fetchAndFilter(ErrorRegistry registry, Map<String, Object> options) {
-        String routeId = (String) options.get(ROUTE_ID);
-        String exceptionFilter = (String) options.get(EXCEPTION);
-        String agoFilter = (String) options.get(AGO);
-        String handledFilter = (String) options.get(HANDLED);
-        int max = parseLimit(options);
+    private List<BacklogErrorEventMessage> fetchAndFilter(ErrorRegistry registry, Map<String, Object> options) {
+        String routeId = optionString(options, ROUTE_ID);
+        String exceptionFilter = optionString(options, EXCEPTION);
+        String agoFilter = optionString(options, AGO);
+        Boolean handledFilter = optionBoolean(options, HANDLED);
+        int max = optionInt(options, LIMIT, Integer.MAX_VALUE);
 
         // fetch all entries (route-scoped if requested), apply filters, then limit
         Collection<BacklogErrorEventMessage> all;
@@ -161,7 +161,7 @@ public class ErrorRegistryConsole extends AbstractDevConsole {
                     && !entry.getExceptionType().toLowerCase().contains(exceptionFilter.toLowerCase())) {
                 continue;
             }
-            if (handledFilter != null && !String.valueOf(entry.isHandled()).equals(handledFilter)) {
+            if (handledFilter != null && entry.isHandled() != handledFilter) {
                 continue;
             }
             result.add(entry);
@@ -172,15 +172,8 @@ public class ErrorRegistryConsole extends AbstractDevConsole {
         return result;
     }
 
-    private static int parseLimit(Map<String, Object> options) {
-        String limit = (String) options.get(LIMIT);
-        if (limit == null) {
-            return Integer.MAX_VALUE;
-        }
-        try {
-            return Integer.parseInt(limit);
-        } catch (NumberFormatException e) {
-            return Integer.MAX_VALUE;
-        }
+    private Boolean optionBoolean(Map<String, Object> options, String key) {
+        String val = optionString(options, key);
+        return val != null ? Boolean.parseBoolean(val) : null;
     }
 }

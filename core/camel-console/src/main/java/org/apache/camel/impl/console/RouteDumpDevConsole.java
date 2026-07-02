@@ -74,7 +74,7 @@ public class RouteDumpDevConsole extends AbstractDevConsole {
         Function<ManagedRouteMBean, Object> task = mrb -> {
             String dump = null;
             try {
-                String format = (String) options.get(FORMAT);
+                String format = optionString(options, FORMAT);
                 if (format == null || "xml".equals(format)) {
                     dump = mrb.dumpRouteAsXml(true);
                 } else if ("yaml".equals(format)) {
@@ -123,7 +123,7 @@ public class RouteDumpDevConsole extends AbstractDevConsole {
 
             try {
                 String dump = null;
-                String format = (String) options.get(FORMAT);
+                String format = optionString(options, FORMAT);
                 if (format == null || "xml".equals(format)) {
                     jo.put("format", "xml");
                     dump = mrb.dumpRouteAsXml(true, false, true);

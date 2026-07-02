@@ -56,7 +56,7 @@ public class ProcessorDevConsole extends AbstractDevConsole {
     public static final String LIMIT = "limit";
 
     @Metadata(label = "query",
-              description = "Action to perform such as start,stop,suspend,resume,enable,disable on one or more processors",
+              description = "Action to perform such as start,stop,enable,disable on one or more processors",
               javaType = "java.lang.String", enums = "start,stop,enable,disable")
     public static final String ACTION = "action";
 

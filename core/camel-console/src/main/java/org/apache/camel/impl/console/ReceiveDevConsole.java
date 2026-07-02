@@ -61,10 +61,12 @@ public class ReceiveDevConsole extends AbstractDevConsole {
               description = "Whether all received messages should be removed when dumping. By default, the messages are removed, which means that dumping will not contain previous dumped messages.")
     private boolean removeOnDump = true;
 
-    @Metadata(label = "query", description = "Whether to enable or disable receive mode", javaType = "java.lang.Boolean")
+    @Metadata(label = "query", description = "Whether to enable or disable receive mode",
+              javaType = "java.lang.String", enums = "true,false")
     public static final String ENABLED = "enabled";
 
-    @Metadata(label = "query", description = "Whether to dump received messages", javaType = "java.lang.Boolean")
+    @Metadata(label = "query", description = "Whether to dump received messages",
+              javaType = "java.lang.String", enums = "true,false")
     public static final String DUMP = "dump";
 
     @Metadata(label = "query",

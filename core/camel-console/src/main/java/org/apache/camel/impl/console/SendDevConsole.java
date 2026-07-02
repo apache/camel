@@ -59,7 +59,7 @@ public class SendDevConsole extends AbstractDevConsole {
     private int pollTimeout = 20000;
 
     @Metadata(label = "query", description = "Maximum size of the message body to include in the dump",
-              javaType = "java.lang.Integer")
+              javaType = "java.lang.Integer", defaultValue = "32768")
     public static final String BODY_MAX_CHARS = "bodyMaxChars";
 
     @Metadata(label = "query", description = "The message body to send. Can refer to files using file: prefix",
@@ -71,7 +71,7 @@ public class SendDevConsole extends AbstractDevConsole {
     public static final String POLL = "poll";
 
     @Metadata(label = "query", description = "Timeout when using poll mode",
-              javaType = "java.lang.Integer")
+              javaType = "java.lang.Integer", defaultValue = "20000")
     public static final String POLL_TIMEOUT = "pollTimeout";
 
     @Metadata(label = "query", description = "Exchange pattern when sending",

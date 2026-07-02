@@ -30,7 +30,7 @@
       "deprecated": false,
       "autowired": false,
       "secret": false,
-      "description": "Action to perform such as start,stop,suspend,resume,enable,disable on one or more processors"
+      "description": "Action to perform such as start,stop,enable,disable on one or more processors"
     },
     "filter": {
       "index": 1,

@@ -24,6 +24,7 @@
       "deprecated": false,
       "autowired": false,
       "secret": false,
+      "defaultValue": 32768,
       "description": "Maximum size of the message body to include in the dump"
     },
     "dump": {
@@ -97,6 +98,7 @@
       "deprecated": false,
       "autowired": false,
       "secret": false,
+      "defaultValue": 100,
       "description": "Limits the number of entries per endpoint"
     },
     "tail": {

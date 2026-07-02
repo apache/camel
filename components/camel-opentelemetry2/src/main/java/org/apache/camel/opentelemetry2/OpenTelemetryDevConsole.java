@@ -35,7 +35,7 @@ import org.apache.camel.util.json.JsonObject;
 public class OpenTelemetryDevConsole extends AbstractDevConsole {
 
     @Metadata(label = "query", description = "Whether to dump span data",
-              javaType = "java.lang.Boolean")
+              javaType = "java.lang.String", enums = "true,false")
     public static final String DUMP = "dump";
 
     @Metadata(label = "query", description = "Limits the number of spans dumped", defaultValue = "100",
