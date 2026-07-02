@@ -145,7 +145,9 @@ class ExportQuarkus extends Export {
             return prop;
         });
         // copy docker files
-        copyDockerFiles(BUILD_DIR);
+        if (docker) {
+            copyDockerFiles(BUILD_DIR);
+        }
         String appJar;
         if ("fast-jar".equals(quarkusPackageType)) {
             appJar = "target" + File.separator + "quarkus-app" + File.separator + "quarkus-run.jar";

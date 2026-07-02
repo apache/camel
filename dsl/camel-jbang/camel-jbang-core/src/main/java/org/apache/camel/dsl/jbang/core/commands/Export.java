@@ -256,6 +256,7 @@ public class Export extends ExportBaseCommand {
         cmd.quarkusPackageType = this.quarkusPackageType;
         cmd.springBootVersion = this.springBootVersion;
         cmd.mavenWrapper = this.mavenWrapper;
+        cmd.docker = this.docker;
         cmd.quiet = this.quiet;
         cmd.buildProperties = this.buildProperties;
         cmd.openapi = this.openapi;

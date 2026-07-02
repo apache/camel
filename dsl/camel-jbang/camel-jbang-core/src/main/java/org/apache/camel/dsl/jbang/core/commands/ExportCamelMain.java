@@ -161,7 +161,9 @@ class ExportCamelMain extends Export {
         if (mavenWrapper) {
             copyMavenWrapper();
         }
-        copyDockerFiles(BUILD_DIR);
+        if (docker) {
+            copyDockerFiles(BUILD_DIR);
+        }
         String appJar = Paths.get("target", ids[1] + "-" + ids[2] + ".jar").toString();
         copyReadme(BUILD_DIR, appJar);
         if (cleanExportDir || !exportDir.equals(".")) {
