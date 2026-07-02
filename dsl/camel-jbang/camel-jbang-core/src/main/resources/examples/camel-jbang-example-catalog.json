@@ -284,8 +284,8 @@
         "requiresDocker": false,
         "hasCitrusTests": false,
         "files": [
-            "README.md",
-            "memory-leak.java"
+            "MemoryLeak.java",
+            "README.md"
         ]
     },
     {

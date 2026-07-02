@@ -9,7 +9,7 @@ It runs three routes:
 
 ### How to run
 
-    camel run memory-leak.java
+    camel run MemoryLeak.java
 
 ### Diagnose with TUI
 

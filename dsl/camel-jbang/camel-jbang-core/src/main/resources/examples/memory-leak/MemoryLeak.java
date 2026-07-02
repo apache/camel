@@ -5,7 +5,7 @@ import java.util.Map;
 
 import org.apache.camel.builder.RouteBuilder;
 
-public class memory_leak extends RouteBuilder {
+public class MemoryLeak extends RouteBuilder {
 
     // these collections grow forever — simulating a memory leak
     private final Map<String, byte[]> cache = new HashMap<>();
