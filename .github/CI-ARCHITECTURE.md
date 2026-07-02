@@ -176,7 +176,7 @@ The shadow comparison section shows:
 
 The script overrides `fullBuildTriggers` to empty (`-Dscalpel.fullBuildTriggers=`) because Scalpel's default (`.mvn/**`) would trigger a full build whenever `.mvn/extensions.xml` itself changes (e.g., Dependabot bumping Scalpel).
 
-The grep-based script fetches the PR diff via the GitHub REST API (unchanged). Scalpel uses local git history to compare effective POM models — the CI workflow pre-fetches the base branch (`git fetch --deepen=200` + fetch of `origin/main`) so Scalpel's JGit can find the merge-base. Scalpel disables its built-in JGit fetch (`-Dscalpel.fetchBaseBranch=false`) to avoid JGit issues in shallow CI clones. The `--deepen=200` fetches only commit metadata (not file blobs), adding ~2-3 seconds to the job.
+The grep-based script fetches the PR diff via the GitHub REST API (unchanged). Scalpel uses local git history to compare effective POM models and detect source file changes — the CI workflow progressively deepens the shallow clone (`50 → 200 → 1000 → full`) until the merge-base is reachable. Scalpel runs for **all PRs** (not just POM changes) so the shadow comparison covers source-only changes too, building confidence for a future switch to Scalpel-driven builds. Scalpel disables its built-in JGit fetch (`-Dscalpel.fetchBaseBranch=false`) because the CI workflow already pre-fetches the base branch with native git (Scalpel uses JGit 5.x which has limited shallow clone support).
 
 ## Manual Integration Test Advisories
 

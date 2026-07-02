@@ -84,13 +84,12 @@ jobs:
         if: ${{ !inputs.skip_full_build }}
         run: |
           # Scalpel needs the merge base between HEAD and the base branch.
-          # The checkout is depth=1, so we progressively deepen until the
-          # merge base is reachable: 200 → 1000 → full history.
+          # The checkout is depth=1; progressively deepen: 50 → 200 → 1000 → full.
           # Scalpel is observational — fetch failures must not break the build.
           BASE_REF="${GITHUB_BASE_REF:-main}"
-          for depth in 200 1000; do
+          for depth in 50 200 1000; do
             git fetch --deepen=$depth 2>/dev/null || true
-            git fetch --no-tags --depth=$depth origin "${BASE_REF}:refs/remotes/origin/${BASE_REF}" || true
+            git fetch --no-tags --depth=$depth origin "${BASE_REF}:refs/remotes/origin/${BASE_REF}" 2>/dev/null || true
             if git merge-base HEAD "origin/${BASE_REF}" >/dev/null 2>&1; then
               echo "Merge base reachable at depth $depth"
               break
@@ -101,7 +100,7 @@ jobs:
           if ! git merge-base HEAD "origin/${BASE_REF}" >/dev/null 2>&1; then
             echo "Merge base still not reachable, fetching full history"
             git fetch --unshallow 2>/dev/null || true
-            git fetch --no-tags origin "${BASE_REF}:refs/remotes/origin/${BASE_REF}" || true
+            git fetch --no-tags origin "${BASE_REF}:refs/remotes/origin/${BASE_REF}" 2>/dev/null || true
           fi
       - id: install-packages
         uses: ./.github/actions/install-packages
