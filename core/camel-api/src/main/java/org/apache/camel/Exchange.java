@@ -276,10 +276,16 @@ public interface Exchange extends VariableAware {
               javaType = "int",
               important = true)
     String SPLIT_SIZE = "CamelSplitSize";
+    /**
+     * @since 4.22
+     */
     @Metadata(label = "split",
               description = "The result of a Splitter EIP operation with error thresholds, providing structured failure details.",
               javaType = "org.apache.camel.SplitResult")
     String SPLIT_RESULT = "CamelSplitResult";
+    /**
+     * @since 4.22
+     */
     @Metadata(label = "split",
               description = "The current watermark value from the watermark store, set before split processing begins.",
               javaType = "String")

@@ -81,6 +81,10 @@ public class SplitReifier extends ExpressionReifier<SplitDefinition> {
         answer.setDisabled(isDisabled(camelContext, definition));
 
         int group = parseInt(definition.getGroup(), 0);
+        if (group < 0) {
+            throw new IllegalArgumentException(
+                    "group must not be negative, but was: " + group);
+        }
         if (group > 0) {
             answer.setGroup(group);
         }

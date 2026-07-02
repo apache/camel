@@ -669,35 +669,37 @@ public class Splitter extends MulticastProcessor {
 
     @SuppressWarnings("unchecked")
     private void updateWatermark(Exchange exchange) {
-        // don't update watermark if processing was aborted (allows retry)
-        if (exchange.getException() != null) {
-            return;
-        }
+        try {
+            // don't update watermark if processing was aborted (allows retry)
+            if (exchange.getException() != null) {
+                return;
+            }
 
-        if (watermarkExpression != null) {
-            // value-based: use the value from the highest-indexed item tracked during processing
-            AtomicReference<IndexedWatermark> latestRef
-                    = exchange.getProperty(SPLIT_WATERMARK_LATEST, AtomicReference.class);
-            if (latestRef != null) {
-                IndexedWatermark latest = latestRef.get();
-                if (latest != null) {
-                    persistWatermark(latest.value());
+            if (watermarkExpression != null) {
+                // value-based: use the value from the highest-indexed item tracked during processing
+                AtomicReference<IndexedWatermark> latestRef
+                        = exchange.getProperty(SPLIT_WATERMARK_LATEST, AtomicReference.class);
+                if (latestRef != null) {
+                    IndexedWatermark latest = latestRef.get();
+                    if (latest != null) {
+                        persistWatermark(latest.value());
+                    }
+                }
+            } else {
+                // index-based: compute absolute last index and store it
+                int offset = exchange.getProperty(SPLIT_WATERMARK_OFFSET, 0, Integer.class);
+                Integer count = exchange.getProperty(SPLIT_WATERMARK_COUNT, Integer.class);
+                if (count != null && count > 0) {
+                    int lastAbsoluteIndex = offset + count - 1;
+                    persistWatermark(String.valueOf(lastAbsoluteIndex));
                 }
             }
-        } else {
-            // index-based: compute absolute last index and store it
-            int offset = exchange.getProperty(SPLIT_WATERMARK_OFFSET, 0, Integer.class);
-            Integer count = exchange.getProperty(SPLIT_WATERMARK_COUNT, Integer.class);
-            if (count != null && count > 0) {
-                int lastAbsoluteIndex = offset + count - 1;
-                persistWatermark(String.valueOf(lastAbsoluteIndex));
-            }
+        } finally {
+            // always clean up internal properties, even on abort
+            exchange.removeProperty(SPLIT_WATERMARK_OFFSET);
+            exchange.removeProperty(SPLIT_WATERMARK_COUNT);
+            exchange.removeProperty(SPLIT_WATERMARK_LATEST);
         }
-
-        // clean up internal properties
-        exchange.removeProperty(SPLIT_WATERMARK_OFFSET);
-        exchange.removeProperty(SPLIT_WATERMARK_COUNT);
-        exchange.removeProperty(SPLIT_WATERMARK_LATEST);
     }
 
     private void persistWatermark(String value) {

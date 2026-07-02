@@ -90,6 +90,7 @@ public enum ExchangePropertyKey {
     SPLIT_INDEX(Exchange.SPLIT_INDEX),
     SPLIT_RESULT(Exchange.SPLIT_RESULT),
     SPLIT_SIZE(Exchange.SPLIT_SIZE),
+    SPLIT_WATERMARK(Exchange.SPLIT_WATERMARK),
     STEP_ID(Exchange.STEP_ID),
     STREAM_CACHE_UNIT_OF_WORK(Exchange.STREAM_CACHE_UNIT_OF_WORK),
     TO_ENDPOINT(Exchange.TO_ENDPOINT),
@@ -227,6 +228,8 @@ public enum ExchangePropertyKey {
                 return SPLIT_RESULT;
             case Exchange.SPLIT_SIZE:
                 return SPLIT_SIZE;
+            case Exchange.SPLIT_WATERMARK:
+                return SPLIT_WATERMARK;
             case Exchange.STEP_ID:
                 return STEP_ID;
             case Exchange.STREAM_CACHE_UNIT_OF_WORK:

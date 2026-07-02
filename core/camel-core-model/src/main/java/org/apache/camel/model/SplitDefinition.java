@@ -982,7 +982,9 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
     }
 
     /**
-     * Sets a Simple expression to evaluate on the exchange after split completion to determine the new watermark value.
+     * Sets a Simple expression to evaluate on each completed sub-exchange to determine the new watermark value. When
+     * set, enables value-based watermarking instead of index-based. The expression is evaluated using the Simple
+     * language.
      */
     public void setWatermarkExpression(String watermarkExpression) {
         this.watermarkExpression = watermarkExpression;

@@ -4655,6 +4655,11 @@
             "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime.",
             "default" : false
           },
+          "errorThreshold" : {
+            "type" : "number",
+            "title" : "Error Threshold",
+            "description" : "Sets the error threshold as a fraction (0.0-1.0) of failed items before aborting the split operation. For example, 0.1 means abort if more than 10% of items fail. When the threshold is exceeded, a org.apache.camel.CamelExchangeException is thrown. This option is mutually exclusive with stopOnException . When set, individual item failures are tracked but processing continues until the threshold is exceeded. Note: When combined with parallelProcessing , the failure ratio may vary between runs because parallel items complete in non-deterministic order. For deterministic abort behavior with parallel processing, prefer maxFailedRecords (absolute count) over errorThreshold (ratio)."
+          },
           "executorService" : {
             "type" : "string",
             "title" : "Executor Service",
@@ -4665,10 +4670,20 @@
             "description" : "The expression that returns the value to use for splitting. The result can be an Iterator, Iterable, Array, Collection, Map, NodeList, or a delimited String.",
             "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
           },
+          "group" : {
+            "type" : "number",
+            "title" : "Group",
+            "description" : "Groups N split messages into a single message with a java.util.List body. This allows processing items in chunks instead of one at a time."
+          },
           "id" : {
             "type" : "string",
             "title" : "Id",
             "description" : "The id of this node"
+          },
+          "maxFailedRecords" : {
+            "type" : "number",
+            "title" : "Max Failed Records",
+            "description" : "Sets the maximum number of failed records before aborting the split operation. When the count is exceeded, a org.apache.camel.CamelExchangeException is thrown. This option is mutually exclusive with stopOnException . Can be combined with errorThreshold processing aborts when either threshold is exceeded."
           },
           "note" : {
             "type" : "string",
@@ -4692,6 +4707,11 @@
             "title" : "Parallel Processing",
             "description" : "If enabled then processing each split message occurs concurrently. The caller thread still waits until all messages are fully processed before it continues.",
             "default" : false
+          },
+          "resumeStrategy" : {
+            "type" : "string",
+            "title" : "Resume Strategy",
+            "description" : "Sets a ResumeStrategy for resume-from-last-position support. The watermark key must also be configured via watermarkKey(String) ."
           },
           "shareUnitOfWork" : {
             "type" : "boolean",
@@ -4728,6 +4748,16 @@
             "title" : "Timeout",
             "description" : "Total timeout in millis when using parallel processing. If the splitter has not been able to process all replies within the given timeframe, then the timeout triggers and the splitter breaks out and continues.",
             "default" : "0"
+          },
+          "watermarkExpression" : {
+            "type" : "string",
+            "title" : "Watermark Expression",
+            "description" : "Sets a Simple expression to evaluate on each completed sub-exchange to determine the new watermark value. When set, enables value-based watermarking instead of index-based. The expression is evaluated using the Simple language."
+          },
+          "watermarkKey" : {
+            "type" : "string",
+            "title" : "Watermark Key",
+            "description" : "Sets the key to use in the watermark store."
           }
         }
       },
