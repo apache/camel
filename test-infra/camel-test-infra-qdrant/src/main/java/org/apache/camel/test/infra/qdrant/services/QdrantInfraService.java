@@ -52,7 +52,7 @@ public interface QdrantInfraService extends InfrastructureService {
         return "";
     }
 
-    // HttpClient does not implement AutoCloseable before Java 21; short-lived and GC'd
+    // HttpClient does not implement AutoCloseable before Java 21; nothing to close on the target JDK
     @SuppressWarnings("java:S2095")
     default HttpResponse<byte[]> put(String path, Map<Object, Object> body) throws Exception {
         final String reqPath = !path.startsWith("/") ? "/" + path : path;

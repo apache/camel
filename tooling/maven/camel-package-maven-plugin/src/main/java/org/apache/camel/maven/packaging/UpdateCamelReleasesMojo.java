@@ -117,7 +117,7 @@ public class UpdateCamelReleasesMojo extends AbstractGeneratorMojo {
         return Jsoner.deserialize(json, new JsonArray());
     }
 
-    // HttpClient does not implement AutoCloseable before Java 21; short-lived and GC'd
+    // HttpClient does not implement AutoCloseable before Java 21; nothing to close on the target JDK
     @SuppressWarnings("java:S2095")
     private List<ReleaseModel> processReleases(List<String> urls) throws Exception {
         List<ReleaseModel> answer = new ArrayList<>();
@@ -129,27 +129,28 @@ public class UpdateCamelReleasesMojo extends AbstractGeneratorMojo {
 
             if (res.statusCode() == 200) {
                 ReleaseModel model = new ReleaseModel();
-                LineNumberReader lr = new LineNumberReader(new StringReader(res.body()));
-                String line = lr.readLine();
-                while (line != null) {
-                    if (line.startsWith("date:")) {
-                        model.setDate(line.substring(5).trim());
-                    } else if (line.startsWith("version:")) {
-                        model.setVersion(line.substring(8).trim());
-                    } else if (line.startsWith("eol:")) {
-                        model.setEol(line.substring(4).trim());
-                    } else if (line.startsWith("kind:")) {
-                        model.setKind(line.substring(5).trim());
-                    } else if (line.startsWith("jdk:")) {
-                        String s = line.substring(4).trim();
-                        if (s.startsWith("[") && s.endsWith("]")) {
-                            s = s.substring(1, s.length() - 1);
+                try (LineNumberReader lr = new LineNumberReader(new StringReader(res.body()))) {
+                    String line = lr.readLine();
+                    while (line != null) {
+                        if (line.startsWith("date:")) {
+                            model.setDate(line.substring(5).trim());
+                        } else if (line.startsWith("version:")) {
+                            model.setVersion(line.substring(8).trim());
+                        } else if (line.startsWith("eol:")) {
+                            model.setEol(line.substring(4).trim());
+                        } else if (line.startsWith("kind:")) {
+                            model.setKind(line.substring(5).trim());
+                        } else if (line.startsWith("jdk:")) {
+                            String s = line.substring(4).trim();
+                            if (s.startsWith("[") && s.endsWith("]")) {
+                                s = s.substring(1, s.length() - 1);
+                            }
+                            // remove white-space noise
+                            s = s.replace(" ", "");
+                            model.setJdk(s);
                         }
-                        // remove white-space noise
-                        s = s.replace(" ", "");
-                        model.setJdk(s);
+                        line = lr.readLine();
                     }
-                    line = lr.readLine();
                 }
                 if (model.getVersion() != null) {
                     answer.add(model);
@@ -160,7 +161,7 @@ public class UpdateCamelReleasesMojo extends AbstractGeneratorMojo {
         return answer;
     }
 
-    // HttpClient does not implement AutoCloseable before Java 21; short-lived and GC'd
+    // HttpClient does not implement AutoCloseable before Java 21; nothing to close on the target JDK
     @SuppressWarnings("java:S2095")
     private List<String> fetchCamelReleaseLinks(String gitUrl) throws Exception {
         List<String> answer = new ArrayList<>();
