@@ -16,10 +16,16 @@
  */
 package org.apache.camel.test.infra.ibmmq.services;
 
+import jakarta.jms.Connection;
+import jakarta.jms.ConnectionFactory;
+import jakarta.jms.JMSException;
+
 import org.apache.camel.spi.annotations.InfraService;
 import org.apache.camel.test.infra.common.LocalPropertyResolver;
+import org.apache.camel.test.infra.common.TestUtils;
 import org.apache.camel.test.infra.common.services.ContainerEnvironmentUtil;
 import org.apache.camel.test.infra.common.services.ContainerService;
+import org.apache.camel.test.infra.ibmmq.common.ConnectionFactoryHelper;
 import org.apache.camel.test.infra.ibmmq.common.IbmMQProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,6 +67,7 @@ public class IbmMQLocalContainerInfraService implements IbmMQInfraService, Conta
                         .withEnv("MQ_QMGR_NAME", IbmMQProperties.DEFAULT_QMGR_NAME)
                         .withEnv("MQ_APP_PASSWORD", IbmMQProperties.DEFAULT_APP_PASSWORD)
                         .withLogConsumer(new Slf4jLogConsumer(LOG))
+                        .waitingFor(Wait.forListeningPort())
                         .waitingFor(Wait.forLogMessage(
                                 ".*Queued Publish/Subscribe Daemon started for queue manager.*", 1));
 
@@ -88,6 +95,26 @@ public class IbmMQLocalContainerInfraService implements IbmMQInfraService, Conta
         // also starts admin console on https://localhost:9443/ibmmq/console, user: admin, password: passw0rd
         container.start();
         registerProperties();
+        waitForJmsConnection();
+    }
+
+    private void waitForJmsConnection() {
+        boolean ready = TestUtils.waitFor(() -> {
+            try {
+                ConnectionFactory connectionFactory = ConnectionFactoryHelper.createConnectionFactory(
+                        queueManager(), channel(), listenerPort());
+                try (Connection connection = connectionFactory.createConnection()) {
+                    connection.start();
+                }
+                return true;
+            } catch (JMSException e) {
+                LOG.debug("IBM MQ is not yet accepting JMS connections: {}", e.getMessage());
+                return false;
+            }
+        });
+        if (!ready) {
+            throw new IllegalStateException("IBM MQ container did not accept JMS connections in time");
+        }
     }
 
     @Override
