@@ -359,57 +359,18 @@ public class RuntimeTools {
             throw new ToolCallException("command is required (start, stop, status, or query)", null);
         }
         RuntimeService.ProcessInfo p = runtimeService.findSingleProcess(nameOrPid);
-        JsonObject result = runtimeService.executeAction(p.pid(), "jfr-old-objects", root -> {
+        return runtimeService.executeAction(p.pid(), "jfr-old-objects", root -> {
             root.put("command", command);
             if ("start".equals(command) && duration != null && !duration.isBlank()) {
                 root.put("duration", duration);
             }
-        });
-        boolean includeStacktrace = "true".equalsIgnoreCase(stacktrace);
-        long minBytes = parseMinSize(minSize);
-        filterSamples(result, includeStacktrace, minBytes);
-        return result;
-    }
-
-    private static void filterSamples(JsonObject result, boolean includeStacktrace, long minBytes) {
-        Object samplesObj = result.get("samples");
-        if (samplesObj instanceof JsonArray samples) {
-            for (int i = samples.size() - 1; i >= 0; i--) {
-                Object obj = samples.get(i);
-                if (obj instanceof JsonObject sample) {
-                    if (minBytes > 0 && sample.getLongOrDefault("totalSize", 0) < minBytes) {
-                        samples.remove(i);
-                        continue;
-                    }
-                    if (!includeStacktrace) {
-                        sample.remove("stackTrace");
-                    }
-                }
+            if (stacktrace != null) {
+                root.put("stacktrace", stacktrace);
             }
-        }
-    }
-
-    private static long parseMinSize(String value) {
-        if (value == null || value.isBlank() || "0".equals(value)) {
-            return 0;
-        }
-        String v = value.trim().toUpperCase(java.util.Locale.US);
-        long multiplier = 1;
-        if (v.endsWith("GB") || v.endsWith("G")) {
-            multiplier = 1024L * 1024 * 1024;
-            v = v.replaceAll("[GMK]B?$", "");
-        } else if (v.endsWith("MB") || v.endsWith("M")) {
-            multiplier = 1024L * 1024;
-            v = v.replaceAll("[GMK]B?$", "");
-        } else if (v.endsWith("KB") || v.endsWith("K")) {
-            multiplier = 1024;
-            v = v.replaceAll("[GMK]B?$", "");
-        }
-        try {
-            return (long) (Double.parseDouble(v) * multiplier);
-        } catch (NumberFormatException e) {
-            return 0;
-        }
+            if (minSize != null && !minSize.isBlank()) {
+                root.put("minSize", minSize);
+            }
+        });
     }
 
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),

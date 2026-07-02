@@ -140,7 +140,7 @@ public class JfrOldObjectSampleDevConsole extends AbstractDevConsole {
     private JsonObject doStop(Map<String, Object> options) {
         if (activeRecording == null) {
             if (cachedResults != null) {
-                return cachedResults;
+                return applyFilters(cachedResults, options);
             }
             return errorJson("No active JFR recording to stop.");
         }
@@ -149,7 +149,8 @@ public class JfrOldObjectSampleDevConsole extends AbstractDevConsole {
         int limit = optionInt(options, "limit", DEFAULT_LIMIT);
 
         try {
-            return doStopRecordingAndParse(limit);
+            JsonObject result = doStopRecordingAndParse(limit);
+            return applyFilters(result, options);
         } catch (Exception e) {
             LOG.warn("Error stopping JFR recording: {}", e.getMessage(), e);
             return errorJson("Error stopping JFR recording: " + e.getMessage());
@@ -221,7 +222,7 @@ public class JfrOldObjectSampleDevConsole extends AbstractDevConsole {
 
     private JsonObject doQuery(Map<String, Object> options) {
         if (cachedResults != null) {
-            return cachedResults;
+            return applyFilters(cachedResults, options);
         }
         if (activeRecording != null) {
             return doStatus();
@@ -231,6 +232,41 @@ public class JfrOldObjectSampleDevConsole extends AbstractDevConsole {
         result.put("sampleCount", 0);
         result.put("samples", new JsonArray());
         result.put("note", "No results available. Start a recording first.");
+        return result;
+    }
+
+    private static JsonObject applyFilters(JsonObject original, Map<String, Object> options) {
+        long minSize = optionLong(options, "minSize", 0);
+        boolean includeStacktrace = "true".equalsIgnoreCase(optionString(options, "stacktrace"));
+
+        if (minSize <= 0 && includeStacktrace) {
+            return original;
+        }
+
+        // work on a copy so the cached results remain unmodified
+        JsonObject result = new JsonObject(original);
+        Object samplesObj = original.get("samples");
+        if (samplesObj instanceof JsonArray origSamples) {
+            JsonArray filtered = new JsonArray();
+            for (int i = 0; i < origSamples.size(); i++) {
+                Object obj = origSamples.get(i);
+                if (obj instanceof JsonObject sample) {
+                    if (minSize > 0 && sample.getLongOrDefault("totalSize", 0) < minSize) {
+                        continue;
+                    }
+                    if (!includeStacktrace) {
+                        // shallow copy to avoid mutating cached data
+                        JsonObject copy = new JsonObject(sample);
+                        copy.remove("stackTrace");
+                        filtered.add(copy);
+                    } else {
+                        filtered.add(sample);
+                    }
+                }
+            }
+            result.put("samples", filtered);
+            result.put("sampleCount", filtered.size());
+        }
         return result;
     }
 
@@ -592,6 +628,18 @@ public class JfrOldObjectSampleDevConsole extends AbstractDevConsole {
         if (val != null) {
             try {
                 return Integer.parseInt(val.toString());
+            } catch (NumberFormatException e) {
+                // use default
+            }
+        }
+        return defaultValue;
+    }
+
+    private static long optionLong(Map<String, Object> options, String key, long defaultValue) {
+        Object val = options.get(key);
+        if (val != null) {
+            try {
+                return Long.parseLong(val.toString());
             } catch (NumberFormatException e) {
                 // use default
             }

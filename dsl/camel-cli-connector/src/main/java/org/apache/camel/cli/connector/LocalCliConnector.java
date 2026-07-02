@@ -869,6 +869,14 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
             if (limit != null) {
                 params.put("limit", limit);
             }
+            String stacktrace = root.getString("stacktrace");
+            if (stacktrace != null) {
+                params.put("stacktrace", stacktrace);
+            }
+            String minSize = root.getString("minSize");
+            if (minSize != null) {
+                params.put("minSize", minSize);
+            }
             JsonObject json = (JsonObject) dc.call(DevConsole.MediaType.JSON, params);
             LOG.trace("Updating output file: {}", outputFile);
             IOHelper.writeText(json.toJson(), outputFile);

@@ -116,6 +116,13 @@ public class CamelJfrOldObjects extends ActionBaseCommand {
         if (start && duration > 0) {
             root.put("duration", String.valueOf(duration));
         }
+        if (stacktrace) {
+            root.put("stacktrace", "true");
+        }
+        long minBytes = parseSize(minSize);
+        if (minBytes > 0) {
+            root.put("minSize", String.valueOf(minBytes));
+        }
 
         Path f = getActionFile(Long.toString(pid));
         try {
@@ -159,15 +166,11 @@ public class CamelJfrOldObjects extends ActionBaseCommand {
 
                 JsonArray samples = (JsonArray) jo.get("samples");
                 if (samples != null && !samples.isEmpty()) {
-                    long minBytes = parseSize(minSize);
                     List<Row> rows = new ArrayList<>();
                     int num = 0;
                     for (int i = 0; i < samples.size(); i++) {
                         JsonObject sample = (JsonObject) samples.get(i);
                         long totalSize = sample.getLongOrDefault("totalSize", 0);
-                        if (totalSize < minBytes) {
-                            continue;
-                        }
                         num++;
                         if (num > top) {
                             break;
