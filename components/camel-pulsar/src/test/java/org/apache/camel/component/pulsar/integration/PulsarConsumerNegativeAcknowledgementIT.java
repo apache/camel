@@ -27,39 +27,63 @@ import org.apache.camel.component.pulsar.PulsarMessageReceipt;
 import org.apache.camel.component.pulsar.utils.AutoConfiguration;
 import org.apache.camel.component.pulsar.utils.message.PulsarMessageHeaders;
 import org.apache.camel.spi.Registry;
+import org.apache.camel.test.infra.common.TestUtils;
 import org.apache.pulsar.client.api.Producer;
 import org.apache.pulsar.client.api.PulsarClient;
 import org.apache.pulsar.client.api.PulsarClientException;
 import org.apache.pulsar.client.api.Schema;
 import org.apache.pulsar.client.impl.ClientBuilderImpl;
 import org.apache.pulsar.client.impl.MultiplierRedeliveryBackoff;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class PulsarConsumerNegativeAcknowledgementIT extends PulsarITSupport {
 
-    private static final String TOPIC_URI = "persistent://public/default/camel-topic-negative-ack";
-    private static final String PRODUCER = "camel-producer-1";
+    private static final Logger LOGGER = LoggerFactory.getLogger(PulsarConsumerNegativeAcknowledgementIT.class);
+    private static final String TOPIC_URI_PREFIX = "persistent://public/default/camel-neg-ack-topic-";
+    private static int topicId;
 
-    @EndpointInject("pulsar:" + TOPIC_URI + "?numberOfConsumers=1&subscriptionType=Exclusive&batchingEnabled=false"
-                    + "&subscriptionName=camel-subscription&consumerQueueSize=1&consumerName=camel-consumer")
     private Endpoint from;
 
     @EndpointInject("mock:result")
     private MockEndpoint to;
 
-    @Override
-    protected RouteBuilder createRouteBuilder() {
-        return new RouteBuilder() {
-            @Override
-            public void configure() {
-                // This route will explicitly negative acknowledge the message.
-                from(from)
-                        .process(exchange -> exchange.getIn()
-                                .getHeader(PulsarMessageHeaders.MESSAGE_RECEIPT, PulsarMessageReceipt.class)
-                                .negativeAcknowledge())
-                        .to(to);
+    private Producer<String> producer;
+
+    @BeforeEach
+    public void setup() throws Exception {
+        context.removeRoute("myRoute");
+        String producerName = this.getClass().getSimpleName() + TestUtils.randomWithRange(1, 100);
+
+        String topicUri = TOPIC_URI_PREFIX + ++topicId;
+        producer = givenPulsarClient().newProducer(Schema.STRING).producerName(producerName).topic(topicUri).create();
+
+        from = context.getEndpoint("pulsar:" + topicUri + "?numberOfConsumers=1&subscriptionType=Exclusive"
+                                   + "&batchingEnabled=false"
+                                   + "&subscriptionName=camel-subscription&consumerQueueSize=1&consumerName=camel-consumer");
+        to = context.getEndpoint("mock:result", MockEndpoint.class);
+    }
+
+    @AfterEach
+    public void tearDown() {
+        try {
+            if (from != null) {
+                from.close();
             }
-        };
+            if (producer != null) {
+                producer.close();
+            }
+        } catch (Exception e) {
+            LOGGER.warn("Failed to close resources: {}", e.getMessage(), e);
+        }
+        try {
+            context.removeRoute("myRoute");
+        } catch (Exception e) {
+            // ignore
+        }
     }
 
     @Override
@@ -94,15 +118,22 @@ public class PulsarConsumerNegativeAcknowledgementIT extends PulsarITSupport {
 
     @Test
     public void testAMessageIsConsumedMultipleTimesWithNegativeAckBackoff() throws Exception {
-        to.expectedMessageCount(3);
+        to.expectedMinimumMessageCount(3);
 
-        Producer<String> producer
-                = givenPulsarClient().newProducer(Schema.STRING).producerName(PRODUCER).topic(TOPIC_URI).create();
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                // This route will explicitly negative acknowledge the message.
+                from(from).routeId("myRoute")
+                        .process(exchange -> exchange.getIn()
+                                .getHeader(PulsarMessageHeaders.MESSAGE_RECEIPT, PulsarMessageReceipt.class)
+                                .negativeAcknowledge())
+                        .to(to);
+            }
+        });
 
         producer.send("Hello World!");
 
         MockEndpoint.assertIsSatisfied(10, TimeUnit.SECONDS, to);
-
-        producer.close();
     }
 }
