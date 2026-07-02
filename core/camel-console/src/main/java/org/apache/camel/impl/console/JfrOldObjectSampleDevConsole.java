@@ -251,7 +251,7 @@ public class JfrOldObjectSampleDevConsole extends AbstractDevConsole {
             for (int i = 0; i < origSamples.size(); i++) {
                 Object obj = origSamples.get(i);
                 if (obj instanceof JsonObject sample) {
-                    if (minSize > 0 && sample.getLongOrDefault("totalSize", 0) < minSize) {
+                    if (minSize > 0 && sample.getLongOrDefault("sampledSize", 0) < minSize) {
                         continue;
                     }
                     if (!includeStacktrace) {
@@ -294,13 +294,13 @@ public class JfrOldObjectSampleDevConsole extends AbstractDevConsole {
             if (existing == null) {
                 sample.put("count", 1);
                 long size = sample.getLongOrDefault("allocationSize", 0);
-                sample.put("totalSize", size);
+                sample.put("sampledSize", size);
                 groups.put(key, sample);
             } else {
                 existing.put("count", existing.getIntegerOrDefault("count", 1) + 1);
-                long prevTotal = existing.getLongOrDefault("totalSize", 0);
+                long prevTotal = existing.getLongOrDefault("sampledSize", 0);
                 long curSize = sample.getLongOrDefault("allocationSize", 0);
-                existing.put("totalSize", prevTotal + curSize);
+                existing.put("sampledSize", prevTotal + curSize);
                 long prevAge = existing.getLongOrDefault("objectAge", 0);
                 long curAge = sample.getLongOrDefault("objectAge", 0);
                 if (curAge > prevAge) {

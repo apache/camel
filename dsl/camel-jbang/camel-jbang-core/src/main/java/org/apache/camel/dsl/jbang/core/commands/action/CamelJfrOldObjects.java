@@ -39,12 +39,17 @@ import picocli.CommandLine.Command;
          description = "Diagnose memory leaks using JFR OldObjectSample events in a running Camel integration",
          sortOptions = false, showDefaultValues = true,
          footer = {
+                 "%nNote: Sizes are sampled during the recording window, not total heap usage.",
+                 "A longer recording captures more samples and shows larger totals for the same leak.",
+                 "Use values to compare classes relative to each other, not as absolute heap numbers.",
                  "%nExamples:",
                  "  camel cmd jfr-old-objects --start",
-                 "  camel cmd jfr-old-objects --start --duration 30",
+                 "  camel cmd jfr-old-objects --start --duration 60",
                  "  camel cmd jfr-old-objects --stop",
                  "  camel cmd jfr-old-objects --status",
-                 "  camel cmd jfr-old-objects --query" })
+                 "  camel cmd jfr-old-objects --query",
+                 "  camel cmd jfr-old-objects --query --min-size 1MB",
+                 "  camel cmd jfr-old-objects --query --stacktrace" })
 public class CamelJfrOldObjects extends ActionBaseCommand {
 
     @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
@@ -170,7 +175,7 @@ public class CamelJfrOldObjects extends ActionBaseCommand {
                     int num = 0;
                     for (int i = 0; i < samples.size(); i++) {
                         JsonObject sample = (JsonObject) samples.get(i);
-                        long totalSize = sample.getLongOrDefault("totalSize", 0);
+                        long sampledSize = sample.getLongOrDefault("sampledSize", 0);
                         num++;
                         if (num > top) {
                             break;
@@ -179,7 +184,7 @@ public class CamelJfrOldObjects extends ActionBaseCommand {
                         row.num = num;
                         row.className = sample.getStringOrDefault("allocationClass", "unknown");
                         row.count = sample.getIntegerOrDefault("count", 1);
-                        row.totalSize = totalSize;
+                        row.sampledSize = sampledSize;
                         row.objectAge = sample.getLongOrDefault("objectAge", 0);
                         row.chainSummary = buildChainSummary(sample);
                         row.stackTrace = (JsonArray) sample.get("stackTrace");
@@ -238,8 +243,8 @@ public class CamelJfrOldObjects extends ActionBaseCommand {
                         .with(r -> r.className),
                 new Column().header("COUNT").headerAlign(HorizontalAlign.RIGHT).dataAlign(HorizontalAlign.RIGHT)
                         .with(r -> Integer.toString(r.count)),
-                new Column().header("TOTAL").headerAlign(HorizontalAlign.RIGHT).dataAlign(HorizontalAlign.RIGHT)
-                        .with(r -> r.totalSize > 0 ? formatBytes(r.totalSize) : "-"),
+                new Column().header("SAMPLED").headerAlign(HorizontalAlign.RIGHT).dataAlign(HorizontalAlign.RIGHT)
+                        .with(r -> r.sampledSize > 0 ? formatBytes(r.sampledSize) : "-"),
                 new Column().header("AGE").headerAlign(HorizontalAlign.RIGHT).dataAlign(HorizontalAlign.RIGHT)
                         .with(r -> formatDuration(r.objectAge)),
                 new Column().header("REFERENCE CHAIN").dataAlign(HorizontalAlign.LEFT)
@@ -249,8 +254,8 @@ public class CamelJfrOldObjects extends ActionBaseCommand {
 
     private void printTableWithStacktrace(List<Row> rows) {
         for (Row r : rows) {
-            String sizeStr = r.totalSize > 0 ? formatBytes(r.totalSize) : "-";
-            printer().printf("%d) %s  count:%d  total:%s  age:%s%n",
+            String sizeStr = r.sampledSize > 0 ? formatBytes(r.sampledSize) : "-";
+            printer().printf("%d) %s  count:%d  sampled:%s  age:%s%n",
                     r.num, r.className, r.count, sizeStr, formatDuration(r.objectAge));
             if (r.chainSummary != null && !r.chainSummary.isEmpty()) {
                 printer().println("   chain: " + r.chainSummary);
@@ -345,7 +350,7 @@ public class CamelJfrOldObjects extends ActionBaseCommand {
         int num;
         String className;
         int count;
-        long totalSize;
+        long sampledSize;
         long objectAge;
         String chainSummary;
         JsonArray stackTrace;

@@ -348,7 +348,10 @@ public class RuntimeTools {
                   Manage JFR OldObjectSample recording for memory leak diagnosis. \
                   Captures objects surviving multiple GC cycles and their reference chains back to GC roots. \
                   Use command 'start' to begin recording, 'stop' to stop and get results, \
-                  'status' to check recording state, and 'query' to retrieve cached results from the last recording.""")
+                  'status' to check recording state, and 'query' to retrieve cached results from the last recording. \
+                  Note: sizes are sampled during the recording window, not total heap usage — \
+                  a longer recording captures more samples and shows larger totals for the same leak. \
+                  Use values to compare classes relative to each other, not as absolute heap numbers.""")
     public JsonObject camel_runtime_jfr_old_objects(
             @ToolArg(description = NAME_OR_PID_DESC) String nameOrPid,
             @ToolArg(description = "Command: start, stop, status, or query") String command,

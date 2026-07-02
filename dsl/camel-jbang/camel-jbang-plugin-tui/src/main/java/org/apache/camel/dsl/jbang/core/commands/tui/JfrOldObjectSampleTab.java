@@ -57,7 +57,7 @@ class JfrOldObjectSampleTab implements MonitorTab {
         HAS_RESULTS
     }
 
-    private static final String[] SORT_COLUMNS = { "allocationClass", "totalSize", "count", "objectAge" };
+    private static final String[] SORT_COLUMNS = { "allocationClass", "sampledSize", "count", "objectAge" };
     private static final long[] MIN_SIZE_PRESETS = {
             0, 1024, 10 * 1024, 100 * 1024, 1024 * 1024, 10 * 1024 * 1024, 100 * 1024 * 1024 };
     private static final String[] MIN_SIZE_LABELS = {
@@ -71,7 +71,7 @@ class JfrOldObjectSampleTab implements MonitorTab {
     private int duration = 30;
     private long recordingStartTime;
 
-    private String sort = "totalSize";
+    private String sort = "sampledSize";
     private int sortIndex = 1;
     private boolean sortReversed;
 
@@ -310,7 +310,7 @@ class JfrOldObjectSampleTab implements MonitorTab {
     private void renderSampleTable(Frame frame, Rect area, List<SampleEntry> visible) {
         List<Row> rows = new ArrayList<>();
         for (SampleEntry e : visible) {
-            String totalStr = e.totalSize > 0 ? formatBytes(e.totalSize) : "-";
+            String totalStr = e.sampledSize > 0 ? formatBytes(e.sampledSize) : "-";
             rows.add(Row.from(
                     rightCell(String.valueOf(e.num), 6),
                     Cell.from(Span.styled(e.className != null ? e.className : "", Style.EMPTY.fg(Color.CYAN))),
@@ -346,8 +346,8 @@ class JfrOldObjectSampleTab implements MonitorTab {
                                 sortStyle("allocationClass"))),
                         rightCell(sortLabel("COUNT", "count"), 8,
                                 sortStyle("count")),
-                        rightCell(sortLabel("TOTAL", "totalSize"), 12,
-                                sortStyle("totalSize")),
+                        rightCell(sortLabel("SAMPLED", "sampledSize"), 12,
+                                sortStyle("sampledSize")),
                         rightCell(sortLabel("AGE", "objectAge"), 12,
                                 sortStyle("objectAge"))))
                 .widths(
@@ -392,10 +392,10 @@ class JfrOldObjectSampleTab implements MonitorTab {
             infoSpans.add(Span.styled("  Count:  ", Style.EMPTY.fg(Color.YELLOW).bold()));
             infoSpans.add(Span.styled(String.valueOf(entry.count), Style.EMPTY.fg(Color.WHITE)));
         }
-        if (entry.totalSize > 0) {
-            infoSpans.add(Span.styled(infoSpans.isEmpty() ? "  Total:  " : "      Total: ",
+        if (entry.sampledSize > 0) {
+            infoSpans.add(Span.styled(infoSpans.isEmpty() ? "  Sampled:  " : "    Sampled: ",
                     Style.EMPTY.fg(Color.YELLOW).bold()));
-            infoSpans.add(Span.styled(formatBytes(entry.totalSize), Style.EMPTY.fg(Color.WHITE)));
+            infoSpans.add(Span.styled(formatBytes(entry.sampledSize), Style.EMPTY.fg(Color.WHITE)));
         }
         if (!infoSpans.isEmpty()) {
             lines.add(Line.from(infoSpans));
@@ -512,7 +512,7 @@ class JfrOldObjectSampleTab implements MonitorTab {
             row.put("num", e.num);
             row.put("className", e.className);
             row.put("count", e.count);
-            row.put("totalSize", e.totalSize);
+            row.put("sampledSize", e.sampledSize);
             row.put("allocationSize", e.allocationSize);
             row.put("objectAge", e.objectAge);
             row.put("chainSummary", e.chainSummary);
@@ -568,7 +568,7 @@ class JfrOldObjectSampleTab implements MonitorTab {
                 - **#** — Group number
                 - **CLASS** — The class of the sampled long-lived object
                 - **COUNT** — Number of samples from the same allocation site
-                - **TOTAL** — Total allocation size across all samples in the group
+                - **SAMPLED** — Sum of sampled allocation sizes during the recording
                 - **AGE** — Maximum age across samples in the group
 
                 ## Detail Panel
@@ -579,6 +579,15 @@ class JfrOldObjectSampleTab implements MonitorTab {
                 - **Reference Chain** — Path from the object to its GC root, showing
                   each referencing type and field name
                 - **Allocation Stack Trace** — Where the object was originally allocated
+
+                ## Important: Sizes Are Sampled, Not Totals
+
+                The SAMPLED column shows the sum of allocation sizes that JFR captured
+                during the recording window — it is NOT the total heap footprint of
+                that class. A 60-second recording will show roughly twice the size of
+                a 30-second one for the same leak. Use the values to compare classes
+                relative to each other and to spot trends across recordings, not as
+                absolute heap usage numbers.
 
                 ## What To Look For
 
@@ -844,14 +853,14 @@ class JfrOldObjectSampleTab implements MonitorTab {
         long minSize = MIN_SIZE_PRESETS[minSizeIndex];
         List<SampleEntry> result = new ArrayList<>(samples);
         if (minSize > 0) {
-            result.removeIf(e -> e.totalSize < minSize);
+            result.removeIf(e -> e.sampledSize < minSize);
         }
         result.sort((a, b) -> {
             int cmp = switch (sort) {
                 case "allocationClass" -> compareStr(a.className, b.className);
                 case "count" -> Integer.compare(b.count, a.count);
                 case "objectAge" -> Long.compare(b.objectAge, a.objectAge);
-                default -> Long.compare(b.totalSize, a.totalSize);
+                default -> Long.compare(b.sampledSize, a.sampledSize);
             };
             return sortReversed ? -cmp : cmp;
         });
@@ -873,7 +882,7 @@ class JfrOldObjectSampleTab implements MonitorTab {
             entry.num = i + 1;
             entry.className = sj.getStringOrDefault("allocationClass", "unknown");
             entry.count = sj.getIntegerOrDefault("count", 1);
-            entry.totalSize = sj.getLongOrDefault("totalSize", 0);
+            entry.sampledSize = sj.getLongOrDefault("sampledSize", 0);
             entry.allocationSize = sj.getLongOrDefault("allocationSize", 0);
             entry.lastKnownHeapUsage = sj.getLongOrDefault("lastKnownHeapUsage", 0);
             entry.objectAge = sj.getLongOrDefault("objectAge", 0);
@@ -1011,7 +1020,7 @@ class JfrOldObjectSampleTab implements MonitorTab {
         long lastKnownHeapUsage;
         long objectAge;
         int count = 1;
-        long totalSize;
+        long sampledSize;
         String chainSummary;
         List<ChainLink> referenceChain;
         List<StackEntry> stackTrace;
