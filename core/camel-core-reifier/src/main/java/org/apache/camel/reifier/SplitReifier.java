@@ -30,6 +30,7 @@ import org.apache.camel.processor.Splitter;
 import org.apache.camel.processor.aggregate.AggregationStrategyBeanAdapter;
 import org.apache.camel.processor.aggregate.AggregationStrategyBiFunctionAdapter;
 import org.apache.camel.processor.aggregate.ShareUnitOfWorkAggregationStrategy;
+import org.apache.camel.resume.ResumeStrategy;
 
 public class SplitReifier extends ExpressionReifier<SplitDefinition> {
 
@@ -78,7 +79,69 @@ public class SplitReifier extends ExpressionReifier<SplitDefinition> {
         }
         answer.setSynchronous(isSynchronous);
         answer.setDisabled(isDisabled(camelContext, definition));
+
+        int group = parseInt(definition.getGroup(), 0);
+        if (group > 0) {
+            answer.setGroup(group);
+        }
+
+        configureErrorThreshold(answer, isStopOnException);
+        configureWatermark(answer);
+
         return answer;
+    }
+
+    private void configureErrorThreshold(Splitter answer, boolean isStopOnException) {
+        String etStr = parseString(definition.getErrorThreshold());
+        double errorThreshold = etStr != null ? Double.parseDouble(etStr) : 0;
+        int maxFailedRecords = parseInt(definition.getMaxFailedRecords(), 0);
+        boolean hasErrorThreshold = errorThreshold > 0 || maxFailedRecords > 0;
+        if (hasErrorThreshold && isStopOnException) {
+            throw new IllegalArgumentException(
+                    "Cannot use both stopOnException and errorThreshold/maxFailedRecords on the Splitter EIP");
+        }
+        if (errorThreshold != 0 && (errorThreshold < 0 || errorThreshold > 1.0)) {
+            throw new IllegalArgumentException(
+                    "errorThreshold must be between 0.0 and 1.0, but was: " + errorThreshold);
+        }
+        if (maxFailedRecords < 0) {
+            throw new IllegalArgumentException(
+                    "maxFailedRecords must not be negative, but was: " + maxFailedRecords);
+        }
+        if (errorThreshold > 0) {
+            answer.setErrorThreshold(errorThreshold);
+        }
+        if (maxFailedRecords > 0) {
+            answer.setMaxFailedRecords(maxFailedRecords);
+        }
+    }
+
+    private void configureWatermark(Splitter answer) {
+        ResumeStrategy resumeStrategy = definition.getResumeStrategyBean();
+        if (resumeStrategy == null && definition.getResumeStrategy() != null) {
+            resumeStrategy = mandatoryLookup(definition.getResumeStrategy(), ResumeStrategy.class);
+        }
+        if (resumeStrategy != null) {
+            CamelContextAware.trySetCamelContext(resumeStrategy, camelContext);
+        }
+        String watermarkKey = parseString(definition.getWatermarkKey());
+        String watermarkExprStr = parseString(definition.getWatermarkExpression());
+        if ((resumeStrategy != null) != (watermarkKey != null)) {
+            throw new IllegalArgumentException(
+                    "Both resumeStrategy and watermarkKey must be configured together on the Splitter EIP");
+        }
+        if (watermarkExprStr != null && resumeStrategy == null) {
+            throw new IllegalArgumentException(
+                    "watermarkExpression requires resumeStrategy and watermarkKey on the Splitter EIP");
+        }
+        if (resumeStrategy != null && watermarkKey != null) {
+            answer.setResumeStrategy(resumeStrategy);
+            answer.setWatermarkKey(watermarkKey);
+            if (watermarkExprStr != null) {
+                Expression watermarkExpr = camelContext.resolveLanguage("simple").createExpression(watermarkExprStr);
+                answer.setWatermarkExpression(watermarkExpr);
+            }
+        }
     }
 
     private AggregationStrategy createAggregationStrategy() {
