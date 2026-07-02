@@ -370,7 +370,7 @@ public class RuntimeTools {
             return doDualJfrRecording(p.pid(), duration, stacktrace, minSize);
         }
 
-        return runtimeService.executeAction(p.pid(), "jfr-old-objects", root -> {
+        return runtimeService.executeAction(p.pid(), "jfr-memory-leak", root -> {
             root.put("command", command);
             if ("start".equals(command) && duration != null && !duration.isBlank()) {
                 root.put("duration", duration);
@@ -396,7 +396,7 @@ public class RuntimeTools {
         int dur2 = dur * 2;
 
         // run 1
-        JsonObject r1 = runtimeService.executeAction(pid, "jfr-old-objects", root -> {
+        JsonObject r1 = runtimeService.executeAction(pid, "jfr-memory-leak", root -> {
             root.put("command", "start");
             root.put("duration", String.valueOf(dur1));
             if (stacktrace != null) {
@@ -417,7 +417,7 @@ public class RuntimeTools {
             throw new ToolCallException("Interrupted during recording 1", null);
         }
 
-        JsonObject s1 = runtimeService.executeAction(pid, "jfr-old-objects", root -> {
+        JsonObject s1 = runtimeService.executeAction(pid, "jfr-memory-leak", root -> {
             root.put("command", "stop");
             if (stacktrace != null) {
                 root.put("stacktrace", stacktrace);
@@ -431,7 +431,7 @@ public class RuntimeTools {
         }
 
         // run 2
-        JsonObject r2 = runtimeService.executeAction(pid, "jfr-old-objects", root -> {
+        JsonObject r2 = runtimeService.executeAction(pid, "jfr-memory-leak", root -> {
             root.put("command", "start");
             root.put("duration", String.valueOf(dur2));
             if (stacktrace != null) {
@@ -452,7 +452,7 @@ public class RuntimeTools {
             throw new ToolCallException("Interrupted during recording 2", null);
         }
 
-        JsonObject s2 = runtimeService.executeAction(pid, "jfr-old-objects", root -> {
+        JsonObject s2 = runtimeService.executeAction(pid, "jfr-memory-leak", root -> {
             root.put("command", "stop");
             if (stacktrace != null) {
                 root.put("stacktrace", stacktrace);
@@ -466,7 +466,7 @@ public class RuntimeTools {
         }
 
         // compare
-        return runtimeService.executeAction(pid, "jfr-old-objects", root -> {
+        return runtimeService.executeAction(pid, "jfr-memory-leak", root -> {
             root.put("command", "compare");
             if (stacktrace != null) {
                 root.put("stacktrace", stacktrace);

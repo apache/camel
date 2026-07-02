@@ -49,12 +49,12 @@ import org.slf4j.LoggerFactory;
  * Dev console for JFR-based old object sampling. Captures objects surviving multiple GC cycles and their reference
  * chains back to GC roots, enabling memory leak diagnosis.
  */
-@DevConsole(name = "jfr-old-objects", displayName = "JFR Old Object Samples",
+@DevConsole(name = "jfr-memory-leak", displayName = "JFR Memory Leak",
             description = "JFR-based old object sampling for memory leak diagnosis")
 @Configurer(extended = true)
-public class JfrOldObjectSampleDevConsole extends AbstractDevConsole {
+public class JfrMemoryLeakDevConsole extends AbstractDevConsole {
 
-    private static final Logger LOG = LoggerFactory.getLogger(JfrOldObjectSampleDevConsole.class);
+    private static final Logger LOG = LoggerFactory.getLogger(JfrMemoryLeakDevConsole.class);
 
     private static final int DEFAULT_LIMIT = 100;
     private static final int MAX_STACK_FRAMES = 10;
@@ -68,8 +68,8 @@ public class JfrOldObjectSampleDevConsole extends AbstractDevConsole {
     private ScheduledExecutorService scheduler;
     private ScheduledFuture<?> autoStopFuture;
 
-    public JfrOldObjectSampleDevConsole() {
-        super("jvm", "jfr-old-objects", "JFR Old Object Samples",
+    public JfrMemoryLeakDevConsole() {
+        super("jvm", "jfr-memory-leak", "JFR Memory Leak",
               "JFR-based old object sampling for memory leak diagnosis");
     }
 
@@ -177,7 +177,7 @@ public class JfrOldObjectSampleDevConsole extends AbstractDevConsole {
 
         Path tempFile = null;
         try {
-            tempFile = Files.createTempFile("camel-jfr-old-objects-", ".jfr");
+            tempFile = Files.createTempFile("camel-jfr-memory-leak-", ".jfr");
             // trigger GC before stopping to flush objects into the recording
             System.gc();
             try {
@@ -719,7 +719,7 @@ public class JfrOldObjectSampleDevConsole extends AbstractDevConsole {
     private void ensureScheduler() {
         if (scheduler == null || scheduler.isShutdown()) {
             scheduler = Executors.newSingleThreadScheduledExecutor(r -> {
-                Thread t = new Thread(r, "JfrOldObjectSampleAutoStop");
+                Thread t = new Thread(r, "JfrMemoryLeakAutoStop");
                 t.setDaemon(true);
                 return t;
             });

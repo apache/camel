@@ -377,8 +377,8 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                 doActionSqlQueryTask(root);
             } else if ("sql-update-row".equals(action)) {
                 doActionSqlUpdateRowTask(root);
-            } else if ("jfr-old-objects".equals(action)) {
-                doActionJfrOldObjectsTask(root);
+            } else if ("jfr-memory-leak".equals(action)) {
+                doActionJfrMemoryLeakTask(root);
             } else if ("cli-debug".equals(action)) {
                 doActionCliDebug(root);
             }
@@ -852,9 +852,9 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
         }
     }
 
-    private void doActionJfrOldObjectsTask(JsonObject root) throws IOException {
+    private void doActionJfrMemoryLeakTask(JsonObject root) throws IOException {
         DevConsole dc = camelContext.getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class)
-                .resolveById("jfr-old-objects");
+                .resolveById("jfr-memory-leak");
         if (dc != null) {
             Map<String, Object> params = new HashMap<>();
             String command = root.getString("command");

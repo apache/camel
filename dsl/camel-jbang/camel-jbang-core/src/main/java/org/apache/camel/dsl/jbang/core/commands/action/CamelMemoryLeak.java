@@ -51,7 +51,7 @@ import picocli.CommandLine.Command;
                  "  camel cmd memory-leak --query --min-size 1MB",
                  "  camel cmd memory-leak --query --stacktrace",
                  "  camel cmd memory-leak --start --mode dual" })
-public class CamelJfrOldObjects extends ActionBaseCommand {
+public class CamelMemoryLeak extends ActionBaseCommand {
 
     @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
     String name = "*";
@@ -90,7 +90,7 @@ public class CamelJfrOldObjects extends ActionBaseCommand {
                         description = "Show allocation stack trace for each sample")
     boolean stacktrace;
 
-    public CamelJfrOldObjects(CamelJBangMain main) {
+    public CamelMemoryLeak(CamelJBangMain main) {
         super(main);
     }
 
@@ -182,7 +182,7 @@ public class CamelJfrOldObjects extends ActionBaseCommand {
         PathUtils.deleteFile(outputFile);
 
         JsonObject root = new JsonObject();
-        root.put("action", "jfr-old-objects");
+        root.put("action", "jfr-memory-leak");
         root.put("command", command);
         if ("start".equals(command) && dur > 0) {
             root.put("duration", String.valueOf(dur));

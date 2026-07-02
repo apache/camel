@@ -48,7 +48,7 @@ import org.apache.camel.util.json.JsonObject;
 
 import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.*;
 
-class JfrOldObjectSampleTab implements MonitorTab {
+class MemoryLeakTab implements MonitorTab {
 
     private enum State {
         IDLE,
@@ -101,7 +101,7 @@ class JfrOldObjectSampleTab implements MonitorTab {
     private int baselineGcCount;
     private int currentGcCount;
 
-    JfrOldObjectSampleTab(MonitorContext ctx) {
+    MemoryLeakTab(MonitorContext ctx) {
         this.ctx = ctx;
     }
 
@@ -542,7 +542,7 @@ class JfrOldObjectSampleTab implements MonitorTab {
             ComparisonEntry e = comparisons.get(i);
             String run1 = e.baselineSampledSize > 0 ? formatBytes(e.baselineSampledSize) : "-";
             String run2 = e.currentSampledSize > 0 ? formatBytes(e.currentSampledSize) : "-";
-            String growth = e.growthRatio > 0 ? String.format(Locale.US, "%.1fx", e.growthRatio) : "-";
+            String growth = e.growthRatio > 0 ? formatGrowthPercent(e.growthRatio) : "-";
             Span trendSpan = trendSpan(e.trend);
 
             rows.add(Row.from(
@@ -626,7 +626,7 @@ class JfrOldObjectSampleTab implements MonitorTab {
         if (entry.growthRatio > 0) {
             lines.add(Line.from(
                     Span.styled("  Growth:  ", Style.EMPTY.fg(Color.YELLOW).bold()),
-                    Span.styled(String.format(Locale.US, "%.2fx", entry.growthRatio),
+                    Span.styled(formatGrowthPercent(entry.growthRatio),
                             entry.growthRatio > 1.3 ? Style.EMPTY.fg(Color.RED).bold() : Style.EMPTY.fg(Color.WHITE))));
         }
 
@@ -897,16 +897,18 @@ class JfrOldObjectSampleTab implements MonitorTab {
                 - **Run 2** at 2x the duration (e.g. 120s)
 
                 After both complete, a comparison table shows how each class
-                behaved across the two runs. The **GROWTH** column is the
-                normalized growth ratio. Entries under 1KB in both runs are
-                filtered out as noise.
+                behaved across the two runs. The **GROWTH** column shows the
+                normalized growth as a percentage. For example, +30% means
+                the class grew 30% faster than expected from the duration
+                increase alone. Entries under 1KB in both runs are filtered
+                out as noise.
 
                 ### Trend Indicators
 
-                - **↑ leak!** (red) — Growth ratio >= 1.2, very likely leak
-                - **↑ leak?** (yellow) — Growth ratio 1.1–1.2, suspicious
-                - **→ stable** (green) — Growth ratio 0.8–1.1, normal
-                - **↓** (dim) — Growth ratio < 0.8, shrinking
+                - **↑ leak!** (red) — Growth >= +20%, very likely leak
+                - **↑ leak?** (yellow) — Growth +10% to +20%, suspicious
+                - **→ stable** (green) — Growth -20% to +10%, normal
+                - **↓** (dim) — Growth < -20%, shrinking
                 - **new** (yellow) — Only appeared in Run 2
                 - **gone** (dim) — Only appeared in Run 1
 
@@ -967,7 +969,7 @@ class JfrOldObjectSampleTab implements MonitorTab {
         PathUtils.deleteFile(outputFile);
 
         JsonObject root = new JsonObject();
-        root.put("action", "jfr-old-objects");
+        root.put("action", "jfr-memory-leak");
         root.put("command", "start");
         root.put("duration", String.valueOf(dur));
 
@@ -1047,7 +1049,7 @@ class JfrOldObjectSampleTab implements MonitorTab {
         PathUtils.deleteFile(outputFile);
 
         JsonObject root = new JsonObject();
-        root.put("action", "jfr-old-objects");
+        root.put("action", "jfr-memory-leak");
         root.put("command", "stop");
         root.put("stacktrace", "true");
 
@@ -1163,7 +1165,7 @@ class JfrOldObjectSampleTab implements MonitorTab {
         PathUtils.deleteFile(outputFile);
 
         JsonObject root = new JsonObject();
-        root.put("action", "jfr-old-objects");
+        root.put("action", "jfr-memory-leak");
         root.put("command", "status");
 
         Path actionFile = ctx.getActionFile(pid);
@@ -1206,7 +1208,7 @@ class JfrOldObjectSampleTab implements MonitorTab {
         PathUtils.deleteFile(outputFile);
 
         JsonObject root = new JsonObject();
-        root.put("action", "jfr-old-objects");
+        root.put("action", "jfr-memory-leak");
         root.put("command", "query");
         root.put("stacktrace", "true");
 
@@ -1252,7 +1254,7 @@ class JfrOldObjectSampleTab implements MonitorTab {
         PathUtils.deleteFile(outputFile);
 
         JsonObject root = new JsonObject();
-        root.put("action", "jfr-old-objects");
+        root.put("action", "jfr-memory-leak");
         root.put("command", "stop");
         root.put("stacktrace", "true");
 
@@ -1278,7 +1280,7 @@ class JfrOldObjectSampleTab implements MonitorTab {
         PathUtils.deleteFile(outputFile);
 
         JsonObject cmpRoot = new JsonObject();
-        cmpRoot.put("action", "jfr-old-objects");
+        cmpRoot.put("action", "jfr-memory-leak");
         cmpRoot.put("command", "compare");
         cmpRoot.put("stacktrace", "true");
 
@@ -1495,6 +1497,11 @@ class JfrOldObjectSampleTab implements MonitorTab {
             long sec = (ms % 60000) / 1000;
             return sec > 0 ? min + "m" + sec + "s" : min + "m";
         }
+    }
+
+    static String formatGrowthPercent(double growthRatio) {
+        int pct = (int) Math.round((growthRatio - 1.0) * 100);
+        return (pct >= 0 ? "+" : "") + pct + "%";
     }
 
     private String sortLabel(String label, String column) {
