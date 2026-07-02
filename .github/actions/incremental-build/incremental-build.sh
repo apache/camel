@@ -414,9 +414,9 @@ checkManualItTests() {
 # ── Scalpel shadow comparison ──────────────────────────────────────────
 
 # Write Scalpel shadow comparison section to the PR comment.
-# Shows what Scalpel would detect vs what the current grep-based approach found,
+# Shows what Scalpel would detect vs what the current approach actually tests,
 # with a one-line diff summary. Observation only — does not affect test execution.
-# Args: $1=comment_file, $2=grep_dep_module_ids (colon-prefixed, comma-separated)
+# Args: $1=comment_file, $2=tested_reactor_ids (newline-separated, already filtered by EXCLUSION_LIST)
 writeScalpelComparison() {
   local comment_file="$1"
   local current_reactor_ids="${2:-}"
@@ -943,10 +943,19 @@ main() {
   writeComment "$comment_file" "$pl" "$grep_dep_module_ids" "$grep_changed_props" "$testedDependents" "$extraModules"
 
   # Scalpel shadow comparison (observation only — after separator)
-  # Pass reactor_ids (artifact IDs of all modules in the -amd reactor) so
-  # Scalpel can compare against the current detection and show modules it
-  # found that the current approach missed.
-  writeScalpelComparison "$comment_file" "$reactor_ids"
+  # Filter reactor_ids through EXCLUSION_LIST so the comparison is
+  # apples-to-apples: both sides exclude the same meta/generated modules.
+  local tested_reactor_ids=""
+  if [ -n "$reactor_ids" ]; then
+    local excl_set
+    excl_set=$(echo "$EXCLUSION_LIST" | sed 's/!://g' | tr ',' '\n')
+    tested_reactor_ids=$(echo "$reactor_ids" | while read -r rid; do
+      if ! echo "$excl_set" | grep -qx "$rid"; then
+        echo "$rid"
+      fi
+    done)
+  fi
+  writeScalpelComparison "$comment_file" "$tested_reactor_ids"
 
   # Check for tests disabled in CI via @DisabledIfSystemProperty(named = "ci.env.name")
   local disabled_tests
