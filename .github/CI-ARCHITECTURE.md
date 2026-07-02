@@ -170,7 +170,10 @@ Scalpel runs in **shadow mode**: it observes what skip-tests mode *would* have d
 The shadow comparison section shows:
 - How many modules Scalpel would test (direct + downstream)
 - How many downstream modules would have tests skipped (generated code, meta-modules)
+- Set differences: modules only Scalpel found vs modules only the current approach found
 - The full list of modules in each category
+
+The comparison is apples-to-apples: the current approach's reactor is filtered through the `EXCLUSION_LIST` before comparing, so both sides exclude the same meta/generated modules (catalog, jbang, docs, etc.).
 
 #### Configuration notes
 

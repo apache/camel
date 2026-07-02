@@ -414,9 +414,9 @@ checkManualItTests() {
 # ── Scalpel shadow comparison ──────────────────────────────────────────
 
 # Write Scalpel shadow comparison section to the PR comment.
-# Shows what Scalpel would detect vs what the current grep-based approach found,
+# Shows what Scalpel would detect vs what the current approach actually tests,
 # with a one-line diff summary. Observation only — does not affect test execution.
-# Args: $1=comment_file, $2=grep_dep_module_ids (colon-prefixed, comma-separated)
+# Args: $1=comment_file, $2=tested_reactor_ids (newline-separated, already filtered by EXCLUSION_LIST)
 writeScalpelComparison() {
   local comment_file="$1"
   local current_reactor_ids="${2:-}"
@@ -495,9 +495,9 @@ writeScalpelComparison() {
   echo "[Maveniverse Scalpel](https://github.com/maveniverse/scalpel) detected **${scalpel_total} affected modules** (current approach: ${current_total})." >> "$comment_file"
   echo "" >> "$comment_file"
 
-  # Show modules only Scalpel found (current approach missed)
+  # Show modules only Scalpel found (not in current reactor)
   if [ "$only_scalpel_count" -gt 0 ]; then
-    echo "<details><summary>:warning: Modules only Scalpel found (${only_scalpel_count}) — current approach missed these</summary>" >> "$comment_file"
+    echo "<details><summary>:warning: Modules only in Scalpel (${only_scalpel_count})</summary>" >> "$comment_file"
     echo "" >> "$comment_file"
     echo "$only_in_scalpel" | while read -r m; do
       [ -n "$m" ] && echo "- \`$m\`" >> "$comment_file"
@@ -507,9 +507,9 @@ writeScalpelComparison() {
     echo "" >> "$comment_file"
   fi
 
-  # Show modules only current approach found (Scalpel missed)
+  # Show modules only current approach found (not in Scalpel)
   if [ "$only_current_count" -gt 0 ]; then
-    echo "<details><summary>Modules only current approach found (${only_current_count}) — Scalpel missed these</summary>" >> "$comment_file"
+    echo "<details><summary>Modules only in current approach (${only_current_count})</summary>" >> "$comment_file"
     echo "" >> "$comment_file"
     echo "$only_in_current" | while read -r m; do
       [ -n "$m" ] && echo "- \`$m\`" >> "$comment_file"
@@ -943,10 +943,19 @@ main() {
   writeComment "$comment_file" "$pl" "$grep_dep_module_ids" "$grep_changed_props" "$testedDependents" "$extraModules"
 
   # Scalpel shadow comparison (observation only — after separator)
-  # Pass reactor_ids (artifact IDs of all modules in the -amd reactor) so
-  # Scalpel can compare against the current detection and show modules it
-  # found that the current approach missed.
-  writeScalpelComparison "$comment_file" "$reactor_ids"
+  # Filter reactor_ids through EXCLUSION_LIST so the comparison is
+  # apples-to-apples: both sides exclude the same meta/generated modules.
+  local tested_reactor_ids=""
+  if [ -n "$reactor_ids" ]; then
+    local excl_set
+    excl_set=$(echo "$EXCLUSION_LIST" | sed 's/!://g' | tr ',' '\n')
+    tested_reactor_ids=$(echo "$reactor_ids" | while read -r rid; do
+      if ! echo "$excl_set" | grep -qx "$rid"; then
+        echo "$rid"
+      fi
+    done)
+  fi
+  writeScalpelComparison "$comment_file" "$tested_reactor_ids"
 
   # Check for tests disabled in CI via @DisabledIfSystemProperty(named = "ci.env.name")
   local disabled_tests
