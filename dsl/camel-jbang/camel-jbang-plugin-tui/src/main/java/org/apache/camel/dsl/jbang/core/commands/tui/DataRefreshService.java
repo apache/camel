@@ -92,6 +92,9 @@ class DataRefreshService {
     // OTel span data -- shared between CamelMonitor and SpansTab
     private final AtomicReference<List<SpanEntry>> otelSpans = new AtomicReference<>(List.of());
 
+    private final Map<String, Integer> lastReloadCount = new ConcurrentHashMap<>();
+    private volatile String reloadNotification;
+
     private volatile long lastRefresh;
     private final AtomicBoolean refreshInProgress = new AtomicBoolean(false);
 
@@ -265,6 +268,7 @@ class DataRefreshService {
                     metrics.updateCbHistory(info);
                     metrics.updateHeapHistory(info);
                     metrics.updateLoadMetrics(ph, info);
+                    detectReload(info);
                 }
             }
         }
@@ -655,6 +659,23 @@ class DataRefreshService {
     }
 
     // ---- Helpers ----
+
+    private void detectReload(IntegrationInfo info) {
+        if (info.pid == null || info.reloaded <= 0) {
+            return;
+        }
+        Integer prev = lastReloadCount.put(info.pid, info.reloaded);
+        if (prev != null && info.reloaded > prev) {
+            String label = info.name != null ? info.name : info.pid;
+            reloadNotification = label + " reloaded";
+        }
+    }
+
+    String consumeReloadNotification() {
+        String msg = reloadNotification;
+        reloadNotification = null;
+        return msg;
+    }
 
     private List<Long> findPids(String name) {
         return TuiHelper.findPids(name, statusFileResolver);

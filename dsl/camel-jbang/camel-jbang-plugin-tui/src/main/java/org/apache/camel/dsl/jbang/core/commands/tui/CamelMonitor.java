@@ -1051,6 +1051,11 @@ public class CamelMonitor extends CamelCommand {
                         Constraint.length(1))
                 .split(area);
 
+        String reloadMsg = dataService.consumeReloadNotification();
+        if (reloadMsg != null) {
+            setNotification(reloadMsg, false);
+        }
+
         renderHeader(frame, mainChunks.get(0));
         renderTabs(frame, mainChunks.get(1));
         lastTabsArea = mainChunks.get(1);
