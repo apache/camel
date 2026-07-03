@@ -53,6 +53,12 @@ class ExportTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(ExportTest.class);
 
+    // Use a released Camel version for Spring Boot tests because the Spring Boot catalog provider
+    // (camel-catalog-provider-springboot) comes from the separate camel-spring-boot project.
+    // Its SNAPSHOT may not be deployed to Apache Snapshots, causing flaky CI failures.
+    // Released versions are always available on Maven Central.
+    private static final String RELEASED_CAMEL_VERSION = "4.13.0";
+
     private File workingDir;
 
     @BeforeEach
@@ -139,8 +145,10 @@ class ExportTest {
     public void shouldGenerateProjectWithBuildProperties(RuntimeType rt) throws Exception {
         LOG.info("shouldGenerateProjectWithBuildProperties {}", rt);
         Export command = new Export(new CamelJBangMain());
+        String camelVersionArg = rt == RuntimeType.springBoot ? "--camel-version=" + RELEASED_CAMEL_VERSION : "";
         CommandLine.populateCommand(command, "--gav=examples:route:1.0.0", "--dir=" + workingDir,
-                "--runtime=%s".formatted(rt.runtime()), "--build-property=foo=bar", "target/test-classes/route.yaml");
+                "--runtime=%s".formatted(rt.runtime()), "--build-property=foo=bar", camelVersionArg,
+                "target/test-classes/route.yaml");
         int exit = command.doCall();
 
         Assertions.assertEquals(0, exit);
@@ -157,8 +165,10 @@ class ExportTest {
     public void testShouldGenerateProjectMultivalue(RuntimeType rt) throws Exception {
         LOG.info("testShouldGenerateProjectMultivalue {}", rt);
         Export command = new Export(new CamelJBangMain());
+        String camelVersionArg = rt == RuntimeType.springBoot ? "--camel-version=" + RELEASED_CAMEL_VERSION : "";
         CommandLine.populateCommand(command, "--gav=examples:route:1.0.0", "--dir=" + workingDir,
                 "--runtime=%s".formatted(rt.runtime()), "--dep=foo:bar:1.0,jupiter:rocks:2.0",
+                camelVersionArg,
                 // it's important for the --build-property to be the last parameter to test a previous
                 // export error when this property had arity=*
                 "--build-property=foo=bar", "--build-property=camel=rocks", "target/test-classes/route.yaml");
@@ -183,6 +193,10 @@ class ExportTest {
         CommandLine.populateCommand(command, "--gav=examples:route:1.0.0", "--dir=" + workingDir, "--quiet",
                 "--runtime=%s".formatted(rt.runtime()),
                 CamelCommandBaseTestSupport.quarkusExtRegistry());
+        // Pin Spring Boot tests to a released version to avoid SNAPSHOT download failures
+        if (rt == RuntimeType.springBoot && !containsCamelVersion(args)) {
+            CommandLine.populateCommand(command, "--camel-version=" + RELEASED_CAMEL_VERSION);
+        }
         if (args != null) {
             CommandLine.populateCommand(command, args);
         }
@@ -190,13 +204,27 @@ class ExportTest {
         return command;
     }
 
+    private static boolean containsCamelVersion(String... args) {
+        if (args == null) {
+            return false;
+        }
+        for (String arg : args) {
+            if (arg != null && arg.startsWith("--camel-version=")) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     @ParameterizedTest
     @MethodSource("runtimeProvider")
     public void shouldExportWithJpaAndHibernate(RuntimeType rt) throws Exception {
         LOG.info("shouldExportWithJpaAndHibernate {}", rt);
         Export command = new Export(new CamelJBangMain());
+        String camelVersionArg = rt == RuntimeType.springBoot ? "--camel-version=" + RELEASED_CAMEL_VERSION : "";
         CommandLine.populateCommand(command, "--gav=examples:route:1.0.0", "--dir=" + workingDir,
-                "--runtime=%s".formatted(rt.runtime()), "--dep=camel:jpa", "target/test-classes/route.yaml");
+                "--runtime=%s".formatted(rt.runtime()), "--dep=camel:jpa", camelVersionArg,
+                "target/test-classes/route.yaml");
         int exit = command.doCall();
 
         Assertions.assertEquals(0, exit);
@@ -673,6 +701,7 @@ class ExportTest {
     public void shouldExportUserProperty(RuntimeType rt) throws Exception {
         LOG.info("shouldExportUserProperty {}", rt);
         // We need a real file as we want to test the generated content
+        // Note: createCommand already handles --camel-version for Spring Boot
         Export command = createCommand(rt, new String[] { "src/test/resources/route.yaml" },
                 "--gav=examples:route:1.0.0", "--dir=" + workingDir, "--quiet",
                 // there was a bug where properties starting with camel.main were duplicated in application.properties
@@ -739,8 +768,10 @@ class ExportTest {
     public void shouldExportObserve(RuntimeType rt) throws Exception {
         LOG.info("shouldExportObserve {}", rt);
         Export command = new Export(new CamelJBangMain());
+        String camelVersionArg = rt == RuntimeType.springBoot ? "--camel-version=" + RELEASED_CAMEL_VERSION : "";
         CommandLine.populateCommand(command, "--gav=examples:route:1.0.0", "--dir=" + workingDir,
-                "--runtime=%s".formatted(rt.runtime()), "--observe=true", "target/test-classes/route.yaml");
+                "--runtime=%s".formatted(rt.runtime()), "--observe=true", camelVersionArg,
+                "target/test-classes/route.yaml");
         int exit = command.doCall();
 
         Assertions.assertEquals(0, exit);
@@ -768,8 +799,9 @@ class ExportTest {
     public void shouldExportFromDir(RuntimeType rt) throws Exception {
         LOG.info("shouldExportFromDir {}", rt);
         Export command = new Export(new CamelJBangMain());
+        String camelVersionArg = rt == RuntimeType.springBoot ? "--camel-version=" + RELEASED_CAMEL_VERSION : "";
         CommandLine.populateCommand(command, "--gav=examples:route:1.0.0", "--dir=" + workingDir,
-                "--runtime=%s".formatted(rt.runtime()), "src/test/resources/myapp");
+                "--runtime=%s".formatted(rt.runtime()), camelVersionArg, "src/test/resources/myapp");
         int exit = command.doCall();
 
         Assertions.assertEquals(0, exit);
@@ -886,8 +918,10 @@ class ExportTest {
     public void shouldExportHawtio(RuntimeType rt) throws Exception {
         LOG.info("shouldExportHawtio {}", rt);
         Export command = new Export(new CamelJBangMain());
+        String camelVersionArg = rt == RuntimeType.springBoot ? "--camel-version=" + RELEASED_CAMEL_VERSION : "";
         CommandLine.populateCommand(command, "--gav=examples:route:1.0.0", "--dir=" + workingDir,
-                "--runtime=%s".formatted(rt.runtime()), "--hawtio=true", "target/test-classes/route.yaml");
+                "--runtime=%s".formatted(rt.runtime()), "--hawtio=true", camelVersionArg,
+                "target/test-classes/route.yaml");
         int exit = command.doCall();
 
         Assertions.assertEquals(0, exit);
@@ -932,8 +966,9 @@ class ExportTest {
     @MethodSource("runtimeProvider")
     public void shouldContainJibProfile(RuntimeType rt) throws Exception {
         Export command = new Export(new CamelJBangMain());
+        String camelVersionArg = rt == RuntimeType.springBoot ? "--camel-version=" + RELEASED_CAMEL_VERSION : "";
         CommandLine.populateCommand(command, "--gav=examples:route:1.0.0", "--dir=" + workingDir,
-                "--runtime=%s".formatted(rt.runtime()), "src/test/resources/route.yaml");
+                "--runtime=%s".formatted(rt.runtime()), camelVersionArg, "src/test/resources/route.yaml");
         int exit = command.doCall();
 
         Assertions.assertEquals(0, exit);
