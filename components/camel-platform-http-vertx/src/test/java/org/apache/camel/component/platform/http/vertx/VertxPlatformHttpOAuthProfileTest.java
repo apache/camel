@@ -21,7 +21,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import io.vertx.core.http.HttpClient;
-import io.vertx.core.http.HttpClientResponse;
 import io.vertx.core.http.HttpMethod;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
@@ -56,24 +55,36 @@ class VertxPlatformHttpOAuthProfileTest {
             VertxPlatformHttpServer server = context.hasService(VertxPlatformHttpServer.class);
             client = server.getVertx().createHttpClient();
 
-            CompletableFuture<HttpClientResponse> responseFuture = new CompletableFuture<>();
+            // Collect status code and response body atomically inside the response
+            // handler to avoid a race where the body arrives and is discarded before
+            // the test registers a body() handler.
+            CompletableFuture<int[]> statusFuture = new CompletableFuture<>();
+            CompletableFuture<String> bodyFuture = new CompletableFuture<>();
             client.request(HttpMethod.POST, server.getPort(), "localhost", "/secure")
                     .onSuccess(request -> {
                         request.putHeader("Content-Length", "1024");
                         request.response()
-                                .onSuccess(responseFuture::complete)
-                                .onFailure(responseFuture::completeExceptionally);
-                        request.sendHead().onFailure(responseFuture::completeExceptionally);
+                                .onSuccess(response -> {
+                                    statusFuture.complete(new int[] { response.statusCode() });
+                                    response.body()
+                                            .onSuccess(buffer -> bodyFuture.complete(buffer.toString()))
+                                            .onFailure(bodyFuture::completeExceptionally);
+                                })
+                                .onFailure(t -> {
+                                    statusFuture.completeExceptionally(t);
+                                    bodyFuture.completeExceptionally(t);
+                                });
+                        request.sendHead().onFailure(t -> {
+                            statusFuture.completeExceptionally(t);
+                            bodyFuture.completeExceptionally(t);
+                        });
                     })
-                    .onFailure(responseFuture::completeExceptionally);
+                    .onFailure(t -> {
+                        statusFuture.completeExceptionally(t);
+                        bodyFuture.completeExceptionally(t);
+                    });
 
-            HttpClientResponse response = responseFuture.get(5, TimeUnit.SECONDS);
-            CompletableFuture<String> bodyFuture = new CompletableFuture<>();
-            response.body()
-                    .onSuccess(buffer -> bodyFuture.complete(buffer.toString()))
-                    .onFailure(bodyFuture::completeExceptionally);
-
-            assertEquals(401, response.statusCode());
+            assertEquals(401, statusFuture.get(5, TimeUnit.SECONDS)[0]);
             assertEquals("Unauthorized", bodyFuture.get(5, TimeUnit.SECONDS));
 
             assertEquals(0, routeInvocations.get());
