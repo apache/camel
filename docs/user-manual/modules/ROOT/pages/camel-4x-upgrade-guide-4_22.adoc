@@ -132,5 +132,5 @@ example 60 for `transformer` and 30 elsewhere).
 
 Terminal width is now detected on Windows (`cmd` / PowerShell) via `mode con`, in addition to the
 existing `COLUMNS` / `stty size` detection. When no terminal can be detected (for example when the
-output is piped or redirected), the width falls back to 80 columns. For full, untruncated output
+output is piped or redirected), the width falls back to 120 columns. For full, untruncated output
 suitable for scripting, use the `--json` option.

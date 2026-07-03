@@ -34,7 +34,7 @@ import java.util.regex.Pattern;
  */
 public final class TerminalWidthHelper {
 
-    private static final int DEFAULT_WIDTH = 80;
+    private static final int DEFAULT_WIDTH = 120;
     private static final int MIN_WIDTH = 40;
 
     private static final Pattern INTEGER = Pattern.compile("\\d+");

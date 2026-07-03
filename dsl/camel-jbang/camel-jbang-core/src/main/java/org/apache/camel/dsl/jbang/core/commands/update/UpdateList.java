@@ -37,6 +37,7 @@ import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.CamelTableColumns;
 import org.apache.camel.dsl.jbang.core.common.RuntimeType;
 import org.apache.camel.dsl.jbang.core.common.TerminalWidthHelper;
 import org.apache.camel.dsl.jbang.core.common.VersionHelper;
@@ -183,21 +184,23 @@ public class UpdateList extends CamelCommand {
                                     .map(UpdateListDTO::toMap)
                                     .collect(Collectors.toList())));
         } else {
-            int tw = terminalWidth();
-            // Fixed columns: VERSION (10), RUNTIME (~18), RUNTIME VERSION (~17)
-            int fixedWidth = 10 + 18 + 17;
-            int descWidth = TerminalWidthHelper.flexWidth(
-                    tw, fixedWidth, TerminalWidthHelper.noBorderOverhead(4),
-                    20, 80);
+            // Size the DESCRIPTION column to fill the terminal: measure the actual rendered width of the
+            // other columns so the remainder handed to the last column is exact (see CamelTableColumns).
+            int versionW = CamelTableColumns.measure("VERSION", Integer.MAX_VALUE, rows, r -> r.version().toString());
+            int runtimeW = CamelTableColumns.measure("RUNTIME", Integer.MAX_VALUE, rows, r -> r.runtime());
+            int runtimeVersionW
+                    = CamelTableColumns.measure("RUNTIME VERSION", Integer.MAX_VALUE, rows, r -> r.runtimeVersion());
+            int overhead = TerminalWidthHelper.noBorderOverhead(4);
+            int descWidth
+                    = CamelTableColumns.lastColumnWidth(terminalWidth(), overhead, versionW, runtimeW, runtimeVersionW);
             printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
-                    new Column().header("VERSION").minWidth(10).dataAlign(HorizontalAlign.LEFT)
+                    new Column().header("VERSION").dataAlign(HorizontalAlign.LEFT)
                             .with(r -> r.version().toString()),
                     new Column().header("RUNTIME")
                             .dataAlign(HorizontalAlign.LEFT).with(r -> r.runtime()),
                     new Column().header("RUNTIME VERSION")
                             .dataAlign(HorizontalAlign.LEFT).with(r -> r.runtimeVersion()),
-                    new Column().header("DESCRIPTION").maxWidth(descWidth)
-                            .dataAlign(HorizontalAlign.LEFT).with(r -> r.description()))));
+                    CamelTableColumns.lastText("DESCRIPTION", descWidth).with(r -> r.description()))));
         }
 
         return 0;
