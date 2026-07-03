@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.function.BiConsumer;
 import java.util.function.IntPredicate;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -179,9 +180,7 @@ class ActionsPopup {
 
     private final List<PendingLaunch> pendingLaunches = new ArrayList<>();
     private DeferredLaunch deferredLaunch;
-    private String launchNotification;
-    private boolean launchNotificationError;
-    private long launchNotificationExpiry;
+    private BiConsumer<String, Boolean> notificationCallback;
     private volatile String pendingAutoSelect;
     private String preSelectedRouteId;
 
@@ -438,12 +437,8 @@ class ActionsPopup {
         captionOverlay.close();
     }
 
-    String notification() {
-        return launchNotification;
-    }
-
-    boolean notificationError() {
-        return launchNotificationError;
+    void setNotificationCallback(BiConsumer<String, Boolean> callback) {
+        this.notificationCallback = callback;
     }
 
     void handlePaste(String text) {
@@ -948,9 +943,6 @@ class ActionsPopup {
     void tick(long now) {
         monitorPendingLaunches(now);
         checkDeferredLaunch(now);
-        if (launchNotification != null && now > launchNotificationExpiry) {
-            launchNotification = null;
-        }
     }
 
     // ---- Rendering ----
@@ -1181,9 +1173,7 @@ class ActionsPopup {
                 .filter(i -> !i.vanishing && i.readmeFiles != null && !i.readmeFiles.isEmpty())
                 .collect(Collectors.toList());
         if (withDocs.isEmpty()) {
-            launchNotification = "No integrations with documentation found";
-            launchNotificationError = true;
-            launchNotificationExpiry = System.currentTimeMillis() + 5000;
+            setNotification("No integrations with documentation found", true);
             return;
         }
         if (withDocs.size() == 1) {
@@ -1231,14 +1221,10 @@ class ActionsPopup {
                 showDocViewer = true;
                 docViewerFromExampleBrowser = false;
             } else {
-                launchNotification = "Could not load documentation";
-                launchNotificationError = true;
-                launchNotificationExpiry = System.currentTimeMillis() + 5000;
+                setNotification("Could not load documentation", true);
             }
         } catch (Exception e) {
-            launchNotification = "Error loading documentation: " + e.getMessage();
-            launchNotificationError = true;
-            launchNotificationExpiry = System.currentTimeMillis() + 5000;
+            setNotification("Error loading documentation: " + e.getMessage(), true);
         }
     }
 
@@ -1283,9 +1269,9 @@ class ActionsPopup {
     }
 
     private void setNotification(String msg, boolean error) {
-        launchNotification = msg;
-        launchNotificationError = error;
-        launchNotificationExpiry = System.currentTimeMillis() + 10000;
+        if (notificationCallback != null) {
+            notificationCallback.accept(msg, error);
+        }
     }
 
     private void checkStopAllNotification() {
@@ -1718,9 +1704,7 @@ class ActionsPopup {
             exampleCatalog = loadAndSortExamples();
         }
         if (exampleCatalog.isEmpty()) {
-            launchNotification = "No examples found";
-            launchNotificationError = true;
-            launchNotificationExpiry = System.currentTimeMillis() + 5000;
+            setNotification("No examples found", true);
             return;
         }
         showExampleBrowser = true;
@@ -2281,17 +2265,13 @@ class ActionsPopup {
             if (!pl.process().isAlive()) {
                 int exitCode = pl.process().exitValue();
                 if (exitCode == 0) {
-                    launchNotification = "Started: " + pl.name();
-                    launchNotificationError = false;
-                    launchNotificationExpiry = now + 5000;
+                    setNotification("Started: " + pl.name(), false);
                 } else {
                     showFailureLog(pl.name(), pl.outputFile());
                 }
                 it.remove();
             } else if (now - pl.startTime() > 8000) {
-                launchNotification = "Started: " + pl.name();
-                launchNotificationError = false;
-                launchNotificationExpiry = now + 5000;
+                setNotification("Started: " + pl.name(), false);
                 it.remove();
             }
         }

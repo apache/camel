@@ -55,6 +55,8 @@ import dev.tamboui.tui.event.TickEvent;
 import dev.tamboui.widgets.paragraph.Paragraph;
 import dev.tamboui.widgets.tabs.Tabs;
 import dev.tamboui.widgets.tabs.TabsState;
+import dev.tamboui.widgets.wavetext.WaveText;
+import dev.tamboui.widgets.wavetext.WaveTextState;
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
@@ -115,6 +117,8 @@ public class CamelMonitor extends CamelCommand {
     private String monitorNotification;
     private boolean monitorNotificationError;
     private long monitorNotificationExpiry;
+    private final WaveTextState notificationWaveState = new WaveTextState();
+    private String lastWaveNotification;
     private boolean mcpInjectedKey;
     private TuiMcpServer mcpServer;
     private McpFacade mcpFacade;
@@ -242,6 +246,7 @@ public class CamelMonitor extends CamelCommand {
                 dataService::enableBurstMode, dataService.stoppingPids());
 
         actionsPopup.setContext(ctx);
+        actionsPopup.setNotificationCallback((msg, error) -> setNotification(msg, error));
         actionsPopup.setResetStatsAction(this::resetStats);
         shellPanel.setContext(ctx);
         aiPanel.setContext(ctx);
@@ -1138,25 +1143,51 @@ public class CamelMonitor extends CamelCommand {
                 titleSpans.add(Span.styled("selected: " + selectedName(), Theme.warning()));
             }
         }
-        if (actionsPopup.notification() != null) {
-            titleSpans.add(Span.raw("  "));
-            Style style = actionsPopup.notificationError() ? Theme.error() : Theme.success();
-            titleSpans.add(Span.styled(actionsPopup.notification(), style));
-        }
         if (monitorNotification != null) {
             if (System.currentTimeMillis() > monitorNotificationExpiry) {
                 monitorNotification = null;
-            } else {
-                titleSpans.add(Span.raw("  "));
-                Style style = monitorNotificationError ? Theme.error() : Theme.success();
-                titleSpans.add(Span.styled(monitorNotification, style));
             }
         }
+        String activeNotification = monitorNotification;
+        boolean activeNotificationError = monitorNotificationError;
         Line titleLine = Line.from(titleSpans);
 
-        frame.renderWidget(
-                Paragraph.builder().text(Text.from(titleLine)).build(),
-                area);
+        if (activeNotification != null) {
+            if (!activeNotification.equals(lastWaveNotification)) {
+                notificationWaveState.reset();
+                lastWaveNotification = activeNotification;
+            }
+            int titleWidth = titleSpans.stream().mapToInt(s -> s.width()).sum();
+            int waveWidth = activeNotification.length() + 2;
+            int leftWidth = Math.min(titleWidth + 2, area.width() - waveWidth);
+            if (leftWidth > 0 && waveWidth > 0 && leftWidth + waveWidth <= area.width()) {
+                Rect leftArea = new Rect(area.x(), area.y(), leftWidth, 1);
+                Rect waveArea = new Rect(area.x() + leftWidth, area.y(), waveWidth, 1);
+                frame.renderWidget(
+                        Paragraph.builder().text(Text.from(titleLine)).build(),
+                        leftArea);
+                Color waveColor = activeNotificationError
+                        ? Theme.error().fg().orElse(Color.LIGHT_RED)
+                        : Theme.success().fg().orElse(Color.LIGHT_GREEN);
+                WaveText wave = WaveText.builder()
+                        .text(activeNotification)
+                        .color(waveColor)
+                        .inverted(false)
+                        .speed(1.2)
+                        .mode(WaveText.Mode.LOOP)
+                        .build();
+                notificationWaveState.advance();
+                frame.renderStatefulWidget(wave, waveArea, notificationWaveState);
+            } else {
+                frame.renderWidget(
+                        Paragraph.builder().text(Text.from(titleLine)).build(),
+                        area);
+            }
+        } else {
+            frame.renderWidget(
+                    Paragraph.builder().text(Text.from(titleLine)).build(),
+                    area);
+        }
     }
 
     private void renderTooSmall(Frame frame, Rect area) {
@@ -1559,7 +1590,8 @@ public class CamelMonitor extends CamelCommand {
     private void setNotification(String message, boolean error) {
         monitorNotification = message;
         monitorNotificationError = error;
-        monitorNotificationExpiry = System.currentTimeMillis() + (error ? 15000 : 5000);
+        monitorNotificationExpiry = System.currentTimeMillis() + (error ? 20000 : 10000);
+        notificationWaveState.reset();
     }
 
     static List<String> parseCommandLine(String commandLine) {
