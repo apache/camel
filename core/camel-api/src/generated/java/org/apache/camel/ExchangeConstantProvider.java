@@ -17,7 +17,7 @@ public class ExchangeConstantProvider {
 
     private static final Map<String, String> MAP;
     static {
-        Map<String, String> map = new HashMap<>(151);
+        Map<String, String> map = new HashMap<>(153);
         map.put("AGGREGATED_COLLECTION_GUARD", "CamelAggregatedCollectionGuard");
         map.put("AGGREGATED_COMPLETED_BY", "CamelAggregatedCompletedBy");
         map.put("AGGREGATED_CORRELATION_KEY", "CamelAggregatedCorrelationKey");
@@ -148,7 +148,9 @@ public class ExchangeConstantProvider {
         map.put("SLIP_PRODUCER", "CamelSlipProducer");
         map.put("SPLIT_COMPLETE", "CamelSplitComplete");
         map.put("SPLIT_INDEX", "CamelSplitIndex");
+        map.put("SPLIT_RESULT", "CamelSplitResult");
         map.put("SPLIT_SIZE", "CamelSplitSize");
+        map.put("SPLIT_WATERMARK", "CamelSplitWatermark");
         map.put("STEP_ID", "CamelStepId");
         map.put("STREAM_CACHE_UNIT_OF_WORK", "CamelStreamCacheUnitOfWork");
         map.put("TIMER_COUNTER", "CamelTimerCounter");
