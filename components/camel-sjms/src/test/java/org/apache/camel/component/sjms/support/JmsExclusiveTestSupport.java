@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.sjms.support;
 
+import jakarta.jms.Connection;
+
 import org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory;
 import org.apache.camel.test.infra.artemis.services.ArtemisService;
 import org.slf4j.Logger;
@@ -80,8 +82,9 @@ public abstract class JmsExclusiveTestSupport extends JmsCommonTestSupport {
                     .pollInterval(pollInterval, MILLISECONDS)
                     .ignoreExceptions()
                     .until(() -> {
-                        connectionFactory.createConnection().close();
-                        return true;
+                        try (Connection conn = connectionFactory.createConnection()) {
+                            return true;
+                        }
                     });
         }
         connect();
