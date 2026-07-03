@@ -34,15 +34,12 @@ public class SingleMessageSameTopicIT extends AbstractPersistentJMSTest {
     // topic subscriptions take a little longer to register than queue consumers, so keep the longer 200ms threshold
     private static final long TOPIC_ROUTE_UPTIME_MILLIS = 200;
 
-    @Order(1)
     @BeforeEach
-    void waitForConnections() {
+    void waitAndPrepare() {
+        // JUnit does not honor @Order on @BeforeEach methods, so the wait and the send must live in a single
+        // @BeforeEach to guarantee the consumer routes are ready before the message is published.
         JmsTestHelper.waitForJmsConsumerRoutes(context, TOPIC_ROUTE_UPTIME_MILLIS, "a", "b");
-    }
 
-    @Order(2)
-    @BeforeEach
-    void prepare() {
         getMockEndpoint("mock:a").expectedBodiesReceived("Hello World");
         getMockEndpoint("mock:b").expectedBodiesReceived("Hello World");
 
