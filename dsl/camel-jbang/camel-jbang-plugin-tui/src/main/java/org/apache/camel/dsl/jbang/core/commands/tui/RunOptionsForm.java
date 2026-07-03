@@ -47,18 +47,21 @@ class RunOptionsForm {
     private static final int ROW_RUNTIME = 1;
     private static final int ROW_PROFILE = 2;
     private static final int ROW_PORT = 3;
-    private static final int ROW_MAX = 4;
-    private static final int ROW_CONSOLE = 5;
-    private static final int ROW_DEV = 6;
-    private static final int ROW_OBSERVE = 7;
-    private static final int ROW_TRACE = 8;
-    private static final int ROW_STUB = 9;
-    private static final int ROW_OTEL_AGENT = 10;
-    private static final int ROW_COUNT = 11;
+    private static final int ROW_INIT_HEAP = 4;
+    private static final int ROW_MAX_HEAP = 5;
+    private static final int ROW_MAX = 6;
+    private static final int ROW_CONSOLE = 7;
+    private static final int ROW_DEV = 8;
+    private static final int ROW_OBSERVE = 9;
+    private static final int ROW_TRACE = 10;
+    private static final int ROW_STUB = 11;
+    private static final int ROW_OTEL_AGENT = 12;
+    private static final int ROW_COUNT = 13;
 
     private boolean visible;
     private int page;
     private int selectedRow;
+    private String errorMessage;
 
     private static final String[] MAX_MODES = { "Max seconds:", "Max messages:", "Max idle secs:" };
     private static final String[] MAX_FLAGS = { "--max-seconds=", "--max-messages=", "--max-idle-seconds=" };
@@ -70,6 +73,8 @@ class RunOptionsForm {
     // Text fields
     private TextInputState nameInput;
     private TextInputState portInput;
+    private TextInputState initHeapInput;
+    private TextInputState maxHeapInput;
     private TextInputState maxInput;
     private int maxMode;
     private int runtimeMode;
@@ -102,6 +107,8 @@ class RunOptionsForm {
     void open(String defaultName, String exampleName, boolean bundled, boolean dev) {
         nameInput = new TextInputState(defaultName != null ? defaultName : "");
         portInput = new TextInputState("");
+        initHeapInput = new TextInputState("");
+        maxHeapInput = new TextInputState("");
         maxInput = new TextInputState("");
         maxMode = 0;
         runtimeMode = 0;
@@ -131,6 +138,10 @@ class RunOptionsForm {
 
     boolean isStubMode() {
         return stubMode;
+    }
+
+    void setError(String error) {
+        this.errorMessage = error;
     }
 
     boolean isJaegerExport() {
@@ -204,6 +215,21 @@ class RunOptionsForm {
         if (!port.isEmpty()) {
             args.add("--port=" + port);
         }
+        StringBuilder jvmArgs = new StringBuilder();
+        String initHeap = initHeapInput.text().trim();
+        if (!initHeap.isEmpty()) {
+            jvmArgs.append("-Xms").append(initHeap);
+        }
+        String maxHeap = maxHeapInput.text().trim();
+        if (!maxHeap.isEmpty()) {
+            if (!jvmArgs.isEmpty()) {
+                jvmArgs.append(" ");
+            }
+            jvmArgs.append("-Xmx").append(maxHeap);
+        }
+        if (!jvmArgs.isEmpty()) {
+            args.add("--jvm-args=" + jvmArgs);
+        }
         String maxVal = maxInput.text().trim();
         if (!maxVal.isEmpty() && !"0".equals(maxVal)) {
             args.add(MAX_FLAGS[maxMode] + maxVal);
@@ -247,6 +273,7 @@ class RunOptionsForm {
     // ---- Options page (page 0) ----
 
     private boolean handleOptionsPage(KeyEvent ke) {
+        errorMessage = null;
         if (ke.isUp()) {
             selectedRow = (selectedRow - 1 + ROW_COUNT) % ROW_COUNT;
             return true;
@@ -336,7 +363,11 @@ class RunOptionsForm {
         if (selectedRow <= ROW_MAX && selectedRow != ROW_RUNTIME && selectedRow != ROW_PROFILE) {
             TextInputState active = activeInput();
             if (active != null) {
-                handleTextInput(ke, active, selectedRow == ROW_PORT || selectedRow == ROW_MAX);
+                if (selectedRow == ROW_INIT_HEAP || selectedRow == ROW_MAX_HEAP) {
+                    handleHeapInput(ke, active);
+                } else {
+                    handleTextInput(ke, active, selectedRow == ROW_PORT || selectedRow == ROW_MAX);
+                }
             }
             return true;
         }
@@ -444,7 +475,7 @@ class RunOptionsForm {
 
     private void renderOptionsPage(Frame frame, Rect area) {
         int popupW = Math.min(64, area.width() - 4);
-        int popupH = 15;
+        int popupH = errorMessage != null ? 18 : 17;
         int x = area.left() + Math.max(0, (area.width() - popupW) / 2);
         int y = area.top() + Math.max(0, (area.height() - popupH) / 4);
         Rect popup = new Rect(x, y, Math.min(popupW, area.width()), Math.min(popupH, area.height()));
@@ -466,7 +497,7 @@ class RunOptionsForm {
 
         int innerX = popup.left() + 2;
         int innerW = popup.width() - 4;
-        int labelW = 16;
+        int labelW = 18;
         int fieldW = innerW - labelW;
         int rowY = popup.top() + 1;
 
@@ -484,6 +515,16 @@ class RunOptionsForm {
 
         renderLabel(frame, innerX, rowY, labelW, "Port:", selectedRow == ROW_PORT);
         renderTextInput(frame, innerX + labelW, rowY, fieldW, portInput, selectedRow == ROW_PORT);
+        rowY++;
+
+        renderLabel(frame, innerX, rowY, labelW, "Init heap (-Xms):", selectedRow == ROW_INIT_HEAP);
+        renderTextInputWithHint(frame, innerX + labelW, rowY, fieldW, initHeapInput, selectedRow == ROW_INIT_HEAP,
+                "e.g. 128m, 1g");
+        rowY++;
+
+        renderLabel(frame, innerX, rowY, labelW, "Max heap (-Xmx):", selectedRow == ROW_MAX_HEAP);
+        renderTextInputWithHint(frame, innerX + labelW, rowY, fieldW, maxHeapInput, selectedRow == ROW_MAX_HEAP,
+                "e.g. 256m, 2g");
         rowY++;
 
         renderLabel(frame, innerX, rowY, labelW, MAX_MODES[maxMode], selectedRow == ROW_MAX);
@@ -518,6 +559,12 @@ class RunOptionsForm {
                     Span.styled(tuiLabel, tuiStyle),
                     Span.styled(" ", Style.EMPTY),
                     Span.styled(jaegerLabel, jaegerStyle))), exportArea);
+        }
+        if (errorMessage != null) {
+            rowY++;
+            Rect errorArea = new Rect(innerX, rowY, innerW, 1);
+            frame.renderWidget(Paragraph.from(Line.from(
+                    Span.styled("⚠ " + errorMessage, Style.EMPTY.bold()))), errorArea);
         }
     }
 
@@ -638,8 +685,86 @@ class RunOptionsForm {
         return switch (selectedRow) {
             case ROW_NAME -> nameInput;
             case ROW_PORT -> portInput;
+            case ROW_INIT_HEAP -> initHeapInput;
+            case ROW_MAX_HEAP -> maxHeapInput;
             case ROW_MAX -> maxInput;
             default -> null;
+        };
+    }
+
+    private void handleHeapInput(KeyEvent ke, TextInputState active) {
+        if (ke.isDeleteBackward()) {
+            active.deleteBackward();
+        } else if (ke.isDeleteForward()) {
+            active.deleteForward();
+        } else if (ke.isLeft()) {
+            active.moveCursorLeft();
+        } else if (ke.isRight()) {
+            active.moveCursorRight();
+        } else if (ke.isHome()) {
+            active.moveCursorToStart();
+        } else if (ke.isEnd()) {
+            active.moveCursorToEnd();
+        } else if (ke.code() == KeyCode.CHAR) {
+            char c = ke.string().charAt(0);
+            String text = active.text();
+            if (Character.isDigit(c)) {
+                // only allow digits before any suffix
+                if (text.isEmpty() || Character.isDigit(text.charAt(text.length() - 1))) {
+                    active.insert(c);
+                }
+            } else if ((c == 'k' || c == 'm' || c == 'g') && !text.isEmpty()
+                    && Character.isDigit(text.charAt(text.length() - 1))) {
+                active.insert(c);
+            }
+        }
+    }
+
+    String validate() {
+        String port = portInput.text().trim();
+        if (!port.isEmpty()) {
+            try {
+                int p = Integer.parseInt(port);
+                if (p < 0 || p > 65535) {
+                    return "Port must be 0-65535";
+                }
+            } catch (NumberFormatException e) {
+                return "Invalid port: " + port;
+            }
+        }
+        String initHeap = initHeapInput.text().trim();
+        String maxHeap = maxHeapInput.text().trim();
+        if (!initHeap.isEmpty() && !isValidHeap(initHeap)) {
+            return "Invalid init heap: " + initHeap;
+        }
+        if (!maxHeap.isEmpty() && !isValidHeap(maxHeap)) {
+            return "Invalid max heap: " + maxHeap;
+        }
+        if (!initHeap.isEmpty() && !maxHeap.isEmpty()) {
+            long initBytes = parseHeapBytes(initHeap);
+            long maxBytes = parseHeapBytes(maxHeap);
+            if (initBytes > maxBytes) {
+                return "Init heap cannot exceed max heap";
+            }
+        }
+        return null;
+    }
+
+    private static boolean isValidHeap(String value) {
+        return value.matches("\\d+[kmg]?");
+    }
+
+    private static long parseHeapBytes(String value) {
+        char last = value.charAt(value.length() - 1);
+        if (Character.isDigit(last)) {
+            return Long.parseLong(value);
+        }
+        long num = Long.parseLong(value.substring(0, value.length() - 1));
+        return switch (last) {
+            case 'k' -> num * 1024;
+            case 'm' -> num * 1024 * 1024;
+            case 'g' -> num * 1024 * 1024 * 1024;
+            default -> num;
         };
     }
 
@@ -674,6 +799,11 @@ class RunOptionsForm {
     }
 
     private void renderTextInput(Frame frame, int x, int y, int w, TextInputState state, boolean active) {
+        renderTextInputWithHint(frame, x, y, w, state, active, null);
+    }
+
+    private void renderTextInputWithHint(
+            Frame frame, int x, int y, int w, TextInputState state, boolean active, String hint) {
         Rect inputArea = new Rect(x, y, w, 1);
         if (active) {
             TextInput textInput = TextInput.builder()
@@ -682,9 +812,14 @@ class RunOptionsForm {
             frame.renderStatefulWidget(textInput, inputArea, state);
         } else {
             String text = state.text();
-            Style style = text.isEmpty() ? Style.EMPTY.dim() : Style.EMPTY;
-            frame.renderWidget(Paragraph.from(Line.from(
-                    Span.styled(text.isEmpty() ? "—" : text, style))), inputArea);
+            if (text.isEmpty() && hint != null) {
+                frame.renderWidget(Paragraph.from(Line.from(
+                        Span.styled(hint, Style.EMPTY.dim()))), inputArea);
+            } else {
+                Style style = text.isEmpty() ? Style.EMPTY.dim() : Style.EMPTY;
+                frame.renderWidget(Paragraph.from(Line.from(
+                        Span.styled(text.isEmpty() ? "—" : text, style))), inputArea);
+            }
         }
     }
 

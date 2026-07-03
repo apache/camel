@@ -540,7 +540,10 @@ class ActionsPopup {
                     showExampleBrowser = true;
                 }
             } else if (ke.isConfirm()) {
-                if (selectedFolder != null) {
+                String error = runOptionsForm.validate();
+                if (error != null) {
+                    runOptionsForm.setError(error);
+                } else if (selectedFolder != null) {
                     launchFolder();
                 } else {
                     launchWithName();

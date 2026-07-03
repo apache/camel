@@ -266,9 +266,6 @@ class MemoryTab extends AbstractTab {
             ceiling = observedMax;
         }
 
-        long pct = ceiling > 0 ? info.heapMemUsed * 100 / ceiling : 0;
-        Color barColor = pct >= 80 ? Color.LIGHT_RED : pct >= 60 ? Color.YELLOW : Color.GREEN;
-
         String title = String.format(" Heap Usage (%s / %s committed) ", formatBytes(info.heapMemUsed), formatBytes(ceiling));
 
         // Render the block border first
@@ -291,11 +288,14 @@ class MemoryTab extends AbstractTab {
             data[dataOffset + (i - startIdx)] = hist.get(i);
         }
 
-        // Render multi-row bar chart into the buffer
+        // Render multi-row bar chart with per-column color based on heap load at that point
         Buffer buf = frame.buffer();
-        Style barStyle = Style.EMPTY.fg(barColor);
 
         for (int col = 0; col < chartW; col++) {
+            long colPct = ceiling > 0 ? data[col] * 100 / ceiling : 0;
+            Color colColor = colPct >= 80 ? Color.LIGHT_RED : colPct >= 60 ? Color.YELLOW : Color.GREEN;
+            Style colStyle = Style.EMPTY.fg(colColor);
+
             double ratio = (double) data[col] / ceiling;
             // Total eighths this column fills (chartH rows * 8 eighths per row)
             double fillEighths = ratio * chartH * 8.0;
@@ -307,7 +307,7 @@ class MemoryTab extends AbstractTab {
                 int x = inner.x() + col;
                 int rowEighths = Math.min(8, Math.max(0, totalEighths - row * 8));
                 if (rowEighths > 0) {
-                    buf.setString(x, y, BAR_EIGHTHS[rowEighths], barStyle);
+                    buf.setString(x, y, BAR_EIGHTHS[rowEighths], colStyle);
                 }
             }
         }

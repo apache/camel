@@ -27,3 +27,17 @@ Run with additional dependencies:
 ----
 camel run hello.java --dep=camel-jackson
 ----
+
+Run with custom JVM memory settings (init and max heap):
+
+[source,bash]
+----
+camel run hello.java --jvm-args="-Xms128m -Xmx256m"
+----
+
+Run with max heap only:
+
+[source,bash]
+----
+camel run hello.java --jvm-args="-Xmx512m"
+----

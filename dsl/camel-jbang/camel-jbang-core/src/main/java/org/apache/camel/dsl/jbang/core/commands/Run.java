@@ -261,6 +261,10 @@ public class Run extends CamelCommand {
                           "enable the remote debugging, false to disable the remote debugging or a number to use a custom port")
     int jvmDebugPort;
 
+    @Option(names = { "--jvm-args" },
+            description = "Additional JVM arguments (e.g. -Xmx256m -Xms128m)")
+    String jvmArgs;
+
     @Option(names = { "--name" }, defaultValue = "CamelJBang", description = "The name of the Camel application")
     String name;
 
@@ -558,7 +562,8 @@ public class Run extends CamelCommand {
     }
 
     private boolean isDebugMode() {
-        return jvmDebugPort > 0 || debugOptions.openTelemetryAgent;
+        return jvmDebugPort > 0 || debugOptions.openTelemetryAgent
+                || (jvmArgs != null && !jvmArgs.isBlank());
     }
 
     private void writeSetting(KameletMain main, Properties existing, String key, String value) {
@@ -1398,9 +1403,17 @@ public class Run extends CamelCommand {
             mvnw = "/mvnw.cmd";
         }
         ProcessBuilder pb = new ProcessBuilder();
-        pb.command(runDirPath + mvnw, "--quiet", "--file",
-                runDirPath.toRealPath().resolve("pom.xml").toString(), "package",
-                "quarkus:" + (dev ? "dev" : "run"));
+        List<String> mvnCmd = new ArrayList<>();
+        mvnCmd.add(runDirPath + mvnw);
+        mvnCmd.add("--quiet");
+        mvnCmd.add("--file");
+        mvnCmd.add(runDirPath.toRealPath().resolve("pom.xml").toString());
+        if (jvmArgs != null && !jvmArgs.isBlank()) {
+            mvnCmd.add("-Djvm.args=" + jvmArgs.trim());
+        }
+        mvnCmd.add("package");
+        mvnCmd.add("quarkus:" + (dev ? "dev" : "run"));
+        pb.command(mvnCmd);
 
         pb.inheritIO(); // run in foreground (with IO so logs are visible)
         Process p = pb.start();
@@ -1522,9 +1535,16 @@ public class Run extends CamelCommand {
         if (FileUtil.isWindows()) {
             mvnw = "/mvnw.cmd";
         }
-        pb.command(runDirPath + mvnw, "--quiet", "--file",
-                runDirPath.toRealPath().resolve("pom.xml").toString(),
-                "spring-boot:run");
+        List<String> mvnCmd = new ArrayList<>();
+        mvnCmd.add(runDirPath + mvnw);
+        mvnCmd.add("--quiet");
+        mvnCmd.add("--file");
+        mvnCmd.add(runDirPath.toRealPath().resolve("pom.xml").toString());
+        if (jvmArgs != null && !jvmArgs.isBlank()) {
+            mvnCmd.add("-Dspring-boot.run.jvmArguments=" + jvmArgs.trim());
+        }
+        mvnCmd.add("spring-boot:run");
+        pb.command(mvnCmd);
 
         pb.inheritIO(); // run in foreground (with IO so logs are visible)
         Process p = pb.start();
@@ -1727,6 +1747,12 @@ public class Run extends CamelCommand {
         if (jvmDebugPort > 0) {
             jbangArgs.add("--debug=" + jvmDebugPort); // jbang --debug=port
             cmds.removeIf(arg -> arg.startsWith("--jvm-debug"));
+        }
+        if (jvmArgs != null && !jvmArgs.isBlank()) {
+            for (String arg : jvmArgs.trim().split("\\s+")) {
+                jbangArgs.add("--java-options=" + arg);
+            }
+            cmds.removeIf(a -> a.startsWith("--jvm-args"));
         }
         if (debugOptions.openTelemetryAgent) {
             boolean jaegerExport = "jaeger".equals(debugOptions.openTelemetryAgentExport);
