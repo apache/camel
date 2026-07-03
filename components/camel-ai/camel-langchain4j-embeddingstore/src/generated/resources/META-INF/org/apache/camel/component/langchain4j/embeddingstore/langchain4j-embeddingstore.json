@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "langchain4j-embeddingstore",
     "title": "LangChain4j Embedding Store",
-    "description": "Perform operations on the Langchain4jEmbeddingStores.",
+    "description": "Perform operations on the LangChain4jEmbeddingStores.",
     "deprecated": false,
     "firstVersion": "4.14.0",
     "label": "database,ai",

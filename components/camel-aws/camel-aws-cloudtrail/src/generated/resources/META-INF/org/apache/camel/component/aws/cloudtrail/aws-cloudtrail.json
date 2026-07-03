@@ -2,8 +2,8 @@
   "component": {
     "kind": "component",
     "name": "aws-cloudtrail",
-    "title": "AWS Cloudtrail",
-    "description": "Consume events from Amazon Cloudtrail using AWS SDK version 2.x.",
+    "title": "AWS CloudTrail",
+    "description": "Consume events from Amazon CloudTrail using AWS SDK version 2.x.",
     "deprecated": false,
     "firstVersion": "3.19.0",
     "label": "cloud,management,monitoring",

@@ -25,7 +25,7 @@ import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 
 /**
- * Hashicorp Vault component
+ * HashiCorp Vault component
  */
 @Component("hashicorp-vault")
 public class HashicorpVaultComponent extends DefaultComponent {

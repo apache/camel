@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "irc",
     "title": "IRC",
-    "description": "Send and receive messages to\/from and IRC chat.",
+    "description": "Send and receive messages to\/from an IRC chat.",
     "deprecated": true,
     "firstVersion": "1.1.0",
     "label": "chat",

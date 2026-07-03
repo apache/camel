@@ -34,7 +34,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Messaging with AMQP protocol using Apache QPid Client.
+ * Messaging with AMQP protocol using Apache Qpid Client.
  */
 @Component("amqp")
 public class AMQPComponent extends JmsComponent {

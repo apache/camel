@@ -2,8 +2,8 @@
   "component": {
     "kind": "component",
     "name": "debezium-postgres",
-    "title": "Debezium PostgresSQL Connector",
-    "description": "Capture changes from a PostgresSQL database.",
+    "title": "Debezium PostgreSQL Connector",
+    "description": "Capture changes from a PostgreSQL database.",
     "deprecated": false,
     "firstVersion": "3.0.0",
     "label": "database",

@@ -36,7 +36,7 @@ import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
 public interface PgReplicationSlotEndpointBuilderFactory {
 
     /**
-     * Builder for endpoint for the PostgresSQL Replication Slot component.
+     * Builder for endpoint for the PostgreSQL Replication Slot component.
      */
     public interface PgReplicationSlotEndpointBuilder
             extends
@@ -566,7 +566,7 @@ public interface PgReplicationSlotEndpointBuilderFactory {
     }
 
     /**
-     * Advanced builder for endpoint for the PostgresSQL Replication Slot component.
+     * Advanced builder for endpoint for the PostgreSQL Replication Slot component.
      */
     public interface AdvancedPgReplicationSlotEndpointBuilder
             extends
@@ -835,7 +835,7 @@ public interface PgReplicationSlotEndpointBuilderFactory {
 
     public interface PgReplicationSlotBuilders {
         /**
-         * PostgresSQL Replication Slot (camel-pg-replication-slot)
+         * PostgreSQL Replication Slot (camel-pg-replication-slot)
          * Poll for PostgreSQL Write-Ahead Log (WAL) records using Streaming
          * Replication Slots.
          * 
@@ -870,7 +870,7 @@ public interface PgReplicationSlotEndpointBuilderFactory {
             return PgReplicationSlotEndpointBuilderFactory.endpointBuilder("pg-replication-slot", path);
         }
         /**
-         * PostgresSQL Replication Slot (camel-pg-replication-slot)
+         * PostgreSQL Replication Slot (camel-pg-replication-slot)
          * Poll for PostgreSQL Write-Ahead Log (WAL) records using Streaming
          * Replication Slots.
          * 

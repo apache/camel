@@ -2,7 +2,7 @@
 :doctitle: MapStruct
 :shortname: mapstruct
 :artifactid: camel-mapstruct
-:description: Type Conversion using Mapstruct
+:description: Type Conversion using MapStruct
 :since: 3.19
 :supportlevel: Stable
 :tabs-sync-option:

@@ -2,7 +2,7 @@
 :doctitle: Elasticsearch
 :shortname: elasticsearch
 :artifactid: camel-elasticsearch
-:description: Send requests to ElasticSearch via Java Client API.
+:description: Send requests to Elasticsearch via Java Client API.
 :since: 3.19
 :supportlevel: Stable
 :tabs-sync-option:
@@ -12,8 +12,8 @@
 
 *{component-header}*
 
-The ElasticSearch component allows you to interface with an
-https://www.elastic.co/products/elasticsearch[ElasticSearch] 8.x API using the Java API Client library.
+The Elasticsearch component allows you to interface with an
+https://www.elastic.co/products/elasticsearch[Elasticsearch] 8.x API using the Java API Client library.
 
 Maven users will need to add the following dependency to their `pom.xml`
 for this component:
@@ -43,7 +43,7 @@ include::partial$component-endpoint-headers.adoc[]
 
 == Message Operations
 
-The following ElasticSearch operations are currently supported.
+The following Elasticsearch operations are currently supported.
 Set an endpoint URI option or exchange header with a key of "operation"
 and a value set to one of the following. Some operations also require
 other parameters or the message body to be set.

@@ -2,7 +2,7 @@
 :doctitle: IRC
 :shortname: irc
 :artifactid: camel-irc
-:description: Send and receive messages to/from and IRC chat.
+:description: Send and receive messages to/from an IRC chat.
 :since: 1.1
 :supportlevel: Stable-deprecated
 :deprecated: *deprecated*

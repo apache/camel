@@ -2,7 +2,7 @@
 :doctitle: AMQP
 :shortname: amqp
 :artifactid: camel-amqp
-:description: Messaging with AMQP protocol using Apache QPid Client.
+:description: Messaging with AMQP protocol using Apache Qpid Client.
 :since: 1.2
 :supportlevel: Stable
 :tabs-sync-option:

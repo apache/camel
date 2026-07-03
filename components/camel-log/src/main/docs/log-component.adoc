@@ -2,7 +2,7 @@
 :doctitle: Log Data
 :shortname: log
 :artifactid: camel-log
-:description: Prints data form the routed message (such as body and headers) to the logger.
+:description: Prints data from the routed message (such as body and headers) to the logger.
 :since: 1.1
 :supportlevel: Stable
 :tabs-sync-option:

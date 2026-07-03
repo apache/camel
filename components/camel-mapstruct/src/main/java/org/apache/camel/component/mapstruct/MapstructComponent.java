@@ -61,7 +61,7 @@ public class MapstructComponent extends DefaultComponent {
     }
 
     /**
-     * Package name(s) where Camel should discover Mapstruct mapping classes. Multiple package names can be separated by
+     * Package name(s) where Camel should discover MapStruct mapping classes. Multiple package names can be separated by
      * comma.
      */
     public void setMapperPackageName(String mapperPackageName) {

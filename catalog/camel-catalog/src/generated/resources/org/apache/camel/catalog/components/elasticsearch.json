@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "elasticsearch",
     "title": "Elasticsearch",
-    "description": "Send requests to ElasticSearch via Java Client API.",
+    "description": "Send requests to Elasticsearch via Java Client API.",
     "deprecated": false,
     "firstVersion": "3.19.0",
     "label": "search,monitoring",

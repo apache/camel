@@ -178,7 +178,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * AMQP (camel-amqp)
-     * Messaging with AMQP protocol using Apache QPid Client.
+     * Messaging with AMQP protocol using Apache Qpid Client.
      * 
      * Category: messaging
      * Since: 1.2
@@ -203,7 +203,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * AMQP (camel-amqp)
-     * Messaging with AMQP protocol using Apache QPid Client.
+     * Messaging with AMQP protocol using Apache Qpid Client.
      * 
      * Category: messaging
      * Since: 1.2
@@ -619,8 +619,8 @@ public class StaticEndpointBuilders {
         return BedrockAgentRuntimeEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * AWS Cloudtrail (camel-aws-cloudtrail)
-     * Consume events from Amazon Cloudtrail using AWS SDK version 2.x.
+     * AWS CloudTrail (camel-aws-cloudtrail)
+     * Consume events from Amazon CloudTrail using AWS SDK version 2.x.
      * 
      * Category: cloud,management,monitoring
      * Since: 3.19
@@ -638,8 +638,8 @@ public class StaticEndpointBuilders {
         return awsCloudtrail("aws-cloudtrail", path);
     }
     /**
-     * AWS Cloudtrail (camel-aws-cloudtrail)
-     * Consume events from Amazon Cloudtrail using AWS SDK version 2.x.
+     * AWS CloudTrail (camel-aws-cloudtrail)
+     * Consume events from Amazon CloudTrail using AWS SDK version 2.x.
      * 
      * Category: cloud,management,monitoring
      * Since: 3.19
@@ -4114,8 +4114,8 @@ public class StaticEndpointBuilders {
         return DebeziumOracleEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * Debezium PostgresSQL Connector (camel-debezium-postgres)
-     * Capture changes from a PostgresSQL database.
+     * Debezium PostgreSQL Connector (camel-debezium-postgres)
+     * Capture changes from a PostgreSQL database.
      * 
      * Category: database
      * Since: 3.0
@@ -4134,8 +4134,8 @@ public class StaticEndpointBuilders {
         return debeziumPostgres("debezium-postgres", path);
     }
     /**
-     * Debezium PostgresSQL Connector (camel-debezium-postgres)
-     * Capture changes from a PostgresSQL database.
+     * Debezium PostgreSQL Connector (camel-debezium-postgres)
+     * Capture changes from a PostgreSQL database.
      * 
      * Category: database
      * Since: 3.0
@@ -4877,7 +4877,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Elasticsearch (camel-elasticsearch)
-     * Send requests to ElasticSearch via Java Client API.
+     * Send requests to Elasticsearch via Java Client API.
      * 
      * Category: search,monitoring
      * Since: 3.19
@@ -4896,7 +4896,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Elasticsearch (camel-elasticsearch)
-     * Send requests to ElasticSearch via Java Client API.
+     * Send requests to Elasticsearch via Java Client API.
      * 
      * Category: search,monitoring
      * Since: 3.19
@@ -6596,8 +6596,8 @@ public class StaticEndpointBuilders {
         return GrpcEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * Hashicorp Vault (camel-hashicorp-vault)
-     * Manage secrets in Hashicorp Vault Service
+     * HashiCorp Vault (camel-hashicorp-vault)
+     * Manage secrets in HashiCorp Vault Service
      * 
      * Category: cloud,cloud
      * Since: 3.18
@@ -6615,8 +6615,8 @@ public class StaticEndpointBuilders {
         return hashicorpVault("hashicorp-vault", path);
     }
     /**
-     * Hashicorp Vault (camel-hashicorp-vault)
-     * Manage secrets in Hashicorp Vault Service
+     * HashiCorp Vault (camel-hashicorp-vault)
+     * Manage secrets in HashiCorp Vault Service
      * 
      * Category: cloud,cloud
      * Since: 3.18
@@ -8506,7 +8506,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * IRC (camel-irc)
-     * Send and receive messages to/from and IRC chat.
+     * Send and receive messages to/from an IRC chat.
      * 
      * Category: chat
      * Since: 1.1
@@ -8530,7 +8530,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * IRC (camel-irc)
-     * Send and receive messages to/from and IRC chat.
+     * Send and receive messages to/from an IRC chat.
      * 
      * Category: chat
      * Since: 1.1
@@ -10738,7 +10738,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * LangChain4j Embedding Store (camel-langchain4j-embeddingstore)
-     * Perform operations on the Langchain4jEmbeddingStores.
+     * Perform operations on the LangChain4jEmbeddingStores.
      * 
      * Category: database,ai
      * Since: 4.14
@@ -10757,7 +10757,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * LangChain4j Embedding Store (camel-langchain4j-embeddingstore)
-     * Perform operations on the Langchain4jEmbeddingStores.
+     * Perform operations on the LangChain4jEmbeddingStores.
      * 
      * Category: database,ai
      * Since: 4.14
@@ -11016,7 +11016,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Log Data (camel-log)
-     * Prints data form the routed message (such as body and headers) to the
+     * Prints data from the routed message (such as body and headers) to the
      * logger.
      * 
      * Category: core,monitoring
@@ -11036,7 +11036,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Log Data (camel-log)
-     * Prints data form the routed message (such as body and headers) to the
+     * Prints data from the routed message (such as body and headers) to the
      * logger.
      * 
      * Category: core,monitoring
@@ -11206,7 +11206,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * MapStruct (camel-mapstruct)
-     * Type Conversion using Mapstruct
+     * Type Conversion using MapStruct
      * 
      * Category: transformation
      * Since: 3.19
@@ -11226,7 +11226,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * MapStruct (camel-mapstruct)
-     * Type Conversion using Mapstruct
+     * Type Conversion using MapStruct
      * 
      * Category: transformation
      * Since: 3.19
@@ -13151,7 +13151,7 @@ public class StaticEndpointBuilders {
         return PdfEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * PostgresSQL Replication Slot (camel-pg-replication-slot)
+     * PostgreSQL Replication Slot (camel-pg-replication-slot)
      * Poll for PostgreSQL Write-Ahead Log (WAL) records using Streaming
      * Replication Slots.
      * 
@@ -13186,7 +13186,7 @@ public class StaticEndpointBuilders {
         return pgReplicationSlot("pg-replication-slot", path);
     }
     /**
-     * PostgresSQL Replication Slot (camel-pg-replication-slot)
+     * PostgreSQL Replication Slot (camel-pg-replication-slot)
      * Poll for PostgreSQL Write-Ahead Log (WAL) records using Streaming
      * Replication Slots.
      * 
@@ -13223,7 +13223,7 @@ public class StaticEndpointBuilders {
         return PgReplicationSlotEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * PostgresSQL Event (camel-pgevent)
+     * PostgreSQL Event (camel-pgevent)
      * Send and receive PostgreSQL events via LISTEN and NOTIFY commands.
      * 
      * Category: database
@@ -13255,7 +13255,7 @@ public class StaticEndpointBuilders {
         return pgevent("pgevent", path);
     }
     /**
-     * PostgresSQL Event (camel-pgevent)
+     * PostgreSQL Event (camel-pgevent)
      * Send and receive PostgreSQL events via LISTEN and NOTIFY commands.
      * 
      * Category: database

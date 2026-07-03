@@ -24,13 +24,13 @@ import org.apache.camel.support.console.AbstractDevConsole;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.vault.HashicorpVaultConfiguration;
 
-@DevConsole(name = "hashicorp-secrets", displayName = "Hashicorp Secrets", description = "Hashicorp Vault Secrets")
+@DevConsole(name = "hashicorp-secrets", displayName = "HashiCorp Secrets", description = "HashiCorp Vault Secrets")
 public class SecretsDevConsole extends AbstractDevConsole {
 
     private HashicorpVaultPropertiesFunction propertiesFunction;
 
     public SecretsDevConsole() {
-        super("camel", "hashicorp-secrets", "Hashicorp Secrets", "Hashicorp Vault Secrets");
+        super("camel", "hashicorp-secrets", "HashiCorp Secrets", "HashiCorp Vault Secrets");
     }
 
     @Override
