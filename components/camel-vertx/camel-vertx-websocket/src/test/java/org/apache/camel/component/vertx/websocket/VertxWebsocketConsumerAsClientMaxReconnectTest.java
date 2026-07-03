@@ -57,14 +57,11 @@ public class VertxWebsocketConsumerAsClientMaxReconnectTest extends VertxWebSock
         Assertions.assertInstanceOf(ConnectException.class, exception.getCause());
 
         // Wait for client consumer reconnect max attempts to be exhausted
-        // (maxReconnectAttempts=1, reconnectInterval=10ms)
+        // (maxReconnectAttempts=1, reconnectInterval=10ms).
+        // Use pollDelay to give reconnect attempts time to complete before checking.
         await().atMost(10, TimeUnit.SECONDS)
-                .pollInterval(100, TimeUnit.MILLISECONDS)
-                .during(2, TimeUnit.SECONDS)
-                .untilAsserted(() -> {
-                    // Keep verifying the mock stays at 0 while reconnect attempts exhaust
-                    mockEndpoint.assertIsSatisfied();
-                });
+                .pollDelay(2, TimeUnit.SECONDS)
+                .untilAsserted(() -> mockEndpoint.assertIsSatisfied());
 
         // Restart server
         context.getRouteController().startRoute("server");
