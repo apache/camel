@@ -67,7 +67,7 @@ public class ScanStreamFileTest extends CamelTestSupport {
             fos.close();
         }
 
-        MockEndpoint.assertIsSatisfied(context);
+        await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> MockEndpoint.assertIsSatisfied(context));
     }
 
     @Test
@@ -112,7 +112,7 @@ public class ScanStreamFileTest extends CamelTestSupport {
             fos.close();
         }
 
-        MockEndpoint.assertIsSatisfied(context);
+        await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> MockEndpoint.assertIsSatisfied(context));
     }
 
     private FileOutputStream refreshFile(FileOutputStream fos) throws Exception {

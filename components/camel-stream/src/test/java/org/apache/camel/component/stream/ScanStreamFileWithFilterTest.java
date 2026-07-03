@@ -18,6 +18,7 @@ package org.apache.camel.component.stream;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -26,6 +27,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.test.junit6.TestSupport.createDirectory;
 import static org.apache.camel.test.junit6.TestSupport.deleteDirectory;
+import static org.awaitility.Awaitility.await;
 
 /**
  * Unit test for scan stream file
@@ -60,7 +62,7 @@ public class ScanStreamFileWithFilterTest extends CamelTestSupport {
         fos.flush();
         fos.close();
 
-        MockEndpoint.assertIsSatisfied(context);
+        await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> MockEndpoint.assertIsSatisfied(context));
     }
 
     @Override
