@@ -19,7 +19,6 @@ package org.apache.camel.component.vertx.websocket;
 import java.net.ConnectException;
 import java.util.concurrent.TimeUnit;
 
-import io.vertx.core.http.WebSocket;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.RoutesBuilder;
@@ -46,40 +45,39 @@ public class VertxWebsocketConsumerAsClientReconnectTest extends VertxWebSocketT
 
         context.getRouteController().stopRoute("server");
 
-        // Verify that we cannot send messages
-        Exchange exchange = template.send(uri, new Processor() {
-            @Override
-            public void process(Exchange exchange) throws Exception {
-                exchange.getMessage().setBody("Hello World Again");
-            }
-        });
-        Exception exception = exchange.getException();
-        Assertions.assertNotNull(exception);
-        Assertions.assertInstanceOf(ConnectException.class, exception.getCause());
+        // Verify that the server is fully down by waiting until sends fail.
+        // The producer endpoint's cached WebSocket may still appear open briefly
+        // after stopRoute returns, until the Vert.x event loop processes the
+        // TCP close frame and isClosed() starts returning true.
+        await().atMost(10, TimeUnit.SECONDS)
+                .untilAsserted(() -> {
+                    Exchange exchange = template.send(uri, new Processor() {
+                        @Override
+                        public void process(Exchange exchange) throws Exception {
+                            exchange.getMessage().setBody("Hello World Again");
+                        }
+                    });
+                    Assertions.assertNotNull(exchange.getException());
+                    Assertions.assertInstanceOf(ConnectException.class, exchange.getException().getCause());
+                });
 
         // Restart server
         context.getRouteController().startRoute("server");
 
-        // Wait for client consumer to reconnect and verify it can receive messages.
-        // After the server is stopped, the client consumer's close handler fires
-        // asynchronously on the Vert.x event loop. Once it fires, the reconnect
-        // timer starts and will connect to the restarted server.
-        // Use a fresh WebSocket connection to send messages (bypassing the Camel
-        // producer endpoint's stale cached WebSocket from the pre-stop send).
+        // Wait for client consumer to reconnect and verify end-to-end message flow.
+        // After the server stops, the client consumer's close handler fires
+        // asynchronously on the Vert.x event loop, starting the reconnect timer
+        // that connects to the restarted server.
+        // Use ignoreExceptions() to retry through transient failures while both
+        // the producer and client consumer re-establish their connections.
         await().atMost(20, TimeUnit.SECONDS)
                 .pollInterval(500, TimeUnit.MILLISECONDS)
                 .ignoreExceptions()
                 .untilAsserted(() -> {
                     mockEndpoint.reset();
                     mockEndpoint.expectedBodiesReceived("Hello World Again");
-                    WebSocket ws = openWebSocketConnection("localhost", port.getPort(), "/echo", msg -> {
-                    });
-                    try {
-                        ws.writeTextMessage("Hello World Again");
-                        mockEndpoint.assertIsSatisfied(500);
-                    } finally {
-                        ws.close();
-                    }
+                    template.sendBody(uri, "Hello World Again");
+                    mockEndpoint.assertIsSatisfied(500);
                 });
     }
 

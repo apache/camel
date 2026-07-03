@@ -45,16 +45,21 @@ public class VertxWebsocketConsumerAsClientMaxReconnectTest extends VertxWebSock
 
         context.getRouteController().stopRoute("server");
 
-        // Verify that we cannot send messages
-        Exchange exchange = template.send(uri, new Processor() {
-            @Override
-            public void process(Exchange exchange) throws Exception {
-                exchange.getMessage().setBody("Hello World Again");
-            }
-        });
-        Exception exception = exchange.getException();
-        Assertions.assertNotNull(exception);
-        Assertions.assertInstanceOf(ConnectException.class, exception.getCause());
+        // Verify that the server is fully down by waiting until sends fail.
+        // The producer endpoint's cached WebSocket may still appear open briefly
+        // after stopRoute returns, until the Vert.x event loop processes the
+        // TCP close frame and isClosed() starts returning true.
+        await().atMost(10, TimeUnit.SECONDS)
+                .untilAsserted(() -> {
+                    Exchange exchange = template.send(uri, new Processor() {
+                        @Override
+                        public void process(Exchange exchange) throws Exception {
+                            exchange.getMessage().setBody("Hello World Again");
+                        }
+                    });
+                    Assertions.assertNotNull(exchange.getException());
+                    Assertions.assertInstanceOf(ConnectException.class, exchange.getException().getCause());
+                });
 
         // Wait for client consumer reconnect max attempts to be exhausted
         // (maxReconnectAttempts=1, reconnectInterval=10ms).
