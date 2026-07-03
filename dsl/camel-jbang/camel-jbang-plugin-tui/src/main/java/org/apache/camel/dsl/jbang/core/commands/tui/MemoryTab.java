@@ -288,18 +288,18 @@ class MemoryTab extends AbstractTab {
             data[dataOffset + (i - startIdx)] = hist.get(i);
         }
 
-        // Render multi-row bar chart with per-column color based on heap load at that point
+        // Render multi-row bar chart with stacked colors: green (<60%), yellow (60-80%), light red (>80%)
         Buffer buf = frame.buffer();
+        // Precompute eighths thresholds for the color bands
+        int greenEighths = (int) Math.round(0.6 * chartH * 8.0);
+        int yellowEighths = (int) Math.round(0.8 * chartH * 8.0);
+        Style greenStyle = Style.EMPTY.fg(Color.GREEN);
+        Style yellowStyle = Style.EMPTY.fg(Color.YELLOW);
+        Style redStyle = Style.EMPTY.fg(Color.LIGHT_RED);
 
         for (int col = 0; col < chartW; col++) {
-            long colPct = ceiling > 0 ? data[col] * 100 / ceiling : 0;
-            Color colColor = colPct >= 80 ? Color.LIGHT_RED : colPct >= 60 ? Color.YELLOW : Color.GREEN;
-            Style colStyle = Style.EMPTY.fg(colColor);
-
             double ratio = (double) data[col] / ceiling;
-            // Total eighths this column fills (chartH rows * 8 eighths per row)
-            double fillEighths = ratio * chartH * 8.0;
-            int totalEighths = (int) Math.round(fillEighths);
+            int totalEighths = (int) Math.round(ratio * chartH * 8.0);
 
             // Render from bottom to top
             for (int row = 0; row < chartH; row++) {
@@ -307,7 +307,17 @@ class MemoryTab extends AbstractTab {
                 int x = inner.x() + col;
                 int rowEighths = Math.min(8, Math.max(0, totalEighths - row * 8));
                 if (rowEighths > 0) {
-                    buf.setString(x, y, BAR_EIGHTHS[rowEighths], colStyle);
+                    // Determine color based on vertical position in the bar
+                    int eighthsAtRowBottom = row * 8;
+                    Style style;
+                    if (eighthsAtRowBottom >= yellowEighths) {
+                        style = redStyle;
+                    } else if (eighthsAtRowBottom >= greenEighths) {
+                        style = yellowStyle;
+                    } else {
+                        style = greenStyle;
+                    }
+                    buf.setString(x, y, BAR_EIGHTHS[rowEighths], style);
                 }
             }
         }
