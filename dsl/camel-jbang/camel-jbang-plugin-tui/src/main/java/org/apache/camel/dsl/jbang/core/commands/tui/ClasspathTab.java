@@ -90,7 +90,6 @@ class ClasspathTab extends AbstractTab {
         lastPid = null;
         errorMessage = null;
         dataLoaded = false;
-        loadClasspath();
     }
 
     @Override

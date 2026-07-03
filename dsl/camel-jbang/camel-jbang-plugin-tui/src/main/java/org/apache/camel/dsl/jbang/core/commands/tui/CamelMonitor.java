@@ -75,7 +75,7 @@ import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.hint;
 public class CamelMonitor extends CamelCommand {
 
     private static final Logger LOG = System.getLogger(CamelMonitor.class.getName());
-    private static final long DEFAULT_REFRESH_MS = 100;
+    private static final long DEFAULT_REFRESH_MS = 500;
 
     // Compact tab bar (10 labels + 9 "|" dividers) needs 88 chars — that is the true minimum
     private static final int MIN_WIDTH = 88;
@@ -1789,9 +1789,6 @@ public class CamelMonitor extends CamelCommand {
         if (ctx.selectedPid != null && !isInfraSelected()) {
             IntegrationInfo selInfo = findSelectedIntegration();
             if (selInfo != null) {
-                if (selInfo.directory != null && !selInfo.directory.isEmpty()) {
-                    hint(spans, "f", "files");
-                }
                 hint(spans, "p", selInfo.routeStarted > 0 ? "stop routes" : "start routes");
             }
         }

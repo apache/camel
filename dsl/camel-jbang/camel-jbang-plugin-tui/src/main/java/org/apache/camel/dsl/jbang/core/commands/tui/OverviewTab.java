@@ -488,10 +488,11 @@ class OverviewTab extends AbstractTab {
                 }
             }
 
-            long maxTp = 0;
+            long rawMax = 0;
             for (long v : mergedTotal) {
-                maxTp = Math.max(maxTp, v);
+                rawMax = Math.max(rawMax, v);
             }
+            long maxTp = roundUpNice(rawMax);
             long curTp = mergedTotal[renderPoints - 1];
             long curFailed = mergedFailed[renderPoints - 1];
             long curOk = Math.max(0, curTp - curFailed);
@@ -561,17 +562,26 @@ class OverviewTab extends AbstractTab {
             if (!vChunks.get(1).isEmpty()) {
                 int barInnerStartX = barChartArea.x();
                 int xAxisY = vChunks.get(1).y();
-                int[][] markerIndices = {
-                        { 0, renderPoints },
-                        { renderPoints / 4, renderPoints - renderPoints / 4 },
-                        { renderPoints / 2, renderPoints / 2 },
-                        { 3 * renderPoints / 4, renderPoints / 4 },
-                        { renderPoints - 1, 0 }
-                };
-                for (int[] m : markerIndices) {
-                    int groupIdx = m[0];
-                    int secsAgo = m[1];
-                    String label = secsAgo == 0 ? "now" : "-" + secsAgo + "s";
+                int step;
+                if (renderPoints <= 20) {
+                    step = 5;
+                } else if (renderPoints <= 80) {
+                    step = 10;
+                } else {
+                    step = 20;
+                }
+                // "now" label at the right edge
+                int nowX = barInnerStartX + (renderPoints - 1) * 2;
+                if (nowX + 3 <= barChartArea.right()) {
+                    frame.buffer().setString(nowX, xAxisY, "now", dimStyle);
+                }
+                // round time markers from right to left
+                for (int s = step; s <= renderPoints; s += step) {
+                    int groupIdx = renderPoints - 1 - s;
+                    if (groupIdx < 0) {
+                        break;
+                    }
+                    String label = "-" + s + "s";
                     int markerX = barInnerStartX + groupIdx * 2;
                     if (markerX + label.length() <= barChartArea.right()) {
                         frame.buffer().setString(markerX, xAxisY, label, dimStyle);
@@ -880,6 +890,18 @@ class OverviewTab extends AbstractTab {
 
     private Style sortStyle(String column) {
         return sortStyle(column, sort);
+    }
+
+    private static long roundUpNice(long value) {
+        if (value <= 10) {
+            return 10;
+        }
+        long step = (long) Math.pow(10, Math.floor(Math.log10(value)));
+        long rounded = ((value + step - 1) / step) * step;
+        if (rounded % 2 != 0) {
+            rounded += step;
+        }
+        return rounded;
     }
 
     private static boolean hasReadmeInSourceDir(IntegrationInfo info) {

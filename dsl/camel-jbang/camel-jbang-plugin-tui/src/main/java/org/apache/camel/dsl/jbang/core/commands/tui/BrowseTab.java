@@ -110,7 +110,6 @@ class BrowseTab extends AbstractTab {
         view = VIEW_ENDPOINTS;
         detailScroll = 0;
         lastPid = null;
-        loadEndpoints();
     }
 
     @Override

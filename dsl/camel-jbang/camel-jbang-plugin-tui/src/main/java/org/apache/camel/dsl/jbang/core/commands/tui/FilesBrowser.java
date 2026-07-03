@@ -113,7 +113,7 @@ class FilesBrowser {
             stream.limit(200)
                     .forEach(p -> {
                         String name = p.getFileName().toString();
-                        if (Files.isDirectory(p)) {
+                        if (Files.isDirectory(p) && !name.startsWith(".")) {
                             dirs.add(new FileEntry("📁", name, -1, p.toString(), true));
                         } else if (Files.isRegularFile(p)) {
                             String emoji = fileEmoji(p);
@@ -169,6 +169,26 @@ class FilesBrowser {
             }
             if (ke.isDown()) {
                 listState.selectNext(entries.size());
+                return true;
+            }
+            if (ke.isPageUp()) {
+                for (int i = 0; i < 20; i++) {
+                    listState.selectPrevious();
+                }
+                return true;
+            }
+            if (ke.isPageDown()) {
+                for (int i = 0; i < 20; i++) {
+                    listState.selectNext(entries.size());
+                }
+                return true;
+            }
+            if (ke.isHome()) {
+                listState.select(0);
+                return true;
+            }
+            if (ke.isEnd()) {
+                listState.select(entries.size() - 1);
                 return true;
             }
             if (ke.isDeleteBackward()) {
@@ -249,7 +269,7 @@ class FilesBrowser {
                 .items(items)
                 .highlightStyle(Theme.selectionBg())
                 .highlightSymbol("")
-                .scrollMode(ScrollMode.NONE)
+                .scrollMode(ScrollMode.AUTO_SCROLL)
                 .block(Block.builder()
                         .borderType(BorderType.ROUNDED).borders(Borders.ALL)
                         .title(Title.from(Line

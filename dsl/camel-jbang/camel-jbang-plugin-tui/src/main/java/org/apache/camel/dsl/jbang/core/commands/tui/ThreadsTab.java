@@ -88,7 +88,6 @@ class ThreadsTab extends AbstractTableTab {
         showTrace = false;
         traceScroll = 0;
         lastPid = null;
-        loadThreads();
     }
 
     @Override

@@ -139,7 +139,6 @@ class StartupTab extends AbstractTab {
         scrollOffset = 0;
         errorMessage = null;
         dataLoaded = false;
-        loadStartupData();
     }
 
     @Override

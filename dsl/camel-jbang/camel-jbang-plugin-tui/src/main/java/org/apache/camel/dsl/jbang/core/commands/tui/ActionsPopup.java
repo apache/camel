@@ -60,9 +60,11 @@ import dev.tamboui.widgets.list.ScrollMode;
 import dev.tamboui.widgets.paragraph.Paragraph;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
+import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.ExampleHelper;
 import org.apache.camel.dsl.jbang.core.common.LauncherHelper;
 import org.apache.camel.dsl.jbang.core.common.PathUtils;
+import org.apache.camel.dsl.jbang.core.common.Printer;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
@@ -158,11 +160,13 @@ class ActionsPopup {
     private int infraImplIndex;
     private TextInputState infraPortState;
 
+    private static final String PROP_LAST_FOLDER = "camel.tui.lastFolder";
     private boolean showFolderInput;
     private TextInputState folderInputState;
     private final List<String> folderHistory = new ArrayList<>();
     private int folderHistoryIndex = -1;
     private String selectedFolder;
+    private final FolderBrowser folderBrowser = new FolderBrowser();
 
     private final McpLogPopup mcpLogPopup = new McpLogPopup();
     private final AiLogPopup aiLogPopup = new AiLogPopup();
@@ -327,7 +331,8 @@ class ActionsPopup {
     }
 
     boolean isVisible() {
-        return showActionsMenu || showGotoPopup || showExampleBrowser || showFolderInput || runOptionsForm.isVisible()
+        return showActionsMenu || showGotoPopup || showExampleBrowser || showFolderInput || folderBrowser.isVisible()
+                || runOptionsForm.isVisible()
                 || showDocPicker || showDocViewer
                 || showInfraBrowser || showInfraPortDialog
                 || mcpLogPopup.isVisible() || aiLogPopup.isVisible() || doctorPopup.isVisible()
@@ -378,8 +383,8 @@ class ActionsPopup {
         labels.add("───");
         // Group 1: User Actions
         labels.add("Send Message");
-        labels.add("Run an example...");
-        labels.add("Run from folder...");
+        labels.add("Run an Example...");
+        labels.add("Run from Folder...");
         labels.add("Run Dev/Infra Service...");
         labels.add("Browse Files...");
         labels.add("Stop All");
@@ -550,12 +555,23 @@ class ActionsPopup {
             }
             return true;
         }
+        if (folderBrowser.isVisible()) {
+            folderBrowser.handleKeyEvent(ke);
+            if (!folderBrowser.isVisible() && !showFolderInput) {
+                showFolderInput = true;
+            }
+            return true;
+        }
         if (showFolderInput) {
             if (ke.isCancel()) {
                 showFolderInput = false;
                 showActionsMenu = true;
             } else if (ke.isConfirm()) {
                 confirmFolderInput();
+            } else if (ke.isKey(KeyCode.TAB)) {
+                String current = folderInputState.text().trim();
+                showFolderInput = false;
+                folderBrowser.open(current);
             } else if (ke.isUp()) {
                 navigateFolderHistory(-1);
             } else if (ke.isDown()) {
@@ -805,6 +821,9 @@ class ActionsPopup {
         if (showInfraPortDialog) {
             renderInfraPortDialog(frame, area);
         }
+        if (folderBrowser.isVisible()) {
+            folderBrowser.render(frame, area);
+        }
         if (showFolderInput) {
             renderFolderInput(frame, area);
         }
@@ -880,10 +899,15 @@ class ActionsPopup {
             runOptionsForm.renderFooter(spans);
             return;
         }
+        if (folderBrowser.isVisible()) {
+            folderBrowser.renderFooter(spans);
+            return;
+        }
         if (showFolderInput) {
             if (!folderHistory.isEmpty()) {
                 hint(spans, "↑↓", "history");
             }
+            hint(spans, "Tab", "browse");
             hint(spans, "Enter", "run...");
             hintLast(spans, "Esc", "back");
             return;
@@ -963,8 +987,8 @@ class ActionsPopup {
         items.add(hasSelection
                 ? ListItem.from("  📩 Send Message")
                 : ListItem.from("  📩 Send Message").style(Style.EMPTY.dim()));
-        items.add(ListItem.from("  🐪 Run an example..."));
-        items.add(ListItem.from("  📂 Run from folder..."));
+        items.add(ListItem.from("  🐪 Run an Example..."));
+        items.add(ListItem.from("  📂 Run from Folder..."));
         items.add(ListItem.from("  🔧 Run Dev/Infra Service..."));
         items.add(hasSelection
                 ? ListItem.from("  📁 Browse Files...")
@@ -1437,8 +1461,16 @@ class ActionsPopup {
     private void openFolderInput() {
         showActionsMenu = false;
         showFolderInput = true;
-        folderInputState = new TextInputState("");
+        String lastFolder = loadLastFolder();
+        if (lastFolder == null) {
+            lastFolder = System.getProperty("user.dir");
+        }
+        folderInputState = new TextInputState(lastFolder != null ? lastFolder : "");
         folderHistoryIndex = -1;
+        folderBrowser.setOnSelect(path -> {
+            folderInputState = new TextInputState(path);
+            showFolderInput = true;
+        });
     }
 
     private void confirmFolderInput() {
@@ -1462,8 +1494,34 @@ class ActionsPopup {
         }
         selectedFolder = folder;
         showFolderInput = false;
+        persistLastFolder(folder);
         String displayName = dirPath.getFileName().toString();
         runOptionsForm.open(displayName, displayName, false, true);
+    }
+
+    private static String loadLastFolder() {
+        String[] holder = { null };
+        try {
+            CommandLineHelper.loadProperties(props -> {
+                holder[0] = props.getProperty(PROP_LAST_FOLDER);
+            });
+        } catch (RuntimeException e) {
+            // ignore
+        }
+        return holder[0];
+    }
+
+    private static void persistLastFolder(String folder) {
+        try {
+            CommandLineHelper.createPropertyFile(false);
+            CommandLineHelper.loadProperties(props -> {
+                props.setProperty(PROP_LAST_FOLDER, folder);
+                CommandLineHelper.storeProperties(props,
+                        new Printer.QuietPrinter(new Printer.SystemOutPrinter()), false);
+            });
+        } catch (Exception e) {
+            // ignore
+        }
     }
 
     private void navigateFolderHistory(int direction) {
@@ -1520,7 +1578,7 @@ class ActionsPopup {
 
         Block block = Block.builder()
                 .borderType(BorderType.ROUNDED).borders(Borders.ALL)
-                .title(" Run from folder ")
+                .title(" Run from Folder ")
                 .build();
         frame.renderWidget(block, popup);
         Rect inner = block.inner(popup);

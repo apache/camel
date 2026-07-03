@@ -240,7 +240,8 @@ class DataRefreshService {
         }
 
         List<Long> refreshPids;
-        if (!fullScan && ctx.selectedPid != null) {
+        boolean overviewTab = refreshCtx.selectedTab() == TabRegistry.TAB_OVERVIEW;
+        if (!fullScan && ctx.selectedPid != null && !overviewTab) {
             try {
                 refreshPids = List.of(Long.parseLong(ctx.selectedPid));
             } catch (NumberFormatException e) {
@@ -267,7 +268,7 @@ class DataRefreshService {
                 }
             }
         }
-        if (!fullScan && ctx.selectedPid != null) {
+        if (!fullScan && ctx.selectedPid != null && !overviewTab) {
             boolean checkLiveness = now - lastLivenessCheckTime >= LIVENESS_CHECK_INTERVAL_MS;
             if (checkLiveness) {
                 lastLivenessCheckTime = now;

@@ -129,6 +129,7 @@ class HistoryTab extends AbstractTab {
     private final DragSplit detailSplit = new DragSplit();
 
     volatile List<HistoryEntry> historyEntries = Collections.emptyList();
+    private volatile int historyVisibleCount;
     private final TableState historyTableState = new TableState();
     private boolean showHistoryProperties;
     private boolean showHistoryVariables;
@@ -297,11 +298,36 @@ class HistoryTab extends AbstractTab {
             } else {
                 if (showWaterfall) {
                     for (int i = 0; i < 10; i++) {
-                        historyTableState.selectNext(historyEntries.size());
+                        historyTableState.selectNext(historyVisibleCount);
                     }
                 } else {
                     historyDetailScroll += 5;
                 }
+            }
+            return true;
+        }
+        if (ke.isHome()) {
+            if (tracerActive && traceDetailView) {
+                traceStepTableState.selectFirst();
+                traceDetailScroll = 0;
+            } else if (tracerActive) {
+                traceTableState.selectFirst();
+            } else {
+                historyTableState.selectFirst();
+                historyDetailScroll = 0;
+            }
+            return true;
+        }
+        if (ke.isEnd()) {
+            if (tracerActive && traceDetailView) {
+                List<TraceEntry> steps = getTraceStepsDepthFirst(traceSelectedExchangeId);
+                traceStepTableState.selectLast(steps.size());
+                traceDetailScroll = 0;
+            } else if (tracerActive) {
+                traceTableState.selectLast(traceSortedExchangeIds.size());
+            } else {
+                historyTableState.selectLast(historyVisibleCount);
+                historyDetailScroll = 0;
             }
             return true;
         }
@@ -520,7 +546,7 @@ class HistoryTab extends AbstractTab {
             }
         }
         if (!tracerActive) {
-            if (handleTableClick(me, lastHistoryTableArea, historyTableState, historyEntries.size())) {
+            if (handleTableClick(me, lastHistoryTableArea, historyTableState, historyVisibleCount)) {
                 historyDetailScroll = 0;
                 return true;
             }
@@ -570,7 +596,7 @@ class HistoryTab extends AbstractTab {
                 }
             } else {
                 if (isInArea(me, lastHistoryTableArea) || showWaterfall) {
-                    historyTableState.selectNext(historyEntries.size());
+                    historyTableState.selectNext(historyVisibleCount);
                     historyDetailScroll = 0;
                 } else {
                     historyDetailScroll += MOUSE_SCROLL_LINES;
@@ -612,7 +638,7 @@ class HistoryTab extends AbstractTab {
                 traceTableState.selectNext(exchangeIds.size());
             }
         } else {
-            historyTableState.selectNext(historyEntries.size());
+            historyTableState.selectNext(historyVisibleCount);
             historyDetailScroll = 0;
         }
     }
@@ -1210,6 +1236,8 @@ class HistoryTab extends AbstractTab {
                 .build();
 
         lastTraceTableArea = area;
+        int traceVisibleRows = Math.max(0, area.height() - 3);
+        traceTableState.scrollToSelected(traceVisibleRows, rows);
         frame.renderStatefulWidget(table, area, traceTableState);
         renderTableScrollbar(frame, lastTraceTableArea, traceTableState, tableScrollState,
                 traceSortedExchangeIds.size());
@@ -1239,6 +1267,8 @@ class HistoryTab extends AbstractTab {
                 = String.format(" Trace [%s] — %d steps ", TuiHelper.truncate(traceSelectedExchangeId, 30), steps.size());
         lastTraceStepArea = chunks.get(0);
         detailSplit.setBorderPos(chunks.get(1).y());
+        int stepVisibleRows = Math.max(0, chunks.get(0).height() - 3);
+        traceStepTableState.scrollToSelected(stepVisibleRows, rows);
         frame.renderStatefulWidget(
                 buildStepTable(rows, stepTitle, showDescription), chunks.get(0), traceStepTableState);
         renderTableScrollbar(frame, lastTraceStepArea, traceStepTableState, traceStepScrollState,
@@ -1493,6 +1523,7 @@ class HistoryTab extends AbstractTab {
         }
 
         List<HistoryEntry> current = reorderHistoryDepthFirst(historyEntries);
+        historyVisibleCount = current.size();
 
         historyTopPanelHeight = Math.max(3, Math.min(historyTopPanelHeight, area.height() - 5));
         List<Rect> chunks = Layout.vertical()
@@ -1514,6 +1545,8 @@ class HistoryTab extends AbstractTab {
         Title historyTitle = buildHistoryTitle(current);
         lastHistoryTableArea = chunks.get(0);
         vSplit.setBorderPos(chunks.get(1).y());
+        int histVisibleRows = Math.max(0, chunks.get(0).height() - 3);
+        historyTableState.scrollToSelected(histVisibleRows, rows);
         frame.renderStatefulWidget(
                 buildStepTable(rows, historyTitle, showDescription), chunks.get(0), historyTableState);
         renderTableScrollbar(frame, lastHistoryTableArea, historyTableState, historyTableScrollState,

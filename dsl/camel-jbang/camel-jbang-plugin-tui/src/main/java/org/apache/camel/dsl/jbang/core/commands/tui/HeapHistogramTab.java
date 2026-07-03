@@ -88,7 +88,6 @@ class HeapHistogramTab extends AbstractTableTab {
         allEntries = Collections.emptyList();
         classpathEntries = Collections.emptyList();
         lastPid = null;
-        loadHeapHistogram();
     }
 
     @Override

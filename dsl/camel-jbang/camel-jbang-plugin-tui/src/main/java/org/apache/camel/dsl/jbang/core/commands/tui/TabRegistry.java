@@ -265,10 +265,6 @@ class TabRegistry {
         dataService.otelSpans().set(List.of());
 
         filesBrowser.reset();
-
-        // Preload diagram data in background so it's ready when the user switches tabs
-        routesTab.preloadDiagram();
-        diagramTab.preloadDiagram();
     }
 
     void navigateUp() {
