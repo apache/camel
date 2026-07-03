@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.function.IntPredicate;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -43,6 +44,8 @@ import dev.tamboui.text.Span;
 import dev.tamboui.text.Text;
 import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
+import dev.tamboui.tui.event.MouseEvent;
+import dev.tamboui.tui.event.MouseEventKind;
 import dev.tamboui.widgets.Clear;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
@@ -64,12 +67,13 @@ import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
 
-import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.hint;
-import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.hintLast;
+import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.hint;
+import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.hintLast;
 
 class ActionsPopup {
 
     enum Action {
+        GOTO_TAB,
         SEND_MESSAGE,
         RUN_EXAMPLE,
         RUN_FOLDER,
@@ -78,6 +82,7 @@ class ActionsPopup {
         DOCTOR,
         RESET_STATS,
         RESET_SCREEN,
+        TOGGLE_THEME,
         STOP_ALL,
         SCREENSHOT,
         TAPE_RECORDING,
@@ -87,11 +92,12 @@ class ActionsPopup {
         SETUP_AI,
         MCP_INFO,
         MCP_LOG,
+        AI_LOG,
         SHELL
     }
 
-    private static final int[] GROUP_SIZES = { 5, 4, 5 };
-    private static final int MCP_GROUP_SIZE = 3;
+    private static final int[] GROUP_SIZES = { 1, 6, 4, 5 };
+    private static final int MCP_GROUP_SIZE = 4;
     private static final int SHELL_GROUP_SIZE = 1;
 
     private final Supplier<Set<String>> runningNames;
@@ -115,6 +121,17 @@ class ActionsPopup {
 
     private boolean showActionsMenu;
     private final ListState actionsMenuState = new ListState();
+    // Absolute bounds of the single-line list popups captured during render, used to hit-test clicks.
+    private Rect actionsMenuRect;
+    private Rect docPickerRect;
+
+    private boolean showGotoPopup;
+    private final FuzzyFilter gotoFilter = new FuzzyFilter();
+    private final ListState gotoListState = new ListState();
+    private List<TabRegistry.TabEntry> allTabEntries;
+    private List<TabRegistry.TabEntry> filteredTabEntries;
+    private Rect gotoPopupRect;
+    private Runnable gotoTabCallback;
 
     private boolean showExampleBrowser;
     private final ListState exampleBrowserState = new ListState();
@@ -148,6 +165,7 @@ class ActionsPopup {
     private String selectedFolder;
 
     private final McpLogPopup mcpLogPopup = new McpLogPopup();
+    private final AiLogPopup aiLogPopup = new AiLogPopup();
 
     private final DoctorPopup doctorPopup = new DoctorPopup();
     private final SendMessagePopup sendMessagePopup = new SendMessagePopup();
@@ -209,13 +227,24 @@ class ActionsPopup {
         this.browseFilesAction = browseFilesAction;
     }
 
+    void setGotoTabSupport(List<TabRegistry.TabEntry> entries, Runnable callback) {
+        this.allTabEntries = entries;
+        this.gotoTabCallback = callback;
+    }
+
     void setMcpEnabled(
-            boolean enabled, int port, Supplier<String> connectedClient, Supplier<List<TuiMcpServer.LogEntry>> activityLog) {
+            boolean enabled, int port, Supplier<String> connectedClient,
+            Supplier<List<TuiMcpServer.LogEntry>> activityLog, Supplier<Integer> toolCallCount) {
         this.mcpEnabled = enabled;
         this.mcpPort = port;
         this.mcpConnectedClient = connectedClient;
         this.mcpActivityLog = activityLog;
         mcpLogPopup.setActivityLog(activityLog);
+        mcpLogPopup.setToolCallCount(toolCallCount);
+    }
+
+    void setAiActivityLog(Supplier<List<AiPanel.LogEntry>> activityLog) {
+        aiLogPopup.setActivityLog(activityLog);
     }
 
     private int visualActionCount() {
@@ -263,17 +292,20 @@ class ActionsPopup {
 
     private List<Action> buildVisualActionList() {
         List<Action> flat = new ArrayList<>();
-        flat.addAll(List.of(
-                Action.SEND_MESSAGE, Action.RUN_EXAMPLE, Action.RUN_FOLDER, Action.RUN_INFRA, Action.BROWSE_FILES));
+        flat.add(Action.GOTO_TAB);
         flat.add(null);
-        flat.addAll(List.of(Action.DOCTOR, Action.RESET_STATS, Action.RESET_SCREEN, Action.STOP_ALL));
+        flat.addAll(List.of(
+                Action.SEND_MESSAGE, Action.RUN_EXAMPLE, Action.RUN_FOLDER, Action.RUN_INFRA, Action.BROWSE_FILES,
+                Action.STOP_ALL));
+        flat.add(null);
+        flat.addAll(List.of(Action.DOCTOR, Action.RESET_STATS, Action.RESET_SCREEN, Action.TOGGLE_THEME));
         flat.add(null);
         flat.addAll(List.of(
                 Action.SCREENSHOT, Action.TAPE_RECORDING, Action.TAPE_INSTRUCTIONS, Action.CAPTION,
                 Action.SHOW_KEYSTROKES));
         if (mcpEnabled) {
             flat.add(null);
-            flat.addAll(List.of(Action.SETUP_AI, Action.MCP_INFO, Action.MCP_LOG));
+            flat.addAll(List.of(Action.SETUP_AI, Action.AI_LOG, Action.MCP_INFO, Action.MCP_LOG));
         }
         flat.add(null);
         flat.add(Action.SHELL);
@@ -295,10 +327,10 @@ class ActionsPopup {
     }
 
     boolean isVisible() {
-        return showActionsMenu || showExampleBrowser || showFolderInput || runOptionsForm.isVisible()
+        return showActionsMenu || showGotoPopup || showExampleBrowser || showFolderInput || runOptionsForm.isVisible()
                 || showDocPicker || showDocViewer
                 || showInfraBrowser || showInfraPortDialog
-                || mcpLogPopup.isVisible() || doctorPopup.isVisible()
+                || mcpLogPopup.isVisible() || aiLogPopup.isVisible() || doctorPopup.isVisible()
                 || sendMessagePopup.isVisible() || stopAllPopup.isVisible() || captionOverlay.isInlineMode();
     }
 
@@ -341,18 +373,22 @@ class ActionsPopup {
 
     List<String> getActionLabels() {
         List<String> labels = new ArrayList<>();
+        // Group 0: Go to
+        labels.add("Go to...");
+        labels.add("───");
         // Group 1: User Actions
         labels.add("Send Message");
         labels.add("Run an example...");
         labels.add("Run from folder...");
         labels.add("Run Dev/Infra Service...");
         labels.add("Browse Files...");
+        labels.add("Stop All");
         labels.add("───");
         // Group 2: Diagnostics
         labels.add("Run Doctor");
         labels.add("Reset Stats");
         labels.add("Reset Screen");
-        labels.add("Stop All");
+        labels.add("dark".equals(Theme.mode()) ? "Light Theme" : "Dark Theme");
         labels.add("───");
         // Group 3: Recording & Presentation
         labels.add("Take Screenshot");
@@ -363,7 +399,8 @@ class ActionsPopup {
         // Group 4: MCP
         if (mcpEnabled) {
             labels.add("───");
-            labels.add("Setup AI...");
+            labels.add("Setup MCP");
+            labels.add("AI Log");
             labels.add("MCP Info");
             labels.add("MCP Log");
         }
@@ -379,6 +416,8 @@ class ActionsPopup {
 
     void close() {
         showActionsMenu = false;
+        showGotoPopup = false;
+        gotoFilter.clearFilter();
         showExampleBrowser = false;
         showFolderInput = false;
         runOptionsForm.close();
@@ -387,6 +426,7 @@ class ActionsPopup {
         showInfraBrowser = false;
         showInfraPortDialog = false;
         mcpLogPopup.close();
+        aiLogPopup.close();
         doctorPopup.close();
         sendMessagePopup.close();
         stopAllPopup.close();
@@ -417,6 +457,9 @@ class ActionsPopup {
             return true;
         }
         if (mcpLogPopup.handleKeyEvent(ke)) {
+            return true;
+        }
+        if (aiLogPopup.handleKeyEvent(ke)) {
             return true;
         }
         if (showDocViewer) {
@@ -484,7 +527,7 @@ class ActionsPopup {
             } else if (ke.isConfirm()) {
                 selectInfraService();
             } else if (ke.code() == KeyCode.CHAR) {
-                jumpToInfraService(ke.character());
+                jumpToInfraService(ke.string().charAt(0));
             }
             return true;
         }
@@ -553,6 +596,32 @@ class ActionsPopup {
         if (doctorPopup.handleKeyEvent(ke)) {
             return true;
         }
+        if (showGotoPopup) {
+            if (ke.isCancel()) {
+                showGotoPopup = false;
+                gotoFilter.clearFilter();
+                showActionsMenu = true;
+            } else if (ke.isUp()) {
+                gotoListState.selectPrevious();
+            } else if (ke.isDown()) {
+                gotoListState.selectNext(filteredTabEntries != null ? filteredTabEntries.size() : 0);
+            } else if (ke.isConfirm()) {
+                Integer sel = gotoListState.selected();
+                if (sel != null && filteredTabEntries != null && sel < filteredTabEntries.size()) {
+                    TabRegistry.TabEntry entry = filteredTabEntries.get(sel);
+                    showGotoPopup = false;
+                    gotoFilter.clearFilter();
+                    navigateToTabEntry(entry);
+                }
+            } else if (ke.isKey(KeyCode.BACKSPACE)) {
+                gotoFilter.deleteChar();
+                rebuildGotoList();
+            } else if (ke.code() == KeyCode.CHAR && !ke.hasCtrl() && !ke.hasAlt()) {
+                gotoFilter.appendChar(ke.string().charAt(0));
+                rebuildGotoList();
+            }
+            return true;
+        }
         if (showActionsMenu) {
             if (ke.isCancel()) {
                 showActionsMenu = false;
@@ -566,6 +635,9 @@ class ActionsPopup {
                     Action action = resolveAction(sel);
                     if (action == null) {
                         // divider selected, ignore
+                    } else if (action == Action.GOTO_TAB) {
+                        showActionsMenu = false;
+                        openGotoPopup();
                     } else if (action == Action.SHELL) {
                         showActionsMenu = false;
                         if (openShellAction != null) {
@@ -608,9 +680,14 @@ class ActionsPopup {
                     } else if (action == Action.MCP_LOG) {
                         showActionsMenu = false;
                         openMcpLog();
-                    } else if (action == Action.SEND_MESSAGE) {
+                    } else if (action == Action.AI_LOG) {
                         showActionsMenu = false;
-                        openSendMessage();
+                        openAiLog();
+                    } else if (action == Action.SEND_MESSAGE) {
+                        if (ctx != null && ctx.selectedPid != null && !ctx.isInfraSelected()) {
+                            showActionsMenu = false;
+                            openSendMessage();
+                        }
                     } else if (action == Action.RESET_STATS) {
                         showActionsMenu = false;
                         if (resetStatsAction != null) {
@@ -621,6 +698,9 @@ class ActionsPopup {
                         if (resetScreenAction != null) {
                             resetScreenAction.run();
                         }
+                    } else if (action == Action.TOGGLE_THEME) {
+                        showActionsMenu = false;
+                        Theme.toggle();
                     } else if (action == Action.STOP_ALL) {
                         showActionsMenu = false;
                         stopAllPopup.open();
@@ -636,7 +716,86 @@ class ActionsPopup {
         return false;
     }
 
+    // ---- Mouse handling ----
+
+    /**
+     * Handles a mouse event while an Actions sub-popup is open. The Actions menu and the doc picker (both single-line
+     * lists) accept clicks: a click on an entry selects it and activates it via a synthetic Enter (reusing the keyboard
+     * activation path), a click outside goes back one level via a synthetic Esc, and the wheel moves the highlight.
+     * Every other sub-popup stays modal for the mouse (events are consumed but not acted on). Returns {@code false}
+     * only when no Actions popup is open, so the caller can fall back to its normal routing.
+     */
+    boolean handleMouseEvent(MouseEvent me) {
+        if (!isVisible()) {
+            return false;
+        }
+        if (showGotoPopup) {
+            return handleGotoPopupMouse(me);
+        }
+        if (showActionsMenu) {
+            return handleListPopupMouse(me, actionsMenuRect, actionsMenuState, visualActionCount(), this::isDividerIndex);
+        }
+        if (showDocPicker && docPickerIntegrations != null) {
+            return handleListPopupMouse(me, docPickerRect, docPickerState, docPickerIntegrations.size(), i -> false);
+        }
+        // Other sub-popups (forms, browsers, viewers) stay modal: consume the event without acting on it.
+        return true;
+    }
+
+    private boolean handleListPopupMouse(MouseEvent me, Rect rect, ListState state, int itemCount, IntPredicate separator) {
+        if (me.kind() == MouseEventKind.SCROLL_UP) {
+            handleKeyEvent(KeyEvent.ofKey(KeyCode.UP));
+            return true;
+        }
+        if (me.kind() == MouseEventKind.SCROLL_DOWN) {
+            handleKeyEvent(KeyEvent.ofKey(KeyCode.DOWN));
+            return true;
+        }
+        if (me.isClick()) {
+            if (rect != null && rect.contains(me.x(), me.y())) {
+                int idx = listItemAt(rect, state.offset(), itemCount, me.x(), me.y());
+                if (idx >= 0 && !separator.test(idx)) {
+                    state.select(idx);
+                    handleKeyEvent(KeyEvent.ofKey(KeyCode.ENTER));
+                }
+                // A click on the border or a divider inside the popup is consumed without acting.
+                return true;
+            }
+            // A click outside the popup dismisses it (one level back), mirroring Esc.
+            handleKeyEvent(KeyEvent.ofKey(KeyCode.ESCAPE));
+            return true;
+        }
+        // Consume any other mouse event so the popup stays modal.
+        return true;
+    }
+
+    /**
+     * Returns the index of the single-line list entry at {@code (mouseX, mouseY)} for a bordered list popup, or
+     * {@code -1} when the click is on the border, outside the popup, or past the last entry. {@code offset} is the
+     * index of the first visible entry (from {@code ListState.offset()}) for scrolled lists.
+     */
+    static int listItemAt(Rect popup, int offset, int itemCount, int mouseX, int mouseY) {
+        if (popup == null) {
+            return -1;
+        }
+        int innerLeft = popup.x() + 1;
+        int innerRight = popup.x() + popup.width() - 1; // exclusive: last column is the right border
+        int firstRow = popup.y() + 1;
+        int lastRow = popup.y() + popup.height() - 1; // exclusive: last row is the bottom border
+        if (mouseX < innerLeft || mouseX >= innerRight) {
+            return -1;
+        }
+        if (mouseY < firstRow || mouseY >= lastRow) {
+            return -1;
+        }
+        int idx = offset + (mouseY - firstRow);
+        return idx >= 0 && idx < itemCount ? idx : -1;
+    }
+
     void render(Frame frame, Rect area) {
+        if (showGotoPopup) {
+            renderGotoPopup(frame, area);
+        }
         if (showActionsMenu) {
             renderActionsMenu(frame, area);
         }
@@ -663,6 +822,9 @@ class ActionsPopup {
         }
         if (mcpLogPopup.isVisible()) {
             mcpLogPopup.render(frame, area);
+        }
+        if (aiLogPopup.isVisible()) {
+            aiLogPopup.render(frame, area);
         }
         if (doctorPopup.isVisible()) {
             doctorPopup.render(frame, area);
@@ -693,6 +855,10 @@ class ActionsPopup {
         }
         if (doctorPopup.isVisible()) {
             doctorPopup.renderFooter(spans);
+            return;
+        }
+        if (aiLogPopup.isVisible()) {
+            aiLogPopup.renderFooter(spans);
             return;
         }
         if (mcpLogPopup.isVisible()) {
@@ -741,6 +907,13 @@ class ActionsPopup {
             hintLast(spans, "Esc", "back");
             return;
         }
+        if (showGotoPopup) {
+            hint(spans, "type", "filter");
+            hint(spans, "↑↓", "navigate");
+            hint(spans, "Enter", "go to");
+            hintLast(spans, "Esc", "back");
+            return;
+        }
         if (showActionsMenu) {
             hint(spans, "↑↓", "navigate");
             hint(spans, "Enter", "select");
@@ -765,6 +938,7 @@ class ActionsPopup {
         int x = area.left() + Math.max(0, (area.width() - popupW) / 2);
         int y = area.top() + 2;
         Rect popup = new Rect(x, y, Math.min(popupW, area.width()), Math.min(popupH, area.height() - 2));
+        this.actionsMenuRect = popup;
 
         frame.renderWidget(Clear.INSTANCE, popup);
         String divider = "  ─────────────────────────────────";
@@ -781,21 +955,28 @@ class ActionsPopup {
                 : "  🔴 Start Tape Recording (Ctrl+R)";
 
         List<ListItem> items = new ArrayList<>();
+        // Group 0: Go to
+        items.add(ListItem.from("  🔍 Go to..."));
+        items.add(ListItem.from(divider).style(Style.EMPTY.dim()));
         // Group 1: User Actions
-        items.add(ListItem.from("  📩 Send Message"));
+        boolean hasSelection = ctx != null && ctx.selectedPid != null && !ctx.isInfraSelected();
+        items.add(hasSelection
+                ? ListItem.from("  📩 Send Message")
+                : ListItem.from("  📩 Send Message").style(Style.EMPTY.dim()));
         items.add(ListItem.from("  🐪 Run an example..."));
         items.add(ListItem.from("  📂 Run from folder..."));
         items.add(ListItem.from("  🔧 Run Dev/Infra Service..."));
-        boolean hasSelection = ctx != null && ctx.selectedPid != null && !ctx.isInfraSelected();
         items.add(hasSelection
                 ? ListItem.from("  📁 Browse Files...")
                 : ListItem.from("  📁 Browse Files...").style(Style.EMPTY.dim()));
+        items.add(ListItem.from(stopLabel));
         items.add(ListItem.from(divider).style(Style.EMPTY.dim()));
         // Group 2: Diagnostics
         items.add(ListItem.from("  🩺 Run Doctor"));
         items.add(ListItem.from("  🔄 Reset Stats"));
         items.add(ListItem.from("  🧹 Reset Screen"));
-        items.add(ListItem.from(stopLabel));
+        String themeLabel = "dark".equals(Theme.mode()) ? "  🌞 Light Theme" : "  🌙 Dark Theme";
+        items.add(ListItem.from(themeLabel));
         items.add(ListItem.from(divider).style(Style.EMPTY.dim()));
         // Group 3: Recording & Presentation
         items.add(ListItem.from("  📸 Take Screenshot"));
@@ -806,7 +987,8 @@ class ActionsPopup {
         // Group 4: MCP
         if (mcpEnabled) {
             items.add(ListItem.from(divider).style(Style.EMPTY.dim()));
-            items.add(ListItem.from("  🧠 Setup AI..."));
+            items.add(ListItem.from("  🧠 Setup MCP"));
+            items.add(ListItem.from("  💬 AI Log"));
             items.add(ListItem.from("  🤖 MCP Info"));
             items.add(ListItem.from("  📋 MCP Log"));
         }
@@ -815,7 +997,7 @@ class ActionsPopup {
         items.add(ListItem.from("  >_ Shell"));
         ListWidget list = ListWidget.builder()
                 .items(items.toArray(ListItem[]::new))
-                .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
+                .highlightStyle(Theme.selectionBg())
                 .highlightSymbol("")
                 .scrollMode(ScrollMode.NONE)
                 .block(Block.builder()
@@ -841,7 +1023,7 @@ class ActionsPopup {
         List<ListItem> items = buildExampleListItems(popupW - 4);
         ListWidget list = ListWidget.builder()
                 .items(items.toArray(ListItem[]::new))
-                .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
+                .highlightStyle(Theme.selectionBg())
                 .highlightSymbol("")
                 .scrollMode(ScrollMode.AUTO_SCROLL)
                 .block(Block.builder()
@@ -948,6 +1130,7 @@ class ActionsPopup {
         int x = area.left() + Math.max(0, (area.width() - popupW) / 2);
         int y = area.top() + 2;
         Rect popup = new Rect(x, y, Math.min(popupW, area.width()), Math.min(popupH, area.height() - 2));
+        this.docPickerRect = popup;
 
         frame.renderWidget(Clear.INSTANCE, popup);
         List<ListItem> items = new ArrayList<>();
@@ -957,7 +1140,7 @@ class ActionsPopup {
         }
         ListWidget list = ListWidget.builder()
                 .items(items.toArray(ListItem[]::new))
-                .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
+                .highlightStyle(Theme.selectionBg())
                 .highlightSymbol("")
                 .scrollMode(ScrollMode.AUTO_SCROLL)
                 .block(Block.builder()
@@ -1014,7 +1197,7 @@ class ActionsPopup {
             JsonObject action = new JsonObject();
             action.put("action", "readme");
             PathUtils.writeTextSafely(action.toJson(), ctx.getActionFile(info.pid));
-            JsonObject response = MonitorContext.pollJsonResponse(outputFile, 5000);
+            JsonObject response = TuiHelper.pollJsonResponse(outputFile, 5000);
             if (response != null && response.getString("content") != null) {
                 String raw = response.getString("content");
                 String file = response.getStringOrDefault("file", "README");
@@ -1160,7 +1343,7 @@ class ActionsPopup {
         String status = client != null
                 ? "**Connected:** " + client + "\n\nYour AI agent is already connected and ready to use."
                 : "**Status:** Waiting for connection";
-        docContent = "# Setup AI Agent\n\n"
+        docContent = "# Setup MCP\n\n"
                      + status + "\n\n"
                      + "## Connect Claude Code\n\n"
                      + "Run this command in your terminal:\n\n"
@@ -1179,7 +1362,7 @@ class ActionsPopup {
                      + "- Send test messages to endpoints\n"
                      + "- Record VHS tapes for documentation\n\n"
                      + "Try asking: *\"What's on my Camel TUI screen right now?\"*\n";
-        docTitle = "Setup AI";
+        docTitle = "Setup MCP";
         docScroll = 0;
         showDocViewer = true;
         docViewerFromExampleBrowser = false;
@@ -1243,6 +1426,10 @@ class ActionsPopup {
 
     private void openMcpLog() {
         mcpLogPopup.open();
+    }
+
+    private void openAiLog() {
+        aiLogPopup.open();
     }
 
     // ---- Folder Input ----
@@ -1318,7 +1505,7 @@ class ActionsPopup {
         } else if (ke.isEnd()) {
             folderInputState.moveCursorToEnd();
         } else if (ke.code() == KeyCode.CHAR) {
-            folderInputState.insert(ke.character());
+            folderInputState.insert(ke.string().charAt(0));
         }
     }
 
@@ -1779,7 +1966,7 @@ class ActionsPopup {
         long available = infraCatalog.stream().filter(e -> !e.running).count();
         ListWidget list = ListWidget.builder()
                 .items(items.toArray(ListItem[]::new))
-                .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
+                .highlightStyle(Theme.selectionBg())
                 .highlightSymbol("")
                 .scrollMode(ScrollMode.AUTO_SCROLL)
                 .block(Block.builder()
@@ -1825,9 +2012,9 @@ class ActionsPopup {
             String impl = selectedInfraService.implementations.get(infraImplIndex);
             Rect implArea = new Rect(ix + labelW, row, fieldW, 1);
             frame.renderWidget(Paragraph.from(Line.from(
-                    Span.styled("◀ ", MonitorContext.HINT_KEY_STYLE),
+                    Span.styled("◀ ", Theme.hintKey()),
                     Span.raw(impl),
-                    Span.styled(" ▶", MonitorContext.HINT_KEY_STYLE))), implArea);
+                    Span.styled(" ▶", Theme.hintKey()))), implArea);
             row++;
         }
 
@@ -1859,8 +2046,8 @@ class ActionsPopup {
             infraPortState.moveCursorToStart();
         } else if (ke.isEnd()) {
             infraPortState.moveCursorToEnd();
-        } else if (ke.code() == KeyCode.CHAR && Character.isDigit(ke.character())) {
-            infraPortState.insert(ke.character());
+        } else if (ke.code() == KeyCode.CHAR && Character.isDigit(ke.string().charAt(0))) {
+            infraPortState.insert(ke.string().charAt(0));
         }
     }
 
@@ -2163,6 +2350,7 @@ class ActionsPopup {
                     resetScreenAction.run();
                 }
             }
+            case TOGGLE_THEME -> Theme.toggle();
             case SCREENSHOT -> screenshotAction.run();
             case SHOW_KEYSTROKES -> toggleKeystrokes.run();
             case TAPE_RECORDING -> toggleTapeRecording.run();
@@ -2171,9 +2359,200 @@ class ActionsPopup {
             case SETUP_AI -> openSetupAI();
             case MCP_INFO -> openMcpInfo();
             case MCP_LOG -> openMcpLog();
+            case AI_LOG -> openAiLog();
             default -> {
                 return false;
             }
+        }
+        return true;
+    }
+
+    // ---- Go-to tab popup ----
+
+    private void openGotoPopup() {
+        showGotoPopup = true;
+        gotoFilter.clearFilter();
+        rebuildGotoList();
+    }
+
+    private void rebuildGotoList() {
+        if (allTabEntries == null) {
+            filteredTabEntries = List.of();
+            return;
+        }
+        if (!gotoFilter.hasFilter()) {
+            filteredTabEntries = new ArrayList<>(allTabEntries);
+        } else {
+            filteredTabEntries = new ArrayList<>();
+            String filter = gotoFilter.filter();
+            for (TabRegistry.TabEntry entry : allTabEntries) {
+                // 1 char: starts-with on name only; 2+ chars: fuzzy name + substring description
+                boolean nameMatch;
+                if (filter.length() == 1) {
+                    nameMatch = entry.name().toLowerCase().startsWith(filter);
+                } else {
+                    nameMatch = gotoFilter.match(entry.name()) != null;
+                }
+                boolean descMatch = filter.length() >= 2 && entry.description() != null
+                        && entry.description().toLowerCase().contains(filter);
+                if (nameMatch || descMatch) {
+                    filteredTabEntries.add(entry);
+                }
+            }
+        }
+        gotoListState.select(filteredTabEntries.isEmpty() ? null : 0);
+    }
+
+    private void navigateToTabEntry(TabRegistry.TabEntry entry) {
+        if (entry.moreIndex() >= 0) {
+            // More sub-tab — use selectMoreTab callback
+            if (gotoTabCallback != null) {
+                // Store the entry info for the callback to use
+                pendingGotoEntry = entry;
+                gotoTabCallback.run();
+            }
+        } else {
+            // Primary tab — use handleTabKey callback
+            if (gotoTabCallback != null) {
+                pendingGotoEntry = entry;
+                gotoTabCallback.run();
+            }
+        }
+    }
+
+    private TabRegistry.TabEntry pendingGotoEntry;
+
+    TabRegistry.TabEntry consumePendingGotoEntry() {
+        TabRegistry.TabEntry e = pendingGotoEntry;
+        pendingGotoEntry = null;
+        return e;
+    }
+
+    private void renderGotoPopup(Frame frame, Rect area) {
+        if (filteredTabEntries == null) {
+            return;
+        }
+        int nameColWidth = 18;
+        int popupW = Math.min(100, area.width() - 4);
+        int descColWidth = popupW - nameColWidth - 8; // 2 border + 3 key col + 3 padding
+        int listH = Math.min(filteredTabEntries.size(), Math.min(28, area.height() - 8));
+        int popupH = listH + 4; // borders + filter row + separator
+        int x = area.left() + Math.max(0, (area.width() - popupW) / 2);
+        int y = area.top() + 2;
+        Rect popup = new Rect(x, y, Math.min(popupW, area.width()), Math.min(popupH, area.height() - 2));
+        this.gotoPopupRect = popup;
+
+        frame.renderWidget(Clear.INSTANCE, popup);
+
+        // Build filter display line
+        String filterText = gotoFilter.hasFilter() ? gotoFilter.filter() : "";
+        String prompt = "> " + filterText + "█";
+
+        List<ListItem> items = new ArrayList<>();
+        // Filter input row
+        items.add(ListItem.from(Line.from(Span.styled(prompt, Theme.info()))));
+        // Separator
+        String sep = "─".repeat(Math.max(1, popupW - 2));
+        items.add(ListItem.from(Line.from(Span.styled(sep, Style.EMPTY.dim()))));
+
+        // Tab entries
+        Style normalStyle = Style.EMPTY;
+        Style matchStyle = Style.EMPTY.fg(Color.YELLOW).bold();
+        Style dimStyle = Style.EMPTY.dim();
+        for (TabRegistry.TabEntry entry : filteredTabEntries) {
+            List<Span> spans = new ArrayList<>();
+            // Shortcut key column
+            String key = String.format(" %-2s ", entry.shortcut());
+            spans.add(Span.styled(key, dimStyle));
+            // Name column with fuzzy highlight
+            String name = entry.name();
+            if (name.length() > nameColWidth) {
+                name = name.substring(0, nameColWidth);
+            } else {
+                name = String.format("%-" + nameColWidth + "s", name);
+            }
+            if (gotoFilter.hasFilter()) {
+                int[] nameMatch = FuzzyFilter.fuzzyMatch(name, gotoFilter.filter());
+                if (nameMatch != null) {
+                    Line hl = FuzzyFilter.highlightLine(name, nameMatch, normalStyle, matchStyle);
+                    spans.addAll(hl.spans());
+                } else {
+                    spans.add(Span.styled(name, normalStyle));
+                }
+            } else {
+                spans.add(Span.styled(name, normalStyle));
+            }
+            // Description column (dimmed, with substring highlight)
+            String desc = entry.description();
+            if (desc != null) {
+                if (desc.length() > descColWidth) {
+                    desc = desc.substring(0, Math.max(0, descColWidth - 1)) + "…";
+                }
+                spans.add(Span.styled(" ", dimStyle));
+                if (gotoFilter.hasFilter() && gotoFilter.filter().length() >= 2) {
+                    String filter = gotoFilter.filter();
+                    int idx = desc.toLowerCase().indexOf(filter);
+                    if (idx >= 0) {
+                        if (idx > 0) {
+                            spans.add(Span.styled(desc.substring(0, idx), dimStyle));
+                        }
+                        spans.add(Span.styled(desc.substring(idx, idx + filter.length()), matchStyle));
+                        if (idx + filter.length() < desc.length()) {
+                            spans.add(Span.styled(desc.substring(idx + filter.length()), dimStyle));
+                        }
+                    } else {
+                        spans.add(Span.styled(desc, dimStyle));
+                    }
+                } else {
+                    spans.add(Span.styled(desc, dimStyle));
+                }
+            }
+            items.add(ListItem.from(Line.from(spans)));
+        }
+
+        // The list has 2 header items (filter + separator) + entries
+        // We need to offset the selection by 2 to account for the header
+        ListState renderState = new ListState();
+        Integer sel = gotoListState.selected();
+        if (sel != null) {
+            renderState.select(sel + 2); // offset for filter row + separator
+        }
+
+        ListWidget list = ListWidget.builder()
+                .items(items.toArray(ListItem[]::new))
+                .highlightStyle(Theme.selectionBg())
+                .highlightSymbol("")
+                .scrollMode(ScrollMode.AUTO_SCROLL)
+                .block(Block.builder()
+                        .borderType(BorderType.ROUNDED).borders(Borders.ALL)
+                        .title(" Go to Tab ")
+                        .build())
+                .build();
+        frame.renderStatefulWidget(list, popup, renderState);
+    }
+
+    private boolean handleGotoPopupMouse(MouseEvent me) {
+        if (me.kind() == MouseEventKind.SCROLL_UP) {
+            handleKeyEvent(KeyEvent.ofKey(KeyCode.UP));
+            return true;
+        }
+        if (me.kind() == MouseEventKind.SCROLL_DOWN) {
+            handleKeyEvent(KeyEvent.ofKey(KeyCode.DOWN));
+            return true;
+        }
+        if (me.isClick()) {
+            if (gotoPopupRect != null && gotoPopupRect.contains(me.x(), me.y())) {
+                int idx = listItemAt(gotoPopupRect, 0,
+                        (filteredTabEntries != null ? filteredTabEntries.size() : 0) + 2,
+                        me.x(), me.y());
+                if (idx >= 2 && filteredTabEntries != null && idx - 2 < filteredTabEntries.size()) {
+                    gotoListState.select(idx - 2);
+                    handleKeyEvent(KeyEvent.ofKey(KeyCode.ENTER));
+                }
+                return true;
+            }
+            handleKeyEvent(KeyEvent.ofKey(KeyCode.ESCAPE));
+            return true;
         }
         return true;
     }

@@ -20,6 +20,7 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.nio.file.Files;
 
+import dev.langchain4j.service.Result;
 import org.apache.camel.Exchange;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.TypeConversionException;
@@ -39,7 +40,7 @@ public class LangChain4jAgentAutoConversionTest extends CamelTestSupport {
     @Override
     protected RoutesBuilder createRouteBuilder() throws Exception {
 
-        Agent mockAgent = (body, exchange) -> "Processed";
+        Agent mockAgent = (body, exchange) -> Result.<String> builder().content("Processed").build();
 
         context.getRegistry().bind("mockAgent", mockAgent);
 

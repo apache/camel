@@ -1951,7 +1951,6 @@ public class ModelParser extends BaseParser {
     }
     protected PQCDataFormat doParsePQCDataFormat() throws IOException, XmlPullParserException {
         return doParse(new PQCDataFormat(), (def, key, val) -> switch (key) {
-                case "bufferSize": def.setBufferSize(val); yield true;
                 case "keyEncapsulationAlgorithm": def.setKeyEncapsulationAlgorithm(val); yield true;
                 case "keyGenerator": def.setKeyGenerator(val); yield true;
                 case "keyPair": def.setKeyPair(val); yield true;

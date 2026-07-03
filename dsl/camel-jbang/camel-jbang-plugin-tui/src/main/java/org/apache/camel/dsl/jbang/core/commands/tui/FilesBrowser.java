@@ -45,7 +45,7 @@ import dev.tamboui.widgets.list.ScrollMode;
 
 class FilesBrowser {
 
-    record FileEntry(String emoji, String name, long size, String path) {
+    record FileEntry(String emoji, String name, long size, String path, boolean directory) {
     }
 
     private static final String[] CAMEL_YAML_MARKERS = {
@@ -65,6 +65,8 @@ class FilesBrowser {
 
     private boolean visible;
     private String title;
+    private Path rootDir;
+    private Path currentDir;
     private final ListState listState = new ListState();
     private List<FileEntry> entries = Collections.emptyList();
     private final SourceViewer sourceViewer = new SourceViewer();
@@ -83,6 +85,8 @@ class FilesBrowser {
 
     void reset() {
         visible = false;
+        rootDir = null;
+        currentDir = null;
         entries = Collections.emptyList();
         sourceViewer.reset();
     }
@@ -92,33 +96,56 @@ class FilesBrowser {
         if (dir == null || !Files.isDirectory(dir)) {
             return;
         }
-        List<FileEntry> found = new ArrayList<>();
+        rootDir = dir;
+        currentDir = dir;
+        title = info.name != null ? info.name : "?";
+        sourceViewer.reset();
+        if (!loadDirectory(dir)) {
+            return;
+        }
+        visible = true;
+    }
+
+    private boolean loadDirectory(Path dir) {
+        List<FileEntry> dirs = new ArrayList<>();
+        List<FileEntry> files = new ArrayList<>();
         try (var stream = Files.list(dir)) {
-            stream.filter(Files::isRegularFile)
-                    .limit(99)
+            stream.limit(200)
                     .forEach(p -> {
                         String name = p.getFileName().toString();
-                        String emoji = fileEmoji(p);
-                        long size = 0;
-                        try {
-                            size = Files.size(p);
-                        } catch (IOException e) {
-                            // ignore
+                        if (Files.isDirectory(p)) {
+                            dirs.add(new FileEntry("📁", name, -1, p.toString(), true));
+                        } else if (Files.isRegularFile(p)) {
+                            String emoji = fileEmoji(p);
+                            long size = 0;
+                            try {
+                                size = Files.size(p);
+                            } catch (IOException e) {
+                                // ignore
+                            }
+                            files.add(new FileEntry(emoji, name, size, p.toString(), false));
                         }
-                        found.add(new FileEntry(emoji, name, size, p.toString()));
                     });
         } catch (IOException e) {
-            return;
+            return false;
         }
+        dirs.sort(Comparator.comparing(FileEntry::name, String.CASE_INSENSITIVE_ORDER));
+        files.sort(Comparator.comparing(FileEntry::name, String.CASE_INSENSITIVE_ORDER));
+
+        List<FileEntry> found = new ArrayList<>();
+        if (!dir.equals(rootDir)) {
+            found.add(new FileEntry("📁", "..", -1, dir.getParent().toString(), true));
+        }
+        found.addAll(dirs);
+        found.addAll(files);
+
         if (found.isEmpty()) {
-            return;
+            return false;
         }
-        found.sort(Comparator.comparing(FileEntry::name, String.CASE_INSENSITIVE_ORDER));
         entries = found;
-        title = info.name != null ? info.name : "?";
         listState.select(0);
-        visible = true;
-        sourceViewer.reset();
+        currentDir = dir;
+        return true;
     }
 
     boolean handleKeyEvent(KeyEvent ke) {
@@ -144,11 +171,21 @@ class FilesBrowser {
                 listState.selectNext(entries.size());
                 return true;
             }
+            if (ke.isDeleteBackward()) {
+                if (currentDir != null && !currentDir.equals(rootDir)) {
+                    loadDirectory(currentDir.getParent());
+                }
+                return true;
+            }
             if (ke.isConfirm()) {
                 Integer sel = listState.selected();
                 if (sel != null && sel < entries.size()) {
                     FileEntry entry = entries.get(sel);
-                    sourceViewer.loadFile(Path.of(entry.path()));
+                    if (entry.directory()) {
+                        loadDirectory(Path.of(entry.path()));
+                    } else {
+                        sourceViewer.loadFile(Path.of(entry.path()));
+                    }
                 }
                 return true;
             }
@@ -167,11 +204,20 @@ class FilesBrowser {
             return;
         }
 
+        String popupTitle = " Files: " + title;
+        if (rootDir != null && currentDir != null && !currentDir.equals(rootDir)) {
+            popupTitle += "/" + rootDir.relativize(currentDir);
+        }
+        popupTitle += " ";
+
         int nameWidth = entries.stream().mapToInt(e -> e.name().length()).max().orElse(10);
-        int sizeWidth = entries.stream().mapToInt(e -> formatFileSize(e.size()).length()).max().orElse(4);
+        int sizeWidth = entries.stream()
+                .filter(e -> !e.directory())
+                .mapToInt(e -> formatFileSize(e.size()).length()).max().orElse(4);
         int itemWidth = 4 + nameWidth + 2 + sizeWidth + 2;
-        int popupW = Math.min(area.width() - 4, Math.max(30, itemWidth + 4));
-        int popupH = Math.min(area.height() - 4, entries.size() + 2);
+        int titleWidth = popupTitle.length() + 4;
+        int popupW = Math.min(area.width() - 4, Math.max(50, Math.max(itemWidth + 4, titleWidth)));
+        int popupH = Math.min(area.height() - 4, Math.max(12, entries.size() + 2));
 
         int x = area.left() + Math.max(0, (area.width() - popupW) / 2);
         int y = area.top() + 2;
@@ -179,23 +225,35 @@ class FilesBrowser {
 
         frame.renderWidget(Clear.INSTANCE, popup);
 
+        int innerWidth = popupW - 2;
         ListItem[] items = new ListItem[entries.size()];
         for (int i = 0; i < entries.size(); i++) {
             FileEntry entry = entries.get(i);
-            String sizeStr = formatFileSize(entry.size());
-            String label = String.format("  %s %-" + nameWidth + "s  %s", entry.emoji(), entry.name(), sizeStr);
-            items[i] = ListItem.from(label);
+            if (entry.directory()) {
+                String label = String.format("  %s %-" + nameWidth + "s", entry.emoji(), entry.name());
+                boolean dimDir = entry.name().startsWith(".") || "target".equals(entry.name());
+                Style dirStyle = dimDir ? Style.EMPTY.fg(Color.CYAN).dim() : Style.EMPTY.fg(Color.CYAN);
+                items[i] = ListItem.from(Line.from(Span.styled(label, dirStyle)));
+            } else {
+                String sizeStr = formatFileSize(entry.size());
+                String nameLabel = String.format("  %s %s", entry.emoji(), entry.name());
+                int gap = Math.max(1, innerWidth - nameLabel.length() - sizeStr.length() - 1);
+                String padding = " ".repeat(gap);
+                items[i] = ListItem.from(Line.from(
+                        Span.raw(nameLabel + padding),
+                        Span.styled(sizeStr + " ", Style.EMPTY.dim())));
+            }
         }
 
         ListWidget list = ListWidget.builder()
                 .items(items)
-                .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
+                .highlightStyle(Theme.selectionBg())
                 .highlightSymbol("")
                 .scrollMode(ScrollMode.NONE)
                 .block(Block.builder()
                         .borderType(BorderType.ROUNDED).borders(Borders.ALL)
                         .title(Title.from(Line
-                                .from(Span.styled(" Files: " + title + " ", Style.EMPTY.fg(Color.YELLOW).bold()))))
+                                .from(Span.styled(popupTitle, Style.EMPTY.fg(Color.YELLOW).bold()))))
                         .build())
                 .build();
         frame.renderStatefulWidget(list, popup, listState);
@@ -205,9 +263,9 @@ class FilesBrowser {
         if (sourceViewer.isVisible()) {
             sourceViewer.renderFooter(spans);
         } else {
-            MonitorContext.hint(spans, "Up/Down", "navigate");
-            MonitorContext.hint(spans, "Enter", "open");
-            MonitorContext.hint(spans, "Esc", "close");
+            TuiHelper.hint(spans, "↑↓", "navigate");
+            TuiHelper.hint(spans, "Enter", "open");
+            TuiHelper.hint(spans, "Esc", "close");
         }
     }
 
@@ -233,6 +291,17 @@ class FilesBrowser {
                             return parent;
                         }
                     }
+                }
+            }
+        }
+        // For exported apps (Quarkus, Spring Boot), MAVEN_PROJECTBASEDIR points to the
+        // actual project directory inside .camel-jbang-run, which may differ from info.directory
+        for (ConfigurationTab.ConfigProperty cp : info.configProperties) {
+            if (("MAVEN_PROJECTBASEDIR".equals(cp.key) || "maven.projectbasedir".equals(cp.key))
+                    && cp.value != null && cp.value.contains(".camel-jbang-run")) {
+                Path dir = Path.of(cp.value);
+                if (Files.isDirectory(dir)) {
+                    return dir;
                 }
             }
         }

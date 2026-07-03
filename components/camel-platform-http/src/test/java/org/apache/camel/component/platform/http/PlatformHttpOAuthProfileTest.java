@@ -181,29 +181,27 @@ class PlatformHttpOAuthProfileTest {
     }
 
     @Test
-    void oauthProfileSpecificWrongTypeValidationFactoryBeanFailsStartup() {
+    void oauthProfileSpecificWrongTypeValidationFactoryBeanFailsStartup() throws Exception {
         CapturingEngine engine = new CapturingEngine();
 
-        assertThrows(Exception.class, () -> {
-            try (DefaultCamelContext context = new DefaultCamelContext()) {
-                context.getRegistry().bind("profileFactory", "not a token validation factory");
-                context.getPropertiesComponent().addInitialProperty(
-                        "camel.oauth.myprofile.validation-factory", "#bean:profileFactory");
+        try (DefaultCamelContext context = new DefaultCamelContext()) {
+            context.getRegistry().bind("profileFactory", "not a token validation factory");
+            context.getPropertiesComponent().addInitialProperty(
+                    "camel.oauth.myprofile.validation-factory", "#bean:profileFactory");
 
-                PlatformHttpComponent component = new PlatformHttpComponent();
-                component.setEngine(engine);
-                context.addComponent("platform-http", component);
-                context.addRoutes(new RouteBuilder() {
-                    @Override
-                    public void configure() {
-                        from("platform-http:/secure?oauthProfile=myprofile")
-                                .setBody().constant("secured");
-                    }
-                });
+            PlatformHttpComponent component = new PlatformHttpComponent();
+            component.setEngine(engine);
+            context.addComponent("platform-http", component);
+            context.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() {
+                    from("platform-http:/secure?oauthProfile=myprofile")
+                            .setBody().constant("secured");
+                }
+            });
 
-                context.start();
-            }
-        });
+            assertThrows(Exception.class, () -> context.start());
+        }
     }
 
     @Test

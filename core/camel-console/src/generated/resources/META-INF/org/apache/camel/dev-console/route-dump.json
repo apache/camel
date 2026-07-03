@@ -9,7 +9,71 @@
     "javaType": "org.apache.camel.impl.console.RouteDumpDevConsole",
     "groupId": "org.apache.camel",
     "artifactId": "camel-console",
-    "version": "4.21.0-SNAPSHOT"
+    "version": "4.22.0-SNAPSHOT"
+  },
+  "options": {
+    "filter": {
+      "index": 0,
+      "kind": "option",
+      "displayName": "Filter",
+      "group": "query",
+      "label": "query",
+      "required": false,
+      "type": "string",
+      "javaType": "java.lang.String",
+      "deprecated": false,
+      "autowired": false,
+      "secret": false,
+      "description": "Filters the routes matching by route id, route uri, and source location"
+    },
+    "format": {
+      "index": 1,
+      "kind": "option",
+      "displayName": "Format",
+      "group": "query",
+      "label": "query",
+      "required": false,
+      "type": "string",
+      "javaType": "java.lang.String",
+      "enum": [
+        "xml",
+        "yaml",
+        "java"
+      ],
+      "deprecated": false,
+      "autowired": false,
+      "secret": false,
+      "description": "To output in either xml, yaml, or java format"
+    },
+    "limit": {
+      "index": 2,
+      "kind": "option",
+      "displayName": "Limit",
+      "group": "query",
+      "label": "query",
+      "required": false,
+      "type": "integer",
+      "javaType": "java.lang.Integer",
+      "deprecated": false,
+      "autowired": false,
+      "secret": false,
+      "description": "Limits the number of entries displayed"
+    },
+    "uriAsParameters": {
+      "index": 3,
+      "kind": "option",
+      "displayName": "Uri As Parameters",
+      "group": "query",
+      "label": "query",
+      "required": false,
+      "type": "boolean",
+      "javaType": "java.lang.Boolean",
+      "deprecated": false,
+      "autowired": false,
+      "secret": false,
+      "defaultValue": false,
+      "description": "Whether to expand URIs into separated key\/value parameters"
+    }
   }
 }
 

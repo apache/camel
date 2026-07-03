@@ -141,7 +141,7 @@ class InputHistory {
 
         ListWidget list = ListWidget.builder()
                 .items(items)
-                .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
+                .highlightStyle(Theme.selectionBg())
                 .highlightSymbol("")
                 .block(Block.builder()
                         .borderType(BorderType.ROUNDED)

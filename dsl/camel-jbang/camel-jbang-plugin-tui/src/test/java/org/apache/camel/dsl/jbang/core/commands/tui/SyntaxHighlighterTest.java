@@ -22,6 +22,7 @@ import dev.tamboui.text.Span;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 class SyntaxHighlighterTest {
 
@@ -77,7 +78,7 @@ class SyntaxHighlighterTest {
     void preservesLeadingIndentationUnstyled() {
         Line line = SyntaxHighlighter.highlightLine("  camel.x=1", SyntaxHighlighter.Language.PROPERTIES);
         // the indentation is emitted as a raw (unstyled) span
-        assertEquals(null, fg(line, "  "));
+        assertNull(fg(line, "  "));
         assertEquals(SyntaxHighlighter.MONOKAI_KEYWORD, fg(line, "camel.x"));
         assertEquals(SyntaxHighlighter.MONOKAI_STRING, fg(line, "1"));
         assertRoundTrip(line, "  camel.x=1");

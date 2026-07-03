@@ -9,7 +9,182 @@
     "javaType": "org.apache.camel.diagram.DiagramDevConsole",
     "groupId": "org.apache.camel",
     "artifactId": "camel-diagram",
-    "version": "4.21.0-SNAPSHOT"
+    "version": "4.22.0-SNAPSHOT"
+  },
+  "options": {
+    "autoRefresh": {
+      "index": 0,
+      "kind": "option",
+      "displayName": "Auto Refresh",
+      "group": "query",
+      "label": "query",
+      "required": false,
+      "type": "boolean",
+      "javaType": "java.lang.Boolean",
+      "deprecated": false,
+      "autowired": false,
+      "secret": false,
+      "defaultValue": true,
+      "description": "Whether to auto-refresh page every 5 seconds"
+    },
+    "external": {
+      "index": 1,
+      "kind": "option",
+      "displayName": "External",
+      "group": "query",
+      "label": "query",
+      "required": false,
+      "type": "boolean",
+      "javaType": "java.lang.Boolean",
+      "deprecated": false,
+      "autowired": false,
+      "secret": false,
+      "defaultValue": true,
+      "description": "Whether to include external systems (kafka, http, etc.) in topology mode"
+    },
+    "filter": {
+      "index": 2,
+      "kind": "option",
+      "displayName": "Filter",
+      "group": "query",
+      "label": "query",
+      "required": false,
+      "type": "string",
+      "javaType": "java.lang.String",
+      "deprecated": false,
+      "autowired": false,
+      "secret": false,
+      "defaultValue": "*",
+      "description": "Filters the routes matching by route id, route uri, and source location"
+    },
+    "fontSize": {
+      "index": 3,
+      "kind": "option",
+      "displayName": "Font Size",
+      "group": "query",
+      "label": "query",
+      "required": false,
+      "type": "integer",
+      "javaType": "java.lang.Integer",
+      "deprecated": false,
+      "autowired": false,
+      "secret": false,
+      "defaultValue": 12,
+      "description": "The size of the font"
+    },
+    "format": {
+      "index": 4,
+      "kind": "option",
+      "displayName": "Format",
+      "group": "query",
+      "label": "query",
+      "required": false,
+      "type": "string",
+      "javaType": "java.lang.String",
+      "enum": [
+        "html",
+        "png",
+        "text",
+        "ascii",
+        "unicode"
+      ],
+      "deprecated": false,
+      "autowired": false,
+      "secret": false,
+      "defaultValue": "html",
+      "description": "Output format: html (interactive web component), png (inline image), text or ascii (ASCII art), unicode (box-drawing characters)"
+    },
+    "metric": {
+      "index": 5,
+      "kind": "option",
+      "displayName": "Metric",
+      "group": "query",
+      "label": "query",
+      "required": false,
+      "type": "boolean",
+      "javaType": "java.lang.Boolean",
+      "deprecated": false,
+      "autowired": false,
+      "secret": false,
+      "defaultValue": true,
+      "description": "Whether to include live metric counters"
+    },
+    "mode": {
+      "index": 6,
+      "kind": "option",
+      "displayName": "Mode",
+      "group": "query",
+      "label": "query",
+      "required": false,
+      "type": "string",
+      "javaType": "java.lang.String",
+      "enum": [
+        "route",
+        "topology"
+      ],
+      "deprecated": false,
+      "autowired": false,
+      "secret": false,
+      "defaultValue": "route",
+      "description": "Diagram mode: route or topology"
+    },
+    "nodeLabel": {
+      "index": 7,
+      "kind": "option",
+      "displayName": "Node Label",
+      "group": "query",
+      "label": "query",
+      "required": false,
+      "type": "string",
+      "javaType": "java.lang.String",
+      "enum": [
+        "code",
+        "description",
+        "both"
+      ],
+      "deprecated": false,
+      "autowired": false,
+      "secret": false,
+      "defaultValue": "code",
+      "description": "Node label mode"
+    },
+    "nodeWidth": {
+      "index": 8,
+      "kind": "option",
+      "displayName": "Node Width",
+      "group": "query",
+      "label": "query",
+      "required": false,
+      "type": "integer",
+      "javaType": "java.lang.Integer",
+      "deprecated": false,
+      "autowired": false,
+      "secret": false,
+      "defaultValue": 180,
+      "description": "The node width in pixels"
+    },
+    "theme": {
+      "index": 9,
+      "kind": "option",
+      "displayName": "Theme",
+      "group": "query",
+      "label": "query",
+      "required": false,
+      "type": "string",
+      "javaType": "java.lang.String",
+      "enum": [
+        "dark",
+        "light",
+        "transparent",
+        "ascii",
+        "unicode"
+      ],
+      "deprecated": false,
+      "autowired": false,
+      "secret": false,
+      "defaultValue": "transparent",
+      "description": "Theme to use: dark, light, transparent, ascii, or unicode"
+    }
   }
 }
 

@@ -2574,6 +2574,19 @@ public class EndpointHeaderBuilders {
         return LangChain4jEmbeddingStoreEndpointBuilderFactory.LangChain4jEmbeddingStoreHeaderNameBuilder.INSTANCE;
     }
     /**
+     * LangChain4j Tools (camel-langchain4j-tools)
+     * LangChain4j Tools and Function Calling Features
+     * 
+     * Category: ai
+     * Since: 4.8
+     * Maven coordinates: org.apache.camel:camel-langchain4j-tools
+     * 
+     * @return the dsl builder for the headers' name.
+     */
+    public static LangChain4jToolsEndpointBuilderFactory.LangChain4jToolsHeaderNameBuilder langchain4jTools() {
+        return LangChain4jToolsEndpointBuilderFactory.LangChain4jToolsHeaderNameBuilder.INSTANCE;
+    }
+    /**
      * Language (camel-language)
      * Execute scripts in any of the languages supported by Camel.
      * 

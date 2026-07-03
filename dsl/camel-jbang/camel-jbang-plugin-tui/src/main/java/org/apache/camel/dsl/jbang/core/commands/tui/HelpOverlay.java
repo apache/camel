@@ -31,8 +31,8 @@ import dev.tamboui.widgets.block.BorderType;
 import dev.tamboui.widgets.block.Borders;
 import dev.tamboui.widgets.block.Title;
 
-import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.hint;
-import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.hintLast;
+import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.hint;
+import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.hintLast;
 
 class HelpOverlay {
 
@@ -95,8 +95,8 @@ class HelpOverlay {
                 .borderType(BorderType.ROUNDED).borders(Borders.ALL)
                 .title(" Help ")
                 .titleBottom(Title.from(Line.from(
-                        Span.styled(" F1/?", MonitorContext.HINT_KEY_STYLE), Span.raw(" close "),
-                        Span.styled(" ↑↓", MonitorContext.HINT_KEY_STYLE), Span.raw(" scroll "))))
+                        Span.styled(" F1/? ", Theme.hintKey()), Span.raw(" close "),
+                        Span.styled(" ↑↓ ", Theme.hintKey()), Span.raw(" scroll "))))
                 .build();
 
         MarkdownView view = MarkdownView.builder()

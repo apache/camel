@@ -33,6 +33,7 @@ import dev.tamboui.text.Span;
 import dev.tamboui.text.Text;
 import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
+import dev.tamboui.tui.event.MouseEvent;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
 import dev.tamboui.widgets.block.Borders;
@@ -40,25 +41,18 @@ import dev.tamboui.widgets.paragraph.Paragraph;
 import dev.tamboui.widgets.table.Cell;
 import dev.tamboui.widgets.table.Row;
 import dev.tamboui.widgets.table.Table;
-import dev.tamboui.widgets.table.TableState;
 import org.apache.camel.dsl.jbang.core.common.PathUtils;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 
-import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.*;
+import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.*;
 
-class ThreadsTab implements MonitorTab {
+class ThreadsTab extends AbstractTableTab {
 
-    private static final String[] SORT_COLUMNS = { "id", "name", "state" };
     private static final String[] FILTER_LABELS = { "camel", "all" };
 
-    private final MonitorContext ctx;
-    private final TableState tableState = new TableState();
     private final AtomicBoolean loading = new AtomicBoolean(false);
 
-    private String sort = "id";
-    private int sortIndex;
-    private boolean sortReversed;
     private int filter; // 0=camel, 1=all
     private List<ThreadData> allThreads = Collections.emptyList();
     private int threadCount;
@@ -68,7 +62,12 @@ class ThreadsTab implements MonitorTab {
     private String lastPid;
 
     ThreadsTab(MonitorContext ctx) {
-        this.ctx = ctx;
+        super(ctx, "id", "name", "state");
+    }
+
+    @Override
+    protected int getRowCount() {
+        return sortedThreads().size();
     }
 
     @Override
@@ -113,20 +112,14 @@ class ThreadsTab implements MonitorTab {
             }
             return false;
         }
+        return super.handleKeyEvent(ke);
+    }
 
+    @Override
+    protected boolean handleTabKeyEvent(KeyEvent ke) {
         if (ke.isConfirm()) {
             showTrace = !showTrace;
             traceScroll = 0;
-            return true;
-        }
-        if (ke.isChar('s')) {
-            sortIndex = (sortIndex + 1) % SORT_COLUMNS.length;
-            sort = SORT_COLUMNS[sortIndex];
-            sortReversed = false;
-            return true;
-        }
-        if (ke.isChar('S')) {
-            sortReversed = !sortReversed;
             return true;
         }
         if (ke.isCharIgnoreCase('f')) {
@@ -137,19 +130,13 @@ class ThreadsTab implements MonitorTab {
             loadThreads();
             return true;
         }
-        if (ke.isPageUp() || ke.isKey(KeyCode.PAGE_UP)) {
-            List<ThreadData> visible = sortedThreads();
-            for (int i = 0; i < 20 && tableState.selected() != null && tableState.selected() > 0; i++) {
-                tableState.selectPrevious();
-            }
-            return true;
-        }
-        if (ke.isPageDown() || ke.isKey(KeyCode.PAGE_DOWN)) {
-            List<ThreadData> visible = sortedThreads();
-            for (int i = 0; i < 20; i++) {
-                tableState.selectNext(visible.size());
-            }
-            return true;
+        return false;
+    }
+
+    @Override
+    public boolean handleMouseEvent(MouseEvent me, Rect area) {
+        if (!showTrace) {
+            return super.handleMouseEvent(me, area);
         }
         return false;
     }
@@ -166,26 +153,19 @@ class ThreadsTab implements MonitorTab {
     @Override
     public void navigateUp() {
         if (!showTrace) {
-            tableState.selectPrevious();
+            super.navigateUp();
         }
     }
 
     @Override
     public void navigateDown() {
         if (!showTrace) {
-            List<ThreadData> visible = sortedThreads();
-            tableState.selectNext(visible.size());
+            super.navigateDown();
         }
     }
 
     @Override
-    public void render(Frame frame, Rect area) {
-        IntegrationInfo info = ctx.findSelectedIntegration();
-        if (info == null) {
-            renderNoSelection(frame, area);
-            return;
-        }
-
+    protected void renderContent(Frame frame, Rect area, IntegrationInfo info) {
         if (loading.get() && allThreads.isEmpty()) {
             frame.renderWidget(
                     Paragraph.builder()
@@ -248,9 +228,7 @@ class ThreadsTab implements MonitorTab {
         }
 
         if (rows.isEmpty()) {
-            rows.add(Row.from(
-                    Cell.from(Span.styled("No threads", Style.EMPTY.dim())),
-                    Cell.from(""), Cell.from(""), Cell.from(""), Cell.from("")));
+            rows.add(emptyRow("No threads", 5));
         }
 
         String title = String.format(" Threads [%d] sort:%s filter:%s ", visible.size(), sort, FILTER_LABELS[filter]);
@@ -268,13 +246,15 @@ class ThreadsTab implements MonitorTab {
                         Constraint.fill(),
                         Constraint.length(16),
                         Constraint.length(14),
-                        Constraint.length(14))
-                .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
+                        Constraint.length(15))
+                .highlightStyle(Theme.selectionBg())
                 .highlightSpacing(Table.HighlightSpacing.ALWAYS)
                 .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(title).build())
                 .build();
 
+        lastTableArea = area;
         frame.renderStatefulWidget(table, area, tableState);
+        renderScrollbar(frame, visible.size());
     }
 
     private void renderTrace(Frame frame, Rect area, List<ThreadData> visible) {
@@ -381,19 +361,6 @@ class ThreadsTab implements MonitorTab {
         return lower.contains("camel") || lower.contains("vertx") || lower.contains("netty");
     }
 
-    private static int compareStr(String a, String b) {
-        if (a == null && b == null) {
-            return 0;
-        }
-        if (a == null) {
-            return -1;
-        }
-        if (b == null) {
-            return 1;
-        }
-        return a.compareToIgnoreCase(b);
-    }
-
     private static Style stateStyle(String state) {
         if (state == null) {
             return Style.EMPTY;
@@ -405,14 +372,6 @@ class ThreadsTab implements MonitorTab {
             case "TIMED_WAITING" -> Style.EMPTY.fg(Color.CYAN);
             default -> Style.EMPTY;
         };
-    }
-
-    private String sortLabel(String label, String column) {
-        return MonitorContext.sortLabel(label, column, sort, sortReversed);
-    }
-
-    private Style sortStyle(String column) {
-        return MonitorContext.sortStyle(column, sort);
     }
 
     private void loadThreads() {
@@ -506,6 +465,11 @@ class ThreadsTab implements MonitorTab {
         long waitedTime;
         String lockName;
         List<String> stackTrace;
+    }
+
+    @Override
+    public String description() {
+        return "JVM thread dump with thread names, states, and stack traces";
     }
 
     @Override

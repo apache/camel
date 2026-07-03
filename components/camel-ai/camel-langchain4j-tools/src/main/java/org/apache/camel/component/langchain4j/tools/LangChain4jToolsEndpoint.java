@@ -51,7 +51,8 @@ import static org.apache.camel.component.langchain4j.tools.LangChain4jTools.SCHE
 @UriEndpoint(firstVersion = "4.8.0", scheme = SCHEME,
              title = "LangChain4j Tools",
              syntax = "langchain4j-tools:toolId",
-             category = { Category.AI })
+             category = { Category.AI },
+             headersClass = LangChain4jToolsHeaders.class)
 public class LangChain4jToolsEndpoint extends DefaultEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(LangChain4jToolsEndpoint.class);

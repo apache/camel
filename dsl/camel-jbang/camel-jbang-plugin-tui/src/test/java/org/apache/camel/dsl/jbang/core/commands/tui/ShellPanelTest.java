@@ -17,6 +17,7 @@
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.List;
 
 import dev.tamboui.style.Modifier;
@@ -30,6 +31,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -256,67 +258,188 @@ class ShellPanelTest {
         assertNull(result);
     }
 
-    // ---- convertAttrToStyle tests ----
+    // ---- convertCellToStyle tests ----
+    // convertCellToStyle takes a full 64-bit cell (attr in upper 32, codepoint in lower 32).
+    // Helper to build a cell from a 32-bit attr value.
+    private static long cellWithAttr(long attr) {
+        return attr << 32;
+    }
 
     @Test
-    void convertAttrToStyleNoFlags() {
-        Style style = ShellPanel.convertAttrToStyle(0);
+    void convertCellToStyleNoFlags() {
+        Style style = ShellPanel.convertCellToStyle(cellWithAttr(0));
         assertTrue(style.effectiveModifiers().isEmpty());
     }
 
     @Test
-    void convertAttrToStyleBold() {
+    void convertCellToStyleBold() {
         // Bold = bit 3 of X nibble (bits 24-27)
-        long attr = 0x08000000L;
-        Style style = ShellPanel.convertAttrToStyle(attr);
+        Style style = ShellPanel.convertCellToStyle(cellWithAttr(0x08000000L));
         assertTrue(style.effectiveModifiers().contains(Modifier.BOLD));
     }
 
     @Test
-    void convertAttrToStyleUnderline() {
-        long attr = 0x01000000L;
-        Style style = ShellPanel.convertAttrToStyle(attr);
+    void convertCellToStyleUnderline() {
+        Style style = ShellPanel.convertCellToStyle(cellWithAttr(0x01000000L));
         assertTrue(style.effectiveModifiers().contains(Modifier.UNDERLINED));
     }
 
     @Test
-    void convertAttrToStyleReversed() {
-        long attr = 0x02000000L;
-        Style style = ShellPanel.convertAttrToStyle(attr);
+    void convertCellToStyleReversed() {
+        Style style = ShellPanel.convertCellToStyle(cellWithAttr(0x02000000L));
         assertTrue(style.effectiveModifiers().contains(Modifier.REVERSED));
     }
 
     @Test
-    void convertAttrToStyleDim() {
+    void convertCellToStyleDim() {
         // Dim = bit 2 of Y nibble (bits 28-31) → 0x4 << 28
-        long attr = 0x40000000L;
-        Style style = ShellPanel.convertAttrToStyle(attr);
+        Style style = ShellPanel.convertCellToStyle(cellWithAttr(0x40000000L));
         assertTrue(style.effectiveModifiers().contains(Modifier.DIM));
     }
 
     @Test
-    void convertAttrToStyleItalic() {
+    void convertCellToStyleItalic() {
         // Italic = bit 3 of Y nibble → 0x8 << 28
-        long attr = 0x80000000L;
-        Style style = ShellPanel.convertAttrToStyle(attr);
+        Style style = ShellPanel.convertCellToStyle(cellWithAttr(0x80000000L));
         assertTrue(style.effectiveModifiers().contains(Modifier.ITALIC));
     }
 
     @Test
-    void convertAttrToStyleCombinedFgBgBoldItalic() {
+    void convertCellToStyleCombinedFgBgBoldItalic() {
         // Y = 0xB (FG set + BG set + italic: bits 0+1+3), X = 0x8 (bold)
         // FFF = 0xF00 (red FG), BBB = 0x080 (green BG)
-        long attr = 0xB8F00080L;
-        Style style = ShellPanel.convertAttrToStyle(attr);
+        Style style = ShellPanel.convertCellToStyle(cellWithAttr(0xB8F00080L));
         assertTrue(style.effectiveModifiers().contains(Modifier.BOLD));
         assertTrue(style.effectiveModifiers().contains(Modifier.ITALIC));
         assertTrue(style.fg().isPresent());
         assertTrue(style.bg().isPresent());
     }
 
+    // ---- panelHeight / cycleHeight tests ----
+
+    @Test
+    void panelHeightDefaultIsUninitialized() {
+        ShellPanel panel = new ShellPanel();
+        assertEquals(-1, panel.panelHeight());
+    }
+
+    @Test
+    void initHeightSetsTo50Percent() {
+        ShellPanel panel = new ShellPanel();
+        panel.initHeight(40);
+        assertEquals(20, panel.panelHeight());
+    }
+
+    @Test
+    void cycleHeightCyclesThroughPercents() {
+        ShellPanel panel = new ShellPanel();
+        int contentHeight = 40;
+        panel.initHeight(contentHeight);
+        assertEquals(20, panel.panelHeight()); // 50%
+
+        panel.cycleHeight(contentHeight);
+        runAnimationToCompletion(panel);
+        assertEquals(30, panel.panelHeight()); // 75%
+
+        panel.cycleHeight(contentHeight);
+        runAnimationToCompletion(panel);
+        assertEquals(40, panel.panelHeight()); // 100%
+
+        panel.cycleHeight(contentHeight);
+        runAnimationToCompletion(panel);
+        assertEquals(10, panel.panelHeight()); // 25%
+
+        panel.cycleHeight(contentHeight);
+        runAnimationToCompletion(panel);
+        assertEquals(20, panel.panelHeight()); // wraps to 50%
+    }
+
+    @Test
+    void cycleHeightAnimates() {
+        ShellPanel panel = new ShellPanel();
+        panel.initHeight(60);
+        assertEquals(30, panel.panelHeight()); // 50% of 60
+
+        panel.cycleHeight(60); // target = 75% = 45
+        assertTrue(panel.isAnimating());
+        assertEquals(30, panel.panelHeight()); // not yet moved
+
+        panel.tickAnimation();
+        assertTrue(panel.panelHeight() > 30); // moved toward target
+        assertTrue(panel.panelHeight() < 45); // not yet at target
+
+        runAnimationToCompletion(panel);
+        assertEquals(45, panel.panelHeight());
+        assertFalse(panel.isAnimating());
+    }
+
+    @Test
+    void setPanelHeightSetsDirectly() {
+        ShellPanel panel = new ShellPanel();
+        panel.setPanelHeight(15);
+        assertEquals(15, panel.panelHeight());
+        assertFalse(panel.isAnimating());
+    }
+
+    private void runAnimationToCompletion(ShellPanel panel) {
+        for (int i = 0; i < 100 && panel.isAnimating(); i++) {
+            panel.tickAnimation();
+        }
+    }
+
+    // ---- renderFooter tests ----
+
+    @Test
+    void renderFooterShowsResizePercent() {
+        ShellPanel panel = new ShellPanel();
+        panel.initHeight(40);
+        List<Span> spans = new ArrayList<>();
+        panel.renderFooter(spans);
+
+        String footer = spansToString(spans);
+        assertTrue(footer.contains("resize (50%)"), "Footer should show 'resize (50%)'");
+    }
+
+    @Test
+    void renderFooterUpdatesAfterCycleHeight() {
+        ShellPanel panel = new ShellPanel();
+        panel.initHeight(40);
+        panel.cycleHeight(40); // cycles to 75%
+        runAnimationToCompletion(panel);
+
+        List<Span> spans = new ArrayList<>();
+        panel.renderFooter(spans);
+
+        String footer = spansToString(spans);
+        assertTrue(footer.contains("resize (75%)"), "Footer should show 'resize (75%)' after cycling once");
+    }
+
+    @Test
+    void renderFooterContainsExpectedHints() {
+        ShellPanel panel = new ShellPanel();
+        List<Span> spans = new ArrayList<>();
+        panel.renderFooter(spans);
+
+        String footer = spansToString(spans);
+        assertTrue(footer.contains("F6"), "Footer should contain F6 hint");
+        assertTrue(footer.contains("close"), "Footer should contain 'close' label for F6");
+        assertTrue(footer.contains("Shift+F6"), "Footer should contain Shift+F6 hint");
+        assertTrue(footer.contains("resize"), "Footer should contain 'resize' action label");
+        assertTrue(footer.contains("PgUp/Dn"), "Footer should contain PgUp/Dn hint");
+        assertTrue(footer.contains("scroll"), "Footer should contain 'scroll' label");
+    }
+
     private static String rawContent(Line line) {
         StringBuilder sb = new StringBuilder();
         for (Span span : line.spans()) {
+            sb.append(span.content());
+        }
+        return sb.toString();
+    }
+
+    private static String spansToString(List<Span> spans) {
+        StringBuilder sb = new StringBuilder();
+        for (Span span : spans) {
             sb.append(span.content());
         }
         return sb.toString();

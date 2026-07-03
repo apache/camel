@@ -83,6 +83,12 @@ class IntegrationInfo {
     final List<HttpEndpointInfo> httpEndpoints = new ArrayList<>();
     final List<ConfigurationTab.ConfigProperty> configProperties = new ArrayList<>();
     final List<DataSourceInfo> dataSources = new ArrayList<>();
+    final List<SqlTraceInfo> sqlTraceStatements = new ArrayList<>();
+    long sqlTraceTotal;
+    long sqlTraceAvgTime;
+    long sqlTraceSlowestTime;
+    long sqlTraceSlowCount;
+    long sqlTraceFailedCount;
     String httpServer;
     String readmeFiles;
 }

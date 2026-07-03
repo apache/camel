@@ -1141,6 +1141,48 @@ public interface DebeziumPostgresComponentBuilderFactory {
             return this;
         }
     
+        
+        /**
+         * The fully-qualified class name of the storage implementation for
+         * schema metadata. The class must implement
+         * io.debezium.relational.TableMappingStorage. Defaults to
+         * io.debezium.relational.ConcurrentMapTableMappingStorage for in-memory
+         * storage.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: io.debezium.relational.ConcurrentMapTableMappingStorage
+         * Group: postgres
+         * 
+         * @param memoryManagementSchemasClass the value to set
+         * @return the dsl builder
+         */
+        default DebeziumPostgresComponentBuilder memoryManagementSchemasClass(java.lang.String memoryManagementSchemasClass) {
+            doSetProperty("memoryManagementSchemasClass", memoryManagementSchemasClass);
+            return this;
+        }
+    
+        
+        /**
+         * The fully-qualified class name of the storage implementation for
+         * table metadata. The class must implement
+         * io.debezium.relational.TableMappingStorage. Defaults to
+         * io.debezium.relational.ConcurrentMapTableMappingStorage for in-memory
+         * storage.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: io.debezium.relational.ConcurrentMapTableMappingStorage
+         * Group: postgres
+         * 
+         * @param memoryManagementTablesClass the value to set
+         * @return the dsl builder
+         */
+        default DebeziumPostgresComponentBuilder memoryManagementTablesClass(java.lang.String memoryManagementTablesClass) {
+            doSetProperty("memoryManagementTablesClass", memoryManagementTablesClass);
+            return this;
+        }
+    
         /**
          * A semicolon-separated list of expressions that match fully-qualified
          * tables and column(s) to be used as message key. Each expression must
@@ -2255,6 +2297,25 @@ public interface DebeziumPostgresComponentBuilderFactory {
     
         
         /**
+         * Enable to collect various kind of statistics, like latencies in
+         * record processing, and derived data like quantiles. By default
+         * collecting statistics is enabled.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: postgres
+         * 
+         * @param statisticsMetricsEnabled the value to set
+         * @return the dsl builder
+         */
+        default DebeziumPostgresComponentBuilder statisticsMetricsEnabled(boolean statisticsMetricsEnabled) {
+            doSetProperty("statisticsMetricsEnabled", statisticsMetricsEnabled);
+            return this;
+        }
+    
+        
+        /**
          * Frequency for sending replication connection status updates to the
          * server, given in milliseconds. Defaults to 10 seconds (10,000 ms).
          * 
@@ -2346,7 +2407,12 @@ public interface DebeziumPostgresComponentBuilderFactory {
          * TIME fields always use microseconds precision; 'connect' always
          * represents time, date, and timestamp values using Kafka Connect's
          * built-in representations for Time, Date, and Timestamp, which uses
-         * millisecond precision regardless of the database columns' precision.
+         * millisecond precision regardless of the database columns' precision;
+         * 'isostring' represents time, date, and timestamp values as ISO-8601
+         * formatted strings at the UTC time zone; 'microseconds' always
+         * represents time, date, and timestamp values using microsecond
+         * precision; 'nanoseconds' always represents time, date, and timestamp
+         * values using nanosecond precision.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -2562,6 +2628,8 @@ public interface DebeziumPostgresComponentBuilderFactory {
             case "maxBatchSize": getOrCreateConfiguration((DebeziumPostgresComponent) component).setMaxBatchSize((int) value); return true;
             case "maxQueueSize": getOrCreateConfiguration((DebeziumPostgresComponent) component).setMaxQueueSize((int) value); return true;
             case "maxQueueSizeInBytes": getOrCreateConfiguration((DebeziumPostgresComponent) component).setMaxQueueSizeInBytes((long) value); return true;
+            case "memoryManagementSchemasClass": getOrCreateConfiguration((DebeziumPostgresComponent) component).setMemoryManagementSchemasClass((java.lang.String) value); return true;
+            case "memoryManagementTablesClass": getOrCreateConfiguration((DebeziumPostgresComponent) component).setMemoryManagementTablesClass((java.lang.String) value); return true;
             case "messageKeyColumns": getOrCreateConfiguration((DebeziumPostgresComponent) component).setMessageKeyColumns((java.lang.String) value); return true;
             case "messagePrefixExcludeList": getOrCreateConfiguration((DebeziumPostgresComponent) component).setMessagePrefixExcludeList((java.lang.String) value); return true;
             case "messagePrefixIncludeList": getOrCreateConfiguration((DebeziumPostgresComponent) component).setMessagePrefixIncludeList((java.lang.String) value); return true;
@@ -2620,6 +2688,7 @@ public interface DebeziumPostgresComponentBuilderFactory {
             case "snapshotSelectStatementOverrides": getOrCreateConfiguration((DebeziumPostgresComponent) component).setSnapshotSelectStatementOverrides((java.lang.String) value); return true;
             case "snapshotTablesOrderByRowCount": getOrCreateConfiguration((DebeziumPostgresComponent) component).setSnapshotTablesOrderByRowCount((java.lang.String) value); return true;
             case "sourceinfoStructMaker": getOrCreateConfiguration((DebeziumPostgresComponent) component).setSourceinfoStructMaker((java.lang.String) value); return true;
+            case "statisticsMetricsEnabled": getOrCreateConfiguration((DebeziumPostgresComponent) component).setStatisticsMetricsEnabled((boolean) value); return true;
             case "statusUpdateIntervalMs": getOrCreateConfiguration((DebeziumPostgresComponent) component).setStatusUpdateIntervalMs((int) value); return true;
             case "streamingDelayMs": getOrCreateConfiguration((DebeziumPostgresComponent) component).setStreamingDelayMs((long) value); return true;
             case "tableExcludeList": getOrCreateConfiguration((DebeziumPostgresComponent) component).setTableExcludeList((java.lang.String) value); return true;

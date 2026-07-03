@@ -4,7 +4,7 @@
 :artifactid: camel-pgvector
 :description: Perform operations on the PostgreSQL pgvector Vector Database.
 :since: 4.19
-:supportlevel: Preview
+:supportlevel: Stable
 :tabs-sync-option:
 :component-header: Only producer is supported
 //Manually maintained attributes

@@ -4,7 +4,7 @@
 :artifactid: camel-google-speech-to-text
 :description: Transcribe audio to text using Google Cloud Speech-to-Text API
 :since: 4.19
-:supportlevel: Preview
+:supportlevel: Stable
 :tabs-sync-option:
 :component-header: Only producer is supported
 //Manually maintained attributes
@@ -343,5 +343,3 @@ YAML::
             uri: mock:result
 ----
 ====
-
-

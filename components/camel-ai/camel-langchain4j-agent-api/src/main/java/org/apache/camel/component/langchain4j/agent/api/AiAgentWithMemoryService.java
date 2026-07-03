@@ -18,6 +18,7 @@ package org.apache.camel.component.langchain4j.agent.api;
 
 import dev.langchain4j.data.message.Content;
 import dev.langchain4j.service.MemoryId;
+import dev.langchain4j.service.Result;
 import dev.langchain4j.service.SystemMessage;
 import dev.langchain4j.service.UserMessage;
 import dev.langchain4j.service.V;
@@ -35,7 +36,7 @@ public interface AiAgentWithMemoryService {
      * @param  message
      * @return
      */
-    String chat(@MemoryId Object memoryId, @UserMessage String message);
+    Result<String> chat(@MemoryId Object memoryId, @UserMessage String message);
 
     /**
      * Chat with a user message containing both text and additional content (e.g., images, audio) with memory support.
@@ -43,9 +44,9 @@ public interface AiAgentWithMemoryService {
      * @param  memoryId the memory identifier for conversation history
      * @param  message  the text portion of the user message
      * @param  content  additional content such as ImageContent, AudioContent, etc.
-     * @return          the AI response
+     * @return          the AI response with token usage metadata
      */
-    String chat(@MemoryId Object memoryId, @UserMessage String message, @UserMessage Content content);
+    Result<String> chat(@MemoryId Object memoryId, @UserMessage String message, @UserMessage Content content);
 
     /**
      * Simple chat with a user message, system message and memory window
@@ -56,7 +57,7 @@ public interface AiAgentWithMemoryService {
      * @return
      */
     @SystemMessage("{{prompt}}")
-    String chat(
+    Result<String> chat(
             @MemoryId Object memoryId, @UserMessage String message,
             @V("prompt") String prompt);
 
@@ -67,10 +68,10 @@ public interface AiAgentWithMemoryService {
      * @param  message  the text portion of the user message
      * @param  content  additional content such as ImageContent, AudioContent, etc.
      * @param  prompt   the system message template
-     * @return          the AI response
+     * @return          the AI response with token usage metadata
      */
     @SystemMessage("{{prompt}}")
-    String chat(
+    Result<String> chat(
             @MemoryId Object memoryId, @UserMessage String message,
             @UserMessage Content content, @V("prompt") String prompt);
 

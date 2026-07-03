@@ -156,7 +156,9 @@ class ExportSpringBoot extends Export {
         if (mavenWrapper) {
             copyMavenWrapper();
         }
-        copyDockerFiles(BUILD_DIR);
+        if (docker) {
+            copyDockerFiles(BUILD_DIR);
+        }
         String appJar = "target" + File.separator + ids[1] + "-" + ids[2] + ".jar";
         copyReadme(BUILD_DIR, appJar);
         if (cleanExportDir || !exportDir.equals(".")) {

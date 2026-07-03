@@ -48,7 +48,7 @@ final class FormHelper {
         } else if (ke.isEnd()) {
             state.moveCursorToEnd();
         } else if (ke.code() == KeyCode.CHAR) {
-            state.insert(ke.character());
+            state.insert(ke.string().charAt(0));
         }
     }
 

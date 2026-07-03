@@ -29,8 +29,8 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 class MetricsCollector {
 
-    static final int MAX_SPARKLINE_POINTS = 60;
-    static final int MAX_ENDPOINT_CHART_POINTS = 60;
+    static final int MAX_SPARKLINE_POINTS = 300;
+    static final int MAX_ENDPOINT_CHART_POINTS = 300;
     static final int MAX_HEAP_HISTORY_POINTS = 120;
     static final long HEAP_SAMPLE_INTERVAL_MS = 5000;
 
@@ -176,16 +176,8 @@ class MetricsCollector {
             Long lastTime = previousExchangesTime.get(pid);
             if (lastTime == null || now - lastTime >= 1000) {
                 previousExchangesTime.put(pid, now);
-                LinkedList<Long> hist = throughputHistory.computeIfAbsent(pid, k -> new LinkedList<>());
-                hist.add(tp);
-                while (hist.size() > MAX_SPARKLINE_POINTS) {
-                    hist.remove(0);
-                }
-                LinkedList<Long> fhist = failedHistory.computeIfAbsent(pid, k -> new LinkedList<>());
-                fhist.add(fp);
-                while (fhist.size() > MAX_SPARKLINE_POINTS) {
-                    fhist.remove(0);
-                }
+                addToHistory(throughputHistory, pid, tp, MAX_SPARKLINE_POINTS);
+                addToHistory(failedHistory, pid, fp, MAX_SPARKLINE_POINTS);
             }
         }
     }
@@ -231,16 +223,8 @@ class MetricsCollector {
         Long lastSizeTime = previousEndpointSizeTime.get(pid);
         if (lastSizeTime == null || now - lastSizeTime >= 1000) {
             previousEndpointSizeTime.put(pid, now);
-            LinkedList<Long> inSizeHist = endpointInSizeHistory.computeIfAbsent(pid, k -> new LinkedList<>());
-            inSizeHist.add(inMeanSize);
-            while (inSizeHist.size() > MAX_ENDPOINT_CHART_POINTS) {
-                inSizeHist.remove(0);
-            }
-            LinkedList<Long> outSizeHist = endpointOutSizeHistory.computeIfAbsent(pid, k -> new LinkedList<>());
-            outSizeHist.add(outMeanSize);
-            while (outSizeHist.size() > MAX_ENDPOINT_CHART_POINTS) {
-                outSizeHist.remove(0);
-            }
+            addToHistory(endpointInSizeHistory, pid, inMeanSize, MAX_ENDPOINT_CHART_POINTS);
+            addToHistory(endpointOutSizeHistory, pid, outMeanSize, MAX_ENDPOINT_CHART_POINTS);
         }
 
         // Per-endpoint rate history (keyed by pid|uri)
@@ -283,16 +267,8 @@ class MetricsCollector {
             Long lastTime = prevTimeMap.get(pid);
             if (lastTime == null || now - lastTime >= 1000) {
                 prevTimeMap.put(pid, now);
-                LinkedList<Long> inHist = inHistMap.computeIfAbsent(pid, k -> new LinkedList<>());
-                inHist.add(Math.max(0, inRate));
-                while (inHist.size() > MAX_ENDPOINT_CHART_POINTS) {
-                    inHist.remove(0);
-                }
-                LinkedList<Long> outHist = outHistMap.computeIfAbsent(pid, k -> new LinkedList<>());
-                outHist.add(Math.max(0, outRate));
-                while (outHist.size() > MAX_ENDPOINT_CHART_POINTS) {
-                    outHist.remove(0);
-                }
+                addToHistory(inHistMap, pid, Math.max(0, inRate), MAX_ENDPOINT_CHART_POINTS);
+                addToHistory(outHistMap, pid, Math.max(0, outRate), MAX_ENDPOINT_CHART_POINTS);
             }
         }
     }
@@ -317,11 +293,7 @@ class MetricsCollector {
             Long lastTime = previousHeapTime.get(info.pid);
             if (lastTime == null || now - lastTime >= HEAP_SAMPLE_INTERVAL_MS) {
                 previousHeapTime.put(info.pid, now);
-                LinkedList<Long> hist = heapMemHistory.computeIfAbsent(info.pid, k -> new LinkedList<>());
-                hist.add(info.heapMemUsed);
-                while (hist.size() > MAX_HEAP_HISTORY_POINTS) {
-                    hist.remove(0);
-                }
+                addToHistory(heapMemHistory, info.pid, info.heapMemUsed, MAX_HEAP_HISTORY_POINTS);
             }
         }
     }
@@ -407,6 +379,22 @@ class MetricsCollector {
                 cbThroughputSamples, previousCbTime);
         removeByPrefix(pid + "|", perEndpointInHistory, perEndpointOutHistory,
                 perEndpointSamples, previousPerEndpointTime);
+    }
+
+    /**
+     * Adds a value to a history list using copy-on-write to avoid {@link java.util.ConcurrentModificationException}
+     * when the UI thread iterates a list while the refresh thread updates it. Instead of mutating the existing list in
+     * place, a new copy is created, modified, and atomically swapped into the map.
+     */
+    private void addToHistory(Map<String, LinkedList<Long>> historyMap, String key, long value, int maxPoints) {
+        historyMap.compute(key, (k, old) -> {
+            LinkedList<Long> hist = old != null ? new LinkedList<>(old) : new LinkedList<>();
+            hist.add(value);
+            while (hist.size() > maxPoints) {
+                hist.remove(0);
+            }
+            return hist;
+        });
     }
 
     @SafeVarargs

@@ -464,6 +464,20 @@ class ExportTest {
         Assertions.assertTrue(new File(workingDir, "AGENTS.md").exists(), "Missing AGENTS.md");
     }
 
+    @ParameterizedTest
+    @MethodSource("runtimeProvider")
+    public void shouldSkipDockerFiles(RuntimeType rt) throws Exception {
+        LOG.info("shouldSkipDockerFiles {}", rt);
+        Export command = createCommand(rt, new String[] { "src/test/resources/route.yaml" },
+                "--gav=examples:route:1.0.0", "--dir=" + workingDir, "--quiet", "--docker=false");
+        int exit = command.doCall();
+
+        Assertions.assertEquals(0, exit);
+        Assertions.assertFalse(new File(workingDir + "/src/main/docker", "Dockerfile").exists(),
+                "Dockerfile should not exist when --docker=false");
+        Assertions.assertTrue(new File(workingDir, "readme.md").exists(), "Missing readme.md");
+    }
+
     // Each runtime may have a different logic
     public void assertApplicationPropertiesContent(RuntimeType rt, File appProps) throws Exception {
         try (FileInputStream fis = new FileInputStream(appProps)) {

@@ -9,7 +9,59 @@
     "javaType": "org.apache.camel.impl.console.ReceiveDevConsole",
     "groupId": "org.apache.camel",
     "artifactId": "camel-console",
-    "version": "4.21.0-SNAPSHOT"
+    "version": "4.22.0-SNAPSHOT"
+  },
+  "options": {
+    "dump": {
+      "index": 0,
+      "kind": "option",
+      "displayName": "Dump",
+      "group": "query",
+      "label": "query",
+      "required": false,
+      "type": "string",
+      "javaType": "java.lang.String",
+      "enum": [
+        "true",
+        "false"
+      ],
+      "deprecated": false,
+      "autowired": false,
+      "secret": false,
+      "description": "Whether to dump received messages"
+    },
+    "enabled": {
+      "index": 1,
+      "kind": "option",
+      "displayName": "Enabled",
+      "group": "query",
+      "label": "query",
+      "required": false,
+      "type": "string",
+      "javaType": "java.lang.String",
+      "enum": [
+        "true",
+        "false"
+      ],
+      "deprecated": false,
+      "autowired": false,
+      "secret": false,
+      "description": "Whether to enable or disable receive mode"
+    },
+    "endpoint": {
+      "index": 2,
+      "kind": "option",
+      "displayName": "Endpoint",
+      "group": "query",
+      "label": "query",
+      "required": false,
+      "type": "string",
+      "javaType": "java.lang.String",
+      "deprecated": false,
+      "autowired": false,
+      "secret": false,
+      "description": "Endpoint for where to receive messages (can also refer to a route id, endpoint pattern)"
+    }
   }
 }
 

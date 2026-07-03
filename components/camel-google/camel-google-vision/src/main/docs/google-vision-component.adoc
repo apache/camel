@@ -4,7 +4,7 @@
 :artifactid: camel-google-vision
 :description: Detect labels, text, faces, logos and more on images through Google Cloud Vision API
 :since: 4.19
-:supportlevel: Preview
+:supportlevel: Stable
 :tabs-sync-option:
 :component-header: Only producer is supported
 //Manually maintained attributes
@@ -538,5 +538,3 @@ YAML::
             uri: mock:result
 ----
 ====
-
-

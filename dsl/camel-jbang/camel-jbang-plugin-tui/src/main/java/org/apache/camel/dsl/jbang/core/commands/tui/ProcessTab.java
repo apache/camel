@@ -30,6 +30,8 @@ import dev.tamboui.text.Line;
 import dev.tamboui.text.Span;
 import dev.tamboui.text.Text;
 import dev.tamboui.tui.event.KeyEvent;
+import dev.tamboui.tui.event.MouseEvent;
+import dev.tamboui.tui.event.MouseEventKind;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
 import dev.tamboui.widgets.block.Borders;
@@ -38,17 +40,23 @@ import dev.tamboui.widgets.scrollbar.Scrollbar;
 import dev.tamboui.widgets.scrollbar.ScrollbarState;
 import org.apache.camel.util.json.JsonObject;
 
-import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.*;
+import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.*;
 
-class ProcessTab implements MonitorTab {
+class ProcessTab extends AbstractTab {
 
-    private final MonitorContext ctx;
+    private static final int MOUSE_SCROLL_LINES = 3;
+
     private boolean wrap;
     private int scroll;
     private final ScrollbarState scrollState = new ScrollbarState();
 
     ProcessTab(MonitorContext ctx) {
-        this.ctx = ctx;
+        super(ctx);
+    }
+
+    @Override
+    public String description() {
+        return "OS process information (PID, CPU, memory, file descriptors)";
     }
 
     @Override
@@ -70,7 +78,15 @@ class ProcessTab implements MonitorTab {
     }
 
     @Override
-    public boolean handleEscape() {
+    public boolean handleMouseEvent(MouseEvent me, Rect area) {
+        if (me.kind() == MouseEventKind.SCROLL_UP) {
+            scroll = Math.max(0, scroll - MOUSE_SCROLL_LINES);
+            return true;
+        }
+        if (me.kind() == MouseEventKind.SCROLL_DOWN) {
+            scroll += MOUSE_SCROLL_LINES;
+            return true;
+        }
         return false;
     }
 

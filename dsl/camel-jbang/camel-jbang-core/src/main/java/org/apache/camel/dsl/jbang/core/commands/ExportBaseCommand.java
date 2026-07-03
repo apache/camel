@@ -204,6 +204,10 @@ public abstract class ExportBaseCommand extends CamelCommand {
                         description = "Include Maven Wrapper files in exported project")
     protected boolean mavenWrapper = true;
 
+    @CommandLine.Option(names = { "--docker" }, defaultValue = "true",
+                        description = "Include Docker files in exported project")
+    protected boolean docker = true;
+
     @CommandLine.Option(names = { "--open-api" }, description = "Adds an OpenAPI spec from the given file (json or yaml file)")
     protected String openapi;
 
@@ -1009,6 +1013,11 @@ public abstract class ExportBaseCommand extends CamelCommand {
 
         if (customize != null) {
             customize.apply(profileProps);
+        }
+
+        // include camel profile if set (so exported runtimes like Spring Boot and Quarkus know the profile)
+        if (this.profile != null && !profileProps.containsKey("camel.main.profile")) {
+            profileProps.put("camel.main.profile", this.profile);
         }
 
         StringBuilder content = new StringBuilder();

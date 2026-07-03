@@ -31,6 +31,8 @@ import dev.tamboui.text.Span;
 import dev.tamboui.text.Text;
 import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
+import dev.tamboui.tui.event.MouseEvent;
+import dev.tamboui.tui.event.MouseEventKind;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
 import dev.tamboui.widgets.block.Borders;
@@ -39,20 +41,23 @@ import dev.tamboui.widgets.list.ListState;
 import dev.tamboui.widgets.list.ListWidget;
 import dev.tamboui.widgets.list.ScrollMode;
 import dev.tamboui.widgets.paragraph.Paragraph;
+import dev.tamboui.widgets.scrollbar.Scrollbar;
+import dev.tamboui.widgets.scrollbar.ScrollbarState;
 import org.apache.camel.dsl.jbang.core.common.PathUtils;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 
-import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.*;
+import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.*;
 
-class ClasspathTab implements MonitorTab {
+class ClasspathTab extends AbstractTab {
 
     private static final Style MATCH_STYLE = Style.EMPTY.fg(Color.YELLOW).bold();
 
-    private final MonitorContext ctx;
     private final ListState listState = new ListState();
+    private final ScrollbarState listScrollState = new ScrollbarState();
     private final FuzzyFilter fuzzyFilter = new FuzzyFilter();
     private final AtomicBoolean loading = new AtomicBoolean(false);
+    private Rect lastArea;
 
     private List<JarEntry> allEntries = Collections.emptyList();
     private List<FilteredEntry> filteredEntries = Collections.emptyList();
@@ -61,7 +66,7 @@ class ClasspathTab implements MonitorTab {
     private boolean dataLoaded;
 
     ClasspathTab(MonitorContext ctx) {
-        this.ctx = ctx;
+        super(ctx);
     }
 
     @Override
@@ -110,9 +115,29 @@ class ClasspathTab implements MonitorTab {
             return true;
         }
         if (ke.code() == KeyCode.CHAR) {
-            fuzzyFilter.appendChar(ke.character());
+            fuzzyFilter.appendChar(ke.string().charAt(0));
             refilter();
             return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean handleMouseEvent(MouseEvent me, Rect area) {
+        if (me.kind() == MouseEventKind.SCROLL_UP) {
+            listState.selectPrevious();
+            return true;
+        }
+        if (me.kind() == MouseEventKind.SCROLL_DOWN) {
+            listState.selectNext(filteredEntries.size());
+            return true;
+        }
+        if (me.isClick() && contains(lastArea, me.x(), me.y())) {
+            int itemIndex = listState.offset() + (me.y() - lastArea.y() - 1);
+            if (itemIndex >= 0 && itemIndex < filteredEntries.size()) {
+                listState.select(itemIndex);
+                return true;
+            }
         }
         return false;
     }
@@ -195,12 +220,23 @@ class ClasspathTab implements MonitorTab {
 
         ListWidget list = ListWidget.builder()
                 .items(items.toArray(ListItem[]::new))
-                .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
+                .highlightStyle(Theme.selectionBg())
                 .highlightSymbol("")
                 .scrollMode(ScrollMode.AUTO_SCROLL)
                 .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(title).build())
                 .build();
         frame.renderStatefulWidget(list, area, listState);
+        lastArea = area;
+
+        // Render vertical scrollbar on the right border when content overflows
+        int visibleRows = area.height() - 2; // top border + bottom border
+        if (visibleRows > 0 && filteredEntries.size() > visibleRows) {
+            Rect scrollRect = new Rect(area.x() + area.width() - 1, area.y() + 1, 1, visibleRows);
+            listScrollState.contentLength(filteredEntries.size());
+            listScrollState.viewportContentLength(visibleRows);
+            listScrollState.position(listState.offset());
+            frame.renderStatefulWidget(Scrollbar.builder().build(), scrollRect, listScrollState);
+        }
     }
 
     @Override
@@ -386,6 +422,11 @@ class ClasspathTab implements MonitorTab {
     }
 
     record FilteredEntry(JarEntry entry, int[] matchPositions) {
+    }
+
+    @Override
+    public String description() {
+        return "JVM classpath entries with filtering";
     }
 
     @Override

@@ -4,7 +4,7 @@
 :artifactid: camel-huggingface
 :description: Integration with Hugging Face's Model Hub by using the Deep Java Library (DJL) Python bridge
 :since: 4.19
-:supportlevel: Preview
+:supportlevel: Stable
 :tabs-sync-option:
 :component-header: Only producer is supported
 

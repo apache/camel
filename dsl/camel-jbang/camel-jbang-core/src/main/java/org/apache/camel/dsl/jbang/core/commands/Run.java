@@ -1291,6 +1291,7 @@ public class Run extends CamelCommand {
         }
 
         AtomicReference<Process> processRef = new AtomicReference<>();
+        AtomicReference<String> appNameRef = new AtomicReference<>();
 
         // create temp run dir
         Path runDirPath = Paths.get(RUN_PLATFORM_DIR, Long.toString(System.currentTimeMillis()));
@@ -1317,6 +1318,11 @@ public class Run extends CamelCommand {
                     }
 
                     removeDir(runDirPath);
+                    // cleanup log file
+                    String appName = appNameRef.get();
+                    if (appName != null) {
+                        Files.deleteIfExists(CommandLineHelper.getCamelDir().resolve(appName + ".log"));
+                    }
                 } catch (Exception e) {
                     // Ignore
                 }
@@ -1326,6 +1332,7 @@ public class Run extends CamelCommand {
 
         // export to hidden folder
         ExportQuarkus eq = new ExportQuarkus(getMain());
+        eq.exportBaseDir = this.exportBaseDir;
         eq.javaLiveReload = this.dev;
         eq.symbolicLink = this.dev;
         eq.mavenWrapper = true;
@@ -1361,6 +1368,7 @@ public class Run extends CamelCommand {
         eq.loggingLevel = "off";
         eq.ignoreLoadingError = this.ignoreLoadingError;
         eq.lazyBean = this.lazyBean;
+        eq.profile = this.profile;
         eq.applicationProperties = this.property;
 
         printer().println("Running using Quarkus (preparing and downloading files)");
@@ -1369,6 +1377,19 @@ public class Run extends CamelCommand {
         int exit = eq.export();
         if (exit != 0) {
             return exit;
+        }
+
+        appNameRef.set(eq.name);
+
+        // prepare quarkus for logging to file
+        Path appProps = Paths.get(eq.exportDir, "src/main/resources/application.properties");
+        if (Files.exists(appProps)) {
+            String content = Files.readString(appProps);
+            content += "\n# logging to file\n"
+                       + "quarkus.log.file.enabled=true\n"
+                       + "quarkus.log.file.path=${user.home}/.camel/" + eq.name + ".log\n"
+                       + "quarkus.log.file.format=%d{yyyy-MM-dd HH:mm:ss.SSS} %5p %i --- [%15.15t] %-40.40c{3.} : %s%e%n\n";
+            Files.writeString(appProps, content);
         }
 
         // run quarkus via maven
@@ -1431,6 +1452,7 @@ public class Run extends CamelCommand {
 
         // export to hidden folder
         ExportSpringBoot eq = new ExportSpringBoot(getMain());
+        eq.exportBaseDir = this.exportBaseDir;
         // the code reload is not supported, since we use symlink, spring-boot devtools doesn't support symlink
         if (this.dev) {
             printer().println("WARN: Code reload is not supported with Spring Boot.");
@@ -1476,6 +1498,7 @@ public class Run extends CamelCommand {
         eq.loggingLevel = "off";
         eq.ignoreLoadingError = this.ignoreLoadingError;
         eq.lazyBean = this.lazyBean;
+        eq.profile = this.profile;
         eq.applicationProperties = this.property;
 
         printer().println("Running using Spring Boot (preparing and downloading files)");
@@ -1623,6 +1646,9 @@ public class Run extends CamelCommand {
             kameletsVersion = answer.getProperty(KAMELETS_VERSION, kameletsVersion);
             springBootVersion = answer.getProperty(SPRING_BOOT_VERSION, springBootVersion);
             javaVersion = answer.getProperty(JAVA_VERSION, javaVersion);
+            if (quarkusPlatform == null) {
+                quarkusPlatform = new QuarkusPlatformMixin();
+            }
             quarkusPlatform = QuarkusPlatformMixin.of(answer, quarkusPlatform);
             gav = answer.getProperty(GAV, gav);
             stub = answer.getProperty(STUB, stub);

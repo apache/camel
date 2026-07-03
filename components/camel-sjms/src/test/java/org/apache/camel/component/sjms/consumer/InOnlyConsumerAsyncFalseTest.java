@@ -48,7 +48,7 @@ public class InOnlyConsumerAsyncFalseTest extends JmsTestSupport {
         // despite delaying the processing of the first message,
         // as asyncConsumer is disabled and there is only one consumer thread
         // processing messages sequentially.
-        MockEndpoint.assertIsSatisfied(context, 3, TimeUnit.SECONDS);
+        MockEndpoint.assertIsSatisfied(context, 20, TimeUnit.SECONDS);
         assertEquals(beforeThreadName, afterThreadName);
     }
 

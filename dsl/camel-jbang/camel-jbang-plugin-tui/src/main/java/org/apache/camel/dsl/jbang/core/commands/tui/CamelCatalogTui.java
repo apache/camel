@@ -465,7 +465,7 @@ public class CamelCatalogTui extends CamelCommand {
         Table table = Table.builder()
                 .rows(rows)
                 .widths(Constraint.fill())
-                .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
+                .highlightStyle(Theme.selectionBg())
                 .highlightSpacing(Table.HighlightSpacing.ALWAYS)
                 .block(Block.builder()
                         .borderType(BorderType.ROUNDED).borders(Borders.ALL)
@@ -524,7 +524,7 @@ public class CamelCatalogTui extends CamelCommand {
                         Constraint.length(4),
                         Constraint.length(12),
                         Constraint.fill())
-                .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
+                .highlightStyle(Theme.selectionBg())
                 .highlightSpacing(Table.HighlightSpacing.ALWAYS)
                 .block(Block.builder()
                         .borderType(BorderType.ROUNDED).borders(Borders.ALL)

@@ -88,6 +88,8 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
     private long retriableRestartConnectorWaitMs = 10000;
     @UriParam(label = LABEL_NAME, defaultValue = "0ms", javaType = "java.time.Duration")
     private long snapshotDelayMs = 0;
+    @UriParam(label = LABEL_NAME, defaultValue = "io.debezium.relational.ConcurrentMapTableMappingStorage")
+    private String memoryManagementTablesClass = "io.debezium.relational.ConcurrentMapTableMappingStorage";
     @UriParam(label = LABEL_NAME, defaultValue = "4s", javaType = "java.time.Duration")
     private long executorShutdownTimeoutMs = 4000;
     @UriParam(label = LABEL_NAME, defaultValue = "false")
@@ -110,6 +112,8 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
     private boolean snapshotModeConfigurationBasedStartStream = false;
     @UriParam(label = LABEL_NAME, defaultValue = "long")
     private String bigintUnsignedHandlingMode = "long";
+    @UriParam(label = LABEL_NAME, defaultValue = "true")
+    private boolean statisticsMetricsEnabled = true;
     @UriParam(label = LABEL_NAME)
     private long databaseServerId;
     @UriParam(label = LABEL_NAME, defaultValue = "5s", javaType = "java.time.Duration")
@@ -122,12 +126,16 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
     private int snapshotMaxThreads = 1;
     @UriParam(label = LABEL_NAME)
     private String notificationSinkTopicName;
+    @UriParam(label = LABEL_NAME, defaultValue = "false")
+    private boolean gtidIgnoreOnRecovery = false;
     @UriParam(label = LABEL_NAME)
     private String snapshotModeCustomName;
     @UriParam(label = LABEL_NAME, defaultValue = "preferred")
     private String databaseSslMode = "preferred";
     @UriParam(label = LABEL_NAME, defaultValue = "none")
     private String schemaNameAdjustmentMode = "none";
+    @UriParam(label = LABEL_NAME, defaultValue = "io.debezium.relational.ConcurrentMapTableMappingStorage")
+    private String memoryManagementSchemasClass = "io.debezium.relational.ConcurrentMapTableMappingStorage";
     @UriParam(label = LABEL_NAME, defaultValue = "1m", javaType = "java.time.Duration")
     private long connectKeepAliveIntervalMs = 60000;
     @UriParam(label = LABEL_NAME)
@@ -144,6 +152,8 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
     private int databaseQueryTimeoutMs = 600000;
     @UriParam(label = LABEL_NAME, defaultValue = "0")
     private int queryFetchSize = 0;
+    @UriParam(label = LABEL_NAME, defaultValue = "default")
+    private String ddlParserType = "default";
     @UriParam(label = LABEL_NAME)
     private String gtidSourceIncludes;
     @UriParam(label = LABEL_NAME)
@@ -659,10 +669,7 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
      * to stream changes from the binlog.; 'initial_only': The connector
      * performs a snapshot as it does for the 'initial' option, but after the
      * connector completes the snapshot, it stops, and does not stream changes
-     * from the binlog.; 'never': The connector does not run a snapshot. Upon
-     * first startup, the connector immediately begins reading from the
-     * beginning of the binlog. The 'never' mode should be used with care, and
-     * only when the binlog is known to contain all history.
+     * from the binlog.
      */
     public void setSnapshotMode(String snapshotMode) {
         this.snapshotMode = snapshotMode;
@@ -758,6 +765,22 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
 
     public long getSnapshotDelayMs() {
         return snapshotDelayMs;
+    }
+
+    /**
+     * The fully-qualified class name of the storage implementation for table
+     * metadata. The class must implement
+     * io.debezium.relational.TableMappingStorage<io.debezium.relational.Table>.
+     * Defaults to io.debezium.relational.ConcurrentMapTableMappingStorage for
+     * in-memory storage.
+     */
+    public void setMemoryManagementTablesClass(
+            String memoryManagementTablesClass) {
+        this.memoryManagementTablesClass = memoryManagementTablesClass;
+    }
+
+    public String getMemoryManagementTablesClass() {
+        return memoryManagementTablesClass;
     }
 
     /**
@@ -913,6 +936,19 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
+     * Enable to collect various kind of statistics, like latencies in record
+     * processing, and derived data like quantiles. By default collecting
+     * statistics is enabled.
+     */
+    public void setStatisticsMetricsEnabled(boolean statisticsMetricsEnabled) {
+        this.statisticsMetricsEnabled = statisticsMetricsEnabled;
+    }
+
+    public boolean isStatisticsMetricsEnabled() {
+        return statisticsMetricsEnabled;
+    }
+
+    /**
      * A numeric ID of this database client, which must be unique across all
      * currently-running database processes in the cluster. This connector joins
      * the database cluster as another server (with this unique ID) so it can
@@ -992,6 +1028,19 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
+     * Whether the connector should ignore GTID during recovery and restart from
+     * the binlog file and position instead. GTID mode on the server remains
+     * enabled, and GTID tracking resumes normally after recovery.
+     */
+    public void setGtidIgnoreOnRecovery(boolean gtidIgnoreOnRecovery) {
+        this.gtidIgnoreOnRecovery = gtidIgnoreOnRecovery;
+    }
+
+    public boolean isGtidIgnoreOnRecovery() {
+        return gtidIgnoreOnRecovery;
+    }
+
+    /**
      * When 'snapshot.mode' is set as custom, this setting must be set to
      * specify a the name of the custom implementation provided in the 'name()'
      * method. The implementations must implement the 'Snapshotter' interface
@@ -1040,6 +1089,20 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
 
     public String getSchemaNameAdjustmentMode() {
         return schemaNameAdjustmentMode;
+    }
+
+    /**
+     * The fully-qualified class name of the storage implementation for schema
+     * metadata. The class must implement
+     * io.debezium.relational.TableMappingStorage<io.debezium.relational.TableSchema>. Defaults to io.debezium.relational.ConcurrentMapTableMappingStorage for in-memory storage.
+     */
+    public void setMemoryManagementSchemasClass(
+            String memoryManagementSchemasClass) {
+        this.memoryManagementSchemasClass = memoryManagementSchemasClass;
+    }
+
+    public String getMemoryManagementSchemasClass() {
+        return memoryManagementSchemasClass;
     }
 
     /**
@@ -1140,6 +1203,20 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
 
     public int getQueryFetchSize() {
         return queryFetchSize;
+    }
+
+    /**
+     * Specifies which ANTLR grammar to use for parsing MySQL DDL statements.
+     * 'default' uses the Oracle MySQL grammar, which is actively maintained and
+     * supports MySQL 8.0+ features. 'legacy' uses the Positive Technologies
+     * grammar for backward compatibility with existing deployments.
+     */
+    public void setDdlParserType(String ddlParserType) {
+        this.ddlParserType = ddlParserType;
+    }
+
+    public String getDdlParserType() {
+        return ddlParserType;
     }
 
     /**
@@ -1816,6 +1893,7 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "openlineage.integration.config.file.path", openlineageIntegrationConfigFilePath);
         addPropertyIfNotNull(configBuilder, "retriable.restart.connector.wait.ms", retriableRestartConnectorWaitMs);
         addPropertyIfNotNull(configBuilder, "snapshot.delay.ms", snapshotDelayMs);
+        addPropertyIfNotNull(configBuilder, "memory.management.tables.class", memoryManagementTablesClass);
         addPropertyIfNotNull(configBuilder, "executor.shutdown.timeout.ms", executorShutdownTimeoutMs);
         addPropertyIfNotNull(configBuilder, "snapshot.mode.configuration.based.snapshot.on.data.error", snapshotModeConfigurationBasedSnapshotOnDataError);
         addPropertyIfNotNull(configBuilder, "schema.history.internal.file.filename", schemaHistoryInternalFileFilename);
@@ -1827,15 +1905,18 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "snapshot.include.collection.list", snapshotIncludeCollectionList);
         addPropertyIfNotNull(configBuilder, "snapshot.mode.configuration.based.start.stream", snapshotModeConfigurationBasedStartStream);
         addPropertyIfNotNull(configBuilder, "bigint.unsigned.handling.mode", bigintUnsignedHandlingMode);
+        addPropertyIfNotNull(configBuilder, "statistics.metrics.enabled", statisticsMetricsEnabled);
         addPropertyIfNotNull(configBuilder, "database.server.id", databaseServerId);
         addPropertyIfNotNull(configBuilder, "signal.poll.interval.ms", signalPollIntervalMs);
         addPropertyIfNotNull(configBuilder, "notification.enabled.channels", notificationEnabledChannels);
         addPropertyIfNotNull(configBuilder, "event.processing.failure.handling.mode", eventProcessingFailureHandlingMode);
         addPropertyIfNotNull(configBuilder, "snapshot.max.threads", snapshotMaxThreads);
         addPropertyIfNotNull(configBuilder, "notification.sink.topic.name", notificationSinkTopicName);
+        addPropertyIfNotNull(configBuilder, "gtid.ignore.on.recovery", gtidIgnoreOnRecovery);
         addPropertyIfNotNull(configBuilder, "snapshot.mode.custom.name", snapshotModeCustomName);
         addPropertyIfNotNull(configBuilder, "database.ssl.mode", databaseSslMode);
         addPropertyIfNotNull(configBuilder, "schema.name.adjustment.mode", schemaNameAdjustmentMode);
+        addPropertyIfNotNull(configBuilder, "memory.management.schemas.class", memoryManagementSchemasClass);
         addPropertyIfNotNull(configBuilder, "connect.keep.alive.interval.ms", connectKeepAliveIntervalMs);
         addPropertyIfNotNull(configBuilder, "table.include.list", tableIncludeList);
         addPropertyIfNotNull(configBuilder, "include.query", includeQuery);
@@ -1844,6 +1925,7 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "openlineage.integration.job.namespace", openlineageIntegrationJobNamespace);
         addPropertyIfNotNull(configBuilder, "database.query.timeout.ms", databaseQueryTimeoutMs);
         addPropertyIfNotNull(configBuilder, "query.fetch.size", queryFetchSize);
+        addPropertyIfNotNull(configBuilder, "ddl.parser.type", ddlParserType);
         addPropertyIfNotNull(configBuilder, "gtid.source.includes", gtidSourceIncludes);
         addPropertyIfNotNull(configBuilder, "heartbeat.action.query", heartbeatActionQuery);
         addPropertyIfNotNull(configBuilder, "poll.interval.ms", pollIntervalMs);

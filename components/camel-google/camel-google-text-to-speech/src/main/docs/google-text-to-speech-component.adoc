@@ -4,7 +4,7 @@
 :artifactid: camel-google-text-to-speech
 :description: Synthesize speech from text using the Google Cloud Text-to-Speech API
 :since: 4.19
-:supportlevel: Preview
+:supportlevel: Stable
 :tabs-sync-option:
 :component-header: Only producer is supported
 //Manually maintained attributes
@@ -419,5 +419,3 @@ YAML::
             uri: mock:result
 ----
 ====
-
-

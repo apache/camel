@@ -47,7 +47,9 @@ import org.apache.camel.dsl.jbang.core.common.PathUtils;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 
-import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.*;
+import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.*;
+import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.hint;
+import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.hintLast;
 
 class SendMessagePopup {
 
@@ -346,7 +348,7 @@ class SendMessagePopup {
             return true;
         }
         if (ke.code() == KeyCode.CHAR) {
-            activeInput.insert(ke.character());
+            activeInput.insert(ke.string().charAt(0));
             return true;
         }
         return true;
@@ -442,7 +444,7 @@ class SendMessagePopup {
                 Path actionFile = ctx.getActionFile(targetPid);
                 PathUtils.writeTextSafely(root.toJson(), actionFile);
 
-                JsonObject response = MonitorContext.pollJsonResponse(outputFile, 25000);
+                JsonObject response = TuiHelper.pollJsonResponse(outputFile, 25000);
                 PathUtils.deleteFile(outputFile);
 
                 if (response == null) {

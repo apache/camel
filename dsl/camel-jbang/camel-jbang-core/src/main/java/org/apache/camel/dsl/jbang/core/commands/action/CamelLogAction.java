@@ -262,7 +262,7 @@ public class CamelLogAction extends ActionBaseCommand {
 
         for (Row row : rows.values()) {
             if (row.reader == null) {
-                Path file = logFile(row.pid);
+                Path file = logFile(row.pid, row.name);
                 if (Files.exists(file)) {
                     row.reader = new LineNumberReader(Files.newBufferedReader(file));
                     if (tail == 0) {
@@ -444,14 +444,24 @@ public class CamelLogAction extends ActionBaseCommand {
     }
 
     private static Path logFile(String pid) {
-        String name = pid + ".log";
+        return logFile(pid, null);
+    }
+
+    private static Path logFile(String pid, String appName) {
         Path parent = CommandLineHelper.getCamelDir();
-        return parent.resolve(name);
+        Path pidLog = parent.resolve(pid + ".log");
+        if (!Files.exists(pidLog) && appName != null) {
+            Path nameLog = parent.resolve(appName + ".log");
+            if (Files.exists(nameLog)) {
+                return nameLog;
+            }
+        }
+        return pidLog;
     }
 
     private void tailStartupLogFiles(Map<Long, Row> rows) throws Exception {
         for (Row row : rows.values()) {
-            Path log = logFile(row.pid);
+            Path log = logFile(row.pid, row.name);
             if (Files.exists(log)) {
                 row.fifo = new ArrayDeque<>();
                 row.reader = new LineNumberReader(Files.newBufferedReader(log));
@@ -473,7 +483,7 @@ public class CamelLogAction extends ActionBaseCommand {
 
     private void tailLogFiles(Map<Long, Row> rows, int tail, Date limit) throws Exception {
         for (Row row : rows.values()) {
-            Path log = logFile(row.pid);
+            Path log = logFile(row.pid, row.name);
             if (Files.exists(log)) {
                 row.reader = new LineNumberReader(Files.newBufferedReader(log));
                 String line;

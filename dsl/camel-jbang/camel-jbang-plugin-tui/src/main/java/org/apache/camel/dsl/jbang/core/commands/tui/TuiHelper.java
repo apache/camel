@@ -16,18 +16,22 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.function.Function;
 
+import dev.tamboui.layout.Rect;
 import dev.tamboui.style.AnsiColor;
 import dev.tamboui.style.Color;
 import dev.tamboui.style.Style;
 import dev.tamboui.text.CharWidth;
 import dev.tamboui.text.Line;
 import dev.tamboui.text.Span;
+import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
 import org.apache.camel.support.PatternHelper;
 import org.apache.camel.util.FileUtil;
@@ -43,7 +47,8 @@ final class TuiHelper {
     }
 
     /**
-     * Find PIDs of running Camel integrations matching the given name pattern.
+     * Find PIDs of running Camel integrations matching the given name pattern. Scans the {@code ~/.camel/} directory
+     * for status files rather than iterating all OS processes, which is significantly faster.
      */
     static List<Long> findPids(String name, Function<String, Path> statusFileResolver) {
         List<Long> pids = new ArrayList<>();
@@ -53,29 +58,65 @@ final class TuiHelper {
             pattern = pattern + "*";
         }
         final String pat = pattern;
-        ProcessHandle.allProcesses()
-                .filter(ph -> ph.pid() != cur)
-                .forEach(ph -> {
-                    JsonObject root = loadStatus(ph.pid(), statusFileResolver);
-                    if (root != null) {
-                        String pName = ProcessHelper.extractName(root, ph);
-                        pName = FileUtil.onlyName(pName);
+
+        for (long pid : findCandidatePids()) {
+            if (pid == cur) {
+                continue;
+            }
+            // check process is still alive
+            if (!ProcessHandle.of(pid).map(ProcessHandle::isAlive).orElse(false)) {
+                continue;
+            }
+            JsonObject root = loadStatus(pid, statusFileResolver);
+            if (root != null) {
+                ProcessHandle ph = ProcessHandle.of(pid).orElse(null);
+                String pName = ProcessHelper.extractName(root, ph);
+                pName = FileUtil.onlyName(pName);
+                if (pName != null && !pName.isEmpty() && PatternHelper.matchPattern(pName, pat)) {
+                    pids.add(pid);
+                } else {
+                    JsonObject context = (JsonObject) root.get("context");
+                    if (context != null) {
+                        pName = context.getString("name");
+                        if ("CamelJBang".equals(pName)) {
+                            pName = null;
+                        }
                         if (pName != null && !pName.isEmpty() && PatternHelper.matchPattern(pName, pat)) {
-                            pids.add(ph.pid());
-                        } else {
-                            JsonObject context = (JsonObject) root.get("context");
-                            if (context != null) {
-                                pName = context.getString("name");
-                                if ("CamelJBang".equals(pName)) {
-                                    pName = null;
-                                }
-                                if (pName != null && !pName.isEmpty() && PatternHelper.matchPattern(pName, pat)) {
-                                    pids.add(ph.pid());
-                                }
-                            }
+                            pids.add(pid);
                         }
                     }
-                });
+                }
+            }
+        }
+        return pids;
+    }
+
+    /**
+     * List candidate PIDs by scanning {@code ~/.camel/} for {@code *-status.json} files. This is O(number of status
+     * files) rather than O(total OS processes).
+     */
+    static List<Long> findCandidatePids() {
+        List<Long> pids = new ArrayList<>();
+        try {
+            Path camelDir = CommandLineHelper.getCamelDir();
+            if (Files.isDirectory(camelDir)) {
+                try (var files = Files.list(camelDir)) {
+                    files.forEach(p -> {
+                        String fn = p.getFileName().toString();
+                        if (fn.endsWith("-status.json")) {
+                            try {
+                                long pid = Long.parseLong(fn.substring(0, fn.length() - "-status.json".length()));
+                                pids.add(pid);
+                            } catch (NumberFormatException e) {
+                                // not a PID-based status file
+                            }
+                        }
+                    });
+                }
+            }
+        } catch (IOException e) {
+            // ignore
+        }
         return pids;
     }
 
@@ -386,6 +427,166 @@ final class TuiHelper {
                        / (Math.log1p(maxDuration) - Math.log1p(minDuration));
         int bandIndex = Math.max(0, Math.min((int) (ratio * 5), 4));
         return DURATION_BAND_STYLES[bandIndex];
+    }
+
+    // ---- UI helpers ----
+
+    static void hint(List<Span> spans, String key, String label) {
+        spans.add(Span.styled(" " + key + " ", Theme.hintKey()));
+        spans.add(Span.raw(" " + label + "  "));
+    }
+
+    static void hintLast(List<Span> spans, String key, String label) {
+        spans.add(Span.styled(" " + key + " ", Theme.hintKey()));
+        spans.add(Span.raw(" " + label));
+    }
+
+    static boolean contains(Rect rect, int x, int y) {
+        return rect != null
+                && x >= rect.x() && x < rect.x() + rect.width()
+                && y >= rect.y() && y < rect.y() + rect.height();
+    }
+
+    static int compareStr(String a, String b) {
+        if (a == null && b == null) {
+            return 0;
+        }
+        if (a == null) {
+            return 1;
+        }
+        if (b == null) {
+            return -1;
+        }
+        return a.compareToIgnoreCase(b);
+    }
+
+    // ---- Data formatting helpers ----
+
+    static final String[] SMALL_CAMEL = {
+            " ,,__",
+            "/o.  \\___/\\",
+            "\\__/       \\",
+            "   |   |   |",
+            "   |   |   |~",
+            "  (_) (_) (_)",
+    };
+
+    static JsonObject pollJsonResponse(Path outputFile, long timeout) {
+        long start = System.currentTimeMillis();
+        while (System.currentTimeMillis() - start < timeout) {
+            try {
+                Thread.sleep(100);
+                if (Files.exists(outputFile) && outputFile.toFile().length() > 0) {
+                    String text = Files.readString(outputFile);
+                    return (JsonObject) Jsoner.deserialize(text);
+                }
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                return null;
+            } catch (Exception e) {
+                // ignore
+            }
+        }
+        return null;
+    }
+
+    static String formatSinceLast(IntegrationInfo info) {
+        return formatSinceLast(info.sinceLastStarted, info.sinceLastCompleted, info.sinceLastFailed);
+    }
+
+    static String formatSinceLast(String started, String completed, String failed) {
+        StringBuilder sb = new StringBuilder();
+        if (started != null) {
+            sb.append(started);
+        }
+        if (completed != null) {
+            if (!sb.isEmpty()) {
+                sb.append('/');
+            }
+            sb.append(completed);
+        }
+        if (failed != null) {
+            if (!sb.isEmpty()) {
+                sb.append('/');
+            }
+            sb.append(failed);
+        }
+        return sb.toString();
+    }
+
+    static String formatSinceLastRoute(RouteInfo route) {
+        return formatSinceLast(route.sinceLastStarted, route.sinceLastCompleted, route.sinceLastFailed);
+    }
+
+    static String formatLoad(String l1, String l5, String l15) {
+        String s1 = l1 != null && !"0.00".equals(l1) ? l1 : "0";
+        String s5 = l5 != null && !"0.00".equals(l5) ? l5 : "0";
+        String s15 = l15 != null && !"0.00".equals(l15) ? l15 : "0";
+        return s1 + "/" + s5 + "/" + s15;
+    }
+
+    static String formatMemory(long used, long max) {
+        if (used <= 0) {
+            return "";
+        }
+        String u = formatBytes(used);
+        if (max > 0) {
+            return u + "/" + formatBytes(max);
+        }
+        return u;
+    }
+
+    static String formatBytes(long bytes) {
+        if (bytes < 1024) {
+            return bytes + "B";
+        }
+        if (bytes < 1024 * 1024) {
+            return (bytes / 1024) + "K";
+        }
+        long mb = bytes / (1024 * 1024);
+        if (mb >= 1024) {
+            long gb = mb / 1024;
+            long rem = mb % 1024;
+            if (rem == 0) {
+                return gb + "G";
+            }
+            return String.format(Locale.US, "%.1fG", mb / 1024.0);
+        }
+        return mb + "M";
+    }
+
+    static String formatThreads(int count, int peak) {
+        if (count <= 0) {
+            return "";
+        }
+        return count + "/" + peak;
+    }
+
+    static Style topTimeStyle(long ms) {
+        if (ms >= 1000) {
+            return Style.EMPTY.fg(Color.LIGHT_RED).bold();
+        } else if (ms >= 100) {
+            return Style.EMPTY.fg(Color.YELLOW);
+        }
+        return Style.EMPTY;
+    }
+
+    static Style topDeltaStyle(long delta) {
+        if (delta > 0) {
+            return Style.EMPTY.fg(Color.LIGHT_RED);
+        } else if (delta < 0) {
+            return Style.EMPTY.fg(Color.GREEN);
+        }
+        return Style.EMPTY;
+    }
+
+    static String buildBar(long value, long maxValue, int maxWidth) {
+        if (value <= 0 || maxValue <= 0) {
+            return "";
+        }
+        int len = (int) Math.round((double) value / maxValue * maxWidth);
+        len = Math.max(len > 0 ? 1 : 0, Math.min(len, maxWidth));
+        return "█".repeat(len);
     }
 
     static String shortTypeName(String type) {

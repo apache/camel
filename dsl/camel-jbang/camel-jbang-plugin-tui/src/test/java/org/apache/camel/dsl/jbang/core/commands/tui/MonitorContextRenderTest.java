@@ -41,13 +41,11 @@ class MonitorContextRenderTest {
         Buffer buffer = Buffer.empty(area);
         Frame frame = Frame.forTesting(buffer);
 
-        MonitorContext.renderNoSelection(frame, area);
+        AbstractTab.renderNoSelection(frame, area);
 
         String rendered = HealthTabRenderTest.bufferToString(buffer);
         assertTrue(rendered.contains("No integration selected"),
-                "Should render 'No integration selected' in the block title");
-        assertTrue(rendered.contains("Select an integration"),
-                "Should render the selection prompt text");
+                "Should render 'No integration selected' in the block title and prompt text");
     }
 
     @Test
@@ -56,47 +54,43 @@ class MonitorContextRenderTest {
         Buffer buffer = Buffer.empty(area);
         Frame frame = Frame.forTesting(buffer);
 
-        MonitorContext.renderNoSelection(frame, area);
+        AbstractTab.renderNoSelection(frame, area);
 
         String rendered = HealthTabRenderTest.bufferToString(buffer);
-        // The block title should appear in the buffer
+        // The block title and prompt text should appear in the buffer
         assertTrue(rendered.contains("No integration selected"),
-                "Should render the block title");
-        // The prompt text should appear somewhere in the buffer
-        assertTrue(rendered.contains("Select an integration"),
-                "Should render the prompt text");
+                "Should render the block title and prompt text");
     }
 
     @Test
-    void renderNoSelectionPromptIsDimmed() {
-        Rect area = new Rect(0, 0, 80, 10);
+    void renderNoSelectionHintKeysAreBold() {
+        Rect area = new Rect(0, 0, 80, 12);
         Buffer buffer = Buffer.empty(area);
         Frame frame = Frame.forTesting(buffer);
 
-        MonitorContext.renderNoSelection(frame, area);
+        AbstractTab.renderNoSelection(frame, area);
 
-        // Check that the "Select" text cell has DIM modifier
-        boolean foundDim = false;
+        boolean foundBold = false;
         for (int y = 0; y < buffer.height(); y++) {
             for (int x = 0; x < buffer.width(); x++) {
                 var cell = buffer.get(x, y);
-                if ("S".equals(cell.symbol()) && cell.style().effectiveModifiers()
-                        .contains(dev.tamboui.style.Modifier.DIM)) {
-                    foundDim = true;
+                if ("1".equals(cell.symbol()) && cell.style().effectiveModifiers()
+                        .contains(dev.tamboui.style.Modifier.BOLD)) {
+                    foundBold = true;
                     break;
                 }
             }
-            if (foundDim) {
+            if (foundBold) {
                 break;
             }
         }
-        assertTrue(foundDim, "Prompt text should use DIM modifier");
+        assertTrue(foundBold, "Hint keys should use BOLD modifier");
     }
 
     @Test
     void hintAddsKeyAndLabel() {
         List<Span> spans = new ArrayList<>();
-        MonitorContext.hint(spans, "Esc", "back");
+        TuiHelper.hint(spans, "Esc", "back");
 
         assertEquals(2, spans.size(), "hint should add exactly 2 spans");
         assertTrue(spans.get(0).content().contains("Esc"), "First span should contain the key");
@@ -104,13 +98,13 @@ class MonitorContextRenderTest {
     }
 
     @Test
-    void hintKeyUsesYellowBoldStyle() {
+    void hintKeyUsesThemeBoldStyle() {
         List<Span> spans = new ArrayList<>();
-        MonitorContext.hint(spans, "s", "sort");
+        TuiHelper.hint(spans, "s", "sort");
 
         Span keySpan = spans.get(0);
         assertTrue(keySpan.style().fg().isPresent(), "Key span should have a foreground color");
-        assertEquals(Color.YELLOW, keySpan.style().fg().get(), "Key span should be YELLOW");
+        assertTrue(keySpan.style().bg().isPresent(), "Key span should have a background color");
         assertTrue(keySpan.style().effectiveModifiers().contains(dev.tamboui.style.Modifier.BOLD),
                 "Key span should be BOLD");
     }
@@ -118,7 +112,7 @@ class MonitorContextRenderTest {
     @Test
     void hintLabelHasTrailingSpaces() {
         List<Span> spans = new ArrayList<>();
-        MonitorContext.hint(spans, "x", "action");
+        TuiHelper.hint(spans, "x", "action");
 
         Span labelSpan = spans.get(1);
         assertTrue(labelSpan.content().endsWith("  "),
@@ -128,7 +122,7 @@ class MonitorContextRenderTest {
     @Test
     void hintLastDoesNotHaveTrailingSpaces() {
         List<Span> spans = new ArrayList<>();
-        MonitorContext.hintLast(spans, "q", "quit");
+        TuiHelper.hintLast(spans, "q", "quit");
 
         Span labelSpan = spans.get(1);
         assertEquals(" quit", labelSpan.content(),
@@ -137,7 +131,7 @@ class MonitorContextRenderTest {
 
     @Test
     void rightCellRendersRightAligned() {
-        var cell = MonitorContext.rightCell("42", 8);
+        var cell = AbstractTab.rightCell("42", 8);
         // rightCell uses String.format("%8s", "42") → "      42"
         String content = extractCellContent(cell);
         assertTrue(content.endsWith("42"), "Content should end with the value");
@@ -146,7 +140,7 @@ class MonitorContextRenderTest {
 
     @Test
     void rightCellWithStyleAppliesStyle() {
-        var cell = MonitorContext.rightCell("5", 6, dev.tamboui.style.Style.EMPTY.fg(Color.LIGHT_RED));
+        var cell = AbstractTab.rightCell("5", 6, dev.tamboui.style.Style.EMPTY.fg(Color.LIGHT_RED));
         // The cell should have styled content
         String content = extractCellContent(cell);
         assertTrue(content.contains("5"), "Should contain the value");
@@ -154,7 +148,7 @@ class MonitorContextRenderTest {
 
     @Test
     void centerCellCentersText() {
-        var cell = MonitorContext.centerCell("x", 6);
+        var cell = AbstractTab.centerCell("x", 6);
         String content = extractCellContent(cell);
         // "x" centered in width 6: "  x" (leftPad = (6-1)/2 = 2)
         assertTrue(content.startsWith("  "), "Content should have leading padding");
@@ -163,22 +157,22 @@ class MonitorContextRenderTest {
 
     @Test
     void sortLabelShowsIndicatorForActiveColumn() {
-        String label = MonitorContext.sortLabel("NAME", "name", "name", false);
+        String label = AbstractTab.sortLabel("NAME", "name", "name", false);
         assertEquals("NAME▼", label, "Active sort column should have descending indicator");
 
-        String reversed = MonitorContext.sortLabel("NAME", "name", "name", true);
+        String reversed = AbstractTab.sortLabel("NAME", "name", "name", true);
         assertEquals("NAME▲", reversed, "Reversed sort should have ascending indicator");
     }
 
     @Test
     void sortLabelNoIndicatorForInactiveColumn() {
-        String label = MonitorContext.sortLabel("NAME", "name", "status", false);
+        String label = AbstractTab.sortLabel("NAME", "name", "status", false);
         assertEquals("NAME", label, "Inactive column should have no indicator");
     }
 
     @Test
     void sortStyleActiveColumnIsYellowBold() {
-        var style = MonitorContext.sortStyle("name", "name");
+        var style = AbstractTab.sortStyle("name", "name");
         assertEquals(Color.YELLOW, style.fg().orElse(null), "Active sort column should be YELLOW");
         assertTrue(style.effectiveModifiers().contains(dev.tamboui.style.Modifier.BOLD),
                 "Active sort column should be BOLD");
@@ -186,7 +180,7 @@ class MonitorContextRenderTest {
 
     @Test
     void sortStyleInactiveColumnIsBoldOnly() {
-        var style = MonitorContext.sortStyle("name", "status");
+        var style = AbstractTab.sortStyle("name", "status");
         assertTrue(style.fg().isEmpty() || !Color.YELLOW.equals(style.fg().get()),
                 "Inactive column should not be YELLOW");
         assertTrue(style.effectiveModifiers().contains(dev.tamboui.style.Modifier.BOLD),

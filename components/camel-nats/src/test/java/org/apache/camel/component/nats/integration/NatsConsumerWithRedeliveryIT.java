@@ -16,12 +16,17 @@
  */
 package org.apache.camel.component.nats.integration;
 
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.EndpointInject;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
+
+import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class NatsConsumerWithRedeliveryIT extends NatsITSupport {
 
@@ -36,16 +41,18 @@ public class NatsConsumerWithRedeliveryIT extends NatsITSupport {
     @Test
     public void testConsumer() throws Exception {
         mockResultEndpoint.setExpectedMessageCount(1);
-        mockResultEndpoint.setAssertPeriod(1000);
+        exception.setExpectedMessageCount(1);
 
         template.sendBody("direct:send", "test");
         template.sendBody("direct:send", "golang");
 
-        exception.setExpectedMessageCount(1);
-
-        exception.assertIsSatisfied();
-
-        mockResultEndpoint.assertIsSatisfied();
+        await().atMost(30, TimeUnit.SECONDS)
+                .untilAsserted(() -> {
+                    assertEquals(1, exception.getReceivedCounter(),
+                            "mock:exception should have received the message after redelivery exhaustion");
+                    assertEquals(1, mockResultEndpoint.getReceivedCounter(),
+                            "mock:result should have received the non-failing message");
+                });
     }
 
     @Override

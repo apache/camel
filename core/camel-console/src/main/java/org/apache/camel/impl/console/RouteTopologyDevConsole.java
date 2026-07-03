@@ -24,6 +24,7 @@ import org.apache.camel.api.management.ManagedCamelContext;
 import org.apache.camel.api.management.mbean.ManagedRouteMBean;
 import org.apache.camel.api.management.mbean.ManagedSendProcessorMBean;
 import org.apache.camel.console.DevConsoleRegistry;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteTopologyDumper;
 import org.apache.camel.spi.RouteTopologyDumper.TopologyEdge;
 import org.apache.camel.spi.RouteTopologyDumper.TopologyExternalEndpoint;
@@ -39,9 +40,18 @@ import org.apache.camel.util.json.JsonObject;
 @DevConsole(name = "route-topology", description = "Route topology showing inter-route connections")
 public class RouteTopologyDevConsole extends AbstractDevConsole {
 
-    private static final String METRIC = "metric";
-    private static final String EXTERNAL = "external";
-    private static final String ROUTES = "routes";
+    @Metadata(label = "query", description = "Whether to include live metrics (message counts) on nodes and edges",
+              defaultValue = "false", javaType = "java.lang.Boolean")
+    public static final String METRIC = "metric";
+
+    @Metadata(label = "query",
+              description = "Whether to include external systems (databases, messaging brokers, etc.) as nodes",
+              defaultValue = "false", javaType = "java.lang.Boolean")
+    public static final String EXTERNAL = "external";
+
+    @Metadata(label = "query", description = "Whether to include route structure data in the response",
+              defaultValue = "false", javaType = "java.lang.Boolean")
+    public static final String ROUTES = "routes";
 
     public RouteTopologyDevConsole() {
         super("camel", "route-topology", "Route Topology", "Route topology showing inter-route connections");
@@ -54,7 +64,7 @@ public class RouteTopologyDevConsole extends AbstractDevConsole {
             return "";
         }
         TopologyResult result = dumper.dumpTopology(getCamelContext());
-        boolean external = "true".equals(options.get(EXTERNAL));
+        boolean external = optionBoolean(options, EXTERNAL, false);
 
         StringBuilder sb = new StringBuilder();
         sb.append(String.format("Route Topology (%d routes, %d connections)%n%n",
@@ -91,8 +101,8 @@ public class RouteTopologyDevConsole extends AbstractDevConsole {
         }
         TopologyResult result = dumper.dumpTopology(getCamelContext());
 
-        boolean metric = "true".equals(options.get(METRIC));
-        boolean external = "true".equals(options.get(EXTERNAL));
+        boolean metric = optionBoolean(options, METRIC, false);
+        boolean external = optionBoolean(options, EXTERNAL, false);
         ManagedCamelContext mcc = metric
                 ? getCamelContext().getCamelContextExtension().getContextPlugin(ManagedCamelContext.class)
                 : null;
@@ -169,7 +179,7 @@ public class RouteTopologyDevConsole extends AbstractDevConsole {
         }
 
         // Optionally include route structure data in the same response
-        if ("true".equals(options.get(ROUTES))) {
+        if (optionBoolean(options, ROUTES, false)) {
             DevConsoleRegistry registry = getCamelContext().getCamelContextExtension()
                     .getContextPlugin(DevConsoleRegistry.class);
             if (registry != null) {

@@ -34,8 +34,8 @@ import dev.tamboui.widgets.input.TextInput;
 import dev.tamboui.widgets.input.TextInputState;
 import dev.tamboui.widgets.paragraph.Paragraph;
 
-import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.hint;
-import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.hintLast;
+import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.hint;
+import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.hintLast;
 
 class RunOptionsForm {
 
@@ -44,15 +44,17 @@ class RunOptionsForm {
 
     // Row indices for page 0
     private static final int ROW_NAME = 0;
-    private static final int ROW_PORT = 1;
-    private static final int ROW_MAX = 2;
-    private static final int ROW_CONSOLE = 3;
-    private static final int ROW_DEV = 4;
-    private static final int ROW_OBSERVE = 5;
-    private static final int ROW_TRACE = 6;
-    private static final int ROW_STUB = 7;
-    private static final int ROW_OTEL_AGENT = 8;
-    private static final int ROW_COUNT = 9;
+    private static final int ROW_RUNTIME = 1;
+    private static final int ROW_PROFILE = 2;
+    private static final int ROW_PORT = 3;
+    private static final int ROW_MAX = 4;
+    private static final int ROW_CONSOLE = 5;
+    private static final int ROW_DEV = 6;
+    private static final int ROW_OBSERVE = 7;
+    private static final int ROW_TRACE = 8;
+    private static final int ROW_STUB = 9;
+    private static final int ROW_OTEL_AGENT = 10;
+    private static final int ROW_COUNT = 11;
 
     private boolean visible;
     private int page;
@@ -60,12 +62,18 @@ class RunOptionsForm {
 
     private static final String[] MAX_MODES = { "Max seconds:", "Max messages:", "Max idle secs:" };
     private static final String[] MAX_FLAGS = { "--max-seconds=", "--max-messages=", "--max-idle-seconds=" };
+    private static final String[] RUNTIME_LABELS = { "🐪 Camel Main", "🍃 Spring Boot", "🚀 Quarkus" };
+    private static final String[] RUNTIME_VALUES = { "camel-main", "spring-boot", "quarkus" };
+    private static final String[] PROFILE_LABELS = { "🛠️ dev", "🔒 prod" };
+    private static final String[] PROFILE_VALUES = { "dev", "prod" };
 
     // Text fields
     private TextInputState nameInput;
     private TextInputState portInput;
     private TextInputState maxInput;
     private int maxMode;
+    private int runtimeMode;
+    private int profileMode;
 
     // Checkboxes
     private boolean devMode;
@@ -96,6 +104,8 @@ class RunOptionsForm {
         portInput = new TextInputState("");
         maxInput = new TextInputState("");
         maxMode = 0;
+        runtimeMode = 0;
+        profileMode = 0;
         devMode = dev;
         observe = false;
         backlogTrace = false;
@@ -161,7 +171,9 @@ class RunOptionsForm {
             } else {
                 hint(spans, "Tab", "next");
             }
-            if (selectedRow >= ROW_CONSOLE) {
+            if (selectedRow == ROW_RUNTIME || selectedRow == ROW_PROFILE || selectedRow == ROW_MAX) {
+                hint(spans, "Space", "cycle");
+            } else if (selectedRow >= ROW_CONSOLE) {
                 hint(spans, "Space", "toggle");
             }
             if (hasProperties()) {
@@ -184,6 +196,10 @@ class RunOptionsForm {
         if (!name.isEmpty()) {
             args.add("--name=" + name);
         }
+        if (runtimeMode > 0) {
+            args.add("--runtime=" + RUNTIME_VALUES[runtimeMode]);
+        }
+        args.add("--profile=" + PROFILE_VALUES[profileMode]);
         String port = portInput.text().trim();
         if (!port.isEmpty()) {
             args.add("--port=" + port);
@@ -277,6 +293,26 @@ class RunOptionsForm {
             return true;
         }
 
+        // Runtime row: Space or Left/Right cycles
+        if (selectedRow == ROW_RUNTIME) {
+            if (ke.isChar(' ') || ke.isRight()) {
+                runtimeMode = (runtimeMode + 1) % RUNTIME_LABELS.length;
+                return true;
+            }
+            if (ke.isLeft()) {
+                runtimeMode = (runtimeMode - 1 + RUNTIME_LABELS.length) % RUNTIME_LABELS.length;
+                return true;
+            }
+        }
+
+        // Profile row: Space or Left/Right cycles
+        if (selectedRow == ROW_PROFILE) {
+            if (ke.isChar(' ') || ke.isRight() || ke.isLeft()) {
+                profileMode = (profileMode + 1) % PROFILE_LABELS.length;
+                return true;
+            }
+        }
+
         // Max row: Space cycles mode
         if (ke.isChar(' ') && selectedRow == ROW_MAX) {
             maxMode = (maxMode + 1) % MAX_MODES.length;
@@ -296,8 +332,8 @@ class RunOptionsForm {
             return true;
         }
 
-        // Text field rows: delegate to active input
-        if (selectedRow <= ROW_MAX) {
+        // Text field rows: delegate to active input (skip runtime row — it uses cycling)
+        if (selectedRow <= ROW_MAX && selectedRow != ROW_RUNTIME && selectedRow != ROW_PROFILE) {
             TextInputState active = activeInput();
             if (active != null) {
                 handleTextInput(ke, active, selectedRow == ROW_PORT || selectedRow == ROW_MAX);
@@ -407,8 +443,8 @@ class RunOptionsForm {
     // ---- Rendering ----
 
     private void renderOptionsPage(Frame frame, Rect area) {
-        int popupW = Math.min(56, area.width() - 4);
-        int popupH = 13;
+        int popupW = Math.min(64, area.width() - 4);
+        int popupH = 15;
         int x = area.left() + Math.max(0, (area.width() - popupW) / 2);
         int y = area.top() + Math.max(0, (area.height() - popupH) / 4);
         Rect popup = new Rect(x, y, Math.min(popupW, area.width()), Math.min(popupH, area.height()));
@@ -436,6 +472,14 @@ class RunOptionsForm {
 
         renderLabel(frame, innerX, rowY, labelW, "Name:", selectedRow == ROW_NAME);
         renderTextInput(frame, innerX + labelW, rowY, fieldW, nameInput, selectedRow == ROW_NAME);
+        rowY++;
+
+        renderLabel(frame, innerX, rowY, labelW, "Runtime:", selectedRow == ROW_RUNTIME);
+        renderCycler(frame, innerX + labelW, rowY, fieldW, RUNTIME_LABELS, runtimeMode, selectedRow == ROW_RUNTIME);
+        rowY++;
+
+        renderLabel(frame, innerX, rowY, labelW, "Profile:", selectedRow == ROW_PROFILE);
+        renderCycler(frame, innerX + labelW, rowY, fieldW, PROFILE_LABELS, profileMode, selectedRow == ROW_PROFILE);
         rowY++;
 
         renderLabel(frame, innerX, rowY, labelW, "Port:", selectedRow == ROW_PORT);
@@ -614,11 +658,11 @@ class RunOptionsForm {
             active.moveCursorToEnd();
         } else if (ke.code() == KeyCode.CHAR) {
             if (digitsOnly) {
-                if (Character.isDigit(ke.character())) {
-                    active.insert(ke.character());
+                if (Character.isDigit(ke.string().charAt(0))) {
+                    active.insert(ke.string().charAt(0));
                 }
             } else {
-                active.insert(ke.character());
+                active.insert(ke.string().charAt(0));
             }
         }
     }
@@ -642,6 +686,22 @@ class RunOptionsForm {
             frame.renderWidget(Paragraph.from(Line.from(
                     Span.styled(text.isEmpty() ? "—" : text, style))), inputArea);
         }
+    }
+
+    private void renderCycler(Frame frame, int x, int y, int w, String[] labels, int active, boolean selected) {
+        List<Span> spans = new ArrayList<>();
+        for (int i = 0; i < labels.length; i++) {
+            if (i > 0) {
+                spans.add(Span.styled(" ", Style.EMPTY));
+            }
+            if (i == active) {
+                spans.add(Span.styled("[" + labels[i] + "]", selected ? Style.EMPTY.bold() : Style.EMPTY));
+            } else {
+                spans.add(Span.styled(" " + labels[i] + " ", Style.EMPTY.dim()));
+            }
+        }
+        Rect area = new Rect(x, y, w, 1);
+        frame.renderWidget(Paragraph.from(Line.from(spans)), area);
     }
 
     private void renderCheckbox(Frame frame, int x, int y, int w, String label, boolean checked, boolean selected) {

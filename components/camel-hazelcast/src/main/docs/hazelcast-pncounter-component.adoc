@@ -4,7 +4,7 @@
 :artifactid: camel-hazelcast
 :description: Increment, decrement, get, etc. operations on a Hazelcast PN Counter (CRDT counter).
 :since: 4.19
-:supportlevel: Preview
+:supportlevel: Stable
 :tabs-sync-option:
 :component-header: Only producer is supported
 //Manually maintained attributes
@@ -263,4 +263,3 @@ YAML::
 
 Destroys the PN Counter instance:
 `template.sendBody("direct:destroy", null);`
-

@@ -335,6 +335,8 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                 doActionJvmTask();
             } else if ("thread-dump".equals(action)) {
                 doActionThreadDumpTask();
+            } else if ("heap-histogram".equals(action)) {
+                doActionHeapHistogramTask();
             } else if ("top-processors".equals(action)) {
                 doActionTopProcessorsTask();
             } else if ("source".equals(action)) {
@@ -375,6 +377,8 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                 doActionSqlQueryTask(root);
             } else if ("sql-update-row".equals(action)) {
                 doActionSqlUpdateRowTask(root);
+            } else if ("jfr-memory-leak".equals(action)) {
+                doActionJfrMemoryLeakTask(root);
             } else if ("cli-debug".equals(action)) {
                 doActionCliDebug(root);
             }
@@ -829,6 +833,51 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                 .resolveById("thread");
         if (dc != null) {
             JsonObject json = (JsonObject) dc.call(DevConsole.MediaType.JSON, Map.of("stackTrace", "true"));
+            LOG.trace("Updating output file: {}", outputFile);
+            IOHelper.writeText(json.toJson(), outputFile);
+        } else {
+            IOHelper.writeText("{}", outputFile);
+        }
+    }
+
+    private void doActionHeapHistogramTask() throws IOException {
+        DevConsole dc = camelContext.getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class)
+                .resolveById("heap-histogram");
+        if (dc != null) {
+            JsonObject json = (JsonObject) dc.call(DevConsole.MediaType.JSON);
+            LOG.trace("Updating output file: {}", outputFile);
+            IOHelper.writeText(json.toJson(), outputFile);
+        } else {
+            IOHelper.writeText("{}", outputFile);
+        }
+    }
+
+    private void doActionJfrMemoryLeakTask(JsonObject root) throws IOException {
+        DevConsole dc = camelContext.getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class)
+                .resolveById("jfr-memory-leak");
+        if (dc != null) {
+            Map<String, Object> params = new HashMap<>();
+            String command = root.getString("command");
+            if (command != null) {
+                params.put("command", command);
+            }
+            String duration = root.getString("duration");
+            if (duration != null) {
+                params.put("duration", duration);
+            }
+            String limit = root.getString("limit");
+            if (limit != null) {
+                params.put("limit", limit);
+            }
+            String stacktrace = root.getString("stacktrace");
+            if (stacktrace != null) {
+                params.put("stacktrace", stacktrace);
+            }
+            String minSize = root.getString("minSize");
+            if (minSize != null) {
+                params.put("minSize", minSize);
+            }
+            JsonObject json = (JsonObject) dc.call(DevConsole.MediaType.JSON, params);
             LOG.trace("Updating output file: {}", outputFile);
             IOHelper.writeText(json.toJson(), outputFile);
         } else {
@@ -1502,6 +1551,13 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                     JsonObject json = (JsonObject) dc27.call(DevConsole.MediaType.JSON);
                     if (json != null && !json.isEmpty()) {
                         root.put("dataSources", json);
+                    }
+                }
+                DevConsole dc28 = dcr.resolveById("sql-trace");
+                if (dc28 != null) {
+                    JsonObject json = (JsonObject) dc28.call(DevConsole.MediaType.JSON);
+                    if (json != null && !json.isEmpty()) {
+                        root.put("sqlTrace", json);
                     }
                 }
             }

@@ -27,69 +27,31 @@ import dev.tamboui.style.Color;
 import dev.tamboui.style.Style;
 import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.Span;
-import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
 import dev.tamboui.widgets.block.Borders;
 import dev.tamboui.widgets.table.Cell;
 import dev.tamboui.widgets.table.Row;
 import dev.tamboui.widgets.table.Table;
-import dev.tamboui.widgets.table.TableState;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 
-import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.*;
+import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.*;
 
-class ConsumersTab implements MonitorTab {
-
-    private static final String[] SORT_COLUMNS = { "id", "status", "type", "inflight", "polls", "uri" };
-
-    private final MonitorContext ctx;
-    private final TableState tableState = new TableState();
-    private String sort = "id";
-    private int sortIndex;
-    private boolean sortReversed;
+class ConsumersTab extends AbstractTableTab {
 
     ConsumersTab(MonitorContext ctx) {
-        this.ctx = ctx;
+        super(ctx, "id", "status", "type", "inflight", "polls", "uri");
     }
 
     @Override
-    public boolean handleKeyEvent(KeyEvent ke) {
-        if (ke.isChar('s')) {
-            sortIndex = (sortIndex + 1) % SORT_COLUMNS.length;
-            sort = SORT_COLUMNS[sortIndex];
-            sortReversed = false;
-            return true;
-        }
-        if (ke.isChar('S')) {
-            sortReversed = !sortReversed;
-            return true;
-        }
-        return false;
-    }
-
-    @Override
-    public boolean handleEscape() {
-        return false;
-    }
-
-    @Override
-    public void navigateUp() {
-    }
-
-    @Override
-    public void navigateDown() {
-    }
-
-    @Override
-    public void render(Frame frame, Rect area) {
+    protected int getRowCount() {
         IntegrationInfo info = ctx.findSelectedIntegration();
-        if (info == null) {
-            renderNoSelection(frame, area);
-            return;
-        }
+        return info != null ? info.consumers.size() : 0;
+    }
 
+    @Override
+    protected void renderContent(Frame frame, Rect area, IntegrationInfo info) {
         List<ConsumerInfo> sorted = new ArrayList<>(info.consumers);
         sorted.sort(this::sortConsumer);
 
@@ -123,10 +85,7 @@ class ConsumersTab implements MonitorTab {
         }
 
         if (rows.isEmpty()) {
-            rows.add(Row.from(
-                    Cell.from(Span.styled("No consumers", Style.EMPTY.dim())),
-                    Cell.from(""), Cell.from(""), Cell.from(""),
-                    Cell.from(""), Cell.from(""), Cell.from(""), Cell.from("")));
+            rows.add(emptyRow("No consumers", 8));
         }
 
         Table table = Table.builder()
@@ -153,21 +112,9 @@ class ConsumersTab implements MonitorTab {
                         .title(" Consumers sort:" + sort + " ").build())
                 .build();
 
+        lastTableArea = area;
         frame.renderStatefulWidget(table, area, tableState);
-    }
-
-    @Override
-    public void renderFooter(List<Span> spans) {
-        hint(spans, "Esc", "back");
-        hint(spans, "s", "sort");
-    }
-
-    private String sortLabel(String label, String column) {
-        return MonitorContext.sortLabel(label, column, sort, sortReversed);
-    }
-
-    private Style sortStyle(String column) {
-        return MonitorContext.sortStyle(column, sort);
+        renderScrollbar(frame, sorted.size());
     }
 
     private int sortConsumer(ConsumerInfo a, ConsumerInfo b) {
@@ -330,6 +277,11 @@ class ConsumersTab implements MonitorTab {
         List<String> items = sorted.stream().map(c -> c.id != null ? c.id : "").toList();
         Integer sel = tableState.selected();
         return new SelectionContext("table", items, sel != null ? sel : -1, items.size(), "Consumers");
+    }
+
+    @Override
+    public String description() {
+        return "Consumer statistics (polling and event-driven consumers)";
     }
 
     @Override

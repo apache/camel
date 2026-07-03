@@ -33,6 +33,8 @@ public class DebeziumOracleEndpointConfigurer extends PropertyConfigurerSupport 
         case "binaryHandlingMode": target.getConfiguration().setBinaryHandlingMode(property(camelContext, java.lang.String.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "capturemode":
+        case "captureMode": target.getConfiguration().setCaptureMode(property(camelContext, java.lang.String.class, value)); return true;
         case "columnexcludelist":
         case "columnExcludeList": target.getConfiguration().setColumnExcludeList(property(camelContext, java.lang.String.class, value)); return true;
         case "columnincludelist":
@@ -112,14 +114,10 @@ public class DebeziumOracleEndpointConfigurer extends PropertyConfigurerSupport 
         case "logMiningArchiveLogOnlyMode": target.getConfiguration().setLogMiningArchiveLogOnlyMode(property(camelContext, boolean.class, value)); return true;
         case "logminingarchivelogonlyscnpollintervalms":
         case "logMiningArchiveLogOnlyScnPollIntervalMs": target.getConfiguration().setLogMiningArchiveLogOnlyScnPollIntervalMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
-        case "logminingbatchsizedefault":
-        case "logMiningBatchSizeDefault": target.getConfiguration().setLogMiningBatchSizeDefault(property(camelContext, long.class, value)); return true;
-        case "logminingbatchsizeincrement":
-        case "logMiningBatchSizeIncrement": target.getConfiguration().setLogMiningBatchSizeIncrement(property(camelContext, long.class, value)); return true;
-        case "logminingbatchsizemax":
-        case "logMiningBatchSizeMax": target.getConfiguration().setLogMiningBatchSizeMax(property(camelContext, long.class, value)); return true;
-        case "logminingbatchsizemin":
-        case "logMiningBatchSizeMin": target.getConfiguration().setLogMiningBatchSizeMin(property(camelContext, long.class, value)); return true;
+        case "logminingbufferdeferredtransactionretentionms":
+        case "logMiningBufferDeferredTransactionRetentionMs": target.getConfiguration().setLogMiningBufferDeferredTransactionRetentionMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
+        case "logminingbufferdeferredtransactionstart":
+        case "logMiningBufferDeferredTransactionStart": target.getConfiguration().setLogMiningBufferDeferredTransactionStart(property(camelContext, boolean.class, value)); return true;
         case "logminingbufferdroponstop":
         case "logMiningBufferDropOnStop": target.getConfiguration().setLogMiningBufferDropOnStop(property(camelContext, boolean.class, value)); return true;
         case "logminingbufferehcacheeventsconfig":
@@ -146,8 +144,18 @@ public class DebeziumOracleEndpointConfigurer extends PropertyConfigurerSupport 
         case "logMiningBufferInfinispanCacheSchemaChanges": target.getConfiguration().setLogMiningBufferInfinispanCacheSchemaChanges(property(camelContext, java.lang.String.class, value)); return true;
         case "logminingbufferinfinispancachetransactions":
         case "logMiningBufferInfinispanCacheTransactions": target.getConfiguration().setLogMiningBufferInfinispanCacheTransactions(property(camelContext, java.lang.String.class, value)); return true;
+        case "logminingbuffermemorylegacytransactionstart":
+        case "logMiningBufferMemoryLegacyTransactionStart": target.getConfiguration().setLogMiningBufferMemoryLegacyTransactionStart(property(camelContext, boolean.class, value)); return true;
+        case "logminingbuffertrackclientid":
+        case "logMiningBufferTrackClientId": target.getConfiguration().setLogMiningBufferTrackClientId(property(camelContext, boolean.class, value)); return true;
+        case "logminingbuffertrackcommittimestamp":
+        case "logMiningBufferTrackCommitTimestamp": target.getConfiguration().setLogMiningBufferTrackCommitTimestamp(property(camelContext, boolean.class, value)); return true;
         case "logminingbuffertrackrsid":
         case "logMiningBufferTrackRsId": target.getConfiguration().setLogMiningBufferTrackRsId(property(camelContext, boolean.class, value)); return true;
+        case "logminingbuffertrackstarttimestamp":
+        case "logMiningBufferTrackStartTimestamp": target.getConfiguration().setLogMiningBufferTrackStartTimestamp(property(camelContext, boolean.class, value)); return true;
+        case "logminingbuffertrackusername":
+        case "logMiningBufferTrackUsername": target.getConfiguration().setLogMiningBufferTrackUsername(property(camelContext, boolean.class, value)); return true;
         case "logminingbuffertransactioneventsthreshold":
         case "logMiningBufferTransactionEventsThreshold": target.getConfiguration().setLogMiningBufferTransactionEventsThreshold(property(camelContext, long.class, value)); return true;
         case "logminingbuffertype":
@@ -160,28 +168,20 @@ public class DebeziumOracleEndpointConfigurer extends PropertyConfigurerSupport 
         case "logMiningFlushTableName": target.getConfiguration().setLogMiningFlushTableName(property(camelContext, java.lang.String.class, value)); return true;
         case "logminingincluderedosql":
         case "logMiningIncludeRedoSql": target.getConfiguration().setLogMiningIncludeRedoSql(property(camelContext, boolean.class, value)); return true;
+        case "logmininglogcountmin":
+        case "logMiningLogCountMin": target.getConfiguration().setLogMiningLogCountMin(property(camelContext, int.class, value)); return true;
         case "logminingpathdictionary":
         case "logMiningPathDictionary": target.getConfiguration().setLogMiningPathDictionary(property(camelContext, java.lang.String.class, value)); return true;
         case "logminingqueryfiltermode":
         case "logMiningQueryFilterMode": target.getConfiguration().setLogMiningQueryFilterMode(property(camelContext, java.lang.String.class, value)); return true;
+        case "logminingreadonly":
+        case "logMiningReadOnly": target.getConfiguration().setLogMiningReadOnly(property(camelContext, boolean.class, value)); return true;
         case "logminingreadonlyhostname":
         case "logMiningReadonlyHostname": target.getConfiguration().setLogMiningReadonlyHostname(property(camelContext, java.lang.String.class, value)); return true;
         case "logminingrestartconnection":
         case "logMiningRestartConnection": target.getConfiguration().setLogMiningRestartConnection(property(camelContext, boolean.class, value)); return true;
-        case "logminingscngapdetectiongapsizemin":
-        case "logMiningScnGapDetectionGapSizeMin": target.getConfiguration().setLogMiningScnGapDetectionGapSizeMin(property(camelContext, long.class, value)); return true;
-        case "logminingscngapdetectiontimeintervalmaxms":
-        case "logMiningScnGapDetectionTimeIntervalMaxMs": target.getConfiguration().setLogMiningScnGapDetectionTimeIntervalMaxMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "logminingsessionmaxms":
         case "logMiningSessionMaxMs": target.getConfiguration().setLogMiningSessionMaxMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
-        case "logminingsleeptimedefaultms":
-        case "logMiningSleepTimeDefaultMs": target.getConfiguration().setLogMiningSleepTimeDefaultMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
-        case "logminingsleeptimeincrementms":
-        case "logMiningSleepTimeIncrementMs": target.getConfiguration().setLogMiningSleepTimeIncrementMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
-        case "logminingsleeptimemaxms":
-        case "logMiningSleepTimeMaxMs": target.getConfiguration().setLogMiningSleepTimeMaxMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
-        case "logminingsleeptimeminms":
-        case "logMiningSleepTimeMinMs": target.getConfiguration().setLogMiningSleepTimeMinMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "logminingstrategy":
         case "logMiningStrategy": target.getConfiguration().setLogMiningStrategy(property(camelContext, java.lang.String.class, value)); return true;
         case "logminingtransactionretentionms":
@@ -198,6 +198,10 @@ public class DebeziumOracleEndpointConfigurer extends PropertyConfigurerSupport 
         case "maxQueueSize": target.getConfiguration().setMaxQueueSize(property(camelContext, int.class, value)); return true;
         case "maxqueuesizeinbytes":
         case "maxQueueSizeInBytes": target.getConfiguration().setMaxQueueSizeInBytes(property(camelContext, long.class, value)); return true;
+        case "memorymanagementschemasclass":
+        case "memoryManagementSchemasClass": target.getConfiguration().setMemoryManagementSchemasClass(property(camelContext, java.lang.String.class, value)); return true;
+        case "memorymanagementtablesclass":
+        case "memoryManagementTablesClass": target.getConfiguration().setMemoryManagementTablesClass(property(camelContext, java.lang.String.class, value)); return true;
         case "messagekeycolumns":
         case "messageKeyColumns": target.getConfiguration().setMessageKeyColumns(property(camelContext, java.lang.String.class, value)); return true;
         case "notificationenabledchannels":
@@ -264,6 +268,14 @@ public class DebeziumOracleEndpointConfigurer extends PropertyConfigurerSupport 
         case "schemaHistoryInternalStoreOnlyCapturedTablesDdl": target.getConfiguration().setSchemaHistoryInternalStoreOnlyCapturedTablesDdl(property(camelContext, boolean.class, value)); return true;
         case "schemanameadjustmentmode":
         case "schemaNameAdjustmentMode": target.getConfiguration().setSchemaNameAdjustmentMode(property(camelContext, java.lang.String.class, value)); return true;
+        case "secondarydbname":
+        case "secondaryDbname": target.getConfiguration().setSecondaryDbname(property(camelContext, java.lang.String.class, value)); return true;
+        case "secondaryhostname":
+        case "secondaryHostname": target.getConfiguration().setSecondaryHostname(property(camelContext, java.lang.String.class, value)); return true;
+        case "secondaryport":
+        case "secondaryPort": target.getConfiguration().setSecondaryPort(property(camelContext, int.class, value)); return true;
+        case "secondaryurl":
+        case "secondaryUrl": target.getConfiguration().setSecondaryUrl(property(camelContext, java.lang.String.class, value)); return true;
         case "signaldatacollection":
         case "signalDataCollection": target.getConfiguration().setSignalDataCollection(property(camelContext, java.lang.String.class, value)); return true;
         case "signalenabledchannels":
@@ -308,6 +320,8 @@ public class DebeziumOracleEndpointConfigurer extends PropertyConfigurerSupport 
         case "snapshotTablesOrderByRowCount": target.getConfiguration().setSnapshotTablesOrderByRowCount(property(camelContext, java.lang.String.class, value)); return true;
         case "sourceinfostructmaker":
         case "sourceinfoStructMaker": target.getConfiguration().setSourceinfoStructMaker(property(camelContext, java.lang.String.class, value)); return true;
+        case "statisticsmetricsenabled":
+        case "statisticsMetricsEnabled": target.getConfiguration().setStatisticsMetricsEnabled(property(camelContext, boolean.class, value)); return true;
         case "streamingdelayms":
         case "streamingDelayMs": target.getConfiguration().setStreamingDelayMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "tableexcludelist":
@@ -345,6 +359,8 @@ public class DebeziumOracleEndpointConfigurer extends PropertyConfigurerSupport 
         case "binaryHandlingMode": return java.lang.String.class;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
+        case "capturemode":
+        case "captureMode": return java.lang.String.class;
         case "columnexcludelist":
         case "columnExcludeList": return java.lang.String.class;
         case "columnincludelist":
@@ -424,14 +440,10 @@ public class DebeziumOracleEndpointConfigurer extends PropertyConfigurerSupport 
         case "logMiningArchiveLogOnlyMode": return boolean.class;
         case "logminingarchivelogonlyscnpollintervalms":
         case "logMiningArchiveLogOnlyScnPollIntervalMs": return long.class;
-        case "logminingbatchsizedefault":
-        case "logMiningBatchSizeDefault": return long.class;
-        case "logminingbatchsizeincrement":
-        case "logMiningBatchSizeIncrement": return long.class;
-        case "logminingbatchsizemax":
-        case "logMiningBatchSizeMax": return long.class;
-        case "logminingbatchsizemin":
-        case "logMiningBatchSizeMin": return long.class;
+        case "logminingbufferdeferredtransactionretentionms":
+        case "logMiningBufferDeferredTransactionRetentionMs": return long.class;
+        case "logminingbufferdeferredtransactionstart":
+        case "logMiningBufferDeferredTransactionStart": return boolean.class;
         case "logminingbufferdroponstop":
         case "logMiningBufferDropOnStop": return boolean.class;
         case "logminingbufferehcacheeventsconfig":
@@ -458,8 +470,18 @@ public class DebeziumOracleEndpointConfigurer extends PropertyConfigurerSupport 
         case "logMiningBufferInfinispanCacheSchemaChanges": return java.lang.String.class;
         case "logminingbufferinfinispancachetransactions":
         case "logMiningBufferInfinispanCacheTransactions": return java.lang.String.class;
+        case "logminingbuffermemorylegacytransactionstart":
+        case "logMiningBufferMemoryLegacyTransactionStart": return boolean.class;
+        case "logminingbuffertrackclientid":
+        case "logMiningBufferTrackClientId": return boolean.class;
+        case "logminingbuffertrackcommittimestamp":
+        case "logMiningBufferTrackCommitTimestamp": return boolean.class;
         case "logminingbuffertrackrsid":
         case "logMiningBufferTrackRsId": return boolean.class;
+        case "logminingbuffertrackstarttimestamp":
+        case "logMiningBufferTrackStartTimestamp": return boolean.class;
+        case "logminingbuffertrackusername":
+        case "logMiningBufferTrackUsername": return boolean.class;
         case "logminingbuffertransactioneventsthreshold":
         case "logMiningBufferTransactionEventsThreshold": return long.class;
         case "logminingbuffertype":
@@ -472,28 +494,20 @@ public class DebeziumOracleEndpointConfigurer extends PropertyConfigurerSupport 
         case "logMiningFlushTableName": return java.lang.String.class;
         case "logminingincluderedosql":
         case "logMiningIncludeRedoSql": return boolean.class;
+        case "logmininglogcountmin":
+        case "logMiningLogCountMin": return int.class;
         case "logminingpathdictionary":
         case "logMiningPathDictionary": return java.lang.String.class;
         case "logminingqueryfiltermode":
         case "logMiningQueryFilterMode": return java.lang.String.class;
+        case "logminingreadonly":
+        case "logMiningReadOnly": return boolean.class;
         case "logminingreadonlyhostname":
         case "logMiningReadonlyHostname": return java.lang.String.class;
         case "logminingrestartconnection":
         case "logMiningRestartConnection": return boolean.class;
-        case "logminingscngapdetectiongapsizemin":
-        case "logMiningScnGapDetectionGapSizeMin": return long.class;
-        case "logminingscngapdetectiontimeintervalmaxms":
-        case "logMiningScnGapDetectionTimeIntervalMaxMs": return long.class;
         case "logminingsessionmaxms":
         case "logMiningSessionMaxMs": return long.class;
-        case "logminingsleeptimedefaultms":
-        case "logMiningSleepTimeDefaultMs": return long.class;
-        case "logminingsleeptimeincrementms":
-        case "logMiningSleepTimeIncrementMs": return long.class;
-        case "logminingsleeptimemaxms":
-        case "logMiningSleepTimeMaxMs": return long.class;
-        case "logminingsleeptimeminms":
-        case "logMiningSleepTimeMinMs": return long.class;
         case "logminingstrategy":
         case "logMiningStrategy": return java.lang.String.class;
         case "logminingtransactionretentionms":
@@ -510,6 +524,10 @@ public class DebeziumOracleEndpointConfigurer extends PropertyConfigurerSupport 
         case "maxQueueSize": return int.class;
         case "maxqueuesizeinbytes":
         case "maxQueueSizeInBytes": return long.class;
+        case "memorymanagementschemasclass":
+        case "memoryManagementSchemasClass": return java.lang.String.class;
+        case "memorymanagementtablesclass":
+        case "memoryManagementTablesClass": return java.lang.String.class;
         case "messagekeycolumns":
         case "messageKeyColumns": return java.lang.String.class;
         case "notificationenabledchannels":
@@ -576,6 +594,14 @@ public class DebeziumOracleEndpointConfigurer extends PropertyConfigurerSupport 
         case "schemaHistoryInternalStoreOnlyCapturedTablesDdl": return boolean.class;
         case "schemanameadjustmentmode":
         case "schemaNameAdjustmentMode": return java.lang.String.class;
+        case "secondarydbname":
+        case "secondaryDbname": return java.lang.String.class;
+        case "secondaryhostname":
+        case "secondaryHostname": return java.lang.String.class;
+        case "secondaryport":
+        case "secondaryPort": return int.class;
+        case "secondaryurl":
+        case "secondaryUrl": return java.lang.String.class;
         case "signaldatacollection":
         case "signalDataCollection": return java.lang.String.class;
         case "signalenabledchannels":
@@ -620,6 +646,8 @@ public class DebeziumOracleEndpointConfigurer extends PropertyConfigurerSupport 
         case "snapshotTablesOrderByRowCount": return java.lang.String.class;
         case "sourceinfostructmaker":
         case "sourceinfoStructMaker": return java.lang.String.class;
+        case "statisticsmetricsenabled":
+        case "statisticsMetricsEnabled": return boolean.class;
         case "streamingdelayms":
         case "streamingDelayMs": return long.class;
         case "tableexcludelist":
@@ -658,6 +686,8 @@ public class DebeziumOracleEndpointConfigurer extends PropertyConfigurerSupport 
         case "binaryHandlingMode": return target.getConfiguration().getBinaryHandlingMode();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
+        case "capturemode":
+        case "captureMode": return target.getConfiguration().getCaptureMode();
         case "columnexcludelist":
         case "columnExcludeList": return target.getConfiguration().getColumnExcludeList();
         case "columnincludelist":
@@ -737,14 +767,10 @@ public class DebeziumOracleEndpointConfigurer extends PropertyConfigurerSupport 
         case "logMiningArchiveLogOnlyMode": return target.getConfiguration().isLogMiningArchiveLogOnlyMode();
         case "logminingarchivelogonlyscnpollintervalms":
         case "logMiningArchiveLogOnlyScnPollIntervalMs": return target.getConfiguration().getLogMiningArchiveLogOnlyScnPollIntervalMs();
-        case "logminingbatchsizedefault":
-        case "logMiningBatchSizeDefault": return target.getConfiguration().getLogMiningBatchSizeDefault();
-        case "logminingbatchsizeincrement":
-        case "logMiningBatchSizeIncrement": return target.getConfiguration().getLogMiningBatchSizeIncrement();
-        case "logminingbatchsizemax":
-        case "logMiningBatchSizeMax": return target.getConfiguration().getLogMiningBatchSizeMax();
-        case "logminingbatchsizemin":
-        case "logMiningBatchSizeMin": return target.getConfiguration().getLogMiningBatchSizeMin();
+        case "logminingbufferdeferredtransactionretentionms":
+        case "logMiningBufferDeferredTransactionRetentionMs": return target.getConfiguration().getLogMiningBufferDeferredTransactionRetentionMs();
+        case "logminingbufferdeferredtransactionstart":
+        case "logMiningBufferDeferredTransactionStart": return target.getConfiguration().isLogMiningBufferDeferredTransactionStart();
         case "logminingbufferdroponstop":
         case "logMiningBufferDropOnStop": return target.getConfiguration().isLogMiningBufferDropOnStop();
         case "logminingbufferehcacheeventsconfig":
@@ -771,8 +797,18 @@ public class DebeziumOracleEndpointConfigurer extends PropertyConfigurerSupport 
         case "logMiningBufferInfinispanCacheSchemaChanges": return target.getConfiguration().getLogMiningBufferInfinispanCacheSchemaChanges();
         case "logminingbufferinfinispancachetransactions":
         case "logMiningBufferInfinispanCacheTransactions": return target.getConfiguration().getLogMiningBufferInfinispanCacheTransactions();
+        case "logminingbuffermemorylegacytransactionstart":
+        case "logMiningBufferMemoryLegacyTransactionStart": return target.getConfiguration().isLogMiningBufferMemoryLegacyTransactionStart();
+        case "logminingbuffertrackclientid":
+        case "logMiningBufferTrackClientId": return target.getConfiguration().isLogMiningBufferTrackClientId();
+        case "logminingbuffertrackcommittimestamp":
+        case "logMiningBufferTrackCommitTimestamp": return target.getConfiguration().isLogMiningBufferTrackCommitTimestamp();
         case "logminingbuffertrackrsid":
         case "logMiningBufferTrackRsId": return target.getConfiguration().isLogMiningBufferTrackRsId();
+        case "logminingbuffertrackstarttimestamp":
+        case "logMiningBufferTrackStartTimestamp": return target.getConfiguration().isLogMiningBufferTrackStartTimestamp();
+        case "logminingbuffertrackusername":
+        case "logMiningBufferTrackUsername": return target.getConfiguration().isLogMiningBufferTrackUsername();
         case "logminingbuffertransactioneventsthreshold":
         case "logMiningBufferTransactionEventsThreshold": return target.getConfiguration().getLogMiningBufferTransactionEventsThreshold();
         case "logminingbuffertype":
@@ -785,28 +821,20 @@ public class DebeziumOracleEndpointConfigurer extends PropertyConfigurerSupport 
         case "logMiningFlushTableName": return target.getConfiguration().getLogMiningFlushTableName();
         case "logminingincluderedosql":
         case "logMiningIncludeRedoSql": return target.getConfiguration().isLogMiningIncludeRedoSql();
+        case "logmininglogcountmin":
+        case "logMiningLogCountMin": return target.getConfiguration().getLogMiningLogCountMin();
         case "logminingpathdictionary":
         case "logMiningPathDictionary": return target.getConfiguration().getLogMiningPathDictionary();
         case "logminingqueryfiltermode":
         case "logMiningQueryFilterMode": return target.getConfiguration().getLogMiningQueryFilterMode();
+        case "logminingreadonly":
+        case "logMiningReadOnly": return target.getConfiguration().isLogMiningReadOnly();
         case "logminingreadonlyhostname":
         case "logMiningReadonlyHostname": return target.getConfiguration().getLogMiningReadonlyHostname();
         case "logminingrestartconnection":
         case "logMiningRestartConnection": return target.getConfiguration().isLogMiningRestartConnection();
-        case "logminingscngapdetectiongapsizemin":
-        case "logMiningScnGapDetectionGapSizeMin": return target.getConfiguration().getLogMiningScnGapDetectionGapSizeMin();
-        case "logminingscngapdetectiontimeintervalmaxms":
-        case "logMiningScnGapDetectionTimeIntervalMaxMs": return target.getConfiguration().getLogMiningScnGapDetectionTimeIntervalMaxMs();
         case "logminingsessionmaxms":
         case "logMiningSessionMaxMs": return target.getConfiguration().getLogMiningSessionMaxMs();
-        case "logminingsleeptimedefaultms":
-        case "logMiningSleepTimeDefaultMs": return target.getConfiguration().getLogMiningSleepTimeDefaultMs();
-        case "logminingsleeptimeincrementms":
-        case "logMiningSleepTimeIncrementMs": return target.getConfiguration().getLogMiningSleepTimeIncrementMs();
-        case "logminingsleeptimemaxms":
-        case "logMiningSleepTimeMaxMs": return target.getConfiguration().getLogMiningSleepTimeMaxMs();
-        case "logminingsleeptimeminms":
-        case "logMiningSleepTimeMinMs": return target.getConfiguration().getLogMiningSleepTimeMinMs();
         case "logminingstrategy":
         case "logMiningStrategy": return target.getConfiguration().getLogMiningStrategy();
         case "logminingtransactionretentionms":
@@ -823,6 +851,10 @@ public class DebeziumOracleEndpointConfigurer extends PropertyConfigurerSupport 
         case "maxQueueSize": return target.getConfiguration().getMaxQueueSize();
         case "maxqueuesizeinbytes":
         case "maxQueueSizeInBytes": return target.getConfiguration().getMaxQueueSizeInBytes();
+        case "memorymanagementschemasclass":
+        case "memoryManagementSchemasClass": return target.getConfiguration().getMemoryManagementSchemasClass();
+        case "memorymanagementtablesclass":
+        case "memoryManagementTablesClass": return target.getConfiguration().getMemoryManagementTablesClass();
         case "messagekeycolumns":
         case "messageKeyColumns": return target.getConfiguration().getMessageKeyColumns();
         case "notificationenabledchannels":
@@ -889,6 +921,14 @@ public class DebeziumOracleEndpointConfigurer extends PropertyConfigurerSupport 
         case "schemaHistoryInternalStoreOnlyCapturedTablesDdl": return target.getConfiguration().isSchemaHistoryInternalStoreOnlyCapturedTablesDdl();
         case "schemanameadjustmentmode":
         case "schemaNameAdjustmentMode": return target.getConfiguration().getSchemaNameAdjustmentMode();
+        case "secondarydbname":
+        case "secondaryDbname": return target.getConfiguration().getSecondaryDbname();
+        case "secondaryhostname":
+        case "secondaryHostname": return target.getConfiguration().getSecondaryHostname();
+        case "secondaryport":
+        case "secondaryPort": return target.getConfiguration().getSecondaryPort();
+        case "secondaryurl":
+        case "secondaryUrl": return target.getConfiguration().getSecondaryUrl();
         case "signaldatacollection":
         case "signalDataCollection": return target.getConfiguration().getSignalDataCollection();
         case "signalenabledchannels":
@@ -933,6 +973,8 @@ public class DebeziumOracleEndpointConfigurer extends PropertyConfigurerSupport 
         case "snapshotTablesOrderByRowCount": return target.getConfiguration().getSnapshotTablesOrderByRowCount();
         case "sourceinfostructmaker":
         case "sourceinfoStructMaker": return target.getConfiguration().getSourceinfoStructMaker();
+        case "statisticsmetricsenabled":
+        case "statisticsMetricsEnabled": return target.getConfiguration().isStatisticsMetricsEnabled();
         case "streamingdelayms":
         case "streamingDelayMs": return target.getConfiguration().getStreamingDelayMs();
         case "tableexcludelist":

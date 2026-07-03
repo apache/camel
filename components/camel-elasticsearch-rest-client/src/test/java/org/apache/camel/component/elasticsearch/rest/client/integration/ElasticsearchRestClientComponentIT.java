@@ -28,6 +28,8 @@ import org.apache.camel.component.elasticsearch.rest.client.ElasticSearchRestCli
 import org.apache.camel.component.elasticsearch.rest.client.ElasticsearchRestClientOperation;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.awaitility.Awaitility;
+import org.elasticsearch.client.Request;
+import org.elasticsearch.client.Response;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -82,8 +84,12 @@ public class ElasticsearchRestClientComponentIT extends ElasticsearchRestClientI
     @Test
     void testProducer() throws ExecutionException, InterruptedException {
 
-        // Workaround to avoid the Credential Provider to not be ready and to receive a 401
-        Thread.sleep(5000);
+        // Wait until Elasticsearch security is ready so authenticated requests succeed, instead of
+        // sleeping a fixed amount and hoping the credential provider is ready (which races and 401s).
+        Awaitility.await().atMost(30, TimeUnit.SECONDS).ignoreExceptions().untilAsserted(() -> {
+            Response health = restClient.performRequest(new Request("GET", "/_cluster/health"));
+            assertEquals(200, health.getStatusLine().getStatusCode());
+        });
 
         // create index
         CompletableFuture<Boolean> ack = template.asyncRequestBody("direct:create-index", null, Boolean.class);

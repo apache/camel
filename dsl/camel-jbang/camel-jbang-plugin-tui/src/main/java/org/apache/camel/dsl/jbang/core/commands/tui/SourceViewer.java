@@ -51,7 +51,7 @@ import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
 
-import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.pollJsonResponse;
+import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.pollJsonResponse;
 
 /**
  * Reusable source code viewer with syntax highlighting, scrolling, and line-number display. Can be used by any tab that
@@ -305,22 +305,22 @@ class SourceViewer {
         if (search.hasFindTerm()) {
             search.renderFindStatus(spans);
         } else {
-            MonitorContext.hint(spans, "Esc/c", "close");
+            TuiHelper.hint(spans, "Esc/c", "close");
         }
-        MonitorContext.hint(spans, "↑↓", "navigate");
+        TuiHelper.hint(spans, "↑↓", "navigate");
         if (currentRouteId != null) {
-            MonitorContext.hint(spans, "Y", "yaml");
-            MonitorContext.hint(spans, "J", "java");
-            MonitorContext.hint(spans, "X", "xml");
+            TuiHelper.hint(spans, "Y", "yaml");
+            TuiHelper.hint(spans, "J", "java");
+            TuiHelper.hint(spans, "X", "xml");
         }
         search.renderSearchHints(spans);
-        MonitorContext.hint(spans, "w", "wrap" + (wordWrap ? " [on]" : " [off]"));
+        TuiHelper.hint(spans, "w", "wrap" + (wordWrap ? " [on]" : " [off]"));
         if (!wordWrap) {
-            MonitorContext.hint(spans, "←→", "horizontal");
+            TuiHelper.hint(spans, "←→", "horizontal");
         }
-        MonitorContext.hint(spans, "PgUp/PgDn", "page");
+        TuiHelper.hint(spans, "PgUp/PgDn", "page");
         if (onLineSelected != null) {
-            MonitorContext.hint(spans, "Enter", "select node");
+            TuiHelper.hint(spans, "Enter", "select node");
         }
     }
 

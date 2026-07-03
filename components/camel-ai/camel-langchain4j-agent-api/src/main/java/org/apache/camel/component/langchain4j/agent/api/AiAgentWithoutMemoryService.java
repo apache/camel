@@ -17,6 +17,7 @@
 package org.apache.camel.component.langchain4j.agent.api;
 
 import dev.langchain4j.data.message.Content;
+import dev.langchain4j.service.Result;
 import dev.langchain4j.service.SystemMessage;
 import dev.langchain4j.service.UserMessage;
 import dev.langchain4j.service.V;
@@ -30,28 +31,28 @@ public interface AiAgentWithoutMemoryService {
      * Simple chat with a single user message
      *
      * @param  message the user message
-     * @return         the AI response
+     * @return         the AI response with token usage metadata
      */
-    String chat(@UserMessage String message);
+    Result<String> chat(@UserMessage String message);
 
     /**
      * Chat with a user message containing both text and additional content (e.g., images, audio).
      *
      * @param  message the text portion of the user message
      * @param  content additional content such as ImageContent, AudioContent, etc.
-     * @return         the AI response
+     * @return         the AI response with token usage metadata
      */
-    String chat(@UserMessage String message, @UserMessage Content content);
+    Result<String> chat(@UserMessage String message, @UserMessage Content content);
 
     /**
      * Simple chat with a single user message and system message
      *
      * @param  message the user message
      * @param  prompt  the system message template
-     * @return         the AI response
+     * @return         the AI response with token usage metadata
      */
     @SystemMessage("{{prompt}}")
-    String chat(@UserMessage String message, @V("prompt") String prompt);
+    Result<String> chat(@UserMessage String message, @V("prompt") String prompt);
 
     /**
      * Chat with a user message containing both text and additional content, with system message.
@@ -59,9 +60,9 @@ public interface AiAgentWithoutMemoryService {
      * @param  message the text portion of the user message
      * @param  content additional content such as ImageContent, AudioContent, etc.
      * @param  prompt  the system message template
-     * @return         the AI response
+     * @return         the AI response with token usage metadata
      */
     @SystemMessage("{{prompt}}")
-    String chat(@UserMessage String message, @UserMessage Content content, @V("prompt") String prompt);
+    Result<String> chat(@UserMessage String message, @UserMessage Content content, @V("prompt") String prompt);
 
 }

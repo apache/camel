@@ -33,6 +33,8 @@ import dev.tamboui.text.Line;
 import dev.tamboui.text.Span;
 import dev.tamboui.text.Text;
 import dev.tamboui.tui.event.KeyEvent;
+import dev.tamboui.tui.event.MouseEvent;
+import dev.tamboui.tui.event.MouseEventKind;
 import dev.tamboui.widgets.barchart.Bar;
 import dev.tamboui.widgets.barchart.BarChart;
 import dev.tamboui.widgets.barchart.BarGroup;
@@ -41,6 +43,7 @@ import dev.tamboui.widgets.block.BorderType;
 import dev.tamboui.widgets.block.Borders;
 import dev.tamboui.widgets.block.Title;
 import dev.tamboui.widgets.paragraph.Paragraph;
+import dev.tamboui.widgets.scrollbar.ScrollbarState;
 import dev.tamboui.widgets.table.Cell;
 import dev.tamboui.widgets.table.Row;
 import dev.tamboui.widgets.table.Table;
@@ -48,29 +51,50 @@ import dev.tamboui.widgets.table.TableState;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 
-import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.*;
+import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.*;
 import static org.apache.camel.dsl.jbang.core.common.CamelCommandHelper.extractState;
 
-class OverviewTab implements MonitorTab {
+class OverviewTab extends AbstractTab {
+
+    /**
+     * Callback interface for process control actions triggered from overview key shortcuts.
+     */
+    interface OverviewActions {
+        void sendRouteCommand(String pid, String routeId, String command);
+
+        void stopSelectedProcess(boolean forceKill);
+
+        void restartSelectedProcess();
+
+        void showKillConfirm();
+
+        void openDoc(IntegrationInfo info);
+
+        void openFilesPopup();
+    }
 
     private static final long VANISH_DURATION_MS = 6000;
-    private static final int MAX_SPARKLINE_POINTS = 60;
+    private static final int MAX_SPARKLINE_POINTS = 300;
     private static final String[] SORT_COLUMNS = { "pid", "name", "version", "status", "total", "fail" };
 
     static final int CHART_ALL = 0;
     static final int CHART_SINGLE = 1;
     static final int CHART_OFF = 2;
 
-    private final MonitorContext ctx;
     private final Map<String, LinkedList<Long>> throughputHistory;
     private final Map<String, LinkedList<Long>> failedHistory;
     private final Map<String, LoadAvg> cpuLoadAvg;
     private final Set<String> stoppingPids;
     private final Runnable onPidChanged;
+    private OverviewActions actions;
 
     final TableState tableState = new TableState();
+    private final ScrollbarState tableScrollState = new ScrollbarState();
+    private Rect lastTableArea;
     int dividerIndex = -1;
     int chartMode = CHART_SINGLE;
+    private int bottomPanelHeight = 16;
+    private final DragSplit vSplit = new DragSplit();
 
     private String sort = "name";
     private int sortIndex = 1;
@@ -81,12 +105,16 @@ class OverviewTab implements MonitorTab {
                 MetricsCollector metrics,
                 Set<String> stoppingPids,
                 Runnable onPidChanged) {
-        this.ctx = ctx;
+        super(ctx);
         this.throughputHistory = metrics.getThroughputHistory();
         this.failedHistory = metrics.getFailedHistory();
         this.cpuLoadAvg = metrics.getCpuLoadAvg();
         this.stoppingPids = stoppingPids;
         this.onPidChanged = onPidChanged;
+    }
+
+    void setActions(OverviewActions actions) {
+        this.actions = actions;
     }
 
     @Override
@@ -105,11 +133,65 @@ class OverviewTab implements MonitorTab {
             chartMode = (chartMode + 1) % 3;
             return true;
         }
+        // Process control keys
+        if (actions != null) {
+            if (ke.isChar('p') && ctx.selectedPid != null && !ctx.isInfraSelected()) {
+                IntegrationInfo selInfo = ctx.findSelectedIntegration();
+                if (selInfo != null) {
+                    String cmd = selInfo.routeStarted > 0 ? "stop" : "start";
+                    actions.sendRouteCommand(ctx.selectedPid, "*", cmd);
+                }
+                return true;
+            }
+            if (ke.isChar('x') && ctx.selectedPid != null) {
+                actions.stopSelectedProcess(false);
+                return true;
+            }
+            if (ke.isChar('X') && ctx.selectedPid != null) {
+                actions.showKillConfirm();
+                return true;
+            }
+            if (ke.isChar('r') && ctx.selectedPid != null && !ctx.isInfraSelected()) {
+                actions.restartSelectedProcess();
+                return true;
+            }
+            if (ke.isChar('f') && ctx.selectedPid != null && !ctx.isInfraSelected()) {
+                actions.openFilesPopup();
+                return true;
+            }
+        }
         return false;
     }
 
+    /**
+     * Returns the table area captured during the last render, or {@code null} before the first render. Package-private
+     * for click hit-testing in tests.
+     */
+    Rect getTableArea() {
+        return lastTableArea;
+    }
+
     @Override
-    public boolean handleEscape() {
+    public boolean handleMouseEvent(MouseEvent me, Rect area) {
+        if (vSplit.handleMouse(me, me.y())) {
+            if (vSplit.isDragging() && me.kind() == MouseEventKind.DRAG) {
+                bottomPanelHeight = Math.max(5, Math.min(area.y() + area.height() - me.y(), area.height() - 5));
+            }
+            return true;
+        }
+        Integer before = tableState.selected();
+        if (handleTableClick(me, lastTableArea, tableState, totalRows())) {
+            // The Dev/Infra divider row is not selectable; restore the prior selection when it is clicked.
+            Integer sel = tableState.selected();
+            if (sel != null && dividerIndex >= 0 && sel == dividerIndex) {
+                if (before != null) {
+                    tableState.select(before);
+                }
+            } else {
+                syncSelectedPid();
+            }
+            return true;
+        }
         return false;
     }
 
@@ -143,6 +225,11 @@ class OverviewTab implements MonitorTab {
         int infraCount = infraInfos.size();
         dividerIndex = infraCount > 0 ? integrationCount : -1;
 
+        if (integrationCount == 0 && infraCount == 0) {
+            renderEmptyState(frame, area);
+            return;
+        }
+
         if (ctx.selectedPid != null) {
             for (int i = 0; i < infos.size(); i++) {
                 if (ctx.selectedPid.equals(infos.get(i).pid)) {
@@ -152,7 +239,7 @@ class OverviewTab implements MonitorTab {
             }
             for (int i = 0; i < infraInfos.size(); i++) {
                 if (ctx.selectedPid.equals(infraInfos.get(i).pid)) {
-                    int tableIndex = integrationCount + (dividerIndex >= 0 ? 1 : 0) + i;
+                    int tableIndex = integrationCount + 1 + i;
                     tableState.select(tableIndex);
                     break;
                 }
@@ -166,17 +253,29 @@ class OverviewTab implements MonitorTab {
         List<Constraint> constraints = new ArrayList<>();
         constraints.add(Constraint.fill());
         if (hasSparkline) {
-            constraints.add(Constraint.length(14));
+            bottomPanelHeight = Math.max(5, Math.min(bottomPanelHeight, area.height() - 5));
+            constraints.add(Constraint.length(bottomPanelHeight));
         } else if (showInfoPanel) {
             int panelH = countInfraLines(infraSel) + 2;
-            constraints.add(Constraint.length(Math.min(panelH, area.height() / 2)));
+            bottomPanelHeight = Math.max(5, Math.min(Math.min(panelH, bottomPanelHeight), area.height() / 2));
+            constraints.add(Constraint.length(bottomPanelHeight));
         }
         List<Rect> chunks = Layout.vertical()
                 .constraints(constraints)
                 .split(area);
+        if (chunks.size() > 1) {
+            vSplit.setBorderPos(chunks.get(1).y());
+        } else {
+            vSplit.clearBorderPos();
+        }
 
         List<Row> rows = new ArrayList<>();
+        int rowIndex = 0;
         for (IntegrationInfo info : infos) {
+            boolean isEven = (rowIndex++ % 2 == 0);
+            // Zebra striping at the row level so the selection highlight (patched on top) always wins.
+            Style rowBg = isEven ? Style.EMPTY.bg(Theme.zebra()) : Style.EMPTY;
+
             if (info.vanishing) {
                 long elapsed = System.currentTimeMillis() - info.vanishStart;
                 float fade = 1.0f - Math.min(1.0f, (float) elapsed / VANISH_DURATION_MS);
@@ -196,7 +295,7 @@ class OverviewTab implements MonitorTab {
                         Cell.from(Span.styled("", dimStyle)),
                         Cell.from(Span.styled("", dimStyle)),
                         Cell.from(Span.styled("", dimStyle)),
-                        Cell.from(Span.styled("", dimStyle))));
+                        Cell.from(Span.styled("", dimStyle))).style(rowBg));
             } else {
                 String stateText = extractState(info.state);
                 if (stoppingPids.contains(info.pid) || "Terminating".equals(stateText)) {
@@ -207,18 +306,25 @@ class OverviewTab implements MonitorTab {
                     stateText = "Stopped";
                 }
                 Style statusStyle = switch (stateText) {
-                    case "Started", "Running" -> Style.EMPTY.fg(Color.GREEN);
-                    case "Stopping" -> Style.EMPTY.fg(Color.YELLOW);
-                    case "Stopped" -> Style.EMPTY.fg(Color.LIGHT_RED);
-                    default -> Style.EMPTY.fg(Color.YELLOW);
+                    case "Started", "Running" -> Theme.success();
+                    case "Stopped" -> Theme.error();
+                    default -> Theme.warning();
                 };
 
-                Style failStyle = info.failed > 0 ? Style.EMPTY.fg(Color.LIGHT_RED).bold() : Style.EMPTY;
+                Style failStyle = info.failed > 0 ? Theme.error().bold() : Style.EMPTY;
 
                 String sinceLastDisplay = formatSinceLast(info);
 
                 boolean hasDoc = info.readmeFiles != null && !info.readmeFiles.isEmpty();
-                String nameText = "🐪 " + (info.name != null ? info.name : "");
+                if (!hasDoc) {
+                    hasDoc = hasReadmeInSourceDir(info);
+                }
+                String platformIcon = switch (info.platform != null ? info.platform : "") {
+                    case "Spring Boot" -> "🍃";
+                    case "Quarkus" -> "🚀";
+                    default -> "🐪";
+                };
+                String nameText = platformIcon + " " + (info.name != null ? info.name : "");
                 List<Span> nameSpans = new ArrayList<>();
                 nameSpans.add(Span.styled(nameText, Style.EMPTY.fg(Color.CYAN)));
                 if (info.devMode) {
@@ -240,7 +346,7 @@ class OverviewTab implements MonitorTab {
                         rightCell(String.valueOf(info.exchangesTotal), 8),
                         rightCell(String.valueOf(info.failed), 6, failStyle),
                         rightCell(String.valueOf(info.inflight), 8),
-                        Cell.from(sinceLastDisplay)));
+                        Cell.from(sinceLastDisplay)).style(rowBg));
             }
         }
 
@@ -268,6 +374,10 @@ class OverviewTab implements MonitorTab {
         }
 
         for (InfraInfo info : infraInfos) {
+            boolean isEven = (rowIndex++ % 2 == 0);
+            Style rowBg = isEven ? Style.EMPTY.bg(Theme.zebra()) : Style.EMPTY;
+            Style statusStyle = info.alive ? Theme.success() : Theme.error();
+
             if (info.vanishing) {
                 long elapsed = System.currentTimeMillis() - info.vanishStart;
                 float fade = 1.0f - Math.min(1.0f, (float) elapsed / VANISH_DURATION_MS);
@@ -286,9 +396,8 @@ class OverviewTab implements MonitorTab {
                         Cell.from(Span.styled("", dimStyle)),
                         Cell.from(Span.styled("", dimStyle)),
                         Cell.from(Span.styled("", dimStyle)),
-                        Cell.from(Span.styled("", dimStyle))));
+                        Cell.from(Span.styled("", dimStyle))).style(rowBg));
             } else {
-                Style statusStyle = info.alive ? Style.EMPTY.fg(Color.GREEN) : Style.EMPTY.fg(Color.LIGHT_RED);
                 String statusText = info.alive ? "Running" : "Stopped";
                 String infraAlias = "🔧  " + info.alias;
                 String version = info.serviceVersion != null ? info.serviceVersion : "";
@@ -304,11 +413,10 @@ class OverviewTab implements MonitorTab {
                         Cell.from(""),
                         Cell.from(""),
                         Cell.from(""),
-                        Cell.from("")));
+                        Cell.from("")).style(rowBg));
             }
         }
 
-        Style overviewHighlight = Style.EMPTY.fg(Color.WHITE).bold().onBlue();
         Table table = Table.builder()
                 .rows(rows)
                 .header(header)
@@ -324,19 +432,21 @@ class OverviewTab implements MonitorTab {
                         Constraint.length(8),
                         Constraint.length(6),
                         Constraint.length(8),
-                        Constraint.length(12))
-                .highlightStyle(overviewHighlight)
+                        Constraint.length(13))
+                .highlightStyle(Theme.selectionBg())
                 .highlightSpacing(Table.HighlightSpacing.ALWAYS)
                 .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(" Overview ").build())
                 .build();
 
+        lastTableArea = chunks.get(0);
         frame.renderStatefulWidget(table, chunks.get(0), tableState);
+        renderTableScrollbar(frame, lastTableArea, tableState, tableScrollState, totalRows());
 
         if (hasSparkline && chunks.size() > 1) {
             Rect chartTotalArea = chunks.get(chunks.size() - 1);
 
             List<Rect> chartHSplit = Layout.horizontal()
-                    .constraints(Constraint.fill(), Constraint.length(30))
+                    .constraints(Constraint.fill(), Constraint.length(34))
                     .split(chartTotalArea);
             Rect chartArea = chartHSplit.get(0);
             Rect infoArea = chartHSplit.get(1);
@@ -494,11 +604,19 @@ class OverviewTab implements MonitorTab {
         Rect inner = infoBlock.inner(area);
         List<Line> lines = new ArrayList<>();
         Style dim = Style.EMPTY.dim();
+        int jvmDetailStart = -1;
+        int jvmDetailCount = 0;
         if (sel != null) {
             if (sel.platform != null) {
+                String platEmoji = switch (sel.platform) {
+                    case "Spring Boot" -> "🍃 ";
+                    case "Quarkus" -> "🚀 ";
+                    case "JBang", "Camel" -> "🐪 ";
+                    default -> "";
+                };
                 String plat = sel.platformVersion != null
-                        ? sel.platform + " v" + sel.platformVersion
-                        : sel.platform;
+                        ? platEmoji + sel.platform + " v" + sel.platformVersion
+                        : platEmoji + sel.platform;
                 lines.add(Line.from(
                         Span.styled("Runtime: ", dim),
                         Span.raw(TuiHelper.truncate(plat, inner.width() - 9))));
@@ -512,7 +630,8 @@ class OverviewTab implements MonitorTab {
                 List<Span> profileSpans = new ArrayList<>();
                 if (sel.profile != null) {
                     profileSpans.add(Span.styled("Profile: ", dim));
-                    profileSpans.add(Span.raw(sel.profile));
+                    String profileEmoji = "dev".equals(sel.profile) ? "🛠️ " : "prod".equals(sel.profile) ? "🔒 " : "";
+                    profileSpans.add(Span.raw(profileEmoji + sel.profile));
                 }
                 if (sel.reloaded > 0) {
                     if (!profileSpans.isEmpty()) {
@@ -530,14 +649,20 @@ class OverviewTab implements MonitorTab {
                         Span.raw(TuiHelper.truncate(sel.javaVersion, inner.width() - 6))));
             }
             if (sel.javaVendor != null) {
+                jvmDetailStart = lines.size();
                 lines.add(Line.from(
                         Span.styled("      ", dim),
                         Span.raw(TuiHelper.truncate(sel.javaVendor, inner.width() - 6))));
+                jvmDetailCount++;
             }
             if (sel.javaVmName != null) {
+                if (jvmDetailStart < 0) {
+                    jvmDetailStart = lines.size();
+                }
                 lines.add(Line.from(
                         Span.styled("      ", dim),
                         Span.raw(TuiHelper.truncate(sel.javaVmName, inner.width() - 6))));
+                jvmDetailCount++;
             }
             lines.add(Line.from(
                     Span.styled("Uptime: ", dim),
@@ -575,8 +700,12 @@ class OverviewTab implements MonitorTab {
                             Span.raw(sel.inflightLoad01 + " / " + sel.inflightLoad05 + " / " + sel.inflightLoad15)));
                 }
             }
+            // if content exceeds panel height, drop JVM vendor/VM name to make room for load
+            if (lines.size() > inner.height() && jvmDetailStart >= 0) {
+                lines.subList(jvmDetailStart, jvmDetailStart + jvmDetailCount).clear();
+            }
         } else {
-            lines.add(Line.from(Span.raw("-")));
+            lines.add(Line.from(Span.raw("")));
         }
         frame.renderWidget(Paragraph.builder().text(Text.from(lines)).build(), inner);
     }
@@ -746,11 +875,28 @@ class OverviewTab implements MonitorTab {
     }
 
     private String sortLabel(String label, String column) {
-        return MonitorContext.sortLabel(label, column, sort, sortReversed);
+        return sortLabel(label, column, sort, sortReversed);
     }
 
     private Style sortStyle(String column) {
-        return MonitorContext.sortStyle(column, sort);
+        return sortStyle(column, sort);
+    }
+
+    private static boolean hasReadmeInSourceDir(IntegrationInfo info) {
+        java.nio.file.Path srcDir = FilesBrowser.resolveSourceDirectory(info);
+        if (srcDir != null) {
+            try (java.util.stream.Stream<java.nio.file.Path> files = java.nio.file.Files.list(srcDir)) {
+                return files.anyMatch(p -> p.getFileName().toString().toLowerCase(java.util.Locale.ROOT).startsWith("readme"));
+            } catch (Exception e) {
+                // ignore
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public String description() {
+        return "Running integrations with PID, uptime, and exchange statistics";
     }
 
     @Override
@@ -833,7 +979,7 @@ class OverviewTab implements MonitorTab {
                 - `Enter` — view routes for selected integration
                 - `s` — cycle sort column
                 - `S` — reverse sort order
-                - `F2` — actions menu
+                - `F2` — actions menu (includes theme toggle, go to tab, etc.)
                 - `F3` — switch integration
                 """;
     }
@@ -869,5 +1015,51 @@ class OverviewTab implements MonitorTab {
         Integer sel = tableState.selected();
         result.put("selectedIndex", sel != null ? sel : -1);
         return result;
+    }
+
+    private void renderEmptyState(Frame frame, Rect area) {
+        List<Line> lines = new ArrayList<>();
+        lines.add(Line.from(Span.raw("")));
+        for (String row : TuiHelper.SMALL_CAMEL) {
+            lines.add(Line.from(Span.styled("     " + row, Style.EMPTY.fg(Theme.accent()).bold())));
+        }
+        lines.add(Line.from(Span.styled("     No Active Camel Integrations Found", Theme.title())));
+        lines.add(Line.from(Span.raw("")));
+        lines.add(Line.from(Span.styled("  💡 How to monitor integrations:", Style.EMPTY.bold())));
+        lines.add(Line.from(Span.raw("     Run a route or integration in another terminal window:")));
+        lines.add(Line.from(Span.styled("     > camel run my-route.yaml", Theme.success())));
+        lines.add(Line.from(Span.raw("")));
+        lines.add(Line.from(Span.styled("  🐪 Or run a bundled example:", Style.EMPTY.bold())));
+        lines.add(Line.from(List.of(
+                Span.raw("     Press "),
+                Span.styled(" F2 ", Theme.hintKey()),
+                Span.raw(" to open Actions and select "),
+                Span.styled("Run Example", Style.EMPTY.bold()),
+                Span.raw("."))));
+        lines.add(Line.from(Span.raw("")));
+        lines.add(Line.from(Span.styled("  💻 Or use the embedded JLine shell panel:", Style.EMPTY.bold())));
+        lines.add(Line.from(List.of(
+                Span.raw("     Press "),
+                Span.styled(" F6 ", Theme.hintKey()),
+                Span.raw(" to open the shell and run commands directly, e.g.:"))));
+        lines.add(Line.from(Span.styled("     camel> run examples/demo.java", Theme.success())));
+        lines.add(Line.from(Span.raw("")));
+        lines.add(Line.from(List.of(
+                Span.styled("  ❔ For shortcut keys and documentation, press ", Theme.muted()),
+                Span.styled(" ? ", Theme.hintKey()),
+                Span.styled(" or ", Theme.muted()),
+                Span.styled(" F1 ", Theme.hintKey()),
+                Span.styled(".", Theme.muted()))));
+
+        frame.renderWidget(
+                Paragraph.builder()
+                        .text(Text.from(lines))
+                        .block(Block.builder()
+                                .borderType(BorderType.ROUNDED).borders(Borders.ALL)
+                                .title(Title.from(Line.from(
+                                        Span.styled(" Camel JBang TUI ", Theme.title()))))
+                                .build())
+                        .build(),
+                area);
     }
 }
