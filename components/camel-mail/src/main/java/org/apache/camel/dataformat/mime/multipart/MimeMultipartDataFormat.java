@@ -50,8 +50,10 @@ import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.attachment.Attachment;
 import org.apache.camel.attachment.AttachmentMessage;
 import org.apache.camel.attachment.DefaultAttachment;
+import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.annotations.Dataformat;
 import org.apache.camel.support.DefaultDataFormat;
+import org.apache.camel.support.DefaultHeaderFilterStrategy;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.MessageHelper;
 import org.apache.camel.util.IOHelper;
@@ -72,9 +74,19 @@ public class MimeMultipartDataFormat extends DefaultDataFormat {
     private String includeHeaders;
     private Pattern includeHeadersPattern;
     private boolean binaryContent;
+    private final HeaderFilterStrategy headerFilterStrategy = createInboundHeaderFilterStrategy();
 
     public void setBinaryContent(boolean binaryContent) {
         this.binaryContent = binaryContent;
+    }
+
+    private static HeaderFilterStrategy createInboundHeaderFilterStrategy() {
+        DefaultHeaderFilterStrategy strategy = new DefaultHeaderFilterStrategy();
+        // camel-4.14 DefaultHeaderFilterStrategy does not enable the Camel* in-filter by default (that
+        // default was introduced on a later branch), so configure it explicitly to filter the Camel*
+        // namespace on the inbound path, matching the mail consumer's HeaderFilterStrategy.
+        strategy.setInFilterStartsWith(DefaultHeaderFilterStrategy.CAMEL_FILTER_STARTS_WITH);
+        return strategy;
     }
 
     public void setHeadersInline(boolean headersInline) {
@@ -219,6 +231,12 @@ public class MimeMultipartDataFormat extends DefaultDataFormat {
                 Object ho = headersEnum.nextElement();
                 if (ho instanceof Header) {
                     Header header = (Header) ho;
+                    // filter Camel internal headers (Camel*) instead of copying them verbatim from the external
+                    // MIME headers, consistent with the inbound HeaderFilterStrategy applied by the mail consumer
+                    if (headerFilterStrategy.applyFilterToExternalHeaders(header.getName(), header.getValue(),
+                            camelMessage.getExchange())) {
+                        continue;
+                    }
                     camelMessage.setHeader(header.getName(), header.getValue());
                 }
             }
