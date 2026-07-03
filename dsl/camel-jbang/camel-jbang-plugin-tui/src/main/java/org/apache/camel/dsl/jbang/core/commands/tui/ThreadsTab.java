@@ -246,7 +246,7 @@ class ThreadsTab extends AbstractTableTab {
                         Constraint.fill(),
                         Constraint.length(16),
                         Constraint.length(14),
-                        Constraint.length(14))
+                        Constraint.length(15))
                 .highlightStyle(Theme.selectionBg())
                 .highlightSpacing(Table.HighlightSpacing.ALWAYS)
                 .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(title).build())

@@ -504,7 +504,8 @@ class SqlQueryTab extends AbstractTab {
 
         Constraint[] colConstraints = new Constraint[widths.length];
         for (int i = 0; i < widths.length; i++) {
-            colConstraints[i] = Constraint.length(widths[i]);
+            // Add 1 extra char to the last column for trailing padding before the border
+            colConstraints[i] = Constraint.length(widths[i] + (i == widths.length - 1 ? 1 : 0));
         }
 
         Table table = Table.builder()

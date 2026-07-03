@@ -93,7 +93,7 @@ class OverviewTab extends AbstractTab {
     private Rect lastTableArea;
     int dividerIndex = -1;
     int chartMode = CHART_SINGLE;
-    private int bottomPanelHeight = 14;
+    private int bottomPanelHeight = 16;
     private final DragSplit vSplit = new DragSplit();
 
     private String sort = "name";
@@ -154,13 +154,6 @@ class OverviewTab extends AbstractTab {
             if (ke.isChar('r') && ctx.selectedPid != null && !ctx.isInfraSelected()) {
                 actions.restartSelectedProcess();
                 return true;
-            }
-            if (ke.isChar('d') && ctx.selectedPid != null && !ctx.isInfraSelected()) {
-                IntegrationInfo selInfo = ctx.findSelectedIntegration();
-                if (selInfo != null && selInfo.readmeFiles != null && !selInfo.readmeFiles.isEmpty()) {
-                    actions.openDoc(selInfo);
-                    return true;
-                }
             }
             if (ke.isChar('f') && ctx.selectedPid != null && !ctx.isInfraSelected()) {
                 actions.openFilesPopup();
@@ -323,7 +316,15 @@ class OverviewTab extends AbstractTab {
                 String sinceLastDisplay = formatSinceLast(info);
 
                 boolean hasDoc = info.readmeFiles != null && !info.readmeFiles.isEmpty();
-                String nameText = "🐪 " + (info.name != null ? info.name : "");
+                if (!hasDoc) {
+                    hasDoc = hasReadmeInSourceDir(info);
+                }
+                String platformIcon = switch (info.platform != null ? info.platform : "") {
+                    case "Spring Boot" -> "🍃";
+                    case "Quarkus" -> "🚀";
+                    default -> "🐪";
+                };
+                String nameText = platformIcon + " " + (info.name != null ? info.name : "");
                 List<Span> nameSpans = new ArrayList<>();
                 nameSpans.add(Span.styled(nameText, Style.EMPTY.fg(Color.CYAN)));
                 if (info.devMode) {
@@ -431,7 +432,7 @@ class OverviewTab extends AbstractTab {
                         Constraint.length(8),
                         Constraint.length(6),
                         Constraint.length(8),
-                        Constraint.length(12))
+                        Constraint.length(13))
                 .highlightStyle(Theme.selectionBg())
                 .highlightSpacing(Table.HighlightSpacing.ALWAYS)
                 .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(" Overview ").build())
@@ -445,7 +446,7 @@ class OverviewTab extends AbstractTab {
             Rect chartTotalArea = chunks.get(chunks.size() - 1);
 
             List<Rect> chartHSplit = Layout.horizontal()
-                    .constraints(Constraint.fill(), Constraint.length(30))
+                    .constraints(Constraint.fill(), Constraint.length(34))
                     .split(chartTotalArea);
             Rect chartArea = chartHSplit.get(0);
             Rect infoArea = chartHSplit.get(1);
@@ -603,11 +604,19 @@ class OverviewTab extends AbstractTab {
         Rect inner = infoBlock.inner(area);
         List<Line> lines = new ArrayList<>();
         Style dim = Style.EMPTY.dim();
+        int jvmDetailStart = -1;
+        int jvmDetailCount = 0;
         if (sel != null) {
             if (sel.platform != null) {
+                String platEmoji = switch (sel.platform) {
+                    case "Spring Boot" -> "🍃 ";
+                    case "Quarkus" -> "🚀 ";
+                    case "JBang", "Camel" -> "🐪 ";
+                    default -> "";
+                };
                 String plat = sel.platformVersion != null
-                        ? sel.platform + " v" + sel.platformVersion
-                        : sel.platform;
+                        ? platEmoji + sel.platform + " v" + sel.platformVersion
+                        : platEmoji + sel.platform;
                 lines.add(Line.from(
                         Span.styled("Runtime: ", dim),
                         Span.raw(TuiHelper.truncate(plat, inner.width() - 9))));
@@ -621,7 +630,8 @@ class OverviewTab extends AbstractTab {
                 List<Span> profileSpans = new ArrayList<>();
                 if (sel.profile != null) {
                     profileSpans.add(Span.styled("Profile: ", dim));
-                    profileSpans.add(Span.raw(sel.profile));
+                    String profileEmoji = "dev".equals(sel.profile) ? "🛠️ " : "prod".equals(sel.profile) ? "🔒 " : "";
+                    profileSpans.add(Span.raw(profileEmoji + sel.profile));
                 }
                 if (sel.reloaded > 0) {
                     if (!profileSpans.isEmpty()) {
@@ -639,14 +649,20 @@ class OverviewTab extends AbstractTab {
                         Span.raw(TuiHelper.truncate(sel.javaVersion, inner.width() - 6))));
             }
             if (sel.javaVendor != null) {
+                jvmDetailStart = lines.size();
                 lines.add(Line.from(
                         Span.styled("      ", dim),
                         Span.raw(TuiHelper.truncate(sel.javaVendor, inner.width() - 6))));
+                jvmDetailCount++;
             }
             if (sel.javaVmName != null) {
+                if (jvmDetailStart < 0) {
+                    jvmDetailStart = lines.size();
+                }
                 lines.add(Line.from(
                         Span.styled("      ", dim),
                         Span.raw(TuiHelper.truncate(sel.javaVmName, inner.width() - 6))));
+                jvmDetailCount++;
             }
             lines.add(Line.from(
                     Span.styled("Uptime: ", dim),
@@ -684,8 +700,12 @@ class OverviewTab extends AbstractTab {
                             Span.raw(sel.inflightLoad01 + " / " + sel.inflightLoad05 + " / " + sel.inflightLoad15)));
                 }
             }
+            // if content exceeds panel height, drop JVM vendor/VM name to make room for load
+            if (lines.size() > inner.height() && jvmDetailStart >= 0) {
+                lines.subList(jvmDetailStart, jvmDetailStart + jvmDetailCount).clear();
+            }
         } else {
-            lines.add(Line.from(Span.raw("-")));
+            lines.add(Line.from(Span.raw("")));
         }
         frame.renderWidget(Paragraph.builder().text(Text.from(lines)).build(), inner);
     }
@@ -860,6 +880,18 @@ class OverviewTab extends AbstractTab {
 
     private Style sortStyle(String column) {
         return sortStyle(column, sort);
+    }
+
+    private static boolean hasReadmeInSourceDir(IntegrationInfo info) {
+        java.nio.file.Path srcDir = FilesBrowser.resolveSourceDirectory(info);
+        if (srcDir != null) {
+            try (java.util.stream.Stream<java.nio.file.Path> files = java.nio.file.Files.list(srcDir)) {
+                return files.anyMatch(p -> p.getFileName().toString().toLowerCase(java.util.Locale.ROOT).startsWith("readme"));
+            } catch (Exception e) {
+                // ignore
+            }
+        }
+        return false;
     }
 
     @Override

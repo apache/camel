@@ -62,9 +62,10 @@ class RunOptionsForm {
 
     private static final String[] MAX_MODES = { "Max seconds:", "Max messages:", "Max idle secs:" };
     private static final String[] MAX_FLAGS = { "--max-seconds=", "--max-messages=", "--max-idle-seconds=" };
-    private static final String[] RUNTIME_LABELS = { "Camel Main", "Spring Boot", "Quarkus" };
+    private static final String[] RUNTIME_LABELS = { "🐪 Camel Main", "🍃 Spring Boot", "🚀 Quarkus" };
     private static final String[] RUNTIME_VALUES = { "camel-main", "spring-boot", "quarkus" };
-    private static final String[] PROFILE_LABELS = { "dev", "prod" };
+    private static final String[] PROFILE_LABELS = { "🛠️ dev", "🔒 prod" };
+    private static final String[] PROFILE_VALUES = { "dev", "prod" };
 
     // Text fields
     private TextInputState nameInput;
@@ -198,7 +199,7 @@ class RunOptionsForm {
         if (runtimeMode > 0) {
             args.add("--runtime=" + RUNTIME_VALUES[runtimeMode]);
         }
-        args.add("--profile=" + PROFILE_LABELS[profileMode]);
+        args.add("--profile=" + PROFILE_VALUES[profileMode]);
         String port = portInput.text().trim();
         if (!port.isEmpty()) {
             args.add("--port=" + port);
@@ -442,7 +443,7 @@ class RunOptionsForm {
     // ---- Rendering ----
 
     private void renderOptionsPage(Frame frame, Rect area) {
-        int popupW = Math.min(56, area.width() - 4);
+        int popupW = Math.min(64, area.width() - 4);
         int popupH = 15;
         int x = area.left() + Math.max(0, (area.width() - popupW) / 2);
         int y = area.top() + Math.max(0, (area.height() - popupH) / 4);

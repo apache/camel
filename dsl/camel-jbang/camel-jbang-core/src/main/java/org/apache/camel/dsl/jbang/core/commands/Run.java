@@ -1291,6 +1291,7 @@ public class Run extends CamelCommand {
         }
 
         AtomicReference<Process> processRef = new AtomicReference<>();
+        AtomicReference<String> appNameRef = new AtomicReference<>();
 
         // create temp run dir
         Path runDirPath = Paths.get(RUN_PLATFORM_DIR, Long.toString(System.currentTimeMillis()));
@@ -1317,6 +1318,11 @@ public class Run extends CamelCommand {
                     }
 
                     removeDir(runDirPath);
+                    // cleanup log file
+                    String appName = appNameRef.get();
+                    if (appName != null) {
+                        Files.deleteIfExists(CommandLineHelper.getCamelDir().resolve(appName + ".log"));
+                    }
                 } catch (Exception e) {
                     // Ignore
                 }
@@ -1371,6 +1377,19 @@ public class Run extends CamelCommand {
         int exit = eq.export();
         if (exit != 0) {
             return exit;
+        }
+
+        appNameRef.set(eq.name);
+
+        // prepare quarkus for logging to file
+        Path appProps = Paths.get(eq.exportDir, "src/main/resources/application.properties");
+        if (Files.exists(appProps)) {
+            String content = Files.readString(appProps);
+            content += "\n# logging to file\n"
+                       + "quarkus.log.file.enabled=true\n"
+                       + "quarkus.log.file.path=${user.home}/.camel/" + eq.name + ".log\n"
+                       + "quarkus.log.file.format=%d{yyyy-MM-dd HH:mm:ss.SSS} %5p %i --- [%15.15t] %-40.40c{3.} : %s%e%n\n";
+            Files.writeString(appProps, content);
         }
 
         // run quarkus via maven

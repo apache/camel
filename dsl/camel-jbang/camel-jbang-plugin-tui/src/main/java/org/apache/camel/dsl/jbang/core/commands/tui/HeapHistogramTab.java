@@ -164,7 +164,7 @@ class HeapHistogramTab extends AbstractTableTab {
                         Constraint.length(6),
                         Constraint.fill(),
                         Constraint.length(14),
-                        Constraint.length(14))
+                        Constraint.length(15))
                 .highlightStyle(Theme.selectionBg())
                 .highlightSpacing(Table.HighlightSpacing.ALWAYS)
                 .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(title).build())

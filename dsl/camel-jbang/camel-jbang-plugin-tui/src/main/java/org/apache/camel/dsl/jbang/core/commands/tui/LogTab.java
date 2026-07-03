@@ -336,11 +336,16 @@ class LogTab extends AbstractTab {
             List<Line> built = new ArrayList<>(entries.size());
             int maxW = 0;
             for (int i = 0; i < entries.size(); i++) {
-                String raw = entries.get(i).raw != null ? entries.get(i).raw : "";
+                LogEntry entry = entries.get(i);
+                String raw = entry.raw != null ? entry.raw : "";
                 if (!wordWrap) {
                     maxW = Math.max(maxW, CharWidth.of(TuiHelper.stripAnsi(raw)));
                 }
-                built.add(TuiHelper.ansiToLine(raw, hSkip));
+                if (raw.indexOf('\u001B') >= 0) {
+                    built.add(TuiHelper.ansiToLine(raw, hSkip));
+                } else {
+                    built.add(colorizePlainLog(raw, entry));
+                }
             }
             cachedLogMaxWidth = maxW;
             cachedLogLines = built;
@@ -612,6 +617,51 @@ class LogTab extends AbstractTab {
         } catch (IOException e) {
             // ignore
         }
+    }
+
+    private static final Style DIM = Style.EMPTY.dim();
+    private static final Style CYAN = Style.EMPTY.fg(Color.CYAN);
+    private static final Style MAGENTA = Style.EMPTY.fg(Color.MAGENTA);
+
+    private static final Pattern PID_PATTERN = Pattern.compile(
+            "^(\\d{4}-\\d{2}-\\d{2})[T ](\\d{2}:\\d{2}:\\d{2}\\.\\d+)\\S*\\s+"
+                                                               + "(TRACE|DEBUG|INFO|WARN|ERROR|FATAL)\\s+"
+                                                               + "(\\d+)\\s+---\\s+"
+                                                               + "\\[([^]]*)]\\s+"
+                                                               + "(\\S+)\\s*:\\s*(.*)$");
+
+    private static Line colorizePlainLog(String raw, LogEntry entry) {
+        String plain = TuiHelper.stripAnsi(raw);
+        Matcher m = PID_PATTERN.matcher(plain);
+        if (!m.matches()) {
+            return Line.from(Span.raw(plain));
+        }
+        String date = m.group(1) + " " + m.group(2);
+        String level = m.group(3);
+        String pid = m.group(4);
+        String thread = "[" + m.group(5) + "]";
+        String logger = m.group(6);
+        String message = m.group(7);
+        Style levelStyle = switch (level) {
+            case "ERROR", "FATAL" -> Style.EMPTY.fg(Color.RED);
+            case "WARN" -> Style.EMPTY.fg(Color.YELLOW);
+            case "INFO" -> Style.EMPTY.fg(Color.GREEN);
+            case "DEBUG" -> Style.EMPTY.fg(Color.CYAN);
+            case "TRACE" -> Style.EMPTY.dim();
+            default -> Style.EMPTY;
+        };
+        return Line.from(
+                Span.styled(date, DIM),
+                Span.raw(" "),
+                Span.styled(String.format("%5s", level), levelStyle),
+                Span.raw(" "),
+                Span.styled(pid, MAGENTA),
+                Span.styled(" --- ", DIM),
+                Span.styled(thread, DIM),
+                Span.raw(" "),
+                Span.styled(logger, CYAN),
+                Span.styled(" :", DIM),
+                Span.raw(" " + message));
     }
 
     static LogEntry parseLogLine(String line) {

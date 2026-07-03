@@ -611,7 +611,7 @@ class RoutesTab extends AbstractTab {
                             Constraint.length(6),
                             Constraint.length(8),
                             Constraint.length(8),
-                            Constraint.length(12))
+                            Constraint.length(13))
                     .highlightStyle(Theme.selectionBg())
                     .highlightSpacing(Table.HighlightSpacing.ALWAYS)
                     .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
@@ -671,7 +671,7 @@ class RoutesTab extends AbstractTab {
                             Constraint.length(6),
                             Constraint.length(8),
                             Constraint.length(14),
-                            Constraint.length(12))
+                            Constraint.length(13))
                     .highlightStyle(Theme.selectionBg())
                     .highlightSpacing(Table.HighlightSpacing.ALWAYS)
                     .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
@@ -1149,7 +1149,7 @@ class RoutesTab extends AbstractTab {
                             Constraint.length(6),
                             Constraint.length(8),
                             Constraint.length(6),
-                            Constraint.length(8))
+                            Constraint.length(9))
                     .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
                             .title(" Top Processors [" + route.routeId + "] sort:" + routeTopSort + " ").build())
                     .build();
@@ -1211,7 +1211,7 @@ class RoutesTab extends AbstractTab {
                             Constraint.length(6),
                             Constraint.length(8),
                             Constraint.length(14),
-                            Constraint.length(12))
+                            Constraint.length(13))
                     .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
                             .title(" Processors [" + route.routeId + "] ").build())
                     .build();

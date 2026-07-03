@@ -294,6 +294,17 @@ class FilesBrowser {
                 }
             }
         }
+        // For exported apps (Quarkus, Spring Boot), MAVEN_PROJECTBASEDIR points to the
+        // actual project directory inside .camel-jbang-run, which may differ from info.directory
+        for (ConfigurationTab.ConfigProperty cp : info.configProperties) {
+            if (("MAVEN_PROJECTBASEDIR".equals(cp.key) || "maven.projectbasedir".equals(cp.key))
+                    && cp.value != null && cp.value.contains(".camel-jbang-run")) {
+                Path dir = Path.of(cp.value);
+                if (Files.isDirectory(dir)) {
+                    return dir;
+                }
+            }
+        }
         if (info.directory != null && !info.directory.isEmpty()) {
             return Path.of(info.directory);
         }

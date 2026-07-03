@@ -1955,7 +1955,7 @@ class HistoryTab extends AbstractTab {
                         Constraint.length(25),
                         Constraint.fill(),
                         Constraint.length(4),
-                        Constraint.length(10))
+                        Constraint.length(11))
                 .highlightStyle(Theme.selectionBg())
                 .highlightSpacing(Table.HighlightSpacing.ALWAYS)
                 .block(block)

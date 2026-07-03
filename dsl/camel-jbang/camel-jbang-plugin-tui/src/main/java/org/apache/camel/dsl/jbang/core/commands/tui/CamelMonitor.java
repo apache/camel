@@ -1703,7 +1703,7 @@ public class CamelMonitor extends CamelCommand {
             rightSpans.add(Span.styled(mcpLabel, labelStyle));
             rightSpans.add(Span.styled(suffix, suffixStyle));
             if (client == null) {
-                rightSpans.add(Span.styled("  F2 → Setup AI", Theme.muted()));
+                rightSpans.add(Span.styled("  F2 → Setup MCP", Theme.muted()));
             }
         }
 
@@ -1789,9 +1789,6 @@ public class CamelMonitor extends CamelCommand {
         if (ctx.selectedPid != null && !isInfraSelected()) {
             IntegrationInfo selInfo = findSelectedIntegration();
             if (selInfo != null) {
-                if (selInfo.readmeFiles != null && !selInfo.readmeFiles.isEmpty()) {
-                    hint(spans, "d", "docs");
-                }
                 if (selInfo.directory != null && !selInfo.directory.isEmpty()) {
                     hint(spans, "f", "files");
                 }
@@ -1825,6 +1822,14 @@ public class CamelMonitor extends CamelCommand {
             if (selected != null) {
                 logPid = selected.pid;
                 logFileName = selected.pid + ".log";
+                // fallback to name-based log file (e.g. Quarkus apps use app name)
+                if (!Files.exists(CommandLineHelper.getCamelDir().resolve(logFileName))
+                        && selected.name != null) {
+                    Path nameLog = CommandLineHelper.getCamelDir().resolve(selected.name + ".log");
+                    if (Files.exists(nameLog)) {
+                        logFileName = selected.name + ".log";
+                    }
+                }
             }
         }
         if (logPid != null) {

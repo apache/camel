@@ -116,7 +116,7 @@ class InflightTab extends AbstractTableTab {
                         Constraint.length(40),
                         Constraint.fill(),
                         Constraint.length(14),
-                        Constraint.length(22))
+                        Constraint.length(23))
                 .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(title).build())
                 .build();
 

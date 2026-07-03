@@ -284,7 +284,7 @@ class SqlTraceTab extends AbstractTableTab {
                         Constraint.length(20),
                         Constraint.length(10),
                         Constraint.length(8),
-                        Constraint.length(8))
+                        Constraint.length(9))
                 .highlightStyle(Theme.selectionBg())
                 .highlightSpacing(Table.HighlightSpacing.ALWAYS)
                 .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)

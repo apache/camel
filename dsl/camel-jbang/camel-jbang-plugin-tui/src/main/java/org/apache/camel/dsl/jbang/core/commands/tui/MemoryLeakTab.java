@@ -436,7 +436,7 @@ class MemoryLeakTab extends AbstractTab {
                         Constraint.fill(),
                         Constraint.length(8),
                         Constraint.length(12),
-                        Constraint.length(12))
+                        Constraint.length(13))
                 .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
                 .highlightSpacing(Table.HighlightSpacing.ALWAYS)
                 .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(title).build())
@@ -591,7 +591,7 @@ class MemoryLeakTab extends AbstractTab {
                         Constraint.length(10),
                         Constraint.length(10),
                         Constraint.length(9),
-                        Constraint.length(12))
+                        Constraint.length(13))
                 .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
                 .highlightSpacing(Table.HighlightSpacing.ALWAYS)
                 .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(title).build())

@@ -412,7 +412,7 @@ class SpansTab extends AbstractTab {
                         Constraint.fill(),
                         Constraint.length(8),
                         Constraint.length(12),
-                        Constraint.length(7))
+                        Constraint.length(8))
                 .highlightStyle(Theme.selectionBg())
                 .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(title).build())
                 .build();

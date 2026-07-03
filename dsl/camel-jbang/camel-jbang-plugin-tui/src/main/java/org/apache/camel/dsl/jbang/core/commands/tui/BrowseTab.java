@@ -315,7 +315,7 @@ class BrowseTab extends AbstractTab {
                         Constraint.fill(),
                         Constraint.length(8),
                         Constraint.length(10),
-                        Constraint.length(10))
+                        Constraint.length(11))
                 .highlightStyle(Theme.selectionBg())
                 .highlightSpacing(Table.HighlightSpacing.ALWAYS)
                 .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(title).build())

@@ -1307,7 +1307,7 @@ class HttpTab extends AbstractTableTab {
                         Constraint.length(30),
                         Constraint.length(30),
                         Constraint.length(15),
-                        Constraint.length(8))
+                        Constraint.length(9))
                 .highlightStyle(Theme.selectionBg())
                 .highlightSpacing(Table.HighlightSpacing.ALWAYS)
                 .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(title).build())
