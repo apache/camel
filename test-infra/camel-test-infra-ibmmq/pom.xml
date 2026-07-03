@@ -46,6 +46,12 @@
             <artifactId>com.ibm.mq.jakarta.client</artifactId>
             <version>${com-ibm-mq-jakarta-client-version}</version>
         </dependency>
+
+        <dependency>
+            <groupId>org.awaitility</groupId>
+            <artifactId>awaitility</artifactId>
+            <version>${awaitility-version}</version>
+        </dependency>
     </dependencies>
 
 </project>
