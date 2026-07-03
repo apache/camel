@@ -17,7 +17,6 @@
 package org.apache.camel.component.jpa;
 
 import java.util.List;
-import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import jakarta.persistence.EntityManager;
@@ -57,8 +56,7 @@ public class JpaWithNamedQueryTest {
     protected EntityManager entityManager;
     protected TransactionTemplate transactionTemplate;
     protected Consumer consumer;
-    protected Exchange receivedExchange;
-    protected CountDownLatch latch = new CountDownLatch(1);
+    protected volatile Exchange receivedExchange;
     protected String entityName = MultiSteps.class.getName();
     protected String queryText = "select o from " + entityName + " o where o.step = 1";
 
@@ -100,14 +98,12 @@ public class JpaWithNamedQueryTest {
                 LOG.info("Received exchange: {}", e.getIn());
                 // make defensive copy
                 receivedExchange = e.copy();
-                latch.countDown();
             }
         });
         consumer.start();
 
-        assertTrue(latch.await(10, TimeUnit.SECONDS));
-
-        assertReceivedResult(receivedExchange);
+        await().atMost(10, TimeUnit.SECONDS)
+                .untilAsserted(() -> assertReceivedResult(receivedExchange));
 
         // lets now test that the database is updated.
         // the consumer updates the row from within its own transaction, so we poll until that
