@@ -17,14 +17,12 @@
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Locale;
 
 import dev.tamboui.layout.Rect;
 import dev.tamboui.style.Color;
@@ -47,21 +45,6 @@ class FilesBrowser {
 
     record FileEntry(String emoji, String name, long size, String path, boolean directory) {
     }
-
-    private static final String[] CAMEL_YAML_MARKERS = {
-            "- from:", "- route:",
-            "- routeTemplate:", "- route-template:",
-            "- templatedRoute:", "- templated-route:",
-            "- routeConfiguration:", "- route-configuration:",
-            "- rest:", "- beans:"
-    };
-
-    private static final String[] CAMEL_XML_MARKERS = {
-            "<route", "<routes", "<routeTemplate", "<routeTemplates",
-            "<templatedRoute", "<templatedRoutes",
-            "<rest", "<rests", "<routeConfiguration",
-            "<beans", "<blueprint", "<camel"
-    };
 
     private boolean visible;
     private String title;
@@ -116,7 +99,7 @@ class FilesBrowser {
                         if (Files.isDirectory(p) && !name.startsWith(".")) {
                             dirs.add(new FileEntry("📁", name, -1, p.toString(), true));
                         } else if (Files.isRegularFile(p)) {
-                            String emoji = fileEmoji(p);
+                            String emoji = TuiHelper.fileEmoji(p);
                             long size = 0;
                             try {
                                 size = Files.size(p);
@@ -342,89 +325,14 @@ class FilesBrowser {
     }
 
     static String fileType(Path path) {
-        String name = path.getFileName().toString();
-        String lower = name.toLowerCase(Locale.ROOT);
-        if (lower.endsWith(".kamelet.yaml") || lower.endsWith(".kamelet.yml")) {
-            return "camel";
-        }
-        if (lower.endsWith(".yaml") || lower.endsWith(".yml")) {
-            return isCamelYaml(path) ? "camel" : "other";
-        }
-        if (lower.endsWith(".xml")) {
-            return isCamelXml(path) ? "camel" : "other";
-        }
-        if (lower.endsWith(".java")) {
-            return isCamelJava(path) ? "camel" : "java";
-        }
-        if (lower.endsWith(".properties") || lower.endsWith(".cfg")) {
-            return "config";
-        }
-        if (lower.startsWith("readme")) {
-            return "readme";
-        }
-        return "other";
+        String emoji = TuiHelper.fileEmoji(path);
+        return switch (emoji) {
+            case "🐪" -> "camel";
+            case "☕" -> "java";
+            case "📄" -> "config";
+            case "📖" -> "readme";
+            default -> "other";
+        };
     }
 
-    private static String fileEmoji(Path path) {
-        String name = path.getFileName().toString();
-        String lower = name.toLowerCase(Locale.ROOT);
-        if (lower.endsWith(".kamelet.yaml") || lower.endsWith(".kamelet.yml")) {
-            return "🐪";
-        }
-        if (lower.endsWith(".yaml") || lower.endsWith(".yml")) {
-            return isCamelYaml(path) ? "🐪" : "📋";
-        }
-        if (lower.endsWith(".xml")) {
-            return isCamelXml(path) ? "🐪" : "📋";
-        }
-        if (lower.endsWith(".java")) {
-            return isCamelJava(path) ? "🐪" : "☕";
-        }
-        if (lower.endsWith(".properties") || lower.endsWith(".cfg")) {
-            return "📄";
-        }
-        if (lower.startsWith("readme")) {
-            return "📖";
-        }
-        return "📋";
-    }
-
-    private static boolean isCamelYaml(Path path) {
-        try {
-            String content = Files.readString(path, StandardCharsets.UTF_8);
-            for (String marker : CAMEL_YAML_MARKERS) {
-                if (content.contains(marker)) {
-                    return true;
-                }
-            }
-        } catch (IOException e) {
-            // ignore
-        }
-        return false;
-    }
-
-    private static boolean isCamelXml(Path path) {
-        try {
-            String content = Files.readString(path, StandardCharsets.UTF_8);
-            for (String marker : CAMEL_XML_MARKERS) {
-                if (content.contains(marker)) {
-                    return true;
-                }
-            }
-        } catch (IOException e) {
-            // ignore
-        }
-        return false;
-    }
-
-    private static boolean isCamelJava(Path path) {
-        try {
-            String content = Files.readString(path, StandardCharsets.UTF_8);
-            return content.contains("RouteBuilder")
-                    || content.contains("EndpointRouteBuilder");
-        } catch (IOException e) {
-            // ignore
-        }
-        return false;
-    }
 }

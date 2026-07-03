@@ -17,6 +17,7 @@
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -613,5 +614,162 @@ final class TuiHelper {
             return type.substring(pos + 1);
         }
         return type;
+    }
+
+    // ---- File emoji helpers (shared by FilesBrowser, FolderBrowser) ----
+
+    private static final String[] CAMEL_YAML_MARKERS = {
+            "- from:", "- route:",
+            "- routeTemplate:", "- route-template:",
+            "- templatedRoute:", "- templated-route:",
+            "- routeConfiguration:", "- route-configuration:",
+            "- rest:", "- beans:"
+    };
+
+    private static final String[] CAMEL_XML_MARKERS = {
+            "<route", "<routes", "<routeTemplate", "<routeTemplates",
+            "<templatedRoute", "<templatedRoutes",
+            "<rest", "<rests", "<routeConfiguration",
+            "<beans", "<blueprint", "<camel"
+    };
+
+    static String fileEmoji(Path path) {
+        String name = path.getFileName().toString();
+        String lower = name.toLowerCase(Locale.ROOT);
+        if ("pom.xml".equals(lower)) {
+            return detectPomEmoji(path);
+        }
+        if (lower.endsWith(".kamelet.yaml") || lower.endsWith(".kamelet.yml")) {
+            return "🐪";
+        }
+        if (lower.endsWith(".yaml") || lower.endsWith(".yml")) {
+            return isCamelYaml(path) ? "🐪" : "📋";
+        }
+        if (lower.endsWith(".xml")) {
+            return isCamelXml(path) ? "🐪" : "📋";
+        }
+        if (lower.endsWith(".java")) {
+            return isCamelJava(path) ? "🐪" : "☕";
+        }
+        if (lower.endsWith(".properties") || lower.endsWith(".cfg")) {
+            return "📄";
+        }
+        if (lower.endsWith(".json")) {
+            return "📋";
+        }
+        if (lower.endsWith(".md") || lower.endsWith(".adoc") || lower.endsWith(".txt")
+                || lower.startsWith("readme")) {
+            return "📖";
+        }
+        return "📄";
+    }
+
+    static String fileEmojiByName(String name) {
+        String lower = name.toLowerCase(Locale.ROOT);
+        if (lower.endsWith(".camel.yaml") || lower.endsWith(".camel.yml")
+                || lower.endsWith(".kamelet.yaml") || lower.endsWith(".kamelet.yml")) {
+            return "🐪";
+        }
+        if (lower.endsWith(".java")) {
+            return "☕";
+        }
+        if (lower.endsWith(".yaml") || lower.endsWith(".yml")) {
+            return "📋";
+        }
+        if (lower.endsWith(".xml")) {
+            return "📋";
+        }
+        if (lower.endsWith(".properties") || lower.endsWith(".cfg")) {
+            return "📄";
+        }
+        if (lower.endsWith(".json")) {
+            return "📋";
+        }
+        if (lower.endsWith(".md") || lower.endsWith(".adoc") || lower.endsWith(".txt")
+                || lower.startsWith("readme")) {
+            return "📖";
+        }
+        return "📄";
+    }
+
+    static String detectPomRuntime(Path pomFile) {
+        try {
+            String content = Files.readString(pomFile, StandardCharsets.UTF_8);
+            if (content.contains("quarkus-maven-plugin") || content.contains("quarkus-bom")
+                    || content.contains("camel-quarkus")) {
+                return "quarkus";
+            }
+            if (content.contains("spring-boot-maven-plugin") || content.contains("spring-boot-starter")
+                    || content.contains("camel-spring-boot")) {
+                return "spring-boot";
+            }
+            if (content.contains("camel-bom") || content.contains("camel-maven-plugin")
+                    || content.contains("camel-main")) {
+                return "main";
+            }
+        } catch (IOException e) {
+            // ignore
+        }
+        return null;
+    }
+
+    private static String detectPomEmoji(Path path) {
+        try {
+            String content = Files.readString(path, StandardCharsets.UTF_8);
+            if (content.contains("quarkus-maven-plugin") || content.contains("quarkus-bom")
+                    || content.contains("camel-quarkus")) {
+                return "🚀";
+            }
+            if (content.contains("spring-boot-maven-plugin") || content.contains("spring-boot-starter")
+                    || content.contains("camel-spring-boot")) {
+                return "🍃";
+            }
+            if (content.contains("camel-core") || content.contains("camel-api")
+                    || content.contains("org.apache.camel")) {
+                return "🐪";
+            }
+        } catch (IOException e) {
+            // ignore
+        }
+        return "📋";
+    }
+
+    private static boolean isCamelYaml(Path path) {
+        try {
+            String content = Files.readString(path, StandardCharsets.UTF_8);
+            for (String marker : CAMEL_YAML_MARKERS) {
+                if (content.contains(marker)) {
+                    return true;
+                }
+            }
+        } catch (IOException e) {
+            // ignore
+        }
+        return false;
+    }
+
+    private static boolean isCamelXml(Path path) {
+        try {
+            String content = Files.readString(path, StandardCharsets.UTF_8);
+            for (String marker : CAMEL_XML_MARKERS) {
+                if (content.contains(marker)) {
+                    return true;
+                }
+            }
+        } catch (IOException e) {
+            // ignore
+        }
+        return false;
+    }
+
+    private static boolean isCamelJava(Path path) {
+        try {
+            String content = Files.readString(path, StandardCharsets.UTF_8);
+            return content.contains("RouteBuilder")
+                    || content.contains("EndpointRouteBuilder");
+        } catch (IOException e) {
+            // ignore
+        }
+        return false;
     }
 }

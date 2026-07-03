@@ -167,6 +167,7 @@ class ActionsPopup {
     private final List<String> folderHistory = new ArrayList<>();
     private int folderHistoryIndex = -1;
     private String selectedFolder;
+    private String detectedPomPath;
     private final FolderBrowser folderBrowser = new FolderBrowser();
 
     private final McpLogPopup mcpLogPopup = new McpLogPopup();
@@ -1486,7 +1487,22 @@ class ActionsPopup {
         showFolderInput = false;
         persistLastFolder(folder);
         String displayName = dirPath.getFileName().toString();
-        runOptionsForm.open(displayName, displayName, false, true);
+
+        Path pomFile = dirPath.resolve("pom.xml");
+        String runtime = Files.isRegularFile(pomFile) ? TuiHelper.detectPomRuntime(pomFile) : null;
+        if (runtime != null) {
+            detectedPomPath = pomFile.toString();
+            int lockedRuntime = 0;
+            if ("spring-boot".equals(runtime)) {
+                lockedRuntime = 1;
+            } else if ("quarkus".equals(runtime)) {
+                lockedRuntime = 2;
+            }
+            runOptionsForm.open(displayName, displayName, false, true, lockedRuntime);
+        } else {
+            detectedPomPath = null;
+            runOptionsForm.open(displayName, displayName, false, true);
+        }
     }
 
     private static String loadLastFolder() {
@@ -1593,6 +1609,7 @@ class ActionsPopup {
             return;
         }
         String folder = selectedFolder;
+        String pomPath = detectedPomPath;
         String displayName = runOptionsForm.name();
         if (displayName.isEmpty()) {
             displayName = Path.of(folder).getFileName().toString();
@@ -1601,24 +1618,29 @@ class ActionsPopup {
         boolean jaegerExport = runOptionsForm.isJaegerExport();
         runOptionsForm.close();
         selectedFolder = null;
+        detectedPomPath = null;
 
         if (jaegerExport && !isJaegerRunning()) {
             if (!isContainerRuntimeAvailable()) {
                 setNotification("Docker/Podman required for Jaeger. Run Doctor for details", true);
                 return;
             }
-            startMissingInfraAndDeferFolder(folder, displayName, extraArgs);
+            startMissingInfraAndDeferFolder(folder, pomPath, displayName, extraArgs);
             return;
         }
 
-        doLaunchFolder(folder, displayName, extraArgs);
+        doLaunchFolder(folder, pomPath, displayName, extraArgs);
     }
 
-    private void doLaunchFolder(String folder, String displayName, List<String> extraArgs) {
+    private void doLaunchFolder(String folder, String pomPath, String displayName, List<String> extraArgs) {
         try {
             List<String> cmd = new ArrayList<>(LauncherHelper.getCamelCommand());
             cmd.add("run");
-            cmd.add("--source-dir=" + folder);
+            if (pomPath != null) {
+                cmd.add(pomPath);
+            } else {
+                cmd.add("--source-dir=" + folder);
+            }
             cmd.add("--logging-color=true");
             cmd.addAll(extraArgs);
             Path outputFile = Files.createTempFile("camel-folder-", ".log");
@@ -2214,9 +2236,9 @@ class ActionsPopup {
                 missingInfra, displayName, () -> doLaunchExample(exampleName, displayName, extraArgs));
     }
 
-    private void startMissingInfraAndDeferFolder(String folder, String displayName, List<String> extraArgs) {
+    private void startMissingInfraAndDeferFolder(String folder, String pomPath, String displayName, List<String> extraArgs) {
         startMissingInfraAndDefer(
-                List.of("jaeger"), displayName, () -> doLaunchFolder(folder, displayName, extraArgs));
+                List.of("jaeger"), displayName, () -> doLaunchFolder(folder, pomPath, displayName, extraArgs));
     }
 
     private void startMissingInfraAndDefer(List<String> missingInfra, String displayName, Runnable launchAction) {

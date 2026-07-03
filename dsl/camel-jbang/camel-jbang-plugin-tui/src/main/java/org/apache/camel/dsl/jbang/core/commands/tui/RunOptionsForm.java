@@ -24,6 +24,7 @@ import dev.tamboui.style.Style;
 import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.Line;
 import dev.tamboui.text.Span;
+import dev.tamboui.text.Text;
 import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.widgets.Clear;
@@ -78,6 +79,7 @@ class RunOptionsForm {
     private TextInputState maxInput;
     private int maxMode;
     private int runtimeMode;
+    private boolean runtimeLocked;
     private int profileMode;
 
     // Checkboxes
@@ -105,15 +107,25 @@ class RunOptionsForm {
     }
 
     void open(String defaultName, String exampleName, boolean bundled, boolean dev) {
+        open(defaultName, exampleName, bundled, dev, -1);
+    }
+
+    void open(String defaultName, String exampleName, boolean bundled, boolean dev, int lockedRuntime) {
         nameInput = new TextInputState(defaultName != null ? defaultName : "");
         portInput = new TextInputState("");
         initHeapInput = new TextInputState("");
         maxHeapInput = new TextInputState("");
         maxInput = new TextInputState("");
         maxMode = 0;
-        runtimeMode = 0;
+        if (lockedRuntime >= 0 && lockedRuntime < RUNTIME_LABELS.length) {
+            runtimeMode = lockedRuntime;
+            runtimeLocked = true;
+        } else {
+            runtimeMode = 0;
+            runtimeLocked = false;
+        }
         profileMode = 0;
-        devMode = dev;
+        devMode = runtimeLocked ? false : dev;
         observe = false;
         backlogTrace = false;
         stubMode = false;
@@ -320,8 +332,8 @@ class RunOptionsForm {
             return true;
         }
 
-        // Runtime row: Space or Left/Right cycles
-        if (selectedRow == ROW_RUNTIME) {
+        // Runtime row: Space or Left/Right cycles (unless locked)
+        if (selectedRow == ROW_RUNTIME && !runtimeLocked) {
             if (ke.isChar(' ') || ke.isRight()) {
                 runtimeMode = (runtimeMode + 1) % RUNTIME_LABELS.length;
                 return true;
@@ -349,7 +361,10 @@ class RunOptionsForm {
         // Checkbox rows: Space toggles
         if (ke.isChar(' ') && selectedRow >= ROW_CONSOLE) {
             switch (selectedRow) {
-                case ROW_DEV -> devMode = !devMode;
+                case ROW_DEV -> {
+                    if (!runtimeLocked)
+                        devMode = !devMode;
+                }
                 case ROW_OBSERVE -> observe = !observe;
                 case ROW_TRACE -> backlogTrace = !backlogTrace;
                 case ROW_STUB -> stubMode = !stubMode;
@@ -506,7 +521,14 @@ class RunOptionsForm {
         rowY++;
 
         renderLabel(frame, innerX, rowY, labelW, "Runtime:", selectedRow == ROW_RUNTIME);
-        renderCycler(frame, innerX + labelW, rowY, fieldW, RUNTIME_LABELS, runtimeMode, selectedRow == ROW_RUNTIME);
+        if (runtimeLocked) {
+            String locked = RUNTIME_LABELS[runtimeMode] + " 🔒";
+            frame.renderWidget(
+                    Paragraph.builder().text(Text.raw(locked)).style(Style.EMPTY.dim()).build(),
+                    new Rect(innerX + labelW, rowY, fieldW, 1));
+        } else {
+            renderCycler(frame, innerX + labelW, rowY, fieldW, RUNTIME_LABELS, runtimeMode, selectedRow == ROW_RUNTIME);
+        }
         rowY++;
 
         renderLabel(frame, innerX, rowY, labelW, "Profile:", selectedRow == ROW_PROFILE);
@@ -534,7 +556,13 @@ class RunOptionsForm {
         renderCheckbox(frame, innerX, rowY, innerW, "Web console (/q/dev)", webConsole, selectedRow == ROW_CONSOLE);
         rowY++;
 
-        renderCheckbox(frame, innerX, rowY, innerW, "Dev mode (live reload)", devMode, selectedRow == ROW_DEV);
+        if (runtimeLocked) {
+            frame.renderWidget(Paragraph.from(Line.from(
+                    Span.styled(" [ ] Dev mode (not available for Maven projects)", Style.EMPTY.dim()))),
+                    new Rect(innerX, rowY, innerW, 1));
+        } else {
+            renderCheckbox(frame, innerX, rowY, innerW, "Dev mode (live reload)", devMode, selectedRow == ROW_DEV);
+        }
         rowY++;
 
         renderCheckbox(frame, innerX, rowY, innerW, "Observe (health + metrics)", observe, selectedRow == ROW_OBSERVE);

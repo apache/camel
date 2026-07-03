@@ -47,7 +47,7 @@ import dev.tamboui.widgets.list.ScrollMode;
 
 class FolderBrowser {
 
-    record DirEntry(String name, String path) {
+    record DirEntry(String emoji, String name, String path, boolean directory) {
     }
 
     private boolean visible;
@@ -58,6 +58,7 @@ class FolderBrowser {
     private Consumer<String> onSelect;
     private char lastJumpChar;
     private int lastJumpIndex = -1;
+    private final SourceViewer sourceViewer = new SourceViewer();
 
     boolean isVisible() {
         return visible;
@@ -94,22 +95,31 @@ class FolderBrowser {
 
     private boolean loadDirectory(Path dir, String selectName) {
         List<DirEntry> dirs = new ArrayList<>();
+        List<DirEntry> files = new ArrayList<>();
         try (var stream = Files.list(dir)) {
-            stream.filter(Files::isDirectory)
-                    .filter(p -> !p.getFileName().toString().startsWith("."))
-                    .limit(200)
-                    .forEach(p -> dirs.add(new DirEntry(p.getFileName().toString(), p.toString())));
+            stream.filter(p -> !p.getFileName().toString().startsWith("."))
+                    .limit(500)
+                    .forEach(p -> {
+                        String name = p.getFileName().toString();
+                        if (Files.isDirectory(p)) {
+                            dirs.add(new DirEntry("📁", name, p.toString(), true));
+                        } else {
+                            files.add(new DirEntry(TuiHelper.fileEmoji(p), name, p.toString(), false));
+                        }
+                    });
         } catch (IOException e) {
             return false;
         }
         dirs.sort(Comparator.comparing(DirEntry::name, String.CASE_INSENSITIVE_ORDER));
+        files.sort(Comparator.comparing(DirEntry::name, String.CASE_INSENSITIVE_ORDER));
 
         List<DirEntry> found = new ArrayList<>();
         Path parent = dir.getParent();
         if (parent != null) {
-            found.add(new DirEntry("..", parent.toString()));
+            found.add(new DirEntry("📁", "..", parent.toString(), true));
         }
         found.addAll(dirs);
+        found.addAll(files);
 
         if (found.isEmpty()) {
             return false;
@@ -140,6 +150,14 @@ class FolderBrowser {
     }
 
     boolean handleKeyEvent(KeyEvent ke) {
+        if (sourceViewer.isVisible()) {
+            if (ke.isCancel()) {
+                sourceViewer.hide();
+                return true;
+            }
+            sourceViewer.handleKeyEvent(ke);
+            return true;
+        }
         if (ke.isCancel()) {
             visible = false;
             return true;
@@ -194,7 +212,9 @@ class FolderBrowser {
             Integer sel = listState.selected();
             if (sel != null && sel < entries.size()) {
                 DirEntry entry = entries.get(sel);
-                if ("..".equals(entry.name()) && currentDir != null) {
+                if (!entry.directory()) {
+                    sourceViewer.loadFile(Path.of(entry.path()));
+                } else if ("..".equals(entry.name()) && currentDir != null) {
                     navigateBack();
                 } else {
                     offsetStack.push(listState.offset());
@@ -262,6 +282,11 @@ class FolderBrowser {
     }
 
     void render(Frame frame, Rect area) {
+        if (sourceViewer.isVisible()) {
+            frame.renderWidget(Clear.INSTANCE, area);
+            sourceViewer.render(frame, area);
+            return;
+        }
         if (entries.isEmpty()) {
             visible = false;
             return;
@@ -285,8 +310,9 @@ class FolderBrowser {
         ListItem[] items = new ListItem[entries.size()];
         for (int i = 0; i < entries.size(); i++) {
             DirEntry entry = entries.get(i);
-            String label = "  📁 " + entry.name();
-            items[i] = ListItem.from(Line.from(Span.styled(label, Style.EMPTY.fg(Color.CYAN))));
+            String label = "  " + entry.emoji() + " " + entry.name();
+            Style style = entry.directory() ? Style.EMPTY.fg(Color.CYAN) : Style.EMPTY;
+            items[i] = ListItem.from(Line.from(Span.styled(label, style)));
         }
 
         ListWidget list = ListWidget.builder()
@@ -304,9 +330,14 @@ class FolderBrowser {
     }
 
     void renderFooter(List<Span> spans) {
+        if (sourceViewer.isVisible()) {
+            sourceViewer.renderFooter(spans);
+            return;
+        }
         TuiHelper.hint(spans, "↑↓", "navigate");
         TuiHelper.hint(spans, "Enter", "open");
         TuiHelper.hint(spans, "Tab", "select");
         TuiHelper.hintLast(spans, "Esc", "close");
     }
+
 }

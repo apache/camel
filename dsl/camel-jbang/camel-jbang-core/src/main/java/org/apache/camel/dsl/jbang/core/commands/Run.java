@@ -22,8 +22,10 @@ import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Reader;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystems;
@@ -80,6 +82,10 @@ import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
 import org.apache.camel.xml.io.util.XmlStreamDetector;
 import org.apache.camel.xml.io.util.XmlStreamInfo;
+import org.apache.maven.model.Dependency;
+import org.apache.maven.model.Model;
+import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
+import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
@@ -630,11 +636,22 @@ public class Run extends CamelCommand {
             }
         }
 
+        // auto-detect runtime from pom.xml before dispatch
+        if (!exportRun && RuntimeType.main == runtime
+                && files != null && files.size() == 1 && files.get(0).endsWith("pom.xml")) {
+            RuntimeType detected = RunHelper.detectRuntimeFromPom(Path.of(files.get(0)).toAbsolutePath());
+            if (detected != null) {
+                runtime = detected;
+            }
+        }
+
         if (!exportRun) {
             if (RuntimeType.quarkus == runtime) {
                 return runQuarkus();
             } else if (RuntimeType.springBoot == runtime) {
                 return runSpringBoot();
+            } else if (files != null && files.size() == 1 && files.get(0).endsWith("pom.xml")) {
+                return runExistingCamelMainProject();
             }
         }
 
@@ -1296,6 +1313,12 @@ public class Run extends CamelCommand {
         }
 
         AtomicReference<Process> processRef = new AtomicReference<>();
+
+        // existing Maven project: run directly without export
+        if (files != null && files.size() == 1 && files.get(0).endsWith("pom.xml")) {
+            return runExistingQuarkusProject(processRef);
+        }
+
         AtomicReference<String> appNameRef = new AtomicReference<>();
 
         // create temp run dir
@@ -1423,6 +1446,169 @@ public class Run extends CamelCommand {
         return p.waitFor();
     }
 
+    private int runExistingCamelMainProject() throws Exception {
+        if (background) {
+            printer().printErr("Run Camel Main with --background is not supported");
+            return 1;
+        }
+
+        AtomicReference<Process> processRef = new AtomicReference<>();
+        Path pomPath = Path.of(files.get(0)).toAbsolutePath();
+        Path projectDir = pomPath.getParent();
+
+        // read the pom.xml and add camel-cli-connector dependency
+        MavenXpp3Reader mavenReader = new MavenXpp3Reader();
+        Model model;
+        try (Reader reader = Files.newBufferedReader(pomPath)) {
+            model = mavenReader.read(reader);
+        }
+
+        boolean hasCliConnector = model.getDependencies().stream()
+                .anyMatch(d -> "camel-cli-connector".equals(d.getArtifactId()));
+        if (!hasCliConnector) {
+            Dependency d = new Dependency();
+            d.setGroupId("org.apache.camel");
+            d.setArtifactId("camel-cli-connector");
+            model.getDependencies().add(d);
+        }
+
+        // write temporary pom with cli-connector injected
+        Path tempPom = projectDir.resolve("camel-jbang-run-pom.xml");
+        MavenXpp3Writer w = new MavenXpp3Writer();
+        try (FileOutputStream fos = new FileOutputStream(tempPom.toFile())) {
+            w.write(fos, model);
+        }
+
+        // shutdown hook to clean up temp files
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            try {
+                Process process = processRef.get();
+                if (process != null) {
+                    process.destroy();
+                    for (int i = 0; i < 30; i++) {
+                        if (!process.isAlive()) {
+                            break;
+                        }
+                        try {
+                            Thread.sleep(1000);
+                        } catch (InterruptedException e) {
+                            Thread.currentThread().interrupt();
+                        }
+                    }
+                }
+                Files.deleteIfExists(tempPom);
+            } catch (Exception e) {
+                // ignore
+            }
+        }));
+
+        // find mvnw or fall back to mvn
+        String mvnw = FileUtil.isWindows() ? "mvnw.cmd" : "mvnw";
+        Path mvnwPath = projectDir.resolve(mvnw);
+        String mvnCmd = Files.isExecutable(mvnwPath) ? mvnwPath.toString() : "mvn";
+
+        List<String> cmd = new ArrayList<>();
+        cmd.add(mvnCmd);
+        cmd.add("--quiet");
+        cmd.add("--file");
+        cmd.add(tempPom.toString());
+        if (jvmArgs != null && !jvmArgs.isBlank()) {
+            cmd.add("-Dcamel.jvmArgs=" + jvmArgs.trim());
+        }
+        cmd.add("-DskipTests");
+        cmd.add("camel:run");
+
+        printer().println("Running Camel Main project: " + projectDir);
+
+        ProcessBuilder pb = new ProcessBuilder();
+        pb.command(cmd);
+        pb.directory(projectDir.toFile());
+        pb.inheritIO();
+        Process p = pb.start();
+        processRef.set(p);
+        this.spawnPid = p.pid();
+        return p.waitFor();
+    }
+
+    private int runExistingQuarkusProject(AtomicReference<Process> processRef) throws Exception {
+        Path pomPath = Path.of(files.get(0)).toAbsolutePath();
+        Path projectDir = pomPath.getParent();
+
+        // read the pom.xml and add camel-quarkus-cli-connector dependency
+        MavenXpp3Reader mavenReader = new MavenXpp3Reader();
+        Model model;
+        try (Reader reader = Files.newBufferedReader(pomPath)) {
+            model = mavenReader.read(reader);
+        }
+
+        boolean hasCliConnector = model.getDependencies().stream()
+                .anyMatch(d -> "camel-quarkus-cli-connector".equals(d.getArtifactId()));
+        if (!hasCliConnector) {
+            Dependency d = new Dependency();
+            d.setGroupId("org.apache.camel.quarkus");
+            d.setArtifactId("camel-quarkus-cli-connector");
+            model.getDependencies().add(d);
+        }
+
+        // write temporary pom with cli-connector injected
+        Path tempPom = projectDir.resolve("camel-jbang-run-pom.xml");
+        MavenXpp3Writer w = new MavenXpp3Writer();
+        try (FileOutputStream fos = new FileOutputStream(tempPom.toFile())) {
+            w.write(fos, model);
+        }
+
+        // shutdown hook to clean up temp files
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            try {
+                Process process = processRef.get();
+                if (process != null) {
+                    process.destroy();
+                    for (int i = 0; i < 30; i++) {
+                        if (!process.isAlive()) {
+                            break;
+                        }
+                        try {
+                            Thread.sleep(1000);
+                        } catch (InterruptedException e) {
+                            Thread.currentThread().interrupt();
+                        }
+                    }
+                }
+                Files.deleteIfExists(tempPom);
+            } catch (Exception e) {
+                // ignore
+            }
+        }));
+
+        // find mvnw or fall back to mvn
+        String mvnw = FileUtil.isWindows() ? "mvnw.cmd" : "mvnw";
+        Path mvnwPath = projectDir.resolve(mvnw);
+        String mvnCmd = Files.isExecutable(mvnwPath) ? mvnwPath.toString() : "mvn";
+
+        List<String> cmd = new ArrayList<>();
+        cmd.add(mvnCmd);
+        cmd.add("--quiet");
+        cmd.add("--file");
+        cmd.add(tempPom.toString());
+        if (jvmArgs != null && !jvmArgs.isBlank()) {
+            cmd.add("-Djvm.args=" + jvmArgs.trim());
+        }
+        cmd.add("-DskipTests");
+        cmd.add("package");
+        cmd.add("quarkus:" + (dev ? "dev" : "run"));
+
+        printer().println("Running Quarkus project: " + projectDir);
+
+        ProcessBuilder pb = new ProcessBuilder();
+        pb.command(cmd);
+        pb.directory(projectDir.toFile());
+        pb.inheritIO();
+        Process p = pb.start();
+        processRef.set(p);
+        this.spawnPid = p.pid();
+        return p.waitFor();
+    }
+
     protected int runSpringBoot() throws Exception {
         if (background) {
             printer().printErr("Run Camel Spring Boot with --background is not supported");
@@ -1430,6 +1616,11 @@ public class Run extends CamelCommand {
         }
 
         AtomicReference<Process> processRef = new AtomicReference<>();
+
+        // existing Maven project: run directly without export
+        if (files != null && files.size() == 1 && files.get(0).endsWith("pom.xml")) {
+            return runExistingSpringBootProject(processRef);
+        }
 
         // create temp run dir
         Path runDirPath = Paths.get(RUN_PLATFORM_DIR, Long.toString(System.currentTimeMillis()));
@@ -1551,6 +1742,96 @@ public class Run extends CamelCommand {
         processRef.set(p);
         this.spawnPid = p.pid();
         // wait for that process to exit as we run in foreground
+        return p.waitFor();
+    }
+
+    private int runExistingSpringBootProject(AtomicReference<Process> processRef) throws Exception {
+        Path pomPath = Path.of(files.get(0)).toAbsolutePath();
+        Path projectDir = pomPath.getParent();
+
+        // read the pom.xml and add camel-cli-connector-starter dependency
+        MavenXpp3Reader mavenReader = new MavenXpp3Reader();
+        Model model;
+        try (Reader reader = Files.newBufferedReader(pomPath)) {
+            model = mavenReader.read(reader);
+        }
+
+        boolean hasCliConnector = model.getDependencies().stream()
+                .anyMatch(d -> "camel-cli-connector-starter".equals(d.getArtifactId()));
+        if (!hasCliConnector) {
+            Dependency d = new Dependency();
+            d.setGroupId("org.apache.camel.springboot");
+            d.setArtifactId("camel-cli-connector-starter");
+            model.getDependencies().add(d);
+        }
+
+        // write temporary pom with cli-connector injected
+        Path tempPom = projectDir.resolve("camel-jbang-run-pom.xml");
+        MavenXpp3Writer w = new MavenXpp3Writer();
+        try (FileOutputStream fos = new FileOutputStream(tempPom.toFile())) {
+            w.write(fos, model);
+        }
+
+        // copy logback config for logging to file (so TUI can read logs)
+        Path logbackPath = projectDir.resolve("src/main/resources/logback-camel-jbang.xml");
+        try (InputStream is = Run.class.getClassLoader().getResourceAsStream("spring-boot-logback.xml")) {
+            if (is != null) {
+                Files.copy(is, logbackPath, StandardCopyOption.REPLACE_EXISTING);
+            }
+        }
+
+        // shutdown hook to clean up temp files
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            try {
+                Process process = processRef.get();
+                if (process != null) {
+                    process.destroy();
+                    for (int i = 0; i < 30; i++) {
+                        if (!process.isAlive()) {
+                            break;
+                        }
+                        try {
+                            Thread.sleep(1000);
+                        } catch (InterruptedException e) {
+                            Thread.currentThread().interrupt();
+                        }
+                    }
+                }
+                Files.deleteIfExists(tempPom);
+                Files.deleteIfExists(logbackPath);
+            } catch (Exception e) {
+                // ignore
+            }
+        }));
+
+        // find mvnw or fall back to mvn
+        String mvnw = FileUtil.isWindows() ? "mvnw.cmd" : "mvnw";
+        Path mvnwPath = projectDir.resolve(mvnw);
+        String mvnCmd = Files.isExecutable(mvnwPath) ? mvnwPath.toString() : "mvn";
+
+        List<String> cmd = new ArrayList<>();
+        cmd.add(mvnCmd);
+        cmd.add("--quiet");
+        cmd.add("--file");
+        cmd.add(tempPom.toString());
+        String sbJvmArgs = "-Dlogging.config=classpath:logback-camel-jbang.xml";
+        if (jvmArgs != null && !jvmArgs.isBlank()) {
+            sbJvmArgs += " " + jvmArgs.trim();
+        }
+        cmd.add("-Dspring-boot.run.jvmArguments=" + sbJvmArgs);
+        cmd.add("-DskipTests");
+        cmd.add("package");
+        cmd.add("spring-boot:run");
+
+        printer().println("Running Spring Boot project: " + projectDir);
+
+        ProcessBuilder pb = new ProcessBuilder();
+        pb.command(cmd);
+        pb.directory(projectDir.toFile());
+        pb.inheritIO();
+        Process p = pb.start();
+        processRef.set(p);
+        this.spawnPid = p.pid();
         return p.waitFor();
     }
 
