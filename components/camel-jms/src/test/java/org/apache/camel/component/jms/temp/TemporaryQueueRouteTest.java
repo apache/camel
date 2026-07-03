@@ -21,6 +21,7 @@ import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.AbstractJMSTest;
+import org.apache.camel.component.jms.JmsTestHelper;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.infra.core.CamelContextExtension;
 import org.apache.camel.test.infra.core.TransientCamelContextExtension;
@@ -43,7 +44,7 @@ public class TemporaryQueueRouteTest extends AbstractJMSTest {
         MockEndpoint endpoint = getMockEndpoint("mock:result");
         endpoint.expectedBodiesReceived("Hello World");
 
-        AbstractJMSTest.waitForJmsConsumerRoutes(context, "consumer");
+        JmsTestHelper.waitForJmsConsumerRoutes(context, "consumer");
 
         template.sendBody(endpointUri, "Hello World");
 

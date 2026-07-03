@@ -44,7 +44,7 @@ public class JmsComponentIbmMQTest extends CamelTestSupport {
         resultEndpoint.message(0).header("cheese").isEqualTo(123);
         resultEndpoint.message(0).body().isEqualTo("Hello there!");
 
-        AbstractJMSTest.waitForJmsConsumerRoutes(context, "consumer");
+        JmsTestHelper.waitForJmsConsumerRoutes(context, "consumer");
 
         template.sendBodyAndHeader("direct:start", "Hello world", "cheese", 123);
 

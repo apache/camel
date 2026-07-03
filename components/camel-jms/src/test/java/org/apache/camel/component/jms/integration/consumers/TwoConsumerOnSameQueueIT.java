@@ -23,7 +23,7 @@ import jakarta.jms.ConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.jms.AbstractJMSTest;
+import org.apache.camel.component.jms.JmsTestHelper;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.infra.artemis.common.ConnectionFactoryHelper;
 import org.apache.camel.test.infra.artemis.services.ArtemisService;
@@ -81,7 +81,7 @@ public class TwoConsumerOnSameQueueIT extends CamelTestSupport {
         getMockEndpoint("mock:a").expectedMessageCount(0);
         getMockEndpoint("mock:b").expectedBodiesReceived("Bye World", "Bye World");
 
-        AbstractJMSTest.waitForJmsConsumerRoutes(context, "b");
+        JmsTestHelper.waitForJmsConsumerRoutes(context, "b");
         template.sendBody("activemq:queue:TwoConsumerOnSameQueueTest", "Bye World");
         template.sendBody("activemq:queue:TwoConsumerOnSameQueueTest", "Bye World");
 
@@ -110,7 +110,7 @@ public class TwoConsumerOnSameQueueIT extends CamelTestSupport {
         getMockEndpoint("mock:a").expectedMessageCount(0);
         getMockEndpoint("mock:b").expectedBodiesReceived("Bye World", "Bye World");
 
-        AbstractJMSTest.waitForJmsConsumerRoutes(context, "b");
+        JmsTestHelper.waitForJmsConsumerRoutes(context, "b");
         template.sendBody("activemq:queue:TwoConsumerOnSameQueueTest", "Bye World");
         template.sendBody("activemq:queue:TwoConsumerOnSameQueueTest", "Bye World");
 
@@ -121,7 +121,7 @@ public class TwoConsumerOnSameQueueIT extends CamelTestSupport {
         final MockEndpoint mockB = getMockEndpoint("mock:b");
         final MockEndpoint mockA = getMockEndpoint("mock:a");
 
-        AbstractJMSTest.waitForJmsConsumerRoutes(context, "a", "b");
+        JmsTestHelper.waitForJmsConsumerRoutes(context, "a", "b");
 
         template.sendBody("activemq:queue:TwoConsumerOnSameQueueTest", "Hello World");
         template.sendBody("activemq:queue:TwoConsumerOnSameQueueTest", "Hello World");

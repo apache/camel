@@ -16,17 +16,19 @@
  */
 package org.apache.camel.test.infra.ibmmq.services;
 
+import java.util.concurrent.TimeUnit;
+
 import jakarta.jms.Connection;
 import jakarta.jms.ConnectionFactory;
 import jakarta.jms.JMSException;
 
 import org.apache.camel.spi.annotations.InfraService;
 import org.apache.camel.test.infra.common.LocalPropertyResolver;
-import org.apache.camel.test.infra.common.TestUtils;
 import org.apache.camel.test.infra.common.services.ContainerEnvironmentUtil;
 import org.apache.camel.test.infra.common.services.ContainerService;
 import org.apache.camel.test.infra.ibmmq.common.ConnectionFactoryHelper;
 import org.apache.camel.test.infra.ibmmq.common.IbmMQProperties;
+import org.awaitility.Awaitility;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.GenericContainer;
@@ -104,22 +106,18 @@ public class IbmMQLocalContainerInfraService implements IbmMQInfraService, Conta
     }
 
     private void waitForJmsConnection() {
-        boolean ready = TestUtils.waitFor(() -> {
-            try {
-                ConnectionFactory connectionFactory = ConnectionFactoryHelper.createConnectionFactory(
-                        queueManager(), channel(), listenerPort());
-                try (Connection connection = connectionFactory.createConnection()) {
-                    connection.start();
-                }
-                return true;
-            } catch (JMSException e) {
-                LOG.debug("IBM MQ is not yet accepting JMS connections: {}", e.getMessage());
-                return false;
-            }
-        });
-        if (!ready) {
-            throw new IllegalStateException("IBM MQ container did not accept JMS connections in time");
-        }
+        Awaitility.await("IBM MQ accepting JMS connections")
+                .atMost(30, TimeUnit.SECONDS)
+                .pollInterval(1, TimeUnit.SECONDS)
+                .ignoreExceptionsInstanceOf(JMSException.class)
+                .until(() -> {
+                    ConnectionFactory connectionFactory = ConnectionFactoryHelper.createConnectionFactory(
+                            queueManager(), channel(), listenerPort());
+                    try (Connection connection = connectionFactory.createConnection()) {
+                        connection.start();
+                    }
+                    return true;
+                });
     }
 
     @Override

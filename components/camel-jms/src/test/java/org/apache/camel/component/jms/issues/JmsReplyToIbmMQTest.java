@@ -20,7 +20,7 @@ import jakarta.jms.ConnectionFactory;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.jms.AbstractJMSTest;
+import org.apache.camel.component.jms.JmsTestHelper;
 import org.apache.camel.test.infra.ibmmq.common.ConnectionFactoryHelper;
 import org.apache.camel.test.infra.ibmmq.services.IbmMQService;
 import org.apache.camel.test.infra.ibmmq.services.IbmMQServiceFactory;
@@ -38,7 +38,7 @@ public class JmsReplyToIbmMQTest extends CamelTestSupport {
 
     @Test
     public void testCustomJMSReplyToInOut() {
-        AbstractJMSTest.waitForJmsConsumerRoutes(context, "request");
+        JmsTestHelper.waitForJmsConsumerRoutes(context, "request");
 
         template.sendBody("jms:queue:DEV.QUEUE.1", "What is your name?");
 

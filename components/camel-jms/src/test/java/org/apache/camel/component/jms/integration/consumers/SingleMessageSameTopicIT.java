@@ -18,6 +18,7 @@ package org.apache.camel.component.jms.integration.consumers;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.AbstractPersistentJMSTest;
+import org.apache.camel.component.jms.JmsTestHelper;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.MethodOrderer;
@@ -36,7 +37,7 @@ public class SingleMessageSameTopicIT extends AbstractPersistentJMSTest {
     @Order(1)
     @BeforeEach
     void waitForConnections() {
-        waitForJmsConsumerRoutes(TOPIC_ROUTE_UPTIME_MILLIS, "a", "b");
+        JmsTestHelper.waitForJmsConsumerRoutes(context, TOPIC_ROUTE_UPTIME_MILLIS, "a", "b");
     }
 
     @Order(2)
@@ -68,7 +69,7 @@ public class SingleMessageSameTopicIT extends AbstractPersistentJMSTest {
         getMockEndpoint("mock:a").expectedMessageCount(0);
         getMockEndpoint("mock:b").expectedBodiesReceived("Bye World");
 
-        waitForJmsConsumerRoutes(TOPIC_ROUTE_UPTIME_MILLIS, "b");
+        JmsTestHelper.waitForJmsConsumerRoutes(context, TOPIC_ROUTE_UPTIME_MILLIS, "b");
         template.sendBody("activemq:topic:SingleMessageSameTopicIT", "Bye World");
 
         MockEndpoint.assertIsSatisfied(context);
@@ -82,7 +83,7 @@ public class SingleMessageSameTopicIT extends AbstractPersistentJMSTest {
         getMockEndpoint("mock:a").expectedBodiesReceived("Hello World");
         getMockEndpoint("mock:b").expectedBodiesReceived("Hello World");
 
-        waitForJmsConsumerRoutes(TOPIC_ROUTE_UPTIME_MILLIS, "a", "b");
+        JmsTestHelper.waitForJmsConsumerRoutes(context, TOPIC_ROUTE_UPTIME_MILLIS, "a", "b");
         template.sendBody("activemq:topic:SingleMessageSameTopicIT", "Hello World");
     }
 
@@ -101,7 +102,7 @@ public class SingleMessageSameTopicIT extends AbstractPersistentJMSTest {
         getMockEndpoint("mock:a").expectedMessageCount(0);
         getMockEndpoint("mock:b").expectedBodiesReceived("Bye World");
 
-        waitForJmsConsumerRoutes(TOPIC_ROUTE_UPTIME_MILLIS, "b");
+        JmsTestHelper.waitForJmsConsumerRoutes(context, TOPIC_ROUTE_UPTIME_MILLIS, "b");
         template.sendBody("activemq:topic:SingleMessageSameTopicIT", "Bye World");
 
         MockEndpoint.assertIsSatisfied(context);

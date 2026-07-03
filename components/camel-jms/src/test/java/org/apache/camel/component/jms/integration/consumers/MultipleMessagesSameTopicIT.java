@@ -19,6 +19,7 @@ package org.apache.camel.component.jms.integration.consumers;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.AbstractPersistentJMSTest;
+import org.apache.camel.component.jms.JmsTestHelper;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -48,7 +49,7 @@ public class MultipleMessagesSameTopicIT extends AbstractPersistentJMSTest {
 
     @BeforeEach
     void waitForConnections() {
-        waitForJmsConsumerRoutes(TOPIC_ROUTE_UPTIME_MILLIS, "a", "b");
+        JmsTestHelper.waitForJmsConsumerRoutes(context, TOPIC_ROUTE_UPTIME_MILLIS, "a", "b");
     }
 
     @Override
