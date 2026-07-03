@@ -16,16 +16,19 @@
  */
 package org.apache.camel.component.springai.chat;
 
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.ai.tool.AiToolRegistry;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.component.springai.tools.spec.CamelToolExecutorCache;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.awaitility.Awaitility.await;
 
 /**
- * Integration test demonstrating interaction between camel-spring-ai-chat and camel-spring-ai-tools components.
+ * Integration test demonstrating interaction between camel-spring-ai-chat and ai-tool components.
  *
  * This test shows how Camel routes can be exposed as tools/functions that LLMs can call during conversations.
  *
@@ -42,18 +45,17 @@ public class SpringAiChatToolsIntegrationIT extends OllamaTestSupport {
 
     @Test
     public void testToolsAreRegistered() throws Exception {
-        // Verify that tools are registered in the cache before testing
-        var toolCache = CamelToolExecutorCache.getInstance();
-        var tools = toolCache.getTools();
+        var registry = AiToolRegistry.getOrCreate(context);
 
-        // Give routes time to start and register tools
-        Thread.sleep(1000);
+        await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> {
+            var tools = registry.getTools();
 
-        assertThat(tools).isNotEmpty();
-        assertThat(tools).containsKey("weather");
-        assertThat(tools).containsKey("math");
-        assertThat(tools.get("weather")).hasSize(1);
-        assertThat(tools.get("math")).hasSize(1);
+            assertThat(tools).isNotEmpty();
+            assertThat(tools).containsKey("weather");
+            assertThat(tools).containsKey("math");
+            assertThat(tools.get("weather")).hasSize(1);
+            assertThat(tools.get("math")).hasSize(1);
+        });
     }
 
     @Test
@@ -190,7 +192,7 @@ public class SpringAiChatToolsIntegrationIT extends OllamaTestSupport {
                 bindChatModel(getCamelContext());
 
                 // Define weather tool - gets weather for a specified city
-                from("spring-ai-tools:weather?tags=weather&description=Get current weather for a city&parameter.city=string")
+                from("ai-tool:weather?tags=weather&description=Get current weather for a city&parameter.city=string")
                         .log("Weather tool called with city: ${header.city}")
                         .process(exchange -> {
                             String city = exchange.getIn().getHeader("city", String.class);
@@ -210,7 +212,7 @@ public class SpringAiChatToolsIntegrationIT extends OllamaTestSupport {
                         .to("mock:weather");
 
                 // Define calculator tool - performs simple calculations
-                from("spring-ai-tools:calculator?tags=math&description=Calculate mathematical expressions&parameter.expression=string")
+                from("ai-tool:calculator?tags=math&description=Calculate mathematical expressions&parameter.expression=string")
                         .process(exchange -> {
                             String expression = exchange.getIn().getHeader("expression", String.class);
                             String result;
