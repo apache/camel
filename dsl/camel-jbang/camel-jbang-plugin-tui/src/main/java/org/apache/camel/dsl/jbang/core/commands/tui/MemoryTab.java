@@ -316,31 +316,58 @@ class MemoryTab extends AbstractTab {
     private void renderTimeAxis(Frame frame, Rect area, IntegrationInfo info) {
         LinkedList<Long> hist = heapMemHistory.get(info.pid);
         int points = hist != null ? hist.size() : 0;
-        long totalSeconds = points * 5L;
-
-        String timeLabel;
-        if (totalSeconds < 60) {
-            timeLabel = totalSeconds + "s ago";
-        } else {
-            timeLabel = (totalSeconds / 60) + "m ago";
-        }
 
         int w = area.width();
         if (w < 10) {
             return;
         }
 
-        // Pad to fill the width: "Xm ago" on the left, "now" on the right
-        String left = " " + timeLabel;
-        String right = "now ";
-        int gap = Math.max(1, w - left.length() - right.length());
+        // The chart area has the same width; each column = 1 data point = 5 seconds
+        // chartW columns map to the rightmost `chartW` points of history
+        int chartW = w;
+        int totalPoints = Math.min(points, chartW);
+        long totalSeconds = totalPoints * 5L;
 
-        Line line = Line.from(
-                Span.styled(left, Style.EMPTY.dim()),
-                Span.raw(" ".repeat(gap)),
-                Span.styled(right, Style.EMPTY.dim()));
+        Buffer buf = frame.buffer();
+        Style dimStyle = Style.EMPTY.dim();
+        int xAxisY = area.y();
+        int startX = area.x();
 
-        frame.renderWidget(Paragraph.builder().text(Text.from(line)).build(), area);
+        // "now" label at the right edge
+        int nowX = startX + chartW - 3;
+        if (nowX >= startX) {
+            buf.setString(nowX, xAxisY, "now", dimStyle);
+        }
+
+        // Pick step interval based on total time span
+        int stepSeconds;
+        if (totalSeconds <= 120) {
+            stepSeconds = 30;
+        } else if (totalSeconds <= 300) {
+            stepSeconds = 60;
+        } else if (totalSeconds <= 900) {
+            stepSeconds = 120;
+        } else {
+            stepSeconds = 300;
+        }
+
+        // Place markers from right to left at regular time intervals
+        for (int s = stepSeconds; s <= totalSeconds; s += stepSeconds) {
+            int col = chartW - 1 - (s / 5);
+            if (col < 0) {
+                break;
+            }
+            String label;
+            if (s < 60) {
+                label = "-" + s + "s";
+            } else {
+                label = "-" + (s / 60) + "m";
+            }
+            int markerX = startX + col;
+            if (markerX + label.length() <= startX + chartW - 4 && markerX >= startX) {
+                buf.setString(markerX, xAxisY, label, dimStyle);
+            }
+        }
     }
 
     private static Span computeTrendSpan(LinkedList<Long> hist) {
