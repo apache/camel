@@ -16,9 +16,8 @@
  */
 package org.apache.camel.component.platform.http.vertx;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
@@ -34,7 +33,7 @@ import static org.awaitility.Awaitility.await;
 import static org.hamcrest.Matchers.is;
 
 public class VertxPlatformEventNotifierTest {
-    private final List<String> events = Collections.synchronizedList(new ArrayList<>());
+    private final List<String> events = new CopyOnWriteArrayList<>();
 
     @Test
     void testEventNotifierOk() throws Exception {
