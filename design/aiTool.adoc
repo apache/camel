@@ -1,0 +1,543 @@
+---
+title: Unified AI tool abstraction
+authors:
+  - "@Croway"
+  - "@zbendhiba"
+reviewers: []
+approvers: []
+creation-date: 2026-07-06
+last-updated: 2026-07-06
+status: implementable
+see-also:
+  - "https://issues.apache.org/jira/browse/CAMEL-23382"
+replaces: []
+superseded-by: []
+---
+
+== Summary
+
+Camel's AI components (`camel-langchain4j-tools`, `camel-spring-ai-tools`,
+`camel-langchain4j-agent`) each implement their own mechanism for exposing Camel routes as
+LLM-callable tools, while `camel-openai` lacks this capability entirely. This document
+proposes a shared, framework-agnostic tool abstraction (`camel-ai-tool`) that all AI
+components discover tools from. One way to define tools, regardless of which AI framework
+you choose. No more duplication.
+
+== Motivation
+
+As users of `camel-langchain4j`, `camel-spring-ai`, or `camel-openai`, we expect the
+same behavior and workflow when implementing tools. Today that is not the case:
+
+* **`camel-langchain4j-tools`**, **`camel-spring-ai-tools`**, and **`camel-langchain4j-agent`**
+  each independently implement the same pattern (consumer endpoint, registry, spec classes)
+  for exposing Camel routes as LLM-callable tools, with duplicated code tightly coupled to
+  their respective framework types.
+* **`camel-openai`** does not support yet Camel routes as tools.
+
+A tool defined for one framework cannot be used by another without re-registering it,
+bug fixes must be applied in multiple places, and new AI components would need to
+re-implement the same pattern from scratch.
+
+== Goals
+
+* Provide a *single* consumer endpoint (`ai-tool:toolName`) for defining Camel routes as
+  LLM-callable tools. No AI framework dependency required.
+* Provide a CamelContext-scoped `AiToolRegistry` that replaces the duplicated
+  `CamelToolExecutorCache` classes in `camel-langchain4j-tools` and `camel-spring-ai-tools`.
+  Each `CamelContext` gets its own registry instance via the context plugin mechanism,
+  preventing tool leaks across contexts running in the same JVM.
+* Provide a framework-agnostic `AiToolSpec` holding tool name, description, structured
+  parameter definitions, JSON Schema, and a reference to the Camel consumer that
+  implements the tool.
+* Provide `AiToolExecutor`, a shared utility that resolves the route processor, validates
+  arguments against declared parameters, wraps them in an `AiToolArguments` variable,
+  invokes the route, and returns the result. Framework adapters only need to parse their
+  native argument format into a `Map<String, Object>`.
+* Allow each AI component to discover tools from the shared registry via a `tags` parameter
+  and convert them to its native format (`ToolSpecification` for LangChain4j,
+  `ToolCallback` for Spring AI, `ChatCompletionFunctionTool` for OpenAI).
+
+== Context
+
+=== Current architecture
+
+Each AI module independently implements the same three-layer pattern:
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                     camel-langchain4j-tools                     │
+│  ┌──────────────────┐  ┌────────────────────┐  ┌────────────┐   │
+│  │ L4j Tools        │  │ CamelToolExecutor  │  │ L4j Tools  │   │
+│  │ Consumer         │→ │ Cache (singleton)  │← │ Producer   │   │
+│  │ registers tool   │  │ tags → specs       │  │ dispatches │   │
+│  └──────────────────┘  └────────────────────┘  └────────────┘   │
+└─────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────┐
+│                     camel-spring-ai-tools                       │
+│  ┌──────────────────┐  ┌────────────────────┐                   │
+│  │ Spring AI Tools  │  │ CamelToolExecutor  │  (no producer —   │
+│  │ Consumer         │→ │ Cache (singleton)  │   invoked via     │
+│  │ registers tool   │  │ tags → specs       │   spring-ai-chat) │
+│  └──────────────────┘  └────────────────────┘                   │
+└─────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────┐
+│                     camel-langchain4j-agent                     │
+│  (uses the LangChain4j CamelToolExecutorCache for Camel route   │
+│   tools — tightly coupled to LangChain4j types)                 │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+The caches are independent singletons with independent type hierarchies. A tool
+registered in the LangChain4j cache is invisible to Spring AI and vice versa.
+
+==== Duplicated classes
+
+[cols="1,1,1"]
+|===
+| Concept | camel-langchain4j-tools | camel-spring-ai-tools
+
+| Singleton registry
+| `CamelToolExecutorCache`
+| `CamelToolExecutorCache`
+
+| Tool specification
+| `CamelToolSpecification` (wraps `ToolSpecification`)
+| `CamelToolSpecification` (wraps `ToolCallback`)
+
+| Tag splitting
+| `TagsHelper`
+| `TagsHelper`
+
+| Consumer endpoint
+| `LangChain4jToolsEndpoint` + `LangChain4jToolsConsumer`
+| `SpringAiToolsEndpoint` + `SpringAiToolsConsumer`
+|===
+
+=== Design principles
+
+* **Define once, use everywhere.** A tool defined via `ai-tool:` is available to any AI
+  producer that queries the shared registry.
+* **Framework adapters are thin.** Each AI component's bridge to `camel-ai-tool` should
+  be a small adapter that converts `AiToolSpec` → native type. The bulk of tool lifecycle,
+  parameter validation, and route dispatch lives in `camel-ai-tool`.
+* **Tag-based discovery.** Tools are grouped by tags. Producers filter the registry by
+  tags to select which tools to expose to the LLM. Tools with no tags go into a default
+  pool available to all producers.
+* **Camel route tools are the focus.** All AI components discover Camel route tools
+  from the shared registry. This abstraction also lays the groundwork for exposing
+  Camel route tools as MCP tools in the future.
+
+== Proposal
+
+=== Target architecture
+
+```
+┌────────────────────────────────────────────────────────────────────────┐
+│                          camel-ai-tool                                 │
+│  ┌──────────────┐    ┌───────────────┐   ┌───────────────┐             │
+│  │  AiToolSpec  │    │ AiToolRegistry│   │ AiToolExecutor│             │
+│  │  (name, desc,│    │ (per-context) │   │  (validate →  │             │
+│  │   params,    │    │  tags → specs │   │   variable →  │             │
+│  │   consumer)  │    │  + default    │   │   route →     │             │
+│  └──────────────┘    │    pool       │   │   result)     │             │
+│                      └───────────────┘   └───────────────┘             │
+│  ┌──────────────────────────────────────────────────┐                  │
+│  │            ai-tool:toolName consumer             │                  │
+│  │  registers route as tool on start, deregisters   │                  │
+│  │  on stop; validates description + parameters     │                  │
+│  └──────────────────────────────────────────────────┘                  │
+└────────────────────────────────────────────────────────────────────────┘
+        ▲                    ▲                    ▲
+        │                    │                    │
+   ┌────┴────┐         ┌─────┴───┐          ┌─────┴───┐
+   │langchain│         │spring-ai│          │ openai  │
+   │  agent  │         │  chat   │          │  chat   │
+   │producer │         │producer │          │producer │
+   └─────────┘         └─────────┘          └─────────┘
+   Converts            Converts             Converts
+   AiToolSpec →        AiToolSpec →         AiToolSpec →
+   ToolSpecification   ToolCallback         ChatCompletion
+   + ToolExecutor                           FunctionTool
+```
+
+=== Module: `camel-ai-tool`
+
+Located at `components/camel-ai/camel-ai-tool` (Java package:
+`org.apache.camel.component.ai.tools`). Consumer-only component with no AI
+framework dependencies. Only `camel-support` (which transitively provides
+`camel-util-json` for JSON Schema generation).
+
+==== `AiToolSpec`
+
+Framework-agnostic tool descriptor. Immutable after construction.
+
+[cols="1,2"]
+|===
+| Field | Description
+
+| `name`
+| Unique tool identifier (the `toolName` path parameter)
+
+| `description`
+| Human-readable description passed verbatim to the LLM
+
+| `parameterDefs`
+| Structured `Map<String, ParameterDef>`. Used by LangChain4j to build native
+  `JsonObjectSchema` without re-parsing JSON
+
+| `parametersJsonSchema`
+| Pre-built JSON Schema string. Used directly by Spring AI (`inputSchema`) and
+  OpenAI (`function.parameters`)
+
+| `consumer`
+| Reference to the `DefaultConsumer` that executes this tool's route
+|===
+
+==== `AiToolRegistry`
+
+CamelContext-scoped registry mapping tags to sets of `AiToolSpec` instances. Each
+`CamelContext` gets its own instance, registered as a context plugin via
+`context.getCamelContextExtension().addContextPlugin()`. Use the static factory
+`AiToolRegistry.getOrCreate(context)` to obtain the instance for a given context.
+Thread-safe via `ConcurrentHashMap` with synchronized value sets.
+
+Two pools:
+
+* **Tagged tools**: `Map<String, Set<AiToolSpec>>`. Producers query by tag.
+* **Default pool**: `Set<AiToolSpec>`. Tools with no tags. Merged into every tag query
+  result, so they are available to all producers.
+
+Key methods:
+
+* `put(tag, spec)` / `remove(tag, spec)`: manage tagged tools
+* `putDefault(spec)` / `removeDefault(spec)`: manage default pool
+* `getToolsByTag(tag)`: returns tagged + default tools
+* `getAllTools()`: returns all tools across all tags and default pool
+
+==== `AiToolExecutor`
+
+Static utility class that handles the common dispatch logic:
+
+1. Resolve the route `Processor` from the spec's consumer
+2. Validate arguments against declared parameters (warn about undeclared, check required)
+3. Wrap arguments in an `AiToolArguments` object and set it as an exchange variable
+4. Invoke the route processor
+5. Return the result body as a string
+
+Framework adapters call `AiToolExecutor.execute(spec, arguments, exchange)` after
+parsing their native argument format (JSON string, Map, etc.) into a
+`Map<String, Object>`. They do not need to know how routes are resolved or invoked.
+
+IMPORTANT: The executor does *not* own the exchange lifecycle. The calling adapter is
+responsible for creating the exchange (via `consumer.createExchange()`) before calling
+`execute()`, and for releasing it (via `consumer.releaseExchange()`) afterwards, using
+a try-finally block to prevent exchange leaks on error.
+
+==== Tool error handling
+
+`AiToolExecutor` classifies tool execution outcomes into three categories and returns
+a typed result object. It does not decide error handling policy — that is the
+framework adapter's responsibility.
+
+===== `AiToolResult`
+
+```java
+public sealed interface AiToolResult {
+    record Success(String value) implements AiToolResult {}
+    record ArgumentError(String message, Exception cause) implements AiToolResult {}
+    record ExecutionError(String message, Exception cause) implements AiToolResult {}
+}
+```
+
+`AiToolExecutor.execute()` returns `AiToolResult` instead of `String`:
+
+* **`Success`**: route executed normally, body returned as string.
+* **`ArgumentError`**: the tool call failed before reaching the route. Missing required
+  argument or type mismatch. The LLM sent bad input. (Undeclared arguments are warned
+  about but not rejected, since LLMs frequently hallucinate extra parameters.)
+* **`ExecutionError`**: the route processor threw an exception or the exchange carries
+  an exception after processing.
+
+===== Why a result object
+
+Each AI framework (LangChain4j, Spring AI, OpenAI) has its own error handling hooks.
+Some want to propagate exceptions so their handlers can fire. Others want a string
+returned to the LLM so it can self-correct.
+
+If `AiToolExecutor` catches everything and returns a string, no framework-level handler
+can ever fire. If it always throws, frameworks that expect a string result break.
+
+By returning a typed result, `AiToolExecutor` stays framework-agnostic. It classifies
+the error but does not choose the policy. Each adapter decides:
+
+* Return the error message as a string to the LLM (current behavior)
+* Rethrow the cause so the framework's own error handler fires
+* Log, wrap, or sanitize the error before returning
+
+===== Security consideration
+
+Returning raw exception messages to the LLM is a security concern. Exception messages
+can contain stack traces, file paths, credentials, or PII. Once sent to the LLM, this
+data can flow into responses, chat history, and provider logs. The `AiToolResult`
+carries both `message` and `cause`, so adapters can choose to return a sanitized
+message while logging the full cause internally.
+
+==== `AiToolParameterHelper`
+
+Shared utilities for parsing flat parameter maps and building JSON Schema:
+
+* `parseParameterMetadata(Map<String, String>)`: parses URI-style parameters
+  (e.g., `city=string`, `city.description=The city name`, `city.required=true`,
+  `unit.enum=celsius,fahrenheit`) into structured `ParameterDef` objects.
+* `buildJsonSchema(Map<String, String>)`: generates a JSON Schema object string
+  from the same flat parameter map. Type mappings: `string`, `integer` (+ `int`,
+  `long`), `number` (+ `double`, `float`), `boolean` (+ `bool`).
+* `splitTags(String)`: splits comma-separated tag list with whitespace trimming.
+
+==== `ai-tool:` consumer endpoint
+
+URI syntax: `ai-tool:toolName[?options]`
+
+[cols="1,1,1,3"]
+|===
+| Option | Type | Required | Description
+
+| `toolName`
+| String (path)
+| Yes
+| The tool name the LLM sees and uses to invoke the tool
+
+| `tags`
+| String
+| No
+| Comma-separated tags. When omitted, tool goes into default pool.
+
+| `description`
+| String
+| No
+| Human-readable description for the LLM. When omitted, defaults to the tool name.
+
+| `parameter.<name>`
+| String
+| No
+| Parameter type (`string`, `integer`, `number`, `boolean`)
+
+| `parameter.<name>.description`
+| String
+| No
+| Parameter description for the LLM
+
+| `parameter.<name>.required`
+| boolean
+| No
+| Whether the parameter is required (default: false)
+
+| `parameter.<name>.enum`
+| String
+| No
+| Comma-separated list of allowed values
+|===
+
+Lifecycle (managed by `AiToolConsumer`):
+
+* **`doStart()`**: builds `AiToolSpec` from configuration, registers in `AiToolRegistry`
+* **`doStop()`**: deregisters from `AiToolRegistry`
+
+=== Adapter pattern for AI components
+
+Each AI component that wants to discover Camel route tools adds a dependency on
+`camel-ai-tool` and implements a thin adapter:
+
+```java
+// In the producer, discover tools from the context-scoped registry
+AiToolRegistry registry = AiToolRegistry.getOrCreate(exchange.getContext());
+Set<AiToolSpec> tools = registry.getToolsByTag(tagsOption);
+
+// Convert each AiToolSpec to the native tool format
+for (AiToolSpec spec : tools) {
+    NativeToolType nativeTool = convertToNative(spec);
+    // add to LLM request
+}
+
+// On tool call response, dispatch via AiToolExecutor
+// The adapter owns the exchange lifecycle (create + release)
+Exchange toolExchange = spec.getConsumer().createExchange(false);
+try {
+    AiToolResult result = AiToolExecutor.execute(spec, parsedArguments, toolExchange);
+    // handle result
+} finally {
+    spec.getConsumer().releaseExchange(toolExchange, false);
+}
+```
+
+==== LangChain4j adapter
+
+Converts `AiToolSpec` → `dev.langchain4j.agent.tool.ToolSpecification`:
+
+* `spec.getName()` → `ToolSpecification.name()`
+* `spec.getDescription()` → `ToolSpecification.description()`
+* `spec.getParameterDefs()` → `JsonObjectSchema` properties (using structured defs
+  to avoid re-parsing JSON)
+
+==== Spring AI adapter
+
+Converts `AiToolSpec` → `org.springframework.ai.tool.ToolCallback`:
+
+* `spec.getName()` → callback name
+* `spec.getDescription()` → callback description
+* `spec.getParametersJsonSchema()` → `inputSchema` (used directly, no conversion)
+* Tool function: `args → AiToolExecutor.execute(spec, args, exchange)`
+
+==== OpenAI adapter
+
+Converts `AiToolSpec` → `ChatCompletionFunctionTool`:
+
+* `spec.getName()` → `FunctionDefinition.name()`
+* `spec.getDescription()` → `FunctionDefinition.description()`
+* `spec.getParametersJsonSchema()` → `FunctionDefinition.parameters()` (used directly)
+
+This is the big one. It gives `camel-openai` Camel route tool support
+for the first time.
+
+=== User-facing example
+
+Define a tool once, use it from any AI framework:
+
+```yaml
+# Define tools (framework-agnostic)
+- route:
+    from:
+      uri: ai-tool:getFacts
+      parameters:
+        tags: research
+        description: "Get facts about a given topic"
+        parameter.topic: string
+        parameter.topic.description: "The topic to research"
+        parameter.topic.required: true
+      steps:
+        - to: "direct:factsLookup"
+
+- route:
+    from:
+      uri: ai-tool:getWeather
+      parameters:
+        tags: research,utility
+        description: "Get current weather for a city"
+        parameter.city: string
+        parameter.city.description: "The city name"
+        parameter.city.required: true
+        parameter.unit: string
+        parameter.unit.enum: "celsius,fahrenheit"
+      steps:
+        - process:
+            ref: weatherProcessor
+
+# Use from LangChain4j agent
+- route:
+    from:
+      uri: direct:langchain4j-chat
+      steps:
+        - to: "langchain4j-agent:assistant?agent=#myAgent&tags=research"
+
+# Use from Spring AI
+- route:
+    from:
+      uri: direct:spring-ai-chat
+      steps:
+        - to: "spring-ai-chat:assistant?chatModel=#chatModel&tags=research"
+
+# Use from OpenAI
+- route:
+    from:
+      uri: direct:openai-chat
+      steps:
+        - to: "openai:chat-completion?autoToolExecution=true&tags=research"
+```
+
+The tool definitions are identical regardless of which AI framework invokes them. The
+`tags=research` parameter on each producer selects the matching tools from the shared
+registry.
+
+=== Migration path
+
+The transition is incremental and non-breaking:
+
+[cols="1,2,2"]
+|===
+| Phase | What changes | User impact
+
+| Existing consumers still work
+| `langchain4j-tools:` and `spring-ai-tools:` consumer endpoints continue to register
+  in their respective `CamelToolExecutorCache` instances
+| None. Existing routes keep working
+
+| Producers read from shared registry
+| `langchain4j-agent`, `spring-ai-chat`, and `openai` producers read from
+  `AiToolRegistry` exclusively, replacing their old cache lookups
+| Tools defined via `ai-tool:` become visible to all producers
+
+| Deprecate old consumers
+| `langchain4j-tools:` consumer side deprecated in favor of `ai-tool:`. `spring-ai-tools:`
+  removed entirely (it was consumer-only)
+| Users update `from("langchain4j-tools:...")` → `from("ai-tool:...")`
+
+| Remove old caches
+| `CamelToolExecutorCache` removed from both modules
+| No user impact (internal)
+|===
+
+== Development
+
+This work is split into sequential PRs to keep reviews focused:
+
+=== Step 1: Create `camel-ai-tool` module (2026-07-06)
+
+Create the new module with all core abstractions:
+
+* `AiToolSpec`: framework-agnostic tool descriptor
+* `AiToolRegistry`: CamelContext-scoped registry (via context plugin)
+* `AiToolConsumer`: consumer that registers/deregisters tools on start/stop
+* `AiToolEndpoint`: consumer-only endpoint with parameter validation
+* `AiToolExecutor`: shared dispatch utility
+* `AiToolParameterHelper`: parameter parsing and JSON Schema generation
+* Full unit test coverage
+
+No changes to existing modules.
+
+=== Step 2: Wire `camel-langchain4j-agent` producer
+
+Update `LangChain4jAgentProducer` to discover tools from `AiToolRegistry` instead of
+(or in addition to) `CamelToolExecutorCache`. Add `tags` parameter support for filtering.
+Adapter converts `AiToolSpec` → `ToolSpecification` + `ToolExecutor`.
+
+Upgrade guide entry documenting the new `tags` parameter behavior.
+
+=== Step 3: Wire `camel-spring-ai-chat` producer
+
+Update `SpringAiChatProducer` to discover tools from `AiToolRegistry`. Adapter converts
+`AiToolSpec` → `FunctionToolCallback`. Add `tags` parameter for filtering.
+
+Upgrade guide entry.
+
+=== Step 4: Wire `camel-langchain4j-tools` producer
+
+Update `LangChain4jToolsProducer` to read from `AiToolRegistry`, keeping the agentic
+tool-call loop intact.
+
+=== Step 5: Deprecate old consumer endpoints
+
+* Deprecate `langchain4j-tools:` consumer side (registration) in favor of `ai-tool:`
+* Remove `camel-spring-ai-tools` entirely (it was consumer-only; its functionality is
+  now in `camel-ai-tool`)
+
+Upgrade guide entries for both, with before/after migration examples.
+
+=== Step 6: Add tool support to `camel-openai`
+
+Add `tags` parameter to `OpenAIConfiguration`. The producer discovers tools from
+`AiToolRegistry`, converts `AiToolSpec` → `ChatCompletionFunctionTool`, and dispatches
+tool calls via `AiToolExecutor`.
+
+Separate JIRA issue for tracking.

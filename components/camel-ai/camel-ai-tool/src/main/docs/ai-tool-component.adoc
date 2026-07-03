@@ -1,0 +1,241 @@
+= AI Tool Component
+:doctitle: AI Tool
+:shortname: ai-tool
+:artifactid: camel-ai-tool
+:description: Framework-agnostic consumer endpoint that registers a Camel route as an LLM tool in the shared AiToolRegistry.
+:since: 4.22
+:supportlevel: Preview
+:tabs-sync-option:
+:component-header: Only consumer is supported
+//Manually maintained attributes
+:group: AI
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The AI Tool component provides a framework-agnostic way to expose Camel routes as tools that AI models can call.
+Tools registered via this component are stored in a shared `AiToolRegistry` and can be discovered by any AI producer
+component (such as xref:langchain4j-agent-component.adoc[LangChain4j Agent] or xref:spring-ai-chat-component.adoc[Spring AI Chat])
+using tag-based filtering.
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-ai-tool</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+== URI format
+
+----
+ai-tool:toolName[?options]
+----
+
+Where *toolName* is the name the LLM sees and uses to invoke the tool.
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+include::partial$component-endpoint-headers.adoc[]
+// component options: END
+
+== Usage
+
+Define a tool by creating a consumer route with the `ai-tool:` scheme.
+The route body processes tool invocations and returns results to the AI model.
+
+=== Basic Tool Definition
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("ai-tool:weather?tags=weather&description=Get current weather for a city" +
+    "&parameter.city=string&parameter.city.description=The city name")
+    .to("bean:weatherService");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="ai-tool:weather?tags=weather&amp;description=Get current weather for a city&amp;parameter.city=string&amp;parameter.city.description=The city name"/>
+  <to uri="bean:weatherService"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: ai-tool:weather
+      parameters:
+        tags: weather
+        description: "Get current weather for a city"
+        parameter.city: string
+        parameter.city.description: "The city name"
+      steps:
+        - to:
+            uri: bean:weatherService
+----
+====
+
+=== Tool with Multiple Parameters
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("ai-tool:calculator?tags=math" +
+    "&description=Calculate a math expression" +
+    "&parameter.a=number" +
+    "&parameter.a.description=First operand" +
+    "&parameter.a.required=true" +
+    "&parameter.b=number" +
+    "&parameter.b.description=Second operand" +
+    "&parameter.b.required=true" +
+    "&parameter.operation=string" +
+    "&parameter.operation.description=The operation to perform" +
+    "&parameter.operation.enum=add,subtract,multiply,divide")
+    .to("direct:calculator");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="ai-tool:calculator?tags=math&amp;description=Calculate a math expression&amp;parameter.a=number&amp;parameter.a.description=First operand&amp;parameter.a.required=true&amp;parameter.b=number&amp;parameter.b.description=Second operand&amp;parameter.b.required=true&amp;parameter.operation=string&amp;parameter.operation.description=The operation to perform&amp;parameter.operation.enum=add,subtract,multiply,divide"/>
+  <to uri="direct:calculator"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: ai-tool:calculator
+      parameters:
+        tags: math
+        description: "Calculate a math expression"
+        parameter.a: number
+        parameter.a.description: "First operand"
+        parameter.a.required: true
+        parameter.b: number
+        parameter.b.description: "Second operand"
+        parameter.b.required: true
+        parameter.operation: string
+        parameter.operation.description: "The operation to perform"
+        parameter.operation.enum: "add,subtract,multiply,divide"
+      steps:
+        - to:
+            uri: direct:calculator
+----
+====
+
+=== Tag-Based Discovery
+
+Tags group tools so that AI producers can select relevant subsets:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+// Define tools with tags
+from("ai-tool:weather?tags=weather,external-api&description=Get weather for a city" +
+    "&parameter.city=string&parameter.city.description=The city name")
+    .to("bean:weatherService");
+
+from("ai-tool:queryUser?tags=users&description=Query database by user ID" +
+    "&parameter.id=integer&parameter.id.description=The user ID&parameter.id.required=true")
+    .to("sql:SELECT name FROM users WHERE id = :#id");
+
+// LangChain4j agent uses only weather-tagged tools
+from("direct:chat")
+    .to("langchain4j-agent:assistant?agent=#myAgent&tags=weather");
+----
+
+XML::
++
+[source,xml]
+----
+<!-- Define tools with tags -->
+<route>
+  <from uri="ai-tool:weather?tags=weather,external-api&amp;description=Get weather for a city&amp;parameter.city=string&amp;parameter.city.description=The city name"/>
+  <to uri="bean:weatherService"/>
+</route>
+
+<route>
+  <from uri="ai-tool:queryUser?tags=users&amp;description=Query database by user ID&amp;parameter.id=integer&amp;parameter.id.description=The user ID&amp;parameter.id.required=true"/>
+  <to uri="sql:SELECT name FROM users WHERE id = :#id"/>
+</route>
+
+<!-- LangChain4j agent uses only weather-tagged tools -->
+<route>
+  <from uri="direct:chat"/>
+  <to uri="langchain4j-agent:assistant?agent=#myAgent&amp;tags=weather"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+# Define tools with tags
+- route:
+    from:
+      uri: ai-tool:weather
+      parameters:
+        tags: weather,external-api
+        description: "Get weather for a city"
+        parameter.city: string
+        parameter.city.description: "The city name"
+      steps:
+        - to:
+            uri: bean:weatherService
+
+- route:
+    from:
+      uri: ai-tool:queryUser
+      parameters:
+        tags: users
+        description: "Query database by user ID"
+        parameter.id: integer
+        parameter.id.description: "The user ID"
+        parameter.id.required: true
+      steps:
+        - to:
+            uri: "sql:SELECT name FROM users WHERE id = :#id"
+
+# LangChain4j agent uses only weather-tagged tools
+- route:
+    from:
+      uri: direct:chat
+      steps:
+        - to:
+            uri: "langchain4j-agent:assistant?agent=#myAgent&tags=weather"
+----
+====
+
+== See Also
+
+* xref:langchain4j-agent-component.adoc[LangChain4j Agent Component] — will discover ai-tool tools in a future release
+* xref:spring-ai-chat-component.adoc[Spring AI Chat Component] — will discover ai-tool tools in a future release

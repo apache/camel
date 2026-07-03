@@ -37,6 +37,7 @@ public interface EndpointBuilderFactory
             org.apache.camel.builder.endpoint.dsl.AWSConfigEndpointBuilderFactory.AWSConfigBuilders,
             org.apache.camel.builder.endpoint.dsl.ActiveMQ6EndpointBuilderFactory.ActiveMQ6Builders,
             org.apache.camel.builder.endpoint.dsl.ActiveMQEndpointBuilderFactory.ActiveMQBuilders,
+            org.apache.camel.builder.endpoint.dsl.AiToolEndpointBuilderFactory.AiToolBuilders,
             org.apache.camel.builder.endpoint.dsl.ArangoDbEndpointBuilderFactory.ArangoDbBuilders,
             org.apache.camel.builder.endpoint.dsl.AsteriskEndpointBuilderFactory.AsteriskBuilders,
             org.apache.camel.builder.endpoint.dsl.Athena2EndpointBuilderFactory.Athena2Builders,

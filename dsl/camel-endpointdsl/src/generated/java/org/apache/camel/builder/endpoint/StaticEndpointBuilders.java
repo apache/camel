@@ -177,6 +177,48 @@ public class StaticEndpointBuilders {
         return ActiveMQ6EndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * AI Tool (camel-ai-tool)
+     * Framework-agnostic consumer endpoint that registers a Camel route as an
+     * LLM tool in the shared AiToolRegistry.
+     * 
+     * Category: ai
+     * Since: 4.22
+     * Maven coordinates: org.apache.camel:camel-ai-tool
+     * 
+     * Syntax: <code>ai-tool:toolName</code>
+     * 
+     * Path parameter: toolName (required)
+     * The tool name. This is the name the LLM sees and uses to invoke the tool.
+     * 
+     * @param path toolName
+     * @return the dsl builder
+     */
+    public static AiToolEndpointBuilderFactory.AiToolEndpointBuilder aiTool(String path) {
+        return aiTool("ai-tool", path);
+    }
+    /**
+     * AI Tool (camel-ai-tool)
+     * Framework-agnostic consumer endpoint that registers a Camel route as an
+     * LLM tool in the shared AiToolRegistry.
+     * 
+     * Category: ai
+     * Since: 4.22
+     * Maven coordinates: org.apache.camel:camel-ai-tool
+     * 
+     * Syntax: <code>ai-tool:toolName</code>
+     * 
+     * Path parameter: toolName (required)
+     * The tool name. This is the name the LLM sees and uses to invoke the tool.
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path toolName
+     * @return the dsl builder
+     */
+    public static AiToolEndpointBuilderFactory.AiToolEndpointBuilder aiTool(String componentName, String path) {
+        return AiToolEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * AMQP (camel-amqp)
      * Messaging with AMQP protocol using Apache Qpid Client.
      * 
