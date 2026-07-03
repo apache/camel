@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor.aggregate.jdbc;
 
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.AggregationStrategy;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -79,11 +81,11 @@ public abstract class AbstractJdbcAggregationTestSupport extends CamelSpringTest
                             = ObjectHelper.getException(OptimisticLockingAggregationRepository.OptimisticLockingException.class,
                                     e);
                     if (ole != null) {
-                        // okay lets try again
+                        // okay lets try again after a short back-off
                         try {
-                            Thread.sleep(50);
+                            TimeUnit.MILLISECONDS.sleep(50);
                         } catch (InterruptedException ex) {
-                            // ignore
+                            Thread.currentThread().interrupt();
                         }
                         continue;
                     }
