@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.sql.stored;
 
+import java.lang.reflect.Field;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
@@ -61,12 +62,28 @@ public class SqlFunctionDataSourceTest extends CamelTestSupport {
     private static JdbcTemplate jdbcTemplate;
     private TemplateParser templateParser;
 
+    /**
+     * MariaDB startup timeout in milliseconds. The default 30s in MariaDB4j is too short for CI environments under
+     * load, where InnoDB initialization can take longer. 120s provides a comfortable margin.
+     */
+    private static final int MARIADB_START_TIMEOUT_MS = 120_000;
+
     /** Initialize the shared MariaDB database for the tests. */
     private static void initSharedMariaDb() throws Exception {
         DBConfigurationBuilder config = DBConfigurationBuilder.newBuilder();
         config.setPort(0);
-        sharedMariaDb = DB.newEmbeddedDB(config.build());
-        sharedMariaDb.start();
+        DB db = DB.newEmbeddedDB(config.build());
+
+        // Increase the startup timeout from the default 30s — CI machines under load
+        // may need more time for InnoDB initialization before "ready for connections"
+        Field timeoutField = DB.class.getDeclaredField("dbStartMaxWaitInMS");
+        timeoutField.setAccessible(true);
+        timeoutField.setInt(db, MARIADB_START_TIMEOUT_MS);
+
+        db.start();
+        // Only assign to static field after successful start, so that surefire retries
+        // will re-attempt initialization if start() fails
+        sharedMariaDb = db;
 
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
         dataSource.setDriverClassName("org.mariadb.jdbc.Driver");
