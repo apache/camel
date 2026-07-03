@@ -28,7 +28,7 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 
 /**
- * Perform operations on the Langchain4jEmbeddingStores.
+ * Perform operations on the LangChain4jEmbeddingStores.
  */
 @UriEndpoint(
              firstVersion = "4.14.0",

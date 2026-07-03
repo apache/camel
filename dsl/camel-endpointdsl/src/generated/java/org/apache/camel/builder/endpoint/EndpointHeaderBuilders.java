@@ -81,7 +81,7 @@ public class EndpointHeaderBuilders {
     }
     /**
      * AMQP (camel-amqp)
-     * Messaging with AMQP protocol using Apache QPid Client.
+     * Messaging with AMQP protocol using Apache Qpid Client.
      * 
      * Category: messaging
      * Since: 1.2
@@ -198,8 +198,8 @@ public class EndpointHeaderBuilders {
         return BedrockAgentRuntimeEndpointBuilderFactory.BedrockAgentRuntimeHeaderNameBuilder.INSTANCE;
     }
     /**
-     * AWS Cloudtrail (camel-aws-cloudtrail)
-     * Consume events from Amazon Cloudtrail using AWS SDK version 2.x.
+     * AWS CloudTrail (camel-aws-cloudtrail)
+     * Consume events from Amazon CloudTrail using AWS SDK version 2.x.
      * 
      * Category: cloud,management,monitoring
      * Since: 3.19
@@ -994,8 +994,8 @@ public class EndpointHeaderBuilders {
         return DebeziumOracleEndpointBuilderFactory.DebeziumOracleHeaderNameBuilder.INSTANCE;
     }
     /**
-     * Debezium PostgresSQL Connector (camel-debezium-postgres)
-     * Capture changes from a PostgresSQL database.
+     * Debezium PostgreSQL Connector (camel-debezium-postgres)
+     * Capture changes from a PostgreSQL database.
      * 
      * Category: database
      * Since: 3.0
@@ -1143,7 +1143,7 @@ public class EndpointHeaderBuilders {
     }
     /**
      * Elasticsearch (camel-elasticsearch)
-     * Send requests to ElasticSearch via Java Client API.
+     * Send requests to Elasticsearch via Java Client API.
      * 
      * Category: search,monitoring
      * Since: 3.19
@@ -1540,8 +1540,8 @@ public class EndpointHeaderBuilders {
         return GrpcEndpointBuilderFactory.GrpcHeaderNameBuilder.INSTANCE;
     }
     /**
-     * Hashicorp Vault (camel-hashicorp-vault)
-     * Manage secrets in Hashicorp Vault Service
+     * HashiCorp Vault (camel-hashicorp-vault)
+     * Manage secrets in HashiCorp Vault Service
      * 
      * Category: cloud,cloud
      * Since: 3.18
@@ -2010,7 +2010,7 @@ public class EndpointHeaderBuilders {
     }
     /**
      * IRC (camel-irc)
-     * Send and receive messages to/from and IRC chat.
+     * Send and receive messages to/from an IRC chat.
      * 
      * Category: chat
      * Since: 1.1
@@ -2562,7 +2562,7 @@ public class EndpointHeaderBuilders {
     }
     /**
      * LangChain4j Embedding Store (camel-langchain4j-embeddingstore)
-     * Perform operations on the Langchain4jEmbeddingStores.
+     * Perform operations on the LangChain4jEmbeddingStores.
      * 
      * Category: database,ai
      * Since: 4.14
@@ -3131,7 +3131,7 @@ public class EndpointHeaderBuilders {
         return PdfEndpointBuilderFactory.PdfHeaderNameBuilder.INSTANCE;
     }
     /**
-     * PostgresSQL Event (camel-pgevent)
+     * PostgreSQL Event (camel-pgevent)
      * Send and receive PostgreSQL events via LISTEN and NOTIFY commands.
      * 
      * Category: database

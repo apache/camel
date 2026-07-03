@@ -35,7 +35,7 @@ import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
 public interface PgEventEndpointBuilderFactory {
 
     /**
-     * Builder for endpoint consumers for the PostgresSQL Event component.
+     * Builder for endpoint consumers for the PostgreSQL Event component.
      */
     public interface PgEventEndpointConsumerBuilder
             extends
@@ -75,7 +75,7 @@ public interface PgEventEndpointBuilderFactory {
     }
 
     /**
-     * Advanced builder for endpoint consumers for the PostgresSQL Event component.
+     * Advanced builder for endpoint consumers for the PostgreSQL Event component.
      */
     public interface AdvancedPgEventEndpointConsumerBuilder
             extends
@@ -364,7 +364,7 @@ public interface PgEventEndpointBuilderFactory {
     }
 
     /**
-     * Builder for endpoint producers for the PostgresSQL Event component.
+     * Builder for endpoint producers for the PostgreSQL Event component.
      */
     public interface PgEventEndpointProducerBuilder
             extends
@@ -405,7 +405,7 @@ public interface PgEventEndpointBuilderFactory {
     }
 
     /**
-     * Advanced builder for endpoint producers for the PostgresSQL Event component.
+     * Advanced builder for endpoint producers for the PostgreSQL Event component.
      */
     public interface AdvancedPgEventEndpointProducerBuilder extends EndpointProducerBuilder {
         default PgEventEndpointProducerBuilder basic() {
@@ -492,7 +492,7 @@ public interface PgEventEndpointBuilderFactory {
     }
 
     /**
-     * Builder for endpoint for the PostgresSQL Event component.
+     * Builder for endpoint for the PostgreSQL Event component.
      */
     public interface PgEventEndpointBuilder
             extends
@@ -534,7 +534,7 @@ public interface PgEventEndpointBuilderFactory {
     }
 
     /**
-     * Advanced builder for endpoint for the PostgresSQL Event component.
+     * Advanced builder for endpoint for the PostgreSQL Event component.
      */
     public interface AdvancedPgEventEndpointBuilder
             extends
@@ -579,7 +579,7 @@ public interface PgEventEndpointBuilderFactory {
 
     public interface PgEventBuilders {
         /**
-         * PostgresSQL Event (camel-pgevent)
+         * PostgreSQL Event (camel-pgevent)
          * Send and receive PostgreSQL events via LISTEN and NOTIFY commands.
          * 
          * Category: database
@@ -592,7 +592,7 @@ public interface PgEventEndpointBuilderFactory {
             return PgEventHeaderNameBuilder.INSTANCE;
         }
         /**
-         * PostgresSQL Event (camel-pgevent)
+         * PostgreSQL Event (camel-pgevent)
          * Send and receive PostgreSQL events via LISTEN and NOTIFY commands.
          * 
          * Category: database
@@ -624,7 +624,7 @@ public interface PgEventEndpointBuilderFactory {
             return PgEventEndpointBuilderFactory.endpointBuilder("pgevent", path);
         }
         /**
-         * PostgresSQL Event (camel-pgevent)
+         * PostgreSQL Event (camel-pgevent)
          * Send and receive PostgreSQL events via LISTEN and NOTIFY commands.
          * 
          * Category: database
@@ -660,7 +660,7 @@ public interface PgEventEndpointBuilderFactory {
 
     }
     /**
-     * The builder of headers' name for the PostgresSQL Event component.
+     * The builder of headers' name for the PostgreSQL Event component.
      */
     public static class PgEventHeaderNameBuilder {
         /**

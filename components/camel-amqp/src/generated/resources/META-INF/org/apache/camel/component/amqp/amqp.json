@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "amqp",
     "title": "AMQP",
-    "description": "Messaging with AMQP protocol using Apache QPid Client.",
+    "description": "Messaging with AMQP protocol using Apache Qpid Client.",
     "deprecated": false,
     "firstVersion": "1.2.0",
     "label": "messaging",

@@ -29,8 +29,8 @@
     <artifactId>camel-aws-cloudtrail</artifactId>
     <packaging>jar</packaging>
 
-    <name>Camel :: AWS Cloutrail</name>
-    <description>Consume Events coming from AWS Cloudtrail Service</description>
+    <name>Camel :: AWS CloudTrail</name>
+    <description>Consume Events coming from AWS CloudTrail Service</description>
 
     <properties>
     </properties>

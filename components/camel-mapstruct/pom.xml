@@ -28,8 +28,8 @@
 
     <artifactId>camel-mapstruct</artifactId>
     <packaging>jar</packaging>
-    <name>Camel :: Mapstruct</name>
-    <description>Type Conversion using Mapstruct</description>
+    <name>Camel :: MapStruct</name>
+    <description>Type Conversion using MapStruct</description>
 
     <properties>
         <firstVersion>3.19.0</firstVersion>

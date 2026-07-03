@@ -482,12 +482,12 @@ class ElasticsearchProducer extends DefaultAsyncProducer {
             lock.lock();
             try {
                 if (client == null) {
-                    LOG.info("Connecting to the ElasticSearch cluster: {}", configuration.getClusterName());
+                    LOG.info("Connecting to the Elasticsearch cluster: {}", configuration.getClusterName());
                     if (configuration.getHostAddressesList() != null
                             && !configuration.getHostAddressesList().isEmpty()) {
                         client = createClient();
                     } else {
-                        LOG.warn("Incorrect ip address and port parameters settings for ElasticSearch cluster");
+                        LOG.warn("Incorrect ip address and port parameters settings for Elasticsearch cluster");
                     }
                 }
             } finally {
@@ -535,7 +535,7 @@ class ElasticsearchProducer extends DefaultAsyncProducer {
     @Override
     protected void doStop() throws Exception {
         if (client != null) {
-            LOG.info("Disconnecting from ElasticSearch cluster: {}", configuration.getClusterName());
+            LOG.info("Disconnecting from Elasticsearch cluster: {}", configuration.getClusterName());
             client.close();
             if (sniffer != null) {
                 sniffer.close();

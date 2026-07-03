@@ -32,7 +32,7 @@ import org.apache.camel.component.pgevent.PgEventComponent;
 public interface PgeventComponentBuilderFactory {
 
     /**
-     * PostgresSQL Event (camel-pgevent)
+     * PostgreSQL Event (camel-pgevent)
      * Send and receive PostgreSQL events via LISTEN and NOTIFY commands.
      * 
      * Category: database
@@ -46,7 +46,7 @@ public interface PgeventComponentBuilderFactory {
     }
 
     /**
-     * Builder for the PostgresSQL Event component.
+     * Builder for the PostgreSQL Event component.
      */
     interface PgeventComponentBuilder extends ComponentBuilder<PgEventComponent> {
     

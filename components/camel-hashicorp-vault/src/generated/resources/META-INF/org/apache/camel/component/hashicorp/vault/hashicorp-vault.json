@@ -2,8 +2,8 @@
   "component": {
     "kind": "component",
     "name": "hashicorp-vault",
-    "title": "Hashicorp Vault",
-    "description": "Manage secrets in Hashicorp Vault Service",
+    "title": "HashiCorp Vault",
+    "description": "Manage secrets in HashiCorp Vault Service",
     "deprecated": false,
     "firstVersion": "3.18.0",
     "label": "cloud,cloud",

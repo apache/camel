@@ -29,8 +29,8 @@
     <artifactId>camel-hashicorp-vault</artifactId>
     <packaging>jar</packaging>
 
-    <name>Camel :: Hashicorp :: Key Vault</name>
-    <description>Camel Hashicorp Vault Component</description>
+    <name>Camel :: HashiCorp :: Key Vault</name>
+    <description>Camel HashiCorp Vault Component</description>
 
     <properties>
         <!-- Hashicorp vault container is not available on this platform -->

@@ -1,5 +1,5 @@
-= PostgresSQL Event Component
-:doctitle: PostgresSQL Event
+= PostgreSQL Event Component
+:doctitle: PostgreSQL Event
 :shortname: pgevent
 :artifactid: camel-pgevent
 :description: Send and receive PostgreSQL events via LISTEN and NOTIFY commands.

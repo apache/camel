@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "log",
     "title": "Log Data",
-    "description": "Prints data form the routed message (such as body and headers) to the logger.",
+    "description": "Prints data from the routed message (such as body and headers) to the logger.",
     "deprecated": false,
     "firstVersion": "1.1.0",
     "label": "core,monitoring",

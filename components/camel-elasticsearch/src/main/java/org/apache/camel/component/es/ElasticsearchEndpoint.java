@@ -27,7 +27,7 @@ import org.apache.camel.support.DefaultEndpoint;
 import org.elasticsearch.client.RestClient;
 
 /**
- * Send requests to ElasticSearch via Java Client API.
+ * Send requests to Elasticsearch via Java Client API.
  */
 @UriEndpoint(firstVersion = "3.19.0", scheme = "elasticsearch", title = "Elasticsearch",
              syntax = "elasticsearch:clusterName", producerOnly = true,

@@ -2,7 +2,7 @@
 :doctitle: LangChain4j Embedding Store
 :shortname: langchain4j-embeddingstore
 :artifactid: camel-langchain4j-embeddingstore
-:description: Perform operations on the Langchain4jEmbeddingStores.
+:description: Perform operations on the LangChain4jEmbeddingStores.
 :since: 4.14
 :supportlevel: Stable
 :tabs-sync-option:
