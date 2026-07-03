@@ -35,6 +35,7 @@ import dev.tamboui.text.Text;
 import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.tui.event.MouseEvent;
 import dev.tamboui.tui.event.MouseEventKind;
+import dev.tamboui.widgets.Clear;
 import dev.tamboui.widgets.barchart.Bar;
 import dev.tamboui.widgets.barchart.BarChart;
 import dev.tamboui.widgets.barchart.BarGroup;
@@ -1073,6 +1074,7 @@ class OverviewTab extends AbstractTab {
                 Span.styled(" F1 ", Theme.hintKey()),
                 Span.styled(".", Theme.muted()))));
 
+        frame.renderWidget(Clear.INSTANCE, area);
         frame.renderWidget(
                 Paragraph.builder()
                         .text(Text.from(lines))
