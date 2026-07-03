@@ -21,6 +21,7 @@ import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
@@ -145,12 +146,13 @@ class ExportTest {
     public void shouldGenerateProjectWithBuildProperties(RuntimeType rt) throws Exception {
         LOG.info("shouldGenerateProjectWithBuildProperties {}", rt);
         Export command = new Export(new CamelJBangMain());
-        CommandLine.populateCommand(command, "--gav=examples:route:1.0.0", "--dir=" + workingDir,
-                "--runtime=%s".formatted(rt.runtime()), "--build-property=foo=bar",
-                "target/test-classes/route.yaml");
+        List<String> cmdArgs = new ArrayList<>(List.of("--gav=examples:route:1.0.0", "--dir=" + workingDir,
+                "--runtime=%s".formatted(rt.runtime()), "--build-property=foo=bar"));
         if (rt == RuntimeType.springBoot) {
-            CommandLine.populateCommand(command, "--camel-version=" + RELEASED_CAMEL_VERSION);
+            cmdArgs.add("--camel-version=" + RELEASED_CAMEL_VERSION);
         }
+        cmdArgs.add("target/test-classes/route.yaml");
+        CommandLine.populateCommand(command, cmdArgs.toArray(String[]::new));
         int exit = command.doCall();
 
         Assertions.assertEquals(0, exit);
@@ -167,14 +169,16 @@ class ExportTest {
     public void testShouldGenerateProjectMultivalue(RuntimeType rt) throws Exception {
         LOG.info("testShouldGenerateProjectMultivalue {}", rt);
         Export command = new Export(new CamelJBangMain());
-        CommandLine.populateCommand(command, "--gav=examples:route:1.0.0", "--dir=" + workingDir,
-                "--runtime=%s".formatted(rt.runtime()), "--dep=foo:bar:1.0,jupiter:rocks:2.0",
-                // it's important for the --build-property to be the last parameter to test a previous
-                // export error when this property had arity=*
-                "--build-property=foo=bar", "--build-property=camel=rocks", "target/test-classes/route.yaml");
+        List<String> cmdArgs = new ArrayList<>(List.of("--gav=examples:route:1.0.0", "--dir=" + workingDir,
+                "--runtime=%s".formatted(rt.runtime()), "--dep=foo:bar:1.0,jupiter:rocks:2.0"));
         if (rt == RuntimeType.springBoot) {
-            CommandLine.populateCommand(command, "--camel-version=" + RELEASED_CAMEL_VERSION);
+            cmdArgs.add("--camel-version=" + RELEASED_CAMEL_VERSION);
         }
+        // it's important for the --build-property to be the last parameter to test a previous
+        // export error when this property had arity=*
+        cmdArgs.addAll(List.of("--build-property=foo=bar", "--build-property=camel=rocks",
+                "target/test-classes/route.yaml"));
+        CommandLine.populateCommand(command, cmdArgs.toArray(String[]::new));
         int exit = command.doCall();
 
         Assertions.assertEquals(0, exit);
@@ -224,12 +228,13 @@ class ExportTest {
     public void shouldExportWithJpaAndHibernate(RuntimeType rt) throws Exception {
         LOG.info("shouldExportWithJpaAndHibernate {}", rt);
         Export command = new Export(new CamelJBangMain());
-        CommandLine.populateCommand(command, "--gav=examples:route:1.0.0", "--dir=" + workingDir,
-                "--runtime=%s".formatted(rt.runtime()), "--dep=camel:jpa",
-                "target/test-classes/route.yaml");
+        List<String> cmdArgs = new ArrayList<>(List.of("--gav=examples:route:1.0.0", "--dir=" + workingDir,
+                "--runtime=%s".formatted(rt.runtime()), "--dep=camel:jpa"));
         if (rt == RuntimeType.springBoot) {
-            CommandLine.populateCommand(command, "--camel-version=" + RELEASED_CAMEL_VERSION);
+            cmdArgs.add("--camel-version=" + RELEASED_CAMEL_VERSION);
         }
+        cmdArgs.add("target/test-classes/route.yaml");
+        CommandLine.populateCommand(command, cmdArgs.toArray(String[]::new));
         int exit = command.doCall();
 
         Assertions.assertEquals(0, exit);
@@ -772,12 +777,13 @@ class ExportTest {
     public void shouldExportObserve(RuntimeType rt) throws Exception {
         LOG.info("shouldExportObserve {}", rt);
         Export command = new Export(new CamelJBangMain());
-        CommandLine.populateCommand(command, "--gav=examples:route:1.0.0", "--dir=" + workingDir,
-                "--runtime=%s".formatted(rt.runtime()), "--observe=true",
-                "target/test-classes/route.yaml");
+        List<String> cmdArgs = new ArrayList<>(List.of("--gav=examples:route:1.0.0", "--dir=" + workingDir,
+                "--runtime=%s".formatted(rt.runtime()), "--observe=true"));
         if (rt == RuntimeType.springBoot) {
-            CommandLine.populateCommand(command, "--camel-version=" + RELEASED_CAMEL_VERSION);
+            cmdArgs.add("--camel-version=" + RELEASED_CAMEL_VERSION);
         }
+        cmdArgs.add("target/test-classes/route.yaml");
+        CommandLine.populateCommand(command, cmdArgs.toArray(String[]::new));
         int exit = command.doCall();
 
         Assertions.assertEquals(0, exit);
@@ -805,11 +811,13 @@ class ExportTest {
     public void shouldExportFromDir(RuntimeType rt) throws Exception {
         LOG.info("shouldExportFromDir {}", rt);
         Export command = new Export(new CamelJBangMain());
-        CommandLine.populateCommand(command, "--gav=examples:route:1.0.0", "--dir=" + workingDir,
-                "--runtime=%s".formatted(rt.runtime()), "src/test/resources/myapp");
+        List<String> cmdArgs = new ArrayList<>(List.of("--gav=examples:route:1.0.0", "--dir=" + workingDir,
+                "--runtime=%s".formatted(rt.runtime())));
         if (rt == RuntimeType.springBoot) {
-            CommandLine.populateCommand(command, "--camel-version=" + RELEASED_CAMEL_VERSION);
+            cmdArgs.add("--camel-version=" + RELEASED_CAMEL_VERSION);
         }
+        cmdArgs.add("src/test/resources/myapp");
+        CommandLine.populateCommand(command, cmdArgs.toArray(String[]::new));
         int exit = command.doCall();
 
         Assertions.assertEquals(0, exit);
@@ -926,12 +934,13 @@ class ExportTest {
     public void shouldExportHawtio(RuntimeType rt) throws Exception {
         LOG.info("shouldExportHawtio {}", rt);
         Export command = new Export(new CamelJBangMain());
-        CommandLine.populateCommand(command, "--gav=examples:route:1.0.0", "--dir=" + workingDir,
-                "--runtime=%s".formatted(rt.runtime()), "--hawtio=true",
-                "target/test-classes/route.yaml");
+        List<String> cmdArgs = new ArrayList<>(List.of("--gav=examples:route:1.0.0", "--dir=" + workingDir,
+                "--runtime=%s".formatted(rt.runtime()), "--hawtio=true"));
         if (rt == RuntimeType.springBoot) {
-            CommandLine.populateCommand(command, "--camel-version=" + RELEASED_CAMEL_VERSION);
+            cmdArgs.add("--camel-version=" + RELEASED_CAMEL_VERSION);
         }
+        cmdArgs.add("target/test-classes/route.yaml");
+        CommandLine.populateCommand(command, cmdArgs.toArray(String[]::new));
         int exit = command.doCall();
 
         Assertions.assertEquals(0, exit);
@@ -976,11 +985,13 @@ class ExportTest {
     @MethodSource("runtimeProvider")
     public void shouldContainJibProfile(RuntimeType rt) throws Exception {
         Export command = new Export(new CamelJBangMain());
-        CommandLine.populateCommand(command, "--gav=examples:route:1.0.0", "--dir=" + workingDir,
-                "--runtime=%s".formatted(rt.runtime()), "src/test/resources/route.yaml");
+        List<String> cmdArgs = new ArrayList<>(List.of("--gav=examples:route:1.0.0", "--dir=" + workingDir,
+                "--runtime=%s".formatted(rt.runtime())));
         if (rt == RuntimeType.springBoot) {
-            CommandLine.populateCommand(command, "--camel-version=" + RELEASED_CAMEL_VERSION);
+            cmdArgs.add("--camel-version=" + RELEASED_CAMEL_VERSION);
         }
+        cmdArgs.add("src/test/resources/route.yaml");
+        CommandLine.populateCommand(command, cmdArgs.toArray(String[]::new));
         int exit = command.doCall();
 
         Assertions.assertEquals(0, exit);
