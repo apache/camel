@@ -71,7 +71,7 @@ class DependencyUpdateTest extends CamelCommandBaseTestSupport {
         DependencyUpdate command = new DependencyUpdate(new CamelJBangMain().withPrinter(secondUpdateCommandPrinter));
         CommandLine.populateCommand(command,
                 "--dir=" + workingDir,
-                "--camel-version=4.13.0",
+                "--camel-version=4.21.0",
                 CamelCommandBaseTestSupport.quarkusExtRegistry(),
                 new File(workingDir, "pom.xml").getAbsolutePath());
         int exit = command.doCall();
@@ -102,7 +102,7 @@ class DependencyUpdateTest extends CamelCommandBaseTestSupport {
         DependencyUpdate command = new DependencyUpdate(new CamelJBangMain().withPrinter(printer));
         CommandLine.populateCommand(command,
                 "--dir=" + workingDir,
-                "--camel-version=4.13.0",
+                "--camel-version=4.21.0",
                 CamelCommandBaseTestSupport.quarkusExtRegistry(),
                 new File(workingDir, "pom.xml").getAbsolutePath());
         int exit = command.doCall();
@@ -125,7 +125,7 @@ class DependencyUpdateTest extends CamelCommandBaseTestSupport {
         CommandLine.populateCommand(exportCommand,
                 "--gav=examples:route:1.0.0",
                 "--dir=" + workingDir,
-                "--camel-version=4.13.0",
+                "--camel-version=4.21.0",
                 "--runtime=" + rt.runtime(),
                 CamelCommandBaseTestSupport.quarkusExtRegistry(),
                 camelFilePath);
@@ -147,7 +147,7 @@ class DependencyUpdateTest extends CamelCommandBaseTestSupport {
         DependencyUpdate command = new DependencyUpdate(new CamelJBangMain().withPrinter(updatePrinter));
         CommandLine.populateCommand(command,
                 "--scan-routes",
-                "--camel-version=4.13.0",
+                "--camel-version=4.21.0",
                 "--dir=" + workingDir,
                 new File(workingDir, "pom.xml").getAbsolutePath());
         int exit = command.doCall();
@@ -245,7 +245,7 @@ class DependencyUpdateTest extends CamelCommandBaseTestSupport {
         // create a Java file with mixed Camel and non-Camel //DEPS
         Path javaFile = createFile("MyRoute.java", """
                 ///usr/bin/env jbang
-                //DEPS org.apache.camel:camel-bom:4.13.0@pom
+                //DEPS org.apache.camel:camel-bom:4.21.0@pom
                 //DEPS org.apache.camel:camel-kafka
                 //DEPS com.google.guava:guava:33.0.0-jre
                 //DEPS io.netty:netty-all:4.1.100.Final
