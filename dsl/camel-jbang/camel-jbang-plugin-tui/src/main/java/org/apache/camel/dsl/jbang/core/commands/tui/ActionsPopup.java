@@ -244,6 +244,7 @@ class ActionsPopup {
         this.mcpActivityLog = activityLog;
         mcpLogPopup.setActivityLog(activityLog);
         mcpLogPopup.setToolCallCount(toolCallCount);
+        doctorPopup.setMcpState(enabled, port, connectedClient);
     }
 
     void setAiActivityLog(Supplier<List<AiPanel.LogEntry>> activityLog) {

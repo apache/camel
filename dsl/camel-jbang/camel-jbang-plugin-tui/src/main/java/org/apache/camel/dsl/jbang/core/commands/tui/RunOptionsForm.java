@@ -474,7 +474,7 @@ class RunOptionsForm {
     // ---- Rendering ----
 
     private void renderOptionsPage(Frame frame, Rect area) {
-        int popupW = Math.min(64, area.width() - 4);
+        int popupW = Math.min(68, area.width() - 4);
         int popupH = errorMessage != null ? 18 : 17;
         int x = area.left() + Math.max(0, (area.width() - popupW) / 2);
         int y = area.top() + Math.max(0, (area.height() - popupH) / 4);
