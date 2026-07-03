@@ -43,6 +43,7 @@ class RoutesTabRenderTest {
 
     @BeforeEach
     void setUp() {
+        Theme.resetForTesting();
         info = new IntegrationInfo();
         info.pid = "5678";
         info.name = "my-integration";

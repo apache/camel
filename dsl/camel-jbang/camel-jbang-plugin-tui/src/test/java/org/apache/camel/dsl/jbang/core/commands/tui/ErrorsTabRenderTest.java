@@ -44,6 +44,7 @@ class ErrorsTabRenderTest {
 
     @BeforeEach
     void setUp() {
+        Theme.resetForTesting();
         info = new IntegrationInfo();
         info.pid = "9999";
         info.name = "error-test-app";

@@ -39,6 +39,7 @@ class ConfigurationTabRenderTest {
 
     @BeforeEach
     void setUp() {
+        Theme.resetForTesting();
         info = new IntegrationInfo();
         info.pid = "1234";
         info.name = "test-app";
