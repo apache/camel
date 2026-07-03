@@ -134,3 +134,7 @@ Terminal width is now detected on Windows (`cmd` / PowerShell) via `mode con`, i
 existing `COLUMNS` / `stty size` detection. When no terminal can be detected (for example when the
 output is piped or redirected), the width falls back to 120 columns. For full, untruncated output
 suitable for scripting, use the `--json` option.
+
+The `camel infra list` table now sizes its `DESCRIPTION` column to the terminal width, and truncates
+the `IMPLEMENTATION` and `SERVICE_DATA` columns with an ellipsis instead of letting the raw service
+data overflow the terminal. The complete, structured service data remains available via `--json`.
