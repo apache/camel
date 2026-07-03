@@ -146,8 +146,9 @@ class ExportTest {
     public void shouldGenerateProjectWithBuildProperties(RuntimeType rt) throws Exception {
         LOG.info("shouldGenerateProjectWithBuildProperties {}", rt);
         Export command = new Export(new CamelJBangMain());
-        List<String> cmdArgs = new ArrayList<>(List.of("--gav=examples:route:1.0.0", "--dir=" + workingDir,
-                "--runtime=%s".formatted(rt.runtime()), "--build-property=foo=bar"));
+        List<String> cmdArgs = new ArrayList<>(
+                List.of("--gav=examples:route:1.0.0", "--dir=" + workingDir,
+                        "--runtime=%s".formatted(rt.runtime()), "--build-property=foo=bar"));
         if (rt == RuntimeType.springBoot) {
             cmdArgs.add("--camel-version=" + RELEASED_CAMEL_VERSION);
         }
@@ -169,8 +170,9 @@ class ExportTest {
     public void testShouldGenerateProjectMultivalue(RuntimeType rt) throws Exception {
         LOG.info("testShouldGenerateProjectMultivalue {}", rt);
         Export command = new Export(new CamelJBangMain());
-        List<String> cmdArgs = new ArrayList<>(List.of("--gav=examples:route:1.0.0", "--dir=" + workingDir,
-                "--runtime=%s".formatted(rt.runtime()), "--dep=foo:bar:1.0,jupiter:rocks:2.0"));
+        List<String> cmdArgs = new ArrayList<>(
+                List.of("--gav=examples:route:1.0.0", "--dir=" + workingDir,
+                        "--runtime=%s".formatted(rt.runtime()), "--dep=foo:bar:1.0,jupiter:rocks:2.0"));
         if (rt == RuntimeType.springBoot) {
             cmdArgs.add("--camel-version=" + RELEASED_CAMEL_VERSION);
         }
@@ -228,8 +230,9 @@ class ExportTest {
     public void shouldExportWithJpaAndHibernate(RuntimeType rt) throws Exception {
         LOG.info("shouldExportWithJpaAndHibernate {}", rt);
         Export command = new Export(new CamelJBangMain());
-        List<String> cmdArgs = new ArrayList<>(List.of("--gav=examples:route:1.0.0", "--dir=" + workingDir,
-                "--runtime=%s".formatted(rt.runtime()), "--dep=camel:jpa"));
+        List<String> cmdArgs = new ArrayList<>(
+                List.of("--gav=examples:route:1.0.0", "--dir=" + workingDir,
+                        "--runtime=%s".formatted(rt.runtime()), "--dep=camel:jpa"));
         if (rt == RuntimeType.springBoot) {
             cmdArgs.add("--camel-version=" + RELEASED_CAMEL_VERSION);
         }
@@ -777,8 +780,9 @@ class ExportTest {
     public void shouldExportObserve(RuntimeType rt) throws Exception {
         LOG.info("shouldExportObserve {}", rt);
         Export command = new Export(new CamelJBangMain());
-        List<String> cmdArgs = new ArrayList<>(List.of("--gav=examples:route:1.0.0", "--dir=" + workingDir,
-                "--runtime=%s".formatted(rt.runtime()), "--observe=true"));
+        List<String> cmdArgs = new ArrayList<>(
+                List.of("--gav=examples:route:1.0.0", "--dir=" + workingDir,
+                        "--runtime=%s".formatted(rt.runtime()), "--observe=true"));
         if (rt == RuntimeType.springBoot) {
             cmdArgs.add("--camel-version=" + RELEASED_CAMEL_VERSION);
         }
@@ -811,8 +815,9 @@ class ExportTest {
     public void shouldExportFromDir(RuntimeType rt) throws Exception {
         LOG.info("shouldExportFromDir {}", rt);
         Export command = new Export(new CamelJBangMain());
-        List<String> cmdArgs = new ArrayList<>(List.of("--gav=examples:route:1.0.0", "--dir=" + workingDir,
-                "--runtime=%s".formatted(rt.runtime())));
+        List<String> cmdArgs = new ArrayList<>(
+                List.of("--gav=examples:route:1.0.0", "--dir=" + workingDir,
+                        "--runtime=%s".formatted(rt.runtime())));
         if (rt == RuntimeType.springBoot) {
             cmdArgs.add("--camel-version=" + RELEASED_CAMEL_VERSION);
         }
@@ -934,8 +939,9 @@ class ExportTest {
     public void shouldExportHawtio(RuntimeType rt) throws Exception {
         LOG.info("shouldExportHawtio {}", rt);
         Export command = new Export(new CamelJBangMain());
-        List<String> cmdArgs = new ArrayList<>(List.of("--gav=examples:route:1.0.0", "--dir=" + workingDir,
-                "--runtime=%s".formatted(rt.runtime()), "--hawtio=true"));
+        List<String> cmdArgs = new ArrayList<>(
+                List.of("--gav=examples:route:1.0.0", "--dir=" + workingDir,
+                        "--runtime=%s".formatted(rt.runtime()), "--hawtio=true"));
         if (rt == RuntimeType.springBoot) {
             cmdArgs.add("--camel-version=" + RELEASED_CAMEL_VERSION);
         }
@@ -985,8 +991,9 @@ class ExportTest {
     @MethodSource("runtimeProvider")
     public void shouldContainJibProfile(RuntimeType rt) throws Exception {
         Export command = new Export(new CamelJBangMain());
-        List<String> cmdArgs = new ArrayList<>(List.of("--gav=examples:route:1.0.0", "--dir=" + workingDir,
-                "--runtime=%s".formatted(rt.runtime())));
+        List<String> cmdArgs = new ArrayList<>(
+                List.of("--gav=examples:route:1.0.0", "--dir=" + workingDir,
+                        "--runtime=%s".formatted(rt.runtime())));
         if (rt == RuntimeType.springBoot) {
             cmdArgs.add("--camel-version=" + RELEASED_CAMEL_VERSION);
         }
