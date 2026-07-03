@@ -57,7 +57,7 @@ class ExportTest {
     // (camel-catalog-provider-springboot) comes from the separate camel-spring-boot project.
     // Its SNAPSHOT may not be deployed to Apache Snapshots, causing flaky CI failures.
     // Released versions are always available on Maven Central.
-    private static final String RELEASED_CAMEL_VERSION = "4.21.0";
+    private static final String RELEASED_CAMEL_VERSION = "4.13.0";
 
     private File workingDir;
 
