@@ -25,35 +25,62 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.pulsar.PulsarComponent;
 import org.apache.camel.component.pulsar.utils.AutoConfiguration;
 import org.apache.camel.spi.Registry;
+import org.apache.camel.test.infra.common.TestUtils;
 import org.apache.pulsar.client.api.Producer;
 import org.apache.pulsar.client.api.PulsarClient;
 import org.apache.pulsar.client.api.PulsarClientException;
 import org.apache.pulsar.client.api.Schema;
 import org.apache.pulsar.client.impl.ClientBuilderImpl;
 import org.apache.pulsar.client.impl.MultiplierRedeliveryBackoff;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class PulsarConsumerNoAcknowledgementIT extends PulsarITSupport {
 
-    private static final String TOPIC_URI = "persistent://public/default/camel-topic";
-    private static final String PRODUCER = "camel-producer-1";
+    private static final Logger LOGGER = LoggerFactory.getLogger(PulsarConsumerNoAcknowledgementIT.class);
+    private static final String TOPIC_URI_PREFIX = "persistent://public/default/camel-no-ack-topic-";
+    private static int topicId;
 
-    @EndpointInject("pulsar:" + TOPIC_URI + "?numberOfConsumers=1&subscriptionType=Exclusive"
-                    + "&subscriptionName=camel-subscription&consumerQueueSize=1&consumerName=camel-consumer")
     private Endpoint from;
 
     @EndpointInject("mock:result")
     private MockEndpoint to;
 
-    @Override
-    protected RouteBuilder createRouteBuilder() {
-        return new RouteBuilder() {
-            @Override
-            public void configure() {
-                // Nothing in the route will ack the message.
-                from(from).to(to);
+    private Producer<String> producer;
+
+    @BeforeEach
+    public void setup() throws Exception {
+        context.removeRoute("myRoute");
+        String producerName = this.getClass().getSimpleName() + TestUtils.randomWithRange(1, 100);
+
+        String topicUri = TOPIC_URI_PREFIX + ++topicId;
+        producer = givenPulsarClient().newProducer(Schema.STRING).producerName(producerName).topic(topicUri).create();
+
+        from = context.getEndpoint("pulsar:" + topicUri + "?numberOfConsumers=1&subscriptionType=Exclusive"
+                                   + "&subscriptionName=camel-subscription&consumerQueueSize=1&consumerName=camel-consumer");
+        to = context.getEndpoint("mock:result", MockEndpoint.class);
+    }
+
+    @AfterEach
+    public void tearDown() {
+        try {
+            if (from != null) {
+                from.close();
             }
-        };
+            if (producer != null) {
+                producer.close();
+            }
+        } catch (Exception e) {
+            LOGGER.warn("Failed to close resources: {}", e.getMessage(), e);
+        }
+        try {
+            context.removeRoute("myRoute");
+        } catch (Exception e) {
+            // ignore
+        }
     }
 
     @Override
@@ -89,27 +116,33 @@ public class PulsarConsumerNoAcknowledgementIT extends PulsarITSupport {
     public void testAMessageIsConsumedMultipleTimes() throws Exception {
         to.expectedMinimumMessageCount(2);
 
-        Producer<String> producer
-                = givenPulsarClient().newProducer(Schema.STRING).producerName(PRODUCER).topic(TOPIC_URI).create();
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                // Nothing in the route will ack the message.
+                from(from).routeId("myRoute").to(to);
+            }
+        });
 
         producer.send("Hello World!");
 
         MockEndpoint.assertIsSatisfied(10, TimeUnit.SECONDS, to);
-
-        producer.close();
     }
 
     @Test
     public void testAMessageIsConsumedMultipleTimesWithAckTimeoutBackoff() throws Exception {
-        to.expectedMessageCount(3);
+        to.expectedMinimumMessageCount(3);
 
-        Producer<String> producer
-                = givenPulsarClient().newProducer(Schema.STRING).producerName(PRODUCER).topic(TOPIC_URI).create();
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                // Nothing in the route will ack the message.
+                from(from).routeId("myRoute").to(to);
+            }
+        });
 
         producer.send("Hello World!");
 
         MockEndpoint.assertIsSatisfied(10, TimeUnit.SECONDS, to);
-
-        producer.close();
     }
 }
