@@ -17,7 +17,9 @@
 package org.apache.camel.component.vertx.websocket;
 
 import java.net.ConnectException;
+import java.util.concurrent.TimeUnit;
 
+import io.vertx.core.http.WebSocket;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.RoutesBuilder;
@@ -25,6 +27,8 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import static org.awaitility.Awaitility.await;
 
 public class VertxWebsocketConsumerAsClientReconnectTest extends VertxWebSocketTestSupport {
     @Test
@@ -56,12 +60,27 @@ public class VertxWebsocketConsumerAsClientReconnectTest extends VertxWebSocketT
         // Restart server
         context.getRouteController().startRoute("server");
 
-        // Wait for client consumer reconnect
-        Thread.sleep(300);
-
-        // Verify that the client consumer reconnected
-        template.sendBody(uri, "Hello World Again");
-        mockEndpoint.assertIsSatisfied();
+        // Wait for client consumer to reconnect and verify it can receive messages.
+        // After the server is stopped, the client consumer's close handler fires
+        // asynchronously on the Vert.x event loop. Once it fires, the reconnect
+        // timer starts and will connect to the restarted server.
+        // Use a fresh WebSocket connection to send messages (bypassing the Camel
+        // producer endpoint's stale cached WebSocket from the pre-stop send).
+        await().atMost(20, TimeUnit.SECONDS)
+                .pollInterval(500, TimeUnit.MILLISECONDS)
+                .ignoreExceptions()
+                .untilAsserted(() -> {
+                    mockEndpoint.reset();
+                    mockEndpoint.expectedBodiesReceived("Hello World Again");
+                    WebSocket ws = openWebSocketConnection("localhost", port.getPort(), "/echo", msg -> {
+                    });
+                    try {
+                        ws.writeTextMessage("Hello World Again");
+                        mockEndpoint.assertIsSatisfied(500);
+                    } finally {
+                        ws.close();
+                    }
+                });
     }
 
     @Override

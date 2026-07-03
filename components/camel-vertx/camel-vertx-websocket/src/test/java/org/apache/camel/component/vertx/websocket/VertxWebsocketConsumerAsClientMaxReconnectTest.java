@@ -17,6 +17,7 @@
 package org.apache.camel.component.vertx.websocket;
 
 import java.net.ConnectException;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -25,6 +26,8 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import static org.awaitility.Awaitility.await;
 
 public class VertxWebsocketConsumerAsClientMaxReconnectTest extends VertxWebSocketTestSupport {
     @Test
@@ -54,14 +57,21 @@ public class VertxWebsocketConsumerAsClientMaxReconnectTest extends VertxWebSock
         Assertions.assertInstanceOf(ConnectException.class, exception.getCause());
 
         // Wait for client consumer reconnect max attempts to be exhausted
-        Thread.sleep(300);
+        // (maxReconnectAttempts=1, reconnectInterval=10ms)
+        await().atMost(10, TimeUnit.SECONDS)
+                .pollInterval(100, TimeUnit.MILLISECONDS)
+                .during(2, TimeUnit.SECONDS)
+                .untilAsserted(() -> {
+                    // Keep verifying the mock stays at 0 while reconnect attempts exhaust
+                    mockEndpoint.assertIsSatisfied();
+                });
 
         // Restart server
         context.getRouteController().startRoute("server");
 
         // Verify that the client consumer gave up reconnecting
         template.sendBody(uri, "Hello World Again");
-        mockEndpoint.assertIsSatisfied();
+        mockEndpoint.assertIsSatisfied(1000);
     }
 
     @Override
