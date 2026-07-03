@@ -16,11 +16,14 @@
  */
 package org.apache.camel.processor.aggregate.jdbc;
 
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.Test;
 
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -62,10 +65,10 @@ public class JdbcAggregationRepositoryRecoverExistingTest extends AbstractJdbcAg
 
         String id = exchange1.getExchangeId();
 
-        // stop the repo
+        // stop the repo and wait for it to be fully stopped
         repo.stop();
-
-        Thread.sleep(1000);
+        await().atMost(5, TimeUnit.SECONDS)
+                .until(() -> repo.isStopped());
 
         // load the repo again
         repo.start();
