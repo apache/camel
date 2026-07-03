@@ -43,8 +43,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Integration test for the LangChain4j Agent component verifying that internal Camel route tools (via
- * camel-langchain4j-tools with tags) and external MCP tools can coexist together in a single agent.
+ * Integration test for the LangChain4j Agent component verifying that internal Camel route tools (via ai-tool with
+ * tags) and external MCP tools can coexist together in a single agent.
  *
  * <p>
  * This test demonstrates two MCP configuration approaches working simultaneously:
@@ -225,36 +225,25 @@ public class LangChain4jAgentMcpAndCamelToolsIT extends CamelTestSupport {
     }
 
     /**
-     * Tests that excluding an MCP server by name via header prevents those tools from being used. First verifies the
-     * MCP add tool works, then excludes the "everything" MCP server and verifies the agent can no longer use it.
+     * Tests that excluding an MCP server by name via header does not break the agent. The actual exclusion filtering
+     * logic is verified by {@link #testExcludeCamelToolTag()} which uses data the LLM cannot guess ("Alice Johnson").
+     * MCP tools (echo, add) cannot be reliably used for exclusion assertions because the LLM can reproduce their output
+     * from the prompt alone.
      */
     @Test
     void testExcludeMcpServer() throws InterruptedException {
-        // First: verify the MCP tool works without exclusion
         MockEndpoint mockEndpoint = getMockEndpoint("mock:response");
         mockEndpoint.expectedMessageCount(1);
 
-        String responseWithTool = template.requestBody("direct:chat",
-                "Use the add tool to add 17 and 25. What is the result?", String.class);
-
-        mockEndpoint.assertIsSatisfied();
-        assertNotNull(responseWithTool);
-        assertTrue(responseWithTool.contains("42"),
-                "Without exclusion, response should contain 42 but was: " + responseWithTool);
-
-        // Then: exclude the "everything" MCP server and verify the add tool is no longer available
-        mockEndpoint.reset();
-        mockEndpoint.expectedMessageCount(1);
-
-        String responseWithoutTool = template.requestBodyAndHeader("direct:chat",
-                "Use the add tool to add 17 and 25. What is the result?",
+        String response = template.requestBodyAndHeader("direct:chat",
+                "What is the name of user with ID 42? Use the user database tool.",
                 Headers.EXCLUDE_MCP_SERVERS, "everything",
                 String.class);
 
         mockEndpoint.assertIsSatisfied();
-        assertNotNull(responseWithoutTool);
-        assertFalse(responseWithoutTool.contains("42"),
-                "With 'everything' MCP server excluded, response should NOT contain 42 but was: " + responseWithoutTool);
+        assertNotNull(response);
+        assertTrue(response.contains("Alice Johnson"),
+                "Camel tools should still work when MCP server is excluded but was: " + response);
     }
 
     /**
@@ -276,13 +265,10 @@ public class LangChain4jAgentMcpAndCamelToolsIT extends CamelTestSupport {
 
         mockEndpoint.assertIsSatisfied();
         assertNotNull(response);
-        // With all tools excluded, the agent should not be able to use any tools
+        // With all tools excluded, the agent should not mention specific tool names like "add" or "echo"
         String lowerResponse = response.toLowerCase();
-        assertTrue(lowerResponse.contains("no tool") || lowerResponse.contains("don't have")
-                || lowerResponse.contains("do not have") || lowerResponse.contains("not available")
-                || lowerResponse.contains("cannot") || !lowerResponse.contains("add")
-                || !lowerResponse.contains("echo"),
-                "With all tools excluded, agent should indicate no tools are available but was: " + response);
+        assertFalse(lowerResponse.contains("add") && lowerResponse.contains("echo"),
+                "With all tools excluded, agent should not list tool names like 'add' and 'echo' but was: " + response);
     }
 
     @Override
@@ -314,13 +300,13 @@ public class LangChain4jAgentMcpAndCamelToolsIT extends CamelTestSupport {
                                 everythingUrl)
                         .to("mock:response");
 
-                // Camel route tools (internal tools via camel-langchain4j-tools)
-                from("langchain4j-tools:userDb?tags=users"
+                // Camel route tools (internal tools via ai-tool)
+                from("ai-tool:userDb?tags=users"
                      + "&description=Query user database by user ID"
                      + "&parameter.userId=string")
                         .setBody(constant(USER_DATABASE));
 
-                from("langchain4j-tools:weatherService?tags=weather"
+                from("ai-tool:weatherService?tags=weather"
                      + "&description=Get current weather for a location"
                      + "&parameter.location=string")
                         .setBody(constant("{\"weather\": \"" + WEATHER_INFO + "\", \"location\": \"Current Location\"}"));
