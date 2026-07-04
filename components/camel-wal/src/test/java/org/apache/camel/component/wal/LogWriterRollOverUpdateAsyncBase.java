@@ -86,11 +86,18 @@ abstract class LogWriterRollOverUpdateAsyncBase extends LogTestBase {
 
         executorService.shutdown();
 
-        // Wait for both tasks to complete using Awaitility instead of only
-        // waiting for the generate task via a latch, which left a race window
-        // where the update task could still be running when verification began.
-        await().atMost(2, TimeUnit.MINUTES)
-                .until(executorService::isTerminated);
+        try {
+            // Wait for both tasks to complete using Awaitility instead of only
+            // waiting for the generate task via a latch, which left a race window
+            // where the update task could still be running when verification began.
+            await().atMost(2, TimeUnit.MINUTES)
+                    .until(executorService::isTerminated);
+        } finally {
+            if (!executorService.isTerminated()) {
+                executorService.shutdownNow();
+                executorService.awaitTermination(30, TimeUnit.SECONDS);
+            }
+        }
 
         // Propagate any exceptions from the tasks
         try {
