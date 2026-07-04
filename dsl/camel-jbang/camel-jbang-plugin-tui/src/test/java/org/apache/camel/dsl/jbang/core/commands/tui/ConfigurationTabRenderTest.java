@@ -104,7 +104,7 @@ class ConfigurationTabRenderTest {
         ConfigurationTab tab = new ConfigurationTab(ctx);
         String rendered = TuiTestHelper.renderToString(tab, 120, 20);
 
-        assertTrue(rendered.contains("2 properties"), "Title should show property count");
+        assertTrue(rendered.contains("[2]"), "Title should show property count");
     }
 
     @Test
