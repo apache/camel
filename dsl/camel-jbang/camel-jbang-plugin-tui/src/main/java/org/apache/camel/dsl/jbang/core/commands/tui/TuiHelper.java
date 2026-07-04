@@ -762,6 +762,74 @@ final class TuiHelper {
         return false;
     }
 
+    static int listItemAt(Rect popup, int offset, int itemCount, int mouseX, int mouseY) {
+        if (popup == null) {
+            return -1;
+        }
+        int innerLeft = popup.x() + 1;
+        int innerRight = popup.x() + popup.width() - 1;
+        int firstRow = popup.y() + 1;
+        int lastRow = popup.y() + popup.height() - 1;
+        if (mouseX < innerLeft || mouseX >= innerRight) {
+            return -1;
+        }
+        if (mouseY < firstRow || mouseY >= lastRow) {
+            return -1;
+        }
+        int idx = offset + (mouseY - firstRow);
+        return idx >= 0 && idx < itemCount ? idx : -1;
+    }
+
+    static List<String> wrapWords(String text, int maxWidth) {
+        List<String> lines = new ArrayList<>();
+        StringBuilder line = new StringBuilder();
+        for (String word : text.split(" ")) {
+            if (line.isEmpty()) {
+                line.append(word);
+            } else if (line.length() + 1 + word.length() <= maxWidth) {
+                line.append(' ').append(word);
+            } else {
+                lines.add(line.toString());
+                line.setLength(0);
+                line.append(word);
+            }
+        }
+        if (!line.isEmpty()) {
+            lines.add(line.toString());
+        }
+        return lines;
+    }
+
+    static String capitalize(String s) {
+        if (s == null || s.isEmpty()) {
+            return s;
+        }
+        return Character.toUpperCase(s.charAt(0)) + s.substring(1);
+    }
+
+    static List<String> readAllLines(Path file) {
+        try {
+            return Files.readAllLines(file);
+        } catch (IOException e) {
+            return List.of();
+        }
+    }
+
+    static String readFirstLine(Path file) {
+        try {
+            List<String> lines = Files.readAllLines(file);
+            for (String line : lines) {
+                String trimmed = line.trim();
+                if (!trimmed.isEmpty()) {
+                    return truncate(trimmed, 60);
+                }
+            }
+        } catch (IOException e) {
+            // ignore
+        }
+        return null;
+    }
+
     private static boolean isCamelJava(Path path) {
         try {
             String content = Files.readString(path, StandardCharsets.UTF_8);

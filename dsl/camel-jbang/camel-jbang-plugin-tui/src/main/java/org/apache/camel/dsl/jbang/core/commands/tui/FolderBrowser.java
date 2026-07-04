@@ -64,6 +64,10 @@ class FolderBrowser {
         return visible;
     }
 
+    void close() {
+        visible = false;
+    }
+
     void setOnSelect(Consumer<String> onSelect) {
         this.onSelect = onSelect;
     }
