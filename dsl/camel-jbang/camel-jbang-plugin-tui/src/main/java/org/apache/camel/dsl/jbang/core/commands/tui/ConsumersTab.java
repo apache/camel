@@ -27,6 +27,9 @@ import dev.tamboui.style.Color;
 import dev.tamboui.style.Style;
 import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.Span;
+import dev.tamboui.tui.event.KeyCode;
+import dev.tamboui.tui.event.KeyEvent;
+import dev.tamboui.tui.event.MouseEvent;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
 import dev.tamboui.widgets.block.Borders;
@@ -42,6 +45,29 @@ class ConsumersTab extends AbstractTableTab {
 
     ConsumersTab(MonitorContext ctx) {
         super(ctx, "id", "status", "type", "inflight", "polls", "uri");
+    }
+
+    @Override
+    public void navigateUp() {
+    }
+
+    @Override
+    public void navigateDown() {
+    }
+
+    @Override
+    public boolean handleKeyEvent(KeyEvent ke) {
+        if (ke.isPageUp() || ke.isKey(KeyCode.PAGE_UP)
+                || ke.isPageDown() || ke.isKey(KeyCode.PAGE_DOWN)
+                || ke.isHome() || ke.isEnd()) {
+            return false;
+        }
+        return super.handleKeyEvent(ke);
+    }
+
+    @Override
+    public boolean handleMouseEvent(MouseEvent me, Rect area) {
+        return false;
     }
 
     @Override
@@ -74,7 +100,7 @@ class ConsumersTab extends AbstractTableTab {
                     : (ci.uri != null ? ci.uri : "");
 
             rows.add(Row.from(
-                    Cell.from(Span.styled(ci.id != null ? ci.id : "", Style.EMPTY.fg(Color.CYAN))),
+                    Cell.from(Span.styled(" " + (ci.id != null ? ci.id : ""), Style.EMPTY.fg(Color.CYAN))),
                     Cell.from(Span.styled(statusText, statusStyle)),
                     Cell.from(type),
                     rightCell(String.valueOf(ci.inflight), 8),
@@ -91,7 +117,7 @@ class ConsumersTab extends AbstractTableTab {
         Table table = Table.builder()
                 .rows(rows)
                 .header(Row.from(
-                        Cell.from(Span.styled(sortLabel("ROUTE", "id"), sortStyle("id"))),
+                        Cell.from(Span.styled(" " + sortLabel("ROUTE", "id"), sortStyle("id"))),
                         Cell.from(Span.styled(sortLabel("STATUS", "status"), sortStyle("status"))),
                         Cell.from(Span.styled(sortLabel("TYPE", "type"), sortStyle("type"))),
                         rightCell(sortLabel("INFLIGHT", "inflight"), 8, sortStyle("inflight")),

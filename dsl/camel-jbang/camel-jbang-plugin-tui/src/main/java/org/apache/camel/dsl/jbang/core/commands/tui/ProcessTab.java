@@ -111,6 +111,7 @@ class ProcessTab extends AbstractTab {
         List<Line> lines = new ArrayList<>();
 
         addField(lines, "PID", info.pid);
+        addField(lines, "User", getProcessUser(info.pid));
         addField(lines, "Name", info.name);
         addField(lines, "Camel", info.camelVersion);
 
@@ -213,6 +214,10 @@ class ProcessTab extends AbstractTab {
         result.put("tab", "Process");
         JsonObject data = new JsonObject();
         data.put("pid", info.pid);
+        String user = getProcessUser(info.pid);
+        if (user != null) {
+            data.put("user", user);
+        }
         data.put("name", info.name);
         data.put("camelVersion", info.camelVersion);
         data.put("platform", info.platform);
@@ -239,6 +244,17 @@ class ProcessTab extends AbstractTab {
         lines.add(Line.from(
                 Span.styled(padded, Style.EMPTY.dim()),
                 Span.styled(value, Style.EMPTY.fg(Color.WHITE).bold())));
+    }
+
+    private static String getProcessUser(String pid) {
+        try {
+            long p = Long.parseLong(pid);
+            return ProcessHandle.of(p)
+                    .flatMap(ph -> ph.info().user())
+                    .orElse(null);
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     private static String getCommandLine(String pid) {

@@ -103,10 +103,6 @@ class StartupTab extends AbstractTab {
             scrollOffset = Integer.MAX_VALUE;
             return true;
         }
-        if (ke.isKey(KeyCode.F5)) {
-            loadStartupData();
-            return true;
-        }
         return false;
     }
 
@@ -260,8 +256,7 @@ class StartupTab extends AbstractTab {
     public void renderFooter(List<Span> spans) {
         hint(spans, "Esc", "back");
         hint(spans, "↑↓", "scroll");
-        hint(spans, "PgUp/Dn", "page");
-        hintLast(spans, "F5", "reload");
+        hintLast(spans, "PgUp/Dn", "page");
     }
 
     private void loadStartupData() {

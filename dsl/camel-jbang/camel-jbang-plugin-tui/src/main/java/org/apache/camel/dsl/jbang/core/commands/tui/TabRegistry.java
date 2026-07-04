@@ -321,6 +321,10 @@ class TabRegistry {
         return sqlQueryTab;
     }
 
+    ClasspathTab classpathTab() {
+        return classpathTab;
+    }
+
     // ---- Tab entries for Go-to and MCP ----
 
     record TabEntry(String name, String description, String shortcut, int tabIndex, int moreIndex) {

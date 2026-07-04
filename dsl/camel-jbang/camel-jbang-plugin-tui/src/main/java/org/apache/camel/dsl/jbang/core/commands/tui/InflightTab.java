@@ -27,6 +27,9 @@ import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.Line;
 import dev.tamboui.text.Span;
 import dev.tamboui.text.Text;
+import dev.tamboui.tui.event.KeyCode;
+import dev.tamboui.tui.event.KeyEvent;
+import dev.tamboui.tui.event.MouseEvent;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
 import dev.tamboui.widgets.block.Borders;
@@ -53,6 +56,29 @@ class InflightTab extends AbstractTableTab {
         super(ctx, "status", "exchange", "route", "duration");
         sortIndex = 3;
         sort = "duration";
+    }
+
+    @Override
+    public void navigateUp() {
+    }
+
+    @Override
+    public void navigateDown() {
+    }
+
+    @Override
+    public boolean handleKeyEvent(KeyEvent ke) {
+        if (ke.isPageUp() || ke.isKey(KeyCode.PAGE_UP)
+                || ke.isPageDown() || ke.isKey(KeyCode.PAGE_DOWN)
+                || ke.isHome() || ke.isEnd()) {
+            return false;
+        }
+        return super.handleKeyEvent(ke);
+    }
+
+    @Override
+    public boolean handleMouseEvent(MouseEvent me, Rect area) {
+        return false;
     }
 
     @Override
@@ -90,7 +116,7 @@ class InflightTab extends AbstractTableTab {
             Span barSpan = buildDurationBar(ii.duration, maxDuration, 20);
 
             rows.add(Row.from(
-                    Cell.from(Span.styled(status, statusStyle)),
+                    Cell.from(Span.styled(" " + status, statusStyle)),
                     Cell.from(Span.styled(ii.exchangeId != null ? ii.exchangeId : "", Style.EMPTY.fg(Color.CYAN))),
                     Cell.from(routeNode),
                     rightCell(duration, 14, durationStyle),
@@ -106,7 +132,7 @@ class InflightTab extends AbstractTableTab {
         Table table = Table.builder()
                 .rows(rows)
                 .header(Row.from(
-                        Cell.from(Span.styled(sortLabel("STATUS", "status"), sortStyle("status"))),
+                        Cell.from(Span.styled(" " + sortLabel("STATUS", "status"), sortStyle("status"))),
                         Cell.from(Span.styled(sortLabel("EXCHANGE ID", "exchange"), sortStyle("exchange"))),
                         Cell.from(Span.styled(sortLabel("ROUTE/NODE", "route"), sortStyle("route"))),
                         rightCell(sortLabel("DURATION", "duration"), 14, sortStyle("duration")),

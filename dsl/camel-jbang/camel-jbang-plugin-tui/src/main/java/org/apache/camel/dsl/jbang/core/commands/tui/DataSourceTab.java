@@ -25,8 +25,12 @@ import dev.tamboui.style.Color;
 import dev.tamboui.style.Style;
 import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.Span;
+import dev.tamboui.tui.event.KeyCode;
+import dev.tamboui.tui.event.KeyEvent;
+import dev.tamboui.tui.event.MouseEvent;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
+import dev.tamboui.widgets.block.Borders;
 import dev.tamboui.widgets.table.Cell;
 import dev.tamboui.widgets.table.Row;
 import dev.tamboui.widgets.table.Table;
@@ -39,6 +43,29 @@ class DataSourceTab extends AbstractTableTab {
 
     DataSourceTab(MonitorContext ctx) {
         super(ctx, "name", "pool", "active", "idle", "total", "max", "waiting");
+    }
+
+    @Override
+    public void navigateUp() {
+    }
+
+    @Override
+    public void navigateDown() {
+    }
+
+    @Override
+    public boolean handleKeyEvent(KeyEvent ke) {
+        if (ke.isPageUp() || ke.isKey(KeyCode.PAGE_UP)
+                || ke.isPageDown() || ke.isKey(KeyCode.PAGE_DOWN)
+                || ke.isHome() || ke.isEnd()) {
+            return false;
+        }
+        return super.handleKeyEvent(ke);
+    }
+
+    @Override
+    public boolean handleMouseEvent(MouseEvent me, Rect area) {
+        return false;
     }
 
     @Override
@@ -67,7 +94,7 @@ class DataSourceTab extends AbstractTableTab {
             String poolLabel = di.poolName != null ? di.poolName : (di.poolType != null ? di.poolType : "");
 
             rows.add(Row.from(
-                    Cell.from(Span.styled(di.name != null ? di.name : "", Style.EMPTY.fg(Color.CYAN))),
+                    Cell.from(Span.styled(" " + (di.name != null ? di.name : ""), Style.EMPTY.fg(Color.CYAN))),
                     Cell.from(poolLabel),
                     rightCell(String.valueOf(di.active), 8, activeStyle),
                     rightCell(String.valueOf(di.idle), 8),
@@ -84,7 +111,7 @@ class DataSourceTab extends AbstractTableTab {
         Table table = Table.builder()
                 .rows(rows)
                 .header(Row.from(
-                        Cell.from(Span.styled(sortLabel("NAME", "name"), sortStyle("name"))),
+                        Cell.from(Span.styled(" " + sortLabel("NAME", "name"), sortStyle("name"))),
                         Cell.from(Span.styled(sortLabel("POOL", "pool"), sortStyle("pool"))),
                         rightCell(sortLabel("ACTIVE", "active"), 8, sortStyle("active")),
                         rightCell(sortLabel("IDLE", "idle"), 8, sortStyle("idle")),
@@ -101,7 +128,7 @@ class DataSourceTab extends AbstractTableTab {
                         Constraint.length(8),
                         Constraint.length(8),
                         Constraint.fill())
-                .block(Block.builder().borderType(BorderType.ROUNDED)
+                .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
                         .title(" DataSource sort:" + sort + " ").build())
                 .build();
 

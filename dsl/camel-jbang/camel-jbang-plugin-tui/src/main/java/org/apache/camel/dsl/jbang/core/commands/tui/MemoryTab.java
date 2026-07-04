@@ -131,7 +131,7 @@ class MemoryTab extends AbstractTab {
 
             // Compute heap trend from history
             LinkedList<Long> hist = heapMemHistory.get(info.pid);
-            Span trendSpan = computeTrendSpan(hist);
+            Span trendSpan = computeTrendSpan(hist, info.heapMemCommitted);
 
             lines.add(Line.from(
                     Span.styled("  used:      ", Style.EMPTY.dim()),
@@ -380,7 +380,7 @@ class MemoryTab extends AbstractTab {
         }
     }
 
-    private static Span computeTrendSpan(LinkedList<Long> hist) {
+    private static Span computeTrendSpan(LinkedList<Long> hist, long heapCeiling) {
         // need at least 30 samples (~2.5 min at 5s intervals) for a meaningful trend
         if (hist == null || hist.size() < 30) {
             return null;
@@ -409,6 +409,13 @@ class MemoryTab extends AbstractTab {
         // each sample is taken every 5 seconds (HEAP_SAMPLE_INTERVAL_MS)
         long seconds = size * 5L;
         String period = seconds >= 60 ? (seconds / 60) + "m" : seconds + "s";
+
+        // ignore small fluctuations relative to heap capacity (at least 5M or 1% of ceiling)
+        long threshold = Math.max(5 * 1024 * 1024, (long) (heapCeiling * 0.01));
+        if (Math.abs(diff) < threshold) {
+            return Span.styled("  → stable over last " + period, Style.EMPTY.fg(Color.GREEN));
+        }
+
         if (change > 0.05) {
             return Span.styled(
                     String.format("  ↑ growing by %d%% (%s) over last %s", pct, formatBytes(diff), period),

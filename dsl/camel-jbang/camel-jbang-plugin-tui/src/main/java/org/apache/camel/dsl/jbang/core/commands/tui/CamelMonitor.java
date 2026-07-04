@@ -569,10 +569,14 @@ public class CamelMonitor extends CamelCommand {
         boolean beanFilterActive = tabRegistry.selectedTabIndex() == TAB_MORE
                 && tabRegistry.getActiveMoreTab() == tabRegistry.beansTab()
                 && tabRegistry.beansTab().isFilterInputActive();
+        boolean classpathFilterActive = tabRegistry.selectedTabIndex() == TAB_MORE
+                && tabRegistry.getActiveMoreTab() == tabRegistry.classpathTab()
+                && tabRegistry.classpathTab().isFilterInputActive();
         boolean sqlInputActive = tabRegistry.selectedTabIndex() == TAB_MORE
                 && tabRegistry.getActiveMoreTab() == tabRegistry.sqlQueryTab()
                 && tabRegistry.sqlQueryTab().isInputActive();
-        boolean textEditing = probeEditing || logSearchActive || spanFilterActive || beanFilterActive || sqlInputActive;
+        boolean textEditing = probeEditing || logSearchActive || spanFilterActive || beanFilterActive
+                || classpathFilterActive || sqlInputActive;
         if (!textEditing && (ke.isCharIgnoreCase('q') || ke.isCtrlC())) {
             runner.quit();
             return true;

@@ -36,6 +36,7 @@ import dev.tamboui.tui.event.MouseEventKind;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
 import dev.tamboui.widgets.block.Borders;
+import dev.tamboui.widgets.input.TextInputState;
 import dev.tamboui.widgets.list.ListItem;
 import dev.tamboui.widgets.list.ListState;
 import dev.tamboui.widgets.list.ListWidget;
@@ -51,16 +52,16 @@ import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.*;
 
 class ClasspathTab extends AbstractTab {
 
-    private static final Style MATCH_STYLE = Style.EMPTY.fg(Color.YELLOW).bold();
-
     private final ListState listState = new ListState();
     private final ScrollbarState listScrollState = new ScrollbarState();
-    private final FuzzyFilter fuzzyFilter = new FuzzyFilter();
     private final AtomicBoolean loading = new AtomicBoolean(false);
     private Rect lastArea;
 
+    private boolean filterInputActive;
+    private TextInputState filterInputState = new TextInputState("");
+    private String filterTerm;
     private List<JarEntry> allEntries = Collections.emptyList();
-    private List<FilteredEntry> filteredEntries = Collections.emptyList();
+    private List<JarEntry> filteredEntries = Collections.emptyList();
     private String lastPid;
     private String errorMessage;
     private boolean dataLoaded;
@@ -86,7 +87,8 @@ class ClasspathTab extends AbstractTab {
     public void onIntegrationChanged() {
         allEntries = Collections.emptyList();
         filteredEntries = Collections.emptyList();
-        fuzzyFilter.clearFilter();
+        filterTerm = null;
+        filterInputActive = false;
         lastPid = null;
         errorMessage = null;
         dataLoaded = false;
@@ -94,12 +96,13 @@ class ClasspathTab extends AbstractTab {
 
     @Override
     public boolean handleKeyEvent(KeyEvent ke) {
-        if (ke.isDeleteBackward()) {
-            if (fuzzyFilter.hasFilter()) {
-                fuzzyFilter.deleteChar();
-                refilter();
-                return true;
-            }
+        if (filterInputActive) {
+            return handleFilterInput(ke);
+        }
+        if (ke.isChar('/')) {
+            filterInputActive = true;
+            filterInputState = new TextInputState(filterTerm != null ? filterTerm : "");
+            return true;
         }
         if (ke.isPageUp() || ke.isKey(KeyCode.PAGE_UP)) {
             for (int i = 0; i < 20 && listState.selected() != null && listState.selected() > 0; i++) {
@@ -113,12 +116,27 @@ class ClasspathTab extends AbstractTab {
             }
             return true;
         }
-        if (ke.code() == KeyCode.CHAR) {
-            fuzzyFilter.appendChar(ke.string().charAt(0));
+        return false;
+    }
+
+    private boolean handleFilterInput(KeyEvent ke) {
+        if (ke.isKey(KeyCode.ESCAPE)) {
+            filterInputActive = false;
+            return true;
+        }
+        if (ke.isConfirm()) {
+            String text = filterInputState.text().trim();
+            filterTerm = text.isEmpty() ? null : text;
+            filterInputActive = false;
             refilter();
             return true;
         }
-        return false;
+        FormHelper.handleTextInput(ke, filterInputState);
+        return true;
+    }
+
+    boolean isFilterInputActive() {
+        return filterInputActive;
     }
 
     @Override
@@ -143,8 +161,8 @@ class ClasspathTab extends AbstractTab {
 
     @Override
     public boolean handleEscape() {
-        if (fuzzyFilter.hasFilter()) {
-            fuzzyFilter.clearFilter();
+        if (filterTerm != null) {
+            filterTerm = null;
             refilter();
             return true;
         }
@@ -194,28 +212,19 @@ class ClasspathTab extends AbstractTab {
 
         int contentW = Math.max(10, area.width() - 4);
         List<ListItem> items = new ArrayList<>();
-        for (FilteredEntry fe : filteredEntries) {
-            String displayText = formatEntry(fe.entry(), contentW);
-            Style normalStyle = fe.entry().isCamel() ? Style.EMPTY : Style.EMPTY.dim();
-            if (fe.matchPositions() != null && fe.matchPositions().length > 0) {
-                int[] adjusted = adjustPositions(fe.matchPositions(), fe.entry(), displayText);
-                Line line = FuzzyFilter.highlightLine(displayText, adjusted, normalStyle, MATCH_STYLE);
-                items.add(ListItem.from(Text.from(line)));
-            } else {
-                items.add(ListItem.from(displayText).style(normalStyle));
-            }
+        for (JarEntry entry : filteredEntries) {
+            String displayText = formatEntry(entry, contentW);
+            Style normalStyle = entry.isCamel() ? Style.EMPTY : Style.EMPTY.dim();
+            items.add(ListItem.from(displayText).style(normalStyle));
         }
 
         if (items.isEmpty() && dataLoaded) {
             items.add(ListItem.from("  No classpath entries found").style(Style.EMPTY.dim()));
         }
 
-        String title = " Classpath (" + filteredEntries.size();
-        if (fuzzyFilter.hasFilter()) {
-            title += "/" + allEntries.size() + ") [" + fuzzyFilter.filter() + "] ";
-        } else {
-            title += ") ";
-        }
+        String title = filterTerm != null
+                ? String.format(" Classpath [%d/%d] filter:\"%s\" ", filteredEntries.size(), allEntries.size(), filterTerm)
+                : String.format(" Classpath [%d] ", filteredEntries.size());
 
         ListWidget list = ListWidget.builder()
                 .items(items.toArray(ListItem[]::new))
@@ -240,9 +249,21 @@ class ClasspathTab extends AbstractTab {
 
     @Override
     public void renderFooter(List<Span> spans) {
-        hint(spans, "Esc", fuzzyFilter.hasFilter() ? "clear" : "back");
-        hint(spans, "↑↓", "navigate");
-        hintLast(spans, "type", "filter");
+        if (filterInputActive) {
+            spans.add(Span.styled(" /", Style.EMPTY.fg(Color.YELLOW).bold()));
+            spans.add(Span.raw(filterInputState.text() + "█  "));
+            hint(spans, "Enter", "filter");
+            hintLast(spans, "Esc", "cancel");
+            return;
+        }
+        hint(spans, "Esc", filterTerm != null ? "clear" : "back");
+        if (filterTerm != null) {
+            spans.add(Span.styled("  /", Style.EMPTY.fg(Color.YELLOW).bold()));
+            spans.add(Span.raw("\"" + filterTerm + "\"  "));
+        } else {
+            hint(spans, "/", "filter");
+        }
+        hintLast(spans, "↑↓", "navigate");
     }
 
     private void loadClasspath() {
@@ -318,32 +339,15 @@ class ClasspathTab extends AbstractTab {
     }
 
     private void refilter() {
-        List<FilteredEntry> result = new ArrayList<>();
+        List<JarEntry> result = new ArrayList<>();
+        String ft = filterTerm != null ? filterTerm.toLowerCase() : null;
         for (JarEntry entry : allEntries) {
-            if (!fuzzyFilter.hasFilter()) {
-                result.add(new FilteredEntry(entry, null));
-            } else {
-                int[] positions = fuzzyFilter.match(entry.display());
-                if (positions != null) {
-                    result.add(new FilteredEntry(entry, positions));
-                }
+            if (ft == null || entry.display().toLowerCase().contains(ft)) {
+                result.add(entry);
             }
         }
         filteredEntries = result;
         listState.select(filteredEntries.isEmpty() ? null : 0);
-    }
-
-    private int[] adjustPositions(int[] matchPositions, JarEntry entry, String displayText) {
-        String searchText = entry.display();
-        int offset = displayText.indexOf(searchText.substring(0, Math.min(searchText.length(), 5)));
-        if (offset < 0) {
-            offset = 2;
-        }
-        int[] adjusted = new int[matchPositions.length];
-        for (int i = 0; i < matchPositions.length; i++) {
-            adjusted[i] = matchPositions[i] + offset;
-        }
-        return adjusted;
     }
 
     private String formatEntry(JarEntry entry, int width) {
@@ -384,12 +388,7 @@ class ClasspathTab extends AbstractTab {
 
     @Override
     public boolean setFilter(String filter) {
-        fuzzyFilter.clearFilter();
-        if (filter != null && !filter.isEmpty()) {
-            for (char c : filter.toCharArray()) {
-                fuzzyFilter.appendChar(c);
-            }
-        }
+        filterTerm = filter != null && !filter.isEmpty() ? filter : null;
         refilter();
         return true;
     }
@@ -418,9 +417,6 @@ class ClasspathTab extends AbstractTab {
         boolean isCamel() {
             return groupId != null && groupId.startsWith("org.apache.camel");
         }
-    }
-
-    record FilteredEntry(JarEntry entry, int[] matchPositions) {
     }
 
     @Override
@@ -458,16 +454,16 @@ class ClasspathTab extends AbstractTab {
                  org.slf4j:slf4j-api                         2.0.16
                 ```
 
-                ## Fuzzy Filter
+                ## Filter
 
-                Start typing to filter the classpath. The filter uses fuzzy matching
-                so you can type partial strings like `kafka` to find all Kafka-related
-                JARs, or `jackson` to find Jackson dependencies. Matching characters
-                are highlighted in yellow.
+                Press `/` to open the filter input. Type a search term and press
+                `Enter` to filter the classpath by substring match. For example,
+                type `kafka` to find all Kafka-related JARs, or `jackson` to find
+                Jackson dependencies.
 
-                - Type any characters to filter
-                - `Backspace` to delete characters from filter
-                - `Esc` to clear filter
+                - `/` — open filter input
+                - `Enter` — apply filter
+                - `Esc` — clear filter
 
                 ## When To Use
 
@@ -480,23 +476,21 @@ class ClasspathTab extends AbstractTab {
 
                 - `Up/Down` — navigate entries
                 - `PgUp/PgDn` — scroll by page
-                - `type` — fuzzy filter
-                - `Backspace` — delete filter character
+                - `/` — open filter
                 - `Esc` — clear filter or back
                 """;
     }
 
     @Override
     public JsonObject getTableDataAsJson() {
-        List<FilteredEntry> entries = filteredEntries;
+        List<JarEntry> entries = filteredEntries;
         if (entries.isEmpty()) {
             return null;
         }
         JsonObject result = new JsonObject();
         result.put("tab", "Classpath");
         JsonArray rows = new JsonArray();
-        for (FilteredEntry fe : entries) {
-            JarEntry j = fe.entry();
+        for (JarEntry j : entries) {
             JsonObject row = new JsonObject();
             if (j.groupId() != null) {
                 row.put("groupId", j.groupId());

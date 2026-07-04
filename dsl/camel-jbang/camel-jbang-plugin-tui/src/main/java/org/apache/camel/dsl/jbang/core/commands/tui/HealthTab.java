@@ -25,7 +25,9 @@ import dev.tamboui.style.Color;
 import dev.tamboui.style.Style;
 import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.Span;
+import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
+import dev.tamboui.tui.event.MouseEvent;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
 import dev.tamboui.widgets.block.Borders;
@@ -45,6 +47,29 @@ class HealthTab extends AbstractTableTab {
         super(ctx, "group", "name", "status");
         sortIndex = 1;
         sort = "name";
+    }
+
+    @Override
+    public void navigateUp() {
+    }
+
+    @Override
+    public void navigateDown() {
+    }
+
+    @Override
+    public boolean handleKeyEvent(KeyEvent ke) {
+        if (ke.isPageUp() || ke.isKey(KeyCode.PAGE_UP)
+                || ke.isPageDown() || ke.isKey(KeyCode.PAGE_DOWN)
+                || ke.isHome() || ke.isEnd()) {
+            return false;
+        }
+        return super.handleKeyEvent(ke);
+    }
+
+    @Override
+    public boolean handleMouseEvent(MouseEvent me, Rect area) {
+        return false;
     }
 
     @Override
@@ -91,7 +116,7 @@ class HealthTab extends AbstractTableTab {
             }
 
             rows.add(Row.from(
-                    Cell.from(Span.styled(hc.group != null ? hc.group : "", Style.EMPTY.dim())),
+                    Cell.from(Span.styled(" " + (hc.group != null ? hc.group : ""), Style.EMPTY.dim())),
                     Cell.from(Span.styled(hc.name != null ? hc.name : "", Style.EMPTY.fg(Color.CYAN))),
                     Cell.from(Span.styled(icon + hc.state, stateStyle)),
                     Cell.from(kind),
@@ -115,7 +140,7 @@ class HealthTab extends AbstractTableTab {
         Table table = Table.builder()
                 .rows(rows)
                 .header(Row.from(
-                        Cell.from(Span.styled(sortLabel("GROUP", "group"), sortStyle("group"))),
+                        Cell.from(Span.styled(" " + sortLabel("GROUP", "group"), sortStyle("group"))),
                         Cell.from(Span.styled(sortLabel("NAME", "name"), sortStyle("name"))),
                         Cell.from(Span.styled(sortLabel("STATUS", "status"), sortStyle("status"))),
                         Cell.from(Span.styled("KIND", Style.EMPTY.bold())),
