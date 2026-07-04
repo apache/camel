@@ -55,7 +55,7 @@ The following 10 Oracle connector options have been removed by Debezium 3.6.0 an
 * `logMiningBatchSizeIncrement`
 * `logMiningBatchSizeMax`
 * `logMiningBatchSizeMin`
-* `logMiningSleepTimeDefaultMs`7
+* `logMiningSleepTimeDefaultMs`
 * `logMiningSleepTimeIncrementMs`
 * `logMiningSleepTimeMaxMs`
 * `logMiningSleepTimeMinMs`
