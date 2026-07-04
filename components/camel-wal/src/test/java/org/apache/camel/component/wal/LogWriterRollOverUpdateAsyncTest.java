@@ -38,8 +38,6 @@ public class LogWriterRollOverUpdateAsyncTest extends LogWriterRollOverUpdateAsy
         } catch (IOException e) {
             LOG.error("Failed to generate records: {}", e.getMessage(), e);
             throw new RuntimeException(e);
-        } finally {
-            latch.countDown();
         }
     }
 

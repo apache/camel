@@ -22,7 +22,7 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -34,12 +34,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 abstract class LogWriterRollOverUpdateAsyncBase extends LogTestBase {
     private static final Logger LOG = LoggerFactory.getLogger(LogWriterRollOverUpdateAsyncBase.class);
     protected BlockingQueue<EntryInfo.CachedEntryInfo> entryInfos;
-    protected CountDownLatch latch = new CountDownLatch(1);
     LogWriter logWriter;
     File reportFile;
 
@@ -84,7 +84,24 @@ abstract class LogWriterRollOverUpdateAsyncBase extends LogTestBase {
 
         final Future<?> updateTask = executorService.submit(this::markRecordsAsCommitted);
 
-        Assertions.assertTrue(latch.await(1, TimeUnit.MINUTES), "Failed to generate records within 1 minute");
+        executorService.shutdown();
+
+        // Wait for both tasks to complete using Awaitility instead of only
+        // waiting for the generate task via a latch, which left a race window
+        // where the update task could still be running when verification began.
+        await().atMost(2, TimeUnit.MINUTES)
+                .until(executorService::isTerminated);
+
+        // Propagate any exceptions from the tasks
+        try {
+            generateTask.get();
+            updateTask.get();
+        } catch (ExecutionException e) {
+            Assertions.fail("Task failed: " + e.getCause().getMessage(), e.getCause());
+        }
+
+        // Flush to ensure all data is persisted to disk before verification
+        logWriter.flush();
 
         try (LogReader reader = new LogReader(reportFile, (int) RECORD_COUNT * 100)) {
 
