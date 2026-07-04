@@ -81,21 +81,24 @@ public class SqlFunctionDataSourceTest extends CamelTestSupport {
         timeoutField.setInt(db, MARIADB_START_TIMEOUT_MS);
 
         db.start();
-        // Only assign to static field after successful start, so that surefire retries
-        // will re-attempt initialization if start() fails
-        sharedMariaDb = db;
 
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
         dataSource.setDriverClassName("org.mariadb.jdbc.Driver");
-        dataSource.setUrl(sharedMariaDb.getConfiguration().getURL(DB_NAME));
+        dataSource.setUrl(db.getConfiguration().getURL(DB_NAME));
         dataSource.setUsername("root");
         dataSource.setPassword("");
-        sharedDataSource = dataSource;
 
         ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
         populator.addScript(new ClassPathResource("sql/storedFunctionMariaDB.sql"));
         populator.setSeparator("$$");
-        populator.execute(sharedDataSource);
+        populator.execute(dataSource);
+
+        // Only assign to static fields after all initialization succeeds (start,
+        // DataSource creation, schema population), so that surefire retries will
+        // re-attempt the full initialization if any step fails
+        sharedMariaDb = db;
+        sharedDataSource = dataSource;
+        jdbcTemplate = new JdbcTemplate(sharedDataSource);
 
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             if (sharedMariaDb != null) {
@@ -106,7 +109,6 @@ public class SqlFunctionDataSourceTest extends CamelTestSupport {
                 }
             }
         }));
-        jdbcTemplate = new JdbcTemplate(sharedDataSource);
     }
 
     /** Initialize the database for the tests. */
