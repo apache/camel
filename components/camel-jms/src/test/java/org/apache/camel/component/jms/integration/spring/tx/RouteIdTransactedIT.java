@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.jms.integration.spring.tx;
 
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.integration.spring.AbstractSpringJMSITSupport;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -27,6 +29,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Tags({ @Tag("not-parallel"), @Tag("spring"), @Tag("tx") })
@@ -47,7 +50,8 @@ public class RouteIdTransactedIT extends AbstractSpringJMSITSupport {
 
         template.sendBody("activemq:queue:RouteIdTransactedTest", "Hello World");
 
-        MockEndpoint.assertIsSatisfied(context);
+        await().atMost(30, TimeUnit.SECONDS)
+                .untilAsserted(() -> MockEndpoint.assertIsSatisfied(context));
 
         String id = context.getRouteDefinitions().get(0).getId();
         assertEquals("myCoolRoute", id);
@@ -61,7 +65,8 @@ public class RouteIdTransactedIT extends AbstractSpringJMSITSupport {
 
         template.sendBody("activemq:queue:RouteIdTransactedTest", "Kaboom");
 
-        MockEndpoint.assertIsSatisfied(context);
+        await().atMost(30, TimeUnit.SECONDS)
+                .untilAsserted(() -> MockEndpoint.assertIsSatisfied(context));
 
         String id = context.getRouteDefinitions().get(0).getId();
         assertEquals("myCoolRoute", id);
