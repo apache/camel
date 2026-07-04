@@ -17,7 +17,9 @@
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import dev.tamboui.layout.Constraint;
 import dev.tamboui.layout.Layout;
@@ -31,71 +33,52 @@ import dev.tamboui.text.Text;
 import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.tui.event.MouseEvent;
-import dev.tamboui.tui.event.MouseEventKind;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
 import dev.tamboui.widgets.block.Borders;
 import dev.tamboui.widgets.paragraph.Paragraph;
-import dev.tamboui.widgets.scrollbar.Scrollbar;
-import dev.tamboui.widgets.scrollbar.ScrollbarState;
+import dev.tamboui.widgets.table.Cell;
+import dev.tamboui.widgets.table.Row;
+import dev.tamboui.widgets.table.Table;
+import org.apache.camel.catalog.CamelCatalog;
+import org.apache.camel.catalog.DefaultCamelCatalog;
+import org.apache.camel.tooling.model.BaseOptionModel;
+import org.apache.camel.tooling.model.ComponentModel;
+import org.apache.camel.tooling.model.MainModel;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 
 import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.*;
 
-class ConfigurationTab extends AbstractTab {
+class ConfigurationTab extends AbstractTableTab {
 
-    private static final int MOUSE_SCROLL_LINES = 3;
-    private static final Style KEY_STYLE = Style.EMPTY.fg(Color.CYAN);
-    private static final Style VALUE_STYLE = Style.EMPTY.fg(Color.WHITE);
     private static final Style SECRET_STYLE = Style.EMPTY.fg(Color.DARK_GRAY);
-    private static final Style SOURCE_STYLE = Style.EMPTY.dim();
 
-    private final ScrollbarState scrollbarState = new ScrollbarState();
-    private int scrollOffset;
+    private int detailScroll;
+
+    private CamelCatalog catalog;
+    private Map<String, BaseOptionModel> mainOptionsMap;
+    private final Map<String, Map<String, BaseOptionModel>> componentOptionsCache = new HashMap<>();
 
     ConfigurationTab(MonitorContext ctx) {
-        super(ctx);
+        super(ctx, "key", "value", "source");
     }
 
     @Override
-    public boolean handleKeyEvent(KeyEvent ke) {
-        if (ke.isUp()) {
-            scrollOffset = Math.max(0, scrollOffset - 1);
-            return true;
-        }
-        if (ke.isDown()) {
-            scrollOffset++;
-            return true;
-        }
+    protected int getRowCount() {
+        IntegrationInfo info = ctx.findSelectedIntegration();
+        return info != null ? info.configProperties.size() : 0;
+    }
+
+    @Override
+    protected boolean handleTabKeyEvent(KeyEvent ke) {
         if (ke.isPageUp() || ke.isKey(KeyCode.PAGE_UP)) {
-            scrollOffset = Math.max(0, scrollOffset - 20);
+            detailScroll = Math.max(0, detailScroll - 10);
             return true;
         }
         if (ke.isPageDown() || ke.isKey(KeyCode.PAGE_DOWN)) {
-            scrollOffset += 20;
-            return true;
-        }
-        if (ke.isHome()) {
-            scrollOffset = 0;
-            return true;
-        }
-        if (ke.isEnd()) {
-            scrollOffset = Integer.MAX_VALUE;
-            return true;
-        }
-        return false;
-    }
-
-    @Override
-    public boolean handleMouseEvent(MouseEvent me, Rect area) {
-        if (me.kind() == MouseEventKind.SCROLL_UP) {
-            scrollOffset = Math.max(0, scrollOffset - MOUSE_SCROLL_LINES);
-            return true;
-        }
-        if (me.kind() == MouseEventKind.SCROLL_DOWN) {
-            scrollOffset += MOUSE_SCROLL_LINES;
+            detailScroll += 10;
             return true;
         }
         return false;
@@ -103,24 +86,30 @@ class ConfigurationTab extends AbstractTab {
 
     @Override
     public void navigateUp() {
-        scrollOffset = Math.max(0, scrollOffset - 1);
+        tableState.selectPrevious();
+        detailScroll = 0;
     }
 
     @Override
     public void navigateDown() {
-        scrollOffset++;
+        IntegrationInfo info = ctx.findSelectedIntegration();
+        int count = info != null ? info.configProperties.size() : 0;
+        tableState.selectNext(count);
+        detailScroll = 0;
     }
 
     @Override
-    public void render(Frame frame, Rect area) {
-        IntegrationInfo info = ctx.findSelectedIntegration();
-        if (info == null) {
-            renderNoSelection(frame, area);
-            return;
+    public boolean handleMouseEvent(MouseEvent me, Rect area) {
+        boolean handled = super.handleMouseEvent(me, area);
+        if (handled) {
+            detailScroll = 0;
         }
+        return handled;
+    }
 
-        List<ConfigProperty> props = info.configProperties;
-        if (props.isEmpty()) {
+    @Override
+    protected void renderContent(Frame frame, Rect area, IntegrationInfo info) {
+        if (info.configProperties.isEmpty()) {
             frame.renderWidget(
                     Paragraph.builder()
                             .text(Text.from(Line.from(
@@ -132,113 +121,259 @@ class ConfigurationTab extends AbstractTab {
             return;
         }
 
-        // Find divider position: index of first non-camel property
-        int dividerIndex = -1;
-        for (int i = 0; i < props.size(); i++) {
-            if (!props.get(i).key.startsWith("camel.")) {
-                dividerIndex = i;
-                break;
+        List<ConfigProperty> props = sortedProperties(info);
+
+        List<Rect> chunks = Layout.vertical()
+                .constraints(Constraint.fill(), Constraint.percentage(30))
+                .split(area);
+        renderTable(frame, chunks.get(0), props);
+        renderDetail(frame, chunks.get(1), props);
+    }
+
+    private List<ConfigProperty> sortedProperties(IntegrationInfo info) {
+        List<ConfigProperty> result = new ArrayList<>(info.configProperties);
+        result.sort((a, b) -> {
+            int cmp = switch (sort) {
+                case "value" -> compareStr(a.value, b.value);
+                case "source" -> compareStr(a.source, b.source);
+                default -> compareCamelFirst(a, b);
+            };
+            return sortReversed ? -cmp : cmp;
+        });
+        return result;
+    }
+
+    private void renderTable(Frame frame, Rect area, List<ConfigProperty> props) {
+        List<Row> rows = new ArrayList<>();
+        for (ConfigProperty p : props) {
+            boolean secret = "xxxxxx".equals(p.value);
+            String value = p.value != null ? p.value : "";
+            Style valStyle = secret ? SECRET_STYLE : Style.EMPTY;
+
+            String source = "";
+            if (p.source != null && !p.source.isEmpty()) {
+                source = FileUtil.stripPath(p.source);
             }
+
+            rows.add(Row.from(
+                    Cell.from(Span.styled(p.key, Style.EMPTY.fg(Color.CYAN))),
+                    Cell.from(Span.styled(value, valStyle)),
+                    Cell.from(Span.styled(source, Style.EMPTY.dim()))));
         }
-        boolean hasDivider = dividerIndex > 0 && dividerIndex < props.size();
-        int totalLines = props.size() + (hasDivider ? 1 : 0);
 
-        String title = String.format(" Configuration — %d properties ", props.size());
-        Block block = Block.builder()
-                .borderType(BorderType.ROUNDED).borders(Borders.ALL)
-                .title(title)
+        if (rows.isEmpty()) {
+            rows.add(emptyRow("No properties", 3));
+        }
+
+        String title = String.format(" Configuration [%d] sort:%s ", props.size(), sort);
+
+        Table table = Table.builder()
+                .rows(rows)
+                .header(Row.from(
+                        Cell.from(Span.styled(sortLabel("KEY", "key"), sortStyle("key"))),
+                        Cell.from(Span.styled(sortLabel("VALUE", "value"), sortStyle("value"))),
+                        Cell.from(Span.styled(sortLabel("SOURCE", "source"), sortStyle("source")))))
+                .widths(
+                        Constraint.percentage(35),
+                        Constraint.fill(),
+                        Constraint.length(20))
+                .highlightStyle(Theme.selectionBg())
+                .highlightSpacing(Table.HighlightSpacing.ALWAYS)
+                .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(title).build())
                 .build();
-        Rect inner = block.inner(area);
-        frame.renderWidget(block, area);
 
-        if (inner.height() < 1 || inner.width() < 10) {
+        lastTableArea = area;
+        frame.renderStatefulWidget(table, area, tableState);
+        renderScrollbar(frame, props.size());
+    }
+
+    private void renderDetail(Frame frame, Rect area, List<ConfigProperty> props) {
+        Integer sel = tableState.selected();
+        if (sel == null || sel < 0 || sel >= props.size()) {
+            frame.renderWidget(
+                    Paragraph.builder()
+                            .text(Text.from(Line.from(Span.styled(" Select a property", Style.EMPTY.dim()))))
+                            .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
+                                    .title(" Property Detail ").build())
+                            .build(),
+                    area);
             return;
         }
 
-        int visibleLines = inner.height();
-        int maxScroll = Math.max(0, totalLines - visibleLines);
-        scrollOffset = Math.min(scrollOffset, maxScroll);
+        ConfigProperty prop = props.get(sel);
+        BaseOptionModel option = lookupPropertyDoc(prop.key);
+        String title = " " + prop.key + " ";
 
-        // Compute max key length across visible properties for alignment
-        int maxKeyLen = 0;
-        for (ConfigProperty p : props) {
-            maxKeyLen = Math.max(maxKeyLen, p.key.length());
-        }
-        int keyWidth = Math.min(maxKeyLen, inner.width() / 2);
-
-        List<Rect> hChunks = Layout.horizontal()
-                .constraints(Constraint.fill(), Constraint.length(1))
-                .split(inner);
-        int lineWidth = hChunks.get(0).width();
-
-        // Build visible lines, inserting divider at the right display position
         List<Line> lines = new ArrayList<>();
-        int displayRow = 0;
-        for (int i = 0; i < props.size() && lines.size() < visibleLines; i++) {
-            if (hasDivider && i == dividerIndex) {
-                if (displayRow >= scrollOffset) {
-                    String divText = "─".repeat(Math.max(1, inner.width() - 2));
-                    lines.add(Line.from(Span.styled(" " + divText, Style.EMPTY.dim())));
-                }
-                displayRow++;
-                if (lines.size() >= visibleLines) {
-                    break;
-                }
+
+        if (option != null) {
+            if (option.getDescription() != null && !option.getDescription().isEmpty()) {
+                addDetailField(lines, "Description", option.getDescription(), area.width());
             }
-            if (displayRow >= scrollOffset) {
-                lines.add(renderProperty(props.get(i), keyWidth, lineWidth));
+            if (option.getType() != null) {
+                addDetailField(lines, "Type", option.getType(), area.width());
             }
-            displayRow++;
+            if (option.getDefaultValue() != null) {
+                addDetailField(lines, "Default", option.getDefaultValue().toString(), area.width());
+            }
+            if (option.getEnums() != null && !option.getEnums().isEmpty()) {
+                addDetailField(lines, "Enum values", String.join(", ", option.getEnums()), area.width());
+            }
+            if (option.isRequired()) {
+                addDetailField(lines, "Required", "true", area.width());
+            }
+            if (option.isDeprecated()) {
+                String depText = "true";
+                if (option.getDeprecationNote() != null && !option.getDeprecationNote().isEmpty()) {
+                    depText += " — " + option.getDeprecationNote();
+                }
+                addDetailField(lines, "Deprecated", depText, area.width());
+            }
+            if (option.isSecret()) {
+                addDetailField(lines, "Secret", "true", area.width());
+            }
+            if (option.getGroup() != null && !option.getGroup().isEmpty()) {
+                addDetailField(lines, "Group", option.getGroup(), area.width());
+            }
+            lines.add(Line.from(Span.raw("")));
         }
 
-        frame.renderWidget(Paragraph.builder().text(Text.from(lines)).build(), hChunks.get(0));
+        // current value and source
+        String value = prop.value != null ? prop.value : "";
+        boolean secret = "xxxxxx".equals(value);
+        addDetailField(lines, "Current value", secret ? "xxxxxx (masked)" : value, area.width());
+        if (prop.source != null && !prop.source.isEmpty()) {
+            addDetailField(lines, "Source", FileUtil.stripPath(prop.source), area.width());
+        }
 
-        if (totalLines > visibleLines) {
-            scrollbarState
-                    .contentLength(totalLines)
-                    .viewportContentLength(visibleLines)
-                    .position(scrollOffset);
-            frame.renderStatefulWidget(Scrollbar.builder().build(), hChunks.get(1), scrollbarState);
+        if (option == null) {
+            lines.add(Line.from(Span.raw("")));
+            lines.add(Line.from(Span.styled("  No documentation available for this property.", Style.EMPTY.dim())));
+        }
+
+        int visibleLines = area.height() - 2;
+        if (visibleLines < 1) {
+            visibleLines = 1;
+        }
+        int maxScroll = Math.max(0, lines.size() - visibleLines);
+        detailScroll = Math.min(detailScroll, maxScroll);
+        int end = Math.min(detailScroll + visibleLines, lines.size());
+        List<Line> visible = lines.subList(detailScroll, end);
+
+        frame.renderWidget(
+                Paragraph.builder()
+                        .text(Text.from(visible))
+                        .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
+                                .title(title).build())
+                        .build(),
+                area);
+    }
+
+    private void addDetailField(List<Line> lines, String label, String value, int width) {
+        String prefix = "  " + label + ": ";
+        int maxValueLen = width - prefix.length() - 2;
+        if (maxValueLen <= 0) {
+            maxValueLen = 40;
+        }
+
+        if (value.length() <= maxValueLen) {
+            lines.add(Line.from(
+                    Span.styled(prefix, Style.EMPTY.dim()),
+                    Span.styled(value, Style.EMPTY.fg(Color.WHITE))));
+        } else {
+            // wrap long values
+            lines.add(Line.from(Span.styled(prefix, Style.EMPTY.dim())));
+            int indent = 6;
+            String indentStr = " ".repeat(indent);
+            int wrapWidth = width - indent - 2;
+            if (wrapWidth <= 0) {
+                wrapWidth = 40;
+            }
+            int pos = 0;
+            while (pos < value.length()) {
+                int end = Math.min(pos + wrapWidth, value.length());
+                lines.add(Line.from(Span.styled(indentStr + value.substring(pos, end), Style.EMPTY.fg(Color.WHITE))));
+                pos = end;
+            }
         }
     }
 
-    private Line renderProperty(ConfigProperty prop, int keyWidth, int lineWidth) {
-        String key = prop.key;
-        if (key.length() > keyWidth) {
-            key = key.substring(0, keyWidth - 1) + "…";
-        } else {
-            key = String.format("%-" + keyWidth + "s", key);
+    private BaseOptionModel lookupPropertyDoc(String key) {
+        if (key == null) {
+            return null;
         }
-
-        boolean secret = "xxxxxx".equals(prop.value);
-        Style valStyle = secret ? SECRET_STYLE : VALUE_STYLE;
-        String value = prop.value != null ? prop.value : "";
-
-        List<Span> spans = new ArrayList<>();
-        String keyPart = "  " + key + "  ";
-        spans.add(Span.styled(keyPart, KEY_STYLE));
-        spans.add(Span.styled(value, valStyle));
-        if (prop.source != null && !prop.source.isEmpty()) {
-            String displaySource = FileUtil.stripPath(prop.source);
-            String sourceText = "[" + displaySource + "]";
-            int used = keyPart.length() + value.length();
-            int gap = Math.max(2, lineWidth - used - sourceText.length());
-            spans.add(Span.styled(" ".repeat(gap) + sourceText, SOURCE_STYLE));
+        initCatalog();
+        if (mainOptionsMap != null) {
+            BaseOptionModel option = mainOptionsMap.get(key);
+            if (option != null) {
+                return option;
+            }
         }
+        // try camel.component.<name>.<option>
+        if (key.startsWith("camel.component.")) {
+            String rest = key.substring("camel.component.".length());
+            int dot = rest.indexOf('.');
+            if (dot > 0) {
+                String componentName = rest.substring(0, dot);
+                String optionName = rest.substring(dot + 1);
+                Map<String, BaseOptionModel> compOptions = getComponentOptions(componentName);
+                if (compOptions != null) {
+                    return compOptions.get(optionName);
+                }
+            }
+        }
+        return null;
+    }
 
-        return Line.from(spans);
+    private void initCatalog() {
+        if (catalog != null) {
+            return;
+        }
+        catalog = new DefaultCamelCatalog();
+        mainOptionsMap = new HashMap<>();
+        MainModel mainModel = catalog.mainModel();
+        if (mainModel != null) {
+            for (MainModel.MainOptionModel opt : mainModel.getOptions()) {
+                if (opt.getName() != null) {
+                    mainOptionsMap.put(opt.getName(), opt);
+                }
+            }
+        }
+    }
+
+    private Map<String, BaseOptionModel> getComponentOptions(String componentName) {
+        return componentOptionsCache.computeIfAbsent(componentName, name -> {
+            initCatalog();
+            ComponentModel model = catalog.componentModel(name);
+            if (model == null) {
+                return null;
+            }
+            Map<String, BaseOptionModel> map = new HashMap<>();
+            for (ComponentModel.ComponentOptionModel opt : model.getComponentOptions()) {
+                if (opt.getName() != null) {
+                    map.put(opt.getName(), opt);
+                }
+            }
+            return map.isEmpty() ? null : map;
+        });
     }
 
     @Override
     public void renderFooter(List<Span> spans) {
-        hint(spans, "Esc", "back");
-        hint(spans, "↑↓", "scroll");
-        hintLast(spans, "PgUp/Dn", "page");
+        super.renderFooter(spans);
+        hint(spans, "↑↓", "navigate");
+        hintLast(spans, "PgUp/Dn", "scroll");
     }
 
     @Override
     public SelectionContext getSelectionContext() {
-        return null;
+        IntegrationInfo info = ctx.findSelectedIntegration();
+        if (info == null || info.configProperties.isEmpty()) {
+            return null;
+        }
+        List<String> items = info.configProperties.stream().map(p -> p.key).toList();
+        Integer sel = tableState.selected();
+        return new SelectionContext("table", items, sel != null ? sel : -1, items.size(), "Configuration");
     }
 
     static int compareCamelFirst(ConfigProperty a, ConfigProperty b) {
@@ -280,47 +415,35 @@ class ConfigurationTab extends AbstractTab {
 
                 - **KEY** — Property name following Camel's naming convention (e.g., `camel.main.name`, `camel.component.kafka.brokers`, `greeting.message`)
                 - **VALUE** — Current resolved property value. Sensitive values (passwords, tokens) are masked as `xxxxxx` for security
-                - **DEFAULT** — Default value (shown only if different from current value). Helps identify which properties were explicitly configured vs using defaults
                 - **SOURCE** — Where the property was set:
                   - `application.properties` — from the main properties file
                   - `ENV` — from an environment variable
-                  - `SYS` — from a Java system property (`-D`)
+                  - `JVM` — from a Java system property (`-D`)
+                  - `Spring Boot` — from Spring Boot configuration
                   - `camel-component` — default from a Camel component
                   - `override` — set programmatically in code
                   - `initial` — set during context initialization
 
-                ## Example Screen
+                ## Detail View
 
-                ```
-                 KEY                              VALUE              DEFAULT      SOURCE
-                 camel.main.name                  camel-demo                      application.properties
-                 camel.main.shutdownTimeout       30                 300          application.properties
-                 camel.component.kafka.brokers    localhost:9092                   application.properties
-                 greeting.message                 Hello World                     application.properties
-                ```
+                Press `Enter` on a property to see its documentation from the Camel
+                catalog. For `camel.main.*` and `camel.component.*` properties, the
+                detail panel shows:
 
-                ## Property Namespaces
-
-                Common property prefixes and what they configure:
-
-                - `camel.main.*` — Core Camel settings (name, shutdown timeout, tracing, etc.)
-                - `camel.component.*` — Component-level defaults (applied to all endpoints of that component)
-                - `camel.dataformat.*` — Data format defaults (JSON, XML, CSV serialization options)
-                - `camel.language.*` — Expression language settings
-                - `camel.server.*` — Embedded HTTP server configuration (port, host, CORS)
-
-                ## Use Cases
-
-                - **Verify configuration**: Confirm that properties from files, environment variables, and system properties are being applied correctly
-                - **Debug overrides**: When a property has an unexpected value, check the SOURCE column to see where it was set
-                - **Audit security**: Verify that sensitive properties (passwords, API keys) are properly masked
+                - **Description** — what the property does
+                - **Type** — expected value type (string, boolean, integer, etc.)
+                - **Default** — default value if not explicitly set
+                - **Enum values** — allowed values for enumerated properties
+                - **Required** / **Deprecated** / **Secret** flags
+                - **Group** — the configuration group this property belongs to
 
                 ## Keys
 
-                - `Up/Down` — navigate properties
+                - `Up/Down` — select property
+                - `Enter` — view property detail / documentation
                 - `s` — cycle sort column
                 - `S` — reverse sort order
-                - `Esc` — back
+                - `Esc` — close detail / back
                 """;
     }
 
@@ -350,6 +473,8 @@ class ConfigurationTab extends AbstractTab {
         }
         result.put("rows", rows);
         result.put("totalRows", info.configProperties.size());
+        Integer sel = tableState.selected();
+        result.put("selectedIndex", sel != null ? sel : -1);
         return result;
     }
 }
