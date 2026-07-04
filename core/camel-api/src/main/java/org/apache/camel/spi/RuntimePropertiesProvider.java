@@ -16,7 +16,7 @@
  */
 package org.apache.camel.spi;
 
-import java.util.Map;
+import java.util.Collection;
 
 /**
  * SPI that allows runtimes (Spring Boot, Quarkus, etc.) to contribute application properties for display purposes, such
@@ -35,14 +35,20 @@ import java.util.Map;
 public interface RuntimePropertiesProvider {
 
     /**
-     * Returns the name of the runtime or source providing these properties (e.g. "Spring Boot", "Quarkus").
+     * A single property with its key, value, and the source it came from.
+     *
+     * @param key    the property key
+     * @param value  the property value
+     * @param source the source (e.g. "Spring Boot", "ENV", "JVM")
+     * @since        4.22
      */
-    String getSource();
+    record Property(String key, Object value, String source) {
+    }
 
     /**
      * Enumerates application properties from the runtime's configuration system.
      *
-     * @return a map of property key to value (never null)
+     * @return a collection of properties with their sources (never null)
      */
-    Map<String, Object> getProperties();
+    Collection<Property> getProperties();
 }
