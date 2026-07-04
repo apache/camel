@@ -305,6 +305,10 @@ class TabRegistry {
         return errorsTab;
     }
 
+    BeansTab beansTab() {
+        return beansTab;
+    }
+
     SpansTab spansTab() {
         return spansTab;
     }

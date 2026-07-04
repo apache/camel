@@ -39,7 +39,8 @@ import picocli.CommandLine.Command;
          footer = {
                  "%nExamples:",
                  "  camel cmd bean",
-                 "  camel cmd bean --filter=myBean" })
+                 "  camel cmd bean --filter=myBean",
+                 "  camel cmd bean --scope=user" })
 public class CamelBeanDump extends ActionBaseCommand {
 
     public static class NameTypeCompletionCandidates implements Iterable<String> {
@@ -50,6 +51,18 @@ public class CamelBeanDump extends ActionBaseCommand {
         @Override
         public Iterator<String> iterator() {
             return List.of("name", "type").iterator();
+        }
+
+    }
+
+    public static class ScopeCompletionCandidates implements Iterable<String> {
+
+        public ScopeCompletionCandidates() {
+        }
+
+        @Override
+        public Iterator<String> iterator() {
+            return List.of("all", "user", "camel", "spring", "quarkus").iterator();
         }
 
     }
@@ -72,6 +85,11 @@ public class CamelBeanDump extends ActionBaseCommand {
     @CommandLine.Option(names = { "--nulls" },
                         description = "Include null values", defaultValue = "true")
     boolean nulls;
+
+    @CommandLine.Option(names = { "--scope" }, completionCandidates = ScopeCompletionCandidates.class,
+                        description = "Filter beans by scope: all, user (excludes Camel/Spring/Quarkus/JDK), camel, spring, quarkus",
+                        defaultValue = "all")
+    String scope;
 
     @CommandLine.Option(names = { "--internal" },
                         description = "Include internal Camel beans", defaultValue = "false")
@@ -113,7 +131,7 @@ public class CamelBeanDump extends ActionBaseCommand {
         }
         root.put("properties", properties);
         root.put("nulls", nulls);
-        root.put("internal", internal);
+        root.put("internal", !"all".equals(scope) || internal);
         Path f = getActionFile(Long.toString(pid));
         PathUtils.writeTextSafely(root.toJson(), f);
 
@@ -155,6 +173,11 @@ public class CamelBeanDump extends ActionBaseCommand {
         } else {
             printer().printErr("Response from running Camel with PID " + pid + " not received within 10 seconds");
             return 1;
+        }
+
+        // filter by scope
+        if (!"all".equals(scope)) {
+            rows.removeIf(r -> !matchesScope(r, scope));
         }
 
         // sort rows
@@ -223,6 +246,44 @@ public class CamelBeanDump extends ActionBaseCommand {
             return r.value.toString();
         }
         return "null";
+    }
+
+    private static boolean matchesScope(Row r, String scope) {
+        return switch (scope) {
+            case "user" -> !isFrameworkBean(r);
+            case "camel" -> isCamelBean(r);
+            case "spring" -> isSpringBean(r);
+            case "quarkus" -> isQuarkusBean(r);
+            default -> true;
+        };
+    }
+
+    private static boolean isFrameworkBean(Row r) {
+        if (isCamelBean(r) || isSpringBean(r) || isQuarkusBean(r)) {
+            return true;
+        }
+        return r.type != null && r.type.startsWith("java.");
+    }
+
+    private static boolean isCamelBean(Row r) {
+        if (r.name != null && (r.name.startsWith("camel-") || r.name.startsWith("org.apache.camel"))) {
+            return true;
+        }
+        return r.type != null && r.type.startsWith("org.apache.camel");
+    }
+
+    private static boolean isSpringBean(Row r) {
+        if (r.name != null && r.name.startsWith("org.springframework")) {
+            return true;
+        }
+        return r.type != null && r.type.startsWith("org.springframework");
+    }
+
+    private static boolean isQuarkusBean(Row r) {
+        if (r.name != null && r.name.startsWith("io.quarkus")) {
+            return true;
+        }
+        return r.type != null && r.type.startsWith("io.quarkus");
     }
 
     protected int sortRow(Row o1, Row o2) {

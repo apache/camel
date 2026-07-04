@@ -85,10 +85,10 @@ class BeansTabRenderTest {
                 .reduce("", String::concat);
 
         assertTrue(footer.contains("Esc"), "Footer should contain Esc hint");
-        assertTrue(footer.contains("sort"), "Footer should contain sort hint");
-        assertTrue(footer.contains("internal"), "Footer should contain internal toggle hint");
-        assertTrue(footer.contains("refresh"), "Footer should contain refresh hint");
-        assertTrue(footer.contains("detail"), "Footer should contain detail hint");
+        assertTrue(footer.contains("scope"), "Footer should contain scope hint");
+        assertTrue(footer.contains("filter"), "Footer should contain filter hint");
+        assertTrue(footer.contains("navigate"), "Footer should contain navigate hint");
+        assertTrue(footer.contains("scroll"), "Footer should contain scroll hint");
     }
 
 }

@@ -51,15 +51,17 @@ class ThreadsTab extends AbstractTableTab {
 
     private static final String[] FILTER_LABELS = { "camel", "all" };
 
+    private static final long AUTO_REFRESH_INTERVAL_MS = 5000;
+
     private final AtomicBoolean loading = new AtomicBoolean(false);
 
     private int filter; // 0=camel, 1=all
     private List<ThreadData> allThreads = Collections.emptyList();
     private int threadCount;
     private int peakThreadCount;
-    private boolean showTrace;
     private int traceScroll;
     private String lastPid;
+    private long lastRefreshTime;
 
     ThreadsTab(MonitorContext ctx) {
         super(ctx, "id", "name", "state");
@@ -85,48 +87,27 @@ class ThreadsTab extends AbstractTableTab {
     @Override
     public void onIntegrationChanged() {
         allThreads = Collections.emptyList();
-        showTrace = false;
         traceScroll = 0;
         lastPid = null;
     }
 
     @Override
     public boolean handleKeyEvent(KeyEvent ke) {
-        if (showTrace) {
-            if (ke.isUp()) {
-                traceScroll = Math.max(0, traceScroll - 1);
-                return true;
-            }
-            if (ke.isDown()) {
-                traceScroll++;
-                return true;
-            }
-            if (ke.isPageUp() || ke.isKey(KeyCode.PAGE_UP)) {
-                traceScroll = Math.max(0, traceScroll - 20);
-                return true;
-            }
-            if (ke.isPageDown() || ke.isKey(KeyCode.PAGE_DOWN)) {
-                traceScroll += 20;
-                return true;
-            }
-            return false;
-        }
         return super.handleKeyEvent(ke);
     }
 
     @Override
     protected boolean handleTabKeyEvent(KeyEvent ke) {
-        if (ke.isConfirm()) {
-            showTrace = !showTrace;
-            traceScroll = 0;
+        if (ke.isPageUp() || ke.isKey(KeyCode.PAGE_UP)) {
+            traceScroll = Math.max(0, traceScroll - 10);
+            return true;
+        }
+        if (ke.isPageDown() || ke.isKey(KeyCode.PAGE_DOWN)) {
+            traceScroll += 10;
             return true;
         }
         if (ke.isCharIgnoreCase('f')) {
             filter = (filter + 1) % FILTER_LABELS.length;
-            return true;
-        }
-        if (ke.isCharIgnoreCase('r')) {
-            loadThreads();
             return true;
         }
         return false;
@@ -134,37 +115,32 @@ class ThreadsTab extends AbstractTableTab {
 
     @Override
     public boolean handleMouseEvent(MouseEvent me, Rect area) {
-        if (!showTrace) {
-            return super.handleMouseEvent(me, area);
+        boolean handled = super.handleMouseEvent(me, area);
+        if (handled) {
+            traceScroll = 0;
         }
-        return false;
-    }
-
-    @Override
-    public boolean handleEscape() {
-        if (showTrace) {
-            showTrace = false;
-            return true;
-        }
-        return false;
+        return handled;
     }
 
     @Override
     public void navigateUp() {
-        if (!showTrace) {
-            super.navigateUp();
-        }
+        super.navigateUp();
+        traceScroll = 0;
     }
 
     @Override
     public void navigateDown() {
-        if (!showTrace) {
-            super.navigateDown();
-        }
+        super.navigateDown();
+        traceScroll = 0;
     }
 
     @Override
     protected void renderContent(Frame frame, Rect area, IntegrationInfo info) {
+        long now = System.currentTimeMillis();
+        if (!allThreads.isEmpty() && now - lastRefreshTime >= AUTO_REFRESH_INTERVAL_MS) {
+            loadThreads();
+        }
+
         if (loading.get() && allThreads.isEmpty()) {
             frame.renderWidget(
                     Paragraph.builder()
@@ -178,33 +154,11 @@ class ThreadsTab extends AbstractTableTab {
 
         List<ThreadData> visible = sortedThreads();
 
-        if (showTrace) {
-            List<Rect> chunks = Layout.vertical()
-                    .constraints(Constraint.length(1), Constraint.percentage(40), Constraint.fill())
-                    .split(area);
-            renderSummary(frame, chunks.get(0), visible);
-            renderTable(frame, chunks.get(1), visible);
-            renderTrace(frame, chunks.get(2), visible);
-        } else {
-            List<Rect> chunks = Layout.vertical()
-                    .constraints(Constraint.length(1), Constraint.fill())
-                    .split(area);
-            renderSummary(frame, chunks.get(0), visible);
-            renderTable(frame, chunks.get(1), visible);
-        }
-    }
-
-    private void renderSummary(Frame frame, Rect area, List<ThreadData> visible) {
-        List<Span> spans = new ArrayList<>();
-        spans.add(Span.styled(" Threads: ", Style.EMPTY.fg(Color.YELLOW).bold()));
-        spans.add(Span.styled(String.valueOf(threadCount), Style.EMPTY.fg(Color.WHITE)));
-        spans.add(Span.raw("    "));
-        spans.add(Span.styled("Peak: ", Style.EMPTY.fg(Color.YELLOW).bold()));
-        spans.add(Span.styled(String.valueOf(peakThreadCount), Style.EMPTY.fg(Color.WHITE)));
-        spans.add(Span.raw("    "));
-        spans.add(Span.styled("Showing: ", Style.EMPTY.fg(Color.YELLOW).bold()));
-        spans.add(Span.styled(visible.size() + "/" + allThreads.size(), Style.EMPTY.fg(Color.WHITE)));
-        frame.renderWidget(Paragraph.from(Line.from(spans)), area);
+        List<Rect> chunks = Layout.vertical()
+                .constraints(Constraint.fill(), Constraint.percentage(40))
+                .split(area);
+        renderTable(frame, chunks.get(0), visible);
+        renderTrace(frame, chunks.get(1), visible);
     }
 
     private void renderTable(Frame frame, Rect area, List<ThreadData> visible) {
@@ -230,7 +184,8 @@ class ThreadsTab extends AbstractTableTab {
             rows.add(emptyRow("No threads", 5));
         }
 
-        String title = String.format(" Threads [%d] sort:%s filter:%s ", visible.size(), sort, FILTER_LABELS[filter]);
+        String title = String.format(" Threads [%d/%d] peak:%d sort:%s filter:%s ",
+                visible.size(), threadCount, peakThreadCount, sort, FILTER_LABELS[filter]);
 
         Table table = Table.builder()
                 .rows(rows)
@@ -314,12 +269,8 @@ class ThreadsTab extends AbstractTableTab {
         hint(spans, "Esc", "back");
         hint(spans, "s", "sort");
         hint(spans, "f", "filter [" + FILTER_LABELS[filter] + "]");
-        hint(spans, "r", "refresh");
-        if (showTrace) {
-            hintLast(spans, "↑↓", "scroll");
-        } else {
-            hintLast(spans, "Enter", "trace");
-        }
+        hint(spans, "↑↓", "navigate");
+        hintLast(spans, "PgUp/Dn", "scroll");
     }
 
     @Override
@@ -450,6 +401,7 @@ class ThreadsTab extends AbstractTableTab {
                 threadCount = tc;
                 peakThreadCount = peak;
                 lastPid = pid;
+                lastRefreshTime = System.currentTimeMillis();
             });
         }
     }
@@ -519,26 +471,31 @@ class ThreadsTab extends AbstractTableTab {
 
                 ## Stack Trace View
 
-                Press `Enter` to see the full stack trace of the selected thread.
-                The stack trace shows exactly what code the thread is executing (or
-                waiting in). Lines containing `org.apache.camel` are highlighted in
-                yellow to help you find Camel-related frames.
+                The detail panel at the bottom always shows the stack trace of the
+                currently selected thread. As you navigate threads with `Up/Down`,
+                the stack trace updates automatically. Lines containing
+                `org.apache.camel` are highlighted in yellow to help you find
+                Camel-related frames.
 
-                Use `Up/Down` or `PgUp/PgDn` to scroll through long stack traces.
+                Use `PgUp/PgDn` to scroll through long stack traces.
 
                 ## Filter Modes
 
                 - **camel** (default) — Show only Camel-related threads (names containing `camel`, `vertx`, or `netty`)
                 - **all** — Show all JVM threads including system threads, GC threads, JIT compiler threads
 
+                ## Auto-Refresh
+
+                Thread data is automatically refreshed every 5 seconds so you can
+                watch BLOCKED/WAITED counters change over time without manual action.
+
                 ## Keys
 
-                - `Up/Down` — select thread
-                - `Enter` — view/hide stack trace
+                - `Up/Down` — select thread (detail updates automatically)
+                - `PgUp/PgDn` — scroll stack trace detail
                 - `s` — cycle sort column
                 - `S` — reverse sort order
                 - `f` — toggle filter (camel / all)
-                - `r` — refresh thread data
                 - `Esc` — back
                 """;
     }
