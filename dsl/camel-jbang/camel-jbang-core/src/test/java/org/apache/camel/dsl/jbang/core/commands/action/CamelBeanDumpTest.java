@@ -39,7 +39,9 @@ class CamelBeanDumpTest extends ActionCommandTestSupport {
         // options are normally defaulted by picocli; set them as we construct the command directly
         command.filter = "all";
         command.sort = "name";
+        command.scope = "all";
         command.properties = true;
+        command.nulls = true;
 
         int exit = callWithResponse(command, singleBeanResponse());
 

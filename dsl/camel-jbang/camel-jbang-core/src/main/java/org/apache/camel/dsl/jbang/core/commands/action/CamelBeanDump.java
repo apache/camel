@@ -72,11 +72,11 @@ public class CamelBeanDump extends ActionBaseCommand {
 
     @CommandLine.Option(names = { "--sort" }, completionCandidates = NameTypeCompletionCandidates.class,
                         description = "Sort by name or type", defaultValue = "name")
-    String sort;
+    String sort = "name";
 
     @CommandLine.Option(names = { "--filter" },
                         description = "Filter beans names (use all to include all beans)", defaultValue = "all")
-    String filter;
+    String filter = "all";
 
     @CommandLine.Option(names = { "--properties" },
                         description = "Show bean properties", defaultValue = "true")
@@ -89,7 +89,7 @@ public class CamelBeanDump extends ActionBaseCommand {
     @CommandLine.Option(names = { "--scope" }, completionCandidates = ScopeCompletionCandidates.class,
                         description = "Filter beans by scope: all, user (excludes Camel/Spring/Quarkus/JDK), camel, spring, quarkus",
                         defaultValue = "all")
-    String scope;
+    String scope = "all";
 
     @CommandLine.Option(names = { "--internal" },
                         description = "Include internal Camel beans", defaultValue = "false")
