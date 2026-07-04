@@ -551,7 +551,7 @@ class MemoryLeakTab extends AbstractTab {
                 growth = "~" + growth;
             }
             Span trendSpan = trendSpan(e.trend);
-            String warn = e.lowConfidence ? " ⚠" : "";
+            String warn = e.lowConfidence ? " " + TuiIcons.HEALTH_WARN : "";
 
             rows.add(Row.from(
                     rightCell(String.valueOf(i + 1), 4),
@@ -642,7 +642,7 @@ class MemoryLeakTab extends AbstractTab {
         }
         if (entry.lowConfidence) {
             lines.add(Line.from(
-                    Span.styled("  ⚠ Low confidence: ", Style.EMPTY.fg(Color.YELLOW)),
+                    Span.styled("  " + TuiIcons.HEALTH_WARN + " Low confidence: ", Style.EMPTY.fg(Color.YELLOW)),
                     Span.styled("sample counts are too low or diverge significantly", Style.EMPTY.dim())));
             lines.add(Line.from(
                     Span.styled("    between runs. The growth percentage may not be reliable.", Style.EMPTY.dim())));
@@ -707,10 +707,10 @@ class MemoryLeakTab extends AbstractTab {
             return Span.styled("-", Style.EMPTY.dim());
         }
         return switch (trend) {
-            case "growing" -> Span.styled("↑ leak!", Style.EMPTY.fg(Color.RED).bold());
-            case "suspicious" -> Span.styled("↑ leak?", Style.EMPTY.fg(Color.YELLOW).bold());
-            case "stable" -> Span.styled("→ stable", Style.EMPTY.fg(Color.GREEN));
-            case "shrinking" -> Span.styled("↓", Style.EMPTY.dim());
+            case "growing" -> Span.styled(TuiIcons.ARROW_UP + " leak!", Style.EMPTY.fg(Color.RED).bold());
+            case "suspicious" -> Span.styled(TuiIcons.ARROW_UP + " leak?", Style.EMPTY.fg(Color.YELLOW).bold());
+            case "stable" -> Span.styled(TuiIcons.ARROW_STABLE + " stable", Style.EMPTY.fg(Color.GREEN));
+            case "shrinking" -> Span.styled(TuiIcons.ARROW_DOWN, Style.EMPTY.dim());
             case "new" -> Span.styled("new", Style.EMPTY.fg(Color.YELLOW));
             case "gone" -> Span.styled("gone", Style.EMPTY.dim());
             default -> Span.styled(trend, Style.EMPTY.dim());
@@ -937,9 +937,9 @@ class MemoryLeakTab extends AbstractTab {
                 - **new** (yellow) — Only appeared in Run 2
                 - **gone** (dim) — Only appeared in Run 1
 
-                ### Low Confidence ⚠
+                ### Low Confidence %s
 
-                A **⚠** warning appears when sample counts are too low
+                A **%s** warning appears when sample counts are too low
                 (fewer than 5 in either run) or diverge significantly from
                 the expected duration ratio. The growth percentage is shown
                 with a **~** prefix (e.g. ~+53%) to indicate the value may
@@ -969,7 +969,7 @@ class MemoryLeakTab extends AbstractTab {
                 | m | Cycle minimum size filter |
                 | PgUp/PgDn | Scroll detail panel |
                 | Esc | Back |
-                """;
+                """.formatted(TuiIcons.HEALTH_WARN, TuiIcons.HEALTH_WARN);
     }
 
     // ---- Action methods ----

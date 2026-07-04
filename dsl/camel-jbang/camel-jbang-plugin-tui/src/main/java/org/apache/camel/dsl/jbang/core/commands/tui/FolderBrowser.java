@@ -297,7 +297,7 @@ class FolderBrowser {
         }
 
         String dirLabel = currentDir != null ? currentDir.toString() : "";
-        String popupTitle = " 📂 " + dirLabel + " ";
+        String popupTitle = " " + TuiIcons.FOLDER_OPEN + " " + dirLabel + " ";
 
         int nameWidth = entries.stream().mapToInt(e -> e.name().length()).max().orElse(10);
         int itemWidth = 6 + nameWidth;
@@ -338,7 +338,7 @@ class FolderBrowser {
             sourceViewer.renderFooter(spans);
             return;
         }
-        TuiHelper.hint(spans, "↑↓", "navigate");
+        TuiHelper.hint(spans, TuiIcons.HINT_SCROLL, "navigate");
         TuiHelper.hint(spans, "Enter", "open");
         TuiHelper.hint(spans, "Tab", "select");
         TuiHelper.hintLast(spans, "Esc", "close");

@@ -283,13 +283,13 @@ class OverviewTab extends AbstractTab {
                 int gray = (int) (100 * fade);
                 Style dimStyle = Style.EMPTY.fg(Color.indexed(232 + Math.min(gray / 4, 23)));
 
-                String vanishName = "🐪 " + (info.name != null ? info.name : "");
+                String vanishName = TuiIcons.labeled(TuiIcons.CAMEL, info.name != null ? info.name : "");
                 rows.add(Row.from(
                         Cell.from(Span.styled(info.pid, dimStyle)),
                         Cell.from(Span.styled(vanishName, dimStyle)),
                         Cell.from(Span.styled("", dimStyle)),
                         Cell.from(Span.styled("", dimStyle)),
-                        Cell.from(Span.styled("✖ Stopped", Style.EMPTY.fg(Color.LIGHT_RED).dim())),
+                        Cell.from(Span.styled(TuiIcons.STOPPED + " Stopped", Style.EMPTY.fg(Color.LIGHT_RED).dim())),
                         Cell.from(Span.styled(info.ago != null ? info.ago : "", dimStyle)),
                         Cell.from(Span.styled("", dimStyle)),
                         Cell.from(Span.styled("", dimStyle)),
@@ -320,11 +320,7 @@ class OverviewTab extends AbstractTab {
                 if (!hasDoc) {
                     hasDoc = hasReadmeInSourceDir(info);
                 }
-                String platformIcon = switch (info.platform != null ? info.platform : "") {
-                    case "Spring Boot" -> "🍃";
-                    case "Quarkus" -> "🚀";
-                    default -> "🐪";
-                };
+                String platformIcon = TuiIcons.runtimeIcon(info.platform != null ? info.platform : "");
                 String nameText = platformIcon + " " + (info.name != null ? info.name : "");
                 List<Span> nameSpans = new ArrayList<>();
                 nameSpans.add(Span.styled(nameText, Style.EMPTY.fg(Color.CYAN)));
@@ -332,7 +328,7 @@ class OverviewTab extends AbstractTab {
                     nameSpans.add(Span.styled(" [dev]", Style.EMPTY.fg(Color.YELLOW).dim()));
                 }
                 if (hasDoc) {
-                    nameSpans.add(Span.styled(" 📖", Style.EMPTY));
+                    nameSpans.add(Span.styled(" " + TuiIcons.README, Style.EMPTY));
                 }
                 Line nameLine = Line.from(nameSpans);
                 String throughputDisplay = info.throughput;
@@ -394,13 +390,13 @@ class OverviewTab extends AbstractTab {
                 float fade = 1.0f - Math.min(1.0f, (float) elapsed / VANISH_DURATION_MS);
                 int gray = (int) (100 * fade);
                 Style dimStyle = Style.EMPTY.fg(Color.indexed(232 + Math.min(gray / 4, 23)));
-                String vanishAlias = "🔧  " + info.alias;
+                String vanishAlias = TuiIcons.INFRA + "  " + info.alias;
                 rows.add(Row.from(
                         Cell.from(Span.styled(info.pid, dimStyle)),
                         Cell.from(Span.styled(vanishAlias, dimStyle)),
                         Cell.from(Span.styled("", dimStyle)),
                         Cell.from(Span.styled("", dimStyle)),
-                        Cell.from(Span.styled("✖ Stopped", Style.EMPTY.fg(Color.LIGHT_RED).dim())),
+                        Cell.from(Span.styled(TuiIcons.STOPPED + " Stopped", Style.EMPTY.fg(Color.LIGHT_RED).dim())),
                         Cell.from(Span.styled("", dimStyle)),
                         Cell.from(Span.styled("", dimStyle)),
                         Cell.from(Span.styled("", dimStyle)),
@@ -410,7 +406,7 @@ class OverviewTab extends AbstractTab {
                         Cell.from(Span.styled("", dimStyle))).style(rowBg));
             } else {
                 String statusText = info.alive ? "Running" : "Stopped";
-                String infraAlias = "🔧  " + info.alias;
+                String infraAlias = TuiIcons.INFRA + "  " + info.alias;
                 String version = info.serviceVersion != null ? info.serviceVersion : "";
                 rows.add(Row.from(
                         Cell.from(info.pid),
@@ -629,12 +625,7 @@ class OverviewTab extends AbstractTab {
         int jvmDetailCount = 0;
         if (sel != null) {
             if (sel.platform != null) {
-                String platEmoji = switch (sel.platform) {
-                    case "Spring Boot" -> "🍃 ";
-                    case "Quarkus" -> "🚀 ";
-                    case "JBang", "Camel" -> "🐪 ";
-                    default -> "";
-                };
+                String platEmoji = TuiIcons.platformIcon(sel.platform);
                 String plat = sel.platformVersion != null
                         ? platEmoji + sel.platform + " v" + sel.platformVersion
                         : platEmoji + sel.platform;
@@ -651,7 +642,7 @@ class OverviewTab extends AbstractTab {
                 List<Span> profileSpans = new ArrayList<>();
                 profileSpans.add(Span.styled("Profile: ", dim));
                 String profile = sel.profile != null ? sel.profile : "prod";
-                String profileEmoji = "dev".equals(profile) ? "🛠️ " : "prod".equals(profile) ? "📦 " : "";
+                String profileEmoji = TuiIcons.profilePrefix(profile);
                 profileSpans.add(Span.raw(profileEmoji + profile));
                 if (sel.reloaded > 0) {
                     profileSpans.add(Span.raw("    "));
@@ -781,7 +772,7 @@ class OverviewTab extends AbstractTab {
         if (ctx.selectedPid != null) {
             hint(spans, "Esc", "unselect");
         }
-        hint(spans, "↑↓", "navigate");
+        hint(spans, TuiIcons.HINT_SCROLL, "navigate");
         if (!ctx.isInfraSelected()) {
             hint(spans, "s", "sort");
             hint(spans, "a", "chart " + switch (chartMode) {
@@ -1055,11 +1046,11 @@ class OverviewTab extends AbstractTab {
         }
         lines.add(Line.from(Span.styled("     No Active Camel Integrations Found", Theme.title())));
         lines.add(Line.from(Span.raw("")));
-        lines.add(Line.from(Span.styled("  💡 How to monitor integrations:", Style.EMPTY.bold())));
+        lines.add(Line.from(Span.styled(TuiIcons.indent(TuiIcons.TIP) + "How to monitor integrations:", Style.EMPTY.bold())));
         lines.add(Line.from(Span.raw("     Run a route or integration in another terminal window:")));
         lines.add(Line.from(Span.styled("     > camel run my-route.yaml", Theme.success())));
         lines.add(Line.from(Span.raw("")));
-        lines.add(Line.from(Span.styled("  🐪 Or run a bundled example:", Style.EMPTY.bold())));
+        lines.add(Line.from(Span.styled(TuiIcons.indent(TuiIcons.CAMEL) + "Or run a bundled example:", Style.EMPTY.bold())));
         lines.add(Line.from(List.of(
                 Span.raw("     Press "),
                 Span.styled(" F2 ", Theme.hintKey()),
@@ -1067,7 +1058,8 @@ class OverviewTab extends AbstractTab {
                 Span.styled("Run Example", Style.EMPTY.bold()),
                 Span.raw("."))));
         lines.add(Line.from(Span.raw("")));
-        lines.add(Line.from(Span.styled("  💻 Or use the embedded JLine shell panel:", Style.EMPTY.bold())));
+        lines.add(Line.from(Span.styled(TuiIcons.indent(TuiIcons.COMPUTER) + "Or use the embedded JLine shell panel:",
+                Style.EMPTY.bold())));
         lines.add(Line.from(List.of(
                 Span.raw("     Press "),
                 Span.styled(" F6 ", Theme.hintKey()),
@@ -1075,7 +1067,7 @@ class OverviewTab extends AbstractTab {
         lines.add(Line.from(Span.styled("     camel> run examples/demo.java", Theme.success())));
         lines.add(Line.from(Span.raw("")));
         lines.add(Line.from(List.of(
-                Span.styled("  ❔ For shortcut keys and documentation, press ", Theme.muted()),
+                Span.styled(TuiIcons.indent(TuiIcons.HELP) + "For shortcut keys and documentation, press ", Theme.muted()),
                 Span.styled(" ? ", Theme.hintKey()),
                 Span.styled(" or ", Theme.muted()),
                 Span.styled(" F1 ", Theme.hintKey()),

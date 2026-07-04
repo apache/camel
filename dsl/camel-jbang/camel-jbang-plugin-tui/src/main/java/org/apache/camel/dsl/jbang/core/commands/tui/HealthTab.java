@@ -98,13 +98,13 @@ class HealthTab extends AbstractTableTab {
             String icon;
             if ("UP".equals(hc.state)) {
                 stateStyle = Style.EMPTY.fg(Color.GREEN);
-                icon = "✔ ";
+                icon = TuiIcons.HEALTH_UP + " ";
             } else if ("DOWN".equals(hc.state)) {
                 stateStyle = Style.EMPTY.fg(Color.LIGHT_RED);
-                icon = "✖ ";
+                icon = TuiIcons.HEALTH_DOWN + " ";
             } else {
                 stateStyle = Style.EMPTY.fg(Color.YELLOW);
-                icon = "⚠ ";
+                icon = TuiIcons.HEALTH_WARN + " ";
             }
 
             String kind = "";

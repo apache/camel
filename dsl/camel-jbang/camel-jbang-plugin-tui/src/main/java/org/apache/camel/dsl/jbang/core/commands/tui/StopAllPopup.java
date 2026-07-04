@@ -158,7 +158,7 @@ class StopAllPopup {
                 .text(Text.from(Line.from(""), intLine, infraLine))
                 .block(Block.builder()
                         .borderType(BorderType.ROUNDED).borders(Borders.ALL)
-                        .title(" 🛑 Stop All ")
+                        .title(" " + TuiIcons.STOP + " Stop All ")
                         .build())
                 .build();
         frame.renderWidget(para, popup);

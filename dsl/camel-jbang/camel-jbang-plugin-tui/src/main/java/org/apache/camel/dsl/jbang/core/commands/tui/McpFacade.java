@@ -87,12 +87,6 @@ class McpFacade {
             "HTTP", "Health", "Inspect", "Errors", "More"
     };
 
-    static final String[] MORE_TAB_NAMES = {
-            "Beans", "Browse", "Circuit Breaker", "Classpath", "Configuration",
-            "Consumers", "CVE Audit", "DataSource", "Heap Histogram", "Inflight", "Memory", "Memory Leak", "Metrics",
-            "SQL Query", "SQL Trace", "Spans", "Process", "Startup", "Threads"
-    };
-
     private final MonitorContext ctx;
     private final AtomicReference<List<IntegrationInfo>> data;
     private final TabsState tabsState;
@@ -233,10 +227,11 @@ class McpFacade {
             }
         }
         // Check More submenu tabs
-        for (int i = 0; i < MORE_TAB_NAMES.length; i++) {
-            if (MORE_TAB_NAMES[i].equalsIgnoreCase(tabName)) {
+        List<TabRegistry.MoreTab> moreTabs = tabRegistry.moreTabs();
+        for (int i = 0; i < moreTabs.size(); i++) {
+            if (moreTabs.get(i).name().equalsIgnoreCase(tabName)) {
                 bridge.selectMoreTab(i);
-                return MORE_TAB_NAMES[i];
+                return moreTabs.get(i).name();
             }
         }
         return null;
@@ -260,7 +255,9 @@ class McpFacade {
     List<String> getTabNames() {
         List<String> names = new ArrayList<>();
         names.addAll(List.of(TAB_NAMES));
-        names.addAll(List.of(MORE_TAB_NAMES));
+        for (TabRegistry.MoreTab mt : tabRegistry.moreTabs()) {
+            names.add(mt.name());
+        }
         return names;
     }
 

@@ -25,6 +25,7 @@ import dev.tamboui.tui.event.KeyModifiers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -69,7 +70,12 @@ class PopupManagerTest {
             }
         };
 
-        popupManager = new PopupManager(ctx, () -> List.of(info), new FilesBrowser(), callbacks);
+        popupManager = new PopupManager(
+                ctx, () -> List.of(info),
+                () -> List.of(
+                        new TabRegistry.MoreTab(TuiIcons.TAB_BEANS, "Beans", "&Beans", null),
+                        new TabRegistry.MoreTab(TuiIcons.TAB_BROWSE, "Browse", "Bro&wse", null)),
+                new FilesBrowser(), callbacks);
     }
 
     @Test
@@ -119,10 +125,11 @@ class PopupManagerTest {
     }
 
     @Test
-    void morePopupShortcutReturnsCorrectIndex() {
-        // 'a' should return 0 (first more tab = beans)
-        int index = PopupManager.morePopupShortcut(KeyEvent.ofChar('a', KeyModifiers.NONE));
-        assertTrue(index >= 0 || index == -1,
-                "Shortcut should return a valid index or -1");
+    void morePopupShortcutMatchesEitherCase() {
+        // 'w'/'W' both select Browse (index 1); Shift+letter must work too
+        assertEquals(1, popupManager.morePopupShortcut(KeyEvent.ofChar('w', KeyModifiers.NONE)));
+        assertEquals(1, popupManager.morePopupShortcut(KeyEvent.ofChar('W', KeyModifiers.NONE)));
+        assertEquals(0, popupManager.morePopupShortcut(KeyEvent.ofChar('B', KeyModifiers.NONE)));
+        assertEquals(-1, popupManager.morePopupShortcut(KeyEvent.ofChar('z', KeyModifiers.NONE)));
     }
 }

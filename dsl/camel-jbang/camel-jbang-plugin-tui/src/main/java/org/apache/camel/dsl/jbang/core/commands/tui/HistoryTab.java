@@ -746,7 +746,7 @@ class HistoryTab extends AbstractTab {
                 };
                 if (diagram.isHistoryTopologyMode()) {
                     hint(spans, "d", "close");
-                    hint(spans, "↑↓←→", "navigate");
+                    hint(spans, TuiIcons.HINT_NAV, "navigate");
                     hint(spans, "Enter", "drill-down");
                     hint(spans, "i", infoLabel);
                     hint(spans, "n", "description" + (showDescription ? " [on]" : ""));
@@ -755,8 +755,8 @@ class HistoryTab extends AbstractTab {
                 } else {
                     hint(spans, "d", "close");
                     hint(spans, "Esc", "back");
-                    hint(spans, "↑↓", "step through path");
-                    hint(spans, "←→", "h-scroll");
+                    hint(spans, TuiIcons.HINT_SCROLL, "step through path");
+                    hint(spans, TuiIcons.HINT_H, "h-scroll");
                     hint(spans, "t", "topology");
                     hint(spans, "i", infoLabel);
                     hint(spans, "n", "description" + (showDescription ? " [on]" : ""));
@@ -771,10 +771,10 @@ class HistoryTab extends AbstractTab {
         boolean tracerActive = !traces.get().isEmpty();
         if (tracerActive && traceDetailView) {
             hint(spans, "Esc", "back");
-            hint(spans, "↑↓", "navigate");
+            hint(spans, TuiIcons.HINT_SCROLL, "navigate");
             hint(spans, "PgUp/PgDn", "scroll");
             if (!showWaterfall && !traceWordWrap) {
-                hint(spans, "←→", "h-scroll");
+                hint(spans, TuiIcons.HINT_H, "h-scroll");
             }
             hint(spans, "n", "description" + (showDescription ? " [on]" : ""));
             hint(spans, "g", "waterfall" + (showWaterfall ? " [on]" : ""));
@@ -785,7 +785,7 @@ class HistoryTab extends AbstractTab {
             hintLast(spans, "w", "wrap" + (traceWordWrap ? " [on]" : " [off]"));
         } else if (tracerActive) {
             hint(spans, "Esc", "back");
-            hint(spans, "↑↓", "navigate");
+            hint(spans, TuiIcons.HINT_SCROLL, "navigate");
             hint(spans, "s", "sort");
             hint(spans, "n", "description" + (showDescription ? " [on]" : ""));
             hint(spans, "d", "diagram");
@@ -793,10 +793,10 @@ class HistoryTab extends AbstractTab {
             hintLast(spans, "F5", "refresh");
         } else {
             hint(spans, "Esc", "back");
-            hint(spans, "↑↓", "navigate");
+            hint(spans, TuiIcons.HINT_SCROLL, "navigate");
             hint(spans, "PgUp/PgDn", "scroll");
             if (!showWaterfall && !historyWordWrap) {
-                hint(spans, "←→", "h-scroll");
+                hint(spans, TuiIcons.HINT_H, "h-scroll");
             }
             hint(spans, "n", "description" + (showDescription ? " [on]" : ""));
             hint(spans, "g", "waterfall" + (showWaterfall ? " [on]" : ""));

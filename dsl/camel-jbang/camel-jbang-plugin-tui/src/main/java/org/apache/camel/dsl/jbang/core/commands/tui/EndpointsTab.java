@@ -173,9 +173,9 @@ class EndpointsTab extends AbstractTableTab {
                 default -> Style.EMPTY.fg(Color.YELLOW);
             };
             String arrow = switch (dir) {
-                case "in" -> "→ ";
-                case "out" -> "← ";
-                default -> "↔ ";
+                case "in" -> TuiIcons.KEY_RIGHT + " ";
+                case "out" -> TuiIcons.KEY_LEFT + " ";
+                default -> TuiIcons.ARROW_BOTH + " ";
             };
 
             List<Cell> cells = new ArrayList<>();
@@ -300,7 +300,7 @@ class EndpointsTab extends AbstractTableTab {
     @Override
     public void renderFooter(List<Span> spans) {
         hint(spans, "Esc", "back");
-        hint(spans, "↑↓", "navigate");
+        hint(spans, TuiIcons.HINT_SCROLL, "navigate");
         hint(spans, "s", "sort");
         String[] filterLabels = { "all", "remote", "remote+stub" };
         hint(spans, "f", "filter [" + filterLabels[filter] + "]");
@@ -385,7 +385,7 @@ class EndpointsTab extends AbstractTableTab {
 
         int sideLen = Math.max(4, (w - boxLen - 2) / 2);
         String arm = "─".repeat(Math.max(1, sideLen - 1));
-        String arrowStr = arm + "►";
+        String arrowStr = arm + TuiIcons.POINTER;
 
         String inStr = String.valueOf(inTotal);
         String outStr = String.valueOf(outTotal);
@@ -501,7 +501,7 @@ class EndpointsTab extends AbstractTableTab {
         int boxLen = CharWidth.of(box);
         int sideLen = Math.max(4, (w - boxLen - 2) / 2);
         String arm = "─".repeat(Math.max(1, sideLen - 1));
-        String arrowStr = arm + "►";
+        String arrowStr = arm + TuiIcons.POINTER;
         String inStr = String.valueOf(inTotal);
         String outStr = String.valueOf(outTotal);
         int inPad = Math.max(0, sideLen - inStr.length());

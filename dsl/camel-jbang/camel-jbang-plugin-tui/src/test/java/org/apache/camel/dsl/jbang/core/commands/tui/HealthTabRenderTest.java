@@ -111,7 +111,7 @@ class HealthTabRenderTest {
         for (int y = 0; y < buffer.height(); y++) {
             for (int x = 0; x < buffer.width(); x++) {
                 var cell = buffer.get(x, y);
-                if ("✖".equals(cell.symbol()) || "D".equals(cell.symbol())) {
+                if (TuiIcons.HEALTH_DOWN.equals(cell.symbol()) || "D".equals(cell.symbol())) {
                     var fg = cell.style().fg().orElse(null);
                     if (Color.LIGHT_RED.equals(fg)) {
                         foundRedDown = true;
@@ -148,7 +148,7 @@ class HealthTabRenderTest {
         for (int y = 0; y < buffer.height(); y++) {
             for (int x = 0; x < buffer.width(); x++) {
                 var cell = buffer.get(x, y);
-                if ("✔".equals(cell.symbol())) {
+                if (TuiIcons.HEALTH_UP.equals(cell.symbol())) {
                     var fg = cell.style().fg().orElse(null);
                     if (Color.GREEN.equals(fg)) {
                         foundGreenUp = true;

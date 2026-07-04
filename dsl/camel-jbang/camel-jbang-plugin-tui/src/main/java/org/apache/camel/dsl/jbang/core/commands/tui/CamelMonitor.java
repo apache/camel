@@ -82,8 +82,8 @@ public class CamelMonitor extends CamelCommand {
     // Compact tab bar (10 labels + 9 "|" dividers) needs 88 chars — that is the true minimum
     private static final int MIN_WIDTH = 88;
     private static final int MIN_HEIGHT = 24;
-    // Full tab bar (10 labels + 9 " | " dividers) needs 126 chars; use compact below that
-    private static final int TABS_FULL_MIN_WIDTH = 126;
+    // Below this width the tab bar uses tight "|" dividers instead of spaced " | " so all 10 labels still fit
+    private static final int TABS_FULL_MIN_WIDTH = 157;
 
     @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
     String name = "*";
@@ -304,7 +304,7 @@ public class CamelMonitor extends CamelCommand {
         });
 
         popupManager = new PopupManager(
-                ctx, this::getNonVanishingIntegrations, filesBrowser,
+                ctx, this::getNonVanishingIntegrations, tabRegistry::moreTabs, filesBrowser,
                 new PopupManager.PopupCallbacks() {
                     @Override
                     public void selectMoreTab(int index) {
@@ -1244,15 +1244,10 @@ public class CamelMonitor extends CamelCommand {
 
         if (infraSelected) {
             // Infra mode: only Overview and Log tabs
-            Line[] labels = compact
-                    ? new Line[] {
-                            Line.from("1 Overview"),
-                            Line.from("2 Log"),
-                    }
-                    : new Line[] {
-                            Line.from(" 1 Overview "),
-                            Line.from(" 2 Log "),
-                    };
+            Line[] labels = {
+                    Line.from(TuiIcons.primaryTabHeader(TuiIcons.TAB_OVERVIEW, "1", "Overview")),
+                    Line.from(TuiIcons.primaryTabHeader(TuiIcons.TAB_LOG, "2", "Log")),
+            };
 
             // Map real tab index to infra tab index for highlight
             int infraTabIdx = tabsState.selected() == TAB_LOG ? 1 : 0;
@@ -1273,31 +1268,20 @@ public class CamelMonitor extends CamelCommand {
             return;
         }
 
-        Line[] labels = compact
-                ? new Line[] {
-                        Line.from("1 Overview"),
-                        Line.from("2 Log"),
-                        Line.from("3 Diagram"),
-                        Line.from(tabRegistry.routesTab().isTopMode() ? "4  Top " : "4 Route"),
-                        Line.from("5 Endpoint"),
-                        Line.from("6 HTTP"),
-                        Line.from("7 Health"),
-                        Line.from("8 Inspect"),
-                        Line.from("9 Errors"),
-                        Line.from("0 More▾"),
-                }
-                : new Line[] {
-                        Line.from(" 1 Overview "),
-                        Line.from(" 2 Log "),
-                        Line.from(" 3 Diagram "),
-                        Line.from(tabRegistry.routesTab().isTopMode() ? " 4  Top  " : " 4 Route "),
-                        Line.from(" 5 Endpoint "),
-                        Line.from(" 6 HTTP "),
-                        Line.from(" 7 Health "),
-                        Line.from(" 8 Inspect "),
-                        Line.from(" 9 Errors "),
-                        Line.from(" 0 More▾ "),
-                };
+        // Route and Top labels are the same display width so toggling Top mode does not shift the bar.
+        String routesLabel = tabRegistry.routesTab().isTopMode() ? " Top " : "Route";
+        Line[] labels = {
+                Line.from(TuiIcons.primaryTabHeader(TuiIcons.TAB_OVERVIEW, "1", "Overview")),
+                Line.from(TuiIcons.primaryTabHeader(TuiIcons.TAB_LOG, "2", "Log")),
+                Line.from(TuiIcons.primaryTabHeader(TuiIcons.TAB_DIAGRAM, "3", "Diagram")),
+                Line.from(TuiIcons.primaryTabHeader(TuiIcons.TAB_ROUTES, "4", routesLabel)),
+                Line.from(TuiIcons.primaryTabHeader(TuiIcons.TAB_ENDPOINTS, "5", "Endpoint")),
+                Line.from(TuiIcons.primaryTabHeader(TuiIcons.TAB_HTTP, "6", "HTTP")),
+                Line.from(TuiIcons.primaryTabHeader(TuiIcons.TAB_HEALTH, "7", "Health")),
+                Line.from(TuiIcons.primaryTabHeader(TuiIcons.TAB_INSPECT, "8", "Inspect")),
+                Line.from(TuiIcons.primaryTabHeader(TuiIcons.TAB_ERRORS, "9", "Errors")),
+                Line.from(TuiIcons.primaryTabHeader(TuiIcons.TAB_MORE, "0", TuiIcons.moreTabLabel())),
+        };
         popupManager.setCurrentTabLabels(labels);
         lastTabLabels = labels;
         lastTabDivider = dividerStr;
@@ -1735,12 +1719,12 @@ public class CamelMonitor extends CamelCommand {
             Style labelStyle;
             Style suffixStyle;
             if (client != null) {
-                suffix = active ? " ●" : " ○";
+                suffix = active ? " " + TuiIcons.SELECTED : " " + TuiIcons.IDLE;
                 mcpLabel += " (" + client + ")";
                 labelStyle = Theme.success();
                 suffixStyle = active ? Theme.mcpActive() : Theme.mcpIdle();
             } else {
-                suffix = " ✗";
+                suffix = " " + TuiIcons.CROSS;
                 labelStyle = Theme.muted();
                 suffixStyle = Theme.mcpDown();
             }

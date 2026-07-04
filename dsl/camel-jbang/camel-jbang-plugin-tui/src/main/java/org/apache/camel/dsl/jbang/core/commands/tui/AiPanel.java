@@ -526,7 +526,7 @@ class AiPanel {
         if (thinking.get()) {
             long elapsed = (System.currentTimeMillis() - thinkingStartTime) / 1000;
             long dots = (System.currentTimeMillis() / 500) % 4;
-            md.append("*🤔 thinking");
+            md.append("*" + TuiIcons.THINKING + " thinking");
             if (elapsed > 0) {
                 md.append(" (").append(elapsed).append("s)");
             }

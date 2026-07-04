@@ -66,9 +66,16 @@ class RunOptionsForm {
 
     private static final String[] MAX_MODES = { "Max seconds:", "Max messages:", "Max idle secs:" };
     private static final String[] MAX_FLAGS = { "--max-seconds=", "--max-messages=", "--max-idle-seconds=" };
-    private static final String[] RUNTIME_LABELS = { "🐪 Camel Main", "🍃 Spring Boot", "🚀 Quarkus" };
+    private static final String[] RUNTIME_LABELS = {
+            TuiIcons.labeled(TuiIcons.CAMEL, "Camel Main"),
+            TuiIcons.labeled(TuiIcons.SPRING_BOOT, "Spring Boot"),
+            TuiIcons.labeled(TuiIcons.QUARKUS, "Quarkus")
+    };
     private static final String[] RUNTIME_VALUES = { "camel-main", "spring-boot", "quarkus" };
-    private static final String[] PROFILE_LABELS = { "🛠️ dev", "📦 prod" };
+    private static final String[] PROFILE_LABELS = {
+            TuiIcons.labeled(TuiIcons.DEV_PROFILE, "dev"),
+            TuiIcons.labeled(TuiIcons.PROD_PROFILE, "prod")
+    };
     private static final String[] PROFILE_VALUES = { "dev", "prod" };
 
     // Text fields
@@ -200,13 +207,13 @@ class RunOptionsForm {
                 hint(spans, "Space", "toggle");
             }
             if (hasProperties()) {
-                hint(spans, "→", "properties");
+                hint(spans, TuiIcons.KEY_RIGHT, "properties");
             }
             hint(spans, "Enter", "launch");
             hintLast(spans, "Esc", "back");
         } else {
-            hint(spans, "←", "options");
-            hint(spans, "↑↓", "navigate");
+            hint(spans, TuiIcons.KEY_LEFT, "options");
+            hint(spans, TuiIcons.HINT_SCROLL, "navigate");
             hint(spans, "+", "add");
             hint(spans, "Enter", "launch");
             hintLast(spans, "Esc", "back");
@@ -592,7 +599,7 @@ class RunOptionsForm {
             rowY++;
             Rect errorArea = new Rect(innerX, rowY, innerW, 1);
             frame.renderWidget(Paragraph.from(Line.from(
-                    Span.styled("⚠ " + errorMessage, Style.EMPTY.bold()))), errorArea);
+                    Span.styled(TuiIcons.HEALTH_WARN + " " + errorMessage, Style.EMPTY.bold()))), errorArea);
         }
     }
 

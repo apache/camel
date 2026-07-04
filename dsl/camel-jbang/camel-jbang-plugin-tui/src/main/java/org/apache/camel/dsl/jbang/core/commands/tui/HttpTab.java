@@ -295,13 +295,13 @@ class HttpTab extends AbstractTableTab {
             hint(spans, "+", "header");
             hint(spans, "p", "pretty" + (probePrettyPrint ? " [on]" : ""));
             if (!probeHistory.isEmpty()) {
-                hintLast(spans, "↑↓", "history");
+                hintLast(spans, TuiIcons.HINT_SCROLL, "history");
             }
             return;
         }
         if (showSpec) {
             hint(spans, "c/Esc", "close");
-            hint(spans, "↑↓", "scroll");
+            hint(spans, TuiIcons.HINT_SCROLL, "scroll");
             hintLast(spans, "PgUp/PgDn", "page");
             return;
         }
@@ -929,8 +929,8 @@ class HttpTab extends AbstractTableTab {
         FormHelper.renderLabel(frame, innerX, row, labelW, "Method:", probeField == PROBE_METHOD);
         Rect methodArea = new Rect(innerX + labelW, row, fieldW, 1);
         Style methodSt = methodStyle(method);
-        String leftArr = probeField == PROBE_METHOD ? "◀ " : "  ";
-        String rightArr = probeField == PROBE_METHOD ? " ▶" : "";
+        String leftArr = probeField == PROBE_METHOD ? TuiIcons.ARROW_LEFT + " " : "  ";
+        String rightArr = probeField == PROBE_METHOD ? " " + TuiIcons.ARROW_RIGHT : "";
         frame.renderWidget(Paragraph.from(Line.from(
                 Span.styled(leftArr, methodSt),
                 Span.styled(method, methodSt.bold()),
@@ -1120,7 +1120,7 @@ class HttpTab extends AbstractTableTab {
         for (int i = start; i < end; i++) {
             ProbeHistoryEntry entry = probeHistory.get(i);
             boolean selected = probeField == PROBE_HISTORY && i == probeHistoryIndex;
-            String pointer = selected ? "► " : "  ";
+            String pointer = selected ? TuiIcons.POINTER + " " : "  ";
             String methodStr = String.format("%-8s", entry.method);
             String statusStr = entry.error ? "ERR" : entry.statusText;
             String elapsedStr = entry.elapsed > 0 ? entry.elapsed + "ms" : "";

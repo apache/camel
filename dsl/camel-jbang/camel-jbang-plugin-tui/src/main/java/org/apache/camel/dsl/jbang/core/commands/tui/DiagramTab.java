@@ -663,17 +663,17 @@ class DiagramTab extends AbstractTab {
             if (!topologyMode && !diagram.getEipNodeBoxes().isEmpty()) {
                 hint(spans, "Esc", "back");
                 hint(spans, "t", "topology");
-                hint(spans, "↑↓←→", "navigate");
+                hint(spans, TuiIcons.HINT_NAV, "navigate");
                 hint(spans, "PgUp/PgDn", "page");
                 hint(spans, "c", "source");
             } else if (!topologyMode) {
                 hint(spans, "Esc", "back");
                 hint(spans, "t", "topology");
-                hint(spans, "↑↓←→", "scroll");
+                hint(spans, TuiIcons.HINT_NAV, "scroll");
                 hint(spans, "PgUp/PgDn", "page");
             } else if (!diagram.getNodeBoxes().isEmpty()) {
                 hint(spans, "Esc", "close");
-                hint(spans, "↑↓←→", "navigate");
+                hint(spans, TuiIcons.HINT_NAV, "navigate");
                 hint(spans, "Enter", "drill-down");
                 hint(spans, "PgUp/PgDn", "page");
                 hint(spans, "c", "source");

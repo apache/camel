@@ -757,13 +757,13 @@ class ActionsPopup {
         }
         if (gotoTabPopup.isVisible()) {
             hint(spans, "type", "filter");
-            hint(spans, "↑↓", "navigate");
+            hint(spans, TuiIcons.HINT_SCROLL, "navigate");
             hint(spans, "Enter", "go to");
             hintLast(spans, "Esc", "back");
             return;
         }
         if (showActionsMenu) {
-            hint(spans, "↑↓", "navigate");
+            hint(spans, TuiIcons.HINT_SCROLL, "navigate");
             hint(spans, "Enter", "select");
             hintLast(spans, "Esc", "cancel");
         }
@@ -789,52 +789,54 @@ class ActionsPopup {
         // CAMEL-23818: use plain 2-wide emoji here. TamboUI mismeasures base-glyph + VS16
         // sequences as 1-wide (fixed upstream in tamboui/tamboui#388), which left stray chars.
         String keystrokeLabel = keystrokesEnabled.get()
-                ? "  🔤 Hide Keystrokes"
-                : "  🔤 Show Keystrokes";
+                ? TuiIcons.menuItem(TuiIcons.KEYSTROKES, "Hide Keystrokes")
+                : TuiIcons.menuItem(TuiIcons.KEYSTROKES, "Show Keystrokes");
         String stopLabel = stopAllPopup.hasBothGroups()
-                ? "  🛑 Stop All..."
-                : "  🛑 Stop All";
+                ? TuiIcons.menuItem(TuiIcons.STOP, "Stop All...")
+                : TuiIcons.menuItem(TuiIcons.STOP, "Stop All");
         String tapeLabel = tapeRecordingActive.get()
-                ? "  🛑 Stop Tape Recording (Ctrl+R)"
-                : "  🔴 Start Tape Recording (Ctrl+R)";
+                ? TuiIcons.menuItem(TuiIcons.STOP, "Stop Tape Recording (Ctrl+R)")
+                : TuiIcons.menuItem(TuiIcons.RECORD, "Start Tape Recording (Ctrl+R)");
 
         List<ListItem> items = new ArrayList<>();
         // Group 0: Go to
-        items.add(ListItem.from("  🔍 Go to..."));
+        items.add(ListItem.from(TuiIcons.menuItem(TuiIcons.GO_TO, "Go to...")));
         items.add(ListItem.from(divider).style(Style.EMPTY.dim()));
         // Group 1: User Actions
         boolean hasSelection = ctx != null && ctx.selectedPid != null && !ctx.isInfraSelected();
         items.add(hasSelection
-                ? ListItem.from("  📩 Send Message")
-                : ListItem.from("  📩 Send Message").style(Style.EMPTY.dim()));
-        items.add(ListItem.from("  🐪 Run an Example..."));
-        items.add(ListItem.from("  📂 Run from Folder..."));
-        items.add(ListItem.from("  🔧 Run Dev/Infra Service..."));
+                ? ListItem.from(TuiIcons.menuItem(TuiIcons.MESSAGE, "Send Message"))
+                : ListItem.from(TuiIcons.menuItem(TuiIcons.MESSAGE, "Send Message")).style(Style.EMPTY.dim()));
+        items.add(ListItem.from(TuiIcons.menuItem(TuiIcons.CAMEL, "Run an Example...")));
+        items.add(ListItem.from(TuiIcons.menuItem(TuiIcons.FOLDER_OPEN, "Run from Folder...")));
+        items.add(ListItem.from(TuiIcons.menuItem(TuiIcons.INFRA, "Run Dev/Infra Service...")));
         items.add(hasSelection
-                ? ListItem.from("  📁 Browse Files...")
-                : ListItem.from("  📁 Browse Files...").style(Style.EMPTY.dim()));
+                ? ListItem.from(TuiIcons.menuItem(TuiIcons.FOLDER, "Browse Files..."))
+                : ListItem.from(TuiIcons.menuItem(TuiIcons.FOLDER, "Browse Files...")).style(Style.EMPTY.dim()));
         items.add(ListItem.from(stopLabel));
         items.add(ListItem.from(divider).style(Style.EMPTY.dim()));
         // Group 2: Diagnostics
-        items.add(ListItem.from("  🩺 Run Doctor"));
-        items.add(ListItem.from("  🔄 Reset Stats"));
-        items.add(ListItem.from("  🧹 Reset Screen"));
-        String themeLabel = "dark".equals(Theme.mode()) ? "  🌞 Light Theme" : "  🌙 Dark Theme";
+        items.add(ListItem.from(TuiIcons.menuItem(TuiIcons.DOCTOR, "Run Doctor")));
+        items.add(ListItem.from(TuiIcons.menuItem(TuiIcons.RESET, "Reset Stats")));
+        items.add(ListItem.from(TuiIcons.menuItem(TuiIcons.CLEAN, "Reset Screen")));
+        String themeLabel = "dark".equals(Theme.mode())
+                ? TuiIcons.menuItem(TuiIcons.LIGHT_THEME, "Light Theme")
+                : TuiIcons.menuItem(TuiIcons.DARK_THEME, "Dark Theme");
         items.add(ListItem.from(themeLabel));
         items.add(ListItem.from(divider).style(Style.EMPTY.dim()));
         // Group 3: Recording & Presentation
-        items.add(ListItem.from("  📸 Take Screenshot"));
+        items.add(ListItem.from(TuiIcons.menuItem(TuiIcons.SCREENSHOT, "Take Screenshot")));
         items.add(ListItem.from(tapeLabel));
-        items.add(ListItem.from("  📄 Tape Recording Guide"));
-        items.add(ListItem.from("  💬 Caption..."));
+        items.add(ListItem.from(TuiIcons.menuItem(TuiIcons.DOCUMENT, "Tape Recording Guide")));
+        items.add(ListItem.from(TuiIcons.menuItem(TuiIcons.CAPTION, "Caption...")));
         items.add(ListItem.from(keystrokeLabel));
         // Group 4: MCP
         if (mcpEnabled) {
             items.add(ListItem.from(divider).style(Style.EMPTY.dim()));
-            items.add(ListItem.from("  🧠 Setup MCP"));
-            items.add(ListItem.from("  💬 AI Log"));
-            items.add(ListItem.from("  🤖 MCP Info"));
-            items.add(ListItem.from("  📋 MCP Log"));
+            items.add(ListItem.from(TuiIcons.menuItem(TuiIcons.MCP_BRAIN, "Setup MCP")));
+            items.add(ListItem.from(TuiIcons.menuItem(TuiIcons.CAPTION, "AI Log")));
+            items.add(ListItem.from(TuiIcons.menuItem(TuiIcons.MCP, "MCP Info")));
+            items.add(ListItem.from(TuiIcons.menuItem(TuiIcons.MCP_LOG, "MCP Log")));
         }
         // Group 5: Shell
         items.add(ListItem.from(divider).style(Style.EMPTY.dim()));

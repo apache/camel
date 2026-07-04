@@ -361,7 +361,7 @@ class ConfigurationTab extends AbstractTableTab {
     @Override
     public void renderFooter(List<Span> spans) {
         super.renderFooter(spans);
-        hint(spans, "↑↓", "navigate");
+        hint(spans, TuiIcons.HINT_SCROLL, "navigate");
         hintLast(spans, "PgUp/Dn", "scroll");
     }
 

@@ -542,7 +542,7 @@ class SqlQueryTab extends AbstractTab {
         for (int i = 0; i < columnNames.length; i++) {
             String label = columnNames[i];
             if (columnIsPk != null && columnIsPk[i]) {
-                label = label + " 🔑";
+                label = label + " " + TuiIcons.KEY;
             }
             cells[i] = Cell.from(Span.styled(label, Style.EMPTY.fg(Color.YELLOW)));
         }
@@ -827,14 +827,14 @@ class SqlQueryTab extends AbstractTab {
                 hint(spans, "C-e", "history");
             }
             if (dsNames.size() > 1) {
-                hint(spans, "C-←→", "datasource");
+                hint(spans, TuiIcons.HINT_CTRL_H, "datasource");
             }
             if (resultRows != null && !resultRows.isEmpty()) {
                 hint(spans, "Tab", "results");
             }
         } else {
             hint(spans, "Tab", "input");
-            hint(spans, "↑↓", "navigate");
+            hint(spans, TuiIcons.HINT_SCROLL, "navigate");
             if (isEditable()) {
                 hint(spans, "Enter", "edit");
             }

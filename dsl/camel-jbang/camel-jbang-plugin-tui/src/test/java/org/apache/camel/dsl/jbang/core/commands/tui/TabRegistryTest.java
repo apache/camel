@@ -16,15 +16,181 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
+import java.nio.file.Path;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicReference;
+
+import dev.tamboui.text.CharWidth;
+import dev.tamboui.widgets.tabs.TabsState;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Tests for {@link TabRegistry} constants and tab index mapping.
+ * Tests for {@link TabRegistry} constants, tab index mapping, and the {@link TabRegistry.MoreTab} records that are the
+ * single source of truth for the More submenu (icon, name, mnemonic label, tab instance).
  */
 class TabRegistryTest {
+
+    private TabRegistry registry;
+
+    @BeforeEach
+    void setUp() {
+        AtomicReference<List<IntegrationInfo>> data = new AtomicReference<>(List.of());
+        AtomicReference<List<InfraInfo>> infraData = new AtomicReference<>(List.of());
+        MonitorContext ctx = new MonitorContext(data, infraData);
+        DataRefreshService dataService = new DataRefreshService(
+                "test",
+                new DataRefreshService.RefreshContext() {
+                    @Override
+                    public int selectedTab() {
+                        return 0;
+                    }
+
+                    @Override
+                    public boolean isSwitchPopupVisible() {
+                        return false;
+                    }
+
+                    @Override
+                    public String getPendingAutoSelect() {
+                        return null;
+                    }
+
+                    @Override
+                    public void clearPendingAutoSelect() {
+                    }
+
+                    @Override
+                    public void onInfraAutoSelected(int tableIndex, String pid) {
+                    }
+
+                    @Override
+                    public boolean isInfraSelected() {
+                        return false;
+                    }
+                },
+                Path::of, Path::of);
+        registry = new TabRegistry(new TabsState(TabRegistry.TAB_OVERVIEW));
+        registry.initTabs(ctx, dataService, () -> {
+        });
+    }
+
+    @Test
+    void moreTabsHasEighteenEntries() {
+        assertEquals(18, registry.moreTabs().size());
+    }
+
+    @Test
+    void everyMoreTabLabelHasMnemonicMarker() {
+        for (TabRegistry.MoreTab mt : registry.moreTabs()) {
+            assertTrue(mt.mnemonicIndex() >= 0,
+                    "More tab '" + mt.name() + "' label must carry a '" + TuiIcons.MNEMONIC_MARKER + "' marker: "
+                                                + mt.label());
+        }
+    }
+
+    @Test
+    void moreTabIconsAreTwoColumnsWideWithoutVariationSelector() {
+        for (TabRegistry.MoreTab mt : registry.moreTabs()) {
+            assertEquals(2, CharWidth.of(mt.icon()), "Icon should be 2 terminal columns wide: " + mt.icon());
+            assertFalse(mt.icon().contains("\uFE0F"), "Icon should not contain VS16 variation selector: " + mt.icon());
+        }
+    }
+
+    @Test
+    void moreTabShortcutsMatchHistoricalSequence() {
+        // Independent oracle (not a re-derivation of shortcut()): these are the exact letters the hand-maintained
+        // MORE_SHORTCUTS array carried before the MoreTab refactor. A label edit that repoints a key must fail here.
+        List<Character> shortcuts = registry.moreTabs().stream().map(TabRegistry.MoreTab::shortcut).toList();
+        assertEquals(
+                List.of('B', 'W', 'C', 'A', 'G', 'N', 'D', 'H', 'I', 'M', 'K', 'E', 'Q', 'R', 'O', 'P', 'S', 'T'),
+                shortcuts, "More tab shortcut letters must match the historical sequence");
+    }
+
+    @Test
+    void moreTabShortcutsAreUnique() {
+        // morePopupShortcut() returns the first matching tab, so a duplicated letter would silently shadow a later tab.
+        List<Character> shortcuts = registry.moreTabs().stream().map(TabRegistry.MoreTab::shortcut).toList();
+        assertEquals(shortcuts.size(), Set.copyOf(shortcuts).size(),
+                "More tab shortcut letters must be unique: " + shortcuts);
+    }
+
+    @Test
+    void moreTabRejectsLabelWithoutUsableMnemonicMarker() {
+        // The record's compact constructor enforces the '&'-before-a-letter invariant that shortcut() relies on,
+        // so a mistyped literal fails loudly at construction instead of throwing StringIndexOutOfBounds later.
+        assertThrows(IllegalArgumentException.class,
+                () -> new TabRegistry.MoreTab(TuiIcons.TAB_BEANS, "Beans", "Beans", null));
+        assertThrows(IllegalArgumentException.class,
+                () -> new TabRegistry.MoreTab(TuiIcons.TAB_BEANS, "Beans", "Beans&", null));
+    }
+
+    @Test
+    void moreTabIndexResolvesSqlQueryByNameForEditSqlJump() {
+        // Guards the selectMoreTab(moreTabIndex("SQL Query")) wiring that replaced a hardcoded index.
+        int idx = registry.moreTabIndex("SQL Query");
+        assertEquals("SQL Query", registry.moreTabs().get(idx).name());
+        assertEquals(-1, registry.moreTabIndex("Nonexistent"), "Unknown name resolves to -1");
+    }
+
+    @Test
+    void allTabEntriesExposeDigitsIconsAndMoreShortcuts() {
+        List<TabRegistry.TabEntry> entries = registry.allTabEntries();
+        assertEquals(9 + registry.moreTabs().size(), entries.size());
+
+        // Primary tabs: digit shortcuts 1-9, moreIndex -1, icon indexed by tabIndex.
+        for (int i = 0; i < 9; i++) {
+            TabRegistry.TabEntry e = entries.get(i);
+            assertEquals(String.valueOf(i + 1), e.shortcut(), "Primary tab " + e.name() + " digit shortcut");
+            assertEquals(-1, e.moreIndex(), "Primary tab " + e.name() + " has no More index");
+            assertEquals(TuiIcons.PRIMARY_TAB_ICONS.get(e.tabIndex()), e.icon());
+        }
+
+        // More tabs: tabIndex TAB_MORE, ascending moreIndex, shortcut/name/icon carried from the owning MoreTab.
+        for (int i = 0; i < registry.moreTabs().size(); i++) {
+            TabRegistry.TabEntry e = entries.get(9 + i);
+            TabRegistry.MoreTab mt = registry.moreTabs().get(i);
+            assertEquals(TabRegistry.TAB_MORE, e.tabIndex());
+            assertEquals(i, e.moreIndex());
+            assertEquals(String.valueOf(mt.shortcut()), e.shortcut());
+            assertEquals(mt.name(), e.name());
+            assertEquals(mt.icon(), e.icon());
+        }
+    }
+
+    @Test
+    void browseAndConfigurationHighlightTheirShortcutLetter() {
+        // Regression guard: these two historically underlined the wrong letter when a hand-maintained index array
+        // drifted. The '&' marker now pins the highlight to the actual shortcut.
+        TabRegistry.MoreTab browse = moreTabNamed("Browse");
+        assertEquals(3, browse.mnemonicIndex(), "Should underline the 'w' in Bro[w]se");
+        assertEquals('W', browse.shortcut());
+
+        TabRegistry.MoreTab configuration = moreTabNamed("Configuration");
+        assertEquals(5, configuration.mnemonicIndex(), "Should underline the 'g' in Confi[g]uration");
+        assertEquals('G', configuration.shortcut());
+    }
+
+    @Test
+    void spansTabKeepsProgrammaticNameButOTelPopupLabel() {
+        TabRegistry.MoreTab spans = moreTabNamed("Spans");
+        assertEquals("Spans", spans.name(), "MCP/Go-to lookup name must stay 'Spans'");
+        assertEquals("OTel Spans", spans.displayName(), "Popup shows the OTel-qualified label");
+        assertEquals('O', spans.shortcut());
+    }
+
+    private TabRegistry.MoreTab moreTabNamed(String name) {
+        return registry.moreTabs().stream()
+                .filter(mt -> mt.name().equals(name))
+                .findFirst()
+                .orElseThrow(() -> new AssertionError("No More tab named " + name));
+    }
 
     @Test
     void tabConstantsAreSequential() {

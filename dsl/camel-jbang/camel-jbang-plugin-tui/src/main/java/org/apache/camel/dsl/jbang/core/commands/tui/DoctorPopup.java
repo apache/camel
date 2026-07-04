@@ -105,7 +105,7 @@ class DoctorPopup {
                 .text(Text.from(lines.toArray(Line[]::new)))
                 .block(Block.builder()
                         .borderType(BorderType.ROUNDED).borders(Borders.ALL)
-                        .title(" 🩺 Doctor ")
+                        .title(" " + TuiIcons.DOCTOR + " Doctor ")
                         .build())
                 .build();
         frame.renderWidget(para, popup);
@@ -125,16 +125,16 @@ class DoctorPopup {
         String emoji;
         if (major >= 21) {
             status = null;
-            emoji = "✅";
+            emoji = TuiIcons.OK;
         } else if (major >= 17) {
             status = "Consider upgrading to 21 or 25";
-            emoji = "⚠️";
+            emoji = TuiIcons.WARN;
         } else {
             status = "17+ required";
-            emoji = "❌";
+            emoji = TuiIcons.FAIL;
         }
         result.add(Line.from(
-                Span.raw("  ☕ "),
+                Span.raw(TuiIcons.indent(TuiIcons.JAVA)),
                 Span.styled(String.format("%-14s", "Java"), Style.EMPTY.bold()),
                 Span.raw(String.format("%-30s", version + " (" + vendor + ")")),
                 Span.raw(" " + emoji)));
@@ -148,16 +148,16 @@ class DoctorPopup {
             CamelCatalog catalog = new DefaultCamelCatalog();
             String version = catalog.getCatalogVersion();
             result.add(Line.from(
-                    Span.raw("  🐪 "),
+                    Span.raw(TuiIcons.indent(TuiIcons.CAMEL)),
                     Span.styled(String.format("%-14s", "Camel"), Style.EMPTY.bold()),
                     Span.raw(String.format("%-30s", version)),
-                    Span.raw(" ✅")));
+                    Span.raw(" " + TuiIcons.OK)));
         } catch (Exception e) {
             result.add(Line.from(
-                    Span.raw("  🐪 "),
+                    Span.raw(TuiIcons.indent(TuiIcons.CAMEL)),
                     Span.styled(String.format("%-14s", "Camel"), Style.EMPTY.bold()),
                     Span.raw(String.format("%-30s", "Not detected")),
-                    Span.raw(" ❌")));
+                    Span.raw(" " + TuiIcons.FAIL)));
         }
     }
 
@@ -165,16 +165,16 @@ class DoctorPopup {
         String version = VersionHelper.getJBangVersion();
         if (version != null) {
             result.add(Line.from(
-                    Span.raw("  📦 "),
+                    Span.raw(TuiIcons.indent(TuiIcons.BUNDLED)),
                     Span.styled(String.format("%-14s", "JBang"), Style.EMPTY.bold()),
                     Span.raw(String.format("%-30s", version)),
-                    Span.raw(" ✅")));
+                    Span.raw(" " + TuiIcons.OK)));
         } else {
             result.add(Line.from(
-                    Span.raw("  📦 "),
+                    Span.raw(TuiIcons.indent(TuiIcons.BUNDLED)),
                     Span.styled(String.format("%-14s", "JBang"), Style.EMPTY.bold()),
                     Span.raw(String.format("%-30s", "Not detected")),
-                    Span.raw(" ⚠️")));
+                    Span.raw(" " + TuiIcons.WARN)));
         }
     }
 
@@ -187,24 +187,24 @@ class DoctorPopup {
                     List.of("org.apache.camel:camel-api:" + version),
                     Set.of(), false, false);
             result.add(Line.from(
-                    Span.raw("  🔧 "),
+                    Span.raw(TuiIcons.indent(TuiIcons.INFRA)),
                     Span.styled(String.format("%-14s", "Maven"), Style.EMPTY.bold()),
                     Span.raw(String.format("%-30s", "Artifact resolution")),
-                    Span.raw(" ✅")));
+                    Span.raw(" " + TuiIcons.OK)));
         } catch (MavenResolutionException e) {
             result.add(Line.from(
-                    Span.raw("  🔧 "),
+                    Span.raw(TuiIcons.indent(TuiIcons.INFRA)),
                     Span.styled(String.format("%-14s", "Maven"), Style.EMPTY.bold()),
                     Span.raw(String.format("%-30s", "Resolution failed")),
-                    Span.raw(" ❌")));
+                    Span.raw(" " + TuiIcons.FAIL)));
             result.add(Line.from(Span.styled("                    " + TuiHelper.truncate(e.getMessage(), 40),
                     Style.EMPTY.dim())));
         } catch (Exception e) {
             result.add(Line.from(
-                    Span.raw("  🔧 "),
+                    Span.raw(TuiIcons.indent(TuiIcons.INFRA)),
                     Span.styled(String.format("%-14s", "Maven"), Style.EMPTY.bold()),
                     Span.raw(String.format("%-30s", "Error")),
-                    Span.raw(" ❌")));
+                    Span.raw(" " + TuiIcons.FAIL)));
             result.add(Line.from(Span.styled("                    " + TuiHelper.truncate(e.getMessage(), 40),
                     Style.EMPTY.dim())));
         }
@@ -221,10 +221,10 @@ class DoctorPopup {
                 if (exit == 0) {
                     String name = Character.toUpperCase(cmd.charAt(0)) + cmd.substring(1);
                     result.add(Line.from(
-                            Span.raw("  🐳 "),
+                            Span.raw(TuiIcons.indent(TuiIcons.DOCKER)),
                             Span.styled(String.format("%-14s", "Container"), Style.EMPTY.bold()),
                             Span.raw(String.format("%-30s", name + " running")),
-                            Span.raw(" ✅")));
+                            Span.raw(" " + TuiIcons.OK)));
                     return;
                 }
             } catch (Exception e) {
@@ -232,10 +232,10 @@ class DoctorPopup {
             }
         }
         result.add(Line.from(
-                Span.raw("  🐳 "),
+                Span.raw(TuiIcons.indent(TuiIcons.DOCKER)),
                 Span.styled(String.format("%-14s", "Container"), Style.EMPTY.bold()),
                 Span.raw(String.format("%-30s", "Not found (optional)")),
-                Span.raw(" ⚠️")));
+                Span.raw(" " + TuiIcons.WARN)));
     }
 
     private void checkCommonPorts(List<Line> result) {
@@ -250,16 +250,16 @@ class DoctorPopup {
         }
         if (!conflicts.isEmpty()) {
             result.add(Line.from(
-                    Span.raw("  🔌 "),
+                    Span.raw(TuiIcons.indent(TuiIcons.ENDPOINT)),
                     Span.styled(String.format("%-14s", "Ports"), Style.EMPTY.bold()),
                     Span.raw(String.format("%-30s", "In use: " + conflicts)),
-                    Span.raw(" ⚠️")));
+                    Span.raw(" " + TuiIcons.WARN)));
         } else {
             result.add(Line.from(
-                    Span.raw("  🔌 "),
+                    Span.raw(TuiIcons.indent(TuiIcons.ENDPOINT)),
                     Span.styled(String.format("%-14s", "Ports"), Style.EMPTY.bold()),
                     Span.raw(String.format("%-30s", "8080, 8443, 9090 free")),
-                    Span.raw(" ✅")));
+                    Span.raw(" " + TuiIcons.OK)));
         }
     }
 
@@ -290,16 +290,16 @@ class DoctorPopup {
         }
         if (provider != null) {
             result.add(Line.from(
-                    Span.raw("  🤖 "),
+                    Span.raw(TuiIcons.indent(TuiIcons.MCP)),
                     Span.styled(String.format("%-14s", "AI"), Style.EMPTY.bold()),
                     Span.raw(String.format("%-30s", provider)),
-                    Span.raw(" ✅")));
+                    Span.raw(" " + TuiIcons.OK)));
         } else {
             result.add(Line.from(
-                    Span.raw("  🤖 "),
+                    Span.raw(TuiIcons.indent(TuiIcons.MCP)),
                     Span.styled(String.format("%-14s", "AI"), Style.EMPTY.bold()),
                     Span.raw(String.format("%-30s", "No API key configured")),
-                    Span.raw(" ⚠️")));
+                    Span.raw(" " + TuiIcons.WARN)));
             result.add(Line.from(Span.styled("                    Set ANTHROPIC_API_KEY or OPENAI_API_KEY",
                     Style.EMPTY.dim())));
         }
@@ -310,25 +310,25 @@ class DoctorPopup {
             String client = mcpConnectedClient != null ? mcpConnectedClient.get() : null;
             if (client != null) {
                 result.add(Line.from(
-                        Span.raw("  🔗 "),
+                        Span.raw(TuiIcons.indent(TuiIcons.OTEL)),
                         Span.styled(String.format("%-14s", "MCP"), Style.EMPTY.bold()),
                         Span.raw(String.format("%-30s", client + " (port " + mcpPort + ")")),
-                        Span.raw(" ✅")));
+                        Span.raw(" " + TuiIcons.OK)));
             } else {
                 result.add(Line.from(
-                        Span.raw("  🔗 "),
+                        Span.raw(TuiIcons.indent(TuiIcons.OTEL)),
                         Span.styled(String.format("%-14s", "MCP"), Style.EMPTY.bold()),
                         Span.raw(String.format("%-30s", "Listening on port " + mcpPort)),
-                        Span.raw(" ⚠️")));
+                        Span.raw(" " + TuiIcons.WARN)));
                 result.add(Line.from(Span.styled("                    No AI client connected",
                         Style.EMPTY.dim())));
             }
         } else {
             result.add(Line.from(
-                    Span.raw("  🔗 "),
+                    Span.raw(TuiIcons.indent(TuiIcons.OTEL)),
                     Span.styled(String.format("%-14s", "MCP"), Style.EMPTY.bold()),
                     Span.raw(String.format("%-30s", "Not enabled")),
-                    Span.raw(" ⚠️")));
+                    Span.raw(" " + TuiIcons.WARN)));
             result.add(Line.from(Span.styled("                    Use --mcp to enable MCP server",
                     Style.EMPTY.dim())));
         }
@@ -339,11 +339,11 @@ class DoctorPopup {
         long free = tmpDir.getFreeSpace();
         long mb = free / (1024 * 1024);
         long gb = mb / 1024;
-        String emoji = mb > 500 ? "✅" : "⚠️";
+        String emoji = mb > 500 ? TuiIcons.OK : TuiIcons.WARN;
         String unit = gb > 10 ? "GB" : "MB";
         long value = gb > 0 ? gb : mb;
         result.add(Line.from(
-                Span.raw("  💾 "),
+                Span.raw(TuiIcons.indent(TuiIcons.MEMORY)),
                 Span.styled(String.format("%-14s", "Disk Space"), Style.EMPTY.bold()),
                 Span.raw(String.format("%-30s", value + " " + unit + " free in temp dir")),
                 Span.raw(" " + emoji)));

@@ -230,16 +230,16 @@ class RecordingManager {
             return ke.hasShift() ? "⇧Tab" : "Tab";
         }
         if (ke.isKey(KeyCode.UP)) {
-            return "↑";
+            return TuiIcons.ARROW_UP;
         }
         if (ke.isKey(KeyCode.DOWN)) {
-            return "↓";
+            return TuiIcons.ARROW_DOWN;
         }
         if (ke.isKey(KeyCode.LEFT)) {
-            return "←";
+            return TuiIcons.KEY_LEFT;
         }
         if (ke.isKey(KeyCode.RIGHT)) {
-            return "→";
+            return TuiIcons.KEY_RIGHT;
         }
         if (ke.isKey(KeyCode.PAGE_UP)) {
             return "PgUp";

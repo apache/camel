@@ -158,10 +158,10 @@ class MonitorContextRenderTest {
     @Test
     void sortLabelShowsIndicatorForActiveColumn() {
         String label = AbstractTab.sortLabel("NAME", "name", "name", false);
-        assertEquals("NAME▼", label, "Active sort column should have descending indicator");
+        assertEquals("NAME" + TuiIcons.SORT_DOWN, label, "Active sort column should have descending indicator");
 
         String reversed = AbstractTab.sortLabel("NAME", "name", "name", true);
-        assertEquals("NAME▲", reversed, "Reversed sort should have ascending indicator");
+        assertEquals("NAME" + TuiIcons.SORT_UP, reversed, "Reversed sort should have ascending indicator");
     }
 
     @Test

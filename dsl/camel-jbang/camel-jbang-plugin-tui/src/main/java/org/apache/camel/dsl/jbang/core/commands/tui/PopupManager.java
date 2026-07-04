@@ -63,6 +63,7 @@ class PopupManager {
 
     private final MonitorContext ctx;
     private final Supplier<List<IntegrationInfo>> nonVanishingIntegrationsSupplier;
+    private final Supplier<List<TabRegistry.MoreTab>> moreTabsSupplier;
     private final PopupCallbacks callbacks;
     private final FilesBrowser filesBrowser;
 
@@ -82,14 +83,19 @@ class PopupManager {
     // Last rendered popup rects for mouse hit-testing
     private Rect lastMorePopupRect;
     private Rect lastSwitchPopupRect;
-    private static final int MORE_POPUP_ITEM_COUNT = 19;
 
     PopupManager(MonitorContext ctx, Supplier<List<IntegrationInfo>> nonVanishingIntegrationsSupplier,
+                 Supplier<List<TabRegistry.MoreTab>> moreTabsSupplier,
                  FilesBrowser filesBrowser, PopupCallbacks callbacks) {
         this.ctx = ctx;
         this.nonVanishingIntegrationsSupplier = nonVanishingIntegrationsSupplier;
+        this.moreTabsSupplier = moreTabsSupplier;
         this.filesBrowser = filesBrowser;
         this.callbacks = callbacks;
+    }
+
+    private int moreTabCount() {
+        return moreTabsSupplier.get().size();
     }
 
     // ---- State queries ----
@@ -184,7 +190,7 @@ class PopupManager {
             return true;
         }
         if (ke.isDown()) {
-            morePopupState.selectNext(MORE_POPUP_ITEM_COUNT);
+            morePopupState.selectNext(moreTabCount());
             return true;
         }
         if (ke.isPageUp() || ke.isKey(KeyCode.PAGE_UP)) {
@@ -195,7 +201,7 @@ class PopupManager {
         }
         if (ke.isPageDown() || ke.isKey(KeyCode.PAGE_DOWN)) {
             for (int i = 0; i < 5; i++) {
-                morePopupState.selectNext(MORE_POPUP_ITEM_COUNT);
+                morePopupState.selectNext(moreTabCount());
             }
             return true;
         }
@@ -204,7 +210,7 @@ class PopupManager {
             return true;
         }
         if (ke.isEnd() || ke.isKey(KeyCode.END)) {
-            morePopupState.selectLast(MORE_POPUP_ITEM_COUNT);
+            morePopupState.selectLast(moreTabCount());
             return true;
         }
         int shortcutSel = morePopupShortcut(ke);
@@ -311,7 +317,7 @@ class PopupManager {
         }
         // Inside the popup: items start at y+1 (after border top row) and each is 1 row
         int itemIndex = me.y() - lastMorePopupRect.y() - 1; // -1 for top border
-        if (itemIndex < 0 || itemIndex >= MORE_POPUP_ITEM_COUNT) {
+        if (itemIndex < 0 || itemIndex >= moreTabCount()) {
             return true; // click on border area
         }
         if (me.kind() == MouseEventKind.SCROLL_UP) {
@@ -319,7 +325,7 @@ class PopupManager {
             return true;
         }
         if (me.kind() == MouseEventKind.SCROLL_DOWN) {
-            morePopupState.selectNext(MORE_POPUP_ITEM_COUNT);
+            morePopupState.selectNext(moreTabCount());
             return true;
         }
         if (me.isClick()) {
@@ -382,9 +388,9 @@ class PopupManager {
     // ---- Rendering ----
 
     void renderMorePopup(Frame frame, Rect area) {
-        int popupW = 22;
+        int popupW = 28;
         int popupH = 21;
-        // Position just below the "0 More▾" tab label
+        // Position just below the More tab label
         int dividerW = CharWidth.of(" | ");
         int tabBarX = 0;
         Line[] tabLabels = currentTabLabels;
@@ -405,27 +411,7 @@ class PopupManager {
         frame.renderWidget(Clear.INSTANCE, popup);
 
         Style keyStyle = Style.EMPTY.fg(Color.YELLOW).bold();
-        ListItem[] items = {
-                ListItem.from(Line.from(Span.raw("  "), Span.styled("B", keyStyle), Span.raw("eans"))),
-                ListItem.from(Line.from(Span.raw("  Bro"), Span.styled("w", keyStyle), Span.raw("se"))),
-                ListItem.from(Line.from(Span.raw("  "), Span.styled("C", keyStyle), Span.raw("ircuit Breaker"))),
-                ListItem.from(Line.from(Span.raw("  Cl"), Span.styled("a", keyStyle), Span.raw("sspath"))),
-                ListItem.from(Line.from(Span.raw("  Confi"), Span.styled("g", keyStyle), Span.raw("uration"))),
-                ListItem.from(Line.from(Span.raw("  Co"), Span.styled("n", keyStyle), Span.raw("sumers"))),
-                ListItem.from(Line.from(Span.raw("  C"), Span.styled("V", keyStyle), Span.raw("E Audit"))),
-                ListItem.from(Line.from(Span.raw("  "), Span.styled("D", keyStyle), Span.raw("ataSource"))),
-                ListItem.from(Line.from(Span.raw("  "), Span.styled("H", keyStyle), Span.raw("eap Histogram"))),
-                ListItem.from(Line.from(Span.raw("  "), Span.styled("I", keyStyle), Span.raw("nflight"))),
-                ListItem.from(Line.from(Span.raw("  "), Span.styled("M", keyStyle), Span.raw("emory"))),
-                ListItem.from(Line.from(Span.raw("  Memory Lea"), Span.styled("k", keyStyle), Span.raw(""))),
-                ListItem.from(Line.from(Span.raw("  M"), Span.styled("e", keyStyle), Span.raw("trics"))),
-                ListItem.from(Line.from(Span.raw("  S"), Span.styled("Q", keyStyle), Span.raw("L Query"))),
-                ListItem.from(Line.from(Span.raw("  SQL T"), Span.styled("r", keyStyle), Span.raw("ace"))),
-                ListItem.from(Line.from(Span.raw("  "), Span.styled("O", keyStyle), Span.raw("Tel Spans"))),
-                ListItem.from(Line.from(Span.raw("  "), Span.styled("P", keyStyle), Span.raw("rocess"))),
-                ListItem.from(Line.from(Span.raw("  "), Span.styled("S", keyStyle), Span.raw("tartup"))),
-                ListItem.from(Line.from(Span.raw("  "), Span.styled("T", keyStyle), Span.raw("hreads"))),
-        };
+        ListItem[] items = morePopupItems(keyStyle);
         ListWidget list = ListWidget.builder()
                 .items(items)
                 .highlightStyle(Theme.selectionBg())
@@ -433,10 +419,32 @@ class PopupManager {
                 .scrollMode(ScrollMode.NONE)
                 .block(Block.builder()
                         .borderType(BorderType.ROUNDED).borders(Borders.ALL)
-                        .title(Title.from(Line.from(Span.styled(" More Tabs ", Style.EMPTY.fg(Color.YELLOW).bold()))))
+                        .title(Title.from(Line.from(Span.styled(
+                                " " + TuiIcons.TAB_MORE + " More Tabs ",
+                                Style.EMPTY.fg(Color.YELLOW).bold()))))
                         .build())
                 .build();
         frame.renderStatefulWidget(list, popup, morePopupState);
+    }
+
+    private ListItem[] morePopupItems(Style keyStyle) {
+        List<TabRegistry.MoreTab> tabs = moreTabsSupplier.get();
+        ListItem[] items = new ListItem[tabs.size()];
+        for (int i = 0; i < tabs.size(); i++) {
+            TabRegistry.MoreTab tab = tabs.get(i);
+            String name = tab.displayName();
+            String prefix = TuiIcons.indent(tab.icon());
+            int keyPos = tab.mnemonicIndex();
+            if (keyPos >= 0 && keyPos < name.length()) {
+                items[i] = ListItem.from(Line.from(
+                        Span.raw(prefix + name.substring(0, keyPos)),
+                        Span.styled(String.valueOf(name.charAt(keyPos)), keyStyle),
+                        Span.raw(name.substring(keyPos + 1))));
+            } else {
+                items[i] = ListItem.from(prefix + name);
+            }
+        }
+        return items;
     }
 
     void renderSwitchPopup(Frame frame, Rect area) {
@@ -467,7 +475,8 @@ class PopupManager {
             IntegrationInfo info = integrations.get(i);
             String name = info.name != null ? info.name : "?";
             boolean current = info.pid.equals(ctx.selectedPid);
-            String label = String.format("  🐪 %s (pid:%s)%s", name, info.pid, current ? " ●" : "");
+            String label = String.format("  %s %s (pid:%s)%s", TuiIcons.CAMEL, name, info.pid,
+                    current ? " " + TuiIcons.SELECTED : "");
             if (current) {
                 items[i] = ListItem.from(Line.from(Span.styled(label, Style.EMPTY.fg(Color.CYAN))));
             } else {
@@ -522,65 +531,18 @@ class PopupManager {
                 inner);
     }
 
-    // ---- Static utilities ----
-
-    static int morePopupShortcut(KeyEvent ke) {
-        if (ke.isChar('b')) {
-            return 0;
-        }
-        if (ke.isChar('w')) {
-            return 1;
-        }
-        if (ke.isChar('c')) {
-            return 2;
-        }
-        if (ke.isChar('a')) {
-            return 3;
-        }
-        if (ke.isChar('g')) {
-            return 4;
-        }
-        if (ke.isChar('n')) {
-            return 5;
-        }
-        if (ke.isChar('v')) {
-            return 6;
-        }
-        if (ke.isChar('d')) {
-            return 7;
-        }
-        if (ke.isChar('h')) {
-            return 8;
-        }
-        if (ke.isChar('i')) {
-            return 9;
-        }
-        if (ke.isChar('m')) {
-            return 10;
-        }
-        if (ke.isChar('k')) {
-            return 11;
-        }
-        if (ke.isChar('e')) {
-            return 12;
-        }
-        if (ke.isChar('q')) {
-            return 13;
-        }
-        if (ke.isChar('r')) {
-            return 14;
-        }
-        if (ke.isChar('o')) {
-            return 15;
-        }
-        if (ke.isChar('p')) {
-            return 16;
-        }
-        if (ke.isChar('s')) {
-            return 17;
-        }
-        if (ke.isChar('t')) {
-            return 18;
+    int morePopupShortcut(KeyEvent ke) {
+        List<TabRegistry.MoreTab> tabs = moreTabsSupplier.get();
+        for (int i = 0; i < tabs.size(); i++) {
+            int idx = tabs.get(i).mnemonicIndex();
+            if (idx < 0) {
+                continue;
+            }
+            char letter = tabs.get(i).displayName().charAt(idx);
+            // trigger on either case so Shift+letter works too
+            if (ke.isChar(Character.toLowerCase(letter)) || ke.isChar(Character.toUpperCase(letter))) {
+                return i;
+            }
         }
         return -1;
     }

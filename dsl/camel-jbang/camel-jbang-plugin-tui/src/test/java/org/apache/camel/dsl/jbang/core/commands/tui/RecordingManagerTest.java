@@ -126,10 +126,10 @@ class RecordingManagerTest {
 
     @Test
     void keyLabelForArrowKeys() {
-        assertEquals("↑", RecordingManager.keyLabel(KeyEvent.ofKey(KeyCode.UP, KeyModifiers.NONE)));
-        assertEquals("↓", RecordingManager.keyLabel(KeyEvent.ofKey(KeyCode.DOWN, KeyModifiers.NONE)));
-        assertEquals("←", RecordingManager.keyLabel(KeyEvent.ofKey(KeyCode.LEFT, KeyModifiers.NONE)));
-        assertEquals("→", RecordingManager.keyLabel(KeyEvent.ofKey(KeyCode.RIGHT, KeyModifiers.NONE)));
+        assertEquals(TuiIcons.ARROW_UP, RecordingManager.keyLabel(KeyEvent.ofKey(KeyCode.UP, KeyModifiers.NONE)));
+        assertEquals(TuiIcons.ARROW_DOWN, RecordingManager.keyLabel(KeyEvent.ofKey(KeyCode.DOWN, KeyModifiers.NONE)));
+        assertEquals(TuiIcons.KEY_LEFT, RecordingManager.keyLabel(KeyEvent.ofKey(KeyCode.LEFT, KeyModifiers.NONE)));
+        assertEquals(TuiIcons.KEY_RIGHT, RecordingManager.keyLabel(KeyEvent.ofKey(KeyCode.RIGHT, KeyModifiers.NONE)));
     }
 
     @Test
