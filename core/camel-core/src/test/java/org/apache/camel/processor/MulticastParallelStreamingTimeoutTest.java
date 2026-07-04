@@ -42,6 +42,9 @@ public class MulticastParallelStreamingTimeoutTest extends ContextTestSupport {
         mock.message(0).body().not(body().contains("A"));
         mock.message(0).body().contains("B");
         mock.message(0).body().contains("C");
+        // Use a short result wait time so each Awaitility attempt checks quickly
+        // without blocking (default 0 maps to 10s internally in MockEndpoint)
+        mock.setResultWaitTime(100);
 
         template.sendBody("direct:start", "Hello");
 
