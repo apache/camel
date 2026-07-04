@@ -650,7 +650,8 @@ public class Run extends CamelCommand {
                 return runQuarkus();
             } else if (RuntimeType.springBoot == runtime) {
                 return runSpringBoot();
-            } else if (files != null && files.size() == 1 && files.get(0).endsWith("pom.xml")) {
+            } else if (RuntimeType.main == runtime
+                    && files != null && files.size() == 1 && files.get(0).endsWith("pom.xml")) {
                 return runExistingCamelMainProject();
             }
         }
