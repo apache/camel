@@ -76,8 +76,9 @@ public class VertxWebsocketConsumerAsClientReconnectTest extends VertxWebSocketT
                 .untilAsserted(() -> {
                     mockEndpoint.reset();
                     mockEndpoint.expectedBodiesReceived("Hello World Again");
+                    mockEndpoint.setResultWaitTime(500);
                     template.sendBody(uri, "Hello World Again");
-                    mockEndpoint.assertIsSatisfied(500);
+                    mockEndpoint.assertIsSatisfied();
                 });
     }
 
