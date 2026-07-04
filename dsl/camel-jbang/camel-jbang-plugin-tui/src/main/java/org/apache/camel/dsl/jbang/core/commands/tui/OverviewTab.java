@@ -335,6 +335,16 @@ class OverviewTab extends AbstractTab {
                     nameSpans.add(Span.styled(" 📖", Style.EMPTY));
                 }
                 Line nameLine = Line.from(nameSpans);
+                String throughputDisplay = info.throughput;
+                if (throughputDisplay == null || "0.00".equals(throughputDisplay)) {
+                    LinkedList<Long> tpHist = throughputHistory.get(info.pid);
+                    if (tpHist != null && !tpHist.isEmpty()) {
+                        long tp = tpHist.getLast();
+                        if (tp > 0) {
+                            throughputDisplay = String.format(java.util.Locale.US, "%.2f", (double) tp);
+                        }
+                    }
+                }
                 rows.add(Row.from(
                         Cell.from(info.pid),
                         Cell.from(nameLine),
@@ -343,7 +353,7 @@ class OverviewTab extends AbstractTab {
                         Cell.from(Span.styled(stateText, statusStyle)),
                         Cell.from(info.ago != null ? info.ago : ""),
                         rightCell(info.routeStarted + "/" + info.routeTotal, 7),
-                        rightCell(info.throughput != null ? info.throughput : "", 8),
+                        rightCell(throughputDisplay != null ? throughputDisplay : "", 8),
                         rightCell(String.valueOf(info.exchangesTotal), 8),
                         rightCell(String.valueOf(info.failed), 6, failStyle),
                         rightCell(String.valueOf(info.inflight), 8),
@@ -637,17 +647,14 @@ class OverviewTab extends AbstractTab {
                         Span.styled("Version: ", dim),
                         Span.raw(TuiHelper.truncate(sel.camelVersion, inner.width() - 9))));
             }
-            if (sel.profile != null || sel.reloaded > 0) {
+            {
                 List<Span> profileSpans = new ArrayList<>();
-                if (sel.profile != null) {
-                    profileSpans.add(Span.styled("Profile: ", dim));
-                    String profileEmoji = "dev".equals(sel.profile) ? "🛠️ " : "prod".equals(sel.profile) ? "🔒 " : "";
-                    profileSpans.add(Span.raw(profileEmoji + sel.profile));
-                }
+                profileSpans.add(Span.styled("Profile: ", dim));
+                String profile = sel.profile != null ? sel.profile : "prod";
+                String profileEmoji = "dev".equals(profile) ? "🛠️ " : "prod".equals(profile) ? "📦 " : "";
+                profileSpans.add(Span.raw(profileEmoji + profile));
                 if (sel.reloaded > 0) {
-                    if (!profileSpans.isEmpty()) {
-                        profileSpans.add(Span.raw("    "));
-                    }
+                    profileSpans.add(Span.raw("    "));
                     profileSpans.add(Span.styled("Reload: ", dim));
                     profileSpans.add(Span.raw(String.valueOf(sel.reloaded)));
                 }

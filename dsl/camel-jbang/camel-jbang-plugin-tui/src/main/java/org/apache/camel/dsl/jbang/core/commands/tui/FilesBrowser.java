@@ -28,6 +28,7 @@ import dev.tamboui.layout.Rect;
 import dev.tamboui.style.Color;
 import dev.tamboui.style.Style;
 import dev.tamboui.terminal.Frame;
+import dev.tamboui.text.CharWidth;
 import dev.tamboui.text.Line;
 import dev.tamboui.text.Span;
 import dev.tamboui.tui.event.KeyEvent;
@@ -240,7 +241,7 @@ class FilesBrowser {
             } else {
                 String sizeStr = formatFileSize(entry.size());
                 String nameLabel = String.format("  %s %s", entry.emoji(), entry.name());
-                int gap = Math.max(1, innerWidth - nameLabel.length() - sizeStr.length() - 1);
+                int gap = Math.max(1, innerWidth - CharWidth.of(nameLabel) - sizeStr.length() - 1);
                 String padding = " ".repeat(gap);
                 items[i] = ListItem.from(Line.from(
                         Span.raw(nameLabel + padding),

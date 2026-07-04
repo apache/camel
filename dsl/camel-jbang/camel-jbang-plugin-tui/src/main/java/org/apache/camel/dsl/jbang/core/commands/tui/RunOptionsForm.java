@@ -68,7 +68,7 @@ class RunOptionsForm {
     private static final String[] MAX_FLAGS = { "--max-seconds=", "--max-messages=", "--max-idle-seconds=" };
     private static final String[] RUNTIME_LABELS = { "🐪 Camel Main", "🍃 Spring Boot", "🚀 Quarkus" };
     private static final String[] RUNTIME_VALUES = { "camel-main", "spring-boot", "quarkus" };
-    private static final String[] PROFILE_LABELS = { "🛠️ dev", "🔒 prod" };
+    private static final String[] PROFILE_LABELS = { "🛠️ dev", "📦 prod" };
     private static final String[] PROFILE_VALUES = { "dev", "prod" };
 
     // Text fields

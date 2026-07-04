@@ -1513,8 +1513,18 @@ public class Run extends CamelCommand {
         cmd.add("--quiet");
         cmd.add("--file");
         cmd.add(tempPom.toString());
+        StringBuilder camelJvmArgs = new StringBuilder();
+        if (profile != null && !"prod".equals(profile)) {
+            camelJvmArgs.append("-Dcamel.main.profile=").append(profile);
+        }
         if (jvmArgs != null && !jvmArgs.isBlank()) {
-            cmd.add("-Dcamel.jvmArgs=" + jvmArgs.trim());
+            if (!camelJvmArgs.isEmpty()) {
+                camelJvmArgs.append(" ");
+            }
+            camelJvmArgs.append(jvmArgs.trim());
+        }
+        if (!camelJvmArgs.isEmpty()) {
+            cmd.add("-Dcamel.jvmArgs=" + camelJvmArgs);
         }
         cmd.add("-DskipTests");
         cmd.add("camel:run");
@@ -1591,8 +1601,18 @@ public class Run extends CamelCommand {
         cmd.add("--quiet");
         cmd.add("--file");
         cmd.add(tempPom.toString());
+        StringBuilder quarkusJvmArgs = new StringBuilder();
+        if (profile != null && !"prod".equals(profile)) {
+            quarkusJvmArgs.append("-Dcamel.main.profile=").append(profile);
+        }
         if (jvmArgs != null && !jvmArgs.isBlank()) {
-            cmd.add("-Djvm.args=" + jvmArgs.trim());
+            if (!quarkusJvmArgs.isEmpty()) {
+                quarkusJvmArgs.append(" ");
+            }
+            quarkusJvmArgs.append(jvmArgs.trim());
+        }
+        if (!quarkusJvmArgs.isEmpty()) {
+            cmd.add("-Djvm.args=" + quarkusJvmArgs);
         }
         cmd.add("-DskipTests");
         cmd.add("package");
@@ -1815,9 +1835,12 @@ public class Run extends CamelCommand {
         cmd.add("--quiet");
         cmd.add("--file");
         cmd.add(tempPom.toString());
-        String sbJvmArgs = "-Dlogging.config=classpath:logback-camel-jbang.xml";
+        StringBuilder sbJvmArgs = new StringBuilder("-Dlogging.config=classpath:logback-camel-jbang.xml");
+        if (profile != null && !"prod".equals(profile)) {
+            sbJvmArgs.append(" -Dcamel.main.profile=").append(profile);
+        }
         if (jvmArgs != null && !jvmArgs.isBlank()) {
-            sbJvmArgs += " " + jvmArgs.trim();
+            sbJvmArgs.append(" ").append(jvmArgs.trim());
         }
         cmd.add("-Dspring-boot.run.jvmArguments=" + sbJvmArgs);
         cmd.add("-DskipTests");
