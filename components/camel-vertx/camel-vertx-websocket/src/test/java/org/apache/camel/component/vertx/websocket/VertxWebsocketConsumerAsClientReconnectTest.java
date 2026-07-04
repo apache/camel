@@ -17,6 +17,7 @@
 package org.apache.camel.component.vertx.websocket;
 
 import java.net.ConnectException;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -25,6 +26,8 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import static org.awaitility.Awaitility.await;
 
 public class VertxWebsocketConsumerAsClientReconnectTest extends VertxWebSocketTestSupport {
     @Test
@@ -42,26 +45,41 @@ public class VertxWebsocketConsumerAsClientReconnectTest extends VertxWebSocketT
 
         context.getRouteController().stopRoute("server");
 
-        // Verify that we cannot send messages
-        Exchange exchange = template.send(uri, new Processor() {
-            @Override
-            public void process(Exchange exchange) throws Exception {
-                exchange.getMessage().setBody("Hello World Again");
-            }
-        });
-        Exception exception = exchange.getException();
-        Assertions.assertNotNull(exception);
-        Assertions.assertInstanceOf(ConnectException.class, exception.getCause());
+        // Verify that the server is fully down by waiting until sends fail.
+        // The producer endpoint's cached WebSocket may still appear open briefly
+        // after stopRoute returns, until the Vert.x event loop processes the
+        // TCP close frame and isClosed() starts returning true.
+        await().atMost(10, TimeUnit.SECONDS)
+                .untilAsserted(() -> {
+                    Exchange exchange = template.send(uri, new Processor() {
+                        @Override
+                        public void process(Exchange exchange) throws Exception {
+                            exchange.getMessage().setBody("Hello World Again");
+                        }
+                    });
+                    Assertions.assertNotNull(exchange.getException());
+                    Assertions.assertInstanceOf(ConnectException.class, exchange.getException().getCause());
+                });
 
         // Restart server
         context.getRouteController().startRoute("server");
 
-        // Wait for client consumer reconnect
-        Thread.sleep(300);
-
-        // Verify that the client consumer reconnected
-        template.sendBody(uri, "Hello World Again");
-        mockEndpoint.assertIsSatisfied();
+        // Wait for client consumer to reconnect and verify end-to-end message flow.
+        // After the server stops, the client consumer's close handler fires
+        // asynchronously on the Vert.x event loop, starting the reconnect timer
+        // that connects to the restarted server.
+        // Use ignoreExceptions() to retry through transient failures while both
+        // the producer and client consumer re-establish their connections.
+        await().atMost(20, TimeUnit.SECONDS)
+                .pollInterval(500, TimeUnit.MILLISECONDS)
+                .ignoreExceptions()
+                .untilAsserted(() -> {
+                    mockEndpoint.reset();
+                    mockEndpoint.expectedBodiesReceived("Hello World Again");
+                    mockEndpoint.setResultWaitTime(500);
+                    template.sendBody(uri, "Hello World Again");
+                    mockEndpoint.assertIsSatisfied();
+                });
     }
 
     @Override
