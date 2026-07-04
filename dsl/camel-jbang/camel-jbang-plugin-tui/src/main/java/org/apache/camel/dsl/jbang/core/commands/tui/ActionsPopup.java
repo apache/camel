@@ -331,6 +331,25 @@ class ActionsPopup {
         }
     }
 
+    private void navigateActionsMenuToSection(int direction) {
+        int total = visualActionCount();
+        Integer current = actionsMenuState.selected();
+        int pos = current != null ? current : 0;
+        // move until we hit a divider
+        pos += direction;
+        while (pos > 0 && pos < total - 1 && !isDividerIndex(pos)) {
+            pos += direction;
+        }
+        // skip past the divider to the first item in the section
+        if (isDividerIndex(pos)) {
+            pos += direction;
+        }
+        pos = Math.max(0, Math.min(pos, total - 1));
+        if (!isDividerIndex(pos)) {
+            actionsMenuState.select(pos);
+        }
+    }
+
     boolean isVisible() {
         return showActionsMenu || showGotoPopup || showExampleBrowser || showFolderInput || folderBrowser.isVisible()
                 || runOptionsForm.isVisible()
@@ -613,6 +632,7 @@ class ActionsPopup {
             return true;
         }
         if (showGotoPopup) {
+            int gotoSize = filteredTabEntries != null ? filteredTabEntries.size() : 0;
             if (ke.isCancel()) {
                 showGotoPopup = false;
                 gotoFilter.clearFilter();
@@ -620,7 +640,19 @@ class ActionsPopup {
             } else if (ke.isUp()) {
                 gotoListState.selectPrevious();
             } else if (ke.isDown()) {
-                gotoListState.selectNext(filteredTabEntries != null ? filteredTabEntries.size() : 0);
+                gotoListState.selectNext(gotoSize);
+            } else if (ke.isPageUp() || ke.isKey(KeyCode.PAGE_UP)) {
+                for (int i = 0; i < 5; i++) {
+                    gotoListState.selectPrevious();
+                }
+            } else if (ke.isPageDown() || ke.isKey(KeyCode.PAGE_DOWN)) {
+                for (int i = 0; i < 5; i++) {
+                    gotoListState.selectNext(gotoSize);
+                }
+            } else if (ke.isHome() || ke.isKey(KeyCode.HOME)) {
+                gotoListState.selectFirst();
+            } else if (ke.isEnd() || ke.isKey(KeyCode.END)) {
+                gotoListState.selectLast(gotoSize);
             } else if (ke.isConfirm()) {
                 Integer sel = gotoListState.selected();
                 if (sel != null && filteredTabEntries != null && sel < filteredTabEntries.size()) {
@@ -645,6 +677,21 @@ class ActionsPopup {
                 navigateActionsMenu(-1);
             } else if (ke.isDown()) {
                 navigateActionsMenu(1);
+            } else if (ke.isPageUp() || ke.isKey(KeyCode.PAGE_UP)) {
+                navigateActionsMenuToSection(-1);
+            } else if (ke.isPageDown() || ke.isKey(KeyCode.PAGE_DOWN)) {
+                navigateActionsMenuToSection(1);
+            } else if (ke.isHome() || ke.isKey(KeyCode.HOME)) {
+                actionsMenuState.select(0);
+                if (isDividerIndex(0)) {
+                    navigateActionsMenu(1);
+                }
+            } else if (ke.isEnd() || ke.isKey(KeyCode.END)) {
+                int last = visualActionCount() - 1;
+                actionsMenuState.select(last);
+                if (isDividerIndex(last)) {
+                    navigateActionsMenu(-1);
+                }
             } else if (ke.isConfirm()) {
                 Integer sel = actionsMenuState.selected();
                 if (sel != null) {

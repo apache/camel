@@ -27,6 +27,7 @@ import dev.tamboui.text.CharWidth;
 import dev.tamboui.text.Line;
 import dev.tamboui.text.Span;
 import dev.tamboui.text.Text;
+import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.tui.event.MouseEvent;
 import dev.tamboui.tui.event.MouseEventKind;
@@ -183,7 +184,27 @@ class PopupManager {
             return true;
         }
         if (ke.isDown()) {
-            morePopupState.selectNext(18);
+            morePopupState.selectNext(MORE_POPUP_ITEM_COUNT);
+            return true;
+        }
+        if (ke.isPageUp() || ke.isKey(KeyCode.PAGE_UP)) {
+            for (int i = 0; i < 5; i++) {
+                morePopupState.selectPrevious();
+            }
+            return true;
+        }
+        if (ke.isPageDown() || ke.isKey(KeyCode.PAGE_DOWN)) {
+            for (int i = 0; i < 5; i++) {
+                morePopupState.selectNext(MORE_POPUP_ITEM_COUNT);
+            }
+            return true;
+        }
+        if (ke.isHome() || ke.isKey(KeyCode.HOME)) {
+            morePopupState.selectFirst();
+            return true;
+        }
+        if (ke.isEnd() || ke.isKey(KeyCode.END)) {
+            morePopupState.selectLast(MORE_POPUP_ITEM_COUNT);
             return true;
         }
         int shortcutSel = morePopupShortcut(ke);
@@ -213,6 +234,26 @@ class PopupManager {
         }
         if (ke.isDown()) {
             switchPopupState.selectNext(switchList.size());
+            return true;
+        }
+        if (ke.isPageUp() || ke.isKey(KeyCode.PAGE_UP)) {
+            for (int i = 0; i < 5; i++) {
+                switchPopupState.selectPrevious();
+            }
+            return true;
+        }
+        if (ke.isPageDown() || ke.isKey(KeyCode.PAGE_DOWN)) {
+            for (int i = 0; i < 5; i++) {
+                switchPopupState.selectNext(switchList.size());
+            }
+            return true;
+        }
+        if (ke.isHome() || ke.isKey(KeyCode.HOME)) {
+            switchPopupState.selectFirst();
+            return true;
+        }
+        if (ke.isEnd() || ke.isKey(KeyCode.END)) {
+            switchPopupState.selectLast(switchList.size());
             return true;
         }
         if (ke.isConfirm()) {
