@@ -16,44 +16,45 @@
  */
 package org.apache.camel.processor;
 
-import java.util.concurrent.Phaser;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import static org.awaitility.Awaitility.await;
 
 /**
  * Delayer while shutting down so its interrupted and will also stop.
  */
 public class DelayerWhileShutdownTest extends ContextTestSupport {
 
-    private final Phaser phaser = new Phaser(2);
-
-    @BeforeEach
-    void sendEarly() {
-        template.sendBody("seda:a", "Long delay");
-        template.sendBody("seda:b", "Short delay");
-    }
+    private final CountDownLatch shortDelayStarted = new CountDownLatch(1);
 
     @Test
     public void testSendingMessageGetsDelayed() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Short delay");
 
-        phaser.awaitAdvanceInterruptibly(0, 5000, TimeUnit.SECONDS);
+        template.sendBody("seda:a", "Long delay");
+        template.sendBody("seda:b", "Short delay");
 
-        assertMockEndpointsSatisfied();
+        // Wait until the short-delay route has entered the delay phase,
+        // ensuring both routes are actively processing
+        shortDelayStarted.await(5, TimeUnit.SECONDS);
+
+        await().atMost(5, TimeUnit.SECONDS)
+                .untilAsserted(() -> assertMockEndpointsSatisfied());
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("seda:a").process(e -> phaser.arriveAndAwaitAdvance()).delay(1000).to("mock:result");
-                from("seda:b").process(e -> phaser.arriveAndAwaitAdvance()).delay(1).to("mock:result");
+                from("seda:a").delay(5000).to("mock:result");
+                from("seda:b").process(e -> shortDelayStarted.countDown()).delay(1).to("mock:result");
             }
         };
     }
