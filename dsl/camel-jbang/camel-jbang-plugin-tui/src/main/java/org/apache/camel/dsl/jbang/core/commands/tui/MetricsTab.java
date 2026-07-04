@@ -493,7 +493,7 @@ class MetricsTab extends AbstractTableTab {
         if (!"all".equals(filterType)) {
             title += " filter:" + filterType;
         }
-        title += " sort:" + sort + " (" + sorted.size() + ") ";
+        title += " (" + sorted.size() + ") ";
 
         Table table = Table.builder()
                 .rows(rows)

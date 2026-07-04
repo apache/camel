@@ -148,9 +148,9 @@ class HeapHistogramTab extends AbstractTableTab {
             visibleBytes += e.bytes;
         }
 
-        String title = String.format(" Heap Histogram [%d] instances:%s bytes:%s sort:%s filter:%s ",
+        String title = String.format(" Heap Histogram [%d] instances:%s bytes:%s filter:%s ",
                 visible.size(), formatNumber(visibleInstances), formatBytes(visibleBytes),
-                sort, FILTER_LABELS[filter]);
+                FILTER_LABELS[filter]);
 
         Table table = Table.builder()
                 .rows(rows)

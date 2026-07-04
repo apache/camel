@@ -237,7 +237,7 @@ class RoutesTabRenderTest {
         RoutesTab tab = new RoutesTab(ctx);
         String rendered = renderToString(tab, 140, 30);
 
-        assertTrue(rendered.contains("sort:name"), "Title should show current sort column");
+        assertTrue(rendered.contains("ROUTE▼"), "Column header should show sort indicator on default sort column");
     }
 
     @Test
@@ -249,7 +249,7 @@ class RoutesTabRenderTest {
         // Press 's' to cycle sort
         tab.handleKeyEvent(KeyEvent.ofChar('s', KeyModifiers.NONE));
         String rendered = renderToString(tab, 140, 30);
-        assertTrue(rendered.contains("sort:from"), "Sort should cycle to 'from'");
+        assertTrue(rendered.contains("FROM▼"), "Sort should cycle to 'from'");
     }
 
     @Test

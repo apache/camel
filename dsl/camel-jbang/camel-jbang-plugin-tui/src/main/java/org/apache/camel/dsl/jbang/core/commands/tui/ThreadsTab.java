@@ -184,8 +184,8 @@ class ThreadsTab extends AbstractTableTab {
             rows.add(emptyRow("No threads", 5));
         }
 
-        String title = String.format(" Threads [%d/%d] peak:%d sort:%s filter:%s ",
-                visible.size(), threadCount, peakThreadCount, sort, FILTER_LABELS[filter]);
+        String title = String.format(" Threads [%d/%d] peak:%d filter:%s ",
+                visible.size(), threadCount, peakThreadCount, FILTER_LABELS[filter]);
 
         Table table = Table.builder()
                 .rows(rows)

@@ -615,7 +615,7 @@ class RoutesTab extends AbstractTab {
                     .highlightStyle(Theme.selectionBg())
                     .highlightSpacing(Table.HighlightSpacing.ALWAYS)
                     .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
-                            .title(" Top Routes sort:" + routeTopSort + " ").build())
+                            .title(" Top Routes ").build())
                     .build();
         } else {
             List<Row> routeRows = new ArrayList<>();
@@ -675,7 +675,7 @@ class RoutesTab extends AbstractTab {
                     .highlightStyle(Theme.selectionBg())
                     .highlightSpacing(Table.HighlightSpacing.ALWAYS)
                     .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
-                            .title(" Routes sort:" + routeSort + " ").build())
+                            .title(" Routes ").build())
                     .build();
         }
 
@@ -1151,7 +1151,7 @@ class RoutesTab extends AbstractTab {
                             Constraint.length(6),
                             Constraint.length(9))
                     .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
-                            .title(" Top Processors [" + route.routeId + "] sort:" + routeTopSort + " ").build())
+                            .title(" Top Processors [" + route.routeId + "] ").build())
                     .build();
         } else {
             List<Row> rows = new ArrayList<>();

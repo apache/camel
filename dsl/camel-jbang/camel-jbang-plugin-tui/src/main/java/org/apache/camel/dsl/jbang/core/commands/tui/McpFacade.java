@@ -89,7 +89,7 @@ class McpFacade {
 
     static final String[] MORE_TAB_NAMES = {
             "Beans", "Browse", "Circuit Breaker", "Classpath", "Configuration",
-            "Consumers", "DataSource", "Heap Histogram", "Inflight", "Memory", "Memory Leak", "Metrics",
+            "Consumers", "CVE Audit", "DataSource", "Heap Histogram", "Inflight", "Memory", "Memory Leak", "Metrics",
             "SQL Query", "SQL Trace", "Spans", "Process", "Startup", "Threads"
     };
 

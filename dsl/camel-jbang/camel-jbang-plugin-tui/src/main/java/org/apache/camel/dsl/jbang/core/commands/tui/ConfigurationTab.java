@@ -165,7 +165,7 @@ class ConfigurationTab extends AbstractTableTab {
             rows.add(emptyRow("No properties", 3));
         }
 
-        String title = String.format(" Configuration [%d] sort:%s ", props.size(), sort);
+        String title = String.format(" Configuration [%d] ", props.size());
 
         Table table = Table.builder()
                 .rows(rows)

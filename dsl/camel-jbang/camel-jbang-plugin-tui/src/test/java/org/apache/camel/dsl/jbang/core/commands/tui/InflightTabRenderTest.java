@@ -175,7 +175,7 @@ class InflightTabRenderTest {
         InflightTab tab = new InflightTab(ctx);
         String rendered = TuiTestHelper.renderToString(tab, 160, 20);
 
-        assertTrue(rendered.contains("sort:duration"), "Title should show current sort column");
+        assertTrue(rendered.contains("DURATION▼"), "Column header should show sort indicator on default sort column");
     }
 
     @Test
@@ -188,7 +188,7 @@ class InflightTabRenderTest {
         tab.handleKeyEvent(KeyEvent.ofChar('s', KeyModifiers.NONE));
 
         String rendered = TuiTestHelper.renderToString(tab, 160, 20);
-        assertTrue(rendered.contains("sort:status"), "Sort should cycle to 'status'");
+        assertTrue(rendered.contains("STATUS▼"), "Sort should cycle to 'status'");
     }
 
     @Test

@@ -211,8 +211,8 @@ class BeansTab extends AbstractTableTab {
 
         String mode = filterModes()[filterIndex];
         String title = filterTerm != null
-                ? String.format(" Beans [%d] sort:%s scope:%s filter:\"%s\" ", visible.size(), sort, mode, filterTerm)
-                : String.format(" Beans [%d] sort:%s scope:%s ", visible.size(), sort, mode);
+                ? String.format(" Beans [%d] scope:%s filter:\"%s\" ", visible.size(), mode, filterTerm)
+                : String.format(" Beans [%d] scope:%s ", visible.size(), mode);
 
         Table table = Table.builder()
                 .rows(rows)

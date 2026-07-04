@@ -1218,7 +1218,7 @@ class HistoryTab extends AbstractTab {
                 rightCell("STEPS", 6, Style.EMPTY.bold()),
                 Cell.from(Span.styled(traceSortLabel("EXCHANGE", "exchange"), traceSortStyle("exchange"))));
 
-        String traceTitle = String.format(" Traces [%d] sort:%s ", summaries.size(), traceSort);
+        String traceTitle = String.format(" Traces [%d] ", summaries.size());
 
         Table table = Table.builder()
                 .rows(rows)

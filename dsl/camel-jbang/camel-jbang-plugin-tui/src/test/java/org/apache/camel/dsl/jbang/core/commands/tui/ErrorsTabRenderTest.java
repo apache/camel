@@ -187,7 +187,7 @@ class ErrorsTabRenderTest {
         ErrorsTab tab = new ErrorsTab(ctx);
         String rendered = renderToString(tab, 160, 30);
 
-        assertTrue(rendered.contains("sort:id"), "Title should show current sort column");
+        assertTrue(rendered.contains("ID▼"), "Column header should show sort indicator on default sort column");
     }
 
     @Test
@@ -200,7 +200,7 @@ class ErrorsTabRenderTest {
         tab.handleKeyEvent(KeyEvent.ofChar('s', KeyModifiers.NONE));
 
         String rendered = renderToString(tab, 160, 30);
-        assertTrue(rendered.contains("sort:age"), "Sort should cycle to 'age'");
+        assertTrue(rendered.contains("AGO▼"), "Sort should cycle to 'age'");
     }
 
     @Test

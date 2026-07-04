@@ -288,7 +288,7 @@ class SqlTraceTab extends AbstractTableTab {
                 .highlightStyle(Theme.selectionBg())
                 .highlightSpacing(Table.HighlightSpacing.ALWAYS)
                 .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
-                        .title(" Statements sort:" + sort + " ").build())
+                        .title(" Statements ").build())
                 .build();
 
         lastTableArea = area;

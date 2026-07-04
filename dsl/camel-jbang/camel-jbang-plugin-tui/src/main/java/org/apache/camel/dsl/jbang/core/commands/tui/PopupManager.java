@@ -82,7 +82,7 @@ class PopupManager {
     // Last rendered popup rects for mouse hit-testing
     private Rect lastMorePopupRect;
     private Rect lastSwitchPopupRect;
-    private static final int MORE_POPUP_ITEM_COUNT = 18;
+    private static final int MORE_POPUP_ITEM_COUNT = 19;
 
     PopupManager(MonitorContext ctx, Supplier<List<IntegrationInfo>> nonVanishingIntegrationsSupplier,
                  FilesBrowser filesBrowser, PopupCallbacks callbacks) {
@@ -383,7 +383,7 @@ class PopupManager {
 
     void renderMorePopup(Frame frame, Rect area) {
         int popupW = 22;
-        int popupH = 20;
+        int popupH = 21;
         // Position just below the "0 More▾" tab label
         int dividerW = CharWidth.of(" | ");
         int tabBarX = 0;
@@ -412,6 +412,7 @@ class PopupManager {
                 ListItem.from(Line.from(Span.raw("  Cl"), Span.styled("a", keyStyle), Span.raw("sspath"))),
                 ListItem.from(Line.from(Span.raw("  Confi"), Span.styled("g", keyStyle), Span.raw("uration"))),
                 ListItem.from(Line.from(Span.raw("  Co"), Span.styled("n", keyStyle), Span.raw("sumers"))),
+                ListItem.from(Line.from(Span.raw("  C"), Span.styled("V", keyStyle), Span.raw("E Audit"))),
                 ListItem.from(Line.from(Span.raw("  "), Span.styled("D", keyStyle), Span.raw("ataSource"))),
                 ListItem.from(Line.from(Span.raw("  "), Span.styled("H", keyStyle), Span.raw("eap Histogram"))),
                 ListItem.from(Line.from(Span.raw("  "), Span.styled("I", keyStyle), Span.raw("nflight"))),
@@ -542,41 +543,44 @@ class PopupManager {
         if (ke.isChar('n')) {
             return 5;
         }
-        if (ke.isChar('d')) {
+        if (ke.isChar('v')) {
             return 6;
         }
-        if (ke.isChar('h')) {
+        if (ke.isChar('d')) {
             return 7;
         }
-        if (ke.isChar('i')) {
+        if (ke.isChar('h')) {
             return 8;
         }
-        if (ke.isChar('m')) {
+        if (ke.isChar('i')) {
             return 9;
         }
-        if (ke.isChar('k')) {
+        if (ke.isChar('m')) {
             return 10;
         }
-        if (ke.isChar('e')) {
+        if (ke.isChar('k')) {
             return 11;
         }
-        if (ke.isChar('q')) {
+        if (ke.isChar('e')) {
             return 12;
         }
-        if (ke.isChar('r')) {
+        if (ke.isChar('q')) {
             return 13;
         }
-        if (ke.isChar('o')) {
+        if (ke.isChar('r')) {
             return 14;
         }
-        if (ke.isChar('p')) {
+        if (ke.isChar('o')) {
             return 15;
         }
-        if (ke.isChar('s')) {
+        if (ke.isChar('p')) {
             return 16;
         }
-        if (ke.isChar('t')) {
+        if (ke.isChar('s')) {
             return 17;
+        }
+        if (ke.isChar('t')) {
+            return 18;
         }
         return -1;
     }

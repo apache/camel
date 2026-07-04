@@ -416,8 +416,8 @@ class MemoryLeakTab extends AbstractTab {
             }
         }
         String gcLabel = gcCount > 0 ? " gc:" + gcCount : "";
-        String title = String.format(" Memory Leak [%d] duration:%s%s sort:%s%s%s ",
-                visible.size(), formatDuration(recordingDurationMs), gcLabel, sort, minLabel, agoLabel);
+        String title = String.format(" Memory Leak [%d] duration:%s%s%s%s ",
+                visible.size(), formatDuration(recordingDurationMs), gcLabel, minLabel, agoLabel);
 
         Table table = Table.builder()
                 .rows(rows)

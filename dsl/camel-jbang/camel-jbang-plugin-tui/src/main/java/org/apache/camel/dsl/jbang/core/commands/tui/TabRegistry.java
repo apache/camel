@@ -80,6 +80,7 @@ class TabRegistry {
     private BeansTab beansTab;
     private BrowseTab browseTab;
     private ClasspathTab classpathTab;
+    private CveAuditTab cveAuditTab;
     private InflightTab inflightTab;
     private MemoryTab memoryTab;
     private HeapHistogramTab heapHistogramTab;
@@ -124,6 +125,7 @@ class TabRegistry {
         beansTab = new BeansTab(ctx);
         browseTab = new BrowseTab(ctx);
         classpathTab = new ClasspathTab(ctx);
+        cveAuditTab = new CveAuditTab(ctx);
         inflightTab = new InflightTab(ctx);
         memoryTab = new MemoryTab(ctx, dataService.metrics());
         threadsTab = new ThreadsTab(ctx);
@@ -134,7 +136,7 @@ class TabRegistry {
                 resetIntegrationTabState);
 
         sqlTraceTab.setEditSqlAction(sql -> {
-            selectMoreTab(12); // switch to SQL Query tab
+            selectMoreTab(13); // switch to SQL Query tab
             sqlQueryTab.setInputValue("sql", sql);
         });
     }
@@ -220,18 +222,19 @@ class TabRegistry {
             case 3 -> classpathTab;
             case 4 -> configurationTab;
             case 5 -> consumersTab;
-            case 6 -> dataSourceTab;
-            case 7 -> heapHistogramTab;
-            case 8 -> inflightTab;
-            case 9 -> memoryTab;
-            case 10 -> memoryLeakTab;
-            case 11 -> metricsTab;
-            case 12 -> sqlQueryTab;
-            case 13 -> sqlTraceTab;
-            case 14 -> spansTab;
-            case 15 -> processTab;
-            case 16 -> startupTab;
-            case 17 -> threadsTab;
+            case 6 -> cveAuditTab;
+            case 7 -> dataSourceTab;
+            case 8 -> heapHistogramTab;
+            case 9 -> inflightTab;
+            case 10 -> memoryTab;
+            case 11 -> memoryLeakTab;
+            case 12 -> metricsTab;
+            case 13 -> sqlQueryTab;
+            case 14 -> sqlTraceTab;
+            case 15 -> spansTab;
+            case 16 -> processTab;
+            case 17 -> startupTab;
+            case 18 -> threadsTab;
             default -> null;
         };
         if (activeMoreTab != null) {
@@ -253,6 +256,7 @@ class TabRegistry {
         startupTab.onIntegrationChanged();
         configurationTab.onIntegrationChanged();
         consumersTab.onIntegrationChanged();
+        cveAuditTab.onIntegrationChanged();
         dataSourceTab.onIntegrationChanged();
         heapHistogramTab.onIntegrationChanged();
         memoryLeakTab.onIntegrationChanged();
@@ -325,13 +329,17 @@ class TabRegistry {
         return classpathTab;
     }
 
+    CveAuditTab cveAuditTab() {
+        return cveAuditTab;
+    }
+
     // ---- Tab entries for Go-to and MCP ----
 
     record TabEntry(String name, String description, String shortcut, int tabIndex, int moreIndex) {
     }
 
     private static final String[] MORE_SHORTCUTS = {
-            "B", "W", "C", "A", "G", "N", "D", "H", "I", "M", "K", "E", "Q", "R", "O", "P", "S", "T"
+            "B", "W", "C", "A", "G", "N", "V", "D", "H", "I", "M", "K", "E", "Q", "R", "O", "P", "S", "T"
     };
 
     List<TabEntry> allTabEntries() {
@@ -348,13 +356,13 @@ class TabRegistry {
         // More sub-tabs
         MonitorTab[] moreTabs = {
                 beansTab, browseTab, circuitBreakerTab, classpathTab, configurationTab,
-                consumersTab, dataSourceTab, heapHistogramTab, inflightTab, memoryTab,
+                consumersTab, cveAuditTab, dataSourceTab, heapHistogramTab, inflightTab, memoryTab,
                 memoryLeakTab, metricsTab, sqlQueryTab, sqlTraceTab, spansTab,
                 processTab, startupTab, threadsTab
         };
         String[] moreNames = {
                 "Beans", "Browse", "Circuit Breaker", "Classpath", "Configuration",
-                "Consumers", "DataSource", "Heap Histogram", "Inflight", "Memory",
+                "Consumers", "CVE Audit", "DataSource", "Heap Histogram", "Inflight", "Memory",
                 "Memory Leak", "Metrics", "SQL Query", "SQL Trace", "Spans",
                 "Process", "Startup", "Threads"
         };

@@ -301,7 +301,7 @@ class BrowseTab extends AbstractTab {
                     Cell.from(""), Cell.from(""), Cell.from("")));
         }
 
-        String title = String.format(" Browse [%d] sort:%s ", sorted.size(), sort);
+        String title = String.format(" Browse [%d] ", sorted.size());
 
         Table table = Table.builder()
                 .rows(rows)

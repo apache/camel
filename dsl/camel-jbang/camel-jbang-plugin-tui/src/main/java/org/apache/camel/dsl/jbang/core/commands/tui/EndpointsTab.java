@@ -231,7 +231,7 @@ class EndpointsTab extends AbstractTableTab {
                 .highlightStyle(Theme.selectionBg())
                 .highlightSpacing(Table.HighlightSpacing.ALWAYS)
                 .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
-                        .title(" Endpoints sort:" + sort
+                        .title(" Endpoints"
                                + (filter == 1 ? " filter:remote" : filter == 2 ? " filter:remote+stub" : "")
                                + " ")
                         .build())

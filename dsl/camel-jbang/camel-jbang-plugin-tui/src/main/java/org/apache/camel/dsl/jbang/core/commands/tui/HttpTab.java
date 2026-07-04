@@ -1286,7 +1286,7 @@ class HttpTab extends AbstractTableTab {
                             "Stopped".equals(state) ? Style.EMPTY.fg(Color.LIGHT_RED) : Style.EMPTY))));
         }
 
-        String title = String.format(" HTTP Services [%d] sort:%s ", visible.size(), sort);
+        String title = String.format(" HTTP Services [%d] ", visible.size());
 
         Row header = Row.from(
                 Cell.from(Span.styled(sortLabel("METHOD", "method"), sortStyle("method"))),

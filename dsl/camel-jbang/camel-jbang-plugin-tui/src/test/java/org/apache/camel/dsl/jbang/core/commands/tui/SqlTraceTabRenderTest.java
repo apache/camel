@@ -151,7 +151,7 @@ class SqlTraceTabRenderTest {
         tab.handleKeyEvent(KeyEvent.ofChar('s', KeyModifiers.NONE));
         String rendered = TuiTestHelper.renderToString(tab, 140, 25);
 
-        assertTrue(rendered.contains("sort:type"), "Sort should cycle to 'type' after pressing 's'");
+        assertTrue(rendered.contains("TYPE▼"), "Sort should cycle to 'type' after pressing 's'");
     }
 
     @Test

@@ -165,7 +165,7 @@ class EndpointsTabRenderTest {
         EndpointsTab tab = new EndpointsTab(ctx, new MetricsCollector());
         String rendered = TuiTestHelper.renderToString(tab, 140, 30);
 
-        assertTrue(rendered.contains("sort:route"), "Title should show default sort column 'route'");
+        assertTrue(rendered.contains("ROUTE▼"), "Column header should show sort indicator on default sort column");
     }
 
     @Test
@@ -178,7 +178,7 @@ class EndpointsTabRenderTest {
         tab.handleKeyEvent(KeyEvent.ofChar('s', KeyModifiers.NONE));
         String rendered = TuiTestHelper.renderToString(tab, 140, 30);
 
-        assertTrue(rendered.contains("sort:dir"), "Sort should cycle to 'dir' after pressing 's'");
+        assertTrue(rendered.contains("DIR▼"), "Sort should cycle to 'dir' after pressing 's'");
     }
 
     @Test

@@ -152,7 +152,7 @@ class DataSourceTabRenderTest {
         tab.handleKeyEvent(KeyEvent.ofChar('s', KeyModifiers.NONE));
         String rendered = TuiTestHelper.renderToString(tab, 140, 20);
 
-        assertTrue(rendered.contains("sort:pool"), "Sort should cycle to 'pool' after pressing 's'");
+        assertTrue(rendered.contains("POOL▼"), "Sort should cycle to 'pool' after pressing 's'");
     }
 
     @Test

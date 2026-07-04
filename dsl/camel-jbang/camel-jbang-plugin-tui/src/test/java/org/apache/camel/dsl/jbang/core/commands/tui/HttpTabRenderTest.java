@@ -151,7 +151,7 @@ class HttpTabRenderTest {
         HttpTab tab = new HttpTab(ctx);
         String rendered = TuiTestHelper.renderToString(tab, 140, 30);
 
-        assertTrue(rendered.contains("sort:method"), "Title should show default sort column 'method'");
+        assertTrue(rendered.contains("METHOD▼"), "Column header should show sort indicator on default sort column");
     }
 
     @Test
@@ -164,7 +164,7 @@ class HttpTabRenderTest {
         tab.handleKeyEvent(KeyEvent.ofChar('s', KeyModifiers.NONE));
         String rendered = TuiTestHelper.renderToString(tab, 140, 30);
 
-        assertTrue(rendered.contains("sort:path"), "Sort should cycle to 'path' after pressing 's'");
+        assertTrue(rendered.contains("PATH▼"), "Sort should cycle to 'path' after pressing 's'");
     }
 
     @Test

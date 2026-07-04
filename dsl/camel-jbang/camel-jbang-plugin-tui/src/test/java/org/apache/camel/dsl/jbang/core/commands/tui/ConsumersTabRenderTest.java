@@ -170,7 +170,7 @@ class ConsumersTabRenderTest {
         ConsumersTab tab = new ConsumersTab(ctx);
         String rendered = TuiTestHelper.renderToString(tab, 120, 20);
 
-        assertTrue(rendered.contains("sort:id"), "Block title should contain default sort column 'sort:id'");
+        assertTrue(rendered.contains("ROUTE▼"), "Column header should show sort indicator on default sort column");
     }
 
     @Test

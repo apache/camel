@@ -129,7 +129,7 @@ class DataSourceTab extends AbstractTableTab {
                         Constraint.length(8),
                         Constraint.fill())
                 .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
-                        .title(" DataSource sort:" + sort + " ").build())
+                        .title(" DataSource ").build())
                 .build();
 
         lastTableArea = area;

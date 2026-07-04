@@ -127,7 +127,7 @@ class InflightTab extends AbstractTableTab {
             rows.add(emptyRow("No inflight or blocked exchanges", 5));
         }
 
-        String title = " Inflight (" + sorted.size() + ") sort:" + sort + " ";
+        String title = " Inflight (" + sorted.size() + ") ";
 
         Table table = Table.builder()
                 .rows(rows)

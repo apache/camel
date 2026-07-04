@@ -135,7 +135,7 @@ class ConsumersTab extends AbstractTableTab {
                         Constraint.length(22),
                         Constraint.fill())
                 .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
-                        .title(" Consumers sort:" + sort + " ").build())
+                        .title(" Consumers ").build())
                 .build();
 
         lastTableArea = area;
