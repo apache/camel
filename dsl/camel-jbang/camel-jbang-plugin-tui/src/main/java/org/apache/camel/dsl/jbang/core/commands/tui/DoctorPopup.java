@@ -310,13 +310,13 @@ class DoctorPopup {
             String client = mcpConnectedClient != null ? mcpConnectedClient.get() : null;
             if (client != null) {
                 result.add(Line.from(
-                        Span.raw(TuiIcons.indent(TuiIcons.OTEL)),
+                        Span.raw(TuiIcons.indent(TuiIcons.MCP)),
                         Span.styled(String.format("%-14s", "MCP"), Style.EMPTY.bold()),
                         Span.raw(String.format("%-30s", client + " (port " + mcpPort + ")")),
                         Span.raw(" " + TuiIcons.OK)));
             } else {
                 result.add(Line.from(
-                        Span.raw(TuiIcons.indent(TuiIcons.OTEL)),
+                        Span.raw(TuiIcons.indent(TuiIcons.MCP)),
                         Span.styled(String.format("%-14s", "MCP"), Style.EMPTY.bold()),
                         Span.raw(String.format("%-30s", "Listening on port " + mcpPort)),
                         Span.raw(" " + TuiIcons.WARN)));
@@ -325,7 +325,7 @@ class DoctorPopup {
             }
         } else {
             result.add(Line.from(
-                    Span.raw(TuiIcons.indent(TuiIcons.OTEL)),
+                    Span.raw(TuiIcons.indent(TuiIcons.MCP)),
                     Span.styled(String.format("%-14s", "MCP"), Style.EMPTY.bold()),
                     Span.raw(String.format("%-30s", "Not enabled")),
                     Span.raw(" " + TuiIcons.WARN)));

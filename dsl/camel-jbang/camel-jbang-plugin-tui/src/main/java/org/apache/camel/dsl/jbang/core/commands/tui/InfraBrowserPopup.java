@@ -288,7 +288,7 @@ class InfraBrowserPopup {
         List<ListItem> items = new ArrayList<>();
         for (InfraServiceEntry entry : catalog) {
             String padded = String.format("%-" + nameCol + "s", TuiHelper.truncate(entry.alias(), nameCol));
-            String prefix = "  🔧 " + padded + " ";
+            String prefix = TuiIcons.indent(TuiIcons.INFRA) + padded + " ";
             if (entry.running()) {
                 items.add(ListItem.from(prefix + "(running)").style(Style.EMPTY.dim()));
             } else {

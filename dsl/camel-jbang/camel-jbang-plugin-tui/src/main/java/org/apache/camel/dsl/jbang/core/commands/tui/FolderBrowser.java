@@ -106,7 +106,7 @@ class FolderBrowser {
                     .forEach(p -> {
                         String name = p.getFileName().toString();
                         if (Files.isDirectory(p)) {
-                            dirs.add(new DirEntry("📁", name, p.toString(), true));
+                            dirs.add(new DirEntry(TuiIcons.FOLDER, name, p.toString(), true));
                         } else {
                             files.add(new DirEntry(TuiHelper.fileEmoji(p), name, p.toString(), false));
                         }
@@ -120,7 +120,7 @@ class FolderBrowser {
         List<DirEntry> found = new ArrayList<>();
         Path parent = dir.getParent();
         if (parent != null) {
-            found.add(new DirEntry("📁", "..", parent.toString(), true));
+            found.add(new DirEntry(TuiIcons.FOLDER, "..", parent.toString(), true));
         }
         found.addAll(dirs);
         found.addAll(files);

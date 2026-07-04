@@ -404,8 +404,8 @@ class ExampleBrowserPopup {
             boolean citrus = ExampleHelper.hasCitrusTests(ex);
             boolean infra = !ExampleHelper.getInfraServices(ex).isEmpty();
 
-            String icons = (bundled ? "📦" : "🌐") + (docker ? "🐳" : "  ")
-                           + (infra ? "🔧" : "  ") + (citrus ? "🍋" : "  ");
+            String icons = (bundled ? TuiIcons.BUNDLED : TuiIcons.ONLINE) + (docker ? TuiIcons.DOCKER : "  ")
+                           + (infra ? TuiIcons.INFRA : "  ") + (citrus ? TuiIcons.CITRUS : "  ");
             int nameCol = Math.min(30, width / 3);
             String padded = String.format("%-" + nameCol + "s", TuiHelper.truncate(name, nameCol));
             String prefix = " " + icons + " " + padded + " ";
@@ -426,7 +426,9 @@ class ExampleBrowserPopup {
             }
         }
         items.add(ListItem.from(""));
-        items.add(ListItem.from(" 📦 = bundled  🌐 = online  🐳 = Docker  🔧 = infra services  🍋 = Citrus tests")
+        items.add(ListItem.from(" " + TuiIcons.BUNDLED + " = bundled  " + TuiIcons.ONLINE + " = online  "
+                                + TuiIcons.DOCKER + " = Docker  " + TuiIcons.INFRA + " = infra services  " + TuiIcons.CITRUS
+                                + " = Citrus tests")
                 .style(Style.EMPTY.dim()));
         return items;
     }
