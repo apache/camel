@@ -9,7 +9,6 @@
 :component-header: Both producer and consumer are supported
 //Manually maintained attributes
 :group: Kubernetes
-:camel-spring-boot-name: kubernetes
 
 *Since Camel {since}*
 
@@ -42,12 +41,45 @@ include::partial$component-endpoint-headers.adoc[]
 
 - `listEvents`: this operation lists the events
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
-from("direct:list").
-    to("kubernetes-events:///?kubernetesClient=#kubernetesClient&operation=listEvents").
-    to("mock:result");
---------------------------------------------------------------------------------
+----
+from("direct:list")
+    .to("kubernetes-events:///?kubernetesClient=#kubernetesClient&operation=listEvents")
+    .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:list"/>
+  <to uri="kubernetes-events:///?kubernetesClient=#kubernetesClient&amp;operation=listEvents"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:list
+      steps:
+        - to:
+            uri: kubernetes-events:///
+            parameters:
+              kubernetesClient: "#kubernetesClient"
+              operation: listEvents
+        - to:
+            uri: mock:result
+----
+====
 
 This operation returns a list of events from your cluster. The type of the events is `io.fabric8.kubernetes.api.model.events.v1.Event`.
 
@@ -55,21 +87,19 @@ To indicate from which namespace, the events are expected, it is possible to set
 
 - `listEventsByLabels`: this operation lists the events selected by labels
 
+._Java-only: using a Processor to set label headers on the exchange_
 [source,java]
---------------------------------------------------------------------------------
-from("direct:listByLabels").process(new Processor() {
-
-            @Override
-            public void process(Exchange exchange) throws Exception {
-                Map<String, String> labels = new HashMap<>();
-                labels.put("key1", "value1");
-                labels.put("key2", "value2");
-                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_EVENTS_LABELS, labels);
-            }
-        });
-    to("kubernetes-events:///?kubernetesClient=#kubernetesClient&operation=listEventsByLabels").
-    to("mock:result");
---------------------------------------------------------------------------------
+----
+from("direct:listByLabels")
+    .process(exchange -> {
+        Map<String, String> labels = new HashMap<>();
+        labels.put("key1", "value1");
+        labels.put("key2", "value2");
+        exchange.getIn().setHeader("CamelKubernetesEventsLabels", labels);
+    })
+    .to("kubernetes-events:///?kubernetesClient=#kubernetesClient&operation=listEventsByLabels")
+    .to("mock:result");
+----
 
 This operation returns a list of events from your cluster that occurred in any namespaces, using a label selector (in the example above only expect events which have the label "key1" set to "value1" and the label "key2" set to "value2"). The type of the events is `io.fabric8.kubernetes.api.model.events.v1.Event`.
 
@@ -77,19 +107,59 @@ This operation expects the message header `CamelKubernetesEventsLabels` to be se
 
 - `getEvent`: this operation gives a specific event
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
-from("direct:get").process(new Processor() {
+----
+from("direct:get")
+    .setHeader("CamelKubernetesNamespaceName", constant("test"))
+    .setHeader("CamelKubernetesEventName", constant("event1"))
+    .to("kubernetes-events:///?kubernetesClient=#kubernetesClient&operation=getEvent")
+    .to("mock:result");
+----
 
-            @Override
-            public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "test");
-                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_EVENT_NAME, "event1");
-            }
-        });
-    to("kubernetes-events:///?kubernetesClient=#kubernetesClient&operation=getEvent").
-    to("mock:result");
---------------------------------------------------------------------------------
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:get"/>
+  <setHeader name="CamelKubernetesNamespaceName">
+    <constant>test</constant>
+  </setHeader>
+  <setHeader name="CamelKubernetesEventName">
+    <constant>event1</constant>
+  </setHeader>
+  <to uri="kubernetes-events:///?kubernetesClient=#kubernetesClient&amp;operation=getEvent"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:get
+      steps:
+        - setHeader:
+            name: CamelKubernetesNamespaceName
+            constant: test
+        - setHeader:
+            name: CamelKubernetesEventName
+            constant: event1
+        - to:
+            uri: kubernetes-events:///
+            parameters:
+              kubernetesClient: "#kubernetesClient"
+              operation: getEvent
+        - to:
+            uri: mock:result
+----
+====
 
 This operation returns the event matching the criteria from your cluster. The type of the event is `io.fabric8.kubernetes.api.model.events.v1.Event`.
 
@@ -99,27 +169,25 @@ If no matching event could be found, `null` is returned.
 
 - `createEvent`: this operation creates a new event
 
+._Java-only: using a Processor to set event headers for creation (requires building a Map for labels)_
 [source,java]
---------------------------------------------------------------------------------
-from("direct:get").process(new Processor() {
-
-            @Override
-            public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "default");
-                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_EVENT_NAME, "test1");
-                Map<String, String> labels = new HashMap<>();
-                labels.put("this", "rocks");
-                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_EVENTS_LABELS, labels);
-                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_EVENT_ACTION_PRODUCER, "Some Action");
-                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_EVENT_TYPE, "Normal");
-                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_EVENT_REASON, "Some Reason");
-                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_EVENT_REPORTING_CONTROLLER, "Some-Reporting-Controller");
-                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_EVENT_REPORTING_INSTANCE, "Some-Reporting-Instance");
-            }
-        });
-    to("kubernetes-events:///?kubernetesClient=#kubernetesClient&operation=createEvent").
-    to("mock:result");
---------------------------------------------------------------------------------
+----
+from("direct:create")
+    .process(exchange -> {
+        exchange.getIn().setHeader("CamelKubernetesNamespaceName", "default");
+        exchange.getIn().setHeader("CamelKubernetesEventName", "test1");
+        Map<String, String> labels = new HashMap<>();
+        labels.put("this", "rocks");
+        exchange.getIn().setHeader("CamelKubernetesEventsLabels", labels);
+        exchange.getIn().setHeader("CamelKubernetesEventAction", "Some Action");
+        exchange.getIn().setHeader("CamelKubernetesEventType", "Normal");
+        exchange.getIn().setHeader("CamelKubernetesEventReason", "Some Reason");
+        exchange.getIn().setHeader("CamelKubernetesEventReportingController", "Some-Reporting-Controller");
+        exchange.getIn().setHeader("CamelKubernetesEventReportingInstance", "Some-Reporting-Instance");
+    })
+    .to("kubernetes-events:///?kubernetesClient=#kubernetesClient&operation=createEvent")
+    .to("mock:result");
+----
 
 This operation publishes a new event in your cluster. An event can be created in two ways either from message headers or directly from an `io.fabric8.kubernetes.api.model.events.v1.EventBuilder`.
 
@@ -138,19 +206,59 @@ The behavior is exactly the same as `createEvent`, only the name of the operatio
 
 - `deleteEvent`: this operation deletes an existing event.
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
-from("direct:get").process(new Processor() {
+----
+from("direct:delete")
+    .setHeader("CamelKubernetesNamespaceName", constant("default"))
+    .setHeader("CamelKubernetesEventName", constant("test1"))
+    .to("kubernetes-events:///?kubernetesClient=#kubernetesClient&operation=deleteEvent")
+    .to("mock:result");
+----
 
-            @Override
-            public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "default");
-                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_EVENT_NAME, "test1");
-            }
-        });
-    to("kubernetes-events:///?kubernetesClient=#kubernetesClient&operation=deleteEvent").
-    to("mock:result");
---------------------------------------------------------------------------------
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:delete"/>
+  <setHeader name="CamelKubernetesNamespaceName">
+    <constant>default</constant>
+  </setHeader>
+  <setHeader name="CamelKubernetesEventName">
+    <constant>test1</constant>
+  </setHeader>
+  <to uri="kubernetes-events:///?kubernetesClient=#kubernetesClient&amp;operation=deleteEvent"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:delete
+      steps:
+        - setHeader:
+            name: CamelKubernetesNamespaceName
+            constant: default
+        - setHeader:
+            name: CamelKubernetesEventName
+            constant: test1
+        - to:
+            uri: kubernetes-events:///
+            parameters:
+              kubernetesClient: "#kubernetesClient"
+              operation: deleteEvent
+        - to:
+            uri: mock:result
+----
+====
 
 This operation removes an existing event from your cluster. It returns a `boolean` to indicate whether the operation was successful or not.
 
@@ -158,20 +266,43 @@ This operation expects two message headers which are `CamelKubernetesNamespaceNa
 
 === Kubernetes Events Consumer Example
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
-fromF("kubernetes-events://%s?oauthToken=%s", host, authToken)
-    .process(new KubernetesProcessor()).to("mock:result");
+----
+// The body is an io.fabric8.kubernetes.api.model.events.v1.Event object
+from("kubernetes-events://{{host}}?oauthToken={{authToken}}")
+    .to("log:result");
+----
 
-    public class KubernetesProcessor implements Processor {
-        @Override
-        public void process(Exchange exchange) throws Exception {
-            Message in = exchange.getIn();
-            Event e = exchange.getIn().getBody(Event.class);
-            log.info("Got event with event name: " + e.getMetadata().getName() + " and action " + in.getHeader(KubernetesConstants.KUBERNETES_EVENT_ACTION));
-        }
-    }
---------------------------------------------------------------------------------
+XML::
++
+[source,xml]
+----
+<!-- The body is an io.fabric8.kubernetes.api.model.events.v1.Event object -->
+<route>
+  <from uri="kubernetes-events://{{host}}?oauthToken={{authToken}}"/>
+  <to uri="log:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+# The body is an io.fabric8.kubernetes.api.model.events.v1.Event object
+- route:
+    from:
+      uri: kubernetes-events://{{host}}
+      parameters:
+        oauthToken: "{{authToken}}"
+      steps:
+        - to:
+            uri: log:result
+----
+====
 
 This consumer returns a message per event received in the whole cluster. It also set the action (`io.fabric8.kubernetes.client.Watcher.Action`) in the message header `CamelKubernetesEventAction` and the timestamp (`long`) in the message header `CamelKubernetesEventTimestamp`.
 
@@ -183,4 +314,3 @@ You can narrow the scope of the consumer using the following query parameter com
 - `namespace` + `labelKey` + `labelValue` - Watch Events with the specified label in the given namespace.
 
 
-include::spring-boot:partial$starter.adoc[]

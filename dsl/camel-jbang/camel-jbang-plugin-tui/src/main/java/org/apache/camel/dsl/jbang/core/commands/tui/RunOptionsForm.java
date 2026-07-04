@@ -24,18 +24,19 @@ import dev.tamboui.style.Style;
 import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.Line;
 import dev.tamboui.text.Span;
+import dev.tamboui.text.Text;
 import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.widgets.Clear;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
-import dev.tamboui.widgets.block.Title;
+import dev.tamboui.widgets.block.Borders;
 import dev.tamboui.widgets.input.TextInput;
 import dev.tamboui.widgets.input.TextInputState;
 import dev.tamboui.widgets.paragraph.Paragraph;
 
-import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.hint;
-import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.hintLast;
+import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.hint;
+import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.hintLast;
 
 class RunOptionsForm {
 
@@ -44,32 +45,51 @@ class RunOptionsForm {
 
     // Row indices for page 0
     private static final int ROW_NAME = 0;
-    private static final int ROW_PORT = 1;
-    private static final int ROW_MAX = 2;
-    private static final int ROW_DEV = 3;
-    private static final int ROW_OBSERVE = 4;
-    private static final int ROW_TRACE = 5;
-    private static final int ROW_STUB = 6;
-    private static final int ROW_COUNT = 7;
+    private static final int ROW_RUNTIME = 1;
+    private static final int ROW_PROFILE = 2;
+    private static final int ROW_PORT = 3;
+    private static final int ROW_INIT_HEAP = 4;
+    private static final int ROW_MAX_HEAP = 5;
+    private static final int ROW_MAX = 6;
+    private static final int ROW_CONSOLE = 7;
+    private static final int ROW_DEV = 8;
+    private static final int ROW_OBSERVE = 9;
+    private static final int ROW_TRACE = 10;
+    private static final int ROW_STUB = 11;
+    private static final int ROW_OTEL_AGENT = 12;
+    private static final int ROW_COUNT = 13;
 
     private boolean visible;
     private int page;
     private int selectedRow;
+    private String errorMessage;
 
     private static final String[] MAX_MODES = { "Max seconds:", "Max messages:", "Max idle secs:" };
     private static final String[] MAX_FLAGS = { "--max-seconds=", "--max-messages=", "--max-idle-seconds=" };
+    private static final String[] RUNTIME_LABELS = { "🐪 Camel Main", "🍃 Spring Boot", "🚀 Quarkus" };
+    private static final String[] RUNTIME_VALUES = { "camel-main", "spring-boot", "quarkus" };
+    private static final String[] PROFILE_LABELS = { "🛠️ dev", "📦 prod" };
+    private static final String[] PROFILE_VALUES = { "dev", "prod" };
 
     // Text fields
     private TextInputState nameInput;
     private TextInputState portInput;
+    private TextInputState initHeapInput;
+    private TextInputState maxHeapInput;
     private TextInputState maxInput;
     private int maxMode;
+    private int runtimeMode;
+    private boolean runtimeLocked;
+    private int profileMode;
 
     // Checkboxes
     private boolean devMode;
     private boolean observe;
     private boolean backlogTrace;
     private boolean stubMode;
+    private boolean otelAgent;
+    private int otelExportTarget; // 0=TUI, 1=Jaeger
+    private boolean webConsole;
 
     private String exampleTitle;
 
@@ -87,14 +107,31 @@ class RunOptionsForm {
     }
 
     void open(String defaultName, String exampleName, boolean bundled, boolean dev) {
+        open(defaultName, exampleName, bundled, dev, -1);
+    }
+
+    void open(String defaultName, String exampleName, boolean bundled, boolean dev, int lockedRuntime) {
         nameInput = new TextInputState(defaultName != null ? defaultName : "");
         portInput = new TextInputState("");
+        initHeapInput = new TextInputState("");
+        maxHeapInput = new TextInputState("");
         maxInput = new TextInputState("");
         maxMode = 0;
-        devMode = dev;
+        if (lockedRuntime >= 0 && lockedRuntime < RUNTIME_LABELS.length) {
+            runtimeMode = lockedRuntime;
+            runtimeLocked = true;
+        } else {
+            runtimeMode = 0;
+            runtimeLocked = false;
+        }
+        profileMode = 0;
+        devMode = runtimeLocked ? false : dev;
         observe = false;
         backlogTrace = false;
         stubMode = false;
+        otelAgent = false;
+        otelExportTarget = 0;
+        webConsole = false;
         selectedRow = ROW_NAME;
         page = PAGE_OPTIONS;
         selectedProperty = 0;
@@ -113,6 +150,14 @@ class RunOptionsForm {
 
     boolean isStubMode() {
         return stubMode;
+    }
+
+    void setError(String error) {
+        this.errorMessage = error;
+    }
+
+    boolean isJaegerExport() {
+        return otelAgent && otelExportTarget == 1;
     }
 
     boolean handleKeyEvent(KeyEvent ke) {
@@ -149,7 +194,9 @@ class RunOptionsForm {
             } else {
                 hint(spans, "Tab", "next");
             }
-            if (selectedRow >= ROW_DEV) {
+            if (selectedRow == ROW_RUNTIME || selectedRow == ROW_PROFILE || selectedRow == ROW_MAX) {
+                hint(spans, "Space", "cycle");
+            } else if (selectedRow >= ROW_CONSOLE) {
                 hint(spans, "Space", "toggle");
             }
             if (hasProperties()) {
@@ -172,9 +219,28 @@ class RunOptionsForm {
         if (!name.isEmpty()) {
             args.add("--name=" + name);
         }
+        if (runtimeMode > 0) {
+            args.add("--runtime=" + RUNTIME_VALUES[runtimeMode]);
+        }
+        args.add("--profile=" + PROFILE_VALUES[profileMode]);
         String port = portInput.text().trim();
         if (!port.isEmpty()) {
             args.add("--port=" + port);
+        }
+        StringBuilder jvmArgs = new StringBuilder();
+        String initHeap = initHeapInput.text().trim();
+        if (!initHeap.isEmpty()) {
+            jvmArgs.append("-Xms").append(initHeap);
+        }
+        String maxHeap = maxHeapInput.text().trim();
+        if (!maxHeap.isEmpty()) {
+            if (!jvmArgs.isEmpty()) {
+                jvmArgs.append(" ");
+            }
+            jvmArgs.append("-Xmx").append(maxHeap);
+        }
+        if (!jvmArgs.isEmpty()) {
+            args.add("--jvm-args=" + jvmArgs);
         }
         String maxVal = maxInput.text().trim();
         if (!maxVal.isEmpty() && !"0".equals(maxVal)) {
@@ -191,6 +257,15 @@ class RunOptionsForm {
         }
         if (stubMode) {
             args.add("--stub=remote");
+        }
+        if (otelAgent) {
+            args.add("--open-telemetry-agent");
+            if (otelExportTarget == 1) {
+                args.add("--open-telemetry-agent-export=jaeger");
+            }
+        }
+        if (webConsole) {
+            args.add("--console");
         }
         if (properties != null) {
             for (PropertyEntry pe : properties) {
@@ -210,12 +285,13 @@ class RunOptionsForm {
     // ---- Options page (page 0) ----
 
     private boolean handleOptionsPage(KeyEvent ke) {
+        errorMessage = null;
         if (ke.isUp()) {
             selectedRow = (selectedRow - 1 + ROW_COUNT) % ROW_COUNT;
             return true;
         }
         if (ke.isDown()) {
-            if (selectedRow == ROW_STUB && hasProperties()) {
+            if (selectedRow == ROW_OTEL_AGENT && hasProperties()) {
                 page = PAGE_PROPERTIES;
                 selectedProperty = 0;
             } else {
@@ -224,7 +300,7 @@ class RunOptionsForm {
             return true;
         }
         if (ke.isFocusNext()) {
-            if (selectedRow == ROW_STUB && hasProperties()) {
+            if (selectedRow == ROW_OTEL_AGENT && hasProperties()) {
                 page = PAGE_PROPERTIES;
                 selectedProperty = 0;
             } else {
@@ -236,16 +312,44 @@ class RunOptionsForm {
             selectedRow = (selectedRow - 1 + ROW_COUNT) % ROW_COUNT;
             return true;
         }
-        if (ke.isRight() && hasProperties() && selectedRow >= ROW_STUB) {
+        if (ke.isRight() && selectedRow == ROW_OTEL_AGENT && otelAgent) {
+            otelExportTarget = (otelExportTarget + 1) % 2;
+            return true;
+        }
+        if (ke.isLeft() && selectedRow == ROW_OTEL_AGENT && otelAgent) {
+            otelExportTarget = (otelExportTarget + 1) % 2;
+            return true;
+        }
+        if (ke.isRight() && hasProperties() && selectedRow >= ROW_OTEL_AGENT) {
             page = PAGE_PROPERTIES;
             selectedProperty = 0;
             return true;
         }
 
-        if (ke.isChar('+') && selectedRow >= ROW_DEV) {
+        if (ke.isChar('+') && selectedRow >= ROW_CONSOLE) {
             page = PAGE_PROPERTIES;
             addCustomProperty();
             return true;
+        }
+
+        // Runtime row: Space or Left/Right cycles (unless locked)
+        if (selectedRow == ROW_RUNTIME && !runtimeLocked) {
+            if (ke.isChar(' ') || ke.isRight()) {
+                runtimeMode = (runtimeMode + 1) % RUNTIME_LABELS.length;
+                return true;
+            }
+            if (ke.isLeft()) {
+                runtimeMode = (runtimeMode - 1 + RUNTIME_LABELS.length) % RUNTIME_LABELS.length;
+                return true;
+            }
+        }
+
+        // Profile row: Space or Left/Right cycles
+        if (selectedRow == ROW_PROFILE) {
+            if (ke.isChar(' ') || ke.isRight() || ke.isLeft()) {
+                profileMode = (profileMode + 1) % PROFILE_LABELS.length;
+                return true;
+            }
         }
 
         // Max row: Space cycles mode
@@ -255,24 +359,34 @@ class RunOptionsForm {
         }
 
         // Checkbox rows: Space toggles
-        if (ke.isChar(' ') && selectedRow >= ROW_DEV) {
+        if (ke.isChar(' ') && selectedRow >= ROW_CONSOLE) {
             switch (selectedRow) {
-                case ROW_DEV -> devMode = !devMode;
+                case ROW_DEV -> {
+                    if (!runtimeLocked)
+                        devMode = !devMode;
+                }
                 case ROW_OBSERVE -> observe = !observe;
                 case ROW_TRACE -> backlogTrace = !backlogTrace;
                 case ROW_STUB -> stubMode = !stubMode;
+                case ROW_OTEL_AGENT -> otelAgent = !otelAgent;
+                case ROW_CONSOLE -> webConsole = !webConsole;
             }
             return true;
         }
 
-        // Text field rows: delegate to active input
-        if (selectedRow <= ROW_MAX) {
+        // Text field rows: delegate to active input (skip runtime row — it uses cycling)
+        if (selectedRow <= ROW_MAX && selectedRow != ROW_RUNTIME && selectedRow != ROW_PROFILE) {
             TextInputState active = activeInput();
             if (active != null) {
-                handleTextInput(ke, active, selectedRow == ROW_PORT || selectedRow == ROW_MAX);
+                if (selectedRow == ROW_INIT_HEAP || selectedRow == ROW_MAX_HEAP) {
+                    handleHeapInput(ke, active);
+                } else {
+                    handleTextInput(ke, active, selectedRow == ROW_PORT || selectedRow == ROW_MAX);
+                }
             }
             return true;
         }
+
         return true;
     }
 
@@ -287,7 +401,7 @@ class RunOptionsForm {
             editingKey = false;
             if (selectedProperty == 0) {
                 page = PAGE_OPTIONS;
-                selectedRow = ROW_STUB;
+                selectedRow = ROW_OTEL_AGENT;
             } else {
                 selectedProperty--;
             }
@@ -317,7 +431,7 @@ class RunOptionsForm {
             } else if (selectedProperty == 0) {
                 editingKey = false;
                 page = PAGE_OPTIONS;
-                selectedRow = ROW_STUB;
+                selectedRow = ROW_OTEL_AGENT;
             } else {
                 editingKey = false;
                 selectedProperty--;
@@ -333,7 +447,7 @@ class RunOptionsForm {
                     return true;
                 }
                 page = PAGE_OPTIONS;
-                selectedRow = ROW_STUB;
+                selectedRow = ROW_OTEL_AGENT;
                 editingKey = false;
                 return true;
             }
@@ -348,7 +462,7 @@ class RunOptionsForm {
                     }
                     if (properties.isEmpty()) {
                         page = PAGE_OPTIONS;
-                        selectedRow = ROW_STUB;
+                        selectedRow = ROW_OTEL_AGENT;
                     }
                     return true;
                 }
@@ -375,8 +489,8 @@ class RunOptionsForm {
     // ---- Rendering ----
 
     private void renderOptionsPage(Frame frame, Rect area) {
-        int popupW = Math.min(56, area.width() - 4);
-        int popupH = 11;
+        int popupW = Math.min(68, area.width() - 4);
+        int popupH = errorMessage != null ? 18 : 17;
         int x = area.left() + Math.max(0, (area.width() - popupW) / 2);
         int y = area.top() + Math.max(0, (area.height() - popupH) / 4);
         Rect popup = new Rect(x, y, Math.min(popupW, area.width()), Math.min(popupH, area.height()));
@@ -390,32 +504,15 @@ class RunOptionsForm {
             title += " ";
         }
 
-        List<Span> bottomSpans = new ArrayList<>();
-        bottomSpans.add(Span.styled(" Tab", MonitorContext.HINT_KEY_STYLE));
-        bottomSpans.add(Span.raw(" next"));
-        if (hasProperties()) {
-            bottomSpans.add(Span.raw(" │"));
-            bottomSpans.add(Span.styled(" →", MonitorContext.HINT_KEY_STYLE));
-            bottomSpans.add(Span.raw(" properties"));
-        }
-        bottomSpans.add(Span.raw(" │"));
-        bottomSpans.add(Span.styled(" Space", MonitorContext.HINT_KEY_STYLE));
-        bottomSpans.add(Span.raw(" toggle │"));
-        bottomSpans.add(Span.styled(" Enter", MonitorContext.HINT_KEY_STYLE));
-        bottomSpans.add(Span.raw(" launch │"));
-        bottomSpans.add(Span.styled(" Esc", MonitorContext.HINT_KEY_STYLE));
-        bottomSpans.add(Span.raw(" back "));
-
         Block block = Block.builder()
-                .borderType(BorderType.ROUNDED)
+                .borderType(BorderType.ROUNDED).borders(Borders.ALL)
                 .title(title)
-                .titleBottom(Title.from(Line.from(bottomSpans)))
                 .build();
         frame.renderWidget(block, popup);
 
         int innerX = popup.left() + 2;
         int innerW = popup.width() - 4;
-        int labelW = 16;
+        int labelW = 18;
         int fieldW = innerW - labelW;
         int rowY = popup.top() + 1;
 
@@ -423,15 +520,49 @@ class RunOptionsForm {
         renderTextInput(frame, innerX + labelW, rowY, fieldW, nameInput, selectedRow == ROW_NAME);
         rowY++;
 
+        renderLabel(frame, innerX, rowY, labelW, "Runtime:", selectedRow == ROW_RUNTIME);
+        if (runtimeLocked) {
+            String locked = RUNTIME_LABELS[runtimeMode] + " 🔒";
+            frame.renderWidget(
+                    Paragraph.builder().text(Text.raw(locked)).style(Style.EMPTY.dim()).build(),
+                    new Rect(innerX + labelW, rowY, fieldW, 1));
+        } else {
+            renderCycler(frame, innerX + labelW, rowY, fieldW, RUNTIME_LABELS, runtimeMode, selectedRow == ROW_RUNTIME);
+        }
+        rowY++;
+
+        renderLabel(frame, innerX, rowY, labelW, "Profile:", selectedRow == ROW_PROFILE);
+        renderCycler(frame, innerX + labelW, rowY, fieldW, PROFILE_LABELS, profileMode, selectedRow == ROW_PROFILE);
+        rowY++;
+
         renderLabel(frame, innerX, rowY, labelW, "Port:", selectedRow == ROW_PORT);
         renderTextInput(frame, innerX + labelW, rowY, fieldW, portInput, selectedRow == ROW_PORT);
+        rowY++;
+
+        renderLabel(frame, innerX, rowY, labelW, "Init heap (-Xms):", selectedRow == ROW_INIT_HEAP);
+        renderTextInputWithHint(frame, innerX + labelW, rowY, fieldW, initHeapInput, selectedRow == ROW_INIT_HEAP,
+                "e.g. 128m, 1g");
+        rowY++;
+
+        renderLabel(frame, innerX, rowY, labelW, "Max heap (-Xmx):", selectedRow == ROW_MAX_HEAP);
+        renderTextInputWithHint(frame, innerX + labelW, rowY, fieldW, maxHeapInput, selectedRow == ROW_MAX_HEAP,
+                "e.g. 256m, 2g");
         rowY++;
 
         renderLabel(frame, innerX, rowY, labelW, MAX_MODES[maxMode], selectedRow == ROW_MAX);
         renderTextInput(frame, innerX + labelW, rowY, fieldW, maxInput, selectedRow == ROW_MAX);
         rowY++;
 
-        renderCheckbox(frame, innerX, rowY, innerW, "Dev mode (live reload)", devMode, selectedRow == ROW_DEV);
+        renderCheckbox(frame, innerX, rowY, innerW, "Web console (/q/dev)", webConsole, selectedRow == ROW_CONSOLE);
+        rowY++;
+
+        if (runtimeLocked) {
+            frame.renderWidget(Paragraph.from(Line.from(
+                    Span.styled(" [ ] Dev mode (not available for Maven projects)", Style.EMPTY.dim()))),
+                    new Rect(innerX, rowY, innerW, 1));
+        } else {
+            renderCheckbox(frame, innerX, rowY, innerW, "Dev mode (live reload)", devMode, selectedRow == ROW_DEV);
+        }
         rowY++;
 
         renderCheckbox(frame, innerX, rowY, innerW, "Observe (health + metrics)", observe, selectedRow == ROW_OBSERVE);
@@ -441,10 +572,32 @@ class RunOptionsForm {
         rowY++;
 
         renderCheckbox(frame, innerX, rowY, innerW, "Stub (no Docker needed)", stubMode, selectedRow == ROW_STUB);
+        rowY++;
+
+        renderCheckbox(frame, innerX, rowY, innerW, "OTel Java Agent (auto-instrument)", otelAgent,
+                selectedRow == ROW_OTEL_AGENT);
+        if (otelAgent) {
+            String tuiLabel = otelExportTarget == 0 ? "[TUI]" : " TUI ";
+            String jaegerLabel = otelExportTarget == 1 ? "[Jaeger]" : " Jaeger ";
+            Style tuiStyle = otelExportTarget == 0 ? Style.EMPTY.bold() : Style.EMPTY.dim();
+            Style jaegerStyle = otelExportTarget == 1 ? Style.EMPTY.bold() : Style.EMPTY.dim();
+            int exportX = innerX + 38;
+            Rect exportArea = new Rect(exportX, rowY, innerW - 36, 1);
+            frame.renderWidget(Paragraph.from(Line.from(
+                    Span.styled(tuiLabel, tuiStyle),
+                    Span.styled(" ", Style.EMPTY),
+                    Span.styled(jaegerLabel, jaegerStyle))), exportArea);
+        }
+        if (errorMessage != null) {
+            rowY++;
+            Rect errorArea = new Rect(innerX, rowY, innerW, 1);
+            frame.renderWidget(Paragraph.from(Line.from(
+                    Span.styled("⚠ " + errorMessage, Style.EMPTY.bold()))), errorArea);
+        }
     }
 
     private void renderPropertiesPage(Frame frame, Rect area) {
-        int popupW = Math.min(70, area.width() - 4);
+        int popupW = Math.min(100, area.width() - 4);
         int propCount = properties != null ? properties.size() : 0;
         int popupH = Math.min(propCount + 2, Math.min(20, area.height() - 4));
         int x = area.left() + Math.max(0, (area.width() - popupW) / 2);
@@ -454,14 +607,8 @@ class RunOptionsForm {
         frame.renderWidget(Clear.INSTANCE, popup);
 
         Block block = Block.builder()
-                .borderType(BorderType.ROUNDED)
+                .borderType(BorderType.ROUNDED).borders(Borders.ALL)
                 .title(" Run: " + exampleTitle + " — Properties (2/2) ")
-                .titleBottom(Title.from(Line.from(
-                        Span.styled(" ←", MonitorContext.HINT_KEY_STYLE), Span.raw(" options │"),
-                        Span.styled(" ↑↓", MonitorContext.HINT_KEY_STYLE), Span.raw(" navigate │"),
-                        Span.styled(" +", MonitorContext.HINT_KEY_STYLE), Span.raw(" add │"),
-                        Span.styled(" Enter", MonitorContext.HINT_KEY_STYLE), Span.raw(" launch │"),
-                        Span.styled(" Esc", MonitorContext.HINT_KEY_STYLE), Span.raw(" back "))))
                 .build();
         frame.renderWidget(block, popup);
 
@@ -471,7 +618,7 @@ class RunOptionsForm {
         for (PropertyEntry pe : properties) {
             maxKeyLen = Math.max(maxKeyLen, pe.key().length());
         }
-        int labelW = Math.min(maxKeyLen + 2, innerW / 2);
+        int labelW = Math.min(maxKeyLen + 2, innerW * 3 / 5);
         int fieldW = innerW - labelW;
 
         int rowY = popup.top() + 1;
@@ -566,8 +713,86 @@ class RunOptionsForm {
         return switch (selectedRow) {
             case ROW_NAME -> nameInput;
             case ROW_PORT -> portInput;
+            case ROW_INIT_HEAP -> initHeapInput;
+            case ROW_MAX_HEAP -> maxHeapInput;
             case ROW_MAX -> maxInput;
             default -> null;
+        };
+    }
+
+    private void handleHeapInput(KeyEvent ke, TextInputState active) {
+        if (ke.isDeleteBackward()) {
+            active.deleteBackward();
+        } else if (ke.isDeleteForward()) {
+            active.deleteForward();
+        } else if (ke.isLeft()) {
+            active.moveCursorLeft();
+        } else if (ke.isRight()) {
+            active.moveCursorRight();
+        } else if (ke.isHome()) {
+            active.moveCursorToStart();
+        } else if (ke.isEnd()) {
+            active.moveCursorToEnd();
+        } else if (ke.code() == KeyCode.CHAR) {
+            char c = ke.string().charAt(0);
+            String text = active.text();
+            if (Character.isDigit(c)) {
+                // only allow digits before any suffix
+                if (text.isEmpty() || Character.isDigit(text.charAt(text.length() - 1))) {
+                    active.insert(c);
+                }
+            } else if ((c == 'k' || c == 'm' || c == 'g') && !text.isEmpty()
+                    && Character.isDigit(text.charAt(text.length() - 1))) {
+                active.insert(c);
+            }
+        }
+    }
+
+    String validate() {
+        String port = portInput.text().trim();
+        if (!port.isEmpty()) {
+            try {
+                int p = Integer.parseInt(port);
+                if (p < 0 || p > 65535) {
+                    return "Port must be 0-65535";
+                }
+            } catch (NumberFormatException e) {
+                return "Invalid port: " + port;
+            }
+        }
+        String initHeap = initHeapInput.text().trim();
+        String maxHeap = maxHeapInput.text().trim();
+        if (!initHeap.isEmpty() && !isValidHeap(initHeap)) {
+            return "Invalid init heap: " + initHeap;
+        }
+        if (!maxHeap.isEmpty() && !isValidHeap(maxHeap)) {
+            return "Invalid max heap: " + maxHeap;
+        }
+        if (!initHeap.isEmpty() && !maxHeap.isEmpty()) {
+            long initBytes = parseHeapBytes(initHeap);
+            long maxBytes = parseHeapBytes(maxHeap);
+            if (initBytes > maxBytes) {
+                return "Init heap cannot exceed max heap";
+            }
+        }
+        return null;
+    }
+
+    private static boolean isValidHeap(String value) {
+        return value.matches("\\d+[kmg]?");
+    }
+
+    private static long parseHeapBytes(String value) {
+        char last = value.charAt(value.length() - 1);
+        if (Character.isDigit(last)) {
+            return Long.parseLong(value);
+        }
+        long num = Long.parseLong(value.substring(0, value.length() - 1));
+        return switch (last) {
+            case 'k' -> num * 1024;
+            case 'm' -> num * 1024 * 1024;
+            case 'g' -> num * 1024 * 1024 * 1024;
+            default -> num;
         };
     }
 
@@ -586,11 +811,11 @@ class RunOptionsForm {
             active.moveCursorToEnd();
         } else if (ke.code() == KeyCode.CHAR) {
             if (digitsOnly) {
-                if (Character.isDigit(ke.character())) {
-                    active.insert(ke.character());
+                if (Character.isDigit(ke.string().charAt(0))) {
+                    active.insert(ke.string().charAt(0));
                 }
             } else {
-                active.insert(ke.character());
+                active.insert(ke.string().charAt(0));
             }
         }
     }
@@ -602,6 +827,11 @@ class RunOptionsForm {
     }
 
     private void renderTextInput(Frame frame, int x, int y, int w, TextInputState state, boolean active) {
+        renderTextInputWithHint(frame, x, y, w, state, active, null);
+    }
+
+    private void renderTextInputWithHint(
+            Frame frame, int x, int y, int w, TextInputState state, boolean active, String hint) {
         Rect inputArea = new Rect(x, y, w, 1);
         if (active) {
             TextInput textInput = TextInput.builder()
@@ -610,10 +840,31 @@ class RunOptionsForm {
             frame.renderStatefulWidget(textInput, inputArea, state);
         } else {
             String text = state.text();
-            Style style = text.isEmpty() ? Style.EMPTY.dim() : Style.EMPTY;
-            frame.renderWidget(Paragraph.from(Line.from(
-                    Span.styled(text.isEmpty() ? "—" : text, style))), inputArea);
+            if (text.isEmpty() && hint != null) {
+                frame.renderWidget(Paragraph.from(Line.from(
+                        Span.styled(hint, Style.EMPTY.dim()))), inputArea);
+            } else {
+                Style style = text.isEmpty() ? Style.EMPTY.dim() : Style.EMPTY;
+                frame.renderWidget(Paragraph.from(Line.from(
+                        Span.styled(text.isEmpty() ? "—" : text, style))), inputArea);
+            }
         }
+    }
+
+    private void renderCycler(Frame frame, int x, int y, int w, String[] labels, int active, boolean selected) {
+        List<Span> spans = new ArrayList<>();
+        for (int i = 0; i < labels.length; i++) {
+            if (i > 0) {
+                spans.add(Span.styled(" ", Style.EMPTY));
+            }
+            if (i == active) {
+                spans.add(Span.styled("[" + labels[i] + "]", selected ? Style.EMPTY.bold() : Style.EMPTY));
+            } else {
+                spans.add(Span.styled(" " + labels[i] + " ", Style.EMPTY.dim()));
+            }
+        }
+        Rect area = new Rect(x, y, w, 1);
+        frame.renderWidget(Paragraph.from(Line.from(spans)), area);
     }
 
     private void renderCheckbox(Frame frame, int x, int y, int w, String label, boolean checked, boolean selected) {

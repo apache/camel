@@ -23,6 +23,7 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.CamelExchangeException;
+import org.apache.camel.EndpointSending;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.ExchangePropertyKey;
@@ -50,7 +51,8 @@ import static org.apache.camel.support.ExchangeHelper.copyResultsPreservePattern
  *
  * @see PollEnricher
  */
-public class Enricher extends BaseProcessorSupport implements IdAware, RouteIdAware, StepIdAware, CamelContextAware {
+public class Enricher extends BaseProcessorSupport
+        implements EndpointSending, IdAware, RouteIdAware, StepIdAware, CamelContextAware {
 
     private CamelContext camelContext;
     private String id;

@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "endpointValidator",
     "title": "Endpoint Validator",
-    "description": "To use a Camel endpoint to perform validation on the route level.",
+    "description": "Uses a Camel endpoint to perform data type validation by sending the message through the endpoint",
     "deprecated": false,
     "label": "validation",
     "javaType": "org.apache.camel.model.validator.EndpointValidatorDefinition",
@@ -12,8 +12,8 @@
     "output": false
   },
   "properties": {
-    "ref": { "index": 0, "kind": "attribute", "displayName": "Ref", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Set the reference of the Endpoint." },
-    "uri": { "index": 1, "kind": "attribute", "displayName": "Uri", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Set the URI of the Endpoint." },
-    "type": { "index": 2, "kind": "attribute", "displayName": "Type", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Set the data type name. If you specify 'xml:XYZ', the validator will be picked up if message type is 'xml:XYZ'. If you specify just 'xml', the validator matches with all of 'xml' message type like 'xml:ABC' or 'xml:DEF'." }
+    "ref": { "index": 0, "kind": "attribute", "displayName": "Ref", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Reference of the Endpoint used for validation." },
+    "uri": { "index": 1, "kind": "attribute", "displayName": "Uri", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "URI of the Endpoint used for validation." },
+    "type": { "index": 2, "kind": "attribute", "displayName": "Type", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The data type name to validate. If you specify 'xml:XYZ', the validator is picked up when message type is 'xml:XYZ'. If you specify just 'xml', the validator matches all xml message types." }
   }
 }

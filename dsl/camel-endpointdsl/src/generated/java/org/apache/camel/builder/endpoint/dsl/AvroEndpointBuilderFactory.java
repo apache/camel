@@ -762,7 +762,7 @@ public interface AvroEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final AvroHeaderNameBuilder INSTANCE = new AvroHeaderNameBuilder();
+        public static final AvroHeaderNameBuilder INSTANCE = new AvroHeaderNameBuilder();
 
         /**
          * The name of the message to send. In consumer overrides message name

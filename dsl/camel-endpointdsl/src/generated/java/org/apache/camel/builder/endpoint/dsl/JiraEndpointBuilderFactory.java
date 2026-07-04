@@ -1349,7 +1349,7 @@ public interface JiraEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final JiraHeaderNameBuilder INSTANCE = new JiraHeaderNameBuilder();
+        public static final JiraHeaderNameBuilder INSTANCE = new JiraHeaderNameBuilder();
 
         /**
          * The assignee's id of the issue.

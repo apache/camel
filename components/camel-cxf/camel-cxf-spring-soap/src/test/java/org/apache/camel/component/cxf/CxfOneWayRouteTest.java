@@ -17,7 +17,8 @@
 package org.apache.camel.component.cxf;
 
 import java.io.ByteArrayOutputStream;
-import java.time.Duration;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import jakarta.xml.ws.Service;
 
@@ -37,6 +38,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -51,13 +53,13 @@ public class CxfOneWayRouteTest extends CamelSpringTestSupport {
     private static final String ROUTER_ADDRESS = "http://localhost:" + CXFTestSupport.getPort1() + "/CxfOneWayRouteTest/router";
 
     private static Exception bindingException;
-    private static boolean bindingDone;
+    private static final AtomicBoolean BINDING_DONE = new AtomicBoolean();
     private static boolean onCompeletedCalled;
 
     @BeforeEach
     public void setup() {
         bindingException = null;
-        bindingDone = false;
+        BINDING_DONE.set(false);
         onCompeletedCalled = false;
     }
 
@@ -84,10 +86,7 @@ public class CxfOneWayRouteTest extends CamelSpringTestSupport {
         client.greetMeOneWay("lemac");
 
         // may need to wait until the oneway call completes
-        long waitUntil = System.nanoTime() + Duration.ofMillis(10000).toMillis();
-        while (!bindingDone && System.nanoTime() < waitUntil) {
-            Thread.sleep(1000);
-        }
+        await().atMost(10, TimeUnit.SECONDS).untilTrue(BINDING_DONE);
 
         MockEndpoint.assertIsSatisfied(context);
         assertTrue(onCompeletedCalled, "UnitOfWork done should be called");
@@ -132,7 +131,7 @@ public class CxfOneWayRouteTest extends CamelSpringTestSupport {
                 bindingException = e;
                 throw e;
             } finally {
-                bindingDone = true;
+                BINDING_DONE.set(true);
             }
         }
 

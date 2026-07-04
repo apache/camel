@@ -69,7 +69,6 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProjectHelper;
 import org.codehaus.plexus.build.BuildContext;
 import org.jboss.forge.roaster.Roaster;
-import org.jboss.forge.roaster.model.source.FieldSource;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.jboss.forge.roaster.model.source.MethodSource;
 import org.jboss.jandex.AnnotationTarget.Kind;
@@ -339,18 +338,28 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
             if (!Strings.isNullOrEmpty(metadata.firstVersion())) {
                 model.setFirstVersion(metadata.firstVersion());
             }
+            if (!Strings.isNullOrEmpty(metadata.description())) {
+                model.setDescription(metadata.description());
+            }
+            if (metadata.aliases().length > 0) {
+                ArrayList<String> aliases = new ArrayList<>();
+                Collections.addAll(aliases, metadata.aliases());
+                model.setAliases(aliases);
+            }
         }
 
-        // favor to use class javadoc of component as description
-        String doc = getDocComment(classElement);
-        if (doc != null) {
-            // need to sanitize the description first (we only want a
-            // summary)
-            doc = JavadocHelper.sanitizeDescription(doc, true);
-            // the javadoc may actually be empty, so only change the doc
-            // if we got something
-            if (!Strings.isNullOrEmpty(doc)) {
-                model.setDescription(doc);
+        // fallback to use class javadoc as description
+        if (Strings.isNullOrEmpty(model.getDescription())) {
+            String doc = getDocComment(classElement);
+            if (doc != null) {
+                // need to sanitize the description first (we only want a
+                // summary)
+                doc = JavadocHelper.sanitizeDescription(doc, true);
+                // the javadoc may actually be empty, so only change the doc
+                // if we got something
+                if (!Strings.isNullOrEmpty(doc)) {
+                    model.setDescription(doc);
+                }
             }
         }
 
@@ -1468,6 +1477,21 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
 
     private String findJavaDoc(
             Field fieldElement, String fieldName, String name, Class<?> classElement, boolean builderPattern) {
+        // prefer @Metadata(description) on setter method as subclasses can override with specific descriptions
+        String setterName = "set" + Character.toUpperCase(fieldName.charAt(0)) + fieldName.substring(1);
+        for (Method method : classElement.getMethods()) {
+            if (method.getName().equals(setterName) && method.getParameterCount() == 1) {
+                Metadata md = method.getAnnotation(Metadata.class);
+                if (md != null) {
+                    String doc = md.description();
+                    if (!Strings.isNullOrEmpty(doc)) {
+                        return doc;
+                    }
+                }
+            }
+        }
+
+        // fallback to @Metadata(description) on the field
         if (fieldElement != null) {
             Metadata md = fieldElement.getAnnotation(Metadata.class);
             if (md != null) {
@@ -1478,44 +1502,9 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
             }
         }
 
-        JavaClassSource source = javaClassSource(classElement.getName());
-        FieldSource<JavaClassSource> field = source.getField(fieldName);
-        if (field != null) {
-            String doc = field.getJavaDoc().getFullText();
-            if (!Strings.isNullOrEmpty(doc)) {
-                return doc;
-            }
-        }
-
-        String setterName = "set" + Character.toUpperCase(fieldName.charAt(0)) + fieldName.substring(1);
-
-        // special for mdcLoggingKeysPattern
-        if ("setMdcLoggingKeysPattern".equals(setterName)) {
-            setterName = "setMDCLoggingKeysPattern";
-        }
-
-        for (MethodSource<JavaClassSource> setter : source.getMethods()) {
-            if (setter.getParameters().size() == 1
-                    && setter.getName().equals(setterName)) {
-                String doc = setter.getJavaDoc().getFullText();
-                if (!Strings.isNullOrEmpty(doc)) {
-                    return doc;
-                }
-            }
-        }
-
-        String getterName = "get" + Character.toUpperCase(fieldName.charAt(0)) + fieldName.substring(1);
-        for (MethodSource<JavaClassSource> setter : source.getMethods()) {
-            if (setter.getParameters().isEmpty()
-                    && setter.getName().equals(getterName)) {
-                String doc = setter.getJavaDoc().getFullText();
-                if (!Strings.isNullOrEmpty(doc)) {
-                    return doc;
-                }
-            }
-        }
-
+        // fallback to fluent builder javadoc
         if (builderPattern) {
+            JavaClassSource source = javaClassSource(classElement.getName());
             if (name != null && !name.equals(fieldName)) {
                 String doc = getDoc(source, name);
                 if (doc != null) {

@@ -9,7 +9,6 @@
 :component-header: Both producer and consumer are supported
 //Manually maintained attributes
 :group: Hazelcast
-:camel-spring-boot-name: hazelcast
 
 *Since Camel {since}*
 
@@ -36,4 +35,3 @@ The set producer provides seven operations:
 * retainAll
 * getAll
 
-include::spring-boot:partial$starter.adoc[]

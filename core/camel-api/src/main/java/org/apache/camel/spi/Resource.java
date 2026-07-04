@@ -29,24 +29,38 @@ import java.nio.charset.StandardCharsets;
 import org.jspecify.annotations.Nullable;
 
 /**
- * Describe a resource, such as a file or class path resource.
+ * Describes a loadable resource such as a file, classpath entry, or HTTP URL.
+ * <p/>
+ * A resource abstracts over its backing location: it exposes the {@link #getScheme() scheme} (file, classpath, http,
+ * and so on), the {@link #getLocation() location}, whether it {@link #exists()}, and provides fresh
+ * {@link #getInputStream() streams} or {@link #getReader() readers} on each call. Camel loads routes, scripts, and
+ * other artifacts through resources. Instances are obtained from a {@link ResourceLoader}, which delegates to a
+ * scheme-specific {@link ResourceResolver}.
  *
+ * @see   ResourceLoader
+ * @see   ResourceResolver
  * @since 3.8
  */
 public interface Resource {
 
     /**
-     * The scheme of the resource such as file, classpath, http
+     * The scheme of the resource such as file, classpath, or http.
+     *
+     * @return the scheme
      */
     String getScheme();
 
     /**
      * The location of the resource.
+     *
+     * @return the location
      */
     String getLocation();
 
     /**
      * Whether this resource exists.
+     *
+     * @return <tt>true</tt> if the resource exists
      */
     boolean exists();
 

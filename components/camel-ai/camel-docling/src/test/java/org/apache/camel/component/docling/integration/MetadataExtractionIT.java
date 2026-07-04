@@ -71,8 +71,8 @@ class MetadataExtractionIT extends DoclingITestSupport {
         assertNotNull(metadata.getFilePath(), "File path should be set");
         assertThat(metadata.getPageCount()).isEqualTo(5);
         assertThat(metadata.getFormat()).isEqualTo("application/pdf");
-        // TODO: assertThat(metadata.getTitle()).isEqualTo("The Evolution of the Word Processor");
-        // TODO: assertThat(metadata.getDocumentType()).isEqualTo("PDF");
+        assertThat(metadata.getTitle()).isEqualTo("The Evolution of the Word Processor");
+        assertThat(metadata.getDocumentType()).isEqualTo("PDF");
 
         LOG.info("Successfully extracted metadata: {}", metadata);
         LOG.info("File name: {}", metadata.getFileName());

@@ -23,6 +23,7 @@ Support for resume varies according to the component. Initially, the support is 
 * xref:components::couchdb-component.adoc[camel-couchdb]
 * xref:components::file-component.adoc[camel-file]
 * xref:components::kafka-component.adoc[camel-kafka]
+* xref:components::mongodb-component.adoc[camel-mongodb]
 * xref:components::rss-component.adoc[camel-rss]
 
 The resume strategies comes in three parts:
@@ -40,6 +41,7 @@ the heavy-lifting for you.
 
 Using the resume API with the configuration should look like this:
 
+._Java-only: configuring resume strategy with KafkaResumeStrategyConfigurationBuilder_
 [source,java]
 ----
 KafkaResumeStrategyConfigurationBuilder kafkaConfigurationBuilder = KafkaResumeStrategyConfigurationBuilder.newBuilder()
@@ -58,6 +60,7 @@ from("some:component")
 
 This instance can be bound in the Context registry as follows:
 
+._Java-only: binding resume strategy to the registry_
 [source,java]
 ----
 getCamelContext().getRegistry().bind("testResumeStrategy", new MyTestResumeStrategy());
@@ -70,6 +73,7 @@ from("some:component")
 
 Or the instance can be constructed as follows:
 
+._Java-only: constructing resume strategy inline_
 [source,java]
 ----
 getCamelContext().getRegistry().bind("resumeCache", new MyChoiceOfResumeCache<>(100));
@@ -90,6 +94,7 @@ In some circumstances, such as when dealing with File I/O, it may be necessary t
 In some cases, it may be necessary to avoid updating the offset for every exchange.
 You can enable the intermittent mode to modify the route behavior so that missing offsets will not cause an exception:
 
+._Java-only: enabling intermittent mode on resumable_
 [source,java]
 ----
 from("some:component")
@@ -110,6 +115,7 @@ Some of the builtin strategies may need additional configuration. This can be do
 available for each strategy. For instance, to configure either one of the Kafka strategies mentioned earlier, the
 `KafkaResumeStrategyConfiguration` needs to be used. It can be created using a code similar to the following:
 
+._Java-only: building KafkaResumeStrategyConfiguration_
 [source,java]
 ----
     KafkaResumeStrategyConfiguration resumeStrategyConfiguration = KafkaResumeStrategyConfigurationBuilder.newBuilder()
@@ -134,6 +140,7 @@ When using the converters with the file component, beware of the differences in 
 
 For instance, the behavior of:
 
+._Java-only: resumable with Reader body type_
 [source,java]
 ----
 from("file:{{input.dir}}?noop=true&fileName={{input.file}}")
@@ -144,6 +151,7 @@ from("file:{{input.dir}}?noop=true&fileName={{input.file}}")
 
 It is different from the behavior of:
 
+._Java-only: resumable with InputStream body type_
 [source,java]
 ----
 from("file:{{input.dir}}?noop=true&fileName={{input.file}}")
@@ -172,6 +180,7 @@ To use the API, it needs an instance of a Consumer listener along with a predica
 
 Usage example:
 
+._Java-only: using pausable consumer API_
 [source,java]
 ----
 from(from)
@@ -190,6 +199,7 @@ On success, it shuts down the scheduled check.
 
 An example implementation of this approach would be similar to this:
 
+._Java-only: integrating pausable consumer with circuit breaker_
 [source,java]
 ----
 CircuitBreaker circuitBreaker = CircuitBreaker.ofDefaults("pausable");

@@ -30,10 +30,10 @@ import org.apache.camel.parser.RouteBuilderParser;
 import org.apache.camel.parser.model.CamelNodeDetails;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.StopWatch;
-import org.fusesource.jansi.Ansi;
-import org.fusesource.jansi.AnsiConsole;
 import org.jboss.forge.roaster.Roaster;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
+import org.jline.jansi.Ansi;
+import org.jline.jansi.AnsiConsole;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "route-parser", description = "Parses Java route and dumps route structure")

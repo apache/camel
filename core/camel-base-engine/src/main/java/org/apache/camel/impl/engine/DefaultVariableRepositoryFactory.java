@@ -27,6 +27,7 @@ import org.apache.camel.spi.VariableRepository;
 import org.apache.camel.spi.VariableRepositoryFactory;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.GlobalVariableRepository;
+import org.apache.camel.support.GroupVariableRepository;
 import org.apache.camel.support.LifecycleStrategySupport;
 import org.apache.camel.support.RouteVariableRepository;
 import org.apache.camel.support.service.ServiceSupport;
@@ -45,6 +46,7 @@ public class DefaultVariableRepositoryFactory extends ServiceSupport implements 
     private final CamelContext camelContext;
     private VariableRepository global;
     private VariableRepository route;
+    private VariableRepository group;
     private FactoryFinder factoryFinder;
 
     public DefaultVariableRepositoryFactory(CamelContext camelContext) {
@@ -63,6 +65,9 @@ public class DefaultVariableRepositoryFactory extends ServiceSupport implements 
         }
         if (route != null && "route".equals(id)) {
             return route;
+        }
+        if (group != null && "group".equals(id)) {
+            return group;
         }
 
         VariableRepository repo = CamelContextHelper.lookup(camelContext, id, VariableRepository.class);
@@ -119,6 +124,18 @@ public class DefaultVariableRepositoryFactory extends ServiceSupport implements 
             camelContext.getRegistry().bind(ROUTE_VARIABLE_REPOSITORY_ID, route);
         }
 
+        // let's see if there is a custom group repo
+        repo = getVariableRepository("group");
+        if (repo != null) {
+            if (!(repo instanceof GroupVariableRepository)) {
+                LOG.info("Using VariableRepository: {} as group repository", repo.getId());
+            }
+            group = repo;
+        } else {
+            group = new GroupVariableRepository();
+            camelContext.getRegistry().bind(GROUP_VARIABLE_REPOSITORY_ID, group);
+        }
+
         if (!camelContext.hasService(global)) {
             camelContext.addService(global);
         }
@@ -133,6 +150,9 @@ public class DefaultVariableRepositoryFactory extends ServiceSupport implements 
                     }
                 }
             });
+        }
+        if (!camelContext.hasService(group)) {
+            camelContext.addService(group);
         }
     }
 

@@ -26,9 +26,9 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
 
   <bean id="quartzDataSource" class="org.apache.commons.dbcp2.BasicDataSource">
-    <property name="driverClassName" value="org.apache.derby.jdbc.EmbeddedDriver" />
+    <property name="driverClassName" value="org.h2.Driver" />
     <!-- refer the embedded database we setup inside SpringQuartzConsumerClusteredAppDatabase.xml -->
-    <property name="url" value="jdbc:derby:memory:{{testClassSimpleName}}" />
+    <property name="url" value="jdbc:h2:mem:{{testClassSimpleName}}" />
     <property name="username" value="sa" />
     <property name="password" value="" />
   </bean>

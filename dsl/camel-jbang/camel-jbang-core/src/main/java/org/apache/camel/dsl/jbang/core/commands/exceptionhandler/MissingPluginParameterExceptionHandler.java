@@ -58,7 +58,7 @@ public class MissingPluginParameterExceptionHandler implements IParameterExcepti
 
         if (ex.getMessage().startsWith("Unmatched argument at index 0")) {
             err.println(cmd.getColorScheme().errorText(
-                    "Maybe a specific Camel JBang plugin must be installed? (Try 'camel plugin --help' for more information)"));
+                    "Maybe a specific Camel CLI plugin must be installed? (Try 'camel plugin --help' for more information)"));
         }
 
         return cmd.getExitCodeExceptionMapper() != null

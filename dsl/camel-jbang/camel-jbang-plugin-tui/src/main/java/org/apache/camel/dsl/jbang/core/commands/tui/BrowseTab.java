@@ -39,9 +39,12 @@ import dev.tamboui.text.Span;
 import dev.tamboui.text.Text;
 import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
+import dev.tamboui.tui.event.MouseEvent;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
+import dev.tamboui.widgets.block.Borders;
 import dev.tamboui.widgets.paragraph.Paragraph;
+import dev.tamboui.widgets.scrollbar.ScrollbarState;
 import dev.tamboui.widgets.table.Cell;
 import dev.tamboui.widgets.table.Row;
 import dev.tamboui.widgets.table.Table;
@@ -51,9 +54,9 @@ import org.apache.camel.dsl.jbang.core.common.PathUtils;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 
-import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.*;
+import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.*;
 
-class BrowseTab implements MonitorTab {
+class BrowseTab extends AbstractTab {
 
     private static final String[] SORT_COLUMNS = { "uri", "size" };
     private static final DateTimeFormatter TIME_FMT = DateTimeFormatter.ofPattern("HH:mm:ss");
@@ -62,9 +65,12 @@ class BrowseTab implements MonitorTab {
     private static final int VIEW_MESSAGES = 1;
     private static final int VIEW_DETAIL = 2;
 
-    private final MonitorContext ctx;
     private final TableState endpointTableState = new TableState();
+    private final ScrollbarState endpointTableScrollState = new ScrollbarState();
+    private Rect lastEndpointTableArea;
     private final TableState messageTableState = new TableState();
+    private final ScrollbarState messageTableScrollState = new ScrollbarState();
+    private Rect lastMessageTableArea;
     private final AtomicBoolean loading = new AtomicBoolean(false);
 
     private String sort = "uri";
@@ -80,7 +86,7 @@ class BrowseTab implements MonitorTab {
     private String lastPid;
 
     BrowseTab(MonitorContext ctx) {
-        this.ctx = ctx;
+        super(ctx);
     }
 
     @Override
@@ -104,7 +110,6 @@ class BrowseTab implements MonitorTab {
         view = VIEW_ENDPOINTS;
         detailScroll = 0;
         lastPid = null;
-        loadEndpoints();
     }
 
     @Override
@@ -203,6 +208,21 @@ class BrowseTab implements MonitorTab {
     }
 
     @Override
+    public boolean handleMouseEvent(MouseEvent me, Rect area) {
+        if (view == VIEW_ENDPOINTS) {
+            List<EndpointData> sorted = sortedEndpoints();
+            if (handleTableClick(me, lastEndpointTableArea, endpointTableState, sorted.size())) {
+                return true;
+            }
+        } else if (view == VIEW_MESSAGES) {
+            if (handleTableClick(me, lastMessageTableArea, messageTableState, messages.size())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
     public boolean handleEscape() {
         if (view == VIEW_DETAIL) {
             view = VIEW_MESSAGES;
@@ -248,7 +268,8 @@ class BrowseTab implements MonitorTab {
             frame.renderWidget(
                     Paragraph.builder()
                             .text(Text.from(Line.from(Span.styled(" Loading browse endpoints...", Style.EMPTY.dim()))))
-                            .block(Block.builder().borderType(BorderType.ROUNDED).title(" Browse ").build())
+                            .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(" Browse ")
+                                    .build())
                             .build(),
                     area);
             return;
@@ -293,13 +314,16 @@ class BrowseTab implements MonitorTab {
                         Constraint.fill(),
                         Constraint.length(8),
                         Constraint.length(10),
-                        Constraint.length(10))
-                .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
+                        Constraint.length(11))
+                .highlightStyle(Theme.selectionBg())
                 .highlightSpacing(Table.HighlightSpacing.ALWAYS)
-                .block(Block.builder().borderType(BorderType.ROUNDED).title(title).build())
+                .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(title).build())
                 .build();
 
+        lastEndpointTableArea = area;
         frame.renderStatefulWidget(table, area, endpointTableState);
+        renderTableScrollbar(frame, lastEndpointTableArea, endpointTableState, endpointTableScrollState,
+                sorted.size());
     }
 
     private void renderMessages(Frame frame, Rect area) {
@@ -308,7 +332,7 @@ class BrowseTab implements MonitorTab {
             frame.renderWidget(
                     Paragraph.builder()
                             .text(Text.from(Line.from(Span.styled(" Loading messages...", Style.EMPTY.dim()))))
-                            .block(Block.builder().borderType(BorderType.ROUNDED).title(title).build())
+                            .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(title).build())
                             .build(),
                     area);
             return;
@@ -327,8 +351,9 @@ class BrowseTab implements MonitorTab {
 
         if (rows.isEmpty()) {
             rows.add(Row.from(
+                    Cell.from(""),
                     Cell.from(Span.styled("No messages", Style.EMPTY.dim())),
-                    Cell.from(""), Cell.from(""), Cell.from("")));
+                    Cell.from(""), Cell.from("")));
         }
 
         String uri = selectedEndpoint != null ? selectedEndpoint.uri : "";
@@ -346,12 +371,15 @@ class BrowseTab implements MonitorTab {
                         Constraint.length(40),
                         Constraint.length(10),
                         Constraint.fill())
-                .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
+                .highlightStyle(Theme.selectionBg())
                 .highlightSpacing(Table.HighlightSpacing.ALWAYS)
-                .block(Block.builder().borderType(BorderType.ROUNDED).title(title).build())
+                .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(title).build())
                 .build();
 
+        lastMessageTableArea = area;
         frame.renderStatefulWidget(table, area, messageTableState);
+        renderTableScrollbar(frame, lastMessageTableArea, messageTableState, messageTableScrollState,
+                messages.size());
     }
 
     private void renderDetail(Frame frame, Rect area) {
@@ -360,7 +388,8 @@ class BrowseTab implements MonitorTab {
             frame.renderWidget(
                     Paragraph.builder()
                             .text(Text.from(Line.from(Span.styled(" Select a message", Style.EMPTY.dim()))))
-                            .block(Block.builder().borderType(BorderType.ROUNDED).title(" Message ").build())
+                            .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(" Message ")
+                                    .build())
                             .build(),
                     area);
             return;
@@ -431,7 +460,7 @@ class BrowseTab implements MonitorTab {
         frame.renderWidget(
                 Paragraph.builder()
                         .text(Text.from(visible))
-                        .block(Block.builder().borderType(BorderType.ROUNDED).title(title).build())
+                        .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(title).build())
                         .build(),
                 chunks.get(1));
     }
@@ -484,25 +513,12 @@ class BrowseTab implements MonitorTab {
         return result;
     }
 
-    private static int compareStr(String a, String b) {
-        if (a == null && b == null) {
-            return 0;
-        }
-        if (a == null) {
-            return -1;
-        }
-        if (b == null) {
-            return 1;
-        }
-        return a.compareToIgnoreCase(b);
-    }
-
     private String sortLabel(String label, String column) {
-        return MonitorContext.sortLabel(label, column, sort, sortReversed);
+        return sortLabel(label, column, sort, sortReversed);
     }
 
     private Style sortStyle(String column) {
-        return MonitorContext.sortStyle(column, sort);
+        return sortStyle(column, sort);
     }
 
     private static String formatTimestamp(long ts) {
@@ -680,6 +696,11 @@ class BrowseTab implements MonitorTab {
     }
 
     @Override
+    public String description() {
+        return "Browse messages queued in browsable endpoints (e.g. SEDA)";
+    }
+
+    @Override
     public String getHelpText() {
         return """
                 # Browse
@@ -728,5 +749,54 @@ class BrowseTab implements MonitorTab {
                 - `Enter` — browse selected endpoint
                 - `Esc` — back to endpoint list
                 """;
+    }
+
+    @Override
+    public JsonObject getTableDataAsJson() {
+        if (selectedEndpoint != null && !messages.isEmpty()) {
+            JsonObject result = new JsonObject();
+            result.put("tab", "Browse Messages");
+            result.put("endpoint", selectedEndpoint.uri);
+            JsonArray rows = new JsonArray();
+            for (MessageData m : messages) {
+                JsonObject row = new JsonObject();
+                row.put("position", m.position);
+                row.put("exchangeId", m.exchangeId);
+                row.put("exchangePattern", m.exchangePattern);
+                row.put("timestamp", m.timestamp);
+                if (m.body != null) {
+                    row.put("body", m.body);
+                }
+                if (m.headers != null && !m.headers.isEmpty()) {
+                    row.put("headers", new JsonObject(m.headers));
+                }
+                rows.add(row);
+            }
+            result.put("rows", rows);
+            result.put("totalRows", messages.size());
+            Integer sel = messageTableState.selected();
+            result.put("selectedIndex", sel != null ? sel : -1);
+            return result;
+        }
+        List<EndpointData> endpoints = sortedEndpoints();
+        if (endpoints.isEmpty()) {
+            return null;
+        }
+        JsonObject result = new JsonObject();
+        result.put("tab", "Browse");
+        JsonArray rows = new JsonArray();
+        for (EndpointData e : endpoints) {
+            JsonObject row = new JsonObject();
+            row.put("uri", e.uri);
+            row.put("queueSize", e.queueSize);
+            row.put("firstTimestamp", e.firstTimestamp);
+            row.put("lastTimestamp", e.lastTimestamp);
+            rows.add(row);
+        }
+        result.put("rows", rows);
+        result.put("totalRows", endpoints.size());
+        Integer sel = endpointTableState.selected();
+        result.put("selectedIndex", sel != null ? sel : -1);
+        return result;
     }
 }

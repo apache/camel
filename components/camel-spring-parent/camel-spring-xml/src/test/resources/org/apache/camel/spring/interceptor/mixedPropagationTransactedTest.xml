@@ -25,8 +25,8 @@
          http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc.xsd
          http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
 
-    <jdbc:embedded-database id="dataSource" type="DERBY">
-    	<jdbc:script location="classpath:sql/init.sql" />
+    <jdbc:embedded-database id="dataSource" type="H2">
+        <jdbc:script location="classpath:sql/init.sql"/>
     </jdbc:embedded-database>
 
     <bean id="txManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">

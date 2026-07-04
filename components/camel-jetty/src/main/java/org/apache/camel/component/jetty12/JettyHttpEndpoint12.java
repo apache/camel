@@ -57,6 +57,7 @@ public class JettyHttpEndpoint12 extends JettyHttpEndpoint implements AsyncEndpo
             this.binding.setLogException(isLogException());
             if (getComponent() != null) {
                 this.binding.setAllowJavaSerializedObject(getComponent().isAllowJavaSerializedObject());
+                this.binding.setDeserializationFilter(getComponent().getDeserializationFilter());
             }
             this.binding.setHeaderFilterStrategy(getHeaderFilterStrategy());
             this.binding.setEagerCheckContentAvailable(isEagerCheckContentAvailable());

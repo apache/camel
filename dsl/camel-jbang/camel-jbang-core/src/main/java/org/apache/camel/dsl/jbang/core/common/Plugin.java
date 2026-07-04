@@ -41,7 +41,7 @@ public interface Plugin {
 
     /**
      * The plugin may provide an optional project exporter implementation that is able to participate in an export
-     * performed by Camel JBang. Project exporter implementations may add properties and dependencies to the generated
+     * performed by Camel CLI. Project exporter implementations may add properties and dependencies to the generated
      * export.
      *
      * @return the plugin specific exporter implementation, otherwise empty

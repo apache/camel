@@ -7,8 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
-//Manually maintained attributes
-:camel-spring-boot-name: docker
 
 *Since Camel {since}*
 
@@ -56,17 +54,77 @@ below
 
 The following example consumes events from Docker:
 
+[tabs]
+====
+Java::
++
 [source,java]
-----------------------------------------------------------------------
+----
 from("docker://events?host=192.168.59.103&port=2375").to("log:event");
-----------------------------------------------------------------------
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="docker://events?host=192.168.59.103&amp;port=2375"/>
+  <to uri="log:event"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: docker://events
+      parameters:
+        host: 192.168.59.103
+        port: 2375
+      steps:
+        - to:
+            uri: log:event
+----
+====
 
 The following example queries Docker for system-wide information
 
+[tabs]
+====
+Java::
++
 [source,java]
--------------------------------------------------------------------
+----
 from("docker://info?host=192.168.59.103&port=2375").to("log:info");
--------------------------------------------------------------------
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="docker://info?host=192.168.59.103&amp;port=2375"/>
+  <to uri="log:info"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: docker://info
+      parameters:
+        host: 192.168.59.103
+        port: 2375
+      steps:
+        - to:
+            uri: log:info
+----
+====
 
 
 == Dependencies
@@ -86,6 +144,3 @@ the download page for the latest versions).
   <version>x.x.x</version>
 </dependency>
 -------------------------------------
-
-
-include::spring-boot:partial$starter.adoc[]

@@ -23,11 +23,21 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 
 /**
- * Allows SPI to plugin a {@link RestApiConsumerFactory} that creates the Camel {@link Consumer} responsible for
- * handling incoming HTTP GET requests from clients that request to access the REST API documentation.
+ * SPI that creates the Camel {@link org.apache.camel.Consumer} responsible for handling incoming HTTP GET requests to
+ * the REST API documentation endpoint.
  * <p/>
- * For example most of the Camel components that supports REST-DSL does that, such as <tt>camel-jetty</tt>,
- * <tt>camel-netty-http</tt>.
+ * When a REST-DSL route includes an {@code apiContextPath} in its {@link RestConfiguration}, Camel uses this factory to
+ * create a dedicated consumer that serves the in-memory OpenAPI specification generated from the route model. HTTP
+ * components that support the REST DSL (such as {@code camel-jetty}, {@code camel-netty-http}, and
+ * {@code camel-platform-http}) implement this interface alongside {@link RestConsumerFactory}. The factory is distinct
+ * from {@link RestOpenApiConsumerFactory}, which handles full contract-first OpenAPI spec routing rather than just
+ * serving the generated doc listing.
+ * <p/>
+ * See <a href="https://camel.apache.org/manual/rest-dsl.html">Rest DSL</a> in the Camel user manual.
+ *
+ * @see RestConsumerFactory
+ * @see RestOpenApiConsumerFactory
+ * @see RestConfiguration
  */
 public interface RestApiConsumerFactory {
 

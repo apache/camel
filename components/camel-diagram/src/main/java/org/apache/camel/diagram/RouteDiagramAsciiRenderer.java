@@ -36,7 +36,6 @@ import static org.apache.camel.diagram.RouteDiagramLayoutEngine.SCOPE_BOX_PAD;
  */
 public class RouteDiagramAsciiRenderer {
 
-    private static final int MAX_WRAP_LINES = 3;
     private static final int Y_SCALE = 20;
     private static final int MIN_BOX_WIDTH = 16;
     private static final int X_DIVISOR = 15;
@@ -484,51 +483,7 @@ public class RouteDiagramAsciiRenderer {
 
     private List<String> rewrapText(LayoutNode node, int maxWidth) {
         String label = String.join("", node.wrappedLines);
-        return wrapText(label, maxWidth);
-    }
-
-    static List<String> wrapText(String text, int maxWidth) {
-        if (maxWidth <= 0 || text.length() <= maxWidth) {
-            return List.of(text);
-        }
-
-        List<String> lines = new ArrayList<>();
-        String remaining = text;
-
-        while (!remaining.isEmpty() && lines.size() < MAX_WRAP_LINES) {
-            if (remaining.length() <= maxWidth) {
-                lines.add(remaining);
-                remaining = "";
-                break;
-            }
-
-            int breakAt = -1;
-            for (int i = 0; i < maxWidth && i < remaining.length(); i++) {
-                char c = remaining.charAt(i);
-                if (c == ' ' || c == ':' || c == '/' || c == '.' || c == ',' || c == '&' || c == '?') {
-                    breakAt = i + 1;
-                }
-            }
-            if (breakAt <= 0) {
-                breakAt = maxWidth;
-            }
-
-            lines.add(remaining.substring(0, breakAt).stripTrailing());
-            remaining = remaining.substring(breakAt).stripLeading();
-        }
-
-        if (!remaining.isEmpty()) {
-            int lastIdx = lines.size() - 1;
-            String lastLine = lines.get(lastIdx);
-            if (lastLine.length() + remaining.length() <= maxWidth) {
-                lines.set(lastIdx, lastLine + remaining);
-            } else {
-                String combined = lastLine + remaining;
-                lines.set(lastIdx, combined.substring(0, Math.max(1, maxWidth - 3)) + "...");
-            }
-        }
-
-        return lines;
+        return RouteDiagramHelper.wrapText(label, maxWidth);
     }
 
     private int toCol(int pixelX) {

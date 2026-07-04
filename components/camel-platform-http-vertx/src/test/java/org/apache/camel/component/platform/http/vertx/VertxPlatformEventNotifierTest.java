@@ -16,8 +16,9 @@
  */
 package org.apache.camel.component.platform.http.vertx;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
@@ -28,10 +29,11 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import static io.restassured.RestAssured.given;
+import static org.awaitility.Awaitility.await;
 import static org.hamcrest.Matchers.is;
 
 public class VertxPlatformEventNotifierTest {
-    private final List<String> events = new ArrayList<>();
+    private final List<String> events = new CopyOnWriteArrayList<>();
 
     @Test
     void testEventNotifierOk() throws Exception {
@@ -57,9 +59,13 @@ public class VertxPlatformEventNotifierTest {
                     .statusCode(200)
                     .body(is("Bye World"));
 
-            Assertions.assertEquals(2, events.size());
-            Assertions.assertEquals("ExchangeCreated (failed:false)", events.get(0));
-            Assertions.assertEquals("ExchangeCompleted (failed:false)", events.get(1));
+            // Event notification is async — the HTTP response can return before
+            // ExchangeCompleted fires, so poll with Awaitility instead of asserting immediately.
+            await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> {
+                Assertions.assertEquals(2, events.size());
+                Assertions.assertEquals("ExchangeCreated (failed:false)", events.get(0));
+                Assertions.assertEquals("ExchangeCompleted (failed:false)", events.get(1));
+            });
         } finally {
             context.stop();
         }
@@ -89,9 +95,13 @@ public class VertxPlatformEventNotifierTest {
                     .statusCode(500)
                     .body(is(""));
 
-            Assertions.assertEquals(2, events.size());
-            Assertions.assertEquals("ExchangeCreated (failed:false)", events.get(0));
-            Assertions.assertEquals("ExchangeFailed (failed:true)", events.get(1));
+            // Event notification is async — the HTTP response can return before
+            // ExchangeFailed fires, so poll with Awaitility instead of asserting immediately.
+            await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> {
+                Assertions.assertEquals(2, events.size());
+                Assertions.assertEquals("ExchangeCreated (failed:false)", events.get(0));
+                Assertions.assertEquals("ExchangeFailed (failed:true)", events.get(1));
+            });
         } finally {
             context.stop();
         }

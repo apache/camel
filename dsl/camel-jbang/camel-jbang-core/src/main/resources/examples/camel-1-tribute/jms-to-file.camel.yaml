@@ -1,0 +1,35 @@
+- route:
+    id: jms-to-file
+    description: "Camel 1.0 tribute: consume from JMS queue and save to file"
+    from:
+      uri: jms
+      parameters:
+        destinationName: test.queue
+      steps:
+        - log:
+            message: "Received: ${body}"
+        - to:
+            uri: file
+            parameters:
+              directoryName: test
+
+- route:
+    id: send-test-messages
+    description: "Send 10 test messages to JMS queue (just like the original example)"
+    from:
+      uri: timer
+      parameters:
+        timerName: sender
+        repeatCount: 10
+        period: 1000
+      steps:
+        - setBody:
+            expression:
+              simple:
+                expression: "Test Message: ${exchangeProperty.CamelTimerCounter}"
+        - log:
+            message: "Sending: ${body}"
+        - to:
+            uri: jms
+            parameters:
+              destinationName: test.queue

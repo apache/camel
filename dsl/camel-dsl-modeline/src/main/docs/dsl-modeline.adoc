@@ -11,7 +11,7 @@
 
 *Since Camel {since}*
 
-== Camel JBang
+== Camel CLI
 
 There is support for https://www.jbang.dev/documentation/guide/latest/dependencies.html[JBang dependencies] using the `//DEPS` comments style,
-when using Camel JBang.
+when using Camel CLI.

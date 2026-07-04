@@ -3,7 +3,7 @@
     "kind": "dataformat",
     "name": "groovyXml",
     "title": "Groovy XML",
-    "description": "Transform between XML and Groovy Node (Map structure) objects.",
+    "description": "Transform between XML and Groovy Node (Map structure) objects",
     "deprecated": false,
     "firstVersion": "4.15.0",
     "label": "dataformat,transformation,xml",
@@ -11,12 +11,12 @@
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-groovy",
-    "version": "4.21.0-SNAPSHOT",
+    "version": "4.22.0-SNAPSHOT",
     "modelName": "groovyXml",
     "modelJavaType": "org.apache.camel.model.dataformat.GroovyXmlDataFormat"
   },
   "properties": {
     "id": { "index": 0, "kind": "attribute", "displayName": "Id", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node" },
-    "attributeMapping": { "index": 1, "kind": "attribute", "displayName": "Attribute Mapping", "group": "common", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": true, "description": "To turn on or off attribute mapping. When enabled then keys that start with _ or character will be mapped to an XML attribute, and vise versa. This rule is what Jackson and other XML or JSon libraries uses." }
+    "attributeMapping": { "index": 1, "kind": "attribute", "displayName": "Attribute Mapping", "group": "common", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": true, "description": "Whether to enable attribute mapping. When enabled, keys that start with _ or character will be mapped to an XML attribute, and vice versa." }
   }
 }

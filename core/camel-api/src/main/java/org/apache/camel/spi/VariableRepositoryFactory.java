@@ -36,6 +36,13 @@ public interface VariableRepositoryFactory {
     String ROUTE_VARIABLE_REPOSITORY_ID = "route-variable-repository";
 
     /**
+     * Registry bean id for group {@link VariableRepository}.
+     *
+     * @since 4.21
+     */
+    String GROUP_VARIABLE_REPOSITORY_ID = "group-variable-repository";
+
+    /**
      * Gets the {@link VariableRepository} for the given id
      *
      * @param  id the repository id

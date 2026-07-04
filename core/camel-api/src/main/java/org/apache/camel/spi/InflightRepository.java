@@ -23,7 +23,20 @@ import org.apache.camel.StaticService;
 import org.jspecify.annotations.Nullable;
 
 /**
- * A repository which tracks in flight {@link Exchange}s.
+ * A live registry that tracks every {@link org.apache.camel.Exchange} that is currently being processed within the
+ * {@link org.apache.camel.CamelContext}.
+ * <p/>
+ * The routing engine calls {@link #add(org.apache.camel.Exchange)} when an exchange enters processing and
+ * {@link #remove(org.apache.camel.Exchange)} when it completes (successfully or with failure). Per-route counts are
+ * available via {@link #size(String)}; the full list of inflight exchanges is accessible via {@link #browse()}, which
+ * returns {@link InflightExchange} snapshots with elapsed-time and duration metrics.
+ * {@link org.apache.camel.spi.ShutdownStrategy} polls this repository to wait until the inflight count reaches zero
+ * before completing a graceful shutdown. The JMX management layer and developer console expose the inflight data for
+ * operational visibility.
+ * <p/>
+ * See <a href="https://camel.apache.org/manual/graceful-shutdown.html">Graceful Shutdown</a> in the Camel user manual.
+ *
+ * @see ShutdownStrategy
  */
 public interface InflightRepository extends StaticService {
 

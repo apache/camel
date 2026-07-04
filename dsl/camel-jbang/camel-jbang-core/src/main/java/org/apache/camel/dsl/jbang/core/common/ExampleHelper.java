@@ -129,7 +129,10 @@ public final class ExampleHelper {
 
     public static boolean requiresDocker(JsonObject entry) {
         Boolean docker = entry.getBoolean("requiresDocker");
-        return docker != null && docker;
+        if (docker != null && docker) {
+            return true;
+        }
+        return !getInfraServices(entry).isEmpty();
     }
 
     public static boolean hasCitrusTests(JsonObject entry) {

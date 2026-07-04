@@ -5,7 +5,7 @@
 # Trigger: generates a new order every 5 seconds
 - route:
     id: order-generator
-    description: Generate Orders
+    description: Generates a new order every 5 seconds
     from:
       uri: timer
       parameters:
@@ -22,7 +22,7 @@
 # HTTP entry point: receives orders from external clients
 - route:
     id: order-api
-    description: Order REST API
+    description: Receives orders from external clients via HTTP
     from:
       uri: platform-http
       parameters:
@@ -35,7 +35,7 @@
 # Shared route: validates and publishes orders (used by both order-generator and order-api)
 - route:
     id: process-order
-    description: Process Order
+    description: Validates and publishes orders to Kafka
     from:
       uri: direct:process-order
       steps:
@@ -44,12 +44,13 @@
         - log:
             message: "Processing order: ${body}"
         - to:
+            id: to-kafka-orders
             uri: kafka:orders
 
 # Validation: checks order contents
 - route:
     id: validate-order
-    description: Validate Order
+    description: Checks order contents before processing
     from:
       uri: direct:validate-order
       steps:
@@ -59,7 +60,7 @@
 # Kafka consumer: picks up orders and fans out to fulfillment and notifications
 - route:
     id: order-dispatcher
-    description: Dispatch Order
+    description: Fans out orders to fulfillment and notifications
     from:
       uri: kafka:orders
       steps:
@@ -68,32 +69,36 @@
         - multicast:
             steps:
               - to:
+                  id: to-kafka-fulfillment
                   uri: kafka:fulfillment
               - to:
+                  id: to-kafka-notifications
                   uri: kafka:notifications
 
 # Kafka consumer: handles fulfillment and reports to warehouse
 - route:
     id: fulfillment
-    description: Fulfill Order
+    description: Handles order fulfillment and ships to warehouse
     from:
       uri: kafka:fulfillment
       steps:
         - log:
             message: "Fulfilling order: ${body}"
         - to:
+            id: to-kafka-warehouse-shipments
             uri: kafka:warehouse-shipments
             description: Ship to Warehouse
 
 # Kafka consumer: sends notifications via external email service
 - route:
     id: notification
-    description: Send Notification
+    description: Sends order notifications via email
     from:
       uri: kafka:notifications
       steps:
         - log:
             message: "Sending notification for: ${body}"
         - to:
+            id: to-kafka-email-outbox
             uri: kafka:email-outbox
             description: Send Email

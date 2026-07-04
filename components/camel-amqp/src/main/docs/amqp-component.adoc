@@ -2,13 +2,11 @@
 :doctitle: AMQP
 :shortname: amqp
 :artifactid: camel-amqp
-:description: Messaging with AMQP protocol using Apache QPid Client.
+:description: Messaging with AMQP protocol using Apache Qpid Client.
 :since: 1.2
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
-//Manually maintained attributes
-:camel-spring-boot-name: amqp
 
 *Since Camel {since}*
 
@@ -33,6 +31,7 @@ for this component:
 
 == URI format
 
+._Java-only: URI format syntax_
 [source,java]
 ----
 amqp:[queue:|topic:]destinationName[?options]
@@ -45,7 +44,6 @@ include::partial$component-endpoint-headers.adoc[]
 // component options: END
 
 
-
 == Usage
 
 As AMQP component is inherited from JMS component, the usage of the
@@ -53,12 +51,13 @@ former is almost identical to the latter:
 
 *Using AMQP component*
 
+._Java-only: Java DSL snippet (incomplete route)_
 [source,java]
 ----
 // Consuming from AMQP queue
 from("amqp:queue:incoming").
   to(...);
- 
+
 // Sending messages to the AMQP topic
 from(...).
   to("amqp:topic:notify");
@@ -69,10 +68,12 @@ from(...).
 *Creating AMQP 1.0 component*
 
 AMQPComponents may be created using the provided factory methods, for example:
+
+._Java-only: Java programmatic component factory_
 [source,java]
 ----
 AMQPComponent amqp = AMQPComponent.amqpComponent("amqp://localhost:5672");
- 
+
 AMQPComponent authorizedAmqp = AMQPComponent.amqpComponent("amqp://localhost:5672", "user", "password");
 ----
 
@@ -84,6 +85,7 @@ configuring SSL, authentication, and AMQP Broker host and port.
 The component can be configured to connect to an AMQP broker using SSL by setting the
 `useSsl` option and providing keystore and truststore details, for example:
 
+._Java-only: Java programmatic SSL configuration_
 [source,java]
 ----
 AMQPComponent component = new AMQPComponent();
@@ -102,6 +104,7 @@ component.setKeyStoreType("PKCS12");
 
 A username and password may be provided for AMQP broker authentication:
 
+._Java-only: Java programmatic component configuration_
 [source,java]
 ----
 AMQPComponent component = new AMQPComponent();
@@ -111,6 +114,7 @@ component.setPassword("rider");
 
 *AMQP Broker host and port configuration*
 
+._Java-only: Java programmatic component configuration_
 [source,java]
 ----
 AMQPComponent amqpComponent = new AMQPComponent();
@@ -127,6 +131,7 @@ if not provided.
 
 If you, for example, need to enable `amqp.traceFrames` you can do that by appending the option to your URI, like the following example:
 
+._Java-only: Java programmatic component factory_
 [source,java]
 ----
 AMQPComponent amqp = AMQPComponent.amqpComponent("amqp://localhost:5672?amqp.traceFrames=true");
@@ -154,6 +159,3 @@ component to use `topic://` as topic prefix, as shown below:
 
 Keep in mind that the factory methods `AMQPComponent#amqpComponent(String)` and `AMQPComponent#amqpComponent(String, String, String)` configure
 the Topic prefix as `topic://` by default, so you don't have to configure it explicitly.
-
-
-include::spring-boot:partial$starter.adoc[]

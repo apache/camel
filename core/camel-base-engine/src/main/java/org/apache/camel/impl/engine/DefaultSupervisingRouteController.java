@@ -564,6 +564,9 @@ public class DefaultSupervisingRouteController extends DefaultRouteController im
             // log after first round of attempts (some routes may be scheduled for restart)
             logRouteStartupSummary();
         }
+
+        // signal that routes have been started so other services can react
+        EventHelper.notifyCamelContextRoutesStarted(getCamelContext());
     }
 
     private void logRouteStartupSummary() {

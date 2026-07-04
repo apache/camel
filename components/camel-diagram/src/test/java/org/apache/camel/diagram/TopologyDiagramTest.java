@@ -275,16 +275,6 @@ class TopologyDiagramTest {
     }
 
     @Test
-    void testWrapText() {
-        List<String> lines = TopologyAsciiRenderer.wrapText("short", 20);
-        assertEquals(1, lines.size());
-        assertEquals("short", lines.get(0));
-
-        List<String> wrapped = TopologyAsciiRenderer.wrapText("this is a longer text that needs wrapping", 15);
-        assertTrue(wrapped.size() > 1);
-    }
-
-    @Test
     void testOrderProcessingTopology() {
         List<TopologyNodeInfo> nodes = List.of(
                 node("order-generator", "timer:orders", "trigger"),

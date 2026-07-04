@@ -130,7 +130,7 @@ public class CamelRouteTopologyAction extends ActionBaseCommand {
                 printTopology(jo);
             }
         } else {
-            printer().println("Response from running Camel with PID " + pid + " not received within 5 seconds");
+            printer().println("Response from running Camel with PID " + pid + " not received within 10 seconds");
             return 1;
         }
 

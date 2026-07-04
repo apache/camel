@@ -4,7 +4,7 @@
 :artifactid: camel-pgvector
 :description: Perform operations on the PostgreSQL pgvector Vector Database.
 :since: 4.19
-:supportlevel: Preview
+:supportlevel: Stable
 :tabs-sync-option:
 :component-header: Only producer is supported
 //Manually maintained attributes
@@ -53,6 +53,7 @@ When using the `SIMILARITY_SEARCH` action, you can filter results using a SQL WH
 `CamelPgVectorFilter` header. For safe handling of dynamic values, use parameterized queries with `?`
 placeholders and provide values via the `CamelPgVectorFilterParams` header:
 
+._Java-only: setting parameterized filter headers programmatically_
 [source,java]
 ----
 from("direct:search")

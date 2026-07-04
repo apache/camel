@@ -26,12 +26,15 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.annotations.DslArg;
 import org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy;
 
 /**
  * Specifies that all steps after this node are processed asynchronously
  */
-@Metadata(label = "eip,routing")
+@Metadata(label = "eip,flowcontrol,routing",
+          description = "Offloads processing of subsequent steps in the route to a thread pool,"
+                        + " enabling asynchronous and concurrent message handling")
 @XmlRootElement(name = "threads")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ThreadsDefinition extends NoOutputDefinition<ThreadsDefinition>
@@ -41,36 +44,48 @@ public class ThreadsDefinition extends NoOutputDefinition<ThreadsDefinition>
     private ExecutorService executorServiceBean;
 
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.util.concurrent.ExecutorService")
+    @Metadata(label = "advanced", javaType = "java.util.concurrent.ExecutorService",
+              description = "To refer to a custom thread pool or use a thread pool profile (as overlay)")
     private String executorService;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Integer")
+    @Metadata(javaType = "java.lang.Integer",
+              description = "Sets the core pool size (number of threads to keep in the pool, even if idle).")
+    @DslArg(position = 0, renderType = "long")
     private String poolSize;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Integer")
+    @Metadata(javaType = "java.lang.Integer",
+              description = "Sets the maximum pool size (the upper bound of threads in the pool).")
+    @DslArg(position = 1, renderType = "long")
     private String maxPoolSize;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Long")
+    @Metadata(javaType = "java.lang.Long",
+              description = "Sets the keep alive time for idle threads before they are terminated. Only applies to threads above the core pool size.")
     private String keepAliveTime;
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.util.concurrent.TimeUnit",
-              enums = "NANOSECONDS,MICROSECONDS,MILLISECONDS,SECONDS,MINUTES,HOURS,DAYS")
+              enums = "NANOSECONDS,MICROSECONDS,MILLISECONDS,SECONDS,MINUTES,HOURS,DAYS",
+              description = "Sets the time unit for the keep alive time. By default SECONDS is used.")
     private String timeUnit;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Integer")
+    @Metadata(javaType = "java.lang.Integer",
+              description = "Sets the maximum number of tasks in the work queue. Use -1 or Integer.MAX_VALUE for an unbounded queue.")
     private String maxQueueSize;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean",
+              description = "Whether idle core threads are allowed to timeout and therefore can shrink the pool size below the core pool size")
     private String allowCoreThreadTimeOut;
     @XmlAttribute
-    @Metadata(defaultValue = "Threads")
+    @Metadata(defaultValue = "Threads",
+              description = "Sets the thread name pattern to use for naming threads created by this thread pool.")
     private String threadName;
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy",
-              enums = "Abort,CallerRuns,Block")
+              enums = "Abort,CallerRuns,Block",
+              description = "Sets the handler for tasks which cannot be executed by the thread pool")
     private String rejectedPolicy;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "true")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "true",
+              description = "Whether to use the caller thread as fallback when a task is rejected being added to the thread pool (when its full). This is only used as fallback if no rejectedPolicy has been configured, or the thread pool has no configured rejection handler.")
     private String callerRunsWhenRejected;
 
     public ThreadsDefinition() {

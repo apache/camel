@@ -25,15 +25,20 @@ import jakarta.xml.bind.annotation.XmlTransient;
 import org.apache.camel.AggregationStrategy;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.annotations.DslArg;
 
 /**
  * Enriches a message with data from a secondary resource
  *
  * @see org.apache.camel.processor.Enricher
  */
-@Metadata(label = "eip,transformation")
+@Metadata(label = "eip,enrichment,transformation",
+          aliases = { "enrich", "hydrate", "augment" },
+          description = "Enriches the message with additional data obtained by sending to another endpoint using request-reply."
+                        + " The reply is merged into the original message using an aggregation strategy.")
 @XmlRootElement(name = "enrich")
 @XmlAccessorType(XmlAccessType.FIELD)
+@DslArg(exclude = "expression")
 public class EnrichDefinition extends ExpressionNode
         implements AggregationStrategyAwareDefinition<EnrichDefinition> {
 
@@ -41,35 +46,49 @@ public class EnrichDefinition extends ExpressionNode
     private AggregationStrategy aggregationStrategyBean;
 
     @XmlAttribute
+    @Metadata(description = "To use a variable as the source for the message body to send."
+                            + " When using send variable then the message body is taken from this variable instead of the current message,"
+                            + " however the headers from the message will still be used as well.")
     private String variableSend;
     @XmlAttribute
+    @Metadata(description = "To use a variable to store the received message body (only body, not headers)."
+                            + " This makes it handy to use variables for user data and to easily control what data to use for sending and receiving.")
     private String variableReceive;
     @XmlAttribute
-    @Metadata(javaType = "org.apache.camel.AggregationStrategy")
+    @Metadata(javaType = "org.apache.camel.AggregationStrategy",
+              description = "Sets the AggregationStrategy to be used to merge the reply from the external service, into a single outgoing message. By default Camel will use the reply from the external service as outgoing message.")
     private String aggregationStrategy;
     @XmlAttribute
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced",
+              description = "This option can be used to explicitly declare the method name to use, when using POJOs as the AggregationStrategy.")
     private String aggregationStrategyMethodName;
     @XmlAttribute
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced",
+              description = "If this option is false then the aggregate method is not used if there was no data to enrich. If this option is true then null values is used as the oldExchange (when no data to enrich), when using POJOs as the AggregationStrategy.")
     private String aggregationStrategyMethodAllowNull;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean",
+              description = "If this option is false then the aggregate method is not used if there was an exception thrown while trying to retrieve the data to enrich from the resource. Setting this option to true allows end users to control what to do if there was an exception in the aggregate method.")
     private String aggregateOnException;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean",
+              description = "Shares the UnitOfWork with the parent and the resource exchange. Enrich will by default not share unit of work between the parent exchange and the resource exchange. This means the resource exchange has its own individual unit of work.")
     private String shareUnitOfWork;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Integer")
+    @Metadata(label = "advanced", javaType = "java.lang.Integer",
+              description = "Sets the maximum size used by the ProducerCache which is used to cache and reuse producers when uris are reused. Use 0 for default cache size, or -1 to turn cache off.")
     private String cacheSize;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean",
+              description = "Whether to ignore an invalid endpoint URI when trying to create a producer with that endpoint.")
     private String ignoreInvalidEndpoint;
     @XmlAttribute
-    @Metadata(label = "advanced", defaultValue = "true", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", defaultValue = "true", javaType = "java.lang.Boolean",
+              description = "Whether to allow components to optimise enricher if they are SendDynamicAware.")
     private String allowOptimisedComponents;
     @XmlAttribute
-    @Metadata(label = "advanced", defaultValue = "true", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", defaultValue = "true", javaType = "java.lang.Boolean",
+              description = "Whether to auto startup components when enricher is starting up.")
     private String autoStartComponents;
 
     public EnrichDefinition() {
@@ -297,10 +316,8 @@ public class EnrichDefinition extends ExpressionNode
         return aggregationStrategy;
     }
 
-    /**
-     * Expression that computes the endpoint uri to use as the resource endpoint to enrich from
-     */
     @Override
+    @Metadata(description = "The expression to compute the endpoint URI to enrich from.")
     public void setExpression(ExpressionDefinition expression) {
         // override to include javadoc what the expression is used for
         super.setExpression(expression);

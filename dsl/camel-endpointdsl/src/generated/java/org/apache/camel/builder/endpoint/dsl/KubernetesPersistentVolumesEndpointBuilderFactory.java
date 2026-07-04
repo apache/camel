@@ -515,7 +515,7 @@ public interface KubernetesPersistentVolumesEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final KubernetesPersistentVolumesHeaderNameBuilder INSTANCE = new KubernetesPersistentVolumesHeaderNameBuilder();
+        public static final KubernetesPersistentVolumesHeaderNameBuilder INSTANCE = new KubernetesPersistentVolumesHeaderNameBuilder();
 
         /**
          * The Producer operation.

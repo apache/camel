@@ -36,7 +36,8 @@ import org.apache.camel.util.StringHelper;
 /**
  * To specify the rest operation parameters.
  */
-@Metadata(label = "rest")
+@Metadata(label = "rest",
+          description = "Defines a parameter for a REST operation, specifying its type, name, data type, and whether it is required")
 @XmlRootElement(name = "param")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ParamDefinition {
@@ -45,33 +46,44 @@ public class ParamDefinition {
     private VerbDefinition verb;
 
     @XmlAttribute(required = true)
+    @Metadata(description = "The parameter name.", required = true)
     private String name;
     @XmlAttribute(required = true)
-    @Metadata(defaultValue = "path")
+    @Metadata(description = "Sets the parameter type such as body, form, header, path, or query.",
+              defaultValue = "path")
     private RestParamType type;
     @XmlAttribute
+    @Metadata(description = "Description of the parameter.")
     private String description;
     @XmlAttribute
+    @Metadata(description = "The default value of the parameter.")
     private String defaultValue;
     @XmlAttribute
-    @Metadata(defaultValue = "true")
+    @Metadata(description = "Sets the parameter required flag.",
+              defaultValue = "true")
     private Boolean required;
     @XmlAttribute
-    @Metadata(defaultValue = "csv")
+    @Metadata(description = "Sets the parameter collection format.",
+              defaultValue = "csv")
     private CollectionFormat collectionFormat;
     @XmlAttribute
-    @Metadata(defaultValue = "string")
+    @Metadata(description = "Sets the parameter array type. Required if data type is array. Describes the type of items in the array.",
+              defaultValue = "string")
     private String arrayType;
     @XmlAttribute
-    @Metadata(defaultValue = "string")
+    @Metadata(description = "Sets the parameter data type such as string, integer, or boolean.",
+              defaultValue = "string")
     private String dataType;
     @XmlAttribute
+    @Metadata(description = "The data format of the parameter such as binary, date, date-time, or password.")
     private String dataFormat;
     @XmlElementWrapper(name = "allowableValues")
     @XmlElement(name = "value") // name = value due to camel-spring-xml
     @DslProperty(name = "allowableValues") // yaml-dsl
+    @Metadata(description = "List of allowable values for the parameter (enum).")
     private List<ValueDefinition> allowableValues;
     @XmlElement(name = "examples")
+    @Metadata(description = "Examples of the parameter.")
     private List<RestPropertyDefinition> examples;
 
     public ParamDefinition() {
@@ -85,9 +97,6 @@ public class ParamDefinition {
         return type != null ? type : RestParamType.path;
     }
 
-    /**
-     * Sets the parameter type.
-     */
     public void setType(RestParamType type) {
         this.type = type;
     }
@@ -96,9 +105,6 @@ public class ParamDefinition {
         return name;
     }
 
-    /**
-     * Sets the parameter name.
-     */
     public void setName(String name) {
         this.name = name;
     }
@@ -107,16 +113,10 @@ public class ParamDefinition {
         return description;
     }
 
-    /**
-     * Sets the parameter description.
-     */
     public void setDescription(String description) {
         this.description = description;
     }
 
-    /**
-     * Sets the parameter default value.
-     */
     public String getDefaultValue() {
         return defaultValue;
     }
@@ -129,9 +129,6 @@ public class ParamDefinition {
         return required != null ? required : true;
     }
 
-    /**
-     * Sets the parameter required flag.
-     */
     public void setRequired(Boolean required) {
         this.required = required;
     }
@@ -140,9 +137,6 @@ public class ParamDefinition {
         return collectionFormat;
     }
 
-    /**
-     * Sets the parameter collection format.
-     */
     public void setCollectionFormat(CollectionFormat collectionFormat) {
         this.collectionFormat = collectionFormat;
     }
@@ -151,9 +145,6 @@ public class ParamDefinition {
         return arrayType;
     }
 
-    /**
-     * Sets the parameter array type. Required if data type is "array". Describes the type of items in the array.
-     */
     public void setArrayType(String arrayType) {
         this.arrayType = arrayType;
     }
@@ -162,9 +153,6 @@ public class ParamDefinition {
         return dataType;
     }
 
-    /**
-     * Sets the parameter data type.
-     */
     public void setDataType(String dataType) {
         this.dataType = dataType;
     }
@@ -173,9 +161,6 @@ public class ParamDefinition {
         return dataFormat;
     }
 
-    /**
-     * Sets the parameter data format.
-     */
     public void setDataFormat(String dataFormat) {
         this.dataFormat = dataFormat;
     }
@@ -184,9 +169,6 @@ public class ParamDefinition {
         return allowableValues;
     }
 
-    /**
-     * Sets the parameter list of allowable values (enum).
-     */
     public void setAllowableValues(List<ValueDefinition> allowableValues) {
         this.allowableValues = allowableValues;
     }
@@ -195,9 +177,6 @@ public class ParamDefinition {
         return examples;
     }
 
-    /**
-     * Sets the parameter examples.
-     */
     public void setExamples(List<RestPropertyDefinition> examples) {
         this.examples = examples;
     }

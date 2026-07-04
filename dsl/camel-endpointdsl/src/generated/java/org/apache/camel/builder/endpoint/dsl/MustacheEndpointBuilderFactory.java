@@ -332,7 +332,7 @@ public interface MustacheEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final MustacheHeaderNameBuilder INSTANCE = new MustacheHeaderNameBuilder();
+        public static final MustacheHeaderNameBuilder INSTANCE = new MustacheHeaderNameBuilder();
 
         /**
          * A URI for the template resource to use instead of the endpoint.

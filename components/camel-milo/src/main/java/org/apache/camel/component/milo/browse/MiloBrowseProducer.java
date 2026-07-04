@@ -19,6 +19,7 @@ package org.apache.camel.component.milo.browse;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
@@ -112,6 +113,7 @@ public class MiloBrowseProducer extends DefaultAsyncProducer {
 
                     final List<String> expandedNodes = browseResults.values().stream()
                             .map(BrowseResult::getReferences)
+                            .filter(Objects::nonNull)
                             .flatMap(Stream::of)
                             .map(ReferenceDescription::getNodeId)
                             .map(ExpandedNodeId::toParseableString)

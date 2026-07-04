@@ -24,7 +24,7 @@ public class MiloBrowseEndpointUriFactory extends org.apache.camel.support.compo
     private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(31);
+        Set<String> props = new HashSet<>(33);
         props.add("allowedSecurityPolicies");
         props.add("applicationName");
         props.add("applicationUri");
@@ -50,16 +50,19 @@ public class MiloBrowseEndpointUriFactory extends org.apache.camel.support.compo
         props.add("nodeClasses");
         props.add("overrideHost");
         props.add("overridePort");
+        props.add("password");
         props.add("productUri");
         props.add("recursive");
         props.add("requestTimeout");
         props.add("requestedPublishingInterval");
         props.add("sessionName");
         props.add("sessionTimeout");
+        props.add("username");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        Set<String> secretProps = new HashSet<>(2);
+        Set<String> secretProps = new HashSet<>(3);
         secretProps.add("keyPassword");
         secretProps.add("keyStorePassword");
+        secretProps.add("password");
         SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
         ENDPOINT_IDENTITY_PROPERTY_NAMES = Collections.emptySet();
         MULTI_VALUE_PREFIXES = Collections.emptyMap();

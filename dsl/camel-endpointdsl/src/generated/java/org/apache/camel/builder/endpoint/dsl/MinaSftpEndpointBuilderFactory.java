@@ -187,6 +187,50 @@ public interface MinaSftpEndpointBuilderFactory {
             return this;
         }
         /**
+         * Used for jailing (restricting) writing files to the starting
+         * directory (and sub) only. This is enabled by default to not allow
+         * Camel to write files to outside directories (to be more secured out
+         * of the box). You can turn this off to allow writing files to
+         * directories outside the starting directory, such as parent or root
+         * folders. For consumers that use a localWorkDirectory, this also
+         * restricts the downloaded files to stay within the configured
+         * localWorkDirectory.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: common
+         * 
+         * @param jailStartingDirectory the value to set
+         * @return the dsl builder
+         */
+        default MinaSftpEndpointConsumerBuilder jailStartingDirectory(boolean jailStartingDirectory) {
+            doSetProperty("jailStartingDirectory", jailStartingDirectory);
+            return this;
+        }
+        /**
+         * Used for jailing (restricting) writing files to the starting
+         * directory (and sub) only. This is enabled by default to not allow
+         * Camel to write files to outside directories (to be more secured out
+         * of the box). You can turn this off to allow writing files to
+         * directories outside the starting directory, such as parent or root
+         * folders. For consumers that use a localWorkDirectory, this also
+         * restricts the downloaded files to stay within the configured
+         * localWorkDirectory.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: common
+         * 
+         * @param jailStartingDirectory the value to set
+         * @return the dsl builder
+         */
+        default MinaSftpEndpointConsumerBuilder jailStartingDirectory(String jailStartingDirectory) {
+            doSetProperty("jailStartingDirectory", jailStartingDirectory);
+            return this;
+        }
+        /**
          * Sets passive mode connections. Default is active mode connections.
          * 
          * The option is a: <code>boolean</code> type.
@@ -3818,6 +3862,50 @@ public interface MinaSftpEndpointBuilderFactory {
             return this;
         }
         /**
+         * Used for jailing (restricting) writing files to the starting
+         * directory (and sub) only. This is enabled by default to not allow
+         * Camel to write files to outside directories (to be more secured out
+         * of the box). You can turn this off to allow writing files to
+         * directories outside the starting directory, such as parent or root
+         * folders. For consumers that use a localWorkDirectory, this also
+         * restricts the downloaded files to stay within the configured
+         * localWorkDirectory.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: common
+         * 
+         * @param jailStartingDirectory the value to set
+         * @return the dsl builder
+         */
+        default MinaSftpEndpointProducerBuilder jailStartingDirectory(boolean jailStartingDirectory) {
+            doSetProperty("jailStartingDirectory", jailStartingDirectory);
+            return this;
+        }
+        /**
+         * Used for jailing (restricting) writing files to the starting
+         * directory (and sub) only. This is enabled by default to not allow
+         * Camel to write files to outside directories (to be more secured out
+         * of the box). You can turn this off to allow writing files to
+         * directories outside the starting directory, such as parent or root
+         * folders. For consumers that use a localWorkDirectory, this also
+         * restricts the downloaded files to stay within the configured
+         * localWorkDirectory.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: common
+         * 
+         * @param jailStartingDirectory the value to set
+         * @return the dsl builder
+         */
+        default MinaSftpEndpointProducerBuilder jailStartingDirectory(String jailStartingDirectory) {
+            doSetProperty("jailStartingDirectory", jailStartingDirectory);
+            return this;
+        }
+        /**
          * Sets passive mode connections. Default is active mode connections.
          * 
          * The option is a: <code>boolean</code> type.
@@ -4033,46 +4121,6 @@ public interface MinaSftpEndpointBuilderFactory {
          */
         default MinaSftpEndpointProducerBuilder flatten(String flatten) {
             doSetProperty("flatten", flatten);
-            return this;
-        }
-        /**
-         * Used for jailing (restricting) writing files to the starting
-         * directory (and sub) only. This is enabled by default to not allow
-         * Camel to write files to outside directories (to be more secured out
-         * of the box). You can turn this off to allow writing files to
-         * directories outside the starting directory, such as parent or root
-         * folders.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: producer
-         * 
-         * @param jailStartingDirectory the value to set
-         * @return the dsl builder
-         */
-        default MinaSftpEndpointProducerBuilder jailStartingDirectory(boolean jailStartingDirectory) {
-            doSetProperty("jailStartingDirectory", jailStartingDirectory);
-            return this;
-        }
-        /**
-         * Used for jailing (restricting) writing files to the starting
-         * directory (and sub) only. This is enabled by default to not allow
-         * Camel to write files to outside directories (to be more secured out
-         * of the box). You can turn this off to allow writing files to
-         * directories outside the starting directory, such as parent or root
-         * folders.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: producer
-         * 
-         * @param jailStartingDirectory the value to set
-         * @return the dsl builder
-         */
-        default MinaSftpEndpointProducerBuilder jailStartingDirectory(String jailStartingDirectory) {
-            doSetProperty("jailStartingDirectory", jailStartingDirectory);
             return this;
         }
         /**
@@ -5698,6 +5746,50 @@ public interface MinaSftpEndpointBuilderFactory {
             return this;
         }
         /**
+         * Used for jailing (restricting) writing files to the starting
+         * directory (and sub) only. This is enabled by default to not allow
+         * Camel to write files to outside directories (to be more secured out
+         * of the box). You can turn this off to allow writing files to
+         * directories outside the starting directory, such as parent or root
+         * folders. For consumers that use a localWorkDirectory, this also
+         * restricts the downloaded files to stay within the configured
+         * localWorkDirectory.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: common
+         * 
+         * @param jailStartingDirectory the value to set
+         * @return the dsl builder
+         */
+        default MinaSftpEndpointBuilder jailStartingDirectory(boolean jailStartingDirectory) {
+            doSetProperty("jailStartingDirectory", jailStartingDirectory);
+            return this;
+        }
+        /**
+         * Used for jailing (restricting) writing files to the starting
+         * directory (and sub) only. This is enabled by default to not allow
+         * Camel to write files to outside directories (to be more secured out
+         * of the box). You can turn this off to allow writing files to
+         * directories outside the starting directory, such as parent or root
+         * folders. For consumers that use a localWorkDirectory, this also
+         * restricts the downloaded files to stay within the configured
+         * localWorkDirectory.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: common
+         * 
+         * @param jailStartingDirectory the value to set
+         * @return the dsl builder
+         */
+        default MinaSftpEndpointBuilder jailStartingDirectory(String jailStartingDirectory) {
+            doSetProperty("jailStartingDirectory", jailStartingDirectory);
+            return this;
+        }
+        /**
          * Sets passive mode connections. Default is active mode connections.
          * 
          * The option is a: <code>boolean</code> type.
@@ -6936,7 +7028,7 @@ public interface MinaSftpEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final MinaSftpHeaderNameBuilder INSTANCE = new MinaSftpHeaderNameBuilder();
+        public static final MinaSftpHeaderNameBuilder INSTANCE = new MinaSftpHeaderNameBuilder();
 
         /**
          * A long value containing the file size.

@@ -20,6 +20,8 @@ import java.util.concurrent.CompletableFuture;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
+import org.apache.camel.DelegateProcessor;
+import org.apache.camel.EndpointSending;
 import org.apache.camel.Exchange;
 import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
@@ -57,9 +59,7 @@ public class TraceProcessorsInterceptStrategy implements InterceptStrategy {
         @Override
         public void process(Exchange exchange) throws Exception {
             String processorName = processorDefinition.getId() + "-" + processorDefinition.getShortName();
-            if ((isCoreProcessEnabled(tracer.isDisableCoreProcessors(), processorDefinition.getShortName()) ||
-                    isCustomProcessEnabled(tracer.isTraceProcessors(), processorDefinition.getShortName()))
-                    && tracer.match(processorName, exchange.getContext())) {
+            if (shouldTrace(processorName, exchange)) {
                 tracer.beginProcessorSpan(exchange, processorName);
                 try {
                     processor.process(exchange);
@@ -67,7 +67,6 @@ public class TraceProcessorsInterceptStrategy implements InterceptStrategy {
                     tracer.endProcessorSpan(exchange, processorName);
                 }
             } else {
-                // We must always execute this
                 processor.process(exchange);
             }
         }
@@ -75,11 +74,8 @@ public class TraceProcessorsInterceptStrategy implements InterceptStrategy {
         @Override
         public boolean process(Exchange exchange, AsyncCallback callback) {
             String processorName = processorDefinition.getId() + "-" + processorDefinition.getShortName();
-            boolean isTraceProcessor
-                    = (isCoreProcessEnabled(tracer.isDisableCoreProcessors(), processorDefinition.getShortName()) ||
-                            isCustomProcessEnabled(tracer.isTraceProcessors(), processorDefinition.getShortName()))
-                            && tracer.match(processorName, exchange.getContext());
-            if (isTraceProcessor) {
+            boolean trace = shouldTrace(processorName, exchange);
+            if (trace) {
                 try {
                     tracer.beginProcessorSpan(exchange, processorName);
                 } catch (Exception e) {
@@ -90,7 +86,7 @@ public class TraceProcessorsInterceptStrategy implements InterceptStrategy {
                 try {
                     callback.done(doneSync);
                 } finally {
-                    if (isTraceProcessor) {
+                    if (trace) {
                         try {
                             tracer.endProcessorSpan(exchange, processorName);
                         } catch (Exception e) {
@@ -108,15 +104,49 @@ public class TraceProcessorsInterceptStrategy implements InterceptStrategy {
             process(exchange, callback);
             return callback.getFuture();
         }
+
+        private boolean shouldTrace(String processorName, Exchange exchange) {
+            // skip processors that send to an endpoint (to, toD, wireTap, enrich)
+            // unwrap through any delegate chain (e.g. otel scope wrapper) to find the real processor
+            if (isEndpointSending(processor)) {
+                return false;
+            }
+            if (tracer.isTraceCustomIdOnly()) {
+                // skip all processors in routes without a custom routeId
+                if (!tracer.isCustomIdRoute(exchange.getFromRouteId())) {
+                    return false;
+                }
+                // within custom-id routes, only trace processors with an explicit .id()
+                if (!processorDefinition.hasCustomIdAssigned()) {
+                    return false;
+                }
+            }
+            String shortName = processorDefinition.getShortName();
+            boolean enabled = isCoreProcessEnabled(shortName) || isCustomProcessEnabled(shortName);
+            return enabled && tracer.match(processorName, exchange.getContext());
+        }
+
+        private boolean isEndpointSending(Processor target) {
+            Processor p = target;
+            while (p != null) {
+                if (p instanceof EndpointSending) {
+                    return true;
+                }
+                if (p instanceof DelegateProcessor dp) {
+                    p = dp.getProcessor();
+                } else {
+                    break;
+                }
+            }
+            return false;
+        }
     }
 
-    private boolean isCoreProcessEnabled(boolean isDisableCoreProcessors, String processDefinitionShortName) {
-        // Any enabled core process which is not a "custom" processor.
-        return !isDisableCoreProcessors && !processDefinitionShortName.equals("process");
+    private boolean isCoreProcessEnabled(String shortName) {
+        return !tracer.isDisableCoreProcessors() && !"process".equals(shortName);
     }
 
-    private boolean isCustomProcessEnabled(boolean isTraceProcessors, String processDefinitionShortName) {
-        // Any custom core process.
-        return isTraceProcessors && processDefinitionShortName.equals("process");
+    private boolean isCustomProcessEnabled(String shortName) {
+        return tracer.isTraceProcessors() && "process".equals(shortName);
     }
 }

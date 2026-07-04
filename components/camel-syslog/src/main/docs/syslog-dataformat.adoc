@@ -2,12 +2,10 @@
 :doctitle: Syslog
 :shortname: syslog
 :artifactid: camel-syslog
-:description: Marshall SyslogMessages to RFC3164 and RFC5424 messages and back.
+:description: Marshall SyslogMessages to RFC3164 and RFC5424 messages and back
 :since: 2.6
 :supportlevel: Stable
 :tabs-sync-option:
-//Manually maintained attributes
-:camel-spring-boot-name: syslog
 
 *Since Camel {since}*
 
@@ -75,8 +73,21 @@ this  +
  will allow a fallback to a NettyTypeConverter and delivers the message
 as an InputStream:
 
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("netty:udp://localhost:10514?sync=false&allowDefaultCodec=false")
+    .unmarshal(new SyslogDataFormat())
+    .to("mock:stop1");
+----
+
+XML::
++
 [source,xml]
-------------------------------------------------------------------------------------------
+----
 <camelContext id="myCamel" xmlns="http://camel.apache.org/schema/spring">
 
     <dataFormats>
@@ -90,12 +101,43 @@ as an InputStream:
     </route>
 
 </camelContext>
-------------------------------------------------------------------------------------------
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: netty:udp://localhost:10514
+      parameters:
+        sync: false
+        allowDefaultCodec: false
+      steps:
+        - unmarshal:
+            syslog: {}
+        - to:
+            uri: mock:stop1
+----
+====
 
 The same route using xref:ROOT:mina-component.adoc[Mina Component]
 
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("mina:udp://localhost:10514")
+    .unmarshal(new SyslogDataFormat())
+    .to("mock:stop1");
+----
+
+XML::
++
 [source,xml]
--------------------------------------------------------------------------
+----
 <camelContext id="myCamel" xmlns="http://camel.apache.org/schema/spring">
 
     <dataFormats>
@@ -109,12 +151,40 @@ The same route using xref:ROOT:mina-component.adoc[Mina Component]
     </route>
 
 </camelContext>
--------------------------------------------------------------------------
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: mina:udp://localhost:10514
+      steps:
+        - unmarshal:
+            syslog: {}
+        - to:
+            uri: mock:stop1
+----
+====
 
 === Sending syslog messages to a remote destination
 
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:syslogMessages")
+    .marshal(new SyslogDataFormat())
+    .to("mina:udp://remotehost:10514");
+----
+
+XML::
++
 [source,xml]
--------------------------------------------------------------------------
+----
 <camelContext id="myCamel" xmlns="http://camel.apache.org/schema/spring">
 
     <dataFormats>
@@ -128,8 +198,19 @@ The same route using xref:ROOT:mina-component.adoc[Mina Component]
     </route>
 
 </camelContext>
--------------------------------------------------------------------------
+----
 
-
-
-include::spring-boot:partial$starter.adoc[]
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:syslogMessages
+      steps:
+        - marshal:
+            syslog: {}
+        - to:
+            uri: mina:udp://remotehost:10514
+----
+====

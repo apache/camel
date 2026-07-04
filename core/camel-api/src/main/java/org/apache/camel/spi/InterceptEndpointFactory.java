@@ -23,8 +23,12 @@ import org.apache.camel.Processor;
 import org.jspecify.annotations.Nullable;
 
 /**
- * A factory to create {@link Endpoint} which are intercepted.
+ * Factory for creating an {@link InterceptSendToEndpoint} that intercepts messages sent to an {@link Endpoint}.
+ * <p/>
+ * This backs the interceptSendToEndpoint EIP: the created endpoint detours the exchange through optional before/after
+ * processors and may skip sending to the original endpoint. Used internally when a route configures send interception.
  *
+ * @see   InterceptSendToEndpoint
  * @since 3.7
  */
 public interface InterceptEndpointFactory {

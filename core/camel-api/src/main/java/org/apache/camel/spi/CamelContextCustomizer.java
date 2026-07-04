@@ -20,8 +20,20 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Ordered;
 
 /**
- * To apply custom configurations to {@link CamelContext} instances.
+ * Strategy for applying custom configuration to a {@link CamelContext} after it has been created.
+ * <p/>
+ * Customizers are discovered from the {@link Registry} and invoked during bootstrap, giving a hook to programmatically
+ * tune the context (adding services, configuring options, registering beans) without subclassing. Multiple customizers
+ * run in {@link Ordered} order. This is most commonly used by runtimes such as Spring Boot and Quarkus to apply
+ * user-provided configuration. The sibling SPIs {@link ComponentCustomizer}, {@link DataFormatCustomizer}, and
+ * {@link LanguageCustomizer} customize individual components, data formats, and languages.
+ * <p/>
+ * See <a href="https://camel.apache.org/manual/camelcontext-autoconfigure.html">CamelContext auto-configuration</a> in
+ * the Camel user manual.
  *
+ * @see   ComponentCustomizer
+ * @see   DataFormatCustomizer
+ * @see   LanguageCustomizer
  * @since 3.6
  */
 @FunctionalInterface

@@ -17,7 +17,7 @@
 package org.apache.camel.component.es;
 
 /**
- * The ElasticSearch server operations list which are implemented
+ * The Elasticsearch server operations list which are implemented
  * <p>
  * <ul>
  * <li>Index - Index a document associated with a given index</li>

@@ -9,7 +9,6 @@
 :component-header: Only consumer is supported
 //Manually maintained attributes
 :group: Ignite
-:camel-spring-boot-name: ignite
 
 *Since Camel {since}*
 
@@ -26,5 +25,3 @@ include::partial$component-endpoint-headers.adoc[]
 // component options: END
 
 
-
-include::spring-boot:partial$starter.adoc[]

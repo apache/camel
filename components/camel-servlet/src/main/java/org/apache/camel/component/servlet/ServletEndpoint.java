@@ -24,6 +24,8 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.http.base.OAuthHttpSecuritySupport;
+import org.apache.camel.http.base.OAuthProfileAwareHttpEndpoint;
 import org.apache.camel.http.common.DefaultHttpBinding;
 import org.apache.camel.http.common.HttpBinding;
 import org.apache.camel.http.common.HttpCommonEndpoint;
@@ -40,9 +42,10 @@ import org.apache.camel.spi.UriPath;
 @Metadata(excludeProperties = "httpUri", annotations = {
         "protocol=http",
 })
-public class ServletEndpoint extends HttpCommonEndpoint {
+public class ServletEndpoint extends HttpCommonEndpoint implements OAuthProfileAwareHttpEndpoint {
 
     private HttpBinding binding;
+    private OAuthHttpSecuritySupport oauthHttpSecurity;
 
     @UriPath(label = "consumer")
     @Metadata(required = true)
@@ -53,6 +56,12 @@ public class ServletEndpoint extends HttpCommonEndpoint {
     private boolean attachmentMultipartBinding;
     @UriParam(label = "consumer,advanced")
     private String fileNameExtWhitelist;
+    @UriParam(label = "consumer,security", displayName = "OAuth Profile",
+              description = "OAuth profile name for validating incoming Authorization: Bearer tokens. "
+                            + "When set, the request is authenticated before the route is processed. "
+                            + "This requires an OAuthTokenValidationFactory; camel-oauth provides the default implementation. "
+                            + "This is Camel endpoint-level validation and does not replace servlet container or framework security.")
+    private String oauthProfile;
 
     public ServletEndpoint() {
     }
@@ -83,6 +92,7 @@ public class ServletEndpoint extends HttpCommonEndpoint {
             this.binding.setLogException(isLogException());
             if (getComponent() != null) {
                 this.binding.setAllowJavaSerializedObject(getComponent().isAllowJavaSerializedObject());
+                this.binding.setDeserializationFilter(getComponent().getDeserializationFilter());
             }
             this.binding.setHeaderFilterStrategy(getHeaderFilterStrategy());
             this.binding.setEagerCheckContentAvailable(isEagerCheckContentAvailable());
@@ -152,6 +162,20 @@ public class ServletEndpoint extends HttpCommonEndpoint {
     }
 
     @Override
+    public String getOauthProfile() {
+        return oauthProfile;
+    }
+
+    public void setOauthProfile(String oauthProfile) {
+        this.oauthProfile = oauthProfile;
+    }
+
+    @Override
+    public OAuthHttpSecuritySupport getOauthHttpSecurity() {
+        return oauthHttpSecurity;
+    }
+
+    @Override
     public Producer createProducer() throws Exception {
         throw new UnsupportedOperationException(
                 "You cannot create producer with servlet endpoint, please consider to use http endpoint.");
@@ -162,6 +186,12 @@ public class ServletEndpoint extends HttpCommonEndpoint {
         ServletConsumer answer = new ServletConsumer(this, processor);
         configureConsumer(answer);
         return answer;
+    }
+
+    @Override
+    protected void doInit() throws Exception {
+        super.doInit();
+        oauthHttpSecurity = OAuthHttpSecuritySupport.create(getCamelContext(), oauthProfile);
     }
 
     @Override

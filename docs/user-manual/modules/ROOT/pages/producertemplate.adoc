@@ -16,6 +16,7 @@ the `stop()` method to close down all the resources it has been using.
 The `sendBody()` method allows you to send any object to an endpoint
 easily as shown:
 
+._Java-only: sending messages using ProducerTemplate_
 [source,java]
 ----
 ProducerTemplate template = exchange.getContext().createProducerTemplate();
@@ -47,6 +48,7 @@ and all the methods starting with `requestXXX` are for InOut messaging.
 
 Let's see an example where we invoke an endpoint to get the response (InOut):
 
+._Java-only: using requestBody for request-reply messaging_
 [source,java]
 ----
 Object response = template.requestBody("<hello/>");
@@ -68,6 +70,7 @@ Here are some examples:
 
 This is the most common style with fluent builders to set headers, and message body as show:
 
+._Java-only: using FluentProducerTemplate with headers and body_
 [source,java]
 ----
 Integer result = FluentProducerTemplate.on(context)
@@ -82,6 +85,7 @@ Integer result = FluentProducerTemplate.on(context)
 
 Here we use xref:processor.adoc[Processor] to prepare the message to be sent.
 
+._Java-only: using FluentProducerTemplate with a Processor_
 [source,java]
 ----
 Integer result = FluentProducerTemplate.on(context)
@@ -95,6 +99,7 @@ Integer result = FluentProducerTemplate.on(context)
 This is rarely in use, but a `TemplateCustomizer` can be used for advanced use-cases
 to control various aspects of the `FluentProducerTemplate` such as configuring to use a custom thread pool:
 
+._Java-only: using FluentProducerTemplate with a template customizer_
 [source,java]
 ----
 Object result = FluentProducerTemplate.on(context)
@@ -124,6 +129,7 @@ an Exchange object.
 From the returned Exchange you can test if it has failed and get the caused
 exception. This is illustrated in the code sample:
 
+._Java-only: retrieving a thrown exception from the returned Exchange_
 [source,java]
 ----
 @Test
@@ -170,6 +176,7 @@ which will be created or dependency inject by `CamelContext`.
 
 This can be done on the `CamelContext` as a global option as shown in the following Java code:
 
+._Java-only: configuring cache size via CamelContext global options_
 [source,java]
 ----
 getCamelContext().getGlobalOptions().put(Exchange.MAXIMUM_CACHE_POOL_SIZE, "50");

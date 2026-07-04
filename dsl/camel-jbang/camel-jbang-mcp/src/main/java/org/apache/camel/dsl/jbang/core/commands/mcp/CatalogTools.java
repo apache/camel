@@ -93,6 +93,7 @@ public class CatalogTools {
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = "Get documentation for a Camel component: URI syntax and endpoint options. "
                         + "Default returns common options only (excludes deprecated and advanced). "
+                        + "Set includeHeaders=true to also return message header metadata (CamelXxx names, constants, types). "
                         + "Use camel_catalog_component_maven for groupId/artifactId/version.")
     public ComponentDetailResult camel_catalog_component_doc(
             @ToolArg(description = "Component name (e.g., kafka, http, file, timer)") String component,
@@ -101,6 +102,9 @@ public class CatalogTools {
             @ToolArg(description = "Which options to include: required | common | all (default: common). "
                                    + "'common' excludes deprecated and advanced options.",
                      required = false) String includeOptions,
+            @ToolArg(description = "Whether to include message headers in the response (default: false). "
+                                   + "Headers show the CamelXxx header names, their Java constants, types, and consumer/producer group.",
+                     required = false) Boolean includeHeaders,
             @ToolArg(description = ToolArgDocs.RUNTIME) String runtime,
             @ToolArg(description = ToolArgDocs.VERSION_QUERY) String camelVersion,
             @ToolArg(description = ToolArgDocs.PLATFORM_BOM) String platformBom) {
@@ -143,7 +147,7 @@ public class CatalogTools {
                 throw new ToolCallException(hint.toString(), null);
             }
 
-            return toComponentDetailResult(model, scope, optionsFilter);
+            return toComponentDetailResult(model, scope, optionsFilter, Boolean.TRUE.equals(includeHeaders));
         } catch (ToolCallException e) {
             throw e;
         } catch (Throwable e) {
@@ -321,9 +325,11 @@ public class CatalogTools {
      */
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = "List Camel Enterprise Integration Patterns (EIPs) like split, aggregate, " +
-                        "filter, choice, multicast, circuit-breaker, etc.")
+                        "filter, choice, multicast, circuit-breaker, etc. " +
+                        "EIPs have aliases for common AI/modern terms (e.g., fan-out, scatter-gather, retry, dedup). " +
+                        "Filter also matches aliases with dash normalization (fan-out, fanout, fanOut all match).")
     public EipListResult camel_catalog_eips(
-            @ToolArg(description = "Filter by name") String filter,
+            @ToolArg(description = "Filter by name, title, description, or alias (e.g., fan-out, dedup, rate-limit)") String filter,
             @ToolArg(description = "Filter by category (e.g., routing, transformation, error handling)") String label,
             @ToolArg(description = ToolArgDocs.RUNTIME) String runtime,
             @ToolArg(description = ToolArgDocs.CAMEL_VERSION) String camelVersion,
@@ -335,7 +341,7 @@ public class CatalogTools {
             List<EipInfo> eips = cat.findModelNames().stream()
                     .map(cat::eipModel)
                     .filter(m -> m != null)
-                    .filter(m -> matchesFilter(m.getName(), m.getTitle(), m.getDescription(), filter))
+                    .filter(m -> matchesFilter(m.getName(), m.getTitle(), m.getDescription(), m.getAliases(), filter))
                     .filter(m -> matchesLabel(m.getLabel(), label))
                     .map(this::toEipInfo)
                     .collect(Collectors.toList());
@@ -392,13 +398,32 @@ public class CatalogTools {
     // Helper methods
 
     private boolean matchesFilter(String name, String title, String description, String filter) {
+        return matchesFilter(name, title, description, null, filter);
+    }
+
+    private boolean matchesFilter(String name, String title, String description, List<String> aliases, String filter) {
         if (filter == null || filter.isBlank()) {
             return true;
         }
         String lowerFilter = filter.toLowerCase();
-        return (name != null && name.toLowerCase().contains(lowerFilter))
+        if ((name != null && name.toLowerCase().contains(lowerFilter))
                 || (title != null && title.toLowerCase().contains(lowerFilter))
-                || (description != null && description.toLowerCase().contains(lowerFilter));
+                || (description != null && description.toLowerCase().contains(lowerFilter))) {
+            return true;
+        }
+        if (aliases != null) {
+            String normalized = normalize(filter);
+            for (String alias : aliases) {
+                if (alias.toLowerCase().contains(lowerFilter) || normalize(alias).contains(normalized)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private static String normalize(String text) {
+        return text.toLowerCase().replace("-", "").replace("_", "");
     }
 
     private boolean matchesLabel(String labels, String labelFilter) {
@@ -422,7 +447,8 @@ public class CatalogTools {
                 model.getSupportLevel() != null ? model.getSupportLevel().name() : null);
     }
 
-    private ComponentDetailResult toComponentDetailResult(ComponentModel model, OptionScope scope, String optionsFilter) {
+    private ComponentDetailResult toComponentDetailResult(
+            ComponentModel model, OptionScope scope, String optionsFilter, boolean includeHeaders) {
         Predicate<BaseOptionModel> filter = scope.asPredicate().and(nameFilter(optionsFilter));
 
         List<OptionInfo> componentOptions = new ArrayList<>();
@@ -451,6 +477,15 @@ public class CatalogTools {
                             opt.getGroup())));
         }
 
+        List<HeaderInfo> headers = List.of();
+        if (includeHeaders && model.getEndpointHeaders() != null) {
+            headers = model.getEndpointHeaders().stream()
+                    .map(h -> new HeaderInfo(
+                            h.getName(), h.getDescription(), h.getJavaType(),
+                            h.getGroup(), h.getConstantName(), h.isRequired()))
+                    .collect(Collectors.toList());
+        }
+
         return new ComponentDetailResult(
                 model.getScheme(),
                 model.getTitle(),
@@ -463,7 +498,8 @@ public class CatalogTools {
                 model.isConsumerOnly(),
                 model.isProducerOnly(),
                 componentOptions,
-                endpointOptions);
+                endpointOptions,
+                headers);
     }
 
     private static Predicate<BaseOptionModel> nameFilter(String optionsFilter) {
@@ -526,7 +562,8 @@ public class CatalogTools {
         return new EipInfo(
                 model.getName(),
                 model.getTitle(),
-                model.getLabel());
+                model.getLabel(),
+                model.getAliases().isEmpty() ? null : model.getAliases());
     }
 
     private EipDetailResult toEipDetailResult(EipModel model) {
@@ -546,6 +583,7 @@ public class CatalogTools {
                 model.getTitle(),
                 model.getDescription(),
                 model.getLabel(),
+                model.getAliases().isEmpty() ? null : model.getAliases(),
                 options);
     }
 
@@ -587,6 +625,32 @@ public class CatalogTools {
                     opt.getGroup())));
         }
 
+        List<FunctionInfo> functions = new ArrayList<>();
+        if (model.getFunctions() != null) {
+            model.getFunctions().stream()
+                    .filter(f -> !f.isDeprecated())
+                    .forEach(fun -> {
+                        List<FunctionParamInfo> params = new ArrayList<>();
+                        if (fun.getParams() != null) {
+                            fun.getParams().forEach(p -> params.add(new FunctionParamInfo(
+                                    p.getName(),
+                                    p.getJavaType(),
+                                    p.isRequired(),
+                                    p.getDefaultValue(),
+                                    p.getDescription())));
+                        }
+                        functions.add(new FunctionInfo(
+                                fun.getName(),
+                                fun.getDisplayName(),
+                                fun.getGroup(),
+                                fun.getJavaType(),
+                                fun.getDescription(),
+                                fun.isOgnl(),
+                                params,
+                                fun.getExamples()));
+                    });
+        }
+
         return new LanguageDetailResult(
                 model.getName(),
                 model.getTitle(),
@@ -598,7 +662,8 @@ public class CatalogTools {
                 model.getArtifactId(),
                 model.getVersion(),
                 model.getModelName(),
-                options);
+                options,
+                functions);
     }
 
     // Result record classes for Jackson serialization
@@ -613,7 +678,8 @@ public class CatalogTools {
     public record ComponentDetailResult(String name, String title, String description, String label,
             boolean deprecated, String supportLevel, String syntax,
             boolean async, boolean consumerOnly, boolean producerOnly,
-            List<OptionInfo> componentOptions, List<OptionInfo> endpointOptions) {
+            List<OptionInfo> componentOptions, List<OptionInfo> endpointOptions,
+            List<HeaderInfo> headers) {
     }
 
     public record ComponentMavenResult(String name, String groupId, String artifactId, String version) {
@@ -621,6 +687,10 @@ public class CatalogTools {
 
     public record OptionInfo(String name, String description, String type, boolean required,
             String defaultValue, String group) {
+    }
+
+    public record HeaderInfo(String name, String description, String javaType,
+            String group, String constantName, boolean required) {
     }
 
     public record DataFormatListResult(int count, List<DataFormatInfo> dataFormats) {
@@ -638,11 +708,11 @@ public class CatalogTools {
     public record EipListResult(int count, List<EipInfo> eips) {
     }
 
-    public record EipInfo(String name, String title, String label) {
+    public record EipInfo(String name, String title, String label, List<String> aliases) {
     }
 
     public record EipDetailResult(String name, String title, String description, String label,
-            List<OptionInfo> options) {
+            List<String> aliases, List<OptionInfo> options) {
     }
 
     public record DataFormatDetailResult(String name, String title, String description, String label,
@@ -652,6 +722,14 @@ public class CatalogTools {
 
     public record LanguageDetailResult(String name, String title, String description, String label,
             boolean deprecated, String supportLevel, String groupId, String artifactId,
-            String version, String modelName, List<OptionInfo> options) {
+            String version, String modelName, List<OptionInfo> options, List<FunctionInfo> functions) {
+    }
+
+    public record FunctionInfo(String name, String displayName, String group, String javaType,
+            String description, boolean ognl, List<FunctionParamInfo> params, List<String> examples) {
+    }
+
+    public record FunctionParamInfo(String name, String javaType, boolean required,
+            String defaultValue, String description) {
     }
 }

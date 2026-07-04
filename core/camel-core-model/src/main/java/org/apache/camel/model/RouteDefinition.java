@@ -34,7 +34,6 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlTransient;
 import jakarta.xml.bind.annotation.XmlType;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.NamedRoute;
@@ -54,7 +53,8 @@ import org.apache.camel.spi.RoutePolicy;
 /**
  * A Camel route
  */
-@Metadata(label = "configuration")
+@Metadata(label = "configuration",
+          description = "Defines a Camel route that specifies the processing steps a message goes through from a consumer endpoint to one or more producer endpoints")
 @XmlRootElement(name = "route")
 @XmlType(propOrder = { "routeProperties", "errorHandler", "input", "inputType", "outputType", "outputs" })
 @XmlAccessorType(XmlAccessType.PROPERTY)
@@ -121,12 +121,6 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition>
         rest = true;
     }
 
-    /**
-     * Check if the route has been prepared
-     *
-     * @return whether the route has been prepared or not
-     * @see    RouteDefinitionHelper#prepareRoute(CamelContext, RouteDefinition)
-     */
     public boolean isPrepared() {
         return prepared.get();
     }
@@ -148,11 +142,6 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition>
         prepared.set(false);
     }
 
-    /**
-     * Check if the route has been inlined by rest-dsl
-     *
-     * @return whether the route has been inlined by rest-dsl or not
-     */
     public boolean isInlined() {
         return inlined.get();
     }
@@ -560,6 +549,17 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition>
     }
 
     /**
+     * Enable delayer for this route.
+     *
+     * @param  delay delay in millis. Supports property placeholders.
+     * @return       the builder
+     */
+    public RouteDefinition delayer(String delay) {
+        setDelayer(delay);
+        return this;
+    }
+
+    /**
      * Installs the given <a href="http://camel.apache.org/error-handler.html">error handler</a> builder.
      *
      * @param  ref reference to existing error handler
@@ -904,10 +904,8 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition>
         return input;
     }
 
-    /**
-     * Input to the route.
-     */
     @XmlElementRef(required = false)
+    @Metadata(description = "The input (from) endpoint that starts this route and acts as the consumer that receives incoming messages.")
     public void setInput(FromDefinition input) {
         if (this.input != null && input != null && this.input != input) {
             throw new IllegalArgumentException("Only one input is allowed per route. Cannot accept input: " + input);
@@ -929,27 +927,16 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition>
         return outputs;
     }
 
-    /**
-     * Outputs are processors that determines how messages are processed by this route.
-     */
     @XmlElementRef
     @Override
     public void setOutputs(List<ProcessorDefinition<?>> outputs) {
         super.setOutputs(outputs);
     }
 
-    /**
-     * The route configuration id or pattern this route should use for configuration. Multiple id/pattern can be
-     * separated by comma.
-     */
     public String getRouteConfigurationId() {
         return routeConfigurationId;
     }
 
-    /**
-     * The route configuration id or pattern this route should use for configuration. Multiple id/pattern can be
-     * separated by comma.
-     */
     @XmlAttribute
     public void setRouteConfigurationId(String routeConfigurationId) {
         this.routeConfigurationId = routeConfigurationId;
@@ -968,83 +955,50 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition>
         appliedRouteConfigurationIds.add(routeConfigurationId);
     }
 
-    /**
-     * This is used internally by Camel to keep track which route configurations is applied when creating a route from
-     * this model.
-     *
-     * This method is not intended for Camel end users.
-     */
     public Set<String> getAppliedRouteConfigurationIds() {
         return appliedRouteConfigurationIds;
     }
 
-    /**
-     * The group name for this route. Multiple routes can belong to the same group.
-     */
     public String getGroup() {
         return group;
     }
 
-    /**
-     * The group name for this route. Multiple routes can belong to the same group.
-     */
     @XmlAttribute
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced", description = "The group name for this route. Multiple routes can belong to the same group.")
     public void setGroup(String group) {
         this.group = group;
     }
 
-    /**
-     * Prefix to use for all node ids (not route id).
-     */
     public String getNodePrefixId() {
         return nodePrefixId;
     }
 
-    /**
-     * Sets a prefix to use for all node ids (not route id).
-     */
     @XmlAttribute
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced", description = "Sets a prefix to use for all node ids (not route id).")
     public void setNodePrefixId(String nodePrefixId) {
         this.nodePrefixId = nodePrefixId;
     }
 
-    /**
-     * Whether stream caching is enabled on this route.
-     */
     public String getStreamCache() {
         return streamCache;
     }
 
-    /**
-     * Whether stream caching is enabled on this route.
-     */
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(javaType = "java.lang.Boolean", description = "Whether stream caching is enabled on this route.")
     public void setStreamCache(String streamCache) {
         this.streamCache = streamCache;
     }
 
-    /**
-     * Whether tracing is enabled on this route.
-     */
     public String getTrace() {
         return trace;
     }
 
-    /**
-     * Whether tracing is enabled on this route.
-     */
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(javaType = "java.lang.Boolean", description = "Whether tracing is enabled on this route.")
     public void setTrace(String trace) {
         this.trace = trace;
     }
 
-    /**
-     * Whether message history is enabled on this route.
-     */
     public String getMessageHistory() {
         return messageHistory;
     }
@@ -1053,14 +1007,12 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition>
      * Whether message history is enabled on this route.
      */
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean",
+              description = "Whether message history is enabled on this route.")
     public void setMessageHistory(String messageHistory) {
         this.messageHistory = messageHistory;
     }
 
-    /**
-     * Whether security mask for Logging is enabled on this route.
-     */
     public String getLogMask() {
         return logMask;
     }
@@ -1069,14 +1021,12 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition>
      * Whether security mask for Logging is enabled on this route.
      */
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean",
+              description = "Whether security mask for logging is enabled on this route.")
     public void setLogMask(String logMask) {
         this.logMask = logMask;
     }
 
-    /**
-     * Whether to slow down processing messages by a given delay in msec.
-     */
     public String getDelayer() {
         return delayer;
     }
@@ -1085,31 +1035,22 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition>
      * Whether to slow down processing messages by a given delay in msec.
      */
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Long")
+    @Metadata(label = "advanced", javaType = "java.lang.Long",
+              description = "Whether to slow down processing messages by a given delay in msec.")
     public void setDelayer(String delayer) {
         this.delayer = delayer;
     }
 
-    /**
-     * Whether to auto start this route
-     */
     public String getAutoStartup() {
         return autoStartup;
     }
 
-    /**
-     * Whether to auto start this route
-     */
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean", defaultValue = "true")
+    @Metadata(javaType = "java.lang.Boolean", defaultValue = "true", description = "Whether to auto start this route.")
     public void setAutoStartup(String autoStartup) {
         this.autoStartup = autoStartup;
     }
 
-    /**
-     * The predicate of the precondition in simple language to evaluate in order to determine if this route should be
-     * included or not.
-     */
     @Override
     public String getPrecondition() {
         return precondition;
@@ -1120,15 +1061,13 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition>
      * included or not.
      */
     @XmlAttribute
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced",
+              description = "The predicate of the precondition in simple language to evaluate in order to determine if this route should be included or not.")
     @Override
     public void setPrecondition(String precondition) {
         this.precondition = precondition;
     }
 
-    /**
-     * To configure the ordering of the routes being started
-     */
     public Integer getStartupOrder() {
         return startupOrder;
     }
@@ -1137,15 +1076,14 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition>
      * To configure the ordering of the routes being started
      */
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Integer")
+    @Metadata(label = "advanced", javaType = "java.lang.Integer",
+              description = "To configure the ordering of the routes being started.")
     public void setStartupOrder(Integer startupOrder) {
         this.startupOrder = startupOrder;
     }
 
-    /**
-     * Sets the bean ref name of the error handler builder to use on this route
-     */
     @XmlAttribute
+    @Metadata(description = "Sets a reference to a custom error handler to use for this route, referring to an error handler by its id in the registry.")
     public void setErrorHandlerRef(String errorHandlerRef) {
         if (errorHandlerRef != null) {
             this.errorHandlerRef = errorHandlerRef;
@@ -1156,9 +1094,6 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition>
         }
     }
 
-    /**
-     * Sets the bean ref name of the error handler builder to use on this route
-     */
     public String getErrorHandlerRef() {
         return errorHandlerRef;
     }
@@ -1167,9 +1102,6 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition>
         return errorHandler;
     }
 
-    /**
-     * Sets the error handler to use for this route
-     */
     @XmlElement
     public void setErrorHandler(ErrorHandlerDefinition errorHandler) {
         this.errorHandler = errorHandler;
@@ -1178,9 +1110,6 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition>
         }
     }
 
-    /**
-     * Sets the error handler if one is not already set
-     */
     @XmlTransient
     public void setErrorHandlerFactoryIfNull(ErrorHandlerFactory errorHandlerFactory) {
         if (this.errorHandlerFactory == null) {
@@ -1188,19 +1117,11 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition>
         }
     }
 
-    /**
-     * Reference to custom {@link org.apache.camel.spi.RoutePolicy} to use by the route. Multiple policies can be
-     * configured by separating values using comma.
-     */
     @XmlAttribute
     public void setRoutePolicyRef(String routePolicyRef) {
         this.routePolicyRef = routePolicyRef;
     }
 
-    /**
-     * Reference to custom {@link org.apache.camel.spi.RoutePolicy} to use by the route. Multiple policies can be
-     * configured by separating values using comma.
-     */
     public String getRoutePolicyRef() {
         return routePolicyRef;
     }
@@ -1223,14 +1144,12 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition>
      */
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "org.apache.camel.ShutdownRoute", defaultValue = "Default",
-              enums = "Default,Defer")
+              enums = "Default,Defer",
+              description = "To control how to shutdown the route. Default shuts down the route normally. Defer delays the shutdown so that in-flight and pending messages are allowed to complete before the route is shutdown.")
     public void setShutdownRoute(String shutdownRoute) {
         this.shutdownRoute = shutdownRoute;
     }
 
-    /**
-     * To control how to shut down the route.
-     */
     public String getShutdownRunningTask() {
         return shutdownRunningTask;
     }
@@ -1240,7 +1159,8 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition>
      */
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "org.apache.camel.ShutdownRunningTask", defaultValue = "CompleteCurrentTaskOnly",
-              enums = "CompleteCurrentTaskOnly,CompleteAllTasks")
+              enums = "CompleteCurrentTaskOnly,CompleteAllTasks",
+              description = "To control how to handle in-flight and pending messages during shutdown. CompleteCurrentTaskOnly (default) finishes only the current message. CompleteAllTasks finishes all pending messages (e.g. from a batch consumer or aggregator) before shutting down.")
     public void setShutdownRunningTask(String shutdownRunningTask) {
         this.shutdownRunningTask = shutdownRunningTask;
     }
@@ -1261,56 +1181,38 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition>
         return errorHandlerFactory;
     }
 
-    /**
-     * Is a custom error handler been set
-     */
     public boolean isErrorHandlerFactorySet() {
         return errorHandlerFactory != null;
     }
 
-    /**
-     * Sets the error handler to use with processors created by this builder
-     */
     @XmlTransient
     public void setErrorHandlerFactory(ErrorHandlerFactory errorHandlerFactory) {
         this.errorHandlerFactory = errorHandlerFactory;
     }
 
-    /**
-     * This route is created from REST DSL
-     */
+    @XmlTransient
     public void setRest(Boolean rest) {
         this.rest = rest;
     }
 
-    @XmlAttribute
-    @Metadata(label = "advanced")
     public Boolean isRest() {
         return rest;
     }
 
-    /**
-     * This route is created from a route template (or from a Kamelet).
-     */
+    @XmlTransient
     public void setTemplate(Boolean template) {
         this.template = template;
     }
 
-    @XmlAttribute
-    @Metadata(label = "advanced")
     public Boolean isTemplate() {
         return template;
     }
 
-    /**
-     * This route is created from a Kamelet.
-     */
+    @XmlTransient
     public void setKamelet(Boolean kamelet) {
         this.kamelet = kamelet;
     }
 
-    @XmlAttribute
-    @Metadata(label = "advanced")
     public Boolean isKamelet() {
         return kamelet;
     }
@@ -1338,7 +1240,8 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition>
     }
 
     @XmlElementRef(required = false)
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced",
+              description = "Declare the expected data type of the input message. If the actual message type is different at runtime, camel looks for a required Transformer and applies if exists.")
     public void setInputType(InputTypeDefinition inputType) {
         this.inputType = inputType;
     }
@@ -1348,7 +1251,8 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition>
     }
 
     @XmlElementRef(required = false)
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced",
+              description = "Declare the expected data type of the output message. If the actual message type is different at runtime, camel looks for a required Transformer and applies if exists.")
     public void setOutputType(OutputTypeDefinition outputType) {
         this.outputType = outputType;
     }
@@ -1361,11 +1265,8 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition>
         return routeProperties;
     }
 
-    /**
-     * To set metadata as properties on the route.
-     */
     @XmlElement(name = "routeProperty")
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced", description = "To set metadata as properties on the route.")
     public void setRouteProperties(List<PropertyDefinition> routeProperties) {
         this.routeProperties = routeProperties;
     }

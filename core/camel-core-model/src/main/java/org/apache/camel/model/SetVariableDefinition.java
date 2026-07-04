@@ -25,16 +25,20 @@ import org.apache.camel.Expression;
 import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.annotations.DslArg;
 
 /**
  * Sets the value of a variable
  */
-@Metadata(label = "eip,transformation")
+@Metadata(label = "eip,messaging,transformation",
+          description = "Sets a variable to a value computed by an expression")
 @XmlRootElement(name = "setVariable")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class SetVariableDefinition extends ExpressionNode {
 
     @XmlAttribute(required = true)
+    @Metadata(description = "Name of variable to set a new value. The simple language can be used to define a dynamic evaluated variable name. Otherwise a constant name will be used.")
+    @DslArg
     private String name;
 
     public SetVariableDefinition() {
@@ -80,21 +84,13 @@ public class SetVariableDefinition extends ExpressionNode {
         return "setVariable[" + getName() + "]";
     }
 
-    /**
-     * Expression to return the value of the variable
-     */
     @Override
+    @Metadata(description = "The expression whose result is used as the variable value.")
     public void setExpression(ExpressionDefinition expression) {
         // override to include javadoc what the expression is used for
         super.setExpression(expression);
     }
 
-    /**
-     * Name of variable to set a new value
-     * <p/>
-     * The <tt>simple</tt> language can be used to define a dynamic evaluated variable name to be used. Otherwise a
-     * constant name will be used.
-     */
     public void setName(String name) {
         this.name = name;
     }

@@ -45,6 +45,7 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
+import org.apache.camel.support.DefaultHeaderFilterStrategy;
 import org.apache.camel.support.jsse.ClientAuthentication;
 import org.apache.camel.support.jsse.KeyManagersParameters;
 import org.apache.camel.support.jsse.SSLContextParameters;
@@ -281,7 +282,7 @@ public class CoAPEndpoint extends DefaultEndpoint implements EndpointServiceLoca
     @Override
     public HeaderFilterStrategy getHeaderFilterStrategy() {
         if (headerFilterStrategy == null) {
-            headerFilterStrategy = new CoAPHeaderFilterStrategy();
+            headerFilterStrategy = new DefaultHeaderFilterStrategy();
         }
         return headerFilterStrategy;
     }

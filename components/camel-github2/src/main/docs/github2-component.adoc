@@ -7,8 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
-//Manually maintained attributes
-:camel-spring-boot-name: github2
 
 *Since Camel {since}*
 
@@ -38,19 +36,19 @@ Maven users will need to add the following dependency to their pom.xml
 for this component:
 
 [source,xml]
------------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-github2</artifactId>
     <version>${camel-version}</version>
 </dependency>
------------------------------------------
+----
 
 == URI format
 
----------------------------
+----
 github2://endpoint[?options]
----------------------------
+----
 
 
 // component-configure options: START
@@ -67,6 +65,7 @@ The GitHub2 component requires to be configured with an authentication token on 
 
 For example, to set it on the component:
 
+._Java-only: programmatic component configuration_
 [source,java]
 ----
 GitHub2Component ghc = context.getComponent("github2", GitHub2Component.class);
@@ -77,11 +76,42 @@ ghc.setOauthToken("mytoken");
 
 To use with GitHub Enterprise, set the `apiUrl` parameter to your GitHub Enterprise API endpoint:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("github2:commit/main?repoOwner=myorg&repoName=myrepo&apiUrl=https://github.mycompany.com/api/v3")
     .to("log:commits");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="github2:commit/main?repoOwner=myorg&amp;repoName=myrepo&amp;apiUrl=https://github.mycompany.com/api/v3"/>
+  <to uri="log:commits"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: github2:commit/main
+      parameters:
+        repoOwner: myorg
+        repoName: myrepo
+        apiUrl: "https://github.mycompany.com/api/v3"
+      steps:
+        - to:
+            uri: log:commits
+----
+====
 
 === Consumer Endpoints
 
@@ -130,6 +160,10 @@ Returns the content of a file at a specific commit.
 
 === Example: Consuming commits
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("github2:commit/main?repoOwner=apache&repoName=camel&oauthToken=mytoken")
@@ -137,8 +171,42 @@ from("github2:commit/main?repoOwner=apache&repoName=camel&oauthToken=mytoken")
     .to("direct:processCommit");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="github2:commit/main?repoOwner=apache&amp;repoName=camel&amp;oauthToken=mytoken"/>
+  <log message="New commit: ${header.CamelGitHubCommitSha} by ${header.CamelGitHubCommitAuthor}"/>
+  <to uri="direct:processCommit"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: github2:commit/main
+      parameters:
+        repoOwner: apache
+        repoName: camel
+        oauthToken: mytoken
+    steps:
+      - log:
+          message: "New commit: ${header.CamelGitHubCommitSha} by ${header.CamelGitHubCommitAuthor}"
+      - to:
+          uri: direct:processCommit
+----
+====
+
 === Example: Creating an issue
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:createIssue")
@@ -147,5 +215,40 @@ from("direct:createIssue")
     .to("github2:createIssue?repoOwner=apache&repoName=camel&oauthToken=mytoken");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:createIssue"/>
+  <setHeader name="CamelGitHubIssueTitle">
+    <constant>Bug Report</constant>
+  </setHeader>
+  <setBody>
+    <constant>This is the issue description</constant>
+  </setBody>
+  <to uri="github2:createIssue?repoOwner=apache&amp;repoName=camel&amp;oauthToken=mytoken"/>
+</route>
+----
 
-include::spring-boot:partial$starter.adoc[]
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:createIssue
+    steps:
+      - setHeader:
+          name: CamelGitHubIssueTitle
+          constant: Bug Report
+      - setBody:
+          constant: This is the issue description
+      - to:
+          uri: github2:createIssue
+          parameters:
+            repoOwner: apache
+            repoName: camel
+            oauthToken: mytoken
+----
+====

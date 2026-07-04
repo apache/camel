@@ -21,11 +21,23 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadFactory;
 
 /**
- * Creates ExecutorService and ScheduledExecutorService objects that work with a thread pool for a given
- * ThreadPoolProfile and ThreadFactory.
+ * Low-level SPI for constructing {@link java.util.concurrent.ExecutorService} and
+ * {@link java.util.concurrent.ScheduledExecutorService} instances from a {@link ThreadPoolProfile} and a
+ * {@link java.util.concurrent.ThreadFactory}.
+ * <p/>
+ * This interface uses only standard JDK types, which makes it the right customization point for environments (such as
+ * JEE application servers) where thread pool creation must be delegated to a managed thread pool or WorkManager rather
+ * than created directly via {@link java.util.concurrent.Executors}. The higher-level {@link ExecutorServiceManager}
+ * handles Camel-specific concerns such as profile lookup, thread naming, lifecycle tracking, and graceful shutdown;
+ * this factory simply creates the pool when asked.
+ * <p/>
+ * The factory is discovered via {@link FactoryFinder} using the key {@link #FACTORY}. Camel ships
+ * {@code DefaultThreadPoolFactory} as the built-in implementation.
+ * <p/>
+ * See <a href="https://camel.apache.org/manual/threading-model.html">Threading Model</a> in the Camel user manual.
  *
- * This interface allows customizing the creation of these objects to adapt camel for application servers and other
- * environments where thread pools should not be created with the jdk methods
+ * @see ExecutorServiceManager
+ * @see ThreadPoolProfile
  */
 public interface ThreadPoolFactory {
 

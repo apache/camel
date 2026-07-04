@@ -7,8 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Only producer is supported
-//Manually maintained attributes
-:camel-spring-boot-name: jsch
 
 *Since Camel {since}*
 
@@ -24,20 +22,20 @@ Maven users will need to add the following dependency to their `pom.xml`
 for this component:
 
 [source,xml]
-------------------------------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-jsch</artifactId>
     <version>x.x.x</version>
     <!-- use the same version as your Camel core version -->
 </dependency>
-------------------------------------------------------------
+----
 
 == URI format
 
----------------------------------------
+----
 scp://host[:port]/destination[?options]
----------------------------------------
+----
 
 The file name can be specified either in the <path> part of the URI or
 as a "CamelFileName" header on the message (`Exchange.FILE_NAME` if used
@@ -55,6 +53,7 @@ include::partial$component-endpoint-headers.adoc[]
 
 Camel supports OpenSSH certificate-based authentication for SCP connections, where a user's public key is signed by a Certificate Authority (CA). This is configured using the `certFile`, `certUri`, or `certBytes` parameters alongside the private key:
 
+._Java-only: configuring certificate-based authentication_
 [source,java]
 ----
 to("scp://host/path?username=myuser"
@@ -69,6 +68,3 @@ See the xref:sftp-component.adoc[SFTP component] documentation for more details 
 Currently, camel-jsch only supports a
 https://www.javadoc.io/doc/org.apache.camel/camel-api/current/org/apache/camel/Producer.html[Producer]
 (i.e., copy files to another host).
-
-
-include::spring-boot:partial$starter.adoc[]

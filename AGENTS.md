@@ -6,7 +6,7 @@ Guidelines for AI agents working on this codebase.
 
 Apache Camel is an integration framework supporting routing rules in Java, XML and YAML DSLs.
 
-- Version: 4.21.0-SNAPSHOT
+- Version: 4.22.0-SNAPSHOT
 - Java: 17+
 - Build: Maven 3.9.12+
 
@@ -19,6 +19,9 @@ These rules apply to ALL AI agents working on this codebase.
 - All AI-generated content (GitHub PR descriptions, review comments, JIRA comments) MUST clearly
   identify itself as AI-generated and mention the human operator.
   Example: "_Claude Code on behalf of [Human Name]_"
+- AI coding agents MUST be configured to add co-authorship trailers to commits
+  (e.g., `Co-authored-by`). For Claude Code, enable this via the
+  [attribution settings](https://code.claude.com/docs/en/settings#attribution-settings).
 
 ### PR Volume
 
@@ -177,8 +180,8 @@ When reviewing PRs, apply the same investigative rigor:
 When writing or modifying `.adoc` documentation:
 
 - **Use `xref:` for internal links**, never external `https://camel.apache.org/...` URLs.
-  Example: `xref:manual::camel-jbang.adoc[Camel JBang]` instead of
-  `https://camel.apache.org/manual/camel-jbang.html[Camel JBang]`.
+  Example: `xref:manual::camel-jbang.adoc[Camel CLI]` instead of
+  `https://camel.apache.org/manual/camel-jbang.html[Camel CLI]`.
 - **Cross-version xref fragments**: When linking to a section anchor (e.g., `#_my_section`) using
   the `components::` prefix, verify that the target section exists in the **current released version**,
   not just on `main`. The `components::` prefix resolves to the latest released version, so anchors
@@ -312,6 +315,9 @@ camel/
 ```
 
 ## Build
+
+For project build commands, code style restrictions and other standards, check
+[`.oss-ai-helper-rules/project-standards.md`](.oss-ai-helper-rules/project-standards.md).
 
 ```bash
 mvn clean install -Dquickly          # fast build, no tests

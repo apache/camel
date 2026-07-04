@@ -8,8 +8,6 @@
 :tabs-sync-option:
 :component-header: Only producer is supported
 :core:
-//Manually maintained attributes
-:camel-spring-boot-name: dataformat
 
 *Since Camel {since}*
 
@@ -38,9 +36,6 @@ include::partial$component-endpoint-headers.adoc[]
 // component options: END
 
 
-
-
-
 == Examples
 
 For example, to use the xref:dataformats:jaxb-dataformat.adoc[JAXB] xref:manual::data-format.adoc[Data Format], we can do as follows:
@@ -60,14 +55,26 @@ XML::
 +
 [source,xml]
 ----
-<camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
-  <route>
-    <from uri="activemq:My.Queue"/>
-    <to uri="dataformat:jaxb:unmarshal?contextPath=com.acme.model"/>
-    <to uri="mqseries:Another.Queue"/>
-  </route>
-</camelContext>
+<route>
+  <from uri="activemq:My.Queue"/>
+  <to uri="dataformat:jaxb:unmarshal?contextPath=com.acme.model"/>
+  <to uri="mqseries:Another.Queue"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: activemq:My.Queue
+      steps:
+        - to:
+            uri: dataformat:jaxb:unmarshal
+            parameters:
+              contextPath: com.acme.model
+        - to:
+            uri: mqseries:Another.Queue
 ----
 ====
-
-include::spring-boot:partial$starter.adoc[]

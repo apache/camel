@@ -32,7 +32,9 @@ import org.apache.camel.spi.Metadata;
 /**
  * Routes a message through a series of steps that are pre-determined (the slip)
  */
-@Metadata(label = "eip,routing")
+@Metadata(label = "eip,routing",
+          description = "Routes a message through a pre-determined sequence of endpoints defined in a header or expression (the routing slip)."
+                        + " The list of endpoints is evaluated once upfront.")
 @XmlRootElement(name = "routingSlip")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RoutingSlipDefinition<Type extends ProcessorDefinition<Type>> extends ExpressionNode {
@@ -40,13 +42,17 @@ public class RoutingSlipDefinition<Type extends ProcessorDefinition<Type>> exten
     public static final String DEFAULT_DELIMITER = ",";
 
     @XmlAttribute
-    @Metadata(defaultValue = ",")
+    @Metadata(defaultValue = ",",
+              description = "The delimiter used to separate endpoint URIs in the routing slip expression. Default is comma.")
     private String uriDelimiter;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean",
+              description = "If enabled then invalid endpoint URIs are ignored and logged instead of throwing an exception.")
     private String ignoreInvalidEndpoints;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Integer")
+    @Metadata(label = "advanced", javaType = "java.lang.Integer",
+              description = "Configures the cache size for ProducerCache which caches producers for reuse. The default cache size is 1000."
+                            + " Set to -1 to turn off caching.")
     private String cacheSize;
 
     public RoutingSlipDefinition() {
@@ -107,12 +113,8 @@ public class RoutingSlipDefinition<Type extends ProcessorDefinition<Type>> exten
         return Collections.emptyList();
     }
 
-    /**
-     * Expression to define the routing slip, which defines which endpoints to route the message in a pipeline style.
-     * Notice the expression is evaluated once, if you want a more dynamic style, then the dynamic router eip is a
-     * better choice.
-     */
     @Override
+    @Metadata(description = "The expression to compute the routing slip of endpoint URIs. The result is a delimited list of endpoint URIs that defines the series of processing steps.")
     public void setExpression(ExpressionDefinition expression) {
         // override to include javadoc what the expression is used for
         super.setExpression(expression);

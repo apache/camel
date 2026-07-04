@@ -32,9 +32,6 @@ To use this component, add the following dependency to your `pom.xml`:
 ----
 
 
-
-
-
 == Initializing the Ignite component
 
 Each instance of the Ignite component is associated with an underlying `org.apache.ignite.Ignite` instance.
@@ -96,6 +93,4 @@ If the underlying Ignite operation returns void (no return type), this flag dete
 Some Ignite operations can deal with multiple elements at once, if passed a Collection. Enabling this option will treat Collections as a single object, invoking the operation variant for cardinality 1.
 |=======================================================================
 
-:camel-spring-boot-name: ignite
 
-include::spring-boot:partial$starter.adoc[]

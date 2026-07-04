@@ -172,7 +172,7 @@ public interface DnsEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final DnsHeaderNameBuilder INSTANCE = new DnsHeaderNameBuilder();
+        public static final DnsHeaderNameBuilder INSTANCE = new DnsHeaderNameBuilder();
 
         /**
          * The DNS class of the lookup. Should match the values of

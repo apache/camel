@@ -632,7 +632,7 @@ public interface Ses2EndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final Ses2HeaderNameBuilder INSTANCE = new Ses2HeaderNameBuilder();
+        public static final Ses2HeaderNameBuilder INSTANCE = new Ses2HeaderNameBuilder();
 
         /**
          * The sender's email address.

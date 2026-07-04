@@ -63,11 +63,15 @@ pipeline {
                 options {
                     throttle(['camel'])
                 }
-                when { anyOf {
-                    expression { params.PLATFORM_FILTER == 'all' }
-                    expression { params.PLATFORM_FILTER == env.PLATFORM }
-                    expression { params.JDK_FILTER == 'all' }
-                    expression { params.JDK_FILTER == env.JDK_NAME }
+                when { allOf {
+                    anyOf {
+                        expression { params.PLATFORM_FILTER == 'all' }
+                        expression { params.PLATFORM_FILTER == env.PLATFORM }
+                    }
+                    anyOf {
+                        expression { params.JDK_FILTER == 'all' }
+                        expression { params.JDK_FILTER == env.JDK_NAME }
+                    }
                 } }
                 axes {
                     axis {
@@ -129,7 +133,24 @@ pipeline {
                         steps {
                             cleanWs()
                             sh 'rm -rvf /home/jenkins/.m2/repository/org/apache/camel'
-                            checkout scm
+                            script {
+                                // Use full clone for JDK 21 on ubuntu-avx (needed for Sonar analysis)
+                                // Use shallow clone for all other combinations
+                                if ("${PLATFORM}" == "ubuntu-avx" && "${JDK_NAME}" == "jdk_21_latest") {
+                                    echo "Using full clone for ${PLATFORM}-${JDK_NAME} (required for code coverage and Sonar)"
+                                    checkout scm
+                                } else {
+                                    echo "Using shallow clone for ${PLATFORM}-${JDK_NAME}"
+                                    checkout([
+                                        $class: 'GitSCM',
+                                        branches: scm.branches,
+                                        extensions: [
+                                            [$class: 'CloneOption', depth: 1, noTags: true, shallow: true]
+                                        ],
+                                        userRemoteConfigs: scm.userRemoteConfigs
+                                    ])
+                                }
+                            }
                         }
                     }
 

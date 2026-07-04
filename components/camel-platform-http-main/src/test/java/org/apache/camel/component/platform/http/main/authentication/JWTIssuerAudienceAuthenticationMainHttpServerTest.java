@@ -24,9 +24,11 @@ import io.vertx.ext.auth.jwt.JWTAuthOptions;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.main.Main;
+import org.apache.camel.test.AvailablePortFinder;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
@@ -41,11 +43,13 @@ public class JWTIssuerAudienceAuthenticationMainHttpServerTest {
     private static Main main;
     private static JWTAuth jwtAuth;
 
+    @RegisterExtension
+    static AvailablePortFinder.Port port = AvailablePortFinder.find();
+
     @BeforeAll
     static void init() {
-        main = new Main();
-        main.setPropertyPlaceholderLocations("jwt-issuer-audience-auth.properties");
-        main.configure().addRoutesBuilder(new PlatformHttpRouteBuilder());
+        main = MainHttpServerAuthenticationTestSupport.createMain(
+                "jwt-issuer-audience-auth.properties", port, new PlatformHttpRouteBuilder());
         main.enableTrace();
         main.start();
 
@@ -58,7 +62,7 @@ public class JWTIssuerAudienceAuthenticationMainHttpServerTest {
 
     @AfterAll
     static void tearDown() {
-        main.stop();
+        MainHttpServerAuthenticationTestSupport.stopMain(main);
     }
 
     @Test

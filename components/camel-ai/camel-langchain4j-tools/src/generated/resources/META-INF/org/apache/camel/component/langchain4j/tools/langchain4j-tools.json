@@ -11,7 +11,7 @@
     "supportLevel": "Preview",
     "groupId": "org.apache.camel",
     "artifactId": "camel-langchain4j-tools",
-    "version": "4.21.0-SNAPSHOT",
+    "version": "4.22.0-SNAPSHOT",
     "scheme": "langchain4j-tools",
     "extendsScheme": "",
     "syntax": "langchain4j-tools:toolId",
@@ -29,6 +29,12 @@
     "lazyStartProducer": { "index": 2, "kind": "property", "displayName": "Lazy Start Producer", "group": "producer", "label": "producer", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing." },
     "autowiredEnabled": { "index": 3, "kind": "property", "displayName": "Autowired Enabled", "group": "advanced", "label": "advanced", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": true, "description": "Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc." },
     "chatModel": { "index": 4, "kind": "property", "displayName": "Chat Model", "group": "advanced", "label": "advanced", "required": false, "type": "object", "javaType": "dev.langchain4j.model.chat.ChatModel", "deprecated": false, "deprecationNote": "", "autowired": true, "secret": false, "configurationClass": "org.apache.camel.component.langchain4j.tools.LangChain4jToolsConfiguration", "configurationField": "configuration", "description": "Chat Model of type dev.langchain4j.model.chat.ChatModel" }
+  },
+  "headers": {
+    "CamelLangChain4jToolsFinishReason": { "index": 0, "kind": "header", "displayName": "", "group": "common", "label": "", "required": false, "javaType": "dev.langchain4j.model.output.FinishReason", "enum": [ "STOP", "LENGTH", "TOOL_EXECUTION", "CONTENT_FILTER", "OTHER" ], "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The Finish Reason.", "constantName": "org.apache.camel.component.langchain4j.tools.LangChain4jToolsHeaders#FINISH_REASON" },
+    "CamelLangChain4jToolsInputTokenCount": { "index": 1, "kind": "header", "displayName": "", "group": "common", "label": "", "required": false, "javaType": "int", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The Input Token Count.", "constantName": "org.apache.camel.component.langchain4j.tools.LangChain4jToolsHeaders#INPUT_TOKEN_COUNT" },
+    "CamelLangChain4jToolsOutputTokenCount": { "index": 2, "kind": "header", "displayName": "", "group": "common", "label": "", "required": false, "javaType": "int", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The Output Token Count.", "constantName": "org.apache.camel.component.langchain4j.tools.LangChain4jToolsHeaders#OUTPUT_TOKEN_COUNT" },
+    "CamelLangChain4jToolsTotalTokenCount": { "index": 3, "kind": "header", "displayName": "", "group": "common", "label": "", "required": false, "javaType": "int", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The Total Token Count.", "constantName": "org.apache.camel.component.langchain4j.tools.LangChain4jToolsHeaders#TOTAL_TOKEN_COUNT" }
   },
   "properties": {
     "toolId": { "index": 0, "kind": "path", "displayName": "Tool Id", "group": "common", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The tool id" },

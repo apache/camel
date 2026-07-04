@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -51,7 +52,6 @@ import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.TerminalWidthHelper;
 import org.apache.camel.dsl.jbang.core.model.InfraBaseDTO;
 import org.apache.camel.support.PatternHelper;
-import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.json.DeserializationException;
 import org.apache.camel.util.json.Jsoner;
 import picocli.CommandLine;
@@ -97,15 +97,40 @@ public abstract class InfraBaseCommand extends CamelCommand {
                     .toList();
             for (Path pidFile : pidFiles) {
                 String fn = pidFile.getFileName().toString();
-                String sn = fn.substring(fn.indexOf("-") + 1, fn.lastIndexOf('-'));
-                String pid = fn.substring(fn.lastIndexOf("-") + 1, fn.lastIndexOf('.'));
+                String sn = serviceNameFromPidFile(fn);
+                String pid = pidFromPidFile(fn);
                 if (pid.equals(pattern) || PatternHelper.matchPattern(sn, pattern)) {
                     pids.put(Long.valueOf(pid), pidFile);
                 }
             }
+        } catch (NoSuchFileException e) {
+            // camel directory does not exist yet
         }
 
         return pids;
+    }
+
+    /**
+     * Extracts the service name from an {@code infra-<service>-<pid>.json} pid file name. The service name may itself
+     * contain hyphens (for example {@code hive-mq}), so it spans everything between the first and the last hyphen
+     * rather than just the second hyphen-delimited segment.
+     *
+     * @param  pidFileName the pid file name, such as {@code infra-hive-mq-1234.json}.
+     * @return             the service name, such as {@code hive-mq}.
+     */
+    protected static String serviceNameFromPidFile(String pidFileName) {
+        return pidFileName.substring(pidFileName.indexOf('-') + 1, pidFileName.lastIndexOf('-'));
+    }
+
+    /**
+     * Extracts the pid from an {@code infra-<service>-<pid>.json} pid file name. The pid is the segment between the
+     * last hyphen and the file extension, which is robust to service names that themselves contain hyphens.
+     *
+     * @param  pidFileName the pid file name, such as {@code infra-hive-mq-1234.json}.
+     * @return             the pid, such as {@code 1234}.
+     */
+    protected static String pidFromPidFile(String pidFileName) {
+        return pidFileName.substring(pidFileName.lastIndexOf('-') + 1, pidFileName.lastIndexOf('.'));
     }
 
     protected boolean showPidColumn() {
@@ -220,7 +245,7 @@ public abstract class InfraBaseCommand extends CamelCommand {
             Files.createDirectories(p);
             for (String s : Objects.requireNonNull(p.toFile().list())) {
                 if (s.startsWith("infra-" + key + "-") && s.endsWith(".json")) {
-                    return FileUtil.stripExt(s.split("-")[2]);
+                    return pidFromPidFile(s);
                 }
             }
         } catch (Exception e) {

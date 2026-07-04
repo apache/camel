@@ -30,6 +30,7 @@ import org.apache.camel.api.management.ManagedCamelContext;
 import org.apache.camel.api.management.mbean.ManagedDestinationAware;
 import org.apache.camel.api.management.mbean.ManagedProcessorMBean;
 import org.apache.camel.api.management.mbean.ManagedRouteMBean;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.LoggerHelper;
 import org.apache.camel.support.PatternHelper;
@@ -46,19 +47,17 @@ public class ProcessorDevConsole extends AbstractDevConsole {
 
     private static final Logger LOG = LoggerFactory.getLogger(ProcessorDevConsole.class);
 
-    /**
-     * Filters the processors matching by processor id, route id, or route group, and source location
-     */
+    @Metadata(label = "query",
+              description = "Filters the processors matching by processor id, route id, or route group, and source location",
+              javaType = "java.lang.String")
     public static final String FILTER = "filter";
 
-    /**
-     * Limits the number of entries displayed
-     */
+    @Metadata(label = "query", description = "Limits the number of entries displayed", javaType = "java.lang.Integer")
     public static final String LIMIT = "limit";
 
-    /**
-     * Action to perform such as start,stop,suspend,resume,enable,disable on one or more processors
-     */
+    @Metadata(label = "query",
+              description = "Action to perform such as start,stop,enable,disable on one or more processors",
+              javaType = "java.lang.String", enums = "start,stop,enable,disable")
     public static final String ACTION = "action";
 
     public ProcessorDevConsole() {
@@ -67,10 +66,9 @@ public class ProcessorDevConsole extends AbstractDevConsole {
 
     @Override
     protected String doCallText(Map<String, Object> options) {
-        String action = (String) options.get(ACTION);
-        String filter = (String) options.get(FILTER);
-        String limit = (String) options.get(LIMIT);
-        final int max = limit == null ? Integer.MAX_VALUE : Integer.parseInt(limit);
+        String action = optionString(options, ACTION);
+        String filter = optionString(options, FILTER);
+        final int max = optionInt(options, LIMIT, Integer.MAX_VALUE);
         if (action != null) {
             doAction(getCamelContext(), action, filter);
             return "";
@@ -190,10 +188,9 @@ public class ProcessorDevConsole extends AbstractDevConsole {
 
     @Override
     protected JsonObject doCallJson(Map<String, Object> options) {
-        String action = (String) options.get(ACTION);
-        String filter = (String) options.get(FILTER);
-        String limit = (String) options.get(LIMIT);
-        final int max = limit == null ? Integer.MAX_VALUE : Integer.parseInt(limit);
+        String action = optionString(options, ACTION);
+        String filter = optionString(options, FILTER);
+        final int max = optionInt(options, LIMIT, Integer.MAX_VALUE);
         if (action != null) {
             doAction(getCamelContext(), action, filter);
             return new JsonObject();

@@ -92,7 +92,6 @@ public class CamelCatalogTui extends CamelCommand {
     public Integer doCall() throws Exception {
         // to make ServiceLoader work with tamboui for downloaded JARs
         Thread.currentThread().setContextClassLoader(classLoader);
-        TuiHelper.preloadClasses(classLoader);
 
         loadCatalog();
 
@@ -418,7 +417,7 @@ public class CamelCatalogTui extends CamelCommand {
                         Style.EMPTY.fg(Color.CYAN)));
 
         Block headerBlock = Block.builder()
-                .borderType(BorderType.ROUNDED)
+                .borderType(BorderType.ROUNDED).borders(Borders.ALL)
                 .title(" Apache Camel ")
                 .build();
 
@@ -466,10 +465,10 @@ public class CamelCatalogTui extends CamelCommand {
         Table table = Table.builder()
                 .rows(rows)
                 .widths(Constraint.fill())
-                .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
+                .highlightStyle(Theme.selectionBg())
                 .highlightSpacing(Table.HighlightSpacing.ALWAYS)
                 .block(Block.builder()
-                        .borderType(BorderType.ROUNDED)
+                        .borderType(BorderType.ROUNDED).borders(Borders.ALL)
                         .borderStyle(borderStyle)
                         .title(listTitle)
                         .build())
@@ -495,7 +494,7 @@ public class CamelCatalogTui extends CamelCommand {
                             .text(Text.from(Line.from(
                                     Span.styled(emptyMsg, Style.EMPTY.dim()))))
                             .block(Block.builder()
-                                    .borderType(BorderType.ROUNDED)
+                                    .borderType(BorderType.ROUNDED).borders(Borders.ALL)
                                     .borderStyle(borderStyle)
                                     .title(optTitle)
                                     .build())
@@ -525,10 +524,10 @@ public class CamelCatalogTui extends CamelCommand {
                         Constraint.length(4),
                         Constraint.length(12),
                         Constraint.fill())
-                .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
+                .highlightStyle(Theme.selectionBg())
                 .highlightSpacing(Table.HighlightSpacing.ALWAYS)
                 .block(Block.builder()
-                        .borderType(BorderType.ROUNDED)
+                        .borderType(BorderType.ROUNDED).borders(Borders.ALL)
                         .borderStyle(borderStyle)
                         .title(optTitle)
                         .build())
@@ -618,7 +617,7 @@ public class CamelCatalogTui extends CamelCommand {
                         .overflow(Overflow.WRAP_WORD)
                         .scroll(descriptionScroll)
                         .block(Block.builder()
-                                .borderType(BorderType.ROUNDED)
+                                .borderType(BorderType.ROUNDED).borders(Borders.ALL)
                                 .title(title)
                                 .build())
                         .build(),

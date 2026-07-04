@@ -7,8 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
-//Manually maintained attributes
-:camel-spring-boot-name: thrift
 
 *Since Camel {since}*
 
@@ -21,21 +19,20 @@ Maven users will need to add the following dependency to their `pom.xml`
 for this component:
 
 [source,xml]
-------------------------------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-thrift</artifactId>
     <version>x.x.x</version>
     <!-- use the same version as your Camel core version -->
 </dependency>
-------------------------------------------------------------
+----
 
 == URI format
 
--------------------------------------
+----
 thrift://service[?options]
--------------------------------------
-
+----
 
 
 // component options: START
@@ -50,8 +47,9 @@ Parameters in the called procedure must be passed as a list of objects inside th
 To correctly find the corresponding method, all types must be transmitted regardless of the values. Please see an example below, how to pass
 different parameters to the method with the Camel body:
 
+._Java-only: passing different parameter types in the Thrift method request body_
 [source,java]
--------------------------------------------------------------------------------
+----
 List requestBody = new ArrayList();
 
 requestBody.add((boolean)true);
@@ -68,7 +66,7 @@ requestBody.add(new HashSet<String>()); // set parameter
 requestBody.add(new HashMap<String, Long>()); // map parameter 
 
 Object responseBody = template.requestBody("direct:thrift-alltypes", requestBody);
--------------------------------------------------------------------------------
+----
 
 Incoming parameters in the service consumer will also be passed to the message body as a list of objects.
 
@@ -76,29 +74,76 @@ Incoming parameters in the service consumer will also be passed to the message b
 
 Below is a simple synchronous method invoke with host and port parameters
 
+[tabs]
+====
+Java::
++
 [source,java]
--------------------------------------------------------------------------------
+----
 from("direct:thrift-calculate")
-.to("thrift://localhost:1101/org.apache.camel.component.thrift.generated.Calculator?method=calculate&synchronous=true");
--------------------------------------------------------------------------------
+    .to("thrift://localhost:1101/org.apache.camel.component.thrift.generated.Calculator?method=calculate&synchronous=true");
+----
 
-Below is a simple synchronous method invoke for the XML DSL configuration
-
+XML::
++
 [source,xml]
----------------------------------------------------------------------------------------
+----
 <route>
-    <from uri="direct:thrift-add" />
-    <to uri="thrift://localhost:1101/org.apache.camel.component.thrift.generated.Calculator?method=add&synchronous=true"/>
+  <from uri="direct:thrift-calculate"/>
+  <to uri="thrift://localhost:1101/org.apache.camel.component.thrift.generated.Calculator?method=calculate&amp;synchronous=true"/>
 </route>
----------------------------------------------------------------------------------------
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:thrift-calculate
+      steps:
+        - to:
+            uri: thrift://localhost:1101/org.apache.camel.component.thrift.generated.Calculator
+            parameters:
+              method: calculate
+              synchronous: true
+----
+====
 
 Thrift service consumer with asynchronous communication
 
+[tabs]
+====
+Java::
++
 [source,java]
--------------------------------------------------------------------------------
+----
 from("thrift://localhost:1101/org.apache.camel.component.thrift.generated.Calculator")
-.to("direct:thrift-service");
--------------------------------------------------------------------------------
+    .to("direct:thrift-service");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="thrift://localhost:1101/org.apache.camel.component.thrift.generated.Calculator"/>
+  <to uri="direct:thrift-service"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: thrift://localhost:1101/org.apache.camel.component.thrift.generated.Calculator
+      steps:
+        - to:
+            uri: direct:thrift-service
+----
+====
 
 It's possible to automate Java code generation for .thrift files using *thrift-maven-plugin*, but before start the thrift compiler binary distribution for your operating system must be present on the running host.
 
@@ -106,7 +151,3 @@ It's possible to automate Java code generation for .thrift files using *thrift-m
 
 https://github.com/apache/thrift/[Thrift project GitHub]
 https://thrift.apache.org/tutorial/java [Apache Thrift Java tutorial]
-
-
-
-include::spring-boot:partial$starter.adoc[]

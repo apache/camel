@@ -29,13 +29,15 @@ import org.apache.camel.spi.Metadata;
 /**
  * Compress and decompress streams using LZF deflate algorithm.
  */
-@Metadata(firstVersion = "2.17.0", label = "dataformat,transformation", title = "LZF Deflate Compression")
+@Metadata(firstVersion = "2.17.0", label = "dataformat,transformation", title = "LZF Deflate Compression",
+          description = "Compress and decompress streams using LZF deflate algorithm")
 @XmlRootElement(name = "lzf")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class LZFDataFormat extends DataFormatDefinition {
 
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(javaType = "java.lang.Boolean",
+              description = "Whether to enable encoding (compress) using multiple processing cores.")
     private String usingParallelCompression;
 
     public LZFDataFormat() {
@@ -61,9 +63,6 @@ public class LZFDataFormat extends DataFormatDefinition {
         return usingParallelCompression;
     }
 
-    /**
-     * Enable encoding (compress) using multiple processing cores.
-     */
     public void setUsingParallelCompression(String usingParallelCompression) {
         this.usingParallelCompression = usingParallelCompression;
     }

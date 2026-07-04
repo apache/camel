@@ -292,7 +292,7 @@ public interface NetWeaverEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final NetWeaverHeaderNameBuilder INSTANCE = new NetWeaverHeaderNameBuilder();
+        public static final NetWeaverHeaderNameBuilder INSTANCE = new NetWeaverHeaderNameBuilder();
 
         /**
          * The command to execute in

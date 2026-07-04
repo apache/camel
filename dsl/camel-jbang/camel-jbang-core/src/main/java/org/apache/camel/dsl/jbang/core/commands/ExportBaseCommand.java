@@ -171,9 +171,8 @@ public abstract class ExportBaseCommand extends CamelCommand {
     protected String camelVersion;
 
     @CommandLine.Option(names = {
-            "--kamelets-version" }, description = "Apache Camel Kamelets version",
-                        defaultValue = RuntimeType.KAMELETS_VERSION)
-    protected String kameletsVersion = RuntimeType.KAMELETS_VERSION;
+            "--kamelets-version" }, description = "Apache Camel Kamelets version (auto-detected from classpath if not set)")
+    protected String kameletsVersion;
 
     @CommandLine.Option(names = { "--profile" }, scope = CommandLine.ScopeType.INHERIT,
                         completionCandidates = ProfileCompletionCandidates.class,
@@ -204,6 +203,10 @@ public abstract class ExportBaseCommand extends CamelCommand {
     @CommandLine.Option(names = { "--maven-wrapper" }, defaultValue = "true",
                         description = "Include Maven Wrapper files in exported project")
     protected boolean mavenWrapper = true;
+
+    @CommandLine.Option(names = { "--docker" }, defaultValue = "true",
+                        description = "Include Docker files in exported project")
+    protected boolean docker = true;
 
     @CommandLine.Option(names = { "--open-api" }, description = "Adds an OpenAPI spec from the given file (json or yaml file)")
     protected String openapi;
@@ -239,7 +242,7 @@ public abstract class ExportBaseCommand extends CamelCommand {
     protected MavenResolverMixin mavenResolver;
 
     @CommandLine.Option(names = { "--package-scan-jars" }, defaultValue = "false",
-                        description = "Whether to automatic package scan JARs for custom Spring or Quarkus beans making them available for Camel JBang")
+                        description = "Whether to automatic package scan JARs for custom Spring or Quarkus beans making them available for Camel CLI")
     protected boolean packageScanJars;
 
     @CommandLine.Option(names = { "--build-property" },
@@ -535,6 +538,9 @@ public abstract class ExportBaseCommand extends CamelCommand {
     protected abstract Integer export() throws Exception;
 
     protected Integer runSilently(boolean ignoreLoadingError, boolean lazyBean, boolean verbose) throws Exception {
+        if (kameletsVersion == null) {
+            kameletsVersion = VersionHelper.extractKameletsVersion();
+        }
         Run run = new Run(getMain());
         // need to declare the profile to use for run
         run.exportBaseDir = exportBaseDir;
@@ -1009,6 +1015,11 @@ public abstract class ExportBaseCommand extends CamelCommand {
             customize.apply(profileProps);
         }
 
+        // include camel profile if set (so exported runtimes like Spring Boot and Quarkus know the profile)
+        if (this.profile != null && !profileProps.containsKey("camel.main.profile")) {
+            profileProps.put("camel.main.profile", this.profile);
+        }
+
         StringBuilder content = new StringBuilder();
         for (Map.Entry<Object, Object> entry : profileProps.entrySet()) {
             String k = entry.getKey().toString();
@@ -1211,7 +1222,7 @@ public abstract class ExportBaseCommand extends CamelCommand {
                 // ignore
             }
         }
-        return answer != null ? answer : "3.4.5";
+        return answer != null ? answer : "3.5.1";
     }
 
     protected static String jkubeMavenPluginVersion(Path settings, Properties props) {

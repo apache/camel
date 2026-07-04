@@ -371,53 +371,82 @@ public class DefaultUnitOfWork implements UnitOfWork {
 
     @Override
     public Route getRoute() {
-        return route;
+        lock.lock();
+        try {
+            return route;
+        } finally {
+            lock.unlock();
+        }
     }
 
     @Override
     public void pushRoute(Route route) {
-        if (this.route == null) {
-            this.route = route;
-        } else {
-            if (routeStack == null) {
-                routeStack = new ArrayDeque<>();
+        lock.lock();
+        try {
+            if (this.route == null) {
+                this.route = route;
+            } else {
+                if (routeStack == null) {
+                    routeStack = new ArrayDeque<>();
+                }
+                routeStack.push(this.route);
+                this.route = route;
             }
-            routeStack.push(this.route);
-            this.route = route;
+        } finally {
+            lock.unlock();
         }
     }
 
     @Override
     public Route popRoute() {
-        Route old = this.route;
-        if (routeStack != null && !routeStack.isEmpty()) {
-            this.route = routeStack.pop();
-        } else {
-            this.route = null;
+        lock.lock();
+        try {
+            Route old = this.route;
+            if (routeStack != null && !routeStack.isEmpty()) {
+                this.route = routeStack.pop();
+            } else {
+                this.route = null;
+            }
+            return old;
+        } finally {
+            lock.unlock();
         }
-        return old;
     }
 
     @Override
     public int routeStackLevel() {
+        lock.lock();
+        try {
+            return routeStackSize();
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    private int routeStackSize() {
         return (route != null ? 1 : 0) + (routeStack != null ? routeStack.size() : 0);
     }
 
     public int routeStackLevel(boolean includeRouteTemplate, boolean includeKamelet) {
-        if (includeKamelet && includeRouteTemplate) {
-            return routeStackLevel();
-        }
-
-        int level = 0;
-        if (route != null) {
-            level += countRoute(route, includeRouteTemplate, includeKamelet);
-        }
-        if (routeStack != null) {
-            for (Route r : routeStack) {
-                level += countRoute(r, includeRouteTemplate, includeKamelet);
+        lock.lock();
+        try {
+            if (includeKamelet && includeRouteTemplate) {
+                return routeStackSize();
             }
+
+            int level = 0;
+            if (route != null) {
+                level += countRoute(route, includeRouteTemplate, includeKamelet);
+            }
+            if (routeStack != null) {
+                for (Route r : routeStack) {
+                    level += countRoute(r, includeRouteTemplate, includeKamelet);
+                }
+            }
+            return level;
+        } finally {
+            lock.unlock();
         }
-        return level;
     }
 
     private static int countRoute(Route r, boolean includeRouteTemplate, boolean includeKamelet) {

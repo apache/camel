@@ -51,9 +51,6 @@ public class TokenizerImplementationDefinition extends IdentifiedType
         return tokenizerName;
     }
 
-    /**
-     * Sets the tokenizer name
-     */
     public void setTokenizerName(String tokenizerName) {
         this.tokenizerName = tokenizerName;
     }
@@ -65,9 +62,6 @@ public class TokenizerImplementationDefinition extends IdentifiedType
         return configuration;
     }
 
-    /**
-     * Sets the tokenizer configuration
-     */
     public void setConfiguration(Tokenizer.Configuration configuration) {
         this.configuration = configuration;
     }

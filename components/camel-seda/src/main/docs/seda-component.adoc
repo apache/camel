@@ -8,8 +8,6 @@
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
 :core:
-//Manually maintained attributes
-:camel-spring-boot-name: seda
 
 *Since Camel {since}*
 
@@ -62,6 +60,7 @@ By default, the SEDA component always instantiates a `LinkedBlockingQueue`,
 but you can use different implementation, you can reference your own
 `BlockingQueue` implementation, in this case the size option is not used:
 
+._XML-only: Spring bean definition for custom BlockingQueue_
 [source,xml]
 ----
 <bean id="arrayQueue" class="java.util.ArrayBlockingQueue">
@@ -80,6 +79,7 @@ Three implementations are provided:
 * `ArrayBlockingQueueFactory`
 * `PriorityBlockingQueueFactory`
 
+._XML-only: Spring bean definition for custom BlockingQueueFactory_
 [source,xml]
 ----
 <bean id="priorityQueueFactory" class="org.apache.camel.component.seda.PriorityBlockingQueueFactory">
@@ -98,12 +98,55 @@ The xref:seda-component.adoc[SEDA] component supports using
 Request Reply, where the caller will wait for
 the Async route to complete. For instance:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("mina:tcp://0.0.0.0:9876?textline=true&sync=true").to("seda:input");
 
 from("seda:input").to("bean:processInput").to("bean:createResponse");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="mina:tcp://0.0.0.0:9876?textline=true&amp;sync=true"/>
+  <to uri="seda:input"/>
+</route>
+<route>
+  <from uri="seda:input"/>
+  <to uri="bean:processInput"/>
+  <to uri="bean:createResponse"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: mina:tcp://0.0.0.0:9876
+      parameters:
+        textline: true
+        sync: true
+      steps:
+        - to:
+            uri: seda:input
+- route:
+    from:
+      uri: seda:input
+      steps:
+        - to:
+            uri: bean:processInput
+        - to:
+            uri: bean:createResponse
+----
+====
 
 In the route above, we have a TCP listener on port 9876 that accepts
 incoming requests. The request is routed to the `seda:input` queue. As
@@ -117,10 +160,32 @@ By default, the SEDA endpoint uses a single consumer thread, but you can
 configure it to use concurrent consumer threads. So instead of thread
  pools, you can use:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("seda:stageName?concurrentConsumers=5").process(...)
 ----
+
+XML::
++
+[source,xml]
+----
+<from uri="seda:stageName?concurrentConsumers=5"/>
+----
+
+YAML::
++
+[source,yaml]
+----
+from:
+  uri: seda:stageName
+  parameters:
+    concurrentConsumers: 5
+----
+====
 
 As for the difference between the two, note a _thread pool_ can
 increase/shrink dynamically at runtime depending on load, whereas the
@@ -131,6 +196,7 @@ number of concurrent consumers is always fixed.
 Be aware that adding a thread pool to a SEDA endpoint by doing something
 like:
 
+._Java-only: thread pool added to SEDA endpoint_
 [source,java]
 ----
 from("seda:stageName").thread(5).process(...)
@@ -142,6 +208,7 @@ Instead, you might wish to configure a xref:direct-component.adoc[Direct] endpoi
 with a thread pool, which can process messages both synchronously and
 asynchronously. For example:
 
+._Java-only: thread pool on a Direct endpoint_
 [source,java]
 ----
 from("direct:stageName").thread(5).process(...)
@@ -160,39 +227,56 @@ to the original caller.
 
 We send a _Hello World_ message and expect the reply to be _OK_.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
-    @Test
-    public void testSendAsync() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedBodiesReceived("Hello World");
+from("direct:start")
+    .to("seda:next")
+    .transform(constant("OK"));
 
-        // START SNIPPET: e2
-        Object out = template.requestBody("direct:start", "Hello World");
-        assertEquals("OK", out);
-        // END SNIPPET: e2
-
-        MockEndpoint.assertIsSatisfied(context);
-    }
-
-    @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
-        return new RouteBuilder() {
-            // START SNIPPET: e1
-            public void configure() throws Exception {
-                from("direct:start")
-                    // send it to the seda queue that is async
-                    .to("seda:next")
-                    // return a constant response
-                    .transform(constant("OK"));
-
-                from("seda:next").to("mock:result");
-            }
-            // END SNIPPET: e1
-        };
-    }
+from("seda:next").to("mock:result");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <to uri="seda:next"/>
+  <transform>
+    <constant>OK</constant>
+  </transform>
+</route>
+<route>
+  <from uri="seda:next"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: seda:next
+        - transform:
+            constant: "OK"
+- route:
+    from:
+      uri: seda:next
+      steps:
+        - to:
+            uri: mock:result
+----
+====
 
 The _Hello World_ message will be consumed from the SEDA queue from
 another thread for further processing. Since this is from a unit test,
@@ -203,49 +287,67 @@ unit test.
 
 In this example, we have defined two consumers.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
-    @Test
-    public void testSameOptionsProducerStillOkay() throws Exception {
-        getMockEndpoint("mock:foo").expectedBodiesReceived("Hello World");
-        getMockEndpoint("mock:bar").expectedBodiesReceived("Hello World");
-
-        template.sendBody("seda:foo", "Hello World");
-
-        MockEndpoint.assertIsSatisfied(context);
-    }
-    
-    @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
-        return new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                from("seda:foo?multipleConsumers=true").routeId("foo").to("mock:foo");
-                from("seda:foo?multipleConsumers=true").routeId("bar").to("mock:bar");
-            }
-        };
-    }
+from("seda:foo?multipleConsumers=true").routeId("foo").to("mock:foo");
+from("seda:foo?multipleConsumers=true").routeId("bar").to("mock:bar");
 ----
 
+XML::
++
+[source,xml]
+----
+<route id="foo">
+  <from uri="seda:foo?multipleConsumers=true"/>
+  <to uri="mock:foo"/>
+</route>
+<route id="bar">
+  <from uri="seda:foo?multipleConsumers=true"/>
+  <to uri="mock:bar"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    id: foo
+    from:
+      uri: seda:foo
+      parameters:
+        multipleConsumers: true
+      steps:
+        - to:
+            uri: mock:foo
+- route:
+    id: bar
+    from:
+      uri: seda:foo
+      parameters:
+        multipleConsumers: true
+      steps:
+        - to:
+            uri: mock:bar
+----
+====
 
 Since we have specified `multipleConsumers=true` on the seda `foo`
 endpoint we can have those two consumers receive their own copy of the
 message as a kind of _publish/subscribe_ style messaging.
-
-As the beans are part of a unit test, they simply send the message to a
-mock endpoint.
 
 === Extracting queue information.
 
 If needed, information such as queue size, etc. can be obtained without
 using JMX in this fashion:
 
+._Java-only: programmatic access to `SedaEndpoint` internals_
 [source,java]
 ----
 SedaEndpoint seda = context.getEndpoint("seda:xxxx");
 int size = seda.getExchanges().size();
 ----
-
-
-
-include::spring-boot:partial$starter.adoc[]

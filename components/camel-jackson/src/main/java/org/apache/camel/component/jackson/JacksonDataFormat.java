@@ -17,7 +17,9 @@
 package org.apache.camel.component.jackson;
 
 import com.fasterxml.jackson.core.StreamReadConstraints;
+import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Dataformat;
 import org.slf4j.Logger;
@@ -85,7 +87,11 @@ public class JacksonDataFormat extends AbstractJacksonDataFormat {
 
     @Override
     protected ObjectMapper createNewObjectMapper() {
-        ObjectMapper om = new ObjectMapper();
+        // Enable BLOCK_UNSAFE_POLYMORPHIC_BASE_TYPES by default as defense-in-depth against gadget-chain
+        // deserialization when polymorphic typing is enabled, consistent with transform/Json.java.
+        ObjectMapper om = JsonMapper.builder()
+                .enable(MapperFeature.BLOCK_UNSAFE_POLYMORPHIC_BASE_TYPES)
+                .build();
         int len = getMaxStringLength();
         if (len > 0) {
             LOG.debug("Creating ObjectMapper with maxStringLength: {}", len);

@@ -1,7 +1,7 @@
 = Step EIP
 :doctitle: Step
 :shortname: step
-:description: Routes the message to a sequence of processors which is grouped together as one logical name
+:description: Groups a sequence of processing steps under a single logical name for improved monitoring, management, and tracing visibility
 :since: 
 :supportlevel: Stable
 :tabs-sync-option:

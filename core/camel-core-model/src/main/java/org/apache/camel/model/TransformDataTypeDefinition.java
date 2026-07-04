@@ -23,18 +23,26 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.annotations.DslArg;
 
 /**
  * Transforms the message body based on known data type transformers.
  */
-@Metadata(label = "eip,transformation")
+@Metadata(label = "eip,transformation",
+          description = "Transforms the message body between known data types (such as XML, JSON, Java objects)"
+                        + " using registered data type transformers")
 @XmlRootElement(name = "transformDataType")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class TransformDataTypeDefinition extends NoOutputDefinition<TransformDataTypeDefinition> {
 
     @XmlAttribute
+    @DslArg(position = 0)
+    @Metadata(description = "The source data type URN in the format 'scheme:name' (e.g. 'java:com.example.MyClass'). If not specified, the current message body type is used.")
     private String fromType;
     @XmlAttribute(required = true)
+    @DslArg(position = 1)
+    @Metadata(required = true,
+              description = "The target data type URN in the format 'scheme:name' (e.g. 'json:JsonOrder') that the message body should be transformed into.")
     private String toType;
 
     public TransformDataTypeDefinition() {
@@ -79,9 +87,6 @@ public class TransformDataTypeDefinition extends NoOutputDefinition<TransformDat
         }
     }
 
-    /**
-     * From type used in data type transformation.
-     */
     public void setFromType(String fromType) {
         this.fromType = fromType;
     }
@@ -90,9 +95,6 @@ public class TransformDataTypeDefinition extends NoOutputDefinition<TransformDat
         return fromType;
     }
 
-    /**
-     * To type used as a target data type in the transformation.
-     */
     public void setToType(String toType) {
         this.toType = toType;
     }

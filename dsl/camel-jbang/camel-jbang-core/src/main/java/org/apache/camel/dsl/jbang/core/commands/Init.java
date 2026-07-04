@@ -86,7 +86,7 @@ public class Init extends CamelCommand {
     private String fromKamelet;
 
     @Option(names = {
-            "--kamelets-version" }, description = "Apache Camel Kamelets version")
+            "--kamelets-version" }, description = "Apache Camel Kamelets version (auto-detected from classpath if not set)")
     private String kameletsVersion;
 
     @Option(names = { "--pipe" },
@@ -118,7 +118,7 @@ public class Init extends CamelCommand {
         int code = execute();
         if (code == 0) {
             // In case of successful execution, we create the working directory if it does not exist to help the tooling
-            // know that it is a Camel JBang project
+            // know that it is a Camel CLI project
             createWorkingDirectoryIfAbsent();
         }
         return code;

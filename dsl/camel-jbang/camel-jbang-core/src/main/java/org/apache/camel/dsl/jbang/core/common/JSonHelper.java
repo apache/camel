@@ -19,7 +19,7 @@ package org.apache.camel.dsl.jbang.core.common;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.json.Jsoner;
 import org.apache.camel.util.json.Yytoken;
-import org.fusesource.jansi.Ansi;
+import org.jline.jansi.Ansi;
 
 public final class JSonHelper {
 

@@ -24,6 +24,7 @@ camel ask [options]
 | `--max-iterations` | Maximum number of tool-calling rounds | 10 | int
 | `--model` | Model to use | DEFAULT_MODEL | String
 | `--name` | Name or PID of the Camel process. Auto-detected when exactly one process is running |  | String
+| `--show-stats` | Show token usage and elapsed time after response |  | boolean
 | `--show-tools` | Show tool calls and results as they happen |  | boolean
 | `--timeout` | Timeout in seconds for LLM response | 120 | int
 | `--url` | LLM API endpoint URL. Auto-detected if not specified. |  | String

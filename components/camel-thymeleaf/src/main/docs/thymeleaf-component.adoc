@@ -7,8 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Only producer is supported
-//Manually maintained attributes
-:camel-spring-boot-name: thymeleaf
 
 *Since Camel {since}*
 
@@ -22,26 +20,24 @@ Maven users will need to add the following dependency to their `pom.xml`
 for this component:
 
 [source,xml]
-------------------------------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-thymeleaf</artifactId>
     <version>x.x.x</version>
     <!-- use the same version as your Camel core version -->
 </dependency>
-------------------------------------------------------------
+----
 
 == URI format
 
--------------------------------
+----
 thymeleaf:templateName[?options]
--------------------------------
+----
 
 Where *templateName* is the classpath-local URI of the template to
 invoke; or the complete URL of the remote template (e.g.:
 `\file://folder/myfile.html`).
-
-
 
 
 // component options: START
@@ -57,9 +53,9 @@ Thymeleaf to the Message.
 For example, to set the header value of `fruit` in the Thymeleaf template
 `fruit-template.html`:
 
--------------------------------
+----
 $in.setHeader("fruit", "Apple")
--------------------------------
+----
 
 The `fruit` header is now accessible from the `message.out.headers`.
 
@@ -97,11 +93,12 @@ The `Exchange` is transferred as:
 You can set up a custom Thymeleaf Context yourself by
 setting property `allowTemplateFromHeader=true` and setting the message header `CamelThymeleafContext` like this
 
+._Java-only: programmatic Thymeleaf context setup via Exchange API_
 [source,java]
------------------------------------------------------------------------
+----
 EngineContext engineContext = new EngineContext(variableMap);
 exchange.getIn().setHeader("CamelThymeleafContext", engineContext);
------------------------------------------------------------------------
+----
 
 === Hot reloading
 
@@ -132,11 +129,38 @@ endpoint configured.
 
 For a simple use case, you could use something like:
 
+[tabs]
+====
+Java::
++
 [source,java]
-----------------------------------------
-from("activemq:My.Queue").
-  to("thymeleaf:com/acme/MyResponse.html");
-----------------------------------------
+----
+from("activemq:My.Queue")
+    .to("thymeleaf:com/acme/MyResponse.html");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="activemq:My.Queue"/>
+  <to uri="thymeleaf:com/acme/MyResponse.html"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: activemq:My.Queue
+      steps:
+        - to:
+            uri: thymeleaf:com/acme/MyResponse.html
+----
+====
 
 To use a Thymeleaf template to formulate a response to a message for
 InOut message exchanges (where there is a `JMSReplyTo` header).
@@ -144,51 +168,219 @@ InOut message exchanges (where there is a `JMSReplyTo` header).
 If you want to use InOnly and consume the message and send it to another
 destination, you could use the following route:
 
+[tabs]
+====
+Java::
++
 [source,java]
-----------------------------------------
+----
 from("activemq:My.Queue")
-  .to("thymeleaf:com/acme/MyResponse.html")
-  .to("activemq:Another.Queue");
-----------------------------------------
+    .to("thymeleaf:com/acme/MyResponse.html")
+    .to("activemq:Another.Queue");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="activemq:My.Queue"/>
+  <to uri="thymeleaf:com/acme/MyResponse.html"/>
+  <to uri="activemq:Another.Queue"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: activemq:My.Queue
+      steps:
+        - to:
+            uri: thymeleaf:com/acme/MyResponse.html
+        - to:
+            uri: activemq:Another.Queue
+----
+====
 
 And to use the content cache, e.g., for use in production, where the
 `.html` template never changes:
 
+[tabs]
+====
+Java::
++
 [source,java]
-----------------------------------------------------------
+----
 from("activemq:My.Queue")
-  .to("thymeleaf:com/acme/MyResponse.html?contentCache=true")
-  .to("activemq:Another.Queue");
-----------------------------------------------------------
+    .to("thymeleaf:com/acme/MyResponse.html?contentCache=true")
+    .to("activemq:Another.Queue");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="activemq:My.Queue"/>
+  <to uri="thymeleaf:com/acme/MyResponse.html?contentCache=true"/>
+  <to uri="activemq:Another.Queue"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: activemq:My.Queue
+      steps:
+        - to:
+            uri: thymeleaf:com/acme/MyResponse.html
+            parameters:
+              contentCache: true
+        - to:
+            uri: activemq:Another.Queue
+----
+====
 
 And a file-based resource:
 
+[tabs]
+====
+Java::
++
 [source,java]
------------------------------------------------------------------
+----
 from("activemq:My.Queue")
-  .to("thymeleaf:file://myfolder/MyResponse.html?contentCache=true")
-  .to("activemq:Another.Queue");
------------------------------------------------------------------
+    .to("thymeleaf:file://myfolder/MyResponse.html?contentCache=true")
+    .to("activemq:Another.Queue");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="activemq:My.Queue"/>
+  <to uri="thymeleaf:file://myfolder/MyResponse.html?contentCache=true"/>
+  <to uri="activemq:Another.Queue"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: activemq:My.Queue
+      steps:
+        - to:
+            uri: thymeleaf:file://myfolder/MyResponse.html
+            parameters:
+              contentCache: true
+        - to:
+            uri: activemq:Another.Queue
+----
+====
 
 It's possible to specify what template the component
 should use dynamically via a header, so for example:
 
+[tabs]
+====
+Java::
++
 [source,java]
----------------------------------------------------------------------------
+----
 from("direct:in")
-  .setHeader("CamelThymeleafResourceUri").constant("path/to/my/template.html")
-  .to("thymeleaf:dummy?allowTemplateFromHeader=true"");
----------------------------------------------------------------------------
+    .setHeader("CamelThymeleafResourceUri").constant("path/to/my/template.html")
+    .to("thymeleaf:dummy?allowTemplateFromHeader=true");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:in"/>
+  <setHeader name="CamelThymeleafResourceUri">
+    <constant>path/to/my/template.html</constant>
+  </setHeader>
+  <to uri="thymeleaf:dummy?allowTemplateFromHeader=true"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:in
+      steps:
+        - setHeader:
+            name: CamelThymeleafResourceUri
+            expression:
+              constant:
+                expression: path/to/my/template.html
+        - to:
+            uri: thymeleaf:dummy
+            parameters:
+              allowTemplateFromHeader: true
+----
+====
 
 It's possible to specify a template directly as a header.
 The component should use it dynamically via a header, so, for example:
 
+[tabs]
+====
+Java::
++
 [source,java]
----------------------------------------------------------------------------------------------------------------
+----
 from("direct:in")
-  .setHeader("CamelThymeleafTemplate").constant("Hi this is a thymeleaf template that can do templating ${body}")
-  .to("thymeleaf:dummy?allowTemplateFromHeader=true"");
----------------------------------------------------------------------------------------------------------------
+    .setHeader("CamelThymeleafTemplate").constant("Hi this is a thymeleaf template that can do templating ${body}")
+    .to("thymeleaf:dummy?allowTemplateFromHeader=true");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:in"/>
+  <setHeader name="CamelThymeleafTemplate">
+    <constant>Hi this is a thymeleaf template that can do templating ${body}</constant>
+  </setHeader>
+  <to uri="thymeleaf:dummy?allowTemplateFromHeader=true"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:in
+      steps:
+        - setHeader:
+            name: CamelThymeleafTemplate
+            expression:
+              constant:
+                expression: "Hi this is a thymeleaf template that can do templating ${body}"
+        - to:
+            uri: thymeleaf:dummy
+            parameters:
+              allowTemplateFromHeader: true
+----
+====
 
 === The Email Example
 
@@ -197,17 +389,18 @@ confirmation email. The email template is laid out in Thymeleaf as:
 
 .letter.html
 [source,text]
-----------------------------------------------
+----
 Dear [(${headers.lastName})], [(${headers.firstName})]
 
 Thanks for the order of [(${headers.item})].
 
 Regards Camel Riders Bookstore
 [(${body})]
-----------------------------------------------
+----
 
 And the java code (from a unit test):
 
+._Java-only: unit test with Exchange creation and RouteBuilder_
 [source,java]
 ----
     private Exchange createLetter() {
@@ -231,17 +424,7 @@ And the java code (from a unit test):
         mock.assertIsSatisfied();
     }
 
-    @Override
-    protected RouteBuilder createRouteBuilder() {
-        return new RouteBuilder() {
-            public void configure() {
-                from("direct:a")
-                    .to("thymeleaf:org/apache/camel/component/thymeleaf/letter.txt")
-                    .to("mock:result");
-            }
-        };
-    }
+    from("direct:a")
+        .to("thymeleaf:org/apache/camel/component/thymeleaf/letter.txt")
+        .to("mock:result");
 ----
-
-
-include::spring-boot:partial$starter.adoc[]

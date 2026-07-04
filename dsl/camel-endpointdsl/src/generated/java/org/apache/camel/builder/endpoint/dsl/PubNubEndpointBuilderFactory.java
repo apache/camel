@@ -802,7 +802,7 @@ public interface PubNubEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final PubNubHeaderNameBuilder INSTANCE = new PubNubHeaderNameBuilder();
+        public static final PubNubHeaderNameBuilder INSTANCE = new PubNubHeaderNameBuilder();
 
         /**
          * The operation to perform.

@@ -22,9 +22,19 @@ import java.lang.reflect.Method;
 import org.jspecify.annotations.Nullable;
 
 /**
- * Used for custom injection when doing {@link CamelBeanPostProcessor} bean post-processing. Can be used to support
- * 3rd-party annotations for dependency injections.
+ * Pluggable injector that participates in {@link CamelBeanPostProcessor} bean post-processing to support custom,
+ * typically 3rd-party, dependency-injection annotations.
+ * <p/>
+ * When the {@link CamelBeanPostProcessor} scans a bean it invokes every registered injector for each field
+ * ({@link #onFieldInject(Field, Object, String)}) and method ({@link #onMethodInject(Method, Object, String)}),
+ * allowing the injector to detect its own annotations and inject the appropriate values. This is how integrations layer
+ * support for annotations beyond the built-in Camel ones (for example Spring or Quarkus annotations) on top of the
+ * standard post processor. Injectors are registered through
+ * {@link CamelBeanPostProcessor#addCamelBeanPostProjectInjector(CamelBeanPostProcessorInjector)}.
+ * <p/>
+ * See <a href="https://camel.apache.org/manual/bean-injection.html">Bean Injection</a> in the Camel user manual.
  *
+ * @see   CamelBeanPostProcessor
  * @since 3.16
  */
 public interface CamelBeanPostProcessorInjector {

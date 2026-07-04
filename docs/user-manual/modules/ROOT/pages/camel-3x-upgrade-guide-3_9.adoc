@@ -54,6 +54,7 @@ The reason is the information is seldom in use, and by removing we were able to 
 
 Camel now validates that a route has only 1 onCompletion. Previously users could have code such as:
 
+._Java-only: multiple onCompletion per route (no longer allowed)_
 [source,java]
 ----
 from("direct:start")

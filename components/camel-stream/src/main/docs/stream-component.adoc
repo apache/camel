@@ -8,8 +8,6 @@
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
 :core:
-//Manually maintained attributes
-:camel-spring-boot-name: stream
 
 *Since Camel {since}*
 
@@ -74,19 +72,37 @@ add a `java.io.OutputStream` object to `message.in.header` in the key
 In the following sample we route messages from the `direct:in` endpoint
 to the `System.out` stream:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
-// Route messages to the standard output.
 from("direct:in").to("stream:out");
-
-// Send String payload to the standard output.
-// Message will be followed by the newline.
-template.sendBody("direct:in", "Hello Text World");
-
-// Send byte[] payload to the standard output.
-// No newline will be added after the message.
-template.sendBody("direct:in", "Hello Bytes World".getBytes());
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:in"/>
+  <to uri="stream:out"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:in
+      steps:
+        - to:
+            uri: stream:out
+----
+====
 
 The following sample demonstrates how the header type can be used to
 determine which stream to use. In the sample we use our own output
@@ -95,30 +111,125 @@ stream, `MyOutputStream`.
 The following sample demonstrates how to continuously read a file stream
 (analogous to the UNIX `tail` command):
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("stream:file?fileName=/server/logs/server.log&scanStream=true&scanStreamDelay=1000")
-  .to("bean:logService?method=parseLogLine");
+    .to("bean:logService?method=parseLogLine");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="stream:file?fileName=/server/logs/server.log&amp;scanStream=true&amp;scanStreamDelay=1000"/>
+  <to uri="bean:logService?method=parseLogLine"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: stream:file
+      parameters:
+        fileName: /server/logs/server.log
+        scanStream: true
+        scanStreamDelay: 1000
+      steps:
+        - to:
+            uri: bean:logService
+            parameters:
+              method: parseLogLine
+----
+====
 
 If you want to re-load the file if it roll over/rewritten then you should also turn on the `fileWatcher` and `retry` options.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("stream:file?fileName=/server/logs/server.log&scanStream=true&scanStreamDelay=1000&retry=true&fileWatcher=true")
-  .to("bean:logService?method=parseLogLine");
+    .to("bean:logService?method=parseLogLine");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="stream:file?fileName=/server/logs/server.log&amp;scanStream=true&amp;scanStreamDelay=1000&amp;retry=true&amp;fileWatcher=true"/>
+  <to uri="bean:logService?method=parseLogLine"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: stream:file
+      parameters:
+        fileName: /server/logs/server.log
+        scanStream: true
+        scanStreamDelay: 1000
+        retry: true
+        fileWatcher: true
+      steps:
+        - to:
+            uri: bean:logService
+            parameters:
+              method: parseLogLine
+----
+====
 
 === Reading HTTP server side streaming
 
 The camel-stream component has basic support for connecting to a remote HTTP server and read streaming data
 (chunk of data separated by new-line).
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("stream:http?scanStream=true&httpUrl=http://localhost:8500")
   .to("log:input");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="stream:http?scanStream=true&amp;httpUrl=http://localhost:8500"/>
+  <to uri="log:input"/>
+</route>
+----
 
-include::spring-boot:partial$starter.adoc[]
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: stream:http
+      parameters:
+        scanStream: true
+        httpUrl: "http://localhost:8500"
+      steps:
+        - to:
+            uri: log:input
+----
+====

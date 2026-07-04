@@ -28,10 +28,11 @@ import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.widgets.Clear;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
+import dev.tamboui.widgets.block.Borders;
 import dev.tamboui.widgets.block.Title;
 
-import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.hint;
-import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.hintLast;
+import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.hint;
+import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.hintLast;
 
 class HelpOverlay {
 
@@ -59,7 +60,7 @@ class HelpOverlay {
         if (!visible) {
             return false;
         }
-        if (ke.isCancel() || ke.isChar('q') || ke.isKey(KeyCode.F1)) {
+        if (ke.isCancel() || ke.isChar('q') || ke.isChar('?') || ke.isKey(KeyCode.F1)) {
             close();
             return true;
         }
@@ -91,11 +92,11 @@ class HelpOverlay {
         Rect popup = new Rect(area.left() + 2, area.top() + 1, area.width() - 4, area.height() - 2);
 
         Block block = Block.builder()
-                .borderType(BorderType.ROUNDED)
+                .borderType(BorderType.ROUNDED).borders(Borders.ALL)
                 .title(" Help ")
                 .titleBottom(Title.from(Line.from(
-                        Span.styled(" F1", MonitorContext.HINT_KEY_STYLE), Span.raw(" close "),
-                        Span.styled(" ↑↓", MonitorContext.HINT_KEY_STYLE), Span.raw(" scroll "))))
+                        Span.styled(" F1/? ", Theme.hintKey()), Span.raw(" close "),
+                        Span.styled(" ↑↓ ", Theme.hintKey()), Span.raw(" scroll "))))
                 .build();
 
         MarkdownView view = MarkdownView.builder()

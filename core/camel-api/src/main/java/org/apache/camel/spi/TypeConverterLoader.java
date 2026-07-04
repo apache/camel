@@ -19,7 +19,18 @@ package org.apache.camel.spi;
 import org.apache.camel.TypeConverterLoaderException;
 
 /**
- * A pluggable strategy to load type converters into a {@link TypeConverterRegistry} from some kind of mechanism.
+ * Pluggable strategy for discovering and loading {@link TypeConverter} instances into a {@link TypeConverterRegistry}
+ * during {@link org.apache.camel.CamelContext} startup.
+ * <p/>
+ * Camel ships a default implementation that reads converter class names from
+ * {@code META-INF/services/org/apache/camel/TypeConverter} resource files on the classpath, a convention that component
+ * modules use to register their converters automatically without explicit wiring. Additional loaders can be supplied to
+ * support alternative discovery mechanisms such as loading converters from a Spring {@code ApplicationContext} or an
+ * OSGi service registry.
+ *
+ * @see TypeConverterRegistry
+ * @see TypeConverter
+ * @see org.apache.camel.Converter
  */
 public interface TypeConverterLoader {
 

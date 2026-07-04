@@ -30,9 +30,9 @@ import org.springframework.vault.client.VaultEndpoint;
 import org.springframework.vault.core.VaultTemplate;
 
 /**
- * Manage secrets in Hashicorp Vault Service
+ * Manage secrets in HashiCorp Vault Service
  */
-@UriEndpoint(firstVersion = "3.18.0", scheme = "hashicorp-vault", title = "Hashicorp Vault",
+@UriEndpoint(firstVersion = "3.18.0", scheme = "hashicorp-vault", title = "HashiCorp Vault",
              syntax = "hashicorp-vault:secretsEngine", category = {
                      Category.CLOUD, Category.CLOUD },
              producerOnly = true,

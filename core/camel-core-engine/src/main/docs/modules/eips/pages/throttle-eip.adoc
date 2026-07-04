@@ -1,7 +1,7 @@
 = Throttle EIP
 :doctitle: Throttle
 :shortname: throttle
-:description: Controls the rate at which messages are passed to the next node in the route
+:description: Limits the message throughput to a maximum number of messages per time period to avoid overloading downstream systems
 :since: 
 :supportlevel: Stable
 :tabs-sync-option:

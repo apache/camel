@@ -57,36 +57,29 @@ public class SpanToBeanTest extends ExchangeTestSupport {
 
     private void checkTrace(MockTrace trace) {
         List<Span> spans = trace.spans();
-        assertEquals(8, spans.size());
-        // Cast to implementation object to be able to
-        // inspect the status of the Span.
+        // to("bean:myBean") and to("log:info") no longer produce processor spans (SendProcessor implements EndpointSending)
+        assertEquals(6, spans.size());
         MockSpanAdapter testProducer = (MockSpanAdapter) spans.get(0);
         MockSpanAdapter direct = (MockSpanAdapter) spans.get(1);
         MockSpanAdapter innerLog = (MockSpanAdapter) spans.get(2);
-        MockSpanAdapter toBean = (MockSpanAdapter) spans.get(3);
-        MockSpanAdapter bean = (MockSpanAdapter) spans.get(4);
-        MockSpanAdapter beanMethod = (MockSpanAdapter) spans.get(5);
-        MockSpanAdapter log = (MockSpanAdapter) spans.get(6);
-        MockSpanAdapter innerToLog = (MockSpanAdapter) spans.get(7);
+        MockSpanAdapter bean = (MockSpanAdapter) spans.get(3);
+        MockSpanAdapter beanMethod = (MockSpanAdapter) spans.get(4);
+        MockSpanAdapter log = (MockSpanAdapter) spans.get(5);
 
         // Validate span completion
         assertEquals("true", testProducer.getTag("isDone"));
         assertEquals("true", direct.getTag("isDone"));
         assertEquals("true", innerLog.getTag("isDone"));
-        assertEquals("true", toBean.getTag("isDone"));
         assertEquals("true", bean.getTag("isDone"));
         assertEquals("true", beanMethod.getTag("isDone"));
         assertEquals("true", log.getTag("isDone"));
-        assertEquals("true", innerToLog.getTag("isDone"));
 
         // Validate same trace
         assertEquals(testProducer.getTag("traceid"), direct.getTag("traceid"));
         assertEquals(testProducer.getTag("traceid"), innerLog.getTag("traceid"));
-        assertEquals(testProducer.getTag("traceid"), log.getTag("traceid"));
-        assertEquals(testProducer.getTag("traceid"), toBean.getTag("traceid"));
         assertEquals(testProducer.getTag("traceid"), bean.getTag("traceid"));
         assertEquals(testProducer.getTag("traceid"), beanMethod.getTag("traceid"));
-        assertEquals(testProducer.getTag("traceid"), innerToLog.getTag("traceid"));
+        assertEquals(testProducer.getTag("traceid"), log.getTag("traceid"));
 
         // Validate op
         assertEquals(Op.EVENT_RECEIVED.toString(), direct.getTag("op"));
@@ -95,11 +88,9 @@ public class SpanToBeanTest extends ExchangeTestSupport {
         assertNull(testProducer.getTag("parentSpan"));
         assertEquals(testProducer.getTag("spanid"), direct.getTag("parentSpan"));
         assertEquals(direct.getTag("spanid"), innerLog.getTag("parentSpan"));
-        assertEquals(direct.getTag("spanid"), log.getTag("parentSpan"));
-        assertEquals(direct.getTag("spanid"), toBean.getTag("parentSpan"));
-        assertEquals(toBean.getTag("spanid"), bean.getTag("parentSpan"));
+        assertEquals(direct.getTag("spanid"), bean.getTag("parentSpan"));
         assertEquals(bean.getTag("spanid"), beanMethod.getTag("parentSpan"));
-        assertEquals(log.getTag("spanid"), innerToLog.getTag("parentSpan"));
+        assertEquals(direct.getTag("spanid"), log.getTag("parentSpan"));
 
         // Validate operations
         assertEquals(Op.EVENT_SENT.toString(), testProducer.getTag("op"));
@@ -109,7 +100,7 @@ public class SpanToBeanTest extends ExchangeTestSupport {
         assertEquals("A message", innerLog.logEntries().get(0).fields().get("message"));
         assertEquals(
                 "Exchange[ExchangePattern: InOnly, BodyType: String, Body: my-body]",
-                innerToLog.logEntries().get(0).fields().get("message"));
+                log.logEntries().get(0).fields().get("message"));
     }
 
     @Override

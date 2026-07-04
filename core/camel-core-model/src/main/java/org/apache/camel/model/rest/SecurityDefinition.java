@@ -26,24 +26,24 @@ import org.apache.camel.spi.Metadata;
 /**
  * Rest security definition
  */
-@Metadata(label = "rest,security,configuration", title = "Rest Security")
+@Metadata(label = "rest,security,configuration", title = "Rest Security",
+          description = "Applies a security requirement to a REST operation, referencing a security scheme defined at the service level")
 @XmlRootElement(name = "security")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class SecurityDefinition {
 
     @XmlAttribute(required = true)
-    @Metadata(required = true)
+    @Metadata(description = "Key used to refer to this security definition.",
+              required = true)
     private String key;
     @XmlAttribute
+    @Metadata(description = "The scopes to allow (separate multiple scopes by comma).")
     private String scopes;
 
     public String getKey() {
         return key;
     }
 
-    /**
-     * Key used to refer to this security definition
-     */
     public void setKey(String key) {
         this.key = key;
     }
@@ -52,9 +52,6 @@ public class SecurityDefinition {
         return scopes;
     }
 
-    /**
-     * The scopes to allow (separate multiple scopes by comma)
-     */
     public void setScopes(String scopes) {
         this.scopes = scopes;
     }

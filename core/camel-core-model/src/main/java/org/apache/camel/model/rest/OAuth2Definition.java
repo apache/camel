@@ -30,21 +30,26 @@ import org.apache.camel.spi.Metadata;
 /**
  * Rest security OAuth2 definition
  */
-@Metadata(label = "rest,security,configuration")
+@Metadata(label = "rest,security,configuration", description = "Configures OAuth2 authentication for a REST service")
 @XmlRootElement(name = "oauth2")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class OAuth2Definition extends RestSecurityDefinition {
 
     @XmlAttribute
+    @Metadata(description = "The authorization URL to use for this flow. Required for implicit and access code flows.")
     private String authorizationUrl;
     @XmlAttribute
+    @Metadata(description = "The token URL to use for this flow. Required for password, application, and access code flows.")
     private String tokenUrl;
     @XmlAttribute
+    @Metadata(description = "The URL to use for obtaining refresh tokens.")
     private String refreshUrl;
     @XmlAttribute
-    @Metadata(enums = "implicit,password,application,clientCredentials,accessCode,authorizationCode")
+    @Metadata(description = "The flow used by the OAuth2 security scheme. Valid values are implicit, password, application or accessCode.",
+              enums = "implicit,password,application,clientCredentials,accessCode,authorizationCode")
     private String flow;
     @XmlElement(name = "scopes")
+    @Metadata(description = "The available scopes for the OAuth2 security scheme.")
     private List<RestPropertyDefinition> scopes = new ArrayList<>();
 
     public OAuth2Definition() {
@@ -58,10 +63,6 @@ public class OAuth2Definition extends RestSecurityDefinition {
         return authorizationUrl;
     }
 
-    /**
-     * The authorization URL to be used for this flow. This SHOULD be in the form of a URL. Required for implicit and
-     * access code flows
-     */
     public void setAuthorizationUrl(String authorizationUrl) {
         this.authorizationUrl = authorizationUrl;
     }
@@ -70,10 +71,6 @@ public class OAuth2Definition extends RestSecurityDefinition {
         return tokenUrl;
     }
 
-    /**
-     * The token URL to be used for this flow. This SHOULD be in the form of a URL. Required for password, application,
-     * and access code flows.
-     */
     public void setTokenUrl(String tokenUrl) {
         this.tokenUrl = tokenUrl;
     }
@@ -82,9 +79,6 @@ public class OAuth2Definition extends RestSecurityDefinition {
         return refreshUrl;
     }
 
-    /**
-     * The URL to be used for obtaining refresh tokens. This MUST be in the form of a URL.
-     */
     public void setRefreshUrl(String refreshUrl) {
         this.refreshUrl = refreshUrl;
     }
@@ -93,10 +87,6 @@ public class OAuth2Definition extends RestSecurityDefinition {
         return flow;
     }
 
-    /**
-     * The flow used by the OAuth2 security scheme. Valid values are "implicit", "password", "application" or
-     * "accessCode".
-     */
     public void setFlow(String flow) {
         this.flow = flow;
     }
@@ -105,9 +95,6 @@ public class OAuth2Definition extends RestSecurityDefinition {
         return scopes;
     }
 
-    /**
-     * The available scopes for an OAuth2 security scheme
-     */
     public void setScopes(List<RestPropertyDefinition> scopes) {
         this.scopes = scopes;
     }

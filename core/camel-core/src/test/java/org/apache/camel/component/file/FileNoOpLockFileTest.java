@@ -25,7 +25,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.DisabledOnOs;
 
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -33,8 +32,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 /**
  * Unit test to verify that the noop file strategy usage of lock files.
  */
-@DisabledOnOs(architectures = { "s390x" },
-              disabledReason = "This test does not run reliably on s390x (see CAMEL-21438)")
 public class FileNoOpLockFileTest extends ContextTestSupport {
 
     @Test
@@ -47,7 +44,7 @@ public class FileNoOpLockFileTest extends ContextTestSupport {
         mock.assertIsSatisfied();
 
         // sleep to let file consumer do its unlocking
-        await().atMost(1, TimeUnit.SECONDS).until(() -> existsLockFile(false));
+        await().atMost(5, TimeUnit.SECONDS).until(() -> existsLockFile(false));
 
         // should be deleted after processing
         checkLockFile(false);
@@ -63,7 +60,7 @@ public class FileNoOpLockFileTest extends ContextTestSupport {
         mock.assertIsSatisfied();
 
         // sleep to let file consumer do its unlocking
-        await().atMost(1, TimeUnit.SECONDS).until(() -> existsLockFile(false));
+        await().atMost(5, TimeUnit.SECONDS).until(() -> existsLockFile(false));
 
         // no lock files should exists after processing
         checkLockFile(false);

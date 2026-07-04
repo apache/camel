@@ -23,6 +23,7 @@ import java.util.Map;
 
 import org.apache.camel.spi.BacklogErrorEventMessage;
 import org.apache.camel.spi.ErrorRegistry;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.console.AbstractDevConsole;
 import org.apache.camel.util.TimeUtils;
@@ -32,34 +33,26 @@ import org.apache.camel.util.json.JsonObject;
 @DevConsole(name = "errors", displayName = "Error Registry", description = "Display captured routing errors")
 public class ErrorRegistryConsole extends AbstractDevConsole {
 
-    /**
-     * Filter by route id
-     */
+    @Metadata(label = "query", description = "Filter by route id", javaType = "java.lang.String")
     public static final String ROUTE_ID = "routeId";
 
-    /**
-     * Limits the number of entries displayed
-     */
+    @Metadata(label = "query", description = "Limits the number of entries displayed", javaType = "java.lang.Integer")
     public static final String LIMIT = "limit";
 
-    /**
-     * Whether to include stack traces
-     */
+    @Metadata(label = "query", description = "Whether to include stack traces", javaType = "java.lang.Boolean",
+              defaultValue = "false")
     public static final String STACK_TRACE = "stackTrace";
 
-    /**
-     * Filter by exception type (case-insensitive substring match)
-     */
+    @Metadata(label = "query", description = "Filter by exception type (case-insensitive substring match)",
+              javaType = "java.lang.String")
     public static final String EXCEPTION = "exception";
 
-    /**
-     * Filter by time window as duration string (e.g. "60s", "5m", "1h"). Only entries within this window are included.
-     */
+    @Metadata(label = "query",
+              description = "Filter by time window as duration string (e.g. 60s, 5m, 1h). Only entries within this window are included.",
+              javaType = "java.lang.String")
     public static final String AGO = "ago";
 
-    /**
-     * Filter by handled status ("true" or "false")
-     */
+    @Metadata(label = "query", description = "Filter by handled status", javaType = "java.lang.Boolean")
     public static final String HANDLED = "handled";
 
     public ErrorRegistryConsole() {
@@ -68,7 +61,7 @@ public class ErrorRegistryConsole extends AbstractDevConsole {
 
     @Override
     protected String doCallText(Map<String, Object> options) {
-        boolean includeStackTrace = "true".equals(options.get(STACK_TRACE));
+        boolean includeStackTrace = optionBoolean(options, STACK_TRACE, false);
 
         StringBuilder sb = new StringBuilder();
 
@@ -105,7 +98,7 @@ public class ErrorRegistryConsole extends AbstractDevConsole {
 
     @Override
     protected JsonObject doCallJson(Map<String, Object> options) {
-        boolean includeStackTrace = "true".equals(options.get(STACK_TRACE));
+        boolean includeStackTrace = optionBoolean(options, STACK_TRACE, false);
 
         JsonObject root = new JsonObject();
 
@@ -134,12 +127,12 @@ public class ErrorRegistryConsole extends AbstractDevConsole {
         return root;
     }
 
-    private static List<BacklogErrorEventMessage> fetchAndFilter(ErrorRegistry registry, Map<String, Object> options) {
-        String routeId = (String) options.get(ROUTE_ID);
-        String exceptionFilter = (String) options.get(EXCEPTION);
-        String agoFilter = (String) options.get(AGO);
-        String handledFilter = (String) options.get(HANDLED);
-        int max = parseLimit(options);
+    private List<BacklogErrorEventMessage> fetchAndFilter(ErrorRegistry registry, Map<String, Object> options) {
+        String routeId = optionString(options, ROUTE_ID);
+        String exceptionFilter = optionString(options, EXCEPTION);
+        String agoFilter = optionString(options, AGO);
+        Boolean handledFilter = optionBoolean(options, HANDLED);
+        int max = optionInt(options, LIMIT, Integer.MAX_VALUE);
 
         // fetch all entries (route-scoped if requested), apply filters, then limit
         Collection<BacklogErrorEventMessage> all;
@@ -168,7 +161,7 @@ public class ErrorRegistryConsole extends AbstractDevConsole {
                     && !entry.getExceptionType().toLowerCase().contains(exceptionFilter.toLowerCase())) {
                 continue;
             }
-            if (handledFilter != null && !String.valueOf(entry.isHandled()).equals(handledFilter)) {
+            if (handledFilter != null && entry.isHandled() != handledFilter) {
                 continue;
             }
             result.add(entry);
@@ -179,15 +172,8 @@ public class ErrorRegistryConsole extends AbstractDevConsole {
         return result;
     }
 
-    private static int parseLimit(Map<String, Object> options) {
-        String limit = (String) options.get(LIMIT);
-        if (limit == null) {
-            return Integer.MAX_VALUE;
-        }
-        try {
-            return Integer.parseInt(limit);
-        } catch (NumberFormatException e) {
-            return Integer.MAX_VALUE;
-        }
+    private Boolean optionBoolean(Map<String, Object> options, String key) {
+        String val = optionString(options, key);
+        return val != null ? Boolean.parseBoolean(val) : null;
     }
 }

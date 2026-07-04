@@ -23,14 +23,14 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>4.21.0-SNAPSHOT</version>
+        <version>4.22.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-hashicorp-vault</artifactId>
     <packaging>jar</packaging>
 
-    <name>Camel :: Hashicorp :: Key Vault</name>
-    <description>Camel Hashicorp Vault Component</description>
+    <name>Camel :: HashiCorp :: Key Vault</name>
+    <description>Camel HashiCorp Vault Component</description>
 
     <properties>
         <!-- Hashicorp vault container is not available on this platform -->

@@ -35,7 +35,7 @@ import picocli.CommandLine.Command;
 
 import static org.apache.camel.support.LoggerHelper.stripSourceLocationLineNumber;
 
-@Command(name = "route-dump", description = "Dump Camel route in XML or YAML format", sortOptions = false,
+@Command(name = "route-dump", description = "Dump Camel route in XML, YAML, or Java DSL format", sortOptions = false,
          showDefaultValues = true,
          footer = {
                  "%nExamples:",
@@ -62,7 +62,7 @@ public class CamelRouteDumpAction extends ActionBaseCommand {
 
         @Override
         public Iterator<String> iterator() {
-            return List.of("yaml", "xml").iterator();
+            return List.of("yaml", "xml", "java").iterator();
         }
 
     }
@@ -71,7 +71,7 @@ public class CamelRouteDumpAction extends ActionBaseCommand {
     String name = "*";
 
     @CommandLine.Option(names = { "--format" }, completionCandidates = FormatCompletionCandidates.class,
-                        description = "Output format (xml, or yaml)", defaultValue = "yaml")
+                        description = "Output format (xml, yaml, or java)", defaultValue = "yaml")
     String format;
 
     @CommandLine.Option(names = { "--raw" },
@@ -172,7 +172,7 @@ public class CamelRouteDumpAction extends ActionBaseCommand {
                 }
             }
         } else {
-            printer().println("Response from running Camel with PID " + pid + " not received within 5 seconds");
+            printer().println("Response from running Camel with PID " + pid + " not received within 10 seconds");
             return 1;
         }
 

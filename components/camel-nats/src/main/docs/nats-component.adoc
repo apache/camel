@@ -7,8 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
-//Manually maintained attributes
-:camel-spring-boot-name: nats
 
 *Since Camel {since}*
 
@@ -20,20 +18,20 @@ Maven users will need to add the following dependency to
 their `pom.xml` for this component.
 
 [source,xml]
-------------------------------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-nats</artifactId>
     <!-- use the same version as your Camel core version -->
     <version>x.y.z</version>
 </dependency>
-------------------------------------------------------------
+----
 
 == URI format
 
-----------------------
+----
 nats:topic[?options]
-----------------------
+----
 
 Where *topic* is the topic name
 
@@ -52,6 +50,7 @@ You configure the NATS servers on either the component or the endpoint.
 
 For example, to configure this once on the component, you can do:
 
+._Java-only: configuring NATS servers on the component_
 [source,java]
 ----
 NatsComponent nats = context.getComponent("nats", NatsComponent.class);
@@ -62,10 +61,39 @@ Notice how you can specify multiple servers separated by comma.
 
 Or you can specify the servers in the endpoint URI
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:send").to("nats:test?servers=localhost:4222");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:send"/>
+  <to uri="nats:test?servers=localhost:4222"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:send
+      steps:
+        - to:
+            uri: nats:test
+            parameters:
+              servers: localhost:4222
+----
+====
 
 The endpoint configuration will override any server configuration on the component level.
 
@@ -74,6 +102,7 @@ The endpoint configuration will override any server configuration on the compone
 You can specify username and password for the servers in the server URLs,
 where its `username:password@url`, or `token@url` etc:
 
+._Java-only: configuring NATS servers with credentials_
 [source,java]
 ----
 NatsComponent nats = context.getComponent("nats", NatsComponent.class);
@@ -95,35 +124,150 @@ The consumer will, when routing the message is complete, send back the message a
 
 === Producer example
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:send")
   .to("nats:mytopic");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:send"/>
+  <to uri="nats:mytopic"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:send
+      steps:
+        - to:
+            uri: nats:mytopic
+----
+====
+
 In case of using authorization, you can directly specify your credentials in the server URL
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:send")
   .to("nats:mytopic?servers=username:password@localhost:4222");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:send"/>
+  <to uri="nats:mytopic?servers=username:password@localhost:4222"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:send
+      steps:
+        - to:
+            uri: nats:mytopic
+            parameters:
+              servers: "username:password@localhost:4222"
+----
+====
+
 or your token
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:send")
-  .to("nats:mytopic?servers=token@localhost:4222);
+  .to("nats:mytopic?servers=token@localhost:4222");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:send"/>
+  <to uri="nats:mytopic?servers=token@localhost:4222"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:send
+      steps:
+        - to:
+            uri: nats:mytopic
+            parameters:
+              servers: "token@localhost:4222"
+----
+====
 
 === Consumer example
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("nats:mytopic?maxMessages=5&queueName=myqueue")
   .to("mock:result");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="nats:mytopic?maxMessages=5&amp;queueName=myqueue"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: nats:mytopic
+      parameters:
+        maxMessages: 5
+        queueName: myqueue
+      steps:
+        - to:
+            uri: mock:result
+----
+====
 
 === Manual Acknowledgment (JetStream)
 
@@ -134,6 +278,7 @@ To take full control of acknowledgment, set `manualAck=true` on the consumer end
 This disables automatic acknowledgment and exposes a `NatsManualAck` object as the
 `CamelNatsManualAck` message header.
 
+._Java-only: manual acknowledgment with NatsManualAck in a processor_
 [source,java]
 ----
 from("nats:mytopic?jetstreamEnabled=true&jetstreamName=mystream&durableName=myconsumer&pullSubscription=false&manualAck=true")
@@ -147,6 +292,3 @@ from("nats:mytopic?jetstreamEnabled=true&jetstreamName=mystream&durableName=myco
 
 If the route completes without calling any NatsManualAck method, the message remains unacknowledged
 and NATS will redeliver it after `ackWait` expires (default 30 seconds).
-
-
-include::spring-boot:partial$starter.adoc[]

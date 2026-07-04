@@ -1,7 +1,7 @@
 = Load Balance EIP
 :doctitle: Load Balance
 :shortname: loadBalance
-:description: Balances message processing among a number of nodes
+:description: Distributes messages across multiple endpoints using a load balancing strategy such as round-robin, random, failover, or weighted
 :since: 
 :supportlevel: Stable
 :tabs-sync-option:

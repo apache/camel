@@ -28,12 +28,16 @@ import org.apache.camel.AggregationStrategy;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
 import org.apache.camel.model.language.ExpressionDefinition;
+import org.apache.camel.resume.ResumeStrategy;
 import org.apache.camel.spi.Metadata;
 
 /**
  * Splits a single message into many sub-messages.
  */
-@Metadata(label = "eip,routing")
+@Metadata(label = "aggregate,eip,routing",
+          aliases = { "split", "chunk" },
+          description = "Splits a message into multiple sub-messages using an expression, and processes each one individually."
+                        + " Supports parallel processing and result aggregation.")
 @XmlRootElement(name = "split")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class SplitDefinition extends OutputExpressionNode implements ExecutorServiceAwareDefinition<SplitDefinition> {
@@ -44,47 +48,94 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
     private AggregationStrategy aggregationStrategyBean;
     @XmlTransient
     private Processor onPrepareProcessor;
+    @XmlTransient
+    private ResumeStrategy resumeStrategyBean;
 
     @XmlAttribute
-    @Metadata(defaultValue = ",")
+    @Metadata(defaultValue = ",",
+              description = "Delimiter used in splitting messages. Can be turned off using the value false."
+                            + " To force not splitting then the delimiter can be set to single to use the value as a single list."
+                            + " The default value is comma.")
     private String delimiter;
     @XmlAttribute
-    @Metadata(javaType = "org.apache.camel.AggregationStrategy")
+    @Metadata(javaType = "org.apache.camel.AggregationStrategy",
+              description = "Reference to the AggregationStrategy to assemble the replies from the split messages"
+                            + " into a single outgoing message. By default Camel uses the original incoming message.")
     private String aggregationStrategy;
     @XmlAttribute
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced",
+              description = "The method name to use when using a POJO as the AggregationStrategy.")
     private String aggregationStrategyMethodName;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean",
+              description = "If true then null is used as the oldExchange when there is no data to aggregate,"
+                            + " when using POJOs as the AggregationStrategy.")
     private String aggregationStrategyMethodAllowNull;
     @Deprecated(since = "4.7.0")
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String parallelAggregate;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(javaType = "java.lang.Boolean",
+              description = "If enabled then processing each split message occurs concurrently."
+                            + " The caller thread still waits until all messages are fully processed before it continues.")
     private String parallelProcessing;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(javaType = "java.lang.Boolean",
+              description = "When enabled then the same thread is used to continue routing after the split is complete,"
+                            + " even if parallel processing is enabled.")
     private String synchronous;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(javaType = "java.lang.Boolean",
+              description = "When enabled then the splitter splits the original message on-demand,"
+                            + " and each split message is processed one by one. This reduces memory usage"
+                            + " as the splitter does not split all messages first.")
     private String streaming;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean",
+              description = "If enabled then stops further split processing if an exception or failure occurred"
+                            + " during processing of a split message, and the caused exception will be thrown."
+                            + " The default behavior is to not stop but continue processing till the end.")
     private String stopOnException;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.time.Duration", defaultValue = "0")
+    @Metadata(label = "advanced", javaType = "java.time.Duration", defaultValue = "0",
+              description = "Total timeout in millis when using parallel processing."
+                            + " If the splitter has not been able to process all replies within the given timeframe,"
+                            + " then the timeout triggers and the splitter breaks out and continues.")
     private String timeout;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.util.concurrent.ExecutorService")
+    @Metadata(label = "advanced", javaType = "java.util.concurrent.ExecutorService",
+              description = "Reference to a custom thread pool to use for parallel processing."
+                            + " Setting this option implies parallel processing.")
     private String executorService;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "org.apache.camel.Processor")
+    @Metadata(label = "advanced", javaType = "org.apache.camel.Processor",
+              description = "Reference to a processor for preparing the exchange to be sent."
+                            + " Can be used to deep-clone messages that should be sent.")
     private String onPrepare;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean",
+              description = "Shares the unit of work with the parent and each of the split messages."
+                            + " By default each split exchange has its own individual unit of work.")
     private String shareUnitOfWork;
+    @XmlAttribute
+    @Metadata(label = "advanced", javaType = "java.lang.Integer")
+    private String group;
+    @XmlAttribute
+    @Metadata(label = "advanced", javaType = "java.lang.Double")
+    private String errorThreshold;
+    @XmlAttribute
+    @Metadata(label = "advanced", javaType = "java.lang.Integer")
+    private String maxFailedRecords;
+    @XmlAttribute
+    @Metadata(label = "advanced", javaType = "org.apache.camel.resume.ResumeStrategy")
+    private String resumeStrategy;
+    @XmlAttribute
+    @Metadata(label = "advanced")
+    private String watermarkKey;
+    @XmlAttribute
+    @Metadata(label = "advanced")
+    private String watermarkExpression;
 
     public SplitDefinition() {
     }
@@ -107,6 +158,13 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
         this.executorService = source.executorService;
         this.onPrepare = source.onPrepare;
         this.shareUnitOfWork = source.shareUnitOfWork;
+        this.group = source.group;
+        this.errorThreshold = source.errorThreshold;
+        this.maxFailedRecords = source.maxFailedRecords;
+        this.resumeStrategyBean = source.resumeStrategyBean;
+        this.resumeStrategy = source.resumeStrategy;
+        this.watermarkKey = source.watermarkKey;
+        this.watermarkExpression = source.watermarkExpression;
     }
 
     public SplitDefinition(Expression expression) {
@@ -566,6 +624,161 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
         return this;
     }
 
+    /**
+     * Groups N split messages into a single message with a {@link java.util.List} body. This allows processing items in
+     * chunks instead of one at a time.
+     *
+     * @param  group the number of items per group
+     * @return       the builder
+     */
+    public SplitDefinition group(int group) {
+        return group(Integer.toString(group));
+    }
+
+    /**
+     * Groups N split messages into a single message with a {@link java.util.List} body. This allows processing items in
+     * chunks instead of one at a time.
+     *
+     * @param  group the number of items per group
+     * @return       the builder
+     */
+    public SplitDefinition group(String group) {
+        setGroup(group);
+        return this;
+    }
+
+    /**
+     * Sets the error threshold as a fraction (0.0-1.0) of failed items before aborting the split operation. For
+     * example, 0.1 means abort if more than 10% of items fail. When the threshold is exceeded, a
+     * {@link org.apache.camel.CamelExchangeException} is thrown.
+     * <p/>
+     * This option is mutually exclusive with {@code stopOnException}. When set, individual item failures are tracked
+     * but processing continues until the threshold is exceeded.
+     * <p/>
+     * <b>Note:</b> When combined with {@code parallelProcessing}, the failure ratio may vary between runs because
+     * parallel items complete in non-deterministic order. For deterministic abort behavior with parallel processing,
+     * prefer {@code maxFailedRecords} (absolute count) over {@code errorThreshold} (ratio).
+     *
+     * @param  errorThreshold the failure ratio threshold (0.0-1.0)
+     * @return                the builder
+     */
+    public SplitDefinition errorThreshold(double errorThreshold) {
+        return errorThreshold(Double.toString(errorThreshold));
+    }
+
+    /**
+     * Sets the error threshold as a fraction (0.0-1.0) of failed items before aborting the split operation. For
+     * example, 0.1 means abort if more than 10% of items fail. When the threshold is exceeded, a
+     * {@link org.apache.camel.CamelExchangeException} is thrown.
+     * <p/>
+     * This option is mutually exclusive with {@code stopOnException}. When set, individual item failures are tracked
+     * but processing continues until the threshold is exceeded.
+     *
+     * @param  errorThreshold the failure ratio threshold (0.0-1.0)
+     * @return                the builder
+     */
+    public SplitDefinition errorThreshold(String errorThreshold) {
+        setErrorThreshold(errorThreshold);
+        return this;
+    }
+
+    /**
+     * Sets the maximum number of failed records before aborting the split operation. When the count is exceeded, a
+     * {@link org.apache.camel.CamelExchangeException} is thrown.
+     * <p/>
+     * This option is mutually exclusive with {@code stopOnException}. Can be combined with {@code errorThreshold} —
+     * processing aborts when either threshold is exceeded.
+     *
+     * @param  maxFailedRecords the maximum number of allowed failures
+     * @return                  the builder
+     */
+    public SplitDefinition maxFailedRecords(int maxFailedRecords) {
+        return maxFailedRecords(Integer.toString(maxFailedRecords));
+    }
+
+    /**
+     * Sets the maximum number of failed records before aborting the split operation. When the count is exceeded, a
+     * {@link org.apache.camel.CamelExchangeException} is thrown.
+     * <p/>
+     * This option is mutually exclusive with {@code stopOnException}. Can be combined with {@code errorThreshold} —
+     * processing aborts when either threshold is exceeded.
+     *
+     * @param  maxFailedRecords the maximum number of allowed failures
+     * @return                  the builder
+     */
+    public SplitDefinition maxFailedRecords(String maxFailedRecords) {
+        setMaxFailedRecords(maxFailedRecords);
+        return this;
+    }
+
+    /**
+     * Sets a {@link ResumeStrategy} and key for resume-from-last-position support. When configured, the Splitter tracks
+     * progress and can skip already-processed items on subsequent runs.
+     * <p/>
+     * With index-based watermarking (no {@code watermarkExpression}), items up to the stored index are automatically
+     * skipped. With value-based watermarking (with {@code watermarkExpression}), the stored value is exposed as an
+     * exchange property ({@link org.apache.camel.Exchange#SPLIT_WATERMARK}) for upstream filtering.
+     * <p/>
+     * The watermark is only updated on successful completion — aborted runs preserve the previous watermark to allow
+     * retry.
+     *
+     * @param  strategy the ResumeStrategy to persist watermark state
+     * @param  key      the key to use in the strategy
+     * @return          the builder
+     */
+    public SplitDefinition resumeStrategy(ResumeStrategy strategy, String key) {
+        this.resumeStrategyBean = strategy;
+        setWatermarkKey(key);
+        return this;
+    }
+
+    /**
+     * Sets a {@link ResumeStrategy} for resume-from-last-position support. The watermark key must also be configured
+     * via {@link #watermarkKey(String)}.
+     *
+     * @param  strategy the ResumeStrategy to persist watermark state
+     * @return          the builder
+     */
+    public SplitDefinition resumeStrategy(ResumeStrategy strategy) {
+        this.resumeStrategyBean = strategy;
+        return this;
+    }
+
+    /**
+     * Sets a reference to a {@link ResumeStrategy} in the registry.
+     *
+     * @param  resumeStrategy reference to the strategy bean
+     * @return                the builder
+     */
+    public SplitDefinition resumeStrategy(String resumeStrategy) {
+        setResumeStrategy(resumeStrategy);
+        return this;
+    }
+
+    /**
+     * Sets the key to use in the watermark store.
+     *
+     * @param  watermarkKey the key
+     * @return              the builder
+     */
+    public SplitDefinition watermarkKey(String watermarkKey) {
+        setWatermarkKey(watermarkKey);
+        return this;
+    }
+
+    /**
+     * Sets a Simple expression to evaluate on each completed sub-exchange to determine the new watermark value. When
+     * set, enables value-based watermarking instead of index-based. The expression is evaluated using the Simple
+     * language.
+     *
+     * @param  watermarkExpression the Simple expression
+     * @return                     the builder
+     */
+    public SplitDefinition watermarkExpression(String watermarkExpression) {
+        setWatermarkExpression(watermarkExpression);
+        return this;
+    }
+
     // Properties
     // -------------------------------------------------------------------------
 
@@ -587,10 +800,8 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
         return executorService;
     }
 
-    /**
-     * Expression of how to split the message body, such as as-is, using a tokenizer, or using a xpath.
-     */
     @Override
+    @Metadata(description = "The expression that returns the value to use for splitting. The result can be an Iterator, Iterable, Array, Collection, Map, NodeList, or a delimited String.")
     public void setExpression(ExpressionDefinition expression) {
         // override to include javadoc what the expression is used for
         super.setExpression(expression);
@@ -650,20 +861,10 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
         return aggregationStrategy;
     }
 
-    /**
-     * Sets a reference to the AggregationStrategy to be used to assemble the replies from the split messages, into a
-     * single outgoing message from the Splitter. By default Camel will use the original incoming message to the
-     * splitter (leave it unchanged). You can also use a POJO as the AggregationStrategy
-     */
     public void setAggregationStrategy(String aggregationStrategy) {
         this.aggregationStrategy = aggregationStrategy;
     }
 
-    /**
-     * Sets the AggregationStrategy to be used to assemble the replies from the split messages, into a single outgoing
-     * message from the Splitter. By default Camel will use the original incoming message to the splitter (leave it
-     * unchanged). You can also use a POJO as the AggregationStrategy
-     */
     public void setAggregationStrategy(AggregationStrategy aggregationStrategyBean) {
         this.aggregationStrategyBean = aggregationStrategyBean;
     }
@@ -672,9 +873,6 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
         return aggregationStrategyMethodName;
     }
 
-    /**
-     * This option can be used to explicit declare the method name to use, when using POJOs as the AggregationStrategy.
-     */
     public void setAggregationStrategyMethodName(String aggregationStrategyMethodName) {
         this.aggregationStrategyMethodName = aggregationStrategyMethodName;
     }
@@ -683,11 +881,6 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
         return aggregationStrategyMethodAllowNull;
     }
 
-    /**
-     * If this option is false then the aggregate method is not used if there was no data to enrich. If this option is
-     * true then null values is used as the oldExchange (when no data to enrich), when using POJOs as the
-     * AggregationStrategy
-     */
     public void setAggregationStrategyMethodAllowNull(String aggregationStrategyMethodAllowNull) {
         this.aggregationStrategyMethodAllowNull = aggregationStrategyMethodAllowNull;
     }
@@ -722,5 +915,78 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
 
     public void setExecutorService(String executorService) {
         this.executorService = executorService;
+    }
+
+    public String getGroup() {
+        return group;
+    }
+
+    /**
+     * Groups N split messages into a single message with a {@link java.util.List} body. This allows processing items in
+     * chunks instead of one at a time.
+     */
+    public void setGroup(String group) {
+        this.group = group;
+    }
+
+    public String getErrorThreshold() {
+        return errorThreshold;
+    }
+
+    /**
+     * Sets the error threshold as a fraction (0.0-1.0) of failed items before aborting the split operation.
+     */
+    public void setErrorThreshold(String errorThreshold) {
+        this.errorThreshold = errorThreshold;
+    }
+
+    public String getMaxFailedRecords() {
+        return maxFailedRecords;
+    }
+
+    /**
+     * Sets the maximum number of failed records before aborting the split operation.
+     */
+    public void setMaxFailedRecords(String maxFailedRecords) {
+        this.maxFailedRecords = maxFailedRecords;
+    }
+
+    public ResumeStrategy getResumeStrategyBean() {
+        return resumeStrategyBean;
+    }
+
+    public String getResumeStrategy() {
+        return resumeStrategy;
+    }
+
+    /**
+     * Sets a reference to a {@link ResumeStrategy} in the registry for resume-from-last-position support.
+     */
+    public void setResumeStrategy(String resumeStrategy) {
+        this.resumeStrategy = resumeStrategy;
+    }
+
+    public String getWatermarkKey() {
+        return watermarkKey;
+    }
+
+    /**
+     * Sets the key to use in the watermark store.
+     */
+    public void setWatermarkKey(String watermarkKey) {
+        this.watermarkKey = watermarkKey;
+    }
+
+    public String getWatermarkExpression() {
+        return watermarkExpression;
+    }
+
+    /**
+     * Sets a Simple expression to evaluate on each completed sub-exchange to determine the new watermark value. When
+     * set, enables value-based watermarking instead of index-based. The expression is evaluated using the Simple
+     * language.
+     */
+    public void setWatermarkExpression(String watermarkExpression) {
+        this.watermarkExpression = watermarkExpression;
     }
 }

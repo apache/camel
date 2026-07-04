@@ -32,7 +32,9 @@ import org.apache.camel.spi.Metadata;
 /**
  * Delays processing for a specified length of time
  */
-@Metadata(label = "eip,routing")
+@Metadata(label = "eip,flowcontrol,routing",
+          aliases = { "debounce", "delay" },
+          description = "Delays message processing for a specified duration, which can be a fixed value or computed dynamically per message")
 @XmlRootElement(name = "delay")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class DelayDefinition extends ExpressionNode implements ExecutorServiceAwareDefinition<DelayDefinition> {
@@ -41,13 +43,16 @@ public class DelayDefinition extends ExpressionNode implements ExecutorServiceAw
     private ExecutorService executorServiceBean;
 
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "true")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "true",
+              description = "Enables asynchronous delay which means the thread will not block while delaying.")
     private String asyncDelayed;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "true")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "true",
+              description = "Whether or not the caller should run the task when it was rejected by the thread pool.")
     private String callerRunsWhenRejected;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.util.concurrent.ExecutorService")
+    @Metadata(label = "advanced", javaType = "java.util.concurrent.ExecutorService",
+              description = "To use a custom thread pool if asyncDelay has been enabled.")
     private String executorService;
 
     public DelayDefinition() {
@@ -179,10 +184,8 @@ public class DelayDefinition extends ExpressionNode implements ExecutorServiceAw
         return executorService;
     }
 
-    /**
-     * Expression to define how long time to wait (in millis)
-     */
     @Override
+    @Metadata(description = "The expression that determines the delay duration in milliseconds.")
     public void setExpression(ExpressionDefinition expression) {
         // override to include javadoc what the expression is used for
         super.setExpression(expression);

@@ -1597,7 +1597,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final AtmosphereWebsocketHeaderNameBuilder INSTANCE = new AtmosphereWebsocketHeaderNameBuilder();
+        public static final AtmosphereWebsocketHeaderNameBuilder INSTANCE = new AtmosphereWebsocketHeaderNameBuilder();
 
         /**
          * The connection key.

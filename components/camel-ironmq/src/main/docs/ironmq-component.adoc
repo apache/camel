@@ -8,8 +8,6 @@
 :deprecated: *deprecated*
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
-//Manually maintained attributes
-:camel-spring-boot-name: ironmq
 
 *Since Camel {since}*
 
@@ -64,21 +62,80 @@ In the latter case, the batch of strings will be sent to IronMQ as one request, 
 
 Consume 50 messages per poll from the queue `testqueue` on aws eu, and save the messages to files.
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------
+----
 from("ironmq:testqueue?ironMQCloud=https://mq-aws-eu-west-1-1.iron.io&projectId=myIronMQProjectid&token=myIronMQToken&maxMessagesPerPoll=50")
   .to("file:somefolder");
---------------------------------------------------
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="ironmq:testqueue?ironMQCloud=https://mq-aws-eu-west-1-1.iron.io&amp;projectId=myIronMQProjectid&amp;token=myIronMQToken&amp;maxMessagesPerPoll=50"/>
+  <to uri="file:somefolder"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: ironmq:testqueue
+      parameters:
+        ironMQCloud: "https://mq-aws-eu-west-1-1.iron.io"
+        projectId: myIronMQProjectid
+        token: myIronMQToken
+        maxMessagesPerPoll: 50
+      steps:
+        - to:
+            uri: file:somefolder
+----
+====
 
 === Producer example
 
 Dequeue from activemq jms and enqueue the messages on IronMQ.
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------
+----
 from("activemq:foo")
   .to("ironmq:testqueue?projectId=myIronMQProjectid&token=myIronMQToken");
---------------------------------------------------
+----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="activemq:foo"/>
+  <to uri="ironmq:testqueue?projectId=myIronMQProjectid&amp;token=myIronMQToken"/>
+</route>
+----
 
-include::spring-boot:partial$starter.adoc[]
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: activemq:foo
+      steps:
+        - to:
+            uri: ironmq:testqueue
+            parameters:
+              projectId: myIronMQProjectid
+              token: myIronMQToken
+----
+====

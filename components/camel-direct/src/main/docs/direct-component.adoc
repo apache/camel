@@ -8,8 +8,6 @@
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
 :core:
-//Manually maintained attributes
-:camel-spring-boot-name: direct
 
 *Since Camel {since}*
 
@@ -63,7 +61,7 @@ from("direct:processOrder")
     .to("activemq:queue:order.out");
 ----
 
-Spring XML::
+XML::
 +
 [source,xml]
 ----
@@ -80,10 +78,32 @@ Spring XML::
 </route>
 ----
 
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: activemq:queue:order.in
+      steps:
+        - to:
+            uri: bean:orderService
+            parameters:
+              method: validate
+        - to:
+            uri: direct:processOrder
+- route:
+    from:
+      uri: direct:processOrder
+      steps:
+        - to:
+            uri: bean:orderService
+            parameters:
+              method: process
+        - to:
+            uri: activemq:queue:order.out
+----
+
 ====
 
 See also samples from the xref:seda-component.adoc[SEDA] component, how they can be used together.
-
-
-
-include::spring-boot:partial$starter.adoc[]

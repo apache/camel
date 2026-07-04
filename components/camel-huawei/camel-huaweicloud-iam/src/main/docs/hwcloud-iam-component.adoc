@@ -9,7 +9,6 @@
 :component-header: Only producer is supported
 //Manually maintained attributes
 :group: Huawei Cloud
-:camel-spring-boot-name: huaweicloud-iam
 
 *Since Camel {since}*
 
@@ -74,6 +73,8 @@ There are many options that can be submitted to https://support.huaweicloud.com/
 
 For the `updateUser` operation, you can pass the user options as an UpdateUserOption object or a Json string:
 
+._Java-only: requires SDK UpdateUserOption builder_
+
 [source,java]
 ----
 from("direct:triggerRoute")
@@ -81,6 +82,10 @@ from("direct:triggerRoute")
  .to("hwcloud-iam:updateUser?userId=********&region=cn-north-4&accessKey=********&secretKey=********")
 ----
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:triggerRoute")
@@ -88,7 +93,42 @@ from("direct:triggerRoute")
  .to("hwcloud-iam:updateUser?userId=********&region=cn-north-4&accessKey=********&secretKey=********")
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:triggerRoute"/>
+  <setBody>
+    <constant>{"name":"user","description":"employee","email":"user@email.com"}</constant>
+  </setBody>
+  <to uri="hwcloud-iam:updateUser?userId=********&amp;region=cn-north-4&amp;accessKey=********&amp;secretKey=********"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:triggerRoute
+      steps:
+        - setBody:
+            constant: '{"name":"user","description":"employee","email":"user@email.com"}'
+        - to:
+            uri: hwcloud-iam:updateUser
+            parameters:
+              userId: "********"
+              region: cn-north-4
+              accessKey: "********"
+              secretKey: "********"
+----
+====
+
 For the `updateGroup` operation, you can pass the group options as a KeystoneUpdateGroupOption object or a Json string:
+
+._Java-only: requires SDK KeystoneUpdateGroupOption builder_
 
 [source,java]
 ----
@@ -97,12 +137,49 @@ from("direct:triggerRoute")
  .to("hwcloud-iam:updateUser?groupId=********&region=cn-north-4&accessKey=********&secretKey=********")
 ----
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:triggerRoute")
  .setBody("{\"name\":\"group\",\"description\":\"employees\",\"domain_id\":\"1234\"}")
  .to("hwcloud-iam:updateUser?groupId=********&region=cn-north-4&accessKey=********&secretKey=********")
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:triggerRoute"/>
+  <setBody>
+    <constant>{"name":"group","description":"employees","domain_id":"1234"}</constant>
+  </setBody>
+  <to uri="hwcloud-iam:updateUser?groupId=********&amp;region=cn-north-4&amp;accessKey=********&amp;secretKey=********"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:triggerRoute
+      steps:
+        - setBody:
+            constant: '{"name":"group","description":"employees","domain_id":"1234"}'
+        - to:
+            uri: hwcloud-iam:updateUser
+            parameters:
+              groupId: "********"
+              region: cn-north-4
+              accessKey: "********"
+              secretKey: "********"
+----
+====
 
 === Using ServiceKey Configuration Bean
 
@@ -120,14 +197,61 @@ Check the following code snippets:
 </bean>
 ----
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:triggerRoute")
- .setProperty(IAMPropeties.OPERATION, constant("listUsers"))
- .setProperty(IAMPropeties.USER_ID ,constant("your_user_id"))
- .setProperty(IAMPropeties.GROUP_ID, constant("your_group_id))
+ .setProperty("CamelHwCloudIamOperation", constant("listUsers"))
+ .setProperty("CamelHwCloudIamUserId", constant("your_user_id"))
+ .setProperty("CamelHwCloudIamGroupId", constant("your_group_id"))
  .to("hwcloud-iam:listUsers?region=cn-north-4&serviceKeys=#myServiceKeyConfig")
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:triggerRoute"/>
+  <setProperty name="CamelHwCloudIamOperation">
+    <constant>listUsers</constant>
+  </setProperty>
+  <setProperty name="CamelHwCloudIamUserId">
+    <constant>your_user_id</constant>
+  </setProperty>
+  <setProperty name="CamelHwCloudIamGroupId">
+    <constant>your_group_id</constant>
+  </setProperty>
+  <to uri="hwcloud-iam:listUsers?region=cn-north-4&amp;serviceKeys=#myServiceKeyConfig"/>
+</route>
+----
 
-include::spring-boot:partial$starter.adoc[]
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:triggerRoute
+      steps:
+        - setProperty:
+            name: CamelHwCloudIamOperation
+            constant: listUsers
+        - setProperty:
+            name: CamelHwCloudIamUserId
+            constant: your_user_id
+        - setProperty:
+            name: CamelHwCloudIamGroupId
+            constant: your_group_id
+        - to:
+            uri: hwcloud-iam:listUsers
+            parameters:
+              region: cn-north-4
+              serviceKeys: "#myServiceKeyConfig"
+----
+====
+
+

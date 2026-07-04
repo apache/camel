@@ -20,7 +20,17 @@ import org.apache.camel.CamelContext;
 import org.jspecify.annotations.Nullable;
 
 /**
- * Represents a resolver of data formats.
+ * SPI strategy for resolving a {@link DataFormat} implementation by name.
+ * <p/>
+ * The default implementation first checks the Camel {@link Registry} for a bean registered under the data format name,
+ * then falls back to classpath service files under {@code META-INF/services/org/apache/camel/dataformat/}. Each call to
+ * {@link #createDataFormat(String, org.apache.camel.CamelContext)} returns a fresh, non-shared instance because data
+ * formats carry per-invocation state. Custom resolvers can alias format names, wrap the resolved instance with
+ * decorators, or source formats from a non-classpath registry.
+ * <p/>
+ * See <a href="https://camel.apache.org/manual/data-format.html">Data Format</a> in the Camel user manual.
+ *
+ * @see DataFormat
  */
 public interface DataFormatResolver {
 

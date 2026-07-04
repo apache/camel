@@ -9,7 +9,6 @@
 :component-header: Only producer is supported
 //Manually maintained attributes
 :group: Huawei Cloud
-:camel-spring-boot-name: huaweicloud-functiongraph
 
 *Since Camel {since}*
 
@@ -92,14 +91,62 @@ Check the following code snippets:
    <property name="secretKey" value="your_secret_key" />
 </bean>
 ----
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:triggerRoute")
- .setProperty(FunctionGraphProperties.OPERATION, constant("invokeFunction"))
- .setProperty(FunctionGraphProperties.FUNCTION_NAME ,constant("your_function_name"))
- .setProperty(FunctionGraphProperties.FUNCTION_PACKAGE, constant("your_function_package"))
+ .setProperty("CamelHwCloudFgOperation", constant("invokeFunction"))
+ .setProperty("CamelHwCloudFgFunction", constant("your_function_name"))
+ .setProperty("CamelHwCloudFgPackage", constant("your_function_package"))
  .to("hwcloud-functiongraph:invokeFunction?projectId=9071a38e7f6a4ba7b7bcbeb7d4ea6efc&region=cn-north-4&serviceKeys=#myServiceKeyConfig")
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:triggerRoute"/>
+  <setProperty name="CamelHwCloudFgOperation">
+    <constant>invokeFunction</constant>
+  </setProperty>
+  <setProperty name="CamelHwCloudFgFunction">
+    <constant>your_function_name</constant>
+  </setProperty>
+  <setProperty name="CamelHwCloudFgPackage">
+    <constant>your_function_package</constant>
+  </setProperty>
+  <to uri="hwcloud-functiongraph:invokeFunction?projectId=9071a38e7f6a4ba7b7bcbeb7d4ea6efc&amp;region=cn-north-4&amp;serviceKeys=#myServiceKeyConfig"/>
+</route>
+----
 
-include::spring-boot:partial$starter.adoc[]
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:triggerRoute
+      steps:
+        - setProperty:
+            name: CamelHwCloudFgOperation
+            constant: invokeFunction
+        - setProperty:
+            name: CamelHwCloudFgFunction
+            constant: your_function_name
+        - setProperty:
+            name: CamelHwCloudFgPackage
+            constant: your_function_package
+        - to:
+            uri: hwcloud-functiongraph:invokeFunction
+            parameters:
+              projectId: 9071a38e7f6a4ba7b7bcbeb7d4ea6efc
+              region: cn-north-4
+              serviceKeys: "#myServiceKeyConfig"
+----
+====
+
+

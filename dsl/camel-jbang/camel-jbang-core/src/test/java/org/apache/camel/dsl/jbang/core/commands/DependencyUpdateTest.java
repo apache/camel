@@ -71,6 +71,7 @@ class DependencyUpdateTest extends CamelCommandBaseTestSupport {
         DependencyUpdate command = new DependencyUpdate(new CamelJBangMain().withPrinter(secondUpdateCommandPrinter));
         CommandLine.populateCommand(command,
                 "--dir=" + workingDir,
+                "--camel-version=4.13.0",
                 CamelCommandBaseTestSupport.quarkusExtRegistry(),
                 new File(workingDir, "pom.xml").getAbsolutePath());
         int exit = command.doCall();
@@ -146,6 +147,7 @@ class DependencyUpdateTest extends CamelCommandBaseTestSupport {
         DependencyUpdate command = new DependencyUpdate(new CamelJBangMain().withPrinter(updatePrinter));
         CommandLine.populateCommand(command,
                 "--scan-routes",
+                "--camel-version=4.13.0",
                 "--dir=" + workingDir,
                 new File(workingDir, "pom.xml").getAbsolutePath());
         int exit = command.doCall();

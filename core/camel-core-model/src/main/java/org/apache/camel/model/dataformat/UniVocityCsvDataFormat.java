@@ -27,22 +27,24 @@ import org.apache.camel.spi.Metadata;
 /**
  * Marshal and unmarshal Java objects from and to CSV (Comma Separated Values) using UniVocity Parsers.
  */
-@Metadata(firstVersion = "2.15.0", label = "dataformat,transformation,csv", title = "uniVocity CSV")
+@Metadata(firstVersion = "2.15.0", label = "dataformat,transformation,csv", title = "uniVocity CSV",
+          description = "Marshal and unmarshal Java objects from and to CSV (Comma Separated Values) using UniVocity Parsers")
 @XmlRootElement(name = "univocityCsv")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class UniVocityCsvDataFormat extends UniVocityAbstractDataFormat {
 
     @XmlAttribute
-    @Metadata(defaultValue = ",")
+    @Metadata(defaultValue = ",", description = "The delimiter of values.")
     private String delimiter;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(javaType = "java.lang.Boolean",
+              description = "Whether or not all values must be quoted when writing them.")
     private String quoteAllFields;
     @XmlAttribute
-    @Metadata(label = "advanced", defaultValue = "\"")
+    @Metadata(label = "advanced", defaultValue = "\"", description = "The quote symbol.")
     private String quote;
     @XmlAttribute
-    @Metadata(label = "advanced", defaultValue = "\"")
+    @Metadata(label = "advanced", defaultValue = "\"", description = "The quote escape symbol.")
     private String quoteEscape;
 
     public UniVocityCsvDataFormat() {
@@ -74,9 +76,6 @@ public class UniVocityCsvDataFormat extends UniVocityAbstractDataFormat {
         return quoteAllFields;
     }
 
-    /**
-     * Whether or not all values must be quoted when writing them.
-     */
     public void setQuoteAllFields(String quoteAllFields) {
         this.quoteAllFields = quoteAllFields;
     }
@@ -85,9 +84,6 @@ public class UniVocityCsvDataFormat extends UniVocityAbstractDataFormat {
         return quote;
     }
 
-    /**
-     * The quote symbol.
-     */
     public void setQuote(String quote) {
         this.quote = quote;
     }
@@ -96,9 +92,6 @@ public class UniVocityCsvDataFormat extends UniVocityAbstractDataFormat {
         return quoteEscape;
     }
 
-    /**
-     * The quote escape symbol
-     */
     public void setQuoteEscape(String quoteEscape) {
         this.quoteEscape = quoteEscape;
     }
@@ -107,9 +100,6 @@ public class UniVocityCsvDataFormat extends UniVocityAbstractDataFormat {
         return delimiter;
     }
 
-    /**
-     * The delimiter of values
-     */
     public void setDelimiter(String delimiter) {
         this.delimiter = delimiter;
     }

@@ -20,7 +20,7 @@ Below is a list of some of the template engines that are provided by Camel:
 |xref:components::xslt-saxon-component.adoc[] | camel-xslt-saxon | Transform XML payloads using an XSLT template using Saxon.
 |===
 
-TIP: To see a wider list try Camel JBang to execute: `camel catalog component --filter=transform` from the CLI.
+TIP: To see a wider list try Camel CLI to execute: `camel catalog component --filter=transform` from the CLI.
 
 == Which template engine to choose
 

@@ -33,29 +33,28 @@ import dev.tamboui.text.CharWidth;
 import dev.tamboui.text.Line;
 import dev.tamboui.text.Span;
 import dev.tamboui.tui.event.KeyEvent;
+import dev.tamboui.tui.event.MouseEvent;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
+import dev.tamboui.widgets.block.Borders;
 import dev.tamboui.widgets.block.Title;
 import dev.tamboui.widgets.paragraph.Paragraph;
+import dev.tamboui.widgets.sparkline.DualSparkline;
 import dev.tamboui.widgets.table.Cell;
 import dev.tamboui.widgets.table.Row;
 import dev.tamboui.widgets.table.Table;
-import dev.tamboui.widgets.table.TableState;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 
-import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.*;
+import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.*;
 
-class EndpointsTab implements MonitorTab {
+class EndpointsTab extends AbstractTableTab {
 
-    private static final String[] SORT_COLUMNS = { "component", "route", "dir", "total", "body", "hdr", "uri" };
-    private static final int MAX_CHART_POINTS = 60;
+    private static final int MAX_CHART_POINTS = 300;
     private static final int CHART_ALL = 0;
     private static final int CHART_SINGLE = 1;
     private static final int CHART_OFF = 2;
 
-    private final MonitorContext ctx;
-    private final TableState tableState = new TableState();
     private final Map<String, LinkedList<Long>> endpointInHistory;
     private final Map<String, LinkedList<Long>> endpointOutHistory;
     private final Map<String, LinkedList<Long>> endpointRemoteInHistory;
@@ -67,48 +66,37 @@ class EndpointsTab implements MonitorTab {
     private final Map<String, LinkedList<Long>> perEndpointInHistory;
     private final Map<String, LinkedList<Long>> perEndpointOutHistory;
 
-    private String sort = "route";
-    private int sortIndex = 1;
-    private boolean sortReversed;
     private int filter;
     private int chartMode = CHART_ALL;
+    private int chartPanelHeight = 16;
+    private final DragSplit vSplit = new DragSplit();
+    private int flowPanelWidth = 38;
+    private final DragSplit hSplit = new DragSplit();
 
-    EndpointsTab(MonitorContext ctx,
-                 Map<String, LinkedList<Long>> endpointInHistory,
-                 Map<String, LinkedList<Long>> endpointOutHistory,
-                 Map<String, LinkedList<Long>> endpointRemoteInHistory,
-                 Map<String, LinkedList<Long>> endpointRemoteOutHistory,
-                 Map<String, LinkedList<Long>> endpointRemoteStubInHistory,
-                 Map<String, LinkedList<Long>> endpointRemoteStubOutHistory,
-                 Map<String, LinkedList<Long>> endpointInSizeHistory,
-                 Map<String, LinkedList<Long>> endpointOutSizeHistory,
-                 Map<String, LinkedList<Long>> perEndpointInHistory,
-                 Map<String, LinkedList<Long>> perEndpointOutHistory) {
-        this.ctx = ctx;
-        this.endpointInHistory = endpointInHistory;
-        this.endpointOutHistory = endpointOutHistory;
-        this.endpointRemoteInHistory = endpointRemoteInHistory;
-        this.endpointRemoteOutHistory = endpointRemoteOutHistory;
-        this.endpointRemoteStubInHistory = endpointRemoteStubInHistory;
-        this.endpointRemoteStubOutHistory = endpointRemoteStubOutHistory;
-        this.endpointInSizeHistory = endpointInSizeHistory;
-        this.endpointOutSizeHistory = endpointOutSizeHistory;
-        this.perEndpointInHistory = perEndpointInHistory;
-        this.perEndpointOutHistory = perEndpointOutHistory;
+    EndpointsTab(MonitorContext ctx, MetricsCollector metrics) {
+        super(ctx, "component", "route", "dir", "total", "body", "hdr", "uri");
+        sortIndex = 1;
+        sort = "route";
+        this.endpointInHistory = metrics.getEndpointInHistory();
+        this.endpointOutHistory = metrics.getEndpointOutHistory();
+        this.endpointRemoteInHistory = metrics.getEndpointRemoteInHistory();
+        this.endpointRemoteOutHistory = metrics.getEndpointRemoteOutHistory();
+        this.endpointRemoteStubInHistory = metrics.getEndpointRemoteStubInHistory();
+        this.endpointRemoteStubOutHistory = metrics.getEndpointRemoteStubOutHistory();
+        this.endpointInSizeHistory = metrics.getEndpointInSizeHistory();
+        this.endpointOutSizeHistory = metrics.getEndpointOutSizeHistory();
+        this.perEndpointInHistory = metrics.getPerEndpointInHistory();
+        this.perEndpointOutHistory = metrics.getPerEndpointOutHistory();
     }
 
     @Override
-    public boolean handleKeyEvent(KeyEvent ke) {
-        if (ke.isChar('s')) {
-            sortIndex = (sortIndex + 1) % SORT_COLUMNS.length;
-            sort = SORT_COLUMNS[sortIndex];
-            sortReversed = false;
-            return true;
-        }
-        if (ke.isChar('S')) {
-            sortReversed = !sortReversed;
-            return true;
-        }
+    protected int getRowCount() {
+        IntegrationInfo info = ctx.findSelectedIntegration();
+        return info != null ? info.endpoints.size() : 0;
+    }
+
+    @Override
+    protected boolean handleTabKeyEvent(KeyEvent ke) {
         if (ke.isCharIgnoreCase('f')) {
             filter = (filter + 1) % 3;
             return true;
@@ -121,13 +109,32 @@ class EndpointsTab implements MonitorTab {
     }
 
     @Override
-    public boolean handleEscape() {
+    public boolean handleMouseEvent(MouseEvent me, Rect area) {
+        if (vSplit.handleMouse(me, me.y())) {
+            if (vSplit.isDragging()) {
+                chartPanelHeight = Math.max(5, Math.min(area.y() + area.height() - me.y(), area.height() - 5));
+            }
+            return true;
+        }
+        if (hSplit.handleMouse(me, me.x())) {
+            if (hSplit.isDragging()) {
+                flowPanelWidth = Math.max(20, Math.min(me.x() - area.x(), area.width() - 20));
+            }
+            return true;
+        }
+        IntegrationInfo info = ctx.findSelectedIntegration();
+        if (info != null) {
+            List<EndpointInfo> filtered = new ArrayList<>(info.endpoints);
+            if (filter == 1) {
+                filtered.removeIf(ep -> !ep.remote);
+            } else if (filter == 2) {
+                filtered.removeIf(ep -> !ep.remote && !ep.stub);
+            }
+            if (handleTableClick(me, lastTableArea, tableState, filtered.size())) {
+                return true;
+            }
+        }
         return false;
-    }
-
-    @Override
-    public void navigateUp() {
-        tableState.selectPrevious();
     }
 
     @Override
@@ -145,13 +152,7 @@ class EndpointsTab implements MonitorTab {
     }
 
     @Override
-    public void render(Frame frame, Rect area) {
-        IntegrationInfo info = ctx.findSelectedIntegration();
-        if (info == null) {
-            renderNoSelection(frame, area);
-            return;
-        }
-
+    protected void renderContent(Frame frame, Rect area, IntegrationInfo info) {
         List<EndpointInfo> sortedEndpoints = new ArrayList<>(info.endpoints);
         if (filter == 1) {
             sortedEndpoints.removeIf(ep -> !ep.remote);
@@ -194,12 +195,7 @@ class EndpointsTab implements MonitorTab {
 
         int emptyCols = hasSize ? 9 : 7;
         if (rows.isEmpty()) {
-            List<Cell> emptyCells = new ArrayList<>();
-            emptyCells.add(Cell.from(Span.styled("No endpoints", Style.EMPTY.dim())));
-            for (int i = 1; i < emptyCols; i++) {
-                emptyCells.add(Cell.from(""));
-            }
-            rows.add(Row.from(emptyCells));
+            rows.add(emptyRow("No endpoints", emptyCols));
         }
 
         List<Cell> headerCells = new ArrayList<>();
@@ -232,24 +228,39 @@ class EndpointsTab implements MonitorTab {
                 .rows(rows)
                 .header(Row.from(headerCells))
                 .widths(widths.toArray(Constraint[]::new))
-                .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
+                .highlightStyle(Theme.selectionBg())
                 .highlightSpacing(Table.HighlightSpacing.ALWAYS)
-                .block(Block.builder().borderType(BorderType.ROUNDED)
+                .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
                         .title(" Endpoints sort:" + sort
                                + (filter == 1 ? " filter:remote" : filter == 2 ? " filter:remote+stub" : "")
                                + " ")
                         .build())
                 .build();
 
-        boolean hasSizeHistory = !endpointInSizeHistory.isEmpty()
-                && endpointInSizeHistory.values().stream().anyMatch(h -> h.stream().anyMatch(v -> v > 0));
+        boolean hasSizeHistory;
+        try {
+            hasSizeHistory = !endpointInSizeHistory.isEmpty()
+                    && endpointInSizeHistory.values().stream()
+                            .anyMatch(h -> new ArrayList<>(h).stream().anyMatch(v -> v > 0));
+        } catch (java.util.ConcurrentModificationException e) {
+            hasSizeHistory = false;
+        }
 
-        boolean showChart = chartMode != CHART_OFF;
-        List<Rect> chunks = showChart
-                ? Layout.vertical().constraints(Constraint.fill(), Constraint.length(16)).split(area)
-                : List.of(area);
+        boolean showChart = chartMode != CHART_OFF && ctx.shellPercent < 50;
+        List<Rect> chunks;
+        if (showChart) {
+            chartPanelHeight = Math.max(5, Math.min(chartPanelHeight, area.height() - 5));
+            chunks = Layout.vertical().constraints(Constraint.fill(), Constraint.length(chartPanelHeight)).split(area);
+            vSplit.setBorderPos(chunks.get(1).y());
+        } else {
+            chunks = List.of(area);
+            vSplit.clearBorderPos();
+            hSplit.clearBorderPos();
+        }
 
+        lastTableArea = chunks.get(0);
         frame.renderStatefulWidget(table, chunks.get(0), tableState);
+        renderScrollbar(frame, sortedEndpoints.size());
 
         if (showChart) {
             // Determine selected endpoint URI for single-endpoint chart
@@ -313,14 +324,6 @@ class EndpointsTab implements MonitorTab {
         };
     }
 
-    private String sortLabel(String label, String column) {
-        return MonitorContext.sortLabel(label, column, sort, sortReversed);
-    }
-
-    private Style sortStyle(String column) {
-        return MonitorContext.sortStyle(column, sort);
-    }
-
     private int sortEndpoint(EndpointInfo a, EndpointInfo b) {
         int result = switch (sort) {
             case "component" -> {
@@ -365,11 +368,13 @@ class EndpointsTab implements MonitorTab {
 
     private void renderEndpointFlow(
             Frame frame, Rect area, long inTotal, long outTotal, String name, String pid) {
-        List<Rect> hSplit = Layout.horizontal()
-                .constraints(Constraint.length(38), Constraint.fill())
+        flowPanelWidth = Math.max(20, Math.min(flowPanelWidth, area.width() - 20));
+        List<Rect> hParts = Layout.horizontal()
+                .constraints(Constraint.length(flowPanelWidth), Constraint.fill())
                 .split(area);
+        hSplit.setBorderPos(hParts.get(1).x());
 
-        int w = Math.max(10, hSplit.get(0).width() - 2);
+        int w = Math.max(10, hParts.get(0).width() - 2);
 
         String label = name != null ? name : "INTEGRATION";
         if (CharWidth.of(label) > 20) {
@@ -418,8 +423,8 @@ class EndpointsTab implements MonitorTab {
 
         frame.renderWidget(Paragraph.builder()
                 .text(dev.tamboui.text.Text.from(flowLines))
-                .block(Block.builder().borderType(BorderType.ROUNDED).title(" Flow ").build())
-                .build(), hSplit.get(0));
+                .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(" Flow ").build())
+                .build(), hParts.get(0));
 
         Map<String, LinkedList<Long>> inHistMap = switch (filter) {
             case 1 -> endpointRemoteInHistory;
@@ -434,17 +439,17 @@ class EndpointsTab implements MonitorTab {
         LinkedList<Long> inHist = inHistMap.getOrDefault(pid, new LinkedList<>());
         LinkedList<Long> outHist = outHistMap.getOrDefault(pid, new LinkedList<>());
 
-        int renderPoints = MAX_CHART_POINTS;
+        int renderPoints = Math.min(MAX_CHART_POINTS, Math.max(2, hParts.get(1).width() - 6));
         long[] inArr = new long[renderPoints];
         long[] outArr = new long[renderPoints];
         for (int i = 0; i < renderPoints; i++) {
             int idx = inHist.size() - renderPoints + i;
             if (idx >= 0) {
-                inArr[i] = inHist.get(idx);
+                inArr[i] = unbox(inHist.get(idx));
             }
             idx = outHist.size() - renderPoints + i;
             if (idx >= 0) {
-                outArr[i] = outHist.get(idx);
+                outArr[i] = unbox(outHist.get(idx));
             }
         }
         long curIn = inArr[renderPoints - 1];
@@ -456,15 +461,16 @@ class EndpointsTab implements MonitorTab {
                 Span.styled("▬", Style.EMPTY.fg(Color.CYAN)),
                 Span.raw(String.format(" out:%-4d msg/s", curOut)));
 
-        Rect rightArea = hSplit.get(1);
-        frame.renderWidget(MirroredSparkline.builder()
+        Rect rightArea = hParts.get(1);
+        frame.renderWidget(DualSparkline.builder()
                 .topData(inArr)
                 .bottomData(outArr)
                 .topStyle(Style.EMPTY.fg(Color.ansi(AnsiColor.BRIGHT_GREEN)))
                 .bottomStyle(Style.EMPTY.fg(Color.CYAN))
+                .showYAxis(true)
                 .xLabels("-" + renderPoints + "s", "-" + (renderPoints * 3 / 4) + "s",
                         "-" + (renderPoints / 2) + "s", "-" + (renderPoints / 4) + "s", "now")
-                .block(Block.builder().borderType(BorderType.ROUNDED)
+                .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
                         .title(Title.from(chartTitle)).build())
                 .build(), rightArea);
     }
@@ -479,12 +485,14 @@ class EndpointsTab implements MonitorTab {
                 .mapToLong(ep -> ep.hits)
                 .sum();
 
-        List<Rect> hSplit = Layout.horizontal()
-                .constraints(Constraint.length(38), Constraint.fill())
+        flowPanelWidth = Math.max(20, Math.min(flowPanelWidth, area.width() - 20));
+        List<Rect> hParts = Layout.horizontal()
+                .constraints(Constraint.length(flowPanelWidth), Constraint.fill())
                 .split(area);
+        hSplit.setBorderPos(hParts.get(1).x());
 
         // Flow diagram with endpoint URI as label
-        int w = Math.max(10, hSplit.get(0).width() - 2);
+        int w = Math.max(10, hParts.get(0).width() - 2);
         String label = selectedUri;
         if (CharWidth.of(label) > 20) {
             label = CharWidth.truncateWithEllipsis(label, 20, CharWidth.TruncatePosition.END);
@@ -528,25 +536,25 @@ class EndpointsTab implements MonitorTab {
 
         frame.renderWidget(Paragraph.builder()
                 .text(dev.tamboui.text.Text.from(flowLines))
-                .block(Block.builder().borderType(BorderType.ROUNDED).title(" Flow ").build())
-                .build(), hSplit.get(0));
+                .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(" Flow ").build())
+                .build(), hParts.get(0));
 
         // Per-endpoint sparkline
         String key = info.pid + "|" + selectedUri;
         LinkedList<Long> inHist = perEndpointInHistory.getOrDefault(key, new LinkedList<>());
         LinkedList<Long> outHist = perEndpointOutHistory.getOrDefault(key, new LinkedList<>());
 
-        int renderPoints = MAX_CHART_POINTS;
+        int renderPoints = Math.min(MAX_CHART_POINTS, Math.max(2, hParts.get(1).width() - 6));
         long[] inArr = new long[renderPoints];
         long[] outArr = new long[renderPoints];
         for (int i = 0; i < renderPoints; i++) {
             int idx = inHist.size() - renderPoints + i;
             if (idx >= 0) {
-                inArr[i] = inHist.get(idx);
+                inArr[i] = unbox(inHist.get(idx));
             }
             idx = outHist.size() - renderPoints + i;
             if (idx >= 0) {
-                outArr[i] = outHist.get(idx);
+                outArr[i] = unbox(outHist.get(idx));
             }
         }
         long curIn = inArr[renderPoints - 1];
@@ -566,33 +574,34 @@ class EndpointsTab implements MonitorTab {
                 Span.styled("▬", Style.EMPTY.fg(Color.CYAN)),
                 Span.raw(String.format(" out:%-4d msg/s", curOut)));
 
-        frame.renderWidget(MirroredSparkline.builder()
+        frame.renderWidget(DualSparkline.builder()
                 .topData(inArr)
                 .bottomData(outArr)
                 .topStyle(Style.EMPTY.fg(Color.ansi(AnsiColor.BRIGHT_GREEN)))
                 .bottomStyle(Style.EMPTY.fg(Color.CYAN))
+                .showYAxis(true)
                 .xLabels("-" + renderPoints + "s", "-" + (renderPoints * 3 / 4) + "s",
                         "-" + (renderPoints / 2) + "s", "-" + (renderPoints / 4) + "s", "now")
-                .block(Block.builder().borderType(BorderType.ROUNDED)
+                .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
                         .title(Title.from(chartTitle)).build())
-                .build(), hSplit.get(1));
+                .build(), hParts.get(1));
     }
 
     private void renderPayloadSizeChart(Frame frame, Rect area, String pid) {
         LinkedList<Long> inHist = endpointInSizeHistory.getOrDefault(pid, new LinkedList<>());
         LinkedList<Long> outHist = endpointOutSizeHistory.getOrDefault(pid, new LinkedList<>());
 
-        int renderPoints = MAX_CHART_POINTS;
+        int renderPoints = Math.min(MAX_CHART_POINTS, Math.max(2, area.width() - 6));
         long[] inArr = new long[renderPoints];
         long[] outArr = new long[renderPoints];
         for (int i = 0; i < renderPoints; i++) {
             int idx = inHist.size() - renderPoints + i;
             if (idx >= 0) {
-                inArr[i] = inHist.get(idx);
+                inArr[i] = unbox(inHist.get(idx));
             }
             idx = outHist.size() - renderPoints + i;
             if (idx >= 0) {
-                outArr[i] = outHist.get(idx);
+                outArr[i] = unbox(outHist.get(idx));
             }
         }
         long curIn = inArr[renderPoints - 1];
@@ -604,32 +613,21 @@ class EndpointsTab implements MonitorTab {
                 Span.styled("▬", Style.EMPTY.fg(Color.MAGENTA)),
                 Span.raw(String.format(" out:%-8s avg body", sizeToString(curOut))));
 
-        frame.renderWidget(MirroredSparkline.builder()
+        frame.renderWidget(DualSparkline.builder()
                 .topData(inArr)
                 .bottomData(outArr)
                 .topStyle(Style.EMPTY.fg(Color.YELLOW))
                 .bottomStyle(Style.EMPTY.fg(Color.MAGENTA))
-                .yLabelFormatter(EndpointsTab::sizeToYLabel)
+                .showYAxis(true)
                 .xLabels("-" + renderPoints + "s", "-" + (renderPoints * 3 / 4) + "s",
                         "-" + (renderPoints / 2) + "s", "-" + (renderPoints / 4) + "s", "now")
-                .block(Block.builder().borderType(BorderType.ROUNDED)
+                .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
                         .title(Title.from(chartTitle)).build())
                 .build(), area);
     }
 
-    private static String sizeToYLabel(long size) {
-        if (size <= 0) {
-            return "0 B";
-        }
-        if (size < 1024) {
-            return size + "B";
-        } else if (size < 1024 * 1024) {
-            long kb = size / 1024;
-            return kb + "KB";
-        } else {
-            long mb = size / (1024 * 1024);
-            return mb + "MB";
-        }
+    private static long unbox(Long value) {
+        return value != null ? value : 0L;
     }
 
     static String sizeToString(long size) {
@@ -664,6 +662,11 @@ class EndpointsTab implements MonitorTab {
         List<String> items = sorted.stream().map(ep -> ep.uri != null ? ep.uri : "").toList();
         Integer sel = tableState.selected();
         return new SelectionContext("table", items, sel != null ? sel : -1, items.size(), "Endpoints");
+    }
+
+    @Override
+    public String description() {
+        return "Registered endpoints with usage statistics (hits, direction)";
     }
 
     @Override

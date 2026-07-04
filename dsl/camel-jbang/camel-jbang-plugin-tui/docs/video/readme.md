@@ -6,7 +6,7 @@ This produces Asciinema `.cast` files with pixel-perfect rendering
 
 ## Prerequisites
 
-- [Camel JBang](https://camel.apache.org/manual/camel-jbang.html) installed
+- [Camel CLI](https://camel.apache.org/manual/camel-jbang.html) installed
 - [camel-jbang-examples](https://github.com/apache/camel-jbang-examples) cloned
   (for the circuit-breaker, openapi, and routes demos)
 - Optional: [agg](https://github.com/asciinema/agg) to convert `.cast` to `.gif`
@@ -139,7 +139,8 @@ terminal interactions (`Type`, `Sleep`, `Screenshot`, etc.).
 
 | File | Description |
 |------|-------------|
-| `camel-tui-hello.tape` | First impression — basic Hello World tour across all main tabs |
+| `camel-tui-hello.tape` | Quick tour (~25s) — Hello World timer-log across main tabs |
+| `camel-tui-topology.tape` | Full demo (~2 min) — Route topology with 7 routes, diagram drill-down, errors, and more |
 
 ## Output
 

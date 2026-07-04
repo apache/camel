@@ -7,8 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
-//Manually maintained attributes
-:camel-spring-boot-name: quickfix
 
 *Since Camel {since}*
 
@@ -240,6 +238,7 @@ method returns the response
 to the request (an ExecutionReport in this case) which is then sent back
 to the requestor session.
 
+._Java-only: route definition using Java DSL for InOut consumer exchange_
 [source,java]
 ----
     from("quickfix:examples/inprocess.qf.cfg?sessionID=FIX.4.2:MARKET->TRADER&exchangePattern=InOut")
@@ -275,6 +274,7 @@ matches our request. The session ID should be for the __requestor__, the
 sender and target CompID fields
 will be reversed when looking for the reply.
 
+._Java-only: programmatic correlation criteria setup using QuickFIX/J API_
 [source,java]
 ----
 exchange.setProperty(QuickfixjProducer.CORRELATION_CRITERIA_KEY,
@@ -291,6 +291,7 @@ QuickFIX/J session ID strings is also included. The following example
 shows a simple configuration of an acceptor and initiator session with
 default settings for both sessions.
 
+._XML-only: Spring XML configuration with QuickFIX/J component and session settings_
 [source,xml]
 ----
 <!--  camel route  -->
@@ -408,6 +409,7 @@ uses the URI scheme "trade-executor".
 The following route receives messages for the trade executor session and
 passes application messages to the trade executor component.
 
+._Java-only: route definition using Java DSL to filter and forward FIX messages_
 [source,java]
 ----
 from("quickfix:examples/inprocess.qf.cfg?sessionID=FIX.4.2:MARKET->TRADER").
@@ -419,6 +421,7 @@ The trade executor component generates messages that are routed back to
 the trade session. The session ID must be set in the FIX message itself
 since no session ID is specified in the endpoint URI.
 
+._Java-only: route definition using Java DSL to send messages back to FIX session_
 [source,java]
 ----
 from("trade-executor:market").to("quickfix:examples/inprocess.qf.cfg");
@@ -427,6 +430,7 @@ from("trade-executor:market").to("quickfix:examples/inprocess.qf.cfg");
 The trader session consumes execution report messages from the market
 and processes them.
 
+._Java-only: route definition using Java DSL to consume and process execution reports_
 [source,java]
 ----
 from("quickfix:examples/inprocess.qf.cfg?sessionID=FIX.4.2:TRADER->MARKET").
@@ -446,7 +450,3 @@ correlation criteria, and is then routed to a quickfix endpoint. The
 response is then converted to a
 JSON-formatted string and sent back to the HTTP server endpoint to be
 provided as the web response.
-
-
-
-include::spring-boot:partial$starter.adoc[]

@@ -591,7 +591,7 @@ public interface Rekognition2EndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final Rekognition2HeaderNameBuilder INSTANCE = new Rekognition2HeaderNameBuilder();
+        public static final Rekognition2HeaderNameBuilder INSTANCE = new Rekognition2HeaderNameBuilder();
 
         /**
          * The operation we want to perform.

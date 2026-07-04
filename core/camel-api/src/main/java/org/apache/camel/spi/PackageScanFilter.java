@@ -17,7 +17,20 @@
 package org.apache.camel.spi;
 
 /**
- * Filter that can be used with the {@link org.apache.camel.spi.PackageScanClassResolver} resolver.
+ * Predicate applied by {@link PackageScanClassResolver} during classpath scanning to determine whether a discovered
+ * class should be included in the result set.
+ * <p/>
+ * Implementations receive each candidate class and return {@code true} to include it or {@code false} to skip it.
+ * Because this is a {@link FunctionalInterface}, a filter can be expressed as a lambda or method reference:
+ *
+ * <pre>
+ * resolver.findByFilter(cls -&gt; cls.isAnnotationPresent(MyAnnotation.class), "com.example");
+ * </pre>
+ *
+ * Global filters registered via {@link PackageScanClassResolver#addFilter(PackageScanFilter)} apply to every subsequent
+ * scan; per-query filters passed to {@link PackageScanClassResolver#findByFilter} apply only to that single call.
+ *
+ * @see PackageScanClassResolver
  */
 @FunctionalInterface
 public interface PackageScanFilter {

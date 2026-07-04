@@ -1169,7 +1169,7 @@ public interface GitHub2EndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final GitHub2HeaderNameBuilder INSTANCE = new GitHub2HeaderNameBuilder();
+        public static final GitHub2HeaderNameBuilder INSTANCE = new GitHub2HeaderNameBuilder();
 
         /**
          * The pull request.

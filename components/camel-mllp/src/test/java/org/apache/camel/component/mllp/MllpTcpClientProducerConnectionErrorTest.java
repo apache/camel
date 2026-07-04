@@ -255,8 +255,6 @@ public class MllpTcpClientProducerConnectionErrorTest extends CamelTestSupport {
         target.expectedMessageCount(1);
         complete.expectedMessageCount(2);
         connectEx.expectedMessageCount(0);
-        writeEx.expectedMessageCount(1);
-        acknowledgementEx.expectedMessageCount(0);
 
         NotifyBuilder done = new NotifyBuilder(context).whenCompleted(2).create();
 
@@ -271,6 +269,10 @@ public class MllpTcpClientProducerConnectionErrorTest extends CamelTestSupport {
         assertTrue(done.matches(10, TimeUnit.SECONDS), "Should have completed an exchange");
 
         MockEndpoint.assertIsSatisfied(context, 10, TimeUnit.SECONDS);
+
+        // Depending on the timing, either a write or a receive exception will be thrown
+        assertEquals(1, writeEx.getExchanges().size() + acknowledgementEx.getExchanges().size(),
+                "Either a write or a receive exception should have been be thrown");
     }
 
 }

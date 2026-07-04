@@ -76,7 +76,9 @@ import org.apache.camel.spi.Metadata;
 /**
  * Marshals data into a specified format for transmission over a transport or component
  */
-@Metadata(label = "eip,dataformat,transformation")
+@Metadata(label = "eip,dataformat,transformation",
+          aliases = { "serialize" },
+          description = "Serializes the message body into a specific data format such as JSON, XML, CSV, or Protobuf for transmission or storage")
 @XmlRootElement(name = "marshal")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class MarshalDefinition extends NoOutputDefinition<MarshalDefinition> implements DataFormatDefinitionAware {
@@ -130,10 +132,13 @@ public class MarshalDefinition extends NoOutputDefinition<MarshalDefinition> imp
             @XmlElement(name = "yaml", type = YAMLDataFormat.class),
             @XmlElement(name = "zipDeflater", type = ZipDeflaterDataFormat.class),
             @XmlElement(name = "zipFile", type = ZipFileDataFormat.class) })
+    @Metadata(description = "The data format to use for marshalling the message body into a specific format such as JSON, XML, CSV, Avro, Protobuf, etc.")
     private DataFormatDefinition dataFormatType;
     @XmlAttribute
+    @Metadata(description = "To use a variable as the source for the message body to send. This makes it handy to use variables for user data and to easily control what data to use for sending and receiving.")
     private String variableSend;
     @XmlAttribute
+    @Metadata(description = "To use a variable to store the received message body (only body, not headers). This makes it handy to use variables for user data and to easily control what data to use for sending and receiving.")
     private String variableReceive;
 
     public MarshalDefinition() {
@@ -179,9 +184,6 @@ public class MarshalDefinition extends NoOutputDefinition<MarshalDefinition> imp
         return dataFormatType;
     }
 
-    /**
-     * The data format to be used
-     */
     @Override
     public void setDataFormatType(DataFormatDefinition dataFormatType) {
         this.dataFormatType = dataFormatType;

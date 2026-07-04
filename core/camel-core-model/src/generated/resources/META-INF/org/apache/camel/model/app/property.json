@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "property",
     "title": "Property",
-    "description": "A key value pair where the value is a literal value",
+    "description": "Defines a key\/value pair with a literal value, used for passing parameters in route templates and other configurations",
     "deprecated": false,
     "label": "configuration",
     "javaType": "org.apache.camel.model.app.BeanPropertyDefinition",
@@ -12,8 +12,8 @@
     "output": false
   },
   "properties": {
-    "key": { "index": 0, "kind": "attribute", "displayName": "Key", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The name of the property" },
-    "value": { "index": 1, "kind": "attribute", "displayName": "Value", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The property value" },
+    "key": { "index": 0, "kind": "attribute", "displayName": "Key", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The name of the property." },
+    "value": { "index": 1, "kind": "attribute", "displayName": "Value", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The property value." },
     "properties": { "index": 2, "kind": "element", "displayName": "Properties", "group": "common", "required": false, "type": "object", "javaType": "org.apache.camel.model.app.BeanPropertiesDefinition", "deprecated": false, "autowired": false, "secret": false, "description": "Optional nested properties." }
   }
 }

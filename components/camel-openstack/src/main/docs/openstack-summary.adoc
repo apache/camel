@@ -32,6 +32,3 @@ for this component:
 ------------------------------------------------------------
 
 
-:camel-spring-boot-name: openstack
-
-include::spring-boot:partial$starter.adoc[]

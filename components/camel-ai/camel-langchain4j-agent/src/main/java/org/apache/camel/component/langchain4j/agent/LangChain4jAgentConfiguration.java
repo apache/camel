@@ -22,6 +22,7 @@ import java.util.Map;
 import dev.langchain4j.mcp.client.McpClient;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.langchain4j.agent.api.Agent;
+import org.apache.camel.component.langchain4j.agent.api.AgentConfiguration;
 import org.apache.camel.component.langchain4j.agent.api.AgentFactory;
 import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.Metadata;
@@ -40,6 +41,13 @@ public class LangChain4jAgentConfiguration implements Cloneable {
     @Metadata(autowired = true)
     private AgentFactory agentFactory;
 
+    @UriParam(description = "AgentConfiguration used by Camel to create the agent internally."
+                            + " When set, Camel creates an AgentWithMemory if a ChatMemoryProvider is configured,"
+                            + " otherwise an AgentWithoutMemory."
+                            + " If an agentFactory is also configured, the factory takes precedence.")
+    @Metadata(autowired = true)
+    private AgentConfiguration agentConfiguration;
+
     @UriParam(description = "Tags for discovering and calling Camel route tools")
     private String tags;
 
@@ -47,6 +55,21 @@ public class LangChain4jAgentConfiguration implements Cloneable {
                             + " Reference beans from the registry, e.g., #myMcpClient1,#myMcpClient2",
               label = "advanced")
     private List<McpClient> mcpClients;
+
+    @UriParam
+    @Metadata(description = "JSON schema for structured output validation. "
+                            + "Only supported in inline agent creation mode: agentConfiguration must be set and neither agent nor agentFactory may be configured. "
+                            + "Mutually exclusive with outputClass.",
+              supportFileReference = true, largeInput = true, inputLanguage = "json")
+    private String jsonSchema;
+
+    @UriParam
+    @Metadata(description = "Java class to use for structured output. "
+                            + "Camel derives the JSON schema from the class and instructs the model to produce matching JSON; the response body is left as a raw JSON string. "
+                            + "Only supported in inline agent creation mode: agentConfiguration must be set and neither agent nor agentFactory may be configured. "
+                            + "The class must be a POJO with public fields or getters; simple types, enums, and collections are not supported. "
+                            + "Mutually exclusive with jsonSchema.")
+    private Class<?> outputClass;
 
     @UriParam(description = "MCP server definitions in the form of mcpServer.<name>.<property>=<value>."
                             + " Supported properties: transportType (stdio, http, streamableHttp, or sse, default: stdio),"
@@ -108,6 +131,17 @@ public class LangChain4jAgentConfiguration implements Cloneable {
     }
 
     /**
+     * AgentConfiguration used by Camel to create the agent internally.
+     */
+    public AgentConfiguration getAgentConfiguration() {
+        return agentConfiguration;
+    }
+
+    public void setAgentConfiguration(AgentConfiguration agentConfiguration) {
+        this.agentConfiguration = agentConfiguration;
+    }
+
+    /**
      * Pre-built MCP client instances for external tool integration
      *
      * @return the list of MCP clients
@@ -141,5 +175,31 @@ public class LangChain4jAgentConfiguration implements Cloneable {
 
     public void setMcpServer(Map<String, Object> mcpServer) {
         this.mcpServer = mcpServer;
+    }
+
+    /**
+     * JSON schema for structured output validation
+     *
+     * @return the JSON schema string or resource reference
+     */
+    public String getJsonSchema() {
+        return jsonSchema;
+    }
+
+    public void setJsonSchema(String jsonSchema) {
+        this.jsonSchema = jsonSchema;
+    }
+
+    /**
+     * Java class to use for structured output
+     *
+     * @return the output class
+     */
+    public Class<?> getOutputClass() {
+        return outputClass;
+    }
+
+    public void setOutputClass(Class<?> outputClass) {
+        this.outputClass = outputClass;
     }
 }

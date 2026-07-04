@@ -45,7 +45,7 @@ There are few ways you can provide a reproducer:
 
 - Create a JUnit test case that reproduces the problem. You can look at some of the existing https://github.com/apache/camel/tree/main/core/camel-core/src/test/java/org/apache/camel[unit test cases] to learn about how to create one.
 - Create a sample project that reproduces the issue.
-- Provide route files, Kamelets or any other file we can run with Camel JBang.
+- Provide route files, Kamelets or any other file we can run with Camel CLI.
 
 ==== Providing a good reproducer
 
@@ -56,7 +56,7 @@ We appreciate all reproducers, but there are a few tips that can make us appreci
 * When an external application is required, reduce debugging friction:
 ** Use the plain Camel Core (i.e.: if it's a problem on Camel Core, avoid creating a reproducer based on Camel Quarkus, Camel Spring Boot and others).
 ** Use Java: the Camel Core is written in Java and that's the language the community is most familiar with.
-* Reproducers using Camel JBang are also highly helpful.
+* Reproducers using Camel CLI are also highly helpful.
 
 [NOTE]
 ====
@@ -344,6 +344,23 @@ Our CI has many other jobs, covering different JDKs, platforms (x86, PowerPC, s3
 As part of our https://ci-builds.apache.org/job/Camel/[Continuous Integration], the code is automatically analyzed for issues using a https://sonarcloud.io/project/overview?id=apache_camel[SonarQube instance] managed by the ASF Infra.
 
 Apache Camel Committers and contributors are encouraged to analyze the quality reports and suggest fixes and improvements.
+
+== AI-assisted contributions
+
+Contributors using AI coding assistants (such as https://github.com/anthropics/claude-code[Claude Code] or similar tools) can take advantage of the project rules in the `.oss-ai-helper-rules/` directory and the `CLAUDE.md` file at the repository root.
+
+These files provide AI agents with project-specific context such as build commands, code style restrictions, branching conventions, issue tracker details, and contribution guidelines.
+They are maintained as part of the repository so that AI-assisted contributions follow the same standards as manual ones.
+
+The `.oss-ai-helper-rules/` files are designed for use with the https://github.com/Open-Harness-Engineering/ai-agents-oss-helper[OSS Helper] toolset, which provides ready-made skills for common contribution tasks (fixing issues, creating PRs, running CI checks, and more).
+
+=== Attribution
+
+Pull requests that include AI-generated code **must** provide proper attribution.
+AI coding agents should be configured to add co-authorship trailers to commits (e.g., `Co-authored-by`).
+For example, Claude Code supports this via its https://code.claude.com/docs/en/settings#attribution-settings[attribution settings].
+
+PR descriptions for AI-assisted contributions should also clearly identify the AI tool used.
 
 == Becoming a committer
 

@@ -9,7 +9,6 @@
 :component-header: Only producer is supported
 //Manually maintained attributes
 :group: Spring
-:camel-spring-boot-name: spring-ldap
 
 *Since Camel {since}*
 
@@ -41,7 +40,6 @@ Where *springLdapTemplate* is the name of the
 http://static.springsource.org/spring-ldap/site/apidocs/org/springframework/ldap/core/LdapTemplate.html[Spring
 LDAP Template bean]. In this bean, you configure the URL and the
 credentials for your LDAP access.
-
 
 
 // component options: START
@@ -114,4 +112,3 @@ in `org.apache.camel.springldap.SpringLdapProducer`:
 * `public static final String REQUEST = "request";`
 
 
-include::spring-boot:partial$starter.adoc[]

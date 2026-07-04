@@ -29,6 +29,8 @@ for this component:
 == Usage
 
 This component provides a custom `HealthCheckRegistry` implementation that needs to be registered on the `CamelContext`.
+
+._Java-only: registering the MicroProfile Health check registry on the CamelContext_
 [source,java]
 ----
 HealthCheckRegistry registry = new CamelMicroProfileHealthCheckRegistry();
@@ -40,6 +42,7 @@ be considered either a readiness or liveness check, you can extend `AbstractHeal
 
 For example, to have a check registered exclusively as a liveness check:
 
+._Java-only: implementing a custom liveness health check_
 [source,java]
 ----
 public class MyHealthCheck extends AbstractHealthCheck {

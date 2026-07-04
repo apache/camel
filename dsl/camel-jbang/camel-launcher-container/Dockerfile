@@ -18,7 +18,7 @@
 FROM ${container.base-image}
 
 LABEL org.opencontainers.image.title="Apache Camel Launcher" \
-      org.opencontainers.image.description="Self-contained executable JAR for running Apache Camel JBang without requiring JBang installed" \
+      org.opencontainers.image.description="Self-contained executable JAR for running Apache Camel CLI without requiring JBang installed" \
       org.opencontainers.image.version="${camel-launcher.version}" \
       org.opencontainers.image.vendor="Apache Software Foundation" \
       org.opencontainers.image.authors="dev@camel.apache.org" \

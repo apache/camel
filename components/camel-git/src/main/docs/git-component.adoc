@@ -7,8 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
-//Manually maintained attributes
-:camel-spring-boot-name: git
 
 *Since Camel {since}*
 
@@ -17,20 +15,20 @@
 The Git component allows you to work with a generic Git repository. 
 
 [source,xml]
-------------------------------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-git</artifactId>
     <version>x.x.x</version>
     <!-- use the same version as your Camel core version -->
 </dependency>
-------------------------------------------------------------
+----
 
 *URI Format*
 
------------------------------------
+----
 git://localRepositoryPath[?options]
------------------------------------
+----
 
 == URI Options
 
@@ -53,37 +51,98 @@ Below is an example route of a producer that adds a file test.java to a
 local repository, commits it with a specific message on the `main` branch and
 then pushes it to remote repository.
 
+._Java-only: setting headers with GitConstants and chaining multiple git operations_
 [source,java]
---------------------------------------------------------------------------------------------------------------------
+----
 from("direct:start")
-    .setHeader(GitConstants.GIT_FILE_NAME, constant("test.java"))
+    .setHeader("CamelGitFilename", constant("test.java"))
     .to("git:///tmp/testRepo?operation=add")
-    .setHeader(GitConstants.GIT_COMMIT_MESSAGE, constant("first commit"))
+    .setHeader("CamelGitCommitMessage", constant("first commit"))
     .to("git:///tmp/testRepo?operation=commit")
     .to("git:///tmp/testRepo?operation=push&remotePath=https://foo.com/test/test.git&username=xxx&password=xxx")
     .to("git:///tmp/testRepo?operation=createTag&tagName=myTag")
     .to("git:///tmp/testRepo?operation=pushTag&tagName=myTag&remoteName=origin");
---------------------------------------------------------------------------------------------------------------------
+----
 
 === Consumer Example
 
 Below is an example route of a consumer that consumes commit:
 
+[tabs]
+====
+Java::
++
 [source,java]
----------------------------------------
+----
 from("git:///tmp/testRepo?type=commit")
-    .to(....)
----------------------------------------
+    .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="git:///tmp/testRepo?type=commit"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: git:///tmp/testRepo
+      parameters:
+        type: commit
+      steps:
+        - to:
+            uri: mock:result
+----
+====
 
 === Shallow Clone
 
 Use the `depth` option to perform a shallow clone, fetching only a limited number of commits. This reduces clone time and disk usage for large repositories when full history is not needed.
 
+[tabs]
+====
+Java::
++
 [source,java]
----------------------------------------
+----
 from("direct:clone")
     .to("git:///tmp/myRepo?operation=clone&remotePath=https://github.com/example/repo.git&depth=1");
----------------------------------------
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:clone"/>
+  <to uri="git:///tmp/myRepo?operation=clone&amp;remotePath=https://github.com/example/repo.git&amp;depth=1"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:clone
+      steps:
+        - to:
+            uri: git:///tmp/myRepo
+            parameters:
+              operation: clone
+              remotePath: "https://github.com/example/repo.git"
+              depth: 1
+----
+====
 
 A `depth` of 1 fetches only the latest commit. The value must be a positive integer. When set to 0 or omitted, a full clone is performed.
 
@@ -92,8 +151,9 @@ A `depth` of 1 fetches only the latest commit. The value must be a positive inte
 By default, camel-git will load ``.gitconfig`` file from user home folder.
 You can override this by providing your own ``.gitconfig`` file.
 
+._Java-only: configuring custom gitConfigFile with different resource schemes_
 [source,java]
----------------------------------------
+----
 from("git:///tmp/testRepo?type=commit&gitConfigFile=file:/tmp/configfile")
     .to(....); // will load from os dirs
 
@@ -102,6 +162,4 @@ from("git:///tmp/testRepo?type=commit&gitConfigFile=classpath:configfile")
 
 from("git:///tmp/testRepo?type=commit&gitConfigFile=http://somedomain.xyz/gitconfigfile")
     .to(....); // will load from http. You could also use https
----------------------------------------
-
-include::spring-boot:partial$starter.adoc[]
+----

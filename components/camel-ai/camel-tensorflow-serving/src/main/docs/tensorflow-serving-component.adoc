@@ -9,7 +9,6 @@
 :component-header: Only producer is supported
 //Manually maintained attributes
 :group: AI
-:camel-spring-boot-name: tensorflow-serving
 
 *Since Camel {since}*
 
@@ -108,6 +107,11 @@ tensorflow-serving:<api>[?options]
 === Model status API
 
 .Check model status
+
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:model-status")
@@ -115,15 +119,87 @@ from("direct:model-status")
     .log("Status: ${body.getModelVersionStatus(0).state}");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:model-status"/>
+  <to uri="tensorflow-serving:model-status?modelName=half_plus_two&amp;modelVersion=123"/>
+  <log message="Status: ${body.getModelVersionStatus(0).state}"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:model-status
+      steps:
+        - to:
+            uri: tensorflow-serving:model-status
+            parameters:
+              modelName: half_plus_two
+              modelVersion: 123
+        - log:
+            message: "Status: ${body.getModelVersionStatus(0).state}"
+----
+====
+
 .Specify the model name and version with headers
+
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:model-status-with-headers")
-    .setHeader(TensorFlowServingConstants.MODEL_NAME, constant("half_plus_two"))
-    .setHeader(TensorFlowServingConstants.MODEL_VERSION, constant(123))
+    .setHeader("CamelTensorFlowServingModelName", constant("half_plus_two"))
+    .setHeader("CamelTensorFlowServingModelVersion", constant(123))
     .to("tensorflow-serving:model-status")
     .log("Status: ${body.getModelVersionStatus(0).state}");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:model-status-with-headers"/>
+  <setHeader name="CamelTensorFlowServingModelName">
+    <constant>half_plus_two</constant>
+  </setHeader>
+  <setHeader name="CamelTensorFlowServingModelVersion">
+    <constant resultType="java.lang.Integer">123</constant>
+  </setHeader>
+  <to uri="tensorflow-serving:model-status"/>
+  <log message="Status: ${body.getModelVersionStatus(0).state}"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:model-status-with-headers
+      steps:
+        - setHeader:
+            name: CamelTensorFlowServingModelName
+            constant: half_plus_two
+        - setHeader:
+            name: CamelTensorFlowServingModelVersion
+            constant: 123
+        - to:
+            uri: tensorflow-serving:model-status
+        - log:
+            message: "Status: ${body.getModelVersionStatus(0).state}"
+----
+====
 
 === Model Metadata API
 
@@ -131,6 +207,11 @@ Currently, TensorFlow Serving only supports `signature_def` as the metadata fiel
 See: https://github.com/tensorflow/serving/blob/2.18.0/tensorflow_serving/apis/get_model_metadata.proto#L26-L28[get_model_metadata.proto]
 
 .Fetch model metadata
+
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:model-metadata")
@@ -138,19 +219,93 @@ from("direct:model-metadata")
     .log("Metadata: ${body.getMetadataOrThrow('signature_def')}");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:model-metadata"/>
+  <to uri="tensorflow-serving:model-metadata?modelName=half_plus_two&amp;modelVersion=123"/>
+  <log message="Metadata: ${body.getMetadataOrThrow('signature_def')}"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:model-metadata
+      steps:
+        - to:
+            uri: tensorflow-serving:model-metadata
+            parameters:
+              modelName: half_plus_two
+              modelVersion: 123
+        - log:
+            message: "Metadata: ${body.getMetadataOrThrow('signature_def')}"
+----
+====
+
 .Specify the model name and version with headers
+
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:model-metadata-with-headers")
-    .setHeader(TensorFlowServingConstants.MODEL_NAME, constant("half_plus_two"))
-    .setHeader(TensorFlowServingConstants.MODEL_VERSION, constant(123))
+    .setHeader("CamelTensorFlowServingModelName", constant("half_plus_two"))
+    .setHeader("CamelTensorFlowServingModelVersion", constant(123))
     .to("tensorflow-serving:model-metadata")
     .log("Metadata: ${body.getMetadataOrThrow('signature_def')}");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:model-metadata-with-headers"/>
+  <setHeader name="CamelTensorFlowServingModelName">
+    <constant>half_plus_two</constant>
+  </setHeader>
+  <setHeader name="CamelTensorFlowServingModelVersion">
+    <constant resultType="java.lang.Integer">123</constant>
+  </setHeader>
+  <to uri="tensorflow-serving:model-metadata"/>
+  <log message="Metadata: ${body.getMetadataOrThrow('signature_def')}"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:model-metadata-with-headers
+      steps:
+        - setHeader:
+            name: CamelTensorFlowServingModelName
+            constant: half_plus_two
+        - setHeader:
+            name: CamelTensorFlowServingModelVersion
+            constant: 123
+        - to:
+            uri: tensorflow-serving:model-metadata
+        - log:
+            message: "Metadata: ${body.getMetadataOrThrow('signature_def')}"
+----
+====
+
 === Classify API
 
 The signature name should be resolved by looking up <<Model Metadata API,the model metadata>>.
+
+._Java-only: requires TensorFlow protobuf Input builder_
 
 .Classify
 [source,java]
@@ -168,6 +323,8 @@ from("direct:classify")
     .log("Result: ${body.result.getClassifications(0).getClasses(0).score}");
 ----
 
+._Java-only: requires TensorFlow protobuf Input builder with header overrides_
+
 .Specify the model and signature name with headers
 [source,java]
 ----
@@ -180,9 +337,9 @@ from("direct:classify-with-headers")
                         .setFloatList(FloatList.newBuilder().addValue(1.0f))
                         .build()))))
         .build()))
-    .setHeader(TensorFlowServingConstants.MODEL_NAME, constant("half_plus_two"))
-    .setHeader(TensorFlowServingConstants.MODEL_VERSION, constant(123))
-    .setHeader(TensorFlowServingConstants.SIGNATURE_NAME, constant("classify_x_to_y"))
+    .setHeader("CamelTensorFlowServingModelName", constant("half_plus_two"))
+    .setHeader("CamelTensorFlowServingModelVersion", constant(123))
+    .setHeader("CamelTensorFlowServingSignatureName", constant("classify_x_to_y"))
     .to("tensorflow-serving:classify")
     .log("Result: ${body.result.getClassifications(0).getClasses(0).score}");
 ----
@@ -190,6 +347,8 @@ from("direct:classify-with-headers")
 === Regress API
 
 The signature name should be resolved by looking up <<Model Metadata API,the model metadata>>.
+
+._Java-only: requires TensorFlow protobuf Input builder_
 
 .Regress
 [source,java]
@@ -207,6 +366,8 @@ from("direct:regress")
     .log("Result: ${body.result.getRegressions(0).value}");
 ----
 
+._Java-only: requires TensorFlow protobuf Input builder with header overrides_
+
 .Specify the model and signature name with headers
 [source,java]
 ----
@@ -219,9 +380,9 @@ from("direct:regress-with-headers")
                         .setFloatList(FloatList.newBuilder().addValue(1.0f))
                         .build()))))
         .build()))
-    .setHeader(TensorFlowServingConstants.MODEL_NAME, constant("half_plus_two"))
-    .setHeader(TensorFlowServingConstants.MODEL_VERSION, constant(123))
-    .setHeader(TensorFlowServingConstants.SIGNATURE_NAME, constant("regress_x_to_y"))
+    .setHeader("CamelTensorFlowServingModelName", constant("half_plus_two"))
+    .setHeader("CamelTensorFlowServingModelVersion", constant(123))
+    .setHeader("CamelTensorFlowServingSignatureName", constant("regress_x_to_y"))
     .to("tensorflow-serving:regress")
     .log("Result: ${body.result.getRegressions(0).value}");
 ----
@@ -229,6 +390,8 @@ from("direct:regress-with-headers")
 === Predict API
 
 The labels of inputs (`x`) and outputs (`y`) should be resolved by looking up <<Model Metadata API,the model metadata>>.
+
+._Java-only: requires TensorFlow protobuf PredictRequest builder_
 
 .Predict
 [source,java]
@@ -250,6 +413,8 @@ from("direct:predict")
     .log("Result3: ${body.getOutputsOrThrow('y').getFloatVal(2)}");
 ----
 
+._Java-only: requires TensorFlow protobuf PredictRequest builder with header overrides_
+
 .Specify the model name and version with headers
 [source,java]
 ----
@@ -264,12 +429,11 @@ from("direct:predict-with-headers")
             .addFloatVal(5.0f)
             .build())
         .build()))
-    .setHeader(TensorFlowServingConstants.MODEL_NAME, constant("half_plus_two"))
-    .setHeader(TensorFlowServingConstants.MODEL_VERSION, constant(123))
+    .setHeader("CamelTensorFlowServingModelName", constant("half_plus_two"))
+    .setHeader("CamelTensorFlowServingModelVersion", constant(123))
     .to("tensorflow-serving:predict")
     .log("Result1: ${body.getOutputsOrThrow('y').getFloatVal(0)}")
     .log("Result2: ${body.getOutputsOrThrow('y').getFloatVal(1)}")
     .log("Result3: ${body.getOutputsOrThrow('y').getFloatVal(2)}");
 ----
 
-include::spring-boot:partial$starter.adoc[]

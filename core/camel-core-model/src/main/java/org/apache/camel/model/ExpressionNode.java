@@ -29,6 +29,8 @@ import org.apache.camel.ExpressionFactory;
 import org.apache.camel.Predicate;
 import org.apache.camel.builder.ExpressionClause;
 import org.apache.camel.model.language.ExpressionDefinition;
+import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.annotations.DslArg;
 
 /**
  * A base {@link ExpressionNode} which does <b>not</b> support any outputs.
@@ -42,6 +44,8 @@ public abstract class ExpressionNode extends ProcessorDefinition<ExpressionNode>
         implements HasExpressionType {
 
     @XmlElementRef
+    @DslArg
+    @Metadata(description = "Expression to define the behavior of the EIP such as the value to set, the predicate to evaluate, the endpoint to resolve, or the body to split/transform.")
     private ExpressionDefinition expression;
 
     protected ExpressionNode() {

@@ -87,4 +87,4 @@ Add the plugin to your `pom.xml`:
 
 ## Example
 
-See the Camel JBang launcher (`dsl/camel-jbang/camel-launcher`) for a real-world example of how this plugin is used.
+See the Camel CLI launcher (`dsl/camel-jbang/camel-launcher`) for a real-world example of how this plugin is used.

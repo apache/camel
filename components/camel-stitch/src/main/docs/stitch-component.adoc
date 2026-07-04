@@ -7,8 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Only producer is supported
-//Manually maintained attributes
-:camel-spring-boot-name: stitch
 
 *Since Camel {since}*
 
@@ -25,21 +23,21 @@ Maven users will need to add the following dependency to their `pom.xml`
 for this component:
 
 [source,xml]
-------------------------------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-stitch</artifactId>
     <version>x.x.x</version>
   <!-- use the same version as your Camel core version -->
 </dependency>
-------------------------------------------------------------
+----
 
 
 == URI format
 
-------------------------------
+----
 stitch:[tableName]//[?options]
-------------------------------
+----
 
 // component options: START
 include::partial$component-configure-options.adoc[]
@@ -62,9 +60,10 @@ This component implements the async Consumer and producer.
 This allows camel route to consume and produce events asynchronously without blocking any threads.
 
 
+._Java-only: Java lambda Processor with Stitch SDK builders_
 .Example showing how to produce data to Stitch from a custom processor:
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:sendStitch")
      .process(exchange -> {
          final StitchMessage stitchMessage = StitchMessage.builder()
@@ -81,7 +80,7 @@ from("direct:sendStitch")
                 exchange.getMessage().setBody(stitchRequestBody);
      })
 .to("stitch:table_1?token=RAW({{token}})");
---------------------------------------------------------------------------------
+----
 
 === Message body type
 
@@ -105,8 +104,9 @@ can be type of `StitchMessage`, `StitchRequestBody` or `Map` but this Map here i
 Here is list of examples showing data that can be proceeded to Stitch:
 
 ==== Input body type `org.apache.camel.component.stitch.client.models.StitchRequestBody`:
+._Java-only: Java lambda Processor with Stitch SDK builders_
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:sendStitch")
      .process(exchange -> {
          final StitchMessage stitchMessage = StitchMessage.builder()
@@ -123,18 +123,19 @@ from("direct:sendStitch")
                 exchange.getMessage().setBody(stitchRequestBody);
      })
 .to("stitch:table_1?token=RAW({{token}})");
---------------------------------------------------------------------------------
+----
 
 
 ==== Input body type `org.apache.camel.component.stitch.client.models.StitchMessage`:
 
+._Java-only: Java lambda Processor with Stitch SDK API_
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:sendStitch")
      .process(exchange -> {
-         exchange.getMessage().setHeader(StitchConstants.SCHEMA, StitchSchema.builder().addKeyword("field_1", "string").build());
-         exchange.getMessage().setHeader(StitchConstants.KEY_NAMES, "field_1");
-         exchange.getMessage().setHeader(StitchConstants.TABLE_NAME, "table_1");
+         exchange.getMessage().setHeader("CamelStitchSchema", StitchSchema.builder().addKeyword("field_1", "string").build());
+         exchange.getMessage().setHeader("CamelStitchKeyNames", "field_1");
+         exchange.getMessage().setHeader("CamelStitchTableName", "table_1");
 
          final StitchMessage stitchMessage = StitchMessage.builder()
                .withData("field_1", "stitchMessage2-1")
@@ -143,12 +144,13 @@ from("direct:sendStitch")
                 exchange.getMessage().setBody(stitchMessage);
      })
 .to("stitch:table_1?token=RAW({{token}})");
---------------------------------------------------------------------------------
+----
 
 
 ==== Input body type `Map`:
+._Java-only: Java lambda Processor with Map construction_
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:sendStitch")
      .process(exchange -> {
         final Map<String, Object> properties = new LinkedHashMap<>();
@@ -167,16 +169,17 @@ from("direct:sendStitch")
         exchange.getMessage().setBody(data);
      })
 .to("stitch:table_1?token=RAW({{token}})");
---------------------------------------------------------------------------------
+----
 
 ==== Input body type `Iterable`:
+._Java-only: Java lambda Processor with Iterable construction_
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:sendStitch")
      .process(exchange -> {
-         exchange.getMessage().setHeader(StitchConstants.SCHEMA, StitchSchema.builder().addKeyword("field_1", "string").build());
-         exchange.getMessage().setHeader(StitchConstants.KEY_NAMES, "field_1");
-         exchange.getMessage().setHeader(StitchConstants.TABLE_NAME, "table_1");
+         exchange.getMessage().setHeader("CamelStitchSchema", StitchSchema.builder().addKeyword("field_1", "string").build());
+         exchange.getMessage().setHeader("CamelStitchKeyNames", "field_1");
+         exchange.getMessage().setHeader("CamelStitchTableName", "table_1");
 
         final StitchMessage stitchMessage1 = StitchMessage.builder()
                 .withData("field_1", "stitchMessage1")
@@ -220,7 +223,7 @@ from("direct:sendStitch")
         exchange.getMessage().setBody(inputMessages);
      })
 .to("stitch:table_1?token=RAW({{token}})");
---------------------------------------------------------------------------------
+----
 
 == Development Notes (Important)
 
@@ -235,7 +238,3 @@ mvn verify -Dtoken=stitchToken
 ----
 
 Whereby `token` is your Stitch token generated for Stitch Import API integration.
-
-
-
-include::spring-boot:partial$starter.adoc[]

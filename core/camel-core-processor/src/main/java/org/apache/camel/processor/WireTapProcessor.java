@@ -24,6 +24,7 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
+import org.apache.camel.EndpointSending;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.ExchangePropertyKey;
@@ -49,7 +50,7 @@ import org.slf4j.LoggerFactory;
  * Processor for wire tapping exchanges to an endpoint destination.
  */
 public class WireTapProcessor extends BaseProcessorSupport
-        implements Traceable, ShutdownAware, IdAware, RouteIdAware, StepIdAware, CamelContextAware {
+        implements Traceable, ShutdownAware, EndpointSending, IdAware, RouteIdAware, StepIdAware, CamelContextAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(WireTapProcessor.class);
 

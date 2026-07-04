@@ -156,7 +156,9 @@ class ExportSpringBoot extends Export {
         if (mavenWrapper) {
             copyMavenWrapper();
         }
-        copyDockerFiles(BUILD_DIR);
+        if (docker) {
+            copyDockerFiles(BUILD_DIR);
+        }
         String appJar = "target" + File.separator + ids[1] + "-" + ids[2] + ".jar";
         copyReadme(BUILD_DIR, appJar);
         if (cleanExportDir || !exportDir.equals(".")) {
@@ -225,6 +227,7 @@ class ExportSpringBoot extends Export {
         model.put("BuildProperties", formatBuildProperties());
         model.put("Repositories", buildRepositoryList(repos));
         model.put("Dependencies", depList);
+        model.put("JibMavenPluginVersion", jibMavenPluginVersion(settings, prop));
 
         String context = TemplateHelper.processTemplate(pomTemplateName, model);
         IOHelper.writeText(context, Files.newOutputStream(pom));

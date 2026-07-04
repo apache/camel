@@ -302,7 +302,7 @@ public interface LuceneEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final LuceneHeaderNameBuilder INSTANCE = new LuceneHeaderNameBuilder();
+        public static final LuceneHeaderNameBuilder INSTANCE = new LuceneHeaderNameBuilder();
 
         /**
          * The Lucene Query to performed on the index. The query may include

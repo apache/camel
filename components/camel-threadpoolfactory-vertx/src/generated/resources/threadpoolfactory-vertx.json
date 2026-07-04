@@ -4,12 +4,12 @@
     "name": "threadpoolfactory-vertx",
     "title": "ThreadPoolFactory Vert.x",
     "description": "ThreadPoolFactory for camel-core using Vert.x",
-    "deprecated": false,
+    "deprecated": true,
     "firstVersion": "3.5.0",
     "label": "reactive",
     "supportLevel": "Experimental",
     "groupId": "org.apache.camel",
     "artifactId": "camel-threadpoolfactory-vertx",
-    "version": "4.21.0-SNAPSHOT"
+    "version": "4.22.0-SNAPSHOT"
   }
 }

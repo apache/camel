@@ -85,4 +85,14 @@ public @interface KeyValuePairField {
      * <b>Camel 2.11:</b> Indicates if there is a decimal point implied at a specified location
      */
     boolean impliedDecimalSeparator() default false;
+
+    /**
+     * Whether to keep going when parsing this field fails.
+     *
+     * TRUE forces tolerance — a parse error is replaced with the type-appropriate default (null, "", false, or
+     * MIN_VALUE for numeric primitives). KeyValuePairField doesn't currently have a defaultValue element, so there's no
+     * user-supplied substitute available here. FALSE forces strict behavior. INHERIT (the default) defers
+     * to @Message.continueParseOnFailure.
+     */
+    ContinueOnFailure continueParseOnFailure() default ContinueOnFailure.INHERIT;
 }

@@ -22,7 +22,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
-import io.netty.buffer.ByteBuf;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.json.JsonArray;
 import org.apache.camel.Converter;
@@ -50,11 +49,6 @@ public final class VertxJsonArrayConverter {
     @Converter
     public static JsonArray toJsonArray(byte[] bytes) {
         return Buffer.buffer(bytes).toJsonArray();
-    }
-
-    @Converter
-    public static JsonArray toJsonArray(ByteBuf byteBuf) {
-        return Buffer.buffer(byteBuf).toJsonArray();
     }
 
     @Converter

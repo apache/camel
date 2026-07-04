@@ -51,6 +51,7 @@ import org.apache.hc.client5.http.cookie.CookieStore;
 import org.apache.hc.client5.http.impl.DefaultRedirectStrategy;
 import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
 import org.apache.hc.client5.http.io.HttpClientConnectionManager;
+import org.apache.hc.client5.http.ssl.HostnameVerificationPolicy;
 import org.apache.hc.core5.http.EntityDetails;
 import org.apache.hc.core5.http.HttpEntity;
 import org.apache.hc.core5.http.HttpException;
@@ -150,9 +151,18 @@ public class HttpEndpoint extends HttpCommonEndpoint implements LineNumberAware 
     private int maxTotalConnections;
     @UriParam(label = "advanced", defaultValue = "20", description = "The maximum number of connections per route.")
     private int connectionsPerRoute;
-    @UriParam(label = "security",
+    @UriParam(label = "security", security = "insecure:ssl",
               description = "To use a custom X509HostnameVerifier such as DefaultHostnameVerifier or NoopHostnameVerifier")
     private HostnameVerifier x509HostnameVerifier;
+    @UriParam(label = "security", defaultValue = "CLIENT", enums = "CLIENT,BUILTIN,BOTH",
+              description = "Controls how hostname verification is performed during the TLS handshake."
+                            + " CLIENT (default) delegates entirely to the configured x509HostnameVerifier, preserving the"
+                            + " behaviour of httpclient 5.5 and earlier — a NoopHostnameVerifier will disable verification."
+                            + " BUILTIN uses the JDK SSLParameters hostname check only, ignoring the configured verifier."
+                            + " BOTH runs the JDK built-in check first and then the configured verifier; a NoopHostnameVerifier"
+                            + " cannot bypass the built-in check under BUILTIN or BOTH."
+                            + " Prefer BOTH when no custom verifier semantics are needed for stronger out-of-the-box security.")
+    private HostnameVerificationPolicy hostnameVerificationPolicy;
     @UriParam(label = "producer,advanced", description = "To use custom host header for producer. When not set in query will "
                                                          + "be ignored. When set will override host header derived from url.")
     private String customHostHeader;
@@ -587,6 +597,19 @@ public class HttpEndpoint extends HttpCommonEndpoint implements LineNumberAware 
      */
     public void setX509HostnameVerifier(HostnameVerifier x509HostnameVerifier) {
         this.x509HostnameVerifier = x509HostnameVerifier;
+    }
+
+    public HostnameVerificationPolicy getHostnameVerificationPolicy() {
+        return hostnameVerificationPolicy;
+    }
+
+    /**
+     * Controls how hostname verification is performed during the TLS handshake. CLIENT (default) delegates entirely to
+     * the configured x509HostnameVerifier. BUILTIN uses only the JDK SSLParameters check. BOTH runs both; a
+     * NoopHostnameVerifier cannot bypass the built-in check under BUILTIN or BOTH.
+     */
+    public void setHostnameVerificationPolicy(HostnameVerificationPolicy hostnameVerificationPolicy) {
+        this.hostnameVerificationPolicy = hostnameVerificationPolicy;
     }
 
     public SSLContextParameters getSslContextParameters() {

@@ -29,36 +29,44 @@ import org.apache.camel.spi.Metadata;
 /**
  * Encrypt and decrypt messages using Java Cryptography Extension (JCE).
  */
-@Metadata(firstVersion = "2.3.0", label = "dataformat,transformation,security", title = "Crypto (Java Cryptographic Extension)")
+@Metadata(firstVersion = "2.3.0", label = "dataformat,transformation,security", title = "Crypto (Java Cryptographic Extension)",
+          description = "Encrypt and decrypt messages using Java Cryptography Extension (JCE)")
 @XmlRootElement(name = "crypto")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CryptoDataFormat extends DataFormatDefinition {
 
     @XmlAttribute
+    @Metadata(description = "The JCE algorithm name indicating the cryptographic algorithm that will be used.")
     private String algorithm;
     @XmlAttribute
-    @Metadata(javaType = "java.security.Key")
+    @Metadata(javaType = "java.security.Key", description = "Refers to the secret key to lookup from the register to use.")
     private String key;
     @XmlAttribute
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced", description = "The name of the JCE Security Provider that should be used.")
     private String cryptoProvider;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "byte[]")
+    @Metadata(label = "advanced", javaType = "byte[]",
+              description = "Refers to a byte array containing the Initialization Vector that will be used to initialize the Cipher.")
     private String initVector;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.security.spec.AlgorithmParameterSpec")
+    @Metadata(label = "advanced", javaType = "java.security.spec.AlgorithmParameterSpec",
+              description = "A JCE AlgorithmParameterSpec used to initialize the Cipher.")
     private String algorithmParameterSpec;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Integer", defaultValue = "4096")
+    @Metadata(javaType = "java.lang.Integer", defaultValue = "4096",
+              description = "The size of the buffer used in the signature process.")
     private String bufferSize;
     @XmlAttribute
-    @Metadata(defaultValue = "HmacSHA1")
+    @Metadata(defaultValue = "HmacSHA1",
+              description = "The JCE algorithm name indicating the Message Authentication algorithm.")
     private String macAlgorithm = "HmacSHA1";
     @XmlAttribute
-    @Metadata(defaultValue = "true", javaType = "java.lang.Boolean")
+    @Metadata(defaultValue = "true", javaType = "java.lang.Boolean",
+              description = "Flag indicating that a Message Authentication Code should be calculated and appended to the encrypted data.")
     private String shouldAppendHMAC;
     @XmlAttribute
-    @Metadata(label = "advanced", defaultValue = "false", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", defaultValue = "false", javaType = "java.lang.Boolean",
+              description = "Flag indicating that the configured IV should be inlined into the encrypted data stream. Is by default false.")
     private String inline;
 
     public CryptoDataFormat() {
@@ -100,9 +108,6 @@ public class CryptoDataFormat extends DataFormatDefinition {
         return algorithm;
     }
 
-    /**
-     * The JCE algorithm name indicating the cryptographic algorithm that will be used.
-     */
     public void setAlgorithm(String algorithm) {
         this.algorithm = algorithm;
     }
@@ -111,9 +116,6 @@ public class CryptoDataFormat extends DataFormatDefinition {
         return cryptoProvider;
     }
 
-    /**
-     * The name of the JCE Security Provider that should be used.
-     */
     public void setCryptoProvider(String cryptoProvider) {
         this.cryptoProvider = cryptoProvider;
     }
@@ -122,9 +124,6 @@ public class CryptoDataFormat extends DataFormatDefinition {
         return key;
     }
 
-    /**
-     * Refers to the secret key to lookup from the register to use.
-     */
     public void setKey(String key) {
         this.key = key;
     }
@@ -133,9 +132,6 @@ public class CryptoDataFormat extends DataFormatDefinition {
         return initVector;
     }
 
-    /**
-     * Refers to a byte array containing the Initialization Vector that will be used to initialize the Cipher.
-     */
     public void setInitVector(String initVector) {
         this.initVector = initVector;
     }
@@ -144,11 +140,6 @@ public class CryptoDataFormat extends DataFormatDefinition {
         return algorithmParameterSpec;
     }
 
-    /**
-     * A JCE AlgorithmParameterSpec used to initialize the Cipher.
-     * <p/>
-     * Will lookup the type using the given name as a {@link java.security.spec.AlgorithmParameterSpec} type.
-     */
     public void setAlgorithmParameterSpec(String algorithmParameterSpec) {
         this.algorithmParameterSpec = algorithmParameterSpec;
     }
@@ -157,9 +148,6 @@ public class CryptoDataFormat extends DataFormatDefinition {
         return bufferSize;
     }
 
-    /**
-     * The size of the buffer used in the signature process.
-     */
     public void setBufferSize(String bufferSize) {
         this.bufferSize = bufferSize;
     }
@@ -168,9 +156,6 @@ public class CryptoDataFormat extends DataFormatDefinition {
         return macAlgorithm;
     }
 
-    /**
-     * The JCE algorithm name indicating the Message Authentication algorithm.
-     */
     public void setMacAlgorithm(String macAlgorithm) {
         this.macAlgorithm = macAlgorithm;
     }
@@ -179,9 +164,6 @@ public class CryptoDataFormat extends DataFormatDefinition {
         return shouldAppendHMAC;
     }
 
-    /**
-     * Flag indicating that a Message Authentication Code should be calculated and appended to the encrypted data.
-     */
     public void setShouldAppendHMAC(String shouldAppendHMAC) {
         this.shouldAppendHMAC = shouldAppendHMAC;
     }
@@ -190,11 +172,6 @@ public class CryptoDataFormat extends DataFormatDefinition {
         return inline;
     }
 
-    /**
-     * Flag indicating that the configured IV should be inlined into the encrypted data stream.
-     * <p/>
-     * Is by default false.
-     */
     public void setInline(String inline) {
         this.inline = inline;
     }

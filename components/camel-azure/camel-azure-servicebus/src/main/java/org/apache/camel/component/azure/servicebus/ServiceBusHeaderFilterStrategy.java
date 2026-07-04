@@ -37,13 +37,6 @@ public class ServiceBusHeaderFilterStrategy extends DefaultHeaderFilterStrategy 
             Date.class,
             UUID.class);
 
-    public ServiceBusHeaderFilterStrategy() {
-        super();
-        setLowerCase(true);
-        setOutFilterStartsWith(DefaultHeaderFilterStrategy.CAMEL_FILTER_STARTS_WITH);
-        setInFilterStartsWith(DefaultHeaderFilterStrategy.CAMEL_FILTER_STARTS_WITH);
-    }
-
     @Override
     public boolean applyFilterToCamelHeaders(String headerName, Object headerValue, Exchange exchange) {
         return headerValue == null || !SUPPORTED_TYPES.contains(headerValue.getClass())

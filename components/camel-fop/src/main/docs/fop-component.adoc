@@ -7,8 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Only producer is supported
-//Manually maintained attributes
-:camel-spring-boot-name: fop
 
 *Since Camel {since}*
 
@@ -131,14 +129,43 @@ loaded from the file system.
 Below is an example route that renders PDFs from XML data and XSLT
 template and saves the PDF files in the target folder:
 
+[tabs]
+====
+Java::
++
 [source,java]
----------------------------------
+----
 from("file:source/data/xml")
     .to("xslt:xslt/template.xsl")
     .to("fop:application/pdf")
     .to("file:target/data");
----------------------------------
+----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="file:source/data/xml"/>
+  <to uri="xslt:xslt/template.xsl"/>
+  <to uri="fop:application/pdf"/>
+  <to uri="file:target/data"/>
+</route>
+----
 
-
-include::spring-boot:partial$starter.adoc[]
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: file:source/data/xml
+      steps:
+        - to:
+            uri: xslt:xslt/template.xsl
+        - to:
+            uri: fop:application/pdf
+        - to:
+            uri: file:target/data
+----
+====

@@ -62,7 +62,7 @@ public class InfraPs extends InfraBaseCommand {
                     .toList();
 
             for (Path pidFile : pidFiles) {
-                String runningServiceName = pidFile.getFileName().toString().split("-")[1];
+                String runningServiceName = serviceNameFromPidFile(pidFile.getFileName().toString());
                 runningAliases.add(runningServiceName);
             }
         } catch (IOException e) {

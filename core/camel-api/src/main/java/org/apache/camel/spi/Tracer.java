@@ -24,8 +24,24 @@ import org.apache.camel.StaticService;
 import org.jspecify.annotations.Nullable;
 
 /**
- * SPI for tracing messages.
+ * SPI for intercepting {@link org.apache.camel.Exchange} flow at each EIP node in a route for tracing and debugging
+ * purposes.
+ * <p/>
+ * The tracer hooks into the routing pipeline at every {@link org.apache.camel.NamedNode} EIP and fires
+ * {@link #traceBeforeNode}/{@link #traceAfterNode} around each step, plus
+ * {@link #traceBeforeRoute}/{@link #traceAfterRoute} for the route entry and exit. Two built-in implementations exist:
+ * {@link BacklogTracer} (buffered in-memory capture accessible via JMX or the developer console) and the OpenTelemetry
+ * tracer in {@code camel-opentelemetry} (exports spans to distributed tracing backends).
+ * <p/>
+ * Tracers support a standby mode: when {@link #isStandby()} is {@code true} the tracer is wired into the pipeline at
+ * startup but does not record anything until manually enabled, which avoids restart overhead when toggling tracing via
+ * JMX at runtime. The {@link #setTracePattern(String)} and {@link #setTraceTemplates(boolean)} options limit which
+ * nodes are traced to reduce verbosity.
+ * <p/>
+ * See <a href="https://camel.apache.org/manual/tracer.html">Tracer</a> in the Camel user manual.
  *
+ * @see   BacklogTracer
+ * @see   ManagementStrategy
  * @since 3.0
  */
 public interface Tracer extends StaticService {

@@ -127,7 +127,11 @@
 
         <dependency>
             <groupId>io.quarkus</groupId>
+[#if UseQuarkusJunit]
+            <artifactId>quarkus-junit</artifactId>
+[#else]
             <artifactId>quarkus-junit5</artifactId>
+[/#if]
             <scope>test</scope>
         </dependency>
     </dependencies>

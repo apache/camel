@@ -1,0 +1,110 @@
+= Camel CLI - Configuration
+
+This page covers configuring the Camel CLI — available options, configuration commands, and how to set up your environment.
+
+// jbang options: START
+== Camel CLI configurations
+The camel.jbang supports 48 options, which are listed below.
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.jbang.camel-version* | The version of Apache Camel to use |  | String
+| *camel.jbang.camelSpringBootVersion* | To use a custom Camel version when running or export to Spring Boot |  | String
+| *camel.jbang.classpathFiles* | Additional files to add to classpath (Use commas to separate multiple files). |  | String
+| *camel.jbang.compileWorkDir* | Work directory for compiler. Can be used to write compiled classes or other resources. | .camel-jbang/compile | String
+| *camel.jbang.console* | Developer console at /q/dev on local HTTP server (port 8080 by default) | false | boolean
+| *camel.jbang.dependencies* | Additional dependencies (Use commas to separate multiple dependencies). |  | String
+| *camel.jbang.dependencies.main* | Additional dependencies for Camel Main runtime only |  | String
+| *camel.jbang.dependencies.quarkus* | Additional dependencies for Quarkus runtime only |  | String
+| *camel.jbang.dependencies.spring-boot* | Additional dependencies for Spring Boot runtime only |  | String
+| *camel.jbang.download* | Whether to allow automatic downloading JAR dependencies (over the internet) | true | boolean
+| *camel.jbang.excludes* | Exclude files by name or pattern (Use commas to separate multiple files) |  | String
+| *camel.jbang.exportDir* | Directory where the project will be exported | . | String
+| *camel.jbang.fresh* | Whether to force using fresh (i.e. non-cached) resources | false | boolean
+| *camel.jbang.gav* | Maven coordinate (groupId:artifactId:version) |  | String
+| *camel.jbang.groovyFiles* | Additional groovy source files to export to src/main/resources/camel-groovy directory (Use commas to separate multiple files) |  | String
+| *camel.jbang.health* | Health check at /observe/health on local HTTP server (port 8080 by default) | false | boolean
+| *camel.jbang.ignoreLoadingError* | Whether to ignore route loading and compilation errors (use this with care!) | false | boolean
+| *camel.jbang.javaVersion* | Java version | 21 | String
+| *camel.jbang.jfr* | Enables Java Flight Recorder saving recording to disk on exit | false | boolean
+| *camel.jbang.jfr-profile* | Java Flight Recorder profile to use (such as default or profile) | default | String
+| *camel.jbang.jib-maven-plugin-version* | Version to use for jib-maven-plugin when exporting the application | 3.5.1 | String
+| *camel.jbang.jkube-maven-plugin-version* | Version to use for jkube-maven-plugin if exporting to camel-main and have Kubernetes enabled (jkube.xxx options) | 1.19.0 | String
+| *camel.jbang.jkubeFiles* | Resource YAML fragments for Kubernetes using Eclipse JKube tool (Use commas to separate multiple files). |  | String
+| *camel.jbang.kameletsVersion* | Apache Camel Kamelets version. By default the Kamelets are the same version as Camel. |  | String
+| *camel.jbang.lazyBean* | Whether to use lazy bean initialization (can help with complex classloading issues) | false | boolean
+| *camel.jbang.localKameletDir* | Local file directory for loading custom Kamelets |  | String
+| *camel.jbang.maven-apache-snapshot-enabled* | Whether downloading JARs from ASF Maven Snapshot repository is enabled | true | boolean
+| *camel.jbang.maven-central-enabled* | Whether downloading JARs from Maven Central repository is enabled | true | boolean
+| *camel.jbang.maven-settings* | Optional location of Maven settings.xml file to configure servers, repositories, mirrors, and proxies. If set to false, not even the default /.m2/settings.xml will be used. |  | String
+| *camel.jbang.maven-settings-security* | Optional location of Maven settings-security.xml file to decrypt Maven Settings (settings.xml) file |  | String
+| *camel.jbang.mavenWrapper* | Include Maven Wrapper files in the exported project | true | boolean
+| *camel.jbang.metrics* | Metrics (Micrometer and Prometheus) at /observe/metrics on local HTTP server (port 8080 by default) when running standalone Camel | false | boolean
+| *camel.jbang.openApi* | File name of open-api spec file (JSON or YAML) to generate routes from the swagger/openapi API spec file. |  | String
+| *camel.jbang.packageScanJars* | Whether to automatic package scan JARs for custom Spring or Quarkus beans making them available for Camel CLI | false | boolean
+| *camel.jbang.prompt* | Allow user to type in required parameters in prompt if not present in application | false | boolean
+| *camel.jbang.quarkusArtifactId* | artifactId of Quarkus Platform BOM |  | String
+| *camel.jbang.quarkusExtensionRegistryBaseUri* | The base URI of Quarkus Extension Registry |  | String
+| *camel.jbang.quarkusGroupId* | groupId of Quarkus Platform BOM |  | String
+| *camel.jbang.quarkusVersion* | version of Quarkus Platform BOM |  | String
+| *camel.jbang.readmeFiles* | README files included with the integration (Use commas to separate multiple files) |  | String
+| *camel.jbang.repos* | Additional Maven repositories for download on-demand (Use commas to separate multiple repositories) |  | String
+| *camel.jbang.runtime* | Which runtime to use (camel-main, spring-boot, quarkus) |  | String
+| *camel.jbang.scriptFiles* | Additional shell script files to export to src/main/scripts directory |  | String
+| *camel.jbang.sourceDir* | Source directory for dynamically loading Camel file(s) to run. When using this, then files cannot be specified at the same time. |  | String
+| *camel.jbang.springBootVersion* | Spring Boot version |  | String
+| *camel.jbang.stub* | Stubs all the matching endpoint with the given component name or pattern. Multiple names can be separated by comma. (all = stub all endpoints, remote = stub only remote components). |  | String
+| *camel.jbang.tlsFiles* | Additional SSL/TLS files to export to src/main/tls directory |  | String
+| *camel.jbang.verbose* | Verbose output of startup activity (dependency resolution and downloading | false | boolean
+|===
+// jbang options: END
+
+== Configuration Commands
+
+Store frequently used CLI options so you don't have to specify them each time:
+
+[source,bash]
+----
+camel config set camel-version=3.18.4
+camel run *
+----
+
+=== Configuration locations
+
+Camel CLI uses two configuration files:
+
+- Global: `~/.camel-jbang-user.properties`
+- Local: `./camel-jbang-user.properties` (takes precedence)
+
+Commands target global by default. Use `--global=false` for local configuration.
+
+IMPORTANT: A set version via `camel config set` cannot be combined with `--camel-version` on the command line.
+
+=== Set, unset, list, and get
+
+[source,bash]
+----
+camel config set gav=com.foo:acme:1.0-SNAPSHOT
+camel config set runtime=spring-boot
+camel config unset runtime
+camel config list
+camel config get gav
+----
+
+=== Placeholder substitution
+
+Configuration values can be referenced as placeholders with `#optionName`:
+
+[source,bash]
+----
+camel config set repos=https://maven.repository.my.repo.com/ga
+camel run 'Test.java' --repos=#repos,https://packages.atlassian.com/maven-external
+----
+
+NOTE: Placeholders only work for options that the given command supports. Run `camel <command> --help` to see available options.
+
+== Troubleshooting
+
+JBang stores state and downloaded JARs in `~/.jbang`. Camel CLI downloads dependencies to `~/.m2`.
+If you encounter issues with outdated JARs, try deleting the relevant entries in these directories.

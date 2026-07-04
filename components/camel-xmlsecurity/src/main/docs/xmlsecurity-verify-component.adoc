@@ -7,9 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Only producer is supported
-//Manually maintained attributes
-:camel-spring-boot-name: xmlsecurity
-
 
 
 *Since Camel {since}*
@@ -72,8 +69,6 @@ successful, then the original content is extracted from the XML
 signature and set to the body of the out-message.
 * The `name` part in the URI can be chosen by the user to distinguish
 between different signer/verifier endpoints within the camel context.
-
-
 
 
 // component options: START
@@ -191,22 +186,50 @@ Elements):
 
 The following example shows the basic usage of the component.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
-from("direct:enveloping").to("xmlsecurity-sign://enveloping?keyAccessor=#accessor",
-                             "xmlsecurity-verify://enveloping?keySelector=#selector",
-                             "mock:result")
+from("direct:enveloping")
+    .to("xmlsecurity-sign://enveloping?keyAccessor=#accessor")
+    .to("xmlsecurity-verify://enveloping?keySelector=#selector")
+    .to("mock:result");
 ----
 
-In Spring XML:
-
+XML::
++
 [source,xml]
 ----
-<from uri="direct:enveloping" />
-    <to uri="xmlsecurity-sign://enveloping?keyAccessor=#accessor" />
-    <to uri="xmlsecurity-verify://enveloping?keySelector=#selector" />
-<to uri="mock:result" />
+<route>
+  <from uri="direct:enveloping"/>
+  <to uri="xmlsecurity-sign://enveloping?keyAccessor=#accessor"/>
+  <to uri="xmlsecurity-verify://enveloping?keySelector=#selector"/>
+  <to uri="mock:result"/>
+</route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:enveloping
+      steps:
+        - to:
+            uri: xmlsecurity-sign://enveloping
+            parameters:
+              keyAccessor: "#accessor"
+        - to:
+            uri: xmlsecurity-verify://enveloping
+            parameters:
+              keySelector: "#selector"
+        - to:
+            uri: mock:result
+----
+====
 
 For the signing process, a private key is necessary. You specify a key
 accessor bean which provides this private key. For the validation, the
@@ -300,6 +323,10 @@ element `A`.
 
 *Java DSL Example*
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:detached")
@@ -308,11 +335,47 @@ from("direct:detached")
   .to("mock:result");
 ----
 
-*Spring Example*
-
+XML::
++
 [source,xml]
 ----
-   
+<route>
+  <from uri="direct:detached"/>
+  <to uri="xmlsecurity-sign://detached?keyAccessor=#keyAccessorBeant&amp;xpathsToIdAttributes=#xpathsToIdAttributesBean&amp;schemaResourceUri=Test.xsd"/>
+  <to uri="xmlsecurity-verify://detached?keySelector=#keySelectorBean&amp;schemaResourceUri=org/apache/camel/component/xmlsecurity/Test.xsd"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:detached
+      steps:
+        - to:
+            uri: xmlsecurity-sign://detached
+            parameters:
+              keyAccessor: "#keyAccessorBeant"
+              xpathsToIdAttributes: "#xpathsToIdAttributesBean"
+              schemaResourceUri: Test.xsd
+        - to:
+            uri: xmlsecurity-verify://detached
+            parameters:
+              keySelector: "#keySelectorBean"
+              schemaResourceUri: org/apache/camel/component/xmlsecurity/Test.xsd
+        - to:
+            uri: mock:result
+----
+====
+
+*Spring Example*
+
+._XML-only: Spring bean configuration for detached XML signature verification_
+[source,xml]
+----
 <bean id="xpathsToIdAttributesBean" class="java.util.ArrayList">
       <constructor-arg type="java.util.Collection">
           <list>
@@ -400,6 +463,7 @@ can just omit them.
 
 *XAdES-BES/EPES Example in Java DSL*
 
+._Java-only: programmatic XAdES signature properties configuration_
 [source,java]
 ----
  Keystore keystore = ... // load a keystore
@@ -480,6 +544,7 @@ from("direct:xades").to("xmlsecurity-sign://xades?keyAccessor=#keyAccessorDefaul
 
 *XAdES-BES/EPES Example in Spring XML*
 
+._XML-only: Spring bean configuration for XAdES signature properties_
 [source,xml]
 ----
 ...
@@ -490,7 +555,7 @@ from("direct:xades").to("xmlsecurity-sign://xades?keyAccessor=#keyAccessorDefaul
 ...
 <bean id="xadesProperties"
     class="org.apache.camel.component.xmlsecurity.api.XAdESSignatureProperties">
-    <!-- For more properties see the previous Java DSL example. 
+    <!-- For more properties see the previous Java DSL example.
          If you want to have a signing certificate then use the bean class DefaultXAdESSignatureProperties (see the previous Java DSL example). -->
     <property name="signaturePolicy" value="ExplicitId" />
     <property name="sigPolicyId" value="http://www.test.com/policy.pdf" />
@@ -537,7 +602,3 @@ the XML signer endpoint).
 `CommitmentTypeIndication` element is not supported.
 * The `AllDataObjectsTimeStamp` element is not supported
 * The `IndividualDataObjectsTimeStamp` element is not supported
-
-
-
-include::spring-boot:partial$starter.adoc[]

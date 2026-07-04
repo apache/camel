@@ -1,7 +1,7 @@
 = Custom Load Balancer EIP
 :doctitle: Custom Load Balancer
 :shortname: customLoadBalancer
-:description: To use a custom load balancer implementation.
+:description: References a custom load balancer implementation from the registry
 :since: 
 :supportlevel: Stable
 :tabs-sync-option:

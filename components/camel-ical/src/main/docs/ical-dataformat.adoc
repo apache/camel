@@ -2,12 +2,10 @@
 :doctitle: iCal
 :shortname: ical
 :artifactid: camel-ical
-:description: Marshal and unmarshal iCal (.ics) documents to/from model objects.
+:description: Marshal and unmarshal iCal (*.ics) documents to/from model objects
 :since: 2.12
 :supportlevel: Stable
 :tabs-sync-option:
-//Manually maintained attributes
-:camel-spring-boot-name: ical
 
 *Since Camel {since}*
 
@@ -16,8 +14,9 @@ http://en.wikipedia.org/wiki/ICalendar[iCalendar] messages.
 
 A typical iCalendar message looks like:
 
+._Java-only: example of an iCalendar message format_
 [source,java]
-----------------------------------------------------------------------
+----
 BEGIN:VCALENDAR
 VERSION:2.0
 PRODID:-//Events Calendar//iCal4j 1.0//EN
@@ -33,7 +32,7 @@ ATTENDEE;ROLE=REQ-PARTICIPANT;CN=Developer 1:mailto:dev1@mycompany.com
 ATTENDEE;ROLE=OPT-PARTICIPANT;CN=Developer 2:mailto:dev2@mycompany.com
 END:VEVENT
 END:VCALENDAR
-----------------------------------------------------------------------
+----
 
 == Options
 
@@ -46,28 +45,60 @@ include::partial$dataformat-options.adoc[]
 To unmarshal and marshal the message shown above, your route will look
 like the following:
 
+[tabs]
+====
+Java::
++
 [source,java]
------------------------------
+----
 from("direct:ical-unmarshal")
-  .unmarshal("ical")
-  .to("mock:unmarshaled")
-  .marshal("ical")
-  .to("mock:marshaled");
------------------------------
+    .unmarshal("ical")
+    .to("mock:unmarshaled")
+    .marshal("ical")
+    .to("mock:marshaled");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:ical-unmarshal"/>
+  <unmarshal><ical/></unmarshal>
+  <to uri="mock:unmarshaled"/>
+  <marshal><ical/></marshal>
+  <to uri="mock:marshaled"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:ical-unmarshal
+      steps:
+        - unmarshal:
+            ical: {}
+        - to:
+            uri: mock:unmarshaled
+        - marshal:
+            ical: {}
+        - to:
+            uri: mock:marshaled
+----
+====
 
 Maven users will need to add the following dependency to their `pom.xml`
 for this component:
 
 [source,xml]
-------------------------------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-ical</artifactId>
     <version>x.x.x</version>
     <!-- use the same version as your Camel core version -->
 </dependency>
-------------------------------------------------------------
-
-
-
-include::spring-boot:partial$starter.adoc[]
+----

@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "mapstruct",
     "title": "MapStruct",
-    "description": "Type Conversion using Mapstruct",
+    "description": "Type Conversion using MapStruct",
     "deprecated": false,
     "firstVersion": "3.19.0",
     "label": "transformation",
@@ -11,7 +11,7 @@
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-mapstruct",
-    "version": "4.21.0-SNAPSHOT",
+    "version": "4.22.0-SNAPSHOT",
     "scheme": "mapstruct",
     "extendsScheme": "",
     "syntax": "mapstruct:className",
@@ -25,7 +25,7 @@
   },
   "componentProperties": {
     "lazyStartProducer": { "index": 0, "kind": "property", "displayName": "Lazy Start Producer", "group": "producer", "label": "producer", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing." },
-    "mapperPackageName": { "index": 1, "kind": "property", "displayName": "Mapper Package Name", "group": "producer", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Package name(s) where Camel should discover Mapstruct mapping classes. Multiple package names can be separated by comma." },
+    "mapperPackageName": { "index": 1, "kind": "property", "displayName": "Mapper Package Name", "group": "producer", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Package name(s) where Camel should discover MapStruct mapping classes. Multiple package names can be separated by comma." },
     "autowiredEnabled": { "index": 2, "kind": "property", "displayName": "Autowired Enabled", "group": "advanced", "label": "advanced", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": true, "description": "Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc." },
     "mapStructConverter": { "index": 3, "kind": "property", "displayName": "Map Struct Converter", "group": "advanced", "label": "advanced", "required": false, "type": "object", "javaType": "org.apache.camel.component.mapstruct.MapStructMapperFinder", "deprecated": false, "autowired": true, "secret": false, "description": "To use a custom MapStructConverter such as adapting to a special runtime." }
   },

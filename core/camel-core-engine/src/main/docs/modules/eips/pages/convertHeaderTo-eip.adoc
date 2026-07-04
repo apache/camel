@@ -1,7 +1,7 @@
 = Convert Header To EIP
 :doctitle: Convert Header To
 :shortname: convertHeaderTo
-:description: Converts the message header to another type
+:description: Converts a message header value to a specified Java type using Camel's built-in type converters
 :since: 
 :supportlevel: Stable
 :tabs-sync-option:

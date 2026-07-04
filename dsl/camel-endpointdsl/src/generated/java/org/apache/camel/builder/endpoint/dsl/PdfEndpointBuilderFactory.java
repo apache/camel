@@ -398,7 +398,7 @@ public interface PdfEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final PdfHeaderNameBuilder INSTANCE = new PdfHeaderNameBuilder();
+        public static final PdfHeaderNameBuilder INSTANCE = new PdfHeaderNameBuilder();
 
         /**
          * Expected type is

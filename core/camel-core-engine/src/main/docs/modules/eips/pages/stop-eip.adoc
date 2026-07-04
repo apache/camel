@@ -1,7 +1,7 @@
 = Stop EIP
 :doctitle: Stop
 :shortname: stop
-:description: Stops the processing of the current message
+:description: Stops processing of the current message and marks the exchange as completed without sending it to any further steps
 :since: 
 :supportlevel: Stable
 :tabs-sync-option:

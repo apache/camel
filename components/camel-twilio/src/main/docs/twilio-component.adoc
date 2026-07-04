@@ -7,8 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
-//Manually maintained attributes
-:camel-spring-boot-name: twilio
 
 *Since Camel {since}*
 
@@ -75,6 +73,3 @@ Available endpoints differ depending on the endpoint prefixes.
 
 For more information on the endpoints and options,
 see https://www.twilio.com/docs/libraries/reference/twilio-java/index.html[Twilio API documentation].
-
-
-include::spring-boot:partial$starter.adoc[]

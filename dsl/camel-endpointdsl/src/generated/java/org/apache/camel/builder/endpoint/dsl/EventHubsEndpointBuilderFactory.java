@@ -1234,7 +1234,7 @@ public interface EventHubsEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final EventHubsHeaderNameBuilder INSTANCE = new EventHubsHeaderNameBuilder();
+        public static final EventHubsHeaderNameBuilder INSTANCE = new EventHubsHeaderNameBuilder();
 
         /**
          * (producer) Overrides the hashing key to be provided for the batch of

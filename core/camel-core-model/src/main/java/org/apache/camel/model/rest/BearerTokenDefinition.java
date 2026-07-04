@@ -26,12 +26,13 @@ import org.apache.camel.spi.Metadata;
 /**
  * Rest security bearer token authentication definition
  */
-@Metadata(label = "rest,security,configuration")
+@Metadata(label = "rest,security,configuration", description = "Configures Bearer token authentication for a REST service")
 @XmlRootElement(name = "bearerToken")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class BearerTokenDefinition extends RestSecurityDefinition {
 
     @XmlAttribute
+    @Metadata(description = "A hint to the client to identify how the bearer token is formatted.")
     private String format;
 
     @SuppressWarnings("unused")
@@ -46,9 +47,6 @@ public class BearerTokenDefinition extends RestSecurityDefinition {
         return format;
     }
 
-    /**
-     * A hint to the client to identify how the bearer token is formatted.
-     */
     public void setFormat(String format) {
         this.format = format;
     }

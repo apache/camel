@@ -24,9 +24,11 @@ import org.apache.camel.util.IOHelper;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Tags;
+import org.junit.jupiter.api.parallel.Isolated;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 @Tags({ @Tag("not-parallel"), @Tag("spring") })
+@Isolated
 public class JmsRouteUsingSpringIT extends JmsRouteTest {
     private ClassPathXmlApplicationContext applicationContext;
 

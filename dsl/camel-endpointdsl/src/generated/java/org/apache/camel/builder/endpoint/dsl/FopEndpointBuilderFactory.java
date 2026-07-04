@@ -226,7 +226,7 @@ public interface FopEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final FopHeaderNameBuilder INSTANCE = new FopHeaderNameBuilder();
+        public static final FopHeaderNameBuilder INSTANCE = new FopHeaderNameBuilder();
 
         /**
          * The output format.

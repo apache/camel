@@ -25,9 +25,6 @@ public class SjmsHeaderFilterStrategy extends DefaultHeaderFilterStrategy {
     }
 
     public SjmsHeaderFilterStrategy(boolean includeAllJMSXProperties) {
-        setLowerCase(true);
-        setOutFilterStartsWith(DefaultHeaderFilterStrategy.CAMEL_FILTER_STARTS_WITH);
-        setInFilterStartsWith(DefaultHeaderFilterStrategy.CAMEL_FILTER_STARTS_WITH);
         if (!includeAllJMSXProperties) {
             initialize();
         }

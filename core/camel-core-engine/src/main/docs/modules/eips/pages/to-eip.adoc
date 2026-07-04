@@ -1,7 +1,7 @@
 = To EIP
 :doctitle: To
 :shortname: to
-:description: Sends the message to a static endpoint
+:description: Sends the message to a fixed endpoint URI
 :since: 
 :supportlevel: Stable
 :tabs-sync-option:
@@ -250,7 +250,3 @@ Use `- recipientList:` for more flexible and dynamic URIs
             uri: jms:queue:foo
 ----
 ====
-
-
-
-

@@ -30,6 +30,7 @@ import io.micrometer.core.instrument.Meter;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Tag;
 import io.micrometer.core.instrument.Timer;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.PatternHelper;
 import org.apache.camel.support.console.AbstractDevConsole;
@@ -39,14 +40,12 @@ import org.apache.camel.util.json.JsonObject;
 @DevConsole(name = "micrometer", description = "Display runtime metrics")
 public class MicrometerConsole extends AbstractDevConsole {
 
-    /**
-     * Whether to include tags
-     */
+    @Metadata(label = "query", description = "Whether to include tags", defaultValue = "true",
+              javaType = "java.lang.Boolean")
     public static final String TAGS = "tags";
 
-    /**
-     * Filters matching metrics by name
-     */
+    @Metadata(label = "query", description = "Filters matching metrics by name",
+              javaType = "java.lang.String")
     public static final String FILTER = "filter";
 
     public MicrometerConsole() {
@@ -55,8 +54,8 @@ public class MicrometerConsole extends AbstractDevConsole {
 
     @Override
     protected String doCallText(Map<String, Object> options) {
-        final boolean tags = "true".equals(options.getOrDefault(TAGS, "true"));
-        final String filter = (String) options.get(FILTER);
+        final boolean tags = optionBoolean(options, TAGS, true);
+        final String filter = optionString(options, FILTER);
 
         StringBuilder sb = new StringBuilder();
 
@@ -178,8 +177,8 @@ public class MicrometerConsole extends AbstractDevConsole {
 
     @Override
     protected JsonObject doCallJson(Map<String, Object> options) {
-        final boolean tags = "true".equals(options.getOrDefault(TAGS, "true"));
-        final String filter = (String) options.get(FILTER);
+        final boolean tags = optionBoolean(options, TAGS, true);
+        final String filter = optionString(options, FILTER);
 
         JsonObject root = new JsonObject();
 

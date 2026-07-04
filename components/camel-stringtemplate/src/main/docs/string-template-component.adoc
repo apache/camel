@@ -7,8 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Only producer is supported
-//Manually maintained attributes
-:camel-spring-boot-name: stringtemplate
 
 *Since Camel {since}*
 
@@ -23,24 +21,23 @@ Maven users will need to add the following dependency to their `pom.xml`
 for this component:
 
 [source,xml]
-------------------------------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-stringtemplate</artifactId>
     <version>x.x.x</version>
     <!-- use the same version as your Camel core version -->
 </dependency>
-------------------------------------------------------------
+----
 
 == URI format
 
---------------------------------------
+----
 string-template:templateName[?options]
---------------------------------------
+----
 
 Where *templateName* is the classpath-local URI of the template to
 invoke; or the complete URL of the remote template.
-
 
 
 // component options: START
@@ -104,8 +101,9 @@ You can define the custom context map by setting the
 message header "*CamelStringTemplateVariableMap*" just like the below
 code.
 
+._Java-only: setting up a custom StringTemplate variable map_
 [source,java]
---------------------------------------------------------------------------
+----
 Map<String, Object> variableMap = new HashMap<String, Object>();
 Map<String, Object> headersMap = new HashMap<String, Object>();
 headersMap.put("name", "Willem");
@@ -113,18 +111,45 @@ variableMap.put("headers", headersMap);
 variableMap.put("body", "Monday");
 variableMap.put("exchange", exchange);
 exchange.getIn().setHeader("CamelStringTemplateVariableMap", variableMap);
---------------------------------------------------------------------------
+----
 
 == Examples
 
 For example, you could use a string template as follows in order to
 formulate a response to a message:
 
+[tabs]
+====
+Java::
++
 [source,java]
------------------------------------------------
-from("activemq:My.Queue").
-  to("string-template:com/acme/MyResponse.tm");
------------------------------------------------
+----
+from("activemq:My.Queue")
+    .to("string-template:com/acme/MyResponse.tm");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="activemq:My.Queue"/>
+  <to uri="string-template:com/acme/MyResponse.tm"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: activemq:My.Queue
+      steps:
+        - to:
+            uri: string-template:com/acme/MyResponse.tm
+----
+====
 
 === The Email Example
 
@@ -132,13 +157,11 @@ In this sample, we want to use a string template to send an order
 confirmation email. The email template is laid out in `StringTemplate`
 as:
 
---------------------------------------------
+----
 Dear <headers.lastName>, <headers.firstName>
 
 Thanks for the order of <headers.item>.
 
 Regards Camel Riders Bookstore
 <body>
---------------------------------------------
-
-include::spring-boot:partial$starter.adoc[]
+----

@@ -23,6 +23,8 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.OptimisticLockingAggregationRepository;
 import org.apache.camel.spi.RecoverableAggregationRepository;
@@ -43,6 +45,10 @@ import org.slf4j.LoggerFactory;
 /**
  * {@link org.apache.camel.spi.AggregationRepository} using Redis as store.
  */
+@Metadata(label = "bean",
+          description = "Aggregation repository that uses Redis to store exchanges.",
+          annotations = { "interfaceName=org.apache.camel.spi.AggregationRepository" })
+@Configurer(metadataOnly = true)
 public class RedisAggregationRepository extends ServiceSupport
         implements RecoverableAggregationRepository, OptimisticLockingAggregationRepository {
     private static final Logger LOG = LoggerFactory.getLogger(RedisAggregationRepository.class);
@@ -118,7 +124,7 @@ public class RedisAggregationRepository extends ServiceSupport
             if (misbehaviorHolder != null) {
                 Exchange misbehaviorEx = unmarshallExchange(camelContext, misbehaviorHolder);
                 LOG.warn(
-                        "Optimistic locking failed for exchange with key {}: IMap#putIfAbsend returned Exchange with ID {}, while it's expected no exchanges to be returned",
+                        "Optimistic locking failed for exchange with key {}: RMap#putIfAbsent returned Exchange with ID {}, while it's expected no exchanges to be returned",
                         key, misbehaviorEx != null ? misbehaviorEx.getExchangeId() : "<null>");
                 throw new OptimisticLockingException();
             }
@@ -127,7 +133,7 @@ public class RedisAggregationRepository extends ServiceSupport
             DefaultExchangeHolder newHolder = DefaultExchangeHolder.marshal(newExchange, true, allowSerializedHeaders);
             if (!cache.replace(key, oldHolder, newHolder)) {
                 LOG.warn(
-                        "Optimistic locking failed for exchange with key {}: IMap#replace returned no Exchanges, while it's expected to replace one",
+                        "Optimistic locking failed for exchange with key {}: RMap#replace returned no Exchanges, while it's expected to replace one",
                         key);
                 throw new OptimisticLockingException();
             }
@@ -142,10 +148,10 @@ public class RedisAggregationRepository extends ServiceSupport
             throw new UnsupportedOperationException();
         }
         LOG.trace("Adding an Exchange with ID {} for key {} in a thread-safe manner.", exchange.getExchangeId(), key);
-        RLock lock = redisson.getLock("aggregationLock");
+        DefaultExchangeHolder newHolder = DefaultExchangeHolder.marshal(exchange, true, allowSerializedHeaders);
+        RLock lock = redisson.getLock(mapName + "-lock-" + key);
         try {
             lock.lock();
-            DefaultExchangeHolder newHolder = DefaultExchangeHolder.marshal(exchange, true, allowSerializedHeaders);
             DefaultExchangeHolder oldHolder = cache.put(key, newHolder);
             return unmarshallExchange(camelContext, oldHolder);
         } finally {
@@ -293,7 +299,7 @@ public class RedisAggregationRepository extends ServiceSupport
             LOG.trace("Removing an exchange with ID {} for key {} in an optimistic manner.", exchange.getExchangeId(), key);
             if (!cache.remove(key, holder)) {
                 LOG.warn(
-                        "Optimistic locking failed for exchange with key {}: IMap#remove removed no Exchanges, while it's expected to remove one.",
+                        "Optimistic locking failed for exchange with key {}: RMap#remove removed no Exchanges, while it's expected to remove one.",
                         key);
                 throw new OptimisticLockingException();
             }
@@ -332,7 +338,7 @@ public class RedisAggregationRepository extends ServiceSupport
                             "Transaction was rolled back for remove operation with a key %s and an Exchange ID %s.",
                             key, exchange.getExchangeId());
                     LOG.warn(msg, throwable);
-                    throw new RuntimeException(msg, throwable);
+                    throw new RuntimeCamelException(msg, throwable);
                 }
             } else {
                 cache.remove(key);
@@ -360,6 +366,9 @@ public class RedisAggregationRepository extends ServiceSupport
     @Override
     protected void doInit() throws Exception {
         StringHelper.notEmpty(mapName, "repositoryName");
+        if (redisson == null) {
+            StringHelper.notEmpty(endpoint, "endpoint");
+        }
         if (maximumRedeliveries < 0) {
             throw new IllegalArgumentException("Maximum redelivery retries must be zero or a positive integer.");
         }

@@ -37,7 +37,7 @@ import org.jline.utils.AttributedStyle;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "shell",
-                     description = "Interactive Camel JBang shell.",
+                     description = "Interactive Camel CLI shell.",
                      footer = {
                              "%nExamples:",
                              "  camel shell",
@@ -57,7 +57,13 @@ public class Shell extends CamelCommand {
 
     @Override
     public Integer doCall() throws Exception {
-        PicocliCommandRegistry registry = new PicocliCommandRegistry(CamelJBangMain.getCommandLine());
+        // TODO: replace with new PicocliCommandRegistry(commandLine, "Camel") when JLine merges #1947
+        PicocliCommandRegistry registry = new PicocliCommandRegistry(CamelJBangMain.getCommandLine()) {
+            @Override
+            public String name() {
+                return "Camel";
+            }
+        };
 
         String homeDir = HomeHelper.resolveHomeDir();
         Path history = Paths.get(homeDir, ".camel-jbang-history");
@@ -74,7 +80,7 @@ public class Shell extends CamelCommand {
 
         // org.jline.shell.Shell is used via FQCN to avoid clash with this class name
         ShellBuilder builder = org.jline.shell.Shell.builder()
-                .prompt(() -> buildPrompt(camelVersion, colorEnabled))
+                .prompt(() -> buildPrompt(colorEnabled))
                 .rightPrompt(() -> buildRightPrompt(colorEnabled))
                 .groups(registry, new PosixCommandGroup(), new InteractiveCommandGroup())
                 .historyFile(history)
@@ -108,16 +114,12 @@ public class Shell extends CamelCommand {
         return 0;
     }
 
-    private static String buildPrompt(String camelVersion, boolean colorEnabled) {
+    private static String buildPrompt(boolean colorEnabled) {
         if (!colorEnabled) {
-            return camelVersion != null ? "camel " + camelVersion + "> " : "camel> ";
+            return "camel> ";
         }
         AttributedStringBuilder sb = new AttributedStringBuilder();
         sb.append("camel", AttributedStyle.DEFAULT.bold().foregroundRgb(CAMEL_ORANGE));
-        if (camelVersion != null) {
-            sb.append(" ");
-            sb.append(camelVersion, AttributedStyle.DEFAULT.foreground(AttributedStyle.GREEN));
-        }
         sb.append("> ", AttributedStyle.DEFAULT);
         return sb.toAnsi();
     }
@@ -150,7 +152,7 @@ public class Shell extends CamelCommand {
             }
             writer.println(sb.toAnsi(shell.terminal()));
         } else {
-            String banner = "Apache Camel JBang Shell";
+            String banner = "Apache Camel CLI Shell";
             if (camelVersion != null) {
                 banner += " v" + camelVersion;
             }

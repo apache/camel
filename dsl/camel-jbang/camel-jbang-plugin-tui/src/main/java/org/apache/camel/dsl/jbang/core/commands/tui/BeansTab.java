@@ -33,38 +33,40 @@ import dev.tamboui.text.Span;
 import dev.tamboui.text.Text;
 import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
+import dev.tamboui.tui.event.MouseEvent;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
+import dev.tamboui.widgets.block.Borders;
+import dev.tamboui.widgets.input.TextInputState;
 import dev.tamboui.widgets.paragraph.Paragraph;
 import dev.tamboui.widgets.table.Cell;
 import dev.tamboui.widgets.table.Row;
 import dev.tamboui.widgets.table.Table;
-import dev.tamboui.widgets.table.TableState;
 import org.apache.camel.dsl.jbang.core.common.PathUtils;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 
-import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.*;
+import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.*;
 
-class BeansTab implements MonitorTab {
+class BeansTab extends AbstractTableTab {
 
-    private static final String[] SORT_COLUMNS = { "name", "type" };
-
-    private final MonitorContext ctx;
-    private final TableState tableState = new TableState();
     private final AtomicBoolean loading = new AtomicBoolean(false);
 
-    private String sort = "name";
-    private int sortIndex;
-    private boolean sortReversed;
-    private boolean showInternal;
+    private int filterIndex;
+    private boolean filterInputActive;
+    private TextInputState filterInputState = new TextInputState("");
+    private String filterTerm;
     private List<BeanData> allBeans = Collections.emptyList();
-    private boolean showDetail;
     private int detailScroll;
     private String lastPid;
 
     BeansTab(MonitorContext ctx) {
-        this.ctx = ctx;
+        super(ctx, "name", "type");
+    }
+
+    @Override
+    protected int getRowCount() {
+        return sortedBeans().size();
     }
 
     @Override
@@ -82,77 +84,67 @@ class BeansTab implements MonitorTab {
     @Override
     public void onIntegrationChanged() {
         allBeans = Collections.emptyList();
-        showDetail = false;
         detailScroll = 0;
         lastPid = null;
-        loadBeans();
     }
 
     @Override
     public boolean handleKeyEvent(KeyEvent ke) {
-        if (showDetail) {
-            if (ke.isUp()) {
-                detailScroll = Math.max(0, detailScroll - 1);
-                return true;
-            }
-            if (ke.isDown()) {
-                detailScroll++;
-                return true;
-            }
-            if (ke.isPageUp() || ke.isKey(KeyCode.PAGE_UP)) {
-                detailScroll = Math.max(0, detailScroll - 20);
-                return true;
-            }
-            if (ke.isPageDown() || ke.isKey(KeyCode.PAGE_DOWN)) {
-                detailScroll += 20;
-                return true;
-            }
-            return false;
+        if (filterInputActive) {
+            return handleFilterInput(ke);
         }
+        if (ke.isChar('/')) {
+            filterInputActive = true;
+            filterInputState = new TextInputState(filterTerm != null ? filterTerm : "");
+            return true;
+        }
+        return super.handleKeyEvent(ke);
+    }
 
+    private boolean handleFilterInput(KeyEvent ke) {
+        if (ke.isKey(KeyCode.ESCAPE)) {
+            filterInputActive = false;
+            return true;
+        }
         if (ke.isConfirm()) {
-            showDetail = !showDetail;
+            String text = filterInputState.text().trim();
+            filterTerm = text.isEmpty() ? null : text;
+            filterInputActive = false;
+            tableState.select(0);
             detailScroll = 0;
             return true;
         }
-        if (ke.isChar('s')) {
-            sortIndex = (sortIndex + 1) % SORT_COLUMNS.length;
-            sort = SORT_COLUMNS[sortIndex];
-            sortReversed = false;
-            return true;
-        }
-        if (ke.isChar('S')) {
-            sortReversed = !sortReversed;
-            return true;
-        }
-        if (ke.isCharIgnoreCase('i')) {
-            showInternal = !showInternal;
-            return true;
-        }
-        if (ke.isCharIgnoreCase('r')) {
-            loadBeans();
-            return true;
-        }
-        if (ke.isPageUp() || ke.isKey(KeyCode.PAGE_UP)) {
-            for (int i = 0; i < 20 && tableState.selected() != null && tableState.selected() > 0; i++) {
-                tableState.selectPrevious();
-            }
-            return true;
-        }
-        if (ke.isPageDown() || ke.isKey(KeyCode.PAGE_DOWN)) {
-            List<BeanData> visible = sortedBeans();
-            for (int i = 0; i < 20; i++) {
-                tableState.selectNext(visible.size());
-            }
+        FormHelper.handleTextInput(ke, filterInputState);
+        return true;
+    }
+
+    boolean isFilterInputActive() {
+        return filterInputActive;
+    }
+
+    @Override
+    public boolean handleEscape() {
+        if (filterTerm != null) {
+            filterTerm = null;
+            tableState.select(0);
+            detailScroll = 0;
             return true;
         }
         return false;
     }
 
     @Override
-    public boolean handleEscape() {
-        if (showDetail) {
-            showDetail = false;
+    protected boolean handleTabKeyEvent(KeyEvent ke) {
+        if (ke.isPageUp() || ke.isKey(KeyCode.PAGE_UP)) {
+            detailScroll = Math.max(0, detailScroll - 10);
+            return true;
+        }
+        if (ke.isPageDown() || ke.isKey(KeyCode.PAGE_DOWN)) {
+            detailScroll += 10;
+            return true;
+        }
+        if (ke.isCharIgnoreCase('f')) {
+            filterIndex = (filterIndex + 1) % filterModes().length;
             return true;
         }
         return false;
@@ -160,32 +152,33 @@ class BeansTab implements MonitorTab {
 
     @Override
     public void navigateUp() {
-        if (!showDetail) {
-            tableState.selectPrevious();
-        }
+        tableState.selectPrevious();
+        detailScroll = 0;
     }
 
     @Override
     public void navigateDown() {
-        if (!showDetail) {
-            List<BeanData> visible = sortedBeans();
-            tableState.selectNext(visible.size());
-        }
+        List<BeanData> visible = sortedBeans();
+        tableState.selectNext(visible.size());
+        detailScroll = 0;
     }
 
     @Override
-    public void render(Frame frame, Rect area) {
-        IntegrationInfo info = ctx.findSelectedIntegration();
-        if (info == null) {
-            renderNoSelection(frame, area);
-            return;
+    public boolean handleMouseEvent(MouseEvent me, Rect area) {
+        boolean handled = super.handleMouseEvent(me, area);
+        if (handled) {
+            detailScroll = 0;
         }
+        return handled;
+    }
 
+    @Override
+    protected void renderContent(Frame frame, Rect area, IntegrationInfo info) {
         if (loading.get() && allBeans.isEmpty()) {
             frame.renderWidget(
                     Paragraph.builder()
                             .text(Text.from(Line.from(Span.styled(" Loading beans...", Style.EMPTY.dim()))))
-                            .block(Block.builder().borderType(BorderType.ROUNDED).title(" Beans ").build())
+                            .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(" Beans ").build())
                             .build(),
                     area);
             return;
@@ -193,15 +186,11 @@ class BeansTab implements MonitorTab {
 
         List<BeanData> visible = sortedBeans();
 
-        if (showDetail) {
-            List<Rect> chunks = Layout.vertical()
-                    .constraints(Constraint.percentage(40), Constraint.fill())
-                    .split(area);
-            renderTable(frame, chunks.get(0), visible);
-            renderDetail(frame, chunks.get(1), visible);
-        } else {
-            renderTable(frame, area, visible);
-        }
+        List<Rect> chunks = Layout.vertical()
+                .constraints(Constraint.fill(), Constraint.percentage(30))
+                .split(area);
+        renderTable(frame, chunks.get(0), visible);
+        renderDetail(frame, chunks.get(1), visible);
     }
 
     private void renderTable(Frame frame, Rect area, List<BeanData> visible) {
@@ -213,37 +202,34 @@ class BeansTab implements MonitorTab {
 
             rows.add(Row.from(
                     Cell.from(Span.styled(b.name != null ? b.name : "", Style.EMPTY.fg(Color.CYAN))),
-                    Cell.from(Span.styled(shortType, Style.EMPTY)),
-                    Cell.from(Span.styled(type, Style.EMPTY.dim()))));
+                    Cell.from(Span.styled(shortType, Style.EMPTY))));
         }
 
         if (rows.isEmpty()) {
-            rows.add(Row.from(
-                    Cell.from(Span.styled("No beans", Style.EMPTY.dim())),
-                    Cell.from(""), Cell.from("")));
+            rows.add(emptyRow("No beans", 2));
         }
 
-        String title = String.format(" Beans [%d] sort:%s ", visible.size(), sort);
-        if (showInternal) {
-            title = String.format(" Beans [%d] sort:%s internal:on ", visible.size(), sort);
-        }
+        String mode = filterModes()[filterIndex];
+        String title = filterTerm != null
+                ? String.format(" Beans [%d] sort:%s scope:%s filter:\"%s\" ", visible.size(), sort, mode, filterTerm)
+                : String.format(" Beans [%d] sort:%s scope:%s ", visible.size(), sort, mode);
 
         Table table = Table.builder()
                 .rows(rows)
                 .header(Row.from(
                         Cell.from(Span.styled(sortLabel("NAME", "name"), sortStyle("name"))),
-                        Cell.from(Span.styled(sortLabel("TYPE", "type"), sortStyle("type"))),
-                        Cell.from(Span.styled("PACKAGE", Style.EMPTY.bold()))))
+                        Cell.from(Span.styled(sortLabel("TYPE", "type"), sortStyle("type")))))
                 .widths(
-                        Constraint.length(30),
-                        Constraint.length(30),
+                        Constraint.percentage(55),
                         Constraint.fill())
-                .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
+                .highlightStyle(Theme.selectionBg())
                 .highlightSpacing(Table.HighlightSpacing.ALWAYS)
-                .block(Block.builder().borderType(BorderType.ROUNDED).title(title).build())
+                .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(title).build())
                 .build();
 
+        lastTableArea = area;
         frame.renderStatefulWidget(table, area, tableState);
+        renderScrollbar(frame, visible.size());
     }
 
     private void renderDetail(Frame frame, Rect area, List<BeanData> visible) {
@@ -252,67 +238,91 @@ class BeansTab implements MonitorTab {
             frame.renderWidget(
                     Paragraph.builder()
                             .text(Text.from(Line.from(Span.styled(" Select a bean", Style.EMPTY.dim()))))
-                            .block(Block.builder().borderType(BorderType.ROUNDED).title(" Properties ").build())
+                            .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
+                                    .title(" Bean Detail ").build())
                             .build(),
                     area);
             return;
         }
 
         BeanData bean = visible.get(sel);
-        String title = " " + bean.name + " (" + (bean.type != null ? bean.type : "") + ") ";
+        String title = " " + (bean.name != null ? bean.name : "") + " ";
 
-        if (bean.properties == null || bean.properties.isEmpty()) {
-            frame.renderWidget(
-                    Paragraph.builder()
-                            .text(Text.from(Line.from(Span.styled(" No properties", Style.EMPTY.dim()))))
-                            .block(Block.builder().borderType(BorderType.ROUNDED).title(title).build())
-                            .build(),
-                    area);
-            return;
+        List<Line> lines = new ArrayList<>();
+
+        // full type
+        if (bean.type != null && !bean.type.isEmpty()) {
+            lines.add(Line.from(
+                    Span.styled("  Type: ", Style.EMPTY.dim()),
+                    Span.styled(bean.type, Style.EMPTY.fg(Color.WHITE))));
+        }
+
+        // properties
+        if (bean.properties != null && !bean.properties.isEmpty()) {
+            lines.add(Line.from(Span.raw("")));
+            lines.add(Line.from(Span.styled("  Properties:", Style.EMPTY.dim())));
+
+            int maxNameLen = 0;
+            for (BeanData.Property prop : bean.properties) {
+                if (prop.name != null) {
+                    maxNameLen = Math.max(maxNameLen, prop.name.length());
+                }
+            }
+            int nameWidth = Math.max(15, maxNameLen + 1);
+
+            for (BeanData.Property prop : bean.properties) {
+                String propType = prop.type != null ? prop.type : "";
+                int dot = propType.lastIndexOf('.');
+                String shortPropType = dot >= 0 ? propType.substring(dot + 1) : propType;
+                String value = prop.value != null ? prop.value : "null";
+
+                lines.add(Line.from(
+                        Span.styled("  " + String.format("%-" + nameWidth + "s", prop.name), Style.EMPTY.fg(Color.CYAN)),
+                        Span.styled(String.format("%-15s", shortPropType), Style.EMPTY.dim()),
+                        Span.styled(" = ", Style.EMPTY.dim()),
+                        Span.styled(value, "null".equals(value) ? Style.EMPTY.dim() : Style.EMPTY.fg(Color.WHITE))));
+            }
+        } else {
+            lines.add(Line.from(Span.raw("")));
+            lines.add(Line.from(Span.styled("  No properties", Style.EMPTY.dim())));
         }
 
         int visibleLines = area.height() - 2;
         if (visibleLines < 1) {
             visibleLines = 1;
         }
-        int maxScroll = Math.max(0, bean.properties.size() - visibleLines);
+        int maxScroll = Math.max(0, lines.size() - visibleLines);
         detailScroll = Math.min(detailScroll, maxScroll);
-
-        int end = Math.min(detailScroll + visibleLines, bean.properties.size());
-        List<Line> lines = new ArrayList<>();
-        for (int i = detailScroll; i < end; i++) {
-            BeanData.Property prop = bean.properties.get(i);
-            String propType = prop.type != null ? prop.type : "";
-            int dot = propType.lastIndexOf('.');
-            String shortPropType = dot >= 0 ? propType.substring(dot + 1) : propType;
-            String value = prop.value != null ? prop.value : "null";
-
-            lines.add(Line.from(
-                    Span.styled("  " + String.format("%-25s", prop.name), Style.EMPTY.fg(Color.CYAN)),
-                    Span.styled(String.format("%-15s", shortPropType), Style.EMPTY.dim()),
-                    Span.styled(" = ", Style.EMPTY.dim()),
-                    Span.styled(value, "null".equals(value) ? Style.EMPTY.dim() : Style.EMPTY.fg(Color.WHITE))));
-        }
+        int end = Math.min(detailScroll + visibleLines, lines.size());
+        List<Line> visibleContent = lines.subList(detailScroll, end);
 
         frame.renderWidget(
                 Paragraph.builder()
-                        .text(Text.from(lines))
-                        .block(Block.builder().borderType(BorderType.ROUNDED).title(title).build())
+                        .text(Text.from(visibleContent))
+                        .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(title).build())
                         .build(),
                 area);
     }
 
     @Override
     public void renderFooter(List<Span> spans) {
-        hint(spans, "Esc", "back");
-        hint(spans, "s", "sort");
-        hint(spans, "i", "internal" + (showInternal ? " [on]" : ""));
-        hint(spans, "r", "refresh");
-        if (showDetail) {
-            hintLast(spans, "↑↓", "scroll");
-        } else {
-            hintLast(spans, "Enter", "detail");
+        if (filterInputActive) {
+            spans.add(Span.styled(" /", Style.EMPTY.fg(Color.YELLOW).bold()));
+            spans.add(Span.raw(filterInputState.text() + "█  "));
+            hint(spans, "Enter", "filter");
+            hintLast(spans, "Esc", "cancel");
+            return;
         }
+        hint(spans, "Esc", filterTerm != null ? "clear" : "back");
+        hint(spans, "f", "scope [" + filterModes()[filterIndex] + "]");
+        if (filterTerm != null) {
+            spans.add(Span.styled("  /", Style.EMPTY.fg(Color.YELLOW).bold()));
+            spans.add(Span.raw("\"" + filterTerm + "\"  "));
+        } else {
+            hint(spans, "/", "filter");
+        }
+        hint(spans, "↑↓", "navigate");
+        hintLast(spans, "PgUp/Dn", "scroll");
     }
 
     @Override
@@ -326,10 +336,39 @@ class BeansTab implements MonitorTab {
         return new SelectionContext("table", items, sel != null ? sel : -1, items.size(), "Beans");
     }
 
+    private String[] filterModes() {
+        IntegrationInfo info = ctx.findSelectedIntegration();
+        String platform = info != null ? info.platform : null;
+        if ("Spring Boot".equals(platform)) {
+            return new String[] { "all", "user", "camel", "spring" };
+        } else if ("Quarkus".equals(platform)) {
+            return new String[] { "all", "user", "camel", "quarkus" };
+        }
+        return new String[] { "all", "user", "camel" };
+    }
+
     private List<BeanData> sortedBeans() {
+        String[] modes = filterModes();
+        if (filterIndex >= modes.length) {
+            filterIndex = 0;
+        }
+        String mode = modes[filterIndex];
+        String ft = filterTerm != null ? filterTerm.toLowerCase() : null;
         List<BeanData> result = new ArrayList<>();
         for (BeanData b : allBeans) {
-            if (!showInternal && b.internal) {
+            if ("user".equals(mode) && isFrameworkBean(b)) {
+                continue;
+            }
+            if ("camel".equals(mode) && !b.internal) {
+                continue;
+            }
+            if ("spring".equals(mode) && !isSpringBean(b)) {
+                continue;
+            }
+            if ("quarkus".equals(mode) && !isQuarkusBean(b)) {
+                continue;
+            }
+            if (ft != null && !matchesFilter(b, ft)) {
                 continue;
             }
             result.add(b);
@@ -342,27 +381,6 @@ class BeansTab implements MonitorTab {
             return sortReversed ? -cmp : cmp;
         });
         return result;
-    }
-
-    private static int compareStr(String a, String b) {
-        if (a == null && b == null) {
-            return 0;
-        }
-        if (a == null) {
-            return -1;
-        }
-        if (b == null) {
-            return 1;
-        }
-        return a.compareToIgnoreCase(b);
-    }
-
-    private String sortLabel(String label, String column) {
-        return MonitorContext.sortLabel(label, column, sort, sortReversed);
-    }
-
-    private Style sortStyle(String column) {
-        return MonitorContext.sortStyle(column, sort);
     }
 
     private void loadBeans() {
@@ -439,6 +457,42 @@ class BeansTab implements MonitorTab {
         }
     }
 
+    private static boolean matchesFilter(BeanData b, String filter) {
+        if (b.name != null && b.name.toLowerCase().contains(filter)) {
+            return true;
+        }
+        return b.type != null && b.type.toLowerCase().contains(filter);
+    }
+
+    private static boolean isFrameworkBean(BeanData b) {
+        if (isInternalBean(b.name, b.type)) {
+            return true;
+        }
+        if (b.name != null && (b.name.startsWith("org.springframework") || b.name.startsWith("io.quarkus"))) {
+            return true;
+        }
+        if (b.type != null
+                && (b.type.startsWith("org.springframework") || b.type.startsWith("io.quarkus")
+                        || b.type.startsWith("java."))) {
+            return true;
+        }
+        return false;
+    }
+
+    private static boolean isSpringBean(BeanData b) {
+        if (b.name != null && b.name.startsWith("org.springframework")) {
+            return true;
+        }
+        return b.type != null && b.type.startsWith("org.springframework");
+    }
+
+    private static boolean isQuarkusBean(BeanData b) {
+        if (b.name != null && b.name.startsWith("io.quarkus")) {
+            return true;
+        }
+        return b.type != null && b.type.startsWith("io.quarkus");
+    }
+
     private static boolean isInternalBean(String name, String type) {
         if (name == null) {
             return false;
@@ -466,6 +520,11 @@ class BeansTab implements MonitorTab {
     }
 
     @Override
+    public String description() {
+        return "Registered beans in the Camel registry";
+    }
+
+    @Override
     public String getHelpText() {
         return """
                 # Beans
@@ -485,34 +544,70 @@ class BeansTab implements MonitorTab {
                 ## Table Columns
 
                 - **NAME** — Bean name used to look it up from routes. In a route you reference this with `.bean("myService")` or `${bean:myService}`
-                - **TYPE** — Java class of the bean (e.g., `com.example.MyService`, `java.util.HashMap`)
-
-                ## Example Screen
-
-                ```
-                 NAME              TYPE
-                 greeter           com.example.Greeter
-                 myDataSource      com.zaxxer.hikari.HikariDataSource
-                 restConfiguration org.apache.camel.spi.RestConfiguration
-                 json-jackson      org.apache.camel.component.jackson.JacksonDataFormat
-                ```
+                - **TYPE** — Short Java class name of the bean (e.g., `Greeter`, `HikariDataSource`)
 
                 ## Detail View
 
-                Press `Enter` on a bean to inspect its properties and current values.
-                Camel uses Java bean introspection to read property values, showing
-                you the runtime state of each bean. This is useful for verifying
-                configuration — for example, checking that a database connection pool
-                has the correct URL, or that a data format is configured with the
+                The detail panel at the bottom shows the full type (including package)
+                and the bean's properties with their current values. This is useful for
+                verifying configuration — for example, checking that a database connection
+                pool has the correct URL, or that a data format is configured with the
                 right options.
+
+                ## Filter Modes
+
+                Press `f` to cycle through filter modes:
+
+                - **all** — show all beans (including framework internals)
+                - **user** — only your application beans (excludes Camel, Spring, Quarkus, and JDK beans)
+                - **camel** — only Camel internal beans
+                - **spring** — only Spring Framework beans (Spring Boot apps only)
+                - **quarkus** — only Quarkus beans (Quarkus apps only)
 
                 ## Keys
 
                 - `Up/Down` — select bean
-                - `Enter` — view bean properties
+                - `PgUp/PgDn` — scroll detail panel
                 - `s` — cycle sort column
                 - `S` — reverse sort order
+                - `f` — cycle filter
                 - `Esc` — back
                 """;
+    }
+
+    @Override
+    public JsonObject getTableDataAsJson() {
+        List<BeanData> beans = sortedBeans();
+        if (beans.isEmpty()) {
+            return null;
+        }
+        JsonObject result = new JsonObject();
+        result.put("tab", "Beans");
+        JsonArray rows = new JsonArray();
+        for (BeanData b : beans) {
+            JsonObject row = new JsonObject();
+            row.put("name", b.name);
+            row.put("type", b.type);
+            row.put("internal", b.internal);
+            if (b.properties != null && !b.properties.isEmpty()) {
+                JsonArray props = new JsonArray();
+                for (BeanData.Property p : b.properties) {
+                    JsonObject prop = new JsonObject();
+                    prop.put("name", p.name);
+                    prop.put("type", p.type);
+                    if (p.value != null) {
+                        prop.put("value", p.value);
+                    }
+                    props.add(prop);
+                }
+                row.put("properties", props);
+            }
+            rows.add(row);
+        }
+        result.put("rows", rows);
+        result.put("totalRows", beans.size());
+        Integer sel = tableState.selected();
+        result.put("selectedIndex", sel != null ? sel : -1);
+        return result;
     }
 }

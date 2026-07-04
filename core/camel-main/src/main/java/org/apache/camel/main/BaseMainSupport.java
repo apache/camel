@@ -2268,7 +2268,7 @@ public abstract class BaseMainSupport extends BaseService {
             LOG.warn("Generating self-signed SSL certificate for development use."
                      + " Do NOT use this in production.");
             String password = "camel-self-signed"; // NOSONAR
-            KeyStore ks = SelfSignedCertificateGenerator.generateKeyStore(password);
+            KeyStore ks = SelfSignedCertificateGenerator.generateKeyStore(password, sslConfig.getSelfSignedKeyType());
 
             KeyStoreParameters ksp = new KeyStoreParameters();
             ksp.setCamelContext(camelContext);

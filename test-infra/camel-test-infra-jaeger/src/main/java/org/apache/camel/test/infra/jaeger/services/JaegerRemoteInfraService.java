@@ -18,6 +18,9 @@ package org.apache.camel.test.infra.jaeger.services;
 
 import org.apache.camel.test.infra.jaeger.common.JaegerProperties;
 
+/**
+ * @since 4.21
+ */
 public class JaegerRemoteInfraService implements JaegerInfraService {
 
     @Override
@@ -37,7 +40,13 @@ public class JaegerRemoteInfraService implements JaegerInfraService {
 
     @Override
     public String host() {
-        return System.getProperty(JaegerProperties.HOST);
+        String host = System.getProperty(JaegerProperties.HOST);
+        if (host == null) {
+            throw new IllegalStateException(
+                    "Remote Jaeger selected but system property '" + JaegerProperties.HOST
+                                            + "' is not set. Set it (and optionally the port properties) to point at the remote Jaeger instance.");
+        }
+        return host;
     }
 
     @Override

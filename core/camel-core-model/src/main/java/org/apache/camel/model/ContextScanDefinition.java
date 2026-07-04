@@ -31,17 +31,21 @@ import org.apache.camel.spi.Metadata;
  * Scans for Java {@link org.apache.camel.builder.RouteBuilder} instances in the context
  * {@link org.apache.camel.spi.Registry}.
  */
-@Metadata(label = "configuration")
+@Metadata(label = "configuration",
+          description = "Scans for RouteBuilder instances in the Camel registry to auto-discover and register routes")
 @XmlRootElement(name = "contextScan")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ContextScanDefinition {
 
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean",
+              description = "Whether to include non-singleton beans (prototypes). By default only singleton beans are included in the context scan.")
     private String includeNonSingletons;
     @XmlElement(name = "excludes")
+    @Metadata(description = "Exclude finding route builder from these java package names.")
     private List<String> excludes = new ArrayList<>();
     @XmlElement(name = "includes")
+    @Metadata(description = "Include finding route builder from these java package names.")
     private List<String> includes = new ArrayList<>();
 
     public ContextScanDefinition() {
@@ -51,11 +55,6 @@ public class ContextScanDefinition {
         return includeNonSingletons;
     }
 
-    /**
-     * Whether to include non-singleton beans (prototypes)
-     * <p/>
-     * By default only singleton beans is included in the context scan
-     */
     public void setIncludeNonSingletons(String includeNonSingletons) {
         this.includeNonSingletons = includeNonSingletons;
     }
@@ -64,9 +63,6 @@ public class ContextScanDefinition {
         return excludes;
     }
 
-    /**
-     * Exclude finding route builder from these java package names.
-     */
     public void setExcludes(List<String> excludes) {
         this.excludes = excludes;
     }
@@ -75,9 +71,6 @@ public class ContextScanDefinition {
         return includes;
     }
 
-    /**
-     * Include finding route builder from these java package names.
-     */
     public void setIncludes(List<String> includes) {
         this.includes = includes;
     }

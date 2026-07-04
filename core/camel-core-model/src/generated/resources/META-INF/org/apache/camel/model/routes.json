@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "routes",
     "title": "Routes",
-    "description": "A series of Camel routes",
+    "description": "Container for a collection of route definitions",
     "deprecated": false,
     "label": "configuration",
     "javaType": "org.apache.camel.model.RoutesDefinition",
@@ -12,9 +12,9 @@
     "output": false
   },
   "properties": {
-    "id": { "index": 0, "kind": "attribute", "displayName": "Id", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Sets the id of this node" },
-    "note": { "index": 1, "kind": "attribute", "displayName": "Note", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Sets the note of this node" },
-    "description": { "index": 2, "kind": "attribute", "displayName": "Description", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Sets the description of this node" },
+    "id": { "index": 0, "kind": "attribute", "displayName": "Id", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node" },
+    "note": { "index": 1, "kind": "attribute", "displayName": "Note", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The note for this node" },
+    "description": { "index": 2, "kind": "attribute", "displayName": "Description", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The description for this node" },
     "routes": { "index": 3, "kind": "element", "displayName": "Routes", "group": "common", "required": false, "type": "array", "javaType": "java.util.List<org.apache.camel.model.RouteDefinition>", "oneOf": [ "route" ], "deprecated": false, "autowired": false, "secret": false, "description": "Contains the Camel routes" }
   }
 }

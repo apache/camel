@@ -25,17 +25,24 @@ import org.apache.camel.spi.CamelEvent.ExchangeEvent;
 import org.jspecify.annotations.Nullable;
 
 /**
- * {@link org.apache.camel.spi.Breakpoint} are used by the {@link org.apache.camel.spi.Debugger} API.
+ * Callback interface for a debugger breakpoint, registered with the {@link Debugger} and invoked as
+ * {@link org.apache.camel.Exchange}s pass through route nodes.
  * <p/>
- * This allows you to register {@link org.apache.camel.spi.Breakpoint}s to the {@link org.apache.camel.spi.Debugger} and
- * have those breakpoints activated when their {@link org.apache.camel.spi.Condition}s match.
+ * Breakpoints are registered via {@link Debugger#addBreakpoint(Breakpoint)} (unconditional) or
+ * {@link Debugger#addBreakpoint(Breakpoint, Condition...)} (conditional). When all provided {@link Condition}s are
+ * satisfied, the {@code Debugger} calls the appropriate {@code before*} / {@code after*} callback on this interface.
+ * Multiple {@code before*} methods exist to differentiate the type of routing event: entering a processor node,
+ * handling an exchange event, and so on.
  * <p/>
- * If any exceptions is thrown from the callback methods then the {@link org.apache.camel.spi.Debugger} will catch and
- * log those at <tt>WARN</tt> level and continue. This ensures Camel can continue to route the message without having
- * breakpoints causing issues.
+ * Exceptions thrown from any callback method are caught by the {@code Debugger} and logged at {@code WARN} level. This
+ * ensures that a buggy breakpoint does not abort routing of the exchange.
+ * <p/>
+ * A breakpoint can be in {@link State#Active} or {@link State#Suspended} state. The {@link BacklogDebugger} uses the
+ * suspended state to pause exchange processing and wait for a resume signal from a debugging client.
  *
- * @see org.apache.camel.spi.Debugger
- * @see org.apache.camel.spi.Condition
+ * @see Debugger
+ * @see Condition
+ * @see BacklogDebugger
  */
 public interface Breakpoint {
 

@@ -25,7 +25,7 @@ import org.apache.camel.spi.Metadata;
 /**
  * Rest POST command
  */
-@Metadata(label = "rest")
+@Metadata(label = "rest", description = "Defines an HTTP POST operation in the REST DSL")
 @XmlRootElement(name = "post")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class PostDefinition extends VerbDefinition {

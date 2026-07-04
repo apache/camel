@@ -25,7 +25,9 @@ import org.apache.camel.spi.Metadata;
 /**
  * Stops the processing of the current message
  */
-@Metadata(label = "eip,routing")
+@Metadata(label = "eip,flowcontrol,routing",
+          description = "Stops processing of the current message and marks the exchange as completed"
+                        + " without sending it to any further steps")
 @XmlRootElement(name = "stop")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class StopDefinition extends NoOutputDefinition<StopDefinition> {

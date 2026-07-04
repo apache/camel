@@ -16,22 +16,26 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.function.Function;
 
+import dev.tamboui.layout.Rect;
 import dev.tamboui.style.AnsiColor;
 import dev.tamboui.style.Color;
 import dev.tamboui.style.Style;
 import dev.tamboui.text.CharWidth;
 import dev.tamboui.text.Line;
 import dev.tamboui.text.Span;
+import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
 import org.apache.camel.support.PatternHelper;
 import org.apache.camel.util.FileUtil;
-import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
 
@@ -44,19 +48,8 @@ final class TuiHelper {
     }
 
     /**
-     * Eagerly load classes used by the TUI input reader daemon thread and picocli post-processing. Without this, during
-     * JVM shutdown the classloader may already be closing while the input reader thread is still trying to load these
-     * classes lazily — causing ClassNotFoundException stack traces on exit.
-     */
-    static void preloadClasses(ClassLoader cl) {
-        ObjectHelper.loadClass("dev.tamboui.tui.event.KeyModifiers", cl);
-        ObjectHelper.loadClass("dev.tamboui.tui.event.KeyEvent", cl);
-        ObjectHelper.loadClass("dev.tamboui.tui.event.KeyCode", cl);
-        ObjectHelper.loadClass("picocli.CommandLine$IExitCodeGenerator", cl);
-    }
-
-    /**
-     * Find PIDs of running Camel integrations matching the given name pattern.
+     * Find PIDs of running Camel integrations matching the given name pattern. Scans the {@code ~/.camel/} directory
+     * for status files rather than iterating all OS processes, which is significantly faster.
      */
     static List<Long> findPids(String name, Function<String, Path> statusFileResolver) {
         List<Long> pids = new ArrayList<>();
@@ -66,29 +59,65 @@ final class TuiHelper {
             pattern = pattern + "*";
         }
         final String pat = pattern;
-        ProcessHandle.allProcesses()
-                .filter(ph -> ph.pid() != cur)
-                .forEach(ph -> {
-                    JsonObject root = loadStatus(ph.pid(), statusFileResolver);
-                    if (root != null) {
-                        String pName = ProcessHelper.extractName(root, ph);
-                        pName = FileUtil.onlyName(pName);
+
+        for (long pid : findCandidatePids()) {
+            if (pid == cur) {
+                continue;
+            }
+            // check process is still alive
+            if (!ProcessHandle.of(pid).map(ProcessHandle::isAlive).orElse(false)) {
+                continue;
+            }
+            JsonObject root = loadStatus(pid, statusFileResolver);
+            if (root != null) {
+                ProcessHandle ph = ProcessHandle.of(pid).orElse(null);
+                String pName = ProcessHelper.extractName(root, ph);
+                pName = FileUtil.onlyName(pName);
+                if (pName != null && !pName.isEmpty() && PatternHelper.matchPattern(pName, pat)) {
+                    pids.add(pid);
+                } else {
+                    JsonObject context = (JsonObject) root.get("context");
+                    if (context != null) {
+                        pName = context.getString("name");
+                        if ("CamelJBang".equals(pName)) {
+                            pName = null;
+                        }
                         if (pName != null && !pName.isEmpty() && PatternHelper.matchPattern(pName, pat)) {
-                            pids.add(ph.pid());
-                        } else {
-                            JsonObject context = (JsonObject) root.get("context");
-                            if (context != null) {
-                                pName = context.getString("name");
-                                if ("CamelJBang".equals(pName)) {
-                                    pName = null;
-                                }
-                                if (pName != null && !pName.isEmpty() && PatternHelper.matchPattern(pName, pat)) {
-                                    pids.add(ph.pid());
-                                }
-                            }
+                            pids.add(pid);
                         }
                     }
-                });
+                }
+            }
+        }
+        return pids;
+    }
+
+    /**
+     * List candidate PIDs by scanning {@code ~/.camel/} for {@code *-status.json} files. This is O(number of status
+     * files) rather than O(total OS processes).
+     */
+    static List<Long> findCandidatePids() {
+        List<Long> pids = new ArrayList<>();
+        try {
+            Path camelDir = CommandLineHelper.getCamelDir();
+            if (Files.isDirectory(camelDir)) {
+                try (var files = Files.list(camelDir)) {
+                    files.forEach(p -> {
+                        String fn = p.getFileName().toString();
+                        if (fn.endsWith("-status.json")) {
+                            try {
+                                long pid = Long.parseLong(fn.substring(0, fn.length() - "-status.json".length()));
+                                pids.add(pid);
+                            } catch (NumberFormatException e) {
+                                // not a PID-based status file
+                            }
+                        }
+                    });
+                }
+            }
+        } catch (IOException e) {
+            // ignore
+        }
         return pids;
     }
 
@@ -388,7 +417,7 @@ final class TuiHelper {
             Style.EMPTY.fg(Color.LIGHT_GREEN),
             Style.EMPTY.fg(Color.YELLOW),
             Style.EMPTY.fg(Color.rgb(0xFF, 0xA5, 0x00)),
-            Style.EMPTY.fg(Color.RED),
+            Style.EMPTY.fg(Color.MAGENTA),
     };
 
     static Style colorForDuration(long duration, long minDuration, long maxDuration) {
@@ -397,8 +426,168 @@ final class TuiHelper {
         }
         double ratio = (Math.log1p(duration) - Math.log1p(minDuration))
                        / (Math.log1p(maxDuration) - Math.log1p(minDuration));
-        int bandIndex = Math.min((int) (ratio * 5), 4);
+        int bandIndex = Math.max(0, Math.min((int) (ratio * 5), 4));
         return DURATION_BAND_STYLES[bandIndex];
+    }
+
+    // ---- UI helpers ----
+
+    static void hint(List<Span> spans, String key, String label) {
+        spans.add(Span.styled(" " + key + " ", Theme.hintKey()));
+        spans.add(Span.raw(" " + label + "  "));
+    }
+
+    static void hintLast(List<Span> spans, String key, String label) {
+        spans.add(Span.styled(" " + key + " ", Theme.hintKey()));
+        spans.add(Span.raw(" " + label));
+    }
+
+    static boolean contains(Rect rect, int x, int y) {
+        return rect != null
+                && x >= rect.x() && x < rect.x() + rect.width()
+                && y >= rect.y() && y < rect.y() + rect.height();
+    }
+
+    static int compareStr(String a, String b) {
+        if (a == null && b == null) {
+            return 0;
+        }
+        if (a == null) {
+            return 1;
+        }
+        if (b == null) {
+            return -1;
+        }
+        return a.compareToIgnoreCase(b);
+    }
+
+    // ---- Data formatting helpers ----
+
+    static final String[] SMALL_CAMEL = {
+            " ,,__",
+            "/o.  \\___/\\",
+            "\\__/       \\",
+            "   |   |   |",
+            "   |   |   |~",
+            "  (_) (_) (_)",
+    };
+
+    static JsonObject pollJsonResponse(Path outputFile, long timeout) {
+        long start = System.currentTimeMillis();
+        while (System.currentTimeMillis() - start < timeout) {
+            try {
+                Thread.sleep(100);
+                if (Files.exists(outputFile) && outputFile.toFile().length() > 0) {
+                    String text = Files.readString(outputFile);
+                    return (JsonObject) Jsoner.deserialize(text);
+                }
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                return null;
+            } catch (Exception e) {
+                // ignore
+            }
+        }
+        return null;
+    }
+
+    static String formatSinceLast(IntegrationInfo info) {
+        return formatSinceLast(info.sinceLastStarted, info.sinceLastCompleted, info.sinceLastFailed);
+    }
+
+    static String formatSinceLast(String started, String completed, String failed) {
+        StringBuilder sb = new StringBuilder();
+        if (started != null) {
+            sb.append(started);
+        }
+        if (completed != null) {
+            if (!sb.isEmpty()) {
+                sb.append('/');
+            }
+            sb.append(completed);
+        }
+        if (failed != null) {
+            if (!sb.isEmpty()) {
+                sb.append('/');
+            }
+            sb.append(failed);
+        }
+        return sb.toString();
+    }
+
+    static String formatSinceLastRoute(RouteInfo route) {
+        return formatSinceLast(route.sinceLastStarted, route.sinceLastCompleted, route.sinceLastFailed);
+    }
+
+    static String formatLoad(String l1, String l5, String l15) {
+        String s1 = l1 != null && !"0.00".equals(l1) ? l1 : "0";
+        String s5 = l5 != null && !"0.00".equals(l5) ? l5 : "0";
+        String s15 = l15 != null && !"0.00".equals(l15) ? l15 : "0";
+        return s1 + "/" + s5 + "/" + s15;
+    }
+
+    static String formatMemory(long used, long max) {
+        if (used <= 0) {
+            return "";
+        }
+        String u = formatBytes(used);
+        if (max > 0) {
+            return u + "/" + formatBytes(max);
+        }
+        return u;
+    }
+
+    static String formatBytes(long bytes) {
+        if (bytes < 1024) {
+            return bytes + "B";
+        }
+        if (bytes < 1024 * 1024) {
+            return (bytes / 1024) + "K";
+        }
+        long mb = bytes / (1024 * 1024);
+        if (mb >= 1024) {
+            long gb = mb / 1024;
+            long rem = mb % 1024;
+            if (rem == 0) {
+                return gb + "G";
+            }
+            return String.format(Locale.US, "%.1fG", mb / 1024.0);
+        }
+        return mb + "M";
+    }
+
+    static String formatThreads(int count, int peak) {
+        if (count <= 0) {
+            return "";
+        }
+        return count + "/" + peak;
+    }
+
+    static Style topTimeStyle(long ms) {
+        if (ms >= 1000) {
+            return Style.EMPTY.fg(Color.LIGHT_RED).bold();
+        } else if (ms >= 100) {
+            return Style.EMPTY.fg(Color.YELLOW);
+        }
+        return Style.EMPTY;
+    }
+
+    static Style topDeltaStyle(long delta) {
+        if (delta > 0) {
+            return Style.EMPTY.fg(Color.LIGHT_RED);
+        } else if (delta < 0) {
+            return Style.EMPTY.fg(Color.GREEN);
+        }
+        return Style.EMPTY;
+    }
+
+    static String buildBar(long value, long maxValue, int maxWidth) {
+        if (value <= 0 || maxValue <= 0) {
+            return "";
+        }
+        int len = (int) Math.round((double) value / maxValue * maxWidth);
+        len = Math.max(len > 0 ? 1 : 0, Math.min(len, maxWidth));
+        return "█".repeat(len);
     }
 
     static String shortTypeName(String type) {
@@ -425,5 +614,230 @@ final class TuiHelper {
             return type.substring(pos + 1);
         }
         return type;
+    }
+
+    // ---- File emoji helpers (shared by FilesBrowser, FolderBrowser) ----
+
+    private static final String[] CAMEL_YAML_MARKERS = {
+            "- from:", "- route:",
+            "- routeTemplate:", "- route-template:",
+            "- templatedRoute:", "- templated-route:",
+            "- routeConfiguration:", "- route-configuration:",
+            "- rest:", "- beans:"
+    };
+
+    private static final String[] CAMEL_XML_MARKERS = {
+            "<route", "<routes", "<routeTemplate", "<routeTemplates",
+            "<templatedRoute", "<templatedRoutes",
+            "<rest", "<rests", "<routeConfiguration",
+            "<beans", "<blueprint", "<camel"
+    };
+
+    static String fileEmoji(Path path) {
+        String name = path.getFileName().toString();
+        String lower = name.toLowerCase(Locale.ROOT);
+        if ("pom.xml".equals(lower)) {
+            return detectPomEmoji(path);
+        }
+        if (lower.endsWith(".kamelet.yaml") || lower.endsWith(".kamelet.yml")) {
+            return "🐪";
+        }
+        if (lower.endsWith(".yaml") || lower.endsWith(".yml")) {
+            return isCamelYaml(path) ? "🐪" : "📋";
+        }
+        if (lower.endsWith(".xml")) {
+            return isCamelXml(path) ? "🐪" : "📋";
+        }
+        if (lower.endsWith(".java")) {
+            return isCamelJava(path) ? "🐪" : "☕";
+        }
+        if (lower.endsWith(".properties") || lower.endsWith(".cfg")) {
+            return "📄";
+        }
+        if (lower.endsWith(".json")) {
+            return "📋";
+        }
+        if (lower.endsWith(".md") || lower.endsWith(".adoc") || lower.endsWith(".txt")
+                || lower.startsWith("readme")) {
+            return "📖";
+        }
+        return "📄";
+    }
+
+    static String fileEmojiByName(String name) {
+        String lower = name.toLowerCase(Locale.ROOT);
+        if (lower.endsWith(".camel.yaml") || lower.endsWith(".camel.yml")
+                || lower.endsWith(".kamelet.yaml") || lower.endsWith(".kamelet.yml")) {
+            return "🐪";
+        }
+        if (lower.endsWith(".java")) {
+            return "☕";
+        }
+        if (lower.endsWith(".yaml") || lower.endsWith(".yml")) {
+            return "📋";
+        }
+        if (lower.endsWith(".xml")) {
+            return "📋";
+        }
+        if (lower.endsWith(".properties") || lower.endsWith(".cfg")) {
+            return "📄";
+        }
+        if (lower.endsWith(".json")) {
+            return "📋";
+        }
+        if (lower.endsWith(".md") || lower.endsWith(".adoc") || lower.endsWith(".txt")
+                || lower.startsWith("readme")) {
+            return "📖";
+        }
+        return "📄";
+    }
+
+    static String detectPomRuntime(Path pomFile) {
+        try {
+            String content = Files.readString(pomFile, StandardCharsets.UTF_8);
+            if (content.contains("quarkus-maven-plugin") || content.contains("quarkus-bom")
+                    || content.contains("camel-quarkus")) {
+                return "quarkus";
+            }
+            if (content.contains("spring-boot-maven-plugin") || content.contains("spring-boot-starter")
+                    || content.contains("camel-spring-boot")) {
+                return "spring-boot";
+            }
+            if (content.contains("camel-bom") || content.contains("camel-maven-plugin")
+                    || content.contains("camel-main")) {
+                return "main";
+            }
+        } catch (IOException e) {
+            // ignore
+        }
+        return null;
+    }
+
+    private static String detectPomEmoji(Path path) {
+        try {
+            String content = Files.readString(path, StandardCharsets.UTF_8);
+            if (content.contains("quarkus-maven-plugin") || content.contains("quarkus-bom")
+                    || content.contains("camel-quarkus")) {
+                return "🚀";
+            }
+            if (content.contains("spring-boot-maven-plugin") || content.contains("spring-boot-starter")
+                    || content.contains("camel-spring-boot")) {
+                return "🍃";
+            }
+            if (content.contains("camel-core") || content.contains("camel-api")
+                    || content.contains("org.apache.camel")) {
+                return "🐪";
+            }
+        } catch (IOException e) {
+            // ignore
+        }
+        return "📋";
+    }
+
+    private static boolean isCamelYaml(Path path) {
+        try {
+            String content = Files.readString(path, StandardCharsets.UTF_8);
+            for (String marker : CAMEL_YAML_MARKERS) {
+                if (content.contains(marker)) {
+                    return true;
+                }
+            }
+        } catch (IOException e) {
+            // ignore
+        }
+        return false;
+    }
+
+    private static boolean isCamelXml(Path path) {
+        try {
+            String content = Files.readString(path, StandardCharsets.UTF_8);
+            for (String marker : CAMEL_XML_MARKERS) {
+                if (content.contains(marker)) {
+                    return true;
+                }
+            }
+        } catch (IOException e) {
+            // ignore
+        }
+        return false;
+    }
+
+    static int listItemAt(Rect popup, int offset, int itemCount, int mouseX, int mouseY) {
+        if (popup == null) {
+            return -1;
+        }
+        int innerLeft = popup.x() + 1;
+        int innerRight = popup.x() + popup.width() - 1;
+        int firstRow = popup.y() + 1;
+        int lastRow = popup.y() + popup.height() - 1;
+        if (mouseX < innerLeft || mouseX >= innerRight) {
+            return -1;
+        }
+        if (mouseY < firstRow || mouseY >= lastRow) {
+            return -1;
+        }
+        int idx = offset + (mouseY - firstRow);
+        return idx >= 0 && idx < itemCount ? idx : -1;
+    }
+
+    static List<String> wrapWords(String text, int maxWidth) {
+        List<String> lines = new ArrayList<>();
+        StringBuilder line = new StringBuilder();
+        for (String word : text.split(" ")) {
+            if (line.isEmpty()) {
+                line.append(word);
+            } else if (line.length() + 1 + word.length() <= maxWidth) {
+                line.append(' ').append(word);
+            } else {
+                lines.add(line.toString());
+                line.setLength(0);
+                line.append(word);
+            }
+        }
+        if (!line.isEmpty()) {
+            lines.add(line.toString());
+        }
+        return lines;
+    }
+
+    static String capitalize(String s) {
+        if (s == null || s.isEmpty()) {
+            return s;
+        }
+        return Character.toUpperCase(s.charAt(0)) + s.substring(1);
+    }
+
+    static List<String> readAllLines(Path file) {
+        try {
+            return Files.readAllLines(file);
+        } catch (IOException e) {
+            return List.of();
+        }
+    }
+
+    static String readFirstLine(Path file) {
+        try {
+            List<String> lines = Files.readAllLines(file);
+            for (String line : lines) {
+                String trimmed = line.trim();
+                if (!trimmed.isEmpty()) {
+                    return truncate(trimmed, 60);
+                }
+            }
+        } catch (IOException e) {
+            // ignore
+        }
+        return null;
+    }
+
+    private static boolean isCamelJava(Path path) {
+        try {
+            String content = Files.readString(path, StandardCharsets.UTF_8);
+            return content.contains("RouteBuilder")
+                    || content.contains("EndpointRouteBuilder");
+        } catch (IOException e) {
+            // ignore
+        }
+        return false;
     }
 }

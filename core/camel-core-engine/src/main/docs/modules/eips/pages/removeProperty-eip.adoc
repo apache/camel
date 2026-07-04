@@ -1,7 +1,7 @@
 = Remove Property EIP
 :doctitle: Remove Property
 :shortname: removeProperty
-:description: Removes a named property from the message exchange
+:description: Removes a specific exchange property by name
 :since: 
 :supportlevel: Stable
 :tabs-sync-option:

@@ -34,6 +34,8 @@ public abstract class DefaultConfigurationProperties<T> {
 
     private String name;
     private String description;
+    @Metadata(enums = "dev,test,prod")
+    private String profile;
     @Metadata(defaultValue = "Default", enums = "Verbose,Default,Brief,Oneline,Off")
     private StartupSummaryLevel startupSummaryLevel;
     private int durationMaxSeconds;
@@ -188,6 +190,23 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getProfile() {
+        return profile;
+    }
+
+    /**
+     * Camel profile to use when running.
+     *
+     * The dev profile is for development, which enables a set of additional developer focus functionality, tracing,
+     * debugging, and gathering additional runtime statistics that are useful during development. However, those
+     * additional features has a slight overhead cost, and are not enabled for production profile.
+     *
+     * The default profile is prod.
+     */
+    public void setProfile(String profile) {
+        this.profile = profile;
     }
 
     public StartupSummaryLevel getStartupSummaryLevel() {
@@ -430,14 +449,14 @@ public abstract class DefaultConfigurationProperties<T> {
     }
 
     /**
-     * Whether to support JBang style //DEPS to specify additional dependencies when running Camel JBang
+     * Whether to support JBang style //DEPS to specify additional dependencies when running Camel CLI
      */
     public boolean isModeline() {
         return modeline;
     }
 
     /**
-     * Whether to support JBang style //DEPS to specify additional dependencies when running Camel JBang
+     * Whether to support JBang style //DEPS to specify additional dependencies when running Camel CLI
      */
     public void setModeline(boolean modeline) {
         this.modeline = modeline;
@@ -450,7 +469,7 @@ public abstract class DefaultConfigurationProperties<T> {
     /**
      * Whether to log a WARN when YAML DSL routes use compact (shorthand) notation instead of the canonical
      * (explicit/normalized) form. The canonical style is recommended as it is more tooling and AI friendly. Use Camel
-     * JBang to normalize existing routes: camel yaml normalize &lt;file&gt;
+     * CLI to normalize existing routes: camel validate normalize &lt;file&gt;
      */
     public void setYamlDslCompactNotationWarn(boolean yamlDslCompactNotationWarn) {
         this.yamlDslCompactNotationWarn = yamlDslCompactNotationWarn;
@@ -1540,12 +1559,14 @@ public abstract class DefaultConfigurationProperties<T> {
 
     /**
      * If dumping is enabled then Camel will during startup dump all loaded routes (incl rests and route templates)
-     * represented as XML/YAML DSL into the log. This is intended for trouble shooting or to assist during development.
+     * represented as XML, YAML, or Java DSL into the log. This is intended for trouble shooting or to assist during
+     * development.
      *
      * Sensitive information that may be configured in the route endpoints could potentially be included in the dump
      * output and is therefore not recommended being used for production usage.
      *
-     * This requires to have camel-xml-io/camel-yaml-io on the classpath to be able to dump the routes as XML/YAML.
+     * This requires to have camel-xml-io/camel-yaml-io/camel-java-io on the classpath to be able to dump the routes as
+     * XML/YAML/Java.
      *
      * You can also use JSon which dumps the route structure in JSon. The JSon does not represent Camel DSL but it
      * useful for tooling to understand the structure of the routes and how EIPs are nested together.
@@ -1775,6 +1796,20 @@ public abstract class DefaultConfigurationProperties<T> {
     }
 
     /**
+     * Camel profile to use when running.
+     *
+     * The dev profile is for development, which enables a set of additional developer focus functionality, tracing,
+     * debugging, and gathering additional runtime statistics that are useful during development. However, those
+     * additional features has a slight overhead cost, and are not enabled for production profile.
+     *
+     * The default profile is prod.
+     */
+    public T withProfile(String profile) {
+        this.profile = profile;
+        return (T) this;
+    }
+
+    /**
      * To specify for how long time in seconds to keep running the JVM before automatic terminating the JVM. You can use
      * this to run Camel for a short while.
      */
@@ -1926,7 +1961,7 @@ public abstract class DefaultConfigurationProperties<T> {
     }
 
     /**
-     * Whether to support JBang style //DEPS to specify additional dependencies when running Camel JBang
+     * Whether to support JBang style //DEPS to specify additional dependencies when running Camel CLI
      */
     public T withModeline(boolean modeline) {
         this.modeline = modeline;
@@ -2754,12 +2789,14 @@ public abstract class DefaultConfigurationProperties<T> {
 
     /**
      * If dumping is enabled then Camel will during startup dump all loaded routes (incl rests and route templates)
-     * represented as XML/YAML DSL into the log. This is intended for trouble shooting or to assist during development.
+     * represented as XML, YAML, or Java DSL into the log. This is intended for trouble shooting or to assist during
+     * development.
      *
      * Sensitive information that may be configured in the route endpoints could potentially be included in the dump
      * output and is therefore not recommended being used for production usage.
      *
-     * This requires to have camel-xml-io/camel-yaml-io on the classpath to be able to dump the routes as XML/YAML.
+     * This requires to have camel-xml-io/camel-yaml-io/camel-java-io on the classpath to be able to dump the routes as
+     * XML/YAML/Java.
      *
      * You can also use JSon which dumps the route structure in JSon. The JSon does not represent Camel DSL but it
      * useful for tooling to understand the structure of the routes and how EIPs are nested together.

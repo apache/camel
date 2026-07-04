@@ -46,7 +46,7 @@ import static org.apache.camel.model.RouteDefinitionHelper.routesByIdOrPattern;
 /**
  * A series of Camel routes
  */
-@Metadata(label = "configuration")
+@Metadata(label = "configuration", description = "Container for a collection of route definitions")
 @XmlRootElement(name = "routes")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RoutesDefinition extends OptionalIdentifiedDefinition<RoutesDefinition>
@@ -72,6 +72,7 @@ public class RoutesDefinition extends OptionalIdentifiedDefinition<RoutesDefinit
     private Resource resource;
 
     @XmlElementRef
+    @Metadata(description = "The Camel routes.")
     private List<RouteDefinition> routes = new ArrayList<>();
 
     public RoutesDefinition() {

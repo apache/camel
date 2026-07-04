@@ -21,6 +21,7 @@ import java.util.TreeMap;
 import java.util.stream.Stream;
 
 import org.apache.camel.spi.BeanIntrospection;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.PatternHelper;
 import org.apache.camel.support.PluginHelper;
@@ -36,32 +37,27 @@ public class BeanDevConsole extends AbstractDevConsole {
         super("camel", "bean", "Bean", "Displays Java beans from the registry");
     }
 
-    /**
-     * Filters the beans matching by name
-     */
+    @Metadata(label = "query", description = "Filters the beans matching by name", javaType = "java.lang.String")
     public static final String FILTER = "filter";
 
-    /**
-     * Whether to include bean properties
-     */
+    @Metadata(label = "query", description = "Whether to include bean properties", javaType = "java.lang.Boolean",
+              defaultValue = "true")
     public static final String PROPERTIES = "properties";
 
-    /**
-     * Whether to include null values
-     */
+    @Metadata(label = "query", description = "Whether to include null values", javaType = "java.lang.Boolean",
+              defaultValue = "true")
     public static final String NULLS = "nulls";
 
-    /**
-     * Whether to include internal Camel beans
-     */
+    @Metadata(label = "query", description = "Whether to include internal Camel beans", javaType = "java.lang.Boolean",
+              defaultValue = "true")
     public static final String INTERNAL = "internal";
 
     @Override
     protected String doCallText(Map<String, Object> options) {
-        String filter = (String) options.get(FILTER);
-        boolean properties = "true".equals(options.getOrDefault(PROPERTIES, "true").toString());
-        boolean nulls = "true".equals(options.getOrDefault(NULLS, "true").toString());
-        boolean internal = "true".equals(options.getOrDefault(INTERNAL, "true").toString());
+        String filter = optionString(options, FILTER);
+        boolean properties = optionBoolean(options, PROPERTIES, true);
+        boolean nulls = optionBoolean(options, NULLS, true);
+        boolean internal = optionBoolean(options, INTERNAL, true);
 
         StringBuilder sb = new StringBuilder();
 
@@ -107,10 +103,10 @@ public class BeanDevConsole extends AbstractDevConsole {
 
     @Override
     protected JsonObject doCallJson(Map<String, Object> options) {
-        String filter = (String) options.get(FILTER);
-        boolean properties = "true".equals(options.getOrDefault(PROPERTIES, "true").toString());
-        boolean nulls = "true".equals(options.getOrDefault(NULLS, "true").toString());
-        boolean internal = "true".equals(options.getOrDefault(INTERNAL, "true").toString());
+        String filter = optionString(options, FILTER);
+        boolean properties = optionBoolean(options, PROPERTIES, true);
+        boolean nulls = optionBoolean(options, NULLS, true);
+        boolean internal = optionBoolean(options, INTERNAL, true);
 
         JsonObject root = new JsonObject();
         JsonObject jo = new JsonObject();

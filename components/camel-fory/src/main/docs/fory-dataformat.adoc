@@ -6,8 +6,6 @@
 :since: 4.9
 :supportlevel: Stable
 :tabs-sync-option:
-//Manually maintained attributes
-:camel-spring-boot-name: fory 
 
 *Since Camel {since}*
 
@@ -16,6 +14,9 @@ https://fory.apache.org/[Fory Library]
 
 [NOTE]
 Apache Fory is not supporting architecture using Big Endian (s390x, for instance).
+
+[NOTE]
+With JDK 25+, the JVM parameter `--add-opens java.base/java.lang.invoke=ALL-UNNAMED` must be provided to be able to use this dataformat.
 
 == Fory Options
 
@@ -42,6 +43,3 @@ substituting the version number for the latest and greatest release.
   <!-- use the same version as your Camel core version -->
 </dependency>
 ----------------------------------------------------------
-
-
-include::spring-boot:partial$starter.adoc[]

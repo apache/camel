@@ -38,6 +38,8 @@ import org.apache.camel.component.undertow.UndertowConstants.EventType;
 import org.apache.camel.component.undertow.handlers.CamelWebSocketHandler;
 import org.apache.camel.component.undertow.spi.UndertowSecurityProvider;
 import org.apache.camel.http.base.HttpHeaderFilterStrategy;
+import org.apache.camel.http.base.OAuthHttpSecuritySupport;
+import org.apache.camel.http.base.OAuthProfileAwareHttpEndpoint;
 import org.apache.camel.http.base.cookie.CookieHandler;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.HeaderFilterStrategy;
@@ -48,6 +50,7 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.support.jsse.SSLContextParameters;
+import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xnio.Option;
@@ -60,7 +63,7 @@ import org.xnio.Options;
 @UriEndpoint(firstVersion = "2.16.0", scheme = "undertow", title = "Undertow", syntax = "undertow:httpURI", category = {
         Category.HTTP, Category.NETWORKING }, lenientProperties = true, headersClass = UndertowConstants.class)
 public class UndertowEndpoint extends DefaultEndpoint
-        implements AsyncEndpoint, HeaderFilterStrategyAware, EndpointServiceLocation {
+        implements AsyncEndpoint, HeaderFilterStrategyAware, EndpointServiceLocation, OAuthProfileAwareHttpEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(UndertowEndpoint.class);
 
@@ -69,6 +72,7 @@ public class UndertowEndpoint extends DefaultEndpoint
     private OptionMap optionMap;
     private HttpHandlerRegistrationInfo registrationInfo;
     private CamelWebSocketHandler webSocketHttpHandler;
+    private OAuthHttpSecuritySupport oauthHttpSecurity;
     private boolean isWebSocket;
 
     @UriPath
@@ -94,8 +98,8 @@ public class UndertowEndpoint extends DefaultEndpoint
     private Boolean throwExceptionOnFailure = Boolean.TRUE;
     @UriParam(label = "consumer", defaultValue = "false", security = "insecure:serialization")
     private Boolean transferException = Boolean.FALSE;
-    @UriParam(label = "consumer", defaultValue = "false")
-    private Boolean muteException = Boolean.FALSE;
+    @UriParam(label = "consumer", defaultValue = "true")
+    private Boolean muteException = Boolean.TRUE;
     @UriParam(label = "producer", defaultValue = "true")
     private Boolean keepAlive = Boolean.TRUE;
     @UriParam(label = "producer", defaultValue = "true")
@@ -136,6 +140,11 @@ public class UndertowEndpoint extends DefaultEndpoint
               description = "Security provider allows plug in the provider, which will be used to secure requests. "
                             + "SPI approach could be used too (endpoint then finds security provider using SPI).")
     private UndertowSecurityProvider securityProvider;
+    @UriParam(label = "consumer,security", displayName = "OAuth Profile",
+              description = "OAuth profile name for validating incoming Authorization: Bearer tokens. "
+                            + "When set, the HTTP request or WebSocket upgrade request is authenticated before the route is processed. "
+                            + "This requires an OAuthTokenValidationFactory; camel-oauth provides the default implementation.")
+    private String oauthProfile;
 
     public UndertowEndpoint(String uri, UndertowComponent component) {
         super(uri, component);
@@ -171,8 +180,23 @@ public class UndertowEndpoint extends DefaultEndpoint
         this.securityProvider = securityProvider;
     }
 
+    public String getOauthProfile() {
+        return oauthProfile;
+    }
+
+    public void setOauthProfile(String oauthProfile) {
+        this.oauthProfile = oauthProfile;
+    }
+
+    public OAuthHttpSecuritySupport getOauthHttpSecurity() {
+        return oauthHttpSecurity;
+    }
+
     @Override
     public Producer createProducer() throws Exception {
+        if (ObjectHelper.isNotEmpty(oauthProfile)) {
+            throw new IllegalArgumentException("The undertow oauthProfile option is only supported on consumers");
+        }
         return new UndertowProducer(this, optionMap);
     }
 
@@ -475,6 +499,8 @@ public class UndertowEndpoint extends DefaultEndpoint
         final String scheme = httpURI.getScheme();
         this.isWebSocket = UndertowConstants.WS_PROTOCOL.equalsIgnoreCase(scheme)
                 || UndertowConstants.WSS_PROTOCOL.equalsIgnoreCase(scheme);
+
+        oauthHttpSecurity = OAuthHttpSecuritySupport.create(getCamelContext(), oauthProfile);
 
         if (sslContextParameters != null) {
             sslContext = sslContextParameters.createSSLContext(getCamelContext());

@@ -17,10 +17,20 @@
 package org.apache.camel.processor;
 
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
+import org.apache.camel.Consumer;
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Endpoint;
+import org.apache.camel.Exchange;
+import org.apache.camel.PollingConsumer;
 import org.apache.camel.Processor;
+import org.apache.camel.Producer;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.support.DefaultComponent;
+import org.apache.camel.support.DefaultEndpoint;
+import org.apache.camel.support.PollingConsumerSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -30,6 +40,9 @@ public class PollEnrichNoCacheTest extends ContextTestSupport {
 
     @Test
     public void testNoCache() throws Exception {
+        final AtomicInteger stopped = new AtomicInteger();
+        context.addComponent("pollAssert", stopCountingComponent(stopped));
+
         assertEquals(1, context.getEndpointRegistry().size());
 
         sendBody("foo", "seda:x");
@@ -39,7 +52,7 @@ public class PollEnrichNoCacheTest extends ContextTestSupport {
         sendBody("bar", "seda:y");
         sendBody("bar", "seda:z");
 
-        // make sure its using an empty producer cache as the cache is disabled
+        // make sure its using an empty consumer cache as the cache is disabled
         List<Processor> list = getProcessors("foo");
         PollEnricher ep = (PollEnricher) list.get(0);
         assertNotNull(ep);
@@ -68,10 +81,67 @@ public class PollEnrichNoCacheTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
 
         assertEquals(4, context.getEndpointRegistry().size());
+
+        // also verify that cacheSize(-1) means consumers are not retained
+        sendBody("poll-one", "pollAssert:one");
+        sendBody("poll-two", "pollAssert:two");
+
+        assertEquals(2, stopped.get());
     }
 
     protected void sendBody(String body, String uri) {
         template.sendBodyAndHeader("direct:a", body, "myHeader", uri);
+    }
+
+    /**
+     * A test-only component whose polling consumers increment the given counter in
+     * {@link PollingConsumerSupport#doStop()}, allowing the test to verify whether the consumer cache retains or
+     * discards consumers after use.
+     */
+    private static DefaultComponent stopCountingComponent(AtomicInteger stopped) {
+        return new DefaultComponent() {
+            @Override
+            protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) {
+                return new DefaultEndpoint(uri, this) {
+                    @Override
+                    public Producer createProducer() {
+                        return null;
+                    }
+
+                    @Override
+                    public Consumer createConsumer(Processor processor) {
+                        return null;
+                    }
+
+                    @Override
+                    public PollingConsumer createPollingConsumer() {
+                        return new PollingConsumerSupport(this) {
+                            @Override
+                            public Exchange receive() {
+                                Exchange ex = getEndpoint().createExchange();
+                                ex.getIn().setBody(remaining);
+                                return ex;
+                            }
+
+                            @Override
+                            public Exchange receive(long timeout) {
+                                return receive();
+                            }
+
+                            @Override
+                            public Exchange receiveNoWait() {
+                                return receive();
+                            }
+
+                            @Override
+                            protected void doStop() {
+                                stopped.incrementAndGet();
+                            }
+                        };
+                    }
+                };
+            }
+        };
     }
 
     @Override

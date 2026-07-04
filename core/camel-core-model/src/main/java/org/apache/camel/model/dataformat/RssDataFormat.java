@@ -28,7 +28,8 @@ import org.apache.camel.spi.Metadata;
 /**
  * Transform from ROME SyndFeed Java Objects to XML and vice-versa.
  */
-@Metadata(firstVersion = "2.1.0", label = "dataformat,transformation", title = "RSS")
+@Metadata(firstVersion = "2.1.0", label = "dataformat,transformation", title = "RSS",
+          description = "Transform from ROME SyndFeed Java Objects to XML and vice-versa")
 @XmlRootElement(name = "rss")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RssDataFormat extends DataFormatDefinition {

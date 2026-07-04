@@ -42,6 +42,8 @@ public class SpringWebserviceEndpointConfigurer extends PropertyConfigurerSuppor
         case "faultAction": target.getConfiguration().setFaultAction(property(camelContext, java.net.URI.class, value)); return true;
         case "faultto":
         case "faultTo": target.getConfiguration().setFaultTo(property(camelContext, java.net.URI.class, value)); return true;
+        case "headerfilterstrategy":
+        case "headerFilterStrategy": target.getConfiguration().setHeaderFilterStrategy(property(camelContext, org.apache.camel.spi.HeaderFilterStrategy.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "messagefactory":
@@ -91,6 +93,8 @@ public class SpringWebserviceEndpointConfigurer extends PropertyConfigurerSuppor
         case "faultAction": return java.net.URI.class;
         case "faultto":
         case "faultTo": return java.net.URI.class;
+        case "headerfilterstrategy":
+        case "headerFilterStrategy": return org.apache.camel.spi.HeaderFilterStrategy.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "messagefactory":
@@ -141,6 +145,8 @@ public class SpringWebserviceEndpointConfigurer extends PropertyConfigurerSuppor
         case "faultAction": return target.getConfiguration().getFaultAction();
         case "faultto":
         case "faultTo": return target.getConfiguration().getFaultTo();
+        case "headerfilterstrategy":
+        case "headerFilterStrategy": return target.getConfiguration().getHeaderFilterStrategy();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "messagefactory":

@@ -1,7 +1,7 @@
 = Logger EIP
 :doctitle: Logger
 :shortname: log
-:description: Used for printing custom messages to the logger.
+:description: Logs a message using an expression that can include message body, headers, and other exchange data
 :since: 
 :supportlevel: Stable
 :tabs-sync-option:
@@ -214,6 +214,7 @@ YAML::
 
 In Java DSL the logger instance may be used as well:
 
+._Java-only: using a logger instance directly in Java DSL_
 [source,java]
 ----
 from("direct:start")
@@ -503,6 +504,7 @@ At this time of writing, there are more than 65 different keywords.
 
 Custom keywords can be added as shown:
 
+._Java-only: registering a custom masking formatter with additional keywords_
 [source,java]
 ----
 DefaultMaskingFormatter formatter = new DefaultMaskingFormatter();

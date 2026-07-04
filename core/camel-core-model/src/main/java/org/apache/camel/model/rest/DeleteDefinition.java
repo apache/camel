@@ -25,7 +25,7 @@ import org.apache.camel.spi.Metadata;
 /**
  * Rest DELETE command
  */
-@Metadata(label = "rest")
+@Metadata(label = "rest", description = "Defines an HTTP DELETE operation in the REST DSL")
 @XmlRootElement(name = "delete")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class DeleteDefinition extends VerbDefinition {

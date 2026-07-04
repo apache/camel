@@ -7,8 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
-//Manually maintained attributes
-:camel-spring-boot-name: slack
 
 *Since Camel {since}*
 
@@ -21,29 +19,28 @@ Maven users will need to add the following dependency to their `pom.xml`
 for this component:
 
 [source,xml]
-------------------------------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-slack</artifactId>
     <version>x.x.x</version>
     <!-- use the same version as your Camel core version -->
 </dependency>
-------------------------------------------------------------
+----
 
 == URI format
 
 To send a message to a channel.
 
-------------------------
+----
 slack:#channel[?options]
-------------------------
+----
 
 To send a direct message to a Slack user.
 
--------------------------
+----
 slack:@userID[?options]
--------------------------
-
+----
 
 
 // component options: START
@@ -64,12 +61,12 @@ The SlackComponent with XML must be configured as a Spring bean that contains th
 parameter.
 
 [source,xml]
------------------------------------------------------------------------------------------------------------------------
+----
 <bean id="slack" class="org.apache.camel.component.slack.SlackComponent">
     <property name="webhookUrl" value="https://hooks.slack.com/services/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"/>
     <property name="token" value="xoxb-12345678901-1234567890123-xxxxxxxxxxxxxxxxxxxxxxxx"/>
 </bean>
------------------------------------------------------------------------------------------------------------------------
+----
 
 NOTE: for Java, you can configure this using Java code.
 
@@ -77,16 +74,46 @@ NOTE: for Java, you can configure this using Java code.
 
 You can now use a token to send a message instead of WebhookUrl
 
+[tabs]
+====
+Java::
++
 [source,java]
----------------------------------------------------------------------------------------------------------------------------
+----
 from("direct:test")
     .to("slack:#random?token=RAW(<YOUR_TOKEN>)");
----------------------------------------------------------------------------------------------------------------------------
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:test"/>
+  <to uri="slack:#random?token=RAW(&lt;YOUR_TOKEN&gt;)"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:test
+      steps:
+        - to:
+            uri: "slack:#random"
+            parameters:
+              token: "<YOUR_TOKEN>"
+----
+====
 
 You can now use the Slack API model to create blocks. You can read more about it here https://api.slack.com/block-kit
 
+._Java-only: creating Slack Block Kit messages with the API model_
 [source,java]
----------------------------------------------------------------------------------------------------------------------------
+----
     public void testSlackAPIModelMessage() {
         Message message = new Message();
         message.setBlocks(Collections.singletonList(SectionBlock
@@ -99,7 +126,7 @@ You can now use the Slack API model to create blocks. You can read more about it
 
         template.sendBody(test, message);
     }
----------------------------------------------------------------------------------------------------------------------------
+----
 
 You'll need to create a Slack app and use it in your workspace.
 
@@ -122,11 +149,41 @@ For User tokens, you'll need the following permissions:
 
 You can also use a consumer for messages in a channel
 
+[tabs]
+====
+Java::
++
 [source,java]
----------------------------------------------------------------------------------------------------------------------------
+----
 from("slack://general?token=RAW(<YOUR_TOKEN>)&maxResults=1")
     .to("mock:result");
----------------------------------------------------------------------------------------------------------------------------
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="slack://general?token=RAW(&lt;YOUR_TOKEN&gt;)&amp;maxResults=1"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: slack://general
+      parameters:
+        token: "<YOUR_TOKEN>"
+        maxResults: 1
+      steps:
+        - to:
+            uri: mock:result
+----
+====
 
 This way you'll get the last message from `general` channel.
 The consumer will track the timestamp of the last message consumed,
@@ -167,5 +224,3 @@ Originally, you would get the newest first and consume backward (`message 3 -> m
 
 IMPORTANT: The channel / conversation doesn't need to be public to read the history and messages.
 Use the `conversationType` option to specify the type of the conversation (`PUBLIC_CHANNEL`,`PRIVATE_CHANNEL`, `MPIM`, `IM`).
-
-include::spring-boot:partial$starter.adoc[]

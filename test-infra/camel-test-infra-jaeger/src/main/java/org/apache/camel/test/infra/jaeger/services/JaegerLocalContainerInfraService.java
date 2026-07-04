@@ -23,6 +23,9 @@ import org.apache.camel.test.infra.jaeger.common.JaegerProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * @since 4.21
+ */
 @InfraService(service = JaegerInfraService.class,
               description = "Jaeger is a distributed tracing backend with OTLP collector and UI",
               serviceAlias = { "jaeger" })
@@ -33,17 +36,25 @@ public class JaegerLocalContainerInfraService implements JaegerInfraService, Con
 
     public JaegerLocalContainerInfraService() {
         container = new JaegerContainer();
-        String name = ContainerEnvironmentUtil.containerName(this.getClass());
-        if (name != null) {
-            container.withCreateContainerCmdModifier(cmd -> cmd.withName(name));
-        }
+        initContainer();
     }
 
     public JaegerLocalContainerInfraService(String imageName) {
         container = JaegerContainer.initContainer(imageName, JaegerContainer.CONTAINER_NAME);
+        initContainer();
+    }
+
+    private void initContainer() {
         String name = ContainerEnvironmentUtil.containerName(this.getClass());
         if (name != null) {
             container.withCreateContainerCmdModifier(cmd -> cmd.withName(name));
+        }
+        boolean fixedPort = ContainerEnvironmentUtil.isFixedPort(this.getClass());
+        if (fixedPort) {
+            ContainerEnvironmentUtil.configurePorts(container, true,
+                    ContainerEnvironmentUtil.PortConfig.primary(JaegerProperties.DEFAULT_COLLECTOR_HTTP_PORT),
+                    ContainerEnvironmentUtil.PortConfig.secondary(JaegerProperties.DEFAULT_COLLECTOR_GRPC_PORT),
+                    ContainerEnvironmentUtil.PortConfig.secondary(JaegerProperties.DEFAULT_QUERY_UI_PORT));
         }
     }
 

@@ -20,16 +20,18 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
+import org.apache.camel.SSLContextParametersAware;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
+import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.solr.client.solrj.SolrClient;
 
 /**
  * Represents the component that manages {@link SolrEndpoint}.
  */
 @Component("solr")
-public class SolrComponent extends DefaultComponent {
+public class SolrComponent extends DefaultComponent implements SSLContextParametersAware {
 
     @Metadata(label = "advanced", autowired = true)
     private SolrClient solrClient;
@@ -49,6 +51,10 @@ public class SolrComponent extends DefaultComponent {
     private String password;
     @Metadata(label = "security")
     private boolean enableSSL;
+    @Metadata(label = "security")
+    private SSLContextParameters sslContextParameters;
+    @Metadata(label = "security", defaultValue = "false")
+    private boolean useGlobalSslContextParameters;
 
     public SolrComponent() {
         this(null);
@@ -70,10 +76,15 @@ public class SolrComponent extends DefaultComponent {
         config.setEnableSSL(this.isEnableSSL());
         config.setUsername(this.getUsername());
         config.setPassword(this.getPassword());
+        config.setSslContextParameters(this.getSslContextParameters());
         config.configure(uri);
 
         Endpoint endpoint = new SolrEndpoint(uri, this, config);
         setProperties(endpoint, parameters);
+
+        if (config.getSslContextParameters() == null) {
+            config.setSslContextParameters(retrieveGlobalSslContextParameters());
+        }
 
         // add collection from solrclient if it is not yet defined
         //     while it might be set on the solr client that could be set from parameters
@@ -182,6 +193,31 @@ public class SolrComponent extends DefaultComponent {
 
     public void setEnableSSL(boolean enableSSL) {
         this.enableSSL = enableSSL;
+    }
+
+    public SSLContextParameters getSslContextParameters() {
+        return sslContextParameters;
+    }
+
+    /**
+     * To configure security using SSLContextParameters. When configured, this takes precedence over the
+     * {@code certificatePath} option.
+     */
+    public void setSslContextParameters(SSLContextParameters sslContextParameters) {
+        this.sslContextParameters = sslContextParameters;
+    }
+
+    @Override
+    public boolean isUseGlobalSslContextParameters() {
+        return useGlobalSslContextParameters;
+    }
+
+    /**
+     * Enable usage of global SSL context parameters.
+     */
+    @Override
+    public void setUseGlobalSslContextParameters(boolean useGlobalSslContextParameters) {
+        this.useGlobalSslContextParameters = useGlobalSslContextParameters;
     }
 
 }

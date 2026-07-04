@@ -228,6 +228,40 @@ public interface SolrComponentBuilderFactory {
         }
     
         /**
+         * To configure security using SSLContextParameters. When configured,
+         * this takes precedence over the certificatePath option.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
+         */
+        default SolrComponentBuilder sslContextParameters(org.apache.camel.support.jsse.SSLContextParameters sslContextParameters) {
+            doSetProperty("sslContextParameters", sslContextParameters);
+            return this;
+        }
+    
+        
+        /**
+         * Enable usage of global SSL context parameters.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param useGlobalSslContextParameters the value to set
+         * @return the dsl builder
+         */
+        default SolrComponentBuilder useGlobalSslContextParameters(boolean useGlobalSslContextParameters) {
+            doSetProperty("useGlobalSslContextParameters", useGlobalSslContextParameters);
+            return this;
+        }
+    
+        /**
          * Basic authenticate user.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -266,6 +300,8 @@ public interface SolrComponentBuilderFactory {
             case "solrClient": ((SolrComponent) component).setSolrClient((org.apache.solr.client.solrj.SolrClient) value); return true;
             case "enableSSL": ((SolrComponent) component).setEnableSSL((boolean) value); return true;
             case "password": ((SolrComponent) component).setPassword((java.lang.String) value); return true;
+            case "sslContextParameters": ((SolrComponent) component).setSslContextParameters((org.apache.camel.support.jsse.SSLContextParameters) value); return true;
+            case "useGlobalSslContextParameters": ((SolrComponent) component).setUseGlobalSslContextParameters((boolean) value); return true;
             case "username": ((SolrComponent) component).setUsername((java.lang.String) value); return true;
             default: return false;
             }

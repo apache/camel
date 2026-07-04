@@ -63,8 +63,6 @@ public class LevelDBAggregationRepositoryLoadExistingTest extends LevelDBTestSup
         // stop the repo
         levelDBFile.stop();
 
-        Thread.sleep(1000);
-
         // load the repo again
         levelDBFile.start();
 

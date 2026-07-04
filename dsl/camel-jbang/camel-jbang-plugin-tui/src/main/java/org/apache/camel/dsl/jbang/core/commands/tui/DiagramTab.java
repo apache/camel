@@ -31,27 +31,32 @@ import dev.tamboui.text.Line;
 import dev.tamboui.text.Span;
 import dev.tamboui.text.Text;
 import dev.tamboui.tui.event.KeyEvent;
+import dev.tamboui.tui.event.MouseEvent;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
+import dev.tamboui.widgets.block.Borders;
 import dev.tamboui.widgets.paragraph.Paragraph;
 import org.apache.camel.util.TimeUtils;
+import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 
-import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.*;
+import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.*;
 
-class DiagramTab implements MonitorTab {
+class DiagramTab extends AbstractTab {
 
-    private final MonitorContext ctx;
     private final DiagramSupport diagram = new DiagramSupport();
     private final SourceViewer sourceViewer = new SourceViewer();
     private boolean diagramMetrics = true;
-    private boolean showExternal;
+    private static final String[] EXTERNAL_LABELS = { " [off]", " [edges]", " [all]" };
+    private int externalMode;
     private boolean topologyMode = true;
     private String drillDownRouteId;
     private final Deque<String> routeNavigationStack = new ArrayDeque<>();
+    private int infoPanelWidth = 30;
+    private final DragSplit hSplit = new DragSplit();
 
     DiagramTab(MonitorContext ctx) {
-        this.ctx = ctx;
+        super(ctx);
     }
 
     boolean isShowDiagram() {
@@ -65,9 +70,15 @@ class DiagramTab implements MonitorTab {
             return true;
         }
 
-        // Source viewer toggle
+        // Source viewer toggle (drill-down mode)
         if (!topologyMode && diagram.isShowDiagram() && ke.isChar('c')) {
             loadSourceForSelectedNode();
+            return true;
+        }
+
+        // Source viewer toggle (topology mode)
+        if (topologyMode && diagram.isShowDiagram() && ke.isChar('c')) {
+            loadSourceForSelectedTopologyRoute();
             return true;
         }
 
@@ -169,9 +180,9 @@ class DiagramTab implements MonitorTab {
             return true;
         }
 
-        // Toggle external systems
+        // Cycle external systems: off → edges → all → off
         if (diagram.isShowDiagram() && topologyMode && ke.isCharIgnoreCase('e')) {
-            showExternal = !showExternal;
+            externalMode = (externalMode + 1) % 3;
             diagram.endLoad();
             reloadDiagram();
             return true;
@@ -232,6 +243,33 @@ class DiagramTab implements MonitorTab {
             return true;
         }
 
+        return false;
+    }
+
+    @Override
+    public boolean handleMouseEvent(MouseEvent me, Rect area) {
+        if (hSplit.handleMouse(me, me.x())) {
+            if (hSplit.isDragging()) {
+                infoPanelWidth = Math.max(10, Math.min(me.x() - area.x(), area.width() - 20));
+            }
+            return true;
+        }
+        if (diagram.handleMouseScroll(me)) {
+            return true;
+        }
+        if (me.isClick()) {
+            if (topologyMode) {
+                int clicked = diagram.handleNodeClick(me);
+                if (clicked >= 0) {
+                    return true;
+                }
+            } else {
+                int clicked = diagram.handleEipNodeClick(me);
+                if (clicked >= 0) {
+                    return true;
+                }
+            }
+        }
         return false;
     }
 
@@ -333,10 +371,11 @@ class DiagramTab implements MonitorTab {
                     title = Line.from(Span.raw(" Topology "));
                 }
                 if (selectedRouteId != null && area.width() > 60) {
-                    int panelWidth = 30;
+                    infoPanelWidth = Math.max(10, Math.min(infoPanelWidth, area.width() - 20));
                     List<Rect> hChunks = Layout.horizontal()
-                            .constraints(Constraint.length(panelWidth), Constraint.fill())
+                            .constraints(Constraint.length(infoPanelWidth), Constraint.fill())
                             .split(area);
+                    hSplit.setBorderPos(hChunks.get(1).x());
                     renderInfoPanel(frame, hChunks.get(0), info, selectedRouteId);
                     diagram.renderNativeDiagram(frame, hChunks.get(1), title, diagramMetrics);
                 } else {
@@ -348,10 +387,11 @@ class DiagramTab implements MonitorTab {
                 Line title = buildBreadcrumbTitle();
                 var routeLayout = diagram.getRouteLayout(drillDownRouteId);
                 if (area.width() > 60) {
-                    int panelWidth = 30;
+                    infoPanelWidth = Math.max(10, Math.min(infoPanelWidth, area.width() - 20));
                     List<Rect> hChunks = Layout.horizontal()
-                            .constraints(Constraint.length(panelWidth), Constraint.fill())
+                            .constraints(Constraint.length(infoPanelWidth), Constraint.fill())
                             .split(area);
+                    hSplit.setBorderPos(hChunks.get(1).x());
                     renderEipInfoPanel(frame, hChunks.get(0));
                     diagram.renderNativeRouteDiagram(
                             frame, hChunks.get(1), title, diagramMetrics, drillDownRouteId, routeLayout);
@@ -368,7 +408,7 @@ class DiagramTab implements MonitorTab {
                         .text(Text.from(Line.from(Span.styled(
                                 "Loading diagram...",
                                 Style.EMPTY.dim()))))
-                        .block(Block.builder().borderType(BorderType.ROUNDED)
+                        .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
                                 .title(" Diagram ").build())
                         .build(),
                 area);
@@ -459,9 +499,10 @@ class DiagramTab implements MonitorTab {
             var topoNode = diagram.getSelectedTopologyNode();
             if (topoNode != null) {
                 boolean isInbound = "external-in".equals(topoNode.nodeType);
+                boolean isBridge = "external".equals(topoNode.nodeType);
+                String label = isBridge ? " External" : isInbound ? " Inbound" : " Outbound";
                 lines.add(Line.from(
-                        Span.styled(isInbound ? " Inbound" : " Outbound",
-                                Style.EMPTY.fg(Color.CYAN).bold())));
+                        Span.styled(label, Style.EMPTY.fg(Color.CYAN).bold())));
                 lines.add(Line.from(Span.raw("")));
                 lines.add(Line.from(
                         Span.styled(" URI: ", Style.EMPTY.dim()),
@@ -471,12 +512,14 @@ class DiagramTab implements MonitorTab {
                             Span.styled(" Path: ", Style.EMPTY.dim()),
                             Span.raw(topoNode.description)));
                 }
-                String connectedRoute = diagram.getConnectedRouteId(routeId);
-                if (connectedRoute != null) {
-                    lines.add(Line.from(Span.raw("")));
-                    lines.add(Line.from(
-                            Span.styled(isInbound ? " To route: " : " From route: ", Style.EMPTY.dim()),
-                            Span.styled(connectedRoute, Style.EMPTY.fg(Color.WHITE))));
+                if (!isBridge) {
+                    String connectedRoute = diagram.getConnectedRouteId(routeId);
+                    if (connectedRoute != null) {
+                        lines.add(Line.from(Span.raw("")));
+                        lines.add(Line.from(
+                                Span.styled(isInbound ? " To route: " : " From route: ", Style.EMPTY.dim()),
+                                Span.styled(connectedRoute, Style.EMPTY.fg(Color.WHITE))));
+                    }
                 }
                 if (topoNode.exchangesTotal > 0 || topoNode.exchangesFailed > 0) {
                     lines.add(Line.from(Span.raw("")));
@@ -500,7 +543,7 @@ class DiagramTab implements MonitorTab {
 
         Paragraph paragraph = Paragraph.builder()
                 .text(Text.from(lines))
-                .block(Block.builder().borderType(BorderType.ROUNDED)
+                .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
                         .title(" Info ").build())
                 .build();
         frame.renderWidget(paragraph, area);
@@ -604,7 +647,7 @@ class DiagramTab implements MonitorTab {
 
         Paragraph paragraph = Paragraph.builder()
                 .text(Text.from(lines))
-                .block(Block.builder().borderType(BorderType.ROUNDED)
+                .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
                         .title(" Info ").build())
                 .build();
         frame.renderWidget(paragraph, area);
@@ -633,12 +676,13 @@ class DiagramTab implements MonitorTab {
                 hint(spans, "↑↓←→", "navigate");
                 hint(spans, "Enter", "drill-down");
                 hint(spans, "PgUp/PgDn", "page");
+                hint(spans, "c", "source");
             } else {
                 diagram.renderFooterHints(spans);
             }
             hint(spans, "m", "metrics" + (diagramMetrics ? " [on]" : " [off]"));
             if (topologyMode) {
-                hint(spans, "e", "external" + (showExternal ? " [on]" : " [off]"));
+                hint(spans, "e", "external" + EXTERNAL_LABELS[externalMode]);
             }
             hint(spans, "n", "description" + (diagram.isShowDescription() ? " [on]" : " [off]"));
         }
@@ -668,7 +712,7 @@ class DiagramTab implements MonitorTab {
 
         String pid = ctx.selectedPid;
         boolean showMetrics = diagramMetrics;
-        boolean external = showExternal;
+        int external = externalMode;
 
         if (showPlaceholder) {
             diagram.setLoadingPlaceholder();
@@ -682,6 +726,11 @@ class DiagramTab implements MonitorTab {
                 diagram.endLoad();
             }
         });
+    }
+
+    @Override
+    public String description() {
+        return "Route topology diagram showing how routes connect to each other and external systems";
     }
 
     @Override
@@ -726,15 +775,20 @@ class DiagramTab implements MonitorTab {
 
                                 When metrics are enabled, each route box shows exchange counts:
                                 - **Green** number — successful exchanges
-                                - **Red** number with `!` — failed exchanges
-                                - Combined as `3748/12!` means 3748 ok and 12 failed
+                                - **Red** number — failed exchanges
+                                - Combined as `3748/12` means 3748 ok and 12 failed
 
                                 ## External Systems
 
-                                When external systems are enabled, the diagram shows a three-band layout:
-                                - **Top band** — external consumers sending messages INTO Camel
-                                - **Middle band** — the Camel routes and their internal connections
-                                - **Bottom band** — external producers where Camel sends messages OUT
+                                Press `e` to cycle through three external modes:
+
+                                - **off** — no external endpoints shown
+                                - **edges** — external endpoints that are truly outside Camel are shown
+                                  as dashed boxes in top/bottom bands. Routes sharing an external
+                                  endpoint (e.g. kafka) are connected with a direct arrow.
+                                - **all** — same as edges, but routes sharing an external endpoint
+                                  are connected through an intermediary dashed box showing the
+                                  endpoint name, instead of a direct arrow.
 
                                 External system boxes are drawn with dashed borders to distinguish
                                 them from route boxes. Dashed edges connect routes to external systems.
@@ -763,18 +817,41 @@ class DiagramTab implements MonitorTab {
                                 Navigation history is maintained as a stack: pressing `Esc` goes
                                 back to the previous route, and eventually back to the topology view.
 
+                                ## Route Structure Preview
+
+                                A compact tree structure preview appears in the bottom-right corner
+                                of the diagram area — like a minimap of the route's EIP structure.
+
+                                In **topology mode**, the preview shows the structure of the currently
+                                selected route and updates as you navigate between route boxes.
+
+                                In **drill-down mode**, the preview highlights the currently selected
+                                EIP node (shown in yellow) as you navigate with arrow keys, giving
+                                you an at-a-glance view of where you are in the route.
+
                                 ## Keys
 
                                 **Topology view:**
                                 - `↑↓←→` — navigate between route boxes
                                 - `Enter` — drill down into selected route
+                                - `c` — show route source code
                                 - `Esc` — close diagram
 
                                 **Route diagram:**
                                 - `↑↓←→` — navigate between EIP nodes
                                 - `Enter` — jump to linked route (when `↵` indicator shown)
+                                - `c` — show source code at selected node
                                 - `Esc` — go back (previous route or topology)
                                 - `t` — jump back to topology view
+
+                                **Source view:**
+                                - `↑↓` — move cursor between lines
+                                - `Ctrl+↑↓` — scroll viewport without moving cursor
+                                - `←→` — horizontal scroll
+                                - `PgUp/PgDn` — page jump
+                                - `Home/End` — go to top/bottom
+                                - `Enter` — select the closest diagram node at cursor line
+                                - `Esc/c` — close source view
 
                                 **Common:**
                                 - `m` — toggle metrics on/off (default: on)
@@ -787,15 +864,11 @@ class DiagramTab implements MonitorTab {
 
     @Override
     public JsonObject getTableDataAsJson() {
-        List<String> lines = diagram.getLines();
-        if (lines == null || lines.isEmpty()) {
-            return null;
-        }
-        JsonObject result = new JsonObject();
-        result.put("tab", "Diagram");
-        result.put("diagram", String.join("\n", lines));
-        result.put("lines", lines.size());
-        return result;
+        return null;
+    }
+
+    JsonObject getTopologyDataAsJson() {
+        return diagram.getTopologyDataAsJson();
     }
 
     private Line buildBreadcrumbTitle() {
@@ -815,6 +888,37 @@ class DiagramTab implements MonitorTab {
         return Line.from(spans);
     }
 
+    private void loadSourceForSelectedTopologyRoute() {
+        String routeId = diagram.getSelectedRouteId();
+        if (routeId == null) {
+            return;
+        }
+        IntegrationInfo info = ctx.findSelectedIntegration();
+        if (info == null || info.routes.stream().noneMatch(r -> routeId.equals(r.routeId))) {
+            return;
+        }
+        sourceViewer.setOnLineSelected(sourceLine -> {
+            sourceViewer.hide();
+            routeNavigationStack.clear();
+            drillDownRouteId = routeId;
+            topologyMode = false;
+            diagram.setTopologyMode(false);
+            diagram.selectFromNode(routeId);
+            diagram.resetScroll();
+            diagram.endLoad();
+            if (diagram.getRouteLayout(routeId) == null) {
+                reloadDiagram();
+            }
+            int bestIdx = findClosestEipNode(sourceLine);
+            if (bestIdx >= 0) {
+                diagram.setSelectedEipNodeIndex(bestIdx);
+                diagram.scrollToSelectedEipNode();
+            }
+        });
+        var rl = diagram.getRouteLayout(routeId);
+        sourceViewer.loadSource(ctx, routeId, 0, rl != null ? rl.source : null);
+    }
+
     private void loadSourceForSelectedNode() {
         if (drillDownRouteId == null) {
             return;
@@ -825,7 +929,54 @@ class DiagramTab implements MonitorTab {
                 && selected.layoutNode().treeNode != null) {
             targetLine = selected.layoutNode().treeNode.info.line;
         }
-        sourceViewer.loadSource(ctx, drillDownRouteId, targetLine);
+        sourceViewer.setOnLineSelected(sourceLine -> {
+            int bestIdx = findClosestEipNode(sourceLine);
+            if (bestIdx >= 0) {
+                diagram.setSelectedEipNodeIndex(bestIdx);
+                diagram.scrollToSelectedEipNode();
+                sourceViewer.hide();
+            }
+        });
+        var rl2 = diagram.getRouteLayout(drillDownRouteId);
+        sourceViewer.loadSource(ctx, drillDownRouteId, targetLine, rl2 != null ? rl2.source : null);
+    }
+
+    private int findClosestEipNode(int sourceLine) {
+        var boxes = diagram.getEipNodeBoxes();
+        if (boxes.isEmpty()) {
+            return -1;
+        }
+        int bestBeforeIdx = -1;
+        int bestBeforeDist = Integer.MAX_VALUE;
+        int bestAfterIdx = -1;
+        int bestAfterDist = Integer.MAX_VALUE;
+        for (int i = 0; i < boxes.size(); i++) {
+            var box = boxes.get(i);
+            if (box.layoutNode() == null || box.layoutNode().treeNode == null) {
+                continue;
+            }
+            int nodeLine = box.layoutNode().treeNode.info.line;
+            if (nodeLine <= 0) {
+                continue;
+            }
+            if (nodeLine == sourceLine) {
+                return i;
+            }
+            if (nodeLine < sourceLine) {
+                int dist = sourceLine - nodeLine;
+                if (dist < bestBeforeDist) {
+                    bestBeforeDist = dist;
+                    bestBeforeIdx = i;
+                }
+            } else {
+                int dist = nodeLine - sourceLine;
+                if (dist < bestAfterDist) {
+                    bestAfterDist = dist;
+                    bestAfterIdx = i;
+                }
+            }
+        }
+        return bestBeforeIdx >= 0 ? bestBeforeIdx : bestAfterIdx;
     }
 
     private static int numWidth(long... values) {
@@ -834,5 +985,200 @@ class DiagramTab implements MonitorTab {
             max = Math.max(max, Math.abs(v));
         }
         return Math.max(1, String.valueOf(max).length());
+    }
+
+    // ---- MCP programmatic navigation ----
+
+    boolean selectRoute(String routeId) {
+        int idx = diagram.findNodeIndexByRouteId(routeId);
+        if (idx < 0) {
+            return false;
+        }
+        diagram.setSelectedNodeIndex(idx);
+        diagram.scrollToSelectedNode();
+        return true;
+    }
+
+    boolean selectNode(String routeId, String nodeId) {
+        // Ensure we're on the Diagram tab in topology mode first
+        if (routeId != null) {
+            int routeIdx = diagram.findNodeIndexByRouteId(routeId);
+            if (routeIdx < 0) {
+                return false;
+            }
+            // Drill down into the route (mirrors Enter-key logic)
+            IntegrationInfo info = ctx.findSelectedIntegration();
+            if (info == null || info.routes.stream().noneMatch(r -> routeId.equals(r.routeId))) {
+                return false;
+            }
+            routeNavigationStack.clear();
+            drillDownRouteId = routeId;
+            topologyMode = false;
+            diagram.setTopologyMode(false);
+            diagram.selectFromNode(routeId);
+            diagram.resetScroll();
+            diagram.endLoad();
+            if (diagram.getRouteLayout(routeId) == null) {
+                reloadDiagram();
+            }
+        }
+        if (nodeId != null) {
+            int nodeIdx = diagram.findEipNodeIndexByNodeId(nodeId);
+            if (nodeIdx < 0) {
+                return false;
+            }
+            diagram.setSelectedEipNodeIndex(nodeIdx);
+            diagram.scrollToSelectedEipNode();
+        }
+        return true;
+    }
+
+    @Override
+    public SelectionContext getSelectionContext() {
+        if (!diagram.isShowDiagram()) {
+            return null;
+        }
+        if (topologyMode) {
+            var boxes = diagram.getNodeBoxes();
+            if (boxes.isEmpty()) {
+                return null;
+            }
+            List<String> items = new ArrayList<>();
+            for (var box : boxes) {
+                items.add(box.routeId());
+            }
+            return new SelectionContext(
+                    "topology-routes", items,
+                    diagram.getSelectedNodeIndex(), items.size(), "Topology routes");
+        } else {
+            var boxes = diagram.getEipNodeBoxes();
+            if (boxes.isEmpty()) {
+                return null;
+            }
+            List<String> items = new ArrayList<>();
+            for (var box : boxes) {
+                items.add(box.nodeId());
+            }
+            return new SelectionContext(
+                    "eip-nodes", items,
+                    diagram.getSelectedEipNodeIndex(), items.size(),
+                    "EIP nodes [" + drillDownRouteId + "]");
+        }
+    }
+
+    JsonObject getDiagramStateAsJson() {
+        if (!diagram.isShowDiagram()) {
+            return null;
+        }
+        JsonObject result = new JsonObject();
+        result.put("diagramMode", topologyMode ? "topology" : "route");
+
+        if (!topologyMode && drillDownRouteId != null) {
+            result.put("routeId", drillDownRouteId);
+            JsonArray stack = new JsonArray();
+            for (String s : routeNavigationStack) {
+                stack.add(s);
+            }
+            if (!stack.isEmpty()) {
+                result.put("navigationStack", stack);
+            }
+        }
+
+        // Selected node info
+        if (topologyMode) {
+            String routeId = diagram.getSelectedRouteId();
+            if (routeId != null) {
+                JsonObject node = new JsonObject();
+                node.put("routeId", routeId);
+                result.put("selectedRoute", node);
+            }
+        } else {
+            var eipBox = diagram.getSelectedEipNodeBox();
+            if (eipBox != null && eipBox.layoutNode() != null) {
+                JsonObject node = new JsonObject();
+                node.put("id", eipBox.nodeId());
+                node.put("type", eipBox.type());
+                String label = String.join("", eipBox.layoutNode().wrappedLines);
+                if (!label.isBlank()) {
+                    node.put("label", label);
+                }
+                if (eipBox.layoutNode().id != null) {
+                    node.put("processorId", eipBox.layoutNode().id);
+                }
+                String linkedRoute = diagram.findLinkedRouteId(drillDownRouteId);
+                if (linkedRoute != null) {
+                    node.put("linkedRoute", linkedRoute);
+                }
+                result.put("selectedNode", node);
+            }
+        }
+
+        // Info panel stats
+        IntegrationInfo info = ctx.findSelectedIntegration();
+        if (info != null) {
+            String routeId = topologyMode ? diagram.getSelectedRouteId() : drillDownRouteId;
+            if (routeId != null) {
+                RouteInfo route = null;
+                for (RouteInfo r : info.routes) {
+                    if (routeId.equals(r.routeId)) {
+                        route = r;
+                        break;
+                    }
+                }
+                if (route != null) {
+                    JsonObject ri = new JsonObject();
+                    ri.put("routeId", route.routeId);
+                    ri.put("from", route.from);
+                    ri.put("state", route.state);
+                    ri.put("uptime", route.uptime);
+                    ri.put("throughput", route.throughput);
+                    if (route.coverage != null) {
+                        ri.put("coverage", route.coverage);
+                    }
+                    ri.put("total", route.total);
+                    ri.put("failed", route.failed);
+                    ri.put("inflight", route.inflight);
+                    if (route.total > 0) {
+                        ri.put("meanTime", route.meanTime);
+                        ri.put("maxTime", route.maxTime);
+                        ri.put("minTime", route.minTime);
+                    }
+                    if (route.sinceLastCompleted != null) {
+                        ri.put("sinceLastSuccess", route.sinceLastCompleted);
+                    }
+                    if (route.sinceLastFailed != null) {
+                        ri.put("sinceLastFail", route.sinceLastFailed);
+                    }
+                    result.put("info", ri);
+                }
+            }
+
+            // EIP node stats (when drilled down)
+            if (!topologyMode) {
+                var eipBox = diagram.getSelectedEipNodeBox();
+                if (eipBox != null && eipBox.layoutNode() != null
+                        && eipBox.layoutNode().treeNode != null
+                        && eipBox.layoutNode().treeNode.info.stat != null) {
+                    var stat = eipBox.layoutNode().treeNode.info.stat;
+                    JsonObject ni = new JsonObject();
+                    ni.put("total", stat.exchangesTotal);
+                    ni.put("failed", stat.exchangesFailed);
+                    ni.put("inflight", stat.exchangesInflight);
+                    if (stat.exchangesTotal > 0) {
+                        ni.put("meanTime", stat.meanProcessingTime);
+                        ni.put("maxTime", stat.maxProcessingTime);
+                        ni.put("minTime", stat.minProcessingTime);
+                        ni.put("lastTime", stat.lastProcessingTime);
+                    }
+                    result.put("nodeInfo", ni);
+                }
+            }
+        }
+
+        return result;
+    }
+
+    JsonObject locateNodes(List<String> nodeIds) {
+        return diagram.locateNodes(nodeIds);
     }
 }

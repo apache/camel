@@ -79,11 +79,11 @@ class PipeLoaderErrorHandlerTest extends YamlTestSupport {
             errorHandlerFactory != null
             errorHandlerFactory instanceof DeadLetterChannelDefinition
             var eh = errorHandlerFactory as DeadLetterChannelDefinition
-            eh.deadLetterUri == 'kamelet:error-handler?kafkaTopic=my-first-test&logMessage=ERROR%21&kafkaServiceAccountId=scott&kafkaBrokers=my-broker&kafkaServiceAccountSecret=tiger'
+            eh.deadLetterUri == 'kamelet:error-handler?kafkaTopic=my-first-test&logMessage=ERROR!&kafkaServiceAccountId=scott&kafkaBrokers=my-broker&kafkaServiceAccountSecret=tiger'
             eh.redeliveryPolicy.maximumRedeliveries == "1"
             eh.redeliveryPolicy.redeliveryDelay == "2000"
             routeId == 'timer-event-source'
-            input.endpointUri == 'kamelet:timer-source?message=Hello+world%21'
+            input.endpointUri == 'kamelet:timer-source?message=Hello world!'
             outputs.size() == 1
             with (outputs[0], ToDefinition) {
                 endpointUri == 'kamelet:log-sink'
@@ -189,7 +189,7 @@ class PipeLoaderErrorHandlerTest extends YamlTestSupport {
             eh.redeliveryPolicy.redeliveryDelay == "2000"
             eh.getUseOriginalMessage() == "true"
             routeId == 'timer-event-source'
-            input.endpointUri == 'kamelet:timer-source?message=Hello+world%21'
+            input.endpointUri == 'kamelet:timer-source?message=Hello world!'
             outputs.size() == 1
             with (outputs[0], ToDefinition) {
                 endpointUri == 'kamelet:log-sink'
@@ -231,7 +231,7 @@ class PipeLoaderErrorHandlerTest extends YamlTestSupport {
             errorHandlerFactory != null
             errorHandlerFactory instanceof NoErrorHandlerDefinition
             routeId == 'timer-event-source'
-            input.endpointUri == 'kamelet:timer-source?message=Hello+world%21'
+            input.endpointUri == 'kamelet:timer-source?message=Hello world!'
             outputs.size() == 1
             with (outputs[0], ToDefinition) {
                 endpointUri == 'kamelet:log-sink'

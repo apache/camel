@@ -9,7 +9,6 @@
 :component-header: Both producer and consumer are supported
 //Manually maintained attributes
 :group: Azure
-:camel-spring-boot-name: azure-eventhubs
 
 *Since Camel {since}*
 
@@ -27,21 +26,21 @@ Maven users will need to add the following dependency to their `pom.xml`
 for this component:
 
 [source,xml]
-------------------------------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-azure-eventhubs</artifactId>
     <version>x.x.x</version>
     <!-- use the same version as your Camel core version -->
 </dependency>
-------------------------------------------------------------
+----
 
 == URI Format
 
 [source,text]
-------------------------------
+----
 azure-eventhubs://[namespace/eventHubName][?options]
-------------------------------
+----
 
 When providing a `connectionString`, the `namespace` and `eventHubName` options are not required as they are already included
 in the `connectionString`
@@ -114,16 +113,50 @@ This may be really useful for smarter configuration of the endpoint.
 
 To consume events:
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
+----
 from("azure-eventhubs:/camel/camelHub?sharedAccessName=SASaccountName&sharedAccessKey=SASaccessKey&blobAccountName=accountName&blobAccessKey=accessKey&blobContainerName=containerName")
     .to("file://queuedirectory");
---------------------------------------------------------------------------------
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="azure-eventhubs:/camel/camelHub?sharedAccessName=SASaccountName&amp;sharedAccessKey=SASaccessKey&amp;blobAccountName=accountName&amp;blobAccessKey=accessKey&amp;blobContainerName=containerName"/>
+  <to uri="file://queuedirectory"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: azure-eventhubs:/camel/camelHub
+      parameters:
+        sharedAccessName: SASaccountName
+        sharedAccessKey: SASaccessKey
+        blobAccountName: accountName
+        blobAccessKey: accessKey
+        blobContainerName: containerName
+      steps:
+        - to:
+            uri: file://queuedirectory
+----
+====
 
 === Producer Example
 
 To produce events:
 
+._Java-only: producing events with a Processor and EventHubsConstants_
 [source,java]
 ----
 from("direct:start")
@@ -136,6 +169,7 @@ from("direct:start")
 
 The azure-eventhubs producer supports sending sending events as an `Iterable` (E.g. as a `List`). For example:
 
+._Java-only: producing batch events with an Iterable body_
 [source,java]
 ----
 from("direct:start")
@@ -155,6 +189,7 @@ from("direct:start")
 The example below makes use of the Azure-AD authentication. See https://docs.microsoft.com/en-us/java/api/overview/azure/identity-readme?view=azure-java-stable#environment-variables[here]
 about what environment variables you need to set for this to work:
 
+._Java-only: registering a TokenCredential bean and using Azure-AD authentication_
 [source,java]
 ----
 @BindToRegistry("myTokenCredential")
@@ -180,5 +215,3 @@ mvn verify -DconnectionString=string -DblobAccountName=blob -DblobAccessKey=key
 Whereby `blobAccountName` is your Azure account name and `blobAccessKey` is the access key being generated from Azure portal and `connectionString` is the eventHub connection string.
 
 
-
-include::spring-boot:partial$starter.adoc[]

@@ -46,6 +46,9 @@ import org.apache.camel.model.validator.*;
 @SuppressWarnings({"deprecation","rawtypes"})
 public class YamlModelWriter extends YamlModelWriterSupport {
 
+    public JsonObject writeA2ASubTaskDefinition(A2ASubTaskDefinition def) {
+        return wrapNode("a2aSubTask", doWriteA2ASubTaskDefinition(def));
+    }
     public JsonObject writeAggregateDefinition(AggregateDefinition def) {
         return wrapNode("aggregate", doWriteAggregateDefinition(def));
     }
@@ -762,6 +765,16 @@ public class YamlModelWriter extends YamlModelWriterSupport {
         return doWriteOptionalIdentifiedDefinitionRef(def);
     }
 
+    protected JsonObject doWriteA2ASubTaskDefinition(A2ASubTaskDefinition def) {
+        JsonObject jo = new JsonObject();
+        doWriteProcessorDefinitionAttributes(jo, def);
+        doWriteAttribute(jo, "emitBefore", def.getEmitBefore(), null);
+        doWriteAttribute(jo, "emitAfter", def.getEmitAfter(), null);
+        doWriteAttribute(jo, "emitOnError", def.getEmitOnError(), null);
+        doWriteAttribute(jo, "failIfNoTaskContext", def.getFailIfNoTaskContext(), "false");
+        doWriteOutputs(jo, def.getOutputs(), this::doWriteProcessorDefinitionRef);
+        return jo;
+    }
     protected JsonObject doWriteAggregateDefinition(AggregateDefinition def) {
         JsonObject jo = new JsonObject();
         doWriteProcessorDefinitionAttributes(jo, def);
@@ -1583,9 +1596,6 @@ public class YamlModelWriter extends YamlModelWriterSupport {
     protected JsonObject doWriteRouteDefinition(RouteDefinition def) {
         JsonObject jo = new JsonObject();
         doWriteProcessorDefinitionAttributes(jo, def);
-        doWriteAttribute(jo, "template", toString(def.isTemplate()), null);
-        doWriteAttribute(jo, "kamelet", toString(def.isKamelet()), null);
-        doWriteAttribute(jo, "rest", toString(def.isRest()), null);
         doWriteAttribute(jo, "group", def.getGroup(), null);
         doWriteAttribute(jo, "nodePrefixId", def.getNodePrefixId(), null);
         doWriteAttribute(jo, "routeConfigurationId", def.getRouteConfigurationId(), null);
@@ -1755,6 +1765,12 @@ public class YamlModelWriter extends YamlModelWriterSupport {
         doWriteAttribute(jo, "executorService", def.getExecutorService(), null);
         doWriteAttribute(jo, "onPrepare", def.getOnPrepare(), null);
         doWriteAttribute(jo, "shareUnitOfWork", def.getShareUnitOfWork(), null);
+        doWriteAttribute(jo, "group", def.getGroup(), null);
+        doWriteAttribute(jo, "errorThreshold", def.getErrorThreshold(), null);
+        doWriteAttribute(jo, "maxFailedRecords", def.getMaxFailedRecords(), null);
+        doWriteAttribute(jo, "resumeStrategy", def.getResumeStrategy(), null);
+        doWriteAttribute(jo, "watermarkKey", def.getWatermarkKey(), null);
+        doWriteAttribute(jo, "watermarkExpression", def.getWatermarkExpression(), null);
         doWriteOutputExpressionNodeElements(jo, def);
         return jo;
     }
@@ -2551,7 +2567,6 @@ public class YamlModelWriter extends YamlModelWriterSupport {
         doWriteAttribute(jo, "symmetricKeyAlgorithm", def.getSymmetricKeyAlgorithm(), "AES");
         doWriteAttribute(jo, "symmetricKeyLength", def.getSymmetricKeyLength(), "128");
         doWriteAttribute(jo, "keyPair", def.getKeyPair(), null);
-        doWriteAttribute(jo, "bufferSize", def.getBufferSize(), "4096");
         doWriteAttribute(jo, "provider", def.getProvider(), null);
         doWriteAttribute(jo, "keyGenerator", def.getKeyGenerator(), null);
         return jo;
@@ -3584,6 +3599,7 @@ public class YamlModelWriter extends YamlModelWriterSupport {
     protected JsonObject doWriteOptionalIdentifiedDefinitionRef(OptionalIdentifiedDefinition v) {
         if (v != null) {
             return switch (v.getClass().getSimpleName()) {
+                case "A2ASubTaskDefinition" -> wrapNode("a2aSubTask", doWriteA2ASubTaskDefinition((A2ASubTaskDefinition) v));
                 case "AggregateDefinition" -> wrapNode("aggregate", doWriteAggregateDefinition((AggregateDefinition) v));
                 case "BeanDefinition" -> wrapNode("bean", doWriteBeanDefinition((BeanDefinition) v));
                 case "CatchDefinition" -> wrapNode("doCatch", doWriteCatchDefinition((CatchDefinition) v));
@@ -3695,6 +3711,7 @@ public class YamlModelWriter extends YamlModelWriterSupport {
     protected JsonObject doWriteProcessorDefinitionRef(ProcessorDefinition v) {
         if (v != null) {
             return switch (v.getClass().getSimpleName()) {
+                case "A2ASubTaskDefinition" -> wrapNode("a2aSubTask", doWriteA2ASubTaskDefinition((A2ASubTaskDefinition) v));
                 case "AggregateDefinition" -> wrapNode("aggregate", doWriteAggregateDefinition((AggregateDefinition) v));
                 case "BeanDefinition" -> wrapNode("bean", doWriteBeanDefinition((BeanDefinition) v));
                 case "CatchDefinition" -> wrapNode("doCatch", doWriteCatchDefinition((CatchDefinition) v));

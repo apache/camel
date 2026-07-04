@@ -31,6 +31,8 @@ public class JettyHttpComponent12Configurer extends PropertyConfigurerSupport im
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "continuationtimeout":
         case "continuationTimeout": target.setContinuationTimeout(property(camelContext, java.lang.Long.class, value)); return true;
+        case "deserializationfilter":
+        case "deserializationFilter": target.setDeserializationFilter(property(camelContext, java.lang.String.class, value)); return true;
         case "enablejmx":
         case "enableJmx": target.setEnableJmx(property(camelContext, boolean.class, value)); return true;
         case "errorhandler":
@@ -113,6 +115,8 @@ public class JettyHttpComponent12Configurer extends PropertyConfigurerSupport im
         case "bridgeErrorHandler": return boolean.class;
         case "continuationtimeout":
         case "continuationTimeout": return java.lang.Long.class;
+        case "deserializationfilter":
+        case "deserializationFilter": return java.lang.String.class;
         case "enablejmx":
         case "enableJmx": return boolean.class;
         case "errorhandler":
@@ -196,6 +200,8 @@ public class JettyHttpComponent12Configurer extends PropertyConfigurerSupport im
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "continuationtimeout":
         case "continuationTimeout": return target.getContinuationTimeout();
+        case "deserializationfilter":
+        case "deserializationFilter": return target.getDeserializationFilter();
         case "enablejmx":
         case "enableJmx": return target.isEnableJmx();
         case "errorhandler":

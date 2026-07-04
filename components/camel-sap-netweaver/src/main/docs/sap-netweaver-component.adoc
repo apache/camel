@@ -7,8 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Only producer is supported
-//Manually maintained attributes
-:camel-spring-boot-name: sap-netweaver
 
 *Since Camel {since}*
 
@@ -24,22 +22,22 @@ Maven users will need to add the following dependency to their `pom.xml`
 for this component:
 
 [source,xml]
-------------------------------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-sap-netweaver</artifactId>
     <version>x.x.x</version>
     <!-- use the same version as your Camel core version -->
 </dependency>
-------------------------------------------------------------
+----
 
 == URI format
 
 The URI scheme for a sap netweaver gateway component is as follows
 
------------------------------------------------------------------
+----
 sap-netweaver:https://host:8080/path?username=foo&password=secret
------------------------------------------------------------------
+----
 
 == Prerequisites
 
@@ -66,16 +64,16 @@ http://scn.sap.com/docs/DOC-31221[here].
 In the route below we request the SAP NetWeaver demo server using the
 following url
 
-----------------------------------------------------------------------
+----
 https://sapes4.sapdevcenter.com/sap/opu/odata/IWFND/RMTSAMPLEFLIGHT
-----------------------------------------------------------------------
+----
 
 And we want to execute the following command
 
-[source,java]
--------------------------------------------------------------------------------------------------------
+[source,text]
+----
 FlightCollection(carrid='AA',connid='0017',fldate=datetime'2016-04-20T00%3A00%3A00')
--------------------------------------------------------------------------------------------------------
+----
 
 To get flight details for the given flight. The command syntax is in
 http://msdn.microsoft.com/en-us/library/cc956153.aspx[MS ADO.Net Data
@@ -83,24 +81,56 @@ Service] format.
 
 We have the following Camel route
 
+[tabs]
+====
+Java::
++
 [source,java]
------------------------------------------------------------------------------
+----
 from("direct:start")
-    .setHeader(NetWeaverConstants.COMMAND, constant(command))
-    .toF("sap-netweaver:%s?username=%s&password=%s", url, username, password)
+    .setHeader("CamelNetWeaverCommand", constant("FlightCollection(carrid='AA',connid='0017',fldate=datetime'2016-04-20T00%3A00%3A00')"))
+    .to("sap-netweaver:https://sapes4.sapdevcenter.com/sap/opu/odata/IWFND/RMTSAMPLEFLIGHT?username=P1909969254&password=TODO")
     .to("log:response")
-    .to("velocity:flight-info.vm")
------------------------------------------------------------------------------
+    .to("velocity:flight-info.vm");
+----
 
-Where `url`, `username`, `password` and `command` are defined as:
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <setHeader name="CamelNetWeaverCommand">
+    <constant>FlightCollection(carrid='AA',connid='0017',fldate=datetime'2016-04-20T00%3A00%3A00')</constant>
+  </setHeader>
+  <to uri="sap-netweaver:https://sapes4.sapdevcenter.com/sap/opu/odata/IWFND/RMTSAMPLEFLIGHT?username=P1909969254&amp;password=TODO"/>
+  <to uri="log:response"/>
+  <to uri="velocity:flight-info.vm"/>
+</route>
+----
 
-[source,java]
----------------------------------------------------------------------------------------------------------------------------------------
-    private String username = "P1909969254";
-    private String password = "TODO";
-    private String url = "https://sapes4.sapdevcenter.com/sap/opu/odata/IWFND/RMTSAMPLEFLIGHT";
-    private String command = "FlightCollection(carrid='AA',connid='0017',fldate=datetime'2016-04-20T00%3A00%3A00')";
----------------------------------------------------------------------------------------------------------------------------------------
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+    steps:
+      - setHeader:
+          name: CamelNetWeaverCommand
+          constant: "FlightCollection(carrid='AA',connid='0017',fldate=datetime'2016-04-20T00%3A00%3A00')"
+      - to:
+          uri: sap-netweaver:https://sapes4.sapdevcenter.com/sap/opu/odata/IWFND/RMTSAMPLEFLIGHT
+          parameters:
+            username: P1909969254
+            password: TODO
+      - to:
+          uri: log:response
+      - to:
+          uri: velocity:flight-info.vm
+----
+====
 
 The password is invalid. You would need to create an account at SAP
 first to run the demo.
@@ -109,7 +139,7 @@ The velocity template is used for formatting the response to a basic
 HTML page
 
 [source,xml]
-------------------------------------------------------------------------
+----
 <html>
   <body>
   Flight information:
@@ -124,11 +154,11 @@ HTML page
 
   </body>
 </html>
-------------------------------------------------------------------------
+----
 
 When running the application, you get sample output:
 
--------------------------------
+----
 Flight information:
 Airline ID: AA
 Aircraft Type: 747-400
@@ -136,8 +166,4 @@ Departure city: new york
 Departure airport: JFK
 Destination city: SAN FRANCISCO
 Destination airport: SFO
--------------------------------
-
-
-
-include::spring-boot:partial$starter.adoc[]
+----

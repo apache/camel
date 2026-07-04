@@ -209,4 +209,19 @@ public @interface Metadata {
      */
     boolean important() default false;
 
+    /**
+     * Usage examples for documentation and AI tooling.
+     *
+     * Each entry is a compact expression and result pair such as "${abs(-5)} -> 5".
+     */
+    String[] examples() default {};
+
+    /**
+     * Alternative names or common aliases for this entity.
+     *
+     * Used for AI and search tooling to discover EIPs by common terminology (e.g., "fan-out" for Multicast, "retry" for
+     * Error Handler). Aliases are descriptive names only — they cannot be used in the DSL.
+     */
+    String[] aliases() default {};
+
 }

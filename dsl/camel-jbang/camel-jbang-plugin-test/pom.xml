@@ -24,14 +24,14 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-jbang-parent</artifactId>
-        <version>4.21.0-SNAPSHOT</version>
+        <version>4.22.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
     <artifactId>camel-jbang-plugin-test</artifactId>
 
     <name>Camel :: JBang :: Plugin :: Testing</name>
-    <description>Camel JBang Testing Plugin</description>
+    <description>Camel CLI Testing Plugin</description>
 
     <properties>
         <firstVersion>4.14.0</firstVersion>
@@ -49,8 +49,19 @@
 
         <dependency>
             <groupId>org.citrusframework</groupId>
-            <artifactId>citrus-jbang-connector</artifactId>
+            <artifactId>citrus-jbang</artifactId>
             <version>${citrus-version}</version>
+            <exclusions>
+              <exclusion>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-tooling-maven</artifactId>
+              </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-tooling-maven</artifactId>
+            <version>${project.version}</version>
         </dependency>
 
        <!-- Test dependencies -->

@@ -1474,7 +1474,7 @@ public interface DoclingEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final DoclingHeaderNameBuilder INSTANCE = new DoclingHeaderNameBuilder();
+        public static final DoclingHeaderNameBuilder INSTANCE = new DoclingHeaderNameBuilder();
 
         /**
          * The operation to perform.
@@ -1740,6 +1740,18 @@ public interface DoclingEndpointBuilderFactory {
          */
         public String doclingMetadataPageCount() {
             return "CamelDoclingMetadataPageCount";
+        }
+        /**
+         * Document title.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code DoclingMetadataTitle}.
+         */
+        public String doclingMetadataTitle() {
+            return "CamelDoclingMetadataTitle";
         }
         /**
          * Document language code.

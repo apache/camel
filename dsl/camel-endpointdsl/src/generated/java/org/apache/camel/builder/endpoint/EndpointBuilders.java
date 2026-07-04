@@ -25,6 +25,7 @@ import javax.annotation.processing.Generated;
 @Generated("org.apache.camel.maven.packaging.EndpointDslMojo")
 public interface EndpointBuilders
         extends
+            org.apache.camel.builder.endpoint.dsl.A2AEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.AMQPEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.AS2EndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.AWS2EC2EndpointBuilderFactory,
@@ -329,6 +330,7 @@ public interface EndpointBuilders
             org.apache.camel.builder.endpoint.dsl.ServletEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.Ses2EndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.SftpEndpointBuilderFactory,
+            org.apache.camel.builder.endpoint.dsl.ShellEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.SimpleNotificationEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.Sjms2EndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.SjmsEndpointBuilderFactory,

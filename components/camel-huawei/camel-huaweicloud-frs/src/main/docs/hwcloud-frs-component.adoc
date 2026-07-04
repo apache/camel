@@ -9,7 +9,6 @@
 :component-header: Only producer is supported
 //Manually maintained attributes
 :group: Huawei Cloud
-:camel-spring-boot-name: huaweicloud-frs
 
 *Since Camel {since}*
 
@@ -90,8 +89,10 @@ When using imageBase64 or videoBase64 option, we suggest you use RAW(base64_valu
 
 ==== faceDetection
 
-Java DSL
-
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:triggerRoute")
@@ -99,51 +100,106 @@ from("direct:triggerRoute")
   .to("hwcloud-frs:faceDetection?accessKey=*********&secretKey=********&projectId=9071a38e7f6a4ba7b7bcbeb7d4ea6efc&region=cn-north-4")
 ----
 
-XML DSL
-
+XML::
++
 [source,xml]
 ----
 <route>
-   <from uri="direct:triggerRoute" />
-   <setProperty name="CamelHwCloudFrsImageUrl">
-      <constant>https://xxxx</constant>
-   </setProperty>
-   <to uri="hwcloud-frs:faceDetection?accessKey=*********&amp;secretKey=********&amp;projectId=9071a38e7f6a4ba7b7bcbeb7d4ea6efc&amp;region=cn-north-4" />
+  <from uri="direct:triggerRoute"/>
+  <setProperty name="CamelHwCloudFrsImageUrl">
+    <constant>https://xxxx</constant>
+  </setProperty>
+  <to uri="hwcloud-frs:faceDetection?accessKey=*********&amp;secretKey=********&amp;projectId=9071a38e7f6a4ba7b7bcbeb7d4ea6efc&amp;region=cn-north-4"/>
 </route>
 ----
 
-=== faceVerification
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:triggerRoute
+      steps:
+        - setProperty:
+            name: CamelHwCloudFrsImageUrl
+            expression:
+              constant:
+                expression: https://xxxx
+        - to:
+            uri: hwcloud-frs:faceDetection
+            parameters:
+              accessKey: "*********"
+              secretKey: "********"
+              projectId: 9071a38e7f6a4ba7b7bcbeb7d4ea6efc
+              region: cn-north-4
+----
+====
 
-Java DSL
+==== faceVerification
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:triggerRoute")
-  .setProperty(FaceRecognitionProperties.FACE_IMAGE_BASE64, constant("/9j/4AAQSkZJRgABAQEASABIAAD/2wBDAA0JCgsKCA0LCgsODg0PEyAVExISEyccHhcgLikxMC4pLSwzOko+MzZGNywtQFdBRkxOUlNSMj5aYVpQYEpRUk..."))
-  .setProperty(FaceRecognitionProperties.ANOTHER_FACE_IMAGE_BASE64, constant("/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAgFBgcGBQgHBgcJCAgJDBMMDAsLDBgREg4THBgdHRsYGxofIywlHyEqIRobJjQnKi4vMTIxHiU2Os..."))
+  .setProperty(FaceRecognitionProperties.FACE_IMAGE_BASE64, constant("/9j/4AAQSkZJRgABAQEASABIAAD/..."))
+  .setProperty(FaceRecognitionProperties.ANOTHER_FACE_IMAGE_BASE64, constant("/9j/4AAQSkZJRgABAQAAAQABAAD/..."))
   .to("hwcloud-frs:faceVerification?accessKey=*********&secretKey=********&projectId=9071a38e7f6a4ba7b7bcbeb7d4ea6efc&region=cn-north-4")
 ----
 
-XML DSL
-
+XML::
++
 [source,xml]
 ----
 <route>
-    <from uri="direct:triggerRoute" />
-    <setProperty name="CamelHwCloudFrsImageBase64">
-        <constant>/9j/4AAQSkZJRgABAQEASABIAAD/2wBDAA0JCgsKCA0LCgsODg0PEyAVExISEyccHhcgLikxMC4pLSwzOko+MzZGNywtQFdBRkxOUlNSMj5aYVpQYEpRUk...</constant>
-    </setProperty>
-    <setProperty name="CamelHwCloudFrsAnotherImageBase64">
-        <constant>/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAgFBgcGBQgHBgcJCAgJDBMMDAsLDBgREg4THBgdHRsYGxofIywlHyEqIRobJjQnKi4vMTIxHiU2Os...</constant>
-    </setProperty>
-    <to uri="hwcloud-frs:faceVerification?accessKey=*********&amp;secretKey=********&amp;projectId=9071a38e7f6a4ba7b7bcbeb7d4ea6efc&amp;region=cn-north-4" />
+  <from uri="direct:triggerRoute"/>
+  <setProperty name="CamelHwCloudFrsImageBase64">
+    <constant>/9j/4AAQSkZJRgABAQEASABIAAD/...</constant>
+  </setProperty>
+  <setProperty name="CamelHwCloudFrsAnotherImageBase64">
+    <constant>/9j/4AAQSkZJRgABAQAAAQABAAD/...</constant>
+  </setProperty>
+  <to uri="hwcloud-frs:faceVerification?accessKey=*********&amp;secretKey=********&amp;projectId=9071a38e7f6a4ba7b7bcbeb7d4ea6efc&amp;region=cn-north-4"/>
 </route>
 ----
 
-=== faceLiveDetection
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:triggerRoute
+      steps:
+        - setProperty:
+            name: CamelHwCloudFrsImageBase64
+            expression:
+              constant:
+                expression: "/9j/4AAQSkZJRgABAQEASABIAAD/..."
+        - setProperty:
+            name: CamelHwCloudFrsAnotherImageBase64
+            expression:
+              constant:
+                expression: "/9j/4AAQSkZJRgABAQAAAQABAAD/..."
+        - to:
+            uri: hwcloud-frs:faceVerification
+            parameters:
+              accessKey: "*********"
+              secretKey: "********"
+              projectId: 9071a38e7f6a4ba7b7bcbeb7d4ea6efc
+              region: cn-north-4
+----
+====
 
-Java DSL
+==== faceLiveDetection
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:triggerRoute")
@@ -152,20 +208,47 @@ from("direct:triggerRoute")
   .to("hwcloud-frs:faceLiveDetection?accessKey=*********&secretKey=********&projectId=9071a38e7f6a4ba7b7bcbeb7d4ea6efc&region=cn-north-4")
 ----
 
-XML DSL
-
+XML::
++
 [source,xml]
 ----
 <route>
-    <from uri="direct:triggerRoute" />
-    <setProperty name="CamelHwCloudFrsVideoFilePath">
-        <constant>/tmp/video.mp4</constant>
-    </setProperty>
-    <setProperty name="CamelHwCloudFrsVideoActions">
-        <constant>1,3,2</constant>
-    </setProperty>
-    <to uri="hwcloud-frs:faceLiveDetection?accessKey=*********&amp;secretKey=********&amp;projectId=9071a38e7f6a4ba7b7bcbeb7d4ea6efc&amp;region=cn-north-4" />
+  <from uri="direct:triggerRoute"/>
+  <setProperty name="CamelHwCloudFrsVideoFilePath">
+    <constant>/tmp/video.mp4</constant>
+  </setProperty>
+  <setProperty name="CamelHwCloudFrsVideoActions">
+    <constant>1,3,2</constant>
+  </setProperty>
+  <to uri="hwcloud-frs:faceLiveDetection?accessKey=*********&amp;secretKey=********&amp;projectId=9071a38e7f6a4ba7b7bcbeb7d4ea6efc&amp;region=cn-north-4"/>
 </route>
 ----
 
-include::spring-boot:partial$starter.adoc[]
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:triggerRoute
+      steps:
+        - setProperty:
+            name: CamelHwCloudFrsVideoFilePath
+            expression:
+              constant:
+                expression: /tmp/video.mp4
+        - setProperty:
+            name: CamelHwCloudFrsVideoActions
+            expression:
+              constant:
+                expression: "1,3,2"
+        - to:
+            uri: hwcloud-frs:faceLiveDetection
+            parameters:
+              accessKey: "*********"
+              secretKey: "********"
+              projectId: 9071a38e7f6a4ba7b7bcbeb7d4ea6efc
+              region: cn-north-4
+----
+====
+

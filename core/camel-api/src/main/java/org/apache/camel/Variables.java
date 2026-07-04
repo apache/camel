@@ -23,8 +23,14 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Marks a parameter as being an injection point of the variables
+ * Marks a method parameter as the entire <a href="https://camel.apache.org/manual/variables.html">variables</a> map of
+ * the current {@link Exchange} when Camel performs <a href="https://camel.apache.org/manual/bean-binding.html">bean
+ * binding</a>.
+ * <p/>
+ * The parameter type should be {@code Map<String, Object>} (or a compatible super-type). Unlike {@link Variable}, which
+ * injects a single named variable, {@code @Variables} gives the method direct access to all variables at once.
  *
+ * @see   Variable
  * @see   Exchange#getVariables()
  * @since 4.4
  */

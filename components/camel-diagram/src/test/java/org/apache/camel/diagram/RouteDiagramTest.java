@@ -1041,14 +1041,14 @@ class RouteDiagramTest {
 
     @Test
     void testAsciiWrapTextShort() {
-        List<String> lines = RouteDiagramAsciiRenderer.wrapText("timer:tick", 20);
+        List<String> lines = RouteDiagramHelper.wrapText("timer:tick", 20);
         assertEquals(1, lines.size());
         assertEquals("timer:tick", lines.get(0));
     }
 
     @Test
     void testAsciiWrapTextWrap() {
-        List<String> lines = RouteDiagramAsciiRenderer.wrapText("kafka:my-topic?brokers=localhost:9092", 20);
+        List<String> lines = RouteDiagramHelper.wrapText("kafka:my-topic?brokers=localhost:9092", 20);
         assertTrue(lines.size() > 1, "Long text should wrap");
         String rejoined = String.join("", lines);
         assertTrue(rejoined.contains("kafka:"));
@@ -1058,7 +1058,7 @@ class RouteDiagramTest {
     @Test
     void testAsciiWrapTextTruncate() {
         String veryLong = "a]".repeat(60);
-        List<String> lines = RouteDiagramAsciiRenderer.wrapText(veryLong, 20);
+        List<String> lines = RouteDiagramHelper.wrapText(veryLong, 20);
         assertTrue(lines.size() <= 3, "Should not exceed 3 lines");
         assertTrue(lines.get(lines.size() - 1).endsWith("..."), "Truncated text should end with ...");
     }

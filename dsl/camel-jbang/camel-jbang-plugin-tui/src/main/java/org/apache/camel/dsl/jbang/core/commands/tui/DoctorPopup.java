@@ -22,6 +22,7 @@ import java.net.ServerSocket;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Supplier;
 
 import dev.tamboui.layout.Rect;
 import dev.tamboui.style.Style;
@@ -33,7 +34,7 @@ import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.widgets.Clear;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
-import dev.tamboui.widgets.block.Title;
+import dev.tamboui.widgets.block.Borders;
 import dev.tamboui.widgets.paragraph.Paragraph;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
@@ -41,15 +42,24 @@ import org.apache.camel.dsl.jbang.core.common.VersionHelper;
 import org.apache.camel.tooling.maven.MavenDownloaderImpl;
 import org.apache.camel.tooling.maven.MavenResolutionException;
 
-import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.hintLast;
+import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.hintLast;
 
 class DoctorPopup {
 
     private boolean visible;
     private List<Line> lines;
+    private boolean mcpEnabled;
+    private int mcpPort;
+    private Supplier<String> mcpConnectedClient;
 
     boolean isVisible() {
         return visible;
+    }
+
+    void setMcpState(boolean enabled, int port, Supplier<String> connectedClient) {
+        this.mcpEnabled = enabled;
+        this.mcpPort = port;
+        this.mcpConnectedClient = connectedClient;
     }
 
     void open() {
@@ -61,6 +71,8 @@ class DoctorPopup {
         checkContainerRuntime(lines);
         checkCommonPorts(lines);
         checkDiskSpace(lines);
+        checkAiProvider(lines);
+        checkMcpConnection(lines);
         visible = true;
     }
 
@@ -85,17 +97,15 @@ class DoctorPopup {
         int popupW = Math.min(62, area.width() - 4);
         int popupH = Math.min(lines.size() + 2, area.height() - 4);
         int x = area.left() + Math.max(0, (area.width() - popupW) / 2);
-        int y = area.top() + Math.max(0, (area.height() - popupH) / 2);
+        int y = area.top() + 2;
         Rect popup = new Rect(x, y, Math.min(popupW, area.width()), Math.min(popupH, area.height()));
 
         frame.renderWidget(Clear.INSTANCE, popup);
         Paragraph para = Paragraph.builder()
                 .text(Text.from(lines.toArray(Line[]::new)))
                 .block(Block.builder()
-                        .borderType(BorderType.ROUNDED)
+                        .borderType(BorderType.ROUNDED).borders(Borders.ALL)
                         .title(" 🩺 Doctor ")
-                        .titleBottom(Title.from(Line.from(
-                                Span.styled(" Esc", MonitorContext.HINT_KEY_STYLE), Span.raw(" back "))))
                         .build())
                 .build();
         frame.renderWidget(para, popup);
@@ -259,6 +269,68 @@ class DoctorPopup {
             return false;
         } catch (Exception e) {
             return true;
+        }
+    }
+
+    private static boolean envSet(String name) {
+        String v = System.getenv(name);
+        return v != null && !v.isBlank();
+    }
+
+    private void checkAiProvider(List<Line> result) {
+        String provider = null;
+        if (envSet("ANTHROPIC_API_KEY")) {
+            provider = "Anthropic";
+        } else if (envSet("CLOUD_ML_REGION") && envSet("ANTHROPIC_VERTEX_PROJECT_ID")) {
+            provider = "Vertex AI";
+        } else if (envSet("OPENAI_API_KEY")) {
+            provider = "OpenAI";
+        } else if (envSet("LLM_API_KEY")) {
+            provider = "Custom (LLM_API_KEY)";
+        }
+        if (provider != null) {
+            result.add(Line.from(
+                    Span.raw("  🤖 "),
+                    Span.styled(String.format("%-14s", "AI"), Style.EMPTY.bold()),
+                    Span.raw(String.format("%-30s", provider)),
+                    Span.raw(" ✅")));
+        } else {
+            result.add(Line.from(
+                    Span.raw("  🤖 "),
+                    Span.styled(String.format("%-14s", "AI"), Style.EMPTY.bold()),
+                    Span.raw(String.format("%-30s", "No API key configured")),
+                    Span.raw(" ⚠️")));
+            result.add(Line.from(Span.styled("                    Set ANTHROPIC_API_KEY or OPENAI_API_KEY",
+                    Style.EMPTY.dim())));
+        }
+    }
+
+    private void checkMcpConnection(List<Line> result) {
+        if (mcpEnabled) {
+            String client = mcpConnectedClient != null ? mcpConnectedClient.get() : null;
+            if (client != null) {
+                result.add(Line.from(
+                        Span.raw("  🔗 "),
+                        Span.styled(String.format("%-14s", "MCP"), Style.EMPTY.bold()),
+                        Span.raw(String.format("%-30s", client + " (port " + mcpPort + ")")),
+                        Span.raw(" ✅")));
+            } else {
+                result.add(Line.from(
+                        Span.raw("  🔗 "),
+                        Span.styled(String.format("%-14s", "MCP"), Style.EMPTY.bold()),
+                        Span.raw(String.format("%-30s", "Listening on port " + mcpPort)),
+                        Span.raw(" ⚠️")));
+                result.add(Line.from(Span.styled("                    No AI client connected",
+                        Style.EMPTY.dim())));
+            }
+        } else {
+            result.add(Line.from(
+                    Span.raw("  🔗 "),
+                    Span.styled(String.format("%-14s", "MCP"), Style.EMPTY.bold()),
+                    Span.raw(String.format("%-30s", "Not enabled")),
+                    Span.raw(" ⚠️")));
+            result.add(Line.from(Span.styled("                    Use --mcp to enable MCP server",
+                    Style.EMPTY.dim())));
         }
     }
 

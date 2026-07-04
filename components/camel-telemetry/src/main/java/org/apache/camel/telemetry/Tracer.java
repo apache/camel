@@ -18,6 +18,8 @@ package org.apache.camel.telemetry;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
@@ -59,8 +61,10 @@ public abstract class Tracer extends ServiceSupport implements CamelTracingServi
     private String includePatterns;
     private boolean traceProcessors;
     private boolean disableCoreProcessors;
+    private boolean traceCustomIdOnly;
     private boolean traceHeadersInclusion;
 
+    private final Set<String> customIdRoutes = ConcurrentHashMap.newKeySet();
     private final TracingEventNotifier eventNotifier = new TracingEventNotifier();
     private final SpanStorageManager spanStorageManager = new SpanStorageManagerExchange();
     private final SpanDecoratorManager spanDecoratorManager = new SpanDecoratorManagerImpl();
@@ -127,6 +131,15 @@ public abstract class Tracer extends ServiceSupport implements CamelTracingServi
         this.disableCoreProcessors = disableCoreProcessors;
     }
 
+    @ManagedAttribute
+    public boolean isTraceCustomIdOnly() {
+        return traceCustomIdOnly;
+    }
+
+    public void setTraceCustomIdOnly(boolean traceCustomIdOnly) {
+        this.traceCustomIdOnly = traceCustomIdOnly;
+    }
+
     public SpanLifecycleManager getSpanLifecycleManager() {
         return this.spanLifecycleManager;
     }
@@ -138,7 +151,21 @@ public abstract class Tracer extends ServiceSupport implements CamelTracingServi
     @Override
     public RoutePolicy createRoutePolicy(CamelContext camelContext, String routeId, NamedNode route) {
         init(camelContext);
+        if (traceCustomIdOnly) {
+            if (route.hasCustomIdAssigned()) {
+                customIdRoutes.add(routeId);
+            } else {
+                return null;
+            }
+        }
         return new TracingRoutePolicy();
+    }
+
+    boolean isCustomIdRoute(String routeId) {
+        if (routeId == null) {
+            return true;
+        }
+        return !traceCustomIdOnly || customIdRoutes.contains(routeId);
     }
 
     /**
@@ -242,12 +269,18 @@ public abstract class Tracer extends ServiceSupport implements CamelTracingServi
         public void notify(CamelEvent event) throws Exception {
             try {
                 if (event instanceof CamelEvent.ExchangeSendingEvent ese) {
+                    if (!isCustomIdRoute(ese.getExchange().getFromRouteId())) {
+                        return;
+                    }
                     if (match(ese.getEndpoint().getEndpointUri(), ese.getExchange().getContext())) {
                         beginEventSpan(ese.getExchange(), ese.getEndpoint(), Op.EVENT_SENT);
                     } else {
                         LOG.debug("Tracing: endpoint {} is explicitly excluded, skipping.", ese.getEndpoint());
                     }
                 } else if (event instanceof CamelEvent.ExchangeSentEvent ese) {
+                    if (!isCustomIdRoute(ese.getExchange().getFromRouteId())) {
+                        return;
+                    }
                     if (match(ese.getEndpoint().getEndpointUri(), ese.getExchange().getContext())) {
                         endEventSpan(ese.getExchange(), ese.getEndpoint());
                     } else {

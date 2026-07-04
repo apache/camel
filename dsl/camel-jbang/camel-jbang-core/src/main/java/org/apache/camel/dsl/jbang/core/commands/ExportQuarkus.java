@@ -145,7 +145,9 @@ class ExportQuarkus extends Export {
             return prop;
         });
         // copy docker files
-        copyDockerFiles(BUILD_DIR);
+        if (docker) {
+            copyDockerFiles(BUILD_DIR);
+        }
         String appJar;
         if ("fast-jar".equals(quarkusPackageType)) {
             appJar = "target" + File.separator + "quarkus-app" + File.separator + "quarkus-run.jar";
@@ -357,6 +359,8 @@ class ExportQuarkus extends Export {
 
         String context = TemplateHelper.processTemplate("readme.native.md.ftl", model);
         Files.writeString(Path.of(buildDir).resolve("readme.md"), context);
+
+        copyAgents(buildDir);
     }
 
     private void createMavenPom(Path settings, Path pom, Set<String> deps) throws Exception {
@@ -384,12 +388,14 @@ class ExportQuarkus extends Export {
         model.put("QuarkusGroupId", quarkusCamelBom.getGroupId());
         model.put("QuarkusArtifactId", quarkusCamelBom.getArtifactId());
         model.put("QuarkusVersion", quarkusCamelBom.getVersion());
+        model.put("UseQuarkusJunit", VersionHelper.isGE(quarkusCamelBom.getVersion(), "3.31.0"));
         model.put("QuarkusPackageType", quarkusPackageType);
         model.put("JavaVersion", javaVersion);
         model.put("ProjectBuildOutputTimestamp", this.getBuildMavenProjectDate());
         model.put("BuildProperties", formatBuildProperties());
         model.put("Repositories", buildRepositoryList(repos));
         model.put("Dependencies", depList);
+        model.put("JibMavenPluginVersion", jibMavenPluginVersion(settings, prop));
 
         String context = TemplateHelper.processTemplate(pomTemplateName, model);
         Files.writeString(pom, context);

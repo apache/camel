@@ -1,28 +1,27 @@
-= AWS Cloudtrail Component
-:doctitle: AWS Cloudtrail
+= AWS CloudTrail Component
+:doctitle: AWS CloudTrail
 :shortname: aws-cloudtrail
 :artifactid: camel-aws-cloudtrail
-:description: Consume events from Amazon Cloudtrail using AWS SDK version 2.x.
+:description: Consume events from Amazon CloudTrail using AWS SDK version 2.x.
 :since: 3.19
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Only consumer is supported
 //Manually maintained attributes
 :group: AWS
-:camel-spring-boot-name: aws-cloudtrail
 
 *Since Camel {since}*
 
 *{component-header}*
 
-The AWS Cloudtrail component supports receiving events from Amazon Cloudtrail
+The AWS CloudTrail component supports receiving events from Amazon CloudTrail
 service.
 
 Prerequisites
 
 You must have a valid Amazon Web Services developer account, and be
-signed up to use Amazon Cloudtrail. More information is available
-at https://aws.amazon.com/cloudtrail/[AWS Cloudtrail]
+signed up to use Amazon CloudTrail. More information is available
+at https://aws.amazon.com/cloudtrail/[AWS CloudTrail]
 
 == URI Format
 
@@ -64,15 +63,14 @@ Only one of static, default and profile credentials could be used at the same ti
 
 For more information about this you can look at https://docs.aws.amazon.com/sdk-for-java/latest/developer-guide/credentials.html[AWS credentials documentation]
 
-=== Cloudtrail Events consumed
+=== CloudTrail Events consumed
 
-The Cloudtrail consumer will use an API method called LookupEvents.
+The CloudTrail consumer will use an API method called LookupEvents.
 
-This method will only take into account management events like create/update/delete of resources and Cloudtrail insight events where enabled.
+This method will only take into account management events like create/update/delete of resources and CloudTrail insight events where enabled.
 
-This means you won't consume the events registered in the Cloudtrail logs stored on S3, in case of creation of a new Trail.
+This means you won't consume the events registered in the CloudTrail logs stored on S3, in case of creation of a new Trail.
 
 This is important to notice, and it must be taken into account when using this component.
 
 
-include::spring-boot:partial$starter.adoc[]

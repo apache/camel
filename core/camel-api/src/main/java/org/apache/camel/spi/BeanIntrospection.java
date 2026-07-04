@@ -28,11 +28,21 @@ import org.apache.camel.TypeConverter;
 import org.jspecify.annotations.Nullable;
 
 /**
- * Used for introspecting beans properties via Java reflection; such as extracting current property values, or updating
- * one or more properties etc.
+ * Low-level SPI for reading and writing bean properties via Java reflection, used internally by Camel's property
+ * binding infrastructure.
+ * <p/>
+ * This interface operates directly on getter/setter pairs discovered at runtime and is consulted by Camel when
+ * configuring components, endpoints, and EIP options from properties files, YAML, or the
+ * <a href="https://camel.apache.org/manual/camel-jbang.html">Camel JBang</a> CLI. Introspection results are cached
+ * internally to minimise repeated reflection calls during configuration-intensive startup sequences. Call
+ * {@link #clearCache()} to invalidate the cache when class definitions change at runtime (for example in OSGi
+ * hot-deployment scenarios).
+ * <p/>
+ * End users should prefer the higher-level {@link org.apache.camel.support.PropertyBindingSupport} utility, which
+ * handles placeholder resolution, type conversion, and nested property paths on top of this interface.
  *
- * End users should favour using {@link org.apache.camel.support.PropertyBindingSupport} instead.
- *
+ * @see   org.apache.camel.support.PropertyBindingSupport
+ * @see   PropertyConfigurer
  * @since 3.0
  */
 public interface BeanIntrospection extends StaticService, AfterPropertiesConfigured {

@@ -1,7 +1,7 @@
 
-Camel JBang editor help
+Camel CLI editor help
 
- The Camel JBang editor adds Camel suggestions (^Space) and diagnostics to JLine's Nano editor. This is done through https://github.com/camel-tooling/camel-language-server.  There are four main sections of the editor.  The top line shows the program version, the current filename being edited, and whether or not the file has been modified.  Next is the main editor window showing the file being edited.  The status line is the third line from the bottom and shows important messages.  The bottom two lines show the most commonly used shortcuts in the editor.
+ The Camel CLI editor adds Camel suggestions (^Space) and diagnostics to JLine's Nano editor. This is done through https://github.com/camel-tooling/camel-language-server.  There are four main sections of the editor.  The top line shows the program version, the current filename being edited, and whether or not the file has been modified.  Next is the main editor window showing the file being edited.  The status line is the third line from the bottom and shows important messages.  The bottom two lines show the most commonly used shortcuts in the editor.
 
  The notation for shortcuts is as follows: Control-key sequences are notated with a caret (^) symbol and can be entered either by using the Control (Ctrl) key or pressing the Escape (Esc) key twice.  Escape-key sequences are notated with the Meta (M-) symbol and can be entered using either the Esc, Alt, or Meta key depending on your keyboard setup.  Also, pressing Esc twice and then typing a three-digit decimal number from 000 to 255 will enter the character with the corresponding value.  The following keystrokes are available in the main editor window.  Alternative keys are shown in parentheses:
 

@@ -206,7 +206,7 @@ class KubernetesExportTest extends KubernetesExportBaseTestSupport {
         Assertions.assertEquals("route", labels.get("camel.apache.org/app"));
         Assertions.assertEquals("route", containers.get(0).getName());
         Assertions.assertEquals("route", matchLabels.get(BaseTrait.KUBERNETES_LABEL_NAME));
-        Assertions.assertNull(containers.get(0).getImage());
+        Assertions.assertEquals("quay.io/camel-test/route:1.0-SNAPSHOT", containers.get(0).getImage());
 
         Model model = readMavenModel();
         Assertions.assertEquals("org.example.project", model.getGroupId());
@@ -299,7 +299,7 @@ class KubernetesExportTest extends KubernetesExportBaseTestSupport {
         Assertions.assertEquals("route", labels.get(BaseTrait.KUBERNETES_LABEL_NAME));
         Assertions.assertEquals("route", containers.get(0).getName());
         Assertions.assertEquals("route", matchLabels.get(BaseTrait.KUBERNETES_LABEL_NAME));
-        Assertions.assertNull(containers.get(0).getImage());
+        Assertions.assertEquals("camel-test/route:1.0-SNAPSHOT", containers.get(0).getImage());
 
         Model model = readMavenModel();
         Assertions.assertEquals("org.example.project", model.getGroupId());
@@ -340,7 +340,7 @@ class KubernetesExportTest extends KubernetesExportBaseTestSupport {
         Container container = deployment.getSpec().getTemplate().getSpec().getContainers().get(0);
         Assertions.assertEquals("route", deployment.getMetadata().getName());
         Assertions.assertEquals(1, deployment.getSpec().getTemplate().getSpec().getContainers().size());
-        Assertions.assertNull(container.getImage());
+        Assertions.assertEquals("route:1.0-SNAPSHOT", container.getImage());
         Assertions.assertEquals(1, container.getPorts().size());
         Assertions.assertEquals("http", container.getPorts().get(0).getName());
         Assertions.assertEquals(8080, container.getPorts().get(0).getContainerPort());
@@ -380,7 +380,7 @@ class KubernetesExportTest extends KubernetesExportBaseTestSupport {
         Container container = deployment.getSpec().getTemplate().getSpec().getContainers().get(0);
         Assertions.assertEquals("route-service", deployment.getMetadata().getName());
         Assertions.assertEquals(1, deployment.getSpec().getTemplate().getSpec().getContainers().size());
-        Assertions.assertNull(container.getImage());
+        Assertions.assertEquals("route-service:1.0-SNAPSHOT", container.getImage());
         Assertions.assertEquals(1, container.getPorts().size());
         Assertions.assertEquals("http", container.getPorts().get(0).getName());
         Assertions.assertEquals(8080, container.getPorts().get(0).getContainerPort());
@@ -429,7 +429,7 @@ class KubernetesExportTest extends KubernetesExportBaseTestSupport {
         Container container = deployment.getSpec().getTemplate().getSpec().getContainers().get(0);
         Assertions.assertEquals("route-service", deployment.getMetadata().getName());
         Assertions.assertEquals(1, deployment.getSpec().getTemplate().getSpec().getContainers().size());
-        Assertions.assertNull(container.getImage());
+        Assertions.assertEquals("route-service:1.0-SNAPSHOT", container.getImage());
         Assertions.assertEquals(1, container.getPorts().size());
         Assertions.assertEquals("http", container.getPorts().get(0).getName());
         Assertions.assertEquals(8080, container.getPorts().get(0).getContainerPort());
@@ -487,7 +487,8 @@ class KubernetesExportTest extends KubernetesExportBaseTestSupport {
         Container container = deployment.getSpec().getTemplate().getSpec().getContainers().get(0);
         Assertions.assertEquals("route-service", deployment.getMetadata().getName());
         Assertions.assertEquals(1, deployment.getSpec().getTemplate().getSpec().getContainers().size());
-        Assertions.assertNull(container.getImage());
+        Assertions.assertEquals("image-registry.openshift-image-registry.svc:5000/route-service:1.0-SNAPSHOT",
+                container.getImage());
         Assertions.assertEquals(1, container.getPorts().size());
         Assertions.assertEquals("http", container.getPorts().get(0).getName());
         Assertions.assertEquals(8080, container.getPorts().get(0).getContainerPort());
@@ -498,8 +499,10 @@ class KubernetesExportTest extends KubernetesExportBaseTestSupport {
         Assertions.assertEquals("1.0-SNAPSHOT", model.getVersion());
 
         Properties props = model.getProperties();
-        Assertions.assertEquals("route-service:1.0-SNAPSHOT", props.get("jkube.image.name"));
-        Assertions.assertEquals("route-service:1.0-SNAPSHOT", props.get("jkube.container-image.name"));
+        Assertions.assertEquals("image-registry.openshift-image-registry.svc:5000/route-service:1.0-SNAPSHOT",
+                props.get("jkube.image.name"));
+        Assertions.assertEquals("image-registry.openshift-image-registry.svc:5000/route-service:1.0-SNAPSHOT",
+                props.get("jkube.container-image.name"));
 
         Route route = getRoute(rt);
         Assertions.assertEquals("route-service", route.getMetadata().getName());
@@ -548,7 +551,8 @@ class KubernetesExportTest extends KubernetesExportBaseTestSupport {
         Deployment deployment = getDeployment(rt);
         Assertions.assertEquals("route-service", deployment.getMetadata().getName());
         Assertions.assertEquals(1, deployment.getSpec().getTemplate().getSpec().getContainers().size());
-        Assertions.assertNull(deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getImage());
+        Assertions.assertEquals("route-service:1.0.0",
+                deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getImage());
         Assertions.assertEquals("IfNotPresent",
                 deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getImagePullPolicy());
         Assertions.assertEquals(1, deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getPorts().size());
@@ -841,7 +845,8 @@ class KubernetesExportTest extends KubernetesExportBaseTestSupport {
         Deployment deployment = getDeployment(rt);
         Assertions.assertEquals("demo-app", deployment.getMetadata().getName());
         Assertions.assertEquals(1, deployment.getSpec().getTemplate().getSpec().getContainers().size());
-        Assertions.assertNull(deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getImage());
+        Assertions.assertEquals("quay.io/camel/demo-app:1.0",
+                deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getImage());
 
         Model model = readMavenModel();
         Assertions.assertEquals("org.example.project", model.getGroupId());
@@ -872,7 +877,7 @@ class KubernetesExportTest extends KubernetesExportBaseTestSupport {
         Container container = deployment.getSpec().getTemplate().getSpec().getContainers().get(0);
         Assertions.assertEquals("route-service", deployment.getMetadata().getName());
         Assertions.assertEquals(1, deployment.getSpec().getTemplate().getSpec().getContainers().size());
-        Assertions.assertNull(container.getImage());
+        Assertions.assertEquals("route-service:1.0-SNAPSHOT", container.getImage());
         Assertions.assertEquals(2, container.getPorts().size());
         Assertions.assertEquals("jolokia", container.getPorts().get(1).getName());
         Assertions.assertEquals(8778, container.getPorts().get(1).getContainerPort());

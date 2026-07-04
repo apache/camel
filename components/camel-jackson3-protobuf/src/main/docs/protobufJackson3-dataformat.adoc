@@ -4,10 +4,8 @@
 :artifactid: camel-jackson3-protobuf
 :description: Marshal POJOs to Protobuf and back using Jackson.
 :since: 4.19
-:supportlevel: Preview
+:supportlevel: Stable
 :tabs-sync-option:
-//Manually maintained attributes
-:camel-spring-boot-name: jackson-protobuf
 
 *Since Camel {since}*
 
@@ -23,12 +21,43 @@ same way as its JSON counterpart, and thus can be used with classes
 annotated for JSON serialization/deserialization.
 ====
 
+[tabs]
+====
+Java::
++
 [source,java]
--------------------------------
-from("kafka:topic").
-  unmarshal().protobuf(ProtobufLibrary.Jackson, JsonNode.class).
-  to("log:info");
--------------------------------
+----
+from("kafka:topic")
+    .unmarshal().protobuf(ProtobufLibrary.Jackson, JsonNode.class)
+    .to("log:info");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="kafka:topic"/>
+  <unmarshal><protobuf library="Jackson"/></unmarshal>
+  <to uri="log:info"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: kafka:topic
+      steps:
+        - unmarshal:
+            protobuf:
+              library: Jackson
+        - to:
+            uri: log:info
+----
+====
 
 == Protobuf Jackson Options
 
@@ -61,13 +90,11 @@ If you use Maven, you could add the following to your pom.xml,
 substituting the version number for the latest & greatest release.
 
 [source,xml]
-----------------------------------------------------------
+----
 <dependency>
   <groupId>org.apache.camel</groupId>
   <artifactId>camel-jackson3-protobuf</artifactId>
   <version>x.x.x</version>
   <!-- use the same version as your Camel core version -->
 </dependency>
-----------------------------------------------------------
-
-include::spring-boot:partial$starter.adoc[]
+----

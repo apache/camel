@@ -390,4 +390,35 @@ class KameletTest extends YamlTestSupport {
         then:
             MockEndpoint.assertIsSatisfied(context)
     }
+
+    def "kamelet (properties not url encoded)"() {
+        setup:
+            addTemplate('setPayloadWithType') {
+                from('kamelet:source')
+                    .setBody().simple('{{contentType}}')
+                    .to("kamelet:sink")
+            }
+
+            loadRoutes '''
+                - from:
+                    uri: "direct:start"
+                    steps:
+                      - kamelet:
+                          name: "setPayloadWithType"
+                          parameters:
+                            contentType: "application/json"
+                      - to: "mock:result"
+            '''
+
+            withMock('mock:result') {
+                expectedMessageCount 1
+                expectedBodiesReceived 'application/json'
+            }
+        when:
+            withTemplate {
+                to('direct:start').withBody('hello').send()
+            }
+        then:
+            MockEndpoint.assertIsSatisfied(context)
+    }
 }

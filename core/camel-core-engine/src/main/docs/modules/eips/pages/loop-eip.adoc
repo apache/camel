@@ -1,7 +1,7 @@
 = Loop EIP
 :doctitle: Loop
 :shortname: loop
-:description: Processes a message multiple times
+:description: Processes the message body repeatedly for a specified number of iterations, or until a condition is met
 :since: 
 :supportlevel: Stable
 :tabs-sync-option:

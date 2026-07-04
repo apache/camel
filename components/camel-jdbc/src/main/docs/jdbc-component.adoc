@@ -7,8 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Only producer is supported
-//Manually maintained attributes
-:camel-spring-boot-name: jdbc
 
 *Since Camel {since}*
 
@@ -86,14 +84,60 @@ Camel will then look up these parameters from the message headers.
 Notice in the example above we set two headers with constant value
  for the named parameters:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
-  from("direct:projects")
-     .setHeader("lic", constant("ASF"))
-     .setHeader("min", constant(123))
-     .setBody("select * from projects where license = :?lic and id > :?min order by id")
-     .to("jdbc:myDataSource?useHeadersAsParameters=true")
+from("direct:projects")
+    .setHeader("lic", constant("ASF"))
+    .setHeader("min", constant(123))
+    .setBody("select * from projects where license = :?lic and id > :?min order by id")
+    .to("jdbc:myDataSource?useHeadersAsParameters=true");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="direct:projects"/>
+    <setHeader name="lic">
+        <constant>ASF</constant>
+    </setHeader>
+    <setHeader name="min">
+        <constant>123</constant>
+    </setHeader>
+    <setBody>
+        <constant>select * from projects where license = :?lic and id &gt; :?min order by id</constant>
+    </setBody>
+    <to uri="jdbc:myDataSource?useHeadersAsParameters=true"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:projects
+    steps:
+      - setHeader:
+          name: lic
+          constant: ASF
+      - setHeader:
+          name: min
+          constant: "123"
+      - setBody:
+          constant: "select * from projects where license = :?lic and id > :?min order by id"
+      - to:
+          uri: jdbc:myDataSource
+          parameters:
+            useHeadersAsParameters: true
+----
+====
 
 You can also store the header values in a `java.util.Map` and store the
 map on the headers with the key `CamelJdbcParameters`.
@@ -103,6 +147,7 @@ map on the headers with the key `CamelJdbcParameters`.
 In the following example, we set up the DataSource that camel-jdbc requires.
 First we register our datasource in the Camel registry as `testdb`:
 
+._Java-only: programmatic DataSource registration using EmbeddedDatabaseBuilder_
 [source,java]
 ----
 EmbeddedDatabase db = new EmbeddedDatabaseBuilder()
@@ -116,16 +161,44 @@ Then we configure a route that routes to the JDBC component, so the SQL
 will be executed. Note how we refer to the `testdb` datasource that was
 bound in the previous step:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:hello")
     .to("jdbc:testdb");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:hello"/>
+  <to uri="jdbc:testdb"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:hello
+      steps:
+        - to:
+            uri: jdbc:testdb
+----
+====
+
 We create an endpoint, add the SQL query to the body of the IN message,
 and then send the exchange. The result of the query is returned in the
 _OUT_ body:
 
+._Java-only: using ProducerTemplate to send an exchange to the endpoint_
 [source,java]
 ----
 Endpoint endpoint = context.getEndpoint("direct:hello");
@@ -140,6 +213,10 @@ If you want to work on the rows one by one instead of the entire
 ResultSet at once, you need to use the Splitter EIP
 such as:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:hello")
@@ -152,6 +229,42 @@ from("direct:hello")
   .to("mock:result");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:hello"/>
+  <to uri="jdbc:testdb?outputType=StreamList"/>
+  <split streaming="true">
+    <body/>
+    <to uri="mock:result"/>
+  </split>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:hello
+    steps:
+      - to:
+          uri: jdbc:testdb
+          parameters:
+            outputType: StreamList
+      - split:
+          expression:
+            body: {}
+          streaming: true
+          steps:
+            - to:
+                uri: mock:result
+----
+====
+
 === Polling the database every minute
 
 If we want to poll a database using the JDBC component, we need to
@@ -159,13 +272,50 @@ combine it with a polling scheduler such as the xref:timer-component.adoc[Timer]
 or xref:quartz-component.adoc[Quartz] etc. In the following example, we retrieve
 data from the database every 60 seconds:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("timer://foo?period=60000")
-  .setBody(constant("select * from customer"))
-  .to("jdbc:testdb")
-  .to("activemq:queue:customers");
+    .setBody(constant("select * from customer"))
+    .to("jdbc:testdb")
+    .to("activemq:queue:customers");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="timer://foo?period=60000"/>
+    <setBody>
+        <constant>select * from customer</constant>
+    </setBody>
+    <to uri="jdbc:testdb"/>
+    <to uri="activemq:queue:customers"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: timer://foo
+      parameters:
+        period: "60000"
+    steps:
+      - setBody:
+          constant: "select * from customer"
+      - to:
+          uri: jdbc:testdb
+      - to:
+          uri: activemq:queue:customers
+----
+====
 
 === Move Data Between Data Sources
 
@@ -174,6 +324,7 @@ another data source (ETL operations). In the following example, we
 retrieve new customer records from the source table every hour,
 filter/transform them and move them to a destination table:
 
+._Java-only: ETL route using inline Processor to filter and transform results_
 [source,java]
 ----
 from("timer://MoveNewCustomersEveryHour?period=3600000")
@@ -184,7 +335,3 @@ from("timer://MoveNewCustomersEveryHour?period=3600000")
         .setBody(simple("insert into processed_customer values('${body[ID]}','${body[NAME]}')"))
         .to("jdbc:testdb");
 ----
-
-
-
-include::spring-boot:partial$starter.adoc[]

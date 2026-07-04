@@ -3,7 +3,7 @@
     "kind": "dataformat",
     "name": "iso8583",
     "title": "ISO-8583",
-    "description": "Create, edit and read ISO-8583 messages.",
+    "description": "Create, edit and read ISO-8583 messages",
     "deprecated": false,
     "firstVersion": "4.14.0",
     "label": "dataformat,transformation,finance",
@@ -11,7 +11,7 @@
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-iso8583",
-    "version": "4.21.0-SNAPSHOT",
+    "version": "4.22.0-SNAPSHOT",
     "modelName": "iso8583",
     "modelJavaType": "org.apache.camel.model.dataformat.Iso8583DataFormat"
   },

@@ -118,6 +118,7 @@ public class CliLocalProcessService implements CliService {
                         "jbang app install --force --fresh -Dcamel.jbang.version=%s camel@%s/%s", jbangVersion, repo, branch);
             }
             executeGenericCommand(installCmd);
+            fixJBangAppScript();
         }
 
         if (ObjectHelper.isNotEmpty(forceToRunVersion)) {
@@ -129,7 +130,7 @@ public class CliLocalProcessService implements CliService {
             execute(String.format("config set repos=%s", mavenRepos));
         }
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Camel JBang version {}", version());
+            LOG.debug("Camel CLI version {}", version());
         }
     }
 
@@ -343,7 +344,7 @@ public class CliLocalProcessService implements CliService {
                         version = StringHelper.between(versionSummary, "camel-version = ", "\n").trim();
                     }
                     if (version == null) {
-                        version = StringHelper.between(versionSummary, "Camel JBang version:", "\n").trim();
+                        version = StringHelper.between(versionSummary, "Camel CLI version:", "\n").trim();
                     }
                     return version;
                 });
@@ -373,6 +374,25 @@ public class CliLocalProcessService implements CliService {
         } catch (IOException | InterruptedException e) {
             LOG.info("Camel command '{}' not found: {}", getMainCommand(), e.getMessage());
             return false;
+        }
+    }
+
+    private void fixJBangAppScript() {
+        // JBang 0.138+ has a bug: "jbang app install -Dkey=value" generates wrapper scripts
+        // with "-D key=value" (space-separated), but "jbang run" rejects that format.
+        // Patch the wrapper script to use "-Dkey=value" (no space).
+        String cmd = getMainCommand();
+        Path script = Path.of(System.getProperty("user.home"), ".jbang", "bin", cmd);
+        try {
+            if (Files.exists(script)) {
+                String content = Files.readString(script);
+                if (content.contains(" -D ")) {
+                    Files.writeString(script, content.replace(" -D ", " -D"));
+                    LOG.info("Patched JBang app script to fix -D property serialization");
+                }
+            }
+        } catch (IOException e) {
+            LOG.warn("Failed to patch JBang app script: {}", e.getMessage());
         }
     }
 

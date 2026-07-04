@@ -135,9 +135,6 @@ public class IdempotentConsumerAsyncTest extends ContextTestSupport {
                 in.setHeader("messageId", messageId);
             }
         });
-
-        // must sleep a little as the route is async and we can be to fast
-        Thread.sleep(50);
     }
 
     @Override

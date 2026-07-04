@@ -7,8 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
-//Manually maintained attributes
-:camel-spring-boot-name: as2
 
 *Since Camel {since}*
 
@@ -56,6 +54,3 @@ producers, strip these internal headers at the trust boundary -- for example wit
 `removeHeaders("Camel*")` -- before the message reaches this component, so that a sender cannot
 override the API call. See xref:manual::security-model.adoc[the Camel security model] for details.
 ====
-
-
-include::spring-boot:partial$starter.adoc[]

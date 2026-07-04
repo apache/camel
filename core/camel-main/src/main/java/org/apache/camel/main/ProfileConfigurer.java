@@ -24,9 +24,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Configure Camel Main with the chosen profile.
+ * Configure Camel with the chosen profile.
  *
- * This is for Camel JBang and Standalone Camel, not Spring Boot or Quarkus; as they have their own profile concept.
+ * The {@link #configureMain} method is for Camel Main (CLI and standalone). The {@link #configureCommon} method is for
+ * all runtimes (standalone, Spring Boot, Quarkus).
  */
 public class ProfileConfigurer {
 
@@ -48,19 +49,13 @@ public class ProfileConfigurer {
         }
 
         if ("dev".equals(profile)) {
-            // make tracing at least standby so we can use it in dev-mode
+            // make tracer config at least standby so we can use it in dev-mode
             boolean enabled = config.tracerConfig().isEnabled();
             if (!enabled) {
                 config.tracerConfig().withStandby(true);
             }
-            if (!config.isTracing()) {
-                config.setTracingStandby(true);
-            }
             // enable error registry to capture routing errors
             config.errorRegistryConfig().withEnabled(true);
-        }
-
-        if ("dev".equals(profile)) {
             // dev profile allows insecure:dev options by default since those features
             // (devConsole, upload, etc.) are expected in development.
             // Users can still override this explicitly via camel.security.insecureDevPolicy=warn/fail.
@@ -97,6 +92,10 @@ public class ProfileConfigurer {
         }
 
         if ("dev".equals(profile)) {
+            // make tracing at least standby so we can use it in dev-mode
+            if (!config.isTracing()) {
+                config.setTracingStandby(true);
+            }
             // enable developer features as defaults — user properties can override any of these
             setIfNotConfigured(autoConfigured, "camel.main.devConsoleEnabled", () -> config.setDevConsoleEnabled(true));
             setIfNotConfigured(autoConfigured, "camel.main.camelEventsTimestampEnabled",

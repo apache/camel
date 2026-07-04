@@ -1,7 +1,7 @@
 = Idempotent Consumer EIP
 :doctitle: Idempotent Consumer
 :shortname: idempotentConsumer
-:description: Filters out duplicate messages
+:description: Filters out duplicate messages based on a unique message identifier and an idempotent repository that tracks previously seen IDs
 :since: 
 :supportlevel: Stable
 :tabs-sync-option:

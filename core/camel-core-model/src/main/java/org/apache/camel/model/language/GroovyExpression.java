@@ -26,7 +26,7 @@ import org.apache.camel.spi.Metadata;
 /**
  * Evaluates a Groovy script.
  */
-@Metadata(firstVersion = "1.3.0", label = "language,script", title = "Groovy")
+@Metadata(firstVersion = "1.3.0", label = "language,script", title = "Groovy", description = "Evaluates a Groovy script")
 @XmlRootElement(name = "groovy")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class GroovyExpression extends TypedExpressionDefinition {

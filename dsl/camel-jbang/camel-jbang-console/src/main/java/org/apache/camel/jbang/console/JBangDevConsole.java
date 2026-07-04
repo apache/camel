@@ -22,11 +22,11 @@ import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.console.AbstractDevConsole;
 import org.apache.camel.util.json.JsonObject;
 
-@DevConsole(name = "jbang", group = "camel-jbang", displayName = "Camel JBang", description = "Information about Camel JBang")
+@DevConsole(name = "jbang", group = "camel-jbang", displayName = "Camel CLI", description = "Information about Camel CLI")
 public class JBangDevConsole extends AbstractDevConsole {
 
     public JBangDevConsole() {
-        super("camel-jbang", "jbang", "Camel JBang", "Information about Camel JBang");
+        super("camel-jbang", "jbang", "Camel CLI", "Information about Camel CLI");
     }
 
     @Override

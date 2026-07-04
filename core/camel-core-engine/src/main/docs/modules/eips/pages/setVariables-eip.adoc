@@ -1,7 +1,7 @@
 = Set Variables EIP
 :doctitle: Set Variables
 :shortname: setVariables
-:description: Allows setting multiple variables at the same time.
+:description: Sets multiple variables at once, each computed by its own expression
 :since: 
 :supportlevel: Stable
 :tabs-sync-option:
@@ -192,29 +192,24 @@ YAML::
 It's also possible to build a Map and pass it as the single argument to `setVariables().`
 If the order in which the variables should be set is important, use a `LinkedHashMap`.
 
-====
-Java::
-+
+._Java-only: using a LinkedHashMap to set variables in order_
 [source,java]
 ----
 private Map<String, Expression> variableMap = new java.util.LinkedHashMap<>();
 variableMap.put("foo", ConstantLanguage.constant("ABC"));
 variableMap.put("bar", ConstantLanguage.constant("XYZ"));
-        
+
 from("direct:startMap")
     .setVariables(variableMap)
     .to("direct:b");
 ----
-====
 
 If the ordering is not critical, then `Map.of(name1, expr1, name2, expr2...)` can be used.
-====
-Java::
-+
+
+._Java-only: using Map.of for unordered variables_
 [source,java]
 ----
 from("direct:startMap")
     .setVariables(Map.of("foo", "ABC", "bar", "XYZ"))
     .to("direct:b");
 ----
-====

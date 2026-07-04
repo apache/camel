@@ -1480,7 +1480,7 @@ public interface GoogleCloudStorageEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final GoogleCloudStorageHeaderNameBuilder INSTANCE = new GoogleCloudStorageHeaderNameBuilder();
+        public static final GoogleCloudStorageHeaderNameBuilder INSTANCE = new GoogleCloudStorageHeaderNameBuilder();
 
         /**
          * The operation to perform.

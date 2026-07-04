@@ -52,7 +52,7 @@ public class VertxWebSocketEventTest extends VertxWebSocketTestSupport {
 
         template.sendBody("vertx-websocket:localhost:" + port + "/test", MESSAGE_BODY);
 
-        ServerWebSocket webSocket = webSocketFuture.get(5000, TimeUnit.SECONDS);
+        ServerWebSocket webSocket = webSocketFuture.get(5, TimeUnit.SECONDS);
         assertNotNull(webSocket);
 
         // Trigger error event (message length > max allowed)

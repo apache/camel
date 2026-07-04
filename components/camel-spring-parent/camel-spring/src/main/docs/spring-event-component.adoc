@@ -9,7 +9,6 @@
 :component-header: Both producer and consumer are supported
 //Manually maintained attributes
 :group: Spring
-:camel-spring-boot-name: spring
 
 *Since Camel {since}*
 
@@ -41,5 +40,3 @@ include::partial$component-endpoint-headers.adoc[]
 // component options: END
 
 
-
-include::spring-boot:partial$starter.adoc[]

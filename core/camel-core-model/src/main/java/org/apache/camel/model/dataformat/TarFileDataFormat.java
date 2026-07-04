@@ -29,22 +29,27 @@ import org.apache.camel.spi.Metadata;
 /**
  * Archive files into tarballs or extract files from tarballs.
  */
-@Metadata(firstVersion = "2.16.0", label = "dataformat,transformation,file", title = "Tar File")
+@Metadata(firstVersion = "2.16.0", label = "dataformat,transformation,file", title = "Tar File",
+          description = "Archive files into tarballs or extract files from tarballs")
 @XmlRootElement(name = "tarFile")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class TarFileDataFormat extends DataFormatDefinition {
 
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(javaType = "java.lang.Boolean",
+              description = "Whether to use an iterator to split tar entries when the tar file has more than one entry, for use with the splitter EIP in streaming mode.")
     private String usingIterator;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(javaType = "java.lang.Boolean",
+              description = "Whether to allow getting the iterator even if the directory is empty, when the tar file has more than one entry.")
     private String allowEmptyDirectory;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(javaType = "java.lang.Boolean",
+              description = "Whether to preserve path elements when the file name contains path elements in the tar file.")
     private String preservePathElements;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Long", defaultValue = "1073741824")
+    @Metadata(label = "advanced", javaType = "java.lang.Long", defaultValue = "1073741824",
+              description = "The maximum decompressed size of a tar file (in bytes). An IOException is thrown if the decompressed size exceeds this amount. Set to -1 to disable.")
     private String maxDecompressedSize;
 
     public TarFileDataFormat() {
@@ -87,37 +92,18 @@ public class TarFileDataFormat extends DataFormatDefinition {
         return maxDecompressedSize;
     }
 
-    /**
-     * If the tar file has more than one entry, the setting this option to true, allows working with the splitter EIP,
-     * to split the data using an iterator in a streaming mode.
-     */
     public void setUsingIterator(String usingIterator) {
         this.usingIterator = usingIterator;
     }
 
-    /**
-     * If the tar file has more than one entry, setting this option to true, allows to get the iterator even if the
-     * directory is empty
-     */
     public void setAllowEmptyDirectory(String allowEmptyDirectory) {
         this.allowEmptyDirectory = allowEmptyDirectory;
     }
 
-    /**
-     * If the file name contains path elements, setting this option to true, allows the path to be maintained in the tar
-     * file.
-     */
     public void setPreservePathElements(String preservePathElements) {
         this.preservePathElements = preservePathElements;
     }
 
-    /**
-     * Set the maximum decompressed size of a tar file (in bytes). The default value if not specified corresponds to 1
-     * gigabyte. An IOException will be thrown if the decompressed size exceeds this amount. Set to -1 to disable
-     * setting a maximum decompressed size.
-     *
-     * @param maxDecompressedSize the maximum decompressed size of a tar file (in bytes)
-     */
     public void setMaxDecompressedSize(String maxDecompressedSize) {
         this.maxDecompressedSize = maxDecompressedSize;
     }

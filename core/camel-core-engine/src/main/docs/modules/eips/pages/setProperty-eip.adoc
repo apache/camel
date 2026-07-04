@@ -1,7 +1,7 @@
 = Set Property EIP
 :doctitle: Set Property
 :shortname: setProperty
-:description: Sets a named property on the message exchange
+:description: Sets an exchange property to a value computed by an expression
 :since: 
 :supportlevel: Stable
 :tabs-sync-option:

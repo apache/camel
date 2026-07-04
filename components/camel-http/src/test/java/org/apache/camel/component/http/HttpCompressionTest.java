@@ -105,6 +105,33 @@ public class HttpCompressionTest extends BaseHttpTest {
         assertBody(out.getBody(String.class));
     }
 
+    @Test
+    public void compressedHttpPostWithAutoDecompressionDisabled() {
+        HttpComponent http = context.getComponent("http", HttpComponent.class);
+        http.setContentCompressionDisabled(true);
+        try {
+            Exchange exchange = template.request(
+                    "http://localhost:" + localServer.getLocalPort() + "/",
+                    exchange1 -> {
+                        exchange1.getIn().setHeader(Exchange.CONTENT_TYPE, "text/plain");
+                        exchange1.getIn().setHeader(Exchange.CONTENT_ENCODING, "gzip");
+                        exchange1.getIn().setBody(getBody());
+                    });
+
+            assertNotNull(exchange);
+
+            Message out = exchange.getMessage();
+            assertNotNull(out);
+
+            Map<String, Object> headers = out.getHeaders();
+            assertEquals(HttpStatus.SC_OK, headers.get(Exchange.HTTP_RESPONSE_CODE));
+
+            assertBody(out.getBody(String.class));
+        } finally {
+            http.setContentCompressionDisabled(false);
+        }
+    }
+
     @Override
     protected HttpProcessor getBasicHttpProcessor() {
         List<HttpRequestInterceptor> requestInterceptors = new ArrayList<>();

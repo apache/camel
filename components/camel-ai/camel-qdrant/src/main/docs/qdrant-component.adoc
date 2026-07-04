@@ -9,7 +9,6 @@
 :component-header: Only producer is supported
 //Manually maintained attributes
 :group: AI
-:camel-spring-boot-name: qdrant
 
 *Since Camel {since}*
 
@@ -148,7 +147,6 @@ from("direct:in")
 ====
 
 
-
 ==== Delete
 
 In the route below, we use the qdrant component to delete points from the collection named `myCollection` according to a criteria:
@@ -169,8 +167,3 @@ from("direct:in")
 ====
 
 
-
-
-
-
-include::spring-boot:partial$starter.adoc[]

@@ -34,6 +34,7 @@ import org.slf4j.LoggerFactory;
  * <p/>
  * NOTE: This is an experimental implementation (use with care)
  */
+@Deprecated(since = "4.21.0")
 @Experimental
 @JdkService(ReactiveExecutor.FACTORY)
 public class VertXReactiveExecutor extends ServiceSupport implements CamelContextAware, ReactiveExecutor, StaticService {

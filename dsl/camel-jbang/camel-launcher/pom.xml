@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-jbang-parent</artifactId>
-        <version>4.21.0-SNAPSHOT</version>
+        <version>4.22.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -48,13 +48,33 @@
         <plexus-xml-version>3.0.1</plexus-xml-version>
         <plexus-sec-dispatcher-version>2.0</plexus-sec-dispatcher-version>
         <plexus-cipher-version>2.1.0</plexus-cipher-version>
-        <eclipse-sisu-version>1.0.0</eclipse-sisu-version>
+        <eclipse-sisu-version>1.0.1</eclipse-sisu-version>
         <javax-inject-version>1</javax-inject-version>
         <httpclient-version>4.5.14</httpclient-version>
         <httpcore-version>4.4.16</httpcore-version>
         <commons-codec-version>1.22.0</commons-codec-version>
         <jcl-over-slf4j-version>${slf4j-version}</jcl-over-slf4j-version>
+        <commonmark-version>0.29.0</commonmark-version>
     </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <!--
+                This launcher bundles both camel-jbang-plugin-generate and camel-jbang-plugin-tui on a
+                single flat classpath. The generate plugin drags in commonmark 0.21.0 (via openapi-generator),
+                while the tui plugin (via tamboui-markdown) needs commonmark 0.28.0 and its renderer.markdown
+                classes that do not exist in 0.21.0. Without this pin Maven mediation keeps the older 0.21.0
+                core next to the 0.28.0 extensions, which makes the TUI markdown help throw NoClassDefFoundError.
+                Pin the core to 0.28.0 so it matches the commonmark-ext-* modules; openapi-generator only uses
+                the stable Parser/HtmlRenderer APIs, which are unchanged in 0.28.0.
+            -->
+            <dependency>
+                <groupId>org.commonmark</groupId>
+                <artifactId>commonmark</artifactId>
+                <version>${commonmark-version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <dependencies>
         <dependency>
@@ -66,7 +86,6 @@
         <!-- Pre-installed plugins -->
         <!-- the edit plugin is not pre-installed -->
         <!-- the route-parser plugin is not pre-installed -->
-        <!-- the citrus test plugin cannot be embedded -->
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-jbang-plugin-generate</artifactId>
@@ -74,7 +93,17 @@
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
+            <artifactId>camel-jbang-plugin-test</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
             <artifactId>camel-jbang-plugin-kubernetes</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-jbang-plugin-mcp</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -234,6 +263,11 @@
             <groupId>org.slf4j</groupId>
             <artifactId>jcl-over-slf4j</artifactId>
             <version>${jcl-over-slf4j-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jolokia</groupId>
+            <artifactId>jolokia-agent-jvm</artifactId>
+            <version>${jolokia-version}</version>
         </dependency>
         <dependency>
             <groupId>org.jolokia</groupId>

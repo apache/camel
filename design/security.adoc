@@ -243,7 +243,7 @@ Key files in the implementation:
   and `security` attributes
 - **Route-level URI scanning**: Detect plain-text secrets embedded in endpoint URIs
   (e.g., `smtp://user:password@host`)
-- **Camel JBang integration**: `camel security-audit` command for offline configuration analysis
+- **Camel CLI integration**: `camel security-audit` command for offline configuration analysis
 - **Custom violation categories**: Allow users to define additional security categories and patterns
 
 === Completed

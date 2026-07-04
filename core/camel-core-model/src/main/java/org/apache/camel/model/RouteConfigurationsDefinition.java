@@ -34,7 +34,7 @@ import org.apache.camel.spi.ResourceAware;
 /**
  * A series of route configurations
  */
-@Metadata(label = "configuration")
+@Metadata(label = "configuration", description = "Container for a collection of route configuration definitions")
 @XmlRootElement(name = "routeConfigurations")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RouteConfigurationsDefinition extends OptionalIdentifiedDefinition<RouteConfigurationsDefinition>
@@ -46,6 +46,7 @@ public class RouteConfigurationsDefinition extends OptionalIdentifiedDefinition<
     private Resource resource;
 
     @XmlElementRef
+    @Metadata(description = "The route configurations.")
     private List<RouteConfigurationDefinition> routeConfigurations = new ArrayList<>();
 
     public RouteConfigurationsDefinition() {

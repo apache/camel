@@ -33,6 +33,7 @@ class SyntaxHighlighter {
         JAVA,
         YAML,
         XML,
+        PROPERTIES,
         PLAIN
     }
 
@@ -64,29 +65,44 @@ class SyntaxHighlighter {
     private static final Pattern XML_ATTR_NAME = Pattern.compile("\\s([\\w:.-]+)=");
     private static final Pattern XML_ENTITY = Pattern.compile("&[^;]+;");
 
+    // Monokai color palette
+    static final Color MONOKAI_COMMENT = Color.rgb(117, 113, 94);
+    static final Color MONOKAI_STRING = Color.rgb(230, 219, 116);
+    static final Color MONOKAI_KEYWORD = Color.rgb(249, 38, 114);
+    static final Color MONOKAI_FUNCTION = Color.rgb(166, 226, 46);
+    static final Color MONOKAI_TYPE = Color.rgb(102, 217, 239);
+    static final Color MONOKAI_CONSTANT = Color.rgb(174, 129, 255);
+    static final Color MONOKAI_TEXT = Color.rgb(248, 248, 242);
+
     // Java styles
-    private static final Style JAVA_COMMENT_STYLE = Style.EMPTY.fg(Color.LIGHT_BLUE);
-    private static final Style JAVA_STRING_STYLE = Style.EMPTY.fg(Color.RED);
-    private static final Style JAVA_ANNOTATION_STYLE = Style.EMPTY.fg(Color.MAGENTA);
-    private static final Style JAVA_MODIFIER_STYLE = Style.EMPTY.fg(Color.CYAN);
-    private static final Style JAVA_KEYWORD_STYLE = Style.EMPTY.fg(Color.RED);
-    private static final Style JAVA_TYPE_STYLE = Style.EMPTY.fg(Color.GREEN);
-    private static final Style JAVA_BOOLEAN_STYLE = Style.EMPTY.fg(Color.YELLOW);
-    private static final Style JAVA_NUMBER_STYLE = Style.EMPTY.fg(Color.YELLOW);
+    private static final Style JAVA_COMMENT_STYLE = Style.EMPTY.fg(MONOKAI_COMMENT);
+    private static final Style JAVA_STRING_STYLE = Style.EMPTY.fg(MONOKAI_STRING);
+    private static final Style JAVA_ANNOTATION_STYLE = Style.EMPTY.fg(MONOKAI_FUNCTION);
+    private static final Style JAVA_MODIFIER_STYLE = Style.EMPTY.fg(MONOKAI_KEYWORD);
+    private static final Style JAVA_KEYWORD_STYLE = Style.EMPTY.fg(MONOKAI_KEYWORD);
+    private static final Style JAVA_TYPE_STYLE = Style.EMPTY.fg(MONOKAI_TYPE);
+    private static final Style JAVA_BOOLEAN_STYLE = Style.EMPTY.fg(MONOKAI_CONSTANT);
+    private static final Style JAVA_NUMBER_STYLE = Style.EMPTY.fg(MONOKAI_CONSTANT);
 
     // YAML styles
-    private static final Style YAML_COMMENT_STYLE = Style.EMPTY.fg(Color.LIGHT_BLUE);
-    private static final Style YAML_KEY_STYLE = Style.EMPTY.fg(Color.RED);
-    private static final Style YAML_VALUE_STYLE = Style.EMPTY.fg(Color.GREEN);
-    private static final Style YAML_SPECIAL_STYLE = Style.EMPTY.fg(Color.YELLOW);
-    private static final Style YAML_SEPARATOR_STYLE = Style.EMPTY.fg(Color.WHITE).bold();
+    private static final Style YAML_COMMENT_STYLE = Style.EMPTY.fg(MONOKAI_COMMENT);
+    private static final Style YAML_KEY_STYLE = Style.EMPTY.fg(MONOKAI_KEYWORD);
+    private static final Style YAML_VALUE_STYLE = Style.EMPTY.fg(MONOKAI_STRING);
+    private static final Style YAML_SPECIAL_STYLE = Style.EMPTY.fg(MONOKAI_CONSTANT);
+    private static final Style YAML_SEPARATOR_STYLE = Style.EMPTY.fg(MONOKAI_TEXT).bold();
 
     // XML styles
-    private static final Style XML_COMMENT_STYLE = Style.EMPTY.fg(Color.YELLOW);
-    private static final Style XML_TAG_STYLE = Style.EMPTY.fg(Color.CYAN);
-    private static final Style XML_ATTR_NAME_STYLE = Style.EMPTY.fg(Color.MAGENTA);
-    private static final Style XML_ATTR_VALUE_STYLE = Style.EMPTY.fg(Color.GREEN);
-    private static final Style XML_ENTITY_STYLE = Style.EMPTY.fg(Color.RED);
+    private static final Style XML_COMMENT_STYLE = Style.EMPTY.fg(MONOKAI_COMMENT);
+    private static final Style XML_TAG_STYLE = Style.EMPTY.fg(MONOKAI_KEYWORD);
+    private static final Style XML_ATTR_NAME_STYLE = Style.EMPTY.fg(MONOKAI_FUNCTION);
+    private static final Style XML_ATTR_VALUE_STYLE = Style.EMPTY.fg(MONOKAI_STRING);
+    private static final Style XML_ENTITY_STYLE = Style.EMPTY.fg(MONOKAI_CONSTANT);
+
+    // Properties styles
+    private static final Style PROPERTIES_COMMENT_STYLE = Style.EMPTY.fg(MONOKAI_COMMENT);
+    private static final Style PROPERTIES_KEY_STYLE = Style.EMPTY.fg(MONOKAI_KEYWORD);
+    private static final Style PROPERTIES_SEPARATOR_STYLE = Style.EMPTY.fg(MONOKAI_TEXT).bold();
+    private static final Style PROPERTIES_VALUE_STYLE = Style.EMPTY.fg(MONOKAI_STRING);
 
     private SyntaxHighlighter() {
     }
@@ -113,6 +129,7 @@ class SyntaxHighlighter {
             case "java" -> Language.JAVA;
             case "yaml", "yml", "camel.yaml", "camel.yml" -> Language.YAML;
             case "xml", "camel.xml" -> Language.XML;
+            case "properties" -> Language.PROPERTIES;
             default -> Language.PLAIN;
         };
     }
@@ -126,6 +143,7 @@ class SyntaxHighlighter {
             case JAVA -> highlightJava(text);
             case YAML -> highlightYaml(text);
             case XML -> highlightXml(text);
+            case PROPERTIES -> highlightProperties(text);
             default -> Line.from(List.of(Span.raw(text)));
         };
     }
@@ -241,6 +259,78 @@ class SyntaxHighlighter {
 
         // Entity references
         applyPattern(charStyles, text, XML_ENTITY, XML_ENTITY_STYLE);
+
+        return buildLine(text, charStyles);
+    }
+
+    private static Line highlightProperties(String text) {
+        int len = text.length();
+        Style[] charStyles = new Style[len];
+
+        // skip leading whitespace (left unstyled, like the indentation)
+        int start = 0;
+        while (start < len && Character.isWhitespace(text.charAt(start))) {
+            start++;
+        }
+
+        // blank line
+        if (start >= len) {
+            return buildLine(text, charStyles);
+        }
+
+        // comment line: starts with # or !
+        char first = text.charAt(start);
+        if (first == '#' || first == '!') {
+            for (int i = start; i < len; i++) {
+                charStyles[i] = PROPERTIES_COMMENT_STYLE;
+            }
+            return buildLine(text, charStyles);
+        }
+
+        // key ends at the first unescaped '=', ':' or whitespace (Properties separators)
+        int keyEnd = -1;
+        for (int i = start; i < len; i++) {
+            char c = text.charAt(i);
+            if (c == '\\') {
+                i++; // skip the escaped character (e.g. \= \: \ )
+                continue;
+            }
+            if (c == '=' || c == ':' || Character.isWhitespace(c)) {
+                keyEnd = i;
+                break;
+            }
+        }
+
+        // key with no separator and no value (e.g. a lone "enabled")
+        if (keyEnd < 0) {
+            for (int i = start; i < len; i++) {
+                charStyles[i] = PROPERTIES_KEY_STYLE;
+            }
+            return buildLine(text, charStyles);
+        }
+
+        // key
+        for (int i = start; i < keyEnd; i++) {
+            charStyles[i] = PROPERTIES_KEY_STYLE;
+        }
+
+        // an explicit '=' or ':' separator may follow optional whitespace
+        int i = keyEnd;
+        while (i < len && Character.isWhitespace(text.charAt(i))) {
+            i++;
+        }
+        if (i < len && (text.charAt(i) == '=' || text.charAt(i) == ':')) {
+            charStyles[i] = PROPERTIES_SEPARATOR_STYLE;
+            i++;
+        }
+
+        // value (leading whitespace skipped, left unstyled)
+        while (i < len && Character.isWhitespace(text.charAt(i))) {
+            i++;
+        }
+        for (; i < len; i++) {
+            charStyles[i] = PROPERTIES_VALUE_STYLE;
+        }
 
         return buildLine(text, charStyles);
     }

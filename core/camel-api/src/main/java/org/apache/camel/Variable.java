@@ -23,8 +23,15 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Marks a parameter as being a variable
+ * Marks a method parameter as a named <a href="https://camel.apache.org/manual/variables.html">variable</a> when Camel
+ * performs <a href="https://camel.apache.org/manual/bean-binding.html">bean binding</a>.
+ * <p/>
+ * Variables are an exchange-scoped store (separate from headers and exchange properties) introduced in Camel 4.4 to
+ * provide a cleaner namespace for application data that should not pollute message headers. The {@link #value()}
+ * attribute names the variable to inject; the value is converted to the declared parameter type via the
+ * {@link TypeConverter} infrastructure.
  *
+ * @see   Variables
  * @see   Exchange#getVariable(String)
  * @since 4.4
  */

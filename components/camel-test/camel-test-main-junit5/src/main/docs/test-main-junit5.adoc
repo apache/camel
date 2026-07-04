@@ -704,6 +704,7 @@ In the next example,
 the property `some-property` is set to `foo` for all the tests in `SomeTest` including the tests in `SomeNestedTest`.
 Additionally, the property `some-other-property` is set to `bar` but only for all the tests in `SomeNestedTest`.
 
+._Java-only: annotation-based nested test configuration_
 [source,java]
 ----
 @CamelMainTest(properties = { "some-property=foo" })
@@ -727,6 +728,7 @@ but also the tests in the `@Nested` test class `SomeOtherNestedTest` as it is no
 `SomeOtherMainClass` is used as the main class for all the tests directly inside `SomeNestedTest`,
 but also the tests in the `@Nested` test class `SomeDeeplyNestedTest` as it is not redefined.
 
+._Java-only: annotation-based nested test class hierarchy_
 [source,java]
 ----
 @CamelMainTest(mainClass = SomeMainClass.class)

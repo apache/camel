@@ -97,7 +97,7 @@ class CatalogToolsTest {
         CatalogTools tools = createTools("https://maven.repository.redhat.com/ga/");
 
         CatalogTools.ComponentDetailResult result
-                = tools.camel_catalog_component_doc("timer", null, null, null, null, null);
+                = tools.camel_catalog_component_doc("timer", null, null, null, null, null, null);
 
         assertThat(result).isNotNull();
         assertThat(result.name()).isEqualTo("timer");
@@ -108,9 +108,9 @@ class CatalogToolsTest {
         CatalogTools tools = createTools(null);
 
         CatalogTools.ComponentDetailResult defaultResult
-                = tools.camel_catalog_component_doc("kafka", null, null, null, null, null);
+                = tools.camel_catalog_component_doc("kafka", null, null, null, null, null, null);
         CatalogTools.ComponentDetailResult allResult
-                = tools.camel_catalog_component_doc("kafka", null, "all", null, null, null);
+                = tools.camel_catalog_component_doc("kafka", null, "all", null, null, null, null);
 
         assertThat(defaultResult.endpointOptions()).isNotEmpty();
         assertThat(allResult.endpointOptions()).isNotEmpty();
@@ -130,7 +130,7 @@ class CatalogToolsTest {
         CatalogTools tools = createTools(null);
 
         CatalogTools.ComponentDetailResult result
-                = tools.camel_catalog_component_doc("kafka", null, "required", null, null, null);
+                = tools.camel_catalog_component_doc("kafka", null, "required", null, null, null, null);
 
         assertThat(result.endpointOptions()).allMatch(CatalogTools.OptionInfo::required);
     }
@@ -140,7 +140,7 @@ class CatalogToolsTest {
         CatalogTools tools = createTools(null);
 
         CatalogTools.ComponentDetailResult result
-                = tools.camel_catalog_component_doc("kafka", "topic", "all", null, null, null);
+                = tools.camel_catalog_component_doc("kafka", "topic", "all", null, null, null, null);
 
         assertThat(result.endpointOptions()).isNotEmpty();
         assertThat(result.endpointOptions())
@@ -151,9 +151,41 @@ class CatalogToolsTest {
     void componentDocInvalidIncludeOptionsThrows() {
         CatalogTools tools = createTools(null);
 
-        assertThatThrownBy(() -> tools.camel_catalog_component_doc("timer", null, "bogus", null, null, null))
+        assertThatThrownBy(() -> tools.camel_catalog_component_doc("timer", null, "bogus", null, null, null, null))
                 .isInstanceOf(ToolCallException.class)
                 .hasMessageContaining("Invalid includeOptions");
+    }
+
+    @Test
+    void componentDocDefaultExcludesHeaders() {
+        CatalogTools tools = createTools(null);
+
+        CatalogTools.ComponentDetailResult result
+                = tools.camel_catalog_component_doc("kafka", null, null, null, null, null, null);
+
+        assertThat(result.headers()).isEmpty();
+    }
+
+    @Test
+    void componentDocIncludeHeadersReturnsHeaders() {
+        CatalogTools tools = createTools(null);
+
+        CatalogTools.ComponentDetailResult result
+                = tools.camel_catalog_component_doc("kafka", null, null, true, null, null, null);
+
+        assertThat(result.headers()).isNotEmpty();
+        assertThat(result.headers())
+                .anyMatch(h -> "CamelKafkaKey".equals(h.name()) && h.constantName() != null);
+    }
+
+    @Test
+    void componentDocIncludeHeadersFalseExcludesHeaders() {
+        CatalogTools tools = createTools(null);
+
+        CatalogTools.ComponentDetailResult result
+                = tools.camel_catalog_component_doc("kafka", null, null, false, null, null, null);
+
+        assertThat(result.headers()).isEmpty();
     }
 
     @Test

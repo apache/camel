@@ -670,7 +670,8 @@ public class PrepareDocSymlinksMojo extends AbstractMojo {
         DocGroup languages = new DocGroup("languages");
         languages.asciidoc = new KindSpec(
                 List.of("components/{*,*/*}/src/main/docs/*-language.adoc",
-                        "core/camel-core-languages/src/main/docs/modules/languages/pages/*-language.adoc"),
+                        "core/camel-core-languages/src/main/docs/modules/languages/pages/*-language.adoc",
+                        "core/camel-core-languages/src/main/docs/modules/languages/pages/simple-*.adoc"),
                 null, "docs/components/modules/languages/pages", null, null, null);
         languages.json = new KindSpec(
                 List.of("components/{*,*/*,*/*/*}/src/generated/resources/META-INF/org/apache/camel/*/{,**/}*.json",
@@ -704,7 +705,8 @@ public class PrepareDocSymlinksMojo extends AbstractMojo {
         eips.asciidoc = new KindSpec(
                 Collections.emptyList(), null,
                 "core/camel-core-engine/src/main/docs/modules/eips/pages", null, null,
-                path -> !path.endsWith("enterprise-integration-patterns.adoc"));
+                path -> !path.endsWith("enterprise-integration-patterns.adoc")
+                        && !path.endsWith("ai-patterns.adoc"));
         eips.json = new KindSpec(
                 List.of("core/camel-core-model/src/generated/resources/META-INF/org/apache/camel/model/{,**/}*.json"),
                 null, "core/camel-core-engine/src/main/docs/modules/eips/examples/json", null, "eip", null);

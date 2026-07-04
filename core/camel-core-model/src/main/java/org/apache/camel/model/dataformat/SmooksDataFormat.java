@@ -29,13 +29,14 @@ import org.apache.camel.spi.Metadata;
 /**
  * Transform and bind XML as well as non-XML data, including EDI, CSV, JSON, and YAML using Smooks.
  */
-@Metadata(firstVersion = "4.9.0", label = "dataformat,transformation", title = "Smooks")
+@Metadata(firstVersion = "4.9.0", label = "dataformat,transformation", title = "Smooks",
+          description = "Transform and bind XML as well as non-XML data, including EDI, CSV, JSON, and YAML using Smooks")
 @XmlRootElement(name = "smooks")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class SmooksDataFormat extends DataFormatDefinition {
 
     @XmlAttribute
-    @Metadata(required = true)
+    @Metadata(required = true, description = "Path to the Smooks configuration file.")
     private String smooksConfig;
 
     public SmooksDataFormat() {
@@ -57,9 +58,6 @@ public class SmooksDataFormat extends DataFormatDefinition {
         return new SmooksDataFormat(this);
     }
 
-    /**
-     * Path to the Smooks configuration file.
-     */
     public void setSmooksConfig(String smooksConfig) {
         this.smooksConfig = smooksConfig;
     }

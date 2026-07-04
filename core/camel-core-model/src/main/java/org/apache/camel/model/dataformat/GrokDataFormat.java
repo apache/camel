@@ -29,22 +29,26 @@ import org.apache.camel.spi.Metadata;
 /**
  * Unmarshal unstructured data to objects using Logstash based Grok patterns.
  */
-@Metadata(label = "dataformat,transformation", title = "Grok", firstVersion = "3.0.0")
+@Metadata(label = "dataformat,transformation", title = "Grok", firstVersion = "3.0.0",
+          description = "Unmarshal unstructured data to objects using Logstash based Grok patterns")
 @XmlRootElement(name = "grok")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class GrokDataFormat extends DataFormatDefinition {
 
     @XmlAttribute(required = true)
-    @Metadata
+    @Metadata(description = "The grok pattern to match lines of input.")
     private String pattern;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(description = "Whether to use flattened mode. In flattened mode an exception is thrown when there are multiple pattern matches with the same key.",
+              javaType = "java.lang.Boolean")
     private String flattened;
     @XmlAttribute
-    @Metadata(defaultValue = "true", javaType = "java.lang.Boolean")
+    @Metadata(description = "Whether to allow multiple matches per line. If false, every line of input is matched for the pattern only once. Otherwise the line can be scanned multiple times when a non-terminal pattern is used.",
+              defaultValue = "true", javaType = "java.lang.Boolean")
     private String allowMultipleMatchesPerLine;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(description = "Whether to capture named expressions only or not (i.e. %{IP:ip} but not ${IP}).",
+              javaType = "java.lang.Boolean")
     private String namedOnly;
 
     public GrokDataFormat() {
@@ -76,9 +80,6 @@ public class GrokDataFormat extends DataFormatDefinition {
         return pattern;
     }
 
-    /**
-     * The grok pattern to match lines of input
-     */
     public void setPattern(String pattern) {
         this.pattern = pattern;
     }
@@ -87,10 +88,6 @@ public class GrokDataFormat extends DataFormatDefinition {
         return flattened;
     }
 
-    /**
-     * Turns on flattened mode. In flattened mode the exception is thrown when there are multiple pattern matches with
-     * same key.
-     */
     public void setFlattened(String flattened) {
         this.flattened = flattened;
     }
@@ -99,10 +96,6 @@ public class GrokDataFormat extends DataFormatDefinition {
         return allowMultipleMatchesPerLine;
     }
 
-    /**
-     * If false, every line of input is matched for pattern only once. Otherwise the line can be scanned multiple times
-     * when non-terminal pattern is used.
-     */
     public void setAllowMultipleMatchesPerLine(String allowMultipleMatchesPerLine) {
         this.allowMultipleMatchesPerLine = allowMultipleMatchesPerLine;
     }
@@ -111,9 +104,6 @@ public class GrokDataFormat extends DataFormatDefinition {
         return namedOnly;
     }
 
-    /**
-     * Whether to capture named expressions only or not (i.e. %{IP:ip} but not ${IP})
-     */
     public void setNamedOnly(String namedOnly) {
         this.namedOnly = namedOnly;
     }

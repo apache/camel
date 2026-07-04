@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
@@ -41,7 +42,7 @@ import org.apache.camel.util.json.Jsoner;
 /**
  * Shared LLM HTTP client supporting Ollama, OpenAI-compatible, and Anthropic (including Vertex AI) APIs.
  */
-class LlmClient {
+public class LlmClient {
 
     private static final String DEFAULT_OLLAMA_URL = "http://localhost:11434";
     private static final String DEFAULT_ANTHROPIC_URL = "https://api.anthropic.com";
@@ -51,7 +52,13 @@ class LlmClient {
     private static final int CONNECT_TIMEOUT_SECONDS = 10;
     private static final int HEALTH_CHECK_TIMEOUT_SECONDS = 5;
 
-    enum ApiType {
+    // Pre-4.6 Claude models require a @date suffix on Vertex AI
+    private static final Map<String, String> VERTEX_MODEL_MAP = Map.of(
+            "claude-sonnet-4-5", "claude-sonnet-4-5@20250929",
+            "claude-opus-4-5", "claude-opus-4-5@20251101",
+            "claude-haiku-4-5", "claude-haiku-4-5@20251001");
+
+    public enum ApiType {
         ollama,
         openai,
         anthropic
@@ -59,31 +66,54 @@ class LlmClient {
 
     // -- Unified abstractions for tool-calling across API formats --
 
-    record ToolDef(String name, String description, JsonObject parameters) {
+    public record ToolDef(String name, String description, JsonObject parameters) {
     }
 
-    record ToolCall(String id, String name, JsonObject arguments) {
+    public record ToolCall(String id, String name, JsonObject arguments) {
     }
 
-    record ToolResult(String toolCallId, String content) {
+    public record ToolResult(String toolCallId, String content) {
     }
 
-    record Message(String role, String content, List<ToolCall> toolCalls, List<ToolResult> toolResults) {
+    public record Message(String role, String content, List<ToolCall> toolCalls, List<ToolResult> toolResults) {
 
-        static Message user(String text) {
+        public static Message user(String text) {
             return new Message("user", text, null, null);
         }
 
-        static Message assistantWithToolCalls(String text, List<ToolCall> calls) {
+        public static Message assistantWithToolCalls(String text, List<ToolCall> calls) {
             return new Message("assistant", text, calls, null);
         }
 
-        static Message toolResults(List<ToolResult> results) {
+        public static Message toolResults(List<ToolResult> results) {
             return new Message("tool", null, null, results);
         }
     }
 
-    record ChatResponse(String text, List<ToolCall> toolCalls, String stopReason, boolean streamed) {
+    public record TokenUsage(int inputTokens, int outputTokens, int totalTokens) {
+        public static final TokenUsage EMPTY = new TokenUsage(0, 0, 0);
+
+        public TokenUsage add(TokenUsage other) {
+            return new TokenUsage(
+                    inputTokens + other.inputTokens,
+                    outputTokens + other.outputTokens,
+                    totalTokens + other.totalTokens);
+        }
+    }
+
+    public record ChatResponse(String text, List<ToolCall> toolCalls, String stopReason, boolean streamed,
+            TokenUsage usage) {
+    }
+
+    public static String formatTokens(int tokens) {
+        if (tokens >= 1000) {
+            double k = tokens / 1000.0;
+            if (k == (int) k) {
+                return (int) k + "k";
+            }
+            return String.format(java.util.Locale.ROOT, "%.1fk", k);
+        }
+        return String.valueOf(tokens);
     }
 
     // -- Configuration --
@@ -97,7 +127,23 @@ class LlmClient {
     boolean stream;
     int maxTokens;
     boolean verbose;
-    Printer printer;
+    Printer printer = new Printer() {
+        @Override
+        public void println() {
+        }
+
+        @Override
+        public void println(String line) {
+        }
+
+        @Override
+        public void print(String output) {
+        }
+
+        @Override
+        public void printf(String format, Object... args) {
+        }
+    };
 
     private final HttpClient httpClient = HttpClient.newBuilder()
             .connectTimeout(Duration.ofSeconds(CONNECT_TIMEOUT_SECONDS))
@@ -107,65 +153,73 @@ class LlmClient {
     private String vertexRegion;
     private String vertexProjectId;
 
+    public String model() {
+        return model;
+    }
+
+    public ApiType apiType() {
+        return apiType;
+    }
+
     // -- Builder --
 
-    static LlmClient create() {
+    public static LlmClient create() {
         return new LlmClient();
     }
 
-    LlmClient withApiType(ApiType apiType) {
+    public LlmClient withApiType(ApiType apiType) {
         this.apiType = apiType;
         return this;
     }
 
-    LlmClient withUrl(String url) {
+    public LlmClient withUrl(String url) {
         this.url = url;
         return this;
     }
 
-    LlmClient withApiKey(String apiKey) {
+    public LlmClient withApiKey(String apiKey) {
         this.apiKey = apiKey;
         return this;
     }
 
-    LlmClient withModel(String model) {
+    public LlmClient withModel(String model) {
         this.model = model;
         return this;
     }
 
-    LlmClient withTimeout(int timeout) {
+    public LlmClient withTimeout(int timeout) {
         this.timeout = timeout;
         return this;
     }
 
-    LlmClient withTemperature(double temperature) {
+    public LlmClient withTemperature(double temperature) {
         this.temperature = temperature;
         return this;
     }
 
-    LlmClient withStream(boolean stream) {
+    public LlmClient withStream(boolean stream) {
         this.stream = stream;
         return this;
     }
 
-    LlmClient withMaxTokens(int maxTokens) {
+    public LlmClient withMaxTokens(int maxTokens) {
         this.maxTokens = maxTokens;
         return this;
     }
 
-    LlmClient withVerbose(boolean verbose) {
+    public LlmClient withVerbose(boolean verbose) {
         this.verbose = verbose;
         return this;
     }
 
-    LlmClient withPrinter(Printer printer) {
+    public LlmClient withPrinter(Printer printer) {
         this.printer = printer;
         return this;
     }
 
     // -- Auto-detection --
 
-    boolean detectEndpoint() {
+    public boolean detectEndpoint() {
         boolean found;
         if (tryExplicitUrl()) {
             found = true;
@@ -225,7 +279,7 @@ class LlmClient {
 
     // -- Chat with tools (for ask) --
 
-    ChatResponse chatWithTools(String systemPrompt, List<Message> messages, List<ToolDef> tools) {
+    public ChatResponse chatWithTools(String systemPrompt, List<Message> messages, List<ToolDef> tools) {
         return switch (apiType) {
             case ollama -> chatOllamaFormat(systemPrompt, messages, tools);
             case openai -> chatOpenAiFormat(systemPrompt, messages, tools);
@@ -363,13 +417,15 @@ class LlmClient {
                     builder.build(), HttpResponse.BodyHandlers.ofLines());
 
             if (response.statusCode() != 200) {
-                handleErrorStatus(response.statusCode(), "Streaming request failed");
-                return new ChatResponse(null, List.of(), "error", false);
+                String errorBody = response.body().collect(Collectors.joining("\n"));
+                handleErrorStatus(response.statusCode(), errorBody);
+                return new ChatResponse(null, List.of(), "error", false, TokenUsage.EMPTY);
             }
 
             StringBuilder fullText = new StringBuilder();
             List<ToolCall> toolCalls = new ArrayList<>();
             String[] doneReasonHolder = { null };
+            int[] tokenHolder = { 0, 0 };
 
             response.body().forEach(line -> {
                 if (line.isBlank()) {
@@ -419,6 +475,8 @@ class LlmClient {
 
                     if (Boolean.TRUE.equals(chunk.get("done"))) {
                         doneReasonHolder[0] = chunk.getString("done_reason");
+                        tokenHolder[0] = getIntValue(chunk, "prompt_eval_count");
+                        tokenHolder[1] = getIntValue(chunk, "eval_count");
                     }
                 } catch (Exception e) {
                     // skip malformed chunks
@@ -433,17 +491,19 @@ class LlmClient {
             String stopReason
                     = !toolCalls.isEmpty() ? "tool_calls" : (doneReasonHolder[0] != null ? doneReasonHolder[0] : "stop");
 
+            TokenUsage usage = new TokenUsage(tokenHolder[0], tokenHolder[1], tokenHolder[0] + tokenHolder[1]);
             if (verbose) {
                 printer.println("[verbose] Streamed Ollama: text=" + (text != null ? truncateVerbose(text) : "null")
-                                + ", toolCalls=" + toolCalls.size() + ", doneReason=" + doneReasonHolder[0]);
+                                + ", toolCalls=" + toolCalls.size() + ", doneReason=" + doneReasonHolder[0]
+                                + ", tokens=" + usage.totalTokens());
             }
-            return new ChatResponse(text, toolCalls, stopReason, true);
+            return new ChatResponse(text, toolCalls, stopReason, true, usage);
         } catch (HttpTimeoutException e) {
             printer.println("\nRequest timed out after " + timeout + " seconds.");
-            return new ChatResponse(null, List.of(), "error", false);
+            return new ChatResponse(null, List.of(), "error", false, TokenUsage.EMPTY);
         } catch (Exception e) {
             printer.println("\nError during streaming: " + e.getMessage());
-            return new ChatResponse(null, List.of(), "error", false);
+            return new ChatResponse(null, List.of(), "error", false, TokenUsage.EMPTY);
         }
     }
 
@@ -609,9 +669,10 @@ class LlmClient {
 
     private String resolveAnthropicUrl() {
         if (isVertexAi()) {
+            String vertexModel = resolveVertexModel(model);
             return String.format(
                     "https://%s-aiplatform.googleapis.com/v1/projects/%s/locations/%s/publishers/anthropic/models/%s:rawPredict",
-                    vertexRegion, vertexProjectId, vertexRegion, model);
+                    vertexRegion, vertexProjectId, vertexRegion, vertexModel);
         }
         String base = url != null ? url : DEFAULT_ANTHROPIC_URL;
         if (base.endsWith("/")) {
@@ -642,6 +703,13 @@ class LlmClient {
         return vertexRegion != null && vertexProjectId != null;
     }
 
+    static String resolveVertexModel(String model) {
+        if (model == null || model.contains("@")) {
+            return model;
+        }
+        return VERTEX_MODEL_MAP.getOrDefault(model, model);
+    }
+
     private String getGcloudAccessToken() {
         try {
             ProcessBuilder pb = new ProcessBuilder("gcloud", "auth", "print-access-token");
@@ -667,20 +735,21 @@ class LlmClient {
             if (verbose) {
                 printer.println("[verbose] parseOpenAiChatResponse: response is null");
             }
-            return new ChatResponse(null, List.of(), "error", false);
+            return new ChatResponse(null, List.of(), "error", false, TokenUsage.EMPTY);
         }
+        TokenUsage usage = extractOpenAiUsage(response);
         JsonArray choices = (JsonArray) response.get("choices");
         if (choices == null || choices.isEmpty()) {
             if (verbose) {
                 printer.println("[verbose] parseOpenAiChatResponse: no choices in response. Keys: " + response.keySet());
             }
-            return new ChatResponse(null, List.of(), "error", false);
+            return new ChatResponse(null, List.of(), "error", false, usage);
         }
         JsonObject firstChoice = (JsonObject) choices.get(0);
         String finishReason = firstChoice.getString("finish_reason");
         JsonObject message = (JsonObject) firstChoice.get("message");
         if (message == null) {
-            return new ChatResponse(null, List.of(), finishReason, false);
+            return new ChatResponse(null, List.of(), finishReason, false, usage);
         }
 
         String content = message.getString("content");
@@ -714,7 +783,7 @@ class LlmClient {
             printer.println("[verbose] Parsed: text=" + (content != null ? truncateVerbose(content) : "null")
                             + ", toolCalls=" + toolCalls.size() + ", finishReason=" + finishReason);
         }
-        return new ChatResponse(content, toolCalls, finishReason, false);
+        return new ChatResponse(content, toolCalls, finishReason, false, usage);
     }
 
     private ChatResponse parseOllamaChatResponse(JsonObject response) {
@@ -722,14 +791,14 @@ class LlmClient {
             if (verbose) {
                 printer.println("[verbose] parseOllamaChatResponse: response is null");
             }
-            return new ChatResponse(null, List.of(), "error", false);
+            return new ChatResponse(null, List.of(), "error", false, TokenUsage.EMPTY);
         }
         JsonObject message = (JsonObject) response.get("message");
         if (message == null) {
             if (verbose) {
                 printer.println("[verbose] parseOllamaChatResponse: no message in response. Keys: " + response.keySet());
             }
-            return new ChatResponse(null, List.of(), "error", false);
+            return new ChatResponse(null, List.of(), "error", false, TokenUsage.EMPTY);
         }
 
         String content = message.getString("content");
@@ -764,21 +833,27 @@ class LlmClient {
 
         String stopReason = !toolCalls.isEmpty() ? "tool_calls" : (doneReason != null ? doneReason : "stop");
 
+        int inputTokens = getIntValue(response, "prompt_eval_count");
+        int outputTokens = getIntValue(response, "eval_count");
+        TokenUsage usage = new TokenUsage(inputTokens, outputTokens, inputTokens + outputTokens);
+
         if (verbose) {
             printer.println("[verbose] Parsed Ollama: text=" + (content != null ? truncateVerbose(content) : "null")
-                            + ", toolCalls=" + toolCalls.size() + ", doneReason=" + doneReason);
+                            + ", toolCalls=" + toolCalls.size() + ", doneReason=" + doneReason
+                            + ", tokens=" + usage.totalTokens());
         }
-        return new ChatResponse(content, toolCalls, stopReason, false);
+        return new ChatResponse(content, toolCalls, stopReason, false, usage);
     }
 
     private ChatResponse parseAnthropicChatResponse(JsonObject response) {
         if (response == null) {
-            return new ChatResponse(null, List.of(), "error", false);
+            return new ChatResponse(null, List.of(), "error", false, TokenUsage.EMPTY);
         }
         String stopReason = response.getString("stop_reason");
+        TokenUsage usage = extractAnthropicUsage(response);
         JsonArray contentBlocks = (JsonArray) response.get("content");
         if (contentBlocks == null) {
-            return new ChatResponse(null, List.of(), stopReason, false);
+            return new ChatResponse(null, List.of(), stopReason, false, usage);
         }
 
         StringBuilder text = new StringBuilder();
@@ -796,7 +871,41 @@ class LlmClient {
             }
         }
         String textContent = text.length() > 0 ? text.toString() : null;
-        return new ChatResponse(textContent, toolCalls, stopReason, false);
+        return new ChatResponse(textContent, toolCalls, stopReason, false, usage);
+    }
+
+    // ---- Token usage extraction ----
+
+    private TokenUsage extractOpenAiUsage(JsonObject response) {
+        JsonObject usage = (JsonObject) response.get("usage");
+        if (usage == null) {
+            return TokenUsage.EMPTY;
+        }
+        int prompt = getIntValue(usage, "prompt_tokens");
+        int completion = getIntValue(usage, "completion_tokens");
+        int total = getIntValue(usage, "total_tokens");
+        if (total == 0) {
+            total = prompt + completion;
+        }
+        return new TokenUsage(prompt, completion, total);
+    }
+
+    private TokenUsage extractAnthropicUsage(JsonObject response) {
+        JsonObject usage = (JsonObject) response.get("usage");
+        if (usage == null) {
+            return TokenUsage.EMPTY;
+        }
+        int input = getIntValue(usage, "input_tokens");
+        int output = getIntValue(usage, "output_tokens");
+        return new TokenUsage(input, output, input + output);
+    }
+
+    private static int getIntValue(JsonObject obj, String key) {
+        Object val = obj.get(key);
+        if (val instanceof Number n) {
+            return n.intValue();
+        }
+        return 0;
     }
 
     private String extractOpenAiContent(JsonObject response) {
@@ -925,7 +1034,8 @@ class LlmClient {
                     builder.build(), HttpResponse.BodyHandlers.ofLines());
 
             if (response.statusCode() != 200) {
-                handleErrorStatus(response.statusCode(), "Streaming request failed");
+                String errorBody = response.body().collect(Collectors.joining("\n"));
+                handleErrorStatus(response.statusCode(), errorBody);
                 return null;
             }
 
@@ -972,7 +1082,8 @@ class LlmClient {
                     builder.build(), HttpResponse.BodyHandlers.ofLines());
 
             if (response.statusCode() != 200) {
-                handleErrorStatus(response.statusCode(), "Streaming request failed");
+                String errorBody = response.body().collect(Collectors.joining("\n"));
+                handleErrorStatus(response.statusCode(), errorBody);
                 return null;
             }
 
@@ -1211,13 +1322,46 @@ class LlmClient {
         printer.println("LLM returned status: " + statusCode);
         switch (statusCode) {
             case 401 -> printer.println("Authentication failed. Check your API key.");
+            case 404 -> {
+                if (isVertexAi()) {
+                    printer.println("Model not found. Check that the model identifier is valid for Vertex AI.");
+                } else {
+                    printer.println("Endpoint not found.");
+                }
+            }
             case 429 -> printer.println("Rate limit exceeded.");
             default -> {
             }
         }
         if (body != null && !body.isBlank()) {
-            printer.println(body);
+            String errorMessage = extractErrorMessage(body);
+            if (errorMessage != null) {
+                printer.println(errorMessage);
+            }
         }
+    }
+
+    static String extractErrorMessage(String body) {
+        String trimmed = body.strip();
+        if (trimmed.startsWith("{")) {
+            try {
+                JsonObject json = (JsonObject) Jsoner.deserialize(trimmed);
+                Object error = json.get("error");
+                if (error instanceof JsonObject) {
+                    String message = ((JsonObject) error).getString("message");
+                    if (message != null && !message.isBlank()) {
+                        return message;
+                    }
+                } else if (error instanceof String && !((String) error).isBlank()) {
+                    return (String) error;
+                }
+                return trimmed;
+            } catch (Exception e) {
+                return trimmed;
+            }
+        }
+        // Non-JSON response (e.g., HTML error page) — don't dump it
+        return null;
     }
 
     // ---- OpenAI message helpers ----

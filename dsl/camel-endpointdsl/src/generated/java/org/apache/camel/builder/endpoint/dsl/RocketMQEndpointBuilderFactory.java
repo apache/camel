@@ -967,7 +967,7 @@ public interface RocketMQEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final RocketMQHeaderNameBuilder INSTANCE = new RocketMQHeaderNameBuilder();
+        public static final RocketMQHeaderNameBuilder INSTANCE = new RocketMQHeaderNameBuilder();
 
         /**
          * Topic of message.

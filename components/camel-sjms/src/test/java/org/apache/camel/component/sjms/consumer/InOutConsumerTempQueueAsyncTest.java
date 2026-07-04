@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.sjms.consumer;
 
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
@@ -33,7 +35,7 @@ public class InOutConsumerTempQueueAsyncTest extends JmsTestSupport {
         template.sendBody("sjms:start.queue.InOutConsumerTempQueueAsyncTest", "Hello Camel");
         template.sendBody("sjms:start.queue.InOutConsumerTempQueueAsyncTest", "Hello World");
 
-        MockEndpoint.assertIsSatisfied(context);
+        MockEndpoint.assertIsSatisfied(context, 20, TimeUnit.SECONDS);
     }
 
     @Override

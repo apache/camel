@@ -2,12 +2,10 @@
 :doctitle: SpEL
 :shortname: spel
 :artifactid: camel-spring
-:description: Evaluates a Spring expression (SpEL).
+:description: Evaluates a Spring expression (SpEL)
 :since: 2.7
 :supportlevel: Stable
 :tabs-sync-option:
-//Manually maintained attributes
-:camel-spring-boot-name: spring
 
 *Since Camel {since}*
 
@@ -55,6 +53,19 @@ You can use SpEL as an expression for xref:eips:recipientList-eip.adoc[Recipient
 List] or as a predicate inside a xref:eips:filter-eip.adoc[Message
 Filter]:
 
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:foo")
+    .filter().spel("#{request.headers.foo == 'bar'}")
+    .to("direct:bar");
+----
+
+XML::
++
 [source,xml]
 ----
 <route>
@@ -66,14 +77,23 @@ Filter]:
 </route>
 ----
 
-And the equivalent in Java DSL:
-
-[source,java]
+YAML::
++
+[source,yaml]
 ----
-from("direct:foo")
-    .filter().spel("#{request.headers.foo == 'bar'}")
-    .to("direct:bar");
+- route:
+    from:
+      uri: direct:foo
+      steps:
+        - filter:
+            expression:
+              spel:
+                expression: "#{request.headers.foo == 'bar'}"
+            steps:
+              - to:
+                  uri: direct:bar
 ----
+====
 
 === Expression templating
 
@@ -84,6 +104,7 @@ template language.
 
 For example, if you construct the following route:
 
+._Java-only: static method import for spel expression_
 [source,java]
 ----
 from("direct:example")
@@ -97,6 +118,7 @@ use `spel` as an Expression passed in as a parameter
 to the `setBody` method.
 Though if we use the fluent API, we can do this instead:
 
+._Java-only: fluent API for spel expression_
 [source,java]
 ----
 from("direct:example")
@@ -110,6 +132,7 @@ this does not require us to statically import the `spel` method.
 Then we send a message with the string "World" in the body, and a header
 `dayOrNight` with value `day`:
 
+._Java-only: ProducerTemplate usage_
 [source,java]
 ----
 template.sendBodyAndHeader("direct:example", "World", "dayOrNight", "day");
@@ -138,11 +161,8 @@ such as `"classpath:"`, `"file:"`, or `"http:"`.
 This is done using the following syntax: `"resource:scheme:location"`,
 e.g., to refer to a file on the classpath you can do:
 
+._Java-only: fluent API for loading SpEL from resource_
 [source,java]
 ----
 .setHeader("myHeader").spel("resource:classpath:myspel.txt")
 ----
-
-
-
-include::spring-boot:partial$starter.adoc[]

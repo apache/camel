@@ -29,32 +29,38 @@ import org.apache.camel.spi.Metadata;
 /**
  * Encrypt and decrypt messages using Post-Quantum Cryptography Key Encapsulation Mechanisms (KEM).
  */
-@Metadata(firstVersion = "4.16.0", label = "dataformat,transformation,security", title = "PQC (Post-Quantum Cryptography)")
+@Metadata(firstVersion = "4.16.0", label = "dataformat,transformation,security", title = "PQC (Post-Quantum Cryptography)",
+          description = "Encrypt and decrypt messages using Post-Quantum Cryptography Key Encapsulation Mechanisms (KEM)")
 @XmlRootElement(name = "pqc")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class PQCDataFormat extends DataFormatDefinition {
 
     @XmlAttribute
-    @Metadata(defaultValue = "MLKEM", enums = "MLKEM,BIKE,HQC,CMCE,SABER,FRODO,NTRU,NTRULPRime,SNTRUPrime,KYBER")
+    @Metadata(defaultValue = "MLKEM", enums = "MLKEM,BIKE,HQC,CMCE,SABER,FRODO,NTRU,NTRULPRime,SNTRUPrime,KYBER",
+              description = "The Post-Quantum KEM algorithm to use for key encapsulation.")
     private String keyEncapsulationAlgorithm;
     @XmlAttribute
     @Metadata(defaultValue = "AES",
-              enums = "AES,ARIA,RC2,RC5,CAMELLIA,CAST5,CAST6,CHACHA7539,DSTU7624,GOST28147,GOST3412_2015,GRAIN128,HC128,HC256,SALSA20,SEED,SM4,DESEDE")
+              enums = "AES,ARIA,CAMELLIA,CAST6,DSTU7624,GOST3412_2015,SEED,SM4,CHACHA7539",
+              description = "The symmetric encryption algorithm to use with the shared secret. Only algorithms that support"
+                            + " authenticated encryption (AEAD) are allowed: AES, ARIA, CAMELLIA, CAST6, DSTU7624, GOST3412_2015,"
+                            + " SEED and SM4 are encrypted with GCM, and CHACHA7539 with ChaCha20-Poly1305.")
     private String symmetricKeyAlgorithm;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Integer", defaultValue = "128")
+    @Metadata(javaType = "java.lang.Integer", defaultValue = "128",
+              description = "The length (in bits) of the symmetric key.")
     private String symmetricKeyLength;
     @XmlAttribute
-    @Metadata(javaType = "java.security.KeyPair")
+    @Metadata(javaType = "java.security.KeyPair",
+              description = "Refers to the KeyPair to lookup from the registry to use for KEM operations.")
     private String keyPair;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Integer", defaultValue = "4096")
-    private String bufferSize;
-    @XmlAttribute
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced",
+              description = "The JCE security provider to use.")
     private String provider;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "javax.crypto.KeyGenerator")
+    @Metadata(label = "advanced", javaType = "javax.crypto.KeyGenerator",
+              description = "Refers to a custom KeyGenerator to lookup from the registry for KEM operations.")
     private String keyGenerator;
 
     public PQCDataFormat() {
@@ -67,7 +73,6 @@ public class PQCDataFormat extends DataFormatDefinition {
         this.symmetricKeyAlgorithm = source.symmetricKeyAlgorithm;
         this.symmetricKeyLength = source.symmetricKeyLength;
         this.keyPair = source.keyPair;
-        this.bufferSize = source.bufferSize;
         this.provider = source.provider;
         this.keyGenerator = source.keyGenerator;
     }
@@ -78,7 +83,6 @@ public class PQCDataFormat extends DataFormatDefinition {
         this.symmetricKeyAlgorithm = builder.symmetricKeyAlgorithm;
         this.symmetricKeyLength = builder.symmetricKeyLength;
         this.keyPair = builder.keyPair;
-        this.bufferSize = builder.bufferSize;
         this.provider = builder.provider;
         this.keyGenerator = builder.keyGenerator;
     }
@@ -92,10 +96,6 @@ public class PQCDataFormat extends DataFormatDefinition {
         return keyEncapsulationAlgorithm;
     }
 
-    /**
-     * The Post-Quantum KEM algorithm to use for key encapsulation. Supported values: MLKEM, BIKE, HQC, CMCE, SABER,
-     * FRODO, NTRU, NTRULPRime, SNTRUPrime, KYBER
-     */
     public void setKeyEncapsulationAlgorithm(String keyEncapsulationAlgorithm) {
         this.keyEncapsulationAlgorithm = keyEncapsulationAlgorithm;
     }
@@ -104,10 +104,6 @@ public class PQCDataFormat extends DataFormatDefinition {
         return symmetricKeyAlgorithm;
     }
 
-    /**
-     * The symmetric encryption algorithm to use with the shared secret. Supported values: AES, ARIA, RC2, RC5,
-     * CAMELLIA, CAST5, CAST6, CHACHA7539, etc.
-     */
     public void setSymmetricKeyAlgorithm(String symmetricKeyAlgorithm) {
         this.symmetricKeyAlgorithm = symmetricKeyAlgorithm;
     }
@@ -116,9 +112,6 @@ public class PQCDataFormat extends DataFormatDefinition {
         return symmetricKeyLength;
     }
 
-    /**
-     * The length (in bits) of the symmetric key.
-     */
     public void setSymmetricKeyLength(String symmetricKeyLength) {
         this.symmetricKeyLength = symmetricKeyLength;
     }
@@ -127,31 +120,14 @@ public class PQCDataFormat extends DataFormatDefinition {
         return keyPair;
     }
 
-    /**
-     * Refers to the KeyPair to lookup from the register to use for KEM operations.
-     */
     public void setKeyPair(String keyPair) {
         this.keyPair = keyPair;
-    }
-
-    public String getBufferSize() {
-        return bufferSize;
-    }
-
-    /**
-     * The size of the buffer used for streaming encryption/decryption.
-     */
-    public void setBufferSize(String bufferSize) {
-        this.bufferSize = bufferSize;
     }
 
     public String getProvider() {
         return provider;
     }
 
-    /**
-     * The JCE security provider to use.
-     */
     public void setProvider(String provider) {
         this.provider = provider;
     }
@@ -160,9 +136,6 @@ public class PQCDataFormat extends DataFormatDefinition {
         return keyGenerator;
     }
 
-    /**
-     * Refers to a custom KeyGenerator to lookup from the register for KEM operations.
-     */
     public void setKeyGenerator(String keyGenerator) {
         this.keyGenerator = keyGenerator;
     }
@@ -177,7 +150,6 @@ public class PQCDataFormat extends DataFormatDefinition {
         private String symmetricKeyAlgorithm = "AES";
         private String symmetricKeyLength;
         private String keyPair;
-        private String bufferSize;
         private String provider;
         private String keyGenerator;
 
@@ -191,8 +163,8 @@ public class PQCDataFormat extends DataFormatDefinition {
         }
 
         /**
-         * The symmetric encryption algorithm to use with the shared secret. Supported values: AES, ARIA, RC2, RC5,
-         * CAMELLIA, CAST5, CAST6, CHACHA7539, etc.
+         * The symmetric encryption algorithm to use with the shared secret. Only AEAD-capable algorithms are allowed:
+         * AES, ARIA, CAMELLIA, CAST6, DSTU7624, GOST3412_2015, SEED, SM4 (GCM) and CHACHA7539 (ChaCha20-Poly1305).
          */
         public Builder symmetricKeyAlgorithm(String symmetricKeyAlgorithm) {
             this.symmetricKeyAlgorithm = symmetricKeyAlgorithm;
@@ -220,22 +192,6 @@ public class PQCDataFormat extends DataFormatDefinition {
          */
         public Builder keyPair(String keyPair) {
             this.keyPair = keyPair;
-            return this;
-        }
-
-        /**
-         * The size of the buffer used for streaming encryption/decryption.
-         */
-        public Builder bufferSize(String bufferSize) {
-            this.bufferSize = bufferSize;
-            return this;
-        }
-
-        /**
-         * The size of the buffer used for streaming encryption/decryption.
-         */
-        public Builder bufferSize(int bufferSize) {
-            this.bufferSize = Integer.toString(bufferSize);
             return this;
         }
 

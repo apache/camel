@@ -909,7 +909,7 @@ public interface XmlSignerEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final XmlSignerHeaderNameBuilder INSTANCE = new XmlSignerHeaderNameBuilder();
+        public static final XmlSignerHeaderNameBuilder INSTANCE = new XmlSignerHeaderNameBuilder();
 
         /**
          * Header for indicating that the message body contains non-xml plain

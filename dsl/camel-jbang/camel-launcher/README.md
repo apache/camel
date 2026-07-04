@@ -1,6 +1,6 @@
-# Camel JBang Self-Executing Launcher
+# Camel CLI Self-Executing Launcher
 
-This module provides a self-contained executable JAR that includes all dependencies required to run Camel JBang without the need for the JBang two-step process.
+This module provides a self-contained executable JAR that includes all dependencies required to run Camel CLI without the need for the JBang two-step process.
 
 The launcher uses Spring Boot's loader tools to create a self-executing JAR with a nested structure, similar to Spring Boot's executable JARs. This provides better performance and avoids classpath conflicts compared to traditional fat JARs.
 

@@ -8,8 +8,6 @@
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
 :core:
-//Manually maintained attributes
-:camel-spring-boot-name: stub
 
 *Since Camel {since}*
 
@@ -29,7 +27,6 @@ stub:someUri
 ----
 
 Where *`someUri`* can be any URI with any query parameters.
-
 
 
 // component options: START
@@ -57,6 +54,3 @@ Here are a few samples of stubbing endpoint uris
 stub:smtp://somehost.foo.com?user=whatnot&something=else
 stub:http://somehost.bar.com/something
 ----
-
-
-include::spring-boot:partial$starter.adoc[]

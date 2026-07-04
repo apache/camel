@@ -44,9 +44,7 @@ public class HttpBridgeMultipartRouteTest extends BaseJettyTest {
         }
 
         protected void initialize() {
-            setLowerCase(true);
             getOutFilter().add("content-length");
-            setOutFilterStartsWith(CAMEL_FILTER_STARTS_WITH);
         }
     }
 

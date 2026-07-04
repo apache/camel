@@ -1,0 +1,796 @@
+<!--
+
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+
+         http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<!DOCTYPE html>
+<!--
+  Local smoke test for the camel-route-diagram web component.
+
+  Browsers block ES module imports from file:// URLs (CORS/null-origin).
+  Serve from the src/ directory:
+
+    cd components/camel-diagram/src/
+    python3 -m http.server 8080
+    open http://localhost:8080/test/resources/smoke-test-route.html
+
+  All data is mocked — no running Camel instance needed.
+-->
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>camel-route-diagram · Smoke Test</title>
+  <script type="module">
+    import '../../main/resources/META-INF/resources/camel/diagram/camel-route-diagram.js';
+  </script>
+  <script>
+    /* eslint-disable */
+
+    /* ──────────────────────────────────────────────────────────────────────
+     * Mock data registry — each key is a URL path used as src="…" below.
+     * ────────────────────────────────────────────────────────────────────── */
+    const MOCK = {
+
+      /* 1. Simple route: used in the three theme-comparison cards */
+      '/mock/simple': {
+        routes: [{
+          routeId: 'demo-route',
+          from: 'timer:tick',
+          code: [
+            { type: 'route',     id: 'r0',  level: 0, code: 'route' },
+            { type: 'from',      id: 'f1',  level: 1, code: 'from[timer:tick]', uri: 'timer:tick' },
+            { type: 'log',       id: 'l1',  level: 1, code: 'log[Hello World]',
+              statistics: { exchangesTotal: 42, exchangesFailed: 1 } },
+            { type: 'choice',    id: 'ch1', level: 1, code: 'choice' },
+            { type: 'when',      id: 'wh1', level: 2, code: 'when[${body} != null]' },
+            { type: 'to',        id: 't1',  level: 3, code: 'to[mock:out]' },
+            { type: 'otherwise', id: 'ow1', level: 2, code: 'otherwise' },
+            { type: 'to',        id: 't2',  level: 3, code: 'to[mock:dead]' },
+          ],
+        }],
+      },
+
+      /* 2. Content-Based Router — choice with two when + otherwise */
+      '/mock/content-router': {
+        routes: [{
+          routeId: 'order-router',
+          from: 'platform-http:/api/orders',
+          code: [
+            { type: 'route',     id: 'r0',  level: 0, code: 'route' },
+            { type: 'from',      id: 'f1',  level: 1, code: 'from[platform-http:/api/orders]' },
+            { type: 'log',       id: 'l1',  level: 1, code: 'log[Order received: ${body}]' },
+            { type: 'choice',    id: 'ch1', level: 1, code: 'choice' },
+            { type: 'when',      id: 'wh1', level: 2, code: 'when[${header.tier} == premium]' },
+            { type: 'to',        id: 't1',  level: 3, code: 'to[direct:premium-fulfillment]' },
+            { type: 'when',      id: 'wh2', level: 2, code: 'when[${header.tier} == standard]' },
+            { type: 'to',        id: 't2',  level: 3, code: 'to[direct:standard-fulfillment]' },
+            { type: 'otherwise', id: 'ow1', level: 2, code: 'otherwise' },
+            { type: 'to',        id: 't3',  level: 3, code: 'to[direct:default-queue]' },
+            { type: 'log',       id: 'l2',  level: 1, code: 'log[Order dispatched]' },
+          ],
+        }],
+      },
+
+      /* 3. Error Handling — doTry + choice inside + doCatch + doFinally */
+      '/mock/error-handling': {
+        routes: [{
+          routeId: 'safe-processor',
+          from: 'direct:process',
+          code: [
+            { type: 'route',     id: 'r0',   level: 0, code: 'route' },
+            { type: 'from',      id: 'f1',   level: 1, code: 'from[direct:process]' },
+            { type: 'setHeader', id: 'sh1',  level: 1, code: 'setHeader[type]' },
+            { type: 'doTry',     id: 'dt1',  level: 1, code: 'doTry' },
+            { type: 'choice',    id: 'ch1',  level: 2, code: 'choice' },
+            { type: 'when',      id: 'wh1',  level: 3, code: 'when[header(type) == A]' },
+            { type: 'log',       id: 'la',   level: 4, code: 'log[Type A processing]' },
+            { type: 'otherwise', id: 'ow1',  level: 3, code: 'otherwise' },
+            { type: 'log',       id: 'lb',   level: 4, code: 'log[Default processing]' },
+            { type: 'doCatch',   id: 'dc1',  level: 2, code: 'doCatch[Exception]' },
+            { type: 'log',       id: 'le',   level: 3, code: 'log[Error: ${exception.message}]' },
+            { type: 'doFinally', id: 'df1',  level: 2, code: 'doFinally' },
+            { type: 'log',       id: 'lf',   level: 3, code: 'log[Cleanup resources]' },
+            { type: 'log',       id: 'lend', level: 1, code: 'log[Processing complete]' },
+          ],
+        }],
+      },
+
+      /* 4. Multicast — scatter to three parallel branches */
+      '/mock/multicast': {
+        routes: [{
+          routeId: 'order-fanout',
+          from: 'direct:orders',
+          code: [
+            { type: 'route',     id: 'r0',  level: 0, code: 'route' },
+            { type: 'from',      id: 'f1',  level: 1, code: 'from[direct:orders]' },
+            { type: 'log',       id: 'l1',  level: 1, code: 'log[Dispatching order]' },
+            { type: 'multicast', id: 'mc1', level: 1, code: 'multicast' },
+            { type: 'to',        id: 't1',  level: 2, code: 'to[direct:billing]' },
+            { type: 'to',        id: 't2',  level: 2, code: 'to[direct:shipping]' },
+            { type: 'to',        id: 't3',  level: 2, code: 'to[direct:notifications]' },
+            { type: 'log',       id: 'l2',  level: 1, code: 'log[All branches complete]' },
+          ],
+        }],
+      },
+
+      /* 5. Circuit Breaker — resilience4j with onFallback branch */
+      '/mock/circuit-breaker': {
+        routes: [{
+          routeId: 'resilient-http-call',
+          from: 'timer:probe',
+          code: [
+            { type: 'route',          id: 'r0',  level: 0, code: 'route' },
+            { type: 'from',           id: 'f1',  level: 1, code: 'from[timer:probe?period=5s]' },
+            { type: 'circuitBreaker', id: 'cb1', level: 1, code: 'circuitBreaker[resilience4j]' },
+            { type: 'to',             id: 't1',  level: 2, code: 'to[http:payment-svc/api/charge]' },
+            // onFallback is modeled as a `when` node — the component has no dedicated onFallback type styling
+            { type: 'when',           id: 'fb1', level: 2, code: 'onFallback' },
+            { type: 'log',            id: 'l1',  level: 3, code: 'log[Service unavailable]' },
+            { type: 'log',            id: 'l2',  level: 1, code: 'log[Result: ${body}]' },
+          ],
+        }],
+      },
+
+      /* 6. Exchange statistics — per-node exchangesTotal / exchangesFailed */
+      '/mock/metrics': {
+        routes: [{
+          routeId: 'event-consumer',
+          from: 'kafka:events',
+          code: [
+            { type: 'route',     id: 'r0',  level: 0, code: 'route' },
+            { type: 'from',      id: 'f1',  level: 1, code: 'from[kafka:events]',
+              statistics: { exchangesTotal: 18420, exchangesFailed: 0 } },
+            { type: 'log',       id: 'l1',  level: 1, code: 'log[Processing event]',
+              statistics: { exchangesTotal: 18420, exchangesFailed: 0 } },
+            { type: 'choice',    id: 'ch1', level: 1, code: 'choice' },
+            { type: 'when',      id: 'wh1', level: 2, code: 'when[${header.priority} == high]',
+              statistics: { exchangesTotal: 4231, exchangesFailed: 0 } },
+            { type: 'to',        id: 't1',  level: 3, code: 'to[direct:priority-queue]',
+              statistics: { exchangesTotal: 4231, exchangesFailed: 0 } },
+            { type: 'otherwise', id: 'ow1', level: 2, code: 'otherwise',
+              statistics: { exchangesTotal: 14189, exchangesFailed: 32 } },
+            { type: 'to',        id: 't2',  level: 3, code: 'to[direct:standard-queue]',
+              statistics: { exchangesTotal: 14189, exchangesFailed: 32 } },
+          ],
+        }],
+      },
+
+      /* 7. Long URI — Kafka consumer with many query parameters */
+      '/mock/kafka-long-uri': {
+        routes: [{
+          routeId: 'kafka-consumer',
+          from: 'kafka:my-orders-topic',
+          code: [
+            { type: 'route', id: 'r0', level: 0, code: 'route' },
+            { type: 'from',  id: 'f1', level: 1,
+              code: 'from[kafka:my-orders-topic?brokers=localhost:9092&groupId=order-consumer-group&autoOffsetReset=earliest]' },
+            { type: 'log',   id: 'l1', level: 1, code: 'log[Order received: ${body}]' },
+            { type: 'to',    id: 't1', level: 1, code: 'to[direct:process-order]' },
+          ],
+        }],
+      },
+
+      /* 8. Multi-route — three-route order-processing pipeline */
+      '/mock/multi-route': {
+        routes: [
+          {
+            routeId: 'order-generator',
+            from: 'timer:orders',
+            code: [
+              { type: 'route',   id: 'og-r0',  level: 0, code: 'route' },
+              { type: 'from',    id: 'og-f1',  level: 1, code: 'from[timer:orders?period=5s]',
+                description: 'Generate test orders' },
+              { type: 'setBody', id: 'og-sb1', level: 1, code: 'setBody[constant(test-order)]',
+                description: 'Set payload' },
+              { type: 'to',      id: 'og-t1',  level: 1, code: 'to[direct:process-order]',
+                description: 'Hand off for processing' },
+            ],
+          },
+          {
+            routeId: 'order-processor',
+            from: 'direct:process-order',
+            code: [
+              { type: 'route',     id: 'op-r0',  level: 0, code: 'route' },
+              { type: 'from',      id: 'op-f1',  level: 1, code: 'from[direct:process-order]' },
+              { type: 'log',       id: 'op-l1',  level: 1, code: 'log[Processing: ${body}]' },
+              { type: 'choice',    id: 'op-ch1', level: 1, code: 'choice' },
+              { type: 'when',      id: 'op-wh1', level: 2, code: 'when[${header.valid}]' },
+              { type: 'to',        id: 'op-t1',  level: 3, code: 'to[direct:validate-order]' },
+              { type: 'otherwise', id: 'op-ow1', level: 2, code: 'otherwise' },
+              { type: 'to',        id: 'op-t2',  level: 3, code: 'to[mock:dead-letter]' },
+            ],
+          },
+          {
+            routeId: 'order-validator',
+            from: 'direct:validate-order',
+            code: [
+              { type: 'route', id: 'ov-r0', level: 0, code: 'route' },
+              { type: 'from',  id: 'ov-f1', level: 1, code: 'from[direct:validate-order]' },
+              { type: 'log',   id: 'ov-l1', level: 1, code: 'log[Validating order]' },
+              { type: 'to',    id: 'ov-t1', level: 1, code: 'to[kafka:validated-orders]' },
+            ],
+          },
+        ],
+      },
+    };
+
+    window.fetch = url => {
+      const path = new URL(url, location.href).pathname;
+      const data = MOCK[path];
+      if (!data) return Promise.resolve({ ok: false, status: 404, statusText: 'Not Found' });
+      return Promise.resolve({ ok: true, json: () => Promise.resolve(data) });
+    };
+  </script>
+  <style>
+    /* ─── Camel design tokens (mirrored from camel.apache.org) ─── */
+    :root {
+      --camel-orange:      #e97826;
+      --camel-orange-dark: #cf7428;
+      --camel-navy:        #303284;
+      --camel-purple:      #4f51ae;
+      --camel-light:       #f5f5f5;
+      --camel-border:      #e1e1e1;
+      --camel-text:        #333;
+      --camel-muted:       #5d5d5d;
+      --camel-white:       #fff;
+      --radius:            6px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: system-ui, 'Open Sans', sans-serif;
+      font-size: 14px;
+      line-height: 1.6;
+      color: var(--camel-text);
+      background: var(--camel-light);
+      min-height: 100vh;
+    }
+
+    /* ─── Top nav bar ─── */
+    .site-nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: var(--camel-navy);
+      color: var(--camel-white);
+      height: 52px;
+      display: flex;
+      align-items: center;
+      padding: 0 1.5rem;
+      gap: 1rem;
+      box-shadow: 0 2px 10px rgba(0,0,0,.35);
+    }
+    .site-nav .logo-mark {
+      width: 30px;
+      height: 30px;
+      background: var(--camel-orange);
+      border-radius: 5px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 16px;
+      flex-shrink: 0;
+      letter-spacing: -1px;
+    }
+    .site-nav .brand-name  { font-weight: 700; font-size: .95rem; }
+    .site-nav .brand-sub   { font-size: .7rem; opacity: .65; }
+    .site-nav .nav-spacer  { flex: 1; }
+    .site-nav .nav-links   { display: flex; gap: 1.25rem; }
+    .site-nav .nav-links a {
+      color: rgba(255,255,255,.75);
+      text-decoration: none;
+      font-size: .8rem;
+      font-weight: 600;
+      transition: color .15s;
+    }
+    .site-nav .nav-links a:hover { color: var(--camel-orange); }
+    .badge-pill {
+      background: var(--camel-orange);
+      color: var(--camel-white);
+      font-size: .65rem;
+      font-weight: 700;
+      padding: 2px 9px;
+      border-radius: 99px;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+    }
+
+    /* ─── Theme switch (segmented control) ─── */
+    .theme-switch {
+      display: inline-flex;
+      gap: 2px;
+      padding: 2px;
+      background: rgba(255,255,255,.1);
+      border: 1px solid rgba(255,255,255,.18);
+      border-radius: 99px;
+    }
+    .theme-switch button {
+      appearance: none;
+      border: 0;
+      background: transparent;
+      color: rgba(255,255,255,.75);
+      font: inherit;
+      font-size: .72rem;
+      font-weight: 600;
+      padding: 3px 11px;
+      border-radius: 99px;
+      cursor: pointer;
+      transition: background .15s, color .15s;
+    }
+    .theme-switch button:hover { color: var(--camel-white); }
+    .theme-switch button.active {
+      background: var(--camel-orange);
+      color: var(--camel-white);
+    }
+
+    /* ─── Hero ─── */
+    .hero {
+      background: var(--camel-navy);
+      color: var(--camel-white);
+      padding: 2.5rem 1.5rem 2.75rem;
+      border-bottom: 4px solid var(--camel-orange);
+    }
+    .hero-inner { max-width: 900px; margin: 0 auto; }
+    .hero h1 {
+      font-size: 1.75rem;
+      font-weight: 800;
+      margin-bottom: .4rem;
+      letter-spacing: -.5px;
+    }
+    .hero h1 code {
+      color: var(--camel-orange);
+      font-family: 'Courier New', monospace;
+      font-size: 1.55rem;
+    }
+    .hero p {
+      opacity: .8;
+      max-width: 640px;
+      font-size: .9rem;
+      margin-bottom: .75rem;
+    }
+    .hero-hint {
+      display: inline-block;
+      background: rgba(255,255,255,.07);
+      border: 1px solid rgba(255,255,255,.15);
+      border-radius: var(--radius);
+      padding: .5rem .9rem;
+      font-family: 'Courier New', monospace;
+      font-size: .78rem;
+      color: #9db8d2;
+      line-height: 1.7;
+    }
+
+    /* ─── Layout ─── */
+    .content {
+      max-width: 1140px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem 3rem;
+    }
+
+    /* ─── Sections ─── */
+    .section { margin-bottom: 3rem; }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: .65rem;
+      margin-bottom: 1rem;
+      padding-bottom: .6rem;
+      border-bottom: 2px solid var(--camel-border);
+    }
+    .section-header h2 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--camel-navy);
+    }
+    .section-tag {
+      font-size: .65rem;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 99px;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+    .tag-theme      { background: #e8eaf6; color: #303284; }
+    .tag-eip        { background: #fff3e0; color: #9a4200; }
+    .tag-error      { background: #fce4ec; color: #880e4f; }
+    .tag-resilience { background: #fbe9e7; color: #b71c1c; }
+    .tag-metrics    { background: #e8f5e9; color: #1b5e20; }
+    .tag-kafka      { background: #f3e5f5; color: #4a148c; }
+    .tag-multi      { background: #e3f2fd; color: #0d47a1; }
+
+    /* ─── Cards ─── */
+    .card {
+      background: var(--camel-white);
+      border: 1px solid var(--camel-border);
+      border-top: 3px solid var(--camel-orange);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+    .card-header {
+      padding: .7rem 1rem .55rem;
+      border-bottom: 1px solid var(--camel-border);
+    }
+    .card-header h3 {
+      font-size: .9rem;
+      font-weight: 700;
+      color: var(--camel-navy);
+      margin-bottom: .15rem;
+    }
+    .card-header h3 code {
+      font-size: .85rem;
+      background: #f0f0f0;
+      border-radius: 3px;
+      padding: 0 3px;
+    }
+    .card-header p {
+      font-size: .78rem;
+      color: var(--camel-muted);
+    }
+    .card-body         { padding: 1rem; }
+    .card-body.dark-bg { background: #0f172a; padding: .75rem; }
+
+    /* ─── Header-driven theme override ───
+       Drives the diagram sections that are not the self-documenting demo cards.
+       "os" sets nothing, so the component falls back to prefers-color-scheme. */
+    body[data-theme="light"] .themed-diagram {
+      --crd-bg: #ffffff; --crd-fg: #1e293b; --crd-edge: #94a3b8;
+    }
+    body[data-theme="dark"] .themed-diagram {
+      --crd-bg: #0f172a; --crd-fg: #e2e8f0; --crd-edge: #475569;
+    }
+    body[data-theme="dark"] .card-body.themed-diagram { background: #0f172a; }
+
+    /* ─── Grids ─── */
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+    .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; }
+
+    /* ─── Scrollable diagrams ─── */
+    .diagram-scroll { overflow-x: auto; }
+
+    /* ─── Footer ─── */
+    .site-footer {
+      background: var(--camel-navy);
+      color: rgba(255,255,255,.55);
+      text-align: center;
+      padding: 1.5rem;
+      font-size: .78rem;
+    }
+    .site-footer a { color: var(--camel-orange); text-decoration: none; }
+    .site-footer a:hover { text-decoration: underline; }
+
+    /* ─── Responsive ─── */
+    @media (max-width: 800px) {
+      .grid-3, .grid-2 { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body data-theme="os">
+
+<!-- ─── Navigation ─── -->
+<nav class="site-nav" aria-label="Site navigation">
+  <div class="logo-mark" aria-hidden="true">C</div>
+  <div>
+    <div class="brand-name">Apache Camel</div>
+    <div class="brand-sub">camel-route-diagram</div>
+  </div>
+  <div class="nav-spacer"></div>
+  <nav class="nav-links" aria-label="Jump to section">
+    <a href="#themes">Themes</a>
+    <a href="#eips">EIPs</a>
+    <a href="#error">Error Handling</a>
+    <a href="#resilience">Resilience</a>
+    <a href="#metrics">Metrics</a>
+    <a href="#kafka">Long URI</a>
+    <a href="#multi">Multi-Route</a>
+  </nav>
+  <div class="theme-switch" role="group" aria-label="Diagram theme">
+    <button type="button" data-theme="light" aria-pressed="false">Light</button>
+    <button type="button" data-theme="dark" aria-pressed="false">Dark</button>
+    <button type="button" data-theme="os" class="active" aria-pressed="true">OS</button>
+  </div>
+  <span class="badge-pill">Smoke Test</span>
+</nav>
+
+<!-- ─── Hero ─── -->
+<header class="hero">
+  <div class="hero-inner">
+    <h1><code>&lt;camel-route-diagram&gt;</code></h1>
+    <p>
+      A local verification page for the route-diagram web component. Each section exercises a different
+      EIP pattern, rendering feature, or edge case. All data is mocked — no running Camel instance required.
+    </p>
+    <span class="hero-hint">
+      cd components/camel-diagram/src/<br>
+      python3 -m http.server 8080 &amp;&amp; open http://localhost:8080/test/resources/smoke-test-route.html
+    </span>
+  </div>
+</header>
+
+<!-- ─── Main content ─── -->
+<main class="content">
+
+  <!-- ══════════════════════════════════════════════════════
+       SECTION 1 — Theme variants
+       ══════════════════════════════════════════════════════ -->
+  <section id="themes" class="section">
+    <div class="section-header">
+      <h2>Theme Variants</h2>
+      <span class="section-tag tag-theme">Theming</span>
+    </div>
+    <div class="grid-3">
+
+      <div class="card">
+        <div class="card-header">
+          <h3>Auto (OS preference)</h3>
+          <p>
+            Follows <code>prefers-color-scheme</code>. No <code>--crd-*</code> variables
+            are set — the component picks light or dark based on your OS setting.
+          </p>
+        </div>
+        <div class="card-body diagram-scroll">
+          <camel-route-diagram src="/mock/simple"></camel-route-diagram>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <h3>Light (forced)</h3>
+          <p>
+            Override via inline <code>style="--crd-bg:#fff; --crd-fg:#1e293b; --crd-edge:#94a3b8"</code>
+            to pin the light palette regardless of OS setting.
+          </p>
+        </div>
+        <div class="card-body diagram-scroll">
+          <camel-route-diagram src="/mock/simple"
+            style="--crd-bg:#ffffff; --crd-fg:#1e293b; --crd-edge:#94a3b8;">
+          </camel-route-diagram>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <h3>Dark (forced)</h3>
+          <p>
+            Override via <code>style="--crd-bg:#0f172a; --crd-fg:#e2e8f0; --crd-edge:#475569"</code>
+            to pin the dark palette regardless of OS setting.
+          </p>
+        </div>
+        <div class="card-body diagram-scroll dark-bg">
+          <camel-route-diagram src="/mock/simple"
+            style="--crd-bg:#0f172a; --crd-fg:#e2e8f0; --crd-edge:#475569;">
+          </camel-route-diagram>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="card" style="margin-top: 1rem;">
+      <div class="card-header">
+        <h3>Custom font</h3>
+        <p>
+          Override via <code>style="--crd-font: 'Courier New', monospace"</code> to verify that text measurement
+          matches the font actually used by the SVG.
+        </p>
+      </div>
+      <div class="card-body diagram-scroll">
+        <camel-route-diagram src="/mock/simple" style="--crd-font: 'Courier New', monospace;"></camel-route-diagram>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════
+       SECTION 2 — Content-Based Router
+       ══════════════════════════════════════════════════════ -->
+  <section id="eips" class="section">
+    <div class="section-header">
+      <h2>Content-Based Router</h2>
+      <span class="section-tag tag-eip">EIP · choice</span>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <h3>Order Router — <code>choice</code> with two <code>when</code> + <code>otherwise</code></h3>
+        <p>
+          Routes incoming HTTP orders to premium, standard, or default fulfillment channels based on a
+          <code>${header.tier}</code> value. Verifies that three side-by-side branches render correctly
+          and that the post-choice <code>log</code> node reconnects from the <code>choice</code> merge point.
+        </p>
+      </div>
+      <div class="card-body diagram-scroll themed-diagram">
+        <camel-route-diagram src="/mock/content-router"></camel-route-diagram>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════
+       SECTION 3 — Error Handling
+       ══════════════════════════════════════════════════════ -->
+  <section id="error" class="section">
+    <div class="section-header">
+      <h2>Error Handling</h2>
+      <span class="section-tag tag-error">EIP · doTry · doCatch · doFinally</span>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <h3>Safe Processor — <code>doTry</code> wrapping a <code>choice</code>,
+            with <code>doCatch</code> and <code>doFinally</code></h3>
+        <p>
+          A <code>choice</code> inside a <code>doTry</code>: the doTry acts as a branching EIP so its three
+          clauses (<em>try block</em>, <em>doCatch</em>, <em>doFinally</em>) are laid side-by-side.
+          The post-try <code>log</code> node reconnects from the <code>doTry</code> merge point.
+          Mirrors the <code>testChoiceInsideDoTryNoSpuriousMergeConnection</code> layout-engine test.
+        </p>
+      </div>
+      <div class="card-body diagram-scroll themed-diagram">
+        <camel-route-diagram src="/mock/error-handling"></camel-route-diagram>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════
+       SECTION 4 — Scatter-Gather & Circuit Breaker
+       ══════════════════════════════════════════════════════ -->
+  <section id="resilience" class="section">
+    <div class="section-header">
+      <h2>Scatter-Gather &amp; Resilience</h2>
+      <span class="section-tag tag-eip">EIP · multicast</span>
+      <span class="section-tag tag-resilience">EIP · circuitBreaker</span>
+    </div>
+    <div class="grid-2">
+
+      <div class="card">
+        <div class="card-header">
+          <h3>Order Fan-out — <code>multicast</code> to three branches</h3>
+          <p>
+            Sends each order simultaneously to billing, shipping, and notification routes.
+            Verifies that three <code>to</code> nodes are placed side-by-side and that the
+            post-multicast <code>log</code> reconnects from the <code>multicast</code> merge point.
+          </p>
+        </div>
+        <div class="card-body diagram-scroll themed-diagram">
+          <camel-route-diagram src="/mock/multicast"></camel-route-diagram>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <h3>Resilient HTTP Call — <code>circuitBreaker</code> with fallback</h3>
+          <p>
+            Protects a downstream payment-service call with Resilience4j. The <code>onFallback</code>
+            branch is laid side-by-side with the main call. The final <code>log</code> reconnects
+            from the <code>circuitBreaker</code> merge point.
+          </p>
+        </div>
+        <div class="card-body diagram-scroll themed-diagram">
+          <camel-route-diagram src="/mock/circuit-breaker"></camel-route-diagram>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════
+       SECTION 5 — Exchange Statistics
+       ══════════════════════════════════════════════════════ -->
+  <section id="metrics" class="section">
+    <div class="section-header">
+      <h2>Exchange Statistics</h2>
+      <span class="section-tag tag-metrics">Metrics</span>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <h3>High-Throughput Event Consumer — per-node <code>exchangesTotal</code> / <code>exchangesFailed</code></h3>
+        <p>
+          When a node has a <code>statistics</code> object the component renders
+          <em>✓&nbsp;successes&nbsp;/&nbsp;✗&nbsp;failures</em> beneath the label.
+          Here the <code>otherwise</code> branch has accumulated 32 failures out of 14&thinsp;189
+          exchanges — spot the error rate at a glance.
+        </p>
+      </div>
+      <div class="card-body diagram-scroll themed-diagram">
+        <camel-route-diagram src="/mock/metrics"></camel-route-diagram>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════
+       SECTION 6 — Long URI wrapping
+       ══════════════════════════════════════════════════════ -->
+  <section id="kafka" class="section">
+    <div class="section-header">
+      <h2>Long URI — Text Wrapping</h2>
+      <span class="section-tag tag-kafka">Kafka</span>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <h3>Kafka Consumer — multi-option URI wrapped inside the node box</h3>
+        <p>
+          A <code>from</code> node with a long Kafka URI
+          (<code>brokers=…&amp;groupId=…&amp;autoOffsetReset=…</code>) verifies that the label
+          wraps gracefully inside the fixed-width box without overflowing or truncating silently.
+          Mirrors <code>testTextWrappingLongLabel</code>.
+        </p>
+      </div>
+      <div class="card-body diagram-scroll themed-diagram">
+        <camel-route-diagram src="/mock/kafka-long-uri"></camel-route-diagram>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════
+       SECTION 7 — Multi-route pipeline
+       ══════════════════════════════════════════════════════ -->
+  <section id="multi" class="section">
+    <div class="section-header">
+      <h2>Multi-Route — Order-Processing Pipeline</h2>
+      <span class="section-tag tag-multi">Multiple Routes</span>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <h3>Three-route pipeline rendered from a single <code>{ routes: […] }</code> response</h3>
+        <p>
+          The <strong>generator</strong> fires a timer and hands off to <strong>processor</strong>
+          (which routes valid/invalid orders via <code>choice</code>), which in turn delegates valid
+          orders to <strong>validator</strong> for publication to Kafka.
+          Nodes in the generator route use the <code>description</code> field for human-readable labels.
+        </p>
+      </div>
+      <div class="card-body diagram-scroll themed-diagram">
+        <camel-route-diagram src="/mock/multi-route"></camel-route-diagram>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- ─── Footer ─── -->
+<footer class="site-footer">
+  <p>
+    <a href="https://camel.apache.org/" rel="noopener noreferrer">Apache Camel</a>
+    &nbsp;·&nbsp;
+    <code>camel-route-diagram</code> web component
+    &nbsp;·&nbsp;
+    Local smoke test — not a production page.
+  </p>
+</footer>
+
+<script>
+  /* eslint-disable */
+  /* Header theme switch: light/dark force --crd-* on the body; "os" clears them
+   * so the component falls back to prefers-color-scheme. */
+  (function () {
+    const sw = document.querySelector('.theme-switch');
+    sw.addEventListener('click', function (e) {
+      const btn = e.target.closest('button[data-theme]');
+      if (!btn) return;
+      document.body.dataset.theme = btn.dataset.theme;
+      sw.querySelectorAll('button').forEach(function (b) {
+        const on = b === btn;
+        b.classList.toggle('active', on);
+        b.setAttribute('aria-pressed', String(on));
+      });
+    });
+  })();
+</script>
+
+</body>
+</html>

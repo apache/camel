@@ -34,15 +34,13 @@ import org.apache.camel.spi.Metadata;
 public class BeanPropertiesDefinition {
 
     @XmlElement(name = "property")
+    @Metadata(description = "Properties to set on the bean.")
     private List<BeanPropertyDefinition> properties;
 
     public List<BeanPropertyDefinition> getProperties() {
         return properties;
     }
 
-    /**
-     * Bean properties
-     */
     public void setProperties(List<BeanPropertyDefinition> properties) {
         this.properties = properties;
     }

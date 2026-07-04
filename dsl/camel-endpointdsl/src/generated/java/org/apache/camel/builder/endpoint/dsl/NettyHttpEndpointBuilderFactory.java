@@ -323,7 +323,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
-         * Default: false
+         * Default: true
          * Group: consumer
          * 
          * @param muteException the value to set
@@ -339,7 +339,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
-         * Default: false
+         * Default: true
          * Group: consumer
          * 
          * @param muteException the value to set
@@ -526,6 +526,25 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default NettyHttpEndpointConsumerBuilder needClientAuth(String needClientAuth) {
             doSetProperty("needClientAuth", needClientAuth);
+            return this;
+        }
+        /**
+         * OAuth profile name for validating incoming Authorization: Bearer
+         * tokens. When set, the request is authenticated before the route is
+         * processed. This requires an OAuthTokenValidationFactory; camel-oauth
+         * provides the default implementation. Requires
+         * usingExecutorService=true and sync=true (the defaults), and is not
+         * supported with nettySharedHttpServer.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param oauthProfile the value to set
+         * @return the dsl builder
+         */
+        default NettyHttpEndpointConsumerBuilder oauthProfile(String oauthProfile) {
+            doSetProperty("oauthProfile", oauthProfile);
             return this;
         }
         /**
@@ -5306,7 +5325,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final NettyHttpHeaderNameBuilder INSTANCE = new NettyHttpHeaderNameBuilder();
+        public static final NettyHttpHeaderNameBuilder INSTANCE = new NettyHttpHeaderNameBuilder();
 
         /**
          * If the user was authenticated using HTTP Basic then this header is

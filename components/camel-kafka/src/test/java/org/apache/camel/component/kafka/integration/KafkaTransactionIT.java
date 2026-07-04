@@ -41,6 +41,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -191,24 +192,19 @@ public class KafkaTransactionIT extends BaseKafkaTestSupport {
     }
 
     private void createKafkaMessageConsumer(
-            KafkaConsumer<String, String> consumerConn, String topic, CountDownLatch messagesLatch)
-            throws InterruptedException {
+            KafkaConsumer<String, String> consumerConn, String topic, CountDownLatch messagesLatch) {
 
         consumerConn.subscribe(Arrays.asList(topic));
-        boolean run = true;
-        int numberOfAttempts = 0;
 
-        while (run && numberOfAttempts < 100) {
-            ConsumerRecords<String, String> records = consumerConn.poll(Duration.ofMillis(100));
-            for (int i = 0; i < records.count(); i++) {
-                messagesLatch.countDown();
-                if (messagesLatch.getCount() == 0) {
-                    run = false;
-                }
-            }
-            numberOfAttempts++;
-            Thread.sleep(100);
-        }
+        await().atMost(20, TimeUnit.SECONDS)
+                .pollInterval(100, TimeUnit.MILLISECONDS)
+                .untilAsserted(() -> {
+                    ConsumerRecords<String, String> records = consumerConn.poll(Duration.ofMillis(100));
+                    for (int i = 0; i < records.count(); i++) {
+                        messagesLatch.countDown();
+                    }
+                    assertEquals(0, messagesLatch.getCount(), "All messages should have been consumed");
+                });
     }
 
 }

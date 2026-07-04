@@ -3220,7 +3220,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final PahoMqtt5HeaderNameBuilder INSTANCE = new PahoMqtt5HeaderNameBuilder();
+        public static final PahoMqtt5HeaderNameBuilder INSTANCE = new PahoMqtt5HeaderNameBuilder();
 
         /**
          * The name of the topic.

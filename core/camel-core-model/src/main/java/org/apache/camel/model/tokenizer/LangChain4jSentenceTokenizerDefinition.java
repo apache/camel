@@ -26,7 +26,8 @@ import org.apache.camel.spi.Metadata;
 /**
  * Camel AI: Tokenizer for splitting by sentences.
  */
-@Metadata(firstVersion = "4.8.0", label = "eip,transformation,ai", title = "LangChain4J Tokenizer with sentence splitter")
+@Metadata(firstVersion = "4.8.0", label = "eip,transformation,ai", title = "LangChain4J Tokenizer with sentence splitter",
+          description = "Splits text into chunks by sentence boundaries, using LangChain4j's sentence tokenizer for AI text processing")
 @XmlRootElement(name = "langChain4jSentenceTokenizer")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class LangChain4jSentenceTokenizerDefinition extends LangChain4jTokenizerDefinition {

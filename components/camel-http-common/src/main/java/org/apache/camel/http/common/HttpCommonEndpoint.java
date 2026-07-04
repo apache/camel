@@ -278,6 +278,7 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint
             httpBinding.setMuteException(isMuteException());
             if (getComponent() != null) {
                 httpBinding.setAllowJavaSerializedObject(getComponent().isAllowJavaSerializedObject());
+                httpBinding.setDeserializationFilter(getComponent().getDeserializationFilter());
             }
             httpBinding.setEagerCheckContentAvailable(isEagerCheckContentAvailable());
             httpBinding.setMapHttpMessageBody(isMapHttpMessageBody());

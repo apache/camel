@@ -6,8 +6,6 @@
 :since: 2.8
 :supportlevel: Stable
 :tabs-sync-option:
-//Manually maintained attributes
-:camel-spring-boot-name: cxf-transport
 
 *Since Camel {since}*
 
@@ -46,7 +44,7 @@ soon as you include the camel-cxf-transport.jar in your app, cxf will scan the
 jar and load a CamelTransportFactory for you.
 
 [source,xml]
---------------------------------------------------------------------------------------------------------
+----
 <!-- you don't need to specify the CamelTransportFactory configuration as it is auto load by CXF bus -->
 <bean class="org.apache.camel.component.cxf.transport.CamelTransportFactory">
   <property name="bus" ref="cxf" />
@@ -63,7 +61,7 @@ jar and load a CamelTransportFactory for you.
     </list>
   </property>
 </bean>
---------------------------------------------------------------------------------------------------------
+----
 
 [[CamelTransportforCXF-IntegratingtheCamelTransportinaprogrammaticway]]
 === Integrating the Camel Transport in a programmatic way
@@ -73,8 +71,9 @@ the Camel context into the transport factory. If you want this factory
 take effect, you need to register the factory into the CXF bus. Here is
 a full example for you.
 
+._Java-only: programmatic CXF bus and transport factory setup_
 [source,java]
-------------------------------------------------------------------------------------------------------------------
+----
 import org.apache.cxf.Bus;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.transport.ConduitInitiatorManager;
@@ -98,7 +97,7 @@ DestinationFactoryManager dfm = bus.getExtension(DestinationFactoryManager.class
 dfm.registerDestinationFactory(CamelTransportFactory.TRANSPORT_ID, camelTransportFactory);
 // set or bus as the default bus for cxf
 BusFactory.setDefaultBus(bus);
-------------------------------------------------------------------------------------------------------------------
+----
 
 [[CamelTransportforCXF-ConfigurethedestinationandconduitwithSpring]]
 == Configure the destination and conduit with Spring
@@ -116,8 +115,8 @@ the `xsi:schemaLocation` attribute.
 
 *Adding the Configuration Namespace*
 
-[source,java]
----------------------------------------------------------------------
+[source,xml]
+----
 <beans ...
        xmlns:camel="http://cxf.apache.org/transports/camel
        ...
@@ -125,7 +124,7 @@ the `xsi:schemaLocation` attribute.
                            http://cxf.apache.org/transports/camel
                            http://cxf.apache.org/transports/camel.xsd
                           ...>
----------------------------------------------------------------------
+----
 
 [[CamelTransportforCXF-Thedestinationelement]]
 === The `destination` element
@@ -142,8 +141,9 @@ endpoint's target namespace was `\http://widgets.widgetvendor.net`.
 
 *camel:destination Element*
 
-[source,java]
----------------------------------------------------------------------------------------------------------------------------
+._XML-only: CXF transport destination configuration with embedded Camel route_
+[source,xml]
+----
 ...
   <camel:destination name="{http://widgets/widgetvendor.net}widgetSOAPPort.http-destination>
     <camelContext id="context" xmlns="http://activemq.apache.org/camel/schema/spring">
@@ -154,10 +154,10 @@ endpoint's target namespace was `\http://widgets.widgetvendor.net`.
      </camelContext>
   </camel:destination>
 
-  <camel:destination name="{http://widgets/widgetvendor.net}widgetSOAPPort.camel-destination" camelContextId="context" />  
+  <camel:destination name="{http://widgets/widgetvendor.net}widgetSOAPPort.camel-destination" camelContextId="context" />
 
 ...
----------------------------------------------------------------------------------------------------------------------------
+----
 
 The `camel:destination` element for Spring has a number of child
 elements that specify configuration information. They are described
@@ -190,8 +190,9 @@ endpoint's target namespace was `\http://widgets.widgetvendor.net`.
 
 *http-conf:conduit Element*
 
+._XML-only: CXF transport conduit configuration with embedded Camel route_
 [source,xml]
--------------------------------------------------------------------------------------------------------------------------
+----
 ...
   <camelContext id="conduit_context" xmlns="http://activemq.apache.org/camel/schema/spring">
        <route>
@@ -201,14 +202,14 @@ endpoint's target namespace was `\http://widgets.widgetvendor.net`.
    </camelContext>
 
   <camel:conduit name="{http://widgets/widgetvendor.net}widgetSOAPPort.camel-conduit" camelContextId="conduit_context" />
-     
+
 
   <camel:conduit name="*.camel-conduit">
   <!-- you can also using the wild card to specify the camel-conduit that you want to configure -->
     ...
   </camel:conduit>
 ...
--------------------------------------------------------------------------------------------------------------------------
+----
 
 The `camel:conduit` element has a number of child elements that specify
 configuration information. They are described below.
@@ -231,5 +232,3 @@ The camel context id which you want to inject into the camel conduit
 This example shows how to use the camel load balancing feature in CXF.
 You need to load the configuration file in CXF and publish the endpoints
 on the address "camel://direct:EndpointA" and "camel://direct:EndpointB"
-
-include::spring-boot:partial$starter.adoc[]

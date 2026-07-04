@@ -2472,7 +2472,7 @@ public interface AWS2S3VectorsEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final AWS2S3VectorsHeaderNameBuilder INSTANCE = new AWS2S3VectorsHeaderNameBuilder();
+        public static final AWS2S3VectorsHeaderNameBuilder INSTANCE = new AWS2S3VectorsHeaderNameBuilder();
 
         /**
          * The operation to perform.

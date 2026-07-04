@@ -34,6 +34,8 @@ class HistoryEntry {
     boolean first;
     boolean last;
     boolean failed;
+    boolean remoteEndpoint;
+    boolean stubEndpoint;
     int nodeLevel;
     long elapsed;
     long epochMs;
@@ -46,4 +48,5 @@ class HistoryEntry {
     Map<String, String> exchangePropertyTypes;
     Map<String, Object> exchangeVariables;
     Map<String, String> exchangeVariableTypes;
+    int inlineDepth;
 }

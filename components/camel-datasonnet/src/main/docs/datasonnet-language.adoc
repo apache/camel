@@ -2,12 +2,10 @@
 :doctitle: DataSonnet
 :shortname: datasonnet
 :artifactid: camel-datasonnet
-:description: To use DataSonnet scripts for message transformations.
+:description: To use DataSonnet scripts for message transformations
 :since: 3.7
 :supportlevel: Stable
 :tabs-sync-option:
-//Manually maintained attributes
-:camel-spring-boot-name: datasonnet
 
 *Since Camel {since}*
 
@@ -22,10 +20,11 @@ xref:eips:recipientList-eip.adoc[Recipient List].
 
 To use a DataSonnet expression, use the following Java code:
 
+._Java-only: creating a DataSonnet expression_
 [source,java]
----------------------------------------
+----
 datasonnet("someDSExpression");
----------------------------------------
+----
 
 == DataSonnet Options
 
@@ -178,7 +177,7 @@ xref:ROOT:properties-component.adoc[Properties] component (property placeholders
 
 Camel ships a standard library of helper functions that can be imported in any DataSonnet script:
 
-[source,java]
+[source,datasonnet]
 ----
 local c = import 'camel.libsonnet';
 {
@@ -257,16 +256,16 @@ Here's an example showing some of these functions in use:
 Java::
 +
 [source,java]
-------------------------------------------------------------------------------------------------
+----
 from("direct:in")
     .setBody(datasonnet("'hello, ' + cml.properties('toGreet')", String.class))
     .to("mock:camel");
-------------------------------------------------------------------------------------------------
+----
 
 XML::
 +
 [source,xml]
------------------------------------------------------------------------------
+----
 <route>
     <from uri="direct:in"/>
     <setBody>
@@ -274,7 +273,24 @@ XML::
     </setBody>
     <to uri="mock:camel"/>
 </route>
------------------------------------------------------------------------------
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:in
+      steps:
+        - setBody:
+            expression:
+              datasonnet:
+                expression: "'hello, ' + cml.properties('toGreet')"
+                resultType: java.lang.String
+        - to:
+            uri: mock:camel
+----
 ====
 
 === Loading script from external resource
@@ -284,10 +300,11 @@ such as `"classpath:"`, `"file:"`, or `"http:"`. +
 This is done using the following syntax: `"resource:scheme:location"`,
 e.g., to refer to a file on the classpath you can do:
 
+._Java-only: loading a DataSonnet script from an external resource_
 [source,java]
--------------------------------------------------------------------
+----
 .setHeader("myHeader").datasonnet("resource:classpath:mydatasonnet.ds");
--------------------------------------------------------------------
+----
 
 == Examples
 
@@ -298,17 +315,17 @@ Here is a simple example using a DataSonnet expression as a predicate in a Messa
 Java::
 +
 [source,java]
-------------------------------------------------------------------------------------------------
+----
 // let's route if a line item is over $100
 from("queue:foo")
     .filter(datasonnet("ds.arrays.firstWith(body.lineItems, function(item) item > 100) != null"))
     .to("queue:bar");
-------------------------------------------------------------------------------------------------
+----
 
 XML::
 +
 [source,xml]
------------------------------------------------------------------------------
+----
 <route>
     <from uri="queue:foo"/>
     <filter>
@@ -316,7 +333,24 @@ XML::
         <to uri="queue:bar"/>
     </filter>
 </route>
------------------------------------------------------------------------------
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: queue:foo
+      steps:
+        - filter:
+            expression:
+              datasonnet:
+                expression: "ds.arrays.firstWith(body.lineItems, function(item) item > 100) != null"
+            steps:
+              - to:
+                  uri: queue:bar
+----
 ====
 
 
@@ -328,16 +362,16 @@ Here is an example of a simple DataSonnet expression as a transformation EIP. Th
 Java::
 +
 [source,java]
-------------------------------------------------------------------------------------------------
+----
 from("queue:foo")
     .transform(datasonnet("ds.filter(body.lineItems, function(item) item > 100)", String.class, "application/xml", "application/json"))
     .to("queue:bar");
-------------------------------------------------------------------------------------------------
+----
 
 XML::
 +
 [source,xml]
------------------------------------------------------------------------------
+----
 <route>
     <from uri="queue:foo"/>
     <filter>
@@ -347,14 +381,32 @@ XML::
         <to uri="queue:bar"/>
     </filter>
 </route>
------------------------------------------------------------------------------
-====
+----
 
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: queue:foo
+      steps:
+        - transform:
+            expression:
+              datasonnet:
+                expression: "ds.filter(body.lineItems, function(item) item > 100)"
+                resultType: java.lang.String
+                bodyMediaType: application/xml
+                outputMediaType: application/json
+        - to:
+            uri: queue:bar
+----
+====
 
 
 == Migrating from DataWeave
 
-If you have existing DataWeave (`.dwl`) scripts, Camel provides a transpiler to convert them to DataSonnet format via the Camel JBang CLI.
+If you have existing DataWeave (`.dwl`) scripts, Camel provides a transpiler to convert them to DataSonnet format via the Camel CLI CLI.
 
 === Converting an inline expression
 
@@ -391,13 +443,10 @@ substituting the version number for the latest and greatest release (see
 the download page for the latest versions).
 
 [source,xml]
----------------------------------------
+----
 <dependency>
   <groupId>org.apache.camel</groupId>
   <artifactId>camel-datasonnet</artifactId>
   <version>x.x.x</version>
 </dependency>
----------------------------------------
-
-
-include::spring-boot:partial$starter.adoc[]
+----

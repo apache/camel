@@ -19,14 +19,11 @@ package org.apache.camel.component.jpa;
 import org.apache.camel.Exchange;
 import org.apache.camel.examples.MultiSteps;
 import org.junit.jupiter.api.Timeout;
-import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @Timeout(30)
-@DisabledIfSystemProperty(named = "ci.env.name", matches = ".*",
-                          disabledReason = "Apache CI is hanging on this test")
 public class JpaWithNativeQueryTest extends JpaWithNamedQueryTest {
 
     /**

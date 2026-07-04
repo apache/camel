@@ -26,7 +26,8 @@ import org.apache.camel.spi.Metadata;
 /**
  * Gets a property from the Exchange.
  */
-@Metadata(firstVersion = "2.0.0", label = "language,core", title = "ExchangeProperty")
+@Metadata(firstVersion = "2.0.0", label = "language,core", title = "ExchangeProperty",
+          description = "Gets a property from the Exchange")
 @XmlRootElement(name = "exchangeProperty")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ExchangePropertyExpression extends ExpressionDefinition {

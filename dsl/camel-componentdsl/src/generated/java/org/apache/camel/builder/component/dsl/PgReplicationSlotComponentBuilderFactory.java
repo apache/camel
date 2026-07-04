@@ -33,7 +33,7 @@ import org.apache.camel.component.pg.replication.slot.PgReplicationSlotComponent
 public interface PgReplicationSlotComponentBuilderFactory {
 
     /**
-     * PostgresSQL Replication Slot (camel-pg-replication-slot)
+     * PostgreSQL Replication Slot (camel-pg-replication-slot)
      * Poll for PostgreSQL Write-Ahead Log (WAL) records using Streaming
      * Replication Slots.
      * 
@@ -48,7 +48,7 @@ public interface PgReplicationSlotComponentBuilderFactory {
     }
 
     /**
-     * Builder for the PostgresSQL Replication Slot component.
+     * Builder for the PostgreSQL Replication Slot component.
      */
     interface PgReplicationSlotComponentBuilder extends ComponentBuilder<PgReplicationSlotComponent> {
     

@@ -19,6 +19,7 @@ package org.apache.camel.dsl.jbang.core.commands.tui;
 import java.net.URI;
 import java.time.Instant;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
@@ -496,6 +497,64 @@ final class StatusParser {
             }
         }
 
+        // Parse dataSources
+        JsonObject dsObj = (JsonObject) root.get("dataSources");
+        if (dsObj != null) {
+            JsonArray dsList = (JsonArray) dsObj.get("dataSources");
+            if (dsList != null) {
+                for (Object d : dsList) {
+                    JsonObject dj = (JsonObject) d;
+                    DataSourceInfo di = new DataSourceInfo();
+                    di.name = dj.getString("name");
+                    di.type = dj.getString("type");
+                    di.poolType = dj.getString("poolType");
+                    di.poolName = dj.getString("poolName");
+                    di.active = dj.getIntegerOrDefault("active", 0);
+                    di.idle = dj.getIntegerOrDefault("idle", 0);
+                    di.total = dj.getIntegerOrDefault("total", 0);
+                    di.waiting = dj.getIntegerOrDefault("waiting", 0);
+                    di.maxPoolSize = dj.getIntegerOrDefault("maxPoolSize", 0);
+                    di.maxUsed = dj.getIntegerOrDefault("maxUsed", 0);
+                    di.leakDetection = dj.getIntegerOrDefault("leakDetection", 0);
+                    di.created = dj.getIntegerOrDefault("created", 0);
+                    info.dataSources.add(di);
+                }
+            }
+        }
+
+        // Parse sqlTrace
+        JsonObject sqlTraceObj = (JsonObject) root.get("sqlTrace");
+        if (sqlTraceObj != null) {
+            JsonObject summary = (JsonObject) sqlTraceObj.get("summary");
+            if (summary != null) {
+                info.sqlTraceTotal = summary.getLongOrDefault("totalQueries", 0);
+                info.sqlTraceAvgTime = summary.getLongOrDefault("avgTime", 0);
+                info.sqlTraceSlowestTime = summary.getLongOrDefault("slowestTime", 0);
+                info.sqlTraceSlowCount = summary.getLongOrDefault("slowCount", 0);
+                info.sqlTraceFailedCount = summary.getLongOrDefault("failedCount", 0);
+            }
+            JsonArray stmts = (JsonArray) sqlTraceObj.get("statements");
+            if (stmts != null) {
+                for (Object s : stmts) {
+                    JsonObject sj = (JsonObject) s;
+                    SqlTraceInfo si = new SqlTraceInfo();
+                    si.exchangeId = sj.getString("exchangeId");
+                    si.routeId = sj.getString("routeId");
+                    si.nodeId = sj.getString("nodeId");
+                    si.location = sj.getString("location");
+                    si.query = sj.getString("query");
+                    si.category = sj.getString("category");
+                    si.endpoint = sj.getString("endpoint");
+                    si.timestamp = sj.getLongOrDefault("timestamp", 0);
+                    si.duration = sj.getLongOrDefault("duration", 0);
+                    si.rowCount = sj.getIntegerOrDefault("rowCount", 0);
+                    si.updateCount = sj.getIntegerOrDefault("updateCount", 0);
+                    si.failed = sj.getBooleanOrDefault("failed", false);
+                    info.sqlTraceStatements.add(si);
+                }
+            }
+        }
+
         return info;
     }
 
@@ -553,12 +612,19 @@ final class StatusParser {
             entry.timestamp = tsObj.toString();
         }
 
+        entry.remoteEndpoint = json.getBooleanOrDefault("remoteEndpoint", false);
+        entry.stubEndpoint = json.getBooleanOrDefault("stubEndpoint", false);
+
         if (entry.first || entry.last) {
             entry.nodeLevel = Math.max(0, entry.nodeLevel - 1);
         }
         String indent = "  ".repeat(entry.nodeLevel);
         if (entry.first) {
-            entry.direction = "-->";
+            if (entry.stubEndpoint) {
+                entry.direction = "~-->";
+            } else {
+                entry.direction = entry.remoteEndpoint ? "*-->" : "*-> ";
+            }
             String uri = json.getString("endpointUri");
             if (uri != null) {
                 entry.processor = indent + "from[" + uri + "]";
@@ -566,10 +632,20 @@ final class StatusParser {
                 entry.processor = indent + (entry.nodeLabel != null ? entry.nodeLabel : "");
             }
         } else if (entry.last) {
-            entry.direction = "<--";
+            if (entry.stubEndpoint) {
+                entry.direction = "<--~";
+            } else {
+                entry.direction = entry.remoteEndpoint ? "<--*" : "<-* ";
+            }
             entry.processor = indent + (entry.nodeLabel != null ? entry.nodeLabel : "");
         } else {
-            entry.direction = "  >";
+            if (entry.stubEndpoint) {
+                entry.direction = "~-->";
+            } else if (entry.remoteEndpoint) {
+                entry.direction = "--->";
+            } else {
+                entry.direction = "    ";
+            }
             entry.processor = indent + (entry.nodeLabel != null ? entry.nodeLabel : "");
         }
 
@@ -618,6 +694,9 @@ final class StatusParser {
         entry.failed = json.getBooleanOrDefault("failed", false);
         entry.nodeLevel = json.getIntegerOrDefault("nodeLevel", 0);
 
+        entry.remoteEndpoint = json.getBooleanOrDefault("remoteEndpoint", false);
+        entry.stubEndpoint = json.getBooleanOrDefault("stubEndpoint", false);
+
         Object elapsedObj = json.get("elapsed");
         if (elapsedObj instanceof Number n) {
             entry.elapsed = n.longValue();
@@ -626,11 +705,25 @@ final class StatusParser {
         }
 
         if (entry.first) {
-            entry.direction = "-->";
+            if (entry.stubEndpoint) {
+                entry.direction = "~-->";
+            } else {
+                entry.direction = entry.remoteEndpoint ? "*-->" : "*-> ";
+            }
         } else if (entry.last) {
-            entry.direction = "<--";
+            if (entry.stubEndpoint) {
+                entry.direction = "<--~";
+            } else {
+                entry.direction = entry.remoteEndpoint ? "<--*" : "<-* ";
+            }
         } else {
-            entry.direction = "  >";
+            if (entry.stubEndpoint) {
+                entry.direction = "~-->";
+            } else if (entry.remoteEndpoint) {
+                entry.direction = "--->";
+            } else {
+                entry.direction = "    ";
+            }
         }
 
         if (entry.first || entry.last) {
@@ -946,6 +1039,72 @@ final class StatusParser {
 
     static long extractSince(ProcessHandle ph) {
         return ph.info().startInstant().map(Instant::toEpochMilli).orElse(0L);
+    }
+
+    @SuppressWarnings("unchecked")
+    static List<ErrorInfo> parseErrors(JsonObject root) {
+        JsonArray errorList = (JsonArray) root.get("errors");
+        if (errorList == null) {
+            return List.of();
+        }
+        List<ErrorInfo> parsed = new ArrayList<>();
+        for (Object e : errorList) {
+            JsonObject ej = (JsonObject) e;
+            ErrorInfo ei = new ErrorInfo();
+            ei.routeId = ej.getString("routeId");
+            ei.nodeId = ej.getString("nodeId");
+            ei.exchangeId = ej.getString("exchangeId");
+            ei.handled = Boolean.TRUE.equals(ej.get("handled"));
+            Long ts = ej.getLong("timestamp");
+            if (ts != null) {
+                ei.timestamp = ts;
+            }
+            ei.location = ej.getString("location");
+            ei.threadName = ej.getString("threadName");
+            Long elapsed = ej.getLong("elapsed");
+            if (elapsed != null) {
+                ei.elapsed = elapsed;
+            }
+            ei.endpointUri = ej.getString("endpointUri");
+            ei.fromEndpointUri = ej.getString("fromEndpointUri");
+            JsonObject ex = (JsonObject) ej.get("exception");
+            if (ex != null) {
+                ei.exceptionType = ex.getString("type");
+                ei.exceptionMessage = ex.getString("message");
+                ei.stackTrace = ex.getString("stackTrace");
+            }
+            Object mhObj = ej.get("messageHistory");
+            if (mhObj instanceof JsonArray mhArr) {
+                ei.messageHistory = new String[mhArr.size()];
+                for (int i = 0; i < mhArr.size(); i++) {
+                    ei.messageHistory[i] = mhArr.get(i).toString();
+                }
+            }
+            JsonObject msg = (JsonObject) ej.get("message");
+            if (msg != null) {
+                Object bodyObj = msg.get("body");
+                if (bodyObj instanceof JsonObject bodyJson) {
+                    ei.body = bodyJson.getString("value");
+                    ei.bodyType = bodyJson.getString("type");
+                } else if (bodyObj != null) {
+                    ei.body = bodyObj.toString();
+                }
+                JsonArray hdrs = msg.getCollection("headers");
+                if (hdrs != null) {
+                    parseKvArray(hdrs, ei.headers, ei.headerTypes);
+                }
+            }
+            JsonArray props = ej.getCollection("exchangeProperties");
+            if (props != null) {
+                parseKvArray(props, ei.properties, ei.propertyTypes);
+            }
+            JsonArray vars = ej.getCollection("exchangeVariables");
+            if (vars != null) {
+                parseKvArray(vars, ei.variables, ei.variableTypes);
+            }
+            parsed.add(ei);
+        }
+        return parsed;
     }
 
     static String stringValue(Object obj) {

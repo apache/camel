@@ -3,9 +3,9 @@
     "kind": "model",
     "name": "weightedLoadBalancer",
     "title": "Weighted Load Balancer",
-    "description": "Uses a weighted load distribution ratio for each server with respect to others.",
+    "description": "Load balancer that distributes messages across endpoints according to configured weight ratios",
     "deprecated": false,
-    "label": "eip,routing",
+    "label": "eip,loadbalancing,routing",
     "javaType": "org.apache.camel.model.loadbalancer.WeightedLoadBalancerDefinition",
     "abstract": false,
     "input": false,
@@ -13,8 +13,8 @@
   },
   "properties": {
     "id": { "index": 0, "kind": "attribute", "displayName": "Id", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node" },
-    "distributionRatio": { "index": 1, "kind": "attribute", "displayName": "Distribution Ratio", "group": "common", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The distribution ratio is a delimited String consisting on integer weights separated by delimiters for example 2,3,5. The distributionRatio must match the number of endpoints and\/or processors specified in the load balancer list." },
-    "distributionRatioDelimiter": { "index": 2, "kind": "attribute", "displayName": "Distribution Ratio Delimiter", "group": "advanced", "label": "advanced", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "defaultValue": ",", "description": "Delimiter used to specify the distribution ratio. The default value is , (comma)" },
-    "roundRobin": { "index": 3, "kind": "attribute", "displayName": "Round Robin", "group": "advanced", "label": "advanced", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "To enable round robin mode. By default the weighted distribution mode is used. The default value is false." }
+    "distributionRatio": { "index": 1, "kind": "attribute", "displayName": "Distribution Ratio", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The distribution ratio is a delimited String consisting of integer weights separated by delimiters for example 2,3,5. The distributionRatio must match the number of endpoints and\/or processors specified in the load balancer list." },
+    "distributionRatioDelimiter": { "index": 2, "kind": "attribute", "displayName": "Distribution Ratio Delimiter", "group": "advanced", "label": "advanced", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "defaultValue": ",", "description": "Delimiter used to specify the distribution ratio. The default value is comma." },
+    "roundRobin": { "index": 3, "kind": "attribute", "displayName": "Round Robin", "group": "advanced", "label": "advanced", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Whether to enable round robin mode. By default the weighted distribution mode is used." }
   }
 }

@@ -43,4 +43,17 @@ public @interface Language {
      */
     Class<?> functionsClass() default void.class;
 
+    /**
+     * The class that contains all the name of operators that are supported by the language. The name of the operators
+     * are defined as {@code String} constants in the operators class.
+     *
+     * The class to provide can be any class but by convention, we would expect a class whose name is of type
+     * <i>xxxOperatorConstants</i> where <i>xxx</i> is the name of the corresponding language like for example
+     * <i>SimpleOperatorConstants</i> for the language <i>camel-simple</i>.
+     *
+     * The metadata of a given operator are retrieved directly from the annotation {@code @Metadata} added to the
+     * {@code String} constant representing its name and defined in the operators class.
+     */
+    Class<?> operatorsClass() default void.class;
+
 }

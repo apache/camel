@@ -90,6 +90,7 @@ Or you can use the `<propertyPlaceholder>` tag.
 
 Using the `<propertyPlaceholder>` allows to configure this within the `<camelContext>` tag.
 
+._XML-only:_
 [source,xml]
 ----
 <camelContext>
@@ -99,6 +100,7 @@ Using the `<propertyPlaceholder>` allows to configure this within the `<camelCon
 
 For fine-grained configuration of the location, then this can be done as follows:
 
+._XML-only:_
 [source,xml]
 ----
 <camelContext>

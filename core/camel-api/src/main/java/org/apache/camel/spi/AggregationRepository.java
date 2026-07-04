@@ -23,15 +23,25 @@ import org.apache.camel.Exchange;
 import org.jspecify.annotations.Nullable;
 
 /**
- * Repository for storing aggregated exchanges used by the Aggregator EIP.
+ * Persistent store for in-progress aggregated {@link Exchange} instances, used by the
+ * <a href="https://camel.apache.org/manual/aggregator2.html">Aggregator EIP</a>.
  * <p/>
- * The aggregation lifecycle is: {@link #get(CamelContext, String)} to retrieve the existing aggregate, then
- * {@link #add(CamelContext, String, Exchange)} to store the updated aggregate, and finally
- * {@link #remove(CamelContext, String, Exchange)} when the aggregation is complete.
- * {@link #confirm(CamelContext, String)} is called after the aggregated exchange has been processed successfully.
- * <p/>
- * Implementations must be thread-safe as multiple threads may aggregate concurrently for different correlation keys.
- *
+ * The Aggregator EIP correlates incoming exchanges by a key and accumulates them until a completion condition is
+ * satisfied. This repository is the pluggable storage layer that holds the partial aggregate between correlation
+ * events. The lifecycle for each aggregate is:
+ * <ol>
+ * <li>{@link #get(CamelContext, String)} — load the current partial aggregate (or {@code null} if none exists
+ * yet).</li>
+ * <li>{@link #add(CamelContext, String, Exchange)} — store the updated aggregate after applying the
+ * {@link org.apache.camel.AggregationStrategy}.</li>
+ * <li>{@link #remove(CamelContext, String, Exchange)} — delete the aggregate once the completion condition fires.</li>
+ * <li>{@link #confirm(CamelContext, String)} — acknowledge successful downstream processing of the completed aggregate
+ * (used by persistent stores to mark records as committed).</li>
+ * </ol>
+ * Implementations must be thread-safe: multiple threads can aggregate concurrently for different correlation keys. The
+ * default in-memory implementation ({@code MemoryAggregationRepository}) is suitable for non-persistent use cases;
+ * persistent implementations backed by JDBC, Hazelcast, Infinispan, or file storage are available as separate Camel
+ * components.
  */
 public interface AggregationRepository {
 

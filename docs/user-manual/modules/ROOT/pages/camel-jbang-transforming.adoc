@@ -1,0 +1,497 @@
+= Camel CLI - Data Transformation
+
+The Camel CLI includes tools for transforming messages and converting between route DSL formats — with live reload for interactive development. For the full overview, see xref:camel-jbang.adoc[Camel CLI].
+
+== Transforming messages (data mapping)
+
+The `camel transform message` command takes an input message and a template, and shows the
+transformed output in real time — with live reload as you edit the template.
+
+For example, given this JSON document (`random.json`):
+
+[source,json]
+----
+{
+  "id": 9914,
+  "uid": "eb5fa603-1db6-45f9-912a-431a6ed59b18",
+  "password": "ei7gvYKdnN",
+  "first_name": "Khalilah",
+  "last_name": "Monahan",
+  "username": "khalilah.monahan",
+  "email": "khalilah.monahan@email.com",
+  "avatar": "https://robohash.org/utnumquamexcepturi.png?size=300x300&set=set1",
+  "gender": "Agender",
+  "phone_number": "+54 (421) 591-5640 x333",
+  "social_insurance_number": "268418308",
+  "date_of_birth": "1975-03-11",
+  "employment": {
+    "title": "Product Design Director",
+    "key_skill": "Work under pressure"
+  },
+  "address": {
+    "city": "New Fritzchester",
+    "street_name": "Patrick Common",
+    "street_address": "4538 Reggie Inlet",
+    "zip_code": "16282-7045",
+    "state": "New York",
+    "country": "United States",
+    "coordinates": {
+      "lat": -1.9868753435474673,
+      "lng": 39.09763956726292
+    }
+  },
+  "credit_card": {
+    "cc_number": "4493983042212"
+  },
+  "subscription": {
+    "plan": "Student",
+    "status": "Active",
+    "payment_method": "Debit card",
+    "term": "Monthly"
+  }
+}
+----
+
+Create a `transform.json` template with the desired output structure:
+
+[source,json]
+----
+{
+    "sid": 123,
+	"name": "TODO",
+	"country": "TODO",
+	"phone": "TODO",
+	"student": false
+}
+----
+
+Run with `--watch` to see output update live as you edit the template:
+
+[source,bash]
+----
+$ camel transform message --body=file:random.json --language=simple --template=file:transform.json --pretty --watch
+----
+
+Initial output:
+
+[source,bash]
+----
+ Exchange  (DefaultExchange)  InOut   23F5DD4CE6C260B-0000000000000002
+ Message   (DefaultMessage)
+ Body      (String) (bytes: 118)
+ {
+   "sid": 123,
+   "name": "TODO",
+   "country": "TODO",
+   "phone": "TODO",
+   "student": false
+ }
+----
+
+Now edit `transform.json` to add JQ expressions and save — the output updates instantly:
+
+[source,json]
+----
+{
+   "sid": ${jq(.id)},
+   "name": "${jq(.first_name)} ${jq(.last_name)}",
+   "country": "TODO",
+   "phone": "TODO",
+   "student": false
+}
+----
+
+Output:
+
+[source,bash]
+----
+ Exchange  (DefaultExchange)  InOut   23F5DD4CE6C260B-0000000000000018
+ Message   (DefaultMessage)
+ Body      (String) (bytes: 158)
+ {
+   "sid": 9914,
+   "name": "Khalilah Monahan",
+   "country": "TODO",
+   "phone": "TODO",
+   "student": false
+ }
+----
+
+Continue editing the template until you have the desired result. Errors are shown in red with a stack trace.
+
+=== Transforming directly from a Camel route
+
+Instead of an external template, you can transform directly inside a Camel route using `--source`.
+
+NOTE: Java DSL does not support `--watch` mode (live reload on change).
+
+For example, given this beer JSON (`sample.json`):
+
+[source,json]
+----
+ {
+   "id": 2104,
+   "uid": "cefb36e1-e42f-4083-8f97-fc4ff85e56fb",
+   "brand": "Pabst Blue Ribbon",
+   "name": "St. Bernardus Abt 12",
+   "style": "Belgian Strong Ale",
+   "hop": "Amarillo",
+   "yeast": "1388 - Belgian Strong Ale",
+   "malts": "Caramel",
+   "ibu": "43 IBU",
+   "alcohol": "3.8%",
+   "blg": "16.0°Blg"
+ }
+----
+
+And a route with a `setBody` expression (starting with TODO):
+
+[source,yaml]
+----
+- route:
+    nodePrefixId: route-c38
+    id: route-66b0
+    from:
+      uri: kamelet:beer-source
+      id: from-3996
+      steps:
+        - setBody:
+            expression:
+              simple:
+                expression: >-
+                  TODO
+                id: simple-b320
+            id: setBody-fa01
+        - log:
+            message: ${body}
+            id: log-0c79
+----
+
+Run the transform command against the route:
+
+[source,bash]
+----
+camel transform message --body=file:sample.json --source=beer-jq.yaml --watch --pretty
+----
+
+Initial output:
+
+[source,text]
+----
+ Exchange  (DefaultExchange)  InOut   D9F909701338607-0000000000000004
+ Message   (DefaultMessage)
+ Body      (String) (bytes: 4)
+ TODO
+----
+
+Edit the expression in the route to use JQ and save — the output updates live:
+
+[source,yaml]
+----
+    expression: >-
+      {
+        "kind": "${jq(.brand)}",
+        "beer": "${jq(.name)}"
+      }
+    id: simple-b320
+----
+
+Output:
+
+[source,text]
+----
+ Exchange  (DefaultExchange)  InOut   D9F909701338607-000000000000003E
+ Message   (DefaultMessage)
+ Body      (String) (bytes: 78)
+ {
+   "kind": "Pabst Blue Ribbon",
+   "beer": "St. Bernardus Abt 12"
+ }
+----
+
+Press Ctrl+C to stop.
+
+By default, `--source` picks the last expression in the route. With multiple expressions,
+specify which one by line number or EIP id:
+
+[source,bash]
+----
+camel transform message --body=file:sample.json --source=beer-jq.yaml:11  --watch --pretty
+----
+
+The line number does not need to be exact — any number within the EIP's range works. By id:
+
+[source,bash]
+----
+camel transform message --body=file:sample.json --source=beer-jq.yaml:setBody-fa01  --watch --pretty
+----
+
+You can also transform to XML or any other structure:
+
+[source,yaml]
+----
+- setBody:
+    expression:
+      simple:
+        expression: >-
+          <beer id="${jq(.id)}">
+            <name>${jq(.name)}</name>
+            <kind>${jq(.brand)}</kind>
+          </beer>
+        id: simple-b320
+    id: setBody-fa01
+----
+
+Configure language options with `--option` (repeatable):
+
+[source,bash]
+----
+$ camel transform message --body=file:sample.json --language=jsonpath --template="beer.unknown" --option=suppressExceptions=true
+----
+
+Here JSONPath would normally throw for a missing path — `suppressExceptions=true` returns null instead:
+
+[source,text]
+----
+2023-12-04 13:02:50.923  66291 --- Message transformed (success) (239ms)
+ Exchange  (DefaultExchange)  InOut   6118686CA3995FF-0000000000000000
+ Message   (DefaultMessage)
+ Body      (null) (bytes: 14)
+ [Body is null]
+----
+
+=== Transforming with Groovy
+
+Groovy is a powerful option for data transformation — its concise syntax and built-in JSON/XML
+support make it ideal for reshaping messages.
+
+Use Groovy as the expression language to transform JSON:
+
+[source,bash]
+----
+camel transform message --body=file:random.json --language=groovy --template=file:transform.groovy --pretty --watch
+----
+
+Where `transform.groovy` uses Groovy's `JsonSlurper` and `JsonBuilder`:
+
+[source,groovy]
+----
+import groovy.json.*
+
+def input = new JsonSlurper().parseText(request.body)
+def output = new JsonBuilder()
+output {
+    name "${input.first_name} ${input.last_name}"
+    country input.address.country
+    phone input.phone_number
+    student input.subscription.plan == 'Student'
+}
+output.toPrettyString()
+----
+
+Camel also provides two Groovy-based data formats for quick marshal/unmarshal without writing scripts:
+
+* `groovyJson` — transform between JSON and `Map`/`List` objects using Groovy's built-in JSON slurper and builder
+* `groovyXml` — transform between XML and Groovy `Node` objects
+
+[source,bash]
+----
+camel transform message --body=file:data.json --dataformat=groovyJson
+camel transform message --body=file:data.xml --dataformat=groovyXml
+----
+
+These data formats have minimal configuration and are convenient for quick inspection
+or when combined with Groovy expressions in a route for further manipulation.
+
+=== Using components
+
+Components like XSLT, Velocity, FreeMarker, and Thymeleaf can also be used for transformation.
+
+TIP: Run `camel catalog component --filter=transform` to list transformation-capable components.
+
+Given this XML (`sample.xml`):
+
+[source,xml]
+----
+<hash>
+  <id type="integer">1369</id>
+  <uid>8c946e1a-fdc5-40d3-9098-44271bdfad65</uid>
+  <account-number>8673088731</account-number>
+  <iban>GB38EFUA27474531363797</iban>
+  <bank-name>ABN AMRO MEZZANINE (UK) LIMITED</bank-name>
+  <routing-number>053228004</routing-number>
+  <swift-bic>AACCGB21</swift-bic>
+</hash>
+----
+
+Transform it with an XSLT stylesheet (`mystyle.xsl`):
+
+[source,xml]
+----
+<?xml version = "1.0"?>
+<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+
+  <xsl:template match="/">
+    <bank>
+    	<name><xsl:value-of select="/hash/bank-name/text()"/></name>
+    	<bic><xsl:value-of select="/hash/swift-bic/text()"/></bic>
+    </bank>
+  </xsl:template>
+
+</xsl:stylesheet>
+----
+
+Run with live reload:
+
+[source,bash]
+----
+$ camel transform message --body=file:sample.xml --component=xslt --template=file:mystyle.xsl --pretty --watch
+----
+
+Configure component options with `--option` (repeatable):
+
+[source,bash]
+----
+$ camel transform message --body=file:sample.xml --component=xslt --template=file:mystyle.xsl --option=output=bytes --pretty --watch
+----
+
+NOTE: Some components require complex options that cannot be set from the command line.
+
+=== Using data formats
+
+Data formats (Base64, CSV, FlatPack, etc.) can unmarshal input into Java objects for inspection.
+
+TIP: Run `camel catalog dataformat --filter=transform` to list available data formats.
+
+Given this CSV file (`daltons.csv`):
+
+[source,text]
+----
+Jack Dalton, 115, mad at Averell
+Joe Dalton, 105, calming Joe
+William Dalton, 105, keeping Joe from killing Averell
+Averell Dalton, 80, playing with Rantanplan
+Lucky Luke, 120, capturing the Daltons
+----
+
+Unmarshal with the CSV data format:
+
+[source,bash]
+----
+$ camel transform message --body=file:daltons.csv --dataformat=csv
+----
+
+Output:
+
+[source,text]
+----
+2023-12-04 10:53:45.578  55793 --- Message transformed (success) (176ms)
+ Exchange  (DefaultExchange)  InOut   6673987D34F3B54-0000000000000000
+ Message   (DefaultMessage)
+ Body      (ArrayList) (size: 5 bytes: 224)
+ [[Jack Dalton,  115,  mad at Averell], [Joe Dalton,  105,  calming Joe], [William Dalton,  105,  keeping Joe from killing Averell], [Averell Dalton,  80,
+ playing with Rantanplan], [Lucky Luke,  120,  capturing the Daltons]]
+----
+
+The CSV data format produces an `ArrayList` — one list per row, each containing the column values.
+
+Configure data format options with `--option` (repeatable):
+
+[source,bash]
+----
+$ camel transform message --body=file:daltons.csv --dataformat=csv --option=captureHeaderRecord=true
+----
+
+NOTE: Some data formats require complex options that cannot be set from the command line.
+
+== Evaluating expressions
+
+Quickly evaluate a Camel expression without writing a route:
+
+[source,bash]
+----
+camel eval expression --language=simple --template='Hello ${body}' --body='World'
+camel eval expression --language=jq --template='.name' --body=file:data.json
+camel eval expression --language=jsonpath --template='$.store.book[0].title' --body=file:store.json
+----
+
+This runs the expression in an isolated process. To evaluate against a running integration
+(using its Exchange context), specify the process name or PID:
+
+[source,bash]
+----
+camel eval expression myApp --language=simple --template='${header.myHeader}'
+----
+
+Use `--predicate` to evaluate as a boolean predicate instead of a value expression.
+
+== Transforming route DSL format
+
+The `camel transform route` command converts between YAML and XML DSL formats —
+useful when working with graphical editors or code generators that target a specific DSL.
+
+For example, given this YAML route (`route.yaml`):
+
+[source, yaml]
+----
+- route:
+    id: route-b785
+    nodePrefixId: route-14b
+    from:
+      id: from-959e
+      uri: direct
+      parameters:
+        name: start
+      steps:
+        - choice:
+            id: choice-52fe
+            when:
+              - id: when-b126
+                expression:
+                  simple:
+                    id: simple-576d
+                    expression: ${header.foo} == 'bar'
+                steps:
+                  - to:
+                      id: to-65f9
+                      uri: jms
+                      parameters:
+                        destinationName: queue
+            otherwise:
+              id: otherwise-c07f
+              steps:
+                - to:
+                    id: to-dc76
+                    uri: log
+                    parameters:
+                      loggerName: default
+----
+
+Convert to XML:
+
+[source, bash]
+----
+camel transform route --format=xml /path/to/route.yaml
+----
+
+Output:
+
+[source, xml]
+----
+<camel>
+    <route id="route-b785" nodePrefixId="route-14b">
+        <from id="from-959e" uri="direct:start"/>
+        <choice id="choice-52fe">
+            <when id="when-b126">
+                <simple>${header.foo} == 'bar'</simple>
+                <to id="to-65f9" uri="jms:queue"/>
+            </when>
+            <otherwise id="otherwise-c07f">
+                <to id="to-dc76" uri="log:default"/>
+            </otherwise>
+        </choice>
+    </route>
+</camel>
+----
+
+TIP: When all input files share the same extension (e.g., `.yaml`), the target format defaults to the other DSL (XML) and vice versa.

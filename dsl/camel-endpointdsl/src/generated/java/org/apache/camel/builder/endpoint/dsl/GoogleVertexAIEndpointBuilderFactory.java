@@ -519,7 +519,7 @@ public interface GoogleVertexAIEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final GoogleVertexAIHeaderNameBuilder INSTANCE = new GoogleVertexAIHeaderNameBuilder();
+        public static final GoogleVertexAIHeaderNameBuilder INSTANCE = new GoogleVertexAIHeaderNameBuilder();
 
         /**
          * The operation to perform.

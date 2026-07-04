@@ -33,6 +33,7 @@ import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.component.dapr.DaprConfiguration;
 import org.apache.camel.component.dapr.DaprConstants;
 import org.apache.camel.component.dapr.DaprEndpoint;
+import org.apache.camel.component.dapr.DaprHeaderFilterStrategy;
 import org.apache.camel.spi.ExchangeFactory;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.test.junit6.CamelTestSupport;
@@ -43,6 +44,7 @@ import org.mockito.ArgumentCaptor;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -78,6 +80,7 @@ public class DaprPubSubConsumerTest extends CamelTestSupport {
                 .thenAnswer(inv -> DefaultExchange.newFromEndpoint(inv.getArgument(0)));
         when(endpoint.getCamelContext()).thenReturn(context);
         when(endpoint.getConfiguration()).thenReturn(configuration);
+        when(endpoint.getHeaderFilterStrategy()).thenReturn(new DaprHeaderFilterStrategy());
         when(configuration.getPubSubName()).thenReturn("testPubSub");
         when(configuration.getTopic()).thenReturn("testTopic");
         when(configuration.getPreviewClient()).thenReturn(mockClient);
@@ -131,8 +134,8 @@ public class DaprPubSubConsumerTest extends CamelTestSupport {
 
         String body = new String(exchange.getIn().getBody(byte[].class), StandardCharsets.UTF_8);
         assertEquals(payload, body);
-        assertEquals(pubSubName, exchange.getIn().getHeader(DaprConstants.PUBSUB_NAME));
-        assertEquals(topic, exchange.getIn().getHeader(DaprConstants.TOPIC));
+        assertNull(exchange.getIn().getHeader(DaprConstants.PUBSUB_NAME));
+        assertNull(exchange.getIn().getHeader(DaprConstants.TOPIC));
         assertEquals(id, exchange.getIn().getHeader(DaprConstants.ID));
         assertEquals(ver, exchange.getIn().getHeader(DaprConstants.SPECIFIC_VERSION));
         assertArrayEquals(payload.getBytes(), (byte[]) exchange.getIn().getHeader(DaprConstants.BINARY_DATA));

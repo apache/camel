@@ -1,0 +1,241 @@
+<!--
+
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+
+         http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<!DOCTYPE html>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Apache Camel Simple Language Validator</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #f5f5f5; color: #333; padding: 2rem;
+    max-width: 900px; margin: 0 auto;
+  }
+  h1 { font-size: 1.5rem; margin-bottom: 0.25rem; }
+  .subtitle { color: #666; font-size: 0.9rem; margin-bottom: 1.5rem; }
+  .input-group { margin-bottom: 1rem; }
+  label { display: block; font-weight: 600; margin-bottom: 0.3rem; font-size: 0.9rem; }
+  input[type="text"] {
+    width: 100%; padding: 0.6rem 0.8rem; font-size: 1rem;
+    font-family: 'SF Mono', 'Menlo', 'Consolas', monospace;
+    border: 2px solid #ccc; border-radius: 6px; outline: none;
+    transition: border-color 0.2s;
+  }
+  input[type="text"]:focus { border-color: #e77225; }
+  .controls { display: flex; gap: 0.75rem; align-items: center; margin-bottom: 1.5rem; }
+  .mode-toggle { display: flex; border: 2px solid #ccc; border-radius: 6px; overflow: hidden; }
+  .mode-toggle button {
+    padding: 0.5rem 1rem; border: none; background: #fff;
+    cursor: pointer; font-size: 0.85rem; font-weight: 500; color: #555;
+    transition: all 0.2s;
+  }
+  .mode-toggle button.active { background: #e77225; color: #fff; }
+  .mode-toggle button:not(.active):hover { background: #f0f0f0; }
+  .validate-btn {
+    padding: 0.5rem 1.5rem; border: none; border-radius: 6px;
+    background: #e77225; color: #fff; font-size: 0.9rem; font-weight: 600;
+    cursor: pointer; transition: background 0.2s;
+  }
+  .validate-btn:hover { background: #c5611e; }
+  .result {
+    border-radius: 8px; padding: 1rem 1.25rem;
+    margin-bottom: 1rem; display: none;
+  }
+  .result.valid { background: #e8f5e9; border: 1px solid #a5d6a7; }
+  .result.invalid { background: #fce4ec; border: 1px solid #ef9a9a; }
+  .result.warning { background: #fff8e1; border: 1px solid #ffe082; }
+  .result-header {
+    font-weight: 700; font-size: 1rem; margin-bottom: 0.5rem;
+    display: flex; align-items: center; gap: 0.5rem;
+  }
+  .result.valid .result-header { color: #2e7d32; }
+  .result.invalid .result-header { color: #c62828; }
+  .result.warning .result-header { color: #f57f17; }
+  .diagnostic {
+    padding: 0.5rem 0.75rem; margin-top: 0.5rem;
+    background: rgba(255,255,255,0.7); border-radius: 4px;
+    font-size: 0.85rem;
+  }
+  .diagnostic .severity {
+    font-weight: 700; text-transform: uppercase; font-size: 0.75rem;
+    padding: 0.1rem 0.4rem; border-radius: 3px; margin-right: 0.4rem;
+  }
+  .diagnostic .severity.error { background: #ef9a9a; color: #b71c1c; }
+  .diagnostic .severity.warning { background: #ffe082; color: #e65100; }
+  .diagnostic .severity.info { background: #b3e5fc; color: #01579b; }
+  .diagnostic .position { color: #888; font-size: 0.8rem; margin-left: 0.5rem; }
+  .diagnostic .suggestion { color: #2e7d32; font-weight: 600; }
+  .pointer-line {
+    font-family: 'SF Mono', 'Menlo', 'Consolas', monospace;
+    font-size: 0.85rem; margin-top: 0.3rem; color: #888;
+    white-space: pre;
+  }
+  .pointer-line .caret { color: #c62828; font-weight: 700; }
+  .examples {
+    margin-top: 2rem; padding-top: 1.5rem;
+    border-top: 1px solid #ddd;
+  }
+  .examples h2 { font-size: 1.1rem; margin-bottom: 0.75rem; }
+  .example-list { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+  .example-btn {
+    padding: 0.35rem 0.75rem; border: 1px solid #ccc; border-radius: 4px;
+    background: #fff; cursor: pointer; font-family: 'SF Mono', 'Menlo', 'Consolas', monospace;
+    font-size: 0.8rem; color: #555; transition: all 0.2s;
+  }
+  .example-btn:hover { border-color: #e77225; color: #e77225; }
+  .example-btn.error-example { border-color: #ef9a9a; color: #c62828; }
+  .example-btn.error-example:hover { background: #fce4ec; }
+  kbd {
+    background: #eee; border: 1px solid #ccc; border-radius: 3px;
+    padding: 0.1rem 0.4rem; font-size: 0.8rem;
+  }
+  .hint { color: #888; font-size: 0.8rem; margin-top: 0.3rem; }
+</style>
+</head>
+<body>
+
+<h1>Apache Camel Simple Language Validator</h1>
+<p class="subtitle">Validate Simple expressions and predicates in the browser — no Java backend needed.</p>
+
+<div class="input-group">
+  <label for="expr">Simple Expression</label>
+  <input type="text" id="expr" placeholder="${body} == 'Hello World'" autofocus>
+  <p class="hint">Press <kbd>Enter</kbd> to validate, or click the button below.</p>
+</div>
+
+<div class="controls">
+  <div class="mode-toggle">
+    <button id="mode-expr" class="active" onclick="setMode('expression')">Expression</button>
+    <button id="mode-pred" onclick="setMode('predicate')">Predicate</button>
+  </div>
+  <button class="validate-btn" onclick="runValidation()">Validate</button>
+</div>
+
+<div id="result" class="result"></div>
+
+<div class="examples">
+  <h2>Try these examples</h2>
+  <div class="example-list">
+    <button class="example-btn" onclick="tryExample('${body}', 'expression')"><span>${body}</span></button>
+    <button class="example-btn" onclick="tryExample('${header.foo}', 'expression')">${header.foo}</button>
+    <button class="example-btn" onclick="tryExample('Hello ${header.name}', 'expression')">Hello ${header.name}</button>
+    <button class="example-btn" onclick="tryExample('${trim()} ~> ${uppercase()}', 'expression')">${trim()} ~> ${uppercase()}</button>
+    <button class="example-btn" onclick="tryExample(\"${header.name} ?: \\'Guest\\'\", 'expression')">${header.name} ?: 'Guest'</button>
+    <button class="example-btn" onclick="tryExample(\"${body} == \\'foo\\'\", 'predicate')">${body} == 'foo'</button>
+    <button class="example-btn" onclick="tryExample(\"${header.count} > 5 && ${header.type} == \\'gold\\'\", 'predicate')">${header.count} > 5 && ...</button>
+    <button class="example-btn" onclick="tryExample(\"${header.age} range \\'18..65\\'\", 'predicate')">${header.age} range '18..65'</button>
+    <button class="example-btn error-example" onclick="tryExample('${boddy}', 'expression')">${boddy}</button>
+    <button class="example-btn error-example" onclick="tryExample('${body', 'expression')">${body</button>
+    <button class="example-btn error-example" onclick="tryExample(\"${header.foo} contans \\'bar\\'\", 'predicate')">contans (typo)</button>
+    <button class="example-btn error-example" onclick="tryExample(\"${body} ==\", 'predicate')">${body} == (no RHS)</button>
+  </div>
+</div>
+
+<script src="camel-simple-validator.js"></script>
+<script>
+let mode = 'expression';
+
+function setMode(m) {
+  mode = m;
+  document.getElementById('mode-expr').className = m === 'expression' ? 'active' : '';
+  document.getElementById('mode-pred').className = m === 'predicate' ? 'active' : '';
+}
+
+function tryExample(expr, m) {
+  document.getElementById('expr').value = expr;
+  setMode(m);
+  runValidation();
+}
+
+function runValidation() {
+  const input = document.getElementById('expr').value;
+  const result = CamelSimpleValidator.validate(input, mode);
+  const el = document.getElementById('result');
+  el.style.display = 'block';
+
+  const hasErrors = result.diagnostics.some(d => d.severity === 'error');
+  const hasWarnings = result.diagnostics.some(d => d.severity === 'warning');
+
+  if (result.valid && !hasWarnings) {
+    el.className = 'result valid';
+    el.innerHTML = '<div class="result-header">✓ Valid ' + mode + '</div>';
+  } else if (result.valid && hasWarnings) {
+    el.className = 'result warning';
+    let html = '<div class="result-header">⚠ Valid with warnings</div>';
+    html += renderDiagnostics(input, result.diagnostics);
+    el.innerHTML = html;
+  } else {
+    el.className = 'result invalid';
+    let html = '<div class="result-header">✗ Invalid ' + mode + '</div>';
+    html += renderDiagnostics(input, result.diagnostics);
+    el.innerHTML = html;
+  }
+}
+
+function renderDiagnostics(input, diagnostics) {
+  let html = '';
+  for (const d of diagnostics) {
+    html += '<div class="diagnostic">';
+    html += '<span class="severity ' + d.severity + '">' + d.severity + '</span>';
+    html += escapeHtml(d.message);
+    if (d.suggestion) {
+      html += ' <span class="suggestion">→ ' + escapeHtml(d.suggestion) + '</span>';
+    }
+    html += '<span class="position">pos ' + d.start + '-' + d.end + '</span>';
+    // Pointer line
+    html += '<div class="pointer-line">';
+    html += escapeHtml(input) + '\n';
+    let pointer = '';
+    for (let i = 0; i < d.start; i++) pointer += ' ';
+    for (let i = d.start; i < d.end; i++) pointer += '^';
+    html += '<span class="caret">' + pointer + '</span>';
+    html += '</div>';
+    html += '</div>';
+  }
+  return html;
+}
+
+function escapeHtml(s) {
+  return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+document.getElementById('expr').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') runValidation();
+});
+</script>
+</body>
+</html>

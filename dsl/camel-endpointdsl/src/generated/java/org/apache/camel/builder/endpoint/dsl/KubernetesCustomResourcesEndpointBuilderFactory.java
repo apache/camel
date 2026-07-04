@@ -1454,7 +1454,7 @@ public interface KubernetesCustomResourcesEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final KubernetesCustomResourcesHeaderNameBuilder INSTANCE = new KubernetesCustomResourcesHeaderNameBuilder();
+        public static final KubernetesCustomResourcesHeaderNameBuilder INSTANCE = new KubernetesCustomResourcesHeaderNameBuilder();
 
         /**
          * The Producer operation.

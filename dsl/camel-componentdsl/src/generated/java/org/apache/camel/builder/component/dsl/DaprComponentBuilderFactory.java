@@ -701,6 +701,24 @@ public interface DaprComponentBuilderFactory {
             doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
+    
+        /**
+         * To use a custom HeaderFilterStrategy to filter header to and from
+         * Camel message.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
+         * type.
+         * 
+         * Group: advanced
+         * 
+         * @param headerFilterStrategy the value to set
+         * @return the dsl builder
+         */
+        default DaprComponentBuilder headerFilterStrategy(org.apache.camel.spi.HeaderFilterStrategy headerFilterStrategy) {
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
+            return this;
+        }
     }
 
     class DaprComponentBuilderImpl
@@ -761,6 +779,7 @@ public interface DaprComponentBuilderFactory {
             case "workflowStartTime": getOrCreateConfiguration((DaprComponent) component).setWorkflowStartTime((java.time.Instant) value); return true;
             case "workflowVersion": getOrCreateConfiguration((DaprComponent) component).setWorkflowVersion((java.lang.String) value); return true;
             case "autowiredEnabled": ((DaprComponent) component).setAutowiredEnabled((boolean) value); return true;
+            case "headerFilterStrategy": ((DaprComponent) component).setHeaderFilterStrategy((org.apache.camel.spi.HeaderFilterStrategy) value); return true;
             default: return false;
             }
         }

@@ -38,22 +38,27 @@ import dev.tamboui.text.Span;
 import dev.tamboui.text.Text;
 import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
+import dev.tamboui.tui.event.MouseEvent;
+import dev.tamboui.tui.event.MouseEventKind;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
+import dev.tamboui.widgets.block.Borders;
 import dev.tamboui.widgets.paragraph.Paragraph;
 import dev.tamboui.widgets.scrollbar.Scrollbar;
 import dev.tamboui.widgets.scrollbar.ScrollbarState;
 import dev.tamboui.widgets.table.Cell;
 import dev.tamboui.widgets.table.Row;
 import dev.tamboui.widgets.table.Table;
-import dev.tamboui.widgets.table.TableState;
+import org.apache.camel.util.json.JsonArray;
+import org.apache.camel.util.json.JsonObject;
 
-import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.*;
+import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.*;
 
-class MetricsTab implements MonitorTab {
+class MetricsTab extends AbstractTableTab {
 
-    private static final String[] SORT_COLUMNS = { "type", "name", "value" };
     private static final String[] FILTER_TYPES = { "all", "counter", "gauge", "timer", "longTaskTimer", "distribution" };
+
+    private static final int MOUSE_SCROLL_LINES = 3;
 
     private static final Style LABEL = Style.EMPTY.dim();
     private static final Style VALUE = Style.EMPTY.fg(Color.WHITE).bold();
@@ -61,17 +66,15 @@ class MetricsTab implements MonitorTab {
     private static final Style GOOD = Style.EMPTY.fg(Color.GREEN);
     private static final Style BAD = Style.EMPTY.fg(Color.LIGHT_RED);
 
-    private final MonitorContext ctx;
-    private final TableState tableState = new TableState();
     private final ScrollbarState scrollbarState = new ScrollbarState();
     private final ScrollbarState rawScrollbarState = new ScrollbarState();
     private boolean tableMode;
     private int lastRowCount;
-    private String sort = "name";
-    private int sortIndex = 1;
-    private boolean sortReversed;
     private String filterType = "all";
     private int filterIndex;
+
+    private int camelPanelWidth = -1;
+    private final DragSplit hSplit = new DragSplit();
 
     // raw metrics view
     private boolean showRaw;
@@ -82,12 +85,18 @@ class MetricsTab implements MonitorTab {
     private final AtomicBoolean rawLoading = new AtomicBoolean(false);
 
     MetricsTab(MonitorContext ctx) {
-        this.ctx = ctx;
+        super(ctx, "type", "name", "value");
+        sortIndex = 1;
+        sort = "name";
+    }
+
+    @Override
+    protected int getRowCount() {
+        return lastRowCount;
     }
 
     @Override
     public boolean handleKeyEvent(KeyEvent ke) {
-        // raw view scrolling
         if (showRaw) {
             if (ke.isUp()) {
                 rawScroll = Math.max(0, rawScroll - 1);
@@ -154,21 +163,12 @@ class MetricsTab implements MonitorTab {
                 tableState.selectLast(lastRowCount);
                 return true;
             }
-            if (ke.isChar('s')) {
-                sortIndex = (sortIndex + 1) % SORT_COLUMNS.length;
-                sort = SORT_COLUMNS[sortIndex];
-                sortReversed = false;
-                return true;
-            }
-            if (ke.isChar('S')) {
-                sortReversed = !sortReversed;
-                return true;
-            }
             if (ke.isChar('f')) {
                 filterIndex = (filterIndex + 1) % FILTER_TYPES.length;
                 filterType = FILTER_TYPES[filterIndex];
                 return true;
             }
+            return super.handleKeyEvent(ke);
         }
         return false;
     }
@@ -182,6 +182,32 @@ class MetricsTab implements MonitorTab {
         if (tableMode) {
             tableMode = false;
             return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean handleMouseEvent(MouseEvent me, Rect area) {
+        if (hSplit.handleMouse(me, me.x())) {
+            if (hSplit.isDragging()) {
+                camelPanelWidth = Math.max(20, Math.min(me.x() - area.x(), area.width() - 20));
+            }
+            return true;
+        }
+        if (!showRaw && tableMode) {
+            if (handleTableClick(me, lastTableArea, tableState, lastRowCount)) {
+                return true;
+            }
+        }
+        if (showRaw) {
+            if (me.kind() == MouseEventKind.SCROLL_UP) {
+                rawScroll = Math.max(0, rawScroll - MOUSE_SCROLL_LINES);
+                return true;
+            }
+            if (me.kind() == MouseEventKind.SCROLL_DOWN) {
+                rawScroll += MOUSE_SCROLL_LINES;
+                return true;
+            }
         }
         return false;
     }
@@ -201,13 +227,7 @@ class MetricsTab implements MonitorTab {
     }
 
     @Override
-    public void render(Frame frame, Rect area) {
-        IntegrationInfo info = ctx.findSelectedIntegration();
-        if (info == null) {
-            renderNoSelection(frame, area);
-            return;
-        }
-
+    protected void renderContent(Frame frame, Rect area, IntegrationInfo info) {
         if (info.meters.isEmpty()) {
             Paragraph p = Paragraph.from(Line.from(
                     Span.styled("No metrics available. Run with --observe to enable micrometer.", LABEL)));
@@ -216,8 +236,10 @@ class MetricsTab implements MonitorTab {
         }
 
         if (showRaw) {
+            hSplit.clearBorderPos();
             renderRaw(frame, area);
         } else if (tableMode) {
+            hSplit.clearBorderPos();
             renderTable(frame, area, info);
         } else {
             renderDashboard(frame, area, info);
@@ -239,9 +261,12 @@ class MetricsTab implements MonitorTab {
             panelArea = vParts.get(1);
         }
 
+        int cpw = camelPanelWidth >= 0 ? camelPanelWidth : panelArea.width() / 2;
+        cpw = Math.max(20, Math.min(cpw, panelArea.width() - 20));
         List<Rect> panels = Layout.horizontal()
-                .constraints(Constraint.percentage(50), Constraint.percentage(50))
+                .constraints(Constraint.length(cpw), Constraint.fill())
                 .split(panelArea);
+        hSplit.setBorderPos(panels.get(1).x());
 
         renderCamelPanel(frame, panels.get(0), info.meters);
         renderJvmPanel(frame, panels.get(1), info.meters);
@@ -325,7 +350,7 @@ class MetricsTab implements MonitorTab {
 
         Paragraph paragraph = Paragraph.builder()
                 .text(Text.from(lines))
-                .block(Block.builder().borderType(BorderType.ROUNDED).title(" Camel ").build())
+                .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(" Camel ").build())
                 .build();
         frame.renderWidget(paragraph, area);
     }
@@ -423,7 +448,7 @@ class MetricsTab implements MonitorTab {
 
         Paragraph paragraph = Paragraph.builder()
                 .text(Text.from(lines))
-                .block(Block.builder().borderType(BorderType.ROUNDED).title(" JVM ").build())
+                .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(" JVM ").build())
                 .build();
         frame.renderWidget(paragraph, area);
     }
@@ -461,10 +486,7 @@ class MetricsTab implements MonitorTab {
         }
 
         if (rows.isEmpty()) {
-            String msg = "No " + filterType + " metrics";
-            rows.add(Row.from(
-                    Cell.from(Span.styled(msg, Style.EMPTY.dim())),
-                    Cell.from(""), Cell.from(""), Cell.from("")));
+            rows.add(emptyRow("No " + filterType + " metrics", 4));
         }
 
         String title = " Metrics";
@@ -485,12 +507,14 @@ class MetricsTab implements MonitorTab {
                         Constraint.length(40),
                         Constraint.percentage(30),
                         Constraint.fill())
-                .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
-                .block(Block.builder().borderType(BorderType.ROUNDED)
+                .highlightStyle(Theme.selectionBg())
+                .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
                         .title(title).build())
                 .build();
 
+        lastTableArea = area;
         frame.renderStatefulWidget(table, area, tableState);
+        renderScrollbar(frame, lastRowCount);
 
         int visibleRows = Math.max(1, area.height() - 4);
         if (lastRowCount > visibleRows) {
@@ -510,7 +534,7 @@ class MetricsTab implements MonitorTab {
         String title = " Raw Metrics (" + rawLines.size() + " lines)" + ct + " [" + (rawTitle != null ? rawTitle : "") + "] ";
 
         Block block = Block.builder()
-                .borderType(BorderType.ROUNDED)
+                .borderType(BorderType.ROUNDED).borders(Borders.ALL)
                 .title(title)
                 .build();
         Rect inner = block.inner(area);
@@ -765,16 +789,6 @@ class MetricsTab implements MonitorTab {
         return "[" + "▓".repeat(filled) + "░".repeat(width - filled) + "]";
     }
 
-    // ---- Table mode helpers ----
-
-    private String sortLabel(String label, String column) {
-        return MonitorContext.sortLabel(label, column, sort, sortReversed);
-    }
-
-    private Style sortStyle(String column) {
-        return MonitorContext.sortStyle(column, sort);
-    }
-
     private int sortMeter(MicrometerMeterInfo a, MicrometerMeterInfo b) {
         int result = switch (sort) {
             case "type" -> {
@@ -888,6 +902,11 @@ class MetricsTab implements MonitorTab {
     }
 
     @Override
+    public String description() {
+        return "Micrometer metrics (counters, gauges, timers, distribution summaries)";
+    }
+
+    @Override
     public String getHelpText() {
         return """
                 # Metrics
@@ -985,5 +1004,67 @@ class MetricsTab implements MonitorTab {
                 - `s` — cycle sort column (in table mode)
                 - `S` — reverse sort order
                 """;
+    }
+
+    @Override
+    public JsonObject getTableDataAsJson() {
+        IntegrationInfo info = ctx.findSelectedIntegration();
+        if (info == null || info.meters.isEmpty()) {
+            return null;
+        }
+        JsonObject result = new JsonObject();
+        result.put("tab", "Metrics");
+        JsonArray rows = new JsonArray();
+        for (MicrometerMeterInfo m : info.meters) {
+            JsonObject row = new JsonObject();
+            row.put("type", m.type);
+            row.put("name", m.name);
+            if (m.description != null) {
+                row.put("description", m.description);
+            }
+            if (m.count != null) {
+                row.put("count", m.count);
+            }
+            if (m.value != null) {
+                row.put("value", m.value);
+            }
+            if (m.mean != null) {
+                row.put("mean", m.mean);
+            }
+            if (m.max != null) {
+                row.put("max", m.max);
+            }
+            if (m.total != null) {
+                row.put("total", m.total);
+            }
+            if (m.activeTasks != null) {
+                row.put("activeTasks", m.activeTasks);
+            }
+            if (m.meanDouble != null) {
+                row.put("meanDouble", m.meanDouble);
+            }
+            if (m.maxDouble != null) {
+                row.put("maxDouble", m.maxDouble);
+            }
+            if (m.totalDouble != null) {
+                row.put("totalDouble", m.totalDouble);
+            }
+            if (!m.tags.isEmpty()) {
+                JsonArray tags = new JsonArray();
+                for (String[] tag : m.tags) {
+                    JsonObject t = new JsonObject();
+                    t.put("key", tag[0]);
+                    t.put("value", tag.length > 1 ? tag[1] : "");
+                    tags.add(t);
+                }
+                row.put("tags", tags);
+            }
+            rows.add(row);
+        }
+        result.put("rows", rows);
+        result.put("totalRows", info.meters.size());
+        Integer sel = tableState.selected();
+        result.put("selectedIndex", sel != null ? sel : -1);
+        return result;
     }
 }

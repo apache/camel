@@ -2,12 +2,10 @@
 :doctitle: DFDL
 :shortname: dfdl
 :artifactid: camel-dfdl
-:description: Transforms fixed format data such as EDI message from/to XML using a Data Format Description Language (DFDL).
+:description: Transforms fixed format data such as EDI message from/to XML using a Data Format Description Language (DFDL)
 :since: 4.11
 :supportlevel: Stable
 :tabs-sync-option:
-//Manually maintained attributes
-:camel-spring-boot-name: dfdl
 
 *Since Camel {since}*
 
@@ -100,5 +98,3 @@ YAML::
 // dataformat options: START
 include::partial$dataformat-options.adoc[]
 // dataformat options: END
-
-include::spring-boot:partial$starter.adoc[]

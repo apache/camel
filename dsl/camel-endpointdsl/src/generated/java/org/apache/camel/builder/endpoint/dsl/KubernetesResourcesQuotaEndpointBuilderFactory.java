@@ -511,7 +511,7 @@ public interface KubernetesResourcesQuotaEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final KubernetesResourcesQuotaHeaderNameBuilder INSTANCE = new KubernetesResourcesQuotaHeaderNameBuilder();
+        public static final KubernetesResourcesQuotaHeaderNameBuilder INSTANCE = new KubernetesResourcesQuotaHeaderNameBuilder();
 
         /**
          * The Producer operation.

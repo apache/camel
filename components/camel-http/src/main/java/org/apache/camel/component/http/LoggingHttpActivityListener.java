@@ -180,15 +180,16 @@ public class LoggingHttpActivityListener extends ServiceSupport implements Camel
                         if (!accepted) {
                             lines.add("WARN: Cannot log HTTP body because the body is binary");
                         } else {
-                            Header ce = request != null
+                            Header reqCe = request != null
                                     ? request.getHeader(HttpHeaders.CONTENT_ENCODING)
-                                    : response.getHeader(HttpHeaders.CONTENT_ENCODING);
+                                    : null;
+                            String ce = reqCe != null ? reqCe.getValue() : e.getContentEncoding();
                             ByteArrayOutputStream bos = new ByteArrayOutputStream();
                             e.writeTo(bos);
                             String data;
-                            if (ce != null && GZIPHelper.isGzip(ce.getValue())) {
+                            if (ce != null && GZIPHelper.isGzip(ce)) {
                                 ByteArrayInputStream bis = new ByteArrayInputStream(bos.toByteArray());
-                                InputStream is = GZIPHelper.uncompressGzip(ce.getValue(), bis);
+                                InputStream is = GZIPHelper.uncompressGzip(ce, bis);
                                 data = new String(is.readAllBytes());
                                 IOHelper.close(is);
                             } else {

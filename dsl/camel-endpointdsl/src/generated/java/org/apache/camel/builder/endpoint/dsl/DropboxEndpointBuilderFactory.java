@@ -899,7 +899,7 @@ public interface DropboxEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final DropboxHeaderNameBuilder INSTANCE = new DropboxHeaderNameBuilder();
+        public static final DropboxHeaderNameBuilder INSTANCE = new DropboxHeaderNameBuilder();
 
         /**
          * The remote path.

@@ -45,7 +45,7 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * A useful base class for an expression
  */
-@Metadata(label = "language", title = "Expression")
+@Metadata(label = "language", title = "Expression", description = "A useful base class for an expression")
 @XmlRootElement
 @XmlType(name = "expression") // must be named expression
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -62,12 +62,14 @@ public class ExpressionDefinition
 
     @XmlAttribute
     @XmlID
+    @Metadata(description = "The id of this node.")
     private String id;
     @XmlValue
-    @Metadata(required = true)
+    @Metadata(required = true, description = "The expression value in your chosen language syntax.")
     private String expression;
     @XmlAttribute
-    @Metadata(label = "advanced", defaultValue = "true", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", defaultValue = "true", javaType = "java.lang.Boolean",
+              description = "Whether to trim the source code to remove leading and trailing whitespaces and line breaks.")
     private String trim;
 
     public ExpressionDefinition() {
@@ -143,9 +145,6 @@ public class ExpressionDefinition
         return expression;
     }
 
-    /**
-     * The expression value in your chosen language syntax
-     */
     public void setExpression(String expression) {
         this.expression = expression;
     }
@@ -154,9 +153,6 @@ public class ExpressionDefinition
         return id;
     }
 
-    /**
-     * Sets the id of this node
-     */
     public void setId(String value) {
         this.id = value;
     }
@@ -178,10 +174,6 @@ public class ExpressionDefinition
         return expressionType;
     }
 
-    /**
-     * Allows derived classes and DSLs to set a lazily created expressionType instance such as if using the
-     * {@link org.apache.camel.builder.ExpressionClause}
-     */
     @Override
     public void setExpressionType(ExpressionDefinition expressionType) {
         this.expressionType = expressionType;
@@ -191,19 +183,10 @@ public class ExpressionDefinition
         return trim;
     }
 
-    /**
-     * Whether to trim the source code to remove leading and trailing whitespaces and line breaks.
-     *
-     * For example when using DSLs where the source will span across multiple lines and there may be additional line
-     * breaks at both the beginning and end.
-     */
     public void setTrim(String trim) {
         this.trim = trim;
     }
 
-    /**
-     * Returns some descriptive text to describe this node
-     */
     public String getLabel() {
         Predicate predicate = getPredicate();
         if (predicate != null) {

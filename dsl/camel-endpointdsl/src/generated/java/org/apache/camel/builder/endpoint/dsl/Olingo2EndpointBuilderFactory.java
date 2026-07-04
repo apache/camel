@@ -2044,7 +2044,7 @@ public interface Olingo2EndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final Olingo2HeaderNameBuilder INSTANCE = new Olingo2HeaderNameBuilder();
+        public static final Olingo2HeaderNameBuilder INSTANCE = new Olingo2HeaderNameBuilder();
 
         /**
          * The response Http headers.

@@ -2,12 +2,10 @@
 :doctitle: OCSF
 :shortname: ocsf
 :artifactid: camel-ocsf
-:description: Marshal and unmarshal OCSF (Open Cybersecurity Schema Framework) security events to/from JSON.
+:description: Marshal and unmarshal OCSF (Open Cybersecurity Schema Framework) security events to/from JSON
 :since: 4.18
 :supportlevel: Stable
 :tabs-sync-option:
-//Manually maintained attributes
-:camel-spring-boot-name: ocsf
 
 *Since Camel {since}*
 
@@ -50,6 +48,10 @@ All event classes extend `OcsfEvent` which provides common attributes like `time
 
 === Marshalling OCSF Events
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:start")
@@ -57,8 +59,40 @@ from("direct:start")
     .to("kafka:security-events");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <marshal>
+    <ocsf/>
+  </marshal>
+  <to uri="kafka:security-events"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - marshal:
+            ocsf: {}
+        - to:
+            uri: kafka:security-events
+----
+====
+
 === Unmarshalling OCSF Events
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("kafka:security-events")
@@ -66,8 +100,40 @@ from("kafka:security-events")
     .to("direct:process");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="kafka:security-events"/>
+  <unmarshal>
+    <ocsf/>
+  </unmarshal>
+  <to uri="direct:process"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: kafka:security-events
+      steps:
+        - unmarshal:
+            ocsf: {}
+        - to:
+            uri: direct:process
+----
+====
+
 === Unmarshalling to a Specific Event Class
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("kafka:security-events")
@@ -75,10 +141,43 @@ from("kafka:security-events")
     .to("direct:process");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="kafka:security-events"/>
+  <unmarshal>
+    <ocsf unmarshalType="org.apache.camel.dataformat.ocsf.model.DetectionFinding"/>
+  </unmarshal>
+  <to uri="direct:process"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: kafka:security-events
+      steps:
+        - unmarshal:
+            ocsf:
+              unmarshalType: org.apache.camel.dataformat.ocsf.model.DetectionFinding
+        - to:
+            uri: direct:process
+----
+====
+
 === Using with AWS Security Hub
 
 AWS Security Hub now outputs findings in OCSF format. You can use this data format to process those findings:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("aws-securityhub:findings")
@@ -90,41 +189,56 @@ from("aws-securityhub:findings")
             .to("direct:normal-severity");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="aws-securityhub:findings"/>
+  <unmarshal>
+    <ocsf unmarshalType="org.apache.camel.dataformat.ocsf.model.DetectionFinding"/>
+  </unmarshal>
+  <choice>
+    <when>
+      <simple>${body.severityId} >= 4</simple>
+      <to uri="direct:high-severity"/>
+    </when>
+    <otherwise>
+      <to uri="direct:normal-severity"/>
+    </otherwise>
+  </choice>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: aws-securityhub:findings
+      steps:
+        - unmarshal:
+            ocsf:
+              unmarshalType: org.apache.camel.dataformat.ocsf.model.DetectionFinding
+        - choice:
+            when:
+              - simple: "${body.severityId} >= 4"
+                steps:
+                  - to:
+                      uri: direct:high-severity
+            otherwise:
+              steps:
+                - to:
+                    uri: direct:normal-severity
+----
+====
+
 == OCSF Options
 
 // dataformat options: START
 include::partial$dataformat-options.adoc[]
 // dataformat options: END
-
-== Using OCSF in Spring DSL
-
-You can use the OCSF data format directly in Spring XML:
-
-[source,xml]
-----
-<route>
-    <from uri="kafka:security-events"/>
-    <unmarshal>
-        <ocsf unmarshalType="org.apache.camel.dataformat.ocsf.model.DetectionFinding"/>
-    </unmarshal>
-    <to uri="direct:process"/>
-</route>
-----
-
-Or define a reusable data format:
-
-[source,xml]
-----
-<dataFormats>
-    <ocsf id="ocsfDetection" unmarshalType="org.apache.camel.dataformat.ocsf.model.DetectionFinding"/>
-</dataFormats>
-
-<route>
-    <from uri="kafka:security-events"/>
-    <unmarshal ref="ocsfDetection"/>
-    <to uri="direct:process"/>
-</route>
-----
 
 == OCSF Event Categories
 
@@ -145,6 +259,7 @@ OCSF defines the following event categories:
 
 == Example: Creating a Detection Finding
 
+._Java-only: creating and marshalling a DetectionFinding POJO_
 [source,java]
 ----
 DetectionFinding finding = new DetectionFinding();
@@ -174,6 +289,7 @@ You can combine the OCSF DataFormat with the LangChain4j Chat component to use a
 
 === Java DSL Example
 
+._Java-only: AI-powered security finding summarization with process and langchain4j_
 [source,java]
 ----
 from("kafka:security-events")
@@ -219,15 +335,23 @@ from("kafka:security-events")
             unmarshalType: "org.apache.camel.dataformat.ocsf.model.DetectionFinding"
       - setHeader:
           name: "findingTitle"
-          simple: "${body.findingInfo?.title}"
+          expression:
+            simple:
+              expression: "${body.findingInfo?.title}"
       - setHeader:
           name: "findingSeverity"
-          simple: "${body.severityId}"
+          expression:
+            simple:
+              expression: "${body.severityId}"
       - setHeader:
           name: "findingMessage"
-          simple: "${body.message}"
+          expression:
+            simple:
+              expression: "${body.message}"
       - setBody:
-          simple: |
+          expression:
+            simple:
+              expression: |
             Analyze this security detection finding and provide a brief summary:
 
             Title: ${header.findingTitle}
@@ -397,5 +521,3 @@ The generated schemas use:
 * https://schema.ocsf.io/[OCSF Schema Browser]
 * https://github.com/ocsf/ocsf-schema[OCSF Schema GitHub]
 * https://docs.aws.amazon.com/securityhub/latest/userguide/securityhub-ocsf.html[AWS Security Hub OCSF Documentation]
-
-include::spring-boot:partial$starter.adoc[]

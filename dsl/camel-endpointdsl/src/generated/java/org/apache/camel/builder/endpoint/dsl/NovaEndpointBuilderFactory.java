@@ -302,7 +302,7 @@ public interface NovaEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final NovaHeaderNameBuilder INSTANCE = new NovaHeaderNameBuilder();
+        public static final NovaHeaderNameBuilder INSTANCE = new NovaHeaderNameBuilder();
 
         /**
          * ID of the flavor.

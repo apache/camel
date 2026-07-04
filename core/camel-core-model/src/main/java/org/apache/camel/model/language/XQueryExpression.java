@@ -27,7 +27,8 @@ import org.apache.camel.spi.Metadata;
 /**
  * Evaluates an XQuery expressions against an XML payload.
  */
-@Metadata(firstVersion = "1.0.0", label = "language,xml", title = "XQuery")
+@Metadata(firstVersion = "1.0.0", label = "language,xml", title = "XQuery",
+          description = "Evaluates an XQuery expressions against an XML payload")
 @XmlRootElement(name = "xquery")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class XQueryExpression extends NamespaceAwareExpression {
@@ -35,7 +36,8 @@ public class XQueryExpression extends NamespaceAwareExpression {
     @XmlTransient
     private Object configuration;
     @XmlAttribute
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced",
+              description = "Reference to a saxon configuration instance in the registry to use for xquery (requires camel-saxon).")
     private String configurationRef;
 
     public XQueryExpression() {
@@ -71,11 +73,6 @@ public class XQueryExpression extends NamespaceAwareExpression {
         return configurationRef;
     }
 
-    /**
-     * Reference to a saxon configuration instance in the registry to use for xquery (requires camel-saxon). This may be
-     * needed to add custom functions to a saxon configuration, so these custom functions can be used in xquery
-     * expressions.
-     */
     public void setConfigurationRef(String configurationRef) {
         this.configurationRef = configurationRef;
     }
@@ -84,10 +81,6 @@ public class XQueryExpression extends NamespaceAwareExpression {
         return configuration;
     }
 
-    /**
-     * Custom saxon configuration (requires camel-saxon). This may be needed to add custom functions to a saxon
-     * configuration, so these custom functions can be used in xquery expressions.
-     */
     public void setConfiguration(Object configuration) {
         this.configuration = configuration;
     }

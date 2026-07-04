@@ -84,6 +84,7 @@ public class TestPluginExporter implements PluginExporter {
         deps.add(asDependency("citrus-yaml"));
         deps.add(asDependency("citrus-xml"));
         deps.add(asDependency("citrus-groovy"));
+        deps.add(asDependency("citrus-validation-text"));
         deps.add(asDependency("citrus-validation-xml"));
         deps.add(asDependency("citrus-validation-json"));
         deps.add(asDependency("citrus-validation-yaml"));
@@ -237,6 +238,6 @@ public class TestPluginExporter implements PluginExporter {
     }
 
     private String asDependency(String artifactName) {
-        return "mvn@test:org.citrusframework:%s:\\$\\{citrus.version}".formatted(artifactName);
+        return "mvn@test:org.citrusframework:%s:${citrus.version}".formatted(artifactName);
     }
 }

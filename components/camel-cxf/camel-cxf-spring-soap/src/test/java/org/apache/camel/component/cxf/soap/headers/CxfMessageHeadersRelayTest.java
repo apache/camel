@@ -318,7 +318,6 @@ public class CxfMessageHeadersRelayTest {
         Me me = new Me();
         me.setFirstName("john");
         me.setLastName("Doh");
-        Thread.sleep(5000);
         Me response = proxy.outOutOfBandHeader(me);
         assertEquals("pass", response.getFirstName(), "Expected the out out of band header *not* to propagate but it did");
         validateReturnedOutOfBandHeader(proxy, false);
@@ -364,8 +363,6 @@ public class CxfMessageHeadersRelayTest {
 
     @Test
     public void testOutHeaderCXFClientNoRelay() throws Exception {
-        Thread.sleep(5000);
-
         HeaderService s = new HeaderService(
                 getClass().getClassLoader().getResource("soap_header.wsdl"),
                 HeaderService.SERVICE);

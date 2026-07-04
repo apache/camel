@@ -343,7 +343,7 @@ public interface InfluxDb2EndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final InfluxDb2HeaderNameBuilder INSTANCE = new InfluxDb2HeaderNameBuilder();
+        public static final InfluxDb2HeaderNameBuilder INSTANCE = new InfluxDb2HeaderNameBuilder();
 
         /**
          * The name of measurement.

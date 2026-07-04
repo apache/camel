@@ -42,6 +42,10 @@ path they should be routed.
 A simple example is to route an xref:exchange.adoc[Exchange] based on a
 header value with the xref:components:eips:choice-eip.adoc[Content Based Router] EIP:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("jms:queue:order")
@@ -52,6 +56,53 @@ from("jms:queue:order")
       .to("bean:miscOrder")
    .end();
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="jms:queue:order"/>
+    <choice>
+        <when>
+            <simple>${header.type} == 'widget'</simple>
+            <to uri="bean:widgetOrder"/>
+        </when>
+        <when>
+            <simple>${header.type} == 'wombat'</simple>
+            <to uri="bean:wombatOrder"/>
+        </when>
+        <otherwise>
+            <to uri="bean:miscOrder"/>
+        </otherwise>
+    </choice>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: jms:queue:order
+      steps:
+        - choice:
+            when:
+              - simple: "${header.type} == 'widget'"
+                steps:
+                  - to:
+                      uri: bean:widgetOrder
+              - simple: "${header.type} == 'wombat'"
+                steps:
+                  - to:
+                      uri: bean:wombatOrder
+            otherwise:
+              steps:
+                - to:
+                    uri: bean:miscOrder
+----
+====
 
 In the route above the xref:predicate.adoc[Predicate] is the
 `header("type").isEqualTo("widget")` as it is constructed as an
@@ -72,6 +123,7 @@ Predicate isWidget = header("type").isEqualTo("widget");
 
 And then you can refer to it in the route as:
 
+._Java-only: using a predicate variable in a route_
 [source,java]
 ----
 from("jms:queue:order")
@@ -99,6 +151,10 @@ import static org.apache.camel.builder.PredicateBuilder.not;
 And then we can use it to enclose an existing predicate and negate it as
 the example shows:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:start")
@@ -107,6 +163,45 @@ from("direct:start")
         .otherwise().to("mock:animals")
     .end();
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="direct:start"/>
+    <choice>
+        <when>
+            <simple>${header.username} not regex 'goofy|pluto'</simple>
+            <to uri="mock:people"/>
+        </when>
+        <otherwise>
+            <to uri="mock:animals"/>
+        </otherwise>
+    </choice>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - choice:
+            when:
+              - simple: "${header.username} not regex 'goofy|pluto'"
+                steps:
+                  - to:
+                      uri: mock:people
+            otherwise:
+              steps:
+                - to:
+                    uri: mock:animals
+----
+====
 
 == Compound Predicates
 
@@ -145,6 +240,7 @@ PredicateBuilder.and(XPathBuilder.xpath("/bookings/flights"), simple("${exchange
 
 The sample below demonstrates further use cases:
 
+._Java-only: compound predicates with PredicateBuilder_
 [source,java]
 ----
 // We define 3 predicates based on some user roles

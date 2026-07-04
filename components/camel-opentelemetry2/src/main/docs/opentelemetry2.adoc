@@ -6,8 +6,6 @@
 :since: 4.11
 :supportlevel: Stable
 :tabs-sync-option:
-//Manually maintained attributes
-:camel-spring-boot-name: opentelemetry2
 
 *Since Camel {since}*
 
@@ -27,9 +25,11 @@ The configuration properties for the OpenTelemetry2 tracer are:
 |`enabled`| false | Turn the tracing on/off.
 |`traceProcessors`| false | Trace inner custom processors (i.e., any `process` configured in the route). When disabled, custom processors are not visible from the OpenTelemetry perspective and have no active span or context.
 |`disableCoreProcessors`| false | Disable any inner core processors (any core DSL processor provided in the route, for example `bean`, `log`, ...).
+|`traceCustomIdOnly`| false | When enabled, only trace routes and processors where the author explicitly assigned a custom ID. Routes without a custom `.routeId()` are excluded entirely — no route span, no processor spans, and no endpoint send spans are created within them. Within traced routes, only processors with a custom `.id()` produce spans (requires `traceProcessors=true`). This provides intent-based filtering: name the routes and steps you care about, and only those appear in your observability tool.
 | `excludePatterns` | | A comma-separated list of patterns (e.g., `log*,direct*,setBody*`) to exclude from tracing. Spans matching these patterns will be disabled. If nothing is specified, no processors are excluded by default.
 | `includePatterns` | | A comma-separated list of patterns (e.g., `log*,direct*,setBody*`) to explicitly include in a trace. Spans matching these patterns will be enabled. If nothing is specified, all processors are included by default.
 | `traceHeadersInclusion`| `false` | If set to `true`, adds the generated telemetry `CAMEL_TRACE_ID` and `CAMEL_SPAN_ID` Exchange headers.
+| `exportTarget` | | Where to export traces when using the OpenTelemetry Java Agent: `tui` (embedded OTLP receiver, default) or `jaeger` (external Jaeger collector).
 |=======================================================================
 
 === Using with Standalone Camel
@@ -51,6 +51,100 @@ When starting your application, you may also need to configure OpenTelemetry SDK
 ----
 java -Dotel.metrics.exporter=none -Dotel.logs.exporter=none -jar my-app.jar
 ----
+
+=== Dev Profile (In-Memory Span Exporter)
+
+When the Camel profile is set to `dev` (the default for Camel JBang), the component automatically configures
+an in-memory span exporter. This captures OTel spans locally without requiring an external collector such as
+Jaeger or an OpenTelemetry Collector.
+
+This is useful during development when you want to inspect traces via the dev console or local tooling
+without setting up external infrastructure.
+
+With Camel JBang, enable it with the `--observe` flag:
+
+[source,bash]
+----
+camel run my-route.yaml --observe
+----
+
+The captured spans are available through the dev console at `/q/dev/opentelemetry`:
+
+[source,bash]
+----
+# Summary (span count, capacity)
+curl http://localhost:8080/q/dev/opentelemetry
+
+# Full span data as JSON
+curl http://localhost:8080/q/dev/opentelemetry?dump=true
+
+# Limit the number of returned spans
+curl http://localhost:8080/q/dev/opentelemetry?dump=true&limit=50
+----
+
+The in-memory exporter holds up to 500 spans with oldest-first eviction. When the buffer is full,
+the oldest spans are discarded to make room for new ones.
+
+NOTE: The in-memory exporter is only activated when the Camel profile is `dev` and no user-provided
+OTel `Tracer` bean is registered. For production deployments, configure a proper span exporter
+(OTLP, Jaeger, Zipkin, etc.).
+
+=== Camel JBang with OpenTelemetry Java Agent
+
+When running with Camel JBang, you can use the `--open-telemetry-agent` flag to automatically attach the
+https://opentelemetry.io/docs/zero-code/java/agent/[OpenTelemetry Java Agent] to your application.
+This provides deep instrumentation beyond Camel routes, including JVM metrics, HTTP clients, database
+drivers, and other libraries — all with zero configuration and no external collector required.
+
+[source,bash]
+----
+camel run my-route.yaml --open-telemetry-agent
+----
+
+This single flag handles the entire setup:
+
+- Downloads and attaches the OpenTelemetry Java Agent to the JVM
+- Adds `camel-opentelemetry2` and `camel-platform-http-main` as dependencies
+- Starts an embedded OTLP receiver on the Vert.x HTTP server (at `/v1/traces`)
+- Configures the agent to export traces to the embedded receiver
+- Starts an HTTP server on port 8080 (if not already specified)
+
+The agent sends protobuf-encoded spans to the embedded OTLP receiver, which parses them and feeds
+them into the in-memory `DevSpanExporter`. The captured spans are then visible in the Camel TUI
+under the OTel Spans tab, or through the dev console.
+
+==== Exporting to Jaeger
+
+Instead of viewing traces in the TUI, you can export them to https://www.jaegertracing.io/[Jaeger]
+for a full tracing UI experience. Start Jaeger first, then run your application with the `jaeger` export target:
+
+[source,bash]
+----
+camel infra run jaeger
+camel run my-route.yaml --open-telemetry-agent --open-telemetry-agent-export=jaeger
+----
+
+This configures the Java Agent to export traces directly to Jaeger's OTLP endpoint on port 4318.
+No embedded OTLP receiver is started — the agent handles all export. Open the Jaeger UI at
+`http://localhost:16686` to browse traces for the `camel` service.
+
+==== When to use `--observe` vs `--open-telemetry-agent` vs Jaeger
+
+All three modes enable tracing during development, but they cover different scopes:
+
+[width="100%",cols="25%,25%,25%,25%",options="header"]
+|=======================================================================
+| | `--observe` | `--open-telemetry-agent` | `--open-telemetry-agent` + Jaeger
+| *Instrumentation* | Camel routes only | Camel + JVM, HTTP, DB, etc. | Camel + JVM, HTTP, DB, etc.
+| *Setup* | Built-in SDK | Downloads OTel Java Agent | Downloads OTel Java Agent
+| *Collector* | Not needed | Not needed (embedded receiver) | Jaeger (via `camel infra run jaeger`)
+| *View traces* | TUI / dev console | TUI / dev console | Jaeger UI (localhost:16686)
+| *Use case* | Quick Camel route debugging | Full-stack observability in TUI | Full tracing UI with search and timeline
+|=======================================================================
+
+NOTE: The embedded OTLP receiver is only activated in `dev` profile mode and is intended for local
+development. For production deployments, configure the OpenTelemetry Java Agent to export to an
+external collector such as Jaeger or an OpenTelemetry Collector.
 
 [[OpenTelemetry-JavaAgent]]
 === Using the OpenTelemetry Java Agent
@@ -152,6 +246,7 @@ Then add the following dependency for the OpenTelemetry Spring Boot starter:
 The starter auto-configures most aspects of the OpenTelemetry instrumentation, with two exceptions:
 No `Tracer` or `ContextPropagators` beans are autoconfigured, they need to be configured manually:
 
+._Java-only: Spring configuration class for OpenTelemetry beans_
 [source,java]
 ----
 import io.opentelemetry.api.OpenTelemetry;
@@ -192,6 +287,7 @@ otel:
 
 When you're working at a very low level, you may need to tweak your metrics and add some in-process custom `span` in order to trace some specific measure of your application. If you need this advanced use case, you can create it during your process by configuring an Opentelemetry Tracer object and share it to your route. For example, in Java DSL:
 
+._Java-only: creating custom spans with the OpenTelemetry Tracer API_
 [source,java]
 ----
 private Tracer otelTracer = otelExtension.getOpenTelemetry().getTracer("traceTest");
@@ -211,6 +307,7 @@ public void process(Exchange exchange) throws Exception {
 
 In complex integrations it is advisable to have third party dependencies or add custom spans at a Processor level in order to get advanced telemetry information. When these spans are added at Processor level, then, you can expect the span to be nested under the specific core Processor. For example:
 
+._Java-only: bean with @WithSpan annotation for custom span nesting_
 [source,java]
 ----
     from("direct:start")
@@ -228,12 +325,38 @@ You should expect your custom span "myLogic" to be nested under the Bean process
 
 If you instead call it with an endpoint producer, the process is converted to an event, and as we cannot capture the scope, then it would nest the custom span under the endpoint instead. For example:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
-    from("direct:start")
-            .to("bean:myBean")
-...
+from("direct:start")
+    .to("bean:myBean");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <to uri="bean:myBean"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: bean:myBean
+----
+====
 
 The spans produced are slightly different because now they include an additional span for the endpoint ("to" node). And, more important, as highlighted above, the custom span is going to be nested directly under the endpoint span "to" instead of the processor span ("bean").
 
@@ -243,18 +366,16 @@ For this reason, whenever you need to provide custom telemetry information, it i
 
 `Baggage` is a way to attach key-value metadata to a request and carry it across service boundaries. In the context of OpenTelemetry, baggage travels along with the context (like trace/span), but it's meant for custom data you define, not telemetry internals. Camel allows you to programmatically provide any `Baggage` information via Exchange property settings. Whenever the component finds a property defined as `CamelBaggage_xyz` it will consider it as a baggage variable named `xyz`. For example, in Java DSL:
 
+._Java-only: inline Processor accessing OpenTelemetry Baggage API_
 [source,java]
 ----
                 from("direct:start")
                         .setProperty("CamelBaggage_myValue", constant("1234"))
                         .routeId("start")
                         .log("A message")
-                        .process(new Processor() {
-                            @Override
-                            public void process(Exchange exchange) throws Exception {
-                                // Baggage is available via the OpenTelemetry API
-                                String val = Baggage.current().getEntryValue("myValue");
-                            }
+                        .process(exchange -> {
+                            // Baggage is available via the OpenTelemetry API
+                            String val = Baggage.current().getEntryValue("myValue");
                         })
                         .to("log:info");
 ----

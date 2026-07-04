@@ -7,8 +7,6 @@
 :supportlevel: Preview
 :tabs-sync-option:
 :component-header: Only consumer is supported
-//Manually maintained attributes
-:camel-spring-boot-name: clickup
 
 *Since Camel {since}*
 
@@ -20,20 +18,20 @@ Maven users will need to add the following dependency to their `pom.xml`
 for this component.
 
 [source,xml]
-------------------------------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-clickup</artifactId>
     <version>x.x.x</version>
     <!-- use the same version as your Camel core version -->
 </dependency>
-------------------------------------------------------------
+----
 
 == URI format
 
-----------------------------------------------------
+----
 clickup:workspaceId[?options]
-----------------------------------------------------
+----
 
 == Usage
 
@@ -49,17 +47,18 @@ To enable webhook mode, users need first to add a REST implementation to their a
 Maven users, for example, can add *netty-http* to their `pom.xml` file:
 
 [source,xml]
-------------------------------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-netty-http</artifactId>
 </dependency>
-------------------------------------------------------------
+----
 
 In Java DSL:
 
+._Java-only: processing ClickUp webhook events with Java types and lambdas_
 [source,java]
----------------------------------------------------------
+----
 from("webhook:clickup:<workspaceId>?&authorizationToken=<authorizationToken>&events=taskTimeTrackedUpdated")
                 .choice()
                     .when(exchange -> exchange.getIn().getBody() instanceof TaskTimeTrackedUpdatedEvent)
@@ -72,7 +71,7 @@ from("webhook:clickup:<workspaceId>?&authorizationToken=<authorizationToken>&eve
                         .log("Unknown Event: ${body}")
                 .end();
 
----------------------------------------------------------
+----
 
 You can follow the
 https://clickup.com/api/developer-portal/webhooks[set-up webhooks guide]

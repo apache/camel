@@ -21,13 +21,21 @@ import org.apache.camel.Consumer;
 import org.apache.camel.ShutdownableService;
 
 /**
- * A pluggable scheduler for {@link org.apache.camel.support.ScheduledPollConsumer} consumers.
+ * Pluggable scheduler that controls when a {@link org.apache.camel.support.ScheduledPollConsumer} wakes up to poll its
+ * source.
  * <p/>
- * The default implementation {@link org.apache.camel.support.DefaultScheduledPollConsumerScheduler} is using the
- * {@link java.util.concurrent.ScheduledExecutorService} from the JDK to schedule and run the poll task.
+ * Polling consumers (file, FTP, mail, etc.) delegate all scheduling decisions to this SPI so that the polling trigger
+ * can be replaced without changing the consumer itself. The default implementation uses a
+ * {@link java.util.concurrent.ScheduledExecutorService} with a fixed or initial delay, while the {@code camel-quartz}
+ * component provides an alternative that accepts CRON expressions for time-based firing.
  * <p/>
- * An alternative implementation is in <tt>camel-quartz</tt> component that allows to use CRON expression to define when
- * the scheduler should run.
+ * A scheduler is initialized via {@link #onInit(org.apache.camel.Consumer)} and then activated by calling
+ * {@link #startScheduler()}, which begins firing the task registered with {@link #scheduleTask(Runnable)}. The consumer
+ * task itself is responsible for calling the consumer's polling logic; the scheduler only controls the firing cadence.
+ * <p/>
+ * See <a href="https://camel.apache.org/manual/polling-consumer.html">Polling Consumer</a> in the Camel user manual.
+ *
+ * @see ExecutorServiceManager
  */
 public interface ScheduledPollConsumerScheduler extends ShutdownableService, CamelContextAware {
 

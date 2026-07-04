@@ -26,7 +26,7 @@ import org.apache.camel.spi.Metadata;
 /**
  * Evaluates a MVEL template.
  */
-@Metadata(firstVersion = "2.0.0", label = "language,java", title = "MVEL")
+@Metadata(firstVersion = "2.0.0", label = "language,java", title = "MVEL", description = "Evaluates a MVEL template")
 @XmlRootElement(name = "mvel")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class MvelExpression extends TypedExpressionDefinition {

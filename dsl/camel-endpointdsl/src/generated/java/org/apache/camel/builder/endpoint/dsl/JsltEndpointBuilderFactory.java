@@ -380,7 +380,7 @@ public interface JsltEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final JsltHeaderNameBuilder INSTANCE = new JsltHeaderNameBuilder();
+        public static final JsltHeaderNameBuilder INSTANCE = new JsltHeaderNameBuilder();
 
         /**
          * The JSLT Template as String.

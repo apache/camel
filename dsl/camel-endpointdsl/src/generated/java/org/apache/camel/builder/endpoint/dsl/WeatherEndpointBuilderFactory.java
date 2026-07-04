@@ -2176,7 +2176,7 @@ public interface WeatherEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final WeatherHeaderNameBuilder INSTANCE = new WeatherHeaderNameBuilder();
+        public static final WeatherHeaderNameBuilder INSTANCE = new WeatherHeaderNameBuilder();
 
         /**
          * Used by the producer to override the endpoint location and use the

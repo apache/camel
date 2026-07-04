@@ -129,8 +129,9 @@ public abstract class CatalogBaseCommand extends CamelCommand {
             rows = rows.stream()
                     .filter(
                             r -> r.name.equalsIgnoreCase(filterName)
-                                    || r.description.toLowerCase(Locale.ROOT).contains(filterName)
-                                    || r.label.toLowerCase(Locale.ROOT).contains(filterName))
+                                    || (r.description != null
+                                            && r.description.toLowerCase(Locale.ROOT).contains(filterName))
+                                    || (r.label != null && r.label.toLowerCase(Locale.ROOT).contains(filterName)))
                     .collect(Collectors.toList());
         }
         if (sinceBefore != null) {

@@ -27,83 +27,108 @@ import org.apache.camel.spi.Metadata;
 /**
  * To configure re-delivery for error handling
  */
-@Metadata(label = "configuration")
+@Metadata(label = "configuration,errorhandling",
+          description = "Configures message redelivery for error handling, including maximum retries, delay patterns, and backoff settings")
 @XmlRootElement(name = "redeliveryPolicy")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RedeliveryPolicyDefinition extends IdentifiedType implements Cloneable {
 
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Integer")
+    @Metadata(javaType = "java.lang.Integer",
+              description = "Sets the maximum number of redeliveries. Use 0 for no redeliveries, or -1 to redeliver forever.")
     private String maximumRedeliveries;
     @XmlAttribute
-    @Metadata(javaType = "java.time.Duration", defaultValue = "1000")
+    @Metadata(javaType = "java.time.Duration", defaultValue = "1000",
+              description = "Sets the initial delay in milliseconds before the first redelivery attempt.")
     private String redeliveryDelay;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean",
+              description = "Allow asynchronous delayed redelivery. The route, in particular the consumer's component, must support the Asynchronous Routing Engine (e.g. seda).")
     private String asyncDelayedRedelivery;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Double", defaultValue = "2.0")
+    @Metadata(javaType = "java.lang.Double", defaultValue = "2.0",
+              description = "Sets the multiplier applied to the previous redelivery delay to compute the next delay when using exponential backoff.")
     private String backOffMultiplier;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean",
+              description = "Enables exponential backoff, so each subsequent redelivery delay is multiplied by the backOffMultiplier.")
     private String useExponentialBackOff;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Double", defaultValue = "0.15")
+    @Metadata(label = "advanced", javaType = "java.lang.Double", defaultValue = "0.15",
+              description = "Sets the collision avoidance factor, which adds a random percentage of the delay to avoid thundering herd problems when multiple redeliveries happen simultaneously.")
     private String collisionAvoidanceFactor;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean",
+              description = "Enables collision avoidance, which adds a random factor to redelivery delays to prevent multiple simultaneous redeliveries from colliding.")
     private String useCollisionAvoidance;
     @XmlAttribute
-    @Metadata(javaType = "java.time.Duration", defaultValue = "60000")
+    @Metadata(javaType = "java.time.Duration", defaultValue = "60000",
+              description = "Sets the upper bound on redelivery delay in milliseconds when using exponential backoff, to prevent delays from growing unbounded.")
     private String maximumRedeliveryDelay;
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "org.apache.camel.LoggingLevel", defaultValue = "ERROR",
-              enums = "TRACE,DEBUG,INFO,WARN,ERROR,OFF")
+              enums = "TRACE,DEBUG,INFO,WARN,ERROR,OFF",
+              description = "Sets the logging level to use when all retries have been exhausted and the message is moved to the dead letter channel or failed.")
     private String retriesExhaustedLogLevel;
     @XmlAttribute
-    @Metadata(javaType = "org.apache.camel.LoggingLevel", defaultValue = "DEBUG", enums = "TRACE,DEBUG,INFO,WARN,ERROR,OFF")
+    @Metadata(javaType = "org.apache.camel.LoggingLevel", defaultValue = "DEBUG", enums = "TRACE,DEBUG,INFO,WARN,ERROR,OFF",
+              description = "Sets the logging level to use when a redelivery attempt is made.")
     private String retryAttemptedLogLevel;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Integer", defaultValue = "1")
+    @Metadata(label = "advanced", javaType = "java.lang.Integer", defaultValue = "1",
+              description = "Sets how often to log redelivery attempts. For example, a value of 3 logs every 3rd redelivery attempt.")
     private String retryAttemptedLogInterval;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "true")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "true",
+              description = "Whether retry attempts should be logged or not. Can be used to include or reduce verbose logging.")
     private String logRetryAttempted;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "true")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "true",
+              description = "Whether stack traces should be logged. Can be used to include or reduce verbose logging.")
     private String logStackTrace;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean",
+              description = "Whether stack traces should be logged when a retry attempt failed. Can be used to include or reduce verbose logging.")
     private String logRetryStackTrace;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean",
+              description = "Whether handled exceptions should be logged or not. Can be used to include or reduce verbose logging.")
     private String logHandled;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "true")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "true",
+              description = "Whether new exceptions should be logged or not. A new exception is an exception that was thrown while handling a previous exception.")
     private String logNewException;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(javaType = "java.lang.Boolean",
+              description = "Whether continued exceptions should be logged or not. Can be used to include or reduce verbose logging.")
     private String logContinued;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "true")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "true",
+              description = "Whether exhausted exceptions should be logged or not. Can be used to include or reduce verbose logging.")
     private String logExhausted;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean",
+              description = "Whether exhausted exceptions should be logged including message history. Can be used to include or reduce verbose logging.")
     private String logExhaustedMessageHistory;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean",
+              description = "Whether exhausted message body should be logged including message history. Requires logExhaustedMessageHistory to be enabled.")
     private String logExhaustedMessageBody;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean",
+              description = "Disables redelivery (same as setting maximum redeliveries to 0).")
     private String disableRedelivery;
     @XmlAttribute
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced",
+              description = "Sets the delay pattern for redeliveries using a pattern such as '0:1000;5:5000;10:30000' where each entry maps a redelivery count to a delay in milliseconds (e.g. redeliveries 0-4 use 1s delay, 5-9 use 5s, 10+ use 30s).")
     private String delayPattern;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "true")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "true",
+              description = "Controls whether to allow redelivery while stopping/shutting down a route that uses error handling.")
     private String allowRedeliveryWhileStopping;
     @XmlAttribute
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced",
+              description = "Sets the reference of the instance of org.apache.camel.spi.ExchangeFormatter to generate the log message from exchange.")
     private String exchangeFormatterRef;
 
     @Override
@@ -317,7 +342,7 @@ public class RedeliveryPolicyDefinition extends IdentifiedType implements Clonea
     }
 
     /**
-     * Sets whether stack traces should be logged. Can be used to include or reduce verbose.
+     * Sets whether stack traces should be logged. Can be used to include or reduce verbose logging.
      *
      * @param  logStackTrace whether stack traces should be logged or not
      * @return               the builder
@@ -362,7 +387,7 @@ public class RedeliveryPolicyDefinition extends IdentifiedType implements Clonea
     }
 
     /**
-     * Sets whether retry attempts should be logged or not. Can be used to include or reduce verbose.
+     * Sets whether retry attempts should be logged or not. Can be used to include or reduce verbose logging.
      *
      * @param  logRetryAttempted whether retry attempts should be logged or not
      * @return                   the builder
@@ -384,7 +409,7 @@ public class RedeliveryPolicyDefinition extends IdentifiedType implements Clonea
     }
 
     /**
-     * Sets whether handled exceptions should be logged or not. Can be used to include or reduce verbose.
+     * Sets whether handled exceptions should be logged or not. Can be used to include or reduce verbose logging.
      *
      * @param  logHandled whether handled exceptions should be logged or not
      * @return            the builder
@@ -406,7 +431,7 @@ public class RedeliveryPolicyDefinition extends IdentifiedType implements Clonea
     }
 
     /**
-     * Sets whether new exceptions should be logged or not. Can be used to include or reduce verbose.
+     * Sets whether new exceptions should be logged or not. Can be used to include or reduce verbose logging.
      * <p/>
      * A new exception is an exception that was thrown while handling a previous exception.
      *
@@ -432,7 +457,7 @@ public class RedeliveryPolicyDefinition extends IdentifiedType implements Clonea
     }
 
     /**
-     * Sets whether continued exceptions should be logged or not. Can be used to include or reduce verbose.
+     * Sets whether continued exceptions should be logged or not. Can be used to include or reduce verbose logging.
      *
      * @param  logContinued whether continued exceptions should be logged or not
      * @return              the builder
@@ -454,7 +479,7 @@ public class RedeliveryPolicyDefinition extends IdentifiedType implements Clonea
     }
 
     /**
-     * Sets whether exhausted exceptions should be logged or not. Can be used to include or reduce verbose.
+     * Sets whether exhausted exceptions should be logged or not. Can be used to include or reduce verbose logging.
      *
      * @param  logExhausted whether exhausted exceptions should be logged or not
      * @return              the builder
@@ -477,7 +502,7 @@ public class RedeliveryPolicyDefinition extends IdentifiedType implements Clonea
 
     /**
      * Sets whether exhausted exceptions should be logged including message history or not (supports property
-     * placeholders). Can be used to include or reduce verbose.
+     * placeholders). Can be used to include or reduce verbose logging.
      *
      * @param  logExhaustedMessageHistory whether exhausted exceptions should be logged with message history
      * @return                            the builder
@@ -489,7 +514,7 @@ public class RedeliveryPolicyDefinition extends IdentifiedType implements Clonea
 
     /**
      * Sets whether exhausted exceptions should be logged including message history or not (supports property
-     * placeholders). Can be used to include or reduce verbose.
+     * placeholders). Can be used to include or reduce verbose logging.
      *
      * @param  logExhaustedMessageHistory whether exhausted exceptions should be logged with message history
      * @return                            the builder
@@ -501,8 +526,8 @@ public class RedeliveryPolicyDefinition extends IdentifiedType implements Clonea
 
     /**
      * Sets whether exhausted message body should be logged including message history or not (supports property
-     * placeholders). Can be used to include or reduce verbose. Requires <tt>logExhaustedMessageHistory</tt> to be
-     * enabled.
+     * placeholders). Can be used to include or reduce verbose logging. Requires <tt>logExhaustedMessageHistory</tt> to
+     * be enabled.
      *
      * @param  logExhaustedMessageBody whether exhausted message body should be logged with message history
      * @return                         the builder
@@ -514,8 +539,8 @@ public class RedeliveryPolicyDefinition extends IdentifiedType implements Clonea
 
     /**
      * Sets whether exhausted message body should be logged including message history or not (supports property
-     * placeholders). Can be used to include or reduce verbose. Requires <tt>logExhaustedMessageHistory</tt> to be
-     * enabled.
+     * placeholders). Can be used to include or reduce verbose logging. Requires <tt>logExhaustedMessageHistory</tt> to
+     * be enabled.
      *
      * @param  logExhaustedMessageBody whether exhausted message body should be logged with message history
      * @return                         the builder
@@ -787,9 +812,6 @@ public class RedeliveryPolicyDefinition extends IdentifiedType implements Clonea
         return disableRedelivery;
     }
 
-    /**
-     * Disables redelivery (same as setting maximum redeliveries to 0)
-     */
     public void setDisableRedelivery(String disableRedelivery) {
         this.disableRedelivery = disableRedelivery;
     }

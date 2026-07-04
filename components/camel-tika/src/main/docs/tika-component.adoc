@@ -7,8 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Only producer is supported
-//Manually maintained attributes
-:camel-spring-boot-name: tika
 
 *Since Camel {since}*
 
@@ -35,7 +33,6 @@ following dependency to their `pom.xml`:
 ----
 
 
-
 // component options: START
 include::partial$component-configure-options.adoc[]
 include::partial$component-endpoint-options.adoc[]
@@ -48,21 +45,72 @@ include::partial$component-endpoint-headers.adoc[]
 
 The file should be placed in the Body.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:start")
         .to("tika:detect");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <to uri="tika:detect"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: tika:detect
+----
+====
+
 === To Parse a File
 
 The file should be placed in the Body.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:start")
         .to("tika:parse");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <to uri="tika:parse"/>
+</route>
+----
 
-include::spring-boot:partial$starter.adoc[]
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: tika:parse
+----
+====

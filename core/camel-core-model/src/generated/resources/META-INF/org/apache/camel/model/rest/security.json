@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "security",
     "title": "Rest Security",
-    "description": "Rest security definition",
+    "description": "Applies a security requirement to a REST operation, referencing a security scheme defined at the service level",
     "deprecated": false,
     "label": "rest,security,configuration",
     "javaType": "org.apache.camel.model.rest.SecurityDefinition",
@@ -12,7 +12,7 @@
     "output": false
   },
   "properties": {
-    "key": { "index": 0, "kind": "attribute", "displayName": "Key", "group": "common", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Key used to refer to this security definition" },
-    "scopes": { "index": 1, "kind": "attribute", "displayName": "Scopes", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The scopes to allow (separate multiple scopes by comma)" }
+    "key": { "index": 0, "kind": "attribute", "displayName": "Key", "group": "common", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Key used to refer to this security definition." },
+    "scopes": { "index": 1, "kind": "attribute", "displayName": "Scopes", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The scopes to allow (separate multiple scopes by comma)." }
   }
 }

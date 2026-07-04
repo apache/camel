@@ -2,12 +2,10 @@
 :doctitle: Base64
 :shortname: base64
 :artifactid: camel-base64
-:description: Encode and decode data using Base64.
+:description: Encode and decode data using Base64
 :since: 2.11
 :supportlevel: Stable
 :tabs-sync-option:
-//Manually maintained attributes
-:camel-spring-boot-name: base64
 
 *Since Camel {since}*
 
@@ -21,6 +19,7 @@ include::partial$dataformat-options.adoc[]
 
 In Spring DSL, you configure the data format using this tag:
 
+._XML-only: Spring XML data format configuration_
 [source,xml]
 ----
 <camelContext>
@@ -35,6 +34,19 @@ In Spring DSL, you configure the data format using this tag:
 
 Then you can use it later by its reference:
 
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:startEncode")
+    .marshal("base64withLineLength64")
+    .to("mock:result");
+----
+
+XML::
++
 [source,xml]
 ----
 <route>
@@ -44,6 +56,21 @@ Then you can use it later by its reference:
 </route>
 ----
 
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:startEncode
+      steps:
+        - marshal:
+            ref: base64withLineLength64
+        - to:
+            uri: mock:result
+----
+====
+
 Most of the time, you won't need to declare the data format if you use
 the default options. In that case, you can declare the data format
 inline as shown below.
@@ -52,6 +79,10 @@ inline as shown below.
 
 In this example, we marshal the file content to a base64 object.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("file://data.bin")
@@ -59,22 +90,43 @@ from("file://data.bin")
     .to("jms://myqueue");
 ----
 
-In Spring DSL:
-
+XML::
++
 [source,xml]
 ----
- <from uri="file://data.bin">
- <marshal>
-     <base64/>
- </marshal>
- <to uri="jms://myqueue"/> 
+<route>
+  <from uri="file://data.bin"/>
+  <marshal>
+    <base64/>
+  </marshal>
+  <to uri="jms://myqueue"/>
+</route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: file://data.bin
+      steps:
+        - marshal:
+            base64: {}
+        - to:
+            uri: jms://myqueue
+----
+====
 
 == Unmarshal
 
 In this example, we unmarshal the payload from the JMS queue to a byte[]
 object, before its processed by the `newOrder` processor.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("jms://queue/order")
@@ -82,16 +134,33 @@ from("jms://queue/order")
     .process("newOrder");
 ----
 
-In Spring DSL:
-
+XML::
++
 [source,xml]
 ----
- <from uri="jms://queue/order">
- <unmarshal>
-     <base64/>
- </unmarshal>
- <to uri="bean:newOrder"/> 
+<route>
+  <from uri="jms://queue/order"/>
+  <unmarshal>
+    <base64/>
+  </unmarshal>
+  <to uri="bean:newOrder"/>
+</route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: jms://queue/order
+      steps:
+        - unmarshal:
+            base64: {}
+        - to:
+            uri: bean:newOrder
+----
+====
 
 == Dependencies
 
@@ -108,6 +177,3 @@ If you use Maven, you can add the following to your pom.xml:
   <version>x.x.x</version>  <!-- use the same version as your Camel core version -->
 </dependency>
 ----
-
-
-include::spring-boot:partial$starter.adoc[]

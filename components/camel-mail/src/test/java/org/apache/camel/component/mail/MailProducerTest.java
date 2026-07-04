@@ -86,7 +86,7 @@ public class MailProducerTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").to(camel.uriPrefix(Protocol.smtp), "mock:result");
+                from("direct:start").to(camel.uriPrefix(Protocol.smtp) + "&useHeaderRecipients=true", "mock:result");
             }
         };
     }

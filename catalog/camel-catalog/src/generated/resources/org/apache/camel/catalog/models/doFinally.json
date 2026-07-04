@@ -3,20 +3,20 @@
     "kind": "model",
     "name": "doFinally",
     "title": "Do Finally",
-    "description": "Path traversed when a try, catch, finally block exits",
+    "description": "Defines steps to always execute after a doTry block completes, regardless of whether an exception was thrown or caught",
     "deprecated": false,
-    "label": "error",
+    "label": "error,errorhandling",
     "javaType": "org.apache.camel.model.FinallyDefinition",
     "abstract": false,
     "input": true,
     "output": true
   },
   "properties": {
-    "id": { "index": 0, "kind": "attribute", "displayName": "Id", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Sets the id of this node" },
-    "note": { "index": 1, "kind": "attribute", "displayName": "Note", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Sets the note of this node" },
-    "description": { "index": 2, "kind": "attribute", "displayName": "Description", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Sets the description of this node" },
-    "disabled": { "index": 3, "kind": "attribute", "displayName": "Disabled", "group": "advanced", "label": "advanced", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Disables this EIP from the route." },
-    "outputs": { "index": 4, "kind": "element", "displayName": "Outputs", "group": "common", "required": true, "type": "array", "javaType": "java.util.List", "oneOf": [ "aggregate", "bean", "choice", "circuitBreaker", "claimCheck", "convertBodyTo", "convertHeaderTo", "convertVariableTo", "delay", "doCatch", "doFinally", "doTry", "dynamicRouter", "enrich", "filter", "idempotentConsumer", "intercept", "interceptFrom", "interceptSendToEndpoint", "kamelet", "loadBalance", "log", "loop", "marshal", "multicast", "onCompletion", "onException", "pausable", "pipeline", "policy", "poll", "pollEnrich", "process", "recipientList", "removeHeader", "removeHeaders", "removeProperties", "removeProperty", "removeVariable", "resequence", "resumable", "rollback", "routingSlip", "saga", "sample", "script", "setBody", "setExchangePattern", "setHeader", "setHeaders", "setProperty", "setVariable", "setVariables", "sort", "split", "step", "stop", "threads", "throttle", "throwException", "to", "toD", "tokenizer", "transacted", "transform", "transformDataType", "unmarshal", "validate", "wireTap" ], "deprecated": false, "autowired": false, "secret": false }
+    "id": { "index": 0, "kind": "attribute", "displayName": "Id", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node" },
+    "note": { "index": 1, "kind": "attribute", "displayName": "Note", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The note for this node" },
+    "description": { "index": 2, "kind": "attribute", "displayName": "Description", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The description for this node" },
+    "disabled": { "index": 3, "kind": "attribute", "displayName": "Disabled", "group": "advanced", "label": "advanced", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime." },
+    "outputs": { "index": 4, "kind": "element", "displayName": "Outputs", "group": "common", "required": true, "type": "array", "javaType": "java.util.List", "oneOf": [ "a2aSubTask", "aggregate", "bean", "choice", "circuitBreaker", "claimCheck", "convertBodyTo", "convertHeaderTo", "convertVariableTo", "delay", "doCatch", "doFinally", "doTry", "dynamicRouter", "enrich", "filter", "idempotentConsumer", "intercept", "interceptFrom", "interceptSendToEndpoint", "kamelet", "loadBalance", "log", "loop", "marshal", "multicast", "onCompletion", "onException", "pausable", "pipeline", "policy", "poll", "pollEnrich", "process", "recipientList", "removeHeader", "removeHeaders", "removeProperties", "removeProperty", "removeVariable", "resequence", "resumable", "rollback", "routingSlip", "saga", "sample", "script", "setBody", "setExchangePattern", "setHeader", "setHeaders", "setProperty", "setVariable", "setVariables", "sort", "split", "step", "stop", "threads", "throttle", "throwException", "to", "toD", "tokenizer", "transacted", "transform", "transformDataType", "unmarshal", "validate", "wireTap" ], "deprecated": false, "autowired": false, "secret": false }
   },
   "exchangeProperties": {
     "CamelExceptionCaught": { "index": 0, "kind": "exchangeProperty", "displayName": "Exception Caught", "label": "producer", "required": false, "javaType": "java.lang.Exception", "deprecated": false, "autowired": false, "secret": false, "description": "Stores the caught exception due to a processing error of the current Exchange" },

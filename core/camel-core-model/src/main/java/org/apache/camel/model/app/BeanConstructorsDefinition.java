@@ -34,15 +34,13 @@ import org.apache.camel.spi.Metadata;
 public class BeanConstructorsDefinition {
 
     @XmlElement(name = "constructor")
+    @Metadata(description = "Constructor arguments for the bean.")
     private List<BeanConstructorDefinition> constructors;
 
     public List<BeanConstructorDefinition> getConstructors() {
         return constructors;
     }
 
-    /**
-     * Constructor arguments
-     */
     public void setConstructors(List<BeanConstructorDefinition> constructors) {
         this.constructors = constructors;
     }

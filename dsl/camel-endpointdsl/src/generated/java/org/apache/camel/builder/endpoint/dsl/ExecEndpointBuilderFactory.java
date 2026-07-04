@@ -441,7 +441,7 @@ public interface ExecEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final ExecHeaderNameBuilder INSTANCE = new ExecHeaderNameBuilder();
+        public static final ExecHeaderNameBuilder INSTANCE = new ExecHeaderNameBuilder();
 
         /**
          * The name of the system command that will be executed. Overrides

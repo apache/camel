@@ -31,13 +31,13 @@
   =======================================================================
 -->
   <Project rdf:about="http://camel.rdf.apache.org/">
-    <created>2008-12-17</created>
+    <created>2009-3-19</created>
     <license rdf:resource="http://usefulinc.com/doap/licenses/asl20" />
     <name>Apache Camel</name>
     <homepage rdf:resource="https://camel.apache.org/" />
     <asfext:pmc rdf:resource="https://camel.apache.org/" />
-    <shortdesc>Apache Camel is an integration framework</shortdesc>
-    <description>Camel is an Open Source integration framework that empowers you to quickly and easily integrate various systems consuming or producing data</description>
+    <shortdesc>Apache Camel is an open source integration framework with 350+ connectors.</shortdesc>
+    <description>Apache Camel is an open source integration framework with 350+ connectors. Write routes in Java, YAML, or XML. Run on Spring Boot, Quarkus, or standalone. Apache License 2.0.</description>
     <bug-database rdf:resource="https://issues.apache.org/jira/browse/CAMEL" />
     <mailing-list rdf:resource="https://camel.apache.org/community/mailing-list/" />
     <download-page rdf:resource="https://camel.apache.org/download.html" />

@@ -29,13 +29,15 @@ import org.apache.camel.spi.Metadata;
 /**
  * Encode and decode SWIFT MT messages.
  */
-@Metadata(firstVersion = "3.20.0", label = "dataformat,transformation,finance", title = "SWIFT MT")
+@Metadata(firstVersion = "3.20.0", label = "dataformat,transformation,finance", title = "SWIFT MT",
+          description = "Encode and decode SWIFT MT messages")
 @XmlRootElement(name = "swiftMt")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class SwiftMtDataFormat extends DataFormatDefinition {
 
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(javaType = "java.lang.Boolean",
+              description = "Whether to marshal messages in JSON format.")
     private String writeInJson;
 
     public SwiftMtDataFormat() {
@@ -66,11 +68,6 @@ public class SwiftMtDataFormat extends DataFormatDefinition {
         return writeInJson;
     }
 
-    /**
-     * The flag indicating that messages must be marshalled in a JSON format.
-     *
-     * @param writeInJson {@code true} if messages must be marshalled in a JSON format, {@code false} otherwise.
-     */
     public void setWriteInJson(String writeInJson) {
         this.writeInJson = writeInJson;
     }

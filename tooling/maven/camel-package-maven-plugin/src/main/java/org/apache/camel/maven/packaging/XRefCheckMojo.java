@@ -157,8 +157,9 @@ public class XRefCheckMojo extends AbstractMojo {
                     ml = module;
                     rem = groups[0];
                 }
-                if (cl.startsWith("latest@")) {
-                    cl = cl.substring("latest@".length());
+                int at = cl.indexOf('@');
+                if (at >= 0) {
+                    cl = cl.substring(at + 1);
                 }
                 link = cl + ":" + ml + ":" + rem;
                 if (!pages.containsKey(link)) {

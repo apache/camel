@@ -25,7 +25,8 @@ import org.apache.camel.spi.Metadata;
 /**
  * Rest security mutual TLS authentication definition
  */
-@Metadata(label = "rest,security,configuration")
+@Metadata(label = "rest,security,configuration",
+          description = "Configures mutual TLS (mTLS) client certificate authentication for a REST service")
 @XmlRootElement(name = "mutualTLS")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class MutualTLSDefinition extends RestSecurityDefinition {

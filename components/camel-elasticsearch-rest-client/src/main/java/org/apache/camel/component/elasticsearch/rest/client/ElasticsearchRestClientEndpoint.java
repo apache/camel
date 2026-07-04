@@ -26,6 +26,7 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
+import org.apache.camel.support.jsse.SSLContextParameters;
 import org.elasticsearch.client.RestClient;
 
 /**
@@ -64,6 +65,8 @@ public class ElasticsearchRestClientEndpoint extends DefaultEndpoint implements 
     @UriParam(label = "security")
     @Metadata(supportFileReference = true)
     private String certificatePath;
+    @UriParam(label = "security")
+    private SSLContextParameters sslContextParameters;
 
     @UriParam(label = "advanced")
     private boolean enableSniffer;
@@ -207,6 +210,19 @@ public class ElasticsearchRestClientEndpoint extends DefaultEndpoint implements 
 
     public void setCertificatePath(String certificatePath) {
         this.certificatePath = certificatePath;
+    }
+
+    public SSLContextParameters getSslContextParameters() {
+        return sslContextParameters;
+    }
+
+    /**
+     * To configure security using SSLContextParameters. When configured, this takes precedence over the
+     * {@code certificatePath} option. This allows configuring named groups, signature schemes, cipher suites, and
+     * protocols for the TLS connection.
+     */
+    public void setSslContextParameters(SSLContextParameters sslContextParameters) {
+        this.sslContextParameters = sslContextParameters;
     }
 
     /**

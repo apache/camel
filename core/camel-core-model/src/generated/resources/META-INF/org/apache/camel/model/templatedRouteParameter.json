@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "templatedRouteParameter",
     "title": "Templated Route Parameter",
-    "description": "An input parameter of a route template.",
+    "description": "Provides a parameter value for a templated route, binding a value to a route template parameter",
     "deprecated": false,
     "label": "configuration",
     "javaType": "org.apache.camel.model.TemplatedRouteParameterDefinition",
@@ -12,7 +12,7 @@
     "output": false
   },
   "properties": {
-    "name": { "index": 0, "kind": "attribute", "displayName": "Name", "group": "common", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The name of the parameter" },
-    "value": { "index": 1, "kind": "attribute", "displayName": "Value", "group": "common", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The value of the parameter." }
+    "name": { "index": 0, "kind": "attribute", "displayName": "Name", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The name of the parameter." },
+    "value": { "index": 1, "kind": "attribute", "displayName": "Value", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The value of the parameter." }
   }
 }

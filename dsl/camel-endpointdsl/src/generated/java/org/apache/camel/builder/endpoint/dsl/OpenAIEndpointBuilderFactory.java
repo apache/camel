@@ -550,11 +550,11 @@ public interface OpenAIEndpointBuilderFactory {
         /**
          * MCP (Model Context Protocol) server configurations. Define servers
          * using prefix notation:
-         * mcpServer..transportType=stdiossestreamableHttp, mcpServer..command=
-         * (stdio), mcpServer..args= (stdio), mcpServer..url=
-         * (sse/streamableHttp), mcpServer..oauthProfile= (OAuth profile for
-         * HTTP auth, requires camel-oauth). This is a multi-value option with
-         * prefix: mcpServer.
+         * mcpServer..transportType=stdiossestreamableHttp, (Note that sse is
+         * deprecated) mcpServer..command= (stdio), mcpServer..args= (stdio),
+         * mcpServer..url= (sse/streamableHttp), mcpServer..oauthProfile= (OAuth
+         * profile for HTTP auth, requires camel-oauth). This is a multi-value
+         * option with prefix: mcpServer.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -575,11 +575,11 @@ public interface OpenAIEndpointBuilderFactory {
         /**
          * MCP (Model Context Protocol) server configurations. Define servers
          * using prefix notation:
-         * mcpServer..transportType=stdiossestreamableHttp, mcpServer..command=
-         * (stdio), mcpServer..args= (stdio), mcpServer..url=
-         * (sse/streamableHttp), mcpServer..oauthProfile= (OAuth profile for
-         * HTTP auth, requires camel-oauth). This is a multi-value option with
-         * prefix: mcpServer.
+         * mcpServer..transportType=stdiossestreamableHttp, (Note that sse is
+         * deprecated) mcpServer..command= (stdio), mcpServer..args= (stdio),
+         * mcpServer..url= (sse/streamableHttp), mcpServer..oauthProfile= (OAuth
+         * profile for HTTP auth, requires camel-oauth). This is a multi-value
+         * option with prefix: mcpServer.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -1190,7 +1190,7 @@ public interface OpenAIEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final OpenAIHeaderNameBuilder INSTANCE = new OpenAIHeaderNameBuilder();
+        public static final OpenAIHeaderNameBuilder INSTANCE = new OpenAIHeaderNameBuilder();
 
         /**
          * The user message to send to the OpenAI chat completion API.
@@ -1328,6 +1328,21 @@ public interface OpenAIEndpointBuilderFactory {
          */
         public String openAIStripThinking() {
             return "CamelOpenAIStripThinking";
+        }
+        /**
+         * The MIME type of the message body when sending a file or binary
+         * content (File, WrappedFile, byte or InputStream) to the model. Takes
+         * precedence over component content-type headers and automatic MIME
+         * type detection.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code OpenAIMediaType}.
+         */
+        public String openAIMediaType() {
+            return "CamelOpenAIMediaType";
         }
         /**
          * The thinking content extracted from ... blocks in the model response.

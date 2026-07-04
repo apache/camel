@@ -2129,7 +2129,7 @@ public interface SpringRabbitMQEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final SpringRabbitMQHeaderNameBuilder INSTANCE = new SpringRabbitMQHeaderNameBuilder();
+        public static final SpringRabbitMQHeaderNameBuilder INSTANCE = new SpringRabbitMQHeaderNameBuilder();
 
         /**
          * To override the endpoint configuration's routing key.

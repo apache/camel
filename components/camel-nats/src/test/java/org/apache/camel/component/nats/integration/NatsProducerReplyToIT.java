@@ -53,7 +53,7 @@ public class NatsProducerReplyToIT extends NatsITSupport {
             public void configure() {
                 from(startUri).to(middleUri).to(resultUri);
 
-                from(middleUri)
+                from(middleUri + "?exchangePattern=InOut")
                         .transform(simple("Bye ${body}"));
             }
         };

@@ -100,7 +100,7 @@ public class RouteDiagramRenderer {
     public RouteDiagramRenderer(int nodeWidth, int fontSizeScaled, int nodeTextPadding, boolean metrics) {
         this.nodeWidth = nodeWidth;
         this.fontSizeNode = fontSizeScaled;
-        this.fontSizeLabel = fontSizeScaled + 1 * SCALE;
+        this.fontSizeLabel = fontSizeScaled + SCALE;
         this.nodeTextPadding = nodeTextPadding;
         this.metrics = metrics;
     }
@@ -141,7 +141,7 @@ public class RouteDiagramRenderer {
             c.text = parseColor(map.getOrDefault("text", "#ffffff"));
             c.arrow = parseColor(map.getOrDefault("arrow", "#b4b4b4"));
             c.counter = parseColor(map.getOrDefault("counter", "#2e7d32"));
-            c.counterFail = parseColor(map.getOrDefault("counter", "#ff0000"));
+            c.counterFail = parseColor(map.getOrDefault("counterFail", "#ff0000"));
             c.routeLabel = parseColor(map.getOrDefault("label", "#c8c8c8"));
             c.nodeFrom = parseColor(map.getOrDefault("from", "#2e7d32"));
             c.nodeTo = parseColor(map.getOrDefault("to", "#1565c0"));
@@ -167,7 +167,7 @@ public class RouteDiagramRenderer {
             }
             Integer idx = Colors.rgbColor(value);
             if (idx != null) {
-                return new Color(Colors.rgbColor(idx.intValue()));
+                return new Color(Colors.rgbColor(idx));
             }
             return null;
         }

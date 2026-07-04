@@ -35,6 +35,8 @@ class TraceEntry {
     boolean first;
     boolean last;
     boolean failed;
+    boolean remoteEndpoint;
+    boolean stubEndpoint;
     int nodeLevel;
     long elapsed;
     long epochMs;
@@ -48,4 +50,5 @@ class TraceEntry {
     Map<String, Object> exchangeVariables;
     Map<String, String> exchangeVariableTypes;
     String exception;
+    int inlineDepth;
 }

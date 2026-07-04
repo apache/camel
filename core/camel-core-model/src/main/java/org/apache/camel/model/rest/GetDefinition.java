@@ -25,7 +25,7 @@ import org.apache.camel.spi.Metadata;
 /**
  * Rest GET command
  */
-@Metadata(label = "rest")
+@Metadata(label = "rest", description = "Defines an HTTP GET operation in the REST DSL")
 @XmlRootElement(name = "get")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class GetDefinition extends VerbDefinition {

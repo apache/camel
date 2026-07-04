@@ -9,7 +9,6 @@
 :component-header: Both producer and consumer are supported
 //Manually maintained attributes
 :group: Hazelcast
-:camel-spring-boot-name: hazelcast
 
 *Since Camel {since}*
 
@@ -50,207 +49,295 @@ The map cache producer provides follow operations specified by *CamelHazelcastOp
 
 You can call the samples with:
 
+._Java-only: calling producer operations using ProducerTemplate_
 [source,java]
--------------------------------------------------------------------------------------------------------------------
-template.sendBodyAndHeader("direct:[put|get|update|delete|query|evict]", "my-foo", HazelcastConstants.OBJECT_ID, "4711");
--------------------------------------------------------------------------------------------------------------------
+----
+template.sendBodyAndHeader("direct:[put|get|update|delete|query|evict]", "my-foo", "CamelHazelcastObjectId", "4711");
+----
 
 === Example for *put*:
 
 [tabs]
 ====
-
-Java DSL::
+Java::
 +
 [source,java]
-------------------------------------------------------------------------------------
+----
 from("direct:put")
-.setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.PUT))
-.toF("hazelcast-%sfoo", HazelcastConstants.MAP_PREFIX);
-------------------------------------------------------------------------------------
+.setHeader("CamelHazelcastOperationType", constant("put"))
+.to("hazelcast-map:foo");
+----
 
-Spring XML::
+XML::
 +
 [source,xml]
------------------------------------------------------------------------------------------------
+----
 <route>
-    <from uri="direct:put" />
-    <setHeader name="hazelcast.operation.type">
+    <from uri="direct:put"/>
+    <setHeader name="CamelHazelcastOperationType">
         <constant>put</constant>
     </setHeader>
-    <to uri="hazelcast-map:foo" />
+    <to uri="hazelcast-map:foo"/>
 </route>
------------------------------------------------------------------------------------------------
+----
 
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:put
+      steps:
+        - setHeader:
+            name: CamelHazelcastOperationType
+            constant: put
+        - to:
+            uri: hazelcast-map:foo
+----
 ====
 
 Sample for *put* with eviction:
 
 [tabs]
 ====
-
-Java DSL::
+Java::
 +
-
 [source,java]
-------------------------------------------------------------------------------------
+----
 from("direct:put")
-.setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.PUT))
-.setHeader(HazelcastConstants.TTL_VALUE, constant(Long.valueOf(1)))
-.setHeader(HazelcastConstants.TTL_UNIT, constant(TimeUnit.MINUTES))
-.toF("hazelcast-%sfoo", HazelcastConstants.MAP_PREFIX);
-------------------------------------------------------------------------------------
+.setHeader("CamelHazelcastOperationType", constant("put"))
+.setHeader("CamelHazelcastObjectTtlValue", constant(Long.valueOf(1)))
+.setHeader("CamelHazelcastObjectTtlUnit", constant(TimeUnit.MINUTES))
+.to("hazelcast-map:foo");
+----
 
-Spring XML::
+XML::
 +
 [source,xml]
------------------------------------------------------------------------------------------------
+----
 <route>
-    <from uri="direct:put" />
-    <setHeader name="hazelcast.operation.type">
+    <from uri="direct:put"/>
+    <setHeader name="CamelHazelcastOperationType">
         <constant>put</constant>
     </setHeader>
-    <setHeader name="HazelcastConstants.TTL_VALUE">
-        <simple resultType="java.lang.Long">1</simple>
+    <setHeader name="CamelHazelcastObjectTtlValue">
+        <constant>1</constant>
     </setHeader>
-    <setHeader name="HazelcastConstants.TTL_UNIT">
-        <simple resultType="java.util.concurrent.TimeUnit">TimeUnit.MINUTES</simple>
+    <setHeader name="CamelHazelcastObjectTtlUnit">
+        <constant>MINUTES</constant>
     </setHeader>
-    <to uri="hazelcast-map:foo" />
+    <to uri="hazelcast-map:foo"/>
 </route>
------------------------------------------------------------------------------------------------
+----
 
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:put
+      steps:
+        - setHeader:
+            name: CamelHazelcastOperationType
+            constant: put
+        - setHeader:
+            name: CamelHazelcastObjectTtlValue
+            constant: 1
+        - setHeader:
+            name: CamelHazelcastObjectTtlUnit
+            constant: MINUTES
+        - to:
+            uri: hazelcast-map:foo
+----
 ====
 
 === Example for *get*:
 
 [tabs]
 ====
-
-Java DSL::
+Java::
 +
 [source,java]
-------------------------------------------------------------------------------------
+----
 from("direct:get")
-.setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.GET))
-.toF("hazelcast-%sfoo", HazelcastConstants.MAP_PREFIX)
+.setHeader("CamelHazelcastOperationType", constant("get"))
+.to("hazelcast-map:foo")
 .to("seda:out");
-------------------------------------------------------------------------------------
+----
 
-Spring XML::
+XML::
 +
 [source,xml]
------------------------------------------------------------------------------------------------
+----
 <route>
-    <from uri="direct:get" />
-    <setHeader name="hazelcast.operation.type">
+    <from uri="direct:get"/>
+    <setHeader name="CamelHazelcastOperationType">
         <constant>get</constant>
     </setHeader>
-    <to uri="hazelcast-map:foo" />
-    <to uri="seda:out" />
+    <to uri="hazelcast-map:foo"/>
+    <to uri="seda:out"/>
 </route>
------------------------------------------------------------------------------------------------
+----
 
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:get
+      steps:
+        - setHeader:
+            name: CamelHazelcastOperationType
+            constant: get
+        - to:
+            uri: hazelcast-map:foo
+        - to:
+            uri: seda:out
+----
 ====
 
 === Example for *update*:
 
 [tabs]
 ====
-
-Java DSL::
+Java::
 +
 [source,java]
----------------------------------------------------------------------------------------
+----
 from("direct:update")
-.setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.UPDATE))
-.toF("hazelcast-%sfoo", HazelcastConstants.MAP_PREFIX);
----------------------------------------------------------------------------------------
+.setHeader("CamelHazelcastOperationType", constant("update"))
+.to("hazelcast-map:foo");
+----
 
-Spring XML::
+XML::
 +
 [source,xml]
------------------------------------------------------------------------------------------------
+----
 <route>
-    <from uri="direct:update" />
-    <setHeader name="hazelcast.operation.type">
+    <from uri="direct:update"/>
+    <setHeader name="CamelHazelcastOperationType">
         <constant>update</constant>
     </setHeader>
-    <to uri="hazelcast-map:foo" />
+    <to uri="hazelcast-map:foo"/>
 </route>
------------------------------------------------------------------------------------------------
+----
 
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:update
+      steps:
+        - setHeader:
+            name: CamelHazelcastOperationType
+            constant: update
+        - to:
+            uri: hazelcast-map:foo
+----
 ====
 
 === Example for *delete*:
 
 [tabs]
 ====
-
-Java DSL::
+Java::
 +
-
 [source,java]
----------------------------------------------------------------------------------------
+----
 from("direct:delete")
-.setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.DELETE))
-.toF("hazelcast-%sfoo", HazelcastConstants.MAP_PREFIX);
----------------------------------------------------------------------------------------
+.setHeader("CamelHazelcastOperationType", constant("delete"))
+.to("hazelcast-map:foo");
+----
 
-Spring XML::
+XML::
 +
 [source,xml]
------------------------------------------------------------------------------------------------
+----
 <route>
-    <from uri="direct:delete" />
-    <setHeader name="hazelcast.operation.type">
+    <from uri="direct:delete"/>
+    <setHeader name="CamelHazelcastOperationType">
         <constant>delete</constant>
     </setHeader>
-    <to uri="hazelcast-map:foo" />
+    <to uri="hazelcast-map:foo"/>
 </route>
------------------------------------------------------------------------------------------------
+----
 
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:delete
+      steps:
+        - setHeader:
+            name: CamelHazelcastOperationType
+            constant: delete
+        - to:
+            uri: hazelcast-map:foo
+----
 ====
 
 === Example for *query*
 
 [tabs]
 ====
-
-Java DSL::
+Java::
 +
 [source,java]
---------------------------------------------------------------------------------------
+----
 from("direct:query")
-.setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.QUERY))
-.toF("hazelcast-%sfoo", HazelcastConstants.MAP_PREFIX)
+.setHeader("CamelHazelcastOperationType", constant("query"))
+.to("hazelcast-map:foo")
 .to("seda:out");
---------------------------------------------------------------------------------------
+----
 
-Spring XML::
+XML::
 +
 [source,xml]
------------------------------------------------------------------------------------------------
+----
 <route>
-    <from uri="direct:query" />
-    <setHeader name="hazelcast.operation.type">
+    <from uri="direct:query"/>
+    <setHeader name="CamelHazelcastOperationType">
         <constant>query</constant>
     </setHeader>
-    <to uri="hazelcast-map:foo" />
-    <to uri="seda:out" />
+    <to uri="hazelcast-map:foo"/>
+    <to uri="seda:out"/>
 </route>
------------------------------------------------------------------------------------------------
+----
 
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:query
+      steps:
+        - setHeader:
+            name: CamelHazelcastOperationType
+            constant: query
+        - to:
+            uri: hazelcast-map:foo
+        - to:
+            uri: seda:out
+----
 ====
 
 For the query operation Hazelcast offers an SQL like syntax to query your
 distributed map.
 
+._Java-only: sending a query predicate using ProducerTemplate_
 [source,java]
--------------------------------------------------------------------------------
+----
 String q1 = "bar > 1000";
-template.sendBodyAndHeader("direct:query", null, HazelcastConstants.QUERY, q1);
--------------------------------------------------------------------------------
+template.sendBodyAndHeader("direct:query", null, "CamelHazelcastQuery", q1);
+----
 
 
 == Map cache consumer - from("hazelcast-map:foo")
@@ -286,26 +373,107 @@ the message body.
 
 Here's a sample:
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------------------
-fromF("hazelcast-%sfoo", HazelcastConstants.MAP_PREFIX)
-.log("object...")
-.choice()
-    .when(header(HazelcastConstants.LISTENER_ACTION).isEqualTo(HazelcastConstants.ADDED))
-         .log("...added")
-         .to("mock:added")
-    .when(header(HazelcastConstants.LISTENER_ACTION).isEqualTo(HazelcastConstants.ENVICTED))
-         .log("...envicted")
-         .to("mock:envicted")
-    .when(header(HazelcastConstants.LISTENER_ACTION).isEqualTo(HazelcastConstants.UPDATED))
-         .log("...updated")
-         .to("mock:updated")
-    .when(header(HazelcastConstants.LISTENER_ACTION).isEqualTo(HazelcastConstants.REMOVED))
-         .log("...removed")
-         .to("mock:removed")
-    .otherwise()
-         .log("fail!");
---------------------------------------------------------------------------------------------
+----
+from("hazelcast-map:foo")
+    .log("object...")
+    .choice()
+        .when(header("CamelHazelcastListenerAction").isEqualTo("added"))
+            .log("...added")
+            .to("mock:added")
+        .when(header("CamelHazelcastListenerAction").isEqualTo("envicted"))
+            .log("...envicted")
+            .to("mock:envicted")
+        .when(header("CamelHazelcastListenerAction").isEqualTo("updated"))
+            .log("...updated")
+            .to("mock:updated")
+        .when(header("CamelHazelcastListenerAction").isEqualTo("removed"))
+            .log("...removed")
+            .to("mock:removed")
+        .otherwise()
+            .log("fail!");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="hazelcast-map:foo"/>
+  <log message="object..."/>
+  <choice>
+    <when>
+      <simple>${header.CamelHazelcastListenerAction} == 'added'</simple>
+      <log message="...added"/>
+      <to uri="mock:added"/>
+    </when>
+    <when>
+      <simple>${header.CamelHazelcastListenerAction} == 'envicted'</simple>
+      <log message="...envicted"/>
+      <to uri="mock:envicted"/>
+    </when>
+    <when>
+      <simple>${header.CamelHazelcastListenerAction} == 'updated'</simple>
+      <log message="...updated"/>
+      <to uri="mock:updated"/>
+    </when>
+    <when>
+      <simple>${header.CamelHazelcastListenerAction} == 'removed'</simple>
+      <log message="...removed"/>
+      <to uri="mock:removed"/>
+    </when>
+    <otherwise>
+      <log message="fail!"/>
+    </otherwise>
+  </choice>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: hazelcast-map:foo
+      steps:
+        - log:
+            message: "object..."
+        - choice:
+            when:
+              - simple: "${header.CamelHazelcastListenerAction} == 'added'"
+                steps:
+                  - log:
+                      message: "...added"
+                  - to:
+                      uri: mock:added
+              - simple: "${header.CamelHazelcastListenerAction} == 'envicted'"
+                steps:
+                  - log:
+                      message: "...envicted"
+                  - to:
+                      uri: mock:envicted
+              - simple: "${header.CamelHazelcastListenerAction} == 'updated'"
+                steps:
+                  - log:
+                      message: "...updated"
+                  - to:
+                      uri: mock:updated
+              - simple: "${header.CamelHazelcastListenerAction} == 'removed'"
+                steps:
+                  - log:
+                      message: "...removed"
+                  - to:
+                      uri: mock:removed
+            otherwise:
+              steps:
+                - log:
+                    message: "fail!"
+----
+====
 
 
-include::spring-boot:partial$starter.adoc[]

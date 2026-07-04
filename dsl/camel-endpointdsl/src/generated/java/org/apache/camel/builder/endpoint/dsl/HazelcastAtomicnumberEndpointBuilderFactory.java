@@ -273,7 +273,7 @@ public interface HazelcastAtomicnumberEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final HazelcastAtomicnumberHeaderNameBuilder INSTANCE = new HazelcastAtomicnumberHeaderNameBuilder();
+        public static final HazelcastAtomicnumberHeaderNameBuilder INSTANCE = new HazelcastAtomicnumberHeaderNameBuilder();
 
         /**
          * The operation to perform.

@@ -2,12 +2,10 @@
 :doctitle: MIME Multipart
 :shortname: mimeMultipart
 :artifactid: camel-mail
-:description: Marshal Camel messages with attachments into MIME-Multipart messages and back.
+:description: Marshal Camel messages with attachments into MIME-Multipart messages and back
 :since: 2.17
 :supportlevel: Stable
 :tabs-sync-option:
-//Manually maintained attributes
-:camel-spring-boot-name: mail
 
 *Since Camel {since}*
 
@@ -99,29 +97,30 @@ MIME multipart. The header is removed afterward
 
 == Examples
 
+._Java-only: marshalling a message with attachments into MIME-Multipart format_
 [source,java]
------------------------------------
+----
 from(...).marshal().mimeMultipart()
------------------------------------
+----
 
 With a message where no Content-Type header is set, will create a
 Message with the following message Camel headers:
 
 *Camel Message Headers*
 
--------------------------------------------------------------------------------
+----
 Content-Type=multipart/mixed; \n boundary="----=_Part_0_14180567.1447658227051"
 Message-Id=<...>
 MIME-Version=1.0
--------------------------------------------------------------------------------
+----
 
--------------------------
+----
 The message body will be:
--------------------------
+----
 
 *Camel Message Body*
 
-----------------------------------------------------------------
+----
 ------=_Part_0_14180567.1447658227051
 Content-Type: application/octet-stream
 Content-Transfer-Encoding: base64
@@ -132,15 +131,16 @@ Content-Transfer-Encoding: base64
 Content-Disposition: attachment; filename="Attachment File Name"
 AAECAwQFBgc=
 ------=_Part_0_14180567.1447658227051--
-----------------------------------------------------------------
+----
 
 A message with the header Content-Type set to "text/plain" sent to the
 route
 
+._Java-only: marshalling with custom MIME-Multipart options_
 [source,java]
-------------------------------------------------------------------------------------
+----
 from("...").marshal().mimeMultipart("related", true, true, "(included|x-.*)", true);
-------------------------------------------------------------------------------------
+----
 
 will create a message without any specific MIME headers set as Camel
 headers (the Content-Type header is removed from the Camel message) and
@@ -149,7 +149,7 @@ original message starting with "x-" and the header with name "included":
 
 *Camel Message Body*
 
-----------------------------------------------------------------
+----
 Message-ID: <...>
 MIME-Version: 1.0
 Content-Type: multipart/related; 
@@ -170,7 +170,7 @@ Content-Disposition: attachment; filename="Attachment File Name"
 
 [binary content]
 ------=_Part_0_1134128170.1447659361365
-----------------------------------------------------------------
+----
 
 == Dependencies
 
@@ -180,13 +180,10 @@ on *camel-mail*, which implements this data format.
 If you use Maven, you can add the following to your pom.xml:
 
 [source,xml]
------------------------------------------------------------------------------------
+----
 <dependency>
   <groupId>org.apache.camel</groupId>
   <artifactId>camel-mail</artifactId>
   <version>x.x.x</version> <!-- use the same version as your Camel core version -->
 </dependency>
------------------------------------------------------------------------------------
-
-
-include::spring-boot:partial$starter.adoc[]
+----

@@ -7,8 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
-//Manually maintained attributes
-:camel-spring-boot-name: jooq
 
 *Since Camel {since}*
 
@@ -31,6 +29,8 @@ There are two types of queries:
 . `org.jooq.ResultQuery`: can return results
 
 For example:
+
+._Java-only: JOOQ DSL API for creating Query and ResultQuery objects_
 [source,java]
 ----
 // Create a Query object and execute it:
@@ -46,10 +46,40 @@ Result<Record> result = resultQuery.fetch();
 SQL could be executed using JOOQ's objects "Query" or "ResultQuery".
 Also, the SQL query could be specified inside URI:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
-from("jooq://org.apache.camel.component.jooq.db.tables.records.BookStoreRecord?query=select * from book_store x where x.name = 'test'").to("bean:myBusinessLogic");
+from("jooq://org.apache.camel.component.jooq.db.tables.records.BookStoreRecord?query=select * from book_store x where x.name = 'test'")
+    .to("bean:myBusinessLogic");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="jooq://org.apache.camel.component.jooq.db.tables.records.BookStoreRecord?query=select * from book_store x where x.name = 'test'"/>
+    <to uri="bean:myBusinessLogic"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: jooq://org.apache.camel.component.jooq.db.tables.records.BookStoreRecord
+      parameters:
+        query: "select * from book_store x where x.name = 'test'"
+    steps:
+      - to:
+          uri: bean:myBusinessLogic
+----
+====
 
 See the examples below.
 
@@ -200,6 +230,8 @@ When using jooq as a producer you can use any of the following `JooqOperation` o
 ----
 
 .Sample bean:
+
+._Java-only: JOOQ bean with Query and ResultQuery factory methods_
 [source,java]
 ----
 @Component
@@ -219,6 +251,3 @@ public class BookStoreRecordBean {
     }
 }
 ----
-
-
-include::spring-boot:partial$starter.adoc[]

@@ -27,17 +27,20 @@ import org.apache.camel.spi.Metadata;
 /**
  * Evaluates a jOOR (Java compiled once at runtime) expression.
  */
-@Metadata(firstVersion = "3.7.0", label = "language", title = "jOOR")
+@Metadata(firstVersion = "3.7.0", label = "language", title = "jOOR",
+          description = "Evaluates a jOOR (Java compiled once at runtime) expression")
 @XmlRootElement(name = "joor")
 @XmlAccessorType(XmlAccessType.FIELD)
 @Deprecated(since = "4.3.0")
 public class JoorExpression extends TypedExpressionDefinition {
 
     @XmlAttribute
-    @Metadata(label = "advanced", defaultValue = "true", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", defaultValue = "true", javaType = "java.lang.Boolean",
+              description = "Whether the expression should be pre compiled once during initialization phase. If this is turned off, then the expression is reloaded and compiled on each evaluation.")
     private String preCompile;
     @XmlAttribute
-    @Metadata(label = "advanced", defaultValue = "true", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", defaultValue = "true", javaType = "java.lang.Boolean",
+              description = "Whether single quotes can be used as replacement for double quotes. This is convenient when you need to work with strings inside strings.")
     private String singleQuotes;
 
     public JoorExpression() {
@@ -73,10 +76,6 @@ public class JoorExpression extends TypedExpressionDefinition {
         return preCompile;
     }
 
-    /**
-     * Whether the expression should be pre compiled once during initialization phase. If this is turned off, then the
-     * expression is reloaded and compiled on each evaluation.
-     */
     public void setPreCompile(String preCompile) {
         this.preCompile = preCompile;
     }
@@ -85,10 +84,6 @@ public class JoorExpression extends TypedExpressionDefinition {
         return singleQuotes;
     }
 
-    /**
-     * Whether single quotes can be used as replacement for double quotes. This is convenient when you need to work with
-     * strings inside strings.
-     */
     public void setSingleQuotes(String singleQuotes) {
         this.singleQuotes = singleQuotes;
     }

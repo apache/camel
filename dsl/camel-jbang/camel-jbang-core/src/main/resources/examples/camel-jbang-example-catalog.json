@@ -10,7 +10,7 @@
             "artemis"
         ],
         "bundled": false,
-        "requiresDocker": false,
+        "requiresDocker": true,
         "hasCitrusTests": false,
         "files": [
             "README.md",
@@ -67,6 +67,30 @@
         ]
     },
     {
+        "name": "camel-1-tribute",
+        "title": "Camel 1.0 Tribute",
+        "description": "A tribute to the very first Apache Camel example from 2007 - JMS to File",
+        "level": "beginner",
+        "tags": [
+            "beginner",
+            "jms",
+            "file",
+            "artemis",
+            "tribute"
+        ],
+        "bundled": true,
+        "requiresDocker": true,
+        "hasCitrusTests": false,
+        "files": [
+            "README.md",
+            "application.properties",
+            "jms-to-file.camel.yaml"
+        ],
+        "infraServices": [
+            "artemis"
+        ]
+    },
+    {
         "name": "circuit-breaker",
         "title": "Circuit Breaker",
         "description": "Use the circuit breaker EIP for fault tolerance",
@@ -120,7 +144,6 @@
         "files": [
             "README.md",
             "application.properties",
-            "compose.yaml",
             "docling-langchain4j-rag.yaml",
             "sample.md"
         ],
@@ -141,7 +164,7 @@
             "finance"
         ],
         "bundled": false,
-        "requiresDocker": false,
+        "requiresDocker": true,
         "hasCitrusTests": false,
         "files": [
             "README.md",
@@ -173,7 +196,6 @@
         "files": [
             "README.md",
             "application.properties",
-            "compose.yaml",
             "ftp.camel.yaml",
             "jbang.properties"
         ],
@@ -213,7 +235,7 @@
             "oauth"
         ],
         "bundled": false,
-        "requiresDocker": false,
+        "requiresDocker": true,
         "hasCitrusTests": false,
         "files": [
             "README.md",
@@ -236,7 +258,7 @@
             "oauth"
         ],
         "bundled": false,
-        "requiresDocker": false,
+        "requiresDocker": true,
         "hasCitrusTests": false,
         "files": [
             "README.md",
@@ -245,6 +267,25 @@
         ],
         "infraServices": [
             "keycloak"
+        ]
+    },
+    {
+        "name": "memory-leak",
+        "title": "Memory Leak",
+        "description": "Simulates a memory leak for testing JFR Old Object Sample diagnostics",
+        "level": "beginner",
+        "tags": [
+            "observability",
+            "jfr",
+            "diagnostics",
+            "tui"
+        ],
+        "bundled": true,
+        "requiresDocker": false,
+        "hasCitrusTests": false,
+        "files": [
+            "MemoryLeak.java",
+            "README.md"
         ]
     },
     {
@@ -281,7 +322,6 @@
         "files": [
             "README.md",
             "application.properties",
-            "compose.yaml",
             "infra/mosquitto.conf",
             "mqtt.camel.yaml",
             "start.sh"
@@ -384,7 +424,7 @@
             "timer"
         ],
         "bundled": true,
-        "requiresDocker": false,
+        "requiresDocker": true,
         "hasCitrusTests": false,
         "files": [
             "README.md",
@@ -436,7 +476,6 @@
             "analyzer/error-analyzer.camel.yaml",
             "containers/caches/infinispan-events-config.json",
             "containers/caches/infinispan-events-to-process-config.json",
-            "containers/docker-compose.yaml",
             "containers/otel-collector-config.yaml",
             "correlator/application-dev.properties",
             "correlator/correlated-log-schema.json",
@@ -474,13 +513,12 @@
             "sql",
             "postgres"
         ],
-        "bundled": false,
+        "bundled": true,
         "requiresDocker": true,
         "hasCitrusTests": false,
         "files": [
             "README.md",
             "application.properties",
-            "compose.yaml",
             "sql.camel.yaml"
         ],
         "infraServices": [

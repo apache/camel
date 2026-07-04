@@ -33,9 +33,10 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.DslProperty;
 
 /**
- * Marks the beginning of a try, catch, finally block
+ * Wraps route steps in a try-catch-finally block for fine-grained exception handling within the route
  */
-@Metadata(label = "eip,routing,error")
+@Metadata(label = "eip,error,errorhandling,routing",
+          description = "Wraps route steps in a try-catch-finally block for fine-grained exception handling within the route")
 @XmlRootElement(name = "doTry")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class TryDefinition extends OutputDefinition<TryDefinition> {

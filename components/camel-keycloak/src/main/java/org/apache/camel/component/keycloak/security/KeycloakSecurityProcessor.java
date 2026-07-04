@@ -59,11 +59,23 @@ public class KeycloakSecurityProcessor extends DelegateProcessor {
                 throw new CamelAuthorizationException("Access token not found in exchange", exchange);
             }
 
-            if (!policy.getRequiredRolesAsList().isEmpty()) {
+            boolean rolesRequired = !policy.getRequiredRolesAsList().isEmpty();
+            boolean permissionsRequired = !policy.getRequiredPermissionsAsList().isEmpty();
+
+            // The token is always authenticated before the route runs (signature, issuer and expiry for
+            // local JWT verification, or active state and issuer for introspection). validateRoles() and
+            // validatePermissions() already authenticate the token, but they only run when roles or
+            // permissions are required; when neither is configured, authenticate here so that an invalid or
+            // unverifiable token is rejected instead of accepted. Authorization checks run after authentication.
+            if (!rolesRequired && !permissionsRequired) {
+                authenticateToken(accessToken, exchange);
+            }
+
+            if (rolesRequired) {
                 validateRoles(accessToken, exchange);
             }
 
-            if (!policy.getRequiredPermissionsAsList().isEmpty()) {
+            if (permissionsRequired) {
                 validatePermissions(accessToken, exchange);
             }
 
@@ -74,6 +86,30 @@ public class KeycloakSecurityProcessor extends DelegateProcessor {
                 throw e;
             }
             throw new CamelAuthorizationException("Authorization failed", exchange, e);
+        }
+    }
+
+    /**
+     * Authenticates the access token without applying any authorization (role or permission) checks. When token
+     * introspection is enabled the token is validated against Keycloak's introspection endpoint (active state and, when
+     * issuer validation is enabled, the issuer); otherwise the token signature, issuer and expiry are verified locally.
+     * This guarantees that an invalid or unverifiable token is rejected even when the policy does not require any roles
+     * or permissions.
+     */
+    private void authenticateToken(String accessToken, Exchange exchange) throws Exception {
+        if (policy.isUseTokenIntrospection() && policy.getTokenIntrospector() != null) {
+            KeycloakTokenIntrospector.IntrospectionResult introspectionResult
+                    = KeycloakSecurityHelper.introspectToken(accessToken, policy.getTokenIntrospector());
+
+            if (!introspectionResult.isActive()) {
+                throw new CamelAuthorizationException("Token is not active (may be revoked or expired)", exchange);
+            }
+
+            if (policy.isValidateIssuer()) {
+                validateIssuerFromIntrospection(introspectionResult, exchange);
+            }
+        } else {
+            parseAndVerifyToken(accessToken, exchange);
         }
     }
 

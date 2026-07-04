@@ -67,21 +67,41 @@ jobs:
     continue-on-error: ${{ matrix.experimental }}
     strategy:
       matrix:
-        java: ['17', '21']
+        java: ['17', '25']
         experimental: [ false ]
         include:
           - java: '17'
             # JDK 17 is kept for runtime compatibility testing.
             # Skip the enforcer which requires JDK 21+ (needed to compile JDK 21-specific classes).
             maven_extra_args: '-Denforcer.phase=none'
-          - java: '25'
-            experimental: true
 
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
           persist-credentials: false
           ref: ${{ inputs.pr_ref || '' }}
+      - name: Fetch base branch for Scalpel change detection
+        if: ${{ !inputs.skip_full_build }}
+        run: |
+          # Scalpel needs the merge base between HEAD and the base branch.
+          # The checkout is depth=1; progressively deepen: 50 → 200 → 1000 → full.
+          # Scalpel is observational — fetch failures must not break the build.
+          BASE_REF="${GITHUB_BASE_REF:-main}"
+          for depth in 50 200 1000; do
+            git fetch --deepen=$depth 2>/dev/null || true
+            git fetch --no-tags --depth=$depth origin "${BASE_REF}:refs/remotes/origin/${BASE_REF}" 2>/dev/null || true
+            if git merge-base HEAD "origin/${BASE_REF}" >/dev/null 2>&1; then
+              echo "Merge base reachable at depth $depth"
+              break
+            fi
+            echo "Merge base not reachable at depth $depth, deepening..."
+          done
+          # If still not reachable, fetch full history as last resort
+          if ! git merge-base HEAD "origin/${BASE_REF}" >/dev/null 2>&1; then
+            echo "Merge base still not reachable, fetching full history"
+            git fetch --unshallow 2>/dev/null || true
+            git fetch --no-tags origin "${BASE_REF}:refs/remotes/origin/${BASE_REF}" 2>/dev/null || true
+          fi
       - id: install-packages
         uses: ./.github/actions/install-packages
       - id: install-mvnd
@@ -92,6 +112,18 @@ jobs:
           distribution: 'temurin'
           java-version: ${{ matrix.java }}
           cache: 'maven'
+      - name: Get Atlassian dependency version
+        id: atlassian-version
+        run: |
+          JIRA_VERSION=$(./mvnw help:evaluate -Dexpression=jira-rest-client-api-version -q -DforceStdout -N -f parent/pom.xml)
+          echo "version=${JIRA_VERSION}" >> $GITHUB_OUTPUT
+      - name: Restore Atlassian Maven Cache
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: |
+            ~/.m2/repository/com/atlassian
+            ~/.m2/repository/io/atlassian
+          key: atlassian-maven-${{ steps.atlassian-version.outputs.version }}
       - name: maven build
         if: ${{ !inputs.skip_full_build }}
         env:
@@ -110,6 +142,14 @@ jobs:
         with:
           name: build-${{ matrix.java }}.log
           path: build.log
+      - name: Save Atlassian Maven Cache
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        if: always()
+        with:
+          path: |
+            ~/.m2/repository/com/atlassian
+            ~/.m2/repository/io/atlassian
+          key: atlassian-maven-${{ steps.atlassian-version.outputs.version }}
       - name: Fail if there are uncommitted changes
         if: ${{ !inputs.skip_full_build }}
         shell: bash
@@ -130,8 +170,11 @@ jobs:
           name: incremental-test-java-${{ matrix.java }}.log
           path: incremental-test.log
       # All non-experimental JDK matrix entries upload with overwrite: true.
-      # This ensures a comment is posted even if one JDK build fails — the
-      # content is identical across JDKs (same modules tested), so last writer wins.
+      # The comment content is identical across JDKs (same modules tested),
+      # so last writer wins. However, we only upload (and overwrite) when the
+      # comment file actually exists — a cancelled build (e.g., JDK 25 killed
+      # while JDK 17 fails) won't have the file and must not overwrite an
+      # artifact from a matrix entry that did produce it.
       - name: Save PR number and test comment for commenter workflow
         if: always() && !matrix.experimental
         shell: bash
@@ -149,7 +192,9 @@ jobs:
             echo ":gear: [View full build and test results](${RUN_URL})" >> ci-comment-artifact/incremental-test-comment.md
           fi
       - name: Upload CI comment artifact
-        if: always() && !matrix.experimental
+        if: >
+          always() && !matrix.experimental &&
+          hashFiles('ci-comment-artifact/incremental-test-comment.md') != ''
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: ci-comment

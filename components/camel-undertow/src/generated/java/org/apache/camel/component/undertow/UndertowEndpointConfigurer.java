@@ -52,6 +52,8 @@ public class UndertowEndpointConfigurer extends PropertyConfigurerSupport implem
         case "matchOnUriPrefix": target.setMatchOnUriPrefix(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "muteexception":
         case "muteException": target.setMuteException(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "oauthprofile":
+        case "oauthProfile": target.setOauthProfile(property(camelContext, java.lang.String.class, value)); return true;
         case "options": target.setOptions(property(camelContext, java.util.Map.class, value)); return true;
         case "optionsenabled":
         case "optionsEnabled": target.setOptionsEnabled(property(camelContext, boolean.class, value)); return true;
@@ -115,6 +117,8 @@ public class UndertowEndpointConfigurer extends PropertyConfigurerSupport implem
         case "matchOnUriPrefix": return java.lang.Boolean.class;
         case "muteexception":
         case "muteException": return java.lang.Boolean.class;
+        case "oauthprofile":
+        case "oauthProfile": return java.lang.String.class;
         case "options": return java.util.Map.class;
         case "optionsenabled":
         case "optionsEnabled": return boolean.class;
@@ -179,6 +183,8 @@ public class UndertowEndpointConfigurer extends PropertyConfigurerSupport implem
         case "matchOnUriPrefix": return target.getMatchOnUriPrefix();
         case "muteexception":
         case "muteException": return target.getMuteException();
+        case "oauthprofile":
+        case "oauthProfile": return target.getOauthProfile();
         case "options": return target.getOptions();
         case "optionsenabled":
         case "optionsEnabled": return target.isOptionsEnabled();

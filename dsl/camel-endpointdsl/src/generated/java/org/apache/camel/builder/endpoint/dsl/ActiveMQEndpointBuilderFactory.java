@@ -7357,7 +7357,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final ActiveMQHeaderNameBuilder INSTANCE = new ActiveMQHeaderNameBuilder();
+        public static final ActiveMQHeaderNameBuilder INSTANCE = new ActiveMQHeaderNameBuilder();
 
         /**
          * The destination.

@@ -79,7 +79,7 @@
     <bean id="webServiceTemplate" class="org.springframework.ws.client.core.WebServiceTemplate">
         <property name="defaultUri" value="http://localhost"/>
         <property name="messageSender">
-            <bean class="net.javacrumbs.springws.test.helper.InMemoryWebServiceMessageSender"/>
+            <bean class="net.javacrumbs.springws.test.helper.InMemoryWebServiceMessageSender2"/>
         </property>
     </bean>
 

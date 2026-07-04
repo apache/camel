@@ -1453,7 +1453,7 @@ public interface KubernetesEventsEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final KubernetesEventsHeaderNameBuilder INSTANCE = new KubernetesEventsHeaderNameBuilder();
+        public static final KubernetesEventsHeaderNameBuilder INSTANCE = new KubernetesEventsHeaderNameBuilder();
 
         /**
          * The Producer operation.

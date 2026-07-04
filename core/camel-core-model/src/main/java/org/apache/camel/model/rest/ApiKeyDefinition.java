@@ -26,22 +26,26 @@ import org.apache.camel.spi.Metadata;
 /**
  * Rest security basic auth definition
  */
-@Metadata(label = "rest,security,configuration")
+@Metadata(label = "rest,security,configuration", description = "Configures API key authentication for a REST service")
 @XmlRootElement(name = "apiKey")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ApiKeyDefinition extends RestSecurityDefinition {
 
     @XmlAttribute(name = "name", required = true)
-    @Metadata(required = true)
+    @Metadata(description = "The name of the header or query parameter to be used.",
+              required = true)
     private String name;
     @XmlAttribute(name = "inHeader")
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(description = "To use header as the location of the API key.",
+              javaType = "java.lang.Boolean")
     private String inHeader;
     @XmlAttribute(name = "inQuery")
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(description = "To use query parameter as the location of the API key.",
+              javaType = "java.lang.Boolean")
     private String inQuery;
     @XmlAttribute(name = "inCookie")
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(description = "To use a cookie as the location of the API key.",
+              javaType = "java.lang.Boolean")
     private String inCookie;
 
     public ApiKeyDefinition() {
@@ -55,9 +59,6 @@ public class ApiKeyDefinition extends RestSecurityDefinition {
         return name;
     }
 
-    /**
-     * The name of the header or query parameter to be used.
-     */
     public void setName(String name) {
         this.name = name;
     }
@@ -66,9 +67,6 @@ public class ApiKeyDefinition extends RestSecurityDefinition {
         return inHeader;
     }
 
-    /**
-     * To use header as the location of the API key.
-     */
     public void setInHeader(String inHeader) {
         this.inHeader = inHeader;
     }
@@ -77,9 +75,6 @@ public class ApiKeyDefinition extends RestSecurityDefinition {
         return inQuery;
     }
 
-    /**
-     * To use query parameter as the location of the API key.
-     */
     public void setInQuery(String inQuery) {
         this.inQuery = inQuery;
     }
@@ -88,9 +83,6 @@ public class ApiKeyDefinition extends RestSecurityDefinition {
         return inCookie;
     }
 
-    /**
-     * To use a cookie as the location of the API key.
-     */
     public void setInCookie(String inCookie) {
         this.inCookie = inCookie;
     }

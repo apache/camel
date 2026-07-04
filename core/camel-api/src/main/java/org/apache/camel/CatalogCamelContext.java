@@ -27,9 +27,8 @@ import org.jspecify.annotations.Nullable;
  * {@link Component}s, {@link DataFormat}s, {@link Language}s and EIPs available at runtime.
  * <p/>
  * The catalog data is the same information surfaced by the
- * <a href="https://camel.apache.org/manual/camel-catalog.html">Camel Catalog</a> tooling and is used by Camel JBang,
- * IDE plugins, Karaf shell commands and the management/console layer to inspect what is loaded in a running
- * application.
+ * <a href="https://camel.apache.org/manual/camel-catalog.html">Camel Catalog</a> tooling and is used by Camel CLI, IDE
+ * plugins, Karaf shell commands and the management/console layer to inspect what is loaded in a running application.
  *
  * @see   CamelContext
  * @since 3.0

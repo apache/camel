@@ -365,7 +365,7 @@ public interface JGroupsRaftEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final JGroupsRaftHeaderNameBuilder INSTANCE = new JGroupsRaftHeaderNameBuilder();
+        public static final JGroupsRaftHeaderNameBuilder INSTANCE = new JGroupsRaftHeaderNameBuilder();
 
         /**
          * The Raft log size in number of entries.

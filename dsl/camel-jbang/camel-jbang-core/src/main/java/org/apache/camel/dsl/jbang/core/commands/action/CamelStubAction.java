@@ -36,7 +36,7 @@ import org.apache.camel.support.PatternHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
-import org.fusesource.jansi.Ansi;
+import org.jline.jansi.Ansi;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
@@ -227,7 +227,7 @@ public class CamelStubAction extends ActionWatchCommand {
                 }
             }
         } else {
-            printer().println("Response from running Camel with PID " + pid + " not received within 5 seconds");
+            printer().println("Response from running Camel with PID " + pid + " not received within 10 seconds");
             return 1;
         }
 

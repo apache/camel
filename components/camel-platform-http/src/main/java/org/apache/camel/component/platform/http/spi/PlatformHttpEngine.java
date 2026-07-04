@@ -34,6 +34,26 @@ public interface PlatformHttpEngine extends EmbeddedHttpService {
      */
     PlatformHttpConsumer createConsumer(PlatformHttpEndpoint platformHttpEndpoint, Processor processor);
 
+    /**
+     * Creates a new secured {@link PlatformHttpConsumer} for the given {@link PlatformHttpEndpoint}.
+     * <p/>
+     * Platform HTTP engines can override this method to customize how the security handler wraps the Camel route
+     * processor. The default implementation wraps the processor, so authentication is enforced before route processing
+     * but after the engine has created the request exchange.
+     *
+     * @param  platformHttpEndpoint the {@link PlatformHttpEndpoint} to create a consumer for
+     * @param  processor            the Processor to pass to
+     * @param  securityHandler      the security handler to enforce before route processing
+     * @return                      a new {@link PlatformHttpConsumer}
+     * @since                       4.21
+     */
+    default PlatformHttpConsumer createConsumer(
+            PlatformHttpEndpoint platformHttpEndpoint,
+            Processor processor,
+            PlatformHttpSecurityHandler securityHandler) {
+        return createConsumer(platformHttpEndpoint, securityHandler.wrapProcessor(platformHttpEndpoint, processor));
+    }
+
     @Override
     default int getServerPort() {
         return 0;

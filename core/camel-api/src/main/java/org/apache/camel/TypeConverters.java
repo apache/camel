@@ -17,10 +17,18 @@
 package org.apache.camel;
 
 /**
- * A tagging interface to mark this class implements type converters using the {@link Converter} annotations.
+ * Marker interface indicating that a class contains <a href="https://camel.apache.org/manual/type-converter.html">type
+ * converter</a> methods annotated with {@link Converter}.
  * <p/>
- * This can be used to provide custom type converters that can be manually added to the {@link CamelContext} using
- * {@link org.apache.camel.spi.TypeConverterRegistry#addTypeConverters(Object)}.
+ * Implementing this interface allows custom converter classes to be registered at runtime with
+ * {@link org.apache.camel.spi.TypeConverterRegistry#addTypeConverters(Object)}, making all {@link Converter}-annotated
+ * methods available as converters within the current {@link CamelContext}.
+ * <p/>
+ * At startup, Camel automatically scans the classpath for converter classes; this interface provides a way to register
+ * additional converters programmatically without requiring a classpath scan.
+ *
+ * @see Converter
+ * @see org.apache.camel.spi.TypeConverterRegistry
  */
 public interface TypeConverters {
 }

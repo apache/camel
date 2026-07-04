@@ -288,7 +288,7 @@ public interface JteEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final JteHeaderNameBuilder INSTANCE = new JteHeaderNameBuilder();
+        public static final JteHeaderNameBuilder INSTANCE = new JteHeaderNameBuilder();
 
         /**
          * A URI for the template resource to use instead of the endpoint

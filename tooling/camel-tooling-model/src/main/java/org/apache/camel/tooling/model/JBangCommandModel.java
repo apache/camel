@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Model for Camel JBang CLI commands.
+ * Model for Camel CLI CLI commands.
  */
 public class JBangCommandModel {
 

@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "packageScan",
     "title": "Package Scan",
-    "description": "Scans for Java org.apache.camel.builder.RouteBuilder classes in java packages",
+    "description": "Scans Java packages on the classpath for RouteBuilder classes to auto-discover and register routes",
     "deprecated": false,
     "label": "configuration",
     "javaType": "org.apache.camel.model.PackageScanDefinition",
@@ -12,7 +12,7 @@
     "output": false
   },
   "properties": {
-    "package": { "index": 0, "kind": "element", "displayName": "Package", "group": "common", "required": true, "type": "array", "javaType": "java.util.List<java.lang.String>", "deprecated": false, "autowired": false, "secret": false, "description": "Sets the java package names to use for scanning for route builder classes" },
+    "package": { "index": 0, "kind": "element", "displayName": "Package", "group": "common", "required": false, "type": "array", "javaType": "java.util.List<java.lang.String>", "deprecated": false, "autowired": false, "secret": false, "description": "Java package names to use for scanning for route builder classes." },
     "excludes": { "index": 1, "kind": "element", "displayName": "Excludes", "group": "advanced", "label": "advanced", "required": false, "type": "array", "javaType": "java.util.List<java.lang.String>", "deprecated": false, "autowired": false, "secret": false, "description": "Exclude finding route builder from these java package names." },
     "includes": { "index": 2, "kind": "element", "displayName": "Includes", "group": "advanced", "label": "advanced", "required": false, "type": "array", "javaType": "java.util.List<java.lang.String>", "deprecated": false, "autowired": false, "secret": false, "description": "Include finding route builder from these java package names." }
   }

@@ -27,7 +27,8 @@ import org.apache.camel.spi.Metadata;
 /**
  * References to an existing or custom error handler.
  */
-@Metadata(label = "configuration,error")
+@Metadata(label = "configuration,error,errorhandling",
+          description = "References a custom error handler bean from the registry by its name")
 @XmlRootElement(name = "refErrorHandler")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RefErrorHandlerDefinition extends BaseErrorHandlerDefinition {
@@ -35,7 +36,8 @@ public class RefErrorHandlerDefinition extends BaseErrorHandlerDefinition {
     public static final String DEFAULT_ERROR_HANDLER_BUILDER = "CamelDefaultErrorHandlerBuilder";
 
     @XmlAttribute(required = true)
-    @Metadata(javaType = "org.apache.camel.ErrorHandlerFactory")
+    @Metadata(javaType = "org.apache.camel.ErrorHandlerFactory",
+              description = "Reference to an existing or custom error handler to lookup from the registry.")
     private String ref;
 
     public RefErrorHandlerDefinition() {
@@ -69,9 +71,6 @@ public class RefErrorHandlerDefinition extends BaseErrorHandlerDefinition {
         return ref;
     }
 
-    /**
-     * References to an existing or custom error handler.
-     */
     public void setRef(String ref) {
         this.ref = ref;
     }

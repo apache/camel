@@ -241,7 +241,7 @@ public interface GoogleBigQueryEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final GoogleBigQueryHeaderNameBuilder INSTANCE = new GoogleBigQueryHeaderNameBuilder();
+        public static final GoogleBigQueryHeaderNameBuilder INSTANCE = new GoogleBigQueryHeaderNameBuilder();
 
         /**
          * Table suffix to use when inserting data.

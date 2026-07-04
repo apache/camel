@@ -1260,7 +1260,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final ServiceNowHeaderNameBuilder INSTANCE = new ServiceNowHeaderNameBuilder();
+        public static final ServiceNowHeaderNameBuilder INSTANCE = new ServiceNowHeaderNameBuilder();
 
         /**
          * The resource to access.

@@ -1733,7 +1733,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final TwitterTimelineHeaderNameBuilder INSTANCE = new TwitterTimelineHeaderNameBuilder();
+        public static final TwitterTimelineHeaderNameBuilder INSTANCE = new TwitterTimelineHeaderNameBuilder();
 
         /**
          * The type of event. The supported values are the values of the enum

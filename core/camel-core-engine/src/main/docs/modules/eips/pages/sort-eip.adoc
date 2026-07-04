@@ -1,7 +1,7 @@
 = Sort EIP
 :doctitle: Sort
 :shortname: sort
-:description: Sorts the contents of the message
+:description: Sorts the items in a message body that is a List, using a specified comparator or the default ordering
 :since: 
 :supportlevel: Stable
 :tabs-sync-option:
@@ -182,4 +182,3 @@ YAML::
             method: processLine
 ----
 ====
-

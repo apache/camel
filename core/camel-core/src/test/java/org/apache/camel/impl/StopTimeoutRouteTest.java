@@ -30,7 +30,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class StopTimeoutRouteTest extends ContextTestSupport {
 
     private final CountDownLatch processingStarted = new CountDownLatch(1);
-    private final CountDownLatch processingDone = new CountDownLatch(1);
 
     @Test
     public void testStopTimeout() throws Exception {
@@ -45,8 +44,6 @@ public class StopTimeoutRouteTest extends ContextTestSupport {
         template.sendBody("direct:foo", "Hello Foo");
 
         assertMockEndpointsSatisfied();
-
-        processingDone.countDown();
 
         assertEquals(ServiceStatus.Stopped, context.getRouteController().getRouteStatus("start"));
         assertEquals(ServiceStatus.Started, context.getRouteController().getRouteStatus("foo"));
@@ -65,7 +62,6 @@ public class StopTimeoutRouteTest extends ContextTestSupport {
                             } catch (Exception ex) {
                                 // ignore
                             }
-                            processingDone.countDown();
                         })
                         .to("mock:foo");
 

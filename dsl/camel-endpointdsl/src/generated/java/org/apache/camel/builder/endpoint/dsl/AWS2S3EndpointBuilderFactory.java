@@ -3714,7 +3714,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final AWS2S3HeaderNameBuilder INSTANCE = new AWS2S3HeaderNameBuilder();
+        public static final AWS2S3HeaderNameBuilder INSTANCE = new AWS2S3HeaderNameBuilder();
 
         /**
          * The bucket Name (can be dynamic using the simple language in the

@@ -9,7 +9,6 @@
 :component-header: Only producer is supported
 //Manually maintained attributes
 :group: AI
-:camel-spring-boot-name: kserve
 
 *Since Camel {since}*
 
@@ -103,6 +102,8 @@ kserve:<api>[?options]
 
 === Infer (ModelInfer) API
 
+._Java-only: requires protobuf ModelInferRequest builder and response post-processing_
+
 .Perform inference
 [source,java]
 ----
@@ -145,13 +146,15 @@ void postprocess(Exchange exchange) {
 }
 ----
 
+._Java-only: requires protobuf ModelInferRequest builder with header overrides_
+
 .Specify the model name and version with headers
 [source,java]
 ----
 from("direct:infer-with-headers")
     .setBody(constant(createRequest()))
-    .setHeader(KServeConstants.MODEL_NAME, constant("simple"))
-    .setHeader(KServeConstants.MODEL_VERSION, constant("1"))
+    .setHeader("CamelKServeModelName", constant("simple"))
+    .setHeader("CamelKServeModelVersion", constant("1"))
     .to("kserve:infer")
     .process(this::postprocess)
     .log("Result: ${body}");
@@ -162,6 +165,11 @@ from("direct:infer-with-headers")
 === ModelReady API
 
 .Check if a model is ready
+
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:model-ready")
@@ -169,19 +177,96 @@ from("direct:model-ready")
     .log("Status: ${body.ready}");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:model-ready"/>
+  <to uri="kserve:model/ready?modelName=simple&amp;modelVersion=1"/>
+  <log message="Status: ${body.ready}"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:model-ready
+      steps:
+        - to:
+            uri: kserve:model/ready
+            parameters:
+              modelName: simple
+              modelVersion: 1
+        - log:
+            message: "Status: ${body.ready}"
+----
+====
+
 .Specify the model name and version with headers
+
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:model-ready-with-headers")
-    .setHeader(KServeConstants.MODEL_NAME, constant("simple"))
-    .setHeader(KServeConstants.MODEL_VERSION, constant("1"))
+    .setHeader("CamelKServeModelName", constant("simple"))
+    .setHeader("CamelKServeModelVersion", constant("1"))
     .to("kserve:model/ready")
     .log("Status: ${body.ready}");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:model-ready-with-headers"/>
+  <setHeader name="CamelKServeModelName">
+    <constant>simple</constant>
+  </setHeader>
+  <setHeader name="CamelKServeModelVersion">
+    <constant>1</constant>
+  </setHeader>
+  <to uri="kserve:model/ready"/>
+  <log message="Status: ${body.ready}"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:model-ready-with-headers
+      steps:
+        - setHeader:
+            name: CamelKServeModelName
+            constant: simple
+        - setHeader:
+            name: CamelKServeModelVersion
+            constant: "1"
+        - to:
+            uri: kserve:model/ready
+        - log:
+            message: "Status: ${body.ready}"
+----
+====
+
 === ModelMetadata API
 
 .Fetch model metadata
+
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:model-metadata")
@@ -189,19 +274,96 @@ from("direct:model-metadata")
     .log("Metadata: ${body}");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:model-metadata"/>
+  <to uri="kserve:model/metadata?modelName=simple&amp;modelVersion=1"/>
+  <log message="Metadata: ${body}"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:model-metadata
+      steps:
+        - to:
+            uri: kserve:model/metadata
+            parameters:
+              modelName: simple
+              modelVersion: 1
+        - log:
+            message: "Metadata: ${body}"
+----
+====
+
 .Specify the model name and version with headers
+
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:model-metadata-with-headers")
-    .setHeader(KServeConstants.MODEL_NAME, constant("simple"))
-    .setHeader(KServeConstants.MODEL_VERSION, constant("1"))
+    .setHeader("CamelKServeModelName", constant("simple"))
+    .setHeader("CamelKServeModelVersion", constant("1"))
     .to("kserve:model/metadata")
     .log("Metadata: ${body}");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:model-metadata-with-headers"/>
+  <setHeader name="CamelKServeModelName">
+    <constant>simple</constant>
+  </setHeader>
+  <setHeader name="CamelKServeModelVersion">
+    <constant>1</constant>
+  </setHeader>
+  <to uri="kserve:model/metadata"/>
+  <log message="Metadata: ${body}"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:model-metadata-with-headers
+      steps:
+        - setHeader:
+            name: CamelKServeModelName
+            constant: simple
+        - setHeader:
+            name: CamelKServeModelVersion
+            constant: "1"
+        - to:
+            uri: kserve:model/metadata
+        - log:
+            message: "Metadata: ${body}"
+----
+====
+
 === ServerReady API
 
 .Check if the server is ready
+
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:server-ready")
@@ -209,9 +371,40 @@ from("direct:server-ready")
     .log("Status: ${body.ready}");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:server-ready"/>
+  <to uri="kserve:server/ready"/>
+  <log message="Status: ${body.ready}"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:server-ready
+      steps:
+        - to:
+            uri: kserve:server/ready
+        - log:
+            message: "Status: ${body.ready}"
+----
+====
+
 === ServerLive API
 
 .Check if the server is live
+
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:server-live")
@@ -219,9 +412,40 @@ from("direct:server-live")
     .log("Status: ${body.live}");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:server-live"/>
+  <to uri="kserve:server/live"/>
+  <log message="Status: ${body.live}"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:server-live
+      steps:
+        - to:
+            uri: kserve:server/live
+        - log:
+            message: "Status: ${body.live}"
+----
+====
+
 === ServerMetadata API
 
 .Fetch server metadata
+
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:server-metadata")
@@ -229,4 +453,29 @@ from("direct:server-metadata")
     .log("Metadata: ${body}");
 ----
 
-include::spring-boot:partial$starter.adoc[]
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:server-metadata"/>
+  <to uri="kserve:server/metadata"/>
+  <log message="Metadata: ${body}"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:server-metadata
+      steps:
+        - to:
+            uri: kserve:server/metadata
+        - log:
+            message: "Metadata: ${body}"
+----
+====
+

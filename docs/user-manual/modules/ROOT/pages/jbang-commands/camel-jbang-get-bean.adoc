@@ -24,6 +24,7 @@ camel get bean [options]
 | `--internal` | Include internal Camel beans | false | boolean
 | `--nulls` | Include null values | true | boolean
 | `--properties` | Show bean properties | true | boolean
+| `--scope` | Filter beans by scope: all, user (excludes Camel/Spring/Quarkus/JDK), camel, spring, quarkus | all | String
 | `--sort` | Sort by name or type | name | String
 | `-h,--help` | Display the help and sub-commands |  | boolean
 |===

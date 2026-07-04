@@ -8,8 +8,6 @@
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
 :core:
-//Manually maintained attributes
-:camel-spring-boot-name: kamelet
 
 *Since Camel {since}*
 
@@ -158,6 +156,7 @@ WARNING: beware of any potential circular reference you may introduce when using
 _Kamelets_ can be used as if they were standard Camel components.
 For example, suppose that we have created a Route Template as follows:
 
+._Java-only: programmatic route template definition_
 [source,java]
 ----
 routeTemplate("setMyBody")
@@ -173,11 +172,40 @@ To let the *Kamelet* component wiring the materialized route to the caller proce
 
 Then the template can be instantiated and invoked as shown below:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:setMyBody")
     .to("kamelet:setMyBody?bodyValue=myKamelet");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:setMyBody"/>
+  <to uri="kamelet:setMyBody?bodyValue=myKamelet"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:setMyBody
+      steps:
+        - to:
+            uri: kamelet:setMyBody
+            parameters:
+              bodyValue: myKamelet
+----
+====
 
 
 Behind the scenes, the *Kamelet* component does the following things:
@@ -187,6 +215,7 @@ Behind the scenes, the *Kamelet* component does the following things:
 
 If you had to do it programmatically, it would have been something like:
 
+._Java-only: programmatic TemplatedRouteBuilder usage_
 [source,java]
 ----
 routeTemplate("setMyBody")
@@ -203,5 +232,3 @@ from("direct:template")
     .to("direct:bar");
 
 ----
-
-include::spring-boot:partial$starter.adoc[]

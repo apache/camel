@@ -29,7 +29,8 @@ import org.apache.camel.spi.Metadata;
 /**
  * To use a custom load balancer implementation.
  */
-@Metadata(label = "eip,routing")
+@Metadata(label = "eip,loadbalancing,routing",
+          description = "References a custom load balancer implementation from the registry")
 @XmlRootElement(name = "customLoadBalancer")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CustomLoadBalancerDefinition extends LoadBalancerDefinition {
@@ -38,6 +39,7 @@ public class CustomLoadBalancerDefinition extends LoadBalancerDefinition {
     private LoadBalancer loadBalancer;
 
     @XmlAttribute(required = true)
+    @Metadata(description = "Refers to the custom load balancer to lookup from the registry.")
     private String ref;
 
     public CustomLoadBalancerDefinition() {
@@ -62,9 +64,6 @@ public class CustomLoadBalancerDefinition extends LoadBalancerDefinition {
         return ref;
     }
 
-    /**
-     * Refers to the custom load balancer to lookup from the registry
-     */
     public void setRef(String ref) {
         this.ref = ref;
     }
@@ -73,9 +72,6 @@ public class CustomLoadBalancerDefinition extends LoadBalancerDefinition {
         return loadBalancer;
     }
 
-    /**
-     * The custom load balancer to use.
-     */
     public void setCustomLoadBalancer(LoadBalancer loadBalancer) {
         this.loadBalancer = loadBalancer;
     }

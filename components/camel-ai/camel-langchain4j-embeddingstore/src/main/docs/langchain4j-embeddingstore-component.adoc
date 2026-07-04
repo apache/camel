@@ -2,14 +2,13 @@
 :doctitle: LangChain4j Embedding Store
 :shortname: langchain4j-embeddingstore
 :artifactid: camel-langchain4j-embeddingstore
-:description: Perform operations on the Langchain4jEmbeddingStores.
+:description: Perform operations on the LangChain4jEmbeddingStores.
 :since: 4.14
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Only producer is supported
 //Manually maintained attributes
 :group: AI
-:camel-spring-boot-name: langchain4j-embeddingstore
 
 *Since Camel {since}*
 
@@ -50,7 +49,6 @@ include::partial$component-endpoint-options.adoc[]
 include::partial$component-endpoint-headers.adoc[]
 // component options: END
 
-include::spring-boot:partial$starter.adoc[]
 
 == Usage
 
@@ -58,6 +56,7 @@ include::spring-boot:partial$starter.adoc[]
 
 The component requires an `EmbeddingStore` instance. Register it in the Camel registry:
 
+._Java-only: programmatic EmbeddingStore configuration and registry binding_
 [source,java]
 ----
 EmbeddingStore<TextSegment> embeddingStore = PgVectorEmbeddingStore.builder()
@@ -218,6 +217,7 @@ YAML::
 
 A complete example showing document ingestion and retrieval:
 
+._Java-only: multi-route RAG pipeline with split and tokenize_
 [source,java]
 ----
 // Ingestion route: chunk, embed, and store documents

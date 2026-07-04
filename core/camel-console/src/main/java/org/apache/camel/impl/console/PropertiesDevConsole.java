@@ -16,10 +16,13 @@
  */
 package org.apache.camel.impl.console;
 
+import java.util.Collection;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 
 import org.apache.camel.spi.PropertiesComponent;
+import org.apache.camel.spi.RuntimePropertiesProvider;
 import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.console.AbstractDevConsole;
 import org.apache.camel.util.OrderedLocationProperties;
@@ -62,6 +65,23 @@ public class PropertiesDevConsole extends AbstractDevConsole {
         }
         sb.append("\n");
 
+        // include properties from runtime providers (Spring Boot, Quarkus, etc.)
+        Set<RuntimePropertiesProvider> providers
+                = getCamelContext().getRegistry().findByType(RuntimePropertiesProvider.class);
+        for (RuntimePropertiesProvider provider : providers) {
+            Collection<RuntimePropertiesProvider.Property> runtimeProps = provider.getProperties();
+            if (runtimeProps != null && !runtimeProps.isEmpty()) {
+                for (RuntimePropertiesProvider.Property prop : runtimeProps) {
+                    if (SensitiveUtils.containsSensitive(prop.key())) {
+                        sb.append(String.format("    %s %s = xxxxxx%n", prop.source(), prop.key()));
+                    } else {
+                        sb.append(String.format("    %s %s = %s%n", prop.source(), prop.key(), prop.value()));
+                    }
+                }
+                sb.append("\n");
+            }
+        }
+
         return sb.toString();
     }
 
@@ -80,6 +100,26 @@ public class PropertiesDevConsole extends AbstractDevConsole {
         }
         if (!arr.isEmpty()) {
             root.put("properties", arr);
+        }
+
+        // include properties from runtime providers (Spring Boot, Quarkus, etc.)
+        Set<RuntimePropertiesProvider> providers
+                = getCamelContext().getRegistry().findByType(RuntimePropertiesProvider.class);
+        for (RuntimePropertiesProvider provider : providers) {
+            Collection<RuntimePropertiesProvider.Property> runtimeProps = provider.getProperties();
+            if (runtimeProps != null && !runtimeProps.isEmpty()) {
+                for (RuntimePropertiesProvider.Property prop : runtimeProps) {
+                    boolean sensitive = SensitiveUtils.containsSensitive(prop.key());
+                    JsonObject jo = new JsonObject();
+                    jo.put("key", prop.key());
+                    jo.put("value", sensitive ? "xxxxxx" : prop.value());
+                    jo.put("source", prop.source());
+                    arr.add(jo);
+                }
+                if (!root.containsKey("properties")) {
+                    root.put("properties", arr);
+                }
+            }
         }
 
         return root;

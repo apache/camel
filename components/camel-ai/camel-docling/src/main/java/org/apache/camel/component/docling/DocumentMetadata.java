@@ -24,6 +24,8 @@ import java.util.Map;
  */
 public class DocumentMetadata {
 
+    private String title;
+    private String documentType;
     private Integer pageCount;
     private String format;
     private Long fileSizeBytes;
@@ -33,6 +35,32 @@ public class DocumentMetadata {
 
     public DocumentMetadata() {
         this.rawMetadata = new HashMap<>();
+    }
+
+    /**
+     * Gets the document title as detected by Docling (the text labelled as the document title), when present.
+     *
+     * @return the document title, or {@code null} if the source document does not expose one
+     */
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    /**
+     * Gets the document type derived from the source (e.g., "PDF", "DOCX"), when it can be determined.
+     *
+     * @return the document type, or {@code null} if it cannot be determined
+     */
+    public String getDocumentType() {
+        return documentType;
+    }
+
+    public void setDocumentType(String documentType) {
+        this.documentType = documentType;
     }
 
     /**
@@ -138,6 +166,8 @@ public class DocumentMetadata {
     @Override
     public String toString() {
         return "DocumentMetadata{"
+               + "title='" + title + '\''
+               + ", documentType='" + documentType + '\''
                + ", pageCount=" + pageCount
                + ", format='" + format + '\''
                + ", fileSizeBytes=" + fileSizeBytes + ", fileName='" + fileName + '\'' + ", filePath='" + filePath + '\''

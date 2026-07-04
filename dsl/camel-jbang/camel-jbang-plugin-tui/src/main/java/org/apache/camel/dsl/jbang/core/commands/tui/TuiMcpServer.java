@@ -27,11 +27,13 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpServer;
 import dev.tamboui.buffer.Buffer;
 import dev.tamboui.export.ExportRequest;
+import dev.tamboui.style.Color;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
@@ -66,16 +68,17 @@ class TuiMcpServer {
     }
 
     private final int port;
-    private final CamelMonitor monitor;
+    private final McpFacade facade;
     private HttpServer server;
     private volatile String clientName;
     private volatile long lastActivity;
     private volatile long lastToolCallTime;
+    private final AtomicInteger toolCallCount = new AtomicInteger();
     private final List<LogEntry> activityLog = new ArrayList<>();
 
-    TuiMcpServer(int port, CamelMonitor monitor) {
+    TuiMcpServer(int port, McpFacade facade) {
         this.port = port;
-        this.monitor = monitor;
+        this.facade = facade;
     }
 
     void start() throws IOException {
@@ -118,9 +121,13 @@ class TuiMcpServer {
         return System.currentTimeMillis() - lastToolCallTime < 2000;
     }
 
+    int getToolCallCount() {
+        return toolCallCount.get();
+    }
+
     String getConnectedClient() {
         if (System.currentTimeMillis() - lastActivity < CLIENT_TIMEOUT_MS) {
-            return clientName != null ? clientName : "unknown";
+            return clientName != null ? clientName : "connected";
         }
         return null;
     }
@@ -260,11 +267,19 @@ class TuiMcpServer {
         toolList.add(toolDef(
                 "tui_navigate",
                 "Navigates the TUI: switch tabs and/or select an integration. "
-                                + "Both parameters are optional — set whichever you want to change. "
-                                + "Tab names: Overview, Log, Routes, Consumers, Endpoints, HTTP, Health, Inspect, Circuit Breaker. "
+                                + "All parameters are optional — set whichever you want to change. "
+                                + "Tab names: Overview, Log, Diagram, Routes, Endpoints, HTTP, Health, Inspect, "
+                                + "Circuit Breaker, Spans, Process. "
+                                + "Use 'route' to select a route in the Diagram topology, "
+                                + "and 'node' to drill down into a route and select a specific processor/EIP node. "
                                 + "Returns screen content and selection metadata after navigating.",
-                Map.of("tab", propDef("string", "Tab to switch to (e.g. 'Routes', 'Health')"),
-                        "integration", propDef("string", "Integration name or PID to select"))));
+                Map.of("tab", propDef("string", "Tab to switch to (e.g. 'Routes', 'Health', 'Diagram')"),
+                        "integration", propDef("string", "Integration name or PID to select"),
+                        "route", propDef("string",
+                                "Route ID to select in the Diagram tab topology (e.g. 'order-dispatcher')"),
+                        "node", propDef("string",
+                                "Processor/EIP node ID to select within a drilled-down route (e.g. 'multicast1'). "
+                                                  + "If 'route' is also provided, drills into that route first"))));
 
         toolList.add(toolDef(
                 "tui_send_keys",
@@ -347,6 +362,29 @@ class TuiMcpServer {
                                   + "The underlying content is unchanged since drawing is an overlay.",
                 Map.of()));
 
+        toolList.add(toolDef(
+                "tui_draw_shape",
+                "Draws a predefined shape on the TUI screen overlay. "
+                                  + "Much easier than constructing individual cells with tui_draw. "
+                                  + "Combine with tui_locate for precise positioning.",
+                Map.of("shape", propDef("string",
+                        "Shape to draw: box (rectangle border), highlight (background color on existing text like a marker pen), "
+                                                  + "underline (horizontal line), arrow-down, arrow-up, arrow-left, arrow-right, "
+                                                  + "text (draw text string at position)"),
+                        "x", propDef("integer", "X coordinate (column) of the shape origin"),
+                        "y", propDef("integer", "Y coordinate (row) of the shape origin"),
+                        "width", propDef("integer", "Width of the shape (for box, highlight, underline)"),
+                        "height", propDef("integer", "Height of the shape (for box, highlight). Defaults to 1."),
+                        "length", propDef("integer", "Length of arrows"),
+                        "text", propDef("string", "Text content to draw (for text shape)"),
+                        "color", propDef("string",
+                                "Color: red, green, blue, yellow, cyan, magenta, white, gray, black. Default: red for box/underline/arrow, yellow for highlight."),
+                        "duration",
+                        propDef("integer", "Auto-dismiss after this many seconds. If omitted, stays until cleared."),
+                        "append", propDef("boolean",
+                                "If true, add to existing drawing instead of replacing it. Default false.")),
+                List.of("shape", "x", "y")));
+
         // --- Structured data tools ---
 
         toolList.add(toolDef(
@@ -361,7 +399,7 @@ class TuiMcpServer {
                 "tui_action",
                 "Invokes a TUI action by name, bypassing fragile key sequences. "
                               + "Actions: reset-stats, reset-screen, screenshot, show-keystrokes, "
-                              + "tape-recording, doctor, caption, mcp-info, mcp-log.",
+                              + "tape-recording, doctor, caption, mcp-info, mcp-log, toggle-theme.",
                 Map.of("action", propDef("string", "Action name in kebab-case (e.g. 'reset-stats', 'screenshot')")),
                 List.of("action")));
         toolList.add(toolDef(
@@ -382,6 +420,28 @@ class TuiMcpServer {
                                    + "Shows the ASCII/Unicode art diagram of routes and their connections.",
                 Map.of()));
         toolList.add(toolDef(
+                "tui_get_history",
+                "Returns rich trace and history data from the History tab as structured JSON. "
+                                   + "Includes ALL exchange details: body with type, headers with types, "
+                                   + "exchange properties, exchange variables, thread name, source location, "
+                                   + "node level, and node labels. Much richer than tui_get_table on History. "
+                                   + "Returns different shapes depending on the History tab's current mode: "
+                                   + "Traces (exchange ID list), Trace Steps (per-step detail), "
+                                   + "or History (message history steps).",
+                Map.of("exchangeId", propDef("string",
+                        "If provided, returns trace steps for this specific exchange ID. "
+                                                       + "Otherwise returns data for the current History tab view."))));
+        toolList.add(toolDef(
+                "tui_get_topology",
+                "Returns the route topology as a structured JSON graph with nodes and edges arrays. "
+                                    + "Each node has: routeId, nodeType (route/external-in/external-out/trigger), "
+                                    + "layer, description, from (consumer URI), exchangesTotal, exchangesFailed. "
+                                    + "Each edge has: from (routeId), to (routeId), endpoint, connectionType, "
+                                    + "selfLoop, backEdge. "
+                                    + "Use this instead of tui_get_diagram when you need to reason about "
+                                    + "route connectivity programmatically.",
+                Map.of()));
+        toolList.add(toolDef(
                 "tui_send_message",
                 "Sends a message to a Camel endpoint in the selected integration. "
                                     + "Uses the file-based IPC protocol to deliver the message directly.",
@@ -389,6 +449,127 @@ class TuiMcpServer {
                         "body", propDef("string", "Message body to send"),
                         "headers", propDef("string", "Message headers as key=value pairs separated by newlines")),
                 List.of("endpoint")));
+        toolList.add(toolDef(
+                "tui_execute_sql",
+                "Executes a SQL query against a DataSource in the selected integration. "
+                                   + "Returns structured JSON with columns, rows, and metadata for SELECT queries, "
+                                   + "or an update count for INSERT/UPDATE/DELETE. "
+                                   + "Requires dev console to be enabled in the running application.",
+                Map.of("query", propDef("string", "The SQL query to execute"),
+                        "datasource", propDef("string",
+                                "Name of the DataSource bean (auto-detected if only one exists)"),
+                        "maxRows", propDef("integer",
+                                "Maximum number of rows to return (default 100)"),
+                        "queryTimeout", propDef("integer",
+                                "Query timeout in seconds (default 30)")),
+                List.of("query")));
+        toolList.add(toolDef(
+                "tui_update_row",
+                "Updates a single row in a database table. Use after tui_execute_sql returns "
+                                  + "editable=true with tableName and primaryKeys. Builds and executes "
+                                  + "an UPDATE statement using PreparedStatement for safety.",
+                Map.of("table", propDef("string", "The table name to update"),
+                        "primaryKeyValues", propDef("string",
+                                "JSON object of primary key column-value pairs, e.g. {\"id\": 1}"),
+                        "columnValues", propDef("string",
+                                "JSON object of column-value pairs to update, e.g. {\"name\": \"new\"}"),
+                        "datasource", propDef("string",
+                                "Name of the DataSource bean (auto-detected if only one exists)")),
+                List.of("table", "primaryKeyValues", "columnValues")));
+        toolList.add(toolDef(
+                "tui_set_log_level",
+                "Changes the runtime log level of the selected integration. "
+                                     + "This sends a command to the running Camel application to change "
+                                     + "the root logger level.",
+                Map.of("level", propDef("string",
+                        "Log level to set: ERROR, WARN, INFO, DEBUG, or TRACE")),
+                List.of("level")));
+        toolList.add(toolDef(
+                "tui_filter",
+                "Sets or clears the fuzzy text filter on a tab that supports typing-to-filter. "
+                              + "Currently supported on the Classpath tab. "
+                              + "Use an empty string to clear the filter.",
+                Map.of("filter", propDef("string",
+                        "Filter text to apply. Empty string clears the filter."),
+                        "tab", propDef("string",
+                                "Tab name to filter (e.g. 'Classpath'). If omitted, uses the active tab.")),
+                List.of("filter")));
+        toolList.add(toolDef(
+                "tui_set_input",
+                "Sets the value of a text input field on a TUI tab directly, without simulating keystrokes. "
+                                 + "The text appears in the TUI input widget so the user can see it. "
+                                 + "Supported fields by tab: SQL Query (field='sql'), "
+                                 + "HTTP probe (field='path' or 'body'), "
+                                 + "Spans (field='filter'), Classpath (field='filter').",
+                Map.of("field", propDef("string",
+                        "Field name to set: 'sql', 'path', 'body', or 'filter'"),
+                        "value", propDef("string",
+                                "The text value to set in the input field"),
+                        "tab", propDef("string",
+                                "Tab name (e.g. 'SQL Query', 'HTTP'). If omitted, uses the active tab.")),
+                List.of("field", "value")));
+        toolList.add(toolDef(
+                "tui_toggle_trace_display",
+                "Toggles which sections are visible in the History tab's detail view. "
+                                            + "Controls what data is shown when inspecting trace steps or history entries.",
+                Map.of("section", propDef("string",
+                        "Section to toggle: headers, properties, variables, body, or wrap"),
+                        "enabled", propDef("boolean",
+                                "If provided, forces the section on (true) or off (false). "
+                                                      + "If omitted, toggles the current state.")),
+                List.of("section")));
+        toolList.add(toolDef(
+                "tui_get_readme",
+                "Returns the README/documentation content from a running integration. "
+                                  + "Useful for understanding what the integration does, its configuration, and usage. "
+                                  + "If no name is provided, returns the README for the currently selected integration.",
+                Map.of("name", propDef("string",
+                        "Integration name. If omitted, uses the currently selected integration."))));
+        toolList.add(toolDef(
+                "tui_control",
+                "Controls the selected integration: stop/start routes, restart, stop, or kill the process. "
+                               + "Actions: stop-routes (or pause) — suspend all routes; "
+                               + "start-routes (or resume) — resume all routes; "
+                               + "restart — gracefully restart the integration; "
+                               + "stop — gracefully stop the process; "
+                               + "kill — forcefully terminate the process.",
+                Map.of("action", propDef("string",
+                        "Control action: stop-routes, start-routes, pause, resume, restart, stop, or kill")),
+                List.of("action")));
+        toolList.add(toolDef(
+                "tui_get_files",
+                "Returns source files from the selected integration's directory. "
+                                 + "Without a file parameter, returns the list of files (name, size, type). "
+                                 + "With a file parameter, returns the file's content. "
+                                 + "Useful for reading route source code, configuration, and other integration files.",
+                Map.of("name", propDef("string",
+                        "Integration name. If omitted, uses the currently selected integration."),
+                        "file", propDef("string",
+                                "Filename to read. If omitted, returns the file list instead."))));
+        toolList.add(toolDef(
+                "tui_get_spans",
+                "Returns raw OpenTelemetry span data as structured JSON from the selected integration. "
+                                 + "Each span includes: traceId, spanId, parentSpanId, name, kind, status, "
+                                 + "startEpochNanos, endEpochNanos, durationMs, routeId, processorId, and attributes. "
+                                 + "Use traceId to filter spans for a specific trace. "
+                                 + "The parentSpanId chain shows the span hierarchy for building waterfall views.",
+                Map.of("traceId", propDef("string",
+                        "Filter to spans matching this trace ID (substring match). "
+                                                    + "If omitted, returns all recent spans."),
+                        "limit", propDef("integer",
+                                "Maximum number of spans to return (default 500)"))));
+        toolList.add(toolDef(
+                "tui_locate",
+                "Locates elements on the TUI screen and returns their exact screen coordinates (x, y, width, height). "
+                              + "Use 'text' to find text on screen with proper wide-character handling (emoji, CJK). "
+                              + "Use 'node' or 'nodes' to find diagram nodes by ID. "
+                              + "Returns coordinates suitable for tui_draw.",
+                Map.of("text", propDef("string",
+                        "Text to search for on screen. Returns all matches with screen coordinates."),
+                        "node", propDef("string",
+                                "Single diagram node ID to locate (routeId or nodeId)."),
+                        "nodes", propDef("array",
+                                "Array of diagram node IDs to locate. Returns individual rects plus combined bounds."))));
 
         JsonObject result = new JsonObject();
         result.put("tools", toolList);
@@ -405,6 +586,7 @@ class TuiMcpServer {
         }
 
         lastToolCallTime = System.currentTimeMillis();
+        toolCallCount.incrementAndGet();
 
         String text;
         boolean isError = false;
@@ -428,7 +610,21 @@ class TuiMcpServer {
                 case "tui_get_log" -> callGetLog(args);
                 case "tui_get_errors" -> callGetErrors();
                 case "tui_get_diagram" -> callGetDiagram();
+                case "tui_get_history" -> callGetHistory(args);
+                case "tui_get_topology" -> callGetTopology();
                 case "tui_send_message" -> callSendMessage(args);
+                case "tui_execute_sql" -> callExecuteSql(args);
+                case "tui_update_row" -> callUpdateRow(args);
+                case "tui_set_log_level" -> callSetLogLevel(args);
+                case "tui_filter" -> callFilter(args);
+                case "tui_set_input" -> callSetInput(args);
+                case "tui_toggle_trace_display" -> callToggleTraceDisplay(args);
+                case "tui_get_readme" -> callGetReadme(args);
+                case "tui_control" -> callControl(args);
+                case "tui_get_files" -> callGetFiles(args);
+                case "tui_get_spans" -> callGetSpans(args);
+                case "tui_locate" -> callLocate(args);
+                case "tui_draw_shape" -> callDrawShape(args);
                 default -> {
                     isError = true;
                     yield "Unknown tool: " + toolName;
@@ -456,7 +652,7 @@ class TuiMcpServer {
     }
 
     private void addSelectionContext(JsonObject result) {
-        SelectionContext ctx = monitor.getSelectionContext();
+        SelectionContext ctx = facade.getSelectionContext();
         if (ctx != null) {
             JsonObject sel = new JsonObject();
             sel.put("type", ctx.type());
@@ -470,8 +666,15 @@ class TuiMcpServer {
         }
     }
 
+    private void addFooterActions(JsonObject result) {
+        JsonArray actions = facade.getFooterActionsAsJson();
+        if (actions != null && !actions.isEmpty()) {
+            result.put("actions", actions);
+        }
+    }
+
     private String callGetScreen(Map<String, Object> args) {
-        Buffer buf = monitor.getLastBuffer();
+        Buffer buf = facade.getLastBuffer();
         if (buf == null) {
             return "Screen not yet available";
         }
@@ -495,7 +698,7 @@ class TuiMcpServer {
             limit = n.intValue();
         }
 
-        TuiEventLog eventLog = monitor.getEventLog();
+        TuiEventLog eventLog = facade.getEventLog();
         List<TuiEventLog.Event> events = eventLog.getRecent(limit);
 
         JsonArray eventsArray = new JsonArray();
@@ -515,21 +718,26 @@ class TuiMcpServer {
 
     private String callGetState() {
         JsonObject result = new JsonObject();
-        result.put("activeTab", monitor.getActiveTabName());
-        result.put("tabIndex", monitor.getActiveTabIndex());
+        result.put("activeTab", facade.getActiveTabName());
+        result.put("tabIndex", facade.getActiveTabIndex());
 
-        String pid = monitor.getSelectedPid();
+        String pid = facade.getSelectedPid();
         if (pid != null) {
             result.put("selectedPid", pid);
         }
-        String name = monitor.getSelectedIntegrationName();
+        String name = facade.getSelectedIntegrationName();
         if (name != null) {
             result.put("selectedIntegration", name);
         }
-        result.put("integrationCount", monitor.getIntegrationCount());
-        result.put("keystrokesVisible", monitor.isKeystrokesVisible());
-        result.put("captionVisible", monitor.isCaptionVisible());
+        result.put("integrationCount", facade.getIntegrationCount());
+        result.put("keystrokesVisible", facade.isKeystrokesVisible());
+        result.put("captionVisible", facade.isCaptionVisible());
         addSelectionContext(result);
+        addFooterActions(result);
+        JsonObject diagramState = facade.getDiagramState();
+        if (diagramState != null) {
+            result.put("diagram", diagramState);
+        }
         return Jsoner.serialize(result);
     }
 
@@ -544,17 +752,17 @@ class TuiMcpServer {
             duration = n.intValue();
         }
 
-        TapeRecorder recorder = monitor.getTapeRecorder();
+        TapeRecorder recorder = facade.getTapeRecorder();
         if (recorder != null && recorder.isActive()) {
             recorder.resetClock();
             recorder.recordCaption(text, Math.max(duration, 0));
         }
 
         if (duration > 0) {
-            monitor.showCaption(text, duration);
+            facade.showCaption(text, duration);
             return "Caption displayed (auto-dismiss in " + duration + "s): " + text;
         }
-        monitor.showCaption(text);
+        facade.showCaption(text);
         return "Caption displayed: " + text;
     }
 
@@ -562,46 +770,67 @@ class TuiMcpServer {
         JsonObject result = new JsonObject();
         String tab = (String) args.get("tab");
         String integration = (String) args.get("integration");
+        String route = args.get("route") instanceof String s ? s : null;
+        String node = args.get("node") instanceof String s ? s : null;
 
-        if (tab == null && integration == null) {
-            result.put("error", "Provide at least one of: tab, integration");
-            result.put("availableTabs", toJsonArray(monitor.getTabNames()));
-            result.put("availableIntegrations", toJsonArray(monitor.getIntegrationNames()));
+        if (tab == null && integration == null && route == null && node == null) {
+            result.put("error", "Provide at least one of: tab, integration, route, node");
+            result.put("availableTabs", toJsonArray(facade.getTabNames()));
+            result.put("availableIntegrations", toJsonArray(facade.getIntegrationNames()));
             return Jsoner.serialize(result);
         }
 
         if (integration != null) {
-            String selected = monitor.selectIntegration(integration);
+            String selected = facade.selectIntegration(integration);
             if (selected != null) {
                 result.put("selectedIntegration", selected);
             } else {
                 result.put("integrationError", "Not found: " + integration);
-                result.put("availableIntegrations", toJsonArray(monitor.getIntegrationNames()));
+                result.put("availableIntegrations", toJsonArray(facade.getIntegrationNames()));
             }
         }
 
         if (tab != null) {
-            String switched = monitor.navigateToTab(tab);
+            String switched = facade.navigateToTab(tab);
             if (switched != null) {
                 result.put("activeTab", switched);
-                TapeRecorder recorder = monitor.getTapeRecorder();
+                TapeRecorder recorder = facade.getTapeRecorder();
                 if (recorder != null && recorder.isActive()) {
                     recorder.resetClock();
-                    int tabIndex = monitor.getTabNames().indexOf(switched);
+                    int tabIndex = facade.getTabNames().indexOf(switched);
                     if (tabIndex >= 0 && tabIndex < 9) {
                         recorder.recordKey(String.valueOf(tabIndex + 1));
                     }
                 }
             } else {
                 result.put("tabError", "Unknown tab: " + tab);
-                result.put("availableTabs", toJsonArray(monitor.getTabNames()));
+                result.put("availableTabs", toJsonArray(facade.getTabNames()));
             }
         }
 
-        long beforeGen = monitor.getRenderGeneration();
+        // Diagram route/node navigation (route selection in topology doesn't need render wait)
+        if (node == null && route != null) {
+            String selected = facade.navigateDiagramToRoute(route);
+            if (selected != null) {
+                result.put("selectedRoute", route);
+            } else {
+                result.put("routeError", "Route not found in diagram: " + route);
+            }
+        }
+
+        // When drilling down with a node, we first drill into the route, then wait
+        // for render to populate the EIP node boxes, then select the node
+        if (node != null) {
+            // Drill into the route first (sets topologyMode=false)
+            if (route != null) {
+                facade.navigateDiagramToNode(route, null);
+            }
+        }
+
+        long beforeGen = facade.getRenderGeneration();
         long deadline = System.currentTimeMillis() + 2000;
         while (System.currentTimeMillis() < deadline) {
-            if (monitor.getRenderGeneration() >= beforeGen + 2) {
+            if (facade.getRenderGeneration() >= beforeGen + 2) {
                 break;
             }
             try {
@@ -611,11 +840,26 @@ class TuiMcpServer {
                 break;
             }
         }
-        Buffer buf = monitor.getLastBuffer();
+
+        // Now that the render has populated EIP node boxes, select the node
+        if (node != null) {
+            String selected = facade.navigateDiagramToNode(null, node);
+            if (selected != null) {
+                result.put("selectedNode", node);
+                if (route != null) {
+                    result.put("drillDownRoute", route);
+                }
+            } else {
+                result.put("nodeError", "Node not found: " + node
+                                        + (route != null ? " in route " + route : ""));
+            }
+        }
+        Buffer buf = facade.getLastBuffer();
         if (buf != null) {
             result.put("screen", ExportRequest.export(buf).text().toString());
         }
         addSelectionContext(result);
+        addFooterActions(result);
         return Jsoner.serialize(result);
     }
 
@@ -636,15 +880,15 @@ class TuiMcpServer {
         if (delayArg instanceof Number n) {
             delay = Math.max(80, n.intValue());
         }
-        TapeRecorder recorder = monitor.getTapeRecorder();
+        TapeRecorder recorder = facade.getTapeRecorder();
         if (recorder != null && recorder.isActive()) {
             recorder.resetClock();
             recorder.recordKeys(keys, delay);
         }
 
         boolean wait = Boolean.TRUE.equals(args.get("wait"));
-        long beforeGen = wait ? monitor.getRenderGeneration() : 0;
-        int sent = monitor.injectKeys(keys, delay);
+        long beforeGen = wait ? facade.getRenderGeneration() : 0;
+        int sent = facade.injectKeys(keys, delay);
 
         if (!wait) {
             return "Queued " + sent + " key(s) with " + delay + "ms delay";
@@ -657,7 +901,7 @@ class TuiMcpServer {
         while (System.currentTimeMillis() < deadline) {
             long now = System.currentTimeMillis();
             if (now >= lastKeyFireAt) {
-                long gen = monitor.getRenderGeneration();
+                long gen = facade.getRenderGeneration();
                 if (gen >= beforeGen + sent + 2) {
                     break;
                 }
@@ -670,7 +914,7 @@ class TuiMcpServer {
             }
         }
 
-        Buffer buf = monitor.getLastBuffer();
+        Buffer buf = facade.getLastBuffer();
         JsonObject result = new JsonObject();
         result.put("sent", sent);
         result.put("delay", delay);
@@ -679,22 +923,32 @@ class TuiMcpServer {
             result.put("screen", ExportRequest.export(buf).text().toString());
         }
         addSelectionContext(result);
+        addFooterActions(result);
         return Jsoner.serialize(result);
     }
 
     private String callGetOptions() {
         JsonObject result = new JsonObject();
-        result.put("tabs", toJsonArray(monitor.getTabNames()));
-        result.put("activeTab", monitor.getActiveTabName());
-        result.put("activeTabIndex", monitor.getActiveTabIndex());
-        result.put("integrations", toJsonArray(monitor.getIntegrationNames()));
-        String selected = monitor.getSelectedIntegrationName();
+        JsonArray tabsArray = new JsonArray();
+        for (TabRegistry.TabEntry entry : facade.getTabEntries()) {
+            JsonObject tab = new JsonObject();
+            tab.put("name", entry.name());
+            if (entry.description() != null) {
+                tab.put("description", entry.description());
+            }
+            tabsArray.add(tab);
+        }
+        result.put("tabs", tabsArray);
+        result.put("activeTab", facade.getActiveTabName());
+        result.put("activeTabIndex", facade.getActiveTabIndex());
+        result.put("integrations", toJsonArray(facade.getIntegrationNames()));
+        String selected = facade.getSelectedIntegrationName();
         if (selected != null) {
             result.put("selectedIntegration", selected);
         }
-        result.put("integrationCount", monitor.getIntegrationCount());
+        result.put("integrationCount", facade.getIntegrationCount());
 
-        List<String> actions = monitor.getActionLabels();
+        List<String> actions = facade.getActionLabels();
         JsonArray actionsArray = new JsonArray();
         for (int i = 0; i < actions.size(); i++) {
             JsonObject action = new JsonObject();
@@ -731,14 +985,14 @@ class TuiMcpServer {
             requiredFrames = Math.max(1, Math.min(10, n.intValue()));
         }
 
-        long startGeneration = monitor.getRenderGeneration();
+        long startGeneration = facade.getRenderGeneration();
         long start = System.currentTimeMillis();
         long deadline = start + timeout;
 
         while (System.currentTimeMillis() < deadline) {
-            long current = monitor.getRenderGeneration();
+            long current = facade.getRenderGeneration();
             if (current >= startGeneration + requiredFrames) {
-                Buffer buf = monitor.getLastBuffer();
+                Buffer buf = facade.getLastBuffer();
                 JsonObject result = new JsonObject();
                 result.put("settled", true);
                 result.put("waitedMs", System.currentTimeMillis() - start);
@@ -765,23 +1019,23 @@ class TuiMcpServer {
     }
 
     private String callTapeStart(Map<String, Object> args) {
-        if (monitor.isTapeRecording()) {
+        if (facade.isTapeRecording()) {
             return "Tape recording is already active. Stop it first with tui_tape_stop.";
         }
         String title = args.get("title") instanceof String s ? s : null;
-        monitor.startTapeRecording(title);
+        facade.startTapeRecording(title);
         return "Tape recording started" + (title != null ? ": " + title : "");
     }
 
     private String callTapeStop(Map<String, Object> args) {
-        if (!monitor.isTapeRecording()) {
+        if (!facade.isTapeRecording()) {
             return "No tape recording is active. Start one with tui_tape_start.";
         }
-        TapeRecorder recorder = monitor.getTapeRecorder();
+        TapeRecorder recorder = facade.getTapeRecorder();
         String tape = recorder.stop();
         int keyCount = recorder.getKeyCount();
         long durationMs = recorder.getDurationMs();
-        monitor.clearTapeRecorder();
+        facade.clearTapeRecorder();
 
         JsonObject result = new JsonObject();
         result.put("tape", tape);
@@ -809,7 +1063,7 @@ class TuiMcpServer {
         int seconds = secArg instanceof Number n ? n.intValue() : 3;
         seconds = Math.max(1, Math.min(30, seconds));
 
-        TapeRecorder recorder = monitor.getTapeRecorder();
+        TapeRecorder recorder = facade.getTapeRecorder();
         if (recorder != null && recorder.isActive()) {
             recorder.resetClock();
             recorder.recordSleep(seconds * 1000L);
@@ -878,9 +1132,9 @@ class TuiMcpServer {
         }
 
         if (append) {
-            monitor.appendDrawing(drawCells);
+            facade.appendDrawing(drawCells);
         } else {
-            monitor.setDrawing(drawCells, duration);
+            facade.setDrawing(drawCells, duration);
         }
 
         return "Drawing " + drawCells.size() + " cell(s)"
@@ -889,13 +1143,13 @@ class TuiMcpServer {
     }
 
     private String callDrawClear() {
-        monitor.clearDrawing();
+        facade.clearDrawing();
         return "Drawing cleared";
     }
 
     private String callGetTable(Map<String, Object> args) {
         String tab = args.get("tab") instanceof String s ? s : null;
-        JsonObject data = monitor.getTableData(tab);
+        JsonObject data = facade.getTableData(tab);
         if (data == null) {
             return "No table data available" + (tab != null ? " for tab: " + tab : "");
         }
@@ -907,13 +1161,13 @@ class TuiMcpServer {
         if (action == null || action.isBlank()) {
             return "Error: action is required";
         }
-        boolean executed = monitor.executeAction(action);
+        boolean executed = facade.executeAction(action);
         if (executed) {
             return "Action '" + action + "' executed";
         }
         return "Unknown or unsupported action: " + action
                + ". Available: reset-stats, reset-screen, screenshot, show-keystrokes, "
-               + "tape-recording, doctor, caption, mcp-info, mcp-log";
+               + "tape-recording, doctor, caption, mcp-info, mcp-log, toggle-theme";
     }
 
     private String callGetLog(Map<String, Object> args) {
@@ -923,12 +1177,12 @@ class TuiMcpServer {
         }
         String filter = args.get("filter") instanceof String s ? s : null;
         String level = args.get("level") instanceof String s ? s : null;
-        JsonObject data = monitor.getLogData(limit, filter, level);
+        JsonObject data = facade.getLogData(limit, filter, level);
         return Jsoner.serialize(data);
     }
 
     private String callGetErrors() {
-        JsonObject data = monitor.getTableData("Errors");
+        JsonObject data = facade.getTableData("Errors");
         if (data == null) {
             JsonObject empty = new JsonObject();
             empty.put("tab", "Errors");
@@ -940,10 +1194,41 @@ class TuiMcpServer {
     }
 
     private String callGetDiagram() {
-        JsonObject data = monitor.getDiagramData();
+        JsonObject data = facade.getDiagramData();
         if (data == null) {
             return "No diagram available. Navigate to the Diagram tab first.";
         }
+        return Jsoner.serialize(data);
+    }
+
+    private String callGetHistory(Map<String, Object> args) {
+        String exchangeId = args.get("exchangeId") instanceof String s ? s : null;
+        if (exchangeId != null && !exchangeId.isBlank()) {
+            facade.navigateToTab("History");
+            facade.selectTraceExchange(exchangeId);
+        }
+        JsonObject data = facade.getTableData("History");
+        if (data == null) {
+            return "No history data available. Ensure the History tab has data.";
+        }
+        return Jsoner.serialize(data);
+    }
+
+    private String callGetTopology() {
+        JsonObject data = facade.getTopologyData();
+        if (data == null) {
+            return "No topology data available. The Diagram tab may not have loaded yet.";
+        }
+        return Jsoner.serialize(data);
+    }
+
+    private String callGetSpans(Map<String, Object> args) {
+        String traceId = args.get("traceId") instanceof String s ? s : null;
+        int limit = 500;
+        if (args.get("limit") instanceof Number n) {
+            limit = n.intValue();
+        }
+        JsonObject data = facade.getSpanData(traceId, limit);
         return Jsoner.serialize(data);
     }
 
@@ -954,11 +1239,209 @@ class TuiMcpServer {
         }
         String body = args.get("body") instanceof String s ? s : null;
         String headers = args.get("headers") instanceof String s ? s : null;
-        JsonObject response = monitor.sendMessage(endpoint, body, headers);
+        JsonObject response = facade.sendMessage(endpoint, body, headers);
         if (response == null) {
             return "Error: no integration selected or PID unavailable";
         }
         return Jsoner.serialize(response);
+    }
+
+    private String callExecuteSql(Map<String, Object> args) {
+        String query = (String) args.get("query");
+        if (query == null || query.isBlank()) {
+            return "Error: query is required";
+        }
+        String datasource = args.get("datasource") instanceof String s ? s : null;
+        int maxRows = args.get("maxRows") instanceof Number n ? n.intValue() : 100;
+        int queryTimeout = args.get("queryTimeout") instanceof Number n ? n.intValue() : 30;
+        JsonObject response = facade.executeSql(query, datasource, maxRows, queryTimeout);
+        if (response == null) {
+            return "Error: no integration selected or PID unavailable";
+        }
+        return Jsoner.serialize(response);
+    }
+
+    private String callUpdateRow(Map<String, Object> args) {
+        String table = (String) args.get("table");
+        if (table == null || table.isBlank()) {
+            return "Error: table is required";
+        }
+        String pkValues = (String) args.get("primaryKeyValues");
+        if (pkValues == null || pkValues.isBlank()) {
+            return "Error: primaryKeyValues is required (JSON object)";
+        }
+        String colValues = (String) args.get("columnValues");
+        if (colValues == null || colValues.isBlank()) {
+            return "Error: columnValues is required (JSON object)";
+        }
+        String datasource = args.get("datasource") instanceof String s ? s : null;
+        JsonObject response = facade.updateRow(table, datasource, pkValues, colValues);
+        if (response == null) {
+            return "Error: no integration selected or PID unavailable";
+        }
+        return Jsoner.serialize(response);
+    }
+
+    private String callSetLogLevel(Map<String, Object> args) {
+        String level = (String) args.get("level");
+        if (level == null || level.isBlank()) {
+            return "Error: level is required (ERROR, WARN, INFO, DEBUG, TRACE)";
+        }
+        level = level.toUpperCase();
+        if (!"ERROR".equals(level) && !"WARN".equals(level) && !"INFO".equals(level)
+                && !"DEBUG".equals(level) && !"TRACE".equals(level)) {
+            return "Error: invalid level '" + level + "'. Must be ERROR, WARN, INFO, DEBUG, or TRACE";
+        }
+        facade.setLogLevel(level);
+        return "Log level set to " + level;
+    }
+
+    private String callFilter(Map<String, Object> args) {
+        String filter = args.get("filter") instanceof String s ? s : "";
+        String tab = args.get("tab") instanceof String s ? s : null;
+        boolean applied = facade.setTabFilter(tab, filter);
+        if (!applied) {
+            return "This tab does not support text filtering";
+        }
+        return filter.isEmpty() ? "Filter cleared" : "Filter set to: " + filter;
+    }
+
+    private String callSetInput(Map<String, Object> args) {
+        String field = (String) args.get("field");
+        if (field == null || field.isBlank()) {
+            return "Error: field is required";
+        }
+        String value = args.get("value") instanceof String s ? s : "";
+        String tab = args.get("tab") instanceof String s ? s : null;
+        boolean applied = facade.setTabInputValue(tab, field, value);
+        if (!applied) {
+            return "Error: field '" + field + "' not found on " + (tab != null ? tab : "active") + " tab";
+        }
+        return "Input set: " + field + " = " + (value.length() > 80 ? value.substring(0, 80) + "..." : value);
+    }
+
+    private String callToggleTraceDisplay(Map<String, Object> args) {
+        String section = (String) args.get("section");
+        if (section == null || section.isBlank()) {
+            return "Error: section is required (headers, properties, variables, body, wrap)";
+        }
+        Boolean enabled = args.get("enabled") instanceof Boolean b ? b : null;
+        String result = facade.toggleTraceDisplay(section, enabled);
+        if (result == null) {
+            return "Error: unknown section '" + section + "'. Must be headers, properties, variables, body, or wrap";
+        }
+        return result;
+    }
+
+    private String callGetReadme(Map<String, Object> args) {
+        String name = args.get("name") instanceof String s ? s : null;
+        JsonObject response = facade.getReadme(name);
+        if (response == null) {
+            return name != null
+                    ? "No README found for integration '" + name + "'"
+                    : "No README found for the selected integration";
+        }
+        JsonObject result = new JsonObject();
+        String content = response.getString("content");
+        String file = response.getStringOrDefault("file", "README");
+        result.put("file", file);
+        result.put("content", content != null ? content : "");
+        return Jsoner.serialize(result);
+    }
+
+    private String callControl(Map<String, Object> args) {
+        String action = (String) args.get("action");
+        if (action == null || action.isBlank()) {
+            return "Error: action is required";
+        }
+        return facade.controlIntegration(action);
+    }
+
+    private String callGetFiles(Map<String, Object> args) {
+        String name = args.get("name") instanceof String s ? s : null;
+        String file = args.get("file") instanceof String s ? s : null;
+        JsonObject response = facade.getFiles(name, file);
+        if (response == null) {
+            return name != null
+                    ? "No source files found for integration '" + name + "'"
+                    : "No source files found for the selected integration";
+        }
+        return Jsoner.serialize(response);
+    }
+
+    @SuppressWarnings("unchecked")
+    private String callLocate(Map<String, Object> args) {
+        String text = args.get("text") instanceof String s ? s : null;
+        String node = args.get("node") instanceof String s ? s : null;
+        List<String> nodes = args.get("nodes") instanceof List<?> list
+                ? ((List<Object>) list).stream().map(Object::toString).toList()
+                : null;
+
+        JsonObject result = new JsonObject();
+
+        if (text != null) {
+            JsonArray matches = facade.locateText(text);
+            result.put("matches", matches);
+        } else if (node != null || nodes != null) {
+            List<String> ids = nodes != null ? nodes : List.of(node);
+            JsonObject located = facade.locateNodes(ids);
+            if (located != null) {
+                result.put("matches", located.get("matches"));
+                if (located.containsKey("bounds")) {
+                    result.put("bounds", located.get("bounds"));
+                }
+            } else {
+                result.put("matches", new JsonArray());
+            }
+        } else {
+            result.put("error", "Provide 'text', 'node', or 'nodes' parameter");
+        }
+
+        return Jsoner.serialize(result);
+    }
+
+    private String callDrawShape(Map<String, Object> args) {
+        String shape = args.get("shape") instanceof String s ? s : null;
+        if (shape == null) {
+            return "Error: 'shape' is required";
+        }
+        int x = args.get("x") instanceof Number n ? n.intValue() : 0;
+        int y = args.get("y") instanceof Number n ? n.intValue() : 0;
+        int width = args.get("width") instanceof Number n ? n.intValue() : 0;
+        int height = args.get("height") instanceof Number n ? n.intValue() : Math.max(1, 0);
+        int length = args.get("length") instanceof Number n ? n.intValue() : 5;
+        String text = args.get("text") instanceof String s ? s : null;
+        String colorName = args.get("color") instanceof String s ? s : null;
+        int duration = args.get("duration") instanceof Number n ? n.intValue() : 0;
+
+        Color color = DrawOverlay.parseColor(colorName);
+        if (color == null) {
+            color = "highlight".equals(shape) ? Color.YELLOW : Color.RED;
+        }
+
+        if (height < 1) {
+            height = 1;
+        }
+
+        List<DrawOverlay.DrawCell> cells;
+        if ("text".equals(shape)) {
+            cells = DrawOverlay.generateText(x, y, text != null ? text : "", color);
+        } else {
+            cells = DrawOverlay.generateShape(shape, x, y, width, height, length, color);
+        }
+
+        if (cells.isEmpty() && !"text".equals(shape)) {
+            return "Unknown shape: " + shape
+                   + ". Use: box, highlight, underline, arrow-down, arrow-up, arrow-left, arrow-right, text";
+        }
+
+        boolean append = args.get("append") instanceof Boolean b && b;
+        if (append) {
+            facade.appendDrawing(cells);
+        } else {
+            facade.setDrawing(cells, duration);
+        }
+        return "Drew " + shape + " at (" + x + "," + y + ")";
     }
 
     private static JsonArray toJsonArray(List<String> list) {

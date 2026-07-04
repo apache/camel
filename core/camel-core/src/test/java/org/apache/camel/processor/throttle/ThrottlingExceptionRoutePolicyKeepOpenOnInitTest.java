@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor.throttle;
 
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -24,6 +26,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledOnOs;
 import org.junit.jupiter.api.condition.OS;
+
+import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @EnabledOnOs(value = { OS.LINUX, OS.MAC, OS.FREEBSD, OS.OPENBSD },
              architectures = { "amd64", "aarch64", "ppc64le" },
@@ -61,18 +66,13 @@ public class ThrottlingExceptionRoutePolicyKeepOpenOnInitTest extends ContextTes
         log.debug("---- sending some messages");
         for (int i = 0; i < size; i++) {
             template.sendBody(url, "Message " + i);
-            Thread.sleep(3);
         }
 
-        // gives time for policy half open check to run every second
-        // and should not close b/c keepOpen is true
-        Thread.sleep(500);
-
-        // gives time for policy half open check to run every second
-        // but it should never close b/c keepOpen is true
-        result.expectedMessageCount(0);
-        result.setResultWaitTime(1000);
-        assertMockEndpointsSatisfied();
+        // gives time for policy half open check to run
+        // and verifies it should not close b/c keepOpen is true
+        await().pollDelay(500, TimeUnit.MILLISECONDS)
+                .atMost(2, TimeUnit.SECONDS)
+                .untilAsserted(() -> assertEquals(0, result.getReceivedCounter()));
     }
 
     @Test
@@ -80,16 +80,13 @@ public class ThrottlingExceptionRoutePolicyKeepOpenOnInitTest extends ContextTes
 
         for (int i = 0; i < size; i++) {
             template.sendBody(url, "Message " + i);
-            Thread.sleep(3);
         }
 
-        // gives time for policy half open check to run every second
-        // and should not close b/c keepOpen is true
-        Thread.sleep(500);
-
-        result.expectedMessageCount(0);
-        result.setResultWaitTime(1500);
-        assertMockEndpointsSatisfied();
+        // gives time for policy half open check to run
+        // and verifies it should not close b/c keepOpen is true
+        await().pollDelay(500, TimeUnit.MILLISECONDS)
+                .atMost(2, TimeUnit.SECONDS)
+                .untilAsserted(() -> assertEquals(0, result.getReceivedCounter()));
 
         // set keepOpen to false
         // now half open check will succeed
