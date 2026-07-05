@@ -29,7 +29,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Tags({ @Tag("not-parallel"), @Tag("spring"), @Tag("tx") })
@@ -50,8 +49,7 @@ public class RouteIdTransactedIT extends AbstractSpringJMSITSupport {
 
         template.sendBody("activemq:queue:RouteIdTransactedTest", "Hello World");
 
-        await().atMost(30, TimeUnit.SECONDS)
-                .untilAsserted(() -> MockEndpoint.assertIsSatisfied(context));
+        MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
 
         String id = context.getRouteDefinitions().get(0).getId();
         assertEquals("myCoolRoute", id);
@@ -65,8 +63,7 @@ public class RouteIdTransactedIT extends AbstractSpringJMSITSupport {
 
         template.sendBody("activemq:queue:RouteIdTransactedTest", "Kaboom");
 
-        await().atMost(30, TimeUnit.SECONDS)
-                .untilAsserted(() -> MockEndpoint.assertIsSatisfied(context));
+        MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
 
         String id = context.getRouteDefinitions().get(0).getId();
         assertEquals("myCoolRoute", id);
