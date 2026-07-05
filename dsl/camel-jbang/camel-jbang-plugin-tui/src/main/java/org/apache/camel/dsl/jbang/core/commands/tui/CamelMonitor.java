@@ -252,6 +252,8 @@ public class CamelMonitor extends CamelCommand {
         aiPanel.setContext(ctx);
         actionsPopup.setOpenShellAction(shellPanel::open);
         actionsPopup.setBrowseFilesAction(this::openFilesPopup);
+        actionsPopup.setSwitchIntegrationAction(
+                () -> popupManager.openSwitchPopup(ctx.selectedPid, getNonVanishingIntegrations()));
 
         tabRegistry = new TabRegistry(tabsState);
         tabRegistry.initTabs(ctx, dataService, this::resetIntegrationTabState);
@@ -797,6 +799,11 @@ public class CamelMonitor extends CamelCommand {
             return true;
         }
 
+        // Modal popups capture all mouse events (including tab bar and footer)
+        if (actionsPopup.isVisible()) {
+            return actionsPopup.handleMouseEvent(me);
+        }
+
         // Tab bar clicks: detect which tab was clicked and switch to it
         if (me.isClick() && lastTabsArea != null && lastTabLabels != null) {
             int tabsY = lastTabsArea.height() >= 2 ? lastTabsArea.y() + 1 : lastTabsArea.y();
@@ -824,9 +831,6 @@ public class CamelMonitor extends CamelCommand {
         if (TuiHelper.contains(lastContentArea, me.x(), me.y())) {
             if (popupManager.isMorePopupVisible() || popupManager.isSwitchPopupVisible()) {
                 return popupManager.handleMouseEvent(me, tabRegistry.selectedTabIndex(), TAB_LOG);
-            }
-            if (actionsPopup.isVisible()) {
-                return actionsPopup.handleMouseEvent(me);
             }
             if (filesBrowser.isVisible()) {
                 return false;

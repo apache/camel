@@ -923,17 +923,17 @@ class MemoryLeakTab extends AbstractTab {
 
                 After both complete, a comparison table shows how each class
                 behaved across the two runs. The **GROWTH** column shows the
-                normalized growth as a percentage. For example, +30% means
-                the class grew 30% faster than expected from the duration
+                normalized growth as a percentage. For example, +30%% means
+                the class grew 30%% faster than expected from the duration
                 increase alone. Entries under 1KB in both runs are filtered
                 out as noise.
 
                 ### Trend Indicators
 
-                - **↑ leak!** (red) — Growth >= +20%, very likely leak
-                - **↑ leak?** (yellow) — Growth +10% to +20%, suspicious
-                - **→ stable** (green) — Growth -20% to +10%, normal
-                - **↓** (dim) — Growth < -20%, shrinking
+                - **↑ leak!** (red) — Growth >= +20%%, very likely leak
+                - **↑ leak?** (yellow) — Growth +10%% to +20%%, suspicious
+                - **→ stable** (green) — Growth -20%% to +10%%, normal
+                - **↓** (dim) — Growth < -20%%, shrinking
                 - **new** (yellow) — Only appeared in Run 2
                 - **gone** (dim) — Only appeared in Run 1
 
@@ -942,7 +942,7 @@ class MemoryLeakTab extends AbstractTab {
                 A **%s** warning appears when sample counts are too low
                 (fewer than 5 in either run) or diverge significantly from
                 the expected duration ratio. The growth percentage is shown
-                with a **~** prefix (e.g. ~+53%) to indicate the value may
+                with a **~** prefix (e.g. ~+53%%) to indicate the value may
                 not be reliable. JFR sampling is statistical — low sample
                 counts produce noisy results. Re-run with a longer duration
                 to collect more samples.

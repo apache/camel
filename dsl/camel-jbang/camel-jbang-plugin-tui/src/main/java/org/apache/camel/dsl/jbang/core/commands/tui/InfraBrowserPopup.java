@@ -37,6 +37,8 @@ import dev.tamboui.text.Span;
 import dev.tamboui.text.Text;
 import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
+import dev.tamboui.tui.event.MouseEvent;
+import dev.tamboui.tui.event.MouseEventKind;
 import dev.tamboui.widgets.Clear;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
@@ -63,6 +65,8 @@ class InfraBrowserPopup {
     private boolean showBrowser;
     private boolean showPortDialog;
     private final ListState browserState = new ListState();
+    private Rect popupRect;
+    private int[] itemHeights;
     private List<InfraServiceEntry> catalog;
     private InfraServiceEntry selectedService;
     private int implIndex;
@@ -130,6 +134,52 @@ class InfraBrowserPopup {
             return handleBrowserKey(ke);
         }
         return false;
+    }
+
+    boolean handleMouseEvent(MouseEvent me) {
+        if (!showBrowser) {
+            return true;
+        }
+        if (me.kind() == MouseEventKind.SCROLL_UP) {
+            navigate(-1);
+            return true;
+        }
+        if (me.kind() == MouseEventKind.SCROLL_DOWN) {
+            navigate(1);
+            return true;
+        }
+        if (me.isClick()) {
+            if (popupRect != null && popupRect.contains(me.x(), me.y())) {
+                int idx = itemAtMouseY(me.y());
+                if (idx >= 0 && catalog != null && idx < catalog.size() && !catalog.get(idx).running()) {
+                    browserState.select(idx);
+                }
+                return true;
+            }
+            close();
+            return true;
+        }
+        return true;
+    }
+
+    private int itemAtMouseY(int mouseY) {
+        if (popupRect == null || itemHeights == null) {
+            return -1;
+        }
+        int firstRow = popupRect.top() + 1;
+        int relY = mouseY - firstRow;
+        if (relY < 0) {
+            return -1;
+        }
+        int offset = browserState.offset();
+        int rowAcc = 0;
+        for (int i = offset; i < itemHeights.length; i++) {
+            rowAcc += itemHeights[i];
+            if (relY < rowAcc) {
+                return i;
+            }
+        }
+        return -1;
     }
 
     void render(Frame frame, Rect area) {
@@ -281,16 +331,19 @@ class InfraBrowserPopup {
         int x = area.left() + Math.max(0, (area.width() - popupW) / 2);
         int y = area.top() + 2;
         Rect popup = new Rect(x, y, Math.min(popupW, area.width()), Math.min(popupH, area.height() - 2));
+        this.popupRect = popup;
 
         frame.renderWidget(Clear.INSTANCE, popup);
 
         int nameCol = 22;
         List<ListItem> items = new ArrayList<>();
+        List<Integer> heights = new ArrayList<>();
         for (InfraServiceEntry entry : catalog) {
             String padded = String.format("%-" + nameCol + "s", TuiHelper.truncate(entry.alias(), nameCol));
             String prefix = TuiIcons.indent(TuiIcons.INFRA) + padded + " ";
             if (entry.running()) {
                 items.add(ListItem.from(prefix + "(running)").style(Style.EMPTY.dim()));
+                heights.add(1);
             } else {
                 String implStr = entry.implementations().isEmpty() ? "" : String.join(", ", entry.implementations());
                 String desc = entry.description();
@@ -300,6 +353,7 @@ class InfraBrowserPopup {
                 int descW = Math.max(10, popupW - prefix.length() - 2);
                 if (desc.length() <= descW) {
                     items.add(ListItem.from(prefix + desc));
+                    heights.add(1);
                 } else {
                     String indent = " ".repeat(prefix.length());
                     List<Line> lines = new ArrayList<>();
@@ -309,9 +363,11 @@ class InfraBrowserPopup {
                         lines.add(Line.from(indent + wrapped.get(w)));
                     }
                     items.add(ListItem.from(Text.from(lines.toArray(Line[]::new))));
+                    heights.add(wrapped.size());
                 }
             }
         }
+        this.itemHeights = heights.stream().mapToInt(Integer::intValue).toArray();
 
         long available = catalog.stream().filter(e -> !e.running()).count();
         ListWidget list = ListWidget.builder()

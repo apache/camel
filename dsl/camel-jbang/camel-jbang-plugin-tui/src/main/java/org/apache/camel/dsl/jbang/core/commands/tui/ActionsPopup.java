@@ -51,6 +51,7 @@ class ActionsPopup {
 
     enum Action {
         GOTO_TAB,
+        SWITCH_INTEGRATION,
         SEND_MESSAGE,
         RUN_EXAMPLE,
         RUN_FOLDER,
@@ -73,7 +74,7 @@ class ActionsPopup {
         SHELL
     }
 
-    private static final int[] GROUP_SIZES = { 1, 6, 4, 5 };
+    private static final int[] GROUP_SIZES = { 2, 6, 4, 5 };
     private static final int MCP_GROUP_SIZE = 4;
     private static final int SHELL_GROUP_SIZE = 1;
 
@@ -89,6 +90,7 @@ class ActionsPopup {
     private Runnable resetScreenAction;
     private Runnable openShellAction;
     private Runnable browseFilesAction;
+    private Runnable switchIntegrationAction;
     private final Supplier<Boolean> tapeRecordingActive;
     private MonitorContext ctx;
     private boolean mcpEnabled;
@@ -181,6 +183,10 @@ class ActionsPopup {
         this.browseFilesAction = browseFilesAction;
     }
 
+    void setSwitchIntegrationAction(Runnable switchIntegrationAction) {
+        this.switchIntegrationAction = switchIntegrationAction;
+    }
+
     void setGotoTabSupport(List<TabRegistry.TabEntry> entries, Runnable callback) {
         gotoTabPopup.setTabEntries(entries, callback);
     }
@@ -248,6 +254,7 @@ class ActionsPopup {
     private List<Action> buildVisualActionList() {
         List<Action> flat = new ArrayList<>();
         flat.add(Action.GOTO_TAB);
+        flat.add(Action.SWITCH_INTEGRATION);
         flat.add(null);
         flat.addAll(List.of(
                 Action.SEND_MESSAGE, Action.RUN_EXAMPLE, Action.RUN_FOLDER, Action.RUN_INFRA, Action.BROWSE_FILES,
@@ -338,8 +345,9 @@ class ActionsPopup {
 
     List<String> getActionLabels() {
         List<String> labels = new ArrayList<>();
-        // Group 0: Go to
+        // Group 0: Navigation
         labels.add("Go to...");
+        labels.add("Switch Integration (F3)");
         labels.add("───");
         // Group 1: User Actions
         labels.add("Send Message");
@@ -524,6 +532,13 @@ class ActionsPopup {
                     } else if (action == Action.GOTO_TAB) {
                         showActionsMenu = false;
                         gotoTabPopup.open();
+                    } else if (action == Action.SWITCH_INTEGRATION) {
+                        if (hasMultipleIntegrations()) {
+                            showActionsMenu = false;
+                            if (switchIntegrationAction != null) {
+                                switchIntegrationAction.run();
+                            }
+                        }
                     } else if (action == Action.SHELL) {
                         showActionsMenu = false;
                         if (openShellAction != null) {
@@ -624,11 +639,17 @@ class ActionsPopup {
         if (showActionsMenu) {
             return handleListPopupMouse(me, actionsMenuRect, actionsMenuState, visualActionCount(), this::isDividerIndex);
         }
+        if (exampleBrowserPopup.isVisible()) {
+            return exampleBrowserPopup.handleMouseEvent(me);
+        }
+        if (infraBrowserPopup.isBrowserVisible()) {
+            return infraBrowserPopup.handleMouseEvent(me);
+        }
         if (docViewerPopup.isPickerVisible() && docViewerPopup.getPickerIntegrations() != null) {
             return handleListPopupMouse(me, docViewerPopup.getPickerRect(), docViewerPopup.getPickerState(),
                     docViewerPopup.getPickerIntegrations().size(), i -> false);
         }
-        // Other sub-popups (forms, browsers, viewers) stay modal: consume the event without acting on it.
+        // Other sub-popups (forms, viewers) stay modal: consume the event without acting on it.
         return true;
     }
 
@@ -798,9 +819,13 @@ class ActionsPopup {
                 ? TuiIcons.menuItem(TuiIcons.STOP, "Stop Tape Recording (Ctrl+R)")
                 : TuiIcons.menuItem(TuiIcons.RECORD, "Start Tape Recording (Ctrl+R)");
 
+        boolean canSwitch = hasMultipleIntegrations();
         List<ListItem> items = new ArrayList<>();
-        // Group 0: Go to
+        // Group 0: Navigation
         items.add(ListItem.from(TuiIcons.menuItem(TuiIcons.GO_TO, "Go to...")));
+        items.add(canSwitch
+                ? ListItem.from(TuiIcons.menuItem(TuiIcons.ARROW_BOTH, "Switch Integration (F3)"))
+                : ListItem.from(TuiIcons.menuItem(TuiIcons.ARROW_BOTH, "Switch Integration (F3)")).style(Style.EMPTY.dim()));
         items.add(ListItem.from(divider).style(Style.EMPTY.dim()));
         // Group 1: User Actions
         boolean hasSelection = ctx != null && ctx.selectedPid != null && !ctx.isInfraSelected();
@@ -852,6 +877,11 @@ class ActionsPopup {
                         .build())
                 .build();
         frame.renderStatefulWidget(list, popup, actionsMenuState);
+    }
+
+    private boolean hasMultipleIntegrations() {
+        List<IntegrationInfo> ints = integrations.get();
+        return ints != null && ints.stream().filter(i -> !i.vanishing && i.pid != null).count() > 1;
     }
 
     void openDoc(IntegrationInfo info) {

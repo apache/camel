@@ -30,6 +30,8 @@ import dev.tamboui.text.Span;
 import dev.tamboui.text.Text;
 import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
+import dev.tamboui.tui.event.MouseEvent;
+import dev.tamboui.tui.event.MouseEventKind;
 import dev.tamboui.widgets.Clear;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
@@ -46,6 +48,8 @@ class ExampleBrowserPopup {
 
     private boolean visible;
     private final ListState listState = new ListState();
+    private Rect popupRect;
+    private int[] itemHeights;
     private List<JsonObject> catalog;
     private JsonObject selectedExample;
 
@@ -132,6 +136,49 @@ class ExampleBrowserPopup {
         return true;
     }
 
+    boolean handleMouseEvent(MouseEvent me) {
+        if (me.kind() == MouseEventKind.SCROLL_UP) {
+            navigate(-1);
+            return true;
+        }
+        if (me.kind() == MouseEventKind.SCROLL_DOWN) {
+            navigate(1);
+            return true;
+        }
+        if (me.isClick()) {
+            if (popupRect != null && popupRect.contains(me.x(), me.y())) {
+                int idx = itemAtMouseY(me.y());
+                if (idx >= 0 && !isSeparatorIndex(idx)) {
+                    listState.select(idx);
+                }
+                return true;
+            }
+            close();
+            return true;
+        }
+        return true;
+    }
+
+    private int itemAtMouseY(int mouseY) {
+        if (popupRect == null || itemHeights == null) {
+            return -1;
+        }
+        int firstRow = popupRect.top() + 1;
+        int relY = mouseY - firstRow;
+        if (relY < 0) {
+            return -1;
+        }
+        int offset = listState.offset();
+        int rowAcc = 0;
+        for (int i = offset; i < itemHeights.length; i++) {
+            rowAcc += itemHeights[i];
+            if (relY < rowAcc) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
     void render(Frame frame, Rect area) {
         if (catalog == null || catalog.isEmpty()) {
             return;
@@ -141,6 +188,7 @@ class ExampleBrowserPopup {
         int x = area.left() + Math.max(0, (area.width() - popupW) / 2);
         int y = area.top() + 2;
         Rect popup = new Rect(x, y, Math.min(popupW, area.width()), Math.min(popupH, area.height() - 2));
+        this.popupRect = popup;
 
         frame.renderWidget(Clear.INSTANCE, popup);
 
@@ -389,6 +437,7 @@ class ExampleBrowserPopup {
 
     private List<ListItem> buildListItems(int width) {
         List<ListItem> items = new ArrayList<>();
+        List<Integer> heights = new ArrayList<>();
         String currentLevel = null;
         for (JsonObject ex : catalog) {
             String level = ex.getStringOrDefault("level", "beginner");
@@ -396,6 +445,7 @@ class ExampleBrowserPopup {
                 currentLevel = level;
                 String header = "── " + TuiHelper.capitalize(level) + " ──";
                 items.add(ListItem.from(header).style(Style.EMPTY.dim()));
+                heights.add(1);
             }
             String name = ex.getStringOrDefault("name", "");
             String desc = ex.getStringOrDefault("description", "");
@@ -414,6 +464,7 @@ class ExampleBrowserPopup {
             Style style = bundled ? Style.EMPTY : Style.EMPTY.dim();
             if (desc.length() <= descCol) {
                 items.add(ListItem.from(prefix + desc).style(style));
+                heights.add(1);
             } else {
                 String indent = " ".repeat(prefix.length());
                 List<Line> lines = new ArrayList<>();
@@ -423,13 +474,17 @@ class ExampleBrowserPopup {
                     lines.add(Line.from(indent + wrapped.get(w)));
                 }
                 items.add(ListItem.from(Text.from(lines.toArray(Line[]::new))).style(style));
+                heights.add(wrapped.size());
             }
         }
         items.add(ListItem.from(""));
+        heights.add(1);
         items.add(ListItem.from(" " + TuiIcons.BUNDLED + " = bundled  " + TuiIcons.ONLINE + " = online  "
                                 + TuiIcons.DOCKER + " = Docker  " + TuiIcons.INFRA + " = infra services  " + TuiIcons.CITRUS
                                 + " = Citrus tests")
                 .style(Style.EMPTY.dim()));
+        heights.add(1);
+        this.itemHeights = heights.stream().mapToInt(Integer::intValue).toArray();
         return items;
     }
 
