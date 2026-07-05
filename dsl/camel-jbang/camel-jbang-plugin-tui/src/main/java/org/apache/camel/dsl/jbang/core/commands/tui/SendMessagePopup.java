@@ -712,8 +712,8 @@ class SendMessagePopup {
             FormHelper.renderLabel(frame, innerX, row, labelW, "Route:", selectedField == FIELD_ROUTE);
             RouteInfo ri = routes.get(selectedRouteIndex);
             String routeDisplay = ri.routeId + " (" + truncateUri(ri.from, fieldW - ri.routeId.length() - 6) + ")";
-            String arrow = selectedField == FIELD_ROUTE ? "◀ " : "  ";
-            String arrowR = selectedField == FIELD_ROUTE ? " ▶" : "  ";
+            String arrow = selectedField == FIELD_ROUTE ? TuiIcons.ARROW_LEFT + " " : "  ";
+            String arrowR = selectedField == FIELD_ROUTE ? " " + TuiIcons.ARROW_RIGHT : "  ";
             Style routeStyle = selectedField == FIELD_ROUTE ? Style.EMPTY.bold() : Style.EMPTY;
             Rect routeArea = new Rect(innerX + labelW, row, fieldW, 1);
             frame.renderWidget(Paragraph.from(Line.from(
@@ -913,7 +913,7 @@ class SendMessagePopup {
         for (int i = start; i < end; i++) {
             SendHistoryEntry entry = history.get(i);
             boolean selected = selectedField == FIELD_HISTORY && i == historyIndex;
-            String pointer = selected ? "► " : "  ";
+            String pointer = selected ? TuiIcons.POINTER + " " : "  ";
             String routeStr = String.format("%-16s", entry.routeId != null ? entry.routeId : "");
             String modeStr = entry.inOut ? "InOut " : "InOnly";
             String statusStr = entry.error ? "ERR" : entry.status;
@@ -952,7 +952,7 @@ class SendMessagePopup {
         hint(spans, "+", "header");
         hint(spans, "p", "pretty" + (prettyPrint ? " [on]" : ""));
         if (!history.isEmpty()) {
-            hintLast(spans, "↑↓", "history");
+            hintLast(spans, TuiIcons.HINT_SCROLL, "history");
         } else {
             hintLast(spans, "PgUp/Dn", "scroll");
         }

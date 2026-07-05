@@ -162,10 +162,10 @@ class TapeRecorder {
     static String toTapeCommand(String key) {
         if (key.length() == 1) {
             return switch (key) {
-                case "↑" -> "Up";
-                case "↓" -> "Down";
-                case "←" -> "Left";
-                case "→" -> "Right";
+                case TuiIcons.ARROW_UP -> "Up";
+                case TuiIcons.ARROW_DOWN -> "Down";
+                case TuiIcons.KEY_LEFT -> "Left";
+                case TuiIcons.KEY_RIGHT -> "Right";
                 case "⌫" -> "Backspace";
                 default -> null;
             };

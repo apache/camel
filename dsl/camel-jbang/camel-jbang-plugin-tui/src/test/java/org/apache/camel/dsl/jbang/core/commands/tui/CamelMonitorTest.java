@@ -179,7 +179,7 @@ class CamelMonitorTest {
     void footerKeyEventRejectsAmbiguousAndInvalidTokens() {
         assertNull(CamelMonitor.footerKeyEvent("Up/Down"), "a two-key hint is not clickable");
         assertNull(CamelMonitor.footerKeyEvent("PgUp/PgDn"), "a paging hint is not clickable");
-        assertNull(CamelMonitor.footerKeyEvent("↑↓"), "arrow glyphs are not a single key");
+        assertNull(CamelMonitor.footerKeyEvent(TuiIcons.HINT_SCROLL), "arrow glyphs are not a single key");
         assertNull(CamelMonitor.footerKeyEvent("F13"), "there is no F13 key");
         assertNull(CamelMonitor.footerKeyEvent(""), "an empty token is not clickable");
         assertNull(CamelMonitor.footerKeyEvent(null), "a null token is not clickable");

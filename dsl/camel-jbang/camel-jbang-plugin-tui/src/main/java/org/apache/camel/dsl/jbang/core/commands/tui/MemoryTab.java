@@ -418,15 +418,15 @@ class MemoryTab extends AbstractTab {
 
         if (change > 0.05) {
             return Span.styled(
-                    String.format("  ↑ growing by %d%% (%s) over last %s", pct, formatBytes(diff), period),
+                    String.format("  %s growing by %d%% (%s) over last %s", TuiIcons.ARROW_UP, pct, formatBytes(diff), period),
                     Style.EMPTY.fg(Color.LIGHT_RED).bold());
         } else if (change < -0.05) {
             return Span.styled(
-                    String.format("  ↓ shrinking by %d%% (%s) over last %s",
+                    String.format("  %s shrinking by %d%% (%s) over last %s", TuiIcons.ARROW_DOWN,
                             Math.abs(pct), formatBytes(Math.abs(diff)), period),
                     Style.EMPTY.fg(Color.GREEN));
         } else {
-            return Span.styled("  → stable over last " + period, Style.EMPTY.fg(Color.GREEN));
+            return Span.styled("  " + TuiIcons.ARROW_STABLE + " stable over last " + period, Style.EMPTY.fg(Color.GREEN));
         }
     }
 

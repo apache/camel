@@ -96,7 +96,7 @@ class HelpOverlay {
                 .title(" Help ")
                 .titleBottom(Title.from(Line.from(
                         Span.styled(" F1/? ", Theme.hintKey()), Span.raw(" close "),
-                        Span.styled(" ↑↓ ", Theme.hintKey()), Span.raw(" scroll "))))
+                        Span.styled(" " + TuiIcons.HINT_SCROLL + " ", Theme.hintKey()), Span.raw(" scroll "))))
                 .build();
 
         MarkdownView view = MarkdownView.builder()
@@ -108,7 +108,7 @@ class HelpOverlay {
     }
 
     void renderFooter(List<Span> spans) {
-        hint(spans, "↑↓", "scroll");
+        hint(spans, TuiIcons.HINT_SCROLL, "scroll");
         hintLast(spans, "Esc", "close");
     }
 }

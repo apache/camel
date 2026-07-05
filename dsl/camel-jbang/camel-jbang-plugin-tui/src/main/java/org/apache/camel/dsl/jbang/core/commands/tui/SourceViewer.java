@@ -307,7 +307,7 @@ class SourceViewer {
         } else {
             TuiHelper.hint(spans, "Esc/c", "close");
         }
-        TuiHelper.hint(spans, "↑↓", "navigate");
+        TuiHelper.hint(spans, TuiIcons.HINT_SCROLL, "navigate");
         if (currentRouteId != null) {
             TuiHelper.hint(spans, "Y", "yaml");
             TuiHelper.hint(spans, "J", "java");
@@ -316,7 +316,7 @@ class SourceViewer {
         search.renderSearchHints(spans);
         TuiHelper.hint(spans, "w", "wrap" + (wordWrap ? " [on]" : " [off]"));
         if (!wordWrap) {
-            TuiHelper.hint(spans, "←→", "horizontal");
+            TuiHelper.hint(spans, TuiIcons.HINT_H, "horizontal");
         }
         TuiHelper.hint(spans, "PgUp/PgDn", "page");
         if (onLineSelected != null) {

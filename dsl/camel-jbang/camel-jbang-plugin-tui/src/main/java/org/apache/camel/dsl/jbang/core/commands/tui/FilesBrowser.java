@@ -98,7 +98,7 @@ class FilesBrowser {
                     .forEach(p -> {
                         String name = p.getFileName().toString();
                         if (Files.isDirectory(p) && !name.startsWith(".")) {
-                            dirs.add(new FileEntry("📁", name, -1, p.toString(), true));
+                            dirs.add(new FileEntry(TuiIcons.FOLDER, name, -1, p.toString(), true));
                         } else if (Files.isRegularFile(p)) {
                             String emoji = TuiHelper.fileEmoji(p);
                             long size = 0;
@@ -118,7 +118,7 @@ class FilesBrowser {
 
         List<FileEntry> found = new ArrayList<>();
         if (!dir.equals(rootDir)) {
-            found.add(new FileEntry("📁", "..", -1, dir.getParent().toString(), true));
+            found.add(new FileEntry(TuiIcons.FOLDER, "..", -1, dir.getParent().toString(), true));
         }
         found.addAll(dirs);
         found.addAll(files);
@@ -267,7 +267,7 @@ class FilesBrowser {
         if (sourceViewer.isVisible()) {
             sourceViewer.renderFooter(spans);
         } else {
-            TuiHelper.hint(spans, "↑↓", "navigate");
+            TuiHelper.hint(spans, TuiIcons.HINT_SCROLL, "navigate");
             TuiHelper.hint(spans, "Enter", "open");
             TuiHelper.hint(spans, "Esc", "close");
         }
@@ -328,10 +328,10 @@ class FilesBrowser {
     static String fileType(Path path) {
         String emoji = TuiHelper.fileEmoji(path);
         return switch (emoji) {
-            case "🐪" -> "camel";
-            case "☕" -> "java";
-            case "📄" -> "config";
-            case "📖" -> "readme";
+            case TuiIcons.CAMEL -> "camel";
+            case TuiIcons.JAVA -> "java";
+            case TuiIcons.DOCUMENT -> "config";
+            case TuiIcons.README -> "readme";
             default -> "other";
         };
     }

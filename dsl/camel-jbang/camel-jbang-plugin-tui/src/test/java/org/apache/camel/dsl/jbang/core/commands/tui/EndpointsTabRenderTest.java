@@ -107,7 +107,8 @@ class EndpointsTabRenderTest {
         Frame frame = Frame.forTesting(buffer);
         tab.render(frame, area);
 
-        boolean foundBrightGreen = TuiTestHelper.findCellWithColor(buffer, "→", Color.ansi(AnsiColor.BRIGHT_GREEN));
+        boolean foundBrightGreen
+                = TuiTestHelper.findCellWithColor(buffer, TuiIcons.KEY_RIGHT, Color.ansi(AnsiColor.BRIGHT_GREEN));
         assertTrue(foundBrightGreen, "In-direction arrow should be rendered in BRIGHT_GREEN");
     }
 
@@ -122,7 +123,7 @@ class EndpointsTabRenderTest {
         Frame frame = Frame.forTesting(buffer);
         tab.render(frame, area);
 
-        boolean foundCyanArrow = TuiTestHelper.findCellWithColor(buffer, "←", Color.CYAN);
+        boolean foundCyanArrow = TuiTestHelper.findCellWithColor(buffer, TuiIcons.KEY_LEFT, Color.CYAN);
         assertTrue(foundCyanArrow, "Out-direction arrow should be rendered in CYAN");
     }
 

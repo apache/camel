@@ -255,7 +255,7 @@ class StartupTab extends AbstractTab {
     @Override
     public void renderFooter(List<Span> spans) {
         hint(spans, "Esc", "back");
-        hint(spans, "↑↓", "scroll");
+        hint(spans, TuiIcons.HINT_SCROLL, "scroll");
         hintLast(spans, "PgUp/Dn", "page");
     }
 

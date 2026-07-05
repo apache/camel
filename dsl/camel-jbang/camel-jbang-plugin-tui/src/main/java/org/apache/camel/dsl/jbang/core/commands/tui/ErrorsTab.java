@@ -408,7 +408,7 @@ class ErrorsTab extends AbstractTableTab {
                 };
                 if (diagram.isHistoryTopologyMode()) {
                     hint(spans, "d", "close");
-                    hint(spans, "↑↓←→", "navigate");
+                    hint(spans, TuiIcons.HINT_NAV, "navigate");
                     hint(spans, "Enter", "drill-down");
                     hint(spans, "i", infoLabel);
                     hint(spans, "n", "description" + (diagram.isShowDescription() ? " [on]" : ""));
@@ -417,8 +417,8 @@ class ErrorsTab extends AbstractTableTab {
                 } else {
                     hint(spans, "d", "close");
                     hint(spans, "Esc", "back");
-                    hint(spans, "↑↓", "step through path");
-                    hint(spans, "←→", "h-scroll");
+                    hint(spans, TuiIcons.HINT_SCROLL, "step through path");
+                    hint(spans, TuiIcons.HINT_H, "h-scroll");
                     hint(spans, "t", "topology");
                     hint(spans, "i", infoLabel);
                     hint(spans, "n", "description" + (diagram.isShowDescription() ? " [on]" : ""));
@@ -431,10 +431,10 @@ class ErrorsTab extends AbstractTableTab {
             return;
         }
         hint(spans, "Esc", "back");
-        hint(spans, "↑↓", "navigate");
+        hint(spans, TuiIcons.HINT_SCROLL, "navigate");
         hint(spans, "PgUp/Dn", "scroll detail");
         if (!wordWrap) {
-            hint(spans, "←→", "h-scroll");
+            hint(spans, TuiIcons.HINT_H, "h-scroll");
         }
         hint(spans, "Home/End", "top/end");
         hint(spans, "s", "sort");

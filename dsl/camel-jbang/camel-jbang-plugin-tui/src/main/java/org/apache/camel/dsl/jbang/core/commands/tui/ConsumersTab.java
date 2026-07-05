@@ -91,7 +91,7 @@ class ConsumersTab extends AbstractTableTab {
                     : ("Started".equals(ci.state) || "Polling".equals(status)
                             ? Style.EMPTY.fg(Color.GREEN)
                             : Style.EMPTY.fg(Color.LIGHT_RED));
-            String statusText = healthDown ? "⚠ " + status : status;
+            String statusText = healthDown ? TuiIcons.HEALTH_WARN + " " + status : status;
             String type = consumerType(ci);
             String schedule = consumerSchedule(ci);
             String sinceLast = consumerSinceLast(ci);

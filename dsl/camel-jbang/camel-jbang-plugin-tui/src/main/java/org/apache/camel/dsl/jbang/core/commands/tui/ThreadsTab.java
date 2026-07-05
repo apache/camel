@@ -269,7 +269,7 @@ class ThreadsTab extends AbstractTableTab {
         hint(spans, "Esc", "back");
         hint(spans, "s", "sort");
         hint(spans, "f", "filter [" + FILTER_LABELS[filter] + "]");
-        hint(spans, "↑↓", "navigate");
+        hint(spans, TuiIcons.HINT_SCROLL, "navigate");
         hintLast(spans, "PgUp/Dn", "scroll");
     }
 

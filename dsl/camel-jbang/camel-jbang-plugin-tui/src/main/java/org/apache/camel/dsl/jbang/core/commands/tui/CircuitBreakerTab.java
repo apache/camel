@@ -165,7 +165,7 @@ class CircuitBreakerTab extends AbstractTableTab {
     @Override
     public void renderFooter(List<Span> spans) {
         hint(spans, "Esc", "back");
-        hint(spans, "↑↓", "navigate");
+        hint(spans, TuiIcons.HINT_SCROLL, "navigate");
         hint(spans, "s", "sort");
     }
 
@@ -208,7 +208,7 @@ class CircuitBreakerTab extends AbstractTableTab {
         lines.add(Line.from(
                 Span.raw("   "),
                 Span.styled("│    CLOSED    │", closedBox),
-                Span.raw("─────────────►"),
+                Span.raw("─────────────" + TuiIcons.POINTER),
                 Span.styled("│     OPEN     │", openBox),
                 Span.raw("◄─┐")));
         lines.add(Line.from(
@@ -220,7 +220,7 @@ class CircuitBreakerTab extends AbstractTableTab {
         lines.add(Line.from(
                 Span.raw("   "),
                 Span.styled("└──────", closedBox),
-                Span.raw("▲"),
+                Span.raw(TuiIcons.SORT_UP),
                 Span.styled("───────┘", closedBox),
                 Span.raw("              "),
                 Span.styled("└───────", openBox),
@@ -240,7 +240,7 @@ class CircuitBreakerTab extends AbstractTableTab {
         lines.add(Line.from(
                 Span.raw("          │                      "),
                 Span.styled("┌───────", halfOpenBox),
-                Span.raw("▼"),
+                Span.raw(TuiIcons.SORT_DOWN),
                 Span.styled("──────┐", halfOpenBox),
                 Span.raw("  │")));
         lines.add(Line.from(

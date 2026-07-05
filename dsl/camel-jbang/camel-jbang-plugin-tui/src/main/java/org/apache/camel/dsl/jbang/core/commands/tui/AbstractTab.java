@@ -108,7 +108,7 @@ abstract class AbstractTab implements MonitorTab {
     // ---- Sort helpers ----
 
     protected static String sortLabel(String label, String column, String currentSort, boolean reversed) {
-        return currentSort.equals(column) ? label + (reversed ? "▲" : "▼") : label;
+        return currentSort.equals(column) ? label + (reversed ? TuiIcons.SORT_UP : TuiIcons.SORT_DOWN) : label;
     }
 
     protected static Style sortStyle(String column, String currentSort) {

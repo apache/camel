@@ -94,6 +94,7 @@ class TabRegistry {
     private SqlTraceTab sqlTraceTab;
 
     private MonitorTab activeMoreTab;
+    private List<MoreTab> moreTabs;
 
     TabRegistry(TabsState tabsState) {
         this.tabsState = tabsState;
@@ -136,9 +137,32 @@ class TabRegistry {
                 resetIntegrationTabState);
 
         sqlTraceTab.setEditSqlAction(sql -> {
-            selectMoreTab(13); // switch to SQL Query tab
+            selectMoreTab(moreTabIndex("SQL Query"));
             sqlQueryTab.setInputValue("sql", sql);
         });
+
+        // Single source of truth for the More submenu: icon, programmatic name, mnemonic label and tab instance.
+        // Order defines the More popup index used by selectMoreTab(int).
+        moreTabs = List.of(
+                new MoreTab(TuiIcons.TAB_BEANS, "Beans", "&Beans", beansTab),
+                new MoreTab(TuiIcons.TAB_BROWSE, "Browse", "Bro&wse", browseTab),
+                new MoreTab(TuiIcons.TAB_CIRCUIT_BREAKER, "Circuit Breaker", "&Circuit Breaker", circuitBreakerTab),
+                new MoreTab(TuiIcons.TAB_CLASSPATH, "Classpath", "Cl&asspath", classpathTab),
+                new MoreTab(TuiIcons.TAB_CONFIGURATION, "Configuration", "Confi&guration", configurationTab),
+                new MoreTab(TuiIcons.TAB_CONSUMERS, "Consumers", "Co&nsumers", consumersTab),
+                new MoreTab(TuiIcons.TAB_CVE_AUDIT, "CVE Audit", "C&VE Audit", cveAuditTab),
+                new MoreTab(TuiIcons.TAB_DATASOURCE, "DataSource", "&DataSource", dataSourceTab),
+                new MoreTab(TuiIcons.TAB_HEAP, "Heap Histogram", "&Heap Histogram", heapHistogramTab),
+                new MoreTab(TuiIcons.TAB_INFLIGHT, "Inflight", "&Inflight", inflightTab),
+                new MoreTab(TuiIcons.TAB_MEMORY, "Memory", "&Memory", memoryTab),
+                new MoreTab(TuiIcons.TAB_MEMORY_LEAK, "Memory Leak", "Memory Lea&k", memoryLeakTab),
+                new MoreTab(TuiIcons.TAB_METRICS, "Metrics", "M&etrics", metricsTab),
+                new MoreTab(TuiIcons.TAB_SQL_QUERY, "SQL Query", "S&QL Query", sqlQueryTab),
+                new MoreTab(TuiIcons.TAB_SQL_TRACE, "SQL Trace", "SQL T&race", sqlTraceTab),
+                new MoreTab(TuiIcons.TAB_SPANS, "Spans", "&OTel Spans", spansTab),
+                new MoreTab(TuiIcons.TAB_PROCESS, "Process", "&Process", processTab),
+                new MoreTab(TuiIcons.TAB_STARTUP, "Startup", "&Startup", startupTab),
+                new MoreTab(TuiIcons.TAB_THREADS, "Threads", "&Threads", threadsTab));
     }
 
     // ---- Tab access ----
@@ -215,28 +239,7 @@ class TabRegistry {
 
     void selectMoreTab(int index) {
         callbacks.selectMorePopupEntry(index);
-        activeMoreTab = switch (index) {
-            case 0 -> beansTab;
-            case 1 -> browseTab;
-            case 2 -> circuitBreakerTab;
-            case 3 -> classpathTab;
-            case 4 -> configurationTab;
-            case 5 -> consumersTab;
-            case 6 -> cveAuditTab;
-            case 7 -> dataSourceTab;
-            case 8 -> heapHistogramTab;
-            case 9 -> inflightTab;
-            case 10 -> memoryTab;
-            case 11 -> memoryLeakTab;
-            case 12 -> metricsTab;
-            case 13 -> sqlQueryTab;
-            case 14 -> sqlTraceTab;
-            case 15 -> spansTab;
-            case 16 -> processTab;
-            case 17 -> startupTab;
-            case 18 -> threadsTab;
-            default -> null;
-        };
+        activeMoreTab = index >= 0 && index < moreTabs.size() ? moreTabs.get(index).tab() : null;
         if (activeMoreTab != null) {
             overviewTab.selectCurrentIntegration();
             tabsState.select(TAB_MORE);
@@ -335,40 +338,73 @@ class TabRegistry {
 
     // ---- Tab entries for Go-to and MCP ----
 
-    record TabEntry(String name, String description, String shortcut, int tabIndex, int moreIndex) {
+    record TabEntry(String icon, String name, String description, String shortcut, int tabIndex, int moreIndex) {
     }
 
-    private static final String[] MORE_SHORTCUTS = {
-            "B", "W", "C", "A", "G", "N", "V", "D", "H", "I", "M", "K", "E", "Q", "R", "O", "P", "S", "T"
-    };
+    /**
+     * A "More" submenu tab. Bundles its icon, programmatic {@code name} (used for tab lookup and the Go to… popup),
+     * popup {@code label} carrying a {@value TuiIcons#MNEMONIC_MARKER} shortcut marker, and the tab instance. The
+     * shortcut letter and its highlight offset are derived from {@code label} via
+     * {@link TuiIcons#mnemonicIndex(String)}, so there is no separate index or shortcut list to keep aligned.
+     */
+    record MoreTab(String icon, String name, String label, MonitorTab tab) {
+
+        MoreTab {
+            int i = TuiIcons.mnemonicIndex(label);
+            if (i < 0 || i >= TuiIcons.stripMnemonic(label).length()) {
+                throw new IllegalArgumentException(
+                        "label must contain a '" + TuiIcons.MNEMONIC_MARKER + "' marker before a letter: " + label);
+            }
+        }
+
+        String displayName() {
+            return TuiIcons.stripMnemonic(label);
+        }
+
+        int mnemonicIndex() {
+            return TuiIcons.mnemonicIndex(label);
+        }
+
+        char shortcut() {
+            return Character.toUpperCase(displayName().charAt(mnemonicIndex()));
+        }
+    }
+
+    List<MoreTab> moreTabs() {
+        return moreTabs;
+    }
+
+    /** Position of the More tab with the given programmatic {@link MoreTab#name() name}, or -1 when absent. */
+    int moreTabIndex(String name) {
+        for (int i = 0; i < moreTabs.size(); i++) {
+            if (moreTabs.get(i).name().equals(name)) {
+                return i;
+            }
+        }
+        return -1;
+    }
 
     List<TabEntry> allTabEntries() {
         List<TabEntry> entries = new ArrayList<>();
-        entries.add(new TabEntry("Overview", overviewTab.description(), "1", TAB_OVERVIEW, -1));
-        entries.add(new TabEntry("Log", logTab.description(), "2", TAB_LOG, -1));
-        entries.add(new TabEntry("Diagram", diagramTab.description(), "3", TAB_DIAGRAM, -1));
-        entries.add(new TabEntry("Routes", routesTab.description(), "4", TAB_ROUTES, -1));
-        entries.add(new TabEntry("Endpoints", endpointsTab.description(), "5", TAB_ENDPOINTS, -1));
-        entries.add(new TabEntry("HTTP", httpTab.description(), "6", TAB_HTTP, -1));
-        entries.add(new TabEntry("Health", healthTab.description(), "7", TAB_HEALTH, -1));
-        entries.add(new TabEntry("Inspect", historyTab.description(), "8", TAB_HISTORY, -1));
-        entries.add(new TabEntry("Errors", errorsTab.description(), "9", TAB_ERRORS, -1));
-        // More sub-tabs
-        MonitorTab[] moreTabs = {
-                beansTab, browseTab, circuitBreakerTab, classpathTab, configurationTab,
-                consumersTab, cveAuditTab, dataSourceTab, heapHistogramTab, inflightTab, memoryTab,
-                memoryLeakTab, metricsTab, sqlQueryTab, sqlTraceTab, spansTab,
-                processTab, startupTab, threadsTab
-        };
-        String[] moreNames = {
-                "Beans", "Browse", "Circuit Breaker", "Classpath", "Configuration",
-                "Consumers", "CVE Audit", "DataSource", "Heap Histogram", "Inflight", "Memory",
-                "Memory Leak", "Metrics", "SQL Query", "SQL Trace", "Spans",
-                "Process", "Startup", "Threads"
-        };
-        for (int i = 0; i < moreTabs.length; i++) {
-            entries.add(new TabEntry(moreNames[i], moreTabs[i].description(), MORE_SHORTCUTS[i], TAB_MORE, i));
+        entries.add(new TabEntry(icon(TAB_OVERVIEW), "Overview", overviewTab.description(), "1", TAB_OVERVIEW, -1));
+        entries.add(new TabEntry(icon(TAB_LOG), "Log", logTab.description(), "2", TAB_LOG, -1));
+        entries.add(new TabEntry(icon(TAB_DIAGRAM), "Diagram", diagramTab.description(), "3", TAB_DIAGRAM, -1));
+        entries.add(new TabEntry(icon(TAB_ROUTES), "Routes", routesTab.description(), "4", TAB_ROUTES, -1));
+        entries.add(new TabEntry(icon(TAB_ENDPOINTS), "Endpoints", endpointsTab.description(), "5", TAB_ENDPOINTS, -1));
+        entries.add(new TabEntry(icon(TAB_HTTP), "HTTP", httpTab.description(), "6", TAB_HTTP, -1));
+        entries.add(new TabEntry(icon(TAB_HEALTH), "Health", healthTab.description(), "7", TAB_HEALTH, -1));
+        entries.add(new TabEntry(icon(TAB_HISTORY), "Inspect", historyTab.description(), "8", TAB_HISTORY, -1));
+        entries.add(new TabEntry(icon(TAB_ERRORS), "Errors", errorsTab.description(), "9", TAB_ERRORS, -1));
+        for (int i = 0; i < moreTabs.size(); i++) {
+            MoreTab mt = moreTabs.get(i);
+            entries.add(new TabEntry(
+                    mt.icon(), mt.name(), mt.tab().description(), String.valueOf(mt.shortcut()),
+                    TAB_MORE, i));
         }
         return entries;
+    }
+
+    private static String icon(int primaryTabIndex) {
+        return TuiIcons.PRIMARY_TAB_ICONS.get(primaryTabIndex);
     }
 }

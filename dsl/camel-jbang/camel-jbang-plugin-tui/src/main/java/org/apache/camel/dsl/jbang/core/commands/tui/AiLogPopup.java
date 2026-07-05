@@ -123,7 +123,7 @@ class AiLogPopup {
     }
 
     void renderFooter(List<Span> spans) {
-        hint(spans, "↑↓", "select");
+        hint(spans, TuiIcons.HINT_SCROLL, "select");
         hint(spans, "PgUp/Dn", "scroll detail");
         hintLast(spans, "Esc", "back");
     }
@@ -174,11 +174,13 @@ class AiLogPopup {
         if (detail != null && !detail.isBlank()) {
             if (entry.level() == AiPanel.LogLevel.TOOL || entry.level() == AiPanel.LogLevel.RESULT) {
                 lines.add(Line.from(Span.styled(
-                        entry.level() == AiPanel.LogLevel.TOOL ? "▶ Arguments" : "◀ Result",
+                        entry.level() == AiPanel.LogLevel.TOOL
+                                ? TuiIcons.ARROW_RIGHT + " Arguments"
+                                : TuiIcons.ARROW_LEFT + " Result",
                         Style.EMPTY.fg(entry.level() == AiPanel.LogLevel.TOOL ? Color.YELLOW : Color.GREEN).bold())));
                 addJsonLines(lines, detail);
             } else {
-                lines.add(Line.from(Span.styled("▶ Content",
+                lines.add(Line.from(Span.styled(TuiIcons.ARROW_RIGHT + " Content",
                         Style.EMPTY.fg(Color.CYAN).bold())));
                 for (String line : detail.split("\n", -1)) {
                     lines.add(Line.from(Span.styled("  " + line, Style.EMPTY.dim())));

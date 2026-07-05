@@ -387,7 +387,7 @@ class SqlTraceTab extends AbstractTableTab {
     @Override
     public void renderFooter(List<Span> spans) {
         hint(spans, "Esc", "back");
-        hint(spans, "↑↓", "navigate");
+        hint(spans, TuiIcons.HINT_SCROLL, "navigate");
         hint(spans, "Home/End", "top/end");
         hint(spans, "PgUp/Dn", "scroll detail");
         hint(spans, "e", "edit SQL");

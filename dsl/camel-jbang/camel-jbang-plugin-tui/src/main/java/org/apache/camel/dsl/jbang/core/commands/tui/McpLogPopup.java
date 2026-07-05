@@ -127,7 +127,7 @@ class McpLogPopup {
     }
 
     void renderFooter(List<Span> spans) {
-        hint(spans, "↑↓", "select");
+        hint(spans, TuiIcons.HINT_SCROLL, "select");
         hint(spans, "PgUp/Dn", "scroll detail");
         hintLast(spans, "Esc", "back");
     }
@@ -182,12 +182,12 @@ class McpLogPopup {
         TuiMcpServer.LogEntry entry = entries.get(selected);
         List<Line> lines = new ArrayList<>();
         if (entry.requestBody() != null) {
-            lines.add(Line.from(Span.styled("▶ Request", Style.EMPTY.fg(Color.YELLOW).bold())));
+            lines.add(Line.from(Span.styled(TuiIcons.ARROW_RIGHT + " Request", Style.EMPTY.fg(Color.YELLOW).bold())));
             addJsonLines(lines, entry.requestBody());
             lines.add(Line.from(Span.raw("")));
         }
         if (entry.responseBody() != null) {
-            lines.add(Line.from(Span.styled("◀ Response", Style.EMPTY.fg(Color.GREEN).bold())));
+            lines.add(Line.from(Span.styled(TuiIcons.ARROW_LEFT + " Response", Style.EMPTY.fg(Color.GREEN).bold())));
             addJsonLines(lines, entry.responseBody());
         }
         if (entry.requestBody() == null && entry.responseBody() == null) {
