@@ -30,13 +30,13 @@ final class TuiIcons {
     static final String CAMEL = "🐪";
     static final String SPRING_BOOT = "🍃";
     static final String QUARKUS = "🚀";
-    static final String DEV_PROFILE = "🛠️";
+    static final String DEV_PROFILE = "🛠";
     static final String PROD_PROFILE = "📦";
     static final String INFRA = "🔧";
 
     // ---- Status & health ----
     static final String OK = "✅";
-    static final String WARN = "⚠️";
+    static final String WARN = "⚠";
     static final String FAIL = "❌";
     static final String HEALTH_UP = "✔";
     static final String HEALTH_DOWN = "✖";

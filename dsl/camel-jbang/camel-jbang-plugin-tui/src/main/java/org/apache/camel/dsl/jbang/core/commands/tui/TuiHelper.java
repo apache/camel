@@ -640,56 +640,56 @@ final class TuiHelper {
             return detectPomEmoji(path);
         }
         if (lower.endsWith(".kamelet.yaml") || lower.endsWith(".kamelet.yml")) {
-            return "🐪";
+            return TuiIcons.CAMEL;
         }
         if (lower.endsWith(".yaml") || lower.endsWith(".yml")) {
-            return isCamelYaml(path) ? "🐪" : "📋";
+            return isCamelYaml(path) ? TuiIcons.CAMEL : TuiIcons.CLIPBOARD;
         }
         if (lower.endsWith(".xml")) {
-            return isCamelXml(path) ? "🐪" : "📋";
+            return isCamelXml(path) ? TuiIcons.CAMEL : TuiIcons.CLIPBOARD;
         }
         if (lower.endsWith(".java")) {
-            return isCamelJava(path) ? "🐪" : "☕";
+            return isCamelJava(path) ? TuiIcons.CAMEL : TuiIcons.JAVA;
         }
         if (lower.endsWith(".properties") || lower.endsWith(".cfg")) {
-            return "📄";
+            return TuiIcons.DOCUMENT;
         }
         if (lower.endsWith(".json")) {
-            return "📋";
+            return TuiIcons.CLIPBOARD;
         }
         if (lower.endsWith(".md") || lower.endsWith(".adoc") || lower.endsWith(".txt")
                 || lower.startsWith("readme")) {
-            return "📖";
+            return TuiIcons.README;
         }
-        return "📄";
+        return TuiIcons.DOCUMENT;
     }
 
     static String fileEmojiByName(String name) {
         String lower = name.toLowerCase(Locale.ROOT);
         if (lower.endsWith(".camel.yaml") || lower.endsWith(".camel.yml")
                 || lower.endsWith(".kamelet.yaml") || lower.endsWith(".kamelet.yml")) {
-            return "🐪";
+            return TuiIcons.CAMEL;
         }
         if (lower.endsWith(".java")) {
-            return "☕";
+            return TuiIcons.JAVA;
         }
         if (lower.endsWith(".yaml") || lower.endsWith(".yml")) {
-            return "📋";
+            return TuiIcons.CLIPBOARD;
         }
         if (lower.endsWith(".xml")) {
-            return "📋";
+            return TuiIcons.CLIPBOARD;
         }
         if (lower.endsWith(".properties") || lower.endsWith(".cfg")) {
-            return "📄";
+            return TuiIcons.DOCUMENT;
         }
         if (lower.endsWith(".json")) {
-            return "📋";
+            return TuiIcons.CLIPBOARD;
         }
         if (lower.endsWith(".md") || lower.endsWith(".adoc") || lower.endsWith(".txt")
                 || lower.startsWith("readme")) {
-            return "📖";
+            return TuiIcons.README;
         }
-        return "📄";
+        return TuiIcons.DOCUMENT;
     }
 
     static String detectPomRuntime(Path pomFile) {
@@ -718,20 +718,20 @@ final class TuiHelper {
             String content = Files.readString(path, StandardCharsets.UTF_8);
             if (content.contains("quarkus-maven-plugin") || content.contains("quarkus-bom")
                     || content.contains("camel-quarkus")) {
-                return "🚀";
+                return TuiIcons.QUARKUS;
             }
             if (content.contains("spring-boot-maven-plugin") || content.contains("spring-boot-starter")
                     || content.contains("camel-spring-boot")) {
-                return "🍃";
+                return TuiIcons.SPRING_BOOT;
             }
             if (content.contains("camel-core") || content.contains("camel-api")
                     || content.contains("org.apache.camel")) {
-                return "🐪";
+                return TuiIcons.CAMEL;
             }
         } catch (IOException e) {
             // ignore
         }
-        return "📋";
+        return TuiIcons.CLIPBOARD;
     }
 
     private static boolean isCamelYaml(Path path) {
