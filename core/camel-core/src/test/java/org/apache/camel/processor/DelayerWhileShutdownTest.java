@@ -25,13 +25,14 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
 import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Delayer while shutting down so its interrupted and will also stop.
  */
 public class DelayerWhileShutdownTest extends ContextTestSupport {
 
-    private final CountDownLatch shortDelayStarted = new CountDownLatch(1);
+    private final CountDownLatch shortRouteStarted = new CountDownLatch(1);
 
     @Test
     public void testSendingMessageGetsDelayed() throws Exception {
@@ -41,9 +42,9 @@ public class DelayerWhileShutdownTest extends ContextTestSupport {
         template.sendBody("seda:a", "Long delay");
         template.sendBody("seda:b", "Short delay");
 
-        // Wait until the short-delay route has entered the delay phase,
-        // ensuring both routes are actively processing
-        shortDelayStarted.await(5, TimeUnit.SECONDS);
+        // Wait until the short-delay route has started processing its message
+        assertTrue(shortRouteStarted.await(5, TimeUnit.SECONDS),
+                "Short-delay route should have started processing within 5 seconds");
 
         await().atMost(5, TimeUnit.SECONDS)
                 .untilAsserted(() -> assertMockEndpointsSatisfied());
@@ -53,8 +54,10 @@ public class DelayerWhileShutdownTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("seda:a").delay(5000).to("mock:result");
-                from("seda:b").process(e -> shortDelayStarted.countDown()).delay(1).to("mock:result");
+                // Long delay must be well above the assertion timeout (5s) to ensure
+                // the context shutdown always interrupts it before it completes
+                from("seda:a").delay(30000).to("mock:result");
+                from("seda:b").process(e -> shortRouteStarted.countDown()).delay(1).to("mock:result");
             }
         };
     }
