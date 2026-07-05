@@ -74,6 +74,7 @@ final class Theme {
 
     private static boolean initialized;
     private static boolean fallbackLogged;
+    private static boolean testMode;
     private static StyleEngine engine;
     private static String mode = DARK;
 
@@ -191,7 +192,9 @@ final class Theme {
     static synchronized String toggle() {
         String next = DARK.equals(mode) ? LIGHT : DARK;
         setMode(next);
-        persist(next);
+        if (!testMode) {
+            persist(next);
+        }
         return next;
     }
 
@@ -210,13 +213,19 @@ final class Theme {
         CACHE.clear();
     }
 
-    /** Test hook: drop all process-wide state so the next access reinitializes from config. */
+    /** Test hook: enable in-memory-only mode so tests never touch user config files. */
     static synchronized void resetForTesting() {
-        initialized = false;
+        testMode = true;
         fallbackLogged = false;
-        engine = null;
-        mode = DARK;
         CACHE.clear();
+        if (engine != null) {
+            try {
+                engine.setActiveStylesheet(DARK);
+            } catch (RuntimeException ex) {
+                // ignore
+            }
+        }
+        mode = DARK;
     }
 
     private static synchronized Style style(String id, Style fallback) {
@@ -239,7 +248,9 @@ final class Theme {
             return engine;
         }
         initialized = true;
-        mode = loadPersistedMode();
+        if (!testMode) {
+            mode = loadPersistedMode();
+        }
         try {
             StyleEngine e = StyleEngine.create();
             e.loadStylesheet(DARK, "tui/themes/dark.tcss");

@@ -30,6 +30,7 @@ import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.tui.event.KeyModifiers;
 import dev.tamboui.tui.event.MouseButton;
 import dev.tamboui.tui.event.MouseEvent;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -58,6 +59,11 @@ class OverviewTabRenderTest {
         AtomicReference<List<InfraInfo>> infraData = new AtomicReference<>(List.of());
         ctx = new MonitorContext(data, infraData);
         ctx.selectedPid = "1234";
+    }
+
+    @AfterEach
+    void tearDown() {
+        Theme.resetForTesting();
     }
 
     @Test

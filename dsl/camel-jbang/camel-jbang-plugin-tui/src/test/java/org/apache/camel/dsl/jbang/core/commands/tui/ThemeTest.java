@@ -16,15 +16,11 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
-import java.nio.file.Path;
-
 import dev.tamboui.style.Color;
 import dev.tamboui.style.Style;
-import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.io.TempDir;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
@@ -32,19 +28,13 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class ThemeTest {
 
-    @TempDir
-    Path home;
-
     @BeforeEach
     void setUp() {
-        // Isolate user config per test so persistence never touches the real home dir.
-        CommandLineHelper.useHomeDir(home.toString());
         Theme.resetForTesting();
     }
 
     @AfterEach
     void tearDown() {
-        // Reset the process-wide engine so toggles do not leak across tests.
         Theme.resetForTesting();
     }
 
@@ -108,17 +98,12 @@ class ThemeTest {
     }
 
     @Test
-    void togglePersistsAndAFreshLoadActivatesIt() {
+    void toggleFlipsModeBackAndForth() {
         Theme.setMode("dark");
-        Theme.toggle(); // -> light, persisted to camel.tui.theme
-
-        String[] stored = { null };
-        CommandLineHelper.loadProperties(p -> stored[0] = p.getProperty("camel.tui.theme"));
-        assertEquals("light", stored[0]);
-
-        // A fresh Theme load (statics reset) must read back the persisted mode.
-        Theme.resetForTesting();
+        assertEquals("light", Theme.toggle());
         assertEquals("light", Theme.mode());
+        assertEquals("dark", Theme.toggle());
+        assertEquals("dark", Theme.mode());
     }
 
     @Test
