@@ -111,8 +111,8 @@ final class TuiIcons {
     // ---- Primary tab bar ----
     static final String TAB_OVERVIEW = CAMEL;
     static final String TAB_LOG = DOCUMENT;
-    static final String TAB_DIAGRAM = "🗺";
-    static final String TAB_ROUTES = "🛤";
+    static final String TAB_DIAGRAM = "📊";
+    static final String TAB_ROUTES = "🔀";
     static final String TAB_ENDPOINTS = ENDPOINT;
     static final String TAB_HTTP = ONLINE;
     static final String TAB_HEALTH = DOCTOR;
@@ -127,8 +127,8 @@ final class TuiIcons {
     static final String TAB_CLASSPATH = BUNDLED;
     static final String TAB_CONFIGURATION = DOCUMENT;
     static final String TAB_CONSUMERS = "📥";
-    static final String TAB_CVE_AUDIT = "🛡";
-    static final String TAB_DATASOURCE = "🗄";
+    static final String TAB_CVE_AUDIT = "🔒";
+    static final String TAB_DATASOURCE = "💿";
     static final String TAB_HEAP = MEMORY;
     static final String TAB_INFLIGHT = RESET;
     static final String TAB_MEMORY = MEMORY;
