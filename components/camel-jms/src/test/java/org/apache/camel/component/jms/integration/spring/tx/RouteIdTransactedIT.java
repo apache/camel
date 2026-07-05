@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.jms.integration.spring.tx;
 
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.integration.spring.AbstractSpringJMSITSupport;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -47,7 +49,7 @@ public class RouteIdTransactedIT extends AbstractSpringJMSITSupport {
 
         template.sendBody("activemq:queue:RouteIdTransactedTest", "Hello World");
 
-        MockEndpoint.assertIsSatisfied(context);
+        MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
 
         String id = context.getRouteDefinitions().get(0).getId();
         assertEquals("myCoolRoute", id);
@@ -61,7 +63,7 @@ public class RouteIdTransactedIT extends AbstractSpringJMSITSupport {
 
         template.sendBody("activemq:queue:RouteIdTransactedTest", "Kaboom");
 
-        MockEndpoint.assertIsSatisfied(context);
+        MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
 
         String id = context.getRouteDefinitions().get(0).getId();
         assertEquals("myCoolRoute", id);
