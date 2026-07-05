@@ -451,7 +451,7 @@ public class CxfConsumer extends DefaultConsumer implements Suspendable {
                 Element childElem = (Element) child;
                 String localName = childElem.getLocalName();
                 if ("faultcode".equals(localName) || "Code".equals(localName)) {
-                    faultCode = parseFaultCode(element, childElem);
+                    faultCode = parseFaultCode(childElem);
                 } else if ("faultstring".equals(localName) || "Reason".equals(localName)) {
                     faultString = childElem.getTextContent();
                 } else if ("detail".equals(localName) || "Detail".equals(localName)) {
@@ -469,7 +469,7 @@ public class CxfConsumer extends DefaultConsumer implements Suspendable {
             return fault;
         }
 
-        private static QName parseFaultCode(Element faultElement, Element codeElement) {
+        private static QName parseFaultCode(Element codeElement) {
             String codeText = codeElement.getTextContent();
             if (codeText == null || codeText.isBlank()) {
                 return null;
@@ -479,7 +479,9 @@ public class CxfConsumer extends DefaultConsumer implements Suspendable {
             if (colonIndex > 0) {
                 String prefix = codeText.substring(0, colonIndex);
                 String localPart = codeText.substring(colonIndex + 1);
-                String namespaceURI = faultElement.lookupNamespaceURI(prefix);
+                // Look up from codeElement (not faultElement) so that namespace declarations
+                // on the <faultcode>/<Code> element itself are also visible
+                String namespaceURI = codeElement.lookupNamespaceURI(prefix);
                 if (namespaceURI != null) {
                     return new QName(namespaceURI, localPart, prefix);
                 }
