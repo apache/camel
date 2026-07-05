@@ -40,7 +40,8 @@ public class LRAFailuresIT extends AbstractLRATestSupport {
         sendBody("direct:saga-compensate", "hello");
 
         await().atMost(20, TimeUnit.SECONDS)
-                .untilAsserted(compensate::assertIsSatisfied);
+                .until(() -> compensate.getReceivedCounter() >= 1);
+        compensate.assertIsSatisfied();
     }
 
     @Test
@@ -56,10 +57,10 @@ public class LRAFailuresIT extends AbstractLRATestSupport {
         sendBody("direct:saga-complete", "hello");
 
         await().atMost(20, TimeUnit.SECONDS)
-                .untilAsserted(() -> {
-                    complete.assertIsSatisfied();
-                    end.assertIsSatisfied();
-                });
+                .until(() -> complete.getReceivedCounter() >= 1
+                        && end.getReceivedCounter() >= 1);
+        complete.assertIsSatisfied();
+        end.assertIsSatisfied();
     }
 
     @Override
