@@ -130,10 +130,8 @@ public class ThreadsRejectedExecutionTest extends ContextTestSupport {
         Awaitility.await().atMost(10, TimeUnit.SECONDS)
                 .untilAsserted(() -> assertEquals(0, context.getInflightRepository().size()));
 
-        assertTrue(getMockEndpoint("mock:result").getReceivedCounter() >= 2,
-                "Expected at least 2 messages at mock:result but got "
-                                                                             + getMockEndpoint("mock:result")
-                                                                                     .getReceivedCounter());
+        int resultCount = getMockEndpoint("mock:result").getReceivedCounter();
+        assertTrue(resultCount >= 2, "Expected at least 2 messages at mock:result but got " + resultCount);
     }
 
     @Test
@@ -191,14 +189,12 @@ public class ThreadsRejectedExecutionTest extends ContextTestSupport {
                 .untilAsserted(() -> assertEquals(0, context.getInflightRepository().size()));
 
         // at least 2 messages should have made it through the thread pool
-        assertTrue(getMockEndpoint("mock:result").getReceivedCounter() >= 2,
-                "Expected at least 2 messages at mock:result but got "
-                                                                             + getMockEndpoint("mock:result")
-                                                                                     .getReceivedCounter());
+        int resultCount = getMockEndpoint("mock:result").getReceivedCounter();
+        assertTrue(resultCount >= 2, "Expected at least 2 messages at mock:result but got " + resultCount);
 
         // there should be no error handling for aborted tasks (no redeliveries and no error handling)
-        assertEquals(0, getMockEndpoint("mock:error").getReceivedCounter(),
-                "Expected 0 messages at mock:error but got " + getMockEndpoint("mock:error").getReceivedCounter());
+        int errorCount = getMockEndpoint("mock:error").getReceivedCounter();
+        assertEquals(0, errorCount, "Expected 0 messages at mock:error but got " + errorCount);
     }
 
 }
