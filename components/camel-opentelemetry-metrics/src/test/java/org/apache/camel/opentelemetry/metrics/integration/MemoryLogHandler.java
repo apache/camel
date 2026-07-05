@@ -18,11 +18,14 @@ package org.apache.camel.opentelemetry.metrics.integration;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.LogRecord;
 
 public class MemoryLogHandler extends ConsoleHandler {
-    private List<LogRecord> logs = new ArrayList<>();
+    // CopyOnWriteArrayList for thread safety: publish() is called from the OTel
+    // exporter thread while hasLogs()/getLogs() are called from the test thread
+    private final List<LogRecord> logs = new CopyOnWriteArrayList<>();
 
     public MemoryLogHandler() {
         super();

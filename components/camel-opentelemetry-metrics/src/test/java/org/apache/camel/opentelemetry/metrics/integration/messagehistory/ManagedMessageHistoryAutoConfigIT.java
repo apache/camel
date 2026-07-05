@@ -17,7 +17,6 @@
 package org.apache.camel.opentelemetry.metrics.integration.messagehistory;
 
 import java.time.Duration;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.LogRecord;
@@ -83,45 +82,53 @@ public class ManagedMessageHistoryAutoConfigIT extends CamelTestSupport {
         MemoryLogHandler handler = new MemoryLogHandler();
         logger.addHandler(handler);
 
-        int count = 10;
-        getMockEndpoint("mock:foo").expectedMessageCount(count / 2);
-        getMockEndpoint("mock:bar").expectedMessageCount(count / 2);
-        getMockEndpoint("mock:baz").expectedMessageCount(count / 2);
+        try {
+            int count = 10;
+            getMockEndpoint("mock:foo").expectedMessageCount(count / 2);
+            getMockEndpoint("mock:bar").expectedMessageCount(count / 2);
+            getMockEndpoint("mock:baz").expectedMessageCount(count / 2);
 
-        for (int i = 0; i < count; i++) {
-            if (i % 2 == 0) {
-                template.sendBody("seda:foo", "Hello " + i);
-            } else {
-                template.sendBody("seda:bar", "Hello " + i);
-            }
-        }
-
-        MockEndpoint.assertIsSatisfied(context);
-
-        await().atMost(Duration.ofMillis(1000L)).until(handler::hasLogs);
-
-        List<LogRecord> logs = new ArrayList<>(handler.getLogs());
-        assertFalse(logs.isEmpty(), "No metrics were exported");
-        int dataCount = 0;
-        for (LogRecord log : logs) {
-            if (log.getParameters() != null && log.getParameters().length > 0) {
-                MetricData metricData = (MetricData) log.getParameters()[0];
-                // Skip non-Camel metrics (e.g. otel.sdk.* internal metrics added in OTel 1.60+)
-                if (!metricData.getName().startsWith("camel.")) {
-                    continue;
+            for (int i = 0; i < count; i++) {
+                if (i % 2 == 0) {
+                    template.sendBody("seda:foo", "Hello " + i);
+                } else {
+                    template.sendBody("seda:bar", "Hello " + i);
                 }
-                assertEquals(DEFAULT_CAMEL_MESSAGE_HISTORY_METER_NAME, metricData.getName());
-
-                assertPointDataForRouteId(metricData, "route1");
-
-                assertMetricDataHasNodeId(metricData, "route1", "foo");
-                assertMetricDataHasNodeId(metricData, "route2", "bar");
-                assertMetricDataHasNodeId(metricData, "route2", "baz");
-
-                dataCount++;
             }
+
+            MockEndpoint.assertIsSatisfied(context);
+
+            // Use Awaitility to retry assertions until the OTel periodic reader has exported
+            // Camel metrics. On slow CI architectures the first export may be delayed well
+            // beyond the 300ms export interval. Assert on the last exported Camel metric data
+            // because earlier exports during message processing may contain incomplete data.
+            await().atMost(Duration.ofSeconds(20)).untilAsserted(() -> {
+                List<LogRecord> logs = handler.getLogs();
+                assertFalse(logs.isEmpty(), "No metrics were exported");
+
+                MetricData lastCamelMetric = null;
+                for (LogRecord log : logs) {
+                    if (log.getParameters() != null && log.getParameters().length > 0) {
+                        MetricData metricData = (MetricData) log.getParameters()[0];
+                        // Skip non-Camel metrics (e.g. otel.sdk.* internal metrics added in OTel 1.60+)
+                        if (!metricData.getName().startsWith("camel.")) {
+                            continue;
+                        }
+                        assertEquals(DEFAULT_CAMEL_MESSAGE_HISTORY_METER_NAME, metricData.getName());
+                        lastCamelMetric = metricData;
+                    }
+                }
+                assertThat(lastCamelMetric).as("No Camel metric data found").isNotNull();
+
+                assertPointDataForRouteId(lastCamelMetric, "route1");
+
+                assertMetricDataHasNodeId(lastCamelMetric, "route1", "foo");
+                assertMetricDataHasNodeId(lastCamelMetric, "route2", "bar");
+                assertMetricDataHasNodeId(lastCamelMetric, "route2", "baz");
+            });
+        } finally {
+            logger.removeHandler(handler);
         }
-        assertTrue(dataCount > 0, "No metric data found");
     }
 
     private void assertMetricDataHasNodeId(MetricData metricData, String routeId, String nodeId) {
