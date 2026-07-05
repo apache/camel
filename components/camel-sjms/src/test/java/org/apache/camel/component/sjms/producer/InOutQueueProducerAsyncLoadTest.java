@@ -95,13 +95,12 @@ public class InOutQueueProducerAsyncLoadTest extends JmsTestSupport {
             };
             executor.execute(worker);
         }
-        // wait for inflight messages to complete
-        await().atMost(30, SECONDS)
-                .untilAsserted(() -> assertEquals(0, context.getInflightRepository().size()));
-
+        // shut down the executor and wait for all submitted tasks to complete
         executor.shutdown();
-        await().atMost(10, SECONDS)
+        await().atMost(30, SECONDS)
                 .until(() -> executor.isTerminated());
+        // verify all inflight messages have completed
+        assertEquals(0, context.getInflightRepository().size());
     }
 
     @Override
