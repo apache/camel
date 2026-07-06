@@ -90,7 +90,7 @@ class MavenDependenciesTab extends AbstractTableTab {
     private List<DepEntry> transitiveEntries = Collections.emptyList();
 
     MavenDependenciesTab(MonitorContext ctx) {
-        super(ctx, "artifact", "version");
+        super(ctx, "artifact", "version", "via");
     }
 
     @Override
@@ -287,7 +287,7 @@ class MavenDependenciesTab extends AbstractTableTab {
                     .header(Row.from(
                             Cell.from(Span.styled(" " + sortLabel("GROUP:ARTIFACT", "artifact"), sortStyle("artifact"))),
                             Cell.from(Span.styled(sortLabel("VERSION", "version"), sortStyle("version"))),
-                            Cell.from(Span.styled("VIA", Style.EMPTY.bold()))))
+                            Cell.from(Span.styled(sortLabel("VIA", "via"), sortStyle("via")))))
                     .widths(
                             Constraint.fill(),
                             Constraint.length(20),
@@ -341,6 +341,11 @@ class MavenDependenciesTab extends AbstractTableTab {
                 String va = a.version() != null ? a.version() : "";
                 String vb = b.version() != null ? b.version() : "";
                 yield va.compareToIgnoreCase(vb);
+            }
+            case "via" -> {
+                String pa = a.parent() != null ? shortArtifact(a.parent()) : "";
+                String pb = b.parent() != null ? shortArtifact(b.parent()) : "";
+                yield pa.compareToIgnoreCase(pb);
             }
             default -> { // "artifact"
                 yield a.display().compareToIgnoreCase(b.display());
@@ -503,11 +508,28 @@ class MavenDependenciesTab extends AbstractTableTab {
                 }
             }
 
-            NodeList nl = dom.getElementsByTagName("dependency");
-            List<DepEntry> deps = new ArrayList<>();
             String camelVersion = null;
             String springBootVersion = null;
             String quarkusVersion = null;
+
+            NodeList parentList = dom.getElementsByTagName("parent");
+            if (parentList.getLength() > 0) {
+                Element parentEl = (Element) parentList.item(0);
+                String pg = textContent(parentEl, "groupId");
+                String pa = textContent(parentEl, "artifactId");
+                String pv = textContent(parentEl, "version");
+                pv = resolveProperty(pv, properties);
+                if ("org.springframework.boot".equals(pg)
+                        && ("spring-boot-starter-parent".equals(pa) || "spring-boot-dependencies".equals(pa))) {
+                    springBootVersion = pv;
+                }
+                if ("org.apache.camel.springboot".equals(pg) && "camel-spring-boot-bom".equals(pa)) {
+                    camelVersion = pv;
+                }
+            }
+
+            NodeList nl = dom.getElementsByTagName("dependency");
+            List<DepEntry> deps = new ArrayList<>();
 
             for (int i = 0; i < nl.getLength(); i++) {
                 Element node = (Element) nl.item(i);
@@ -624,6 +646,11 @@ class MavenDependenciesTab extends AbstractTableTab {
         } catch (Exception e) {
             return Collections.emptyList();
         }
+    }
+
+    private static String textContent(Element parent, String tag) {
+        NodeList nl = parent.getElementsByTagName(tag);
+        return nl.getLength() > 0 ? nl.item(0).getTextContent().trim() : null;
     }
 
     private static String resolveProperty(String value, Map<String, String> properties) {

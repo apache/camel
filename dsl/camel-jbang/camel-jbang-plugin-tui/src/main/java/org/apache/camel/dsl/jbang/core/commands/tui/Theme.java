@@ -200,17 +200,12 @@ final class Theme {
 
     /** Activate a specific mode without persisting. Unknown values fall back to dark. */
     static synchronized void setMode(String newMode) {
-        engine();
         String resolved = DARK.equals(newMode) || LIGHT.equals(newMode) ? newMode : DARK;
-        if (engine != null) {
-            try {
-                engine.setActiveStylesheet(resolved);
-            } catch (RuntimeException ex) {
-                logFallbackOnce(ex);
-            }
-        }
         mode = resolved;
         CACHE.clear();
+        engine = null;
+        initialized = false;
+        engine();
     }
 
     /** Test hook: enable in-memory-only mode so tests never touch user config files. */
@@ -218,13 +213,8 @@ final class Theme {
         testMode = true;
         fallbackLogged = false;
         CACHE.clear();
-        if (engine != null) {
-            try {
-                engine.setActiveStylesheet(DARK);
-            } catch (RuntimeException ex) {
-                // ignore
-            }
-        }
+        engine = null;
+        initialized = false;
         mode = DARK;
     }
 
@@ -253,8 +243,7 @@ final class Theme {
         }
         try {
             StyleEngine e = StyleEngine.create();
-            e.loadStylesheet(DARK, "tui/themes/dark.tcss");
-            e.loadStylesheet(LIGHT, "tui/themes/light.tcss");
+            e.loadStylesheet(mode, "tui/themes/" + mode + ".tcss");
             e.setActiveStylesheet(mode);
             engine = e;
         } catch (Exception ex) {
