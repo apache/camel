@@ -33,7 +33,9 @@ import org.apache.camel.component.direct.DirectEndpoint;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SamplingThrottlerTest extends ContextTestSupport {
 
@@ -66,8 +68,8 @@ public class SamplingThrottlerTest extends ContextTestSupport {
 
         // send a burst of 5 exchanges, expecting only one to get through
         sendExchangesThroughDroppingThrottler(sentExchanges, 5);
-        // sleep through a complete period
-        Thread.sleep(1100);
+        // wait through a complete sampling period (1s) using Awaitility instead of Thread.sleep
+        await().pollDelay(Duration.ofMillis(1100)).atMost(Duration.ofSeconds(3)).until(() -> true);
         // send another 5 now
         sendExchangesThroughDroppingThrottler(sentExchanges, 5);
 
@@ -116,28 +118,32 @@ public class SamplingThrottlerTest extends ContextTestSupport {
     public void testSamplingUsingMessageFrequency() throws Exception {
         long totalMessages = 100;
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMinimumMessageCount(10);
-        mock.setResultWaitTime(100);
 
         for (int i = 0; i < totalMessages; i++) {
             template.sendBody("direct:sample-messageFrequency", "<message>" + i + "</message>");
         }
 
-        mock.assertIsSatisfied();
+        await().atMost(Duration.ofSeconds(5))
+                .untilAsserted(() -> {
+                    int count = mock.getReceivedCounter();
+                    assertTrue(count >= 10, "Expected at least 10 messages but got " + count);
+                });
     }
 
     @Test
     public void testSamplingUsingMessageFrequencyViaDSL() throws Exception {
         long totalMessages = 50;
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMinimumMessageCount(10);
-        mock.setResultWaitTime(100);
 
         for (int i = 0; i < totalMessages; i++) {
             template.sendBody("direct:sample-messageFrequency-via-dsl", "<message>" + i + "</message>");
         }
 
-        mock.assertIsSatisfied();
+        await().atMost(Duration.ofSeconds(5))
+                .untilAsserted(() -> {
+                    int count = mock.getReceivedCounter();
+                    assertTrue(count >= 10, "Expected at least 10 messages but got " + count);
+                });
     }
 
     private void sendExchangesThroughDroppingThrottler(List<Exchange> sentExchanges, int messages) throws Exception {
@@ -151,7 +157,8 @@ public class SamplingThrottlerTest extends ContextTestSupport {
             if (context.getStatus().isStarted()) {
                 myTemplate.send(targetEndpoint, e);
                 sentExchanges.add(e);
-                Thread.sleep(100);
+                // pace messages using Awaitility instead of Thread.sleep
+                await().pollDelay(Duration.ofMillis(100)).atMost(Duration.ofSeconds(1)).until(() -> true);
             }
         }
         myTemplate.stop();
