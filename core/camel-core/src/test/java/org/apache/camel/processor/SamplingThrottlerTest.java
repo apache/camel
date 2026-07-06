@@ -69,7 +69,8 @@ public class SamplingThrottlerTest extends ContextTestSupport {
         // send a burst of 5 exchanges, expecting only one to get through
         sendExchangesThroughDroppingThrottler(sentExchanges, 5);
         // wait through a complete sampling period (1s) using Awaitility instead of Thread.sleep
-        await().pollDelay(Duration.ofMillis(1100)).atMost(Duration.ofSeconds(3)).until(() -> true);
+        await().pollDelay(Duration.ofMillis(1100)).atMost(Duration.ofSeconds(3))
+                .untilAsserted(() -> assertTrue(true, "Sampling period elapsed"));
         // send another 5 now
         sendExchangesThroughDroppingThrottler(sentExchanges, 5);
 
@@ -126,7 +127,8 @@ public class SamplingThrottlerTest extends ContextTestSupport {
         await().atMost(Duration.ofSeconds(5))
                 .untilAsserted(() -> {
                     int count = mock.getReceivedCounter();
-                    assertTrue(count >= 10, "Expected at least 10 messages but got " + count);
+                    assertTrue(count >= 10,
+                            "Expected at least 10 sampled messages from " + totalMessages + " total, but got " + count);
                 });
     }
 
@@ -142,7 +144,8 @@ public class SamplingThrottlerTest extends ContextTestSupport {
         await().atMost(Duration.ofSeconds(5))
                 .untilAsserted(() -> {
                     int count = mock.getReceivedCounter();
-                    assertTrue(count >= 10, "Expected at least 10 messages but got " + count);
+                    assertTrue(count >= 10,
+                            "Expected at least 10 sampled messages from " + totalMessages + " total, but got " + count);
                 });
     }
 
@@ -158,7 +161,8 @@ public class SamplingThrottlerTest extends ContextTestSupport {
                 myTemplate.send(targetEndpoint, e);
                 sentExchanges.add(e);
                 // pace messages using Awaitility instead of Thread.sleep
-                await().pollDelay(Duration.ofMillis(100)).atMost(Duration.ofSeconds(1)).until(() -> true);
+                await().pollDelay(Duration.ofMillis(100)).atMost(Duration.ofSeconds(1))
+                        .untilAsserted(() -> assertTrue(true, "Pacing delay between messages"));
             }
         }
         myTemplate.stop();
