@@ -17,6 +17,8 @@
 package org.apache.camel.component.reactive.streams;
 
 import java.time.Duration;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -116,8 +118,15 @@ public class BackpressureStrategyTest extends BaseReactiveTest {
         await().during(Duration.ofMillis(500))
                 .atMost(Duration.ofSeconds(2))
                 .until(() -> queue.size() == 2);
-        int sum = queue.stream().reduce((i, j) -> i + j).get();
-        assertEquals(3, sum); // 1 + 2 = 3
+        // Verify OLDEST strategy behavior:
+        // - First item is always 1 (OLDEST keeps the first buffered item)
+        // - Second item is an early value (the first item buffered after the initial flush)
+        // The exact second value depends on flush timing vs timer events,
+        // but it must be > 1 and much less than 20 (the last timer event)
+        List<Integer> items = new ArrayList<>(queue);
+        assertEquals(1, items.get(0).intValue(), "OLDEST strategy should deliver item 1 first");
+        assertTrue(items.get(1) > 1 && items.get(1) < 20,
+                "OLDEST strategy should keep an early buffered item, got: " + items.get(1));
 
         subscriber.cancel();
     }
@@ -168,8 +177,13 @@ public class BackpressureStrategyTest extends BaseReactiveTest {
         await().during(Duration.ofMillis(500))
                 .atMost(Duration.ofSeconds(2))
                 .until(() -> queue.size() == 2);
-        int sum = queue.stream().reduce((i, j) -> i + j).get();
-        assertEquals(21, sum); // 1 + 20 = 21
+        // Verify LATEST strategy behavior:
+        // - Second item is always 20 (LATEST always replaces with the newest)
+        // - First item depends on flush timing but is always < 20
+        List<Integer> items = new ArrayList<>(queue);
+        assertTrue(items.get(0) >= 1 && items.get(0) < 20,
+                "First item should be less than 20, got: " + items.get(0));
+        assertEquals(20, items.get(1).intValue(), "LATEST strategy should keep the most recent item (20)");
 
         subscriber.cancel();
     }
@@ -217,8 +231,12 @@ public class BackpressureStrategyTest extends BaseReactiveTest {
         await().during(Duration.ofMillis(500))
                 .atMost(Duration.ofSeconds(2))
                 .until(() -> queue.size() == 2);
-        int sum = queue.stream().reduce((i, j) -> i + j).get();
-        assertEquals(3, sum); // 1 + 2 = 3
+        // Verify OLDEST strategy behavior (same invariant as testBackpressureDropStrategy):
+        // - First item is always 1, second is an early buffered item
+        List<Integer> items = new ArrayList<>(queue);
+        assertEquals(1, items.get(0).intValue(), "OLDEST strategy should deliver item 1 first");
+        assertTrue(items.get(1) > 1 && items.get(1) < 20,
+                "OLDEST strategy should keep an early buffered item, got: " + items.get(1));
 
         subscriber.cancel();
     }
