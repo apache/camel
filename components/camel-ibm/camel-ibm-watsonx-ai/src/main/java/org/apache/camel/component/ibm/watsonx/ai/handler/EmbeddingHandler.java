@@ -67,7 +67,7 @@ public class EmbeddingHandler extends AbstractWatsonxAiHandler {
 
         // Call the service
         EmbeddingService service = endpoint.getEmbeddingService();
-        EmbeddingResponse response = service.embedding(inputs, paramsBuilder.build());
+        EmbeddingResponse response = service.embed(inputs, paramsBuilder.build());
 
         // Extract embedding vectors from response
         List<List<Float>> embeddings = response.results().stream()
