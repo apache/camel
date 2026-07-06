@@ -176,7 +176,7 @@ class DataSourceTab extends AbstractTableTab {
         sorted.sort(this::sortDataSource);
         List<String> items = sorted.stream().map(d -> d.name != null ? d.name : "").toList();
         Integer sel = tableState.selected();
-        return new SelectionContext("table", items, sel != null ? sel : -1, items.size(), "DataSource");
+        return new SelectionContext("table", items, sel != null ? sel : -1, items.size(), "JDBC DataSource");
     }
 
     @Override
@@ -236,7 +236,7 @@ class DataSourceTab extends AbstractTableTab {
             return null;
         }
         JsonObject result = new JsonObject();
-        result.put("tab", "DataSource");
+        result.put("tab", "JDBC DataSource");
         JsonArray rows = new JsonArray();
         for (DataSourceInfo di : info.dataSources) {
             JsonObject row = new JsonObject();

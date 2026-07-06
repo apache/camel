@@ -80,6 +80,7 @@ class TabRegistry {
     private BeansTab beansTab;
     private BrowseTab browseTab;
     private ClasspathTab classpathTab;
+    private MavenDependenciesTab mavenDependenciesTab;
     private CveAuditTab cveAuditTab;
     private InflightTab inflightTab;
     private MemoryTab memoryTab;
@@ -126,6 +127,7 @@ class TabRegistry {
         beansTab = new BeansTab(ctx);
         browseTab = new BrowseTab(ctx);
         classpathTab = new ClasspathTab(ctx);
+        mavenDependenciesTab = new MavenDependenciesTab(ctx);
         cveAuditTab = new CveAuditTab(ctx);
         inflightTab = new InflightTab(ctx);
         memoryTab = new MemoryTab(ctx, dataService.metrics());
@@ -151,9 +153,10 @@ class TabRegistry {
                 new MoreTab(TuiIcons.TAB_CONFIGURATION, "Configuration", "Confi&guration", configurationTab),
                 new MoreTab(TuiIcons.TAB_CONSUMERS, "Consumers", "Co&nsumers", consumersTab),
                 new MoreTab(TuiIcons.TAB_CVE_AUDIT, "CVE Audit", "C&VE Audit", cveAuditTab),
-                new MoreTab(TuiIcons.TAB_DATASOURCE, "DataSource", "&DataSource", dataSourceTab),
                 new MoreTab(TuiIcons.TAB_HEAP, "Heap Histogram", "&Heap Histogram", heapHistogramTab),
                 new MoreTab(TuiIcons.TAB_INFLIGHT, "Inflight", "&Inflight", inflightTab),
+                new MoreTab(TuiIcons.TAB_DATASOURCE, "JDBC DataSource", "&JDBC DataSource", dataSourceTab),
+                new MoreTab(TuiIcons.TAB_MAVEN_DEPENDENCIES, "Maven Dependencies", "Maven &Dependencies", mavenDependenciesTab),
                 new MoreTab(TuiIcons.TAB_MEMORY, "Memory", "&Memory", memoryTab),
                 new MoreTab(TuiIcons.TAB_MEMORY_LEAK, "Memory Leak", "Memory Lea&k", memoryLeakTab),
                 new MoreTab(TuiIcons.TAB_METRICS, "Metrics", "M&etrics", metricsTab),
@@ -262,6 +265,7 @@ class TabRegistry {
         cveAuditTab.onIntegrationChanged();
         dataSourceTab.onIntegrationChanged();
         heapHistogramTab.onIntegrationChanged();
+        mavenDependenciesTab.onIntegrationChanged();
         memoryLeakTab.onIntegrationChanged();
         sqlQueryTab.onIntegrationChanged();
         sqlTraceTab.onIntegrationChanged();
@@ -330,6 +334,10 @@ class TabRegistry {
 
     ClasspathTab classpathTab() {
         return classpathTab;
+    }
+
+    MavenDependenciesTab mavenDependenciesTab() {
+        return mavenDependenciesTab;
     }
 
     CveAuditTab cveAuditTab() {

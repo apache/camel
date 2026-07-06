@@ -52,6 +52,8 @@ import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.*;
 
 class ClasspathTab extends AbstractTab {
 
+    private static final String[] SCOPES = { "all", "camel", "other" };
+
     private final ListState listState = new ListState();
     private final ScrollbarState listScrollState = new ScrollbarState();
     private final AtomicBoolean loading = new AtomicBoolean(false);
@@ -60,6 +62,7 @@ class ClasspathTab extends AbstractTab {
     private boolean filterInputActive;
     private TextInputState filterInputState = new TextInputState("");
     private String filterTerm;
+    private int scopeIndex;
     private List<JarEntry> allEntries = Collections.emptyList();
     private List<JarEntry> filteredEntries = Collections.emptyList();
     private String lastPid;
@@ -89,6 +92,7 @@ class ClasspathTab extends AbstractTab {
         filteredEntries = Collections.emptyList();
         filterTerm = null;
         filterInputActive = false;
+        scopeIndex = 0;
         lastPid = null;
         errorMessage = null;
         dataLoaded = false;
@@ -102,6 +106,11 @@ class ClasspathTab extends AbstractTab {
         if (ke.isChar('/')) {
             filterInputActive = true;
             filterInputState = new TextInputState(filterTerm != null ? filterTerm : "");
+            return true;
+        }
+        if (ke.isCharIgnoreCase('f')) {
+            scopeIndex = (scopeIndex + 1) % SCOPES.length;
+            refilter();
             return true;
         }
         if (ke.isPageUp() || ke.isKey(KeyCode.PAGE_UP)) {
@@ -222,9 +231,22 @@ class ClasspathTab extends AbstractTab {
             items.add(ListItem.from("  No classpath entries found").style(Style.EMPTY.dim()));
         }
 
-        String title = filterTerm != null
-                ? String.format(" Classpath [%d/%d] filter:\"%s\" ", filteredEntries.size(), allEntries.size(), filterTerm)
-                : String.format(" Classpath [%d] ", filteredEntries.size());
+        String scope = SCOPES[scopeIndex];
+        StringBuilder sb = new StringBuilder(" Classpath [");
+        if (filterTerm != null || !"all".equals(scope)) {
+            sb.append(filteredEntries.size()).append('/').append(allEntries.size());
+        } else {
+            sb.append(filteredEntries.size());
+        }
+        sb.append(']');
+        if (!"all".equals(scope)) {
+            sb.append(" scope:").append(scope);
+        }
+        if (filterTerm != null) {
+            sb.append(" filter:\"").append(filterTerm).append('"');
+        }
+        sb.append(' ');
+        String title = sb.toString();
 
         ListWidget list = ListWidget.builder()
                 .items(items.toArray(ListItem[]::new))
@@ -257,6 +279,7 @@ class ClasspathTab extends AbstractTab {
             return;
         }
         hint(spans, "Esc", filterTerm != null ? "clear" : "back");
+        hint(spans, "f", "scope [" + SCOPES[scopeIndex] + "]");
         if (filterTerm != null) {
             spans.add(Span.styled("  /", Style.EMPTY.fg(Color.YELLOW).bold()));
             spans.add(Span.raw("\"" + filterTerm + "\"  "));
@@ -341,10 +364,18 @@ class ClasspathTab extends AbstractTab {
     private void refilter() {
         List<JarEntry> result = new ArrayList<>();
         String ft = filterTerm != null ? filterTerm.toLowerCase() : null;
+        String scope = SCOPES[scopeIndex];
         for (JarEntry entry : allEntries) {
-            if (ft == null || entry.display().toLowerCase().contains(ft)) {
-                result.add(entry);
+            if ("camel".equals(scope) && !entry.isCamel()) {
+                continue;
             }
+            if ("other".equals(scope) && entry.isCamel()) {
+                continue;
+            }
+            if (ft != null && !entry.display().toLowerCase().contains(ft)) {
+                continue;
+            }
+            result.add(entry);
         }
         filteredEntries = result;
         listState.select(filteredEntries.isEmpty() ? null : 0);
@@ -454,16 +485,22 @@ class ClasspathTab extends AbstractTab {
                  org.slf4j:slf4j-api                         2.0.16
                 ```
 
+                ## Scope
+
+                Press `f` to cycle the scope filter:
+
+                - **all** — show all classpath entries (default)
+                - **camel** — show only Apache Camel JARs
+                - **other** — show only non-Camel (third-party) JARs
+
+                The active scope is shown in the footer and title bar.
+
                 ## Filter
 
                 Press `/` to open the filter input. Type a search term and press
                 `Enter` to filter the classpath by substring match. For example,
                 type `kafka` to find all Kafka-related JARs, or `jackson` to find
-                Jackson dependencies.
-
-                - `/` — open filter input
-                - `Enter` — apply filter
-                - `Esc` — clear filter
+                Jackson dependencies. The scope and text filter work together.
 
                 ## When To Use
 
@@ -476,6 +513,7 @@ class ClasspathTab extends AbstractTab {
 
                 - `Up/Down` — navigate entries
                 - `PgUp/PgDn` — scroll by page
+                - `f` — cycle scope (all, camel, other)
                 - `/` — open filter
                 - `Esc` — clear filter or back
                 """;
