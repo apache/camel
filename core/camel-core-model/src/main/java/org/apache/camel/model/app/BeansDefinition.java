@@ -143,8 +143,8 @@ public class BeansDefinition {
     }
 
     /**
-     * @deprecated use standard Camel XML DSL (camel-xml-io) instead of legacy Spring/Blueprint XML.
-     *             This feature will be removed in a future release.
+     * @deprecated use standard Camel XML DSL (camel-xml-io) instead of legacy Spring/Blueprint XML. This feature will
+     *             be removed in a future release.
      */
     @Deprecated(since = "4.22")
     public List<Element> getSpringOrBlueprintBeans() {
@@ -152,8 +152,8 @@ public class BeansDefinition {
     }
 
     /**
-     * @deprecated use standard Camel XML DSL (camel-xml-io) instead of legacy Spring/Blueprint XML.
-     *             This feature will be removed in a future release.
+     * @deprecated use standard Camel XML DSL (camel-xml-io) instead of legacy Spring/Blueprint XML. This feature will
+     *             be removed in a future release.
      */
     @Deprecated(since = "4.22")
     public void setSpringOrBlueprintBeans(List<Element> springOrBlueprintBeans) {

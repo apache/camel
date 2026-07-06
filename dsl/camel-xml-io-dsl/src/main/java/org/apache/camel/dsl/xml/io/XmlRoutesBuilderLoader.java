@@ -398,7 +398,7 @@ public class XmlRoutesBuilderLoader extends RouteBuilderLoaderSupport {
                 springBlueprintWarned = true;
                 LOG.warn(
                         "Detected legacy Spring <beans> or OSGi <blueprint> XML. This feature is deprecated and will be removed in a future release."
-                                + " Migrate to standard Camel XML DSL (camel-xml-io).");
+                         + " Migrate to standard Camel XML DSL (camel-xml-io).");
             }
             Document doc = app.getSpringOrBlueprintBeans().get(0).getOwnerDocument();
             String ns = doc.getDocumentElement().getNamespaceURI();
