@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
@@ -155,13 +154,6 @@ public class PrepareCamelMainMojo extends AbstractGeneratorMojo {
         return answer;
     }
 
-    private static final Set<String> SETTABLE_JAVA_TYPES = Set.of(
-            "java.lang.String", "java.lang.Integer", "java.lang.Long", "java.lang.Boolean",
-            "java.lang.Double", "java.lang.Float", "java.lang.Short", "java.lang.Byte",
-            "int", "long", "boolean", "double", "float", "short", "byte",
-            "java.util.Map", "java.util.concurrent.TimeUnit",
-            "org.apache.camel.support.jsse.SSLContextParameters");
-
     /**
      * Loads cluster service configuration metadata from a bean JSON file.
      */
@@ -194,12 +186,6 @@ public class PrepareCamelMainMojo extends AbstractGeneratorMojo {
                 JsonObject prop = (JsonObject) entry.getValue();
 
                 String javaType = prop.getString("javaType");
-                String label = prop.getString("label");
-
-                // skip advanced properties with component-specific types
-                if (label != null && label.contains("advanced") && !SETTABLE_JAVA_TYPES.contains(javaType)) {
-                    continue;
-                }
 
                 MainModel.MainOptionModel model = new MainModel.MainOptionModel();
                 model.setName(prefix + name);

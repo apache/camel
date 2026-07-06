@@ -756,12 +756,13 @@ The camel.cluster.file supports 10 options, which are listed below.
 
 
 === Camel Kubernetes Cluster Service configurations
-The camel.cluster.kubernetes supports 14 options, which are listed below.
+The camel.cluster.kubernetes supports 15 options, which are listed below.
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *camel.cluster.kubernetes.clusterLabels* | Labels used to identify the members of the cluster. |  | Map
+| *camel.cluster.kubernetes.configuration* | To use an existing configuration for Kubernetes |  | KubernetesConfiguration
 | *camel.cluster.kubernetes.connectionTimeout* | Connection timeout in milliseconds to use when making requests to the Kubernetes API server. |  | Integer
 | *camel.cluster.kubernetes.enabled* | Whether to enable this cluster service. | true | boolean
 | *camel.cluster.kubernetes.groupName* | Name of the lock group (or namespace according to the Camel cluster convention) within the chosen ConfigMap. |  | String
@@ -779,7 +780,7 @@ The camel.cluster.kubernetes supports 14 options, which are listed below.
 
 
 === Camel ZooKeeper Cluster Service configurations
-The camel.cluster.zookeeper supports 11 options, which are listed below.
+The camel.cluster.zookeeper supports 12 options, which are listed below.
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -794,18 +795,20 @@ The camel.cluster.zookeeper supports 11 options, which are listed below.
 | *camel.cluster.zookeeper.reconnectBaseSleepTime* | Initial amount of time (millis) to wait between retries | 1000 | long
 | *camel.cluster.zookeeper.reconnectMaxRetries* | Max number of times to retry | 3 | int
 | *camel.cluster.zookeeper.reconnectMaxSleepTime* | Max time (millis) to sleep on each retry |  | long
+| *camel.cluster.zookeeper.retryPolicy* | To use a custom retry policy implementation |  | RetryPolicy
 | *camel.cluster.zookeeper.sessionTimeout* | Session timeout (millis) | 60000 | long
 |===
 
 
 === Camel Consul Cluster Service configurations
-The camel.cluster.consul supports 16 options, which are listed below.
+The camel.cluster.consul supports 17 options, which are listed below.
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *camel.cluster.consul.aclToken* | Sets the ACL token to be used with Consul |  | String
 | *camel.cluster.consul.blockSeconds* | The second to wait for a watch event, default 10 seconds | 10 | int
+| *camel.cluster.consul.configuration* | To use an existing configuration |  | ConsulClusterConfiguration
 | *camel.cluster.consul.connectTimeout* | Connect timeout in millis |  | int
 | *camel.cluster.consul.datacenter* | The data center |  | String
 | *camel.cluster.consul.enabled* | Whether to enable this cluster service. | true | boolean
@@ -824,7 +827,7 @@ The camel.cluster.consul supports 16 options, which are listed below.
 
 
 === Camel JGroups Raft Cluster Service configurations
-The camel.cluster.jgroups-raft supports 4 options, which are listed below.
+The camel.cluster.jgroups-raft supports 5 options, which are listed below.
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -833,16 +836,19 @@ The camel.cluster.jgroups-raft supports 4 options, which are listed below.
 | *camel.cluster.jgroups-raft.id* | Unique Raft id |  | String
 | *camel.cluster.jgroups-raft.jgroupsClusterName* | The name of the cluster | jgroupsraft-master | String
 | *camel.cluster.jgroups-raft.jgroupsConfig* | The path to the JGroups Raft configuration | raft.xml | String
+| *camel.cluster.jgroups-raft.raftHandle* | To use a custom RaftHandler |  | RaftHandle
 |===
 
 
 === Camel Infinispan Remote Cluster Service configurations
-The camel.cluster.infinispan supports 14 options, which are listed below.
+The camel.cluster.infinispan supports 16 options, which are listed below.
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *camel.cluster.infinispan.cacheContainer* | Specifies the cache Container to connect |  | RemoteCacheManager
+| *camel.cluster.infinispan.cacheContainerConfiguration* | The CacheContainer configuration. Used if the cacheContainer is not defined. |  | Configuration
+| *camel.cluster.infinispan.configuration* | To use an existing configuration |  | InfinispanRemoteClusterConfiguration
 | *camel.cluster.infinispan.configurationProperties* | Implementation specific properties for the CacheManager |  | Map
 | *camel.cluster.infinispan.configurationUri* | An implementation specific URI for the CacheManager |  | String
 | *camel.cluster.infinispan.enabled* | Whether to enable this cluster service. | true | boolean
