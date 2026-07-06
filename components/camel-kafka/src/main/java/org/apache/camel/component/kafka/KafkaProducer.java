@@ -27,6 +27,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -332,6 +333,10 @@ public class KafkaProducer extends DefaultAsyncProducer implements RouteIdAware 
     }
 
     private boolean isIterable(Object body) {
+        if (body instanceof JsonNode node) {
+            return node.isContainerNode();
+        }
+
         if (body instanceof Iterable || body instanceof Iterator) {
             return true;
         }
