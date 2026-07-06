@@ -96,6 +96,11 @@ class ClasspathTab extends AbstractTab {
         lastPid = null;
         errorMessage = null;
         dataLoaded = false;
+        loading.set(false);
+        if (ctx.selectedPid != null) {
+            lastPid = ctx.selectedPid;
+            loadClasspath();
+        }
     }
 
     @Override

@@ -16,25 +16,13 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
 
 import dev.tamboui.layout.Constraint;
 import dev.tamboui.layout.Rect;
@@ -54,10 +42,6 @@ import dev.tamboui.widgets.paragraph.Paragraph;
 import dev.tamboui.widgets.table.Cell;
 import dev.tamboui.widgets.table.Row;
 import dev.tamboui.widgets.table.Table;
-import org.apache.camel.dsl.jbang.core.common.XmlHelper;
-import org.apache.camel.tooling.maven.MavenArtifact;
-import org.apache.camel.tooling.maven.MavenDownloaderImpl;
-import org.apache.camel.tooling.maven.MavenGav;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 
@@ -78,8 +62,8 @@ class MavenDependenciesTab extends AbstractTableTab {
     private TextInputState filterInputState = new TextInputState("");
     private String filterTerm;
     private int scopeIndex;
-    private List<DepEntry> allEntries = Collections.emptyList();
-    private List<DepEntry> filteredEntries = Collections.emptyList();
+    private List<DependencyLoader.DepEntry> allEntries = Collections.emptyList();
+    private List<DependencyLoader.DepEntry> filteredEntries = Collections.emptyList();
     private String lastPid;
     private String errorMessage;
     private boolean dataLoaded;
@@ -87,7 +71,7 @@ class MavenDependenciesTab extends AbstractTableTab {
     private boolean transitiveMode;
     private boolean transitiveLoading;
     private boolean transitiveLoaded;
-    private List<DepEntry> transitiveEntries = Collections.emptyList();
+    private List<DependencyLoader.DepEntry> transitiveEntries = Collections.emptyList();
 
     MavenDependenciesTab(MonitorContext ctx) {
         super(ctx, "artifact", "version", "via");
@@ -121,6 +105,11 @@ class MavenDependenciesTab extends AbstractTableTab {
         transitiveLoading = false;
         transitiveLoaded = false;
         transitiveEntries = Collections.emptyList();
+        loading.set(false);
+        if (ctx.selectedPid != null) {
+            lastPid = ctx.selectedPid;
+            loadDependencies();
+        }
     }
 
     @Override
@@ -226,16 +215,16 @@ class MavenDependenciesTab extends AbstractTableTab {
 
     @Override
     protected void renderContent(Frame frame, Rect area, IntegrationInfo info) {
-        List<DepEntry> sorted = new ArrayList<>(filteredEntries);
+        List<DependencyLoader.DepEntry> sorted = new ArrayList<>(filteredEntries);
         sorted.sort(this::sortDep);
 
         List<Row> rows = new ArrayList<>();
-        for (DepEntry entry : sorted) {
+        for (DependencyLoader.DepEntry entry : sorted) {
             String artifact = entry.groupId() + ":" + entry.artifactId();
             String ver = entry.version() != null ? entry.version() : "";
             Style style = entry.transitive() ? Style.EMPTY.dim() : Style.EMPTY;
             if (transitiveMode) {
-                String via = entry.parent() != null ? shortArtifact(entry.parent()) : "";
+                String via = entry.parent() != null ? DependencyLoader.shortArtifact(entry.parent()) : "";
                 rows.add(Row.from(
                         Cell.from(Span.styled(" " + artifact, style)),
                         Cell.from(Span.styled(ver, style)),
@@ -335,7 +324,7 @@ class MavenDependenciesTab extends AbstractTableTab {
         hintLast(spans, TuiIcons.HINT_SCROLL, "navigate");
     }
 
-    private int sortDep(DepEntry a, DepEntry b) {
+    private int sortDep(DependencyLoader.DepEntry a, DependencyLoader.DepEntry b) {
         int result = switch (sort) {
             case "version" -> {
                 String va = a.version() != null ? a.version() : "";
@@ -343,8 +332,8 @@ class MavenDependenciesTab extends AbstractTableTab {
                 yield va.compareToIgnoreCase(vb);
             }
             case "via" -> {
-                String pa = a.parent() != null ? shortArtifact(a.parent()) : "";
-                String pb = b.parent() != null ? shortArtifact(b.parent()) : "";
+                String pa = a.parent() != null ? DependencyLoader.shortArtifact(a.parent()) : "";
+                String pb = b.parent() != null ? DependencyLoader.shortArtifact(b.parent()) : "";
                 yield pa.compareToIgnoreCase(pb);
             }
             default -> { // "artifact"
@@ -365,56 +354,8 @@ class MavenDependenciesTab extends AbstractTableTab {
 
         ctx.runner.scheduler().execute(() -> {
             try {
-                List<Path> candidates = new ArrayList<>();
-                Path sourceDir = FilesBrowser.resolveSourceDirectory(info);
-                if (sourceDir != null) {
-                    candidates.add(sourceDir);
-                }
-                if (info.directory != null && !info.directory.isEmpty()) {
-                    Path infoDir = Path.of(info.directory);
-                    if (!candidates.contains(infoDir)) {
-                        candidates.add(infoDir);
-                    }
-                }
-                if (candidates.isEmpty()) {
-                    applyResult(Collections.emptyList(), null, "Cannot determine integration directory");
-                    return;
-                }
-
-                boolean jbangMode = "JBang".equals(info.platform) || "Camel".equals(info.platform);
-
-                if (jbangMode) {
-                    for (Path dir : candidates) {
-                        Path propsFile = dir.resolve(".camel-jbang").resolve("camel-jbang-run.properties");
-                        if (Files.exists(propsFile)) {
-                            List<DepEntry> deps = loadFromRunProperties(propsFile);
-                            applyResult(deps, "jbang", deps.isEmpty() ? "No dependencies in run properties" : null);
-                            return;
-                        }
-                    }
-                }
-
-                for (Path dir : candidates) {
-                    Path pomFile = dir.resolve("pom.xml");
-                    if (Files.exists(pomFile)) {
-                        List<DepEntry> deps = loadFromPomXml(pomFile);
-                        applyResult(deps, "pom.xml", deps.isEmpty() ? "No compile dependencies in pom.xml" : null);
-                        return;
-                    }
-                }
-
-                if (!jbangMode) {
-                    for (Path dir : candidates) {
-                        Path propsFile = dir.resolve(".camel-jbang").resolve("camel-jbang-run.properties");
-                        if (Files.exists(propsFile)) {
-                            List<DepEntry> deps = loadFromRunProperties(propsFile);
-                            applyResult(deps, "jbang", deps.isEmpty() ? "No dependencies in run properties" : null);
-                            return;
-                        }
-                    }
-                }
-
-                applyResult(Collections.emptyList(), null, "No dependency information found");
+                DependencyLoader.LoadResult result = DependencyLoader.loadDependencies(info);
+                applyResult(result.entries(), result.source(), result.error());
             } catch (Exception e) {
                 applyResult(Collections.emptyList(), null, "Error: " + e.getMessage());
             } finally {
@@ -429,45 +370,8 @@ class MavenDependenciesTab extends AbstractTableTab {
         }
         transitiveLoading = true;
         ctx.runner.scheduler().execute(() -> {
-            try (MavenDownloaderImpl downloader = new MavenDownloaderImpl()) {
-                downloader.build();
-
-                Set<String> directKeys = new HashSet<>();
-                for (DepEntry d : allEntries) {
-                    directKeys.add(d.groupId() + ":" + d.artifactId());
-                }
-
-                boolean hasSnapshot = allEntries.stream()
-                        .anyMatch(d -> d.version() != null && d.version().contains("SNAPSHOT"));
-
-                Map<String, DepEntry> transitiveMap = new HashMap<>();
-                for (DepEntry direct : allEntries) {
-                    if (direct.version() == null) {
-                        continue;
-                    }
-                    String gav = direct.groupId() + ":" + direct.artifactId() + ":" + direct.version();
-                    String parentKey = direct.groupId() + ":" + direct.artifactId();
-                    try {
-                        List<MavenArtifact> resolved = downloader.resolveArtifacts(
-                                List.of(gav), Set.of(), true, hasSnapshot);
-                        for (MavenArtifact ma : resolved) {
-                            MavenGav g = ma.getGav();
-                            if (skipArtifact(g.getGroupId(), g.getArtifactId())) {
-                                continue;
-                            }
-                            String key = g.getGroupId() + ":" + g.getArtifactId();
-                            if (!directKeys.contains(key) && !transitiveMap.containsKey(key)) {
-                                transitiveMap.put(key, new DepEntry(
-                                        g.getGroupId(), g.getArtifactId(), g.getVersion(), true, parentKey));
-                            }
-                        }
-                    } catch (Exception e) {
-                        // skip this dependency
-                    }
-                }
-
-                List<DepEntry> entries = new ArrayList<>(transitiveMap.values());
-                entries.sort(Comparator.comparing(DepEntry::display, String.CASE_INSENSITIVE_ORDER));
+            try {
+                List<DependencyLoader.DepEntry> entries = DependencyLoader.resolveTransitives(allEntries);
                 applyTransitiveResult(entries);
             } catch (Exception e) {
                 applyTransitiveResult(Collections.emptyList());
@@ -475,7 +379,7 @@ class MavenDependenciesTab extends AbstractTableTab {
         });
     }
 
-    private void applyTransitiveResult(List<DepEntry> entries) {
+    private void applyTransitiveResult(List<DependencyLoader.DepEntry> entries) {
         if (ctx.runner == null) {
             return;
         }
@@ -488,207 +392,7 @@ class MavenDependenciesTab extends AbstractTableTab {
         });
     }
 
-    private List<DepEntry> loadFromPomXml(Path pomFile) {
-        try {
-            DocumentBuilderFactory dbf = XmlHelper.createDocumentBuilderFactory();
-            DocumentBuilder db = dbf.newDocumentBuilder();
-            Document dom;
-            try (InputStream is = Files.newInputStream(pomFile)) {
-                dom = db.parse(is);
-            }
-
-            Map<String, String> properties = new HashMap<>();
-            NodeList propsList = dom.getElementsByTagName("properties");
-            if (propsList.getLength() > 0) {
-                Element propsEl = (Element) propsList.item(0);
-                for (int i = 0; i < propsEl.getChildNodes().getLength(); i++) {
-                    if (propsEl.getChildNodes().item(i) instanceof Element prop) {
-                        properties.put(prop.getTagName(), prop.getTextContent().trim());
-                    }
-                }
-            }
-
-            String camelVersion = null;
-            String springBootVersion = null;
-            String quarkusVersion = null;
-
-            NodeList parentList = dom.getElementsByTagName("parent");
-            if (parentList.getLength() > 0) {
-                Element parentEl = (Element) parentList.item(0);
-                String pg = textContent(parentEl, "groupId");
-                String pa = textContent(parentEl, "artifactId");
-                String pv = textContent(parentEl, "version");
-                pv = resolveProperty(pv, properties);
-                if ("org.springframework.boot".equals(pg)
-                        && ("spring-boot-starter-parent".equals(pa) || "spring-boot-dependencies".equals(pa))) {
-                    springBootVersion = pv;
-                }
-                if ("org.apache.camel.springboot".equals(pg) && "camel-spring-boot-bom".equals(pa)) {
-                    camelVersion = pv;
-                }
-            }
-
-            NodeList nl = dom.getElementsByTagName("dependency");
-            List<DepEntry> deps = new ArrayList<>();
-
-            for (int i = 0; i < nl.getLength(); i++) {
-                Element node = (Element) nl.item(i);
-
-                String p = node.getParentNode().getNodeName();
-                String p2 = node.getParentNode().getParentNode().getNodeName();
-                boolean accept = ("dependencyManagement".equals(p2) || "project".equals(p2))
-                        && "dependencies".equals(p);
-                if (!accept) {
-                    continue;
-                }
-
-                String g = node.getElementsByTagName("groupId").item(0).getTextContent();
-                String a = node.getElementsByTagName("artifactId").item(0).getTextContent();
-                String v = null;
-                NodeList vl = node.getElementsByTagName("version");
-                if (vl.getLength() > 0) {
-                    v = vl.item(0).getTextContent();
-                }
-
-                v = resolveProperty(v, properties);
-
-                if ("org.apache.camel".equals(g) && "camel-bom".equals(a)) {
-                    camelVersion = v;
-                    continue;
-                }
-                if ("org.apache.camel.springboot".equals(g) && "camel-spring-boot-bom".equals(a)) {
-                    camelVersion = v;
-                    continue;
-                }
-                if ("org.springframework.boot".equals(g) && "spring-boot-dependencies".equals(a)) {
-                    springBootVersion = v;
-                    continue;
-                }
-                if (("${quarkus.platform.group-id}".equals(g) || "io.quarkus.platform".equals(g))
-                        && ("${quarkus.platform.artifact-id}".equals(a) || "quarkus-bom".equals(a))) {
-                    if ("${quarkus.platform.version}".equals(v)) {
-                        NodeList qvl = dom.getElementsByTagName("quarkus.platform.version");
-                        if (qvl.getLength() > 0) {
-                            quarkusVersion = qvl.item(0).getTextContent();
-                        }
-                    } else {
-                        quarkusVersion = v;
-                    }
-                    continue;
-                }
-
-                String scope = null;
-                NodeList sl = node.getElementsByTagName("scope");
-                if (sl.getLength() > 0) {
-                    scope = sl.item(0).getTextContent();
-                }
-                if ("test".equals(scope) || "import".equals(scope)) {
-                    continue;
-                }
-
-                if (v == null && "org.apache.camel".equals(g)) {
-                    v = camelVersion;
-                }
-                if (v == null && "org.apache.camel.springboot".equals(g)) {
-                    v = camelVersion;
-                }
-                if (v == null && "org.springframework.boot".equals(g)) {
-                    v = springBootVersion;
-                }
-                if (v == null && ("io.quarkus".equals(g) || "org.apache.camel.quarkus".equals(g))) {
-                    v = quarkusVersion;
-                }
-
-                g = resolveProperty(g, properties);
-                a = resolveProperty(a, properties);
-                v = resolveProperty(v, properties);
-
-                if (skipArtifact(g, a)) {
-                    continue;
-                }
-
-                deps.add(new DepEntry(g, a, v));
-            }
-
-            deps.sort(Comparator.comparing(DepEntry::display, String.CASE_INSENSITIVE_ORDER));
-            return deps;
-        } catch (Exception e) {
-            return Collections.emptyList();
-        }
-    }
-
-    private List<DepEntry> loadFromRunProperties(Path propsFile) {
-        try {
-            List<String> lines = Files.readAllLines(propsFile);
-            List<DepEntry> deps = new ArrayList<>();
-
-            for (String line : lines) {
-                line = line.trim();
-                if (!line.startsWith("dependency=")) {
-                    continue;
-                }
-                String value = line.substring("dependency=".length()).trim();
-                value = value.replace("\\:", ":");
-
-                if (value.startsWith("mvn:") || value.startsWith("mvn\\:")) {
-                    String gav = value.startsWith("mvn:") ? value.substring(4) : value.substring(5);
-                    MavenGav parsed = MavenGav.parseGav(gav);
-                    if (parsed.getGroupId() != null && parsed.getArtifactId() != null) {
-                        if (!skipArtifact(parsed.getGroupId(), parsed.getArtifactId())) {
-                            deps.add(new DepEntry(parsed.getGroupId(), parsed.getArtifactId(), parsed.getVersion()));
-                        }
-                    }
-                }
-            }
-
-            deps.sort(Comparator.comparing(DepEntry::display, String.CASE_INSENSITIVE_ORDER));
-            return deps;
-        } catch (Exception e) {
-            return Collections.emptyList();
-        }
-    }
-
-    private static String textContent(Element parent, String tag) {
-        NodeList nl = parent.getElementsByTagName(tag);
-        return nl.getLength() > 0 ? nl.item(0).getTextContent().trim() : null;
-    }
-
-    private static String resolveProperty(String value, Map<String, String> properties) {
-        if (value != null && value.startsWith("${") && value.endsWith("}")) {
-            String key = value.substring(2, value.length() - 1);
-            String resolved = properties.get(key);
-            if (resolved != null) {
-                return resolved;
-            }
-        }
-        return value;
-    }
-
-    private static String shortArtifact(String ga) {
-        if (ga == null) {
-            return "";
-        }
-        int colon = ga.indexOf(':');
-        return colon >= 0 ? ga.substring(colon + 1) : ga;
-    }
-
-    private static boolean skipArtifact(String groupId, String artifactId) {
-        if ("org.fusesource.jansi".equals(groupId)) {
-            return true;
-        }
-        if ("org.apache.logging.log4j".equals(groupId)) {
-            return true;
-        }
-        if ("org.apache.camel".equals(groupId) && "camel-kamelet-main".equals(artifactId)) {
-            return true;
-        }
-        if ("org.apache.camel".equals(groupId) && "camel-cli-connector".equals(artifactId)) {
-            return true;
-        }
-        return false;
-    }
-
-    private void applyResult(List<DepEntry> parsed, String source, String error) {
+    private void applyResult(List<DependencyLoader.DepEntry> parsed, String source, String error) {
         if (ctx.runner == null) {
             return;
         }
@@ -702,13 +406,13 @@ class MavenDependenciesTab extends AbstractTableTab {
     }
 
     private void refilter() {
-        List<DepEntry> source = transitiveMode
+        List<DependencyLoader.DepEntry> source = transitiveMode
                 ? combinedEntries()
                 : allEntries;
-        List<DepEntry> result = new ArrayList<>();
+        List<DependencyLoader.DepEntry> result = new ArrayList<>();
         String ft = filterTerm != null ? filterTerm.toLowerCase() : null;
         String scope = SCOPES[scopeIndex];
-        for (DepEntry entry : source) {
+        for (DependencyLoader.DepEntry entry : source) {
             if ("camel".equals(scope) && !entry.isCamel()) {
                 continue;
             }
@@ -726,18 +430,18 @@ class MavenDependenciesTab extends AbstractTableTab {
         }
     }
 
-    private List<DepEntry> combinedEntries() {
+    private List<DependencyLoader.DepEntry> combinedEntries() {
         Set<String> directKeys = new HashSet<>();
-        for (DepEntry d : allEntries) {
+        for (DependencyLoader.DepEntry d : allEntries) {
             directKeys.add(d.groupId() + ":" + d.artifactId());
         }
-        List<DepEntry> combined = new ArrayList<>(allEntries);
-        for (DepEntry t : transitiveEntries) {
+        List<DependencyLoader.DepEntry> combined = new ArrayList<>(allEntries);
+        for (DependencyLoader.DepEntry t : transitiveEntries) {
             if (!directKeys.contains(t.groupId() + ":" + t.artifactId())) {
                 combined.add(t);
             }
         }
-        combined.sort(Comparator.comparing(DepEntry::display, String.CASE_INSENSITIVE_ORDER));
+        combined.sort(Comparator.comparing(DependencyLoader.DepEntry::display, String.CASE_INSENSITIVE_ORDER));
         return combined;
     }
 
@@ -761,27 +465,9 @@ class MavenDependenciesTab extends AbstractTableTab {
         if (filteredEntries.isEmpty()) {
             return null;
         }
-        List<String> items = filteredEntries.stream().map(DepEntry::display).toList();
+        List<String> items = filteredEntries.stream().map(DependencyLoader.DepEntry::display).toList();
         Integer sel = tableState.selected();
         return new SelectionContext("table", items, sel != null ? sel : -1, items.size(), "Maven Dependencies");
-    }
-
-    record DepEntry(String groupId, String artifactId, String version, boolean transitive, String parent) {
-
-        DepEntry(String groupId, String artifactId, String version) {
-            this(groupId, artifactId, version, false, null);
-        }
-
-        String display() {
-            if (version != null) {
-                return groupId + ":" + artifactId + ":" + version;
-            }
-            return groupId + ":" + artifactId;
-        }
-
-        boolean isCamel() {
-            return groupId != null && groupId.startsWith("org.apache.camel");
-        }
     }
 
     @Override
@@ -878,14 +564,14 @@ class MavenDependenciesTab extends AbstractTableTab {
 
     @Override
     public JsonObject getTableDataAsJson() {
-        List<DepEntry> entries = filteredEntries;
+        List<DependencyLoader.DepEntry> entries = filteredEntries;
         if (entries.isEmpty()) {
             return null;
         }
         JsonObject result = new JsonObject();
         result.put("tab", "Maven Dependencies");
         JsonArray rows = new JsonArray();
-        for (DepEntry d : entries) {
+        for (DependencyLoader.DepEntry d : entries) {
             JsonObject row = new JsonObject();
             row.put("groupId", d.groupId());
             row.put("artifactId", d.artifactId());

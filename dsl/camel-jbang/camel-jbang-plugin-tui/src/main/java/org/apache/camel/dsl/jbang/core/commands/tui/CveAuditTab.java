@@ -16,7 +16,6 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -46,7 +45,6 @@ import dev.tamboui.widgets.paragraph.Paragraph;
 import dev.tamboui.widgets.table.Cell;
 import dev.tamboui.widgets.table.Row;
 import dev.tamboui.widgets.table.Table;
-import org.apache.camel.dsl.jbang.core.common.PathUtils;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 
@@ -61,13 +59,12 @@ class CveAuditTab extends AbstractTableTab {
 
     private int detailScroll;
 
-    private List<ClasspathTab.JarEntry> jarEntries = Collections.emptyList();
+    private List<DependencyLoader.DepEntry> depEntries = Collections.emptyList();
     private List<VulnGroup> allGroups = Collections.emptyList();
     private String lastPid;
     private String errorMessage;
     private boolean dataLoaded;
     private int scannedCount;
-    private int totalCount;
 
     CveAuditTab(MonitorContext ctx) {
         super(ctx, "severity", "id", "artifact");
@@ -94,7 +91,7 @@ class CveAuditTab extends AbstractTableTab {
     @Override
     public void onIntegrationChanged() {
         allGroups = Collections.emptyList();
-        jarEntries = Collections.emptyList();
+        depEntries = Collections.emptyList();
         lastPid = null;
         errorMessage = null;
         dataLoaded = false;
@@ -157,9 +154,7 @@ class CveAuditTab extends AbstractTableTab {
     @Override
     protected void renderContent(Frame frame, Rect area, IntegrationInfo info) {
         if (loading.get() && allGroups.isEmpty()) {
-            String msg = totalCount > 0
-                    ? String.format("  Scanning %d dependencies...", totalCount)
-                    : "  Loading classpath...";
+            String msg = "  Scanning dependencies...";
             frame.renderWidget(
                     Paragraph.builder()
                             .text(Text.from(Line.from(Span.styled(msg, Style.EMPTY.dim()))))
@@ -361,7 +356,7 @@ class CveAuditTab extends AbstractTableTab {
         if (loading.get()) {
             return;
         }
-        osvClient.clearCache(jarEntries);
+        osvClient.clearCache(depEntries);
         allGroups = Collections.emptyList();
         dataLoaded = false;
         errorMessage = null;
@@ -369,64 +364,38 @@ class CveAuditTab extends AbstractTableTab {
     }
 
     private void loadAndScan() {
-        if (ctx.selectedPid == null || ctx.runner == null) {
+        IntegrationInfo info = ctx.findSelectedIntegration();
+        if (info == null || ctx.runner == null) {
             return;
         }
         if (!loading.compareAndSet(false, true)) {
             return;
         }
 
-        String pid = ctx.selectedPid;
         ctx.runner.scheduler().execute(() -> {
             try {
-                Path outputFile = ctx.getOutputFile(pid);
-                PathUtils.deleteFile(outputFile);
-
-                JsonObject action = new JsonObject();
-                action.put("action", "jvm");
-
-                Path actionFile = ctx.getActionFile(pid);
-                PathUtils.writeTextSafely(action.toJson(), actionFile);
-
-                JsonObject response = pollJsonResponse(outputFile, 5000);
-                PathUtils.deleteFile(outputFile);
-
-                if (response == null) {
-                    applyResult(Collections.emptyList(), Collections.emptyList(), "No response from integration");
+                DependencyLoader.LoadResult loadResult = DependencyLoader.loadDependencies(info);
+                if (loadResult.error() != null && loadResult.entries().isEmpty()) {
+                    applyResult(Collections.emptyList(), Collections.emptyList(), loadResult.error());
                     return;
                 }
 
-                List<String> paths = new ArrayList<>();
-                Object cp = response.get("classpath");
-                if (cp instanceof JsonArray arr) {
-                    for (Object item : arr) {
-                        paths.add(String.valueOf(item));
-                    }
+                List<DependencyLoader.DepEntry> directDeps = loadResult.entries();
+                List<DependencyLoader.DepEntry> transitiveDeps = DependencyLoader.resolveTransitives(directDeps);
+
+                List<DependencyLoader.DepEntry> allDeps = new ArrayList<>(directDeps);
+                for (DependencyLoader.DepEntry t : transitiveDeps) {
+                    allDeps.add(t);
                 }
 
-                if (paths.isEmpty()) {
-                    applyResult(Collections.emptyList(), Collections.emptyList(), "No classpath information available");
-                    return;
-                }
-
-                List<ClasspathTab.JarEntry> jars = new ArrayList<>();
-                for (String path : paths) {
-                    ClasspathTab.JarEntry entry = ClasspathTab.parseJarEntry(path);
-                    if (entry.groupId() != null) {
-                        jars.add(entry);
-                    }
-                }
-
-                updateProgress(jars);
-
-                Map<String, List<OsvClient.Vulnerability>> vulnMap = osvClient.queryBatch(jars);
+                Map<String, List<OsvClient.Vulnerability>> vulnMap = osvClient.queryBatch(allDeps);
 
                 List<VulnGroup> groups = buildVulnGroups(vulnMap);
                 groups.sort(Comparator
                         .comparingInt((VulnGroup g) -> severityIndex(g.severity))
                         .thenComparing(g -> g.canonicalId));
 
-                applyResult(jars, groups, null);
+                applyResult(allDeps, groups, null);
             } catch (Exception e) {
                 applyResult(Collections.emptyList(), Collections.emptyList(), "Error: " + e.getMessage());
             } finally {
@@ -435,25 +404,16 @@ class CveAuditTab extends AbstractTableTab {
         });
     }
 
-    private void updateProgress(List<ClasspathTab.JarEntry> jars) {
+    private void applyResult(List<DependencyLoader.DepEntry> deps, List<VulnGroup> groups, String error) {
         if (ctx.runner == null) {
             return;
         }
         ctx.runner.runOnRenderThread(() -> {
-            totalCount = jars.size();
-        });
-    }
-
-    private void applyResult(List<ClasspathTab.JarEntry> jars, List<VulnGroup> groups, String error) {
-        if (ctx.runner == null) {
-            return;
-        }
-        ctx.runner.runOnRenderThread(() -> {
-            jarEntries = jars;
+            depEntries = deps;
             allGroups = groups;
             errorMessage = error;
             dataLoaded = true;
-            scannedCount = jars.size();
+            scannedCount = deps.size();
             if (!allGroups.isEmpty()) {
                 tableState.select(0);
             }

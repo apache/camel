@@ -54,11 +54,11 @@ class OsvClient {
      *
      * @return map from GAV string (groupId:artifactId:version) to list of vulnerabilities
      */
-    Map<String, List<Vulnerability>> queryBatch(List<ClasspathTab.JarEntry> entries) {
+    Map<String, List<Vulnerability>> queryBatch(List<DependencyLoader.DepEntry> entries) {
         Map<String, List<Vulnerability>> result = new HashMap<>();
-        List<ClasspathTab.JarEntry> uncached = new ArrayList<>();
+        List<DependencyLoader.DepEntry> uncached = new ArrayList<>();
 
-        for (ClasspathTab.JarEntry entry : entries) {
+        for (DependencyLoader.DepEntry entry : entries) {
             if (entry.groupId() == null) {
                 continue;
             }
@@ -76,7 +76,7 @@ class OsvClient {
         }
 
         JsonArray queries = new JsonArray();
-        for (ClasspathTab.JarEntry entry : uncached) {
+        for (DependencyLoader.DepEntry entry : uncached) {
             JsonObject pkg = new JsonObject();
             pkg.put("name", entry.groupId() + ":" + entry.artifactId());
             pkg.put("ecosystem", "Maven");
@@ -110,7 +110,7 @@ class OsvClient {
                     // collect vuln IDs per GAV, then fetch full details
                     Map<String, List<String>> gavToVulnIds = new HashMap<>();
                     for (int i = 0; i < results.size() && i < uncached.size(); i++) {
-                        ClasspathTab.JarEntry entry = uncached.get(i);
+                        DependencyLoader.DepEntry entry = uncached.get(i);
                         String gav = entry.display();
                         JsonObject queryResult = (JsonObject) results.get(i);
                         JsonArray vulns = (JsonArray) queryResult.get("vulns");
@@ -152,7 +152,7 @@ class OsvClient {
         }
 
         // cache empty results for uncached entries that got no response
-        for (ClasspathTab.JarEntry entry : uncached) {
+        for (DependencyLoader.DepEntry entry : uncached) {
             String gav = entry.display();
             result.putIfAbsent(gav, Collections.emptyList());
             CACHE.putIfAbsent(gav, Collections.emptyList());
@@ -198,8 +198,8 @@ class OsvClient {
         VULN_DETAIL_CACHE.clear();
     }
 
-    void clearCache(List<ClasspathTab.JarEntry> entries) {
-        for (ClasspathTab.JarEntry entry : entries) {
+    void clearCache(List<DependencyLoader.DepEntry> entries) {
+        for (DependencyLoader.DepEntry entry : entries) {
             if (entry.groupId() != null) {
                 CACHE.remove(entry.display());
             }

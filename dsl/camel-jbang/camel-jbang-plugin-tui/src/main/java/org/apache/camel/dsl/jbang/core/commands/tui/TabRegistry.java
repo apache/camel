@@ -256,23 +256,9 @@ class TabRegistry {
         httpTab.onIntegrationChanged();
         logTab.onIntegrationChanged();
         historyTab.onIntegrationChanged();
-        beansTab.onIntegrationChanged();
-        browseTab.onIntegrationChanged();
-        threadsTab.onIntegrationChanged();
-        startupTab.onIntegrationChanged();
-        configurationTab.onIntegrationChanged();
-        consumersTab.onIntegrationChanged();
-        cveAuditTab.onIntegrationChanged();
-        dataSourceTab.onIntegrationChanged();
-        heapHistogramTab.onIntegrationChanged();
-        mavenDependenciesTab.onIntegrationChanged();
-        memoryLeakTab.onIntegrationChanged();
-        sqlQueryTab.onIntegrationChanged();
-        sqlTraceTab.onIntegrationChanged();
-        circuitBreakerTab.onIntegrationChanged();
-        inflightTab.onIntegrationChanged();
-        spansTab.onIntegrationChanged();
-        processTab.onIntegrationChanged();
+        for (MoreTab mt : moreTabs) {
+            mt.tab().onIntegrationChanged();
+        }
         dataService.otelSpans().set(List.of());
 
         filesBrowser.reset();
