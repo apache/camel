@@ -57,7 +57,9 @@ accurate and complete. Use `gh pr edit --title "..." --body "..."` after each pu
 
 ### PR Reviewers
 
-When creating a PR, **always identify and request reviews** from the most relevant committers:
+When a PR is **ready for review** (not in draft), **always identify and request reviews** from
+the most relevant committers. **Do NOT request reviewers on draft PRs** — wait until the PR is
+marked ready for review.
 
 - Run `git log --format='%an' --since='1 year' -- <affected-files> | sort | uniq -c | sort -rn | head -10`
   to find who has been most active on the affected files.
