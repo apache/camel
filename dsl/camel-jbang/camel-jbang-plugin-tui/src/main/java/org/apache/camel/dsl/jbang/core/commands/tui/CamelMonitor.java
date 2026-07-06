@@ -630,15 +630,8 @@ public class CamelMonitor extends CamelCommand {
                 int prev = tabRegistry.selectedTabIndex() == TAB_OVERVIEW ? TAB_LOG : TAB_OVERVIEW;
                 tabsState.select(prev);
             } else {
-                // Skip TAB_MORE when cycling – it is a popup trigger, not a renderable tab
                 int prev = (tabRegistry.selectedTabIndex() - 1 + NUM_TABS) % NUM_TABS;
-                if (prev == TAB_MORE) {
-                    prev = (prev - 1 + NUM_TABS) % NUM_TABS;
-                }
-                if (prev != TAB_OVERVIEW) {
-                    tabRegistry.overviewTab().selectCurrentIntegration();
-                }
-                tabsState.select(prev);
+                tabRegistry.handleTabKey(prev, ctx, dataService);
             }
             return true;
         }
@@ -647,15 +640,8 @@ public class CamelMonitor extends CamelCommand {
                 int next = tabRegistry.selectedTabIndex() == TAB_OVERVIEW ? TAB_LOG : TAB_OVERVIEW;
                 tabsState.select(next);
             } else {
-                // Skip TAB_MORE when cycling – it is a popup trigger, not a renderable tab
                 int next = (tabRegistry.selectedTabIndex() + 1) % NUM_TABS;
-                if (next == TAB_MORE) {
-                    next = (next + 1) % NUM_TABS;
-                }
-                if (next != TAB_OVERVIEW) {
-                    tabRegistry.overviewTab().selectCurrentIntegration();
-                }
-                tabsState.select(next);
+                tabRegistry.handleTabKey(next, ctx, dataService);
             }
             return true;
         }
@@ -1694,7 +1680,7 @@ public class CamelMonitor extends CamelCommand {
 
             if (tabRegistry.selectedTabIndex() == TAB_OVERVIEW) {
                 fKeyTotal = renderOverviewFooter(spans);
-            } else {
+            } else if (tab != null) {
                 tab.renderFooter(spans);
                 fKeyTotal = insertFKeyHints(spans);
             }
