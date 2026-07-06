@@ -96,8 +96,12 @@ public abstract class PropertyConfigurerSupport {
 
         if (value != null) {
             try {
-                if (MAGIC_VALUE.equals(value) && boolean.class == type) {
-                    value = "true";
+                if (MAGIC_VALUE.equals(value)) {
+                    if (boolean.class == type || Boolean.class == type) {
+                        value = "true";
+                    } else {
+                        return null;
+                    }
                 }
                 return camelContext.getTypeConverter().mandatoryConvertTo(type, value);
             } catch (NoTypeConversionAvailableException e) {
