@@ -60,7 +60,11 @@ public class ManagedMessageHistoryAutoConfigIT extends CamelTestSupport {
         System.setProperty("otel.traces.exporter", "none");
         System.setProperty("otel.logs.exporter", "none");
         System.setProperty("otel.propagators", "tracecontext");
-        System.setProperty("otel.metric.export.interval", "300");
+        // Use a long export interval so the first periodic export fires well after all
+        // messages have been processed. With a short interval (e.g. 300ms), the exporter
+        // fires during message processing and the last exported MetricData may contain
+        // incomplete point data, causing the assertion to fail intermittently on slow CI.
+        System.setProperty("otel.metric.export.interval", "5000");
     }
 
     @AfterEach
