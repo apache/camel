@@ -23,10 +23,12 @@ import org.apache.camel.component.infinispan.cluster.InfinispanClusterService;
 import org.apache.camel.component.infinispan.cluster.InfinispanClusterView;
 import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.annotations.JdkService;
 import org.apache.camel.util.ObjectHelper;
 import org.infinispan.client.hotrod.RemoteCacheManager;
 import org.infinispan.client.hotrod.configuration.Configuration;
 
+@JdkService("cluster-service-infinispan")
 @Metadata(label = "bean",
           description = "Infinispan based remote cluster locking",
           annotations = { "interfaceName=org.apache.camel.cluster.CamelClusterService" })

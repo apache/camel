@@ -28,12 +28,14 @@ import org.apache.camel.component.kubernetes.KubernetesConfiguration;
 import org.apache.camel.component.kubernetes.cluster.lock.KubernetesLockConfiguration;
 import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.annotations.JdkService;
 import org.apache.camel.support.cluster.AbstractCamelClusterService;
 import org.apache.camel.util.ObjectHelper;
 
 /**
  * A Kubernetes based cluster service leveraging Kubernetes optimistic locks on resources (specifically ConfigMaps).
  */
+@JdkService("cluster-service-kubernetes")
 @Metadata(label = "bean",
           description = "Kubernetes based cluster locking",
           annotations = { "interfaceName=org.apache.camel.cluster.CamelClusterService" })

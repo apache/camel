@@ -24,9 +24,11 @@ import java.util.concurrent.locks.Lock;
 import org.apache.camel.CamelContext;
 import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.annotations.JdkService;
 import org.apache.camel.support.cluster.AbstractCamelClusterService;
 import org.apache.camel.util.ObjectHelper;
 
+@JdkService("cluster-service-file")
 @Metadata(label = "bean",
           description = "A file based cluster locking (read documentation to understand limitations)",
           annotations = { "interfaceName=org.apache.camel.cluster.CamelClusterService" })
