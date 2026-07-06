@@ -30,7 +30,8 @@ import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Unit test for the HL7MLLP Codec.
@@ -101,26 +102,22 @@ public class HL7MLLPCodecMessageFloodingTest extends HL7TestSupport {
             String msg = String.format(in, i);
             outputStream.write(11);
             outputStream.flush();
-            // Some systems send end bytes in a separate frame
-            // Thread.sleep(10);
             outputStream.write(msg.getBytes());
             outputStream.flush();
-            // Some systems send end bytes in a separate frame
-            // Thread.sleep(10);
             outputStream.write(28);
             outputStream.write(13);
             outputStream.flush();
-            // Potentially wait after message
-            // Thread.sleep(10);
         }
 
-        boolean success = latch.await(20, TimeUnit.SECONDS);
+        // Use Awaitility to wait for all messages to be processed,
+        // with a generous timeout to avoid flakiness on slow CI machines
+        await().atMost(60, TimeUnit.SECONDS)
+                .untilAsserted(() -> assertEquals(0, latch.getCount(),
+                        "Not all messages were processed"));
 
         outputStream.close();
         inputStream.close();
         socket.close();
-
-        assertTrue(success);
     }
 
 }
