@@ -649,6 +649,80 @@ main() {
     fi
   fi
 
+  # Check for full-test label: run ALL module tests with failure ignored
+  if [ -n "$prId" ]; then
+    local fullTest
+    fullTest=$(hasLabel "${prId}" "full-test" "${repository}")
+    if [[ ${fullTest} = "1" ]]; then
+      echo "============================================================"
+      echo "[FULL TEST] Running ALL module tests (failure ignored)"
+      echo "============================================================"
+
+      # Discover all modules with test sources
+      local all_modules=""
+      while IFS= read -r dir; do
+        if [[ -f "$dir/pom.xml" ]] && [[ -d "$dir/src/test" ]]; then
+          if [[ -n "$all_modules" ]]; then
+            all_modules="$all_modules,$dir"
+          else
+            all_modules="$dir"
+          fi
+        fi
+      done < <(find core/ catalog/ dsl/ components/ tests/ test-infra/ \
+        -name pom.xml -maxdepth 4 \
+        -not -path '*/target/*' -not -path '*/src/*' -not -path '*/.worktrees/*' \
+        -exec dirname {} \; 2>/dev/null | sort -u)
+
+      local mod_count
+      mod_count=$(echo "$all_modules" | tr ',' '\n' | wc -l | tr -d ' ')
+      echo "Found $mod_count modules with test sources"
+      echo ""
+
+      $mavenBinary -l "$log" $MVND_OPTS ${MAVEN_EXTRA_ARGS:-} \
+        -Dsurefire.rerunFailingTestsCount=0 \
+        -Dfailsafe.rerunFailingTestsCount=0 \
+        -Dmaven.test.failure.ignore=true \
+        install -pl "$all_modules" || ret=$?
+
+      echo ""
+      echo "Full test run completed with exit code: $ret"
+      echo "============================================================"
+
+      # Generate summary of failures from test reports
+      echo "<!-- ci-tested-modules -->" > "incremental-test-comment.md"
+      echo ":test_tube: **[FULL TEST] Ran ALL module tests ($mod_count modules)**" >> "incremental-test-comment.md"
+      echo "" >> "incremental-test-comment.md"
+      echo "rerunFailingTestsCount=0, maven.test.failure.ignore=true" >> "incremental-test-comment.md"
+      echo "" >> "incremental-test-comment.md"
+
+      # Collect test failures
+      local failure_count=0
+      local failure_summary=""
+      while IFS= read -r report; do
+        if grep -q 'failures="[1-9]\|errors="[1-9]' "$report" 2>/dev/null; then
+          local testname classname failures errors
+          classname=$(grep -o 'classname="[^"]*"' "$report" | head -1 | sed 's/classname="//;s/"//')
+          failures=$(grep -o 'failures="[0-9]*"' "$report" | head -1 | sed 's/failures="//;s/"//')
+          errors=$(grep -o 'errors="[0-9]*"' "$report" | head -1 | sed 's/errors="//;s/"//')
+          if [[ "${failures:-0}" -gt 0 || "${errors:-0}" -gt 0 ]]; then
+            failure_count=$((failure_count + 1))
+            failure_summary="${failure_summary}- \`${classname}\`: ${failures} failures, ${errors} errors\n"
+          fi
+        fi
+      done < <(find . -path '*/target/*-reports/TEST-*.xml' 2>/dev/null)
+
+      if [[ $failure_count -gt 0 ]]; then
+        echo ":x: **$failure_count test classes with failures:**" >> "incremental-test-comment.md"
+        echo "" >> "incremental-test-comment.md"
+        echo -e "$failure_summary" >> "incremental-test-comment.md"
+      else
+        echo ":white_check_mark: **All tests passed!**" >> "incremental-test-comment.md"
+      fi
+
+      exit $ret
+    fi
+  fi
+
   # Fetch the diff (PR diff via API, or git diff for push builds)
   local diff_body
   if [ -n "$prId" ]; then
