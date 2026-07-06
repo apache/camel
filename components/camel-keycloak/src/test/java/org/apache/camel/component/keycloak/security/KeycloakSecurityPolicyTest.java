@@ -100,6 +100,17 @@ public class KeycloakSecurityPolicyTest extends CamelTestSupport {
     }
 
     @Test
+    void testKeycloakSecurityPolicyWithExpectedAudience() {
+        KeycloakSecurityPolicy policy = new KeycloakSecurityPolicy();
+        assertTrue(policy.getExpectedAudienceAsList().isEmpty(), "Audience validation is disabled by default");
+
+        policy.setExpectedAudience("my-client,my-other-client");
+
+        assertEquals("my-client,my-other-client", policy.getExpectedAudience());
+        assertEquals(Arrays.asList("my-client", "my-other-client"), policy.getExpectedAudienceAsList());
+    }
+
+    @Test
     void testResourceOwnerPasswordCredentialsConfiguration() {
         KeycloakSecurityPolicy policy = new KeycloakSecurityPolicy(
                 "http://localhost:8080", "test-realm", "test-client", "testuser", "testpass");
