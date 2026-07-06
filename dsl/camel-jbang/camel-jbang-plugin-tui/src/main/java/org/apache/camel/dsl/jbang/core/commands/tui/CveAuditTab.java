@@ -207,8 +207,15 @@ class CveAuditTab extends AbstractTableTab {
         List<Row> rows = new ArrayList<>();
         for (VulnGroup group : visible) {
             String firstArtifact = group.affectedGavs.isEmpty() ? "" : group.affectedGavs.get(0);
+            String firstParent = group.affectedGavs.isEmpty() ? null : group.gavParents.get(firstArtifact);
             int artCount = group.affectedGavs.size();
-            String artDisplay = artCount > 1 ? firstArtifact + " (+" + (artCount - 1) + ")" : firstArtifact;
+            String artDisplay = firstArtifact;
+            if (firstParent != null) {
+                artDisplay += " (via " + firstParent + ")";
+            }
+            if (artCount > 1) {
+                artDisplay += " (+" + (artCount - 1) + ")";
+            }
 
             rows.add(Row.from(
                     Cell.from(Span.styled(group.severity != null ? group.severity : "", severityStyle(group.severity))),
@@ -278,7 +285,12 @@ class CveAuditTab extends AbstractTableTab {
         }
         md.append("**Affected artifacts:**\n");
         for (String gav : group.affectedGavs) {
-            md.append("- `").append(gav).append("`\n");
+            String parent = group.gavParents.get(gav);
+            md.append("- `").append(gav).append("`");
+            if (parent != null) {
+                md.append(" *(via ").append(parent).append(")*");
+            }
+            md.append("\n");
         }
         if (!group.fixedVersions.isEmpty()) {
             md.append("\n**Fixed in:** ").append(String.join(", ", group.fixedVersions)).append("\n");
@@ -390,7 +402,14 @@ class CveAuditTab extends AbstractTableTab {
 
                 Map<String, List<OsvClient.Vulnerability>> vulnMap = osvClient.queryBatch(allDeps);
 
-                List<VulnGroup> groups = buildVulnGroups(vulnMap);
+                Map<String, String> gavToParent = new HashMap<>();
+                for (DependencyLoader.DepEntry dep : allDeps) {
+                    if (dep.transitive() && dep.parent() != null) {
+                        gavToParent.put(dep.display(), DependencyLoader.shortArtifact(dep.parent()));
+                    }
+                }
+
+                List<VulnGroup> groups = buildVulnGroups(vulnMap, gavToParent);
                 groups.sort(Comparator
                         .comparingInt((VulnGroup g) -> severityIndex(g.severity))
                         .thenComparing(g -> g.canonicalId));
@@ -436,7 +455,8 @@ class CveAuditTab extends AbstractTableTab {
         return result;
     }
 
-    static List<VulnGroup> buildVulnGroups(Map<String, List<OsvClient.Vulnerability>> vulnMap) {
+    static List<VulnGroup> buildVulnGroups(
+            Map<String, List<OsvClient.Vulnerability>> vulnMap, Map<String, String> gavToParent) {
         Map<String, String> aliasToCanonical = new HashMap<>();
         Map<String, VulnGroup> groups = new LinkedHashMap<>();
 
@@ -449,7 +469,8 @@ class CveAuditTab extends AbstractTableTab {
                 if (group == null) {
                     group = new VulnGroup(
                             canonicalId, normalizeSeverity(vuln.severity()), vuln.cvssVector(), vuln.summary(),
-                            vuln.details(), vuln.published(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
+                            vuln.details(), vuln.published(), new ArrayList<>(), new HashMap<>(),
+                            new ArrayList<>(), new ArrayList<>());
                     groups.put(canonicalId, group);
                     aliasToCanonical.put(vuln.id(), canonicalId);
                     for (String alias : vuln.aliases()) {
@@ -459,6 +480,10 @@ class CveAuditTab extends AbstractTableTab {
 
                 if (!group.affectedGavs.contains(gav)) {
                     group.affectedGavs.add(gav);
+                    String parent = gavToParent.get(gav);
+                    if (parent != null) {
+                        group.gavParents.put(gav, parent);
+                    }
                 }
                 for (String alias : vuln.aliases()) {
                     if (!alias.equals(canonicalId) && !group.aliases.contains(alias)) {
@@ -623,11 +648,13 @@ class CveAuditTab extends AbstractTableTab {
         final String details;
         final String published;
         final List<String> affectedGavs;
+        final Map<String, String> gavParents;
         final List<String> aliases;
         final List<String> fixedVersions;
 
         VulnGroup(String canonicalId, String severity, String cvssVector, String summary, String details,
-                  String published, List<String> affectedGavs, List<String> aliases, List<String> fixedVersions) {
+                  String published, List<String> affectedGavs, Map<String, String> gavParents,
+                  List<String> aliases, List<String> fixedVersions) {
             this.canonicalId = canonicalId;
             this.severity = severity;
             this.cvssVector = cvssVector;
@@ -635,6 +662,7 @@ class CveAuditTab extends AbstractTableTab {
             this.details = details;
             this.published = published;
             this.affectedGavs = affectedGavs;
+            this.gavParents = gavParents;
             this.aliases = aliases;
             this.fixedVersions = fixedVersions;
         }
