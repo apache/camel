@@ -16,9 +16,13 @@
  */
 package org.apache.camel.component.file.remote.integration;
 
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
+
+import static org.awaitility.Awaitility.await;
 
 /**
  * Unit test for the idempotent=true option.
@@ -41,8 +45,6 @@ public class FtpConsumerIdempotentIT extends FtpServerTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        Thread.sleep(100);
-
         // reset mock and set new expectations
         mock.reset();
         mock.expectedMessageCount(0);
@@ -50,10 +52,11 @@ public class FtpConsumerIdempotentIT extends FtpServerTestSupport {
         // move file back
         sendFile(getFtpUrl(), "Hello World", "report.txt");
 
-        // should NOT consume the file again, let 2 secs pass to let the
+        // should NOT consume the file again, let 2+ secs pass to let the
         // consumer try to consume it but it should not
-        Thread.sleep(2000);
-        MockEndpoint.assertIsSatisfied(context);
+        await().pollDelay(2, TimeUnit.SECONDS)
+                .atMost(5, TimeUnit.SECONDS)
+                .untilAsserted(() -> MockEndpoint.assertIsSatisfied(context));
     }
 
     @Override

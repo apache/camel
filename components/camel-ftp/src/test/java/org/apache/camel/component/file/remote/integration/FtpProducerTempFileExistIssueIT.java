@@ -51,13 +51,13 @@ public class FtpProducerTempFileExistIssueIT extends FtpServerTestSupport {
     public void testWriteUsingTempPrefixButFileExist() throws Exception {
         template.sendBodyAndHeader(getFtpUrl(), "Hello World", Exchange.FILE_NAME, "hello.txt");
 
-        Thread.sleep(500);
+        File file = service.ftpFile("tempprefix/hello.txt").toFile();
+        await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> assertTrue(file.exists()));
 
         template.sendBodyAndHeader(getFtpUrl() + "&tempPrefix=foo", "Bye World", Exchange.FILE_NAME, "hello.txt");
 
-        File file = service.ftpFile("tempprefix/hello.txt").toFile();
-        await().atMost(500, TimeUnit.MILLISECONDS).untilAsserted(() -> assertTrue(file.exists()));
-        assertEquals("Bye World", context.getTypeConverter().convertTo(String.class, file));
+        await().atMost(5, TimeUnit.SECONDS)
+                .untilAsserted(() -> assertEquals("Bye World", context.getTypeConverter().convertTo(String.class, file)));
     }
 
     @Test
@@ -65,42 +65,41 @@ public class FtpProducerTempFileExistIssueIT extends FtpServerTestSupport {
         template.sendBodyAndHeader(getFtpUrl(), "Hello World", Exchange.FILE_NAME, "hello.txt");
         template.sendBodyAndHeader(getFtpUrl(), "Hello World", Exchange.FILE_NAME, "foohello.txt");
 
-        Thread.sleep(500);
+        File file = service.ftpFile("tempprefix/hello.txt").toFile();
+        await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> assertTrue(file.exists()));
 
         template.sendBodyAndHeader(getFtpUrl() + "&tempPrefix=foo", "Bye World", Exchange.FILE_NAME, "hello.txt");
 
-        File file = service.ftpFile("tempprefix/hello.txt").toFile();
-        await().atMost(500, TimeUnit.MILLISECONDS).untilAsserted(() -> assertTrue(file.exists()));
-        assertEquals("Bye World", context.getTypeConverter().convertTo(String.class, file));
+        await().atMost(5, TimeUnit.SECONDS)
+                .untilAsserted(() -> assertEquals("Bye World", context.getTypeConverter().convertTo(String.class, file)));
     }
 
     @Test
     public void testWriteUsingTempPrefixButFileExistOverride() throws Exception {
         template.sendBodyAndHeader(getFtpUrl(), "Hello World", Exchange.FILE_NAME, "hello.txt");
 
-        Thread.sleep(500);
+        File file = service.ftpFile("tempprefix/hello.txt").toFile();
+        await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> assertTrue(file.exists()));
 
         template.sendBodyAndHeader(getFtpUrl() + "&tempPrefix=foo&fileExist=Override", "Bye World", Exchange.FILE_NAME,
                 "hello.txt");
 
-        File file = service.ftpFile("tempprefix/hello.txt").toFile();
-        await().atMost(500, TimeUnit.MILLISECONDS)
-                .untilAsserted(() -> assertTrue(file.exists()));
-        assertEquals("Bye World", context.getTypeConverter().convertTo(String.class, file));
+        await().atMost(5, TimeUnit.SECONDS)
+                .untilAsserted(() -> assertEquals("Bye World", context.getTypeConverter().convertTo(String.class, file)));
     }
 
     @Test
     public void testWriteUsingTempPrefixButFileExistIgnore() throws Exception {
         template.sendBodyAndHeader(getFtpUrl(), "Hello World", Exchange.FILE_NAME, "hello.txt");
 
-        Thread.sleep(500);
+        File file = service.ftpFile("tempprefix/hello.txt").toFile();
+        await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> assertTrue(file.exists()));
 
         template.sendBodyAndHeader(getFtpUrl() + "&tempPrefix=foo&fileExist=Ignore", "Bye World", Exchange.FILE_NAME,
                 "hello.txt");
 
-        File file = service.ftpFile("tempprefix/hello.txt").toFile();
         // should not write new file as we should ignore
-        await().atMost(500, TimeUnit.MILLISECONDS)
+        await().atMost(5, TimeUnit.SECONDS)
                 .untilAsserted(() -> assertEquals("Hello World", context.getTypeConverter().convertTo(String.class, file)));
     }
 
@@ -108,7 +107,8 @@ public class FtpProducerTempFileExistIssueIT extends FtpServerTestSupport {
     public void testWriteUsingTempPrefixButFileExistFail() throws Exception {
         template.sendBodyAndHeader(getFtpUrl(), "Hello World", Exchange.FILE_NAME, "hello.txt");
 
-        Thread.sleep(500);
+        File file = service.ftpFile("tempprefix/hello.txt").toFile();
+        await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> assertTrue(file.exists()));
 
         String uri = getFtpUrl() + "&tempPrefix=foo&fileExist=Fail";
         Exception ex = assertThrows(CamelExecutionException.class,
@@ -118,9 +118,8 @@ public class FtpProducerTempFileExistIssueIT extends FtpServerTestSupport {
                 = assertIsInstanceOf(GenericFileOperationFailedException.class, ex.getCause());
         assertTrue(cause.getMessage().startsWith("File already exist"));
 
-        File file = service.ftpFile("tempprefix/hello.txt").toFile();
-        // should not write new file as we should ignore
-        await().atMost(1, TimeUnit.SECONDS)
+        // should not write new file as we should fail
+        await().atMost(5, TimeUnit.SECONDS)
                 .untilAsserted(() -> assertEquals("Hello World", context.getTypeConverter().convertTo(String.class, file)));
     }
 }
