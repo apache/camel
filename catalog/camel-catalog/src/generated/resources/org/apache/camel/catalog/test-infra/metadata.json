@@ -617,7 +617,7 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-ollama",
   "version" : "4.22.0-SNAPSHOT",
-  "serviceVersion" : "0.30.10"
+  "serviceVersion" : "0.31.1"
 }, {
   "service" : "org.apache.camel.test.infra.azure.common.services.AzureInfraService",
   "description" : "Local Azure services with Azurite",
