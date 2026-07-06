@@ -190,8 +190,7 @@ class CaptionOverlay {
     private void renderInline(Frame frame, Rect area) {
         Style style = Style.EMPTY.fg(Color.WHITE).bold();
         String text = inlineBuffer != null ? inlineBuffer.toString() : "";
-        boolean cursorVisible = (System.currentTimeMillis() / 500) % 2 == 0;
-        String display = text + (cursorVisible ? "▌" : " ");
+        String display = text + "█";
 
         String[] parts = display.split("\\\\n", -1);
         List<Line> lines = new ArrayList<>();

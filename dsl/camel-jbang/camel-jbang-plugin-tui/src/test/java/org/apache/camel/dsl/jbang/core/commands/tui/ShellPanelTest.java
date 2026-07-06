@@ -156,6 +156,99 @@ class ShellPanelTest {
         assertEquals("ABC", rawContent(line));
     }
 
+    // ---- convertRow cursor tests ----
+
+    @Test
+    void convertRowCursorReversesCharacter() {
+        // Cursor at column 1 should reverse that character
+        long[] buffer = new long[] { 'A', 'B', 'C' };
+
+        Line line = ShellPanel.convertRow(buffer, 0, 3, 1);
+        List<Span> spans = line.spans();
+        // Should split into: "A", reversed "B", "C"
+        assertEquals(3, spans.size());
+        assertEquals("A", spans.get(0).content());
+        assertEquals("B", spans.get(1).content());
+        assertTrue(spans.get(1).style().effectiveModifiers().contains(Modifier.REVERSED));
+        assertEquals("C", spans.get(2).content());
+    }
+
+    @Test
+    void convertRowCursorAtStart() {
+        long[] buffer = new long[] { 'X', 'Y', 'Z' };
+
+        Line line = ShellPanel.convertRow(buffer, 0, 3, 0);
+        List<Span> spans = line.spans();
+        assertEquals(2, spans.size());
+        assertEquals("X", spans.get(0).content());
+        assertTrue(spans.get(0).style().effectiveModifiers().contains(Modifier.REVERSED));
+        assertEquals("YZ", spans.get(1).content());
+    }
+
+    @Test
+    void convertRowCursorAtEnd() {
+        long[] buffer = new long[] { 'A', 'B', 'C' };
+
+        Line line = ShellPanel.convertRow(buffer, 0, 3, 2);
+        List<Span> spans = line.spans();
+        assertEquals(2, spans.size());
+        assertEquals("AB", spans.get(0).content());
+        assertEquals("C", spans.get(1).content());
+        assertTrue(spans.get(1).style().effectiveModifiers().contains(Modifier.REVERSED));
+    }
+
+    @Test
+    void convertRowCursorOnNullCodepoint() {
+        // Cursor on a null codepoint (empty cell) should show reversed space
+        long[] buffer = new long[] { 'A', 0, 'C' };
+
+        Line line = ShellPanel.convertRow(buffer, 0, 3, 1);
+        List<Span> spans = line.spans();
+        assertEquals(3, spans.size());
+        assertEquals(" ", spans.get(1).content());
+        assertTrue(spans.get(1).style().effectiveModifiers().contains(Modifier.REVERSED));
+    }
+
+    @Test
+    void convertRowNoCursorWhenNegative() {
+        // cursorCol = -1 means no cursor (same as the no-arg overload)
+        long[] buffer = new long[] { 'A', 'B', 'C' };
+
+        Line line = ShellPanel.convertRow(buffer, 0, 3, -1);
+        List<Span> spans = line.spans();
+        // All same attr → single merged span, no reversed
+        assertEquals(1, spans.size());
+        assertEquals("ABC", spans.get(0).content());
+        assertFalse(spans.get(0).style().effectiveModifiers().contains(Modifier.REVERSED));
+    }
+
+    @Test
+    void convertRowCursorSplitsBoldRun() {
+        // Two bold cells with cursor on the second should split the run
+        long attr = 0x8L << 24; // Bold
+        long[] buffer = new long[] {
+                'A' | (attr << 32),
+                'B' | (attr << 32),
+                'C' | (attr << 32)
+        };
+
+        Line line = ShellPanel.convertRow(buffer, 0, 3, 1);
+        List<Span> spans = line.spans();
+        assertEquals(3, spans.size());
+        // First span: bold A
+        assertEquals("A", spans.get(0).content());
+        assertTrue(spans.get(0).style().effectiveModifiers().contains(Modifier.BOLD));
+        assertFalse(spans.get(0).style().effectiveModifiers().contains(Modifier.REVERSED));
+        // Second span: bold + reversed B (cursor)
+        assertEquals("B", spans.get(1).content());
+        assertTrue(spans.get(1).style().effectiveModifiers().contains(Modifier.BOLD));
+        assertTrue(spans.get(1).style().effectiveModifiers().contains(Modifier.REVERSED));
+        // Third span: bold C
+        assertEquals("C", spans.get(2).content());
+        assertTrue(spans.get(2).style().effectiveModifiers().contains(Modifier.BOLD));
+        assertFalse(spans.get(2).style().effectiveModifiers().contains(Modifier.REVERSED));
+    }
+
     // ---- encodeKeyEvent tests ----
 
     @Test
