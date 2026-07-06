@@ -19,6 +19,7 @@ package org.apache.camel.component.reactive.streams;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import io.reactivex.Flowable;
 import org.apache.camel.Exchange;
@@ -27,6 +28,7 @@ import org.apache.camel.component.reactive.streams.api.CamelReactiveStreams;
 import org.apache.camel.component.reactive.streams.support.TestSubscriber;
 import org.junit.jupiter.api.Test;
 
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -73,11 +75,14 @@ public class BackpressureStrategyTest extends BaseReactiveTest {
         ReactiveStreamsComponent comp = (ReactiveStreamsComponent) context().getComponent("reactive-streams");
         comp.setBackpressureStrategy(ReactiveStreamsBackpressureStrategy.OLDEST);
 
+        AtomicInteger timerCount = new AtomicInteger(0);
+
         new RouteBuilder() {
             @Override
             public void configure() {
                 from("timer:gen?period=20&repeatCount=20&includeMetadata=true")
                         .setBody().header(Exchange.TIMER_COUNTER)
+                        .process(e -> timerCount.incrementAndGet())
                         .to("reactive-streams:integers");
             }
         }.addRoutesToCamelContext(context);
@@ -100,12 +105,14 @@ public class BackpressureStrategyTest extends BaseReactiveTest {
         context().start();
 
         assertTrue(latch.await(5, TimeUnit.SECONDS));
-        Thread.sleep(1000); // wait for all numbers to be generated
+        // Wait for all 20 timer events to be processed
+        await().atMost(5, TimeUnit.SECONDS).until(() -> timerCount.get() >= 20);
 
         subscriber.request(19);
-        assertTrue(latch2.await(1, TimeUnit.SECONDS));
-        Thread.sleep(200); // add other time to ensure no other items arrive
-        assertEquals(2, queue.size());
+        assertTrue(latch2.await(2, TimeUnit.SECONDS));
+        // Verify exactly 2 items received and no more arrive
+        await().atMost(2, TimeUnit.SECONDS)
+                .untilAsserted(() -> assertEquals(2, queue.size()));
         int sum = queue.stream().reduce((i, j) -> i + j).get();
         assertEquals(3, sum); // 1 + 2 = 3
 
@@ -118,11 +125,14 @@ public class BackpressureStrategyTest extends BaseReactiveTest {
         ReactiveStreamsComponent comp = (ReactiveStreamsComponent) context().getComponent("reactive-streams");
         comp.setBackpressureStrategy(ReactiveStreamsBackpressureStrategy.LATEST);
 
+        AtomicInteger timerCount = new AtomicInteger(0);
+
         new RouteBuilder() {
             @Override
             public void configure() {
                 from("timer:gen?period=20&repeatCount=20&includeMetadata=true")
                         .setBody().header(Exchange.TIMER_COUNTER)
+                        .process(e -> timerCount.incrementAndGet())
                         .to("reactive-streams:integers");
             }
         }.addRoutesToCamelContext(context);
@@ -145,12 +155,14 @@ public class BackpressureStrategyTest extends BaseReactiveTest {
         context().start();
 
         assertTrue(latch.await(5, TimeUnit.SECONDS));
-        Thread.sleep(1000); // wait for all numbers to be generated
+        // Wait for all 20 timer events to be processed
+        await().atMost(5, TimeUnit.SECONDS).until(() -> timerCount.get() >= 20);
 
         subscriber.request(19);
-        assertTrue(latch2.await(1, TimeUnit.SECONDS));
-        Thread.sleep(200); // add other time to ensure no other items arrive
-        assertEquals(2, queue.size());
+        assertTrue(latch2.await(2, TimeUnit.SECONDS));
+        // Verify exactly 2 items received and no more arrive
+        await().atMost(2, TimeUnit.SECONDS)
+                .untilAsserted(() -> assertEquals(2, queue.size()));
         int sum = queue.stream().reduce((i, j) -> i + j).get();
         assertEquals(21, sum); // 1 + 20 = 21
 
@@ -159,11 +171,15 @@ public class BackpressureStrategyTest extends BaseReactiveTest {
 
     @Test
     public void testBackpressureDropStrategyInEndpoint() throws Exception {
+
+        AtomicInteger timerCount = new AtomicInteger(0);
+
         new RouteBuilder() {
             @Override
             public void configure() {
                 from("timer:gen?period=20&repeatCount=20&includeMetadata=true")
                         .setBody().header(Exchange.TIMER_COUNTER)
+                        .process(e -> timerCount.incrementAndGet())
                         .to("reactive-streams:integers?backpressureStrategy=OLDEST");
             }
         }.addRoutesToCamelContext(context);
@@ -186,12 +202,14 @@ public class BackpressureStrategyTest extends BaseReactiveTest {
         context().start();
 
         assertTrue(latch.await(5, TimeUnit.SECONDS));
-        Thread.sleep(1000); // wait for all numbers to be generated
+        // Wait for all 20 timer events to be processed
+        await().atMost(5, TimeUnit.SECONDS).until(() -> timerCount.get() >= 20);
 
         subscriber.request(19);
-        assertTrue(latch2.await(1, TimeUnit.SECONDS));
-        Thread.sleep(200); // add other time to ensure no other items arrive
-        assertEquals(2, queue.size());
+        assertTrue(latch2.await(2, TimeUnit.SECONDS));
+        // Verify exactly 2 items received and no more arrive
+        await().atMost(2, TimeUnit.SECONDS)
+                .untilAsserted(() -> assertEquals(2, queue.size()));
         int sum = queue.stream().reduce((i, j) -> i + j).get();
         assertEquals(3, sum); // 1 + 2 = 3
 

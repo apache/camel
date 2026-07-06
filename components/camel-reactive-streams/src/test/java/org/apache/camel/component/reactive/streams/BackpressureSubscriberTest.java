@@ -93,15 +93,15 @@ public class BackpressureSubscriberTest extends BaseReactiveTest {
             @Override
             public void configure() {
                 from("reactive-streams:slowNumbers?concurrentConsumers=10&maxInflightExchanges=1")
-                        .process(x -> Thread.sleep(50))
+                        .delay(50)
                         .to("mock:endpoint");
 
                 from("reactive-streams:slowerNumbers?concurrentConsumers=10&maxInflightExchanges=1")
-                        .process(x -> Thread.sleep(300))
+                        .delay(300)
                         .to("mock:endpoint");
 
                 from("reactive-streams:parallelSlowNumbers?concurrentConsumers=10&maxInflightExchanges=5")
-                        .process(x -> Thread.sleep(100))
+                        .delay(100)
                         .to("mock:endpoint");
             }
         };

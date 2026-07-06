@@ -95,10 +95,7 @@ public class BasicPublisherTest extends BaseReactiveTest {
         disp1.dispose();
         disp2.dispose();
 
-        // No active subscriptions, warnings expected
-        Thread.sleep(60);
-
-        // Add another subscription
+        // Add another subscription after disposal
         CountDownLatch latch3 = new CountDownLatch(5);
         Disposable disp3 = Observable.fromPublisher(CamelReactiveStreams.get(context).fromStream("unbounded", Integer.class))
                 .subscribe(n -> latch3.countDown());
