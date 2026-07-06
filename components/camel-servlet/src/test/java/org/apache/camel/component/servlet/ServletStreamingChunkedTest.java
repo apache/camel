@@ -42,28 +42,25 @@ public class ServletStreamingChunkedTest extends ServletCamelRouterTestSupport {
     @Test
     public void testStreaming() throws Exception {
 
+        final CountDownLatch requestStarted = new CountDownLatch(1);
         final CountDownLatch latch1 = new CountDownLatch(1);
         final CountDownLatch latch2 = new CountDownLatch(1);
 
-        // use background thread to write to stream that camel-servlet uses as reponse
+        // use background thread to write to stream that camel-servlet uses as response
         context.getExecutorServiceManager().newSingleThreadExecutor(this, "writer").execute(() -> {
             try {
-                LOG.info(">>>> sleeping <<<<");
-                Thread.sleep(500);
+                LOG.info(">>>> waiting for request <<<<");
+                requestStarted.await(5, TimeUnit.SECONDS);
                 LOG.info(">>>> writing <<<<");
                 pos.write("ABC".getBytes());
                 pos.flush();
 
                 latch1.await(5, TimeUnit.SECONDS);
-                LOG.info(">>>> sleeping <<<<");
-                Thread.sleep(500);
                 LOG.info(">>>> writing <<<<");
                 pos.write("DEF".getBytes());
                 pos.flush();
 
                 latch2.await(5, TimeUnit.SECONDS);
-                LOG.info(">>>> sleeping <<<<");
-                Thread.sleep(500);
                 LOG.info(">>>> writing <<<<");
                 pos.write("GHI".getBytes());
                 pos.flush();
@@ -83,6 +80,9 @@ public class ServletStreamingChunkedTest extends ServletCamelRouterTestSupport {
 
         assertEquals(200, response.getResponseCode());
         assertEquals("chunked", response.getHeaderField(Exchange.TRANSFER_ENCODING));
+
+        // Signal writer that the request has been processed and response is streaming
+        requestStarted.countDown();
 
         InputStream is = response.getInputStream();
         assertNotNull(is);
