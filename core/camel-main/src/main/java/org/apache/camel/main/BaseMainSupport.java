@@ -54,6 +54,7 @@ import org.apache.camel.PropertiesLookupListener;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.Service;
 import org.apache.camel.StartupStep;
+import org.apache.camel.cluster.CamelClusterService;
 import org.apache.camel.console.DevConsole;
 import org.apache.camel.console.DevConsoleRegistry;
 import org.apache.camel.health.HealthCheck;
@@ -153,7 +154,7 @@ public abstract class BaseMainSupport extends BaseService {
     private static final String[] GROUP_PREFIXES = new String[] {
             "camel.context.", "camel.resilience4j.", "camel.faulttolerance.",
             "camel.rest.", "camel.vault.", "camel.threadpool.", "camel.health.",
-            "camel.lra.", "camel.opentelemetry2.", "camel.opentelemetry.",
+            "camel.lra.", "camel.cluster.", "camel.opentelemetry2.", "camel.opentelemetry.",
             "camel.telemetryDev.", "camel.management.", "camel.mdc.", "camel.metrics.", "camel.routeTemplate",
             "camel.devConsole.", "camel.variable.", "camel.beans.", "camel.globalOptions.",
             PREFIX_SERVER, PREFIX_SSL, PREFIX_SECURITY, PREFIX_DEBUG, PREFIX_TRACE,
@@ -1396,6 +1397,7 @@ public abstract class BaseMainSupport extends BaseService {
         OrderedLocationProperties threadPoolProperties = new OrderedLocationProperties();
         OrderedLocationProperties healthProperties = new OrderedLocationProperties();
         OrderedLocationProperties lraProperties = new OrderedLocationProperties();
+        OrderedLocationProperties clusterProperties = new OrderedLocationProperties();
         OrderedLocationProperties otelProperties = new OrderedLocationProperties();
         OrderedLocationProperties otel2Properties = new OrderedLocationProperties();
         OrderedLocationProperties mdcProperties = new OrderedLocationProperties();
@@ -1459,6 +1461,12 @@ public abstract class BaseMainSupport extends BaseService {
                 String option = key.substring(10);
                 validateOptionAndValue(key, option, value);
                 lraProperties.put(loc, optionKey(option), value);
+            } else if (startsWithIgnoreCase(key, "camel.cluster.")) {
+                // grab the value
+                String value = prop.getProperty(key);
+                String option = key.substring(14);
+                validateOptionAndValue(key, option, value);
+                clusterProperties.put(loc, optionKey(option), value);
             } else if (startsWithIgnoreCase(key, "camel.opentelemetry2.")) {
                 // grab the value
                 String value = prop.getProperty(key);
@@ -1644,6 +1652,12 @@ public abstract class BaseMainSupport extends BaseService {
         if (!lraProperties.isEmpty() || mainConfigurationProperties.hasLraConfiguration()) {
             LOG.debug("Auto-configuring Saga LRA from loaded properties: {}", lraProperties.size());
             setLraCheckProperties(camelContext, lraProperties, mainConfigurationProperties.isAutoConfigurationFailFast(),
+                    autoConfiguredProperties);
+        }
+        if (!clusterProperties.isEmpty()) {
+            LOG.debug("Auto-configuring Cluster Service from loaded properties: {}", clusterProperties.size());
+            setClusterServiceProperties(camelContext, clusterProperties,
+                    mainConfigurationProperties.isAutoConfigurationFailFast(),
                     autoConfiguredProperties);
         }
         if (!otelProperties.isEmpty() || mainConfigurationProperties.hasOtelConfiguration()) {
@@ -1978,6 +1992,51 @@ public abstract class BaseMainSupport extends BaseService {
             // add as service so saga can be active
             camelContext.addService(css, true, true);
         }
+    }
+
+    private void setClusterServiceProperties(
+            CamelContext camelContext, OrderedLocationProperties clusterProperties,
+            boolean failIfNotSet, OrderedLocationProperties autoConfiguredProperties)
+            throws Exception {
+
+        // group properties by cluster type (first dot-delimited segment)
+        // e.g., "file.root" -> type="file", option="root"
+        Map<String, OrderedLocationProperties> byType = new LinkedHashMap<>();
+        for (String key : clusterProperties.stringPropertyNames()) {
+            String loc = clusterProperties.getLocation(key);
+            String value = clusterProperties.getProperty(key);
+            int dot = key.indexOf('.');
+            if (dot > 0) {
+                String type = key.substring(0, dot);
+                String option = key.substring(dot + 1);
+                byType.computeIfAbsent(type, k -> new OrderedLocationProperties())
+                        .put(loc, optionKey(option), value);
+            }
+        }
+
+        for (Map.Entry<String, OrderedLocationProperties> entry : byType.entrySet()) {
+            String type = entry.getKey();
+            OrderedLocationProperties typeProperties = entry.getValue();
+
+            String enabledLoc = typeProperties.getLocation("enabled");
+            Object enabledObj = typeProperties.remove("enabled");
+            if (ObjectHelper.isNotEmpty(enabledObj)) {
+                autoConfiguredProperties.put(enabledLoc, "camel.cluster." + type + ".enabled", enabledObj.toString());
+            }
+            boolean enabled = enabledObj != null ? CamelContextHelper.parseBoolean(camelContext, enabledObj.toString()) : true;
+            if (enabled) {
+                CamelClusterService css = resolveClusterService(camelContext, type);
+                setPropertiesOnTarget(camelContext, css, typeProperties, "camel.cluster." + type + ".", failIfNotSet, true,
+                        autoConfiguredProperties);
+                camelContext.addService(css, true, true);
+            }
+        }
+    }
+
+    private static CamelClusterService resolveClusterService(CamelContext camelContext, String type) throws Exception {
+        String factoryKey = "cluster-service-" + type;
+        return ResolverHelper.resolveMandatoryBootstrapService(
+                camelContext, factoryKey, CamelClusterService.class, "camel-" + type);
     }
 
     private void setOtelProperties(

@@ -18,9 +18,11 @@ package org.apache.camel.component.jgroups.raft.cluster;
 
 import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.annotations.JdkService;
 import org.apache.camel.support.cluster.AbstractCamelClusterService;
 import org.jgroups.raft.RaftHandle;
 
+@JdkService("cluster-service-jgroups-raft")
 @Metadata(label = "bean",
           description = "JGroups Raft based cluster locking",
           annotations = { "interfaceName=org.apache.camel.cluster.CamelClusterService" })

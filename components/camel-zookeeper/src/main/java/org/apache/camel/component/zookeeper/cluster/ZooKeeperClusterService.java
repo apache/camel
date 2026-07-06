@@ -20,6 +20,7 @@ import org.apache.camel.component.zookeeper.ZooKeeperCuratorConfiguration;
 import org.apache.camel.component.zookeeper.ZooKeeperCuratorHelper;
 import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.annotations.JdkService;
 import org.apache.camel.support.cluster.AbstractCamelClusterService;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -28,6 +29,7 @@ import org.apache.curator.framework.CuratorFramework;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@JdkService("cluster-service-zookeeper")
 @Metadata(label = "bean",
           description = "ZooKeeper based cluster locking",
           annotations = { "interfaceName=org.apache.camel.cluster.CamelClusterService" })
