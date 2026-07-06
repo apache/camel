@@ -236,7 +236,7 @@
         <ibm-cos-sdk-version>2.15.1</ibm-cos-sdk-version>
         <ibm-secrets-manager-version>2.0.28</ibm-secrets-manager-version>
         <ibm-watson-sdk-version>16.2.0</ibm-watson-sdk-version>
-        <ibm-watsonx-ai-sdk-version>0.21.0</ibm-watsonx-ai-sdk-version>
+        <ibm-watsonx-ai-sdk-version>0.22.0</ibm-watsonx-ai-sdk-version>
         <ibm-watsonx-data-sdk-version>0.9.0</ibm-watsonx-data-sdk-version>
         <ical4j-version>4.3.0</ical4j-version>
         <icu4j-version>78.3</icu4j-version>
