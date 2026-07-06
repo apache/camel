@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.AvailablePortFinder;
@@ -28,6 +29,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import static org.awaitility.Awaitility.await;
 
 public class SyslogSpringMinaTest extends CamelSpringTestSupport {
 
@@ -50,7 +53,7 @@ public class SyslogSpringMinaTest extends CamelSpringTestSupport {
     }
 
     @Test
-    public void testSendingRawUDP() throws IOException, InterruptedException {
+    public void testSendingRawUDP() throws IOException {
 
         MockEndpoint mock = getMockEndpoint("mock:stop1");
         MockEndpoint mock2 = getMockEndpoint("mock:stop2");
@@ -67,12 +70,12 @@ public class SyslogSpringMinaTest extends CamelSpringTestSupport {
 
                 DatagramPacket packet = new DatagramPacket(data, data.length, address, serverPort.getPort());
                 socket.send(packet);
-                Thread.sleep(100);
             }
         } finally {
             socket.close();
         }
 
-        MockEndpoint.assertIsSatisfied(context);
+        await().atMost(5, TimeUnit.SECONDS)
+                .untilAsserted(() -> MockEndpoint.assertIsSatisfied(context));
     }
 }

@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -30,6 +31,7 @@ import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class AutomatedConversionTest extends CamelTestSupport {
@@ -45,7 +47,7 @@ public class AutomatedConversionTest extends CamelTestSupport {
             = "<34>1 2003-10-11T22:14:15.003Z mymachine.example.com su - ID47 - BOM'su root' failed for lonvick on /dev/pts/8";
 
     @Test
-    public void testSendingRawUDP() throws IOException, InterruptedException {
+    public void testSendingRawUDP() throws IOException {
 
         MockEndpoint mock = getMockEndpoint("mock:syslogReceiver");
         MockEndpoint mock2 = getMockEndpoint("mock:syslogReceiver2");
@@ -60,19 +62,18 @@ public class AutomatedConversionTest extends CamelTestSupport {
                 byte[] data = rfc3164Message.getBytes();
                 DatagramPacket packet = new DatagramPacket(data, data.length, address, serverPort.getPort());
                 socket.send(packet);
-                Thread.sleep(100);
             }
             for (int i = 0; i < messageCount; i++) {
                 byte[] data = rfc5424Message.getBytes();
                 DatagramPacket packet = new DatagramPacket(data, data.length, address, serverPort.getPort());
                 socket.send(packet);
-                Thread.sleep(100);
             }
         } finally {
             socket.close();
         }
 
-        MockEndpoint.assertIsSatisfied(context);
+        await().atMost(5, TimeUnit.SECONDS)
+                .untilAsserted(() -> MockEndpoint.assertIsSatisfied(context));
     }
 
     @Override

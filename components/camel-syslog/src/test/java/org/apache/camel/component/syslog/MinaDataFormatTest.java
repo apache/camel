@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -31,6 +32,7 @@ import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MinaDataFormatTest extends CamelTestSupport {
@@ -44,7 +46,7 @@ public class MinaDataFormatTest extends CamelTestSupport {
               + "         Conveyer1=OK, Conveyer2=OK # %%";
 
     @Test
-    public void testSendingRawUDP() throws IOException, InterruptedException {
+    public void testSendingRawUDP() throws IOException {
 
         MockEndpoint mock = getMockEndpoint("mock:syslogReceiver");
         MockEndpoint mock2 = getMockEndpoint("mock:syslogReceiver2");
@@ -61,13 +63,13 @@ public class MinaDataFormatTest extends CamelTestSupport {
 
                 DatagramPacket packet = new DatagramPacket(data, data.length, address, serverPort.getPort());
                 socket.send(packet);
-                Thread.sleep(100);
             }
         } finally {
             socket.close();
         }
 
-        MockEndpoint.assertIsSatisfied(context);
+        await().atMost(5, TimeUnit.SECONDS)
+                .untilAsserted(() -> MockEndpoint.assertIsSatisfied(context));
     }
 
     @Override

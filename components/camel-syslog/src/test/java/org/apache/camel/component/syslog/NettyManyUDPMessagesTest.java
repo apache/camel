@@ -19,6 +19,7 @@ package org.apache.camel.component.syslog;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -30,6 +31,7 @@ import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class NettyManyUDPMessagesTest extends CamelTestSupport {
@@ -58,13 +60,13 @@ public class NettyManyUDPMessagesTest extends CamelTestSupport {
 
                 DatagramPacket packet = new DatagramPacket(data, data.length, address, serverPort.getPort());
                 socket.send(packet);
-                Thread.sleep(100);
             }
         } finally {
             socket.close();
         }
 
-        MockEndpoint.assertIsSatisfied(context);
+        await().atMost(20, TimeUnit.SECONDS)
+                .untilAsserted(() -> MockEndpoint.assertIsSatisfied(context));
     }
 
     @Override
