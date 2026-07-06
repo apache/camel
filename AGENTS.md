@@ -19,6 +19,9 @@ These rules apply to ALL AI agents working on this codebase.
 - All AI-generated content (GitHub PR descriptions, review comments, JIRA comments) MUST clearly
   identify itself as AI-generated and mention the human operator.
   Example: "_Claude Code on behalf of [Human Name]_"
+- **Never guess or hallucinate the operator's name.** Always determine it programmatically:
+  - Use `gh api /user --jq '.login'` to get the authenticated GitHub username.
+  - If for any reason the lookup fails, omit the name rather than guessing.
 - AI coding agents MUST be configured to add co-authorship trailers to commits
   (e.g., `Co-authored-by`). For Claude Code, enable this via the
   [attribution settings](https://code.claude.com/docs/en/settings#attribution-settings).
@@ -89,6 +92,8 @@ When merging a PR, an agent MUST perform the following steps **in order**:
      cannot be set on an already-closed issue — always set it **before** closing.
 
 3. **Assign the PR and JIRA issue to the contributor**:
+   - **Never guess or hallucinate the PR author's username.** Always look it up programmatically:
+     `gh pr view <PR> --json author --jq '.author.login'`.
    - Assign the PR to the PR author on GitHub: `gh pr edit <PR> --add-assignee <author>`.
    - Ensure the JIRA issue is assigned to the contributor (it should already be from the
      "JIRA Ticket Ownership" rules, but verify).
