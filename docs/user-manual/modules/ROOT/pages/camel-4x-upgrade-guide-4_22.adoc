@@ -104,3 +104,14 @@ the message, consistent with the inbound header filtering already performed by t
 
 Ordinary application headers are unaffected. If a route relied on `Camel*` headers being propagated from the MIME
 content, set them explicitly after unmarshalling.
+
+=== camel-kafka - Producer no longer silently drops scalar Jackson nodes
+
+With `useIterator=true`, the Kafka producer splits an `Iterable` body into one record per element.
+A Jackson `JsonNode` implements `Iterable`, so a scalar value node (e.g. an `IntNode` produced by
+`transform().jq(".my-value")`) was seen as an empty iterable and produced no record, silently
+discarding the message with no exception or log.
+
+Scalar value nodes are now sent as a single record. Only container nodes (`ArrayNode`, `ObjectNode`)
+are still split, which is unchanged. Any `convertBodyTo(...)` previously used as a workaround is no
+longer required.
