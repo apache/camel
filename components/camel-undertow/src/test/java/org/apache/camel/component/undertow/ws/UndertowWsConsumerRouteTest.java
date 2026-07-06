@@ -170,14 +170,16 @@ public class UndertowWsConsumerRouteTest extends BaseUndertowTest {
 
         wsclient1.sendTextMessage("Test1");
         // Wait for the first echo before sending the next message to avoid
-        // IllegalStateException from JDK WebSocket when a send is still pending
+        // IllegalStateException from JDK WebSocket when a send is still pending.
+        // Poll using size() to avoid iterating the non-thread-safe received list.
         await().atMost(10, TimeUnit.SECONDS)
-                .untilAsserted(() -> assertTrue(wsclient1.getReceived(String.class).contains("Test1")));
+                .until(() -> wsclient1.getReceived().size() >= 1);
 
         wsclient1.sendTextMessage("Test2");
         await().atMost(10, TimeUnit.SECONDS)
-                .untilAsserted(
-                        () -> assertEquals(Arrays.asList("Test1", "Test2"), wsclient1.getReceived(String.class)));
+                .until(() -> wsclient1.getReceived().size() >= 2);
+
+        assertEquals(Arrays.asList("Test1", "Test2"), wsclient1.getReceived(String.class));
 
         wsclient1.close();
     }
@@ -192,11 +194,12 @@ public class UndertowWsConsumerRouteTest extends BaseUndertowTest {
         wsclient1.sendTextMessage("Gambas");
         wsclient2.sendTextMessage("Calamares");
 
+        // Poll using size() to avoid iterating the non-thread-safe received list
         await().atMost(10, TimeUnit.SECONDS)
-                .untilAsserted(() -> {
-                    assertEquals(List.of("Gambas"), wsclient1.getReceived(String.class));
-                    assertEquals(List.of("Calamares"), wsclient2.getReceived(String.class));
-                });
+                .until(() -> wsclient1.getReceived().size() >= 1 && wsclient2.getReceived().size() >= 1);
+
+        assertEquals(List.of("Gambas"), wsclient1.getReceived(String.class));
+        assertEquals(List.of("Calamares"), wsclient2.getReceived(String.class));
 
         wsclient1.close();
         wsclient2.close();
@@ -212,18 +215,19 @@ public class UndertowWsConsumerRouteTest extends BaseUndertowTest {
         wsclient1.sendTextMessage("Gambas");
         wsclient2.sendTextMessage("Calamares");
 
+        // Poll using size() to avoid iterating the non-thread-safe received list
         await().atMost(10, TimeUnit.SECONDS)
-                .untilAsserted(() -> {
-                    List<String> received1 = wsclient1.getReceived(String.class);
-                    assertEquals(2, received1.size());
-                    assertTrue(received1.contains("Gambas"));
-                    assertTrue(received1.contains("Calamares"));
+                .until(() -> wsclient1.getReceived().size() >= 2 && wsclient2.getReceived().size() >= 2);
 
-                    List<String> received2 = wsclient2.getReceived(String.class);
-                    assertEquals(2, received2.size());
-                    assertTrue(received2.contains("Gambas"));
-                    assertTrue(received2.contains("Calamares"));
-                });
+        List<String> received1 = wsclient1.getReceived(String.class);
+        assertEquals(2, received1.size());
+        assertTrue(received1.contains("Gambas"));
+        assertTrue(received1.contains("Calamares"));
+
+        List<String> received2 = wsclient2.getReceived(String.class);
+        assertEquals(2, received2.size());
+        assertTrue(received2.contains("Gambas"));
+        assertTrue(received2.contains("Calamares"));
 
         wsclient1.close();
         wsclient2.close();
@@ -296,15 +300,16 @@ public class UndertowWsConsumerRouteTest extends BaseUndertowTest {
         wsclient2.connect();
         wsclient3.connect();
 
+        // Poll using size() to avoid iterating the non-thread-safe received list
         await().atMost(10, TimeUnit.SECONDS)
-                .untilAsserted(() -> assertConnected(wsclient1));
+                .until(() -> wsclient1.getReceived().size() >= 1);
         final String connectionKey1 = assertConnected(wsclient1);
         assertNotNull(connectionKey1);
         await().atMost(10, TimeUnit.SECONDS)
-                .untilAsserted(() -> assertConnected(wsclient2));
+                .until(() -> wsclient2.getReceived().size() >= 1);
         final String connectionKey2 = assertConnected(wsclient2);
         await().atMost(10, TimeUnit.SECONDS)
-                .untilAsserted(() -> assertConnected(wsclient3));
+                .until(() -> wsclient3.getReceived().size() >= 1);
         final String connectionKey3 = assertConnected(wsclient3);
 
         wsclient1.reset(1);
@@ -315,15 +320,14 @@ public class UndertowWsConsumerRouteTest extends BaseUndertowTest {
         // Wait for broadcast delivery before sending the next message to avoid
         // IllegalStateException from JDK WebSocket when a send is still pending
         await().atMost(10, TimeUnit.SECONDS)
-                .untilAsserted(() -> {
-                    assertEquals(broadcastMsg, wsclient2.getReceived(String.class).get(0));
-                    assertEquals(broadcastMsg, wsclient3.getReceived(String.class).get(0));
-                });
+                .until(() -> wsclient2.getReceived().size() >= 1 && wsclient3.getReceived().size() >= 1);
+        assertEquals(broadcastMsg, wsclient2.getReceived(String.class).get(0));
+        assertEquals(broadcastMsg, wsclient3.getReceived(String.class).get(0));
 
         wsclient1.sendTextMessage("private"); // this one should go to wsclient1 only
         await().atMost(10, TimeUnit.SECONDS)
-                .untilAsserted(
-                        () -> assertEquals("private", wsclient1.getReceived(String.class).get(0)));
+                .until(() -> wsclient1.getReceived().size() >= 1);
+        assertEquals("private", wsclient1.getReceived(String.class).get(0));
 
         wsclient1.close();
         wsclient2.close();
