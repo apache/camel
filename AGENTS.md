@@ -112,6 +112,8 @@ When merging a PR, an agent MUST perform the following steps **in order**:
 
 5. **Merge the PR**:
    - Verify all merge requirements above are satisfied (human approval, no unresolved conversations).
+   - If any commit in the PR was AI-assisted, the squash-merge commit message MUST include the
+     AI co-authorship trailer (e.g., `Co-authored-by: Claude Opus 4.6 <noreply@anthropic.com>`).
    - Merge the PR: `gh pr merge <PR> --squash` (or `--merge` / `--rebase` as appropriate).
 
 6. **Close the JIRA issue**:
