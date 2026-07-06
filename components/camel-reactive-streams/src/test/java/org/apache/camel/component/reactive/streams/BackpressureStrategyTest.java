@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.reactive.streams;
 
+import java.time.Duration;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -111,8 +112,10 @@ public class BackpressureStrategyTest extends BaseReactiveTest {
         subscriber.request(19);
         assertTrue(latch2.await(2, TimeUnit.SECONDS));
         // Verify exactly 2 items received and no more arrive
-        await().atMost(2, TimeUnit.SECONDS)
-                .untilAsserted(() -> assertEquals(2, queue.size()));
+        // Use during() to ensure queue size remains stable at 2
+        await().during(Duration.ofMillis(500))
+                .atMost(Duration.ofSeconds(2))
+                .until(() -> queue.size() == 2);
         int sum = queue.stream().reduce((i, j) -> i + j).get();
         assertEquals(3, sum); // 1 + 2 = 3
 
@@ -161,8 +164,10 @@ public class BackpressureStrategyTest extends BaseReactiveTest {
         subscriber.request(19);
         assertTrue(latch2.await(2, TimeUnit.SECONDS));
         // Verify exactly 2 items received and no more arrive
-        await().atMost(2, TimeUnit.SECONDS)
-                .untilAsserted(() -> assertEquals(2, queue.size()));
+        // Use during() to ensure queue size remains stable at 2
+        await().during(Duration.ofMillis(500))
+                .atMost(Duration.ofSeconds(2))
+                .until(() -> queue.size() == 2);
         int sum = queue.stream().reduce((i, j) -> i + j).get();
         assertEquals(21, sum); // 1 + 20 = 21
 
@@ -208,8 +213,10 @@ public class BackpressureStrategyTest extends BaseReactiveTest {
         subscriber.request(19);
         assertTrue(latch2.await(2, TimeUnit.SECONDS));
         // Verify exactly 2 items received and no more arrive
-        await().atMost(2, TimeUnit.SECONDS)
-                .untilAsserted(() -> assertEquals(2, queue.size()));
+        // Use during() to ensure queue size remains stable at 2
+        await().during(Duration.ofMillis(500))
+                .atMost(Duration.ofSeconds(2))
+                .until(() -> queue.size() == 2);
         int sum = queue.stream().reduce((i, j) -> i + j).get();
         assertEquals(3, sum); // 1 + 2 = 3
 
