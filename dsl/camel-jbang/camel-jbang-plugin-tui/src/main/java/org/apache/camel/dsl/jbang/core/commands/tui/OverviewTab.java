@@ -131,7 +131,12 @@ class OverviewTab extends AbstractTab {
             return true;
         }
         if (ke.isCharIgnoreCase('a')) {
-            chartMode = (chartMode + 1) % 3;
+            if (ctx.selectedPid == null) {
+                // no selection: toggle between all and off (skip single)
+                chartMode = chartMode == CHART_ALL ? CHART_OFF : CHART_ALL;
+            } else {
+                chartMode = (chartMode + 1) % 3;
+            }
             return true;
         }
         // Process control keys
@@ -775,7 +780,8 @@ class OverviewTab extends AbstractTab {
         hint(spans, TuiIcons.HINT_SCROLL, "navigate");
         if (!ctx.isInfraSelected()) {
             hint(spans, "s", "sort");
-            hint(spans, "a", "chart " + switch (chartMode) {
+            int effectiveMode = (chartMode == CHART_SINGLE && ctx.selectedPid == null) ? CHART_ALL : chartMode;
+            hint(spans, "a", "chart " + switch (effectiveMode) {
                 case CHART_ALL -> "[all]";
                 case CHART_SINGLE -> "[single]";
                 default -> "[off]";
