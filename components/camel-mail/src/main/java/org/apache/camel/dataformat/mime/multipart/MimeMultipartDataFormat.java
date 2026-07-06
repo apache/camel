@@ -50,8 +50,10 @@ import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.attachment.Attachment;
 import org.apache.camel.attachment.AttachmentMessage;
 import org.apache.camel.attachment.DefaultAttachment;
+import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.annotations.Dataformat;
 import org.apache.camel.support.DefaultDataFormat;
+import org.apache.camel.support.DefaultHeaderFilterStrategy;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.MessageHelper;
 import org.apache.camel.util.IOHelper;
@@ -72,6 +74,7 @@ public class MimeMultipartDataFormat extends DefaultDataFormat {
     private String includeHeaders;
     private Pattern includeHeadersPattern;
     private boolean binaryContent;
+    private final HeaderFilterStrategy headerFilterStrategy = new DefaultHeaderFilterStrategy();
 
     public String getMultipartSubType() {
         return multipartSubType;
@@ -282,6 +285,12 @@ public class MimeMultipartDataFormat extends DefaultDataFormat {
         while (headersEnum.hasMoreElements()) {
             Object ho = headersEnum.nextElement();
             if (ho instanceof Header header) {
+                // filter Camel internal headers (Camel*) instead of copying them verbatim from the external
+                // MIME headers, consistent with the inbound HeaderFilterStrategy applied by the mail consumer
+                if (headerFilterStrategy.applyFilterToExternalHeaders(header.getName(), header.getValue(),
+                        camelMessage.getExchange())) {
+                    continue;
+                }
                 camelMessage.setHeader(header.getName(), header.getValue());
             }
         }
