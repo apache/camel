@@ -28,7 +28,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
- *
+ * Tests message ordering when using a single synchronous JMS consumer thread with asyncConsumer disabled.
  */
 public class InOnlyConsumerAsyncFalseTest extends JmsTestSupport {
 
@@ -38,16 +38,16 @@ public class InOnlyConsumerAsyncFalseTest extends JmsTestSupport {
     private static String afterThreadName;
 
     @Test
-    public void testInOnlyConsumerAsyncTrue() throws Exception {
+    public void testInOnlyConsumerAsyncFalse() throws Exception {
         getMockEndpoint(MOCK_RESULT).expectedBodiesReceived("Hello Camel", "Hello World");
 
         template.sendBody(SJMS_QUEUE_NAME, "Hello Camel");
         template.sendBody(SJMS_QUEUE_NAME, "Hello World");
 
-        // Hello World is received first despite its send last
-        // the reason is that the first message is processed asynchronously
-        // and it takes 2 sec to complete, so in between we have time to
-        // process the 2nd message on the queue
+        // We expect message to be received in the same order as they were sent
+        // despite delaying the processing of the first message,
+        // as asyncConsumer is disabled and there is only one consumer thread
+        // processing messages sequentially.
         MockEndpoint.assertIsSatisfied(context, 20, TimeUnit.SECONDS);
         assertEquals(beforeThreadName, afterThreadName);
     }
@@ -57,18 +57,21 @@ public class InOnlyConsumerAsyncFalseTest extends JmsTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from(SJMS_QUEUE_NAME).to("log:before").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        beforeThreadName = Thread.currentThread().getName();
-                        if (exchange.getIn().getBody(String.class).equals("Hello Camel")) {
-                            Thread.sleep(2000);
-                        }
-                    }
-                }).process(new Processor() {
-                    public void process(Exchange exchange) {
-                        afterThreadName = Thread.currentThread().getName();
-                    }
-                }).to("log:after").to(MOCK_RESULT);
+                from(SJMS_QUEUE_NAME)
+                        .to("log:before")
+                        .process(new Processor() {
+                            public void process(Exchange exchange) throws Exception {
+                                beforeThreadName = Thread.currentThread().getName();
+                                if (exchange.getIn().getBody(String.class).equals("Hello Camel")) {
+                                    // delay processing of the message
+                                    Thread.sleep(2000);
+                                }
+                            }
+                        }).process(new Processor() {
+                            public void process(Exchange exchange) {
+                                afterThreadName = Thread.currentThread().getName();
+                            }
+                        }).to("log:after").to(MOCK_RESULT);
             }
         };
     }
