@@ -16,9 +16,12 @@
  */
 package org.apache.camel.component.quartz;
 
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.awaitility.Awaitility;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.quartz.Scheduler;
@@ -123,15 +126,20 @@ public class QuartzNameCollisionTest {
 
         // traverse a litany of states
         assertDoesNotThrow(camel::start, "Start should have not thrown exception");
-        Thread.sleep(100);
+        Awaitility.await().atMost(5, TimeUnit.SECONDS)
+                .untilAsserted(() -> assertTrue(camel.isStarted(), "CamelContext should be started"));
         assertDoesNotThrow(camel::suspend, "Suspend should not have thrown exception");
-        Thread.sleep(100);
+        Awaitility.await().atMost(5, TimeUnit.SECONDS)
+                .untilAsserted(() -> assertTrue(camel.isSuspended(), "CamelContext should be suspended"));
         assertDoesNotThrow(camel::resume, "Resume should not have thrown exception");
-        Thread.sleep(100);
+        Awaitility.await().atMost(5, TimeUnit.SECONDS)
+                .untilAsserted(() -> assertTrue(camel.isStarted(), "CamelContext should be started after resume"));
         assertDoesNotThrow(camel::stop, "Stop should not have thrown exception");
-        Thread.sleep(100);
+        Awaitility.await().atMost(5, TimeUnit.SECONDS)
+                .untilAsserted(() -> assertTrue(camel.isStopped(), "CamelContext should be stopped"));
         assertDoesNotThrow(camel::start, "Start again should have thrown exception");
-        Thread.sleep(100);
+        Awaitility.await().atMost(5, TimeUnit.SECONDS)
+                .untilAsserted(() -> assertTrue(camel.isStarted(), "CamelContext should be started again"));
         assertDoesNotThrow(camel::stop, "Final stop should have thrown exception");
     }
 
