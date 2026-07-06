@@ -29,6 +29,7 @@ import dev.tamboui.text.Line;
 import dev.tamboui.text.Span;
 import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
+import dev.tamboui.tui.event.MouseEvent;
 import dev.tamboui.widgets.Clear;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
@@ -124,6 +125,13 @@ class FolderInputPopup {
     void close() {
         showInput = false;
         folderBrowser.close();
+    }
+
+    boolean handleMouseEvent(MouseEvent me) {
+        if (folderBrowser.isVisible()) {
+            return folderBrowser.handleMouseEvent(me);
+        }
+        return false;
     }
 
     boolean handleKeyEvent(KeyEvent ke) {
@@ -290,7 +298,7 @@ class FolderInputPopup {
         int popupW = Math.min(70, area.width() - 4);
         int popupH = 4;
         int x = area.left() + Math.max(0, (area.width() - popupW) / 2);
-        int y = area.top() + 2;
+        int y = area.top() + Math.max(0, (area.height() - 17) / 4);
         Rect popup = new Rect(x, y, Math.min(popupW, area.width()), Math.min(popupH, area.height()));
 
         frame.renderWidget(Clear.INSTANCE, popup);

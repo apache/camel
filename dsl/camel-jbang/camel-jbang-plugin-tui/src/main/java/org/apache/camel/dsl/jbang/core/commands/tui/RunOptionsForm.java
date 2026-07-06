@@ -608,7 +608,9 @@ class RunOptionsForm {
         int propCount = properties != null ? properties.size() : 0;
         int popupH = Math.min(propCount + 2, Math.min(20, area.height() - 4));
         int x = area.left() + Math.max(0, (area.width() - popupW) / 2);
-        int y = area.top() + Math.max(0, (area.height() - popupH) / 4);
+        // use same y-offset as page 1 (based on page 1's fixed height) so both pages align
+        int page1H = 17;
+        int y = area.top() + Math.max(0, (area.height() - page1H) / 4);
         Rect popup = new Rect(x, y, Math.min(popupW, area.width()), Math.min(popupH, area.height()));
 
         frame.renderWidget(Clear.INSTANCE, popup);

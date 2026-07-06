@@ -34,6 +34,8 @@ import dev.tamboui.text.Span;
 import dev.tamboui.text.Text;
 import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
+import dev.tamboui.tui.event.MouseEvent;
+import dev.tamboui.tui.event.MouseEventKind;
 import dev.tamboui.widgets.Clear;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
@@ -169,6 +171,21 @@ class DocViewerPopup {
                 pickerState.selectNext(pickerIntegrations != null ? pickerIntegrations.size() : 0);
             } else if (ke.isConfirm()) {
                 loadDocFromSelectedIntegration();
+            }
+            return true;
+        }
+        return false;
+    }
+
+    boolean handleMouseEvent(MouseEvent me) {
+        if (showViewer) {
+            if (me.kind() == MouseEventKind.SCROLL_UP) {
+                docScroll = Math.max(0, docScroll - 3);
+                return true;
+            }
+            if (me.kind() == MouseEventKind.SCROLL_DOWN) {
+                docScroll += 3;
+                return true;
             }
             return true;
         }

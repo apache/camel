@@ -30,7 +30,7 @@ final class TuiIcons {
     static final String CAMEL = "🐪";
     static final String SPRING_BOOT = "🍃";
     static final String QUARKUS = "🚀";
-    static final String DEV_PROFILE = "🛠";
+    static final String DEV_PROFILE = "🔨";
     static final String PROD_PROFILE = "📦";
     static final String INFRA = "🔧";
 
@@ -81,6 +81,7 @@ final class TuiIcons {
     static final String MEMORY = "💾";
 
     // ---- Misc UI ----
+    static final String SWITCH = "🔃";
     static final String KEY = "🔑";
     static final String TIP = "💡";
     static final String COMPUTER = "💻";

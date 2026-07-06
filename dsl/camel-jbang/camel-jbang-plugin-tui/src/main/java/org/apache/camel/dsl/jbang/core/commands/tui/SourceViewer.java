@@ -37,6 +37,8 @@ import dev.tamboui.text.Span;
 import dev.tamboui.text.Text;
 import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
+import dev.tamboui.tui.event.MouseEvent;
+import dev.tamboui.tui.event.MouseEventKind;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
 import dev.tamboui.widgets.block.Borders;
@@ -81,6 +83,7 @@ class SourceViewer {
     private String currentRouteId;
     private MonitorContext currentCtx;
     private String currentPid;
+    private Rect lastInnerArea;
 
     private record CachedSource(
             List<String> lines, List<JsonObject> codeData,
@@ -214,6 +217,30 @@ class SourceViewer {
         return true;
     }
 
+    boolean handleMouseEvent(MouseEvent me) {
+        if (!visible) {
+            return false;
+        }
+        if (me.kind() == MouseEventKind.SCROLL_UP) {
+            selectedLine = Math.max(0, selectedLine - 3);
+            return true;
+        }
+        if (me.kind() == MouseEventKind.SCROLL_DOWN) {
+            if (!lines.isEmpty()) {
+                selectedLine = Math.min(lines.size() - 1, selectedLine + 3);
+            }
+            return true;
+        }
+        if (me.isClick() && lastInnerArea != null && lastInnerArea.contains(me.x(), me.y())) {
+            int clickedLine = scrollY + (me.y() - lastInnerArea.top());
+            if (clickedLine >= 0 && clickedLine < lines.size()) {
+                selectedLine = clickedLine;
+            }
+            return true;
+        }
+        return true;
+    }
+
     boolean isSearchInputActive() {
         return search.isSearchInputActive();
     }
@@ -228,6 +255,7 @@ class SourceViewer {
                 .title(buildTitle())
                 .build();
         Rect inner = block.inner(area);
+        lastInnerArea = inner;
         frame.renderWidget(block, area);
 
         if (lines.isEmpty()) {

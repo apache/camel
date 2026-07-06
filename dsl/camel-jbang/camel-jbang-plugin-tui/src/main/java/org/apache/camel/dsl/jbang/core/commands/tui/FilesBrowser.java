@@ -32,6 +32,8 @@ import dev.tamboui.text.CharWidth;
 import dev.tamboui.text.Line;
 import dev.tamboui.text.Span;
 import dev.tamboui.tui.event.KeyEvent;
+import dev.tamboui.tui.event.MouseEvent;
+import dev.tamboui.tui.event.MouseEventKind;
 import dev.tamboui.widgets.Clear;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
@@ -54,6 +56,7 @@ class FilesBrowser {
     private final ListState listState = new ListState();
     private List<FileEntry> entries = Collections.emptyList();
     private final SourceViewer sourceViewer = new SourceViewer();
+    private Rect lastPopup;
 
     boolean isVisible() {
         return visible;
@@ -129,6 +132,29 @@ class FilesBrowser {
         entries = found;
         listState.select(0);
         currentDir = dir;
+        return true;
+    }
+
+    boolean handleMouseEvent(MouseEvent me) {
+        if (sourceViewer.isVisible()) {
+            return sourceViewer.handleMouseEvent(me);
+        }
+        if (me.kind() == MouseEventKind.SCROLL_UP) {
+            listState.selectPrevious();
+            return true;
+        }
+        if (me.kind() == MouseEventKind.SCROLL_DOWN) {
+            listState.selectNext(entries.size());
+            return true;
+        }
+        if (me.isClick() && lastPopup != null && lastPopup.contains(me.x(), me.y())) {
+            int innerTop = lastPopup.top() + 1;
+            int clicked = listState.offset() + (me.y() - innerTop);
+            if (clicked >= 0 && clicked < entries.size()) {
+                listState.select(clicked);
+            }
+            return true;
+        }
         return true;
     }
 
@@ -227,6 +253,7 @@ class FilesBrowser {
         int y = area.top() + 2;
         Rect popup = new Rect(x, y, Math.min(popupW, area.width()), Math.min(popupH, area.height() - 2));
 
+        lastPopup = popup;
         frame.renderWidget(Clear.INSTANCE, popup);
 
         int innerWidth = popupW - 2;

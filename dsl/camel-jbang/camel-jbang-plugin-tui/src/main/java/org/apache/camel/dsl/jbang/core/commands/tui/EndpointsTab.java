@@ -39,6 +39,7 @@ import dev.tamboui.text.Span;
 import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.tui.event.MouseEvent;
+import dev.tamboui.tui.event.MouseEventKind;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
 import dev.tamboui.widgets.block.Borders;
@@ -82,6 +83,7 @@ class EndpointsTab extends AbstractTableTab {
     private int chartMode = CHART_ALL;
     private int panelMode = PANEL_CHART;
     private int detailScroll;
+    private Rect lastDetailArea;
     private int chartPanelHeight = 16;
     private final DragSplit vSplit = new DragSplit();
     private int flowPanelWidth = 38;
@@ -141,6 +143,16 @@ class EndpointsTab extends AbstractTableTab {
 
     @Override
     public boolean handleMouseEvent(MouseEvent me, Rect area) {
+        if (panelMode == PANEL_DETAIL && lastDetailArea != null && lastDetailArea.contains(me.x(), me.y())) {
+            if (me.kind() == MouseEventKind.SCROLL_UP) {
+                detailScroll = Math.max(0, detailScroll - 3);
+                return true;
+            }
+            if (me.kind() == MouseEventKind.SCROLL_DOWN) {
+                detailScroll += 3;
+                return true;
+            }
+        }
         if (vSplit.handleMouse(me, me.y())) {
             if (vSplit.isDragging()) {
                 chartPanelHeight = Math.max(5, Math.min(area.y() + area.height() - me.y(), area.height() - 5));
@@ -310,8 +322,10 @@ class EndpointsTab extends AbstractTableTab {
 
         if (showPanel && panelMode == PANEL_DETAIL) {
             hSplit.clearBorderPos();
+            lastDetailArea = chunks.get(1);
             renderDetail(frame, chunks.get(1), sortedEndpoints, info);
         } else if (showPanel) {
+            lastDetailArea = null;
             // Determine selected endpoint URI for single-endpoint chart
             String selectedUri = null;
             if (chartMode == CHART_SINGLE) {
@@ -744,7 +758,7 @@ class EndpointsTab extends AbstractTableTab {
                         BaseOptionModel doc = optionDocs.get(optName);
 
                         md.append("---\n\n");
-                        md.append("**").append(optName).append("** = `").append(optValue).append("`\n\n");
+                        md.append("**").append(optName).append("** = **").append(optValue).append("**\n\n");
 
                         if (doc != null) {
                             if (doc.getDescription() != null && !doc.getDescription().isEmpty()) {

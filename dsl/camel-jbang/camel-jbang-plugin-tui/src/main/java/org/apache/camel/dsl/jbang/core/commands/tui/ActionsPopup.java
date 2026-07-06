@@ -649,6 +649,12 @@ class ActionsPopup {
             return handleListPopupMouse(me, docViewerPopup.getPickerRect(), docViewerPopup.getPickerState(),
                     docViewerPopup.getPickerIntegrations().size(), i -> false);
         }
+        if (docViewerPopup.isVisible()) {
+            return docViewerPopup.handleMouseEvent(me);
+        }
+        if (folderInputPopup.isVisible()) {
+            return folderInputPopup.handleMouseEvent(me);
+        }
         // Other sub-popups (forms, viewers) stay modal: consume the event without acting on it.
         return true;
     }
@@ -824,8 +830,8 @@ class ActionsPopup {
         // Group 0: Navigation
         items.add(ListItem.from(TuiIcons.menuItem(TuiIcons.GO_TO, "Go to...")));
         items.add(canSwitch
-                ? ListItem.from(TuiIcons.menuItem(TuiIcons.ARROW_BOTH, "Switch Integration (F3)"))
-                : ListItem.from(TuiIcons.menuItem(TuiIcons.ARROW_BOTH, "Switch Integration (F3)")).style(Style.EMPTY.dim()));
+                ? ListItem.from(TuiIcons.menuItem(TuiIcons.SWITCH, "Switch Integration (F3)"))
+                : ListItem.from(TuiIcons.menuItem(TuiIcons.SWITCH, "Switch Integration (F3)")).style(Style.EMPTY.dim()));
         items.add(ListItem.from(divider).style(Style.EMPTY.dim()));
         // Group 1: User Actions
         boolean hasSelection = ctx != null && ctx.selectedPid != null && !ctx.isInfraSelected();

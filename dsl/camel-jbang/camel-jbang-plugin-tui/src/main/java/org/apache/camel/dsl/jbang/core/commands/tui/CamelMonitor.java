@@ -837,7 +837,7 @@ public class CamelMonitor extends CamelCommand {
                 return popupManager.handleMouseEvent(me, tabRegistry.selectedTabIndex(), TAB_LOG);
             }
             if (filesBrowser.isVisible()) {
-                return false;
+                return filesBrowser.handleMouseEvent(me);
             }
             MonitorTab activeTab = tabRegistry.activeTab();
             if (activeTab != null && activeTab.handleMouseEvent(me, lastContentArea)) {

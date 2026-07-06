@@ -35,6 +35,8 @@ import dev.tamboui.text.Line;
 import dev.tamboui.text.Span;
 import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
+import dev.tamboui.tui.event.MouseEvent;
+import dev.tamboui.tui.event.MouseEventKind;
 import dev.tamboui.widgets.Clear;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
@@ -59,6 +61,7 @@ class FolderBrowser {
     private char lastJumpChar;
     private int lastJumpIndex = -1;
     private final SourceViewer sourceViewer = new SourceViewer();
+    private Rect lastPopup;
 
     boolean isVisible() {
         return visible;
@@ -151,6 +154,29 @@ class FolderBrowser {
             int savedOffset = offsetStack.isEmpty() ? 0 : offsetStack.pop();
             listState.setOffset(savedOffset);
         }
+    }
+
+    boolean handleMouseEvent(MouseEvent me) {
+        if (sourceViewer.isVisible()) {
+            return sourceViewer.handleMouseEvent(me);
+        }
+        if (me.kind() == MouseEventKind.SCROLL_UP) {
+            listState.selectPrevious();
+            return true;
+        }
+        if (me.kind() == MouseEventKind.SCROLL_DOWN) {
+            listState.selectNext(entries.size());
+            return true;
+        }
+        if (me.isClick() && lastPopup != null && lastPopup.contains(me.x(), me.y())) {
+            int innerTop = lastPopup.top() + 1;
+            int clicked = listState.offset() + (me.y() - innerTop);
+            if (clicked >= 0 && clicked < entries.size()) {
+                listState.select(clicked);
+            }
+            return true;
+        }
+        return true;
     }
 
     boolean handleKeyEvent(KeyEvent ke) {
@@ -306,9 +332,10 @@ class FolderBrowser {
         int popupH = Math.min(area.height() - 4, Math.max(12, entries.size() + 2));
 
         int x = area.left() + Math.max(0, (area.width() - popupW) / 2);
-        int y = area.top() + 2;
+        int y = area.top() + Math.max(0, (area.height() - 17) / 4);
         Rect popup = new Rect(x, y, Math.min(popupW, area.width()), Math.min(popupH, area.height() - 2));
 
+        lastPopup = popup;
         frame.renderWidget(Clear.INSTANCE, popup);
 
         ListItem[] items = new ListItem[entries.size()];
