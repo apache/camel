@@ -46,6 +46,7 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -168,9 +169,15 @@ public class UndertowWsConsumerRouteTest extends BaseUndertowTest {
         wsclient1.connect();
 
         wsclient1.sendTextMessage("Test1");
-        wsclient1.sendTextMessage("Test2");
+        // Wait for the first echo before sending the next message to avoid
+        // IllegalStateException from JDK WebSocket when a send is still pending.
+        // Poll using size() to avoid iterating the non-thread-safe received list.
+        await().atMost(10, TimeUnit.SECONDS)
+                .until(() -> wsclient1.getReceived().size() >= 1);
 
-        assertTrue(wsclient1.await(10));
+        wsclient1.sendTextMessage("Test2");
+        await().atMost(10, TimeUnit.SECONDS)
+                .until(() -> wsclient1.getReceived().size() >= 2);
 
         assertEquals(Arrays.asList("Test1", "Test2"), wsclient1.getReceived(String.class));
 
@@ -187,8 +194,9 @@ public class UndertowWsConsumerRouteTest extends BaseUndertowTest {
         wsclient1.sendTextMessage("Gambas");
         wsclient2.sendTextMessage("Calamares");
 
-        assertTrue(wsclient1.await(10));
-        assertTrue(wsclient2.await(10));
+        // Poll using size() to avoid iterating the non-thread-safe received list
+        await().atMost(10, TimeUnit.SECONDS)
+                .until(() -> wsclient1.getReceived().size() >= 1 && wsclient2.getReceived().size() >= 1);
 
         assertEquals(List.of("Gambas"), wsclient1.getReceived(String.class));
         assertEquals(List.of("Calamares"), wsclient2.getReceived(String.class));
@@ -207,12 +215,12 @@ public class UndertowWsConsumerRouteTest extends BaseUndertowTest {
         wsclient1.sendTextMessage("Gambas");
         wsclient2.sendTextMessage("Calamares");
 
-        assertTrue(wsclient1.await(10));
-        assertTrue(wsclient2.await(10));
+        // Poll using size() to avoid iterating the non-thread-safe received list
+        await().atMost(10, TimeUnit.SECONDS)
+                .until(() -> wsclient1.getReceived().size() >= 2 && wsclient2.getReceived().size() >= 2);
 
         List<String> received1 = wsclient1.getReceived(String.class);
         assertEquals(2, received1.size());
-
         assertTrue(received1.contains("Gambas"));
         assertTrue(received1.contains("Calamares"));
 
@@ -292,12 +300,16 @@ public class UndertowWsConsumerRouteTest extends BaseUndertowTest {
         wsclient2.connect();
         wsclient3.connect();
 
-        wsclient1.await(10);
+        // Poll using size() to avoid iterating the non-thread-safe received list
+        await().atMost(10, TimeUnit.SECONDS)
+                .until(() -> wsclient1.getReceived().size() >= 1);
         final String connectionKey1 = assertConnected(wsclient1);
         assertNotNull(connectionKey1);
-        wsclient2.await(10);
+        await().atMost(10, TimeUnit.SECONDS)
+                .until(() -> wsclient2.getReceived().size() >= 1);
         final String connectionKey2 = assertConnected(wsclient2);
-        wsclient3.await(10);
+        await().atMost(10, TimeUnit.SECONDS)
+                .until(() -> wsclient3.getReceived().size() >= 1);
         final String connectionKey3 = assertConnected(wsclient3);
 
         wsclient1.reset(1);
@@ -305,13 +317,16 @@ public class UndertowWsConsumerRouteTest extends BaseUndertowTest {
         wsclient3.reset(1);
         final String broadcastMsg = BROADCAST_MESSAGE_PREFIX + connectionKey2 + " " + connectionKey3;
         wsclient1.sendTextMessage(broadcastMsg); // this one should go to wsclient2 and wsclient3
-        wsclient1.sendTextMessage("private"); // this one should go to wsclient1 only
-
-        wsclient2.await(10);
+        // Wait for broadcast delivery before sending the next message to avoid
+        // IllegalStateException from JDK WebSocket when a send is still pending
+        await().atMost(10, TimeUnit.SECONDS)
+                .until(() -> wsclient2.getReceived().size() >= 1 && wsclient3.getReceived().size() >= 1);
         assertEquals(broadcastMsg, wsclient2.getReceived(String.class).get(0));
-        wsclient3.await(10);
         assertEquals(broadcastMsg, wsclient3.getReceived(String.class).get(0));
-        wsclient1.await(10);
+
+        wsclient1.sendTextMessage("private"); // this one should go to wsclient1 only
+        await().atMost(10, TimeUnit.SECONDS)
+                .until(() -> wsclient1.getReceived().size() >= 1);
         assertEquals("private", wsclient1.getReceived(String.class).get(0));
 
         wsclient1.close();
