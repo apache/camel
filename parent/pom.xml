@@ -294,7 +294,7 @@
         <jgit-version>7.7.0.202606012155-r</jgit-version>
         <jgroups-version>5.5.6.Final</jgroups-version>
         <jgroups-raft-version>1.1.4.Final</jgroups-raft-version>
-        <jira-rest-client-api-version>6.0.2</jira-rest-client-api-version>
+        <jira-rest-client-api-version>6.0.4</jira-rest-client-api-version>
         <jira-sal-api-version>7.2.1</jira-sal-api-version>
         <jline-version>4.3.1</jline-version>
         <libthrift-version>0.23.0</libthrift-version>
