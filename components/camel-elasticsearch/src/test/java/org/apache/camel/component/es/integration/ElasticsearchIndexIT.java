@@ -48,7 +48,7 @@ class ElasticsearchIndexIT extends ElasticsearchTestSupport {
         boolean exists = template.requestBody("direct:exists", null, Boolean.class);
         assertTrue(exists, "index should be present");
 
-        DeleteIndexRequest.Builder builder = new DeleteIndexRequest.Builder().index("twitter");
+        DeleteIndexRequest.Builder builder = new DeleteIndexRequest.Builder().index("idx");
         Boolean status = template.requestBody("direct:deleteIndex", builder, Boolean.class);
         assertEquals(true, status, "status should be 200");
 
@@ -65,7 +65,7 @@ class ElasticsearchIndexIT extends ElasticsearchTestSupport {
         boolean exists = template.requestBody("direct:exists", null, Boolean.class);
         assertTrue(exists, "index should be present");
 
-        Boolean status = template.requestBody("direct:deleteIndex", "twitter", Boolean.class);
+        Boolean status = template.requestBody("direct:deleteIndex", "idx", Boolean.class);
         assertEquals(true, status, "status should be 200");
 
         exists = template.requestBody("direct:exists", null, Boolean.class);
@@ -77,7 +77,7 @@ class ElasticsearchIndexIT extends ElasticsearchTestSupport {
         Map<String, String> map = createIndexedData();
         Map<String, Object> headers = new HashMap<>();
         headers.put(ElasticsearchConstants.PARAM_OPERATION, ElasticsearchOperation.Index);
-        headers.put(ElasticsearchConstants.PARAM_INDEX_NAME, "twitter");
+        headers.put(ElasticsearchConstants.PARAM_INDEX_NAME, "idx");
 
         String indexId = template.requestBodyAndHeaders("direct:start", map, headers, String.class);
         assertNotNull(indexId, "indexId should be set");
@@ -88,7 +88,7 @@ class ElasticsearchIndexIT extends ElasticsearchTestSupport {
         Map<String, String> map = createIndexedData();
         Map<String, Object> headers = new HashMap<>();
         headers.put(ElasticsearchConstants.PARAM_OPERATION, ElasticsearchOperation.Index);
-        headers.put(ElasticsearchConstants.PARAM_INDEX_NAME, "twitter");
+        headers.put(ElasticsearchConstants.PARAM_INDEX_NAME, "idx");
         headers.put(ElasticsearchConstants.PARAM_INDEX_ID, "123");
 
         String indexId = template.requestBodyAndHeaders("direct:start", map, headers, String.class);
@@ -118,11 +118,11 @@ class ElasticsearchIndexIT extends ElasticsearchTestSupport {
                 from("direct:start")
                         .to("elasticsearch://elasticsearch");
                 from("direct:index")
-                        .to("elasticsearch://elasticsearch?operation=Index&indexName=twitter");
+                        .to("elasticsearch://elasticsearch?operation=Index&indexName=idx");
                 from("direct:exists")
-                        .to("elasticsearch://elasticsearch?operation=Exists&indexName=twitter");
+                        .to("elasticsearch://elasticsearch?operation=Exists&indexName=idx");
                 from("direct:deleteIndex")
-                        .to("elasticsearch://elasticsearch?operation=DeleteIndex&indexName=twitter");
+                        .to("elasticsearch://elasticsearch?operation=DeleteIndex&indexName=idx");
             }
         };
     }
