@@ -72,6 +72,49 @@ When creating a PR, **always identify and request reviews** from the most releva
 - An agent MUST NOT merge a PR without at least **one human approval**.
 - An agent MUST NOT approve its own PRs — human review is always required.
 
+### Merge Procedure
+
+When merging a PR, an agent MUST perform the following steps **in order**:
+
+1. **Derive the milestone from the target branch**:
+   - Read the `<version>` from the root `pom.xml` on the PR's **target branch** (e.g., `main`,
+     `camel-4.18.x`).
+   - Strip the `-SNAPSHOT` suffix to get the milestone name (e.g., `4.22.0-SNAPSHOT` → `4.22.0`).
+
+2. **Assign the milestone**:
+   - Set the GitHub milestone on the PR: `gh pr edit <PR> --milestone <version>`.
+   - If the milestone does not exist yet on GitHub, create it first:
+     `gh api repos/{owner}/{repo}/milestones -f title="<version>"`.
+   - Set `fixVersions` on the corresponding JIRA issue to the same version. Note: `fixVersions`
+     cannot be set on an already-closed issue — always set it **before** closing.
+
+3. **Assign the PR and JIRA issue to the contributor**:
+   - Assign the PR to the PR author on GitHub: `gh pr edit <PR> --add-assignee <author>`.
+   - Ensure the JIRA issue is assigned to the contributor (it should already be from the
+     "JIRA Ticket Ownership" rules, but verify).
+
+4. **Categorize the PR with labels**:
+   - Determine the PR category from the linked JIRA issue type or PR content:
+     - `bug` — for bug fixes (JIRA type: Bug)
+     - `enhancement` — for improvements and new features (JIRA type: Improvement, New Feature)
+     - `documentation` — for documentation-only changes (JIRA type: Documentation)
+     - `task` — for chores, refactoring, build changes (JIRA type: Task)
+     - `dependency` — for dependency upgrades
+     - `test` — for test-only changes (JIRA type: Test)
+   - Apply the label: `gh pr edit <PR> --add-label <category>`.
+
+5. **Merge the PR**:
+   - Verify all merge requirements above are satisfied (human approval, no unresolved conversations).
+   - Merge the PR: `gh pr merge <PR> --squash` (or `--merge` / `--rebase` as appropriate).
+
+6. **Close the JIRA issue**:
+   - Transition the JIRA issue to **Resolved/Fixed** (ensure `fixVersions` is already set from step 2).
+   - Add a comment linking to the merged PR.
+
+7. **Clean up the branch**:
+   - Delete the PR branch after merge (GitHub may do this automatically if configured).
+   - As per the "Git branch" rules, branches must be cleaned up after merge or rejection.
+
 ### Code Quality
 
 - Every PR must include tests for new functionality or bug fixes.

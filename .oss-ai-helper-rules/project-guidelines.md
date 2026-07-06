@@ -17,3 +17,11 @@ This rule file contains branching, commit, PR, and task-finding conventions for 
 - **Find-task intermediate:** Filter 12352792 (easy issues)
 - **Find-task experienced JQL:** `project = CAMEL AND status = Open AND labels = help-wanted` (maxResults=10)
 - **Scope-too-large redirect:** create a Jira issue directly
+- **Merge procedure:**
+  1. Derive milestone from target branch: read `<version>` from root `pom.xml` on the target branch and strip `-SNAPSHOT` (e.g., `4.22.0-SNAPSHOT` → `4.22.0`)
+  2. Assign milestone to PR (`gh pr edit <PR> --milestone <version>`) and set `fixVersions` on the JIRA issue to the same version (before closing)
+  3. Assign PR to the PR author (`gh pr edit <PR> --add-assignee <author>`) and verify JIRA issue is assigned to the contributor
+  4. Categorize PR with labels based on JIRA issue type or PR content: `bug` (Bug), `enhancement` (Improvement/New Feature), `documentation` (Documentation), `task` (Task/refactoring), `dependency` (dependency upgrades), `test` (Test)
+  5. Merge the PR (after verifying human approval and no unresolved conversations)
+  6. Close the JIRA issue (transition to Resolved/Fixed, add comment linking to merged PR)
+  7. Delete the PR branch
