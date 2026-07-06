@@ -74,7 +74,7 @@ public class MimeMultipartDataFormat extends DefaultDataFormat {
     private String includeHeaders;
     private Pattern includeHeadersPattern;
     private boolean binaryContent;
-    private final HeaderFilterStrategy headerFilterStrategy = new DefaultHeaderFilterStrategy();
+    private final HeaderFilterStrategy headerFilterStrategy = createInboundHeaderFilterStrategy();
 
     public String getMultipartSubType() {
         return multipartSubType;
@@ -122,6 +122,15 @@ public class MimeMultipartDataFormat extends DefaultDataFormat {
 
     public void setBinaryContent(boolean binaryContent) {
         this.binaryContent = binaryContent;
+    }
+
+    private static HeaderFilterStrategy createInboundHeaderFilterStrategy() {
+        DefaultHeaderFilterStrategy strategy = new DefaultHeaderFilterStrategy();
+        // camel-4.18 DefaultHeaderFilterStrategy does not enable the Camel* in-filter by default (that
+        // default was introduced on a later branch), so configure it explicitly to filter the Camel*
+        // namespace on the inbound path, matching the mail consumer's HeaderFilterStrategy.
+        strategy.setInFilterStartsWith(DefaultHeaderFilterStrategy.CAMEL_FILTER_STARTS_WITH);
+        return strategy;
     }
 
     @Override
