@@ -734,6 +734,129 @@ The camel.errorRegistry supports 8 options, which are listed below.
 | *camel.errorRegistry.maximumEntries* | The maximum number of error entries to keep in the registry. When the limit is exceeded, the oldest entries are evicted. | 100 | int
 | *camel.errorRegistry.timeToLiveSeconds* | The time-to-live in seconds for error entries. Entries older than this are evicted. The default value is 0 (disabled). | 0 | int
 |===
+
+
+=== Camel File Cluster Service configurations
+The camel.cluster.file supports 10 options, which are listed below.
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.cluster.file.acquireLockDelay* | The time to wait before starting to try to acquire the cluster lock. Note that if FileLockClusterService determines no cluster members are running or cannot reliably determine the cluster state, the initial delay is computed from the acquireLockInterval. | 1 | long
+| *camel.cluster.file.acquireLockDelayUnit* | The time unit for the acquireLockDelay | SECONDS | TimeUnit
+| *camel.cluster.file.acquireLockInterval* | The time to wait between attempts to try to acquire the cluster lock evaluated using wall-clock time. All cluster members must use the same value so leadership checks and leader liveness detection remain consistent. | 10 | long
+| *camel.cluster.file.acquireLockIntervalUnit* | The time unit for the acquireLockInterval | SECONDS | TimeUnit
+| *camel.cluster.file.clusterDataTaskMaxAttempts* | Sets how many times a cluster data task will run, counting both the first execution and subsequent retries in case of failure or timeout. The default is 5 attempts. This can be useful when the cluster data root is on network based file storage, where I/O operations may occasionally block for long or unpredictable periods. | 5 | int
+| *camel.cluster.file.clusterDataTaskTimeout* | Sets the timeout for a cluster data task (reading or writing cluster data). The default is 10 seconds. Timeouts are useful when the cluster data root is on network storage, where I/O operations may occasionally block for long or unpredictable periods. | 10 | long
+| *camel.cluster.file.clusterDataTaskTimeoutUnit* | The time unit for the clusterDataTaskTimeoutUnit | SECONDS | TimeUnit
+| *camel.cluster.file.enabled* | Whether to enable this cluster service. | true | boolean
+| *camel.cluster.file.heartbeatTimeoutMultiplier* | Multiplier applied to the cluster leader acquireLockInterval to determine how long followers should wait before considering the leader stale. For example, if the leader updates its heartbeat every 2 seconds and the heartbeatTimeoutMultiplier is 3, followers will tolerate up to 2s * 3 = 6s of silence before declaring the leader unavailable. | 5 | int
+| *camel.cluster.file.root* | The root file path |  | String
+|===
+
+
+=== Camel Kubernetes Cluster Service configurations
+The camel.cluster.kubernetes supports 14 options, which are listed below.
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.cluster.kubernetes.clusterLabels* | Labels used to identify the members of the cluster. |  | Map
+| *camel.cluster.kubernetes.connectionTimeout* | Connection timeout in milliseconds to use when making requests to the Kubernetes API server. |  | Integer
+| *camel.cluster.kubernetes.enabled* | Whether to enable this cluster service. | true | boolean
+| *camel.cluster.kubernetes.groupName* | Name of the lock group (or namespace according to the Camel cluster convention) within the chosen ConfigMap. |  | String
+| *camel.cluster.kubernetes.jitterFactor* | A jitter factor to apply in order to prevent all pods to call Kubernetes APIs in the same instant. | 1.2 | double
+| *camel.cluster.kubernetes.kubernetesResourceName* | Name of the resource used for locking (or prefix, in case multiple ones are used). | leaders | String
+| *camel.cluster.kubernetes.kubernetesResourcesNamespace* | Kubernetes namespace containing the pods and the ConfigMap used for locking. |  | String
+| *camel.cluster.kubernetes.leaseDurationMillis* | The default duration of the lease for the current leader. | 15000 | long
+| *camel.cluster.kubernetes.leaseResourceType* | Kubernetes resource type used to hold the leases. | Lease | LeaseResourceType
+| *camel.cluster.kubernetes.masterUrl* | URL to a remote Kubernetes API server. This should only be used when your Camel application is connecting from outside Kubernetes. If you run your Camel application inside Kubernetes, then you can use local or client as the URL to tell Camel to run in local mode. If you connect remotely to Kubernetes, then you may also need some of the many other configuration options for secured connection with certificates, etc. |  | String
+| *camel.cluster.kubernetes.namespace* | Kubernetes namespace |  | String
+| *camel.cluster.kubernetes.podName* | Name of the current pod (defaults to host name). |  | String
+| *camel.cluster.kubernetes.renewDeadlineMillis* | The deadline after which the leader must stop its services because it may have lost the leadership. | 10000 | long
+| *camel.cluster.kubernetes.retryPeriodMillis* | The time between two subsequent attempts to check and acquire the leadership. It is randomized using the jitter factor. | 2000 | long
+|===
+
+
+=== Camel ZooKeeper Cluster Service configurations
+The camel.cluster.zookeeper supports 11 options, which are listed below.
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.cluster.zookeeper.basePath* | The base path to store in ZooKeeper |  | String
+| *camel.cluster.zookeeper.connectTimeout* | Connect timeout (millis) | 15000 | long
+| *camel.cluster.zookeeper.enabled* | Whether to enable this cluster service. | true | boolean
+| *camel.cluster.zookeeper.id* | Node id |  | String
+| *camel.cluster.zookeeper.maxCloseWait* | Time to wait (millis) during close to join background threads | 1000 | long
+| *camel.cluster.zookeeper.namespace* | ZooKeeper namespace. If a namespace is set here, all paths will get pre-pended with the namespace |  | String
+| *camel.cluster.zookeeper.nodes* | The Zookeeper server hosts (multiple servers can be separated by comma) |  | String
+| *camel.cluster.zookeeper.reconnectBaseSleepTime* | Initial amount of time (millis) to wait between retries | 1000 | long
+| *camel.cluster.zookeeper.reconnectMaxRetries* | Max number of times to retry | 3 | int
+| *camel.cluster.zookeeper.reconnectMaxSleepTime* | Max time (millis) to sleep on each retry |  | long
+| *camel.cluster.zookeeper.sessionTimeout* | Session timeout (millis) | 60000 | long
+|===
+
+
+=== Camel Consul Cluster Service configurations
+The camel.cluster.consul supports 16 options, which are listed below.
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.cluster.consul.aclToken* | Sets the ACL token to be used with Consul |  | String
+| *camel.cluster.consul.blockSeconds* | The second to wait for a watch event, default 10 seconds | 10 | int
+| *camel.cluster.consul.connectTimeout* | Connect timeout in millis |  | int
+| *camel.cluster.consul.datacenter* | The data center |  | String
+| *camel.cluster.consul.enabled* | Whether to enable this cluster service. | true | boolean
+| *camel.cluster.consul.id* | Client id registered as _consul.service.registry.id |  | String
+| *camel.cluster.consul.password* | Sets the password to be used for basic authentication |  | String
+| *camel.cluster.consul.readTimeout* | Read timeout in millis |  | int
+| *camel.cluster.consul.rootPath* | The Consul cluster root directory path | /camel | String
+| *camel.cluster.consul.sessionLockDelay* | Session lock delay in seconds | 5 | int
+| *camel.cluster.consul.sessionRefreshInterval* | Session refresh interval in seconds | 5 | int
+| *camel.cluster.consul.sessionTtl* | Session time to live in seconds | 60 | int
+| *camel.cluster.consul.sslContextParameters* | SSL configuration for advanced security configuration |  | SSLContextParameters
+| *camel.cluster.consul.url* | The Consul agent URL |  | String
+| *camel.cluster.consul.userName* | Sets the username to be used for basic authentication |  | String
+| *camel.cluster.consul.writeTimeout* | Write timeout in mills |  | int
+|===
+
+
+=== Camel JGroups Raft Cluster Service configurations
+The camel.cluster.jgroups-raft supports 4 options, which are listed below.
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.cluster.jgroups-raft.enabled* | Whether to enable this cluster service. | true | boolean
+| *camel.cluster.jgroups-raft.id* | Unique Raft id |  | String
+| *camel.cluster.jgroups-raft.jgroupsClusterName* | The name of the cluster | jgroupsraft-master | String
+| *camel.cluster.jgroups-raft.jgroupsConfig* | The path to the JGroups Raft configuration | raft.xml | String
+|===
+
+
+=== Camel Infinispan Remote Cluster Service configurations
+The camel.cluster.infinispan supports 14 options, which are listed below.
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.cluster.infinispan.cacheContainer* | Specifies the cache Container to connect |  | RemoteCacheManager
+| *camel.cluster.infinispan.configurationProperties* | Implementation specific properties for the CacheManager |  | Map
+| *camel.cluster.infinispan.configurationUri* | An implementation specific URI for the CacheManager |  | String
+| *camel.cluster.infinispan.enabled* | Whether to enable this cluster service. | true | boolean
+| *camel.cluster.infinispan.hosts* | Specifies the host of the cache on Infinispan instance. Multiple hosts can be separated by semicolon. |  | String
+| *camel.cluster.infinispan.id* | Node id |  | String
+| *camel.cluster.infinispan.lifespan* | The lifespan of the cache entry for the local cluster member registered to the inventory | 30 | long
+| *camel.cluster.infinispan.lifespanTimeUnit* | The TimeUnit of the lifespan | SECONDS | TimeUnit
+| *camel.cluster.infinispan.password* | Define the password to access the infinispan instance |  | String
+| *camel.cluster.infinispan.saslMechanism* | Define the SASL Mechanism to access the infinispan instance |  | String
+| *camel.cluster.infinispan.secure* | Define if we are connecting to a secured Infinispan instance | false | boolean
+| *camel.cluster.infinispan.securityRealm* | Define the security realm to access the infinispan instance |  | String
+| *camel.cluster.infinispan.securityServerName* | Define the security server name to access the infinispan instance |  | String
+| *camel.cluster.infinispan.username* | Define the username to access the infinispan instance |  | String
+|===
 // main options: END
 
 == Package Scanning
