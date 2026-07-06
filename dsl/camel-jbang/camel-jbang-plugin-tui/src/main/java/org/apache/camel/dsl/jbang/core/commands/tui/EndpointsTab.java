@@ -16,7 +16,10 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
+import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -25,6 +28,7 @@ import java.util.Map;
 import dev.tamboui.layout.Constraint;
 import dev.tamboui.layout.Layout;
 import dev.tamboui.layout.Rect;
+import dev.tamboui.markdown.MarkdownView;
 import dev.tamboui.style.AnsiColor;
 import dev.tamboui.style.Color;
 import dev.tamboui.style.Style;
@@ -32,6 +36,7 @@ import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.CharWidth;
 import dev.tamboui.text.Line;
 import dev.tamboui.text.Span;
+import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.tui.event.MouseEvent;
 import dev.tamboui.widgets.block.Block;
@@ -43,6 +48,10 @@ import dev.tamboui.widgets.sparkline.DualSparkline;
 import dev.tamboui.widgets.table.Cell;
 import dev.tamboui.widgets.table.Row;
 import dev.tamboui.widgets.table.Table;
+import org.apache.camel.catalog.CamelCatalog;
+import org.apache.camel.dsl.jbang.core.common.CatalogLoader;
+import org.apache.camel.tooling.model.BaseOptionModel;
+import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 
@@ -54,6 +63,9 @@ class EndpointsTab extends AbstractTableTab {
     private static final int CHART_ALL = 0;
     private static final int CHART_SINGLE = 1;
     private static final int CHART_OFF = 2;
+
+    private static final int PANEL_CHART = 0;
+    private static final int PANEL_DETAIL = 1;
 
     private final Map<String, LinkedList<Long>> endpointInHistory;
     private final Map<String, LinkedList<Long>> endpointOutHistory;
@@ -68,10 +80,14 @@ class EndpointsTab extends AbstractTableTab {
 
     private int filter;
     private int chartMode = CHART_ALL;
+    private int panelMode = PANEL_CHART;
+    private int detailScroll;
     private int chartPanelHeight = 16;
     private final DragSplit vSplit = new DragSplit();
     private int flowPanelWidth = 38;
     private final DragSplit hSplit = new DragSplit();
+
+    private final Map<String, CamelCatalog> catalogCache = new HashMap<>();
 
     EndpointsTab(MonitorContext ctx, MetricsCollector metrics) {
         super(ctx, "component", "route", "dir", "total", "body", "hdr", "uri");
@@ -105,6 +121,21 @@ class EndpointsTab extends AbstractTableTab {
             chartMode = (chartMode + 1) % 3;
             return true;
         }
+        if (ke.isCharIgnoreCase('d')) {
+            panelMode = panelMode == PANEL_CHART ? PANEL_DETAIL : PANEL_CHART;
+            detailScroll = 0;
+            return true;
+        }
+        if (panelMode == PANEL_DETAIL) {
+            if (ke.isPageUp() || ke.isKey(KeyCode.PAGE_UP)) {
+                detailScroll = Math.max(0, detailScroll - 10);
+                return true;
+            }
+            if (ke.isPageDown() || ke.isKey(KeyCode.PAGE_DOWN)) {
+                detailScroll += 10;
+                return true;
+            }
+        }
         return false;
     }
 
@@ -116,7 +147,7 @@ class EndpointsTab extends AbstractTableTab {
             }
             return true;
         }
-        if (hSplit.handleMouse(me, me.x())) {
+        if (panelMode == PANEL_CHART && hSplit.handleMouse(me, me.x())) {
             if (hSplit.isDragging()) {
                 flowPanelWidth = Math.max(20, Math.min(me.x() - area.x(), area.width() - 20));
             }
@@ -131,10 +162,17 @@ class EndpointsTab extends AbstractTableTab {
                 filtered.removeIf(ep -> !ep.remote && !ep.stub);
             }
             if (handleTableClick(me, lastTableArea, tableState, filtered.size())) {
+                detailScroll = 0;
                 return true;
             }
         }
         return false;
+    }
+
+    @Override
+    public void navigateUp() {
+        tableState.selectPrevious();
+        detailScroll = 0;
     }
 
     @Override
@@ -148,6 +186,7 @@ class EndpointsTab extends AbstractTableTab {
                 filtered.removeIf(ep -> !ep.remote && !ep.stub);
             }
             tableState.selectNext(filtered.size());
+            detailScroll = 0;
         }
     }
 
@@ -246,11 +285,18 @@ class EndpointsTab extends AbstractTableTab {
             hasSizeHistory = false;
         }
 
-        boolean showChart = chartMode != CHART_OFF && ctx.shellPercent < 50;
+        boolean showPanel = panelMode == PANEL_DETAIL
+                || (chartMode != CHART_OFF && ctx.shellPercent < 50);
         List<Rect> chunks;
-        if (showChart) {
-            chartPanelHeight = Math.max(5, Math.min(chartPanelHeight, area.height() - 5));
-            chunks = Layout.vertical().constraints(Constraint.fill(), Constraint.length(chartPanelHeight)).split(area);
+        if (showPanel) {
+            if (panelMode == PANEL_DETAIL) {
+                // doc panel gets 60% of area
+                int detailH = Math.max(5, area.height() * 60 / 100);
+                chunks = Layout.vertical().constraints(Constraint.fill(), Constraint.length(detailH)).split(area);
+            } else {
+                chartPanelHeight = Math.max(5, Math.min(chartPanelHeight, area.height() - 5));
+                chunks = Layout.vertical().constraints(Constraint.fill(), Constraint.length(chartPanelHeight)).split(area);
+            }
             vSplit.setBorderPos(chunks.get(1).y());
         } else {
             chunks = List.of(area);
@@ -262,7 +308,10 @@ class EndpointsTab extends AbstractTableTab {
         frame.renderStatefulWidget(table, chunks.get(0), tableState);
         renderScrollbar(frame, sortedEndpoints.size());
 
-        if (showChart) {
+        if (showPanel && panelMode == PANEL_DETAIL) {
+            hSplit.clearBorderPos();
+            renderDetail(frame, chunks.get(1), sortedEndpoints, info);
+        } else if (showPanel) {
             // Determine selected endpoint URI for single-endpoint chart
             String selectedUri = null;
             if (chartMode == CHART_SINGLE) {
@@ -310,6 +359,10 @@ class EndpointsTab extends AbstractTableTab {
             default -> "[off]";
         };
         hint(spans, "a", "chart " + chartLabel);
+        hint(spans, "d", "doc " + (panelMode == PANEL_DETAIL ? "[on]" : "[off]"));
+        if (panelMode == PANEL_DETAIL) {
+            hintLast(spans, "PgUp/Dn", "scroll");
+        }
     }
 
     int getFilter() {
@@ -626,6 +679,145 @@ class EndpointsTab extends AbstractTableTab {
                 .build(), area);
     }
 
+    private void renderDetail(Frame frame, Rect area, List<EndpointInfo> sortedEndpoints, IntegrationInfo info) {
+        Integer sel = tableState.selected();
+        if (sel == null || sel < 0 || sel >= sortedEndpoints.size()) {
+            frame.renderWidget(
+                    MarkdownView.builder()
+                            .source("*Select an endpoint*")
+                            .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
+                                    .title(" Endpoint Detail ").build())
+                            .build(),
+                    area);
+            return;
+        }
+
+        EndpointInfo ep = sortedEndpoints.get(sel);
+        String uri = ep.uri;
+        String component = ep.component;
+        if (uri == null || component == null) {
+            frame.renderWidget(
+                    MarkdownView.builder()
+                            .source("*No endpoint URI*")
+                            .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
+                                    .title(" Endpoint Detail ").build())
+                            .build(),
+                    area);
+            return;
+        }
+
+        CamelCatalog catalog = getCatalog(info);
+        StringBuilder md = new StringBuilder();
+
+        if (catalog != null) {
+            ComponentModel model = catalog.componentModel(component);
+            if (model != null) {
+                // component title and description
+                String compTitle = model.getTitle() != null ? model.getTitle() : component;
+                md.append("## ").append(compTitle).append("\n\n");
+                if (model.getDescription() != null && !model.getDescription().isEmpty()) {
+                    md.append(model.getDescription()).append("\n\n");
+                }
+
+                // parse the URI into option name/value pairs
+                Map<String, String> parsedOptions;
+                try {
+                    parsedOptions = catalog.endpointProperties(uri);
+                } catch (URISyntaxException e) {
+                    parsedOptions = Map.of();
+                }
+
+                if (parsedOptions.isEmpty()) {
+                    md.append("*No configured options*\n");
+                } else {
+                    // build lookup map from endpoint option models
+                    Map<String, BaseOptionModel> optionDocs = new LinkedHashMap<>();
+                    for (ComponentModel.EndpointOptionModel opt : model.getEndpointOptions()) {
+                        if (opt.getName() != null) {
+                            optionDocs.put(opt.getName(), opt);
+                        }
+                    }
+
+                    for (Map.Entry<String, String> entry : parsedOptions.entrySet()) {
+                        String optName = entry.getKey();
+                        String optValue = entry.getValue();
+                        BaseOptionModel doc = optionDocs.get(optName);
+
+                        md.append("---\n\n");
+                        md.append("**").append(optName).append("** = `").append(optValue).append("`\n\n");
+
+                        if (doc != null) {
+                            if (doc.getDescription() != null && !doc.getDescription().isEmpty()) {
+                                md.append(doc.getDescription()).append("\n\n");
+                            }
+                            List<String> meta = new ArrayList<>();
+                            if (doc.getType() != null) {
+                                meta.add("Type: `" + doc.getType() + "`");
+                            }
+                            if (doc.getDefaultValue() != null) {
+                                meta.add("Default: `" + doc.getDefaultValue() + "`");
+                            }
+                            if (doc.isRequired()) {
+                                meta.add("Required: yes");
+                            }
+                            if (doc.getEnums() != null && !doc.getEnums().isEmpty()) {
+                                meta.add("Enum: " + String.join(", ", doc.getEnums()));
+                            }
+                            if (doc.getGroup() != null && !doc.getGroup().isEmpty()) {
+                                meta.add("Group: " + doc.getGroup());
+                            }
+                            if (doc.isDeprecated()) {
+                                String depText = "Deprecated";
+                                if (doc.getDeprecationNote() != null && !doc.getDeprecationNote().isEmpty()) {
+                                    depText += " — " + doc.getDeprecationNote();
+                                }
+                                meta.add(depText);
+                            }
+                            if (!meta.isEmpty()) {
+                                for (String m : meta) {
+                                    md.append("- ").append(m).append("\n");
+                                }
+                                md.append("\n");
+                            }
+                        }
+                    }
+                }
+            } else {
+                md.append("*No catalog documentation for: ").append(component).append("*\n");
+            }
+        } else {
+            md.append("*Loading catalog...*\n");
+        }
+
+        String title = " " + uri + " ";
+        if (CharWidth.of(title) > area.width() - 4) {
+            title = " " + CharWidth.truncateWithEllipsis(uri, area.width() - 6, CharWidth.TruncatePosition.MIDDLE) + " ";
+        }
+
+        frame.renderWidget(
+                MarkdownView.builder()
+                        .source(md.toString())
+                        .scroll(detailScroll)
+                        .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
+                                .title(title).build())
+                        .build(),
+                area);
+    }
+
+    private CamelCatalog getCatalog(IntegrationInfo info) {
+        String version = info.camelVersion;
+        if (version == null) {
+            return null;
+        }
+        return catalogCache.computeIfAbsent(version, v -> {
+            try {
+                return CatalogLoader.loadCatalog(null, v, true);
+            } catch (Exception e) {
+                return null;
+            }
+        });
+    }
+
     private static long unbox(Long value) {
         return value != null ? value : 0L;
     }
@@ -746,12 +938,31 @@ class EndpointsTab extends AbstractTableTab {
                 - **remote** — show only remote endpoints (external connections)
                 - **stub** — show only stubbed endpoints
 
+                ## Endpoint Documentation
+
+                Press `d` to toggle the documentation panel. When enabled, the
+                bottom panel shows detailed documentation for the selected endpoint's
+                configured options — parsed from the endpoint URI and looked up in
+                the Camel catalog matching the integration's Camel version.
+
+                For each configured option you'll see:
+                - **Name** and **current value** (highlighted)
+                - **Description** — what the option does
+                - **Type** — the expected value type
+                - **Default** — the default value if not set
+                - **Enum values** — valid choices for enum options
+                - **Group** — whether it's a common, consumer, producer, or advanced option
+
+                Use `PgUp/PgDn` to scroll the documentation panel.
+
                 ## Keys
 
                 - `Up/Down` — select endpoint
                 - `s` — cycle sort column
                 - `S` — reverse sort order
                 - `f` — cycle filter mode
+                - `d` — toggle endpoint documentation panel
+                - `PgUp/PgDn` — scroll documentation (when doc panel is open)
                 """;
     }
 
