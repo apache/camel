@@ -16,6 +16,7 @@
  */
 package org.apache.camel.support.component;
 
+import java.time.Duration;
 import java.util.List;
 
 import org.apache.camel.CamelContext;
@@ -65,22 +66,25 @@ public abstract class PropertyConfigurerSupport {
                 }
                 value = obj;
             } else if (type == long.class || type == Long.class || type == int.class || type == Integer.class) {
-                Object obj = null;
-                // string to long/int then it may be a duration where we can convert the value to milli seconds
-                // it may be a time pattern, such as 5s for 5 seconds = 5000
-                try {
-                    long num = TimeUtils.toMilliSeconds(text);
-                    if (type == int.class || type == Integer.class) {
-                        // need to cast to int
-                        obj = (int) num;
-                    } else {
-                        obj = num;
+                // skip duration conversion for magic export placeholder
+                if (!MAGIC_VALUE.equals(text)) {
+                    Object obj = null;
+                    // string to long/int then it may be a duration where we can convert the value to milli seconds
+                    // it may be a time pattern, such as 5s for 5 seconds = 5000
+                    try {
+                        long num = TimeUtils.toMilliSeconds(text);
+                        if (type == int.class || type == Integer.class) {
+                            // need to cast to int
+                            obj = (int) num;
+                        } else {
+                            obj = num;
+                        }
+                    } catch (IllegalArgumentException e) {
+                        // ignore
                     }
-                } catch (IllegalArgumentException e) {
-                    // ignore
-                }
-                if (obj != null) {
-                    value = obj;
+                    if (obj != null) {
+                        value = obj;
+                    }
                 }
             }
         }
@@ -95,10 +99,26 @@ public abstract class PropertyConfigurerSupport {
         }
 
         if (value != null) {
-            try {
-                if (MAGIC_VALUE.equals(value) && boolean.class == type) {
-                    value = "true";
+            if (MAGIC_VALUE.equals(value)) {
+                if (boolean.class == type || Boolean.class == type) {
+                    return (T) Boolean.TRUE;
+                } else if (int.class == type || Integer.class == type) {
+                    return (T) Integer.valueOf(1);
+                } else if (long.class == type || Long.class == type) {
+                    return (T) Long.valueOf(1L);
+                } else if (double.class == type || Double.class == type) {
+                    return (T) Double.valueOf(1d);
+                } else if (float.class == type || Float.class == type) {
+                    return (T) Float.valueOf(1f);
+                } else if (short.class == type || Short.class == type) {
+                    return (T) Short.valueOf((short) 1);
+                } else if (byte.class == type || Byte.class == type) {
+                    return (T) Byte.valueOf((byte) 0);
+                } else if (Duration.class == type) {
+                    return (T) Duration.ofMillis(1);
                 }
+            }
+            try {
                 return camelContext.getTypeConverter().mandatoryConvertTo(type, value);
             } catch (NoTypeConversionAvailableException e) {
                 throw RuntimeCamelException.wrapRuntimeCamelException(e);
