@@ -157,7 +157,7 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-kafka",
   "version" : "4.22.0-SNAPSHOT",
-  "serviceVersion" : "v26.1.10"
+  "serviceVersion" : "v26.1.12"
 }, {
   "service" : "org.apache.camel.test.infra.hashicorp.vault.services.HashicorpVaultInfraService",
   "description" : "HashiCorp Vault is a tool for securely accessing secrets",
