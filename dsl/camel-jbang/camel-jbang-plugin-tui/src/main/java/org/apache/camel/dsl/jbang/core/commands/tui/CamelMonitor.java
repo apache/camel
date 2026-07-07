@@ -33,6 +33,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+import dev.tamboui.buffer.Cell;
 import dev.tamboui.layout.Constraint;
 import dev.tamboui.layout.Layout;
 import dev.tamboui.layout.Rect;
@@ -446,6 +447,10 @@ public class CamelMonitor extends CamelCommand {
             ctx.runner = tui;
             actionsPopup.setScheduler(tui.scheduler());
             actionsPopup.setResetScreenAction(() -> tui.terminal().clear());
+            actionsPopup.setThemeToggleAction(() -> {
+                Theme.toggle();
+                tui.terminal().clear();
+            });
             // Preload diagram data if an integration was auto-selected
             tabRegistry.routesTab().preloadDiagram();
             tabRegistry.diagramTab().preloadDiagram();
@@ -1114,6 +1119,7 @@ public class CamelMonitor extends CamelCommand {
             helpOverlay.render(frame, contentArea);
         }
         renderFooter(frame, mainChunks.get(3));
+        applyThemeBaseColors(frame, area);
 
         recordingManager.updateBuffer(frame.buffer());
         recordingManager.processPendingScreenshot();
@@ -1228,6 +1234,7 @@ public class CamelMonitor extends CamelCommand {
 
         int x5 = area.x() + Math.max(0, (area.width() - CharWidth.of(line5)) / 2);
         frame.buffer().setString(x5, startY + 4, line5, normal);
+        applyThemeBaseColors(frame, area);
     }
 
     private void renderTabs(Frame frame, Rect area) {
@@ -1334,6 +1341,38 @@ public class CamelMonitor extends CamelCommand {
         // Render "Files" popup overlay when visible
         if (filesBrowser.isVisible()) {
             filesBrowser.render(frame, area);
+        }
+    }
+
+    /**
+     * Fills cells that still have no explicit fg/bg after widget rendering. TamboUI clears the buffer to
+     * {@link Cell#EMPTY} each frame; when bg is unset the terminal falls back to its own default (usually black). Only
+     * patches missing colors so selection highlights, zebra stripes, and other widget backgrounds are preserved.
+     */
+    private void applyThemeBaseColors(Frame frame, Rect area) {
+        Color baseBg = Theme.baseBg();
+        Color baseFg = Theme.baseFg();
+        Rect intersection = frame.buffer().area().intersection(area);
+        for (int y = intersection.top(); y < intersection.bottom(); y++) {
+            for (int x = intersection.left(); x < intersection.right(); x++) {
+                Cell cell = frame.buffer().get(x, y);
+                if (cell.isContinuation()) {
+                    continue;
+                }
+                Style style = cell.style();
+                Color cellBg = style.bg().orElse(null);
+                Color cellFg = style.fg().orElse(null);
+                if (cellBg == null || cellFg == null) {
+                    Style patch = Style.EMPTY;
+                    if (cellBg == null) {
+                        patch = patch.bg(baseBg);
+                    }
+                    if (cellFg == null) {
+                        patch = patch.fg(baseFg);
+                    }
+                    frame.buffer().set(x, y, cell.patchStyle(patch));
+                }
+            }
         }
     }
 

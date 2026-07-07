@@ -58,24 +58,27 @@ final class Theme {
     // Fallback palette mirrors the dark stylesheet, used when CSS is unavailable.
     private static final Style FALLBACK_ACCENT_BG = Style.EMPTY.fg(Color.WHITE).bg(ACCENT).bold();
     private static final Style FALLBACK_HINT_KEY = Style.EMPTY.fg(Color.BLACK).bg(ACCENT).bold();
-    private static final Style FALLBACK_BORDER = Style.EMPTY.fg(Color.DARK_GRAY);
+    private static final Style FALLBACK_BORDER = Style.EMPTY.fg(Color.rgb(0x50, 0x50, 0x50));
     private static final Style FALLBACK_BORDER_FOCUSED = Style.EMPTY.fg(ACCENT);
     private static final Style FALLBACK_TITLE = Style.EMPTY.fg(ACCENT).bold();
-    private static final Style FALLBACK_SUCCESS = Style.EMPTY.fg(Color.LIGHT_GREEN);
-    private static final Style FALLBACK_WARNING = Style.EMPTY.fg(Color.LIGHT_YELLOW);
-    private static final Style FALLBACK_ERROR = Style.EMPTY.fg(Color.LIGHT_RED);
-    private static final Style FALLBACK_MUTED = Style.EMPTY.dim();
-    private static final Style FALLBACK_SELECTION = Style.EMPTY.fg(Color.WHITE).bold().onBlue();
-    private static final Style FALLBACK_INFO = Style.EMPTY.fg(Color.CYAN);
-    private static final Style FALLBACK_NOTICE = Style.EMPTY.fg(Color.MAGENTA);
-    private static final Style FALLBACK_MCP_ACTIVE = Style.EMPTY.fg(Color.LIGHT_GREEN);
-    private static final Style FALLBACK_MCP_IDLE = Style.EMPTY.fg(Color.DARK_GRAY);
-    private static final Style FALLBACK_MCP_DOWN = Style.EMPTY.fg(Color.LIGHT_RED);
-    private static final Color FALLBACK_ZEBRA = Color.rgb(0x1C, 0x1C, 0x1C);
+    private static final Style FALLBACK_SUCCESS = Style.EMPTY.fg(Color.rgb(0x4E, 0xC9, 0xB0));
+    private static final Style FALLBACK_WARNING = Style.EMPTY.fg(Color.rgb(0xDC, 0xDC, 0xAA));
+    private static final Style FALLBACK_ERROR = Style.EMPTY.fg(Color.rgb(0xF4, 0x87, 0x71));
+    private static final Style FALLBACK_MUTED = Style.EMPTY.fg(Color.rgb(0x80, 0x80, 0x80));
+    private static final Style FALLBACK_SELECTION = Style.EMPTY.fg(Color.WHITE).bg(Color.rgb(0x26, 0x4F, 0x78)).bold();
+    private static final Style FALLBACK_INFO = Style.EMPTY.fg(Color.rgb(0x9C, 0xDC, 0xFE));
+    private static final Style FALLBACK_NOTICE = Style.EMPTY.fg(Color.rgb(0xC5, 0x86, 0xC0));
+    private static final Style FALLBACK_MCP_ACTIVE = Style.EMPTY.fg(Color.rgb(0x4E, 0xC9, 0xB0));
+    private static final Style FALLBACK_MCP_IDLE = Style.EMPTY.fg(Color.rgb(0x60, 0x60, 0x60));
+    private static final Style FALLBACK_MCP_DOWN = Style.EMPTY.fg(Color.rgb(0xF4, 0x87, 0x71));
+    private static final Color FALLBACK_ZEBRA = Color.rgb(0x25, 0x25, 0x25);
+    private static final Color FALLBACK_BASE_BG = Color.rgb(0x1E, 0x1E, 0x1E);
+    private static final Color FALLBACK_BASE_FG = Color.rgb(0xD4, 0xD4, 0xD4);
 
     private static final Map<String, Style> CACHE = new HashMap<>();
 
     private static boolean initialized;
+    private static boolean persistedModeLoaded;
     private static boolean fallbackLogged;
     private static boolean testMode;
     private static StyleEngine engine;
@@ -111,6 +114,38 @@ final class Theme {
         } catch (RuntimeException ex) {
             logFallbackOnce(ex);
             return FALLBACK_ZEBRA;
+        }
+    }
+
+    /**
+     * Base background color for the main content area. Theme-aware (dark on dark mode, white on light mode).
+     */
+    static Color baseBg() {
+        StyleEngine e = engine();
+        if (e == null) {
+            return FALLBACK_BASE_BG;
+        }
+        try {
+            return e.resolve(new Token("base-bg")).background().orElse(FALLBACK_BASE_BG);
+        } catch (RuntimeException ex) {
+            logFallbackOnce(ex);
+            return FALLBACK_BASE_BG;
+        }
+    }
+
+    /**
+     * Base foreground color for normal text. Theme-aware (light gray on dark mode, dark gray on light mode).
+     */
+    static Color baseFg() {
+        StyleEngine e = engine();
+        if (e == null) {
+            return FALLBACK_BASE_FG;
+        }
+        try {
+            return e.resolve(new Token("base-fg")).foreground().orElse(FALLBACK_BASE_FG);
+        } catch (RuntimeException ex) {
+            logFallbackOnce(ex);
+            return FALLBACK_BASE_FG;
         }
     }
 
@@ -194,10 +229,10 @@ final class Theme {
     /** Flip the active theme, clear the cache, persist the new value, and return the new mode. */
     static synchronized String toggle() {
         String next = DARK.equals(mode) ? LIGHT : DARK;
-        setMode(next);
         if (!testMode) {
             persist(next);
         }
+        setMode(next);
         return next;
     }
 
@@ -215,6 +250,7 @@ final class Theme {
     static synchronized void resetForTesting() {
         testMode = true;
         fallbackLogged = false;
+        persistedModeLoaded = false;
         CACHE.clear();
         engine = null;
         initialized = false;
@@ -241,7 +277,8 @@ final class Theme {
             return engine;
         }
         initialized = true;
-        if (!testMode) {
+        if (!testMode && !persistedModeLoaded) {
+            persistedModeLoaded = true;
             mode = loadPersistedMode();
         }
         try {

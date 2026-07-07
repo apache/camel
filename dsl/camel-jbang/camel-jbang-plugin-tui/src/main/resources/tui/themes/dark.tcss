@@ -17,21 +17,25 @@
 /* Camel TUI dark theme (default). Single source of color truth for Theme tokens. */
 
 $brand: #F69123;
+$dark-bg: #1E1E1E;
+$dark-fg: #D4D4D4;
 
 #accent         { color: $brand; }
 #accent-bg      { color: white; background: $brand; text-style: bold; }
 #hint-key       { color: black; background: $brand; text-style: bold; }
-#border         { color: dark-gray; }
+#border         { color: #505050; }
 #border-focused { color: $brand; }
 #title          { color: $brand; text-style: bold; }
-#success        { color: light-green; }
-#warning        { color: light-yellow; }
-#error          { color: light-red; }
-#muted          { text-style: dim; }
-#selection      { color: white; background: blue; text-style: bold; }
-#info           { color: cyan; }
-#notice         { color: magenta; }
-#row-alt        { background: #1C1C1C; }
-#mcp-active     { color: light-green; }
-#mcp-idle       { color: dark-gray; }
-#mcp-down       { color: light-red; }
+#success        { color: #4EC9B0; }
+#warning        { color: #DCDCAA; }
+#error          { color: #F48771; }
+#muted          { color: #808080; }
+#selection      { color: white; background: #264F78; text-style: bold; }
+#info           { color: #9CDCFE; }
+#notice         { color: #C586C0; }
+#row-alt        { background: #252525; }
+#mcp-active     { color: #4EC9B0; }
+#mcp-idle       { color: #606060; }
+#mcp-down       { color: #F48771; }
+#base-bg        { background: $dark-bg; }
+#base-fg        { color: $dark-fg; }

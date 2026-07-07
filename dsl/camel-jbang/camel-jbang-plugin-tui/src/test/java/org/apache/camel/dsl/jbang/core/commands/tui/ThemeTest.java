@@ -55,20 +55,22 @@ class ThemeTest {
         Theme.setMode("dark");
         assertEquals(Style.EMPTY.fg(Color.WHITE).bg(Theme.ACCENT).bold(), Theme.accentBg());
         assertEquals(Style.EMPTY.fg(Color.BLACK).bg(Theme.ACCENT).bold(), Theme.hintKey());
-        assertEquals(Style.EMPTY.fg(Color.DARK_GRAY), Theme.border());
+        assertEquals(Style.EMPTY.fg(Color.rgb(0x50, 0x50, 0x50)), Theme.border());
         assertEquals(Style.EMPTY.fg(Theme.ACCENT), Theme.borderFocused());
         assertEquals(Style.EMPTY.fg(Theme.ACCENT).bold(), Theme.title());
-        assertEquals(Style.EMPTY.fg(Color.LIGHT_GREEN), Theme.success());
-        assertEquals(Style.EMPTY.fg(Color.LIGHT_YELLOW), Theme.warning());
-        assertEquals(Style.EMPTY.fg(Color.LIGHT_RED), Theme.error());
-        assertEquals(Style.EMPTY.dim(), Theme.muted());
-        assertEquals(Style.EMPTY.fg(Color.WHITE).bold().onBlue(), Theme.selectionBg());
-        assertEquals(Style.EMPTY.fg(Color.CYAN), Theme.info());
-        assertEquals(Style.EMPTY.fg(Color.MAGENTA), Theme.notice());
-        assertEquals(Style.EMPTY.fg(Color.LIGHT_GREEN), Theme.mcpActive());
-        assertEquals(Style.EMPTY.fg(Color.DARK_GRAY), Theme.mcpIdle());
-        assertEquals(Style.EMPTY.fg(Color.LIGHT_RED), Theme.mcpDown());
-        assertEquals(Color.rgb(0x1C, 0x1C, 0x1C), Theme.zebra());
+        assertEquals(Style.EMPTY.fg(Color.rgb(0x4E, 0xC9, 0xB0)), Theme.success());
+        assertEquals(Style.EMPTY.fg(Color.rgb(0xDC, 0xDC, 0xAA)), Theme.warning());
+        assertEquals(Style.EMPTY.fg(Color.rgb(0xF4, 0x87, 0x71)), Theme.error());
+        assertEquals(Style.EMPTY.fg(Color.rgb(0x80, 0x80, 0x80)), Theme.muted());
+        assertEquals(Style.EMPTY.fg(Color.WHITE).bg(Color.rgb(0x26, 0x4F, 0x78)).bold(), Theme.selectionBg());
+        assertEquals(Style.EMPTY.fg(Color.rgb(0x9C, 0xDC, 0xFE)), Theme.info());
+        assertEquals(Style.EMPTY.fg(Color.rgb(0xC5, 0x86, 0xC0)), Theme.notice());
+        assertEquals(Style.EMPTY.fg(Color.rgb(0x4E, 0xC9, 0xB0)), Theme.mcpActive());
+        assertEquals(Style.EMPTY.fg(Color.rgb(0x60, 0x60, 0x60)), Theme.mcpIdle());
+        assertEquals(Style.EMPTY.fg(Color.rgb(0xF4, 0x87, 0x71)), Theme.mcpDown());
+        assertEquals(Color.rgb(0x25, 0x25, 0x25), Theme.zebra());
+        assertEquals(Color.rgb(0x1E, 0x1E, 0x1E), Theme.baseBg());
+        assertEquals(Color.rgb(0xD4, 0xD4, 0xD4), Theme.baseFg());
     }
 
     @Test
@@ -76,14 +78,17 @@ class ThemeTest {
         // Light theme: status hues are explicit dark hex; brand orange is unchanged.
         Theme.setMode("light");
         assertEquals(Color.rgb(0xF6, 0x91, 0x23), Theme.accent());
-        assertEquals(Style.EMPTY.fg(Color.rgb(0x00, 0x77, 0x00)), Theme.success());
-        assertEquals(Style.EMPTY.fg(Color.rgb(0x88, 0x88, 0x88)), Theme.border());
+        assertEquals(Style.EMPTY.fg(Color.rgb(0x22, 0x86, 0x3A)), Theme.success());
+        assertEquals(Style.EMPTY.fg(Color.rgb(0xC0, 0xC0, 0xC0)), Theme.border());
         // MCP indicator hues track the light palette: idle gray and down red differ from the dark ANSI variants.
-        assertEquals(Style.EMPTY.fg(Color.rgb(0x00, 0x77, 0x00)), Theme.mcpActive());
-        assertEquals(Style.EMPTY.fg(Color.rgb(0x88, 0x88, 0x88)), Theme.mcpIdle());
-        assertEquals(Style.EMPTY.fg(Color.rgb(0xcc, 0x00, 0x00)), Theme.mcpDown());
+        assertEquals(Style.EMPTY.fg(Color.rgb(0x22, 0x86, 0x3A)), Theme.mcpActive());
+        assertEquals(Style.EMPTY.fg(Color.rgb(0x95, 0x9D, 0xA5)), Theme.mcpIdle());
+        assertEquals(Style.EMPTY.fg(Color.rgb(0xD7, 0x3A, 0x49)), Theme.mcpDown());
         // Zebra background is theme-aware: light gray on light, unlike the dark gray used on dark.
-        assertEquals(Color.rgb(0xEB, 0xEB, 0xEB), Theme.zebra());
+        assertEquals(Color.rgb(0xF6, 0xF8, 0xFA), Theme.zebra());
+        // Base colors differ significantly between themes: white background and dark text on light mode.
+        assertEquals(Color.rgb(0xFF, 0xFF, 0xFF), Theme.baseBg());
+        assertEquals(Color.rgb(0x24, 0x29, 0x2E), Theme.baseFg());
     }
 
     @Test
@@ -128,5 +133,7 @@ class ThemeTest {
         assertNotNull(Theme.mcpIdle());
         assertNotNull(Theme.mcpDown());
         assertNotNull(Theme.zebra());
+        assertNotNull(Theme.baseBg());
+        assertNotNull(Theme.baseFg());
     }
 }

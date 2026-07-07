@@ -17,21 +17,25 @@
 /* Camel TUI light theme. Brand orange stays truecolor; status hues darkened for light terminals. */
 
 $brand: #F69123;
+$light-bg: #FFFFFF;
+$light-fg: #24292E;
 
 #accent         { color: $brand; }
 #accent-bg      { color: white; background: $brand; text-style: bold; }
 #hint-key       { color: black; background: $brand; text-style: bold; }
-#border         { color: #888888; }
+#border         { color: #C0C0C0; }
 #border-focused { color: $brand; }
 #title          { color: $brand; text-style: bold; }
-#success        { color: #007700; }
-#warning        { color: #996600; }
-#error          { color: #cc0000; }
-#muted          { color: #666666; }
-#selection      { color: white; background: blue; text-style: bold; }
-#info           { color: #006688; }
-#notice         { color: #884488; }
-#row-alt        { background: #EBEBEB; }
-#mcp-active     { color: #007700; }
-#mcp-idle       { color: #888888; }
-#mcp-down       { color: #cc0000; }
+#success        { color: #22863A; }
+#warning        { color: #B08800; }
+#error          { color: #D73A49; }
+#muted          { color: #6A737D; }
+#selection      { color: white; background: #0366D6; text-style: bold; }
+#info           { color: #0366D6; }
+#notice         { color: #6F42C1; }
+#row-alt        { background: #F6F8FA; }
+#mcp-active     { color: #22863A; }
+#mcp-idle       { color: #959DA5; }
+#mcp-down       { color: #D73A49; }
+#base-bg        { background: $light-bg; }
+#base-fg        { color: $light-fg; }
