@@ -122,8 +122,8 @@ public class JfrMemoryLeakDevConsole extends AbstractDevConsole {
             return errorJson("A JFR recording is already active. Stop it first.");
         }
 
+        Recording rec = new Recording();
         try {
-            Recording rec = new Recording();
             rec.setName("Camel OldObjectSample");
             rec.enable("jdk.OldObjectSample").withStackTrace().withPeriod(Duration.ofSeconds(1));
             rec.enable("jdk.GarbageCollection");
@@ -165,6 +165,14 @@ public class JfrMemoryLeakDevConsole extends AbstractDevConsole {
             }
             return result;
         } catch (Exception e) {
+            // Clean up state in case the exception occurred after activeRecording was set
+            // (e.g. during auto-stop scheduling), so the console does not get stuck
+            // referencing a closed Recording.
+            cancelAutoStop();
+            activeRecording = null;
+            recordingStartTime = 0;
+            requestedDurationSeconds = 0;
+            rec.close();
             LOG.warn("Failed to start JFR recording: {}", e.getMessage(), e);
             return errorJson("Failed to start JFR recording: " + e.getMessage());
         }
