@@ -16,11 +16,14 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import dev.tamboui.css.Styleable;
 import dev.tamboui.css.engine.StyleEngine;
@@ -70,7 +73,7 @@ final class Theme {
     private static final Style FALLBACK_MCP_DOWN = Style.EMPTY.fg(Color.LIGHT_RED);
     private static final Color FALLBACK_ZEBRA = Color.rgb(0x1C, 0x1C, 0x1C);
 
-    private static final Map<String, Style> CACHE = new HashMap<>();
+    private static final Map<String, Style> CACHE = new ConcurrentHashMap<>();
 
     private static boolean initialized;
     private static boolean fallbackLogged;
@@ -81,7 +84,7 @@ final class Theme {
     private Theme() {
     }
 
-    static Color accent() {
+    static synchronized Color accent() {
         StyleEngine e = engine();
         if (e == null) {
             return ACCENT;
@@ -98,7 +101,7 @@ final class Theme {
      * Subtle alternating-row background for zebra striping. Theme-aware (dark gray on dark, light gray on light) so
      * stripes stay readable on both terminals. Applied at the row level so it never overrides the selection highlight.
      */
-    static Color zebra() {
+    static synchronized Color zebra() {
         StyleEngine e = engine();
         if (e == null) {
             return FALLBACK_ZEBRA;
@@ -243,7 +246,12 @@ final class Theme {
         }
         try {
             StyleEngine e = StyleEngine.create();
-            e.loadStylesheet(mode, "tui/themes/" + mode + ".tcss");
+            // Read CSS content via Theme's own classloader instead of delegating
+            // to StyleEngine.loadStylesheet() which uses StyleEngine.class.getClassLoader().
+            // Under parallel test execution the two classloaders can diverge, causing
+            // intermittent "resource not found" failures in CI.
+            String cssContent = loadCssResource("tui/themes/" + mode + ".tcss");
+            e.addStylesheet(mode, cssContent);
             e.setActiveStylesheet(mode);
             engine = e;
         } catch (Exception ex) {
@@ -251,6 +259,28 @@ final class Theme {
             logFallbackOnce(ex);
         }
         return engine;
+    }
+
+    /**
+     * Reads a CSS resource from the classpath using this class's own classloader, which is guaranteed to have access to
+     * project resources regardless of classloader hierarchy.
+     */
+    private static String loadCssResource(String path) throws IOException {
+        InputStream is = Theme.class.getClassLoader().getResourceAsStream(path);
+        if (is == null) {
+            // Fallback to the thread context classloader in case the class's own classloader
+            // doesn't have visibility (e.g., in OSGi or custom classloader setups).
+            ClassLoader tccl = Thread.currentThread().getContextClassLoader();
+            if (tccl != null) {
+                is = tccl.getResourceAsStream(path);
+            }
+        }
+        if (is == null) {
+            throw new IOException("Theme CSS resource not found on classpath: " + path);
+        }
+        try (InputStream in = is) {
+            return new String(in.readAllBytes(), StandardCharsets.UTF_8);
+        }
     }
 
     private static String loadPersistedMode() {
