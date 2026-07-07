@@ -136,7 +136,7 @@ public class WeaviateVectorDbEndpoint extends DefaultEndpoint {
         final String resolvedHttpHost = httpHost;
         final int resolvedHttpPort = httpPort;
         final String grpcHost = configuration.getGrpcHost() != null ? configuration.getGrpcHost() : httpHost;
-        final int grpcPort = configuration.getGrpcPort() != null ? configuration.getGrpcPort() : 50051;
+        final int grpcPort = configuration.getGrpcPort();
 
         return WeaviateClient.connectToCustom(conn -> {
             conn.scheme(scheme)

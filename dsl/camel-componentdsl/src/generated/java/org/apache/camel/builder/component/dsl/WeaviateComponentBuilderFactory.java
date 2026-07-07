@@ -153,54 +153,6 @@ public interface WeaviateComponentBuilderFactory {
             return this;
         }
     
-        /**
-         * Proxy host to connect to weaviate through.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: producer
-         * 
-         * @param proxyHost the value to set
-         * @return the dsl builder
-         */
-        @Deprecated
-        default WeaviateComponentBuilder proxyHost(java.lang.String proxyHost) {
-            doSetProperty("proxyHost", proxyHost);
-            return this;
-        }
-    
-        /**
-         * Proxy port to connect to weaviate through.
-         * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
-         * 
-         * Group: producer
-         * 
-         * @param proxyPort the value to set
-         * @return the dsl builder
-         */
-        @Deprecated
-        default WeaviateComponentBuilder proxyPort(java.lang.Integer proxyPort) {
-            doSetProperty("proxyPort", proxyPort);
-            return this;
-        }
-    
-        /**
-         * Proxy scheme to connect to weaviate through.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: producer
-         * 
-         * @param proxyScheme the value to set
-         * @return the dsl builder
-         */
-        @Deprecated
-        default WeaviateComponentBuilder proxyScheme(java.lang.String proxyScheme) {
-            doSetProperty("proxyScheme", proxyScheme);
-            return this;
-        }
-    
         
         /**
          * Scheme used to connect to weaviate.
@@ -266,9 +218,6 @@ public interface WeaviateComponentBuilderFactory {
             case "grpcPort": getOrCreateConfiguration((WeaviateVectorDbComponent) component).setGrpcPort((java.lang.Integer) value); return true;
             case "host": getOrCreateConfiguration((WeaviateVectorDbComponent) component).setHost((java.lang.String) value); return true;
             case "lazyStartProducer": ((WeaviateVectorDbComponent) component).setLazyStartProducer((boolean) value); return true;
-            case "proxyHost": getOrCreateConfiguration((WeaviateVectorDbComponent) component).setProxyHost((java.lang.String) value); return true;
-            case "proxyPort": getOrCreateConfiguration((WeaviateVectorDbComponent) component).setProxyPort((java.lang.Integer) value); return true;
-            case "proxyScheme": getOrCreateConfiguration((WeaviateVectorDbComponent) component).setProxyScheme((java.lang.String) value); return true;
             case "scheme": getOrCreateConfiguration((WeaviateVectorDbComponent) component).setScheme((java.lang.String) value); return true;
             case "autowiredEnabled": ((WeaviateVectorDbComponent) component).setAutowiredEnabled((boolean) value); return true;
             default: return false;

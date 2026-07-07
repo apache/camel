@@ -42,12 +42,6 @@ public class WeaviateVectorDbComponentConfigurer extends PropertyConfigurerSuppo
         case "host": getOrCreateConfiguration(target).setHost(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "proxyhost":
-        case "proxyHost": getOrCreateConfiguration(target).setProxyHost(property(camelContext, java.lang.String.class, value)); return true;
-        case "proxyport":
-        case "proxyPort": getOrCreateConfiguration(target).setProxyPort(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "proxyscheme":
-        case "proxyScheme": getOrCreateConfiguration(target).setProxyScheme(property(camelContext, java.lang.String.class, value)); return true;
         case "scheme": getOrCreateConfiguration(target).setScheme(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
@@ -68,12 +62,6 @@ public class WeaviateVectorDbComponentConfigurer extends PropertyConfigurerSuppo
         case "host": return java.lang.String.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
-        case "proxyhost":
-        case "proxyHost": return java.lang.String.class;
-        case "proxyport":
-        case "proxyPort": return java.lang.Integer.class;
-        case "proxyscheme":
-        case "proxyScheme": return java.lang.String.class;
         case "scheme": return java.lang.String.class;
         default: return null;
         }
@@ -95,12 +83,6 @@ public class WeaviateVectorDbComponentConfigurer extends PropertyConfigurerSuppo
         case "host": return getOrCreateConfiguration(target).getHost();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
-        case "proxyhost":
-        case "proxyHost": return getOrCreateConfiguration(target).getProxyHost();
-        case "proxyport":
-        case "proxyPort": return getOrCreateConfiguration(target).getProxyPort();
-        case "proxyscheme":
-        case "proxyScheme": return getOrCreateConfiguration(target).getProxyScheme();
         case "scheme": return getOrCreateConfiguration(target).getScheme();
         default: return null;
         }

@@ -37,24 +37,6 @@ public class WeaviateVectorDbConfiguration implements Cloneable {
     @UriParam
     private String host;
 
-    @Deprecated
-    @Metadata(label = "producer",
-              description = "Proxy host to connect to weaviate through")
-    @UriParam
-    private String proxyHost;
-
-    @Deprecated
-    @Metadata(label = "producer",
-              description = "Proxy port to connect to weaviate through")
-    @UriParam
-    private Integer proxyPort;
-
-    @Deprecated
-    @Metadata(label = "producer",
-              description = "Proxy scheme to connect to weaviate through")
-    @UriParam
-    private String proxyScheme;
-
     @Metadata(label = "producer",
               description = "gRPC host for Weaviate server connection")
     @UriParam
@@ -63,7 +45,7 @@ public class WeaviateVectorDbConfiguration implements Cloneable {
     @Metadata(label = "producer",
               description = "gRPC port for Weaviate server connection", defaultValue = "50051")
     @UriParam(defaultValue = "50051")
-    private Integer grpcPort;
+    private Integer grpcPort = 50051;
 
     @Metadata(label = "producer",
               description = "API Key to authenticate to weaviate with", security = "secret")
@@ -145,54 +127,6 @@ public class WeaviateVectorDbConfiguration implements Cloneable {
      */
     public void setHost(String host) {
         this.host = host;
-    }
-
-    /**
-     * @deprecated The Weaviate v6 client does not support proxy configuration.
-     */
-    @Deprecated
-    public String getProxyHost() {
-        return proxyHost;
-    }
-
-    /**
-     * @deprecated The Weaviate v6 client does not support proxy configuration.
-     */
-    @Deprecated
-    public void setProxyHost(String proxyHost) {
-        this.proxyHost = proxyHost;
-    }
-
-    /**
-     * @deprecated The Weaviate v6 client does not support proxy configuration.
-     */
-    @Deprecated
-    public Integer getProxyPort() {
-        return proxyPort;
-    }
-
-    /**
-     * @deprecated The Weaviate v6 client does not support proxy configuration.
-     */
-    @Deprecated
-    public void setProxyPort(Integer proxyPort) {
-        this.proxyPort = proxyPort;
-    }
-
-    /**
-     * @deprecated The Weaviate v6 client does not support proxy configuration.
-     */
-    @Deprecated
-    public String getProxyScheme() {
-        return proxyScheme;
-    }
-
-    /**
-     * @deprecated The Weaviate v6 client does not support proxy configuration.
-     */
-    @Deprecated
-    public void setProxyScheme(String proxyScheme) {
-        this.proxyScheme = proxyScheme;
     }
 
     /**

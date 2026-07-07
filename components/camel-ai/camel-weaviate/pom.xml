@@ -52,12 +52,10 @@
             <version>${langchain4j-version}</version>
         </dependency>
 
-        <!-- classifier=all is required: without it, gRPC's ServiceLoader breaks in fat JARs -->
         <dependency>
             <groupId>io.weaviate</groupId>
             <artifactId>client6</artifactId>
             <version>${weaviate-client-version}</version>
-            <classifier>all</classifier>
         </dependency>
 
         <!-- test infra -->

@@ -31,12 +31,6 @@ public class WeaviateVectorDbConfigurationConfigurer extends org.apache.camel.su
         case "grpcport":
         case "grpcPort": target.setGrpcPort(property(camelContext, java.lang.Integer.class, value)); return true;
         case "host": target.setHost(property(camelContext, java.lang.String.class, value)); return true;
-        case "proxyhost":
-        case "proxyHost": target.setProxyHost(property(camelContext, java.lang.String.class, value)); return true;
-        case "proxyport":
-        case "proxyPort": target.setProxyPort(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "proxyscheme":
-        case "proxyScheme": target.setProxyScheme(property(camelContext, java.lang.String.class, value)); return true;
         case "scheme": target.setScheme(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
@@ -53,12 +47,6 @@ public class WeaviateVectorDbConfigurationConfigurer extends org.apache.camel.su
         case "grpcport":
         case "grpcPort": return java.lang.Integer.class;
         case "host": return java.lang.String.class;
-        case "proxyhost":
-        case "proxyHost": return java.lang.String.class;
-        case "proxyport":
-        case "proxyPort": return java.lang.Integer.class;
-        case "proxyscheme":
-        case "proxyScheme": return java.lang.String.class;
         case "scheme": return java.lang.String.class;
         default: return null;
         }
@@ -76,12 +64,6 @@ public class WeaviateVectorDbConfigurationConfigurer extends org.apache.camel.su
         case "grpcport":
         case "grpcPort": return target.getGrpcPort();
         case "host": return target.getHost();
-        case "proxyhost":
-        case "proxyHost": return target.getProxyHost();
-        case "proxyport":
-        case "proxyPort": return target.getProxyPort();
-        case "proxyscheme":
-        case "proxyScheme": return target.getProxyScheme();
         case "scheme": return target.getScheme();
         default: return null;
         }

@@ -201,8 +201,7 @@ The v5 client performed a readiness check (`misc().readyChecker()`) during clien
 if the Weaviate server was not ready. The v6 client no longer performs this check at startup. Errors will now
 surface on the first operation instead of during endpoint initialization.
 
-==== Proxy configuration deprecated
+==== Proxy configuration removed
 
 The v6 client no longer supports HTTP proxy configuration.
-The `proxyHost`, `proxyPort`, and `proxyScheme` endpoint options are deprecated and have no effect.
-They will be removed in a future release.
+The `proxyHost`, `proxyPort`, and `proxyScheme` endpoint options have been removed.
