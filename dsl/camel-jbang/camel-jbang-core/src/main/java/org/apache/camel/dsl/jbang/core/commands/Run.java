@@ -411,13 +411,26 @@ public class Run extends CamelCommand {
             if (entries.isEmpty()) {
                 continue;
             }
-            entries.sort(Comparator.comparing(e -> e.getString("name")));
+            String levelName = group.getKey();
+            entries.sort(Comparator.comparing((JsonObject e) -> {
+                String cat = ExampleHelper.getCategory(e);
+                return cat.equals(levelName) ? "" : cat;
+            }).thenComparing(e -> e.getString("name")));
             printer().println();
-            printer().println(group.getKey().substring(0, 1).toUpperCase() + group.getKey().substring(1) + ":");
-            printer().printf("       %-30s %s%n", "NAME", "DESCRIPTION");
-            printer().printf("       %-30s %s%n", "----", "-----------");
+            String levelLabel = levelName.substring(0, 1).toUpperCase() + levelName.substring(1) + ":";
+            printer().println(levelLabel);
+            printer().println("=".repeat(levelLabel.length()));
+            String currentCategory = null;
             for (JsonObject entry : entries) {
-                String eName = entry.getString("name");
+                String category = ExampleHelper.getCategory(entry);
+                if (!category.equals(currentCategory)) {
+                    currentCategory = category;
+                    if (!category.equals(levelName)) {
+                        printer().println();
+                        printer().println("  " + ExampleHelper.formatCategory(category) + ":");
+                    }
+                }
+                String eName = ExampleHelper.getShortName(entry);
                 String desc = entry.getString("description");
                 StringBuilder icons = new StringBuilder();
                 if (ExampleHelper.isBundled(entry)) {
