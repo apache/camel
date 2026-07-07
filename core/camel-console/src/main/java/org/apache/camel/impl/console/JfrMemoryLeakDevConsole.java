@@ -165,6 +165,13 @@ public class JfrMemoryLeakDevConsole extends AbstractDevConsole {
             }
             return result;
         } catch (Exception e) {
+            // Clean up state in case the exception occurred after activeRecording was set
+            // (e.g. during auto-stop scheduling), so the console does not get stuck
+            // referencing a closed Recording.
+            cancelAutoStop();
+            activeRecording = null;
+            recordingStartTime = 0;
+            requestedDurationSeconds = 0;
             rec.close();
             LOG.warn("Failed to start JFR recording: {}", e.getMessage(), e);
             return errorJson("Failed to start JFR recording: " + e.getMessage());
