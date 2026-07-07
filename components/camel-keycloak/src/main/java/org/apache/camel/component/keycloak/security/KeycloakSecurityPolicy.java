@@ -98,6 +98,13 @@ public class KeycloakSecurityPolicy implements AuthorizationPolicy {
      * {serverUrl}/realms/{realm}/protocol/openid-connect/certs. This ensures token signatures are properly verified.
      */
     private boolean autoFetchPublicKey = true;
+    /**
+     * Comma-separated list of expected audiences for token validation. When set, tokens whose "aud" claim does not
+     * contain every one of the configured audiences are rejected (matching Keycloak's own audience verification
+     * behavior). This prevents a token issued for one client from being accepted by routes intended for another client
+     * in multi-client Keycloak realms. Disabled by default for backward compatibility. Example: "my-client"
+     */
+    private String expectedAudience;
 
     public KeycloakSecurityPolicy() {
         this.requiredRoles = "";
@@ -428,5 +435,39 @@ public class KeycloakSecurityPolicy implements AuthorizationPolicy {
      */
     public String getExpectedIssuer() {
         return serverUrl + "/realms/" + realm;
+    }
+
+    /**
+     * Gets the expected audience(s) as a comma-separated string.
+     *
+     * @return comma-separated audiences (e.g., "my-client,my-other-client"), or null if not configured
+     */
+    public String getExpectedAudience() {
+        return expectedAudience;
+    }
+
+    /**
+     * Sets the expected audience(s) as a comma-separated string. When set, tokens whose "aud" claim does not contain
+     * every one of the configured audiences are rejected.
+     *
+     * @param expectedAudience comma-separated audiences (e.g., "my-client,my-other-client")
+     */
+    public void setExpectedAudience(String expectedAudience) {
+        this.expectedAudience = expectedAudience;
+    }
+
+    /**
+     * Gets the expected audiences as a list.
+     *
+     * @return list of expected audiences, or an empty list if not configured
+     */
+    public List<String> getExpectedAudienceAsList() {
+        if (ObjectHelper.isEmpty(expectedAudience)) {
+            return Collections.emptyList();
+        }
+        return Arrays.stream(expectedAudience.split(","))
+                .map(String::trim)
+                .filter(s -> !s.isEmpty())
+                .collect(Collectors.toList());
     }
 }
