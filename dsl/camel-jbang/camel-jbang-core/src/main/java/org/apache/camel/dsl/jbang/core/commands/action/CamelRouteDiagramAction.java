@@ -21,6 +21,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
@@ -69,7 +70,8 @@ import picocli.CommandLine.Command;
 public class CamelRouteDiagramAction extends ActionWatchCommand {
 
     @CommandLine.Parameters(
-                            description = "Source file name(s)/pattern(s), or name/pid of a running Camel integration",
+                            description = "Source file name(s) (shell-expanded wildcards), or name/pid of a running "
+                                          + "Camel integration",
                             arity = "0..9", paramLabel = "<files>", parameterConsumer = FilesConsumer.class)
     Path[] filePaths; // Defined only for file path completion; the field never used
 
@@ -177,11 +179,15 @@ public class CamelRouteDiagramAction extends ActionWatchCommand {
         // multiple tokens can only be a set of source files
         List<Long> pids = files.size() <= 1 ? findPids(files.isEmpty() ? "*" : files.get(0)) : List.of();
 
+        boolean sourceMode = pids.isEmpty() && !files.isEmpty();
+
         List<RouteInfo> routes;
         if (pids.isEmpty()) {
-            // no running so check source files
-            List<String> sourceFiles = files.isEmpty() ? List.of("*") : files;
-            routes = doCallSource(sourceFiles);
+            if (files.isEmpty()) {
+                printer().println("No running Camel integration found");
+                return 1;
+            }
+            routes = doCallSource(files);
             if (routes == null) {
                 return 1;
             }
@@ -208,7 +214,13 @@ public class CamelRouteDiagramAction extends ActionWatchCommand {
         }
 
         if (routes.isEmpty()) {
-            printer().println("No routes found");
+            if (sourceMode) {
+                printer().println("No routes found in: " + files
+                                  + " (if this is unexpected, the source may have failed to fully load within the "
+                                  + "timeout; try --ignore-loading-error or check the logs)");
+            } else {
+                printer().println("No routes found");
+            }
             return 1;
         }
 
@@ -373,35 +385,39 @@ public class CamelRouteDiagramAction extends ActionWatchCommand {
             }
         }
 
-        Path workDir = Path.of(CommandLineHelper.CAMEL_JBANG_WORK_DIR, "route-diagram-source");
+        Path workDir = Path.of(CommandLineHelper.CAMEL_JBANG_WORK_DIR, "route-diagram-source-" + ProcessHandle.current().pid());
         PathUtils.deleteDirectory(workDir);
         final String target = workDir.toString();
-
-        Run run = new Run(getMain()) {
-            @Override
-            protected void doAddInitialProperty(KameletMain main) {
-                main.addInitialProperty("camel.main.dumpRoutes", "json");
-                main.addInitialProperty("camel.main.dumpRoutesLog", "false");
-                main.addInitialProperty("camel.main.dumpRoutesOutput", target);
-                // turn debug off as this can otherwise include source location in dump
-                main.addInitialProperty("camel.debug.enabled", "false");
-                main.addInitialProperty(CamelJBangConstants.TRANSFORM, "true");
-                main.addInitialProperty("camel.component.properties.ignoreMissingProperty", "true");
-                if (ignoreLoadingError) {
-                    // turn off bean method validator if ignore loading error
-                    main.addInitialProperty("camel.language.bean.validate", "false");
-                }
-            }
-        };
-        run.files = sourceFiles;
-        run.executionLimitOptions.maxSeconds = 1;
-        int exit = run.runTransform(ignoreLoadingError);
-        if (exit != 0) {
-            return null;
-        }
+        // anything this boot dumps must be newer than this: guards readRoutesFromFolder against a stale
+        // route-topology.json left over from a previous --watch iteration whose cleanup above raced with (or lost
+        // against) a slow filesystem
+        Instant bootStart = Instant.now();
 
         try {
-            return readRoutesFromFolder(workDir);
+            Run run = new Run(getMain()) {
+                @Override
+                protected void doAddInitialProperty(KameletMain main) {
+                    main.addInitialProperty("camel.main.dumpRoutes", "json");
+                    main.addInitialProperty("camel.main.dumpRoutesLog", "false");
+                    main.addInitialProperty("camel.main.dumpRoutesOutput", target);
+                    // turn debug off as this can otherwise include source location in dump
+                    main.addInitialProperty("camel.debug.enabled", "false");
+                    main.addInitialProperty(CamelJBangConstants.TRANSFORM, "true");
+                    main.addInitialProperty("camel.component.properties.ignoreMissingProperty", "true");
+                    if (ignoreLoadingError) {
+                        // turn off bean method validator if ignore loading error
+                        main.addInitialProperty("camel.language.bean.validate", "false");
+                    }
+                }
+            };
+            run.files = sourceFiles;
+            run.executionLimitOptions.maxSeconds = 1;
+            int exit = run.runTransform(ignoreLoadingError);
+            if (exit != 0) {
+                return null;
+            }
+
+            return readRoutesFromFolder(workDir, bootStart);
         } finally {
             PathUtils.deleteDirectory(workDir);
         }
@@ -409,25 +425,28 @@ public class CamelRouteDiagramAction extends ActionWatchCommand {
 
     /**
      * Reads every per-resource route-structure JSON file dumped into the given folder (one file per source file, named
-     * after it; {@code route-topology.json} is skipped) and merges their routes. Polls for up to 10 seconds since the
-     * dump happens asynchronously as part of the transient Camel boot. Package visible for testing.
+     * after it; {@code route-topology.json} is skipped) and merges their routes. Waits (up to 10 seconds) for
+     * {@code route-topology.json} to appear with a timestamp at or after {@code notBefore}, since the dump happens
+     * asynchronously as part of the transient Camel boot: that file is always written last by
+     * {@code DefaultDumpRoutesStrategy}, once every route-structure file for this batch has already landed, so its
+     * fresh appearance (rather than "any file exists") is what actually signals the whole batch is complete and safe to
+     * merge, instead of a partial batch mid-write. Package visible for testing.
      */
-    List<RouteInfo> readRoutesFromFolder(Path folder) throws Exception {
-        List<Path> jsonFiles = List.of();
+    List<RouteInfo> readRoutesFromFolder(Path folder, Instant notBefore) throws Exception {
+        Path topologyMarker = folder.resolve("route-topology.json");
         StopWatch watch = new StopWatch();
-        while (watch.taken() < 10000) {
+        while (watch.taken() < 10000 && !isFreshFile(topologyMarker, notBefore)) {
             Thread.sleep(100);
-            if (Files.isDirectory(folder)) {
-                try (Stream<Path> stream = Files.list(folder)) {
-                    jsonFiles = stream
-                            .filter(p -> p.getFileName().toString().endsWith(".json"))
-                            .filter(p -> !"route-topology.json".equals(p.getFileName().toString()))
-                            .sorted()
-                            .toList();
-                }
-                if (!jsonFiles.isEmpty()) {
-                    break;
-                }
+        }
+
+        List<Path> jsonFiles = List.of();
+        if (Files.isDirectory(folder)) {
+            try (Stream<Path> stream = Files.list(folder)) {
+                jsonFiles = stream
+                        .filter(p -> p.getFileName().toString().endsWith(".json"))
+                        .filter(p -> !"route-topology.json".equals(p.getFileName().toString()))
+                        .sorted()
+                        .toList();
             }
         }
 
@@ -437,6 +456,11 @@ public class CamelRouteDiagramAction extends ActionWatchCommand {
             all.addAll(parseRoutes(jo));
         }
         return all;
+    }
+
+    private static boolean isFreshFile(Path file, Instant notBefore) throws IOException {
+        // small tolerance for filesystem mtime granularity / clock skew between capturing notBefore and the write
+        return Files.exists(file) && !Files.getLastModifiedTime(file).toInstant().isBefore(notBefore.minusSeconds(1));
     }
 
     List<RouteInfo> parseRoutes(JsonObject jo) {
@@ -466,8 +490,11 @@ public class CamelRouteDiagramAction extends ActionWatchCommand {
      * Used BY MCP tools
      *
      * Renders the routes contained in the given source file as a PNG diagram saved to {@code outputFile}. Convenience
-     * entry point for programmatic invocation (e.g. from MCP tools) that always targets a non-running source file and
-     * skips the running-PID lookup.
+     * entry point for programmatic invocation (e.g. from MCP tools) that always targets a source file rather than a
+     * named/PID diagram theme option. Note: this still goes through the normal single-token dispatch in
+     * {@link #doWatchCall()}, which first checks {@code sourceFile} against running Camel integrations; a source file
+     * whose name (without extension) happens to match a running integration's name would render that integration
+     * instead. In practice this is unlikely since {@code sourceFile} is expected to include a file extension.
      *
      * @param  sourceFile         path to the route source file (YAML, XML, Java, ...)
      * @param  outputFile         path to the PNG file to write

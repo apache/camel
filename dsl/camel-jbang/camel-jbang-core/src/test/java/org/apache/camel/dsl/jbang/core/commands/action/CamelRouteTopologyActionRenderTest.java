@@ -28,9 +28,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * Verifies CamelRouteTopologyAction.renderTopology against the exact JSON shape that
  * DefaultDumpRoutesStrategy#doDumpTopologyAsJSon (camel-core-engine) writes to route-topology.json. This is the
- * contract CAMEL-23850 relies on: whether the JSON comes from a running integration (route-topology dev console) or
- * from a source-file dump, rendering must produce the same connections summary, proving cross-route topology (not just
- * per-route node counts) is correctly wired from source.
+ * contract the source-file rendering path relies on: whether the JSON comes from a running integration (route-topology
+ * dev console) or from a source-file dump, rendering must produce the same connections summary, proving cross-route
+ * topology (not just per-route node counts) is correctly wired from source.
  */
 class CamelRouteTopologyActionRenderTest {
 

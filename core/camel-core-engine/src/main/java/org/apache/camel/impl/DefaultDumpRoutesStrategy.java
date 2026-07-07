@@ -260,9 +260,9 @@ public class DefaultDumpRoutesStrategy extends ServiceSupport implements DumpRou
                 LOG.info("Dumping {} route structure as JSon", size);
                 LOG.info("{}", sbLog);
             }
-            if (topology) {
-                doDumpTopologyAsJSon(camelContext);
-            }
+        }
+        if (topology) {
+            doDumpTopologyAsJSon(camelContext);
         }
 
     }
@@ -270,24 +270,31 @@ public class DefaultDumpRoutesStrategy extends ServiceSupport implements DumpRou
     /**
      * Dumps the inter-route topology (nodes, edges and optionally external endpoints) as a single
      * {@code route-topology.json} file in the configured output directory. This mirrors the JSON shape produced by the
-     * {@code route-topology} developer console (minus live metrics, which are not available at dump time).
+     * {@code route-topology} developer console (minus live metrics, which are not available at dump time). The file is
+     * always written (with empty {@code nodes}/{@code edges} arrays if there are no routes) as long as an output
+     * directory and a dumper are available, so its presence signals that the whole route-structure dump (which always
+     * runs first) has completed.
      */
     protected void doDumpTopologyAsJSon(CamelContext camelContext) {
         if (output == null) {
-            // topology dump requires an output directory to write the file to
+            // unlike route-structure dumping, topology has no console/log-only mode: it is only ever written
+            // as a file, so without an output directory there is nowhere to put it
             return;
         }
 
         RouteTopologyDumper dumper = PluginHelper.getRouteTopologyDumper(camelContext);
         if (dumper == null) {
+            LOG.warn("Cannot dump route topology as JSon as there is no RouteTopologyDumper available");
             return;
         }
 
         RouteTopologyDumper.TopologyResult result = dumper.dumpTopology(camelContext);
-        if (result.nodes().isEmpty()) {
-            return;
+        if (result.nodes().isEmpty() && log) {
+            LOG.info("Dumping route topology JSon as there are no routes to connect");
         }
 
+        // always write the file, even with empty nodes/edges: its presence is how callers (e.g. camel-jbang)
+        // distinguish "the dump ran and there are genuinely no routes" from "the dump never completed"
         JsonObject root = new JsonObject();
 
         JsonArray nodesArr = new JsonArray();

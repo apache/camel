@@ -55,6 +55,18 @@ class CamelRouteTopologyActionTest extends ActionCommandTestSupport {
     }
 
     @Test
+    void testReturnsErrorWhenNoRunningIntegrationAndNoFilesGiven() throws Exception {
+        // no status file written, so the mocked process does not match "*" and files stays empty (the default)
+        CamelRouteTopologyAction command = new CamelRouteTopologyAction(new CamelJBangMain().withPrinter(printer));
+
+        int exit = callWithSingleProcess(command);
+
+        assertEquals(1, exit);
+        assertTrue(printer.getOutput().contains("No running Camel integration found"),
+                "should report no running integration, was: " + printer.getOutput());
+    }
+
+    @Test
     void testReturnsErrorWhenNameDoesNotMatchAndIsNotASourceFile() throws Exception {
         writeStatusFile(TEST_PID, "myApp");
 
@@ -67,6 +79,25 @@ class CamelRouteTopologyActionTest extends ActionCommandTestSupport {
         assertEquals(1, exit);
         assertTrue(printer.getOutput().contains("File does not exist: doesNotExist"),
                 "should report the missing source file, was: " + printer.getOutput());
+    }
+
+    @Test
+    void testMultipleFilesSkipRunningIntegrationLookupEvenWhenFirstNameMatches() throws Exception {
+        // a running integration whose name matches the first of the given file tokens: with 2+ tokens the
+        // running-integration lookup (findPids) must not even be attempted, so no ProcessHandle mocking is needed
+        // here at all -- that absence of interaction is exactly what this test proves
+        writeStatusFile(TEST_PID, "route1");
+
+        CamelRouteTopologyAction command = new CamelRouteTopologyAction(new CamelJBangMain().withPrinter(printer));
+        command.files = List.of("route1", "route2");
+
+        int exit = command.doCall();
+
+        assertEquals(1, exit);
+        assertTrue(printer.getOutput().contains("File does not exist: route1"),
+                "with 2+ file args, dispatch must go straight to source-file handling and skip the "
+                                                                                + "running-integration lookup entirely, was: "
+                                                                                + printer.getOutput());
     }
 
     // Note: the actual doCallSource -> Run.runTransform spawn path (successfully rendering topology from a real

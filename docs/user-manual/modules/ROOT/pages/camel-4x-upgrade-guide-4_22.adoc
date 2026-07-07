@@ -37,7 +37,9 @@ same way `route-diagram` already did.
 
 As part of this, `camel.main.dumpRoutes=json` (used internally by these commands, and available to users
 dumping route structure to a folder) now additionally writes a `route-topology.json` file alongside the
-per-route structure files when topology dumping is enabled (the default).
+per-route structure files when topology dumping is enabled (the default). This file is now always written,
+with empty `nodes`/`edges` arrays if there are no routes to connect, so its presence reliably signals that
+the dump has completed (previously it was silently skipped when there were no routes).
 
 === camel-langchain4j-agent
 
