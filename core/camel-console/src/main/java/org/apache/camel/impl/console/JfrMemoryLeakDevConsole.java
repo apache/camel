@@ -40,6 +40,7 @@ import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.console.AbstractDevConsole;
+import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
@@ -137,9 +138,9 @@ public class JfrMemoryLeakDevConsole extends AbstractDevConsole {
             // trigger GC before starting to establish a cleaner baseline
             System.gc();
             try {
-                long deadline = System.currentTimeMillis() + 500;
+                StopWatch watch = new StopWatch();
                 long remaining;
-                while ((remaining = deadline - System.currentTimeMillis()) > 0) {
+                while ((remaining = 500 - watch.taken()) > 0) {
                     wait(remaining);
                 }
             } catch (InterruptedException e) {
@@ -206,9 +207,9 @@ public class JfrMemoryLeakDevConsole extends AbstractDevConsole {
             // trigger GC before stopping to flush objects into the recording
             System.gc();
             try {
-                long deadline = System.currentTimeMillis() + 500;
+                StopWatch watch = new StopWatch();
                 long remaining;
-                while ((remaining = deadline - System.currentTimeMillis()) > 0) {
+                while ((remaining = 500 - watch.taken()) > 0) {
                     wait(remaining);
                 }
             } catch (InterruptedException e) {
