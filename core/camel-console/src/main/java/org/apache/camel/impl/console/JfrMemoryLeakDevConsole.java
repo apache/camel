@@ -122,8 +122,8 @@ public class JfrMemoryLeakDevConsole extends AbstractDevConsole {
             return errorJson("A JFR recording is already active. Stop it first.");
         }
 
+        Recording rec = new Recording();
         try {
-            Recording rec = new Recording();
             rec.setName("Camel OldObjectSample");
             rec.enable("jdk.OldObjectSample").withStackTrace().withPeriod(Duration.ofSeconds(1));
             rec.enable("jdk.GarbageCollection");
@@ -165,6 +165,7 @@ public class JfrMemoryLeakDevConsole extends AbstractDevConsole {
             }
             return result;
         } catch (Exception e) {
+            rec.close();
             LOG.warn("Failed to start JFR recording: {}", e.getMessage(), e);
             return errorJson("Failed to start JFR recording: " + e.getMessage());
         }

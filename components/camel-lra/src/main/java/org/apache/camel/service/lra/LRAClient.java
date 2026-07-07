@@ -201,5 +201,14 @@ public class LRAClient implements Closeable {
 
     @Override
     public void close() throws IOException {
+        if (client instanceof AutoCloseable closeable) {
+            try {
+                closeable.close();
+            } catch (IOException e) {
+                throw e;
+            } catch (Exception e) {
+                throw new IOException(e);
+            }
+        }
     }
 }
