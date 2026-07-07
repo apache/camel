@@ -19,9 +19,15 @@ package org.apache.camel.dsl.jbang.core.commands.tui;
 import java.util.ArrayList;
 import java.util.List;
 
+import dev.tamboui.buffer.Buffer;
+import dev.tamboui.buffer.Cell;
+import dev.tamboui.layout.Rect;
+import dev.tamboui.style.Color;
+import dev.tamboui.style.Style;
 import dev.tamboui.text.Span;
 import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.hint;
@@ -31,6 +37,12 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class CamelMonitorTest {
+
+    @BeforeEach
+    void resetTheme() {
+        Theme.resetForTesting();
+        Theme.setMode("dark");
+    }
 
     // '?' is an alternative to F1 for opening the help overlay. Unlike F1, it must be suppressed
     // while a text input is focused, otherwise typing '?' in a search or probe field would
@@ -198,5 +210,63 @@ class CamelMonitorTest {
         assertEquals(1, CamelMonitor.footerRegionAt(startX, endX, 17), "last cell of the second region");
         assertEquals(-1, CamelMonitor.footerRegionAt(startX, endX, 18), "column 18 is past the second region");
         assertEquals(-1, CamelMonitor.footerRegionAt(null, endX, 3), "no captured geometry yet");
+    }
+
+    // applyThemeBaseColors patches unset terminal cells with the active theme canvas colors while
+    // preserving widget-specific foreground and background styles.
+
+    @Test
+    void applyThemeBaseColorsPatchesUnsetCells() {
+        Rect area = new Rect(0, 0, 4, 2);
+        Buffer buffer = Buffer.empty(area);
+
+        CamelMonitor.applyThemeBaseColors(buffer, area);
+
+        Cell cell = buffer.get(0, 0);
+        assertEquals(Theme.baseBg(), cell.style().bg().orElse(null), "unset cells receive the theme background");
+        assertEquals(Theme.baseFg(), cell.style().fg().orElse(null), "unset cells receive the theme foreground");
+    }
+
+    @Test
+    void applyThemeBaseColorsPreservesExplicitSelectionStyle() {
+        Rect area = new Rect(0, 0, 4, 2);
+        Buffer buffer = Buffer.empty(area);
+        Style selection = Theme.selectionBg();
+        buffer.setString(1, 0, "X", selection);
+
+        CamelMonitor.applyThemeBaseColors(buffer, area);
+
+        Cell cell = buffer.get(1, 0);
+        assertEquals(selection.bg().orElse(null), cell.style().bg().orElse(null), "selection background is preserved");
+        assertEquals(selection.fg().orElse(null), cell.style().fg().orElse(null), "selection foreground is preserved");
+    }
+
+    @Test
+    void applyThemeBaseColorsPatchesOnlyMissingBackground() {
+        Rect area = new Rect(0, 0, 4, 2);
+        Buffer buffer = Buffer.empty(area);
+        Color explicitFg = Color.rgb(0xFF, 0x00, 0x00);
+        buffer.setString(2, 0, "Y", Style.EMPTY.fg(explicitFg));
+
+        CamelMonitor.applyThemeBaseColors(buffer, area);
+
+        Cell cell = buffer.get(2, 0);
+        assertEquals(explicitFg, cell.style().fg().orElse(null), "explicit foreground is preserved");
+        assertEquals(Theme.baseBg(), cell.style().bg().orElse(null), "missing background is patched");
+    }
+
+    @Test
+    void applyThemeBaseColorsUsesActiveThemePalette() {
+        Rect area = new Rect(0, 0, 2, 1);
+        Buffer buffer = Buffer.empty(area);
+        Color darkBg = Theme.baseBg();
+
+        Theme.toggle();
+        CamelMonitor.applyThemeBaseColors(buffer, area);
+
+        Cell cell = buffer.get(0, 0);
+        assertEquals(Theme.baseBg(), cell.style().bg().orElse(null), "light palette background is applied after toggle");
+        assertEquals(Theme.baseFg(), cell.style().fg().orElse(null), "light palette foreground is applied after toggle");
+        assertFalse(darkBg.equals(cell.style().bg().orElse(null)), "patched background must follow the active theme");
     }
 }

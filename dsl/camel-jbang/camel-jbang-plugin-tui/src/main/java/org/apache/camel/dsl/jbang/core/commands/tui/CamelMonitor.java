@@ -34,6 +34,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+import dev.tamboui.buffer.Buffer;
 import dev.tamboui.buffer.Cell;
 import dev.tamboui.layout.Constraint;
 import dev.tamboui.layout.Layout;
@@ -1134,7 +1135,7 @@ public class CamelMonitor extends CamelCommand {
             helpOverlay.render(frame, contentArea);
         }
         renderFooter(frame, mainChunks.get(3));
-        applyThemeBaseColors(frame, area);
+        applyThemeBaseColors(frame.buffer(), area);
 
         recordingManager.updateBuffer(frame.buffer());
         recordingManager.processPendingScreenshot();
@@ -1249,7 +1250,7 @@ public class CamelMonitor extends CamelCommand {
 
         int x5 = area.x() + Math.max(0, (area.width() - CharWidth.of(line5)) / 2);
         frame.buffer().setString(x5, startY + 4, line5, normal);
-        applyThemeBaseColors(frame, area);
+        applyThemeBaseColors(frame.buffer(), area);
     }
 
     private void renderTabs(Frame frame, Rect area) {
@@ -1364,13 +1365,13 @@ public class CamelMonitor extends CamelCommand {
      * {@link Cell#EMPTY} each frame; when bg is unset the terminal falls back to its own default (usually black). Only
      * patches missing colors so selection highlights, zebra stripes, and other widget backgrounds are preserved.
      */
-    private void applyThemeBaseColors(Frame frame, Rect area) {
+    static void applyThemeBaseColors(Buffer buffer, Rect area) {
         Color baseBg = Theme.baseBg();
         Color baseFg = Theme.baseFg();
-        Rect intersection = frame.buffer().area().intersection(area);
+        Rect intersection = buffer.area().intersection(area);
         for (int y = intersection.top(); y < intersection.bottom(); y++) {
             for (int x = intersection.left(); x < intersection.right(); x++) {
-                Cell cell = frame.buffer().get(x, y);
+                Cell cell = buffer.get(x, y);
                 if (cell.isContinuation()) {
                     continue;
                 }
@@ -1385,7 +1386,7 @@ public class CamelMonitor extends CamelCommand {
                     if (cellFg == null) {
                         patch = patch.fg(baseFg);
                     }
-                    frame.buffer().set(x, y, cell.patchStyle(patch));
+                    buffer.set(x, y, cell.patchStyle(patch));
                 }
             }
         }
