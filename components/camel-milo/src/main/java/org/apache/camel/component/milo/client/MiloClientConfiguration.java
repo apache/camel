@@ -455,7 +455,8 @@ public class MiloClientConfiguration implements Cloneable {
     public MiloClientConfiguration clone() {
         try {
             MiloClientConfiguration copy = (MiloClientConfiguration) super.clone();
-            copy.allowedSecurityPolicies = new HashSet<>(this.allowedSecurityPolicies);
+            copy.allowedSecurityPolicies
+                    = this.allowedSecurityPolicies != null ? new HashSet<>(this.allowedSecurityPolicies) : null;
             return copy;
         } catch (CloneNotSupportedException e) {
             throw new RuntimeCamelException(e);
