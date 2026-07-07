@@ -19,6 +19,7 @@ package org.apache.camel.component.langchain4j.agent.api;
 import java.io.Serializable;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Function;
 
 import dev.langchain4j.agent.tool.ToolExecutionRequest;
 import dev.langchain4j.data.message.ToolExecutionResultMessage;
@@ -275,7 +276,7 @@ public class AgentConfigurationTest {
         AgentConfiguration config = new AgentConfiguration();
         assertNull(config.getHallucinatedToolNameStrategy());
 
-        java.util.function.Function<ToolExecutionRequest, ToolExecutionResultMessage> strategy
+        Function<ToolExecutionRequest, ToolExecutionResultMessage> strategy
                 = request -> ToolExecutionResultMessage.from(request, "Unknown tool: " + request.name());
         AgentConfiguration result = config.withHallucinatedToolNameStrategy(strategy);
 
