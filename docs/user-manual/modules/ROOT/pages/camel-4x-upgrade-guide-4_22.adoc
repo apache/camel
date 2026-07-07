@@ -18,6 +18,27 @@ See the xref:camel-upgrade-recipes-tool.adoc[documentation] page for details.
 The Camel JBang CLI now automatic resolves quarkus version to use,
 instead of hardcoded `3.33.1.1` (https://github.com/apache/camel/commit/d1f4713ebdf787ab04a31c50a6f07e3ca66f0c2b).
 
+=== camel-jbang - route-diagram and route-topology can render from source files
+
+`camel cmd route-diagram` and `camel cmd route-topology` now accept one or more Camel route source files
+(instead of only the name/pid of a running integration), so diagrams and inter-route topology can be
+generated at design/source time without starting the application first, for example:
+
+[source,bash]
+----
+camel cmd route-diagram routes/*.yaml
+camel cmd route-topology routes/*.yaml
+----
+
+`route-diagram` previously only accepted a single source file; both commands now accept a set of files.
+`route-topology` previously required a running integration and printed
+"No running Camel integration found" when none matched; it now falls back to loading the given files the
+same way `route-diagram` already did.
+
+As part of this, `camel.main.dumpRoutes=json` (used internally by these commands, and available to users
+dumping route structure to a folder) now additionally writes a `route-topology.json` file alongside the
+per-route structure files when topology dumping is enabled (the default).
+
 === camel-langchain4j-agent
 
 The `Agent.chat()` method return type has changed from `String` to `Result<String>` (from `dev.langchain4j.service.Result`).

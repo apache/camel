@@ -20,7 +20,9 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Stack;
 
 import javax.imageio.ImageIO;
 
@@ -33,7 +35,11 @@ import org.apache.camel.diagram.TopologyLayoutEngine.TopologyEdgeInfo;
 import org.apache.camel.diagram.TopologyLayoutEngine.TopologyLayoutResult;
 import org.apache.camel.diagram.TopologyLayoutEngine.TopologyNodeInfo;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.commands.Run;
+import org.apache.camel.dsl.jbang.core.common.CamelJBangConstants;
+import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.PathUtils;
+import org.apache.camel.main.KameletMain;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
@@ -52,11 +58,16 @@ import picocli.CommandLine.Command;
                  "  camel cmd route-topology --json",
                  "  camel cmd route-topology --theme=unicode",
                  "  camel cmd route-topology --theme=dark",
-                 "  camel cmd route-topology --theme=dark --output=topology.png" })
+                 "  camel cmd route-topology --theme=dark --output=topology.png",
+                 "  camel cmd route-topology hello.yaml bye.yaml" })
 public class CamelRouteTopologyAction extends ActionBaseCommand {
 
-    @CommandLine.Parameters(description = "Name or pid of a running Camel integration", arity = "0..1")
-    String name = "*";
+    @CommandLine.Parameters(
+                            description = "Source file name(s)/pattern(s), or name/pid of a running Camel integration",
+                            arity = "0..9", paramLabel = "<files>", parameterConsumer = FilesConsumer.class)
+    Path[] filePaths; // Defined only for file path completion; the field never used
+
+    List<String> files = new ArrayList<>();
 
     @CommandLine.Option(names = { "--json" },
                         description = "Output in JSON Format")
@@ -85,12 +96,16 @@ public class CamelRouteTopologyAction extends ActionBaseCommand {
     boolean description;
 
     @CommandLine.Option(names = { "--metric" }, defaultValue = "true",
-                        description = "Whether to include live metrics")
+                        description = "Whether to include live metrics (only possible for a running Camel application)")
     boolean metric;
 
     @CommandLine.Option(names = { "--external" },
                         description = "Include external systems (consumers at top, producers at bottom)")
     boolean external;
+
+    @CommandLine.Option(names = { "--ignore-loading-error" }, defaultValue = "false",
+                        description = "Whether to ignore route loading and compilation errors (use this with care!)")
+    boolean ignoreLoadingError;
 
     public CamelRouteTopologyAction(CamelJBangMain main) {
         super(main);
@@ -98,13 +113,19 @@ public class CamelRouteTopologyAction extends ActionBaseCommand {
 
     @Override
     public Integer doCall() throws Exception {
-        List<Long> pids = findPids(name);
+        // only attempt to resolve a running integration when a single token is given (or none, defaulting to "*"):
+        // multiple tokens can only be a set of source files
+        List<Long> pids = files.size() <= 1 ? findPids(files.isEmpty() ? "*" : files.get(0)) : List.of();
+
         if (pids.isEmpty()) {
-            printer().println("No running Camel integration found");
-            return 1;
+            if (files.isEmpty()) {
+                printer().println("No running Camel integration found");
+                return 1;
+            }
+            return doCallSource(files);
         }
         if (pids.size() > 1) {
-            printer().println("Name or pid " + name + " matches " + pids.size()
+            printer().println("Name or pid " + files.get(0) + " matches " + pids.size()
                               + " running Camel integrations. Specify a name or PID that matches exactly one.");
             return 1;
         }
@@ -116,25 +137,84 @@ public class CamelRouteTopologyAction extends ActionBaseCommand {
         });
 
         JsonObject jo = getJsonObject(outputFile);
-        if (jo != null) {
-            if (jsonOutput) {
-                String dump = Jsoner.prettyPrint(jo.toJson(), 2);
-                printer().println(dump);
-            } else if (theme != null) {
-                if (isTextTheme()) {
-                    printTextDiagram(jo);
-                } else {
-                    printImageDiagram(jo);
-                }
-            } else {
-                printTopology(jo);
-            }
-        } else {
+        if (jo == null) {
             printer().println("Response from running Camel with PID " + pid + " not received within 10 seconds");
             return 1;
         }
 
+        int exit = renderTopology(jo);
         PathUtils.deleteFile(outputFile);
+        return exit;
+    }
+
+    private int doCallSource(List<String> sourceFiles) throws Exception {
+        for (String name : sourceFiles) {
+            File f = new File(name);
+            if (!f.isFile() || !f.exists()) {
+                printer().printErr("File does not exist: " + name);
+                return 1;
+            }
+        }
+
+        Path workDir = Path.of(CommandLineHelper.CAMEL_JBANG_WORK_DIR, "route-topology-source");
+        PathUtils.deleteDirectory(workDir);
+        final String target = workDir.toString();
+
+        Run run = new Run(getMain()) {
+            @Override
+            protected void doAddInitialProperty(KameletMain main) {
+                main.addInitialProperty("camel.main.dumpRoutes", "json");
+                main.addInitialProperty("camel.main.dumpRoutesLog", "false");
+                main.addInitialProperty("camel.main.dumpRoutesOutput", target);
+                // turn debug off as this can otherwise include source location in dump
+                main.addInitialProperty("camel.debug.enabled", "false");
+                main.addInitialProperty(CamelJBangConstants.TRANSFORM, "true");
+                main.addInitialProperty("camel.component.properties.ignoreMissingProperty", "true");
+                if (ignoreLoadingError) {
+                    // turn off bean method validator if ignore loading error
+                    main.addInitialProperty("camel.language.bean.validate", "false");
+                }
+            }
+        };
+        run.files = sourceFiles;
+        run.executionLimitOptions.maxSeconds = 1;
+        int exit = run.runTransform(ignoreLoadingError);
+        if (exit != 0) {
+            return exit;
+        }
+
+        Path topologyFile = workDir.resolve("route-topology.json");
+        JsonObject jo = getJsonObject(topologyFile, 5000);
+        if (jo == null) {
+            printer().println("No routes found in: " + sourceFiles);
+            return 1;
+        }
+
+        try {
+            return renderTopology(jo);
+        } finally {
+            PathUtils.deleteDirectory(workDir);
+        }
+    }
+
+    /**
+     * Renders the topology described by the given JSON, which may come either from a running Camel integration (via the
+     * {@code route-topology} developer console) or from a source-file dump (via {@code camel.main.dumpRoutes=json}).
+     * Both shapes are identical (see {@code RouteTopologyDevConsole}). Package visible for testing.
+     */
+    int renderTopology(JsonObject jo) throws Exception {
+        if (jsonOutput) {
+            String dump = Jsoner.prettyPrint(jo.toJson(), 2);
+            printer().println(dump);
+        } else if (theme != null) {
+            if (isTextTheme()) {
+                printTextDiagram(jo);
+            } else {
+                printImageDiagram(jo);
+            }
+        } else {
+            printTopology(jo);
+        }
         return 0;
     }
 
@@ -248,6 +328,14 @@ public class CamelRouteTopologyAction extends ActionBaseCommand {
 
     private boolean isUnicodeTheme() {
         return "unicode".equalsIgnoreCase(theme);
+    }
+
+    static class FilesConsumer extends ParameterConsumer<CamelRouteTopologyAction> {
+        @Override
+        protected void doConsumeParameters(Stack<String> args, CamelRouteTopologyAction cmd) {
+            String arg = args.pop();
+            cmd.files.add(arg);
+        }
     }
 
 }

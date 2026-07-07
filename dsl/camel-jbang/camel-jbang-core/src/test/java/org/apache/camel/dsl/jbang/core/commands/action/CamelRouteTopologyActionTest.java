@@ -16,6 +16,8 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.action;
 
+import java.util.List;
+
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
@@ -35,7 +37,7 @@ class CamelRouteTopologyActionTest extends ActionCommandTestSupport {
         writeStatusFile(TEST_PID, "myApp");
 
         CamelRouteTopologyAction command = new CamelRouteTopologyAction(new CamelJBangMain().withPrinter(printer));
-        command.name = "myApp";
+        command.files = List.of("myApp");
 
         int exit = callWithResponse(command, singleNodeResponse());
 
@@ -53,18 +55,25 @@ class CamelRouteTopologyActionTest extends ActionCommandTestSupport {
     }
 
     @Test
-    void testReturnsErrorWhenNameDoesNotMatch() throws Exception {
+    void testReturnsErrorWhenNameDoesNotMatchAndIsNotASourceFile() throws Exception {
         writeStatusFile(TEST_PID, "myApp");
 
         CamelRouteTopologyAction command = new CamelRouteTopologyAction(new CamelJBangMain().withPrinter(printer));
-        command.name = "doesNotExist";
+        // "doesNotExist" matches no running process, so it is tried as a source file next
+        command.files = List.of("doesNotExist");
 
         int exit = callWithSingleProcess(command);
 
         assertEquals(1, exit);
-        assertTrue(printer.getOutput().contains("No running Camel integration found"),
-                "should report no running integration, was: " + printer.getOutput());
+        assertTrue(printer.getOutput().contains("File does not exist: doesNotExist"),
+                "should report the missing source file, was: " + printer.getOutput());
     }
+
+    // Note: the actual doCallSource -> Run.runTransform spawn path (successfully rendering topology from a real
+    // source file) is out of scope for unit tests, mirroring CamelRouteStructureActionTest: it boots a transient
+    // Camel and cannot be exercised deterministically here. The JSON-shape rendering it feeds into is covered by
+    // CamelRouteTopologyActionRenderTest, and DefaultDumpRoutesStrategyTopologyJsonTest (camel-core) proves the
+    // route-topology.json that doCallSource reads is produced correctly from the route model alone.
 
     private static JsonObject singleNodeResponse() {
         JsonObject node = new JsonObject();

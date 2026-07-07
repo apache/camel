@@ -50,6 +50,7 @@ import org.apache.camel.spi.ModelToXMLDumper;
 import org.apache.camel.spi.ModelToYAMLDumper;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.RouteDiagramDumper;
+import org.apache.camel.spi.RouteTopologyDumper;
 import org.apache.camel.spi.annotations.JdkService;
 import org.apache.camel.support.LoggerHelper;
 import org.apache.camel.support.PluginHelper;
@@ -58,6 +59,7 @@ import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StringHelper;
+import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
 import org.slf4j.Logger;
@@ -258,8 +260,86 @@ public class DefaultDumpRoutesStrategy extends ServiceSupport implements DumpRou
                 LOG.info("Dumping {} route structure as JSon", size);
                 LOG.info("{}", sbLog);
             }
+            if (topology) {
+                doDumpTopologyAsJSon(camelContext);
+            }
         }
 
+    }
+
+    /**
+     * Dumps the inter-route topology (nodes, edges and optionally external endpoints) as a single
+     * {@code route-topology.json} file in the configured output directory. This mirrors the JSON shape produced by the
+     * {@code route-topology} developer console (minus live metrics, which are not available at dump time).
+     */
+    protected void doDumpTopologyAsJSon(CamelContext camelContext) {
+        if (output == null) {
+            // topology dump requires an output directory to write the file to
+            return;
+        }
+
+        RouteTopologyDumper dumper = PluginHelper.getRouteTopologyDumper(camelContext);
+        if (dumper == null) {
+            return;
+        }
+
+        RouteTopologyDumper.TopologyResult result = dumper.dumpTopology(camelContext);
+        if (result.nodes().isEmpty()) {
+            return;
+        }
+
+        JsonObject root = new JsonObject();
+
+        JsonArray nodesArr = new JsonArray();
+        for (RouteTopologyDumper.TopologyNode node : result.nodes()) {
+            JsonObject jo = new JsonObject();
+            jo.put("routeId", node.routeId());
+            if (node.description() != null) {
+                jo.put("description", node.description());
+            }
+            jo.put("from", node.from());
+            jo.put("fromScheme", node.fromScheme());
+            jo.put("nodeType", node.nodeType());
+            nodesArr.add(jo);
+        }
+        root.put("nodes", nodesArr);
+
+        JsonArray edgesArr = new JsonArray();
+        for (RouteTopologyDumper.TopologyEdge edge : result.edges()) {
+            JsonObject jo = new JsonObject();
+            jo.put("fromRouteId", edge.fromRouteId());
+            jo.put("toRouteId", edge.toRouteId());
+            jo.put("endpoint", edge.endpoint());
+            jo.put("connectionType", edge.connectionType());
+            edgesArr.add(jo);
+        }
+        root.put("edges", edgesArr);
+
+        if (topologyExternal && !result.externalEndpoints().isEmpty()) {
+            JsonArray extArr = new JsonArray();
+            for (RouteTopologyDumper.TopologyExternalEndpoint ep : result.externalEndpoints()) {
+                JsonObject jo = new JsonObject();
+                jo.put("id", ep.id());
+                jo.put("uri", ep.uri());
+                jo.put("scheme", ep.scheme());
+                jo.put("direction", ep.direction());
+                jo.put("routeId", ep.routeId());
+                extArr.add(jo);
+            }
+            root.put("externalEndpoints", extArr);
+        }
+
+        try {
+            File dir = new File(output);
+            dir.mkdirs();
+            File target = new File(dir, "route-topology.json");
+            IOHelper.writeText(Jsoner.prettyPrint(root.toJson(), 2), target);
+            if (log) {
+                LOG.info("Dumped route topology as JSon to file: {}", target);
+            }
+        } catch (Exception e) {
+            LOG.warn("Error dumping route topology to JSon due to {}. This exception is ignored.", e.getMessage(), e);
+        }
     }
 
     protected void doDumpRoutesAsYaml(CamelContext camelContext) {
