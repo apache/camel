@@ -23,7 +23,6 @@ import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.PrivateKey;
 import java.security.PublicKey;
-import java.security.SecureRandom;
 import java.security.spec.AlgorithmParameterSpec;
 import java.time.Duration;
 import java.util.ArrayList;
@@ -36,6 +35,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.component.pqc.PQCKeyEncapsulationAlgorithms;
 import org.apache.camel.component.pqc.PQCSignatureAlgorithms;
+import org.apache.camel.util.SecureRandomHelper;
 import org.bouncycastle.pqc.crypto.lms.LMOtsParameters;
 import org.bouncycastle.pqc.crypto.lms.LMSigParameters;
 import org.bouncycastle.pqc.jcajce.spec.*;
@@ -184,17 +184,17 @@ public class AwsSecretsManagerKeyLifecycleManager implements KeyLifecycleManager
         // Initialize with parameter spec if provided
         if (parameterSpec != null) {
             if (parameterSpec instanceof AlgorithmParameterSpec algorithmParamSpec) {
-                generator.initialize(algorithmParamSpec, new SecureRandom());
+                generator.initialize(algorithmParamSpec, SecureRandomHelper.getSecureRandom());
             } else if (parameterSpec instanceof Integer keySize) {
-                generator.initialize(keySize, new SecureRandom());
+                generator.initialize(keySize, SecureRandomHelper.getSecureRandom());
             }
         } else {
             // Use default parameter spec for the algorithm
             AlgorithmParameterSpec defaultSpec = getDefaultParameterSpec(algorithm);
             if (defaultSpec != null) {
-                generator.initialize(defaultSpec, new SecureRandom());
+                generator.initialize(defaultSpec, SecureRandomHelper.getSecureRandom());
             } else {
-                generator.initialize(getDefaultKeySize(algorithm), new SecureRandom());
+                generator.initialize(getDefaultKeySize(algorithm), SecureRandomHelper.getSecureRandom());
             }
         }
 

@@ -23,7 +23,6 @@ import java.security.KeyPairGenerator;
 import java.security.KeyStore;
 import java.security.PrivateKey;
 import java.security.PublicKey;
-import java.security.SecureRandom;
 import java.security.Signature;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
@@ -31,6 +30,8 @@ import java.security.spec.ECGenParameterSpec;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.Locale;
+
+import org.apache.camel.util.SecureRandomHelper;
 
 /**
  * Generates a self-signed certificate for development use. This allows enabling HTTPS with minimal configuration when
@@ -73,21 +74,20 @@ final class SelfSignedCertificateGenerator {
         String type = keyType == null || keyType.isBlank()
                 ? DEFAULT_KEY_TYPE : keyType.trim().toUpperCase(Locale.ROOT);
 
-        SecureRandom random = new SecureRandom();
         KeyPairGenerator keyGen;
         if ("EC".equals(type)) {
             keyGen = KeyPairGenerator.getInstance("EC");
-            keyGen.initialize(new ECGenParameterSpec("secp256r1"), random);
+            keyGen.initialize(new ECGenParameterSpec("secp256r1"), SecureRandomHelper.getSecureRandom());
         } else if ("RSA".equals(type)) {
             keyGen = KeyPairGenerator.getInstance("RSA");
-            keyGen.initialize(2048, random);
+            keyGen.initialize(2048, SecureRandomHelper.getSecureRandom());
         } else {
             throw new IllegalArgumentException(
                     "Unsupported self-signed certificate key type: " + keyType + " (supported: EC, RSA)");
         }
         KeyPair keyPair = keyGen.generateKeyPair();
 
-        X509Certificate cert = generateCertificate(keyPair, type, random);
+        X509Certificate cert = generateCertificate(keyPair, type);
 
         KeyStore ks = KeyStore.getInstance("PKCS12");
         ks.load(null, password.toCharArray());
@@ -97,7 +97,7 @@ final class SelfSignedCertificateGenerator {
         return ks;
     }
 
-    private static X509Certificate generateCertificate(KeyPair keyPair, String keyType, SecureRandom random)
+    private static X509Certificate generateCertificate(KeyPair keyPair, String keyType)
             throws Exception {
         PublicKey publicKey = keyPair.getPublic();
         PrivateKey privateKey = keyPair.getPrivate();
@@ -106,7 +106,7 @@ final class SelfSignedCertificateGenerator {
         ZonedDateTime expiry = now.plusDays(365);
 
         // Build self-signed X.509 certificate using DER encoding
-        byte[] encoded = buildSelfSignedCertificateDer(publicKey, privateKey, keyType, now, expiry, random);
+        byte[] encoded = buildSelfSignedCertificateDer(publicKey, privateKey, keyType, now, expiry);
 
         CertificateFactory cf = CertificateFactory.getInstance("X.509");
         return (X509Certificate) cf.generateCertificate(new ByteArrayInputStream(encoded));
@@ -114,8 +114,7 @@ final class SelfSignedCertificateGenerator {
 
     private static byte[] buildSelfSignedCertificateDer(
             PublicKey publicKey, PrivateKey privateKey, String keyType,
-            ZonedDateTime notBefore, ZonedDateTime notAfter,
-            SecureRandom random)
+            ZonedDateTime notBefore, ZonedDateTime notAfter)
             throws Exception {
 
         boolean ec = "EC".equals(keyType);
@@ -127,7 +126,7 @@ final class SelfSignedCertificateGenerator {
 
         // TBS Certificate
         byte[] tbsCertificate
-                = buildTbsCertificate(publicKey, issuerDn, signatureAlgorithm, notBefore, notAfter, random);
+                = buildTbsCertificate(publicKey, issuerDn, signatureAlgorithm, notBefore, notAfter);
 
         // Sign the TBS certificate
         Signature sig = Signature.getInstance(signatureAlgorithmName);
@@ -143,15 +142,14 @@ final class SelfSignedCertificateGenerator {
 
     private static byte[] buildTbsCertificate(
             PublicKey publicKey, byte[] dn, byte[] signatureAlgorithm,
-            ZonedDateTime notBefore, ZonedDateTime notAfter,
-            SecureRandom random) {
+            ZonedDateTime notBefore, ZonedDateTime notAfter) {
 
         // Version: v3 (2)
         byte[] version = wrapExplicitTag(0, wrapInteger(new byte[] { 2 }));
 
         // Serial number
         byte[] serialBytes = new byte[16];
-        random.nextBytes(serialBytes);
+        SecureRandomHelper.getSecureRandom().nextBytes(serialBytes);
         serialBytes[0] &= 0x7F; // ensure positive
         byte[] serial = wrapInteger(serialBytes);
 
