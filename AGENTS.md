@@ -163,10 +163,37 @@ await().atMost(20, TimeUnit.SECONDS)
        .untilAsserted(() -> assertEquals(1, context.getRoutes().size()));
 ```
 
+**MockEndpoint tests — prefer built-in timed assertions:**
+
+When the wait condition is "mock expectations are met", use `MockEndpoint`'s native timed
+assertion instead of wrapping with Awaitility. It is latch-based (more efficient than polling)
+and requires no external dependency:
+
+```java
+// Preferred — native, latch-based, returns as soon as expectations are met:
+MockEndpoint.assertIsSatisfied(context, 10, TimeUnit.SECONDS);
+
+// Also available on a single endpoint:
+mock.setResultWaitTime(TimeUnit.SECONDS.toMillis(10));
+mock.assertIsSatisfied();
+
+// DO NOT wrap MockEndpoint assertions with Awaitility — it polls a mechanism that already waits:
+// await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> MockEndpoint.assertIsSatisfied(context));
+```
+
+Use Awaitility only when waiting on a condition that `MockEndpoint` cannot express natively,
+such as waiting for a specific received count mid-test before performing the next action:
+
+```java
+// Awaitility IS appropriate here — no MockEndpoint API for "wait until N received" without asserting:
+await().atMost(10, TimeUnit.SECONDS).until(() -> mock.getReceivedCounter() >= 2);
+```
+
 **Rules:**
 
 - New test code MUST NOT introduce `Thread.sleep()` calls.
-- When modifying existing test code that contains `Thread.sleep()`, migrate it to Awaitility.
+- When modifying existing test code that contains `Thread.sleep()`, migrate it to
+  `MockEndpoint`'s timed assertions (for mock-based waits) or Awaitility (for other conditions).
 - Always set an explicit `atMost` timeout to avoid hanging builds.
 - Use `untilAsserted` or `until` with a clear predicate — do not replace a sleep with a
   busy-wait loop.
