@@ -1,0 +1,22 @@
+- route:
+    id: order-splitter
+    from:
+      uri: timer
+      parameters:
+        timerName: orders
+        period: 5000
+        repeatCount: 3
+      steps:
+        - setBody:
+            expression:
+              constant:
+                expression: "Laptop,Phone,Tablet,Monitor,Keyboard"
+        - log:
+            message: "Received batch: ${body}"
+        - split:
+            expression:
+              tokenize:
+                token: ","
+            steps:
+              - log:
+                  message: "Processing item ${headers.CamelSplitIndex}: ${body}"
