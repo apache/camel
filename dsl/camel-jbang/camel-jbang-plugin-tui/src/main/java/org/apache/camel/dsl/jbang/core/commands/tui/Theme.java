@@ -21,7 +21,6 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -53,8 +52,6 @@ final class Theme {
     private static final Logger LOG = LoggerFactory.getLogger(Theme.class);
 
     private static final String PROP_KEY = "camel.tui.theme";
-    private static final String DARK = "dark";
-    private static final String LIGHT = "light";
 
     // Fallback palette mirrors the dark stylesheet, used when CSS is unavailable.
     private static final Style FALLBACK_ACCENT_BG = Style.EMPTY.fg(Color.WHITE).bg(ACCENT).bold();
@@ -83,7 +80,7 @@ final class Theme {
     private static boolean fallbackLogged;
     private static boolean testMode;
     private static StyleEngine engine;
-    private static String mode = DARK;
+    private static ThemeMode mode = ThemeMode.DARK;
 
     private Theme() {
     }
@@ -224,27 +221,27 @@ final class Theme {
     /** The active theme mode: {@code "dark"} or {@code "light"}. */
     static String mode() {
         engine();
-        return mode;
+        return mode.id();
+    }
+
+    static boolean isDark() {
+        engine();
+        return mode == ThemeMode.DARK;
     }
 
     /** Flip the active theme, clear the cache, persist the new value, and return the new mode. */
     static synchronized String toggle() {
-        String next = DARK.equals(mode) ? LIGHT : DARK;
+        ThemeMode next = mode.toggle();
         if (!testMode) {
             persist(next);
         }
-        setMode(next);
-        return next;
+        activate(next, false);
+        return next.id();
     }
 
     /** Activate a specific mode without persisting. Unknown values fall back to dark. */
     static synchronized void setMode(String newMode) {
-        String resolved = DARK.equals(newMode) || LIGHT.equals(newMode) ? newMode : DARK;
-        mode = resolved;
-        CACHE.clear();
-        engine = null;
-        initialized = false;
-        engine();
+        activate(ThemeMode.parseOrDefault(newMode), false);
     }
 
     /**
@@ -252,29 +249,11 @@ final class Theme {
      * from {@code --theme} wins over {@code camel.tui.theme} in user config.
      */
     static synchronized void applyStartupMode(String newMode) {
-        String resolved = resolveMode(newMode);
-        mode = resolved;
-        persistedModeLoaded = true;
-        CACHE.clear();
-        engine = null;
-        initialized = false;
-        engine();
+        activate(ThemeMode.parseOrDefault(newMode), true);
     }
 
     static boolean isValidMode(String value) {
-        if (value == null) {
-            return false;
-        }
-        String normalized = value.toLowerCase(Locale.ROOT);
-        return DARK.equals(normalized) || LIGHT.equals(normalized);
-    }
-
-    private static String resolveMode(String newMode) {
-        if (newMode == null) {
-            return DARK;
-        }
-        String normalized = newMode.toLowerCase(Locale.ROOT);
-        return LIGHT.equals(normalized) ? LIGHT : DARK;
+        return ThemeMode.parse(value).isPresent();
     }
 
     /** Test hook: enable in-memory-only mode so tests never touch user config files. */
@@ -285,7 +264,18 @@ final class Theme {
         CACHE.clear();
         engine = null;
         initialized = false;
-        mode = DARK;
+        mode = ThemeMode.DARK;
+    }
+
+    private static synchronized void activate(ThemeMode newMode, boolean cliOverride) {
+        mode = newMode;
+        if (cliOverride) {
+            persistedModeLoaded = true;
+        }
+        CACHE.clear();
+        engine = null;
+        initialized = false;
+        engine();
     }
 
     private static synchronized Style style(String id, Style fallback) {
@@ -314,13 +304,14 @@ final class Theme {
         }
         try {
             StyleEngine e = StyleEngine.create();
+            String stylesheet = mode.id();
             // Read CSS content via Theme's own classloader instead of delegating
             // to StyleEngine.loadStylesheet() which uses StyleEngine.class.getClassLoader().
             // Under parallel test execution the two classloaders can diverge, causing
             // intermittent "resource not found" failures in CI.
-            String cssContent = loadCssResource("tui/themes/" + mode + ".tcss");
-            e.addStylesheet(mode, cssContent);
-            e.setActiveStylesheet(mode);
+            String cssContent = loadCssResource("tui/themes/" + stylesheet + ".tcss");
+            e.addStylesheet(stylesheet, cssContent);
+            e.setActiveStylesheet(stylesheet);
             engine = e;
         } catch (Exception ex) {
             engine = null;
@@ -356,14 +347,11 @@ final class Theme {
         }
     }
 
-    private static String loadPersistedMode() {
-        String[] holder = { DARK };
+    private static ThemeMode loadPersistedMode() {
+        ThemeMode[] holder = { ThemeMode.DARK };
         try {
             CommandLineHelper.loadProperties(props -> {
-                String v = props.getProperty(PROP_KEY);
-                if (DARK.equals(v) || LIGHT.equals(v)) {
-                    holder[0] = v;
-                }
+                ThemeMode.parse(props.getProperty(PROP_KEY)).ifPresent(parsed -> holder[0] = parsed);
             });
         } catch (RuntimeException ex) {
             // Config unreadable; keep the default mode.
@@ -371,11 +359,11 @@ final class Theme {
         return holder[0];
     }
 
-    private static void persist(String newMode) {
+    private static void persist(ThemeMode newMode) {
         try {
             CommandLineHelper.createPropertyFile(false);
             CommandLineHelper.loadProperties(props -> {
-                props.setProperty(PROP_KEY, newMode);
+                props.setProperty(PROP_KEY, newMode.id());
                 CommandLineHelper.storeProperties(props,
                         new Printer.QuietPrinter(new Printer.SystemOutPrinter()), false);
             });

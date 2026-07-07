@@ -366,7 +366,7 @@ class ActionsPopup {
         labels.add("Run Doctor");
         labels.add("Reset Stats");
         labels.add("Reset Screen");
-        labels.add("dark".equals(Theme.mode()) ? "Light Theme" : "Dark Theme");
+        labels.add(Theme.isDark() ? "Light Theme" : "Dark Theme");
         labels.add("───");
         // Group 3: Recording & Presentation
         labels.add("Take Screenshot");
@@ -855,7 +855,7 @@ class ActionsPopup {
         items.add(ListItem.from(TuiIcons.menuItem(TuiIcons.DOCTOR, "Run Doctor")));
         items.add(ListItem.from(TuiIcons.menuItem(TuiIcons.RESET, "Reset Stats")));
         items.add(ListItem.from(TuiIcons.menuItem(TuiIcons.CLEAN, "Reset Screen")));
-        String themeLabel = "dark".equals(Theme.mode())
+        String themeLabel = Theme.isDark()
                 ? TuiIcons.menuItem(TuiIcons.LIGHT_THEME, "Light Theme")
                 : TuiIcons.menuItem(TuiIcons.DARK_THEME, "Dark Theme");
         items.add(ListItem.from(themeLabel));

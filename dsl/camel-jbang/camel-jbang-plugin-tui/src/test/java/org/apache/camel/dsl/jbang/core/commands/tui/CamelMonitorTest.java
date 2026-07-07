@@ -29,6 +29,7 @@ import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 
 import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.hint;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -36,6 +37,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@Isolated
 class CamelMonitorTest {
 
     @BeforeEach
@@ -259,14 +261,15 @@ class CamelMonitorTest {
     void applyThemeBaseColorsUsesActiveThemePalette() {
         Rect area = new Rect(0, 0, 2, 1);
         Buffer buffer = Buffer.empty(area);
+        Theme.setMode("dark");
         Color darkBg = Theme.baseBg();
 
-        Theme.toggle();
+        Theme.setMode("light");
         CamelMonitor.applyThemeBaseColors(buffer, area);
 
         Cell cell = buffer.get(0, 0);
-        assertEquals(Theme.baseBg(), cell.style().bg().orElse(null), "light palette background is applied after toggle");
-        assertEquals(Theme.baseFg(), cell.style().fg().orElse(null), "light palette foreground is applied after toggle");
+        assertEquals(Theme.baseBg(), cell.style().bg().orElse(null), "light palette background is applied");
+        assertEquals(Theme.baseFg(), cell.style().fg().orElse(null), "light palette foreground is applied");
         assertFalse(darkBg.equals(cell.style().bg().orElse(null)), "patched background must follow the active theme");
     }
 }

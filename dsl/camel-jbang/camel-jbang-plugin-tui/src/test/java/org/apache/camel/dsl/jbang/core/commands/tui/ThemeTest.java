@@ -128,6 +128,12 @@ class ThemeTest {
     }
 
     @Test
+    void setModeAcceptsMixedCase() {
+        Theme.setMode("LIGHT");
+        assertEquals("light", Theme.mode());
+    }
+
+    @Test
     void isValidModeAcceptsDarkAndLightOnly() {
         assertEquals(true, Theme.isValidMode("dark"));
         assertEquals(true, Theme.isValidMode("LIGHT"));

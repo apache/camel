@@ -17,12 +17,12 @@
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
 import java.util.Iterator;
-import java.util.List;
 
+/** Picocli tab-completion candidates for {@code --theme}. */
 public class ThemeModeCompletionCandidates implements Iterable<String> {
 
     @Override
     public Iterator<String> iterator() {
-        return List.of("dark", "light").iterator();
+        return ThemeMode.ids().iterator();
     }
 }

@@ -26,7 +26,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Locale;
 import java.util.Optional;
 import java.util.Queue;
 import java.util.concurrent.CompletableFuture;
@@ -177,7 +176,7 @@ public class CamelMonitor extends CamelCommand {
                         new CommandLine(this),
                         "Invalid value for option '--theme': expected 'dark' or 'light', was '" + theme + "'");
             }
-            Theme.applyStartupMode(theme.toLowerCase(Locale.ROOT));
+            Theme.applyStartupMode(theme);
         }
 
         // Configure TamboUI recording if --record is specified
