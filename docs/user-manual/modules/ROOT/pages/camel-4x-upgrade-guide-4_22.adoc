@@ -128,3 +128,21 @@ discarding the message with no exception or log.
 Scalar value nodes are now sent as a single record. Only container nodes (`ArrayNode`, `ObjectNode`)
 are still split, which is unchanged. Any `convertBodyTo(...)` previously used as a workaround is no
 longer required.
+
+=== camel-jbang catalog tables fill the terminal width
+
+The `camel catalog` commands (`camel catalog component`, `camel catalog dataformat`,
+`camel catalog language`, `camel catalog transformer`, `camel catalog kamelet`, ...) now size the
+`DESCRIPTION` column to the detected terminal width instead of the previous fixed 80-character cap,
+so wide terminals show more of the description before it is truncated with an ellipsis. The `NAME`
+column width is also standardized across these commands (it previously differed per command, for
+example 60 for `transformer` and 30 elsewhere).
+
+Terminal width is now detected on Windows (`cmd` / PowerShell) via `mode con`, in addition to the
+existing `COLUMNS` / `stty size` detection. When no terminal can be detected (for example when the
+output is piped or redirected), the width falls back to 120 columns. For full, untruncated output
+suitable for scripting, use the `--json` option.
+
+The `camel infra list` table now sizes its `DESCRIPTION` column to the terminal width, and truncates
+the `IMPLEMENTATION` and `SERVICE_DATA` columns with an ellipsis instead of letting the raw service
+data overflow the terminal. The complete, structured service data remains available via `--json`.

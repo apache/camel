@@ -31,6 +31,63 @@ class TerminalWidthHelperTest {
         assertTrue(width >= 40, "Terminal width should be at least 40, got: " + width);
     }
 
+    // --- fillWidth ---
+
+    @Test
+    void fillWidthFillsRemainingSpaceWithoutCap() {
+        // 200 cols - 80 others - 6 borders = 114 available; no upper cap, so the last column keeps all 114
+        assertEquals(114, TerminalWidthHelper.fillWidth(200, 80, 6, 20));
+    }
+
+    @Test
+    void fillWidthFloorsAtMinOnNarrowTerminal() {
+        // 60 cols - 86 others - 6 borders = -32 available; floored at min 20
+        assertEquals(20, TerminalWidthHelper.fillWidth(60, 86, 6, 20));
+    }
+
+    // --- parseColumns (shared by stty size and Windows mode con) ---
+
+    @Test
+    void parseColumnsFromStty() {
+        // stty size prints "rows cols"; the column count is the second integer
+        assertEquals(80, TerminalWidthHelper.parseColumns("24 80"));
+        assertEquals(211, TerminalWidthHelper.parseColumns("51 211\n"));
+    }
+
+    @Test
+    void parseColumnsFromWindowsModeCon() {
+        String output = """
+                Status for device CON:
+                ----------------------
+                    Lines:          30
+                    Columns:        120
+                    Keyboard rate:  31
+                    Keyboard delay: 1
+                    Code page:      850
+                """;
+        assertEquals(120, TerminalWidthHelper.parseColumns(output));
+    }
+
+    @Test
+    void parseColumnsFromLocalizedModeCon() {
+        // Non-English Windows translates the labels; parsing the second integer positionally still works
+        String output = """
+                État du périphérique CON :
+                --------------------------
+                    Lignes :        30
+                    Colonnes :      120
+                """;
+        assertEquals(120, TerminalWidthHelper.parseColumns(output));
+    }
+
+    @Test
+    void parseColumnsReturnsNegativeWhenUndetermined() {
+        assertEquals(-1, TerminalWidthHelper.parseColumns(null));
+        assertEquals(-1, TerminalWidthHelper.parseColumns(""));
+        assertEquals(-1, TerminalWidthHelper.parseColumns("no numbers here"));
+        assertEquals(-1, TerminalWidthHelper.parseColumns("42")); // only one integer, no column value
+    }
+
     // --- flexWidth ---
 
     @Test
@@ -101,14 +158,16 @@ class TerminalWidthHelperTest {
 
     @Test
     void noBorderOverheadSingleColumn() {
-        assertEquals(0, TerminalWidthHelper.noBorderOverhead(1));
+        // one leading + one trailing padding space around the single column
+        assertEquals(2, TerminalWidthHelper.noBorderOverhead(1));
     }
 
     @Test
     void noBorderOverheadMultipleColumns() {
-        assertEquals(2, TerminalWidthHelper.noBorderOverhead(2));
-        assertEquals(6, TerminalWidthHelper.noBorderOverhead(4));
-        assertEquals(16, TerminalWidthHelper.noBorderOverhead(9));
+        // each column contributes 2 padding spaces (one on each side)
+        assertEquals(4, TerminalWidthHelper.noBorderOverhead(2));
+        assertEquals(8, TerminalWidthHelper.noBorderOverhead(4));
+        assertEquals(18, TerminalWidthHelper.noBorderOverhead(9));
     }
 
     // --- fancyBorderOverhead ---
@@ -168,19 +227,19 @@ class TerminalWidthHelperTest {
     void flexWidthForNoBordersProcessCommand() {
         // Simulate ListProcess: 9 columns, fixed ~56 chars, NAME flex (max 40), error flex (max 70)
         int tw = 80;
-        int borders = TerminalWidthHelper.noBorderOverhead(9); // 16
+        int borders = TerminalWidthHelper.noBorderOverhead(9); // 18
         int nameW = TerminalWidthHelper.flexWidth(tw, 56, borders, 15, 40);
-        // 80 - 56 - 16 = 8, but min is 15
+        // 80 - 56 - 18 = 6, but min is 15
         assertEquals(15, nameW);
 
         tw = 120;
         nameW = TerminalWidthHelper.flexWidth(tw, 56, borders, 15, 40);
-        // 120 - 56 - 16 = 48, capped at max 40
+        // 120 - 56 - 18 = 46, capped at max 40
         assertEquals(40, nameW);
 
         tw = 100;
         nameW = TerminalWidthHelper.flexWidth(tw, 56, borders, 15, 40);
-        // 100 - 56 - 16 = 28
-        assertEquals(28, nameW);
+        // 100 - 56 - 18 = 26
+        assertEquals(26, nameW);
     }
 }
