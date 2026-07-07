@@ -19,7 +19,7 @@ package org.apache.camel.dsl.jbang.it;
 import org.apache.camel.dsl.jbang.it.support.JBangTestSupport;
 import org.junit.jupiter.api.Test;
 
-public class CamelDocITCase extends JBangTestSupport {
+public class CamelDocCaseIT extends JBangTestSupport {
     @Test
     public void testDisplayComponent() {
         checkCommandOutputs("doc kafka", "Component Name: kafka");
