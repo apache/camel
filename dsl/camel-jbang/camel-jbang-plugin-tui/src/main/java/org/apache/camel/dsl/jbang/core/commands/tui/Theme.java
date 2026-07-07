@@ -39,10 +39,10 @@ import org.slf4j.LoggerFactory;
  * palette lives in one place. Values are resolved from CSS stylesheets ({@code dark.tcss} / {@code light.tcss}) through
  * a shared {@link StyleEngine}; the active stylesheet can be switched at runtime and is persisted to user config.
  * <p/>
- * Palette policy: the brand accent is Camel orange (truecolor), reserved for accent and borders. Status colors use ANSI
- * names in dark mode (so they respect the terminal) and explicit darker hex in light mode. If a stylesheet is missing
- * or malformed, the facade falls back to the built-in palette below and logs once, so a cosmetic failure never crashes
- * the TUI.
+ * Palette policy: the brand accent is Camel orange (truecolor), used for accent tokens, focused borders, and titles.
+ * Status colors use explicit truecolor hex values in both themes (no ANSI names); accent-bg/hint-key/selection keep
+ * plain white/black foregrounds. Fallbacks mirror {@code dark.tcss}. If a stylesheet is missing or malformed, the
+ * facade falls back to the built-in palette below and logs once, so a cosmetic failure never crashes the TUI.
  */
 final class Theme {
 
@@ -52,34 +52,38 @@ final class Theme {
     private static final Logger LOG = LoggerFactory.getLogger(Theme.class);
 
     private static final String PROP_KEY = "camel.tui.theme";
-    private static final String DARK = "dark";
-    private static final String LIGHT = "light";
 
     // Fallback palette mirrors the dark stylesheet, used when CSS is unavailable.
     private static final Style FALLBACK_ACCENT_BG = Style.EMPTY.fg(Color.WHITE).bg(ACCENT).bold();
     private static final Style FALLBACK_HINT_KEY = Style.EMPTY.fg(Color.BLACK).bg(ACCENT).bold();
-    private static final Style FALLBACK_BORDER = Style.EMPTY.fg(Color.DARK_GRAY);
+    private static final Style FALLBACK_BORDER = Style.EMPTY.fg(Color.rgb(0x50, 0x50, 0x50));
     private static final Style FALLBACK_BORDER_FOCUSED = Style.EMPTY.fg(ACCENT);
     private static final Style FALLBACK_TITLE = Style.EMPTY.fg(ACCENT).bold();
-    private static final Style FALLBACK_SUCCESS = Style.EMPTY.fg(Color.LIGHT_GREEN);
-    private static final Style FALLBACK_WARNING = Style.EMPTY.fg(Color.LIGHT_YELLOW);
-    private static final Style FALLBACK_ERROR = Style.EMPTY.fg(Color.LIGHT_RED);
-    private static final Style FALLBACK_MUTED = Style.EMPTY.dim();
-    private static final Style FALLBACK_SELECTION = Style.EMPTY.fg(Color.WHITE).bold().onBlue();
-    private static final Style FALLBACK_INFO = Style.EMPTY.fg(Color.CYAN);
-    private static final Style FALLBACK_NOTICE = Style.EMPTY.fg(Color.MAGENTA);
-    private static final Style FALLBACK_MCP_ACTIVE = Style.EMPTY.fg(Color.LIGHT_GREEN);
-    private static final Style FALLBACK_MCP_IDLE = Style.EMPTY.fg(Color.DARK_GRAY);
-    private static final Style FALLBACK_MCP_DOWN = Style.EMPTY.fg(Color.LIGHT_RED);
-    private static final Color FALLBACK_ZEBRA = Color.rgb(0x1C, 0x1C, 0x1C);
+    private static final Style FALLBACK_SUCCESS = Style.EMPTY.fg(Color.rgb(0x4E, 0xC9, 0xB0));
+    private static final Style FALLBACK_WARNING = Style.EMPTY.fg(Color.rgb(0xDC, 0xDC, 0xAA));
+    private static final Style FALLBACK_ERROR = Style.EMPTY.fg(Color.rgb(0xF4, 0x87, 0x71));
+    private static final Style FALLBACK_MUTED = Style.EMPTY.fg(Color.rgb(0x80, 0x80, 0x80));
+    private static final Style FALLBACK_SELECTION = Style.EMPTY.fg(Color.WHITE).bg(Color.rgb(0x26, 0x4F, 0x78)).bold();
+    private static final Style FALLBACK_INFO = Style.EMPTY.fg(Color.rgb(0x9C, 0xDC, 0xFE));
+    private static final Style FALLBACK_NOTICE = Style.EMPTY.fg(Color.rgb(0xC5, 0x86, 0xC0));
+    private static final Style FALLBACK_MCP_ACTIVE = Style.EMPTY.fg(Color.rgb(0x4E, 0xC9, 0xB0));
+    private static final Style FALLBACK_MCP_IDLE = Style.EMPTY.fg(Color.rgb(0x60, 0x60, 0x60));
+    private static final Style FALLBACK_MCP_DOWN = Style.EMPTY.fg(Color.rgb(0xF4, 0x87, 0x71));
+    private static final Color FALLBACK_ZEBRA = Color.rgb(0x25, 0x25, 0x25);
+    private static final Color FALLBACK_BASE_BG = Color.rgb(0x1E, 0x1E, 0x1E);
+    private static final Color FALLBACK_BASE_FG = Color.rgb(0xD4, 0xD4, 0xD4);
 
     private static final Map<String, Style> CACHE = new HashMap<>();
 
     private static boolean initialized;
-    private static boolean fallbackLogged;
+    private static boolean persistedModeLoaded;
+    private static boolean stylesheetFallbackLogged;
+    private static boolean tokenFallbackLogged;
+    private static boolean persistedReadFallbackLogged;
+    private static boolean persistedWriteFallbackLogged;
     private static boolean testMode;
     private static StyleEngine engine;
-    private static String mode = DARK;
+    private static ThemeMode mode = ThemeMode.DARK;
 
     private Theme() {
     }
@@ -92,7 +96,7 @@ final class Theme {
         try {
             return e.resolve(new Token("accent")).foreground().orElse(ACCENT);
         } catch (RuntimeException ex) {
-            logFallbackOnce(ex);
+            logTokenFallbackOnce(ex);
             return ACCENT;
         }
     }
@@ -109,8 +113,40 @@ final class Theme {
         try {
             return e.resolve(new Token("row-alt")).background().orElse(FALLBACK_ZEBRA);
         } catch (RuntimeException ex) {
-            logFallbackOnce(ex);
+            logTokenFallbackOnce(ex);
             return FALLBACK_ZEBRA;
+        }
+    }
+
+    /**
+     * Base background color for the main content area. Theme-aware (dark on dark mode, white on light mode).
+     */
+    static Color baseBg() {
+        StyleEngine e = engine();
+        if (e == null) {
+            return FALLBACK_BASE_BG;
+        }
+        try {
+            return e.resolve(new Token("base-bg")).background().orElse(FALLBACK_BASE_BG);
+        } catch (RuntimeException ex) {
+            logTokenFallbackOnce(ex);
+            return FALLBACK_BASE_BG;
+        }
+    }
+
+    /**
+     * Base foreground color for normal text. Theme-aware (light gray on dark mode, dark gray on light mode).
+     */
+    static Color baseFg() {
+        StyleEngine e = engine();
+        if (e == null) {
+            return FALLBACK_BASE_FG;
+        }
+        try {
+            return e.resolve(new Token("base-fg")).foreground().orElse(FALLBACK_BASE_FG);
+        } catch (RuntimeException ex) {
+            logTokenFallbackOnce(ex);
+            return FALLBACK_BASE_FG;
         }
     }
 
@@ -160,7 +196,7 @@ final class Theme {
         return style("selection", FALLBACK_SELECTION);
     }
 
-    /** Informational accent (header integration count). */
+    /** Informational accent (header integration count, integration name text, popup prompts). */
     static Style info() {
         return style("info", FALLBACK_INFO);
     }
@@ -188,37 +224,85 @@ final class Theme {
     /** The active theme mode: {@code "dark"} or {@code "light"}. */
     static String mode() {
         engine();
-        return mode;
+        return mode.id();
     }
 
-    /** Flip the active theme, clear the cache, persist the new value, and return the new mode. */
+    /** True if the active mode is dark. */
+    static boolean isDark() {
+        engine();
+        return mode == ThemeMode.DARK;
+    }
+
+    /** Flip the active theme mode, persist it (outside test mode), and activate it, returning the new mode. */
     static synchronized String toggle() {
-        String next = DARK.equals(mode) ? LIGHT : DARK;
-        setMode(next);
+        ThemeMode next = mode.toggle();
         if (!testMode) {
             persist(next);
         }
-        return next;
+        activate(next, false);
+        return next.id();
     }
 
-    /** Activate a specific mode without persisting. Unknown values fall back to dark. */
+    /**
+     * Activate a specific mode without persisting. Unknown values fall back to dark.
+     * <p/>
+     * Test-only entry point: unlike {@link #applyStartupMode(String)}, this does not mark the persisted preference as
+     * loaded, so outside test mode a later {@link #engine()} re-initialization can still overwrite the mode with
+     * whatever is on disk.
+     */
     static synchronized void setMode(String newMode) {
-        String resolved = DARK.equals(newMode) || LIGHT.equals(newMode) ? newMode : DARK;
-        mode = resolved;
-        CACHE.clear();
-        engine = null;
-        initialized = false;
-        engine();
+        activate(ThemeMode.parseOrDefault(newMode), false);
+    }
+
+    /**
+     * Applies a CLI-selected theme for this process only. Marks the persisted preference as already loaded so the value
+     * from {@code --theme} wins over {@code camel.tui.theme} in user config.
+     *
+     * @throws IllegalArgumentException if {@code newMode} is not a known theme mode; callers should normally validate
+     *                                  with {@link #isValidMode(String)} first to report a friendlier CLI error.
+     */
+    static synchronized void applyStartupMode(String newMode) {
+        ThemeMode parsed = ThemeMode.parse(newMode)
+                .orElseThrow(() -> new IllegalArgumentException("Unknown Camel TUI theme mode: " + newMode));
+        activate(parsed, true);
+    }
+
+    /** Whether {@code value} parses to a known theme mode. */
+    static boolean isValidMode(String value) {
+        return ThemeMode.parse(value).isPresent();
     }
 
     /** Test hook: enable in-memory-only mode so tests never touch user config files. */
     static synchronized void resetForTesting() {
-        testMode = true;
-        fallbackLogged = false;
+        resetForTesting(true);
+    }
+
+    /**
+     * Test hook like {@link #resetForTesting()}, but lets the caller keep {@code testMode} disabled so a test can
+     * exercise the real persistence path (disk read/write) against an isolated home directory.
+     */
+    static synchronized void resetForTesting(boolean testModeValue) {
+        testMode = testModeValue;
+        stylesheetFallbackLogged = false;
+        tokenFallbackLogged = false;
+        persistedReadFallbackLogged = false;
+        persistedWriteFallbackLogged = false;
+        persistedModeLoaded = false;
         CACHE.clear();
         engine = null;
         initialized = false;
-        mode = DARK;
+        mode = ThemeMode.DARK;
+    }
+
+    private static synchronized void activate(ThemeMode newMode, boolean cliOverride) {
+        mode = newMode;
+        if (cliOverride) {
+            persistedModeLoaded = true;
+        }
+        CACHE.clear();
+        engine = null;
+        initialized = false;
+        engine();
     }
 
     private static synchronized Style style(String id, Style fallback) {
@@ -226,14 +310,19 @@ final class Theme {
         if (e == null) {
             return fallback;
         }
-        return CACHE.computeIfAbsent(id, key -> {
-            try {
-                return e.resolve(new Token(key)).toStyle();
-            } catch (RuntimeException ex) {
-                logFallbackOnce(ex);
-                return fallback;
-            }
-        });
+        Style cached = CACHE.get(id);
+        if (cached != null) {
+            return cached;
+        }
+        try {
+            Style resolved = e.resolve(new Token(id)).toStyle();
+            CACHE.put(id, resolved);
+            return resolved;
+        } catch (RuntimeException ex) {
+            // Not cached: a transient resolution failure must not permanently lock this token to the fallback.
+            logTokenFallbackOnce(ex);
+            return fallback;
+        }
     }
 
     private static synchronized StyleEngine engine() {
@@ -241,22 +330,29 @@ final class Theme {
             return engine;
         }
         initialized = true;
-        if (!testMode) {
-            mode = loadPersistedMode();
+        if (!testMode && !persistedModeLoaded) {
+            ThemeMode[] loaded = { ThemeMode.DARK };
+            if (tryLoadPersistedMode(loaded)) {
+                // Only mark as loaded on success (including "nothing persisted yet"). A read failure leaves this
+                // false so the next reinitialization gets another chance instead of pinning the session forever.
+                mode = loaded[0];
+                persistedModeLoaded = true;
+            }
         }
         try {
             StyleEngine e = StyleEngine.create();
+            String stylesheet = mode.id();
             // Read CSS content via Theme's own classloader instead of delegating
             // to StyleEngine.loadStylesheet() which uses StyleEngine.class.getClassLoader().
             // Under parallel test execution the two classloaders can diverge, causing
             // intermittent "resource not found" failures in CI.
-            String cssContent = loadCssResource("tui/themes/" + mode + ".tcss");
-            e.addStylesheet(mode, cssContent);
-            e.setActiveStylesheet(mode);
+            String cssContent = loadCssResource(mode.stylesheetResource());
+            e.addStylesheet(stylesheet, cssContent);
+            e.setActiveStylesheet(stylesheet);
             engine = e;
         } catch (Exception ex) {
             engine = null;
-            logFallbackOnce(ex);
+            logStylesheetFallbackOnce(ex);
         }
         return engine;
     }
@@ -288,38 +384,58 @@ final class Theme {
         }
     }
 
-    private static String loadPersistedMode() {
-        String[] holder = { DARK };
+    private static boolean tryLoadPersistedMode(ThemeMode[] result) {
         try {
             CommandLineHelper.loadProperties(props -> {
-                String v = props.getProperty(PROP_KEY);
-                if (DARK.equals(v) || LIGHT.equals(v)) {
-                    holder[0] = v;
-                }
+                ThemeMode.parse(props.getProperty(PROP_KEY)).ifPresent(parsed -> result[0] = parsed);
             });
+            return true;
         } catch (RuntimeException ex) {
-            // Config unreadable; keep the default mode.
+            logPersistedReadFallbackOnce(ex);
+            return false;
         }
-        return holder[0];
     }
 
-    private static void persist(String newMode) {
+    private static void persist(ThemeMode newMode) {
         try {
             CommandLineHelper.createPropertyFile(false);
             CommandLineHelper.loadProperties(props -> {
-                props.setProperty(PROP_KEY, newMode);
+                props.setProperty(PROP_KEY, newMode.id());
                 CommandLineHelper.storeProperties(props,
                         new Printer.QuietPrinter(new Printer.SystemOutPrinter()), false);
             });
         } catch (Exception ex) {
-            logFallbackOnce(ex);
+            logPersistedWriteFallbackOnce(ex);
         }
     }
 
-    private static void logFallbackOnce(Throwable t) {
-        if (!fallbackLogged) {
-            fallbackLogged = true;
+    private static void logStylesheetFallbackOnce(Throwable t) {
+        if (!stylesheetFallbackLogged) {
+            stylesheetFallbackLogged = true;
             LOG.warn("Camel TUI theme stylesheet unavailable; using built-in palette", t);
+        }
+    }
+
+    private static void logTokenFallbackOnce(Throwable t) {
+        if (!tokenFallbackLogged) {
+            tokenFallbackLogged = true;
+            LOG.warn("Camel TUI theme token resolution failed; using built-in fallback color", t);
+        }
+    }
+
+    private static void logPersistedReadFallbackOnce(Throwable t) {
+        if (!persistedReadFallbackLogged) {
+            persistedReadFallbackLogged = true;
+            LOG.warn("Camel TUI theme preference could not be read; falling back to the default theme for this session",
+                    t);
+        }
+    }
+
+    private static void logPersistedWriteFallbackOnce(Throwable t) {
+        if (!persistedWriteFallbackLogged) {
+            persistedWriteFallbackLogged = true;
+            LOG.warn("Camel TUI theme preference could not be saved; the selected theme may not persist across restarts",
+                    t);
         }
     }
 
