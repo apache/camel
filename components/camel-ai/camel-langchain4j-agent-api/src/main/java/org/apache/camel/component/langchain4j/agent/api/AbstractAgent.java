@@ -150,5 +150,27 @@ public abstract class AbstractAgent<S> implements Agent {
         if (responseFormat != null) {
             builder.chatRequestTransformer(chatRequest -> chatRequest.toBuilder().responseFormat(responseFormat).build());
         }
+
+        // Tool calling options
+        if (configuration.getMaxToolCallingRoundTrips() > 0) {
+            builder.maxToolCallingRoundTrips(configuration.getMaxToolCallingRoundTrips());
+        }
+        if (configuration.getHallucinatedToolNameStrategy() != null) {
+            builder.hallucinatedToolNameStrategy(configuration.getHallucinatedToolNameStrategy());
+        }
+        if (configuration.getToolExecutionErrorHandler() != null) {
+            builder.toolExecutionErrorHandler(configuration.getToolExecutionErrorHandler());
+        }
+        if (configuration.getToolArgumentsErrorHandler() != null) {
+            builder.toolArgumentsErrorHandler(configuration.getToolArgumentsErrorHandler());
+        }
+        if (configuration.getCompensateOnToolErrors() != null) {
+            builder.compensateOnToolErrors(configuration.getCompensateOnToolErrors());
+        }
+
+        // Custom AiServices builder customizer (escape hatch for any builder option not directly exposed)
+        if (configuration.getAiServicesCustomizer() != null) {
+            configuration.getAiServicesCustomizer().accept(builder);
+        }
     }
 }

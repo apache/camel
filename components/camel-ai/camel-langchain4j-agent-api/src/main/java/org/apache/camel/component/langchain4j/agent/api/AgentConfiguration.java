@@ -21,13 +21,20 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.BiPredicate;
+import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import dev.langchain4j.agent.tool.ToolExecutionRequest;
 import dev.langchain4j.agent.tool.ToolSpecification;
+import dev.langchain4j.data.message.ToolExecutionResultMessage;
 import dev.langchain4j.mcp.client.McpClient;
 import dev.langchain4j.memory.chat.ChatMemoryProvider;
 import dev.langchain4j.model.chat.ChatModel;
 import dev.langchain4j.rag.RetrievalAugmentor;
+import dev.langchain4j.service.AiServices;
+import dev.langchain4j.service.tool.ToolArgumentsErrorHandler;
+import dev.langchain4j.service.tool.ToolExecutionErrorHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -67,6 +74,12 @@ public class AgentConfiguration {
     private List<Object> customTools; // Custom LangChain4j tools
     private List<McpClient> mcpClients; // MCP clients for external tool integration
     private BiPredicate<McpClient, ToolSpecification> mcpToolProviderFilter; // Filter for MCP tools
+    private int maxToolCallingRoundTrips; // Max number of tool-calling round trips (0 = not set)
+    private Function<ToolExecutionRequest, ToolExecutionResultMessage> hallucinatedToolNameStrategy;
+    private ToolExecutionErrorHandler toolExecutionErrorHandler;
+    private ToolArgumentsErrorHandler toolArgumentsErrorHandler;
+    private Boolean compensateOnToolErrors;
+    private Consumer<AiServices<?>> aiServicesCustomizer;
 
     /**
      * Gets the configured chat model.
@@ -343,6 +356,132 @@ public class AgentConfiguration {
      */
     public AgentConfiguration withMcpToolProviderFilter(BiPredicate<McpClient, ToolSpecification> mcpToolProviderFilter) {
         this.mcpToolProviderFilter = mcpToolProviderFilter;
+        return this;
+    }
+
+    /**
+     * Gets the maximum number of tool-calling round trips allowed.
+     *
+     * @return the maximum round trips, or 0 if not configured
+     */
+    public int getMaxToolCallingRoundTrips() {
+        return maxToolCallingRoundTrips;
+    }
+
+    /**
+     * Sets the maximum number of tool-calling round trips the LLM can make per request. This limits how many times the
+     * model can invoke tools before a final response must be produced.
+     *
+     * @param  maxToolCallingRoundTrips the maximum number of round trips (must be positive)
+     * @return                          this configuration instance for method chaining
+     */
+    public AgentConfiguration withMaxToolCallingRoundTrips(int maxToolCallingRoundTrips) {
+        this.maxToolCallingRoundTrips = maxToolCallingRoundTrips;
+        return this;
+    }
+
+    /**
+     * Gets the strategy for handling hallucinated (non-existent) tool names.
+     *
+     * @return the hallucinated tool name strategy, or {@code null} if not configured
+     */
+    public Function<ToolExecutionRequest, ToolExecutionResultMessage> getHallucinatedToolNameStrategy() {
+        return hallucinatedToolNameStrategy;
+    }
+
+    /**
+     * Sets the strategy for handling cases where the LLM hallucinates a tool name that does not exist. The function
+     * receives the invalid tool execution request and returns a result message to send back to the LLM.
+     *
+     * @param  hallucinatedToolNameStrategy the strategy function for handling hallucinated tool names
+     * @return                              this configuration instance for method chaining
+     */
+    public AgentConfiguration withHallucinatedToolNameStrategy(
+            Function<ToolExecutionRequest, ToolExecutionResultMessage> hallucinatedToolNameStrategy) {
+        this.hallucinatedToolNameStrategy = hallucinatedToolNameStrategy;
+        return this;
+    }
+
+    /**
+     * Gets the error handler for tool execution failures.
+     *
+     * @return the tool execution error handler, or {@code null} if not configured
+     */
+    public ToolExecutionErrorHandler getToolExecutionErrorHandler() {
+        return toolExecutionErrorHandler;
+    }
+
+    /**
+     * Sets the error handler invoked when a tool execution throws an exception.
+     *
+     * @param  toolExecutionErrorHandler the handler for tool execution errors
+     * @return                           this configuration instance for method chaining
+     */
+    public AgentConfiguration withToolExecutionErrorHandler(ToolExecutionErrorHandler toolExecutionErrorHandler) {
+        this.toolExecutionErrorHandler = toolExecutionErrorHandler;
+        return this;
+    }
+
+    /**
+     * Gets the error handler for tool argument parsing failures.
+     *
+     * @return the tool arguments error handler, or {@code null} if not configured
+     */
+    public ToolArgumentsErrorHandler getToolArgumentsErrorHandler() {
+        return toolArgumentsErrorHandler;
+    }
+
+    /**
+     * Sets the error handler invoked when tool arguments cannot be parsed or validated.
+     *
+     * @param  toolArgumentsErrorHandler the handler for tool argument errors
+     * @return                           this configuration instance for method chaining
+     */
+    public AgentConfiguration withToolArgumentsErrorHandler(ToolArgumentsErrorHandler toolArgumentsErrorHandler) {
+        this.toolArgumentsErrorHandler = toolArgumentsErrorHandler;
+        return this;
+    }
+
+    /**
+     * Gets whether tool error compensation is enabled.
+     *
+     * @return {@code true} if enabled, {@code false} if disabled, or {@code null} if not configured
+     */
+    public Boolean getCompensateOnToolErrors() {
+        return compensateOnToolErrors;
+    }
+
+    /**
+     * Sets whether the agent should attempt to compensate when tool execution errors occur by sending the error back to
+     * the LLM for recovery.
+     *
+     * @param  compensateOnToolErrors {@code true} to enable compensation, {@code false} to disable
+     * @return                        this configuration instance for method chaining
+     */
+    public AgentConfiguration withCompensateOnToolErrors(Boolean compensateOnToolErrors) {
+        this.compensateOnToolErrors = compensateOnToolErrors;
+        return this;
+    }
+
+    /**
+     * Gets the custom AiServices builder customizer.
+     *
+     * @return the customizer, or {@code null} if not configured
+     */
+    public Consumer<AiServices<?>> getAiServicesCustomizer() {
+        return aiServicesCustomizer;
+    }
+
+    /**
+     * Sets a customizer callback that is invoked on the LangChain4j {@link AiServices} builder after all standard
+     * configuration has been applied but before {@code build()} is called. This provides an escape hatch for
+     * configuring any AiServices builder option that is not directly exposed on this configuration class.
+     *
+     * @param  aiServicesCustomizer the customizer to apply to the AiServices builder
+     * @return                      this configuration instance for method chaining
+     */
+    public AgentConfiguration withAiServicesCustomizer(Consumer<AiServices<?>> aiServicesCustomizer) {
+        this.aiServicesCustomizer = aiServicesCustomizer;
         return this;
     }
 
