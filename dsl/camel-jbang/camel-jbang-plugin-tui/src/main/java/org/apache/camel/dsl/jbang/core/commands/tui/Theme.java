@@ -40,10 +40,10 @@ import org.slf4j.LoggerFactory;
  * palette lives in one place. Values are resolved from CSS stylesheets ({@code dark.tcss} / {@code light.tcss}) through
  * a shared {@link StyleEngine}; the active stylesheet can be switched at runtime and is persisted to user config.
  * <p/>
- * Palette policy: the brand accent is Camel orange (truecolor), reserved for accent and borders. Status colors use ANSI
- * names in dark mode (so they respect the terminal) and explicit darker hex in light mode. If a stylesheet is missing
- * or malformed, the facade falls back to the built-in palette below and logs once, so a cosmetic failure never crashes
- * the TUI.
+ * Palette policy: the brand accent is Camel orange (truecolor), used for accent tokens, focused borders, and titles.
+ * Both themes use explicit truecolor hex values defined in the stylesheets; fallbacks mirror {@code dark.tcss}. If a
+ * stylesheet is missing or malformed, the facade falls back to the built-in palette below and logs once, so a cosmetic
+ * failure never crashes the TUI.
  */
 final class Theme {
 

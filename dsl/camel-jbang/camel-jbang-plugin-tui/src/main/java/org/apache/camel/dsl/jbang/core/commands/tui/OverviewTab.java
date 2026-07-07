@@ -328,7 +328,7 @@ class OverviewTab extends AbstractTab {
                 String platformIcon = TuiIcons.runtimeIcon(info.platform != null ? info.platform : "");
                 String nameText = platformIcon + " " + (info.name != null ? info.name : "");
                 List<Span> nameSpans = new ArrayList<>();
-                nameSpans.add(Span.styled(nameText, Style.EMPTY.fg(Color.CYAN)));
+                nameSpans.add(Span.styled(nameText, Theme.info()));
                 if (info.devMode) {
                     nameSpans.add(Span.styled(" [dev]", Style.EMPTY.fg(Color.YELLOW).dim()));
                 }
