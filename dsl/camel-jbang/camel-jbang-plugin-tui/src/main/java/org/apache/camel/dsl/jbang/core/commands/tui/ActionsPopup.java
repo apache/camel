@@ -88,6 +88,7 @@ class ActionsPopup {
     private final Runnable burstCallback;
     private Runnable resetStatsAction;
     private Runnable resetScreenAction;
+    private Runnable themeToggleAction;
     private Runnable openShellAction;
     private Runnable browseFilesAction;
     private Runnable switchIntegrationAction;
@@ -173,6 +174,10 @@ class ActionsPopup {
 
     void setResetScreenAction(Runnable resetScreenAction) {
         this.resetScreenAction = resetScreenAction;
+    }
+
+    void setThemeToggleAction(Runnable themeToggleAction) {
+        this.themeToggleAction = themeToggleAction;
     }
 
     void setOpenShellAction(Runnable openShellAction) {
@@ -361,7 +366,7 @@ class ActionsPopup {
         labels.add("Run Doctor");
         labels.add("Reset Stats");
         labels.add("Reset Screen");
-        labels.add("dark".equals(Theme.mode()) ? "Light Theme" : "Dark Theme");
+        labels.add(Theme.isDark() ? "Light Theme" : "Dark Theme");
         labels.add("───");
         // Group 3: Recording & Presentation
         labels.add("Take Screenshot");
@@ -604,7 +609,7 @@ class ActionsPopup {
                         }
                     } else if (action == Action.TOGGLE_THEME) {
                         showActionsMenu = false;
-                        Theme.toggle();
+                        toggleTheme();
                     } else if (action == Action.STOP_ALL) {
                         showActionsMenu = false;
                         stopAllPopup.open();
@@ -850,7 +855,7 @@ class ActionsPopup {
         items.add(ListItem.from(TuiIcons.menuItem(TuiIcons.DOCTOR, "Run Doctor")));
         items.add(ListItem.from(TuiIcons.menuItem(TuiIcons.RESET, "Reset Stats")));
         items.add(ListItem.from(TuiIcons.menuItem(TuiIcons.CLEAN, "Reset Screen")));
-        String themeLabel = "dark".equals(Theme.mode())
+        String themeLabel = Theme.isDark()
                 ? TuiIcons.menuItem(TuiIcons.LIGHT_THEME, "Light Theme")
                 : TuiIcons.menuItem(TuiIcons.DARK_THEME, "Dark Theme");
         items.add(ListItem.from(themeLabel));
@@ -1090,7 +1095,7 @@ class ActionsPopup {
                     resetScreenAction.run();
                 }
             }
-            case TOGGLE_THEME -> Theme.toggle();
+            case TOGGLE_THEME -> toggleTheme();
             case SCREENSHOT -> screenshotAction.run();
             case SHOW_KEYSTROKES -> toggleKeystrokes.run();
             case TAPE_RECORDING -> toggleTapeRecording.run();
@@ -1109,6 +1114,14 @@ class ActionsPopup {
 
     TabRegistry.TabEntry consumePendingGotoEntry() {
         return gotoTabPopup.consumePendingEntry();
+    }
+
+    private void toggleTheme() {
+        if (themeToggleAction != null) {
+            themeToggleAction.run();
+        } else {
+            Theme.toggle();
+        }
     }
 
 }

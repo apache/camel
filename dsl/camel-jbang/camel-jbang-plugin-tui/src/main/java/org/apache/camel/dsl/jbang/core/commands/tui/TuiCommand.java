@@ -50,6 +50,11 @@ public class TuiCommand extends CamelCommand {
                         arity = "0..1")
     String record;
 
+    @CommandLine.Option(names = { "--theme" },
+                        description = "Color theme: dark or light (overrides persisted preference for this session)",
+                        completionCandidates = ThemeModeCompletionCandidates.class)
+    String theme;
+
     public TuiCommand(CamelJBangMain main, ClassLoader classLoader) {
         super(main);
         this.classLoader = classLoader;
@@ -75,6 +80,10 @@ public class TuiCommand extends CamelCommand {
         if (record != null) {
             args.add("--record");
             args.add(record);
+        }
+        if (theme != null) {
+            args.add("--theme");
+            args.add(theme);
         }
         CamelMonitor cmd = new CamelMonitor(getMain(), classLoader);
         return new CommandLine(cmd).execute(args.toArray(String[]::new));
