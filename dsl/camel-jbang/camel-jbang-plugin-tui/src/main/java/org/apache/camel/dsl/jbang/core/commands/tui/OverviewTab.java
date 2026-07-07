@@ -504,10 +504,15 @@ class OverviewTab extends AbstractTab {
             for (long v : mergedTotal) {
                 rawMax = Math.max(rawMax, v);
             }
-            long maxTp = roundUpNice(rawMax);
+            long maxTp = MetricsCollector.niceMax(rawMax);
             long curTp = mergedTotal[renderPoints - 1];
             long curFailed = mergedFailed[renderPoints - 1];
             long curOk = Math.max(0, curTp - curFailed);
+
+            // Format throughput values unscaled for display
+            String curTpFmt = MetricsCollector.formatThroughput(curTp);
+            String curOkFmt = MetricsCollector.formatThroughput(curOk);
+            String curFailFmt = MetricsCollector.formatThroughput(curFailed);
 
             Line titleLine;
             if (chartMode == CHART_SINGLE && ctx.selectedPid != null) {
@@ -517,18 +522,18 @@ class OverviewTab extends AbstractTab {
                 titleLine = Line.from(
                         Span.raw(" ["),
                         Span.styled(chartName, Style.EMPTY.fg(Color.YELLOW)),
-                        Span.raw(String.format("] Throughput: %d msg/s  ", curTp)),
+                        Span.raw(String.format("] Throughput: %s msg/s  ", curTpFmt)),
                         Span.styled("■", Style.EMPTY.fg(Color.ansi(AnsiColor.BRIGHT_GREEN))),
-                        Span.raw(String.format(" ok:%d  ", curOk)),
+                        Span.raw(String.format(" ok:%s  ", curOkFmt)),
                         Span.styled("■", Style.EMPTY.fg(Color.RED)),
-                        Span.raw(String.format(" fail:%d ", curFailed)));
+                        Span.raw(String.format(" fail:%s ", curFailFmt)));
             } else {
                 titleLine = Line.from(
-                        Span.raw(String.format(" [All] Throughput: %d msg/s  ", curTp)),
+                        Span.raw(String.format(" [All] Throughput: %s msg/s  ", curTpFmt)),
                         Span.styled("■", Style.EMPTY.fg(Color.ansi(AnsiColor.BRIGHT_GREEN))),
-                        Span.raw(String.format(" ok:%d  ", curOk)),
+                        Span.raw(String.format(" ok:%s  ", curOkFmt)),
                         Span.styled("■", Style.EMPTY.fg(Color.RED)),
-                        Span.raw(String.format(" fail:%d ", curFailed)));
+                        Span.raw(String.format(" fail:%s ", curFailFmt)));
             }
 
             Block chartBlock = Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
@@ -547,7 +552,7 @@ class OverviewTab extends AbstractTab {
 
             BarChart barChart = BarChart.builder()
                     .data(groups)
-                    .max(maxTp > 0 ? maxTp + 2 : 2)
+                    .max(maxTp)
                     .barWidth(1)
                     .barGap(0)
                     .groupGap(0)
@@ -560,9 +565,11 @@ class OverviewTab extends AbstractTab {
             Style dimStyle = Style.EMPTY.dim();
             for (int row = 0; row < barRows; row++) {
                 if (row == 0) {
-                    yLines.add(Line.from(Span.styled(String.format("%3d", maxTp), dimStyle)));
+                    yLines.add(
+                            Line.from(Span.styled(String.format("%3s", MetricsCollector.formatThroughput(maxTp)), dimStyle)));
                 } else if (barRows > 4 && row == barRows / 2) {
-                    yLines.add(Line.from(Span.styled(String.format("%3d", maxTp / 2), dimStyle)));
+                    yLines.add(Line
+                            .from(Span.styled(String.format("%3s", MetricsCollector.formatThroughput(maxTp / 2)), dimStyle)));
                 } else if (row == barRows - 1) {
                     yLines.add(Line.from(Span.styled("  0", dimStyle)));
                 } else {
