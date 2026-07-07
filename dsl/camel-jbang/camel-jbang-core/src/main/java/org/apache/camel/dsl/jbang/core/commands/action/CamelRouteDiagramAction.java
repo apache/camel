@@ -69,6 +69,8 @@ import picocli.CommandLine.Command;
                  "  camel cmd route-diagram hello.yaml bye.yaml" })
 public class CamelRouteDiagramAction extends ActionWatchCommand {
 
+    private static final long DUMP_COMPLETION_TIMEOUT_MILLIS = 10000;
+
     @CommandLine.Parameters(
                             description = "Source file name(s) (shell-expanded wildcards), or name/pid of a running "
                                           + "Camel integration",
@@ -430,13 +432,24 @@ public class CamelRouteDiagramAction extends ActionWatchCommand {
      * asynchronously as part of the transient Camel boot: that file is always written last by
      * {@code DefaultDumpRoutesStrategy}, once every route-structure file for this batch has already landed, so its
      * fresh appearance (rather than "any file exists") is what actually signals the whole batch is complete and safe to
-     * merge, instead of a partial batch mid-write. Package visible for testing.
+     * merge, instead of a partial batch mid-write. Returns {@code null}, without merging whatever partial files exist,
+     * if the marker never becomes fresh within {@code maxWaitMillis}. Package visible for testing.
      */
     List<RouteInfo> readRoutesFromFolder(Path folder, Instant notBefore) throws Exception {
+        return readRoutesFromFolder(folder, notBefore, DUMP_COMPLETION_TIMEOUT_MILLIS);
+    }
+
+    List<RouteInfo> readRoutesFromFolder(Path folder, Instant notBefore, long maxWaitMillis) throws Exception {
         Path topologyMarker = folder.resolve("route-topology.json");
         StopWatch watch = new StopWatch();
-        while (watch.taken() < 10000 && !isFreshFile(topologyMarker, notBefore)) {
+        while (watch.taken() < maxWaitMillis && !isFreshFile(topologyMarker, notBefore)) {
             Thread.sleep(100);
+        }
+        if (!isFreshFile(topologyMarker, notBefore)) {
+            printer().printErr("Dump did not complete within " + maxWaitMillis + " ms: " + topologyMarker
+                               + " was never (freshly) written; the source may have failed to fully load "
+                               + "within the timeout, try --ignore-loading-error or check the logs");
+            return null;
         }
 
         List<Path> jsonFiles = List.of();
