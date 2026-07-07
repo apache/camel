@@ -96,4 +96,19 @@ class MetricsCollectorThroughputTest {
         // Verify the scale factor — tests and display logic depend on this value
         assertEquals(100, MetricsCollector.THROUGHPUT_SCALE);
     }
+
+    @Test
+    void niceMaxDoesNotOverflowForLargeInput() {
+        // Very large rawMax should not cause infinite loop or negative values
+        long result = MetricsCollector.niceMax(Long.MAX_VALUE / 2);
+        assertTrue(result >= Long.MAX_VALUE / 2,
+                "niceMax should return at least rawMax for extreme values, got " + result);
+    }
+
+    @Test
+    void niceMaxHandlesMaxLong() {
+        // Long.MAX_VALUE itself should not hang
+        long result = MetricsCollector.niceMax(Long.MAX_VALUE);
+        assertTrue(result > 0, "niceMax(Long.MAX_VALUE) should return a positive value, got " + result);
+    }
 }

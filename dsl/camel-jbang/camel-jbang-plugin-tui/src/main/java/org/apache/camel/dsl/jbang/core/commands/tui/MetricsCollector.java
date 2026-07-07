@@ -266,6 +266,15 @@ class MetricsCollector {
             String pid, long now, long inTotal, long outTotal,
             Map<String, LinkedList<long[]>> samplesMap, Map<String, Long> prevTimeMap,
             Map<String, LinkedList<Long>> inHistMap, Map<String, LinkedList<Long>> outHistMap) {
+        recordEndpointSample(pid, now, inTotal, outTotal,
+                samplesMap, prevTimeMap, inHistMap, outHistMap, THROUGHPUT_SCALE);
+    }
+
+    private void recordEndpointSample(
+            String pid, long now, long inTotal, long outTotal,
+            Map<String, LinkedList<long[]>> samplesMap, Map<String, Long> prevTimeMap,
+            Map<String, LinkedList<Long>> inHistMap, Map<String, LinkedList<Long>> outHistMap,
+            long scale) {
         LinkedList<long[]> samples = samplesMap.computeIfAbsent(pid, k -> new LinkedList<>());
         samples.add(new long[] { now, inTotal, outTotal });
         while (!samples.isEmpty() && now - samples.get(0)[0] > 2000) {
@@ -275,8 +284,8 @@ class MetricsCollector {
             long[] oldest = samples.get(0);
             long[] newest = samples.get(samples.size() - 1);
             long deltaMs = newest[0] - oldest[0];
-            long inRate = deltaMs > 0 ? (newest[1] - oldest[1]) * 1000 * THROUGHPUT_SCALE / deltaMs : 0;
-            long outRate = deltaMs > 0 ? (newest[2] - oldest[2]) * 1000 * THROUGHPUT_SCALE / deltaMs : 0;
+            long inRate = deltaMs > 0 ? (newest[1] - oldest[1]) * 1000 * scale / deltaMs : 0;
+            long outRate = deltaMs > 0 ? (newest[2] - oldest[2]) * 1000 * scale / deltaMs : 0;
             Long lastTime = prevTimeMap.get(pid);
             if (lastTime == null || now - lastTime >= 1000) {
                 prevTimeMap.put(pid, now);
@@ -295,8 +304,10 @@ class MetricsCollector {
             String key = info.pid + "/" + cb.id;
             long success = cb.successfulCalls;
             long failed = cb.failedCalls;
+            // Circuit breaker history stays unscaled (scale=1) because CircuitBreakerTab
+            // formats values as plain integers, not via formatThroughput()
             recordEndpointSample(key, now, success, failed,
-                    cbThroughputSamples, previousCbTime, cbSuccessHistory, cbFailHistory);
+                    cbThroughputSamples, previousCbTime, cbSuccessHistory, cbFailHistory, 1);
         }
     }
 
@@ -429,15 +440,25 @@ class MetricsCollector {
         }
         int[] steps = { 1, 2, 5 };
         long multiplier = THROUGHPUT_SCALE;
-        while (true) {
+        while (multiplier > 0) {
             for (int s : steps) {
                 long candidate = s * multiplier;
+                if (candidate < 0) {
+                    // overflow — fall back to rawMax
+                    return rawMax;
+                }
                 if (candidate >= rawMax) {
                     return candidate;
                 }
             }
-            multiplier *= 10;
+            long next = multiplier * 10;
+            if (next / 10 != multiplier) {
+                // overflow — fall back to rawMax
+                return rawMax;
+            }
+            multiplier = next;
         }
+        return rawMax;
     }
 
     /**

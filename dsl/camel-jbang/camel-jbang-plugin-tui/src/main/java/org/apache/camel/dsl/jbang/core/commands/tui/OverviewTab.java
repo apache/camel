@@ -506,7 +506,9 @@ class OverviewTab extends AbstractTab {
             }
             long maxTp = MetricsCollector.niceMax(rawMax);
             long curTp = mergedTotal[renderPoints - 1];
-            long curFailed = mergedFailed[renderPoints - 1];
+            // Clamp failed to total so the title matches the chart bars (total comes from
+            // EWMA while failed is still delta-based, so failed can momentarily exceed total)
+            long curFailed = Math.min(mergedFailed[renderPoints - 1], curTp);
             long curOk = Math.max(0, curTp - curFailed);
 
             // Format throughput values unscaled for display
@@ -902,18 +904,6 @@ class OverviewTab extends AbstractTab {
 
     private Style sortStyle(String column) {
         return sortStyle(column, sort);
-    }
-
-    private static long roundUpNice(long value) {
-        if (value <= 10) {
-            return 10;
-        }
-        long step = (long) Math.pow(10, Math.floor(Math.log10(value)));
-        long rounded = ((value + step - 1) / step) * step;
-        if (rounded % 2 != 0) {
-            rounded += step;
-        }
-        return rounded;
     }
 
     private static boolean hasReadmeInSourceDir(IntegrationInfo info) {
