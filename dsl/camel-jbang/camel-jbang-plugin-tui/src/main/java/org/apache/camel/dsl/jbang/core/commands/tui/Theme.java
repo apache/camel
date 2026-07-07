@@ -20,10 +20,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 
 import dev.tamboui.css.Styleable;
 import dev.tamboui.css.engine.StyleEngine;
@@ -73,7 +73,7 @@ final class Theme {
     private static final Style FALLBACK_MCP_DOWN = Style.EMPTY.fg(Color.LIGHT_RED);
     private static final Color FALLBACK_ZEBRA = Color.rgb(0x1C, 0x1C, 0x1C);
 
-    private static final Map<String, Style> CACHE = new ConcurrentHashMap<>();
+    private static final Map<String, Style> CACHE = new HashMap<>();
 
     private static boolean initialized;
     private static boolean fallbackLogged;
@@ -262,14 +262,19 @@ final class Theme {
     }
 
     /**
-     * Reads a CSS resource from the classpath using this class's own classloader, which is guaranteed to have access to
-     * project resources regardless of classloader hierarchy.
+     * Reads a CSS resource from the classpath using this class's own classloader, which in the normal Camel
+     * class-loading hierarchy has access to project resources. Falls back to the thread-context classloader when the
+     * primary lookup returns null (e.g., in OSGi or custom classloader setups) or when the class is bootstrap-loaded.
      */
     private static String loadCssResource(String path) throws IOException {
-        InputStream is = Theme.class.getClassLoader().getResourceAsStream(path);
+        InputStream is = null;
+        ClassLoader cl = Theme.class.getClassLoader();
+        if (cl != null) {
+            is = cl.getResourceAsStream(path);
+        }
         if (is == null) {
             // Fallback to the thread context classloader in case the class's own classloader
-            // doesn't have visibility (e.g., in OSGi or custom classloader setups).
+            // doesn't have visibility or is null (bootstrap-loaded classes).
             ClassLoader tccl = Thread.currentThread().getContextClassLoader();
             if (tccl != null) {
                 is = tccl.getResourceAsStream(path);
