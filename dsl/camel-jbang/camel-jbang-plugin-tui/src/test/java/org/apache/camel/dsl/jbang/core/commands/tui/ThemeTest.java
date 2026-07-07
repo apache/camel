@@ -114,6 +114,28 @@ class ThemeTest {
     }
 
     @Test
+    void applyStartupModeSelectsLightPalette() {
+        Theme.setMode("dark");
+        Theme.applyStartupMode("light");
+        assertEquals("light", Theme.mode());
+        assertEquals(Color.rgb(0xFF, 0xFF, 0xFF), Theme.baseBg());
+    }
+
+    @Test
+    void applyStartupModeAcceptsMixedCase() {
+        Theme.applyStartupMode("LIGHT");
+        assertEquals("light", Theme.mode());
+    }
+
+    @Test
+    void isValidModeAcceptsDarkAndLightOnly() {
+        assertEquals(true, Theme.isValidMode("dark"));
+        assertEquals(true, Theme.isValidMode("LIGHT"));
+        assertEquals(false, Theme.isValidMode("sepia"));
+        assertEquals(false, Theme.isValidMode(null));
+    }
+
+    @Test
     void accessorsNeverReturnNull() {
         // Resilience: even when resolution is exercised the palette is always usable.
         Theme.setMode("dark");

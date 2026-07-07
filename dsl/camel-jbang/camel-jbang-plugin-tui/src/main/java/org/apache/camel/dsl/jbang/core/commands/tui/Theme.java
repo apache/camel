@@ -21,6 +21,7 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -244,6 +245,36 @@ final class Theme {
         engine = null;
         initialized = false;
         engine();
+    }
+
+    /**
+     * Applies a CLI-selected theme for this process only. Marks the persisted preference as already loaded so the value
+     * from {@code --theme} wins over {@code camel.tui.theme} in user config.
+     */
+    static synchronized void applyStartupMode(String newMode) {
+        String resolved = resolveMode(newMode);
+        mode = resolved;
+        persistedModeLoaded = true;
+        CACHE.clear();
+        engine = null;
+        initialized = false;
+        engine();
+    }
+
+    static boolean isValidMode(String value) {
+        if (value == null) {
+            return false;
+        }
+        String normalized = value.toLowerCase(Locale.ROOT);
+        return DARK.equals(normalized) || LIGHT.equals(normalized);
+    }
+
+    private static String resolveMode(String newMode) {
+        if (newMode == null) {
+            return DARK;
+        }
+        String normalized = newMode.toLowerCase(Locale.ROOT);
+        return LIGHT.equals(normalized) ? LIGHT : DARK;
     }
 
     /** Test hook: enable in-memory-only mode so tests never touch user config files. */

@@ -18,6 +18,9 @@ See the xref:camel-upgrade-recipes-tool.adoc[documentation] page for details.
 The Camel JBang CLI now automatic resolves quarkus version to use,
 instead of hardcoded `3.33.1.1` (https://github.com/apache/camel/commit/d1f4713ebdf787ab04a31c50a6f07e3ca66f0c2b).
 
+The Camel TUI (`camel tui`) accepts `--theme=dark` or `--theme=light` to choose the color palette at startup.
+When omitted, the persisted `camel.tui.theme` value from `.camel-jbang-user.properties` is used.
+
 === camel-langchain4j-agent
 
 The `Agent.chat()` method return type has changed from `String` to `Result<String>` (from `dev.langchain4j.service.Result`).

@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.Queue;
 import java.util.concurrent.CompletableFuture;
@@ -108,6 +109,11 @@ public class CamelMonitor extends CamelCommand {
                         defaultValue = "8123")
     int mcpPort = 8123;
 
+    @CommandLine.Option(names = { "--theme" },
+                        description = "Color theme: dark or light (overrides persisted preference for this session)",
+                        completionCandidates = ThemeModeCompletionCandidates.class)
+    String theme;
+
     // State
     private final TabsState tabsState = new TabsState(TAB_OVERVIEW);
     private TabRegistry tabRegistry;
@@ -163,6 +169,15 @@ public class CamelMonitor extends CamelCommand {
     @Override
     public Integer doCall() throws Exception {
         System.setProperty("java.awt.headless", "true");
+
+        if (theme != null) {
+            if (!Theme.isValidMode(theme)) {
+                throw new CommandLine.ParameterException(
+                        new CommandLine(this),
+                        "Invalid value for option '--theme': expected 'dark' or 'light', was '" + theme + "'");
+            }
+            Theme.applyStartupMode(theme.toLowerCase(Locale.ROOT));
+        }
 
         // Configure TamboUI recording if --record is specified
         if (record != null) {
