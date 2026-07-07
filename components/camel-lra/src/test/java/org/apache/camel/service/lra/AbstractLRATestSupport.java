@@ -59,7 +59,7 @@ public abstract class AbstractLRATestSupport extends CamelTestSupport {
     @AfterEach
     public void checkActiveLRAs() throws IOException, InterruptedException {
         await().atMost(20, SECONDS)
-                .failMessage("Some LRA have been left pending")
+                .alias("Some LRA have been left pending")
                 .until(() -> getNumberOfActiveLRAs(), equalTo(activeLRAs));
     }
 
