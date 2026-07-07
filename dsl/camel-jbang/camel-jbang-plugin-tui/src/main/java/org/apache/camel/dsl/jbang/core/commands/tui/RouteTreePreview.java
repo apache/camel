@@ -54,41 +54,50 @@ class RouteTreePreview {
             return List.of(Line.from(Span.styled("(no structure)", Style.EMPTY.dim())));
         }
 
-        List<Line> result = new ArrayList<>();
-        addLine(result, " ", root, maxLines, maxWidth, selectedNode);
-        addChildren(root.children, " ", result, maxLines, maxWidth, selectedNode);
-        return result;
+        List<Line> allLines = new ArrayList<>();
+        List<TreeNode> lineNodes = new ArrayList<>();
+        addLine(allLines, lineNodes, " ", root, maxWidth, selectedNode);
+        addChildren(root.children, " ", allLines, lineNodes, maxWidth, selectedNode);
+
+        if (allLines.size() <= maxLines) {
+            return allLines;
+        }
+
+        // find the selected node's line and scroll to keep it visible
+        int selectedIdx = -1;
+        if (selectedNode != null) {
+            selectedIdx = lineNodes.indexOf(selectedNode);
+        }
+
+        int start;
+        if (selectedIdx < 0) {
+            start = 0;
+        } else {
+            // center the selected node in the window, but keep root visible when near the top
+            start = selectedIdx - maxLines / 2;
+            start = Math.max(0, Math.min(start, allLines.size() - maxLines));
+        }
+
+        return allLines.subList(start, start + maxLines);
     }
 
     private static void addChildren(
             List<TreeNode> children, String parentIndent,
-            List<Line> result, int maxLines, int maxWidth, TreeNode selectedNode) {
+            List<Line> result, List<TreeNode> lineNodes, int maxWidth, TreeNode selectedNode) {
         for (int i = 0; i < children.size(); i++) {
-            if (result.size() >= maxLines) {
-                return;
-            }
             boolean last = (i == children.size() - 1);
-
-            if (result.size() >= maxLines - 1 && !last) {
-                result.add(Line.from(Span.styled(parentIndent + "...", Style.EMPTY.dim())));
-                return;
-            }
-
             String connector = last ? "└─" : "├─";
             String childCont = last ? "  " : "│ ";
 
             TreeNode child = children.get(i);
-            addLine(result, parentIndent + connector, child, maxLines, maxWidth, selectedNode);
-            addChildren(child.children, parentIndent + childCont, result, maxLines, maxWidth, selectedNode);
+            addLine(result, lineNodes, parentIndent + connector, child, maxWidth, selectedNode);
+            addChildren(child.children, parentIndent + childCont, result, lineNodes, maxWidth, selectedNode);
         }
     }
 
     private static void addLine(
-            List<Line> result, String prefix, TreeNode node,
-            int maxLines, int maxWidth, TreeNode selectedNode) {
-        if (result.size() >= maxLines) {
-            return;
-        }
+            List<Line> result, List<TreeNode> lineNodes, String prefix, TreeNode node,
+            int maxWidth, TreeNode selectedNode) {
         String label = buildLabel(node);
         boolean selected = (node == selectedNode);
 
@@ -96,6 +105,7 @@ class RouteTreePreview {
         spans.add(Span.styled(prefix, Style.EMPTY.fg(Color.DARK_GRAY)));
         spans.add(styledLabel(node.info.type, truncate(label, maxWidth - prefix.length()), selected));
         result.add(Line.from(spans));
+        lineNodes.add(node);
     }
 
     private static Span styledLabel(String type, String text, boolean selected) {
