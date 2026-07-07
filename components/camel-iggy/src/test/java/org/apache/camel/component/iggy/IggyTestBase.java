@@ -70,9 +70,13 @@ public abstract class IggyTestBase {
     }
 
     protected void sendMessage(String message) {
+        sendMessage(STREAM, TOPIC, message);
+    }
+
+    protected void sendMessage(String stream, String topic, String message) {
         client.messages().sendMessages(
-                StreamId.of(STREAM),
-                TopicId.of(TOPIC),
+                StreamId.of(stream),
+                TopicId.of(topic),
                 Partitioning.balanced(),
                 Collections.singletonList(Message.of(message)));
     }
