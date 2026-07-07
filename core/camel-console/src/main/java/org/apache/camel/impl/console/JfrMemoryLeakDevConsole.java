@@ -137,7 +137,11 @@ public class JfrMemoryLeakDevConsole extends AbstractDevConsole {
             // trigger GC before starting to establish a cleaner baseline
             System.gc();
             try {
-                Thread.sleep(500);
+                long deadline = System.currentTimeMillis() + 500;
+                long remaining;
+                while ((remaining = deadline - System.currentTimeMillis()) > 0) {
+                    wait(remaining);
+                }
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             }
@@ -202,7 +206,11 @@ public class JfrMemoryLeakDevConsole extends AbstractDevConsole {
             // trigger GC before stopping to flush objects into the recording
             System.gc();
             try {
-                Thread.sleep(500);
+                long deadline = System.currentTimeMillis() + 500;
+                long remaining;
+                while ((remaining = deadline - System.currentTimeMillis()) > 0) {
+                    wait(remaining);
+                }
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             }
