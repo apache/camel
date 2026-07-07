@@ -40,6 +40,7 @@ import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.console.AbstractDevConsole;
+import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
@@ -80,6 +81,10 @@ public class JfrMemoryLeakDevConsole extends AbstractDevConsole {
     private static final int DEFAULT_LIMIT = 100;
     private static final int MAX_STACK_FRAMES = 10;
     private static final int MAX_CHAIN_DEPTH = 20;
+
+    // Private monitor for GC wait delays so that wait() does not release the
+    // 'this' monitor of synchronized methods (which guards recording state).
+    private final Object gcWaitMonitor = new Object();
 
     private volatile Recording activeRecording;
     private volatile JsonObject cachedResults;
@@ -137,7 +142,13 @@ public class JfrMemoryLeakDevConsole extends AbstractDevConsole {
             // trigger GC before starting to establish a cleaner baseline
             System.gc();
             try {
-                Thread.sleep(500);
+                synchronized (gcWaitMonitor) {
+                    StopWatch watch = new StopWatch();
+                    long remaining;
+                    while ((remaining = 500 - watch.taken()) > 0) {
+                        gcWaitMonitor.wait(remaining);
+                    }
+                }
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             }
@@ -210,7 +221,13 @@ public class JfrMemoryLeakDevConsole extends AbstractDevConsole {
             // trigger GC before stopping to flush objects into the recording
             System.gc();
             try {
-                Thread.sleep(500);
+                synchronized (gcWaitMonitor) {
+                    StopWatch watch = new StopWatch();
+                    long remaining;
+                    while ((remaining = 500 - watch.taken()) > 0) {
+                        gcWaitMonitor.wait(remaining);
+                    }
+                }
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             }
