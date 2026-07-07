@@ -180,7 +180,7 @@ class ElasticsearchBulkIT extends ElasticsearchTestSupport {
         String indexId = template.requestBody("direct:index", map, String.class);
         assertNotNull(indexId, "indexId should be set");
 
-        DeleteOperation.Builder builder = new DeleteOperation.Builder().index("twitter").id(indexId);
+        DeleteOperation.Builder builder = new DeleteOperation.Builder().index("bulk").id(indexId);
         // when
         @SuppressWarnings("unchecked")
         List<BulkResponseItem> response = template.requestBody("direct:bulk", List.of(builder), List.class);
@@ -199,7 +199,7 @@ class ElasticsearchBulkIT extends ElasticsearchTestSupport {
         String prefix = createPrefix();
 
         CreateOperation.Builder<?> builder
-                = new CreateOperation.Builder<>().index("twitter").document(Map.of(prefix + "content", prefix + "hello"));
+                = new CreateOperation.Builder<>().index("bulk").document(Map.of(prefix + "content", prefix + "hello"));
         // when
         @SuppressWarnings("unchecked")
         List<BulkResponseItem> response = template.requestBody("direct:bulk", List.of(builder), List.class);
@@ -218,7 +218,7 @@ class ElasticsearchBulkIT extends ElasticsearchTestSupport {
         assertNotNull(indexId, "indexId should be set");
 
         UpdateOperation.Builder<?, ?> builder = new UpdateOperation.Builder<>()
-                .index("twitter").id(indexId)
+                .index("bulk").id(indexId)
                 .action(
                         new UpdateAction.Builder<>()
                                 .doc(JsonData.from(
@@ -245,11 +245,11 @@ class ElasticsearchBulkIT extends ElasticsearchTestSupport {
             @Override
             public void configure() {
                 from("direct:index")
-                        .to("elasticsearch://elasticsearch?operation=Index&indexName=twitter");
+                        .to("elasticsearch://elasticsearch?operation=Index&indexName=bulk");
                 from("direct:get")
-                        .to("elasticsearch://elasticsearch?operation=GetById&indexName=twitter");
+                        .to("elasticsearch://elasticsearch?operation=GetById&indexName=bulk");
                 from("direct:bulk")
-                        .to("elasticsearch://elasticsearch?operation=Bulk&indexName=twitter");
+                        .to("elasticsearch://elasticsearch?operation=Bulk&indexName=bulk");
             }
         };
     }
