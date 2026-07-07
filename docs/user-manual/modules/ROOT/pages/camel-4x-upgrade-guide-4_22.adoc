@@ -110,6 +110,14 @@ the message, consistent with the inbound header filtering already performed by t
 Ordinary application headers are unaffected. If a route relied on `Camel*` headers being propagated from the MIME
 content, set them explicitly after unmarshalling.
 
+=== camel-kafka - metadataMaxAgeMs option moved from producer to common
+
+The `metadataMaxAgeMs` (`metadata.max.age.ms`) option was incorrectly labeled as producer-only,
+but is applied to both consumer and producer Kafka clients. The label has been corrected to `common`.
+
+If you use the Endpoint DSL, the `metadataMaxAgeMs` method has moved from the producer (advanced) builder
+to the common builder.
+
 === camel-kafka - Producer no longer silently drops scalar Jackson nodes
 
 With `useIterator=true`, the Kafka producer splits an `Iterable` body into one record per element.
