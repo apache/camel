@@ -27,14 +27,17 @@ import dev.tamboui.style.Style;
 import dev.tamboui.text.Span;
 import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
+import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Isolated;
+import picocli.CommandLine;
 
 import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.hint;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Isolated
@@ -44,6 +47,19 @@ class CamelMonitorTest {
     void resetTheme() {
         Theme.resetForTesting();
         Theme.setMode("dark");
+    }
+
+    // --theme is validated at the very top of doCall(), before any TUI/terminal setup, so an invalid value
+    // must be rejected immediately without needing a real terminal.
+
+    @Test
+    void doCallRejectsInvalidThemeBeforeAnyTuiSetup() {
+        CamelMonitor monitor = new CamelMonitor(new CamelJBangMain(), Thread.currentThread().getContextClassLoader());
+        monitor.theme = "sepia";
+
+        CommandLine.ParameterException ex = assertThrows(CommandLine.ParameterException.class, monitor::doCall,
+                "an invalid --theme value must be rejected before any TUI/terminal setup runs");
+        assertTrue(ex.getMessage().contains("sepia"), "the rejected value should be echoed back in the error message");
     }
 
     // '?' is an alternative to F1 for opening the help overlay. Unlike F1, it must be suppressed
@@ -255,6 +271,20 @@ class CamelMonitorTest {
         Cell cell = buffer.get(2, 0);
         assertEquals(explicitFg, cell.style().fg().orElse(null), "explicit foreground is preserved");
         assertEquals(Theme.baseBg(), cell.style().bg().orElse(null), "missing background is patched");
+    }
+
+    @Test
+    void applyThemeBaseColorsPatchesOnlyMissingForeground() {
+        Rect area = new Rect(0, 0, 4, 2);
+        Buffer buffer = Buffer.empty(area);
+        Color explicitBg = Color.rgb(0x00, 0x00, 0xFF);
+        buffer.setString(3, 0, "Z", Style.EMPTY.bg(explicitBg));
+
+        CamelMonitor.applyThemeBaseColors(buffer, area);
+
+        Cell cell = buffer.get(3, 0);
+        assertEquals(explicitBg, cell.style().bg().orElse(null), "explicit background is preserved");
+        assertEquals(Theme.baseFg(), cell.style().fg().orElse(null), "missing foreground is patched");
     }
 
     @Test

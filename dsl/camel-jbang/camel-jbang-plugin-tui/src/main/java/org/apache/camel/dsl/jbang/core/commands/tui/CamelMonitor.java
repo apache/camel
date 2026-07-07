@@ -172,9 +172,10 @@ public class CamelMonitor extends CamelCommand {
 
         if (theme != null) {
             if (!Theme.isValidMode(theme)) {
+                String expected = String.join("' or '", ThemeMode.ids());
                 throw new CommandLine.ParameterException(
                         new CommandLine(this),
-                        "Invalid value for option '--theme': expected 'dark' or 'light', was '" + theme + "'");
+                        "Invalid value for option '--theme': expected '" + expected + "', was '" + theme + "'");
             }
             Theme.applyStartupMode(theme);
         }

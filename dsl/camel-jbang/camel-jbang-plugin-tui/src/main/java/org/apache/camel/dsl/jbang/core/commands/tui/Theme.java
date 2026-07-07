@@ -40,9 +40,9 @@ import org.slf4j.LoggerFactory;
  * a shared {@link StyleEngine}; the active stylesheet can be switched at runtime and is persisted to user config.
  * <p/>
  * Palette policy: the brand accent is Camel orange (truecolor), used for accent tokens, focused borders, and titles.
- * Both themes use explicit truecolor hex values defined in the stylesheets; fallbacks mirror {@code dark.tcss}. If a
- * stylesheet is missing or malformed, the facade falls back to the built-in palette below and logs once, so a cosmetic
- * failure never crashes the TUI.
+ * Status colors use explicit truecolor hex values in both themes (no ANSI names); accent-bg/hint-key/selection keep
+ * plain white/black foregrounds. Fallbacks mirror {@code dark.tcss}. If a stylesheet is missing or malformed, the
+ * facade falls back to the built-in palette below and logs once, so a cosmetic failure never crashes the TUI.
  */
 final class Theme {
 
@@ -77,7 +77,10 @@ final class Theme {
 
     private static boolean initialized;
     private static boolean persistedModeLoaded;
-    private static boolean fallbackLogged;
+    private static boolean stylesheetFallbackLogged;
+    private static boolean tokenFallbackLogged;
+    private static boolean persistedReadFallbackLogged;
+    private static boolean persistedWriteFallbackLogged;
     private static boolean testMode;
     private static StyleEngine engine;
     private static ThemeMode mode = ThemeMode.DARK;
@@ -93,7 +96,7 @@ final class Theme {
         try {
             return e.resolve(new Token("accent")).foreground().orElse(ACCENT);
         } catch (RuntimeException ex) {
-            logFallbackOnce(ex);
+            logTokenFallbackOnce(ex);
             return ACCENT;
         }
     }
@@ -110,7 +113,7 @@ final class Theme {
         try {
             return e.resolve(new Token("row-alt")).background().orElse(FALLBACK_ZEBRA);
         } catch (RuntimeException ex) {
-            logFallbackOnce(ex);
+            logTokenFallbackOnce(ex);
             return FALLBACK_ZEBRA;
         }
     }
@@ -126,7 +129,7 @@ final class Theme {
         try {
             return e.resolve(new Token("base-bg")).background().orElse(FALLBACK_BASE_BG);
         } catch (RuntimeException ex) {
-            logFallbackOnce(ex);
+            logTokenFallbackOnce(ex);
             return FALLBACK_BASE_BG;
         }
     }
@@ -142,7 +145,7 @@ final class Theme {
         try {
             return e.resolve(new Token("base-fg")).foreground().orElse(FALLBACK_BASE_FG);
         } catch (RuntimeException ex) {
-            logFallbackOnce(ex);
+            logTokenFallbackOnce(ex);
             return FALLBACK_BASE_FG;
         }
     }
@@ -193,7 +196,7 @@ final class Theme {
         return style("selection", FALLBACK_SELECTION);
     }
 
-    /** Informational accent (header integration count). */
+    /** Informational accent (header integration count, integration name text, popup prompts). */
     static Style info() {
         return style("info", FALLBACK_INFO);
     }
@@ -224,12 +227,13 @@ final class Theme {
         return mode.id();
     }
 
+    /** True if the active mode is dark. */
     static boolean isDark() {
         engine();
         return mode == ThemeMode.DARK;
     }
 
-    /** Flip the active theme, clear the cache, persist the new value, and return the new mode. */
+    /** Flip the active theme mode, persist it (outside test mode), and activate it, returning the new mode. */
     static synchronized String toggle() {
         ThemeMode next = mode.toggle();
         if (!testMode) {
@@ -239,7 +243,13 @@ final class Theme {
         return next.id();
     }
 
-    /** Activate a specific mode without persisting. Unknown values fall back to dark. */
+    /**
+     * Activate a specific mode without persisting. Unknown values fall back to dark.
+     * <p/>
+     * Test-only entry point: unlike {@link #applyStartupMode(String)}, this does not mark the persisted preference as
+     * loaded, so outside test mode a later {@link #engine()} re-initialization can still overwrite the mode with
+     * whatever is on disk.
+     */
     static synchronized void setMode(String newMode) {
         activate(ThemeMode.parseOrDefault(newMode), false);
     }
@@ -247,19 +257,36 @@ final class Theme {
     /**
      * Applies a CLI-selected theme for this process only. Marks the persisted preference as already loaded so the value
      * from {@code --theme} wins over {@code camel.tui.theme} in user config.
+     *
+     * @throws IllegalArgumentException if {@code newMode} is not a known theme mode; callers should normally validate
+     *                                  with {@link #isValidMode(String)} first to report a friendlier CLI error.
      */
     static synchronized void applyStartupMode(String newMode) {
-        activate(ThemeMode.parseOrDefault(newMode), true);
+        ThemeMode parsed = ThemeMode.parse(newMode)
+                .orElseThrow(() -> new IllegalArgumentException("Unknown Camel TUI theme mode: " + newMode));
+        activate(parsed, true);
     }
 
+    /** Whether {@code value} parses to a known theme mode. */
     static boolean isValidMode(String value) {
         return ThemeMode.parse(value).isPresent();
     }
 
     /** Test hook: enable in-memory-only mode so tests never touch user config files. */
     static synchronized void resetForTesting() {
-        testMode = true;
-        fallbackLogged = false;
+        resetForTesting(true);
+    }
+
+    /**
+     * Test hook like {@link #resetForTesting()}, but lets the caller keep {@code testMode} disabled so a test can
+     * exercise the real persistence path (disk read/write) against an isolated home directory.
+     */
+    static synchronized void resetForTesting(boolean testModeValue) {
+        testMode = testModeValue;
+        stylesheetFallbackLogged = false;
+        tokenFallbackLogged = false;
+        persistedReadFallbackLogged = false;
+        persistedWriteFallbackLogged = false;
         persistedModeLoaded = false;
         CACHE.clear();
         engine = null;
@@ -283,14 +310,19 @@ final class Theme {
         if (e == null) {
             return fallback;
         }
-        return CACHE.computeIfAbsent(id, key -> {
-            try {
-                return e.resolve(new Token(key)).toStyle();
-            } catch (RuntimeException ex) {
-                logFallbackOnce(ex);
-                return fallback;
-            }
-        });
+        Style cached = CACHE.get(id);
+        if (cached != null) {
+            return cached;
+        }
+        try {
+            Style resolved = e.resolve(new Token(id)).toStyle();
+            CACHE.put(id, resolved);
+            return resolved;
+        } catch (RuntimeException ex) {
+            // Not cached: a transient resolution failure must not permanently lock this token to the fallback.
+            logTokenFallbackOnce(ex);
+            return fallback;
+        }
     }
 
     private static synchronized StyleEngine engine() {
@@ -299,8 +331,13 @@ final class Theme {
         }
         initialized = true;
         if (!testMode && !persistedModeLoaded) {
-            persistedModeLoaded = true;
-            mode = loadPersistedMode();
+            ThemeMode[] loaded = { ThemeMode.DARK };
+            if (tryLoadPersistedMode(loaded)) {
+                // Only mark as loaded on success (including "nothing persisted yet"). A read failure leaves this
+                // false so the next reinitialization gets another chance instead of pinning the session forever.
+                mode = loaded[0];
+                persistedModeLoaded = true;
+            }
         }
         try {
             StyleEngine e = StyleEngine.create();
@@ -309,13 +346,13 @@ final class Theme {
             // to StyleEngine.loadStylesheet() which uses StyleEngine.class.getClassLoader().
             // Under parallel test execution the two classloaders can diverge, causing
             // intermittent "resource not found" failures in CI.
-            String cssContent = loadCssResource("tui/themes/" + stylesheet + ".tcss");
+            String cssContent = loadCssResource(mode.stylesheetResource());
             e.addStylesheet(stylesheet, cssContent);
             e.setActiveStylesheet(stylesheet);
             engine = e;
         } catch (Exception ex) {
             engine = null;
-            logFallbackOnce(ex);
+            logStylesheetFallbackOnce(ex);
         }
         return engine;
     }
@@ -347,16 +384,16 @@ final class Theme {
         }
     }
 
-    private static ThemeMode loadPersistedMode() {
-        ThemeMode[] holder = { ThemeMode.DARK };
+    private static boolean tryLoadPersistedMode(ThemeMode[] result) {
         try {
             CommandLineHelper.loadProperties(props -> {
-                ThemeMode.parse(props.getProperty(PROP_KEY)).ifPresent(parsed -> holder[0] = parsed);
+                ThemeMode.parse(props.getProperty(PROP_KEY)).ifPresent(parsed -> result[0] = parsed);
             });
+            return true;
         } catch (RuntimeException ex) {
-            // Config unreadable; keep the default mode.
+            logPersistedReadFallbackOnce(ex);
+            return false;
         }
-        return holder[0];
     }
 
     private static void persist(ThemeMode newMode) {
@@ -368,14 +405,37 @@ final class Theme {
                         new Printer.QuietPrinter(new Printer.SystemOutPrinter()), false);
             });
         } catch (Exception ex) {
-            logFallbackOnce(ex);
+            logPersistedWriteFallbackOnce(ex);
         }
     }
 
-    private static void logFallbackOnce(Throwable t) {
-        if (!fallbackLogged) {
-            fallbackLogged = true;
+    private static void logStylesheetFallbackOnce(Throwable t) {
+        if (!stylesheetFallbackLogged) {
+            stylesheetFallbackLogged = true;
             LOG.warn("Camel TUI theme stylesheet unavailable; using built-in palette", t);
+        }
+    }
+
+    private static void logTokenFallbackOnce(Throwable t) {
+        if (!tokenFallbackLogged) {
+            tokenFallbackLogged = true;
+            LOG.warn("Camel TUI theme token resolution failed; using built-in fallback color", t);
+        }
+    }
+
+    private static void logPersistedReadFallbackOnce(Throwable t) {
+        if (!persistedReadFallbackLogged) {
+            persistedReadFallbackLogged = true;
+            LOG.warn("Camel TUI theme preference could not be read; falling back to the default theme for this session",
+                    t);
+        }
+    }
+
+    private static void logPersistedWriteFallbackOnce(Throwable t) {
+        if (!persistedWriteFallbackLogged) {
+            persistedWriteFallbackLogged = true;
+            LOG.warn("Camel TUI theme preference could not be saved; the selected theme may not persist across restarts",
+                    t);
         }
     }
 

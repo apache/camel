@@ -16,16 +16,24 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+
 import dev.tamboui.style.Color;
 import dev.tamboui.style.Style;
+import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.api.parallel.Isolated;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Isolated
 class ThemeTest {
@@ -128,6 +136,13 @@ class ThemeTest {
     }
 
     @Test
+    void applyStartupModeRejectsUnknownValue() {
+        // Unlike setMode(), an invalid --theme value must never be silently coerced to a default: CamelMonitor relies
+        // on isValidMode() for a friendly CLI error, but the type itself must also refuse to guess.
+        assertThrows(IllegalArgumentException.class, () -> Theme.applyStartupMode("sepia"));
+    }
+
+    @Test
     void setModeAcceptsMixedCase() {
         Theme.setMode("LIGHT");
         assertEquals("light", Theme.mode());
@@ -135,10 +150,80 @@ class ThemeTest {
 
     @Test
     void isValidModeAcceptsDarkAndLightOnly() {
-        assertEquals(true, Theme.isValidMode("dark"));
-        assertEquals(true, Theme.isValidMode("LIGHT"));
-        assertEquals(false, Theme.isValidMode("sepia"));
-        assertEquals(false, Theme.isValidMode(null));
+        assertTrue(Theme.isValidMode("dark"));
+        assertTrue(Theme.isValidMode("LIGHT"));
+        assertFalse(Theme.isValidMode("sepia"));
+        assertFalse(Theme.isValidMode(null));
+    }
+
+    @Test
+    void toggleTakesEffectOnFirstActivationOutsideTestMode(@TempDir Path tempDir) {
+        // Regression test for the "toggle needs two activations" bug: every other test here runs through
+        // Theme.resetForTesting(), which forces testMode=true and short-circuits both persist() and the
+        // persisted-mode disk-reload guard in engine() - exactly the two paths responsible for the original bug.
+        // This test leaves testMode disabled, against an isolated home directory, to actually exercise them.
+        String originalHomeDir = CommandLineHelper.getHomeDir().toString();
+        CommandLineHelper.useHomeDir(tempDir.toString());
+        try {
+            Theme.resetForTesting(false);
+            Theme.setMode("dark");
+            assertEquals("dark", Theme.mode());
+
+            String newMode = Theme.toggle();
+
+            assertEquals("light", newMode, "a single toggle() call must flip the mode immediately");
+            assertEquals("light", Theme.mode(), "the effective mode must reflect the toggle without a second activation");
+        } finally {
+            CommandLineHelper.useHomeDir(originalHomeDir);
+            Theme.resetForTesting();
+        }
+    }
+
+    @Test
+    void persistedModeReadFailureFallsBackAndRetriesOnNextInit(@TempDir Path tempDir) throws Exception {
+        // Regression test for the read-failure branch of tryLoadPersistedMode(): a corrupt config file must not crash
+        // the TUI, and must not permanently pin the session to the default theme - the very next reinitialization
+        // (triggered here by setMode()) should retry the disk read and pick up a since-fixed value.
+        String originalHomeDir = CommandLineHelper.getHomeDir().toString();
+        CommandLineHelper.useHomeDir(tempDir.toString());
+        try {
+            Path configFile = tempDir.resolve(CommandLineHelper.USER_CONFIG);
+            Files.writeString(configFile, "camel.tui.theme=\\uZZZZ\n");
+
+            Theme.resetForTesting(false);
+            assertEquals("dark", Theme.mode(), "a corrupt config file must fall back to the default theme, not crash");
+
+            Files.writeString(configFile, "camel.tui.theme=light\n");
+            Theme.setMode("dark");
+
+            assertEquals("light", Theme.mode(),
+                    "a later reinitialization must retry the persisted-mode read instead of being pinned by the earlier failure");
+        } finally {
+            CommandLineHelper.useHomeDir(originalHomeDir);
+            Theme.resetForTesting();
+        }
+    }
+
+    @Test
+    void applyStartupModeOverridesPersistedConfigOutsideTestMode(@TempDir Path tempDir) throws Exception {
+        // Regression test for the "--theme wins over camel.tui.theme" contract: exercised against real disk I/O
+        // (outside test mode), unlike applyStartupModeSelectsLightPalette which runs under testMode=true, where
+        // persistence loading is unconditionally skipped and so can't prove an override actually happened.
+        String originalHomeDir = CommandLineHelper.getHomeDir().toString();
+        CommandLineHelper.useHomeDir(tempDir.toString());
+        try {
+            Path configFile = tempDir.resolve(CommandLineHelper.USER_CONFIG);
+            Files.writeString(configFile, "camel.tui.theme=light\n");
+
+            Theme.resetForTesting(false);
+            Theme.applyStartupMode("dark");
+
+            assertEquals("dark", Theme.mode(), "--theme must win over a persisted camel.tui.theme value");
+            assertEquals(Color.rgb(0x1E, 0x1E, 0x1E), Theme.baseBg(), "the dark palette must actually be active");
+        } finally {
+            CommandLineHelper.useHomeDir(originalHomeDir);
+            Theme.resetForTesting();
+        }
     }
 
     @Test
