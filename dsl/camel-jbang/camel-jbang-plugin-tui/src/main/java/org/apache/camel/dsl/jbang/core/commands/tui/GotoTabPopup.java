@@ -37,12 +37,15 @@ import dev.tamboui.widgets.list.ListItem;
 import dev.tamboui.widgets.list.ListState;
 import dev.tamboui.widgets.list.ListWidget;
 import dev.tamboui.widgets.list.ScrollMode;
+import dev.tamboui.widgets.scrollbar.Scrollbar;
+import dev.tamboui.widgets.scrollbar.ScrollbarState;
 
 class GotoTabPopup {
 
     private boolean visible;
     private final FuzzyFilter filter = new FuzzyFilter();
     private final ListState listState = new ListState();
+    private final ScrollbarState scrollbarState = new ScrollbarState();
     private List<TabRegistry.TabEntry> allEntries;
     private List<TabRegistry.TabEntry> filteredEntries;
     private Rect popupRect;
@@ -165,8 +168,8 @@ class GotoTabPopup {
         int nameColWidth = 18;
         int popupW = Math.min(100, area.width() - 4);
         int descColWidth = popupW - nameColWidth - 8;
-        int listH = Math.min(filteredEntries.size(), Math.min(28, area.height() - 8));
-        int popupH = listH + 4;
+        int contentH = filteredEntries.size() + 2;
+        int popupH = Math.min(contentH + 2, area.height() - 4);
         int x = area.left() + Math.max(0, (area.width() - popupW) / 2);
         int y = area.top() + 2;
         Rect popup = new Rect(x, y, Math.min(popupW, area.width()), Math.min(popupH, area.height() - 2));
@@ -239,6 +242,12 @@ class GotoTabPopup {
             renderState.select(sel + 2);
         }
 
+        int total = allEntries != null ? allEntries.size() : 0;
+        int shown = filteredEntries.size();
+        String title = shown == total
+                ? " Go to Tab (" + total + ") "
+                : " Go to Tab (" + shown + "/" + total + ") ";
+
         ListWidget list = ListWidget.builder()
                 .items(items.toArray(ListItem[]::new))
                 .highlightStyle(Theme.selectionBg())
@@ -246,10 +255,19 @@ class GotoTabPopup {
                 .scrollMode(ScrollMode.AUTO_SCROLL)
                 .block(Block.builder()
                         .borderType(BorderType.ROUNDED).borders(Borders.ALL)
-                        .title(" Go to Tab ")
+                        .title(title)
                         .build())
                 .build();
         frame.renderStatefulWidget(list, popup, renderState);
+
+        int visibleRows = Math.max(1, popup.height() - 2);
+        if (shown + 2 > visibleRows) {
+            scrollbarState
+                    .contentLength(shown)
+                    .viewportContentLength(visibleRows)
+                    .position(sel != null ? sel : 0);
+            frame.renderStatefulWidget(Scrollbar.builder().build(), popup, scrollbarState);
+        }
     }
 
     SelectionContext getSelectionContext() {
