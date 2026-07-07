@@ -27,7 +27,6 @@ import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.test.junit6.TestSupport.createDirectory;
 import static org.apache.camel.test.junit6.TestSupport.deleteDirectory;
-import static org.awaitility.Awaitility.await;
 
 /**
  * Unit test for scan stream file
@@ -62,7 +61,7 @@ public class ScanStreamFileWithFilterTest extends CamelTestSupport {
         fos.flush();
         fos.close();
 
-        await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> MockEndpoint.assertIsSatisfied(context));
+        MockEndpoint.assertIsSatisfied(context, 10, TimeUnit.SECONDS);
     }
 
     @Override

@@ -67,7 +67,7 @@ public class ScanStreamFileTest extends CamelTestSupport {
             fos.close();
         }
 
-        await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> MockEndpoint.assertIsSatisfied(context));
+        MockEndpoint.assertIsSatisfied(context, 10, TimeUnit.SECONDS);
     }
 
     @Test
@@ -95,7 +95,7 @@ public class ScanStreamFileTest extends CamelTestSupport {
             fos.close();
         }
 
-        MockEndpoint.assertIsSatisfied(context);
+        MockEndpoint.assertIsSatisfied(context, 10, TimeUnit.SECONDS);
     }
 
     @Test
@@ -112,7 +112,7 @@ public class ScanStreamFileTest extends CamelTestSupport {
             fos.close();
         }
 
-        await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> MockEndpoint.assertIsSatisfied(context));
+        MockEndpoint.assertIsSatisfied(context, 10, TimeUnit.SECONDS);
     }
 
     private FileOutputStream refreshFile(FileOutputStream fos) throws Exception {
