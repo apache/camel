@@ -140,7 +140,7 @@ public abstract class AbstractSftpConsumer extends RemoteFileConsumer<SftpRemote
         }
 
         if (getEndpoint().isPreSort()) {
-            Arrays.sort(files, Comparator.comparing(SftpRemoteFile::getFilename));
+            Arrays.sort(files, preSortComparator(getEndpoint().getPreSort()));
         }
 
         for (SftpRemoteFile file : files) {
@@ -294,5 +294,24 @@ public abstract class AbstractSftpConsumer extends RemoteFileConsumer<SftpRemote
     private boolean isUseList() {
         RemoteFileConfiguration config = (RemoteFileConfiguration) endpoint.getConfiguration();
         return config.isUseList();
+    }
+
+    @SuppressWarnings("unchecked")
+    private static Comparator<SftpRemoteFile> preSortComparator(String preSort) {
+        boolean reverse = preSort.startsWith("-");
+        String field = reverse ? preSort.substring(1) : preSort;
+        Comparator<SftpRemoteFile> cmp;
+        switch (field) {
+            case "modified":
+                cmp = Comparator.comparingLong(SftpRemoteFile::getLastModified);
+                break;
+            case "size":
+                cmp = Comparator.comparingLong(SftpRemoteFile::getFileLength);
+                break;
+            default:
+                cmp = Comparator.comparing(SftpRemoteFile::getFilename);
+                break;
+        }
+        return reverse ? cmp.reversed() : cmp;
     }
 }

@@ -401,31 +401,15 @@ public interface MinaSftpEndpointBuilderFactory {
          * system. You may want to do this in case you need to operate on the
          * files in a sorted order. The pre-sort is executed before the consumer
          * starts to filter, and accept files to process by Camel. This option
-         * is default=false meaning disabled.
+         * is default=false meaning disabled. The following values are
+         * supported: name (sort by file name), modified (sort by last-modified
+         * timestamp), size (sort by file size). To sort in descending (reverse)
+         * order, prefix the value with a minus sign (e.g., -modified to sort
+         * newest first). The value true is an alias for name (backward
+         * compatible).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default: false
-         * Group: consumer
-         * 
-         * @param preSort the value to set
-         * @return the dsl builder
-         */
-        default MinaSftpEndpointConsumerBuilder preSort(boolean preSort) {
-            doSetProperty("preSort", preSort);
-            return this;
-        }
-        /**
-         * When pre-sort is enabled then the consumer will sort the file and
-         * directory names during polling, that was retrieved from the file
-         * system. You may want to do this in case you need to operate on the
-         * files in a sorted order. The pre-sort is executed before the consumer
-         * starts to filter, and accept files to process by Camel. This option
-         * is default=false meaning disabled.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
          * Group: consumer
          * 
          * @param preSort the value to set

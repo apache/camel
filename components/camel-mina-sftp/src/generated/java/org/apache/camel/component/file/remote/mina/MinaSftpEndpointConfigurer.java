@@ -168,7 +168,7 @@ public class MinaSftpEndpointConfigurer extends PropertyConfigurerSupport implem
         case "premove":
         case "preMove": target.setPreMove(property(camelContext, java.lang.String.class, value)); return true;
         case "presort":
-        case "preSort": target.setPreSort(property(camelContext, boolean.class, value)); return true;
+        case "preSort": target.setPreSort(property(camelContext, java.lang.String.class, value)); return true;
         case "preferredauthentications":
         case "preferredAuthentications": target.getConfiguration().setPreferredAuthentications(property(camelContext, java.lang.String.class, value)); return true;
         case "privatekey":
@@ -423,7 +423,7 @@ public class MinaSftpEndpointConfigurer extends PropertyConfigurerSupport implem
         case "premove":
         case "preMove": return java.lang.String.class;
         case "presort":
-        case "preSort": return boolean.class;
+        case "preSort": return java.lang.String.class;
         case "preferredauthentications":
         case "preferredAuthentications": return java.lang.String.class;
         case "privatekey":
@@ -679,7 +679,7 @@ public class MinaSftpEndpointConfigurer extends PropertyConfigurerSupport implem
         case "premove":
         case "preMove": return target.getPreMove();
         case "presort":
-        case "preSort": return target.isPreSort();
+        case "preSort": return target.getPreSort();
         case "preferredauthentications":
         case "preferredAuthentications": return target.getConfiguration().getPreferredAuthentications();
         case "privatekey":
