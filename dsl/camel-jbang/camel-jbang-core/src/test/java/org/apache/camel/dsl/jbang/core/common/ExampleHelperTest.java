@@ -36,7 +36,7 @@ class ExampleHelperTest {
     @Test
     void shouldFindExample() {
         List<JsonObject> catalog = ExampleHelper.loadCatalog();
-        JsonObject entry = ExampleHelper.findExample(catalog, "circuit-breaker");
+        JsonObject entry = ExampleHelper.findExample(catalog, "eip/circuit-breaker");
         assertNotNull(entry);
         assertEquals("Circuit Breaker", entry.getString("title"));
     }
@@ -66,7 +66,7 @@ class ExampleHelperTest {
         List<JsonObject> catalog = ExampleHelper.loadCatalog();
         List<JsonObject> filtered = ExampleHelper.filterExamples(catalog, "mqtt");
         assertEquals(1, filtered.size());
-        assertEquals("mqtt", filtered.get(0).getString("name"));
+        assertEquals("messaging/mqtt", filtered.get(0).getString("name"));
     }
 
     @Test
@@ -79,27 +79,27 @@ class ExampleHelperTest {
     @Test
     void shouldDetectBundled() {
         List<JsonObject> catalog = ExampleHelper.loadCatalog();
-        JsonObject circuitBreaker = ExampleHelper.findExample(catalog, "circuit-breaker");
+        JsonObject circuitBreaker = ExampleHelper.findExample(catalog, "eip/circuit-breaker");
         assertTrue(ExampleHelper.isBundled(circuitBreaker));
 
-        JsonObject mqtt = ExampleHelper.findExample(catalog, "mqtt");
+        JsonObject mqtt = ExampleHelper.findExample(catalog, "messaging/mqtt");
         assertFalse(ExampleHelper.isBundled(mqtt));
     }
 
     @Test
     void shouldDetectDocker() {
         List<JsonObject> catalog = ExampleHelper.loadCatalog();
-        JsonObject mqtt = ExampleHelper.findExample(catalog, "mqtt");
+        JsonObject mqtt = ExampleHelper.findExample(catalog, "messaging/mqtt");
         assertTrue(ExampleHelper.requiresDocker(mqtt));
 
-        JsonObject circuitBreaker = ExampleHelper.findExample(catalog, "circuit-breaker");
+        JsonObject circuitBreaker = ExampleHelper.findExample(catalog, "eip/circuit-breaker");
         assertFalse(ExampleHelper.requiresDocker(circuitBreaker));
     }
 
     @Test
     void shouldGetFiles() {
         List<JsonObject> catalog = ExampleHelper.loadCatalog();
-        JsonObject routes = ExampleHelper.findExample(catalog, "routes");
+        JsonObject routes = ExampleHelper.findExample(catalog, "beginner/routes");
         List<String> files = ExampleHelper.getFiles(routes);
         assertTrue(files.contains("routes.camel.yaml"));
         assertTrue(files.contains("Greeter.java"));
@@ -109,7 +109,7 @@ class ExampleHelperTest {
     @Test
     void shouldExtractBundledExample() throws Exception {
         List<JsonObject> catalog = ExampleHelper.loadCatalog();
-        JsonObject entry = ExampleHelper.findExample(catalog, "circuit-breaker");
+        JsonObject entry = ExampleHelper.findExample(catalog, "eip/circuit-breaker");
         Path tempDir = ExampleHelper.extractBundledExample(entry);
 
         assertTrue(Files.exists(tempDir.resolve("route.camel.yaml")));
@@ -120,7 +120,7 @@ class ExampleHelperTest {
     @Test
     void shouldExtractBundledExampleWithSubdirectory() throws Exception {
         List<JsonObject> catalog = ExampleHelper.loadCatalog();
-        JsonObject entry = ExampleHelper.findExample(catalog, "xslt");
+        JsonObject entry = ExampleHelper.findExample(catalog, "transformation/xslt");
         Path tempDir = ExampleHelper.extractBundledExample(entry);
 
         assertTrue(Files.exists(tempDir.resolve("consumer.camel.yaml")));
@@ -131,26 +131,26 @@ class ExampleHelperTest {
     @Test
     void shouldGetGithubUrl() {
         List<JsonObject> catalog = ExampleHelper.loadCatalog();
-        JsonObject entry = ExampleHelper.findExample(catalog, "mqtt");
+        JsonObject entry = ExampleHelper.findExample(catalog, "messaging/mqtt");
         String url = ExampleHelper.getGithubUrl(entry);
-        assertEquals("https://github.com/apache/camel-jbang-examples/tree/main/mqtt", url);
+        assertEquals("https://github.com/apache/camel-jbang-examples/tree/main/messaging/mqtt", url);
     }
 
     @Test
     void shouldGetGithubUrlForNestedExample() {
         List<JsonObject> catalog = ExampleHelper.loadCatalog();
-        JsonObject entry = ExampleHelper.findExample(catalog, "aws/aws-sqs");
+        JsonObject entry = ExampleHelper.findExample(catalog, "cloud/aws-sqs");
         String url = ExampleHelper.getGithubUrl(entry);
-        assertEquals("https://github.com/apache/camel-jbang-examples/tree/main/aws/aws-sqs", url);
+        assertEquals("https://github.com/apache/camel-jbang-examples/tree/main/cloud/aws-sqs", url);
     }
 
     @Test
     void shouldDetectCitrusTests() {
         List<JsonObject> catalog = ExampleHelper.loadCatalog();
-        JsonObject mqtt = ExampleHelper.findExample(catalog, "mqtt");
+        JsonObject mqtt = ExampleHelper.findExample(catalog, "messaging/mqtt");
         assertTrue(ExampleHelper.hasCitrusTests(mqtt));
 
-        JsonObject circuitBreaker = ExampleHelper.findExample(catalog, "circuit-breaker");
+        JsonObject circuitBreaker = ExampleHelper.findExample(catalog, "eip/circuit-breaker");
         assertFalse(ExampleHelper.hasCitrusTests(circuitBreaker));
     }
 
@@ -158,8 +158,8 @@ class ExampleHelperTest {
     void shouldGetExampleNames() {
         List<JsonObject> catalog = ExampleHelper.loadCatalog();
         List<String> names = ExampleHelper.getExampleNames(catalog);
-        assertTrue(names.contains("circuit-breaker"));
-        assertTrue(names.contains("mqtt"));
-        assertTrue(names.contains("aws/aws-sqs"));
+        assertTrue(names.contains("eip/circuit-breaker"));
+        assertTrue(names.contains("messaging/mqtt"));
+        assertTrue(names.contains("cloud/aws-sqs"));
     }
 }
