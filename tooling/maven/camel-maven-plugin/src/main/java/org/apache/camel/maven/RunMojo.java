@@ -459,8 +459,8 @@ public class RunMojo extends AbstractExecMojo {
         // noop
     }
 
+    @SuppressWarnings("java:S3014") // ThreadGroup is needed internally for thread containment; no modern alternative in Java 17
     class IsolatedThreadGroup implements Thread.UncaughtExceptionHandler {
-        @SuppressWarnings("java:S3014") // ThreadGroup is needed for thread containment; no modern alternative in Java 17
         private final ThreadGroup threadGroup;
         Throwable uncaughtException; // synchronize access to this
 

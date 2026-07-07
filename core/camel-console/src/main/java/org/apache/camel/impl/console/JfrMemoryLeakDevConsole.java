@@ -82,6 +82,10 @@ public class JfrMemoryLeakDevConsole extends AbstractDevConsole {
     private static final int MAX_STACK_FRAMES = 10;
     private static final int MAX_CHAIN_DEPTH = 20;
 
+    // Private monitor for GC wait delays so that wait() does not release the
+    // 'this' monitor of synchronized methods (which guards recording state).
+    private final Object gcWaitMonitor = new Object();
+
     private volatile Recording activeRecording;
     private volatile JsonObject cachedResults;
     private volatile JsonObject previousResults;
@@ -138,10 +142,12 @@ public class JfrMemoryLeakDevConsole extends AbstractDevConsole {
             // trigger GC before starting to establish a cleaner baseline
             System.gc();
             try {
-                StopWatch watch = new StopWatch();
-                long remaining;
-                while ((remaining = 500 - watch.taken()) > 0) {
-                    wait(remaining);
+                synchronized (gcWaitMonitor) {
+                    StopWatch watch = new StopWatch();
+                    long remaining;
+                    while ((remaining = 500 - watch.taken()) > 0) {
+                        gcWaitMonitor.wait(remaining);
+                    }
                 }
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
@@ -207,10 +213,12 @@ public class JfrMemoryLeakDevConsole extends AbstractDevConsole {
             // trigger GC before stopping to flush objects into the recording
             System.gc();
             try {
-                StopWatch watch = new StopWatch();
-                long remaining;
-                while ((remaining = 500 - watch.taken()) > 0) {
-                    wait(remaining);
+                synchronized (gcWaitMonitor) {
+                    StopWatch watch = new StopWatch();
+                    long remaining;
+                    while ((remaining = 500 - watch.taken()) > 0) {
+                        gcWaitMonitor.wait(remaining);
+                    }
                 }
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
