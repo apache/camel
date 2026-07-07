@@ -9,7 +9,7 @@ NOTE: Both unit testing and integration testing are essential in software develo
 == Citrus Test Framework
 
 As an example of writing integration tests for Camel applications you can use the
-https://citfrusframework.org[Citrus] test framework.
+https://citrusframework.org[Citrus] test framework.
 
 Citrus is an Open Source Java testing framework with focus on integration testing and messaging.
 
