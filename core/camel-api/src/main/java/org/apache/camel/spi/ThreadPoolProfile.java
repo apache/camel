@@ -22,6 +22,7 @@ import java.util.Objects;
 import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy;
 import org.jspecify.annotations.Nullable;
 
@@ -289,17 +290,11 @@ public class ThreadPoolProfile implements Serializable, Cloneable {
 
     @Override
     public ThreadPoolProfile clone() {
-        ThreadPoolProfile cloned = new ThreadPoolProfile();
-        cloned.setDefaultProfile(defaultProfile);
-        cloned.setId(id);
-        cloned.setKeepAliveTime(keepAliveTime);
-        cloned.setMaxPoolSize(maxPoolSize);
-        cloned.setMaxQueueSize(maxQueueSize);
-        cloned.setPoolSize(poolSize);
-        cloned.setAllowCoreThreadTimeOut(allowCoreThreadTimeOut);
-        cloned.setRejectedPolicy(rejectedPolicy);
-        cloned.setTimeUnit(timeUnit);
-        return cloned;
+        try {
+            return (ThreadPoolProfile) super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeCamelException(e);
+        }
     }
 
     @Override

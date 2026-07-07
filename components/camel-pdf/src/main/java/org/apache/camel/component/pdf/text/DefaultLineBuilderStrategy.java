@@ -101,7 +101,7 @@ public class DefaultLineBuilderStrategy implements LineBuilderStrategy {
     }
 
     private boolean isWordFitInCurrentLine(LineBuilder currentLine, String word, float allowedLineWidth) throws IOException {
-        LineBuilder lineBuilder = currentLine.clone().appendWord(word);
+        LineBuilder lineBuilder = currentLine.copy().appendWord(word);
         return isLineFitInLineWidth(lineBuilder.buildLine(), allowedLineWidth);
     }
 
@@ -160,8 +160,7 @@ public class DefaultLineBuilderStrategy implements LineBuilderStrategy {
             wordsCount = 0;
         }
 
-        @Override
-        public LineBuilder clone() {
+        public LineBuilder copy() {
             return new LineBuilder(this.line.toString(), this.wordsCount);
         }
 

@@ -453,7 +453,13 @@ public class MiloClientConfiguration implements Cloneable {
 
     @Override
     public MiloClientConfiguration clone() {
-        return new MiloClientConfiguration(this);
+        try {
+            MiloClientConfiguration copy = (MiloClientConfiguration) super.clone();
+            copy.allowedSecurityPolicies = new HashSet<>(this.allowedSecurityPolicies);
+            return copy;
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeCamelException(e);
+        }
     }
 
     public String toCacheId() {
