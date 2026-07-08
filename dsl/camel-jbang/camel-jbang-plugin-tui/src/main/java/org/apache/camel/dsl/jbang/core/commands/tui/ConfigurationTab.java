@@ -53,7 +53,7 @@ import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.*;
 
 class ConfigurationTab extends AbstractTableTab {
 
-    private static final Style SECRET_STYLE = Style.EMPTY.fg(Color.DARK_GRAY);
+    private static final Style SECRET_STYLE = Theme.muted();
 
     private int detailScroll;
 

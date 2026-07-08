@@ -378,7 +378,7 @@ class SqlQueryTab extends AbstractTab {
                     sb.append("  ");
                 }
             }
-            Style style = focusOnInput ? Style.EMPTY.fg(Color.CYAN) : Style.EMPTY.fg(Color.DARK_GRAY);
+            Style style = focusOnInput ? Style.EMPTY.fg(Color.CYAN) : Theme.muted();
             Paragraph dsLabel = Paragraph.builder()
                     .text(Text.from(Line.from(Span.styled(sb.toString(), style))))
                     .build();
@@ -399,7 +399,7 @@ class SqlQueryTab extends AbstractTab {
         } else {
             title = " SQL Query (F5 to execute) ";
         }
-        Style borderStyle = focusOnInput ? Style.EMPTY.fg(Color.CYAN) : Style.EMPTY.fg(Color.DARK_GRAY);
+        Style borderStyle = focusOnInput ? Style.EMPTY.fg(Color.CYAN) : Theme.muted();
         Block inputBlock = Block.builder()
                 .title(Title.from(title))
                 .borders(Borders.ALL)
@@ -459,7 +459,7 @@ class SqlQueryTab extends AbstractTab {
                     .title(Title.from(" Results "))
                     .borders(Borders.ALL)
                     .borderType(BorderType.ROUNDED)
-                    .borderStyle(Style.EMPTY.fg(Color.DARK_GRAY))
+                    .borderStyle(Theme.muted())
                     .build();
             Rect inner = emptyBlock.inner(area);
             frame.renderWidget(emptyBlock, area);
@@ -468,7 +468,7 @@ class SqlQueryTab extends AbstractTab {
                     ? "No DataSource available"
                     : "Type a SQL query and press F5 to execute";
             Paragraph hintText = Paragraph.builder()
-                    .text(Text.from(Line.from(Span.styled(hint, Style.EMPTY.fg(Color.DARK_GRAY)))))
+                    .text(Text.from(Line.from(Span.styled(hint, Theme.muted()))))
                     .build();
             frame.renderWidget(hintText, inner);
             return;
@@ -477,7 +477,7 @@ class SqlQueryTab extends AbstractTab {
         // build result table
         String resultTitle = String.format(" %d row(s)%s  %dms ",
                 rowCount, truncated ? " (truncated)" : "", elapsed);
-        Style tableBorderStyle = !focusOnInput ? Style.EMPTY.fg(Color.CYAN) : Style.EMPTY.fg(Color.DARK_GRAY);
+        Style tableBorderStyle = !focusOnInput ? Style.EMPTY.fg(Color.CYAN) : Theme.muted();
         Block tableBlock = Block.builder()
                 .title(Title.from(resultTitle))
                 .borders(Borders.ALL)
@@ -496,7 +496,7 @@ class SqlQueryTab extends AbstractTab {
             for (String col : columnNames) {
                 Object val = row.get(col);
                 String s = val != null ? String.valueOf(val) : "null";
-                Style style = val == null ? Style.EMPTY.fg(Color.DARK_GRAY) : Style.EMPTY.fg(Theme.baseFg());
+                Style style = val == null ? Theme.muted() : Style.EMPTY.fg(Theme.baseFg());
                 cells.add(Cell.from(Span.styled(s, style)));
             }
             dataRows.add(Row.from(cells));
@@ -513,7 +513,7 @@ class SqlQueryTab extends AbstractTab {
                 .rows(dataRows)
                 .widths(colConstraints)
                 .block(tableBlock)
-                .highlightStyle(Style.EMPTY.bg(Color.DARK_GRAY))
+                .highlightStyle(Theme.selectionBg())
                 .build();
         lastTableArea = area;
         frame.renderStatefulWidget(table, area, tableState);
@@ -770,7 +770,7 @@ class SqlQueryTab extends AbstractTab {
             String label = columnNames[i] + (isPk ? " *" : "  ");
             Style labelStyle;
             if (isPk) {
-                labelStyle = Style.EMPTY.fg(Color.DARK_GRAY);
+                labelStyle = Theme.muted();
             } else if (isFocused) {
                 labelStyle = Style.EMPTY.fg(Color.CYAN).bold();
             } else {
@@ -785,7 +785,7 @@ class SqlQueryTab extends AbstractTab {
             if (isPk) {
                 String val = editOriginalValues[i];
                 frame.renderWidget(Paragraph.from(Line.from(
-                        Span.styled(val.isEmpty() ? "null" : val, Style.EMPTY.fg(Color.DARK_GRAY)))), valArea);
+                        Span.styled(val.isEmpty() ? "null" : val, Theme.muted()))), valArea);
             } else if (isFocused) {
                 boolean changed = !editInputs[i].text().equals(editOriginalValues[i]);
                 Style cursorStyle = changed
@@ -810,11 +810,11 @@ class SqlQueryTab extends AbstractTab {
             Rect footerArea = new Rect(inner.left(), footerY, inner.width(), 1);
             frame.renderWidget(Paragraph.from(Line.from(
                     Span.styled(" F5", Theme.label().bold()),
-                    Span.styled("=Save  ", Style.EMPTY.fg(Color.DARK_GRAY)),
+                    Span.styled("=Save  ", Theme.muted()),
                     Span.styled("Esc", Theme.label().bold()),
-                    Span.styled("=Cancel  ", Style.EMPTY.fg(Color.DARK_GRAY)),
-                    Span.styled("*", Style.EMPTY.fg(Color.DARK_GRAY)),
-                    Span.styled("=Primary Key", Style.EMPTY.fg(Color.DARK_GRAY)))), footerArea);
+                    Span.styled("=Cancel  ", Theme.muted()),
+                    Span.styled("*", Theme.muted()),
+                    Span.styled("=Primary Key", Theme.muted()))), footerArea);
         }
     }
 

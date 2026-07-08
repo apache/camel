@@ -540,7 +540,7 @@ public class CamelCatalogTui extends CamelCommand {
         frame.renderWidget(
                 Block.builder()
                         .borders(Borders.TOP_ONLY)
-                        .borderStyle(Style.EMPTY.fg(Color.DARK_GRAY))
+                        .borderStyle(Theme.muted())
                         .build(),
                 area);
     }

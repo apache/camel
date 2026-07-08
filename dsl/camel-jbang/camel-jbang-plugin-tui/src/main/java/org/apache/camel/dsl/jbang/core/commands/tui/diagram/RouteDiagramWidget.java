@@ -301,7 +301,7 @@ public class RouteDiagramWidget implements Widget {
         } else if (external) {
             edgeStyle = Style.EMPTY.fg(externalColor());
         } else if (dashed) {
-            edgeStyle = Style.EMPTY.fg(Color.DARK_GRAY);
+            edgeStyle = Theme.muted();
         } else {
             edgeStyle = Style.EMPTY.fg(Color.GRAY);
         }

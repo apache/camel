@@ -582,7 +582,7 @@ class DiagramTab extends AbstractTab {
             } else if (ln.treeNode != null && ln.treeNode.info.remote) {
                 String arrow = "from".equals(ln.type) ? " external → " : " → external";
                 lines.add(Line.from(
-                        Span.styled(arrow, Style.EMPTY.fg(Color.DARK_GRAY))));
+                        Span.styled(arrow, Theme.muted())));
             } else {
                 lines.add(Line.from(Span.raw("")));
             }

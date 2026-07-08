@@ -132,8 +132,8 @@ class ConfigurationTabRenderTest {
         Frame frame = Frame.forTesting(buffer);
         tab.render(frame, area);
 
-        assertTrue(TuiTestHelper.findCellWithColor(buffer, "x", Color.DARK_GRAY),
-                "Secret value 'xxxxxx' should be rendered in DARK_GRAY");
+        assertTrue(TuiTestHelper.findCellWithColor(buffer, "x", Theme.muted().fg().orElse(Color.DARK_GRAY)),
+                "Secret value 'xxxxxx' should be rendered in muted color");
     }
 
     // ---- Helper methods ----
