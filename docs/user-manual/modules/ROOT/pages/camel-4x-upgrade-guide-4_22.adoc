@@ -103,6 +103,22 @@ payloads, enable stream caching on the route.
 * The `bufferSize` option has been removed. It only configured the previous streaming implementation and no longer has
 any effect with authenticated encryption.
 
+=== camel-file / camel-ftp / camel-azure-files / camel-smb - preSort option enhanced
+
+The `preSort` option on the File, FTP, FTPS, SFTP, Azure Files, and SMB consumers has changed from a `boolean`
+to a `String`. Previously, `preSort=true` sorted files by name only. The option now supports the following values:
+
+* `name` — sort by file name ascending (same behavior as old `preSort=true`)
+* `modified` — sort by last-modified timestamp ascending (oldest first)
+* `size` — sort by file size ascending (smallest first)
+* `-name`, `-modified`, `-size` — descending (reverse) order
+* `true` — backward compatible alias for `name`
+* `false` or not set — disabled (default, unchanged)
+
+The pre-sort is applied on the raw file listing before any filtering or eager limiting, which makes it possible
+to combine `preSort=modified` with `eagerMaxMessagesPerPoll=true` and `maxMessagesPerPoll=10` to efficiently
+consume the 10 oldest files without creating Exchange objects for every file on the server.
+
 === camel-mail - MimeMultipartDataFormat inbound header filtering
 
 When unmarshalling a MIME message with `headersInline=true`, the `mime-multipart` data format now applies a

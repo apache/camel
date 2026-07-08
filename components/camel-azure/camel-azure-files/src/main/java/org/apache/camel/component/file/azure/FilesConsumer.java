@@ -118,7 +118,7 @@ public class FilesConsumer extends RemoteFileConsumer<ShareFileItem> {
         LOG.trace("Found {} files in directory: {}", listedFileItems.length, path);
 
         if (getEndpoint().isPreSort()) {
-            Arrays.sort(listedFileItems, Comparator.comparing(ShareFileItem::getName));
+            Arrays.sort(listedFileItems, preSortComparator(getEndpoint().getPreSort()));
         }
 
         for (var fileItem : listedFileItems) {
@@ -270,9 +270,26 @@ public class FilesConsumer extends RemoteFileConsumer<ShareFileItem> {
     private static long lastModified(ShareFileItem file) {
         var raw = file.getProperties().getLastModified();
         if (raw == null) {
-            // if ls without metadata
             return 0;
         }
         return raw.toInstant().toEpochMilli();
+    }
+
+    private static Comparator<ShareFileItem> preSortComparator(String preSort) {
+        boolean reverse = preSort.startsWith("-");
+        String field = reverse ? preSort.substring(1) : preSort;
+        Comparator<ShareFileItem> cmp;
+        switch (field) {
+            case "modified":
+                cmp = Comparator.comparingLong(FilesConsumer::lastModified);
+                break;
+            case "size":
+                cmp = Comparator.comparingLong(ShareFileItem::getFileSize);
+                break;
+            default:
+                cmp = Comparator.comparing(ShareFileItem::getName);
+                break;
+        }
+        return reverse ? cmp.reversed() : cmp;
     }
 }

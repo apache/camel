@@ -205,11 +205,15 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
     protected boolean recursive;
     @UriParam(label = "consumer", description = "If true, the file will be deleted after it is processed successfully.")
     protected boolean delete;
-    @UriParam(label = "consumer", description = "When pre-sort is enabled then the consumer will sort the file and "
-                                                + "directory names during polling,  that was retrieved from the file system. You may want to do this in "
-                                                + "case you need to operate on the files  in a sorted order. The pre-sort is executed before the consumer "
-                                                + "starts to filter, and accept files  to process by Camel. This option is default=false meaning disabled.")
-    protected boolean preSort;
+    @UriParam(label = "consumer", enums = "true,false,name,-name,modified,-modified,size,-size",
+              description = "When pre-sort is enabled then the consumer will sort the file and "
+                            + "directory names during polling, that was retrieved from the file system. You may want to do this in "
+                            + "case you need to operate on the files in a sorted order. The pre-sort is executed before the consumer "
+                            + "starts to filter, and accept files to process by Camel. This option is default=false meaning disabled. "
+                            + "The following values are supported: name (sort by file name), modified (sort by last-modified timestamp), "
+                            + "size (sort by file size). To sort in descending (reverse) order, prefix the value with a minus sign "
+                            + "(e.g., -modified to sort newest first). The value true is an alias for name (backward compatible).")
+    protected String preSort;
     @UriParam(label = "consumer,filter", description = "To define a maximum messages to gather per poll. By default "
                                                        + "no maximum is set. Can be used to set a limit of e.g. 1000 to avoid when starting up the server that "
                                                        + "there are thousands of files. Set a value of 0 or negative to disabled it. Notice: If this option is "
@@ -715,17 +719,24 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
         this.excludeExt = excludeExt;
     }
 
-    public boolean isPreSort() {
+    public String getPreSort() {
         return preSort;
+    }
+
+    public boolean isPreSort() {
+        return preSort != null && !preSort.isBlank() && !"false".equalsIgnoreCase(preSort);
     }
 
     /**
      * When pre-sort is enabled then the consumer will sort the file and directory names during polling, that was
      * retrieved from the file system. You may want to do this in case you need to operate on the files in a sorted
      * order. The pre-sort is executed before the consumer starts to filter, and accept files to process by Camel. This
-     * option is default=false meaning disabled.
+     * option is default=false meaning disabled. The following values are supported: name (sort by file name), modified
+     * (sort by last-modified timestamp), size (sort by file size). To sort in descending (reverse) order, prefix the
+     * value with a minus sign (e.g., -modified to sort newest first). The value true is an alias for name (backward
+     * compatible).
      */
-    public void setPreSort(boolean preSort) {
+    public void setPreSort(String preSort) {
         this.preSort = preSort;
     }
 
