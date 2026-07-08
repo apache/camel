@@ -21,7 +21,6 @@ import java.util.List;
 
 import dev.tamboui.layout.Constraint;
 import dev.tamboui.layout.Rect;
-import dev.tamboui.style.Color;
 import dev.tamboui.style.Style;
 import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.Line;
@@ -117,7 +116,7 @@ class InflightTab extends AbstractTableTab {
 
             rows.add(Row.from(
                     Cell.from(Span.styled(" " + status, statusStyle)),
-                    Cell.from(Span.styled(ii.exchangeId != null ? ii.exchangeId : "", Style.EMPTY.fg(Color.CYAN))),
+                    Cell.from(Span.styled(ii.exchangeId != null ? ii.exchangeId : "", Style.EMPTY.fg(Theme.accent()))),
                     Cell.from(routeNode),
                     rightCell(duration, 14, durationStyle),
                     Cell.from(barSpan)));

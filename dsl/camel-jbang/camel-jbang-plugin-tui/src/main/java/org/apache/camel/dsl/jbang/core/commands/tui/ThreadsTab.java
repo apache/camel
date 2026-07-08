@@ -25,7 +25,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import dev.tamboui.layout.Constraint;
 import dev.tamboui.layout.Layout;
 import dev.tamboui.layout.Rect;
-import dev.tamboui.style.Color;
 import dev.tamboui.style.Style;
 import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.Line;
@@ -174,7 +173,7 @@ class ThreadsTab extends AbstractTableTab {
 
             rows.add(Row.from(
                     rightCell(String.valueOf(t.id), 8),
-                    Cell.from(Span.styled(t.name != null ? t.name : "", Style.EMPTY.fg(Color.CYAN))),
+                    Cell.from(Span.styled(t.name != null ? t.name : "", Style.EMPTY.fg(Theme.accent()))),
                     Cell.from(Span.styled(state, stateStyle(state))),
                     rightCell(blocked, 14),
                     rightCell(waited, 14)));
@@ -319,7 +318,7 @@ class ThreadsTab extends AbstractTableTab {
             case "RUNNABLE" -> Theme.success();
             case "BLOCKED" -> Theme.error();
             case "WAITING" -> Theme.warning();
-            case "TIMED_WAITING" -> Style.EMPTY.fg(Color.CYAN);
+            case "TIMED_WAITING" -> Style.EMPTY.fg(Theme.accent());
             default -> Style.EMPTY;
         };
     }

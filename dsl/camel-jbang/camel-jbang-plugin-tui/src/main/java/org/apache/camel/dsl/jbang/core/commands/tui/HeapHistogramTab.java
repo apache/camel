@@ -25,7 +25,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import dev.tamboui.layout.Constraint;
 import dev.tamboui.layout.Layout;
 import dev.tamboui.layout.Rect;
-import dev.tamboui.style.Color;
 import dev.tamboui.style.Style;
 import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.Line;
@@ -132,7 +131,7 @@ class HeapHistogramTab extends AbstractTableTab {
         for (HeapEntry e : visible) {
             rows.add(Row.from(
                     rightCell(String.valueOf(e.num), 6),
-                    Cell.from(Span.styled(e.className != null ? e.className : "", Style.EMPTY.fg(Color.CYAN))),
+                    Cell.from(Span.styled(e.className != null ? e.className : "", Style.EMPTY.fg(Theme.accent()))),
                     rightCell(formatNumber(e.instances), 14),
                     rightCell(formatBytes(e.bytes), 14)));
         }
@@ -194,7 +193,7 @@ class HeapHistogramTab extends AbstractTableTab {
         // Class info
         lines.add(Line.from(
                 Span.styled("  Class:      ", Theme.label().bold()),
-                Span.styled(className, Style.EMPTY.fg(Color.CYAN))));
+                Span.styled(className, Style.EMPTY.fg(Theme.accent()))));
         lines.add(Line.from(
                 Span.styled("  Package:    ", Theme.label().bold()),
                 Span.styled(pkg.isEmpty() ? "(none)" : pkg,

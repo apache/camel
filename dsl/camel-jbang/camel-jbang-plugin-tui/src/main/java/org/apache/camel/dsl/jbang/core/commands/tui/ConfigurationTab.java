@@ -24,7 +24,6 @@ import java.util.Map;
 import dev.tamboui.layout.Constraint;
 import dev.tamboui.layout.Layout;
 import dev.tamboui.layout.Rect;
-import dev.tamboui.style.Color;
 import dev.tamboui.style.Style;
 import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.Line;
@@ -156,7 +155,7 @@ class ConfigurationTab extends AbstractTableTab {
             }
 
             rows.add(Row.from(
-                    Cell.from(Span.styled(p.key, Style.EMPTY.fg(Color.CYAN))),
+                    Cell.from(Span.styled(p.key, Style.EMPTY.fg(Theme.accent()))),
                     Cell.from(Span.styled(value, valStyle)),
                     Cell.from(Span.styled(source, Style.EMPTY.dim()))));
         }

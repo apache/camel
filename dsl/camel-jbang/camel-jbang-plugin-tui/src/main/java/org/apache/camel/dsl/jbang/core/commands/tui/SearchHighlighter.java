@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import dev.tamboui.style.Color;
 import dev.tamboui.style.Style;
 import dev.tamboui.text.Line;
 import dev.tamboui.text.Span;
@@ -39,7 +38,7 @@ import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.hintLast;
  */
 class SearchHighlighter {
 
-    static final Style FIND_CURRENT_STYLE = Style.EMPTY.fg(Color.BLACK).bg(Color.LIGHT_GREEN);
+    static final Style FIND_CURRENT_STYLE = Theme.searchMatch();
 
     private boolean findInputActive;
     private boolean highlightInputActive;

@@ -119,7 +119,7 @@ class InflightTabRenderTest {
         Frame frame = Frame.forTesting(buffer);
         tab.render(frame, area);
 
-        boolean foundCyan = TuiTestHelper.findCellWithColor(buffer, "I", Color.CYAN);
+        boolean foundCyan = TuiTestHelper.findCellWithColor(buffer, "I", Theme.accent());
         assertTrue(foundCyan, "Exchange ID should use CYAN color");
     }
 

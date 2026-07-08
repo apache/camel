@@ -28,7 +28,6 @@ import java.util.List;
 import java.util.function.Consumer;
 
 import dev.tamboui.layout.Rect;
-import dev.tamboui.style.Color;
 import dev.tamboui.style.Style;
 import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.Line;
@@ -342,7 +341,7 @@ class FolderBrowser {
         for (int i = 0; i < entries.size(); i++) {
             DirEntry entry = entries.get(i);
             String label = "  " + entry.emoji() + " " + entry.name();
-            Style style = entry.directory() ? Style.EMPTY.fg(Color.CYAN) : Style.EMPTY;
+            Style style = entry.directory() ? Style.EMPTY.fg(Theme.accent()) : Style.EMPTY;
             items[i] = ListItem.from(Line.from(Span.styled(label, style)));
         }
 

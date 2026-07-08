@@ -25,7 +25,6 @@ import java.util.Comparator;
 import java.util.List;
 
 import dev.tamboui.layout.Rect;
-import dev.tamboui.style.Color;
 import dev.tamboui.style.Style;
 import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.CharWidth;
@@ -263,7 +262,7 @@ class FilesBrowser {
             if (entry.directory()) {
                 String label = String.format("  %s %-" + nameWidth + "s", entry.emoji(), entry.name());
                 boolean dimDir = entry.name().startsWith(".") || "target".equals(entry.name());
-                Style dirStyle = dimDir ? Style.EMPTY.fg(Color.CYAN).dim() : Style.EMPTY.fg(Color.CYAN);
+                Style dirStyle = dimDir ? Style.EMPTY.fg(Theme.accent()).dim() : Style.EMPTY.fg(Theme.accent());
                 items[i] = ListItem.from(Line.from(Span.styled(label, dirStyle)));
             } else {
                 String sizeStr = formatFileSize(entry.size());

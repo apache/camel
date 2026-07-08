@@ -33,7 +33,6 @@ import dev.tamboui.layout.Alignment;
 import dev.tamboui.layout.Constraint;
 import dev.tamboui.layout.Layout;
 import dev.tamboui.layout.Rect;
-import dev.tamboui.style.Color;
 import dev.tamboui.style.Overflow;
 import dev.tamboui.style.Style;
 import dev.tamboui.terminal.Frame;
@@ -819,7 +818,7 @@ class HistoryTab extends AbstractTab {
         } else {
             for (var it = stack.descendingIterator(); it.hasNext();) {
                 spans.add(Span.styled(it.next(), nameStyle));
-                spans.add(Span.styled(" → ", Style.EMPTY.fg(Color.GRAY)));
+                spans.add(Span.styled(" → ", Theme.muted()));
             }
             spans.add(Span.styled(diagram.getHistoryDrillDownRouteId(), nameStyle));
         }
@@ -924,7 +923,7 @@ class HistoryTab extends AbstractTab {
                 Span.raw(exchangeId)));
         lines.add(Line.from(
                 Span.styled(" Route:    ", Theme.label().bold()),
-                Span.styled(routeId != null ? routeId : "", Style.EMPTY.fg(Color.CYAN))));
+                Span.styled(routeId != null ? routeId : "", Style.EMPTY.fg(Theme.accent()))));
         lines.add(Line.from(
                 Span.styled(" Node:     ", Theme.label().bold()),
                 Span.raw(nodeId != null ? nodeId : "")));
@@ -1035,7 +1034,7 @@ class HistoryTab extends AbstractTab {
             boolean keyChanged = sectionChanged && prevMap != null
                     && (!prevMap.containsKey(entry.getKey())
                             || !Objects.equals(prevMap.get(entry.getKey()), entry.getValue()));
-            Style keyStyle = keyChanged ? Theme.change() : Style.EMPTY.fg(Color.CYAN);
+            Style keyStyle = keyChanged ? Theme.change() : Style.EMPTY.fg(Theme.accent());
             Style valStyle = keyChanged ? Theme.change() : Style.EMPTY;
             lines.add(Line.from(
                     Span.styled(" " + entry.getKey(), keyStyle),
@@ -1203,7 +1202,7 @@ class HistoryTab extends AbstractTab {
                     Cell.from(s.timestamp != null ? TuiHelper.truncate(s.timestamp, 12) : ""),
                     Cell.from(Span.styled(
                             s.routeId != null ? TuiHelper.truncate(s.routeId, 25) : "",
-                            Style.EMPTY.fg(Color.CYAN))),
+                            Style.EMPTY.fg(Theme.accent()))),
                     Cell.from(Span.styled(s.status, statusStyle)),
                     rightCell(s.elapsed + "ms", 10),
                     rightCell(String.valueOf(s.steps), 6),
@@ -1496,7 +1495,7 @@ class HistoryTab extends AbstractTab {
         String durationStr = entry.elapsed + "ms";
         int pad = Math.max(1, 8 - durationStr.length());
 
-        Style labelStyle = selected ? Style.EMPTY.fg(Color.CYAN).bold() : Style.EMPTY.fg(Color.CYAN);
+        Style labelStyle = selected ? Style.EMPTY.fg(Theme.accent()).bold() : Style.EMPTY.fg(Theme.accent());
 
         return Line.from(
                 Span.styled(indicator, Theme.label().bold()),
@@ -1917,7 +1916,7 @@ class HistoryTab extends AbstractTab {
                 rightCell(String.valueOf(stepNumber), 3),
                 Cell.from(Span.styled(direction, dirStyle)),
                 Cell.from(timestamp != null ? TuiHelper.truncate(timestamp, 12) : ""),
-                Cell.from(Span.styled(routeId != null ? TuiHelper.truncate(routeId, 25) : "", Style.EMPTY.fg(Color.CYAN))),
+                Cell.from(Span.styled(routeId != null ? TuiHelper.truncate(routeId, 25) : "", Style.EMPTY.fg(Theme.accent()))),
                 Cell.from(indent + (nodeId != null ? TuiHelper.truncate(nodeId, 25) : "")),
                 Cell.from(indent + display),
                 Cell.from(Line.from(changeSpans)),
@@ -2084,7 +2083,7 @@ class HistoryTab extends AbstractTab {
             boolean keyChanged = changed && prevMap != null
                     && (!prevMap.containsKey(entry.getKey())
                             || !Objects.equals(prevMap.get(entry.getKey()), entry.getValue()));
-            Style keyStyle = keyChanged ? Theme.change() : Style.EMPTY.fg(Color.CYAN);
+            Style keyStyle = keyChanged ? Theme.change() : Style.EMPTY.fg(Theme.accent());
             Style valStyle = keyChanged ? Theme.change() : Style.EMPTY;
             lines.add(Line.from(
                     Span.styled("   " + typeLabel, Style.EMPTY.dim()),

@@ -25,7 +25,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import dev.tamboui.layout.Constraint;
 import dev.tamboui.layout.Layout;
 import dev.tamboui.layout.Rect;
-import dev.tamboui.style.Color;
 import dev.tamboui.style.Style;
 import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.Line;
@@ -201,7 +200,7 @@ class BeansTab extends AbstractTableTab {
             String shortType = dot >= 0 ? type.substring(dot + 1) : type;
 
             rows.add(Row.from(
-                    Cell.from(Span.styled(b.name != null ? b.name : "", Style.EMPTY.fg(Color.CYAN))),
+                    Cell.from(Span.styled(b.name != null ? b.name : "", Style.EMPTY.fg(Theme.accent()))),
                     Cell.from(Span.styled(shortType, Style.EMPTY))));
         }
 
@@ -277,7 +276,7 @@ class BeansTab extends AbstractTableTab {
                 String value = prop.value != null ? prop.value : "null";
 
                 lines.add(Line.from(
-                        Span.styled("  " + String.format("%-" + nameWidth + "s", prop.name), Style.EMPTY.fg(Color.CYAN)),
+                        Span.styled("  " + String.format("%-" + nameWidth + "s", prop.name), Style.EMPTY.fg(Theme.accent())),
                         Span.styled(String.format("%-15s", shortPropType), Style.EMPTY.dim()),
                         Span.styled(" = ", Style.EMPTY.dim()),
                         Span.styled(value, "null".equals(value) ? Style.EMPTY.dim() : Style.EMPTY.fg(Theme.baseFg()))));

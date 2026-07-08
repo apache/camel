@@ -30,7 +30,6 @@ import java.util.stream.Collectors;
 import dev.tamboui.layout.Constraint;
 import dev.tamboui.layout.Layout;
 import dev.tamboui.layout.Rect;
-import dev.tamboui.style.Color;
 import dev.tamboui.style.Style;
 import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.Line;
@@ -256,7 +255,7 @@ class MetricsTab extends AbstractTableTab {
                     .split(area);
             frame.renderWidget(Paragraph.from(Line.from(
                     Span.styled("  Endpoint: ", LABEL),
-                    Span.styled(metricsUrl, Style.EMPTY.fg(Color.CYAN)))), vParts.get(0));
+                    Span.styled(metricsUrl, Style.EMPTY.fg(Theme.accent())))), vParts.get(0));
             panelArea = vParts.get(1);
         }
 
@@ -320,7 +319,7 @@ class MetricsTab extends AbstractTableTab {
                         rt.max != null ? rt.max : 0);
                 int pad = Math.max(1, 30 - routeId.length());
                 lines.add(Line.from(
-                        Span.styled("    " + routeId, Style.EMPTY.fg(Color.CYAN)),
+                        Span.styled("    " + routeId, Style.EMPTY.fg(Theme.accent())),
                         Span.styled(" ".repeat(pad), Style.EMPTY),
                         Span.styled(timing, VALUE)));
             }
@@ -341,7 +340,7 @@ class MetricsTab extends AbstractTableTab {
                         et.max != null ? et.max : 0);
                 int pad = Math.max(1, 30 - shortName.length());
                 lines.add(Line.from(
-                        Span.styled("    " + shortName, Style.EMPTY.fg(Color.CYAN)),
+                        Span.styled("    " + shortName, Style.EMPTY.fg(Theme.accent())),
                         Span.styled(" ".repeat(pad), Style.EMPTY),
                         Span.styled(timing, VALUE)));
             }
@@ -474,7 +473,7 @@ class MetricsTab extends AbstractTableTab {
 
             rows.add(Row.from(
                     Cell.from(Span.styled(typeLabel, typeStyle)),
-                    Cell.from(Span.styled(m.name != null ? m.name : "", Style.EMPTY.fg(Color.CYAN))),
+                    Cell.from(Span.styled(m.name != null ? m.name : "", Style.EMPTY.fg(Theme.accent()))),
                     Cell.from(value),
                     Cell.from(Span.styled(tags, Style.EMPTY.dim()))));
         }
@@ -642,7 +641,7 @@ class MetricsTab extends AbstractTableTab {
     // ---- Prometheus syntax coloring ----
 
     private static final Style PROM_COMMENT = Style.EMPTY.dim();
-    private static final Style PROM_NAME = Style.EMPTY.fg(Color.CYAN);
+    private static final Style PROM_NAME = Style.EMPTY.fg(Theme.accent());
     private static final Style PROM_VALUE = Style.EMPTY.fg(Theme.baseFg()).bold();
 
     private static Line colorPrometheusLine(String line) {
@@ -833,11 +832,11 @@ class MetricsTab extends AbstractTableTab {
             return Style.EMPTY;
         }
         return switch (type) {
-            case "counter" -> Style.EMPTY.fg(Color.LIGHT_BLUE);
-            case "gauge" -> Style.EMPTY.fg(Color.LIGHT_GREEN);
-            case "timer" -> Style.EMPTY.fg(Color.LIGHT_YELLOW);
-            case "longTaskTimer" -> Style.EMPTY.fg(Color.LIGHT_MAGENTA);
-            case "distribution" -> Style.EMPTY.fg(Color.LIGHT_CYAN);
+            case "counter" -> Style.EMPTY.fg(Theme.accent());
+            case "gauge" -> Theme.success();
+            case "timer" -> Theme.warning();
+            case "longTaskTimer" -> Theme.notice();
+            case "distribution" -> Theme.info();
             default -> Style.EMPTY;
         };
     }

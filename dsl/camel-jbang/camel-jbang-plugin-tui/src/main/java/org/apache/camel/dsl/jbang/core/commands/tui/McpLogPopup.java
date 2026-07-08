@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.function.Supplier;
 
 import dev.tamboui.layout.Rect;
-import dev.tamboui.style.Color;
 import dev.tamboui.style.Style;
 import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.Line;
@@ -137,7 +136,7 @@ class McpLogPopup {
         for (TuiMcpServer.LogEntry entry : entries) {
             Style levelStyle = switch (entry.level()) {
                 case CONNECT -> Theme.success();
-                case TOOL -> Style.EMPTY.fg(Color.CYAN);
+                case TOOL -> Style.EMPTY.fg(Theme.accent());
                 case ERROR -> Theme.error();
                 default -> Theme.success();
             };

@@ -72,7 +72,7 @@ class ConfigurationTabRenderTest {
         Frame frame = Frame.forTesting(buffer);
         tab.render(frame, area);
 
-        assertTrue(TuiTestHelper.findCellWithColor(buffer, "c", Color.CYAN),
+        assertTrue(TuiTestHelper.findCellWithColor(buffer, "c", Theme.accent()),
                 "Property key should be rendered in CYAN");
     }
 

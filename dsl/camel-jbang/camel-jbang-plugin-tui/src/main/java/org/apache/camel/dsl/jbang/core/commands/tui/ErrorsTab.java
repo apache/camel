@@ -23,7 +23,6 @@ import java.util.Map;
 import dev.tamboui.layout.Constraint;
 import dev.tamboui.layout.Layout;
 import dev.tamboui.layout.Rect;
-import dev.tamboui.style.Color;
 import dev.tamboui.style.Overflow;
 import dev.tamboui.style.Style;
 import dev.tamboui.terminal.Frame;
@@ -341,7 +340,7 @@ class ErrorsTab extends AbstractTableTab {
             rows.add(Row.from(
                     Cell.from(ei.exchangeId != null ? ei.exchangeId : ""),
                     Cell.from(ago),
-                    Cell.from(Span.styled(ei.routeId != null ? ei.routeId : "", Style.EMPTY.fg(Color.CYAN))),
+                    Cell.from(Span.styled(ei.routeId != null ? ei.routeId : "", Style.EMPTY.fg(Theme.accent()))),
                     Cell.from(ei.nodeId != null ? ei.nodeId : ""),
                     Cell.from(Span.styled(handledStr, handledStyle)),
                     Cell.from(shortException),
@@ -480,7 +479,7 @@ class ErrorsTab extends AbstractTableTab {
 
         // message history
         if (ei.messageHistory != null && ei.messageHistory.length > 0) {
-            lines.add(Line.from(Span.styled(" Message History:", Style.EMPTY.fg(Color.MAGENTA).bold())));
+            lines.add(Line.from(Span.styled(" Message History:", Theme.notice().bold())));
             for (String step : ei.messageHistory) {
                 lines.add(Line.from(Span.raw("   " + TuiHelper.fixControlChars(step))));
             }
@@ -576,7 +575,7 @@ class ErrorsTab extends AbstractTableTab {
         } else {
             for (var it = stack.descendingIterator(); it.hasNext();) {
                 spans.add(Span.styled(it.next(), nameStyle));
-                spans.add(Span.styled(" → ", Style.EMPTY.fg(Color.GRAY)));
+                spans.add(Span.styled(" → ", Theme.muted()));
             }
             spans.add(Span.styled(diagram.getHistoryDrillDownRouteId(), nameStyle));
         }
@@ -610,7 +609,7 @@ class ErrorsTab extends AbstractTableTab {
                 Span.raw(ei.exchangeId != null ? ei.exchangeId : "")));
         lines.add(Line.from(
                 Span.styled(" Route:    ", Theme.label().bold()),
-                Span.styled(ei.routeId != null ? ei.routeId : "", Style.EMPTY.fg(Color.CYAN))));
+                Span.styled(ei.routeId != null ? ei.routeId : "", Style.EMPTY.fg(Theme.accent()))));
         lines.add(Line.from(
                 Span.styled(" Node:     ", Theme.label().bold()),
                 Span.raw(ei.nodeId != null ? ei.nodeId : "")));
@@ -679,7 +678,7 @@ class ErrorsTab extends AbstractTableTab {
         for (var entry : map.entrySet()) {
             String val = entry.getValue() != null ? entry.getValue().toString() : "null";
             lines.add(Line.from(
-                    Span.styled(" " + entry.getKey(), Style.EMPTY.fg(Color.CYAN)),
+                    Span.styled(" " + entry.getKey(), Style.EMPTY.fg(Theme.accent())),
                     Span.raw(" = " + val)));
         }
     }

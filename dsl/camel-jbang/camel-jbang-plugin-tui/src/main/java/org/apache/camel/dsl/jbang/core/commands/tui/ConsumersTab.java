@@ -23,7 +23,6 @@ import java.util.List;
 
 import dev.tamboui.layout.Constraint;
 import dev.tamboui.layout.Rect;
-import dev.tamboui.style.Color;
 import dev.tamboui.style.Style;
 import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.Span;
@@ -100,7 +99,7 @@ class ConsumersTab extends AbstractTableTab {
                     : (ci.uri != null ? ci.uri : "");
 
             rows.add(Row.from(
-                    Cell.from(Span.styled(" " + (ci.id != null ? ci.id : ""), Style.EMPTY.fg(Color.CYAN))),
+                    Cell.from(Span.styled(" " + (ci.id != null ? ci.id : ""), Style.EMPTY.fg(Theme.accent()))),
                     Cell.from(Span.styled(statusText, statusStyle)),
                     Cell.from(type),
                     rightCell(String.valueOf(ci.inflight), 8),

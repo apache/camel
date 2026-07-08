@@ -21,7 +21,6 @@ import java.util.List;
 
 import dev.tamboui.layout.Constraint;
 import dev.tamboui.layout.Rect;
-import dev.tamboui.style.Color;
 import dev.tamboui.style.Style;
 import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.Span;
@@ -117,7 +116,7 @@ class HealthTab extends AbstractTableTab {
 
             rows.add(Row.from(
                     Cell.from(Span.styled(" " + (hc.group != null ? hc.group : ""), Style.EMPTY.dim())),
-                    Cell.from(Span.styled(hc.name != null ? hc.name : "", Style.EMPTY.fg(Color.CYAN))),
+                    Cell.from(Span.styled(hc.name != null ? hc.name : "", Style.EMPTY.fg(Theme.accent()))),
                     Cell.from(Span.styled(icon + hc.state, stateStyle)),
                     Cell.from(kind),
                     Cell.from(hc.message != null ? hc.message : "")));

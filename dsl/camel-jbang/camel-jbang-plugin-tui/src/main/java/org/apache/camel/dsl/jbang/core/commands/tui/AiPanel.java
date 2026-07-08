@@ -29,7 +29,6 @@ import dev.tamboui.layout.Constraint;
 import dev.tamboui.layout.Layout;
 import dev.tamboui.layout.Rect;
 import dev.tamboui.markdown.MarkdownView;
-import dev.tamboui.style.Color;
 import dev.tamboui.style.Style;
 import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.Line;
@@ -606,7 +605,7 @@ class AiPanel {
         String text = inputBuffer.toString();
 
         List<Span> spans = new ArrayList<>();
-        spans.add(Span.styled(prompt, Style.EMPTY.fg(Color.CYAN).bold()));
+        spans.add(Span.styled(prompt, Style.EMPTY.fg(Theme.accent()).bold()));
 
         if (thinking.get()) {
             spans.add(Span.styled(text, Style.EMPTY.dim()));
@@ -734,7 +733,7 @@ class AiPanel {
         // --- Summary ---
         Rect summaryArea = sections.get(0);
         Style dimStyle = Style.EMPTY.dim();
-        Style cyanStyle = Style.EMPTY.fg(Color.CYAN);
+        Style cyanStyle = Style.EMPTY.fg(Theme.accent());
         List<Line> summaryLines = new ArrayList<>();
         summaryLines.add(Line.from(
                 Span.styled("Requests: ", dimStyle),
@@ -808,7 +807,7 @@ class AiPanel {
                         Bar.builder()
                                 .value(turnTokens.get(i))
                                 .textValue("")
-                                .style(Style.EMPTY.fg(Color.CYAN))
+                                .style(Style.EMPTY.fg(Theme.accent()))
                                 .build()));
             }
 
@@ -831,7 +830,7 @@ class AiPanel {
         List<Line> lines = new ArrayList<>();
         for (int i = 0; i < area.height(); i++) {
             if (i >= thumbPos && i < thumbPos + thumbSize) {
-                lines.add(Line.from(Span.styled("▐", Style.EMPTY.fg(Color.CYAN))));
+                lines.add(Line.from(Span.styled("▐", Style.EMPTY.fg(Theme.accent()))));
             } else {
                 lines.add(Line.from(Span.styled("│", Style.EMPTY.dim())));
             }

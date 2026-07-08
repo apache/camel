@@ -20,7 +20,6 @@ import java.util.List;
 import java.util.function.Supplier;
 
 import dev.tamboui.layout.Rect;
-import dev.tamboui.style.Color;
 import dev.tamboui.style.Style;
 import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.CharWidth;
@@ -478,7 +477,7 @@ class PopupManager {
             String label = String.format("  %s %s (pid:%s)%s", TuiIcons.CAMEL, name, info.pid,
                     current ? " " + TuiIcons.SELECTED : "");
             if (current) {
-                items[i] = ListItem.from(Line.from(Span.styled(label, Style.EMPTY.fg(Color.CYAN))));
+                items[i] = ListItem.from(Line.from(Span.styled(label, Style.EMPTY.fg(Theme.accent()))));
             } else {
                 items[i] = ListItem.from(label);
             }

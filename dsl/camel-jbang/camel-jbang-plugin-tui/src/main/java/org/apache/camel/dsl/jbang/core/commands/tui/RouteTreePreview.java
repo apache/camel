@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import dev.tamboui.style.Color;
 import dev.tamboui.style.Style;
 import dev.tamboui.text.Line;
 import dev.tamboui.text.Span;
@@ -113,7 +112,7 @@ class RouteTreePreview {
         if ("from".equals(type)) {
             style = Theme.label();
         } else if (STRUCTURAL_TYPES.contains(type)) {
-            style = Style.EMPTY.fg(Color.CYAN);
+            style = Style.EMPTY.fg(Theme.accent());
         } else {
             style = Style.EMPTY;
         }

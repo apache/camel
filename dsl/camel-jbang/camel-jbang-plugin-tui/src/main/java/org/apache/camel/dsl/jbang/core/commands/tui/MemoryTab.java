@@ -26,7 +26,6 @@ import dev.tamboui.buffer.Buffer;
 import dev.tamboui.layout.Constraint;
 import dev.tamboui.layout.Layout;
 import dev.tamboui.layout.Rect;
-import dev.tamboui.style.Color;
 import dev.tamboui.style.Style;
 import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.Line;
@@ -127,7 +126,7 @@ class MemoryTab extends AbstractTab {
         // Heap memory with two gauge bars (used/committed and used/max)
         if (info.heapMemUsed > 0) {
             lines.add(Line.from(
-                    Span.styled("  Heap Memory", Style.EMPTY.fg(Color.CYAN).bold())));
+                    Span.styled("  Heap Memory", Style.EMPTY.fg(Theme.accent()).bold())));
 
             // Compute heap trend from history
             LinkedList<Long> hist = heapMemHistory.get(info.pid);
@@ -194,7 +193,7 @@ class MemoryTab extends AbstractTab {
         if (info.nonHeapMemUsed > 0) {
             lines.add(Line.from(Span.raw("")));
             lines.add(Line.from(
-                    Span.styled("  Non-Heap Memory", Style.EMPTY.fg(Color.CYAN).bold())));
+                    Span.styled("  Non-Heap Memory", Style.EMPTY.fg(Theme.accent()).bold())));
             lines.add(Line.from(
                     Span.styled("  used:      ", Style.EMPTY.dim()),
                     Span.styled(String.format("%-10s", formatBytes(info.nonHeapMemUsed)),
@@ -217,7 +216,7 @@ class MemoryTab extends AbstractTab {
         if (info.threadCount > 0) {
             lines.add(Line.from(Span.raw("")));
             List<Span> threadSpans = new ArrayList<>();
-            threadSpans.add(Span.styled("  Threads", Style.EMPTY.fg(Color.CYAN).bold()));
+            threadSpans.add(Span.styled("  Threads", Style.EMPTY.fg(Theme.accent()).bold()));
             threadSpans.add(Span.styled("  current: ", Style.EMPTY.dim()));
             threadSpans.add(Span.styled(String.valueOf(info.threadCount), Style.EMPTY.fg(Theme.baseFg()).bold()));
             threadSpans.add(Span.styled("  peak: ", Style.EMPTY.dim()));

@@ -303,7 +303,7 @@ public class RouteDiagramWidget implements Widget {
         } else if (dashed) {
             edgeStyle = Theme.muted();
         } else {
-            edgeStyle = Style.EMPTY.fg(Color.GRAY);
+            edgeStyle = Theme.muted();
         }
 
         if (fromCx == toCx) {

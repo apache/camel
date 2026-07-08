@@ -569,7 +569,7 @@ class RoutesTab extends AbstractTab {
                         : Style.EMPTY;
 
                 routeRows.add(Row.from(
-                        Cell.from(Span.styled(route.routeId != null ? route.routeId : "", Style.EMPTY.fg(Color.CYAN))),
+                        Cell.from(Span.styled(route.routeId != null ? route.routeId : "", Style.EMPTY.fg(Theme.accent()))),
                         Cell.from(routeFromLabel(route)),
                         rightCell(route.total > 0 ? String.valueOf(route.meanTime) : "", 6, topTimeStyle(route.meanTime)),
                         rightCell(route.total > 0 ? String.valueOf(route.maxTime) : "", 6, topTimeStyle(route.maxTime)),
@@ -631,7 +631,7 @@ class RoutesTab extends AbstractTab {
                 String sinceLastRoute = formatSinceLastRoute(route);
 
                 routeRows.add(Row.from(
-                        Cell.from(Span.styled(route.routeId != null ? route.routeId : "", Style.EMPTY.fg(Color.CYAN))),
+                        Cell.from(Span.styled(route.routeId != null ? route.routeId : "", Style.EMPTY.fg(Theme.accent()))),
                         Cell.from(routeFromLabel(route)),
                         Cell.from(Span.styled(route.state != null ? route.state : "", stateStyle)),
                         Cell.from(route.uptime != null ? route.uptime : ""),
@@ -910,7 +910,7 @@ class RoutesTab extends AbstractTab {
                 boolean isInbound = "external-in".equals(topoNode.nodeType);
                 lines.add(Line.from(
                         Span.styled(isInbound ? " Inbound" : " Outbound",
-                                Style.EMPTY.fg(Color.CYAN).bold())));
+                                Style.EMPTY.fg(Theme.accent()).bold())));
                 lines.add(Line.from(Span.raw("")));
                 lines.add(Line.from(
                         Span.styled(" URI: ", Style.EMPTY.dim()),
@@ -941,7 +941,7 @@ class RoutesTab extends AbstractTab {
                 }
             } else {
                 lines.add(Line.from(
-                        Span.styled(" " + routeId, Style.EMPTY.fg(Color.CYAN).bold())));
+                        Span.styled(" " + routeId, Style.EMPTY.fg(Theme.accent()).bold())));
                 lines.add(Line.from(
                         Span.styled(" (external endpoint)", Style.EMPTY.dim())));
             }
@@ -1093,7 +1093,7 @@ class RoutesTab extends AbstractTab {
             }
 
             for (ProcessorInfo proc : sorted) {
-                Style nameStyle = proc.failed > 0 ? Theme.error() : Style.EMPTY.fg(Color.CYAN);
+                Style nameStyle = proc.failed > 0 ? Theme.error() : Style.EMPTY.fg(Theme.accent());
                 long chartVal = procChartValue(proc);
                 String bar;
                 if (chartVal > 0) {
@@ -1105,7 +1105,7 @@ class RoutesTab extends AbstractTab {
                 }
                 Style barStyle = topTimeStyle(chartVal);
                 if (barStyle == Style.EMPTY) {
-                    barStyle = Style.EMPTY.fg(Color.CYAN);
+                    barStyle = Style.EMPTY.fg(Theme.accent());
                 }
 
                 rows.add(Row.from(
@@ -1157,7 +1157,7 @@ class RoutesTab extends AbstractTab {
             List<Row> rows = new ArrayList<>();
 
             // Synthetic top row representing the route itself
-            Style routeStyle = route.failed > 0 ? Theme.error() : Style.EMPTY.fg(Color.CYAN);
+            Style routeStyle = route.failed > 0 ? Theme.error() : Style.EMPTY.fg(Theme.accent());
             rows.add(Row.from(
                     Cell.from("   route"),
                     Cell.from(Span.styled(route.from != null ? route.from : route.routeId, routeStyle)),
@@ -1173,7 +1173,7 @@ class RoutesTab extends AbstractTab {
 
             for (ProcessorInfo proc : route.processors) {
                 String indent = "  ".repeat(proc.level);
-                Style nameStyle = proc.failed > 0 ? Theme.error() : Style.EMPTY.fg(Color.CYAN);
+                Style nameStyle = proc.failed > 0 ? Theme.error() : Style.EMPTY.fg(Theme.accent());
 
                 rows.add(Row.from(
                         Cell.from("   " + (proc.processor != null ? proc.processor : "")),

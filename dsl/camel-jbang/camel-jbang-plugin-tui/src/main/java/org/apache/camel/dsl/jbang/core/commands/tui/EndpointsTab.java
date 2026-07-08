@@ -29,7 +29,6 @@ import dev.tamboui.layout.Constraint;
 import dev.tamboui.layout.Layout;
 import dev.tamboui.layout.Rect;
 import dev.tamboui.markdown.MarkdownView;
-import dev.tamboui.style.Color;
 import dev.tamboui.style.Style;
 import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.CharWidth;
@@ -219,7 +218,7 @@ class EndpointsTab extends AbstractTableTab {
             String dir = ep.direction != null ? ep.direction : "";
             Style dirStyle = switch (dir) {
                 case "in" -> Theme.success();
-                case "out" -> Style.EMPTY.fg(Color.CYAN);
+                case "out" -> Style.EMPTY.fg(Theme.accent());
                 default -> Theme.label();
             };
             String arrow = switch (dir) {
@@ -229,7 +228,7 @@ class EndpointsTab extends AbstractTableTab {
             };
 
             List<Cell> cells = new ArrayList<>();
-            cells.add(Cell.from(Span.styled(ep.component != null ? ep.component : "", Style.EMPTY.fg(Color.CYAN))));
+            cells.add(Cell.from(Span.styled(ep.component != null ? ep.component : "", Style.EMPTY.fg(Theme.accent()))));
             cells.add(Cell.from(ep.routeId != null ? ep.routeId : ""));
             cells.add(Cell.from(Span.styled(arrow + dir, dirStyle)));
             cells.add(rightCell(ep.hits > 0 ? String.valueOf(ep.hits) : "", 8));
@@ -466,7 +465,7 @@ class EndpointsTab extends AbstractTableTab {
         String outLabelStr = " ".repeat(outLabelPad) + "out";
 
         Style inStyle = Theme.success();
-        Style outStyle = Style.EMPTY.fg(Color.CYAN);
+        Style outStyle = Style.EMPTY.fg(Theme.accent());
         Style dimStyle = Style.EMPTY.dim();
 
         List<Line> flowLines = new ArrayList<>();
@@ -524,7 +523,7 @@ class EndpointsTab extends AbstractTableTab {
         Line chartTitle = Line.from(
                 Span.styled("▬", Theme.success()),
                 Span.raw(String.format(" in:%-4s ", MetricsCollector.formatThroughput(curIn))),
-                Span.styled("▬", Style.EMPTY.fg(Color.CYAN)),
+                Span.styled("▬", Style.EMPTY.fg(Theme.accent())),
                 Span.raw(String.format(" out:%-4s msg/s", MetricsCollector.formatThroughput(curOut))));
 
         Rect rightArea = hParts.get(1);
@@ -532,7 +531,7 @@ class EndpointsTab extends AbstractTableTab {
                 .topData(inArr)
                 .bottomData(outArr)
                 .topStyle(Theme.success())
-                .bottomStyle(Style.EMPTY.fg(Color.CYAN))
+                .bottomStyle(Style.EMPTY.fg(Theme.accent()))
                 .showYAxis(true)
                 .xLabels("-" + renderPoints + "s", "-" + (renderPoints * 3 / 4) + "s",
                         "-" + (renderPoints / 2) + "s", "-" + (renderPoints / 4) + "s", "now")
@@ -579,7 +578,7 @@ class EndpointsTab extends AbstractTableTab {
         String outLabelStr = " ".repeat(outLabelPad) + "out";
 
         Style inStyle = Theme.success();
-        Style outStyle = Style.EMPTY.fg(Color.CYAN);
+        Style outStyle = Style.EMPTY.fg(Theme.accent());
         Style dimStyle = Style.EMPTY.dim();
 
         List<Line> flowLines = new ArrayList<>();
@@ -637,14 +636,14 @@ class EndpointsTab extends AbstractTableTab {
                 Span.raw("] "),
                 Span.styled("▬", Theme.success()),
                 Span.raw(String.format(" in:%-4s ", MetricsCollector.formatThroughput(curIn))),
-                Span.styled("▬", Style.EMPTY.fg(Color.CYAN)),
+                Span.styled("▬", Style.EMPTY.fg(Theme.accent())),
                 Span.raw(String.format(" out:%-4s msg/s", MetricsCollector.formatThroughput(curOut))));
 
         frame.renderWidget(DualSparkline.builder()
                 .topData(inArr)
                 .bottomData(outArr)
                 .topStyle(Theme.success())
-                .bottomStyle(Style.EMPTY.fg(Color.CYAN))
+                .bottomStyle(Style.EMPTY.fg(Theme.accent()))
                 .showYAxis(true)
                 .xLabels("-" + renderPoints + "s", "-" + (renderPoints * 3 / 4) + "s",
                         "-" + (renderPoints / 2) + "s", "-" + (renderPoints / 4) + "s", "now")
@@ -676,14 +675,14 @@ class EndpointsTab extends AbstractTableTab {
         Line chartTitle = Line.from(
                 Span.styled("▬", Theme.label()),
                 Span.raw(String.format(" in:%-8s ", sizeToString(curIn))),
-                Span.styled("▬", Style.EMPTY.fg(Color.MAGENTA)),
+                Span.styled("▬", Theme.notice()),
                 Span.raw(String.format(" out:%-8s avg body", sizeToString(curOut))));
 
         frame.renderWidget(DualSparkline.builder()
                 .topData(inArr)
                 .bottomData(outArr)
                 .topStyle(Theme.label())
-                .bottomStyle(Style.EMPTY.fg(Color.MAGENTA))
+                .bottomStyle(Theme.notice())
                 .showYAxis(true)
                 .xLabels("-" + renderPoints + "s", "-" + (renderPoints * 3 / 4) + "s",
                         "-" + (renderPoints / 2) + "s", "-" + (renderPoints / 4) + "s", "now")

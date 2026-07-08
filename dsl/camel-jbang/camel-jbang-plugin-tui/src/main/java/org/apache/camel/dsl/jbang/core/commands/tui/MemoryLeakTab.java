@@ -26,7 +26,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import dev.tamboui.layout.Constraint;
 import dev.tamboui.layout.Layout;
 import dev.tamboui.layout.Rect;
-import dev.tamboui.style.Color;
 import dev.tamboui.style.Style;
 import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.Line;
@@ -266,11 +265,11 @@ class MemoryLeakTab extends AbstractTab {
                 lines.add(Line.from(
                         Span.styled("  Runs two sequential JFR recordings:", Style.EMPTY.dim())));
                 lines.add(Line.from(
-                        Span.styled("    Run 1: ", Style.EMPTY.fg(Color.CYAN)),
+                        Span.styled("    Run 1: ", Style.EMPTY.fg(Theme.accent())),
                         Span.styled(duration + "s", Style.EMPTY.fg(Theme.baseFg())),
                         Span.styled(" baseline recording", Style.EMPTY.dim())));
                 lines.add(Line.from(
-                        Span.styled("    Run 2: ", Style.EMPTY.fg(Color.CYAN)),
+                        Span.styled("    Run 2: ", Style.EMPTY.fg(Theme.accent())),
                         Span.styled((duration * 2) + "s", Style.EMPTY.fg(Theme.baseFg())),
                         Span.styled(" comparison recording (2x duration)", Style.EMPTY.dim())));
                 lines.add(Line.from(
@@ -393,7 +392,7 @@ class MemoryLeakTab extends AbstractTab {
             String totalStr = e.sampledSize > 0 ? formatBytes(e.sampledSize) : "-";
             rows.add(Row.from(
                     rightCell(String.valueOf(e.num), 6),
-                    Cell.from(Span.styled(e.className != null ? e.className : "", Style.EMPTY.fg(Color.CYAN))),
+                    Cell.from(Span.styled(e.className != null ? e.className : "", Style.EMPTY.fg(Theme.accent()))),
                     rightCell(String.valueOf(e.count), 8),
                     rightCell(totalStr, 12),
                     rightCell(formatDuration(e.objectAge), 12)));
@@ -466,7 +465,7 @@ class MemoryLeakTab extends AbstractTab {
         // Sample info
         lines.add(Line.from(
                 Span.styled("  Class:  ", Theme.label().bold()),
-                Span.styled(entry.className != null ? entry.className : "unknown", Style.EMPTY.fg(Color.CYAN))));
+                Span.styled(entry.className != null ? entry.className : "unknown", Style.EMPTY.fg(Theme.accent()))));
 
         List<Span> infoSpans = new ArrayList<>();
         if (entry.count > 1) {
@@ -499,8 +498,8 @@ class MemoryLeakTab extends AbstractTab {
                 String descInfo = link.description != null ? " [" + link.description + "]" : "";
 
                 lines.add(Line.from(
-                        Span.styled(prefix, Style.EMPTY.fg(Color.BLUE)),
-                        Span.styled(typeName, Style.EMPTY.fg(Color.CYAN)),
+                        Span.styled(prefix, Style.EMPTY.fg(Theme.accent())),
+                        Span.styled(typeName, Style.EMPTY.fg(Theme.accent())),
                         Span.styled(fieldInfo, Theme.success()),
                         Span.styled(descInfo, Style.EMPTY.dim())));
             }
@@ -555,7 +554,7 @@ class MemoryLeakTab extends AbstractTab {
 
             rows.add(Row.from(
                     rightCell(String.valueOf(i + 1), 4),
-                    Cell.from(Span.styled(e.className != null ? e.className : "", Style.EMPTY.fg(Color.CYAN))),
+                    Cell.from(Span.styled(e.className != null ? e.className : "", Style.EMPTY.fg(Theme.accent()))),
                     rightCell(run1, 10),
                     rightCell(run2, 10),
                     rightCell(growth, 8),
@@ -619,7 +618,7 @@ class MemoryLeakTab extends AbstractTab {
 
         lines.add(Line.from(
                 Span.styled("  Class:   ", Theme.label().bold()),
-                Span.styled(entry.className != null ? entry.className : "unknown", Style.EMPTY.fg(Color.CYAN))));
+                Span.styled(entry.className != null ? entry.className : "unknown", Style.EMPTY.fg(Theme.accent()))));
         lines.add(Line.from(
                 Span.styled("  Trend:   ", Theme.label().bold()),
                 trendSpan(entry.trend)));
@@ -638,7 +637,7 @@ class MemoryLeakTab extends AbstractTab {
             lines.add(Line.from(
                     Span.styled("  Growth:  ", Theme.label().bold()),
                     Span.styled(growthLabel,
-                            entry.growthRatio > 1.3 ? Style.EMPTY.fg(Color.RED).bold() : Style.EMPTY.fg(Theme.baseFg()))));
+                            entry.growthRatio > 1.3 ? Theme.error().bold() : Style.EMPTY.fg(Theme.baseFg()))));
         }
         if (entry.lowConfidence) {
             lines.add(Line.from(
@@ -662,8 +661,8 @@ class MemoryLeakTab extends AbstractTab {
                 String fieldInfo = link.field != null ? " (field: " + link.field + ")" : "";
                 String descInfo = link.description != null ? " [" + link.description + "]" : "";
                 lines.add(Line.from(
-                        Span.styled(prefix, Style.EMPTY.fg(Color.BLUE)),
-                        Span.styled(typeName, Style.EMPTY.fg(Color.CYAN)),
+                        Span.styled(prefix, Style.EMPTY.fg(Theme.accent())),
+                        Span.styled(typeName, Style.EMPTY.fg(Theme.accent())),
                         Span.styled(fieldInfo, Theme.success()),
                         Span.styled(descInfo, Style.EMPTY.dim())));
             }
@@ -707,7 +706,7 @@ class MemoryLeakTab extends AbstractTab {
             return Span.styled("-", Style.EMPTY.dim());
         }
         return switch (trend) {
-            case "growing" -> Span.styled(TuiIcons.ARROW_UP + " leak!", Style.EMPTY.fg(Color.RED).bold());
+            case "growing" -> Span.styled(TuiIcons.ARROW_UP + " leak!", Theme.error().bold());
             case "suspicious" -> Span.styled(TuiIcons.ARROW_UP + " leak?", Theme.warning());
             case "stable" -> Span.styled(TuiIcons.ARROW_STABLE + " stable", Theme.success());
             case "shrinking" -> Span.styled(TuiIcons.ARROW_DOWN, Style.EMPTY.dim());

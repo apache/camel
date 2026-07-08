@@ -502,7 +502,7 @@ class DiagramTab extends AbstractTab {
                 boolean isBridge = "external".equals(topoNode.nodeType);
                 String label = isBridge ? " External" : isInbound ? " Inbound" : " Outbound";
                 lines.add(Line.from(
-                        Span.styled(label, Style.EMPTY.fg(Color.CYAN).bold())));
+                        Span.styled(label, Style.EMPTY.fg(Theme.accent()).bold())));
                 lines.add(Line.from(Span.raw("")));
                 lines.add(Line.from(
                         Span.styled(" URI: ", Style.EMPTY.dim()),
@@ -535,7 +535,7 @@ class DiagramTab extends AbstractTab {
                 }
             } else {
                 lines.add(Line.from(
-                        Span.styled(" " + routeId, Style.EMPTY.fg(Color.CYAN).bold())));
+                        Span.styled(" " + routeId, Style.EMPTY.fg(Theme.accent()).bold())));
                 lines.add(Line.from(
                         Span.styled(" (external endpoint)", Style.EMPTY.dim())));
             }

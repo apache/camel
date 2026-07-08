@@ -31,7 +31,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import dev.tamboui.layout.Constraint;
 import dev.tamboui.layout.Layout;
 import dev.tamboui.layout.Rect;
-import dev.tamboui.style.Color;
 import dev.tamboui.style.Style;
 import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.Line;
@@ -289,7 +288,7 @@ class BrowseTab extends AbstractTab {
             String first = ep.firstTimestamp > 0 ? formatTimestamp(ep.firstTimestamp) : "";
             String last = ep.lastTimestamp > 0 ? formatTimestamp(ep.lastTimestamp) : "";
             rows.add(Row.from(
-                    Cell.from(Span.styled(ep.uri != null ? ep.uri : "", Style.EMPTY.fg(Color.CYAN))),
+                    Cell.from(Span.styled(ep.uri != null ? ep.uri : "", Style.EMPTY.fg(Theme.accent()))),
                     rightCell(String.valueOf(ep.queueSize), 8),
                     Cell.from(first),
                     Cell.from(last)));
@@ -344,7 +343,7 @@ class BrowseTab extends AbstractTab {
             String ts = msg.timestamp > 0 ? formatTimestamp(msg.timestamp) : "";
             rows.add(Row.from(
                     rightCell(String.valueOf(msg.position), 5),
-                    Cell.from(Span.styled(msg.exchangeId != null ? msg.exchangeId : "", Style.EMPTY.fg(Color.CYAN))),
+                    Cell.from(Span.styled(msg.exchangeId != null ? msg.exchangeId : "", Style.EMPTY.fg(Theme.accent()))),
                     Cell.from(ts),
                     Cell.from(Span.styled(bodyPreview, Style.EMPTY.dim()))));
         }
@@ -421,7 +420,7 @@ class BrowseTab extends AbstractTab {
             lines.add(Line.from(Span.styled("  Headers:", Theme.label().bold())));
             for (Map.Entry<String, String> entry : msg.headers.entrySet()) {
                 lines.add(Line.from(
-                        Span.styled("    " + entry.getKey(), Style.EMPTY.fg(Color.CYAN)),
+                        Span.styled("    " + entry.getKey(), Style.EMPTY.fg(Theme.accent())),
                         Span.styled(" = ", Style.EMPTY.dim()),
                         Span.styled(entry.getValue(), Style.EMPTY.fg(Theme.baseFg()))));
             }

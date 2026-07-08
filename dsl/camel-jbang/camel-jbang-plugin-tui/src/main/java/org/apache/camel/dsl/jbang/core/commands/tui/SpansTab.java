@@ -30,7 +30,6 @@ import java.util.concurrent.atomic.AtomicReference;
 import dev.tamboui.layout.Constraint;
 import dev.tamboui.layout.Layout;
 import dev.tamboui.layout.Rect;
-import dev.tamboui.style.Color;
 import dev.tamboui.style.Style;
 import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.Line;
@@ -554,10 +553,10 @@ class SpansTab extends AbstractTab {
             labelStyle = selected ? Theme.error().bold() : Theme.error();
             bandStyle = Theme.error();
         } else if (!camelSpan) {
-            labelStyle = selected ? Style.EMPTY.fg(Color.LIGHT_MAGENTA).bold() : Style.EMPTY.fg(Color.LIGHT_MAGENTA);
-            bandStyle = Style.EMPTY.fg(Color.LIGHT_MAGENTA);
+            labelStyle = selected ? Theme.notice().bold() : Theme.notice();
+            bandStyle = Theme.notice();
         } else {
-            labelStyle = selected ? Style.EMPTY.fg(Color.CYAN).bold() : Style.EMPTY.fg(Color.CYAN);
+            labelStyle = selected ? Style.EMPTY.fg(Theme.accent()).bold() : Style.EMPTY.fg(Theme.accent());
             bandStyle = TuiHelper.colorForDuration(node.span.durationMs(), minDuration, maxDuration);
         }
 
@@ -613,7 +612,7 @@ class SpansTab extends AbstractTab {
             }
             if (!span.isCamelSpan()) {
                 ctx.add(Span.styled("  Source: ", Style.EMPTY.dim()));
-                ctx.add(Span.styled(span.scopeName(), Style.EMPTY.fg(Color.LIGHT_MAGENTA)));
+                ctx.add(Span.styled(span.scopeName(), Theme.notice()));
             }
             lines.add(Line.from(ctx));
         }
@@ -628,7 +627,7 @@ class SpansTab extends AbstractTab {
             }
         }
 
-        Style titleStyle = span.isError() ? Theme.error() : Style.EMPTY.fg(Color.CYAN);
+        Style titleStyle = span.isError() ? Theme.error() : Style.EMPTY.fg(Theme.accent());
         frame.renderWidget(
                 Paragraph.builder()
                         .text(Text.from(lines))

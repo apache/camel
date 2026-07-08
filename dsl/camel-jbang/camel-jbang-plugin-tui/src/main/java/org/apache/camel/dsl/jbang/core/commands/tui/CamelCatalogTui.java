@@ -414,7 +414,7 @@ public class CamelCatalogTui extends CamelCommand {
                 Span.styled(" Camel Catalog", Style.EMPTY.fg(Color.rgb(0xF6, 0x91, 0x23)).bold()),
                 Span.raw("  "),
                 Span.styled(filteredComponents.size() + "/" + allComponents.size() + " components",
-                        Style.EMPTY.fg(Color.CYAN)));
+                        Style.EMPTY.fg(Theme.accent())));
 
         Block headerBlock = Block.builder()
                 .borderType(BorderType.ROUNDED).borders(Borders.ALL)
@@ -440,8 +440,8 @@ public class CamelCatalogTui extends CamelCommand {
         List<Row> rows = new ArrayList<>();
         for (ComponentInfo comp : filteredComponents) {
             Style nameStyle = comp.deprecated
-                    ? Style.EMPTY.fg(Color.RED).dim()
-                    : Style.EMPTY.fg(Color.CYAN);
+                    ? Theme.error().dim()
+                    : Style.EMPTY.fg(Theme.accent());
             String label = comp.name;
             if (comp.deprecated) {
                 label = label + " (deprecated)";
@@ -626,14 +626,14 @@ public class CamelCatalogTui extends CamelCommand {
 
     private Row optionToRow(OptionInfo opt) {
         Style nameStyle = opt.required
-                ? Style.EMPTY.fg(Color.CYAN).bold()
-                : Style.EMPTY.fg(Color.CYAN);
+                ? Style.EMPTY.fg(Theme.accent()).bold()
+                : Style.EMPTY.fg(Theme.accent());
 
         return Row.from(
                 Cell.from(Span.styled(opt.name, nameStyle)),
                 Cell.from(Span.styled(opt.type, Style.EMPTY.dim())),
                 Cell.from(opt.required
-                        ? Span.styled("*", Style.EMPTY.fg(Color.RED).bold())
+                        ? Span.styled("*", Theme.error().bold())
                         : Span.raw("")),
                 Cell.from(Span.styled(opt.defaultValue, Style.EMPTY.dim())),
                 Cell.from(Span.styled(opt.kind != null ? opt.kind : "", Style.EMPTY.dim())));
@@ -690,13 +690,13 @@ public class CamelCatalogTui extends CamelCommand {
             // Apply special styling for certain values
             Style valueStyle;
             if ("DEPRECATED".equals(value)) {
-                valueStyle = Style.EMPTY.fg(Color.RED).bold();
+                valueStyle = Theme.error().bold();
             } else if (opt != null && "Required".equals(field[0]) && opt.required) {
-                valueStyle = Style.EMPTY.fg(Color.RED).bold();
+                valueStyle = Theme.error().bold();
             } else if (opt != null && "Name".equals(field[0])) {
-                valueStyle = Style.EMPTY.fg(Color.CYAN).bold();
+                valueStyle = Style.EMPTY.fg(Theme.accent()).bold();
             } else if ("Label".equals(field[0]) || "Values".equals(field[0])) {
-                valueStyle = Style.EMPTY.fg(Color.CYAN);
+                valueStyle = Style.EMPTY.fg(Theme.accent());
             } else {
                 valueStyle = Style.EMPTY;
             }

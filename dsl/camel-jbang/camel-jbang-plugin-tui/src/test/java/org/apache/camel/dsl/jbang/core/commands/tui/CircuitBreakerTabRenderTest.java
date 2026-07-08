@@ -90,7 +90,7 @@ class CircuitBreakerTabRenderTest {
         Frame frame = Frame.forTesting(buffer);
         tab.render(frame, area);
 
-        boolean foundCyan = TuiTestHelper.findCellWithColor(buffer, "m", Color.CYAN);
+        boolean foundCyan = TuiTestHelper.findCellWithColor(buffer, "m", Theme.accent());
         assertTrue(foundCyan, "Route ID should use CYAN color");
     }
 

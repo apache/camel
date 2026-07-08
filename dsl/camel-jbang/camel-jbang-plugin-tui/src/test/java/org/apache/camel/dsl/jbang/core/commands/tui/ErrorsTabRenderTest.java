@@ -101,7 +101,7 @@ class ErrorsTabRenderTest {
         Frame frame = Frame.forTesting(buffer);
         tab.render(frame, area);
 
-        boolean foundCyan = findCellWithColor(buffer, "m", Color.CYAN);
+        boolean foundCyan = findCellWithColor(buffer, "m", Theme.accent());
         assertTrue(foundCyan, "Route ID should use CYAN color");
     }
 

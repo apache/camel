@@ -22,7 +22,6 @@ import java.util.List;
 import dev.tamboui.layout.Constraint;
 import dev.tamboui.layout.Layout;
 import dev.tamboui.layout.Rect;
-import dev.tamboui.style.Color;
 import dev.tamboui.style.Overflow;
 import dev.tamboui.style.Style;
 import dev.tamboui.terminal.Frame;
@@ -143,7 +142,7 @@ class ProcessTab extends AbstractTab {
         String cmdLine = getCommandLine(info.pid);
         if (cmdLine != null) {
             lines.add(Line.from(
-                    Span.styled("  Command Line", Style.EMPTY.fg(Color.CYAN).bold())));
+                    Span.styled("  Command Line", Style.EMPTY.fg(Theme.accent()).bold())));
             lines.add(Line.from(Span.raw("")));
             if (wrap) {
                 lines.add(Line.from(Span.raw("  " + cmdLine)));

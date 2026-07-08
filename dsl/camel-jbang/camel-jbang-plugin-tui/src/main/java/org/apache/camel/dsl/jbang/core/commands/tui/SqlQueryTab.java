@@ -378,7 +378,7 @@ class SqlQueryTab extends AbstractTab {
                     sb.append("  ");
                 }
             }
-            Style style = focusOnInput ? Style.EMPTY.fg(Color.CYAN) : Theme.muted();
+            Style style = focusOnInput ? Style.EMPTY.fg(Theme.accent()) : Theme.muted();
             Paragraph dsLabel = Paragraph.builder()
                     .text(Text.from(Line.from(Span.styled(sb.toString(), style))))
                     .build();
@@ -399,7 +399,7 @@ class SqlQueryTab extends AbstractTab {
         } else {
             title = " SQL Query (F5 to execute) ";
         }
-        Style borderStyle = focusOnInput ? Style.EMPTY.fg(Color.CYAN) : Theme.muted();
+        Style borderStyle = focusOnInput ? Style.EMPTY.fg(Theme.accent()) : Theme.muted();
         Block inputBlock = Block.builder()
                 .title(Title.from(title))
                 .borders(Borders.ALL)
@@ -426,12 +426,12 @@ class SqlQueryTab extends AbstractTab {
                     .title(Title.from(" Error "))
                     .borders(Borders.ALL)
                     .borderType(BorderType.ROUNDED)
-                    .borderStyle(Style.EMPTY.fg(Color.RED))
+                    .borderStyle(Theme.error())
                     .build();
             Rect inner = errBlock.inner(area);
             frame.renderWidget(errBlock, area);
             Paragraph errText = Paragraph.builder()
-                    .text(Text.from(Line.from(Span.styled(errorMessage, Style.EMPTY.fg(Color.RED)))))
+                    .text(Text.from(Line.from(Span.styled(errorMessage, Theme.error()))))
                     .build();
             frame.renderWidget(errText, inner);
             return;
@@ -477,7 +477,7 @@ class SqlQueryTab extends AbstractTab {
         // build result table
         String resultTitle = String.format(" %d row(s)%s  %dms ",
                 rowCount, truncated ? " (truncated)" : "", elapsed);
-        Style tableBorderStyle = !focusOnInput ? Style.EMPTY.fg(Color.CYAN) : Theme.muted();
+        Style tableBorderStyle = !focusOnInput ? Style.EMPTY.fg(Theme.accent()) : Theme.muted();
         Block tableBlock = Block.builder()
                 .title(Title.from(resultTitle))
                 .borders(Borders.ALL)
@@ -772,7 +772,7 @@ class SqlQueryTab extends AbstractTab {
             if (isPk) {
                 labelStyle = Theme.muted();
             } else if (isFocused) {
-                labelStyle = Style.EMPTY.fg(Color.CYAN).bold();
+                labelStyle = Style.EMPTY.fg(Theme.accent()).bold();
             } else {
                 labelStyle = Style.EMPTY;
             }

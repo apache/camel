@@ -21,7 +21,6 @@ import java.util.List;
 
 import dev.tamboui.layout.Constraint;
 import dev.tamboui.layout.Rect;
-import dev.tamboui.style.Color;
 import dev.tamboui.style.Style;
 import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.Span;
@@ -86,7 +85,7 @@ class DataSourceTab extends AbstractTableTab {
 
             Style activeStyle = exhausted
                     ? Theme.error()
-                    : Style.EMPTY.fg(Color.CYAN);
+                    : Style.EMPTY.fg(Theme.accent());
             Style waitingStyle = waiters
                     ? Theme.warning()
                     : Style.EMPTY;
@@ -94,7 +93,7 @@ class DataSourceTab extends AbstractTableTab {
             String poolLabel = di.poolName != null ? di.poolName : (di.poolType != null ? di.poolType : "");
 
             rows.add(Row.from(
-                    Cell.from(Span.styled(" " + (di.name != null ? di.name : ""), Style.EMPTY.fg(Color.CYAN))),
+                    Cell.from(Span.styled(" " + (di.name != null ? di.name : ""), Style.EMPTY.fg(Theme.accent()))),
                     Cell.from(poolLabel),
                     rightCell(String.valueOf(di.active), 8, activeStyle),
                     rightCell(String.valueOf(di.idle), 8),

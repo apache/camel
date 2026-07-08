@@ -133,7 +133,7 @@ class HistoryTabRenderTest {
         Frame frame = Frame.forTesting(buffer);
         tab.render(frame, area);
 
-        assertTrue(TuiTestHelper.findCellWithColor(buffer, "m", Color.CYAN),
+        assertTrue(TuiTestHelper.findCellWithColor(buffer, "m", Theme.accent()),
                 "Route ID should contain a cell rendered in CYAN");
     }
 

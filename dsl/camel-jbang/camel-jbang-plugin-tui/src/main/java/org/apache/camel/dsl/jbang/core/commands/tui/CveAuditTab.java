@@ -29,7 +29,6 @@ import dev.tamboui.layout.Constraint;
 import dev.tamboui.layout.Layout;
 import dev.tamboui.layout.Rect;
 import dev.tamboui.markdown.MarkdownView;
-import dev.tamboui.style.Color;
 import dev.tamboui.style.Style;
 import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.Line;
@@ -220,7 +219,7 @@ class CveAuditTab extends AbstractTableTab {
             rows.add(Row.from(
                     Cell.from(Span.styled(group.severity != null ? group.severity : "", severityStyle(group.severity))),
                     Cell.from(Span.styled(group.canonicalId != null ? group.canonicalId : "", Style.EMPTY.bold())),
-                    Cell.from(Span.styled(artDisplay, Style.EMPTY.fg(Color.CYAN))),
+                    Cell.from(Span.styled(artDisplay, Style.EMPTY.fg(Theme.accent()))),
                     Cell.from(Span.styled(group.summary != null ? group.summary : "", Style.EMPTY.dim()))));
         }
 

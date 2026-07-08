@@ -24,7 +24,6 @@ import java.util.Map;
 import dev.tamboui.layout.Constraint;
 import dev.tamboui.layout.Layout;
 import dev.tamboui.layout.Rect;
-import dev.tamboui.style.Color;
 import dev.tamboui.style.Style;
 import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.Line;
@@ -93,7 +92,7 @@ class CircuitBreakerTab extends AbstractTableTab {
             String sinceLast = formatSinceLast(cb.sinceLastStarted, cb.sinceLastSuccess, cb.sinceLastFail);
 
             rows.add(Row.from(
-                    Cell.from(Span.styled(cb.routeId != null ? cb.routeId : "", Style.EMPTY.fg(Color.CYAN))),
+                    Cell.from(Span.styled(cb.routeId != null ? cb.routeId : "", Style.EMPTY.fg(Theme.accent()))),
                     Cell.from(cb.id != null ? cb.id : ""),
                     Cell.from(cb.component != null ? cb.component : ""),
                     Cell.from(Span.styled(state, stateStyle)),

@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.function.Supplier;
 
 import dev.tamboui.layout.Rect;
-import dev.tamboui.style.Color;
 import dev.tamboui.style.Style;
 import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.Line;
@@ -132,10 +131,10 @@ class AiLogPopup {
         List<ListItem> items = new ArrayList<>();
         for (AiPanel.LogEntry entry : entries) {
             Style levelStyle = switch (entry.level()) {
-                case QUESTION -> Style.EMPTY.fg(Color.CYAN);
+                case QUESTION -> Style.EMPTY.fg(Theme.accent());
                 case TOOL -> Theme.warning();
                 case RESULT -> Theme.success();
-                case RESPONSE -> Style.EMPTY.fg(Color.MAGENTA);
+                case RESPONSE -> Theme.notice();
                 case ERROR -> Theme.error();
             };
             String levelTag = switch (entry.level()) {
@@ -181,7 +180,7 @@ class AiLogPopup {
                 addJsonLines(lines, detail);
             } else {
                 lines.add(Line.from(Span.styled(TuiIcons.ARROW_RIGHT + " Content",
-                        Style.EMPTY.fg(Color.CYAN).bold())));
+                        Style.EMPTY.fg(Theme.accent()).bold())));
                 for (String line : detail.split("\n", -1)) {
                     lines.add(Line.from(Span.styled("  " + line, Style.EMPTY.dim())));
                 }

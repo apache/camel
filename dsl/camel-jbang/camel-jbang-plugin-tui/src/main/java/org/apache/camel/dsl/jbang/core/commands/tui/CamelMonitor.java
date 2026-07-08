@@ -1394,7 +1394,7 @@ public class CamelMonitor extends CamelCommand {
 
     private void computeTabBadges(String[] badgeTexts, Style[] badgeStyles) {
         Style yellow = Theme.label();
-        Style cyan = Style.EMPTY.fg(Color.CYAN).bold();
+        Style cyan = Style.EMPTY.fg(Theme.accent()).bold();
         Style red = Theme.error().bold();
         for (int j = 0; j < badgeStyles.length; j++) {
             badgeTexts[j] = "";

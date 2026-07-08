@@ -91,7 +91,7 @@ class EndpointsTabRenderTest {
         Frame frame = Frame.forTesting(buffer);
         tab.render(frame, area);
 
-        boolean foundCyan = TuiTestHelper.findCellWithColor(buffer, "h", Color.CYAN);
+        boolean foundCyan = TuiTestHelper.findCellWithColor(buffer, "h", Theme.accent());
         assertTrue(foundCyan, "Component name should be rendered in CYAN");
     }
 
@@ -122,7 +122,7 @@ class EndpointsTabRenderTest {
         Frame frame = Frame.forTesting(buffer);
         tab.render(frame, area);
 
-        boolean foundCyanArrow = TuiTestHelper.findCellWithColor(buffer, TuiIcons.KEY_LEFT, Color.CYAN);
+        boolean foundCyanArrow = TuiTestHelper.findCellWithColor(buffer, TuiIcons.KEY_LEFT, Theme.accent());
         assertTrue(foundCyanArrow, "Out-direction arrow should be rendered in CYAN");
     }
 
