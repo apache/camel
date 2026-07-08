@@ -279,7 +279,7 @@ class ConfigurationTab extends AbstractTableTab {
         if (value.length() <= maxValueLen) {
             lines.add(Line.from(
                     Span.styled(prefix, Style.EMPTY.dim()),
-                    Span.styled(value, Style.EMPTY.fg(Color.WHITE))));
+                    Span.styled(value, Style.EMPTY.fg(Theme.baseFg()))));
         } else {
             // wrap long values
             lines.add(Line.from(Span.styled(prefix, Style.EMPTY.dim())));
@@ -292,7 +292,7 @@ class ConfigurationTab extends AbstractTableTab {
             int pos = 0;
             while (pos < value.length()) {
                 int end = Math.min(pos + wrapWidth, value.length());
-                lines.add(Line.from(Span.styled(indentStr + value.substring(pos, end), Style.EMPTY.fg(Color.WHITE))));
+                lines.add(Line.from(Span.styled(indentStr + value.substring(pos, end), Style.EMPTY.fg(Theme.baseFg()))));
                 pos = end;
             }
         }
