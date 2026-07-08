@@ -524,9 +524,9 @@ class EndpointsTab extends AbstractTableTab {
 
         Line chartTitle = Line.from(
                 Span.styled("▬", Style.EMPTY.fg(Color.ansi(AnsiColor.BRIGHT_GREEN))),
-                Span.raw(String.format(" in:%-4d ", curIn)),
+                Span.raw(String.format(" in:%-4s ", MetricsCollector.formatThroughput(curIn))),
                 Span.styled("▬", Style.EMPTY.fg(Color.CYAN)),
-                Span.raw(String.format(" out:%-4d msg/s", curOut)));
+                Span.raw(String.format(" out:%-4s msg/s", MetricsCollector.formatThroughput(curOut))));
 
         Rect rightArea = hParts.get(1);
         frame.renderWidget(DualSparkline.builder()
@@ -637,9 +637,9 @@ class EndpointsTab extends AbstractTableTab {
                 Span.styled(uriLabel, Style.EMPTY.fg(Color.YELLOW)),
                 Span.raw("] "),
                 Span.styled("▬", Style.EMPTY.fg(Color.ansi(AnsiColor.BRIGHT_GREEN))),
-                Span.raw(String.format(" in:%-4d ", curIn)),
+                Span.raw(String.format(" in:%-4s ", MetricsCollector.formatThroughput(curIn))),
                 Span.styled("▬", Style.EMPTY.fg(Color.CYAN)),
-                Span.raw(String.format(" out:%-4d msg/s", curOut)));
+                Span.raw(String.format(" out:%-4s msg/s", MetricsCollector.formatThroughput(curOut))));
 
         frame.renderWidget(DualSparkline.builder()
                 .topData(inArr)
