@@ -75,10 +75,9 @@ public class RerankHandler extends AbstractWatsonxAiHandler {
         }
         if (topN != null) {
             paramsBuilder.topN(topN);
-            // TODO: remove the following with the next sdk release
-            paramsBuilder.inputs(config.getReturnDocuments() != null ? config.getReturnDocuments() : false);
+            paramsBuilder.returnInputs(config.getReturnDocuments() != null && config.getReturnDocuments());
         } else if (config.getReturnDocuments() != null) {
-            paramsBuilder.inputs(config.getReturnDocuments());
+            paramsBuilder.returnInputs(config.getReturnDocuments());
         }
 
         // Call the service
