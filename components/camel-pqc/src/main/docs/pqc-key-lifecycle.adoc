@@ -816,6 +816,73 @@ if (needsRotation) {
 }
 ----
 
+=== Automated Rotation Scheduling
+
+Rather than calling `needsRotation()`/`rotateKey()` by hand, the `KeyRotationScheduler` can evaluate all managed keys
+periodically in the background and rotate the ones that breach a configurable policy. It is opt-in: nothing runs until
+the scheduler is started.
+
+On every tick the scheduler lists the keys of its `KeyLifecycleManager`, keeps the ones matching the key filter (by
+default only `ACTIVE` keys) and, for each, delegates the decision to `needsRotation(keyId, maxKeyAge, maxKeyUsage)`. A
+key that needs rotation is replaced by a freshly generated key while the previous key is deprecated. At least one
+rotation signal must be configured - a maximum age, a maximum usage, or a per-key `nextRotationAt`/`PENDING_ROTATION`
+status recorded in the key metadata - otherwise no key will ever be selected.
+
+._Java-only: scheduling automated key rotation_
+[source,java]
+----
+KeyLifecycleManager keyManager = new FileBasedKeyLifecycleManager("/secure/keys");
+
+KeyRotationScheduler scheduler = new KeyRotationScheduler(keyManager)
+    .setCheckInterval(Duration.ofHours(6))   // how often to evaluate the keys (default: 1 hour)
+    .setMaxKeyAge(Duration.ofDays(90))       // rotate keys older than 90 days
+    .setMaxKeyUsage(1_000_000)               // and/or rotate keys used more than 1,000,000 times
+    .setListener(new KeyRotationScheduler.KeyRotationListener() {
+        @Override
+        public void onRotated(String oldKeyId, String newKeyId, KeyMetadata previous, KeyPair newKeyPair) {
+            logger.info("Rotated {} -> {}", oldKeyId, newKeyId);
+        }
+    });
+
+scheduler.start();       // begin the background schedule
+// ... application runs ...
+scheduler.stop();        // stop the background schedule
+----
+
+Because `KeyRotationScheduler` is a Camel `Service`, it can instead be added to the `CamelContext` so that it is started
+and stopped together with the context:
+
+._Java-only: managing the scheduler with the CamelContext_
+[source,java]
+----
+camelContext.addService(scheduler);   // started and stopped with the context
+----
+
+Alternatively, the scheduler can be started and configured entirely through component options - no Java code - by setting
+`camel.component.pqc.*` properties (for example in `application.properties`). Bind a `KeyLifecycleManager` in the
+registry and enable the scheduler:
+
+._application.properties: property-driven key rotation_
+[source,properties]
+----
+# a KeyLifecycleManager bean must be available in the registry, e.g. #myKeyManager
+camel.component.pqc.key-lifecycle-manager = #myKeyManager
+camel.component.pqc.key-rotation-scheduler-enabled = true
+camel.component.pqc.key-rotation-check-interval = 6h
+camel.component.pqc.key-rotation-max-age = 90d
+camel.component.pqc.key-rotation-max-usage = 1000000
+----
+
+When `keyRotationSchedulerEnabled` is `true`, the `pqc` component builds a `KeyRotationScheduler` around the configured
+`keyLifecycleManager` and starts and stops it with the component. The same options are available in the YAML DSL and as
+`PQCComponent` setters, which makes the scheduler usable from Spring Boot and Quarkus without any Java code.
+
+The default id of a replacement key is the previous key id with a rotation marker and timestamp appended; supply a
+`setKeyIdStrategy(Function<KeyMetadata, String>)` to control it, and a `setKeyFilter(Predicate<KeyMetadata>)` to change
+which keys are considered. The scheduler also exposes counters (`getChecksPerformed()`, `getRotationsPerformed()`,
+`getRotationFailures()`, `getLastCheckAt()`) for monitoring. A single pass can be triggered on demand with
+`checkAndRotate()`.
+
 == Key Export and Import
 
 Keys can be exported and imported in multiple formats:
