@@ -135,6 +135,14 @@ public class ServiceBusConsumer extends DefaultConsumer implements ShutdownAware
 
     @Override
     protected void doStop() throws Exception {
+        if (lockRenewer != null) {
+            lockRenewer.cancel();
+            lockRenewer = null;
+        }
+        if (renewalClient != null) {
+            renewalClient.close();
+            renewalClient = null;
+        }
         if (client != null) {
             // stop accepting new messages but keep the connection open
             // so that in-flight exchanges can still complete/abandon messages
@@ -147,6 +155,7 @@ public class ServiceBusConsumer extends DefaultConsumer implements ShutdownAware
 
     @Override
     protected void doShutdown() throws Exception {
+        // defensive cleanup in case doStop() was not called
         if (lockRenewer != null) {
             lockRenewer.cancel();
             lockRenewer = null;

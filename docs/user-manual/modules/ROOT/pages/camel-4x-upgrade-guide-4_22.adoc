@@ -48,6 +48,24 @@ to the true average throughput rather than oscillating between zero and spike va
 If you have tooling that consumes the JMX throughput value and expects the old instantaneous
 behavior, be aware that the reported value will now ramp up and decay gradually.
 
+=== camel-azure-servicebus - Camel-managed message lock renewal
+
+When consuming from Azure Service Bus in `PEEK_LOCK` mode with `maxAutoLockRenewDuration > 0`, Camel now
+actively renews message locks using a dedicated `ServiceBusReceiverAsyncClient` and Camel's internal
+`PeriodTaskScheduler`. This addresses a limitation where the Azure SDK's built-in lock renewal is tied
+to the `processMessage` callback duration, which returns immediately for asynchronous Camel routes —
+causing long-running exchanges to silently lose their message locks.
+
+The new behavior activates automatically when all of the following are true:
+
+* No custom `processorClient` is provided
+* Receive mode is `PEEK_LOCK`
+* `maxAutoLockRenewDuration > 0`
+* Session mode is disabled
+
+No configuration changes are required. The existing `maxAutoLockRenewDuration` option controls how long
+Camel will continue renewing a message's lock.
+
 === camel-debezium
 
 The `camel-debezium` component has upgraded from Debezium 3.5.2 to 3.6.0.

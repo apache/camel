@@ -576,26 +576,32 @@ public class ServiceBusConsumerTest {
         when(configuration.getServiceBusReceiveMode()).thenReturn(ServiceBusReceiveMode.PEEK_LOCK);
         when(configuration.getMaxAutoLockRenewDuration()).thenReturn(300000L);
         when(messageContext.getMessage()).thenReturn(message);
-        when(message.getLockedUntil()).thenReturn(OffsetDateTime.now().plusMinutes(1));
+        // lock expiring soon so the renewer would attempt renewal
+        when(message.getLockedUntil()).thenReturn(OffsetDateTime.now().plusSeconds(5));
         try (ServiceBusConsumer consumer = new ServiceBusConsumer(endpoint, processor)) {
             consumer.doStart();
 
+            // capture the lock renewer task scheduled with PeriodTaskScheduler
+            ArgumentCaptor<Runnable> taskCaptor = ArgumentCaptor.captor();
+            verify(periodTaskScheduler).schedulePeriodTask(taskCaptor.capture(), anyLong());
+            Runnable lockRenewerTask = taskCaptor.getValue();
+
             processMessageCaptor.getValue().accept(messageContext);
 
-            // pendingExchanges tracks the in-flight message
-            assertThat(consumer.getPendingExchangesSize()).isEqualTo(1);
-
-            // complete the exchange — should remove from lock renewer too
+            // complete the exchange — should remove from lock renewer tracking
             Exchange exchange = exchangeCaptor.getValue();
-            Synchronization synchronization = exchange.getExchangeExtension().handoverCompletions().get(0);
-            synchronization.onComplete(exchange);
+            for (Synchronization sync : exchange.getExchangeExtension().handoverCompletions()) {
+                sync.onComplete(exchange);
+            }
 
-            assertThat(consumer.getPendingExchangesSize()).isZero();
+            // run the lock renewer — it should NOT attempt renewal for the completed exchange
+            lockRenewerTask.run();
+            verify(renewalClient, never()).renewMessageLock(any(ServiceBusReceivedMessage.class));
         }
     }
 
     @Test
-    void doShutdownCleansUpLockRenewer() throws Exception {
+    void doStopCleansUpLockRenewer() throws Exception {
         when(configuration.getServiceBusReceiveMode()).thenReturn(ServiceBusReceiveMode.PEEK_LOCK);
         when(configuration.getMaxAutoLockRenewDuration()).thenReturn(300000L);
         ServiceBusConsumer consumer = new ServiceBusConsumer(endpoint, processor);
@@ -603,10 +609,35 @@ public class ServiceBusConsumerTest {
 
         verify(clientFactory).createServiceBusReceiverAsyncClient(any());
 
-        consumer.doShutdown();
+        consumer.doStop();
 
         verify(renewalClient).close();
-        verify(client).close();
+        verify(client).stop();
+        verify(client, never()).close();
+    }
+
+    @Test
+    void stopStartCycleRecreatesLockRenewer() throws Exception {
+        when(configuration.getServiceBusReceiveMode()).thenReturn(ServiceBusReceiveMode.PEEK_LOCK);
+        when(configuration.getMaxAutoLockRenewDuration()).thenReturn(300000L);
+        ServiceBusConsumer consumer = new ServiceBusConsumer(endpoint, processor);
+        consumer.doStart();
+
+        verify(clientFactory, times(1)).createServiceBusReceiverAsyncClient(any());
+
+        consumer.doStop();
+        verify(renewalClient).close();
+
+        // second start should create a fresh renewal client
+        ServiceBusReceiverAsyncClient renewalClient2 = mock();
+        when(clientFactory.createServiceBusReceiverAsyncClient(any())).thenReturn(renewalClient2);
+        consumer.doStart();
+
+        verify(clientFactory, times(2)).createServiceBusReceiverAsyncClient(any());
+        verify(periodTaskScheduler, times(2)).schedulePeriodTask(any(), anyLong());
+
+        consumer.doShutdown();
+        verify(renewalClient2).close();
     }
 
     @Test
