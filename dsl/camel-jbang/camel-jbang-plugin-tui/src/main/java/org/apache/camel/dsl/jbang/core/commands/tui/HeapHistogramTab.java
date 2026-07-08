@@ -238,11 +238,11 @@ class HeapHistogramTab extends AbstractTableTab {
                 lines.add(Line.from(
                         Span.styled("  JAR:        ", Theme.label().bold()),
                         Span.styled(jar.groupId() + ":" + jar.artifactId() + ":" + jar.version(),
-                                Style.EMPTY.fg(Color.GREEN))));
+                                Theme.success())));
             } else {
                 lines.add(Line.from(
                         Span.styled("  JAR:        ", Theme.label().bold()),
-                        Span.styled(jar.display(), Style.EMPTY.fg(Color.GREEN))));
+                        Span.styled(jar.display(), Theme.success())));
             }
             if (jar.fullPath() != null) {
                 String path = jar.fullPath();
@@ -258,7 +258,7 @@ class HeapHistogramTab extends AbstractTableTab {
             lines.add(Line.from(Span.raw("")));
             lines.add(Line.from(
                     Span.styled("  JAR:        ", Theme.label().bold()),
-                    Span.styled("JDK (built-in)", Style.EMPTY.fg(Color.GREEN))));
+                    Span.styled("JDK (built-in)", Theme.success())));
         }
 
         String title = " Detail: " + TuiHelper.truncate(className, area.width() - 14) + " ";

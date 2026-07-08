@@ -87,10 +87,10 @@ class ConsumersTab extends AbstractTableTab {
             HealthCheckInfo hc = consumerHealthCheck(info, ci);
             boolean healthDown = hc != null && "DOWN".equals(hc.state);
             Style statusStyle = healthDown
-                    ? Style.EMPTY.fg(Color.LIGHT_RED)
+                    ? Theme.error()
                     : ("Started".equals(ci.state) || "Polling".equals(status)
-                            ? Style.EMPTY.fg(Color.GREEN)
-                            : Style.EMPTY.fg(Color.LIGHT_RED));
+                            ? Theme.success()
+                            : Theme.error());
             String statusText = healthDown ? TuiIcons.HEALTH_WARN + " " + status : status;
             String type = consumerType(ci);
             String schedule = consumerSchedule(ci);
@@ -107,7 +107,7 @@ class ConsumersTab extends AbstractTableTab {
                     rightCell(ci.totalCounter != null ? String.valueOf(ci.totalCounter) : "", 8),
                     Cell.from(schedule),
                     Cell.from(sinceLast),
-                    Cell.from(Span.styled(uri, healthDown ? Style.EMPTY.fg(Color.LIGHT_RED) : Style.EMPTY))));
+                    Cell.from(Span.styled(uri, healthDown ? Theme.error() : Style.EMPTY))));
         }
 
         if (rows.isEmpty()) {

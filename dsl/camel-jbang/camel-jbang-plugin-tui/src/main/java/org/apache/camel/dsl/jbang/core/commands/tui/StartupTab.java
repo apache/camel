@@ -25,7 +25,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import dev.tamboui.layout.Constraint;
 import dev.tamboui.layout.Layout;
 import dev.tamboui.layout.Rect;
-import dev.tamboui.style.Color;
 import dev.tamboui.style.Style;
 import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.Line;
@@ -159,7 +158,7 @@ class StartupTab extends AbstractTab {
             frame.renderWidget(
                     Paragraph.builder()
                             .text(Text.from(Line.from(
-                                    Span.styled("  " + errorMessage, Style.EMPTY.fg(Color.LIGHT_RED)))))
+                                    Span.styled("  " + errorMessage, Theme.error()))))
                             .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
                                     .title(" Startup Timeline ").build())
                             .build(),

@@ -62,8 +62,8 @@ class MetricsTab extends AbstractTableTab {
 
     private static final Style LABEL = Style.EMPTY.dim();
     private static final Style VALUE = Style.EMPTY.fg(Theme.baseFg()).bold();
-    private static final Style GOOD = Style.EMPTY.fg(Color.GREEN);
-    private static final Style BAD = Style.EMPTY.fg(Color.LIGHT_RED);
+    private static final Style GOOD = Theme.success();
+    private static final Style BAD = Theme.error();
 
     private final ScrollbarState scrollbarState = new ScrollbarState();
     private final ScrollbarState rawScrollbarState = new ScrollbarState();

@@ -26,7 +26,6 @@ import java.util.concurrent.ScheduledExecutorService;
 import dev.tamboui.layout.Constraint;
 import dev.tamboui.layout.Layout;
 import dev.tamboui.layout.Rect;
-import dev.tamboui.style.Color;
 import dev.tamboui.style.Style;
 import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.Line;
@@ -827,14 +826,14 @@ class SendMessagePopup {
             if (responseElapsed > 0) {
                 titleStr = " Response — Error (" + responseElapsed + "ms) ";
             }
-            titleStyle = Style.EMPTY.fg(Color.LIGHT_RED).bold();
+            titleStyle = Theme.error().bold();
         } else {
             titleStr = " Response — " + (inOut ? "InOut" : "InOnly");
             if (responseElapsed > 0) {
                 titleStr += " (" + responseElapsed + "ms)";
             }
             titleStr += " ";
-            titleStyle = Style.EMPTY.fg(Color.GREEN).bold();
+            titleStyle = Theme.success().bold();
         }
 
         Title title = Title.from(Line.from(Span.styled(titleStr, titleStyle)));
@@ -923,7 +922,7 @@ class SendMessagePopup {
                     : "";
 
             Style lineStyle = selected ? Style.EMPTY.bold() : Style.EMPTY;
-            Style statusStyle = entry.error ? Style.EMPTY.fg(Color.LIGHT_RED) : Style.EMPTY.fg(Color.GREEN);
+            Style statusStyle = entry.error ? Theme.error() : Theme.success();
             if (!selected) {
                 statusStyle = statusStyle.dim();
             }

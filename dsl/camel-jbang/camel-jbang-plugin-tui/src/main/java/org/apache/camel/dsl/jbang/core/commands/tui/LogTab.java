@@ -438,7 +438,7 @@ class LogTab extends AbstractTab {
 
         ListWidget list = ListWidget.builder()
                 .items(
-                        ListItem.from("  ERROR  ").style(Style.EMPTY.fg(Color.LIGHT_RED)),
+                        ListItem.from("  ERROR  ").style(Theme.error()),
                         ListItem.from("  WARN   ").style(Theme.warning()),
                         ListItem.from("  INFO   ").style(Style.EMPTY),
                         ListItem.from("  DEBUG  ").style(Style.EMPTY.fg(Color.CYAN)),
@@ -645,7 +645,7 @@ class LogTab extends AbstractTab {
         Style levelStyle = switch (level) {
             case "ERROR", "FATAL" -> Style.EMPTY.fg(Color.RED);
             case "WARN" -> Theme.warning();
-            case "INFO" -> Style.EMPTY.fg(Color.GREEN);
+            case "INFO" -> Theme.success();
             case "DEBUG" -> Style.EMPTY.fg(Color.CYAN);
             case "TRACE" -> Style.EMPTY.dim();
             default -> Style.EMPTY;

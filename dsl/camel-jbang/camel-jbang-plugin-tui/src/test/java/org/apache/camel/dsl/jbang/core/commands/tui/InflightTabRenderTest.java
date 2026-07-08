@@ -89,7 +89,7 @@ class InflightTabRenderTest {
         Frame frame = Frame.forTesting(buffer);
         tab.render(frame, area);
 
-        boolean foundGreen = TuiTestHelper.findCellWithColor(buffer, "i", Color.GREEN);
+        boolean foundGreen = TuiTestHelper.findCellWithColor(buffer, "i", Theme.success().fg().orElse(Color.GREEN));
         assertTrue(foundGreen, "Inflight status should be rendered in GREEN");
     }
 
@@ -104,7 +104,7 @@ class InflightTabRenderTest {
         Frame frame = Frame.forTesting(buffer);
         tab.render(frame, area);
 
-        boolean foundRed = TuiTestHelper.findCellWithColor(buffer, "b", Color.LIGHT_RED);
+        boolean foundRed = TuiTestHelper.findCellWithColor(buffer, "b", Theme.error().fg().orElse(Color.LIGHT_RED));
         assertTrue(foundRed, "Blocked status should be rendered in LIGHT_RED");
     }
 

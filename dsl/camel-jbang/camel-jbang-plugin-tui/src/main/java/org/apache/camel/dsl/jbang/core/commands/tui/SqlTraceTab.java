@@ -147,7 +147,7 @@ class SqlTraceTab extends AbstractTableTab {
         Style labelStyle = Style.EMPTY.dim();
         Style valueStyle = Style.EMPTY.fg(Color.CYAN).bold();
         Style warnStyle = Theme.warning().bold();
-        Style errorStyle = Style.EMPTY.fg(Color.LIGHT_RED).bold();
+        Style errorStyle = Theme.error().bold();
 
         List<Span> spans = new ArrayList<>();
         spans.add(Span.styled("  Total: ", labelStyle));
@@ -234,7 +234,7 @@ class SqlTraceTab extends AbstractTableTab {
         List<Row> rows = new ArrayList<>();
         for (SqlTraceInfo si : sorted) {
             Style durStyle = si.duration >= 100 ? Theme.warning() : Style.EMPTY;
-            Style statusStyle = si.failed ? Style.EMPTY.fg(Color.LIGHT_RED) : Style.EMPTY.fg(Color.GREEN);
+            Style statusStyle = si.failed ? Theme.error() : Theme.success();
             String status = si.failed ? "FAIL" : "OK";
 
             String time = "";
@@ -340,7 +340,7 @@ class SqlTraceTab extends AbstractTableTab {
                     .format(TIME_FMT);
         }
         Style durStyle = si.duration >= 100 ? Theme.warning() : Style.EMPTY;
-        Style statusStyle = si.failed ? Style.EMPTY.fg(Color.LIGHT_RED) : Style.EMPTY.fg(Color.GREEN);
+        Style statusStyle = si.failed ? Theme.error() : Theme.success();
         lines.add(Line.from(
                 Span.styled(" Time: ", labelStyle),
                 Span.styled(time, valueStyle),
@@ -377,9 +377,9 @@ class SqlTraceTab extends AbstractTableTab {
         }
         return switch (category) {
             case "SELECT" -> Style.EMPTY.fg(Color.CYAN);
-            case "INSERT" -> Style.EMPTY.fg(Color.GREEN);
+            case "INSERT" -> Theme.success();
             case "UPDATE" -> Theme.label();
-            case "DELETE" -> Style.EMPTY.fg(Color.LIGHT_RED);
+            case "DELETE" -> Theme.error();
             default -> Style.EMPTY;
         };
     }

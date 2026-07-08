@@ -262,7 +262,7 @@ class MemoryLeakTab extends AbstractTab {
             if (recordingMode == RecordingMode.DUAL) {
                 lines.add(Line.from(
                         Span.styled("  Dual mode ", Style.EMPTY.dim()),
-                        Span.styled("(recommended)", Style.EMPTY.fg(Color.GREEN))));
+                        Span.styled("(recommended)", Theme.success())));
                 lines.add(Line.from(
                         Span.styled("  Runs two sequential JFR recordings:", Style.EMPTY.dim())));
                 lines.add(Line.from(
@@ -311,10 +311,10 @@ class MemoryLeakTab extends AbstractTab {
                     ? "Recording 2 of 2 (" + currentRecordingDuration + "s)..."
                     : "Recording 1 of 2 (" + currentRecordingDuration + "s)...";
             lines.add(Line.from(
-                    Span.styled("  " + recLabel, Style.EMPTY.fg(Color.GREEN).bold())));
+                    Span.styled("  " + recLabel, Theme.success().bold())));
         } else {
             lines.add(Line.from(
-                    Span.styled("  Memory leak recording in progress...", Style.EMPTY.fg(Color.GREEN).bold())));
+                    Span.styled("  Memory leak recording in progress...", Theme.success().bold())));
         }
 
         lines.add(Line.from(Span.raw("")));
@@ -344,7 +344,7 @@ class MemoryLeakTab extends AbstractTab {
             bar.append(i < filled ? '█' : '░');
         }
         lines.add(Line.from(Span.raw("")));
-        lines.add(Line.from(Span.styled(bar.toString(), Style.EMPTY.fg(Color.GREEN))));
+        lines.add(Line.from(Span.styled(bar.toString(), Theme.success())));
 
         String title = recordingMode == RecordingMode.DUAL
                 ? " Memory Leak Recording [dual] "
@@ -501,7 +501,7 @@ class MemoryLeakTab extends AbstractTab {
                 lines.add(Line.from(
                         Span.styled(prefix, Style.EMPTY.fg(Color.BLUE)),
                         Span.styled(typeName, Style.EMPTY.fg(Color.CYAN)),
-                        Span.styled(fieldInfo, Style.EMPTY.fg(Color.GREEN)),
+                        Span.styled(fieldInfo, Theme.success()),
                         Span.styled(descInfo, Style.EMPTY.dim())));
             }
         }
@@ -664,7 +664,7 @@ class MemoryLeakTab extends AbstractTab {
                 lines.add(Line.from(
                         Span.styled(prefix, Style.EMPTY.fg(Color.BLUE)),
                         Span.styled(typeName, Style.EMPTY.fg(Color.CYAN)),
-                        Span.styled(fieldInfo, Style.EMPTY.fg(Color.GREEN)),
+                        Span.styled(fieldInfo, Theme.success()),
                         Span.styled(descInfo, Style.EMPTY.dim())));
             }
         }
@@ -709,7 +709,7 @@ class MemoryLeakTab extends AbstractTab {
         return switch (trend) {
             case "growing" -> Span.styled(TuiIcons.ARROW_UP + " leak!", Style.EMPTY.fg(Color.RED).bold());
             case "suspicious" -> Span.styled(TuiIcons.ARROW_UP + " leak?", Theme.warning());
-            case "stable" -> Span.styled(TuiIcons.ARROW_STABLE + " stable", Style.EMPTY.fg(Color.GREEN));
+            case "stable" -> Span.styled(TuiIcons.ARROW_STABLE + " stable", Theme.success());
             case "shrinking" -> Span.styled(TuiIcons.ARROW_DOWN, Style.EMPTY.dim());
             case "new" -> Span.styled("new", Theme.warning());
             case "gone" -> Span.styled("gone", Style.EMPTY.dim());

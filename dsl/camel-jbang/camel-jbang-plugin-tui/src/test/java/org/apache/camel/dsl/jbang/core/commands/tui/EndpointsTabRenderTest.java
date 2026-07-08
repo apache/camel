@@ -107,7 +107,7 @@ class EndpointsTabRenderTest {
         tab.render(frame, area);
 
         boolean foundGreen
-                = TuiTestHelper.findCellWithColor(buffer, TuiIcons.KEY_RIGHT, Color.GREEN);
+                = TuiTestHelper.findCellWithColor(buffer, TuiIcons.KEY_RIGHT, Theme.success().fg().orElse(Color.GREEN));
         assertTrue(foundGreen, "In-direction arrow should be rendered in GREEN");
     }
 

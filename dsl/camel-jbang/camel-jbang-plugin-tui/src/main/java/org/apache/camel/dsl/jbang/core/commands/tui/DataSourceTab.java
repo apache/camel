@@ -85,7 +85,7 @@ class DataSourceTab extends AbstractTableTab {
             boolean waiters = di.waiting > 0;
 
             Style activeStyle = exhausted
-                    ? Style.EMPTY.fg(Color.LIGHT_RED)
+                    ? Theme.error()
                     : Style.EMPTY.fg(Color.CYAN);
             Style waitingStyle = waiters
                     ? Theme.warning()

@@ -432,7 +432,7 @@ class DiagramTab extends AbstractTab {
                     Span.styled(" From:  ", Style.EMPTY.dim()),
                     Span.raw(route.from != null ? route.from : "")));
             String stateLabel = route.state != null ? route.state : "";
-            Style stateStyle = "Started".equals(route.state) ? Style.EMPTY.fg(Color.GREEN) : Style.EMPTY.fg(Color.LIGHT_RED);
+            Style stateStyle = "Started".equals(route.state) ? Theme.success() : Theme.error();
             lines.add(Line.from(
                     Span.styled(" State: ", Style.EMPTY.dim()),
                     Span.styled(stateLabel, stateStyle)));
@@ -455,7 +455,7 @@ class DiagramTab extends AbstractTab {
             lines.add(Line.from(
                     Span.styled(" Total:    ", Style.EMPTY.dim()),
                     Span.raw(String.format("%" + w + "d", route.total))));
-            Style failStyle = route.failed > 0 ? Style.EMPTY.fg(Color.LIGHT_RED).bold() : Style.EMPTY;
+            Style failStyle = route.failed > 0 ? Theme.error().bold() : Style.EMPTY;
             lines.add(Line.from(
                     Span.styled(" Failed:   ", Style.EMPTY.dim()),
                     Span.styled(String.format("%" + w + "d", route.failed), failStyle)));
@@ -490,7 +490,7 @@ class DiagramTab extends AbstractTab {
                     lines.add(Line.from(
                             Span.styled("   fail:    ", Style.EMPTY.dim()),
                             Span.styled(route.sinceLastFailed,
-                                    Style.EMPTY.fg(Color.LIGHT_RED))));
+                                    Theme.error())));
                 }
             }
 
@@ -530,7 +530,7 @@ class DiagramTab extends AbstractTab {
                         lines.add(Line.from(
                                 Span.styled(" Failed: ", Style.EMPTY.dim()),
                                 Span.styled(String.valueOf(topoNode.exchangesFailed),
-                                        Style.EMPTY.fg(Color.LIGHT_RED).bold())));
+                                        Theme.error().bold())));
                     }
                 }
             } else {
@@ -595,7 +595,7 @@ class DiagramTab extends AbstractTab {
                         Span.styled(" Total:    ", Style.EMPTY.dim()),
                         Span.raw(String.format("%" + w + "d", stat.exchangesTotal))));
                 Style failStyle = stat.exchangesFailed > 0
-                        ? Style.EMPTY.fg(Color.LIGHT_RED).bold() : Style.EMPTY;
+                        ? Theme.error().bold() : Style.EMPTY;
                 lines.add(Line.from(
                         Span.styled(" Failed:   ", Style.EMPTY.dim()),
                         Span.styled(String.format("%" + w + "d", stat.exchangesFailed), failStyle)));
@@ -636,7 +636,7 @@ class DiagramTab extends AbstractTab {
                             lines.add(Line.from(
                                     Span.styled("   fail:    ", Style.EMPTY.dim()),
                                     Span.styled(TimeUtils.printDuration(ago, false),
-                                            Style.EMPTY.fg(Color.LIGHT_RED))));
+                                            Theme.error())));
                         }
                     }
                 }

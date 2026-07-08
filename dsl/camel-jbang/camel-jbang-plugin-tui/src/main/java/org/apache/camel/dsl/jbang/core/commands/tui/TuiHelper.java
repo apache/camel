@@ -569,7 +569,7 @@ final class TuiHelper {
 
     static Style topTimeStyle(long ms) {
         if (ms >= 1000) {
-            return Style.EMPTY.fg(Color.LIGHT_RED).bold();
+            return Theme.error().bold();
         } else if (ms >= 100) {
             return Theme.warning();
         }
@@ -578,9 +578,9 @@ final class TuiHelper {
 
     static Style topDeltaStyle(long delta) {
         if (delta > 0) {
-            return Style.EMPTY.fg(Color.LIGHT_RED);
+            return Theme.error();
         } else if (delta < 0) {
-            return Style.EMPTY.fg(Color.GREEN);
+            return Theme.success();
         }
         return Style.EMPTY;
     }

@@ -565,7 +565,7 @@ class RoutesTab extends AbstractTab {
             List<Row> routeRows = new ArrayList<>();
             for (RouteInfo route : sortedRoutes) {
                 Style failStyle = route.failed > 0
-                        ? Style.EMPTY.fg(Color.LIGHT_RED).bold()
+                        ? Theme.error().bold()
                         : Style.EMPTY;
 
                 routeRows.add(Row.from(
@@ -621,11 +621,11 @@ class RoutesTab extends AbstractTab {
             List<Row> routeRows = new ArrayList<>();
             for (RouteInfo route : sortedRoutes) {
                 Style stateStyle = "Started".equals(route.state)
-                        ? Style.EMPTY.fg(Color.GREEN)
-                        : Style.EMPTY.fg(Color.LIGHT_RED);
+                        ? Theme.success()
+                        : Theme.error();
 
                 Style failStyle = route.failed > 0
-                        ? Style.EMPTY.fg(Color.LIGHT_RED).bold()
+                        ? Theme.error().bold()
                         : Style.EMPTY;
 
                 String sinceLastRoute = formatSinceLastRoute(route);
@@ -842,7 +842,7 @@ class RoutesTab extends AbstractTab {
                     Span.styled(" From:  ", Style.EMPTY.dim()),
                     Span.raw(route.from != null ? route.from : "")));
             String stateLabel = route.state != null ? route.state : "";
-            Style stateStyle = "Started".equals(route.state) ? Style.EMPTY.fg(Color.GREEN) : Style.EMPTY.fg(Color.LIGHT_RED);
+            Style stateStyle = "Started".equals(route.state) ? Theme.success() : Theme.error();
             lines.add(Line.from(
                     Span.styled(" State: ", Style.EMPTY.dim()),
                     Span.styled(stateLabel, stateStyle)));
@@ -865,7 +865,7 @@ class RoutesTab extends AbstractTab {
             lines.add(Line.from(
                     Span.styled(" Total:    ", Style.EMPTY.dim()),
                     Span.raw(String.format("%" + w + "d", route.total))));
-            Style failStyle = route.failed > 0 ? Style.EMPTY.fg(Color.LIGHT_RED).bold() : Style.EMPTY;
+            Style failStyle = route.failed > 0 ? Theme.error().bold() : Style.EMPTY;
             lines.add(Line.from(
                     Span.styled(" Failed:   ", Style.EMPTY.dim()),
                     Span.styled(String.format("%" + w + "d", route.failed), failStyle)));
@@ -900,7 +900,7 @@ class RoutesTab extends AbstractTab {
                     lines.add(Line.from(
                             Span.styled("   fail:    ", Style.EMPTY.dim()),
                             Span.styled(route.sinceLastFailed,
-                                    Style.EMPTY.fg(Color.LIGHT_RED))));
+                                    Theme.error())));
                 }
             }
 
@@ -936,7 +936,7 @@ class RoutesTab extends AbstractTab {
                         lines.add(Line.from(
                                 Span.styled(" Failed: ", Style.EMPTY.dim()),
                                 Span.styled(String.valueOf(topoNode.exchangesFailed),
-                                        Style.EMPTY.fg(Color.LIGHT_RED).bold())));
+                                        Theme.error().bold())));
                     }
                 }
             } else {
@@ -1001,7 +1001,7 @@ class RoutesTab extends AbstractTab {
                         Span.styled(" Total:    ", Style.EMPTY.dim()),
                         Span.raw(String.format("%" + w + "d", stat.exchangesTotal))));
                 Style failStyle = stat.exchangesFailed > 0
-                        ? Style.EMPTY.fg(Color.LIGHT_RED).bold() : Style.EMPTY;
+                        ? Theme.error().bold() : Style.EMPTY;
                 lines.add(Line.from(
                         Span.styled(" Failed:   ", Style.EMPTY.dim()),
                         Span.styled(String.format("%" + w + "d", stat.exchangesFailed), failStyle)));
@@ -1042,7 +1042,7 @@ class RoutesTab extends AbstractTab {
                             lines.add(Line.from(
                                     Span.styled("   fail:    ", Style.EMPTY.dim()),
                                     Span.styled(TimeUtils.printDuration(ago, false),
-                                            Style.EMPTY.fg(Color.LIGHT_RED))));
+                                            Theme.error())));
                         }
                     }
                 }
@@ -1093,7 +1093,7 @@ class RoutesTab extends AbstractTab {
             }
 
             for (ProcessorInfo proc : sorted) {
-                Style nameStyle = proc.failed > 0 ? Style.EMPTY.fg(Color.LIGHT_RED) : Style.EMPTY.fg(Color.CYAN);
+                Style nameStyle = proc.failed > 0 ? Theme.error() : Style.EMPTY.fg(Color.CYAN);
                 long chartVal = procChartValue(proc);
                 String bar;
                 if (chartVal > 0) {
@@ -1120,7 +1120,7 @@ class RoutesTab extends AbstractTab {
                                 topDeltaStyle(proc.deltaTime)),
                         rightCell(String.valueOf(proc.total), 8),
                         rightCell(String.valueOf(proc.failed), 6,
-                                proc.failed > 0 ? Style.EMPTY.fg(Color.LIGHT_RED) : Style.EMPTY),
+                                proc.failed > 0 ? Theme.error() : Style.EMPTY),
                         rightCell(String.valueOf(proc.inflight), 8)));
             }
 
@@ -1157,14 +1157,14 @@ class RoutesTab extends AbstractTab {
             List<Row> rows = new ArrayList<>();
 
             // Synthetic top row representing the route itself
-            Style routeStyle = route.failed > 0 ? Style.EMPTY.fg(Color.LIGHT_RED) : Style.EMPTY.fg(Color.CYAN);
+            Style routeStyle = route.failed > 0 ? Theme.error() : Style.EMPTY.fg(Color.CYAN);
             rows.add(Row.from(
                     Cell.from("   route"),
                     Cell.from(Span.styled(route.from != null ? route.from : route.routeId, routeStyle)),
                     Cell.from(""), Cell.from(""), Cell.from(""), Cell.from(""),
                     rightCell(String.valueOf(route.total), 8),
                     rightCell(String.valueOf(route.failed), 6,
-                            route.failed > 0 ? Style.EMPTY.fg(Color.LIGHT_RED) : Style.EMPTY),
+                            route.failed > 0 ? Theme.error() : Style.EMPTY),
                     rightCell(String.valueOf(route.inflight), 8),
                     rightCell(route.total > 0
                             ? route.minTime + "/" + route.maxTime + "/" + route.meanTime
@@ -1173,7 +1173,7 @@ class RoutesTab extends AbstractTab {
 
             for (ProcessorInfo proc : route.processors) {
                 String indent = "  ".repeat(proc.level);
-                Style nameStyle = proc.failed > 0 ? Style.EMPTY.fg(Color.LIGHT_RED) : Style.EMPTY.fg(Color.CYAN);
+                Style nameStyle = proc.failed > 0 ? Theme.error() : Style.EMPTY.fg(Color.CYAN);
 
                 rows.add(Row.from(
                         Cell.from("   " + (proc.processor != null ? proc.processor : "")),
@@ -1181,7 +1181,7 @@ class RoutesTab extends AbstractTab {
                         Cell.from(""), Cell.from(""), Cell.from(""), Cell.from(""),
                         rightCell(String.valueOf(proc.total), 8),
                         rightCell(String.valueOf(proc.failed), 6,
-                                proc.failed > 0 ? Style.EMPTY.fg(Color.LIGHT_RED) : Style.EMPTY),
+                                proc.failed > 0 ? Theme.error() : Style.EMPTY),
                         rightCell(String.valueOf(proc.inflight), 8),
                         rightCell(proc.total > 0
                                 ? proc.minTime + "/" + proc.maxTime + "/" + proc.meanTime

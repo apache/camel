@@ -293,7 +293,7 @@ class OverviewTab extends AbstractTab {
                         Cell.from(Span.styled(vanishName, dimStyle)),
                         Cell.from(Span.styled("", dimStyle)),
                         Cell.from(Span.styled("", dimStyle)),
-                        Cell.from(Span.styled(TuiIcons.STOPPED + " Stopped", Style.EMPTY.fg(Color.LIGHT_RED).dim())),
+                        Cell.from(Span.styled(TuiIcons.STOPPED + " Stopped", Theme.error().dim())),
                         Cell.from(Span.styled(info.ago != null ? info.ago : "", dimStyle)),
                         Cell.from(Span.styled("", dimStyle)),
                         Cell.from(Span.styled("", dimStyle)),
@@ -400,7 +400,7 @@ class OverviewTab extends AbstractTab {
                         Cell.from(Span.styled(vanishAlias, dimStyle)),
                         Cell.from(Span.styled("", dimStyle)),
                         Cell.from(Span.styled("", dimStyle)),
-                        Cell.from(Span.styled(TuiIcons.STOPPED + " Stopped", Style.EMPTY.fg(Color.LIGHT_RED).dim())),
+                        Cell.from(Span.styled(TuiIcons.STOPPED + " Stopped", Theme.error().dim())),
                         Cell.from(Span.styled("", dimStyle)),
                         Cell.from(Span.styled("", dimStyle)),
                         Cell.from(Span.styled("", dimStyle)),
@@ -524,14 +524,14 @@ class OverviewTab extends AbstractTab {
                         Span.raw(" ["),
                         Span.styled(chartName, Theme.label().bold()),
                         Span.raw(String.format("] Throughput: %s msg/s  ", curTpFmt)),
-                        Span.styled("■", Style.EMPTY.fg(Color.GREEN)),
+                        Span.styled("■", Theme.success()),
                         Span.raw(String.format(" ok:%s  ", curOkFmt)),
                         Span.styled("■", Style.EMPTY.fg(Color.RED)),
                         Span.raw(String.format(" fail:%s ", curFailFmt)));
             } else {
                 titleLine = Line.from(
                         Span.raw(String.format(" [All] Throughput: %s msg/s  ", curTpFmt)),
-                        Span.styled("■", Style.EMPTY.fg(Color.GREEN)),
+                        Span.styled("■", Theme.success()),
                         Span.raw(String.format(" ok:%s  ", curOkFmt)),
                         Span.styled("■", Style.EMPTY.fg(Color.RED)),
                         Span.raw(String.format(" fail:%s ", curFailFmt)));
@@ -546,7 +546,7 @@ class OverviewTab extends AbstractTab {
                 long failed = Math.min(mergedFailed[i], mergedTotal[i]);
                 long ok = Math.max(0, mergedTotal[i] - failed);
                 groups.add(BarGroup.of(
-                        Bar.builder().value(ok).textValue("").style(Style.EMPTY.fg(Color.GREEN))
+                        Bar.builder().value(ok).textValue("").style(Theme.success())
                                 .build(),
                         Bar.builder().value(failed).textValue("").style(Style.EMPTY.fg(Color.RED)).build()));
             }

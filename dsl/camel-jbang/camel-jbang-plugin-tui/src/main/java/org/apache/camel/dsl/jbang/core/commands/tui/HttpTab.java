@@ -1028,7 +1028,7 @@ class HttpTab extends AbstractTableTab {
             titleStr = " Response ";
         } else if (probeResponseError) {
             titleStr = " Response " + probeResponseStatus + " ";
-            titleStyle = Style.EMPTY.fg(Color.LIGHT_RED).bold();
+            titleStyle = Theme.error().bold();
         } else if ("Sending...".equals(probeResponseStatus)) {
             titleStr = " Sending... ";
             titleStyle = Theme.warning().bold();
@@ -1152,7 +1152,7 @@ class HttpTab extends AbstractTableTab {
         try {
             int code = Integer.parseInt(status);
             if (code >= 200 && code < 300) {
-                return Style.EMPTY.fg(Color.GREEN).bold();
+                return Theme.success().bold();
             }
             if (code >= 300 && code < 400) {
                 return Style.EMPTY.fg(Color.CYAN).bold();
@@ -1161,12 +1161,12 @@ class HttpTab extends AbstractTableTab {
                 return Theme.warning().bold();
             }
             if (code >= 500) {
-                return Style.EMPTY.fg(Color.LIGHT_RED).bold();
+                return Theme.error().bold();
             }
         } catch (NumberFormatException e) {
             // not a number — treat as error
         }
-        return Style.EMPTY.fg(Color.LIGHT_RED).bold();
+        return Theme.error().bold();
     }
 
     // ---- Existing table/spec methods ----
@@ -1213,10 +1213,10 @@ class HttpTab extends AbstractTableTab {
         }
         String m = method.split(",")[0].trim().toUpperCase(Locale.ENGLISH);
         return switch (m) {
-            case "GET" -> Style.EMPTY.fg(Color.GREEN);
+            case "GET" -> Theme.success();
             case "POST" -> Theme.label();
             case "PUT" -> Style.EMPTY.fg(Color.CYAN);
-            case "DELETE" -> Style.EMPTY.fg(Color.LIGHT_RED);
+            case "DELETE" -> Theme.error();
             case "PATCH" -> Style.EMPTY.fg(Color.rgb(0xFF, 0x80, 0x00));
             default -> Style.EMPTY.dim();
         };
@@ -1236,7 +1236,7 @@ class HttpTab extends AbstractTableTab {
         long mgmtCount = info.httpEndpoints.stream().filter(e -> e.management).count();
         if (restCount > 0) {
             spans.add(Span.raw("  "));
-            spans.add(Span.styled("REST: ", Style.EMPTY.fg(Color.GREEN)));
+            spans.add(Span.styled("REST: ", Theme.success()));
             spans.add(Span.raw(restCount + ""));
         }
         if (specCount > 0) {
@@ -1285,10 +1285,10 @@ class HttpTab extends AbstractTableTab {
                     Cell.from(produces),
                     Cell.from(Span.styled(source,
                             ep.specification ? Style.EMPTY.fg(Color.MAGENTA)
-                                    : ep.fromRest ? Style.EMPTY.fg(Color.GREEN)
+                                    : ep.fromRest ? Theme.success()
                                     : Style.EMPTY.fg(Color.CYAN))),
                     Cell.from(Span.styled(state,
-                            "Stopped".equals(state) ? Style.EMPTY.fg(Color.LIGHT_RED) : Style.EMPTY))));
+                            "Stopped".equals(state) ? Theme.error() : Style.EMPTY))));
         }
 
         Title title = buildTableTitle(info, visible);

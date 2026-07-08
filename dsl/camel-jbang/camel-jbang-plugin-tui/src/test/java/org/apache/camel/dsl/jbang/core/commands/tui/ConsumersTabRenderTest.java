@@ -107,7 +107,7 @@ class ConsumersTabRenderTest {
         Frame frame = Frame.forTesting(buffer);
         tab.render(frame, area);
 
-        assertTrue(TuiTestHelper.findCellWithColor(buffer, "S", Color.GREEN),
+        assertTrue(TuiTestHelper.findCellWithColor(buffer, "S", Theme.success().fg().orElse(Color.GREEN)),
                 "Started status should be rendered in GREEN");
     }
 
@@ -123,7 +123,7 @@ class ConsumersTabRenderTest {
         Frame frame = Frame.forTesting(buffer);
         tab.render(frame, area);
 
-        assertTrue(TuiTestHelper.findCellWithColor(buffer, "S", Color.LIGHT_RED),
+        assertTrue(TuiTestHelper.findCellWithColor(buffer, "S", Theme.error().fg().orElse(Color.LIGHT_RED)),
                 "Stopped status should be rendered in LIGHT_RED");
     }
 

@@ -25,9 +25,7 @@ import java.util.stream.Collectors;
 
 import dev.tamboui.layout.Rect;
 import dev.tamboui.markdown.MarkdownView;
-import dev.tamboui.style.Color;
 import dev.tamboui.style.Overflow;
-import dev.tamboui.style.Style;
 import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.Line;
 import dev.tamboui.text.Span;
@@ -406,7 +404,7 @@ class DocViewerPopup {
         if (docTitle != null && docTitle.startsWith("Failed:")) {
             String rest = docTitle.substring("Failed:".length());
             title = Title.from(Line.from(
-                    Span.styled(" Failed:", Style.EMPTY.fg(Color.LIGHT_RED).bold()),
+                    Span.styled(" Failed:", Theme.error().bold()),
                     Span.raw(rest + " ")));
         } else {
             title = Title.from(" " + docTitle + " ");

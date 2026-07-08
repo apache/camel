@@ -442,13 +442,13 @@ class SqlQueryTab extends AbstractTab {
                     .title(Title.from(" Result "))
                     .borders(Borders.ALL)
                     .borderType(BorderType.ROUNDED)
-                    .borderStyle(Style.EMPTY.fg(Color.GREEN))
+                    .borderStyle(Theme.success())
                     .build();
             Rect inner = ucBlock.inner(area);
             frame.renderWidget(ucBlock, area);
             String msg = String.format("Update count: %d  (%dms)", updateCount, elapsed);
             Paragraph ucText = Paragraph.builder()
-                    .text(Text.from(Line.from(Span.styled(msg, Style.EMPTY.fg(Color.GREEN)))))
+                    .text(Text.from(Line.from(Span.styled(msg, Theme.success()))))
                     .build();
             frame.renderWidget(ucText, inner);
             return;
@@ -788,7 +788,9 @@ class SqlQueryTab extends AbstractTab {
                         Span.styled(val.isEmpty() ? "null" : val, Style.EMPTY.fg(Color.DARK_GRAY)))), valArea);
             } else if (isFocused) {
                 boolean changed = !editInputs[i].text().equals(editOriginalValues[i]);
-                Style cursorStyle = changed ? Style.EMPTY.reversed().fg(Color.GREEN) : Style.EMPTY.reversed();
+                Style cursorStyle = changed
+                        ? Style.EMPTY.reversed().fg(Theme.success().fg().orElse(Color.GREEN))
+                        : Style.EMPTY.reversed();
                 TextInput input = TextInput.builder()
                         .cursorStyle(cursorStyle)
                         .build();
@@ -796,7 +798,7 @@ class SqlQueryTab extends AbstractTab {
             } else {
                 String val = editInputs[i].text();
                 boolean changed = !val.equals(editOriginalValues[i]);
-                Style valStyle = changed ? Style.EMPTY.fg(Color.GREEN) : Style.EMPTY;
+                Style valStyle = changed ? Theme.success() : Style.EMPTY;
                 frame.renderWidget(Paragraph.from(Line.from(
                         Span.styled(val.isEmpty() ? "null" : val, valStyle))), valArea);
             }

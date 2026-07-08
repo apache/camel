@@ -146,7 +146,7 @@ class MonitorContextRenderTest {
 
     @Test
     void rightCellWithStyleAppliesStyle() {
-        var cell = AbstractTab.rightCell("5", 6, dev.tamboui.style.Style.EMPTY.fg(Color.LIGHT_RED));
+        var cell = AbstractTab.rightCell("5", 6, Theme.error());
         // The cell should have styled content
         String content = extractCellContent(cell);
         assertTrue(content.contains("5"), "Should contain the value");

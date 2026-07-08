@@ -79,8 +79,8 @@ class CircuitBreakerTab extends AbstractTableTab {
         List<Row> rows = new ArrayList<>();
         for (CircuitBreakerInfo cb : sorted) {
             Style stateStyle = switch (cb.state != null ? cb.state.toLowerCase() : "") {
-                case "closed" -> Style.EMPTY.fg(Color.GREEN);
-                case "open", "forced_open" -> Style.EMPTY.fg(Color.LIGHT_RED);
+                case "closed" -> Theme.success();
+                case "open", "forced_open" -> Theme.error();
                 default -> Theme.warning();
             };
             String state = cb.state != null ? cb.state : "";
@@ -193,8 +193,8 @@ class CircuitBreakerTab extends AbstractTableTab {
         boolean isClosed = state.equals("closed");
         boolean isOpen = state.equals("open") || state.equals("forced_open");
 
-        Style closedBox = isClosed ? Style.EMPTY.fg(Color.GREEN).bold() : Style.EMPTY;
-        Style openBox = isOpen ? Style.EMPTY.fg(Color.LIGHT_RED).bold() : Style.EMPTY;
+        Style closedBox = isClosed ? Theme.success().bold() : Style.EMPTY;
+        Style openBox = isOpen ? Theme.error().bold() : Style.EMPTY;
         Style halfOpenBox = !isClosed && !isOpen ? Theme.warning().bold() : Style.EMPTY;
         Style lbl = Style.EMPTY.dim();
 
@@ -279,11 +279,11 @@ class CircuitBreakerTab extends AbstractTableTab {
         double rate = cb.failureRate >= 0 ? cb.failureRate : 0;
         Style barColor;
         if (rate >= 80) {
-            barColor = Style.EMPTY.fg(Color.LIGHT_RED);
+            barColor = Theme.error();
         } else if (rate >= 50) {
             barColor = Theme.warning();
         } else {
-            barColor = Style.EMPTY.fg(Color.GREEN);
+            barColor = Theme.success();
         }
         String rateLabel = String.format(" %.0f%%", Math.max(0, cb.failureRate));
         int barWidth = MAX_CHART_POINTS;
@@ -324,15 +324,15 @@ class CircuitBreakerTab extends AbstractTableTab {
         long curSuccess = successArr[renderPoints - 1];
         long curFail = failArr[renderPoints - 1];
         Line chartTitle = Line.from(
-                Span.styled("▬", Style.EMPTY.fg(Color.GREEN)),
+                Span.styled("▬", Theme.success()),
                 Span.raw(String.format(" ok:%-4d ", curSuccess)),
-                Span.styled("▬", Style.EMPTY.fg(Color.LIGHT_RED)),
+                Span.styled("▬", Theme.error()),
                 Span.raw(String.format(" fail:%-4d msg/s", curFail)));
         frame.renderWidget(DualSparkline.builder()
                 .topData(successArr)
                 .bottomData(failArr)
-                .topStyle(Style.EMPTY.fg(Color.GREEN))
-                .bottomStyle(Style.EMPTY.fg(Color.LIGHT_RED))
+                .topStyle(Theme.success())
+                .bottomStyle(Theme.error())
                 .showYAxis(true)
                 .xLabels("-" + renderPoints + "s", "-" + (renderPoints * 3 / 4) + "s",
                         "-" + (renderPoints / 2) + "s", "-" + (renderPoints / 4) + "s", "now")

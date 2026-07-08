@@ -742,7 +742,7 @@ class AiPanel {
                 Span.styled("   Total tokens: ", dimStyle),
                 Span.styled(LlmClient.formatTokens(totalTokens), cyanStyle),
                 Span.styled(" (in: ", dimStyle),
-                Span.styled(LlmClient.formatTokens(totalInput), Style.EMPTY.fg(Color.GREEN)),
+                Span.styled(LlmClient.formatTokens(totalInput), Theme.success()),
                 Span.styled(" / out: ", dimStyle),
                 Span.styled(LlmClient.formatTokens(totalOutput), Theme.label()),
                 Span.styled(")", dimStyle)));

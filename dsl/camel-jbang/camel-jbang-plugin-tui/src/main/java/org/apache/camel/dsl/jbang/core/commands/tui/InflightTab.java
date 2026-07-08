@@ -103,8 +103,8 @@ class InflightTab extends AbstractTableTab {
         for (InflightInfo ii : sorted) {
             String status = ii.blocked ? "blocked" : "inflight";
             Style statusStyle = ii.blocked
-                    ? Style.EMPTY.fg(Color.LIGHT_RED).bold()
-                    : Style.EMPTY.fg(Color.GREEN);
+                    ? Theme.error().bold()
+                    : Theme.success();
 
             String duration = TimeUtils.printDuration(ii.duration, true);
             Style durationStyle = durationColor(ii.duration);
@@ -166,11 +166,11 @@ class InflightTab extends AbstractTableTab {
 
     private Style durationColor(long durationMs) {
         if (durationMs >= THRESHOLD_RED) {
-            return Style.EMPTY.fg(Color.LIGHT_RED).bold();
+            return Theme.error().bold();
         } else if (durationMs >= THRESHOLD_YELLOW) {
             return Theme.warning();
         }
-        return Style.EMPTY.fg(Color.GREEN);
+        return Theme.success();
     }
 
     private Span buildDurationBar(long duration, long maxDuration, int barWidth) {
@@ -193,11 +193,11 @@ class InflightTab extends AbstractTableTab {
 
         Style barStyle;
         if (duration >= THRESHOLD_RED) {
-            barStyle = Style.EMPTY.fg(Color.LIGHT_RED);
+            barStyle = Theme.error();
         } else if (duration >= THRESHOLD_YELLOW) {
             barStyle = Theme.warning();
         } else {
-            barStyle = Style.EMPTY.fg(Color.GREEN);
+            barStyle = Theme.success();
         }
 
         return Span.styled(sb.toString(), barStyle);

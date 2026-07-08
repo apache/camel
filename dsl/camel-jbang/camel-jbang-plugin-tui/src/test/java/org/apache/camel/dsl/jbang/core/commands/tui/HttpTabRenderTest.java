@@ -87,7 +87,7 @@ class HttpTabRenderTest {
         Frame frame = Frame.forTesting(buffer);
         tab.render(frame, area);
 
-        boolean foundGreen = TuiTestHelper.findCellWithColor(buffer, "G", Color.GREEN);
+        boolean foundGreen = TuiTestHelper.findCellWithColor(buffer, "G", Theme.success().fg().orElse(Color.GREEN));
         assertTrue(foundGreen, "GET method should be rendered in GREEN");
     }
 
@@ -118,7 +118,7 @@ class HttpTabRenderTest {
         Frame frame = Frame.forTesting(buffer);
         tab.render(frame, area);
 
-        boolean foundRed = TuiTestHelper.findCellWithColor(buffer, "D", Color.LIGHT_RED);
+        boolean foundRed = TuiTestHelper.findCellWithColor(buffer, "D", Theme.error().fg().orElse(Color.LIGHT_RED));
         assertTrue(foundRed, "DELETE method should be rendered in LIGHT_RED");
     }
 

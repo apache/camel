@@ -367,9 +367,9 @@ class SpansTab extends AbstractTab {
         for (TraceSummary ts : summaries) {
             Style statusStyle;
             if (ts.hasError) {
-                statusStyle = Style.EMPTY.fg(Color.LIGHT_RED);
+                statusStyle = Theme.error();
             } else {
-                statusStyle = Style.EMPTY.fg(Color.GREEN);
+                statusStyle = Theme.success();
             }
 
             rows.add(Row.from(
@@ -551,8 +551,8 @@ class SpansTab extends AbstractTab {
         Style labelStyle;
         Style bandStyle;
         if (error) {
-            labelStyle = selected ? Style.EMPTY.fg(Color.LIGHT_RED).bold() : Style.EMPTY.fg(Color.LIGHT_RED);
-            bandStyle = Style.EMPTY.fg(Color.LIGHT_RED);
+            labelStyle = selected ? Theme.error().bold() : Theme.error();
+            bandStyle = Theme.error();
         } else if (!camelSpan) {
             labelStyle = selected ? Style.EMPTY.fg(Color.LIGHT_MAGENTA).bold() : Style.EMPTY.fg(Color.LIGHT_MAGENTA);
             bandStyle = Style.EMPTY.fg(Color.LIGHT_MAGENTA);
@@ -568,10 +568,10 @@ class SpansTab extends AbstractTab {
                 Span.styled(label, labelStyle),
                 Span.raw(gap),
                 Span.styled(bar, bandStyle),
-                Span.styled(errorTag, Style.EMPTY.fg(Color.LIGHT_RED).bold()),
+                Span.styled(errorTag, Theme.error().bold()),
                 Span.raw(" ".repeat(pad)),
                 Span.styled(durationStr, error
-                        ? Style.EMPTY.fg(Color.LIGHT_RED).bold()
+                        ? Theme.error().bold()
                         : Style.EMPTY.fg(Theme.baseFg()).bold()));
     }
 
@@ -584,7 +584,7 @@ class SpansTab extends AbstractTab {
         List<Line> lines = new ArrayList<>();
 
         // Row 1: span identity
-        Style statusStyle = span.isError() ? Style.EMPTY.fg(Color.LIGHT_RED).bold() : Style.EMPTY.fg(Color.GREEN);
+        Style statusStyle = span.isError() ? Theme.error().bold() : Theme.success();
         lines.add(Line.from(
                 Span.styled(" Span:   ", Style.EMPTY.dim()),
                 Span.styled(span.spanId(), Style.EMPTY.fg(Theme.baseFg()).bold()),
@@ -628,7 +628,7 @@ class SpansTab extends AbstractTab {
             }
         }
 
-        Style titleStyle = span.isError() ? Style.EMPTY.fg(Color.LIGHT_RED) : Style.EMPTY.fg(Color.CYAN);
+        Style titleStyle = span.isError() ? Theme.error() : Style.EMPTY.fg(Color.CYAN);
         frame.renderWidget(
                 Paragraph.builder()
                         .text(Text.from(lines))

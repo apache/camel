@@ -134,9 +134,9 @@ class AiLogPopup {
             Style levelStyle = switch (entry.level()) {
                 case QUESTION -> Style.EMPTY.fg(Color.CYAN);
                 case TOOL -> Theme.warning();
-                case RESULT -> Style.EMPTY.fg(Color.GREEN);
+                case RESULT -> Theme.success();
                 case RESPONSE -> Style.EMPTY.fg(Color.MAGENTA);
-                case ERROR -> Style.EMPTY.fg(Color.LIGHT_RED);
+                case ERROR -> Theme.error();
             };
             String levelTag = switch (entry.level()) {
                 case QUESTION -> " ASK      ";
@@ -177,7 +177,7 @@ class AiLogPopup {
                         entry.level() == AiPanel.LogLevel.TOOL
                                 ? TuiIcons.ARROW_RIGHT + " Arguments"
                                 : TuiIcons.ARROW_LEFT + " Result",
-                        (entry.level() == AiPanel.LogLevel.TOOL ? Theme.warning() : Style.EMPTY.fg(Color.GREEN)).bold())));
+                        (entry.level() == AiPanel.LogLevel.TOOL ? Theme.warning() : Theme.success()).bold())));
                 addJsonLines(lines, detail);
             } else {
                 lines.add(Line.from(Span.styled(TuiIcons.ARROW_RIGHT + " Content",

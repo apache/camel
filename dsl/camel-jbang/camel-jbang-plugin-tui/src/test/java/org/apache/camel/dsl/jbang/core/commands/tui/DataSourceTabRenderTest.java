@@ -106,7 +106,7 @@ class DataSourceTabRenderTest {
         tab.render(frame, area);
 
         // active (10) >= maxPoolSize (10), so active column should be LIGHT_RED
-        boolean foundRed = TuiTestHelper.findCellWithColor(buffer, "1", Color.LIGHT_RED);
+        boolean foundRed = TuiTestHelper.findCellWithColor(buffer, "1", Theme.error().fg().orElse(Color.LIGHT_RED));
         assertTrue(foundRed, "Exhausted pool active count should be rendered in LIGHT_RED");
     }
 

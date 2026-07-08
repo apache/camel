@@ -136,10 +136,10 @@ class McpLogPopup {
         List<ListItem> items = new ArrayList<>();
         for (TuiMcpServer.LogEntry entry : entries) {
             Style levelStyle = switch (entry.level()) {
-                case CONNECT -> Style.EMPTY.fg(Color.GREEN);
+                case CONNECT -> Theme.success();
                 case TOOL -> Style.EMPTY.fg(Color.CYAN);
-                case ERROR -> Style.EMPTY.fg(Color.LIGHT_RED);
-                default -> Style.EMPTY.fg(Color.GREEN);
+                case ERROR -> Theme.error();
+                default -> Theme.success();
             };
             String levelTag = switch (entry.level()) {
                 case CONNECT -> " CONNECT ";
@@ -187,7 +187,7 @@ class McpLogPopup {
             lines.add(Line.from(Span.raw("")));
         }
         if (entry.responseBody() != null) {
-            lines.add(Line.from(Span.styled(TuiIcons.ARROW_LEFT + " Response", Style.EMPTY.fg(Color.GREEN).bold())));
+            lines.add(Line.from(Span.styled(TuiIcons.ARROW_LEFT + " Response", Theme.success().bold())));
             addJsonLines(lines, entry.responseBody());
         }
         if (entry.requestBody() == null && entry.responseBody() == null) {

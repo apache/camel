@@ -169,7 +169,7 @@ class CveAuditTab extends AbstractTableTab {
             frame.renderWidget(
                     Paragraph.builder()
                             .text(Text.from(Line.from(
-                                    Span.styled("  " + errorMessage, Style.EMPTY.fg(Color.LIGHT_RED)))))
+                                    Span.styled("  " + errorMessage, Theme.error()))))
                             .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
                                     .title(" CVE Audit ").build())
                             .build(),
@@ -183,7 +183,7 @@ class CveAuditTab extends AbstractTableTab {
                             .text(Text.from(
                                     Line.from(Span.raw("")),
                                     Line.from(Span.styled("  No vulnerabilities found",
-                                            Style.EMPTY.fg(Color.GREEN))),
+                                            Theme.success())),
                                     Line.from(Span.raw("")),
                                     Line.from(Span.styled(
                                             String.format("  Scanned %d dependencies", scannedCount),

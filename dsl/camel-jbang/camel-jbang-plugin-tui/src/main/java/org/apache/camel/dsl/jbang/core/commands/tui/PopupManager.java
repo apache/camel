@@ -510,7 +510,7 @@ class PopupManager {
         frame.renderWidget(Clear.INSTANCE, popup);
         Block block = Block.builder()
                 .borderType(BorderType.ROUNDED).borders(Borders.ALL)
-                .borderStyle(Style.EMPTY.fg(Color.LIGHT_RED))
+                .borderStyle(Theme.error())
                 .title(" Confirm Kill ")
                 .build();
         frame.renderWidget(block, popup);
@@ -519,7 +519,7 @@ class PopupManager {
                 Paragraph.builder()
                         .text(Text.from(
                                 Line.from(Span.raw("")),
-                                Line.from(Span.styled(msg, Style.EMPTY.fg(Color.LIGHT_RED).bold())),
+                                Line.from(Span.styled(msg, Theme.error().bold())),
                                 Line.from(Span.raw("")),
                                 Line.from(
                                         Span.raw("  "),

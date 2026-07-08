@@ -1190,8 +1190,8 @@ public class CamelMonitor extends CamelCommand {
                         Paragraph.builder().text(Text.from(titleLine)).build(),
                         leftArea);
                 Color waveColor = activeNotificationError
-                        ? Theme.error().fg().orElse(Color.LIGHT_RED)
-                        : Theme.success().fg().orElse(Color.LIGHT_GREEN);
+                        ? Theme.error().fg().orElse(Color.RED)
+                        : Theme.success().fg().orElse(Color.GREEN);
                 WaveText wave = WaveText.builder()
                         .text(activeNotification)
                         .color(waveColor)
@@ -1395,7 +1395,7 @@ public class CamelMonitor extends CamelCommand {
     private void computeTabBadges(String[] badgeTexts, Style[] badgeStyles) {
         Style yellow = Theme.label();
         Style cyan = Style.EMPTY.fg(Color.CYAN).bold();
-        Style red = Style.EMPTY.fg(Color.LIGHT_RED).bold();
+        Style red = Theme.error().bold();
         for (int j = 0; j < badgeStyles.length; j++) {
             badgeTexts[j] = "";
             badgeStyles[j] = yellow;

@@ -105,7 +105,7 @@ class CircuitBreakerTabRenderTest {
         Frame frame = Frame.forTesting(buffer);
         tab.render(frame, area);
 
-        boolean foundGreen = TuiTestHelper.findCellWithColor(buffer, "c", Color.GREEN);
+        boolean foundGreen = TuiTestHelper.findCellWithColor(buffer, "c", Theme.success().fg().orElse(Color.GREEN));
         assertTrue(foundGreen, "closed state should be rendered in GREEN");
     }
 
@@ -120,7 +120,7 @@ class CircuitBreakerTabRenderTest {
         Frame frame = Frame.forTesting(buffer);
         tab.render(frame, area);
 
-        boolean foundRed = TuiTestHelper.findCellWithColor(buffer, "o", Color.LIGHT_RED);
+        boolean foundRed = TuiTestHelper.findCellWithColor(buffer, "o", Theme.error().fg().orElse(Color.LIGHT_RED));
         assertTrue(foundRed, "open state should be rendered in LIGHT_RED");
     }
 

@@ -140,8 +140,8 @@ class MemoryTab extends AbstractTab {
             if (info.heapMemCommitted > 0) {
                 long pctComm = info.heapMemUsed * 100 / info.heapMemCommitted;
                 String gaugeComm = buildGaugeBar(pctComm, 30);
-                Style colorComm = pctComm >= 80 ? Style.EMPTY.fg(Color.LIGHT_RED) : pctComm >= 60 ? Theme.warning()
-                        : Style.EMPTY.fg(Color.GREEN);
+                Style colorComm = pctComm >= 80 ? Theme.error() : pctComm >= 60 ? Theme.warning()
+                        : Theme.success();
                 List<Span> commSpans = new ArrayList<>();
                 commSpans.add(Span.styled("  committed: ", Style.EMPTY.dim()));
                 commSpans.add(Span.styled(String.format("%-10s", formatBytes(info.heapMemCommitted)), Style.EMPTY));
@@ -156,8 +156,8 @@ class MemoryTab extends AbstractTab {
             if (info.heapMemMax > 0) {
                 long pctMax = info.heapMemUsed * 100 / info.heapMemMax;
                 String gaugeMax = buildGaugeBar(pctMax, 30);
-                Style colorMax = pctMax >= 80 ? Style.EMPTY.fg(Color.LIGHT_RED) : pctMax >= 60 ? Theme.warning()
-                        : Style.EMPTY.fg(Color.GREEN);
+                Style colorMax = pctMax >= 80 ? Theme.error() : pctMax >= 60 ? Theme.warning()
+                        : Theme.success();
                 List<Span> maxSpans = new ArrayList<>();
                 maxSpans.add(Span.styled("  max:       ", Style.EMPTY.dim()));
                 maxSpans.add(Span.styled(String.format("%-10s", formatBytes(info.heapMemMax)), Style.EMPTY));
@@ -175,8 +175,8 @@ class MemoryTab extends AbstractTab {
         if (info.oldGenUsed > 0) {
             long oldPct = info.oldGenMax > 0 ? info.oldGenUsed * 100 / info.oldGenMax : 0;
             String oldGauge = buildGaugeBar(oldPct, 30);
-            Style oldColor = oldPct >= 80 ? Style.EMPTY.fg(Color.LIGHT_RED) : oldPct >= 60 ? Theme.warning()
-                    : Style.EMPTY.fg(Color.GREEN);
+            Style oldColor = oldPct >= 80 ? Theme.error() : oldPct >= 60 ? Theme.warning()
+                    : Theme.success();
 
             lines.add(Line.from(
                     Span.styled("  Old Gen:   ", Style.EMPTY.dim()),
@@ -297,9 +297,9 @@ class MemoryTab extends AbstractTab {
         // Precompute eighths thresholds for the color bands
         int greenEighths = (int) Math.round(0.6 * chartH * 8.0);
         int yellowEighths = (int) Math.round(0.8 * chartH * 8.0);
-        Style greenStyle = Style.EMPTY.fg(Color.GREEN);
+        Style greenStyle = Theme.success();
         Style yellowStyle = Theme.warning();
-        Style redStyle = Style.EMPTY.fg(Color.LIGHT_RED);
+        Style redStyle = Theme.error();
 
         for (int col = 0; col < chartW; col++) {
             double ratio = (double) data[col] / ceiling;
@@ -417,20 +417,20 @@ class MemoryTab extends AbstractTab {
         // ignore small fluctuations relative to heap capacity (at least 5M or 1% of ceiling)
         long threshold = Math.max(5 * 1024 * 1024, (long) (heapCeiling * 0.01));
         if (Math.abs(diff) < threshold) {
-            return Span.styled("  → stable over last " + period, Style.EMPTY.fg(Color.GREEN));
+            return Span.styled("  → stable over last " + period, Theme.success());
         }
 
         if (change > 0.05) {
             return Span.styled(
                     String.format("  %s growing by %d%% (%s) over last %s", TuiIcons.ARROW_UP, pct, formatBytes(diff), period),
-                    Style.EMPTY.fg(Color.LIGHT_RED).bold());
+                    Theme.error().bold());
         } else if (change < -0.05) {
             return Span.styled(
                     String.format("  %s shrinking by %d%% (%s) over last %s", TuiIcons.ARROW_DOWN,
                             Math.abs(pct), formatBytes(Math.abs(diff)), period),
-                    Style.EMPTY.fg(Color.GREEN));
+                    Theme.success());
         } else {
-            return Span.styled("  " + TuiIcons.ARROW_STABLE + " stable over last " + period, Style.EMPTY.fg(Color.GREEN));
+            return Span.styled("  " + TuiIcons.ARROW_STABLE + " stable over last " + period, Theme.success());
         }
     }
 

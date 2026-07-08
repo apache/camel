@@ -316,8 +316,8 @@ class ThreadsTab extends AbstractTableTab {
             return Style.EMPTY;
         }
         return switch (state) {
-            case "RUNNABLE" -> Style.EMPTY.fg(Color.GREEN);
-            case "BLOCKED" -> Style.EMPTY.fg(Color.LIGHT_RED);
+            case "RUNNABLE" -> Theme.success();
+            case "BLOCKED" -> Theme.error();
             case "WAITING" -> Theme.warning();
             case "TIMED_WAITING" -> Style.EMPTY.fg(Color.CYAN);
             default -> Style.EMPTY;
