@@ -41,11 +41,7 @@ import org.apache.camel.diagram.RouteDiagramLayoutEngine.RouteInfo;
 import org.apache.camel.diagram.RouteDiagramRenderer;
 import org.apache.camel.diagram.RouteDiagramRenderer.DiagramColors;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
-import org.apache.camel.dsl.jbang.core.commands.Run;
-import org.apache.camel.dsl.jbang.core.common.CamelJBangConstants;
-import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.PathUtils;
-import org.apache.camel.main.KameletMain;
 import org.apache.camel.support.PatternHelper;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.json.JsonObject;
@@ -75,7 +71,8 @@ public class CamelRouteDiagramAction extends ActionWatchCommand {
                             description = "Source file name(s) (shell-expanded wildcards), or name/pid of a running "
                                           + "Camel integration",
                             arity = "0..9", paramLabel = "<files>", parameterConsumer = FilesConsumer.class)
-    Path[] filePaths; // Defined only for file path completion; the field never used
+    @SuppressWarnings("unused") // only declared so picocli offers file-path completion; values go into files instead
+    Path[] filePaths;
 
     List<String> files = new ArrayList<>();
 
@@ -129,7 +126,7 @@ public class CamelRouteDiagramAction extends ActionWatchCommand {
                         description = "Whether to ignore route loading and compilation errors (use this with care!)")
     boolean ignoreLoadingError;
 
-    private volatile long pid;
+    private long pid;
 
     private DiagramColors colors;
     private Terminal terminal;
@@ -374,54 +371,21 @@ public class CamelRouteDiagramAction extends ActionWatchCommand {
     }
 
     /**
-     * Loads the given source files via a transient Camel boot (see {@link Run#runTransform(boolean)}) and returns the
-     * merged route structure across all of them, or {@code null} if a file does not exist or loading failed (an error
-     * is already printed to the user in that case). Package visible for testing.
+     * Loads the given source files via a transient Camel boot (see
+     * {@link #dumpRoutesFromSource(List, String, boolean)}) and returns the merged route structure across all of them,
+     * or {@code null} if a file does not exist or loading failed (an error is already printed to the user in that
+     * case). Package visible for testing.
      */
     List<RouteInfo> doCallSource(List<String> sourceFiles) throws Exception {
-        for (String name : sourceFiles) {
-            File f = new File(name);
-            if (!f.isFile() || !f.exists()) {
-                printer().printErr("File does not exist: " + name);
-                return null;
-            }
+        SourceDump dump = dumpRoutesFromSource(sourceFiles, "route-diagram-source-", ignoreLoadingError);
+        if (dump == null) {
+            return null;
         }
 
-        Path workDir = Path.of(CommandLineHelper.CAMEL_JBANG_WORK_DIR, "route-diagram-source-" + ProcessHandle.current().pid());
-        PathUtils.deleteDirectory(workDir);
-        final String target = workDir.toString();
-        // anything this boot dumps must be newer than this: guards readRoutesFromFolder against a stale
-        // route-topology.json left over from a previous --watch iteration whose cleanup above raced with (or lost
-        // against) a slow filesystem
-        Instant bootStart = Instant.now();
-
         try {
-            Run run = new Run(getMain()) {
-                @Override
-                protected void doAddInitialProperty(KameletMain main) {
-                    main.addInitialProperty("camel.main.dumpRoutes", "json");
-                    main.addInitialProperty("camel.main.dumpRoutesLog", "false");
-                    main.addInitialProperty("camel.main.dumpRoutesOutput", target);
-                    // turn debug off as this can otherwise include source location in dump
-                    main.addInitialProperty("camel.debug.enabled", "false");
-                    main.addInitialProperty(CamelJBangConstants.TRANSFORM, "true");
-                    main.addInitialProperty("camel.component.properties.ignoreMissingProperty", "true");
-                    if (ignoreLoadingError) {
-                        // turn off bean method validator if ignore loading error
-                        main.addInitialProperty("camel.language.bean.validate", "false");
-                    }
-                }
-            };
-            run.files = sourceFiles;
-            run.executionLimitOptions.maxSeconds = 1;
-            int exit = run.runTransform(ignoreLoadingError);
-            if (exit != 0) {
-                return null;
-            }
-
-            return readRoutesFromFolder(workDir, bootStart);
+            return readRoutesFromFolder(dump.workDir(), dump.bootStart());
         } finally {
-            PathUtils.deleteDirectory(workDir);
+            PathUtils.deleteDirectory(dump.workDir());
         }
     }
 

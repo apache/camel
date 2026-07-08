@@ -35,11 +35,7 @@ import org.apache.camel.diagram.TopologyLayoutEngine.TopologyEdgeInfo;
 import org.apache.camel.diagram.TopologyLayoutEngine.TopologyLayoutResult;
 import org.apache.camel.diagram.TopologyLayoutEngine.TopologyNodeInfo;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
-import org.apache.camel.dsl.jbang.core.commands.Run;
-import org.apache.camel.dsl.jbang.core.common.CamelJBangConstants;
-import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.PathUtils;
-import org.apache.camel.main.KameletMain;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
@@ -66,7 +62,8 @@ public class CamelRouteTopologyAction extends ActionBaseCommand {
                             description = "Source file name(s) (shell-expanded wildcards), or name/pid of a running "
                                           + "Camel integration",
                             arity = "0..9", paramLabel = "<files>", parameterConsumer = FilesConsumer.class)
-    Path[] filePaths; // Defined only for file path completion; the field never used
+    @SuppressWarnings("unused") // only declared so picocli offers file-path completion; values go into files instead
+    Path[] filePaths;
 
     List<String> files = new ArrayList<>();
 
@@ -108,7 +105,7 @@ public class CamelRouteTopologyAction extends ActionBaseCommand {
                         description = "Whether to ignore route loading and compilation errors (use this with care!)")
     boolean ignoreLoadingError;
 
-    private volatile long pid;
+    private long pid;
 
     public CamelRouteTopologyAction(CamelJBangMain main) {
         super(main);
@@ -152,44 +149,13 @@ public class CamelRouteTopologyAction extends ActionBaseCommand {
     }
 
     private int doCallSource(List<String> sourceFiles) throws Exception {
-        for (String name : sourceFiles) {
-            File f = new File(name);
-            if (!f.isFile() || !f.exists()) {
-                printer().printErr("File does not exist: " + name);
-                return 1;
-            }
+        SourceDump dump = dumpRoutesFromSource(sourceFiles, "route-topology-source-", ignoreLoadingError);
+        if (dump == null) {
+            return 1;
         }
 
-        Path workDir
-                = Path.of(CommandLineHelper.CAMEL_JBANG_WORK_DIR, "route-topology-source-" + ProcessHandle.current().pid());
-        PathUtils.deleteDirectory(workDir);
-        final String target = workDir.toString();
-
         try {
-            Run run = new Run(getMain()) {
-                @Override
-                protected void doAddInitialProperty(KameletMain main) {
-                    main.addInitialProperty("camel.main.dumpRoutes", "json");
-                    main.addInitialProperty("camel.main.dumpRoutesLog", "false");
-                    main.addInitialProperty("camel.main.dumpRoutesOutput", target);
-                    // turn debug off as this can otherwise include source location in dump
-                    main.addInitialProperty("camel.debug.enabled", "false");
-                    main.addInitialProperty(CamelJBangConstants.TRANSFORM, "true");
-                    main.addInitialProperty("camel.component.properties.ignoreMissingProperty", "true");
-                    if (ignoreLoadingError) {
-                        // turn off bean method validator if ignore loading error
-                        main.addInitialProperty("camel.language.bean.validate", "false");
-                    }
-                }
-            };
-            run.files = sourceFiles;
-            run.executionLimitOptions.maxSeconds = 1;
-            int exit = run.runTransform(ignoreLoadingError);
-            if (exit != 0) {
-                return exit;
-            }
-
-            Path topologyFile = workDir.resolve("route-topology.json");
+            Path topologyFile = dump.workDir().resolve("route-topology.json");
             JsonObject jo = getJsonObject(topologyFile, 10000);
             if (jo == null) {
                 // DefaultDumpRoutesStrategy always writes route-topology.json once the source is loaded, even when
@@ -203,7 +169,7 @@ public class CamelRouteTopologyAction extends ActionBaseCommand {
 
             return renderTopology(jo);
         } finally {
-            PathUtils.deleteDirectory(workDir);
+            PathUtils.deleteDirectory(dump.workDir());
         }
     }
 

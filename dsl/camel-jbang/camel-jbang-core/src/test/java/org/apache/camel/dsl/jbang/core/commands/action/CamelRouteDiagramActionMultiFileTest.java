@@ -23,7 +23,6 @@ import java.nio.file.Path;
 import java.nio.file.attribute.FileTime;
 import java.time.Instant;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.diagram.RouteDiagramLayoutEngine.RouteInfo;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
@@ -31,7 +30,6 @@ import org.apache.camel.dsl.jbang.core.common.StringPrinter;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
-import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -99,8 +97,10 @@ class CamelRouteDiagramActionMultiFileTest {
         // DefaultDumpRoutesStrategy) land shortly after; if readRoutesFromFolder returned as soon as any file
         // appeared (the pre-fix behavior), it would race ahead and merge only route1, silently dropping route2
         Thread writer = new Thread(() -> {
-            await().pollDelay(300, TimeUnit.MILLISECONDS).atMost(5, TimeUnit.SECONDS).until(() -> true);
             try {
+                // simulate the dump files landing progressively: sleep so these writes arrive after
+                // readRoutesFromFolder has already started polling for the completion marker
+                Thread.sleep(300);
                 Files.writeString(tempDir.resolve("route2.json"), """
                         {"routes":[{"routeId":"route2","code":[{"type":"from","code":"direct:linked","level":0}]}]}
                         """);
@@ -109,6 +109,8 @@ class CamelRouteDiagramActionMultiFileTest {
                         """);
             } catch (IOException e) {
                 throw new UncheckedIOException(e);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
             }
         }, "test-delayed-dump-writer");
         writer.start();
@@ -134,14 +136,18 @@ class CamelRouteDiagramActionMultiFileTest {
 
         // this iteration's own dump lands shortly after, rewriting the marker with a fresh timestamp
         Thread writer = new Thread(() -> {
-            await().pollDelay(300, TimeUnit.MILLISECONDS).atMost(5, TimeUnit.SECONDS).until(() -> true);
             try {
+                // simulate this iteration's own dump landing progressively: sleep so the fresh write arrives
+                // after readRoutesFromFolder has already started polling and seen the stale marker
+                Thread.sleep(300);
                 Files.writeString(tempDir.resolve("route1.json"), """
                         {"routes":[{"routeId":"route1","code":[{"type":"from","code":"timer:tick","level":0}]}]}
                         """);
                 Files.writeString(topologyMarker, "{\"nodes\":[],\"edges\":[]}");
             } catch (IOException e) {
                 throw new UncheckedIOException(e);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
             }
         }, "test-delayed-refresh-writer");
         writer.start();
