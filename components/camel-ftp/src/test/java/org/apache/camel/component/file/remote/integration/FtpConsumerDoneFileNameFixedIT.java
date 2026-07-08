@@ -41,7 +41,7 @@ public class FtpConsumerDoneFileNameFixedIT extends FtpServerTestSupport {
 
         // wait a bit and it should not pickup the written file as there are no
         // done file
-        MockEndpoint.assertIsSatisfied(context);
+        await().atMost(1, TimeUnit.SECONDS).untilAsserted(() -> MockEndpoint.assertIsSatisfied(context));
 
         MockEndpoint.resetMocks(context);
 

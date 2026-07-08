@@ -21,6 +21,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit6.params.Test;
+import org.awaitility.Awaitility;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
 
@@ -42,7 +43,8 @@ public class LevelDBAggregateDiscardOnTimeoutTest extends LevelDBTestSupport {
         template.sendBodyAndHeader("direct:start", "A", "id", 123);
         template.sendBodyAndHeader("direct:start", "B", "id", 123);
 
-        mock.assertIsSatisfied();
+        // wait at most 3 seconds
+        Awaitility.await().atMost(3, TimeUnit.SECONDS).untilAsserted(() -> mock.assertIsSatisfied());
 
         mock.assertIsSatisfied();
 
