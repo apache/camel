@@ -44,6 +44,7 @@ import com.azure.storage.file.datalake.sas.DataLakeServiceSasSignatureValues;
 import com.azure.storage.file.datalake.sas.PathSasPermission;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.component.azure.common.AzureFileNameHelper;
 import org.apache.camel.component.azure.storage.datalake.DataLakeConfiguration;
 import org.apache.camel.component.azure.storage.datalake.DataLakeConfigurationOptionsProxy;
 import org.apache.camel.component.azure.storage.datalake.DataLakeExchangeHeaders;
@@ -106,7 +107,7 @@ public class DataLakeFileOperations {
             throw new IllegalArgumentException("to download a file, you need to specify the fileDir in the URI");
         }
         final DataLakeFileClientWrapper fileClientWrapper = getFileClientWrapper(exchange);
-        final File recieverFile = new File(fileDir, fileClientWrapper.getFileName());
+        final File recieverFile = AzureFileNameHelper.resolveWithinDirectory(fileDir, fileClientWrapper.getFileName());
         final FileCommonRequestOptions commonRequestOptions = getCommonRequestOptions(exchange);
         final FileRange fileRange = configurationProxy.getFileRange(exchange);
         final ParallelTransferOptions parallelTransferOptions = configurationProxy.getParallelTransferOptions(exchange);
