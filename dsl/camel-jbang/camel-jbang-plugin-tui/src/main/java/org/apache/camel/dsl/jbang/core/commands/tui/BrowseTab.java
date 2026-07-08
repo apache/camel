@@ -408,11 +408,11 @@ class BrowseTab extends AbstractTab {
         List<Line> lines = new ArrayList<>();
         lines.add(Line.from(
                 Span.styled("  Exchange ID: ", Theme.label().bold()),
-                Span.styled(msg.exchangeId != null ? msg.exchangeId : "", Style.EMPTY.fg(Color.WHITE))));
+                Span.styled(msg.exchangeId != null ? msg.exchangeId : "", Style.EMPTY.fg(Theme.baseFg()))));
         if (msg.exchangePattern != null) {
             lines.add(Line.from(
                     Span.styled("  Pattern:     ", Theme.label().bold()),
-                    Span.styled(msg.exchangePattern, Style.EMPTY.fg(Color.WHITE))));
+                    Span.styled(msg.exchangePattern, Style.EMPTY.fg(Theme.baseFg()))));
         }
         lines.add(Line.from(Span.raw("")));
 
@@ -423,7 +423,7 @@ class BrowseTab extends AbstractTab {
                 lines.add(Line.from(
                         Span.styled("    " + entry.getKey(), Style.EMPTY.fg(Color.CYAN)),
                         Span.styled(" = ", Style.EMPTY.dim()),
-                        Span.styled(entry.getValue(), Style.EMPTY.fg(Color.WHITE))));
+                        Span.styled(entry.getValue(), Style.EMPTY.fg(Theme.baseFg()))));
             }
             lines.add(Line.from(Span.raw("")));
         }
@@ -440,7 +440,7 @@ class BrowseTab extends AbstractTab {
                 }
             }
             for (String line : bodyText.split("\n", -1)) {
-                lines.add(Line.from(Span.styled("    " + line, Style.EMPTY.fg(Color.WHITE))));
+                lines.add(Line.from(Span.styled("    " + line, Style.EMPTY.fg(Theme.baseFg()))));
             }
         } else {
             lines.add(Line.from(Span.styled("    (empty)", Style.EMPTY.dim())));

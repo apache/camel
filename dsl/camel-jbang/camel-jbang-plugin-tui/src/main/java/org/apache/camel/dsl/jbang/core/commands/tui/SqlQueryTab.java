@@ -496,7 +496,7 @@ class SqlQueryTab extends AbstractTab {
             for (String col : columnNames) {
                 Object val = row.get(col);
                 String s = val != null ? String.valueOf(val) : "null";
-                Style style = val == null ? Style.EMPTY.fg(Color.DARK_GRAY) : Style.EMPTY.fg(Color.WHITE);
+                Style style = val == null ? Style.EMPTY.fg(Color.DARK_GRAY) : Style.EMPTY.fg(Theme.baseFg());
                 cells.add(Cell.from(Span.styled(s, style)));
             }
             dataRows.add(Row.from(cells));

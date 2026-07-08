@@ -135,7 +135,7 @@ class MemoryTab extends AbstractTab {
 
             lines.add(Line.from(
                     Span.styled("  used:      ", Style.EMPTY.dim()),
-                    Span.styled(formatBytes(info.heapMemUsed), Style.EMPTY.fg(Color.WHITE).bold())));
+                    Span.styled(formatBytes(info.heapMemUsed), Style.EMPTY.fg(Theme.baseFg()).bold())));
 
             if (info.heapMemCommitted > 0) {
                 long pctComm = info.heapMemUsed * 100 / info.heapMemCommitted;
@@ -180,7 +180,7 @@ class MemoryTab extends AbstractTab {
 
             lines.add(Line.from(
                     Span.styled("  Old Gen:   ", Style.EMPTY.dim()),
-                    Span.styled(String.format("%-10s", formatBytes(info.oldGenUsed)), Style.EMPTY.fg(Color.WHITE).bold()),
+                    Span.styled(String.format("%-10s", formatBytes(info.oldGenUsed)), Style.EMPTY.fg(Theme.baseFg()).bold()),
                     Span.styled(oldGauge, oldColor),
                     Span.styled(String.format("  %d%%", oldPct), oldColor.bold())));
             lines.add(Line.from(
@@ -197,14 +197,15 @@ class MemoryTab extends AbstractTab {
                     Span.styled("  Non-Heap Memory", Style.EMPTY.fg(Color.CYAN).bold())));
             lines.add(Line.from(
                     Span.styled("  used:      ", Style.EMPTY.dim()),
-                    Span.styled(String.format("%-10s", formatBytes(info.nonHeapMemUsed)), Style.EMPTY.fg(Color.WHITE).bold()),
+                    Span.styled(String.format("%-10s", formatBytes(info.nonHeapMemUsed)),
+                            Style.EMPTY.fg(Theme.baseFg()).bold()),
                     Span.styled("  committed: ", Style.EMPTY.dim()),
                     Span.raw(formatBytes(info.nonHeapMemCommitted))));
         }
         if (info.metaspaceUsed > 0) {
             lines.add(Line.from(
                     Span.styled("  Metaspace: ", Style.EMPTY.dim()),
-                    Span.styled(String.format("%-10s", formatBytes(info.metaspaceUsed)), Style.EMPTY.fg(Color.WHITE).bold()),
+                    Span.styled(String.format("%-10s", formatBytes(info.metaspaceUsed)), Style.EMPTY.fg(Theme.baseFg()).bold()),
                     Span.styled("  committed: ", Style.EMPTY.dim()),
                     Span.raw(formatBytes(info.metaspaceCommitted)),
                     info.metaspaceMax > 0
@@ -218,7 +219,7 @@ class MemoryTab extends AbstractTab {
             List<Span> threadSpans = new ArrayList<>();
             threadSpans.add(Span.styled("  Threads", Style.EMPTY.fg(Color.CYAN).bold()));
             threadSpans.add(Span.styled("  current: ", Style.EMPTY.dim()));
-            threadSpans.add(Span.styled(String.valueOf(info.threadCount), Style.EMPTY.fg(Color.WHITE).bold()));
+            threadSpans.add(Span.styled(String.valueOf(info.threadCount), Style.EMPTY.fg(Theme.baseFg()).bold()));
             threadSpans.add(Span.styled("  peak: ", Style.EMPTY.dim()));
             threadSpans.add(Span.raw(String.valueOf(info.peakThreadCount)));
             lines.add(Line.from(threadSpans));

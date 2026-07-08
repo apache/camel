@@ -837,7 +837,7 @@ class RoutesTab extends AbstractTab {
         if (route != null) {
             lines.add(Line.from(
                     Span.styled(" Route: ", Theme.label().bold()),
-                    Span.styled(route.routeId, Style.EMPTY.fg(Color.WHITE).bold())));
+                    Span.styled(route.routeId, Style.EMPTY.fg(Theme.baseFg()).bold())));
             lines.add(Line.from(
                     Span.styled(" From:  ", Style.EMPTY.dim()),
                     Span.raw(route.from != null ? route.from : "")));
@@ -925,7 +925,7 @@ class RoutesTab extends AbstractTab {
                     lines.add(Line.from(Span.raw("")));
                     lines.add(Line.from(
                             Span.styled(isInbound ? " To route: " : " From route: ", Style.EMPTY.dim()),
-                            Span.styled(connectedRoute, Style.EMPTY.fg(Color.WHITE))));
+                            Span.styled(connectedRoute, Style.EMPTY.fg(Theme.baseFg()))));
                 }
                 if (topoNode.exchangesTotal > 0 || topoNode.exchangesFailed > 0) {
                     lines.add(Line.from(Span.raw("")));
@@ -984,7 +984,7 @@ class RoutesTab extends AbstractTab {
             if (linkedRoute != null && diagram.getRouteLayout(linkedRoute) != null) {
                 lines.add(Line.from(
                         Span.styled(" ↵ ", Theme.label().bold()),
-                        Span.styled(linkedRoute, Style.EMPTY.fg(Color.WHITE))));
+                        Span.styled(linkedRoute, Style.EMPTY.fg(Theme.baseFg()))));
             } else if (ln.treeNode != null && ln.treeNode.info.remote) {
                 String arrow = "from".equals(ln.type) ? " external → " : " → external";
                 lines.add(Line.from(

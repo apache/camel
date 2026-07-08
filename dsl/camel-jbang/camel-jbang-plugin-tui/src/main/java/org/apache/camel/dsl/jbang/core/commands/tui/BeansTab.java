@@ -254,7 +254,7 @@ class BeansTab extends AbstractTableTab {
         if (bean.type != null && !bean.type.isEmpty()) {
             lines.add(Line.from(
                     Span.styled("  Type: ", Style.EMPTY.dim()),
-                    Span.styled(bean.type, Style.EMPTY.fg(Color.WHITE))));
+                    Span.styled(bean.type, Style.EMPTY.fg(Theme.baseFg()))));
         }
 
         // properties
@@ -280,7 +280,7 @@ class BeansTab extends AbstractTableTab {
                         Span.styled("  " + String.format("%-" + nameWidth + "s", prop.name), Style.EMPTY.fg(Color.CYAN)),
                         Span.styled(String.format("%-15s", shortPropType), Style.EMPTY.dim()),
                         Span.styled(" = ", Style.EMPTY.dim()),
-                        Span.styled(value, "null".equals(value) ? Style.EMPTY.dim() : Style.EMPTY.fg(Color.WHITE))));
+                        Span.styled(value, "null".equals(value) ? Style.EMPTY.dim() : Style.EMPTY.fg(Theme.baseFg()))));
             }
         } else {
             lines.add(Line.from(Span.raw("")));

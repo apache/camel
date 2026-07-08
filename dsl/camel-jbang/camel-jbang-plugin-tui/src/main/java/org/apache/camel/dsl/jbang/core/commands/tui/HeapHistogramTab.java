@@ -197,12 +197,13 @@ class HeapHistogramTab extends AbstractTableTab {
                 Span.styled(className, Style.EMPTY.fg(Color.CYAN))));
         lines.add(Line.from(
                 Span.styled("  Package:    ", Theme.label().bold()),
-                Span.styled(pkg.isEmpty() ? "(none)" : pkg, pkg.isEmpty() ? Style.EMPTY.dim() : Style.EMPTY.fg(Color.WHITE))));
+                Span.styled(pkg.isEmpty() ? "(none)" : pkg,
+                        pkg.isEmpty() ? Style.EMPTY.dim() : Style.EMPTY.fg(Theme.baseFg()))));
         lines.add(Line.from(
                 Span.styled("  Instances:  ", Theme.label().bold()),
-                Span.styled(formatNumber(entry.instances), Style.EMPTY.fg(Color.WHITE)),
+                Span.styled(formatNumber(entry.instances), Style.EMPTY.fg(Theme.baseFg())),
                 Span.styled("          Bytes: ", Theme.label().bold()),
-                Span.styled(formatBytes(entry.bytes), Style.EMPTY.fg(Color.WHITE))));
+                Span.styled(formatBytes(entry.bytes), Style.EMPTY.fg(Theme.baseFg()))));
 
         // Package summary
         if (!pkg.isEmpty()) {
@@ -222,11 +223,11 @@ class HeapHistogramTab extends AbstractTableTab {
                     Span.styled("(" + pkg + ")", Style.EMPTY.dim())));
             lines.add(Line.from(
                     Span.styled("    Classes: ", Theme.label()),
-                    Span.styled(formatNumber(pkgClasses), Style.EMPTY.fg(Color.WHITE)),
+                    Span.styled(formatNumber(pkgClasses), Style.EMPTY.fg(Theme.baseFg())),
                     Span.styled("     Instances: ", Theme.label()),
-                    Span.styled(formatNumber(pkgInstances), Style.EMPTY.fg(Color.WHITE)),
+                    Span.styled(formatNumber(pkgInstances), Style.EMPTY.fg(Theme.baseFg())),
                     Span.styled("     Bytes: ", Theme.label()),
-                    Span.styled(formatBytes(pkgBytes), Style.EMPTY.fg(Color.WHITE))));
+                    Span.styled(formatBytes(pkgBytes), Style.EMPTY.fg(Theme.baseFg()))));
         }
 
         // JAR info

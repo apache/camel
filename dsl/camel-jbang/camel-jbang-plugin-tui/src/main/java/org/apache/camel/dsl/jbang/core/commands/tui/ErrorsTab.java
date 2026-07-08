@@ -313,7 +313,7 @@ class ErrorsTab extends AbstractTableTab {
                     Line title = Line.from(Span.styled(
                             String.format(" Error Topology — step %d/%d ",
                                     diagram.getHistoryStepIndex() + 1, diagram.getHistoryStepCount()),
-                            Style.EMPTY.fg(Color.WHITE)));
+                            Style.EMPTY.fg(Theme.baseFg())));
                     diagram.renderHistoryTopologyDiagram(frame, diagramArea, title);
                 } else {
                     String routeId = diagram.getHistoryDrillDownRouteId();
@@ -569,7 +569,7 @@ class ErrorsTab extends AbstractTableTab {
     private Line buildErrorBreadcrumbTitle() {
         Style nameStyle = Theme.label().bold();
         List<Span> spans = new ArrayList<>();
-        spans.add(Span.styled(" Error [", Style.EMPTY.fg(Color.WHITE)));
+        spans.add(Span.styled(" Error [", Style.EMPTY.fg(Theme.baseFg())));
         var stack = diagram.getHistoryNavigationStack();
         if (stack.isEmpty()) {
             spans.add(Span.styled(diagram.getHistoryDrillDownRouteId(), nameStyle));
@@ -582,7 +582,7 @@ class ErrorsTab extends AbstractTableTab {
         }
         spans.add(Span.styled(String.format("] — step %d/%d ",
                 diagram.getHistoryStepIndex() + 1, diagram.getHistoryStepCount()),
-                Style.EMPTY.fg(Color.WHITE)));
+                Style.EMPTY.fg(Theme.baseFg())));
         return Line.from(spans);
     }
 
@@ -687,10 +687,10 @@ class ErrorsTab extends AbstractTableTab {
     private static void hintShowBhpv(List<Span> spans, boolean body, boolean headers, boolean props, boolean vars) {
         spans.add(Span.styled(" show", Theme.hintKey()));
         spans.add(Span.raw(" "));
-        spans.add(Span.styled(body ? "B" : "b", body ? Style.EMPTY.fg(Color.WHITE).bold() : Style.EMPTY.dim()));
-        spans.add(Span.styled(headers ? "H" : "h", headers ? Style.EMPTY.fg(Color.WHITE).bold() : Style.EMPTY.dim()));
-        spans.add(Span.styled(props ? "P" : "p", props ? Style.EMPTY.fg(Color.WHITE).bold() : Style.EMPTY.dim()));
-        spans.add(Span.styled(vars ? "V" : "v", vars ? Style.EMPTY.fg(Color.WHITE).bold() : Style.EMPTY.dim()));
+        spans.add(Span.styled(body ? "B" : "b", body ? Style.EMPTY.fg(Theme.baseFg()).bold() : Style.EMPTY.dim()));
+        spans.add(Span.styled(headers ? "H" : "h", headers ? Style.EMPTY.fg(Theme.baseFg()).bold() : Style.EMPTY.dim()));
+        spans.add(Span.styled(props ? "P" : "p", props ? Style.EMPTY.fg(Theme.baseFg()).bold() : Style.EMPTY.dim()));
+        spans.add(Span.styled(vars ? "V" : "v", vars ? Style.EMPTY.fg(Theme.baseFg()).bold() : Style.EMPTY.dim()));
         spans.add(Span.raw("  "));
     }
 

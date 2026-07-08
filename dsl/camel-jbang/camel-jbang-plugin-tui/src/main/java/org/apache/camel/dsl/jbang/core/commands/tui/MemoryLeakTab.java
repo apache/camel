@@ -245,7 +245,7 @@ class MemoryLeakTab extends AbstractTab {
             lines.add(Line.from(Span.raw("")));
             lines.add(Line.from(
                     Span.styled("  Duration: ", Theme.label().bold()),
-                    Span.styled(duration + "s", Style.EMPTY.fg(Color.WHITE)),
+                    Span.styled(duration + "s", Style.EMPTY.fg(Theme.baseFg())),
                     Span.styled("  (use ", Style.EMPTY.dim()),
                     Span.styled("+", Theme.label().bold()),
                     Span.styled("/", Style.EMPTY.dim()),
@@ -254,7 +254,7 @@ class MemoryLeakTab extends AbstractTab {
             String modeLabel = recordingMode == RecordingMode.DUAL ? "dual" : "single";
             lines.add(Line.from(
                     Span.styled("  Mode:     ", Theme.label().bold()),
-                    Span.styled("[" + modeLabel + "]", Style.EMPTY.fg(Color.WHITE)),
+                    Span.styled("[" + modeLabel + "]", Style.EMPTY.fg(Theme.baseFg())),
                     Span.styled("  (press ", Style.EMPTY.dim()),
                     Span.styled("d", Theme.label().bold()),
                     Span.styled(" to toggle)", Style.EMPTY.dim())));
@@ -267,11 +267,11 @@ class MemoryLeakTab extends AbstractTab {
                         Span.styled("  Runs two sequential JFR recordings:", Style.EMPTY.dim())));
                 lines.add(Line.from(
                         Span.styled("    Run 1: ", Style.EMPTY.fg(Color.CYAN)),
-                        Span.styled(duration + "s", Style.EMPTY.fg(Color.WHITE)),
+                        Span.styled(duration + "s", Style.EMPTY.fg(Theme.baseFg())),
                         Span.styled(" baseline recording", Style.EMPTY.dim())));
                 lines.add(Line.from(
                         Span.styled("    Run 2: ", Style.EMPTY.fg(Color.CYAN)),
-                        Span.styled((duration * 2) + "s", Style.EMPTY.fg(Color.WHITE)),
+                        Span.styled((duration * 2) + "s", Style.EMPTY.fg(Theme.baseFg())),
                         Span.styled(" comparison recording (2x duration)", Style.EMPTY.dim())));
                 lines.add(Line.from(
                         Span.styled("  Compares trends to detect leaks: classes growing faster", Style.EMPTY.dim())));
@@ -320,13 +320,13 @@ class MemoryLeakTab extends AbstractTab {
         lines.add(Line.from(Span.raw("")));
         lines.add(Line.from(
                 Span.styled("  Elapsed:    ", Theme.label().bold()),
-                Span.styled(elapsedSec + "s", Style.EMPTY.fg(Color.WHITE))));
+                Span.styled(elapsedSec + "s", Style.EMPTY.fg(Theme.baseFg()))));
         lines.add(Line.from(
                 Span.styled("  Remaining:  ", Theme.label().bold()),
-                Span.styled(remainingSec + "s", Style.EMPTY.fg(Color.WHITE))));
+                Span.styled(remainingSec + "s", Style.EMPTY.fg(Theme.baseFg()))));
         lines.add(Line.from(
                 Span.styled("  Duration:   ", Theme.label().bold()),
-                Span.styled(currentRecordingDuration + "s", Style.EMPTY.fg(Color.WHITE))));
+                Span.styled(currentRecordingDuration + "s", Style.EMPTY.fg(Theme.baseFg()))));
         lines.add(Line.from(Span.raw("")));
         lines.add(Line.from(
                 Span.styled("  Press ", Style.EMPTY.dim()),
@@ -437,7 +437,7 @@ class MemoryLeakTab extends AbstractTab {
                         Constraint.length(8),
                         Constraint.length(12),
                         Constraint.length(13))
-                .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
+                .highlightStyle(Style.EMPTY.fg(Theme.baseFg()).bold().onBlue())
                 .highlightSpacing(Table.HighlightSpacing.ALWAYS)
                 .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(title).build())
                 .build();
@@ -471,19 +471,19 @@ class MemoryLeakTab extends AbstractTab {
         List<Span> infoSpans = new ArrayList<>();
         if (entry.count > 1) {
             infoSpans.add(Span.styled("  Count:  ", Theme.label().bold()));
-            infoSpans.add(Span.styled(String.valueOf(entry.count), Style.EMPTY.fg(Color.WHITE)));
+            infoSpans.add(Span.styled(String.valueOf(entry.count), Style.EMPTY.fg(Theme.baseFg())));
         }
         if (entry.sampledSize > 0) {
             infoSpans.add(Span.styled(infoSpans.isEmpty() ? "  Sampled:  " : "    Sampled: ",
                     Theme.label().bold()));
-            infoSpans.add(Span.styled(formatBytes(entry.sampledSize), Style.EMPTY.fg(Color.WHITE)));
+            infoSpans.add(Span.styled(formatBytes(entry.sampledSize), Style.EMPTY.fg(Theme.baseFg())));
         }
         if (!infoSpans.isEmpty()) {
             lines.add(Line.from(infoSpans));
         }
         lines.add(Line.from(
                 Span.styled("  Age:    ", Theme.label().bold()),
-                Span.styled(formatDuration(entry.objectAge), Style.EMPTY.fg(Color.WHITE))));
+                Span.styled(formatDuration(entry.objectAge), Style.EMPTY.fg(Theme.baseFg()))));
 
         // Reference chain
         if (entry.referenceChain != null && !entry.referenceChain.isEmpty()) {
@@ -513,7 +513,7 @@ class MemoryLeakTab extends AbstractTab {
                     Span.styled("  Allocation Stack Trace:", Theme.label().bold())));
 
             for (StackEntry frame2 : entry.stackTrace) {
-                Style methodStyle = isJdkFrame(frame2.method) ? Style.EMPTY.dim() : Style.EMPTY.fg(Color.WHITE);
+                Style methodStyle = isJdkFrame(frame2.method) ? Style.EMPTY.dim() : Style.EMPTY.fg(Theme.baseFg());
                 lines.add(Line.from(
                         Span.styled("    at ", Style.EMPTY.dim()),
                         Span.styled(frame2.method, methodStyle),
@@ -592,7 +592,7 @@ class MemoryLeakTab extends AbstractTab {
                         Constraint.length(10),
                         Constraint.length(9),
                         Constraint.length(13))
-                .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
+                .highlightStyle(Style.EMPTY.fg(Theme.baseFg()).bold().onBlue())
                 .highlightSpacing(Table.HighlightSpacing.ALWAYS)
                 .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(title).build())
                 .build();
@@ -626,11 +626,11 @@ class MemoryLeakTab extends AbstractTab {
         lines.add(Line.from(
                 Span.styled("  Run 1:   ", Theme.label().bold()),
                 Span.styled(formatBytes(entry.baselineSampledSize) + " (" + entry.baselineCount + " samples)",
-                        Style.EMPTY.fg(Color.WHITE))));
+                        Style.EMPTY.fg(Theme.baseFg()))));
         lines.add(Line.from(
                 Span.styled("  Run 2:   ", Theme.label().bold()),
                 Span.styled(formatBytes(entry.currentSampledSize) + " (" + entry.currentCount + " samples)",
-                        Style.EMPTY.fg(Color.WHITE))));
+                        Style.EMPTY.fg(Theme.baseFg()))));
         if (entry.growthRatio > 0) {
             String growthLabel = entry.lowConfidence
                     ? "~" + formatGrowthPercent(entry.growthRatio)
@@ -638,7 +638,7 @@ class MemoryLeakTab extends AbstractTab {
             lines.add(Line.from(
                     Span.styled("  Growth:  ", Theme.label().bold()),
                     Span.styled(growthLabel,
-                            entry.growthRatio > 1.3 ? Style.EMPTY.fg(Color.RED).bold() : Style.EMPTY.fg(Color.WHITE))));
+                            entry.growthRatio > 1.3 ? Style.EMPTY.fg(Color.RED).bold() : Style.EMPTY.fg(Theme.baseFg()))));
         }
         if (entry.lowConfidence) {
             lines.add(Line.from(
@@ -675,7 +675,7 @@ class MemoryLeakTab extends AbstractTab {
             lines.add(Line.from(
                     Span.styled("  Allocation Stack Trace:", Theme.label().bold())));
             for (StackEntry se : entry.stackTrace) {
-                Style methodStyle = isJdkFrame(se.method) ? Style.EMPTY.dim() : Style.EMPTY.fg(Color.WHITE);
+                Style methodStyle = isJdkFrame(se.method) ? Style.EMPTY.dim() : Style.EMPTY.fg(Theme.baseFg());
                 lines.add(Line.from(
                         Span.styled("    at ", Style.EMPTY.dim()),
                         Span.styled(se.method, methodStyle),

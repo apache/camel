@@ -694,7 +694,7 @@ class HistoryTab extends AbstractTab {
                     Line title = Line.from(Span.styled(
                             String.format(" History Topology — step %d/%d ",
                                     diagram.getHistoryStepIndex() + 1, diagram.getHistoryStepCount()),
-                            Style.EMPTY.fg(Color.WHITE)));
+                            Style.EMPTY.fg(Theme.baseFg())));
                     diagram.renderHistoryTopologyDiagram(frame, diagramArea, title);
                 } else {
                     String routeId = diagram.getHistoryDrillDownRouteId();
@@ -812,7 +812,7 @@ class HistoryTab extends AbstractTab {
     private Line buildHistoryBreadcrumbTitle() {
         Style nameStyle = Theme.label().bold();
         List<Span> spans = new ArrayList<>();
-        spans.add(Span.styled(" History [", Style.EMPTY.fg(Color.WHITE)));
+        spans.add(Span.styled(" History [", Style.EMPTY.fg(Theme.baseFg())));
         var stack = diagram.getHistoryNavigationStack();
         if (stack.isEmpty()) {
             spans.add(Span.styled(diagram.getHistoryDrillDownRouteId(), nameStyle));
@@ -825,7 +825,7 @@ class HistoryTab extends AbstractTab {
         }
         spans.add(Span.styled(String.format("] — step %d/%d ",
                 diagram.getHistoryStepIndex() + 1, diagram.getHistoryStepCount()),
-                Style.EMPTY.fg(Color.WHITE)));
+                Style.EMPTY.fg(Theme.baseFg())));
         return Line.from(spans);
     }
 
@@ -1503,7 +1503,7 @@ class HistoryTab extends AbstractTab {
                 Span.styled(label, labelStyle),
                 Span.styled(bar, bandStyle),
                 Span.raw(" ".repeat(pad)),
-                Span.styled(durationStr, isRoute ? Style.EMPTY.dim() : Style.EMPTY.fg(Color.WHITE).bold()));
+                Span.styled(durationStr, isRoute ? Style.EMPTY.dim() : Style.EMPTY.fg(Theme.baseFg()).bold()));
     }
 
     private static boolean nodeIdEquals(String a, String b) {
@@ -1883,10 +1883,10 @@ class HistoryTab extends AbstractTab {
     private static void hintShowBhpv(List<Span> spans, boolean body, boolean headers, boolean props, boolean vars) {
         spans.add(Span.styled(" show", Theme.hintKey()));
         spans.add(Span.raw(" "));
-        spans.add(Span.styled(body ? "B" : "b", body ? Style.EMPTY.fg(Color.WHITE).bold() : Style.EMPTY.dim()));
-        spans.add(Span.styled(headers ? "H" : "h", headers ? Style.EMPTY.fg(Color.WHITE).bold() : Style.EMPTY.dim()));
-        spans.add(Span.styled(props ? "P" : "p", props ? Style.EMPTY.fg(Color.WHITE).bold() : Style.EMPTY.dim()));
-        spans.add(Span.styled(vars ? "V" : "v", vars ? Style.EMPTY.fg(Color.WHITE).bold() : Style.EMPTY.dim()));
+        spans.add(Span.styled(body ? "B" : "b", body ? Style.EMPTY.fg(Theme.baseFg()).bold() : Style.EMPTY.dim()));
+        spans.add(Span.styled(headers ? "H" : "h", headers ? Style.EMPTY.fg(Theme.baseFg()).bold() : Style.EMPTY.dim()));
+        spans.add(Span.styled(props ? "P" : "p", props ? Style.EMPTY.fg(Theme.baseFg()).bold() : Style.EMPTY.dim()));
+        spans.add(Span.styled(vars ? "V" : "v", vars ? Style.EMPTY.fg(Theme.baseFg()).bold() : Style.EMPTY.dim()));
         spans.add(Span.raw("  "));
     }
 

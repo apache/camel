@@ -243,7 +243,7 @@ class ProcessTab extends AbstractTab {
         String padded = String.format("  %-12s", label + ":");
         lines.add(Line.from(
                 Span.styled(padded, Style.EMPTY.dim()),
-                Span.styled(value, Style.EMPTY.fg(Color.WHITE).bold())));
+                Span.styled(value, Style.EMPTY.fg(Theme.baseFg()).bold())));
     }
 
     private static String getProcessUser(String pid) {

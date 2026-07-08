@@ -572,7 +572,7 @@ class SpansTab extends AbstractTab {
                 Span.raw(" ".repeat(pad)),
                 Span.styled(durationStr, error
                         ? Style.EMPTY.fg(Color.LIGHT_RED).bold()
-                        : Style.EMPTY.fg(Color.WHITE).bold()));
+                        : Style.EMPTY.fg(Theme.baseFg()).bold()));
     }
 
     private void renderSpanDetail(Frame frame, Rect area, List<WaterfallNode> nodes) {
@@ -587,7 +587,7 @@ class SpansTab extends AbstractTab {
         Style statusStyle = span.isError() ? Style.EMPTY.fg(Color.LIGHT_RED).bold() : Style.EMPTY.fg(Color.GREEN);
         lines.add(Line.from(
                 Span.styled(" Span:   ", Style.EMPTY.dim()),
-                Span.styled(span.spanId(), Style.EMPTY.fg(Color.WHITE).bold()),
+                Span.styled(span.spanId(), Style.EMPTY.fg(Theme.baseFg()).bold()),
                 Span.styled("  Parent: ", Style.EMPTY.dim()),
                 Span.raw(span.parentSpanId() != null ? span.parentSpanId() : "-"),
                 Span.styled("  Kind: ", Style.EMPTY.dim()),

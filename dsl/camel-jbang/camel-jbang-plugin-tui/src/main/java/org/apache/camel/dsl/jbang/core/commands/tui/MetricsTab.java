@@ -61,7 +61,7 @@ class MetricsTab extends AbstractTableTab {
     private static final int MOUSE_SCROLL_LINES = 3;
 
     private static final Style LABEL = Style.EMPTY.dim();
-    private static final Style VALUE = Style.EMPTY.fg(Color.WHITE).bold();
+    private static final Style VALUE = Style.EMPTY.fg(Theme.baseFg()).bold();
     private static final Style GOOD = Style.EMPTY.fg(Color.GREEN);
     private static final Style BAD = Style.EMPTY.fg(Color.LIGHT_RED);
 
@@ -643,7 +643,7 @@ class MetricsTab extends AbstractTableTab {
 
     private static final Style PROM_COMMENT = Style.EMPTY.dim();
     private static final Style PROM_NAME = Style.EMPTY.fg(Color.CYAN);
-    private static final Style PROM_VALUE = Style.EMPTY.fg(Color.WHITE).bold();
+    private static final Style PROM_VALUE = Style.EMPTY.fg(Theme.baseFg()).bold();
 
     private static Line colorPrometheusLine(String line) {
         if (line.startsWith("#")) {
