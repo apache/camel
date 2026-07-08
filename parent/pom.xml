@@ -198,7 +198,7 @@
         <google-cloud-aiplatform-version>3.94.0</google-cloud-aiplatform-version>
         <google-cloud-vision-version>3.91.0</google-cloud-vision-version>
         <google-cloud-speech-version>4.89.0</google-cloud-speech-version>
-        <google-cloud-texttospeech-version>2.94.0</google-cloud-texttospeech-version>
+        <google-cloud-texttospeech-version>2.95.0</google-cloud-texttospeech-version>
         <google-genai-version>1.60.0</google-genai-version>
         <graaljs-version>25.1.3</graaljs-version>
         <graphql-java-version>26.0</graphql-java-version>
