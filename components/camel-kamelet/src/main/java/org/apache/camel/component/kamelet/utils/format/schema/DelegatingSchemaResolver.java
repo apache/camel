@@ -17,6 +17,8 @@
 
 package org.apache.camel.component.kamelet.utils.format.schema;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.jackson.avro.transform.AvroSchemaResolver;
@@ -31,12 +33,29 @@ import org.apache.camel.util.ObjectHelper;
  * determine the schema resolver (Avro or Json). Delegates to schema resolver and sets proper content class and schema
  * properties on the delegate.
  */
-public class DelegatingSchemaResolver implements Processor {
+public class DelegatingSchemaResolver implements Processor, CamelContextAware {
+
+    private static final String AVRO_SCHEMA_RESOLVER = "org.apache.camel.component.jackson.avro.transform.AvroSchemaResolver";
+    private static final String PROTOBUF_SCHEMA_RESOLVER
+            = "org.apache.camel.component.jackson.protobuf.transform.ProtobufSchemaResolver";
+    private static final String JSON_SCHEMA_RESOLVER = "org.apache.camel.component.jackson.transform.JsonSchemaResolver";
+
+    private CamelContext camelContext;
     private String mimeType;
     private String targetMimeType;
 
     private String schema;
     private String contentClass;
+
+    @Override
+    public CamelContext getCamelContext() {
+        return camelContext;
+    }
+
+    @Override
+    public void setCamelContext(CamelContext camelContext) {
+        this.camelContext = camelContext;
+    }
 
     @Override
     public void process(Exchange exchange) throws Exception {
@@ -65,25 +84,64 @@ public class DelegatingSchemaResolver implements Processor {
             case PROTOBUF:
             case PROTOBUF_BINARY:
             case PROTOBUF_STRUCT:
+                return createSchemaResolver(PROTOBUF_SCHEMA_RESOLVER);
+            case AVRO:
+            case AVRO_BINARY:
+            case AVRO_STRUCT:
+                return createSchemaResolver(AVRO_SCHEMA_RESOLVER);
+            case JSON:
+            case STRUCT:
+                return createSchemaResolver(JSON_SCHEMA_RESOLVER);
+            default:
+                return null;
+        }
+    }
+
+    private Processor createSchemaResolver(String className) {
+        try {
+            return doCreateSchemaResolver(className);
+        } catch (NoClassDefFoundError e) {
+            // fallback to dynamic class resolution (e.g. Camel CLI with downloaded dependencies)
+            return doCreateSchemaResolverReflection(className);
+        }
+    }
+
+    private Processor doCreateSchemaResolver(String className) {
+        switch (className) {
+            case PROTOBUF_SCHEMA_RESOLVER:
                 ProtobufSchemaResolver protobufSchemaResolver = new ProtobufSchemaResolver();
                 protobufSchemaResolver.setSchema(this.schema);
                 protobufSchemaResolver.setContentClass(this.contentClass);
                 return protobufSchemaResolver;
-            case AVRO:
-            case AVRO_BINARY:
-            case AVRO_STRUCT:
+            case AVRO_SCHEMA_RESOLVER:
                 AvroSchemaResolver avroSchemaResolver = new AvroSchemaResolver();
                 avroSchemaResolver.setSchema(this.schema);
                 avroSchemaResolver.setContentClass(this.contentClass);
                 return avroSchemaResolver;
-            case JSON:
-            case STRUCT:
+            case JSON_SCHEMA_RESOLVER:
                 JsonSchemaResolver jsonSchemaResolver = new JsonSchemaResolver();
                 jsonSchemaResolver.setSchema(this.schema);
                 jsonSchemaResolver.setContentClass(this.contentClass);
                 return jsonSchemaResolver;
             default:
                 return null;
+        }
+    }
+
+    private Processor doCreateSchemaResolverReflection(String className) {
+        try {
+            Class<?> clazz;
+            if (camelContext != null) {
+                clazz = camelContext.getClassResolver().resolveMandatoryClass(className);
+            } else {
+                clazz = Thread.currentThread().getContextClassLoader().loadClass(className);
+            }
+            Object instance = clazz.getDeclaredConstructor().newInstance();
+            clazz.getMethod("setSchema", String.class).invoke(instance, this.schema);
+            clazz.getMethod("setContentClass", String.class).invoke(instance, this.contentClass);
+            return (Processor) instance;
+        } catch (Exception e) {
+            throw new RuntimeException("Cannot create schema resolver: " + className, e);
         }
     }
 
