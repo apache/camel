@@ -47,7 +47,7 @@ public class JmsDurableTopicIT extends AbstractPersistentJMSTest {
     }
 
     @Test
-    public void testDurableTopic() {
+    public void testDurableTopic() throws Exception {
         final CompletableFuture<Object> future = template.asyncSendBody("activemq:topic:JmsDurableTopicTest", "Hello World");
         final Object request = assertDoesNotThrow(() -> future.get(5, TimeUnit.SECONDS));
         assertNotNull(request);

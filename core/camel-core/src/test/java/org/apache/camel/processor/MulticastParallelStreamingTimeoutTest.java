@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.AggregationStrategy;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -24,6 +26,8 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.parallel.Isolated;
+
+import static org.awaitility.Awaitility.await;
 
 @Isolated("Short timeouts cause problems with parallel test execution")
 @DisabledOnOs(architectures = { "s390x" },
@@ -38,11 +42,14 @@ public class MulticastParallelStreamingTimeoutTest extends ContextTestSupport {
         mock.message(0).body().not(body().contains("A"));
         mock.message(0).body().contains("B");
         mock.message(0).body().contains("C");
-        mock.setResultWaitTime(20000);
+        // Use a short result wait time so each Awaitility attempt checks quickly
+        // without blocking (default 0 maps to 10s internally in MockEndpoint)
+        mock.setResultWaitTime(100);
 
         template.sendBody("direct:start", "Hello");
 
-        assertMockEndpointsSatisfied();
+        await().atMost(20, TimeUnit.SECONDS)
+                .untilAsserted(() -> assertMockEndpointsSatisfied());
     }
 
     @Override
