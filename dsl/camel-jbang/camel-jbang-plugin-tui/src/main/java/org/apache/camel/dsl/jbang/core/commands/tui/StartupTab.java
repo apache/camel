@@ -25,7 +25,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import dev.tamboui.layout.Constraint;
 import dev.tamboui.layout.Layout;
 import dev.tamboui.layout.Rect;
-import dev.tamboui.style.Color;
 import dev.tamboui.style.Style;
 import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.Line;
@@ -50,9 +49,8 @@ import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.*;
 class StartupTab extends AbstractTab {
 
     private static final int MOUSE_SCROLL_LINES = 3;
-    private static final Style LABEL = Style.EMPTY.dim();
-    private static final Style VALUE = Style.EMPTY.fg(Color.WHITE).bold();
-    private static final Style HEADER = Style.EMPTY.fg(Color.YELLOW).bold();
+    private static final Style LABEL = Theme.muted();
+    private static final Style VALUE = Style.EMPTY.fg(Theme.baseFg()).bold();
 
     private final ScrollbarState scrollbarState = new ScrollbarState();
     private final AtomicBoolean loading = new AtomicBoolean(false);
@@ -160,7 +158,7 @@ class StartupTab extends AbstractTab {
             frame.renderWidget(
                     Paragraph.builder()
                             .text(Text.from(Line.from(
-                                    Span.styled("  " + errorMessage, Style.EMPTY.fg(Color.LIGHT_RED)))))
+                                    Span.styled("  " + errorMessage, Theme.error()))))
                             .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
                                     .title(" Startup Timeline ").build())
                             .build(),

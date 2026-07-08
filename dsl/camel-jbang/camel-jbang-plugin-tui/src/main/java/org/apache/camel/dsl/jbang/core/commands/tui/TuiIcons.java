@@ -172,8 +172,12 @@ final class TuiIcons {
      * Primary tab bar label of the form {@code "<icon>  <key> <name>"} with two spaces between the emoji and the key
      * digit so the two do not visually collide. Rendered without outer padding (compact) for every tab.
      */
-    static String primaryTabHeader(String icon, String key, String name) {
-        return icon + "  " + key + " " + name;
+    static dev.tamboui.text.Span[] primaryTabHeader(String icon, String key, String name) {
+        return new dev.tamboui.text.Span[] {
+                dev.tamboui.text.Span.raw(icon + "  "),
+                dev.tamboui.text.Span.styled(key, Theme.mnemonic()),
+                dev.tamboui.text.Span.raw(" " + name)
+        };
     }
 
     /** Removes the {@value #MNEMONIC_MARKER} mnemonic marker from a label for display. */

@@ -427,6 +427,10 @@ final class TuiHelper {
         double ratio = (Math.log1p(duration) - Math.log1p(minDuration))
                        / (Math.log1p(maxDuration) - Math.log1p(minDuration));
         int bandIndex = Math.max(0, Math.min((int) (ratio * 5), 4));
+        // band 2 uses the theme warning color instead of the static array entry
+        if (bandIndex == 2) {
+            return Theme.warning();
+        }
         return DURATION_BAND_STYLES[bandIndex];
     }
 
@@ -565,18 +569,18 @@ final class TuiHelper {
 
     static Style topTimeStyle(long ms) {
         if (ms >= 1000) {
-            return Style.EMPTY.fg(Color.LIGHT_RED).bold();
+            return Theme.error().bold();
         } else if (ms >= 100) {
-            return Style.EMPTY.fg(Color.YELLOW);
+            return Theme.warning();
         }
         return Style.EMPTY;
     }
 
     static Style topDeltaStyle(long delta) {
         if (delta > 0) {
-            return Style.EMPTY.fg(Color.LIGHT_RED);
+            return Theme.error();
         } else if (delta < 0) {
-            return Style.EMPTY.fg(Color.GREEN);
+            return Theme.success();
         }
         return Style.EMPTY;
     }

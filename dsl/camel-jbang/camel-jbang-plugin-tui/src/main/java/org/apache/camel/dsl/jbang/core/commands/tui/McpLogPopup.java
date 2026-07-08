@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.function.Supplier;
 
 import dev.tamboui.layout.Rect;
-import dev.tamboui.style.Color;
 import dev.tamboui.style.Style;
 import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.Line;
@@ -136,10 +135,10 @@ class McpLogPopup {
         List<ListItem> items = new ArrayList<>();
         for (TuiMcpServer.LogEntry entry : entries) {
             Style levelStyle = switch (entry.level()) {
-                case CONNECT -> Style.EMPTY.fg(Color.GREEN);
-                case TOOL -> Style.EMPTY.fg(Color.CYAN);
-                case ERROR -> Style.EMPTY.fg(Color.LIGHT_RED);
-                default -> Style.EMPTY.fg(Color.GREEN);
+                case CONNECT -> Theme.success();
+                case TOOL -> Style.EMPTY.fg(Theme.accent());
+                case ERROR -> Theme.error();
+                default -> Theme.success();
             };
             String levelTag = switch (entry.level()) {
                 case CONNECT -> " CONNECT ";
@@ -182,12 +181,12 @@ class McpLogPopup {
         TuiMcpServer.LogEntry entry = entries.get(selected);
         List<Line> lines = new ArrayList<>();
         if (entry.requestBody() != null) {
-            lines.add(Line.from(Span.styled(TuiIcons.ARROW_RIGHT + " Request", Style.EMPTY.fg(Color.YELLOW).bold())));
+            lines.add(Line.from(Span.styled(TuiIcons.ARROW_RIGHT + " Request", Theme.label().bold())));
             addJsonLines(lines, entry.requestBody());
             lines.add(Line.from(Span.raw("")));
         }
         if (entry.responseBody() != null) {
-            lines.add(Line.from(Span.styled(TuiIcons.ARROW_LEFT + " Response", Style.EMPTY.fg(Color.GREEN).bold())));
+            lines.add(Line.from(Span.styled(TuiIcons.ARROW_LEFT + " Response", Theme.success().bold())));
             addJsonLines(lines, entry.responseBody());
         }
         if (entry.requestBody() == null && entry.responseBody() == null) {

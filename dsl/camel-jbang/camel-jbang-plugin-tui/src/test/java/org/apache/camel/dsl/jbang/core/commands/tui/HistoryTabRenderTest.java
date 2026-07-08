@@ -100,8 +100,9 @@ class HistoryTabRenderTest {
         Frame frame = Frame.forTesting(buffer);
         tab.render(frame, area);
 
-        assertTrue(TuiTestHelper.findCellWithColor(buffer, "D", Color.GREEN),
-                "Done status should contain a cell rendered in GREEN");
+        Color successColor = Theme.success().fg().orElse(Color.GREEN);
+        assertTrue(TuiTestHelper.findCellWithColor(buffer, "D", successColor),
+                "Done status should contain a cell rendered in success color");
     }
 
     @Test
@@ -116,7 +117,8 @@ class HistoryTabRenderTest {
         Frame frame = Frame.forTesting(buffer);
         tab.render(frame, area);
 
-        assertTrue(TuiTestHelper.findCellWithColor(buffer, "F", Color.LIGHT_RED),
+        Color errorColor = Theme.error().fg().orElse(Color.LIGHT_RED);
+        assertTrue(TuiTestHelper.findCellWithColor(buffer, "F", errorColor),
                 "Failed status should contain a cell rendered in LIGHT_RED");
     }
 
@@ -131,7 +133,7 @@ class HistoryTabRenderTest {
         Frame frame = Frame.forTesting(buffer);
         tab.render(frame, area);
 
-        assertTrue(TuiTestHelper.findCellWithColor(buffer, "m", Color.CYAN),
+        assertTrue(TuiTestHelper.findCellWithColor(buffer, "m", Theme.accent()),
                 "Route ID should contain a cell rendered in CYAN");
     }
 

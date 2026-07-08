@@ -411,7 +411,7 @@ class InfraBrowserPopup {
         if (hasMultiImpl) {
             row++;
             Rect labelArea = new Rect(ix, row, labelW, 1);
-            frame.renderWidget(Paragraph.from(Line.from(Span.styled("Impl:", Style.EMPTY.bold()))), labelArea);
+            frame.renderWidget(Paragraph.from(Line.from(Span.styled("Impl:", Theme.muted()))), labelArea);
             String impl = selectedService.implementations().get(implIndex);
             Rect implArea = new Rect(ix + labelW, row, fieldW, 1);
             frame.renderWidget(Paragraph.from(Line.from(
@@ -423,7 +423,7 @@ class InfraBrowserPopup {
 
         row++;
         Rect labelArea = new Rect(ix, row, labelW, 1);
-        frame.renderWidget(Paragraph.from(Line.from(Span.styled("Port:", Style.EMPTY.bold()))), labelArea);
+        frame.renderWidget(Paragraph.from(Line.from(Span.styled("Port:", Theme.muted()))), labelArea);
         Rect portArea = new Rect(ix + labelW, row, fieldW, 1);
         TextInput textInput = TextInput.builder()
                 .cursorStyle(Style.EMPTY.reversed())

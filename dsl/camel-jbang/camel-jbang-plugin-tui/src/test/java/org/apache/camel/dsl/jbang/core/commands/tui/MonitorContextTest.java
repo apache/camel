@@ -16,15 +16,20 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
-import dev.tamboui.style.Color;
 import dev.tamboui.style.Modifier;
 import dev.tamboui.style.Style;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class MonitorContextTest {
+
+    @BeforeEach
+    void setUp() {
+        Theme.resetForTesting();
+    }
 
     // ---- formatSinceLast tests ----
 
@@ -174,13 +179,13 @@ class MonitorContextTest {
     void topTimeStyleOver1000ms() {
         Style style = TuiHelper.topTimeStyle(1000);
         assertTrue(style.effectiveModifiers().contains(Modifier.BOLD));
-        assertEquals(Color.LIGHT_RED, style.fg().orElse(null));
+        assertEquals(Theme.error().fg().orElse(null), style.fg().orElse(null));
     }
 
     @Test
     void topTimeStyleOver100ms() {
         Style style = TuiHelper.topTimeStyle(500);
-        assertEquals(Color.YELLOW, style.fg().orElse(null));
+        assertEquals(Theme.warning(), style);
     }
 
     @Test
@@ -194,13 +199,13 @@ class MonitorContextTest {
     @Test
     void topDeltaStylePositive() {
         Style style = TuiHelper.topDeltaStyle(10);
-        assertEquals(Color.LIGHT_RED, style.fg().orElse(null));
+        assertEquals(Theme.error().fg().orElse(null), style.fg().orElse(null));
     }
 
     @Test
     void topDeltaStyleNegative() {
         Style style = TuiHelper.topDeltaStyle(-5);
-        assertEquals(Color.GREEN, style.fg().orElse(null));
+        assertEquals(Theme.success().fg().orElse(null), style.fg().orElse(null));
     }
 
     @Test

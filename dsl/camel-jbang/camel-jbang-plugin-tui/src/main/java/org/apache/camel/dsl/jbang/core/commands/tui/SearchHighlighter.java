@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import dev.tamboui.style.Color;
 import dev.tamboui.style.Style;
 import dev.tamboui.text.Line;
 import dev.tamboui.text.Span;
@@ -39,9 +38,7 @@ import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.hintLast;
  */
 class SearchHighlighter {
 
-    static final Style HIGHLIGHT_STYLE = Style.EMPTY.fg(Color.BLACK).bg(Color.YELLOW);
-    static final Style FIND_MATCH_STYLE = Style.EMPTY.fg(Color.BLACK).bg(Color.YELLOW);
-    static final Style FIND_CURRENT_STYLE = Style.EMPTY.fg(Color.BLACK).bg(Color.LIGHT_GREEN);
+    static final Style FIND_CURRENT_STYLE = Theme.searchMatch();
 
     private boolean findInputActive;
     private boolean highlightInputActive;
@@ -202,7 +199,7 @@ class SearchHighlighter {
             Matcher m = highlightPattern.matcher(fullText);
             while (m.find()) {
                 ranges.add(new int[] { m.start(), m.end() });
-                rangeStyles.add(HIGHLIGHT_STYLE);
+                rangeStyles.add(Theme.searchMatch());
             }
         }
         if (findPattern != null) {
@@ -210,7 +207,7 @@ class SearchHighlighter {
             Matcher m = findPattern.matcher(fullText);
             while (m.find()) {
                 ranges.add(new int[] { m.start(), m.end() });
-                rangeStyles.add(isCurrentLine ? FIND_CURRENT_STYLE : FIND_MATCH_STYLE);
+                rangeStyles.add(isCurrentLine ? FIND_CURRENT_STYLE : Theme.searchMatch());
             }
         }
         if (ranges.isEmpty()) {

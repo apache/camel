@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import dev.tamboui.layout.Rect;
-import dev.tamboui.style.Color;
 import dev.tamboui.style.Style;
 import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.Line;
@@ -186,12 +185,14 @@ class GotoTabPopup {
         items.add(ListItem.from(Line.from(Span.styled(sep, Style.EMPTY.dim()))));
 
         Style normalStyle = Style.EMPTY;
-        Style matchStyle = Style.EMPTY.fg(Color.YELLOW).bold();
+        Style matchStyle = Theme.label().bold();
         Style dimStyle = Style.EMPTY.dim();
         for (TabRegistry.TabEntry entry : filteredEntries) {
             List<Span> spans = new ArrayList<>();
-            String key = String.format(" %-2s ", entry.shortcut());
-            spans.add(Span.styled(key, dimStyle));
+            String sc = entry.shortcut();
+            spans.add(Span.raw(" "));
+            spans.add(Span.styled(sc, Theme.mnemonic()));
+            spans.add(Span.raw(" " + entry.icon() + " "));
             String name = entry.name();
             if (name.length() > nameColWidth) {
                 name = name.substring(0, nameColWidth);

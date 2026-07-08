@@ -1190,8 +1190,8 @@ public class CamelMonitor extends CamelCommand {
                         Paragraph.builder().text(Text.from(titleLine)).build(),
                         leftArea);
                 Color waveColor = activeNotificationError
-                        ? Theme.error().fg().orElse(Color.LIGHT_RED)
-                        : Theme.success().fg().orElse(Color.LIGHT_GREEN);
+                        ? Theme.error().fg().orElseThrow()
+                        : Theme.success().fg().orElseThrow();
                 WaveText wave = WaveText.builder()
                         .text(activeNotification)
                         .color(waveColor)
@@ -1214,7 +1214,7 @@ public class CamelMonitor extends CamelCommand {
     }
 
     private void renderTooSmall(Frame frame, Rect area) {
-        Style orange = Style.EMPTY.fg(Color.rgb(0xF6, 0x91, 0x23));
+        Style orange = Style.EMPTY.fg(Theme.accent());
         Style normal = Style.EMPTY;
         Style bold = Style.EMPTY.bold();
 
@@ -1263,7 +1263,7 @@ public class CamelMonitor extends CamelCommand {
             // Infra mode: only Overview and Log tabs
             Line[] labels = {
                     Line.from(TuiIcons.primaryTabHeader(TuiIcons.TAB_OVERVIEW, "1", "Overview")),
-                    Line.from(TuiIcons.primaryTabHeader(TuiIcons.TAB_LOG, "2", "Log")),
+                    Line.from(TuiIcons.primaryTabHeader(TuiIcons.TAB_LOG, "2", "Log"))
             };
 
             // Map real tab index to infra tab index for highlight
@@ -1393,9 +1393,9 @@ public class CamelMonitor extends CamelCommand {
     }
 
     private void computeTabBadges(String[] badgeTexts, Style[] badgeStyles) {
-        Style yellow = Style.EMPTY.fg(Color.YELLOW).bold();
-        Style cyan = Style.EMPTY.fg(Color.CYAN).bold();
-        Style red = Style.EMPTY.fg(Color.LIGHT_RED).bold();
+        Style yellow = Theme.label();
+        Style cyan = Style.EMPTY.fg(Theme.accent()).bold();
+        Style red = Theme.error().bold();
         for (int j = 0; j < badgeStyles.length; j++) {
             badgeTexts[j] = "";
             badgeStyles[j] = yellow;
@@ -1771,11 +1771,11 @@ public class CamelMonitor extends CamelCommand {
                 suffix = active ? " " + TuiIcons.SELECTED : " " + TuiIcons.IDLE;
                 mcpLabel += " (" + client + ")";
                 labelStyle = Theme.success();
-                suffixStyle = active ? Theme.mcpActive() : Theme.mcpIdle();
+                suffixStyle = active ? Theme.success() : Theme.muted();
             } else {
                 suffix = " " + TuiIcons.CROSS;
                 labelStyle = Theme.muted();
-                suffixStyle = Theme.mcpDown();
+                suffixStyle = Theme.error();
             }
             rightSpans.add(Span.styled(mcpLabel, labelStyle));
             rightSpans.add(Span.styled(suffix, suffixStyle));

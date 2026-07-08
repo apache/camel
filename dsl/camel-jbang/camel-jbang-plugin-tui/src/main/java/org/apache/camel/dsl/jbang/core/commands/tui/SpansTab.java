@@ -30,7 +30,6 @@ import java.util.concurrent.atomic.AtomicReference;
 import dev.tamboui.layout.Constraint;
 import dev.tamboui.layout.Layout;
 import dev.tamboui.layout.Rect;
-import dev.tamboui.style.Color;
 import dev.tamboui.style.Style;
 import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.Line;
@@ -367,9 +366,9 @@ class SpansTab extends AbstractTab {
         for (TraceSummary ts : summaries) {
             Style statusStyle;
             if (ts.hasError) {
-                statusStyle = Style.EMPTY.fg(Color.LIGHT_RED);
+                statusStyle = Theme.error();
             } else {
-                statusStyle = Style.EMPTY.fg(Color.GREEN);
+                statusStyle = Theme.success();
             }
 
             rows.add(Row.from(
@@ -399,10 +398,10 @@ class SpansTab extends AbstractTab {
                         Cell.from(Span.styled(sortLabel("FROM", "from"), sortStyle("from"))),
                         Cell.from(Span.styled(sortLabel("SPANS", "spans"), sortStyle("spans"))),
                         Cell.from(Span.styled(sortLabel("ROUTES", "routes"), sortStyle("routes"))),
-                        Cell.from(Span.styled("REMOTE", Style.EMPTY.fg(Color.YELLOW).bold())),
+                        Cell.from(Span.styled("REMOTE", Theme.label().bold())),
                         Cell.from(Span.styled(sortLabel("STATUS", "status"), sortStyle("status"))),
                         Cell.from(Span.styled(sortLabel("DURATION", "duration"), sortStyle("duration"))),
-                        Cell.from(Span.styled("DEPTH", Style.EMPTY.fg(Color.YELLOW).bold()))))
+                        Cell.from(Span.styled("DEPTH", Theme.label().bold()))))
                 .widths(
                         Constraint.length(10),
                         Constraint.length(20),
@@ -551,28 +550,28 @@ class SpansTab extends AbstractTab {
         Style labelStyle;
         Style bandStyle;
         if (error) {
-            labelStyle = selected ? Style.EMPTY.fg(Color.LIGHT_RED).bold() : Style.EMPTY.fg(Color.LIGHT_RED);
-            bandStyle = Style.EMPTY.fg(Color.LIGHT_RED);
+            labelStyle = selected ? Theme.error().bold() : Theme.error();
+            bandStyle = Theme.error();
         } else if (!camelSpan) {
-            labelStyle = selected ? Style.EMPTY.fg(Color.LIGHT_MAGENTA).bold() : Style.EMPTY.fg(Color.LIGHT_MAGENTA);
-            bandStyle = Style.EMPTY.fg(Color.LIGHT_MAGENTA);
+            labelStyle = selected ? Theme.notice().bold() : Theme.notice();
+            bandStyle = Theme.notice();
         } else {
-            labelStyle = selected ? Style.EMPTY.fg(Color.CYAN).bold() : Style.EMPTY.fg(Color.CYAN);
+            labelStyle = selected ? Style.EMPTY.fg(Theme.accent()).bold() : Style.EMPTY.fg(Theme.accent());
             bandStyle = TuiHelper.colorForDuration(node.span.durationMs(), minDuration, maxDuration);
         }
 
         String errorTag = error ? " ERR" : "";
 
         return Line.from(
-                Span.styled(indicator, Style.EMPTY.fg(Color.YELLOW).bold()),
+                Span.styled(indicator, Theme.label().bold()),
                 Span.styled(label, labelStyle),
                 Span.raw(gap),
                 Span.styled(bar, bandStyle),
-                Span.styled(errorTag, Style.EMPTY.fg(Color.LIGHT_RED).bold()),
+                Span.styled(errorTag, Theme.error().bold()),
                 Span.raw(" ".repeat(pad)),
                 Span.styled(durationStr, error
-                        ? Style.EMPTY.fg(Color.LIGHT_RED).bold()
-                        : Style.EMPTY.fg(Color.WHITE).bold()));
+                        ? Theme.error().bold()
+                        : Style.EMPTY.fg(Theme.baseFg()).bold()));
     }
 
     private void renderSpanDetail(Frame frame, Rect area, List<WaterfallNode> nodes) {
@@ -584,36 +583,36 @@ class SpansTab extends AbstractTab {
         List<Line> lines = new ArrayList<>();
 
         // Row 1: span identity
-        Style statusStyle = span.isError() ? Style.EMPTY.fg(Color.LIGHT_RED).bold() : Style.EMPTY.fg(Color.GREEN);
+        Style statusStyle = span.isError() ? Theme.error().bold() : Theme.success();
         lines.add(Line.from(
-                Span.styled(" Span:   ", Style.EMPTY.dim()),
-                Span.styled(span.spanId(), Style.EMPTY.fg(Color.WHITE).bold()),
-                Span.styled("  Parent: ", Style.EMPTY.dim()),
+                Span.styled(" Span:   ", Theme.muted()),
+                Span.styled(span.spanId(), Style.EMPTY.fg(Theme.baseFg()).bold()),
+                Span.styled("  Parent: ", Theme.muted()),
                 Span.raw(span.parentSpanId() != null ? span.parentSpanId() : "-"),
-                Span.styled("  Kind: ", Style.EMPTY.dim()),
+                Span.styled("  Kind: ", Theme.muted()),
                 Span.raw(span.kind() != null ? span.kind() : "")));
 
         // Row 2: status and duration
         lines.add(Line.from(
-                Span.styled(" Status: ", Style.EMPTY.dim()),
+                Span.styled(" Status: ", Theme.muted()),
                 Span.styled(span.isError() ? "ERROR" : "OK", statusStyle),
-                Span.styled("  Duration: ", Style.EMPTY.dim()),
+                Span.styled("  Duration: ", Theme.muted()),
                 Span.raw(span.durationMs() + "ms")));
 
         // Row 3: route, processor context, and scope (for 3rd-party spans)
         if (span.routeId() != null || span.processorId() != null || !span.isCamelSpan()) {
             List<Span> ctx = new ArrayList<>();
             if (span.routeId() != null) {
-                ctx.add(Span.styled(" Route:  ", Style.EMPTY.dim()));
-                ctx.add(Span.styled(span.routeId(), Style.EMPTY.fg(Color.YELLOW)));
+                ctx.add(Span.styled(" Route:  ", Theme.muted()));
+                ctx.add(Span.styled(span.routeId(), Theme.label()));
             }
             if (span.processorId() != null) {
-                ctx.add(Span.styled("  Processor: ", Style.EMPTY.dim()));
-                ctx.add(Span.styled(span.processorId(), Style.EMPTY.fg(Color.YELLOW)));
+                ctx.add(Span.styled("  Processor: ", Theme.muted()));
+                ctx.add(Span.styled(span.processorId(), Theme.label()));
             }
             if (!span.isCamelSpan()) {
-                ctx.add(Span.styled("  Source: ", Style.EMPTY.dim()));
-                ctx.add(Span.styled(span.scopeName(), Style.EMPTY.fg(Color.LIGHT_MAGENTA)));
+                ctx.add(Span.styled("  Source: ", Theme.muted()));
+                ctx.add(Span.styled(span.scopeName(), Theme.notice()));
             }
             lines.add(Line.from(ctx));
         }
@@ -623,12 +622,12 @@ class SpansTab extends AbstractTab {
             lines.add(Line.from(Span.raw("")));
             for (Map.Entry<String, Object> entry : span.attributes().entrySet()) {
                 lines.add(Line.from(
-                        Span.styled(" " + entry.getKey() + ": ", Style.EMPTY.dim()),
+                        Span.styled(" " + entry.getKey() + ": ", Theme.muted()),
                         Span.raw(String.valueOf(entry.getValue()))));
             }
         }
 
-        Style titleStyle = span.isError() ? Style.EMPTY.fg(Color.LIGHT_RED) : Style.EMPTY.fg(Color.CYAN);
+        Style titleStyle = span.isError() ? Theme.error() : Style.EMPTY.fg(Theme.accent());
         frame.renderWidget(
                 Paragraph.builder()
                         .text(Text.from(lines))
@@ -650,7 +649,7 @@ class SpansTab extends AbstractTab {
             hint(spans, TuiIcons.HINT_SCROLL, "navigate");
             hintLast(spans, "PgUp/Dn", "page");
         } else if (filterInputActive) {
-            spans.add(Span.styled(" /", Style.EMPTY.fg(Color.YELLOW).bold()));
+            spans.add(Span.styled(" /", Theme.label().bold()));
             spans.add(Span.raw(filterInputState.text() + "█  "));
             hint(spans, "Enter", "filter");
             hintLast(spans, "Esc", "cancel");
@@ -659,7 +658,7 @@ class SpansTab extends AbstractTab {
             hint(spans, "F5", "refresh");
             hint(spans, "Enter", "waterfall");
             if (filterTerm != null) {
-                spans.add(Span.styled("  /", Style.EMPTY.fg(Color.YELLOW).bold()));
+                spans.add(Span.styled("  /", Theme.label().bold()));
                 spans.add(Span.raw("\"" + filterTerm + "\"  "));
             } else {
                 hint(spans, "/", "filter");
@@ -955,7 +954,7 @@ class SpansTab extends AbstractTab {
     }
 
     private Style sortStyle(String column) {
-        return Style.EMPTY.fg(Color.YELLOW).bold();
+        return Theme.label().bold();
     }
 
     private static int computeMaxDepth(List<SpanEntry> traceSpans) {

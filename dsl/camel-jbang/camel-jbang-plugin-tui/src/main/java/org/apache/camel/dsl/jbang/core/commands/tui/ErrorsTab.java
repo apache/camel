@@ -23,7 +23,6 @@ import java.util.Map;
 import dev.tamboui.layout.Constraint;
 import dev.tamboui.layout.Layout;
 import dev.tamboui.layout.Rect;
-import dev.tamboui.style.Color;
 import dev.tamboui.style.Overflow;
 import dev.tamboui.style.Style;
 import dev.tamboui.terminal.Frame;
@@ -313,7 +312,7 @@ class ErrorsTab extends AbstractTableTab {
                     Line title = Line.from(Span.styled(
                             String.format(" Error Topology — step %d/%d ",
                                     diagram.getHistoryStepIndex() + 1, diagram.getHistoryStepCount()),
-                            Style.EMPTY.fg(Color.WHITE)));
+                            Style.EMPTY.fg(Theme.baseFg())));
                     diagram.renderHistoryTopologyDiagram(frame, diagramArea, title);
                 } else {
                     String routeId = diagram.getHistoryDrillDownRouteId();
@@ -335,13 +334,13 @@ class ErrorsTab extends AbstractTableTab {
                     ? org.apache.camel.util.TimeUtils.printSince(ei.timestamp) : "";
             String handledStr = ei.handled ? "true" : "false";
             Style handledStyle = ei.handled
-                    ? Style.EMPTY.fg(Color.GREEN) : Style.EMPTY.fg(Color.LIGHT_RED);
+                    ? Theme.success() : Theme.error();
             String shortException = shortExceptionType(ei.exceptionType);
 
             rows.add(Row.from(
                     Cell.from(ei.exchangeId != null ? ei.exchangeId : ""),
                     Cell.from(ago),
-                    Cell.from(Span.styled(ei.routeId != null ? ei.routeId : "", Style.EMPTY.fg(Color.CYAN))),
+                    Cell.from(Span.styled(ei.routeId != null ? ei.routeId : "", Style.EMPTY.fg(Theme.accent()))),
                     Cell.from(ei.nodeId != null ? ei.nodeId : ""),
                     Cell.from(Span.styled(handledStr, handledStyle)),
                     Cell.from(shortException),
@@ -480,7 +479,7 @@ class ErrorsTab extends AbstractTableTab {
 
         // message history
         if (ei.messageHistory != null && ei.messageHistory.length > 0) {
-            lines.add(Line.from(Span.styled(" Message History:", Style.EMPTY.fg(Color.MAGENTA).bold())));
+            lines.add(Line.from(Span.styled(" Message History:", Theme.notice().bold())));
             for (String step : ei.messageHistory) {
                 lines.add(Line.from(Span.raw("   " + TuiHelper.fixControlChars(step))));
             }
@@ -567,22 +566,22 @@ class ErrorsTab extends AbstractTableTab {
     }
 
     private Line buildErrorBreadcrumbTitle() {
-        Style nameStyle = Style.EMPTY.fg(Color.YELLOW).bold();
+        Style nameStyle = Theme.label().bold();
         List<Span> spans = new ArrayList<>();
-        spans.add(Span.styled(" Error [", Style.EMPTY.fg(Color.WHITE)));
+        spans.add(Span.styled(" Error [", Style.EMPTY.fg(Theme.baseFg())));
         var stack = diagram.getHistoryNavigationStack();
         if (stack.isEmpty()) {
             spans.add(Span.styled(diagram.getHistoryDrillDownRouteId(), nameStyle));
         } else {
             for (var it = stack.descendingIterator(); it.hasNext();) {
                 spans.add(Span.styled(it.next(), nameStyle));
-                spans.add(Span.styled(" → ", Style.EMPTY.fg(Color.GRAY)));
+                spans.add(Span.styled(" → ", Theme.muted()));
             }
             spans.add(Span.styled(diagram.getHistoryDrillDownRouteId(), nameStyle));
         }
         spans.add(Span.styled(String.format("] — step %d/%d ",
                 diagram.getHistoryStepIndex() + 1, diagram.getHistoryStepCount()),
-                Style.EMPTY.fg(Color.WHITE)));
+                Style.EMPTY.fg(Theme.baseFg())));
         return Line.from(spans);
     }
 
@@ -606,32 +605,32 @@ class ErrorsTab extends AbstractTableTab {
         }
 
         lines.add(Line.from(
-                Span.styled(" Exchange: ", Style.EMPTY.fg(Color.YELLOW).bold()),
+                Span.styled(" Exchange: ", Theme.muted()),
                 Span.raw(ei.exchangeId != null ? ei.exchangeId : "")));
         lines.add(Line.from(
-                Span.styled(" Route:    ", Style.EMPTY.fg(Color.YELLOW).bold()),
-                Span.styled(ei.routeId != null ? ei.routeId : "", Style.EMPTY.fg(Color.CYAN))));
+                Span.styled(" Route:    ", Theme.muted()),
+                Span.styled(ei.routeId != null ? ei.routeId : "", Style.EMPTY.fg(Theme.accent()))));
         lines.add(Line.from(
-                Span.styled(" Node:     ", Style.EMPTY.fg(Color.YELLOW).bold()),
+                Span.styled(" Node:     ", Theme.muted()),
                 Span.raw(ei.nodeId != null ? ei.nodeId : "")));
         if (ei.elapsed >= 0) {
             lines.add(Line.from(
-                    Span.styled(" Elapsed:  ", Style.EMPTY.fg(Color.YELLOW).bold()),
+                    Span.styled(" Elapsed:  ", Theme.muted()),
                     Span.raw(ei.elapsed + "ms")));
         }
         if (ei.threadName != null) {
             lines.add(Line.from(
-                    Span.styled(" Thread:   ", Style.EMPTY.fg(Color.YELLOW).bold()),
+                    Span.styled(" Thread:   ", Theme.muted()),
                     Span.raw(ei.threadName)));
         }
-        Style handledStyle = ei.handled ? Style.EMPTY.fg(Color.GREEN) : Style.EMPTY.fg(Color.LIGHT_RED).bold();
+        Style handledStyle = ei.handled ? Theme.success() : Theme.error().bold();
         lines.add(Line.from(
-                Span.styled(" Handled:  ", Style.EMPTY.fg(Color.YELLOW).bold()),
+                Span.styled(" Handled:  ", Theme.muted()),
                 Span.styled(ei.handled ? "true" : "false", handledStyle)));
 
         if (ei.exceptionType != null) {
             lines.add(Line.from(Span.raw("")));
-            lines.add(Line.from(Span.styled(" Exception", Style.EMPTY.fg(Color.LIGHT_RED).bold())));
+            lines.add(Line.from(Span.styled(" Exception", Theme.error().bold())));
             lines.add(Line.from(Span.raw(" " + ei.exceptionType)));
             if (ei.exceptionMessage != null) {
                 lines.add(Line.from(Span.raw(" " + ei.exceptionMessage)));
@@ -641,7 +640,7 @@ class ErrorsTab extends AbstractTableTab {
         if (showBody && ei.body != null) {
             lines.add(Line.from(Span.raw("")));
             lines.add(Line.from(
-                    Span.styled(" Body", Style.EMPTY.fg(Color.GREEN).bold()),
+                    Span.styled(" Body", Theme.muted()),
                     ei.bodyType != null ? Span.styled(" (" + ei.bodyType + ")", Style.EMPTY.dim()) : Span.raw("")));
             for (String line : ei.body.split("\n")) {
                 lines.add(Line.from(Span.raw(" " + line)));
@@ -650,19 +649,19 @@ class ErrorsTab extends AbstractTableTab {
 
         if (showHeaders && !ei.headers.isEmpty()) {
             lines.add(Line.from(Span.raw("")));
-            lines.add(Line.from(Span.styled(" Headers", Style.EMPTY.fg(Color.GREEN).bold())));
+            lines.add(Line.from(Span.styled(" Headers", Theme.muted())));
             addKvLines(lines, ei.headers);
         }
 
         if (showProperties && !ei.properties.isEmpty()) {
             lines.add(Line.from(Span.raw("")));
-            lines.add(Line.from(Span.styled(" Properties", Style.EMPTY.fg(Color.GREEN).bold())));
+            lines.add(Line.from(Span.styled(" Properties", Theme.muted())));
             addKvLines(lines, ei.properties);
         }
 
         if (showVariables && !ei.variables.isEmpty()) {
             lines.add(Line.from(Span.raw("")));
-            lines.add(Line.from(Span.styled(" Variables", Style.EMPTY.fg(Color.GREEN).bold())));
+            lines.add(Line.from(Span.styled(" Variables", Theme.muted())));
             addKvLines(lines, ei.variables);
         }
 
@@ -679,7 +678,7 @@ class ErrorsTab extends AbstractTableTab {
         for (var entry : map.entrySet()) {
             String val = entry.getValue() != null ? entry.getValue().toString() : "null";
             lines.add(Line.from(
-                    Span.styled(" " + entry.getKey(), Style.EMPTY.fg(Color.CYAN)),
+                    Span.styled(" " + entry.getKey(), Theme.muted()),
                     Span.raw(" = " + val)));
         }
     }
@@ -687,10 +686,10 @@ class ErrorsTab extends AbstractTableTab {
     private static void hintShowBhpv(List<Span> spans, boolean body, boolean headers, boolean props, boolean vars) {
         spans.add(Span.styled(" show", Theme.hintKey()));
         spans.add(Span.raw(" "));
-        spans.add(Span.styled(body ? "B" : "b", body ? Style.EMPTY.fg(Color.WHITE).bold() : Style.EMPTY.dim()));
-        spans.add(Span.styled(headers ? "H" : "h", headers ? Style.EMPTY.fg(Color.WHITE).bold() : Style.EMPTY.dim()));
-        spans.add(Span.styled(props ? "P" : "p", props ? Style.EMPTY.fg(Color.WHITE).bold() : Style.EMPTY.dim()));
-        spans.add(Span.styled(vars ? "V" : "v", vars ? Style.EMPTY.fg(Color.WHITE).bold() : Style.EMPTY.dim()));
+        spans.add(Span.styled(body ? "B" : "b", body ? Style.EMPTY.fg(Theme.baseFg()).bold() : Style.EMPTY.dim()));
+        spans.add(Span.styled(headers ? "H" : "h", headers ? Style.EMPTY.fg(Theme.baseFg()).bold() : Style.EMPTY.dim()));
+        spans.add(Span.styled(props ? "P" : "p", props ? Style.EMPTY.fg(Theme.baseFg()).bold() : Style.EMPTY.dim()));
+        spans.add(Span.styled(vars ? "V" : "v", vars ? Style.EMPTY.fg(Theme.baseFg()).bold() : Style.EMPTY.dim()));
         spans.add(Span.raw("  "));
     }
 

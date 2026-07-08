@@ -21,7 +21,6 @@ import java.util.List;
 
 import dev.tamboui.layout.Constraint;
 import dev.tamboui.layout.Rect;
-import dev.tamboui.style.Color;
 import dev.tamboui.style.Style;
 import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.Line;
@@ -103,8 +102,8 @@ class InflightTab extends AbstractTableTab {
         for (InflightInfo ii : sorted) {
             String status = ii.blocked ? "blocked" : "inflight";
             Style statusStyle = ii.blocked
-                    ? Style.EMPTY.fg(Color.LIGHT_RED).bold()
-                    : Style.EMPTY.fg(Color.GREEN);
+                    ? Theme.error().bold()
+                    : Theme.success();
 
             String duration = TimeUtils.printDuration(ii.duration, true);
             Style durationStyle = durationColor(ii.duration);
@@ -117,7 +116,7 @@ class InflightTab extends AbstractTableTab {
 
             rows.add(Row.from(
                     Cell.from(Span.styled(" " + status, statusStyle)),
-                    Cell.from(Span.styled(ii.exchangeId != null ? ii.exchangeId : "", Style.EMPTY.fg(Color.CYAN))),
+                    Cell.from(Span.styled(ii.exchangeId != null ? ii.exchangeId : "", Style.EMPTY.fg(Theme.accent()))),
                     Cell.from(routeNode),
                     rightCell(duration, 14, durationStyle),
                     Cell.from(barSpan)));
@@ -166,11 +165,11 @@ class InflightTab extends AbstractTableTab {
 
     private Style durationColor(long durationMs) {
         if (durationMs >= THRESHOLD_RED) {
-            return Style.EMPTY.fg(Color.LIGHT_RED).bold();
+            return Theme.error().bold();
         } else if (durationMs >= THRESHOLD_YELLOW) {
-            return Style.EMPTY.fg(Color.YELLOW);
+            return Theme.warning();
         }
-        return Style.EMPTY.fg(Color.GREEN);
+        return Theme.success();
     }
 
     private Span buildDurationBar(long duration, long maxDuration, int barWidth) {
@@ -191,16 +190,16 @@ class InflightTab extends AbstractTableTab {
             sb.append(BAR_CHARS[partial]);
         }
 
-        Color color;
+        Style barStyle;
         if (duration >= THRESHOLD_RED) {
-            color = Color.LIGHT_RED;
+            barStyle = Theme.error();
         } else if (duration >= THRESHOLD_YELLOW) {
-            color = Color.YELLOW;
+            barStyle = Theme.warning();
         } else {
-            color = Color.GREEN;
+            barStyle = Theme.success();
         }
 
-        return Span.styled(sb.toString(), Style.EMPTY.fg(color));
+        return Span.styled(sb.toString(), barStyle);
     }
 
     private int sortExchange(InflightInfo a, InflightInfo b) {

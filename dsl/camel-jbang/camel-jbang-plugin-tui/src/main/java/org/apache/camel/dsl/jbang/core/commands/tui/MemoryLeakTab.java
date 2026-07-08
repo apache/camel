@@ -26,7 +26,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import dev.tamboui.layout.Constraint;
 import dev.tamboui.layout.Layout;
 import dev.tamboui.layout.Rect;
-import dev.tamboui.style.Color;
 import dev.tamboui.style.Style;
 import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.Line;
@@ -240,38 +239,38 @@ class MemoryLeakTab extends AbstractTab {
             lines.add(Line.from(Span.raw("")));
             lines.add(Line.from(
                     Span.styled("  Press ", Style.EMPTY.dim()),
-                    Span.styled("R", Style.EMPTY.fg(Color.YELLOW).bold()),
+                    Span.styled("R", Theme.label().bold()),
                     Span.styled(" to start a recording.", Style.EMPTY.dim())));
             lines.add(Line.from(Span.raw("")));
             lines.add(Line.from(
-                    Span.styled("  Duration: ", Style.EMPTY.fg(Color.YELLOW).bold()),
-                    Span.styled(duration + "s", Style.EMPTY.fg(Color.WHITE)),
+                    Span.styled("  Duration: ", Theme.muted()),
+                    Span.styled(duration + "s", Style.EMPTY.fg(Theme.baseFg())),
                     Span.styled("  (use ", Style.EMPTY.dim()),
-                    Span.styled("+", Style.EMPTY.fg(Color.YELLOW).bold()),
+                    Span.styled("+", Theme.label().bold()),
                     Span.styled("/", Style.EMPTY.dim()),
-                    Span.styled("-", Style.EMPTY.fg(Color.YELLOW).bold()),
+                    Span.styled("-", Theme.label().bold()),
                     Span.styled(" to adjust)", Style.EMPTY.dim())));
             String modeLabel = recordingMode == RecordingMode.DUAL ? "dual" : "single";
             lines.add(Line.from(
-                    Span.styled("  Mode:     ", Style.EMPTY.fg(Color.YELLOW).bold()),
-                    Span.styled("[" + modeLabel + "]", Style.EMPTY.fg(Color.WHITE)),
+                    Span.styled("  Mode:     ", Theme.muted()),
+                    Span.styled("[" + modeLabel + "]", Style.EMPTY.fg(Theme.baseFg())),
                     Span.styled("  (press ", Style.EMPTY.dim()),
-                    Span.styled("d", Style.EMPTY.fg(Color.YELLOW).bold()),
+                    Span.styled("d", Theme.label().bold()),
                     Span.styled(" to toggle)", Style.EMPTY.dim())));
             lines.add(Line.from(Span.raw("")));
             if (recordingMode == RecordingMode.DUAL) {
                 lines.add(Line.from(
                         Span.styled("  Dual mode ", Style.EMPTY.dim()),
-                        Span.styled("(recommended)", Style.EMPTY.fg(Color.GREEN))));
+                        Span.styled("(recommended)", Theme.success())));
                 lines.add(Line.from(
                         Span.styled("  Runs two sequential JFR recordings:", Style.EMPTY.dim())));
                 lines.add(Line.from(
-                        Span.styled("    Run 1: ", Style.EMPTY.fg(Color.CYAN)),
-                        Span.styled(duration + "s", Style.EMPTY.fg(Color.WHITE)),
+                        Span.styled("    Run 1: ", Theme.muted()),
+                        Span.styled(duration + "s", Style.EMPTY.fg(Theme.baseFg())),
                         Span.styled(" baseline recording", Style.EMPTY.dim())));
                 lines.add(Line.from(
-                        Span.styled("    Run 2: ", Style.EMPTY.fg(Color.CYAN)),
-                        Span.styled((duration * 2) + "s", Style.EMPTY.fg(Color.WHITE)),
+                        Span.styled("    Run 2: ", Theme.muted()),
+                        Span.styled((duration * 2) + "s", Style.EMPTY.fg(Theme.baseFg())),
                         Span.styled(" comparison recording (2x duration)", Style.EMPTY.dim())));
                 lines.add(Line.from(
                         Span.styled("  Compares trends to detect leaks: classes growing faster", Style.EMPTY.dim())));
@@ -311,26 +310,26 @@ class MemoryLeakTab extends AbstractTab {
                     ? "Recording 2 of 2 (" + currentRecordingDuration + "s)..."
                     : "Recording 1 of 2 (" + currentRecordingDuration + "s)...";
             lines.add(Line.from(
-                    Span.styled("  " + recLabel, Style.EMPTY.fg(Color.GREEN).bold())));
+                    Span.styled("  " + recLabel, Theme.success().bold())));
         } else {
             lines.add(Line.from(
-                    Span.styled("  Memory leak recording in progress...", Style.EMPTY.fg(Color.GREEN).bold())));
+                    Span.styled("  Memory leak recording in progress...", Theme.success().bold())));
         }
 
         lines.add(Line.from(Span.raw("")));
         lines.add(Line.from(
-                Span.styled("  Elapsed:    ", Style.EMPTY.fg(Color.YELLOW).bold()),
-                Span.styled(elapsedSec + "s", Style.EMPTY.fg(Color.WHITE))));
+                Span.styled("  Elapsed:    ", Theme.muted()),
+                Span.styled(elapsedSec + "s", Style.EMPTY.fg(Theme.baseFg()))));
         lines.add(Line.from(
-                Span.styled("  Remaining:  ", Style.EMPTY.fg(Color.YELLOW).bold()),
-                Span.styled(remainingSec + "s", Style.EMPTY.fg(Color.WHITE))));
+                Span.styled("  Remaining:  ", Theme.muted()),
+                Span.styled(remainingSec + "s", Style.EMPTY.fg(Theme.baseFg()))));
         lines.add(Line.from(
-                Span.styled("  Duration:   ", Style.EMPTY.fg(Color.YELLOW).bold()),
-                Span.styled(currentRecordingDuration + "s", Style.EMPTY.fg(Color.WHITE))));
+                Span.styled("  Duration:   ", Theme.muted()),
+                Span.styled(currentRecordingDuration + "s", Style.EMPTY.fg(Theme.baseFg()))));
         lines.add(Line.from(Span.raw("")));
         lines.add(Line.from(
                 Span.styled("  Press ", Style.EMPTY.dim()),
-                Span.styled("X", Style.EMPTY.fg(Color.YELLOW).bold()),
+                Span.styled("X", Theme.label().bold()),
                 Span.styled(" to stop recording early and view results.", Style.EMPTY.dim())));
 
         // progress bar
@@ -344,7 +343,7 @@ class MemoryLeakTab extends AbstractTab {
             bar.append(i < filled ? '█' : '░');
         }
         lines.add(Line.from(Span.raw("")));
-        lines.add(Line.from(Span.styled(bar.toString(), Style.EMPTY.fg(Color.GREEN))));
+        lines.add(Line.from(Span.styled(bar.toString(), Theme.success())));
 
         String title = recordingMode == RecordingMode.DUAL
                 ? " Memory Leak Recording [dual] "
@@ -393,7 +392,7 @@ class MemoryLeakTab extends AbstractTab {
             String totalStr = e.sampledSize > 0 ? formatBytes(e.sampledSize) : "-";
             rows.add(Row.from(
                     rightCell(String.valueOf(e.num), 6),
-                    Cell.from(Span.styled(e.className != null ? e.className : "", Style.EMPTY.fg(Color.CYAN))),
+                    Cell.from(Span.styled(e.className != null ? e.className : "", Style.EMPTY.fg(Theme.accent()))),
                     rightCell(String.valueOf(e.count), 8),
                     rightCell(totalStr, 12),
                     rightCell(formatDuration(e.objectAge), 12)));
@@ -437,7 +436,7 @@ class MemoryLeakTab extends AbstractTab {
                         Constraint.length(8),
                         Constraint.length(12),
                         Constraint.length(13))
-                .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
+                .highlightStyle(Style.EMPTY.fg(Theme.baseFg()).bold().onBlue())
                 .highlightSpacing(Table.HighlightSpacing.ALWAYS)
                 .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(title).build())
                 .build();
@@ -465,31 +464,31 @@ class MemoryLeakTab extends AbstractTab {
 
         // Sample info
         lines.add(Line.from(
-                Span.styled("  Class:  ", Style.EMPTY.fg(Color.YELLOW).bold()),
-                Span.styled(entry.className != null ? entry.className : "unknown", Style.EMPTY.fg(Color.CYAN))));
+                Span.styled("  Class:  ", Theme.muted()),
+                Span.styled(entry.className != null ? entry.className : "unknown", Style.EMPTY.fg(Theme.accent()))));
 
         List<Span> infoSpans = new ArrayList<>();
         if (entry.count > 1) {
-            infoSpans.add(Span.styled("  Count:  ", Style.EMPTY.fg(Color.YELLOW).bold()));
-            infoSpans.add(Span.styled(String.valueOf(entry.count), Style.EMPTY.fg(Color.WHITE)));
+            infoSpans.add(Span.styled("  Count:  ", Theme.muted()));
+            infoSpans.add(Span.styled(String.valueOf(entry.count), Style.EMPTY.fg(Theme.baseFg())));
         }
         if (entry.sampledSize > 0) {
             infoSpans.add(Span.styled(infoSpans.isEmpty() ? "  Sampled:  " : "    Sampled: ",
-                    Style.EMPTY.fg(Color.YELLOW).bold()));
-            infoSpans.add(Span.styled(formatBytes(entry.sampledSize), Style.EMPTY.fg(Color.WHITE)));
+                    Theme.muted()));
+            infoSpans.add(Span.styled(formatBytes(entry.sampledSize), Style.EMPTY.fg(Theme.baseFg())));
         }
         if (!infoSpans.isEmpty()) {
             lines.add(Line.from(infoSpans));
         }
         lines.add(Line.from(
-                Span.styled("  Age:    ", Style.EMPTY.fg(Color.YELLOW).bold()),
-                Span.styled(formatDuration(entry.objectAge), Style.EMPTY.fg(Color.WHITE))));
+                Span.styled("  Age:    ", Theme.muted()),
+                Span.styled(formatDuration(entry.objectAge), Style.EMPTY.fg(Theme.baseFg()))));
 
         // Reference chain
         if (entry.referenceChain != null && !entry.referenceChain.isEmpty()) {
             lines.add(Line.from(Span.raw("")));
             lines.add(Line.from(
-                    Span.styled("  Reference Chain (Object → GC Root):", Style.EMPTY.fg(Color.YELLOW).bold())));
+                    Span.styled("  Reference Chain (Object → GC Root):", Theme.muted())));
 
             for (int i = 0; i < entry.referenceChain.size(); i++) {
                 ChainLink link = entry.referenceChain.get(i);
@@ -499,9 +498,9 @@ class MemoryLeakTab extends AbstractTab {
                 String descInfo = link.description != null ? " [" + link.description + "]" : "";
 
                 lines.add(Line.from(
-                        Span.styled(prefix, Style.EMPTY.fg(Color.BLUE)),
-                        Span.styled(typeName, Style.EMPTY.fg(Color.CYAN)),
-                        Span.styled(fieldInfo, Style.EMPTY.fg(Color.GREEN)),
+                        Span.styled(prefix, Style.EMPTY.fg(Theme.accent())),
+                        Span.styled(typeName, Style.EMPTY.fg(Theme.accent())),
+                        Span.styled(fieldInfo, Theme.success()),
                         Span.styled(descInfo, Style.EMPTY.dim())));
             }
         }
@@ -510,10 +509,10 @@ class MemoryLeakTab extends AbstractTab {
         if (entry.stackTrace != null && !entry.stackTrace.isEmpty()) {
             lines.add(Line.from(Span.raw("")));
             lines.add(Line.from(
-                    Span.styled("  Allocation Stack Trace:", Style.EMPTY.fg(Color.YELLOW).bold())));
+                    Span.styled("  Allocation Stack Trace:", Theme.muted())));
 
             for (StackEntry frame2 : entry.stackTrace) {
-                Style methodStyle = isJdkFrame(frame2.method) ? Style.EMPTY.dim() : Style.EMPTY.fg(Color.WHITE);
+                Style methodStyle = isJdkFrame(frame2.method) ? Style.EMPTY.dim() : Style.EMPTY.fg(Theme.baseFg());
                 lines.add(Line.from(
                         Span.styled("    at ", Style.EMPTY.dim()),
                         Span.styled(frame2.method, methodStyle),
@@ -555,11 +554,11 @@ class MemoryLeakTab extends AbstractTab {
 
             rows.add(Row.from(
                     rightCell(String.valueOf(i + 1), 4),
-                    Cell.from(Span.styled(e.className != null ? e.className : "", Style.EMPTY.fg(Color.CYAN))),
+                    Cell.from(Span.styled(e.className != null ? e.className : "", Style.EMPTY.fg(Theme.accent()))),
                     rightCell(run1, 10),
                     rightCell(run2, 10),
                     rightCell(growth, 8),
-                    Cell.from(Line.from(trendSpan, Span.styled(warn, Style.EMPTY.fg(Color.YELLOW))))));
+                    Cell.from(Line.from(trendSpan, Span.styled(warn, Theme.warning())))));
         }
 
         if (rows.isEmpty()) {
@@ -592,7 +591,7 @@ class MemoryLeakTab extends AbstractTab {
                         Constraint.length(10),
                         Constraint.length(9),
                         Constraint.length(13))
-                .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
+                .highlightStyle(Style.EMPTY.fg(Theme.baseFg()).bold().onBlue())
                 .highlightSpacing(Table.HighlightSpacing.ALWAYS)
                 .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(title).build())
                 .build();
@@ -618,31 +617,31 @@ class MemoryLeakTab extends AbstractTab {
         List<Line> lines = new ArrayList<>();
 
         lines.add(Line.from(
-                Span.styled("  Class:   ", Style.EMPTY.fg(Color.YELLOW).bold()),
-                Span.styled(entry.className != null ? entry.className : "unknown", Style.EMPTY.fg(Color.CYAN))));
+                Span.styled("  Class:   ", Theme.muted()),
+                Span.styled(entry.className != null ? entry.className : "unknown", Style.EMPTY.fg(Theme.accent()))));
         lines.add(Line.from(
-                Span.styled("  Trend:   ", Style.EMPTY.fg(Color.YELLOW).bold()),
+                Span.styled("  Trend:   ", Theme.muted()),
                 trendSpan(entry.trend)));
         lines.add(Line.from(
-                Span.styled("  Run 1:   ", Style.EMPTY.fg(Color.YELLOW).bold()),
+                Span.styled("  Run 1:   ", Theme.muted()),
                 Span.styled(formatBytes(entry.baselineSampledSize) + " (" + entry.baselineCount + " samples)",
-                        Style.EMPTY.fg(Color.WHITE))));
+                        Style.EMPTY.fg(Theme.baseFg()))));
         lines.add(Line.from(
-                Span.styled("  Run 2:   ", Style.EMPTY.fg(Color.YELLOW).bold()),
+                Span.styled("  Run 2:   ", Theme.muted()),
                 Span.styled(formatBytes(entry.currentSampledSize) + " (" + entry.currentCount + " samples)",
-                        Style.EMPTY.fg(Color.WHITE))));
+                        Style.EMPTY.fg(Theme.baseFg()))));
         if (entry.growthRatio > 0) {
             String growthLabel = entry.lowConfidence
                     ? "~" + formatGrowthPercent(entry.growthRatio)
                     : formatGrowthPercent(entry.growthRatio);
             lines.add(Line.from(
-                    Span.styled("  Growth:  ", Style.EMPTY.fg(Color.YELLOW).bold()),
+                    Span.styled("  Growth:  ", Theme.muted()),
                     Span.styled(growthLabel,
-                            entry.growthRatio > 1.3 ? Style.EMPTY.fg(Color.RED).bold() : Style.EMPTY.fg(Color.WHITE))));
+                            entry.growthRatio > 1.3 ? Theme.error().bold() : Style.EMPTY.fg(Theme.baseFg()))));
         }
         if (entry.lowConfidence) {
             lines.add(Line.from(
-                    Span.styled("  " + TuiIcons.HEALTH_WARN + " Low confidence: ", Style.EMPTY.fg(Color.YELLOW)),
+                    Span.styled("  " + TuiIcons.HEALTH_WARN + " Low confidence: ", Theme.warning()),
                     Span.styled("sample counts are too low or diverge significantly", Style.EMPTY.dim())));
             lines.add(Line.from(
                     Span.styled("    between runs. The growth percentage may not be reliable.", Style.EMPTY.dim())));
@@ -654,7 +653,7 @@ class MemoryLeakTab extends AbstractTab {
         if (entry.referenceChain != null && !entry.referenceChain.isEmpty()) {
             lines.add(Line.from(Span.raw("")));
             lines.add(Line.from(
-                    Span.styled("  Reference Chain (Object -> GC Root):", Style.EMPTY.fg(Color.YELLOW).bold())));
+                    Span.styled("  Reference Chain (Object -> GC Root):", Theme.muted())));
             for (int i = 0; i < entry.referenceChain.size(); i++) {
                 ChainLink link = entry.referenceChain.get(i);
                 String prefix = i == entry.referenceChain.size() - 1 ? "  └─ " : "  ├─ ";
@@ -662,9 +661,9 @@ class MemoryLeakTab extends AbstractTab {
                 String fieldInfo = link.field != null ? " (field: " + link.field + ")" : "";
                 String descInfo = link.description != null ? " [" + link.description + "]" : "";
                 lines.add(Line.from(
-                        Span.styled(prefix, Style.EMPTY.fg(Color.BLUE)),
-                        Span.styled(typeName, Style.EMPTY.fg(Color.CYAN)),
-                        Span.styled(fieldInfo, Style.EMPTY.fg(Color.GREEN)),
+                        Span.styled(prefix, Style.EMPTY.fg(Theme.accent())),
+                        Span.styled(typeName, Style.EMPTY.fg(Theme.accent())),
+                        Span.styled(fieldInfo, Theme.success()),
                         Span.styled(descInfo, Style.EMPTY.dim())));
             }
         }
@@ -673,9 +672,9 @@ class MemoryLeakTab extends AbstractTab {
         if (entry.stackTrace != null && !entry.stackTrace.isEmpty()) {
             lines.add(Line.from(Span.raw("")));
             lines.add(Line.from(
-                    Span.styled("  Allocation Stack Trace:", Style.EMPTY.fg(Color.YELLOW).bold())));
+                    Span.styled("  Allocation Stack Trace:", Theme.muted())));
             for (StackEntry se : entry.stackTrace) {
-                Style methodStyle = isJdkFrame(se.method) ? Style.EMPTY.dim() : Style.EMPTY.fg(Color.WHITE);
+                Style methodStyle = isJdkFrame(se.method) ? Style.EMPTY.dim() : Style.EMPTY.fg(Theme.baseFg());
                 lines.add(Line.from(
                         Span.styled("    at ", Style.EMPTY.dim()),
                         Span.styled(se.method, methodStyle),
@@ -707,11 +706,11 @@ class MemoryLeakTab extends AbstractTab {
             return Span.styled("-", Style.EMPTY.dim());
         }
         return switch (trend) {
-            case "growing" -> Span.styled(TuiIcons.ARROW_UP + " leak!", Style.EMPTY.fg(Color.RED).bold());
-            case "suspicious" -> Span.styled(TuiIcons.ARROW_UP + " leak?", Style.EMPTY.fg(Color.YELLOW).bold());
-            case "stable" -> Span.styled(TuiIcons.ARROW_STABLE + " stable", Style.EMPTY.fg(Color.GREEN));
+            case "growing" -> Span.styled(TuiIcons.ARROW_UP + " leak!", Theme.error().bold());
+            case "suspicious" -> Span.styled(TuiIcons.ARROW_UP + " leak?", Theme.warning());
+            case "stable" -> Span.styled(TuiIcons.ARROW_STABLE + " stable", Theme.success());
             case "shrinking" -> Span.styled(TuiIcons.ARROW_DOWN, Style.EMPTY.dim());
-            case "new" -> Span.styled("new", Style.EMPTY.fg(Color.YELLOW));
+            case "new" -> Span.styled("new", Theme.warning());
             case "gone" -> Span.styled("gone", Style.EMPTY.dim());
             default -> Span.styled(trend, Style.EMPTY.dim());
         };

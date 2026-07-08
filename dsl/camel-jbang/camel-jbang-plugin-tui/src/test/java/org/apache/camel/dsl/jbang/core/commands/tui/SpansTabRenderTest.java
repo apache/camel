@@ -109,7 +109,7 @@ class SpansTabRenderTest {
         Frame frame = Frame.forTesting(buffer);
         tab.render(frame, area);
 
-        boolean foundRed = TuiTestHelper.findCellWithColor(buffer, "E", Color.LIGHT_RED);
+        boolean foundRed = TuiTestHelper.findCellWithColor(buffer, "E", Theme.error().fg().orElse(Color.LIGHT_RED));
         assertTrue(foundRed, "ERROR status should be rendered in LIGHT_RED");
     }
 

@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.function.Supplier;
 
 import dev.tamboui.layout.Rect;
-import dev.tamboui.style.Color;
 import dev.tamboui.style.Style;
 import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.Line;
@@ -132,11 +131,11 @@ class AiLogPopup {
         List<ListItem> items = new ArrayList<>();
         for (AiPanel.LogEntry entry : entries) {
             Style levelStyle = switch (entry.level()) {
-                case QUESTION -> Style.EMPTY.fg(Color.CYAN);
-                case TOOL -> Style.EMPTY.fg(Color.YELLOW);
-                case RESULT -> Style.EMPTY.fg(Color.GREEN);
-                case RESPONSE -> Style.EMPTY.fg(Color.MAGENTA);
-                case ERROR -> Style.EMPTY.fg(Color.LIGHT_RED);
+                case QUESTION -> Style.EMPTY.fg(Theme.accent());
+                case TOOL -> Theme.warning();
+                case RESULT -> Theme.success();
+                case RESPONSE -> Theme.notice();
+                case ERROR -> Theme.error();
             };
             String levelTag = switch (entry.level()) {
                 case QUESTION -> " ASK      ";
@@ -177,11 +176,11 @@ class AiLogPopup {
                         entry.level() == AiPanel.LogLevel.TOOL
                                 ? TuiIcons.ARROW_RIGHT + " Arguments"
                                 : TuiIcons.ARROW_LEFT + " Result",
-                        Style.EMPTY.fg(entry.level() == AiPanel.LogLevel.TOOL ? Color.YELLOW : Color.GREEN).bold())));
+                        (entry.level() == AiPanel.LogLevel.TOOL ? Theme.warning() : Theme.success()).bold())));
                 addJsonLines(lines, detail);
             } else {
                 lines.add(Line.from(Span.styled(TuiIcons.ARROW_RIGHT + " Content",
-                        Style.EMPTY.fg(Color.CYAN).bold())));
+                        Style.EMPTY.fg(Theme.accent()).bold())));
                 for (String line : detail.split("\n", -1)) {
                     lines.add(Line.from(Span.styled("  " + line, Style.EMPTY.dim())));
                 }

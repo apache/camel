@@ -26,7 +26,6 @@ import java.util.concurrent.ScheduledExecutorService;
 import dev.tamboui.layout.Constraint;
 import dev.tamboui.layout.Layout;
 import dev.tamboui.layout.Rect;
-import dev.tamboui.style.Color;
 import dev.tamboui.style.Style;
 import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.Line;
@@ -696,7 +695,7 @@ class SendMessagePopup {
 
         Block block = Block.builder()
                 .borderType(BorderType.ROUNDED).borders(Borders.ALL)
-                .title(Title.from(Line.from(Span.styled(title, Style.EMPTY.fg(Color.YELLOW).bold()))))
+                .title(Title.from(Line.from(Span.styled(title, Theme.label().bold()))))
                 .build();
         frame.renderWidget(block, area);
         Rect inner = block.inner(area);
@@ -821,20 +820,20 @@ class SendMessagePopup {
             titleStr = " Response ";
         } else if (sending) {
             titleStr = " Sending... ";
-            titleStyle = Style.EMPTY.fg(Color.YELLOW).bold();
+            titleStyle = Theme.warning();
         } else if (responseError) {
             titleStr = " Response — Error ";
             if (responseElapsed > 0) {
                 titleStr = " Response — Error (" + responseElapsed + "ms) ";
             }
-            titleStyle = Style.EMPTY.fg(Color.LIGHT_RED).bold();
+            titleStyle = Theme.error().bold();
         } else {
             titleStr = " Response — " + (inOut ? "InOut" : "InOnly");
             if (responseElapsed > 0) {
                 titleStr += " (" + responseElapsed + "ms)";
             }
             titleStr += " ";
-            titleStyle = Style.EMPTY.fg(Color.GREEN).bold();
+            titleStyle = Theme.success().bold();
         }
 
         Title title = Title.from(Line.from(Span.styled(titleStr, titleStyle)));
@@ -869,7 +868,7 @@ class SendMessagePopup {
                     && !line.startsWith("[") && !line.startsWith("\"")) {
                 int colon = line.indexOf(": ");
                 lines.add(Line.from(
-                        Span.styled(line.substring(0, colon + 1), Style.EMPTY.fg(Color.YELLOW)),
+                        Span.styled(line.substring(0, colon + 1), Theme.label()),
                         Span.raw(line.substring(colon + 1))));
             } else {
                 lines.add(Line.from(Span.raw(line)));
@@ -923,7 +922,7 @@ class SendMessagePopup {
                     : "";
 
             Style lineStyle = selected ? Style.EMPTY.bold() : Style.EMPTY;
-            Style statusStyle = entry.error ? Style.EMPTY.fg(Color.LIGHT_RED) : Style.EMPTY.fg(Color.GREEN);
+            Style statusStyle = entry.error ? Theme.error() : Theme.success();
             if (!selected) {
                 statusStyle = statusStyle.dim();
             }

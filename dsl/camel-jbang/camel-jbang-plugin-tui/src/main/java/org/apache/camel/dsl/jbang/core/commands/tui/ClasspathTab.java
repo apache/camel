@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import dev.tamboui.layout.Rect;
-import dev.tamboui.style.Color;
 import dev.tamboui.style.Style;
 import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.Line;
@@ -216,7 +215,7 @@ class ClasspathTab extends AbstractTab {
             frame.renderWidget(
                     Paragraph.builder()
                             .text(Text.from(Line.from(
-                                    Span.styled("  " + errorMessage, Style.EMPTY.fg(Color.LIGHT_RED)))))
+                                    Span.styled("  " + errorMessage, Theme.error()))))
                             .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
                                     .title(" Classpath ").build())
                             .build(),
@@ -277,7 +276,7 @@ class ClasspathTab extends AbstractTab {
     @Override
     public void renderFooter(List<Span> spans) {
         if (filterInputActive) {
-            spans.add(Span.styled(" /", Style.EMPTY.fg(Color.YELLOW).bold()));
+            spans.add(Span.styled(" /", Theme.label().bold()));
             spans.add(Span.raw(filterInputState.text() + "█  "));
             hint(spans, "Enter", "filter");
             hintLast(spans, "Esc", "cancel");
@@ -286,7 +285,7 @@ class ClasspathTab extends AbstractTab {
         hint(spans, "Esc", filterTerm != null ? "clear" : "back");
         hint(spans, "f", "scope [" + SCOPES[scopeIndex] + "]");
         if (filterTerm != null) {
-            spans.add(Span.styled("  /", Style.EMPTY.fg(Color.YELLOW).bold()));
+            spans.add(Span.styled("  /", Theme.label().bold()));
             spans.add(Span.raw("\"" + filterTerm + "\"  "));
         } else {
             hint(spans, "/", "filter");

@@ -30,7 +30,6 @@ import java.util.stream.Collectors;
 import dev.tamboui.layout.Constraint;
 import dev.tamboui.layout.Layout;
 import dev.tamboui.layout.Rect;
-import dev.tamboui.style.Color;
 import dev.tamboui.style.Style;
 import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.Line;
@@ -60,11 +59,10 @@ class MetricsTab extends AbstractTableTab {
 
     private static final int MOUSE_SCROLL_LINES = 3;
 
-    private static final Style LABEL = Style.EMPTY.dim();
-    private static final Style VALUE = Style.EMPTY.fg(Color.WHITE).bold();
-    private static final Style HEADER = Style.EMPTY.fg(Color.YELLOW).bold();
-    private static final Style GOOD = Style.EMPTY.fg(Color.GREEN);
-    private static final Style BAD = Style.EMPTY.fg(Color.LIGHT_RED);
+    private static final Style LABEL = Theme.muted();
+    private static final Style VALUE = Style.EMPTY.fg(Theme.baseFg()).bold();
+    private static final Style GOOD = Theme.success();
+    private static final Style BAD = Theme.error();
 
     private final ScrollbarState scrollbarState = new ScrollbarState();
     private final ScrollbarState rawScrollbarState = new ScrollbarState();
@@ -229,9 +227,15 @@ class MetricsTab extends AbstractTableTab {
     @Override
     protected void renderContent(Frame frame, Rect area, IntegrationInfo info) {
         if (info.meters.isEmpty()) {
-            Paragraph p = Paragraph.from(Line.from(
-                    Span.styled("No metrics available. Run with --observe to enable micrometer.", LABEL)));
-            frame.renderWidget(p, area);
+            frame.renderWidget(
+                    Paragraph.builder()
+                            .text(Text.from(Line.from(
+                                    Span.styled("  No metrics available. Run with --observe to enable micrometer.",
+                                            LABEL))))
+                            .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
+                                    .title(" Metrics ").build())
+                            .build(),
+                    area);
             return;
         }
 
@@ -257,7 +261,7 @@ class MetricsTab extends AbstractTableTab {
                     .split(area);
             frame.renderWidget(Paragraph.from(Line.from(
                     Span.styled("  Endpoint: ", LABEL),
-                    Span.styled(metricsUrl, Style.EMPTY.fg(Color.CYAN)))), vParts.get(0));
+                    Span.styled(metricsUrl, Style.EMPTY.fg(Theme.accent())))), vParts.get(0));
             panelArea = vParts.get(1);
         }
 
@@ -276,7 +280,7 @@ class MetricsTab extends AbstractTableTab {
         List<Line> lines = new ArrayList<>();
 
         // Exchanges section
-        lines.add(Line.from(Span.styled("  Exchanges", HEADER)));
+        lines.add(Line.from(Span.styled("  Exchanges", Theme.label().bold())));
         lines.add(Line.empty());
 
         long total = counterValue(meters, "camel.exchanges.total");
@@ -305,7 +309,7 @@ class MetricsTab extends AbstractTableTab {
         // Route timers
         List<MicrometerMeterInfo> routeTimers = findMeters(meters, "camel.route.policy");
         if (!routeTimers.isEmpty()) {
-            lines.add(Line.from(Span.styled("  Route Timers", HEADER),
+            lines.add(Line.from(Span.styled("  Route Timers", Theme.label().bold()),
                     Span.styled("                     mean / max", LABEL)));
             lines.add(Line.empty());
             for (MicrometerMeterInfo rt : routeTimers) {
@@ -321,7 +325,7 @@ class MetricsTab extends AbstractTableTab {
                         rt.max != null ? rt.max : 0);
                 int pad = Math.max(1, 30 - routeId.length());
                 lines.add(Line.from(
-                        Span.styled("    " + routeId, Style.EMPTY.fg(Color.CYAN)),
+                        Span.styled("    " + routeId, Style.EMPTY.fg(Theme.accent())),
                         Span.styled(" ".repeat(pad), Style.EMPTY),
                         Span.styled(timing, VALUE)));
             }
@@ -331,7 +335,7 @@ class MetricsTab extends AbstractTableTab {
         List<MicrometerMeterInfo> eventTimers = findMeters(meters, "camel.exchange.event.notifier");
         if (!eventTimers.isEmpty()) {
             lines.add(Line.empty());
-            lines.add(Line.from(Span.styled("  Event Notifiers", HEADER),
+            lines.add(Line.from(Span.styled("  Event Notifiers", Theme.label().bold()),
                     Span.styled("                  mean / max", LABEL)));
             lines.add(Line.empty());
             for (MicrometerMeterInfo et : eventTimers) {
@@ -342,7 +346,7 @@ class MetricsTab extends AbstractTableTab {
                         et.max != null ? et.max : 0);
                 int pad = Math.max(1, 30 - shortName.length());
                 lines.add(Line.from(
-                        Span.styled("    " + shortName, Style.EMPTY.fg(Color.CYAN)),
+                        Span.styled("    " + shortName, Style.EMPTY.fg(Theme.accent())),
                         Span.styled(" ".repeat(pad), Style.EMPTY),
                         Span.styled(timing, VALUE)));
             }
@@ -359,7 +363,7 @@ class MetricsTab extends AbstractTableTab {
         List<Line> lines = new ArrayList<>();
 
         // Memory section
-        lines.add(Line.from(Span.styled("  Memory", HEADER)));
+        lines.add(Line.from(Span.styled("  Memory", Theme.label().bold())));
         lines.add(Line.empty());
 
         double heapUsed = gaugeValue(meters, "jvm.memory.used", "area", "heap");
@@ -390,7 +394,7 @@ class MetricsTab extends AbstractTableTab {
         lines.add(Line.empty());
 
         // Runtime section
-        lines.add(Line.from(Span.styled("  Runtime", HEADER)));
+        lines.add(Line.from(Span.styled("  Runtime", Theme.label().bold())));
         lines.add(Line.empty());
 
         double cpuProcess = gaugeValue(meters, "process.cpu.usage");
@@ -431,7 +435,7 @@ class MetricsTab extends AbstractTableTab {
         List<MicrometerMeterInfo> gcTimers = findMeters(meters, "jvm.gc.pause");
         if (!gcTimers.isEmpty()) {
             lines.add(Line.empty());
-            lines.add(Line.from(Span.styled("  Garbage Collection", HEADER)));
+            lines.add(Line.from(Span.styled("  Garbage Collection", Theme.label().bold())));
             lines.add(Line.empty());
             for (MicrometerMeterInfo gc : gcTimers) {
                 String cause = tagValue(gc, "cause");
@@ -475,7 +479,7 @@ class MetricsTab extends AbstractTableTab {
 
             rows.add(Row.from(
                     Cell.from(Span.styled(typeLabel, typeStyle)),
-                    Cell.from(Span.styled(m.name != null ? m.name : "", Style.EMPTY.fg(Color.CYAN))),
+                    Cell.from(Span.styled(m.name != null ? m.name : "", Style.EMPTY.fg(Theme.accent()))),
                     Cell.from(value),
                     Cell.from(Span.styled(tags, Style.EMPTY.dim()))));
         }
@@ -643,9 +647,8 @@ class MetricsTab extends AbstractTableTab {
     // ---- Prometheus syntax coloring ----
 
     private static final Style PROM_COMMENT = Style.EMPTY.dim();
-    private static final Style PROM_NAME = Style.EMPTY.fg(Color.CYAN);
-    private static final Style PROM_VALUE = Style.EMPTY.fg(Color.WHITE).bold();
-    private static final Style PROM_TAGS = Style.EMPTY.fg(Color.YELLOW);
+    private static final Style PROM_NAME = Style.EMPTY.fg(Theme.accent());
+    private static final Style PROM_VALUE = Style.EMPTY.fg(Theme.baseFg()).bold();
 
     private static Line colorPrometheusLine(String line) {
         if (line.startsWith("#")) {
@@ -660,7 +663,7 @@ class MetricsTab extends AbstractTableTab {
             String rest = line.substring(braceEnd + 1).trim();
             return Line.from(
                     Span.styled(name, PROM_NAME),
-                    Span.styled(tags, PROM_TAGS),
+                    Span.styled(tags, Theme.label()),
                     Span.styled(" " + rest, PROM_VALUE));
         }
         // name value (no tags)
@@ -835,11 +838,11 @@ class MetricsTab extends AbstractTableTab {
             return Style.EMPTY;
         }
         return switch (type) {
-            case "counter" -> Style.EMPTY.fg(Color.LIGHT_BLUE);
-            case "gauge" -> Style.EMPTY.fg(Color.LIGHT_GREEN);
-            case "timer" -> Style.EMPTY.fg(Color.LIGHT_YELLOW);
-            case "longTaskTimer" -> Style.EMPTY.fg(Color.LIGHT_MAGENTA);
-            case "distribution" -> Style.EMPTY.fg(Color.LIGHT_CYAN);
+            case "counter" -> Style.EMPTY.fg(Theme.accent());
+            case "gauge" -> Theme.success();
+            case "timer" -> Theme.warning();
+            case "longTaskTimer" -> Theme.notice();
+            case "distribution" -> Theme.info();
             default -> Style.EMPTY;
         };
     }

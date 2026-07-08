@@ -90,7 +90,7 @@ class CircuitBreakerTabRenderTest {
         Frame frame = Frame.forTesting(buffer);
         tab.render(frame, area);
 
-        boolean foundCyan = TuiTestHelper.findCellWithColor(buffer, "m", Color.CYAN);
+        boolean foundCyan = TuiTestHelper.findCellWithColor(buffer, "m", Theme.accent());
         assertTrue(foundCyan, "Route ID should use CYAN color");
     }
 
@@ -105,7 +105,7 @@ class CircuitBreakerTabRenderTest {
         Frame frame = Frame.forTesting(buffer);
         tab.render(frame, area);
 
-        boolean foundGreen = TuiTestHelper.findCellWithColor(buffer, "c", Color.GREEN);
+        boolean foundGreen = TuiTestHelper.findCellWithColor(buffer, "c", Theme.success().fg().orElse(Color.GREEN));
         assertTrue(foundGreen, "closed state should be rendered in GREEN");
     }
 
@@ -120,7 +120,7 @@ class CircuitBreakerTabRenderTest {
         Frame frame = Frame.forTesting(buffer);
         tab.render(frame, area);
 
-        boolean foundRed = TuiTestHelper.findCellWithColor(buffer, "o", Color.LIGHT_RED);
+        boolean foundRed = TuiTestHelper.findCellWithColor(buffer, "o", Theme.error().fg().orElse(Color.LIGHT_RED));
         assertTrue(foundRed, "open state should be rendered in LIGHT_RED");
     }
 
@@ -135,8 +135,9 @@ class CircuitBreakerTabRenderTest {
         Frame frame = Frame.forTesting(buffer);
         tab.render(frame, area);
 
-        boolean foundYellow = TuiTestHelper.findCellWithColor(buffer, "h", Color.YELLOW);
-        assertTrue(foundYellow, "half_open state should be rendered in YELLOW");
+        Color warningColor = Theme.warning().fg().orElse(Color.YELLOW);
+        boolean foundWarning = TuiTestHelper.findCellWithColor(buffer, "h", warningColor);
+        assertTrue(foundWarning, "half_open state should be rendered in warning color");
     }
 
     @Test

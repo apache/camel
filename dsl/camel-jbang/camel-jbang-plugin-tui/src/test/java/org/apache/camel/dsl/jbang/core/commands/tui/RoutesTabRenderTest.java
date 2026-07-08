@@ -90,7 +90,7 @@ class RoutesTabRenderTest {
         Frame frame = Frame.forTesting(buffer);
         tab.render(frame, area);
 
-        boolean foundGreenStarted = findCellWithColorContaining(buffer, "S", Color.GREEN);
+        boolean foundGreenStarted = findCellWithColorContaining(buffer, "S", Theme.success().fg().orElse(Color.GREEN));
         assertTrue(foundGreenStarted, "Started status should be rendered in GREEN");
     }
 
@@ -105,7 +105,7 @@ class RoutesTabRenderTest {
         Frame frame = Frame.forTesting(buffer);
         tab.render(frame, area);
 
-        boolean foundRedStopped = findCellWithColorContaining(buffer, "S", Color.LIGHT_RED);
+        boolean foundRedStopped = findCellWithColorContaining(buffer, "S", Theme.error().fg().orElse(Color.LIGHT_RED));
         assertTrue(foundRedStopped, "Stopped status should be rendered in LIGHT_RED");
     }
 
@@ -120,7 +120,7 @@ class RoutesTabRenderTest {
         Frame frame = Frame.forTesting(buffer);
         tab.render(frame, area);
 
-        boolean foundCyanRouteId = findCellWithColorContaining(buffer, "m", Color.CYAN);
+        boolean foundCyanRouteId = findCellWithColorContaining(buffer, "m", Theme.accent());
         assertTrue(foundCyanRouteId, "Route ID should be rendered in CYAN");
     }
 
@@ -151,7 +151,7 @@ class RoutesTabRenderTest {
         Frame frame = Frame.forTesting(buffer);
         tab.render(frame, area);
 
-        boolean foundRedFailed = findCellWithColorContaining(buffer, "5", Color.LIGHT_RED);
+        boolean foundRedFailed = findCellWithColorContaining(buffer, "5", Theme.error().fg().orElse(Color.LIGHT_RED));
         assertTrue(foundRedFailed, "Failed count should be rendered in LIGHT_RED");
     }
 

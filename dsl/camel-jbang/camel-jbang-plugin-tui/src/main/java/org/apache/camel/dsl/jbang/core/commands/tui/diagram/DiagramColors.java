@@ -18,22 +18,9 @@ package org.apache.camel.dsl.jbang.core.commands.tui.diagram;
 
 import dev.tamboui.style.Color;
 import dev.tamboui.style.Style;
+import org.apache.camel.dsl.jbang.core.commands.tui.Theme;
 
 public final class DiagramColors {
-
-    static final Color OK_COLOR = Color.GREEN;
-    static final Color FAIL_COLOR = Color.LIGHT_RED;
-    static final Color EXTERNAL_COLOR = Color.CYAN;
-
-    static final Style BORDER_STYLE = Style.EMPTY.fg(Color.WHITE);
-    static final Style DASHED_BORDER_STYLE = Style.EMPTY.fg(Color.CYAN);
-    static final Style SELECTION_STYLE = Style.EMPTY.bg(Color.DARK_GRAY);
-    static final Style ROUTE_ID_STYLE = Style.EMPTY.fg(Color.WHITE).bold();
-    static final Style FROM_LABEL_STYLE = Style.EMPTY.fg(Color.GRAY);
-    static final Style METRICS_OK_STYLE = Style.EMPTY.fg(Color.GREEN);
-    static final Style METRICS_FAIL_STYLE = Style.EMPTY.fg(Color.LIGHT_RED).bold();
-    static final Color HIGHLIGHT_OK_COLOR = Color.GREEN;
-    static final Color HIGHLIGHT_FAIL_COLOR = Color.LIGHT_RED;
 
     // Unicode box-drawing characters
     static final char H = '─';
@@ -52,25 +39,73 @@ public final class DiagramColors {
     private DiagramColors() {
     }
 
+    static Style borderStyle() {
+        return Style.EMPTY.fg(Theme.diagramBorder());
+    }
+
+    static Style dashedBorderStyle() {
+        return Style.EMPTY.fg(Theme.diagramTo());
+    }
+
+    static Style selectionStyle() {
+        return Theme.selectionBg();
+    }
+
+    static Style routeIdStyle() {
+        return Style.EMPTY.fg(Theme.diagramId()).bold();
+    }
+
+    static Style fromLabelStyle() {
+        return Theme.muted();
+    }
+
+    static Style metricsOkStyle() {
+        return Theme.success();
+    }
+
+    static Style metricsFailStyle() {
+        return Theme.error().bold();
+    }
+
+    static Color okColor() {
+        return Theme.diagramFrom();
+    }
+
+    static Color failColor() {
+        return Theme.error().fg().orElse(Color.LIGHT_RED);
+    }
+
+    static Color externalColor() {
+        return Theme.diagramTo();
+    }
+
+    static Color highlightOkColor() {
+        return Theme.diagramFrom();
+    }
+
+    static Color highlightFailColor() {
+        return Theme.error().fg().orElse(Color.LIGHT_RED);
+    }
+
     public static Color getEipColor(String type) {
         if (type == null) {
-            return Color.GRAY;
+            return Theme.diagramDefault();
         }
         return switch (type) {
-            case "from" -> Color.GREEN;
-            case "to", "toD", "wireTap", "enrich", "pollEnrich" -> Color.CYAN;
-            case "choice", "when", "otherwise" -> Color.YELLOW;
+            case "from" -> Theme.diagramFrom();
+            case "to", "toD", "wireTap", "enrich", "pollEnrich" -> Theme.diagramTo();
+            case "choice", "when", "otherwise" -> Theme.diagramChoice();
             case "marshal", "unmarshal", "transform", "setBody", "setHeader", "setProperty",
                     "convertBodyTo", "removeHeader", "removeHeaders", "removeProperty", "removeProperties" ->
-                Color.CYAN;
-            case "bean", "process", "log", "script", "delay" -> Color.MAGENTA;
+                Theme.diagramTo();
+            case "bean", "process", "log", "script", "delay" -> Theme.diagramAction();
             case "filter", "split", "aggregate", "multicast", "recipientList",
                     "routingSlip", "dynamicRouter", "loadBalance",
                     "circuitBreaker", "saga", "doTry", "doCatch", "doFinally",
                     "onException", "onCompletion", "intercept",
                     "loop", "resequence", "throttle", "kamelet", "pipeline", "threads" ->
-                Color.rgb(0x89, 0x57, 0xE5);
-            default -> Color.GRAY;
+                Theme.diagramEip();
+            default -> Theme.diagramDefault();
         };
     }
 }

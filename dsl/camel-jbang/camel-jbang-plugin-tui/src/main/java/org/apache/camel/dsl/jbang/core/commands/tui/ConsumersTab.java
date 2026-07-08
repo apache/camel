@@ -23,7 +23,6 @@ import java.util.List;
 
 import dev.tamboui.layout.Constraint;
 import dev.tamboui.layout.Rect;
-import dev.tamboui.style.Color;
 import dev.tamboui.style.Style;
 import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.Span;
@@ -87,10 +86,10 @@ class ConsumersTab extends AbstractTableTab {
             HealthCheckInfo hc = consumerHealthCheck(info, ci);
             boolean healthDown = hc != null && "DOWN".equals(hc.state);
             Style statusStyle = healthDown
-                    ? Style.EMPTY.fg(Color.LIGHT_RED)
+                    ? Theme.error()
                     : ("Started".equals(ci.state) || "Polling".equals(status)
-                            ? Style.EMPTY.fg(Color.GREEN)
-                            : Style.EMPTY.fg(Color.LIGHT_RED));
+                            ? Theme.success()
+                            : Theme.error());
             String statusText = healthDown ? TuiIcons.HEALTH_WARN + " " + status : status;
             String type = consumerType(ci);
             String schedule = consumerSchedule(ci);
@@ -100,14 +99,14 @@ class ConsumersTab extends AbstractTableTab {
                     : (ci.uri != null ? ci.uri : "");
 
             rows.add(Row.from(
-                    Cell.from(Span.styled(" " + (ci.id != null ? ci.id : ""), Style.EMPTY.fg(Color.CYAN))),
+                    Cell.from(Span.styled(" " + (ci.id != null ? ci.id : ""), Style.EMPTY.fg(Theme.accent()))),
                     Cell.from(Span.styled(statusText, statusStyle)),
                     Cell.from(type),
                     rightCell(String.valueOf(ci.inflight), 8),
                     rightCell(ci.totalCounter != null ? String.valueOf(ci.totalCounter) : "", 8),
                     Cell.from(schedule),
                     Cell.from(sinceLast),
-                    Cell.from(Span.styled(uri, healthDown ? Style.EMPTY.fg(Color.LIGHT_RED) : Style.EMPTY))));
+                    Cell.from(Span.styled(uri, healthDown ? Theme.error() : Style.EMPTY))));
         }
 
         if (rows.isEmpty()) {

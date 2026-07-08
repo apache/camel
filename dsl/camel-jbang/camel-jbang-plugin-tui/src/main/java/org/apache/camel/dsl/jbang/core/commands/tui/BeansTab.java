@@ -25,7 +25,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import dev.tamboui.layout.Constraint;
 import dev.tamboui.layout.Layout;
 import dev.tamboui.layout.Rect;
-import dev.tamboui.style.Color;
 import dev.tamboui.style.Style;
 import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.Line;
@@ -201,7 +200,7 @@ class BeansTab extends AbstractTableTab {
             String shortType = dot >= 0 ? type.substring(dot + 1) : type;
 
             rows.add(Row.from(
-                    Cell.from(Span.styled(b.name != null ? b.name : "", Style.EMPTY.fg(Color.CYAN))),
+                    Cell.from(Span.styled(b.name != null ? b.name : "", Style.EMPTY.fg(Theme.accent()))),
                     Cell.from(Span.styled(shortType, Style.EMPTY))));
         }
 
@@ -253,14 +252,14 @@ class BeansTab extends AbstractTableTab {
         // full type
         if (bean.type != null && !bean.type.isEmpty()) {
             lines.add(Line.from(
-                    Span.styled("  Type: ", Style.EMPTY.dim()),
-                    Span.styled(bean.type, Style.EMPTY.fg(Color.WHITE))));
+                    Span.styled("  Type: ", Theme.muted()),
+                    Span.styled(bean.type, Style.EMPTY.fg(Theme.baseFg()))));
         }
 
         // properties
         if (bean.properties != null && !bean.properties.isEmpty()) {
             lines.add(Line.from(Span.raw("")));
-            lines.add(Line.from(Span.styled("  Properties:", Style.EMPTY.dim())));
+            lines.add(Line.from(Span.styled("  Properties:", Theme.muted())));
 
             int maxNameLen = 0;
             for (BeanData.Property prop : bean.properties) {
@@ -277,10 +276,10 @@ class BeansTab extends AbstractTableTab {
                 String value = prop.value != null ? prop.value : "null";
 
                 lines.add(Line.from(
-                        Span.styled("  " + String.format("%-" + nameWidth + "s", prop.name), Style.EMPTY.fg(Color.CYAN)),
+                        Span.styled("  " + String.format("%-" + nameWidth + "s", prop.name), Style.EMPTY.fg(Theme.accent())),
                         Span.styled(String.format("%-15s", shortPropType), Style.EMPTY.dim()),
                         Span.styled(" = ", Style.EMPTY.dim()),
-                        Span.styled(value, "null".equals(value) ? Style.EMPTY.dim() : Style.EMPTY.fg(Color.WHITE))));
+                        Span.styled(value, "null".equals(value) ? Style.EMPTY.dim() : Style.EMPTY.fg(Theme.baseFg()))));
             }
         } else {
             lines.add(Line.from(Span.raw("")));
@@ -307,7 +306,7 @@ class BeansTab extends AbstractTableTab {
     @Override
     public void renderFooter(List<Span> spans) {
         if (filterInputActive) {
-            spans.add(Span.styled(" /", Style.EMPTY.fg(Color.YELLOW).bold()));
+            spans.add(Span.styled(" /", Theme.label().bold()));
             spans.add(Span.raw(filterInputState.text() + "█  "));
             hint(spans, "Enter", "filter");
             hintLast(spans, "Esc", "cancel");
@@ -316,7 +315,7 @@ class BeansTab extends AbstractTableTab {
         hint(spans, "Esc", filterTerm != null ? "clear" : "back");
         hint(spans, "f", "scope [" + filterModes()[filterIndex] + "]");
         if (filterTerm != null) {
-            spans.add(Span.styled("  /", Style.EMPTY.fg(Color.YELLOW).bold()));
+            spans.add(Span.styled("  /", Theme.label().bold()));
             spans.add(Span.raw("\"" + filterTerm + "\"  "));
         } else {
             hint(spans, "/", "filter");

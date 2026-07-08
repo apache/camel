@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import dev.tamboui.style.Color;
 import dev.tamboui.style.Style;
 import dev.tamboui.text.Line;
 import dev.tamboui.text.Span;
@@ -102,7 +101,7 @@ class RouteTreePreview {
         boolean selected = (node == selectedNode);
 
         List<Span> spans = new ArrayList<>();
-        spans.add(Span.styled(prefix, Style.EMPTY.fg(Color.DARK_GRAY)));
+        spans.add(Span.styled(prefix, Theme.muted()));
         spans.add(styledLabel(node.info.type, truncate(label, maxWidth - prefix.length()), selected));
         result.add(Line.from(spans));
         lineNodes.add(node);
@@ -111,14 +110,14 @@ class RouteTreePreview {
     private static Span styledLabel(String type, String text, boolean selected) {
         Style style;
         if ("from".equals(type)) {
-            style = Style.EMPTY.fg(Color.YELLOW);
+            style = Theme.label();
         } else if (STRUCTURAL_TYPES.contains(type)) {
-            style = Style.EMPTY.fg(Color.CYAN);
+            style = Style.EMPTY.fg(Theme.accent());
         } else {
             style = Style.EMPTY;
         }
         if (selected) {
-            style = Style.EMPTY.fg(Color.YELLOW).bold().bg(Color.DARK_GRAY);
+            style = Theme.selectionBg();
         }
         return Span.styled(text, style);
     }

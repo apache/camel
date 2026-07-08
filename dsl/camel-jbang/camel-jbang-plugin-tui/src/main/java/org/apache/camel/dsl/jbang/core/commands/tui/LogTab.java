@@ -30,7 +30,6 @@ import java.util.regex.Pattern;
 import dev.tamboui.layout.Constraint;
 import dev.tamboui.layout.Layout;
 import dev.tamboui.layout.Rect;
-import dev.tamboui.style.Color;
 import dev.tamboui.style.Overflow;
 import dev.tamboui.style.Style;
 import dev.tamboui.terminal.Frame;
@@ -302,7 +301,7 @@ class LogTab extends AbstractTab {
         if (hasNew) {
             titleLine = Line.from(
                     Span.raw(logLabel + " "),
-                    Span.styled("(*)", Style.EMPTY.fg(Color.YELLOW).bold()),
+                    Span.styled("(*)", Theme.label()),
                     Span.raw(" "));
         } else {
             titleLine = Line.from(Span.raw(logLabel + " "));
@@ -438,10 +437,10 @@ class LogTab extends AbstractTab {
 
         ListWidget list = ListWidget.builder()
                 .items(
-                        ListItem.from("  ERROR  ").style(Style.EMPTY.fg(Color.LIGHT_RED)),
-                        ListItem.from("  WARN   ").style(Style.EMPTY.fg(Color.YELLOW)),
+                        ListItem.from("  ERROR  ").style(Theme.error()),
+                        ListItem.from("  WARN   ").style(Theme.warning()),
                         ListItem.from("  INFO   ").style(Style.EMPTY),
-                        ListItem.from("  DEBUG  ").style(Style.EMPTY.fg(Color.CYAN)),
+                        ListItem.from("  DEBUG  ").style(Style.EMPTY.fg(Theme.accent())),
                         ListItem.from("  TRACE  ").style(Style.EMPTY.dim()))
                 .highlightStyle(Theme.selectionBg())
                 .highlightSymbol("")
@@ -620,8 +619,8 @@ class LogTab extends AbstractTab {
     }
 
     private static final Style DIM = Style.EMPTY.dim();
-    private static final Style CYAN = Style.EMPTY.fg(Color.CYAN);
-    private static final Style MAGENTA = Style.EMPTY.fg(Color.MAGENTA);
+    private static final Style CYAN = Style.EMPTY.fg(Theme.accent());
+    private static final Style MAGENTA = Theme.notice();
 
     private static final Pattern PID_PATTERN = Pattern.compile(
             "^(\\d{4}-\\d{2}-\\d{2})[T ](\\d{2}:\\d{2}:\\d{2}\\.\\d+)\\S*\\s+"
@@ -643,10 +642,10 @@ class LogTab extends AbstractTab {
         String logger = m.group(6);
         String message = m.group(7);
         Style levelStyle = switch (level) {
-            case "ERROR", "FATAL" -> Style.EMPTY.fg(Color.RED);
-            case "WARN" -> Style.EMPTY.fg(Color.YELLOW);
-            case "INFO" -> Style.EMPTY.fg(Color.GREEN);
-            case "DEBUG" -> Style.EMPTY.fg(Color.CYAN);
+            case "ERROR", "FATAL" -> Theme.error();
+            case "WARN" -> Theme.warning();
+            case "INFO" -> Theme.success();
+            case "DEBUG" -> Style.EMPTY.fg(Theme.accent());
             case "TRACE" -> Style.EMPTY.dim();
             default -> Style.EMPTY;
         };
