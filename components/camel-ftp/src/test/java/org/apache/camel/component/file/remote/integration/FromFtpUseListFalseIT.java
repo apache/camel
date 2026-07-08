@@ -51,7 +51,7 @@ public class FromFtpUseListFalseIT extends FtpServerTestSupport {
     }
 
     @Test
-    public void testUseListFalse() {
+    public void testUseListFalse() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World from FTPServer");
 
