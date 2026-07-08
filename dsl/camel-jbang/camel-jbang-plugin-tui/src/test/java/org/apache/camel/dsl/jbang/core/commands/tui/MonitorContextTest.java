@@ -19,12 +19,18 @@ package org.apache.camel.dsl.jbang.core.commands.tui;
 import dev.tamboui.style.Color;
 import dev.tamboui.style.Modifier;
 import dev.tamboui.style.Style;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class MonitorContextTest {
+
+    @BeforeEach
+    void setUp() {
+        Theme.resetForTesting();
+    }
 
     // ---- formatSinceLast tests ----
 
@@ -180,7 +186,7 @@ class MonitorContextTest {
     @Test
     void topTimeStyleOver100ms() {
         Style style = TuiHelper.topTimeStyle(500);
-        assertEquals(Color.YELLOW, style.fg().orElse(null));
+        assertEquals(Theme.warning(), style);
     }
 
     @Test

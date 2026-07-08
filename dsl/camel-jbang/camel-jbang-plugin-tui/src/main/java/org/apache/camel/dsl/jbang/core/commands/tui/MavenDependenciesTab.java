@@ -301,7 +301,7 @@ class MavenDependenciesTab extends AbstractTableTab {
     @Override
     public void renderFooter(List<Span> spans) {
         if (filterInputActive) {
-            spans.add(Span.styled(" /", Style.EMPTY.fg(Color.YELLOW).bold()));
+            spans.add(Span.styled(" /", Theme.label().bold()));
             spans.add(Span.raw(filterInputState.text() + "█  "));
             hint(spans, "Enter", "filter");
             hintLast(spans, "Esc", "cancel");
@@ -316,7 +316,7 @@ class MavenDependenciesTab extends AbstractTableTab {
             hint(spans, "t", transitiveMode ? "direct" : "transitive");
         }
         if (filterTerm != null) {
-            spans.add(Span.styled("  /", Style.EMPTY.fg(Color.YELLOW).bold()));
+            spans.add(Span.styled("  /", Theme.label().bold()));
             spans.add(Span.raw("\"" + filterTerm + "\"  "));
         } else {
             hint(spans, "/", "filter");

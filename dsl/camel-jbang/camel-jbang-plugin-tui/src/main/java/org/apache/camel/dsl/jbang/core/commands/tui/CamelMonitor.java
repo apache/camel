@@ -1393,7 +1393,7 @@ public class CamelMonitor extends CamelCommand {
     }
 
     private void computeTabBadges(String[] badgeTexts, Style[] badgeStyles) {
-        Style yellow = Style.EMPTY.fg(Color.YELLOW).bold();
+        Style yellow = Theme.label();
         Style cyan = Style.EMPTY.fg(Color.CYAN).bold();
         Style red = Style.EMPTY.fg(Color.LIGHT_RED).bold();
         for (int j = 0; j < badgeStyles.length; j++) {

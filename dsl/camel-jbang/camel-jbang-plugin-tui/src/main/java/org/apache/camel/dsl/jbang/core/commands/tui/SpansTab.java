@@ -399,10 +399,10 @@ class SpansTab extends AbstractTab {
                         Cell.from(Span.styled(sortLabel("FROM", "from"), sortStyle("from"))),
                         Cell.from(Span.styled(sortLabel("SPANS", "spans"), sortStyle("spans"))),
                         Cell.from(Span.styled(sortLabel("ROUTES", "routes"), sortStyle("routes"))),
-                        Cell.from(Span.styled("REMOTE", Style.EMPTY.fg(Color.YELLOW).bold())),
+                        Cell.from(Span.styled("REMOTE", Theme.label().bold())),
                         Cell.from(Span.styled(sortLabel("STATUS", "status"), sortStyle("status"))),
                         Cell.from(Span.styled(sortLabel("DURATION", "duration"), sortStyle("duration"))),
-                        Cell.from(Span.styled("DEPTH", Style.EMPTY.fg(Color.YELLOW).bold()))))
+                        Cell.from(Span.styled("DEPTH", Theme.label().bold()))))
                 .widths(
                         Constraint.length(10),
                         Constraint.length(20),
@@ -564,7 +564,7 @@ class SpansTab extends AbstractTab {
         String errorTag = error ? " ERR" : "";
 
         return Line.from(
-                Span.styled(indicator, Style.EMPTY.fg(Color.YELLOW).bold()),
+                Span.styled(indicator, Theme.label().bold()),
                 Span.styled(label, labelStyle),
                 Span.raw(gap),
                 Span.styled(bar, bandStyle),
@@ -605,11 +605,11 @@ class SpansTab extends AbstractTab {
             List<Span> ctx = new ArrayList<>();
             if (span.routeId() != null) {
                 ctx.add(Span.styled(" Route:  ", Style.EMPTY.dim()));
-                ctx.add(Span.styled(span.routeId(), Style.EMPTY.fg(Color.YELLOW)));
+                ctx.add(Span.styled(span.routeId(), Theme.label()));
             }
             if (span.processorId() != null) {
                 ctx.add(Span.styled("  Processor: ", Style.EMPTY.dim()));
-                ctx.add(Span.styled(span.processorId(), Style.EMPTY.fg(Color.YELLOW)));
+                ctx.add(Span.styled(span.processorId(), Theme.label()));
             }
             if (!span.isCamelSpan()) {
                 ctx.add(Span.styled("  Source: ", Style.EMPTY.dim()));
@@ -650,7 +650,7 @@ class SpansTab extends AbstractTab {
             hint(spans, TuiIcons.HINT_SCROLL, "navigate");
             hintLast(spans, "PgUp/Dn", "page");
         } else if (filterInputActive) {
-            spans.add(Span.styled(" /", Style.EMPTY.fg(Color.YELLOW).bold()));
+            spans.add(Span.styled(" /", Theme.label().bold()));
             spans.add(Span.raw(filterInputState.text() + "█  "));
             hint(spans, "Enter", "filter");
             hintLast(spans, "Esc", "cancel");
@@ -659,7 +659,7 @@ class SpansTab extends AbstractTab {
             hint(spans, "F5", "refresh");
             hint(spans, "Enter", "waterfall");
             if (filterTerm != null) {
-                spans.add(Span.styled("  /", Style.EMPTY.fg(Color.YELLOW).bold()));
+                spans.add(Span.styled("  /", Theme.label().bold()));
                 spans.add(Span.raw("\"" + filterTerm + "\"  "));
             } else {
                 hint(spans, "/", "filter");
@@ -955,7 +955,7 @@ class SpansTab extends AbstractTab {
     }
 
     private Style sortStyle(String column) {
-        return Style.EMPTY.fg(Color.YELLOW).bold();
+        return Theme.label().bold();
     }
 
     private static int computeMaxDepth(List<SpanEntry> traceSpans) {

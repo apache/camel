@@ -251,7 +251,7 @@ class ThreadsTab extends AbstractTableTab {
             String frame2 = thread.stackTrace.get(i);
             Style style = Style.EMPTY;
             if (frame2 != null && frame2.contains("org.apache.camel")) {
-                style = Style.EMPTY.fg(Color.YELLOW);
+                style = Theme.label();
             }
             lines.add(Line.from(Span.styled("  " + (frame2 != null ? frame2 : ""), style)));
         }
@@ -318,7 +318,7 @@ class ThreadsTab extends AbstractTableTab {
         return switch (state) {
             case "RUNNABLE" -> Style.EMPTY.fg(Color.GREEN);
             case "BLOCKED" -> Style.EMPTY.fg(Color.LIGHT_RED);
-            case "WAITING" -> Style.EMPTY.fg(Color.YELLOW);
+            case "WAITING" -> Theme.warning();
             case "TIMED_WAITING" -> Style.EMPTY.fg(Color.CYAN);
             default -> Style.EMPTY;
         };

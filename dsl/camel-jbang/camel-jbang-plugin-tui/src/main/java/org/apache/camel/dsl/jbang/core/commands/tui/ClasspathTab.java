@@ -277,7 +277,7 @@ class ClasspathTab extends AbstractTab {
     @Override
     public void renderFooter(List<Span> spans) {
         if (filterInputActive) {
-            spans.add(Span.styled(" /", Style.EMPTY.fg(Color.YELLOW).bold()));
+            spans.add(Span.styled(" /", Theme.label().bold()));
             spans.add(Span.raw(filterInputState.text() + "█  "));
             hint(spans, "Enter", "filter");
             hintLast(spans, "Esc", "cancel");
@@ -286,7 +286,7 @@ class ClasspathTab extends AbstractTab {
         hint(spans, "Esc", filterTerm != null ? "clear" : "back");
         hint(spans, "f", "scope [" + SCOPES[scopeIndex] + "]");
         if (filterTerm != null) {
-            spans.add(Span.styled("  /", Style.EMPTY.fg(Color.YELLOW).bold()));
+            spans.add(Span.styled("  /", Theme.label().bold()));
             spans.add(Span.raw("\"" + filterTerm + "\"  "));
         } else {
             hint(spans, "/", "filter");

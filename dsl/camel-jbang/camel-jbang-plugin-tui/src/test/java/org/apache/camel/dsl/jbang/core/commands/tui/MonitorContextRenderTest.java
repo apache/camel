@@ -24,6 +24,7 @@ import dev.tamboui.layout.Rect;
 import dev.tamboui.style.Color;
 import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.Span;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -34,6 +35,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * Frame/Buffer rendering pipeline to verify that text and styles appear correctly.
  */
 class MonitorContextRenderTest {
+
+    @BeforeEach
+    void setUp() {
+        Theme.resetForTesting();
+    }
 
     @Test
     void renderNoSelectionShowsPromptText() {
@@ -173,7 +179,8 @@ class MonitorContextRenderTest {
     @Test
     void sortStyleActiveColumnIsYellowBold() {
         var style = AbstractTab.sortStyle("name", "name");
-        assertEquals(Color.YELLOW, style.fg().orElse(null), "Active sort column should be YELLOW");
+        Color labelColor = Theme.label().fg().orElse(Color.YELLOW);
+        assertEquals(labelColor, style.fg().orElse(null), "Active sort column should be label color");
         assertTrue(style.effectiveModifiers().contains(dev.tamboui.style.Modifier.BOLD),
                 "Active sort column should be BOLD");
     }
@@ -181,8 +188,9 @@ class MonitorContextRenderTest {
     @Test
     void sortStyleInactiveColumnIsBoldOnly() {
         var style = AbstractTab.sortStyle("name", "status");
-        assertTrue(style.fg().isEmpty() || !Color.YELLOW.equals(style.fg().get()),
-                "Inactive column should not be YELLOW");
+        Color labelColor = Theme.label().fg().orElse(Color.YELLOW);
+        assertTrue(style.fg().isEmpty() || !labelColor.equals(style.fg().get()),
+                "Inactive column should not be label color");
         assertTrue(style.effectiveModifiers().contains(dev.tamboui.style.Modifier.BOLD),
                 "Inactive column should still be BOLD");
     }

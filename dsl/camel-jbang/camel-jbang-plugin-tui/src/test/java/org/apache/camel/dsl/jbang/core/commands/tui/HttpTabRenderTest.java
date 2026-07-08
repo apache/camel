@@ -102,8 +102,9 @@ class HttpTabRenderTest {
         Frame frame = Frame.forTesting(buffer);
         tab.render(frame, area);
 
-        boolean foundYellow = TuiTestHelper.findCellWithColor(buffer, "P", Color.YELLOW);
-        assertTrue(foundYellow, "POST method should be rendered in YELLOW");
+        Color labelColor = Theme.label().fg().orElse(Color.YELLOW);
+        boolean foundLabel = TuiTestHelper.findCellWithColor(buffer, "P", labelColor);
+        assertTrue(foundLabel, "POST method should be rendered in label color");
     }
 
     @Test

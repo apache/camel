@@ -221,7 +221,7 @@ class EndpointsTab extends AbstractTableTab {
             Style dirStyle = switch (dir) {
                 case "in" -> Style.EMPTY.fg(Color.ansi(AnsiColor.BRIGHT_GREEN));
                 case "out" -> Style.EMPTY.fg(Color.CYAN);
-                default -> Style.EMPTY.fg(Color.YELLOW);
+                default -> Theme.label();
             };
             String arrow = switch (dir) {
                 case "in" -> TuiIcons.KEY_RIGHT + " ";
@@ -480,7 +480,7 @@ class EndpointsTab extends AbstractTableTab {
         flowLines.add(Line.from(
                 Span.styled(arrowStr, inStyle),
                 Span.raw(" "),
-                Span.styled(box, Style.EMPTY.fg(Color.YELLOW).bold()),
+                Span.styled(box, Theme.label().bold()),
                 Span.raw(" "),
                 Span.styled(arrowStr, outStyle)));
         flowLines.add(Line.from(
@@ -593,7 +593,7 @@ class EndpointsTab extends AbstractTableTab {
         flowLines.add(Line.from(
                 Span.styled(arrowStr, inStyle),
                 Span.raw(" "),
-                Span.styled(box, Style.EMPTY.fg(Color.YELLOW).bold()),
+                Span.styled(box, Theme.label().bold()),
                 Span.raw(" "),
                 Span.styled(arrowStr, outStyle)));
         flowLines.add(Line.from(
@@ -634,7 +634,7 @@ class EndpointsTab extends AbstractTableTab {
 
         Line chartTitle = Line.from(
                 Span.raw(" ["),
-                Span.styled(uriLabel, Style.EMPTY.fg(Color.YELLOW)),
+                Span.styled(uriLabel, Theme.label().bold()),
                 Span.raw("] "),
                 Span.styled("▬", Style.EMPTY.fg(Color.ansi(AnsiColor.BRIGHT_GREEN))),
                 Span.raw(String.format(" in:%-4s ", MetricsCollector.formatThroughput(curIn))),
@@ -675,7 +675,7 @@ class EndpointsTab extends AbstractTableTab {
         long curOut = outArr[renderPoints - 1];
 
         Line chartTitle = Line.from(
-                Span.styled("▬", Style.EMPTY.fg(Color.YELLOW)),
+                Span.styled("▬", Theme.label()),
                 Span.raw(String.format(" in:%-8s ", sizeToString(curIn))),
                 Span.styled("▬", Style.EMPTY.fg(Color.MAGENTA)),
                 Span.raw(String.format(" out:%-8s avg body", sizeToString(curOut))));
@@ -683,7 +683,7 @@ class EndpointsTab extends AbstractTableTab {
         frame.renderWidget(DualSparkline.builder()
                 .topData(inArr)
                 .bottomData(outArr)
-                .topStyle(Style.EMPTY.fg(Color.YELLOW))
+                .topStyle(Theme.label())
                 .bottomStyle(Style.EMPTY.fg(Color.MAGENTA))
                 .showYAxis(true)
                 .xLabels("-" + renderPoints + "s", "-" + (renderPoints * 3 / 4) + "s",

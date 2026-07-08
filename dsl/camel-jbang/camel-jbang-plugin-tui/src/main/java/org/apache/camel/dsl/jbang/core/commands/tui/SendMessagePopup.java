@@ -696,7 +696,7 @@ class SendMessagePopup {
 
         Block block = Block.builder()
                 .borderType(BorderType.ROUNDED).borders(Borders.ALL)
-                .title(Title.from(Line.from(Span.styled(title, Style.EMPTY.fg(Color.YELLOW).bold()))))
+                .title(Title.from(Line.from(Span.styled(title, Theme.label().bold()))))
                 .build();
         frame.renderWidget(block, area);
         Rect inner = block.inner(area);
@@ -821,7 +821,7 @@ class SendMessagePopup {
             titleStr = " Response ";
         } else if (sending) {
             titleStr = " Sending... ";
-            titleStyle = Style.EMPTY.fg(Color.YELLOW).bold();
+            titleStyle = Theme.warning();
         } else if (responseError) {
             titleStr = " Response — Error ";
             if (responseElapsed > 0) {
@@ -869,7 +869,7 @@ class SendMessagePopup {
                     && !line.startsWith("[") && !line.startsWith("\"")) {
                 int colon = line.indexOf(": ");
                 lines.add(Line.from(
-                        Span.styled(line.substring(0, colon + 1), Style.EMPTY.fg(Color.YELLOW)),
+                        Span.styled(line.substring(0, colon + 1), Theme.label()),
                         Span.raw(line.substring(colon + 1))));
             } else {
                 lines.add(Line.from(Span.raw(line)));

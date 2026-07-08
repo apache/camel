@@ -81,7 +81,7 @@ class CircuitBreakerTab extends AbstractTableTab {
             Style stateStyle = switch (cb.state != null ? cb.state.toLowerCase() : "") {
                 case "closed" -> Style.EMPTY.fg(Color.GREEN);
                 case "open", "forced_open" -> Style.EMPTY.fg(Color.LIGHT_RED);
-                default -> Style.EMPTY.fg(Color.YELLOW);
+                default -> Theme.warning();
             };
             String state = cb.state != null ? cb.state : "";
             String pending = cb.bufferedCalls > 0 ? String.valueOf(cb.bufferedCalls) : "";
@@ -195,7 +195,7 @@ class CircuitBreakerTab extends AbstractTableTab {
 
         Style closedBox = isClosed ? Style.EMPTY.fg(Color.GREEN).bold() : Style.EMPTY;
         Style openBox = isOpen ? Style.EMPTY.fg(Color.LIGHT_RED).bold() : Style.EMPTY;
-        Style halfOpenBox = !isClosed && !isOpen ? Style.EMPTY.fg(Color.YELLOW).bold() : Style.EMPTY;
+        Style halfOpenBox = !isClosed && !isOpen ? Theme.warning().bold() : Style.EMPTY;
         Style lbl = Style.EMPTY.dim();
 
         List<Line> lines = new ArrayList<>();
@@ -281,7 +281,7 @@ class CircuitBreakerTab extends AbstractTableTab {
         if (rate >= 80) {
             barColor = Style.EMPTY.fg(Color.LIGHT_RED);
         } else if (rate >= 50) {
-            barColor = Style.EMPTY.fg(Color.YELLOW);
+            barColor = Theme.warning();
         } else {
             barColor = Style.EMPTY.fg(Color.GREEN);
         }

@@ -365,7 +365,7 @@ class DiagramTab extends AbstractTab {
                 if (info.name != null) {
                     title = Line.from(
                             Span.raw(" Topology ["),
-                            Span.styled(info.name, Style.EMPTY.fg(Color.YELLOW).bold()),
+                            Span.styled(info.name, Theme.label().bold()),
                             Span.raw("] "));
                 } else {
                     title = Line.from(Span.raw(" Topology "));
@@ -426,7 +426,7 @@ class DiagramTab extends AbstractTab {
         List<Line> lines = new ArrayList<>();
         if (route != null) {
             lines.add(Line.from(
-                    Span.styled(" Route: ", Style.EMPTY.fg(Color.YELLOW).bold()),
+                    Span.styled(" Route: ", Theme.label().bold()),
                     Span.styled(route.routeId, Style.EMPTY.fg(Color.WHITE).bold())));
             lines.add(Line.from(
                     Span.styled(" From:  ", Style.EMPTY.dim()),
@@ -577,7 +577,7 @@ class DiagramTab extends AbstractTab {
             String linkedRoute = diagram.findLinkedRouteId(drillDownRouteId);
             if (linkedRoute != null && diagram.getRouteLayout(linkedRoute) != null) {
                 lines.add(Line.from(
-                        Span.styled(" ↵ ", Style.EMPTY.fg(Color.YELLOW).bold()),
+                        Span.styled(" ↵ ", Theme.label().bold()),
                         Span.styled(linkedRoute, Style.EMPTY.fg(Color.WHITE))));
             } else if (ln.treeNode != null && ln.treeNode.info.remote) {
                 String arrow = "from".equals(ln.type) ? " external → " : " → external";
@@ -872,7 +872,7 @@ class DiagramTab extends AbstractTab {
     }
 
     private Line buildBreadcrumbTitle() {
-        Style nameStyle = Style.EMPTY.fg(Color.YELLOW).bold();
+        Style nameStyle = Theme.label().bold();
         List<Span> spans = new ArrayList<>();
         spans.add(Span.raw(" Route ["));
         if (routeNavigationStack.isEmpty()) {

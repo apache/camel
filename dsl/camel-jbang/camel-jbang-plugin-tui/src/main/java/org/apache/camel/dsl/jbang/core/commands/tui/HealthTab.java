@@ -103,7 +103,7 @@ class HealthTab extends AbstractTableTab {
                 stateStyle = Style.EMPTY.fg(Color.LIGHT_RED);
                 icon = TuiIcons.HEALTH_DOWN + " ";
             } else {
-                stateStyle = Style.EMPTY.fg(Color.YELLOW);
+                stateStyle = Theme.warning();
                 icon = TuiIcons.HEALTH_WARN + " ";
             }
 

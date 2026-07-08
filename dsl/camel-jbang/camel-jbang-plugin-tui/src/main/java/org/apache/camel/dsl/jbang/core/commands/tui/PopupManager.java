@@ -410,7 +410,7 @@ class PopupManager {
 
         frame.renderWidget(Clear.INSTANCE, popup);
 
-        Style keyStyle = Style.EMPTY.fg(Color.YELLOW).bold();
+        Style keyStyle = Theme.label().bold();
         ListItem[] items = morePopupItems(keyStyle);
         ListWidget list = ListWidget.builder()
                 .items(items)
@@ -421,7 +421,7 @@ class PopupManager {
                         .borderType(BorderType.ROUNDED).borders(Borders.ALL)
                         .title(Title.from(Line.from(Span.styled(
                                 " " + TuiIcons.TAB_MORE + " More Tabs ",
-                                Style.EMPTY.fg(Color.YELLOW).bold()))))
+                                Theme.label().bold()))))
                         .build())
                 .build();
         frame.renderStatefulWidget(list, popup, morePopupState);
@@ -492,7 +492,7 @@ class PopupManager {
                 .block(Block.builder()
                         .borderType(BorderType.ROUNDED).borders(Borders.ALL)
                         .title(Title.from(
-                                Line.from(Span.styled(" Switch Integration ", Style.EMPTY.fg(Color.YELLOW).bold()))))
+                                Line.from(Span.styled(" Switch Integration ", Theme.label().bold()))))
                         .build())
                 .build();
         frame.renderStatefulWidget(listWidget, popup, switchPopupState);

@@ -135,8 +135,9 @@ class CircuitBreakerTabRenderTest {
         Frame frame = Frame.forTesting(buffer);
         tab.render(frame, area);
 
-        boolean foundYellow = TuiTestHelper.findCellWithColor(buffer, "h", Color.YELLOW);
-        assertTrue(foundYellow, "half_open state should be rendered in YELLOW");
+        Color warningColor = Theme.warning().fg().orElse(Color.YELLOW);
+        boolean foundWarning = TuiTestHelper.findCellWithColor(buffer, "h", warningColor);
+        assertTrue(foundWarning, "half_open state should be rendered in warning color");
     }
 
     @Test

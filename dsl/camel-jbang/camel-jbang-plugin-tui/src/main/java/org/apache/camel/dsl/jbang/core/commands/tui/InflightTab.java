@@ -168,7 +168,7 @@ class InflightTab extends AbstractTableTab {
         if (durationMs >= THRESHOLD_RED) {
             return Style.EMPTY.fg(Color.LIGHT_RED).bold();
         } else if (durationMs >= THRESHOLD_YELLOW) {
-            return Style.EMPTY.fg(Color.YELLOW);
+            return Theme.warning();
         }
         return Style.EMPTY.fg(Color.GREEN);
     }
@@ -191,16 +191,16 @@ class InflightTab extends AbstractTableTab {
             sb.append(BAR_CHARS[partial]);
         }
 
-        Color color;
+        Style barStyle;
         if (duration >= THRESHOLD_RED) {
-            color = Color.LIGHT_RED;
+            barStyle = Style.EMPTY.fg(Color.LIGHT_RED);
         } else if (duration >= THRESHOLD_YELLOW) {
-            color = Color.YELLOW;
+            barStyle = Theme.warning();
         } else {
-            color = Color.GREEN;
+            barStyle = Style.EMPTY.fg(Color.GREEN);
         }
 
-        return Span.styled(sb.toString(), Style.EMPTY.fg(color));
+        return Span.styled(sb.toString(), barStyle);
     }
 
     private int sortExchange(InflightInfo a, InflightInfo b) {

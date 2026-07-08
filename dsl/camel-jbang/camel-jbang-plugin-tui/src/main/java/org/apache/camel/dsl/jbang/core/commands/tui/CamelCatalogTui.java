@@ -641,19 +641,19 @@ public class CamelCatalogTui extends CamelCommand {
 
     private void renderFooter(Frame frame, Rect area) {
         Line footer = Line.from(
-                Span.styled(" Type", Style.EMPTY.fg(Color.YELLOW).bold()),
+                Span.styled(" Type", Theme.label().bold()),
                 Span.raw(" name filter  "),
-                Span.styled("/", Style.EMPTY.fg(Color.YELLOW).bold()),
+                Span.styled("/", Theme.label().bold()),
                 Span.raw(" full-text  "),
-                Span.styled("Esc", Style.EMPTY.fg(Color.YELLOW).bold()),
+                Span.styled("Esc", Theme.label().bold()),
                 Span.raw(" clear/back/quit  "),
-                Span.styled("\u2191\u2193", Style.EMPTY.fg(Color.YELLOW).bold()),
+                Span.styled("\u2191\u2193", Theme.label().bold()),
                 Span.raw(" navigate  "),
-                Span.styled("\u2190\u2192", Style.EMPTY.fg(Color.YELLOW).bold()),
+                Span.styled("\u2190\u2192", Theme.label().bold()),
                 Span.raw("/"),
-                Span.styled("Tab", Style.EMPTY.fg(Color.YELLOW).bold()),
+                Span.styled("Tab", Theme.label().bold()),
                 Span.raw(" panels  "),
-                Span.styled("PgUp/Dn", Style.EMPTY.fg(Color.YELLOW).bold()),
+                Span.styled("PgUp/Dn", Theme.label().bold()),
                 Span.raw(" scroll"));
 
         frame.renderWidget(Paragraph.from(footer), area);
@@ -685,7 +685,7 @@ public class CamelCatalogTui extends CamelCommand {
                 currentSpans.add(Span.raw(" "));
             }
 
-            currentSpans.add(Span.styled(label, Style.EMPTY.fg(Color.YELLOW).bold()));
+            currentSpans.add(Span.styled(label, Theme.label().bold()));
 
             // Apply special styling for certain values
             Style valueStyle;

@@ -488,7 +488,7 @@ class SqlQueryTab extends AbstractTab {
         int[] widths = computeColumnWidths(area.width() - 2);
 
         Row header = Row.from(buildHeaderCells());
-        header.style(Style.EMPTY.fg(Color.YELLOW));
+        header.style(Theme.label());
 
         List<Row> dataRows = new ArrayList<>();
         for (JsonObject row : resultRows) {
@@ -544,7 +544,7 @@ class SqlQueryTab extends AbstractTab {
             if (columnIsPk != null && columnIsPk[i]) {
                 label = label + " " + TuiIcons.KEY;
             }
-            cells[i] = Cell.from(Span.styled(label, Style.EMPTY.fg(Color.YELLOW)));
+            cells[i] = Cell.from(Span.styled(label, Theme.label().bold()));
         }
         return cells;
     }
@@ -747,7 +747,7 @@ class SqlQueryTab extends AbstractTab {
 
         Block block = Block.builder()
                 .borderType(BorderType.ROUNDED)
-                .title(Title.from(Line.from(Span.styled(title, Style.EMPTY.fg(Color.YELLOW).bold()))))
+                .title(Title.from(Line.from(Span.styled(title, Theme.label().bold()))))
                 .build();
         Rect inner = block.inner(popup);
         frame.renderWidget(block, popup);
@@ -807,9 +807,9 @@ class SqlQueryTab extends AbstractTab {
         if (footerY < popup.bottom() - 1) {
             Rect footerArea = new Rect(inner.left(), footerY, inner.width(), 1);
             frame.renderWidget(Paragraph.from(Line.from(
-                    Span.styled(" F5", Style.EMPTY.fg(Color.YELLOW)),
+                    Span.styled(" F5", Theme.label().bold()),
                     Span.styled("=Save  ", Style.EMPTY.fg(Color.DARK_GRAY)),
-                    Span.styled("Esc", Style.EMPTY.fg(Color.YELLOW)),
+                    Span.styled("Esc", Theme.label().bold()),
                     Span.styled("=Cancel  ", Style.EMPTY.fg(Color.DARK_GRAY)),
                     Span.styled("*", Style.EMPTY.fg(Color.DARK_GRAY)),
                     Span.styled("=Primary Key", Style.EMPTY.fg(Color.DARK_GRAY)))), footerArea);

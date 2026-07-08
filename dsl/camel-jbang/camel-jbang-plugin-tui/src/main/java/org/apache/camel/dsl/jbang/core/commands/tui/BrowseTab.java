@@ -407,18 +407,18 @@ class BrowseTab extends AbstractTab {
 
         List<Line> lines = new ArrayList<>();
         lines.add(Line.from(
-                Span.styled("  Exchange ID: ", Style.EMPTY.fg(Color.YELLOW).bold()),
+                Span.styled("  Exchange ID: ", Theme.label().bold()),
                 Span.styled(msg.exchangeId != null ? msg.exchangeId : "", Style.EMPTY.fg(Color.WHITE))));
         if (msg.exchangePattern != null) {
             lines.add(Line.from(
-                    Span.styled("  Pattern:     ", Style.EMPTY.fg(Color.YELLOW).bold()),
+                    Span.styled("  Pattern:     ", Theme.label().bold()),
                     Span.styled(msg.exchangePattern, Style.EMPTY.fg(Color.WHITE))));
         }
         lines.add(Line.from(Span.raw("")));
 
         // Headers
         if (msg.headers != null && !msg.headers.isEmpty()) {
-            lines.add(Line.from(Span.styled("  Headers:", Style.EMPTY.fg(Color.YELLOW).bold())));
+            lines.add(Line.from(Span.styled("  Headers:", Theme.label().bold())));
             for (Map.Entry<String, String> entry : msg.headers.entrySet()) {
                 lines.add(Line.from(
                         Span.styled("    " + entry.getKey(), Style.EMPTY.fg(Color.CYAN)),
@@ -429,7 +429,7 @@ class BrowseTab extends AbstractTab {
         }
 
         // Body
-        lines.add(Line.from(Span.styled("  Body:", Style.EMPTY.fg(Color.YELLOW).bold())));
+        lines.add(Line.from(Span.styled("  Body:", Theme.label().bold())));
         if (msg.body != null && !msg.body.isEmpty()) {
             String bodyText = msg.body;
             if (prettyPrint) {

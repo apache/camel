@@ -140,12 +140,13 @@ class MemoryTab extends AbstractTab {
             if (info.heapMemCommitted > 0) {
                 long pctComm = info.heapMemUsed * 100 / info.heapMemCommitted;
                 String gaugeComm = buildGaugeBar(pctComm, 30);
-                Color colorComm = pctComm >= 80 ? Color.LIGHT_RED : pctComm >= 60 ? Color.YELLOW : Color.GREEN;
+                Style colorComm = pctComm >= 80 ? Style.EMPTY.fg(Color.LIGHT_RED) : pctComm >= 60 ? Theme.warning()
+                        : Style.EMPTY.fg(Color.GREEN);
                 List<Span> commSpans = new ArrayList<>();
                 commSpans.add(Span.styled("  committed: ", Style.EMPTY.dim()));
                 commSpans.add(Span.styled(String.format("%-10s", formatBytes(info.heapMemCommitted)), Style.EMPTY));
-                commSpans.add(Span.styled(gaugeComm, Style.EMPTY.fg(colorComm)));
-                commSpans.add(Span.styled(String.format("  %d%%", pctComm), Style.EMPTY.fg(colorComm).bold()));
+                commSpans.add(Span.styled(gaugeComm, colorComm));
+                commSpans.add(Span.styled(String.format("  %d%%", pctComm), colorComm.bold()));
                 if (info.heapMemMax <= 0 && trendSpan != null) {
                     commSpans.add(Span.raw("    "));
                     commSpans.add(trendSpan);
@@ -155,12 +156,13 @@ class MemoryTab extends AbstractTab {
             if (info.heapMemMax > 0) {
                 long pctMax = info.heapMemUsed * 100 / info.heapMemMax;
                 String gaugeMax = buildGaugeBar(pctMax, 30);
-                Color colorMax = pctMax >= 80 ? Color.LIGHT_RED : pctMax >= 60 ? Color.YELLOW : Color.GREEN;
+                Style colorMax = pctMax >= 80 ? Style.EMPTY.fg(Color.LIGHT_RED) : pctMax >= 60 ? Theme.warning()
+                        : Style.EMPTY.fg(Color.GREEN);
                 List<Span> maxSpans = new ArrayList<>();
                 maxSpans.add(Span.styled("  max:       ", Style.EMPTY.dim()));
                 maxSpans.add(Span.styled(String.format("%-10s", formatBytes(info.heapMemMax)), Style.EMPTY));
-                maxSpans.add(Span.styled(gaugeMax, Style.EMPTY.fg(colorMax)));
-                maxSpans.add(Span.styled(String.format("  %d%%", pctMax), Style.EMPTY.fg(colorMax).bold()));
+                maxSpans.add(Span.styled(gaugeMax, colorMax));
+                maxSpans.add(Span.styled(String.format("  %d%%", pctMax), colorMax.bold()));
                 if (trendSpan != null) {
                     maxSpans.add(Span.raw("    "));
                     maxSpans.add(trendSpan);
@@ -173,13 +175,14 @@ class MemoryTab extends AbstractTab {
         if (info.oldGenUsed > 0) {
             long oldPct = info.oldGenMax > 0 ? info.oldGenUsed * 100 / info.oldGenMax : 0;
             String oldGauge = buildGaugeBar(oldPct, 30);
-            Color oldColor = oldPct >= 80 ? Color.LIGHT_RED : oldPct >= 60 ? Color.YELLOW : Color.GREEN;
+            Style oldColor = oldPct >= 80 ? Style.EMPTY.fg(Color.LIGHT_RED) : oldPct >= 60 ? Theme.warning()
+                    : Style.EMPTY.fg(Color.GREEN);
 
             lines.add(Line.from(
                     Span.styled("  Old Gen:   ", Style.EMPTY.dim()),
                     Span.styled(String.format("%-10s", formatBytes(info.oldGenUsed)), Style.EMPTY.fg(Color.WHITE).bold()),
-                    Span.styled(oldGauge, Style.EMPTY.fg(oldColor)),
-                    Span.styled(String.format("  %d%%", oldPct), Style.EMPTY.fg(oldColor).bold())));
+                    Span.styled(oldGauge, oldColor),
+                    Span.styled(String.format("  %d%%", oldPct), oldColor.bold())));
             lines.add(Line.from(
                     Span.styled("  committed: ", Style.EMPTY.dim()),
                     Span.raw(formatBytes(info.oldGenCommitted)),
@@ -294,7 +297,7 @@ class MemoryTab extends AbstractTab {
         int greenEighths = (int) Math.round(0.6 * chartH * 8.0);
         int yellowEighths = (int) Math.round(0.8 * chartH * 8.0);
         Style greenStyle = Style.EMPTY.fg(Color.GREEN);
-        Style yellowStyle = Style.EMPTY.fg(Color.YELLOW);
+        Style yellowStyle = Theme.warning();
         Style redStyle = Style.EMPTY.fg(Color.LIGHT_RED);
 
         for (int col = 0; col < chartW; col++) {

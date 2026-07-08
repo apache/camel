@@ -744,7 +744,7 @@ class AiPanel {
                 Span.styled(" (in: ", dimStyle),
                 Span.styled(LlmClient.formatTokens(totalInput), Style.EMPTY.fg(Color.GREEN)),
                 Span.styled(" / out: ", dimStyle),
-                Span.styled(LlmClient.formatTokens(totalOutput), Style.EMPTY.fg(Color.YELLOW)),
+                Span.styled(LlmClient.formatTokens(totalOutput), Theme.label()),
                 Span.styled(")", dimStyle)));
         summaryLines.add(Line.from(
                 Span.styled("Avg latency: ", dimStyle),

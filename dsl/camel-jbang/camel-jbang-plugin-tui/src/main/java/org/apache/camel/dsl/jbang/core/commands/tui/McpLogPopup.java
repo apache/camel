@@ -182,7 +182,7 @@ class McpLogPopup {
         TuiMcpServer.LogEntry entry = entries.get(selected);
         List<Line> lines = new ArrayList<>();
         if (entry.requestBody() != null) {
-            lines.add(Line.from(Span.styled(TuiIcons.ARROW_RIGHT + " Request", Style.EMPTY.fg(Color.YELLOW).bold())));
+            lines.add(Line.from(Span.styled(TuiIcons.ARROW_RIGHT + " Request", Theme.label().bold())));
             addJsonLines(lines, entry.requestBody());
             lines.add(Line.from(Span.raw("")));
         }

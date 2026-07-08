@@ -88,7 +88,7 @@ class DataSourceTab extends AbstractTableTab {
                     ? Style.EMPTY.fg(Color.LIGHT_RED)
                     : Style.EMPTY.fg(Color.CYAN);
             Style waitingStyle = waiters
-                    ? Style.EMPTY.fg(Color.YELLOW)
+                    ? Theme.warning()
                     : Style.EMPTY;
 
             String poolLabel = di.poolName != null ? di.poolName : (di.poolType != null ? di.poolType : "");

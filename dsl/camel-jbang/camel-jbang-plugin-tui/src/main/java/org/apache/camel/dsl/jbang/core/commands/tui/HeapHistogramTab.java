@@ -193,15 +193,15 @@ class HeapHistogramTab extends AbstractTableTab {
 
         // Class info
         lines.add(Line.from(
-                Span.styled("  Class:      ", Style.EMPTY.fg(Color.YELLOW).bold()),
+                Span.styled("  Class:      ", Theme.label().bold()),
                 Span.styled(className, Style.EMPTY.fg(Color.CYAN))));
         lines.add(Line.from(
-                Span.styled("  Package:    ", Style.EMPTY.fg(Color.YELLOW).bold()),
+                Span.styled("  Package:    ", Theme.label().bold()),
                 Span.styled(pkg.isEmpty() ? "(none)" : pkg, pkg.isEmpty() ? Style.EMPTY.dim() : Style.EMPTY.fg(Color.WHITE))));
         lines.add(Line.from(
-                Span.styled("  Instances:  ", Style.EMPTY.fg(Color.YELLOW).bold()),
+                Span.styled("  Instances:  ", Theme.label().bold()),
                 Span.styled(formatNumber(entry.instances), Style.EMPTY.fg(Color.WHITE)),
-                Span.styled("          Bytes: ", Style.EMPTY.fg(Color.YELLOW).bold()),
+                Span.styled("          Bytes: ", Theme.label().bold()),
                 Span.styled(formatBytes(entry.bytes), Style.EMPTY.fg(Color.WHITE))));
 
         // Package summary
@@ -218,14 +218,14 @@ class HeapHistogramTab extends AbstractTableTab {
             }
             lines.add(Line.from(Span.raw("")));
             lines.add(Line.from(
-                    Span.styled("  Package Summary ", Style.EMPTY.fg(Color.YELLOW).bold()),
+                    Span.styled("  Package Summary ", Theme.label().bold()),
                     Span.styled("(" + pkg + ")", Style.EMPTY.dim())));
             lines.add(Line.from(
-                    Span.styled("    Classes: ", Style.EMPTY.fg(Color.YELLOW)),
+                    Span.styled("    Classes: ", Theme.label()),
                     Span.styled(formatNumber(pkgClasses), Style.EMPTY.fg(Color.WHITE)),
-                    Span.styled("     Instances: ", Style.EMPTY.fg(Color.YELLOW)),
+                    Span.styled("     Instances: ", Theme.label()),
                     Span.styled(formatNumber(pkgInstances), Style.EMPTY.fg(Color.WHITE)),
-                    Span.styled("     Bytes: ", Style.EMPTY.fg(Color.YELLOW)),
+                    Span.styled("     Bytes: ", Theme.label()),
                     Span.styled(formatBytes(pkgBytes), Style.EMPTY.fg(Color.WHITE))));
         }
 
@@ -235,12 +235,12 @@ class HeapHistogramTab extends AbstractTableTab {
             lines.add(Line.from(Span.raw("")));
             if (jar.groupId() != null) {
                 lines.add(Line.from(
-                        Span.styled("  JAR:        ", Style.EMPTY.fg(Color.YELLOW).bold()),
+                        Span.styled("  JAR:        ", Theme.label().bold()),
                         Span.styled(jar.groupId() + ":" + jar.artifactId() + ":" + jar.version(),
                                 Style.EMPTY.fg(Color.GREEN))));
             } else {
                 lines.add(Line.from(
-                        Span.styled("  JAR:        ", Style.EMPTY.fg(Color.YELLOW).bold()),
+                        Span.styled("  JAR:        ", Theme.label().bold()),
                         Span.styled(jar.display(), Style.EMPTY.fg(Color.GREEN))));
             }
             if (jar.fullPath() != null) {
@@ -256,7 +256,7 @@ class HeapHistogramTab extends AbstractTableTab {
         } else if (isBuiltinClass(className)) {
             lines.add(Line.from(Span.raw("")));
             lines.add(Line.from(
-                    Span.styled("  JAR:        ", Style.EMPTY.fg(Color.YELLOW).bold()),
+                    Span.styled("  JAR:        ", Theme.label().bold()),
                     Span.styled("JDK (built-in)", Style.EMPTY.fg(Color.GREEN))));
         }
 

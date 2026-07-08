@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import dev.tamboui.layout.Rect;
-import dev.tamboui.style.Color;
 import dev.tamboui.style.Style;
 import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.Line;
@@ -113,7 +112,7 @@ abstract class AbstractTab implements MonitorTab {
 
     protected static Style sortStyle(String column, String currentSort) {
         return currentSort.equals(column)
-                ? Style.EMPTY.fg(Color.YELLOW).bold()
+                ? Theme.label().bold()
                 : Style.EMPTY.bold();
     }
 

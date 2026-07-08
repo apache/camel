@@ -29,6 +29,7 @@ import dev.tamboui.widget.Widget;
 import org.apache.camel.diagram.TopologyLayoutEngine.TopologyLayoutEdge;
 import org.apache.camel.diagram.TopologyLayoutEngine.TopologyLayoutNode;
 import org.apache.camel.diagram.TopologyLayoutEngine.TopologyLayoutResult;
+import org.apache.camel.dsl.jbang.core.commands.tui.Theme;
 
 import static org.apache.camel.dsl.jbang.core.commands.tui.diagram.DiagramColors.*;
 
@@ -171,13 +172,13 @@ public class TopologyDiagramWidget implements Widget {
         char vChar = ext ? DASH_V : V;
         Style borderStyle;
         if (highlighted) {
-            Color hlColor = highlightFailed ? HIGHLIGHT_FAIL_COLOR : HIGHLIGHT_OK_COLOR;
+            Color hlColor = highlightFailed ? highlightFailColor() : highlightOkColor();
             borderStyle = Style.EMPTY.fg(hlColor).bold();
         } else {
-            borderStyle = ext ? DASHED_BORDER_STYLE : BORDER_STYLE;
+            borderStyle = ext ? dashedBorderStyle() : borderStyle();
         }
         if (selected) {
-            borderStyle = borderStyle.patch(SELECTION_STYLE);
+            borderStyle = borderStyle.patch(selectionStyle());
         }
 
         // Top border
@@ -203,7 +204,7 @@ public class TopologyDiagramWidget implements Widget {
             setChar(buffer, area, r, col + boxWidth - 1, vChar, borderStyle);
 
             // Clear interior
-            Style bgStyle = selected ? SELECTION_STYLE : Style.EMPTY;
+            Style bgStyle = selected ? selectionStyle() : Style.EMPTY;
             for (int c = col + 1; c < col + boxWidth - 1; c++) {
                 setChar(buffer, area, r, c, ' ', bgStyle);
             }
@@ -216,16 +217,16 @@ public class TopologyDiagramWidget implements Widget {
 
             // Choose style based on content type
             if (ext && i == 0) {
-                writeText(buffer, area, r, textCol, text, style(DASHED_BORDER_STYLE, selected));
+                writeText(buffer, area, r, textCol, text, style(dashedBorderStyle(), selected));
             } else if (showMetrics && i == lines.size() - 1 && node.exchangesTotal > 0) {
                 drawMetricsLine(buffer, area, r, textCol, text, node, selected);
             } else if (i == 0 && !ext) {
                 Style idStyle = highlighted
-                        ? Style.EMPTY.fg(highlightFailed ? HIGHLIGHT_FAIL_COLOR : HIGHLIGHT_OK_COLOR).bold()
-                        : ROUTE_ID_STYLE;
+                        ? Style.EMPTY.fg(highlightFailed ? highlightFailColor() : highlightOkColor()).bold()
+                        : routeIdStyle();
                 writeText(buffer, area, r, textCol, text, style(idStyle, selected));
             } else {
-                writeText(buffer, area, r, textCol, text, style(FROM_LABEL_STYLE, selected));
+                writeText(buffer, area, r, textCol, text, style(fromLabelStyle(), selected));
             }
         }
 
@@ -239,14 +240,14 @@ public class TopologyDiagramWidget implements Widget {
         if (ok > 0 && node.exchangesFailed > 0) {
             String okStr = String.valueOf(ok);
             String failStr = String.valueOf(node.exchangesFailed);
-            writeText(buffer, area, row, col, okStr, style(METRICS_OK_STYLE, selected));
+            writeText(buffer, area, row, col, okStr, style(metricsOkStyle(), selected));
             int slashCol = col + okStr.length();
-            writeText(buffer, area, row, slashCol, "/", style(Style.EMPTY.fg(Color.GRAY), selected));
-            writeText(buffer, area, row, slashCol + 1, failStr, style(METRICS_FAIL_STYLE, selected));
+            writeText(buffer, area, row, slashCol, "/", style(Style.EMPTY.fg(Theme.diagramBorder()), selected));
+            writeText(buffer, area, row, slashCol + 1, failStr, style(metricsFailStyle(), selected));
         } else if (ok > 0) {
-            writeText(buffer, area, row, col, text, style(METRICS_OK_STYLE, selected));
+            writeText(buffer, area, row, col, text, style(metricsOkStyle(), selected));
         } else if (node.exchangesFailed > 0) {
-            writeText(buffer, area, row, col, text, style(METRICS_FAIL_STYLE, selected));
+            writeText(buffer, area, row, col, text, style(metricsFailStyle(), selected));
         }
     }
 
@@ -268,9 +269,9 @@ public class TopologyDiagramWidget implements Widget {
                 && edge.to.routeId != null && highlightRouteIds.contains(edge.to.routeId);
         Style edgeStyle;
         if (edgeHighlighted) {
-            edgeStyle = Style.EMPTY.fg(highlightFailed ? HIGHLIGHT_FAIL_COLOR : HIGHLIGHT_OK_COLOR);
+            edgeStyle = Style.EMPTY.fg(highlightFailed ? highlightFailColor() : highlightOkColor());
         } else {
-            edgeStyle = dashed ? DASHED_BORDER_STYLE : Style.EMPTY.fg(Color.GRAY);
+            edgeStyle = dashed ? dashedBorderStyle() : Style.EMPTY.fg(Theme.diagramBorder());
         }
 
         if (fromCx == toCx) {
@@ -306,7 +307,7 @@ public class TopologyDiagramWidget implements Widget {
         int topRow = toRow(edge.from.y) + 1;
         int botRow = topRow + 2;
 
-        Style s = Style.EMPTY.fg(Color.GRAY);
+        Style s = Style.EMPTY.fg(Theme.diagramBorder());
         for (int c = col; c < col + 3; c++) {
             setChar(buffer, area, topRow, c, H, s);
             setChar(buffer, area, botRow, c, H, s);
@@ -373,7 +374,7 @@ public class TopologyDiagramWidget implements Widget {
     }
 
     private Style style(Style base, boolean selected) {
-        return selected ? base.patch(SELECTION_STYLE) : base;
+        return selected ? base.patch(selectionStyle()) : base;
     }
 
     private int toCol(int pixelX) {

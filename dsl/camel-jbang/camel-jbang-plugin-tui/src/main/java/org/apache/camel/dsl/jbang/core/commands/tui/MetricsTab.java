@@ -62,7 +62,6 @@ class MetricsTab extends AbstractTableTab {
 
     private static final Style LABEL = Style.EMPTY.dim();
     private static final Style VALUE = Style.EMPTY.fg(Color.WHITE).bold();
-    private static final Style HEADER = Style.EMPTY.fg(Color.YELLOW).bold();
     private static final Style GOOD = Style.EMPTY.fg(Color.GREEN);
     private static final Style BAD = Style.EMPTY.fg(Color.LIGHT_RED);
 
@@ -276,7 +275,7 @@ class MetricsTab extends AbstractTableTab {
         List<Line> lines = new ArrayList<>();
 
         // Exchanges section
-        lines.add(Line.from(Span.styled("  Exchanges", HEADER)));
+        lines.add(Line.from(Span.styled("  Exchanges", Theme.label().bold())));
         lines.add(Line.empty());
 
         long total = counterValue(meters, "camel.exchanges.total");
@@ -305,7 +304,7 @@ class MetricsTab extends AbstractTableTab {
         // Route timers
         List<MicrometerMeterInfo> routeTimers = findMeters(meters, "camel.route.policy");
         if (!routeTimers.isEmpty()) {
-            lines.add(Line.from(Span.styled("  Route Timers", HEADER),
+            lines.add(Line.from(Span.styled("  Route Timers", Theme.label().bold()),
                     Span.styled("                     mean / max", LABEL)));
             lines.add(Line.empty());
             for (MicrometerMeterInfo rt : routeTimers) {
@@ -331,7 +330,7 @@ class MetricsTab extends AbstractTableTab {
         List<MicrometerMeterInfo> eventTimers = findMeters(meters, "camel.exchange.event.notifier");
         if (!eventTimers.isEmpty()) {
             lines.add(Line.empty());
-            lines.add(Line.from(Span.styled("  Event Notifiers", HEADER),
+            lines.add(Line.from(Span.styled("  Event Notifiers", Theme.label().bold()),
                     Span.styled("                  mean / max", LABEL)));
             lines.add(Line.empty());
             for (MicrometerMeterInfo et : eventTimers) {
@@ -359,7 +358,7 @@ class MetricsTab extends AbstractTableTab {
         List<Line> lines = new ArrayList<>();
 
         // Memory section
-        lines.add(Line.from(Span.styled("  Memory", HEADER)));
+        lines.add(Line.from(Span.styled("  Memory", Theme.label().bold())));
         lines.add(Line.empty());
 
         double heapUsed = gaugeValue(meters, "jvm.memory.used", "area", "heap");
@@ -390,7 +389,7 @@ class MetricsTab extends AbstractTableTab {
         lines.add(Line.empty());
 
         // Runtime section
-        lines.add(Line.from(Span.styled("  Runtime", HEADER)));
+        lines.add(Line.from(Span.styled("  Runtime", Theme.label().bold())));
         lines.add(Line.empty());
 
         double cpuProcess = gaugeValue(meters, "process.cpu.usage");
@@ -431,7 +430,7 @@ class MetricsTab extends AbstractTableTab {
         List<MicrometerMeterInfo> gcTimers = findMeters(meters, "jvm.gc.pause");
         if (!gcTimers.isEmpty()) {
             lines.add(Line.empty());
-            lines.add(Line.from(Span.styled("  Garbage Collection", HEADER)));
+            lines.add(Line.from(Span.styled("  Garbage Collection", Theme.label().bold())));
             lines.add(Line.empty());
             for (MicrometerMeterInfo gc : gcTimers) {
                 String cause = tagValue(gc, "cause");
@@ -645,7 +644,6 @@ class MetricsTab extends AbstractTableTab {
     private static final Style PROM_COMMENT = Style.EMPTY.dim();
     private static final Style PROM_NAME = Style.EMPTY.fg(Color.CYAN);
     private static final Style PROM_VALUE = Style.EMPTY.fg(Color.WHITE).bold();
-    private static final Style PROM_TAGS = Style.EMPTY.fg(Color.YELLOW);
 
     private static Line colorPrometheusLine(String line) {
         if (line.startsWith("#")) {
@@ -660,7 +658,7 @@ class MetricsTab extends AbstractTableTab {
             String rest = line.substring(braceEnd + 1).trim();
             return Line.from(
                     Span.styled(name, PROM_NAME),
-                    Span.styled(tags, PROM_TAGS),
+                    Span.styled(tags, Theme.label()),
                     Span.styled(" " + rest, PROM_VALUE));
         }
         // name value (no tags)

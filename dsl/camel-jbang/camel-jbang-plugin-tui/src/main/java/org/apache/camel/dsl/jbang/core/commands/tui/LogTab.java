@@ -302,7 +302,7 @@ class LogTab extends AbstractTab {
         if (hasNew) {
             titleLine = Line.from(
                     Span.raw(logLabel + " "),
-                    Span.styled("(*)", Style.EMPTY.fg(Color.YELLOW).bold()),
+                    Span.styled("(*)", Theme.label()),
                     Span.raw(" "));
         } else {
             titleLine = Line.from(Span.raw(logLabel + " "));
@@ -439,7 +439,7 @@ class LogTab extends AbstractTab {
         ListWidget list = ListWidget.builder()
                 .items(
                         ListItem.from("  ERROR  ").style(Style.EMPTY.fg(Color.LIGHT_RED)),
-                        ListItem.from("  WARN   ").style(Style.EMPTY.fg(Color.YELLOW)),
+                        ListItem.from("  WARN   ").style(Theme.warning()),
                         ListItem.from("  INFO   ").style(Style.EMPTY),
                         ListItem.from("  DEBUG  ").style(Style.EMPTY.fg(Color.CYAN)),
                         ListItem.from("  TRACE  ").style(Style.EMPTY.dim()))
@@ -644,7 +644,7 @@ class LogTab extends AbstractTab {
         String message = m.group(7);
         Style levelStyle = switch (level) {
             case "ERROR", "FATAL" -> Style.EMPTY.fg(Color.RED);
-            case "WARN" -> Style.EMPTY.fg(Color.YELLOW);
+            case "WARN" -> Theme.warning();
             case "INFO" -> Style.EMPTY.fg(Color.GREEN);
             case "DEBUG" -> Style.EMPTY.fg(Color.CYAN);
             case "TRACE" -> Style.EMPTY.dim();

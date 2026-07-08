@@ -284,7 +284,7 @@ class FilesBrowser {
                 .block(Block.builder()
                         .borderType(BorderType.ROUNDED).borders(Borders.ALL)
                         .title(Title.from(Line
-                                .from(Span.styled(popupTitle, Style.EMPTY.fg(Color.YELLOW).bold()))))
+                                .from(Span.styled(popupTitle, Theme.label().bold()))))
                         .build())
                 .build();
         frame.renderStatefulWidget(list, popup, listState);

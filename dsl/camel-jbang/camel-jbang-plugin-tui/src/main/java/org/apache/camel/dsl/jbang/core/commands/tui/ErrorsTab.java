@@ -567,7 +567,7 @@ class ErrorsTab extends AbstractTableTab {
     }
 
     private Line buildErrorBreadcrumbTitle() {
-        Style nameStyle = Style.EMPTY.fg(Color.YELLOW).bold();
+        Style nameStyle = Theme.label().bold();
         List<Span> spans = new ArrayList<>();
         spans.add(Span.styled(" Error [", Style.EMPTY.fg(Color.WHITE)));
         var stack = diagram.getHistoryNavigationStack();
@@ -606,27 +606,27 @@ class ErrorsTab extends AbstractTableTab {
         }
 
         lines.add(Line.from(
-                Span.styled(" Exchange: ", Style.EMPTY.fg(Color.YELLOW).bold()),
+                Span.styled(" Exchange: ", Theme.label().bold()),
                 Span.raw(ei.exchangeId != null ? ei.exchangeId : "")));
         lines.add(Line.from(
-                Span.styled(" Route:    ", Style.EMPTY.fg(Color.YELLOW).bold()),
+                Span.styled(" Route:    ", Theme.label().bold()),
                 Span.styled(ei.routeId != null ? ei.routeId : "", Style.EMPTY.fg(Color.CYAN))));
         lines.add(Line.from(
-                Span.styled(" Node:     ", Style.EMPTY.fg(Color.YELLOW).bold()),
+                Span.styled(" Node:     ", Theme.label().bold()),
                 Span.raw(ei.nodeId != null ? ei.nodeId : "")));
         if (ei.elapsed >= 0) {
             lines.add(Line.from(
-                    Span.styled(" Elapsed:  ", Style.EMPTY.fg(Color.YELLOW).bold()),
+                    Span.styled(" Elapsed:  ", Theme.label().bold()),
                     Span.raw(ei.elapsed + "ms")));
         }
         if (ei.threadName != null) {
             lines.add(Line.from(
-                    Span.styled(" Thread:   ", Style.EMPTY.fg(Color.YELLOW).bold()),
+                    Span.styled(" Thread:   ", Theme.label().bold()),
                     Span.raw(ei.threadName)));
         }
         Style handledStyle = ei.handled ? Style.EMPTY.fg(Color.GREEN) : Style.EMPTY.fg(Color.LIGHT_RED).bold();
         lines.add(Line.from(
-                Span.styled(" Handled:  ", Style.EMPTY.fg(Color.YELLOW).bold()),
+                Span.styled(" Handled:  ", Theme.label().bold()),
                 Span.styled(ei.handled ? "true" : "false", handledStyle)));
 
         if (ei.exceptionType != null) {

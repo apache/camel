@@ -39,3 +39,18 @@ $light-fg: #24292E;
 #mcp-down       { color: #D73A49; }
 #base-bg        { background: $light-bg; }
 #base-fg        { color: $light-fg; }
+
+/* Content tokens — labels, change indicators, search highlight */
+#label          { color: #735C00; }
+#change         { color: #B08800; }
+#search-match   { color: black; background: #FFD33D; }
+
+/* Diagram tokens */
+#diagram-border  { color: #808080; }
+#diagram-id      { color: $light-fg; }
+#diagram-from    { color: #22863A; }
+#diagram-to      { color: #0366D6; }
+#diagram-choice  { color: #B08800; }
+#diagram-action  { color: #6F42C1; }
+#diagram-eip     { color: #5A32A3; }
+#diagram-default { color: #6A737D; }

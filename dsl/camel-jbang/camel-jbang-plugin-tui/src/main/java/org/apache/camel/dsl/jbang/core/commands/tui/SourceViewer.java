@@ -779,9 +779,9 @@ class SourceViewer {
         List<Span> spans = new ArrayList<>();
         Style selBg = Style.EMPTY.bg(Color.rgb(30, 45, 70));
         if (isSelected) {
-            spans.add(Span.styled(">> ", Style.EMPTY.fg(Color.YELLOW).bold()));
+            spans.add(Span.styled(">> ", Theme.label().bold()));
             if (!prefix.isEmpty()) {
-                spans.add(Span.styled(prefix, Style.EMPTY.fg(Color.YELLOW).bold().patch(selBg)));
+                spans.add(Span.styled(prefix, Theme.label().bold().patch(selBg)));
             }
             for (Span s : highlighted.spans()) {
                 spans.add(Span.styled(s.content(), s.style().patch(selBg)));

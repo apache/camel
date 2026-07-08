@@ -330,7 +330,7 @@ class OverviewTab extends AbstractTab {
                 List<Span> nameSpans = new ArrayList<>();
                 nameSpans.add(Span.styled(nameText, Theme.info()));
                 if (info.devMode) {
-                    nameSpans.add(Span.styled(" [dev]", Style.EMPTY.fg(Color.YELLOW).dim()));
+                    nameSpans.add(Span.styled(" [dev]", Theme.label()));
                 }
                 if (hasDoc) {
                     nameSpans.add(Span.styled(" " + TuiIcons.README, Style.EMPTY));
@@ -523,7 +523,7 @@ class OverviewTab extends AbstractTab {
                         : ctx.selectedPid != null ? ctx.selectedPid : "?";
                 titleLine = Line.from(
                         Span.raw(" ["),
-                        Span.styled(chartName, Style.EMPTY.fg(Color.YELLOW)),
+                        Span.styled(chartName, Theme.label().bold()),
                         Span.raw(String.format("] Throughput: %s msg/s  ", curTpFmt)),
                         Span.styled("■", Style.EMPTY.fg(Color.ansi(AnsiColor.BRIGHT_GREEN))),
                         Span.raw(String.format(" ok:%s  ", curOkFmt)),

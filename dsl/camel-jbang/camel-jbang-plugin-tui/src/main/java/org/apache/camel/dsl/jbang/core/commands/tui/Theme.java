@@ -44,7 +44,7 @@ import org.slf4j.LoggerFactory;
  * plain white/black foregrounds. Fallbacks mirror {@code dark.tcss}. If a stylesheet is missing or malformed, the
  * facade falls back to the built-in palette below and logs once, so a cosmetic failure never crashes the TUI.
  */
-final class Theme {
+public final class Theme {
 
     /** Camel brand orange. */
     static final Color ACCENT = Color.rgb(0xF6, 0x91, 0x23);
@@ -73,6 +73,21 @@ final class Theme {
     private static final Color FALLBACK_BASE_BG = Color.rgb(0x1E, 0x1E, 0x1E);
     private static final Color FALLBACK_BASE_FG = Color.rgb(0xD4, 0xD4, 0xD4);
 
+    // Content token fallbacks (dark-theme defaults).
+    private static final Style FALLBACK_LABEL = Style.EMPTY.fg(Color.rgb(0xDC, 0xDC, 0xAA));
+    private static final Style FALLBACK_CHANGE = Style.EMPTY.fg(Color.rgb(0xDC, 0xDC, 0xAA));
+    private static final Style FALLBACK_SEARCH_MATCH = Style.EMPTY.fg(Color.BLACK).bg(Color.rgb(0xDC, 0xDC, 0xAA));
+
+    // Diagram token fallbacks (dark-theme defaults).
+    private static final Color FALLBACK_DIAGRAM_BORDER = Color.rgb(0x80, 0x80, 0x80);
+    private static final Color FALLBACK_DIAGRAM_ID = FALLBACK_BASE_FG;
+    private static final Color FALLBACK_DIAGRAM_FROM = Color.rgb(0x4E, 0xC9, 0xB0);
+    private static final Color FALLBACK_DIAGRAM_TO = Color.rgb(0x56, 0xB6, 0xC2);
+    private static final Color FALLBACK_DIAGRAM_CHOICE = Color.rgb(0xDC, 0xDC, 0xAA);
+    private static final Color FALLBACK_DIAGRAM_ACTION = Color.rgb(0xC5, 0x86, 0xC0);
+    private static final Color FALLBACK_DIAGRAM_EIP = Color.rgb(0x89, 0x57, 0xE5);
+    private static final Color FALLBACK_DIAGRAM_DEFAULT = Color.rgb(0x80, 0x80, 0x80);
+
     private static final Map<String, Style> CACHE = new HashMap<>();
 
     private static boolean initialized;
@@ -88,7 +103,7 @@ final class Theme {
     private Theme() {
     }
 
-    static synchronized Color accent() {
+    public static synchronized Color accent() {
         StyleEngine e = engine();
         if (e == null) {
             return ACCENT;
@@ -105,7 +120,7 @@ final class Theme {
      * Subtle alternating-row background for zebra striping. Theme-aware (dark gray on dark, light gray on light) so
      * stripes stay readable on both terminals. Applied at the row level so it never overrides the selection highlight.
      */
-    static synchronized Color zebra() {
+    public static synchronized Color zebra() {
         StyleEngine e = engine();
         if (e == null) {
             return FALLBACK_ZEBRA;
@@ -121,7 +136,7 @@ final class Theme {
     /**
      * Base background color for the main content area. Theme-aware (dark on dark mode, white on light mode).
      */
-    static Color baseBg() {
+    public static Color baseBg() {
         StyleEngine e = engine();
         if (e == null) {
             return FALLBACK_BASE_BG;
@@ -137,7 +152,7 @@ final class Theme {
     /**
      * Base foreground color for normal text. Theme-aware (light gray on dark mode, dark gray on light mode).
      */
-    static Color baseFg() {
+    public static Color baseFg() {
         StyleEngine e = engine();
         if (e == null) {
             return FALLBACK_BASE_FG;
@@ -151,90 +166,145 @@ final class Theme {
     }
 
     /** White-on-orange: active tab highlight. */
-    static Style accentBg() {
+    public static Style accentBg() {
         return style("accent-bg", FALLBACK_ACCENT_BG);
     }
 
     /** Black-on-orange chip: key hints in footers and prompts. */
-    static Style hintKey() {
+    public static Style hintKey() {
         return style("hint-key", FALLBACK_HINT_KEY);
     }
 
     /** Dim border for unfocused panels. */
-    static Style border() {
+    public static Style border() {
         return style("border", FALLBACK_BORDER);
     }
 
     /** Orange border for the focused panel. */
-    static Style borderFocused() {
+    public static Style borderFocused() {
         return style("border-focused", FALLBACK_BORDER_FOCUSED);
     }
 
     /** Panel and border titles. */
-    static Style title() {
+    public static Style title() {
         return style("title", FALLBACK_TITLE);
     }
 
-    static Style success() {
+    public static Style success() {
         return style("success", FALLBACK_SUCCESS);
     }
 
-    static Style warning() {
+    public static Style warning() {
         return style("warning", FALLBACK_WARNING);
     }
 
-    static Style error() {
+    public static Style error() {
         return style("error", FALLBACK_ERROR);
     }
 
-    static Style muted() {
+    public static Style muted() {
         return style("muted", FALLBACK_MUTED);
     }
 
     /** Row/selection highlight (matches the existing list highlight). */
-    static Style selectionBg() {
+    public static Style selectionBg() {
         return style("selection", FALLBACK_SELECTION);
     }
 
     /** Informational accent (header integration count, integration name text, popup prompts). */
-    static Style info() {
+    public static Style info() {
         return style("info", FALLBACK_INFO);
     }
 
     /** Secondary accent (header infra / selected). */
-    static Style notice() {
+    public static Style notice() {
         return style("notice", FALLBACK_NOTICE);
     }
 
     /** MCP indicator: connected with recent activity. */
-    static Style mcpActive() {
+    public static Style mcpActive() {
         return style("mcp-active", FALLBACK_MCP_ACTIVE);
     }
 
     /** MCP indicator: connected but idle. */
-    static Style mcpIdle() {
+    public static Style mcpIdle() {
         return style("mcp-idle", FALLBACK_MCP_IDLE);
     }
 
     /** MCP indicator: not connected. */
-    static Style mcpDown() {
+    public static Style mcpDown() {
         return style("mcp-down", FALLBACK_MCP_DOWN);
     }
 
+    /** Secondary accent for field labels, section headers, key hints, and popup titles. */
+    public static Style label() {
+        return style("label", FALLBACK_LABEL);
+    }
+
+    /** Changed-value indicator in trace diffs. */
+    public static Style change() {
+        return style("change", FALLBACK_CHANGE);
+    }
+
+    /** Search/find match highlight (foreground + background). */
+    public static Style searchMatch() {
+        return style("search-match", FALLBACK_SEARCH_MATCH);
+    }
+
+    /** Diagram box-drawing border color. */
+    public static synchronized Color diagramBorder() {
+        return color("diagram-border", FALLBACK_DIAGRAM_BORDER);
+    }
+
+    /** Route ID text color in diagrams. */
+    public static synchronized Color diagramId() {
+        return color("diagram-id", FALLBACK_DIAGRAM_ID);
+    }
+
+    /** Diagram color for "from" EIP nodes. */
+    public static synchronized Color diagramFrom() {
+        return color("diagram-from", FALLBACK_DIAGRAM_FROM);
+    }
+
+    /** Diagram color for "to", "enrich", marshal, and transform EIP nodes. */
+    public static synchronized Color diagramTo() {
+        return color("diagram-to", FALLBACK_DIAGRAM_TO);
+    }
+
+    /** Diagram color for "choice"/"when"/"otherwise" EIP nodes. */
+    public static synchronized Color diagramChoice() {
+        return color("diagram-choice", FALLBACK_DIAGRAM_CHOICE);
+    }
+
+    /** Diagram color for "bean"/"process"/"log"/"script" EIP nodes. */
+    public static synchronized Color diagramAction() {
+        return color("diagram-action", FALLBACK_DIAGRAM_ACTION);
+    }
+
+    /** Diagram color for routing EIPs (split, aggregate, multicast, etc.). */
+    public static synchronized Color diagramEip() {
+        return color("diagram-eip", FALLBACK_DIAGRAM_EIP);
+    }
+
+    /** Diagram fallback color for unknown EIP types. */
+    public static synchronized Color diagramDefault() {
+        return color("diagram-default", FALLBACK_DIAGRAM_DEFAULT);
+    }
+
     /** The active theme mode: {@code "dark"} or {@code "light"}. */
-    static String mode() {
+    public static String mode() {
         engine();
         return mode.id();
     }
 
     /** True if the active mode is dark. */
-    static boolean isDark() {
+    public static boolean isDark() {
         engine();
         return mode == ThemeMode.DARK;
     }
 
     /** Flip the active theme mode, persist it (outside test mode), and activate it, returning the new mode. */
-    static synchronized String toggle() {
+    public static synchronized String toggle() {
         ThemeMode next = mode.toggle();
         if (!testMode) {
             persist(next);
@@ -250,7 +320,7 @@ final class Theme {
      * loaded, so outside test mode a later {@link #engine()} re-initialization can still overwrite the mode with
      * whatever is on disk.
      */
-    static synchronized void setMode(String newMode) {
+    public static synchronized void setMode(String newMode) {
         activate(ThemeMode.parseOrDefault(newMode), false);
     }
 
@@ -261,19 +331,19 @@ final class Theme {
      * @throws IllegalArgumentException if {@code newMode} is not a known theme mode; callers should normally validate
      *                                  with {@link #isValidMode(String)} first to report a friendlier CLI error.
      */
-    static synchronized void applyStartupMode(String newMode) {
+    public static synchronized void applyStartupMode(String newMode) {
         ThemeMode parsed = ThemeMode.parse(newMode)
                 .orElseThrow(() -> new IllegalArgumentException("Unknown Camel TUI theme mode: " + newMode));
         activate(parsed, true);
     }
 
     /** Whether {@code value} parses to a known theme mode. */
-    static boolean isValidMode(String value) {
+    public static boolean isValidMode(String value) {
         return ThemeMode.parse(value).isPresent();
     }
 
     /** Test hook: enable in-memory-only mode so tests never touch user config files. */
-    static synchronized void resetForTesting() {
+    public static synchronized void resetForTesting() {
         resetForTesting(true);
     }
 
@@ -281,7 +351,7 @@ final class Theme {
      * Test hook like {@link #resetForTesting()}, but lets the caller keep {@code testMode} disabled so a test can
      * exercise the real persistence path (disk read/write) against an isolated home directory.
      */
-    static synchronized void resetForTesting(boolean testModeValue) {
+    public static synchronized void resetForTesting(boolean testModeValue) {
         testMode = testModeValue;
         stylesheetFallbackLogged = false;
         tokenFallbackLogged = false;
@@ -303,6 +373,19 @@ final class Theme {
         engine = null;
         initialized = false;
         engine();
+    }
+
+    private static synchronized Color color(String id, Color fallback) {
+        StyleEngine e = engine();
+        if (e == null) {
+            return fallback;
+        }
+        try {
+            return e.resolve(new Token(id)).foreground().orElse(fallback);
+        } catch (RuntimeException ex) {
+            logTokenFallbackOnce(ex);
+            return fallback;
+        }
     }
 
     private static synchronized Style style(String id, Style fallback) {

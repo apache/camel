@@ -146,7 +146,7 @@ class SqlTraceTab extends AbstractTableTab {
     private void renderKpiStrip(Frame frame, Rect area, IntegrationInfo info) {
         Style labelStyle = Style.EMPTY.dim();
         Style valueStyle = Style.EMPTY.fg(Color.CYAN).bold();
-        Style warnStyle = Style.EMPTY.fg(Color.YELLOW).bold();
+        Style warnStyle = Theme.warning().bold();
         Style errorStyle = Style.EMPTY.fg(Color.LIGHT_RED).bold();
 
         List<Span> spans = new ArrayList<>();
@@ -233,7 +233,7 @@ class SqlTraceTab extends AbstractTableTab {
     private void renderTable(Frame frame, Rect area, List<SqlTraceInfo> sorted) {
         List<Row> rows = new ArrayList<>();
         for (SqlTraceInfo si : sorted) {
-            Style durStyle = si.duration >= 100 ? Style.EMPTY.fg(Color.YELLOW) : Style.EMPTY;
+            Style durStyle = si.duration >= 100 ? Theme.warning() : Style.EMPTY;
             Style statusStyle = si.failed ? Style.EMPTY.fg(Color.LIGHT_RED) : Style.EMPTY.fg(Color.GREEN);
             String status = si.failed ? "FAIL" : "OK";
 
@@ -339,7 +339,7 @@ class SqlTraceTab extends AbstractTableTab {
             time = LocalDateTime.ofInstant(Instant.ofEpochMilli(si.timestamp), ZoneId.systemDefault())
                     .format(TIME_FMT);
         }
-        Style durStyle = si.duration >= 100 ? Style.EMPTY.fg(Color.YELLOW) : Style.EMPTY;
+        Style durStyle = si.duration >= 100 ? Theme.warning() : Style.EMPTY;
         Style statusStyle = si.failed ? Style.EMPTY.fg(Color.LIGHT_RED) : Style.EMPTY.fg(Color.GREEN);
         lines.add(Line.from(
                 Span.styled(" Time: ", labelStyle),
@@ -378,7 +378,7 @@ class SqlTraceTab extends AbstractTableTab {
         return switch (category) {
             case "SELECT" -> Style.EMPTY.fg(Color.CYAN);
             case "INSERT" -> Style.EMPTY.fg(Color.GREEN);
-            case "UPDATE" -> Style.EMPTY.fg(Color.YELLOW);
+            case "UPDATE" -> Theme.label();
             case "DELETE" -> Style.EMPTY.fg(Color.LIGHT_RED);
             default -> Style.EMPTY;
         };
