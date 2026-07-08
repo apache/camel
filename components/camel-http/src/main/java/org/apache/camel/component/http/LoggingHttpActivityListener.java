@@ -204,7 +204,7 @@ public class LoggingHttpActivityListener extends ServiceSupport implements Camel
                                 byte[] arr = bos.toByteArray();
                                 // ByteArrayEntity close() is a NOOP. Additionally
                                 // the stream must be closed by client (request/response in our case).
-                                e = new ByteArrayEntity(arr, ct); // NOSONAR
+                                e = new ByteArrayEntity(arr, ct, ce != null ? ce.getValue() : null); // NOSONAR
                                 if (request instanceof HttpEntityContainer ec) {
                                     ec.setEntity(e);
                                 } else if (response instanceof HttpEntityContainer ec) {
