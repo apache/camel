@@ -3419,7 +3419,62 @@ beans:
 NOTE: When an access token is present, it is always verified - signature, issuer and expiry for local JWT
 verification, or active state and issuer when token introspection is enabled - regardless of whether
 `requiredRoles` or `requiredPermissions` are configured. Role and permission checks are applied only after the
-token has been verified. A request without a token is rejected.
+token has been verified. A request without a token is rejected. Audience validation (see below) is optional and
+applied in addition to these checks when `expectedAudience` is configured.
+
+=== Audience Validation
+
+By default, the security policy does not check the token's `aud` (audience) claim. In a multi-client Keycloak
+realm this means a token issued for one client could be accepted by a route intended for another client. Setting
+`expectedAudience` closes this gap: tokens whose `aud` claim does not contain every one of the configured
+audiences are rejected, for both local JWT verification and token introspection. This matches the behavior of
+Keycloak's own `TokenVerifier.audience(String...)` check.
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+KeycloakSecurityPolicy policy = new KeycloakSecurityPolicy(
+    "http://localhost:8080", "my-realm", "my-client", "client-secret");
+
+// Reject tokens that do not have "my-client" in their "aud" claim
+policy.setExpectedAudience("my-client");
+
+from("direct:protected")
+    .policy(policy)
+    .to("mock:result");
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:protected
+      steps:
+        - policy:
+            ref: audiencePolicy
+        - to:
+            uri: mock:result
+
+# Bean definition
+beans:
+  - name: audiencePolicy
+    type: org.apache.camel.component.keycloak.security.KeycloakSecurityPolicy
+    properties:
+      serverUrl: "http://localhost:8080"
+      realm: "my-realm"
+      clientId: "my-client"
+      clientSecret: "client-secret"
+      expectedAudience: "my-client"
+----
+====
+
+`expectedAudience` accepts a comma-separated list (e.g., `"my-client,my-other-client"`) when a token must carry
+several audiences at once. Disabled by default for backward compatibility.
 
 === Role-based Authorization
 
