@@ -103,7 +103,7 @@ class SqlQueryTab extends AbstractTab {
     }
 
     boolean isInputActive() {
-        return editMode || focusOnInput;
+        return !dsNames.isEmpty() && (editMode || focusOnInput);
     }
 
     void handlePaste(String text) {
@@ -139,8 +139,8 @@ class SqlQueryTab extends AbstractTab {
 
     @Override
     public boolean handleKeyEvent(KeyEvent ke) {
-        if (executing.get()) {
-            return true;
+        if (dsNames.isEmpty() || executing.get()) {
+            return dsNames.isEmpty() ? false : true;
         }
 
         // edit mode takes priority
@@ -396,10 +396,13 @@ class SqlQueryTab extends AbstractTab {
             title = String.format(" SQL Query (%d updated, %dms) ", updateCount, elapsed);
         } else if (resultRows != null) {
             title = String.format(" SQL Query (%d row(s), %dms) ", rowCount, elapsed);
+        } else if (dsNames.isEmpty()) {
+            title = " SQL Query ";
         } else {
             title = " SQL Query (F5 to execute) ";
         }
-        Style borderStyle = focusOnInput ? Style.EMPTY.fg(Theme.accent()) : Theme.muted();
+        Style borderStyle = dsNames.isEmpty() ? Theme.muted()
+                : focusOnInput ? Style.EMPTY.fg(Theme.accent()) : Theme.muted();
         Block inputBlock = Block.builder()
                 .title(Title.from(title))
                 .borders(Borders.ALL)
@@ -411,9 +414,13 @@ class SqlQueryTab extends AbstractTab {
 
         TextArea textArea = TextArea.builder()
                 .cursorStyle(Style.EMPTY.reversed())
-                .placeholder("Type SQL query or file:query.sql ...")
+                .placeholder(dsNames.isEmpty()
+                        ? "No DataSource available"
+                        : "Type SQL query or file:query.sql ...")
                 .build();
-        if (focusOnInput) {
+        if (dsNames.isEmpty()) {
+            textArea.render(inner, frame.buffer(), sqlInput);
+        } else if (focusOnInput) {
             textArea.renderWithCursor(inner, frame.buffer(), sqlInput, frame);
         } else {
             textArea.render(inner, frame.buffer(), sqlInput);
