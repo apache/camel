@@ -21,10 +21,12 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.spi.EndpointServiceLocation;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
 import org.opensearch.client.RestClient;
+import org.opensearch.client.opensearch.OpenSearchClient;
 
 /**
  * Send requests to OpenSearch via Java Client API.
@@ -39,11 +41,16 @@ public class OpensearchEndpoint extends DefaultEndpoint implements EndpointServi
 
     private final RestClient client;
 
+    @UriParam(label = "advanced", description = "To use a custom configured OpenSearchClient instance")
+    @Metadata(autowired = true)
+    private OpenSearchClient openSearchClient;
+
     public OpensearchEndpoint(String uri, OpensearchComponent component, OpensearchConfiguration config,
                               RestClient client) {
         super(uri, component);
         this.configuration = config;
         this.client = client;
+        this.openSearchClient = component.getOpenSearchClient();
     }
 
     public OpensearchConfiguration getConfiguration() {
@@ -72,5 +79,13 @@ public class OpensearchEndpoint extends DefaultEndpoint implements EndpointServi
     @Override
     public String getServiceProtocol() {
         return "opensearch";
+    }
+
+    public OpenSearchClient getOpenSearchClient() {
+        return openSearchClient;
+    }
+
+    public void setOpenSearchClient(OpenSearchClient openSearchClient) {
+        this.openSearchClient = openSearchClient;
     }
 }

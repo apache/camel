@@ -91,11 +91,19 @@ class OpensearchProducer extends DefaultAsyncProducer {
     protected final OpensearchConfiguration configuration;
     private volatile RestClient client;
     private Sniffer sniffer;
+    private final OpenSearchClient openSearchClient;
+    private boolean isCustomClient;
 
     public OpensearchProducer(OpensearchEndpoint endpoint, OpensearchConfiguration configuration) {
         super(endpoint);
         this.configuration = configuration;
         this.client = endpoint.getClient();
+        this.openSearchClient = endpoint.getOpenSearchClient();
+        if(this.openSearchClient != null) {
+            isCustomClient = true;
+        }else{
+            isCustomClient = false;
+        }
     }
 
     private OpensearchOperation resolveOperation(Exchange exchange) {
@@ -154,12 +162,17 @@ class OpensearchProducer extends DefaultAsyncProducer {
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
         try {
-            if (configuration.isDisconnect() && client == null) {
-                startClient();
+            OpenSearchTransport transport;
+            if (openSearchClient == null) {
+                if (configuration.isDisconnect() && client == null && !isCustomClient) {
+                    startClient();
+                }
+                final ObjectMapper mapper = new ObjectMapper();
+                mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+                transport = new RestClientTransport(client, new JacksonJsonpMapper(mapper));
+            } else {
+                transport = openSearchClient._transport();
             }
-            final ObjectMapper mapper = new ObjectMapper();
-            mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
-            OpenSearchTransport transport = new RestClientTransport(client, new JacksonJsonpMapper(mapper));
             // 2. Index and type will be set by:
             // a. If the incoming body is already an action request
             // b. If the body is not an action request we will use headers if they
@@ -434,7 +447,7 @@ class OpensearchProducer extends DefaultAsyncProducer {
             if (ctx.configWaitForActiveShards()) {
                 message.removeHeader(OpensearchConstants.PARAM_WAIT_FOR_ACTIVE_SHARDS);
             }
-            if (configuration.isDisconnect()) {
+            if (configuration.isDisconnect() && !isCustomClient) {
                 IOHelper.close(ctx.transport());
                 if (configuration.isEnableSniffer()) {
                     IOHelper.close(sniffer);
@@ -451,7 +464,7 @@ class OpensearchProducer extends DefaultAsyncProducer {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        if (!configuration.isDisconnect()) {
+        if (!configuration.isDisconnect() && !isCustomClient) {
             startClient();
         }
     }
