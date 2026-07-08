@@ -2644,7 +2644,7 @@ public interface CxfEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final CxfHeaderNameBuilder INSTANCE = new CxfHeaderNameBuilder();
+        public static final CxfHeaderNameBuilder INSTANCE = new CxfHeaderNameBuilder();
 
         /**
          * The name of the operation.

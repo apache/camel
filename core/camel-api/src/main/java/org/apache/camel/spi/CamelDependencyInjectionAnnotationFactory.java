@@ -17,9 +17,18 @@
 package org.apache.camel.spi;
 
 /**
- * A factory which performs the task from Camel dependency injection annotations on a field, property or method
- * parameter of a specified type.
+ * Factory that creates the task carrying out a Camel dependency-injection annotation, such as binding a
+ * {@link org.apache.camel.BindToRegistry} bean into the {@link Registry}.
+ * <p/>
+ * During {@link CamelBeanPostProcessor} bean post-processing, when a {@link org.apache.camel.BindToRegistry} annotation
+ * is found this factory produces a {@link Runnable} that performs the actual binding, including any optional init and
+ * destroy methods. Decoupling the binding into a task lets runtimes (such as Spring or Quarkus) control exactly when
+ * and how beans are registered, rather than binding eagerly during the scan.
+ * <p/>
+ * See <a href="https://camel.apache.org/manual/bean-integration.html">Bean Integration</a> in the Camel user manual.
  *
+ * @see   CamelBeanPostProcessor
+ * @see   org.apache.camel.BindToRegistry
  * @since 3.16
  */
 public interface CamelDependencyInjectionAnnotationFactory {

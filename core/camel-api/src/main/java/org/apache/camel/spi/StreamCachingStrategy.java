@@ -26,10 +26,25 @@ import org.apache.camel.StreamCache;
 import org.jspecify.annotations.Nullable;
 
 /**
- * Strategy for stream caching, which allows message bodies based on streams (such as {@link java.io.InputStream}) to be
- * re-read. The strategy controls whether caching uses memory or spools to disk.
+ * Strategy that controls when and how stream-based message bodies (such as {@link java.io.InputStream}) are buffered so
+ * they can be re-read, as described in the <a href="https://camel.apache.org/manual/stream-caching.html">Stream
+ * Caching</a> documentation.
+ * <p/>
+ * Without stream caching, a stream body can only be consumed once; any EIP or log statement that reads the body a
+ * second time will see an empty stream. When stream caching is enabled, Camel wraps the body in a {@link StreamCache}
+ * that buffers data either in memory or in a temporary spool file on disk, depending on thresholds configured on this
+ * strategy.
+ * <p/>
+ * The key thresholds are:
+ * <ul>
+ * <li>{@link #setSpoolThreshold(long)} — streams larger than this value are spooled to disk rather than held in memory,
+ * preventing out-of-memory errors for large payloads.</li>
+ * <li>{@link #setBufferSize(int)} — the internal read-buffer size when copying bytes to the spool file.</li>
+ * <li>{@link #setSpoolDirectory(java.io.File)} — the directory where spool files are written.</li>
+ * </ul>
+ * Statistics about in-memory vs. on-disk cache usage are available via {@link #getStatistics()}.
  *
- * @see <a href="https://camel.apache.org/stream-caching.html">stream caching</a>
+ * @see StreamCache
  */
 public interface StreamCachingStrategy extends StaticService {
 

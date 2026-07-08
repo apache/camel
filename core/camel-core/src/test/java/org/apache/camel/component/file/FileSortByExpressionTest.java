@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.file;
 
-import java.util.concurrent.TimeUnit;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -42,6 +40,9 @@ public class FileSortByExpressionTest extends ContextTestSupport {
     public void testSortFiles() throws Exception {
         prepareFolder("a");
 
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedBodiesReceived("Hello Paris", "Hello London", "Hello Copenhagen");
+
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
@@ -49,16 +50,15 @@ public class FileSortByExpressionTest extends ContextTestSupport {
             }
         });
 
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedBodiesReceived("Hello Paris", "Hello London", "Hello Copenhagen");
-
-        // wait a bit for the file processing to complete
-        assertMockEndpointsSatisfied(1, TimeUnit.SECONDS);
+        assertMockEndpointsSatisfied();
     }
 
     @Test
     public void testSortFilesReverse() throws Exception {
         prepareFolder("b");
+
+        MockEndpoint reverse = getMockEndpoint("mock:reverse");
+        reverse.expectedBodiesReceived("Hello Copenhagen", "Hello London", "Hello Paris");
 
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -68,11 +68,7 @@ public class FileSortByExpressionTest extends ContextTestSupport {
             }
         });
 
-        MockEndpoint reverse = getMockEndpoint("mock:reverse");
-        reverse.expectedBodiesReceived("Hello Copenhagen", "Hello London", "Hello Paris");
-
-        // wait a bit for the file processing to complete
-        assertMockEndpointsSatisfied(1, TimeUnit.SECONDS);
+        assertMockEndpointsSatisfied();
     }
 
 }

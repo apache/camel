@@ -20,7 +20,21 @@ import org.apache.camel.support.jsse.SSLContextParameters;
 import org.jspecify.annotations.Nullable;
 
 /**
- * Indicates that an object is able to use the global {@link SSLContextParameters} if configured.
+ * Marker interface for Camel components and endpoints that can consume the context-wide
+ * {@link org.apache.camel.support.jsse.SSLContextParameters} configured on the {@link CamelContext}.
+ * <p/>
+ * Camel supports a single global SSL/TLS configuration via
+ * {@link CamelContext#setSSLContextParameters(org.apache.camel.support.jsse.SSLContextParameters)}. Components that
+ * implement this interface expose the {@link #isUseGlobalSslContextParameters()} /
+ * {@link #setUseGlobalSslContextParameters(boolean)} pair; when enabled, {@link #retrieveGlobalSslContextParameters()}
+ * fetches the context-level instance so the component does not need its own per-endpoint TLS configuration. This
+ * pattern avoids duplicating keystore and truststore settings across many endpoints while still allowing per-endpoint
+ * overrides when the component has its own {@code SSLContextParameters} property.
+ * <p/>
+ * See <a href="https://camel.apache.org/manual/camel-configuration-utilities.html">JSSE Utility</a> in the Camel user
+ * manual.
+ *
+ * @see org.apache.camel.support.jsse.SSLContextParameters
  */
 public interface SSLContextParametersAware extends CamelContextAware {
 

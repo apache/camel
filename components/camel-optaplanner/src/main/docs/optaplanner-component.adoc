@@ -7,8 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
-//Manually maintained attributes
-:camel-spring-boot-name: optaplanner
 
 *Since Camel {since}*
 
@@ -66,20 +64,76 @@ the best result from the solver identified by `solverId`.
 
 Solve a planning problem on the ActiveMQ queue with OptaPlanner, passing the `SolverManager`:
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------
-from("activemq:My.Queue").
-  .to("optaplanner:problemName?solverManager=#solverManager");
---------------------------------------------------
+----
+from("activemq:My.Queue")
+    .to("optaplanner:problemName?solverManager=#solverManager");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="activemq:My.Queue"/>
+  <to uri="optaplanner:problemName?solverManager=#solverManager"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: activemq:My.Queue
+      steps:
+        - to:
+            uri: optaplanner:problemName
+            parameters:
+              solverManager: "#solverManager"
+----
+====
 
 Expose OptaPlanner as a REST service, passing the Solver configuration file:
 
+[tabs]
+====
+Java::
++
 [source,java]
--------------------------------------------------------
+----
 from("cxfrs:bean:rsServer?bindingStyle=SimpleConsumer")
-  .to("optaplanner:problemName?configFile=/org/foo/barSolverConfig.xml");
--------------------------------------------------------
+    .to("optaplanner:problemName?configFile=/org/foo/barSolverConfig.xml");
+----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="cxfrs:bean:rsServer?bindingStyle=SimpleConsumer"/>
+  <to uri="optaplanner:problemName?configFile=/org/foo/barSolverConfig.xml"/>
+</route>
+----
 
-
-include::spring-boot:partial$starter.adoc[]
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: cxfrs:bean:rsServer
+      parameters:
+        bindingStyle: SimpleConsumer
+      steps:
+        - to:
+            uri: optaplanner:problemName
+            parameters:
+              configFile: /org/foo/barSolverConfig.xml
+----
+====

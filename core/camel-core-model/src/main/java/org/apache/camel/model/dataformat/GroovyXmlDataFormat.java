@@ -29,13 +29,15 @@ import org.apache.camel.spi.Metadata;
 /**
  * Transform between XML and Groovy Node (Map structure) objects.
  */
-@Metadata(firstVersion = "4.15.0", label = "dataformat,transformation,xml", title = "Groovy XML")
+@Metadata(firstVersion = "4.15.0", label = "dataformat,transformation,xml", title = "Groovy XML",
+          description = "Transform between XML and Groovy Node (Map structure) objects")
 @XmlRootElement(name = "groovyXml")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class GroovyXmlDataFormat extends DataFormatDefinition {
 
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean", defaultValue = "true")
+    @Metadata(description = "Whether to enable attribute mapping. When enabled, keys that start with _ or @ character will be mapped to an XML attribute, and vice versa.",
+              javaType = "java.lang.Boolean", defaultValue = "true")
     private String attributeMapping;
 
     public GroovyXmlDataFormat() {
@@ -61,10 +63,6 @@ public class GroovyXmlDataFormat extends DataFormatDefinition {
         return attributeMapping;
     }
 
-    /**
-     * To turn on or off attribute mapping. When enabled then keys that start with _ or @ character will be mapped to an
-     * XML attribute, and vise versa. This rule is what Jackson and other XML or JSon libraries uses.
-     */
     public void setAttributeMapping(String attributeMapping) {
         this.attributeMapping = attributeMapping;
     }

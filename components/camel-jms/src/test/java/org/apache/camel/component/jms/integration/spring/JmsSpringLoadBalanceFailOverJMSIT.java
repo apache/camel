@@ -20,6 +20,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -29,6 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * Integration test for Camel load-balancer fail-over with JMS
  */
 @Tags({ @Tag("not-parallel"), @Tag("spring") })
+@Isolated
 public class JmsSpringLoadBalanceFailOverJMSIT extends AbstractSpringJMSITSupport {
 
     @Override

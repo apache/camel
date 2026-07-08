@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.sjms.consumer;
 
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -23,6 +25,8 @@ import org.apache.camel.component.sjms.SjmsComponent;
 import org.apache.camel.component.sjms.support.JmsTestSupport;
 import org.junit.jupiter.api.Test;
 import org.messaginghub.pooled.jms.JmsPoolConnectionFactory;
+
+import static org.awaitility.Awaitility.await;
 
 public class InOnlyTopicDurableConsumerTest extends JmsTestSupport {
 
@@ -36,8 +40,11 @@ public class InOnlyTopicDurableConsumerTest extends JmsTestSupport {
         MockEndpoint mock2 = getMockEndpoint("mock:result2");
         mock2.expectedBodiesReceived("Hello World");
 
-        // wait a bit and send the message
-        Thread.sleep(1000);
+        // Ensure durable subscription consumers are fully started before publishing
+        // to avoid losing the message if the subscription is not yet registered on the broker
+        await().atMost(5, TimeUnit.SECONDS)
+                .until(() -> context.getRoutes().stream()
+                        .allMatch(r -> context.getRouteController().getRouteStatus(r.getId()).isStarted()));
 
         template.sendBody("sjms:topic:foo.topic.InOnlyTopicDurableConsumerTest", "Hello World");
 

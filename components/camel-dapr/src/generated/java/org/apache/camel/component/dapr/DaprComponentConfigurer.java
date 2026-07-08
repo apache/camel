@@ -56,6 +56,8 @@ public class DaprComponentConfigurer extends PropertyConfigurerSupport implement
         case "expiryInSeconds": getOrCreateConfiguration(target).setExpiryInSeconds(property(camelContext, java.lang.Integer.class, value)); return true;
         case "getworkflowio":
         case "getWorkflowIO": getOrCreateConfiguration(target).setGetWorkflowIO(property(camelContext, boolean.class, value)); return true;
+        case "headerfilterstrategy":
+        case "headerFilterStrategy": target.setHeaderFilterStrategy(property(camelContext, org.apache.camel.spi.HeaderFilterStrategy.class, value)); return true;
         case "httpextension":
         case "httpExtension": getOrCreateConfiguration(target).setHttpExtension(property(camelContext, io.dapr.client.domain.HttpExtension.class, value)); return true;
         case "key": getOrCreateConfiguration(target).setKey(property(camelContext, java.lang.String.class, value)); return true;
@@ -137,6 +139,8 @@ public class DaprComponentConfigurer extends PropertyConfigurerSupport implement
         case "expiryInSeconds": return java.lang.Integer.class;
         case "getworkflowio":
         case "getWorkflowIO": return boolean.class;
+        case "headerfilterstrategy":
+        case "headerFilterStrategy": return org.apache.camel.spi.HeaderFilterStrategy.class;
         case "httpextension":
         case "httpExtension": return io.dapr.client.domain.HttpExtension.class;
         case "key": return java.lang.String.class;
@@ -214,6 +218,8 @@ public class DaprComponentConfigurer extends PropertyConfigurerSupport implement
         case "expiryInSeconds": return getOrCreateConfiguration(target).getExpiryInSeconds();
         case "getworkflowio":
         case "getWorkflowIO": return getOrCreateConfiguration(target).isGetWorkflowIO();
+        case "headerfilterstrategy":
+        case "headerFilterStrategy": return target.getHeaderFilterStrategy();
         case "httpextension":
         case "httpExtension": return getOrCreateConfiguration(target).getHttpExtension();
         case "key": return getOrCreateConfiguration(target).getKey();

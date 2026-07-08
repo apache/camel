@@ -291,7 +291,7 @@ public interface JsonPatchEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final JsonPatchHeaderNameBuilder INSTANCE = new JsonPatchHeaderNameBuilder();
+        public static final JsonPatchHeaderNameBuilder INSTANCE = new JsonPatchHeaderNameBuilder();
 
         /**
          * The resource URI.

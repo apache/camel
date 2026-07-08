@@ -27,25 +27,26 @@ import org.apache.camel.spi.Metadata;
 /**
  * A key value pair where the value is a literal value
  */
-@Metadata(label = "configuration")
+@Metadata(label = "configuration",
+          description = "Defines a key/value pair with a literal value, used for passing parameters in route templates and other configurations")
 @XmlType
 @XmlAccessorType(XmlAccessType.FIELD)
 public class BeanPropertyDefinition {
 
     @XmlAttribute
+    @Metadata(description = "The name of the property.")
     private String key;
     @XmlAttribute
+    @Metadata(description = "The property value.")
     private String value;
     @XmlElement(name = "properties")
+    @Metadata(description = "Optional nested properties.")
     private BeanPropertiesDefinition properties;
 
     public String getKey() {
         return key;
     }
 
-    /**
-     * The name of the property
-     */
     public void setKey(String key) {
         this.key = key;
     }
@@ -54,9 +55,6 @@ public class BeanPropertyDefinition {
         return value;
     }
 
-    /**
-     * The property value
-     */
     public void setValue(String value) {
         this.value = value;
     }
@@ -65,9 +63,6 @@ public class BeanPropertyDefinition {
         return properties;
     }
 
-    /**
-     * Optional nested properties.
-     */
     public void setProperties(BeanPropertiesDefinition properties) {
         this.properties = properties;
     }

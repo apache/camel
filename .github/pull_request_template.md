@@ -31,3 +31,7 @@ You can run the aforementioned command in your module so that the build auto-for
 You can learn more about the contribution guidelines at https://github.com/apache/camel/blob/main/CONTRIBUTING.md
 -->
 
+# AI-assisted contributions
+
+- [ ] If this PR includes AI-generated code, commits have proper co-authorship attribution (e.g., `Co-authored-by` trailers) and the PR description identifies the AI tool used.
+

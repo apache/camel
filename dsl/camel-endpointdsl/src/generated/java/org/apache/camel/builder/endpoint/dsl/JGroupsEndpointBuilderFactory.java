@@ -410,7 +410,7 @@ public interface JGroupsEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final JGroupsHeaderNameBuilder INSTANCE = new JGroupsHeaderNameBuilder();
+        public static final JGroupsHeaderNameBuilder INSTANCE = new JGroupsHeaderNameBuilder();
 
         /**
          * Address (org.jgroups.Address) of the channel associated with the

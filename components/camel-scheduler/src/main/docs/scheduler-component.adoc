@@ -8,8 +8,6 @@
 :tabs-sync-option:
 :component-header: Only consumer is supported
 :core:
-//Manually maintained attributes
-:camel-spring-boot-name: scheduler
 
 *Since Camel {since}*
 
@@ -36,7 +34,6 @@ you can configure the thread pool to allow more concurrent threads.
 
 *Note:* The IN body of the generated exchange is `null`. So
 `exchange.getIn().getBody()` returns `null`.
-
 
 
 // component options: START
@@ -94,17 +91,17 @@ exchange.
 
 To set up a route that generates an event every 60 seconds:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("scheduler://foo?delay=60000").to("bean:myBean?method=someMethodName");
 ----
 
-The above route will generate an event and then invoke the
-`someMethodName` method on the bean called `myBean` in the
-Registry such as JNDI or Spring.
-
-And the route in Spring DSL:
-
+XML::
++
 [source,xml]
 ----
 <route>
@@ -113,5 +110,23 @@ And the route in Spring DSL:
 </route>
 ----
 
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: scheduler:foo
+      parameters:
+        delay: 60000
+      steps:
+        - to:
+            uri: bean:myBean
+            parameters:
+              method: someMethodName
+----
+====
 
-include::spring-boot:partial$starter.adoc[]
+The above route will generate an event and then invoke the
+`someMethodName` method on the bean called `myBean` in the
+Registry such as JNDI or Spring.

@@ -28,7 +28,8 @@ import org.apache.camel.spi.Metadata;
 /**
  * To configure headers for UniVocity data formats.
  */
-@Metadata(label = "dataformat,transformation,csv", title = "uniVocity Header")
+@Metadata(label = "dataformat,transformation,csv", title = "uniVocity Header",
+          description = "Defines a column header for UniVocity data format configuration")
 @XmlRootElement(name = "univocityHeader")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class UniVocityHeader implements CopyableDefinition<UniVocityHeader> {
@@ -36,6 +37,7 @@ public class UniVocityHeader implements CopyableDefinition<UniVocityHeader> {
     @XmlValue
     private String name;
     @XmlAttribute
+    @Metadata(description = "Header length.")
     private String length;
 
     public UniVocityHeader() {
@@ -55,9 +57,6 @@ public class UniVocityHeader implements CopyableDefinition<UniVocityHeader> {
         return name;
     }
 
-    /**
-     * Header name
-     */
     public void setName(String name) {
         this.name = name;
     }
@@ -66,9 +65,6 @@ public class UniVocityHeader implements CopyableDefinition<UniVocityHeader> {
         return length;
     }
 
-    /**
-     * Header length
-     */
     public void setLength(String length) {
         this.length = length;
     }

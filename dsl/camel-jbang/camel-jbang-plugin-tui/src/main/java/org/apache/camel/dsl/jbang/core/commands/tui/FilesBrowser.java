@@ -17,25 +17,27 @@
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Locale;
 
 import dev.tamboui.layout.Rect;
 import dev.tamboui.style.Color;
 import dev.tamboui.style.Style;
 import dev.tamboui.terminal.Frame;
+import dev.tamboui.text.CharWidth;
 import dev.tamboui.text.Line;
 import dev.tamboui.text.Span;
 import dev.tamboui.tui.event.KeyEvent;
+import dev.tamboui.tui.event.MouseEvent;
+import dev.tamboui.tui.event.MouseEventKind;
 import dev.tamboui.widgets.Clear;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
+import dev.tamboui.widgets.block.Borders;
 import dev.tamboui.widgets.block.Title;
 import dev.tamboui.widgets.list.ListItem;
 import dev.tamboui.widgets.list.ListState;
@@ -44,29 +46,17 @@ import dev.tamboui.widgets.list.ScrollMode;
 
 class FilesBrowser {
 
-    record FileEntry(String emoji, String name, long size, String path) {
+    record FileEntry(String emoji, String name, long size, String path, boolean directory) {
     }
-
-    private static final String[] CAMEL_YAML_MARKERS = {
-            "- from:", "- route:",
-            "- routeTemplate:", "- route-template:",
-            "- templatedRoute:", "- templated-route:",
-            "- routeConfiguration:", "- route-configuration:",
-            "- rest:", "- beans:"
-    };
-
-    private static final String[] CAMEL_XML_MARKERS = {
-            "<route", "<routes", "<routeTemplate", "<routeTemplates",
-            "<templatedRoute", "<templatedRoutes",
-            "<rest", "<rests", "<routeConfiguration",
-            "<beans", "<blueprint", "<camel"
-    };
 
     private boolean visible;
     private String title;
+    private Path rootDir;
+    private Path currentDir;
     private final ListState listState = new ListState();
     private List<FileEntry> entries = Collections.emptyList();
     private final SourceViewer sourceViewer = new SourceViewer();
+    private Rect lastPopup;
 
     boolean isVisible() {
         return visible;
@@ -82,6 +72,8 @@ class FilesBrowser {
 
     void reset() {
         visible = false;
+        rootDir = null;
+        currentDir = null;
         entries = Collections.emptyList();
         sourceViewer.reset();
     }
@@ -91,33 +83,79 @@ class FilesBrowser {
         if (dir == null || !Files.isDirectory(dir)) {
             return;
         }
-        List<FileEntry> found = new ArrayList<>();
+        rootDir = dir;
+        currentDir = dir;
+        title = info.name != null ? info.name : "?";
+        sourceViewer.reset();
+        if (!loadDirectory(dir)) {
+            return;
+        }
+        visible = true;
+    }
+
+    private boolean loadDirectory(Path dir) {
+        List<FileEntry> dirs = new ArrayList<>();
+        List<FileEntry> files = new ArrayList<>();
         try (var stream = Files.list(dir)) {
-            stream.filter(Files::isRegularFile)
-                    .limit(99)
+            stream.limit(200)
                     .forEach(p -> {
                         String name = p.getFileName().toString();
-                        String emoji = fileEmoji(p);
-                        long size = 0;
-                        try {
-                            size = Files.size(p);
-                        } catch (IOException e) {
-                            // ignore
+                        if (Files.isDirectory(p) && !name.startsWith(".")) {
+                            dirs.add(new FileEntry(TuiIcons.FOLDER, name, -1, p.toString(), true));
+                        } else if (Files.isRegularFile(p)) {
+                            String emoji = TuiHelper.fileEmoji(p);
+                            long size = 0;
+                            try {
+                                size = Files.size(p);
+                            } catch (IOException e) {
+                                // ignore
+                            }
+                            files.add(new FileEntry(emoji, name, size, p.toString(), false));
                         }
-                        found.add(new FileEntry(emoji, name, size, p.toString()));
                     });
         } catch (IOException e) {
-            return;
+            return false;
         }
+        dirs.sort(Comparator.comparing(FileEntry::name, String.CASE_INSENSITIVE_ORDER));
+        files.sort(Comparator.comparing(FileEntry::name, String.CASE_INSENSITIVE_ORDER));
+
+        List<FileEntry> found = new ArrayList<>();
+        if (!dir.equals(rootDir)) {
+            found.add(new FileEntry(TuiIcons.FOLDER, "..", -1, dir.getParent().toString(), true));
+        }
+        found.addAll(dirs);
+        found.addAll(files);
+
         if (found.isEmpty()) {
-            return;
+            return false;
         }
-        found.sort(Comparator.comparing(FileEntry::name, String.CASE_INSENSITIVE_ORDER));
         entries = found;
-        title = info.name != null ? info.name : "?";
         listState.select(0);
-        visible = true;
-        sourceViewer.reset();
+        currentDir = dir;
+        return true;
+    }
+
+    boolean handleMouseEvent(MouseEvent me) {
+        if (sourceViewer.isVisible()) {
+            return sourceViewer.handleMouseEvent(me);
+        }
+        if (me.kind() == MouseEventKind.SCROLL_UP) {
+            listState.selectPrevious();
+            return true;
+        }
+        if (me.kind() == MouseEventKind.SCROLL_DOWN) {
+            listState.selectNext(entries.size());
+            return true;
+        }
+        if (me.isClick() && lastPopup != null && lastPopup.contains(me.x(), me.y())) {
+            int innerTop = lastPopup.top() + 1;
+            int clicked = listState.offset() + (me.y() - innerTop);
+            if (clicked >= 0 && clicked < entries.size()) {
+                listState.select(clicked);
+            }
+            return true;
+        }
+        return true;
     }
 
     boolean handleKeyEvent(KeyEvent ke) {
@@ -143,11 +181,41 @@ class FilesBrowser {
                 listState.selectNext(entries.size());
                 return true;
             }
+            if (ke.isPageUp()) {
+                for (int i = 0; i < 20; i++) {
+                    listState.selectPrevious();
+                }
+                return true;
+            }
+            if (ke.isPageDown()) {
+                for (int i = 0; i < 20; i++) {
+                    listState.selectNext(entries.size());
+                }
+                return true;
+            }
+            if (ke.isHome()) {
+                listState.select(0);
+                return true;
+            }
+            if (ke.isEnd()) {
+                listState.select(entries.size() - 1);
+                return true;
+            }
+            if (ke.isDeleteBackward()) {
+                if (currentDir != null && !currentDir.equals(rootDir)) {
+                    loadDirectory(currentDir.getParent());
+                }
+                return true;
+            }
             if (ke.isConfirm()) {
                 Integer sel = listState.selected();
                 if (sel != null && sel < entries.size()) {
                     FileEntry entry = entries.get(sel);
-                    sourceViewer.loadFile(Path.of(entry.path()));
+                    if (entry.directory()) {
+                        loadDirectory(Path.of(entry.path()));
+                    } else {
+                        sourceViewer.loadFile(Path.of(entry.path()));
+                    }
                 }
                 return true;
             }
@@ -166,35 +234,57 @@ class FilesBrowser {
             return;
         }
 
+        String popupTitle = " Files: " + title;
+        if (rootDir != null && currentDir != null && !currentDir.equals(rootDir)) {
+            popupTitle += "/" + rootDir.relativize(currentDir);
+        }
+        popupTitle += " ";
+
         int nameWidth = entries.stream().mapToInt(e -> e.name().length()).max().orElse(10);
-        int sizeWidth = entries.stream().mapToInt(e -> formatFileSize(e.size()).length()).max().orElse(4);
+        int sizeWidth = entries.stream()
+                .filter(e -> !e.directory())
+                .mapToInt(e -> formatFileSize(e.size()).length()).max().orElse(4);
         int itemWidth = 4 + nameWidth + 2 + sizeWidth + 2;
-        int popupW = Math.min(area.width() - 4, Math.max(30, itemWidth + 4));
-        int popupH = Math.min(area.height() - 4, entries.size() + 2);
+        int titleWidth = popupTitle.length() + 4;
+        int popupW = Math.min(area.width() - 4, Math.max(50, Math.max(itemWidth + 4, titleWidth)));
+        int popupH = Math.min(area.height() - 4, Math.max(12, entries.size() + 2));
 
         int x = area.left() + Math.max(0, (area.width() - popupW) / 2);
         int y = area.top() + 2;
         Rect popup = new Rect(x, y, Math.min(popupW, area.width()), Math.min(popupH, area.height() - 2));
 
+        lastPopup = popup;
         frame.renderWidget(Clear.INSTANCE, popup);
 
+        int innerWidth = popupW - 2;
         ListItem[] items = new ListItem[entries.size()];
         for (int i = 0; i < entries.size(); i++) {
             FileEntry entry = entries.get(i);
-            String sizeStr = formatFileSize(entry.size());
-            String label = String.format("  %s %-" + nameWidth + "s  %s", entry.emoji(), entry.name(), sizeStr);
-            items[i] = ListItem.from(label);
+            if (entry.directory()) {
+                String label = String.format("  %s %-" + nameWidth + "s", entry.emoji(), entry.name());
+                boolean dimDir = entry.name().startsWith(".") || "target".equals(entry.name());
+                Style dirStyle = dimDir ? Style.EMPTY.fg(Color.CYAN).dim() : Style.EMPTY.fg(Color.CYAN);
+                items[i] = ListItem.from(Line.from(Span.styled(label, dirStyle)));
+            } else {
+                String sizeStr = formatFileSize(entry.size());
+                String nameLabel = String.format("  %s %s", entry.emoji(), entry.name());
+                int gap = Math.max(1, innerWidth - CharWidth.of(nameLabel) - sizeStr.length() - 1);
+                String padding = " ".repeat(gap);
+                items[i] = ListItem.from(Line.from(
+                        Span.raw(nameLabel + padding),
+                        Span.styled(sizeStr + " ", Style.EMPTY.dim())));
+            }
         }
 
         ListWidget list = ListWidget.builder()
                 .items(items)
-                .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
+                .highlightStyle(Theme.selectionBg())
                 .highlightSymbol("")
-                .scrollMode(ScrollMode.NONE)
+                .scrollMode(ScrollMode.AUTO_SCROLL)
                 .block(Block.builder()
-                        .borderType(BorderType.ROUNDED)
+                        .borderType(BorderType.ROUNDED).borders(Borders.ALL)
                         .title(Title.from(Line
-                                .from(Span.styled(" Files: " + title + " ", Style.EMPTY.fg(Color.YELLOW).bold()))))
+                                .from(Span.styled(popupTitle, Style.EMPTY.fg(Color.YELLOW).bold()))))
                         .build())
                 .build();
         frame.renderStatefulWidget(list, popup, listState);
@@ -204,9 +294,9 @@ class FilesBrowser {
         if (sourceViewer.isVisible()) {
             sourceViewer.renderFooter(spans);
         } else {
-            MonitorContext.hint(spans, "Up/Down", "navigate");
-            MonitorContext.hint(spans, "Enter", "open");
-            MonitorContext.hint(spans, "Esc", "close");
+            TuiHelper.hint(spans, TuiIcons.HINT_SCROLL, "navigate");
+            TuiHelper.hint(spans, "Enter", "open");
+            TuiHelper.hint(spans, "Esc", "close");
         }
     }
 
@@ -235,6 +325,17 @@ class FilesBrowser {
                 }
             }
         }
+        // For exported apps (Quarkus, Spring Boot), MAVEN_PROJECTBASEDIR points to the
+        // actual project directory inside .camel-jbang-run, which may differ from info.directory
+        for (ConfigurationTab.ConfigProperty cp : info.configProperties) {
+            if (("MAVEN_PROJECTBASEDIR".equals(cp.key) || "maven.projectbasedir".equals(cp.key))
+                    && cp.value != null && cp.value.contains(".camel-jbang-run")) {
+                Path dir = Path.of(cp.value);
+                if (Files.isDirectory(dir)) {
+                    return dir;
+                }
+            }
+        }
         if (info.directory != null && !info.directory.isEmpty()) {
             return Path.of(info.directory);
         }
@@ -252,89 +353,14 @@ class FilesBrowser {
     }
 
     static String fileType(Path path) {
-        String name = path.getFileName().toString();
-        String lower = name.toLowerCase(Locale.ROOT);
-        if (lower.endsWith(".kamelet.yaml") || lower.endsWith(".kamelet.yml")) {
-            return "camel";
-        }
-        if (lower.endsWith(".yaml") || lower.endsWith(".yml")) {
-            return isCamelYaml(path) ? "camel" : "other";
-        }
-        if (lower.endsWith(".xml")) {
-            return isCamelXml(path) ? "camel" : "other";
-        }
-        if (lower.endsWith(".java")) {
-            return isCamelJava(path) ? "camel" : "java";
-        }
-        if (lower.endsWith(".properties") || lower.endsWith(".cfg")) {
-            return "config";
-        }
-        if (lower.startsWith("readme")) {
-            return "readme";
-        }
-        return "other";
+        String emoji = TuiHelper.fileEmoji(path);
+        return switch (emoji) {
+            case TuiIcons.CAMEL -> "camel";
+            case TuiIcons.JAVA -> "java";
+            case TuiIcons.DOCUMENT -> "config";
+            case TuiIcons.README -> "readme";
+            default -> "other";
+        };
     }
 
-    private static String fileEmoji(Path path) {
-        String name = path.getFileName().toString();
-        String lower = name.toLowerCase(Locale.ROOT);
-        if (lower.endsWith(".kamelet.yaml") || lower.endsWith(".kamelet.yml")) {
-            return "🐪";
-        }
-        if (lower.endsWith(".yaml") || lower.endsWith(".yml")) {
-            return isCamelYaml(path) ? "🐪" : "📋";
-        }
-        if (lower.endsWith(".xml")) {
-            return isCamelXml(path) ? "🐪" : "📋";
-        }
-        if (lower.endsWith(".java")) {
-            return isCamelJava(path) ? "🐪" : "☕";
-        }
-        if (lower.endsWith(".properties") || lower.endsWith(".cfg")) {
-            return "📄";
-        }
-        if (lower.startsWith("readme")) {
-            return "📖";
-        }
-        return "📋";
-    }
-
-    private static boolean isCamelYaml(Path path) {
-        try {
-            String content = Files.readString(path, StandardCharsets.UTF_8);
-            for (String marker : CAMEL_YAML_MARKERS) {
-                if (content.contains(marker)) {
-                    return true;
-                }
-            }
-        } catch (IOException e) {
-            // ignore
-        }
-        return false;
-    }
-
-    private static boolean isCamelXml(Path path) {
-        try {
-            String content = Files.readString(path, StandardCharsets.UTF_8);
-            for (String marker : CAMEL_XML_MARKERS) {
-                if (content.contains(marker)) {
-                    return true;
-                }
-            }
-        } catch (IOException e) {
-            // ignore
-        }
-        return false;
-    }
-
-    private static boolean isCamelJava(Path path) {
-        try {
-            String content = Files.readString(path, StandardCharsets.UTF_8);
-            return content.contains("RouteBuilder")
-                    || content.contains("EndpointRouteBuilder");
-        } catch (IOException e) {
-            // ignore
-        }
-        return false;
-    }
 }

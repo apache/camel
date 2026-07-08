@@ -41,7 +41,10 @@ import org.apache.camel.spi.Metadata;
 /**
  * Balances message processing among a number of nodes
  */
-@Metadata(label = "eip,routing")
+@Metadata(label = "eip,loadbalancing,routing",
+          aliases = { "load-balance" },
+          description = "Distributes messages across multiple endpoints using a load balancing strategy"
+                        + " such as round-robin, random, failover, or weighted")
 @XmlRootElement(name = "loadBalance")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class LoadBalanceDefinition extends OutputDefinition<LoadBalanceDefinition> {
@@ -53,6 +56,7 @@ public class LoadBalanceDefinition extends OutputDefinition<LoadBalanceDefinitio
             @XmlElement(name = "stickyLoadBalancer", type = StickyLoadBalancerDefinition.class),
             @XmlElement(name = "topicLoadBalancer", type = TopicLoadBalancerDefinition.class),
             @XmlElement(name = "weightedLoadBalancer", type = WeightedLoadBalancerDefinition.class) })
+    @Metadata(description = "The load balancing strategy to use, such as round-robin, random, sticky, topic, failover, weighted, or a custom load balancer.")
     private LoadBalancerDefinition loadBalancerType;
 
     public LoadBalanceDefinition() {
@@ -83,9 +87,6 @@ public class LoadBalanceDefinition extends OutputDefinition<LoadBalanceDefinitio
         return loadBalancerType;
     }
 
-    /**
-     * The load balancer to be used
-     */
     public void setLoadBalancerType(LoadBalancerDefinition loadbalancer) {
         if (loadBalancerType != null) {
             throw new IllegalArgumentException(

@@ -30,12 +30,14 @@ import org.apache.camel.spi.Metadata;
 /**
  * To refer to an XML file with rest services defined using the rest-dsl
  */
-@Metadata(label = "configuration,rest")
+@Metadata(label = "configuration,rest",
+          description = "References an external XML file containing REST service definitions for inclusion in the current context")
 @XmlRootElement(name = "restContextRef")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RestContextRefDefinition {
 
     @XmlAttribute(required = true)
+    @Metadata(description = "Reference to the rest-dsl.")
     private String ref;
 
     public RestContextRefDefinition() {
@@ -54,9 +56,6 @@ public class RestContextRefDefinition {
         return ref;
     }
 
-    /**
-     * Reference to the rest-dsl
-     */
     public void setRef(String ref) {
         this.ref = ref;
     }

@@ -11,7 +11,7 @@
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-langchain4j-chat",
-    "version": "4.21.0-SNAPSHOT",
+    "version": "4.22.0-SNAPSHOT",
     "scheme": "langchain4j-chat",
     "extendsScheme": "",
     "syntax": "langchain4j-chat:chatId",
@@ -32,7 +32,11 @@
   },
   "headers": {
     "CamelLangChain4jChatPromptTemplate": { "index": 0, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The prompt Template.", "constantName": "org.apache.camel.component.langchain4j.chat.LangChain4jChatHeaders#PROMPT_TEMPLATE" },
-    "CamelLangChain4jChatAugmentedData": { "index": 1, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Augmented Data for RAG", "constantName": "org.apache.camel.component.langchain4j.chat.LangChain4jChatHeaders#AUGMENTED_DATA" }
+    "CamelLangChain4jChatAugmentedData": { "index": 1, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Augmented Data for RAG", "constantName": "org.apache.camel.component.langchain4j.chat.LangChain4jChatHeaders#AUGMENTED_DATA" },
+    "CamelLangChain4jChatFinishReason": { "index": 2, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "dev.langchain4j.model.output.FinishReason", "enum": [ "STOP", "LENGTH", "TOOL_EXECUTION", "CONTENT_FILTER", "OTHER" ], "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The Finish Reason.", "constantName": "org.apache.camel.component.langchain4j.chat.LangChain4jChatHeaders#FINISH_REASON" },
+    "CamelLangChain4jChatInputTokenCount": { "index": 3, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "int", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The Input Token Count.", "constantName": "org.apache.camel.component.langchain4j.chat.LangChain4jChatHeaders#INPUT_TOKEN_COUNT" },
+    "CamelLangChain4jChatOutputTokenCount": { "index": 4, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "int", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The Output Token Count.", "constantName": "org.apache.camel.component.langchain4j.chat.LangChain4jChatHeaders#OUTPUT_TOKEN_COUNT" },
+    "CamelLangChain4jChatTotalTokenCount": { "index": 5, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "int", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The Total Token Count.", "constantName": "org.apache.camel.component.langchain4j.chat.LangChain4jChatHeaders#TOTAL_TOKEN_COUNT" }
   },
   "properties": {
     "chatId": { "index": 0, "kind": "path", "displayName": "Chat Id", "group": "producer", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The id" },

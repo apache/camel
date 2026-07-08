@@ -35,9 +35,12 @@ import org.apache.camel.test.infra.jaeger.services.JaegerLocalContainerInfraServ
 /**
  * Manual test application that starts a Jaeger container, sends sample OTEL traces, and waits for the user to press
  * Enter before shutting down.
- *
+ * <p/>
  * Run with: mvn test-compile exec:java -Dexec.mainClass=org.apache.camel.test.infra.jaeger.JaegerTestApp
- * -Dexec.classpathScope=test -pl test-infra/camel-test-infra-jaeger
+ * -Dexec.classpathScope=test -pl test-infra/camel-test-infra-jaeger -am (-am is required so the reactor builds the
+ * camel-test-infra-common snapshot before exec resolves the classpath)
+ *
+ * @since 4.21
  */
 public final class JaegerTestApp {
 

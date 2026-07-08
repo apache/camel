@@ -1,7 +1,7 @@
 = Remove Properties EIP
 :doctitle: Remove Properties
 :shortname: removeProperties
-:description: Removes message exchange properties whose name matches a specified pattern
+:description: Removes all exchange properties whose names match a given pattern
 :since: 
 :supportlevel: Stable
 :tabs-sync-option:

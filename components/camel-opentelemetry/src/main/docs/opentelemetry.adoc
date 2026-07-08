@@ -7,8 +7,6 @@
 :supportlevel: Stable-deprecated
 :deprecated: *deprecated*
 :tabs-sync-option:
-//Manually maintained attributes
-:camel-spring-boot-name: opentelemetry
 
 *Since Camel {since}*
 
@@ -47,14 +45,15 @@ To explicitly configure OpenTelemetry support, instantiate the `OpenTelemetryTra
 context. You can optionally specify a `Tracer`, or alternatively it can be implicitly discovered using the
 `Registry`
 
+._Java-only: programmatic OpenTelemetryTracer configuration_
 [source,java]
---------------------------------------------------------------------------------------------------
+----
 OpenTelemetryTracer otelTracer = new OpenTelemetryTracer();
 // By default, it uses the DefaultTracer, but you can override it with a specific OpenTelemetry Tracer implementation.
 otelTracer.setTracer(...);
 // And then initialize the context
 otelTracer.init(camelContext);
---------------------------------------------------------------------------------------------------
+----
 
 NOTE: You would still need OpenTelemetry to instrument your code, which can be done via a <<OpenTelemetry-JavaAgent,Java agent>>.
 
@@ -115,8 +114,6 @@ java -javaagent:path/to/opentelemetry-javaagent.jar \
      -jar myapp.jar
 ----
 
-include::spring-boot:partial$starter.adoc[]
-
 
 === Spring Boot's Actuator
 
@@ -135,26 +132,28 @@ as they allow you to export your traces to various backends (e.g., Zipkin and Ja
 add `io.opentelemetry:opentelemetry-exporter-otlp` as a dependency to your project. To configure it, you can
 use the `management.otlp.tracing` properties or register a new `SpanExporter` bean yourself:
 
+._Java-only: Spring bean definition for SpanExporter_
 [source,java]
---------------------------------------------------------------------------------------------------
+----
 @Bean
 public SpanExporter OtlpGrpcSpanExporter(@Value("${tracing.url}") String url) {
     return OtlpGrpcSpanExporter.builder().setEndpoint(url).build();
 }
---------------------------------------------------------------------------------------------------
+----
 
 Spring Boot's Actuator will take care of the wiring for you.
 
 Alternatively if you just want to log your traces in OTLP JSON format,
 add `io.opentelemetry:opentelemetry-exporter-logging-otlp` as a dependency to your project and also register a new `SpanExporter` bean:
 
+._Java-only: Spring bean definition for logging SpanExporter_
 [source,java]
---------------------------------------------------------------------------------------------------
+----
 @Bean
 public SpanExporter logTraces() {
     return OtlpJsonLoggingSpanExporter.create();
 }
---------------------------------------------------------------------------------------------------
+----
 
 Multiple `SpanExporters` can be used at the same time.
 
@@ -171,6 +170,7 @@ or bind it to the Camel registry, where it will be automatically resolved by the
 
 Note that care should be taken when configuring parents & links to avoid breaking the relationship between spans & traces.
 
+._Java-only: SpanCustomizer class definition_
 [source,java]
 ----
 public class MySpanCustomizer implements SpanCustomizer {

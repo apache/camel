@@ -31,18 +31,19 @@ import dev.tamboui.text.Line;
 import dev.tamboui.text.Span;
 import dev.tamboui.text.Text;
 import dev.tamboui.tui.event.KeyEvent;
+import dev.tamboui.tui.event.MouseEvent;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
+import dev.tamboui.widgets.block.Borders;
 import dev.tamboui.widgets.paragraph.Paragraph;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 
-import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.*;
+import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.*;
 
-class DiagramTab implements MonitorTab {
+class DiagramTab extends AbstractTab {
 
-    private final MonitorContext ctx;
     private final DiagramSupport diagram = new DiagramSupport();
     private final SourceViewer sourceViewer = new SourceViewer();
     private boolean diagramMetrics = true;
@@ -51,9 +52,11 @@ class DiagramTab implements MonitorTab {
     private boolean topologyMode = true;
     private String drillDownRouteId;
     private final Deque<String> routeNavigationStack = new ArrayDeque<>();
+    private int infoPanelWidth = 30;
+    private final DragSplit hSplit = new DragSplit();
 
     DiagramTab(MonitorContext ctx) {
-        this.ctx = ctx;
+        super(ctx);
     }
 
     boolean isShowDiagram() {
@@ -244,6 +247,33 @@ class DiagramTab implements MonitorTab {
     }
 
     @Override
+    public boolean handleMouseEvent(MouseEvent me, Rect area) {
+        if (hSplit.handleMouse(me, me.x())) {
+            if (hSplit.isDragging()) {
+                infoPanelWidth = Math.max(10, Math.min(me.x() - area.x(), area.width() - 20));
+            }
+            return true;
+        }
+        if (diagram.handleMouseScroll(me)) {
+            return true;
+        }
+        if (me.isClick()) {
+            if (topologyMode) {
+                int clicked = diagram.handleNodeClick(me);
+                if (clicked >= 0) {
+                    return true;
+                }
+            } else {
+                int clicked = diagram.handleEipNodeClick(me);
+                if (clicked >= 0) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    @Override
     public boolean handleEscape() {
         if (sourceViewer.isVisible()) {
             sourceViewer.hide();
@@ -341,10 +371,11 @@ class DiagramTab implements MonitorTab {
                     title = Line.from(Span.raw(" Topology "));
                 }
                 if (selectedRouteId != null && area.width() > 60) {
-                    int panelWidth = 30;
+                    infoPanelWidth = Math.max(10, Math.min(infoPanelWidth, area.width() - 20));
                     List<Rect> hChunks = Layout.horizontal()
-                            .constraints(Constraint.length(panelWidth), Constraint.fill())
+                            .constraints(Constraint.length(infoPanelWidth), Constraint.fill())
                             .split(area);
+                    hSplit.setBorderPos(hChunks.get(1).x());
                     renderInfoPanel(frame, hChunks.get(0), info, selectedRouteId);
                     diagram.renderNativeDiagram(frame, hChunks.get(1), title, diagramMetrics);
                 } else {
@@ -356,10 +387,11 @@ class DiagramTab implements MonitorTab {
                 Line title = buildBreadcrumbTitle();
                 var routeLayout = diagram.getRouteLayout(drillDownRouteId);
                 if (area.width() > 60) {
-                    int panelWidth = 30;
+                    infoPanelWidth = Math.max(10, Math.min(infoPanelWidth, area.width() - 20));
                     List<Rect> hChunks = Layout.horizontal()
-                            .constraints(Constraint.length(panelWidth), Constraint.fill())
+                            .constraints(Constraint.length(infoPanelWidth), Constraint.fill())
                             .split(area);
+                    hSplit.setBorderPos(hChunks.get(1).x());
                     renderEipInfoPanel(frame, hChunks.get(0));
                     diagram.renderNativeRouteDiagram(
                             frame, hChunks.get(1), title, diagramMetrics, drillDownRouteId, routeLayout);
@@ -376,7 +408,7 @@ class DiagramTab implements MonitorTab {
                         .text(Text.from(Line.from(Span.styled(
                                 "Loading diagram...",
                                 Style.EMPTY.dim()))))
-                        .block(Block.builder().borderType(BorderType.ROUNDED)
+                        .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
                                 .title(" Diagram ").build())
                         .build(),
                 area);
@@ -511,7 +543,7 @@ class DiagramTab implements MonitorTab {
 
         Paragraph paragraph = Paragraph.builder()
                 .text(Text.from(lines))
-                .block(Block.builder().borderType(BorderType.ROUNDED)
+                .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
                         .title(" Info ").build())
                 .build();
         frame.renderWidget(paragraph, area);
@@ -615,7 +647,7 @@ class DiagramTab implements MonitorTab {
 
         Paragraph paragraph = Paragraph.builder()
                 .text(Text.from(lines))
-                .block(Block.builder().borderType(BorderType.ROUNDED)
+                .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
                         .title(" Info ").build())
                 .build();
         frame.renderWidget(paragraph, area);
@@ -631,17 +663,17 @@ class DiagramTab implements MonitorTab {
             if (!topologyMode && !diagram.getEipNodeBoxes().isEmpty()) {
                 hint(spans, "Esc", "back");
                 hint(spans, "t", "topology");
-                hint(spans, "↑↓←→", "navigate");
+                hint(spans, TuiIcons.HINT_NAV, "navigate");
                 hint(spans, "PgUp/PgDn", "page");
                 hint(spans, "c", "source");
             } else if (!topologyMode) {
                 hint(spans, "Esc", "back");
                 hint(spans, "t", "topology");
-                hint(spans, "↑↓←→", "scroll");
+                hint(spans, TuiIcons.HINT_NAV, "scroll");
                 hint(spans, "PgUp/PgDn", "page");
             } else if (!diagram.getNodeBoxes().isEmpty()) {
                 hint(spans, "Esc", "close");
-                hint(spans, "↑↓←→", "navigate");
+                hint(spans, TuiIcons.HINT_NAV, "navigate");
                 hint(spans, "Enter", "drill-down");
                 hint(spans, "PgUp/PgDn", "page");
                 hint(spans, "c", "source");
@@ -694,6 +726,11 @@ class DiagramTab implements MonitorTab {
                 diagram.endLoad();
             }
         });
+    }
+
+    @Override
+    public String description() {
+        return "Route topology diagram showing how routes connect to each other and external systems";
     }
 
     @Override

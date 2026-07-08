@@ -37,6 +37,7 @@ import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.widgets.Clear;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
+import dev.tamboui.widgets.block.Borders;
 import dev.tamboui.widgets.block.Title;
 import dev.tamboui.widgets.input.TextInput;
 import dev.tamboui.widgets.input.TextInputState;
@@ -46,7 +47,9 @@ import org.apache.camel.dsl.jbang.core.common.PathUtils;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 
-import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.*;
+import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.*;
+import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.hint;
+import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.hintLast;
 
 class SendMessagePopup {
 
@@ -345,7 +348,7 @@ class SendMessagePopup {
             return true;
         }
         if (ke.code() == KeyCode.CHAR) {
-            activeInput.insert(ke.character());
+            activeInput.insert(ke.string().charAt(0));
             return true;
         }
         return true;
@@ -441,7 +444,7 @@ class SendMessagePopup {
                 Path actionFile = ctx.getActionFile(targetPid);
                 PathUtils.writeTextSafely(root.toJson(), actionFile);
 
-                JsonObject response = MonitorContext.pollJsonResponse(outputFile, 25000);
+                JsonObject response = TuiHelper.pollJsonResponse(outputFile, 25000);
                 PathUtils.deleteFile(outputFile);
 
                 if (response == null) {
@@ -692,7 +695,7 @@ class SendMessagePopup {
         title += " ";
 
         Block block = Block.builder()
-                .borderType(BorderType.ROUNDED)
+                .borderType(BorderType.ROUNDED).borders(Borders.ALL)
                 .title(Title.from(Line.from(Span.styled(title, Style.EMPTY.fg(Color.YELLOW).bold()))))
                 .build();
         frame.renderWidget(block, area);
@@ -709,8 +712,8 @@ class SendMessagePopup {
             FormHelper.renderLabel(frame, innerX, row, labelW, "Route:", selectedField == FIELD_ROUTE);
             RouteInfo ri = routes.get(selectedRouteIndex);
             String routeDisplay = ri.routeId + " (" + truncateUri(ri.from, fieldW - ri.routeId.length() - 6) + ")";
-            String arrow = selectedField == FIELD_ROUTE ? "◀ " : "  ";
-            String arrowR = selectedField == FIELD_ROUTE ? " ▶" : "  ";
+            String arrow = selectedField == FIELD_ROUTE ? TuiIcons.ARROW_LEFT + " " : "  ";
+            String arrowR = selectedField == FIELD_ROUTE ? " " + TuiIcons.ARROW_RIGHT : "  ";
             Style routeStyle = selectedField == FIELD_ROUTE ? Style.EMPTY.bold() : Style.EMPTY;
             Rect routeArea = new Rect(innerX + labelW, row, fieldW, 1);
             frame.renderWidget(Paragraph.from(Line.from(
@@ -843,7 +846,7 @@ class SendMessagePopup {
             frame.renderWidget(
                     Paragraph.builder()
                             .text(Text.from(Line.from(Span.styled(placeholder, Style.EMPTY.dim()))))
-                            .block(Block.builder().borderType(BorderType.ROUNDED).title(title).build())
+                            .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(title).build())
                             .build(),
                     area);
             return;
@@ -876,7 +879,7 @@ class SendMessagePopup {
         frame.renderWidget(
                 Paragraph.builder()
                         .text(Text.from(lines))
-                        .block(Block.builder().borderType(BorderType.ROUNDED).title(title).build())
+                        .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(title).build())
                         .build(),
                 area);
     }
@@ -889,7 +892,7 @@ class SendMessagePopup {
                     Paragraph.builder()
                             .text(Text.from(Line.from(
                                     Span.styled(" No messages sent yet", Style.EMPTY.dim()))))
-                            .block(Block.builder().borderType(BorderType.ROUNDED).title(title).build())
+                            .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(title).build())
                             .build(),
                     area);
             return;
@@ -910,7 +913,7 @@ class SendMessagePopup {
         for (int i = start; i < end; i++) {
             SendHistoryEntry entry = history.get(i);
             boolean selected = selectedField == FIELD_HISTORY && i == historyIndex;
-            String pointer = selected ? "► " : "  ";
+            String pointer = selected ? TuiIcons.POINTER + " " : "  ";
             String routeStr = String.format("%-16s", entry.routeId != null ? entry.routeId : "");
             String modeStr = entry.inOut ? "InOut " : "InOnly";
             String statusStr = entry.error ? "ERR" : entry.status;
@@ -937,7 +940,7 @@ class SendMessagePopup {
         frame.renderWidget(
                 Paragraph.builder()
                         .text(Text.from(lines))
-                        .block(Block.builder().borderType(BorderType.ROUNDED).title(title).build())
+                        .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(title).build())
                         .build(),
                 area);
     }
@@ -949,7 +952,7 @@ class SendMessagePopup {
         hint(spans, "+", "header");
         hint(spans, "p", "pretty" + (prettyPrint ? " [on]" : ""));
         if (!history.isEmpty()) {
-            hintLast(spans, "↑↓", "history");
+            hintLast(spans, TuiIcons.HINT_SCROLL, "history");
         } else {
             hintLast(spans, "PgUp/Dn", "scroll");
         }

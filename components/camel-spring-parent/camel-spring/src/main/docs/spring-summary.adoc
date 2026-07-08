@@ -52,6 +52,7 @@ http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/came
 
 So the XML file looks like this:
 
+._XML-only: Spring XML schema declaration for Camel_
 [source,xml]
 ----
 <beans xmlns="http://www.springframework.org/schema/beans"
@@ -72,6 +73,7 @@ xmlns:camel="http://camel.apache.org/schema/spring"
 
 ... so the declaration is:
 
+._XML-only: Spring XML schema declaration with camel namespace prefix_
 [source,xml]
 ----
 <beans xmlns="http://www.springframework.org/schema/beans"
@@ -85,6 +87,7 @@ xmlns:camel="http://camel.apache.org/schema/spring"
 ... and then use the camel: namespace prefix, and you can omit the
 inline namespace declaration:
 
+._XML-only: using camel namespace prefix for CamelContext configuration_
 [source,xml]
 ----
 <camel:camelContext>
@@ -111,6 +114,7 @@ definition, specifying the packages to be recursively searched for
 `<package></package>` tag specifying a comma-separated list of
 packages that should be searched e.g.
 
+._XML-only: CamelContext with package scanning for RouteBuilder classes_
 [source,xml]
 ----
   <camelContext xmlns="http://camel.apache.org/schema/spring">
@@ -144,8 +148,9 @@ contain one or more 'package' elements, and optionally
 one or more 'includes' or 'excludes' elements specifying patterns to be
 applied to the fully qualified names of the discovered classes. e.g.
 
+._XML-only: CamelContext with packageScan including include/exclude patterns_
 [source,xml]
---------------------------------------------------------------
+----
   <camelContext xmlns="http://camel.apache.org/schema/spring">
     <packageScan>
       <package>org.example.routes</package>
@@ -153,7 +158,7 @@ applied to the fully qualified names of the discovered classes. e.g.
       <includes>**.*</includes>
     </packageScan>
   </camelContext>
---------------------------------------------------------------
+----
 
 Exclude patterns are applied before the include patterns. If no include
 or exclude patterns are defined, then all the Route classes discovered in
@@ -198,8 +203,9 @@ the Spring `<component-scan>` feature and have Camel pickup any
 This allows you to just annotate your routes using the Spring
 `@Component` and have those routes included by Camel
 
+._Java-only: Spring component-scanned RouteBuilder class definition_
 [source,java]
--------------------------------------------------
+----
 @Component
 public class MyRoute extends SpringRouteBuilder {
 
@@ -208,7 +214,7 @@ public class MyRoute extends SpringRouteBuilder {
         from("direct:start").to("mock:result");
     }
 }
--------------------------------------------------
+----
 
 You can also use the ant style for inclusion and exclusion, as mentioned
 above in the `<packageScan>` documentation.
@@ -235,6 +241,7 @@ other words the `<routeContext>` is currently isolated.
 For example, we could have a file named `myCoolRoutes.xml` which contains
 a couple of routes as shown:
 
+._XML-only: Spring XML file with routeContext for externalized route definitions_
 [source,xml]
 ----
 <beans xmlns="http://www.springframework.org/schema/beans"
@@ -264,6 +271,7 @@ to import the `myCoolRoute.xml` file.
 And then inside `<camelContext/>` you can refer to the
 `<routeContext/>` by its id as shown below:
 
+._XML-only: importing routeContext and combining with inline routes in CamelContext_
 [source,xml]
 ----
  <!-- import the routes from another XML file -->
@@ -311,15 +319,16 @@ to allow this. It provides two methods (`excludeRoute` and
 `excludeRoutes`) that may be overridden to exclude a single class or an
 array of classes.
 
+._Java-only: test class with route exclusion_
 [source,java]
-----------------------------------------------------------------
+----
 public class RouteAandRouteBOnlyTest extends SpringTestSupport {
-    @Override      
+    @Override
     protected Class<?> excludeRoute() {
         return RouteC.class;
     }
 }
-----------------------------------------------------------------
+----
 
 To hook into the camelContext initialization by spring to
 exclude the class `MyExcludedRouteBuilder`, we need to intercept the spring
@@ -328,31 +337,45 @@ spring context, we call the `getRouteExcludingApplicationContext()` method
 to provide a special parent spring context that takes care of the
 exclusion.
 
+._Java-only: overriding Spring application context for route exclusion_
 [source,java]
---------------------------------------------------------------------------------------------------------------------------
+----
 @Override
 protected AbstractXmlApplicationContext createApplicationContext() {
     return new ClassPathXmlApplicationContext(new String[] {"routes-context.xml"}, getRouteExcludingApplicationContext());
 }
---------------------------------------------------------------------------------------------------------------------------
+----
 
 `RouteC` will now be excluded from initialization. Similarly, in another
 test that is testing only `RouteC`, we could exclude RouteB and RouteA by
 overriding the method `excludeRoutes`.
 
+._Java-only: excluding multiple route classes_
 [source,java]
----------------------------------------------------
+----
 @Override
 protected Class<?>[] excludeRoutes() {
     return new Class[]{RouteA.class, RouteB.class};
 }
----------------------------------------------------
+----
 
 == Using Spring XML
 
 You can use Spring XML configuration to specify your XML Configuration for
 Routes such as in the following
 
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("seda:start")
+    .to("mock:result");
+----
+
+XML::
++
 [source,xml]
 ----
 <beans xmlns="http://www.springframework.org/schema/beans"
@@ -372,11 +395,25 @@ Routes such as in the following
 </beans>
 ----
 
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: seda:start
+      steps:
+        - to:
+            uri: mock:result
+----
+====
+
 == Configuring Components and Endpoints
 
 You can configure your Component or Endpoint instances in your Spring
 XML as follows:
 
+._XML-only: Spring bean configuration for CamelContext and JMS component_
 [source,xml]
 ----
   <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
@@ -417,17 +454,29 @@ The `camel-spring` module can be used as implementation of the Camel Cron compon
 Maven users will need to add the following additional dependency to their `pom.xml`:
 
 [source,xml]
-------------------------------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-cron</artifactId>
     <version>x.x.x</version>
     <!-- use the same version as your Camel core version -->
 </dependency>
-------------------------------------------------------------
+----
 
 Users can then use the cron component inside routes of their Spring or Spring Boot application:
 
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("cron:tab?schedule=0/1+*+*+*+*+?")
+    .to("log:info");
+----
+
+XML::
++
 [source,xml]
 ----
 <route>
@@ -436,6 +485,19 @@ Users can then use the cron component inside routes of their Spring or Spring Bo
 </route>
 ----
 
-:camel-spring-boot-name: spring
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: cron:tab
+      parameters:
+        schedule: "0/1+*+*+*+*+?"
+      steps:
+        - to:
+            uri: log:info
+----
+====
 
-include::spring-boot:partial$starter.adoc[]
+

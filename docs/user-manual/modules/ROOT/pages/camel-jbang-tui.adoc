@@ -58,7 +58,7 @@ If an example requires infrastructure (like Kafka or a database), the TUI automa
 required Docker containers before launching the example. A notification in the footer shows the
 progress.
 
-TIP: Press *F1* on any screen for context-sensitive help.
+TIP: Press *F1* or *?* on any screen for context-sensitive help.
 Keyboard shortcuts are always shown in the footer bar.
 
 == Tabs Overview
@@ -79,7 +79,7 @@ to any tab, or use *Tab* / *Shift+Tab* to cycle.
 | 7 | Health | Health check status.
 | 8 | Inspect | Message history and tracing -- step through exchanges processor by processor.
 | 9 | Errors | Failures with stack traces and exchange context.
-| 0 | More | Additional tabs: Beans, Browse, Circuit Breaker, Classpath, Configuration, Consumers, Inflight, Memory, Metrics, Startup, Threads.
+| 0 | More | Additional tabs: Beans, Browse, Circuit Breaker, Classpath, Configuration, Consumers, Inflight, Memory, Metrics, Process, Spans, Startup, Threads.
 |===
 
 Tab badges show live counts -- the Errors tab shows a red badge when errors exist,
@@ -225,6 +225,39 @@ For deeper troubleshooting, switch to the Inspect tab (Tab 8) and use the diagra
 This combination of error details + visual diagram replay gives you a complete picture of
 what went wrong and why -- without leaving the terminal.
 
+== OpenTelemetry Spans
+
+The Spans tab (under More, shortcut *o*) visualizes OpenTelemetry traces collected from your
+running integration. It shows every span with trace ID, span name, kind, status, duration,
+and Camel-specific context (route ID, processor ID).
+
+Run your integration with OpenTelemetry enabled:
+
+[source,bash]
+----
+camel run my-route.yaml --dep=camel:opentelemetry
+----
+
+Features:
+
+* *Waterfall view* -- spans displayed as a timeline showing parent-child relationships
+  and duration bars, color-coded from green (fast) to red (slow)
+* *Trace grouping* -- spans grouped by trace ID so you can follow a complete request
+  across multiple routes and components
+* *Camel-only filter* -- toggle to show only Camel-originated spans, hiding framework
+  and library spans
+* *Sort and search* -- sort by trace ID, route, status, duration, or span count;
+  filter with text search
+* *Error highlighting* -- failed spans (status ERROR) are highlighted in red
+
+This is especially useful for understanding latency in multi-route integrations and for
+correlating Camel processing with external service calls (HTTP, database, messaging).
+
+== Process Information
+
+The Process tab (under More, shortcut *p*) shows JVM process details for the selected
+integration: Java version, PID, uptime, command-line arguments, and system properties.
+
 == Actions Menu (F2)
 
 Press *F2* to open the actions menu with quick access to common operations:
@@ -270,6 +303,23 @@ The Doctor checks your development environment and reports issues:
 * Common port conflicts (8080, 8443, 9090)
 * Disk space in temp directory
 
+== Theme
+
+The TUI ships with two color themes, *dark* (the default) and *light*, defined as
+CSS stylesheets. Open the *F2* actions menu and choose *Light Theme* or *Dark Theme*
+to switch at runtime.
+
+Pass `--theme=dark` or `--theme=light` on the command line to pick the palette for
+the current session. The CLI value overrides the persisted preference from
+`.camel-jbang-user.properties`; runtime toggles and the config file still apply on
+later launches when `--theme` is omitted.
+
+The brand orange accent is identical in both themes; status colors (success,
+warning, error) and borders adapt for readability on dark and light terminals.
+
+Your choice is remembered: it is saved as `camel.tui.theme` (`dark` or `light`)
+in `.camel-jbang-user.properties` and restored the next time you open the TUI.
+
 == Keyboard Shortcuts
 
 === Global (All Tabs)
@@ -280,7 +330,7 @@ The Doctor checks your development environment and reports issues:
 
 | *1* - *0* | Jump to tab by number
 | *Tab* / *Shift+Tab* | Next / previous tab
-| *F1* | Context-sensitive help (toggle)
+| *F1* / *?* | Context-sensitive help (toggle)
 | *F2* | Actions menu
 | *F3* | Switch between integrations (when multiple running)
 | *Shift+F5* | Take screenshot
@@ -451,6 +501,10 @@ vhs demo.tape               # .tape -> .gif
 | `--refresh`
 | Screen refresh interval in milliseconds.
 | `100`
+
+| `--theme`
+| Color theme for this session: `dark` or `light`. Overrides the persisted `camel.tui.theme` preference when set.
+|
 
 | `--record`
 | Replay a `.tape` file and record the session to an Asciinema `.cast` file.

@@ -50,8 +50,6 @@ public class ResequencerTest extends ContextTestSupport {
 
         context.getRouteController().stopRoute("myRoute");
 
-        // wait just a little bit
-        Thread.sleep(5);
         resultEndpoint.reset();
 
         context.getRouteController().startRoute("myRoute");

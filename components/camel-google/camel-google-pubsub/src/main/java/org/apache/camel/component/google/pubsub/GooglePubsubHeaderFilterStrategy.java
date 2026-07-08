@@ -25,9 +25,6 @@ public class GooglePubsubHeaderFilterStrategy extends DefaultHeaderFilterStrateg
     }
 
     public GooglePubsubHeaderFilterStrategy(boolean includeAllGoogleProperties) {
-        setLowerCase(true);
-        setOutFilterStartsWith(DefaultHeaderFilterStrategy.CAMEL_FILTER_STARTS_WITH);
-        setInFilterStartsWith(DefaultHeaderFilterStrategy.CAMEL_FILTER_STARTS_WITH);
         // Filter authorization on both directions for security
         getOutFilter().add("authorization");
         getInFilter().add("authorization");

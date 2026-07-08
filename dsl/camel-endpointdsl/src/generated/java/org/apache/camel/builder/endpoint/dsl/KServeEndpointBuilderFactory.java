@@ -249,7 +249,7 @@ public interface KServeEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final KServeHeaderNameBuilder INSTANCE = new KServeHeaderNameBuilder();
+        public static final KServeHeaderNameBuilder INSTANCE = new KServeHeaderNameBuilder();
 
         /**
          * The name of the model used for inference.

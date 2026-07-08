@@ -13,6 +13,7 @@ NOTE: The `NotifyBuilder` is only intended for testing purposes and you can only
 
 Suppose we have a very simple route:
 
+._Java-only: a simple route for NotifyBuilder demonstration_
 [source,java]
 ----
 from("jms:queue:quotes")
@@ -25,6 +26,7 @@ Now you want to test this route without using mocks or the likes.
 We want to test that it could process a message send to that queue.
 By using the `NotifyBuilder` we can build an expression which expresses when that condition occurred.
 
+._Java-only: basic NotifyBuilder waiting for one message to complete_
 [source,java]
 ----
 NotifyBuilder notify = new NotifyBuilder().whenDone(1).create();
@@ -84,6 +86,7 @@ The names of these three ways are also incorporated in the names of the builder 
 
 === Examples
 
+._Java-only: matching when 5 messages are done from a specific endpoint_
 [source,java]
 ----
 NotifyBuilder notify = new NotifyBuilder(context)
@@ -95,6 +98,7 @@ Here we want to match when the direct:foo endpoint have done 5 messages.
 
 You may also want to be notified when an message is done by the index, for example the very first message. To do that you can simply do:
 
+._Java-only: matching when the first message is done using index_
 [source,java]
 ----
 NotifyBuilder notify = new NotifyBuilder(context)
@@ -112,6 +116,7 @@ That is why `whenDoneByIndex` was added to support this scenario.
 Here we want to match when the direct:foo endpoint have done 5 messages which contains the word 'test' in the body.
 The filter accepts a xref:predicate.adoc[Predicate].
 
+._Java-only: filtering messages with a predicate before matching_
 [source,java]
 ----
 NotifyBuilder notify = new NotifyBuilder(context)
@@ -121,6 +126,7 @@ NotifyBuilder notify = new NotifyBuilder(context)
 
 Here we just say that at least one message should be done received from any JMS endpoint (notice the wildcard matching).
 
+._Java-only: matching messages from any JMS endpoint using wildcard_
 [source,java]
 ----
 NotifyBuilder notify = new NotifyBuilder(context)
@@ -130,6 +136,7 @@ NotifyBuilder notify = new NotifyBuilder(context)
 
 Here, we just say that at least three message should be done received from any of myCoolRoutes (notice the wildcard matching).
 
+._Java-only: matching messages from routes using wildcard_
 [source,java]
 ----
 NotifyBuilder notify = new NotifyBuilder(context)
@@ -139,6 +146,7 @@ NotifyBuilder notify = new NotifyBuilder(context)
 
 Here both 5 foo messages and 7 bar messages must be done. Notice the use of the and operator.
 
+._Java-only: combining conditions with the and operator_
 [source,java]
 ----
 NotifyBuilder notify = new NotifyBuilder(context)
@@ -149,6 +157,7 @@ NotifyBuilder notify = new NotifyBuilder(context)
 
 Here we expect to receive two messages whose body is Hello World then Bye World.
 
+._Java-only: matching on expected message bodies_
 [source,java]
 ----
 NotifyBuilder notify = new NotifyBuilder(context)
@@ -158,6 +167,7 @@ NotifyBuilder notify = new NotifyBuilder(context)
 
 Here we expect to receive a message which contains Camel in the body.
 
+._Java-only: matching any received message with a predicate_
 [source,java]
 ----
 NotifyBuilder notify = new NotifyBuilder(context)
@@ -167,6 +177,7 @@ NotifyBuilder notify = new NotifyBuilder(context)
 
 === Using mock endpoint for fine-grained expectations
 
+._Java-only: combining Mock endpoint with NotifyBuilder_
 [source,java]
 ----
 // let's use a mock to set the expressions as it got many great assertions for that
@@ -187,6 +198,7 @@ However, we suggest using the mock for fine-grained expectations that you may al
 
 For example in the following we expect the message to be sent to mock:bar
 
+._Java-only: matching messages that were sent to a specific endpoint_
 [source,java]
 ----
 NotifyBuilder notify = new NotifyBuilder(context)
@@ -196,6 +208,7 @@ NotifyBuilder notify = new NotifyBuilder(context)
 
 You can combine this with any of the other expectations, such as, to only match if 3+ messages are done, and were sent to the mock:bar endpoint:
 
+._Java-only: combining whenDone with wereSentTo_
 [source,java]
 ----
 NotifyBuilder notify = new NotifyBuilder(context)
@@ -205,6 +218,7 @@ NotifyBuilder notify = new NotifyBuilder(context)
 
 You can add additional `wereSentTo`, such as the following two:
 
+._Java-only: chaining multiple wereSentTo conditions_
 [source,java]
 ----
 NotifyBuilder notify = new NotifyBuilder(context)
@@ -214,6 +228,7 @@ NotifyBuilder notify = new NotifyBuilder(context)
 
 As well as you can expect a number of messages to be done, and a message to fail, which has to be sent to another endpoint:
 
+._Java-only: combining done and failed conditions with different endpoints_
 [source,java]
 ----
 NotifyBuilder notify = new NotifyBuilder(context)

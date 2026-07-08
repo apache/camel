@@ -87,6 +87,9 @@ public final class DoclingHeaders {
     @Metadata(description = "Number of pages in the document", javaType = "Integer")
     public static final String METADATA_PAGE_COUNT = "CamelDoclingMetadataPageCount";
 
+    @Metadata(description = "Document title", javaType = "String")
+    public static final String METADATA_TITLE = "CamelDoclingMetadataTitle";
+
     @Metadata(description = "Document language code", javaType = "String")
     public static final String METADATA_LANGUAGE = "CamelDoclingMetadataLanguage";
 

@@ -29,61 +29,81 @@ import org.apache.camel.spi.Metadata;
 /**
  * Unmarshal XML payloads to POJOs and back using JAXB2 XML marshalling standard.
  */
-@Metadata(firstVersion = "1.0.0", label = "dataformat,transformation,xml", title = "JAXB")
+@Metadata(firstVersion = "1.0.0", label = "dataformat,transformation,xml", title = "JAXB",
+          description = "Unmarshal XML payloads to POJOs and back using JAXB2 XML marshalling standard")
 @XmlRootElement(name = "jaxb")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class JaxbDataFormat extends DataFormatDefinition implements ContentTypeHeaderAware {
 
     @XmlAttribute(required = true)
+    @Metadata(required = true, description = "Package name where your JAXB classes are located.")
     private String contextPath;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(javaType = "java.lang.Boolean",
+              description = "This can be set to true to mark that the contextPath is referring to a classname and not a package name.")
     private String contextPathIsClassName;
     @XmlAttribute
+    @Metadata(description = "To validate against an existing schema. You can use the prefix classpath:, file: or http: to specify how the resource should be resolved."
+                            + " You can separate multiple schema files by using the comma character.")
     private String schema;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Integer", enums = "0,1,2", defaultValue = "0")
+    @Metadata(javaType = "java.lang.Integer", enums = "0,1,2", defaultValue = "0",
+              description = "Sets the schema severity level to use when validating against a schema."
+                            + " The default value of 0 (warning) means that any error will trigger JAXB to stop. There are the following three levels: 0=warning, 1=error, 2=fatal error.")
     private String schemaSeverityLevel;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean", defaultValue = "true")
+    @Metadata(javaType = "java.lang.Boolean", defaultValue = "true",
+              description = "To enable pretty printing output nicely formatted. Is by default false.")
     private String prettyPrint;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "true")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "true",
+              description = "Whether to allow using ObjectFactory classes to create the POJO classes during marshalling.")
     private String objectFactory;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "true")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "true",
+              description = "Whether to ignore JAXBElement elements - only needed to be set to false in very special use-cases.")
     private String ignoreJAXBElement;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean",
+              description = "Whether marshalling must be java objects with JAXB annotations. And if not then it fails."
+                            + " This option can be set to false to relax that, such as when the data is already in XML format.")
     private String mustBeJAXBElement;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean",
+              description = "To ignore non xml characters and replace them with an empty space.")
     private String filterNonXmlChars;
     @XmlAttribute
+    @Metadata(description = "To overrule and use a specific encoding.")
     private String encoding;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean",
+              description = "To turn on marshalling XML fragment trees. This is useful when generated code does not have @XmlRootElement annotation"
+                            + " and you need to unmarshall only part of the tree.")
     private String fragment;
     // Partial encoding
     @XmlAttribute
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced", description = "Name of class used for fragment parsing.")
     private String partClass;
     @XmlAttribute
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced", description = "XML namespace to use for fragment parsing.")
     private String partNamespace;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.util.Map")
+    @Metadata(label = "advanced", javaType = "java.util.Map",
+              description = "When marshalling using JAXB or SOAP then the JAXB implementation will automatically assign namespace prefixes,"
+                            + " such as ns2, ns3, ns4 etc. To control this mapping, Camel allows you to refer to a map which contains the desired mapping.")
     private String namespacePrefix;
     @XmlAttribute
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced", description = "To use a custom xml stream writer.")
     private String xmlStreamWriterWrapper;
     @XmlAttribute
+    @Metadata(description = "To define the location of the schema.")
     private String schemaLocation;
     @XmlAttribute
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced", description = "To define the location of the namespaceless schema.")
     private String noNamespaceSchemaLocation;
     @XmlAttribute
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced",
+              description = "Refers to a custom java.util.Map to lookup in the registry containing custom JAXB provider properties to be used with the JAXB marshaller.")
     private String jaxbProviderProperties;
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean", defaultValue = "true",
@@ -91,7 +111,9 @@ public class JaxbDataFormat extends DataFormatDefinition implements ContentTypeH
                             + " For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSON")
     private String contentTypeHeader;
     @XmlAttribute
-    @Metadata(label = "security")
+    @Metadata(label = "security",
+              description = "Only in use if schema validation has been enabled."
+                            + " Restrict access to the protocols specified for external reference set by the schemaLocation attribute, Import and Include element.")
     private String accessExternalSchemaProtocols;
 
     public JaxbDataFormat() {
@@ -160,9 +182,6 @@ public class JaxbDataFormat extends DataFormatDefinition implements ContentTypeH
         return contextPath;
     }
 
-    /**
-     * Package name where your JAXB classes are located.
-     */
     public void setContextPath(String contextPath) {
         this.contextPath = contextPath;
     }
@@ -171,9 +190,6 @@ public class JaxbDataFormat extends DataFormatDefinition implements ContentTypeH
         return contextPathIsClassName;
     }
 
-    /**
-     * This can be set to true to mark that the contextPath is referring to a classname and not a package name.
-     */
     public void setContextPathIsClassName(String contextPathIsClassName) {
         this.contextPathIsClassName = contextPathIsClassName;
     }
@@ -182,10 +198,6 @@ public class JaxbDataFormat extends DataFormatDefinition implements ContentTypeH
         return schema;
     }
 
-    /**
-     * To validate against an existing schema. Your can use the prefix classpath:, file:* or *http: to specify how the
-     * resource should be resolved. You can separate multiple schema files by using the ',' character.
-     */
     public void setSchema(String schema) {
         this.schema = schema;
     }
@@ -194,12 +206,6 @@ public class JaxbDataFormat extends DataFormatDefinition implements ContentTypeH
         return schemaSeverityLevel;
     }
 
-    /**
-     * Sets the schema severity level to use when validating against a schema. This level determines the minimum
-     * severity error that triggers JAXB to stop continue parsing. The default value of 0 (warning) means that any error
-     * (warning, error or fatal error) will trigger JAXB to stop. There are the following three levels: 0=warning,
-     * 1=error, 2=fatal error.
-     */
     public void setSchemaSeverityLevel(String schemaSeverityLevel) {
         this.schemaSeverityLevel = schemaSeverityLevel;
     }
@@ -208,11 +214,6 @@ public class JaxbDataFormat extends DataFormatDefinition implements ContentTypeH
         return prettyPrint;
     }
 
-    /**
-     * To enable pretty printing output nicely formatted.
-     * <p/>
-     * Is by default false.
-     */
     public void setPrettyPrint(String prettyPrint) {
         this.prettyPrint = prettyPrint;
     }
@@ -221,10 +222,6 @@ public class JaxbDataFormat extends DataFormatDefinition implements ContentTypeH
         return objectFactory;
     }
 
-    /**
-     * Whether to allow using ObjectFactory classes to create the POJO classes during marshalling. This only applies to
-     * POJO classes that has not been annotated with JAXB and providing jaxb.index descriptor files.
-     */
     public void setObjectFactory(String objectFactory) {
         this.objectFactory = objectFactory;
     }
@@ -233,9 +230,6 @@ public class JaxbDataFormat extends DataFormatDefinition implements ContentTypeH
         return ignoreJAXBElement;
     }
 
-    /**
-     * Whether to ignore JAXBElement elements - only needed to be set to false in very special use-cases.
-     */
     public void setIgnoreJAXBElement(String ignoreJAXBElement) {
         this.ignoreJAXBElement = ignoreJAXBElement;
     }
@@ -244,20 +238,10 @@ public class JaxbDataFormat extends DataFormatDefinition implements ContentTypeH
         return mustBeJAXBElement;
     }
 
-    /**
-     * Whether marhsalling must be java objects with JAXB annotations. And if not then it fails. This option can be set
-     * to false to relax that, such as when the data is already in XML format.
-     */
     public void setMustBeJAXBElement(String mustBeJAXBElement) {
         this.mustBeJAXBElement = mustBeJAXBElement;
     }
 
-    /**
-     * To turn on marshalling XML fragment trees. By default JAXB looks for @XmlRootElement annotation on given class to
-     * operate on whole XML tree. This is useful but not always - sometimes generated code does not have @XmlRootElement
-     * annotation, sometimes you need unmarshall only part of tree. In that case you can use partial unmarshalling. To
-     * enable this behaviours you need set property partClass. Camel will pass this class to JAXB's unmarshaler.
-     */
     public void setFragment(String fragment) {
         this.fragment = fragment;
     }
@@ -270,9 +254,6 @@ public class JaxbDataFormat extends DataFormatDefinition implements ContentTypeH
         return filterNonXmlChars;
     }
 
-    /**
-     * To ignore non xml characheters and replace them with an empty space.
-     */
     public void setFilterNonXmlChars(String filterNonXmlChars) {
         this.filterNonXmlChars = filterNonXmlChars;
     }
@@ -281,9 +262,6 @@ public class JaxbDataFormat extends DataFormatDefinition implements ContentTypeH
         return encoding;
     }
 
-    /**
-     * To overrule and use a specific encoding
-     */
     public void setEncoding(String encoding) {
         this.encoding = encoding;
     }
@@ -292,11 +270,6 @@ public class JaxbDataFormat extends DataFormatDefinition implements ContentTypeH
         return partClass;
     }
 
-    /**
-     * Name of class used for fragment parsing.
-     * <p/>
-     * See more details at the fragment option.
-     */
     public void setPartClass(String partClass) {
         this.partClass = partClass;
     }
@@ -305,11 +278,6 @@ public class JaxbDataFormat extends DataFormatDefinition implements ContentTypeH
         return partNamespace;
     }
 
-    /**
-     * XML namespace to use for fragment parsing.
-     * <p/>
-     * See more details at the fragment option.
-     */
     public void setPartNamespace(String partNamespace) {
         this.partNamespace = partNamespace;
     }
@@ -318,11 +286,6 @@ public class JaxbDataFormat extends DataFormatDefinition implements ContentTypeH
         return namespacePrefix;
     }
 
-    /**
-     * When marshalling using JAXB or SOAP then the JAXB implementation will automatically assign namespace prefixes,
-     * such as ns2, ns3, ns4 etc. To control this mapping, Camel allows you to refer to a map which contains the desired
-     * mapping.
-     */
     public void setNamespacePrefix(String namespacePrefix) {
         this.namespacePrefix = namespacePrefix;
     }
@@ -331,9 +294,6 @@ public class JaxbDataFormat extends DataFormatDefinition implements ContentTypeH
         return xmlStreamWriterWrapper;
     }
 
-    /**
-     * To use a custom xml stream writer.
-     */
     public void setXmlStreamWriterWrapper(String xmlStreamWriterWrapperRef) {
         this.xmlStreamWriterWrapper = xmlStreamWriterWrapperRef;
     }
@@ -342,9 +302,6 @@ public class JaxbDataFormat extends DataFormatDefinition implements ContentTypeH
         return schemaLocation;
     }
 
-    /**
-     * To define the location of the schema
-     */
     public void setSchemaLocation(String schemaLocation) {
         this.schemaLocation = schemaLocation;
     }
@@ -353,9 +310,6 @@ public class JaxbDataFormat extends DataFormatDefinition implements ContentTypeH
         return noNamespaceSchemaLocation;
     }
 
-    /**
-     * To define the location of the namespaceless schema
-     */
     public void setNoNamespaceSchemaLocation(String schemaLocation) {
         this.noNamespaceSchemaLocation = schemaLocation;
     }
@@ -364,10 +318,6 @@ public class JaxbDataFormat extends DataFormatDefinition implements ContentTypeH
         return jaxbProviderProperties;
     }
 
-    /**
-     * Refers to a custom java.util.Map to lookup in the registry containing custom JAXB provider properties to be used
-     * with the JAXB marshaller.
-     */
     public void setJaxbProviderProperties(String jaxbProviderProperties) {
         this.jaxbProviderProperties = jaxbProviderProperties;
     }
@@ -384,15 +334,6 @@ public class JaxbDataFormat extends DataFormatDefinition implements ContentTypeH
         return accessExternalSchemaProtocols;
     }
 
-    /**
-     * Only in use if schema validation has been enabled.
-     *
-     * Restrict access to the protocols specified for external reference set by the schemaLocation attribute, Import and
-     * Include element. Examples of protocols are file, http, jar:file.
-     *
-     * empty, false or none to deny all access to external references; a specific protocol, such as file, to give
-     * permission to only the protocol; the keyword all to grant permission to all protocols.
-     */
     public void setAccessExternalSchemaProtocols(String accessExternalSchemaProtocols) {
         this.accessExternalSchemaProtocols = accessExternalSchemaProtocols;
     }

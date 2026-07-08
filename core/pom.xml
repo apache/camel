@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-parent</artifactId>
-        <version>4.21.0-SNAPSHOT</version>
+        <version>4.22.0-SNAPSHOT</version>
         <relativePath>../parent/pom.xml</relativePath>
     </parent>
 
@@ -54,6 +54,7 @@
         <module>camel-xml-io</module>
         <module>camel-xml-jaxb</module>
         <module>camel-yaml-io</module>
+        <module>camel-java-io</module>
         <module>camel-core</module>
         <module>camel-core-xml</module>
         <module>camel-health</module>

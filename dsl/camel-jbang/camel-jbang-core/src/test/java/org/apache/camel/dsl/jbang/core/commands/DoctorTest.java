@@ -37,7 +37,7 @@ class DoctorTest extends CamelCommandBaseTestSupport {
         command.doCall();
 
         String output = printer.getOutput();
-        Assertions.assertTrue(output.contains("Camel JBang Doctor"));
+        Assertions.assertTrue(output.contains("Camel CLI Doctor"));
         Assertions.assertTrue(output.contains("=================="));
     }
 

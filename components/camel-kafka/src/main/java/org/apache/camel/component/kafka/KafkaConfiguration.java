@@ -240,7 +240,7 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     @UriParam(label = "producer", defaultValue = "5")
     private Integer maxInFlightRequest = 5;
     // metadata.max.age.ms
-    @UriParam(label = "producer", defaultValue = "300000")
+    @UriParam(label = "common", defaultValue = "300000")
     private Integer metadataMaxAgeMs = 300000;
     // metric.reporters
     @UriParam(label = "producer")

@@ -1,0 +1,41 @@
+{
+  "protocolVersion": "1.0",
+  "name": "SecureAgent",
+  "description": "Agent with API key security",
+  "url": "http://localhost:8080",
+  "version": "1.0.0",
+  "capabilities": {
+    "streaming": false,
+    "pushNotifications": false,
+    "extendedAgentCard": false
+  },
+  "defaultInputModes": ["text/plain"],
+  "defaultOutputModes": ["text/plain"],
+  "securitySchemes": {
+    "apikey": {
+      "apiKeySecurityScheme": {
+        "location": "header",
+        "name": "Authorization"
+      }
+    }
+  },
+  "securityRequirements": [
+    {
+      "schemes": {
+        "apikey": {
+          "list": []
+        }
+      }
+    }
+  ],
+  "skills": [
+    {
+      "id": "secure-echo",
+      "name": "Secure Echo",
+      "description": "Returns an authenticated response",
+      "tags": ["test"],
+      "inputModes": ["text/plain"],
+      "outputModes": ["text/plain"]
+    }
+  ]
+}

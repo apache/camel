@@ -267,7 +267,7 @@ public interface WeaviateVectorDbEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final WeaviateVectorDbHeaderNameBuilder INSTANCE = new WeaviateVectorDbHeaderNameBuilder();
+        public static final WeaviateVectorDbHeaderNameBuilder INSTANCE = new WeaviateVectorDbHeaderNameBuilder();
 
         /**
          * The action to be performed.

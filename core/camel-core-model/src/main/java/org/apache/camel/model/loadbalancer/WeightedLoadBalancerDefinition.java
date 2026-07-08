@@ -27,18 +27,24 @@ import org.apache.camel.spi.Metadata;
 /**
  * Uses a weighted load distribution ratio for each server with respect to others.
  */
-@Metadata(label = "eip,routing")
+@Metadata(label = "eip,loadbalancing,routing",
+          description = "Load balancer that distributes messages across endpoints according to configured weight ratios")
 @XmlRootElement(name = "weightedLoadBalancer")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class WeightedLoadBalancerDefinition extends LoadBalancerDefinition {
 
     @XmlAttribute(required = true)
+    @Metadata(description = "The distribution ratio is a delimited String consisting of integer weights separated by delimiters"
+                            + " for example \"2,3,5\". The distributionRatio must match the number of endpoints and/or processors"
+                            + " specified in the load balancer list.")
     private String distributionRatio;
     @XmlAttribute
-    @Metadata(label = "advanced", defaultValue = ",")
+    @Metadata(label = "advanced", defaultValue = ",",
+              description = "Delimiter used to specify the distribution ratio. The default value is comma.")
     private String distributionRatioDelimiter;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean",
+              description = "Whether to enable round robin mode. By default the weighted distribution mode is used.")
     private String roundRobin;
 
     public WeightedLoadBalancerDefinition() {
@@ -60,11 +66,6 @@ public class WeightedLoadBalancerDefinition extends LoadBalancerDefinition {
         return roundRobin;
     }
 
-    /**
-     * To enable round robin mode. By default the weighted distribution mode is used.
-     * <p/>
-     * The default value is false.
-     */
     public void setRoundRobin(String roundRobin) {
         this.roundRobin = roundRobin;
     }
@@ -73,11 +74,6 @@ public class WeightedLoadBalancerDefinition extends LoadBalancerDefinition {
         return distributionRatio;
     }
 
-    /**
-     * The distribution ratio is a delimited String consisting on integer weights separated by delimiters for example
-     * "2,3,5". The distributionRatio must match the number of endpoints and/or processors specified in the load
-     * balancer list.
-     */
     public void setDistributionRatio(String distributionRatio) {
         this.distributionRatio = distributionRatio;
     }
@@ -86,11 +82,6 @@ public class WeightedLoadBalancerDefinition extends LoadBalancerDefinition {
         return distributionRatioDelimiter == null ? "," : distributionRatioDelimiter;
     }
 
-    /**
-     * Delimiter used to specify the distribution ratio.
-     * <p/>
-     * The default value is , (comma)
-     */
     public void setDistributionRatioDelimiter(String distributionRatioDelimiter) {
         this.distributionRatioDelimiter = distributionRatioDelimiter;
     }

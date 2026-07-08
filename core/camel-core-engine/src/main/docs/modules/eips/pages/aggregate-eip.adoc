@@ -68,6 +68,7 @@ favor returning the old exchange whenever possible.
 Here are a few example `AggregationStrategy` implementations that should
 help you create your own custom strategy.
 
+._Java-only: example AggregationStrategy implementations_
 [source,java]
 ----
 //simply combines Exchange String body values using '+' as a delimiter
@@ -113,6 +114,7 @@ be used for creating commonly used aggregation strategies without having to crea
 In the route below we group all the exchanges together using
 `GroupedExchangeAggregationStrategy`:
 
+._Java-only: using GroupedExchangeAggregationStrategy_
 [source,java]
 ----
 from("direct:start")
@@ -131,6 +133,7 @@ containing all the incoming Exchanges.
 The output of the aggregator will then contain the exchanges grouped
 together in a list as shown below:
 
+._Java-only: retrieving grouped exchanges from message body_
 [source,java]
 ----
 List<Exchange> grouped = exchange.getMessage().getBody(List.class);
@@ -149,6 +152,7 @@ the message body.
 For example, to aggregate a `List<Integer>` you can extend this class as
 shown below, and implement the `getValue` method:
 
+._Java-only: extending AbstractListAggregationStrategy_
 [source,java]
 ----
 public class MyListOfNumbersStrategy extends AbstractListAggregationStrategy<Integer> {
@@ -166,6 +170,7 @@ be used for creating commonly used aggregation strategies without having to crea
 
 The previous example can also be built using the builder as shown:
 
+._Java-only: using AggregationStrategies builder_
 [source,java]
 ----
 AggregationStrategy agg = AggregationStrategies.flexible(Integer.class)
@@ -245,6 +250,7 @@ to return a `true` value.
 
 When pre-completion is enabled then the `preComplete` method is invoked:
 
+._Java-only: preComplete method signature_
 [source,java]
 ----
 /**
@@ -299,6 +305,7 @@ For example, the following logic will complete the
 group if the message body size is larger than 5. This is done by setting
 the exchange property `Exchange.AGGREGATION_COMPLETE_CURRENT_GROUP` to `true`.
 
+._Java-only: completing current group from AggregationStrategy_
 [source,java]
 ----
 public final class MyCompletionStrategy implements AggregationStrategy {
@@ -333,6 +340,7 @@ previous groups, and start a new aggregation group.
 This is done by setting the property `Exchange.AGGREGATION_COMPLETE_ALL_GROUPS` to `true`
 on the returned exchange.
 
+._Java-only: completing all previous groups from AggregationStrategy_
 [source,java]
 ----
 public final class MyCompletionStrategy implements AggregationStrategy {
@@ -377,6 +385,11 @@ configured, which can be accessed using `getAggregateController()` method.
 Though it may be easier to configure a controller in the route using
 `aggregateController` as shown below:
 
+[tabs]
+====
+
+Java::
++
 [source,java]
 ----
 private AggregateController controller = new DefaultAggregateController();
@@ -388,33 +401,12 @@ from("direct:start")
       .to("mock:aggregated");
 ----
 
-Then there is API on `AggregateController` to force completion. For
-example, to complete a group with key foo:
-
-[source,java]
-----
-int groups = controller.forceCompletionOfGroup("foo");
-----
-
-The returned value is the number of groups completed.
-A value of 1 is returned if the foo group existed, otherwise 0 is returned.
-
-There is also a method to complete all groups:
-
-[source,java]
-----
-int groups = controller.forceCompletionOfAllGroups();
-----
-
-The controller can also be used in XML DSL using the `aggregateController` to
-refer to a bean with the controller implementation, which is looked up in the registry.
-
-When using Spring XML, you can create the bean with `<bean>` as shown:
-
+XML::
++
 [source,xml]
 ----
 <bean id="myController" class="org.apache.camel.processor.aggregate.DefaultAggregateController"/>
- 
+
 <camelContext xmlns="http://camel.apache.org/schema/spring">
     <route>
         <from uri="direct:start"/>
@@ -427,6 +419,47 @@ When using Spring XML, you can create the bean with `<bean>` as shown:
         </aggregate>
     </route>
 </camelContext>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - aggregate:
+            aggregateController: myController
+            aggregationStrategy: myAppender
+            completionSize: 10
+            correlationExpression:
+              header:
+                expression: id
+            steps:
+              - to:
+                  uri: mock:result
+----
+====
+
+Then there is API on `AggregateController` to force completion. For
+example, to complete a group with key foo:
+
+._Java-only: forcing completion of a group via AggregateController_
+[source,java]
+----
+int groups = controller.forceCompletionOfGroup("foo");
+----
+
+The returned value is the number of groups completed.
+A value of 1 is returned if the foo group existed, otherwise 0 is returned.
+
+There is also a method to complete all groups:
+
+._Java-only: forcing completion of all groups_
+[source,java]
+----
+int groups = controller.forceCompletionOfAllGroups();
 ----
 
 There is also JMX API on the aggregator which is available under the processors node in the Camel JMX tree.
@@ -459,6 +492,7 @@ In the method below, we have only two parameters, so the first parameter is
 the body of the `oldExchange`, and the second is paired to the body of the
 `newExchange`:
 
+._Java-only: bean method with two parameters_
 [source,java]
 ----
 public String append(String existing, String next) {
@@ -471,6 +505,7 @@ the body of the `oldExchange`, and the second is the `Map` of the
 `oldExchange` headers, and the third is paired to the body of the `newExchange`,
 and the fourth parameter is the `Map` of the `newExchange` headers:
 
+._Java-only: bean method with four parameters_
 [source,java]
 ----
 public String append(String existing, Map existingHeaders, String next, Map nextHeaders) {
@@ -480,6 +515,7 @@ public String append(String existing, Map existingHeaders, String next, Map next
 
 And finally, if we have six parameters, that includes the exchange properties:
 
+._Java-only: bean method with six parameters_
 [source,java]
 ----
 public String append(String existing, Map existingHeaders, Map existingProperties,
@@ -490,6 +526,7 @@ public String append(String existing, Map existingHeaders, Map existingPropertie
 
 To use this with the aggregate EIP, we can use a bean with the aggregate logic as follows:
 
+._Java-only: bean class for aggregation_
 [source,java]
 ----
 public class MyBodyAppender {
@@ -505,6 +542,11 @@ And then in the Camel route we create an instance of our bean, and then
 refer to the bean in the route using `bean` method from
 `org.apache.camel.builder.AggregationStrategies` as shown:
 
+[tabs]
+====
+
+Java::
++
 [source,java]
 ----
 private MyBodyAppender appender = new MyBodyAppender();
@@ -517,57 +559,12 @@ public void configure() throws Exception {
 }
 ----
 
-We can also provide the bean class type directly:
-
-[source,java]
-----
-public void configure() throws Exception {
-    from("direct:start")
-        .aggregate(constant(true), AggregationStrategies.bean(MyBodyAppender.class, "append"))
-            .completionSize(3)
-            .to("mock:result");
-}
-----
-
-And if the bean has only one method, we do not need to specify the name
-of the method:
-
-[source,java]
-----
-public void configure() throws Exception {
-    from("direct:start")
-        .aggregate(constant(true), AggregationStrategies.bean(MyBodyAppender.class))
-            .completionSize(3)
-            .to("mock:result");
-}
-----
-
-And the `append` method could be static:
-
-[source,java]
-----
-public class MyBodyAppender {
-
-    public static String append(String existing, String next) {
-        return next + existing;
-    }
-
-}
-----
-
-If you are using XML DSL, then we need to declare a `<bean>` with the bean:
-
+XML::
++
 [source,xml]
 ----
 <bean id="myAppender" class="com.foo.MyBodyAppender"/>
-----
 
-And in the Camel route we use `aggregationStrategy` to refer to the bean by its
-id, and the `strategyMethodName` can be used to define the method name
-to call:
-
-[source,xml]
-----
 <camelContext xmlns="http://camel.apache.org/schema/spring">
     <route>
         <from uri="direct:start"/>
@@ -581,9 +578,76 @@ to call:
 </camelContext>
 ----
 
-When using XML DSL, you can also specify the bean class directly in `aggregationStrategy`
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - aggregate:
+            aggregationStrategy: myAppender
+            aggregationStrategyMethodName: append
+            completionSize: 3
+            correlationExpression:
+              constant:
+                expression: "true"
+            steps:
+              - to:
+                  uri: mock:result
+----
+====
+
+In Java DSL, you can also provide the bean class type directly:
+
+._Java-only: using AggregationStrategies.bean with class type_
+[source,java]
+----
+public void configure() throws Exception {
+    from("direct:start")
+        .aggregate(constant(true), AggregationStrategies.bean(MyBodyAppender.class, "append"))
+            .completionSize(3)
+            .to("mock:result");
+}
+----
+
+And if the bean has only one method, we do not need to specify the name
+of the method:
+
+._Java-only: using AggregationStrategies.bean without method name_
+[source,java]
+----
+public void configure() throws Exception {
+    from("direct:start")
+        .aggregate(constant(true), AggregationStrategies.bean(MyBodyAppender.class))
+            .completionSize(3)
+            .to("mock:result");
+}
+----
+
+And the `append` method could be static:
+
+._Java-only: bean class with static method_
+[source,java]
+----
+public class MyBodyAppender {
+
+    public static String append(String existing, String next) {
+        return next + existing;
+    }
+
+}
+----
+
+When using XML or YAML DSL, you can also specify the bean class directly in `aggregationStrategy`
 using the `#class:` syntax as shown:
 
+[tabs]
+====
+
+XML::
++
 [source,xml]
 ----
 <route>
@@ -597,8 +661,26 @@ using the `#class:` syntax as shown:
 </route>
 ----
 
-You can use this in XML DSL when you are not using the classic Spring XML files (
-where you use XML only for Camel routes).
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - aggregate:
+            aggregationStrategy: "#class:com.foo.MyBodyAppender"
+            aggregationStrategyMethodName: append
+            completionSize: 3
+            correlationExpression:
+              constant:
+                expression: "true"
+            steps:
+              - to:
+                  uri: mock:result
+----
+====
 
 === Aggregating when no data
 
@@ -610,6 +692,7 @@ then set the `strategyMethodAllowNull` to `true`.
 When using beans, this can be configured a bit easier using the `beanAllowNull` method
 from `AggregationStrategies` as shown:
 
+._Java-only: using AggregationStrategies.beanAllowNull_
 [source,java]
 ----
 public void configure() throws Exception {
@@ -622,6 +705,7 @@ public void configure() throws Exception {
 Then the `append` method in the bean would need to deal with the
 situation that `newExchange` can be `null`:
 
+._Java-only: bean class handling null values_
 [source,java]
 ----
 public class MyBodyAppender {
@@ -647,9 +731,14 @@ If we didn't do this, then on timeout the append method would normally not be
 invoked, meaning the xref:content-enricher.adoc[Content Enricher] did
 not merge/change the message.
 
-In XML DSL you would configure the `strategyMethodAllowNull` option and
+In XML and YAML DSL you would configure the `strategyMethodAllowNull` option and
 set it to `true` as shown below:
 
+[tabs]
+====
+
+XML::
++
 [source,xml]
 ----
 <camelContext xmlns="http://camel.apache.org/schema/spring">
@@ -668,6 +757,28 @@ set it to `true` as shown below:
 </camelContext>
 ----
 
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - aggregate:
+            aggregationStrategy: myAppender
+            aggregationStrategyMethodName: append
+            aggregationStrategyMethodAllowNull: true
+            completionSize: 3
+            correlationExpression:
+              constant:
+                expression: "true"
+            steps:
+              - to:
+                  uri: mock:result
+----
+====
+
 === Aggregating with different body types
 
 When, for example, using `strategyMethodAllowNull` as `true`, then the
@@ -675,6 +786,7 @@ parameter type of the message bodies does not have to be the same.
 For example suppose we want to aggregate from a `com.foo.User` type to a
 `List<String>` that contains the name of the user. We could code a bean as follows:
 
+._Java-only: bean class aggregating different body types_
 [source,java]
 ----
 public final class MyUserAppender {

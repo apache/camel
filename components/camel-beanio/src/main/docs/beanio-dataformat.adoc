@@ -2,12 +2,10 @@
 :doctitle: BeanIO
 :shortname: beanio
 :artifactid: camel-beanio
-:description: Marshal and unmarshal Java beans to and from flat files (such as CSV, delimited, or fixed length formats).
+:description: Marshal and unmarshal Java beans to and from flat files (such as CSV, delimited, or fixed length formats)
 :since: 2.10
 :supportlevel: Stable
 :tabs-sync-option:
-//Manually maintained attributes
-:camel-spring-boot-name: beanio
 
 *Since Camel {since}*
 
@@ -81,8 +79,37 @@ XML::
     <to uri="mock:beanio-marshal"/>
 </route>
 ----
-To use the BeanIO data format in XML, you need to configure it using the
-`<beanio>` XML tag as shown below. The routes are similar to the example above.
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:unmarshal
+      steps:
+        - unmarshal:
+            beanio:
+              mapping: org/apache/camel/dataformat/beanio/mappings.xml
+              streamName: employeeFile
+        - split:
+            expression:
+              simple:
+                expression: "${body}"
+            steps:
+              - to:
+                  uri: mock:beanio-unmarshal
+- route:
+    from:
+      uri: direct:marshal
+      steps:
+        - marshal:
+            beanio:
+              mapping: org/apache/camel/dataformat/beanio/mappings.xml
+              streamName: employeeFile
+        - to:
+            uri: mock:beanio-marshal
+----
 ====
 
 The first route is for transforming CSV data into a `List<Employee>` Java objects.
@@ -123,6 +150,3 @@ the download page for the latest versions).
   <version>4.4.0</version>
 </dependency>
 ---------------------------------------
-
-
-include::spring-boot:partial$starter.adoc[]

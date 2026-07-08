@@ -142,20 +142,283 @@ Components reference a profile by name via the `oauthProfile` parameter:
             oauthProfile: "azure"
 ----
 
-=== Using the SPI Programmatically
+=== Incoming Bearer Token Validation
 
-Components and custom code can use the `OAuthHelper` utility from `camel-support`:
+The camel-oauth module also provides an `OAuthTokenValidationFactory` SPI for validating incoming
+`Authorization: Bearer` tokens. HTTP consumer components such as
+xref:components::platform-http-component.adoc[Platform HTTP], xref:components::servlet-component.adoc[Servlet],
+xref:components::jetty-component.adoc[Jetty], xref:components::netty-http-component.adoc[Netty HTTP], and
+xref:components::undertow-component.adoc[Undertow HTTP/WebSocket] can use this SPI without a compile-time dependency on
+camel-oauth. This module is the default provider for the SPI; runtime-specific integrations can provide their own
+implementation backed by their native security stack.
 
+JWT tokens are validated locally with JWKS. The validator verifies the JWS signature, checks `exp`
+and `nbf`, and validates `iss` and `aud`. Opaque tokens are validated with RFC 7662 introspection
+using a strict bounded HTTP/JSON implementation.
+
+HTTP consumer integrations share the same request contract. The inbound header must use
+`Authorization: Bearer <token>`. The token part must use the RFC 6750 `b64token` character set
+(`A-Z`, `a-z`, `0-9`, `-`, `.`, `_`, `~`, `+`, `/`) with optional trailing `=` padding, and is
+limited to 8192 characters. Malformed Bearer syntax and oversized tokens are rejected before the
+validation factory is called. When an HTTP transport exposes duplicate `Authorization` header
+values to Camel, they are also treated as malformed.
+
+HTTP integrations reject missing credentials and invalid tokens with HTTP 401. Missing
+credentials receive the bare `WWW-Authenticate: Bearer` challenge, while invalid tokens receive
+the RFC 6750 `WWW-Authenticate: Bearer error="invalid_token"` challenge. Malformed `Authorization`
+headers are rejected with HTTP 400 and the
+RFC 6750 `WWW-Authenticate: Bearer error="invalid_request"` challenge. Token validation
+infrastructure failures are rejected with HTTP 503. For valid tokens, the validation result is
+stored on the exchange as the `CamelOAuthTokenValidationResult` exchange property and the raw
+`Authorization` header is removed before route processors run. Token validation is an
+authentication check only: scope, role, or per-operation authorization is not enforced, and route
+code must check scopes or claims itself from the `CamelOAuthTokenValidationResult` exchange
+property.
+
+==== Identity-Provider Failure Behavior
+
+Calls to identity-provider infrastructure (OIDC discovery, JWKS fetch, and token introspection) are
+bounded by the configured connect and read timeouts. After a transport-level failure such as a
+connection refusal, timeout, or HTTP 5xx response, further attempts against the same endpoint URL
+are skipped for 30 seconds and requests fail fast; the resulting HTTP 503 rejections include the
+original failure as the cause in debug logs. The fail-fast window is shared JVM-wide across Camel
+contexts. It also applies to OIDC discovery performed during route startup, so restarting a route
+within 30 seconds of a startup discovery failure fails with the recorded cause until the window
+elapses.
+
+JWT validation degrades gracefully during an identity-provider outage: when a JWKS refresh fails
+and a previously fetched key set is cached, the cached (possibly expired) keys are used so that
+requests with valid signatures continue to be accepted. HTTP 503 is returned only when no key set
+was ever fetched. The JWKS cache contains public key material only.
+
+==== Incoming Token Validation Properties
+
+Properties are resolved from `camel.oauth.<profileName>.*` when the HTTP endpoint or route starts.
+Updates to property sources such as `application.properties`, secrets, config maps, or vault-backed
+values require restarting the route or Camel context before they are used for token validation.
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|===
+|Name |Required |Description
+
+|`camel.oauth.<profile>.base-uri` |No |Base URL used to discover OIDC metadata from `/.well-known/openid-configuration`.
+
+|`camel.oauth.<profile>.jwks-endpoint` |For JWT if `base-uri` is not set |JWKS URL used to validate JWT signatures.
+
+|`camel.oauth.<profile>.introspection-endpoint` |For opaque tokens if `base-uri` is not set |RFC 7662 introspection endpoint used to validate opaque tokens.
+
+|`camel.oauth.<profile>.introspection-client-id` |For opaque tokens |Client identifier for introspection. If omitted, `client-id` is used.
+
+|`camel.oauth.<profile>.introspection-client-secret` |For opaque tokens |Client secret for introspection. If omitted, `client-secret` is used. Treat this value as a secret.
+
+|`camel.oauth.<profile>.client-id` |No |Fallback client identifier used by introspection when `introspection-client-id` is omitted.
+
+|`camel.oauth.<profile>.client-secret` |No |Fallback client secret used by introspection when `introspection-client-secret` is omitted. Treat this value as a secret.
+
+|`camel.oauth.<profile>.expected-issuer` |Yes, unless `base-uri` is set or `allow-missing-issuer=true` |Expected `iss` claim. When `base-uri` is set, the base URI is used as the expected issuer.
+
+|`camel.oauth.<profile>.expected-audience` |Yes, unless `allow-missing-audience=true` |Comma-separated accepted `aud` claim values, for example `my-api,my-api-v2`. The token is accepted when its `aud` claim matches at least one configured value. Configure this so tokens minted for another service are not accepted.
+
+|`camel.oauth.<profile>.expected-token-type` |No |Expected JWT `typ` header, for example `at+jwt`. When set, JWT tokens without this type are rejected.
+
+|`camel.oauth.<profile>.clock-skew-seconds` |No |Clock skew leeway for temporal claims. Default: `0`.
+
+|`camel.oauth.<profile>.jwks-cache-ttl-seconds` |No |JWKS cache TTL. Default: `600`.
+
+|`camel.oauth.<profile>.oidc-discovery-cache-ttl-seconds` |No |OIDC discovery metadata cache TTL. Default: `600`.
+
+|`camel.oauth.<profile>.connect-timeout-seconds` |No |Connect timeout for OIDC discovery, JWKS fetch, and introspection calls. Default: `5`.
+
+|`camel.oauth.<profile>.read-timeout-seconds` |No |Read timeout for OIDC discovery, JWKS fetch, and introspection calls. Default: `10`.
+
+|`camel.oauth.<profile>.require-expiration` |No |Whether JWT tokens must include an `exp` claim. Default: `true`.
+
+|`camel.oauth.<profile>.allowed-jws-algorithms` |No |Comma-separated JWS algorithm allowlist, for example `RS256,ES256`. When omitted, compatible RSA and EC JWS algorithms supported by the verifier are accepted.
+
+|`camel.oauth.<profile>.allow-missing-audience` |No |Set to `true` to accept tokens without configuring accepted audiences. Default: `false`.
+
+|`camel.oauth.<profile>.allow-missing-issuer` |No |Set to `true` to accept tokens without configuring an expected issuer. Default: `false`.
+
+|`camel.oauth.<profile>.allow-insecure-http` |No |Set to `true` to allow plain HTTP OIDC discovery, JWKS, or introspection endpoints for local development. Default: `false`.
+|===
+
+==== Choosing JWT Validation, OIDC Discovery, or Opaque Introspection
+
+Camel chooses the validation path from the incoming token and the configured profile:
+
+* If only `introspection-endpoint` is configured, Camel introspects the token, regardless of token shape.
+* If only `jwks-endpoint` is configured, Camel validates the token as a JWT.
+* If both JWKS and introspection are configured, parseable signed JWT tokens are validated locally and other tokens are introspected. If a signed JWT fails local validation, Camel rejects it and does not fall back to introspection.
+
+Local JWT validation avoids a per-request identity-provider call and is appropriate when the issuer
+publishes signing keys through JWKS. Opaque introspection performs a blocking outbound HTTP call for
+each validation and is appropriate when the issuer does not expose token contents to the resource
+server. For production resource-server routes, configure `expected-issuer` and `expected-audience`
+and use HTTPS endpoints.
+
+===== JWT Validation with an Explicit JWKS Endpoint
+
+[source,properties]
+----
+camel.oauth.myprofile.jwks-endpoint=https://idp.example.com/.well-known/jwks.json
+camel.oauth.myprofile.expected-issuer=https://idp.example.com
+camel.oauth.myprofile.expected-audience=my-api
+camel.oauth.myprofile.connect-timeout-seconds=5
+camel.oauth.myprofile.read-timeout-seconds=10
+----
+
+===== OIDC Discovery
+
+Use `base-uri` when the identity provider exposes OIDC metadata at `/.well-known/openid-configuration`.
+Camel discovers `jwks_uri` when it is not configured explicitly.
+Camel discovers and enables `introspection_endpoint` only when introspection credentials are also configured.
+This lets JWT-only resource servers use OIDC discovery against providers that advertise introspection metadata
+without requiring unused client credentials.
+When `expected-issuer` is not set, the configured `base-uri` is used as the expected issuer.
+The discovery document `issuer` must match the configured expected issuer. When using the
+programmatic `OAuthTokenValidationConfig.setOidcDiscoveryUrl()` API directly without
+`expected-issuer`, the discovery URL must use the standard `/.well-known/openid-configuration`
+path so Camel can derive and validate the expected issuer. For non-standard discovery URLs,
+configure `expected-issuer` explicitly.
+
+[source,properties]
+----
+camel.oauth.myprofile.base-uri=https://idp.example.com/realms/main
+camel.oauth.myprofile.expected-audience=my-api,my-api-v2
+camel.oauth.myprofile.connect-timeout-seconds=5
+camel.oauth.myprofile.read-timeout-seconds=10
+----
+
+===== Opaque Token Introspection
+
+[source,properties]
+----
+camel.oauth.myprofile.introspection-endpoint=https://idp.example.com/oauth2/introspect
+camel.oauth.myprofile.introspection-client-id=resource-server-client
+camel.oauth.myprofile.introspection-client-secret=resource-server-secret
+camel.oauth.myprofile.expected-issuer=https://idp.example.com
+camel.oauth.myprofile.expected-audience=my-api
+camel.oauth.myprofile.connect-timeout-seconds=5
+camel.oauth.myprofile.read-timeout-seconds=10
+----
+
+The introspection client secret is sensitive.
+Store it with the same secret-management mechanism used for other Camel secrets.
+
+===== Mixed JWT and Opaque Tokens
+
+[source,properties]
+----
+camel.oauth.myprofile.jwks-endpoint=https://idp.example.com/.well-known/jwks.json
+camel.oauth.myprofile.introspection-endpoint=https://idp.example.com/oauth2/introspect
+camel.oauth.myprofile.introspection-client-id=resource-server-client
+camel.oauth.myprofile.introspection-client-secret=resource-server-secret
+camel.oauth.myprofile.expected-issuer=https://idp.example.com
+camel.oauth.myprofile.expected-audience=my-api
+camel.oauth.myprofile.connect-timeout-seconds=5
+camel.oauth.myprofile.read-timeout-seconds=10
+----
+
+To use a runtime-specific or application-specific validator for one profile, bind an
+`OAuthTokenValidationFactory` bean and reference it from the profile:
+
+[source,properties]
+----
+camel.oauth.myprofile.validation-factory=#bean:myTokenValidationFactory
+----
+
+For the default unnamed profile, use `camel.oauth.validation-factory`.
+
+If this property is configured, the referenced bean must exist and implement
+`OAuthTokenValidationFactory`; otherwise the route fails to start.
+
+Use HTTPS endpoints for OIDC discovery, JWKS, and introspection in production. Plain HTTP endpoints
+are rejected by default; set `allow-insecure-http=true` only for local testing or other trusted
+development environments.
+
+Opaque-token introspection performs a blocking outbound HTTP call for each token validation, so tune
+the timeout properties for the expected request rate and identity-provider latency.
+
+Validation error details are intended for logs and diagnostics. Do not return
+`OAuthTokenValidationResult.getError()` directly to external clients; HTTP responses should use
+generic messages such as `Unauthorized`.
+Stable error categories are available through `OAuthTokenValidationResult.getErrorCode()`: `INVALID_TOKEN`,
+`INACTIVE_TOKEN`, `EXPIRED_TOKEN`, `NOT_YET_VALID`, `MISSING_EXPIRATION`, `INVALID_SIGNATURE`,
+`NO_MATCHING_KEY`, `UNSUPPORTED_ALGORITHM`, `INVALID_ISSUER`, and `INVALID_AUDIENCE`.
+
+=== Using OAuth Programmatically
+
+The `OAuthHelper` utility from `camel-support` can be used for both outgoing client credentials token acquisition and incoming bearer token validation.
+
+==== Validate an Incoming Bearer Token
+
+._Java-only: programmatic token validation using OAuthHelper API_
+[source,java]
+----
+import org.apache.camel.spi.OAuthTokenValidationResult;
+import org.apache.camel.support.OAuthHelper;
+
+OAuthTokenValidationResult result;
+try {
+    result = OAuthHelper.validateOAuthToken(camelContext, "myprofile", bearerToken);
+} catch (RuntimeException e) {
+    // Treat configuration, network, and identity-provider failures as infrastructure errors.
+    throw new IllegalStateException("Token validation is unavailable", e);
+}
+
+if (!result.isValid()) {
+    OAuthTokenValidationResult.ErrorCode errorCode = result.getErrorCode();
+    // Use generic responses at HTTP boundaries. Do not expose result.getError() to external clients.
+    throw new IllegalArgumentException("Unauthorized");
+}
+
+String subject = result.getSubject();
+String principalName = result.getName();
+boolean canRead = result.hasScope("read");
+String email = result.getClaim("email", String.class);
+----
+
+For the default unnamed profile, use:
+
+._Java-only: default profile token validation_
+[source,java]
+----
+OAuthTokenValidationResult result = OAuthHelper.validateOAuthToken(camelContext, bearerToken);
+----
+
+For advanced validation use cases, resolve `OAuthTokenValidationFactory` directly and pass an explicit `OAuthTokenValidationConfig`.
+
+._Java-only: advanced validation with explicit config and factory_
+[source,java]
+----
+import org.apache.camel.spi.OAuthTokenValidationConfig;
+import org.apache.camel.spi.OAuthTokenValidationFactory;
+import org.apache.camel.spi.OAuthTokenValidationResult;
+import org.apache.camel.support.OAuthHelper;
+
+OAuthTokenValidationFactory factory = OAuthHelper.resolveOAuthTokenValidationFactory(camelContext, "myprofile");
+
+OAuthTokenValidationConfig config = new OAuthTokenValidationConfig()
+        .setJwksEndpoint("https://idp.example.com/.well-known/jwks.json")
+        .setExpectedIssuer("https://idp.example.com")
+        .setExpectedAudience("my-api");
+
+OAuthTokenValidationResult result = factory.validateToken(config, bearerToken);
+----
+
+==== Resolve an Outgoing Client Credentials Token
+
+._Java-only: resolving an OAuth token using OAuthHelper_
 [source,java]
 ----
 import org.apache.camel.support.OAuthHelper;
 
-// Resolve a token from a named profile
 String token = OAuthHelper.resolveOAuthToken(camelContext, "keycloak");
 ----
 
 For advanced use cases, the `OAuthClientAuthenticationFactory` can be used directly with an explicit `OAuthClientConfig`:
 
+._Java-only: advanced token resolution with explicit OAuthClientConfig_
 [source,java]
 ----
 import org.apache.camel.spi.OAuthClientAuthenticationFactory;
@@ -232,7 +495,7 @@ k8s-fetch-cert:
 
 k8s-export: k8s-fetch-cert
 	@$(CAMEL_CMD) kubernetes export platform-http-files/* tls/* \
-	--dep=org.apache.camel:camel-oauth:4.21.0-SNAPSHOT \
+	--dep=org.apache.camel:camel-oauth:4.22.0-SNAPSHOT \
 	--gav=examples:platform-http-oauth:1.0.0 \
 	--property=camel.oauth.base-uri=https://oauth.localtest.me/kc/realms/camel \
 	--property=camel.oauth.redirect-uri=http://127.0.0.1:8080/auth \

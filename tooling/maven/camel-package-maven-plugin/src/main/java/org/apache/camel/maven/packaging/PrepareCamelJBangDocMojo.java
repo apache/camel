@@ -81,7 +81,7 @@ public class PrepareCamelJBangDocMojo extends AbstractGeneratorMojo {
             return;
         }
 
-        File file = new File(docDocDir, "camel-jbang.adoc");
+        File file = new File(docDocDir, "camel-jbang-configuration.adoc");
         boolean exists = file.exists();
         boolean updated;
         try {

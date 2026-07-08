@@ -8,8 +8,6 @@
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
 :core:
-//Manually maintained attributes
-:camel-spring-boot-name: file
 
 *Since Camel {since}*
 
@@ -74,10 +72,39 @@ relative to the directory where the file was consumed.
 
 If you want to delete the file after processing, the route should be:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("file://inbox?delete=true").to("bean:handleOrder");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="file://inbox?delete=true"/>
+  <to uri="bean:handleOrder"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: file://inbox
+      parameters:
+        delete: true
+      steps:
+        - to:
+            uri: bean:handleOrder
+----
+====
 
 [NOTE]
 ====
@@ -91,10 +118,39 @@ So, during processing of the `Exchange` the file is still located in the inbox f
 
 Let's illustrate this with an example:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("file://inbox?move=.done").to("bean:handleOrder");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="file://inbox?move=.done"/>
+  <to uri="bean:handleOrder"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: file://inbox
+      parameters:
+        move: .done
+      steps:
+        - to:
+            uri: bean:handleOrder
+----
+====
 
 When a file is dropped in the `inbox` folder, the file consumer notices
 this and creates a new `FileExchange` that is routed to the
@@ -124,17 +180,76 @@ We have introduced a `preMove` operation to move files *before* they
 are processed. This allows you to mark which files have been scanned as
 they are moved to this subfolder before being processed.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("file://inbox?preMove=inprogress").to("bean:handleOrder");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="file://inbox?preMove=inprogress"/>
+  <to uri="bean:handleOrder"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: file://inbox
+      parameters:
+        preMove: inprogress
+      steps:
+        - to:
+            uri: bean:handleOrder
+----
+====
+
 You can combine the `preMove` and the regular `move`:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("file://inbox?preMove=inprogress&move=.done").to("bean:handleOrder");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="file://inbox?preMove=inprogress&amp;move=.done"/>
+  <to uri="bean:handleOrder"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: file://inbox
+      parameters:
+        preMove: inprogress
+        move: .done
+      steps:
+        - to:
+            uri: bean:handleOrder
+----
+====
 
 So in this situation, the file is in the `inprogress` folder when being
 processed, and after it's processed, it's moved to the `.done` folder.
@@ -202,11 +317,42 @@ The `charset` option allows configuring the encoding of the files on
 both the consumer and producer endpoints. For example, if you read utf-8
 files and want to convert the files to iso-8859-1, you can do:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("file:inbox?charset=utf-8")
   .to("file:outbox?charset=iso-8859-1")
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="file:inbox?charset=utf-8"/>
+  <to uri="file:outbox?charset=iso-8859-1"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: file:inbox
+      parameters:
+        charset: utf-8
+      steps:
+        - to:
+            uri: file:outbox
+            parameters:
+              charset: iso-8859-1
+----
+====
 
 You can also use the `convertBodyTo` in the route. In the example below,
 we have still input files in utf-8 format, but we want to convert the
@@ -214,6 +360,10 @@ file content to a byte array in iso-8859-1 format. And then let a bean
 process the data. Before writing the content to the outbox folder using
 the current charset.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("file:inbox?charset=utf-8")
@@ -221,6 +371,38 @@ from("file:inbox?charset=utf-8")
   .to("bean:myBean")
   .to("file:outbox");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="file:inbox?charset=utf-8"/>
+  <convertBodyTo type="byte[]" charset="iso-8859-1"/>
+  <to uri="bean:myBean"/>
+  <to uri="file:outbox"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: file:inbox
+      parameters:
+        charset: utf-8
+      steps:
+        - convertBodyTo:
+            type: "byte[]"
+            charset: iso-8859-1
+        - to:
+            uri: bean:myBean
+        - to:
+            uri: file:outbox
+----
+====
 
 If you omit the charset on the consumer endpoint, then Camel does not
 know the charset of the file, and would by default use `UTF-8`. However,
@@ -234,6 +416,10 @@ In this example when writing the files, the content has already been
 converted to a byte array, and thus would write the content directly as
 is (without any further encodings).
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("file:inbox")
@@ -242,11 +428,45 @@ from("file:inbox")
   .to("file:outbox");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="file:inbox"/>
+  <convertBodyTo type="byte[]" charset="iso-8859-1"/>
+  <to uri="bean:myBean"/>
+  <to uri="file:outbox"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: file:inbox
+      steps:
+        - convertBodyTo:
+            type: "byte[]"
+            charset: iso-8859-1
+        - to:
+            uri: bean:myBean
+        - to:
+            uri: file:outbox
+----
+====
+
 You can also override and control the encoding dynamic when writing
 files, by setting a property on the exchange with the key
 `Exchange.CHARSET_NAME`. For example, in the route below, we set the
 property with a value from a message header.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("file:inbox")
@@ -255,6 +475,42 @@ from("file:inbox")
   .setProperty(Exchange.CHARSET_NAME, header("someCharsetHeader"))
   .to("file:outbox");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="file:inbox"/>
+  <convertBodyTo type="byte[]" charset="iso-8859-1"/>
+  <to uri="bean:myBean"/>
+  <setProperty name="CamelCharsetName">
+    <header>someCharsetHeader</header>
+  </setProperty>
+  <to uri="file:outbox"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: file:inbox
+      steps:
+        - convertBodyTo:
+            type: "byte[]"
+            charset: iso-8859-1
+        - to:
+            uri: bean:myBean
+        - setProperty:
+            name: CamelCharsetName
+            header: someCharsetHeader
+        - to:
+            uri: file:outbox
+----
+====
 
 We suggest keeping things simpler, so if you pick up files with the same
 encoding, and want to write the files in a specific encoding, then favor
@@ -269,18 +525,49 @@ If you have some issues then you can enable DEBUG logging on
 file using a specific charset.
 For example, the route below will log the following:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("file:inbox?charset=utf-8")
   .to("file:outbox?charset=iso-8859-1")
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="file:inbox?charset=utf-8"/>
+  <to uri="file:outbox?charset=iso-8859-1"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: file:inbox
+      parameters:
+        charset: utf-8
+      steps:
+        - to:
+            uri: file:outbox
+            parameters:
+              charset: iso-8859-1
+----
+====
+
 And the logs:
 
-----------------------------------------------------------------------------------------------------------------------------------------------
+----
 DEBUG GenericFileConverter           - Read file /Users/davsclaus/workspace/camel/camel-core/target/charset/input/input.txt with charset utf-8
 DEBUG FileOperations                 - Using Reader to write file: target/charset/output.txt with charset: iso-8859-1
-----------------------------------------------------------------------------------------------------------------------------------------------
+----
 
 === Common gotchas with folder and filenames
 
@@ -295,32 +582,114 @@ header. The constant, `Exchange.FILE_NAME`, can also be used.
 The sample code below produces files using the message ID as the
 filename:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:report").to("file:target/reports");
 ----
 
-To use `report.txt` as the filename you have to do:
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:report"/>
+  <to uri="file:target/reports"/>
+</route>
+----
 
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:report
+      steps:
+        - to:
+            uri: file:target/reports
+----
+====
+
+To use `report.txt` as the filename you have to do (using the `CamelFileName` header):
+
+[tabs]
+====
+Java::
++
 [source,java]
 ----
-from("direct:report").setHeader(Exchange.FILE_NAME, constant("report.txt")).to( "file:target/reports");
+from("direct:report").setHeader("CamelFileName", constant("report.txt")).to("file:target/reports");
 ----
 
-... the same as above, but with `CamelFileName`:
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:report"/>
+  <setHeader name="CamelFileName">
+    <constant>report.txt</constant>
+  </setHeader>
+  <to uri="file:target/reports"/>
+</route>
+----
 
-[source,java]
+YAML::
++
+[source,yaml]
 ----
-from("direct:report").setHeader("CamelFileName", constant("report.txt")).to( "file:target/reports");
+- route:
+    from:
+      uri: direct:report
+      steps:
+        - setHeader:
+            name: CamelFileName
+            constant: report.txt
+        - to:
+            uri: file:target/reports
 ----
+====
 
 And a syntax where we set the filename on the endpoint with the
 `fileName` URI option.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:report").to("file:target/reports/?fileName=report.txt");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:report"/>
+  <to uri="file:target/reports/?fileName=report.txt"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:report
+      steps:
+        - to:
+            uri: file:target/reports/
+            parameters:
+              fileName: report.txt
+----
+====
 
 === Filename Expression
 
@@ -354,10 +723,32 @@ See also section <<File2-WritingDoneFiles,_writing done files_>> below.
 If you want only to consume files when a _done file_ exists, then you can
 use the `doneFileName` option on the endpoint.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("file:bar?doneFileName=done");
 ----
+
+XML::
++
+[source,xml]
+----
+<from uri="file:bar?doneFileName=done"/>
+----
+
+YAML::
++
+[source,yaml]
+----
+- from:
+    uri: file:bar
+    parameters:
+      doneFileName: done
+----
+====
 
 It will only consume files from the _bar_ folder if a _done file_ exists in
 the same directory as the target files. Camel will automatically delete
@@ -416,10 +807,32 @@ After you have written a file, you may want to write an additional _done file_ a
 to indicate to others that the file is finished and has been written.
 To do that, you can use the `doneFileName` option on the file producer endpoint.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 .to("file:bar?doneFileName=done");
 ----
+
+XML::
++
+[source,xml]
+----
+<to uri="file:bar?doneFileName=done"/>
+----
+
+YAML::
++
+[source,yaml]
+----
+- to:
+    uri: file:bar
+    parameters:
+      doneFileName: done
+----
+====
 
 This will create a file named `done` in the same directory as the
 target file.
@@ -472,10 +885,42 @@ directory, disregarding the source directory layout (e.g., to flatten out
 the path), you add the `flatten=true` option on the file producer
 side:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("file://inputdir/?recursive=true&delete=true").to("file://outputdir?flatten=true")
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="file://inputdir/?recursive=true&amp;delete=true"/>
+  <to uri="file://outputdir?flatten=true"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: file://inputdir/
+      parameters:
+        recursive: true
+        delete: true
+      steps:
+        - to:
+            uri: file://outputdir
+            parameters:
+              flatten: true
+----
+====
 
 It will result in the following output layout:
 
@@ -495,6 +940,18 @@ before they are being written to a directory.
 Using a single route, it is possible to write a file to any number of
 subdirectories. If you have a route setup as such:
 
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("bean:myBean")
+    .to("file:/rootDirectory");
+----
+
+XML::
++
 [source,xml]
 ----
 <route>
@@ -502,6 +959,19 @@ subdirectories. If you have a route setup as such:
   <to uri="file:/rootDirectory"/>
 </route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: bean:myBean
+      steps:
+        - to:
+            uri: file:/rootDirectory
+----
+====
 
 You can have `myBean` set the header `Exchange.FILE_NAME` to values such
 as:
@@ -524,11 +994,40 @@ files will be written to the  `/var/myapp/filesInProgress` directory and
 after data transfer is done, they will be atomically moved to
 the` /var/myapp/finalDirectory `directory.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:start").
   to("file:///var/myapp/finalDirectory?tempPrefix=/../filesInProgress/");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <to uri="file:///var/myapp/finalDirectory?tempPrefix=/../filesInProgress/"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: file:///var/myapp/finalDirectory
+            parameters:
+              tempPrefix: "/../filesInProgress/"
+----
+====
 
 === Avoiding reading the same file more than once (idempotent consumer)
 
@@ -536,16 +1035,50 @@ Camel supports Idempotent Consumer
 directly within the component, so it will skip already processed files.
 This feature can be enabled by setting the `idempotent=true` option.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("file://inbox?idempotent=true").to("...");
 ----
+
+XML::
++
+[source,xml]
+----
+<from uri="file://inbox?idempotent=true"/>
+----
+
+YAML::
++
+[source,yaml]
+----
+- from:
+    uri: file://inbox
+    parameters:
+      idempotent: true
+----
+====
 
 Camel uses the absolute file name as the idempotent key, to detect
 duplicate files. You can customize this key by
 using an expression in the idempotentKey option. For example, to use both
 the name and the file size as the key
 
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("file://inbox?idempotent=true&idempotentKey=${file:name}-${file:size}")
+    .to("bean:processInbox");
+----
+
+XML::
++
 [source,xml]
 ----
 <route>
@@ -553,6 +1086,22 @@ the name and the file size as the key
   <to uri="bean:processInbox"/>
 </route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: file://inbox
+      parameters:
+        idempotent: true
+        idempotentKey: "${file:name}-${file:size}"
+      steps:
+        - to:
+            uri: bean:processInbox
+----
+====
 
 By default, Camel uses an in-memory store for keeping track of
 consumed files.
@@ -562,16 +1111,43 @@ the `idempotentRepository` option using the `#` sign in the value to
 indicate it's a referring to a bean in the Registry
 with the specified `id`.
 
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("file://inbox?idempotent=true&idempotentRepository=#myStore")
+    .to("bean:processInbox");
+----
+
+XML::
++
 [source,xml]
 ----
- <!-- define our store as a plain spring bean -->
- <bean id="myStore" class="com.mycompany.MyIdempotentStore"/>
+<!-- define our store as a plain spring bean -->
+<bean id="myStore" class="com.mycompany.MyIdempotentStore"/>
 
 <route>
   <from uri="file://inbox?idempotent=true&amp;idempotentRepository=#myStore"/>
   <to uri="bean:processInbox"/>
 </route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- from:
+    uri: file://inbox
+    parameters:
+      idempotent: true
+      idempotentRepository: "#myStore"
+    steps:
+      - to:
+          uri: bean:processInbox
+----
+====
 
 Camel will log at `DEBUG` level if it skips a file because it has been
 consumed before:
@@ -617,8 +1193,8 @@ need to use the class
   <class>org.apache.camel.processor.idempotent.jpa.MessageProcessed</class>
 
   <properties>
-    <property name="openjpa.ConnectionURL" value="jdbc:derby:target/idempotentTest;create=true"/>
-    <property name="openjpa.ConnectionDriverName" value="org.apache.derby.jdbc.EmbeddedDriver"/>
+    <property name="openjpa.ConnectionURL" value="jdbc:h2:./target/idempotentTest"/>
+    <property name="openjpa.ConnectionDriverName" value="org.h2.Driver"/>
     <property name="openjpa.jdbc.SynchronizeMappings" value="buildSchema"/>
     <property name="openjpa.Log" value="DefaultLevel=WARN, Tool=INFO"/>
     <property name="openjpa.Multithreaded" value="true"/>
@@ -629,6 +1205,7 @@ need to use the class
 Next, we can create our JPA idempotent repository in the spring
 XML file as well:
 
+._XML-only: Spring bean definition for JPA-based idempotent repository_
 [source,xml]
 ----
 <!-- we define our jpa based idempotent repository we want to use in the file consumer -->
@@ -645,6 +1222,18 @@ And yes then we just need to refer to the *jpaStore* bean in the file
 consumer endpoint using the `idempotentRepository` using the `#` syntax
 option:
 
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("file://inbox?idempotent=true&idempotentRepository=#jpaStore")
+    .to("bean:processInbox");
+----
+
+XML::
++
 [source,xml]
 ----
 <route>
@@ -652,6 +1241,22 @@ option:
   <to uri="bean:processInbox"/>
 </route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: file://inbox
+      parameters:
+        idempotent: true
+        idempotentRepository: "#jpaStore"
+      steps:
+        - to:
+            uri: bean:processInbox
+----
+====
 
 === Filtering Strategies
 
@@ -686,6 +1291,18 @@ And then we can configure our route using the `filter` attribute to
 reference our filter (using `#` notation) that we have defined in the
 spring XML file:
 
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("file://inbox?filter=#myFilter")
+    .to("bean:processInbox");
+----
+
+XML::
++
 [source,xml]
 ----
 <!-- define our filter as a plain spring bean -->
@@ -696,6 +1313,20 @@ spring XML file:
   <to uri="bean:processInbox"/>
 </route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- from:
+    uri: file://inbox
+    parameters:
+      filter: "#myFilter"
+    steps:
+      - to:
+          uri: bean:processInbox
+----
+====
 
 ==== Filtering using ANT path matcher
 
@@ -714,10 +1345,32 @@ See the URI options above for more information.
 
 The sample below demonstrates how to use it:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("file://inbox?antInclude=**/*.txt").to("...");
 ----
+
+XML::
++
+[source,xml]
+----
+<from uri="file://inbox?antInclude=**/*.txt"/>
+----
+
+YAML::
++
+[source,yaml]
+----
+- from:
+    uri: file://inbox
+    parameters:
+      antInclude: "**/*.txt"
+----
+====
 
 === Sorting Strategies
 
@@ -736,16 +1389,42 @@ And then we can configure our route using the *sorter* option to
 reference to our sorter (`mySorter`) we have defined in the spring XML
 file:
 
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("file://inbox?sorter=#mySorter")
+    .to("bean:processInbox");
+----
+
+XML::
++
 [source,xml]
 ----
- <!-- define our sorter as a plain spring bean -->
- <bean id="mySorter" class="com.mycompany.MyFileSorter"/>
+<!-- define our sorter as a plain spring bean -->
+<bean id="mySorter" class="com.mycompany.MyFileSorter"/>
 
 <route>
   <from uri="file://inbox?sorter=#mySorter"/>
   <to uri="bean:processInbox"/>
 </route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- from:
+    uri: file://inbox
+    parameters:
+      sorter: "#mySorter"
+    steps:
+      - to:
+          uri: bean:processInbox
+----
+====
 
 [TIP]
 ====
@@ -863,6 +1542,7 @@ If you want to use the Camel Error Handler to
 deal with any exception occurring in the file consumer, then you can
 enable the `bridgeErrorHandler` option as shown below:
 
+._Java-only: `onException` error handler configuration is Java DSL specific_
 [source,java]
 ----
 // to handle any IOException being thrown
@@ -903,10 +1583,40 @@ problems.
 By default, Camel will move any processed file into a `.camel`
 subdirectory in the directory the file was consumed from.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
-from("file://inputdir/?recursive=true&delete=true").to("file://outputdir")
+from("file://inputdir/?recursive=true&delete=true").to("file://outputdir");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="file://inputdir/?recursive=true&amp;delete=true"/>
+  <to uri="file://outputdir"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: file://inputdir/
+      parameters:
+        recursive: true
+        delete: true
+      steps:
+        - to:
+            uri: file://outputdir
+----
+====
 
 Affects the layout as follows: +
 *before*
@@ -927,17 +1637,77 @@ outputdir/sub/bar.txt
 
 === Read from a directory and write to another directory
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
-from("file://inputdir/?delete=true").to("file://outputdir")
+from("file://inputdir/?delete=true").to("file://outputdir");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="file://inputdir/?delete=true"/>
+  <to uri="file://outputdir"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: file://inputdir/
+      parameters:
+        delete: true
+      steps:
+        - to:
+            uri: file://outputdir
+----
+====
 
 === Read from a directory and write to another directory using a dynamic name
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
-from("file://inputdir/?delete=true").to("file://outputdir?fileName=copy-of-${file:name}")
+from("file://inputdir/?delete=true").to("file://outputdir?fileName=copy-of-${file:name}");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="file://inputdir/?delete=true"/>
+  <to uri="file://outputdir?fileName=copy-of-${file:name}"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: file://inputdir/
+      parameters:
+        delete: true
+      steps:
+        - to:
+            uri: file://outputdir
+            parameters:
+              fileName: "copy-of-${file:name}"
+----
+====
 
 Listen to a directory and create a message for each file dropped there.
 Copy the contents to the `outputdir` and delete the file in the
@@ -945,10 +1715,40 @@ Copy the contents to the `outputdir` and delete the file in the
 
 === Reading recursively from a directory and writing to another
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
-from("file://inputdir/?recursive=true&delete=true").to("file://outputdir")
+from("file://inputdir/?recursive=true&delete=true").to("file://outputdir");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="file://inputdir/?recursive=true&amp;delete=true"/>
+  <to uri="file://outputdir"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: file://inputdir/
+      parameters:
+        recursive: true
+        delete: true
+      steps:
+        - to:
+            uri: file://outputdir
+----
+====
 
 Listen to a directory and create a message for each file dropped there.
 Copy the contents to the `outputdir` and delete the file in the
@@ -971,13 +1771,13 @@ outputdir/sub/bar.txt
 
 === Read from a directory and process the message in java
 
+._Java-only: inline Processor implementation_
+
 [source,java]
 ----
-from("file://inputdir/").process(new Processor() {
-  public void process(Exchange exchange) throws Exception {
+from("file://inputdir/").process(exchange -> {
     Object body = exchange.getIn().getBody();
     // do some business logic with the input body
-  }
 });
 ----
 
@@ -989,12 +1789,38 @@ dropped into the `inputdir` directory.
 In this sample, we want to move consumed files to a backup folder using
 today's date as a subfolder name:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("file://inbox?move=backup/${date:now:yyyyMMdd}/${file:name}").to("...");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="file://inbox?move=backup/${date:now:yyyyMMdd}/${file:name}"/>
+  <to uri="..."/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: file://inbox
+      parameters:
+        move: "backup/${date:now:yyyyMMdd}/${file:name}"
+      steps:
+        - to:
+            uri: "..."
+----
+====
+
 See xref:languages:file-language.adoc[File Language] for more samples.
-
-
-include::spring-boot:partial$starter.adoc[]

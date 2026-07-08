@@ -41,7 +41,7 @@ class PluginAddTest extends CamelCommandBaseTestSupport {
         command.name = "kubernetes";
         command.doCall();
 
-        Assertions.assertEquals("", printer.getOutput());
+        Assertions.assertEquals("Plugin kubernetes added", printer.getOutput());
 
         Assertions.assertEquals(
                 "{\"plugins\":{\"kubernetes\":{\"name\":\"kubernetes\",\"command\":\"kubernetes\",\"firstVersion\":\"4.8.0\",\"description\":\"%s\"}}}"
@@ -58,7 +58,7 @@ class PluginAddTest extends CamelCommandBaseTestSupport {
         command.firstVersion = "1.2.3";
         command.doCall();
 
-        Assertions.assertEquals("", printer.getOutput());
+        Assertions.assertEquals("Plugin foo-plugin added", printer.getOutput());
 
         Assertions.assertEquals("{\"plugins\":{\"foo-plugin\":{\"name\":\"foo-plugin\",\"command\":\"foo\"," +
                                 "\"firstVersion\":\"1.2.3\",\"description\":\"Some plugin\"}}}",
@@ -71,7 +71,7 @@ class PluginAddTest extends CamelCommandBaseTestSupport {
         command.name = "foo";
         command.doCall();
 
-        Assertions.assertEquals("", printer.getOutput());
+        Assertions.assertEquals("Plugin foo added", printer.getOutput());
 
         Assertions.assertEquals("{\"plugins\":{\"foo\":{\"name\":\"foo\",\"command\":\"foo\"," +
                                 "\"description\":\"Plugin foo called with command foo\"}}}",
@@ -86,7 +86,7 @@ class PluginAddTest extends CamelCommandBaseTestSupport {
         command.gav = "org.apache.camel:foo-plugin:1.0.0";
         command.doCall();
 
-        Assertions.assertEquals("", printer.getOutput());
+        Assertions.assertEquals("Plugin foo-plugin added", printer.getOutput());
 
         Assertions.assertEquals("{\"plugins\":{\"foo-plugin\":{\"name\":\"foo-plugin\",\"command\":\"foo\"," +
                                 "\"description\":\"Plugin foo-plugin called with command foo\",\"dependency\":\"org.apache.camel:foo-plugin:1.0.0\"}}}",
@@ -103,7 +103,7 @@ class PluginAddTest extends CamelCommandBaseTestSupport {
         command.version = "1.0.0";
         command.doCall();
 
-        Assertions.assertEquals("", printer.getOutput());
+        Assertions.assertEquals("Plugin foo-plugin added", printer.getOutput());
 
         Assertions.assertEquals("{\"plugins\":{\"foo-plugin\":{\"name\":\"foo-plugin\",\"command\":\"foo\"," +
                                 "\"firstVersion\":\"1.0.0\",\"description\":\"Plugin foo-plugin called with command foo\"" +

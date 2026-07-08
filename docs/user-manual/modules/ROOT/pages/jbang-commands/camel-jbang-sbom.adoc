@@ -26,6 +26,7 @@ camel sbom [options]
 | `--cyclonedx-plugin-version` | The CycloneDX Maven Plugin version | 2.9.1 | String
 | `--dep,--dependency` | Add additional dependencies |  | List
 | `--dir,--directory` | Directory where the project will be exported | . | String
+| `--docker` | Include Docker files in exported project | true | boolean
 | `--download` | Whether to allow automatic downloading JAR dependencies (over the internet) | true | boolean
 | `--dry-run` | Preview export without writing files | false | boolean
 | `--exclude` | Exclude files by name or pattern |  | List
@@ -54,7 +55,7 @@ camel sbom [options]
 | `--output-directory` | Directory where the SBOM will be saved | . | String
 | `--output-name` | Output name of the SBOM file | sbom | String
 | `--package-name` | For Java source files should they have the given package name. By default the package name is computed from the Maven GAV. Use false to turn off and not include package name in the Java source files. |  | String
-| `--package-scan-jars` | Whether to automatic package scan JARs for custom Spring or Quarkus beans making them available for Camel JBang | false | boolean
+| `--package-scan-jars` | Whether to automatic package scan JARs for custom Spring or Quarkus beans making them available for Camel CLI | false | boolean
 | `--port` | Embeds a local HTTP server on this port |  | int
 | `--profile` | Profile to export (dev, test, prod). |  | String
 | `--prop,--property` | Camel application properties, ex. --property=prop1=foo |  | String

@@ -335,6 +335,8 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                 doActionJvmTask();
             } else if ("thread-dump".equals(action)) {
                 doActionThreadDumpTask();
+            } else if ("heap-histogram".equals(action)) {
+                doActionHeapHistogramTask();
             } else if ("top-processors".equals(action)) {
                 doActionTopProcessorsTask();
             } else if ("source".equals(action)) {
@@ -371,6 +373,12 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                 doActionReceiveTask(root);
             } else if ("readme".equals(action)) {
                 doActionReadmeTask(root);
+            } else if ("sql-query".equals(action)) {
+                doActionSqlQueryTask(root);
+            } else if ("sql-update-row".equals(action)) {
+                doActionSqlUpdateRowTask(root);
+            } else if ("jfr-memory-leak".equals(action)) {
+                doActionJfrMemoryLeakTask(root);
             } else if ("cli-debug".equals(action)) {
                 doActionCliDebug(root);
             }
@@ -832,6 +840,51 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
         }
     }
 
+    private void doActionHeapHistogramTask() throws IOException {
+        DevConsole dc = camelContext.getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class)
+                .resolveById("heap-histogram");
+        if (dc != null) {
+            JsonObject json = (JsonObject) dc.call(DevConsole.MediaType.JSON);
+            LOG.trace("Updating output file: {}", outputFile);
+            IOHelper.writeText(json.toJson(), outputFile);
+        } else {
+            IOHelper.writeText("{}", outputFile);
+        }
+    }
+
+    private void doActionJfrMemoryLeakTask(JsonObject root) throws IOException {
+        DevConsole dc = camelContext.getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class)
+                .resolveById("jfr-memory-leak");
+        if (dc != null) {
+            Map<String, Object> params = new HashMap<>();
+            String command = root.getString("command");
+            if (command != null) {
+                params.put("command", command);
+            }
+            String duration = root.getString("duration");
+            if (duration != null) {
+                params.put("duration", duration);
+            }
+            String limit = root.getString("limit");
+            if (limit != null) {
+                params.put("limit", limit);
+            }
+            String stacktrace = root.getString("stacktrace");
+            if (stacktrace != null) {
+                params.put("stacktrace", stacktrace);
+            }
+            String minSize = root.getString("minSize");
+            if (minSize != null) {
+                params.put("minSize", minSize);
+            }
+            JsonObject json = (JsonObject) dc.call(DevConsole.MediaType.JSON, params);
+            LOG.trace("Updating output file: {}", outputFile);
+            IOHelper.writeText(json.toJson(), outputFile);
+        } else {
+            IOHelper.writeText("{}", outputFile);
+        }
+    }
+
     private void doActionKafkaTask() throws IOException {
         DevConsole dc = camelContext.getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class)
                 .resolveById("kafka");
@@ -1012,6 +1065,56 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
         }
     }
 
+    private void doActionSqlQueryTask(JsonObject root) throws Exception {
+        DevConsole dc = camelContext.getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class)
+                .resolveById("sql-query");
+        if (dc != null) {
+            String sql = root.getStringOrDefault("sql", "");
+            if (sql.startsWith("file:")) {
+                File f = new File(sql.substring(5));
+                if (f.exists() && f.isFile()) {
+                    sql = Files.readString(f.toPath()).trim();
+                }
+            }
+            String datasource = root.getString("datasource");
+            int maxRows = root.getIntegerOrDefault("maxRows", 100);
+            int queryTimeout = root.getIntegerOrDefault("queryTimeout", 30);
+            Map<String, Object> args = new HashMap<>();
+            args.put("sql", sql);
+            if (datasource != null) {
+                args.put("datasource", datasource);
+            }
+            args.put("maxRows", String.valueOf(maxRows));
+            args.put("queryTimeout", String.valueOf(queryTimeout));
+            JsonObject json = (JsonObject) dc.call(DevConsole.MediaType.JSON, args);
+            LOG.trace("Updating output file: {}", outputFile);
+            IOHelper.writeText(json.toJson(), outputFile);
+        } else {
+            IOHelper.writeText("{}", outputFile);
+        }
+    }
+
+    private void doActionSqlUpdateRowTask(JsonObject root) throws Exception {
+        DevConsole dc = camelContext.getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class)
+                .resolveById("sql-query");
+        if (dc != null) {
+            Map<String, Object> args = new HashMap<>();
+            args.put("actionType", "update-row");
+            args.put("table", root.getString("table"));
+            String datasource = root.getString("datasource");
+            if (datasource != null) {
+                args.put("datasource", datasource);
+            }
+            args.put("primaryKeyValues", root.getString("primaryKeyValues"));
+            args.put("columnValues", root.getString("columnValues"));
+            JsonObject json = (JsonObject) dc.call(DevConsole.MediaType.JSON, args);
+            LOG.trace("Updating output file: {}", outputFile);
+            IOHelper.writeText(json.toJson(), outputFile);
+        } else {
+            IOHelper.writeText("{}", outputFile);
+        }
+    }
+
     private void doActionLoadTask(JsonObject root) throws Exception {
         List<String> files = root.getCollection("source");
         boolean restart = root.getBooleanOrDefault("restart", false);
@@ -1022,7 +1125,7 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                 cr.setCamelContext(camelContext);
                 camelContext.addService(cr);
             }
-            cr.load("Camel JBang", files, restart);
+            cr.load("Camel CLI", files, restart);
             JsonObject jo = new JsonObject();
             Exception error = cr.getLastError();
             if (error != null) {
@@ -1041,11 +1144,11 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
     private void doActionReloadTask() {
         ContextReloadStrategy cr = camelContext.hasService(ContextReloadStrategy.class);
         if (cr != null) {
-            cr.onReload("Camel JBang");
+            cr.onReload("Camel CLI");
         } else {
             ResourceReloadStrategy rr = camelContext.hasService(ResourceReloadStrategy.class);
             if (rr != null) {
-                rr.onReload("Camel JBang");
+                rr.onReload("Camel CLI");
             }
         }
     }
@@ -1441,6 +1544,20 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                         summary.put("maximumEntries", json.get("maximumEntries"));
                         summary.put("timeToLive", json.get("timeToLive"));
                         root.put("errors", summary);
+                    }
+                }
+                DevConsole dc27 = dcr.resolveById("datasource");
+                if (dc27 != null) {
+                    JsonObject json = (JsonObject) dc27.call(DevConsole.MediaType.JSON);
+                    if (json != null && !json.isEmpty()) {
+                        root.put("dataSources", json);
+                    }
+                }
+                DevConsole dc28 = dcr.resolveById("sql-trace");
+                if (dc28 != null) {
+                    JsonObject json = (JsonObject) dc28.call(DevConsole.MediaType.JSON);
+                    if (json != null && !json.isEmpty()) {
+                        root.put("sqlTrace", json);
                     }
                 }
             }

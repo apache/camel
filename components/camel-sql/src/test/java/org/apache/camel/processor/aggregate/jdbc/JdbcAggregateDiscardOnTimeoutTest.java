@@ -22,6 +22,9 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
+import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 public class JdbcAggregateDiscardOnTimeoutTest extends AbstractJdbcAggregationTestSupport {
 
     @Test
@@ -32,21 +35,25 @@ public class JdbcAggregateDiscardOnTimeoutTest extends AbstractJdbcAggregationTe
         template.sendBodyAndHeader("direct:start", "A", "id", 123);
         template.sendBodyAndHeader("direct:start", "B", "id", 123);
 
-        // wait 2 seconds
-        Thread.sleep(2000);
-
+        // Wait long enough for the 1-second completion timeout to fire and discard the
+        // incomplete aggregate (only 2 of 3 messages). Use setSleepForEmptyTest so
+        // assertIsSatisfied waits before accepting the zero-message expectation.
+        mock.setSleepForEmptyTest(2000);
         mock.assertIsSatisfied();
 
-        // now send 3 which does not timeout
+        // now send 3 which completes by size before timeout
         mock.reset();
-        mock.expectedBodiesReceived("C+D+E");
+        mock.expectedBodiesReceived("ABC");
 
         template.sendBodyAndHeader("direct:start", "A", "id", 123);
         template.sendBodyAndHeader("direct:start", "B", "id", 123);
         template.sendBodyAndHeader("direct:start", "C", "id", 123);
 
-        // should complete before timeout
-        mock.await(1500, TimeUnit.MILLISECONDS);
+        // Wait for the aggregate to complete (completionSize=3 reached)
+        await().atMost(10, TimeUnit.SECONDS)
+                .untilAsserted(() -> assertEquals(1, mock.getReceivedExchanges().size()));
+
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

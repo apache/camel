@@ -28,6 +28,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class HMACAccumulatorTest {
     private byte[] payload = {
@@ -68,6 +69,18 @@ public class HMACAccumulatorTest {
         HMACAccumulator builder = new HMACAccumulator(key, "HmacSHA1", null, buffersize);
         builder.decryptUpdate(buffer, 40);
         validate(builder);
+    }
+
+    @Test
+    void testValidateFailsWhenAppendedMacDoesNotMatch() throws Exception {
+        int buffersize = 256;
+        byte[] buffer = initializeBuffer(buffersize);
+        // Corrupt the first byte of the appended MAC so it no longer matches the calculated MAC
+        buffer[payload.length] ^= 0x01;
+
+        HMACAccumulator builder = new HMACAccumulator(key, "HmacSHA1", null, buffersize);
+        builder.decryptUpdate(buffer, 40);
+        assertThrows(IllegalStateException.class, builder::validate);
     }
 
     @Test

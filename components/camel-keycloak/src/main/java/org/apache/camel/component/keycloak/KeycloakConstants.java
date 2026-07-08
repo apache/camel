@@ -178,6 +178,12 @@ public final class KeycloakConstants {
     @Metadata(description = "The access token for permission evaluation", javaType = "String")
     public static final String ACCESS_TOKEN = "CamelKeycloakAccessToken";
 
+    @Metadata(description = "The token for revocation or introspection", javaType = "String")
+    public static final String TOKEN = "CamelKeycloakToken";
+
+    @Metadata(description = "The token type hint for revocation", javaType = "String")
+    public static final String TOKEN_TYPE_HINT = "CamelKeycloakTokenTypeHint";
+
     @Metadata(description = "Comma-separated list of resource names or IDs to evaluate permissions for", javaType = "String")
     public static final String PERMISSION_RESOURCE_NAMES = "CamelKeycloakPermissionResourceNames";
 

@@ -33,9 +33,9 @@ import org.apache.camel.util.json.Jsoner;
 /**
  * Shared helper for discovering running Camel processes and communicating with them via the file-based IPC protocol.
  * <p>
- * Camel JBang applications write status snapshots to {@code ~/.camel/{pid}-status.json}. Actions are requested by
- * writing to {@code {pid}-action-{requestId}.json} and reading the response from {@code {pid}-output-{requestId}.json}.
- * Each request gets a unique ID so concurrent callers (CLI, MCP server, etc.) don't interfere with each other.
+ * Camel CLI applications write status snapshots to {@code ~/.camel/{pid}-status.json}. Actions are requested by writing
+ * to {@code {pid}-action-{requestId}.json} and reading the response from {@code {pid}-output-{requestId}.json}. Each
+ * request gets a unique ID so concurrent callers (CLI, MCP server, etc.) don't interfere with each other.
  * <p>
  * This class is used by both the {@code camel ask} CLI command and the MCP server's {@code RuntimeService}.
  *
@@ -183,6 +183,10 @@ public final class RuntimeHelper {
      * @return           the raw response string, or a timeout message if no response was received
      */
     public static String executeAction(long pid, String action, Consumer<JsonObject> configure) {
+        return executeAction(pid, action, configure, ACTION_TIMEOUT_MS);
+    }
+
+    public static String executeAction(long pid, String action, Consumer<JsonObject> configure, long timeoutMs) {
         String requestId = UUID.randomUUID().toString().substring(0, 8);
         Path camelDir = CommandLineHelper.getCamelDir();
         Path outputFile = camelDir.resolve(pid + "-output-" + requestId + ".json");
@@ -199,7 +203,7 @@ public final class RuntimeHelper {
 
         try {
             StopWatch watch = new StopWatch();
-            while (watch.taken() < ACTION_TIMEOUT_MS) {
+            while (watch.taken() < timeoutMs) {
                 try {
                     Thread.sleep(POLL_INTERVAL_MS);
                     if (Files.exists(outputFile) && outputFile.toFile().length() > 0) {
@@ -263,6 +267,44 @@ public final class RuntimeHelper {
                 root.put("headers", headers);
             }
         });
+        try {
+            return (JsonObject) Jsoner.deserialize(result);
+        } catch (Exception e) {
+            JsonObject wrapper = new JsonObject();
+            wrapper.put("result", result);
+            return wrapper;
+        }
+    }
+
+    public static JsonObject executeRowUpdate(
+            long pid, String table, String datasource, String pkValuesJson, String colValuesJson) {
+        String result = executeAction(pid, "sql-update-row", root -> {
+            root.put("table", table);
+            if (datasource != null) {
+                root.put("datasource", datasource);
+            }
+            root.put("primaryKeyValues", pkValuesJson);
+            root.put("columnValues", colValuesJson);
+        });
+        try {
+            return (JsonObject) Jsoner.deserialize(result);
+        } catch (Exception e) {
+            JsonObject wrapper = new JsonObject();
+            wrapper.put("result", result);
+            return wrapper;
+        }
+    }
+
+    public static JsonObject executeSqlQuery(long pid, String sql, String datasource, int maxRows, int queryTimeout) {
+        long timeout = (queryTimeout + 10) * 1000L;
+        String result = executeAction(pid, "sql-query", root -> {
+            root.put("sql", sql);
+            if (datasource != null) {
+                root.put("datasource", datasource);
+            }
+            root.put("maxRows", maxRows);
+            root.put("queryTimeout", queryTimeout);
+        }, timeout);
         try {
             return (JsonObject) Jsoner.deserialize(result);
         } catch (Exception e) {

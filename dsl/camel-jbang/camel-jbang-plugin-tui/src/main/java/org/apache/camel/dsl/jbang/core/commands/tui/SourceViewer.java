@@ -37,8 +37,12 @@ import dev.tamboui.text.Span;
 import dev.tamboui.text.Text;
 import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
+import dev.tamboui.tui.event.MouseEvent;
+import dev.tamboui.tui.event.MouseEventKind;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
+import dev.tamboui.widgets.block.Borders;
+import dev.tamboui.widgets.block.Title;
 import dev.tamboui.widgets.paragraph.Paragraph;
 import dev.tamboui.widgets.scrollbar.Scrollbar;
 import dev.tamboui.widgets.scrollbar.ScrollbarState;
@@ -49,7 +53,7 @@ import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
 
-import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.pollJsonResponse;
+import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.pollJsonResponse;
 
 /**
  * Reusable source code viewer with syntax highlighting, scrolling, and line-number display. Can be used by any tab that
@@ -74,6 +78,12 @@ class SourceViewer {
     private final Map<String, CachedSource> sourceCache = new ConcurrentHashMap<>();
     private boolean wordWrap;
     private final SearchHighlighter search = new SearchHighlighter();
+    private String currentFormat;
+    private String originalFormat;
+    private String currentRouteId;
+    private MonitorContext currentCtx;
+    private String currentPid;
+    private Rect lastInnerArea;
 
     private record CachedSource(
             List<String> lines, List<JsonObject> codeData,
@@ -102,6 +112,11 @@ class SourceViewer {
         sourceCache.clear();
         wordWrap = false;
         search.reset();
+        currentFormat = null;
+        originalFormat = null;
+        currentRouteId = null;
+        currentCtx = null;
+        currentPid = null;
     }
 
     void setOnLineSelected(IntConsumer callback) {
@@ -132,6 +147,20 @@ class SourceViewer {
             visible = false;
             onLineSelected = null;
             return true;
+        }
+        if (currentRouteId != null) {
+            if (ke.isChar('Y') || ke.isChar('y')) {
+                switchFormat("yaml");
+                return true;
+            }
+            if (ke.isChar('J') || ke.isChar('j')) {
+                switchFormat("java");
+                return true;
+            }
+            if (ke.isChar('X') || ke.isChar('x')) {
+                switchFormat("xml");
+                return true;
+            }
         }
         if (search.handleKeyEvent(ke)) {
             int matchLine = search.currentMatchLine();
@@ -188,6 +217,30 @@ class SourceViewer {
         return true;
     }
 
+    boolean handleMouseEvent(MouseEvent me) {
+        if (!visible) {
+            return false;
+        }
+        if (me.kind() == MouseEventKind.SCROLL_UP) {
+            selectedLine = Math.max(0, selectedLine - 3);
+            return true;
+        }
+        if (me.kind() == MouseEventKind.SCROLL_DOWN) {
+            if (!lines.isEmpty()) {
+                selectedLine = Math.min(lines.size() - 1, selectedLine + 3);
+            }
+            return true;
+        }
+        if (me.isClick() && lastInnerArea != null && lastInnerArea.contains(me.x(), me.y())) {
+            int clickedLine = scrollY + (me.y() - lastInnerArea.top());
+            if (clickedLine >= 0 && clickedLine < lines.size()) {
+                selectedLine = clickedLine;
+            }
+            return true;
+        }
+        return true;
+    }
+
     boolean isSearchInputActive() {
         return search.isSearchInputActive();
     }
@@ -198,10 +251,11 @@ class SourceViewer {
 
     void render(Frame frame, Rect area) {
         Block block = Block.builder()
-                .borderType(BorderType.ROUNDED)
-                .title(" Source [" + (title != null ? title : "") + "] ")
+                .borderType(BorderType.ROUNDED).borders(Borders.ALL)
+                .title(buildTitle())
                 .build();
         Rect inner = block.inner(area);
+        lastInnerArea = inner;
         frame.renderWidget(block, area);
 
         if (lines.isEmpty()) {
@@ -279,17 +333,22 @@ class SourceViewer {
         if (search.hasFindTerm()) {
             search.renderFindStatus(spans);
         } else {
-            MonitorContext.hint(spans, "Esc/c", "close");
+            TuiHelper.hint(spans, "Esc/c", "close");
         }
-        MonitorContext.hint(spans, "↑↓", "navigate");
+        TuiHelper.hint(spans, TuiIcons.HINT_SCROLL, "navigate");
+        if (currentRouteId != null) {
+            TuiHelper.hint(spans, "Y", "yaml");
+            TuiHelper.hint(spans, "J", "java");
+            TuiHelper.hint(spans, "X", "xml");
+        }
         search.renderSearchHints(spans);
-        MonitorContext.hint(spans, "w", "wrap" + (wordWrap ? " [on]" : " [off]"));
+        TuiHelper.hint(spans, "w", "wrap" + (wordWrap ? " [on]" : " [off]"));
         if (!wordWrap) {
-            MonitorContext.hint(spans, "←→", "horizontal");
+            TuiHelper.hint(spans, TuiIcons.HINT_H, "horizontal");
         }
-        MonitorContext.hint(spans, "PgUp/PgDn", "page");
+        TuiHelper.hint(spans, "PgUp/PgDn", "page");
         if (onLineSelected != null) {
-            MonitorContext.hint(spans, "Enter", "select node");
+            TuiHelper.hint(spans, "Enter", "select node");
         }
     }
 
@@ -297,6 +356,11 @@ class SourceViewer {
      * Load source for a route, scrolling to the given source line number.
      */
     void loadFile(Path filePath) {
+        currentRouteId = null;
+        currentFormat = null;
+        originalFormat = null;
+        currentCtx = null;
+        currentPid = null;
         String fileName = filePath.getFileName().toString();
         try {
             List<String> rawLines = java.nio.file.Files.readAllLines(filePath, java.nio.charset.StandardCharsets.UTF_8);
@@ -342,6 +406,9 @@ class SourceViewer {
         }
 
         String pid = ctx.selectedPid;
+        currentRouteId = routeId;
+        currentCtx = ctx;
+        currentPid = pid;
         String cacheKey = pid + ":" + routeId;
         CachedSource cached = sourceCache.get(cacheKey);
         if (cached == null && sourceLocationHint != null) {
@@ -407,6 +474,11 @@ class SourceViewer {
         scrollX = 0;
         pendingScroll = true;
         visible = true;
+        String fmt = languageToFormat(cached.language);
+        if (fmt != null) {
+            originalFormat = fmt;
+            currentFormat = fmt;
+        }
     }
 
     private void loadInBackground(MonitorContext ctx, String pid, String routeId, int targetLine) {
@@ -489,6 +561,10 @@ class SourceViewer {
         if (sourceLocation != null) {
             sourceCache.put(pid + ":loc:" + sourceLocation, cached);
         }
+        String fmt = languageToFormat(lang);
+        if (fmt != null) {
+            sourceCache.put(pid + ":" + routeId + ":" + fmt, cached);
+        }
 
         applyResult(ctx, routeId, sourceLocation, result, codeLines, scrollTo, cursorLine);
     }
@@ -511,7 +587,182 @@ class SourceViewer {
             selectedLine = Math.max(0, cursorLine);
             scrollY = 0;
             pendingScroll = true;
+            if (currentRouteId != null) {
+                String fmt = languageToFormat(language);
+                if (fmt != null) {
+                    originalFormat = fmt;
+                    currentFormat = fmt;
+                }
+            }
         });
+    }
+
+    private Title buildTitle() {
+        String info = title != null ? title : "";
+        if (currentRouteId == null) {
+            return Title.from(Line.from(List.of(Span.raw(" Source [" + info + "] "))));
+        }
+
+        List<Span> spans = new ArrayList<>();
+        spans.add(Span.raw(" Source [" + info + "]  "));
+
+        String[] formats = { "yaml", "java", "xml" };
+        String[] labels = { "YAML", "Java", "XML" };
+
+        for (int i = 0; i < formats.length; i++) {
+            if (i > 0) {
+                spans.add(Span.styled(" │ ", Style.EMPTY.dim()));
+            }
+            String label = labels[i];
+            if (formats[i].equals(originalFormat)) {
+                label += "*";
+            }
+            if (formats[i].equals(currentFormat)) {
+                spans.add(Span.styled(label, Style.EMPTY.bold()));
+            } else {
+                spans.add(Span.styled(label, Style.EMPTY.dim()));
+            }
+        }
+        spans.add(Span.raw(" "));
+
+        return Title.from(Line.from(spans));
+    }
+
+    private void switchFormat(String format) {
+        if (format.equals(currentFormat)) {
+            return;
+        }
+        if (currentPid == null || currentRouteId == null || currentCtx == null) {
+            return;
+        }
+
+        String cacheKey = currentPid + ":" + currentRouteId + ":" + format;
+        CachedSource cached = sourceCache.get(cacheKey);
+        if (cached != null) {
+            lines = cached.lines;
+            codeData = cached.codeData;
+            language = cached.language;
+            currentFormat = format;
+            selectedLine = findLicenseHeaderEnd(codeData);
+            scrollY = 0;
+            scrollX = 0;
+            pendingScroll = true;
+            search.reset();
+            return;
+        }
+
+        if (!loading.compareAndSet(false, true)) {
+            return;
+        }
+
+        lines = List.of("(Loading " + format + " format...)");
+        currentFormat = format;
+        scrollY = 0;
+        scrollX = 0;
+
+        MonitorContext ctx = currentCtx;
+        String pid = currentPid;
+        String routeId = currentRouteId;
+        ctx.runner.scheduler().execute(() -> {
+            try {
+                if (format.equals(originalFormat)) {
+                    loadInBackground(ctx, pid, routeId, 0);
+                } else {
+                    loadFormatInBackground(ctx, pid, routeId, format);
+                }
+            } finally {
+                loading.set(false);
+            }
+        });
+    }
+
+    private void loadFormatInBackground(MonitorContext ctx, String pid, String routeId, String format) {
+        Path outputFile = ctx.getOutputFile(pid);
+        PathUtils.deleteFile(outputFile);
+
+        JsonObject root = new JsonObject();
+        root.put("action", "route-dump");
+        root.put("filter", routeId);
+        root.put("format", format);
+        root.put("uriAsParameters", "yaml".equals(format) ? "true" : "false");
+
+        Path actionFile = ctx.getActionFile(pid);
+        PathUtils.writeTextSafely(root.toJson(), actionFile);
+
+        JsonObject jo = pollJsonResponse(outputFile, 5000);
+        PathUtils.deleteFile(outputFile);
+
+        if (jo == null) {
+            applyFormatResult(ctx, format, List.of("(No response from integration)"), Collections.emptyList());
+            return;
+        }
+
+        JsonArray routes = (JsonArray) jo.get("routes");
+        if (routes == null || routes.isEmpty()) {
+            applyFormatResult(ctx, format,
+                    List.of("(No dump available for route: " + routeId + ")"), Collections.emptyList());
+            return;
+        }
+
+        JsonObject routeObj = (JsonObject) routes.get(0);
+        List<JsonObject> codeLines = routeObj.getCollection("code");
+        if (codeLines == null || codeLines.isEmpty()) {
+            applyFormatResult(ctx, format, List.of("(No code available)"), Collections.emptyList());
+            return;
+        }
+
+        List<String> result = new ArrayList<>();
+        int lineNumWidth = String.valueOf(codeLines.size()).length();
+        for (int i = 0; i < codeLines.size(); i++) {
+            String code = Jsoner.unescape(objToString(codeLines.get(i).get("code")));
+            result.add(String.format("%" + lineNumWidth + "d  %s", i + 1, code));
+        }
+
+        SyntaxHighlighter.Language lang = formatToLanguage(format);
+        CachedSource cached = new CachedSource(result, codeLines, null, lang);
+        sourceCache.put(pid + ":" + routeId + ":" + format, cached);
+
+        applyFormatResult(ctx, format, result, codeLines);
+    }
+
+    private void applyFormatResult(
+            MonitorContext ctx, String format,
+            List<String> resultLines, List<JsonObject> codeLines) {
+        if (ctx.runner == null) {
+            return;
+        }
+        ctx.runner.runOnRenderThread(() -> {
+            if (!visible) {
+                return;
+            }
+            language = formatToLanguage(format);
+            lines = resultLines;
+            codeData = codeLines;
+            currentFormat = format;
+            selectedLine = findLicenseHeaderEnd(codeLines);
+            scrollY = 0;
+            scrollX = 0;
+            pendingScroll = true;
+            search.reset();
+        });
+    }
+
+    private static String languageToFormat(SyntaxHighlighter.Language lang) {
+        return switch (lang) {
+            case YAML -> "yaml";
+            case JAVA -> "java";
+            case XML -> "xml";
+            default -> null;
+        };
+    }
+
+    private static SyntaxHighlighter.Language formatToLanguage(String format) {
+        return switch (format) {
+            case "yaml" -> SyntaxHighlighter.Language.YAML;
+            case "java" -> SyntaxHighlighter.Language.JAVA;
+            case "xml" -> SyntaxHighlighter.Language.XML;
+            default -> SyntaxHighlighter.Language.PLAIN;
+        };
     }
 
     private Line highlightSourceLine(String raw, int hSkip, boolean isSelected, int viewportWidth) {

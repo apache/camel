@@ -7,8 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Only consumer is supported
-//Manually maintained attributes
-:camel-spring-boot-name: zookeeper-master
 
 *Since Camel {since}*
 
@@ -25,10 +23,38 @@ consumption or due to commercial or stability reasons, you can only have a singl
 Prefix any camel endpoint with **zookeeper-master:someName:** where _someName_ is a logical name and is
 used to acquire the master lock. e.g.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
-from("zookeeper-master:cheese:jms:foo").to("activemq:wine");
+from("zookeeper-master:cheese:jms:foo")
+    .to("activemq:wine");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="zookeeper-master:cheese:jms:foo"/>
+  <to uri="activemq:wine"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: zookeeper-master:cheese:jms:foo
+      steps:
+        - to:
+            uri: activemq:wine
+----
+====
 
 The above simulates the [Exclusive Consumers](http://activemq.apache.org/exclusive-consumer.html) type feature in
 ActiveMQ; but on any third party JMS provider that maybe doesn't support exclusive consumers.
@@ -43,7 +69,6 @@ zookeeper-master:name:endpoint[?options]
 Where endpoint is any Camel endpoint, you want to run in master/slave mode.
 
 
-
 // component options: START
 include::partial$component-configure-options.adoc[]
 include::partial$component-endpoint-options.adoc[]
@@ -51,32 +76,56 @@ include::partial$component-endpoint-headers.adoc[]
 // component options: END
 
 
-
 == Examples
 
 You can protect a clustered Camel application to only consume files from one active node.
 
-
+[tabs]
+====
+Java::
++
 [source,java]
 ----
-    // the file endpoint we want to consume from
-    String url = "file:target/inbox?delete=true";
-
-    // use the zookeeper master component in the clustered group named myGroup
-    // to run a master/slave mode in the following Camel url
-    from("zookeeper-master:myGroup:" + url)
-        .log(name + " - Received file: ${file:name}")
-        .delay(delay)
-        .log(name + " - Done file:     ${file:name}")
-        .to("file:target/outbox");
+from("zookeeper-master:myGroup:file:target/inbox?delete=true")
+    .log(name + " - Received file: ${file:name}")
+    .delay(delay)
+    .log(name + " - Done file:     ${file:name}")
+    .to("file:target/outbox");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="zookeeper-master:myGroup:file:target/inbox?delete=true"/>
+  <log message="${file:name}"/>
+  <to uri="file:target/outbox"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: zookeeper-master:myGroup:file:target/inbox?delete=true
+      steps:
+        - log:
+            message: "${file:name}"
+        - to:
+            uri: file:target/outbox
+----
+====
 
 ZooKeeper will by default connect to `localhost:2181`, but you can configure this on the component level.
 
+._Java-only: programmatic component configuration_
 [source,java]
 ----
-    MasterComponent master = new MasterComponent();
-    master.setZooKeeperUrl("myzookeeper:2181");
+MasterComponent master = new MasterComponent();
+master.setZooKeeperUrl("myzookeeper:2181");
 ----
 
 However, you can also configure the url of the ZooKeeper ensemble using environment variables.
@@ -98,24 +147,21 @@ When doing so, you must configure the route policy with
 
 A little example
 
+._Java-only: programmatic RoutePolicy configuration_
 [source,java]
 ----
-    MasterRoutePolicy master = new MasterRoutePolicy();
-    master.setZooKeeperUrl("localhost:2181");
-    master.setGroupName("myGroup");
+MasterRoutePolicy master = new MasterRoutePolicy();
+master.setZooKeeperUrl("localhost:2181");
+master.setGroupName("myGroup");
 
-    // its import to set the route to not auto startup
-    // as we let the route policy start/stop the routes when it becomes a master/slave, etc.
-    from("file:target/inbox?delete=true").noAutoStartup()
-        // use the zookeeper master route policy in the clustered group
-        // to run this route in master/slave mode
-        .routePolicy(master)
-        .log(name + " - Received file: ${file:name}")
-        .delay(delay)
-        .log(name + " - Done file:     ${file:name}")
-        .to("file:target/outbox");
+// its import to set the route to not auto startup
+// as we let the route policy start/stop the routes when it becomes a master/slave, etc.
+from("file:target/inbox?delete=true").noAutoStartup()
+    // use the zookeeper master route policy in the clustered group
+    // to run this route in master/slave mode
+    .routePolicy(master)
+    .log(name + " - Received file: ${file:name}")
+    .delay(delay)
+    .log(name + " - Done file:     ${file:name}")
+    .to("file:target/outbox");
 ----
-
-
-
-include::spring-boot:partial$starter.adoc[]

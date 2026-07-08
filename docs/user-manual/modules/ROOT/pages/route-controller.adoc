@@ -165,7 +165,7 @@ src.setThreadPoolSize(2);
 
 Application Properties::
 +
-When using Spring Boot, Quarkus or Camel JBang
+When using Spring Boot, Quarkus or Camel CLI
 +
 [source,properties]
 ----
@@ -315,7 +315,7 @@ src.setExcludeRoutes("aws*");
 
 Application Properties::
 +
-When using Spring Boot, Quarkus or Camel JBang
+When using Spring Boot, Quarkus or Camel CLI
 +
 [source,properties]
 -----

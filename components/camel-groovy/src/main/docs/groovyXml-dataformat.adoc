@@ -2,12 +2,10 @@
 :doctitle: Groovy XML
 :shortname: groovyXml
 :artifactid: camel-groovy
-:description: Transform between XML and Groovy Node (Map structure) objects.
+:description: Transform between XML and Groovy Node (Map structure) objects
 :since: 4.15
 :supportlevel: Stable
 :tabs-sync-option:
-//Manually maintained attributes
-:camel-spring-boot-name: groovy
 
 *Since Camel {since}*
 
@@ -93,5 +91,3 @@ the download page for the latest versions).
   <version>x.x.x</version>
 </dependency>
 ----------------------------------------
-
-include::spring-boot:partial$starter.adoc[]

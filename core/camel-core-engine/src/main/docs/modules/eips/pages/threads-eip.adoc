@@ -1,7 +1,7 @@
 = Threads EIP
 :doctitle: Threads
 :shortname: threads
-:description: Specifies that all steps after this node are processed asynchronously
+:description: Offloads processing of subsequent steps in the route to a thread pool, enabling asynchronous and concurrent message handling
 :since: 
 :supportlevel: Stable
 :tabs-sync-option:

@@ -11,12 +11,12 @@
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-fastjson",
-    "version": "4.21.0-SNAPSHOT",
+    "version": "4.22.0-SNAPSHOT",
     "modelName": "json",
     "modelJavaType": "org.apache.camel.model.dataformat.JsonDataFormat"
   },
   "properties": {
-    "unmarshalType": { "index": 0, "kind": "attribute", "displayName": "Unmarshal Type", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Class name of the java type to use when unmarshalling" },
+    "unmarshalType": { "index": 0, "kind": "attribute", "displayName": "Unmarshal Type", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Class name of the java type to use when unmarshalling." },
     "contentTypeHeader": { "index": 1, "kind": "attribute", "displayName": "Content Type Header", "group": "common", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": true, "description": "Whether the data format should set the Content-Type header with the type from the data format. For example application\/xml for data formats marshalling to XML, or application\/json for data formats marshalling to JSON" }
   }
 }

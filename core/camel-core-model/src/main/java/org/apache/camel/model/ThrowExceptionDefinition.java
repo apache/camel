@@ -23,11 +23,13 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.annotations.DslArg;
 
 /**
  * Throws an exception
  */
-@Metadata(label = "error")
+@Metadata(label = "error,errorhandling",
+          description = "Throws an exception during route processing, either creating a new exception instance or re-throwing an existing one")
 @XmlRootElement(name = "throwException")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ThrowExceptionDefinition extends NoOutputDefinition<ThrowExceptionDefinition> {
@@ -38,11 +40,16 @@ public class ThrowExceptionDefinition extends NoOutputDefinition<ThrowExceptionD
     private Class<? extends Exception> exceptionClass;
 
     @XmlAttribute
+    @DslArg(position = 1)
+    @Metadata(description = "The message text for the exception to be thrown. Supports simple language expressions.")
     private String message;
     @XmlAttribute
+    @DslArg(position = 0, renderType = "class")
+    @Metadata(description = "The fully qualified class name of the exception to throw. Used together with message.")
     private String exceptionType;
     @XmlAttribute
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced",
+              description = "Reference to an existing exception instance to lookup from the registry and throw.")
     private String ref;
 
     public ThrowExceptionDefinition() {
@@ -91,9 +98,6 @@ public class ThrowExceptionDefinition extends NoOutputDefinition<ThrowExceptionD
         return ref;
     }
 
-    /**
-     * Reference to the exception instance to lookup from the registry to throw
-     */
     public void setRef(String ref) {
         this.ref = ref;
     }
@@ -110,9 +114,6 @@ public class ThrowExceptionDefinition extends NoOutputDefinition<ThrowExceptionD
         return message;
     }
 
-    /**
-     * To create a new exception instance and use the given message as caused message (supports simple language)
-     */
     public void setMessage(String message) {
         this.message = message;
     }
@@ -121,11 +122,6 @@ public class ThrowExceptionDefinition extends NoOutputDefinition<ThrowExceptionD
         return exceptionType;
     }
 
-    /**
-     * The class of the exception to create using the message.
-     *
-     * @see #setMessage(String)
-     */
     public void setExceptionType(String exceptionType) {
         this.exceptionType = exceptionType;
     }
@@ -134,11 +130,6 @@ public class ThrowExceptionDefinition extends NoOutputDefinition<ThrowExceptionD
         return exceptionClass;
     }
 
-    /**
-     * The class of the exception to create using the message.
-     *
-     * @see #setMessage(String)
-     */
     public void setExceptionClass(Class<? extends Exception> exceptionClass) {
         this.exceptionClass = exceptionClass;
     }

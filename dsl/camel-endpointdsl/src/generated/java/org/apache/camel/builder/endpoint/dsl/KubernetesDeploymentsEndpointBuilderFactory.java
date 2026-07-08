@@ -1454,7 +1454,7 @@ public interface KubernetesDeploymentsEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final KubernetesDeploymentsHeaderNameBuilder INSTANCE = new KubernetesDeploymentsHeaderNameBuilder();
+        public static final KubernetesDeploymentsHeaderNameBuilder INSTANCE = new KubernetesDeploymentsHeaderNameBuilder();
 
         /**
          * The Producer operation.

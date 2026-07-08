@@ -36,6 +36,7 @@ public abstract class BaseModel<O extends BaseOptionModel> {
     protected final List<O> options = new ArrayList<>();
     protected SupportLevel supportLevel;
     protected boolean nativeSupported;
+    protected List<String> aliases = new ArrayList<>();
     protected Map<String, Object> metadata = new LinkedHashMap<>();
 
     public static Comparator<BaseModel<?>> compareTitle() {
@@ -149,6 +150,18 @@ public abstract class BaseModel<O extends BaseOptionModel> {
 
     public void setNativeSupported(boolean nativeSupported) {
         this.nativeSupported = nativeSupported;
+    }
+
+    /**
+     * Alternative names or common aliases for this entity (e.g., "fan-out" for Multicast). Aliases are descriptive only
+     * — they cannot be used in the DSL.
+     */
+    public List<String> getAliases() {
+        return aliases;
+    }
+
+    public void setAliases(List<String> aliases) {
+        this.aliases = aliases;
     }
 
     /**

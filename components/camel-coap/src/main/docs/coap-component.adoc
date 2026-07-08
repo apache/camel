@@ -7,8 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
-//Manually maintained attributes
-:camel-spring-boot-name: coap
 
 *Since Camel {since}*
 
@@ -23,14 +21,14 @@ Maven users will need to add the following dependency to their pom.xml
 for this component:
 
 [source,xml]
----------------------------------------------------------
+----
 <dependency>
  <groupId>org.apache.camel</groupId>
  <artifactId>camel-coap</artifactId>
  <version>x.x.x</version>
  <!-- use the same version as your Camel core version -->
 </dependency>
----------------------------------------------------------
+----
 
 
 // component options: START
@@ -69,13 +67,12 @@ The following rules determine which request method the CoAP producer will use to
  4. `GET` otherwise.
 
 
-include::spring-boot:partial$starter.adoc[]
-
 == Configuring COAP Server
 
 The COAP server has many configuration options, and this can be configured from a properties file such as `Californium3.properties`.
 You can specfiy the location of this configuration file on the Camel CoAPComponent, such as:
 
+._Java-only: configuring the CoAP component programmatically_
 [source,java]
 ----
 CoAPComponent coap = context.getComponent("coap", CoAPComponent.class);

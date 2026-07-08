@@ -16,10 +16,14 @@
  */
 package org.apache.camel.processor;
 
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
+
+import static org.awaitility.Awaitility.await;
 
 public class RecipientListParallelStreamingTest extends ContextTestSupport {
 
@@ -30,14 +34,17 @@ public class RecipientListParallelStreamingTest extends ContextTestSupport {
 
         template.sendBodyAndHeader("direct:start", "Hello World", "foo", "direct:a,direct:b,direct:c");
 
-        assertMockEndpointsSatisfied();
+        await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> mock.assertIsSatisfied());
+    }
 
-        mock.reset();
+    @Test
+    public void testRecipientListParallelStreaming() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("b");
 
         template.sendBodyAndHeader("direct:streaming", "Hello World", "foo", "direct:a,direct:b,direct:c");
 
-        assertMockEndpointsSatisfied();
+        await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> mock.assertIsSatisfied());
     }
 
     @Override
@@ -49,8 +56,8 @@ public class RecipientListParallelStreamingTest extends ContextTestSupport {
 
                 from("direct:streaming").recipientList(header("foo")).parallelProcessing().streaming().to("mock:result");
 
-                from("direct:a").delay(100).syncDelayed().transform(constant("a"));
-                from("direct:b").delay(500).syncDelayed().transform(constant("b"));
+                from("direct:a").delay(500).syncDelayed().transform(constant("a"));
+                from("direct:b").delay(2000).syncDelayed().transform(constant("b"));
                 from("direct:c").transform(constant("c"));
             }
         };

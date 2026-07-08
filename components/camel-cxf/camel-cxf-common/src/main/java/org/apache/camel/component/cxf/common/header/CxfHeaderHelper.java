@@ -130,7 +130,8 @@ public final class CxfHeaderHelper {
 
         camelHeaders.entrySet().forEach(entry -> {
             // Need to make sure the cxf needed header will not be filtered
-            if (strategy.applyFilterToCamelHeaders(entry.getKey(), entry.getValue(), exchange)) {
+            if (strategy.applyFilterToCamelHeaders(entry.getKey(), entry.getValue(), exchange)
+                    && CAMEL_TO_CXF_HEADERS.get(entry.getKey()) == null) {
                 LOG.trace("Drop external header: {}={}", entry.getKey(), entry.getValue());
                 return;
             }

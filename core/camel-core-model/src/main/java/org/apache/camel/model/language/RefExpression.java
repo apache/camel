@@ -26,7 +26,8 @@ import org.apache.camel.spi.Metadata;
 /**
  * Uses an existing expression from the registry.
  */
-@Metadata(firstVersion = "2.8.0", label = "language,core", title = "Ref")
+@Metadata(firstVersion = "2.8.0", label = "language,core", title = "Ref",
+          description = "Uses an existing expression from the registry")
 @XmlRootElement(name = "ref")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RefExpression extends TypedExpressionDefinition {

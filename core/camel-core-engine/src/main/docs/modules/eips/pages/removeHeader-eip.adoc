@@ -1,7 +1,7 @@
 = Remove Header EIP
 :doctitle: Remove Header
 :shortname: removeHeader
-:description: Removes a named header from the message
+:description: Removes a specific header from the message by name
 :since: 
 :supportlevel: Stable
 :tabs-sync-option:

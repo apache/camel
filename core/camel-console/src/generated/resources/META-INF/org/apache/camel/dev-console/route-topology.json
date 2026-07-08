@@ -9,7 +9,54 @@
     "javaType": "org.apache.camel.impl.console.RouteTopologyDevConsole",
     "groupId": "org.apache.camel",
     "artifactId": "camel-console",
-    "version": "4.21.0-SNAPSHOT"
+    "version": "4.22.0-SNAPSHOT"
+  },
+  "options": {
+    "external": {
+      "index": 0,
+      "kind": "option",
+      "displayName": "External",
+      "group": "query",
+      "label": "query",
+      "required": false,
+      "type": "boolean",
+      "javaType": "java.lang.Boolean",
+      "deprecated": false,
+      "autowired": false,
+      "secret": false,
+      "defaultValue": false,
+      "description": "Whether to include external systems (databases, messaging brokers, etc.) as nodes"
+    },
+    "metric": {
+      "index": 1,
+      "kind": "option",
+      "displayName": "Metric",
+      "group": "query",
+      "label": "query",
+      "required": false,
+      "type": "boolean",
+      "javaType": "java.lang.Boolean",
+      "deprecated": false,
+      "autowired": false,
+      "secret": false,
+      "defaultValue": false,
+      "description": "Whether to include live metrics (message counts) on nodes and edges"
+    },
+    "routes": {
+      "index": 2,
+      "kind": "option",
+      "displayName": "Routes",
+      "group": "query",
+      "label": "query",
+      "required": false,
+      "type": "boolean",
+      "javaType": "java.lang.Boolean",
+      "deprecated": false,
+      "autowired": false,
+      "secret": false,
+      "defaultValue": false,
+      "description": "Whether to include route structure data in the response"
+    }
   }
 }
 

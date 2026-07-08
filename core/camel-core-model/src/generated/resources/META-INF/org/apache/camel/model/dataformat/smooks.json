@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "smooks",
     "title": "Smooks",
-    "description": "Transform and bind XML as well as non-XML data, including EDI, CSV, JSON, and YAML using Smooks.",
+    "description": "Transform and bind XML as well as non-XML data, including EDI, CSV, JSON, and YAML using Smooks",
     "deprecated": false,
     "firstVersion": "4.9.0",
     "label": "dataformat,transformation",

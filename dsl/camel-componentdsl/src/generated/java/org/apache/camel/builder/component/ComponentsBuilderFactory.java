@@ -46,6 +46,19 @@ import org.apache.camel.builder.component.dsl.*;
 public interface ComponentsBuilderFactory {
 
     /**
+     * A2A (camel-a2a)
+     * A2A endpoint for agent-to-agent communication.
+     * 
+     * Category: ai
+     * Since: 4.21
+     * Maven coordinates: org.apache.camel:camel-a2a
+     * 
+     * @return the dsl builder
+     */
+    static A2aComponentBuilderFactory.A2aComponentBuilder a2a() {
+        return A2aComponentBuilderFactory.a2a();
+    }
+    /**
      * ActiveMQ 5.x (camel-activemq)
      * Send messages to (or consume from) Apache ActiveMQ 5.x. This component
      * extends the Camel JMS component.
@@ -75,7 +88,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * AMQP (camel-amqp)
-     * Messaging with AMQP protocol using Apache QPid Client.
+     * Messaging with AMQP protocol using Apache Qpid Client.
      * 
      * Category: messaging
      * Since: 1.2
@@ -205,8 +218,8 @@ public interface ComponentsBuilderFactory {
         return AwsBedrockAgentRuntimeComponentBuilderFactory.awsBedrockAgentRuntime();
     }
     /**
-     * AWS Cloudtrail (camel-aws-cloudtrail)
-     * Consume events from Amazon Cloudtrail using AWS SDK version 2.x.
+     * AWS CloudTrail (camel-aws-cloudtrail)
+     * Consume events from Amazon CloudTrail using AWS SDK version 2.x.
      * 
      * Category: cloud,management,monitoring
      * Since: 3.19
@@ -1282,8 +1295,8 @@ public interface ComponentsBuilderFactory {
         return DebeziumOracleComponentBuilderFactory.debeziumOracle();
     }
     /**
-     * Debezium PostgresSQL Connector (camel-debezium-postgres)
-     * Capture changes from a PostgresSQL database.
+     * Debezium PostgreSQL Connector (camel-debezium-postgres)
+     * Capture changes from a PostgreSQL database.
      * 
      * Category: database
      * Since: 3.0
@@ -1511,7 +1524,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Elasticsearch (camel-elasticsearch)
-     * Send requests to ElasticSearch via Java Client API.
+     * Send requests to Elasticsearch via Java Client API.
      * 
      * Category: search,monitoring
      * Since: 3.19
@@ -2000,8 +2013,8 @@ public interface ComponentsBuilderFactory {
         return GrpcComponentBuilderFactory.grpc();
     }
     /**
-     * Hashicorp Vault (camel-hashicorp-vault)
-     * Manage secrets in Hashicorp Vault Service
+     * HashiCorp Vault (camel-hashicorp-vault)
+     * Manage secrets in HashiCorp Vault Service
      * 
      * Category: cloud,cloud
      * Since: 3.18
@@ -2629,7 +2642,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * IRC (camel-irc)
-     * Send and receive messages to/from and IRC chat.
+     * Send and receive messages to/from an IRC chat.
      * 
      * Category: chat
      * Since: 1.1
@@ -3243,7 +3256,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * LangChain4j Embedding Store (camel-langchain4j-embeddingstore)
-     * Perform operations on the Langchain4jEmbeddingStores.
+     * Perform operations on the LangChain4jEmbeddingStores.
      * 
      * Category: database,ai
      * Since: 4.14
@@ -3321,7 +3334,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Log Data (camel-log)
-     * Prints data form the routed message (such as body and headers) to the
+     * Prints data from the routed message (such as body and headers) to the
      * logger.
      * 
      * Category: core,monitoring
@@ -3374,7 +3387,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * MapStruct (camel-mapstruct)
-     * Type Conversion using Mapstruct
+     * Type Conversion using MapStruct
      * 
      * Category: transformation
      * Since: 3.19
@@ -3942,7 +3955,7 @@ public interface ComponentsBuilderFactory {
         return PdfComponentBuilderFactory.pdf();
     }
     /**
-     * PostgresSQL Replication Slot (camel-pg-replication-slot)
+     * PostgreSQL Replication Slot (camel-pg-replication-slot)
      * Poll for PostgreSQL Write-Ahead Log (WAL) records using Streaming
      * Replication Slots.
      * 
@@ -3956,7 +3969,7 @@ public interface ComponentsBuilderFactory {
         return PgReplicationSlotComponentBuilderFactory.pgReplicationSlot();
     }
     /**
-     * PostgresSQL Event (camel-pgevent)
+     * PostgreSQL Event (camel-pgevent)
      * Send and receive PostgreSQL events via LISTEN and NOTIFY commands.
      * 
      * Category: database
@@ -4365,6 +4378,19 @@ public interface ComponentsBuilderFactory {
      */
     static SftpComponentBuilderFactory.SftpComponentBuilder sftp() {
         return SftpComponentBuilderFactory.sftp();
+    }
+    /**
+     * Shell (camel-shell)
+     * Camel Shell component
+     * 
+     * Category: api
+     * Since: 4.21
+     * Maven coordinates: org.apache.camel:camel-shell
+     * 
+     * @return the dsl builder
+     */
+    static ShellComponentBuilderFactory.ShellComponentBuilder shell() {
+        return ShellComponentBuilderFactory.shell();
     }
     /**
      * Simple JMS (camel-sjms)

@@ -33,26 +33,29 @@ import dev.tamboui.text.Line;
 import dev.tamboui.text.Span;
 import dev.tamboui.text.Text;
 import dev.tamboui.tui.event.KeyEvent;
+import dev.tamboui.tui.event.MouseEvent;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
+import dev.tamboui.widgets.block.Borders;
 import dev.tamboui.widgets.paragraph.Paragraph;
 import org.apache.camel.dsl.jbang.core.common.PathUtils;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonObject;
 
-import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.*;
+import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.*;
 
-class MemoryTab implements MonitorTab {
+class MemoryTab extends AbstractTab {
 
     // Unicode block characters for gauge bar
     private static final String GAUGE_FILLED = "█";
     private static final String GAUGE_EMPTY = "░";
 
-    private final MonitorContext ctx;
     private final Map<String, LinkedList<Long>> heapMemHistory;
+    private int statsPanelHeight = -1;
+    private final DragSplit vSplit = new DragSplit();
 
     MemoryTab(MonitorContext ctx, MetricsCollector metrics) {
-        this.ctx = ctx;
+        super(ctx);
         this.heapMemHistory = metrics.getHeapMemHistory();
     }
 
@@ -66,7 +69,13 @@ class MemoryTab implements MonitorTab {
     }
 
     @Override
-    public boolean handleEscape() {
+    public boolean handleMouseEvent(MouseEvent me, Rect area) {
+        if (vSplit.handleMouse(me, me.y())) {
+            if (vSplit.isDragging()) {
+                statsPanelHeight = Math.max(5, Math.min(me.y() - area.y(), area.height() - 5));
+            }
+            return true;
+        }
         return false;
     }
 
@@ -86,7 +95,6 @@ class MemoryTab implements MonitorTab {
             return;
         }
 
-        // Layout: stats panel + chart row (14 + 1 for axis)
         int statsHeight = 11;
         if (info.oldGenUsed > 0) {
             statsHeight += 2;
@@ -97,20 +105,17 @@ class MemoryTab implements MonitorTab {
         if (info.threadCount > 0) {
             statsHeight += 2;
         }
+        int statsH = statsPanelHeight >= 0 ? statsPanelHeight : statsHeight;
         List<Rect> chunks = Layout.vertical()
-                .constraints(Constraint.length(statsHeight), Constraint.length(15))
+                .constraints(Constraint.length(statsH), Constraint.fill())
                 .split(area);
+        vSplit.setBorderPos(chunks.get(1).y());
 
         renderStats(frame, chunks.get(0), info);
 
-        // Limit chart width: use ~2/3 of area, leave right side empty
-        int chartWidth = Math.max(40, area.width() * 2 / 3);
-        List<Rect> hChunks = Layout.horizontal()
-                .constraints(Constraint.length(chartWidth), Constraint.fill())
-                .split(chunks.get(1));
         List<Rect> vChunks = Layout.vertical()
-                .constraints(Constraint.length(14), Constraint.length(1))
-                .split(hChunks.get(0));
+                .constraints(Constraint.fill(), Constraint.length(1))
+                .split(chunks.get(1));
 
         renderSparkline(frame, vChunks.get(0), info);
         renderTimeAxis(frame, vChunks.get(1), info);
@@ -123,6 +128,11 @@ class MemoryTab implements MonitorTab {
         if (info.heapMemUsed > 0) {
             lines.add(Line.from(
                     Span.styled("  Heap Memory", Style.EMPTY.fg(Color.CYAN).bold())));
+
+            // Compute heap trend from history
+            LinkedList<Long> hist = heapMemHistory.get(info.pid);
+            Span trendSpan = computeTrendSpan(hist, info.heapMemCommitted);
+
             lines.add(Line.from(
                     Span.styled("  used:      ", Style.EMPTY.dim()),
                     Span.styled(formatBytes(info.heapMemUsed), Style.EMPTY.fg(Color.WHITE).bold())));
@@ -131,21 +141,31 @@ class MemoryTab implements MonitorTab {
                 long pctComm = info.heapMemUsed * 100 / info.heapMemCommitted;
                 String gaugeComm = buildGaugeBar(pctComm, 30);
                 Color colorComm = pctComm >= 80 ? Color.LIGHT_RED : pctComm >= 60 ? Color.YELLOW : Color.GREEN;
-                lines.add(Line.from(
-                        Span.styled("  committed: ", Style.EMPTY.dim()),
-                        Span.styled(String.format("%-10s", formatBytes(info.heapMemCommitted)), Style.EMPTY),
-                        Span.styled(gaugeComm, Style.EMPTY.fg(colorComm)),
-                        Span.styled(String.format("  %d%%", pctComm), Style.EMPTY.fg(colorComm).bold())));
+                List<Span> commSpans = new ArrayList<>();
+                commSpans.add(Span.styled("  committed: ", Style.EMPTY.dim()));
+                commSpans.add(Span.styled(String.format("%-10s", formatBytes(info.heapMemCommitted)), Style.EMPTY));
+                commSpans.add(Span.styled(gaugeComm, Style.EMPTY.fg(colorComm)));
+                commSpans.add(Span.styled(String.format("  %d%%", pctComm), Style.EMPTY.fg(colorComm).bold()));
+                if (info.heapMemMax <= 0 && trendSpan != null) {
+                    commSpans.add(Span.raw("    "));
+                    commSpans.add(trendSpan);
+                }
+                lines.add(Line.from(commSpans));
             }
             if (info.heapMemMax > 0) {
                 long pctMax = info.heapMemUsed * 100 / info.heapMemMax;
                 String gaugeMax = buildGaugeBar(pctMax, 30);
                 Color colorMax = pctMax >= 80 ? Color.LIGHT_RED : pctMax >= 60 ? Color.YELLOW : Color.GREEN;
-                lines.add(Line.from(
-                        Span.styled("  max:       ", Style.EMPTY.dim()),
-                        Span.styled(String.format("%-10s", formatBytes(info.heapMemMax)), Style.EMPTY),
-                        Span.styled(gaugeMax, Style.EMPTY.fg(colorMax)),
-                        Span.styled(String.format("  %d%%", pctMax), Style.EMPTY.fg(colorMax).bold())));
+                List<Span> maxSpans = new ArrayList<>();
+                maxSpans.add(Span.styled("  max:       ", Style.EMPTY.dim()));
+                maxSpans.add(Span.styled(String.format("%-10s", formatBytes(info.heapMemMax)), Style.EMPTY));
+                maxSpans.add(Span.styled(gaugeMax, Style.EMPTY.fg(colorMax)));
+                maxSpans.add(Span.styled(String.format("  %d%%", pctMax), Style.EMPTY.fg(colorMax).bold()));
+                if (trendSpan != null) {
+                    maxSpans.add(Span.raw("    "));
+                    maxSpans.add(trendSpan);
+                }
+                lines.add(Line.from(maxSpans));
             }
         }
 
@@ -218,7 +238,7 @@ class MemoryTab implements MonitorTab {
 
         Paragraph paragraph = Paragraph.builder()
                 .text(Text.from(lines))
-                .block(Block.builder().borderType(BorderType.ROUNDED).title(" Memory ").build())
+                .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(" Memory ").build())
                 .build();
 
         frame.renderWidget(paragraph, area);
@@ -233,7 +253,7 @@ class MemoryTab implements MonitorTab {
         if (hist == null || hist.isEmpty()) {
             Paragraph p = Paragraph.builder()
                     .text(Text.from(Line.from(Span.styled("  Collecting heap data...", Style.EMPTY.dim()))))
-                    .block(Block.builder().borderType(BorderType.ROUNDED).title(" Heap Usage ").build())
+                    .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(" Heap Usage ").build())
                     .build();
             frame.renderWidget(p, area);
             return;
@@ -246,13 +266,10 @@ class MemoryTab implements MonitorTab {
             ceiling = observedMax;
         }
 
-        long pct = ceiling > 0 ? info.heapMemUsed * 100 / ceiling : 0;
-        Color barColor = pct >= 80 ? Color.LIGHT_RED : pct >= 60 ? Color.YELLOW : Color.GREEN;
-
         String title = String.format(" Heap Usage (%s / %s committed) ", formatBytes(info.heapMemUsed), formatBytes(ceiling));
 
         // Render the block border first
-        Block block = Block.builder().borderType(BorderType.ROUNDED).title(title).build();
+        Block block = Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(title).build();
         frame.renderWidget(block, area);
         Rect inner = block.inner(area);
 
@@ -271,15 +288,18 @@ class MemoryTab implements MonitorTab {
             data[dataOffset + (i - startIdx)] = hist.get(i);
         }
 
-        // Render multi-row bar chart into the buffer
+        // Render multi-row bar chart with stacked colors: green (<60%), yellow (60-80%), light red (>80%)
         Buffer buf = frame.buffer();
-        Style barStyle = Style.EMPTY.fg(barColor);
+        // Precompute eighths thresholds for the color bands
+        int greenEighths = (int) Math.round(0.6 * chartH * 8.0);
+        int yellowEighths = (int) Math.round(0.8 * chartH * 8.0);
+        Style greenStyle = Style.EMPTY.fg(Color.GREEN);
+        Style yellowStyle = Style.EMPTY.fg(Color.YELLOW);
+        Style redStyle = Style.EMPTY.fg(Color.LIGHT_RED);
 
         for (int col = 0; col < chartW; col++) {
             double ratio = (double) data[col] / ceiling;
-            // Total eighths this column fills (chartH rows * 8 eighths per row)
-            double fillEighths = ratio * chartH * 8.0;
-            int totalEighths = (int) Math.round(fillEighths);
+            int totalEighths = (int) Math.round(ratio * chartH * 8.0);
 
             // Render from bottom to top
             for (int row = 0; row < chartH; row++) {
@@ -287,7 +307,17 @@ class MemoryTab implements MonitorTab {
                 int x = inner.x() + col;
                 int rowEighths = Math.min(8, Math.max(0, totalEighths - row * 8));
                 if (rowEighths > 0) {
-                    buf.setString(x, y, BAR_EIGHTHS[rowEighths], barStyle);
+                    // Determine color based on vertical position in the bar
+                    int eighthsAtRowBottom = row * 8;
+                    Style style;
+                    if (eighthsAtRowBottom >= yellowEighths) {
+                        style = redStyle;
+                    } else if (eighthsAtRowBottom >= greenEighths) {
+                        style = yellowStyle;
+                    } else {
+                        style = greenStyle;
+                    }
+                    buf.setString(x, y, BAR_EIGHTHS[rowEighths], style);
                 }
             }
         }
@@ -296,31 +326,108 @@ class MemoryTab implements MonitorTab {
     private void renderTimeAxis(Frame frame, Rect area, IntegrationInfo info) {
         LinkedList<Long> hist = heapMemHistory.get(info.pid);
         int points = hist != null ? hist.size() : 0;
-        long totalSeconds = points * 5L;
-
-        String timeLabel;
-        if (totalSeconds < 60) {
-            timeLabel = totalSeconds + "s ago";
-        } else {
-            timeLabel = (totalSeconds / 60) + "m ago";
-        }
 
         int w = area.width();
         if (w < 10) {
             return;
         }
 
-        // Pad to fill the width: "Xm ago" on the left, "now" on the right
-        String left = " " + timeLabel;
-        String right = "now ";
-        int gap = Math.max(1, w - left.length() - right.length());
+        // The chart area has the same width; each column = 1 data point = 5 seconds
+        // chartW columns map to the rightmost `chartW` points of history
+        int chartW = w;
+        int totalPoints = Math.min(points, chartW);
+        long totalSeconds = totalPoints * 5L;
 
-        Line line = Line.from(
-                Span.styled(left, Style.EMPTY.dim()),
-                Span.raw(" ".repeat(gap)),
-                Span.styled(right, Style.EMPTY.dim()));
+        Buffer buf = frame.buffer();
+        Style dimStyle = Style.EMPTY.dim();
+        int xAxisY = area.y();
+        int startX = area.x();
 
-        frame.renderWidget(Paragraph.builder().text(Text.from(line)).build(), area);
+        // "now" label at the right edge
+        int nowX = startX + chartW - 3;
+        if (nowX >= startX) {
+            buf.setString(nowX, xAxisY, "now", dimStyle);
+        }
+
+        // Pick step interval based on total time span
+        int stepSeconds;
+        if (totalSeconds <= 120) {
+            stepSeconds = 30;
+        } else if (totalSeconds <= 300) {
+            stepSeconds = 60;
+        } else if (totalSeconds <= 900) {
+            stepSeconds = 120;
+        } else {
+            stepSeconds = 300;
+        }
+
+        // Place markers from right to left at regular time intervals
+        for (int s = stepSeconds; s <= totalSeconds; s += stepSeconds) {
+            int col = chartW - 1 - (s / 5);
+            if (col < 0) {
+                break;
+            }
+            String label;
+            if (s < 60) {
+                label = "-" + s + "s";
+            } else {
+                label = "-" + (s / 60) + "m";
+            }
+            int markerX = startX + col;
+            if (markerX + label.length() <= startX + chartW - 4 && markerX >= startX) {
+                buf.setString(markerX, xAxisY, label, dimStyle);
+            }
+        }
+    }
+
+    private static Span computeTrendSpan(LinkedList<Long> hist, long heapCeiling) {
+        // need at least 30 samples (~2.5 min at 5s intervals) for a meaningful trend
+        if (hist == null || hist.size() < 30) {
+            return null;
+        }
+        int size = hist.size();
+        int third = size / 3;
+
+        // average the first and last thirds to smooth out GC sawtooth noise
+        long oldSum = 0;
+        for (int i = 0; i < third; i++) {
+            oldSum += hist.get(i);
+        }
+        long newSum = 0;
+        for (int i = size - third; i < size; i++) {
+            newSum += hist.get(i);
+        }
+        double oldAvg = (double) oldSum / third;
+        double newAvg = (double) newSum / third;
+        if (oldAvg <= 0) {
+            return null;
+        }
+
+        long diff = (long) (newAvg - oldAvg);
+        double change = (newAvg - oldAvg) / oldAvg;
+        int pct = (int) Math.round(change * 100);
+        // each sample is taken every 5 seconds (HEAP_SAMPLE_INTERVAL_MS)
+        long seconds = size * 5L;
+        String period = seconds >= 60 ? (seconds / 60) + "m" : seconds + "s";
+
+        // ignore small fluctuations relative to heap capacity (at least 5M or 1% of ceiling)
+        long threshold = Math.max(5 * 1024 * 1024, (long) (heapCeiling * 0.01));
+        if (Math.abs(diff) < threshold) {
+            return Span.styled("  → stable over last " + period, Style.EMPTY.fg(Color.GREEN));
+        }
+
+        if (change > 0.05) {
+            return Span.styled(
+                    String.format("  %s growing by %d%% (%s) over last %s", TuiIcons.ARROW_UP, pct, formatBytes(diff), period),
+                    Style.EMPTY.fg(Color.LIGHT_RED).bold());
+        } else if (change < -0.05) {
+            return Span.styled(
+                    String.format("  %s shrinking by %d%% (%s) over last %s", TuiIcons.ARROW_DOWN,
+                            Math.abs(pct), formatBytes(Math.abs(diff)), period),
+                    Style.EMPTY.fg(Color.GREEN));
+        } else {
+            return Span.styled("  " + TuiIcons.ARROW_STABLE + " stable over last " + period, Style.EMPTY.fg(Color.GREEN));
+        }
     }
 
     @Override
@@ -338,6 +445,11 @@ class MemoryTab implements MonitorTab {
         root.put("action", "gc");
         Path actionFile = ctx.getActionFile(info.pid);
         PathUtils.writeTextSafely(root.toJson(), actionFile);
+    }
+
+    @Override
+    public String description() {
+        return "JVM memory usage (heap/non-heap), GC stats, and thread counts";
     }
 
     @Override

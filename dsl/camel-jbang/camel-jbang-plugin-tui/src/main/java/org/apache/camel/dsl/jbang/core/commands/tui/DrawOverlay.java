@@ -145,13 +145,13 @@ class DrawOverlay {
         String shaft = dy != 0 ? "│" : "─";
         String head;
         if (dx > 0) {
-            head = "▶";
+            head = TuiIcons.ARROW_RIGHT;
         } else if (dx < 0) {
-            head = "◀";
+            head = TuiIcons.ARROW_LEFT;
         } else if (dy > 0) {
-            head = "▼";
+            head = TuiIcons.SORT_DOWN;
         } else {
-            head = "▲";
+            head = TuiIcons.SORT_UP;
         }
         for (int i = 0; i < length - 1; i++) {
             cells.add(new DrawCell(x + i * dx, y + i * dy, shaft, s));

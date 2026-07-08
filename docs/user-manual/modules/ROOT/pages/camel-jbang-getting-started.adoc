@@ -1,0 +1,252 @@
+= Camel CLI - Getting Started
+
+Three commands. That is all it takes to go from zero to a running integration.
+
+== Install
+
+The Camel CLI runs on https://www.jbang.dev/[JBang].
+Install JBang first (see https://www.jbang.dev/download/[download instructions]),
+then install the Camel CLI:
+
+[source,bash]
+----
+jbang app install camel@apache/camel
+----
+
+Verify that it works:
+
+[source,bash]
+----
+camel version
+----
+
+[source]
+----
+Camel CLI version: 4.21.0
+----
+
+That is it. No Maven project, no POM file, no IDE required.
+
+NOTE: The CLI requires internet access to download dependencies on first use.
+If you are behind a proxy, see https://www.jbang.dev/documentation/jbang/latest/configuration.html#proxy-configuration[JBang proxy configuration].
+
+TIP: For version-pinned installs, offline-safe setups, container images, or installing without JBang,
+see xref:camel-jbang-installation.adoc[Installation Options].
+
+== Create your first route
+
+Use `camel init` to scaffold a new route. The file extension determines the DSL.
+
+=== YAML
+
+[source,bash]
+----
+camel init hello.yaml
+camel run hello.yaml
+----
+
+You should see Camel start up and begin logging:
+
+[source]
+----
+... Started hello (timer://yaml)
+... Hello Camel from route1
+... Hello Camel from route1
+----
+
+Press `Ctrl+C` to stop.
+
+=== Java
+
+[source,bash]
+----
+camel init Hello.java
+camel run Hello.java
+----
+
+Same workflow, same result — just a different DSL.
+XML works the same way (`camel init hello.xml`).
+
+== Dev mode — edit and reload instantly
+
+Run any route in dev mode to get live reload:
+
+[source,bash]
+----
+camel run hello.yaml --dev
+----
+
+Now edit the file in your editor and save.
+Camel detects the change and reloads the route automatically — no restart needed.
+This works for all DSLs (YAML, Java, XML).
+
+TIP: Dev mode is the fastest way to prototype integrations.
+Keep it running while you iterate on your routes.
+
+TIP: Want a visual overview of your running routes, message flow, and health status — right in the terminal?
+Just type `camel tui` — the plugin auto-installs on first use, no setup needed.
+See xref:camel-jbang-tui.adoc[Camel TUI] for details.
+
+== Try a built-in example
+
+Don't have a route yet? The CLI ships with a catalog of ready-to-run examples:
+
+[source,bash]
+----
+camel run --example
+----
+
+This lists all available examples grouped by difficulty (beginner, intermediate, advanced),
+with icons showing whether they are bundled (work offline), require Docker, or include Citrus tests.
+
+Run one directly:
+
+[source,bash]
+----
+camel run --example=timer-log
+camel run --example=rest-api --dev
+----
+
+TIP: Combine with `--dev` for live reload while exploring the example.
+
+=== Running multiple files
+
+You can run several files together, even mixing DSLs:
+
+[source,bash]
+----
+camel run one.yaml Hello.java
+----
+
+Or use wildcards to run everything in a directory:
+
+[source,bash]
+----
+camel run *.yaml
+camel run *
+----
+
+TIP: The CLI automatically picks up `application.properties` files in the same directory.
+
+== Browse the component catalog
+
+Discover what Camel offers — components, data formats, languages, and Kamelets:
+
+[source,bash]
+----
+camel catalog component
+camel catalog kamelet
+----
+
+TIP: Run `camel catalog --help` to see all sub-commands.
+
+=== Component documentation
+
+Show quick reference documentation (description + all configuration options):
+
+[source,bash]
+----
+camel doc kafka
+camel doc jackson
+camel doc aws-kinesis-sink
+----
+
+NOTE: This shows catalog-level documentation with option tables, not the full website documentation.
+
+If a component and data format share the same name, prefix with `dataformat:` (e.g., `camel doc dataformat:thrift`).
+
+Open the online documentation in a browser with `--open-url`, or get just the URL with `--url`:
+
+[source,bash]
+----
+camel doc kafka --open-url
+----
+
+Filter options by name, description, or group (producer, security, advanced, etc.):
+
+[source,bash]
+----
+camel doc kafka --filter=security
+camel doc kafka --filter=timeout
+----
+
+=== Open API
+
+Camel CLI supports contract-first REST development — each OpenAPI operation is bridged to
+a Camel route via `direct:<operationId>`.
+
+See the https://github.com/apache/camel-kamelets-examples/tree/main/jbang/open-api[open-api example] for details.
+
+== Enable shell completion
+
+Tab completion makes discovering commands much easier:
+
+[source,bash]
+----
+source <(camel completion)
+----
+
+To make it permanent:
+
+[source,bash]
+----
+echo 'source <(camel completion)' >> ~/.bashrc
+----
+
+== Interactive shell
+
+Launch an interactive shell with command history, autocompletion, and alias support:
+
+[source,bash]
+----
+camel shell
+----
+
+All CLI commands are available inside the shell without the `camel` prefix.
+The shell stores history in `~/.camel-jbang-history` and aliases in `~/.camel-jbang-aliases`.
+
+== Check your environment
+
+Run the doctor to verify that your environment is set up correctly:
+
+[source,bash]
+----
+camel doctor
+----
+
+This checks Camel and Java versions, JBang availability, Maven repository connectivity,
+container runtime (Docker/Podman), and disk space.
+
+== Explore commands
+
+Every command supports `--help`:
+
+[source,bash]
+----
+camel run --help
+camel init --help
+----
+
+For the full list of commands, see the xref:jbang-commands/camel-jbang-commands.adoc[Command Reference].
+
+== What's next
+
+[cols="1,2"]
+|===
+| Next step | When to use it
+
+| xref:camel-jbang-running.adoc[Running Camel]
+| Dev mode options, profiles, properties, GitHub-hosted routes, Spring Boot and Quarkus runtimes.
+
+| xref:camel-jbang-dev-services.adoc[Dev Services]
+| Spin up databases, message brokers, and other infrastructure for your routes.
+
+| xref:camel-jbang-devtools.adoc[Development Tools]
+| Send and receive test messages, configure JDBC, set up dependency injection.
+
+| xref:camel-jbang-debugging.adoc[Debugging]
+| Step through routes with the built-in debugger or connect your IDE.
+
+| xref:camel-jbang-projects.adoc[Export to Maven]
+| Export to Spring Boot, Quarkus, or Camel Main for production. Manage dependencies and versions.
+|===

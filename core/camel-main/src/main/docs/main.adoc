@@ -49,7 +49,7 @@ The camel.main supports 129 options, which are listed below.
 | *camel.main.contextReloadEnabled* | Used for enabling context reloading. If enabled then Camel allow external systems such as security vaults (AWS secrets manager, etc.) to trigger refreshing Camel by updating property placeholders and reload all existing routes to take changes into effect. | false | boolean
 | *camel.main.description* | Sets the description (intended for humans) of the Camel application. |  | String
 | *camel.main.devConsoleEnabled* | Whether to enable developer console (requires camel-console on classpath). The developer console is only for assisting during development. This is NOT for production usage. | false | boolean
-| *camel.main.dumpRoutes* | If dumping is enabled then Camel will during startup dump all loaded routes (incl rests and route templates) represented as XML/YAML DSL into the log. This is intended for trouble shooting or to assist during development. Sensitive information that may be configured in the route endpoints could potentially be included in the dump output and is therefore not recommended being used for production usage. This requires to have camel-xml-io/camel-yaml-io on the classpath to be able to dump the routes as XML/YAML. You can also use JSon which dumps the route structure in JSon. The JSon does not represent Camel DSL but it useful for tooling to understand the structure of the routes and how EIPs are nested together. You can also use png to save route diagrams as PNG image files either all combined in a single file (default camel-route-diagrams.png) or to a given folder, where routes are grouped by source file name(s) and saved as corresponding .png files. This requires to have camel-diagram on the classpath to be able to render PNG diagrams. |  | String
+| *camel.main.dumpRoutes* | If dumping is enabled then Camel will during startup dump all loaded routes (incl rests and route templates) represented as XML, YAML, or Java DSL into the log. This is intended for trouble shooting or to assist during development. Sensitive information that may be configured in the route endpoints could potentially be included in the dump output and is therefore not recommended being used for production usage. This requires to have camel-xml-io/camel-yaml-io/camel-java-io on the classpath to be able to dump the routes as XML/YAML/Java. You can also use JSon which dumps the route structure in JSon. The JSon does not represent Camel DSL but it useful for tooling to understand the structure of the routes and how EIPs are nested together. You can also use png to save route diagrams as PNG image files either all combined in a single file (default camel-route-diagrams.png) or to a given folder, where routes are grouped by source file name(s) and saved as corresponding .png files. This requires to have camel-diagram on the classpath to be able to render PNG diagrams. |  | String
 | *camel.main.dumpRoutesGeneratedIds* | Whether to include auto generated IDs in the dumped output. Default is false. | false | boolean
 | *camel.main.dumpRoutesInclude* | Controls what to include in output for route dumping. Possible values: all, routes, rests, routeConfigurations, routeTemplates, beans, dataFormats. Multiple values can be separated by comma. Default is routes. | routes | String
 | *camel.main.dumpRoutesLog* | Whether to log route dumps to Logger | true | boolean
@@ -95,7 +95,7 @@ The camel.main supports 129 options, which are listed below.
 | *camel.main.mdcLoggingKeysPattern* | Sets the pattern used for determine which custom MDC keys to propagate during message routing when the routing engine continues routing asynchronously for the given message. Setting this pattern to will propagate all custom keys. Or setting the pattern to foo,bar will propagate any keys starting with either foo or bar. Notice that a set of standard Camel MDC keys are always propagated which starts with camel. as key name. The match rules are applied in this order (case insensitive): 1. exact match, returns true 2. wildcard match (pattern ends with a and the name starts with the pattern), returns true 3. regular expression match, returns true 4. otherwise returns false Deprecated, use camel-mdc component instead |  | String
 | *camel.main.messageHistory* | Sets whether message history is enabled or not. Default is false. | false | boolean
 | *camel.main.messageSizeEnabled* | Sets whether message size observation is enabled (default is false). When enabled, Camel will compute the size of message body and headers (in bytes) per endpoint (for both IN and OUT directions) and make this available via JMX MBeans (min/max/mean body size and headers size). | false | boolean
-| *camel.main.modeline* | Whether to support JBang style //DEPS to specify additional dependencies when running Camel JBang | false | boolean
+| *camel.main.modeline* | Whether to support JBang style //DEPS to specify additional dependencies when running Camel CLI | false | boolean
 | *camel.main.name* | Sets the name of the CamelContext. |  | String
 | *camel.main.producerTemplateCacheSize* | Producer template endpoints cache size. | 1000 | int
 | *camel.main.profile* | Camel profile to use when running. The dev profile is for development, which enables a set of additional developer focus functionality, tracing, debugging, and gathering additional runtime statistics that are useful during development. However, those additional features has a slight overhead cost, and are not enabled for production profile. The default profile is prod. |  | String
@@ -152,7 +152,7 @@ The camel.main supports 129 options, which are listed below.
 | *camel.main.useMdcLogging* | To turn on MDC logging (deprecated, use camel-mdc component instead) | false | boolean
 | *camel.main.uuidGenerator* | UUID generator to use. default (32 bytes), short (16 bytes), classic (32 bytes or longer), simple (long incrementing counter), off (turned off for exchanges - only intended for performance profiling) | default | String
 | *camel.main.virtualThreadsEnabled* | Whether to enable virtual threads when creating thread pools. When enabled, Camel will use virtual threads instead of platform threads for its thread pools. This can also be enabled via the JVM system property {code camel.threads.virtual.enabled=true} . This option must be read early during bootstrap, so it is set as a system property before thread pools are created. | false | boolean
-| *camel.main.yamlDslCompactNotationWarn* | Whether to log a WARN when YAML DSL routes use compact (shorthand) notation instead of the canonical (explicit/normalized) form. The canonical style is recommended as it is more tooling and AI friendly. Use Camel JBang to normalize existing routes: camel yaml normalize &lt;file&gt; | true | boolean
+| *camel.main.yamlDslCompactNotationWarn* | Whether to log a WARN when YAML DSL routes use compact (shorthand) notation instead of the canonical (explicit/normalized) form. The canonical style is recommended as it is more tooling and AI friendly. Use Camel CLI to normalize existing routes: camel validate normalize &lt;file&gt; | true | boolean
 |===
 
 
@@ -320,7 +320,7 @@ The camel.security supports 6 options, which are listed below.
 
 
 === Camel SSL configurations
-The camel.ssl supports 27 options, which are listed below.
+The camel.ssl supports 28 options, which are listed below.
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -345,6 +345,7 @@ The camel.ssl supports 27 options, which are listed below.
 | *camel.ssl.secureRandomProvider* | To use a specific provider for creating SecureRandom. The list of available providers returned by java.security.Security.getProviders() or null to use the highest priority provider implementing the secure socket protocol. |  | String
 | *camel.ssl.secureSocketProtocol* | The protocol for the secure sockets created by the SSLContext. See \https://docs.oracle.com/en/java/javase/17/docs/specs/security/standard-names.html | TLSv1.3 | String
 | *camel.ssl.selfSigned* | Whether to generate a self-signed certificate for development use when no keystore is configured. This can be used in development environment to easily enable HTTPS without providing a keystore. Do NOT use this in production as the certificate is not trusted and is regenerated on each restart. | false | boolean
+| *camel.ssl.selfSignedKeyType* | The key algorithm to use when generating the self-signed certificate for development use (requires selfSigned to be enabled). Supported values are EC (default, NIST P-256) and RSA (2048-bit). | EC | String
 | *camel.ssl.sessionTimeout* | Timeout in seconds to use for SSLContext. The default is 24 hours. | 86400 | int
 | *camel.ssl.signatureSchemes* | List of TLS/SSL signature schemes. Multiple names can be separated by comma. Signature schemes control which signature algorithms are available during the TLS handshake, including post-quantum signature algorithms such as ML-DSA. |  | String
 | *camel.ssl.signatureSchemesExclude* | Filters TLS/SSL signature schemes. This filter is used for excluding signature schemes that match the naming pattern. Multiple names can be separated by comma. Notice that if the signatureSchemes option has been configured then the include/exclude filters are not in use. |  | String
@@ -636,7 +637,7 @@ The camel.metrics supports 16 options, which are listed below.
 | Name | Description | Default | Type
 | *camel.metrics.baseEndpointURIExchangeEventNotifier* | Whether to use static or dynamic values for Endpoint Name tags in captured metrics. By default, static values are used. When using dynamic tags, then a dynamic to (toD) can compute many different endpoint URIs that, can lead to many tags as the URI is dynamic, so use this with care if setting this option to false. | true | boolean
 | *camel.metrics.binders* | Additional Micrometer binders to include such as jvm-memory, processor, jvm-thread, and so forth. Multiple binders can be separated by comma. The following binders currently is available from Micrometer: class-loader, commons-object-pool2, file-descriptor, hystrix-metrics-binder, jvm-compilation, jvm-gc, jvm-heap-pressure, jvm-info, jvm-memory, jvm-thread, log4j2, logback, processor, uptime |  | String
-| *camel.metrics.clearOnReload* | Clear the captured metrics data when Camel is reloading routes such as when using Camel JBang. | true | boolean
+| *camel.metrics.clearOnReload* | Clear the captured metrics data when Camel is reloading routes such as when using Camel CLI. | true | boolean
 | *camel.metrics.enabled* | To enable Micrometer metrics. | false | boolean
 | *camel.metrics.enableExchangeEventNotifier* | Set whether to enable the MicrometerExchangeEventNotifier for capturing metrics on exchange processing times. | true | boolean
 | *camel.metrics.enableInstrumentedThreadPoolFactory* | Set whether to gather performance information about Camel Thread Pools by injecting an InstrumentedThreadPoolFactory. | false | boolean
@@ -732,6 +733,135 @@ The camel.errorRegistry supports 8 options, which are listed below.
 | *camel.errorRegistry.includeExchangeVariables* | Whether to include the exchange variables in the captured error data. | true | boolean
 | *camel.errorRegistry.maximumEntries* | The maximum number of error entries to keep in the registry. When the limit is exceeded, the oldest entries are evicted. | 100 | int
 | *camel.errorRegistry.timeToLiveSeconds* | The time-to-live in seconds for error entries. Entries older than this are evicted. The default value is 0 (disabled). | 0 | int
+|===
+
+
+=== Camel File Cluster Service configurations
+The camel.cluster.file supports 10 options, which are listed below.
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.cluster.file.acquireLockDelay* | The time to wait before starting to try to acquire the cluster lock. Note that if FileLockClusterService determines no cluster members are running or cannot reliably determine the cluster state, the initial delay is computed from the acquireLockInterval. | 1 | long
+| *camel.cluster.file.acquireLockDelayUnit* | The time unit for the acquireLockDelay | SECONDS | TimeUnit
+| *camel.cluster.file.acquireLockInterval* | The time to wait between attempts to try to acquire the cluster lock evaluated using wall-clock time. All cluster members must use the same value so leadership checks and leader liveness detection remain consistent. | 10 | long
+| *camel.cluster.file.acquireLockIntervalUnit* | The time unit for the acquireLockInterval | SECONDS | TimeUnit
+| *camel.cluster.file.clusterDataTaskMaxAttempts* | Sets how many times a cluster data task will run, counting both the first execution and subsequent retries in case of failure or timeout. The default is 5 attempts. This can be useful when the cluster data root is on network based file storage, where I/O operations may occasionally block for long or unpredictable periods. | 5 | int
+| *camel.cluster.file.clusterDataTaskTimeout* | Sets the timeout for a cluster data task (reading or writing cluster data). The default is 10 seconds. Timeouts are useful when the cluster data root is on network storage, where I/O operations may occasionally block for long or unpredictable periods. | 10 | long
+| *camel.cluster.file.clusterDataTaskTimeoutUnit* | The time unit for the clusterDataTaskTimeoutUnit | SECONDS | TimeUnit
+| *camel.cluster.file.enabled* | Whether to enable this cluster service. | true | boolean
+| *camel.cluster.file.heartbeatTimeoutMultiplier* | Multiplier applied to the cluster leader acquireLockInterval to determine how long followers should wait before considering the leader stale. For example, if the leader updates its heartbeat every 2 seconds and the heartbeatTimeoutMultiplier is 3, followers will tolerate up to 2s * 3 = 6s of silence before declaring the leader unavailable. | 5 | int
+| *camel.cluster.file.root* | The root file path |  | String
+|===
+
+
+=== Camel Kubernetes Cluster Service configurations
+The camel.cluster.kubernetes supports 15 options, which are listed below.
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.cluster.kubernetes.clusterLabels* | Labels used to identify the members of the cluster. |  | Map
+| *camel.cluster.kubernetes.configuration* | To use an existing configuration for Kubernetes |  | KubernetesConfiguration
+| *camel.cluster.kubernetes.connectionTimeout* | Connection timeout in milliseconds to use when making requests to the Kubernetes API server. |  | Integer
+| *camel.cluster.kubernetes.enabled* | Whether to enable this cluster service. | true | boolean
+| *camel.cluster.kubernetes.groupName* | Name of the lock group (or namespace according to the Camel cluster convention) within the chosen ConfigMap. |  | String
+| *camel.cluster.kubernetes.jitterFactor* | A jitter factor to apply in order to prevent all pods to call Kubernetes APIs in the same instant. | 1.2 | double
+| *camel.cluster.kubernetes.kubernetesResourceName* | Name of the resource used for locking (or prefix, in case multiple ones are used). | leaders | String
+| *camel.cluster.kubernetes.kubernetesResourcesNamespace* | Kubernetes namespace containing the pods and the ConfigMap used for locking. |  | String
+| *camel.cluster.kubernetes.leaseDurationMillis* | The default duration of the lease for the current leader. | 15000 | long
+| *camel.cluster.kubernetes.leaseResourceType* | Kubernetes resource type used to hold the leases. | Lease | LeaseResourceType
+| *camel.cluster.kubernetes.masterUrl* | URL to a remote Kubernetes API server. This should only be used when your Camel application is connecting from outside Kubernetes. If you run your Camel application inside Kubernetes, then you can use local or client as the URL to tell Camel to run in local mode. If you connect remotely to Kubernetes, then you may also need some of the many other configuration options for secured connection with certificates, etc. |  | String
+| *camel.cluster.kubernetes.namespace* | Kubernetes namespace |  | String
+| *camel.cluster.kubernetes.podName* | Name of the current pod (defaults to host name). |  | String
+| *camel.cluster.kubernetes.renewDeadlineMillis* | The deadline after which the leader must stop its services because it may have lost the leadership. | 10000 | long
+| *camel.cluster.kubernetes.retryPeriodMillis* | The time between two subsequent attempts to check and acquire the leadership. It is randomized using the jitter factor. | 2000 | long
+|===
+
+
+=== Camel ZooKeeper Cluster Service configurations
+The camel.cluster.zookeeper supports 12 options, which are listed below.
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.cluster.zookeeper.basePath* | The base path to store in ZooKeeper |  | String
+| *camel.cluster.zookeeper.connectTimeout* | Connect timeout (millis) | 15000 | long
+| *camel.cluster.zookeeper.enabled* | Whether to enable this cluster service. | true | boolean
+| *camel.cluster.zookeeper.id* | Node id |  | String
+| *camel.cluster.zookeeper.maxCloseWait* | Time to wait (millis) during close to join background threads | 1000 | long
+| *camel.cluster.zookeeper.namespace* | ZooKeeper namespace. If a namespace is set here, all paths will get pre-pended with the namespace |  | String
+| *camel.cluster.zookeeper.nodes* | The Zookeeper server hosts (multiple servers can be separated by comma) |  | String
+| *camel.cluster.zookeeper.reconnectBaseSleepTime* | Initial amount of time (millis) to wait between retries | 1000 | long
+| *camel.cluster.zookeeper.reconnectMaxRetries* | Max number of times to retry | 3 | int
+| *camel.cluster.zookeeper.reconnectMaxSleepTime* | Max time (millis) to sleep on each retry |  | long
+| *camel.cluster.zookeeper.retryPolicy* | To use a custom retry policy implementation |  | RetryPolicy
+| *camel.cluster.zookeeper.sessionTimeout* | Session timeout (millis) | 60000 | long
+|===
+
+
+=== Camel Consul Cluster Service configurations
+The camel.cluster.consul supports 17 options, which are listed below.
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.cluster.consul.aclToken* | Sets the ACL token to be used with Consul |  | String
+| *camel.cluster.consul.blockSeconds* | The second to wait for a watch event, default 10 seconds | 10 | int
+| *camel.cluster.consul.configuration* | To use an existing configuration |  | ConsulClusterConfiguration
+| *camel.cluster.consul.connectTimeout* | Connect timeout in millis |  | int
+| *camel.cluster.consul.datacenter* | The data center |  | String
+| *camel.cluster.consul.enabled* | Whether to enable this cluster service. | true | boolean
+| *camel.cluster.consul.id* | Client id registered as _consul.service.registry.id |  | String
+| *camel.cluster.consul.password* | Sets the password to be used for basic authentication |  | String
+| *camel.cluster.consul.readTimeout* | Read timeout in millis |  | int
+| *camel.cluster.consul.rootPath* | The Consul cluster root directory path | /camel | String
+| *camel.cluster.consul.sessionLockDelay* | Session lock delay in seconds | 5 | int
+| *camel.cluster.consul.sessionRefreshInterval* | Session refresh interval in seconds | 5 | int
+| *camel.cluster.consul.sessionTtl* | Session time to live in seconds | 60 | int
+| *camel.cluster.consul.sslContextParameters* | SSL configuration for advanced security configuration |  | SSLContextParameters
+| *camel.cluster.consul.url* | The Consul agent URL |  | String
+| *camel.cluster.consul.userName* | Sets the username to be used for basic authentication |  | String
+| *camel.cluster.consul.writeTimeout* | Write timeout in mills |  | int
+|===
+
+
+=== Camel JGroups Raft Cluster Service configurations
+The camel.cluster.jgroups-raft supports 5 options, which are listed below.
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.cluster.jgroups-raft.enabled* | Whether to enable this cluster service. | true | boolean
+| *camel.cluster.jgroups-raft.id* | Unique Raft id |  | String
+| *camel.cluster.jgroups-raft.jgroupsClusterName* | The name of the cluster | jgroupsraft-master | String
+| *camel.cluster.jgroups-raft.jgroupsConfig* | The path to the JGroups Raft configuration | raft.xml | String
+| *camel.cluster.jgroups-raft.raftHandle* | To use a custom RaftHandler |  | RaftHandle
+|===
+
+
+=== Camel Infinispan Remote Cluster Service configurations
+The camel.cluster.infinispan supports 16 options, which are listed below.
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.cluster.infinispan.cacheContainer* | Specifies the cache Container to connect |  | RemoteCacheManager
+| *camel.cluster.infinispan.cacheContainerConfiguration* | The CacheContainer configuration. Used if the cacheContainer is not defined. |  | Configuration
+| *camel.cluster.infinispan.configuration* | To use an existing configuration |  | InfinispanRemoteClusterConfiguration
+| *camel.cluster.infinispan.configurationProperties* | Implementation specific properties for the CacheManager |  | Map
+| *camel.cluster.infinispan.configurationUri* | An implementation specific URI for the CacheManager |  | String
+| *camel.cluster.infinispan.enabled* | Whether to enable this cluster service. | true | boolean
+| *camel.cluster.infinispan.hosts* | Specifies the host of the cache on Infinispan instance. Multiple hosts can be separated by semicolon. |  | String
+| *camel.cluster.infinispan.id* | Node id |  | String
+| *camel.cluster.infinispan.lifespan* | The lifespan of the cache entry for the local cluster member registered to the inventory | 30 | long
+| *camel.cluster.infinispan.lifespanTimeUnit* | The TimeUnit of the lifespan | SECONDS | TimeUnit
+| *camel.cluster.infinispan.password* | Define the password to access the infinispan instance |  | String
+| *camel.cluster.infinispan.saslMechanism* | Define the SASL Mechanism to access the infinispan instance |  | String
+| *camel.cluster.infinispan.secure* | Define if we are connecting to a secured Infinispan instance | false | boolean
+| *camel.cluster.infinispan.securityRealm* | Define the security realm to access the infinispan instance |  | String
+| *camel.cluster.infinispan.securityServerName* | Define the security server name to access the infinispan instance |  | String
+| *camel.cluster.infinispan.username* | Define the username to access the infinispan instance |  | String
 |===
 // main options: END
 

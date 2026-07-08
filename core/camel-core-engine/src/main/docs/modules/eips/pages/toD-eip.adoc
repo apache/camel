@@ -1,7 +1,7 @@
 = To D EIP
 :doctitle: To D
 :shortname: toD
-:description: Sends the message to a dynamic endpoint
+:description: Sends the message to an endpoint URI computed dynamically from an expression, allowing the destination to vary per message
 :since: 
 :supportlevel: Stable
 :tabs-sync-option:
@@ -171,11 +171,40 @@ which results in an overhead of resources in use, by each dynamic endpoint uri, 
 
 For example, HTTP-based endpoints where you may have dynamic values in URI parameters when calling the HTTP service, such as:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:login")
   .toD("http:myloginserver:8080/login?userid=${header.userName}");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:login"/>
+  <toD uri="http:myloginserver:8080/login?userid=${header.userName}"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:login
+      steps:
+        - toD:
+            uri: http:myloginserver:8080/login
+            parameters:
+              userid: "${header.userName}"
+----
+====
 
 In the example above then the parameter `userid` is dynamically computed, and would result in one instance of endpoint and producer
 for each different userid. To avoid having too many dynamic endpoints you can configure `toD` to reduce its cache size, for example,
@@ -359,6 +388,7 @@ YAML::
 
 This will essentially be optimized to (**internally** pseudo route):
 
+._Java-only: pseudo code showing the internal optimization_
 [source,java]
 ----
 from("direct:login")

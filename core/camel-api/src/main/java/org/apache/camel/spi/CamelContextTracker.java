@@ -29,7 +29,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A {@link CamelContext} creation and destruction tracker.
+ * Tracks the creation and destruction of {@link CamelContext} instances across the JVM.
+ * <p/>
+ * A tracker is activated by calling {@link #open()} (and deactivated via {@link #close()}); while open it is notified
+ * through {@link #contextCreated(CamelContext)} and {@link #contextDestroyed(CamelContext)} for every context that
+ * passes its {@link Filter} (by default, non-proxy contexts). Registration is global and static, making this suited to
+ * cross-cutting concerns such as metrics or diagnostics that must observe all contexts rather than a single
+ * {@link CamelContext}. Subclass and override the callbacks to react.
  */
 public class CamelContextTracker implements Closeable {
 
@@ -39,9 +45,18 @@ public class CamelContextTracker implements Closeable {
 
     private static final Lock LOCK = new ReentrantLock();
 
+    /**
+     * Decides which {@link CamelContext} instances a {@link CamelContextTracker} is notified about.
+     */
     @FunctionalInterface
     public interface Filter extends Predicate<CamelContext> {
 
+        /**
+         * Whether the given context should be tracked.
+         *
+         * @param  camelContext the camel context
+         * @return              <tt>true</tt> to track the context
+         */
         boolean accept(CamelContext camelContext);
 
         @Override
@@ -98,6 +113,12 @@ public class CamelContextTracker implements Closeable {
         TRACKERS.remove(this);
     }
 
+    /**
+     * Notifies all open trackers that the given {@link CamelContext} has been created. Called by Camel; exceptions from
+     * trackers are logged and ignored.
+     *
+     * @param camelContext the created camel context
+     */
     public static void notifyContextCreated(CamelContext camelContext) {
         Objects.requireNonNull(camelContext, "camelContext");
         LOCK.lock();
@@ -116,6 +137,12 @@ public class CamelContextTracker implements Closeable {
         }
     }
 
+    /**
+     * Notifies all open trackers that the given {@link CamelContext} has been destroyed. Called by Camel; exceptions
+     * from trackers are logged and ignored.
+     *
+     * @param camelContext the destroyed camel context
+     */
     public static void notifyContextDestroyed(CamelContext camelContext) {
         Objects.requireNonNull(camelContext, "camelContext");
         LOCK.lock();

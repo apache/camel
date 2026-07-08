@@ -264,7 +264,7 @@ public interface DrillEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final DrillHeaderNameBuilder INSTANCE = new DrillHeaderNameBuilder();
+        public static final DrillHeaderNameBuilder INSTANCE = new DrillHeaderNameBuilder();
 
         /**
          * The drill query.

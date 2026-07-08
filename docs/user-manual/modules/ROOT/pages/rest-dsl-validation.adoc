@@ -1,0 +1,380 @@
+= Rest DSL - Error Handling and Validation
+:tabs-sync-option:
+
+xref:rest-dsl.adoc[Back to Rest DSL]
+
+== Defining a custom error message as-is
+
+If you want to define custom error messages to be sent back to the
+client with an HTTP error code (e.g., such as 400, 404 etc.)
+then you set a header with the key `Exchange.HTTP_RESPONSE_CODE`
+to the error code (must be 300+) such as 404.
+And then the message body with any reply message, and optionally
+set the content-type header as well. There is a little example shown
+below:
+
+[tabs]
+====
+
+Java::
++
+[source,java]
+----
+restConfiguration().component("netty-http").host("localhost").port(9091).bindingMode(RestBindingMode.json);
+// use the rest DSL to define the rest services
+rest("/users/")
+    .post("lives").type(UserPojo.class).outType(CountryPojo.class)
+    .to("direct:users-lives");
+
+from("direct:users-lives")
+    .choice()
+        .when().simple("${body.id} < 100")
+            .bean("userErrorService", "idToLowError")
+        .otherwise()
+            .bean("userService", "livesWhere");
+----
+
+XML::
++
+[source,xml]
+----
+<restConfiguration component="netty-http" host="localhost" port="9091" bindingMode="json"/>
+
+<rest path="/users/">
+    <post path="lives" type="com.foo.UserPojo" outType="com.foo.CountryPojo">
+        <to uri="direct:users-lives"/>
+    </post>
+</rest>
+
+<route>
+    <from uri="direct:users-lives"/>
+    <choice>
+        <when>
+            <simple>${body.id} &lt; 100</simple>
+            <bean ref="userErrorService" method="idToLowError"/>
+        </when>
+        <otherwise>
+            <bean ref="userService" method="livesWhere"/>
+        </otherwise>
+    </choice>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- restConfiguration:
+    component: "netty-http"
+    host: "localhost"
+    port: "9091"
+    bindingMode: "json"
+- rest:
+    path: "/users"
+    post:
+      - path: "/lives"
+        to: "direct:users-lives"
+        type: "com.foo.UserPojo"
+        outType: "com.foo.CountryPojo"
+- route:
+    from:
+      uri: direct:users-lives
+      steps:
+        - choice:
+            when:
+              - expression:
+                  simple:
+                    expression: "${body.id} < 100"
+                steps:
+                  - bean:
+                      ref: userErrorService
+                      method: idToLowError
+            otherwise:
+              steps:
+                - bean:
+                    ref: userService
+                    method: livesWhere
+----
+====
+
+In this example, if the input id is a number that is below 100, we want
+to send back a custom error message, using the `UserErrorService` bean,
+which is implemented as shown:
+
+[source,java]
+----
+public class UserErrorService {
+    public void idToLowError(Exchange exchange) {
+        exchange.getIn().setBody("id value is too low");
+        exchange.getIn().setHeader(Exchange.CONTENT_TYPE, "text/plain");
+        exchange.getIn().setHeader(Exchange.HTTP_RESPONSE_CODE, 400);
+    }
+}
+----
+
+In the `_UserErrorService_` bean, we build our custom error message, and set
+the HTTP error code to 400. This is important, as that tells rest-dsl
+that this is a custom error message, and the message should not use the
+output pojo binding (e.g., would otherwise bind to `_CountryPojo_`).
+
+=== Catching JsonParserException and returning a custom error message
+
+You can return a custom message as-is (see previous section).
+So we can leverage this with Camel error handler to
+catch `JsonParserException`, handle that exception and build our custom
+response message.
+For example, to return an HTTP error code 400 with a
+hardcoded message, we can do as shown below:
+
+[tabs]
+====
+
+Java::
++
+[source,java]
+----
+onException(JsonParseException.class)
+    .handled(true)
+    .setHeader(Exchange.HTTP_RESPONSE_CODE, constant(400))
+    .setHeader(Exchange.CONTENT_TYPE, constant("text/plain"))
+    .setBody().constant("Invalid json data");
+----
+
+XML::
++
+[source,xml]
+----
+<onException>
+    <exception>com.fasterxml.jackson.core.JsonParseException</exception>
+    <handled>
+        <constant>true</constant>
+    </handled>
+    <setHeader name="CamelHttpResponseCode">
+        <constant>400</constant>
+    </setHeader>
+    <setHeader name="Content-Type">
+        <constant>text/plain</constant>
+    </setHeader>
+    <setBody>
+        <constant>Invalid json data</constant>
+    </setBody>
+</onException>
+----
+
+YAML::
++
+[source,yaml]
+----
+- onException:
+    exception:
+      - com.fasterxml.jackson.core.JsonParseException
+    handled:
+      constant:
+        expression: "true"
+    steps:
+      - setHeader:
+          name: CamelHttpResponseCode
+          expression:
+            constant:
+              expression: 400
+      - setHeader:
+          name: Content-Type
+          expression:
+            constant:
+              expression: text/plain
+      - setBody:
+          expression:
+            constant:
+              expression: Invalid json data
+----
+====
+
+== Query/Header Parameter default Values
+
+You can specify default values for parameters in the rest-dsl, such as
+the verbose parameter below:
+
+[tabs]
+====
+
+Java::
++
+[source,java]
+----
+rest("/customers/")
+    .get("/{id}").to("direct:customerDetail")
+    .get("/{id}/orders")
+      .param().name("verbose").type(RestParamType.query).defaultValue("false").description("Verbose order details").endParam()
+        .to("direct:customerOrders")
+    .post("/neworder").to("direct:customerNewOrder");
+----
+
+XML::
++
+[source,xml]
+----
+<rest path="/customers/">
+    <get path="/{id}">
+        <to uri="direct:customerDetail"/>
+    </get>
+    <get path="/{id}/orders">
+        <param description="Verbose order details" name="verbose" type="query" defaultValue="false"/>
+        <to uri="direct:customerOrders"/>
+    </get>
+    <post path="/neworder">
+        <to uri="direct:customerNewOrder"/>
+    </post>
+</rest>
+----
+
+
+YAML::
++
+[source,yaml]
+----
+- rest:
+    path: "/customers/"
+    get:
+      - path: "/{id}"
+        to: "direct:customerDetail"
+      - path: "/{id}/orders"
+        to: "direct:customerOrders"
+        param:
+          - name: "verbose"
+            type: "query"
+            defaultValue: "false"
+            description: "Verbose order details"
+    post:
+      - path: "/neworder"
+        to: "direct:customerNewOrder"
+----
+====
+
+The default value is automatic set as
+header on the incoming Camel `Message`. So if the call
+to `/customers/id/orders` do not include a query parameter with
+key `verbose` then Camel will now include a header with key `verbose`
+and the value `false` because it was declared as the default value. This
+functionality is only applicable for query parameters.
+Request headers may also be defaulted in the same way.
+
+[tabs]
+====
+
+Java::
++
+[source,java]
+----
+rest("/customers/")
+    .get("/{id}").to("direct:customerDetail")
+    .get("/{id}/orders")
+      .param().name("indicator").type(RestParamType.header).defaultValue("disabled").description("Feature Enabled Indicator").endParam()
+        .to("direct:customerOrders")
+    .post("/neworder").to("direct:customerNewOrder");
+----
+
+XML::
++
+[source,xml]
+----
+<rest path="/customers/">
+    <get path="/{id}">
+        <param name="id"/>
+        <to uri="direct:customerDetail"/>
+    </get>
+    <get path="/{id}/orders">
+        <param description="Feature Enabled Indicator" name="indicator" type="header" defaultValue="disabled"/>
+        <to uri="direct:customerOrders"/>
+    </get>
+    <post path="/neworder">
+        <to uri="direct:customerNewOrder"/>
+    </post>
+</rest>
+----
+
+YAML::
++
+[source,yaml]
+----
+- rest:
+    path: "/customers/"
+    get:
+      - path: "/{id}"
+        to: "direct:customerDetail"
+      - path: "/{id}/orders"
+        to: "direct:customerOrders"
+        param:
+          - name: "indicator"
+            type: "header"
+            defaultValue: "disabled"
+            description: "Feature Enabled Indicator"
+    post:
+      - path: "/neworder"
+        to: "direct:customerNewOrder"
+----
+====
+
+== Client Request and Response Validation
+
+It is possible to enable validation of the incoming client request.
+The validation checks for the following:
+
+- Content-Type header matches what the Rest DSL consumes. (Returns HTTP Status 415)
+- Accept header matches what the Rest DSL produces. (Returns HTTP Status 406)
+- Missing required data (query parameters, HTTP headers, body). (Returns HTTP Status 400)
+- Checking if query parameters or HTTP headers has not-allowed values. (Returns HTTP Status 400)
+- Parsing error of the message body (JSON, XML or Auto binding mode must be enabled). (Returns HTTP Status 400)
+
+If the validation fails, then Rest DSL will return a response with an HTTP error code.
+
+The validation is by default turned off (to be backwards compatible).
+It can be turned on via `clientRequestValidation` as shown below:
+
+[tabs]
+====
+
+Java::
++
+[source,java]
+----
+restConfiguration().component("jetty").host("localhost")
+    .clientRequestValidation(true);
+----
+
+XML::
++
+[source,xml]
+----
+<restConfiguration component="jetty" host="localhost" clientRequestValidation="true"/>
+----
+
+YAML::
++
+[source,yaml]
+----
+- restConfiguration:
+    component: "jetty"
+    host: "localhost"
+    clientRequestValidation: "true"
+----
+====
+
+The validator is pluggable and Camel provides a default implementation out of the box.
+
+However, the `camel-openapi-validator` uses the third party https://bitbucket.org/atlassian/swagger-request-validator/src/master/[Atlassian Swagger Request Validator]
+library instead for client request validator. This library is a more extensive validator than
+the default validator from `camel-core`, such as being able to validate the payload
+is structured according to the OpenAPI specification.
+
+In **Camel 4.13** we added a _response validator_ as well which is intended more as development assistance
+that you can enable while building your Camel integrations, and help ensure what Camel is sending back
+to the HTTP client is valid. The response validator checks for the following:
+
+- Status-code and Content-Type matches Rest DSL response messages.
+- Check whether expected headers is included according to the Rest DSL repose message headers.
+- If the response body is JSon then check whether its valid JSon.
+
+If any error is detected the HTTP Status 500 is returned.
+
+Also, the `camel-openapi-validator` can be added to the classpath to have a more powerful response validator,
+that can be used to validate the response payload is structured according to the OpenAPI specification.

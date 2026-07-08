@@ -477,7 +477,7 @@ public class DefaultStreamCachingStrategy extends ServiceSupport implements Came
     }
 
     private boolean isSpoolRemovable() {
-        return spoolThreshold > 0 & spoolDirectory != null && isRemoveSpoolDirectoryWhenStopping();
+        return spoolThreshold > 0 && spoolDirectory != null && isRemoveSpoolDirectoryWhenStopping();
     }
 
     @Override

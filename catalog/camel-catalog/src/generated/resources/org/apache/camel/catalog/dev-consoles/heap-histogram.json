@@ -1,0 +1,32 @@
+{
+  "console": {
+    "kind": "console",
+    "group": "camel",
+    "name": "heap-histogram",
+    "title": "Heap Histogram",
+    "description": "Displays class-level heap memory usage",
+    "deprecated": false,
+    "javaType": "org.apache.camel.impl.console.HeapHistogramDevConsole",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-console",
+    "version": "4.22.0-SNAPSHOT"
+  },
+  "options": {
+    "limit": {
+      "index": 0,
+      "kind": "option",
+      "displayName": "Limit",
+      "group": "query",
+      "label": "query",
+      "required": false,
+      "type": "integer",
+      "javaType": "java.lang.Integer",
+      "deprecated": false,
+      "autowired": false,
+      "secret": false,
+      "defaultValue": 100,
+      "description": "Limits the number of classes displayed"
+    }
+  }
+}
+

@@ -22,6 +22,7 @@ import javax.crypto.KeyAgreement;
 import javax.crypto.KeyGenerator;
 
 import org.apache.camel.component.pqc.PQCKeyEncapsulationAlgorithms;
+import org.apache.camel.util.SecureRandomHelper;
 import org.bouncycastle.jcajce.spec.MLKEMParameterSpec;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
@@ -63,7 +64,7 @@ public class PQCDefaultX25519MLKEMMaterial {
             KeyPairGenerator mlkemKpg = KeyPairGenerator.getInstance(
                     PQCKeyEncapsulationAlgorithms.MLKEM.getAlgorithm(),
                     PQCKeyEncapsulationAlgorithms.MLKEM.getBcProvider());
-            mlkemKpg.initialize(MLKEMParameterSpec.ml_kem_768, new SecureRandom());
+            mlkemKpg.initialize(MLKEMParameterSpec.ml_kem_768, SecureRandomHelper.getSecureRandom());
             pqcKeyPair = mlkemKpg.generateKeyPair();
             pqcKeyGenerator = KeyGenerator.getInstance(
                     PQCKeyEncapsulationAlgorithms.MLKEM.getAlgorithm(),

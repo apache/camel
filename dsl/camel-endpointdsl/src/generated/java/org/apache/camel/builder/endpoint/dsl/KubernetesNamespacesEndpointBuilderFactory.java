@@ -1454,7 +1454,7 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final KubernetesNamespacesHeaderNameBuilder INSTANCE = new KubernetesNamespacesHeaderNameBuilder();
+        public static final KubernetesNamespacesHeaderNameBuilder INSTANCE = new KubernetesNamespacesHeaderNameBuilder();
 
         /**
          * The Producer operation.

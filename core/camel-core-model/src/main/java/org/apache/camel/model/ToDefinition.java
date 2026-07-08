@@ -25,21 +25,30 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.annotations.DslArg;
 
 /**
  * Sends the message to a static endpoint
  */
-@Metadata(label = "eip,routing")
+@Metadata(label = "eip,endpoint,routing",
+          aliases = { "sink", "egress" },
+          description = "Sends the message to a fixed endpoint URI")
 @XmlRootElement(name = "to")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ToDefinition extends SendDefinition<ToDefinition> {
 
     @XmlAttribute
+    @Metadata(description = "To use a variable as the source for the message body to send."
+                            + " This makes it handy to use variables for user data and to easily control what data to use for sending and receiving.")
     private String variableSend;
     @XmlAttribute
+    @Metadata(description = "To use a variable to store the received message body (only body, not headers)."
+                            + " This makes it handy to use variables for user data and to easily control what data to use for sending and receiving.")
     private String variableReceive;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "org.apache.camel.ExchangePattern", enums = "InOnly,InOut")
+    @Metadata(label = "advanced", javaType = "org.apache.camel.ExchangePattern", enums = "InOnly,InOut",
+              description = "Sets the optional ExchangePattern to use. If not specified the default exchange pattern is used.")
+    @DslArg(position = 0, renderType = "enumString", typeName = "ExchangePattern")
     private String pattern;
 
     public ToDefinition() {
@@ -97,9 +106,6 @@ public class ToDefinition extends SendDefinition<ToDefinition> {
         return pattern;
     }
 
-    /**
-     * Sets the optional {@link ExchangePattern} used to invoke this endpoint
-     */
     public void setPattern(String pattern) {
         this.pattern = pattern;
     }
@@ -108,14 +114,6 @@ public class ToDefinition extends SendDefinition<ToDefinition> {
         return variableSend;
     }
 
-    /**
-     * To use a variable as the source for the message body to send. This makes it handy to use variables for user data
-     * and to easily control what data to use for sending and receiving.
-     *
-     * Important: When using send variable then the message body is taken from this variable instead of the current
-     * message, however the headers from the message will still be used as well. In other words, the variable is used
-     * instead of the message body, but everything else is as usual.
-     */
     public void setVariableSend(String variableSend) {
         this.variableSend = variableSend;
     }
@@ -124,13 +122,6 @@ public class ToDefinition extends SendDefinition<ToDefinition> {
         return variableReceive;
     }
 
-    /**
-     * To use a variable to store the received message body (only body, not headers). This makes it handy to use
-     * variables for user data and to easily control what data to use for sending and receiving.
-     *
-     * Important: When using receive variable then the received body is stored only in this variable and not on the
-     * current message.
-     */
     public void setVariableReceive(String variableReceive) {
         this.variableReceive = variableReceive;
     }

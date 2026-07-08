@@ -142,6 +142,9 @@ public class BedrockProducer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 setResponseText(result, message);
+            } else {
+                throw new IllegalArgumentException(
+                        "InvokeTextModel operation requires InvokeModelRequest in POJO mode");
             }
         } else {
             InvokeModelRequest.Builder builder = InvokeModelRequest.builder();
@@ -186,6 +189,9 @@ public class BedrockProducer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
+            } else {
+                throw new IllegalArgumentException(
+                        "InvokeImageModel operation requires InvokeModelRequest in POJO mode");
             }
         } else {
             InvokeModelRequest.Builder builder = InvokeModelRequest.builder();
@@ -235,6 +241,9 @@ public class BedrockProducer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
+            } else {
+                throw new IllegalArgumentException(
+                        "InvokeEmbeddingsModel operation requires InvokeModelRequest in POJO mode");
             }
         } else {
             InvokeModelRequest.Builder builder = InvokeModelRequest.builder();
@@ -379,6 +388,42 @@ public class BedrockProducer extends DefaultProducer {
                 }
                 break;
 
+            // Image generation models — use the invokeImageModel operation instead
+            case "amazon.titan-image-generator-v1":
+            case "amazon.titan-image-generator-v2:0":
+            case "amazon.nova-canvas-v1:0":
+            case "stability.sd3-5-large-v1:0":
+            case "stability.stable-image-control-sketch-v1:0":
+            case "stability.stable-image-control-structure-v1:0":
+            case "stability.stable-image-core-v1:1":
+                throw new IllegalArgumentException(
+                        "Model " + modelId
+                                                   + " is an image generation model and cannot be used with the invokeTextModel operation. Use the invokeImageModel operation instead.");
+
+            // Embedding models — use the invokeEmbeddingsModel operation instead
+            case "amazon.titan-embed-text-v1":
+            case "amazon.titan-embed-image-v1":
+            case "cohere.embed-english-v3":
+            case "cohere.embed-multilingual-v3":
+                throw new IllegalArgumentException(
+                        "Model " + modelId
+                                                   + " is an embedding model and cannot be used with the invokeTextModel operation. Use the invokeEmbeddingsModel operation instead.");
+
+            // Rerank models — not supported by the invokeTextModel operation
+            case "amazon.rerank-v1:0":
+            case "cohere.rerank-v3-5:0":
+                throw new IllegalArgumentException(
+                        "Model " + modelId
+                                                   + " is a rerank model and cannot be used with the invokeTextModel operation.");
+
+            // Video and speech models — not supported by the invokeTextModel operation
+            case "amazon.nova-reel-v1:0":
+            case "amazon.nova-reel-v1:1":
+            case "amazon.nova-sonic-v1:0":
+                throw new IllegalArgumentException(
+                        "Model " + modelId
+                                                   + " is a video/speech generation model and cannot be used with the invokeTextModel operation.");
+
             default:
                 throw new IllegalStateException("Unexpected model: " + modelId);
         }
@@ -430,6 +475,9 @@ public class BedrockProducer extends DefaultProducer {
             Object payload = exchange.getMessage().getMandatoryBody();
             if (payload instanceof InvokeModelWithResponseStreamRequest streamRequest) {
                 processStreamingRequest(streamRequest, exchange);
+            } else {
+                throw new IllegalArgumentException(
+                        "Streaming invoke operations require InvokeModelWithResponseStreamRequest in POJO mode");
             }
         } else {
             InvokeModelWithResponseStreamRequest.Builder builder = InvokeModelWithResponseStreamRequest.builder();

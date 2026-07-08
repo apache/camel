@@ -390,7 +390,7 @@ public class RunMojo extends AbstractExecMojo {
                     "Cannot run Kamelet Main because camel-kamelet-main JAR is not available on classpath");
         }
 
-        final Thread bootstrapThread = new Thread(threadGroup, () -> {
+        final Thread bootstrapThread = threadGroup.newThread(() -> {
             try {
                 beforeBootstrapCamel();
 
@@ -406,7 +406,7 @@ public class RunMojo extends AbstractExecMojo {
                 getLog().error("Error occurred while running main from: " + mainClass);
                 getLog().error(e);
                 getLog().error("*************************************");
-                Thread.currentThread().getThreadGroup().uncaughtException(Thread.currentThread(), e);
+                threadGroup.uncaughtException(Thread.currentThread(), e);
             }
         }, mainClass + ".main()");
 
@@ -459,11 +459,13 @@ public class RunMojo extends AbstractExecMojo {
         // noop
     }
 
-    class IsolatedThreadGroup extends ThreadGroup {
+    @SuppressWarnings("java:S3014") // ThreadGroup is needed internally for thread containment; no modern alternative in Java 17
+    class IsolatedThreadGroup implements Thread.UncaughtExceptionHandler {
+        private final ThreadGroup threadGroup;
         Throwable uncaughtException; // synchronize access to this
 
         IsolatedThreadGroup(String name) {
-            super(name);
+            this.threadGroup = new ThreadGroup(name);
         }
 
         @Override
@@ -482,13 +484,38 @@ public class RunMojo extends AbstractExecMojo {
                 getLog().warn("an additional exception was thrown", throwable);
             }
         }
+
+        Thread newThread(Runnable task, String name) {
+            Thread t = new Thread(threadGroup, task, name);
+            t.setUncaughtExceptionHandler(this);
+            return t;
+        }
+
+        Collection<Thread> getActiveThreads() {
+            Thread[] threads = new Thread[threadGroup.activeCount()];
+            threadGroup.enumerate(threads);
+            Collection<Thread> result = new ArrayList<>(threads.length);
+            for (int i = 0; i < threads.length && threads[i] != null; i++) {
+                result.add(threads[i]);
+            }
+            // note: the result should be modifiable
+            return result;
+        }
+
+        int activeCount() {
+            return threadGroup.activeCount();
+        }
+
+        void enumerate(Thread[] threads) {
+            threadGroup.enumerate(threads);
+        }
     }
 
-    private void joinNonDaemonThreads(ThreadGroup threadGroup) {
+    private void joinNonDaemonThreads(IsolatedThreadGroup threadGroup) {
         boolean foundNonDaemon;
         do {
             foundNonDaemon = false;
-            Collection<Thread> threads = getActiveThreads(threadGroup);
+            Collection<Thread> threads = threadGroup.getActiveThreads();
             for (Thread thread : threads) {
                 if (thread.isDaemon()) {
                     continue;
@@ -516,13 +543,13 @@ public class RunMojo extends AbstractExecMojo {
         }
     }
 
-    private void terminateThreads(ThreadGroup threadGroup) {
+    private void terminateThreads(IsolatedThreadGroup threadGroup) {
         StopWatch watch = new StopWatch();
         Set<Thread> uncooperativeThreads = new HashSet<>(); // these were not responsive
         // to interruption
-        for (Collection<Thread> threads = getActiveThreads(threadGroup);
+        for (Collection<Thread> threads = threadGroup.getActiveThreads();
              !threads.isEmpty();
-             threads = getActiveThreads(threadGroup), threads
+             threads = threadGroup.getActiveThreads(), threads
                      .removeAll(uncooperativeThreads)) {
             // Interrupt all threads we know about as of this instant (harmless
             // if spuriously went dead (! isAlive())
@@ -580,17 +607,6 @@ public class RunMojo extends AbstractExecMojo {
                 }
             }
         }
-    }
-
-    private Collection<Thread> getActiveThreads(ThreadGroup threadGroup) {
-        Thread[] threads = new Thread[threadGroup.activeCount()];
-        int numThreads = threadGroup.enumerate(threads);
-        Collection<Thread> result = new ArrayList<>(numThreads);
-        for (int i = 0; i < threads.length && threads[i] != null; i++) {
-            result.add(threads[i]);
-        }
-        // note: the result should be modifiable
-        return result;
     }
 
     /**

@@ -22,13 +22,13 @@
         <artifactId>camel-test-infra-parent</artifactId>
         <groupId>org.apache.camel</groupId>
         <relativePath>../camel-test-infra-parent/pom.xml</relativePath>
-        <version>4.21.0-SNAPSHOT</version>
+        <version>4.22.0-SNAPSHOT</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>camel-test-infra-cli</artifactId>
-    <name>Camel :: Test Infra :: Cli (Camel JBang)</name>
+    <name>Camel :: Test Infra :: Cli (Camel CLI)</name>
 
     <properties>
         <skipTests>true</skipTests>

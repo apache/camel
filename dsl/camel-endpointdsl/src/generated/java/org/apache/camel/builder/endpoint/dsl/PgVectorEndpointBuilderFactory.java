@@ -263,7 +263,7 @@ public interface PgVectorEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final PgVectorHeaderNameBuilder INSTANCE = new PgVectorHeaderNameBuilder();
+        public static final PgVectorHeaderNameBuilder INSTANCE = new PgVectorHeaderNameBuilder();
 
         /**
          * The action to be performed.

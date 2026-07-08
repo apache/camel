@@ -24,8 +24,15 @@ A route has exactly one input xref:endpoint.adoc[endpoint],
 and 0, 1 or more output xref:endpoint.adoc[endpoints].
 
 You use Camel xref:dsl.adoc[DSL] to _code_ the xref:routes.adoc[routes].
-For example the route below is coded in xref:java-dsl.adoc[Java DSL]:
+For example the route below can be coded in xref:java-dsl.adoc[Java DSL],
+xref:components:others:java-xml-io-dsl.adoc[XML DSL],
+or xref:components:others:yaml-dsl.adoc[YAML DSL]:
 
+[tabs]
+====
+
+Java::
++
 [source,java]
 ----
 public class MyRoute extends RouteBuilder {
@@ -37,8 +44,8 @@ public class MyRoute extends RouteBuilder {
 }
 ----
 
-You can also use xref:components:others:java-xml-io-dsl.adoc[XML DSL] to _code_ the xref:routes.adoc[routes].
-
+XML::
++
 [source,xml]
 ----
 <route>
@@ -47,8 +54,8 @@ You can also use xref:components:others:java-xml-io-dsl.adoc[XML DSL] to _code_ 
 </route>
 ----
 
-For low-code users then xref:components:others:yaml-dsl.adoc[YAML DSL] is also possible:
-
+YAML::
++
 [source,yaml]
 ----
 - route:
@@ -58,3 +65,4 @@ For low-code users then xref:components:others:yaml-dsl.adoc[YAML DSL] is also p
         - to:
             uri: activemq:queue:cheese
 ----
+====

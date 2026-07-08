@@ -29,14 +29,19 @@ import org.apache.camel.spi.Metadata;
 /**
  * Filter out messages based using a predicate
  */
-@Metadata(label = "eip,routing")
+@Metadata(label = "eip,routing",
+          aliases = { "filter" },
+          description = "Filters messages using a predicate expression."
+                        + " Messages matching the predicate continue processing; non-matching messages are skipped.")
 @AsPredicate
 @XmlRootElement(name = "filter")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class FilterDefinition extends OutputExpressionNode {
 
     @XmlAttribute
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced",
+              description = "Name of an exchange property to store whether the filter predicate matched or not."
+                            + " The value is stored as a boolean.")
     private String statusPropertyName;
 
     public FilterDefinition() {
@@ -83,11 +88,8 @@ public class FilterDefinition extends OutputExpressionNode {
         this.statusPropertyName = statusPropertyName;
     }
 
-    /**
-     * Expression to determine if the message should be filtered or not. If the expression returns an empty value or
-     * <tt>false</tt> then the message is filtered (dropped), otherwise the message is continued being routed.
-     */
     @Override
+    @Metadata(description = "The predicate expression to evaluate. Messages where the predicate returns false are filtered out and not routed further.")
     public void setExpression(ExpressionDefinition expression) {
         // override to include javadoc what the expression is used for
         super.setExpression(expression);

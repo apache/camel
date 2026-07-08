@@ -2,12 +2,10 @@
 :doctitle: uniVocity Fixed Length
 :shortname: univocityFixed
 :artifactid: camel-univocity-parsers
-:description: Marshal and unmarshal Java objects from and to fixed length records using UniVocity Parsers.
+:description: Marshal and unmarshal Java objects from and to fixed length records using UniVocity Parsers
 :since: 2.15
 :supportlevel: Stable
 :tabs-sync-option:
-//Manually maintained attributes
-:camel-spring-boot-name: univocity-parsers
 
 *Since Camel {since}*
 
@@ -54,7 +52,6 @@ include::partial$dataformat-options.adoc[]
 // dataformat options: END
 
 
-
 == Marshalling usages
 
 The marshalling accepts either:
@@ -66,8 +63,21 @@ Any other body will throws an exception.
 
 === Usage example: marshalling a Map into CSV format
 
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:input")
+    .marshal().univocityCsv()
+    .to("mock:result");
+----
+
+XML::
++
 [source,xml]
-------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+----
 <route>
     <from uri="direct:input"/>
     <marshal>
@@ -75,12 +85,40 @@ Any other body will throws an exception.
     </marshal>
     <to uri="mock:result"/>
 </route>
-------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:input
+      steps:
+        - marshal:
+            univocityCsv: {}
+        - to:
+            uri: mock:result
+----
+====
 
 === Usage example: marshalling a Map into fixed-width format
 
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:input")
+    .marshal().univocityFixed()
+    .to("mock:result");
+----
+
+XML::
++
 [source,xml]
-------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+----
 <route>
     <from uri="direct:input"/>
     <marshal>
@@ -92,12 +130,41 @@ Any other body will throws an exception.
     </marshal>
     <to uri="mock:result"/>
 </route>
-------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:input
+      steps:
+        - marshal:
+            univocityFixed:
+              padding: "_"
+        - to:
+            uri: mock:result
+----
+====
 
 === Usage example: marshalling a Map into TSV format
 
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:input")
+    .marshal().univocityTsv()
+    .to("mock:result");
+----
+
+XML::
++
 [source,xml]
-------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+----
 <route>
     <from uri="direct:input"/>
     <marshal>
@@ -105,7 +172,22 @@ Any other body will throws an exception.
     </marshal>
     <to uri="mock:result"/>
 </route>
-------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:input
+      steps:
+        - marshal:
+            univocityTsv: {}
+        - to:
+            uri: mock:result
+----
+====
 
 == Unmarshalling usages
 
@@ -124,8 +206,21 @@ All the rows can either:
 
 === Usage example: unmarshalling a CSV format into maps with automatic headers
 
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:input")
+    .unmarshal().univocityCsv()
+    .to("mock:result");
+----
+
+XML::
++
 [source,xml]
-------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+----
 <route>
     <from uri="direct:input"/>
     <unmarshal>
@@ -133,12 +228,42 @@ All the rows can either:
     </unmarshal>
     <to uri="mock:result"/>
 </route>
-------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:input
+      steps:
+        - unmarshal:
+            univocityCsv:
+              headerExtractionEnabled: true
+              asMap: true
+        - to:
+            uri: mock:result
+----
+====
 
 === Usage example: unmarshalling a fixed-width format into lists
 
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:input")
+    .unmarshal().univocityFixed()
+    .to("mock:result");
+----
+
+XML::
++
 [source,xml]
-------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+----
 <route>
     <from uri="direct:input"/>
     <unmarshal>
@@ -150,7 +275,19 @@ All the rows can either:
     </unmarshal>
     <to uri="mock:result"/>
 </route>
-------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+----
 
-
-include::spring-boot:partial$starter.adoc[]
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:input
+      steps:
+        - unmarshal:
+            univocityFixed: {}
+        - to:
+            uri: mock:result
+----
+====

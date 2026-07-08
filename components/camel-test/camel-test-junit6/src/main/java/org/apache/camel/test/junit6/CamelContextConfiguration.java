@@ -319,7 +319,7 @@ public class CamelContextConfiguration {
     /**
      * A supplier that classes can use to create a {@link RouteBuilder} to define the routes for testing
      */
-    protected CamelContextConfiguration withRoutesSupplier(
+    public CamelContextConfiguration withRoutesSupplier(
             RoutesSupplier routesSupplier) {
         this.routesSupplier = routesSupplier;
         return this;
@@ -348,7 +348,7 @@ public class CamelContextConfiguration {
      *
      * @param postProcessor the post-test processor to use
      */
-    protected CamelContextConfiguration withPostProcessor(
+    public CamelContextConfiguration withPostProcessor(
             PostProcessor postProcessor) {
         this.postProcessor = postProcessor;
         return this;

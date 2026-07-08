@@ -7,8 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Only producer is supported
-//Manually maintained attributes
-:camel-spring-boot-name: influxdb
 
 *Since Camel {since}*
 
@@ -18,7 +16,7 @@ This component allows you to interact with https://influxdata.com/time-series-pl
 a time series database.
 
 The native body type for this component is `Point` (the native influxdb class).
-However, it can also accept `Map<String, Object>` as message body, and it will get converted to `Point.class`, please note that the map must contain an element with `InfluxDbConstants.MEASUREMENT_NAME` as key.
+However, it can also accept `Map<String, Object>` as message body, and it will get converted to `Point.class`, please note that the map must contain an element with `camelInfluxDB.MeasurementName` as key.
 
 Additionally, you may register your own Converters to your data type to `Point`, or use the
 (un)marshalling tools provided by Camel.
@@ -58,19 +56,37 @@ include::partial$component-endpoint-headers.adoc[]
 Below is an example route that stores a point into the db (taking the db name from the URI)
 specific key:
 
-[source,java]
-----
-from("direct:start")
-        .setHeader(InfluxDbConstants.DBNAME_HEADER, constant("myTimeSeriesDB"))
-        .to("influxdb://connectionBean);
-----
-
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:start")
         .to("influxdb://connectionBean?databaseName=myTimeSeriesDB");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <to uri="influxdb://connectionBean?databaseName=myTimeSeriesDB"/>
+</route>
+----
 
-
-include::spring-boot:partial$starter.adoc[]
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: influxdb://connectionBean
+            parameters:
+              databaseName: myTimeSeriesDB
+----
+====

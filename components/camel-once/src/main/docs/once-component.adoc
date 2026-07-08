@@ -8,8 +8,6 @@
 :tabs-sync-option:
 :component-header: Only consumer is supported
 :core:
-//Manually maintained attributes
-:camel-spring-boot-name: once
 
 *Since Camel {since}*
 
@@ -44,34 +42,86 @@ include::partial$component-endpoint-headers.adoc[]
 
 To set up a route that generates an event every 60 seconds:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("once:foo?body=file:data.json").to("bean:myBean?method=someMethodName");
 ----
 
-The above route will trigger once and load the `data.json` from file system and use as message body.
-And then route to call the bean.
-
-And the route in XML DSL:
-
+XML::
++
 [source,xml]
------
+----
 <route>
   <from uri="once:foo?body=file:data.json"/>
   <to uri="bean:myBean?method=someMethodName"/>
 </route>
------
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: once:foo
+      parameters:
+        body: "file:data.json"
+      steps:
+        - to:
+            uri: bean:myBean
+            parameters:
+              method: someMethodName
+----
+====
+
+The above route will trigger once and load the `data.json` from file system and use as message body.
+And then route to call the bean.
 
 === Using headers and variables
 
 You can also specify headers and variables using _multivalue_, where each header is prefixed with `header.<key>`.
 In the sample below we set 2 headers as follows: `foo=abc` and `bar=123`.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("once:tick?body=world&header.foo=abc&header.bar=123")
-  .to("bean:myBean");
+    .to("bean:myBean");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="once:tick?body=world&amp;header.foo=abc&amp;header.bar=123"/>
+  <to uri="bean:myBean"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: once:tick
+      parameters:
+        body: world
+        header.foo: abc
+        header.bar: "123"
+      steps:
+        - to:
+            uri: bean:myBean
+----
+====
 
 You can do the same for variables with `variable.<key>`.
 
@@ -110,11 +160,41 @@ on data from the variables and headers.
 
 For example:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("once:tick?body=language:groovy:file:src/test/resources/calc.groovy&variable.amount=123")
         .to("mock:result");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="once:tick?body=language:groovy:file:src/test/resources/calc.groovy&amp;variable.amount=123"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: once:tick
+      parameters:
+        body: "language:groovy:file:src/test/resources/calc.groovy"
+        variable.amount: "123"
+      steps:
+        - to:
+            uri: mock:result
+----
+====
 
 You must use `language:groovy:` as prefix when using languages. And you can combine this with loading from file.
 The `calc.groovy` file is as follows:
@@ -141,6 +221,17 @@ And for any other its `String` or the output from executing a language.
 By default, the component is fired after 1 seconds when Camel has been fully started.
 If you want to fire messages in a Camel route as soon as possible, you can use a negative delay:
 
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("once:foo?body=file.data.json&delay=-1").to("bean:myBean?method=someMethodName");
+----
+
+XML::
++
 [source,xml]
 ----
 <route>
@@ -149,7 +240,22 @@ If you want to fire messages in a Camel route as soon as possible, you can use a
 </route>
 ----
 
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: once:foo
+      parameters:
+        body: file.data.json
+        delay: -1
+      steps:
+        - to:
+            uri: bean:myBean
+            parameters:
+              method: someMethodName
+----
+====
+
 In this way, the timer will fire messages immediately.
-
-
-include::spring-boot:partial$starter.adoc[]

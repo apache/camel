@@ -32,6 +32,7 @@ import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.widgets.Clear;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
+import dev.tamboui.widgets.block.Borders;
 import dev.tamboui.widgets.block.Title;
 import dev.tamboui.widgets.list.ListItem;
 import dev.tamboui.widgets.list.ListState;
@@ -40,19 +41,24 @@ import dev.tamboui.widgets.list.ScrollMode;
 import dev.tamboui.widgets.paragraph.Paragraph;
 import org.apache.camel.util.json.Jsoner;
 
-import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.hint;
-import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.hintLast;
+import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.hint;
+import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.hintLast;
 
 class McpLogPopup {
 
     private boolean visible;
     private Supplier<List<TuiMcpServer.LogEntry>> activityLog;
+    private Supplier<Integer> toolCallCount;
     private List<TuiMcpServer.LogEntry> entries;
     private int selected;
     private int detailScroll;
 
     void setActivityLog(Supplier<List<TuiMcpServer.LogEntry>> activityLog) {
         this.activityLog = activityLog;
+    }
+
+    void setToolCallCount(Supplier<Integer> toolCallCount) {
+        this.toolCallCount = toolCallCount;
     }
 
     boolean isVisible() {
@@ -100,10 +106,10 @@ class McpLogPopup {
 
         if (entries == null || entries.isEmpty()) {
             Block block = Block.builder()
-                    .borderType(BorderType.ROUNDED)
+                    .borderType(BorderType.ROUNDED).borders(Borders.ALL)
                     .title(" MCP Log ")
                     .titleBottom(Title.from(Line.from(
-                            Span.styled(" Esc", MonitorContext.HINT_KEY_STYLE), Span.raw(" back "))))
+                            Span.styled(" Esc", Theme.hintKey()), Span.raw(" back "))))
                     .build();
             frame.renderWidget(block, popup);
             Rect inner = block.inner(popup);
@@ -121,7 +127,7 @@ class McpLogPopup {
     }
 
     void renderFooter(List<Span> spans) {
-        hint(spans, "↑↓", "select");
+        hint(spans, TuiIcons.HINT_SCROLL, "select");
         hint(spans, "PgUp/Dn", "scroll detail");
         hintLast(spans, "Esc", "back");
     }
@@ -147,16 +153,26 @@ class McpLogPopup {
                     Span.raw(entry.message()))));
         }
 
+        int count = toolCallCount != null ? toolCallCount.get() : 0;
+        Line titleLine;
+        if (count > 0) {
+            titleLine = Line.from(
+                    Span.styled(" MCP Log ", Style.EMPTY.bold()),
+                    Span.styled("(" + count + " calls) ", Style.EMPTY.dim()));
+        } else {
+            titleLine = Line.from(Span.styled(" MCP Log ", Style.EMPTY.bold()));
+        }
+
         ListState masterState = new ListState();
         masterState.select(selected);
         ListWidget list = ListWidget.builder()
                 .items(items.toArray(ListItem[]::new))
-                .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
+                .highlightStyle(Theme.selectionBg())
                 .highlightSymbol("▸ ")
                 .scrollMode(ScrollMode.AUTO_SCROLL)
                 .block(Block.builder()
-                        .borderType(BorderType.ROUNDED)
-                        .title(" MCP Log ")
+                        .borderType(BorderType.ROUNDED).borders(Borders.ALL)
+                        .title(Title.from(titleLine))
                         .build())
                 .build();
         frame.renderStatefulWidget(list, area, masterState);
@@ -166,12 +182,12 @@ class McpLogPopup {
         TuiMcpServer.LogEntry entry = entries.get(selected);
         List<Line> lines = new ArrayList<>();
         if (entry.requestBody() != null) {
-            lines.add(Line.from(Span.styled("▶ Request", Style.EMPTY.fg(Color.YELLOW).bold())));
+            lines.add(Line.from(Span.styled(TuiIcons.ARROW_RIGHT + " Request", Style.EMPTY.fg(Color.YELLOW).bold())));
             addJsonLines(lines, entry.requestBody());
             lines.add(Line.from(Span.raw("")));
         }
         if (entry.responseBody() != null) {
-            lines.add(Line.from(Span.styled("◀ Response", Style.EMPTY.fg(Color.GREEN).bold())));
+            lines.add(Line.from(Span.styled(TuiIcons.ARROW_LEFT + " Response", Style.EMPTY.fg(Color.GREEN).bold())));
             addJsonLines(lines, entry.responseBody());
         }
         if (entry.requestBody() == null && entry.responseBody() == null) {
@@ -179,12 +195,8 @@ class McpLogPopup {
         }
 
         Block detailBlock = Block.builder()
-                .borderType(BorderType.ROUNDED)
+                .borderType(BorderType.ROUNDED).borders(Borders.ALL)
                 .title(" Detail ")
-                .titleBottom(Title.from(Line.from(
-                        Span.styled(" ↑↓", MonitorContext.HINT_KEY_STYLE), Span.raw(" select │"),
-                        Span.styled(" PgUp/Dn", MonitorContext.HINT_KEY_STYLE), Span.raw(" scroll │"),
-                        Span.styled(" Esc", MonitorContext.HINT_KEY_STYLE), Span.raw(" back "))))
                 .build();
         frame.renderWidget(detailBlock, area);
         Rect inner = detailBlock.inner(area);

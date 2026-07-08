@@ -36,8 +36,6 @@ public class DistributedCompletionIntervalTest extends AbstractDistributedTest {
         MockEndpoint mock2 = getMockEndpoint2("mock:result");
         mock2.expectedMessageCount(0);
 
-        // ensure messages are send after the 1s
-        Thread.sleep(2000);
         sendMessages();
 
         mock.assertIsSatisfied();
@@ -51,8 +49,6 @@ public class DistributedCompletionIntervalTest extends AbstractDistributedTest {
         MockEndpoint mock2 = getMockEndpoint2("mock:result");
         mock2.expectedBodiesReceived("Message 19");
 
-        // ensure messages are send after the 1s
-        Thread.sleep(2000);
         sendMessages();
 
         mock2.assertIsSatisfied();

@@ -237,8 +237,12 @@ public final class VertxPlatformHttpSupport {
         Vertx vertx = ctx.vertx();
         Context context = vertx.getOrCreateContext();
 
+        // For SSE streams, flush each chunk immediately instead of greedily filling the buffer
+        String contentType = response.headers().get("Content-Type");
+        boolean eagerFlush = contentType != null && contentType.startsWith("text/event-stream");
+
         // Process the InputStream async to avoid blocking the Vert.x event loop on large responses
-        AsyncInputStream asyncInputStream = new AsyncInputStream(vertx, context, is);
+        AsyncInputStream asyncInputStream = new AsyncInputStream(vertx, context, is, eagerFlush);
         asyncInputStream.exceptionHandler(promise::fail);
         asyncInputStream.endHandler(event -> endHandler(promise, response, asyncInputStream));
 

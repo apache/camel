@@ -68,8 +68,6 @@ public class AsyncCompletionServiceTest {
         service.submit(result("A", 200));
         service.submit(result("B"));
 
-        Thread.sleep(300);
-
         Object a = service.take();
         Object b = service.take();
 

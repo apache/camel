@@ -23,9 +23,17 @@ import org.apache.camel.util.StringHelper;
 import org.jspecify.annotations.Nullable;
 
 /**
- * Key used in {@link org.apache.camel.spi.TransformerRegistry} in
- * {@link org.apache.camel.impl.engine.AbstractCamelContext}, to ensure a consistent lookup.
+ * Composite lookup key for the {@link TransformerRegistry}, encoding a from-{@link DataType} / to-{@link DataType} pair
+ * as a single string value for efficient map-based lookup.
+ * <p/>
+ * The string form is {@code "fromType/toType"} when both ends are specified, or just {@code "toType"} when the from
+ * side is {@link DataType#ANY} (scheme-only transformer that applies to any input type). This normalization ensures
+ * that scheme-based transformers (e.g. all {@code json:*} conversions) can be resolved with a single registry lookup
+ * without iterating all registered transformers.
  *
+ * @see   TransformerRegistry
+ * @see   Transformer
+ * @see   DataType
  * @since 4.7
  */
 public final class TransformerKey extends ValueHolder<String> {

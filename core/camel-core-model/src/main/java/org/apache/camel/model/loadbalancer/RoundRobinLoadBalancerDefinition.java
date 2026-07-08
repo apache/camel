@@ -27,7 +27,8 @@ import org.apache.camel.spi.Metadata;
  * The destination endpoints are selected in a round-robin fashion. This is a well-known and classic policy, which
  * spreads the load evenly.
  */
-@Metadata(label = "eip,routing")
+@Metadata(label = "eip,loadbalancing,routing",
+          description = "Load balancer that cycles through destination endpoints in sequential order, distributing the load evenly")
 @XmlRootElement(name = "roundRobinLoadBalancer")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RoundRobinLoadBalancerDefinition extends LoadBalancerDefinition {

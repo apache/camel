@@ -27,8 +27,8 @@
     ">
 
   <!-- the persistent store for quartz -->
-  <jdbc:embedded-database id="{{testClassSimpleName}}" type="DERBY">
-    <jdbc:script location="classpath:tables_derby.sql"/>
+  <jdbc:embedded-database id="{{testClassSimpleName}}" type="H2">
+    <jdbc:script location="classpath:tables_h2.sql"/>
   </jdbc:embedded-database>
 
   <bean id="quartz" class="org.apache.camel.component.quartz.QuartzComponent">

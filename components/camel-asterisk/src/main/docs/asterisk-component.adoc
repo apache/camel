@@ -7,8 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
-//Manually maintained attributes
-:camel-spring-boot-name: asterisk
 
 *Since Camel {since}*
 
@@ -55,19 +53,79 @@ Supported actions are:
 
 === Producer Example
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:in")
-  .to("asterisk://myVoIP?hostname=hostname&username=username&password=password&action=EXTENSION_STATE")
---------------------------------------------------------------------------------
+  .to("asterisk://myVoIP?hostname=hostname&username=username&password=password&action=EXTENSION_STATE");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:in"/>
+  <to uri="asterisk://myVoIP?hostname=hostname&amp;username=username&amp;password=password&amp;action=EXTENSION_STATE"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:in
+      steps:
+        - to:
+            uri: asterisk://myVoIP
+            parameters:
+              hostname: hostname
+              username: username
+              password: password
+              action: EXTENSION_STATE
+----
+====
 
 === Consumer Example
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
+----
 from("asterisk:myVoIP?hostname=hostname&username=username&password=password")
   .log("Received a message - ${body}");
---------------------------------------------------------------------------------
+----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="asterisk:myVoIP?hostname=hostname&amp;username=username&amp;password=password"/>
+  <log message="Received a message - ${body}"/>
+</route>
+----
 
-include::spring-boot:partial$starter.adoc[]
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: asterisk:myVoIP
+      parameters:
+        hostname: hostname
+        username: username
+        password: password
+      steps:
+        - log:
+            message: "Received a message - ${body}"
+----
+====

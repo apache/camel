@@ -39,9 +39,12 @@ import dev.tamboui.text.Line;
 import dev.tamboui.text.Span;
 import dev.tamboui.text.Text;
 import dev.tamboui.tui.event.KeyEvent;
+import dev.tamboui.tui.event.MouseEvent;
+import dev.tamboui.tui.event.MouseEventKind;
 import dev.tamboui.widgets.Clear;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
+import dev.tamboui.widgets.block.Borders;
 import dev.tamboui.widgets.block.Title;
 import dev.tamboui.widgets.list.ListItem;
 import dev.tamboui.widgets.list.ListState;
@@ -54,11 +57,12 @@ import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 
-import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.*;
+import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.*;
 
-class LogTab implements MonitorTab {
+class LogTab extends AbstractTab {
 
     private static final int MAX_LOG_LINES = 3000;
+    private static final int MOUSE_SCROLL_LINES = 3;
     private static final String[] LOG_LEVELS = { "ERROR", "WARN", "INFO", "DEBUG", "TRACE" };
 
     private static final Pattern LOG_PATTERN = Pattern.compile(
@@ -68,7 +72,6 @@ class LogTab implements MonitorTab {
                                                                + "\\[([^]]*)]\\s+"
                                                                + "(\\S+)\\s*:\\s*(.*)$");
 
-    private final MonitorContext ctx;
     private final ScrollbarState scrollState = new ScrollbarState();
     private final ListState logLevelListState = new ListState();
 
@@ -96,7 +99,7 @@ class LogTab implements MonitorTab {
     private final SearchHighlighter search = new SearchHighlighter();
 
     LogTab(MonitorContext ctx) {
-        this.ctx = ctx;
+        super(ctx);
     }
 
     @Override
@@ -210,6 +213,21 @@ class LogTab implements MonitorTab {
     }
 
     @Override
+    public boolean handleMouseEvent(MouseEvent me, Rect area) {
+        if (me.kind() == MouseEventKind.SCROLL_UP) {
+            followMode = false;
+            scroll = Math.max(0, scroll - MOUSE_SCROLL_LINES);
+            return true;
+        }
+        if (me.kind() == MouseEventKind.SCROLL_DOWN) {
+            followMode = false;
+            scroll += MOUSE_SCROLL_LINES;
+            return true;
+        }
+        return false;
+    }
+
+    @Override
     public boolean handleEscape() {
         if (search.handleEscape()) {
             return true;
@@ -256,7 +274,7 @@ class LogTab implements MonitorTab {
 
         if (logLoading && filteredLogEntries.isEmpty()) {
             Block loadingBlock = Block.builder()
-                    .borderType(BorderType.ROUNDED)
+                    .borderType(BorderType.ROUNDED).borders(Borders.ALL)
                     .title(" Log ")
                     .build();
             frame.renderWidget(loadingBlock, area);
@@ -290,7 +308,7 @@ class LogTab implements MonitorTab {
             titleLine = Line.from(Span.raw(logLabel + " "));
         }
         Block block = Block.builder()
-                .borderType(BorderType.ROUNDED)
+                .borderType(BorderType.ROUNDED).borders(Borders.ALL)
                 .title(Title.from(titleLine))
                 .build();
         frame.renderWidget(block, area);
@@ -318,11 +336,16 @@ class LogTab implements MonitorTab {
             List<Line> built = new ArrayList<>(entries.size());
             int maxW = 0;
             for (int i = 0; i < entries.size(); i++) {
-                String raw = entries.get(i).raw != null ? entries.get(i).raw : "";
+                LogEntry entry = entries.get(i);
+                String raw = entry.raw != null ? entry.raw : "";
                 if (!wordWrap) {
                     maxW = Math.max(maxW, CharWidth.of(TuiHelper.stripAnsi(raw)));
                 }
-                built.add(TuiHelper.ansiToLine(raw, hSkip));
+                if (raw.indexOf('\u001B') >= 0) {
+                    built.add(TuiHelper.ansiToLine(raw, hSkip));
+                } else {
+                    built.add(colorizePlainLog(raw, entry));
+                }
             }
             cachedLogMaxWidth = maxW;
             cachedLogLines = built;
@@ -384,7 +407,7 @@ class LogTab implements MonitorTab {
             return;
         }
         if (showLogLevelPopup) {
-            hint(spans, "↑↓", "navigate");
+            hint(spans, TuiIcons.HINT_SCROLL, "navigate");
             hint(spans, "Enter", "set level");
             hintLast(spans, "Esc", "cancel");
             return;
@@ -395,7 +418,7 @@ class LogTab implements MonitorTab {
         } else {
             hint(spans, "Esc", "back");
         }
-        hint(spans, "↑↓", "scroll");
+        hint(spans, TuiIcons.HINT_SCROLL, "scroll");
         search.renderSearchHints(spans);
         hint(spans, "w", "wrap" + (wordWrap ? " [on]" : " [off]"));
         if (!ctx.isInfraSelected()) {
@@ -420,11 +443,11 @@ class LogTab implements MonitorTab {
                         ListItem.from("  INFO   ").style(Style.EMPTY),
                         ListItem.from("  DEBUG  ").style(Style.EMPTY.fg(Color.CYAN)),
                         ListItem.from("  TRACE  ").style(Style.EMPTY.dim()))
-                .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
+                .highlightStyle(Theme.selectionBg())
                 .highlightSymbol("")
                 .scrollMode(ScrollMode.NONE)
                 .block(Block.builder()
-                        .borderType(BorderType.ROUNDED)
+                        .borderType(BorderType.ROUNDED).borders(Borders.ALL)
                         .title(" Set Log Level ")
                         .build())
                 .build();
@@ -596,6 +619,51 @@ class LogTab implements MonitorTab {
         }
     }
 
+    private static final Style DIM = Style.EMPTY.dim();
+    private static final Style CYAN = Style.EMPTY.fg(Color.CYAN);
+    private static final Style MAGENTA = Style.EMPTY.fg(Color.MAGENTA);
+
+    private static final Pattern PID_PATTERN = Pattern.compile(
+            "^(\\d{4}-\\d{2}-\\d{2})[T ](\\d{2}:\\d{2}:\\d{2}\\.\\d+)\\S*\\s+"
+                                                               + "(TRACE|DEBUG|INFO|WARN|ERROR|FATAL)\\s+"
+                                                               + "(\\d+)\\s+---\\s+"
+                                                               + "\\[([^]]*)]\\s+"
+                                                               + "(\\S+)\\s*:\\s*(.*)$");
+
+    private static Line colorizePlainLog(String raw, LogEntry entry) {
+        String plain = TuiHelper.stripAnsi(raw);
+        Matcher m = PID_PATTERN.matcher(plain);
+        if (!m.matches()) {
+            return Line.from(Span.raw(plain));
+        }
+        String date = m.group(1) + " " + m.group(2);
+        String level = m.group(3);
+        String pid = m.group(4);
+        String thread = "[" + m.group(5) + "]";
+        String logger = m.group(6);
+        String message = m.group(7);
+        Style levelStyle = switch (level) {
+            case "ERROR", "FATAL" -> Style.EMPTY.fg(Color.RED);
+            case "WARN" -> Style.EMPTY.fg(Color.YELLOW);
+            case "INFO" -> Style.EMPTY.fg(Color.GREEN);
+            case "DEBUG" -> Style.EMPTY.fg(Color.CYAN);
+            case "TRACE" -> Style.EMPTY.dim();
+            default -> Style.EMPTY;
+        };
+        return Line.from(
+                Span.styled(date, DIM),
+                Span.raw(" "),
+                Span.styled(String.format("%5s", level), levelStyle),
+                Span.raw(" "),
+                Span.styled(pid, MAGENTA),
+                Span.styled(" --- ", DIM),
+                Span.styled(thread, DIM),
+                Span.raw(" "),
+                Span.styled(logger, CYAN),
+                Span.styled(" :", DIM),
+                Span.raw(" " + message));
+    }
+
     static LogEntry parseLogLine(String line) {
         LogEntry entry = new LogEntry();
         entry.raw = line;
@@ -625,6 +693,11 @@ class LogTab implements MonitorTab {
             entry.message = TuiHelper.stripAnsi(line);
         }
         return entry;
+    }
+
+    @Override
+    public String description() {
+        return "Live application log with ANSI color support and filtering";
     }
 
     @Override

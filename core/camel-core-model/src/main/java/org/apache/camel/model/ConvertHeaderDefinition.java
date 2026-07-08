@@ -23,11 +23,13 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.annotations.DslArg;
 
 /**
  * Converts the message header to another type
  */
-@Metadata(label = "eip,transformation")
+@Metadata(label = "eip,messaging,transformation",
+          description = "Converts a message header value to a specified Java type using Camel's built-in type converters")
 @XmlRootElement(name = "convertHeaderTo")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ConvertHeaderDefinition extends NoOutputDefinition<ConvertHeaderDefinition> {
@@ -36,16 +38,23 @@ public class ConvertHeaderDefinition extends NoOutputDefinition<ConvertHeaderDef
     private Class<?> typeClass;
 
     @XmlAttribute(required = true)
+    @DslArg(position = 0)
+    @Metadata(description = "Name of message header to convert its value. The simple language can be used to define a dynamic evaluated header name.")
     private String name;
     @XmlAttribute(required = true)
+    @DslArg(position = 1, renderType = "class")
+    @Metadata(description = "The java type to convert to.")
     private String type;
     @XmlAttribute
+    @Metadata(description = "To use another header to store the result. By default, the result is stored in the same header.")
     private String toName;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "true")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "true",
+              description = "Whether the conversion is mandatory. If mandatory and conversion is not possible, a NoTypeConversionAvailableException is thrown."
+                            + " Setting this to false means null may be returned if conversion is not possible.")
     private String mandatory;
     @XmlAttribute
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced", description = "To use a specific charset when converting.")
     private String charset;
 
     public ConvertHeaderDefinition() {
@@ -113,12 +122,6 @@ public class ConvertHeaderDefinition extends NoOutputDefinition<ConvertHeaderDef
         return "convertHeaderTo[" + getType() + "]";
     }
 
-    /**
-     * Name of message header to convert its value
-     * <p/>
-     * The <tt>simple</tt> language can be used to define a dynamic evaluated header name to be used. Otherwise a
-     * constant name will be used.
-     */
     public void setName(String name) {
         this.name = name;
     }
@@ -131,13 +134,6 @@ public class ConvertHeaderDefinition extends NoOutputDefinition<ConvertHeaderDef
         return toName;
     }
 
-    /**
-     * To use another header to store the result. By default, the result is stored in the same header. This option
-     * allows to use another header.
-     * <p/>
-     * The <tt>simple</tt> language can be used to define a dynamic evaluated header name to be used. Otherwise a
-     * constant name will be used.
-     */
     public void setToName(String toName) {
         this.toName = toName;
     }
@@ -146,9 +142,6 @@ public class ConvertHeaderDefinition extends NoOutputDefinition<ConvertHeaderDef
         return type;
     }
 
-    /**
-     * The java type to convert to
-     */
     public void setType(String type) {
         this.type = type;
     }
@@ -165,9 +158,6 @@ public class ConvertHeaderDefinition extends NoOutputDefinition<ConvertHeaderDef
         return charset;
     }
 
-    /**
-     * To use a specific charset when converting
-     */
     public void setCharset(String charset) {
         this.charset = charset;
     }
@@ -176,11 +166,6 @@ public class ConvertHeaderDefinition extends NoOutputDefinition<ConvertHeaderDef
         return mandatory;
     }
 
-    /**
-     * When mandatory then the conversion must return a value (cannot be null), if this is not possible then
-     * NoTypeConversionAvailableException is thrown. Setting this to false could mean conversion is not possible and the
-     * value is null.
-     */
     public void setMandatory(String mandatory) {
         this.mandatory = mandatory;
     }

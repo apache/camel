@@ -26,12 +26,13 @@ import org.apache.camel.spi.Metadata;
 /**
  * Rest security OpenID Connect definition
  */
-@Metadata(label = "rest,security,configuration")
+@Metadata(label = "rest,security,configuration", description = "Configures OpenID Connect authentication for a REST service")
 @XmlRootElement(name = "openIdConnect")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class OpenIdConnectDefinition extends RestSecurityDefinition {
 
     @XmlAttribute(required = true)
+    @Metadata(description = "OpenID Connect URL to discover OAuth2 configuration values.", required = true)
     private String url;
 
     @SuppressWarnings("unused")
@@ -46,9 +47,6 @@ public class OpenIdConnectDefinition extends RestSecurityDefinition {
         return url;
     }
 
-    /**
-     * OpenId Connect URL to discover OAuth2 configuration values.
-     */
     public void setUrl(String url) {
         this.url = url;
     }

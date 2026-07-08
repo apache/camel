@@ -7,8 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
-//Manually maintained attributes
-:camel-spring-boot-name: couchbase
 
 *Since Camel {since}*
 
@@ -22,20 +20,20 @@ Maven users will need to add the following dependency to their `pom.xml`
 for this component:
 
 [source,xml]
-------------------------------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-couchbase</artifactId>
     <version>x.x.x</version>
     <!-- use the same version as your Camel core version -->
 </dependency>
-------------------------------------------------------------
+----
 
 == URI format
 
--------------------------------------------------
+----
 couchbase:url
--------------------------------------------------
+----
 
 
 // component options: START
@@ -63,12 +61,44 @@ The simplest way to consume documents is to just use the existing endpoint optio
 auto-generates a SQL++ query from `bucket`, `collection`, `limit`, `skip`, `descending`,
 `rangeStartKey`, and `rangeEndKey`:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
-// Consumes up to 10 documents in descending order
 from("couchbase:http://localhost?bucket=myBucket&username=user&password=pass&limit=10&descending=true")
     .to("direct:result");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="couchbase:http://localhost?bucket=myBucket&amp;username=user&amp;password=pass&amp;limit=10&amp;descending=true"/>
+  <to uri="direct:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: couchbase:http://localhost
+      parameters:
+        bucket: myBucket
+        username: user
+        password: pass
+        limit: 10
+        descending: true
+      steps:
+        - to:
+            uri: direct:result
+----
+====
 
 This generates: `SELECT META().id AS \__id, * FROM \`myBucket\` ORDER BY META().id DESC LIMIT 10`
 
@@ -76,6 +106,7 @@ This generates: `SELECT META().id AS \__id, * FROM \`myBucket\` ORDER BY META().
 
 For complex queries (filters, joins, aggregations), set the `statement` option directly:
 
+._Java-only: string concatenation in endpoint URI_
 [source,java]
 ----
 from("couchbase:http://localhost?bucket=myBucket&username=user&password=pass"
@@ -97,6 +128,7 @@ The consumer can also poll documents using MapReduce Views by setting `useView=t
 `designDocumentName` and `viewName` endpoint options. This mode is deprecated and will be removed
 in a future release.
 
+._Java-only: string concatenation in endpoint URI_
 [source,java]
 ----
 from("couchbase:http://localhost?bucket=myBucket&username=user&password=pass"
@@ -135,6 +167,7 @@ are automatically translated to SQL++ clauses:
 
 For example, a view-based consumer:
 
+._Java-only: string concatenation in endpoint URI_
 [source,java]
 ----
 from("couchbase:http://localhost?bucket=myBucket&username=user&password=pass"
@@ -143,6 +176,7 @@ from("couchbase:http://localhost?bucket=myBucket&username=user&password=pass"
 
 Can be migrated by simply removing the view-specific options:
 
+._Java-only: string concatenation in endpoint URI_
 [source,java]
 ----
 from("couchbase:http://localhost?bucket=myBucket&username=user&password=pass"
@@ -151,6 +185,7 @@ from("couchbase:http://localhost?bucket=myBucket&username=user&password=pass"
 
 Or with an explicit SQL++ statement for more control:
 
+._Java-only: string concatenation in endpoint URI_
 [source,java]
 ----
 from("couchbase:http://localhost?bucket=myBucket&username=user&password=pass"
@@ -166,6 +201,3 @@ Check the compatibility https://docs.couchbase.com/java-sdk/current/project-docs
 
  * The value formerly interpreted as a bucket-name is now interpreted as a username. The username must correspond to a user defined on the cluster that is being accessed.
  * The value formerly interpreted as a bucket-password is now interpreted as the password of the defined user.
-
-
-include::spring-boot:partial$starter.adoc[]

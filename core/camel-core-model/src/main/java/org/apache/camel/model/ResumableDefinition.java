@@ -31,7 +31,9 @@ import org.apache.camel.spi.Metadata;
 /**
  * Resume EIP to support resuming processing from last known offset.
  */
-@Metadata(label = "eip,routing")
+@Metadata(label = "eip,routing",
+          description = "Enables resuming processing from the last known offset after a restart,"
+                        + " using a resume strategy to track and restore position")
 @XmlRootElement(name = "resumable")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ResumableDefinition extends NoOutputDefinition<ResumableDefinition> {
@@ -42,14 +44,17 @@ public class ResumableDefinition extends NoOutputDefinition<ResumableDefinition>
     private ResumeStrategyConfiguration resumeStrategyConfiguration;
 
     @XmlAttribute(required = true)
-    @Metadata(required = true, javaType = "org.apache.camel.resume.ResumeStrategy")
+    @Metadata(required = true, javaType = "org.apache.camel.resume.ResumeStrategy",
+              description = "The resume strategy to use for resuming processing from the last known offset.")
     private String resumeStrategy;
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "org.apache.camel.LoggingLevel", defaultValue = "ERROR",
-              enums = "TRACE,DEBUG,INFO,WARN,ERROR,OFF")
+              enums = "TRACE,DEBUG,INFO,WARN,ERROR,OFF",
+              description = "The logging level to use in case of failures.")
     private String loggingLevel;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "false")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "false",
+              description = "Whether the offsets will be intermittently present or whether they must be present in every exchange.")
     private String intermittent;
 
     public ResumableDefinition() {

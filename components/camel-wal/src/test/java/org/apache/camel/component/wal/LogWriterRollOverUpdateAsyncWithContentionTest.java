@@ -44,8 +44,6 @@ public class LogWriterRollOverUpdateAsyncWithContentionTest extends LogWriterRol
         } catch (IOException e) {
             LOG.error("Failed to generate records: {}", e.getMessage(), e);
             throw new RuntimeException(e);
-        } finally {
-            latch.countDown();
         }
     }
 

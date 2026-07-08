@@ -68,11 +68,15 @@ pipeline {
                 options {
                     throttle(['camel'])
                 }
-                when { anyOf {
-                    expression { params.PLATFORM_FILTER == 'all' }
-                    expression { params.PLATFORM_FILTER == env.PLATFORM }
-                    expression { params.JDK_FILTER == 'all' }
-                    expression { params.JDK_FILTER == env.JDK_NAME }
+                when { allOf {
+                    anyOf {
+                        expression { params.PLATFORM_FILTER == 'all' }
+                        expression { params.PLATFORM_FILTER == env.PLATFORM }
+                    }
+                    anyOf {
+                        expression { params.JDK_FILTER == 'all' }
+                        expression { params.JDK_FILTER == env.JDK_NAME }
+                    }
                 } }
                 axes {
                     axis {
@@ -92,7 +96,14 @@ pipeline {
                         steps {
                             cleanWs()
                             sh 'rm -rvf /home/jenkins/.m2/repository/org/apache/camel'
-                            checkout scm
+                            checkout([
+                                $class: 'GitSCM',
+                                branches: scm.branches,
+                                extensions: [
+                                    [$class: 'CloneOption', depth: 1, noTags: true, shallow: true]
+                                ],
+                                userRemoteConfigs: scm.userRemoteConfigs
+                            ])
                         }
                     }
 

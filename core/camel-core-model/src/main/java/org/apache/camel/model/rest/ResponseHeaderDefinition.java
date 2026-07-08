@@ -36,7 +36,8 @@ import org.apache.camel.util.StringHelper;
 /**
  * To specify the rest operation response headers.
  */
-@Metadata(label = "rest")
+@Metadata(label = "rest",
+          description = "Defines a response header for a REST operation, used for API documentation and OpenAPI spec generation")
 @XmlRootElement(name = "responseHeader")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ResponseHeaderDefinition {
@@ -45,25 +46,33 @@ public class ResponseHeaderDefinition {
     private ResponseMessageDefinition response;
 
     @XmlAttribute(required = true)
+    @Metadata(description = "Name of the response header.", required = true)
     private String name;
     @XmlAttribute
+    @Metadata(description = "Description of the response header.")
     private String description;
     @XmlAttribute
-    @Metadata(defaultValue = "csv")
+    @Metadata(description = "Sets the parameter collection format.",
+              defaultValue = "csv")
     private CollectionFormat collectionFormat;
     @XmlAttribute
-    @Metadata(defaultValue = "string")
+    @Metadata(description = "Sets the parameter array type. Required if data type is array. Describes the type of items in the array.",
+              defaultValue = "string")
     private String arrayType;
     @XmlAttribute
-    @Metadata(defaultValue = "string")
+    @Metadata(description = "Sets the header data type such as string, integer, or boolean.",
+              defaultValue = "string")
     private String dataType;
     @XmlAttribute
+    @Metadata(description = "The data format of the header such as binary, date, date-time, or password.")
     private String dataFormat;
     @XmlElementWrapper(name = "allowableValues")
     @XmlElement(name = "value") // name = value due to camel-spring-xml
     @DslProperty(name = "allowableValues") // yaml-dsl
+    @Metadata(description = "List of allowable values for the header (enum).")
     private List<ValueDefinition> allowableValues;
     @XmlAttribute
+    @Metadata(description = "An example value of this response header.")
     private String example;
 
     public ResponseHeaderDefinition(ResponseMessageDefinition response) {
@@ -104,9 +113,6 @@ public class ResponseHeaderDefinition {
         return collectionFormat;
     }
 
-    /**
-     * Sets the parameter collection format.
-     */
     public void setCollectionFormat(CollectionFormat collectionFormat) {
         this.collectionFormat = collectionFormat;
     }
@@ -115,9 +121,6 @@ public class ResponseHeaderDefinition {
         return arrayType;
     }
 
-    /**
-     * Sets the parameter array type. Required if data type is "array". Describes the type of items in the array.
-     */
     public void setArrayType(String arrayType) {
         this.arrayType = arrayType;
     }
@@ -126,9 +129,6 @@ public class ResponseHeaderDefinition {
         return dataType;
     }
 
-    /**
-     * Sets the header data type.
-     */
     public void setDataType(String dataType) {
         this.dataType = dataType;
     }
@@ -137,9 +137,6 @@ public class ResponseHeaderDefinition {
         return dataFormat;
     }
 
-    /**
-     * Sets the parameter data format.
-     */
     public void setDataFormat(String dataFormat) {
         this.dataFormat = dataFormat;
     }
@@ -152,16 +149,10 @@ public class ResponseHeaderDefinition {
         return example;
     }
 
-    /**
-     * Sets the example
-     */
     public void setExample(String example) {
         this.example = example;
     }
 
-    /**
-     * Sets the parameter list of allowable values.
-     */
     public void setAllowableValues(List<ValueDefinition> allowableValues) {
         this.allowableValues = allowableValues;
     }

@@ -24,8 +24,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
 import io.vertx.core.Vertx;
-import io.vertx.core.http.HttpClient;
 import io.vertx.core.http.WebSocket;
+import io.vertx.core.http.WebSocketClient;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.ibm.watsonx.ai.WatsonxAiConstants;
@@ -227,8 +227,8 @@ public class WatsonxAiWebSocketStreamingIT extends WatsonxAiTestSupport {
     private WebSocket openWebSocketConnection(String host, int port, String path, Consumer<String> handler)
             throws Exception {
         vertx = Vertx.vertx();
-        HttpClient client = vertx.createHttpClient();
-        CompletableFuture<WebSocket> future = client.webSocket(port, host, path)
+        WebSocketClient client = vertx.createWebSocketClient();
+        CompletableFuture<WebSocket> future = client.connect(port, host, path)
                 .toCompletionStage()
                 .toCompletableFuture();
         WebSocket webSocket = future.get(10, TimeUnit.SECONDS);

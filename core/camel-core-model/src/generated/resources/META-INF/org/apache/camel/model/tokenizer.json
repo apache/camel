@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "tokenizer",
     "title": "Specialized tokenizer for AI applications",
-    "description": "Represents a Camel tokenizer for AI.",
+    "description": "Tokenizes the message body for AI processing, splitting text into chunks suitable for embedding or LLM input",
     "deprecated": false,
     "firstVersion": "4.8.0",
     "label": "eip,transformation,ai",
@@ -13,10 +13,10 @@
     "output": false
   },
   "properties": {
-    "id": { "index": 0, "kind": "attribute", "displayName": "Id", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Sets the id of this node" },
-    "note": { "index": 1, "kind": "attribute", "displayName": "Note", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Sets the note of this node" },
-    "description": { "index": 2, "kind": "attribute", "displayName": "Description", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Sets the description of this node" },
-    "disabled": { "index": 3, "kind": "attribute", "displayName": "Disabled", "group": "advanced", "label": "advanced", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Disables this EIP from the route." },
-    "tokenizerImplementation": { "index": 4, "kind": "element", "displayName": "Tokenizer Implementation", "group": "common", "required": true, "type": "object", "javaType": "org.apache.camel.model.TokenizerImplementationDefinition", "oneOf": [ "langChain4jCharacterTokenizer", "langChain4jLineTokenizer", "langChain4jParagraphTokenizer", "langChain4jSentenceTokenizer", "langChain4jWordTokenizer" ], "deprecated": false, "autowired": false, "secret": false, "description": "Sets the tokenizer implementation" }
+    "id": { "index": 0, "kind": "attribute", "displayName": "Id", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node" },
+    "note": { "index": 1, "kind": "attribute", "displayName": "Note", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The note for this node" },
+    "description": { "index": 2, "kind": "attribute", "displayName": "Description", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The description for this node" },
+    "disabled": { "index": 3, "kind": "attribute", "displayName": "Disabled", "group": "advanced", "label": "advanced", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime." },
+    "tokenizerImplementation": { "index": 4, "kind": "element", "displayName": "Tokenizer Implementation", "group": "common", "required": false, "type": "object", "javaType": "org.apache.camel.model.TokenizerImplementationDefinition", "oneOf": [ "langChain4jCharacterTokenizer", "langChain4jLineTokenizer", "langChain4jParagraphTokenizer", "langChain4jSentenceTokenizer", "langChain4jWordTokenizer" ], "deprecated": false, "autowired": false, "secret": false, "description": "The tokenizer implementation to use, such as LangChain4j character, line, paragraph, sentence, or word tokenizers." }
   }
 }

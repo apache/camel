@@ -2075,7 +2075,7 @@ public interface GrpcEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final GrpcHeaderNameBuilder INSTANCE = new GrpcHeaderNameBuilder();
+        public static final GrpcHeaderNameBuilder INSTANCE = new GrpcHeaderNameBuilder();
 
         /**
          * Method name handled by the consumer service.

@@ -7,8 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
-//Manually maintained attributes
-:camel-spring-boot-name: undertow
 
 *Since Camel {since}*
 
@@ -53,13 +51,95 @@ undertow:wss://hostname[:port][/resourceUri][?options]
 ----
 
 
-
 // component options: START
 include::partial$component-configure-options.adoc[]
 include::partial$component-endpoint-options.adoc[]
 include::partial$component-endpoint-headers.adoc[]
 // component options: END
 
+== OAuth Bearer token validation
+
+Undertow HTTP and WebSocket consumers can validate incoming `Authorization: Bearer` tokens by setting the
+`oauthProfile` endpoint option.
+The profile is resolved through Camel's `OAuthTokenValidationFactory` SPI. The
+xref:components:others:oauth.adoc[camel-oauth] component provides the default implementation for
+standalone Camel applications; see its documentation for validation profile options and production
+hardening (expected issuer and audience, HTTPS for JWKS, OIDC discovery, and introspection
+endpoints). Runtimes can also provide their own implementation.
+
+[NOTE]
+====
+If `oauthProfile` is set but no `OAuthTokenValidationFactory` is available, the route fails to start.
+Add `camel-oauth` for the default provider or include a runtime-specific provider from the platform integration.
+====
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("undertow:http://0.0.0.0:8080/secure?oauthProfile=myprofile")
+    .to("direct:businessLogic");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="undertow:http://0.0.0.0:8080/secure?oauthProfile=myprofile"/>
+  <to uri="direct:businessLogic"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: undertow:http://0.0.0.0:8080/secure
+      parameters:
+        oauthProfile: myprofile
+      steps:
+        - to:
+            uri: direct:businessLogic
+----
+====
+
+When `oauthProfile` is set, static profile configuration is resolved and validated at route startup.
+Updates to OAuth profile properties require restarting the route or Camel context before they take effect.
+HTTP requests and WebSocket upgrade requests without a Bearer token or with an invalid token are
+rejected with HTTP 401 before the route is processed; missing credentials receive a
+`WWW-Authenticate: Bearer` response header and invalid tokens receive
+`WWW-Authenticate: Bearer error="invalid_token"`. Malformed `Authorization` headers are rejected with HTTP 400 and
+`WWW-Authenticate: Bearer error="invalid_request"`. Token validation infrastructure failures are
+rejected with HTTP 503.
+For valid tokens, the token validation result is stored on the exchange as the
+`CamelOAuthTokenValidationResult` exchange property. The raw `Authorization` header is removed before
+the route is invoked.
+
+[NOTE]
+====
+For WebSocket consumers, the token is validated during the HTTP upgrade handshake. The validation
+result is available on the `ONOPEN` event exchange when `fireWebSocketChannelEvents=true`, and on
+subsequent message exchanges for that connection; individual WebSocket messages are not revalidated.
+====
+
+[NOTE]
+====
+For HTTP consumers, automatic `OPTIONS` handling still runs before OAuth validation when
+`optionsEnabled=false`, so unauthenticated preflight and Allow requests keep the existing Undertow
+behavior. If an `OPTIONS` route is explicitly enabled, that route is protected by OAuth like other
+methods.
+
+Custom Undertow `handlers` and `UndertowSecurityProvider#wrapHttpHandler` wrap outside the OAuth
+handler and can observe the original request headers before OAuth validation. The
+`UndertowSecurityProvider#authenticate` callback runs after OAuth validation and sees the request
+after Camel has removed the `Authorization` header. See the Security provider section below for how
+`UndertowSecurityProvider` is configured.
+====
 
 == Host Options
 
@@ -128,10 +208,37 @@ To listen across an entire URI prefix see next section.
 
 By default, Undertow will only match on exact uri's. But you can instruct Undertow to match prefixes. For example:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("undertow:http://0.0.0.0:8123/foo").to("mock:foo");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="undertow:http://0.0.0.0:8123/foo"/>
+  <to uri="mock:foo"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: undertow:http://0.0.0.0:8123/foo
+      steps:
+        - to:
+            uri: mock:foo
+----
+====
 
 In the route above Undertow will only match if the uri is
 an exact match, so it will match if you enter
@@ -140,19 +247,77 @@ an exact match, so it will match if you enter
 
 So if you want to enable wildcard matching you need to set `matchOnUriPrefix=true` as follows:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("undertow:http://0.0.0.0:8123/foo?matchOnUriPrefix=true").to("mock:foo");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="undertow:http://0.0.0.0:8123/foo?matchOnUriPrefix=true"/>
+  <to uri="mock:foo"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: undertow:http://0.0.0.0:8123/foo
+      parameters:
+        matchOnUriPrefix: true
+      steps:
+        - to:
+            uri: mock:foo
+----
+====
+
 So now Undertow matches any endpoints with starts with `foo`.
 
 To match *any* endpoint you can remove the prefix so it will match anything from the root:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("undertow:http://0.0.0.0:8123?matchOnUriPrefix=true").to("mock:foo");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="undertow:http://0.0.0.0:8123?matchOnUriPrefix=true"/>
+  <to uri="mock:foo"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: undertow:http://0.0.0.0:8123
+      parameters:
+        matchOnUriPrefix: true
+      steps:
+        - to:
+            uri: mock:foo
+----
+====
 
 
 === Security provider
@@ -198,6 +363,18 @@ XML::
 </route>
 ----
 
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: undertow:http://www.google.com
+----
+
 ====
 
 === HTTP Consumer Example
@@ -205,6 +382,18 @@ XML::
 In this sample we define a route that exposes a HTTP service at
 `\http://localhost:8080/myapp/myservice`:
 
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("undertow:http://localhost:8080/myapp/myservice")
+    .to("bean:myBean");
+----
+
+XML::
++
 [source,xml]
 ----
 <route>
@@ -213,11 +402,37 @@ In this sample we define a route that exposes a HTTP service at
 </route>
 ----
 
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: undertow:http://localhost:8080/myapp/myservice
+      steps:
+        - to:
+            uri: bean:myBean
+----
+====
+
 === WebSocket Example
 
 In this sample we define a route that exposes a WebSocket service at
 `\http://localhost:8080/myapp/mysocket` and returns back a response to the same channel:
 
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("undertow:ws://localhost:8080/myapp/mysocket")
+    .transform(simple("Echo ${body}"))
+    .to("undertow:ws://localhost:8080/myapp/mysocket");
+----
+
+XML::
++
 [source,xml]
 ----
 <route>
@@ -227,4 +442,17 @@ In this sample we define a route that exposes a WebSocket service at
 </route>
 ----
 
-include::spring-boot:partial$starter.adoc[]
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: undertow:ws://localhost:8080/myapp/mysocket
+      steps:
+        - transform:
+            simple: "Echo ${body}"
+        - to:
+            uri: undertow:ws://localhost:8080/myapp/mysocket
+----
+====

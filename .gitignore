@@ -3,11 +3,12 @@ target
 *.ipr
 *.iws
 .idea
+!.idea/vcs.xml
 .DS_Store
 .classpath
 .ekstazi
 .project
-.settings
+.settings/
 .checkstyle
 *.log
 test-salesforce-login.properties
@@ -29,8 +30,8 @@ node_modules/
 mvnd.zip*
 .camel-jbang
 .camel-jbang-run
+.citrus-jbang
 .mvn/.develocity/develocity-workspace-id
 backlog
 .claude
 .omc
-.oss-ai-helper-rules

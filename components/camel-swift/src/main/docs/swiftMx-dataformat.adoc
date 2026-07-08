@@ -2,12 +2,10 @@
 :doctitle: SWIFT MX
 :shortname: swiftMx
 :artifactid: camel-swift
-:description: Encode and decode SWIFT MX messages.
+:description: Encode and decode SWIFT MX messages
 :since: 3.20
 :supportlevel: Stable
 :tabs-sync-option:
-//Manually maintained attributes
-:camel-spring-boot-name: swift
 
 *Since Camel {since}*
 
@@ -21,6 +19,7 @@ include::partial$dataformat-options.adoc[]
 
 In Spring DSL, you configure the data format using this tag:
 
+._XML-only: Spring XML data format configuration_
 [source,xml]
 ----
 <camelContext>
@@ -33,6 +32,19 @@ In Spring DSL, you configure the data format using this tag:
 
 Then you can use it later by its reference:
 
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:startEncode")
+    .marshal("swiftInJson")
+    .to("mock:result");
+----
+
+XML::
++
 [source,xml]
 ----
 <route>
@@ -42,10 +54,38 @@ Then you can use it later by its reference:
 </route>
 ----
 
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:startEncode
+      steps:
+        - marshal:
+            ref: swiftInJson
+        - to:
+            uri: mock:result
+----
+====
+
 Most of the time, you won't need to declare the data format if you use
 the default options. In that case, you can declare the data format
 inline as shown below:
 
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:startEncode")
+    .marshal().swiftMx()
+    .to("mock:result");
+----
+
+XML::
++
 [source,xml]
 ----
 <route>
@@ -57,10 +97,29 @@ inline as shown below:
 </route>
 ----
 
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:startEncode
+      steps:
+        - marshal:
+            swiftMx: {}
+        - to:
+            uri: mock:result
+----
+====
+
 == Marshal
 
 In this example, we marshal the messages read from a JMS queue in SWIFT format before storing the result into a file.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("jms://myqueue")
@@ -68,16 +127,33 @@ from("jms://myqueue")
     .to("file://data.bin");
 ----
 
-In Spring DSL:
-
+XML::
++
 [source,xml]
 ----
- <from uri="jms://myqueue">
- <marshal>
-     <swiftMx/>
- </marshal>
- <to uri="file://data.bin"/>
+<route>
+  <from uri="jms://myqueue"/>
+  <marshal>
+    <swiftMx/>
+  </marshal>
+  <to uri="file://data.bin"/>
+</route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: jms://myqueue
+      steps:
+        - marshal:
+            swiftMx: {}
+        - to:
+            uri: file://data.bin
+----
+====
 
 == Unmarshal
 
@@ -86,6 +162,10 @@ The unmarshaller converts the input data into the concrete class of type `com.pr
 In this example, we unmarshal the content of a file to get SWIFT MX
 objects before processing them with the `newOrder` processor.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("file://data.bin")
@@ -93,16 +173,33 @@ from("file://data.bin")
     .process("newOrder");
 ----
 
-In Spring DSL:
-
+XML::
++
 [source,xml]
 ----
- <from uri="file://data.bin">
- <unmarshal>
-     <swiftMx/>
- </unmarshal>
- <to uri="bean:newOrder"/> 
+<route>
+  <from uri="file://data.bin"/>
+  <unmarshal>
+    <swiftMx/>
+  </unmarshal>
+  <to uri="bean:newOrder"/>
+</route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: file://data.bin
+      steps:
+        - unmarshal:
+            swiftMx: {}
+        - to:
+            uri: bean:newOrder
+----
+====
 
 == Dependencies
 
@@ -119,6 +216,3 @@ If you use Maven, you can add the following to your pom.xml:
   <version>x.x.x</version>  <!-- use the same version as your Camel core version -->
 </dependency>
 ----
-
-
-include::spring-boot:partial$starter.adoc[]

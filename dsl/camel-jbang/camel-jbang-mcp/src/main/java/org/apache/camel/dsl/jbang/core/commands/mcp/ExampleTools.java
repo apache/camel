@@ -31,13 +31,13 @@ import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.json.JsonObject;
 
 /**
- * MCP Tools for browsing Camel JBang examples.
+ * MCP Tools for browsing Camel CLI examples.
  */
 @ApplicationScoped
 public class ExampleTools {
 
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
-          description = "List available Camel JBang examples. "
+          description = "List available Camel CLI examples. "
                         + "Returns name, title, description, difficulty level, and tags. "
                         + "Use filter to search by name, description, or tag. "
                         + "Use level to filter by difficulty (beginner, intermediate, advanced).")
@@ -76,7 +76,7 @@ public class ExampleTools {
     }
 
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
-          description = "Get the content of a specific file from a Camel JBang example. "
+          description = "Get the content of a specific file from a Camel CLI example. "
                         + "Use camel_catalog_examples first to find the example name and its files. "
                         + "Only bundled examples can return file contents directly; "
                         + "for non-bundled examples, a GitHub URL is returned instead.")

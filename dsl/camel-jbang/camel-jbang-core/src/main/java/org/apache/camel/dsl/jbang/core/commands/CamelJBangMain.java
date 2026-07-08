@@ -46,6 +46,7 @@ import org.apache.camel.dsl.jbang.core.commands.infra.InfraGet;
 import org.apache.camel.dsl.jbang.core.commands.infra.InfraList;
 import org.apache.camel.dsl.jbang.core.commands.infra.InfraLog;
 import org.apache.camel.dsl.jbang.core.commands.infra.InfraPs;
+import org.apache.camel.dsl.jbang.core.commands.infra.InfraRestart;
 import org.apache.camel.dsl.jbang.core.commands.infra.InfraRun;
 import org.apache.camel.dsl.jbang.core.commands.infra.InfraStop;
 import org.apache.camel.dsl.jbang.core.commands.plugin.PluginAdd;
@@ -109,6 +110,8 @@ public class CamelJBangMain implements Callable<Integer> {
                         .addSubcommand("disable-processor", new CommandLine(new CamelProcessorDisableAction(this)))
                         .addSubcommand("enable-processor", new CommandLine(new CamelProcessorEnableAction(this)))
                         .addSubcommand("gc", new CommandLine(new CamelGCAction(this)))
+                        .addSubcommand("heap-histogram", new CommandLine(new CamelHeapHistogram(this)))
+                        .addSubcommand("memory-leak", new CommandLine(new CamelMemoryLeak(this)))
                         .addSubcommand("load", new CommandLine(new CamelLoadAction(this)))
                         .addSubcommand("logger", new CommandLine(new LoggerAction(this)))
                         .addSubcommand("receive", new CommandLine(new CamelReceiveAction(this)))
@@ -116,9 +119,11 @@ public class CamelJBangMain implements Callable<Integer> {
                         .addSubcommand("reset-stats", new CommandLine(new CamelResetStatsAction(this)))
                         .addSubcommand("resume-route", new CommandLine(new CamelRouteResumeAction(this)))
                         .addSubcommand("route-diagram", new CommandLine(new CamelRouteDiagramAction(this)))
+                        .addSubcommand("route-dump", new CommandLine(new CamelRouteDumpAction(this)))
                         .addSubcommand("route-structure", new CommandLine(new CamelRouteStructureAction(this)))
                         .addSubcommand("route-topology", new CommandLine(new CamelRouteTopologyAction(this)))
                         .addSubcommand("send", new CommandLine(new CamelSendAction(this)))
+                        .addSubcommand("sql", new CommandLine(new CamelSqlQueryAction(this)))
                         .addSubcommand("span", new CommandLine(new CamelSpanAction(this)))
                         .addSubcommand("start-group", new CommandLine(new CamelRouteGroupStartAction(this)))
                         .addSubcommand("start-route", new CommandLine(new CamelRouteStartAction(this)))
@@ -156,6 +161,7 @@ public class CamelJBangMain implements Callable<Integer> {
                         .addSubcommand("consumer", new CommandLine(new ListConsumer(this)))
                         .addSubcommand("context", new CommandLine(new CamelContextStatus(this)))
                         .addSubcommand("count", new CommandLine(new CamelCount(this)))
+                        .addSubcommand("datasource", new CommandLine(new ListDataSource(this)))
                         .addSubcommand("endpoint", new CommandLine(new ListEndpoint(this)))
                         .addSubcommand("error", new CommandLine(new ListError(this)))
                         .addSubcommand("event", new CommandLine(new ListEvent(this)))
@@ -174,9 +180,9 @@ public class CamelJBangMain implements Callable<Integer> {
                         .addSubcommand("rest", new CommandLine(new ListRest(this)))
                         .addSubcommand("route", new CommandLine(new CamelRouteStatus(this)))
                         .addSubcommand("route-controller", new CommandLine(new RouteControllerAction(this)))
-                        .addSubcommand("route-dump", new CommandLine(new CamelRouteDumpAction(this)))
                         .addSubcommand("service", new CommandLine(new ListService(this)))
                         .addSubcommand("source", new CommandLine(new CamelSourceAction(this)))
+                        .addSubcommand("sql-trace", new CommandLine(new ListSqlTrace(this)))
                         .addSubcommand("startup-recorder", new CommandLine(new CamelStartupRecorderAction(this)))
                         .addSubcommand("transformer", new CommandLine(new ListTransformer(this)))
                         .addSubcommand("variable", new CommandLine(new ListVariable(this)))
@@ -187,6 +193,7 @@ public class CamelJBangMain implements Callable<Integer> {
                         .addSubcommand("list", new CommandLine(new InfraList(this)))
                         .addSubcommand("log", new CommandLine(new InfraLog(this)))
                         .addSubcommand("ps", new CommandLine(new InfraPs(this)))
+                        .addSubcommand("restart", new CommandLine(new InfraRestart(this)))
                         .addSubcommand("run", new CommandLine(new InfraRun(this)))
                         .addSubcommand("stop", new CommandLine(new InfraStop(this))))
                 .addSubcommand("init", new CommandLine(new Init(this)))
@@ -225,6 +232,10 @@ public class CamelJBangMain implements Callable<Integer> {
                         .addSubcommand("set", new CommandLine(new VersionSet(this))))
                 .addSubcommand("wrapper", new CommandLine(new WrapperCommand(this)))
                 .setParameterExceptionHandler(new MissingPluginParameterExceptionHandler());
+
+        commandLine.getHelpSectionMap().put(
+                CommandLine.Model.UsageMessageSpec.SECTION_KEY_COMMAND_LIST,
+                new GroupedCommandHelpRenderer());
 
         postAddCommands(commandLine, args);
 

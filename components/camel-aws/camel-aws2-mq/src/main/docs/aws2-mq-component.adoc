@@ -9,7 +9,6 @@
 :component-header: Only producer is supported
 //Manually maintained attributes
 :group: AWS
-:camel-spring-boot-name: aws2-mq
 
 *Since Camel {since}*
 
@@ -26,9 +25,9 @@ https://aws.amazon.com/amazon-mq/[Amazon MQ].
 
 == URI Format
 
--------------------------
+----
 aws2-mq://label[?options]
--------------------------
+----
 
 You can append query options to the URI in the following format:
 
@@ -85,67 +84,163 @@ Camel-AWS MQ component provides the following operation on the producer side:
 
 - listBrokers: this operation will list the available MQ Brokers in AWS
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:listBrokers")
-    .to("aws2-mq://test?amazonMqClient=#amazonMqClient&operation=listBrokers")
---------------------------------------------------------------------------------
+    .to("aws2-mq://test?amazonMqClient=#amazonMqClient&operation=listBrokers");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:listBrokers"/>
+  <to uri="aws2-mq://test?amazonMqClient=#amazonMqClient&amp;operation=listBrokers"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:listBrokers
+      steps:
+        - to:
+            uri: aws2-mq://test
+            parameters:
+              amazonMqClient: "#amazonMqClient"
+              operation: listBrokers
+----
+====
 
 - createBroker: this operation will create an MQ Broker in AWS
 
+._Java-only: uses AWS SDK enum types and `User` builder_
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:createBroker")
-    .process(new Processor() {
-       @Override
-       public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(MQ2Constants.BROKER_NAME, "test");
-                exchange.getIn().setHeader(MQ2Constants.BROKER_DEPLOYMENT_MODE, DeploymentMode.SINGLE_INSTANCE);
-                exchange.getIn().setHeader(MQ2Constants.BROKER_INSTANCE_TYPE, "mq.t2.micro");
-                exchange.getIn().setHeader(MQ2Constants.BROKER_ENGINE, EngineType.ACTIVEMQ.name());
-                exchange.getIn().setHeader(MQ2Constants.BROKER_ENGINE_VERSION, "5.15.6");
-                exchange.getIn().setHeader(MQ2Constants.BROKER_PUBLICLY_ACCESSIBLE, false);
-                List<User> users = new ArrayList<>();
-                User.Builder user = User.builder();
-                user.username("camel");
-                user.password("camelpwd");
-                users.add(user.build());
-                exchange.getIn().setHeader(MQ2Constants.BROKER_USERS, users);
-						
-       }
+    .process(exchange -> {
+        exchange.getIn().setHeader("CamelAwsMQBrokerName", "test");
+        exchange.getIn().setHeader("CamelAwsMQBrokerDeploymentMode", DeploymentMode.SINGLE_INSTANCE);
+        exchange.getIn().setHeader("CamelAwsMQBrokerInstanceType", "mq.t2.micro");
+        exchange.getIn().setHeader("CamelAwsMQBrokerEngine", EngineType.ACTIVEMQ.name());
+        exchange.getIn().setHeader("CamelAwsMQBrokerEngineVersion", "5.15.6");
+        exchange.getIn().setHeader("CamelAwsMQBrokerPubliclyAccessible", false);
+        exchange.getIn().setHeader("CamelAwsMQBrokerUsers",
+            List.of(User.builder().username("camel").password("camelpwd").build()));
     })
-    .to("aws2-mq://test?amazonMqClient=#amazonMqClient&operation=createBroker")
---------------------------------------------------------------------------------
+    .to("aws2-mq://test?amazonMqClient=#amazonMqClient&operation=createBroker");
+----
 
 - deleteBroker: this operation will delete an MQ Broker in AWS
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
-from("direct:listBrokers")
-    .setHeader(MQ2Constants.BROKER_ID, constant("123")
-    .to("aws2-mq://test?amazonMqClient=#amazonMqClient&operation=deleteBroker")
---------------------------------------------------------------------------------
+----
+from("direct:deleteBroker")
+    .setHeader("CamelAwsMQBrokerID", constant("123"))
+    .to("aws2-mq://test?amazonMqClient=#amazonMqClient&operation=deleteBroker");
+----
 
-- rebootBroker: this operation will delete an MQ Broker in AWS
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="direct:deleteBroker"/>
+    <setHeader name="CamelAwsMQBrokerID">
+        <constant>123</constant>
+    </setHeader>
+    <to uri="aws2-mq://test?amazonMqClient=#amazonMqClient&amp;operation=deleteBroker"/>
+</route>
+----
 
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:deleteBroker
+    steps:
+      - setHeader:
+          name: CamelAwsMQBrokerID
+          constant: "123"
+      - to:
+          uri: aws2-mq://test
+          parameters:
+            amazonMqClient: "#amazonMqClient"
+            operation: deleteBroker
+----
+====
+
+- rebootBroker: this operation will reboot an MQ Broker in AWS
+
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
-from("direct:listBrokers")
-    .setHeader(MQ2Constants.BROKER_ID, constant("123")
-    .to("aws2-mq://test?amazonMqClient=#amazonMqClient&operation=rebootBroker")
---------------------------------------------------------------------------------
+----
+from("direct:rebootBroker")
+    .setHeader("CamelAwsMQBrokerID", constant("123"))
+    .to("aws2-mq://test?amazonMqClient=#amazonMqClient&operation=rebootBroker");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="direct:rebootBroker"/>
+    <setHeader name="CamelAwsMQBrokerID">
+        <constant>123</constant>
+    </setHeader>
+    <to uri="aws2-mq://test?amazonMqClient=#amazonMqClient&amp;operation=rebootBroker"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:rebootBroker
+    steps:
+      - setHeader:
+          name: CamelAwsMQBrokerID
+          constant: "123"
+      - to:
+          uri: aws2-mq://test
+          parameters:
+            amazonMqClient: "#amazonMqClient"
+            operation: rebootBroker
+----
+====
 
 === Using a POJO as body
 
 Sometimes building an AWS Request can be complex because of multiple options. We introduce the possibility to use a POJO as the body.
 In AWS MQ, there are multiple operations you can submit, as an example for List brokers request, you can do something like:
 
+._Java-only: uses AWS SDK POJO request builder as message body_
 [source,java]
-------------------------------------------------------------------------------------------------------
+----
 from("direct:aws2-mq")
      .setBody(ListBrokersRequest.builder().maxResults(10).build())
      .to("aws2-mq://test?amazonMqClient=#amazonMqClient&operation=listBrokers&pojoRequest=true")
-------------------------------------------------------------------------------------------------------
+----
 
 In this way, you'll pass the request directly without the need of passing headers and options specifically related to this operation.
 
@@ -156,15 +251,14 @@ Maven users will need to add the following dependency to their pom.xml.
 *pom.xml*
 
 [source,xml]
----------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-aws2-mq</artifactId>
     <version>${camel-version}</version>
 </dependency>
----------------------------------------
+----
 
 where `$\{camel-version}` must be replaced by the actual version of Camel.
 
 
-include::spring-boot:partial$starter.adoc[]

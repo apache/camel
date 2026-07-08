@@ -63,6 +63,7 @@ that otherwise is in use when using Rest DSL and many services. You can restore 
 
 However, the inlining requires that each REST endpoint inlined with `direct` endpoints must use unique direct names, ie.
 
+._Java-only: Rest DSL with shared direct endpoint names_
 [source,java]
 ----
 rest("/rest")
@@ -73,6 +74,7 @@ rest("/rest")
 
 Should be changed to:
 
+._Java-only: Rest DSL with unique direct endpoint names_
 [source,java]
 ----
 rest("/rest")
@@ -197,6 +199,7 @@ From this release onwards, Camel will convert each entry to a `Book` so the resu
 
 This is also how `camel-jq` works.
 
+._Java-only: Using jsonpath with resultType_
 [source,java]
 ----
 .transform().jsonpath(".book", Book.class)

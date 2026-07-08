@@ -1,20 +1,18 @@
-= Hashicorp Vault Component
-:doctitle: Hashicorp Vault
+= HashiCorp Vault Component
+:doctitle: HashiCorp Vault
 :shortname: hashicorp-vault
 :artifactid: camel-hashicorp-vault
-:description: Manage secrets in Hashicorp Vault Service
+:description: Manage secrets in HashiCorp Vault Service
 :since: 3.18
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Only producer is supported
-//Manually maintained attributes
-:camel-spring-boot-name: hashicorp-vault
 
 *Since Camel {since}*
 
 *{component-header}*
 
-The hashicorp-vault component that integrates https://www.vaultproject.io/[Hashicorp Vault].
+The hashicorp-vault component that integrates https://www.vaultproject.io/[HashiCorp Vault].
 
 
 == URI Format
@@ -36,7 +34,7 @@ include::partial$component-endpoint-options.adoc[]
 include::partial$component-endpoint-headers.adoc[]
 // component options: END
 
-== Authentication and Hashicorp vault on-premise vs Hashicorp Cloud
+== Authentication and HashiCorp Vault on-premise vs HashiCorp Cloud
 
 The component supports operations at the producer level. Specifically, it provides the following functionalities:
 
@@ -57,9 +55,9 @@ When using a HashiCorp Vault Cloud instance, in addition to the standard paramet
 
 == Examples
 
-=== Using Hashicorp Vault Property Function
+=== Using HashiCorp Vault Property Function
 
-To use this function, you'll need to provide credentials for Hashicorp vault as environment variables:
+To use this function, you'll need to provide credentials for HashiCorp Vault as environment variables:
 
 [source,bash]
 ----
@@ -79,7 +77,7 @@ camel.vault.hashicorp.port = port
 camel.vault.hashicorp.scheme = scheme
 ----
 
-In case the running Hashicorp Vault instance you're pointing is running on Hashicorp Cloud, the configuration will require two additional parameters:
+In case the running HashiCorp Vault instance you're pointing is running on HashiCorp Cloud, the configuration will require two additional parameters:
 
 [source,bash]
 ----
@@ -103,15 +101,27 @@ camel.vault.hashicorp.cloud = true
 camel.vault.hashicorp.namespace = namespace
 ----
 
-This will make the Properties function works even in the Hashicorp Cloud deployment option.
+This will make the Properties function works even in the HashiCorp Cloud deployment option.
 
 NOTE: if you're running the application on a Kubernetes based cloud platform, you can initialize the environment variables from a Secret or Configmap to enhance security. You can also enhance security by xref:manual::using-propertyplaceholder.adoc#_resolving_property_placeholders_on_cloud[setting a Secret property placeholder] which will be initialized at application runtime only.
 
-NOTE: `camel.vault.hashicorp` configuration only applies to the Hashicorp Vault properties function (E.g when resolving properties).
+NOTE: `camel.vault.hashicorp` configuration only applies to the HashiCorp Vault properties function (E.g when resolving properties).
 When using the `operation` option to create, get, list secrets etc., you should provide the `host`, `port`, `scheme` (if required) & `token` options.
 
 At this point, you'll be able to reference a property in the following way:
 
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+    .to("{{hashicorp:secret:route}}");
+----
+
+XML::
++
 [source,xml]
 ----
 <camelContext>
@@ -122,10 +132,35 @@ At this point, you'll be able to reference a property in the following way:
 </camelContext>
 ----
 
-Where route will be the name of the secret stored in the Hashicorp Vault instance, in the 'secret' engine.
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: "{{hashicorp:secret:route}}"
+----
+====
 
-You could specify a default value in case the secret is not present on Hashicorp Vault instance:
+Where route will be the name of the secret stored in the HashiCorp Vault instance, in the 'secret' engine.
 
+You could specify a default value in case the secret is not present on HashiCorp Vault instance:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+    .to("{{hashicorp:secret:route:default}}");
+----
+
+XML::
++
 [source,xml]
 ----
 <camelContext>
@@ -135,6 +170,19 @@ You could specify a default value in case the secret is not present on Hashicorp
     </route>
 </camelContext>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: "{{hashicorp:secret:route:default}}"
+----
+====
 
 In this case, if the secret doesn't exist in the 'secret' engine, the property will fall back to "default" as value.
 
@@ -154,6 +202,18 @@ Also, you are able to get a particular field of the secret, if you have, for exa
 
 You're able to do get single secret value in your route, in the 'secret' engine, like for example:
 
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+    .log("Username is {{hashicorp:secret:database#username}}");
+----
+
+XML::
++
 [source,xml]
 ----
 <camelContext>
@@ -164,10 +224,35 @@ You're able to do get single secret value in your route, in the 'secret' engine,
 </camelContext>
 ----
 
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - log:
+            message: "Username is {{hashicorp:secret:database#username}}"
+----
+====
+
 Or re-use the property as part of an endpoint.
 
-You could specify a default value in case the particular field of secret is not present on Hashicorp Vault instance, in the 'secret' engine:
+You could specify a default value in case the particular field of secret is not present on HashiCorp Vault instance, in the 'secret' engine:
 
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+    .log("Username is {{hashicorp:secret:database#username:admin}}");
+----
+
+XML::
++
 [source,xml]
 ----
 <camelContext>
@@ -178,10 +263,35 @@ You could specify a default value in case the particular field of secret is not 
 </camelContext>
 ----
 
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - log:
+            message: "Username is {{hashicorp:secret:database#username:admin}}"
+----
+====
+
 In this case, if the secret doesn't exist or the secret exists (in the 'secret' engine) but the username field is not part of the secret, the property will fall back to "admin" as value.
 
 There is also the syntax to get a particular version of the secret for both the approach, with field/default value specified or only with secret:
 
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+    .to("{{hashicorp:secret:route@2}}");
+----
+
+XML::
++
 [source,xml]
 ----
 <camelContext>
@@ -192,8 +302,33 @@ There is also the syntax to get a particular version of the secret for both the 
 </camelContext>
 ----
 
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: "{{hashicorp:secret:route@2}}"
+----
+====
+
 This approach will return the RAW route secret with version '2', in the 'secret' engine.
 
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+    .to("{{hashicorp:route:default@2}}");
+----
+
+XML::
++
 [source,xml]
 ----
 <camelContext>
@@ -204,8 +339,33 @@ This approach will return the RAW route secret with version '2', in the 'secret'
 </camelContext>
 ----
 
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: "{{hashicorp:route:default@2}}"
+----
+====
+
 This approach will return the route secret value with version '2' or default value in case the secret doesn't exist or the version doesn't exist (in the 'secret' engine).
 
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+    .log("Username is {{hashicorp:secret:database#username:admin@2}}");
+----
+
+XML::
++
 [source,xml]
 ----
 <camelContext>
@@ -216,13 +376,26 @@ This approach will return the route secret value with version '2' or default val
 </camelContext>
 ----
 
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - log:
+            message: "Username is {{hashicorp:secret:database#username:admin@2}}"
+----
+====
+
 This approach will return the username field of the database secret with version '2' or admin in case the secret doesn't exist or the version doesn't exist (in the 'secret' engine).
 
 The only requirement is adding the camel-hashicorp-vault jar to your Camel application.
 
 === Automatic Camel context reloading on Secret Refresh
 
-Being able to reload Camel context on a Secret Refresh could be done by specifying the usual credentials (the same used for Hashicorp Vault Property Function).
+Being able to reload Camel context on a Secret Refresh could be done by specifying the usual credentials (the same used for HashiCorp Vault Property Function).
 
 With Environment variables:
 
@@ -265,9 +438,9 @@ Note that `camel.vault.hashicorp.secrets` is not mandatory: if not specified the
 
 ==== How the Refresh Mechanism Works
 
-Unlike cloud-based secret managers (AWS, GCP, Azure) that provide event-driven notifications, Hashicorp Vault does not have a native event notification system for secret changes. Therefore, this implementation uses a **polling-based approach**:
+Unlike cloud-based secret managers (AWS, GCP, Azure) that provide event-driven notifications, HashiCorp Vault does not have a native event notification system for secret changes. Therefore, this implementation uses a **polling-based approach**:
 
-1. **Metadata Polling**: The refresh task periodically queries the Hashicorp Vault metadata endpoint (`/v1/<engine>/metadata/<secret>`) for each tracked secret.
+1. **Metadata Polling**: The refresh task periodically queries the HashiCorp Vault metadata endpoint (`/v1/<engine>/metadata/<secret>`) for each tracked secret.
 2. **Version Tracking**: It compares the `current_version` field to detect changes.
 3. **Change Detection**: When a version change is detected, it triggers a Camel context reload.
 4. **Efficiency**: Only metadata is queried (not the full secret content), making this approach lightweight.
@@ -277,13 +450,12 @@ For example, if a secret named `database` is updated in Vault:
 - On the next check, if `current_version` changes to `6`, a reload is triggered
 - The refresh period (default 60 seconds) determines how quickly changes are detected
 
-This polling approach works with all Hashicorp Vault deployments (on-premise, cloud, enterprise, and open-source) without requiring additional infrastructure.
+This polling approach works with all HashiCorp Vault deployments (on-premise, cloud, enterprise, and open-source) without requiring additional infrastructure.
 
-include::spring-boot:partial$starter.adoc[]
 
-=== Using Hashicorp Vault Property Function in Spring Boot for Early resolving properties
+=== Using HashiCorp Vault Property Function in Spring Boot for Early resolving properties
 
-Hashicorp Vault Spring Boot component starter offers the ability to early resolve properties, so the end user could resolve properties directly in the application.properties before both Spring Boot runtime and Camel context will start.
+HashiCorp Vault Spring Boot component starter offers the ability to early resolve properties, so the end user could resolve properties directly in the application.properties before both Spring Boot runtime and Camel context will start.
 
 This could be accomplished in the following way. You should specified this property in your application.properties file:
 

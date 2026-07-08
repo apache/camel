@@ -108,7 +108,7 @@ public class PineconeComponentIT extends CamelTestSupport {
 
         assertThat(result).isNotNull();
         assertThat(result.getException()).isNull();
-        assertThat(!result.getMessage().getBody(QueryResponseWithUnsignedIndices.class).getMatchesList().isEmpty());
+        assertThat(result.getMessage().getBody(QueryResponseWithUnsignedIndices.class).getMatchesList()).isNotEmpty();
     }
 
     @Test
@@ -132,7 +132,7 @@ public class PineconeComponentIT extends CamelTestSupport {
 
         assertThat(result).isNotNull();
         assertThat(result.getException()).isNull();
-        assertThat(!result.getMessage().getBody(QueryResponseWithUnsignedIndices.class).getMatchesList().isEmpty());
+        assertThat(result.getMessage().getBody(QueryResponseWithUnsignedIndices.class).getMatchesList()).isNotEmpty();
     }
 
     @Test
@@ -148,7 +148,7 @@ public class PineconeComponentIT extends CamelTestSupport {
 
         assertThat(result).isNotNull();
         assertThat(result.getException()).isNull();
-        assertThat(!result.getMessage().getBody(QueryResponseWithUnsignedIndices.class).getMatchesList().isEmpty());
+        assertThat(result.getMessage().getBody(QueryResponseWithUnsignedIndices.class).getMatchesList()).isNotEmpty();
     }
 
     @Test
@@ -179,7 +179,7 @@ public class PineconeComponentIT extends CamelTestSupport {
 
         assertThat(result).isNotNull();
         assertThat(result.getException()).isNull();
-        assertThat(result.getMessage().getBody(FetchResponse.class).getVectorsCount() != 0);
+        assertThat(result.getMessage().getBody(FetchResponse.class).getVectorsCount()).isNotZero();
     }
 
 }

@@ -16,5 +16,9 @@
  */
 package org.apache.camel.http.common;
 
+/**
+ * @deprecated use {@link org.apache.camel.http.base.HttpProtocolHeaderFilterStrategy} directly
+ */
+@Deprecated(since = "4.21")
 public class HttpProtocolHeaderFilterStrategy extends org.apache.camel.http.base.HttpProtocolHeaderFilterStrategy {
 }

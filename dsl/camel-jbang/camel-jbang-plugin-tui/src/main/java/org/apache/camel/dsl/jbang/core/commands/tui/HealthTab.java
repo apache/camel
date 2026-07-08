@@ -25,55 +25,28 @@ import dev.tamboui.style.Color;
 import dev.tamboui.style.Style;
 import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.Span;
+import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
+import dev.tamboui.tui.event.MouseEvent;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
+import dev.tamboui.widgets.block.Borders;
 import dev.tamboui.widgets.table.Cell;
 import dev.tamboui.widgets.table.Row;
 import dev.tamboui.widgets.table.Table;
-import dev.tamboui.widgets.table.TableState;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 
-import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.*;
+import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.*;
 
-class HealthTab implements MonitorTab {
+class HealthTab extends AbstractTableTab {
 
-    private static final String[] SORT_COLUMNS = { "group", "name", "status" };
-
-    private final MonitorContext ctx;
-    private final TableState tableState = new TableState();
     private boolean showOnlyDown;
-    private String sort = "name";
-    private int sortIndex = 1;
-    private boolean sortReversed;
 
     HealthTab(MonitorContext ctx) {
-        this.ctx = ctx;
-    }
-
-    @Override
-    public boolean handleKeyEvent(KeyEvent ke) {
-        if (ke.isChar('s')) {
-            sortIndex = (sortIndex + 1) % SORT_COLUMNS.length;
-            sort = SORT_COLUMNS[sortIndex];
-            sortReversed = false;
-            return true;
-        }
-        if (ke.isChar('S')) {
-            sortReversed = !sortReversed;
-            return true;
-        }
-        if (ke.isCharIgnoreCase('d')) {
-            showOnlyDown = !showOnlyDown;
-            return true;
-        }
-        return false;
-    }
-
-    @Override
-    public boolean handleEscape() {
-        return false;
+        super(ctx, "group", "name", "status");
+        sortIndex = 1;
+        sort = "name";
     }
 
     @Override
@@ -85,13 +58,37 @@ class HealthTab implements MonitorTab {
     }
 
     @Override
-    public void render(Frame frame, Rect area) {
-        IntegrationInfo info = ctx.findSelectedIntegration();
-        if (info == null) {
-            MonitorContext.renderNoSelection(frame, area);
-            return;
+    public boolean handleKeyEvent(KeyEvent ke) {
+        if (ke.isPageUp() || ke.isKey(KeyCode.PAGE_UP)
+                || ke.isPageDown() || ke.isKey(KeyCode.PAGE_DOWN)
+                || ke.isHome() || ke.isEnd()) {
+            return false;
         }
+        return super.handleKeyEvent(ke);
+    }
 
+    @Override
+    public boolean handleMouseEvent(MouseEvent me, Rect area) {
+        return false;
+    }
+
+    @Override
+    protected int getRowCount() {
+        IntegrationInfo info = ctx.findSelectedIntegration();
+        return info != null ? getFilteredHealthChecks(info).size() : 0;
+    }
+
+    @Override
+    protected boolean handleTabKeyEvent(KeyEvent ke) {
+        if (ke.isCharIgnoreCase('d')) {
+            showOnlyDown = !showOnlyDown;
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    protected void renderContent(Frame frame, Rect area, IntegrationInfo info) {
         List<HealthCheckInfo> healthChecks = new ArrayList<>(getFilteredHealthChecks(info));
         healthChecks.sort(this::sortHealth);
 
@@ -101,13 +98,13 @@ class HealthTab implements MonitorTab {
             String icon;
             if ("UP".equals(hc.state)) {
                 stateStyle = Style.EMPTY.fg(Color.GREEN);
-                icon = "✔ ";
+                icon = TuiIcons.HEALTH_UP + " ";
             } else if ("DOWN".equals(hc.state)) {
                 stateStyle = Style.EMPTY.fg(Color.LIGHT_RED);
-                icon = "✖ ";
+                icon = TuiIcons.HEALTH_DOWN + " ";
             } else {
                 stateStyle = Style.EMPTY.fg(Color.YELLOW);
-                icon = "⚠ ";
+                icon = TuiIcons.HEALTH_WARN + " ";
             }
 
             String kind = "";
@@ -119,7 +116,7 @@ class HealthTab implements MonitorTab {
             }
 
             rows.add(Row.from(
-                    Cell.from(Span.styled(hc.group != null ? hc.group : "", Style.EMPTY.dim())),
+                    Cell.from(Span.styled(" " + (hc.group != null ? hc.group : ""), Style.EMPTY.dim())),
                     Cell.from(Span.styled(hc.name != null ? hc.name : "", Style.EMPTY.fg(Color.CYAN))),
                     Cell.from(Span.styled(icon + hc.state, stateStyle)),
                     Cell.from(kind),
@@ -143,9 +140,9 @@ class HealthTab implements MonitorTab {
         Table table = Table.builder()
                 .rows(rows)
                 .header(Row.from(
-                        Cell.from(Span.styled(sortLabel("GROUP", "group", sort, sortReversed), sortStyle("group", sort))),
-                        Cell.from(Span.styled(sortLabel("NAME", "name", sort, sortReversed), sortStyle("name", sort))),
-                        Cell.from(Span.styled(sortLabel("STATUS", "status", sort, sortReversed), sortStyle("status", sort))),
+                        Cell.from(Span.styled(" " + sortLabel("GROUP", "group"), sortStyle("group"))),
+                        Cell.from(Span.styled(sortLabel("NAME", "name"), sortStyle("name"))),
+                        Cell.from(Span.styled(sortLabel("STATUS", "status"), sortStyle("status"))),
                         Cell.from(Span.styled("KIND", Style.EMPTY.bold())),
                         Cell.from(Span.styled("MESSAGE", Style.EMPTY.bold()))))
                 .widths(
@@ -154,16 +151,17 @@ class HealthTab implements MonitorTab {
                         Constraint.length(12),
                         Constraint.length(6),
                         Constraint.fill())
-                .block(Block.builder().borderType(BorderType.ROUNDED).title(title).build())
+                .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(title).build())
                 .build();
 
+        lastTableArea = area;
         frame.renderStatefulWidget(table, area, tableState);
+        renderScrollbar(frame, healthChecks.size());
     }
 
     @Override
     public void renderFooter(List<Span> spans) {
-        hint(spans, "Esc", "back");
-        hint(spans, "s", "sort");
+        super.renderFooter(spans);
         hint(spans, "d", "toggle DOWN");
     }
 
@@ -201,6 +199,11 @@ class HealthTab implements MonitorTab {
         List<String> items = checks.stream().map(hc -> hc.name != null ? hc.name : "").toList();
         Integer sel = tableState.selected();
         return new SelectionContext("table", items, sel != null ? sel : -1, items.size(), "Health");
+    }
+
+    @Override
+    public String description() {
+        return "Health check status for readiness and liveness probes";
     }
 
     @Override

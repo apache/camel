@@ -2,12 +2,10 @@
 :doctitle: PGP (Pretty Good Privacy Cryptographic)
 :shortname: pgp
 :artifactid: camel-crypto-pgp
-:description: Encrypt and decrypt messages using Java Cryptographic Extension (JCE) and PGP.
+:description: Encrypt and decrypt messages using Java Cryptographic Extension (JCE) and PGP
 :since: 2.9
 :supportlevel: Stable
 :tabs-sync-option:
-//Manually maintained attributes
-:camel-spring-boot-name: crypto-pgp
 
 *Since Camel {since}*
 
@@ -101,7 +99,7 @@ from("direct:pgp-encrypt")
     .unmarshal().pgp("file:secring.gpg", "alice@example.com", "letmein");
 ----
 
-Spring XML::
+XML::
 +
 [source,xml]
 ----
@@ -110,6 +108,25 @@ Spring XML::
   <marshal><pgp keyFileName="file:pubring.gpg" keyUserid="alice@example.com"/></marshal>
   <unmarshal><pgp keyFileName="file:secring.gpg" keyUserid="alice@example.com" password="letmein"/></unmarshal>
 </route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:pgp-encrypt
+      steps:
+        - marshal:
+            pgp:
+              keyFileName: "file:pubring.gpg"
+              keyUserid: "alice@example.com"
+        - unmarshal:
+            pgp:
+              keyFileName: "file:secring.gpg"
+              keyUserid: "alice@example.com"
+              password: letmein
 ----
 
 ====
@@ -133,27 +150,27 @@ if you would prefer to do it that way.
 Install the command line utilities on linux
 
 [source,bash]
----------------------
+----
 apt-get install gnupg
----------------------
+----
 Create your keyring, entering a secure password
 
 [source,bash]
--------------
+----
 gpg --gen-key
--------------
+----
 If you need to import someone else's public key so that you can encrypt a file for them.
 
 [source,bash]
---------------------------
+----
 gpg --import <filename.key
---------------------------
+----
 If you are using GnuPG versions prior to 2.1, the key formats are stored in different files that can be used, for example. You can check if the required files exist by running the following command:
 
 [source,bash]
------------------------------------------------
+----
 ls -l ~/.gnupg/pubring.gpg ~/.gnupg/secring.gpg
------------------------------------------------
+----
 
 However, starting from GnuPG 2.1, the key formats were changed to improve efficiency and flexibility. Unfortunately, these new formats cannot be directly used with the Bouncy Castle libraries, which are used to implement the PGP data format. For more details about the changes to the key formats, you can refer to the https://gnupg.org/faq/whats-new-in-2.1.html[GnuPG FAQ].
 
@@ -176,8 +193,9 @@ Provide the corresponding private keys in the secret keyring, the
 corresponding public keys in the public keyring, and the passphrases in
 the passphrase accessor.
 
+._Java-only: programmatic PGPDataFormat with passphrase accessor and multiple keyrings_
 [source,java]
-------------------------------------------------------------------------------------------------------------------------------------------
+----
 Map<String, String> userId2Passphrase = new HashMap<String, String>(2);
 // add passphrases of several private keys whose corresponding public keys have been used to encrypt the messages
 userId2Passphrase.put("UserIdOfKey1","passphrase1"); // you must specify the exact User ID!
@@ -191,12 +209,12 @@ pgpVerifyAndDecrypt.setEncryptionKeyRing(getSecKeyRing()); // alternatively, you
 // the method getPublicKeyRing() provides the public keyring as a byte array containing the public keys
 pgpVerifyAndDecrypt.setSignatureKeyRing((getPublicKeyRing());  // alternatively, you can use setSignatureKeyFileName(signatgureKeyfileName)
 // it is not necessary to specify the encryption or signer User Id
- 
+
 from("direct:start")
-         ...     
+         ...
         .unmarshal(pgpVerifyAndDecrypt) // can decrypt/verify messages encrypted/signed by different private/public keys
-        ...            
-------------------------------------------------------------------------------------------------------------------------------------------
+        ...
+----
 
 * The functionality is especially useful to support the key exchange. If
 you want to exchange the private key for decrypting, you can accept for a
@@ -221,24 +239,25 @@ which can be used for the verification of a signature.
 
 *Signature User IDs*
 
+._Java-only: programmatic PGPDataFormat restricting signer identities for verification_
 [source,java]
----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+----
 // specify the User IDs of the expected signer identities
  List<String> expectedSigUserIds = new ArrayList<String>();
  expectedSigUserIds.add("Trusted company1");
  expectedSigUserIds.add("Trusted company2");
- 
+
  PGPDataFormat pgpVerifyWithSpecificKeysAndDecrypt = new PGPDataFormat();
  pgpVerifyWithSpecificKeysAndDecrypt.setPassword("my password"); // for decrypting with private key
  pgpVerifyWithSpecificKeysAndDecrypt.setKeyFileName(keyfileName);
  pgpVerifyWithSpecificKeysAndDecrypt.setSignatureKeyFileName(signatgureKeyfileName);
  pgpVerifyWithSpecificKeysAndDecrypt.setSignatureKeyUserids(expectedSigUserIds); // if you have only one signer identity, then you can also use setSignatureKeyUserid("expected Signer")
- 
+
 from("direct:start")
-         ...     
+         ...
         .unmarshal(pgpVerifyWithSpecificKeysAndDecrypt)
-        ...      
----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+        ...
+----
 
 * If the PGP content has several signatures, the verification is
 successful as soon as one signature can be verified.
@@ -255,8 +274,9 @@ User IDs which relate to several private keys in the secret keyring.
 
 *Several Signatures*
 
+._Java-only: programmatic PGPDataFormat with multiple signer keys_
 [source,java]
--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+----
  PGPDataFormat pgpSignAndEncryptSeveralSignerKeys = new PGPDataFormat();
  pgpSignAndEncryptSeveralSignerKeys.setKeyUserid(keyUserid); // for encrypting, you can also use setKeyUserids if you want to encrypt with several keys
  pgpSignAndEncryptSeveralSignerKeys.setKeyFileName(keyfileName);
@@ -267,12 +287,12 @@ User IDs which relate to several private keys in the secret keyring.
  signerUserIds.add("company old key");
  signerUserIds.add("company new key");
  pgpSignAndEncryptSeveralSignerKeys.setSignatureKeyUserids(signerUserIds);
- 
+
 from("direct:start")
-         ...     
+         ...
         .marshal(pgpSignAndEncryptSeveralSignerKeys)
-        ...      
--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+        ...
+----
 
 == Support for Sub-Keys and Key Flags in PGP Data Format Marshaller
 
@@ -317,15 +337,11 @@ To use the PGP dataformat in your camel routes you
 need to add the following dependency to your pom.
 
 [source,xml]
-----------------------------------------------------------
+----
 <dependency>
   <groupId>org.apache.camel</groupId>
   <artifactId>camel-crypto</artifactId>
   <version>x.x.x</version>
   <!-- use the same version as your Camel core version -->
 </dependency>
-----------------------------------------------------------
-
-
-
-include::spring-boot:partial$starter.adoc[]
+----

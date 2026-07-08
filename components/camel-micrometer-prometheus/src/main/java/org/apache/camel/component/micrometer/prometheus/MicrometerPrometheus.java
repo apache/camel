@@ -33,7 +33,6 @@ import io.vertx.core.Handler;
 import io.vertx.core.http.HttpMethod;
 import io.vertx.ext.web.Route;
 import io.vertx.ext.web.RoutingContext;
-import io.vertx.ext.web.impl.BlockingHandlerDecorator;
 import org.apache.camel.CamelContext;
 import org.apache.camel.StaticService;
 import org.apache.camel.api.management.ManagedResource;
@@ -228,7 +227,7 @@ public class MicrometerPrometheus extends ServiceSupport implements CamelMetrics
     }
 
     /**
-     * Clear the captured metrics data when Camel is reloading routes such as when using Camel JBang.
+     * Clear the captured metrics data when Camel is reloading routes such as when using Camel CLI.
      */
     public void setClearOnReload(boolean clearOnReload) {
         this.clearOnReload = clearOnReload;
@@ -575,7 +574,7 @@ public class MicrometerPrometheus extends ServiceSupport implements CamelMetrics
         };
 
         // use blocking handler as the task can take longer time to complete
-        metrics.handler(new BlockingHandlerDecorator(handler, true));
+        metrics.blockingHandler(handler);
 
         platformHttpComponent.addHttpManagementEndpoint(path, "GET",
                 null, format, null);

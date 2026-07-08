@@ -14,6 +14,7 @@ xref:components:eips:enterprise-integration-patterns.adoc[EIPs] implements.
 
 Once you have written a class which implements processor like this:
 
+._Java-only: implementing the Processor interface_
 [source,java]
 ----
 public class MyProcessor implements Processor {
@@ -117,6 +118,7 @@ NOTE: For more details about the `#class:` prefix (and others) then see xref:pro
 
 The process can be used in routes as an anonymous inner class such:
 
+._Java-only: using an anonymous inner class as a Processor_
 [source,java]
 ----
     from("activemq:myQueue").process(new Processor() {

@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "securityDefinitions",
     "title": "Rest Security Definitions",
-    "description": "To configure rest security definitions.",
+    "description": "Container for security scheme definitions used by REST services",
     "deprecated": false,
     "label": "rest,security,configuration",
     "javaType": "org.apache.camel.model.rest.RestSecuritiesDefinition",
@@ -12,6 +12,6 @@
     "output": false
   },
   "properties": {
-    "securityDefinitions": { "index": 0, "kind": "element", "displayName": "Security Definitions", "group": "common", "required": true, "type": "array", "javaType": "java.util.List<org.apache.camel.model.rest.RestSecurityDefinition>", "oneOf": [ "apiKey", "basicAuth", "bearerToken", "mutualTLS", "oauth2", "openIdConnect" ], "deprecated": false, "autowired": false, "secret": false, "description": "Security definitions" }
+    "securityDefinitions": { "index": 0, "kind": "element", "displayName": "Security Definitions", "group": "common", "required": false, "type": "array", "javaType": "java.util.List<org.apache.camel.model.rest.RestSecurityDefinition>", "oneOf": [ "apiKey", "basicAuth", "bearerToken", "mutualTLS", "oauth2", "openIdConnect" ], "deprecated": false, "autowired": false, "secret": false, "description": "The configured security definitions (apiKey, basicAuth, bearerToken, oauth2, openIdConnect, mutualTLS)." }
   }
 }

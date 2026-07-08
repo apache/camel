@@ -8,8 +8,6 @@
 :tabs-sync-option:
 :component-header: Only consumer is supported
 :core:
-//Manually maintained attributes
-:camel-spring-boot-name: timer
 
 *Since Camel {since}*
 
@@ -72,30 +70,63 @@ to the `Exchange`:
 
 To set up a route that generates an event every 60 seconds:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("timer://foo?fixedRate=true&period=60000").to("bean:myBean?method=someMethodName");
 ----
 
-The above route will generate an event and then invoke the
-`someMethodName` method on the bean called `myBean` in the
-Registry.
-
-And the route in Spring DSL:
-
+XML::
++
 [source,xml]
------
+----
 <route>
   <from uri="timer://foo?fixedRate=true&amp;period=60000"/>
   <to uri="bean:myBean?method=someMethodName"/>
 </route>
------
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: timer:foo
+      parameters:
+        fixedRate: true
+        period: 60000
+      steps:
+        - to:
+            uri: bean:myBean
+            parameters:
+              method: someMethodName
+----
+====
+
+The above route will generate an event and then invoke the
+`someMethodName` method on the bean called `myBean` in the
+Registry.
 
 === Firing as soon as possible
 
 You may want to fire messages in a Camel route as soon as possible, you
 can use a negative delay:
 
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("timer://foo?delay=-1").to("bean:myBean?method=someMethodName");
+----
+
+XML::
++
 [source,xml]
 ----
 <route>
@@ -103,6 +134,23 @@ can use a negative delay:
   <to uri="bean:myBean?method=someMethodName"/>
 </route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: timer:foo
+      parameters:
+        delay: -1
+      steps:
+        - to:
+            uri: bean:myBean
+            parameters:
+              method: someMethodName
+----
+====
 
 In this way, the timer will fire messages immediately.
 
@@ -119,6 +167,17 @@ You may want to fire a message in a Camel route only once, such as when
 starting the route.
 To do that, you use the `repeatCount` option as shown:
 
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("timer://foo?repeatCount=1").to("bean:myBean?method=someMethodName");
+----
+
+XML::
++
 [source,xml]
 ----
 <route>
@@ -127,6 +186,19 @@ To do that, you use the `repeatCount` option as shown:
 </route>
 ----
 
-
-
-include::spring-boot:partial$starter.adoc[]
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: timer:foo
+      parameters:
+        repeatCount: 1
+      steps:
+        - to:
+            uri: bean:myBean
+            parameters:
+              method: someMethodName
+----
+====

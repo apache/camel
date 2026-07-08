@@ -7,8 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Only producer is supported
-//Manually maintained attributes
-:camel-spring-boot-name: braintree
 
 *Since Camel {since}*
 
@@ -52,17 +50,40 @@ override the API call. See xref:manual::security-model.adoc[the Camel security m
 
 == Examples
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct://GENERATE")
-    .to("braintree://sclientToken/generate");
+    .to("braintree://clientToken/generate");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct://GENERATE"/>
+  <to uri="braintree://clientToken/generate"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:GENERATE
+      steps:
+        - to:
+            uri: braintree:clientToken/generate
+----
+====
 
 == More Information
 
 For more information on the endpoints and options see Braintree
 references at https://developers.braintreepayments.com/reference/overview[https://developers.braintreepayments.com/reference/overview]
-
-
-
-include::spring-boot:partial$starter.adoc[]

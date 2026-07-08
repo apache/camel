@@ -23,17 +23,21 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.annotations.DslArg;
 
 /**
  * Sets the exchange pattern on the message exchange
  */
-@Metadata(label = "configuration")
+@Metadata(label = "configuration,messaging",
+          description = "Sets the message exchange pattern (MEP) on the exchange, such as InOnly for one-way or InOut for request-reply")
 @XmlRootElement(name = "setExchangePattern")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class SetExchangePatternDefinition extends NoOutputDefinition<SetExchangePatternDefinition> {
 
     @XmlAttribute(required = true)
-    @Metadata(required = true, javaType = "org.apache.camel.ExchangePattern", enums = "InOnly,InOut")
+    @Metadata(required = true, javaType = "org.apache.camel.ExchangePattern", enums = "InOnly,InOut",
+              description = "The new exchange pattern to use from this point forward.")
+    @DslArg(renderType = "enumString", typeName = "ExchangePattern")
     private String pattern;
 
     public SetExchangePatternDefinition() {
@@ -70,9 +74,6 @@ public class SetExchangePatternDefinition extends NoOutputDefinition<SetExchange
         return pattern;
     }
 
-    /**
-     * Sets the new exchange pattern of the Exchange to be used from this point forward
-     */
     public void setPattern(String pattern) {
         this.pattern = pattern;
     }

@@ -17,7 +17,19 @@
 package org.apache.camel;
 
 /**
- * Marker for indicating the {@link Service} is a static service (only one instance per {@link CamelContext}).
+ * Marker interface indicating that a {@link Service} is a "static" service: a singleton within a {@link CamelContext}
+ * that is created once at context startup and shared for the context lifetime.
+ * <p/>
+ * Static services are managed differently from ordinary services: the context starts and stops them as part of its own
+ * lifecycle rather than per-route or per-endpoint lifecycle. Examples include
+ * {@link org.apache.camel.spi.PropertiesComponent}, {@link org.apache.camel.spi.RestRegistry},
+ * {@link org.apache.camel.spi.InflightRepository}, and other context-wide infrastructure services. A service that
+ * implements this marker will not be started or stopped multiple times even if multiple routes reference it — the
+ * context guarantees exactly one start and one stop across its full lifecycle.
+ * <p/>
+ * See <a href="https://camel.apache.org/manual/lifecycle.html">Lifecycle</a> in the Camel user manual.
+ *
+ * @see Service
  */
 public interface StaticService extends Service {
 }

@@ -99,7 +99,7 @@ public class OpenAIProducerMcpMockTest extends CamelTestSupport {
     private McpSyncClient createMockMcpClient(String toolName, String resultText) {
         McpSyncClient client = mock(McpSyncClient.class);
         McpSchema.CallToolResult result = McpSchema.CallToolResult.builder()
-                .content(List.of(new McpSchema.TextContent(resultText)))
+                .content(List.of(new McpSchema.TextContent(null, resultText, null)))
                 .isError(false)
                 .build();
         when(client.callTool(any(McpSchema.CallToolRequest.class))).thenReturn(result);
@@ -124,10 +124,8 @@ public class OpenAIProducerMcpMockTest extends CamelTestSupport {
 
         // Convert tool names to OpenAI function tools via McpToolConverter
         List<McpSchema.Tool> mcpTools = toolClients.keySet().stream()
-                .map(name -> McpSchema.Tool.builder()
-                        .name(name)
+                .map(name -> McpSchema.Tool.builder(name, Map.of("type", "object"))
                         .description("Mock tool: " + name)
-                        .inputSchema(new McpSchema.JsonSchema("object", null, null, null, null, null))
                         .build())
                 .toList();
 

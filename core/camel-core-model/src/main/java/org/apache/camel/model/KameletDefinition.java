@@ -25,6 +25,7 @@ import jakarta.xml.bind.annotation.XmlElementRef;
 import jakarta.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.annotations.DslArg;
 
 /**
  * To call Kamelets in special situations. By default, calling kamelets should be done as endpoints with the kamelet
@@ -33,12 +34,17 @@ import org.apache.camel.spi.Metadata;
  * kamelet does not return a response message for every incoming message. In special situations like these, then you
  * must use this Kamelet EIP instead of using the kamelet component.
  */
-@Metadata(label = "eip,routing")
+@Metadata(label = "eip,endpoint,routing",
+          description = "Calls a Kamelet (reusable route template) as a step in the route."
+                        + " Normally Kamelets are invoked via kamelet: endpoint URIs;"
+                        + " this EIP is for special cases where direct invocation is needed.")
 @XmlRootElement(name = "kamelet")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class KameletDefinition extends OutputDefinition<KameletDefinition> {
 
     @XmlAttribute(required = true)
+    @DslArg
+    @Metadata(description = "Name of the Kamelet (templateId/routeId) to call. Options for the kamelet can be specified using uri syntax, eg myname?count=4&type=gold.")
     private String name;
 
     public KameletDefinition() {
@@ -83,11 +89,6 @@ public class KameletDefinition extends OutputDefinition<KameletDefinition> {
         return name;
     }
 
-    /**
-     * Name of the Kamelet (templateId/routeId) to call.
-     *
-     * Options for the kamelet can be specified using uri syntax, eg myname?count=4&type=gold.
-     */
     public void setName(String name) {
         this.name = name;
     }

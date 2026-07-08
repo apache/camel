@@ -9,7 +9,6 @@
 :component-header: Both producer and consumer are supported
 //Manually maintained attributes
 :group: Spring
-:camel-spring-boot-name: spring-rabbitmq
 
 *Since Camel {since}*
 
@@ -66,6 +65,18 @@ TIP: It is recommended to use `CachingConnectionFactory` from spring-rabbit as i
 
 The `ConnectionFactory` is auto-detected by default, so you can do:
 
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:cheese")
+    .to("spring-rabbitmq:foo?routingKey=cheese");
+----
+
+XML::
++
 [source,xml]
 ----
 <camelContext>
@@ -76,15 +87,52 @@ The `ConnectionFactory` is auto-detected by default, so you can do:
 </camelContext>
 ----
 
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:cheese
+      steps:
+        - to:
+            uri: spring-rabbitmq:foo
+            parameters:
+              routingKey: cheese
+----
+====
+
 === Default Exchange Name
 
 To use default exchange name (which would be an empty exchange name in RabbitMQ) then you should use `default` as name
 in the endpoint uri, such as:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 to("spring-rabbitmq:default?routingKey=foo")
 ----
+
+XML::
++
+[source,xml]
+----
+<to uri="spring-rabbitmq:default?routingKey=foo"/>
+----
+
+YAML::
++
+[source,yaml]
+----
+- to:
+    uri: spring-rabbitmq:default
+    parameters:
+      routingKey: foo
+----
+====
 
 === Auto declare exchanges, queues and bindings
 
@@ -153,6 +201,7 @@ So if we send `World` as message body to _direct:start_ then, we will se the mes
 - `log:input -> World`
 - `log:response -> Hello World`
 
+._Java-only: Java DSL with ExchangePattern.InOut and body().prepend()_
 [source,java]
 ----
 from("direct:start")
@@ -188,12 +237,42 @@ For example, the following route shows how you can compute a destination
 at run time and use it to override the exchange appearing in the endpoint
 URL:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("file://inbox")
-  .to("bean:computeDestination")
-  .to("spring-rabbitmq:dummy");
+    .to("bean:computeDestination")
+    .to("spring-rabbitmq:dummy");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="file:inbox"/>
+  <to uri="bean:computeDestination"/>
+  <to uri="spring-rabbitmq:dummy"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: file:inbox
+      steps:
+        - to:
+            uri: bean:computeDestination
+        - to:
+            uri: spring-rabbitmq:dummy
+----
+====
 
 The exchange name, `dummy`, is just a placeholder. It must be provided as
 part of the RabbitMQ endpoint URL, but it will be ignored in this example.
@@ -201,6 +280,7 @@ part of the RabbitMQ endpoint URL, but it will be ignored in this example.
 In the `computeDestination` bean, specify the real destination by
 setting the `CamelRabbitmqExchangeOverrideName` header as follows:
 
+._Java-only: Java handler method_
 [source,java]
 ----
 public void setExchangeHeader(Exchange exchange) {
@@ -228,12 +308,38 @@ with simple language using xref:eips:toD-eip.adoc[toD].
 For example, suppose you need to send messages to exchanges with order types,
 then using toD could, for example, be done as follows:
 
-.Example SJMS2 route with `toD`
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:order")
   .toD("spring-rabbit:order-${header.orderType}");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:order"/>
+  <toD uri="spring-rabbit:order-${header.orderType}"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:order
+      steps:
+        - toD:
+            uri: "spring-rabbit:order-${header.orderType}"
+----
+====
 
 === Manual Acknowledgement
 
@@ -241,6 +347,7 @@ If we need to manually acknowledge a message for some use case, we can
 do it by setting and acknowledgeMode to Manual and using the below snippet
 of code to get Channel and deliveryTag to manually acknowledge the message:
 
+._Java-only: inline Processor with Spring RabbitMQ API_
 [source,java]
 ----
 from("spring-rabbitmq:%s?queues=%s&acknowledgeMode=MANUAL")
@@ -252,4 +359,3 @@ from("spring-rabbitmq:%s?queues=%s&acknowledgeMode=MANUAL")
 ----
 
 
-include::spring-boot:partial$starter.adoc[]

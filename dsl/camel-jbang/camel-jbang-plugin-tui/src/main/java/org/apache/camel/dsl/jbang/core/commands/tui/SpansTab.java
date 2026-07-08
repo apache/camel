@@ -38,8 +38,11 @@ import dev.tamboui.text.Span;
 import dev.tamboui.text.Text;
 import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
+import dev.tamboui.tui.event.MouseEvent;
+import dev.tamboui.tui.event.MouseEventKind;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
+import dev.tamboui.widgets.block.Borders;
 import dev.tamboui.widgets.input.TextInputState;
 import dev.tamboui.widgets.paragraph.Paragraph;
 import dev.tamboui.widgets.scrollbar.Scrollbar;
@@ -51,15 +54,19 @@ import dev.tamboui.widgets.table.TableState;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 
-class SpansTab implements MonitorTab {
+import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.*;
 
+class SpansTab extends AbstractTab {
+
+    private static final int MOUSE_SCROLL_LINES = 3;
     private static final String[] SORT_COLUMNS = { "trace-id", "route", "from", "spans", "routes", "status", "duration" };
 
-    private final MonitorContext ctx;
     private final AtomicReference<List<SpanEntry>> spans;
 
     private final TableState traceListState = new TableState();
     private final ScrollbarState waterfallScrollState = new ScrollbarState();
+    private final ScrollbarState tableScrollState = new ScrollbarState();
+    private Rect lastTableArea;
 
     private boolean waterfallView;
     private String selectedTraceId;
@@ -67,6 +74,7 @@ class SpansTab implements MonitorTab {
     private int waterfallScroll;
     private int waterfallSelected;
     private boolean showProcessors = true;
+    private boolean camelOnly;
     private String sortColumn = "trace-id";
     private int sortIndex;
     private boolean sortReversed;
@@ -77,7 +85,7 @@ class SpansTab implements MonitorTab {
     boolean spanRefreshRequested;
 
     SpansTab(MonitorContext ctx, AtomicReference<List<SpanEntry>> spans) {
-        this.ctx = ctx;
+        super(ctx);
         this.spans = spans;
     }
 
@@ -184,9 +192,40 @@ class SpansTab implements MonitorTab {
             waterfallScroll = 0;
             return true;
         }
+        if (ke.isChar('c')) {
+            camelOnly = !camelOnly;
+            waterfallSelected = 0;
+            waterfallScroll = 0;
+            return true;
+        }
         if (ke.isKey(KeyCode.F5)) {
             spanRefreshRequested = true;
             return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean handleMouseEvent(MouseEvent me, Rect area) {
+        if (!waterfallView) {
+            List<TraceSummary> summaries = buildFilteredTraceSummaries();
+            if (handleTableClick(me, lastTableArea, traceListState, summaries.size())) {
+                syncSelectedListTraceId();
+                return true;
+            }
+        }
+        if (waterfallView) {
+            if (me.kind() == MouseEventKind.SCROLL_UP) {
+                if (waterfallSelected > 0) {
+                    waterfallSelected = Math.max(0, waterfallSelected - MOUSE_SCROLL_LINES);
+                }
+                return true;
+            }
+            if (me.kind() == MouseEventKind.SCROLL_DOWN) {
+                List<WaterfallNode> nodes = buildWaterfallNodes(selectedTraceId);
+                waterfallSelected = Math.min(nodes.size() - 1, waterfallSelected + MOUSE_SCROLL_LINES);
+                return true;
+            }
         }
         return false;
     }
@@ -221,6 +260,14 @@ class SpansTab implements MonitorTab {
     }
 
     @Override
+    public boolean setInputValue(String field, String value) {
+        if ("filter".equals(field)) {
+            return setFilter(value);
+        }
+        return false;
+    }
+
+    @Override
     public void navigateUp() {
         if (!waterfallView) {
             traceListState.selectPrevious();
@@ -250,7 +297,7 @@ class SpansTab implements MonitorTab {
     public void render(Frame frame, Rect area) {
         IntegrationInfo info = ctx.findSelectedIntegration();
         if (info == null) {
-            MonitorContext.renderNoSelection(frame, area);
+            renderNoSelection(frame, area);
             return;
         }
 
@@ -261,7 +308,7 @@ class SpansTab implements MonitorTab {
                             .text(Text.from(Line.from(
                                     Span.styled("  No OTel spans captured. Use --observe flag when running.",
                                             Style.EMPTY.dim()))))
-                            .block(Block.builder().borderType(BorderType.ROUNDED)
+                            .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
                                     .title(" OTel Spans ").build())
                             .build(),
                     area);
@@ -329,12 +376,12 @@ class SpansTab implements MonitorTab {
                     Cell.from(shortId(ts.traceId)),
                     Cell.from(ts.rootRouteId != null ? ts.rootRouteId : ""),
                     Cell.from(ts.rootName != null ? ts.rootName : "?"),
-                    MonitorContext.rightCell(String.valueOf(ts.spanCount), 5),
-                    MonitorContext.rightCell(String.valueOf(ts.routeCount), 5),
+                    rightCell(String.valueOf(ts.spanCount), 5),
+                    rightCell(String.valueOf(ts.routeCount), 5),
                     Cell.from(ts.remoteComponents.isEmpty() ? "-" : ts.remoteComponents),
                     Cell.from(Span.styled(ts.hasError ? "ERROR" : "OK", statusStyle)),
                     Cell.from(ts.totalDurationMs + "ms"),
-                    MonitorContext.rightCell(String.valueOf(ts.maxDepth), 5)));
+                    rightCell(String.valueOf(ts.maxDepth), 5)));
         }
 
         String title;
@@ -365,11 +412,13 @@ class SpansTab implements MonitorTab {
                         Constraint.fill(),
                         Constraint.length(8),
                         Constraint.length(12),
-                        Constraint.length(7))
-                .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
-                .block(Block.builder().borderType(BorderType.ROUNDED).title(title).build())
+                        Constraint.length(8))
+                .highlightStyle(Theme.selectionBg())
+                .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(title).build())
                 .build();
+        lastTableArea = area;
         frame.renderStatefulWidget(table, area, traceListState);
+        renderTableScrollbar(frame, lastTableArea, traceListState, tableScrollState, summaries.size());
     }
 
     private void renderWaterfallView(Frame frame, Rect area) {
@@ -412,7 +461,7 @@ class SpansTab implements MonitorTab {
         String title = String.format(" Trace %s — %d spans, %dms ",
                 shortId(selectedTraceId), nodes.size(), traceDuration);
         Block block = Block.builder()
-                .borderType(BorderType.ROUNDED)
+                .borderType(BorderType.ROUNDED).borders(Borders.ALL)
                 .title(title)
                 .build();
         Rect inner = block.inner(area);
@@ -498,11 +547,15 @@ class SpansTab implements MonitorTab {
         int pad = Math.max(1, 8 - durationStr.length());
 
         boolean error = node.span.isError();
+        boolean camelSpan = node.span.isCamelSpan();
         Style labelStyle;
         Style bandStyle;
         if (error) {
             labelStyle = selected ? Style.EMPTY.fg(Color.LIGHT_RED).bold() : Style.EMPTY.fg(Color.LIGHT_RED);
             bandStyle = Style.EMPTY.fg(Color.LIGHT_RED);
+        } else if (!camelSpan) {
+            labelStyle = selected ? Style.EMPTY.fg(Color.LIGHT_MAGENTA).bold() : Style.EMPTY.fg(Color.LIGHT_MAGENTA);
+            bandStyle = Style.EMPTY.fg(Color.LIGHT_MAGENTA);
         } else {
             labelStyle = selected ? Style.EMPTY.fg(Color.CYAN).bold() : Style.EMPTY.fg(Color.CYAN);
             bandStyle = TuiHelper.colorForDuration(node.span.durationMs(), minDuration, maxDuration);
@@ -547,8 +600,8 @@ class SpansTab implements MonitorTab {
                 Span.styled("  Duration: ", Style.EMPTY.dim()),
                 Span.raw(span.durationMs() + "ms")));
 
-        // Row 3: route and processor context
-        if (span.routeId() != null || span.processorId() != null) {
+        // Row 3: route, processor context, and scope (for 3rd-party spans)
+        if (span.routeId() != null || span.processorId() != null || !span.isCamelSpan()) {
             List<Span> ctx = new ArrayList<>();
             if (span.routeId() != null) {
                 ctx.add(Span.styled(" Route:  ", Style.EMPTY.dim()));
@@ -557,6 +610,10 @@ class SpansTab implements MonitorTab {
             if (span.processorId() != null) {
                 ctx.add(Span.styled("  Processor: ", Style.EMPTY.dim()));
                 ctx.add(Span.styled(span.processorId(), Style.EMPTY.fg(Color.YELLOW)));
+            }
+            if (!span.isCamelSpan()) {
+                ctx.add(Span.styled("  Source: ", Style.EMPTY.dim()));
+                ctx.add(Span.styled(span.scopeName(), Style.EMPTY.fg(Color.LIGHT_MAGENTA)));
             }
             lines.add(Line.from(ctx));
         }
@@ -575,7 +632,7 @@ class SpansTab implements MonitorTab {
         frame.renderWidget(
                 Paragraph.builder()
                         .text(Text.from(lines))
-                        .block(Block.builder().borderType(BorderType.ROUNDED)
+                        .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
                                 .title(dev.tamboui.widgets.block.Title.from(
                                         Line.from(Span.styled(" " + spanLabel(span) + " ", titleStyle))))
                                 .build())
@@ -586,27 +643,28 @@ class SpansTab implements MonitorTab {
     @Override
     public void renderFooter(List<Span> spans) {
         if (waterfallView) {
-            MonitorContext.hint(spans, "Esc", "back");
-            MonitorContext.hint(spans, "F5", "refresh");
-            MonitorContext.hint(spans, "p", showProcessors ? "processors [on]" : "processors [off]");
-            MonitorContext.hint(spans, "↑↓", "navigate");
-            MonitorContext.hintLast(spans, "PgUp/Dn", "page");
+            hint(spans, "Esc", "back");
+            hint(spans, "F5", "refresh");
+            hint(spans, "c", camelOnly ? "camel-only [on]" : "camel-only [off]");
+            hint(spans, "p", showProcessors ? "processors [on]" : "processors [off]");
+            hint(spans, TuiIcons.HINT_SCROLL, "navigate");
+            hintLast(spans, "PgUp/Dn", "page");
         } else if (filterInputActive) {
             spans.add(Span.styled(" /", Style.EMPTY.fg(Color.YELLOW).bold()));
             spans.add(Span.raw(filterInputState.text() + "█  "));
-            MonitorContext.hint(spans, "Enter", "filter");
-            MonitorContext.hintLast(spans, "Esc", "cancel");
+            hint(spans, "Enter", "filter");
+            hintLast(spans, "Esc", "cancel");
         } else {
-            MonitorContext.hint(spans, "Esc", filterTerm != null ? "clear" : "back");
-            MonitorContext.hint(spans, "F5", "refresh");
-            MonitorContext.hint(spans, "Enter", "waterfall");
+            hint(spans, "Esc", filterTerm != null ? "clear" : "back");
+            hint(spans, "F5", "refresh");
+            hint(spans, "Enter", "waterfall");
             if (filterTerm != null) {
                 spans.add(Span.styled("  /", Style.EMPTY.fg(Color.YELLOW).bold()));
                 spans.add(Span.raw("\"" + filterTerm + "\"  "));
             } else {
-                MonitorContext.hint(spans, "/", "filter");
+                hint(spans, "/", "filter");
             }
-            MonitorContext.hintLast(spans, "↑↓", "navigate");
+            hintLast(spans, TuiIcons.HINT_SCROLL, "navigate");
         }
     }
 
@@ -677,13 +735,8 @@ class SpansTab implements MonitorTab {
                 sb.append(ts.remoteComponents);
             }
             ts.searchText = sb.toString().toLowerCase();
-            // Count effective spans (exclude EVENT_PROCESS which are collapsed in waterfall)
-            for (SpanEntry s : traceSpans) {
-                if (!isEventProcess(s)) {
-                    ts.spanCount++;
-                }
-            }
-            ts.maxDepth = computeEffectiveDepth(traceSpans);
+            ts.spanCount = traceSpans.size();
+            ts.maxDepth = computeMaxDepth(traceSpans);
         }
         result.sort((a, b) -> {
             int cmp = sortTrace(a, b, currentSpans);
@@ -770,12 +823,13 @@ class SpansTab implements MonitorTab {
             addToWaterfall(result, children.get(0), childrenMap, depth, included, spanIdToDepth);
             return;
         }
-        // Collapse processor+send pairs:
-        // When an EVENT_PROCESS span (e.g. to4-to) has a single EVENT_SENT child,
-        // skip the processor wrapper and show only the send span.
-        if (isEventProcess(span) && !span.isError() && children != null && children.size() == 1
-                && isEventSent(children.get(0))) {
-            addToWaterfall(result, children.get(0), childrenMap, depth, included, spanIdToDepth);
+        // Hide 3rd-party agent spans when camelOnly is on — promote children to same depth
+        if (camelOnly && !span.isError() && !span.isCamelSpan()) {
+            if (children != null) {
+                for (SpanEntry child : children) {
+                    addToWaterfall(result, child, childrenMap, depth, included, spanIdToDepth);
+                }
+            }
             return;
         }
         // Hide processor spans when toggle is off — promote children to same depth
@@ -897,42 +951,24 @@ class SpansTab implements MonitorTab {
     }
 
     private String sortLabel(String label, String column) {
-        return MonitorContext.sortLabel(label, column, sortColumn, sortReversed);
+        return sortLabel(label, column, sortColumn, sortReversed);
     }
 
     private Style sortStyle(String column) {
         return Style.EMPTY.fg(Color.YELLOW).bold();
     }
 
-    private static int computeEffectiveDepth(List<SpanEntry> traceSpans) {
-        // Build parent-child tree excluding EVENT_PROCESS spans
+    private static int computeMaxDepth(List<SpanEntry> traceSpans) {
         Map<String, String> parentMap = new HashMap<>();
-        Set<String> nonProcessIds = new HashSet<>();
         for (SpanEntry s : traceSpans) {
-            if (!isEventProcess(s)) {
-                nonProcessIds.add(s.spanId());
-                // Walk up to find nearest non-process parent
-                String parentId = s.parentSpanId();
-                while (parentId != null && !nonProcessIds.contains(parentId)) {
-                    String nextParent = null;
-                    for (SpanEntry p : traceSpans) {
-                        if (p.spanId().equals(parentId)) {
-                            nextParent = p.parentSpanId();
-                            break;
-                        }
-                    }
-                    parentId = nextParent;
-                }
-                if (parentId != null) {
-                    parentMap.put(s.spanId(), parentId);
-                }
+            if (s.parentSpanId() != null && !s.parentSpanId().isEmpty()) {
+                parentMap.put(s.spanId(), s.parentSpanId());
             }
         }
-        // Compute max depth from the effective tree
         int maxDepth = 0;
-        for (String id : nonProcessIds) {
+        for (SpanEntry s : traceSpans) {
             int depth = 0;
-            String cur = id;
+            String cur = s.spanId();
             while (parentMap.containsKey(cur)) {
                 depth++;
                 cur = parentMap.get(cur);
@@ -950,12 +986,19 @@ class SpansTab implements MonitorTab {
     }
 
     @Override
+    public String description() {
+        return "OpenTelemetry spans with trace/span IDs, timing, and attributes";
+    }
+
+    @Override
     public String getHelpText() {
         return """
                 # OTel Spans
 
                 The Spans tab shows OpenTelemetry traces captured from the running
-                integration. Requires the `--observe` flag when starting the integration.
+                integration. Use `--observe` for lightweight Camel-only tracing, or
+                `--open-telemetry-agent` for full auto-instrumentation (HTTP clients,
+                JDBC, Kafka clients, etc.) via the OpenTelemetry Java Agent.
 
                 ## Trace List
 
@@ -981,6 +1024,17 @@ class SpansTab implements MonitorTab {
                 bars are proportional to the trace envelope so you can visually spot
                 where time is spent. Colors indicate relative duration: green (fast),
                 yellow (medium), red (slow).
+
+                ### Span Colors
+
+                - **Cyan** — Camel spans (route execution, processors, endpoints)
+                - **Magenta** — 3rd-party spans from the OTel Java Agent
+                  (HTTP clients, JDBC, Kafka clients, gRPC, etc.)
+                - **Red** — Error spans (regardless of source)
+
+                The 3rd-party spans are only visible when using `--open-telemetry-agent`.
+                The detail panel shows the **Source** field for agent-instrumented spans
+                (e.g., `io.opentelemetry.jdk-http-client`).
 
                 Processor spans (setBody, log, etc.) are shown by default. Press **p**
                 to toggle them off for a cleaner view focused on endpoint-to-endpoint
@@ -1019,6 +1073,7 @@ class SpansTab implements MonitorTab {
                 | s | Cycle sort column (trace-id, route, from, spans, routes, status, duration) |
                 | S | Reverse sort direction |
                 | p | Toggle processor spans in waterfall |
+                | c | Toggle camel-only (hide 3rd-party agent spans) |
                 | F5 | Refresh span data |
 
                 ## Filtering

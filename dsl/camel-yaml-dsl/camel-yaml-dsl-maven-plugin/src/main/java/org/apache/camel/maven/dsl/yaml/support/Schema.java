@@ -32,6 +32,8 @@ public class Schema {
     public ObjectNode exchangeProperties;
     @JsonProperty
     public ObjectNode functions;
+    @JsonProperty
+    public ObjectNode operators;
 
     public Schema() {
     }

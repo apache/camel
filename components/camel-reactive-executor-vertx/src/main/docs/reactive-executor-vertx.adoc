@@ -1,10 +1,11 @@
-= Reactive Executor Vert.x Component
+= Reactive Executor Vert.x Component (deprecated)
 :doctitle: Reactive Executor Vert.x
 :shortname: reactive-executor-vertx
 :artifactid: camel-reactive-executor-vertx
 :description: Reactive Executor for camel-core using Vert.x
 :since: 3.0
-:supportlevel: Experimental
+:supportlevel: Experimental-deprecated
+:deprecated: *deprecated*
 :tabs-sync-option:
 
 *Since Camel {since}*

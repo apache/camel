@@ -27,23 +27,23 @@ import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.Line;
 import dev.tamboui.text.Span;
 import dev.tamboui.text.Text;
+import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
+import dev.tamboui.tui.event.MouseEvent;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
+import dev.tamboui.widgets.block.Borders;
 import dev.tamboui.widgets.paragraph.Paragraph;
 import dev.tamboui.widgets.table.Cell;
 import dev.tamboui.widgets.table.Row;
 import dev.tamboui.widgets.table.Table;
-import dev.tamboui.widgets.table.TableState;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 
-import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.*;
+import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.*;
 
-class InflightTab implements MonitorTab {
-
-    private static final String[] SORT_COLUMNS = { "status", "exchange", "route", "duration" };
+class InflightTab extends AbstractTableTab {
 
     // Duration thresholds for color coding
     private static final long THRESHOLD_YELLOW = 1000;  // 1 second
@@ -52,57 +52,43 @@ class InflightTab implements MonitorTab {
     // Unicode block characters for duration bar (1/8 increments)
     private static final char[] BAR_CHARS = { ' ', '▏', '▎', '▍', '▌', '▋', '▊', '▉', '█' };
 
-    private final MonitorContext ctx;
-    private final TableState tableState = new TableState();
-    private String sort = "duration";
-    private int sortIndex = 3;
-    private boolean sortReversed;
-
     InflightTab(MonitorContext ctx) {
-        this.ctx = ctx;
-    }
-
-    @Override
-    public boolean handleKeyEvent(KeyEvent ke) {
-        if (ke.isChar('s')) {
-            sortIndex = (sortIndex + 1) % SORT_COLUMNS.length;
-            sort = SORT_COLUMNS[sortIndex];
-            sortReversed = false;
-            return true;
-        }
-        if (ke.isChar('S')) {
-            sortReversed = !sortReversed;
-            return true;
-        }
-        return false;
-    }
-
-    @Override
-    public boolean handleEscape() {
-        return false;
+        super(ctx, "status", "exchange", "route", "duration");
+        sortIndex = 3;
+        sort = "duration";
     }
 
     @Override
     public void navigateUp() {
-        tableState.selectPrevious();
     }
 
     @Override
     public void navigateDown() {
-        List<InflightInfo> list = getInflightExchanges();
-        if (list != null) {
-            tableState.selectNext(list.size());
-        }
     }
 
     @Override
-    public void render(Frame frame, Rect area) {
-        IntegrationInfo info = ctx.findSelectedIntegration();
-        if (info == null) {
-            renderNoSelection(frame, area);
-            return;
+    public boolean handleKeyEvent(KeyEvent ke) {
+        if (ke.isPageUp() || ke.isKey(KeyCode.PAGE_UP)
+                || ke.isPageDown() || ke.isKey(KeyCode.PAGE_DOWN)
+                || ke.isHome() || ke.isEnd()) {
+            return false;
         }
+        return super.handleKeyEvent(ke);
+    }
 
+    @Override
+    public boolean handleMouseEvent(MouseEvent me, Rect area) {
+        return false;
+    }
+
+    @Override
+    protected int getRowCount() {
+        IntegrationInfo info = ctx.findSelectedIntegration();
+        return info != null ? info.inflightExchanges.size() : 0;
+    }
+
+    @Override
+    protected void renderContent(Frame frame, Rect area, IntegrationInfo info) {
         if (!info.inflightBrowseEnabled && info.inflightExchanges.isEmpty()) {
             renderBrowseDisabled(frame, area);
             return;
@@ -130,7 +116,7 @@ class InflightTab implements MonitorTab {
             Span barSpan = buildDurationBar(ii.duration, maxDuration, 20);
 
             rows.add(Row.from(
-                    Cell.from(Span.styled(status, statusStyle)),
+                    Cell.from(Span.styled(" " + status, statusStyle)),
                     Cell.from(Span.styled(ii.exchangeId != null ? ii.exchangeId : "", Style.EMPTY.fg(Color.CYAN))),
                     Cell.from(routeNode),
                     rightCell(duration, 14, durationStyle),
@@ -138,17 +124,15 @@ class InflightTab implements MonitorTab {
         }
 
         if (rows.isEmpty()) {
-            rows.add(Row.from(
-                    Cell.from(Span.styled("No inflight or blocked exchanges", Style.EMPTY.dim())),
-                    Cell.from(""), Cell.from(""), Cell.from(""), Cell.from("")));
+            rows.add(emptyRow("No inflight or blocked exchanges", 5));
         }
 
-        String title = " Inflight (" + sorted.size() + ") sort:" + sort + " ";
+        String title = " Inflight (" + sorted.size() + ") ";
 
         Table table = Table.builder()
                 .rows(rows)
                 .header(Row.from(
-                        Cell.from(Span.styled(sortLabel("STATUS", "status"), sortStyle("status"))),
+                        Cell.from(Span.styled(" " + sortLabel("STATUS", "status"), sortStyle("status"))),
                         Cell.from(Span.styled(sortLabel("EXCHANGE ID", "exchange"), sortStyle("exchange"))),
                         Cell.from(Span.styled(sortLabel("ROUTE/NODE", "route"), sortStyle("route"))),
                         rightCell(sortLabel("DURATION", "duration"), 14, sortStyle("duration")),
@@ -158,17 +142,13 @@ class InflightTab implements MonitorTab {
                         Constraint.length(40),
                         Constraint.fill(),
                         Constraint.length(14),
-                        Constraint.length(22))
-                .block(Block.builder().borderType(BorderType.ROUNDED).title(title).build())
+                        Constraint.length(23))
+                .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(title).build())
                 .build();
 
+        lastTableArea = area;
         frame.renderStatefulWidget(table, area, tableState);
-    }
-
-    @Override
-    public void renderFooter(List<Span> spans) {
-        hint(spans, "Esc", "back");
-        hint(spans, "s", "sort");
+        renderScrollbar(frame, sorted.size());
     }
 
     private void renderBrowseDisabled(Frame frame, Rect area) {
@@ -179,14 +159,9 @@ class InflightTab implements MonitorTab {
         frame.renderWidget(
                 Paragraph.builder()
                         .text(text)
-                        .block(Block.builder().borderType(BorderType.ROUNDED).title(" Inflight ").build())
+                        .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(" Inflight ").build())
                         .build(),
                 area);
-    }
-
-    private List<InflightInfo> getInflightExchanges() {
-        IntegrationInfo info = ctx.findSelectedIntegration();
-        return info != null ? info.inflightExchanges : null;
     }
 
     private Style durationColor(long durationMs) {
@@ -228,14 +203,6 @@ class InflightTab implements MonitorTab {
         return Span.styled(sb.toString(), Style.EMPTY.fg(color));
     }
 
-    private String sortLabel(String label, String column) {
-        return MonitorContext.sortLabel(label, column, sort, sortReversed);
-    }
-
-    private Style sortStyle(String column) {
-        return MonitorContext.sortStyle(column, sort);
-    }
-
     private int sortExchange(InflightInfo a, InflightInfo b) {
         int result = switch (sort) {
             case "route" -> {
@@ -256,6 +223,11 @@ class InflightTab implements MonitorTab {
             default -> Long.compare(b.duration, a.duration); // longest first
         };
         return sortReversed ? -result : result;
+    }
+
+    @Override
+    public String description() {
+        return "Currently in-flight exchanges being processed";
     }
 
     @Override

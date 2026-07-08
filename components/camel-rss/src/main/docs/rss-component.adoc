@@ -7,8 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Only consumer is supported
-//Manually maintained attributes
-:camel-spring-boot-name: rss
 
 *Since Camel {since}*
 
@@ -21,22 +19,22 @@ Maven users will need to add the following dependency to their `pom.xml`
 for this component:
 
 [source,xml]
-------------------------------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-rss</artifactId>
     <version>x.x.x</version>
     <!-- use the same version as your Camel core version -->
 </dependency>
-------------------------------------------------------------
+----
 
 NOTE: The component currently only supports consuming feeds.
 
 == URI format
 
-----------
+----
 rss:rssUri
-----------
+----
 
 Where `rssUri` is the URI to the RSS feed to poll.
 
@@ -69,11 +67,41 @@ a `SyndFeed` with one `SyndEntry` or a `java.util.List` of `SyndEntrys`.
 If the URL for the RSS feed uses query parameters, this component will
 resolve them. For example, if the feed uses `alt=rss`, then the following example will be resolved:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("rss:http://someserver.com/feeds/posts/default?alt=rss&splitEntries=false&delay=1000")
     .to("bean:rss");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="rss:http://someserver.com/feeds/posts/default?alt=rss&amp;splitEntries=false&amp;delay=1000"/>
+  <to uri="bean:rss"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: "rss:http://someserver.com/feeds/posts/default?alt=rss"
+      parameters:
+        splitEntries: false
+        delay: 1000
+      steps:
+        - to:
+            uri: bean:rss
+----
+====
 
 === Filtering entries
 
@@ -83,6 +111,10 @@ Bean Integration to implement your own
 conditions. For instance, a filter equivalent to the XPath example above
 would be:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("rss:file:src/test/data/rss20.xml?splitEntries=true&delay=100")
@@ -90,8 +122,43 @@ from("rss:file:src/test/data/rss20.xml?splitEntries=true&delay=100")
         .to("mock:result");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="rss:file:src/test/data/rss20.xml?splitEntries=true&amp;delay=100"/>
+  <filter>
+    <method ref="myFilterBean" method="titleContainsCamel"/>
+    <to uri="mock:result"/>
+  </filter>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: rss:file:src/test/data/rss20.xml
+      parameters:
+        splitEntries: true
+        delay: 100
+      steps:
+        - filter:
+            method:
+              ref: myFilterBean
+              method: titleContainsCamel
+            steps:
+              - to:
+                  uri: mock:result
+----
+====
+
 The custom bean for this would be:
 
+._Java-only: bean class definition with annotations and type casts_
 [source,java]
 ----
 public static class FilterBean {
@@ -114,6 +181,7 @@ Instead of directly using `from("rss:...")`, you can configure an HTTP client wi
 
 Below is an example that sets up an HTTP client with a proxy (including authentication support) and uses it to retrieve and process an RSS feed:
 
+._Java-only: programmatic proxy configuration with HttpClientConfigurer, registry binding, and RouteBuilder class_
 [source,java]
 ----
 protected RoutesBuilder createRouteBuilder() throws Exception {
@@ -149,16 +217,9 @@ protected RoutesBuilder createRouteBuilder() throws Exception {
         }
     });
 
-    return new RouteBuilder() {
-        @Override
-        public void configure() throws Exception {
-            from("timer://mytimer?fixedRate=false&period=60&synchronous=true")
-                .to("http://feeds.aps.org/rss/recent/prstper.xml?httpClientConfigurer=myHttpClientConfigurer")
-                .unmarshal(new RssDataFormat()) // Convert raw response to structured RSS
-                .to("mock:result");
-        }
-    };
+    from("timer://mytimer?fixedRate=false&period=60&synchronous=true")
+        .to("http://feeds.aps.org/rss/recent/prstper.xml?httpClientConfigurer=myHttpClientConfigurer")
+        .unmarshal(new RssDataFormat())
+        .to("mock:result");
 }
 ----
-
-include::spring-boot:partial$starter.adoc[]

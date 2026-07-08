@@ -2625,7 +2625,7 @@ public interface SqlEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final SqlHeaderNameBuilder INSTANCE = new SqlHeaderNameBuilder();
+        public static final SqlHeaderNameBuilder INSTANCE = new SqlHeaderNameBuilder();
 
         /**
          * Query to execute. This query takes precedence over the query

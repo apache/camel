@@ -18,6 +18,7 @@ package org.apache.camel.processor.aggregate.jdbc;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.Exchange;
@@ -53,7 +54,7 @@ public class JdbcAggregateLoadAndRecoverTest extends AbstractJdbcAggregationTest
             LOG.debug("Sending {} with id {}", value, id);
             template.sendBodyAndHeaders("seda:start?size=" + SIZE, value, headers);
             // simulate a little delay
-            Thread.sleep(3);
+            TimeUnit.MILLISECONDS.sleep(3);
         }
 
         LOG.info("Sending all {} message done. Now waiting for aggregation to complete.", SIZE);

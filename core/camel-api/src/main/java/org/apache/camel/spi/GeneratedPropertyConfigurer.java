@@ -17,8 +17,16 @@
 package org.apache.camel.spi;
 
 /**
- * A auto generated {@link PropertyConfigurer} for fast configuration of Camel components & endpoints.
+ * Marker for a {@link PropertyConfigurer} that Camel generates at build time for fast configuration of components and
+ * endpoints.
+ * <p/>
+ * Implementations are produced by the Camel tooling from a type's options, providing reflection-free property binding
+ * during bootstrap. Application code does not implement this directly; it is generated alongside the component or
+ * endpoint it configures.
+ * <p/>
+ * See <a href="https://camel.apache.org/manual/property-binding.html">Property Binding</a> in the Camel user manual.
  *
+ * @see   PropertyConfigurer
  * @since 3.0
  */
 public interface GeneratedPropertyConfigurer extends PropertyConfigurer {

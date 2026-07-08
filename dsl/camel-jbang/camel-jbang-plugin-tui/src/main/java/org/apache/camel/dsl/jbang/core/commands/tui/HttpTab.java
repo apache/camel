@@ -43,9 +43,12 @@ import dev.tamboui.text.Span;
 import dev.tamboui.text.Text;
 import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
+import dev.tamboui.tui.event.MouseEvent;
+import dev.tamboui.tui.event.MouseEventKind;
 import dev.tamboui.widgets.Clear;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
+import dev.tamboui.widgets.block.Borders;
 import dev.tamboui.widgets.block.Title;
 import dev.tamboui.widgets.input.TextInput;
 import dev.tamboui.widgets.input.TextInputState;
@@ -53,17 +56,16 @@ import dev.tamboui.widgets.paragraph.Paragraph;
 import dev.tamboui.widgets.table.Cell;
 import dev.tamboui.widgets.table.Row;
 import dev.tamboui.widgets.table.Table;
-import dev.tamboui.widgets.table.TableState;
 import org.apache.camel.dsl.jbang.core.common.CamelCommandHelper;
 import org.apache.camel.dsl.jbang.core.common.PathUtils;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 
-import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.*;
+import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.*;
 
-class HttpTab implements MonitorTab {
+class HttpTab extends AbstractTableTab {
 
-    private static final String[] SORT_COLUMNS = { "method", "path", "total", "consumes", "produces", "source" };
+    private static final int MOUSE_SCROLL_LINES = 3;
     private static final Set<String> OPENAPI_HTTP_VERBS
             = Set.of("get", "post", "put", "delete", "patch", "options", "head", "trace");
 
@@ -77,13 +79,8 @@ class HttpTab implements MonitorTab {
     private static final String[] PROBE_METHODS = { "GET", "POST", "PUT", "DELETE", "PATCH", "HEAD", "OPTIONS" };
     private static final int MAX_PROBE_HISTORY = 20;
 
-    private final MonitorContext ctx;
-    private final TableState tableState = new TableState();
     private final AtomicBoolean specLoading = new AtomicBoolean(false);
 
-    private String sort = "method";
-    private int sortIndex;
-    private boolean sortReversed;
     private int filter;
     private boolean showManagement;
 
@@ -115,8 +112,16 @@ class HttpTab implements MonitorTab {
     private String probeResponseRawBody;
     private List<String> probeResponseHeaderLines;
 
+    private int detailPanelHeight = 10;
+    private final DragSplit vSplit = new DragSplit();
+
     HttpTab(MonitorContext ctx) {
-        this.ctx = ctx;
+        super(ctx, "method", "path", "total", "consumes", "produces", "source");
+    }
+
+    @Override
+    protected int getRowCount() {
+        return sortedVisibleEndpoints(ctx.findSelectedIntegration()).size();
     }
 
     boolean isProbeMode() {
@@ -150,18 +155,13 @@ class HttpTab implements MonitorTab {
             return true;
         }
 
+        return super.handleKeyEvent(ke);
+    }
+
+    @Override
+    protected boolean handleTabKeyEvent(KeyEvent ke) {
         if (ke.isConfirm()) {
             enterProbeModeFromTable();
-            return true;
-        }
-        if (ke.isChar('s')) {
-            sortIndex = (sortIndex + 1) % SORT_COLUMNS.length;
-            sort = SORT_COLUMNS[sortIndex];
-            sortReversed = false;
-            return true;
-        }
-        if (ke.isChar('S')) {
-            sortReversed = !sortReversed;
             return true;
         }
         if (ke.isCharIgnoreCase('f')) {
@@ -175,6 +175,43 @@ class HttpTab implements MonitorTab {
         if (ke.isChar('c')) {
             loadSpecForSelectedEndpoint();
             return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean handleMouseEvent(MouseEvent me, Rect area) {
+        if (!probeMode && !showSpec && vSplit.handleMouse(me, me.y())) {
+            if (vSplit.isDragging() && me.kind() == MouseEventKind.DRAG) {
+                detailPanelHeight = Math.max(3, Math.min(area.y() + area.height() - me.y(), area.height() - 5));
+            }
+            return true;
+        }
+        if (!probeMode && !showSpec) {
+            List<HttpEndpointInfo> visible = sortedVisibleEndpoints(ctx.findSelectedIntegration());
+            if (handleTableClick(me, lastTableArea, tableState, visible.size())) {
+                return true;
+            }
+        }
+        if (showSpec) {
+            if (me.kind() == MouseEventKind.SCROLL_UP) {
+                specScroll = Math.max(0, specScroll - MOUSE_SCROLL_LINES);
+                return true;
+            }
+            if (me.kind() == MouseEventKind.SCROLL_DOWN) {
+                specScroll += MOUSE_SCROLL_LINES;
+                return true;
+            }
+        }
+        if (probeMode) {
+            if (me.kind() == MouseEventKind.SCROLL_UP) {
+                probeResponseScroll = Math.max(0, probeResponseScroll - MOUSE_SCROLL_LINES);
+                return true;
+            }
+            if (me.kind() == MouseEventKind.SCROLL_DOWN) {
+                probeResponseScroll += MOUSE_SCROLL_LINES;
+                return true;
+            }
         }
         return false;
     }
@@ -225,13 +262,7 @@ class HttpTab implements MonitorTab {
     }
 
     @Override
-    public void render(Frame frame, Rect area) {
-        IntegrationInfo info = ctx.findSelectedIntegration();
-        if (info == null) {
-            renderNoSelection(frame, area);
-            return;
-        }
-
+    protected void renderContent(Frame frame, Rect area, IntegrationInfo info) {
         if (probeMode) {
             renderProbe(frame, area);
             return;
@@ -244,13 +275,14 @@ class HttpTab implements MonitorTab {
 
         List<HttpEndpointInfo> visible = sortedVisibleEndpoints(info);
 
+        detailPanelHeight = Math.max(3, Math.min(detailPanelHeight, area.height() - 5));
         List<Rect> chunks = Layout.vertical()
-                .constraints(Constraint.length(1), Constraint.fill(), Constraint.length(10))
+                .constraints(Constraint.fill(), Constraint.length(detailPanelHeight))
                 .split(area);
 
-        renderServerInfo(frame, chunks.get(0), info, visible);
-        renderTable(frame, chunks.get(1), visible);
-        renderDetail(frame, chunks.get(2), visible);
+        renderTable(frame, chunks.get(0), visible, info);
+        vSplit.setBorderPos(chunks.get(1).y());
+        renderDetail(frame, chunks.get(1), visible);
     }
 
     @Override
@@ -262,13 +294,13 @@ class HttpTab implements MonitorTab {
             hint(spans, "+", "header");
             hint(spans, "p", "pretty" + (probePrettyPrint ? " [on]" : ""));
             if (!probeHistory.isEmpty()) {
-                hintLast(spans, "↑↓", "history");
+                hintLast(spans, TuiIcons.HINT_SCROLL, "history");
             }
             return;
         }
         if (showSpec) {
             hint(spans, "c/Esc", "close");
-            hint(spans, "↑↓", "scroll");
+            hint(spans, TuiIcons.HINT_SCROLL, "scroll");
             hintLast(spans, "PgUp/PgDn", "page");
             return;
         }
@@ -573,7 +605,7 @@ class HttpTab implements MonitorTab {
             return true;
         }
         if (ke.code() == KeyCode.CHAR) {
-            activeInput.insert(ke.character());
+            activeInput.insert(ke.string().charAt(0));
             return true;
         }
         return true;
@@ -883,7 +915,7 @@ class HttpTab implements MonitorTab {
                 Span.styled(method, methodStyle(method).bold()),
                 Span.raw(" " + probePathState.text() + " ")));
 
-        Block block = Block.builder().borderType(BorderType.ROUNDED).title(title).build();
+        Block block = Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(title).build();
         frame.renderWidget(block, area);
 
         int innerX = area.left() + 2;
@@ -896,8 +928,8 @@ class HttpTab implements MonitorTab {
         FormHelper.renderLabel(frame, innerX, row, labelW, "Method:", probeField == PROBE_METHOD);
         Rect methodArea = new Rect(innerX + labelW, row, fieldW, 1);
         Style methodSt = methodStyle(method);
-        String leftArr = probeField == PROBE_METHOD ? "◀ " : "  ";
-        String rightArr = probeField == PROBE_METHOD ? " ▶" : "";
+        String leftArr = probeField == PROBE_METHOD ? TuiIcons.ARROW_LEFT + " " : "  ";
+        String rightArr = probeField == PROBE_METHOD ? " " + TuiIcons.ARROW_RIGHT : "";
         frame.renderWidget(Paragraph.from(Line.from(
                 Span.styled(leftArr, methodSt),
                 Span.styled(method, methodSt.bold()),
@@ -1018,7 +1050,7 @@ class HttpTab implements MonitorTab {
             frame.renderWidget(
                     Paragraph.builder()
                             .text(Text.from(Line.from(Span.styled(placeholder, Style.EMPTY.dim()))))
-                            .block(Block.builder().borderType(BorderType.ROUNDED).title(title).build())
+                            .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(title).build())
                             .build(),
                     area);
             return;
@@ -1052,7 +1084,7 @@ class HttpTab implements MonitorTab {
         frame.renderWidget(
                 Paragraph.builder()
                         .text(Text.from(lines))
-                        .block(Block.builder().borderType(BorderType.ROUNDED).title(title).build())
+                        .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(title).build())
                         .build(),
                 area);
     }
@@ -1065,7 +1097,7 @@ class HttpTab implements MonitorTab {
                     Paragraph.builder()
                             .text(Text.from(Line.from(
                                     Span.styled(" No requests yet", Style.EMPTY.dim()))))
-                            .block(Block.builder().borderType(BorderType.ROUNDED).title(title).build())
+                            .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(title).build())
                             .build(),
                     area);
             return;
@@ -1087,7 +1119,7 @@ class HttpTab implements MonitorTab {
         for (int i = start; i < end; i++) {
             ProbeHistoryEntry entry = probeHistory.get(i);
             boolean selected = probeField == PROBE_HISTORY && i == probeHistoryIndex;
-            String pointer = selected ? "► " : "  ";
+            String pointer = selected ? TuiIcons.POINTER + " " : "  ";
             String methodStr = String.format("%-8s", entry.method);
             String statusStr = entry.error ? "ERR" : entry.statusText;
             String elapsedStr = entry.elapsed > 0 ? entry.elapsed + "ms" : "";
@@ -1108,7 +1140,7 @@ class HttpTab implements MonitorTab {
         frame.renderWidget(
                 Paragraph.builder()
                         .text(Text.from(lines))
-                        .block(Block.builder().borderType(BorderType.ROUNDED).title(title).build())
+                        .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(title).build())
                         .build(),
                 area);
     }
@@ -1175,36 +1207,6 @@ class HttpTab implements MonitorTab {
         return result;
     }
 
-    private void renderServerInfo(Frame frame, Rect area, IntegrationInfo info, List<HttpEndpointInfo> visible) {
-        List<Span> spans = new ArrayList<>();
-        if (info.httpServer != null) {
-            spans.add(Span.styled(" Server: ", Style.EMPTY.fg(Color.YELLOW).bold()));
-            spans.add(Span.styled(info.httpServer, Style.EMPTY.fg(Color.CYAN)));
-            spans.add(Span.raw("    "));
-        }
-        long restCount = info.httpEndpoints.stream().filter(e -> e.fromRest && !e.specification).count();
-        long specCount = info.httpEndpoints.stream().filter(e -> e.specification).count();
-        long httpCount = info.httpEndpoints.stream().filter(e -> !e.fromRest && !e.management).count();
-        long mgmtCount = info.httpEndpoints.stream().filter(e -> e.management).count();
-        if (restCount > 0) {
-            spans.add(Span.styled("REST: ", Style.EMPTY.fg(Color.GREEN)));
-            spans.add(Span.raw(restCount + "  "));
-        }
-        if (specCount > 0) {
-            spans.add(Span.styled("Spec: ", Style.EMPTY.fg(Color.MAGENTA)));
-            spans.add(Span.raw(specCount + "  "));
-        }
-        if (httpCount > 0) {
-            spans.add(Span.styled("HTTP: ", Style.EMPTY.fg(Color.CYAN)));
-            spans.add(Span.raw(httpCount + "  "));
-        }
-        if (mgmtCount > 0) {
-            spans.add(Span.styled("Mgmt: ", Style.EMPTY.fg(Color.YELLOW).dim()));
-            spans.add(Span.raw(mgmtCount + ""));
-        }
-        frame.renderWidget(Paragraph.from(Line.from(spans)), area);
-    }
-
     static Style methodStyle(String method) {
         if (method == null) {
             return Style.EMPTY;
@@ -1220,7 +1222,43 @@ class HttpTab implements MonitorTab {
         };
     }
 
-    private void renderTable(Frame frame, Rect area, List<HttpEndpointInfo> visible) {
+    private Title buildTableTitle(IntegrationInfo info, List<HttpEndpointInfo> visible) {
+        List<Span> spans = new ArrayList<>();
+        spans.add(Span.raw(" HTTP Services [" + visible.size() + "]"));
+        if (info.httpServer != null) {
+            spans.add(Span.raw("  "));
+            spans.add(Span.styled("Server: ", Style.EMPTY.fg(Color.YELLOW).bold()));
+            spans.add(Span.styled(info.httpServer, Style.EMPTY.fg(Color.CYAN)));
+        }
+        long restCount = info.httpEndpoints.stream().filter(e -> e.fromRest && !e.specification).count();
+        long specCount = info.httpEndpoints.stream().filter(e -> e.specification).count();
+        long httpCount = info.httpEndpoints.stream().filter(e -> !e.fromRest && !e.management).count();
+        long mgmtCount = info.httpEndpoints.stream().filter(e -> e.management).count();
+        if (restCount > 0) {
+            spans.add(Span.raw("  "));
+            spans.add(Span.styled("REST: ", Style.EMPTY.fg(Color.GREEN)));
+            spans.add(Span.raw(restCount + ""));
+        }
+        if (specCount > 0) {
+            spans.add(Span.raw("  "));
+            spans.add(Span.styled("Spec: ", Style.EMPTY.fg(Color.MAGENTA)));
+            spans.add(Span.raw(specCount + ""));
+        }
+        if (httpCount > 0) {
+            spans.add(Span.raw("  "));
+            spans.add(Span.styled("HTTP: ", Style.EMPTY.fg(Color.CYAN)));
+            spans.add(Span.raw(httpCount + ""));
+        }
+        if (mgmtCount > 0) {
+            spans.add(Span.raw("  "));
+            spans.add(Span.styled("Mgmt: ", Style.EMPTY.fg(Color.YELLOW).dim()));
+            spans.add(Span.raw(mgmtCount + ""));
+        }
+        spans.add(Span.raw(" "));
+        return Title.from(Line.from(spans));
+    }
+
+    private void renderTable(Frame frame, Rect area, List<HttpEndpointInfo> visible, IntegrationInfo info) {
         List<Row> rows = new ArrayList<>();
         for (HttpEndpointInfo ep : visible) {
             String method = ep.method != null ? ep.method : "";
@@ -1253,7 +1291,7 @@ class HttpTab implements MonitorTab {
                             "Stopped".equals(state) ? Style.EMPTY.fg(Color.LIGHT_RED) : Style.EMPTY))));
         }
 
-        String title = String.format(" HTTP Services [%d] sort:%s ", visible.size(), sort);
+        Title title = buildTableTitle(info, visible);
 
         Row header = Row.from(
                 Cell.from(Span.styled(sortLabel("METHOD", "method"), sortStyle("method"))),
@@ -1274,13 +1312,15 @@ class HttpTab implements MonitorTab {
                         Constraint.length(30),
                         Constraint.length(30),
                         Constraint.length(15),
-                        Constraint.length(8))
-                .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
+                        Constraint.length(9))
+                .highlightStyle(Theme.selectionBg())
                 .highlightSpacing(Table.HighlightSpacing.ALWAYS)
-                .block(Block.builder().borderType(BorderType.ROUNDED).title(title).build())
+                .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(title).build())
                 .build();
 
+        lastTableArea = area;
         frame.renderStatefulWidget(table, area, tableState);
+        renderScrollbar(frame, visible.size());
     }
 
     private void renderDetail(Frame frame, Rect area, List<HttpEndpointInfo> visible) {
@@ -1291,7 +1331,7 @@ class HttpTab implements MonitorTab {
                             .text(Text.from(Line.from(
                                     Span.styled(" Select an endpoint to view details",
                                             Style.EMPTY.dim()))))
-                            .block(Block.builder().borderType(BorderType.ROUNDED)
+                            .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
                                     .title(" Detail ").build())
                             .build(),
                     area);
@@ -1350,7 +1390,7 @@ class HttpTab implements MonitorTab {
         frame.renderWidget(
                 Paragraph.builder()
                         .text(Text.from(lines))
-                        .block(Block.builder().borderType(BorderType.ROUNDED).title(detailTitle).build())
+                        .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(detailTitle).build())
                         .build(),
                 area);
     }
@@ -1523,17 +1563,9 @@ class HttpTab implements MonitorTab {
         frame.renderWidget(
                 Paragraph.builder()
                         .text(Text.from(visible))
-                        .block(Block.builder().borderType(BorderType.ROUNDED).title(title).build())
+                        .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(title).build())
                         .build(),
                 area);
-    }
-
-    private String sortLabel(String label, String column) {
-        return MonitorContext.sortLabel(label, column, sort, sortReversed);
-    }
-
-    private Style sortStyle(String column) {
-        return MonitorContext.sortStyle(column, sort);
     }
 
     @Override
@@ -1555,6 +1587,11 @@ class HttpTab implements MonitorTab {
             List<FormHelper.HeaderEntry> headers, String body,
             int statusCode, long elapsed,
             String statusText, boolean error) {
+    }
+
+    @Override
+    public String description() {
+        return "HTTP endpoint probe — send requests and inspect responses";
     }
 
     @Override
@@ -1624,6 +1661,23 @@ class HttpTab implements MonitorTab {
                 - `S` — reverse sort order
                 - `Esc` — close probe view
                 """;
+    }
+
+    @Override
+    public boolean setInputValue(String field, String value) {
+        if (!probeMode) {
+            return false;
+        }
+        String v = value != null ? value : "";
+        if ("path".equals(field)) {
+            probePathState.setText(v);
+            return true;
+        }
+        if ("body".equals(field)) {
+            probeBodyState.setText(v);
+            return true;
+        }
+        return false;
     }
 
     @Override

@@ -1033,7 +1033,7 @@ public interface EhcacheEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final EhcacheHeaderNameBuilder INSTANCE = new EhcacheHeaderNameBuilder();
+        public static final EhcacheHeaderNameBuilder INSTANCE = new EhcacheHeaderNameBuilder();
 
         /**
          * The operation to be performed on the cache, valid options are: CLEAR

@@ -21,13 +21,13 @@ import org.apache.camel.StaticService;
 public interface MapStructMapperFinder extends StaticService {
 
     /**
-     * Package name(s) where Camel should discover Mapstruct mapping classes. Multiple package names can be separated by
+     * Package name(s) where Camel should discover MapStruct mapping classes. Multiple package names can be separated by
      * comma.
      */
     void setMapperPackageName(String mapperPackageName);
 
     /**
-     * Package name(s) where Camel should discover Mapstruct mapping classes. Multiple package names can be separated by
+     * Package name(s) where Camel should discover MapStruct mapping classes. Multiple package names can be separated by
      * comma.
      */
     String getMapperPackageName();

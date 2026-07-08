@@ -156,6 +156,41 @@ public interface KafkaEndpointBuilderFactory {
             return this;
         }
         /**
+         * The period of time in milliseconds after which we force a refresh of
+         * metadata even if we haven't seen any partition leadership changes to
+         * proactively discover any new brokers or partitions.
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Default: 300000
+         * Group: common
+         * 
+         * @param metadataMaxAgeMs the value to set
+         * @return the dsl builder
+         */
+        default KafkaEndpointConsumerBuilder metadataMaxAgeMs(Integer metadataMaxAgeMs) {
+            doSetProperty("metadataMaxAgeMs", metadataMaxAgeMs);
+            return this;
+        }
+        /**
+         * The period of time in milliseconds after which we force a refresh of
+         * metadata even if we haven't seen any partition leadership changes to
+         * proactively discover any new brokers or partitions.
+         * 
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
+         * 
+         * Default: 300000
+         * Group: common
+         * 
+         * @param metadataMaxAgeMs the value to set
+         * @return the dsl builder
+         */
+        default KafkaEndpointConsumerBuilder metadataMaxAgeMs(String metadataMaxAgeMs) {
+            doSetProperty("metadataMaxAgeMs", metadataMaxAgeMs);
+            return this;
+        }
+        /**
          * The maximum amount of time in milliseconds to wait when reconnecting
          * to a broker that has repeatedly failed to connect. If provided, the
          * backoff per host will increase exponentially for each consecutive
@@ -2471,6 +2506,41 @@ public interface KafkaEndpointBuilderFactory {
             return this;
         }
         /**
+         * The period of time in milliseconds after which we force a refresh of
+         * metadata even if we haven't seen any partition leadership changes to
+         * proactively discover any new brokers or partitions.
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Default: 300000
+         * Group: common
+         * 
+         * @param metadataMaxAgeMs the value to set
+         * @return the dsl builder
+         */
+        default KafkaEndpointProducerBuilder metadataMaxAgeMs(Integer metadataMaxAgeMs) {
+            doSetProperty("metadataMaxAgeMs", metadataMaxAgeMs);
+            return this;
+        }
+        /**
+         * The period of time in milliseconds after which we force a refresh of
+         * metadata even if we haven't seen any partition leadership changes to
+         * proactively discover any new brokers or partitions.
+         * 
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
+         * 
+         * Default: 300000
+         * Group: common
+         * 
+         * @param metadataMaxAgeMs the value to set
+         * @return the dsl builder
+         */
+        default KafkaEndpointProducerBuilder metadataMaxAgeMs(String metadataMaxAgeMs) {
+            doSetProperty("metadataMaxAgeMs", metadataMaxAgeMs);
+            return this;
+        }
+        /**
          * The maximum amount of time in milliseconds to wait when reconnecting
          * to a broker that has repeatedly failed to connect. If provided, the
          * backoff per host will increase exponentially for each consecutive
@@ -3107,41 +3177,6 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointProducerBuilder maxRequestSize(String maxRequestSize) {
             doSetProperty("maxRequestSize", maxRequestSize);
-            return this;
-        }
-        /**
-         * The period of time in milliseconds after which we force a refresh of
-         * metadata even if we haven't seen any partition leadership changes to
-         * proactively discover any new brokers or partitions.
-         * 
-         * The option is a: <code>java.lang.Integer</code> type.
-         * 
-         * Default: 300000
-         * Group: producer
-         * 
-         * @param metadataMaxAgeMs the value to set
-         * @return the dsl builder
-         */
-        default KafkaEndpointProducerBuilder metadataMaxAgeMs(Integer metadataMaxAgeMs) {
-            doSetProperty("metadataMaxAgeMs", metadataMaxAgeMs);
-            return this;
-        }
-        /**
-         * The period of time in milliseconds after which we force a refresh of
-         * metadata even if we haven't seen any partition leadership changes to
-         * proactively discover any new brokers or partitions.
-         * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
-         * 
-         * Default: 300000
-         * Group: producer
-         * 
-         * @param metadataMaxAgeMs the value to set
-         * @return the dsl builder
-         */
-        default KafkaEndpointProducerBuilder metadataMaxAgeMs(String metadataMaxAgeMs) {
-            doSetProperty("metadataMaxAgeMs", metadataMaxAgeMs);
             return this;
         }
         /**
@@ -4768,6 +4803,41 @@ public interface KafkaEndpointBuilderFactory {
             return this;
         }
         /**
+         * The period of time in milliseconds after which we force a refresh of
+         * metadata even if we haven't seen any partition leadership changes to
+         * proactively discover any new brokers or partitions.
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Default: 300000
+         * Group: common
+         * 
+         * @param metadataMaxAgeMs the value to set
+         * @return the dsl builder
+         */
+        default KafkaEndpointBuilder metadataMaxAgeMs(Integer metadataMaxAgeMs) {
+            doSetProperty("metadataMaxAgeMs", metadataMaxAgeMs);
+            return this;
+        }
+        /**
+         * The period of time in milliseconds after which we force a refresh of
+         * metadata even if we haven't seen any partition leadership changes to
+         * proactively discover any new brokers or partitions.
+         * 
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
+         * 
+         * Default: 300000
+         * Group: common
+         * 
+         * @param metadataMaxAgeMs the value to set
+         * @return the dsl builder
+         */
+        default KafkaEndpointBuilder metadataMaxAgeMs(String metadataMaxAgeMs) {
+            doSetProperty("metadataMaxAgeMs", metadataMaxAgeMs);
+            return this;
+        }
+        /**
          * The maximum amount of time in milliseconds to wait when reconnecting
          * to a broker that has repeatedly failed to connect. If provided, the
          * backoff per host will increase exponentially for each consecutive
@@ -5728,7 +5798,7 @@ public interface KafkaEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final KafkaHeaderNameBuilder INSTANCE = new KafkaHeaderNameBuilder();
+        public static final KafkaHeaderNameBuilder INSTANCE = new KafkaHeaderNameBuilder();
 
         /**
          * Explicitly specify the partition.

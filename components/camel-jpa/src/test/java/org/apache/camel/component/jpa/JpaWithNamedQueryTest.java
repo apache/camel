@@ -17,7 +17,6 @@
 package org.apache.camel.component.jpa;
 
 import java.util.List;
-import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import jakarta.persistence.EntityManager;
@@ -41,6 +40,7 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -56,8 +56,7 @@ public class JpaWithNamedQueryTest {
     protected EntityManager entityManager;
     protected TransactionTemplate transactionTemplate;
     protected Consumer consumer;
-    protected Exchange receivedExchange;
-    protected CountDownLatch latch = new CountDownLatch(1);
+    protected volatile Exchange receivedExchange;
     protected String entityName = MultiSteps.class.getName();
     protected String queryText = "select o from " + entityName + " o where o.step = 1";
 
@@ -99,52 +98,51 @@ public class JpaWithNamedQueryTest {
                 LOG.info("Received exchange: {}", e.getIn());
                 // make defensive copy
                 receivedExchange = e.copy();
-                latch.countDown();
             }
         });
         consumer.start();
 
-        assertTrue(latch.await(10, TimeUnit.SECONDS));
+        await().atMost(10, TimeUnit.SECONDS)
+                .untilAsserted(() -> assertReceivedResult(receivedExchange));
 
-        assertReceivedResult(receivedExchange);
+        // lets now test that the database is updated.
+        // the consumer updates the row from within its own transaction, so we poll until that
+        // transaction has committed - we cannot read it while that transaction is still active
+        // (org.apache.openjpa.persistence.InvalidStateException: This operation cannot be performed
+        // while a Transaction is active).
+        await().atMost(10, TimeUnit.SECONDS).ignoreExceptions().untilAsserted(
+                () -> transactionTemplate.execute(new TransactionCallback<Object>() {
+                    public Object doInTransaction(TransactionStatus status) {
+                        // make use of the EntityManager having the relevant persistence-context
+                        EntityManager entityManager2
+                                = receivedExchange.getIn().getHeader(JpaConstants.ENTITY_MANAGER, EntityManager.class);
+                        if (!entityManager2.isOpen()) {
+                            entityManager2 = endpoint.getEntityManagerFactory().createEntityManager();
+                        }
+                        entityManager2.joinTransaction();
 
-        // lets now test that the database is updated
-        // we need to sleep as we will be invoked from inside the transaction!
-        // org.apache.openjpa.persistence.InvalidStateException: This operation cannot be performed while a Transaction is active.
-        Thread.sleep(2000);
+                        // now lets assert that there are still 2 entities left
+                        List<?> rows = entityManager2.createQuery("select x from MultiSteps x").getResultList();
+                        assertEquals(2, rows.size(), "Number of entities: " + rows);
 
-        transactionTemplate.execute(new TransactionCallback<Object>() {
-            public Object doInTransaction(TransactionStatus status) {
-                // make use of the EntityManager having the relevant persistence-context
-                EntityManager entityManager2
-                        = receivedExchange.getIn().getHeader(JpaConstants.ENTITY_MANAGER, EntityManager.class);
-                if (!entityManager2.isOpen()) {
-                    entityManager2 = endpoint.getEntityManagerFactory().createEntityManager();
-                }
-                entityManager2.joinTransaction();
+                        int counter = 1;
+                        for (Object rowObj : rows) {
+                            assertTrue(rowObj instanceof MultiSteps, "Rows are not instances of MultiSteps");
+                            final MultiSteps row = (MultiSteps) rowObj;
+                            LOG.info("entity: {} = {}", counter++, row);
 
-                // now lets assert that there are still 2 entities left
-                List<?> rows = entityManager2.createQuery("select x from MultiSteps x").getResultList();
-                assertEquals(2, rows.size(), "Number of entities: " + rows);
-
-                int counter = 1;
-                for (Object rowObj : rows) {
-                    assertTrue(rowObj instanceof MultiSteps, "Rows are not instances of MultiSteps");
-                    final MultiSteps row = (MultiSteps) rowObj;
-                    LOG.info("entity: {} = {}", counter++, row);
-
-                    if (row.getAddress().equals("foo@bar.com")) {
-                        LOG.info("Found updated row: {}", row);
-                        assertEquals(getUpdatedStepValue(), row.getStep(), "Updated row step for: " + row);
-                    } else {
-                        // dummy row
-                        assertEquals(4, row.getStep(), "dummy row step for: " + row);
-                        assertEquals("cheese", row.getAddress(), "Not the expected row: " + row);
+                            if (row.getAddress().equals("foo@bar.com")) {
+                                LOG.info("Found updated row: {}", row);
+                                assertEquals(getUpdatedStepValue(), row.getStep(), "Updated row step for: " + row);
+                            } else {
+                                // dummy row
+                                assertEquals(4, row.getStep(), "dummy row step for: " + row);
+                                assertEquals("cheese", row.getAddress(), "Not the expected row: " + row);
+                            }
+                        }
+                        return null;
                     }
-                }
-                return null;
-            }
-        });
+                }));
 
         JpaConsumer jpaConsumer = (JpaConsumer) consumer;
         assertURIQueryOption(jpaConsumer);

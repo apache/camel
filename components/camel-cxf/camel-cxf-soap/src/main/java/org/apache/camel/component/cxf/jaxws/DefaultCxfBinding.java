@@ -95,9 +95,6 @@ import org.apache.cxf.service.model.BindingOperationInfo;
 import org.apache.cxf.service.model.MessagePartInfo;
 import org.apache.cxf.service.model.OperationInfo;
 import org.apache.cxf.staxutils.StaxUtils;
-import org.apache.wss4j.dom.engine.WSSecurityEngineResult;
-import org.apache.wss4j.dom.handler.WSHandlerConstants;
-import org.apache.wss4j.dom.handler.WSHandlerResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -389,80 +386,32 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
         }
     }
 
+    private static final boolean WSS4J_AVAILABLE;
+    static {
+        boolean available;
+        try {
+            Class.forName("org.apache.wss4j.dom.handler.WSHandlerConstants");
+            available = true;
+        } catch (ClassNotFoundException e) {
+            available = false;
+        }
+        WSS4J_AVAILABLE = available;
+    }
+
     private static void addInboundX509CertificatesToSubject(Message cxfMessage, Subject subject) {
-        if (cxfMessage == null || subject == null) {
+        if (!WSS4J_AVAILABLE || cxfMessage == null || subject == null) {
             return;
         }
 
-        // If it’s read-only, don’t break the route; just skip.
         if (subject.isReadOnly()) {
             return;
         }
 
-        final Object recv = cxfMessage.get(WSHandlerConstants.RECV_RESULTS);
-        if (recv == null) {
+        Collection<X509Certificate> certs;
+        try {
+            certs = WsSecurityHelper.extractCertificates(cxfMessage);
+        } catch (NoClassDefFoundError e) {
             return;
-        }
-
-        // We only need the cert objects.
-        Collection<X509Certificate> certs = null;
-
-        if (recv instanceof Map<?, ?> map) {
-            Object v = map.get(WSSecurityEngineResult.TAG_X509_CERTIFICATES);
-
-            if (v instanceof Collection<?> coll) {
-                certs = new ArrayList<>();
-                for (Object o : coll) {
-                    if (o instanceof X509Certificate cert) {
-                        certs.add(cert);
-                    } else if (o instanceof X509Certificate[] arr) {
-                        for (X509Certificate c : arr) {
-                            if (c != null) {
-                                certs.add(c);
-                            }
-                        }
-                    }
-                }
-            } else if (v instanceof X509Certificate[] arr) {
-                certs = new ArrayList<>();
-                for (X509Certificate c : arr) {
-                    if (c != null) {
-                        certs.add(c);
-                    }
-                }
-            }
-
-        } else if (recv instanceof List<?> list) {
-            // Typical CXF case: List<WSHandlerResult>
-            if (!list.isEmpty() && list.get(0) instanceof WSHandlerResult) {
-                certs = new ArrayList<>();
-                for (Object hrObj : list) {
-                    if (!(hrObj instanceof WSHandlerResult hr)) {
-                        continue;
-                    }
-                    for (WSSecurityEngineResult r : hr.getResults()) {
-                        Object v = r.get(WSSecurityEngineResult.TAG_X509_CERTIFICATES);
-
-                        if (v instanceof X509Certificate[] arr) {
-                            for (X509Certificate c : arr) {
-                                if (c != null) {
-                                    certs.add(c);
-                                }
-                            }
-                        } else if (v instanceof X509Certificate cert) {
-                            certs.add(cert);
-                        } else {
-                            Object leaf = r.get(WSSecurityEngineResult.TAG_X509_CERTIFICATE);
-                            if (leaf instanceof X509Certificate cert) {
-                                certs.add(cert);
-                            }
-                        }
-                    }
-                }
-                if (certs.isEmpty()) {
-                    certs = null;
-                }
-            }
         }
 
         if (certs == null || certs.isEmpty()) {

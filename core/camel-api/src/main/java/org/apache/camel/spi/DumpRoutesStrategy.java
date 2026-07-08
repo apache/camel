@@ -33,7 +33,7 @@ public interface DumpRoutesStrategy extends StaticService {
     /**
      * Dump routes
      *
-     * @param format xml or yaml (json for route structure)
+     * @param format xml, yaml, or java (json for route structure)
      */
     void dumpRoutes(String format);
 

@@ -24,6 +24,7 @@ public class LanguageModel extends ArtifactModel<LanguageModel.LanguageOptionMod
     protected String modelName;
     protected String modelJavaType;
     protected final List<LanguageFunctionModel> functions = new ArrayList<>();
+    protected final List<LanguageOperatorModel> operators = new ArrayList<>();
 
     public static class LanguageOptionModel extends BaseOptionModel {
 
@@ -61,6 +62,14 @@ public class LanguageModel extends ArtifactModel<LanguageModel.LanguageOptionMod
         functions.add(function);
     }
 
+    public List<LanguageOperatorModel> getOperators() {
+        return operators;
+    }
+
+    public void addOperator(LanguageOperatorModel operator) {
+        operators.add(operator);
+    }
+
     public static class LanguageFunctionModel extends BaseOptionModel {
 
         /**
@@ -82,6 +91,16 @@ public class LanguageModel extends ArtifactModel<LanguageModel.LanguageOptionMod
          * Optional suffix for the function
          */
         private String suffix;
+
+        /**
+         * Structured parameter metadata for the function arguments.
+         */
+        private final List<FunctionParamModel> params = new ArrayList<>();
+
+        /**
+         * Usage examples for documentation and AI tooling.
+         */
+        private final List<String> examples = new ArrayList<>();
 
         public String getConstantName() {
             return constantName;
@@ -115,6 +134,119 @@ public class LanguageModel extends ArtifactModel<LanguageModel.LanguageOptionMod
 
         public void setSuffix(String suffix) {
             this.suffix = suffix;
+        }
+
+        public List<FunctionParamModel> getParams() {
+            return params;
+        }
+
+        public void addParam(FunctionParamModel param) {
+            params.add(param);
+        }
+
+        public List<String> getExamples() {
+            return examples;
+        }
+
+        public void addExample(String example) {
+            examples.add(example);
+        }
+    }
+
+    public static class LanguageOperatorModel extends BaseOptionModel {
+
+        private String constantName;
+        private String operatorKind;
+        private String operatorSyntax;
+        private int precedence;
+        private final List<String> examples = new ArrayList<>();
+
+        public String getConstantName() {
+            return constantName;
+        }
+
+        public void setConstantName(String constantName) {
+            this.constantName = constantName;
+        }
+
+        public String getOperatorKind() {
+            return operatorKind;
+        }
+
+        public void setOperatorKind(String operatorKind) {
+            this.operatorKind = operatorKind;
+        }
+
+        public String getOperatorSyntax() {
+            return operatorSyntax;
+        }
+
+        public void setOperatorSyntax(String operatorSyntax) {
+            this.operatorSyntax = operatorSyntax;
+        }
+
+        public int getPrecedence() {
+            return precedence;
+        }
+
+        public void setPrecedence(int precedence) {
+            this.precedence = precedence;
+        }
+
+        public List<String> getExamples() {
+            return examples;
+        }
+
+        public void addExample(String example) {
+            examples.add(example);
+        }
+    }
+
+    public static class FunctionParamModel {
+        private String name;
+        private String javaType;
+        private boolean required;
+        private String defaultValue;
+        private String description;
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public String getJavaType() {
+            return javaType;
+        }
+
+        public void setJavaType(String javaType) {
+            this.javaType = javaType;
+        }
+
+        public boolean isRequired() {
+            return required;
+        }
+
+        public void setRequired(boolean required) {
+            this.required = required;
+        }
+
+        public String getDefaultValue() {
+            return defaultValue;
+        }
+
+        public void setDefaultValue(String defaultValue) {
+            this.defaultValue = defaultValue;
+        }
+
+        public String getDescription() {
+            return description;
+        }
+
+        public void setDescription(String description) {
+            this.description = description;
         }
     }
 

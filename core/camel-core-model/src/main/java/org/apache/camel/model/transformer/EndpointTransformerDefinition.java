@@ -26,14 +26,17 @@ import org.apache.camel.spi.Metadata;
 /**
  * To use a Camel endpoint to perform transformation on the route level.
  */
-@Metadata(label = "transformation")
+@Metadata(label = "transformation",
+          description = "Uses a Camel endpoint to perform data type transformation by sending the message through the endpoint")
 @XmlRootElement(name = "endpointTransformer")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class EndpointTransformerDefinition extends TransformerDefinition {
 
     @XmlAttribute
+    @Metadata(description = "Reference of the Endpoint used for transformation.")
     private String ref;
     @XmlAttribute
+    @Metadata(description = "URI of the Endpoint used for transformation.")
     private String uri;
 
     public EndpointTransformerDefinition() {
@@ -54,9 +57,6 @@ public class EndpointTransformerDefinition extends TransformerDefinition {
         return ref;
     }
 
-    /**
-     * Set the reference of the Endpoint.
-     */
     public void setRef(String ref) {
         this.ref = ref;
     }
@@ -65,9 +65,6 @@ public class EndpointTransformerDefinition extends TransformerDefinition {
         return uri;
     }
 
-    /**
-     * Set the URI of the Endpoint.
-     */
     public void setUri(String uri) {
         this.uri = uri;
     }

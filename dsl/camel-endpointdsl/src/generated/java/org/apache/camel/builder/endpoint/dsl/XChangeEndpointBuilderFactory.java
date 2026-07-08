@@ -276,7 +276,7 @@ public interface XChangeEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final XChangeHeaderNameBuilder INSTANCE = new XChangeHeaderNameBuilder();
+        public static final XChangeHeaderNameBuilder INSTANCE = new XChangeHeaderNameBuilder();
 
         /**
          * The target currency.

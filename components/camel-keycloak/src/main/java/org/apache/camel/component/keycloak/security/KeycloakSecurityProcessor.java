@@ -22,6 +22,9 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
 import java.util.Base64;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.apache.camel.CamelAuthorizationException;
@@ -59,11 +62,23 @@ public class KeycloakSecurityProcessor extends DelegateProcessor {
                 throw new CamelAuthorizationException("Access token not found in exchange", exchange);
             }
 
-            if (!policy.getRequiredRolesAsList().isEmpty()) {
+            boolean rolesRequired = !policy.getRequiredRolesAsList().isEmpty();
+            boolean permissionsRequired = !policy.getRequiredPermissionsAsList().isEmpty();
+
+            // The token is always authenticated before the route runs (signature, issuer and expiry for
+            // local JWT verification, or active state and issuer for introspection). validateRoles() and
+            // validatePermissions() already authenticate the token, but they only run when roles or
+            // permissions are required; when neither is configured, authenticate here so that an invalid or
+            // unverifiable token is rejected instead of accepted. Authorization checks run after authentication.
+            if (!rolesRequired && !permissionsRequired) {
+                authenticateToken(accessToken, exchange);
+            }
+
+            if (rolesRequired) {
                 validateRoles(accessToken, exchange);
             }
 
-            if (!policy.getRequiredPermissionsAsList().isEmpty()) {
+            if (permissionsRequired) {
                 validatePermissions(accessToken, exchange);
             }
 
@@ -74,6 +89,34 @@ public class KeycloakSecurityProcessor extends DelegateProcessor {
                 throw e;
             }
             throw new CamelAuthorizationException("Authorization failed", exchange, e);
+        }
+    }
+
+    /**
+     * Authenticates the access token without applying any authorization (role or permission) checks. When token
+     * introspection is enabled the token is validated against Keycloak's introspection endpoint (active state and, when
+     * issuer validation is enabled, the issuer); otherwise the token signature, issuer and expiry are verified locally.
+     * This guarantees that an invalid or unverifiable token is rejected even when the policy does not require any roles
+     * or permissions.
+     */
+    private void authenticateToken(String accessToken, Exchange exchange) throws Exception {
+        if (policy.isUseTokenIntrospection() && policy.getTokenIntrospector() != null) {
+            KeycloakTokenIntrospector.IntrospectionResult introspectionResult
+                    = KeycloakSecurityHelper.introspectToken(accessToken, policy.getTokenIntrospector());
+
+            if (!introspectionResult.isActive()) {
+                throw new CamelAuthorizationException("Token is not active (may be revoked or expired)", exchange);
+            }
+
+            if (policy.isValidateIssuer()) {
+                validateIssuerFromIntrospection(introspectionResult, exchange);
+            }
+
+            if (!policy.getExpectedAudienceAsList().isEmpty()) {
+                validateAudienceFromIntrospection(introspectionResult, exchange);
+            }
+        } else {
+            parseAndVerifyToken(accessToken, exchange);
         }
     }
 
@@ -236,6 +279,11 @@ public class KeycloakSecurityProcessor extends DelegateProcessor {
                     validateIssuerFromIntrospection(introspectionResult, exchange);
                 }
 
+                // Validate audience from introspection result if configured
+                if (!policy.getExpectedAudienceAsList().isEmpty()) {
+                    validateAudienceFromIntrospection(introspectionResult, exchange);
+                }
+
                 userRoles = KeycloakSecurityHelper.extractRolesFromIntrospection(
                         introspectionResult, policy.getRealm(), policy.getClientId());
             } else {
@@ -286,10 +334,11 @@ public class KeycloakSecurityProcessor extends DelegateProcessor {
             publicKey = policy.getPublicKey();
         }
 
-        // Verify token with public key and issuer validation
+        // Verify token with public key, issuer and (optionally) audience validation
         if (publicKey != null) {
             try {
-                return KeycloakSecurityHelper.parseAndVerifyAccessToken(accessToken, publicKey, expectedIssuer);
+                return KeycloakSecurityHelper.parseAndVerifyAccessToken(
+                        accessToken, publicKey, expectedIssuer, policy.getExpectedAudienceAsList());
             } catch (VerificationException e) {
                 LOG.error("Token verification failed: {}", e.getMessage());
                 throw new CamelAuthorizationException("Token verification failed: " + e.getMessage(), exchange, e);
@@ -331,6 +380,40 @@ public class KeycloakSecurityProcessor extends DelegateProcessor {
         LOG.debug("Issuer validation from introspection successful: {}", expectedIssuer);
     }
 
+    /**
+     * Validates the audience from an introspection result. Unlike issuer validation, a token whose "aud" claim is
+     * missing is rejected: the whole point of this check is to reject tokens that were not issued for this policy's
+     * client(s).
+     */
+    private void validateAudienceFromIntrospection(
+            KeycloakTokenIntrospector.IntrospectionResult introspectionResult, Exchange exchange)
+            throws CamelAuthorizationException {
+        List<String> expectedAudiences = policy.getExpectedAudienceAsList();
+        Object audienceClaim = introspectionResult.getClaim("aud");
+
+        Set<String> actualAudiences = new HashSet<>();
+        if (audienceClaim instanceof Collection<?> audienceCollection) {
+            for (Object audience : audienceCollection) {
+                if (audience instanceof String s) {
+                    actualAudiences.add(s);
+                }
+            }
+        } else if (audienceClaim instanceof String s) {
+            actualAudiences.add(s);
+        }
+
+        if (!actualAudiences.containsAll(expectedAudiences)) {
+            LOG.error("SECURITY: Token audience mismatch from introspection - expected all of '{}' but got '{}'",
+                    expectedAudiences, actualAudiences);
+            throw new CamelAuthorizationException(
+                    String.format("Token audience mismatch: expected all of '%s' but got '%s'",
+                            expectedAudiences, actualAudiences),
+                    exchange);
+        }
+
+        LOG.debug("Audience validation from introspection successful: {}", expectedAudiences);
+    }
+
     private void validatePermissions(String accessToken, Exchange exchange) throws Exception {
         try {
             Set<String> userPermissions;
@@ -348,6 +431,11 @@ public class KeycloakSecurityProcessor extends DelegateProcessor {
                 // Validate issuer from introspection result if enabled
                 if (policy.isValidateIssuer()) {
                     validateIssuerFromIntrospection(introspectionResult, exchange);
+                }
+
+                // Validate audience from introspection result if configured
+                if (!policy.getExpectedAudienceAsList().isEmpty()) {
+                    validateAudienceFromIntrospection(introspectionResult, exchange);
                 }
 
                 userPermissions = KeycloakSecurityHelper.extractPermissionsFromIntrospection(introspectionResult);

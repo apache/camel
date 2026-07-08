@@ -3,3 +3,7 @@
 * xref:languages:index.adoc[Languages]
 <!-- inject:adoc -->
 <!-- endinject -->
+** xref:simple-advanced.adoc[Simple - Advanced Features]
+** xref:simple-functions.adoc[Simple - Built-in Functions]
+** xref:simple-ognl.adoc[Simple - OGNL Expressions]
+** xref:simple-operators.adoc[Simple - Built-in Operators]

@@ -511,7 +511,7 @@ public interface KubernetesServiceAccountsEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final KubernetesServiceAccountsHeaderNameBuilder INSTANCE = new KubernetesServiceAccountsHeaderNameBuilder();
+        public static final KubernetesServiceAccountsHeaderNameBuilder INSTANCE = new KubernetesServiceAccountsHeaderNameBuilder();
 
         /**
          * The Producer operation.

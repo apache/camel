@@ -27,8 +27,8 @@
 
     <!-- START SNIPPET: e1 -->
     <!-- this example uses JDBC so we define a data source -->
-    <jdbc:embedded-database id="dataSource" type="DERBY">
-    	<jdbc:script location="classpath:sql/init.sql" />
+    <jdbc:embedded-database id="dataSource" type="H2">
+        <jdbc:script location="classpath:sql/init.sql"/>
     </jdbc:embedded-database>
 
     <!-- spring transaction manager -->

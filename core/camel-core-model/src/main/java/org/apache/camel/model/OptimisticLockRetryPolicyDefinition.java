@@ -26,25 +26,31 @@ import org.apache.camel.spi.Metadata;
 /**
  * To configure optimistic locking
  */
-@Metadata(label = "configuration")
+@Metadata(label = "configuration",
+          description = "Configures the retry policy for optimistic locking in the Aggregate EIP, controlling retry attempts and delays on version conflicts")
 @XmlRootElement(name = "optimisticLockRetryPolicy")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class OptimisticLockRetryPolicyDefinition {
 
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Integer")
+    @Metadata(javaType = "java.lang.Integer",
+              description = "Sets the maximum number of retries before giving up on acquiring the optimistic lock.")
     private String maximumRetries;
     @XmlAttribute
-    @Metadata(javaType = "java.time.Duration", defaultValue = "50")
+    @Metadata(javaType = "java.time.Duration", defaultValue = "50",
+              description = "Sets the delay in milliseconds between retry attempts when the optimistic lock fails.")
     private String retryDelay;
     @XmlAttribute
-    @Metadata(javaType = "java.time.Duration", defaultValue = "1000")
+    @Metadata(javaType = "java.time.Duration", defaultValue = "1000",
+              description = "Sets the upper bound on retry delay in milliseconds to prevent delays from growing unbounded when using exponential or random backoff.")
     private String maximumRetryDelay;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "true")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "true",
+              description = "Whether to enable exponential backoff, so each subsequent retry delay is doubled until the maximum retry delay is reached.")
     private String exponentialBackOff;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean",
+              description = "Whether to enable random backoff, which uses a random delay between 0 and the computed retry delay to avoid thundering herd problems.")
     private String randomBackOff;
 
     public OptimisticLockRetryPolicyDefinition() {

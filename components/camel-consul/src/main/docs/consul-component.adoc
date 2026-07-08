@@ -7,8 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
-//Manually maintained attributes
-:camel-spring-boot-name: consul
 
 *Since Camel {since}*
 
@@ -20,19 +18,19 @@ Maven users will need to add the following dependency to their pom.xml
 for this component:
 
 [source,xml]
--------------------------------------------------
+----
     <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-consul</artifactId>
         <version>${camel-version}</version>
     </dependency>
--------------------------------------------------
+----
 
 == URI format
 
----------------------------------------
+----
 consul://domain?[options]
----------------------------------------
+----
 
 // component options: START
 include::partial$component-configure-options.adoc[]
@@ -68,7 +66,7 @@ As an example, we will show how to use the `ConsulAgentProducer` to register a s
 
 Registering and unregistering are examples for possible actions against the Consul agent api.
 
-The desired action can be defined by setting the header `ConsulConstants.CONSUL_ACTION` to a value from the `ConsulXXXActions` interface of the respective Consul api. E.g.  `ConsulAgentActions` contains the actions for the agent api.
+The desired action can be defined by setting the header `CamelConsulAction` to a value from the respective Consul api.
 
 If you set `CONSUL_ACTION` to `ConsulAgentActions.REGISTER`, the agent action `REGISTER` will be executed.
 
@@ -78,6 +76,7 @@ Which producer action invoked by which consul api is defined by the respective p
 E.g., the `ConsulAgentProducer` maps `ConsulAgentActions.REGISTER` to an invocation of `AgentClient.register`.
 ====
 
+._Java-only: route using ImmutableRegistration builder and Java constants_
 [source,java]
 ----
 from("direct:registerFooService")
@@ -87,7 +86,7 @@ from("direct:registerFooService")
         .address("localhost")
         .port(80)
         .build())
-    .setHeader(ConsulConstants.CONSUL_ACTION, constant(ConsulAgentActions.REGISTER))
+    .setHeader("CamelConsulAction", constant("REGISTER"))
     .to("consul:agent");
 ----
 
@@ -101,6 +100,7 @@ consul:agent?action=REGISTER
 
 You can employ a `ServiceRegistrationRoutePolicy` to register Camel routes as services with Consul automatically.
 
+._Java-only: route with programmatic routePolicy and Java constants_
 [source,java]
 ----
 from("jetty:http://0.0.0.0:8080/service/endpoint").routeId("foo-1")
@@ -109,6 +109,3 @@ from("jetty:http://0.0.0.0:8080/service/endpoint").routeId("foo-1")
     .routePolicy(new ServiceRegistrationRoutePolicy())
 ...
 ----
-
-
-include::spring-boot:partial$starter.adoc[]

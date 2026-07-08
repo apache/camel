@@ -1,7 +1,7 @@
 = Set Header EIP
 :doctitle: Set Header
 :shortname: setHeader
-:description: Sets the value of a message header
+:description: Sets a message header to a value computed by an expression
 :since: 
 :supportlevel: Stable
 :tabs-sync-option:

@@ -7,8 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Only producer is supported
-//Manually maintained attributes
-:camel-spring-boot-name: jsonata
 
 *Since Camel {since}*
 
@@ -22,21 +20,21 @@ Maven users will need to add the following dependency to
 their `pom.xml` for this component:
 
 [source,xml]
-------------------------------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-jsonata</artifactId>
     <version>x.x.x</version>
     <!-- use the same version as your Camel core version -->
 </dependency>
-------------------------------------------------------------
+----
  
 
 == URI format
 
------------------------
+----
 jsonata:specName[?options]
------------------------
+----
 
 Where *specName* is the classpath-local URI of the specification to
 invoke; or the complete URL of the remote specification
@@ -55,37 +53,130 @@ include::partial$component-endpoint-headers.adoc[]
 
 For example, you could use something like:
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------
-from("activemq:My.Queue").
-  to("jsonata:com/acme/MyResponse.json");
---------------------------------------
+----
+from("activemq:My.Queue")
+    .to("jsonata:com/acme/MyResponse.json");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="activemq:My.Queue"/>
+  <to uri="jsonata:com/acme/MyResponse.json"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: activemq:My.Queue
+      steps:
+        - to:
+            uri: jsonata:com/acme/MyResponse.json
+----
+====
 
 And a file-based resource:
 
+[tabs]
+====
+Java::
++
 [source,java]
----------------------------------------------------------------
-from("activemq:My.Queue").
-  to("jsonata:file://myfolder/MyResponse.json?contentCache=true").
-  to("activemq:Another.Queue");
----------------------------------------------------------------
+----
+from("activemq:My.Queue")
+    .to("jsonata:file://myfolder/MyResponse.json?contentCache=true")
+    .to("activemq:Another.Queue");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="activemq:My.Queue"/>
+  <to uri="jsonata:file://myfolder/MyResponse.json?contentCache=true"/>
+  <to uri="activemq:Another.Queue"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: activemq:My.Queue
+      steps:
+        - to:
+            uri: jsonata:file://myfolder/MyResponse.json
+            parameters:
+              contentCache: true
+        - to:
+            uri: activemq:Another.Queue
+----
+====
 
 === Frame bindings
 
 It is possible to configure custom functions that can be called from Jsonata. For example you might want to be able to
 inject environment variables:
 
+[tabs]
+====
+Java::
++
 [source,java]
----------------------------------------------------------------
-from("activemq:My.Queue").
-  to("jsonata:file://myfolder/MyResponse.json?contentCache=true&frameBinding=#customBindings").
-  to("activemq:Another.Queue");
----------------------------------------------------------------
+----
+from("activemq:My.Queue")
+    .to("jsonata:file://myfolder/MyResponse.json?contentCache=true&frameBinding=#customBindings")
+    .to("activemq:Another.Queue");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="activemq:My.Queue"/>
+  <to uri="jsonata:file://myfolder/MyResponse.json?contentCache=true&amp;frameBinding=#customBindings"/>
+  <to uri="activemq:Another.Queue"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: activemq:My.Queue
+      steps:
+        - to:
+            uri: jsonata:file://myfolder/MyResponse.json
+            parameters:
+              contentCache: true
+              frameBinding: "#customBindings"
+        - to:
+            uri: activemq:Another.Queue
+----
+====
 
 A custom binding might look like the following:
 
+._Java-only: implementing a custom JsonataFrameBinding_
 [source,java]
----------------------------------------------------------------
+----
 @NoArgsConstructor
 public class CustomJsonataFrameBinding implements JsonataFrameBinding {
   @Override
@@ -93,6 +184,4 @@ public class CustomJsonataFrameBinding implements JsonataFrameBinding {
     frame.bind("env", (String s) -> System.getenv(s));
   }
 }
----------------------------------------------------------------
-
-include::spring-boot:partial$starter.adoc[]
+----

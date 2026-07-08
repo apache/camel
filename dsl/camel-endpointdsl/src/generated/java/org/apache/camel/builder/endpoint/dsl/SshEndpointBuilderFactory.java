@@ -2489,7 +2489,7 @@ public interface SshEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final SshHeaderNameBuilder INSTANCE = new SshHeaderNameBuilder();
+        public static final SshHeaderNameBuilder INSTANCE = new SshHeaderNameBuilder();
 
         /**
          * The user name.

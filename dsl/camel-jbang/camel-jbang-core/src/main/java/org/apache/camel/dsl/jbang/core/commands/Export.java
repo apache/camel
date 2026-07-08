@@ -256,6 +256,7 @@ public class Export extends ExportBaseCommand {
         cmd.quarkusPackageType = this.quarkusPackageType;
         cmd.springBootVersion = this.springBootVersion;
         cmd.mavenWrapper = this.mavenWrapper;
+        cmd.docker = this.docker;
         cmd.quiet = this.quiet;
         cmd.buildProperties = this.buildProperties;
         cmd.openapi = this.openapi;
@@ -348,5 +349,17 @@ public class Export extends ExportBaseCommand {
 
         String context = TemplateHelper.processTemplate("readme.md.ftl", model);
         Files.writeString(Path.of(buildDir).resolve("readme.md"), context);
+
+        copyAgents(buildDir);
+    }
+
+    // Copy the AGENTS.md into the same Maven project root directory to assist AI coding assistants.
+    protected void copyAgents(String buildDir) throws Exception {
+        String[] ids = gav.split(":");
+        Map<String, Object> model = new HashMap<>();
+        model.put("ArtifactId", ids[1]);
+
+        String context = TemplateHelper.processTemplate("agents.md.ftl", model);
+        Files.writeString(Path.of(buildDir).resolve("AGENTS.md"), context);
     }
 }

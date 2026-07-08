@@ -23,7 +23,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Marks a class as a Service that can be used by Camel JBang infra
+ * Marks a class as a Service that can be used by Camel CLI infra
  *
  * The marked class is analyzed by the mojo CamelTestInfraGenerateMetadataMojo
  *
@@ -36,7 +36,7 @@ public @interface InfraService {
     /**
      * Interface that extends InfrastructureService
      *
-     * the interface is used by Camel JBang infra run to retrieve testing information like port, endpoint, username...
+     * the interface is used by Camel CLI infra run to retrieve testing information like port, endpoint, username...
      *
      * @return
      */

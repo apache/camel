@@ -33,8 +33,11 @@ import dev.tamboui.text.Span;
 import dev.tamboui.text.Text;
 import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
+import dev.tamboui.tui.event.MouseEvent;
+import dev.tamboui.tui.event.MouseEventKind;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
+import dev.tamboui.widgets.block.Borders;
 import dev.tamboui.widgets.paragraph.Paragraph;
 import dev.tamboui.widgets.scrollbar.Scrollbar;
 import dev.tamboui.widgets.scrollbar.ScrollbarState;
@@ -42,15 +45,15 @@ import org.apache.camel.dsl.jbang.core.common.PathUtils;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 
-import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.*;
+import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.*;
 
-class StartupTab implements MonitorTab {
+class StartupTab extends AbstractTab {
 
+    private static final int MOUSE_SCROLL_LINES = 3;
     private static final Style LABEL = Style.EMPTY.dim();
     private static final Style VALUE = Style.EMPTY.fg(Color.WHITE).bold();
     private static final Style HEADER = Style.EMPTY.fg(Color.YELLOW).bold();
 
-    private final MonitorContext ctx;
     private final ScrollbarState scrollbarState = new ScrollbarState();
     private final AtomicBoolean loading = new AtomicBoolean(false);
 
@@ -64,7 +67,7 @@ class StartupTab implements MonitorTab {
     private boolean dataLoaded;
 
     StartupTab(MonitorContext ctx) {
-        this.ctx = ctx;
+        super(ctx);
     }
 
     @Override
@@ -100,15 +103,19 @@ class StartupTab implements MonitorTab {
             scrollOffset = Integer.MAX_VALUE;
             return true;
         }
-        if (ke.isKey(KeyCode.F5)) {
-            loadStartupData();
-            return true;
-        }
         return false;
     }
 
     @Override
-    public boolean handleEscape() {
+    public boolean handleMouseEvent(MouseEvent me, Rect area) {
+        if (me.kind() == MouseEventKind.SCROLL_UP) {
+            scrollOffset = Math.max(0, scrollOffset - MOUSE_SCROLL_LINES);
+            return true;
+        }
+        if (me.kind() == MouseEventKind.SCROLL_DOWN) {
+            scrollOffset += MOUSE_SCROLL_LINES;
+            return true;
+        }
         return false;
     }
 
@@ -128,7 +135,6 @@ class StartupTab implements MonitorTab {
         scrollOffset = 0;
         errorMessage = null;
         dataLoaded = false;
-        loadStartupData();
     }
 
     @Override
@@ -143,7 +149,7 @@ class StartupTab implements MonitorTab {
             frame.renderWidget(
                     Paragraph.builder()
                             .text(Text.from(Line.from(Span.styled("  Loading startup data...", LABEL))))
-                            .block(Block.builder().borderType(BorderType.ROUNDED)
+                            .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
                                     .title(" Startup Timeline ").build())
                             .build(),
                     area);
@@ -155,7 +161,7 @@ class StartupTab implements MonitorTab {
                     Paragraph.builder()
                             .text(Text.from(Line.from(
                                     Span.styled("  " + errorMessage, Style.EMPTY.fg(Color.LIGHT_RED)))))
-                            .block(Block.builder().borderType(BorderType.ROUNDED)
+                            .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
                                     .title(" Startup Timeline ").build())
                             .build(),
                     area);
@@ -169,7 +175,7 @@ class StartupTab implements MonitorTab {
                                     Span.styled(
                                             "  No startup data available. The integration may not have a startup recorder enabled.",
                                             LABEL))))
-                            .block(Block.builder().borderType(BorderType.ROUNDED)
+                            .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
                                     .title(" Startup Timeline ").build())
                             .build(),
                     area);
@@ -178,7 +184,7 @@ class StartupTab implements MonitorTab {
 
         String title = String.format(" Startup Timeline — Total: %dms, Steps: %d ", totalDuration, steps.size());
         Block block = Block.builder()
-                .borderType(BorderType.ROUNDED)
+                .borderType(BorderType.ROUNDED).borders(Borders.ALL)
                 .title(title)
                 .build();
         Rect inner = block.inner(area);
@@ -249,9 +255,8 @@ class StartupTab implements MonitorTab {
     @Override
     public void renderFooter(List<Span> spans) {
         hint(spans, "Esc", "back");
-        hint(spans, "↑↓", "scroll");
-        hint(spans, "PgUp/Dn", "page");
-        hintLast(spans, "F5", "reload");
+        hint(spans, TuiIcons.HINT_SCROLL, "scroll");
+        hintLast(spans, "PgUp/Dn", "page");
     }
 
     private void loadStartupData() {
@@ -349,6 +354,11 @@ class StartupTab implements MonitorTab {
     }
 
     @Override
+    public String description() {
+        return "Startup step recorder showing initialization timing";
+    }
+
+    @Override
     public String getHelpText() {
         return """
                 # Startup
@@ -402,7 +412,7 @@ class StartupTab implements MonitorTab {
 
                 ## Startup Recorder
 
-                This tab requires the startup recorder to be enabled. Camel JBang
+                This tab requires the startup recorder to be enabled. Camel CLI
                 enables it by default in `dev` profile. For production deployments,
                 enable it with `camel.main.startup-recorder=true`.
 

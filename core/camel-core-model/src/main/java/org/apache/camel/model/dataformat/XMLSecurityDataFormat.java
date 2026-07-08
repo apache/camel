@@ -35,7 +35,8 @@ import org.apache.camel.support.jsse.KeyStoreParameters;
 /**
  * Encrypt and decrypt XML payloads using Apache Santuario.
  */
-@Metadata(firstVersion = "2.0.0", label = "dataformat,transformation,security,xml", title = "XML Security")
+@Metadata(firstVersion = "2.0.0", label = "dataformat,transformation,security,xml", title = "XML Security",
+          description = "Encrypt and decrypt XML payloads using Apache Santuario")
 @XmlRootElement(name = "xmlSecurity")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class XMLSecurityDataFormat extends DataFormatDefinition implements NamespaceAware {
@@ -47,40 +48,56 @@ public class XMLSecurityDataFormat extends DataFormatDefinition implements Names
 
     @XmlAttribute
     @Metadata(defaultValue = "AES-256-GCM",
-              enums = "TRIPLEDES,AES_128,AES_128_GCM,AES_192,AES_192_GCM,AES_256,AES_256_GCM,SEED_128,CAMELLIA_128,CAMELLIA_192,CAMELLIA_256")
+              enums = "TRIPLEDES,AES_128,AES_128_GCM,AES_192,AES_192_GCM,AES_256,AES_256_GCM,SEED_128,CAMELLIA_128,CAMELLIA_192,CAMELLIA_256",
+              description = "The cipher algorithm to be used for encryption/decryption of the XML message content.")
     private String xmlCipherAlgorithm;
     @XmlAttribute
-    @Metadata(security = "secret")
+    @Metadata(security = "secret",
+              description = "A String used as passPhrase to encrypt/decrypt content.")
     private String passPhrase;
     @XmlAttribute
-    @Metadata(label = "advanced", security = "secret")
+    @Metadata(label = "advanced", security = "secret",
+              description = "A byte[] used as passPhrase to encrypt/decrypt content.")
     private byte[] passPhraseByte;
     @XmlAttribute
+    @Metadata(description = "The XPath reference to the XML Element selected for encryption/decryption. If no tag is specified, the entire payload is encrypted/decrypted.")
     private String secureTag;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(javaType = "java.lang.Boolean",
+              description = "A boolean value to specify whether the XML Element is to be encrypted or the contents of the XML Element."
+                            + " false = Element Level, true = Element Content Level.")
     private String secureTagContents;
     @XmlAttribute
-    @Metadata(defaultValue = "RSA_OAEP", enums = "RSA_v1dot5,RSA_OAEP,RSA_OAEP_11")
+    @Metadata(defaultValue = "RSA_OAEP", enums = "RSA_v1dot5,RSA_OAEP,RSA_OAEP_11",
+              description = "The cipher algorithm to be used for encryption/decryption of the asymmetric key.")
     private String keyCipherAlgorithm;
     @XmlAttribute
+    @Metadata(description = "The key alias to be used when retrieving the recipient's public or private key from a KeyStore when performing asymmetric key encryption or decryption.")
     private String recipientKeyAlias;
     @XmlAttribute
-    @Metadata(javaType = "org.apache.camel.support.jsse.KeyStoreParameters")
+    @Metadata(javaType = "org.apache.camel.support.jsse.KeyStoreParameters",
+              description = "Refers to a KeyStore instance to lookup in the registry, which is used for configuration options for creating and"
+                            + " loading a KeyStore instance that represents the sender's trustStore or recipient's keyStore.")
     private String keyOrTrustStoreParameters;
     @XmlAttribute
+    @Metadata(security = "secret",
+              description = "The password to be used for retrieving the private key from the KeyStore. This key is used for asymmetric decryption.")
     private String keyPassword;
     @XmlAttribute
-    @Metadata(defaultValue = "SHA1", enums = "SHA1,SHA256,SHA512")
+    @Metadata(defaultValue = "SHA1", enums = "SHA1,SHA256,SHA512",
+              description = "The digest algorithm to use with the RSA OAEP algorithm.")
     private String digestAlgorithm;
     @XmlAttribute
-    @Metadata(defaultValue = "MGF1_SHA1", enums = "MGF1_SHA1,MGF1_SHA256,MGF1_SHA512")
+    @Metadata(defaultValue = "MGF1_SHA1", enums = "MGF1_SHA1,MGF1_SHA256,MGF1_SHA512",
+              description = "The MGF Algorithm to use with the RSA OAEP algorithm.")
     private String mgfAlgorithm;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean", defaultValue = "true")
+    @Metadata(javaType = "java.lang.Boolean", defaultValue = "true",
+              description = "Whether to add the public key used to encrypt the session key as a KeyValue in the EncryptedKey structure or not.")
     private String addKeyValueForEncryptedKey;
     @XmlAttribute(name = "namespace")
-    @Metadata(javaType = "java.util.Map")
+    @Metadata(javaType = "java.util.Map",
+              description = "Refers to a Map of XML Namespaces of prefix to uri mappings.")
     private String namespaceRef;
 
     public XMLSecurityDataFormat() {
@@ -134,23 +151,6 @@ public class XMLSecurityDataFormat extends DataFormatDefinition implements Names
         return xmlCipherAlgorithm;
     }
 
-    /**
-     * The cipher algorithm to be used for encryption/decryption of the XML message content. The available choices are:
-     * <ul>
-     * <li>XMLCipher.TRIPLEDES</li>
-     * <li>XMLCipher.AES_128</li>
-     * <li>XMLCipher.AES_128_GCM</li>
-     * <li>XMLCipher.AES_192</li>
-     * <li>XMLCipher.AES_192_GCM</li>
-     * <li>XMLCipher.AES_256</li>
-     * <li>XMLCipher.AES_256_GCM</li>
-     * <li>XMLCipher.SEED_128</li>
-     * <li>XMLCipher.CAMELLIA_128</li>
-     * <li>XMLCipher.CAMELLIA_192</li>
-     * <li>XMLCipher.CAMELLIA_256</li>
-     * </ul>
-     * The default value is XMLCipher.AES_256_GCM
-     */
     public void setXmlCipherAlgorithm(String xmlCipherAlgorithm) {
         this.xmlCipherAlgorithm = xmlCipherAlgorithm;
     }
@@ -159,11 +159,6 @@ public class XMLSecurityDataFormat extends DataFormatDefinition implements Names
         return passPhrase;
     }
 
-    /**
-     * A String used as passPhrase to encrypt/decrypt content. The passPhrase has to be provided. The passPhrase needs
-     * to be put together in conjunction with the appropriate encryption algorithm. For example using TRIPLEDES the
-     * passPhase can be a "Only another 24 Byte key"
-     */
     public void setPassPhrase(String passPhrase) {
         this.passPhrase = passPhrase;
     }
@@ -172,11 +167,6 @@ public class XMLSecurityDataFormat extends DataFormatDefinition implements Names
         return passPhraseByte;
     }
 
-    /**
-     * A byte[] used as passPhrase to encrypt/decrypt content. The passPhrase has to be provided. The passPhrase needs
-     * to be put together in conjunction with the appropriate encryption algorithm. For example using TRIPLEDES the
-     * passPhase can be a "Only another 24 Byte key"
-     */
     public void setPassPhraseByte(byte[] passPhraseByte) {
         this.passPhraseByte = passPhraseByte;
     }
@@ -185,10 +175,6 @@ public class XMLSecurityDataFormat extends DataFormatDefinition implements Names
         return secureTag;
     }
 
-    /**
-     * The XPath reference to the XML Element selected for encryption/decryption. If no tag is specified, the entire
-     * payload is encrypted/decrypted.
-     */
     public void setSecureTag(String secureTag) {
         this.secureTag = secureTag;
     }
@@ -197,23 +183,10 @@ public class XMLSecurityDataFormat extends DataFormatDefinition implements Names
         return secureTagContents;
     }
 
-    /**
-     * A boolean value to specify whether the XML Element is to be encrypted or the contents of the XML Element. false =
-     * Element Level. true = Element Content Level.
-     */
     public void setSecureTagContents(String secureTagContents) {
         this.secureTagContents = secureTagContents;
     }
 
-    /**
-     * The cipher algorithm to be used for encryption/decryption of the asymmetric key. The available choices are:
-     * <ul>
-     * <li>XMLCipher.RSA_v1dot5</li>
-     * <li>XMLCipher.RSA_OAEP</li>
-     * <li>XMLCipher.RSA_OAEP_11</li>
-     * </ul>
-     * The default value is XMLCipher.RSA_OAEP
-     */
     public void setKeyCipherAlgorithm(String keyCipherAlgorithm) {
         this.keyCipherAlgorithm = keyCipherAlgorithm;
     }
@@ -222,10 +195,6 @@ public class XMLSecurityDataFormat extends DataFormatDefinition implements Names
         return keyCipherAlgorithm;
     }
 
-    /**
-     * The key alias to be used when retrieving the recipient's public or private key from a KeyStore when performing
-     * asymmetric key encryption or decryption.
-     */
     public void setRecipientKeyAlias(String recipientKeyAlias) {
         this.recipientKeyAlias = recipientKeyAlias;
     }
@@ -234,10 +203,6 @@ public class XMLSecurityDataFormat extends DataFormatDefinition implements Names
         return recipientKeyAlias;
     }
 
-    /**
-     * Refers to a KeyStore instance to lookup in the registry, which is used for configuration options for creating and
-     * loading a KeyStore instance that represents the sender's trustStore or recipient's keyStore.
-     */
     public void setKeyOrTrustStoreParameters(String id) {
         this.keyOrTrustStoreParameters = id;
     }
@@ -250,10 +215,6 @@ public class XMLSecurityDataFormat extends DataFormatDefinition implements Names
         return keyStoreParameters;
     }
 
-    /**
-     * Configuration options for creating and loading a KeyStore instance that represents the sender's trustStore or
-     * recipient's keyStore.
-     */
     public void setKeyStoreParameters(KeyStoreParameters keyStoreParameters) {
         this.keyStoreParameters = keyStoreParameters;
     }
@@ -262,10 +223,6 @@ public class XMLSecurityDataFormat extends DataFormatDefinition implements Names
         return this.keyPassword;
     }
 
-    /**
-     * The password to be used for retrieving the private key from the KeyStore. This key is used for asymmetric
-     * decryption.
-     */
     public void setKeyPassword(String keyPassword) {
         this.keyPassword = keyPassword;
     }
@@ -274,15 +231,6 @@ public class XMLSecurityDataFormat extends DataFormatDefinition implements Names
         return digestAlgorithm;
     }
 
-    /**
-     * The digest algorithm to use with the RSA OAEP algorithm. The available choices are:
-     * <ul>
-     * <li>XMLCipher.SHA1</li>
-     * <li>XMLCipher.SHA256</li>
-     * <li>XMLCipher.SHA512</li>
-     * </ul>
-     * The default value is XMLCipher.SHA1
-     */
     public void setDigestAlgorithm(String digestAlgorithm) {
         this.digestAlgorithm = digestAlgorithm;
     }
@@ -291,15 +239,6 @@ public class XMLSecurityDataFormat extends DataFormatDefinition implements Names
         return mgfAlgorithm;
     }
 
-    /**
-     * The MGF Algorithm to use with the RSA OAEP algorithm. The available choices are:
-     * <ul>
-     * <li>EncryptionConstants.MGF1_SHA1</li>
-     * <li>EncryptionConstants.MGF1_SHA256</li>
-     * <li>EncryptionConstants.MGF1_SHA512</li>
-     * </ul>
-     * The default value is EncryptionConstants.MGF1_SHA1
-     */
     public void setMgfAlgorithm(String mgfAlgorithm) {
         this.mgfAlgorithm = mgfAlgorithm;
     }
@@ -308,9 +247,6 @@ public class XMLSecurityDataFormat extends DataFormatDefinition implements Names
         return addKeyValueForEncryptedKey;
     }
 
-    /**
-     * Whether to add the public key used to encrypt the session key as a KeyValue in the EncryptedKey structure or not.
-     */
     public void setAddKeyValueForEncryptedKey(String addKeyValueForEncryptedKey) {
         this.addKeyValueForEncryptedKey = addKeyValueForEncryptedKey;
     }
@@ -332,9 +268,6 @@ public class XMLSecurityDataFormat extends DataFormatDefinition implements Names
         return namespaceRef;
     }
 
-    /**
-     * Refers to a Map XML Namespaces of prefix -> uri mappings
-     */
     public void setNamespaceRef(String namespaceRef) {
         this.namespaceRef = namespaceRef;
     }

@@ -25,7 +25,7 @@ import org.apache.camel.spi.Metadata;
 /**
  * Rest HEAD command
  */
-@Metadata(label = "rest")
+@Metadata(label = "rest", description = "Defines an HTTP HEAD operation in the REST DSL")
 @XmlRootElement(name = "head")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class HeadDefinition extends VerbDefinition {

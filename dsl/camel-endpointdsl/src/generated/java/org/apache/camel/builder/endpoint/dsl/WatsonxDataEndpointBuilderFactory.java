@@ -306,7 +306,7 @@ public interface WatsonxDataEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final WatsonxDataHeaderNameBuilder INSTANCE = new WatsonxDataHeaderNameBuilder();
+        public static final WatsonxDataHeaderNameBuilder INSTANCE = new WatsonxDataHeaderNameBuilder();
 
         /**
          * The operation to perform.

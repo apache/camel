@@ -31,8 +31,8 @@ import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.widgets.Clear;
 import dev.tamboui.widgets.paragraph.Paragraph;
 
-import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.hint;
-import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.hintLast;
+import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.hint;
+import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.hintLast;
 
 class CaptionOverlay {
 
@@ -107,7 +107,7 @@ class CaptionOverlay {
                     inlineLastKeystroke = System.currentTimeMillis();
                 }
             } else if (ke.code() == KeyCode.CHAR) {
-                inlineBuffer.append(ke.character());
+                inlineBuffer.append(ke.string());
                 captionText = inlineBuffer.toString();
                 inlineLastKeystroke = System.currentTimeMillis();
             }
@@ -190,8 +190,7 @@ class CaptionOverlay {
     private void renderInline(Frame frame, Rect area) {
         Style style = Style.EMPTY.fg(Color.WHITE).bold();
         String text = inlineBuffer != null ? inlineBuffer.toString() : "";
-        boolean cursorVisible = (System.currentTimeMillis() / 500) % 2 == 0;
-        String display = text + (cursorVisible ? "▌" : " ");
+        String display = text + "█";
 
         String[] parts = display.split("\\\\n", -1);
         List<Line> lines = new ArrayList<>();

@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "restProperty",
     "title": "Rest Property",
-    "description": "A key value pair",
+    "description": "Defines a key\/value property for REST configuration, used to pass component-specific settings",
     "deprecated": false,
     "label": "rest",
     "javaType": "org.apache.camel.model.rest.RestPropertyDefinition",
@@ -12,7 +12,7 @@
     "output": false
   },
   "properties": {
-    "key": { "index": 0, "kind": "attribute", "displayName": "Key", "group": "common", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Property key" },
-    "value": { "index": 1, "kind": "attribute", "displayName": "Value", "group": "common", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Property value" }
+    "key": { "index": 0, "kind": "attribute", "displayName": "Key", "group": "common", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Property key." },
+    "value": { "index": 1, "kind": "attribute", "displayName": "Value", "group": "common", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Property value." }
   }
 }

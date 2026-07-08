@@ -26,6 +26,7 @@ import org.apache.camel.NamedRoute;
 import org.apache.camel.api.management.ManagedCamelContext;
 import org.apache.camel.api.management.mbean.ManagedProcessorMBean;
 import org.apache.camel.api.management.mbean.ManagedRouteMBean;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.ModelDumpLine;
 import org.apache.camel.spi.ModelToStructureDumper;
 import org.apache.camel.spi.annotations.DevConsole;
@@ -44,24 +45,21 @@ import static org.apache.camel.impl.console.ConsoleHelper.extractSourceLocationN
 @DevConsole(name = "route-structure", description = "Dump route structure")
 public class RouteStructureDevConsole extends AbstractDevConsole {
 
-    /**
-     * Filters the routes matching by route id, route uri, and source location
-     */
+    @Metadata(label = "query", description = "Filters the routes matching by route id, route uri, and source location",
+              javaType = "java.lang.String")
     public static final String FILTER = "filter";
 
-    /**
-     * Limits the number of entries displayed
-     */
+    @Metadata(label = "query", description = "Limits the number of entries displayed", javaType = "java.lang.Integer")
     public static final String LIMIT = "limit";
 
-    /**
-     * Whether to dump in brief mode (only overall structure, and no detailed options or expressions)
-     */
+    @Metadata(label = "query",
+              description = "Whether to dump in brief mode (only overall structure, and no detailed options or expressions)",
+              javaType = "java.lang.Boolean", defaultValue = "false")
     public static final String BRIEF = "brief";
 
-    /**
-     * Whether to include metrics such as number of messages processed (from JMX)
-     */
+    @Metadata(label = "query",
+              description = "Whether to include metrics such as number of messages processed (from JMX)",
+              javaType = "java.lang.Boolean", defaultValue = "false")
     public static final String METRIC = "metric";
 
     public RouteStructureDevConsole() {
@@ -70,14 +68,14 @@ public class RouteStructureDevConsole extends AbstractDevConsole {
 
     @Override
     protected String doCallText(Map<String, Object> options) {
-        final String brief = (String) options.getOrDefault(BRIEF, "false");
+        final boolean brief = optionBoolean(options, BRIEF, false);
 
         final StringBuilder sb = new StringBuilder();
         Function<NamedRoute, Object> task = def -> {
             try {
                 ModelToStructureDumper dumper = PluginHelper.getModelToStructureDumper(getCamelContext());
                 List<ModelDumpLine> lines
-                        = dumper.dumpStructure(getCamelContext(), def.getRouteId(), "true".equalsIgnoreCase(brief));
+                        = dumper.dumpStructure(getCamelContext(), def.getRouteId(), brief);
 
                 sb.append(String.format("    Id: %s", def.getRouteId()));
                 if (def.getResource() != null) {
@@ -108,13 +106,13 @@ public class RouteStructureDevConsole extends AbstractDevConsole {
 
     @Override
     protected JsonObject doCallJson(Map<String, Object> options) {
-        final String brief = (String) options.getOrDefault(BRIEF, "false");
-        final String metric = (String) options.getOrDefault(METRIC, "false");
+        final boolean brief = optionBoolean(options, BRIEF, false);
+        final boolean metric = optionBoolean(options, METRIC, false);
 
         final JsonObject root = new JsonObject();
         final JsonArray list = new JsonArray();
 
-        final boolean stats = "true".equalsIgnoreCase(metric);
+        final boolean stats = metric;
         Function<NamedRoute, Object> task = def -> {
             JsonObject jo = new JsonObject();
             list.add(jo);
@@ -135,7 +133,7 @@ public class RouteStructureDevConsole extends AbstractDevConsole {
             try {
                 ModelToStructureDumper dumper = PluginHelper.getModelToStructureDumper(getCamelContext());
                 List<ModelDumpLine> lines
-                        = dumper.dumpStructure(getCamelContext(), def.getRouteId(), "true".equalsIgnoreCase(brief));
+                        = dumper.dumpStructure(getCamelContext(), def.getRouteId(), brief);
                 JsonArray code = dumpAsJSon(getCamelContext(), lines, stats);
                 jo.put("code", code);
             } catch (Exception e) {
@@ -151,9 +149,8 @@ public class RouteStructureDevConsole extends AbstractDevConsole {
     protected void doCall(Map<String, Object> options, Function<NamedRoute, Object> task) {
         String path = (String) options.get(Exchange.HTTP_PATH);
         String subPath = path != null ? StringHelper.after(path, "/") : null;
-        String filter = (String) options.get(FILTER);
-        String limit = (String) options.get(LIMIT);
-        final int max = limit == null ? Integer.MAX_VALUE : Integer.parseInt(limit);
+        String filter = optionString(options, FILTER);
+        final int max = optionInt(options, LIMIT, Integer.MAX_VALUE);
 
         var routes = getCamelContext().getNamedRouteDefinitions();
         routes.sort((o1, o2) -> o1.getRouteId().compareToIgnoreCase(o2.getRouteId()));

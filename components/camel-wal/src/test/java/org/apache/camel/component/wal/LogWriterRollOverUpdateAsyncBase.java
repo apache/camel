@@ -22,7 +22,7 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -34,12 +34,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 abstract class LogWriterRollOverUpdateAsyncBase extends LogTestBase {
     private static final Logger LOG = LoggerFactory.getLogger(LogWriterRollOverUpdateAsyncBase.class);
     protected BlockingQueue<EntryInfo.CachedEntryInfo> entryInfos;
-    protected CountDownLatch latch = new CountDownLatch(1);
     LogWriter logWriter;
     File reportFile;
 
@@ -79,41 +79,62 @@ abstract class LogWriterRollOverUpdateAsyncBase extends LogTestBase {
         entryInfos = new ArrayBlockingQueue<>(queueCapacity);
 
         final ExecutorService executorService = Executors.newFixedThreadPool(2);
+        try {
+            final Future<?> generateTask = executorService.submit(this::asyncGenerate);
 
-        final Future<?> generateTask = executorService.submit(this::asyncGenerate);
+            final Future<?> updateTask = executorService.submit(this::markRecordsAsCommitted);
 
-        final Future<?> updateTask = executorService.submit(this::markRecordsAsCommitted);
+            executorService.shutdown();
 
-        Assertions.assertTrue(latch.await(1, TimeUnit.MINUTES), "Failed to generate records within 1 minute");
+            // Wait for both tasks to complete using Awaitility instead of only
+            // waiting for the generate task via a latch, which left a race window
+            // where the update task could still be running when verification began.
+            await().atMost(2, TimeUnit.MINUTES)
+                    .until(executorService::isTerminated);
 
-        try (LogReader reader = new LogReader(reportFile, (int) RECORD_COUNT * 100)) {
-
-            Header fileHeader = reader.getHeader();
-            assertEquals(Header.FORMAT_NAME, fileHeader.getFormatName().trim());
-            assertEquals(Header.CURRENT_FILE_VERSION, fileHeader.getFileVersion());
-
-            int count = 0;
-            PersistedLogEntry entry = reader.readEntry();
-            while (entry != null) {
-                LOG.debug("Read state: {}", entry.getEntryState());
-                assertEquals(LogEntry.EntryState.PROCESSED, entry.getEntryState());
-                assertEquals(0, entry.getKeyMetadata());
-                assertEquals(0, entry.getValueMetadata());
-
-                String key = new String(entry.getKey());
-                LOG.debug("Read record: {}", key);
-                Assertions.assertTrue(key.startsWith("record-"));
-
-                ByteBuffer buffer = ByteBuffer.wrap(entry.getValue());
-
-                Assertions.assertTrue(buffer.getLong() > 0);
-
-                count++;
-
-                entry = reader.readEntry();
+            // Propagate any exceptions from the tasks
+            try {
+                generateTask.get();
+                updateTask.get();
+            } catch (ExecutionException e) {
+                Assertions.fail("Task failed: " + e.getCause().getMessage(), e.getCause());
             }
 
-            Assertions.assertEquals(100, count, "The number of records don't match");
+            // Flush to ensure all data is persisted to disk before verification
+            logWriter.flush();
+
+            try (LogReader reader = new LogReader(reportFile, (int) RECORD_COUNT * 100)) {
+
+                Header fileHeader = reader.getHeader();
+                assertEquals(Header.FORMAT_NAME, fileHeader.getFormatName().trim());
+                assertEquals(Header.CURRENT_FILE_VERSION, fileHeader.getFileVersion());
+
+                int count = 0;
+                PersistedLogEntry entry = reader.readEntry();
+                while (entry != null) {
+                    LOG.debug("Read state: {}", entry.getEntryState());
+                    assertEquals(LogEntry.EntryState.PROCESSED, entry.getEntryState());
+                    assertEquals(0, entry.getKeyMetadata());
+                    assertEquals(0, entry.getValueMetadata());
+
+                    String key = new String(entry.getKey());
+                    LOG.debug("Read record: {}", key);
+                    Assertions.assertTrue(key.startsWith("record-"));
+
+                    ByteBuffer buffer = ByteBuffer.wrap(entry.getValue());
+
+                    Assertions.assertTrue(buffer.getLong() > 0);
+
+                    count++;
+
+                    entry = reader.readEntry();
+                }
+
+                Assertions.assertEquals(100, count, "The number of records don't match");
+            }
+        } finally {
+            executorService.shutdownNow();
+            executorService.awaitTermination(5, TimeUnit.SECONDS);
         }
     }
 

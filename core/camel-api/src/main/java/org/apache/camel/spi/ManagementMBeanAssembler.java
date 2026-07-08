@@ -25,8 +25,24 @@ import org.apache.camel.StaticService;
 import org.jspecify.annotations.Nullable;
 
 /**
- * An assembler to assemble a {@link javax.management.modelmbean.RequiredModelMBean} which can be used to register the
- * object in JMX.
+ * Assembles a {@link javax.management.modelmbean.ModelMBean} from a Camel managed object so it can be registered in the
+ * {@link javax.management.MBeanServer}.
+ * <p/>
+ * Camel's JMX layer does not require managed objects to implement a fixed MBean interface. Instead, managed facades
+ * (such as {@code ManagedCamelContext} or {@code ManagedRoute}) are annotated with
+ * {@code @org.apache.camel.api.management.ManagedResource}, {@code @ManagedAttribute}, and {@code @ManagedOperation}.
+ * The assembler scans those annotations and builds a {@link javax.management.modelmbean.RequiredModelMBean} that
+ * exposes exactly the declared attributes and operations.
+ * <p/>
+ * The {@link ManagementAgent} calls
+ * {@link #assemble(javax.management.MBeanServer, Object, javax.management.ObjectName)} for each managed object before
+ * registering it. Replacing this implementation allows custom annotation processors or alternative MBean descriptors to
+ * be used.
+ * <p/>
+ * See <a href="https://camel.apache.org/manual/jmx.html">JMX</a> in the Camel user manual.
+ *
+ * @see ManagementAgent
+ * @see ManagementObjectStrategy
  */
 public interface ManagementMBeanAssembler extends StaticService {
 

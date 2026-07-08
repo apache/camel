@@ -2104,6 +2104,146 @@ public interface MailEndpointBuilderFactory {
             return this;
         }
         /**
+         * Whether message headers From and Sender override the sender
+         * pre-configured in the endpoint URI. Defaults to true. Set to false to
+         * always use the endpoint URI sender, ignoring any From or Sender
+         * headers from the message.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param useHeaderFrom the value to set
+         * @return the dsl builder
+         */
+        default MailEndpointProducerBuilder useHeaderFrom(boolean useHeaderFrom) {
+            doSetProperty("useHeaderFrom", useHeaderFrom);
+            return this;
+        }
+        /**
+         * Whether message headers From and Sender override the sender
+         * pre-configured in the endpoint URI. Defaults to true. Set to false to
+         * always use the endpoint URI sender, ignoring any From or Sender
+         * headers from the message.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param useHeaderFrom the value to set
+         * @return the dsl builder
+         */
+        default MailEndpointProducerBuilder useHeaderFrom(String useHeaderFrom) {
+            doSetProperty("useHeaderFrom", useHeaderFrom);
+            return this;
+        }
+        /**
+         * Whether message headers To, CC, and BCC override the recipients
+         * pre-configured in the endpoint URI. Defaults to true. Set to false to
+         * always use the endpoint URI recipients, ignoring any recipient
+         * headers from the message.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param useHeaderRecipients the value to set
+         * @return the dsl builder
+         */
+        default MailEndpointProducerBuilder useHeaderRecipients(boolean useHeaderRecipients) {
+            doSetProperty("useHeaderRecipients", useHeaderRecipients);
+            return this;
+        }
+        /**
+         * Whether message headers To, CC, and BCC override the recipients
+         * pre-configured in the endpoint URI. Defaults to true. Set to false to
+         * always use the endpoint URI recipients, ignoring any recipient
+         * headers from the message.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param useHeaderRecipients the value to set
+         * @return the dsl builder
+         */
+        default MailEndpointProducerBuilder useHeaderRecipients(String useHeaderRecipients) {
+            doSetProperty("useHeaderRecipients", useHeaderRecipients);
+            return this;
+        }
+        /**
+         * Whether message header Reply-To overrides the replyTo pre-configured
+         * in the endpoint URI. Defaults to true. Set to false to always use the
+         * endpoint URI replyTo, ignoring any Reply-To header from the message.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param useHeaderReplyTo the value to set
+         * @return the dsl builder
+         */
+        default MailEndpointProducerBuilder useHeaderReplyTo(boolean useHeaderReplyTo) {
+            doSetProperty("useHeaderReplyTo", useHeaderReplyTo);
+            return this;
+        }
+        /**
+         * Whether message header Reply-To overrides the replyTo pre-configured
+         * in the endpoint URI. Defaults to true. Set to false to always use the
+         * endpoint URI replyTo, ignoring any Reply-To header from the message.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param useHeaderReplyTo the value to set
+         * @return the dsl builder
+         */
+        default MailEndpointProducerBuilder useHeaderReplyTo(String useHeaderReplyTo) {
+            doSetProperty("useHeaderReplyTo", useHeaderReplyTo);
+            return this;
+        }
+        /**
+         * Whether message header Subject overrides the subject pre-configured
+         * in the endpoint URI. Defaults to true. Set to false to always use the
+         * endpoint URI subject, ignoring any Subject header from the message.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param useHeaderSubject the value to set
+         * @return the dsl builder
+         */
+        default MailEndpointProducerBuilder useHeaderSubject(boolean useHeaderSubject) {
+            doSetProperty("useHeaderSubject", useHeaderSubject);
+            return this;
+        }
+        /**
+         * Whether message header Subject overrides the subject pre-configured
+         * in the endpoint URI. Defaults to true. Set to false to always use the
+         * endpoint URI subject, ignoring any Subject header from the message.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param useHeaderSubject the value to set
+         * @return the dsl builder
+         */
+        default MailEndpointProducerBuilder useHeaderSubject(String useHeaderSubject) {
+            doSetProperty("useHeaderSubject", useHeaderSubject);
+            return this;
+        }
+        /**
          * The password for login. See also setAuthenticator(MailAuthenticator).
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -3499,7 +3639,7 @@ public interface MailEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final MailHeaderNameBuilder INSTANCE = new MailHeaderNameBuilder();
+        public static final MailHeaderNameBuilder INSTANCE = new MailHeaderNameBuilder();
 
         /**
          * Subject.

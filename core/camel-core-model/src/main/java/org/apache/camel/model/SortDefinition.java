@@ -31,7 +31,8 @@ import org.apache.camel.spi.Metadata;
 /**
  * Sorts the contents of the message
  */
-@Metadata(label = "eip,transformation")
+@Metadata(label = "eip,transformation",
+          description = "Sorts the items in a message body that is a List, using a specified comparator or the default ordering")
 @XmlRootElement(name = "sort")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class SortDefinition<T> extends ExpressionNode {
@@ -39,7 +40,8 @@ public class SortDefinition<T> extends ExpressionNode {
     @XmlTransient
     private Comparator<? super T> comparatorBean;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.util.Comparator")
+    @Metadata(label = "advanced", javaType = "java.util.Comparator",
+              description = "Sets a reference to lookup for the comparator to use for sorting.")
     private String comparator;
 
     public SortDefinition() {
@@ -80,10 +82,8 @@ public class SortDefinition<T> extends ExpressionNode {
         return "sort[" + getExpression() + "]";
     }
 
-    /**
-     * Optional expression to sort by something else than the message body
-     */
     @Override
+    @Metadata(description = "The expression to use for sorting. The message body is split into a list, sorted using this expression as the comparator key, and then reassembled.")
     public void setExpression(ExpressionDefinition expression) {
         // override to include javadoc what the expression is used for
         super.setExpression(expression);

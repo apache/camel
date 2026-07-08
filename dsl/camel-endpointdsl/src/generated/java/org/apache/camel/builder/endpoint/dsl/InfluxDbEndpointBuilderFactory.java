@@ -319,7 +319,7 @@ public interface InfluxDbEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final InfluxDbHeaderNameBuilder INSTANCE = new InfluxDbHeaderNameBuilder();
+        public static final InfluxDbHeaderNameBuilder INSTANCE = new InfluxDbHeaderNameBuilder();
 
         /**
          * The string that defines the retention policy to the data created by

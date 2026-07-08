@@ -19,15 +19,16 @@ package org.apache.camel.spi;
 import java.util.Map;
 
 /**
- * A marker interface to identify the object as being a configurer which can provide details about the options the
- * configurer supports.
+ * Extends {@link PropertyConfigurerGetter} with the ability to enumerate every option a target supports.
  * <p/>
- * This is used in Camel to have fast property configuration of Camel components & endpoints, and for EIP patterns as
- * well.
+ * In addition to inspecting individual options, {@link #getAllOptions(Object)} returns the full map of option name to
+ * class type for a target. This is used primarily by API-based components and is only available while the
+ * {@link org.apache.camel.CamelContext} is bootstrapping.
  * <p/>
- * This is used by API based components
+ * See <a href="https://camel.apache.org/manual/property-binding.html">Property Binding</a> in the Camel user manual.
  *
  * @see   PropertyConfigurer
+ * @see   PropertyConfigurerGetter
  * @since 3.7
  */
 public interface ExtendedPropertyConfigurerGetter extends PropertyConfigurerGetter {

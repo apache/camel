@@ -1,0 +1,60 @@
+= Camel JBang container release process
+
+This folder contains all the scripts required to run the release process for Camel JBang containers. It is performed via `Makefile` which contains the configuration variable for each release version.
+
+The process is in charge to build, publish and verify images for the JVM and architectures provided in the configuration, for example:
+
+```
+JDK_VERSIONS = 17-jdk 21-jdk
+ARCH_VERSIONS = amd64 arm64
+```
+
+It also set the default container image for `amd64` architecture and the JDK defined in `OFFICIAL_IMAGE_VERSION` configuration variable.
+
+The process can be run from `main` branch as it is in charge to checkout the proper release tag version as part of the execution script.
+
+== Docker Hub staging setting
+
+The default configuration is set to publish on https://hub.docker.com/orgs/apache/repositories[Apache Docker Hub organization]
+
+If you want to perform a staging release, you need to change the `IMAGE_NAME ?= docker.io/apache/camel-jbang` to any other organization where you have privileges to push images.
+
+== Software required to release
+
+In order to release Camel JBang you may need certain software installed in the machine from where you're performing the release action. Most of the actions are scripted and may assume the presence of tools (in some case with specific version). Here a best effort list (may not be fully accurate):
+
+* Docker and DockerX tooling
+* https://www.qemu.org/[QEMU] - required to emulate ARM64 build
+
+=== Verify if your machine can build an ARM64 container image
+
+As suggested above, you may need to install some software to be able to build an ARM64 based image. You can verify that with:
+
+```
+docker buildx ls | grep arm
+```
+
+NOTE: if you don't list any available builder, if you're on Ubuntu, you can install quickly QEMU via `sudo apt-get install -y qemu qemu-user-static` and retry to list the ARM64 based builders afterward.
+
+== Stage images
+
+In order to perform a staging release, run:
+
+```
+IMAGE_NAME=<my-org>/camel-jbang CAMEL_VERSION=<tagged-camel-release> make images-release
+# IMAGE_NAME=squakez/camel-jbang CAMEL_VERSION=4.20.0 make images-release
+```
+
+The process is in charge to build, push and also verify (just checking `camel version` return the expected version) each container image released. It also run the `arm64` or any other architecture provided in the configuration.
+
+== Official release
+
+In order to perform an official release, run:
+
+```
+CAMEL_VERSION=4.20.0 make images-release
+```
+
+Make sure you're authenticated to docker hub and have an authorized user to push on Apache organization.
+
+The setting of `CAMEL_VERSION` variable is required to be provided by user input in order to make sure that this is always executed on an existing Camel release (the release tag `camel-a.b.x` must be available on github).

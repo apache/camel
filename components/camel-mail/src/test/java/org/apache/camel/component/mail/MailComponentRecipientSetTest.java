@@ -78,11 +78,12 @@ public class MailComponentRecipientSetTest extends CamelTestSupport {
                 MailComponent mail = context.getComponent("smtp", MailComponent.class);
                 mail.setConfiguration(config);
 
-                from("direct:a").to(james.uriPrefix(Protocol.smtp) + "&to=a@localhost");
+                from("direct:a").to(james.uriPrefix(Protocol.smtp) + "&to=a@localhost&useHeaderSubject=true");
 
-                from("direct:b").to(james.uriPrefix(Protocol.smtp) + "&to=b@localhost&from=you@you.com");
+                from("direct:b").to(james.uriPrefix(Protocol.smtp) + "&to=b@localhost&from=you@you.com&useHeaderSubject=true");
 
-                from("direct:c").to(admin.uriPrefix(Protocol.smtp) + "&to=c@localhost&cc=you@you.com,them@them.com");
+                from("direct:c").to(
+                        admin.uriPrefix(Protocol.smtp) + "&to=c@localhost&cc=you@you.com,them@them.com&useHeaderSubject=true");
             }
         };
     }

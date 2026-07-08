@@ -7,8 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
-//Manually maintained attributes
-:camel-spring-boot-name: mina
 
 *Since Camel {since}*
 
@@ -30,22 +28,22 @@ Maven users will need to add the following dependency to their `pom.xml`
 for this component:
 
 [source,xml]
-------------------------------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-mina</artifactId>
     <version>x.x.x</version>
     <!-- use the same version as your Camel core version -->
 </dependency>
-------------------------------------------------------------
+----
 
 == URI format
 
--------------------------------------
+----
 mina:tcp://hostname[:port][?options]
 mina:udp://hostname[:port][?options]
 mina:vm://hostname[:port][?options]
--------------------------------------
+----
 
 You can specify a codec in the Registry using the
 *codec* option. If you are using TCP and no codec is specified then the
@@ -87,9 +85,9 @@ your codec. See xref:dataformats:hl7-dataformat.adoc[HL7] that has a custom code
 === Get the IoSession for message
 
 You can get the IoSession from the message header with this key
-`MinaConstants.MINA_IOSESSION`, and also get the local host address
-with the key `MinaConstants.MINA_LOCAL_ADDRESS` and remote host address
-with the key `MinaConstants.MINA_REMOTE_ADDRESS`.
+`CamelMinaIoSession`, and also get the local host address
+with the key `CamelMinaLocalAddress` and remote host address
+with the key `CamelMinaRemoteAddress`.
 
 === Configuring Mina filters
 
@@ -106,24 +104,25 @@ is, after `codec` and `logger`.
 In this sample, Camel exposes a service that listens for TCP connections
 on port 6200. We use the *textline* codec. In our route, we create a
 Mina consumer endpoint that listens to on port 6200:
-
+._Java-only: Java string concatenation with port variable_
 [source,java]
----------------------------------------------------------------------------------------
+----
 from("mina:tcp://localhost:" + port1 + "?textline=true&sync=false").to("mock:result");
----------------------------------------------------------------------------------------
+----
 
 As the sample is part of a unit test, we test it by sending some data to
 it on port 6200.
 
+._Java-only: Java test API (MockEndpoint and ProducerTemplate)_
 [source,java]
--------------------------------------------------------------------------------------------------
+----
 MockEndpoint mock = getMockEndpoint("mock:result");
 mock.expectedBodiesReceived("Hello World");
 
 template.sendBody("mina:tcp://localhost:" + port1 + "?textline=true&sync=false", "Hello World");
 
 MockEndpoint.assertIsSatisfied(context);
--------------------------------------------------------------------------------------------------
+----
 
 === Example with sync=true
 
@@ -132,52 +131,109 @@ service on port 6201 also use the `textline` codec. However, this time we
 want to return a response, so we set the `sync` option to `true` on the
 consumer.
 
+[tabs]
+====
+Java::
++
 [source,java]
----------------------------------------------------------------------------------------------
-fromF("mina:tcp://localhost:%d?textline=true&sync=true", port2).process(new Processor() {
-    public void process(Exchange exchange) throws Exception {
-        String body = exchange.getIn().getBody(String.class);
-        exchange.getOut().setBody("Bye " + body);
-    }
-});
----------------------------------------------------------------------------------------------
+----
+from("mina:tcp://localhost:{{port}}?textline=true&sync=true")
+    .setBody(simple("Bye ${body}"));
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="mina:tcp://localhost:{{port}}?textline=true&amp;sync=true"/>
+  <setBody>
+    <simple>Bye ${body}</simple>
+  </setBody>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: mina:tcp://localhost:{{port}}
+      parameters:
+        textline: true
+        sync: true
+      steps:
+        - setBody:
+            simple: "Bye ${body}"
+----
+====
 
 Then we test the sample by sending some data and retrieving the response
 using the `template.requestBody()` method. As we know the response is a
 `String`, we cast it to `String` and can assert that the response is, in
 fact, something we have dynamically set in our processor code logic.
 
+._Java-only: Java test API (ProducerTemplate)_
 [source,java]
------------------------------------------------------------------------------------------------------------------------
+----
 String response = (String)template.requestBody("mina:tcp://localhost:" + port2 + "?textline=true&sync=true", "World");
 assertEquals("Bye World", response);
------------------------------------------------------------------------------------------------------------------------
+----
 
 === Example with Spring DSL
 
 Spring DSL can also be used for xref:mina-component.adoc[MINA].
 In the sample below, we expose a TCP server on port 5555:
 
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("mina:tcp://localhost:5555?textline=true")
+    .to("bean:myTCPOrderHandler");
+----
+
+XML::
++
 [source,xml]
------------------------------------------------------------
-   <route>
-     <from uri="mina:tcp://localhost:5555?textline=true"/>
-     <to uri="bean:myTCPOrderHandler"/>
-  </route>
------------------------------------------------------------
+----
+<route>
+  <from uri="mina:tcp://localhost:5555?textline=true"/>
+  <to uri="bean:myTCPOrderHandler"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: mina:tcp://localhost:5555
+      parameters:
+        textline: true
+      steps:
+        - to:
+            uri: bean:myTCPOrderHandler
+----
+====
 
 In the route above, we expose a TCP server on port 5555 using the
 textline codec. We let the Spring bean with ID, `myTCPOrderHandler`,
 handle the request and return a reply. For instance, the handler bean
 could be implemented as follows:
 
+._Java-only: Java handler class_
 [source,java]
------------------------------------------------
+----
     public String handleOrder(String payload) {
         ...
         return "Order: OK"
    }
------------------------------------------------
+----
 
 == Closing Session When Complete
 
@@ -189,17 +245,47 @@ the session, you should add a header with the key
 For instance, the example below will close the session after it has
 written the `bye` message back to the client:
 
+[tabs]
+====
+Java::
++
 [source,java]
----------------------------------------------------------------------------------------------------
-        from("mina:tcp://localhost:8080?sync=true&textline=true").process(new Processor() {
-            public void process(Exchange exchange) throws Exception {
-                String body = exchange.getIn().getBody(String.class);
-                exchange.getOut().setBody("Bye " + body);
-                exchange.getOut().setHeader(MinaConstants.MINA_CLOSE_SESSION_WHEN_COMPLETE, true);
-            }
-        });
----------------------------------------------------------------------------------------------------
+----
+from("mina:tcp://localhost:8080?sync=true&textline=true")
+    .setBody(simple("Bye ${body}"))
+    .setHeader("CamelMinaCloseSessionWhenComplete", constant(true));
+----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="mina:tcp://localhost:8080?sync=true&amp;textline=true"/>
+  <setBody>
+    <simple>Bye ${body}</simple>
+  </setBody>
+  <setHeader name="CamelMinaCloseSessionWhenComplete">
+    <constant>true</constant>
+  </setHeader>
+</route>
+----
 
-
-include::spring-boot:partial$starter.adoc[]
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: mina:tcp://localhost:8080
+      parameters:
+        sync: true
+        textline: true
+      steps:
+        - setBody:
+            simple: "Bye ${body}"
+        - setHeader:
+            name: CamelMinaCloseSessionWhenComplete
+            constant: true
+----
+====

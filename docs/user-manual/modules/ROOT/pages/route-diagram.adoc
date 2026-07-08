@@ -11,7 +11,7 @@ For example as shown below:
 
 image::images/route-diagram-sample.png[Foo Camel Route Diagram]
 
-== Generating Route Diagrams with Camel JBang
+== Generating Route Diagrams with Camel CLI
 
 You can generate route diagrams with JBang such:
 
@@ -36,8 +36,21 @@ camel cmd route-diagram MyRoute.java foo.yaml
 
 TIP: See more options with `camel cmd route-diagram --help`.
 
-And if you run Camel JBang with `--console` then the developer console also comes with this functionality,
+And if you run Camel CLI with `--console` then the developer console also comes with this functionality,
 by opening the link: http://localhost:8080/q/dev/route-diagram
+
+To see a topology diagram (how routes connect to each other) in the browser, use:
+
+    http://localhost:8080/q/dev/route-diagram?mode=topology
+
+The topology view supports the following query parameters:
+
+- `mode=topology` — switch from route diagram (default) to topology diagram
+- `format=html` — interactive SVG web component (default)
+- `format=png` — static PNG image
+- `format=text` — ASCII art, `format=unicode` — Unicode box-drawing characters
+- `external=true|false` — include/exclude external systems such as Kafka, HTTP, etc. (default: `true`)
+- `metric=true|false` — show live exchange counters (default: `true`)
 
 
 == Generating Route Diagrams with Camel Main
@@ -140,9 +153,9 @@ and `couchbase:http://host:8091?bucket=invoices` target different buckets. Camel
 on component parameters to correctly match endpoints — two URIs that differ only in identity parameters are treated
 as different destinations in the topology.
 
-=== Generating Topology Diagrams with Camel JBang
+=== Generating Topology Diagrams with Camel CLI
 
-When running with Camel JBang, you can generate topology diagrams via:
+When running with Camel CLI, you can generate topology diagrams via:
 
 [source,bash]
 ----
@@ -151,7 +164,8 @@ camel cmd route-topology
 
 See xref:jbang-commands/camel-jbang-cmd-route-topology.adoc[] for more details.
 
-The developer console is also available at: `http://localhost:8080/q/dev/route-topology`
+The developer console is also available at: `http://localhost:8080/q/dev/route-topology` (JSON/text data),
+or as a visual HTML diagram at: `http://localhost:8080/q/dev/route-diagram?mode=topology`
 
 === Generating Topology Diagrams during `mvn test`
 

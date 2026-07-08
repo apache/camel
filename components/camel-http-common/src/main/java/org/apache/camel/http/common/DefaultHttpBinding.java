@@ -89,6 +89,7 @@ public class DefaultHttpBinding implements HttpBinding {
     private boolean muteException;
     private boolean logException;
     private boolean allowJavaSerializedObject;
+    private String deserializationFilter;
     private boolean mapHttpMessageBody = true;
     private boolean mapHttpMessageHeaders = true;
     private boolean mapHttpMessageFormUrlEncodedBody = true;
@@ -111,6 +112,7 @@ public class DefaultHttpBinding implements HttpBinding {
         this.logException = endpoint.isLogException();
         if (endpoint.getComponent() != null) {
             this.allowJavaSerializedObject = endpoint.getComponent().isAllowJavaSerializedObject();
+            this.deserializationFilter = endpoint.getComponent().getDeserializationFilter();
         }
     }
 
@@ -220,7 +222,8 @@ public class DefaultHttpBinding implements HttpBinding {
                 try {
                     InputStream is
                             = message.getExchange().getContext().getTypeConverter().mandatoryConvertTo(InputStream.class, body);
-                    Object object = HttpHelper.deserializeJavaObjectFromStream(is, message.getExchange().getContext());
+                    Object object = HttpHelper.deserializeJavaObjectFromStream(is, message.getExchange().getContext(),
+                            deserializationFilter);
                     if (object != null) {
                         message.setBody(object);
                     }
@@ -704,6 +707,16 @@ public class DefaultHttpBinding implements HttpBinding {
     @Override
     public void setAllowJavaSerializedObject(boolean allowJavaSerializedObject) {
         this.allowJavaSerializedObject = allowJavaSerializedObject;
+    }
+
+    @Override
+    public String getDeserializationFilter() {
+        return deserializationFilter;
+    }
+
+    @Override
+    public void setDeserializationFilter(String deserializationFilter) {
+        this.deserializationFilter = deserializationFilter;
     }
 
     @Override

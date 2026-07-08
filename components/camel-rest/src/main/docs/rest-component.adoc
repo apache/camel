@@ -8,8 +8,6 @@
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
 :core:
-//Manually maintained attributes
-:camel-spring-boot-name: rest
 
 *Since Camel {since}*
 
@@ -69,24 +67,86 @@ practice with REST.
 
 The following is a Camel route using a path only
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("rest:get:hello")
   .transform().constant("Bye World");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="rest:get:hello"/>
+  <transform>
+    <constant>Bye World</constant>
+  </transform>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: rest:get:hello
+      steps:
+        - transform:
+            constant: "Bye World"
+----
+====
+
 And the following route uses a parameter which is mapped to a Camel
 header with the key "me".
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("rest:get:hello/{me}")
   .transform().simple("Bye ${header.me}");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="rest:get:hello/{me}"/>
+  <transform>
+    <simple>Bye ${header.me}</simple>
+  </transform>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: rest:get:hello/{me}
+      steps:
+        - transform:
+            simple: "Bye ${header.me}"
+----
+====
+
 The following examples have configured a base path as "hello" and then
 have two REST services configured using uriTemplates.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("rest:get:hello:/{me}")
@@ -96,6 +156,43 @@ from("rest:get:hello:/french/{me}")
   .transform().simple("Bonjour ${header.me}");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="rest:get:hello:/{me}"/>
+  <transform>
+    <simple>Hi ${header.me}</simple>
+  </transform>
+</route>
+<route>
+  <from uri="rest:get:hello:/french/{me}"/>
+  <transform>
+    <simple>Bonjour ${header.me}</simple>
+  </transform>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: rest:get:hello:/{me}
+      steps:
+        - transform:
+            simple: "Hi ${header.me}"
+- route:
+    from:
+      uri: rest:get:hello:/french/{me}
+      steps:
+        - transform:
+            simple: "Bonjour ${header.me}"
+----
+====
+
 == Examples
 
 === Rest producer examples
@@ -104,15 +201,43 @@ You can use the REST component to call REST services like any other Camel compon
 
 For example, to call a REST service on using `hello/\{me}` you can do
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:start")
   .to("rest:get:hello/{me}");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <to uri="rest:get:hello/{me}"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: rest:get:hello/{me}
+----
+====
+
 And then the dynamic value `\{me}` is mapped to a header or variable with the same name.
 So to call this REST service, you can send an empty message body and a header as shown:
 
+._Java-only: Java test API (ProducerTemplate)_
 [source,java]
 ----
 template.sendBodyAndHeader("direct:start", null, "me", "Donald Duck");
@@ -120,6 +245,7 @@ template.sendBodyAndHeader("direct:start", null, "me", "Donald Duck");
 
 Instead of a header you can also use exchange variable such as:
 
+._Java-only: Java test API (ProducerTemplate)_
 [source,java]
 ----
 String response = template.withVariable("me", "Donald Duck").to("direct:start").request(String.class);
@@ -128,14 +254,44 @@ String response = template.withVariable("me", "Donald Duck").to("direct:start").
 The Rest producer needs to know the hostname and port of the REST service, which you can configure
 using the host option as shown:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:start")
   .to("rest:get:hello/{me}?host=myserver:8080/foo");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <to uri="rest:get:hello/{me}?host=myserver:8080/foo"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: rest:get:hello/{me}
+            parameters:
+              host: "myserver:8080/foo"
+----
+====
+
 Instead of using the host option, you can configure the host on the `restConfiguration` as shown:
 
+._Java-only: Java programmatic REST configuration API_
 [source,java]
 ----
 restConfiguration().host("myserver:8080/foo");
@@ -147,6 +303,7 @@ from("direct:start")
 You can use the `producerComponent` to select which Camel component to use as the HTTP client, for example
 to use http, you can do:
 
+._Java-only: Java programmatic REST configuration API_
 [source,java]
 ----
 restConfiguration().host("myserver:8080/foo").producerComponent("http");
@@ -162,6 +319,7 @@ The REST producer supports binding using JSON or XML like the rest-dsl does.
 
 For example, to use jetty with JSON binding mode turned on, you can configure this in the REST configuration:
 
+._Java-only: Java programmatic REST configuration API_
 [source,java]
 ----
 restConfiguration().component("jetty").host("localhost").port(8080).bindingMode(RestBindingMode.json);
@@ -172,6 +330,7 @@ from("direct:start")
 
 Then when calling the REST service using the REST producer, it will automatically bind any POJOs to JSON before calling the REST service:
 
+._Java-only: Java POJO API (ProducerTemplate)_
 [source,java]
 ----
   UserPojo user = new UserPojo();
@@ -189,6 +348,7 @@ would need to configure the `outType` option to specify what is the class name o
 
 For example, if the REST service returns a JSON payload that binds to `com.foo.MyResponsePojo` you can configure this as shown:
 
+._Java-only: Java programmatic REST configuration API_
 [source,java]
 ----
   restConfiguration().component("jetty").host("localhost").port(8080).bindingMode(RestBindingMode.json);
@@ -210,7 +370,3 @@ Camel distribution, that demonstrates how to use the
 Rest DSL with Servlet as
 transport that can be deployed on Apache Tomcat, or similar web
 containers.
-
-
-
-include::spring-boot:partial$starter.adoc[]

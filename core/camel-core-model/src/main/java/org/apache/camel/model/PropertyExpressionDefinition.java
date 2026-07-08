@@ -31,15 +31,17 @@ import org.apache.camel.spi.Metadata;
  *
  * @see PropertyDefinition
  */
-@Metadata(label = "configuration")
+@Metadata(label = "configuration",
+          description = "Defines a key/value pair where the value is computed by an expression, used for passing dynamic parameters")
 @XmlRootElement(name = "propertyExpression")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class PropertyExpressionDefinition implements HasExpressionType {
 
     @XmlAttribute(required = true)
+    @Metadata(required = true, description = "The property key.")
     private String key;
     @XmlElementRef
-    @Metadata(required = true)
+    @Metadata(required = true, description = "The property value as an expression.")
     private ExpressionDefinition expression;
 
     public PropertyExpressionDefinition() {
@@ -61,9 +63,6 @@ public class PropertyExpressionDefinition implements HasExpressionType {
         return new PropertyExpressionDefinition(this);
     }
 
-    /**
-     * Property key
-     */
     public void setKey(String key) {
         this.key = key;
     }
@@ -76,9 +75,6 @@ public class PropertyExpressionDefinition implements HasExpressionType {
         return expression;
     }
 
-    /**
-     * Property values as an expression
-     */
     public void setExpression(ExpressionDefinition expression) {
         this.expression = expression;
     }

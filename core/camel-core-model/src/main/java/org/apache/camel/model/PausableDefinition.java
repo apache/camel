@@ -31,7 +31,9 @@ import org.apache.camel.spi.Metadata;
 /**
  * Pausable EIP to support resuming processing from last known offset.
  */
-@Metadata(label = "eip,routing")
+@Metadata(label = "eip,routing",
+          description = "Pauses a consumer based on a condition, allowing it to be resumed later from the last known offset."
+                        + " Useful for controlling ingestion rate on polling consumers.")
 @XmlRootElement(name = "pausable")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class PausableDefinition extends NoOutputDefinition<PausableDefinition> {
@@ -42,10 +44,12 @@ public class PausableDefinition extends NoOutputDefinition<PausableDefinition> {
     private Predicate<?> untilCheckBean;
 
     @XmlAttribute(required = true)
-    @Metadata(required = true, javaType = "org.apache.camel.resume.ConsumerListener")
+    @Metadata(required = true, javaType = "org.apache.camel.resume.ConsumerListener",
+              description = "The consumer listener to use for pausing and resuming the consumer.")
     private String consumerListener;
     @XmlAttribute(required = true)
-    @Metadata(required = true, javaType = "java.util.function.Predicate")
+    @Metadata(required = true, javaType = "java.util.function.Predicate",
+              description = "Predicate to evaluate whether the processing can resume. Returns true if consumption can resume, or false otherwise.")
     private String untilCheck;
 
     public PausableDefinition() {

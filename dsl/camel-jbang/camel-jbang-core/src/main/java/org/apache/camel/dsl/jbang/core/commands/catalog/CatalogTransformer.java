@@ -36,11 +36,6 @@ public class CatalogTransformer extends CatalogBaseCommand {
     }
 
     @Override
-    int nameWidth() {
-        return 60;
-    }
-
-    @Override
     List<Row> collectRows() {
         List<Row> rows = new ArrayList<>();
         for (String name : catalog.findTransformerNames()) {

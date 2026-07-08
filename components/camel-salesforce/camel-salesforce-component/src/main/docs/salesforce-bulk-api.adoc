@@ -1,0 +1,584 @@
+= Salesforce - Bulk API
+:tabs-sync-option:
+
+xref:ROOT:salesforce-component.adoc[Back to Salesforce Component]
+
+[[Bulk2API]]
+== Bulk 2.0 API
+
+The Bulk 2.0 API has a simplified model over the original Bulk API. Use it to quickly load a large
+amount of data into salesforce, or query a large amount of data out of salesforce. Data must be
+provided in CSV format, usually via an `InputStream` instance. PK chunking is performed automatically. The minimum API version for Bulk 2.0
+is v41.0. The minimum API version for Bulk Queries is v47.0. DTO classes mentioned below are from the
+`org.apache.camel.component.salesforce.api.dto.bulkv2` package. The following operations are supported:
+
+* <<bulk2CreateJob,bulk2CreateJob>> - Creates a bulk ingest job.
+* <<bulk2CreateBatch,bulk2CreateBatch>> - Adds a batch of data to an ingest job.
+* <<bulk2CloseJob,bulk2CloseJob>> - Closes an ingest job.
+* <<bulk2AbortJob,bulk2AbortJob>> - Aborts an ingest job.
+* <<bulk2DeleteJob,bulk2DeleteJob>> - Deletes an ingest job.
+* <<bulk2GetSuccessfulResults,bulk2GetSuccessfulResults>> - Gets successful results for an ingest job.
+* <<bulk2GetFailedResults,bulk2GetFailedResults>> - Gets failed results for an ingest job.
+* <<bulk2GetUnprocessedRecords,bulk2GetUnprocessedRecords>> - Gets unprocessed records for an ingest job.
+* <<bulk2GetJob,bulk2GetJob>> - Gets an ingest Job.
+* <<bulk2GetAllJobs,bulk2GetAllJobs>> - Gets all ingest jobs.
+* <<bulk2CreateQueryJob,bulk2CreateQueryJob>> - Creates a query job.
+* <<bulk2GetQueryJobResults,bulk2GetQueryJobResults>> - Gets query job results.
+* <<bulk2AbortQueryJob,bulk2AbortQueryJob>> - Aborts a query job.
+* <<bulk2DeleteQueryJob,bulk2DeleteQueryJob>> - Deletes a query job.
+* <<bulk2GetQueryJob,bulk2GetQueryJob>> - Gets a query job.
+* <<bulk2GetAllQueryJobs,bulk2GetAllQueryJobs>> - Gets all query jobs.
+
+[[bulk2CreateJob]]
+== Create a Job
+
+`bulk2CreateJob`
+Creates a bulk ingest job.
+
+|===
+| Parameter | Type | Description| Default| Required
+
+| Body | `Job` | Job to create | | x
+|===
+
+*Output*
+
+Type: `Job`
+
+[[bulk2CreateBatch]]
+== Upload a Batch of Job Data
+
+`bulk2CreateBatch`
+
+Adds a batch of data to an ingest job.
+
+|===
+| Parameter | Type | Description| Default| Required
+
+| Body | `InputStream` or `String` | CSV data. The first row must contain headers. | | Required if `jobId` not supplied
+| `jobId` | `String` | Id of Job to create batch under | | x
+|===
+
+[[bulk2CloseJob]]
+== Close a Job
+
+`bulk2CloseJob`
+
+Closes an ingest job. You must close the job in order for it to be processed or
+aborted/deleted.
+
+|===
+| Parameter | Type | Description| Default| Required
+
+| `jobId` | `String` | Id of Job to close | | x
+|===
+
+*Output*
+
+Type: `Job`
+
+[[bulk2AbortJob]]
+== Abort a Job
+
+`bulk2AbortJob`
+
+Aborts an ingest job.
+
+|===
+| Parameter | Type | Description| Default| Required
+
+| `jobId` | `String` | Id of Job to abort | | x
+|===
+
+*Output*
+
+Type: `Job`
+
+[[bulk2DeleteJob]]
+== Delete a Job
+
+`bulk2DeleteJob`
+
+Deletes an ingest job.
+
+|===
+| Parameter | Type | Description| Default| Required
+
+| `jobId` | `String` | Id of Job to delete | | x
+|===
+
+[[bulk2GetSuccessfulResults]]
+== Get Job Successful Record Results
+
+`bulk2GetSuccessfulResults`
+
+Gets successful results for an ingest job.
+
+|===
+| Parameter | Type | Description| Default| Required
+
+| `jobId` | `String` | Id of Job to get results for | | x
+|===
+
+*Output*
+
+Type: `InputStream` +
+Contents: CSV data
+
+[[bulk2GetFailedResults]]
+== Get Job Failed Record Results
+
+`bulk2GetFailedResults`
+
+Gets failed results for an ingest job.
+
+|===
+| Parameter | Type | Description| Default| Required
+
+| `jobId` | `String` | Id of Job to get results for | | x
+|===
+
+*Output*
+
+Type: `InputStream` +
+Contents: CSV data
+
+[[bulk2GetUnprocessedRecords]]
+== Get Job Unprocessed Record Results
+
+`bulk2GetUnprocessedRecords`
+
+Gets unprocessed records for an ingest job.
+
+|===
+| Parameter | Type | Description| Default| Required
+
+| `jobId` | `String` | Id of Job to get records for | | x
+|===
+
+*Output*
+
+Type: `InputStream`
+Contents: CSV data
+
+[[bulk2GetJob]]
+== Get Job Info
+
+`bulk2GetJob`
+
+Gets an ingest Job.
+
+|===
+| Parameter | Type | Description| Default| Required
+
+| Body | `Job` | Will use Id of supplied Job to retrieve Job | | Required if `jobId` not supplied
+| `jobId` | `String` | Id of Job to retrieve | | Required if `Job` not supplied in body
+|===
+
+*Output*
+
+Type: `Job`
+
+[[bulk2GetAllJobs]]
+== Get All Jobs
+
+`bulk2GetAllJobs`
+
+Gets all ingest jobs.
+
+|===
+| Parameter | Type | Description| Default| Required
+
+| `queryLocator` | `String` | Used in subsequent calls if results span multiple pages | |
+|===
+
+*Output*
+
+Type: `Jobs`
+
+If the `done` property of the `Jobs` instance
+is false, there are additional pages to fetch, and the `nextRecordsUrl` property contains the value
+to be set in the `queryLocator` parameter on subsequent calls.
+
+[[bulk2CreateQueryJob]]
+== Create a Query Job
+
+`bulk2CreateQueryJob`
+
+Gets a query job.
+
+|===
+| Parameter | Type | Description| Default| Required
+
+| Body | `QueryJob` | QueryJob to create | | x
+|===
+
+*Output*
+
+Type: `QueryJob`
+
+[[bulk2GetQueryJobResults]]
+== Get Results for a Query Job
+
+`bulk2GetQueryJobResults`
+
+Get bulk query job results. `jobId` parameter is required. Accepts
+`maxRecords` and `locator` parameters.
+
+|===
+| Parameter | Type | Description| Default| Required
+
+| `jobId` | `String` | Id of Job to get results for | | x
+| `maxRecords` | `Integer` | The maximum number of records to retrieve per set of results for the query. The request is still subject to the size limits. If you are working with a very large number of query results, you may experience a timeout before receiving all the data from Salesforce. To prevent a timeout, specify the maximum number of records your client is expecting to receive in the maxRecords parameter. This splits the results into smaller sets with this value as the maximum size. | |
+| `locator` | `locator` | A string that identifies a specific set of query results. Providing a value for this parameter returns only that set of results.
+Omitting this parameter returns the first set of results. | |
+|===
+
+*Output*
+
+Type: `InputStream`
+Contents: CSV data
+
+Response message headers include `Sforce-NumberOfRecords` and
+`Sforce-Locator` headers. The value of `Sforce-Locator` can be passed into subsequent calls via the
+`locator` parameter.
+
+[[bulk2AbortQueryJob]]
+== Abort a Query Job
+
+`bulk2AbortQueryJob`
+
+Aborts a query job.
+
+|===
+| Parameter | Type | Description| Default| Required
+
+| `jobId` | `String` | Id of Job to abort | | x
+|===
+
+*Output*
+
+Type: `QueryJob`
+
+[[bulk2DeleteQueryJob]]
+== Delete a Query Job
+
+`bulk2DeleteQueryJob`
+
+Deletes a query job.
+
+|===
+| Parameter | Type | Description| Default| Required
+
+| `jobId` | `String` | Id of Job to delete | | x
+|===
+
+[[bulk2GetQueryJob]]
+== Get Information About a Query Job
+
+`bulk2GetQueryJob`
+
+Gets a query job.
+
+|===
+| Parameter | Type | Description| Default| Required
+
+| `jobId` | `String` | Id of Job to retrieve | | x
+|===
+
+*Output*
+
+Type: `QueryJob`
+
+[[bulk2GetAllQueryJobs]]
+== Get Information About All Query Jobs
+
+`bulk2GetAllQueryJobs`
+
+Gets all query jobs.
+
+|===
+| Parameter | Type | Description| Default| Required
+
+| `queryLocator` | `String` | Used in subsequent calls if results span multiple pages | |
+|===
+
+*Output*
+
+Type: `QueryJobs`
+
+If the `done` property of the `QueryJobs` instance
+is false, there are additional pages to fetch, and the `nextRecordsUrl` property contains the value
+to be set in the `queryLocator` parameter on subsequent calls.
+
+[[BulkAPI]]
+== Bulk (original) API
+
+Producer endpoints can use the following APIs. All Job data formats,
+i.e. xml, csv, zip/xml, and zip/csv are supported. +
+ The request and response have to be marshalled/unmarshalled by the
+route. Usually the request will be some stream source like a CSV file,
+ and the response may also be saved to a file to be correlated with the
+request.
+
+The following operations are supported:
+
+* <<createJob,createJob>> - Creates a Salesforce Bulk Job.
+* <<getJob,getJob>> - Gets a Job using its Salesforce Id
+* <<closeJob,closeJob>> - Closes a Job
+* <<abortJob,abortJob>> - Aborts a Job
+* <<createBatch,createBatch>> - Submits a Batch within a Bulk Job
+* <<getBatch,getBatch>> - Gets a Batch using Id
+* <<getAllBatches,getAllBatches>> - Gets all Batches for a Bulk Job Id
+* <<getRequest,getRequest>> - Gets Request data (XML/CSV) for a Batch
+* <<getResults,getResults>> - Gets the results of the Batch when its complete
+* <<createBatchQuery,createBatchQuery>> - Creates a Batch from an SOQL query
+* <<getQueryResultIds,getQueryResultIds>> - Gets a list of Result Ids for a Batch Query
+* <<getQueryResult,getQueryResult>> - Gets results for a Result Id
+
+[[createJob]]
+== Create a Job
+
+`createJob`
+
+Creates a Salesforce Bulk Job. PK Chunking
+is supported via the pkChunking* options. See an explanation https://developer.salesforce.com/docs/atlas.en-us.api_asynch.meta/api_asynch/async_api_headers_enable_pk_chunking.htm[here].
+
+|===
+| Parameter | Type | Description| Default| Required
+
+| Body | `JobInfo` | Job to create | | x
+| `pkChunking` | `Boolean` | Whether to use PK Chunking | false |
+| `pkChunkingChunkSize` | `Integer` | | |
+| `pkChunkingStartRow` | `Integer` | |  |
+| `pkChunkingParent` | `String` | | |
+
+|===
+
+*Output*
+
+Type: `JobInfo`
+
+[[getJob]]
+== Get Job Details
+
+`getJob`
+
+Gets a Job
+
+|===
+| Parameter | Type | Description| Default| Required
+
+| `jobId` | `String` | Id of Job to get | | Required if body not supplied
+| Body | `JobInfo` | `JobInfo` instance from which Id will be used | | Required if `jobId` not supplied
+|===
+
+*Output*
+
+Type: `JobInfo`
+
+[[closeJob]]
+== Close a Job
+
+`closeJob`
+
+Closes a Job
+
+|===
+| Parameter | Type | Description| Default| Required
+
+| `jobId` | `String` | Id of Job | | Required if body not supplied
+| Body | `JobInfo` | `JobInfo` instance from which Id will be used | | Required if `jobId` not supplied
+|===
+
+*Output*
+
+Type: `JobInfo`
+
+[[abortJob]]
+== Abort a Job
+
+`abortJob`
+
+Aborts a Job
+
+|===
+| Parameter | Type | Description| Default| Required
+
+| `jobId` | `String` | Id of Job | | Required if body not supplied
+| Body | `JobInfo` | `JobInfo` instance from which Id will be used | | Required if `jobId` not supplied
+|===
+
+*Output*
+
+Type: `JobInfo`
+
+[[createBatch]]
+== Add a Batch to a Job
+
+`createBatch`
+
+Submits a Batch within a Bulk Job
+
+|===
+| Parameter | Type | Description| Default| Required
+
+| `jobId` | `String` | Id of Job | | x
+| `contentType` | `String` | Content type of body. Can be XML, CSV, ZIP_XML or ZIP_CSV  | | x
+| `Body` | `InputStream` or `String` | Batch data | | x
+|===
+
+*Output*
+
+Type: `BatchInfo`
+
+[[getBatch]]
+== Get Information for a Batch
+
+`getBatch`
+
+Get a Batch
+
+|===
+| Parameter | Type | Description| Default| Required
+
+| `jobId` | `String` | Id of Job | | Required if body not supplied
+| `batchId` | `String` | Id of Batch | | Required if body not supplied
+| Body | `BatchInfo` | `JobInfo` instance from which `jobId` and `batchId` will be used | | Required if `jobId` and `BatchId` not supplied
+|===
+
+*Output*
+
+Type: `BatchInfo`
+
+[[getAllBatches]]
+== Get Information for All Batches in a Job
+
+`getAllBatches`
+
+Gets all Batches for a Bulk Job Id
+
+|===
+| Parameter | Type | Description| Default| Required
+
+| `jobId` | `String` | Id of Job | | Required if body not supplied
+| Body | `JobInfo` | `JobInfo` instance from which Id will be used | | Required if `jobId` not supplied
+|===
+
+*Output*
+
+Type: `List<JobInfo>`
+
+[[getRequest]]
+== Get a Batch Request
+
+`getRequest`
+
+Gets Request data (XML/CSV) for a Batch
+
+|===
+| Parameter | Type | Description| Default| Required
+
+| `jobId` | `String` | Id of Job | | Required if body not supplied
+| `batchId` | `String` | Id of Batch | | Required if body not supplied
+| Body | `BatchInfo` | `JobInfo` instance from which `jobId` and `batchId` will be used | | Required if `jobId` and `BatchId` not supplied
+|===
+
+*Output*
+
+Type: `InputStream`
+
+
+[[getResults]]
+== Get Batch Results
+
+`getResults`
+
+Gets the results of the Batch when it's complete
+
+|===
+| Parameter | Type | Description| Default| Required
+
+| `jobId` | `String` | Id of Job | | Required if body not supplied
+| `batchId` | `String` | Id of Batch | | Required if body not supplied
+| Body | `BatchInfo` | `JobInfo` instance from which `jobId` and `batchId` will be used | | Required if `jobId` and `BatchId` not supplied
+|===
+
+*Output*
+
+Type: `InputStream`
+
+[[createBatchQuery]]
+== Create Bulk Query Batch
+
+`createBatchQuery`
+
+Creates a Batch from an SOQL query
+
+|===
+| Parameter | Type | Description| Default| Required
+
+| `jobId` | `String` | Id of Job | | Required if body not supplied
+| `contentType` | `String` | Content type of body. Can be XML, CSV, ZIP_XML or ZIP_CSV | | Required if `JobInfo` instance not supplied in body
+| `sObjectQuery` | `String` | SOQL query to be used for this batch | | Required if not supplied in body
+| Body | `JobInfo` or `String` | Either `JobInfo` instance from which `jobId` and `contentType` will be used, or `String` to be used as the Batch query | | Required `JobInfo` if `jobId` and `contentType` not supplied.
+|===
+
+*Output*
+
+Type: `BatchInfo`
+
+[[getQueryResultIds]]
+== Get Batch Results
+
+`getQueryResultIds`
+
+Gets a list of Result Ids for a Batch Query
+
+|===
+| Parameter | Type | Description| Default| Required
+
+| `jobId` | `String` | Id of Job | | Required if body not supplied
+| `batchId` | `String` | Id of Batch | | Required if body not supplied
+| Body | `BatchInfo` | `JobInfo` instance from which `jobId` and `batchId` will be used | | Required if `jobId` and `BatchId` not supplied
+|===
+
+*Output*
+
+Type: `List<String>`
+
+
+[[getQueryResult]]
+== Get Bulk Query Results
+
+`getQueryResult`
+
+Gets results for a Result Id
+
+|===
+| Parameter | Type | Description| Default| Required
+
+| `jobId` | `String` | Id of Job | | Required if body not supplied
+| `batchId` | `String` | Id of Batch | | Required if body not supplied
+| `resultId` | `String` | Id of Result | | If not passed in body
+| Body | `BatchInfo` or `String` | `JobInfo` instance from which `jobId` and `batchId` will be used.
+Otherwise, can be a `String` containing the `resultId` | | `BatchInfo` Required if `jobId` and `BatchId` not supplied
+|===
+
+*Output*
+
+Type: `InputStream`
+
+For example, the following producer endpoint uses the createBatch API to
+create a Job Batch. The in message must contain a body that can be converted into an
+`InputStream` (usually UTF-8 CSV or XML content from a file, etc.) and
+header fields 'jobId' for the Job and 'contentType' for the Job content
+type, which can be XML, CSV, ZIP_XML or ZIP_CSV. The put message body
+will contain `BatchInfo` on success, or throw a `SalesforceException` on
+error.
+
+._Java-only: endpoint URI snippet_
+[source,java]
+----
+...to("salesforce:createBatch")..
+----

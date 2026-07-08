@@ -9,7 +9,6 @@
 :component-header: Both producer and consumer are supported
 //Manually maintained attributes
 :group: Google
-:camel-spring-boot-name: google-pubsub
 
 *Since Camel {since}*
 
@@ -23,14 +22,14 @@ Maven users will need to add the following dependency to their pom.xml
 for this component:
 
 [source,xml]
-------------------------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-google-pubsub</artifactId>
     <!-- use the same version as your Camel core version -->
     <version>x.x.x</version>
 </dependency>
-------------------------------------------------------
+----
 
 == URI Format
 
@@ -100,6 +99,7 @@ Without a dead-letter policy, the header will not be set.
 
 This allows routes to implement custom retry logic based on the delivery attempt count:
 
+._Java-only: inline Processor with lambda expression accessing delivery attempt header_
 [source,java]
 ----
 from("google-pubsub:{{project.name}}:{{subscription.name}}")
@@ -132,16 +132,40 @@ The `maxDeliveryAttempts` value is resolved as follows:
    disabled and a warning is logged.
 4. A value of `0` disables enforcement.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
-// Explicit configuration
 from("google-pubsub:{{project.name}}:{{subscription.name}}?maxDeliveryAttempts=5")
     .to("direct:process");
-
-// Auto-fetch from subscription dead-letter policy (default behavior when not set)
-from("google-pubsub:{{project.name}}:{{subscription.name}}")
-    .to("direct:process");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="google-pubsub:{{project.name}}:{{subscription.name}}?maxDeliveryAttempts=5"/>
+  <to uri="direct:process"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: google-pubsub:{{project.name}}:{{subscription.name}}
+      parameters:
+        maxDeliveryAttempts: 5
+      steps:
+        - to:
+            uri: direct:process
+----
+====
 
 === Message Body
 
@@ -162,6 +186,7 @@ All Google components support https://cloud.google.com/iam/docs/workload-identit
 
 **With an explicit WIF configuration file:** Set `useWorkloadIdentityFederation=true` and provide the path to the WIF JSON config file via `workloadIdentityConfig`. This is the typical setup for GitHub Actions, AWS, and Azure workloads.
 
+._Java-only: programmatic endpoint configuration for Workload Identity Federation_
 [source,java]
 ----
 // GKE with Workload Identity - ADC handles it automatically
@@ -176,6 +201,7 @@ endpoint.setWorkloadIdentityConfig("/path/to/wif-config.json");
 
 **With Service Account Impersonation:** Set `impersonatedServiceAccount` to a target service account email. The external credentials obtained via WIF will impersonate that service account, inheriting its permissions.
 
+._Java-only: programmatic endpoint configuration with service account impersonation_
 [source,java]
 ----
 // WIF with service account impersonation
@@ -187,7 +213,6 @@ endpoint.setImpersonatedServiceAccount("my-sa@my-project.iam.gserviceaccount.com
 
 NOTE: Workload Identity Federation support is available in all Google components (PubSub, Storage, BigQuery, Firestore, Sheets, Calendar, Drive, Mail, Functions, Secret Manager, Vision, Vertex AI, Speech-to-Text, Text-to-Speech) through the common `GoogleCommonConfiguration` interface.
 
-include::spring-boot:partial$starter.adoc[]
 
 === Manual Acknowledgement
 
@@ -196,6 +221,7 @@ By default, the PubSub consumer will acknowledge messages once the exchange has 
 If the _ackMode_ option is set to `NONE`, the component will not acknowledge messages, and it is up to the route to do so.
 In this case, a `GooglePubsubAcknowledge` object is stored in the header `GooglePubsubConstants.GOOGLE_PUBSUB_ACKNOWLEDGE` and can be used to acknowledge messages:
 
+._Java-only: inline Processor with lambda expression for manual acknowledgement_
 [source,java]
 ----
 from("google-pubsub:{{project.name}}:{{subscription.name}}?ackMode=NONE")

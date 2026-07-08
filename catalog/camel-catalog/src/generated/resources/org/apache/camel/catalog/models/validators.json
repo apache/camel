@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "validators",
     "title": "Validations",
-    "description": "To configure validators.",
+    "description": "Container for defining data type validator definitions",
     "deprecated": false,
     "label": "validation",
     "javaType": "org.apache.camel.model.validator.ValidatorsDefinition",
@@ -12,6 +12,6 @@
     "output": false
   },
   "properties": {
-    "validators": { "index": 0, "kind": "element", "displayName": "Validators", "group": "common", "required": true, "type": "array", "javaType": "java.util.List<org.apache.camel.model.validator.ValidatorDefinition>", "oneOf": [ "customValidator", "endpointValidator", "predicateValidator" ], "deprecated": false, "autowired": false, "secret": false, "description": "The configured validators" }
+    "validators": { "index": 0, "kind": "element", "displayName": "Validators", "group": "common", "required": false, "type": "array", "javaType": "java.util.List<org.apache.camel.model.validator.ValidatorDefinition>", "oneOf": [ "customValidator", "endpointValidator", "predicateValidator" ], "deprecated": false, "autowired": false, "secret": false, "description": "The configured validators." }
   }
 }

@@ -21,12 +21,19 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 
 /**
- * Factory to create {@link org.apache.camel.spi.UnitOfWork}.
+ * SPI factory that creates a {@link UnitOfWork} for each incoming {@link org.apache.camel.Exchange}.
+ * <p/>
+ * The factory is called by the routing engine at exchange creation time; the returned {@link UnitOfWork} is attached to
+ * the exchange for its lifetime. Implementing a custom factory is only necessary for very rare use-cases such as
+ * integrating with an external transaction manager or attaching custom synchronization hooks globally. The created
+ * {@link UnitOfWork} <b>must</b> extend {@code DefaultUnitOfWork} from {@code camel-base-engine}: that class wires the
+ * breadcrumb ID, MDC propagation, and route-context tracking that the routing engine relies on. Implementing
+ * {@link UnitOfWork} from scratch without extending {@code DefaultUnitOfWork} will break async routing and MDC logging
+ * in subtle ways.
+ * <p/>
+ * See <a href="https://camel.apache.org/manual/exchange.html">Exchange</a> in the Camel user manual.
  *
- * <b>IMPORTANT:</b> Implementing a custom {@link UnitOfWorkFactory} is only intended for very rare and special
- * use-cases. The created {@link UnitOfWork} is highly recommended to extend
- * org.apache.camel.impl.engine.DefaultUnitOfWork to ensure Camel functionality works correctly during routing of
- * {@link Exchange}s.
+ * @see UnitOfWork
  */
 public interface UnitOfWorkFactory extends AfterPropertiesConfigured {
 

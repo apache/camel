@@ -33,7 +33,8 @@ import org.apache.camel.spi.Metadata;
 /**
  * Represents a Camel tokenizer for AI.
  */
-@Metadata(firstVersion = "4.8.0", label = "eip,transformation,ai", title = "Specialized tokenizer for AI applications")
+@Metadata(firstVersion = "4.8.0", label = "eip,transformation,ai", title = "Specialized tokenizer for AI applications",
+          description = "Tokenizes the message body for AI processing, splitting text into chunks suitable for embedding or LLM input")
 @XmlRootElement(name = "tokenizer")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class TokenizerDefinition extends NoOutputDefinition<TokenizerDefinition> {
@@ -45,6 +46,7 @@ public class TokenizerDefinition extends NoOutputDefinition<TokenizerDefinition>
             @XmlElement(name = "langChain4jSentenceTokenizer", type = LangChain4jSentenceTokenizerDefinition.class),
             @XmlElement(name = "langChain4jWordTokenizer", type = LangChain4jWordTokenizerDefinition.class),
     })
+    @Metadata(description = "The tokenizer implementation to use, such as LangChain4j character, line, paragraph, sentence, or word tokenizers.")
     private TokenizerImplementationDefinition tokenizerImplementation;
 
     @XmlTransient
@@ -70,23 +72,14 @@ public class TokenizerDefinition extends NoOutputDefinition<TokenizerDefinition>
         return tokenizerName;
     }
 
-    /**
-     * Sets the tokenizer name
-     */
     public void setTokenizerName(String tokenizerName) {
         this.tokenizerName = tokenizerName;
     }
 
-    /**
-     * Gets the tokenizer implementation
-     */
     public TokenizerImplementationDefinition getTokenizerImplementation() {
         return tokenizerImplementation;
     }
 
-    /**
-     * Sets the tokenizer implementation
-     */
     public void setTokenizerImplementation(TokenizerImplementationDefinition tokenizerImplementation) {
         this.tokenizerImplementation = tokenizerImplementation;
     }

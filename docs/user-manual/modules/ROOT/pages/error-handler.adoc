@@ -76,15 +76,20 @@ or in Spring XML DSL:
 
 === No Error Handler
 
-The no error handler is to be used for disabling error handling in Java DSL:
+The no error handler is to be used for disabling error handling.
 
+[tabs]
+====
+
+Java::
++
 [source,java]
 ----
 errorHandler(noErrorHandler());
 ----
 
-And in Spring XML DSL:
-
+Spring XML::
++
 [source,xml]
 ----
 <camel:errorHandler id="noErrorHandler" type="NoErrorHandler"/>
@@ -93,6 +98,7 @@ And in Spring XML DSL:
   ...
 </camel:camelContext>
 ----
+====
 
 === TransactionErrorHandler
 
@@ -185,6 +191,7 @@ The error handler is scoped as either:
 
 The following example shows how you can register a global error handler for the `RouteBuilder`:
 
+._Java-only: RouteBuilder with global error handler_
 [source,java]
 ----
 RouteBuilder builder = new RouteBuilder() {
@@ -200,6 +207,7 @@ RouteBuilder builder = new RouteBuilder() {
 The following example shows how you can register a route specific error
 handler:
 
+._Java-only: RouteBuilder with route-specific error handler_
 [source,java]
 ----
 RouteBuilder builder = new RouteBuilder() {

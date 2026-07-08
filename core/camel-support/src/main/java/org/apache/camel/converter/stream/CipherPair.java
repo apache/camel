@@ -18,12 +18,12 @@ package org.apache.camel.converter.stream;
 
 import java.security.GeneralSecurityException;
 import java.security.Key;
-import java.security.SecureRandom;
 
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
 import javax.crypto.spec.IvParameterSpec;
 
+import org.apache.camel.util.SecureRandomHelper;
 import org.apache.camel.util.StringHelper;
 
 /**
@@ -41,7 +41,7 @@ public class CipherPair {
         String a = StringHelper.before(transformation, "/", transformation);
 
         KeyGenerator keygen = KeyGenerator.getInstance(a);
-        keygen.init(new SecureRandom());
+        keygen.init(SecureRandomHelper.getSecureRandom());
         key = keygen.generateKey();
         enccipher = Cipher.getInstance(transformation);
         enccipher.init(Cipher.ENCRYPT_MODE, key);

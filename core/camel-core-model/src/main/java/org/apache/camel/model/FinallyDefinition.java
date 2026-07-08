@@ -27,9 +27,10 @@ import org.apache.camel.Exchange;
 import org.apache.camel.spi.Metadata;
 
 /**
- * Path traversed when a try, catch, finally block exits
+ * Steps to execute after a doTry block completes, regardless of whether an exception was thrown or caught
  */
-@Metadata(label = "error")
+@Metadata(label = "error,errorhandling",
+          description = "Defines steps to always execute after a doTry block completes, regardless of whether an exception was thrown or caught")
 @XmlRootElement(name = "doFinally")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class FinallyDefinition extends OutputDefinition<FinallyDefinition> {

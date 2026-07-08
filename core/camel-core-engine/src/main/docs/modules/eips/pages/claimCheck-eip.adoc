@@ -1,7 +1,7 @@
 = Claim Check EIP
 :doctitle: Claim Check
 :shortname: claimCheck
-:description: The Claim Check EIP allows you to replace message content with a claim check (a unique key), which can be used to retrieve the message content at a later time.
+:description: Temporarily stores the message content and replaces it with a claim check key, allowing the content to be retrieved later in the route. Useful for reducing memory when large payloads pass through processing steps that don't need them.
 :since: 
 :supportlevel: Stable
 :tabs-sync-option:

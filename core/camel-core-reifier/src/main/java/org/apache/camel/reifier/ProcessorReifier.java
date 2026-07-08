@@ -34,6 +34,7 @@ import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.StartupStep;
+import org.apache.camel.model.A2ASubTaskDefinition;
 import org.apache.camel.model.AggregateDefinition;
 import org.apache.camel.model.AggregationStrategyAwareDefinition;
 import org.apache.camel.model.BeanDefinition;
@@ -205,7 +206,9 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
     public static ProcessorReifier<? extends ProcessorDefinition<?>> coreReifier(
             Route route, ProcessorDefinition<?> definition) {
 
-        if (definition instanceof AggregateDefinition) {
+        if (definition instanceof A2ASubTaskDefinition) {
+            return new A2ASubTaskReifier(route, definition);
+        } else if (definition instanceof AggregateDefinition) {
             return new AggregateReifier(route, definition);
         } else if (definition instanceof BeanDefinition) {
             return new BeanReifier(route, definition);

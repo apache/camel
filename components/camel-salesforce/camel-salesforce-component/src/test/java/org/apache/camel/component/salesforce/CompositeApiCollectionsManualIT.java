@@ -62,9 +62,9 @@ public class CompositeApiCollectionsManualIT extends AbstractSalesforceTestBase 
 
         List<AbstractDescribedSObjectBase> result
                 = (List<AbstractDescribedSObjectBase>) fluentTemplate.to("salesforce:compositeRetrieveSObjectCollections")
-                        .withHeader("sObjectIds", Collections.singletonList(accountId))
-                        .withHeader("sObjectFields", Arrays.asList("Id", "Name"))
-                        .withHeader("sObjectName", "Account")
+                        .withHeader("CamelSalesforceSObjectIds", Collections.singletonList(accountId))
+                        .withHeader("CamelSalesforceSObjectFields", Arrays.asList("Id", "Name"))
+                        .withHeader("CamelSalesforceSObjectName", "Account")
                         .request();
         assertNotNull(result, "Response was null.");
         assertEquals(1, result.size());
@@ -77,7 +77,7 @@ public class CompositeApiCollectionsManualIT extends AbstractSalesforceTestBase 
         final List<String> ids = Arrays.asList(accountId, account2Id, "001000000000000000");
         List<DeleteSObjectResult> result
                 = (List<DeleteSObjectResult>) fluentTemplate.to("salesforce:compositeDeleteSObjectCollections")
-                        .withHeader("sObjectIds", ids)
+                        .withHeader("CamelSalesforceSObjectIds", ids)
                         .request();
         assertNotNull(result, "Response was null.");
         assertEquals(3, result.size());
@@ -92,8 +92,8 @@ public class CompositeApiCollectionsManualIT extends AbstractSalesforceTestBase 
         final List<String> ids = Arrays.asList(accountId, "001000000000000000");
         List<DeleteSObjectResult> result
                 = (List<DeleteSObjectResult>) fluentTemplate.to("salesforce:compositeDeleteSObjectCollections")
-                        .withHeader("sObjectIds", ids)
-                        .withHeader("allOrNone", constant(true))
+                        .withHeader("CamelSalesforceSObjectIds", ids)
+                        .withHeader("CamelSalesforceAllOrNone", constant(true))
                         .request();
         assertNotNull(result, "Response was null.");
         assertEquals(2, result.size());
@@ -170,7 +170,7 @@ public class CompositeApiCollectionsManualIT extends AbstractSalesforceTestBase 
                 from("direct:deleteCompositeAccounts")
                         .to("salesforce:query?sObjectClass=" + Account.class.getName()
                                 + "&sObjectQuery=SELECT Id FROM Account WHERE Name = 'Account created from Composite Collections API'")
-                        .split(simple("${body.records}")).setHeader("sObjectId", simple("${body.id}"))
+                        .split(simple("${body.records}")).setHeader("CamelSalesforceSObjectId", simple("${body.id}"))
                         .to("salesforce:deleteSObject?sObjectName=Account").end();
             }
         };

@@ -1453,7 +1453,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final KubernetesNodesHeaderNameBuilder INSTANCE = new KubernetesNodesHeaderNameBuilder();
+        public static final KubernetesNodesHeaderNameBuilder INSTANCE = new KubernetesNodesHeaderNameBuilder();
 
         /**
          * The Producer operation.

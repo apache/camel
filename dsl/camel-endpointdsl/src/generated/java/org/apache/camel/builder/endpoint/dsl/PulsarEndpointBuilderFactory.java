@@ -1644,7 +1644,7 @@ public interface PulsarEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final PulsarHeaderNameBuilder INSTANCE = new PulsarHeaderNameBuilder();
+        public static final PulsarHeaderNameBuilder INSTANCE = new PulsarHeaderNameBuilder();
 
         /**
          * The properties attached to the message.

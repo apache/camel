@@ -7,8 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Only consumer is supported
-//Manually maintained attributes
-:camel-spring-boot-name: master
 
 *Since Camel {since}*
 
@@ -43,11 +41,38 @@ Prefix any camel endpoint with **master:someName:** where _someName_ is a logica
 used to acquire the master lock.
 For instance:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("master:cheese:jms:foo")
-  .to("activemq:wine");
+    .to("activemq:wine");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="master:cheese:jms:foo"/>
+  <to uri="activemq:wine"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: master:cheese:jms:foo
+      steps:
+        - to:
+            uri: activemq:wine
+----
+====
 
 In this example, the master component ensures that the route is only active in one node, at any given time, in the cluster.
 So if there are 8 nodes in the cluster, then the master component will elect one route to be the leader, and only
@@ -62,7 +87,7 @@ TIP: Apache ActiveMQ 5.x has such a feature out of the box called https://active
 
 You can protect a clustered Camel application to only consume files from one active node.
 
-
+._Java-only: string concatenation to build the master endpoint URI_
 [source,java]
 ----
 // the file endpoint we want to consume from
@@ -81,6 +106,7 @@ The master component leverages CamelClusterService you can configure using
 
 * *Java*
 +
+._Java-only: programmatic ZooKeeperClusterService configuration_
 [source,java]
 ----
 ZooKeeperClusterService service = new ZooKeeperClusterService();
@@ -138,6 +164,3 @@ Camel provides the following ClusterService implementations:
 - camel-jgroups
 - camel-kubernetes
 - camel-zookeeper
-
-
-include::spring-boot:partial$starter.adoc[]

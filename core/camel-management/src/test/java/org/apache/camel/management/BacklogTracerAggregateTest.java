@@ -17,6 +17,7 @@
 package org.apache.camel.management;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
@@ -28,6 +29,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
 
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -56,14 +58,18 @@ public class BacklogTracerAggregateTest extends ManagementTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        List<BacklogTracerEventMessage> events
-                = (List<BacklogTracerEventMessage>) mbeanServer.invoke(on, "dumpAllTracedMessages", null, null);
+        // the aggregate completion may still be processing traced events asynchronously,
+        // so use Awaitility to wait until all backlog tracer events are recorded
+        await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> {
+            List<BacklogTracerEventMessage> events
+                    = (List<BacklogTracerEventMessage>) mbeanServer.invoke(on, "dumpAllTracedMessages", null, null);
 
-        assertNotNull(events);
+            assertNotNull(events);
 
-        // should be 4 first and 4 last
-        assertEquals(4, events.stream().filter(BacklogTracerEventMessage::isFirst).count());
-        assertEquals(4, events.stream().filter(BacklogTracerEventMessage::isLast).count());
+            // should be 4 first and 4 last
+            assertEquals(4, events.stream().filter(BacklogTracerEventMessage::isFirst).count());
+            assertEquals(4, events.stream().filter(BacklogTracerEventMessage::isLast).count());
+        });
     }
 
     @Override

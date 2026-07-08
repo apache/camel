@@ -34,6 +34,8 @@ updates:
       - dependency-name: "org.apache.logging.log4j:*"
       # This is a virtual plugin which doesn't really exist
       - dependency-name: "org.eclipse.m2e:lifecycle-mapping"
+      # Managed manually - gencode version must be <= the lowest runtime version across Spring Boot and Quarkus
+      - dependency-name: "com.google.protobuf:*"
     groups:
       Micrometer:
         patterns: ["io.micrometer:*"]
@@ -43,6 +45,8 @@ updates:
         patterns: ["dev.langchain4j:*"]
       Parquet:
         patterns: ["org.apache.parquet:*"]
+      CometD:
+        patterns: ["org.cometd.java:*"]
     open-pull-requests-limit: 20
   - package-ecosystem: "npm"
     directory: "docs"

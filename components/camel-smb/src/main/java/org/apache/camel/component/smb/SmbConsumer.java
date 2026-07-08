@@ -84,7 +84,7 @@ public class SmbConsumer extends GenericFileConsumer<FileIdBothDirectoryInformat
         }
 
         if (getEndpoint().isPreSort()) {
-            Arrays.sort(files, Comparator.comparing(FileIdBothDirectoryInformation::getFileName));
+            Arrays.sort(files, preSortComparator(getEndpoint().getPreSort()));
         }
 
         for (FileIdBothDirectoryInformation file : files) {
@@ -426,5 +426,23 @@ public class SmbConsumer extends GenericFileConsumer<FileIdBothDirectoryInformat
 
     private boolean isDirectory(FileIdBothDirectoryInformation file) {
         return EnumWithValue.EnumUtils.isSet(file.getFileAttributes(), FileAttributes.FILE_ATTRIBUTE_DIRECTORY);
+    }
+
+    private static Comparator<FileIdBothDirectoryInformation> preSortComparator(String preSort) {
+        boolean reverse = preSort.startsWith("-");
+        String field = reverse ? preSort.substring(1) : preSort;
+        Comparator<FileIdBothDirectoryInformation> cmp;
+        switch (field) {
+            case "modified":
+                cmp = Comparator.comparingLong(f -> f.getLastWriteTime().toEpochMillis());
+                break;
+            case "size":
+                cmp = Comparator.comparingLong(FileIdBothDirectoryInformation::getEndOfFile);
+                break;
+            default:
+                cmp = Comparator.comparing(FileIdBothDirectoryInformation::getFileName);
+                break;
+        }
+        return reverse ? cmp.reversed() : cmp;
     }
 }

@@ -32,9 +32,13 @@ import dev.tamboui.text.Line;
 import dev.tamboui.text.Span;
 import dev.tamboui.text.Text;
 import dev.tamboui.tui.event.KeyEvent;
+import dev.tamboui.tui.event.MouseEvent;
+import dev.tamboui.tui.event.MouseEventKind;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
+import dev.tamboui.widgets.block.Borders;
 import dev.tamboui.widgets.paragraph.Paragraph;
+import dev.tamboui.widgets.scrollbar.ScrollbarState;
 import dev.tamboui.widgets.table.Cell;
 import dev.tamboui.widgets.table.Row;
 import dev.tamboui.widgets.table.Table;
@@ -44,14 +48,12 @@ import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 
-import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.*;
+import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.*;
 
-class RoutesTab implements MonitorTab {
+class RoutesTab extends AbstractTab {
 
     private static final String[] ROUTE_SORT_COLUMNS = { "name", "from", "status", "total", "failed" };
     private static final String[] ROUTE_TOP_SORT_COLUMNS = { "mean", "max", "min", "last", "delta" };
-
-    private final MonitorContext ctx;
 
     // Route sort state
     private String routeSort = "name";
@@ -64,7 +66,14 @@ class RoutesTab implements MonitorTab {
 
     // Table states
     private final TableState routeTableState = new TableState();
+    private final ScrollbarState routeTableScrollState = new ScrollbarState();
     private final TableState processorTableState = new TableState();
+    private final ScrollbarState processorTableScrollState = new ScrollbarState();
+    private Rect lastRouteTableArea;
+    private int topPanelHeight = -1;
+    private final DragSplit vSplit = new DragSplit();
+    private int infoPanelWidth = 30;
+    private final DragSplit hSplit = new DragSplit();
 
     // Diagram support (shared rendering/loading logic)
     private final DiagramSupport diagram = new DiagramSupport();
@@ -78,7 +87,7 @@ class RoutesTab implements MonitorTab {
     private final Deque<String> routeNavigationStack = new ArrayDeque<>();
 
     RoutesTab(MonitorContext ctx) {
-        this.ctx = ctx;
+        super(ctx);
     }
 
     boolean isTopMode() {
@@ -386,6 +395,49 @@ class RoutesTab implements MonitorTab {
     }
 
     @Override
+    public boolean handleMouseEvent(MouseEvent me, Rect area) {
+        if (!diagram.isShowDiagram() && vSplit.handleMouse(me, me.y())) {
+            if (vSplit.isDragging() && me.kind() == MouseEventKind.DRAG) {
+                topPanelHeight = Math.max(3, Math.min(me.y() - area.y(), area.height() - 5));
+            }
+            return true;
+        }
+        if (diagram.isShowDiagram() && hSplit.handleMouse(me, me.x())) {
+            if (hSplit.isDragging() && me.kind() == MouseEventKind.DRAG) {
+                infoPanelWidth = Math.max(10, Math.min(me.x() - area.x(), area.width() - 20));
+            }
+            return true;
+        }
+        if (!diagram.isShowDiagram()) {
+            IntegrationInfo info = ctx.findSelectedIntegration();
+            if (info != null) {
+                if (handleTableClick(me, lastRouteTableArea, routeTableState, info.routes.size())) {
+                    return true;
+                }
+            }
+        }
+        if (diagram.isShowDiagram()) {
+            if (diagram.handleMouseScroll(me)) {
+                return true;
+            }
+            if (me.isClick()) {
+                if (topologyMode) {
+                    int clicked = diagram.handleNodeClick(me);
+                    if (clicked >= 0) {
+                        return true;
+                    }
+                } else {
+                    int clicked = diagram.handleEipNodeClick(me);
+                    if (clicked >= 0) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    @Override
     public void navigateUp() {
         if (!diagram.isShowDiagram()) {
             routeTableState.selectPrevious();
@@ -450,10 +502,11 @@ class RoutesTab implements MonitorTab {
                     title = Line.from(Span.raw(" Topology "));
                 }
                 if (selectedRouteId != null && area.width() > 60) {
-                    int panelWidth = 30;
+                    infoPanelWidth = Math.max(10, Math.min(infoPanelWidth, area.width() - 20));
                     List<Rect> hChunks = Layout.horizontal()
-                            .constraints(Constraint.length(panelWidth), Constraint.fill())
+                            .constraints(Constraint.length(infoPanelWidth), Constraint.fill())
                             .split(area);
+                    hSplit.setBorderPos(hChunks.get(1).x());
                     renderInfoPanel(frame, hChunks.get(0), info, selectedRouteId);
                     diagram.renderNativeDiagram(frame, hChunks.get(1), title, diagramMetrics);
                 } else {
@@ -465,10 +518,11 @@ class RoutesTab implements MonitorTab {
                 Line title = buildBreadcrumbTitle();
                 var routeLayout = diagram.getRouteLayout(drillDownRouteId);
                 if (area.width() > 60) {
-                    int panelWidth = 30;
+                    infoPanelWidth = Math.max(10, Math.min(infoPanelWidth, area.width() - 20));
                     List<Rect> hChunks = Layout.horizontal()
-                            .constraints(Constraint.length(panelWidth), Constraint.fill())
+                            .constraints(Constraint.length(infoPanelWidth), Constraint.fill())
                             .split(area);
+                    hSplit.setBorderPos(hChunks.get(1).x());
                     renderEipInfoPanel(frame, hChunks.get(0));
                     diagram.renderNativeRouteDiagram(
                             frame, hChunks.get(1), title, diagramMetrics, drillDownRouteId, routeLayout);
@@ -484,7 +538,7 @@ class RoutesTab implements MonitorTab {
                             .text(Text.from(Line.from(Span.styled(
                                     "Loading diagram...",
                                     Style.EMPTY.dim()))))
-                            .block(Block.builder().borderType(BorderType.ROUNDED)
+                            .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
                                     .title(" Diagram ").build())
                             .build(),
                     area);
@@ -495,8 +549,12 @@ class RoutesTab implements MonitorTab {
         List<RouteInfo> sortedRoutes = new ArrayList<>(info.routes);
         sortedRoutes.sort(this::sortRoute);
 
+        if (topPanelHeight < 0) {
+            topPanelHeight = area.height() * 45 / 100;
+        }
+        topPanelHeight = Math.max(3, Math.min(topPanelHeight, area.height() - 5));
         List<Rect> chunks = Layout.vertical()
-                .constraints(Constraint.percentage(45), Constraint.percentage(55))
+                .constraints(Constraint.length(topPanelHeight), Constraint.fill())
                 .split(area);
 
         // Routes table
@@ -553,11 +611,11 @@ class RoutesTab implements MonitorTab {
                             Constraint.length(6),
                             Constraint.length(8),
                             Constraint.length(8),
-                            Constraint.length(12))
-                    .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
+                            Constraint.length(13))
+                    .highlightStyle(Theme.selectionBg())
                     .highlightSpacing(Table.HighlightSpacing.ALWAYS)
-                    .block(Block.builder().borderType(BorderType.ROUNDED)
-                            .title(" Top Routes sort:" + routeTopSort + " ").build())
+                    .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
+                            .title(" Top Routes ").build())
                     .build();
         } else {
             List<Row> routeRows = new ArrayList<>();
@@ -613,15 +671,19 @@ class RoutesTab implements MonitorTab {
                             Constraint.length(6),
                             Constraint.length(8),
                             Constraint.length(14),
-                            Constraint.length(12))
-                    .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
+                            Constraint.length(13))
+                    .highlightStyle(Theme.selectionBg())
                     .highlightSpacing(Table.HighlightSpacing.ALWAYS)
-                    .block(Block.builder().borderType(BorderType.ROUNDED)
-                            .title(" Routes sort:" + routeSort + " ").build())
+                    .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
+                            .title(" Routes ").build())
                     .build();
         }
 
+        lastRouteTableArea = chunks.get(0);
+        vSplit.setBorderPos(chunks.get(1).y());
         frame.renderStatefulWidget(routeTable, chunks.get(0), routeTableState);
+        renderTableScrollbar(frame, lastRouteTableArea, routeTableState, routeTableScrollState,
+                info.routes.size());
 
         // Bottom panel: processors
         Integer selectedRoute = routeTableState.selected();
@@ -634,7 +696,8 @@ class RoutesTab implements MonitorTab {
             frame.renderWidget(
                     Paragraph.builder()
                             .text(Text.from(Line.from(Span.styled("No routes", Style.EMPTY.dim()))))
-                            .block(Block.builder().borderType(BorderType.ROUNDED).title(" Processors ").build())
+                            .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(" Processors ")
+                                    .build())
                             .build(),
                     chunks.get(1));
         }
@@ -648,17 +711,17 @@ class RoutesTab implements MonitorTab {
             if (!topologyMode && !diagram.getEipNodeBoxes().isEmpty()) {
                 hint(spans, "Esc", "back");
                 hint(spans, "t", "topology");
-                hint(spans, "↑↓←→", "navigate");
+                hint(spans, TuiIcons.HINT_NAV, "navigate");
                 hint(spans, "PgUp/PgDn", "page");
                 hint(spans, "c", "source");
             } else if (!topologyMode) {
                 hint(spans, "Esc", "back");
                 hint(spans, "t", "topology");
-                hint(spans, "↑↓←→", "scroll");
+                hint(spans, TuiIcons.HINT_NAV, "scroll");
                 hint(spans, "PgUp/PgDn", "page");
             } else if (!diagram.getNodeBoxes().isEmpty()) {
                 hint(spans, "Esc", "close");
-                hint(spans, "↑↓←→", "navigate");
+                hint(spans, TuiIcons.HINT_NAV, "navigate");
                 hint(spans, "Enter", "drill-down");
                 hint(spans, "PgUp/PgDn", "page");
                 hint(spans, "c", "source");
@@ -672,7 +735,7 @@ class RoutesTab implements MonitorTab {
             hint(spans, "n", "description" + (diagram.isShowDescription() ? " [on]" : " [off]"));
         } else {
             hint(spans, "Esc", "back");
-            hint(spans, "↑↓", "navigate");
+            hint(spans, TuiIcons.HINT_SCROLL, "navigate");
             hint(spans, "Enter", "topology");
             hint(spans, "d", "diagram");
             hint(spans, "s", "sort");
@@ -886,7 +949,7 @@ class RoutesTab implements MonitorTab {
 
         Paragraph paragraph = Paragraph.builder()
                 .text(Text.from(lines))
-                .block(Block.builder().borderType(BorderType.ROUNDED)
+                .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
                         .title(" Info ").build())
                 .build();
         frame.renderWidget(paragraph, area);
@@ -990,7 +1053,7 @@ class RoutesTab implements MonitorTab {
 
         Paragraph paragraph = Paragraph.builder()
                 .text(Text.from(lines))
-                .block(Block.builder().borderType(BorderType.ROUNDED)
+                .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
                         .title(" Info ").build())
                 .build();
         frame.renderWidget(paragraph, area);
@@ -1086,9 +1149,9 @@ class RoutesTab implements MonitorTab {
                             Constraint.length(6),
                             Constraint.length(8),
                             Constraint.length(6),
-                            Constraint.length(8))
-                    .block(Block.builder().borderType(BorderType.ROUNDED)
-                            .title(" Top Processors [" + route.routeId + "] sort:" + routeTopSort + " ").build())
+                            Constraint.length(9))
+                    .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
+                            .title(" Top Processors [" + route.routeId + "] ").build())
                     .build();
         } else {
             List<Row> rows = new ArrayList<>();
@@ -1148,13 +1211,16 @@ class RoutesTab implements MonitorTab {
                             Constraint.length(6),
                             Constraint.length(8),
                             Constraint.length(14),
-                            Constraint.length(12))
-                    .block(Block.builder().borderType(BorderType.ROUNDED)
+                            Constraint.length(13))
+                    .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
                             .title(" Processors [" + route.routeId + "] ").build())
                     .build();
         }
 
         frame.renderStatefulWidget(table, area, processorTableState);
+        int processorRowCount = routeTopMode ? route.processors.size() : route.processors.size() + 1;
+        renderTableScrollbar(frame, area, processorTableState, processorTableScrollState,
+                processorRowCount);
     }
 
     // ---- Sorting ----
@@ -1219,19 +1285,19 @@ class RoutesTab implements MonitorTab {
     }
 
     private String routeSortLabel(String label, String column) {
-        return MonitorContext.sortLabel(label, column, routeSort, routeSortReversed);
+        return sortLabel(label, column, routeSort, routeSortReversed);
     }
 
     private Style routeSortStyle(String column) {
-        return MonitorContext.sortStyle(column, routeSort);
+        return sortStyle(column, routeSort);
     }
 
     private String routeTopSortLabel(String label, String column) {
-        return MonitorContext.sortLabel(label, column, routeTopSort, routeTopSortReversed);
+        return sortLabel(label, column, routeTopSort, routeTopSortReversed);
     }
 
     private Style routeTopSortStyle(String column) {
-        return MonitorContext.sortStyle(column, routeTopSort);
+        return sortStyle(column, routeTopSort);
     }
 
     // ---- Route actions ----
@@ -1493,6 +1559,11 @@ class RoutesTab implements MonitorTab {
         List<String> items = sorted.stream().map(r -> r.routeId != null ? r.routeId : "").toList();
         Integer sel = routeTableState.selected();
         return new SelectionContext("table", items, sel != null ? sel : -1, items.size(), "Routes");
+    }
+
+    @Override
+    public String description() {
+        return "Route list with state, message counts, throughput, and failure statistics";
     }
 
     @Override

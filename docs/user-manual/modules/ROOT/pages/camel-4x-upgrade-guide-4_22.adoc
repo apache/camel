@@ -1,0 +1,188 @@
+= Apache Camel 4.x Upgrade Guide
+
+This document is for helping you upgrade your Apache Camel application
+from Camel 4.x to 4.y. For example, if you are upgrading Camel 4.0 to 4.2, then you should follow the guides
+from both 4.0 to 4.1 and 4.1 to 4.2.
+
+[NOTE]
+====
+https://github.com/apache/camel-upgrade-recipes/[The Camel Upgrade Recipes project] provides automated assistance for some common migration tasks.
+Note that manual migration is still required.
+See the xref:camel-upgrade-recipes-tool.adoc[documentation] page for details.
+====
+
+== Upgrading Camel 4.21 to 4.22
+
+=== camel-jbang
+
+The Camel JBang CLI now automatic resolves quarkus version to use,
+instead of hardcoded `3.33.1.1` (https://github.com/apache/camel/commit/d1f4713ebdf787ab04a31c50a6f07e3ca66f0c2b).
+
+The `camel cmd route-diagram` and `camel cmd route-topology` now accept one or more Camel route source files
+(instead of only the name/pid of a running integration), so diagrams and inter-route topology can be
+generated at design/source time without starting the application first, for example:
+
+[source,bash]
+----
+camel cmd route-diagram routes/*.yaml
+camel cmd route-topology routes/*.yaml
+----
+
+`route-diagram` previously only accepted a single source file; both commands now accept a set of files.
+`route-topology` previously required a running integration and printed
+"No running Camel integration found" when none matched; it now falls back to loading the given files the
+same way `route-diagram` already did.
+
+As part of this, `camel.main.dumpRoutes=json` (used internally by these commands, and available to users
+dumping route structure to a folder) now additionally writes a `route-topology.json` file alongside the
+per-route structure files when topology dumping is enabled (the default). This file is now always written,
+with empty `nodes`/`edges` arrays if there are no routes to connect, so its presence reliably signals that
+the dump has completed (previously it was silently skipped when there were no routes).
+
+The Camel TUI (`camel tui`) accepts `--theme=dark` or `--theme=light` to choose the color palette at startup.
+When omitted, the persisted `camel.tui.theme` value from `.camel-jbang-user.properties` is used.
+
+=== camel-langchain4j-agent
+
+The `Agent.chat()` method return type has changed from `String` to `Result<String>` (from `dev.langchain4j.service.Result`).
+This allows the agent producer to expose token usage (input, output, total token count) and finish reason as exchange headers,
+consistent with the chat, tools, and embeddings components.
+
+If you have a custom `Agent` implementation, update the `chat` method signature:
+
+[source,java]
+----
+// Before
+String chat(AiAgentBody<?> aiAgentBody, ToolProvider toolProvider);
+
+// After
+Result<String> chat(AiAgentBody<?> aiAgentBody, ToolProvider toolProvider);
+----
+
+=== camel-management - Throughput MBean attribute uses EWMA smoothing
+
+The `Throughput` attribute on the `ManagedPerformanceCounter` JMX MBean now reports an EWMA
+(exponentially weighted moving average) value with a 1-minute decay window, instead of the
+previous raw instantaneous rate. This produces a smoother, more stable reading that converges
+to the true average throughput rather than oscillating between zero and spike values.
+
+If you have tooling that consumes the JMX throughput value and expects the old instantaneous
+behavior, be aware that the reported value will now ramp up and decay gradually.
+
+=== camel-debezium
+
+The `camel-debezium` component has upgraded from Debezium 3.5.2 to 3.6.0.
+
+The following 10 Oracle connector options have been removed by Debezium 3.6.0 and are no longer available:
+
+* `logMiningBatchSizeDefault`
+* `logMiningBatchSizeIncrement`
+* `logMiningBatchSizeMax`
+* `logMiningBatchSizeMin`
+* `logMiningSleepTimeDefaultMs`
+* `logMiningSleepTimeIncrementMs`
+* `logMiningSleepTimeMaxMs`
+* `logMiningSleepTimeMinMs`
+* `logMiningScnGapDetectionGapSizeMin`
+* `logMiningScnGapDetectionTimeIntervalMaxMs`
+
+If you use any of these options, remove them from your configuration as they will cause errors.
+
+=== camel-fory with JDK 25+ - Breaking change
+
+Due to new requirements from Apache Fory, when using Apache Fory Dataformat, the JVM parameter `--add-opens java.base/java.lang.invoke=ALL-UNNAMED` must be provided.
+
+=== camel-pqc - potential breaking change
+
+The `pqc` data format now encrypts the message payload with *authenticated encryption (AEAD)* instead of the
+previous unauthenticated ECB mode. 128-bit block ciphers are encrypted with GCM and the ChaCha20 stream cipher is
+encrypted with ChaCha20-Poly1305, so both the confidentiality and the integrity of the data are now protected, and
+tampered or corrupted messages are detected and rejected on decryption.
+
+As a consequence:
+
+* The wire format changed. A 12-byte AEAD nonce is now written between the encapsulation and the ciphertext, and the
+ciphertext carries an authentication tag:
++
+[source,text]
+----
+[4 bytes: encapsulation length] [N bytes: encapsulation] [12 bytes: AEAD nonce] [M bytes: ciphertext + auth tag]
+----
++
+Data encrypted by Camel 4.21 or earlier (unauthenticated ECB, no nonce) *cannot be decrypted* by Camel 4.22 or
+later. Re-encrypt any data at rest with the new version.
+
+* Only symmetric algorithms that support AEAD are accepted: `AES`, `ARIA`, `CAMELLIA`, `CAST6`, `DSTU7624`,
+`GOST3412-2015`, `SEED`, `SM4` (GCM) and `CHACHA7539` (ChaCha20-Poly1305). The previously accepted `RC2`, `RC5`,
+`CAST5`, `GOST28147`, `DESEDE` and the unauthenticated stream ciphers `GRAIN128`, `HC128`, `HC256` and `SALSA20`
+are no longer supported and are rejected when the route starts. The default (`AES`) is unchanged.
+
+* The message is now processed in memory rather than streamed: the authenticated cipher must verify the authentication
+tag before releasing any plaintext, so the whole payload is held in memory during marshal and unmarshal. For very large
+payloads, enable stream caching on the route.
+
+* The `bufferSize` option has been removed. It only configured the previous streaming implementation and no longer has
+any effect with authenticated encryption.
+
+=== camel-file / camel-ftp / camel-azure-files / camel-smb - preSort option enhanced
+
+The `preSort` option on the File, FTP, FTPS, SFTP, Azure Files, and SMB consumers has changed from a `boolean`
+to a `String`. Previously, `preSort=true` sorted files by name only. The option now supports the following values:
+
+* `name` — sort by file name ascending (same behavior as old `preSort=true`)
+* `modified` — sort by last-modified timestamp ascending (oldest first)
+* `size` — sort by file size ascending (smallest first)
+* `-name`, `-modified`, `-size` — descending (reverse) order
+* `true` — backward compatible alias for `name`
+* `false` or not set — disabled (default, unchanged)
+
+The pre-sort is applied on the raw file listing before any filtering or eager limiting, which makes it possible
+to combine `preSort=modified` with `eagerMaxMessagesPerPoll=true` and `maxMessagesPerPoll=10` to efficiently
+consume the 10 oldest files without creating Exchange objects for every file on the server.
+
+=== camel-mail - MimeMultipartDataFormat inbound header filtering
+
+When unmarshalling a MIME message with `headersInline=true`, the `mime-multipart` data format now applies a
+`HeaderFilterStrategy` to the headers copied from the MIME content onto the Camel message. Camel-internal headers
+(the `Camel*` namespace, matched case-insensitively) present in the external MIME headers are no longer copied onto
+the message, consistent with the inbound header filtering already performed by the camel-mail consumer.
+
+Ordinary application headers are unaffected. If a route relied on `Camel*` headers being propagated from the MIME
+content, set them explicitly after unmarshalling.
+
+=== camel-kafka - metadataMaxAgeMs option moved from producer to common
+
+The `metadataMaxAgeMs` (`metadata.max.age.ms`) option was incorrectly labeled as producer-only,
+but is applied to both consumer and producer Kafka clients. The label has been corrected to `common`.
+
+If you use the Endpoint DSL, the `metadataMaxAgeMs` method has moved from the producer (advanced) builder
+to the common builder.
+
+=== camel-kafka - Producer no longer silently drops scalar Jackson nodes
+
+With `useIterator=true`, the Kafka producer splits an `Iterable` body into one record per element.
+A Jackson `JsonNode` implements `Iterable`, so a scalar value node (e.g. an `IntNode` produced by
+`transform().jq(".my-value")`) was seen as an empty iterable and produced no record, silently
+discarding the message with no exception or log.
+
+Scalar value nodes are now sent as a single record. Only container nodes (`ArrayNode`, `ObjectNode`)
+are still split, which is unchanged. Any `convertBodyTo(...)` previously used as a workaround is no
+longer required.
+
+=== camel-jbang catalog tables fill the terminal width
+
+The `camel catalog` commands (`camel catalog component`, `camel catalog dataformat`,
+`camel catalog language`, `camel catalog transformer`, `camel catalog kamelet`, ...) now size the
+`DESCRIPTION` column to the detected terminal width instead of the previous fixed 80-character cap,
+so wide terminals show more of the description before it is truncated with an ellipsis. The `NAME`
+column width is also standardized across these commands (it previously differed per command, for
+example 60 for `transformer` and 30 elsewhere).
+
+Terminal width is now detected on Windows (`cmd` / PowerShell) via `mode con`, in addition to the
+existing `COLUMNS` / `stty size` detection. When no terminal can be detected (for example when the
+output is piped or redirected), the width falls back to 120 columns. For full, untruncated output
+suitable for scripting, use the `--json` option.
+
+The `camel infra list` table now sizes its `DESCRIPTION` column to the terminal width, and truncates
+the `IMPLEMENTATION` and `SERVICE_DATA` columns with an ellipsis instead of letting the raw service
+data overflow the terminal. The complete, structured service data remains available via `--json`.

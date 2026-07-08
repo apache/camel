@@ -7,8 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Only producer is supported
-//Manually maintained attributes
-:camel-spring-boot-name: micrometer
 
 *Since Camel {since}*
 
@@ -67,7 +65,6 @@ a `MeterRegistry` bean. Micrometer registries primarily determine the backend mo
 to be used. A `CompositeMeterRegistry` can be used to address more than one monitoring target.
 
 
-
 === Default Camel Metrics
 
 Some Camel specific metrics are available out of the box.
@@ -98,6 +95,8 @@ However, since Camel 3.21 onwards, the naming is using the Micrometer convention
 To use the legacy naming, then you can use the `LEGACY` naming from the `xxxNamingStrategy` interfaces.
 
 For example:
+
+._Java-only: configuring legacy naming strategy on the route policy factory_
 
 [source,java]
 ----
@@ -135,11 +134,13 @@ The meter tags defined as URI parameters can be augmented by populating a header
 
 For example
 
+._Java-only: requires Micrometer Tags API_
+
 [source,java]
 ----
 from("direct:in")
-    .setHeader(MicrometerConstants.HEADER_METRIC_NAME, constant("new.name"))
-    .setHeader(MicrometerConstants.HEADER_METRIC_TAGS, constant(Tags.of("dynamic-key", "dynamic-value")))
+    .setHeader("CamelMetricsName").constant("new.name")
+    .setHeader("CamelMetricsTags", constant(Tags.of("dynamic-key", "dynamic-value")))
     .to("micrometer:counter:name.not.used?tags=key=value")
     .to("direct:out");
 ----
@@ -171,6 +172,10 @@ If neither `increment` or `decrement` is defined then value of the counter will
 be incremented by one. If `increment` and `decrement` are both defined
 only increment operation is called.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 // update counter simple.counter by 7
@@ -179,6 +184,38 @@ from("direct:in")
     .to("direct:out");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:in"/>
+  <to uri="micrometer:counter:simple.counter?increment=7"/>
+  <to uri="direct:out"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:in
+      steps:
+        - to:
+            uri: micrometer:counter:simple.counter
+            parameters:
+              increment: 7
+        - to:
+            uri: direct:out
+----
+====
+
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 // increment counter simple.counter by 1
@@ -187,9 +224,39 @@ from("direct:in")
     .to("direct:out");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:in"/>
+  <to uri="micrometer:counter:simple.counter"/>
+  <to uri="direct:out"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:in
+      steps:
+        - to:
+            uri: micrometer:counter:simple.counter
+        - to:
+            uri: direct:out
+----
+====
+
 Both `increment` and `decrement` values are evaluated as `Simple` expressions with a Double result, e.g.,
 if header `X` contains a value that evaluates to 3.0, the `simple.counter` counter is decremented by 3.0:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 // decrement counter simple.counter by 3
@@ -197,6 +264,34 @@ from("direct:in")
     .to("micrometer:counter:simple.counter?decrement=${header.X}")
     .to("direct:out");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:in"/>
+  <to uri="micrometer:counter:simple.counter?decrement=${header.X}"/>
+  <to uri="direct:out"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:in
+      steps:
+        - to:
+            uri: micrometer:counter:simple.counter
+            parameters:
+              decrement: "${header.X}"
+        - to:
+            uri: direct:out
+----
+====
 
 ==== Headers
 
@@ -210,24 +305,97 @@ Like in `camel-metrics`, specific Message headers can be used to override
 |CamelMetricsCounterDecrement  |Override decrement value in URI |Double
 |====================================================================
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 // update counter simple.counter by 417
 from("direct:in")
-    .setHeader(MicrometerConstants.HEADER_COUNTER_INCREMENT, constant(417.0D))
+    .setHeader("CamelMetricsCounterIncrement").constant(417.0D)
     .to("micrometer:counter:simple.counter?increment=7")
     .to("direct:out");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:in"/>
+  <setHeader name="CamelMetricsCounterIncrement">
+    <constant resultType="java.lang.Double">417.0</constant>
+  </setHeader>
+  <to uri="micrometer:counter:simple.counter?increment=7"/>
+  <to uri="direct:out"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:in
+      steps:
+        - setHeader:
+            name: CamelMetricsCounterIncrement
+            constant: 417.0
+        - to:
+            uri: micrometer:counter:simple.counter
+            parameters:
+              increment: 7
+        - to:
+            uri: direct:out
+----
+====
+
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 // updates counter using simple language to evaluate body.length
 from("direct:in")
-    .setHeader(MicrometerConstants.HEADER_COUNTER_INCREMENT, simple("${body.length}"))
+    .setHeader("CamelMetricsCounterIncrement", simple("${body.length}"))
     .to("micrometer:counter:body.length")
     .to("direct:out");
-
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:in"/>
+  <setHeader name="CamelMetricsCounterIncrement">
+    <simple>${body.length}</simple>
+  </setHeader>
+  <to uri="micrometer:counter:body.length"/>
+  <to uri="direct:out"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:in
+      steps:
+        - setHeader:
+            name: CamelMetricsCounterIncrement
+            simple: "${body.length}"
+        - to:
+            uri: micrometer:counter:body.length
+        - to:
+            uri: direct:out
+----
+====
 
 [[MicrometerComponent-summary]]
 === Distribution Summary
@@ -247,6 +415,10 @@ micrometer:summary:metricname[?options]
 If no `value` is not set, nothing is added to histogram and warning is
 logged.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 // adds value 9923 to simple.histogram
@@ -255,25 +427,113 @@ from("direct:in")
     .to("direct:out");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:in"/>
+  <to uri="micrometer:summary:simple.histogram?value=9923"/>
+  <to uri="direct:out"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:in
+      steps:
+        - to:
+            uri: micrometer:summary:simple.histogram
+            parameters:
+              value: 9923
+        - to:
+            uri: direct:out
+----
+====
+
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 // nothing is added to simple.histogram; warning is logged
 from("direct:in")
     .to("micrometer:summary:simple.histogram")
     .to("direct:out");
-
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:in"/>
+  <to uri="micrometer:summary:simple.histogram"/>
+  <to uri="direct:out"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:in
+      steps:
+        - to:
+            uri: micrometer:summary:simple.histogram
+        - to:
+            uri: direct:out
+----
+====
 
 `value` is evaluated as `Simple` expressions with a Double result, e.g.,
 if header `X` contains a value that evaluates to 3.0, this value is registered with the `simple.histogram`:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:in")
     .to("micrometer:summary:simple.histogram?value=${header.X}")
     .to("direct:out");
-
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:in"/>
+  <to uri="micrometer:summary:simple.histogram?value=${header.X}"/>
+  <to uri="direct:out"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:in
+      steps:
+        - to:
+            uri: micrometer:summary:simple.histogram
+            parameters:
+              value: "${header.X}"
+        - to:
+            uri: direct:out
+----
+====
 
 ==== Headers
 
@@ -286,15 +546,52 @@ the Micrometer endpoint URI.
 |CamelMetricsHistogramValue |Override histogram value in URI |Long
 |=================================================================
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 // adds value 992.0 to simple.histogram
 from("direct:in")
-    .setHeader(MicrometerConstants.HEADER_HISTOGRAM_VALUE, constant(992.0D))
+    .setHeader("CamelMetricsHistogramValue").constant(992.0D)
     .to("micrometer:summary:simple.histogram?value=700")
-    .to("direct:out")
-
+    .to("direct:out");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:in"/>
+  <setHeader name="CamelMetricsHistogramValue">
+    <constant resultType="java.lang.Double">992.0</constant>
+  </setHeader>
+  <to uri="micrometer:summary:simple.histogram?value=700"/>
+  <to uri="direct:out"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:in
+      steps:
+        - setHeader:
+            name: CamelMetricsHistogramValue
+            constant: 992.0
+        - to:
+            uri: micrometer:summary:simple.histogram
+            parameters:
+              value: 700
+        - to:
+            uri: direct:out
+----
+====
 
 
 [[MicrometerComponent-timer]]
@@ -317,6 +614,10 @@ without any timer update. If action `start` is called on an already running
 timer or `stop` is called on an unknown timer, nothing is updated
 and warning is logged.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 // measure time spent in route "direct:calculate"
@@ -325,6 +626,39 @@ from("direct:in")
     .to("direct:calculate")
     .to("micrometer:timer:simple.timer?action=stop");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:in"/>
+  <to uri="micrometer:timer:simple.timer?action=start"/>
+  <to uri="direct:calculate"/>
+  <to uri="micrometer:timer:simple.timer?action=stop"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:in
+      steps:
+        - to:
+            uri: micrometer:timer:simple.timer
+            parameters:
+              action: start
+        - to:
+            uri: direct:calculate
+        - to:
+            uri: micrometer:timer:simple.timer
+            parameters:
+              action: stop
+----
+====
 
 `Timer.Sample` objects are stored as Exchange properties between
 different Metrics component calls.
@@ -343,14 +677,50 @@ the Micrometer endpoint URI.
 |`org.apache.camel.component.micrometer.MicrometerTimerAction`
 |=======================================================================
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 // sets timer action using header
 from("direct:in")
-    .setHeader(MicrometerConstants.HEADER_TIMER_ACTION, MicrometerTimerAction.start)
+    .setHeader("CamelMetricsTimerAction").constant("start")
     .to("micrometer:timer:simple.timer")
     .to("direct:out");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:in"/>
+  <setHeader name="CamelMetricsTimerAction">
+    <constant>start</constant>
+  </setHeader>
+  <to uri="micrometer:timer:simple.timer"/>
+  <to uri="direct:out"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:in
+      steps:
+        - setHeader:
+            name: CamelMetricsTimerAction
+            constant: start
+        - to:
+            uri: micrometer:timer:simple.timer
+        - to:
+            uri: direct:out
+----
+====
 
 
 === Using Micrometer route policy factory
@@ -368,6 +738,8 @@ want to instrument a few selected routes.
 ====
 
 From Java, you add the factory to the `CamelContext` as shown below:
+
+._Java-only: adding MicrometerRoutePolicyFactory to the CamelContext_
 
 [source,java]
 ----
@@ -427,6 +799,8 @@ the examples below demonstrates.
 
 From Java, you set the factory to the `CamelContext` as shown below:
 
+._Java-only: setting MicrometerMessageHistoryFactory on the CamelContext_
+
 [source,java]
 ----
 context.setMessageHistoryFactory(new MicrometerMessageHistoryFactory());
@@ -456,6 +830,8 @@ to gather the data as json output.
 From Java code, you can get the service from the CamelContext as
 shown:
 
+._Java-only: accessing MicrometerMessageHistoryService from the CamelContext_
+
 [source,java]
 ----
 MicrometerMessageHistoryService service = context.hasService(MicrometerMessageHistoryService.class);
@@ -472,6 +848,8 @@ There is a `MicrometerRouteEventNotifier` (counting added and running routes) an
 
 EventNotifiers can be added to the CamelContext, e.g.:
 
+._Java-only: adding MicrometerExchangeEventNotifier to the CamelContext_
+
 [source,java]
 ----
 camelContext.getManagementStrategy().addEventNotifier(new MicrometerExchangeEventNotifier());
@@ -482,6 +860,8 @@ to gather the data as json output.
 
 From Java code, you can get the service from the CamelContext as
 shown:
+
+._Java-only: accessing MicrometerEventNotifierService from the CamelContext_
 
 [source,java]
 ----
@@ -536,7 +916,7 @@ Java::
 +
 [source,java]
 ----
-    @Bean(name = MicrometerConstants.METRICS_REGISTRY_NAME)
+    @Bean(name = "metricsRegistry")
     public MeterRegistry getMeterRegistry() {
         CompositeMeterRegistry meterRegistry = new CompositeMeterRegistry();
         meterRegistry.add(...);
@@ -553,7 +933,7 @@ CDI::
 [source,java]
 ----
     @Produces
-    @Named(MicrometerConstants.METRICS_REGISTRY_NAME))
+    @Named("metricsRegistry"))
     public MeterRegistry getMeterRegistry() {
         CompositeMeterRegistry meterRegistry = new CompositeMeterRegistry();
         meterRegistry.add(...);
@@ -604,5 +984,3 @@ For example, to capture data with Prometheus, you can add the following dependen
 ----
 
 See the following table for options to specify what metrics to capture, or to turn it off.
-
-include::spring-boot:partial$starter.adoc[]

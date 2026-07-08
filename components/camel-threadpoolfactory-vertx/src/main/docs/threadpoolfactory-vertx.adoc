@@ -1,10 +1,11 @@
-= ThreadPoolFactory Vert.x Component
+= ThreadPoolFactory Vert.x Component (deprecated)
 :doctitle: ThreadPoolFactory Vert.x
 :shortname: threadpoolfactory-vertx
 :artifactid: camel-threadpoolfactory-vertx
 :description: ThreadPoolFactory for camel-core using Vert.x
 :since: 3.5
-:supportlevel: Experimental
+:supportlevel: Experimental-deprecated
+:deprecated: *deprecated*
 :tabs-sync-option:
 
 *Since Camel {since}*
@@ -21,6 +22,7 @@ This implementation has been designed to use VertX worker threads for EIPs where
 However, this is limited to only apply when the EIP is not configured with a specific thread pool. For example, the first example
 below will use VertX worker threads, and the 2nd below will not:
 
+._Java-only: split with parallel processing using VertX worker threads_
 [source,java]
 ----
 from("direct:start")
@@ -34,6 +36,7 @@ from("direct:start")
 The following Split EIP will refer to a custom thread pool, and therefore VertX is not in use, and Camel will
 use the custom thread pool:
 
+._Java-only: split with a custom thread pool profile (not using VertX)_
 [source,java]
 ----
 // register a custom thread pool profile with id myLowPool

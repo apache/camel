@@ -87,7 +87,7 @@ public class FileConsumer extends GenericFileConsumer<File> implements ResumeAwa
         }
 
         if (getEndpoint().isPreSort()) {
-            Arrays.sort(files, Comparator.comparing(File::getAbsoluteFile));
+            Arrays.sort(files, preSortComparator(getEndpoint().getPreSort()));
         }
 
         if (processPolledFiles(dynamic, fileList, depth, files)) {
@@ -472,5 +472,23 @@ public class FileConsumer extends GenericFileConsumer<File> implements ResumeAwa
     @Override
     public String adapterFactoryService() {
         return "file-adapter-factory";
+    }
+
+    private static Comparator<File> preSortComparator(String preSort) {
+        boolean reverse = preSort.startsWith("-");
+        String field = reverse ? preSort.substring(1) : preSort;
+        Comparator<File> cmp;
+        switch (field) {
+            case "modified":
+                cmp = Comparator.comparingLong(File::lastModified);
+                break;
+            case "size":
+                cmp = Comparator.comparingLong(File::length);
+                break;
+            default:
+                cmp = Comparator.comparing(File::getName);
+                break;
+        }
+        return reverse ? cmp.reversed() : cmp;
     }
 }

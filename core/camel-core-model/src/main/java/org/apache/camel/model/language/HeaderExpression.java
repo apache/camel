@@ -26,7 +26,7 @@ import org.apache.camel.spi.Metadata;
 /**
  * Gets a header from the Exchange.
  */
-@Metadata(firstVersion = "1.5.0", label = "language,core", title = "Header")
+@Metadata(firstVersion = "1.5.0", label = "language,core", title = "Header", description = "Gets a header from the Exchange")
 @XmlRootElement(name = "header")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class HeaderExpression extends ExpressionDefinition {

@@ -17,8 +17,15 @@
 package org.apache.camel.spi;
 
 /**
- * Listener for re-loading a {@link Resource} such as a Camel route.
+ * Listener notified when a {@link Resource} is re-loaded at runtime, for example after a route file changes.
+ * <p/>
+ * When live reloading is enabled, the {@link ResourceReloadStrategy} invokes {@link #onReload(String, Resource)} with
+ * the resource name and the reloaded {@link Resource}, allowing Camel to update routes without a restart.
+ * <p/>
+ * See <a href="https://camel.apache.org/manual/route-reload.html">Route Reload</a> in the Camel user manual.
  *
+ * @see   ResourceReloadStrategy
+ * @see   Resource
  * @since 3.14
  */
 @FunctionalInterface

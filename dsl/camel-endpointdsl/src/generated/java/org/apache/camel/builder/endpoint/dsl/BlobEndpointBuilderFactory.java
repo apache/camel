@@ -3437,7 +3437,7 @@ public interface BlobEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final BlobHeaderNameBuilder INSTANCE = new BlobHeaderNameBuilder();
+        public static final BlobHeaderNameBuilder INSTANCE = new BlobHeaderNameBuilder();
 
         /**
          * (All) Specify the producer operation to execute, please see the doc

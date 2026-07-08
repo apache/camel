@@ -24,10 +24,12 @@ public class MongoDbEndpointUriFactory extends org.apache.camel.support.componen
     private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(57);
+        Set<String> props = new HashSet<>(59);
         props.add("appName");
         props.add("authSource");
         props.add("bridgeErrorHandler");
+        props.add("changeStreamToken");
+        props.add("changeStreamTokenRepository");
         props.add("collection");
         props.add("collectionIndex");
         props.add("compressors");

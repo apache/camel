@@ -7,8 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Only producer is supported
-//Manually maintained attributes
-:camel-spring-boot-name: vertx-http
 
 *Since Camel {since}*
 
@@ -20,21 +18,20 @@ Maven users will need to add the following dependency to their `pom.xml`
 for this component:
 
 [source,xml]
-------------------------------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-vertx-http</artifactId>
     <version>x.x.x</version>
     <!-- use the same version as your Camel core version -->
 </dependency>
-------------------------------------------------------------
+----
 
 == URI format
 
----------------------------
+----
 vertx-http:hostname[:port][/resourceUri][?options]
----------------------------
-
+----
 
 
 // component options: START
@@ -49,11 +46,38 @@ The following example shows how to send a request to an HTTP endpoint.
 
 You can override the URI configured on the `vertx-http` producer via headers `Exchange.HTTP_URI` and `Exchange.HTTP_PATH`.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:start")
     .to("vertx-http:https://camel.apache.org");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <to uri="vertx-http:https://camel.apache.org"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: vertx-http:https://camel.apache.org
+----
+====
 
 === URI Parameters
 
@@ -118,22 +142,52 @@ You can upload text or binary files by setting the message body as a https://ver
 When finer control of the Vert.x Web Client configuration is required, you can bind a custom https://vertx.io/docs/apidocs/io/vertx/ext/web/client/WebClientOptions.html[WebClientOptions]
 instance to the registry.
 
+._Java-only: programmatic `WebClientOptions` configuration and registry binding_
 [source,java]
----------------------------
+----
 WebClientOptions options = new WebClientOptions().setMaxRedirects(5)
     .setIdleTimeout(10)
     .setConnectTimeout(3);
 
 camelContext.getRegistry.bind("clientOptions", options);
----------------------------
+----
 
 Then reference the options on the `vertx-http` producer.
 
+[tabs]
+====
+Java::
++
 [source,java]
----------------------------
+----
 from("direct:start")
-    .to("vertx-http:http://localhost:8080?webClientOptions=#clientOptions")
----------------------------
+    .to("vertx-http:http://localhost:8080?webClientOptions=#clientOptions");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <to uri="vertx-http:http://localhost:8080?webClientOptions=#clientOptions"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: vertx-http:http://localhost:8080
+            parameters:
+              webClientOptions: "#clientOptions"
+----
+====
 
 === SSL
 
@@ -145,6 +199,3 @@ It is also possible to configure SSL options by providing a custom `WebClientOpt
 
 Session management can be enabled via the `sessionManagement` URI option. When enabled, an in-memory cookie store is used to track cookies.
 This can be overridden by providing a custom `CookieStore` via the `cookieStore` URI option.
-
-
-include::spring-boot:partial$starter.adoc[]

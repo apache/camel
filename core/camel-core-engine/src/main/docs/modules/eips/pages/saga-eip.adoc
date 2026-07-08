@@ -1,7 +1,7 @@
 = Saga EIP
 :doctitle: Saga
 :shortname: saga
-:description: Enables Sagas on the route
+:description: Defines a Saga (long-running action) that coordinates distributed services toward a consistent outcome. Unlike XA transactions, Sagas use compensating actions for rollback and work across heterogeneous services.
 :since: 
 :supportlevel: Stable
 :tabs-sync-option:

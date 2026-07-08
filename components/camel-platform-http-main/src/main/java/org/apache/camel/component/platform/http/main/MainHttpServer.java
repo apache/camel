@@ -24,7 +24,6 @@ import io.vertx.core.Handler;
 import io.vertx.core.http.impl.MimeMapping;
 import io.vertx.ext.web.Route;
 import io.vertx.ext.web.RoutingContext;
-import io.vertx.ext.web.impl.BlockingHandlerDecorator;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.StaticService;
@@ -297,7 +296,7 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
         };
 
         // use blocking handler as the task can take longer time to complete
-        web.handler(new BlockingHandlerDecorator(handler, true));
+        web.blockingHandler(handler);
 
         platformHttpComponent.addHttpEndpoint(staticContextPath, null, null, null, null);
     }

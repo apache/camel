@@ -22,6 +22,7 @@ import dev.tamboui.layout.Rect;
 import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.Span;
 import dev.tamboui.tui.event.KeyEvent;
+import dev.tamboui.tui.event.MouseEvent;
 import org.apache.camel.util.json.JsonObject;
 
 /**
@@ -31,15 +32,31 @@ interface MonitorTab {
 
     boolean handleKeyEvent(KeyEvent ke);
 
-    boolean handleEscape();
+    /**
+     * Handle a mouse event within the tab's content area.
+     *
+     * @param  me   the mouse event
+     * @param  area the content area where this tab is rendered
+     * @return      true if the event was consumed
+     */
+    default boolean handleMouseEvent(MouseEvent me, Rect area) {
+        return false;
+    }
 
-    void navigateUp();
+    default boolean handleEscape() {
+        return false;
+    }
 
-    void navigateDown();
+    default void navigateUp() {
+    }
+
+    default void navigateDown() {
+    }
 
     void render(Frame frame, Rect area);
 
-    void renderFooter(List<Span> spans);
+    default void renderFooter(List<Span> spans) {
+    }
 
     default void onTabSelected() {
     }
@@ -51,6 +68,8 @@ interface MonitorTab {
         return null;
     }
 
+    String description();
+
     default String getHelpText() {
         return null;
     }
@@ -60,6 +79,10 @@ interface MonitorTab {
     }
 
     default boolean setFilter(String filter) {
+        return false;
+    }
+
+    default boolean setInputValue(String field, String value) {
         return false;
     }
 }

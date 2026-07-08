@@ -39,9 +39,12 @@ import dev.tamboui.text.Line;
 import dev.tamboui.text.Span;
 import dev.tamboui.text.Text;
 import dev.tamboui.tui.event.KeyEvent;
+import dev.tamboui.tui.event.MouseEvent;
+import dev.tamboui.tui.event.MouseEventKind;
 import dev.tamboui.widgets.Clear;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
+import dev.tamboui.widgets.block.Borders;
 import dev.tamboui.widgets.block.Title;
 import dev.tamboui.widgets.paragraph.Paragraph;
 import dev.tamboui.widgets.scrollbar.Scrollbar;
@@ -60,7 +63,8 @@ import org.apache.camel.dsl.jbang.core.common.PathUtils;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 
-import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.*;
+import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.*;
+import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.hint;
 
 class DiagramSupport {
 
@@ -376,6 +380,71 @@ class DiagramSupport {
         return false;
     }
 
+    private static final int MOUSE_SCROLL_LINES = 3;
+
+    /**
+     * Handle mouse scroll events for the diagram. Returns true if consumed.
+     */
+    boolean handleMouseScroll(MouseEvent me) {
+        if (!showDiagram) {
+            return false;
+        }
+        if (me.kind() == MouseEventKind.SCROLL_UP) {
+            scrollY = Math.max(0, scrollY - MOUSE_SCROLL_LINES);
+            return true;
+        }
+        if (me.kind() == MouseEventKind.SCROLL_DOWN) {
+            scrollY += MOUSE_SCROLL_LINES;
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Handle a mouse click in the diagram area. Checks if the click falls on a topology node box and selects it.
+     * Returns the index of the clicked node, or -1 if no node was hit.
+     */
+    int handleNodeClick(MouseEvent me) {
+        if (!showDiagram || !me.isClick() || nodeBoxes.isEmpty()) {
+            return -1;
+        }
+        // Convert screen coordinates to diagram coordinates
+        int diagramCol = me.x() - lastAreaX + scrollX;
+        int diagramRow = me.y() - lastAreaY + scrollY;
+
+        for (int i = 0; i < nodeBoxes.size(); i++) {
+            TopologyAsciiRenderer.NodeBox nb = nodeBoxes.get(i);
+            if (diagramRow >= nb.startRow() && diagramRow <= nb.endRow()
+                    && diagramCol >= nb.startCol() && diagramCol <= nb.endCol()) {
+                selectedNodeIndex = i;
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    /**
+     * Handle a mouse click in the route diagram area. Checks if the click falls on an EIP node box and selects it.
+     * Returns the index of the clicked EIP node, or -1 if no node was hit.
+     */
+    int handleEipNodeClick(MouseEvent me) {
+        if (!showDiagram || !me.isClick() || eipNodeBoxes.isEmpty()) {
+            return -1;
+        }
+        int diagramCol = me.x() - lastAreaX + scrollX;
+        int diagramRow = me.y() - lastAreaY + scrollY;
+
+        for (int i = 0; i < eipNodeBoxes.size(); i++) {
+            var nb = eipNodeBoxes.get(i);
+            if (diagramRow >= nb.startRow() && diagramRow <= nb.endRow()
+                    && diagramCol >= nb.startCol() && diagramCol <= nb.endCol()) {
+                selectedEipNodeIndex = i;
+                return i;
+            }
+        }
+        return -1;
+    }
+
     void resetScroll() {
         scrollY = 0;
         scrollX = 0;
@@ -493,7 +562,7 @@ class DiagramSupport {
 
     void renderFooterHints(List<Span> spans) {
         hint(spans, "d/Esc", "close");
-        hint(spans, "↑↓←→", "scroll");
+        hint(spans, TuiIcons.HINT_NAV, "scroll");
         hint(spans, "PgUp/PgDn", "page");
         hint(spans, "Home/End", "top/end");
     }
@@ -736,7 +805,7 @@ class DiagramSupport {
 
     void renderNativeDiagram(Frame frame, Rect area, Line title, boolean metrics) {
         Block block = Block.builder()
-                .borderType(BorderType.ROUNDED)
+                .borderType(BorderType.ROUNDED).borders(Borders.ALL)
                 .title(Title.from(title))
                 .build();
         frame.renderWidget(block, area);
@@ -830,7 +899,7 @@ class DiagramSupport {
         frame.renderWidget(Clear.INSTANCE, previewRect);
 
         Block previewBlock = Block.builder()
-                .borderType(BorderType.ROUNDED)
+                .borderType(BorderType.ROUNDED).borders(Borders.ALL)
                 .title(Title.from(Line.from(Span.styled(" Route ", Style.EMPTY.dim()))))
                 .build();
         frame.renderWidget(previewBlock, previewRect);
@@ -1209,7 +1278,7 @@ class DiagramSupport {
             Frame frame, Rect area, Line title, boolean metrics,
             String currentRouteId, RouteDiagramLayoutEngine.LayoutRoute routeLayout) {
         Block block = Block.builder()
-                .borderType(BorderType.ROUNDED)
+                .borderType(BorderType.ROUNDED).borders(Borders.ALL)
                 .title(Title.from(title))
                 .build();
         frame.renderWidget(block, area);
@@ -1294,7 +1363,7 @@ class DiagramSupport {
         frame.renderWidget(Clear.INSTANCE, mapRect);
 
         Block mapBlock = Block.builder()
-                .borderType(BorderType.ROUNDED)
+                .borderType(BorderType.ROUNDED).borders(Borders.ALL)
                 .title(Title.from(Line.from(Span.styled(" Map ", Style.EMPTY.dim()))))
                 .build();
         frame.renderWidget(mapBlock, mapRect);
@@ -1652,7 +1721,7 @@ class DiagramSupport {
         }
 
         Block block = Block.builder()
-                .borderType(BorderType.ROUNDED)
+                .borderType(BorderType.ROUNDED).borders(Borders.ALL)
                 .title(Title.from(title))
                 .build();
         frame.renderWidget(block, area);
@@ -1725,7 +1794,7 @@ class DiagramSupport {
         }
 
         Block block = Block.builder()
-                .borderType(BorderType.ROUNDED)
+                .borderType(BorderType.ROUNDED).borders(Borders.ALL)
                 .title(Title.from(title))
                 .build();
         frame.renderWidget(block, area);

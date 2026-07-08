@@ -195,6 +195,42 @@ public interface ElasticsearchRestClientEndpointBuilderFactory {
             return this;
         }
         /**
+         * To configure security using SSLContextParameters. When configured,
+         * this takes precedence over the certificatePath option. This allows
+         * configuring named groups, signature schemes, cipher suites, and
+         * protocols for the TLS connection.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * 
+         * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
+         */
+        default ElasticsearchRestClientEndpointBuilder sslContextParameters(org.apache.camel.support.jsse.SSLContextParameters sslContextParameters) {
+            doSetProperty("sslContextParameters", sslContextParameters);
+            return this;
+        }
+        /**
+         * To configure security using SSLContextParameters. When configured,
+         * this takes precedence over the certificatePath option. This allows
+         * configuring named groups, signature schemes, cipher suites, and
+         * protocols for the TLS connection.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * 
+         * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
+         */
+        default ElasticsearchRestClientEndpointBuilder sslContextParameters(String sslContextParameters) {
+            doSetProperty("sslContextParameters", sslContextParameters);
+            return this;
+        }
+        /**
          * Username.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -457,7 +493,7 @@ public interface ElasticsearchRestClientEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final ElasticsearchRestClientHeaderNameBuilder INSTANCE = new ElasticsearchRestClientHeaderNameBuilder();
+        public static final ElasticsearchRestClientHeaderNameBuilder INSTANCE = new ElasticsearchRestClientHeaderNameBuilder();
 
         /**
          * ID of the object to index or retrieve or delete.

@@ -22,8 +22,19 @@ import org.apache.camel.Endpoint;
 import org.jspecify.annotations.Nullable;
 
 /**
- * Represents a traced message by the BacklogTracer.
+ * Snapshot of a single exchange event captured by the {@link BacklogTracer} as a message transits a route node.
+ * <p/>
+ * Each instance represents a detached, point-in-time view of the exchange at one route node: the exchange body and
+ * headers are serialized to XML/JSON at capture time so they can be read after the exchange has moved on or has
+ * completed. The unique {@link #getUid()} counter and {@link #getTimestamp()} allow events to be correlated and ordered
+ * across concurrent exchanges.
+ * <p/>
+ * For each route a message passes through, the tracer emits at least two events: a "first" event when the exchange
+ * enters the route ({@link #isFirst()}) and a "last" event when it leaves ({@link #isLast()}). An exchange routed
+ * across multiple routes (e.g. via Direct or SEDA) produces separate first/last pairs for each route.
  *
+ * @see   BacklogTracer
+ * @see   BacklogEventMessage
  * @since 4.0
  */
 public interface BacklogTracerEventMessage extends BacklogEventMessage {

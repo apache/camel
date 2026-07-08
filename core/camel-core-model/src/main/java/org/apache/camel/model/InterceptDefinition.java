@@ -31,7 +31,8 @@ import org.apache.camel.spi.Metadata;
 /**
  * Intercepts a message at each step in the route
  */
-@Metadata(label = "configuration")
+@Metadata(label = "configuration",
+          description = "Intercepts each message at every processing step in the route, allowing cross-cutting logic such as logging or auditing")
 @XmlRootElement(name = "intercept")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class InterceptDefinition extends OutputDefinition<InterceptDefinition> {

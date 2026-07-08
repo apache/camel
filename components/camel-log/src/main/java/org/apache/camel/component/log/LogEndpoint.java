@@ -40,7 +40,7 @@ import org.slf4j.Logger;
 import static org.apache.camel.support.LoggerHelper.getLineNumberLoggerName;
 
 /**
- * Prints data form the routed message (such as body and headers) to the logger.
+ * Prints data from the routed message (such as body and headers) to the logger.
  */
 @UriEndpoint(firstVersion = "1.1.0", scheme = "log", title = "Log Data",
              remote = false, syntax = "log:loggerName", producerOnly = true, category = { Category.CORE, Category.MONITORING })

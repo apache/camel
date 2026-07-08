@@ -2521,7 +2521,7 @@ public interface KeycloakEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final KeycloakHeaderNameBuilder INSTANCE = new KeycloakHeaderNameBuilder();
+        public static final KeycloakHeaderNameBuilder INSTANCE = new KeycloakHeaderNameBuilder();
 
         /**
          * The operation to perform.
@@ -3125,6 +3125,30 @@ public interface KeycloakEndpointBuilderFactory {
          */
         public String keycloakAccessToken() {
             return "CamelKeycloakAccessToken";
+        }
+        /**
+         * The token for revocation or introspection.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code KeycloakToken}.
+         */
+        public String keycloakToken() {
+            return "CamelKeycloakToken";
+        }
+        /**
+         * The token type hint for revocation.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code KeycloakTokenTypeHint}.
+         */
+        public String keycloakTokenTypeHint() {
+            return "CamelKeycloakTokenTypeHint";
         }
         /**
          * Comma-separated list of resource names or IDs to evaluate permissions

@@ -2,12 +2,10 @@
 :doctitle: Smooks
 :shortname: smooks
 :artifactid: camel-smooks
-:description: Transform and bind XML as well as non-XML data, including EDI, CSV, JSON, and YAML using Smooks.
+:description: Transform and bind XML as well as non-XML data, including EDI, CSV, JSON, and YAML using Smooks
 :since: 4.9
 :supportlevel: Stable
 :tabs-sync-option:
-//Manually maintained attributes
-:camel-spring-boot-name: smooks
 
 *Since Camel {since}*
 
@@ -81,5 +79,3 @@ The Smooks configuration in `csv-smooks-unmarshal-config.xml` is as follows:
 // dataformat options: START
 include::partial$dataformat-options.adoc[]
 // dataformat options: END
-
-include::spring-boot:partial$starter.adoc[]

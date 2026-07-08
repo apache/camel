@@ -26,14 +26,17 @@ import org.apache.camel.spi.Metadata;
 /**
  * A key value pair
  */
-@Metadata(label = "rest")
+@Metadata(label = "rest",
+          description = "Defines a key/value property for REST configuration, used to pass component-specific settings")
 @XmlRootElement(name = "restProperty")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RestPropertyDefinition {
 
     @XmlAttribute(required = true)
+    @Metadata(description = "Property key.", required = true)
     private String key;
     @XmlAttribute(required = true)
+    @Metadata(description = "Property value.", required = true)
     private String value;
 
     public RestPropertyDefinition() {
@@ -44,9 +47,6 @@ public class RestPropertyDefinition {
         this.value = value;
     }
 
-    /**
-     * Property key
-     */
     public void setKey(String key) {
         this.key = key;
     }
@@ -55,9 +55,6 @@ public class RestPropertyDefinition {
         return key;
     }
 
-    /**
-     * Property value
-     */
     public void setValue(String value) {
         this.value = value;
     }

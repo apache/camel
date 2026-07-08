@@ -9,7 +9,6 @@
 :component-header: Only consumer is supported
 //Manually maintained attributes
 :group: Tahu
-:camel-spring-boot-name: tahu
 
 *Since Camel {since}*
 

@@ -2,12 +2,10 @@
 :doctitle: Grok
 :shortname: grok
 :artifactid: camel-grok
-:description: Unmarshal unstructured data to objects using Logstash based Grok patterns.
+:description: Unmarshal unstructured data to objects using Logstash based Grok patterns
 :since: 3.0
 :supportlevel: Stable
 :tabs-sync-option:
-//Manually maintained attributes
-:camel-spring-boot-name: grok
 
 *Since Camel {since}*
 
@@ -32,21 +30,95 @@ for this component:
 == Usage
 
 .Extract all IP addresses from input
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:in")
     .unmarshal().grok("%{IP:ip}")
     .to("log:out");
---------------------------------------------------------------------------------
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:in"/>
+  <unmarshal><grok pattern="%{IP:ip}"/></unmarshal>
+  <to uri="log:out"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:in
+      steps:
+        - unmarshal:
+            grok:
+              pattern: "%{IP:ip}"
+        - to:
+            uri: log:out
+----
+====
 
 .Parse Apache logs and process only 4xx responses
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
+----
 from("file://apacheLogs")
     .unmarshal().grok("%{COMBINEDAPACHELOG")
     .split(body()).filter(simple("${body[response]} starts with '4'"))
-    .to("log:4xx")
---------------------------------------------------------------------------------
+    .to("log:4xx");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="file://apacheLogs"/>
+  <unmarshal><grok pattern="%{COMBINEDAPACHELOG"/></unmarshal>
+  <split>
+    <simple>${body}</simple>
+    <filter>
+      <simple>${body[response]} starts with '4'</simple>
+      <to uri="log:4xx"/>
+    </filter>
+  </split>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: file://apacheLogs
+      steps:
+        - unmarshal:
+            grok:
+              pattern: "%{COMBINEDAPACHELOG"
+        - split:
+            simple: "${body}"
+            steps:
+              - filter:
+                  simple: "${body[response]} starts with '4'"
+                  steps:
+                    - to:
+                        uri: log:4xx
+----
+====
 
 === Preregistered patterns
 
@@ -58,54 +130,31 @@ All https://github.com/thekrakken/java-grok/tree/master/src/main/resources/patte
 Camel Grok DataFormat supports plugable patterns, which are auto loaded from Camel Registry.
 You can register patterns with Java DSL and Spring DSL:
 
-[tabs]
-====
-
-Java DSL::
-+
+._Java-only: registering a custom Grok pattern_
 [source,java]
---------------------------------------------------------------------------------
-public class MyRouteBuilder extends RouteBuilder {
+----
+bindToRegistry("myCustomPatternBean", new GrokPattern("FOOBAR", "foo|bar"));
 
-    @Override
-    public void configure() throws Exception {
-        bindToRegistry("myCustomPatternBean", new GrokPattern("FOOBAR", "foo|bar"));
+from("direct:in")
+    .unmarshal().grok("%{FOOBAR:fooBar}")
+    .to("log:out");
+----
 
-        from("direct:in")
-            .unmarshal().grok("%{FOOBAR:fooBar}")
-            .to("log:out");
-    }
-}
---------------------------------------------------------------------------------
+In Spring XML, you register the custom pattern as a bean:
 
-Spring XML::
-+
+._XML-only: Spring XML bean registration_
 [source,xml]
---------------------------------------------------------------------------------
+----
 <beans>
     <bean id="myCustomPatternBean" class="org.apache.camel.component.grok.GrokPattern">
         <constructor-arg value="FOOBAR"/>
         <constructor-arg value="foo|bar"/>
     </bean>
-<beans>
-<camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
-    <route>
-        <from uri="direct:in"/>
-        <unmarshal>
-            <grok pattern="%{FOOBAR:fooBar}"/>
-        </unmarshal>
-        <to uri="log:out"/>
-    </route>
-</camelContext>
---------------------------------------------------------------------------------
-
-====
+</beans>
+----
 
 == Grok Data format Options
 
 // dataformat options: START
 include::partial$dataformat-options.adoc[]
 // dataformat options: END
-
-
-include::spring-boot:partial$starter.adoc[]

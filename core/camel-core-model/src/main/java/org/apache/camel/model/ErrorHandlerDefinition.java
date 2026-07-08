@@ -34,7 +34,8 @@ import org.apache.camel.spi.Metadata;
 /**
  * Camel error handling.
  */
-@Metadata(label = "configuration,error")
+@Metadata(label = "configuration,error,errorhandling",
+          description = "Configures error handling strategy for routes, controlling how failed exchanges are handled and redelivered")
 @XmlRootElement(name = "errorHandler")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ErrorHandlerDefinition extends IdentifiedType {
@@ -46,15 +47,13 @@ public class ErrorHandlerDefinition extends IdentifiedType {
             @XmlElement(name = "refErrorHandler", type = RefErrorHandlerDefinition.class),
             @XmlElement(name = "jtaTransactionErrorHandler", type = JtaTransactionErrorHandlerDefinition.class),
             @XmlElement(name = "springTransactionErrorHandler", type = SpringTransactionErrorHandlerDefinition.class) })
+    @Metadata(description = "The error handler type to use, such as default error handler, dead letter channel, no error handler, or a transaction error handler.")
     private ErrorHandlerFactory errorHandlerType;
 
     public ErrorHandlerFactory getErrorHandlerType() {
         return errorHandlerType;
     }
 
-    /**
-     * The specific error handler in use.
-     */
     public void setErrorHandlerType(ErrorHandlerFactory errorHandlerType) {
         this.errorHandlerType = errorHandlerType;
     }

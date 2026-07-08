@@ -22,6 +22,9 @@ import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
 import org.testcontainers.utility.DockerImageName;
 
+/**
+ * @since 4.21
+ */
 public class JaegerContainer extends GenericContainer<JaegerContainer> {
     public static final String CONTAINER_NAME = "jaeger";
 
@@ -52,8 +55,12 @@ public class JaegerContainer extends GenericContainer<JaegerContainer> {
         return this;
     }
 
+    /**
+     * Creates a configured but unstarted Jaeger container with a custom image and network alias.
+     *
+     * @return an unstarted container; the caller is responsible for starting and closing it
+     */
     @SuppressWarnings("resource")
-    // NOTE: the object must be closed by the client.
     public static JaegerContainer initContainer(String imageName, String networkAlias) {
         return new JaegerContainer(imageName) // NOSONAR
                 .withNetworkAliases(networkAlias)

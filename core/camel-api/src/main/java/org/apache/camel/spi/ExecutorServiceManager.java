@@ -49,8 +49,11 @@ import org.jspecify.annotations.Nullable;
  * and {@link #shutdownNow(java.util.concurrent.ExecutorService)}, and {@link #getShutdownAwaitTermination()} methods.
  * Notice the details about using a graceful shutdown at first, and then falling back to aggressive shutdown in case of
  * await termination timeout occurred.
+ * <p/>
+ * See <a href="https://camel.apache.org/manual/threading-model.html">Threading Model</a> in the Camel user manual.
  *
  * @see ThreadPoolFactory
+ * @see ThreadPoolProfile
  */
 public interface ExecutorServiceManager extends ShutdownableService, StaticService {
 

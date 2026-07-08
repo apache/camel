@@ -31,7 +31,8 @@ import org.apache.camel.spi.Metadata;
 /**
  * Evaluates an XPath expression against an XML payload.
  */
-@Metadata(firstVersion = "1.1.0", label = "language,core,xml", title = "XPath")
+@Metadata(firstVersion = "1.1.0", label = "language,core,xml", title = "XPath",
+          description = "Evaluates an XPath expression against an XML payload")
 @XmlRootElement(name = "xpath")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class XPathExpression extends NamespaceAwareExpression {
@@ -42,28 +43,32 @@ public class XPathExpression extends NamespaceAwareExpression {
     private XPathFactory xpathFactory;
 
     @XmlAttribute(name = "documentType")
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced", description = "Name of class for document type. The default value is org.w3c.dom.Document.")
     private String documentTypeName;
     @XmlAttribute(name = "resultQName")
-    @Metadata(defaultValue = "NODESET", enums = "NUMBER,STRING,BOOLEAN,NODESET,NODE")
+    @Metadata(defaultValue = "NODESET", enums = "NUMBER,STRING,BOOLEAN,NODESET,NODE",
+              description = "Sets the output type supported by XPath.")
     private String resultQName;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean", description = "Whether to use Saxon.")
     private String saxon;
     @XmlAttribute
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced", description = "References to a custom XPathFactory to lookup in the registry.")
     private String factoryRef;
     @XmlAttribute
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced", description = "The XPath object model to use.")
     private String objectModel;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean",
+              description = "Whether to log namespaces which can assist during troubleshooting.")
     private String logNamespaces;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean",
+              description = "Whether to enable thread-safety for the returned result of the xpath expression. This applies to when using NODESET as the result type, and the returned set has multiple elements.")
     private String threadSafety;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "true")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "true",
+              description = "Whether to enable pre-compiling the xpath expression during initialization phase. pre-compile is enabled by default.")
     private String preCompile;
 
     public XPathExpression() {
@@ -119,11 +124,6 @@ public class XPathExpression extends NamespaceAwareExpression {
         return documentType;
     }
 
-    /**
-     * Class for document type to use
-     * <p/>
-     * The default value is org.w3c.dom.Document
-     */
     public void setDocumentType(Class<?> documentType) {
         this.documentType = documentType;
     }
@@ -132,11 +132,6 @@ public class XPathExpression extends NamespaceAwareExpression {
         return documentTypeName;
     }
 
-    /**
-     * Name of class for document type
-     * <p/>
-     * The default value is org.w3c.dom.Document
-     */
     public void setDocumentTypeName(String documentTypeName) {
         this.documentTypeName = documentTypeName;
     }
@@ -145,16 +140,10 @@ public class XPathExpression extends NamespaceAwareExpression {
         return resultQName;
     }
 
-    /**
-     * Sets the output type supported by XPath.
-     */
     public void setResultQName(String resultQName) {
         this.resultQName = resultQName;
     }
 
-    /**
-     * Whether to use Saxon.
-     */
     public void setSaxon(String saxon) {
         this.saxon = saxon;
     }
@@ -163,9 +152,6 @@ public class XPathExpression extends NamespaceAwareExpression {
         return saxon;
     }
 
-    /**
-     * References to a custom XPathFactory to lookup in the registry
-     */
     public void setFactoryRef(String factoryRef) {
         this.factoryRef = factoryRef;
     }
@@ -174,9 +160,6 @@ public class XPathExpression extends NamespaceAwareExpression {
         return factoryRef;
     }
 
-    /**
-     * The XPath object model to use
-     */
     public void setObjectModel(String objectModel) {
         this.objectModel = objectModel;
     }
@@ -185,9 +168,6 @@ public class XPathExpression extends NamespaceAwareExpression {
         return objectModel;
     }
 
-    /**
-     * Whether to log namespaces which can assist during troubleshooting
-     */
     public void setLogNamespaces(String logNamespaces) {
         this.logNamespaces = logNamespaces;
     }
@@ -208,15 +188,6 @@ public class XPathExpression extends NamespaceAwareExpression {
         return threadSafety;
     }
 
-    /**
-     * Whether to enable thread-safety for the returned result of the xpath expression. This applies to when using
-     * NODESET as the result type, and the returned set has multiple elements. In this situation there can be
-     * thread-safety issues if you process the NODESET concurrently such as from a Camel Splitter EIP in parallel
-     * processing mode. This option prevents concurrency issues by doing defensive copies of the nodes.
-     * <p/>
-     * It is recommended to turn this option on if you are using camel-saxon or Saxon in your application. Saxon has
-     * thread-safety issues which can be prevented by turning this option on.
-     */
     public void setThreadSafety(String threadSafety) {
         this.threadSafety = threadSafety;
     }
@@ -225,14 +196,6 @@ public class XPathExpression extends NamespaceAwareExpression {
         return preCompile;
     }
 
-    /**
-     * Whether to enable pre-compiling the xpath expression during initialization phase. pre-compile is enabled by
-     * default.
-     * <p>
-     * This can be used to turn off, for example in cases the compilation phase is desired at the starting phase, such
-     * as if the application is ahead of time compiled (for example with camel-quarkus) which would then load the xpath
-     * factory of the built operating system, and not a JVM runtime.
-     */
     public void setPreCompile(String preCompile) {
         this.preCompile = preCompile;
     }

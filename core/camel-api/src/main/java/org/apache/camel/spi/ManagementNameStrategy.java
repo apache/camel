@@ -19,22 +19,29 @@ package org.apache.camel.spi;
 import org.jspecify.annotations.Nullable;
 
 /**
- * Strategy for assigning the name part of the {@link javax.management.ObjectName} for a managed
+ * Strategy for assigning the {@code name} segment of the {@link javax.management.ObjectName} for a managed
  * {@link org.apache.camel.CamelContext}.
  * <p/>
- * A strategy is needed as you can run multiple CamelContext in the same JVM, and want them to be enlisted in the JVM
- * wide JMXMBeanServer. And this requires a strategy to be able to calculate unique names, in case of clashes. Or to
- * enforce an explicit fixed name, to ensure the JMX name is not using dynamic counters etc.
+ * A strategy is needed because multiple {@link org.apache.camel.CamelContext} instances can run in the same JVM and
+ * share the same JMX {@link javax.management.MBeanServer}. The strategy either computes a unique name automatically
+ * (using an incrementing counter or the context name) or enforces a fixed name so the JMX key remains stable across
+ * restarts.
  * <p/>
- * This strategy supports a naming pattern which supports at least the following tokens
+ * The naming pattern supports at least the following tokens:
  * <ul>
- * <li>#camelId# - the camel id (eg the camel name)</li>
- * <li>#name# - same as #camelId#</li>
- * <li>#counter# - an incrementing counter</li>
+ * <li>{@code #camelId#} - the Camel context id (its configured name)</li>
+ * <li>{@code #name#} - same as {@code #camelId#}</li>
+ * <li>{@code #counter#} - an incrementing counter that guarantees uniqueness</li>
  * </ul>
+ * <p/>
+ * This strategy controls only the {@code name=} key within the domain; the full {@link javax.management.ObjectName}
+ * construction (including all other key-value pairs) is the responsibility of {@link ManagementObjectNameStrategy}.
+ * <p/>
+ * See <a href="https://camel.apache.org/manual/jmx.html">JMX</a> in the Camel user manual.
  *
  * @see CamelContextNameStrategy
- * @see org.apache.camel.impl.DefaultManagementNameStrategy
+ * @see ManagementObjectNameStrategy
+ * @see ManagementAgent
  */
 public interface ManagementNameStrategy {
 

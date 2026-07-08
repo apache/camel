@@ -25,16 +25,20 @@ import org.apache.camel.Expression;
 import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.annotations.DslArg;
 
 /**
  * Sets the value of a message header
  */
-@Metadata(label = "eip,transformation")
+@Metadata(label = "eip,messaging,transformation",
+          description = "Sets a message header to a value computed by an expression")
 @XmlRootElement(name = "setHeader")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class SetHeaderDefinition extends ExpressionNode {
 
     @XmlAttribute(required = true)
+    @Metadata(description = "Name of message header to set a new value. The simple language can be used to define a dynamic evaluated header name. Otherwise a constant name will be used.")
+    @DslArg
     private String name;
 
     public SetHeaderDefinition() {
@@ -80,21 +84,13 @@ public class SetHeaderDefinition extends ExpressionNode {
         return "setHeader[" + getName() + "]";
     }
 
-    /**
-     * Expression to return the value of the header
-     */
     @Override
+    @Metadata(description = "The expression whose result is used as the header value.")
     public void setExpression(ExpressionDefinition expression) {
         // override to include javadoc what the expression is used for
         super.setExpression(expression);
     }
 
-    /**
-     * Name of message header to set a new value
-     * <p/>
-     * The <tt>simple</tt> language can be used to define a dynamic evaluated header name to be used. Otherwise a
-     * constant name will be used.
-     */
     public void setName(String name) {
         this.name = name;
     }

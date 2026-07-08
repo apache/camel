@@ -19,6 +19,7 @@ package org.apache.camel.converter.crypto;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.security.Key;
+import java.security.MessageDigest;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
@@ -98,13 +99,12 @@ public class HMACAccumulator {
     public void validate() {
         byte[] actual = getCalculatedMac();
         byte[] expected = getAppendedMac();
-        for (int x = 0; x < actual.length; x++) {
-            if (expected[x] != actual[x]) {
-                throw new IllegalStateException(
-                        "Expected mac did not match actual mac\nexpected:"
-                                                + byteArrayToHexString(expected) + "\n     actual:"
-                                                + byteArrayToHexString(actual));
-            }
+        // Use a constant-time comparison to avoid leaking MAC-match progress through timing (side-channel).
+        if (!MessageDigest.isEqual(expected, actual)) {
+            throw new IllegalStateException(
+                    "Expected mac did not match actual mac\nexpected:"
+                                            + byteArrayToHexString(expected) + "\n     actual:"
+                                            + byteArrayToHexString(actual));
         }
     }
 

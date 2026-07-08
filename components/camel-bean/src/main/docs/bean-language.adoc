@@ -2,12 +2,10 @@
 :doctitle: Bean Method
 :shortname: bean
 :artifactid: camel-bean
-:description: Calls a Java bean method.
+:description: Calls a Java bean method
 :since: 1.3
 :supportlevel: Stable
 :tabs-sync-option:
-//Manually maintained attributes
-:camel-spring-boot-name: bean
 
 *Since Camel {since}*
 
@@ -59,10 +57,29 @@ XML::
   </filter>
 </route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: activemq:topic:OrdersTopic
+      steps:
+        - filter:
+            expression:
+              method:
+                ref: myBean
+                method: isGoldCustomer
+            steps:
+              - to:
+                  uri: activemq:BigSpendersQueue
+----
 ====
 
 The bean could be implemented as follows:
 
+._Java-only: bean class implementation with Exchange parameter_
 [source,java]
 ----
 public class MyBean {
@@ -76,6 +93,7 @@ How this method uses `Exchange` in the method signature. You would often not do 
 and use non-Camel types. For example, by using `String` then Camel will automatically
 convert the message body to this type when calling the method:
 
+._Java-only: bean method with automatic type conversion_
 [source,java]
 ----
 public boolean isGoldCustomer(String body) {...}
@@ -86,6 +104,7 @@ public boolean isGoldCustomer(String body) {...}
 You can also use the xref:manual::bean-integration.adoc[Bean Integration]
 annotations, such as `@Header`, `@Body`, `@Variable` etc
 
+._Java-only: using bean integration annotations for parameter binding_
 [source,java]
 ----
 public boolean isGoldCustomer(@Header(name = "foo") Integer fooHeader) {...}
@@ -103,6 +122,7 @@ that are not registered in the xref:manual::registry.adoc[Registry].
 Camel can instantiate the bean of a given type and invoke the method
 or invoke the method on an already existing instance.
 
+._Java-only: invoking a bean by class type_
 [source,java]
 ----
 from("activemq:topic:OrdersTopic")
@@ -112,6 +132,7 @@ from("activemq:topic:OrdersTopic")
 
 The first parameter can also be an existing instance of a Bean such as:
 
+._Java-only: invoking a method on an existing bean instance_
 [source,java]
 ----
 private MyBean my = ...;
@@ -120,6 +141,3 @@ from("activemq:topic:OrdersTopic")
   .filter().method(my, "isGoldCustomer")
   .to("activemq:BigSpendersQueue");
 ----
-
-
-include::spring-boot:partial$starter.adoc[]

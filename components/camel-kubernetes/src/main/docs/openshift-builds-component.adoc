@@ -9,7 +9,6 @@
 :component-header: Only producer is supported
 //Manually maintained attributes
 :group: Kubernetes
-:camel-spring-boot-name: kubernetes
 
 *Since Camel {since}*
 
@@ -40,33 +39,62 @@ include::partial$component-endpoint-headers.adoc[]
 
 - `listBuilds`: this operation lists the builds on an Openshift cluster
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
-from("direct:list").
-    toF("openshift-builds:///?kubernetesClient=#kubernetesClient&operation=listBuilds").
-    to("mock:result");
---------------------------------------------------------------------------------
+----
+from("direct:list")
+    .to("openshift-builds:///?kubernetesClient=#kubernetesClient&operation=listBuilds")
+    .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:list"/>
+  <to uri="openshift-builds:///?kubernetesClient=#kubernetesClient&amp;operation=listBuilds"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:list
+      steps:
+        - to:
+            uri: openshift-builds:///
+            parameters:
+              kubernetesClient: "#kubernetesClient"
+              operation: listBuilds
+        - to:
+            uri: mock:result
+----
+====
 
 This operation returns a List of Builds from your Openshift cluster
 
 - `listBuildsByLabels`: this operation lists the builds by labels on an Openshift cluster
 
+._Java-only: sets a Map header for label selection_
 [source,java]
---------------------------------------------------------------------------------
-from("direct:listByLabels").process(new Processor() {
-            @Override
-            public void process(Exchange exchange) throws Exception {
-                Map<String, String> labels = new HashMap<>();
-                labels.put("key1", "value1");
-                labels.put("key2", "value2");
-                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_BUILDS_LABELS, labels);
-            }
-        });
-    toF("openshift-builds:///?kubernetesClient=#kubernetesClient&operation=listBuildsByLabels").
-    to("mock:result");
---------------------------------------------------------------------------------
+----
+from("direct:listByLabels")
+    .process(exchange -> {
+        exchange.getIn().setHeader("CamelKubernetesBuildsLabels",
+            Map.of("key1", "value1", "key2", "value2"));
+    })
+    .to("openshift-builds:///?kubernetesClient=#kubernetesClient&operation=listBuildsByLabels")
+    .to("mock:result");
+----
 
 This operation returns a list of builds from your cluster using a label selector (with key1 and key2, with value value1 and value2)
 
 
-include::spring-boot:partial$starter.adoc[]

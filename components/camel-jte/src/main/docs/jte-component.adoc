@@ -7,8 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Only producer is supported
-//Manually maintained attributes
-:camel-spring-boot-name: jte
 
 *Since Camel {since}*
 
@@ -26,19 +24,19 @@ Maven users will need to add the following dependency to their `pom.xml`
 for this component:
 
 [source,xml]
--------------------------------------------------------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-jte</artifactId>
     <version>x.x.x</version> <!-- use the same version as your Camel core version -->
 </dependency>
--------------------------------------------------------------------------------------
+----
 
 == URI format
 
----------------------------------
+----
 jte:templateName[?options]
----------------------------------
+----
 
 Where *templateName* is the classpath-local URI of the template to
 invoke; or the complete URL of the remote template (e.g.:
@@ -90,14 +88,42 @@ resource. This allows you to provide a dynamic template at runtime.
 
 For example, you could use something like:
 
+[tabs]
+====
+Java::
++
 [source,java]
--------------------------------------------
-from("rest:get:item/{id}").
-  to("jte:com/acme/response.jte");
--------------------------------------------
+----
+from("rest:get:item/{id}")
+    .to("jte:com/acme/response.jte");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="rest:get:item/{id}"/>
+  <to uri="jte:com/acme/response.jte"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: rest:get:item/{id}
+      steps:
+        - to:
+            uri: jte:com/acme/response.jte
+----
+====
 
 To use a JTE template to formulate a response to the REST get call:
 
+._Java-only: example JTE template file content_
 [source,java]
 ----
 @import org.apache.camel.component.jte.Model
@@ -105,6 +131,3 @@ To use a JTE template to formulate a response to the REST get call:
 
 The item ${model.header("id")} is being processed.
 ----
-
-
-include::spring-boot:partial$starter.adoc[]

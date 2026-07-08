@@ -919,7 +919,7 @@ public interface WatsonxAiEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final WatsonxAiHeaderNameBuilder INSTANCE = new WatsonxAiHeaderNameBuilder();
+        public static final WatsonxAiHeaderNameBuilder INSTANCE = new WatsonxAiHeaderNameBuilder();
 
         /**
          * The operation to perform.

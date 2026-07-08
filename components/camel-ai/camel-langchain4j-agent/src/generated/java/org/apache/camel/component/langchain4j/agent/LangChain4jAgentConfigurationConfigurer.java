@@ -28,10 +28,14 @@ public class LangChain4jAgentConfigurationConfigurer extends org.apache.camel.su
         case "agentConfiguration": target.setAgentConfiguration(property(camelContext, org.apache.camel.component.langchain4j.agent.api.AgentConfiguration.class, value)); return true;
         case "agentfactory":
         case "agentFactory": target.setAgentFactory(property(camelContext, org.apache.camel.component.langchain4j.agent.api.AgentFactory.class, value)); return true;
+        case "jsonschema":
+        case "jsonSchema": target.setJsonSchema(property(camelContext, java.lang.String.class, value)); return true;
         case "mcpclients":
         case "mcpClients": target.setMcpClients(property(camelContext, java.util.List.class, value)); return true;
         case "mcpserver":
         case "mcpServer": target.setMcpServer(property(camelContext, java.util.Map.class, value)); return true;
+        case "outputclass":
+        case "outputClass": target.setOutputClass(property(camelContext, java.lang.Class.class, value)); return true;
         case "tags": target.setTags(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
@@ -45,10 +49,14 @@ public class LangChain4jAgentConfigurationConfigurer extends org.apache.camel.su
         case "agentConfiguration": return org.apache.camel.component.langchain4j.agent.api.AgentConfiguration.class;
         case "agentfactory":
         case "agentFactory": return org.apache.camel.component.langchain4j.agent.api.AgentFactory.class;
+        case "jsonschema":
+        case "jsonSchema": return java.lang.String.class;
         case "mcpclients":
         case "mcpClients": return java.util.List.class;
         case "mcpserver":
         case "mcpServer": return java.util.Map.class;
+        case "outputclass":
+        case "outputClass": return java.lang.Class.class;
         case "tags": return java.lang.String.class;
         default: return null;
         }
@@ -63,10 +71,14 @@ public class LangChain4jAgentConfigurationConfigurer extends org.apache.camel.su
         case "agentConfiguration": return target.getAgentConfiguration();
         case "agentfactory":
         case "agentFactory": return target.getAgentFactory();
+        case "jsonschema":
+        case "jsonSchema": return target.getJsonSchema();
         case "mcpclients":
         case "mcpClients": return target.getMcpClients();
         case "mcpserver":
         case "mcpServer": return target.getMcpServer();
+        case "outputclass":
+        case "outputClass": return target.getOutputClass();
         case "tags": return target.getTags();
         default: return null;
         }

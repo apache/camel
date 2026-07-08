@@ -38,7 +38,7 @@ class ElasticsearchClusterIndexIT extends ElasticsearchTestSupport {
         Map<String, String> map = createIndexedData();
         Map<String, Object> headers = new HashMap<>();
         headers.put(ElasticsearchConstants.PARAM_OPERATION, ElasticsearchOperation.Index);
-        headers.put(ElasticsearchConstants.PARAM_INDEX_NAME, "twitter");
+        headers.put(ElasticsearchConstants.PARAM_INDEX_NAME, "cluster");
         headers.put(ElasticsearchConstants.PARAM_INDEX_ID, "1");
 
         String indexId = template.requestBodyAndHeaders("direct:indexWithIpAndPort", map, headers, String.class);
@@ -47,7 +47,7 @@ class ElasticsearchClusterIndexIT extends ElasticsearchTestSupport {
         indexId = template.requestBodyAndHeaders("direct:indexWithIpAndPort", map, headers, String.class);
         assertNotNull(indexId, "indexId should be set");
 
-        assertTrue(client.get(new GetRequest.Builder().index("twitter").id("1").build(), ObjectNode.class).found(),
+        assertTrue(client.get(new GetRequest.Builder().index("cluster").id("1").build(), ObjectNode.class).found(),
                 "Index id 1 must exists");
     }
 
@@ -77,9 +77,9 @@ class ElasticsearchClusterIndexIT extends ElasticsearchTestSupport {
             @Override
             public void configure() {
                 from("direct:indexWithIpAndPort")
-                        .to("elasticsearch://" + clusterName + "?operation=Index&indexName=twitter");
+                        .to("elasticsearch://" + clusterName + "?operation=Index&indexName=cluster");
                 from("direct:indexWithSniffer")
-                        .to("elasticsearch://" + clusterName + "?operation=Index&indexName=twitter&enableSniffer=true");
+                        .to("elasticsearch://" + clusterName + "?operation=Index&indexName=cluster&enableSniffer=true");
             }
         };
     }

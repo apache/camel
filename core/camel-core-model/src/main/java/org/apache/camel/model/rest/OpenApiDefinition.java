@@ -28,7 +28,8 @@ import org.apache.camel.spi.Metadata;
 /**
  * To use OpenApi as contract-first with Camel Rest DSL.
  */
-@Metadata(label = "rest")
+@Metadata(label = "rest",
+          description = "Configures a contract-first REST service using an OpenAPI specification, where Camel auto-generates routes for each operation")
 @XmlRootElement(name = "openApi")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class OpenApiDefinition extends OptionalIdentifiedDefinition<OpenApiDefinition> {
@@ -37,19 +38,25 @@ public class OpenApiDefinition extends OptionalIdentifiedDefinition<OpenApiDefin
     private RestDefinition rest;
 
     @XmlAttribute(required = true)
+    @Metadata(description = "Path to the OpenAPI specification file.", required = true)
     private String specification;
     @XmlAttribute
+    @Metadata(description = "Context path for exposing the OpenAPI specification file as a REST endpoint, allowing clients to obtain the specification from the running application.")
     private String apiContextPath;
     @XmlAttribute
+    @Metadata(description = "The route id.")
     private String routeId;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
+    @Metadata(description = "Whether to disable all the REST services from the OpenAPI contract from the route during build time. Once an REST service has been disabled then it cannot be enabled later at runtime.",
+              label = "advanced", javaType = "java.lang.Boolean")
     private String disabled;
     @XmlAttribute
-    @Metadata(enums = "fail,ignore,mock", defaultValue = "fail")
+    @Metadata(description = "Whether to fail, ignore or return a mock response for OpenAPI operations that are not mapped to a corresponding route.",
+              enums = "fail,ignore,mock", defaultValue = "fail")
     private String missingOperation;
     @XmlAttribute
-    @Metadata(label = "advanced", defaultValue = "classpath:camel-mock/**")
+    @Metadata(description = "Used for inclusive filtering of mock data from directories. The pattern is using Ant-path style pattern. Multiple patterns can be specified separated by comma.",
+              label = "advanced", defaultValue = "classpath:camel-mock/**")
     private String mockIncludePattern;
 
     public void setRest(RestDefinition rest) {
@@ -78,10 +85,6 @@ public class OpenApiDefinition extends OptionalIdentifiedDefinition<OpenApiDefin
         return apiContextPath;
     }
 
-    /**
-     * Whether to enable api-doc that exposes the OpenAPI specification file as a REST endpoint. This allows clients to
-     * obtain the specification from the running Camel application.
-     */
     public void setApiContextPath(String apiContextPath) {
         this.apiContextPath = apiContextPath;
     }
@@ -90,10 +93,6 @@ public class OpenApiDefinition extends OptionalIdentifiedDefinition<OpenApiDefin
         return disabled;
     }
 
-    /**
-     * Whether to disable all the REST services from the OpenAPI contract from the route during build time. Once an REST
-     * service has been disabled then it cannot be enabled later at runtime.
-     */
     public void setDisabled(String disabled) {
         this.disabled = disabled;
     }
@@ -102,10 +101,6 @@ public class OpenApiDefinition extends OptionalIdentifiedDefinition<OpenApiDefin
         return missingOperation;
     }
 
-    /**
-     * Whether to fail, ignore or return a mock response for OpenAPI operations that are not mapped to a corresponding
-     * route.
-     */
     public void setMissingOperation(String missingOperation) {
         this.missingOperation = missingOperation;
     }
@@ -114,10 +109,6 @@ public class OpenApiDefinition extends OptionalIdentifiedDefinition<OpenApiDefin
         return mockIncludePattern;
     }
 
-    /**
-     * Used for inclusive filtering of mock data from directories. The pattern is using Ant-path style pattern. Multiple
-     * patterns can be specified separated by comma.
-     */
     public void setMockIncludePattern(String mockIncludePattern) {
         this.mockIncludePattern = mockIncludePattern;
     }
@@ -126,9 +117,6 @@ public class OpenApiDefinition extends OptionalIdentifiedDefinition<OpenApiDefin
         return routeId;
     }
 
-    /**
-     * Sets the id of the route
-     */
     public void setRouteId(String routeId) {
         this.routeId = routeId;
     }

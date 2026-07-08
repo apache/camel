@@ -1,22 +1,21 @@
-= Debezium PostgresSQL Connector Component
-:doctitle: Debezium PostgresSQL Connector
+= Debezium PostgreSQL Connector Component
+:doctitle: Debezium PostgreSQL Connector
 :shortname: debezium-postgres
 :artifactid: camel-debezium-postgres
-:description: Capture changes from a PostgresSQL database.
+:description: Capture changes from a PostgreSQL database.
 :since: 3.0
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Only consumer is supported
 //Manually maintained attributes
 :group: Debezium
-:camel-spring-boot-name: debezium-postgres
 
 *Since Camel {since}*
 
 *{component-header}*
 
 
-The Debezium PostgresSQL component is wrapper around https://debezium.io/[Debezium] using https://debezium.io/documentation/reference/1.9/development/engine.html[Debezium Engine], which enables Change Data Capture from PostgresSQL database using Debezium without the need for Kafka or Kafka Connect.
+The Debezium PostgreSQL component is wrapper around https://debezium.io/[Debezium] using https://debezium.io/documentation/reference/1.9/development/engine.html[Debezium Engine], which enables Change Data Capture from PostgreSQL database using Debezium without the need for Kafka or Kafka Connect.
 
 [NOTE]
 ====
@@ -45,9 +44,9 @@ Maven users will need to add the following dependency to their `pom.xml` for thi
 
 == URI format
 
----------------------------
+----
 debezium-postgres:name[?options]
----------------------------
+----
 
 
 // component options: START
@@ -77,8 +76,12 @@ See below for more details.
 
 === Consuming events
 
-Here is a basic route that you can use to listen to Debezium events from PostgresSQL connector.
+Here is a basic route that you can use to listen to Debezium events from PostgreSQL connector.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("debezium-postgres:dbz-test-1?offsetStorageFileName=/usr/offset-file-1.dat&databaseHostname=localhost&databaseUser=debezium&databasePassword=dbz&databaseServerName=my-app-connector&databaseHistoryFileFilename=/usr/history-file-1.dat")
@@ -88,8 +91,56 @@ from("debezium-postgres:dbz-test-1?offsetStorageFileName=/usr/offset-file-1.dat&
     .log("    the event occurred upon this operation '${headers.CamelDebeziumSourceOperation}'")
     .log("    on this database '${headers.CamelDebeziumSourceMetadata[db]}' and this table '${headers.CamelDebeziumSourceMetadata[table]}'")
     .log("    with the key ${headers.CamelDebeziumKey}")
-    .log("    the previous value is ${headers.CamelDebeziumBefore}")
+    .log("    the previous value is ${headers.CamelDebeziumBefore}");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="debezium-postgres:dbz-test-1?offsetStorageFileName=/usr/offset-file-1.dat&amp;databaseHostname=localhost&amp;databaseUser=debezium&amp;databasePassword=dbz&amp;databaseServerName=my-app-connector&amp;databaseHistoryFileFilename=/usr/history-file-1.dat"/>
+  <log message="Event received from Debezium : ${body}"/>
+  <log message="    with this identifier ${headers.CamelDebeziumIdentifier}"/>
+  <log message="    with these source metadata ${headers.CamelDebeziumSourceMetadata}"/>
+  <log message="    the event occurred upon this operation '${headers.CamelDebeziumSourceOperation}'"/>
+  <log message="    on this database '${headers.CamelDebeziumSourceMetadata[db]}' and this table '${headers.CamelDebeziumSourceMetadata[table]}'"/>
+  <log message="    with the key ${headers.CamelDebeziumKey}"/>
+  <log message="    the previous value is ${headers.CamelDebeziumBefore}"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: debezium-postgres:dbz-test-1
+      parameters:
+        offsetStorageFileName: /usr/offset-file-1.dat
+        databaseHostname: localhost
+        databaseUser: debezium
+        databasePassword: dbz
+        databaseServerName: my-app-connector
+        databaseHistoryFileFilename: /usr/history-file-1.dat
+      steps:
+        - log:
+            message: "Event received from Debezium : ${body}"
+        - log:
+            message: "    with this identifier ${headers.CamelDebeziumIdentifier}"
+        - log:
+            message: "    with these source metadata ${headers.CamelDebeziumSourceMetadata}"
+        - log:
+            message: "    the event occurred upon this operation '${headers.CamelDebeziumSourceOperation}'"
+        - log:
+            message: "    on this database '${headers.CamelDebeziumSourceMetadata[db]}' and this table '${headers.CamelDebeziumSourceMetadata[table]}'"
+        - log:
+            message: "    with the key ${headers.CamelDebeziumKey}"
+        - log:
+            message: "    the previous value is ${headers.CamelDebeziumBefore}"
+----
+====
 
 By default, the component will emit the events in the body and `CamelDebeziumBefore` header as https://kafka.apache.org/22/javadoc/org/apache/kafka/connect/data/Struct.html[`Struct`] data type, the reasoning behind this, is to perceive the schema information in case is needed.
 However, the component as well contains a xref:manual::type-converter.adoc[Type Converter] that converts
@@ -99,6 +150,7 @@ To use it, you can either add `Map.class` type when you access the message (e.g.
 We mentioned above the schema, which can be used in case you need to perform advance data transformation and the schema is needed for that.
 If you choose not to convert your body to `Map`, you can obtain the schema information as https://kafka.apache.org/22/javadoc/org/apache/kafka/connect/data/Schema.html[`Schema`] type from `Struct` like this:
 
+._Java-only: accessing the Struct schema from a processor_
 [source,java]
 ----
 from("debezium-postgres:[name]?[options]])
@@ -120,4 +172,3 @@ Therefore, before using this component in production, you need to understand how
 This is especially true in regard to https://debezium.io/documentation/reference/1.9/operations/embedded.html#_handling_failures[handling failures].
 ====
 
-include::spring-boot:partial$starter.adoc[]

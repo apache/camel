@@ -23,6 +23,7 @@ import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.AbstractJMSTest;
+import org.apache.camel.component.jms.JmsTestHelper;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.infra.core.CamelContextExtension;
 import org.apache.camel.test.infra.core.DefaultCamelContextExtension;
@@ -44,14 +45,16 @@ public class JmsReplyToLoopIssueTest extends AbstractJMSTest {
     protected ConsumerTemplate consumer;
 
     @Test
-    public void testReplyToLoopIssue() {
+    public void testReplyToLoopIssue() throws Exception {
         getMockEndpoint("mock:foo").expectedBodiesReceived("World");
         getMockEndpoint("mock:bar").expectedBodiesReceived("Bye World");
         getMockEndpoint("mock:done").expectedBodiesReceived("World");
 
+        JmsTestHelper.waitForJmsConsumerRoutes(context, "foo", "bar");
+
         template.sendBodyAndHeader("direct:start", "World", "JMSReplyTo", "queue:JmsReplyToLoopIssueTest.bar");
 
-        // sleep a little to ensure we do not do endless loop
+        // fail fast if an endless reply loop keeps producing messages
         Awaitility.await().atMost(250, TimeUnit.MILLISECONDS).untilAsserted(() -> MockEndpoint.assertIsSatisfied(context));
     }
 
@@ -70,11 +73,11 @@ public class JmsReplyToLoopIssueTest extends AbstractJMSTest {
                         .to("activemq:queue:JmsReplyToLoopIssueTest.foo?preserveMessageQos=true")
                         .to("mock:done");
 
-                from("activemq:queue:JmsReplyToLoopIssueTest.foo")
+                from("activemq:queue:JmsReplyToLoopIssueTest.foo").routeId("foo")
                         .to("log:foo?showAll=true", "mock:foo")
                         .transform(body().prepend("Bye "));
 
-                from("activemq:queue:JmsReplyToLoopIssueTest.bar")
+                from("activemq:queue:JmsReplyToLoopIssueTest.bar").routeId("bar")
                         .to("log:bar?showAll=true", "mock:bar");
             }
         };

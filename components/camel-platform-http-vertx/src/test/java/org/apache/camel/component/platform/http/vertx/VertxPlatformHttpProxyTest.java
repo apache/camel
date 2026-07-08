@@ -17,7 +17,6 @@
 package org.apache.camel.component.platform.http.vertx;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
-import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
@@ -78,8 +77,9 @@ public class VertxPlatformHttpProxyTest {
 
             context.start();
 
-            // URI of proxy created with platform HTTP component
-            final var proxyURI = "http://localhost:" + RestAssured.port;
+            // URI of proxy created with platform HTTP component — use camelPort directly
+            // instead of the static RestAssured.port to avoid races with other tests.
+            final var proxyURI = "http://localhost:" + camelPort.getPort();
 
             final var originURI = "http://localhost:" + wireMockServer.port();
 

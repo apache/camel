@@ -55,6 +55,7 @@ and remove any `timePeriodMillis` option.
 
 For example, update the following:
 
+._Java-only: Old throttle with maxRequestsPerPeriod_
 [source,java]
 ----
 long maxRequestsPerPeriod = 100L;
@@ -71,6 +72,7 @@ from("seda:c")
 
 to use `maxConcurrentRequests`:
 
+._Java-only: New throttle with maxConcurrentRequests_
 [source,java]
 ----
 long maxConcurrentRequests = 30L;

@@ -1454,7 +1454,7 @@ public interface KubernetesReplicationControllersEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final KubernetesReplicationControllersHeaderNameBuilder INSTANCE = new KubernetesReplicationControllersHeaderNameBuilder();
+        public static final KubernetesReplicationControllersHeaderNameBuilder INSTANCE = new KubernetesReplicationControllersHeaderNameBuilder();
 
         /**
          * The Producer operation.

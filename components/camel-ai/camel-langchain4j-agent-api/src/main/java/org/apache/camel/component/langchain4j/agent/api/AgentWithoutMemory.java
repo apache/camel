@@ -18,6 +18,7 @@ package org.apache.camel.component.langchain4j.agent.api;
 
 import dev.langchain4j.data.message.Content;
 import dev.langchain4j.service.AiServices;
+import dev.langchain4j.service.Result;
 import dev.langchain4j.service.tool.ToolProvider;
 
 /**
@@ -34,7 +35,7 @@ public class AgentWithoutMemory extends AbstractAgent<AiAgentWithoutMemoryServic
     }
 
     @Override
-    public String chat(AiAgentBody<?> aiAgentBody, ToolProvider toolProvider) {
+    public Result<String> chat(AiAgentBody<?> aiAgentBody, ToolProvider toolProvider) {
         AiAgentWithoutMemoryService agentService = createAiAgentService(toolProvider);
 
         String userMessage = aiAgentBody.getUserMessage();

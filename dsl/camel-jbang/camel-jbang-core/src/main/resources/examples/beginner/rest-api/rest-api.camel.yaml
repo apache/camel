@@ -1,0 +1,31 @@
+- rest:
+    path: /api
+    get:
+      - path: /hello
+        to:
+          uri: direct:hello
+      - path: "/hello/{name}"
+        to:
+          uri: direct:hello-name
+- route:
+    id: hello
+    from:
+      uri: direct
+      parameters:
+        name: hello
+      steps:
+        - setBody:
+            expression:
+              constant:
+                expression: "{{greeting.message}}"
+- route:
+    id: hello-name
+    from:
+      uri: direct
+      parameters:
+        name: hello-name
+      steps:
+        - setBody:
+            expression:
+              simple:
+                expression: "Hello ${header.name} from Camel REST API!"

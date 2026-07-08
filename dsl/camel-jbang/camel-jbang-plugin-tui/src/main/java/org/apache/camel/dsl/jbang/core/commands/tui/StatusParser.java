@@ -497,6 +497,64 @@ final class StatusParser {
             }
         }
 
+        // Parse dataSources
+        JsonObject dsObj = (JsonObject) root.get("dataSources");
+        if (dsObj != null) {
+            JsonArray dsList = (JsonArray) dsObj.get("dataSources");
+            if (dsList != null) {
+                for (Object d : dsList) {
+                    JsonObject dj = (JsonObject) d;
+                    DataSourceInfo di = new DataSourceInfo();
+                    di.name = dj.getString("name");
+                    di.type = dj.getString("type");
+                    di.poolType = dj.getString("poolType");
+                    di.poolName = dj.getString("poolName");
+                    di.active = dj.getIntegerOrDefault("active", 0);
+                    di.idle = dj.getIntegerOrDefault("idle", 0);
+                    di.total = dj.getIntegerOrDefault("total", 0);
+                    di.waiting = dj.getIntegerOrDefault("waiting", 0);
+                    di.maxPoolSize = dj.getIntegerOrDefault("maxPoolSize", 0);
+                    di.maxUsed = dj.getIntegerOrDefault("maxUsed", 0);
+                    di.leakDetection = dj.getIntegerOrDefault("leakDetection", 0);
+                    di.created = dj.getIntegerOrDefault("created", 0);
+                    info.dataSources.add(di);
+                }
+            }
+        }
+
+        // Parse sqlTrace
+        JsonObject sqlTraceObj = (JsonObject) root.get("sqlTrace");
+        if (sqlTraceObj != null) {
+            JsonObject summary = (JsonObject) sqlTraceObj.get("summary");
+            if (summary != null) {
+                info.sqlTraceTotal = summary.getLongOrDefault("totalQueries", 0);
+                info.sqlTraceAvgTime = summary.getLongOrDefault("avgTime", 0);
+                info.sqlTraceSlowestTime = summary.getLongOrDefault("slowestTime", 0);
+                info.sqlTraceSlowCount = summary.getLongOrDefault("slowCount", 0);
+                info.sqlTraceFailedCount = summary.getLongOrDefault("failedCount", 0);
+            }
+            JsonArray stmts = (JsonArray) sqlTraceObj.get("statements");
+            if (stmts != null) {
+                for (Object s : stmts) {
+                    JsonObject sj = (JsonObject) s;
+                    SqlTraceInfo si = new SqlTraceInfo();
+                    si.exchangeId = sj.getString("exchangeId");
+                    si.routeId = sj.getString("routeId");
+                    si.nodeId = sj.getString("nodeId");
+                    si.location = sj.getString("location");
+                    si.query = sj.getString("query");
+                    si.category = sj.getString("category");
+                    si.endpoint = sj.getString("endpoint");
+                    si.timestamp = sj.getLongOrDefault("timestamp", 0);
+                    si.duration = sj.getLongOrDefault("duration", 0);
+                    si.rowCount = sj.getIntegerOrDefault("rowCount", 0);
+                    si.updateCount = sj.getIntegerOrDefault("updateCount", 0);
+                    si.failed = sj.getBooleanOrDefault("failed", false);
+                    info.sqlTraceStatements.add(si);
+                }
+            }
+        }
+
         return info;
     }
 

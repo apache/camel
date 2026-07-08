@@ -1,7 +1,7 @@
 = Remove Headers EIP
 :doctitle: Remove Headers
 :shortname: removeHeaders
-:description: Removes message headers whose name matches a specified pattern
+:description: Removes all message headers whose names match a given pattern. Useful for stripping internal Camel headers before sending to external systems.
 :since: 
 :supportlevel: Stable
 :tabs-sync-option:

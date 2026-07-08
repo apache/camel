@@ -78,6 +78,7 @@ public class XmlRoutesBuilderLoader extends RouteBuilderLoaderSupport {
     private final List<BeanFactoryDefinition<?>> delayedRegistrations = new ArrayList<>();
 
     private final AtomicInteger counter = new AtomicInteger(0);
+    private volatile boolean springBlueprintWarned;
 
     public XmlRoutesBuilderLoader() {
         super(EXTENSION);
@@ -187,6 +188,7 @@ public class XmlRoutesBuilderLoader extends RouteBuilderLoaderSupport {
                         new XmlModelParser(resource, xmlInfo.getRootElementNamespace())
                                 .parseRouteConfigurationsDefinition()
                                 .ifPresent(this::addConfigurations);
+                        break;
                     }
                     default: {
                         // NO-OP
@@ -392,7 +394,13 @@ public class XmlRoutesBuilderLoader extends RouteBuilderLoaderSupport {
 
         // <s:bean>, <s:beans> and <s:alias> elements - all the elements in single BeansDefinition have
         // one parent org.w3c.dom.Document - and this is what we collect from each resource
-        if (!app.getSpringOrBlueprintBeans().isEmpty()) {
+        if (!app.getSpringOrBlueprintBeans().isEmpty()) { // NOSONAR
+            if (!springBlueprintWarned) {
+                springBlueprintWarned = true;
+                LOG.warn(
+                        "Detected legacy Spring <beans> or OSGi <blueprint> XML. This feature is deprecated and will be removed in a future release."
+                         + " Migrate to standard Camel XML DSL (camel-xml-io).");
+            }
             Document doc = app.getSpringOrBlueprintBeans().get(0).getOwnerDocument();
             String ns = doc.getDocumentElement().getNamespaceURI();
             String id = null;

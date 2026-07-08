@@ -522,6 +522,8 @@ public class KubernetesExport extends Export {
             return "localhost:5001";
         } else if (ClusterType.MINIKUBE.isEqualTo(clusterType)) {
             return "localhost:5000";
+        } else if (ClusterType.OPENSHIFT.isEqualTo(clusterType)) {
+            return "image-registry.openshift-image-registry.svc:5000";
         }
 
         return null;

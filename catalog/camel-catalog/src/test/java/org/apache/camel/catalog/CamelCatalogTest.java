@@ -31,6 +31,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.tooling.model.ArtifactModel;
 import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.model.DataFormatModel;
+import org.apache.camel.tooling.model.EipModel;
+import org.apache.camel.tooling.model.JsonMapper;
 import org.apache.camel.tooling.model.Kind;
 import org.apache.camel.tooling.model.LanguageModel;
 import org.apache.camel.tooling.model.PojoBeanModel;
@@ -179,6 +181,73 @@ public class CamelCatalogTest {
     }
 
     @Test
+    public void testEipModelAliases() {
+        // verify aliases are present in the EIP model
+        EipModel multicast = catalog.eipModel("multicast");
+        assertNotNull(multicast);
+        assertNotNull(multicast.getAliases());
+        assertTrue(multicast.getAliases().contains("fan-out"));
+        assertTrue(multicast.getAliases().contains("broadcast"));
+
+        EipModel aggregate = catalog.eipModel("aggregate");
+        assertNotNull(aggregate);
+        assertTrue(aggregate.getAliases().contains("fan-in"));
+        assertTrue(aggregate.getAliases().contains("reduce"));
+
+        EipModel choice = catalog.eipModel("choice");
+        assertNotNull(choice);
+        assertTrue(choice.getAliases().contains("router"));
+        assertTrue(choice.getAliases().contains("dispatch"));
+    }
+
+    @Test
+    public void testFindModelNamesByAlias() {
+        // searching by alias should find the EIP
+        List<String> names = catalog.findModelNames("fan-out");
+        assertTrue(names.contains("multicast"), "fan-out should find multicast");
+
+        names = catalog.findModelNames("fan-in");
+        assertTrue(names.contains("aggregate"), "fan-in should find aggregate");
+
+        names = catalog.findModelNames("circuit-breaker");
+        assertTrue(names.contains("circuitBreaker"), "circuit-breaker should find circuitBreaker");
+
+        names = catalog.findModelNames("dedup");
+        assertTrue(names.contains("idempotentConsumer"), "dedup should find idempotentConsumer");
+
+        names = catalog.findModelNames("sink");
+        assertTrue(names.contains("to"), "sink should find to");
+        assertTrue(names.contains("toD"), "sink should find toD");
+    }
+
+    @Test
+    public void testFindModelNamesByAliasDashNormalized() {
+        // fan-out, fanout, fanOut should all match
+        List<String> names1 = catalog.findModelNames("fan-out");
+        List<String> names2 = catalog.findModelNames("fanout");
+        List<String> names3 = catalog.findModelNames("fanOut");
+        assertTrue(names1.contains("multicast"));
+        assertTrue(names2.contains("multicast"));
+        assertTrue(names3.contains("multicast"));
+
+        // circuit-breaker, circuitbreaker, circuitBreaker
+        names1 = catalog.findModelNames("circuit-breaker");
+        names2 = catalog.findModelNames("circuitbreaker");
+        names3 = catalog.findModelNames("circuitBreaker");
+        assertTrue(names1.contains("circuitBreaker"));
+        assertTrue(names2.contains("circuitBreaker"));
+        assertTrue(names3.contains("circuitBreaker"));
+
+        // rate-limit, ratelimit, rateLimit
+        names1 = catalog.findModelNames("rate-limit");
+        names2 = catalog.findModelNames("ratelimit");
+        names3 = catalog.findModelNames("rateLimit");
+        assertTrue(names1.contains("throttle"));
+        assertTrue(names2.contains("throttle"));
+        assertTrue(names3.contains("throttle"));
+    }
+
+    @Test
     public void testJsonSchema() {
         String schema = catalog.componentJSonSchema("docker");
         assertNotNull(schema);
@@ -197,15 +266,26 @@ public class CamelCatalogTest {
         assertNotNull(schema);
         schema = catalog.modelJSonSchema("bean");
         assertNotNull(schema);
+
+        schema = catalog.modelJSonSchema("a2aSubTask");
+        assertNotNull(schema);
+        assertTrue(schema.contains("\"name\": \"a2aSubTask\""));
+        assertTrue(schema.contains("\"failIfNoTaskContext\""));
     }
 
     @Test
     public void testXmlSchema() {
         String schema = catalog.springSchemaAsXml();
         assertNotNull(schema, "Spring XML Schema");
+        assertTrue(schema.contains("targetNamespace=\"http://camel.apache.org/schema/spring\""));
+        assertTrue(schema.contains("name=\"a2aSubTask\""));
+        assertTrue(schema.contains("name=\"failIfNoTaskContext\""));
 
         schema = catalog.xmlIoSchemaAsXml();
         assertNotNull(schema, "XML-IO XML Schema");
+        assertTrue(schema.contains("targetNamespace=\"http://camel.apache.org/schema/xml-io\""));
+        assertTrue(schema.contains("name=\"a2aSubTask\""));
+        assertTrue(schema.contains("name=\"failIfNoTaskContext\""));
     }
 
     @Test
@@ -1609,7 +1689,7 @@ public class CamelCatalogTest {
 
         am = catalog.modelFromMavenGAV("org.apache.camel", "camel-ognl", catalog.getCatalogVersion());
         Assertions.assertInstanceOf(LanguageModel.class, am);
-        Assertions.assertEquals("Evaluates an OGNL expression (Apache Commons OGNL).", am.getDescription());
+        Assertions.assertEquals("Evaluates an OGNL expression (Apache Commons OGNL)", am.getDescription());
 
         am = catalog.modelFromMavenGAV("org.apache.camel", "camel-bindy", catalog.getCatalogVersion());
         Assertions.assertInstanceOf(DataFormatModel.class, am);
@@ -1817,6 +1897,67 @@ public class CamelCatalogTest {
         String json = cat.summaryAsJson();
         assertNotNull(json);
         assertTrue(json.contains("99.0.0-test"), "summaryAsJson should contain the custom version");
+    }
+
+    @Test
+    public void testSimpleValidatorJsExists() throws Exception {
+        try (InputStream is = getClass().getClassLoader()
+                .getResourceAsStream("org/apache/camel/catalog/simple/camel-simple-validator.js")) {
+            assertNotNull(is, "camel-simple-validator.js should exist in catalog");
+            String js = new String(is.readAllBytes(), StandardCharsets.UTF_8);
+
+            // Verify catalog data sections are present
+            assertTrue(js.contains("const FUNCTIONS = {"), "JS should contain FUNCTIONS object");
+            assertTrue(js.contains("const OPERATORS = {"), "JS should contain OPERATORS object");
+
+            // Verify key functions are present (from simple.json)
+            assertTrue(js.contains("'body': true"), "JS should contain body function");
+            assertTrue(js.contains("'header': true"), "JS should contain header function");
+            assertTrue(js.contains("'exchangeProperty': true"), "JS should contain exchangeProperty function");
+
+            // Verify operators are present
+            assertTrue(js.contains("'==':"), "JS should contain == operator");
+            assertTrue(js.contains("'contains':"), "JS should contain contains operator");
+            assertTrue(js.contains("'regex':"), "JS should contain regex operator");
+
+            // Verify API functions are present
+            assertTrue(js.contains("function validate("), "JS should contain validate function");
+            assertTrue(js.contains("function complete("), "JS should contain complete function");
+
+            // Verify the function count matches simple.json
+            String langJson = catalog.languageJSonSchema("simple");
+            assertNotNull(langJson, "simple language JSON should exist");
+            LanguageModel model = JsonMapper.generateLanguageModel(langJson);
+            long expectedFunctions = model.getFunctions().stream()
+                    .map(f -> {
+                        String name = f.getName();
+                        for (char ch : new char[] { '(', '.', ':' }) {
+                            int pos = name.indexOf(ch);
+                            if (pos != -1) {
+                                name = name.substring(0, pos);
+                            }
+                        }
+                        return name;
+                    })
+                    .distinct()
+                    .count();
+            long actualFunctions = js.lines()
+                    .filter(line -> line.matches("\\s+'[^']+': true.*"))
+                    .count();
+            assertEquals(expectedFunctions, actualFunctions,
+                    "JS FUNCTIONS count should match unique base names from simple.json");
+        }
+    }
+
+    @Test
+    public void testSimpleValidatorHtmlExists() throws Exception {
+        try (InputStream is = getClass().getClassLoader()
+                .getResourceAsStream("org/apache/camel/catalog/simple/camel-simple-validator.html")) {
+            assertNotNull(is, "camel-simple-validator.html should exist in catalog");
+            String html = new String(is.readAllBytes(), StandardCharsets.UTF_8);
+            assertTrue(html.contains("Simple Language Validator"), "HTML should contain title");
+            assertTrue(html.contains("camel-simple-validator.js"), "HTML should reference the JS file");
+        }
     }
 
 }

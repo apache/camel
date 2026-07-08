@@ -78,7 +78,8 @@ import org.apache.camel.spi.Metadata;
  * {@link org.apache.camel.spi.DataFormat} to perform transformation. One of the DataFormat 'ref' or DataFormat 'type'
  * needs to be specified.
  */
-@Metadata(label = "dataformat,transformation")
+@Metadata(label = "dataformat,transformation",
+          description = "Uses a Camel data format to perform data type transformation between input and output types")
 @XmlRootElement(name = "dataFormatTransformer")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class DataFormatTransformerDefinition extends TransformerDefinition {
@@ -132,6 +133,7 @@ public class DataFormatTransformerDefinition extends TransformerDefinition {
             @XmlElement(name = "yaml", type = YAMLDataFormat.class),
             @XmlElement(name = "zipDeflater", type = ZipDeflaterDataFormat.class),
             @XmlElement(name = "zipFile", type = ZipFileDataFormat.class) })
+    @Metadata(description = "The data format to be used for transformation.")
     private DataFormatDefinition dataFormatType;
 
     public DataFormatTransformerDefinition() {
@@ -151,9 +153,6 @@ public class DataFormatTransformerDefinition extends TransformerDefinition {
         return dataFormatType;
     }
 
-    /**
-     * The data format to be used
-     */
     public void setDataFormatType(DataFormatDefinition dataFormatType) {
         this.dataFormatType = dataFormatType;
     }

@@ -9,7 +9,6 @@
 :component-header: Only producer is supported
 //Manually maintained attributes
 :group: AWS
-:camel-spring-boot-name: aws2-translate
 
 *Since Camel {since}*
 
@@ -26,9 +25,9 @@ https://aws.amazon.com/translate/[Amazon Translate].
 
 == URI Format
 
--------------------------
+----
 aws2-translate://label[?options]
--------------------------
+----
 
 You can append query options to the URI in the following format:
 
@@ -79,14 +78,15 @@ Camel-AWS Translate component provides the following operation on the producer s
 
 === Translate Text example
 
+._Java-only: uses Java constants for header names and enum values_
 [source,java]
-------------------------------------------------------------------------------------------------------
+----
 from("direct:start")
   .setHeader(TranslateConstants.SOURCE_LANGUAGE, TranslateLanguageEnum.ITALIAN)
   .setHeader(TranslateConstants.TARGET_LANGUAGE, TranslateLanguageEnum.GERMAN)
   .setBody("Ciao")
   .to("aws2-translate://test?translateClient=#amazonTranslateClient&operation=translateText");
-------------------------------------------------------------------------------------------------------
+----
 
 As a result, you'll get an exchange containing the translated text.
 
@@ -95,13 +95,14 @@ As a result, you'll get an exchange containing the translated text.
 Sometimes building an AWS Request can be complex because of multiple options. We introduce the possibility to use a POJO as the body.
 In AWS Translate, the only operation available is TranslateText, so you can do something like:
 
+._Java-only: uses AWS SDK POJO request builder as message body_
 [source,java]
-------------------------------------------------------------------------------------------------------
+----
 from("direct:start")
   .setBody(TranslateTextRequest.builder().sourceLanguageCode(Translate2LanguageEnum.ITALIAN.toString())
                     .targetLanguageCode(Translate2LanguageEnum.GERMAN.toString()).text("Ciao").build())
   .to("aws2-translate://test?translateClient=#amazonTranslateClient&operation=translateText&pojoRequest=true");
-------------------------------------------------------------------------------------------------------
+----
 
 In this way, you'll pass the request directly without the need of passing headers and options specifically related to this operation.
 
@@ -112,15 +113,14 @@ Maven users will need to add the following dependency to their pom.xml.
 *pom.xml*
 
 [source,xml]
----------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-aws2-translate</artifactId>
     <version>${camel-version}</version>
 </dependency>
----------------------------------------
+----
 
 where `$\{camel-version}` must be replaced by the actual version of Camel.
 
 
-include::spring-boot:partial$starter.adoc[]

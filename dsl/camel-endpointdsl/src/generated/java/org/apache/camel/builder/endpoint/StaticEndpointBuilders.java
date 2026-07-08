@@ -27,6 +27,48 @@ import org.apache.camel.builder.endpoint.dsl.*;
 public class StaticEndpointBuilders {
 
     /**
+     * A2A (camel-a2a)
+     * A2A endpoint for agent-to-agent communication.
+     * 
+     * Category: ai
+     * Since: 4.21
+     * Maven coordinates: org.apache.camel:camel-a2a
+     * 
+     * Syntax: <code>a2a:agentCardSource</code>
+     * 
+     * Path parameter: agentCardSource (required)
+     * The agent card source (classpath:, file:, http://, https://, or plain
+     * name)
+     * 
+     * @param path agentCardSource
+     * @return the dsl builder
+     */
+    public static A2AEndpointBuilderFactory.A2AEndpointBuilder a2a(String path) {
+        return a2a("a2a", path);
+    }
+    /**
+     * A2A (camel-a2a)
+     * A2A endpoint for agent-to-agent communication.
+     * 
+     * Category: ai
+     * Since: 4.21
+     * Maven coordinates: org.apache.camel:camel-a2a
+     * 
+     * Syntax: <code>a2a:agentCardSource</code>
+     * 
+     * Path parameter: agentCardSource (required)
+     * The agent card source (classpath:, file:, http://, https://, or plain
+     * name)
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path agentCardSource
+     * @return the dsl builder
+     */
+    public static A2AEndpointBuilderFactory.A2AEndpointBuilder a2a(String componentName, String path) {
+        return A2AEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * ActiveMQ 5.x (camel-activemq)
      * Send messages to (or consume from) Apache ActiveMQ 5.x. This component
      * extends the Camel JMS component.
@@ -136,7 +178,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * AMQP (camel-amqp)
-     * Messaging with AMQP protocol using Apache QPid Client.
+     * Messaging with AMQP protocol using Apache Qpid Client.
      * 
      * Category: messaging
      * Since: 1.2
@@ -161,7 +203,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * AMQP (camel-amqp)
-     * Messaging with AMQP protocol using Apache QPid Client.
+     * Messaging with AMQP protocol using Apache Qpid Client.
      * 
      * Category: messaging
      * Since: 1.2
@@ -577,8 +619,8 @@ public class StaticEndpointBuilders {
         return BedrockAgentRuntimeEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * AWS Cloudtrail (camel-aws-cloudtrail)
-     * Consume events from Amazon Cloudtrail using AWS SDK version 2.x.
+     * AWS CloudTrail (camel-aws-cloudtrail)
+     * Consume events from Amazon CloudTrail using AWS SDK version 2.x.
      * 
      * Category: cloud,management,monitoring
      * Since: 3.19
@@ -596,8 +638,8 @@ public class StaticEndpointBuilders {
         return awsCloudtrail("aws-cloudtrail", path);
     }
     /**
-     * AWS Cloudtrail (camel-aws-cloudtrail)
-     * Consume events from Amazon Cloudtrail using AWS SDK version 2.x.
+     * AWS CloudTrail (camel-aws-cloudtrail)
+     * Consume events from Amazon CloudTrail using AWS SDK version 2.x.
      * 
      * Category: cloud,management,monitoring
      * Since: 3.19
@@ -4072,8 +4114,8 @@ public class StaticEndpointBuilders {
         return DebeziumOracleEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * Debezium PostgresSQL Connector (camel-debezium-postgres)
-     * Capture changes from a PostgresSQL database.
+     * Debezium PostgreSQL Connector (camel-debezium-postgres)
+     * Capture changes from a PostgreSQL database.
      * 
      * Category: database
      * Since: 3.0
@@ -4092,8 +4134,8 @@ public class StaticEndpointBuilders {
         return debeziumPostgres("debezium-postgres", path);
     }
     /**
-     * Debezium PostgresSQL Connector (camel-debezium-postgres)
-     * Capture changes from a PostgresSQL database.
+     * Debezium PostgreSQL Connector (camel-debezium-postgres)
+     * Capture changes from a PostgreSQL database.
      * 
      * Category: database
      * Since: 3.0
@@ -4835,7 +4877,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Elasticsearch (camel-elasticsearch)
-     * Send requests to ElasticSearch via Java Client API.
+     * Send requests to Elasticsearch via Java Client API.
      * 
      * Category: search,monitoring
      * Since: 3.19
@@ -4854,7 +4896,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Elasticsearch (camel-elasticsearch)
-     * Send requests to ElasticSearch via Java Client API.
+     * Send requests to Elasticsearch via Java Client API.
      * 
      * Category: search,monitoring
      * Since: 3.19
@@ -6554,8 +6596,8 @@ public class StaticEndpointBuilders {
         return GrpcEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * Hashicorp Vault (camel-hashicorp-vault)
-     * Manage secrets in Hashicorp Vault Service
+     * HashiCorp Vault (camel-hashicorp-vault)
+     * Manage secrets in HashiCorp Vault Service
      * 
      * Category: cloud,cloud
      * Since: 3.18
@@ -6573,8 +6615,8 @@ public class StaticEndpointBuilders {
         return hashicorpVault("hashicorp-vault", path);
     }
     /**
-     * Hashicorp Vault (camel-hashicorp-vault)
-     * Manage secrets in Hashicorp Vault Service
+     * HashiCorp Vault (camel-hashicorp-vault)
+     * Manage secrets in HashiCorp Vault Service
      * 
      * Category: cloud,cloud
      * Since: 3.18
@@ -8464,7 +8506,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * IRC (camel-irc)
-     * Send and receive messages to/from and IRC chat.
+     * Send and receive messages to/from an IRC chat.
      * 
      * Category: chat
      * Since: 1.1
@@ -8488,7 +8530,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * IRC (camel-irc)
-     * Send and receive messages to/from and IRC chat.
+     * Send and receive messages to/from an IRC chat.
      * 
      * Category: chat
      * Since: 1.1
@@ -10696,7 +10738,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * LangChain4j Embedding Store (camel-langchain4j-embeddingstore)
-     * Perform operations on the Langchain4jEmbeddingStores.
+     * Perform operations on the LangChain4jEmbeddingStores.
      * 
      * Category: database,ai
      * Since: 4.14
@@ -10715,7 +10757,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * LangChain4j Embedding Store (camel-langchain4j-embeddingstore)
-     * Perform operations on the Langchain4jEmbeddingStores.
+     * Perform operations on the LangChain4jEmbeddingStores.
      * 
      * Category: database,ai
      * Since: 4.14
@@ -10974,7 +11016,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Log Data (camel-log)
-     * Prints data form the routed message (such as body and headers) to the
+     * Prints data from the routed message (such as body and headers) to the
      * logger.
      * 
      * Category: core,monitoring
@@ -10994,7 +11036,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Log Data (camel-log)
-     * Prints data form the routed message (such as body and headers) to the
+     * Prints data from the routed message (such as body and headers) to the
      * logger.
      * 
      * Category: core,monitoring
@@ -11164,7 +11206,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * MapStruct (camel-mapstruct)
-     * Type Conversion using Mapstruct
+     * Type Conversion using MapStruct
      * 
      * Category: transformation
      * Since: 3.19
@@ -11184,7 +11226,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * MapStruct (camel-mapstruct)
-     * Type Conversion using Mapstruct
+     * Type Conversion using MapStruct
      * 
      * Category: transformation
      * Since: 3.19
@@ -13109,7 +13151,7 @@ public class StaticEndpointBuilders {
         return PdfEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * PostgresSQL Replication Slot (camel-pg-replication-slot)
+     * PostgreSQL Replication Slot (camel-pg-replication-slot)
      * Poll for PostgreSQL Write-Ahead Log (WAL) records using Streaming
      * Replication Slots.
      * 
@@ -13144,7 +13186,7 @@ public class StaticEndpointBuilders {
         return pgReplicationSlot("pg-replication-slot", path);
     }
     /**
-     * PostgresSQL Replication Slot (camel-pg-replication-slot)
+     * PostgreSQL Replication Slot (camel-pg-replication-slot)
      * Poll for PostgreSQL Write-Ahead Log (WAL) records using Streaming
      * Replication Slots.
      * 
@@ -13181,7 +13223,7 @@ public class StaticEndpointBuilders {
         return PgReplicationSlotEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * PostgresSQL Event (camel-pgevent)
+     * PostgreSQL Event (camel-pgevent)
      * Send and receive PostgreSQL events via LISTEN and NOTIFY commands.
      * 
      * Category: database
@@ -13213,7 +13255,7 @@ public class StaticEndpointBuilders {
         return pgevent("pgevent", path);
     }
     /**
-     * PostgresSQL Event (camel-pgevent)
+     * PostgreSQL Event (camel-pgevent)
      * Send and receive PostgreSQL events via LISTEN and NOTIFY commands.
      * 
      * Category: database
@@ -14613,6 +14655,46 @@ public class StaticEndpointBuilders {
      */
     public static SftpEndpointBuilderFactory.SftpEndpointBuilder sftp(String componentName, String path) {
         return SftpEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
+     * Shell (camel-shell)
+     * Camel Shell component
+     * 
+     * Category: api
+     * Since: 4.21
+     * Maven coordinates: org.apache.camel:camel-shell
+     * 
+     * Syntax: <code>shell:prompt</code>
+     * 
+     * Path parameter: prompt (required)
+     * Shell prompt
+     * 
+     * @param path prompt
+     * @return the dsl builder
+     */
+    public static ShellEndpointBuilderFactory.ShellEndpointBuilder shell(String path) {
+        return shell("shell", path);
+    }
+    /**
+     * Shell (camel-shell)
+     * Camel Shell component
+     * 
+     * Category: api
+     * Since: 4.21
+     * Maven coordinates: org.apache.camel:camel-shell
+     * 
+     * Syntax: <code>shell:prompt</code>
+     * 
+     * Path parameter: prompt (required)
+     * Shell prompt
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path prompt
+     * @return the dsl builder
+     */
+    public static ShellEndpointBuilderFactory.ShellEndpointBuilder shell(String componentName, String path) {
+        return ShellEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
      * Simple JMS (camel-sjms)

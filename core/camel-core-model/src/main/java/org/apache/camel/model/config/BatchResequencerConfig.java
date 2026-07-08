@@ -26,25 +26,31 @@ import org.apache.camel.spi.Metadata;
 /**
  * Configures batch-processing resequence eip.
  */
-@Metadata(label = "configuration,eip")
+@Metadata(label = "configuration,eip",
+          description = "Configures the batch-processing mode of the Resequence EIP, which collects messages into a batch and sorts them before releasing")
 @XmlRootElement(name = "batchConfig")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class BatchResequencerConfig extends ResequencerConfig {
 
     @XmlAttribute
-    @Metadata(defaultValue = "100", javaType = "java.lang.Integer")
+    @Metadata(defaultValue = "100", javaType = "java.lang.Integer",
+              description = "Sets the size of the batch to be re-ordered. The default size is 100.")
     private String batchSize;
     @XmlAttribute
-    @Metadata(defaultValue = "1000", javaType = "java.time.Duration")
+    @Metadata(defaultValue = "1000", javaType = "java.time.Duration",
+              description = "Sets the timeout for collecting elements to be re-ordered. The default timeout is 1000 msec.")
     private String batchTimeout;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean",
+              description = "Whether to allow duplicates.")
     private String allowDuplicates;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean",
+              description = "Whether to reverse the ordering.")
     private String reverse;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean",
+              description = "Whether to ignore invalid exchanges.")
     private String ignoreInvalidExchanges;
 
     /**
@@ -94,9 +100,6 @@ public class BatchResequencerConfig extends ResequencerConfig {
         return batchSize;
     }
 
-    /**
-     * Sets the size of the batch to be re-ordered. The default size is 100.
-     */
     public void setBatchSize(String batchSize) {
         this.batchSize = batchSize;
     }
@@ -105,9 +108,6 @@ public class BatchResequencerConfig extends ResequencerConfig {
         return batchTimeout;
     }
 
-    /**
-     * Sets the timeout for collecting elements to be re-ordered. The default timeout is 1000 msec.
-     */
     public void setBatchTimeout(String batchTimeout) {
         this.batchTimeout = batchTimeout;
     }
@@ -116,9 +116,6 @@ public class BatchResequencerConfig extends ResequencerConfig {
         return allowDuplicates;
     }
 
-    /**
-     * Whether to allow duplicates.
-     */
     public void setAllowDuplicates(String allowDuplicates) {
         this.allowDuplicates = allowDuplicates;
     }
@@ -127,9 +124,6 @@ public class BatchResequencerConfig extends ResequencerConfig {
         return reverse;
     }
 
-    /**
-     * Whether to reverse the ordering.
-     */
     public void setReverse(String reverse) {
         this.reverse = reverse;
     }
@@ -138,9 +132,6 @@ public class BatchResequencerConfig extends ResequencerConfig {
         return ignoreInvalidExchanges;
     }
 
-    /**
-     * Whether to ignore invalid exchanges
-     */
     public void setIgnoreInvalidExchanges(String ignoreInvalidExchanges) {
         this.ignoreInvalidExchanges = ignoreInvalidExchanges;
     }

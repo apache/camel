@@ -135,18 +135,18 @@ public class PlatformHttpRestOpenApiConsumerTest {
         final CamelContext context = VertxPlatformHttpEngineTest.createCamelContext();
 
         try {
+            context.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() {
+                    from("rest-openapi:classpath:openapi-v3.json?missingOperation=fail")
+                            .log("dummy");
+
+                    from("direct:getPetById")
+                            .setBody().constant("{\"pet\": \"tony the tiger\"}");
+                }
+            });
+
             assertThrows(Exception.class, () -> {
-                context.addRoutes(new RouteBuilder() {
-                    @Override
-                    public void configure() {
-                        from("rest-openapi:classpath:openapi-v3.json?missingOperation=fail")
-                                .log("dummy");
-
-                        from("direct:getPetById")
-                                .setBody().constant("{\"pet\": \"tony the tiger\"}");
-                    }
-                });
-
                 VertxPlatformHttpEngineTest.startCamelContext(context);
             }, "OpenAPI specification has 18 unmapped operations to corresponding routes");
         } finally {

@@ -7,8 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Only producer is supported
-//Manually maintained attributes
-:camel-spring-boot-name: crypto
 
 *Since Camel {since}*
 
@@ -24,14 +22,14 @@ Maven users will need to add the following dependency to their `pom.xml`
 for this component:
 
 [source,xml]
-------------------------------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-crypto</artifactId>
     <version>x.x.x</version>
     <!-- use the same version as your Camel core version -->
 </dependency>
-------------------------------------------------------------
+----
 
 == Introduction
 
@@ -64,15 +62,13 @@ http://en.wikipedia.org/wiki/Digital_signature[Digital_signatures]
 As mentioned, Camel provides a pair of crypto endpoints to create and
 verify signatures
 
-----------------------------
+----
 crypto:sign:name[?options]
 crypto:verify:name[?options]
-----------------------------
+----
 
-* `crypto:sign` creates the signature and stores it in the Header keyed
-by the constant
-`org.apache.camel.component.crypto.DigitalSignatureConstants.SIGNATURE`,
-i.e., `"CamelDigitalSignature"`.
+* `crypto:sign` creates the signature and stores it in the header
+`CamelDigitalSignature`.
 * `crypto:verify` will read in the contents of this header and do the
 verification calculation.
 
@@ -102,17 +98,19 @@ include::partial$component-endpoint-headers.adoc[]
 The most basic way to sign and verify an exchange is with a
 KeyPair as follows.
 
+._Java-only: requires Java KeyPair objects_
+
 [source,java]
 ----
 KeyPair keyPair = KeyGenerator.getInstance("RSA").generateKeyPair();
 
 from("direct:sign")
-    .setHeader(DigitalSignatureConstants.SIGNATURE_PRIVATE_KEY, constant(keys.getPrivate()))
+    .setHeader("CamelSignaturePrivateKey", constant(keyPair.getPrivate()))
     .to("crypto:sign:message")
     .to("direct:verify");
 
 from("direct:verify")
-    .setHeader(DigitalSignatureConstants.SIGNATURE_PUBLIC_KEY_OR_CERT, constant(keys.getPublic()))
+    .setHeader("CamelSignaturePublicKeyOrCert", constant(keyPair.getPublic()))
     .to("crypto:verify:check");
 ----
 
@@ -137,6 +135,10 @@ keytool -genkey -keyalg RSA -keysize 2048 -keystore keystore.jks -storepass letm
 
 The following route first signs an exchange using Bob's alias from the KeyStore bound into the Camel Registry, and then verifies it using the same alias.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:sign")
@@ -146,13 +148,54 @@ from("direct:sign")
     .log("Verified: ${body}");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:sign"/>
+  <to uri="crypto:sign:keystoreSign?alias=bob&amp;keystoreName=myKeystore&amp;password=letmein"/>
+  <log message="Signature: ${header.CamelDigitalSignature}"/>
+  <to uri="crypto:verify:keystoreVerify?alias=bob&amp;keystoreName=myKeystore&amp;password=letmein"/>
+  <log message="Verified: ${body}"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:sign
+      steps:
+        - to:
+            uri: crypto:sign:keystoreSign
+            parameters:
+              alias: bob
+              keystoreName: myKeystore
+              password: letmein
+        - log:
+            message: "Signature: ${header.CamelDigitalSignature}"
+        - to:
+            uri: crypto:verify:keystoreVerify
+            parameters:
+              alias: bob
+              keystoreName: myKeystore
+              password: letmein
+        - log:
+            message: "Verified: ${body}"
+----
+====
+
 The following code shows how to load the keystore created using the above `keytool` command and bind it into the registry with the name `myKeystore` for use in the above route. The example makes use of the `@Configuration` and `@BindToRegistry` annotations introduced in Camel 3 to instantiate the KeyStore and register it with the name `myKeyStore`.
 
+._Java-only: KeyStore bean configuration with `@BindToRegistry`_
 [source,java]
 ----
 @Configuration
 public class KeystoreConfig {
-    
+
     @BindToRegistry
     public KeyStore myKeystore() throws Exception {
         KeyStore store = KeyStore.getInstance("JKS");
@@ -178,6 +221,10 @@ It may be desirable to change the message header used to store the
 signature. A different header name can be specified in the route
 definition as follows
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:sign")
@@ -185,6 +232,45 @@ from("direct:sign")
     .log("Signature: ${header.mySignature}")
     .to("crypto:verify:keystoreVerify?alias=bob&keystoreName=myKeystore&password=letmein&signatureHeaderName=mySignature");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:sign"/>
+  <to uri="crypto:sign:keystoreSign?alias=bob&amp;keystoreName=myKeystore&amp;password=letmein&amp;signatureHeaderName=mySignature"/>
+  <log message="Signature: ${header.mySignature}"/>
+  <to uri="crypto:verify:keystoreVerify?alias=bob&amp;keystoreName=myKeystore&amp;password=letmein&amp;signatureHeaderName=mySignature"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:sign
+      steps:
+        - to:
+            uri: crypto:sign:keystoreSign
+            parameters:
+              alias: bob
+              keystoreName: myKeystore
+              password: letmein
+              signatureHeaderName: mySignature
+        - log:
+            message: "Signature: ${header.mySignature}"
+        - to:
+            uri: crypto:verify:keystoreVerify
+            parameters:
+              alias: bob
+              keystoreName: myKeystore
+              password: letmein
+              signatureHeaderName: mySignature
+----
+====
 
 === Changing the bufferSize
 
@@ -200,28 +286,30 @@ then be dynamically enriched with the key of its target recipient prior
 to signing. To facilitate this, the signature mechanisms allow for keys
 to be supplied dynamically via the message headers below
 
-* `DigitalSignatureConstants.SIGNATURE_PRIVATE_KEY`, `"CamelSignaturePrivateKey"`
-* `DigitalSignatureConstants.SIGNATURE_PUBLIC_KEY_OR_CERT`, `"CamelSignaturePublicKeyOrCert"`
+* `CamelSignaturePrivateKey`
+* `CamelSignaturePublicKeyOrCert`
 
 Even better would be to dynamically supply a keystore alias. Again, the
 alias can be supplied in a message header
 
-* `DigitalSignatureConstants.KEYSTORE_ALIAS`, `"CamelSignatureKeyStoreAlias"`
+* `CamelSignatureKeyStoreAlias`
 
 The header would be set as follows:
 
+._Java-only: Java test API (ProducerTemplate)_
+
 [source,java]
--------------------------------------------------------------------------------------------------
+----
 Exchange unsigned = getMandatoryEndpoint("direct:alias-sign").createExchange();
 unsigned.getIn().setBody(payload);
-unsigned.getIn().setHeader(DigitalSignatureConstants.KEYSTORE_ALIAS, "bob");
-unsigned.getIn().setHeader(DigitalSignatureConstants.KEYSTORE_PASSWORD, "letmein".toCharArray());
+unsigned.getIn().setHeader("CamelSignatureKeyStoreAlias", "bob");
+unsigned.getIn().setHeader("CamelSignatureKeyStorePassword", "letmein".toCharArray());
 template.send("direct:alias-sign", unsigned);
 Exchange signed = getMandatoryEndpoint("direct:alias-sign").createExchange();
 signed.getIn().copyFrom(unsigned.getMessage());
-signed.getIn().setHeader(DigitalSignatureConstants.KEYSTORE_ALIAS, "bob");
+signed.getIn().setHeader("CamelSignatureKeyStoreAlias", "bob");
 template.send("direct:alias-verify", signed);
--------------------------------------------------------------------------------------------------
+----
 
 == Using Post-Quantum Cryptography (PQC) Algorithms
 
@@ -251,6 +339,7 @@ Add the Bouncy Castle provider dependencies to your project:
 
 Register the Bouncy Castle provider at application startup:
 
+._Java-only: static provider registration_
 [source,java]
 ----
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
@@ -309,12 +398,12 @@ kpGen.initialize(MLDSAParameterSpec.ml_dsa_65);
 KeyPair kp = kpGen.generateKeyPair();
 
 from("direct:sign")
-    .setHeader(DigitalSignatureConstants.SIGNATURE_PRIVATE_KEY, constant(kp.getPrivate()))
+    .setHeader("CamelSignaturePrivateKey", constant(kp.getPrivate()))
     .to("crypto:sign:pqc?algorithm=ML-DSA&provider=BC")
     .to("direct:verify");
 
 from("direct:verify")
-    .setHeader(DigitalSignatureConstants.SIGNATURE_PUBLIC_KEY_OR_CERT, constant(kp.getPublic()))
+    .setHeader("CamelSignaturePublicKeyOrCert", constant(kp.getPublic()))
     .to("crypto:verify:pqc?algorithm=ML-DSA&provider=BC")
     .to("mock:result");
 ----
@@ -380,6 +469,8 @@ The following ML-DSA parameter sets are available:
 === SLH-DSA (NIST FIPS 205)
 
 SLH-DSA (Stateless Hash-Based Digital Signature Algorithm, formerly SPHINCS+) is the secondary NIST-standardized PQC signature algorithm, based on hash functions.
+
+._Java-only: requires Java KeyPair and registry binding_
 
 [source,java]
 ----
@@ -486,26 +577,86 @@ See the xref:components::pqc-component.adoc[PQC component] for the full list of 
 
 Alternatively, you can chain two `crypto:sign` / `crypto:verify` endpoints to produce both a classical and a PQC signature, storing each in a separate header:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:sign")
-    // Classical ECDSA signature
-    .to("crypto:sign:classical?algorithm=SHA256withECDSA&privateKeyName=#ecPrivateKey"
-        + "&signatureHeaderName=ClassicalSignature")
-    // PQC ML-DSA signature
-    .to("crypto:sign:pqc?algorithm=ML-DSA&provider=BC&privateKeyName=#mlDsaPrivateKey"
-        + "&signatureHeaderName=PQCSignature")
+    .to("crypto:sign:classical?algorithm=SHA256withECDSA&privateKeyName=#ecPrivateKey&signatureHeaderName=ClassicalSignature")
+    .to("crypto:sign:pqc?algorithm=ML-DSA&provider=BC&privateKeyName=#mlDsaPrivateKey&signatureHeaderName=PQCSignature")
     .to("direct:verify");
 
 from("direct:verify")
-    // Verify classical signature
-    .to("crypto:verify:classical?algorithm=SHA256withECDSA&publicKeyName=#ecPublicKey"
-        + "&signatureHeaderName=ClassicalSignature")
-    // Verify PQC signature
-    .to("crypto:verify:pqc?algorithm=ML-DSA&provider=BC&publicKeyName=#mlDsaPublicKey"
-        + "&signatureHeaderName=PQCSignature")
+    .to("crypto:verify:classical?algorithm=SHA256withECDSA&publicKeyName=#ecPublicKey&signatureHeaderName=ClassicalSignature")
+    .to("crypto:verify:pqc?algorithm=ML-DSA&provider=BC&publicKeyName=#mlDsaPublicKey&signatureHeaderName=PQCSignature")
     .to("mock:result");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:sign"/>
+  <to uri="crypto:sign:classical?algorithm=SHA256withECDSA&amp;privateKeyName=#ecPrivateKey&amp;signatureHeaderName=ClassicalSignature"/>
+  <to uri="crypto:sign:pqc?algorithm=ML-DSA&amp;provider=BC&amp;privateKeyName=#mlDsaPrivateKey&amp;signatureHeaderName=PQCSignature"/>
+  <to uri="direct:verify"/>
+</route>
+
+<route>
+  <from uri="direct:verify"/>
+  <to uri="crypto:verify:classical?algorithm=SHA256withECDSA&amp;publicKeyName=#ecPublicKey&amp;signatureHeaderName=ClassicalSignature"/>
+  <to uri="crypto:verify:pqc?algorithm=ML-DSA&amp;provider=BC&amp;publicKeyName=#mlDsaPublicKey&amp;signatureHeaderName=PQCSignature"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:sign
+      steps:
+        - to:
+            uri: crypto:sign:classical
+            parameters:
+              algorithm: SHA256withECDSA
+              privateKeyName: "#ecPrivateKey"
+              signatureHeaderName: ClassicalSignature
+        - to:
+            uri: crypto:sign:pqc
+            parameters:
+              algorithm: ML-DSA
+              provider: BC
+              privateKeyName: "#mlDsaPrivateKey"
+              signatureHeaderName: PQCSignature
+        - to:
+            uri: direct:verify
+- route:
+    from:
+      uri: direct:verify
+      steps:
+        - to:
+            uri: crypto:verify:classical
+            parameters:
+              algorithm: SHA256withECDSA
+              publicKeyName: "#ecPublicKey"
+              signatureHeaderName: ClassicalSignature
+        - to:
+            uri: crypto:verify:pqc
+            parameters:
+              algorithm: ML-DSA
+              provider: BC
+              publicKeyName: "#mlDsaPublicKey"
+              signatureHeaderName: PQCSignature
+        - to:
+            uri: mock:result
+----
+====
 
 NOTE: The chaining approach stores two independent signatures in separate headers, while the PQC component's hybrid operations produce a single combined signature.
 For new implementations, the PQC component's hybrid operations are recommended as they handle the wire format, key management, and verification logic in a single step.
@@ -540,5 +691,3 @@ For new implementations, the PQC component's hybrid operations are recommended a
 | Adding PQC to existing crypto: routes
 | New PQC-focused implementations
 |===
-
-include::spring-boot:partial$starter.adoc[]

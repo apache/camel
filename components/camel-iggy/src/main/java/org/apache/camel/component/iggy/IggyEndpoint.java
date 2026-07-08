@@ -32,6 +32,7 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
+import org.apache.camel.support.DefaultHeaderFilterStrategy;
 import org.apache.iggy.client.blocking.IggyBaseClient;
 import org.apache.iggy.consumergroup.ConsumerGroupDetails;
 import org.apache.iggy.identifier.ConsumerId;
@@ -170,7 +171,7 @@ public class IggyEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
     @Override
     public HeaderFilterStrategy getHeaderFilterStrategy() {
         if (headerFilterStrategy == null) {
-            headerFilterStrategy = new IggyHeaderFilterStrategy();
+            headerFilterStrategy = new DefaultHeaderFilterStrategy();
         }
         return headerFilterStrategy;
     }

@@ -20,17 +20,28 @@ import org.apache.camel.Ordered;
 import org.jspecify.annotations.Nullable;
 
 /**
- * A source for properties.
+ * A source of property values for the Camel {@link PropertiesComponent} when resolving property placeholders.
  * <p/>
- * A source can implement {@link Ordered} to control the ordering of which sources are used by the Camel properties
- * component. The source with the highest precedence (the lowest number) will be used first.
+ * The properties component consults all registered sources (system properties, environment variables, .properties
+ * files, beans, vaults, and so on) to resolve a placeholder. A source can implement {@link Ordered} to control its
+ * precedence; the source with the highest precedence (the lowest number) is consulted first. Sources whose properties
+ * can be loaded eagerly in bulk implement {@link LoadablePropertiesSource}, and the built-in sources are created via
+ * {@link PropertiesSourceFactory}.
+ * <p/>
+ * See <a href="https://camel.apache.org/manual/using-propertyplaceholder.html">Using PropertyPlaceholder</a> in the
+ * Camel user manual.
  *
+ * @see   PropertiesComponent
+ * @see   LoadablePropertiesSource
+ * @see   PropertiesSourceFactory
  * @since 3.0
  */
 public interface PropertiesSource {
 
     /**
-     * Name of properties source
+     * The name of this properties source.
+     *
+     * @return the source name
      */
     String getName();
 

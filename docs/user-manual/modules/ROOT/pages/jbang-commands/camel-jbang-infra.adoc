@@ -22,6 +22,7 @@ camel infra [options]
 | xref:jbang-commands/camel-jbang-infra-list.adoc[list] | Displays available external services
 | xref:jbang-commands/camel-jbang-infra-log.adoc[log] | Displays external service logs
 | xref:jbang-commands/camel-jbang-infra-ps.adoc[ps] | Displays running services
+| xref:jbang-commands/camel-jbang-infra-restart.adoc[restart] | Restarts a running external service
 | xref:jbang-commands/camel-jbang-infra-run.adoc[run] | Run an external service
 | xref:jbang-commands/camel-jbang-infra-stop.adoc[stop] | Shuts down running external services
 |===

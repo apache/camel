@@ -40,7 +40,10 @@ import org.apache.camel.spi.Resource;
 /**
  * Route messages based on a series of predicates
  */
-@Metadata(label = "eip,routing")
+@Metadata(label = "eip,routing",
+          aliases = { "router", "dispatch" },
+          description = "Routes messages to different steps based on a series of conditions (predicates),"
+                        + " similar to if-elseif-else in Java. Each condition is evaluated in order until one matches.")
 @XmlRootElement(name = "choice")
 @XmlType(propOrder = { "whenClauses", "otherwise" })
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -48,13 +51,16 @@ public class ChoiceDefinition extends NoOutputDefinition<ChoiceDefinition> {
 
     @XmlElementRef(name = "when")
     @AsPredicate
-    @Metadata(description = "Sets the when nodes")
+    @Metadata(description = "The when clauses (predicates) to evaluate. The first when clause that matches determines which route branch to follow.")
     private List<WhenDefinition> whenClauses = new ArrayList<>();
     @XmlElement
-    @Metadata(description = "Sets the otherwise node")
+    @Metadata(description = "The otherwise clause to execute when none of the when predicates matched.")
     private OtherwiseDefinition otherwise;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "false")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "false",
+              description = "If enabled then the choice is evaluated at route initialization time (precondition)."
+                            + " Only when predicates with property placeholders or simple expressions using only"
+                            + " property placeholders are supported.")
     private String precondition;
 
     public ChoiceDefinition() {
@@ -81,10 +87,6 @@ public class ChoiceDefinition extends NoOutputDefinition<ChoiceDefinition> {
         return precondition;
     }
 
-    /**
-     * Indicates whether this Choice EIP is in precondition mode or not. If so its branches (when/otherwise) are
-     * evaluated during startup to keep at runtime only the branch that matched.
-     */
     public void setPrecondition(String precondition) {
         this.precondition = precondition;
     }
@@ -324,9 +326,6 @@ public class ChoiceDefinition extends NoOutputDefinition<ChoiceDefinition> {
         return whenClauses;
     }
 
-    /**
-     * Sets the when nodes
-     */
     public void setWhenClauses(List<WhenDefinition> whenClauses) {
         this.whenClauses = whenClauses;
     }

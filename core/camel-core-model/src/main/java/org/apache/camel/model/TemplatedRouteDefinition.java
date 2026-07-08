@@ -39,7 +39,8 @@ import org.apache.camel.spi.ResourceAware;
 /**
  * Defines a templated route (a route built from a route template)
  */
-@Metadata(label = "configuration")
+@Metadata(label = "configuration",
+          description = "Creates a route instance from a route template, binding specific parameter values to the template's parameters")
 @XmlRootElement(name = "templatedRoute")
 @XmlType(propOrder = { "parameters", "beans" })
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -51,14 +52,18 @@ public class TemplatedRouteDefinition implements CamelContextAware, ResourceAwar
     private Resource resource;
 
     @XmlAttribute(required = true)
+    @Metadata(description = "The id of the route template to use to build the route.")
     private String routeTemplateRef;
     @XmlAttribute
+    @Metadata(description = "The id of the route built from the route template.")
     private String routeId;
     @XmlAttribute
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced",
+              description = "Sets a prefix to use for all node ids (not route id).")
     private String prefixId;
     @XmlAttribute
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced",
+              description = "The group name for the route built from this template. Multiple routes can belong to the same group.")
     private String group;
     @XmlElement(name = "parameter")
     @Metadata(description = "Adds an input parameter of the template to build the route")

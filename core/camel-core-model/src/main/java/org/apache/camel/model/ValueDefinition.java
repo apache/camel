@@ -26,12 +26,14 @@ import org.apache.camel.spi.Metadata;
 /**
  * A single value
  */
-@Metadata(label = "configuration")
+@Metadata(label = "configuration",
+          description = "Holds a single value, typically used as a child element in collection-based configurations")
 @XmlRootElement(name = "value")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ValueDefinition {
 
     @XmlValue
+    @Metadata(description = "The value.")
     private String value;
 
     public ValueDefinition() {
@@ -41,16 +43,10 @@ public class ValueDefinition {
         this.value = value;
     }
 
-    /**
-     * Property value
-     */
     public String getValue() {
         return value;
     }
 
-    /**
-     * Property value
-     */
     public void setValue(String value) {
         this.value = value;
     }

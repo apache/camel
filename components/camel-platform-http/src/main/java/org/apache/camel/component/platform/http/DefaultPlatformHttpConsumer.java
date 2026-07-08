@@ -22,6 +22,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.Suspendable;
 import org.apache.camel.component.platform.http.spi.PlatformHttpConsumer;
 import org.apache.camel.component.platform.http.spi.PlatformHttpConsumerAware;
+import org.apache.camel.component.platform.http.spi.PlatformHttpSecurityHandler;
 import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.support.service.ServiceHelper;
@@ -32,9 +33,15 @@ public class DefaultPlatformHttpConsumer extends DefaultConsumer
     private PlatformHttpConsumer platformHttpConsumer;
     private boolean register = true;
     private AfterPropertiesConfigured afterConfiguredListener;
+    private final PlatformHttpSecurityHandler securityHandler;
 
     public DefaultPlatformHttpConsumer(Endpoint endpoint, Processor processor) {
+        this(endpoint, processor, null);
+    }
+
+    public DefaultPlatformHttpConsumer(Endpoint endpoint, Processor processor, PlatformHttpSecurityHandler securityHandler) {
         super(endpoint, processor);
+        this.securityHandler = securityHandler;
     }
 
     @Override
@@ -79,7 +86,7 @@ public class DefaultPlatformHttpConsumer extends DefaultConsumer
 
     @Override
     protected void doInit() throws Exception {
-        platformHttpConsumer = getEndpoint().createPlatformHttpConsumer(getProcessor());
+        platformHttpConsumer = getEndpoint().createPlatformHttpConsumer(getProcessor(), securityHandler);
         configurePlatformHttpConsumer(platformHttpConsumer);
         super.doInit();
 

@@ -22,16 +22,20 @@ import jakarta.xml.bind.annotation.XmlAttribute;
 import jakarta.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.annotations.DslArg;
 
 /**
  * Removes a named property from the message exchange
  */
-@Metadata(label = "eip,transformation")
+@Metadata(label = "eip,messaging,transformation",
+          description = "Removes a specific exchange property by name")
 @XmlRootElement(name = "removeProperty")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RemovePropertyDefinition extends NoOutputDefinition<RemovePropertyDefinition> {
 
     @XmlAttribute(required = true)
+    @DslArg
+    @Metadata(description = "Name of the exchange property to remove.")
     private String name;
 
     public RemovePropertyDefinition() {
@@ -70,9 +74,6 @@ public class RemovePropertyDefinition extends NoOutputDefinition<RemovePropertyD
         return name;
     }
 
-    /**
-     * Name of property to remove.
-     */
     public void setName(String name) {
         this.name = name;
     }

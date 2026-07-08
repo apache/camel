@@ -7,8 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
-//Manually maintained attributes
-:camel-spring-boot-name: atmosphere-websocket
 
 *Since Camel {since}*
 
@@ -54,46 +52,73 @@ the producer or the consumer, respectively.
 In the route below, Camel will read from the specified websocket
 connection.
 
+[tabs]
+====
+Java::
++
 [source,java]
--------------------------------------------
+----
 from("atmosphere-websocket:///servicepath")
         .to("direct:next");
--------------------------------------------
+----
 
-And the equivalent Spring sample:
-
+XML::
++
 [source,xml]
-------------------------------------------------------------
-<camelContext xmlns="http://camel.apache.org/schema/spring">
-  <route>
-    <from uri="atmosphere-websocket:///servicepath"/>
-    <to uri="direct:next"/>
-  </route>
-</camelContext>
-------------------------------------------------------------
+----
+<route>
+  <from uri="atmosphere-websocket:///servicepath"/>
+  <to uri="direct:next"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: atmosphere-websocket:///servicepath
+      steps:
+        - to:
+            uri: direct:next
+----
+====
 
 === Producer Example
 
 In the route below, Camel will write to the specified websocket
 connection.
 
+[tabs]
+====
+Java::
++
 [source,java]
----------------------------------------------------
+----
 from("direct:next")
         .to("atmosphere-websocket:///servicepath");
----------------------------------------------------
+----
 
-And the equivalent Spring sample:
-
+XML::
++
 [source,xml]
-------------------------------------------------------------
-<camelContext xmlns="http://camel.apache.org/schema/spring">
-  <route>
-    <from uri="direct:next"/>
-    <to uri="atmosphere-websocket:///servicepath"/>
-  </route>
-</camelContext>
-------------------------------------------------------------
+----
+<route>
+  <from uri="direct:next"/>
+  <to uri="atmosphere-websocket:///servicepath"/>
+</route>
+----
 
-
-include::spring-boot:partial$starter.adoc[]
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:next
+      steps:
+        - to:
+            uri: atmosphere-websocket:///servicepath
+----
+====

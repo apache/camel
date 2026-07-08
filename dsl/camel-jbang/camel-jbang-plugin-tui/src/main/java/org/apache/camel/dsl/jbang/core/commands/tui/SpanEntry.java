@@ -32,6 +32,7 @@ record SpanEntry(
         long durationMs,
         String routeId,
         String processorId,
+        String scopeName,
         Map<String, Object> attributes) {
 
     @SuppressWarnings("unchecked")
@@ -53,6 +54,7 @@ record SpanEntry(
                 jo.getLongOrDefault("durationMs", 0),
                 jo.getString("routeId"),
                 jo.getString("processorId"),
+                jo.getString("scopeName"),
                 attrs);
     }
 
@@ -62,5 +64,9 @@ record SpanEntry(
 
     boolean isError() {
         return "ERROR".equals(status);
+    }
+
+    boolean isCamelSpan() {
+        return scopeName == null || "camel".equals(scopeName);
     }
 }

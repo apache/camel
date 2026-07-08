@@ -19,9 +19,11 @@ package org.apache.camel.component.file;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
@@ -43,11 +45,14 @@ class FileProducerCharsetUTFtoUTFTest extends ContextTestSupport {
 
         assertTrue(oneExchangeDone.matchesWaitTime());
 
-        assertFileExists(testFile(OUTPUT_FILE));
-        byte[] target = Files.readAllBytes(testFile(OUTPUT_FILE));
-
-        assertArrayEquals(source, target, "The byte arrays should be equals but they are not.\n Source:\n" + new String(source)
-                                          + "\nTarget:\n" + new String(target));
+        // The file may have been created but not yet fully flushed to disk
+        Awaitility.await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> {
+            assertFileExists(testFile(OUTPUT_FILE));
+            byte[] target = Files.readAllBytes(testFile(OUTPUT_FILE));
+            assertArrayEquals(source, target,
+                    "The byte arrays should be equals but they are not.\n Source:\n" + new String(source)
+                                              + "\nTarget:\n" + new String(target));
+        });
     }
 
     @Override

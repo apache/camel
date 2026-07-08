@@ -57,7 +57,7 @@ public class MailUsingOwnComponentTest extends CamelTestSupport {
     public void testUsingOwnMailComponent() throws Exception {
         Mailbox.clearAll();
 
-        template.sendBodyAndHeader("mailbox:localhost", "Hello Mailbox", "to", davsclaus.getEmail());
+        template.sendBodyAndHeader("mailbox:localhost?useHeaderRecipients=true", "Hello Mailbox", "to", davsclaus.getEmail());
 
         Mailbox box = davsclaus.getInbox();
         Message msg = box.get(0);

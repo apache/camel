@@ -7,8 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
-//Manually maintained attributes
-:camel-spring-boot-name: wordpress
 
 *Since Camel {since}*
 
@@ -17,7 +15,6 @@
 Camel component for the https://developer.wordpress.org/rest-api/reference/[WordPress API].
 
 Currently only the **Posts** and **Users** operations are supported.
-
 
 
 // component options: START
@@ -42,6 +39,7 @@ wordpress:post?criteria.perPage=10&criteria.orderBy=author&criteria.categories=c
 
 The `WordpressConfiguration` class can be used to set initial properties configuration to the component instead of passing it as query parameter. The following listing shows how to set the component to be used in your routes.
 
+._Java-only: configuring the WordPress component programmatically_
 [source,java]
 ----
 public void configure() {
@@ -93,6 +91,3 @@ you must install the https://github.com/WP-API/Basic-Auth[Basic-Auth WordPress p
 `from("direct:deletePost").to("wordpress:post:delete?id=9&user=ben&password=password123").to("mock:resultDelete");`
 
 **It's not recommended to use Basic Authentication in production without TLS!!**
-
-
-include::spring-boot:partial$starter.adoc[]

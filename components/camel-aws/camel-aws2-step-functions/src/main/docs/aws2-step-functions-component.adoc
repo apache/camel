@@ -9,7 +9,6 @@
 :component-header: Only producer is supported
 //Manually maintained attributes
 :group: AWS
-:camel-spring-boot-name: aws2-step-functions
 
 *Since Camel {since}*
 
@@ -33,9 +32,9 @@ https://aws.amazon.com/step-functions/[AWS Step Functions].
 
 == URI Format
 
--------------------------
+----
 aws2-step-functions://label[?options]
--------------------------
+----
 
 You can append query options to the URI in the following format:
 
@@ -103,11 +102,41 @@ Camel-AWS Step Functions component provides the following operation on the produ
 
 - createStateMachine: this operation will create a state machine
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:createStateMachine")
-    .to("aws2-step-functions://test?awsSfnClient=#awsSfnClient&operation=createMachine")
---------------------------------------------------------------------------------
+    .to("aws2-step-functions://test?awsSfnClient=#awsSfnClient&operation=createMachine");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:createStateMachine"/>
+  <to uri="aws2-step-functions://test?awsSfnClient=#awsSfnClient&amp;operation=createMachine"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:createStateMachine
+      steps:
+        - to:
+            uri: aws2-step-functions://test
+            parameters:
+              awsSfnClient: "#awsSfnClient"
+              operation: createMachine
+----
+====
 
 === Using a POJO as body
 
@@ -115,12 +144,13 @@ Sometimes building an AWS Request can be complex because of multiple options. We
 In AWS Step Functions, there are multiple operations you can submit, as an example for Create state machine
  request, you can do something like:
 
+._Java-only: using a POJO request body with the AWS SDK builder_
 [source,java]
-------------------------------------------------------------------------------------------------------
+----
 from("direct:start")
   .setBody(CreateStateMachineRequest.builder().name("state-machine").build())
   .to("aws2-step-functions://test?awsSfnClient=#awsSfnClient&operation=createStateMachine&pojoRequest=true")
-------------------------------------------------------------------------------------------------------
+----
 
 In this way, you'll pass the request directly without the need of passing headers and options specifically related to this operation.
 
@@ -131,15 +161,14 @@ Maven users will need to add the following dependency to their pom.xml.
 *pom.xml*
 
 [source,xml]
----------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-aws2-step-functions</artifactId>
     <version>${camel-version}</version>
 </dependency>
----------------------------------------
+----
 
 where `$\{camel-version}` must be replaced by the actual version of Camel.
 
 
-include::spring-boot:partial$starter.adoc[]

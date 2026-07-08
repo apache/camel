@@ -1,8 +1,8 @@
-= Camel JBang Integration Tests
+= Camel CLI Integration Tests
 
 == Overview
 
-This module is used to run integration tests for Camel JBang; CLI commands are executed in a containerized environment provided by link:../../../test-infra/camel-test-infra-cli[camel-test-infra-cli]
+This module is used to run integration tests for Camel CLI; CLI commands are executed in a containerized environment provided by link:../../../test-infra/camel-test-infra-cli[camel-test-infra-cli]
 
 == Run tests
 

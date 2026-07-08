@@ -1,7 +1,7 @@
 = Validate EIP
 :doctitle: Validate
 :shortname: validate
-:description: Validates a message based on an expression
+:description: Validates the message against a predicate expression and throws a PredicateValidationException if the validation fails
 :since: 
 :supportlevel: Stable
 :tabs-sync-option:

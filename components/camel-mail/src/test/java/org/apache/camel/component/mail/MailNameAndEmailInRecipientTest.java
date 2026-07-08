@@ -42,7 +42,8 @@ public class MailNameAndEmailInRecipientTest extends CamelTestSupport {
         assertMailbox("davsclaus");
         assertMailbox("jstrachan");
 
-        template.sendBodyAndHeaders(davsclaus.uriPrefix(Protocol.smtp), "Hello World", headers);
+        template.sendBodyAndHeaders(davsclaus.uriPrefix(Protocol.smtp) + "&useHeaderRecipients=true", "Hello World",
+                headers);
         // END SNIPPET: e1
 
         MockEndpoint.assertIsSatisfied(context);

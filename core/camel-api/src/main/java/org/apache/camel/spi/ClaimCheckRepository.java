@@ -21,14 +21,24 @@ import org.apache.camel.Service;
 import org.jspecify.annotations.Nullable;
 
 /**
- * Access to a repository of keys to implement the <a href="https://camel.apache.org/claim-check.html">Claim Check</a>
- * pattern.
+ * Storage repository for the <a href="https://camel.apache.org/manual/claim-check.html">Claim Check EIP</a>, which
+ * temporarily parks a message payload so that a lighter message can travel through an intermediate part of a route.
  * <p/>
- * The <tt>add</tt> and <tt>contains</tt> methods is operating according to the {@link java.util.Map} contract, and the
- * <tt>push</tt> and <tt>pop</tt> methods is operating according to the {@link java.util.Stack} contract.
+ * The Claim Check pattern solves the problem of passing large payloads through components that have size limits or
+ * performance concerns. The producing side stores the payload under a unique key (the "claim check") using
+ * {@link #add(String, Exchange)} or {@link #push(Exchange)}, replacing the message body with just the key. The
+ * consuming side later retrieves the payload with {@link #get(String)} or {@link #pop()} and restores it to the
+ * exchange.
  * <p/>
- * See important details about the Claim Check EIP implementation in Apache Camel at
- * {@link org.apache.camel.processor.ClaimCheckProcessor}.
+ * The interface exposes two access styles:
+ * <ul>
+ * <li><b>keyed</b> ({@link #add}, {@link #contains}, {@link #get}, {@link #getAndRemove}) — operates like a
+ * {@link java.util.Map}; the caller controls the key.</li>
+ * <li><b>stack</b> ({@link #push}, {@link #pop}) — operates like a {@link java.util.Deque}; Camel manages the key
+ * internally, useful for nested claim checks.</li>
+ * </ul>
+ *
+ * @see org.apache.camel.processor.ClaimCheckProcessor
  */
 public interface ClaimCheckRepository extends Service {
 

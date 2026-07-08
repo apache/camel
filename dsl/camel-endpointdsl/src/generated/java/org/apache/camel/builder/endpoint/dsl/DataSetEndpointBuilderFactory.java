@@ -1073,7 +1073,7 @@ public interface DataSetEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final DataSetHeaderNameBuilder INSTANCE = new DataSetHeaderNameBuilder();
+        public static final DataSetHeaderNameBuilder INSTANCE = new DataSetHeaderNameBuilder();
 
         /**
          * The dataset index.

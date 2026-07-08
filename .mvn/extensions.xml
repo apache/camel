@@ -3,26 +3,26 @@
     <extension>
         <groupId>org.l2x6.cq</groupId>
         <artifactId>cq-alias-fastinstall-quickly-extension</artifactId>
-        <version>4.24.2</version>
+        <version>4.27.0</version>
     </extension>
     <extension>
         <groupId>eu.maveniverse.maven.nisse</groupId>
         <artifactId>extension</artifactId>
-        <version>0.9.2</version>
+        <version>0.9.3</version>
     </extension>
     <extension>
         <groupId>com.gradle</groupId>
         <artifactId>develocity-maven-extension</artifactId>
-        <version>2.4.1</version>
+        <version>2.5.0</version>
     </extension>
     <extension>
         <groupId>com.gradle</groupId>
         <artifactId>common-custom-user-data-maven-extension</artifactId>
-        <version>2.2.0</version>
+        <version>2.3.0</version>
     </extension>
     <extension>
         <groupId>eu.maveniverse.maven.scalpel</groupId>
         <artifactId>extension3</artifactId>
-        <version>0.3.3</version>
+        <version>0.3.7</version>
     </extension>
 </extensions>

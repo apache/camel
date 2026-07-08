@@ -24,12 +24,14 @@ import jakarta.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.Processor;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.annotations.DslArg;
 import org.apache.camel.util.ObjectHelper;
 
 /**
  * Calls a Camel processor
  */
-@Metadata(label = "eip,endpoint")
+@Metadata(label = "eip,endpoint",
+          description = "Invokes a custom Camel Processor for programmatic message processing in Java")
 @XmlRootElement(name = "process")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ProcessDefinition extends NoOutputDefinition<ProcessDefinition> {
@@ -38,6 +40,9 @@ public class ProcessDefinition extends NoOutputDefinition<ProcessDefinition> {
     private Processor processor;
 
     @XmlAttribute(required = true)
+    @DslArg
+    @Metadata(required = true,
+              description = "Reference to the Processor to lookup in the registry to use. Can use prefixes such as #bean:, #class:, or #type: to control how the processor is obtained.")
     private String ref;
 
     public ProcessDefinition() {
@@ -97,20 +102,6 @@ public class ProcessDefinition extends NoOutputDefinition<ProcessDefinition> {
         return ref;
     }
 
-    /**
-     * Reference to the Processor to lookup in the registry to use.
-     *
-     * A Processor is a class of type org.apache.camel.Processor, which can are to be called by this EIP. In this
-     * processor you have custom Java code, that can work with the message, such as to do custom business logic, special
-     * message manipulations and so on.
-     *
-     * By default, the ref, will lookup the bean in the Camel registry.
-     *
-     * The ref can use prefix that controls how the processor is obtained. You can use #bean:myBean where myBean is the
-     * id of the Camel processor (lookup). Can also be used for creating new beans by their class name by prefixing with
-     * #class, eg #class:com.foo.MyClassType. And it is also possible to refer to singleton beans by their type in the
-     * registry by prefixing with #type: syntax, eg #type:com.foo.MyClassType
-     */
     public void setRef(String ref) {
         this.ref = ref;
     }

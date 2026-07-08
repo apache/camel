@@ -2,13 +2,10 @@
 :doctitle: Ref
 :shortname: ref
 :artifactid: camel-core-languages
-:description: Uses an existing expression from the registry.
+:description: Uses an existing expression from the registry
 :since: 2.8
 :supportlevel: Stable
 :tabs-sync-option:
-//Manually maintained attributes
-:camel-spring-boot-name: core
-:starter-artifactid: camel-core-starter
 
 *Since Camel {since}*
 
@@ -25,9 +22,21 @@ include::partial$language-options.adoc[]
 
 == Example usage
 
-The Splitter EIP in XML DSL can utilize a custom
-expression using `<ref>` like:
+The Splitter EIP can utilize a custom
+expression using `ref` like:
 
+[tabs]
+====
+
+Java::
++
+[source,java]
+----
+from("seda:a").split().ref("myExpression").to("seda:b");
+----
+
+XML::
++
 [source,xml]
 ----
 <bean id="myExpression" class="com.mycompany.MyCustomExpression"/>
@@ -35,25 +44,35 @@ expression using `<ref>` like:
 <route>
   <from uri="seda:a"/>
   <split>
-    <ref>myExpression</ref>   
+    <ref>myExpression</ref>
     <to uri="mock:b"/>
-  </split>     
+  </split>
 </route>
 ----
 
-in this case, the message coming from the seda:a
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: seda:a
+      steps:
+        - split:
+            expression:
+              ref:
+                expression: myExpression
+            steps:
+              - to:
+                  uri: mock:b
+----
+====
+
+In this case, the message coming from the seda:a
 endpoint will be split using a custom
 `Expression` which has the id `myExpression` in the
 xref:manual:ROOT:registry.adoc[Registry].
 
-And the same example using Java DSL:
-
-[source,java]
-----
-from("seda:a").split().ref("myExpression").to("seda:b");
-----
-
 == Dependencies
 
 The Ref language is part of *camel-core*.
-

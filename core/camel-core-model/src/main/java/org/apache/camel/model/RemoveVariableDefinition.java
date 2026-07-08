@@ -22,16 +22,20 @@ import jakarta.xml.bind.annotation.XmlAttribute;
 import jakarta.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.annotations.DslArg;
 
 /**
  * Removes a named variable
  */
-@Metadata(label = "eip,transformation")
+@Metadata(label = "eip,messaging,transformation",
+          description = "Removes a specific variable by name")
 @XmlRootElement(name = "removeVariable")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RemoveVariableDefinition extends NoOutputDefinition<RemoveVariableDefinition> {
 
     @XmlAttribute(required = true)
+    @DslArg
+    @Metadata(description = "Name of the variable to remove.")
     private String name;
 
     public RemoveVariableDefinition() {
@@ -70,9 +74,6 @@ public class RemoveVariableDefinition extends NoOutputDefinition<RemoveVariableD
         return name;
     }
 
-    /**
-     * Name of variable to remove.
-     */
     public void setName(String name) {
         this.name = name;
     }

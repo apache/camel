@@ -1,7 +1,7 @@
 = Convert Variable To EIP
 :doctitle: Convert Variable To
 :shortname: convertVariableTo
-:description: Converts the variable to another type
+:description: Converts a variable value to a specified Java type using Camel's built-in type converters
 :since: 
 :supportlevel: Stable
 :tabs-sync-option:

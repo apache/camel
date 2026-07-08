@@ -23,12 +23,12 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>4.21.0-SNAPSHOT</version>
+        <version>4.22.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-reactive-executor-vertx</artifactId>
     <packaging>jar</packaging>
-    <name>Camel :: Reactive Executor :: Vert.x</name>
+    <name>Camel :: Reactive Executor :: Vert.x (deprecated)</name>
     <description>Reactive Executor for camel-core using Vert.x</description>
 
     <properties>

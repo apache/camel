@@ -7,8 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Only producer is supported
-//Manually maintained attributes
-:camel-spring-boot-name: splunk-hec
 
 *Since Camel {since}*
 
@@ -21,20 +19,19 @@ Maven users will need to add the following dependency to their pom.xml
 for this component:
 
 [source,xml]
----------------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-splunk-hec</artifactId>
     <version>${camel-version}</version>
 </dependency>
----------------------------------------------
+----
 
 == URI format
 
--------------------------------
+----
 splunk-hec:[splunkURL]?[options]
--------------------------------
-
+----
 
 
 // component options: START
@@ -61,29 +58,82 @@ It is meant for high-volume ingestion of machine data.
 By default, the index time for an event is when the event makes it to the Splunk
 server.
 
+[tabs]
+====
+Java::
++
 [source,java]
--------------------------------
+----
 from("direct:start")
-        .to("splunk-hec://localhost:8080?token=token");
--------------------------------
+    .to("splunk-hec://localhost:8080?token=token");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <to uri="splunk-hec://localhost:8080?token=token"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: splunk-hec://localhost:8080
+            parameters:
+              token: token
+----
+====
 
 If you are ingesting a large enough dataset with a big enough lag, then the time
 the event hits the server and when that event actually happened could be skewed. If
 you want to override the index time, you can do so.
 
+._Java-only: overrides index time from Kafka header_
 [source,java]
--------------------------------
+----
 from("kafka:logs")
-        .setHeader(SplunkHECConstants.INDEX_TIME, simple("${headers[kafka.HEADERS].lastKey('TIME')}"))
+        .setHeader("CamelSplunkHECIndexTime", simple("${headers[kafka.HEADERS].lastKey('TIME')}"))
         .to("splunk-hec://localhost:8080?token=token");
--------------------------------
+----
 
+[tabs]
+====
+Java::
++
 [source,java]
--------------------------------
+----
 from("kafka:logs")
         .toD("splunk-hec://localhost:8080?token=token&time=${headers[kafka.HEADERS].lastKey('TIME')}");
--------------------------------
+----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="kafka:logs"/>
+  <toD uri="splunk-hec://localhost:8080?token=token&amp;time=${headers[kafka.HEADERS].lastKey('TIME')}"/>
+</route>
+----
 
-
-include::spring-boot:partial$starter.adoc[]
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: kafka:logs
+      steps:
+        - toD:
+            uri: "splunk-hec://localhost:8080?token=token&time=${headers[kafka.HEADERS].lastKey('TIME')}"
+----
+====

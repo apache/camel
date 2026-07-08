@@ -255,7 +255,7 @@ public interface MyBatisBeanEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final MyBatisBeanHeaderNameBuilder INSTANCE = new MyBatisBeanHeaderNameBuilder();
+        public static final MyBatisBeanHeaderNameBuilder INSTANCE = new MyBatisBeanHeaderNameBuilder();
 
         /**
          * The response returned from MyBatis in any of the operations. Such as

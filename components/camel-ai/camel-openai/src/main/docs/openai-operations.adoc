@@ -1,0 +1,299 @@
+= OpenAI - Embeddings and Audio Operations
+:tabs-sync-option:
+
+xref:ROOT:openai-component.adoc[Back to OpenAI Component]
+
+== Embeddings Operation
+
+The `embeddings` operation generates vector embeddings from text, which can be used for semantic search, similarity comparison, and RAG (Retrieval-Augmented Generation) applications.
+
+=== Basic Embedding
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:embed")
+    .setBody(constant("What is Apache Camel?"))
+    .to("openai:embeddings?embeddingModel=nomic-embed-text")
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:embed
+      steps:
+        - to:
+            uri: openai:embeddings
+            parameters:
+              embeddingModel: nomic-embed-text
+----
+====
+
+The response body is the embedding vector data:
+
+* Single input: `List<Float>` (a single embedding vector)
+* Batch input: `List<List<Float>>` (one embedding vector per input string)
+
+Additional metadata (model, token usage, vector size, count) is exposed via headers (see `OpenAIConstants`).
+
+=== Batch Embedding
+
+You can embed multiple texts in a single request by passing a `List<String>`:
+
+._Java-only: uses `List.of()` for batch input_
+[source,java]
+----
+from("direct:batch-embed")
+    .setBody(constant(List.of("First text", "Second text", "Third text")))
+    .to("openai:embeddings?embeddingModel=nomic-embed-text")
+    .log("Generated ${header.CamelOpenAIEmbeddingCount} embeddings");
+----
+
+=== Direct Vector Database Integration
+
+For single-input requests, the component returns a raw `List<Float>` embedding vector, enabling direct chaining to vector database components.
+
+==== PostgreSQL + pgvector (Recommended)
+
+Using the xref:ROOT:pgvector-component.adoc[PGVector] component:
+
+[source,yaml]
+----
+# Index documents in PostgreSQL with pgvector
+- route:
+    from:
+      uri: direct:index
+      steps:
+        - setVariable:
+            name: text
+            expression:
+              simple:
+                expression: "${body}"
+        - to:
+            uri: openai:embeddings
+            parameters:
+              embeddingModel: nomic-embed-text
+        - setHeader:
+            name: CamelPgVectorAction
+            constant: UPSERT
+        - setHeader:
+            name: CamelPgVectorTextContent
+            expression:
+              simple:
+                expression: "${variable.text}"
+        - to:
+            uri: pgvector:documents
+
+# Similarity search
+- route:
+    from:
+      uri: direct:search
+      steps:
+        - to:
+            uri: openai:embeddings
+            parameters:
+              embeddingModel: nomic-embed-text
+        - setHeader:
+            name: CamelPgVectorAction
+            constant: SIMILARITY_SEARCH
+        - setHeader:
+            name: CamelPgVectorQueryTopK
+            constant: 5
+        - to:
+            uri: pgvector:documents
+----
+
+The pgvector component handles table creation, HNSW indexing, upsert with conflict resolution, and similarity search with configurable distance types (cosine, euclidean, inner product). See the xref:ROOT:pgvector-component.adoc[PGVector component documentation] for details.
+
+For custom table schemas, complex queries (joins, CTEs), or integration with existing PostgreSQL tables, you can use `camel-sql` directly with the pgvector extension:
+
+[source,yaml]
+----
+- to:
+    uri: sql:INSERT INTO documents (content, embedding) VALUES (:#text, :#embedding::vector)
+----
+
+==== Alternative: Dedicated Vector Databases
+
+For specialized vector workloads, you can also use `camel-qdrant`, `camel-weaviate`, `camel-milvus`, or `camel-pinecone`:
+
+=== Similarity Calculation
+
+The component can automatically calculate cosine similarity when a reference embedding is provided:
+
+._Java-only: uses `List<Float>` variable for reference embedding_
+[source,java]
+----
+List<Float> referenceEmbedding = /* previously computed embedding */;
+
+from("direct:compare")
+    .setBody(constant("New text to compare"))
+    .setHeader("CamelOpenAIReferenceEmbedding", constant(referenceEmbedding))
+    .to("openai:embeddings?embeddingModel=nomic-embed-text")
+    .log("Similarity score: ${header.CamelOpenAISimilarityScore}");
+----
+
+You can also use `SimilarityUtils` directly for manual calculations:
+
+._Java-only: `SimilarityUtils` API for vector math_
+[source,java]
+----
+import org.apache.camel.component.openai.SimilarityUtils;
+
+double similarity = SimilarityUtils.cosineSimilarity(embedding1, embedding2);
+double distance = SimilarityUtils.euclideanDistance(embedding1, embedding2);
+List<Float> normalized = SimilarityUtils.normalize(embedding);
+----
+
+=== Embeddings Output Headers
+
+The following headers are set after an embeddings request:
+
+[cols="1,1,3"]
+|===
+| Header | Type | Description
+
+| `CamelOpenAIEmbeddingResponseModel` | String | The model used for embedding
+| `CamelOpenAIEmbeddingCount` | Integer | Number of embeddings returned
+| `CamelOpenAIEmbeddingVectorSize` | Integer | Dimension of each embedding vector
+| `CamelOpenAIPromptTokens` | Integer | Tokens used in the input
+| `CamelOpenAITotalTokens` | Integer | Total tokens used
+| `CamelOpenAIOriginalText` | String/List | Original input text(s)
+| `CamelOpenAISimilarityScore` | Double | Cosine similarity (if reference embedding provided)
+|===
+
+== Audio Transcription Operation
+
+The `audio-transcription` operation transcribes audio files to text using OpenAI's speech-to-text models (Whisper, GPT-4o Transcribe).
+
+=== Basic Audio Transcription
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("file:audio?noop=true")
+    .to("openai:audio-transcription?audioModel=whisper-1")
+    .log("Transcription: ${body}");
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:transcribe
+      steps:
+        - to:
+            uri: openai:audio-transcription
+            parameters:
+              audioModel: whisper-1
+        - log:
+            message: "Transcription: ${body}"
+----
+====
+
+=== Input Handling
+
+The audio transcription operation accepts the following types in the message body:
+
+* `java.io.File` - Audio file reference
+* `java.nio.file.Path` - Path to an audio file
+* `java.io.InputStream` - Audio data stream
+* `byte[]` - Raw audio bytes
+
+Supported audio formats: flac, mp3, mp4, mpeg, mpga, m4a, ogg, wav, webm.
+
+=== Audio Transcription Parameters
+
+[cols="1,1,1,3"]
+|===
+| Parameter | Type | Default | Description
+
+| `audioModel` | String | | The model to use (e.g., `whisper-1`, `gpt-4o-transcribe`). Required.
+| `audioLanguage` | String | | Input audio language in ISO-639-1 format (e.g., `en`). Improves accuracy.
+| `audioPrompt` | String | | Optional text to guide the model's style or continue a previous segment.
+| `audioResponseFormat` | String | `json` | Output format: `json`, `text`, `srt`, `verbose_json`, `vtt`.
+| `audioTemperature` | Double | | Sampling temperature (0.0 to 1.0).
+| `audioTimestampGranularities` | String | | Comma-separated: `word`, `segment`, or `word,segment`. Only with `verbose_json`.
+|===
+
+=== Audio Transcription Output Headers
+
+[cols="1,1,3"]
+|===
+| Header | Type | Description
+
+| `CamelOpenAIAudioDuration` | Double | Duration of the audio in seconds (verbose_json only)
+| `CamelOpenAIAudioDetectedLanguage` | String | Language detected in the audio (verbose_json only)
+|===
+
+=== Audio Models by Provider
+
+[cols="1,2,3"]
+|===
+| Provider | Model | Description
+
+| OpenAI | `whisper-1` | General-purpose speech recognition
+| OpenAI | `gpt-4o-transcribe` | High-accuracy transcription based on GPT-4o
+| OpenAI | `gpt-4o-mini-transcribe` | Lighter-weight GPT-4o variant
+|===
+
+=== Local Audio Transcription Servers
+
+The audio transcription operation works with any OpenAI-compatible server that implements the `POST /v1/audio/transcriptions` endpoint. It has been tested with:
+
+* https://github.com/ml-explore/mlx-audio[MLX Audio] — `python3 -m mlx_audio.server --host 127.0.0.1 --port 8003`
+
+.Example using MLX Audio for local transcription:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:transcribe")
+    .to("openai:audio-transcription?audioModel=mlx-community/whisper-large-v3-turbo"
+        + "&baseUrl=http://localhost:8003/v1");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:transcribe"/>
+  <to uri="openai:audio-transcription?audioModel=mlx-community/whisper-large-v3-turbo&amp;baseUrl=http://localhost:8003/v1"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:transcribe
+      steps:
+        - to:
+            uri: openai:audio-transcription
+            parameters:
+              audioModel: mlx-community/whisper-large-v3-turbo
+              baseUrl: http://localhost:8003/v1
+----
+====
+
+[NOTE]
+====
+Some local servers require the model parameter to be a path (e.g., `./models/granite-speech-4.1-2b-8bit`). Refer to your server's documentation for the expected model identifier format.
+====

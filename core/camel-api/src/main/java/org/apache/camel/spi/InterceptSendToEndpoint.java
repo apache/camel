@@ -22,8 +22,14 @@ import org.apache.camel.Processor;
 import org.jspecify.annotations.Nullable;
 
 /**
- * This is an endpoint when sending to it, is intercepted and is routed in a detour, with the following flow: before,
- * send to original endpoint (can be skipped), after (optional).
+ * An {@link Endpoint} wrapper that, when sent to, detours the exchange: before, send to the original endpoint (which
+ * can be skipped), then after (optional).
+ * <p/>
+ * This is the endpoint created by {@link InterceptEndpointFactory} to implement the interceptSendToEndpoint EIP. The
+ * before/after {@link Processor}s and the optional {@link Predicate} guard are configurable, as is whether the original
+ * send is {@link #isSkip() skipped}.
+ *
+ * @see InterceptEndpointFactory
  */
 public interface InterceptSendToEndpoint extends Endpoint {
 

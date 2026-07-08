@@ -790,7 +790,7 @@ public interface Sns2EndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final Sns2HeaderNameBuilder INSTANCE = new Sns2HeaderNameBuilder();
+        public static final Sns2HeaderNameBuilder INSTANCE = new Sns2HeaderNameBuilder();
 
         /**
          * The Amazon SNS message ID.

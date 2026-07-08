@@ -1,7 +1,7 @@
 = Marshal EIP
 :doctitle: Marshal
 :shortname: marshal
-:description: Marshals data into a specified format for transmission over a transport or component
+:description: Serializes the message body into a specific data format such as JSON, XML, CSV, or Protobuf for transmission or storage
 :since: 
 :supportlevel: Stable
 :tabs-sync-option:

@@ -17,6 +17,7 @@
 package org.apache.camel.component.milvus.helpers;
 
 import io.milvus.grpc.DataType;
+import io.milvus.param.collection.CollectionSchemaParam;
 import io.milvus.param.collection.CreateCollectionParam;
 import io.milvus.param.collection.FieldType;
 import org.apache.camel.Exchange;
@@ -72,9 +73,10 @@ public class MilvusHelperCreateCollection implements Processor {
 
         CreateCollectionParam.Builder builder = CreateCollectionParam.newBuilder()
                 .withCollectionName(collectionName)
-                .withDescription(collectionDescription)
-                .addFieldType(idField)
-                .addFieldType(textField);
+                .withDescription(collectionDescription);
+
+        CollectionSchemaParam.Builder schemaParamBuilder = CollectionSchemaParam.newBuilder();
+        schemaParamBuilder.addFieldType(idField).addFieldType(textField);
 
         if (additionalTextFields != null && !additionalTextFields.isBlank()) {
             for (String fieldName : additionalTextFields.split(",")) {
@@ -85,12 +87,13 @@ public class MilvusHelperCreateCollection implements Processor {
                             .withDataType(DataType.VarChar)
                             .withMaxLength(maxLength)
                             .build();
-                    builder.addFieldType(extraField);
+                    schemaParamBuilder.addFieldType(extraField);
                 }
             }
         }
 
-        builder.addFieldType(vectorField);
+        schemaParamBuilder.addFieldType(vectorField);
+        builder.withSchema(schemaParamBuilder.build());
 
         exchange.getIn().setBody(builder.build());
         exchange.getIn().setHeader(MilvusHeaders.ACTION, MilvusAction.CREATE_COLLECTION);

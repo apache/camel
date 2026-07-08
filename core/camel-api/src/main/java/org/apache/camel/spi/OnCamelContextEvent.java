@@ -17,17 +17,25 @@
 package org.apache.camel.spi;
 
 /**
- * Marker interface used to make it easy to discover {@link org.apache.camel.CamelContext} related event handlers from
- * the registry.
+ * Marker interface for event handlers that react to {@link org.apache.camel.CamelContext} lifecycle phases.
+ * <p/>
+ * Implementations are placed in the {@link Registry} and discovered by Camel during bootstrap, then invoked as the
+ * context moves through its lifecycle: initializing, initialized, starting, started, stopping, and stopped. Each phase
+ * has its own sub-interface ({@link OnCamelContextInitializing}, {@link OnCamelContextInitialized},
+ * {@link OnCamelContextStarting}, {@link OnCamelContextStarted}, {@link OnCamelContextStopping},
+ * {@link OnCamelContextStopped}) which a handler implements to receive that specific callback; a single class may
+ * implement several of them. This is a lightweight, registry-driven alternative to {@link LifecycleStrategy} for code
+ * that only needs to hook into context startup or shutdown.
+ * <p/>
+ * See <a href="https://camel.apache.org/manual/lifecycle.html">Lifecycle</a> in the Camel user manual.
  *
  * @see   OnCamelContextInitializing
  * @see   OnCamelContextInitialized
- * @see   OnCamelContextStart
  * @see   OnCamelContextStarting
  * @see   OnCamelContextStarted
- * @see   OnCamelContextStop
- * @see   OnCamelContextStopped
  * @see   OnCamelContextStopping
+ * @see   OnCamelContextStopped
+ * @see   LifecycleStrategy
  * @since 3.4
  */
 public interface OnCamelContextEvent {

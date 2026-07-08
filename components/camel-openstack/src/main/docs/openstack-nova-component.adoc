@@ -9,7 +9,6 @@
 :component-header: Only producer is supported
 //Manually maintained attributes
 :group: OpenStack
-:camel-spring-boot-name: openstack
 
 *Since Camel {since}*
 
@@ -107,4 +106,3 @@ If you need more precise server settings, you can create a new object of the typ
 
 |=========================================================================
 
-include::spring-boot:partial$starter.adoc[]

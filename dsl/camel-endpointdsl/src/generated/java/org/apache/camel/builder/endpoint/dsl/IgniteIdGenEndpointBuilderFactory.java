@@ -327,7 +327,7 @@ public interface IgniteIdGenEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final IgniteIdGenHeaderNameBuilder INSTANCE = new IgniteIdGenHeaderNameBuilder();
+        public static final IgniteIdGenHeaderNameBuilder INSTANCE = new IgniteIdGenHeaderNameBuilder();
 
         /**
          * Allows you to dynamically change the ID Generator operation.

@@ -1,7 +1,7 @@
 = Choice EIP
 :doctitle: Choice
 :shortname: choice
-:description: Route messages based on a series of predicates
+:description: Routes messages to different steps based on a series of conditions (predicates), similar to if-elseif-else in Java. Each condition is evaluated in order until one matches.
 :since: 
 :supportlevel: Stable
 :tabs-sync-option:
@@ -108,6 +108,7 @@ xref:loadBalance-eip.adoc[Load Balancer] EIP inside the Choice EIP in the first 
 
 *Code will not compile*
 
+._Java-only: incorrect use of loadBalance inside choice_
 [source,java]
 ----
 from("direct:start")
@@ -122,6 +123,7 @@ Well, the first issue is that the xref:loadBalance-eip.adoc[Load Balancer] EIP
 uses the additional routing to know what to use in the load balancing.
 In this example, that would be:
 
+._Java-only: load balancer routing snippet_
 [source,java]
 ----
 .to("mock:foo").to("mock:bar")
@@ -133,6 +135,7 @@ So the route is updated as follows:
 
 *Code will still not compile*
 
+._Java-only: using end() does not fix the compilation issue_
 [source,java]
 ----
 from("direct:start")
@@ -156,6 +159,7 @@ to the scope of the Choice EIP.
 
 *Code compiles*
 
+._Java-only: using endChoice() to fix the compilation issue_
 [source,java]
 ----
 from("direct:start")

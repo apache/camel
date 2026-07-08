@@ -941,7 +941,7 @@ public interface ThriftEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final ThriftHeaderNameBuilder INSTANCE = new ThriftHeaderNameBuilder();
+        public static final ThriftHeaderNameBuilder INSTANCE = new ThriftHeaderNameBuilder();
 
         /**
          * Method name handled by the consumer service.

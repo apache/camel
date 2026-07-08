@@ -8,8 +8,6 @@
 :deprecated: *deprecated*
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
-//Manually maintained attributes
-:camel-spring-boot-name: iec60870
 
 *Since Camel {since}*
 
@@ -88,6 +86,7 @@ The producer supports different command types via the `CamelIec60870CommandType`
 
 === Getting Connection Status (Producer)
 
+._Java-only: using ProducerTemplate to send and inspect connection state headers_
 [source,java]
 ----
 from("direct:status")
@@ -102,6 +101,10 @@ Long uptime = result.getMessage().getHeader("CamelIec60870ConnectionUptime", Lon
 
 === Triggering Interrogation
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:interrogate")
@@ -114,8 +117,65 @@ from("direct:interrogateGroup")
     .to("iec60870-client:localhost:2404/00-01-00-00-01");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:interrogate"/>
+  <setHeader name="CamelIec60870CommandType">
+    <constant>interrogation</constant>
+  </setHeader>
+  <to uri="iec60870-client:localhost:2404/00-01-00-00-01"/>
+</route>
+
+<route>
+  <from uri="direct:interrogateGroup"/>
+  <setHeader name="CamelIec60870CommandType">
+    <constant>interrogation</constant>
+  </setHeader>
+  <setHeader name="CamelIec60870Qoi">
+    <constant>21</constant>
+  </setHeader>
+  <to uri="iec60870-client:localhost:2404/00-01-00-00-01"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:interrogate
+      steps:
+        - setHeader:
+            name: CamelIec60870CommandType
+            constant: interrogation
+        - to:
+            uri: iec60870-client:localhost:2404/00-01-00-00-01
+
+- route:
+    from:
+      uri: direct:interrogateGroup
+      steps:
+        - setHeader:
+            name: CamelIec60870CommandType
+            constant: interrogation
+        - setHeader:
+            name: CamelIec60870Qoi
+            constant: 21
+        - to:
+            uri: iec60870-client:localhost:2404/00-01-00-00-01
+----
+====
+
 === Sending Value Commands
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:bool").setBody(constant(true))
@@ -125,12 +185,58 @@ from("direct:float").setBody(constant(42.5f))
     .to("iec60870-client:localhost:2404/00-01-00-00-01");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:bool"/>
+  <setBody>
+    <constant>true</constant>
+  </setBody>
+  <to uri="iec60870-client:localhost:2404/00-01-00-00-01"/>
+</route>
+
+<route>
+  <from uri="direct:float"/>
+  <setBody>
+    <constant>42.5</constant>
+  </setBody>
+  <to uri="iec60870-client:localhost:2404/00-01-00-00-01"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:bool
+      steps:
+        - setBody:
+            constant: true
+        - to:
+            uri: iec60870-client:localhost:2404/00-01-00-00-01
+
+- route:
+    from:
+      uri: direct:float
+      steps:
+        - setBody:
+            constant: 42.5
+        - to:
+            uri: iec60870-client:localhost:2404/00-01-00-00-01
+----
+====
+
 == Consumer Examples
 
 Each message received by the consumer includes connection state and quality headers.
 
 === Getting Connection Status (Consumer)
 
+._Java-only: using a Processor lambda to access typed connection state and quality headers_
 [source,java]
 ----
 from("iec60870-client:localhost:2404/00-01-00-00-01")
@@ -150,6 +256,10 @@ from("iec60870-client:localhost:2404/00-01-00-00-01")
 
 === Filtering by Quality
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("iec60870-client:localhost:2404/00-01-00-00-01")
@@ -158,4 +268,33 @@ from("iec60870-client:localhost:2404/00-01-00-00-01")
     .to("seda:process");
 ----
 
-include::spring-boot:partial$starter.adoc[]
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="iec60870-client:localhost:2404/00-01-00-00-01"/>
+  <filter>
+    <simple>${header.CamelIec60870QualityValid} == true</simple>
+    <log message="Good value: ${header.CamelIec60870Value}"/>
+    <to uri="seda:process"/>
+  </filter>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: iec60870-client:localhost:2404/00-01-00-00-01
+      steps:
+        - filter:
+            simple: "${header.CamelIec60870QualityValid} == true"
+            steps:
+              - log: "Good value: ${header.CamelIec60870Value}"
+              - to:
+                  uri: seda:process
+----
+====

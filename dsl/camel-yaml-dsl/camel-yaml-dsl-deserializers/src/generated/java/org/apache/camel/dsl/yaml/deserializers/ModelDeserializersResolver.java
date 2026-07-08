@@ -17,6 +17,8 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
     @Override
     public ConstructNode resolve(String id) {
         switch(id) {
+            case "a2aSubTask": return new ModelDeserializers.A2ASubTaskDefinitionDeserializer();
+            case "org.apache.camel.model.A2ASubTaskDefinition": return new ModelDeserializers.A2ASubTaskDefinitionDeserializer();
             case "asn1": return new ModelDeserializers.ASN1DataFormatDeserializer();
             case "org.apache.camel.model.dataformat.ASN1DataFormat": return new ModelDeserializers.ASN1DataFormatDeserializer();
             case "aggregate": return new ModelDeserializers.AggregateDefinitionDeserializer();

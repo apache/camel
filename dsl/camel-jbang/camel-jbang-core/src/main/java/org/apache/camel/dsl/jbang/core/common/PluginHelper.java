@@ -114,7 +114,7 @@ public final class PluginHelper {
      * pattern. If present the plugin is called to customize the command line to add all sub-commands of the plugin.
      *
      * @param commandLine the command line to add commands to
-     * @param main        the current Camel JBang main
+     * @param main        the current Camel CLI main
      */
     public static void addPlugins(CommandLine commandLine, CamelJBangMain main, String... args) {
         // first arg is the command name (ie camel generate xxx)
@@ -181,7 +181,7 @@ public final class PluginHelper {
 
     /**
      * Gets the active plugins according to the local plugin configuration file. Performs version check to make sure
-     * that the current Camel JBang version is able to execute the plugin.
+     * that the current Camel CLI version is able to execute the plugin.
      *
      * @param  main  to exit the CLI process in case of error
      * @param  repos custom maven repositories

@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -47,11 +48,11 @@ import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.CamelTableColumns;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.TerminalWidthHelper;
 import org.apache.camel.dsl.jbang.core.model.InfraBaseDTO;
 import org.apache.camel.support.PatternHelper;
-import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.json.DeserializationException;
 import org.apache.camel.util.json.Jsoner;
 import picocli.CommandLine;
@@ -97,15 +98,40 @@ public abstract class InfraBaseCommand extends CamelCommand {
                     .toList();
             for (Path pidFile : pidFiles) {
                 String fn = pidFile.getFileName().toString();
-                String sn = fn.substring(fn.indexOf("-") + 1, fn.lastIndexOf('-'));
-                String pid = fn.substring(fn.lastIndexOf("-") + 1, fn.lastIndexOf('.'));
+                String sn = serviceNameFromPidFile(fn);
+                String pid = pidFromPidFile(fn);
                 if (pid.equals(pattern) || PatternHelper.matchPattern(sn, pattern)) {
                     pids.put(Long.valueOf(pid), pidFile);
                 }
             }
+        } catch (NoSuchFileException e) {
+            // camel directory does not exist yet
         }
 
         return pids;
+    }
+
+    /**
+     * Extracts the service name from an {@code infra-<service>-<pid>.json} pid file name. The service name may itself
+     * contain hyphens (for example {@code hive-mq}), so it spans everything between the first and the last hyphen
+     * rather than just the second hyphen-delimited segment.
+     *
+     * @param  pidFileName the pid file name, such as {@code infra-hive-mq-1234.json}.
+     * @return             the service name, such as {@code hive-mq}.
+     */
+    protected static String serviceNameFromPidFile(String pidFileName) {
+        return pidFileName.substring(pidFileName.indexOf('-') + 1, pidFileName.lastIndexOf('-'));
+    }
+
+    /**
+     * Extracts the pid from an {@code infra-<service>-<pid>.json} pid file name. The pid is the segment between the
+     * last hyphen and the file extension, which is robust to service names that themselves contain hyphens.
+     *
+     * @param  pidFileName the pid file name, such as {@code infra-hive-mq-1234.json}.
+     * @return             the pid, such as {@code 1234}.
+     */
+    protected static String pidFromPidFile(String pidFileName) {
+        return pidFileName.substring(pidFileName.lastIndexOf('-') + 1, pidFileName.lastIndexOf('.'));
     }
 
     protected boolean showPidColumn() {
@@ -167,38 +193,52 @@ public abstract class InfraBaseCommand extends CamelCommand {
         if (jsonOutput) {
             printer().println(
                     Jsoner.serialize(
-                            rows.stream().map(row -> {
-                                Object serviceDataObj = null;
-                                try {
-                                    serviceDataObj = Jsoner.deserialize(row.serviceData());
-                                } catch (DeserializationException e) {
-                                    // ignore
-                                }
-                                return new InfraBaseDTO(row.alias, row.aliasImplementation, row.description, serviceDataObj);
-                            })
+                            rows.stream().map(row -> new InfraBaseDTO(
+                                    row.alias, row.aliasImplementation, row.description,
+                                    parseServiceData(row.serviceData())))
                                     .map(InfraBaseDTO::toMap)
                                     .collect(Collectors.toList())));
         } else {
             int tw = terminalWidth();
-            // Fixed columns: PID (~8), ALIAS (width+2), SERVICE_DATA (~30), DESCRIPTION (~30)
-            int fixedWidth = (width + 2) + 30 + 30;
-            if (showPidColumn()) {
-                fixedWidth += 8;
-            }
-            int implWidth = TerminalWidthHelper.flexWidth(
-                    tw, fixedWidth, TerminalWidthHelper.noBorderOverhead(showPidColumn() ? 5 : 4),
-                    20, 35);
+            // Size DESCRIPTION to fill the terminal: measure the other columns so it gets the exact remainder.
+            // IMPLEMENTATION is capped and SERVICE_DATA keeps a compact fixed width; both truncate with an ellipsis
+            // instead of overflowing the terminal (the full, structured service data is available via --json).
+            int serviceDataWidth = 30;
+            int aliasWidth = width + 2;
+            int pidWidth = showPidColumn()
+                    ? CamelTableColumns.measure("PID", Integer.MAX_VALUE, rows, r -> r.pid) : 0;
+            int implWidth = CamelTableColumns.measure("IMPLEMENTATION", 35, rows, Row::aliasImplementation);
+            int overhead = TerminalWidthHelper.noBorderOverhead(showPidColumn() ? 5 : 4);
+            int descWidth = CamelTableColumns.lastColumnWidth(
+                    tw, overhead, pidWidth, aliasWidth, implWidth, serviceDataWidth);
             printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
                     new Column().header("PID").visible(showPidColumn()).headerAlign(HorizontalAlign.CENTER).with(r -> r.pid),
-                    new Column().header("ALIAS").minWidth(width + 2).dataAlign(HorizontalAlign.LEFT)
+                    new Column().header("ALIAS").minWidth(aliasWidth).dataAlign(HorizontalAlign.LEFT)
                             .with(Row::alias),
-                    new Column().header("IMPLEMENTATION").maxWidth(implWidth, OverflowBehaviour.NEWLINE)
+                    new Column().header("IMPLEMENTATION").maxWidth(implWidth, OverflowBehaviour.ELLIPSIS_RIGHT)
                             .dataAlign(HorizontalAlign.LEFT).with(Row::aliasImplementation),
-                    new Column().header("DESCRIPTION").dataAlign(HorizontalAlign.LEFT).with(Row::description),
-                    new Column().header("SERVICE_DATA").dataAlign(HorizontalAlign.LEFT).with(Row::serviceData))));
+                    CamelTableColumns.lastText("DESCRIPTION", descWidth).with(Row::description),
+                    new Column().header("SERVICE_DATA").maxWidth(serviceDataWidth, OverflowBehaviour.ELLIPSIS_RIGHT)
+                            .dataAlign(HorizontalAlign.LEFT).with(Row::serviceData))));
         }
 
         return 0;
+    }
+
+    /**
+     * Parses the raw service-data JSON string (read from the infra {@code .json} file) into a structured object so it
+     * is emitted as nested JSON by {@code --json}, rather than as an escaped string. Returns {@code null} (so the
+     * {@code serviceData} field is omitted) when there is no data or the stored content is not valid JSON.
+     */
+    static Object parseServiceData(String serviceData) {
+        if (serviceData == null) {
+            return null;
+        }
+        try {
+            return Jsoner.deserialize(serviceData);
+        } catch (DeserializationException e) {
+            return null;
+        }
     }
 
     private String getServiceData(String key, String pid) {
@@ -220,7 +260,7 @@ public abstract class InfraBaseCommand extends CamelCommand {
             Files.createDirectories(p);
             for (String s : Objects.requireNonNull(p.toFile().list())) {
                 if (s.startsWith("infra-" + key + "-") && s.endsWith(".json")) {
-                    return FileUtil.stripExt(s.split("-")[2]);
+                    return pidFromPidFile(s);
                 }
             }
         } catch (Exception e) {

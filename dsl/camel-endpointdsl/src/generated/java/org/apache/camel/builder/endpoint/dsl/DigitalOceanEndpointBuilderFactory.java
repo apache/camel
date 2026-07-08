@@ -396,7 +396,7 @@ public interface DigitalOceanEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final DigitalOceanHeaderNameBuilder INSTANCE = new DigitalOceanHeaderNameBuilder();
+        public static final DigitalOceanHeaderNameBuilder INSTANCE = new DigitalOceanHeaderNameBuilder();
 
         /**
          * The operation to perform.

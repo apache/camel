@@ -12,6 +12,7 @@ inbound JMS message from ActiveMQ on the cheese
 queue; this will use the xref:type-converter.adoc[Type Converter] to
 convert the JMS payload to `String` as declared in the method signature.
 
+._Java-only: consuming messages using @Consume annotation_
 [source,java]
 ----
 public class Foo {
@@ -29,6 +30,7 @@ the method.
 
 This basically creates a route that looks kinda like this (based on the example above):
 
+._Java-only: equivalent route created by the @Consume annotation_
 [source,java]
 ----
 from("activemq:cheese").bean(Foo.class, "onCheese");
@@ -43,12 +45,13 @@ the property.
 
 For example:
 
+._Java-only: using a property to define the @Consume endpoint_
 [source,java]
 ----
 public class MyService {
 
   private String serviceEndpoint;
-  
+
   public void setServiceEndpoint(String uri) {
      this.serviceEndpoint = uri;
   }
@@ -116,6 +119,7 @@ The method must be a `getXXX` method.
 
 So in the example above, we could have defined the `@Consume` annotation as:
 
+._Java-only: using shortened property name with @Consume_
 [source,java]
 ----
   @Consume(property = "service")
@@ -127,6 +131,7 @@ the algorithm, and have Camel invoke the `getServiceEndpoint` method.
 
 We could also have omitted the property attribute, to make it implicit:
 
+._Java-only: using implicit property resolution with @Consume_
 [source,java]
 ----
   @Consume

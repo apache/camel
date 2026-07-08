@@ -24,14 +24,14 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-jbang-parent</artifactId>
-        <version>4.21.0-SNAPSHOT</version>
+        <version>4.22.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
     <artifactId>camel-jbang-plugin-generate</artifactId>
 
     <name>Camel :: JBang :: Plugin :: Generate</name>
-    <description>Camel JBang Generate Plugin</description>
+    <description>Camel CLI Generate Plugin</description>
 
     <properties>
         <firstVersion>4.8.0</firstVersion>

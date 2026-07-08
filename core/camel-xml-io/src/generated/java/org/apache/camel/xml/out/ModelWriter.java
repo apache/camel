@@ -53,6 +53,9 @@ public class ModelWriter extends BaseWriter {
         super(writer, null);
     }
 
+    public void writeA2ASubTaskDefinition(A2ASubTaskDefinition def) throws IOException {
+        doWriteA2ASubTaskDefinition("a2aSubTask", def);
+    }
     public void writeAggregateDefinition(AggregateDefinition def) throws IOException {
         doWriteAggregateDefinition("aggregate", def);
     }
@@ -769,6 +772,16 @@ public class ModelWriter extends BaseWriter {
         doWriteOptionalIdentifiedDefinitionRef(null, def);
     }
 
+    protected void doWriteA2ASubTaskDefinition(String name, A2ASubTaskDefinition def) throws IOException {
+        startElement(name);
+        doWriteProcessorDefinitionAttributes(def);
+        doWriteAttribute("emitBefore", def.getEmitBefore(), null);
+        doWriteAttribute("emitAfter", def.getEmitAfter(), null);
+        doWriteAttribute("emitOnError", def.getEmitOnError(), null);
+        doWriteAttribute("failIfNoTaskContext", def.getFailIfNoTaskContext(), "false");
+        doWriteList(null, null, def.getOutputs(), this::doWriteProcessorDefinitionRef);
+        endElement(name);
+    }
     protected void doWriteAggregateDefinition(String name, AggregateDefinition def) throws IOException {
         startElement(name);
         doWriteProcessorDefinitionAttributes(def);
@@ -1588,9 +1601,6 @@ public class ModelWriter extends BaseWriter {
     protected void doWriteRouteDefinition(String name, RouteDefinition def) throws IOException {
         startElement(name);
         doWriteProcessorDefinitionAttributes(def);
-        doWriteAttribute("template", toString(def.isTemplate()), null);
-        doWriteAttribute("kamelet", toString(def.isKamelet()), null);
-        doWriteAttribute("rest", toString(def.isRest()), null);
         doWriteAttribute("group", def.getGroup(), null);
         doWriteAttribute("nodePrefixId", def.getNodePrefixId(), null);
         doWriteAttribute("routeConfigurationId", def.getRouteConfigurationId(), null);
@@ -1759,6 +1769,12 @@ public class ModelWriter extends BaseWriter {
         doWriteAttribute("executorService", def.getExecutorService(), null);
         doWriteAttribute("onPrepare", def.getOnPrepare(), null);
         doWriteAttribute("shareUnitOfWork", def.getShareUnitOfWork(), null);
+        doWriteAttribute("group", def.getGroup(), null);
+        doWriteAttribute("errorThreshold", def.getErrorThreshold(), null);
+        doWriteAttribute("maxFailedRecords", def.getMaxFailedRecords(), null);
+        doWriteAttribute("resumeStrategy", def.getResumeStrategy(), null);
+        doWriteAttribute("watermarkKey", def.getWatermarkKey(), null);
+        doWriteAttribute("watermarkExpression", def.getWatermarkExpression(), null);
         doWriteOutputExpressionNodeElements(def);
         endElement(name);
     }
@@ -2553,7 +2569,6 @@ public class ModelWriter extends BaseWriter {
         doWriteAttribute("symmetricKeyAlgorithm", def.getSymmetricKeyAlgorithm(), "AES");
         doWriteAttribute("symmetricKeyLength", def.getSymmetricKeyLength(), "128");
         doWriteAttribute("keyPair", def.getKeyPair(), null);
-        doWriteAttribute("bufferSize", def.getBufferSize(), "4096");
         doWriteAttribute("provider", def.getProvider(), null);
         doWriteAttribute("keyGenerator", def.getKeyGenerator(), null);
         endElement(name);
@@ -3576,6 +3591,7 @@ public class ModelWriter extends BaseWriter {
     protected void doWriteOptionalIdentifiedDefinitionRef(String n, OptionalIdentifiedDefinition v) throws IOException {
         if (v != null) {
             switch (v.getClass().getSimpleName()) {
+                case "A2ASubTaskDefinition" -> doWriteA2ASubTaskDefinition("a2aSubTask", (A2ASubTaskDefinition) v);
                 case "AggregateDefinition" -> doWriteAggregateDefinition("aggregate", (AggregateDefinition) v);
                 case "BeanDefinition" -> doWriteBeanDefinition("bean", (BeanDefinition) v);
                 case "CatchDefinition" -> doWriteCatchDefinition("doCatch", (CatchDefinition) v);
@@ -3683,6 +3699,7 @@ public class ModelWriter extends BaseWriter {
     protected void doWriteProcessorDefinitionRef(String n, ProcessorDefinition v) throws IOException {
         if (v != null) {
             switch (v.getClass().getSimpleName()) {
+                case "A2ASubTaskDefinition" -> doWriteA2ASubTaskDefinition("a2aSubTask", (A2ASubTaskDefinition) v);
                 case "AggregateDefinition" -> doWriteAggregateDefinition("aggregate", (AggregateDefinition) v);
                 case "BeanDefinition" -> doWriteBeanDefinition("bean", (BeanDefinition) v);
                 case "CatchDefinition" -> doWriteCatchDefinition("doCatch", (CatchDefinition) v);

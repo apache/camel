@@ -2,12 +2,10 @@
 :doctitle: Python
 :shortname: python
 :artifactid: camel-python
-:description: Evaluates a Python expression.
+:description: Evaluates a Python expression
 :since: 3.19
 :supportlevel: Experimental
 :tabs-sync-option:
-//Manually maintained attributes
-:camel-spring-boot-name: python
 
 *Since Camel {since}*
 
@@ -24,8 +22,6 @@ with the xref:eips:choice-eip.adoc[Content-Based Router] EIP.
 // language options: START
 include::partial$language-options.adoc[]
 // language options: END
-
-
 
 
 == Variables
@@ -60,6 +56,3 @@ substituting the version number for the latest release.
   <version>x.x.x</version>
 </dependency>
 -------------------------------------
-
-
-include::spring-boot:partial$starter.adoc[]

@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "asn1",
     "title": "ASN.1 File",
-    "description": "Encode and decode data structures using Abstract Syntax Notation One (ASN.1).",
+    "description": "Encode and decode data structures using Abstract Syntax Notation One (ASN.1)",
     "deprecated": false,
     "firstVersion": "2.20.0",
     "label": "dataformat,transformation,file",
@@ -15,6 +15,6 @@
   "properties": {
     "id": { "index": 0, "kind": "attribute", "displayName": "Id", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node" },
     "unmarshalType": { "index": 1, "kind": "attribute", "displayName": "Unmarshal Type", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Class to use when unmarshalling." },
-    "usingIterator": { "index": 2, "kind": "attribute", "displayName": "Using Iterator", "group": "common", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "If the asn1 file has more than one entry, the setting this option to true, allows working with the splitter EIP, to split the data using an iterator in a streaming mode." }
+    "usingIterator": { "index": 2, "kind": "attribute", "displayName": "Using Iterator", "group": "common", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "If the asn1 file has more than one entry, the setting this option to true allows working with the splitter EIP to split each entry individually." }
   }
 }

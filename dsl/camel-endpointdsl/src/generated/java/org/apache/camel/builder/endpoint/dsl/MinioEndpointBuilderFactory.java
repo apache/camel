@@ -2574,7 +2574,7 @@ public interface MinioEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final MinioHeaderNameBuilder INSTANCE = new MinioHeaderNameBuilder();
+        public static final MinioHeaderNameBuilder INSTANCE = new MinioHeaderNameBuilder();
 
         /**
          * Consumer: The name of the bucket in which this object is contained.

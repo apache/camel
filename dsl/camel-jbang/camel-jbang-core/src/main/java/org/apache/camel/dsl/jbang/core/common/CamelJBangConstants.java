@@ -147,8 +147,8 @@ public final class CamelJBangConstants {
     @Metadata(description = "Additional dependencies for Quarkus runtime only", javaType = "String")
     public static final String DEPENDENCIES_QUARKUS = "camel.jbang.dependencies.quarkus";
 
-    @Metadata(description = "Version to use for jib-maven-plugin if exporting to camel-main and have Kubernetes enabled (jkube.xxx options)",
-              javaType = "String", defaultValue = "3.4.5", label = "kubernetes")
+    @Metadata(description = "Version to use for jib-maven-plugin when exporting the application",
+              javaType = "String", defaultValue = "3.5.1", label = "maven")
     public static final String JIB_MAVEN_PLUGIN_VERSION = "camel.jbang.jib-maven-plugin-version";
 
     @Metadata(description = "Version to use for jkube-maven-plugin if exporting to camel-main and have Kubernetes enabled (jkube.xxx options)",
@@ -217,7 +217,7 @@ public final class CamelJBangConstants {
               javaType = "boolean", defaultValue = "false")
     public static final String FRESH = "camel.jbang.fresh";
 
-    @Metadata(description = "Whether to automatic package scan JARs for custom Spring or Quarkus beans making them available for Camel JBang",
+    @Metadata(description = "Whether to automatic package scan JARs for custom Spring or Quarkus beans making them available for Camel CLI",
               javaType = "boolean", label = "advanced")
     public static final String PACKAGE_SCAN_JARS = "camel.jbang.packageScanJars";
 

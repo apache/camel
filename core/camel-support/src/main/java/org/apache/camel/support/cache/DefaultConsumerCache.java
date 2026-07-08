@@ -53,7 +53,12 @@ public class DefaultConsumerCache extends ServiceSupport implements ConsumerCach
         this.source = source;
         this.camelContext = camelContext;
         this.maxCacheSize = cacheSize <= 0 ? CamelContextHelper.getMaximumCachePoolSize(camelContext) : cacheSize;
-        this.consumers = createServicePool(camelContext, maxCacheSize);
+        if (cacheSize >= 0) {
+            this.consumers = createServicePool(camelContext, maxCacheSize);
+        } else {
+            // no cache then empty
+            this.consumers = null;
+        }
         // only if JMX is enabled
         if (camelContext.getManagementStrategy().getManagementAgent() != null) {
             this.extendedStatistics
@@ -194,7 +199,7 @@ public class DefaultConsumerCache extends ServiceSupport implements ConsumerCach
      */
     @Override
     public int size() {
-        int size = consumers.size();
+        int size = consumers != null ? consumers.size() : 0;
         LOG.trace("size = {}", size);
         return size;
     }
@@ -207,8 +212,10 @@ public class DefaultConsumerCache extends ServiceSupport implements ConsumerCach
         lock.lock();
         try {
             try {
-                consumers.stop();
-                consumers.start();
+                if (consumers != null) {
+                    consumers.stop();
+                    consumers.start();
+                }
             } catch (Exception e) {
                 LOG.debug("Error restarting consumer pool", e);
             }
@@ -222,7 +229,9 @@ public class DefaultConsumerCache extends ServiceSupport implements ConsumerCach
 
     @Override
     public void cleanUp() {
-        consumers.cleanUp();
+        if (consumers != null) {
+            consumers.cleanUp();
+        }
     }
 
     @Override

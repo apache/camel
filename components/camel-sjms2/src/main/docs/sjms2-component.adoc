@@ -7,8 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
-//Manually maintained attributes
-:camel-spring-boot-name: sjms2
 
 *Since Camel {since}*
 
@@ -61,7 +59,6 @@ You append query options to the URI using the following format,
 `?option=value&option=value&...`
 
 
-
 // component options: START
 include::partial$component-configure-options.adoc[]
 include::partial$component-endpoint-options.adoc[]
@@ -107,12 +104,42 @@ For example, the following route shows how you can compute a destination
 at run time and use it to override the destination appearing in the JMS
 URL:
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------
+----
 from("file://inbox")
   .to("bean:computeDestination")
   .to("sjms2:queue:dummy");
---------------------------------
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="file://inbox"/>
+  <to uri="bean:computeDestination"/>
+  <to uri="sjms2:queue:dummy"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: file://inbox
+      steps:
+        - to:
+            uri: bean:computeDestination
+        - to:
+            uri: sjms2:queue:dummy
+----
+====
 
 The queue name, `dummy`, is just a placeholder. It must be provided as
 part of the JMS endpoint URL, but it will be ignored in this example.
@@ -120,13 +147,14 @@ part of the JMS endpoint URL, but it will be ignored in this example.
 In the `computeDestination` bean, specify the real destination by
 setting the `CamelJmsDestinationName` header as follows:
 
+._Java-only: programmatic header manipulation with Exchange API_
 [source,java]
--------------------------------------------------------------------------
+----
 public void setJmsHeader(Exchange exchange) {
    String id = ....
    exchange.getIn().setHeader("CamelJmsDestinationName", "order:" + id");
 }
--------------------------------------------------------------------------
+----
 
 Then Camel will read this header and use it as the destination instead
 of the one configured on the endpoint. So, in this example Camel sends
@@ -148,11 +176,38 @@ For example, suppose you need to send messages to queues with order types,
 then using toD could, for example, be done as follows:
 
 .Example SJMS2 route with `toD`
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------
+----
 from("direct:order")
   .toD("sjms2:order-${header.orderType}");
---------------------------------
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:order"/>
+  <toD uri="sjms2:order-${header.orderType}"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:order
+      steps:
+        - toD:
+            uri: "sjms2:order-${header.orderType}"
+----
+====
 
 === Local transactions
 
@@ -166,6 +221,10 @@ before the active JMS Session will commit or rollback.
 You can combine consumer and producer, such as:
 
 .Example transacted SJMS2 route with consumer and producer
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("sjms2:cheese?transacted=true")
@@ -173,6 +232,39 @@ from("sjms2:cheese?transacted=true")
   .to("sjms2:foo?transacted=true")
   .to("bean:bar");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="sjms2:cheese?transacted=true"/>
+  <to uri="bean:foo"/>
+  <to uri="sjms2:foo?transacted=true"/>
+  <to uri="bean:bar"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: sjms2:cheese
+      parameters:
+        transacted: true
+      steps:
+        - to:
+            uri: bean:foo
+        - to:
+            uri: sjms2:foo
+            parameters:
+              transacted: true
+        - to:
+            uri: bean:bar
+----
+====
 
 Here the consumer and producer are both transacted, which means that only at the end of processing the message,
 then both the consumer and the producer will commit (or rollback in case of an exception during routing).
@@ -224,7 +316,3 @@ Currently, the only correlation strategy is to use the `JMSCorrelationId`.
 The _InOut_ Consumer uses this strategy as well ensuring that all
 response messages to the included `JMSReplyTo` destination also have the
 `JMSCorrelationId` copied from the request as well.
-
-
-
-include::spring-boot:partial$starter.adoc[]

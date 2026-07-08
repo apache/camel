@@ -338,7 +338,7 @@ public interface HazelcastInstanceEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final HazelcastInstanceHeaderNameBuilder INSTANCE = new HazelcastInstanceHeaderNameBuilder();
+        public static final HazelcastInstanceHeaderNameBuilder INSTANCE = new HazelcastInstanceHeaderNameBuilder();
 
         /**
          * The type of event - here added and removed.

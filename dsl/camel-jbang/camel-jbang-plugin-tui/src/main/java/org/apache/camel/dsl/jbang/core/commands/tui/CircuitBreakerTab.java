@@ -30,38 +30,37 @@ import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.Line;
 import dev.tamboui.text.Span;
 import dev.tamboui.text.Text;
-import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
+import dev.tamboui.widgets.block.Borders;
 import dev.tamboui.widgets.block.Title;
 import dev.tamboui.widgets.paragraph.Paragraph;
+import dev.tamboui.widgets.sparkline.DualSparkline;
 import dev.tamboui.widgets.table.Cell;
 import dev.tamboui.widgets.table.Row;
 import dev.tamboui.widgets.table.Table;
-import dev.tamboui.widgets.table.TableState;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 
-import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.*;
+import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.*;
 
-class CircuitBreakerTab implements MonitorTab {
+class CircuitBreakerTab extends AbstractTableTab {
 
-    private static final String[] SORT_COLUMNS = { "route", "id", "component", "state" };
-    private static final int MAX_CHART_POINTS = 60;
+    private static final int MAX_CHART_POINTS = 300;
 
-    private final MonitorContext ctx;
-    private final TableState tableState = new TableState();
     private final Map<String, LinkedList<Long>> cbSuccessHistory;
     private final Map<String, LinkedList<Long>> cbFailHistory;
 
-    private String sort = "route";
-    private int sortIndex;
-    private boolean sortReversed;
-
     CircuitBreakerTab(MonitorContext ctx, MetricsCollector metrics) {
-        this.ctx = ctx;
+        super(ctx, "route", "id", "component", "state");
         this.cbSuccessHistory = metrics.getCbSuccessHistory();
         this.cbFailHistory = metrics.getCbFailHistory();
+    }
+
+    @Override
+    protected int getRowCount() {
+        IntegrationInfo info = ctx.findSelectedIntegration();
+        return info != null ? info.circuitBreakers.size() : 0;
     }
 
     @Override
@@ -73,44 +72,7 @@ class CircuitBreakerTab implements MonitorTab {
     }
 
     @Override
-    public boolean handleKeyEvent(KeyEvent ke) {
-        if (ke.isChar('s')) {
-            sortIndex = (sortIndex + 1) % SORT_COLUMNS.length;
-            sort = SORT_COLUMNS[sortIndex];
-            sortReversed = false;
-            return true;
-        }
-        if (ke.isChar('S')) {
-            sortReversed = !sortReversed;
-            return true;
-        }
-        return false;
-    }
-
-    @Override
-    public boolean handleEscape() {
-        return false;
-    }
-
-    @Override
-    public void navigateUp() {
-        tableState.selectPrevious();
-    }
-
-    @Override
-    public void navigateDown() {
-        IntegrationInfo info = ctx.findSelectedIntegration();
-        tableState.selectNext(info != null ? info.circuitBreakers.size() : 0);
-    }
-
-    @Override
-    public void render(Frame frame, Rect area) {
-        IntegrationInfo info = ctx.findSelectedIntegration();
-        if (info == null) {
-            renderNoSelection(frame, area);
-            return;
-        }
-
+    protected void renderContent(Frame frame, Rect area, IntegrationInfo info) {
         List<CircuitBreakerInfo> sorted = new ArrayList<>(info.circuitBreakers);
         sorted.sort(this::sortCb);
 
@@ -145,11 +107,7 @@ class CircuitBreakerTab implements MonitorTab {
         }
 
         if (rows.isEmpty()) {
-            rows.add(Row.from(
-                    Cell.from(Span.styled("No circuit breakers", Style.EMPTY.dim())),
-                    Cell.from(""), Cell.from(""), Cell.from(""),
-                    Cell.from(""), Cell.from(""), Cell.from(""), Cell.from(""), Cell.from(""),
-                    Cell.from(""), Cell.from("")));
+            rows.add(emptyRow("No circuit breakers", 11));
         }
 
         CircuitBreakerInfo selectedCb = null;
@@ -190,12 +148,14 @@ class CircuitBreakerTab implements MonitorTab {
                         Constraint.length(6),
                         Constraint.length(8),
                         Constraint.fill())
-                .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
+                .highlightStyle(Theme.selectionBg())
                 .highlightSpacing(Table.HighlightSpacing.ALWAYS)
-                .block(Block.builder().borderType(BorderType.ROUNDED).title(" Circuit Breaker ").build())
+                .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(" Circuit Breaker ").build())
                 .build();
 
+        lastTableArea = chunks.get(0);
         frame.renderStatefulWidget(table, chunks.get(0), tableState);
+        renderScrollbar(frame, info.circuitBreakers.size());
 
         if (showDiagram) {
             renderDiagram(frame, chunks.get(1), selectedCb, info.pid);
@@ -205,16 +165,8 @@ class CircuitBreakerTab implements MonitorTab {
     @Override
     public void renderFooter(List<Span> spans) {
         hint(spans, "Esc", "back");
-        hint(spans, "↑↓", "navigate");
+        hint(spans, TuiIcons.HINT_SCROLL, "navigate");
         hint(spans, "s", "sort");
-    }
-
-    private String sortLabel(String label, String column) {
-        return MonitorContext.sortLabel(label, column, sort, sortReversed);
-    }
-
-    private Style sortStyle(String column) {
-        return MonitorContext.sortStyle(column, sort);
     }
 
     private int sortCb(CircuitBreakerInfo a, CircuitBreakerInfo b) {
@@ -256,7 +208,7 @@ class CircuitBreakerTab implements MonitorTab {
         lines.add(Line.from(
                 Span.raw("   "),
                 Span.styled("│    CLOSED    │", closedBox),
-                Span.raw("─────────────►"),
+                Span.raw("─────────────" + TuiIcons.POINTER),
                 Span.styled("│     OPEN     │", openBox),
                 Span.raw("◄─┐")));
         lines.add(Line.from(
@@ -268,7 +220,7 @@ class CircuitBreakerTab implements MonitorTab {
         lines.add(Line.from(
                 Span.raw("   "),
                 Span.styled("└──────", closedBox),
-                Span.raw("▲"),
+                Span.raw(TuiIcons.SORT_UP),
                 Span.styled("───────┘", closedBox),
                 Span.raw("              "),
                 Span.styled("└───────", openBox),
@@ -288,7 +240,7 @@ class CircuitBreakerTab implements MonitorTab {
         lines.add(Line.from(
                 Span.raw("          │                      "),
                 Span.styled("┌───────", halfOpenBox),
-                Span.raw("▼"),
+                Span.raw(TuiIcons.SORT_DOWN),
                 Span.styled("──────┐", halfOpenBox),
                 Span.raw("  │")));
         lines.add(Line.from(
@@ -313,7 +265,7 @@ class CircuitBreakerTab implements MonitorTab {
 
         frame.renderWidget(Paragraph.builder()
                 .text(Text.from(lines))
-                .block(Block.builder().borderType(BorderType.ROUNDED).title(title).build())
+                .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(title).build())
                 .build(), area);
     }
 
@@ -345,12 +297,12 @@ class CircuitBreakerTab implements MonitorTab {
                 Span.styled("░".repeat(empty), Style.EMPTY.dim()));
         frame.renderWidget(Paragraph.builder()
                 .text(Text.from(barLine))
-                .block(Block.builder().borderType(BorderType.ROUNDED).title(" Failure Rate ").build())
+                .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(" Failure Rate ").build())
                 .build(), vSplit.get(0));
 
         LinkedList<Long> successHist = cbSuccessHistory.get(key);
         LinkedList<Long> failHist = cbFailHistory.get(key);
-        int renderPoints = MAX_CHART_POINTS;
+        int renderPoints = Math.min(MAX_CHART_POINTS, Math.max(2, vSplit.get(1).width() - 6));
         long[] successArr = new long[renderPoints];
         long[] failArr = new long[renderPoints];
         if (successHist != null) {
@@ -376,13 +328,15 @@ class CircuitBreakerTab implements MonitorTab {
                 Span.raw(String.format(" ok:%-4d ", curSuccess)),
                 Span.styled("▬", Style.EMPTY.fg(Color.LIGHT_RED)),
                 Span.raw(String.format(" fail:%-4d msg/s", curFail)));
-        frame.renderWidget(MirroredSparkline.builder()
+        frame.renderWidget(DualSparkline.builder()
                 .topData(successArr)
                 .bottomData(failArr)
                 .topStyle(Style.EMPTY.fg(Color.GREEN))
                 .bottomStyle(Style.EMPTY.fg(Color.LIGHT_RED))
-                .xLabels("-60s", "-45s", "-30s", "-15s", "now")
-                .block(Block.builder().borderType(BorderType.ROUNDED)
+                .showYAxis(true)
+                .xLabels("-" + renderPoints + "s", "-" + (renderPoints * 3 / 4) + "s",
+                        "-" + (renderPoints / 2) + "s", "-" + (renderPoints / 4) + "s", "now")
+                .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
                         .title(Title.from(chartTitle)).build())
                 .build(), vSplit.get(1));
 
@@ -406,7 +360,7 @@ class CircuitBreakerTab implements MonitorTab {
                 Span.styled("fail:", dim), Span.raw(" " + lastFail));
         frame.renderWidget(Paragraph.builder()
                 .text(Text.from(Line.from(Span.raw("")), metricsLine1, metricsLine2))
-                .block(Block.builder().borderType(BorderType.ROUNDED).build())
+                .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).build())
                 .build(), vSplit.get(2));
     }
 
@@ -421,6 +375,11 @@ class CircuitBreakerTab implements MonitorTab {
         List<String> items = sorted.stream().map(cb -> cb.id != null ? cb.id : "").toList();
         Integer sel = tableState.selected();
         return new SelectionContext("table", items, sel != null ? sel : -1, items.size(), "Circuit Breakers");
+    }
+
+    @Override
+    public String description() {
+        return "Circuit breaker state and statistics (Resilience4j)";
     }
 
     @Override

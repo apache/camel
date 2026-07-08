@@ -33,6 +33,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -87,19 +89,18 @@ public class InOutQueueProducerAsyncLoadTest extends JmsTestSupport {
                         assertNotNull(response);
                         assertEquals(responseText, response);
                     } catch (Exception e) {
-                        log.error("TODO Auto-generated catch block", e);
+                        log.error("Failed to process message {}", tempI, e);
                     }
                 }
             };
             executor.execute(worker);
         }
-        while (context.getInflightRepository().size() > 0) {
-            Thread.sleep(100);
-        }
+        // shut down the executor and wait for all submitted tasks to complete
         executor.shutdown();
-        while (!executor.isTerminated()) {
-            Thread.sleep(100);
-        }
+        await().atMost(30, SECONDS)
+                .until(() -> executor.isTerminated());
+        // verify all inflight messages have completed
+        assertEquals(0, context.getInflightRepository().size());
     }
 
     @Override

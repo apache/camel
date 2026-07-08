@@ -54,7 +54,7 @@ public class MailRouteTest extends CamelTestSupport {
 
         Map<String, Object> headers = new HashMap<>();
         headers.put(MailConstants.MAIL_REPLY_TO, "route-test-reply@localhost");
-        template.sendBodyAndHeaders(james.uriPrefix(Protocol.smtp), "hello world!", headers);
+        template.sendBodyAndHeaders(james.uriPrefix(Protocol.smtp) + "&useHeaderReplyTo=true", "hello world!", headers);
 
         // lets test the first sent worked
         assertMailboxReceivedMessages(james);
@@ -131,7 +131,8 @@ public class MailRouteTest extends CamelTestSupport {
                 // to seperate the mail addresses
                 from("direct:a")
                         .setHeader("to", constant("result@localhost; copy@localhost"))
-                        .to(result.uriPrefix(Protocol.smtp));
+                        .to(result.uriPrefix(Protocol.smtp)
+                            + "&useHeaderRecipients=true&useHeaderReplyTo=true&useHeaderSubject=true");
 
                 from(result.uriPrefix(Protocol.imap) + "&initialDelay=100&delay=100").convertBodyTo(String.class)
                         .to("mock:result");

@@ -44,20 +44,6 @@ public class XPathRouteConcurrentTest extends ContextTestSupport {
     }
 
     @Test
-    public void testXPathTwoMessagesNotSameTime() throws Exception {
-        getMockEndpoint("mock:result").expectedMessageCount(1);
-        getMockEndpoint("mock:other").expectedMessageCount(1);
-
-        template.sendBody("seda:foo", "<person><name>Claus</name></person>");
-
-        Thread.sleep(10);
-
-        template.sendBody("seda:foo", "<person><name>James</name></person>");
-
-        assertMockEndpointsSatisfied();
-    }
-
-    @Test
     public void testNoConcurrent() throws Exception {
         doSendMessages(1);
     }

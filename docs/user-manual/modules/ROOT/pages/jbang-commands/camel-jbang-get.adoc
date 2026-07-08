@@ -24,6 +24,7 @@ camel get [options]
 | xref:jbang-commands/camel-jbang-get-consumer.adoc[consumer] | Get status of Camel consumers
 | xref:jbang-commands/camel-jbang-get-context.adoc[context] | Get status of Camel integrations
 | xref:jbang-commands/camel-jbang-get-count.adoc[count] | Get total and failed exchanges
+| xref:jbang-commands/camel-jbang-get-datasource.adoc[datasource] | Get status of DataSource connection pools
 | xref:jbang-commands/camel-jbang-get-endpoint.adoc[endpoint] | Get usage of Camel endpoints
 | xref:jbang-commands/camel-jbang-get-error.adoc[error] | Get captured routing errors of Camel integrations
 | xref:jbang-commands/camel-jbang-get-event.adoc[event] | Get latest events of Camel integrations
@@ -42,9 +43,9 @@ camel get [options]
 | xref:jbang-commands/camel-jbang-get-rest.adoc[rest] | Get REST services of Camel integrations
 | xref:jbang-commands/camel-jbang-get-route.adoc[route] | Get status of Camel routes
 | xref:jbang-commands/camel-jbang-get-route-controller.adoc[route-controller] | List status of route controller
-| xref:jbang-commands/camel-jbang-get-route-dump.adoc[route-dump] | Dump Camel route in XML or YAML format
 | xref:jbang-commands/camel-jbang-get-service.adoc[service] | Get services of Camel integrations
 | xref:jbang-commands/camel-jbang-get-source.adoc[source] | Display Camel route source code
+| xref:jbang-commands/camel-jbang-get-sql-trace.adoc[sql-trace] | Get SQL query trace data
 | xref:jbang-commands/camel-jbang-get-startup-recorder.adoc[startup-recorder] | Display startup recording
 | xref:jbang-commands/camel-jbang-get-transformer.adoc[transformer] | Get list of data type transformers
 | xref:jbang-commands/camel-jbang-get-variable.adoc[variable] | List variables of Camel integrations

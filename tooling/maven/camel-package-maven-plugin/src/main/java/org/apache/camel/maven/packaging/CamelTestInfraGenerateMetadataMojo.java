@@ -53,7 +53,7 @@ import org.jboss.jandex.DotName;
 /**
  * Gather all classes annotated with @InfraService and create a JSON file containing all the metadata.
  *
- * The JSON can be used to retrieve the test-infra information and run the services (via Camel JBang for example)
+ * The JSON can be used to retrieve the test-infra information and run the services (via Camel CLI for example)
  */
 @Mojo(name = "test-infra-generate-metadata", threadSafe = true,
       requiresDependencyResolution = ResolutionScope.COMPILE, defaultPhase = LifecyclePhase.PROCESS_CLASSES)

@@ -7,8 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Only consumer is supported
-//Manually maintained attributes
-:camel-spring-boot-name: jetty
 
 *Since Camel {since}*
 
@@ -54,6 +52,84 @@ include::partial$component-endpoint-options.adoc[]
 include::partial$component-endpoint-headers.adoc[]
 // component options: END
 
+== OAuth Bearer token validation
+
+Jetty consumers can validate incoming `Authorization: Bearer` tokens by setting the
+`oauthProfile` endpoint option.
+The profile is resolved through Camel's `OAuthTokenValidationFactory` SPI. The
+xref:components:others:oauth.adoc[camel-oauth] component provides the default implementation for
+standalone Camel applications; see its documentation for validation profile options and production
+hardening (expected issuer and audience, HTTPS for JWKS, OIDC discovery, and introspection
+endpoints). Runtimes can also provide their own implementation.
+
+[NOTE]
+====
+If `oauthProfile` is set but no `OAuthTokenValidationFactory` is available, the route fails to start.
+Add `camel-oauth` for the default provider or include a runtime-specific provider from the platform integration.
+====
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("jetty:http://0.0.0.0:8080/secure?oauthProfile=myprofile")
+    .to("direct:businessLogic");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="jetty:http://0.0.0.0:8080/secure?oauthProfile=myprofile"/>
+  <to uri="direct:businessLogic"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: jetty:http://0.0.0.0:8080/secure
+      parameters:
+        oauthProfile: myprofile
+      steps:
+        - to:
+            uri: direct:businessLogic
+----
+====
+
+When `oauthProfile` is set, static profile configuration is resolved and validated at route startup.
+Updates to OAuth profile properties require restarting the route or Camel context before they take effect.
+Requests without a Bearer token or with an invalid token are rejected with HTTP 401 before the
+route is processed; missing credentials receive a `WWW-Authenticate: Bearer` response header and
+invalid tokens receive `WWW-Authenticate: Bearer error="invalid_token"`. Malformed
+`Authorization` headers are rejected with HTTP 400 and
+`WWW-Authenticate: Bearer error="invalid_request"`.
+Token validation infrastructure failures are rejected with HTTP 503.
+For valid tokens, the token validation result is stored on the exchange as the
+`CamelOAuthTokenValidationResult` exchange property. The raw `Authorization` header is removed from
+the Camel message before the route is invoked.
+
+[NOTE]
+====
+Automatic `OPTIONS` handling runs before OAuth validation when `optionsEnabled=false`, so
+unauthenticated CORS preflight and Allow requests keep the existing Jetty behavior.
+If an `OPTIONS` route is explicitly enabled, that route is protected by OAuth like other methods.
+====
+
+[NOTE]
+====
+This is Camel endpoint-level validation and does not replace Jetty handlers or other container
+security mechanisms. If route code accesses the native servlet request object directly, the
+container request still reflects the original inbound HTTP headers.
+When combining OAuth validation with custom Jetty handlers or container-managed security, see the
+Jetty handlers and security configuration section below.
+====
 
 == Message Headers
 
@@ -99,10 +175,37 @@ To listen across an entire URI prefix, see below.
 
 By default, Jetty will only match on exact uri's. But you can instruct Jetty to match prefixes. For example:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("jetty://0.0.0.0:8123/foo").to("mock:foo");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="jetty:http://0.0.0.0:8123/foo"/>
+  <to uri="mock:foo"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: jetty:http://0.0.0.0:8123/foo
+      steps:
+        - to:
+            uri: mock:foo
+----
+====
 
 In the route above Jetty will only match if the uri is
 an exact match, so it will match if you enter
@@ -111,19 +214,77 @@ an exact match, so it will match if you enter
 
 So if you want to enable wildcard matching you need to set `matchOnUriPrefix=true` as follows:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("jetty://0.0.0.0:8123/foo?matchOnUriPrefix=true").to("mock:foo");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="jetty:http://0.0.0.0:8123/foo?matchOnUriPrefix=true"/>
+  <to uri="mock:foo"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: jetty:http://0.0.0.0:8123/foo
+      parameters:
+        matchOnUriPrefix: true
+      steps:
+        - to:
+            uri: mock:foo
+----
+====
+
 So now Jetty matches any endpoints with starts with `foo`.
 
 To match *any* endpoint you can remove the prefix so it will match anything from the root:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("jetty://0.0.0.0:8123?matchOnUriPrefix=true").to("mock:foo");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="jetty:http://0.0.0.0:8123?matchOnUriPrefix=true"/>
+  <to uri="mock:foo"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: jetty:http://0.0.0.0:8123
+      parameters:
+        matchOnUriPrefix: true
+      steps:
+        - to:
+            uri: mock:foo
+----
+====
 
 === Servlets
 
@@ -148,6 +309,18 @@ The session support option, `sessionSupport`, can be used to enable a
 `HttpSession` object and access the session object while processing the
 exchange. For example, the following route enables sessions:
 
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("jetty:http://0.0.0.0/myapp/myservice/?sessionSupport=true")
+    .process("myCode");
+----
+
+XML::
++
 [source,xml]
 ----
 <route>
@@ -156,9 +329,25 @@ exchange. For example, the following route enables sessions:
 </route>
 ----
 
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: jetty:http://0.0.0.0/myapp/myservice/
+      parameters:
+        sessionSupport: true
+      steps:
+        - process:
+            ref: myCode
+----
+====
+
 The `myCode` Processor can be instantiated by a
 Spring `bean` element:
 
+._XML-only: Spring bean definition for Processor_
 [source,xml]
 ----
 <bean id="myCode" class="com.mycompany.MyCodeProcessor"/>
@@ -167,6 +356,7 @@ Spring `bean` element:
 Where the processor implementation can access the `HttpSession` as
 follows:
 
+._Java-only: inline Processor accessing HttpSession_
 [source,java]
 ----
 public void process(Exchange exchange) throws Exception {
@@ -190,6 +380,7 @@ to use the utility with the Jetty component.
 [[Jetty-Programmaticconfigurationofthecomponent]]
 Programmatic configuration of the component
 
+._Java-only: programmatic SSL configuration with KeyStore and SSLContext parameters_
 [source,java]
 ----
 KeyStoreParameters ksp = new KeyStoreParameters();
@@ -210,6 +401,7 @@ jettyComponent.setSslContextParameters(scp);
 [[Jetty-SpringDSLbasedconfigurationofendpoint]]
 Spring DSL based configuration of endpoint
 
+._XML-only: Spring XML configuration for SSL context parameters_
 [source,xml]
 ----
   <camel:sslContextParameters
@@ -232,10 +424,30 @@ Configuring Jetty Directly
 Jetty provides SSL support out of the box. To enable Jetty to run in SSL
 mode, format the URI with the `\https://` prefix---for example:
 
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("jetty:https://0.0.0.0/myapp/myservice/");
+----
+
+XML::
++
 [source,xml]
 ----
 <from uri="jetty:https://0.0.0.0/myapp/myservice/"/>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- from:
+    uri: jetty:https://0.0.0.0/myapp/myservice/
+----
+====
 
 Jetty also needs to know where to load your keystore from and what
 passwords to use to load the correct SSL certificate. Set the
@@ -263,6 +475,7 @@ properties like needClientAuth for mutual authentication requiring a
 client certificate or wantClientAuth for mutual authentication where a
 client doesn't need a certificate but can have one.
 
+._XML-only: Spring bean configuration for Jetty SSL socket connectors_
 [source,xml]
 ----
 <bean id="jetty" class="org.apache.camel.component.jetty.JettyHttpComponent">
@@ -292,6 +505,7 @@ above), you can now configure general properties that apply for all
 SSL socket connectors (that are not explicitly configured as above with
 the port number as entry).
 
+._XML-only: Spring bean configuration for general Jetty SSL properties_
 [source,xml]
 ----
 <bean id="jetty" class="org.apache.camel.component.jetty.JettyHttpComponent">
@@ -312,6 +526,7 @@ the port number as entry).
 Jetty stores a reference to the certificate in the HttpServletRequest
 which you can access from code as follows:
 
+._Java-only: accessing X509Certificate from HttpServletRequest_
 [source,java]
 ----
 HttpServletRequest req = exchange.getIn().getBody(HttpServletRequest.class);
@@ -325,6 +540,7 @@ above), you can now configure general properties that apply for all
 HTTP socket connectors (that are not explicitly configured as above with
 the port number as entry).
 
+._XML-only: Spring bean configuration for general Jetty HTTP connector properties_
 [source,xml]
 ----
 <bean id="jetty" class="org.apache.camel.component.jetty.JettyHttpComponent">
@@ -350,6 +566,7 @@ property.  This property is not available directly through the endpoint
 configuration, but it can be easily added using the socketConnectors
 property:
 
+._XML-only: Spring bean configuration for Jetty X-Forwarded-For support_
 [source,xml]
 ----
 <bean id="jetty" class="org.apache.camel.component.jetty.JettyHttpComponent">
@@ -396,6 +613,7 @@ order to change how exceptions are returned:
 We can then create an instance of our binding and register it in the
 Spring registry as follows:
 
+._XML-only: Spring bean definition for custom HttpBinding_
 [source,xml]
 ----
 <bean id="mybinding" class="com.mycompany.MyHttpBinding"/>
@@ -403,6 +621,18 @@ Spring registry as follows:
 
 And then we can reference this binding when we define the route:
 
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("jetty:http://0.0.0.0:8080/myapp/myservice?httpBinding=#mybinding")
+    .to("bean:doSomething");
+----
+
+XML::
++
 [source,xml]
 ----
 <route>
@@ -411,12 +641,28 @@ And then we can reference this binding when we define the route:
 </route>
 ----
 
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: jetty:http://0.0.0.0:8080/myapp/myservice
+      parameters:
+        httpBinding: "#mybinding"
+      steps:
+        - to:
+            uri: bean:doSomething
+----
+====
+
 === Jetty handlers and security configuration
 
 You can configure a list of Jetty handlers on the endpoint, which can be
 useful for enabling advanced Jetty security features. These handlers are
 configured in Spring XML as follows:
 
+._XML-only: Spring bean definitions for Jetty JAAS security handler_
 [source,xml]
 ----
 <bean id="userRealm" class="org.mortbay.jetty.plus.jaas.JAASUserRealm">
@@ -443,6 +689,7 @@ configured in Spring XML as follows:
 
 You can configure a list of Jetty handlers as follows:
 
+._XML-only: Spring bean definitions for Jetty constraint-based security handler_
 [source,xml]
 ----
 <bean id="constraint" class="org.eclipse.jetty.http.security.Constraint">
@@ -470,10 +717,38 @@ You can configure a list of Jetty handlers as follows:
 
 You can then define the endpoint as:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("jetty:http://0.0.0.0:9080/myservice?handlers=securityHandler");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="jetty:http://0.0.0.0:9080/myservice?handlers=securityHandler"/>
+    <!-- ... -->
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: jetty:http://0.0.0.0:9080/myservice
+      parameters:
+        handlers: securityHandler
+    steps:
+      # ...
+----
+====
 
 If you need more handlers, set the `handlers` option equal to a
 comma-separated list of bean IDs.
@@ -511,15 +786,59 @@ first endpoint to use a protocol/host/port pairing. For example, given
 two routes created from the following XML fragments, JMX support would
 remain enabled for all endpoints listening on `https://0.0.0.0`.
 
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("jetty:https://0.0.0.0/myapp/myservice1/?enableJmx=true");
+----
+
+XML::
++
 [source,xml]
 ----
 <from uri="jetty:https://0.0.0.0/myapp/myservice1/?enableJmx=true"/>
 ----
 
+YAML::
++
+[source,yaml]
+----
+- from:
+    uri: jetty:https://0.0.0.0/myapp/myservice1/
+    parameters:
+      enableJmx: true
+----
+====
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("jetty:https://0.0.0.0/myapp/myservice2/?enableJmx=false");
+----
+
+XML::
++
 [source,xml]
 ----
 <from uri="jetty:https://0.0.0.0/myapp/myservice2/?enableJmx=false"/>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- from:
+    uri: jetty:https://0.0.0.0/myapp/myservice2/
+    parameters:
+      enableJmx: false
+----
+====
 
 The camel-jetty component also provides for direct configuration of the
 Jetty MBeanContainer. Jetty creates MBean names dynamically. If you are
@@ -527,6 +846,3 @@ running another instance of Jetty outside of the Camel context and
 sharing the same MBeanServer between the instances, you can provide both
 instances with a reference to the same MBeanContainer to avoid
 name collisions when registering Jetty MBeans.
-
-
-include::spring-boot:partial$starter.adoc[]

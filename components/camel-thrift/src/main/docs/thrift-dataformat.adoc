@@ -2,12 +2,10 @@
 :doctitle: Thrift
 :shortname: thrift
 :artifactid: camel-thrift
-:description: Serialize and deserialize messages using Apache Thrift binary data format.
+:description: Serialize and deserialize messages using Apache Thrift binary data format
 :since: 2.20
 :supportlevel: Stable
 :tabs-sync-option:
-//Manually maintained attributes
-:camel-spring-boot-name: thrift
 
 *Since Camel {since}*
 
@@ -34,6 +32,10 @@ If the default instance is not specified, always use the native binary Thrift fo
 The simple JSON format is write-only (marshal) and produces a simple output format suitable for parsing by scripting languages.
 The sample code shows below:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:marshal")
@@ -41,6 +43,36 @@ from("direct:marshal")
     .thrift("org.apache.camel.dataformat.thrift.generated.Work", "json")
     .to("mock:reverse");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:marshal"/>
+  <unmarshal>
+    <thrift instanceClass="org.apache.camel.dataformat.thrift.generated.Work" contentTypeFormat="json"/>
+  </unmarshal>
+  <to uri="mock:reverse"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:marshal
+      steps:
+        - unmarshal:
+            thrift:
+              instanceClass: org.apache.camel.dataformat.thrift.generated.Work
+              contentTypeFormat: json
+        - to:
+            uri: mock:reverse
+----
+====
 
 == Thrift overview
 
@@ -93,50 +125,76 @@ Camel will throw an exception on route creation if you attempt to tell
 the Data Format to use a class that does not implement 
 org.apache.thrift.TBase.
 
-== Java DSL
+== Examples
 
 You can use create the ThriftDataFormat instance and pass it to Camel
 DataFormat marshal and unmarshal API like this.
 
+._Java-only: programmatic ThriftDataFormat instance_
 [source,java]
 ----
-   ThriftDataFormat format = new ThriftDataFormat(new Work());
+ThriftDataFormat format = new ThriftDataFormat(new Work());
 
-   from("direct:in").marshal(format);
-   from("direct:back").unmarshal(format).to("mock:reverse");
+from("direct:in").marshal(format);
+from("direct:back").unmarshal(format).to("mock:reverse");
 ----
 
 Or use the DSL thrift() passing the unmarshal default instance or
 default instance class name like this.
 
+._Java-only: DSL thrift() with class name and instance parameters_
 [source,java]
 ----
-   // You don't need to specify the default instance for the thrift marshaling               
-   from("direct:marshal").marshal().thrift();
-   from("direct:unmarshalA").unmarshal()
-       .thrift("org.apache.camel.dataformat.thrift.generated.Work")
-       .to("mock:reverse");
-                
-   from("direct:unmarshalB").unmarshal().thrift(new Work()).to("mock:reverse");
+// You don't need to specify the default instance for the thrift marshaling
+from("direct:marshal").marshal().thrift();
+from("direct:unmarshalA").unmarshal()
+    .thrift("org.apache.camel.dataformat.thrift.generated.Work")
+    .to("mock:reverse");
+
+from("direct:unmarshalB").unmarshal().thrift(new Work()).to("mock:reverse");
 ----
 
-== Spring DSL
+The following example shows how to use Thrift to unmarshal:
 
-The following example shows how to use Thrift to unmarshal using Spring
-configuring the thrift data type
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+    .unmarshal().thrift("org.apache.camel.dataformat.thrift.generated.Work")
+    .to("mock:result");
+----
 
+XML::
++
 [source,xml]
 ----
-<camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
-  <route>
-    <from uri="direct:start"/>
-    <unmarshal>
-      <thrift instanceClass="org.apache.camel.dataformat.thrift.generated.Work" />
-    </unmarshal>
-    <to uri="mock:result"/>
-  </route>
-</camelContext>
+<route>
+  <from uri="direct:start"/>
+  <unmarshal>
+    <thrift instanceClass="org.apache.camel.dataformat.thrift.generated.Work"/>
+  </unmarshal>
+  <to uri="mock:result"/>
+</route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - unmarshal:
+            thrift:
+              instanceClass: org.apache.camel.dataformat.thrift.generated.Work
+        - to:
+            uri: mock:result
+----
+====
 
 == Dependencies
 
@@ -152,6 +210,3 @@ To use Thrift in your Camel routes, you need to add a dependency on
   <!-- use the same version as your Camel core version -->
 </dependency>
 ----
-
-
-include::spring-boot:partial$starter.adoc[]

@@ -2,13 +2,10 @@
 :doctitle: Tokenize
 :shortname: tokenize
 :artifactid: camel-core-languages
-:description: Tokenize text payloads using delimiter patterns.
+:description: Tokenize text payloads using delimiter patterns
 :since: 2.0
 :supportlevel: Stable
 :tabs-sync-option:
-//Manually maintained attributes
-:camel-spring-boot-name: core
-:starter-artifactid: camel-core-starter
 
 *Since Camel {since}*
 
@@ -90,4 +87,3 @@ For more examples see xref:eips:split-eip.adoc[Split] EIP.
 == Dependencies
 
 The Tokenize language is part of *camel-core*.
-

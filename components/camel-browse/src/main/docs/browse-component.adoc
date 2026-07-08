@@ -8,8 +8,6 @@
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
 :core:
-//Manually maintained attributes
-:camel-spring-boot-name: browse
 
 *Since Camel {since}*
 
@@ -20,9 +18,9 @@ The exchanges sent to the endpoint are all available to be browsed.
 
 == URI format
 
--------------------------
+----
 browse:someId[?options]
--------------------------
+----
 
 Where _someId_ can be any string to uniquely identify the endpoint.
 
@@ -39,13 +37,44 @@ include::partial$component-endpoint-headers.adoc[]
 In the route below, we insert a `browse:` component to be able to browse
 the Exchanges that are passing through:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("activemq:order.in").to("browse:orderReceived").to("bean:processOrder");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="activemq:order.in"/>
+  <to uri="browse:orderReceived"/>
+  <to uri="bean:processOrder"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: activemq:order.in
+      steps:
+        - to:
+            uri: browse:orderReceived
+        - to:
+            uri: bean:processOrder
+----
+====
+
 We can now inspect the received exchanges from within the Java code:
 
+._Java-only: inspecting received exchanges using the BrowsableEndpoint API_
 [source,java]
 ----
 private CamelContext context;
@@ -61,7 +90,3 @@ public void inspectReceivedOrders() {
     }
 }
 ----
-
-
-
-include::spring-boot:partial$starter.adoc[]

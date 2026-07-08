@@ -302,7 +302,7 @@ public interface MvelEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final MvelHeaderNameBuilder INSTANCE = new MvelHeaderNameBuilder();
+        public static final MvelHeaderNameBuilder INSTANCE = new MvelHeaderNameBuilder();
 
         /**
          * A URI for the template resource to use instead of the endpoint

@@ -2,12 +2,10 @@
 :doctitle: MVEL
 :shortname: mvel
 :artifactid: camel-mvel
-:description: Evaluates a MVEL template.
+:description: Evaluates a MVEL template
 :since: 2.0
 :supportlevel: Stable
 :tabs-sync-option:
-//Manually maintained attributes
-:camel-spring-boot-name: mvel
 
 *Since Camel {since}*
 
@@ -31,6 +29,7 @@ request.body.familyName
 
 Or use similar syntax as in Java:
 
+._Java-only: MVEL expression using Java method call syntax_
 [source,java]
 ----
 getRequest().getBody().getFamilyName()
@@ -70,6 +69,10 @@ The following Camel related variables are made available:
 For example, you could use MVEL inside a xref:eips:filter-eip.adoc[Message
 Filter]
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("seda:foo")
@@ -77,8 +80,8 @@ from("seda:foo")
     .to("seda:bar");
 ----
 
-And in XML:
-
+XML::
++
 [source,xml]
 ----
 <route>
@@ -90,6 +93,24 @@ And in XML:
 </route>
 ----
 
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: seda:foo
+      steps:
+        - filter:
+            expression:
+              mvel:
+                expression: headers.foo == 'bar'
+            steps:
+              - to:
+                  uri: seda:bar
+----
+====
+
 == Loading script from external resource
 
 You can externalize the script and have Apache Camel load it from a resource
@@ -97,6 +118,7 @@ such as `"classpath:"`, `"file:"`, or `"http:"`.
 This is done using the following syntax: `"resource:scheme:location"`,
 e.g., to refer to a file on the classpath you can do:
 
+._Java-only: loading a MVEL script from the classpath_
 [source,java]
 ----
 .setHeader("myHeader").mvel("resource:classpath:script.mvel")
@@ -118,6 +140,3 @@ substituting the version number for the latest & greatest release.
   <version>x.x.x</version>
 </dependency>
 ----
-
-
-include::spring-boot:partial$starter.adoc[]

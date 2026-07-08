@@ -19,6 +19,7 @@ package org.apache.camel.dsl.jbang.core.commands.tui;
 import java.time.Duration;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
@@ -29,10 +30,12 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 class MetricsCollector {
 
-    static final int MAX_SPARKLINE_POINTS = 60;
-    static final int MAX_ENDPOINT_CHART_POINTS = 60;
+    static final int MAX_SPARKLINE_POINTS = 300;
+    static final int MAX_ENDPOINT_CHART_POINTS = 300;
     static final int MAX_HEAP_HISTORY_POINTS = 120;
     static final long HEAP_SAMPLE_INTERVAL_MS = 5000;
+    // Throughput values are stored scaled by this factor so sub-1.0 msg/s rates are preserved as longs
+    static final long THROUGHPUT_SCALE = 100;
 
     // Throughput history per PID (one point per second)
     private final Map<String, LinkedList<Long>> throughputHistory = new ConcurrentHashMap<>();
@@ -152,41 +155,43 @@ class MetricsCollector {
     // --- Update methods ---
 
     void updateThroughputHistory(IntegrationInfo info) {
-        long currentTotal = info.exchangesTotal;
         long currentFailed = info.failed;
         long now = System.currentTimeMillis();
 
         String pid = info.pid;
         LinkedList<long[]> samples = throughputSamples.computeIfAbsent(pid, k -> new LinkedList<>());
-        samples.add(new long[] { now, currentTotal, currentFailed });
+        samples.add(new long[] { now, info.exchangesTotal, currentFailed });
 
         while (!samples.isEmpty() && now - samples.get(0)[0] > 2000) {
             samples.remove(0);
         }
 
+        // Use the EWMA throughput from the status JSON (already smoothed in camel-core)
+        // and store scaled by THROUGHPUT_SCALE so sub-1.0 rates (e.g. 0.20 msg/s) are preserved as longs
+        long tp = 0;
+        if (info.throughput != null) {
+            try {
+                tp = Math.round(Double.parseDouble(info.throughput) * THROUGHPUT_SCALE);
+            } catch (NumberFormatException e) {
+                // ignore
+            }
+        }
+
+        // Failed throughput still computed from delta (no EWMA source for failed-only)
+        long fp = 0;
         if (samples.size() >= 2) {
             long[] oldest = samples.get(0);
             long[] newest = samples.get(samples.size() - 1);
-            long deltaTotal = newest[1] - oldest[1];
             long deltaFailed = newest[2] - oldest[2];
             long deltaTimeMs = newest[0] - oldest[0];
-            long tp = deltaTimeMs > 0 ? (deltaTotal * 1000) / deltaTimeMs : 0;
-            long fp = deltaTimeMs > 0 ? (deltaFailed * 1000) / deltaTimeMs : 0;
+            fp = deltaTimeMs > 0 ? (deltaFailed * 1000 * THROUGHPUT_SCALE) / deltaTimeMs : 0;
+        }
 
-            Long lastTime = previousExchangesTime.get(pid);
-            if (lastTime == null || now - lastTime >= 1000) {
-                previousExchangesTime.put(pid, now);
-                LinkedList<Long> hist = throughputHistory.computeIfAbsent(pid, k -> new LinkedList<>());
-                hist.add(tp);
-                while (hist.size() > MAX_SPARKLINE_POINTS) {
-                    hist.remove(0);
-                }
-                LinkedList<Long> fhist = failedHistory.computeIfAbsent(pid, k -> new LinkedList<>());
-                fhist.add(fp);
-                while (fhist.size() > MAX_SPARKLINE_POINTS) {
-                    fhist.remove(0);
-                }
-            }
+        Long lastTime = previousExchangesTime.get(pid);
+        if (lastTime == null || now - lastTime >= 1000) {
+            previousExchangesTime.put(pid, now);
+            addToHistory(throughputHistory, pid, tp, MAX_SPARKLINE_POINTS);
+            addToHistory(failedHistory, pid, fp, MAX_SPARKLINE_POINTS);
         }
     }
 
@@ -231,16 +236,8 @@ class MetricsCollector {
         Long lastSizeTime = previousEndpointSizeTime.get(pid);
         if (lastSizeTime == null || now - lastSizeTime >= 1000) {
             previousEndpointSizeTime.put(pid, now);
-            LinkedList<Long> inSizeHist = endpointInSizeHistory.computeIfAbsent(pid, k -> new LinkedList<>());
-            inSizeHist.add(inMeanSize);
-            while (inSizeHist.size() > MAX_ENDPOINT_CHART_POINTS) {
-                inSizeHist.remove(0);
-            }
-            LinkedList<Long> outSizeHist = endpointOutSizeHistory.computeIfAbsent(pid, k -> new LinkedList<>());
-            outSizeHist.add(outMeanSize);
-            while (outSizeHist.size() > MAX_ENDPOINT_CHART_POINTS) {
-                outSizeHist.remove(0);
-            }
+            addToHistory(endpointInSizeHistory, pid, inMeanSize, MAX_ENDPOINT_CHART_POINTS);
+            addToHistory(endpointOutSizeHistory, pid, outMeanSize, MAX_ENDPOINT_CHART_POINTS);
         }
 
         // Per-endpoint rate history (keyed by pid|uri)
@@ -269,6 +266,15 @@ class MetricsCollector {
             String pid, long now, long inTotal, long outTotal,
             Map<String, LinkedList<long[]>> samplesMap, Map<String, Long> prevTimeMap,
             Map<String, LinkedList<Long>> inHistMap, Map<String, LinkedList<Long>> outHistMap) {
+        recordEndpointSample(pid, now, inTotal, outTotal,
+                samplesMap, prevTimeMap, inHistMap, outHistMap, THROUGHPUT_SCALE);
+    }
+
+    private void recordEndpointSample(
+            String pid, long now, long inTotal, long outTotal,
+            Map<String, LinkedList<long[]>> samplesMap, Map<String, Long> prevTimeMap,
+            Map<String, LinkedList<Long>> inHistMap, Map<String, LinkedList<Long>> outHistMap,
+            long scale) {
         LinkedList<long[]> samples = samplesMap.computeIfAbsent(pid, k -> new LinkedList<>());
         samples.add(new long[] { now, inTotal, outTotal });
         while (!samples.isEmpty() && now - samples.get(0)[0] > 2000) {
@@ -278,21 +284,13 @@ class MetricsCollector {
             long[] oldest = samples.get(0);
             long[] newest = samples.get(samples.size() - 1);
             long deltaMs = newest[0] - oldest[0];
-            long inRate = deltaMs > 0 ? (newest[1] - oldest[1]) * 1000 / deltaMs : 0;
-            long outRate = deltaMs > 0 ? (newest[2] - oldest[2]) * 1000 / deltaMs : 0;
+            long inRate = deltaMs > 0 ? (newest[1] - oldest[1]) * 1000 * scale / deltaMs : 0;
+            long outRate = deltaMs > 0 ? (newest[2] - oldest[2]) * 1000 * scale / deltaMs : 0;
             Long lastTime = prevTimeMap.get(pid);
             if (lastTime == null || now - lastTime >= 1000) {
                 prevTimeMap.put(pid, now);
-                LinkedList<Long> inHist = inHistMap.computeIfAbsent(pid, k -> new LinkedList<>());
-                inHist.add(Math.max(0, inRate));
-                while (inHist.size() > MAX_ENDPOINT_CHART_POINTS) {
-                    inHist.remove(0);
-                }
-                LinkedList<Long> outHist = outHistMap.computeIfAbsent(pid, k -> new LinkedList<>());
-                outHist.add(Math.max(0, outRate));
-                while (outHist.size() > MAX_ENDPOINT_CHART_POINTS) {
-                    outHist.remove(0);
-                }
+                addToHistory(inHistMap, pid, Math.max(0, inRate), MAX_ENDPOINT_CHART_POINTS);
+                addToHistory(outHistMap, pid, Math.max(0, outRate), MAX_ENDPOINT_CHART_POINTS);
             }
         }
     }
@@ -306,8 +304,10 @@ class MetricsCollector {
             String key = info.pid + "/" + cb.id;
             long success = cb.successfulCalls;
             long failed = cb.failedCalls;
+            // Circuit breaker history stays unscaled (scale=1) because CircuitBreakerTab
+            // formats values as plain integers, not via formatThroughput()
             recordEndpointSample(key, now, success, failed,
-                    cbThroughputSamples, previousCbTime, cbSuccessHistory, cbFailHistory);
+                    cbThroughputSamples, previousCbTime, cbSuccessHistory, cbFailHistory, 1);
         }
     }
 
@@ -317,11 +317,7 @@ class MetricsCollector {
             Long lastTime = previousHeapTime.get(info.pid);
             if (lastTime == null || now - lastTime >= HEAP_SAMPLE_INTERVAL_MS) {
                 previousHeapTime.put(info.pid, now);
-                LinkedList<Long> hist = heapMemHistory.computeIfAbsent(info.pid, k -> new LinkedList<>());
-                hist.add(info.heapMemUsed);
-                while (hist.size() > MAX_HEAP_HISTORY_POINTS) {
-                    hist.remove(0);
-                }
+                addToHistory(heapMemHistory, info.pid, info.heapMemUsed, MAX_HEAP_HISTORY_POINTS);
             }
         }
     }
@@ -409,10 +405,76 @@ class MetricsCollector {
                 perEndpointSamples, previousPerEndpointTime);
     }
 
+    /**
+     * Adds a value to a history list using copy-on-write to avoid {@link java.util.ConcurrentModificationException}
+     * when the UI thread iterates a list while the refresh thread updates it. Instead of mutating the existing list in
+     * place, a new copy is created, modified, and atomically swapped into the map.
+     */
+    private void addToHistory(Map<String, LinkedList<Long>> historyMap, String key, long value, int maxPoints) {
+        historyMap.compute(key, (k, old) -> {
+            LinkedList<Long> hist = old != null ? new LinkedList<>(old) : new LinkedList<>();
+            hist.add(value);
+            while (hist.size() > maxPoints) {
+                hist.remove(0);
+            }
+            return hist;
+        });
+    }
+
     @SafeVarargs
     private void removeByPrefix(String prefix, Map<String, ?>... maps) {
         for (Map<String, ?> map : maps) {
             map.keySet().removeIf(k -> k.startsWith(prefix));
+        }
+    }
+
+    // --- Shared throughput formatting utilities ---
+
+    /**
+     * Round a scaled throughput value up to a nice chart-axis maximum. Returns values that are multiples of 1, 2, or 5
+     * at the appropriate magnitude, ensuring the Y-axis labels are human-readable.
+     */
+    static long niceMax(long rawMax) {
+        if (rawMax <= 0) {
+            return THROUGHPUT_SCALE;
+        }
+        int[] steps = { 1, 2, 5 };
+        long multiplier = THROUGHPUT_SCALE;
+        while (multiplier > 0) {
+            for (int s : steps) {
+                long candidate = s * multiplier;
+                if (candidate < 0) {
+                    // overflow — fall back to rawMax
+                    return rawMax;
+                }
+                if (candidate >= rawMax) {
+                    return candidate;
+                }
+            }
+            long next = multiplier * 10;
+            if (next / 10 != multiplier) {
+                // overflow — fall back to rawMax
+                return rawMax;
+            }
+            multiplier = next;
+        }
+        return rawMax;
+    }
+
+    /**
+     * Format a scaled throughput value for display. Values >= 10 are shown as integers, values >= 1 with one decimal,
+     * and sub-1 values with two decimals.
+     */
+    static String formatThroughput(long scaledValue) {
+        double v = scaledValue / (double) THROUGHPUT_SCALE;
+        if (v >= 10) {
+            return String.valueOf(Math.round(v));
+        } else if (v >= 1) {
+            return String.format(Locale.US, "%.1f", v);
+        } else if (scaledValue > 0) {
+            return String.format(Locale.US, "%.2f", v);
+        } else {
+            return "0";
         }
     }
 }

@@ -30,9 +30,12 @@ import org.apache.pulsar.client.api.PulsarClient;
 import org.apache.pulsar.client.api.PulsarClientException;
 import org.apache.pulsar.client.api.Schema;
 import org.apache.pulsar.client.impl.ClientBuilderImpl;
+import org.awaitility.core.ConditionTimeoutException;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.awaitility.Awaitility.await;
 
 public class PulsarSharedSubscriptionMessageDistributionIT extends PulsarITSupport {
 
@@ -69,10 +72,13 @@ public class PulsarSharedSubscriptionMessageDistributionIT extends PulsarITSuppo
                     LOGGER.info("Processing message {} on Thread {}", exchange.getIn().getHeader("message_id"),
                             Thread.currentThread());
                     try {
-                        Thread.sleep(1000);
-                    } catch (InterruptedException e) {
-                        LOGGER.info("Propagating interrupt");
-                        Thread.currentThread().interrupt();
+                        // hold each exchange until the late-starting consumer (route 2) has received a
+                        // message, so route 1 cannot drain the topic before route 2 comes online;
+                        // the wait must stay well below the 10s ackTimeoutMillis default so a held
+                        // (unacknowledged) message cannot hit the ack-timeout and be redelivered
+                        await().atMost(5, TimeUnit.SECONDS).until(() -> to2.getReceivedCounter() > 0);
+                    } catch (ConditionTimeoutException e) {
+                        LOGGER.warn("Timed out waiting for the late-starting consumer to receive a message");
                     }
                 }
             };

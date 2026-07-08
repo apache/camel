@@ -1,7 +1,7 @@
 = Recipient List EIP
 :doctitle: Recipient List
 :shortname: recipientList
-:description: Route messages to a number of dynamically specified recipients
+:description: Routes a message to a list of dynamically calculated endpoints, determined at runtime from an expression. Each recipient receives a copy of the message.
 :since: 
 :supportlevel: Stable
 :tabs-sync-option:
@@ -146,6 +146,7 @@ The dynamic list of recipients that are defined in the header must be iterable s
 In XML DSL you can set the delimiter attribute for setting a delimiter to be used if the header value is a single `String` with multiple separated endpoints.
 By default, Camel uses comma as delimiter, but this option lets you specify a custom delimiter to use instead.
 
+._XML-only:_
 [source,xml]
 ----
 <route>
@@ -179,6 +180,7 @@ You can use spaces between the endpoints as Camel will trim the value when it lo
 
 In Java DSL, you specify the delimiter as second parameter as shown below:
 
+._Java-only: the delimiter is passed as a second parameter to recipientList_
 [source,java]
 ----
 from("direct:a")
@@ -416,6 +418,7 @@ For example, in the unit test below, you can see that we multicast the message t
 We have a timeout of 2 seconds, which means only the last two messages can be completed within the timeframe.
 This means we will only aggregate the last two which yields a result aggregation which outputs "BC".
 
+._Java-only: multicast with inline AggregationStrategy and timeout_
 [source,java]
 ----
 from("direct:start")

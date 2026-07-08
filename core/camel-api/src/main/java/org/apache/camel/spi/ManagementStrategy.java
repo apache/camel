@@ -23,15 +23,25 @@ import org.apache.camel.Service;
 import org.apache.camel.StaticService;
 
 /**
- * Strategy for management.
+ * Top-level SPI for Camel's management and observability layer, coordinating JMX registration, lifecycle events, and
+ * statistics collection across all Camel artifacts.
  * <p/>
- * If JMX is detected (camel-management JAR on the classpath) then org.apache.camel.management.JmxManagementStrategy is
- * in use. Otherwise, the DefaultManagementStrategy is in use.
+ * When the {@code camel-management} JAR is on the classpath, {@code JmxManagementStrategy} is activated and delegates
+ * MBean registration to a {@link ManagementAgent}. Without that JAR, {@code DefaultManagementStrategy} is used, which
+ * still dispatches lifecycle events to registered {@link EventNotifier}s but does not expose JMX MBeans.
  * <p/>
- * You can also plugin and use a 3rd party management implementation with Camel.
+ * The strategy is the central hub for two concerns: management objects (registering and unregistering Camel components,
+ * routes, processors, etc. as MBeans via {@link ManagementObjectStrategy} and {@link ManagementObjectNameStrategy}) and
+ * events (delivering {@link CamelEvent} notifications to all registered {@link EventNotifier}s via
+ * {@link #notify(CamelEvent)}). A third-party management backend can be plugged in by implementing this interface and
+ * providing a {@link ManagementStrategyFactory}.
+ * <p/>
+ * See <a href="https://camel.apache.org/manual/jmx.html">JMX</a> in the Camel user manual.
  *
- * @see org.apache.camel.spi.EventNotifier
- * @see org.apache.camel.spi.EventFactory
+ * @see ManagementAgent
+ * @see EventNotifier
+ * @see EventFactory
+ * @see ManagementStrategyFactory
  */
 public interface ManagementStrategy extends StaticService {
 

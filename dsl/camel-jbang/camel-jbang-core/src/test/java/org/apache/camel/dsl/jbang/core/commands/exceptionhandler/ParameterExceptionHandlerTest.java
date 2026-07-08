@@ -37,7 +37,7 @@ class ParameterExceptionHandlerTest {
         Assertions.assertEquals("Did you mean: camel eval or camel stop or camel infra?", lines[1],
                 "Second line with suggestion in case it is a typo");
         Assertions.assertEquals(
-                "Maybe a specific Camel JBang plugin must be installed? (Try 'camel plugin --help' for more information)",
+                "Maybe a specific Camel CLI plugin must be installed? (Try 'camel plugin --help' for more information)",
                 lines[4], "Last line suggesting new plugin");
     }
 

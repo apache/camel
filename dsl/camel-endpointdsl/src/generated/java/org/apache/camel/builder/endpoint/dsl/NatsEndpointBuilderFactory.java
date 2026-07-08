@@ -2812,7 +2812,7 @@ public interface NatsEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final NatsHeaderNameBuilder INSTANCE = new NatsHeaderNameBuilder();
+        public static final NatsHeaderNameBuilder INSTANCE = new NatsHeaderNameBuilder();
 
         /**
          * The timestamp of a consumed message.

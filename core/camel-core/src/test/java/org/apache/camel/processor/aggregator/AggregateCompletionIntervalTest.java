@@ -34,9 +34,6 @@ public class AggregateCompletionIntervalTest extends ContextTestSupport {
         // message 9
         result.expectedBodiesReceived("Message 9");
 
-        // ensure messages are send after a little bit
-        Thread.sleep(100);
-
         for (int i = 0; i < 10; i++) {
             template.sendBodyAndHeader("seda:start", "Message " + i, "id", "1");
         }

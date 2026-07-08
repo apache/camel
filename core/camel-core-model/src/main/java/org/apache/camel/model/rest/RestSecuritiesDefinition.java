@@ -31,7 +31,8 @@ import org.apache.camel.spi.Metadata;
 /**
  * To configure rest security definitions.
  */
-@Metadata(label = "rest,security,configuration", title = "Rest Security Definitions")
+@Metadata(label = "rest,security,configuration", title = "Rest Security Definitions",
+          description = "Container for security scheme definitions used by REST services")
 @XmlRootElement(name = "securityDefinitions")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RestSecuritiesDefinition {
@@ -46,6 +47,7 @@ public class RestSecuritiesDefinition {
             @XmlElement(name = "oauth2", type = OAuth2Definition.class),
             @XmlElement(name = "openIdConnect", type = OpenIdConnectDefinition.class),
             @XmlElement(name = "mutualTLS", type = MutualTLSDefinition.class) })
+    @Metadata(description = "The configured security definitions (apiKey, basicAuth, bearerToken, oauth2, openIdConnect, mutualTLS).")
     private List<RestSecurityDefinition> securityDefinitions = new ArrayList<>();
 
     public RestSecuritiesDefinition() {
@@ -59,9 +61,6 @@ public class RestSecuritiesDefinition {
         return securityDefinitions;
     }
 
-    /**
-     * Security definitions
-     */
     public void setSecurityDefinitions(List<RestSecurityDefinition> securityDefinitions) {
         this.securityDefinitions = securityDefinitions;
     }

@@ -22,9 +22,22 @@ import java.util.Objects;
 import org.jspecify.annotations.Nullable;
 
 /**
- * Configuration use by {@link org.apache.camel.spi.RestConsumerFactory} and
- * {@link org.apache.camel.spi.RestApiConsumerFactory} for Camel components to support the Camel
- * {@link org.apache.camel.model.rest.RestDefinition rest} DSL.
+ * Central configuration bean for the Camel REST DSL, shared by {@link RestConsumerFactory},
+ * {@link RestProducerFactory}, and {@link RestApiConsumerFactory} implementations.
+ * <p/>
+ * An instance of this class is held on {@link org.apache.camel.CamelContext} and controls every aspect of REST service
+ * hosting and client invocation: the HTTP component to use (e.g. {@code platform-http}, {@code jetty},
+ * {@code netty-http}, {@code servlet}), the server host and port, the binding mode ({@link RestBindingMode#off},
+ * {@link RestBindingMode#json}, {@link RestBindingMode#xml}, or {@link RestBindingMode#json_xml}), CORS headers, JSON
+ * and XML data-format class names, and additional {@code Map<String, Object>} property overrides for the component,
+ * consumer, and producer tiers. The configuration is typically expressed via the {@code restConfiguration()} builder in
+ * the Java DSL, or the {@code rest-configuration} element in XML and YAML DSLs.
+ * <p/>
+ * See <a href="https://camel.apache.org/manual/rest-dsl.html">Rest DSL</a> in the Camel user manual.
+ *
+ * @see RestConsumerFactory
+ * @see RestProducerFactory
+ * @see RestRegistry
  */
 public class RestConfiguration {
 

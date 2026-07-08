@@ -19,8 +19,8 @@ package org.apache.camel.component.vertx.websocket;
 import java.net.URI;
 import java.util.Map;
 
-import io.vertx.core.http.HttpClientOptions;
 import io.vertx.core.http.HttpServerOptions;
+import io.vertx.core.http.WebSocketClientOptions;
 import io.vertx.ext.web.Router;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
@@ -56,7 +56,7 @@ public class VertxWebsocketConfiguration {
     @UriParam(label = "consumer")
     private int maxReconnectAttempts;
     @UriParam(label = "producer,advanced")
-    private HttpClientOptions clientOptions;
+    private WebSocketClientOptions clientOptions;
     @UriParam(label = "producer")
     private boolean sendToAll;
     @UriParam(label = "producer")
@@ -122,7 +122,7 @@ public class VertxWebsocketConfiguration {
     /**
      * Sets customized options for configuring the WebSocket client used in the producer
      */
-    public void setClientOptions(HttpClientOptions clientOptions) {
+    public void setClientOptions(WebSocketClientOptions clientOptions) {
         this.clientOptions = clientOptions;
     }
 
@@ -184,7 +184,7 @@ public class VertxWebsocketConfiguration {
         this.consumeAsClient = consumeAsClient;
     }
 
-    public HttpClientOptions getClientOptions() {
+    public WebSocketClientOptions getClientOptions() {
         return clientOptions;
     }
 

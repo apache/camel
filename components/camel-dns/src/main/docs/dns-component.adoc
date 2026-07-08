@@ -7,8 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Only producer is supported
-//Manually maintained attributes
-:camel-spring-boot-name: dns
 
 *Since Camel {since}*
 
@@ -62,6 +60,18 @@ include::partial$component-endpoint-headers.adoc[]
 
 === IP lookup
 
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+    .to("dns:ip");
+----
+
+XML::
++
 [source,xml]
 ----
 <route id="IPCheck">
@@ -70,6 +80,20 @@ include::partial$component-endpoint-headers.adoc[]
 </route>
 ----
 
+YAML::
++
+[source,yaml]
+----
+- route:
+    id: IPCheck
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: dns:ip
+----
+====
+
 This looks up a domain's IP. For example, _www.example.com_ resolves to
 192.0.32.10.
 
@@ -77,6 +101,18 @@ The IP address to lookup must be provided in the header with key `"CamelDnsDomai
 
 === DNS lookup
 
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+    .to("dns:lookup");
+----
+
+XML::
++
 [source,xml]
 ----
 <route id="IPCheck">
@@ -84,6 +120,20 @@ The IP address to lookup must be provided in the header with key `"CamelDnsDomai
     <to uri="dns:lookup"/>
 </route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    id: IPCheck
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: dns:lookup
+----
+====
 
 This returns a set of DNS records associated with a domain. +
  The name to lookup must be provided in the header with key
@@ -93,6 +143,18 @@ This returns a set of DNS records associated with a domain. +
 
 Dig is a Unix command-line utility to run DNS queries.
 
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+    .to("dns:dig");
+----
+
+XML::
++
 [source,xml]
 ----
 <route id="IPCheck">
@@ -100,6 +162,20 @@ Dig is a Unix command-line utility to run DNS queries.
     <to uri="dns:dig"/>
 </route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    id: IPCheck
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: dns:dig
+----
+====
 
 The query must be provided in the header with key `"CamelDnsName"`.
 
@@ -112,18 +188,52 @@ If you have instances of the same component running in different regions, you ca
 
 For example, you may have an instance in NYC and an instance in SFO. You would configure a service CNAME service.example.com to point to nyc-service.example.com to bring NYC instance up and SFO instance down. When you change the CNAME service.example.com to point to sfo-service.example.com -- nyc instance would stop its routes and sfo will bring its routes up. This allows you to switch regions without restarting actual components.
 
+[tabs]
+====
+Java::
++
+[source,java]
+----
+DnsActivationPolicy policy = new DnsActivationPolicy();
+policy.setHostname("service.example.com");
+policy.setResolvesTo("nyc-service.example.com");
+policy.setTtl(60000);
+policy.setStopRoutesOnException(false);
+
+from("direct:start")
+    .routeId("routeId")
+    .autoStartup(false)
+    .routePolicy(policy)
+    .to("...");
+----
+
+XML::
++
 [source,xml]
 ----
- <bean id="dnsActivationPolicy" class="org.apache.camel.component.dns.policy.DnsActivationPolicy">
-     <property name="hostname" value="service.example.com" />
-     <property name="resolvesTo" value="nyc-service.example.com" />
-     <property name="ttl" value="60000" />
-     <property name="stopRoutesOnException" value="false" />
- </bean>
+<bean id="dnsActivationPolicy" class="org.apache.camel.component.dns.policy.DnsActivationPolicy">
+    <property name="hostname" value="service.example.com" />
+    <property name="resolvesTo" value="nyc-service.example.com" />
+    <property name="ttl" value="60000" />
+    <property name="stopRoutesOnException" value="false" />
+</bean>
 
- <route id="routeId" autoStartup="false" routePolicyRef="dnsActivationPolicy">
- </route>
+<route id="routeId" autoStartup="false" routePolicyRef="dnsActivationPolicy">
+</route>
 ----
 
-
-include::spring-boot:partial$starter.adoc[]
+YAML::
++
+[source,yaml]
+----
+- route:
+    id: routeId
+    autoStartup: false
+    routePolicyRef: dnsActivationPolicy
+    from:
+      uri: direct:start
+    steps:
+      - to:
+          uri: "..."
+----
+====

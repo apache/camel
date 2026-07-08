@@ -26,6 +26,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.model.SagaCompletionMode;
 import org.apache.camel.saga.InMemorySagaService;
 import org.apache.camel.test.junit6.CamelTestSupport;
+import org.apache.camel.test.junit6.TestSupport;
 import org.junit.jupiter.api.Test;
 
 public class LRAManualInMemoryTest extends CamelTestSupport {
@@ -46,7 +47,7 @@ public class LRAManualInMemoryTest extends CamelTestSupport {
         completeEndpoint.expectedMessageCount(1);
         completeEndpoint.expectedHeaderReceived("id", "1");
 
-        sendBody("direct:saga", "hello", Collections.singletonMap("myid", "1"));
+        TestSupport.sendBody(template, "direct:saga", "hello", Collections.singletonMap("myid", "1"));
 
         completeEndpoint.assertIsSatisfied();
     }
@@ -56,7 +57,7 @@ public class LRAManualInMemoryTest extends CamelTestSupport {
         MockEndpoint compensateEndpoint = getMockEndpoint("mock:compensate");
         compensateEndpoint.expectedMessageCount(1);
 
-        sendBody("direct:saga", "fail");
+        TestSupport.sendBody(template, "direct:saga", "fail");
 
         compensateEndpoint.assertIsSatisfied();
     }
@@ -66,7 +67,7 @@ public class LRAManualInMemoryTest extends CamelTestSupport {
         MockEndpoint compensateEndpoint = getMockEndpoint("mock:compensate");
         compensateEndpoint.expectedMessageCount(1);
 
-        sendBody("direct:saga", "timeout");
+        TestSupport.sendBody(template, "direct:saga", "timeout");
 
         compensateEndpoint.assertIsSatisfied();
     }

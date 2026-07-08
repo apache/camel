@@ -42,7 +42,8 @@ import org.apache.camel.spi.ResourceAware;
 /**
  * Defines a route template (parameterized routes)
  */
-@Metadata(label = "configuration")
+@Metadata(label = "configuration",
+          description = "Defines a parameterized route template that can be instantiated multiple times with different parameter values")
 @XmlRootElement(name = "routeTemplate")
 @XmlType(propOrder = { "templateParameters", "templateBeans", "route" })
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -61,6 +62,7 @@ public class RouteTemplateDefinition extends OptionalIdentifiedDefinition<RouteT
     @Metadata(description = "Adds a local bean the route template uses")
     private List<BeanFactoryDefinition<RouteTemplateDefinition>> templateBeans;
     @XmlElement(name = "route", required = true)
+    @Metadata(description = "The route definition that this template uses to create routes.")
     private RouteDefinition route = new RouteDefinition();
     @XmlTransient
     private Resource resource;
