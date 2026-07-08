@@ -28,7 +28,6 @@ import java.util.function.IntConsumer;
 import dev.tamboui.layout.Constraint;
 import dev.tamboui.layout.Layout;
 import dev.tamboui.layout.Rect;
-import dev.tamboui.style.Color;
 import dev.tamboui.style.Overflow;
 import dev.tamboui.style.Style;
 import dev.tamboui.terminal.Frame;
@@ -777,7 +776,7 @@ class SourceViewer {
         Line highlighted = SyntaxHighlighter.highlightLine(code, language);
 
         List<Span> spans = new ArrayList<>();
-        Style selBg = Style.EMPTY.bg(Color.rgb(30, 45, 70));
+        Style selBg = Theme.selectionBg();
         if (isSelected) {
             spans.add(Span.styled(">> ", Theme.label().bold()));
             if (!prefix.isEmpty()) {

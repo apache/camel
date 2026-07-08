@@ -24,7 +24,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import dev.tamboui.layout.Constraint;
 import dev.tamboui.layout.Layout;
 import dev.tamboui.layout.Rect;
-import dev.tamboui.style.Color;
 import dev.tamboui.style.Style;
 import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.Line;
@@ -796,7 +795,7 @@ class SqlQueryTab extends AbstractTab {
             } else if (isFocused) {
                 boolean changed = !editInputs[i].text().equals(editOriginalValues[i]);
                 Style cursorStyle = changed
-                        ? Style.EMPTY.reversed().fg(Theme.success().fg().orElse(Color.GREEN))
+                        ? Style.EMPTY.reversed().fg(Theme.success().fg().orElseThrow())
                         : Style.EMPTY.reversed();
                 TextInput input = TextInput.builder()
                         .cursorStyle(cursorStyle)

@@ -1190,8 +1190,8 @@ public class CamelMonitor extends CamelCommand {
                         Paragraph.builder().text(Text.from(titleLine)).build(),
                         leftArea);
                 Color waveColor = activeNotificationError
-                        ? Theme.error().fg().orElse(Color.RED)
-                        : Theme.success().fg().orElse(Color.GREEN);
+                        ? Theme.error().fg().orElseThrow()
+                        : Theme.success().fg().orElseThrow();
                 WaveText wave = WaveText.builder()
                         .text(activeNotification)
                         .color(waveColor)
@@ -1214,7 +1214,7 @@ public class CamelMonitor extends CamelCommand {
     }
 
     private void renderTooSmall(Frame frame, Rect area) {
-        Style orange = Style.EMPTY.fg(Color.rgb(0xF6, 0x91, 0x23));
+        Style orange = Style.EMPTY.fg(Theme.accent());
         Style normal = Style.EMPTY;
         Style bold = Style.EMPTY.bold();
 

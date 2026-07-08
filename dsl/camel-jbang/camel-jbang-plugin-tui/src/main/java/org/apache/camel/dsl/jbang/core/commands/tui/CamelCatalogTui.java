@@ -24,7 +24,6 @@ import java.util.Map;
 import dev.tamboui.layout.Constraint;
 import dev.tamboui.layout.Layout;
 import dev.tamboui.layout.Rect;
-import dev.tamboui.style.Color;
 import dev.tamboui.style.Overflow;
 import dev.tamboui.style.Style;
 import dev.tamboui.terminal.Frame;
@@ -411,7 +410,7 @@ public class CamelCatalogTui extends CamelCommand {
 
     private void renderHeader(Frame frame, Rect area) {
         Line titleLine = Line.from(
-                Span.styled(" Camel Catalog", Style.EMPTY.fg(Color.rgb(0xF6, 0x91, 0x23)).bold()),
+                Span.styled(" Camel Catalog", Style.EMPTY.fg(Theme.accent()).bold()),
                 Span.raw("  "),
                 Span.styled(filteredComponents.size() + "/" + allComponents.size() + " components",
                         Style.EMPTY.fg(Theme.accent())));
@@ -454,7 +453,7 @@ public class CamelCatalogTui extends CamelCommand {
         }
 
         Style borderStyle = focus == FOCUS_LIST
-                ? Style.EMPTY.fg(Color.rgb(0xF6, 0x91, 0x23))
+                ? Style.EMPTY.fg(Theme.accent())
                 : Style.EMPTY;
 
         String modePrefix = componentFullText ? "/" : "";
@@ -479,7 +478,7 @@ public class CamelCatalogTui extends CamelCommand {
 
     private void renderOptionsTable(Frame frame, Rect area) {
         Style borderStyle = focus == FOCUS_OPTIONS
-                ? Style.EMPTY.fg(Color.rgb(0xF6, 0x91, 0x23))
+                ? Style.EMPTY.fg(Theme.accent())
                 : Style.EMPTY;
 
         String optModePrefix = optionFullText ? "/" : "";

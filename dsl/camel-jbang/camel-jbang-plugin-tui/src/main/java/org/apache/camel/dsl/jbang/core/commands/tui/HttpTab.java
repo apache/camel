@@ -35,7 +35,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import dev.tamboui.layout.Constraint;
 import dev.tamboui.layout.Layout;
 import dev.tamboui.layout.Rect;
-import dev.tamboui.style.Color;
 import dev.tamboui.style.Style;
 import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.Line;
@@ -1217,7 +1216,7 @@ class HttpTab extends AbstractTableTab {
             case "POST" -> Theme.label();
             case "PUT" -> Style.EMPTY.fg(Theme.accent());
             case "DELETE" -> Theme.error();
-            case "PATCH" -> Style.EMPTY.fg(Color.rgb(0xFF, 0x80, 0x00));
+            case "PATCH" -> Theme.warning();
             default -> Style.EMPTY.dim();
         };
     }

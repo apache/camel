@@ -19,8 +19,10 @@ package org.apache.camel.dsl.jbang.core.commands.tui;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -84,6 +86,15 @@ public final class Theme {
     private static final Color FALLBACK_DIAGRAM_ACTION = Color.rgb(0xC5, 0x86, 0xC0);
     private static final Color FALLBACK_DIAGRAM_EIP = Color.rgb(0x89, 0x57, 0xE5);
     private static final Color FALLBACK_DIAGRAM_DEFAULT = Color.rgb(0x80, 0x80, 0x80);
+
+    private static final String[] REQUIRED_TOKENS = {
+            "accent", "accent-bg", "hint-key", "border", "border-focused", "title",
+            "success", "warning", "error", "muted", "selection", "info", "notice",
+            "row-alt", "base-bg", "base-fg",
+            "label", "change", "search-match",
+            "diagram-border", "diagram-id", "diagram-from", "diagram-to",
+            "diagram-choice", "diagram-action", "diagram-eip", "diagram-default"
+    };
 
     private static final Map<String, Style> CACHE = new HashMap<>();
 
@@ -414,6 +425,7 @@ public final class Theme {
             String cssContent = loadCssResource(mode.stylesheetResource());
             e.addStylesheet(stylesheet, cssContent);
             e.setActiveStylesheet(stylesheet);
+            validateTokens(e, stylesheet);
             engine = e;
         } catch (Exception ex) {
             engine = null;
@@ -501,6 +513,24 @@ public final class Theme {
             persistedWriteFallbackLogged = true;
             LOG.warn("Camel TUI theme preference could not be saved; the selected theme may not persist across restarts",
                     t);
+        }
+    }
+
+    private static void validateTokens(StyleEngine e, String stylesheet) {
+        List<String> missing = new ArrayList<>();
+        for (String token : REQUIRED_TOKENS) {
+            try {
+                Style resolved = e.resolve(new Token(token)).toStyle();
+                if (resolved.equals(Style.EMPTY)) {
+                    missing.add(token);
+                }
+            } catch (RuntimeException ex) {
+                missing.add(token);
+            }
+        }
+        if (!missing.isEmpty()) {
+            throw new IllegalStateException(
+                    "Theme stylesheet '" + stylesheet + "' is missing required CSS tokens: " + missing);
         }
     }
 
