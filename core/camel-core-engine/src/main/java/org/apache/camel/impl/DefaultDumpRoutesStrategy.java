@@ -50,6 +50,7 @@ import org.apache.camel.spi.ModelToXMLDumper;
 import org.apache.camel.spi.ModelToYAMLDumper;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.RouteDiagramDumper;
+import org.apache.camel.spi.RouteTopologyDumper;
 import org.apache.camel.spi.annotations.JdkService;
 import org.apache.camel.support.LoggerHelper;
 import org.apache.camel.support.PluginHelper;
@@ -58,6 +59,7 @@ import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StringHelper;
+import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
 import org.slf4j.Logger;
@@ -259,7 +261,92 @@ public class DefaultDumpRoutesStrategy extends ServiceSupport implements DumpRou
                 LOG.info("{}", sbLog);
             }
         }
+        if (topology) {
+            doDumpTopologyAsJSon(camelContext);
+        }
 
+    }
+
+    /**
+     * Dumps the inter-route topology (nodes, edges and optionally external endpoints) as a single
+     * {@code route-topology.json} file in the configured output directory. This mirrors the JSON shape produced by the
+     * {@code route-topology} developer console (minus live metrics, which are not available at dump time). The file is
+     * always written (with empty {@code nodes}/{@code edges} arrays if there are no routes) as long as an output
+     * directory and a dumper are available, so its presence signals that the whole route-structure dump (which always
+     * runs first) has completed.
+     */
+    protected void doDumpTopologyAsJSon(CamelContext camelContext) {
+        if (output == null) {
+            // unlike route-structure dumping, topology has no console/log-only mode: it is only ever written
+            // as a file, so without an output directory there is nowhere to put it
+            return;
+        }
+
+        RouteTopologyDumper dumper = PluginHelper.getRouteTopologyDumper(camelContext);
+        if (dumper == null) {
+            LOG.warn("Cannot dump route topology as JSon as there is no RouteTopologyDumper available");
+            return;
+        }
+
+        RouteTopologyDumper.TopologyResult result = dumper.dumpTopology(camelContext);
+        if (result.nodes().isEmpty() && log) {
+            LOG.info("Dumping route topology JSon as there are no routes to connect");
+        }
+
+        // always write the file, even with empty nodes/edges: its presence is how callers (e.g. camel-jbang)
+        // distinguish "the dump ran and there are genuinely no routes" from "the dump never completed"
+        JsonObject root = new JsonObject();
+
+        JsonArray nodesArr = new JsonArray();
+        for (RouteTopologyDumper.TopologyNode node : result.nodes()) {
+            JsonObject jo = new JsonObject();
+            jo.put("routeId", node.routeId());
+            if (node.description() != null) {
+                jo.put("description", node.description());
+            }
+            jo.put("from", node.from());
+            jo.put("fromScheme", node.fromScheme());
+            jo.put("nodeType", node.nodeType());
+            nodesArr.add(jo);
+        }
+        root.put("nodes", nodesArr);
+
+        JsonArray edgesArr = new JsonArray();
+        for (RouteTopologyDumper.TopologyEdge edge : result.edges()) {
+            JsonObject jo = new JsonObject();
+            jo.put("fromRouteId", edge.fromRouteId());
+            jo.put("toRouteId", edge.toRouteId());
+            jo.put("endpoint", edge.endpoint());
+            jo.put("connectionType", edge.connectionType());
+            edgesArr.add(jo);
+        }
+        root.put("edges", edgesArr);
+
+        if (topologyExternal && !result.externalEndpoints().isEmpty()) {
+            JsonArray extArr = new JsonArray();
+            for (RouteTopologyDumper.TopologyExternalEndpoint ep : result.externalEndpoints()) {
+                JsonObject jo = new JsonObject();
+                jo.put("id", ep.id());
+                jo.put("uri", ep.uri());
+                jo.put("scheme", ep.scheme());
+                jo.put("direction", ep.direction());
+                jo.put("routeId", ep.routeId());
+                extArr.add(jo);
+            }
+            root.put("externalEndpoints", extArr);
+        }
+
+        try {
+            File dir = new File(output);
+            dir.mkdirs();
+            File target = new File(dir, "route-topology.json");
+            IOHelper.writeText(Jsoner.prettyPrint(root.toJson(), 2), target);
+            if (log) {
+                LOG.info("Dumped route topology as JSon to file: {}", target);
+            }
+        } catch (Exception e) {
+            LOG.warn("Error dumping route topology to JSon due to {}. This exception is ignored.", e.getMessage(), e);
+        }
     }
 
     protected void doDumpRoutesAsYaml(CamelContext camelContext) {
