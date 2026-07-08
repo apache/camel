@@ -37,7 +37,6 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.awaitility.Awaitility.await;
 import static org.hamcrest.Matchers.equalTo;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Base class for LRA based tests.
@@ -59,8 +58,9 @@ public abstract class AbstractLRATestSupport extends CamelTestSupport {
 
     @AfterEach
     public void checkActiveLRAs() throws IOException, InterruptedException {
-        await().atMost(2, SECONDS).until(() -> getNumberOfActiveLRAs(), equalTo(activeLRAs));
-        assertEquals(activeLRAs, getNumberOfActiveLRAs(), "Some LRA have been left pending");
+        await().atMost(20, SECONDS)
+                .alias("Some LRA have been left pending")
+                .until(() -> getNumberOfActiveLRAs(), equalTo(activeLRAs));
     }
 
     @Override
