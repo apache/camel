@@ -181,6 +181,10 @@ mock.assertIsSatisfied();
 // await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> MockEndpoint.assertIsSatisfied(context));
 ```
 
+Note: `MockEndpoint.assertIsSatisfied(context)` (no timeout argument) already waits up to
+10 seconds internally — `waitForCompleteLatch` defaults to 10 000 ms when `resultWaitTime`
+is not set. The timed overload is only needed when you want a **different** timeout.
+
 Use Awaitility only when waiting on a condition that `MockEndpoint` cannot express natively,
 such as waiting for a specific received count mid-test before performing the next action:
 
