@@ -22,7 +22,6 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import dev.tamboui.buffer.Buffer;
 import dev.tamboui.layout.Rect;
-import dev.tamboui.style.AnsiColor;
 import dev.tamboui.style.Color;
 import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.Span;
@@ -107,9 +106,9 @@ class EndpointsTabRenderTest {
         Frame frame = Frame.forTesting(buffer);
         tab.render(frame, area);
 
-        boolean foundBrightGreen
-                = TuiTestHelper.findCellWithColor(buffer, TuiIcons.KEY_RIGHT, Color.ansi(AnsiColor.BRIGHT_GREEN));
-        assertTrue(foundBrightGreen, "In-direction arrow should be rendered in BRIGHT_GREEN");
+        boolean foundGreen
+                = TuiTestHelper.findCellWithColor(buffer, TuiIcons.KEY_RIGHT, Color.GREEN);
+        assertTrue(foundGreen, "In-direction arrow should be rendered in GREEN");
     }
 
     @Test

@@ -29,7 +29,6 @@ import dev.tamboui.layout.Constraint;
 import dev.tamboui.layout.Layout;
 import dev.tamboui.layout.Rect;
 import dev.tamboui.markdown.MarkdownView;
-import dev.tamboui.style.AnsiColor;
 import dev.tamboui.style.Color;
 import dev.tamboui.style.Style;
 import dev.tamboui.terminal.Frame;
@@ -219,7 +218,7 @@ class EndpointsTab extends AbstractTableTab {
         for (EndpointInfo ep : sortedEndpoints) {
             String dir = ep.direction != null ? ep.direction : "";
             Style dirStyle = switch (dir) {
-                case "in" -> Style.EMPTY.fg(Color.ansi(AnsiColor.BRIGHT_GREEN));
+                case "in" -> Style.EMPTY.fg(Color.GREEN);
                 case "out" -> Style.EMPTY.fg(Color.CYAN);
                 default -> Theme.label();
             };
@@ -466,7 +465,7 @@ class EndpointsTab extends AbstractTableTab {
         String inLabelStr = " ".repeat(inLabelPad) + "in" + " ".repeat(sideLen - inLabelPad - 2);
         String outLabelStr = " ".repeat(outLabelPad) + "out";
 
-        Style inStyle = Style.EMPTY.fg(Color.ansi(AnsiColor.BRIGHT_GREEN));
+        Style inStyle = Style.EMPTY.fg(Color.GREEN);
         Style outStyle = Style.EMPTY.fg(Color.CYAN);
         Style dimStyle = Style.EMPTY.dim();
 
@@ -523,7 +522,7 @@ class EndpointsTab extends AbstractTableTab {
         long curOut = outArr[renderPoints - 1];
 
         Line chartTitle = Line.from(
-                Span.styled("▬", Style.EMPTY.fg(Color.ansi(AnsiColor.BRIGHT_GREEN))),
+                Span.styled("▬", Style.EMPTY.fg(Color.GREEN)),
                 Span.raw(String.format(" in:%-4s ", MetricsCollector.formatThroughput(curIn))),
                 Span.styled("▬", Style.EMPTY.fg(Color.CYAN)),
                 Span.raw(String.format(" out:%-4s msg/s", MetricsCollector.formatThroughput(curOut))));
@@ -532,7 +531,7 @@ class EndpointsTab extends AbstractTableTab {
         frame.renderWidget(DualSparkline.builder()
                 .topData(inArr)
                 .bottomData(outArr)
-                .topStyle(Style.EMPTY.fg(Color.ansi(AnsiColor.BRIGHT_GREEN)))
+                .topStyle(Style.EMPTY.fg(Color.GREEN))
                 .bottomStyle(Style.EMPTY.fg(Color.CYAN))
                 .showYAxis(true)
                 .xLabels("-" + renderPoints + "s", "-" + (renderPoints * 3 / 4) + "s",
@@ -579,7 +578,7 @@ class EndpointsTab extends AbstractTableTab {
         String inLabelStr = " ".repeat(inLabelPad) + "in" + " ".repeat(sideLen - inLabelPad - 2);
         String outLabelStr = " ".repeat(outLabelPad) + "out";
 
-        Style inStyle = Style.EMPTY.fg(Color.ansi(AnsiColor.BRIGHT_GREEN));
+        Style inStyle = Style.EMPTY.fg(Color.GREEN);
         Style outStyle = Style.EMPTY.fg(Color.CYAN);
         Style dimStyle = Style.EMPTY.dim();
 
@@ -636,7 +635,7 @@ class EndpointsTab extends AbstractTableTab {
                 Span.raw(" ["),
                 Span.styled(uriLabel, Theme.label().bold()),
                 Span.raw("] "),
-                Span.styled("▬", Style.EMPTY.fg(Color.ansi(AnsiColor.BRIGHT_GREEN))),
+                Span.styled("▬", Style.EMPTY.fg(Color.GREEN)),
                 Span.raw(String.format(" in:%-4s ", MetricsCollector.formatThroughput(curIn))),
                 Span.styled("▬", Style.EMPTY.fg(Color.CYAN)),
                 Span.raw(String.format(" out:%-4s msg/s", MetricsCollector.formatThroughput(curOut))));
@@ -644,7 +643,7 @@ class EndpointsTab extends AbstractTableTab {
         frame.renderWidget(DualSparkline.builder()
                 .topData(inArr)
                 .bottomData(outArr)
-                .topStyle(Style.EMPTY.fg(Color.ansi(AnsiColor.BRIGHT_GREEN)))
+                .topStyle(Style.EMPTY.fg(Color.GREEN))
                 .bottomStyle(Style.EMPTY.fg(Color.CYAN))
                 .showYAxis(true)
                 .xLabels("-" + renderPoints + "s", "-" + (renderPoints * 3 / 4) + "s",
