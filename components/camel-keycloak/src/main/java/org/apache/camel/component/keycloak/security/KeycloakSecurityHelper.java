@@ -29,6 +29,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.keycloak.TokenVerifier;
 import org.keycloak.common.VerificationException;
+import org.keycloak.jose.jws.JWSInput;
 import org.keycloak.representations.AccessToken;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,6 +40,22 @@ public final class KeycloakSecurityHelper {
 
     private KeycloakSecurityHelper() {
         // Utility class
+    }
+
+    /**
+     * Extracts the key ID ({@code kid}) from the JWT header, so the matching JWKS key can be selected.
+     *
+     * @param  tokenString the serialized JWT
+     * @return             the {@code kid} from the JWS header, or {@code null} if it is absent or the token cannot be
+     *                     parsed
+     */
+    public static String extractKeyId(String tokenString) {
+        try {
+            return new JWSInput(tokenString).getHeader().getKeyId();
+        } catch (Exception e) {
+            LOG.debug("Could not extract kid from token header: {}", e.getMessage());
+            return null;
+        }
     }
 
     /**
