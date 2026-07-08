@@ -433,6 +433,7 @@ class DocViewerPopup {
                     .source(docContent)
                     .scroll(docScroll)
                     .block(block)
+                    .styles(Theme.markdownStyles())
                     .build();
             frame.renderWidget(view, popup);
         }

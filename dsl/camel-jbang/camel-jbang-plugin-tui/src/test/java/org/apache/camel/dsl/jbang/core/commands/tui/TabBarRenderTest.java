@@ -35,7 +35,9 @@ class TabBarRenderTest {
     void primaryTabHeadersStartWithIconAndTwoSpaces() {
         String[] names = { "Overview", "Log", "Diagram", "Route", "Endpoint", "HTTP", "Health", "Inspect", "Errors" };
         for (int i = 0; i < names.length; i++) {
-            String header = TuiIcons.primaryTabHeader(TuiIcons.PRIMARY_TAB_ICONS.get(i), String.valueOf(i + 1), names[i]);
+            String header
+                    = Line.from(TuiIcons.primaryTabHeader(TuiIcons.PRIMARY_TAB_ICONS.get(i), String.valueOf(i + 1), names[i]))
+                            .rawContent();
             assertTrue(header.startsWith(TuiIcons.PRIMARY_TAB_ICONS.get(i) + "  " + (i + 1)),
                     "Tab header should be '<icon>  <key> <name>': " + header);
         }
@@ -43,7 +45,7 @@ class TabBarRenderTest {
 
     @Test
     void moreTabHeaderIncludesIconAndChevron() {
-        String header = TuiIcons.primaryTabHeader(TuiIcons.TAB_MORE, "0", TuiIcons.moreTabLabel());
+        String header = Line.from(TuiIcons.primaryTabHeader(TuiIcons.TAB_MORE, "0", TuiIcons.moreTabLabel())).rawContent();
         assertTrue(header.startsWith(TuiIcons.TAB_MORE));
         assertTrue(header.contains(TuiIcons.MORE_CHEVRON));
     }
@@ -51,8 +53,8 @@ class TabBarRenderTest {
     @Test
     void routeAndTopLabelsHaveEqualWidth() {
         // toggling Top mode must not shift the tab bar
-        int route = CharWidth.of(TuiIcons.primaryTabHeader(TuiIcons.TAB_ROUTES, "4", "Route"));
-        int top = CharWidth.of(TuiIcons.primaryTabHeader(TuiIcons.TAB_ROUTES, "4", " Top "));
+        int route = Line.from(TuiIcons.primaryTabHeader(TuiIcons.TAB_ROUTES, "4", "Route")).width();
+        int top = Line.from(TuiIcons.primaryTabHeader(TuiIcons.TAB_ROUTES, "4", " Top ")).width();
         assertEquals(route, top, "Route and Top tab cells must be the same width");
     }
 

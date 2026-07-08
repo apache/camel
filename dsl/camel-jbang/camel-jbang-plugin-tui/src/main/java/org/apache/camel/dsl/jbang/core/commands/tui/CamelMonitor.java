@@ -1263,7 +1263,7 @@ public class CamelMonitor extends CamelCommand {
             // Infra mode: only Overview and Log tabs
             Line[] labels = {
                     Line.from(TuiIcons.primaryTabHeader(TuiIcons.TAB_OVERVIEW, "1", "Overview")),
-                    Line.from(TuiIcons.primaryTabHeader(TuiIcons.TAB_LOG, "2", "Log")),
+                    Line.from(TuiIcons.primaryTabHeader(TuiIcons.TAB_LOG, "2", "Log"))
             };
 
             // Map real tab index to infra tab index for highlight

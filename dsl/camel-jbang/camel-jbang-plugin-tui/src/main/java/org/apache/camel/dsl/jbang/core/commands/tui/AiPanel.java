@@ -585,6 +585,7 @@ class AiPanel {
         MarkdownView view = MarkdownView.builder()
                 .source(source)
                 .scroll(scroll)
+                .styles(Theme.markdownStyles())
                 .build();
         frame.renderWidget(view, contentArea);
 

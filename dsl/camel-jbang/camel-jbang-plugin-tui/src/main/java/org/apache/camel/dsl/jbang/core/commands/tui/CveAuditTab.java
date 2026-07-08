@@ -307,6 +307,7 @@ class CveAuditTab extends AbstractTableTab {
                         .source(md.toString())
                         .scroll(detailScroll)
                         .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(title).build())
+                        .styles(Theme.markdownStyles())
                         .build(),
                 area);
     }

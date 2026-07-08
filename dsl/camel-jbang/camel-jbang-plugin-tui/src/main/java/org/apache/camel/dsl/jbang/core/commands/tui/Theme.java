@@ -244,6 +244,19 @@ public final class Theme {
         return style("search-match", FALLBACK_SEARCH_MATCH);
     }
 
+    /** Theme-aware markdown styles for MarkdownView headings and other elements. */
+    public static dev.tamboui.markdown.MarkdownStyles markdownStyles() {
+        return dev.tamboui.markdown.MarkdownStyles.builder()
+                .heading(1, label().bold())
+                .heading(2, label().bold())
+                .heading(3, label().bold())
+                .inlineCode(Style.EMPTY.fg(accent()))
+                .codeBlock(muted())
+                .listMarker(Style.EMPTY.fg(accent()))
+                .link(Style.EMPTY.fg(accent()).underlined())
+                .build();
+    }
+
     /** Diagram box-drawing border color. */
     public static synchronized Color diagramBorder() {
         return color("diagram-border", FALLBACK_DIAGRAM_BORDER);

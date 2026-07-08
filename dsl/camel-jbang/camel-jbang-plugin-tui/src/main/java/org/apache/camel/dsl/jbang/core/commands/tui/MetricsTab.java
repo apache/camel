@@ -227,9 +227,15 @@ class MetricsTab extends AbstractTableTab {
     @Override
     protected void renderContent(Frame frame, Rect area, IntegrationInfo info) {
         if (info.meters.isEmpty()) {
-            Paragraph p = Paragraph.from(Line.from(
-                    Span.styled("No metrics available. Run with --observe to enable micrometer.", LABEL)));
-            frame.renderWidget(p, area);
+            frame.renderWidget(
+                    Paragraph.builder()
+                            .text(Text.from(Line.from(
+                                    Span.styled("  No metrics available. Run with --observe to enable micrometer.",
+                                            LABEL))))
+                            .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
+                                    .title(" Metrics ").build())
+                            .build(),
+                    area);
             return;
         }
 

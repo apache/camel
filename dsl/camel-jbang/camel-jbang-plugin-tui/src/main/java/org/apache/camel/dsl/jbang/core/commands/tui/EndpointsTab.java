@@ -699,6 +699,7 @@ class EndpointsTab extends AbstractTableTab {
                             .source("*Select an endpoint*")
                             .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
                                     .title(" Endpoint Detail ").build())
+                            .styles(Theme.markdownStyles())
                             .build(),
                     area);
             return;
@@ -713,6 +714,7 @@ class EndpointsTab extends AbstractTableTab {
                             .source("*No endpoint URI*")
                             .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
                                     .title(" Endpoint Detail ").build())
+                            .styles(Theme.markdownStyles())
                             .build(),
                     area);
             return;
@@ -812,6 +814,7 @@ class EndpointsTab extends AbstractTableTab {
                         .scroll(detailScroll)
                         .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
                                 .title(title).build())
+                        .styles(Theme.markdownStyles())
                         .build(),
                 area);
     }
