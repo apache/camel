@@ -25,7 +25,6 @@ import java.util.Set;
 import dev.tamboui.layout.Constraint;
 import dev.tamboui.layout.Layout;
 import dev.tamboui.layout.Rect;
-import dev.tamboui.style.AnsiColor;
 import dev.tamboui.style.Color;
 import dev.tamboui.style.Style;
 import dev.tamboui.terminal.Frame;
@@ -525,14 +524,14 @@ class OverviewTab extends AbstractTab {
                         Span.raw(" ["),
                         Span.styled(chartName, Theme.label().bold()),
                         Span.raw(String.format("] Throughput: %s msg/s  ", curTpFmt)),
-                        Span.styled("■", Style.EMPTY.fg(Color.ansi(AnsiColor.BRIGHT_GREEN))),
+                        Span.styled("■", Style.EMPTY.fg(Color.GREEN)),
                         Span.raw(String.format(" ok:%s  ", curOkFmt)),
                         Span.styled("■", Style.EMPTY.fg(Color.RED)),
                         Span.raw(String.format(" fail:%s ", curFailFmt)));
             } else {
                 titleLine = Line.from(
                         Span.raw(String.format(" [All] Throughput: %s msg/s  ", curTpFmt)),
-                        Span.styled("■", Style.EMPTY.fg(Color.ansi(AnsiColor.BRIGHT_GREEN))),
+                        Span.styled("■", Style.EMPTY.fg(Color.GREEN)),
                         Span.raw(String.format(" ok:%s  ", curOkFmt)),
                         Span.styled("■", Style.EMPTY.fg(Color.RED)),
                         Span.raw(String.format(" fail:%s ", curFailFmt)));
@@ -547,7 +546,7 @@ class OverviewTab extends AbstractTab {
                 long failed = Math.min(mergedFailed[i], mergedTotal[i]);
                 long ok = Math.max(0, mergedTotal[i] - failed);
                 groups.add(BarGroup.of(
-                        Bar.builder().value(ok).textValue("").style(Style.EMPTY.fg(Color.ansi(AnsiColor.BRIGHT_GREEN)))
+                        Bar.builder().value(ok).textValue("").style(Style.EMPTY.fg(Color.GREEN))
                                 .build(),
                         Bar.builder().value(failed).textValue("").style(Style.EMPTY.fg(Color.RED)).build()));
             }
