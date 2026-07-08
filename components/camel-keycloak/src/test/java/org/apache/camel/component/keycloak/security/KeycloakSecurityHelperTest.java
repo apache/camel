@@ -225,6 +225,29 @@ public class KeycloakSecurityHelperTest {
     }
 
     @Test
+    void testExtractKeyIdReturnsKidFromHeader() throws Exception {
+        KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA");
+        keyGen.initialize(2048);
+        KeyPair keyPair = keyGen.generateKeyPair();
+
+        AccessToken token = new AccessToken();
+        token.subject("user-123");
+
+        String signed = new JWSBuilder()
+                .type("JWT")
+                .kid("test-key-id")
+                .jsonContent(token)
+                .rsa256(keyPair.getPrivate());
+
+        assertEquals("test-key-id", KeycloakSecurityHelper.extractKeyId(signed));
+    }
+
+    @Test
+    void testExtractKeyIdReturnsNullForMalformedToken() {
+        assertNull(KeycloakSecurityHelper.extractKeyId("not-a-jwt"));
+    }
+
+    @Test
     void testParseAndVerifyAccessTokenAcceptsMatchingAudience() throws Exception {
         String expectedIssuer = "http://localhost:8080/realms/test";
 
