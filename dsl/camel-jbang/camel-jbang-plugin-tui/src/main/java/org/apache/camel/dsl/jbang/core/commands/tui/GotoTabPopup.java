@@ -189,8 +189,10 @@ class GotoTabPopup {
         Style dimStyle = Style.EMPTY.dim();
         for (TabRegistry.TabEntry entry : filteredEntries) {
             List<Span> spans = new ArrayList<>();
-            String key = String.format(" %-2s ", entry.shortcut());
-            spans.add(Span.styled(key, dimStyle));
+            String sc = entry.shortcut();
+            spans.add(Span.raw(" "));
+            spans.add(Span.styled(sc, Theme.mnemonic()));
+            spans.add(Span.raw(" ".repeat(Math.max(1, 3 - sc.length()))));
             String name = entry.name();
             if (name.length() > nameColWidth) {
                 name = name.substring(0, nameColWidth);
