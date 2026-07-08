@@ -66,9 +66,6 @@ public final class Theme {
     private static final Style FALLBACK_SELECTION = Style.EMPTY.fg(Color.WHITE).bg(Color.rgb(0x26, 0x4F, 0x78)).bold();
     private static final Style FALLBACK_INFO = Style.EMPTY.fg(Color.rgb(0x9C, 0xDC, 0xFE));
     private static final Style FALLBACK_NOTICE = Style.EMPTY.fg(Color.rgb(0xC5, 0x86, 0xC0));
-    private static final Style FALLBACK_MCP_ACTIVE = Style.EMPTY.fg(Color.rgb(0x4E, 0xC9, 0xB0));
-    private static final Style FALLBACK_MCP_IDLE = Style.EMPTY.fg(Color.rgb(0x60, 0x60, 0x60));
-    private static final Style FALLBACK_MCP_DOWN = Style.EMPTY.fg(Color.rgb(0xF4, 0x87, 0x71));
     private static final Color FALLBACK_ZEBRA = Color.rgb(0x25, 0x25, 0x25);
     private static final Color FALLBACK_BASE_BG = Color.rgb(0x1E, 0x1E, 0x1E);
     private static final Color FALLBACK_BASE_FG = Color.rgb(0xD4, 0xD4, 0xD4);
@@ -219,21 +216,6 @@ public final class Theme {
     /** Secondary accent (header infra / selected). */
     public static Style notice() {
         return style("notice", FALLBACK_NOTICE);
-    }
-
-    /** MCP indicator: connected with recent activity. */
-    public static Style mcpActive() {
-        return style("mcp-active", FALLBACK_MCP_ACTIVE);
-    }
-
-    /** MCP indicator: connected but idle. */
-    public static Style mcpIdle() {
-        return style("mcp-idle", FALLBACK_MCP_IDLE);
-    }
-
-    /** MCP indicator: not connected. */
-    public static Style mcpDown() {
-        return style("mcp-down", FALLBACK_MCP_DOWN);
     }
 
     /** Secondary accent for field labels, section headers, key hints, and popup titles. */

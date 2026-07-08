@@ -34,9 +34,6 @@ $dark-fg: #D4D4D4;
 #info           { color: #9CDCFE; }
 #notice         { color: #C586C0; }
 #row-alt        { background: #252525; }
-#mcp-active     { color: #4EC9B0; }
-#mcp-idle       { color: #606060; }
-#mcp-down       { color: #F48771; }
 #base-bg        { background: $dark-bg; }
 #base-fg        { color: $dark-fg; }
 

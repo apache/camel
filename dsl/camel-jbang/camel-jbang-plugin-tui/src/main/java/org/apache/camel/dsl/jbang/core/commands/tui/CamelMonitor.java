@@ -1771,11 +1771,11 @@ public class CamelMonitor extends CamelCommand {
                 suffix = active ? " " + TuiIcons.SELECTED : " " + TuiIcons.IDLE;
                 mcpLabel += " (" + client + ")";
                 labelStyle = Theme.success();
-                suffixStyle = active ? Theme.mcpActive() : Theme.mcpIdle();
+                suffixStyle = active ? Theme.success() : Theme.muted();
             } else {
                 suffix = " " + TuiIcons.CROSS;
                 labelStyle = Theme.muted();
-                suffixStyle = Theme.mcpDown();
+                suffixStyle = Theme.error();
             }
             rightSpans.add(Span.styled(mcpLabel, labelStyle));
             rightSpans.add(Span.styled(suffix, suffixStyle));

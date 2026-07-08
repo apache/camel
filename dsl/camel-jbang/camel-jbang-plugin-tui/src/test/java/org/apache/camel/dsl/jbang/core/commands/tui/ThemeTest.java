@@ -73,9 +73,6 @@ class ThemeTest {
         assertEquals(Style.EMPTY.fg(Color.WHITE).bg(Color.rgb(0x26, 0x4F, 0x78)).bold(), Theme.selectionBg());
         assertEquals(Style.EMPTY.fg(Color.rgb(0x9C, 0xDC, 0xFE)), Theme.info());
         assertEquals(Style.EMPTY.fg(Color.rgb(0xC5, 0x86, 0xC0)), Theme.notice());
-        assertEquals(Style.EMPTY.fg(Color.rgb(0x4E, 0xC9, 0xB0)), Theme.mcpActive());
-        assertEquals(Style.EMPTY.fg(Color.rgb(0x60, 0x60, 0x60)), Theme.mcpIdle());
-        assertEquals(Style.EMPTY.fg(Color.rgb(0xF4, 0x87, 0x71)), Theme.mcpDown());
         assertEquals(Color.rgb(0x25, 0x25, 0x25), Theme.zebra());
         assertEquals(Color.rgb(0x1E, 0x1E, 0x1E), Theme.baseBg());
         assertEquals(Color.rgb(0xD4, 0xD4, 0xD4), Theme.baseFg());
@@ -88,10 +85,6 @@ class ThemeTest {
         assertEquals(Color.rgb(0xF6, 0x91, 0x23), Theme.accent());
         assertEquals(Style.EMPTY.fg(Color.rgb(0x22, 0x86, 0x3A)), Theme.success());
         assertEquals(Style.EMPTY.fg(Color.rgb(0xC0, 0xC0, 0xC0)), Theme.border());
-        // MCP indicator hues track the light palette: idle gray and down red differ from the dark ANSI variants.
-        assertEquals(Style.EMPTY.fg(Color.rgb(0x22, 0x86, 0x3A)), Theme.mcpActive());
-        assertEquals(Style.EMPTY.fg(Color.rgb(0x95, 0x9D, 0xA5)), Theme.mcpIdle());
-        assertEquals(Style.EMPTY.fg(Color.rgb(0xD7, 0x3A, 0x49)), Theme.mcpDown());
         // Zebra background is theme-aware: light gray on light, unlike the dark gray used on dark.
         assertEquals(Color.rgb(0xF6, 0xF8, 0xFA), Theme.zebra());
         // Base colors differ significantly between themes: white background and dark text on light mode.
@@ -242,9 +235,6 @@ class ThemeTest {
         assertNotNull(Theme.selectionBg());
         assertNotNull(Theme.info());
         assertNotNull(Theme.notice());
-        assertNotNull(Theme.mcpActive());
-        assertNotNull(Theme.mcpIdle());
-        assertNotNull(Theme.mcpDown());
         assertNotNull(Theme.zebra());
         assertNotNull(Theme.baseBg());
         assertNotNull(Theme.baseFg());

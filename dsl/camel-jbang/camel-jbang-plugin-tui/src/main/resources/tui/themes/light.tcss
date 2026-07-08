@@ -34,9 +34,6 @@ $light-fg: #24292E;
 #info           { color: #0366D6; }
 #notice         { color: #6F42C1; }
 #row-alt        { background: #F6F8FA; }
-#mcp-active     { color: #22863A; }
-#mcp-idle       { color: #959DA5; }
-#mcp-down       { color: #D73A49; }
 #base-bg        { background: $light-bg; }
 #base-fg        { color: $light-fg; }
 
