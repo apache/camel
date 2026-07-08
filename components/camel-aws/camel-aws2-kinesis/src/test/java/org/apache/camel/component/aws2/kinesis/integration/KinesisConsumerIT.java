@@ -117,7 +117,7 @@ public class KinesisConsumerIT extends CamelTestSupport {
     @DisplayName("Tests that the component can produce messages to AWS Kinesis")
     @Timeout(value = 2, unit = TimeUnit.MINUTES)
     @Test
-    void testProduceMessages() {
+    void testProduceMessages() throws Exception {
         result.expectedMessageCount(messageCount);
 
         result.setResultWaitTime(60000);

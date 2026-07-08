@@ -187,7 +187,7 @@ public class KinesisConsumerResumeIT extends CamelTestSupport {
     @DisplayName("Tests that the component can resume messages from AWS Kinesis")
     @Timeout(value = 3, unit = TimeUnit.MINUTES)
     @Test
-    void testProduceMessages() {
+    void testProduceMessages() throws Exception {
         result.expectedMessageCount(expectedCount);
 
         result.setResultWaitTime(120000);

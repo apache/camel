@@ -112,7 +112,7 @@ public class KafkaConsumerAsyncManualCommitIT extends BaseKafkaTestSupport {
     @DisplayName("Tests that LAST_RECORD_BEFORE_COMMIT header includes a value")
     @Order(1)
     @Test
-    void testLastRecordBeforeCommitHeader() {
+    void testLastRecordBeforeCommitHeader() throws Exception {
         MockEndpoint to = contextExtension.getMockEndpoint(KafkaTestUtil.MOCK_RESULT);
 
         to.expectedMessageCount(5);

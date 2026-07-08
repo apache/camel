@@ -36,7 +36,7 @@ public class MinaSpringMultipleUDPTest extends CamelSpringTestSupport {
     }
 
     @Test
-    public void testMinaSpringProtobufEndpoint() {
+    public void testMinaSpringProtobufEndpoint() throws Exception {
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedMessageCount(7);
 

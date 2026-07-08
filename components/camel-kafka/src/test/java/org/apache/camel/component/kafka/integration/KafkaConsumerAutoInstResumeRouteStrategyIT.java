@@ -64,7 +64,7 @@ public class KafkaConsumerAutoInstResumeRouteStrategyIT extends BaseKafkaTestSup
 
     @Test
     @Timeout(value = 30)
-    public void testOffsetIsBeingChecked() {
+    public void testOffsetIsBeingChecked() throws Exception {
         MockEndpoint mock = contextExtension.getMockEndpoint(KafkaTestUtil.MOCK_RESULT);
 
         mock.expectedMessageCount(10);
