@@ -409,7 +409,7 @@ class PopupManager {
 
         frame.renderWidget(Clear.INSTANCE, popup);
 
-        Style keyStyle = Theme.hintKey();
+        Style keyStyle = Theme.mnemonic();
         ListItem[] items = morePopupItems(keyStyle);
         ListWidget list = ListWidget.builder()
                 .items(items)

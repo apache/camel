@@ -76,6 +76,7 @@ public final class Theme {
     private static final Style FALLBACK_LABEL = Style.EMPTY.fg(Color.rgb(0xDC, 0xDC, 0xAA));
     private static final Style FALLBACK_CHANGE = Style.EMPTY.fg(Color.rgb(0xDC, 0xDC, 0xAA));
     private static final Style FALLBACK_SEARCH_MATCH = Style.EMPTY.fg(Color.BLACK).bg(Color.rgb(0xDC, 0xDC, 0xAA));
+    private static final Style FALLBACK_MNEMONIC = Style.EMPTY.fg(Color.rgb(0xDC, 0xDC, 0xAA)).bold().underlined();
 
     // Diagram token fallbacks (dark-theme defaults).
     private static final Color FALLBACK_DIAGRAM_BORDER = Color.rgb(0x80, 0x80, 0x80);
@@ -91,7 +92,7 @@ public final class Theme {
             "accent", "accent-bg", "hint-key", "border", "border-focused", "title",
             "success", "warning", "error", "muted", "selection", "info", "notice",
             "row-alt", "base-bg", "base-fg",
-            "label", "change", "search-match",
+            "label", "change", "search-match", "mnemonic",
             "diagram-border", "diagram-id", "diagram-from", "diagram-to",
             "diagram-choice", "diagram-action", "diagram-eip", "diagram-default"
     };
@@ -242,6 +243,11 @@ public final class Theme {
     /** Search/find match highlight (foreground + background). */
     public static Style searchMatch() {
         return style("search-match", FALLBACK_SEARCH_MATCH);
+    }
+
+    /** Keyboard shortcut mnemonic in tab headers and menus (bold + underlined). */
+    public static Style mnemonic() {
+        return style("mnemonic", FALLBACK_MNEMONIC);
     }
 
     /** Theme-aware markdown styles for MarkdownView headings and other elements. */

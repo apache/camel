@@ -41,6 +41,7 @@ $light-fg: #24292E;
 #label          { color: #735C00; }
 #change         { color: #B08800; }
 #search-match   { color: black; background: #FFD33D; }
+#mnemonic       { color: #735C00; text-style: bold underline; }
 
 /* Diagram tokens */
 #diagram-border  { color: #808080; }

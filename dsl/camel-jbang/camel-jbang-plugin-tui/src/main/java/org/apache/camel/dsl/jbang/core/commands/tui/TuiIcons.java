@@ -175,7 +175,7 @@ final class TuiIcons {
     static dev.tamboui.text.Span[] primaryTabHeader(String icon, String key, String name) {
         return new dev.tamboui.text.Span[] {
                 dev.tamboui.text.Span.raw(icon + "  "),
-                dev.tamboui.text.Span.styled(key, Theme.hintKey()),
+                dev.tamboui.text.Span.styled(key, Theme.mnemonic()),
                 dev.tamboui.text.Span.raw(" " + name)
         };
     }
