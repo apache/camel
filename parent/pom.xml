@@ -194,7 +194,7 @@
         <google-cloud-http-client-version>2.1.1</google-cloud-http-client-version>
         <google-cloud-pubsub-version>1.152.0</google-cloud-pubsub-version>
         <google-cloud-secretmanager-version>2.94.0</google-cloud-secretmanager-version>
-        <google-cloud-storage-version>2.69.0</google-cloud-storage-version>
+        <google-cloud-storage-version>2.70.0</google-cloud-storage-version>
         <google-cloud-aiplatform-version>3.94.0</google-cloud-aiplatform-version>
         <google-cloud-vision-version>3.91.0</google-cloud-vision-version>
         <google-cloud-speech-version>4.89.0</google-cloud-speech-version>
