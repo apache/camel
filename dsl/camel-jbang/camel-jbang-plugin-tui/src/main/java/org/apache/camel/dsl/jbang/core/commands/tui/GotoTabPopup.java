@@ -192,7 +192,7 @@ class GotoTabPopup {
             String sc = entry.shortcut();
             spans.add(Span.raw(" "));
             spans.add(Span.styled(sc, Theme.mnemonic()));
-            spans.add(Span.raw(" ".repeat(Math.max(1, 3 - sc.length()))));
+            spans.add(Span.raw(" " + entry.icon() + " "));
             String name = entry.name();
             if (name.length() > nameColWidth) {
                 name = name.substring(0, nameColWidth);
