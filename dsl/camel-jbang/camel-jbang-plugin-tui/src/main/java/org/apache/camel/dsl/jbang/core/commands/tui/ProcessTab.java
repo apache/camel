@@ -142,7 +142,7 @@ class ProcessTab extends AbstractTab {
         String cmdLine = getCommandLine(info.pid);
         if (cmdLine != null) {
             lines.add(Line.from(
-                    Span.styled("  Command Line", Style.EMPTY.fg(Theme.accent()).bold())));
+                    Span.styled("  Command Line", Theme.label().bold())));
             lines.add(Line.from(Span.raw("")));
             if (wrap) {
                 lines.add(Line.from(Span.raw("  " + cmdLine)));
@@ -241,7 +241,7 @@ class ProcessTab extends AbstractTab {
         }
         String padded = String.format("  %-12s", label + ":");
         lines.add(Line.from(
-                Span.styled(padded, Style.EMPTY.dim()),
+                Span.styled(padded, Theme.muted()),
                 Span.styled(value, Style.EMPTY.fg(Theme.baseFg()).bold())));
     }
 

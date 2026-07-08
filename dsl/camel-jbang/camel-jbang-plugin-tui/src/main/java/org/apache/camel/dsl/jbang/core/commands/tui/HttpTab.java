@@ -1226,7 +1226,7 @@ class HttpTab extends AbstractTableTab {
         spans.add(Span.raw(" HTTP Services [" + visible.size() + "]"));
         if (info.httpServer != null) {
             spans.add(Span.raw("  "));
-            spans.add(Span.styled("Server: ", Theme.label().bold()));
+            spans.add(Span.styled("Server: ", Theme.muted()));
             spans.add(Span.styled(info.httpServer, Style.EMPTY.fg(Theme.accent())));
         }
         long restCount = info.httpEndpoints.stream().filter(e -> e.fromRest && !e.specification).count();
@@ -1399,7 +1399,7 @@ class HttpTab extends AbstractTableTab {
             return;
         }
         lines.add(Line.from(
-                Span.styled(String.format("  %-10s ", label + ":"), Theme.label().bold()),
+                Span.styled(String.format("  %-10s ", label + ":"), Theme.muted()),
                 Span.raw(value)));
     }
 

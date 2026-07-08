@@ -633,7 +633,7 @@ class OverviewTab extends AbstractTab {
         frame.renderWidget(infoBlock, area);
         Rect inner = infoBlock.inner(area);
         List<Line> lines = new ArrayList<>();
-        Style dim = Style.EMPTY.dim();
+        Style dim = Theme.muted();
         int jvmDetailStart = -1;
         int jvmDetailCount = 0;
         if (sel != null) {
@@ -749,7 +749,7 @@ class OverviewTab extends AbstractTab {
         frame.renderWidget(infoBlock, area);
         Rect inner = infoBlock.inner(area);
         List<Line> lines = new ArrayList<>();
-        Style dim = Style.EMPTY.dim();
+        Style dim = Theme.muted();
         lines.add(Line.from(
                 Span.styled("Service: ", dim),
                 Span.styled(infra.alias, Theme.notice())));

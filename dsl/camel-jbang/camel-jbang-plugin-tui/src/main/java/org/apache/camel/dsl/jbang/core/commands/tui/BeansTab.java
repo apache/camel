@@ -252,14 +252,14 @@ class BeansTab extends AbstractTableTab {
         // full type
         if (bean.type != null && !bean.type.isEmpty()) {
             lines.add(Line.from(
-                    Span.styled("  Type: ", Style.EMPTY.dim()),
+                    Span.styled("  Type: ", Theme.muted()),
                     Span.styled(bean.type, Style.EMPTY.fg(Theme.baseFg()))));
         }
 
         // properties
         if (bean.properties != null && !bean.properties.isEmpty()) {
             lines.add(Line.from(Span.raw("")));
-            lines.add(Line.from(Span.styled("  Properties:", Style.EMPTY.dim())));
+            lines.add(Line.from(Span.styled("  Properties:", Theme.muted())));
 
             int maxNameLen = 0;
             for (BeanData.Property prop : bean.properties) {

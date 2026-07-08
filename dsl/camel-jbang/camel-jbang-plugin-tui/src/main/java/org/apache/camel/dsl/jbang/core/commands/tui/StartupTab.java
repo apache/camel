@@ -49,7 +49,7 @@ import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.*;
 class StartupTab extends AbstractTab {
 
     private static final int MOUSE_SCROLL_LINES = 3;
-    private static final Style LABEL = Style.EMPTY.dim();
+    private static final Style LABEL = Theme.muted();
     private static final Style VALUE = Style.EMPTY.fg(Theme.baseFg()).bold();
 
     private final ScrollbarState scrollbarState = new ScrollbarState();

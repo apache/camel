@@ -126,14 +126,14 @@ class MemoryTab extends AbstractTab {
         // Heap memory with two gauge bars (used/committed and used/max)
         if (info.heapMemUsed > 0) {
             lines.add(Line.from(
-                    Span.styled("  Heap Memory", Style.EMPTY.fg(Theme.accent()).bold())));
+                    Span.styled("  Heap Memory", Theme.label().bold())));
 
             // Compute heap trend from history
             LinkedList<Long> hist = heapMemHistory.get(info.pid);
             Span trendSpan = computeTrendSpan(hist, info.heapMemCommitted);
 
             lines.add(Line.from(
-                    Span.styled("  used:      ", Style.EMPTY.dim()),
+                    Span.styled("  used:      ", Theme.muted()),
                     Span.styled(formatBytes(info.heapMemUsed), Style.EMPTY.fg(Theme.baseFg()).bold())));
 
             if (info.heapMemCommitted > 0) {
@@ -142,7 +142,7 @@ class MemoryTab extends AbstractTab {
                 Style colorComm = pctComm >= 80 ? Theme.error() : pctComm >= 60 ? Theme.warning()
                         : Theme.success();
                 List<Span> commSpans = new ArrayList<>();
-                commSpans.add(Span.styled("  committed: ", Style.EMPTY.dim()));
+                commSpans.add(Span.styled("  committed: ", Theme.muted()));
                 commSpans.add(Span.styled(String.format("%-10s", formatBytes(info.heapMemCommitted)), Style.EMPTY));
                 commSpans.add(Span.styled(gaugeComm, colorComm));
                 commSpans.add(Span.styled(String.format("  %d%%", pctComm), colorComm.bold()));
@@ -158,7 +158,7 @@ class MemoryTab extends AbstractTab {
                 Style colorMax = pctMax >= 80 ? Theme.error() : pctMax >= 60 ? Theme.warning()
                         : Theme.success();
                 List<Span> maxSpans = new ArrayList<>();
-                maxSpans.add(Span.styled("  max:       ", Style.EMPTY.dim()));
+                maxSpans.add(Span.styled("  max:       ", Theme.muted()));
                 maxSpans.add(Span.styled(String.format("%-10s", formatBytes(info.heapMemMax)), Style.EMPTY));
                 maxSpans.add(Span.styled(gaugeMax, colorMax));
                 maxSpans.add(Span.styled(String.format("  %d%%", pctMax), colorMax.bold()));
@@ -178,14 +178,14 @@ class MemoryTab extends AbstractTab {
                     : Theme.success();
 
             lines.add(Line.from(
-                    Span.styled("  Old Gen:   ", Style.EMPTY.dim()),
+                    Span.styled("  Old Gen:   ", Theme.muted()),
                     Span.styled(String.format("%-10s", formatBytes(info.oldGenUsed)), Style.EMPTY.fg(Theme.baseFg()).bold()),
                     Span.styled(oldGauge, oldColor),
                     Span.styled(String.format("  %d%%", oldPct), oldColor.bold())));
             lines.add(Line.from(
-                    Span.styled("  committed: ", Style.EMPTY.dim()),
+                    Span.styled("  committed: ", Theme.muted()),
                     Span.raw(formatBytes(info.oldGenCommitted)),
-                    Span.styled("    max: ", Style.EMPTY.dim()),
+                    Span.styled("    max: ", Theme.muted()),
                     Span.raw(formatBytes(info.oldGenMax))));
         }
 
@@ -193,22 +193,22 @@ class MemoryTab extends AbstractTab {
         if (info.nonHeapMemUsed > 0) {
             lines.add(Line.from(Span.raw("")));
             lines.add(Line.from(
-                    Span.styled("  Non-Heap Memory", Style.EMPTY.fg(Theme.accent()).bold())));
+                    Span.styled("  Non-Heap Memory", Theme.label().bold())));
             lines.add(Line.from(
-                    Span.styled("  used:      ", Style.EMPTY.dim()),
+                    Span.styled("  used:      ", Theme.muted()),
                     Span.styled(String.format("%-10s", formatBytes(info.nonHeapMemUsed)),
                             Style.EMPTY.fg(Theme.baseFg()).bold()),
-                    Span.styled("  committed: ", Style.EMPTY.dim()),
+                    Span.styled("  committed: ", Theme.muted()),
                     Span.raw(formatBytes(info.nonHeapMemCommitted))));
         }
         if (info.metaspaceUsed > 0) {
             lines.add(Line.from(
-                    Span.styled("  Metaspace: ", Style.EMPTY.dim()),
+                    Span.styled("  Metaspace: ", Theme.muted()),
                     Span.styled(String.format("%-10s", formatBytes(info.metaspaceUsed)), Style.EMPTY.fg(Theme.baseFg()).bold()),
-                    Span.styled("  committed: ", Style.EMPTY.dim()),
+                    Span.styled("  committed: ", Theme.muted()),
                     Span.raw(formatBytes(info.metaspaceCommitted)),
                     info.metaspaceMax > 0
-                            ? Span.styled("  max: " + formatBytes(info.metaspaceMax), Style.EMPTY.dim())
+                            ? Span.styled("  max: " + formatBytes(info.metaspaceMax), Theme.muted())
                             : Span.raw("")));
         }
 
@@ -216,24 +216,24 @@ class MemoryTab extends AbstractTab {
         if (info.threadCount > 0) {
             lines.add(Line.from(Span.raw("")));
             List<Span> threadSpans = new ArrayList<>();
-            threadSpans.add(Span.styled("  Threads", Style.EMPTY.fg(Theme.accent()).bold()));
-            threadSpans.add(Span.styled("  current: ", Style.EMPTY.dim()));
+            threadSpans.add(Span.styled("  Threads", Theme.label().bold()));
+            threadSpans.add(Span.styled("  current: ", Theme.muted()));
             threadSpans.add(Span.styled(String.valueOf(info.threadCount), Style.EMPTY.fg(Theme.baseFg()).bold()));
-            threadSpans.add(Span.styled("  peak: ", Style.EMPTY.dim()));
+            threadSpans.add(Span.styled("  peak: ", Theme.muted()));
             threadSpans.add(Span.raw(String.valueOf(info.peakThreadCount)));
             lines.add(Line.from(threadSpans));
         }
 
         // GC and class loading on the same line
         List<Span> gcSpans = new ArrayList<>();
-        gcSpans.add(Span.styled("  GC: ", Style.EMPTY.dim()));
+        gcSpans.add(Span.styled("  GC: ", Theme.muted()));
         gcSpans.add(Span.raw(info.gcCollectionCount + " collections"));
         if (info.gcCollectionTime > 0) {
-            gcSpans.add(Span.styled("  time: ", Style.EMPTY.dim()));
+            gcSpans.add(Span.styled("  time: ", Theme.muted()));
             gcSpans.add(Span.raw(TimeUtils.printDuration(info.gcCollectionTime, true)));
         }
         if (info.loadedClassCount > 0) {
-            gcSpans.add(Span.styled("    Classes: ", Style.EMPTY.dim()));
+            gcSpans.add(Span.styled("    Classes: ", Theme.muted()));
             gcSpans.add(Span.raw(String.valueOf(info.loadedClassCount)));
         }
         lines.add(Line.from(Span.raw("")));

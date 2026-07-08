@@ -59,7 +59,7 @@ class MetricsTab extends AbstractTableTab {
 
     private static final int MOUSE_SCROLL_LINES = 3;
 
-    private static final Style LABEL = Style.EMPTY.dim();
+    private static final Style LABEL = Theme.muted();
     private static final Style VALUE = Style.EMPTY.fg(Theme.baseFg()).bold();
     private static final Style GOOD = Theme.success();
     private static final Style BAD = Theme.error();

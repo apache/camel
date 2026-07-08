@@ -339,7 +339,7 @@ class CircuitBreakerTab extends AbstractTableTab {
                         .title(Title.from(chartTitle)).build())
                 .build(), vSplit.get(1));
 
-        Style dim = Style.EMPTY.dim();
+        Style dim = Theme.muted();
         Line metricsLine1 = Line.from(
                 Span.raw(" "),
                 Span.styled("total:", dim), Span.raw(cb.total + " "),

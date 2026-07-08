@@ -143,7 +143,7 @@ class SqlTraceTab extends AbstractTableTab {
     }
 
     private void renderKpiStrip(Frame frame, Rect area, IntegrationInfo info) {
-        Style labelStyle = Style.EMPTY.dim();
+        Style labelStyle = Theme.muted();
         Style valueStyle = Style.EMPTY.fg(Theme.accent()).bold();
         Style warnStyle = Theme.warning().bold();
         Style errorStyle = Theme.error().bold();
@@ -310,7 +310,7 @@ class SqlTraceTab extends AbstractTableTab {
 
     private void renderDetail(Frame frame, Rect area, SqlTraceInfo si) {
         List<Line> lines = new ArrayList<>();
-        Style labelStyle = Style.EMPTY.fg(Theme.accent()).bold();
+        Style labelStyle = Theme.muted();
         Style valueStyle = Style.EMPTY;
 
         lines.add(Line.from(

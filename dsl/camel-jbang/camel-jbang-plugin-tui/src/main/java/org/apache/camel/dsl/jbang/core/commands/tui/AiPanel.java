@@ -732,7 +732,7 @@ class AiPanel {
 
         // --- Summary ---
         Rect summaryArea = sections.get(0);
-        Style dimStyle = Style.EMPTY.dim();
+        Style dimStyle = Theme.muted();
         Style cyanStyle = Style.EMPTY.fg(Theme.accent());
         List<Line> summaryLines = new ArrayList<>();
         summaryLines.add(Line.from(

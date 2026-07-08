@@ -135,7 +135,7 @@ class DoctorPopup {
         }
         result.add(Line.from(
                 Span.raw(TuiIcons.indent(TuiIcons.JAVA)),
-                Span.styled(String.format("%-14s", "Java"), Style.EMPTY.bold()),
+                Span.styled(String.format("%-14s", "Java"), Theme.muted()),
                 Span.raw(String.format("%-30s", version + " (" + vendor + ")")),
                 Span.raw(" " + emoji)));
         if (status != null) {
@@ -149,13 +149,13 @@ class DoctorPopup {
             String version = catalog.getCatalogVersion();
             result.add(Line.from(
                     Span.raw(TuiIcons.indent(TuiIcons.CAMEL)),
-                    Span.styled(String.format("%-14s", "Camel"), Style.EMPTY.bold()),
+                    Span.styled(String.format("%-14s", "Camel"), Theme.muted()),
                     Span.raw(String.format("%-30s", version)),
                     Span.raw(" " + TuiIcons.OK)));
         } catch (Exception e) {
             result.add(Line.from(
                     Span.raw(TuiIcons.indent(TuiIcons.CAMEL)),
-                    Span.styled(String.format("%-14s", "Camel"), Style.EMPTY.bold()),
+                    Span.styled(String.format("%-14s", "Camel"), Theme.muted()),
                     Span.raw(String.format("%-30s", "Not detected")),
                     Span.raw(" " + TuiIcons.FAIL)));
         }
@@ -166,13 +166,13 @@ class DoctorPopup {
         if (version != null) {
             result.add(Line.from(
                     Span.raw(TuiIcons.indent(TuiIcons.BUNDLED)),
-                    Span.styled(String.format("%-14s", "JBang"), Style.EMPTY.bold()),
+                    Span.styled(String.format("%-14s", "JBang"), Theme.muted()),
                     Span.raw(String.format("%-30s", version)),
                     Span.raw(" " + TuiIcons.OK)));
         } else {
             result.add(Line.from(
                     Span.raw(TuiIcons.indent(TuiIcons.BUNDLED)),
-                    Span.styled(String.format("%-14s", "JBang"), Style.EMPTY.bold()),
+                    Span.styled(String.format("%-14s", "JBang"), Theme.muted()),
                     Span.raw(String.format("%-30s", "Not detected")),
                     Span.raw(" " + TuiIcons.WARN)));
         }
@@ -188,13 +188,13 @@ class DoctorPopup {
                     Set.of(), false, false);
             result.add(Line.from(
                     Span.raw(TuiIcons.indent(TuiIcons.INFRA)),
-                    Span.styled(String.format("%-14s", "Maven"), Style.EMPTY.bold()),
+                    Span.styled(String.format("%-14s", "Maven"), Theme.muted()),
                     Span.raw(String.format("%-30s", "Artifact resolution")),
                     Span.raw(" " + TuiIcons.OK)));
         } catch (MavenResolutionException e) {
             result.add(Line.from(
                     Span.raw(TuiIcons.indent(TuiIcons.INFRA)),
-                    Span.styled(String.format("%-14s", "Maven"), Style.EMPTY.bold()),
+                    Span.styled(String.format("%-14s", "Maven"), Theme.muted()),
                     Span.raw(String.format("%-30s", "Resolution failed")),
                     Span.raw(" " + TuiIcons.FAIL)));
             result.add(Line.from(Span.styled("                    " + TuiHelper.truncate(e.getMessage(), 40),
@@ -202,7 +202,7 @@ class DoctorPopup {
         } catch (Exception e) {
             result.add(Line.from(
                     Span.raw(TuiIcons.indent(TuiIcons.INFRA)),
-                    Span.styled(String.format("%-14s", "Maven"), Style.EMPTY.bold()),
+                    Span.styled(String.format("%-14s", "Maven"), Theme.muted()),
                     Span.raw(String.format("%-30s", "Error")),
                     Span.raw(" " + TuiIcons.FAIL)));
             result.add(Line.from(Span.styled("                    " + TuiHelper.truncate(e.getMessage(), 40),
@@ -222,7 +222,7 @@ class DoctorPopup {
                     String name = Character.toUpperCase(cmd.charAt(0)) + cmd.substring(1);
                     result.add(Line.from(
                             Span.raw(TuiIcons.indent(TuiIcons.DOCKER)),
-                            Span.styled(String.format("%-14s", "Container"), Style.EMPTY.bold()),
+                            Span.styled(String.format("%-14s", "Container"), Theme.muted()),
                             Span.raw(String.format("%-30s", name + " running")),
                             Span.raw(" " + TuiIcons.OK)));
                     return;
@@ -233,7 +233,7 @@ class DoctorPopup {
         }
         result.add(Line.from(
                 Span.raw(TuiIcons.indent(TuiIcons.DOCKER)),
-                Span.styled(String.format("%-14s", "Container"), Style.EMPTY.bold()),
+                Span.styled(String.format("%-14s", "Container"), Theme.muted()),
                 Span.raw(String.format("%-30s", "Not found (optional)")),
                 Span.raw(" " + TuiIcons.WARN)));
     }
@@ -251,13 +251,13 @@ class DoctorPopup {
         if (!conflicts.isEmpty()) {
             result.add(Line.from(
                     Span.raw(TuiIcons.indent(TuiIcons.ENDPOINT)),
-                    Span.styled(String.format("%-14s", "Ports"), Style.EMPTY.bold()),
+                    Span.styled(String.format("%-14s", "Ports"), Theme.muted()),
                     Span.raw(String.format("%-30s", "In use: " + conflicts)),
                     Span.raw(" " + TuiIcons.WARN)));
         } else {
             result.add(Line.from(
                     Span.raw(TuiIcons.indent(TuiIcons.ENDPOINT)),
-                    Span.styled(String.format("%-14s", "Ports"), Style.EMPTY.bold()),
+                    Span.styled(String.format("%-14s", "Ports"), Theme.muted()),
                     Span.raw(String.format("%-30s", "8080, 8443, 9090 free")),
                     Span.raw(" " + TuiIcons.OK)));
         }
@@ -291,13 +291,13 @@ class DoctorPopup {
         if (provider != null) {
             result.add(Line.from(
                     Span.raw(TuiIcons.indent(TuiIcons.MCP)),
-                    Span.styled(String.format("%-14s", "AI"), Style.EMPTY.bold()),
+                    Span.styled(String.format("%-14s", "AI"), Theme.muted()),
                     Span.raw(String.format("%-30s", provider)),
                     Span.raw(" " + TuiIcons.OK)));
         } else {
             result.add(Line.from(
                     Span.raw(TuiIcons.indent(TuiIcons.MCP)),
-                    Span.styled(String.format("%-14s", "AI"), Style.EMPTY.bold()),
+                    Span.styled(String.format("%-14s", "AI"), Theme.muted()),
                     Span.raw(String.format("%-30s", "No API key configured")),
                     Span.raw(" " + TuiIcons.WARN)));
             result.add(Line.from(Span.styled("                    Set ANTHROPIC_API_KEY or OPENAI_API_KEY",
@@ -311,13 +311,13 @@ class DoctorPopup {
             if (client != null) {
                 result.add(Line.from(
                         Span.raw(TuiIcons.indent(TuiIcons.MCP)),
-                        Span.styled(String.format("%-14s", "MCP"), Style.EMPTY.bold()),
+                        Span.styled(String.format("%-14s", "MCP"), Theme.muted()),
                         Span.raw(String.format("%-30s", client + " (port " + mcpPort + ")")),
                         Span.raw(" " + TuiIcons.OK)));
             } else {
                 result.add(Line.from(
                         Span.raw(TuiIcons.indent(TuiIcons.MCP)),
-                        Span.styled(String.format("%-14s", "MCP"), Style.EMPTY.bold()),
+                        Span.styled(String.format("%-14s", "MCP"), Theme.muted()),
                         Span.raw(String.format("%-30s", "Listening on port " + mcpPort)),
                         Span.raw(" " + TuiIcons.WARN)));
                 result.add(Line.from(Span.styled("                    No AI client connected",
@@ -326,7 +326,7 @@ class DoctorPopup {
         } else {
             result.add(Line.from(
                     Span.raw(TuiIcons.indent(TuiIcons.MCP)),
-                    Span.styled(String.format("%-14s", "MCP"), Style.EMPTY.bold()),
+                    Span.styled(String.format("%-14s", "MCP"), Theme.muted()),
                     Span.raw(String.format("%-30s", "Not enabled")),
                     Span.raw(" " + TuiIcons.WARN)));
             result.add(Line.from(Span.styled("                    Use --mcp to enable MCP server",
@@ -344,7 +344,7 @@ class DoctorPopup {
         long value = gb > 0 ? gb : mb;
         result.add(Line.from(
                 Span.raw(TuiIcons.indent(TuiIcons.MEMORY)),
-                Span.styled(String.format("%-14s", "Disk Space"), Style.EMPTY.bold()),
+                Span.styled(String.format("%-14s", "Disk Space"), Theme.muted()),
                 Span.raw(String.format("%-30s", value + " " + unit + " free in temp dir")),
                 Span.raw(" " + emoji)));
         if (mb <= 500) {

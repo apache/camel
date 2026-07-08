@@ -910,7 +910,7 @@ class HistoryTab extends AbstractTab {
         }
 
         List<Span> stepSpans = new ArrayList<>();
-        stepSpans.add(Span.styled(" Step:     ", Theme.label().bold()));
+        stepSpans.add(Span.styled(" Step:     ", Theme.muted()));
         stepSpans.add(Span.raw(String.format("%d/%d", stepIdx + 1, diagram.getHistoryStepCount())));
         if (direction != null && !direction.isBlank()) {
             Style dirStyle = failed ? Theme.error() : Theme.success();
@@ -919,37 +919,37 @@ class HistoryTab extends AbstractTab {
         }
         lines.add(Line.from(stepSpans));
         lines.add(Line.from(
-                Span.styled(" Exchange: ", Theme.label().bold()),
+                Span.styled(" Exchange: ", Theme.muted()),
                 Span.raw(exchangeId)));
         lines.add(Line.from(
-                Span.styled(" Route:    ", Theme.label().bold()),
+                Span.styled(" Route:    ", Theme.muted()),
                 Span.styled(routeId != null ? routeId : "", Style.EMPTY.fg(Theme.accent()))));
         lines.add(Line.from(
-                Span.styled(" Node:     ", Theme.label().bold()),
+                Span.styled(" Node:     ", Theme.muted()),
                 Span.raw(nodeId != null ? nodeId : "")));
         if (processor != null) {
             lines.add(Line.from(
-                    Span.styled(" Proc:     ", Theme.label().bold()),
+                    Span.styled(" Proc:     ", Theme.muted()),
                     Span.raw(processor.strip())));
         }
         if (elapsed >= 0) {
             lines.add(Line.from(
-                    Span.styled(" Elapsed:  ", Theme.label().bold()),
+                    Span.styled(" Elapsed:  ", Theme.muted()),
                     Span.raw(elapsed + "ms")));
         }
         if (timestamp != null) {
             lines.add(Line.from(
-                    Span.styled(" Time:     ", Theme.label().bold()),
+                    Span.styled(" Time:     ", Theme.muted()),
                     Span.raw(timestamp)));
         }
         if (threadName != null) {
             lines.add(Line.from(
-                    Span.styled(" Thread:   ", Theme.label().bold()),
+                    Span.styled(" Thread:   ", Theme.muted()),
                     Span.raw(threadName)));
         }
         if (failed) {
             lines.add(Line.from(
-                    Span.styled(" Status:   ", Theme.label().bold()),
+                    Span.styled(" Status:   ", Theme.muted()),
                     Span.styled("Failed", Theme.error().bold())));
         }
 
@@ -966,7 +966,7 @@ class HistoryTab extends AbstractTab {
         boolean varsChanged = changes.length() > 3 && changes.charAt(3) == 'V';
 
         List<Span> changeSpans = new ArrayList<>();
-        changeSpans.add(Span.styled(" Changed:  ", Theme.label().bold()));
+        changeSpans.add(Span.styled(" Changed:  ", Theme.muted()));
         if (!changes.isBlank()) {
             changeSpans.addAll(buildChangeSpans(changes));
         }
@@ -985,7 +985,7 @@ class HistoryTab extends AbstractTab {
         }
 
         if (showBody && body != null) {
-            Style headerStyle = bodyChanged ? Theme.change().bold() : Theme.success().bold();
+            Style headerStyle = bodyChanged ? Theme.change().bold() : Theme.muted();
             lines.add(Line.from(Span.raw("")));
             lines.add(Line.from(
                     Span.styled(" Body", headerStyle),
@@ -996,21 +996,21 @@ class HistoryTab extends AbstractTab {
         }
 
         if (showHeaders && headers != null && !headers.isEmpty()) {
-            Style sectionStyle = headersChanged ? Theme.change().bold() : Theme.success().bold();
+            Style sectionStyle = headersChanged ? Theme.change().bold() : Theme.muted();
             lines.add(Line.from(Span.raw("")));
             lines.add(Line.from(Span.styled(" Headers", sectionStyle)));
             addInfoKvLines(lines, headers, headersChanged, prevHeaders);
         }
 
         if (showProps && properties != null && !properties.isEmpty()) {
-            Style sectionStyle = propsChanged ? Theme.change().bold() : Theme.success().bold();
+            Style sectionStyle = propsChanged ? Theme.change().bold() : Theme.muted();
             lines.add(Line.from(Span.raw("")));
             lines.add(Line.from(Span.styled(" Properties", sectionStyle)));
             addInfoKvLines(lines, properties, propsChanged, prevProperties);
         }
 
         if (showVars && variables != null && !variables.isEmpty()) {
-            Style sectionStyle = varsChanged ? Theme.change().bold() : Theme.success().bold();
+            Style sectionStyle = varsChanged ? Theme.change().bold() : Theme.muted();
             lines.add(Line.from(Span.raw("")));
             lines.add(Line.from(Span.styled(" Variables", sectionStyle)));
             addInfoKvLines(lines, variables, varsChanged, prevVariables);
@@ -1034,7 +1034,7 @@ class HistoryTab extends AbstractTab {
             boolean keyChanged = sectionChanged && prevMap != null
                     && (!prevMap.containsKey(entry.getKey())
                             || !Objects.equals(prevMap.get(entry.getKey()), entry.getValue()));
-            Style keyStyle = keyChanged ? Theme.change() : Style.EMPTY.fg(Theme.accent());
+            Style keyStyle = keyChanged ? Theme.change() : Theme.muted();
             Style valStyle = keyChanged ? Theme.change() : Style.EMPTY;
             lines.add(Line.from(
                     Span.styled(" " + entry.getKey(), keyStyle),
@@ -2030,25 +2030,25 @@ class HistoryTab extends AbstractTab {
             List<Line> lines, String exchangeId, String routeId,
             String nodeId, String nodeLabel, String location, long elapsed, String threadName, boolean failed) {
         lines.add(Line.from(
-                Span.styled(" Exchange: ", Theme.label().bold()),
+                Span.styled(" Exchange: ", Theme.muted()),
                 Span.raw(exchangeId != null ? exchangeId : "")));
         lines.add(Line.from(
-                Span.styled(" Route:    ", Theme.label().bold()),
+                Span.styled(" Route:    ", Theme.muted()),
                 Span.raw(String.format("%-25s", routeId != null ? routeId : "")),
-                Span.styled("  Node: ", Theme.label().bold()),
+                Span.styled("  Node: ", Theme.muted()),
                 Span.raw(nodeId != null ? nodeId : ""),
                 Span.raw(nodeLabel != null ? " (" + nodeLabel + ")" : "")));
         lines.add(Line.from(
-                Span.styled(" Location: ", Theme.label().bold()),
+                Span.styled(" Location: ", Theme.muted()),
                 Span.raw(location != null ? location : "")));
         lines.add(Line.from(
-                Span.styled(" Elapsed:  ", Theme.label().bold()),
+                Span.styled(" Elapsed:  ", Theme.muted()),
                 Span.raw(elapsed >= 0 ? elapsed + "ms" : ""),
-                Span.styled("  Thread: ", Theme.label().bold()),
+                Span.styled("  Thread: ", Theme.muted()),
                 Span.raw(threadName != null ? threadName : "")));
         if (failed) {
             lines.add(Line.from(
-                    Span.styled(" Status:   ", Theme.label().bold()),
+                    Span.styled(" Status:   ", Theme.muted()),
                     Span.styled("Failed", Theme.error().bold())));
         }
         lines.add(Line.from(Span.raw("")));
@@ -2061,7 +2061,7 @@ class HistoryTab extends AbstractTab {
         if (map == null || map.isEmpty()) {
             return;
         }
-        Style headerStyle = changed ? Theme.change().bold() : Theme.success().bold();
+        Style headerStyle = changed ? Theme.change().bold() : Theme.muted();
         lines.add(Line.from(Span.styled(section, headerStyle)));
         for (Map.Entry<String, Object> entry : map.entrySet()) {
             String type = types != null ? types.get(entry.getKey()) : null;
@@ -2083,7 +2083,7 @@ class HistoryTab extends AbstractTab {
             boolean keyChanged = changed && prevMap != null
                     && (!prevMap.containsKey(entry.getKey())
                             || !Objects.equals(prevMap.get(entry.getKey()), entry.getValue()));
-            Style keyStyle = keyChanged ? Theme.change() : Style.EMPTY.fg(Theme.accent());
+            Style keyStyle = keyChanged ? Theme.change() : Theme.muted();
             Style valStyle = keyChanged ? Theme.change() : Style.EMPTY;
             lines.add(Line.from(
                     Span.styled("   " + typeLabel, Style.EMPTY.dim()),
@@ -2095,7 +2095,7 @@ class HistoryTab extends AbstractTab {
     }
 
     static void addBodyLines(List<Line> lines, String body, String bodyType, boolean changed) {
-        Style headerStyle = changed ? Theme.change().bold() : Theme.success().bold();
+        Style headerStyle = changed ? Theme.change().bold() : Theme.muted();
         if (body != null) {
             if (bodyType != null) {
                 lines.add(Line.from(

@@ -836,69 +836,69 @@ class RoutesTab extends AbstractTab {
         List<Line> lines = new ArrayList<>();
         if (route != null) {
             lines.add(Line.from(
-                    Span.styled(" Route: ", Theme.label().bold()),
+                    Span.styled(" Route: ", Theme.muted()),
                     Span.styled(route.routeId, Style.EMPTY.fg(Theme.baseFg()).bold())));
             lines.add(Line.from(
-                    Span.styled(" From:  ", Style.EMPTY.dim()),
+                    Span.styled(" From:  ", Theme.muted()),
                     Span.raw(route.from != null ? route.from : "")));
             String stateLabel = route.state != null ? route.state : "";
             Style stateStyle = "Started".equals(route.state) ? Theme.success() : Theme.error();
             lines.add(Line.from(
-                    Span.styled(" State: ", Style.EMPTY.dim()),
+                    Span.styled(" State: ", Theme.muted()),
                     Span.styled(stateLabel, stateStyle)));
 
             lines.add(Line.from(Span.raw("")));
             lines.add(Line.from(
-                    Span.styled(" Uptime:     ", Style.EMPTY.dim()),
+                    Span.styled(" Uptime:     ", Theme.muted()),
                     Span.raw(route.uptime != null ? route.uptime : "")));
             lines.add(Line.from(
-                    Span.styled(" Throughput: ", Style.EMPTY.dim()),
+                    Span.styled(" Throughput: ", Theme.muted()),
                     Span.raw(route.throughput != null ? route.throughput : "")));
             if (route.coverage != null) {
                 lines.add(Line.from(
-                        Span.styled(" Coverage:   ", Style.EMPTY.dim()),
+                        Span.styled(" Coverage:   ", Theme.muted()),
                         Span.raw(route.coverage)));
             }
 
             lines.add(Line.from(Span.raw("")));
             int w = numWidth(route.total, route.failed, route.inflight);
             lines.add(Line.from(
-                    Span.styled(" Total:    ", Style.EMPTY.dim()),
+                    Span.styled(" Total:    ", Theme.muted()),
                     Span.raw(String.format("%" + w + "d", route.total))));
             Style failStyle = route.failed > 0 ? Theme.error().bold() : Style.EMPTY;
             lines.add(Line.from(
-                    Span.styled(" Failed:   ", Style.EMPTY.dim()),
+                    Span.styled(" Failed:   ", Theme.muted()),
                     Span.styled(String.format("%" + w + "d", route.failed), failStyle)));
             lines.add(Line.from(
-                    Span.styled(" Inflight: ", Style.EMPTY.dim()),
+                    Span.styled(" Inflight: ", Theme.muted()),
                     Span.raw(String.format("%" + w + "d", route.inflight))));
 
             lines.add(Line.from(Span.raw("")));
             if (route.total > 0) {
                 int tw = numWidth(route.meanTime, route.maxTime, route.minTime);
                 lines.add(Line.from(
-                        Span.styled(" Mean: ", Style.EMPTY.dim()),
+                        Span.styled(" Mean: ", Theme.muted()),
                         Span.raw(String.format("%" + tw + "d ms", route.meanTime))));
                 lines.add(Line.from(
-                        Span.styled(" Max:  ", Style.EMPTY.dim()),
+                        Span.styled(" Max:  ", Theme.muted()),
                         Span.raw(String.format("%" + tw + "d ms", route.maxTime))));
                 lines.add(Line.from(
-                        Span.styled(" Min:  ", Style.EMPTY.dim()),
+                        Span.styled(" Min:  ", Theme.muted()),
                         Span.raw(String.format("%" + tw + "d ms", route.minTime))));
             }
 
             if (route.sinceLastCompleted != null || route.sinceLastFailed != null) {
                 lines.add(Line.from(Span.raw("")));
                 lines.add(Line.from(
-                        Span.styled(" Since last:", Style.EMPTY.dim())));
+                        Span.styled(" Since last:", Theme.muted())));
                 if (route.sinceLastCompleted != null) {
                     lines.add(Line.from(
-                            Span.styled("   success: ", Style.EMPTY.dim()),
+                            Span.styled("   success: ", Theme.muted()),
                             Span.raw(route.sinceLastCompleted)));
                 }
                 if (route.sinceLastFailed != null) {
                     lines.add(Line.from(
-                            Span.styled("   fail:    ", Style.EMPTY.dim()),
+                            Span.styled("   fail:    ", Theme.muted()),
                             Span.styled(route.sinceLastFailed,
                                     Theme.error())));
                 }
@@ -913,28 +913,28 @@ class RoutesTab extends AbstractTab {
                                 Style.EMPTY.fg(Theme.accent()).bold())));
                 lines.add(Line.from(Span.raw("")));
                 lines.add(Line.from(
-                        Span.styled(" URI: ", Style.EMPTY.dim()),
+                        Span.styled(" URI: ", Theme.muted()),
                         Span.raw(topoNode.from != null ? topoNode.from : "")));
                 if (topoNode.description != null && !topoNode.description.isBlank()) {
                     lines.add(Line.from(
-                            Span.styled(" Path: ", Style.EMPTY.dim()),
+                            Span.styled(" Path: ", Theme.muted()),
                             Span.raw(topoNode.description)));
                 }
                 String connectedRoute = diagram.getConnectedRouteId(routeId);
                 if (connectedRoute != null) {
                     lines.add(Line.from(Span.raw("")));
                     lines.add(Line.from(
-                            Span.styled(isInbound ? " To route: " : " From route: ", Style.EMPTY.dim()),
+                            Span.styled(isInbound ? " To route: " : " From route: ", Theme.muted()),
                             Span.styled(connectedRoute, Style.EMPTY.fg(Theme.baseFg()))));
                 }
                 if (topoNode.exchangesTotal > 0 || topoNode.exchangesFailed > 0) {
                     lines.add(Line.from(Span.raw("")));
                     lines.add(Line.from(
-                            Span.styled(" Total:  ", Style.EMPTY.dim()),
+                            Span.styled(" Total:  ", Theme.muted()),
                             Span.raw(String.valueOf(topoNode.exchangesTotal))));
                     if (topoNode.exchangesFailed > 0) {
                         lines.add(Line.from(
-                                Span.styled(" Failed: ", Style.EMPTY.dim()),
+                                Span.styled(" Failed: ", Theme.muted()),
                                 Span.styled(String.valueOf(topoNode.exchangesFailed),
                                         Theme.error().bold())));
                     }

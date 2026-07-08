@@ -585,33 +585,33 @@ class SpansTab extends AbstractTab {
         // Row 1: span identity
         Style statusStyle = span.isError() ? Theme.error().bold() : Theme.success();
         lines.add(Line.from(
-                Span.styled(" Span:   ", Style.EMPTY.dim()),
+                Span.styled(" Span:   ", Theme.muted()),
                 Span.styled(span.spanId(), Style.EMPTY.fg(Theme.baseFg()).bold()),
-                Span.styled("  Parent: ", Style.EMPTY.dim()),
+                Span.styled("  Parent: ", Theme.muted()),
                 Span.raw(span.parentSpanId() != null ? span.parentSpanId() : "-"),
-                Span.styled("  Kind: ", Style.EMPTY.dim()),
+                Span.styled("  Kind: ", Theme.muted()),
                 Span.raw(span.kind() != null ? span.kind() : "")));
 
         // Row 2: status and duration
         lines.add(Line.from(
-                Span.styled(" Status: ", Style.EMPTY.dim()),
+                Span.styled(" Status: ", Theme.muted()),
                 Span.styled(span.isError() ? "ERROR" : "OK", statusStyle),
-                Span.styled("  Duration: ", Style.EMPTY.dim()),
+                Span.styled("  Duration: ", Theme.muted()),
                 Span.raw(span.durationMs() + "ms")));
 
         // Row 3: route, processor context, and scope (for 3rd-party spans)
         if (span.routeId() != null || span.processorId() != null || !span.isCamelSpan()) {
             List<Span> ctx = new ArrayList<>();
             if (span.routeId() != null) {
-                ctx.add(Span.styled(" Route:  ", Style.EMPTY.dim()));
+                ctx.add(Span.styled(" Route:  ", Theme.muted()));
                 ctx.add(Span.styled(span.routeId(), Theme.label()));
             }
             if (span.processorId() != null) {
-                ctx.add(Span.styled("  Processor: ", Style.EMPTY.dim()));
+                ctx.add(Span.styled("  Processor: ", Theme.muted()));
                 ctx.add(Span.styled(span.processorId(), Theme.label()));
             }
             if (!span.isCamelSpan()) {
-                ctx.add(Span.styled("  Source: ", Style.EMPTY.dim()));
+                ctx.add(Span.styled("  Source: ", Theme.muted()));
                 ctx.add(Span.styled(span.scopeName(), Theme.notice()));
             }
             lines.add(Line.from(ctx));
@@ -622,7 +622,7 @@ class SpansTab extends AbstractTab {
             lines.add(Line.from(Span.raw("")));
             for (Map.Entry<String, Object> entry : span.attributes().entrySet()) {
                 lines.add(Line.from(
-                        Span.styled(" " + entry.getKey() + ": ", Style.EMPTY.dim()),
+                        Span.styled(" " + entry.getKey() + ": ", Theme.muted()),
                         Span.raw(String.valueOf(entry.getValue()))));
             }
         }

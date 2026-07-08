@@ -605,27 +605,27 @@ class ErrorsTab extends AbstractTableTab {
         }
 
         lines.add(Line.from(
-                Span.styled(" Exchange: ", Theme.label().bold()),
+                Span.styled(" Exchange: ", Theme.muted()),
                 Span.raw(ei.exchangeId != null ? ei.exchangeId : "")));
         lines.add(Line.from(
-                Span.styled(" Route:    ", Theme.label().bold()),
+                Span.styled(" Route:    ", Theme.muted()),
                 Span.styled(ei.routeId != null ? ei.routeId : "", Style.EMPTY.fg(Theme.accent()))));
         lines.add(Line.from(
-                Span.styled(" Node:     ", Theme.label().bold()),
+                Span.styled(" Node:     ", Theme.muted()),
                 Span.raw(ei.nodeId != null ? ei.nodeId : "")));
         if (ei.elapsed >= 0) {
             lines.add(Line.from(
-                    Span.styled(" Elapsed:  ", Theme.label().bold()),
+                    Span.styled(" Elapsed:  ", Theme.muted()),
                     Span.raw(ei.elapsed + "ms")));
         }
         if (ei.threadName != null) {
             lines.add(Line.from(
-                    Span.styled(" Thread:   ", Theme.label().bold()),
+                    Span.styled(" Thread:   ", Theme.muted()),
                     Span.raw(ei.threadName)));
         }
         Style handledStyle = ei.handled ? Theme.success() : Theme.error().bold();
         lines.add(Line.from(
-                Span.styled(" Handled:  ", Theme.label().bold()),
+                Span.styled(" Handled:  ", Theme.muted()),
                 Span.styled(ei.handled ? "true" : "false", handledStyle)));
 
         if (ei.exceptionType != null) {
@@ -640,7 +640,7 @@ class ErrorsTab extends AbstractTableTab {
         if (showBody && ei.body != null) {
             lines.add(Line.from(Span.raw("")));
             lines.add(Line.from(
-                    Span.styled(" Body", Theme.success().bold()),
+                    Span.styled(" Body", Theme.muted()),
                     ei.bodyType != null ? Span.styled(" (" + ei.bodyType + ")", Style.EMPTY.dim()) : Span.raw("")));
             for (String line : ei.body.split("\n")) {
                 lines.add(Line.from(Span.raw(" " + line)));
@@ -649,19 +649,19 @@ class ErrorsTab extends AbstractTableTab {
 
         if (showHeaders && !ei.headers.isEmpty()) {
             lines.add(Line.from(Span.raw("")));
-            lines.add(Line.from(Span.styled(" Headers", Theme.success().bold())));
+            lines.add(Line.from(Span.styled(" Headers", Theme.muted())));
             addKvLines(lines, ei.headers);
         }
 
         if (showProperties && !ei.properties.isEmpty()) {
             lines.add(Line.from(Span.raw("")));
-            lines.add(Line.from(Span.styled(" Properties", Theme.success().bold())));
+            lines.add(Line.from(Span.styled(" Properties", Theme.muted())));
             addKvLines(lines, ei.properties);
         }
 
         if (showVariables && !ei.variables.isEmpty()) {
             lines.add(Line.from(Span.raw("")));
-            lines.add(Line.from(Span.styled(" Variables", Theme.success().bold())));
+            lines.add(Line.from(Span.styled(" Variables", Theme.muted())));
             addKvLines(lines, ei.variables);
         }
 
@@ -678,7 +678,7 @@ class ErrorsTab extends AbstractTableTab {
         for (var entry : map.entrySet()) {
             String val = entry.getValue() != null ? entry.getValue().toString() : "null";
             lines.add(Line.from(
-                    Span.styled(" " + entry.getKey(), Style.EMPTY.fg(Theme.accent())),
+                    Span.styled(" " + entry.getKey(), Theme.muted()),
                     Span.raw(" = " + val)));
         }
     }
