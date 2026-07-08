@@ -198,6 +198,9 @@ await().atMost(10, TimeUnit.SECONDS).until(() -> mock.getReceivedCounter() >= 2)
 - New test code MUST NOT introduce `Thread.sleep()` calls.
 - When modifying existing test code that contains `Thread.sleep()`, migrate it to
   `MockEndpoint`'s timed assertions (for mock-based waits) or Awaitility (for other conditions).
+- Do NOT wrap `MockEndpoint.assertIsSatisfied()` with Awaitility — it already waits internally
+  via a `CountDownLatch`. Wrapping it with `untilAsserted` adds polling on top of a mechanism
+  that already blocks, which is redundant and less efficient.
 - Always set an explicit `atMost` timeout to avoid hanging builds.
 - Use `untilAsserted` or `until` with a clear predicate — do not replace a sleep with a
   busy-wait loop.
