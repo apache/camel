@@ -28,6 +28,8 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -64,7 +66,7 @@ import org.slf4j.LoggerFactory;
  * calls. The method is thread-safe: concurrent invocations (for example a manual call overlapping a scheduled tick) are
  * serialized.
  */
-public class KeyRotationScheduler extends ServiceSupport {
+public class KeyRotationScheduler extends ServiceSupport implements CamelContextAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(KeyRotationScheduler.class);
 
@@ -84,8 +86,20 @@ public class KeyRotationScheduler extends ServiceSupport {
 
     private ScheduledExecutorService executorService;
 
+    private CamelContext camelContext;
+
     public KeyRotationScheduler(KeyLifecycleManager keyManager) {
         this.keyManager = ObjectHelper.notNull(keyManager, "keyManager");
+    }
+
+    @Override
+    public CamelContext getCamelContext() {
+        return camelContext;
+    }
+
+    @Override
+    public void setCamelContext(CamelContext camelContext) {
+        this.camelContext = camelContext;
     }
 
     /**
@@ -140,7 +154,14 @@ public class KeyRotationScheduler extends ServiceSupport {
             throw new IllegalArgumentException("checkInterval must be a positive duration");
         }
         long millis = checkInterval.toMillis();
-        executorService = Executors.newSingleThreadScheduledExecutor(new RotationThreadFactory());
+        // Prefer Camel's ExecutorServiceManager (centralized lifecycle, profiling, naming) when running inside a
+        // CamelContext; fall back to a self-managed daemon executor for standalone use.
+        if (camelContext != null) {
+            executorService = camelContext.getExecutorServiceManager()
+                    .newSingleThreadScheduledExecutor(this, "PQCKeyRotationScheduler");
+        } else {
+            executorService = Executors.newSingleThreadScheduledExecutor(new RotationThreadFactory());
+        }
         executorService.scheduleWithFixedDelay(this::runScheduledCheck, millis, millis, TimeUnit.MILLISECONDS);
         LOG.info("Started PQC KeyRotationScheduler (interval={}, maxAge={}, maxUsage={})",
                 checkInterval, maxKeyAge, maxKeyUsage);
@@ -149,7 +170,11 @@ public class KeyRotationScheduler extends ServiceSupport {
     @Override
     protected void doStop() throws Exception {
         if (executorService != null) {
-            executorService.shutdownNow();
+            if (camelContext != null) {
+                camelContext.getExecutorServiceManager().shutdownNow(executorService);
+            } else {
+                executorService.shutdownNow();
+            }
             executorService = null;
         }
         LOG.info("Stopped PQC KeyRotationScheduler (checks={}, rotations={}, failures={})",

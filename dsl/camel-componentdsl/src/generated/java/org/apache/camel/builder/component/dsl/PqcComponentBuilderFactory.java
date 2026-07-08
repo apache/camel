@@ -307,6 +307,75 @@ public interface PqcComponentBuilderFactory {
             return this;
         }
     
+        
+        /**
+         * Interval between key rotation checks when the scheduler is enabled.
+         * 
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: 3600000
+         * Group: advanced
+         * 
+         * @param keyRotationCheckInterval the value to set
+         * @return the dsl builder
+         */
+        default PqcComponentBuilder keyRotationCheckInterval(long keyRotationCheckInterval) {
+            doSetProperty("keyRotationCheckInterval", keyRotationCheckInterval);
+            return this;
+        }
+    
+        /**
+         * When the scheduler is enabled, rotate keys older than this age. If
+         * not set, age is not used as a rotation signal.
+         * 
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param keyRotationMaxAge the value to set
+         * @return the dsl builder
+         */
+        default PqcComponentBuilder keyRotationMaxAge(long keyRotationMaxAge) {
+            doSetProperty("keyRotationMaxAge", keyRotationMaxAge);
+            return this;
+        }
+    
+        /**
+         * When the scheduler is enabled, rotate keys whose recorded usage count
+         * reaches this value. 0 disables usage-based rotation.
+         * 
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param keyRotationMaxUsage the value to set
+         * @return the dsl builder
+         */
+        default PqcComponentBuilder keyRotationMaxUsage(long keyRotationMaxUsage) {
+            doSetProperty("keyRotationMaxUsage", keyRotationMaxUsage);
+            return this;
+        }
+    
+        
+        /**
+         * Whether to start an automated background key rotation scheduler for
+         * this component. Requires keyLifecycleManager to be set. The scheduler
+         * periodically rotates keys that exceed the configured age and/or usage
+         * policy.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param keyRotationSchedulerEnabled the value to set
+         * @return the dsl builder
+         */
+        default PqcComponentBuilder keyRotationSchedulerEnabled(boolean keyRotationSchedulerEnabled) {
+            doSetProperty("keyRotationSchedulerEnabled", keyRotationSchedulerEnabled);
+            return this;
+        }
+    
         /**
          * A KeyStore where we could get Cryptographic material.
          * 
@@ -538,6 +607,10 @@ public interface PqcComponentBuilderFactory {
             case "keyLifecycleManager": getOrCreateConfiguration((PQCComponent) component).setKeyLifecycleManager((org.apache.camel.component.pqc.lifecycle.KeyLifecycleManager) value); return true;
             case "keyPair": getOrCreateConfiguration((PQCComponent) component).setKeyPair((java.security.KeyPair) value); return true;
             case "keyPairAlias": getOrCreateConfiguration((PQCComponent) component).setKeyPairAlias((java.lang.String) value); return true;
+            case "keyRotationCheckInterval": ((PQCComponent) component).setKeyRotationCheckInterval((long) value); return true;
+            case "keyRotationMaxAge": ((PQCComponent) component).setKeyRotationMaxAge((long) value); return true;
+            case "keyRotationMaxUsage": ((PQCComponent) component).setKeyRotationMaxUsage((long) value); return true;
+            case "keyRotationSchedulerEnabled": ((PQCComponent) component).setKeyRotationSchedulerEnabled((boolean) value); return true;
             case "keyStore": getOrCreateConfiguration((PQCComponent) component).setKeyStore((java.security.KeyStore) value); return true;
             case "keyStorePassword": getOrCreateConfiguration((PQCComponent) component).setKeyStorePassword((java.lang.String) value); return true;
             case "signatureAlgorithm": getOrCreateConfiguration((PQCComponent) component).setSignatureAlgorithm((java.lang.String) value); return true;

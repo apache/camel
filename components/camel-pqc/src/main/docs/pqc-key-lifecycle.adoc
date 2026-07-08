@@ -858,6 +858,25 @@ and stopped together with the context:
 camelContext.addService(scheduler);   // started and stopped with the context
 ----
 
+Alternatively, the scheduler can be started and configured entirely through component options - no Java code - by setting
+`camel.component.pqc.*` properties (for example in `application.properties`). Bind a `KeyLifecycleManager` in the
+registry and enable the scheduler:
+
+._application.properties: property-driven key rotation_
+[source,properties]
+----
+# a KeyLifecycleManager bean must be available in the registry, e.g. #myKeyManager
+camel.component.pqc.key-lifecycle-manager = #myKeyManager
+camel.component.pqc.key-rotation-scheduler-enabled = true
+camel.component.pqc.key-rotation-check-interval = 6h
+camel.component.pqc.key-rotation-max-age = 90d
+camel.component.pqc.key-rotation-max-usage = 1000000
+----
+
+When `keyRotationSchedulerEnabled` is `true`, the `pqc` component builds a `KeyRotationScheduler` around the configured
+`keyLifecycleManager` and starts and stops it with the component. The same options are available in the YAML DSL and as
+`PQCComponent` setters, which makes the scheduler usable from Spring Boot and Quarkus without any Java code.
+
 The default id of a replacement key is the previous key id with a rotation marker and timestamp appended; supply a
 `setKeyIdStrategy(Function<KeyMetadata, String>)` to control it, and a `setKeyFilter(Predicate<KeyMetadata>)` to change
 which keys are considered. The scheduler also exposes counters (`getChecksPerformed()`, `getRotationsPerformed()`,

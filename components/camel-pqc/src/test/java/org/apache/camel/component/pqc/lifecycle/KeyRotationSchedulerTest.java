@@ -25,6 +25,8 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
+import org.apache.camel.component.pqc.PQCComponent;
+import org.apache.camel.impl.DefaultCamelContext;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
 import org.bouncycastle.pqc.jcajce.spec.DilithiumParameterSpec;
@@ -37,6 +39,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -215,5 +219,66 @@ class KeyRotationSchedulerTest {
         newManager();
         scheduler = new KeyRotationScheduler(keyManager).setCheckInterval(Duration.ZERO);
         assertThrows(RuntimeException.class, () -> scheduler.start());
+    }
+
+    @Test
+    void testScheduledRotationWithCamelContext() throws Exception {
+        newManager();
+        generateKeyWithUsage("app-key", 100);
+
+        CountDownLatch rotated = new CountDownLatch(1);
+        try (DefaultCamelContext context = new DefaultCamelContext()) {
+            context.start();
+            // With a CamelContext set, the scheduler obtains its executor from the ExecutorServiceManager
+            scheduler = new KeyRotationScheduler(keyManager)
+                    .setCheckInterval(Duration.ofMillis(50))
+                    .setMaxKeyUsage(50)
+                    .setListener(new KeyRotationScheduler.KeyRotationListener() {
+                        @Override
+                        public void onRotated(
+                                String oldKeyId, String newKeyId, KeyMetadata previousMetadata, KeyPair newKeyPair) {
+                            rotated.countDown();
+                        }
+                    });
+            scheduler.setCamelContext(context);
+            scheduler.start();
+
+            assertTrue(rotated.await(10, TimeUnit.SECONDS), "Scheduled rotation did not run in time");
+            assertSame(context, scheduler.getCamelContext());
+            scheduler.stop();
+        }
+
+        assertTrue(scheduler.getRotationsPerformed() >= 1);
+        assertEquals(KeyMetadata.KeyStatus.DEPRECATED, keyManager.getKeyMetadata("app-key").getStatus());
+    }
+
+    @Test
+    void testComponentOptionsStartScheduler() throws Exception {
+        newManager();
+        generateKeyWithUsage("app-key", 100);
+
+        try (DefaultCamelContext context = new DefaultCamelContext()) {
+            context.start();
+            PQCComponent component = new PQCComponent();
+            component.setCamelContext(context);
+            component.getConfiguration().setKeyLifecycleManager(keyManager);
+            component.setKeyRotationSchedulerEnabled(true);
+            component.setKeyRotationCheckInterval(3_600_000L); // 1h - won't auto-fire during the test
+            component.setKeyRotationMaxUsage(50);
+            component.start();
+
+            KeyRotationScheduler s = component.getKeyRotationScheduler();
+            assertNotNull(s);
+            assertSame(context, s.getCamelContext());
+            assertTrue(s.isStarted());
+
+            // Deterministic manual trigger: the component wired the manager and policy correctly
+            assertEquals(1, s.checkAndRotate());
+            assertEquals(KeyMetadata.KeyStatus.DEPRECATED, keyManager.getKeyMetadata("app-key").getStatus());
+
+            component.stop();
+            assertFalse(s.isStarted());
+            assertNull(component.getKeyRotationScheduler());
+        }
     }
 }
