@@ -60,6 +60,7 @@ import com.azure.storage.blob.specialized.BlobLeaseClient;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.WrappedFile;
+import org.apache.camel.component.azure.common.AzureFileNameHelper;
 import org.apache.camel.component.azure.storage.blob.BlobBlock;
 import org.apache.camel.component.azure.storage.blob.BlobCommonRequestOptions;
 import org.apache.camel.component.azure.storage.blob.BlobConfiguration;
@@ -153,7 +154,7 @@ public class BlobOperations {
             throw new IllegalArgumentException("In order to download a blob, you will need to specify the fileDir in the URI");
         }
 
-        final File fileToDownload = new File(fileDir, client.getBlobName());
+        final File fileToDownload = AzureFileNameHelper.resolveWithinDirectory(fileDir, client.getBlobName());
         final BlobCommonRequestOptions commonRequestOptions = getCommonRequestOptions(exchange);
         final BlobRange blobRange = configurationProxy.getBlobRange(exchange);
         final ParallelTransferOptions parallelTransferOptions = configurationProxy.getParallelTransferOptions(exchange);

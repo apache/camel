@@ -204,3 +204,13 @@ suitable for scripting, use the `--json` option.
 The `camel infra list` table now sizes its `DESCRIPTION` column to the terminal width, and truncates
 the `IMPLEMENTATION` and `SERVICE_DATA` columns with an ellipsis instead of letting the raw service
 data overflow the terminal. The complete, structured service data remains available via `--json`.
+
+=== camel-azure-storage-blob / camel-azure-storage-datalake - download contained within fileDir
+
+When `fileDir` is configured, the Azure Storage Blob and DataLake consumers now ensure the downloaded
+local file stays within the configured directory, so a remote object name containing `../` sequences
+can no longer resolve to a path outside it. This is consistent with the containment already performed
+by the file-based consumers (see the `localWorkDirectory` note in the 4.21 upgrade guide).
+
+Ordinary object names are unaffected. A name that resolves outside `fileDir` is now rejected with an
+`IllegalArgumentException`.
