@@ -75,8 +75,7 @@ public class NettyConsumerClientModeReconnectTest extends BaseNettyTest {
 
             LOG.info(">>> routing done");
 
-            Awaitility.await().atMost(5, TimeUnit.SECONDS)
-                    .untilAsserted(() -> MockEndpoint.assertIsSatisfied(context));
+            MockEndpoint.assertIsSatisfied(context);
 
         } finally {
             LOG.info(">>> shutting down Netty server");

@@ -16,12 +16,9 @@
  */
 package org.apache.camel.component.jms;
 
-import java.util.concurrent.TimeUnit;
-
 import org.apache.camel.Service;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 
@@ -45,8 +42,7 @@ public class JmsAutoStartupTest extends AbstractPersistentJMSTest {
 
         template.sendBody("activemq:queue:JmsAutoStartupTest", "Hello World");
 
-        Awaitility.await().atMost(2, TimeUnit.SECONDS)
-                .untilAsserted(() -> MockEndpoint.assertIsSatisfied(context));
+        MockEndpoint.assertIsSatisfied(context);
 
         mock.reset();
         mock.expectedBodiesReceived("Hello World");

@@ -52,7 +52,7 @@ public class JmsDurableTopicIT extends AbstractPersistentJMSTest {
         final Object request = assertDoesNotThrow(() -> future.get(5, TimeUnit.SECONDS));
         assertNotNull(request);
 
-        Awaitility.await().atMost(6, TimeUnit.SECONDS).untilAsserted(() -> MockEndpoint.assertIsSatisfied(context));
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

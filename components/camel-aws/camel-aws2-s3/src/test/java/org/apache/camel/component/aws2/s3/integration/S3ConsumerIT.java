@@ -69,8 +69,7 @@ public class S3ConsumerIT extends Aws2S3Base {
             }
         });
 
-        Awaitility.await().atMost(10, TimeUnit.SECONDS)
-                .untilAsserted(() -> MockEndpoint.assertIsSatisfied(context));
+        MockEndpoint.assertIsSatisfied(context);
 
         // in-progress should remove keys when complete
         AWS2S3Endpoint s3 = (AWS2S3Endpoint) context.getRoute("s3consumer").getEndpoint();

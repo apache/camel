@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.snmp;
 
-import java.util.concurrent.TimeUnit;
-
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
@@ -26,7 +24,6 @@ import org.apache.camel.Producer;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.AvailablePortFinder;
-import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -69,9 +66,7 @@ public class TrapTest extends SnmpTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:resultV" + version);
         mock.expectedMessageCount(1);
 
-        // wait a bit
-        Awaitility.await().atMost(2, TimeUnit.SECONDS)
-                .untilAsserted(() -> mock.assertIsSatisfied());
+        mock.assertIsSatisfied();
 
         Message in = mock.getReceivedExchanges().get(0).getIn();
         Assertions.assertTrue(in instanceof SnmpMessage, "Expected received object 'SnmpMessage.class'. Got: " + in.getClass());

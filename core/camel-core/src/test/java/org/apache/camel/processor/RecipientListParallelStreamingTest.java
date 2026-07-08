@@ -16,14 +16,10 @@
  */
 package org.apache.camel.processor;
 
-import java.util.concurrent.TimeUnit;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.awaitility.Awaitility.await;
 
 public class RecipientListParallelStreamingTest extends ContextTestSupport {
 
@@ -34,7 +30,7 @@ public class RecipientListParallelStreamingTest extends ContextTestSupport {
 
         template.sendBodyAndHeader("direct:start", "Hello World", "foo", "direct:a,direct:b,direct:c");
 
-        await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> mock.assertIsSatisfied());
+        mock.assertIsSatisfied();
     }
 
     @Test
@@ -44,7 +40,7 @@ public class RecipientListParallelStreamingTest extends ContextTestSupport {
 
         template.sendBodyAndHeader("direct:streaming", "Hello World", "foo", "direct:a,direct:b,direct:c");
 
-        await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> mock.assertIsSatisfied());
+        mock.assertIsSatisfied();
     }
 
     @Override

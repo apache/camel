@@ -16,15 +16,11 @@
  */
 package org.apache.camel.component.mina;
 
-import java.util.concurrent.TimeUnit;
-
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.spring.junit6.CamelSpringTestSupport;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-
-import static org.awaitility.Awaitility.await;
 
 /**
  *
@@ -49,7 +45,6 @@ public class MinaSpringMultipleUDPTest extends CamelSpringTestSupport {
         }
 
         // Sleep for awhile to let the messages go through.
-        await().atMost(3, TimeUnit.SECONDS)
-                .untilAsserted(() -> MockEndpoint.assertIsSatisfied(context));
+        MockEndpoint.assertIsSatisfied(context);
     }
 }

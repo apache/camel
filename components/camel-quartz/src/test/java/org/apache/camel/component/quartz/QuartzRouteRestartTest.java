@@ -16,11 +16,8 @@
  */
 package org.apache.camel.component.quartz;
 
-import java.util.concurrent.TimeUnit;
-
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
 
 public class QuartzRouteRestartTest extends BaseQuartzTest {
@@ -38,8 +35,7 @@ public class QuartzRouteRestartTest extends BaseQuartzTest {
         mock.expectedMessageCount(0);
 
         // wait a bit
-        Awaitility.await().atMost(2, TimeUnit.SECONDS)
-                .untilAsserted(() -> MockEndpoint.assertIsSatisfied(context));
+        MockEndpoint.assertIsSatisfied(context);
 
         // start route, and we got messages again
         mock.reset();

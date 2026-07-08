@@ -17,8 +17,8 @@
 
 package org.apache.camel.component.zeebe;
 
-import java.time.Duration;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.CamelContext;
@@ -39,7 +39,6 @@ import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
-import org.testcontainers.shaded.org.awaitility.Awaitility;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -78,7 +77,7 @@ class ZeebeConsumerIT extends CamelTestSupport {
         MockEndpoint workerMock = getMockEndpoint("mock:jobWorker");
         workerMock.expectedMinimumMessageCount(1);
 
-        Awaitility.await().atMost(Duration.ofSeconds(30)).untilAsserted(() -> MockEndpoint.assertIsSatisfied(context));
+        MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
 
         List<Exchange> exchanges = workerMock.getExchanges();
         for (Exchange exchange : exchanges) {
@@ -108,7 +107,7 @@ class ZeebeConsumerIT extends CamelTestSupport {
         MockEndpoint workerMock = getMockEndpoint("mock:jobWorker_JSON");
         workerMock.expectedMinimumMessageCount(1);
 
-        Awaitility.await().atMost(Duration.ofSeconds(30)).untilAsserted(() -> MockEndpoint.assertIsSatisfied(context));
+        MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
 
         List<Exchange> exchanges = workerMock.getExchanges();
         for (Exchange exchange : exchanges) {

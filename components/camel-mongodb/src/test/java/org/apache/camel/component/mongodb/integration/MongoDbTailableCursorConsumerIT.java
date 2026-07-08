@@ -19,7 +19,6 @@ package org.apache.camel.component.mongodb.integration;
 import java.util.Calendar;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.CreateCollectionOptions;
@@ -30,7 +29,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.mongodb.MongoDbTailTrackingConfig;
 import org.apache.camel.test.infra.core.annotations.RouteFixture;
 import org.apache.camel.test.infra.core.api.ConfigurableRoute;
-import org.awaitility.Awaitility;
 import org.bson.Document;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assumptions;
@@ -76,7 +74,7 @@ public class MongoDbTailableCursorConsumerIT extends AbstractMongoDbITSupport im
         assertEquals(0, cappedTestCollection.countDocuments());
 
         context.getRouteController().startRoute("tailableCursorConsumer1");
-        Awaitility.await().atMost(1, TimeUnit.SECONDS).untilAsserted(() -> mock.assertIsSatisfied());
+        mock.assertIsSatisfied();
         context.getRouteController().stopRoute("tailableCursorConsumer1");
 
     }
@@ -345,7 +343,7 @@ public class MongoDbTailableCursorConsumerIT extends AbstractMongoDbITSupport im
         }
         assertEquals(1000, cappedTestCollection.countDocuments());
         context.getRouteController().startRoute(routeId);
-        Awaitility.await().atMost(1, TimeUnit.SECONDS).untilAsserted(() -> mock.assertIsSatisfied());
+        mock.assertIsSatisfied();
         context.getRouteController().stopRoute(routeId);
     }
 

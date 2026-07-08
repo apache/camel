@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.jms.issues;
 
-import java.util.concurrent.TimeUnit;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.ProducerTemplate;
@@ -27,7 +25,6 @@ import org.apache.camel.component.jms.JmsTestHelper;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.infra.core.CamelContextExtension;
 import org.apache.camel.test.infra.core.DefaultCamelContextExtension;
-import org.awaitility.Awaitility;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -55,7 +52,7 @@ public class JmsReplyToLoopIssueTest extends AbstractJMSTest {
         template.sendBodyAndHeader("direct:start", "World", "JMSReplyTo", "queue:JmsReplyToLoopIssueTest.bar");
 
         // fail fast if an endless reply loop keeps producing messages
-        Awaitility.await().atMost(250, TimeUnit.MILLISECONDS).untilAsserted(() -> MockEndpoint.assertIsSatisfied(context));
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

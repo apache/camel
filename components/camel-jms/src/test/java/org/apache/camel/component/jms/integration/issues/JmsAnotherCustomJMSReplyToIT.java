@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.jms.integration.issues;
 
-import java.util.concurrent.TimeUnit;
-
 import jakarta.jms.ConnectionFactory;
 import jakarta.jms.Queue;
 import jakarta.jms.TextMessage;
@@ -32,7 +30,6 @@ import org.apache.camel.component.jms.JmsComponent;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.infra.core.CamelContextExtension;
 import org.apache.camel.test.infra.core.DefaultCamelContextExtension;
-import org.awaitility.Awaitility;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -69,7 +66,7 @@ public class JmsAnotherCustomJMSReplyToIT extends AbstractJMSTest {
         // send reply
         template.sendBody("activemq:" + replyTo.getQueueName(), "My name is Arnio");
 
-        Awaitility.await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> MockEndpoint.assertIsSatisfied(context));
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

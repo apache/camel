@@ -16,15 +16,11 @@
  */
 package org.apache.camel.processor;
 
-import java.util.concurrent.TimeUnit;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.saga.InMemorySagaService;
 import org.junit.jupiter.api.Test;
-
-import static org.awaitility.Awaitility.await;
 
 /**
  * Tests that saga coordination survives removeHeaders("*") in a sub-route. The coordinator ID is stored internally in
@@ -55,8 +51,7 @@ public class SagaRemoveHeadersTest extends ContextTestSupport {
             // expected
         }
 
-        await().atMost(5, TimeUnit.SECONDS)
-                .untilAsserted(() -> assertMockEndpointsSatisfied());
+        assertMockEndpointsSatisfied();
     }
 
     @Override

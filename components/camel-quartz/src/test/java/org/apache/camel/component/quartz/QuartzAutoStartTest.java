@@ -16,11 +16,8 @@
  */
 package org.apache.camel.component.quartz;
 
-import java.util.concurrent.TimeUnit;
-
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -35,8 +32,7 @@ public class QuartzAutoStartTest extends BaseQuartzTest {
         QuartzComponent quartz = context.getComponent("quartz", QuartzComponent.class);
         assertFalse(quartz.getScheduler().isStarted(), "Should not have started scheduler");
 
-        Awaitility.await().atMost(2, TimeUnit.SECONDS)
-                .untilAsserted(() -> MockEndpoint.assertIsSatisfied(context));
+        MockEndpoint.assertIsSatisfied(context);
 
         MockEndpoint.assertIsSatisfied(context);
 

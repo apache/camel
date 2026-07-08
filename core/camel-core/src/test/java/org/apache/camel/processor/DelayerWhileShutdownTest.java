@@ -24,7 +24,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
-import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -46,8 +45,7 @@ public class DelayerWhileShutdownTest extends ContextTestSupport {
         assertTrue(shortRouteStarted.await(5, TimeUnit.SECONDS),
                 "Short-delay route should have started processing within 5 seconds");
 
-        await().atMost(5, TimeUnit.SECONDS)
-                .untilAsserted(() -> assertMockEndpointsSatisfied());
+        assertMockEndpointsSatisfied();
     }
 
     @Override

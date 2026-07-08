@@ -133,8 +133,7 @@ public class SjmsConnectionRecoveryTest extends CamelTestSupport {
         // Phase 1: verify normal consumption (also confirms consumer is fully started)
         mock.expectedMessageCount(1);
         template.sendBody(SJMS_QUEUE_NAME, "before-failure");
-        await().atMost(10, TimeUnit.SECONDS)
-                .untilAsserted(() -> mock.assertIsSatisfied());
+        mock.assertIsSatisfied();
         mock.reset();
 
         // Phase 2: simulate a transient JMS connection exception.
@@ -168,8 +167,7 @@ public class SjmsConnectionRecoveryTest extends CamelTestSupport {
         // Phase 5: verify messages are consumed after recovery.
         mock.expectedMessageCount(1);
         template.sendBody(SJMS_QUEUE_NAME, "after-failure");
-        await().atMost(10, TimeUnit.SECONDS)
-                .untilAsserted(() -> mock.assertIsSatisfied());
+        mock.assertIsSatisfied();
     }
 
     @Override

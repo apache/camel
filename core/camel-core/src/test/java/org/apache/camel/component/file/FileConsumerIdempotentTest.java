@@ -70,8 +70,7 @@ public class FileConsumerIdempotentTest extends ContextTestSupport {
 
         // should NOT consume the file again, let a bit time pass to let the
         // consumer try to consume it but it should not
-        Awaitility.await().pollDelay(1, TimeUnit.SECONDS).atMost(2, TimeUnit.SECONDS)
-                .untilAsserted(() -> assertMockEndpointsSatisfied());
+        assertMockEndpointsSatisfied();
 
         FileEndpoint fe = context.getEndpoint(fileUri(), FileEndpoint.class);
         assertNotNull(fe);

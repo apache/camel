@@ -19,7 +19,6 @@ package org.apache.camel.component.kafka.integration;
 import java.time.Duration;
 import java.util.Collections;
 import java.util.Properties;
-import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -30,7 +29,6 @@ import org.apache.camel.processor.resume.TransientResumeStrategy;
 import org.apache.camel.processor.resume.kafka.KafkaResumeStrategyConfigurationBuilder;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
-import org.awaitility.Awaitility;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -70,7 +68,8 @@ public class KafkaConsumerAutoInstResumeRouteStrategyIT extends BaseKafkaTestSup
         MockEndpoint mock = contextExtension.getMockEndpoint(KafkaTestUtil.MOCK_RESULT);
 
         mock.expectedMessageCount(10);
-        Awaitility.await().atMost(25, TimeUnit.SECONDS).untilAsserted(() -> mock.assertIsSatisfied());
+        mock.setResultWaitTime(25000);
+        mock.assertIsSatisfied();
     }
 
     @AfterEach

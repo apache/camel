@@ -31,7 +31,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.infra.core.CamelContextExtension;
 import org.apache.camel.test.infra.core.DefaultCamelContextExtension;
-import org.awaitility.Awaitility;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Tag;
@@ -203,8 +202,7 @@ public class JmsProducerWithJMSHeaderTest extends AbstractJMSTest {
         assertNotNull(bar, "Should be a message on queue");
         template.send("activemq:queue:fooJmsProducerWithJMSHeaderTest?preserveMessageQos=true", bar);
 
-        Awaitility.await().atMost(5, TimeUnit.SECONDS)
-                .untilAsserted(() -> MockEndpoint.assertIsSatisfied(context));
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
