@@ -28,10 +28,12 @@ import org.apache.camel.test.infra.ibmmq.services.IbmMQService;
 import org.apache.camel.test.infra.ibmmq.services.IbmMQServiceFactory;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
+@DisabledOnOs(architectures = { "aarch64", "aarch_64" }, disabledReason = "IBM MQ has no Linux ARM64 native image")
 public class JmsComponentIbmMQTest extends CamelTestSupport {
 
     @RegisterExtension
