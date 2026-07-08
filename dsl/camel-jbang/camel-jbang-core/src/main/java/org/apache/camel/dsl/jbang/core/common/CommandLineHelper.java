@@ -37,13 +37,88 @@ import picocli.CommandLine;
 public final class CommandLineHelper {
 
     private static volatile Path homeDir = Paths.get(HomeHelper.resolveHomeDir());
-    public static final String USER_CONFIG = ".camel-jbang-user.properties";
-    public static final String LOCAL_USER_CONFIG = "camel-jbang-user.properties";
+    public static final String USER_CONFIG = ".camel-cli.properties";
+    public static final String LOCAL_USER_CONFIG = "camel-cli.properties";
+    public static final String LEGACY_USER_CONFIG = ".camel-jbang-user.properties";
+    public static final String LEGACY_LOCAL_USER_CONFIG = "camel-jbang-user.properties";
     public static final String CAMEL_DIR = ".camel";
     public static final String CAMEL_JBANG_WORK_DIR = ".camel-jbang";
 
     private CommandLineHelper() {
         super();
+    }
+
+    /**
+     * Migrates any pre-existing legacy user configuration file ({@value #LEGACY_USER_CONFIG}) to the new name
+     * ({@value #USER_CONFIG}), for both the user home directory and the current working directory.
+     * <p>
+     * The migration is idempotent and best-effort: it renames when only the legacy file exists, merges non-conflicting
+     * legacy keys into the current file when the current file is newer or same-age, and leaves both files untouched
+     * when the legacy file is newer.
+     */
+    public static void migrateLegacyUserConfig() {
+        migrateLegacyUserConfig(new Printer.SystemOutPrinter());
+    }
+
+    public static void migrateLegacyUserConfig(Printer printer) {
+        migrateLegacyUserConfig(homeDir.resolve(LEGACY_USER_CONFIG), homeDir.resolve(USER_CONFIG), printer);
+        migrateLegacyUserConfig(Paths.get(LEGACY_LOCAL_USER_CONFIG), Paths.get(LOCAL_USER_CONFIG), printer);
+    }
+
+    private static void migrateLegacyUserConfig(Path legacy, Path current, Printer printer) {
+        try {
+            if (!Files.isRegularFile(legacy)) {
+                return;
+            }
+            if (!Files.exists(current)) {
+                Files.move(legacy, current);
+                printer.println("Migrated legacy settings: " + legacy.getFileName() + " -> " + current.getFileName());
+                return;
+            }
+
+            long legacyModified = Files.getLastModifiedTime(legacy).toMillis();
+            long currentModified = Files.getLastModifiedTime(current).toMillis();
+            if (currentModified < legacyModified) {
+                printer.println("Note: legacy settings file " + legacy.getFileName()
+                                + " is newer than " + current.getFileName()
+                                + ". Both files left unchanged. Remove the legacy file manually if no longer needed.");
+                return;
+            }
+
+            Properties legacyProps = new OrderedProperties();
+            try (InputStream is = Files.newInputStream(legacy)) {
+                legacyProps.load(is);
+            }
+            Properties currentProps = new OrderedProperties();
+            try (InputStream is = Files.newInputStream(current)) {
+                currentProps.load(is);
+            }
+            boolean merged = false;
+            for (String key : legacyProps.stringPropertyNames()) {
+                if (currentProps.getProperty(key) == null) {
+                    currentProps.setProperty(key, legacyProps.getProperty(key));
+                    merged = true;
+                }
+            }
+            if (merged) {
+                try (OutputStream os = Files.newOutputStream(current)) {
+                    currentProps.store(os, null);
+                }
+                printer.println("Merged legacy settings from " + legacy.getFileName() + " into " + current.getFileName());
+            }
+            Files.delete(legacy);
+            printer.println("Removed legacy settings file: " + legacy.getFileName());
+        } catch (IOException e) {
+            // best-effort: a migration hiccup must never block the CLI
+        }
+    }
+
+    /**
+     * Whether a local user configuration file ({@value #LOCAL_USER_CONFIG}) exists in the current working directory.
+     * Callers use this to decide whether to read/write the local file instead of the user home file.
+     */
+    public static boolean hasLocalUserConfig() {
+        return Files.exists(Paths.get(LOCAL_USER_CONFIG));
     }
 
     public static void augmentWithUserConfiguration(CommandLine commandLine) {
@@ -167,7 +242,7 @@ public final class CommandLineHelper {
 
         @Override
         public String defaultValue(CommandLine.Model.ArgSpec argSpec) throws Exception {
-            // all plugin commands should not support default values from camel-jbang-user.properties
+            // all plugin commands should not support default values from the user configuration file
             CommandLine.Model.CommandSpec parent = argSpec.command().parent();
             if (parent != null && parent.name().equals("plugin")) {
                 return null;

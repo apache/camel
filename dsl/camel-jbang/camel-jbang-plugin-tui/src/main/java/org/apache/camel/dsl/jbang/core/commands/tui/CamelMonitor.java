@@ -486,10 +486,13 @@ public class CamelMonitor extends CamelCommand {
             actionsPopup.setScheduler(tui.scheduler());
             actionsPopup.setResetScreenAction(() -> tui.terminal().clear());
             actionsPopup.setThemeRefreshAction(() -> tui.terminal().clear());
+            actionsPopup.setClearScreenAction(() -> tui.terminal().clear());
             actionsPopup.setCamelAnimationAction(() -> playBuiltinAnimation("camel"));
             // Preload diagram data if an integration was auto-selected
             tabRegistry.routesTab().preloadDiagram();
             tabRegistry.diagramTab().preloadDiagram();
+            // Open on the configured starting tab (if any), now that all tab wiring is in place
+            applyStartingTab();
             // Intercept Ctrl+C: quit the TUI cleanly instead of letting
             // the JVM tear down the classloader while we're still running
             Signal.handle(new Signal("INT"), sig -> tui.quit());
@@ -506,6 +509,28 @@ public class CamelMonitor extends CamelCommand {
             this.runner = null;
         }
         return 0;
+    }
+
+    /**
+     * Selects the tab configured as the starting tab in {@link TuiSettings} (if any), resolving the stored programmatic
+     * name against {@link TabRegistry#allTabEntries()}. Unset, unknown, or the default "Overview" leaves the initial
+     * {@code TAB_OVERVIEW} selection untouched. Reuses the same selection logic as the Go-to callback.
+     */
+    private void applyStartingTab() {
+        String startTab = TuiSettings.load().getStartTab();
+        if (startTab == null || startTab.isBlank() || "Overview".equals(startTab)) {
+            return;
+        }
+        for (TabRegistry.TabEntry entry : tabRegistry.allTabEntries()) {
+            if (entry.name().equals(startTab)) {
+                if (entry.moreIndex() >= 0) {
+                    tabRegistry.selectMoreTab(entry.moreIndex());
+                } else {
+                    tabRegistry.handleTabKey(entry.tabIndex(), ctx, dataService);
+                }
+                return;
+            }
+        }
     }
 
     // ---- Event Handling ----

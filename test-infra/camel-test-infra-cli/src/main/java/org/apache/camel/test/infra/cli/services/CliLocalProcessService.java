@@ -492,7 +492,7 @@ public class CliLocalProcessService implements CliService {
     }
 
     private Path getUserPropertiesFile() {
-        return Path.of(System.getProperty("user.home"), ".camel-jbang-user.properties");
+        return Path.of(System.getProperty("user.home"), ".camel-cli.properties");
     }
 
     private void backupUserFiles() {
