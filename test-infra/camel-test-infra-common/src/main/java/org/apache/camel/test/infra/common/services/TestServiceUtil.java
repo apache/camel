@@ -69,6 +69,11 @@ public final class TestServiceUtil {
 
     private static boolean isRetryableContainerException(Throwable e) {
         for (Throwable t = e; t != null; t = t.getCause()) {
+            if (t.getClass().getName().contains("NoHttpResponseException")) {
+                return false;
+            }
+        }
+        for (Throwable t = e; t != null; t = t.getCause()) {
             if (t instanceof ContainerFetchException || t instanceof ContainerLaunchException) {
                 return true;
             }
