@@ -40,8 +40,8 @@ import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.hintLast;
 /**
  * Central settings dialog for the Camel TUI. Exposes user preferences (theme, starting tab, default run-from-folder)
  * backed by {@link TuiSettings}. Loading, mutating and saving go through a single {@code TuiSettings} object so all
- * {@code camel.tui.*} keys are written together. Theme changes are applied live on save; the starting tab is applied on
- * the next TUI launch.
+ * {@code camel.tui.*} keys are written together. Cycling the theme previews it instantly (like {@link ThemePopup}),
+ * Enter persists the previewed theme, Esc reverts it; the starting tab is applied on the next TUI launch.
  */
 class SettingsPopup {
 
@@ -97,6 +97,10 @@ class SettingsPopup {
     }
 
     void close() {
+        if (visible) {
+            Theme.revertPreview();
+            refreshTheme();
+        }
         visible = false;
     }
 
@@ -105,6 +109,8 @@ class SettingsPopup {
             return false;
         }
         if (ke.isCancel()) {
+            Theme.revertPreview();
+            refreshTheme();
             visible = false;
             return true;
         }
@@ -122,10 +128,15 @@ class SettingsPopup {
         }
         if (selectedRow == ROW_THEME) {
             int count = ThemeMode.ids().size();
+            int previous = themeIndex;
             if (ke.isChar(' ') || ke.isRight()) {
                 themeIndex = (themeIndex + 1) % count;
             } else if (ke.isLeft()) {
                 themeIndex = (themeIndex - 1 + count) % count;
+            }
+            if (themeIndex != previous) {
+                Theme.preview(ThemeMode.ids().get(themeIndex));
+                refreshTheme();
             }
             return true;
         }
@@ -147,16 +158,21 @@ class SettingsPopup {
     }
 
     private void save() {
-        settings.setThemeId(ThemeMode.ids().get(themeIndex));
+        String selectedThemeId = ThemeMode.ids().get(themeIndex);
+        settings.setThemeId(selectedThemeId);
         if (!tabNames.isEmpty()) {
             settings.setStartTab(tabNames.get(startTabIndex));
         }
         settings.setDefaultFolder(stripControlChars(folderInput.text().trim()));
         settings.save();
-        Theme.applyStartupMode(settings.getThemeId());
-        if (clearScreen != null) {
-            clearScreen.run();
+        if (Theme.mode().equals(selectedThemeId)) {
+            // Already active via live preview (or unchanged): just persist and clear the preview marker.
+            Theme.confirmPreview();
+        } else {
+            // Row was never touched but disk/session state disagrees (e.g. a --theme CLI override); force it.
+            Theme.applyStartupMode(selectedThemeId);
         }
+        refreshTheme();
         visible = false;
     }
 
@@ -182,7 +198,7 @@ class SettingsPopup {
         int rowY = popup.top() + 1;
 
         renderLabel(frame, innerX, rowY, labelW, "Theme:", selectedRow == ROW_THEME);
-        renderCycler(frame, innerX + labelW, rowY, fieldW, ThemeMode.ids(), themeIndex, selectedRow == ROW_THEME);
+        renderValue(frame, innerX + labelW, rowY, fieldW, ThemeMode.values()[themeIndex].label(), selectedRow == ROW_THEME);
         rowY++;
 
         renderLabel(frame, innerX, rowY, labelW, "Starting Tab:", selectedRow == ROW_START_TAB);
@@ -203,6 +219,12 @@ class SettingsPopup {
     }
 
     // ---- Helpers ----
+
+    private void refreshTheme() {
+        if (clearScreen != null) {
+            clearScreen.run();
+        }
+    }
 
     private String currentTabLabel() {
         if (tabEntries == null || tabEntries.isEmpty()) {
@@ -250,21 +272,6 @@ class SettingsPopup {
     private void renderLabel(Frame frame, int x, int y, int w, String label, boolean selected) {
         Style style = selected ? Style.EMPTY.bold() : Style.EMPTY.dim();
         frame.renderWidget(Paragraph.from(Line.from(Span.styled(label, style))), new Rect(x, y, w, 1));
-    }
-
-    private void renderCycler(Frame frame, int x, int y, int w, List<String> labels, int active, boolean selected) {
-        List<Span> spans = new ArrayList<>();
-        for (int i = 0; i < labels.size(); i++) {
-            if (i > 0) {
-                spans.add(Span.styled(" ", Style.EMPTY));
-            }
-            if (i == active) {
-                spans.add(Span.styled("[" + labels.get(i) + "]", selected ? Style.EMPTY.bold() : Style.EMPTY));
-            } else {
-                spans.add(Span.styled(" " + labels.get(i) + " ", Style.EMPTY.dim()));
-            }
-        }
-        frame.renderWidget(Paragraph.from(Line.from(spans)), new Rect(x, y, w, 1));
     }
 
     private void renderValue(Frame frame, int x, int y, int w, String text, boolean selected) {

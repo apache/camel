@@ -99,8 +99,12 @@ class SettingsPopupTest {
         assertEquals("dark", popup.selectedThemeId(), "with no config, theme defaults to the active mode (dark)");
         popup.handleKeyEvent(KeyEvent.ofChar(' '));
         assertEquals("light", popup.selectedThemeId());
-        popup.handleKeyEvent(KeyEvent.ofChar(' '));
-        assertEquals("dark", popup.selectedThemeId(), "cycling wraps back to the first value");
+
+        int themeCount = ThemeMode.ids().size();
+        for (int i = 0; i < themeCount - 1; i++) {
+            popup.handleKeyEvent(KeyEvent.ofChar(' '));
+        }
+        assertEquals("dark", popup.selectedThemeId(), "cycling through every theme wraps back to the first value");
     }
 
     @Test
@@ -200,5 +204,23 @@ class SettingsPopupTest {
 
         assertFalse(popup.isVisible());
         assertEquals("dark", TuiSettings.load().getThemeId(), "Esc must not persist the in-form change");
+        assertEquals("dark", Theme.mode(), "Esc must revert the live preview back to the theme active before open()");
+    }
+
+    @Test
+    void themeCyclingPreviewsLiveWithoutClosingThePopup(@TempDir Path tempDir) {
+        useHome(tempDir);
+        boolean[] cleared = { false };
+        SettingsPopup popup = new SettingsPopup();
+        popup.setTabEntries(tabs());
+        popup.setClearScreen(() -> cleared[0] = true);
+        popup.open();
+
+        assertEquals("dark", Theme.mode());
+        popup.handleKeyEvent(KeyEvent.ofChar(' ')); // theme dark -> light
+
+        assertTrue(popup.isVisible(), "cycling the theme row must not close the dialog");
+        assertEquals("light", Theme.mode(), "the previewed theme must apply immediately, without saving");
+        assertTrue(cleared[0], "the screen must refresh so the live preview is visible");
     }
 }
