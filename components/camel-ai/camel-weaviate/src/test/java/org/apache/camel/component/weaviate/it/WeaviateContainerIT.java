@@ -20,10 +20,10 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
-import io.weaviate.client.base.Result;
-import io.weaviate.client.v1.data.model.WeaviateObject;
-import io.weaviate.client.v1.graphql.model.GraphQLResponse;
+import io.weaviate.client6.v1.api.collections.WeaviateObject;
+import io.weaviate.client6.v1.api.collections.query.QueryResponse;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.weaviate.WeaviateTestSupport;
 import org.apache.camel.component.weaviate.WeaviateVectorDbAction;
@@ -60,10 +60,9 @@ public class WeaviateContainerIT extends WeaviateTestSupport {
                 .request(Exchange.class);
 
         assertThat(result).isNotNull();
-        Result<Boolean> res = (Result<Boolean>) result.getIn().getBody();
-        assertThat(res.hasErrors()).isFalse();
-        assertThat(res.getResult()).isTrue();
         assertThat(result.getException()).isNull();
+        Boolean res = result.getIn().getBody(Boolean.class);
+        assertThat(res).isTrue();
     }
 
     @Test
@@ -85,12 +84,13 @@ public class WeaviateContainerIT extends WeaviateTestSupport {
                 .request(Exchange.class);
 
         assertThat(result).isNotNull();
+        assertThat(result.getException()).isNull();
 
-        Result<WeaviateObject> res = (Result<WeaviateObject>) result.getIn().getBody();
-        CREATEID = res.getResult().getId();
+        WeaviateObject<Map<String, Object>> res = (WeaviateObject<Map<String, Object>>) result.getIn().getBody();
+        CREATEID = res.uuid();
 
-        assertThat(res.hasErrors()).isFalse();
         assertThat(res).isNotNull();
+        assertThat(CREATEID).isNotNull();
     }
 
     @Test
@@ -111,11 +111,10 @@ public class WeaviateContainerIT extends WeaviateTestSupport {
                 .request(Exchange.class);
 
         assertThat(result).isNotNull();
-
-        Result<Boolean> res = (Result<Boolean>) result.getIn().getBody();
-        assertThat(res.hasErrors()).isFalse();
-        assertThat(res.getResult()).isTrue();
         assertThat(result.getException()).isNull();
+
+        Boolean res = result.getIn().getBody(Boolean.class);
+        assertThat(res).isTrue();
     }
 
     @Test
@@ -130,18 +129,16 @@ public class WeaviateContainerIT extends WeaviateTestSupport {
 
         assertThat(result).isNotNull();
         assertThat(result.getException()).isNull();
-        Result<WeaviateObject> res = (Result<WeaviateObject>) result.getIn().getBody();
-        assertThat(res.hasErrors()).isFalse();
 
-        List<WeaviateObject> list = (List) res.getResult();
-        for (WeaviateObject wo : list) {
+        Optional<WeaviateObject<Map<String, Object>>> res
+                = (Optional<WeaviateObject<Map<String, Object>>>) result.getIn().getBody();
+        assertThat(res).isPresent();
 
-            Map<String, Object> map = wo.getProperties();
-            assertThat(map).containsKey("sky");
-            assertThat(map).containsKey("age");
-            assertThat(map).containsKey("dog");
-        }
-
+        WeaviateObject<Map<String, Object>> wo = res.get();
+        Map<String, Object> props = wo.properties();
+        assertThat(props).containsKey("sky");
+        assertThat(props).containsKey("age");
+        assertThat(props).containsKey("dog");
     }
 
     @SuppressWarnings("unchecked")
@@ -165,9 +162,12 @@ public class WeaviateContainerIT extends WeaviateTestSupport {
                 .request(Exchange.class);
 
         assertThat(result).isNotNull();
-        GraphQLResponse<?> qlResponse = (GraphQLResponse<?>) result.getIn().getBody(Result.class).getResult();
-        var dataMap = (Map<String, Map<String, List<Map<String, String>>>>) qlResponse.getData();
-        assertThat(dataMap.get("Get").get(COLLECTION).get(0)).containsEntry("sky", "blue");
+        assertThat(result.getException()).isNull();
+
+        QueryResponse<Map<String, Object>> queryResponse
+                = (QueryResponse<Map<String, Object>>) result.getIn().getBody();
+        assertThat(queryResponse.objects()).isNotEmpty();
+        assertThat(queryResponse.objects().get(0).properties()).containsEntry("sky", "blue");
     }
 
     @Test
@@ -182,11 +182,9 @@ public class WeaviateContainerIT extends WeaviateTestSupport {
                 .request(Exchange.class);
 
         assertThat(result).isNotNull();
-        Result<Boolean> res = (Result<Boolean>) result.getIn().getBody();
-
-        assertThat(res.hasErrors()).isFalse();
-        assertThat(res.getResult()).isTrue();
         assertThat(result.getException()).isNull();
+        Boolean res = result.getIn().getBody(Boolean.class);
+        assertThat(res).isTrue();
     }
 
     @Test
@@ -199,10 +197,9 @@ public class WeaviateContainerIT extends WeaviateTestSupport {
                 .request(Exchange.class);
 
         assertThat(result).isNotNull();
-        Result<Boolean> res = (Result<Boolean>) result.getIn().getBody();
-        assertThat(res.hasErrors()).isFalse();
-        assertThat(res.getResult()).isTrue();
         assertThat(result.getException()).isNull();
+        Boolean res = result.getIn().getBody(Boolean.class);
+        assertThat(res).isTrue();
     }
 
     private String getUri() {

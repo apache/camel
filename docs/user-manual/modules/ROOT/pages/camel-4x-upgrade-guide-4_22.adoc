@@ -214,3 +214,62 @@ by the file-based consumers (see the `localWorkDirectory` note in the 4.21 upgra
 
 Ordinary object names are unaffected. A name that resolves outside `fileDir` is now rejected with an
 `IllegalArgumentException`.
+
+=== camel-weaviate - potential breaking change
+
+The Weaviate Java client has been upgraded from v5 (`io.weaviate:client`) to v6 (`io.weaviate:client6`).
+This is a major upgrade with several breaking changes.
+
+==== Scheme default value
+
+The `scheme` endpoint option now defaults to `http`. Previously it had no default. Routes that relied on the old
+behavior (passing no scheme) should explicitly set `scheme=http` or `scheme=https` as appropriate.
+
+==== Collection name case sensitivity
+
+Weaviate v6 requires collection names to start with an uppercase letter (PascalCase). Existing routes using lowercase
+collection names (e.g., `weaviate:myCollection`) must be updated to use PascalCase (e.g., `weaviate:MyCollection`).
+
+==== New gRPC configuration options
+
+The v6 client requires a gRPC connection in addition to the HTTP connection.
+Two new endpoint options have been added: `grpcHost` (defaults to the HTTP host) and `grpcPort` (defaults to `50051`).
+When connecting to a Weaviate server that exposes gRPC on a non-default host or port, these options must be set explicitly.
+
+==== Response body types changed
+
+The exchange body returned by the producer no longer uses `io.weaviate.client.base.Result<T>` wrappers.
+Code that casts the response body must be updated:
+
+[cols="1,2,2", options="header"]
+|===
+| Action | Old body type | New body type
+
+| `CREATE_COLLECTION` | `Result<Boolean>` | `Boolean`
+| `CREATE` | `Result<WeaviateObject>` | `WeaviateObject<Map<String, Object>>`
+| `UPDATE_BY_ID` | `Result<Boolean>` | `Boolean`
+| `DELETE_BY_ID` | `Result<Boolean>` | `Boolean`
+| `DELETE_COLLECTION` | `Result<Boolean>` | `Boolean`
+| `QUERY` | `Result<GraphQLResponse>` | `QueryResponse<Map<String, Object>>`
+| `QUERY_BY_ID` | `Result<List<WeaviateObject>>` | `Optional<WeaviateObject<Map<String, Object>>>`
+|===
+
+The `WeaviateObject` class has also moved from `io.weaviate.client.v1.data.model` to `io.weaviate.client6.v1.api.collections`
+and uses accessor methods (`uuid()`, `properties()`) instead of getter methods (`getId()`, `getProperties()`).
+
+==== Client type changed
+
+The autowired client type has changed from `io.weaviate.client.WeaviateClient` to `io.weaviate.client6.v1.api.WeaviateClient`.
+Routes that inject a custom `WeaviateClient` instance must update the import and construction to use the v6 API
+(e.g., `WeaviateClient.connectToCustom(...)` instead of `new WeaviateClient(config)`).
+
+==== Readiness check removed
+
+The v5 client performed a readiness check (`misc().readyChecker()`) during client creation and threw an exception
+if the Weaviate server was not ready. The v6 client no longer performs this check at startup. Errors will now
+surface on the first operation instead of during endpoint initialization.
+
+==== Proxy configuration removed
+
+The v6 client no longer supports HTTP proxy configuration.
+The `proxyHost`, `proxyPort`, and `proxyScheme` endpoint options have been removed.

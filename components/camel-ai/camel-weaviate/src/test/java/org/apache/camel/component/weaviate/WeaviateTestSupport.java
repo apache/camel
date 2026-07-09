@@ -34,6 +34,8 @@ public class WeaviateTestSupport extends CamelTestSupport {
 
         WeaviateVectorDbComponent component = context.getComponent("weaviate", WeaviateVectorDbComponent.class);
         component.getConfiguration().setHost(WEAVIATE.getWeaviateHost() + ":" + WEAVIATE.getWeaviatePort());
+        component.getConfiguration().setGrpcHost(WEAVIATE.getWeaviateHost());
+        component.getConfiguration().setGrpcPort(WEAVIATE.getWeaviateGrpcPort());
 
         return context;
     }

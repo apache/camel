@@ -28,4 +28,6 @@ public interface WeaviateInfraService extends InfrastructureService {
     String getWeaviateHost();
 
     int getWeaviatePort();
+
+    int getWeaviateGrpcPort();
 }
