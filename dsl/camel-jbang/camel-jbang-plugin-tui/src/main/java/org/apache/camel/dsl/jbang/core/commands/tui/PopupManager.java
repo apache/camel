@@ -148,6 +148,13 @@ class PopupManager {
         }
     }
 
+    void dismissAll() {
+        showMorePopup = false;
+        showSwitchPopup = false;
+        showKillConfirm = false;
+        filesBrowser.reset();
+    }
+
     void closeMorePopup() {
         showMorePopup = false;
     }

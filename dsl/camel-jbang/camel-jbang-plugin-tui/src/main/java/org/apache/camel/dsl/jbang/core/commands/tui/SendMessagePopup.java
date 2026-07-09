@@ -26,6 +26,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import dev.tamboui.layout.Constraint;
 import dev.tamboui.layout.Layout;
 import dev.tamboui.layout.Rect;
+import dev.tamboui.style.Overflow;
 import dev.tamboui.style.Style;
 import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.Line;
@@ -38,6 +39,8 @@ import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
 import dev.tamboui.widgets.block.Borders;
 import dev.tamboui.widgets.block.Title;
+import dev.tamboui.widgets.input.TextArea;
+import dev.tamboui.widgets.input.TextAreaState;
 import dev.tamboui.widgets.input.TextInput;
 import dev.tamboui.widgets.input.TextInputState;
 import dev.tamboui.widgets.paragraph.Paragraph;
@@ -45,6 +48,7 @@ import org.apache.camel.dsl.jbang.core.common.CamelCommandHelper;
 import org.apache.camel.dsl.jbang.core.common.PathUtils;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.Jsoner;
 
 import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.*;
 import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.hint;
@@ -66,7 +70,7 @@ class SendMessagePopup {
     private String integrationName;
     private List<RouteInfo> routes;
     private int selectedRouteIndex;
-    private final TextInputState bodyState = new TextInputState("");
+    private final TextAreaState bodyState = new TextAreaState("");
     private int selectedField = FIELD_BODY;
     private boolean inOut;
 
@@ -84,6 +88,9 @@ class SendMessagePopup {
     private boolean responseError;
     private int responseScroll;
     private boolean prettyPrint;
+    private boolean wordWrap = true;
+    private boolean showResponseBody = true;
+    private boolean showResponseHeaders;
 
     // History
     private final List<SendHistoryEntry> history = new ArrayList<>();
@@ -103,7 +110,7 @@ class SendMessagePopup {
         this.selectedRouteIndex = findSmartDefault(preSelectRouteId);
         this.bodyState.clear();
         this.selectedField = FIELD_BODY;
-        this.inOut = false;
+        this.inOut = true;
         this.sending = false;
         this.headers = null;
         this.selectedHeader = 0;
@@ -129,6 +136,10 @@ class SendMessagePopup {
             return true;
         }
         if (ke.isConfirm()) {
+            if (selectedField == FIELD_BODY) {
+                bodyState.insert('\n');
+                return true;
+            }
             if (selectedField == FIELD_HISTORY && !history.isEmpty()) {
                 replayHistoryEntry(history.get(historyIndex));
             }
@@ -145,18 +156,40 @@ class SendMessagePopup {
             return true;
         }
 
-        // Toggle pretty print (only when not editing text)
-        if (ke.isChar('p') && selectedField != FIELD_BODY && selectedField != FIELD_HEADERS) {
-            prettyPrint = !prettyPrint;
-            if (responseLines != null) {
-                rebuildResponseLines();
-                responseScroll = 0;
+        // Toggle response display options (only when not editing text)
+        if (selectedField != FIELD_BODY && selectedField != FIELD_HEADERS) {
+            if (ke.isChar('b')) {
+                showResponseBody = !showResponseBody;
+                if (responseLines != null) {
+                    rebuildResponseLines();
+                    responseScroll = 0;
+                }
+                return true;
             }
-            return true;
+            if (ke.isChar('h')) {
+                showResponseHeaders = !showResponseHeaders;
+                if (responseLines != null) {
+                    rebuildResponseLines();
+                    responseScroll = 0;
+                }
+                return true;
+            }
+            if (ke.isChar('p')) {
+                prettyPrint = !prettyPrint;
+                if (responseLines != null) {
+                    rebuildResponseLines();
+                    responseScroll = 0;
+                }
+                return true;
+            }
+            if (ke.isChar('w')) {
+                wordWrap = !wordWrap;
+                return true;
+            }
         }
 
         if (selectedField == FIELD_BODY) {
-            if (ke.isKey(KeyCode.TAB) || ke.isDown()) {
+            if (ke.isKey(KeyCode.TAB)) {
                 if (hasHeaders()) {
                     selectedField = FIELD_HEADERS;
                     selectedHeader = 0;
@@ -167,18 +200,59 @@ class SendMessagePopup {
                 return true;
             }
             if (ke.isUp()) {
-                if (routes.size() > 1) {
-                    selectedField = FIELD_ROUTE;
+                if (bodyState.cursorRow() == 0) {
+                    if (routes.size() > 1) {
+                        selectedField = FIELD_ROUTE;
+                    } else {
+                        goToLastField();
+                    }
                 } else {
-                    goToLastField();
+                    bodyState.moveCursorUp();
                 }
                 return true;
             }
-            if (ke.isChar('+')) {
-                addHeader();
+            if (ke.isDown()) {
+                if (bodyState.cursorRow() >= bodyState.lineCount() - 1) {
+                    if (hasHeaders()) {
+                        selectedField = FIELD_HEADERS;
+                        selectedHeader = 0;
+                        editingHeaderKey = true;
+                    } else {
+                        selectedField = FIELD_MODE;
+                    }
+                } else {
+                    bodyState.moveCursorDown();
+                }
                 return true;
             }
-            FormHelper.handleTextInput(ke, bodyState);
+            if (ke.isLeft()) {
+                bodyState.moveCursorLeft();
+                return true;
+            }
+            if (ke.isRight()) {
+                bodyState.moveCursorRight();
+                return true;
+            }
+            if (ke.isHome()) {
+                bodyState.moveCursorToLineStart();
+                return true;
+            }
+            if (ke.isEnd()) {
+                bodyState.moveCursorToLineEnd();
+                return true;
+            }
+            if (ke.isDeleteBackward()) {
+                bodyState.deleteBackward();
+                return true;
+            }
+            if (ke.isDeleteForward()) {
+                bodyState.deleteForward();
+                return true;
+            }
+            if (ke.code() == KeyCode.CHAR) {
+                bodyState.insert(ke.character());
+                return true;
+            }
             return true;
         }
         if (selectedField == FIELD_ROUTE) {
@@ -276,10 +350,6 @@ class SendMessagePopup {
         FormHelper.HeaderEntry current = headers.get(selectedHeader);
         TextInputState activeInput = editingHeaderKey ? current.keyInput() : current.valueInput();
 
-        if (ke.isChar('+')) {
-            addHeader();
-            return true;
-        }
         if (ke.isKey(KeyCode.TAB) || ke.isDown()) {
             if (editingHeaderKey) {
                 editingHeaderKey = false;
@@ -368,21 +438,16 @@ class SendMessagePopup {
     }
 
     void handlePaste(String text) {
-        if (!visible || sending) {
+        if (!visible || sending || text == null || text.isEmpty()) {
             return;
         }
-        FormHelper.handlePaste(text, activeTextInput());
-    }
-
-    private TextInputState activeTextInput() {
         if (selectedField == FIELD_BODY) {
-            return bodyState;
-        }
-        if (selectedField == FIELD_HEADERS && hasHeaders()) {
+            bodyState.insert(text);
+        } else if (selectedField == FIELD_HEADERS && hasHeaders()) {
             FormHelper.HeaderEntry he = headers.get(selectedHeader);
-            return editingHeaderKey ? he.keyInput() : he.valueInput();
+            TextInputState target = editingHeaderKey ? he.keyInput() : he.valueInput();
+            FormHelper.handlePaste(text, target);
         }
-        return null;
     }
 
     void doSend(MonitorContext ctx, ScheduledExecutorService scheduler) {
@@ -464,7 +529,6 @@ class SendMessagePopup {
                     if (exchangeId != null) {
                         hdrLines.add("exchangeId: " + exchangeId);
                     }
-                    hdrLines.add("exchangePattern: " + mep);
 
                     JsonObject message = response.getMap("message");
                     if (captureInOut && message != null) {
@@ -502,11 +566,21 @@ class SendMessagePopup {
                         if (errMsg == null) {
                             errMsg = status != null ? status : "unknown error";
                         }
+                        try {
+                            errMsg = Jsoner.unescape(errMsg);
+                        } catch (Exception e) {
+                            // ignore
+                        }
                         errLines.add("Exception: " + errMsg);
                         String stackTrace = exception.getString("stackTrace");
                         if (stackTrace != null) {
+                            try {
+                                stackTrace = Jsoner.unescape(stackTrace);
+                            } catch (Exception e) {
+                                // ignore
+                            }
                             for (String line : stackTrace.split("\n")) {
-                                errLines.add(line);
+                                errLines.add(TuiHelper.fixControlChars(line));
                             }
                         }
                     } else {
@@ -584,12 +658,7 @@ class SendMessagePopup {
         }
 
         // Restore body
-        bodyState.clear();
-        if (entry.body != null) {
-            for (int i = 0; i < entry.body.length(); i++) {
-                bodyState.insert(entry.body.charAt(i));
-            }
-        }
+        bodyState.setText(entry.body != null ? entry.body : "");
 
         // Restore headers
         headers = null;
@@ -632,17 +701,19 @@ class SendMessagePopup {
 
     private void rebuildResponseLines() {
         List<String> lines = new ArrayList<>();
-        if (responseHeaderLines != null) {
+        if (responseHeaderLines != null && (responseError || showResponseHeaders)) {
             lines.addAll(responseHeaderLines);
         }
-        if (responseRawBody != null && !responseRawBody.isEmpty()) {
-            lines.add("");
+        if (showResponseBody && responseRawBody != null && !responseRawBody.isEmpty()) {
+            if (!lines.isEmpty()) {
+                lines.add("");
+            }
             String body = responseRawBody;
             if (prettyPrint) {
                 body = CamelCommandHelper.valueAsStringPretty(body, false);
             }
             for (String line : body.split("\n", -1)) {
-                lines.add(line);
+                lines.add(TuiHelper.fixControlChars(line));
             }
         }
         responseLines = lines;
@@ -663,8 +734,9 @@ class SendMessagePopup {
                 area.left() + padX, area.top() + padY,
                 area.width() - padX * 2, area.height() - padY * 2);
 
+        int bodyHeight = 6;
         int headerCount = hasHeaders() ? headers.size() : 0;
-        int requestHeight = 7 + headerCount + (headerCount > 0 ? 1 : 0);
+        int requestHeight = 5 + bodyHeight + headerCount + (headerCount > 0 ? 1 : 0);
         if (routes.size() > 1) {
             requestHeight += 1;
         }
@@ -722,22 +794,29 @@ class SendMessagePopup {
             row++;
         }
 
-        // Body input
+        // Body input (multi-line text area)
         row++;
+        int bodyHeight = 6;
         FormHelper.renderLabel(frame, innerX, row, labelW, "Body:", selectedField == FIELD_BODY);
-        Rect bodyArea = new Rect(innerX + labelW, row, fieldW, 1);
+        Rect bodyArea = new Rect(innerX + labelW, row, fieldW, bodyHeight);
+        Style bodyBorderStyle = selectedField == FIELD_BODY ? Style.EMPTY.fg(Theme.accent()) : Theme.muted();
+        Block bodyBlock = Block.builder()
+                .borders(Borders.ALL)
+                .borderType(BorderType.ROUNDED)
+                .borderStyle(bodyBorderStyle)
+                .build();
+        Rect bodyInner = bodyBlock.inner(bodyArea);
+        frame.renderWidget(bodyBlock, bodyArea);
+        TextArea textArea = TextArea.builder()
+                .cursorStyle(Style.EMPTY.reversed())
+                .placeholder("body text, JSON, or file:payload.json")
+                .build();
         if (selectedField == FIELD_BODY && !sending) {
-            TextInput textInput = TextInput.builder()
-                    .cursorStyle(Style.EMPTY.reversed())
-                    .placeholder("body text or file:payload.json")
-                    .build();
-            frame.renderStatefulWidget(textInput, bodyArea, bodyState);
+            textArea.renderWithCursor(bodyInner, frame.buffer(), bodyState, frame);
         } else {
-            String text = bodyState.text();
-            Style style = text.isEmpty() ? Style.EMPTY.dim() : Style.EMPTY;
-            frame.renderWidget(Paragraph.from(Line.from(
-                    Span.styled(text.isEmpty() ? "—" : text, style))), bodyArea);
+            textArea.render(bodyInner, frame.buffer(), bodyState);
         }
+        row += bodyHeight - 1;
 
         // Headers section
         if (hasHeaders()) {
@@ -840,7 +919,7 @@ class SendMessagePopup {
 
         if (responseLines == null || responseLines.isEmpty()) {
             String placeholder = responseStatus == null && !sending
-                    ? " Press Enter to send message"
+                    ? " Press F5 to send message"
                     : " No response content";
             frame.renderWidget(
                     Paragraph.builder()
@@ -850,6 +929,8 @@ class SendMessagePopup {
                     area);
             return;
         }
+
+        Overflow overflow = wordWrap ? Overflow.WRAP_WORD : Overflow.CLIP;
 
         int visibleLines = area.height() - 2;
         if (visibleLines < 1) {
@@ -878,13 +959,15 @@ class SendMessagePopup {
         frame.renderWidget(
                 Paragraph.builder()
                         .text(Text.from(lines))
+                        .overflow(overflow)
                         .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(title).build())
                         .build(),
                 area);
     }
 
     private void renderHistory(Frame frame, Rect area) {
-        String title = " History [" + history.size() + "] ";
+        String title = " History [" + history.size() + "]"
+                       + (selectedField == FIELD_HISTORY ? " — Enter to replay " : " ");
 
         if (history.isEmpty()) {
             frame.renderWidget(
@@ -947,13 +1030,14 @@ class SendMessagePopup {
     void renderFooter(List<Span> spans) {
         hint(spans, "Esc", "back");
         hint(spans, "Tab", "fields");
-        hint(spans, "Enter", "send");
+        hint(spans, "F5", "send");
         hint(spans, "+", "header");
+        hint(spans, "b", "body" + (showResponseBody ? " [on]" : ""));
+        hint(spans, "h", "headers" + (showResponseHeaders ? " [on]" : ""));
         hint(spans, "p", "pretty" + (prettyPrint ? " [on]" : ""));
-        if (!history.isEmpty()) {
-            hintLast(spans, TuiIcons.HINT_SCROLL, "history");
-        } else {
-            hintLast(spans, "PgUp/Dn", "scroll");
+        hint(spans, "w", "wrap" + (wordWrap ? " [on]" : ""));
+        if (responseLines != null && !responseLines.isEmpty()) {
+            hintLast(spans, "PgUp/Dn", "response");
         }
     }
 

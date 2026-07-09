@@ -67,6 +67,19 @@ class TuiMcpServer {
     record LogEntry(String timestamp, LogLevel level, String message, String requestBody, String responseBody) {
     }
 
+    static final class AnimationState {
+        final String id;
+        final int totalFrames;
+        final AtomicInteger currentFrame = new AtomicInteger();
+        volatile boolean cancelled;
+        volatile String status = "running";
+
+        AnimationState(String id, int totalFrames) {
+            this.id = id;
+            this.totalFrames = totalFrames;
+        }
+    }
+
     private final int port;
     private final McpFacade facade;
     private HttpServer server;
@@ -74,6 +87,8 @@ class TuiMcpServer {
     private volatile long lastActivity;
     private volatile long lastToolCallTime;
     private final AtomicInteger toolCallCount = new AtomicInteger();
+    private final AtomicInteger animCounter = new AtomicInteger();
+    private volatile AnimationState currentAnimation;
     private final List<LogEntry> activityLog = new ArrayList<>();
 
     TuiMcpServer(int port, McpFacade facade) {
@@ -350,12 +365,22 @@ class TuiMcpServer {
                                                  + "fg (string, optional foreground color: red/green/blue/yellow/cyan/magenta/white/gray/black), "
                                                  + "bg (string, optional background color, same values), "
                                                  + "bold (boolean, optional)"),
+                        "shapes", propDef("array",
+                                "Array of shape objects to draw (batch mode). Each shape has: "
+                                                   + "shape (string, required: box/highlight/underline/arrow-down/arrow-up/arrow-left/arrow-right/text), "
+                                                   + "x (integer, column), y (integer, row), "
+                                                   + "width (integer, for box/highlight/underline), "
+                                                   + "height (integer, for box/highlight), "
+                                                   + "length (integer, for arrows), "
+                                                   + "text (string, for text shape), "
+                                                   + "color (string: red/green/blue/yellow/cyan/magenta/white/gray/black). "
+                                                   + "Use shapes instead of cells for high-level drawing in a single call."),
                         "duration", propDef("integer",
                                 "Auto-dismiss drawing after this many seconds. "
                                                        + "If omitted, drawing stays until cleared with tui_draw_clear or replaced by another tui_draw call."),
                         "append", propDef("boolean",
                                 "If true, add cells to the existing drawing instead of replacing it. Default false.")),
-                List.of("cells")));
+                List.of()));
         toolList.add(toolDef(
                 "tui_draw_clear",
                 "Clears the drawing overlay and restores the screen to its normal state. "
@@ -384,6 +409,45 @@ class TuiMcpServer {
                         "append", propDef("boolean",
                                 "If true, add to existing drawing instead of replacing it. Default false.")),
                 List.of("shape", "x", "y")));
+
+        toolList.add(toolDef(
+                "tui_canvas_open",
+                "Opens a full blank canvas screen for free-form drawing. "
+                                   + "Use tui_draw / tui_draw_shape to draw on the canvas. "
+                                   + "The user can press Esc to dismiss.",
+                Map.of("shapes", propDef("array",
+                        "Optional array of shapes to draw immediately on the canvas. "
+                                                  + "Same format as tui_draw shapes parameter. "
+                                                  + "Saves a round-trip vs separate tui_canvas_open + tui_draw calls."))));
+        toolList.add(toolDef(
+                "tui_canvas_close",
+                "Closes the canvas and returns to the normal TUI screen. Also clears any drawing.",
+                Map.of()));
+        toolList.add(toolDef(
+                "tui_animate",
+                "Run a keyframe animation on the canvas. Auto-opens the canvas, "
+                               + "plays frames sequentially with specified delays, then optionally auto-closes. "
+                               + "User can press Esc to stop early. Returns immediately; "
+                               + "use tui_animate_status to check progress. "
+                               + "Use 'name' for built-in animations (instant start, no token cost): "
+                               + String.join(", ", BuiltinAnimations.names()) + ".",
+                Map.of("frames", propDef("array",
+                        "Array of keyframes. Each keyframe is an object with: "
+                                                  + "delay (integer, milliseconds to wait before drawing this frame), "
+                                                  + "shapes (array of shape objects, same format as tui_draw shapes). "
+                                                  + "Not required when 'name' is provided."),
+                        "name", propDef("string",
+                                "Name of a built-in animation: "
+                                                  + String.join(", ", BuiltinAnimations.names())
+                                                  + ". When set, 'frames' is ignored."),
+                        "autoClose", propDef("boolean",
+                                "If true, close the canvas when animation finishes (default: false)"))));
+        toolList.add(toolDef(
+                "tui_animate_status",
+                "Check progress of a running animation. Returns animationId, status "
+                                      + "(running/completed/cancelled), currentFrame, and totalFrames.",
+                Map.of("animationId", propDef("string",
+                        "Animation ID to check. If omitted, returns status of the latest animation."))));
 
         // --- Structured data tools ---
 
@@ -637,6 +701,10 @@ class TuiMcpServer {
                 case "tui_get_spans" -> callGetSpans(args);
                 case "tui_locate" -> callLocate(args);
                 case "tui_draw_shape" -> callDrawShape(args);
+                case "tui_canvas_open" -> callCanvasOpen(args);
+                case "tui_canvas_close" -> callCanvasClose();
+                case "tui_animate" -> callAnimate(args);
+                case "tui_animate_status" -> callAnimateStatus(args);
                 default -> {
                     isError = true;
                     yield "Unknown tool: " + toolName;
@@ -1092,49 +1160,59 @@ class TuiMcpServer {
 
     @SuppressWarnings("unchecked")
     private String callDraw(Map<String, Object> args) {
-        Object cellsArg = args.get("cells");
-        if (!(cellsArg instanceof List)) {
-            return "Error: cells must be an array";
-        }
-        List<Object> cellsList = (List<Object>) cellsArg;
-        if (cellsList.isEmpty()) {
-            return "Error: cells array is empty";
-        }
-
         List<DrawOverlay.DrawCell> drawCells = new ArrayList<>();
-        for (Object item : cellsList) {
-            if (!(item instanceof Map)) {
-                continue;
-            }
-            Map<String, Object> cell = (Map<String, Object>) item;
+        int cellCount = 0;
+        int shapeCount = 0;
 
-            int x = cell.get("x") instanceof Number n ? n.intValue() : -1;
-            int y = cell.get("y") instanceof Number n ? n.intValue() : -1;
-            String ch = cell.get("char") instanceof String s ? s : " ";
-            if (x < 0 || y < 0) {
-                continue;
-            }
+        // Process raw cells
+        if (args.get("cells") instanceof List<?> cellsList) {
+            for (Object item : cellsList) {
+                if (!(item instanceof Map)) {
+                    continue;
+                }
+                Map<String, Object> cell = (Map<String, Object>) item;
 
-            dev.tamboui.style.Style style = dev.tamboui.style.Style.EMPTY;
-            dev.tamboui.style.Color fg = DrawOverlay.parseColor(
-                    cell.get("fg") instanceof String s ? s : null);
-            dev.tamboui.style.Color bg = DrawOverlay.parseColor(
-                    cell.get("bg") instanceof String s ? s : null);
-            if (fg != null) {
-                style = style.fg(fg);
-            }
-            if (bg != null) {
-                style = style.bg(bg);
-            }
-            if (Boolean.TRUE.equals(cell.get("bold"))) {
-                style = style.bold();
-            }
+                int x = cell.get("x") instanceof Number n ? n.intValue() : -1;
+                int y = cell.get("y") instanceof Number n ? n.intValue() : -1;
+                String ch = cell.get("char") instanceof String s ? s : " ";
+                if (x < 0 || y < 0) {
+                    continue;
+                }
 
-            drawCells.add(new DrawOverlay.DrawCell(x, y, ch, style));
+                dev.tamboui.style.Style style = dev.tamboui.style.Style.EMPTY;
+                dev.tamboui.style.Color fg = DrawOverlay.parseColor(
+                        cell.get("fg") instanceof String s ? s : null);
+                dev.tamboui.style.Color bg = DrawOverlay.parseColor(
+                        cell.get("bg") instanceof String s ? s : null);
+                if (fg != null) {
+                    style = style.fg(fg);
+                }
+                if (bg != null) {
+                    style = style.bg(bg);
+                }
+                if (Boolean.TRUE.equals(cell.get("bold"))) {
+                    style = style.bold();
+                }
+
+                drawCells.add(new DrawOverlay.DrawCell(x, y, ch, style));
+                cellCount++;
+            }
+        }
+
+        // Process shapes
+        if (args.get("shapes") instanceof List<?> shapesList) {
+            for (Object item : shapesList) {
+                if (!(item instanceof Map)) {
+                    continue;
+                }
+                Map<String, Object> s = (Map<String, Object>) item;
+                drawCells.addAll(parseShape(s));
+                shapeCount++;
+            }
         }
 
         if (drawCells.isEmpty()) {
-            return "Error: no valid cells in array";
+            return "Error: no valid cells or shapes provided";
         }
 
         boolean append = Boolean.TRUE.equals(args.get("append"));
@@ -1149,14 +1227,215 @@ class TuiMcpServer {
             facade.setDrawing(drawCells, duration);
         }
 
-        return "Drawing " + drawCells.size() + " cell(s)"
-               + (append ? " (appended)" : "")
-               + (duration > 0 ? ", auto-dismiss in " + duration + "s" : "");
+        StringBuilder sb = new StringBuilder("Drawing ");
+        if (cellCount > 0) {
+            sb.append(cellCount).append(" cell(s)");
+        }
+        if (shapeCount > 0) {
+            if (cellCount > 0) {
+                sb.append(" + ");
+            }
+            sb.append(shapeCount).append(" shape(s)");
+        }
+        if (append) {
+            sb.append(" (appended)");
+        }
+        if (duration > 0) {
+            sb.append(", auto-dismiss in ").append(duration).append("s");
+        }
+        return sb.toString();
+    }
+
+    private List<DrawOverlay.DrawCell> parseShape(Map<String, Object> s) {
+        String shape = s.get("shape") instanceof String v ? v : null;
+        if (shape == null) {
+            return List.of();
+        }
+        int x = s.get("x") instanceof Number n ? n.intValue() : 0;
+        int y = s.get("y") instanceof Number n ? n.intValue() : 0;
+        int width = s.get("width") instanceof Number n ? n.intValue() : 0;
+        int height = s.get("height") instanceof Number n ? n.intValue() : 1;
+        int length = s.get("length") instanceof Number n ? n.intValue() : 5;
+        String text = s.get("text") instanceof String v ? v : null;
+        String colorName = s.get("color") instanceof String v ? v : null;
+
+        Color color = DrawOverlay.parseColor(colorName);
+        if (color == null) {
+            color = "highlight".equals(shape) ? Color.YELLOW : Color.RED;
+        }
+        if (height < 1) {
+            height = 1;
+        }
+
+        if ("text".equals(shape)) {
+            return DrawOverlay.generateText(x, y, text != null ? text : "", color);
+        }
+        return DrawOverlay.generateShape(shape, x, y, width, height, length, color);
     }
 
     private String callDrawClear() {
         facade.clearDrawing();
         return "Drawing cleared";
+    }
+
+    private String callCanvasOpen(Map<String, Object> args) {
+        facade.openCanvas();
+
+        // Draw shapes if provided
+        int shapeCount = 0;
+        if (args.get("shapes") instanceof List<?> shapesList) {
+            List<DrawOverlay.DrawCell> drawCells = new ArrayList<>();
+            for (Object item : shapesList) {
+                if (item instanceof Map) {
+                    drawCells.addAll(parseShape((Map<String, Object>) item));
+                    shapeCount++;
+                }
+            }
+            if (!drawCells.isEmpty()) {
+                facade.setDrawing(drawCells, 0);
+            }
+        }
+
+        Buffer buf = facade.getLastBuffer();
+        int w = buf != null ? buf.area().width() : 0;
+        int h = buf != null ? buf.area().height() - 1 : 0;
+
+        JsonObject result = new JsonObject();
+        result.put("status", "Canvas opened");
+        result.put("width", w);
+        result.put("height", h);
+        result.put("theme", Theme.isDark() ? "dark" : "light");
+        if (shapeCount > 0) {
+            result.put("shapesDrawn", shapeCount);
+        }
+        return Jsoner.serialize(result);
+    }
+
+    private String callCanvasClose() {
+        facade.closeCanvas();
+        AnimationState anim = currentAnimation;
+        if (anim != null && "running".equals(anim.status)) {
+            anim.cancelled = true;
+            anim.status = "cancelled";
+        }
+        return "Canvas closed";
+    }
+
+    @SuppressWarnings("unchecked")
+    private String callAnimate(Map<String, Object> args) {
+        // Cancel any running animation
+        AnimationState prev = currentAnimation;
+        if (prev != null && "running".equals(prev.status)) {
+            prev.cancelled = true;
+            prev.status = "cancelled";
+        }
+
+        boolean requestedAutoClose = args.get("autoClose") instanceof Boolean b && b;
+
+        // Pre-parse all frames
+        record ParsedFrame(long delayMs, List<DrawOverlay.DrawCell> cells) {
+        }
+        List<ParsedFrame> frames = new ArrayList<>();
+
+        // Check for built-in animation by name
+        String animName = args.get("name") instanceof String s ? s : null;
+        if (animName != null) {
+            List<BuiltinAnimations.Frame> builtin = BuiltinAnimations.get(animName);
+            if (builtin == null) {
+                return "Error: unknown animation '" + animName + "'. Available: "
+                       + String.join(", ", BuiltinAnimations.names());
+            }
+            for (BuiltinAnimations.Frame bf : builtin) {
+                frames.add(new ParsedFrame(bf.delayMs(), bf.cells()));
+            }
+            requestedAutoClose = true;
+        } else {
+            List<?> framesList = args.get("frames") instanceof List<?> l ? l : List.of();
+            if (framesList.isEmpty()) {
+                return "Error: frames array or name is required";
+            }
+            for (Object item : framesList) {
+                if (item instanceof Map<?, ?> m) {
+                    long delay = m.get("delay") instanceof Number n ? n.longValue() : 0;
+                    delay = Math.max(0, Math.min(30_000, delay));
+                    List<DrawOverlay.DrawCell> cells = new ArrayList<>();
+                    if (m.get("shapes") instanceof List<?> shapesList) {
+                        for (Object s : shapesList) {
+                            if (s instanceof Map) {
+                                cells.addAll(parseShape((Map<String, Object>) s));
+                            }
+                        }
+                    }
+                    frames.add(new ParsedFrame(delay, cells));
+                }
+            }
+        }
+
+        String id = "anim-" + animCounter.incrementAndGet();
+        AnimationState anim = new AnimationState(id, frames.size());
+        currentAnimation = anim;
+
+        boolean autoClose = requestedAutoClose;
+
+        // Open canvas
+        facade.openCanvas();
+
+        // Launch animation on a daemon thread
+        Thread animThread = new Thread(() -> {
+            try {
+                for (int i = 0; i < frames.size(); i++) {
+                    if (anim.cancelled || !facade.isCanvasVisible()) {
+                        anim.cancelled = true;
+                        anim.status = "cancelled";
+                        return;
+                    }
+                    ParsedFrame f = frames.get(i);
+                    if (f.delayMs > 0) {
+                        Thread.sleep(f.delayMs);
+                    }
+                    if (anim.cancelled || !facade.isCanvasVisible()) {
+                        anim.cancelled = true;
+                        anim.status = "cancelled";
+                        return;
+                    }
+                    facade.setDrawing(f.cells, 0);
+                    anim.currentFrame.set(i + 1);
+                }
+                anim.status = "completed";
+                if (autoClose) {
+                    facade.closeCanvas();
+                }
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                anim.status = "cancelled";
+            }
+        }, "tui-animate-" + id);
+        animThread.setDaemon(true);
+        animThread.start();
+
+        JsonObject result = new JsonObject();
+        result.put("animationId", id);
+        result.put("totalFrames", frames.size());
+        result.put("status", "running");
+        return Jsoner.serialize(result);
+    }
+
+    private String callAnimateStatus(Map<String, Object> args) {
+        AnimationState anim = currentAnimation;
+        if (anim == null) {
+            return "No animation has been started";
+        }
+        String requestedId = args.get("animationId") instanceof String s ? s : null;
+        if (requestedId != null && !requestedId.equals(anim.id)) {
+            return "Animation not found: " + requestedId;
+        }
+
+        JsonObject result = new JsonObject();
+        result.put("animationId", anim.id);
+        result.put("status", anim.status);
+        result.put("currentFrame", anim.currentFrame.get());
+        result.put("totalFrames", anim.totalFrames);
+        return Jsoner.serialize(result);
     }
 
     private String callGetTable(Map<String, Object> args) {
@@ -1454,36 +1733,16 @@ class TuiMcpServer {
         if (shape == null) {
             return "Error: 'shape' is required";
         }
-        int x = args.get("x") instanceof Number n ? n.intValue() : 0;
-        int y = args.get("y") instanceof Number n ? n.intValue() : 0;
-        int width = args.get("width") instanceof Number n ? n.intValue() : 0;
-        int height = args.get("height") instanceof Number n ? n.intValue() : Math.max(1, 0);
-        int length = args.get("length") instanceof Number n ? n.intValue() : 5;
-        String text = args.get("text") instanceof String s ? s : null;
-        String colorName = args.get("color") instanceof String s ? s : null;
-        int duration = args.get("duration") instanceof Number n ? n.intValue() : 0;
 
-        Color color = DrawOverlay.parseColor(colorName);
-        if (color == null) {
-            color = "highlight".equals(shape) ? Color.YELLOW : Color.RED;
-        }
-
-        if (height < 1) {
-            height = 1;
-        }
-
-        List<DrawOverlay.DrawCell> cells;
-        if ("text".equals(shape)) {
-            cells = DrawOverlay.generateText(x, y, text != null ? text : "", color);
-        } else {
-            cells = DrawOverlay.generateShape(shape, x, y, width, height, length, color);
-        }
-
+        List<DrawOverlay.DrawCell> cells = parseShape(args);
         if (cells.isEmpty() && !"text".equals(shape)) {
             return "Unknown shape: " + shape
                    + ". Use: box, highlight, underline, arrow-down, arrow-up, arrow-left, arrow-right, text";
         }
 
+        int x = args.get("x") instanceof Number n ? n.intValue() : 0;
+        int y = args.get("y") instanceof Number n ? n.intValue() : 0;
+        int duration = args.get("duration") instanceof Number n ? n.intValue() : 0;
         boolean append = args.get("append") instanceof Boolean b && b;
         if (append) {
             facade.appendDrawing(cells);

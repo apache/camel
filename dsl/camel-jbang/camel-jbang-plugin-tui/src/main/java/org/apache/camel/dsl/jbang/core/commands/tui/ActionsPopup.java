@@ -72,10 +72,12 @@ class ActionsPopup {
         TAPE_INSTRUCTIONS,
         CAPTION,
         SHOW_KEYSTROKES,
+        CAMEL_ANIMATION,
         SETUP_AI,
         MCP_INFO,
         MCP_LOG,
-        AI_LOG
+        AI_LOG,
+        AI_PROMPT
     }
 
     private final Supplier<Set<String>> runningNames;
@@ -90,7 +92,9 @@ class ActionsPopup {
     private Runnable resetScreenAction;
     private Runnable themeRefreshAction;
     private Runnable openShellAction;
+    private Runnable openAiPromptAction;
     private Runnable browseFilesAction;
+    private Runnable camelAnimationAction;
     private Runnable switchIntegrationAction;
     private final Supplier<Boolean> tapeRecordingActive;
     private MonitorContext ctx;
@@ -188,8 +192,16 @@ class ActionsPopup {
         this.openShellAction = openShellAction;
     }
 
+    void setOpenAiPromptAction(Runnable openAiPromptAction) {
+        this.openAiPromptAction = openAiPromptAction;
+    }
+
     void setBrowseFilesAction(Runnable browseFilesAction) {
         this.browseFilesAction = browseFilesAction;
+    }
+
+    void setCamelAnimationAction(Runnable camelAnimationAction) {
+        this.camelAnimationAction = camelAnimationAction;
     }
 
     void setSwitchIntegrationAction(Runnable switchIntegrationAction) {
@@ -267,9 +279,11 @@ class ActionsPopup {
         List<Action> flat = new ArrayList<>();
         flat.add(Action.BACK);
         flat.add(null);
-        flat.addAll(List.of(Action.SCREENSHOT, Action.THEMES_SUBMENU, Action.RESET_SCREEN));
+        flat.addAll(List.of(Action.THEMES_SUBMENU, Action.SCREENSHOT, Action.RESET_SCREEN));
         flat.add(null);
         flat.addAll(List.of(Action.TAPE_RECORDING, Action.TAPE_INSTRUCTIONS, Action.CAPTION, Action.SHOW_KEYSTROKES));
+        flat.add(null);
+        flat.add(Action.CAMEL_ANIMATION);
         return flat;
     }
 
@@ -277,7 +291,7 @@ class ActionsPopup {
         List<Action> flat = new ArrayList<>();
         flat.add(Action.BACK);
         flat.add(null);
-        flat.addAll(List.of(Action.SETUP_AI, Action.AI_LOG, Action.MCP_INFO, Action.MCP_LOG));
+        flat.addAll(List.of(Action.AI_PROMPT, Action.SETUP_AI, Action.AI_LOG, Action.MCP_INFO, Action.MCP_LOG));
         return flat;
     }
 
@@ -359,19 +373,22 @@ class ActionsPopup {
         if ("screen".equals(currentSubmenu)) {
             labels.add("..");
             labels.add("───");
-            labels.add("Take Screenshot");
             labels.add("Themes...");
+            labels.add("Take Screenshot");
             labels.add("Reset Screen");
             labels.add("───");
             labels.add(tapeRecordingActive.get() ? "Stop Tape Recording" : "Start Tape Recording");
             labels.add("Tape Recording Guide");
             labels.add("Caption...");
             labels.add(keystrokesEnabled.get() ? "Hide Keystrokes" : "Show Keystrokes");
+            labels.add("───");
+            labels.add("Camel Animation");
             return labels;
         }
         if ("mcp".equals(currentSubmenu)) {
             labels.add("..");
             labels.add("───");
+            labels.add("AI Prompt");
             labels.add("Setup MCP");
             labels.add("AI Log");
             labels.add("MCP Info");
@@ -379,7 +396,7 @@ class ActionsPopup {
             return labels;
         }
         // Main menu
-        labels.add("Go to...");
+        labels.add("Go to... (Shift+F2)");
         labels.add("Switch Integration (F3)");
         labels.add("───");
         labels.add("Send Message");
@@ -405,6 +422,10 @@ class ActionsPopup {
         showActionsMenu = true;
         currentSubmenu = null;
         actionsMenuState.select(0);
+    }
+
+    void openGotoTab() {
+        gotoTabPopup.open();
     }
 
     void close() {
@@ -441,7 +462,7 @@ class ActionsPopup {
 
     boolean handleKeyEvent(KeyEvent ke) {
         if (sendMessagePopup.isVisible()) {
-            if (ke.isConfirm()) {
+            if (ke.isKey(KeyCode.F5)) {
                 sendMessagePopup.doSend(ctx, scheduler);
             } else {
                 sendMessagePopup.handleKeyEvent(ke);
@@ -619,6 +640,11 @@ class ActionsPopup {
                     } else if (action == Action.RUN_INFRA) {
                         showActionsMenu = false;
                         infraBrowserPopup.open();
+                    } else if (action == Action.AI_PROMPT) {
+                        showActionsMenu = false;
+                        if (openAiPromptAction != null) {
+                            openAiPromptAction.run();
+                        }
                     } else if (action == Action.SETUP_AI) {
                         showActionsMenu = false;
                         openSetupAI();
@@ -657,6 +683,11 @@ class ActionsPopup {
                     } else if (action == Action.CAPTION) {
                         showActionsMenu = false;
                         captionOverlay.openInline();
+                    } else if (action == Action.CAMEL_ANIMATION) {
+                        showActionsMenu = false;
+                        if (camelAnimationAction != null) {
+                            camelAnimationAction.run();
+                        }
                     }
                 }
             }
@@ -885,7 +916,7 @@ class ActionsPopup {
         boolean canSwitch = hasMultipleIntegrations();
         List<ListItem> items = new ArrayList<>();
         // Group 0: Navigation
-        items.add(ListItem.from(TuiIcons.menuItem(TuiIcons.GO_TO, "Go to...")));
+        items.add(ListItem.from(TuiIcons.menuItem(TuiIcons.GO_TO, "Go to... (Shift+F2)")));
         items.add(canSwitch
                 ? ListItem.from(TuiIcons.menuItem(TuiIcons.SWITCH, "Switch Integration (F3)"))
                 : ListItem.from(TuiIcons.menuItem(TuiIcons.SWITCH, "Switch Integration (F3)")).style(Style.EMPTY.dim()));
@@ -914,7 +945,7 @@ class ActionsPopup {
         }
         // Group 4: Shell
         items.add(ListItem.from(divider).style(Style.EMPTY.dim()));
-        items.add(ListItem.from("  >_ Shell"));
+        items.add(ListItem.from("  >_ Shell (F6)"));
         ListWidget list = ListWidget.builder()
                 .items(items.toArray(ListItem[]::new))
                 .highlightStyle(Theme.selectionBg())
@@ -948,14 +979,16 @@ class ActionsPopup {
         List<ListItem> items = new ArrayList<>();
         items.add(ListItem.from("  .."));
         items.add(ListItem.from(divider).style(Style.EMPTY.dim()));
-        items.add(ListItem.from(TuiIcons.menuItem(TuiIcons.SCREENSHOT, "Take Screenshot")));
         items.add(ListItem.from(TuiIcons.menuItem(TuiIcons.THEMES, "Themes...")));
+        items.add(ListItem.from(TuiIcons.menuItem(TuiIcons.SCREENSHOT, "Take Screenshot")));
         items.add(ListItem.from(TuiIcons.menuItem(TuiIcons.CLEAN, "Reset Screen")));
         items.add(ListItem.from(divider).style(Style.EMPTY.dim()));
         items.add(ListItem.from(tapeLabel));
         items.add(ListItem.from(TuiIcons.menuItem(TuiIcons.DOCUMENT, "Tape Recording Guide")));
         items.add(ListItem.from(TuiIcons.menuItem(TuiIcons.CAPTION, "Caption...")));
         items.add(ListItem.from(keystrokeLabel));
+        items.add(ListItem.from(divider).style(Style.EMPTY.dim()));
+        items.add(ListItem.from(TuiIcons.menuItem(TuiIcons.CAMEL, "Camel Animation")));
         ListWidget list = ListWidget.builder()
                 .items(items.toArray(ListItem[]::new))
                 .highlightStyle(Theme.selectionBg())
@@ -984,7 +1017,8 @@ class ActionsPopup {
         List<ListItem> items = new ArrayList<>();
         items.add(ListItem.from("  .."));
         items.add(ListItem.from(divider).style(Style.EMPTY.dim()));
-        items.add(ListItem.from(TuiIcons.menuItem(TuiIcons.MCP_BRAIN, "Setup MCP")));
+        items.add(ListItem.from(TuiIcons.menuItem(TuiIcons.MCP_BRAIN, "AI Prompt (F8)")));
+        items.add(ListItem.from(TuiIcons.menuItem(TuiIcons.README, "Setup MCP")));
         items.add(ListItem.from(TuiIcons.menuItem(TuiIcons.CAPTION, "AI Log")));
         items.add(ListItem.from(TuiIcons.menuItem(TuiIcons.MCP, "MCP Info")));
         items.add(ListItem.from(TuiIcons.menuItem(TuiIcons.MCP_LOG, "MCP Log")));
@@ -1219,6 +1253,16 @@ class ActionsPopup {
             case MCP_INFO -> openMcpInfo();
             case MCP_LOG -> openMcpLog();
             case AI_LOG -> openAiLog();
+            case AI_PROMPT -> {
+                if (openAiPromptAction != null) {
+                    openAiPromptAction.run();
+                }
+            }
+            case CAMEL_ANIMATION -> {
+                if (camelAnimationAction != null) {
+                    camelAnimationAction.run();
+                }
+            }
             default -> {
                 return false;
             }

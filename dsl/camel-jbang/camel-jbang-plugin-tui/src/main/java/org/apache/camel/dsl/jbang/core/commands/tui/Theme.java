@@ -313,7 +313,7 @@ public final class Theme {
     /** True if the active mode is dark. */
     public static boolean isDark() {
         engine();
-        return mode == ThemeMode.DARK;
+        return !mode.isLight();
     }
 
     /** Cycle to the next theme in declaration order, persist it (outside test mode), and activate it. */

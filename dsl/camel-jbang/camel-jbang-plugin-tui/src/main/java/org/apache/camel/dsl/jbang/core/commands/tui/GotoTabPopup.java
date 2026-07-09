@@ -168,7 +168,8 @@ class GotoTabPopup {
         int popupW = Math.min(100, area.width() - 4);
         int descColWidth = popupW - nameColWidth - 8;
         int contentH = filteredEntries.size() + 2;
-        int popupH = Math.min(contentH + 2, area.height() - 4);
+        int maxH = area.height() - 4;
+        int popupH = contentH + 2 <= maxH ? contentH + 2 : Math.min(contentH + 2, maxH - 6);
         int x = area.left() + Math.max(0, (area.width() - popupW) / 2);
         int y = area.top() + 2;
         Rect popup = new Rect(x, y, Math.min(popupW, area.width()), Math.min(popupH, area.height() - 2));
@@ -192,6 +193,9 @@ class GotoTabPopup {
             String sc = entry.shortcut();
             spans.add(Span.raw(" "));
             spans.add(Span.styled(sc, Theme.mnemonic()));
+            if (sc.length() < 2) {
+                spans.add(Span.raw(" "));
+            }
             spans.add(Span.raw(" " + entry.icon() + " "));
             String name = entry.name();
             if (name.length() > nameColWidth) {
@@ -292,8 +296,8 @@ class GotoTabPopup {
             String f = filter.filter();
             for (TabRegistry.TabEntry entry : allEntries) {
                 boolean nameMatch;
-                if (f.length() == 1) {
-                    nameMatch = entry.name().toLowerCase().startsWith(f);
+                if (f.length() <= 2) {
+                    nameMatch = entry.name().toLowerCase().contains(f);
                 } else {
                     nameMatch = filter.match(entry.name()) != null;
                 }

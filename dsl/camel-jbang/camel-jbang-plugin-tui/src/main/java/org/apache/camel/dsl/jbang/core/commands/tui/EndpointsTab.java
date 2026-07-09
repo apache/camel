@@ -504,7 +504,7 @@ class EndpointsTab extends AbstractTableTab {
         LinkedList<Long> inHist = inHistMap.getOrDefault(pid, new LinkedList<>());
         LinkedList<Long> outHist = outHistMap.getOrDefault(pid, new LinkedList<>());
 
-        int renderPoints = Math.min(MAX_CHART_POINTS, Math.max(2, hParts.get(1).width() - 6));
+        int renderPoints = Math.max(20, (Math.min(MAX_CHART_POINTS, hParts.get(1).width() - 6) / 20) * 20);
         long[] inArr = new long[renderPoints];
         long[] outArr = new long[renderPoints];
         for (int i = 0; i < renderPoints; i++) {
@@ -524,7 +524,7 @@ class EndpointsTab extends AbstractTableTab {
                 Span.styled("▬", Theme.success()),
                 Span.raw(String.format(" in:%-4s ", MetricsCollector.formatThroughput(curIn))),
                 Span.styled("▬", Style.EMPTY.fg(Theme.accent())),
-                Span.raw(String.format(" out:%-4s msg/s", MetricsCollector.formatThroughput(curOut))));
+                Span.raw(String.format(" out:%-4s msg/s ", MetricsCollector.formatThroughput(curOut))));
 
         Rect rightArea = hParts.get(1);
         frame.renderWidget(DualSparkline.builder()
@@ -609,7 +609,7 @@ class EndpointsTab extends AbstractTableTab {
         LinkedList<Long> inHist = perEndpointInHistory.getOrDefault(key, new LinkedList<>());
         LinkedList<Long> outHist = perEndpointOutHistory.getOrDefault(key, new LinkedList<>());
 
-        int renderPoints = Math.min(MAX_CHART_POINTS, Math.max(2, hParts.get(1).width() - 6));
+        int renderPoints = Math.max(20, (Math.min(MAX_CHART_POINTS, hParts.get(1).width() - 6) / 20) * 20);
         long[] inArr = new long[renderPoints];
         long[] outArr = new long[renderPoints];
         for (int i = 0; i < renderPoints; i++) {
@@ -637,7 +637,7 @@ class EndpointsTab extends AbstractTableTab {
                 Span.styled("▬", Theme.success()),
                 Span.raw(String.format(" in:%-4s ", MetricsCollector.formatThroughput(curIn))),
                 Span.styled("▬", Style.EMPTY.fg(Theme.accent())),
-                Span.raw(String.format(" out:%-4s msg/s", MetricsCollector.formatThroughput(curOut))));
+                Span.raw(String.format(" out:%-4s msg/s ", MetricsCollector.formatThroughput(curOut))));
 
         frame.renderWidget(DualSparkline.builder()
                 .topData(inArr)
@@ -656,7 +656,7 @@ class EndpointsTab extends AbstractTableTab {
         LinkedList<Long> inHist = endpointInSizeHistory.getOrDefault(pid, new LinkedList<>());
         LinkedList<Long> outHist = endpointOutSizeHistory.getOrDefault(pid, new LinkedList<>());
 
-        int renderPoints = Math.min(MAX_CHART_POINTS, Math.max(2, area.width() - 6));
+        int renderPoints = Math.max(20, (Math.min(MAX_CHART_POINTS, area.width() - 6) / 20) * 20);
         long[] inArr = new long[renderPoints];
         long[] outArr = new long[renderPoints];
         for (int i = 0; i < renderPoints; i++) {
@@ -676,7 +676,7 @@ class EndpointsTab extends AbstractTableTab {
                 Span.styled("▬", Theme.label()),
                 Span.raw(String.format(" in:%-8s ", sizeToString(curIn))),
                 Span.styled("▬", Theme.notice()),
-                Span.raw(String.format(" out:%-8s avg body", sizeToString(curOut))));
+                Span.raw(String.format(" out:%-8s avg body ", sizeToString(curOut))));
 
         frame.renderWidget(DualSparkline.builder()
                 .topData(inArr)

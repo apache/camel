@@ -301,7 +301,7 @@ class CircuitBreakerTab extends AbstractTableTab {
 
         LinkedList<Long> successHist = cbSuccessHistory.get(key);
         LinkedList<Long> failHist = cbFailHistory.get(key);
-        int renderPoints = Math.min(MAX_CHART_POINTS, Math.max(2, vSplit.get(1).width() - 6));
+        int renderPoints = Math.max(20, (Math.min(MAX_CHART_POINTS, vSplit.get(1).width() - 6) / 20) * 20);
         long[] successArr = new long[renderPoints];
         long[] failArr = new long[renderPoints];
         if (successHist != null) {
@@ -326,7 +326,7 @@ class CircuitBreakerTab extends AbstractTableTab {
                 Span.styled("▬", Theme.success()),
                 Span.raw(String.format(" ok:%-4d ", curSuccess)),
                 Span.styled("▬", Theme.error()),
-                Span.raw(String.format(" fail:%-4d msg/s", curFail)));
+                Span.raw(String.format(" fail:%-4d msg/s ", curFail)));
         frame.renderWidget(DualSparkline.builder()
                 .topData(successArr)
                 .bottomData(failArr)
