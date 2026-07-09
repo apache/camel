@@ -31,11 +31,17 @@ final class TuiSettings {
     static final String PROP_START_TAB = "camel.tui.startTab";
     static final String PROP_LOG_PIN = "camel.tui.logPin";
     static final String PROP_DEFAULT_FOLDER = "camel.tui.defaultFolder";
+    static final String PROP_AI_PROVIDER = "camel.tui.ai.provider";
+    static final String PROP_AI_MODEL = "camel.tui.ai.model";
+    static final String PROP_AI_URL = "camel.tui.ai.url";
 
     private String themeId;
     private String startTab;
     private String logPin;
     private String defaultFolder;
+    private String aiProvider;
+    private String aiModel;
+    private String aiUrl;
 
     String getThemeId() {
         return themeId;
@@ -69,6 +75,30 @@ final class TuiSettings {
         this.defaultFolder = defaultFolder;
     }
 
+    String getAiProvider() {
+        return aiProvider;
+    }
+
+    void setAiProvider(String aiProvider) {
+        this.aiProvider = aiProvider;
+    }
+
+    String getAiModel() {
+        return aiModel;
+    }
+
+    void setAiModel(String aiModel) {
+        this.aiModel = aiModel;
+    }
+
+    String getAiUrl() {
+        return aiUrl;
+    }
+
+    void setAiUrl(String aiUrl) {
+        this.aiUrl = aiUrl;
+    }
+
     /**
      * Loads the current settings, resolving each key with per-key local/global precedence via {@link TuiUserConfig}.
      * Unset keys yield {@code null} fields; a read failure yields an object with {@code null} fields rather than
@@ -81,6 +111,9 @@ final class TuiSettings {
             settings.startTab = trimToNull(TuiUserConfig.read(PROP_START_TAB));
             settings.logPin = trimToNull(TuiUserConfig.read(PROP_LOG_PIN));
             settings.defaultFolder = trimToNull(TuiUserConfig.read(PROP_DEFAULT_FOLDER));
+            settings.aiProvider = trimToNull(TuiUserConfig.read(PROP_AI_PROVIDER));
+            settings.aiModel = trimToNull(TuiUserConfig.read(PROP_AI_MODEL));
+            settings.aiUrl = trimToNull(TuiUserConfig.read(PROP_AI_URL));
         } catch (RuntimeException e) {
             // best-effort: return an object with null fields on read failure
         }
@@ -98,6 +131,9 @@ final class TuiSettings {
             TuiUserConfig.write(PROP_START_TAB, startTab);
             TuiUserConfig.write(PROP_LOG_PIN, logPin);
             TuiUserConfig.write(PROP_DEFAULT_FOLDER, defaultFolder);
+            TuiUserConfig.write(PROP_AI_PROVIDER, aiProvider);
+            TuiUserConfig.write(PROP_AI_MODEL, aiModel);
+            TuiUserConfig.write(PROP_AI_URL, aiUrl);
         } catch (RuntimeException e) {
             // best-effort: a save failure must not disrupt the TUI
         }

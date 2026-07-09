@@ -59,12 +59,18 @@ class TuiSettingsTest {
         settings.setThemeId("light");
         settings.setStartTab("Health");
         settings.setDefaultFolder("/tmp/projects");
+        settings.setAiProvider("gemini");
+        settings.setAiModel("gemini-3.5-flash");
+        settings.setAiUrl("https://generativelanguage.googleapis.com");
         settings.save();
 
         TuiSettings loaded = TuiSettings.load();
         assertEquals("light", loaded.getThemeId());
         assertEquals("Health", loaded.getStartTab());
         assertEquals("/tmp/projects", loaded.getDefaultFolder());
+        assertEquals("gemini", loaded.getAiProvider());
+        assertEquals("gemini-3.5-flash", loaded.getAiModel());
+        assertEquals("https://generativelanguage.googleapis.com", loaded.getAiUrl());
     }
 
     @Test
@@ -79,10 +85,16 @@ class TuiSettingsTest {
         TuiSettings second = TuiSettings.load();
         assertEquals("/tmp/x", second.getDefaultFolder());
         second.setDefaultFolder("   ");
+        second.setAiProvider("   ");
+        second.setAiModel("   ");
+        second.setAiUrl("   ");
         second.save();
 
         TuiSettings third = TuiSettings.load();
         assertNull(third.getDefaultFolder(), "a blank folder must clear its key");
+        assertNull(third.getAiProvider(), "a blank AI provider must clear its key");
+        assertNull(third.getAiModel(), "a blank AI model must clear its key");
+        assertNull(third.getAiUrl(), "a blank AI URL must clear its key");
         assertEquals("dark", third.getThemeId(), "unrelated keys must remain");
 
         String content = Files.readString(tempDir.resolve(CommandLineHelper.USER_CONFIG));
