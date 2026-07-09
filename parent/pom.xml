@@ -73,7 +73,7 @@
         <asm-version>9.10.1</asm-version>
         <asn1bean-version>1.14.0</asn1bean-version>
         <assertj-version>3.27.7</assertj-version>
-        <asterisk-java-version>3.41.0</asterisk-java-version>
+        <asterisk-java-version>3.42.2</asterisk-java-version>
         <atlassian-fugue-version>6.1.5</atlassian-fugue-version>
         <atmosphere-version>3.1.0</atmosphere-version>
         <avro-version>1.12.1</avro-version>
