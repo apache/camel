@@ -249,6 +249,7 @@ public class CamelJBangMain implements Callable<Integer> {
             return new String[] { v };
         });
 
+        CommandLineHelper.migrateLegacyUserConfig(out);
         CommandLineHelper.augmentWithUserConfiguration(commandLine);
         preExecute(commandLine, args);
         int exitCode = commandLine.execute(args);

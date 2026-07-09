@@ -40,7 +40,21 @@ with empty `nodes`/`edges` arrays if there are no routes to connect, so its pres
 the dump has completed (previously it was silently skipped when there were no routes).
 
 The Camel TUI (`camel tui`) accepts `--theme=dark` or `--theme=light` to choose the color palette at startup.
-When omitted, the persisted `camel.tui.theme` value from `.camel-jbang-user.properties` is used.
+When omitted, the persisted `camel.tui.theme` value from `.camel-cli.properties` is used.
+
+The Camel TUI now has a *Settings...* entry in the *F2* actions menu for choosing the theme, the
+starting tab, and the default run-from-folder. These are stored under `camel.tui.*` keys
+(`camel.tui.theme`, `camel.tui.startTab`, `camel.tui.defaultFolder`) in the Camel CLI configuration
+file. Each key is read from and written back to the file where it currently lives: a key present in
+the local `./camel-cli.properties` stays local (project override), while every other key defaults to
+the global `~/.camel-cli.properties`.
+
+The Camel CLI user configuration file has been renamed from `camel-jbang-user.properties` to
+`camel-cli.properties` (global `~/.camel-cli.properties`, local `./camel-cli.properties`). The dot
+convention is unchanged: the global file is a hidden dotfile, the local file is visible. On first
+run the CLI automatically renames a pre-existing global `~/.camel-jbang-user.properties` to
+`~/.camel-cli.properties` and a pre-existing local `./camel-jbang-user.properties` to
+`./camel-cli.properties`; an existing new file is never overwritten.
 
 === camel-langchain4j-agent
 

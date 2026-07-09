@@ -86,6 +86,7 @@ final class TuiIcons {
     static final String KEY = "🔑";
     static final String TIP = "💡";
     static final String COMPUTER = "💻";
+    static final String SETTINGS = "🧰";
     static final String HELP = "❔";
     static final String THINKING = "🤔";
 

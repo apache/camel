@@ -62,6 +62,7 @@ class ActionsPopup {
         STOP_ALL,
         SHELL,
         SCREEN_SUBMENU,
+        SETTINGS,
         MCP_SUBMENU,
         BACK,
         SCREENSHOT,
@@ -112,6 +113,7 @@ class ActionsPopup {
 
     private final GotoTabPopup gotoTabPopup = new GotoTabPopup();
     private final ThemePopup themePopup = new ThemePopup();
+    private final SettingsPopup settingsPopup = new SettingsPopup();
     private final DocViewerPopup docViewerPopup = new DocViewerPopup();
 
     private final ExampleBrowserPopup exampleBrowserPopup;
@@ -212,6 +214,11 @@ class ActionsPopup {
 
     void setGotoTabSupport(List<TabRegistry.TabEntry> entries, Runnable callback) {
         gotoTabPopup.setTabEntries(entries, callback);
+        settingsPopup.setTabEntries(entries);
+    }
+
+    void setClearScreenAction(Runnable clearScreen) {
+        settingsPopup.setClearScreen(clearScreen);
     }
 
     void setMcpEnabled(
@@ -267,7 +274,7 @@ class ActionsPopup {
                 Action.SEND_MESSAGE, Action.RUN_EXAMPLE, Action.RUN_FOLDER, Action.RUN_INFRA, Action.BROWSE_FILES,
                 Action.STOP_ALL));
         flat.add(null);
-        flat.addAll(List.of(Action.DOCTOR, Action.RESET_STATS, Action.SCREEN_SUBMENU));
+        flat.addAll(List.of(Action.DOCTOR, Action.RESET_STATS, Action.SCREEN_SUBMENU, Action.SETTINGS));
         if (mcpEnabled) {
             flat.add(null);
             flat.add(Action.MCP_SUBMENU);
@@ -331,7 +338,7 @@ class ActionsPopup {
     }
 
     boolean isVisible() {
-        return showActionsMenu || themePopup.isVisible() || gotoTabPopup.isVisible()
+        return showActionsMenu || themePopup.isVisible() || gotoTabPopup.isVisible() || settingsPopup.isVisible()
                 || exampleBrowserPopup.isVisible()
                 || folderInputPopup.isVisible()
                 || runOptionsForm.isVisible()
@@ -411,6 +418,7 @@ class ActionsPopup {
         labels.add("Run Doctor");
         labels.add("Reset Stats");
         labels.add("Screen...");
+        labels.add("Settings...");
         if (mcpEnabled) {
             labels.add("───");
             labels.add("AI & MCP...");
@@ -435,6 +443,7 @@ class ActionsPopup {
         currentSubmenu = null;
         themePopup.close();
         gotoTabPopup.close();
+        settingsPopup.close();
         exampleBrowserPopup.close();
         folderInputPopup.close();
         runOptionsForm.close();
@@ -549,6 +558,13 @@ class ActionsPopup {
             }
             return true;
         }
+        if (settingsPopup.isVisible()) {
+            settingsPopup.handleKeyEvent(ke);
+            if (!settingsPopup.isVisible() && ke.isCancel()) {
+                showActionsMenu = true;
+            }
+            return true;
+        }
         if (showActionsMenu) {
             if (ke.isCancel()) {
                 if (currentSubmenu != null) {
@@ -599,6 +615,9 @@ class ActionsPopup {
                     } else if (action == Action.GOTO_TAB) {
                         showActionsMenu = false;
                         gotoTabPopup.open();
+                    } else if (action == Action.SETTINGS) {
+                        showActionsMenu = false;
+                        settingsPopup.open();
                     } else if (action == Action.SWITCH_INTEGRATION) {
                         if (hasMultipleIntegrations()) {
                             showActionsMenu = false;
@@ -783,6 +802,9 @@ class ActionsPopup {
         if (gotoTabPopup.isVisible()) {
             gotoTabPopup.render(frame, area);
         }
+        if (settingsPopup.isVisible()) {
+            settingsPopup.render(frame, area);
+        }
         if (showActionsMenu) {
             renderActionsMenu(frame, area);
         }
@@ -870,6 +892,10 @@ class ActionsPopup {
             themePopup.renderFooter(spans);
             return;
         }
+        if (settingsPopup.isVisible()) {
+            settingsPopup.renderFooter(spans);
+            return;
+        }
         if (gotoTabPopup.isVisible()) {
             hint(spans, "type", "filter");
             hint(spans, TuiIcons.HINT_SCROLL, "navigate");
@@ -940,6 +966,7 @@ class ActionsPopup {
         items.add(ListItem.from(TuiIcons.menuItem(TuiIcons.DOCTOR, "Run Doctor")));
         items.add(ListItem.from(TuiIcons.menuItem(TuiIcons.RESET, "Reset Stats")));
         items.add(ListItem.from(TuiIcons.menuItem(TuiIcons.COMPUTER, "Screen...")));
+        items.add(ListItem.from(TuiIcons.menuItem(TuiIcons.SETTINGS, "Settings...")));
         // Group 3: MCP (conditional)
         if (mcpEnabled) {
             items.add(ListItem.from(divider).style(Style.EMPTY.dim()));

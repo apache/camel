@@ -37,9 +37,7 @@ import dev.tamboui.widgets.block.Borders;
 import dev.tamboui.widgets.input.TextInput;
 import dev.tamboui.widgets.input.TextInputState;
 import dev.tamboui.widgets.paragraph.Paragraph;
-import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.LauncherHelper;
-import org.apache.camel.dsl.jbang.core.common.Printer;
 
 class FolderInputPopup {
 
@@ -99,6 +97,10 @@ class FolderInputPopup {
         return detectedPomPath;
     }
 
+    String getInputText() {
+        return inputState != null ? inputState.text() : null;
+    }
+
     void clearSelection() {
         selectedFolder = null;
         detectedPomPath = null;
@@ -111,10 +113,14 @@ class FolderInputPopup {
     void open() {
         showInput = true;
         String lastFolder = loadLastFolder();
-        if (lastFolder == null) {
-            lastFolder = System.getProperty("user.dir");
+        String initialFolder;
+        if (lastFolder != null) {
+            initialFolder = lastFolder;
+        } else {
+            String defaultFolder = TuiSettings.load().getDefaultFolder();
+            initialFolder = defaultFolder != null ? defaultFolder : System.getProperty("user.dir");
         }
-        inputState = new TextInputState(lastFolder != null ? lastFolder : "");
+        inputState = new TextInputState(initialFolder);
         historyIndex = -1;
         folderBrowser.setOnSelect(path -> {
             inputState = new TextInputState(path);
@@ -290,7 +296,10 @@ class FolderInputPopup {
         } else if (ke.isEnd()) {
             inputState.moveCursorToEnd();
         } else if (ke.code() == KeyCode.CHAR) {
-            inputState.insert(ke.string().charAt(0));
+            char ch = ke.string().charAt(0);
+            if (ch >= 0x20 && ch != 0x7F) {
+                inputState.insert(ch);
+            }
         }
     }
 
@@ -362,27 +371,18 @@ class FolderInputPopup {
     }
 
     private static String loadLastFolder() {
-        String[] holder = { null };
         try {
-            CommandLineHelper.loadProperties(props -> {
-                holder[0] = props.getProperty(PROP_LAST_FOLDER);
-            });
+            return TuiUserConfig.read(PROP_LAST_FOLDER);
         } catch (RuntimeException e) {
-            // ignore
+            return null;
         }
-        return holder[0];
     }
 
     private static void persistLastFolder(String folder) {
         try {
-            CommandLineHelper.createPropertyFile(false);
-            CommandLineHelper.loadProperties(props -> {
-                props.setProperty(PROP_LAST_FOLDER, folder);
-                CommandLineHelper.storeProperties(props,
-                        new Printer.QuietPrinter(new Printer.SystemOutPrinter()), false);
-            });
-        } catch (Exception e) {
-            // ignore
+            TuiUserConfig.write(PROP_LAST_FOLDER, folder);
+        } catch (RuntimeException e) {
+            // best-effort: a persist failure must not disrupt the TUI
         }
     }
 

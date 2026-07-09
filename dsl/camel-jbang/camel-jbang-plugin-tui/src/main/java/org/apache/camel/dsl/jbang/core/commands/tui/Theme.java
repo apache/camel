@@ -31,8 +31,6 @@ import dev.tamboui.css.Styleable;
 import dev.tamboui.css.engine.StyleEngine;
 import dev.tamboui.style.Color;
 import dev.tamboui.style.Style;
-import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
-import org.apache.camel.dsl.jbang.core.common.Printer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -524,9 +522,7 @@ public final class Theme {
 
     private static boolean tryLoadPersistedMode(ThemeMode[] result) {
         try {
-            CommandLineHelper.loadProperties(props -> {
-                ThemeMode.parse(props.getProperty(PROP_KEY)).ifPresent(parsed -> result[0] = parsed);
-            });
+            ThemeMode.parse(TuiUserConfig.read(PROP_KEY)).ifPresent(parsed -> result[0] = parsed);
             return true;
         } catch (RuntimeException ex) {
             logPersistedReadFallbackOnce(ex);
@@ -536,13 +532,8 @@ public final class Theme {
 
     private static void persist(ThemeMode newMode) {
         try {
-            CommandLineHelper.createPropertyFile(false);
-            CommandLineHelper.loadProperties(props -> {
-                props.setProperty(PROP_KEY, newMode.id());
-                CommandLineHelper.storeProperties(props,
-                        new Printer.QuietPrinter(new Printer.SystemOutPrinter()), false);
-            });
-        } catch (Exception ex) {
+            TuiUserConfig.write(PROP_KEY, newMode.id());
+        } catch (RuntimeException ex) {
             logPersistedWriteFallbackOnce(ex);
         }
     }
