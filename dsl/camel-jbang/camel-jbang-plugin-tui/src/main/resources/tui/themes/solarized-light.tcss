@@ -1,0 +1,54 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+/* Camel TUI Solarized Light theme. Ethan Schoonover's precision color palette on a light base. */
+
+$brand: #268BD2;
+$solar-bg: #FDF6E3;
+$solar-fg: #657B83;
+
+#accent         { color: $brand; }
+#accent-bg      { color: white; background: $brand; text-style: bold; }
+#hint-key       { color: white; background: #268BD2; text-style: bold; }
+#border         { color: #93A1A1; }
+#border-focused { color: $brand; }
+#title          { color: $brand; text-style: bold; }
+#success        { color: #859900; }
+#warning        { color: #B58900; }
+#error          { color: #DC322F; }
+#muted          { color: #93A1A1; }
+#selection      { color: white; background: #268BD2; text-style: bold; }
+#info           { color: #268BD2; }
+#notice         { color: #6C71C4; }
+#row-alt        { background: #EEE8D5; }
+#base-bg        { background: $solar-bg; }
+#base-fg        { color: $solar-fg; }
+
+/* Content tokens — labels, change indicators, search highlight */
+#label          { color: #B58900; }
+#change         { color: #B58900; }
+#search-match   { color: #657B83; background: #B58900; }
+#mnemonic       { color: #B58900; text-style: bold underline; }
+
+/* Diagram tokens */
+#diagram-border  { color: #93A1A1; }
+#diagram-id      { color: $solar-fg; }
+#diagram-from    { color: #859900; }
+#diagram-to      { color: #2AA198; }
+#diagram-choice  { color: #B58900; }
+#diagram-action  { color: #D33682; }
+#diagram-eip     { color: #6C71C4; }
+#diagram-default { color: #93A1A1; }

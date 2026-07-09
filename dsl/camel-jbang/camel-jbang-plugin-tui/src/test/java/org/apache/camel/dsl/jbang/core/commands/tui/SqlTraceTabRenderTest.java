@@ -104,8 +104,9 @@ class SqlTraceTabRenderTest {
         Frame frame = Frame.forTesting(buffer);
         tab.render(frame, area);
 
-        boolean foundYellow = TuiTestHelper.findCellWithColor(buffer, "1", Color.YELLOW);
-        assertTrue(foundYellow, "Slow query duration should be highlighted in YELLOW");
+        Color warningColor = Theme.warning().fg().orElse(Color.YELLOW);
+        boolean foundWarning = TuiTestHelper.findCellWithColor(buffer, "1", warningColor);
+        assertTrue(foundWarning, "Slow query duration should be highlighted in warning color");
     }
 
     @Test
@@ -119,7 +120,7 @@ class SqlTraceTabRenderTest {
         Frame frame = Frame.forTesting(buffer);
         tab.render(frame, area);
 
-        boolean foundRed = TuiTestHelper.findCellWithColor(buffer, "F", Color.LIGHT_RED);
+        boolean foundRed = TuiTestHelper.findCellWithColor(buffer, "F", Theme.error().fg().orElse(Color.LIGHT_RED));
         assertTrue(foundRed, "Failed status should be rendered in LIGHT_RED");
     }
 

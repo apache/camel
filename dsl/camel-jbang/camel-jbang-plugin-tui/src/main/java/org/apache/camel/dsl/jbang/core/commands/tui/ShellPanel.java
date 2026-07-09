@@ -94,8 +94,6 @@ class ShellPanel {
     private int lastHeight;
     private int scrollOffset;
     private int lastHistorySize;
-    private int lastCursorX = -1;
-    private int lastCursorY = -1;
     private Rect lastArea;
     private volatile boolean shellExited;
 
@@ -286,7 +284,7 @@ class ShellPanel {
         if (scrollOffset > 0) {
             lines = renderScrolledView(screen, innerWidth, innerHeight);
         } else {
-            lines = renderLiveView(screen, innerWidth, innerHeight);
+            lines = renderLiveView(screen, innerWidth, innerHeight, cursor[0], cursor[1]);
         }
 
         // Split the inner area: content (fill) + scrollbar (1 col) when history exists
@@ -316,22 +314,6 @@ class ShellPanel {
                         .overflow(Overflow.CLIP)
                         .build(),
                 contentArea);
-
-        // Position the hardware cursor only when it has moved, so the terminal's
-        // blink timer is not reset on every frame.
-        if (scrollOffset == 0 && cursor[1] >= 0 && cursor[1] < innerHeight
-                && cursor[0] >= 0 && cursor[0] < innerWidth) {
-            int cx = contentArea.x() + cursor[0];
-            int cy = contentArea.y() + cursor[1];
-            if (cx != lastCursorX || cy != lastCursorY) {
-                frame.setCursorPosition(cx, cy);
-                lastCursorX = cx;
-                lastCursorY = cy;
-            }
-        } else {
-            lastCursorX = -1;
-            lastCursorY = -1;
-        }
     }
 
     void renderFooter(List<Span> spans) {
@@ -340,10 +322,11 @@ class ShellPanel {
         TuiHelper.hint(spans, "PgUp/Dn", "scroll");
     }
 
-    private List<Line> renderLiveView(long[] screen, int width, int height) {
+    private List<Line> renderLiveView(long[] screen, int width, int height, int cursorCol, int cursorRow) {
         List<Line> lines = new ArrayList<>(height);
         for (int row = 0; row < height; row++) {
-            lines.add(convertRow(screen, row * width, width));
+            int cc = (row == cursorRow) ? cursorCol : -1;
+            lines.add(convertRow(screen, row * width, width, cc));
         }
         return lines;
     }
@@ -351,7 +334,7 @@ class ShellPanel {
     private List<Line> renderScrolledView(long[] screen, int width, int height) {
         List<long[]> history = screenTerminal.getHistory();
         if (history.isEmpty()) {
-            return renderLiveView(screen, width, height);
+            return renderLiveView(screen, width, height, -1, -1);
         }
 
         int totalLines = history.size() + height;
@@ -376,6 +359,22 @@ class ShellPanel {
     }
 
     static Line convertRow(long[] buffer, int offset, int width) {
+        return convertRow(buffer, offset, width, -1);
+    }
+
+    /**
+     * Converts a row of {@link ScreenTerminal} cells into a TamboUI {@link Line}.
+     * <p>
+     * When {@code cursorCol} is non-negative, the character at that column is rendered with reversed video to act as a
+     * software block cursor. This avoids the hardware terminal cursor whose blink timer resets on every TamboUI frame
+     * redraw, causing the cursor to appear half-shown on each keypress.
+     *
+     * @param buffer    the screen buffer (flat array of 64-bit cells)
+     * @param offset    start offset of this row in the buffer
+     * @param width     number of columns in this row
+     * @param cursorCol column index of the cursor in this row, or -1 for no cursor
+     */
+    static Line convertRow(long[] buffer, int offset, int width, int cursorCol) {
         List<Span> spans = new ArrayList<>();
         int col = 0;
         while (col < width) {
@@ -384,10 +383,24 @@ class ShellPanel {
             long attr = ScreenTerminal.cellAttr(cell);
             Style style = convertCellToStyle(cell);
 
+            // Cursor column: emit a single reversed-video span so the cursor
+            // is always visible and does not blink (software block cursor).
+            if (col == cursorCol) {
+                spans.add(Span.styled(
+                        String.valueOf(Character.toChars(ch == 0 ? ' ' : ch)),
+                        style.reversed()));
+                col++;
+                continue;
+            }
+
             StringBuilder sb = new StringBuilder();
             sb.appendCodePoint(ch == 0 ? ' ' : ch);
             int nextCol = col + 1;
             while (nextCol < width) {
+                // Stop batching before the cursor column so it gets its own span
+                if (nextCol == cursorCol) {
+                    break;
+                }
                 long nextCell = buffer[offset + nextCol];
                 if (ScreenTerminal.cellAttr(nextCell) != attr) {
                     break;

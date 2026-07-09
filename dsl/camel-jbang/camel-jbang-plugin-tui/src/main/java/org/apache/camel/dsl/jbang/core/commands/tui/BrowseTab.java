@@ -31,7 +31,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import dev.tamboui.layout.Constraint;
 import dev.tamboui.layout.Layout;
 import dev.tamboui.layout.Rect;
-import dev.tamboui.style.Color;
 import dev.tamboui.style.Style;
 import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.Line;
@@ -289,7 +288,7 @@ class BrowseTab extends AbstractTab {
             String first = ep.firstTimestamp > 0 ? formatTimestamp(ep.firstTimestamp) : "";
             String last = ep.lastTimestamp > 0 ? formatTimestamp(ep.lastTimestamp) : "";
             rows.add(Row.from(
-                    Cell.from(Span.styled(ep.uri != null ? ep.uri : "", Style.EMPTY.fg(Color.CYAN))),
+                    Cell.from(Span.styled(ep.uri != null ? ep.uri : "", Style.EMPTY.fg(Theme.accent()))),
                     rightCell(String.valueOf(ep.queueSize), 8),
                     Cell.from(first),
                     Cell.from(last)));
@@ -344,7 +343,7 @@ class BrowseTab extends AbstractTab {
             String ts = msg.timestamp > 0 ? formatTimestamp(msg.timestamp) : "";
             rows.add(Row.from(
                     rightCell(String.valueOf(msg.position), 5),
-                    Cell.from(Span.styled(msg.exchangeId != null ? msg.exchangeId : "", Style.EMPTY.fg(Color.CYAN))),
+                    Cell.from(Span.styled(msg.exchangeId != null ? msg.exchangeId : "", Style.EMPTY.fg(Theme.accent()))),
                     Cell.from(ts),
                     Cell.from(Span.styled(bodyPreview, Style.EMPTY.dim()))));
         }
@@ -407,29 +406,29 @@ class BrowseTab extends AbstractTab {
 
         List<Line> lines = new ArrayList<>();
         lines.add(Line.from(
-                Span.styled("  Exchange ID: ", Style.EMPTY.fg(Color.YELLOW).bold()),
-                Span.styled(msg.exchangeId != null ? msg.exchangeId : "", Style.EMPTY.fg(Color.WHITE))));
+                Span.styled("  Exchange ID: ", Theme.muted()),
+                Span.styled(msg.exchangeId != null ? msg.exchangeId : "", Style.EMPTY.fg(Theme.baseFg()))));
         if (msg.exchangePattern != null) {
             lines.add(Line.from(
-                    Span.styled("  Pattern:     ", Style.EMPTY.fg(Color.YELLOW).bold()),
-                    Span.styled(msg.exchangePattern, Style.EMPTY.fg(Color.WHITE))));
+                    Span.styled("  Pattern:     ", Theme.muted()),
+                    Span.styled(msg.exchangePattern, Style.EMPTY.fg(Theme.baseFg()))));
         }
         lines.add(Line.from(Span.raw("")));
 
         // Headers
         if (msg.headers != null && !msg.headers.isEmpty()) {
-            lines.add(Line.from(Span.styled("  Headers:", Style.EMPTY.fg(Color.YELLOW).bold())));
+            lines.add(Line.from(Span.styled("  Headers:", Theme.muted())));
             for (Map.Entry<String, String> entry : msg.headers.entrySet()) {
                 lines.add(Line.from(
-                        Span.styled("    " + entry.getKey(), Style.EMPTY.fg(Color.CYAN)),
+                        Span.styled("    " + entry.getKey(), Theme.muted()),
                         Span.styled(" = ", Style.EMPTY.dim()),
-                        Span.styled(entry.getValue(), Style.EMPTY.fg(Color.WHITE))));
+                        Span.styled(entry.getValue(), Style.EMPTY.fg(Theme.baseFg()))));
             }
             lines.add(Line.from(Span.raw("")));
         }
 
         // Body
-        lines.add(Line.from(Span.styled("  Body:", Style.EMPTY.fg(Color.YELLOW).bold())));
+        lines.add(Line.from(Span.styled("  Body:", Theme.muted())));
         if (msg.body != null && !msg.body.isEmpty()) {
             String bodyText = msg.body;
             if (prettyPrint) {
@@ -440,7 +439,7 @@ class BrowseTab extends AbstractTab {
                 }
             }
             for (String line : bodyText.split("\n", -1)) {
-                lines.add(Line.from(Span.styled("    " + line, Style.EMPTY.fg(Color.WHITE))));
+                lines.add(Line.from(Span.styled("    " + line, Style.EMPTY.fg(Theme.baseFg()))));
             }
         } else {
             lines.add(Line.from(Span.styled("    (empty)", Style.EMPTY.dim())));

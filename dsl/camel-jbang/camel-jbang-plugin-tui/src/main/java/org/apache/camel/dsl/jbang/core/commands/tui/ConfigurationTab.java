@@ -24,7 +24,6 @@ import java.util.Map;
 import dev.tamboui.layout.Constraint;
 import dev.tamboui.layout.Layout;
 import dev.tamboui.layout.Rect;
-import dev.tamboui.style.Color;
 import dev.tamboui.style.Style;
 import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.Line;
@@ -53,7 +52,7 @@ import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.*;
 
 class ConfigurationTab extends AbstractTableTab {
 
-    private static final Style SECRET_STYLE = Style.EMPTY.fg(Color.DARK_GRAY);
+    private static final Style SECRET_STYLE = Theme.muted();
 
     private int detailScroll;
 
@@ -156,7 +155,7 @@ class ConfigurationTab extends AbstractTableTab {
             }
 
             rows.add(Row.from(
-                    Cell.from(Span.styled(p.key, Style.EMPTY.fg(Color.CYAN))),
+                    Cell.from(Span.styled(p.key, Style.EMPTY.fg(Theme.accent()))),
                     Cell.from(Span.styled(value, valStyle)),
                     Cell.from(Span.styled(source, Style.EMPTY.dim()))));
         }
@@ -279,7 +278,7 @@ class ConfigurationTab extends AbstractTableTab {
         if (value.length() <= maxValueLen) {
             lines.add(Line.from(
                     Span.styled(prefix, Style.EMPTY.dim()),
-                    Span.styled(value, Style.EMPTY.fg(Color.WHITE))));
+                    Span.styled(value, Style.EMPTY.fg(Theme.baseFg()))));
         } else {
             // wrap long values
             lines.add(Line.from(Span.styled(prefix, Style.EMPTY.dim())));
@@ -292,7 +291,7 @@ class ConfigurationTab extends AbstractTableTab {
             int pos = 0;
             while (pos < value.length()) {
                 int end = Math.min(pos + wrapWidth, value.length());
-                lines.add(Line.from(Span.styled(indentStr + value.substring(pos, end), Style.EMPTY.fg(Color.WHITE))));
+                lines.add(Line.from(Span.styled(indentStr + value.substring(pos, end), Style.EMPTY.fg(Theme.baseFg()))));
                 pos = end;
             }
         }

@@ -148,7 +148,7 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
         LOG.trace("Found {} files in directory: {}", files.length, dir);
 
         if (getEndpoint().isPreSort()) {
-            Arrays.sort(files, Comparator.comparing(FTPFile::getName));
+            Arrays.sort(files, preSortComparator(getEndpoint().getPreSort()));
         }
 
         for (FTPFile file : files) {
@@ -437,5 +437,23 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
             ftpConsumerToString = "FtpConsumer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
         }
         return ftpConsumerToString;
+    }
+
+    private static Comparator<FTPFile> preSortComparator(String preSort) {
+        boolean reverse = preSort.startsWith("-");
+        String field = reverse ? preSort.substring(1) : preSort;
+        Comparator<FTPFile> cmp;
+        switch (field) {
+            case "modified":
+                cmp = Comparator.comparingLong(f -> f.getTimestamp() != null ? f.getTimestamp().getTimeInMillis() : 0);
+                break;
+            case "size":
+                cmp = Comparator.comparingLong(FTPFile::getSize);
+                break;
+            default:
+                cmp = Comparator.comparing(FTPFile::getName);
+                break;
+        }
+        return reverse ? cmp.reversed() : cmp;
     }
 }

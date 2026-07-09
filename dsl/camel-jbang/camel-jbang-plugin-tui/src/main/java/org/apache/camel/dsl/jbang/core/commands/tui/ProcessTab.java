@@ -22,7 +22,6 @@ import java.util.List;
 import dev.tamboui.layout.Constraint;
 import dev.tamboui.layout.Layout;
 import dev.tamboui.layout.Rect;
-import dev.tamboui.style.Color;
 import dev.tamboui.style.Overflow;
 import dev.tamboui.style.Style;
 import dev.tamboui.terminal.Frame;
@@ -143,7 +142,7 @@ class ProcessTab extends AbstractTab {
         String cmdLine = getCommandLine(info.pid);
         if (cmdLine != null) {
             lines.add(Line.from(
-                    Span.styled("  Command Line", Style.EMPTY.fg(Color.CYAN).bold())));
+                    Span.styled("  Command Line", Theme.label().bold())));
             lines.add(Line.from(Span.raw("")));
             if (wrap) {
                 lines.add(Line.from(Span.raw("  " + cmdLine)));
@@ -199,9 +198,9 @@ class ProcessTab extends AbstractTab {
 
     @Override
     public void renderFooter(List<Span> spans) {
+        hint(spans, "Esc", "back");
         hint(spans, TuiIcons.HINT_SCROLL, "scroll");
         hint(spans, "w", "wrap [" + (wrap ? "on" : "off") + "]");
-        hintLast(spans, "Esc", "back");
     }
 
     @Override
@@ -242,8 +241,8 @@ class ProcessTab extends AbstractTab {
         }
         String padded = String.format("  %-12s", label + ":");
         lines.add(Line.from(
-                Span.styled(padded, Style.EMPTY.dim()),
-                Span.styled(value, Style.EMPTY.fg(Color.WHITE).bold())));
+                Span.styled(padded, Theme.muted()),
+                Span.styled(value, Style.EMPTY.fg(Theme.baseFg()).bold())));
     }
 
     private static String getProcessUser(String pid) {

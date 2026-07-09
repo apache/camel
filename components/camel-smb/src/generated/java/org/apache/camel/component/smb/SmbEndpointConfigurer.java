@@ -129,7 +129,7 @@ public class SmbEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "premove":
         case "preMove": target.setPreMove(property(camelContext, java.lang.String.class, value)); return true;
         case "presort":
-        case "preSort": target.setPreSort(property(camelContext, boolean.class, value)); return true;
+        case "preSort": target.setPreSort(property(camelContext, java.lang.String.class, value)); return true;
         case "processstrategy":
         case "processStrategy": target.setProcessStrategy(property(camelContext, org.apache.camel.component.file.GenericFileProcessStrategy.class, value)); return true;
         case "readlock":
@@ -309,7 +309,7 @@ public class SmbEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "premove":
         case "preMove": return java.lang.String.class;
         case "presort":
-        case "preSort": return boolean.class;
+        case "preSort": return java.lang.String.class;
         case "processstrategy":
         case "processStrategy": return org.apache.camel.component.file.GenericFileProcessStrategy.class;
         case "readlock":
@@ -485,7 +485,7 @@ public class SmbEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "premove":
         case "preMove": return target.getPreMove();
         case "presort":
-        case "preSort": return target.isPreSort();
+        case "preSort": return target.getPreSort();
         case "processstrategy":
         case "processStrategy": return target.getProcessStrategy();
         case "readlock":

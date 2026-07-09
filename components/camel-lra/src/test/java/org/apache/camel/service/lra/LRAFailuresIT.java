@@ -22,6 +22,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit6.TestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.awaitility.Awaitility.await;
@@ -37,9 +38,9 @@ public class LRAFailuresIT extends AbstractLRATestSupport {
         MockEndpoint compensate = getMockEndpoint("mock:compensate");
         compensate.expectedMessageCount(1);
 
-        sendBody("direct:saga-compensate", "hello");
+        TestSupport.sendBody(template, "direct:saga-compensate", "hello");
 
-        await().atMost(20, TimeUnit.SECONDS)
+        await().atMost(60, TimeUnit.SECONDS)
                 .until(() -> compensate.getReceivedCounter() >= 1);
         compensate.assertIsSatisfied();
     }
@@ -54,9 +55,9 @@ public class LRAFailuresIT extends AbstractLRATestSupport {
         MockEndpoint end = getMockEndpoint("mock:end");
         end.expectedBodiesReceived("hello");
 
-        sendBody("direct:saga-complete", "hello");
+        TestSupport.sendBody(template, "direct:saga-complete", "hello");
 
-        await().atMost(20, TimeUnit.SECONDS)
+        await().atMost(60, TimeUnit.SECONDS)
                 .until(() -> complete.getReceivedCounter() >= 1
                         && end.getReceivedCounter() >= 1);
         complete.assertIsSatisfied();

@@ -33,6 +33,7 @@ import org.apache.camel.diagram.RouteDiagramLayoutEngine.LayoutNode;
 import org.apache.camel.diagram.RouteDiagramLayoutEngine.LayoutRoute;
 import org.apache.camel.diagram.RouteDiagramLayoutEngine.StatInfo;
 import org.apache.camel.diagram.RouteDiagramLayoutEngine.TreeNode;
+import org.apache.camel.dsl.jbang.core.commands.tui.Theme;
 
 import static org.apache.camel.diagram.RouteDiagramLayoutEngine.BRANCH_CHILD_TYPES;
 import static org.apache.camel.diagram.RouteDiagramLayoutEngine.PADDING;
@@ -187,13 +188,13 @@ public class RouteDiagramWidget implements Widget {
 
         Color eipColor;
         if (highlighted) {
-            eipColor = highlightFailed ? HIGHLIGHT_FAIL_COLOR : HIGHLIGHT_OK_COLOR;
+            eipColor = highlightFailed ? highlightFailColor() : highlightOkColor();
         } else {
             eipColor = getEipColor(node.type);
         }
         Style borderStyle = Style.EMPTY.fg(eipColor);
         if (selected) {
-            borderStyle = borderStyle.patch(SELECTION_STYLE);
+            borderStyle = borderStyle.patch(selectionStyle());
         }
 
         char hChar = external ? DASH_H : H;
@@ -220,7 +221,7 @@ public class RouteDiagramWidget implements Widget {
             setChar(buffer, area, r, col, vChar, borderStyle);
             setChar(buffer, area, r, col + boxWidth - 1, vChar, borderStyle);
 
-            Style bgStyle = selected ? SELECTION_STYLE : Style.EMPTY;
+            Style bgStyle = selected ? selectionStyle() : Style.EMPTY;
             for (int c = col + 1; c < col + boxWidth - 1; c++) {
                 setChar(buffer, area, r, c, ' ', bgStyle);
             }
@@ -235,14 +236,14 @@ public class RouteDiagramWidget implements Widget {
             if (i == 0) {
                 writeText(buffer, area, r, textCol, text, style(Style.EMPTY.fg(eipColor).bold(), selected));
             } else {
-                writeText(buffer, area, r, textCol, text, style(FROM_LABEL_STYLE, selected));
+                writeText(buffer, area, r, textCol, text, style(fromLabelStyle(), selected));
             }
         }
 
         // Link indicator for nodes that connect to other routes
         String linkedRouteId = findLinkedRouteId(node);
         if (linkedRouteId != null) {
-            Style linkStyle = Style.EMPTY.fg(Color.YELLOW).bold();
+            Style linkStyle = Theme.label().bold();
             writeText(buffer, area, bottom, col + boxWidth, " ↵ " + linkedRouteId, linkStyle);
         }
 
@@ -296,13 +297,13 @@ public class RouteDiagramWidget implements Widget {
         char hChar = dashed ? DASH_H : H;
         Style edgeStyle;
         if (highlighted) {
-            edgeStyle = Style.EMPTY.fg(highlightFailed ? HIGHLIGHT_FAIL_COLOR : HIGHLIGHT_OK_COLOR);
+            edgeStyle = Style.EMPTY.fg(highlightFailed ? highlightFailColor() : highlightOkColor());
         } else if (external) {
-            edgeStyle = Style.EMPTY.fg(EXTERNAL_COLOR);
+            edgeStyle = Style.EMPTY.fg(externalColor());
         } else if (dashed) {
-            edgeStyle = Style.EMPTY.fg(Color.DARK_GRAY);
+            edgeStyle = Theme.muted();
         } else {
-            edgeStyle = Style.EMPTY.fg(Color.GRAY);
+            edgeStyle = Theme.muted();
         }
 
         if (fromCx == toCx) {
@@ -342,12 +343,12 @@ public class RouteDiagramWidget implements Widget {
         long ok = total - failed;
         if (ok > 0) {
             String okStr = String.valueOf(ok);
-            writeText(buffer, area, toTop - 1, toCx + 2, okStr, METRICS_OK_STYLE);
+            writeText(buffer, area, toTop - 1, toCx + 2, okStr, metricsOkStyle());
         }
         if (failed > 0) {
             String failStr = String.valueOf(failed);
             int col = toCx - 1 - failStr.length();
-            writeText(buffer, area, toTop - 1, col, failStr, METRICS_FAIL_STYLE);
+            writeText(buffer, area, toTop - 1, col, failStr, metricsFailStyle());
         }
     }
 
@@ -488,7 +489,7 @@ public class RouteDiagramWidget implements Widget {
     }
 
     private Style style(Style base, boolean selected) {
-        return selected ? base.patch(SELECTION_STYLE) : base;
+        return selected ? base.patch(selectionStyle()) : base;
     }
 
     private int toCol(int pixelX) {

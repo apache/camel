@@ -25,6 +25,7 @@ import dev.tamboui.text.Span;
 import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.tui.event.KeyModifiers;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -32,6 +33,11 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class SearchHighlighterTest {
+
+    @BeforeEach
+    void setUp() {
+        Theme.resetForTesting();
+    }
 
     // ---- applyHighlights tests ----
 
@@ -76,7 +82,7 @@ class SearchHighlighterTest {
         boolean foundHighlight = false;
         for (Span span : result.spans()) {
             if (span.content().equals("err")) {
-                assertEquals(SearchHighlighter.HIGHLIGHT_STYLE, span.style());
+                assertEquals(Theme.searchMatch(), span.style());
                 foundHighlight = true;
             }
         }
@@ -127,7 +133,7 @@ class SearchHighlighterTest {
         boolean foundMatch = false;
         for (Span span : result.spans()) {
             if (span.content().equals("bar")) {
-                assertEquals(SearchHighlighter.FIND_MATCH_STYLE, span.style());
+                assertEquals(Theme.searchMatch(), span.style());
                 foundMatch = true;
             }
         }

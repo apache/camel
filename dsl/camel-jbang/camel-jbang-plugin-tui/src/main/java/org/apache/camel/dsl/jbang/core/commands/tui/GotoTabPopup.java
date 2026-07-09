@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import dev.tamboui.layout.Rect;
-import dev.tamboui.style.Color;
 import dev.tamboui.style.Style;
 import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.Line;
@@ -37,12 +36,15 @@ import dev.tamboui.widgets.list.ListItem;
 import dev.tamboui.widgets.list.ListState;
 import dev.tamboui.widgets.list.ListWidget;
 import dev.tamboui.widgets.list.ScrollMode;
+import dev.tamboui.widgets.scrollbar.Scrollbar;
+import dev.tamboui.widgets.scrollbar.ScrollbarState;
 
 class GotoTabPopup {
 
     private boolean visible;
     private final FuzzyFilter filter = new FuzzyFilter();
     private final ListState listState = new ListState();
+    private final ScrollbarState scrollbarState = new ScrollbarState();
     private List<TabRegistry.TabEntry> allEntries;
     private List<TabRegistry.TabEntry> filteredEntries;
     private Rect popupRect;
@@ -165,8 +167,9 @@ class GotoTabPopup {
         int nameColWidth = 18;
         int popupW = Math.min(100, area.width() - 4);
         int descColWidth = popupW - nameColWidth - 8;
-        int listH = Math.min(filteredEntries.size(), Math.min(28, area.height() - 8));
-        int popupH = listH + 4;
+        int contentH = filteredEntries.size() + 2;
+        int maxH = area.height() - 4;
+        int popupH = contentH + 2 <= maxH ? contentH + 2 : Math.min(contentH + 2, maxH - 6);
         int x = area.left() + Math.max(0, (area.width() - popupW) / 2);
         int y = area.top() + 2;
         Rect popup = new Rect(x, y, Math.min(popupW, area.width()), Math.min(popupH, area.height() - 2));
@@ -183,12 +186,17 @@ class GotoTabPopup {
         items.add(ListItem.from(Line.from(Span.styled(sep, Style.EMPTY.dim()))));
 
         Style normalStyle = Style.EMPTY;
-        Style matchStyle = Style.EMPTY.fg(Color.YELLOW).bold();
+        Style matchStyle = Theme.label().bold();
         Style dimStyle = Style.EMPTY.dim();
         for (TabRegistry.TabEntry entry : filteredEntries) {
             List<Span> spans = new ArrayList<>();
-            String key = String.format(" %-2s ", entry.shortcut());
-            spans.add(Span.styled(key, dimStyle));
+            String sc = entry.shortcut();
+            spans.add(Span.raw(" "));
+            spans.add(Span.styled(sc, Theme.mnemonic()));
+            if (sc.length() < 2) {
+                spans.add(Span.raw(" "));
+            }
+            spans.add(Span.raw(" " + entry.icon() + " "));
             String name = entry.name();
             if (name.length() > nameColWidth) {
                 name = name.substring(0, nameColWidth);
@@ -239,6 +247,12 @@ class GotoTabPopup {
             renderState.select(sel + 2);
         }
 
+        int total = allEntries != null ? allEntries.size() : 0;
+        int shown = filteredEntries.size();
+        String title = shown == total
+                ? " Go to Tab (" + total + ") "
+                : " Go to Tab (" + shown + "/" + total + ") ";
+
         ListWidget list = ListWidget.builder()
                 .items(items.toArray(ListItem[]::new))
                 .highlightStyle(Theme.selectionBg())
@@ -246,10 +260,19 @@ class GotoTabPopup {
                 .scrollMode(ScrollMode.AUTO_SCROLL)
                 .block(Block.builder()
                         .borderType(BorderType.ROUNDED).borders(Borders.ALL)
-                        .title(" Go to Tab ")
+                        .title(title)
                         .build())
                 .build();
         frame.renderStatefulWidget(list, popup, renderState);
+
+        int visibleRows = Math.max(1, popup.height() - 2);
+        if (shown + 2 > visibleRows) {
+            scrollbarState
+                    .contentLength(shown)
+                    .viewportContentLength(visibleRows)
+                    .position(sel != null ? sel : 0);
+            frame.renderStatefulWidget(Scrollbar.builder().build(), popup, scrollbarState);
+        }
     }
 
     SelectionContext getSelectionContext() {
@@ -273,8 +296,8 @@ class GotoTabPopup {
             String f = filter.filter();
             for (TabRegistry.TabEntry entry : allEntries) {
                 boolean nameMatch;
-                if (f.length() == 1) {
-                    nameMatch = entry.name().toLowerCase().startsWith(f);
+                if (f.length() <= 2) {
+                    nameMatch = entry.name().toLowerCase().contains(f);
                 } else {
                     nameMatch = filter.match(entry.name()) != null;
                 }

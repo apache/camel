@@ -1,0 +1,54 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+/* Camel TUI Nord theme. Muted arctic palette inspired by the Nord color scheme. */
+
+$brand: #88C0D0;
+$nord-bg: #2E3440;
+$nord-fg: #D8DEE9;
+
+#accent         { color: $brand; }
+#accent-bg      { color: white; background: $brand; text-style: bold; }
+#hint-key       { color: black; background: $brand; text-style: bold; }
+#border         { color: #4C566A; }
+#border-focused { color: $brand; }
+#title          { color: $brand; text-style: bold; }
+#success        { color: #A3BE8C; }
+#warning        { color: #EBCB8B; }
+#error          { color: #BF616A; }
+#muted          { color: #4C566A; }
+#selection      { color: white; background: #3B4252; text-style: bold; }
+#info           { color: #88C0D0; }
+#notice         { color: #B48EAD; }
+#row-alt        { background: #333947; }
+#base-bg        { background: $nord-bg; }
+#base-fg        { color: $nord-fg; }
+
+/* Content tokens — labels, change indicators, search highlight */
+#label          { color: #EBCB8B; }
+#change         { color: #EBCB8B; }
+#search-match   { color: black; background: #EBCB8B; }
+#mnemonic       { color: #EBCB8B; text-style: bold underline; }
+
+/* Diagram tokens */
+#diagram-border  { color: #4C566A; }
+#diagram-id      { color: $nord-fg; }
+#diagram-from    { color: #A3BE8C; }
+#diagram-to      { color: #88C0D0; }
+#diagram-choice  { color: #EBCB8B; }
+#diagram-action  { color: #B48EAD; }
+#diagram-eip     { color: #5E81AC; }
+#diagram-default { color: #4C566A; }

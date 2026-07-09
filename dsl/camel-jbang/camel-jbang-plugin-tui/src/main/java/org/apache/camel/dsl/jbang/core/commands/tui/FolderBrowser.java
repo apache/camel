@@ -28,7 +28,6 @@ import java.util.List;
 import java.util.function.Consumer;
 
 import dev.tamboui.layout.Rect;
-import dev.tamboui.style.Color;
 import dev.tamboui.style.Style;
 import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.Line;
@@ -58,6 +57,7 @@ class FolderBrowser {
     private final Deque<Integer> offsetStack = new ArrayDeque<>();
     private List<DirEntry> entries = Collections.emptyList();
     private Consumer<String> onSelect;
+    private boolean fileSelectMode;
     private char lastJumpChar;
     private int lastJumpIndex = -1;
     private final SourceViewer sourceViewer = new SourceViewer();
@@ -73,6 +73,10 @@ class FolderBrowser {
 
     void setOnSelect(Consumer<String> onSelect) {
         this.onSelect = onSelect;
+    }
+
+    void setFileSelectMode(boolean fileSelectMode) {
+        this.fileSelectMode = fileSelectMode;
     }
 
     void open(String startPath) {
@@ -242,7 +246,12 @@ class FolderBrowser {
             Integer sel = listState.selected();
             if (sel != null && sel < entries.size()) {
                 DirEntry entry = entries.get(sel);
-                if (!entry.directory()) {
+                if (!entry.directory() && fileSelectMode) {
+                    visible = false;
+                    if (onSelect != null) {
+                        onSelect.accept(entry.path());
+                    }
+                } else if (!entry.directory()) {
                     sourceViewer.loadFile(Path.of(entry.path()));
                 } else if ("..".equals(entry.name()) && currentDir != null) {
                     navigateBack();
@@ -342,7 +351,7 @@ class FolderBrowser {
         for (int i = 0; i < entries.size(); i++) {
             DirEntry entry = entries.get(i);
             String label = "  " + entry.emoji() + " " + entry.name();
-            Style style = entry.directory() ? Style.EMPTY.fg(Color.CYAN) : Style.EMPTY;
+            Style style = entry.directory() ? Style.EMPTY.fg(Theme.accent()) : Style.EMPTY;
             items[i] = ListItem.from(Line.from(Span.styled(label, style)));
         }
 
@@ -354,7 +363,7 @@ class FolderBrowser {
                 .block(Block.builder()
                         .borderType(BorderType.ROUNDED).borders(Borders.ALL)
                         .title(Title.from(Line
-                                .from(Span.styled(popupTitle, Style.EMPTY.fg(Color.YELLOW).bold()))))
+                                .from(Span.styled(popupTitle, Theme.label().bold()))))
                         .build())
                 .build();
         frame.renderStatefulWidget(list, popup, listState);
@@ -366,8 +375,10 @@ class FolderBrowser {
             return;
         }
         TuiHelper.hint(spans, TuiIcons.HINT_SCROLL, "navigate");
-        TuiHelper.hint(spans, "Enter", "open");
-        TuiHelper.hint(spans, "Tab", "select");
+        TuiHelper.hint(spans, "Enter", fileSelectMode ? "select" : "open");
+        if (!fileSelectMode) {
+            TuiHelper.hint(spans, "Tab", "select");
+        }
         TuiHelper.hintLast(spans, "Esc", "close");
     }
 

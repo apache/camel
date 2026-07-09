@@ -122,6 +122,27 @@ public final class ExampleHelper {
         return false;
     }
 
+    public static String getCategory(JsonObject entry) {
+        String name = entry.getString("name");
+        int slash = name != null ? name.indexOf('/') : -1;
+        return slash > 0 ? name.substring(0, slash) : "";
+    }
+
+    public static String formatCategory(String category) {
+        return switch (category) {
+            case "ai" -> "AI";
+            case "eip" -> "EIP";
+            case "rest" -> "REST";
+            default -> category.substring(0, 1).toUpperCase() + category.substring(1);
+        };
+    }
+
+    public static String getShortName(JsonObject entry) {
+        String name = entry.getString("name");
+        int slash = name != null ? name.indexOf('/') : -1;
+        return slash > 0 ? name.substring(slash + 1) : name != null ? name : "";
+    }
+
     public static boolean isBundled(JsonObject entry) {
         Boolean bundled = entry.getBoolean("bundled");
         return bundled != null && bundled;

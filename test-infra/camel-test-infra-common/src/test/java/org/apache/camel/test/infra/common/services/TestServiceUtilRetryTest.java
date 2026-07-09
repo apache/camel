@@ -97,6 +97,23 @@ class TestServiceUtilRetryTest {
     }
 
     @Test
+    void failsImmediatelyOnDockerDaemonNoHttpResponse() throws Exception {
+        AtomicInteger attempts = new AtomicInteger();
+        Throwable noHttpResponse = (Throwable) Class.forName(
+                "com.github.dockerjava.zerodep.shaded.org.apache.hc.core5.http.NoHttpResponseException")
+                .getConstructor(String.class)
+                .newInstance("localhost:2375 failed to respond");
+
+        TestService service = new StubTestService(() -> {
+            attempts.incrementAndGet();
+            throw new ContainerLaunchException("Could not start container", noHttpResponse);
+        });
+
+        assertThrows(ContainerLaunchException.class, () -> TestServiceUtil.tryInitialize(service, null));
+        assertEquals(1, attempts.get());
+    }
+
+    @Test
     void succeedsOnFirstAttempt() {
         AtomicInteger attempts = new AtomicInteger();
 

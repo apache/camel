@@ -365,7 +365,7 @@ class DiagramTab extends AbstractTab {
                 if (info.name != null) {
                     title = Line.from(
                             Span.raw(" Topology ["),
-                            Span.styled(info.name, Style.EMPTY.fg(Color.YELLOW).bold()),
+                            Span.styled(info.name, Theme.label().bold()),
                             Span.raw("] "));
                 } else {
                     title = Line.from(Span.raw(" Topology "));
@@ -426,71 +426,71 @@ class DiagramTab extends AbstractTab {
         List<Line> lines = new ArrayList<>();
         if (route != null) {
             lines.add(Line.from(
-                    Span.styled(" Route: ", Style.EMPTY.fg(Color.YELLOW).bold()),
-                    Span.styled(route.routeId, Style.EMPTY.fg(Color.WHITE).bold())));
+                    Span.styled(" Route: ", Theme.muted()),
+                    Span.styled(route.routeId, Style.EMPTY.fg(Theme.baseFg()).bold())));
             lines.add(Line.from(
-                    Span.styled(" From:  ", Style.EMPTY.dim()),
+                    Span.styled(" From:  ", Theme.muted()),
                     Span.raw(route.from != null ? route.from : "")));
             String stateLabel = route.state != null ? route.state : "";
-            Style stateStyle = "Started".equals(route.state) ? Style.EMPTY.fg(Color.GREEN) : Style.EMPTY.fg(Color.LIGHT_RED);
+            Style stateStyle = "Started".equals(route.state) ? Theme.success() : Theme.error();
             lines.add(Line.from(
-                    Span.styled(" State: ", Style.EMPTY.dim()),
+                    Span.styled(" State: ", Theme.muted()),
                     Span.styled(stateLabel, stateStyle)));
 
             lines.add(Line.from(Span.raw("")));
             lines.add(Line.from(
-                    Span.styled(" Uptime:     ", Style.EMPTY.dim()),
+                    Span.styled(" Uptime:     ", Theme.muted()),
                     Span.raw(route.uptime != null ? route.uptime : "")));
             lines.add(Line.from(
-                    Span.styled(" Throughput: ", Style.EMPTY.dim()),
+                    Span.styled(" Throughput: ", Theme.muted()),
                     Span.raw(route.throughput != null ? route.throughput : "")));
             if (route.coverage != null) {
                 lines.add(Line.from(
-                        Span.styled(" Coverage:   ", Style.EMPTY.dim()),
+                        Span.styled(" Coverage:   ", Theme.muted()),
                         Span.raw(route.coverage)));
             }
 
             lines.add(Line.from(Span.raw("")));
             int w = numWidth(route.total, route.failed, route.inflight);
             lines.add(Line.from(
-                    Span.styled(" Total:    ", Style.EMPTY.dim()),
+                    Span.styled(" Total:    ", Theme.muted()),
                     Span.raw(String.format("%" + w + "d", route.total))));
-            Style failStyle = route.failed > 0 ? Style.EMPTY.fg(Color.LIGHT_RED).bold() : Style.EMPTY;
+            Style failStyle = route.failed > 0 ? Theme.error().bold() : Style.EMPTY;
             lines.add(Line.from(
-                    Span.styled(" Failed:   ", Style.EMPTY.dim()),
+                    Span.styled(" Failed:   ", Theme.muted()),
                     Span.styled(String.format("%" + w + "d", route.failed), failStyle)));
             lines.add(Line.from(
-                    Span.styled(" Inflight: ", Style.EMPTY.dim()),
+                    Span.styled(" Inflight: ", Theme.muted()),
                     Span.raw(String.format("%" + w + "d", route.inflight))));
 
             lines.add(Line.from(Span.raw("")));
             if (route.total > 0) {
                 int tw = numWidth(route.meanTime, route.maxTime, route.minTime);
                 lines.add(Line.from(
-                        Span.styled(" Mean: ", Style.EMPTY.dim()),
+                        Span.styled(" Mean: ", Theme.muted()),
                         Span.raw(String.format("%" + tw + "d ms", route.meanTime))));
                 lines.add(Line.from(
-                        Span.styled(" Max:  ", Style.EMPTY.dim()),
+                        Span.styled(" Max:  ", Theme.muted()),
                         Span.raw(String.format("%" + tw + "d ms", route.maxTime))));
                 lines.add(Line.from(
-                        Span.styled(" Min:  ", Style.EMPTY.dim()),
+                        Span.styled(" Min:  ", Theme.muted()),
                         Span.raw(String.format("%" + tw + "d ms", route.minTime))));
             }
 
             if (route.sinceLastCompleted != null || route.sinceLastFailed != null) {
                 lines.add(Line.from(Span.raw("")));
                 lines.add(Line.from(
-                        Span.styled(" Since last:", Style.EMPTY.dim())));
+                        Span.styled(" Since last:", Theme.muted())));
                 if (route.sinceLastCompleted != null) {
                     lines.add(Line.from(
-                            Span.styled("   success: ", Style.EMPTY.dim()),
+                            Span.styled("   success: ", Theme.muted()),
                             Span.raw(route.sinceLastCompleted)));
                 }
                 if (route.sinceLastFailed != null) {
                     lines.add(Line.from(
-                            Span.styled("   fail:    ", Style.EMPTY.dim()),
+                            Span.styled("   fail:    ", Theme.muted()),
                             Span.styled(route.sinceLastFailed,
-                                    Style.EMPTY.fg(Color.LIGHT_RED))));
+                                    Theme.error())));
                 }
             }
 
@@ -502,14 +502,14 @@ class DiagramTab extends AbstractTab {
                 boolean isBridge = "external".equals(topoNode.nodeType);
                 String label = isBridge ? " External" : isInbound ? " Inbound" : " Outbound";
                 lines.add(Line.from(
-                        Span.styled(label, Style.EMPTY.fg(Color.CYAN).bold())));
+                        Span.styled(label, Style.EMPTY.fg(Theme.accent()).bold())));
                 lines.add(Line.from(Span.raw("")));
                 lines.add(Line.from(
-                        Span.styled(" URI: ", Style.EMPTY.dim()),
+                        Span.styled(" URI: ", Theme.muted()),
                         Span.raw(topoNode.from != null ? topoNode.from : "")));
                 if (topoNode.description != null && !topoNode.description.isBlank()) {
                     lines.add(Line.from(
-                            Span.styled(" Path: ", Style.EMPTY.dim()),
+                            Span.styled(" Path: ", Theme.muted()),
                             Span.raw(topoNode.description)));
                 }
                 if (!isBridge) {
@@ -517,25 +517,25 @@ class DiagramTab extends AbstractTab {
                     if (connectedRoute != null) {
                         lines.add(Line.from(Span.raw("")));
                         lines.add(Line.from(
-                                Span.styled(isInbound ? " To route: " : " From route: ", Style.EMPTY.dim()),
-                                Span.styled(connectedRoute, Style.EMPTY.fg(Color.WHITE))));
+                                Span.styled(isInbound ? " To route: " : " From route: ", Theme.muted()),
+                                Span.styled(connectedRoute, Style.EMPTY.fg(Theme.baseFg()))));
                     }
                 }
                 if (topoNode.exchangesTotal > 0 || topoNode.exchangesFailed > 0) {
                     lines.add(Line.from(Span.raw("")));
                     lines.add(Line.from(
-                            Span.styled(" Total:  ", Style.EMPTY.dim()),
+                            Span.styled(" Total:  ", Theme.muted()),
                             Span.raw(String.valueOf(topoNode.exchangesTotal))));
                     if (topoNode.exchangesFailed > 0) {
                         lines.add(Line.from(
-                                Span.styled(" Failed: ", Style.EMPTY.dim()),
+                                Span.styled(" Failed: ", Theme.muted()),
                                 Span.styled(String.valueOf(topoNode.exchangesFailed),
-                                        Style.EMPTY.fg(Color.LIGHT_RED).bold())));
+                                        Theme.error().bold())));
                     }
                 }
             } else {
                 lines.add(Line.from(
-                        Span.styled(" " + routeId, Style.EMPTY.fg(Color.CYAN).bold())));
+                        Span.styled(" " + routeId, Style.EMPTY.fg(Theme.accent()).bold())));
                 lines.add(Line.from(
                         Span.styled(" (external endpoint)", Style.EMPTY.dim())));
             }
@@ -569,7 +569,7 @@ class DiagramTab extends AbstractTab {
 
             if (ln.id != null) {
                 lines.add(Line.from(
-                        Span.styled(" ID: ", Style.EMPTY.dim()),
+                        Span.styled(" ID: ", Theme.muted()),
                         Span.raw(ln.id)));
             }
 
@@ -577,12 +577,12 @@ class DiagramTab extends AbstractTab {
             String linkedRoute = diagram.findLinkedRouteId(drillDownRouteId);
             if (linkedRoute != null && diagram.getRouteLayout(linkedRoute) != null) {
                 lines.add(Line.from(
-                        Span.styled(" ↵ ", Style.EMPTY.fg(Color.YELLOW).bold()),
-                        Span.styled(linkedRoute, Style.EMPTY.fg(Color.WHITE))));
+                        Span.styled(" ↵ ", Theme.label().bold()),
+                        Span.styled(linkedRoute, Style.EMPTY.fg(Theme.baseFg()))));
             } else if (ln.treeNode != null && ln.treeNode.info.remote) {
                 String arrow = "from".equals(ln.type) ? " external → " : " → external";
                 lines.add(Line.from(
-                        Span.styled(arrow, Style.EMPTY.fg(Color.DARK_GRAY))));
+                        Span.styled(arrow, Theme.muted())));
             } else {
                 lines.add(Line.from(Span.raw("")));
             }
@@ -592,15 +592,15 @@ class DiagramTab extends AbstractTab {
                 lines.add(Line.from(Span.raw("")));
                 int w = numWidth(stat.exchangesTotal, stat.exchangesFailed, stat.exchangesInflight);
                 lines.add(Line.from(
-                        Span.styled(" Total:    ", Style.EMPTY.dim()),
+                        Span.styled(" Total:    ", Theme.muted()),
                         Span.raw(String.format("%" + w + "d", stat.exchangesTotal))));
                 Style failStyle = stat.exchangesFailed > 0
-                        ? Style.EMPTY.fg(Color.LIGHT_RED).bold() : Style.EMPTY;
+                        ? Theme.error().bold() : Style.EMPTY;
                 lines.add(Line.from(
-                        Span.styled(" Failed:   ", Style.EMPTY.dim()),
+                        Span.styled(" Failed:   ", Theme.muted()),
                         Span.styled(String.format("%" + w + "d", stat.exchangesFailed), failStyle)));
                 lines.add(Line.from(
-                        Span.styled(" Inflight: ", Style.EMPTY.dim()),
+                        Span.styled(" Inflight: ", Theme.muted()),
                         Span.raw(String.format("%" + w + "d", stat.exchangesInflight))));
 
                 if (stat.exchangesTotal > 0) {
@@ -608,35 +608,35 @@ class DiagramTab extends AbstractTab {
                     int tw = numWidth(stat.meanProcessingTime, stat.maxProcessingTime,
                             stat.minProcessingTime, stat.lastProcessingTime);
                     lines.add(Line.from(
-                            Span.styled(" Mean: ", Style.EMPTY.dim()),
+                            Span.styled(" Mean: ", Theme.muted()),
                             Span.raw(String.format("%" + tw + "d ms", stat.meanProcessingTime))));
                     lines.add(Line.from(
-                            Span.styled(" Max:  ", Style.EMPTY.dim()),
+                            Span.styled(" Max:  ", Theme.muted()),
                             Span.raw(String.format("%" + tw + "d ms", stat.maxProcessingTime))));
                     lines.add(Line.from(
-                            Span.styled(" Min:  ", Style.EMPTY.dim()),
+                            Span.styled(" Min:  ", Theme.muted()),
                             Span.raw(String.format("%" + tw + "d ms", stat.minProcessingTime))));
                     lines.add(Line.from(
-                            Span.styled(" Last: ", Style.EMPTY.dim()),
+                            Span.styled(" Last: ", Theme.muted()),
                             Span.raw(String.format("%" + tw + "d ms", stat.lastProcessingTime))));
 
                     if (stat.lastCompletedExchangeTimestamp > 0 || stat.lastFailedExchangeTimestamp > 0) {
                         long now = System.currentTimeMillis();
                         lines.add(Line.from(Span.raw("")));
                         lines.add(Line.from(
-                                Span.styled(" Since last:", Style.EMPTY.dim())));
+                                Span.styled(" Since last:", Theme.muted())));
                         if (stat.lastCompletedExchangeTimestamp > 0) {
                             long ago = now - stat.lastCompletedExchangeTimestamp;
                             lines.add(Line.from(
-                                    Span.styled("   success: ", Style.EMPTY.dim()),
+                                    Span.styled("   success: ", Theme.muted()),
                                     Span.raw(TimeUtils.printDuration(ago, false))));
                         }
                         if (stat.lastFailedExchangeTimestamp > 0) {
                             long ago = now - stat.lastFailedExchangeTimestamp;
                             lines.add(Line.from(
-                                    Span.styled("   fail:    ", Style.EMPTY.dim()),
+                                    Span.styled("   fail:    ", Theme.muted()),
                                     Span.styled(TimeUtils.printDuration(ago, false),
-                                            Style.EMPTY.fg(Color.LIGHT_RED))));
+                                            Theme.error())));
                         }
                     }
                 }
@@ -736,129 +736,129 @@ class DiagramTab extends AbstractTab {
     @Override
     public String getHelpText() {
         return """
-                                # Diagram
+                # Diagram
 
-                                The Diagram tab shows a visual topology of how routes connect to each other.
-                                This helps you understand the overall message flow in your integration.
+                The Diagram tab shows a visual topology of how routes connect to each other.
+                This helps you understand the overall message flow in your integration.
 
-                                ## Topology View
+                ## Topology View
 
-                                The topology view shows all routes and their connections:
-                                - **Trigger routes** (timer, cron, etc.) appear at the top
-                                - **Downstream routes** appear below, connected by arrows
-                                - Routes that are connected show edges between them
+                The topology view shows all routes and their connections:
+                - **Trigger routes** (timer, cron, etc.) appear at the top
+                - **Downstream routes** appear below, connected by arrows
+                - Routes that are connected show edges between them
 
-                                ## Example Topology
+                ## Example Topology
 
-                                ```
-                                ┌──────────────────┐
-                                │ order-generator  │
-                                │  (timer://gen)   │
-                                │                  │
-                                │      3748        │
-                                └──────────────────┘
-                                         │
-                                         ▼
-                                ┌──────────────────┐
-                                │  process-order   │
-                                │ (direct:process) │
-                                │                  │
-                                │    3748/12!      │
-                                └──────────────────┘
-                                ```
+                ```
+                ┌──────────────────┐
+                │ order-generator  │
+                │  (timer://gen)   │
+                │                  │
+                │      3748        │
+                └──────────────────┘
+                         │
+                         ▼
+                ┌──────────────────┐
+                │  process-order   │
+                │ (direct:process) │
+                │                  │
+                │    3748/12!      │
+                └──────────────────┘
+                ```
 
-                                Each box represents a route. The first line is the route ID,
-                                the second line shows the `from` endpoint, and the bottom line
-                                shows metrics when enabled. Arrows show how routes connect.
+                Each box represents a route. The first line is the route ID,
+                the second line shows the `from` endpoint, and the bottom line
+                shows metrics when enabled. Arrows show how routes connect.
 
-                                ## Metrics
+                ## Metrics
 
-                                When metrics are enabled, each route box shows exchange counts:
-                                - **Green** number — successful exchanges
-                                - **Red** number — failed exchanges
-                                - Combined as `3748/12` means 3748 ok and 12 failed
+                When metrics are enabled, each route box shows exchange counts:
+                - **Green** number — successful exchanges
+                - **Red** number — failed exchanges
+                - Combined as `3748/12` means 3748 ok and 12 failed
 
-                                ## External Systems
+                ## External Systems
 
-                                Press `e` to cycle through three external modes:
+                Press `e` to cycle through three external modes:
 
-                                - **off** — no external endpoints shown
-                                - **edges** — external endpoints that are truly outside Camel are shown
-                                  as dashed boxes in top/bottom bands. Routes sharing an external
-                                  endpoint (e.g. kafka) are connected with a direct arrow.
-                                - **all** — same as edges, but routes sharing an external endpoint
-                                  are connected through an intermediary dashed box showing the
-                                  endpoint name, instead of a direct arrow.
+                - **off** — no external endpoints shown
+                - **edges** — external endpoints that are truly outside Camel are shown
+                  as dashed boxes in top/bottom bands. Routes sharing an external
+                  endpoint (e.g. kafka) are connected with a direct arrow.
+                - **all** — same as edges, but routes sharing an external endpoint
+                  are connected through an intermediary dashed box showing the
+                  endpoint name, instead of a direct arrow.
 
-                                External system boxes are drawn with dashed borders to distinguish
-                                them from route boxes. Dashed edges connect routes to external systems.
+                External system boxes are drawn with dashed borders to distinguish
+                them from route boxes. Dashed edges connect routes to external systems.
 
-                                ## Navigation
+                ## Navigation
 
-                                In the topology view, use arrow keys to select route boxes:
-                                - `↑↓` moves between layers (upstream/downstream routes)
-                                - `←→` moves between routes in the same layer
+                In the topology view, use arrow keys to select route boxes:
+                - `↑↓` moves between layers (upstream/downstream routes)
+                - `←→` moves between routes in the same layer
 
-                                When a route is selected, an **Info panel** appears on the left
-                                showing key metrics: state, uptime, throughput, exchange counts,
-                                and processing times.
+                When a route is selected, an **Info panel** appears on the left
+                showing key metrics: state, uptime, throughput, exchange counts,
+                and processing times.
 
-                                Press `Enter` on a selected route to **drill down** into its
-                                internal EIP structure (the route diagram). Press `Esc` to
-                                return to the topology view.
+                Press `Enter` on a selected route to **drill down** into its
+                internal EIP structure (the route diagram). Press `Esc` to
+                return to the topology view.
 
-                                ## Route Diagram
+                ## Route Diagram
 
-                                In the route diagram, each EIP node shows its type tag (colored)
-                                and endpoint URI or description. Nodes that connect to other routes
-                                display a `↵` indicator — press `Enter` to jump directly to the
-                                linked route's diagram.
+                In the route diagram, each EIP node shows its type tag (colored)
+                and endpoint URI or description. Nodes that connect to other routes
+                display a `↵` indicator — press `Enter` to jump directly to the
+                linked route's diagram.
 
-                                Navigation history is maintained as a stack: pressing `Esc` goes
-                                back to the previous route, and eventually back to the topology view.
+                Navigation history is maintained as a stack: pressing `Esc` goes
+                back to the previous route, and eventually back to the topology view.
 
-                                ## Route Structure Preview
+                ## Route Structure Preview
 
-                                A compact tree structure preview appears in the bottom-right corner
-                                of the diagram area — like a minimap of the route's EIP structure.
+                A compact tree structure preview appears in the bottom-right corner
+                of the diagram area — like a minimap of the route's EIP structure.
 
-                                In **topology mode**, the preview shows the structure of the currently
-                                selected route and updates as you navigate between route boxes.
+                In **topology mode**, the preview shows the structure of the currently
+                selected route and updates as you navigate between route boxes.
 
-                                In **drill-down mode**, the preview highlights the currently selected
-                                EIP node (shown in yellow) as you navigate with arrow keys, giving
-                                you an at-a-glance view of where you are in the route.
+                In **drill-down mode**, the preview highlights the currently selected
+                EIP node (shown in yellow) as you navigate with arrow keys, giving
+                you an at-a-glance view of where you are in the route.
 
-                                ## Keys
+                ## Keys
 
-                                **Topology view:**
-                                - `↑↓←→` — navigate between route boxes
-                                - `Enter` — drill down into selected route
-                                - `c` — show route source code
-                                - `Esc` — close diagram
+                **Topology view:**
+                - `↑↓←→` — navigate between route boxes
+                - `Enter` — drill down into selected route
+                - `c` — show route source code
+                - `Esc` — close diagram
 
-                                **Route diagram:**
-                                - `↑↓←→` — navigate between EIP nodes
-                                - `Enter` — jump to linked route (when `↵` indicator shown)
-                                - `c` — show source code at selected node
-                                - `Esc` — go back (previous route or topology)
-                                - `t` — jump back to topology view
+                **Route diagram:**
+                - `↑↓←→` — navigate between EIP nodes
+                - `Enter` — jump to linked route (when `↵` indicator shown)
+                - `c` — show source code at selected node
+                - `Esc` — go back (previous route or topology)
+                - `t` — jump back to topology view
 
-                                **Source view:**
-                                - `↑↓` — move cursor between lines
-                                - `Ctrl+↑↓` — scroll viewport without moving cursor
-                                - `←→` — horizontal scroll
-                                - `PgUp/PgDn` — page jump
-                                - `Home/End` — go to top/bottom
-                                - `Enter` — select the closest diagram node at cursor line
-                                - `Esc/c` — close source view
+                **Source view:**
+                - `↑↓` — move cursor between lines
+                - `Ctrl+↑↓` — scroll viewport without moving cursor
+                - `←→` — horizontal scroll
+                - `PgUp/PgDn` — page jump
+                - `Home/End` — go to top/bottom
+                - `Enter` — select the closest diagram node at cursor line
+                - `Esc/c` — close source view
 
-                                **Common:**
-                                - `m` — toggle metrics on/off (default: on)
-                                - `e` — toggle external systems on/off (topology only)
-                                - `n` — toggle description labels on/off
-                                - `PgUp/PgDn` — page scroll
-                                - `Home/End` — top/end
+                **Common:**
+                - `m` — toggle metrics on/off (default: on)
+                - `e` — toggle external systems on/off (topology only)
+                - `n` — toggle description labels on/off
+                - `PgUp/PgDn` — page scroll
+                - `Home/End` — top/end
                 """;
     }
 
@@ -872,7 +872,7 @@ class DiagramTab extends AbstractTab {
     }
 
     private Line buildBreadcrumbTitle() {
-        Style nameStyle = Style.EMPTY.fg(Color.YELLOW).bold();
+        Style nameStyle = Theme.label().bold();
         List<Span> spans = new ArrayList<>();
         spans.add(Span.raw(" Route ["));
         if (routeNavigationStack.isEmpty()) {

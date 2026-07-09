@@ -113,7 +113,7 @@ class HealthTabRenderTest {
                 var cell = buffer.get(x, y);
                 if (TuiIcons.HEALTH_DOWN.equals(cell.symbol()) || "D".equals(cell.symbol())) {
                     var fg = cell.style().fg().orElse(null);
-                    if (Color.LIGHT_RED.equals(fg)) {
+                    if (Theme.error().fg().orElse(Color.LIGHT_RED).equals(fg)) {
                         foundRedDown = true;
                         break;
                     }
@@ -150,7 +150,7 @@ class HealthTabRenderTest {
                 var cell = buffer.get(x, y);
                 if (TuiIcons.HEALTH_UP.equals(cell.symbol())) {
                     var fg = cell.style().fg().orElse(null);
-                    if (Color.GREEN.equals(fg)) {
+                    if (Theme.success().fg().orElse(Color.GREEN).equals(fg)) {
                         foundGreenUp = true;
                         break;
                     }

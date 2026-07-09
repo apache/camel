@@ -59,24 +59,26 @@ class ActionsPopup {
         BROWSE_FILES,
         DOCTOR,
         RESET_STATS,
-        RESET_SCREEN,
-        TOGGLE_THEME,
         STOP_ALL,
+        SHELL,
+        SCREEN_SUBMENU,
+        MCP_SUBMENU,
+        BACK,
         SCREENSHOT,
+        TOGGLE_THEME,
+        THEMES_SUBMENU,
+        RESET_SCREEN,
         TAPE_RECORDING,
         TAPE_INSTRUCTIONS,
         CAPTION,
         SHOW_KEYSTROKES,
+        CAMEL_ANIMATION,
         SETUP_AI,
         MCP_INFO,
         MCP_LOG,
         AI_LOG,
-        SHELL
+        AI_PROMPT
     }
-
-    private static final int[] GROUP_SIZES = { 2, 6, 4, 5 };
-    private static final int MCP_GROUP_SIZE = 4;
-    private static final int SHELL_GROUP_SIZE = 1;
 
     private final Supplier<Set<String>> runningNames;
     private final Supplier<List<IntegrationInfo>> integrations;
@@ -88,8 +90,11 @@ class ActionsPopup {
     private final Runnable burstCallback;
     private Runnable resetStatsAction;
     private Runnable resetScreenAction;
+    private Runnable themeRefreshAction;
     private Runnable openShellAction;
+    private Runnable openAiPromptAction;
     private Runnable browseFilesAction;
+    private Runnable camelAnimationAction;
     private Runnable switchIntegrationAction;
     private final Supplier<Boolean> tapeRecordingActive;
     private MonitorContext ctx;
@@ -100,10 +105,13 @@ class ActionsPopup {
 
     private boolean showActionsMenu;
     private final ListState actionsMenuState = new ListState();
+    private String currentSubmenu;
+    private int savedMainSelection;
     // Absolute bounds of the single-line list popups captured during render, used to hit-test clicks.
     private Rect actionsMenuRect;
 
     private final GotoTabPopup gotoTabPopup = new GotoTabPopup();
+    private final ThemePopup themePopup = new ThemePopup();
     private final DocViewerPopup docViewerPopup = new DocViewerPopup();
 
     private final ExampleBrowserPopup exampleBrowserPopup;
@@ -115,6 +123,7 @@ class ActionsPopup {
     private final AiLogPopup aiLogPopup = new AiLogPopup();
 
     private final DoctorPopup doctorPopup = new DoctorPopup();
+    private final FolderBrowser sendFileBrowser = new FolderBrowser();
     private final SendMessagePopup sendMessagePopup = new SendMessagePopup();
     private final StopAllPopup stopAllPopup;
     private final CaptionOverlay captionOverlay;
@@ -152,6 +161,7 @@ class ActionsPopup {
         folderInputPopup.setBurstCallback(burstCallback);
         folderInputPopup.setOnFolderConfirmed(this::openFolderRunOptionsForm);
         folderInputPopup.setInfraCatalogClearer(infraBrowserPopup::clearCatalog);
+        sendMessagePopup.setFileBrowser(sendFileBrowser);
     }
 
     void setContext(MonitorContext ctx) {
@@ -175,12 +185,25 @@ class ActionsPopup {
         this.resetScreenAction = resetScreenAction;
     }
 
+    void setThemeRefreshAction(Runnable themeRefreshAction) {
+        this.themeRefreshAction = themeRefreshAction;
+        themePopup.setThemeRefreshAction(themeRefreshAction);
+    }
+
     void setOpenShellAction(Runnable openShellAction) {
         this.openShellAction = openShellAction;
     }
 
+    void setOpenAiPromptAction(Runnable openAiPromptAction) {
+        this.openAiPromptAction = openAiPromptAction;
+    }
+
     void setBrowseFilesAction(Runnable browseFilesAction) {
         this.browseFilesAction = browseFilesAction;
+    }
+
+    void setCamelAnimationAction(Runnable camelAnimationAction) {
+        this.camelAnimationAction = camelAnimationAction;
     }
 
     void setSwitchIntegrationAction(Runnable switchIntegrationAction) {
@@ -209,38 +232,12 @@ class ActionsPopup {
     }
 
     private int visualActionCount() {
-        int total = 0;
-        for (int gs : GROUP_SIZES) {
-            total += gs;
-        }
-        int dividers = GROUP_SIZES.length - 1;
-        if (mcpEnabled) {
-            total += MCP_GROUP_SIZE;
-            dividers++;
-        }
-        total += SHELL_GROUP_SIZE;
-        dividers++;
-        return total + dividers;
+        return buildVisualActionList().size();
     }
 
     private boolean isDividerIndex(int visualIndex) {
-        int pos = 0;
-        for (int i = 0; i < GROUP_SIZES.length; i++) {
-            pos += GROUP_SIZES[i];
-            if (visualIndex == pos) {
-                return true;
-            }
-            pos++;
-        }
-        if (mcpEnabled) {
-            pos += MCP_GROUP_SIZE;
-            if (visualIndex == pos) {
-                return true;
-            }
-            pos++;
-        }
-        pos += SHELL_GROUP_SIZE;
-        return false;
+        List<Action> flat = buildVisualActionList();
+        return visualIndex >= 0 && visualIndex < flat.size() && flat.get(visualIndex) == null;
     }
 
     private Action resolveAction(int visualIndex) {
@@ -252,6 +249,16 @@ class ActionsPopup {
     }
 
     private List<Action> buildVisualActionList() {
+        if ("screen".equals(currentSubmenu)) {
+            return buildScreenSubmenuList();
+        }
+        if ("mcp".equals(currentSubmenu)) {
+            return buildMcpSubmenuList();
+        }
+        return buildMainMenuList();
+    }
+
+    private List<Action> buildMainMenuList() {
         List<Action> flat = new ArrayList<>();
         flat.add(Action.GOTO_TAB);
         flat.add(Action.SWITCH_INTEGRATION);
@@ -260,17 +267,33 @@ class ActionsPopup {
                 Action.SEND_MESSAGE, Action.RUN_EXAMPLE, Action.RUN_FOLDER, Action.RUN_INFRA, Action.BROWSE_FILES,
                 Action.STOP_ALL));
         flat.add(null);
-        flat.addAll(List.of(Action.DOCTOR, Action.RESET_STATS, Action.RESET_SCREEN, Action.TOGGLE_THEME));
-        flat.add(null);
-        flat.addAll(List.of(
-                Action.SCREENSHOT, Action.TAPE_RECORDING, Action.TAPE_INSTRUCTIONS, Action.CAPTION,
-                Action.SHOW_KEYSTROKES));
+        flat.addAll(List.of(Action.DOCTOR, Action.RESET_STATS, Action.SCREEN_SUBMENU));
         if (mcpEnabled) {
             flat.add(null);
-            flat.addAll(List.of(Action.SETUP_AI, Action.AI_LOG, Action.MCP_INFO, Action.MCP_LOG));
+            flat.add(Action.MCP_SUBMENU);
         }
         flat.add(null);
         flat.add(Action.SHELL);
+        return flat;
+    }
+
+    private List<Action> buildScreenSubmenuList() {
+        List<Action> flat = new ArrayList<>();
+        flat.add(Action.BACK);
+        flat.add(null);
+        flat.addAll(List.of(Action.THEMES_SUBMENU, Action.SCREENSHOT, Action.RESET_SCREEN));
+        flat.add(null);
+        flat.addAll(List.of(Action.TAPE_RECORDING, Action.TAPE_INSTRUCTIONS, Action.CAPTION, Action.SHOW_KEYSTROKES));
+        flat.add(null);
+        flat.add(Action.CAMEL_ANIMATION);
+        return flat;
+    }
+
+    private List<Action> buildMcpSubmenuList() {
+        List<Action> flat = new ArrayList<>();
+        flat.add(Action.BACK);
+        flat.add(null);
+        flat.addAll(List.of(Action.AI_PROMPT, Action.SETUP_AI, Action.AI_LOG, Action.MCP_INFO, Action.MCP_LOG));
         return flat;
     }
 
@@ -308,7 +331,8 @@ class ActionsPopup {
     }
 
     boolean isVisible() {
-        return showActionsMenu || gotoTabPopup.isVisible() || exampleBrowserPopup.isVisible()
+        return showActionsMenu || themePopup.isVisible() || gotoTabPopup.isVisible()
+                || exampleBrowserPopup.isVisible()
                 || folderInputPopup.isVisible()
                 || runOptionsForm.isVisible()
                 || docViewerPopup.isVisible()
@@ -318,6 +342,9 @@ class ActionsPopup {
     }
 
     SelectionContext getSelectionContext() {
+        if (themePopup.isVisible()) {
+            return themePopup.getSelectionContext();
+        }
         if (gotoTabPopup.isVisible()) {
             return gotoTabPopup.getSelectionContext();
         }
@@ -345,37 +372,48 @@ class ActionsPopup {
 
     List<String> getActionLabels() {
         List<String> labels = new ArrayList<>();
-        // Group 0: Navigation
-        labels.add("Go to...");
-        labels.add("Switch Integration (F3)");
-        labels.add("───");
-        // Group 1: User Actions
-        labels.add("Send Message");
-        labels.add("Run an Example...");
-        labels.add("Run from Folder...");
-        labels.add("Run Dev/Infra Service...");
-        labels.add("Browse Files...");
-        labels.add("Stop All");
-        labels.add("───");
-        // Group 2: Diagnostics
-        labels.add("Run Doctor");
-        labels.add("Reset Stats");
-        labels.add("Reset Screen");
-        labels.add("dark".equals(Theme.mode()) ? "Light Theme" : "Dark Theme");
-        labels.add("───");
-        // Group 3: Recording & Presentation
-        labels.add("Take Screenshot");
-        labels.add(tapeRecordingActive.get() ? "Stop Tape Recording" : "Start Tape Recording");
-        labels.add("Tape Recording Guide");
-        labels.add("Caption...");
-        labels.add(keystrokesEnabled.get() ? "Hide Keystrokes" : "Show Keystrokes");
-        // Group 4: MCP
-        if (mcpEnabled) {
+        if ("screen".equals(currentSubmenu)) {
+            labels.add("..");
             labels.add("───");
+            labels.add("Themes...");
+            labels.add("Take Screenshot");
+            labels.add("Reset Screen");
+            labels.add("───");
+            labels.add(tapeRecordingActive.get() ? "Stop Tape Recording" : "Start Tape Recording");
+            labels.add("Tape Recording Guide");
+            labels.add("Caption...");
+            labels.add(keystrokesEnabled.get() ? "Hide Keystrokes" : "Show Keystrokes");
+            labels.add("───");
+            labels.add("Camel Animation");
+            return labels;
+        }
+        if ("mcp".equals(currentSubmenu)) {
+            labels.add("..");
+            labels.add("───");
+            labels.add("AI Prompt");
             labels.add("Setup MCP");
             labels.add("AI Log");
             labels.add("MCP Info");
             labels.add("MCP Log");
+            return labels;
+        }
+        // Main menu
+        labels.add("Go to... (Shift+F2)");
+        labels.add("Switch Integration (F3)");
+        labels.add("───");
+        labels.add("Send Message");
+        labels.add("Run an Example...");
+        labels.add("Run from Folder...");
+        labels.add("Run Dev/Infra Service...");
+        labels.add("Browse Files... (Ctrl+F)");
+        labels.add("Stop All");
+        labels.add("───");
+        labels.add("Run Doctor");
+        labels.add("Reset Stats");
+        labels.add("Screen...");
+        if (mcpEnabled) {
+            labels.add("───");
+            labels.add("AI & MCP...");
         }
         labels.add("───");
         labels.add("Shell");
@@ -384,11 +422,18 @@ class ActionsPopup {
 
     void open() {
         showActionsMenu = true;
+        currentSubmenu = null;
         actionsMenuState.select(0);
+    }
+
+    void openGotoTab() {
+        gotoTabPopup.open();
     }
 
     void close() {
         showActionsMenu = false;
+        currentSubmenu = null;
+        themePopup.close();
         gotoTabPopup.close();
         exampleBrowserPopup.close();
         folderInputPopup.close();
@@ -419,7 +464,7 @@ class ActionsPopup {
 
     boolean handleKeyEvent(KeyEvent ke) {
         if (sendMessagePopup.isVisible()) {
-            if (ke.isConfirm()) {
+            if (ke.isKey(KeyCode.F5) && !sendFileBrowser.isVisible()) {
                 sendMessagePopup.doSend(ctx, scheduler);
             } else {
                 sendMessagePopup.handleKeyEvent(ke);
@@ -493,6 +538,9 @@ class ActionsPopup {
         if (doctorPopup.handleKeyEvent(ke)) {
             return true;
         }
+        if (themePopup.handleKeyEvent(ke)) {
+            return true;
+        }
         if (gotoTabPopup.isVisible()) {
             boolean wasVisible = gotoTabPopup.isVisible();
             gotoTabPopup.handleKeyEvent(ke);
@@ -503,7 +551,12 @@ class ActionsPopup {
         }
         if (showActionsMenu) {
             if (ke.isCancel()) {
-                showActionsMenu = false;
+                if (currentSubmenu != null) {
+                    currentSubmenu = null;
+                    actionsMenuState.select(savedMainSelection);
+                } else {
+                    showActionsMenu = false;
+                }
             } else if (ke.isUp()) {
                 navigateActionsMenu(-1);
             } else if (ke.isDown()) {
@@ -529,6 +582,20 @@ class ActionsPopup {
                     Action action = resolveAction(sel);
                     if (action == null) {
                         // divider selected, ignore
+                    } else if (action == Action.BACK) {
+                        currentSubmenu = null;
+                        actionsMenuState.select(savedMainSelection);
+                    } else if (action == Action.THEMES_SUBMENU) {
+                        showActionsMenu = false;
+                        themePopup.open();
+                    } else if (action == Action.SCREEN_SUBMENU) {
+                        savedMainSelection = sel;
+                        currentSubmenu = "screen";
+                        actionsMenuState.select(0);
+                    } else if (action == Action.MCP_SUBMENU) {
+                        savedMainSelection = sel;
+                        currentSubmenu = "mcp";
+                        actionsMenuState.select(0);
                     } else if (action == Action.GOTO_TAB) {
                         showActionsMenu = false;
                         gotoTabPopup.open();
@@ -575,6 +642,11 @@ class ActionsPopup {
                     } else if (action == Action.RUN_INFRA) {
                         showActionsMenu = false;
                         infraBrowserPopup.open();
+                    } else if (action == Action.AI_PROMPT) {
+                        showActionsMenu = false;
+                        if (openAiPromptAction != null) {
+                            openAiPromptAction.run();
+                        }
                     } else if (action == Action.SETUP_AI) {
                         showActionsMenu = false;
                         openSetupAI();
@@ -603,8 +675,9 @@ class ActionsPopup {
                             resetScreenAction.run();
                         }
                     } else if (action == Action.TOGGLE_THEME) {
-                        showActionsMenu = false;
                         Theme.toggle();
+                        refreshTheme();
+                        showActionsMenu = false;
                     } else if (action == Action.STOP_ALL) {
                         showActionsMenu = false;
                         stopAllPopup.open();
@@ -612,6 +685,11 @@ class ActionsPopup {
                     } else if (action == Action.CAPTION) {
                         showActionsMenu = false;
                         captionOverlay.openInline();
+                    } else if (action == Action.CAMEL_ANIMATION) {
+                        showActionsMenu = false;
+                        if (camelAnimationAction != null) {
+                            camelAnimationAction.run();
+                        }
                     }
                 }
             }
@@ -632,6 +710,9 @@ class ActionsPopup {
     boolean handleMouseEvent(MouseEvent me) {
         if (!isVisible()) {
             return false;
+        }
+        if (themePopup.isVisible()) {
+            return themePopup.handleMouseEvent(me);
         }
         if (gotoTabPopup.isVisible()) {
             return gotoTabPopup.handleMouseEvent(me);
@@ -696,6 +777,9 @@ class ActionsPopup {
     }
 
     void render(Frame frame, Rect area) {
+        if (themePopup.isVisible()) {
+            themePopup.render(frame, area);
+        }
         if (gotoTabPopup.isVisible()) {
             gotoTabPopup.render(frame, area);
         }
@@ -782,6 +866,10 @@ class ActionsPopup {
             exampleBrowserPopup.renderFooter(spans);
             return;
         }
+        if (themePopup.isVisible()) {
+            themePopup.renderFooter(spans);
+            return;
+        }
         if (gotoTabPopup.isVisible()) {
             hint(spans, "type", "filter");
             hint(spans, TuiIcons.HINT_SCROLL, "navigate");
@@ -792,7 +880,7 @@ class ActionsPopup {
         if (showActionsMenu) {
             hint(spans, TuiIcons.HINT_SCROLL, "navigate");
             hint(spans, "Enter", "select");
-            hintLast(spans, "Esc", "cancel");
+            hintLast(spans, "Esc", currentSubmenu != null ? "back" : "cancel");
         }
     }
 
@@ -803,6 +891,16 @@ class ActionsPopup {
     // ---- Rendering ----
 
     private void renderActionsMenu(Frame frame, Rect area) {
+        if ("screen".equals(currentSubmenu)) {
+            renderScreenSubmenu(frame, area);
+        } else if ("mcp".equals(currentSubmenu)) {
+            renderMcpSubmenu(frame, area);
+        } else {
+            renderMainMenu(frame, area);
+        }
+    }
+
+    private void renderMainMenu(Frame frame, Rect area) {
         int count = visualActionCount();
         int popupW = 40;
         int popupH = 2 + count;
@@ -813,22 +911,14 @@ class ActionsPopup {
 
         frame.renderWidget(Clear.INSTANCE, popup);
         String divider = "  ─────────────────────────────────";
-        // CAMEL-23818: use plain 2-wide emoji here. TamboUI mismeasures base-glyph + VS16
-        // sequences as 1-wide (fixed upstream in tamboui/tamboui#388), which left stray chars.
-        String keystrokeLabel = keystrokesEnabled.get()
-                ? TuiIcons.menuItem(TuiIcons.KEYSTROKES, "Hide Keystrokes")
-                : TuiIcons.menuItem(TuiIcons.KEYSTROKES, "Show Keystrokes");
         String stopLabel = stopAllPopup.hasBothGroups()
                 ? TuiIcons.menuItem(TuiIcons.STOP, "Stop All...")
                 : TuiIcons.menuItem(TuiIcons.STOP, "Stop All");
-        String tapeLabel = tapeRecordingActive.get()
-                ? TuiIcons.menuItem(TuiIcons.STOP, "Stop Tape Recording (Ctrl+R)")
-                : TuiIcons.menuItem(TuiIcons.RECORD, "Start Tape Recording (Ctrl+R)");
 
         boolean canSwitch = hasMultipleIntegrations();
         List<ListItem> items = new ArrayList<>();
         // Group 0: Navigation
-        items.add(ListItem.from(TuiIcons.menuItem(TuiIcons.GO_TO, "Go to...")));
+        items.add(ListItem.from(TuiIcons.menuItem(TuiIcons.GO_TO, "Go to... (Shift+F2)")));
         items.add(canSwitch
                 ? ListItem.from(TuiIcons.menuItem(TuiIcons.SWITCH, "Switch Integration (F3)"))
                 : ListItem.from(TuiIcons.menuItem(TuiIcons.SWITCH, "Switch Integration (F3)")).style(Style.EMPTY.dim()));
@@ -842,36 +932,22 @@ class ActionsPopup {
         items.add(ListItem.from(TuiIcons.menuItem(TuiIcons.FOLDER_OPEN, "Run from Folder...")));
         items.add(ListItem.from(TuiIcons.menuItem(TuiIcons.INFRA, "Run Dev/Infra Service...")));
         items.add(hasSelection
-                ? ListItem.from(TuiIcons.menuItem(TuiIcons.FOLDER, "Browse Files..."))
-                : ListItem.from(TuiIcons.menuItem(TuiIcons.FOLDER, "Browse Files...")).style(Style.EMPTY.dim()));
+                ? ListItem.from(TuiIcons.menuItem(TuiIcons.FOLDER, "Browse Files... (Ctrl+F)"))
+                : ListItem.from(TuiIcons.menuItem(TuiIcons.FOLDER, "Browse Files... (Ctrl+F)")).style(Style.EMPTY.dim()));
         items.add(ListItem.from(stopLabel));
         items.add(ListItem.from(divider).style(Style.EMPTY.dim()));
-        // Group 2: Diagnostics
+        // Group 2: Diagnostics & Screen
         items.add(ListItem.from(TuiIcons.menuItem(TuiIcons.DOCTOR, "Run Doctor")));
         items.add(ListItem.from(TuiIcons.menuItem(TuiIcons.RESET, "Reset Stats")));
-        items.add(ListItem.from(TuiIcons.menuItem(TuiIcons.CLEAN, "Reset Screen")));
-        String themeLabel = "dark".equals(Theme.mode())
-                ? TuiIcons.menuItem(TuiIcons.LIGHT_THEME, "Light Theme")
-                : TuiIcons.menuItem(TuiIcons.DARK_THEME, "Dark Theme");
-        items.add(ListItem.from(themeLabel));
-        items.add(ListItem.from(divider).style(Style.EMPTY.dim()));
-        // Group 3: Recording & Presentation
-        items.add(ListItem.from(TuiIcons.menuItem(TuiIcons.SCREENSHOT, "Take Screenshot")));
-        items.add(ListItem.from(tapeLabel));
-        items.add(ListItem.from(TuiIcons.menuItem(TuiIcons.DOCUMENT, "Tape Recording Guide")));
-        items.add(ListItem.from(TuiIcons.menuItem(TuiIcons.CAPTION, "Caption...")));
-        items.add(ListItem.from(keystrokeLabel));
-        // Group 4: MCP
+        items.add(ListItem.from(TuiIcons.menuItem(TuiIcons.COMPUTER, "Screen...")));
+        // Group 3: MCP (conditional)
         if (mcpEnabled) {
             items.add(ListItem.from(divider).style(Style.EMPTY.dim()));
-            items.add(ListItem.from(TuiIcons.menuItem(TuiIcons.MCP_BRAIN, "Setup MCP")));
-            items.add(ListItem.from(TuiIcons.menuItem(TuiIcons.CAPTION, "AI Log")));
-            items.add(ListItem.from(TuiIcons.menuItem(TuiIcons.MCP, "MCP Info")));
-            items.add(ListItem.from(TuiIcons.menuItem(TuiIcons.MCP_LOG, "MCP Log")));
+            items.add(ListItem.from(TuiIcons.menuItem(TuiIcons.MCP, "AI & MCP...")));
         }
-        // Group 5: Shell
+        // Group 4: Shell
         items.add(ListItem.from(divider).style(Style.EMPTY.dim()));
-        items.add(ListItem.from("  >_ Shell"));
+        items.add(ListItem.from("  >_ Shell (F6)"));
         ListWidget list = ListWidget.builder()
                 .items(items.toArray(ListItem[]::new))
                 .highlightStyle(Theme.selectionBg())
@@ -880,6 +956,82 @@ class ActionsPopup {
                 .block(Block.builder()
                         .borderType(BorderType.ROUNDED).borders(Borders.ALL)
                         .title(" Actions ")
+                        .build())
+                .build();
+        frame.renderStatefulWidget(list, popup, actionsMenuState);
+    }
+
+    private void renderScreenSubmenu(Frame frame, Rect area) {
+        int count = visualActionCount();
+        int popupW = 40;
+        int popupH = 2 + count;
+        int x = area.left() + Math.max(0, (area.width() - popupW) / 2);
+        int y = area.top() + 2;
+        Rect popup = new Rect(x, y, Math.min(popupW, area.width()), Math.min(popupH, area.height() - 2));
+        this.actionsMenuRect = popup;
+
+        frame.renderWidget(Clear.INSTANCE, popup);
+        String divider = "  ─────────────────────────────────";
+        String keystrokeLabel = keystrokesEnabled.get()
+                ? TuiIcons.menuItem(TuiIcons.KEYSTROKES, "Hide Keystrokes")
+                : TuiIcons.menuItem(TuiIcons.KEYSTROKES, "Show Keystrokes");
+        String tapeLabel = tapeRecordingActive.get()
+                ? TuiIcons.menuItem(TuiIcons.STOP, "Stop Tape Recording (Ctrl+R)")
+                : TuiIcons.menuItem(TuiIcons.RECORD, "Start Tape Recording (Ctrl+R)");
+        List<ListItem> items = new ArrayList<>();
+        items.add(ListItem.from("  .."));
+        items.add(ListItem.from(divider).style(Style.EMPTY.dim()));
+        items.add(ListItem.from(TuiIcons.menuItem(TuiIcons.THEMES, "Themes...")));
+        items.add(ListItem.from(TuiIcons.menuItem(TuiIcons.SCREENSHOT, "Take Screenshot")));
+        items.add(ListItem.from(TuiIcons.menuItem(TuiIcons.CLEAN, "Reset Screen")));
+        items.add(ListItem.from(divider).style(Style.EMPTY.dim()));
+        items.add(ListItem.from(tapeLabel));
+        items.add(ListItem.from(TuiIcons.menuItem(TuiIcons.DOCUMENT, "Tape Recording Guide")));
+        items.add(ListItem.from(TuiIcons.menuItem(TuiIcons.CAPTION, "Caption...")));
+        items.add(ListItem.from(keystrokeLabel));
+        items.add(ListItem.from(divider).style(Style.EMPTY.dim()));
+        items.add(ListItem.from(TuiIcons.menuItem(TuiIcons.CAMEL, "Camel Animation")));
+        ListWidget list = ListWidget.builder()
+                .items(items.toArray(ListItem[]::new))
+                .highlightStyle(Theme.selectionBg())
+                .highlightSymbol("")
+                .scrollMode(ScrollMode.NONE)
+                .block(Block.builder()
+                        .borderType(BorderType.ROUNDED).borders(Borders.ALL)
+                        .title(" Screen ")
+                        .build())
+                .build();
+        frame.renderStatefulWidget(list, popup, actionsMenuState);
+    }
+
+    private void renderMcpSubmenu(Frame frame, Rect area) {
+        int count = visualActionCount();
+        int popupW = 40;
+        int popupH = 2 + count;
+        int x = area.left() + Math.max(0, (area.width() - popupW) / 2);
+        int y = area.top() + 2;
+        Rect popup = new Rect(x, y, Math.min(popupW, area.width()), Math.min(popupH, area.height() - 2));
+        this.actionsMenuRect = popup;
+
+        frame.renderWidget(Clear.INSTANCE, popup);
+        String divider = "  ─────────────────────────────────";
+
+        List<ListItem> items = new ArrayList<>();
+        items.add(ListItem.from("  .."));
+        items.add(ListItem.from(divider).style(Style.EMPTY.dim()));
+        items.add(ListItem.from(TuiIcons.menuItem(TuiIcons.MCP_BRAIN, "AI Prompt (F8)")));
+        items.add(ListItem.from(TuiIcons.menuItem(TuiIcons.README, "Setup MCP")));
+        items.add(ListItem.from(TuiIcons.menuItem(TuiIcons.CAPTION, "AI Log")));
+        items.add(ListItem.from(TuiIcons.menuItem(TuiIcons.MCP, "MCP Info")));
+        items.add(ListItem.from(TuiIcons.menuItem(TuiIcons.MCP_LOG, "MCP Log")));
+        ListWidget list = ListWidget.builder()
+                .items(items.toArray(ListItem[]::new))
+                .highlightStyle(Theme.selectionBg())
+                .highlightSymbol("")
+                .scrollMode(ScrollMode.NONE)
+                .block(Block.builder()
+                        .borderType(BorderType.ROUNDED).borders(Borders.ALL)
+                        .title(" AI & MCP ")
                         .build())
                 .build();
         frame.renderStatefulWidget(list, popup, actionsMenuState);
@@ -932,7 +1084,7 @@ class ActionsPopup {
             setNotification("No routes available", true);
             return;
         }
-        sendMessagePopup.open(ctx, pid, info.name, info.routes, preSelectedRouteId);
+        sendMessagePopup.open(ctx, pid, info.name, info.routes, preSelectedRouteId, info.directory);
         preSelectedRouteId = null;
     }
 
@@ -1090,7 +1242,10 @@ class ActionsPopup {
                     resetScreenAction.run();
                 }
             }
-            case TOGGLE_THEME -> Theme.toggle();
+            case TOGGLE_THEME -> {
+                Theme.toggle();
+                refreshTheme();
+            }
             case SCREENSHOT -> screenshotAction.run();
             case SHOW_KEYSTROKES -> toggleKeystrokes.run();
             case TAPE_RECORDING -> toggleTapeRecording.run();
@@ -1100,6 +1255,16 @@ class ActionsPopup {
             case MCP_INFO -> openMcpInfo();
             case MCP_LOG -> openMcpLog();
             case AI_LOG -> openAiLog();
+            case AI_PROMPT -> {
+                if (openAiPromptAction != null) {
+                    openAiPromptAction.run();
+                }
+            }
+            case CAMEL_ANIMATION -> {
+                if (camelAnimationAction != null) {
+                    camelAnimationAction.run();
+                }
+            }
             default -> {
                 return false;
             }
@@ -1109,6 +1274,12 @@ class ActionsPopup {
 
     TabRegistry.TabEntry consumePendingGotoEntry() {
         return gotoTabPopup.consumePendingEntry();
+    }
+
+    private void refreshTheme() {
+        if (themeRefreshAction != null) {
+            themeRefreshAction.run();
+        }
     }
 
 }

@@ -22,7 +22,6 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import dev.tamboui.buffer.Buffer;
 import dev.tamboui.layout.Rect;
-import dev.tamboui.style.Color;
 import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.Span;
 import dev.tamboui.tui.event.KeyEvent;
@@ -118,7 +117,7 @@ class MetricsTabRenderTest {
 
         // Use "." which only appears in the metric name (e.g., "camel.exchanges.total"),
         // not in the type label "counter".
-        boolean foundCyan = TuiTestHelper.findCellWithColor(buffer, ".", Color.CYAN);
+        boolean foundCyan = TuiTestHelper.findCellWithColor(buffer, ".", Theme.accent());
         assertTrue(foundCyan, "Metric name should use CYAN color");
     }
 

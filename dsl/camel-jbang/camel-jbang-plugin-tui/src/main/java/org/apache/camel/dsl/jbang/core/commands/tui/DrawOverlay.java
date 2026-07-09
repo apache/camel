@@ -164,10 +164,17 @@ class DrawOverlay {
         List<DrawCell> cells = new ArrayList<>();
         Style s = Style.EMPTY.fg(color).bold();
         int col = x;
+        int row = y;
         for (int i = 0; i < text.length();) {
             int cp = text.codePointAt(i);
+            if (cp == '\n') {
+                row++;
+                col = x;
+                i++;
+                continue;
+            }
             String ch = new String(Character.toChars(cp));
-            cells.add(new DrawCell(col, y, ch, s));
+            cells.add(new DrawCell(col, row, ch, s));
             col += Math.max(1, dev.tamboui.text.CharWidth.of(cp));
             i += Character.charCount(cp);
         }

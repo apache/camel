@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.pqc;
 
+import java.time.Duration;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -23,6 +24,8 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.component.pqc.crypto.*;
 import org.apache.camel.component.pqc.crypto.hybrid.*;
 import org.apache.camel.component.pqc.crypto.kem.*;
+import org.apache.camel.component.pqc.lifecycle.KeyLifecycleManager;
+import org.apache.camel.component.pqc.lifecycle.KeyRotationScheduler;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.HealthCheckComponent;
@@ -36,6 +39,24 @@ public class PQCComponent extends HealthCheckComponent {
 
     @Metadata
     private PQCConfiguration configuration = new PQCConfiguration();
+    @Metadata(label = "advanced", defaultValue = "false",
+              description = "Whether to start an automated background key rotation scheduler for this component."
+                            + " Requires keyLifecycleManager to be set. The scheduler periodically rotates keys that"
+                            + " exceed the configured age and/or usage policy.")
+    private boolean keyRotationSchedulerEnabled;
+    @Metadata(label = "advanced", defaultValue = "3600000", javaType = "java.time.Duration",
+              description = "Interval between key rotation checks when the scheduler is enabled.")
+    private long keyRotationCheckInterval = 3600000L;
+    @Metadata(label = "advanced", javaType = "java.time.Duration",
+              description = "When the scheduler is enabled, rotate keys older than this age. If not set, age is not used"
+                            + " as a rotation signal.")
+    private long keyRotationMaxAge;
+    @Metadata(label = "advanced", defaultValue = "0",
+              description = "When the scheduler is enabled, rotate keys whose recorded usage count reaches this value. 0"
+                            + " disables usage-based rotation.")
+    private long keyRotationMaxUsage;
+
+    private KeyRotationScheduler keyRotationScheduler;
 
     public PQCComponent() {
         this(null);
@@ -260,6 +281,31 @@ public class PQCComponent extends HealthCheckComponent {
         }
     }
 
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+        if (keyRotationSchedulerEnabled) {
+            KeyLifecycleManager manager = configuration != null ? configuration.getKeyLifecycleManager() : null;
+            ObjectHelper.notNull(manager,
+                    "keyLifecycleManager (required when keyRotationSchedulerEnabled=true)");
+            keyRotationScheduler = new KeyRotationScheduler(manager)
+                    .setCheckInterval(Duration.ofMillis(keyRotationCheckInterval))
+                    .setMaxKeyAge(keyRotationMaxAge > 0 ? Duration.ofMillis(keyRotationMaxAge) : null)
+                    .setMaxKeyUsage(keyRotationMaxUsage);
+            keyRotationScheduler.setCamelContext(getCamelContext());
+            keyRotationScheduler.start();
+        }
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        if (keyRotationScheduler != null) {
+            keyRotationScheduler.stop();
+            keyRotationScheduler = null;
+        }
+        super.doStop();
+    }
+
     public PQCConfiguration getConfiguration() {
         return configuration;
     }
@@ -269,5 +315,58 @@ public class PQCComponent extends HealthCheckComponent {
      */
     public void setConfiguration(PQCConfiguration configuration) {
         this.configuration = configuration;
+    }
+
+    public boolean isKeyRotationSchedulerEnabled() {
+        return keyRotationSchedulerEnabled;
+    }
+
+    /**
+     * Whether to start an automated background key rotation scheduler for this component. Requires keyLifecycleManager
+     * to be set. The scheduler periodically rotates keys that exceed the configured age and/or usage policy.
+     */
+    public void setKeyRotationSchedulerEnabled(boolean keyRotationSchedulerEnabled) {
+        this.keyRotationSchedulerEnabled = keyRotationSchedulerEnabled;
+    }
+
+    public long getKeyRotationCheckInterval() {
+        return keyRotationCheckInterval;
+    }
+
+    /**
+     * Interval between key rotation checks when the scheduler is enabled.
+     */
+    public void setKeyRotationCheckInterval(long keyRotationCheckInterval) {
+        this.keyRotationCheckInterval = keyRotationCheckInterval;
+    }
+
+    public long getKeyRotationMaxAge() {
+        return keyRotationMaxAge;
+    }
+
+    /**
+     * When the scheduler is enabled, rotate keys older than this age. If not set, age is not used as a rotation signal.
+     */
+    public void setKeyRotationMaxAge(long keyRotationMaxAge) {
+        this.keyRotationMaxAge = keyRotationMaxAge;
+    }
+
+    public long getKeyRotationMaxUsage() {
+        return keyRotationMaxUsage;
+    }
+
+    /**
+     * When the scheduler is enabled, rotate keys whose recorded usage count reaches this value. 0 disables usage-based
+     * rotation.
+     */
+    public void setKeyRotationMaxUsage(long keyRotationMaxUsage) {
+        this.keyRotationMaxUsage = keyRotationMaxUsage;
+    }
+
+    /**
+     * The automated key rotation scheduler created when keyRotationSchedulerEnabled is true, or null.
+     */
+    public KeyRotationScheduler getKeyRotationScheduler() {
+        return keyRotationScheduler;
     }
 }

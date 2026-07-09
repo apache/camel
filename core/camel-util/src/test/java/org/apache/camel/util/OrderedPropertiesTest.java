@@ -22,6 +22,8 @@ import java.util.Properties;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class OrderedPropertiesTest {
 
@@ -70,6 +72,45 @@ public class OrderedPropertiesTest {
         assertEquals("2", it.next());
         assertEquals("500", it.next());
         assertEquals("1234", it.next());
+    }
+
+    @Test
+    public void testContainsKey() {
+        Properties prop = new OrderedProperties();
+        prop.setProperty("foo", "bar");
+
+        assertTrue(prop.containsKey("foo"));
+        assertFalse(prop.containsKey("bar"));
+    }
+
+    @Test
+    public void testContainsValue() {
+        Properties prop = new OrderedProperties();
+        prop.setProperty("foo", "bar");
+
+        assertTrue(prop.containsValue("bar"));
+        assertFalse(prop.containsValue("foo"));
+    }
+
+    @Test
+    public void testContainsLegacy() {
+        Properties prop = new OrderedProperties();
+        prop.setProperty("foo", "bar");
+
+        assertTrue(prop.contains("bar"));
+        assertFalse(prop.contains("foo"));
+    }
+
+    @Test
+    public void testContainsKeyAfterRemove() {
+        Properties prop = new OrderedProperties();
+        prop.setProperty("foo", "bar");
+
+        assertTrue(prop.containsKey("foo"));
+
+        prop.remove("foo");
+
+        assertFalse(prop.containsKey("foo"));
     }
 
 }

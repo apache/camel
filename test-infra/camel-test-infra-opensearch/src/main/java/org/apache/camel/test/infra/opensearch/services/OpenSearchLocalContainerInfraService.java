@@ -66,6 +66,10 @@ public class OpenSearchLocalContainerInfraService implements OpenSearchInfraServ
 
                 withLogConsumer(new Slf4jLogConsumer(LOG));
 
+                // Disable the observability plugin to avoid startup issues (CAMEL-23502)
+                withEnv("OPENSEARCH_JAVA_OPTS",
+                        "-Dopensearch.cgroups.hierarchy.override=/ -Dopensearch.plugin.disable=opensearch-observability");
+
                 ContainerEnvironmentUtil.configurePort(this, fixedPort, OPEN_SEARCH_PORT);
             }
         }

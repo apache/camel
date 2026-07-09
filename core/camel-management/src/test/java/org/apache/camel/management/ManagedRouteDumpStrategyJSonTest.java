@@ -85,8 +85,8 @@ public class ManagedRouteDumpStrategyJSonTest extends ManagementTestSupport {
         File dir = testDirectory().toFile();
         String[] files = dir.list();
         assertNotNull(files, "There are no files in " + dir);
-        assertEquals(1, files.length);
-        assertEquals("dump1.json", files[0]);
+        assertEquals(2, files.length);
+        assertEquals(Set.of("dump1.json", "route-topology.json"), Set.of(files));
     }
 
     @Override

@@ -1,0 +1,45 @@
+- route:
+    id: sensor
+    from:
+      uri: timer
+      parameters:
+        timerName: sensor
+        period: 1000
+      steps:
+        - setBody:
+            expression:
+              simple:
+                expression: "${random(0,40)}"
+        - convertBodyTo:
+            type: int
+        - choice:
+            when:
+              - simple:
+                  expression: "${body} >= 30"
+                steps:
+                  - setHeader:
+                      name: level
+                      expression:
+                        constant:
+                          expression: hot
+                  - log:
+                      message: "Hot alert: ${body} C"
+              - simple:
+                  expression: "${body} >= 15"
+                steps:
+                  - setHeader:
+                      name: level
+                      expression:
+                        constant:
+                          expression: normal
+                  - log:
+                      message: "Normal: ${body} C"
+            otherwise:
+              steps:
+                - setHeader:
+                    name: level
+                    expression:
+                      constant:
+                        expression: cold
+                - log:
+                    message: "Cold alert: ${body} C"

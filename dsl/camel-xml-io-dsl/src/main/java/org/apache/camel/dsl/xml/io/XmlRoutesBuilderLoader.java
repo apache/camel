@@ -188,6 +188,7 @@ public class XmlRoutesBuilderLoader extends RouteBuilderLoaderSupport {
                         new XmlModelParser(resource, xmlInfo.getRootElementNamespace())
                                 .parseRouteConfigurationsDefinition()
                                 .ifPresent(this::addConfigurations);
+                        break;
                     }
                     default: {
                         // NO-OP

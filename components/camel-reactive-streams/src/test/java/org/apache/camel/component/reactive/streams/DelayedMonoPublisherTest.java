@@ -20,8 +20,8 @@ import java.util.LinkedList;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingDeque;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
@@ -33,13 +33,14 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class DelayedMonoPublisherTest {
 
-    private ExecutorService service;
+    private ScheduledExecutorService service;
 
     @BeforeEach
     public void init() {
@@ -131,10 +132,9 @@ public class DelayedMonoPublisherTest {
                 .doOnComplete(latch::countDown)
                 .subscribe();
 
-        Thread.sleep(200);
-        pub.setData(5);
+        service.schedule(() -> pub.setData(5), 200, TimeUnit.MILLISECONDS);
 
-        assertTrue(latch.await(1, TimeUnit.SECONDS));
+        assertTrue(latch.await(2, TimeUnit.SECONDS));
 
         assertEquals(1, data.size());
         assertEquals(5, data.get(0).intValue());
@@ -158,10 +158,9 @@ public class DelayedMonoPublisherTest {
                 .doOnComplete(latch::countDown)
                 .subscribe();
 
-        Thread.sleep(200);
-        pub.setData(5);
+        service.schedule(() -> pub.setData(5), 200, TimeUnit.MILLISECONDS);
 
-        assertTrue(latch.await(1, TimeUnit.SECONDS));
+        assertTrue(latch.await(2, TimeUnit.SECONDS));
 
         assertEquals(2, data.size());
         for (Integer n : data) {
@@ -182,15 +181,17 @@ public class DelayedMonoPublisherTest {
                 .doOnComplete(latch::countDown)
                 .subscribe();
 
-        Thread.sleep(200);
-        pub.setData(5);
+        service.schedule(() -> pub.setData(5), 200, TimeUnit.MILLISECONDS);
+
+        // Wait for first subscriber to receive data before subscribing second
+        await().atMost(2, TimeUnit.SECONDS).until(() -> data.size() >= 1);
 
         Flowable.fromPublisher(pub)
                 .doOnNext(data::add)
                 .doOnComplete(latch::countDown)
                 .subscribe();
 
-        assertTrue(latch.await(1, TimeUnit.SECONDS));
+        assertTrue(latch.await(2, TimeUnit.SECONDS));
 
         assertEquals(2, data.size());
         for (Integer n : data) {
@@ -215,8 +216,10 @@ public class DelayedMonoPublisherTest {
                     latch.countDown();
                 });
 
-        Thread.sleep(200);
-        pub.setException(ex);
+        service.schedule(() -> pub.setException(ex), 200, TimeUnit.MILLISECONDS);
+
+        // Wait for first subscriber to receive exception before subscribing second
+        await().atMost(2, TimeUnit.SECONDS).until(() -> exceptions.size() >= 1);
 
         Flowable.fromPublisher(pub)
                 .subscribe(item -> {
@@ -225,7 +228,7 @@ public class DelayedMonoPublisherTest {
                     latch.countDown();
                 });
 
-        assertTrue(latch.await(1, TimeUnit.SECONDS));
+        assertTrue(latch.await(2, TimeUnit.SECONDS));
 
         assertEquals(2, exceptions.size());
         for (Throwable t : exceptions) {
@@ -251,10 +254,9 @@ public class DelayedMonoPublisherTest {
 
         pub.subscribe(sub);
 
-        Thread.sleep(100);
-        sub.request(1);
+        service.schedule(() -> sub.request(1), 100, TimeUnit.MILLISECONDS);
 
-        Integer res = queue.poll(1, TimeUnit.SECONDS);
+        Integer res = queue.poll(2, TimeUnit.SECONDS);
         assertEquals(Integer.valueOf(2), res);
     }
 

@@ -24,7 +24,6 @@ import java.util.Map;
 import dev.tamboui.layout.Constraint;
 import dev.tamboui.layout.Layout;
 import dev.tamboui.layout.Rect;
-import dev.tamboui.style.Color;
 import dev.tamboui.style.Overflow;
 import dev.tamboui.style.Style;
 import dev.tamboui.terminal.Frame;
@@ -411,10 +410,10 @@ public class CamelCatalogTui extends CamelCommand {
 
     private void renderHeader(Frame frame, Rect area) {
         Line titleLine = Line.from(
-                Span.styled(" Camel Catalog", Style.EMPTY.fg(Color.rgb(0xF6, 0x91, 0x23)).bold()),
+                Span.styled(" Camel Catalog", Style.EMPTY.fg(Theme.accent()).bold()),
                 Span.raw("  "),
                 Span.styled(filteredComponents.size() + "/" + allComponents.size() + " components",
-                        Style.EMPTY.fg(Color.CYAN)));
+                        Style.EMPTY.fg(Theme.accent())));
 
         Block headerBlock = Block.builder()
                 .borderType(BorderType.ROUNDED).borders(Borders.ALL)
@@ -440,8 +439,8 @@ public class CamelCatalogTui extends CamelCommand {
         List<Row> rows = new ArrayList<>();
         for (ComponentInfo comp : filteredComponents) {
             Style nameStyle = comp.deprecated
-                    ? Style.EMPTY.fg(Color.RED).dim()
-                    : Style.EMPTY.fg(Color.CYAN);
+                    ? Theme.error().dim()
+                    : Style.EMPTY.fg(Theme.accent());
             String label = comp.name;
             if (comp.deprecated) {
                 label = label + " (deprecated)";
@@ -454,7 +453,7 @@ public class CamelCatalogTui extends CamelCommand {
         }
 
         Style borderStyle = focus == FOCUS_LIST
-                ? Style.EMPTY.fg(Color.rgb(0xF6, 0x91, 0x23))
+                ? Style.EMPTY.fg(Theme.accent())
                 : Style.EMPTY;
 
         String modePrefix = componentFullText ? "/" : "";
@@ -479,7 +478,7 @@ public class CamelCatalogTui extends CamelCommand {
 
     private void renderOptionsTable(Frame frame, Rect area) {
         Style borderStyle = focus == FOCUS_OPTIONS
-                ? Style.EMPTY.fg(Color.rgb(0xF6, 0x91, 0x23))
+                ? Style.EMPTY.fg(Theme.accent())
                 : Style.EMPTY;
 
         String optModePrefix = optionFullText ? "/" : "";
@@ -540,7 +539,7 @@ public class CamelCatalogTui extends CamelCommand {
         frame.renderWidget(
                 Block.builder()
                         .borders(Borders.TOP_ONLY)
-                        .borderStyle(Style.EMPTY.fg(Color.DARK_GRAY))
+                        .borderStyle(Theme.muted())
                         .build(),
                 area);
     }
@@ -626,14 +625,14 @@ public class CamelCatalogTui extends CamelCommand {
 
     private Row optionToRow(OptionInfo opt) {
         Style nameStyle = opt.required
-                ? Style.EMPTY.fg(Color.CYAN).bold()
-                : Style.EMPTY.fg(Color.CYAN);
+                ? Style.EMPTY.fg(Theme.accent()).bold()
+                : Style.EMPTY.fg(Theme.accent());
 
         return Row.from(
                 Cell.from(Span.styled(opt.name, nameStyle)),
                 Cell.from(Span.styled(opt.type, Style.EMPTY.dim())),
                 Cell.from(opt.required
-                        ? Span.styled("*", Style.EMPTY.fg(Color.RED).bold())
+                        ? Span.styled("*", Theme.error().bold())
                         : Span.raw("")),
                 Cell.from(Span.styled(opt.defaultValue, Style.EMPTY.dim())),
                 Cell.from(Span.styled(opt.kind != null ? opt.kind : "", Style.EMPTY.dim())));
@@ -641,19 +640,19 @@ public class CamelCatalogTui extends CamelCommand {
 
     private void renderFooter(Frame frame, Rect area) {
         Line footer = Line.from(
-                Span.styled(" Type", Style.EMPTY.fg(Color.YELLOW).bold()),
+                Span.styled(" Type", Theme.label().bold()),
                 Span.raw(" name filter  "),
-                Span.styled("/", Style.EMPTY.fg(Color.YELLOW).bold()),
+                Span.styled("/", Theme.label().bold()),
                 Span.raw(" full-text  "),
-                Span.styled("Esc", Style.EMPTY.fg(Color.YELLOW).bold()),
+                Span.styled("Esc", Theme.label().bold()),
                 Span.raw(" clear/back/quit  "),
-                Span.styled("\u2191\u2193", Style.EMPTY.fg(Color.YELLOW).bold()),
+                Span.styled("\u2191\u2193", Theme.label().bold()),
                 Span.raw(" navigate  "),
-                Span.styled("\u2190\u2192", Style.EMPTY.fg(Color.YELLOW).bold()),
+                Span.styled("\u2190\u2192", Theme.label().bold()),
                 Span.raw("/"),
-                Span.styled("Tab", Style.EMPTY.fg(Color.YELLOW).bold()),
+                Span.styled("Tab", Theme.label().bold()),
                 Span.raw(" panels  "),
-                Span.styled("PgUp/Dn", Style.EMPTY.fg(Color.YELLOW).bold()),
+                Span.styled("PgUp/Dn", Theme.label().bold()),
                 Span.raw(" scroll"));
 
         frame.renderWidget(Paragraph.from(footer), area);
@@ -685,18 +684,18 @@ public class CamelCatalogTui extends CamelCommand {
                 currentSpans.add(Span.raw(" "));
             }
 
-            currentSpans.add(Span.styled(label, Style.EMPTY.fg(Color.YELLOW).bold()));
+            currentSpans.add(Span.styled(label, Theme.label().bold()));
 
             // Apply special styling for certain values
             Style valueStyle;
             if ("DEPRECATED".equals(value)) {
-                valueStyle = Style.EMPTY.fg(Color.RED).bold();
+                valueStyle = Theme.error().bold();
             } else if (opt != null && "Required".equals(field[0]) && opt.required) {
-                valueStyle = Style.EMPTY.fg(Color.RED).bold();
+                valueStyle = Theme.error().bold();
             } else if (opt != null && "Name".equals(field[0])) {
-                valueStyle = Style.EMPTY.fg(Color.CYAN).bold();
+                valueStyle = Style.EMPTY.fg(Theme.accent()).bold();
             } else if ("Label".equals(field[0]) || "Values".equals(field[0])) {
-                valueStyle = Style.EMPTY.fg(Color.CYAN);
+                valueStyle = Style.EMPTY.fg(Theme.accent());
             } else {
                 valueStyle = Style.EMPTY;
             }

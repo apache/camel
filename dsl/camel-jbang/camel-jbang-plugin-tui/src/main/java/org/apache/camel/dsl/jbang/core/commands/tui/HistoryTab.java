@@ -33,7 +33,6 @@ import dev.tamboui.layout.Alignment;
 import dev.tamboui.layout.Constraint;
 import dev.tamboui.layout.Layout;
 import dev.tamboui.layout.Rect;
-import dev.tamboui.style.Color;
 import dev.tamboui.style.Overflow;
 import dev.tamboui.style.Style;
 import dev.tamboui.terminal.Frame;
@@ -694,7 +693,7 @@ class HistoryTab extends AbstractTab {
                     Line title = Line.from(Span.styled(
                             String.format(" History Topology — step %d/%d ",
                                     diagram.getHistoryStepIndex() + 1, diagram.getHistoryStepCount()),
-                            Style.EMPTY.fg(Color.WHITE)));
+                            Style.EMPTY.fg(Theme.baseFg())));
                     diagram.renderHistoryTopologyDiagram(frame, diagramArea, title);
                 } else {
                     String routeId = diagram.getHistoryDrillDownRouteId();
@@ -810,22 +809,22 @@ class HistoryTab extends AbstractTab {
     }
 
     private Line buildHistoryBreadcrumbTitle() {
-        Style nameStyle = Style.EMPTY.fg(Color.YELLOW).bold();
+        Style nameStyle = Theme.label().bold();
         List<Span> spans = new ArrayList<>();
-        spans.add(Span.styled(" History [", Style.EMPTY.fg(Color.WHITE)));
+        spans.add(Span.styled(" History [", Style.EMPTY.fg(Theme.baseFg())));
         var stack = diagram.getHistoryNavigationStack();
         if (stack.isEmpty()) {
             spans.add(Span.styled(diagram.getHistoryDrillDownRouteId(), nameStyle));
         } else {
             for (var it = stack.descendingIterator(); it.hasNext();) {
                 spans.add(Span.styled(it.next(), nameStyle));
-                spans.add(Span.styled(" → ", Style.EMPTY.fg(Color.GRAY)));
+                spans.add(Span.styled(" → ", Theme.muted()));
             }
             spans.add(Span.styled(diagram.getHistoryDrillDownRouteId(), nameStyle));
         }
         spans.add(Span.styled(String.format("] — step %d/%d ",
                 diagram.getHistoryStepIndex() + 1, diagram.getHistoryStepCount()),
-                Style.EMPTY.fg(Color.WHITE)));
+                Style.EMPTY.fg(Theme.baseFg())));
         return Line.from(spans);
     }
 
@@ -911,47 +910,47 @@ class HistoryTab extends AbstractTab {
         }
 
         List<Span> stepSpans = new ArrayList<>();
-        stepSpans.add(Span.styled(" Step:     ", Style.EMPTY.fg(Color.YELLOW).bold()));
+        stepSpans.add(Span.styled(" Step:     ", Theme.muted()));
         stepSpans.add(Span.raw(String.format("%d/%d", stepIdx + 1, diagram.getHistoryStepCount())));
         if (direction != null && !direction.isBlank()) {
-            Style dirStyle = failed ? Style.EMPTY.fg(Color.LIGHT_RED) : Style.EMPTY.fg(Color.GREEN);
+            Style dirStyle = failed ? Theme.error() : Theme.success();
             stepSpans.add(Span.raw(" "));
             stepSpans.add(Span.styled(direction, dirStyle));
         }
         lines.add(Line.from(stepSpans));
         lines.add(Line.from(
-                Span.styled(" Exchange: ", Style.EMPTY.fg(Color.YELLOW).bold()),
+                Span.styled(" Exchange: ", Theme.muted()),
                 Span.raw(exchangeId)));
         lines.add(Line.from(
-                Span.styled(" Route:    ", Style.EMPTY.fg(Color.YELLOW).bold()),
-                Span.styled(routeId != null ? routeId : "", Style.EMPTY.fg(Color.CYAN))));
+                Span.styled(" Route:    ", Theme.muted()),
+                Span.styled(routeId != null ? routeId : "", Style.EMPTY.fg(Theme.accent()))));
         lines.add(Line.from(
-                Span.styled(" Node:     ", Style.EMPTY.fg(Color.YELLOW).bold()),
+                Span.styled(" Node:     ", Theme.muted()),
                 Span.raw(nodeId != null ? nodeId : "")));
         if (processor != null) {
             lines.add(Line.from(
-                    Span.styled(" Proc:     ", Style.EMPTY.fg(Color.YELLOW).bold()),
+                    Span.styled(" Proc:     ", Theme.muted()),
                     Span.raw(processor.strip())));
         }
         if (elapsed >= 0) {
             lines.add(Line.from(
-                    Span.styled(" Elapsed:  ", Style.EMPTY.fg(Color.YELLOW).bold()),
+                    Span.styled(" Elapsed:  ", Theme.muted()),
                     Span.raw(elapsed + "ms")));
         }
         if (timestamp != null) {
             lines.add(Line.from(
-                    Span.styled(" Time:     ", Style.EMPTY.fg(Color.YELLOW).bold()),
+                    Span.styled(" Time:     ", Theme.muted()),
                     Span.raw(timestamp)));
         }
         if (threadName != null) {
             lines.add(Line.from(
-                    Span.styled(" Thread:   ", Style.EMPTY.fg(Color.YELLOW).bold()),
+                    Span.styled(" Thread:   ", Theme.muted()),
                     Span.raw(threadName)));
         }
         if (failed) {
             lines.add(Line.from(
-                    Span.styled(" Status:   ", Style.EMPTY.fg(Color.YELLOW).bold()),
-                    Span.styled("Failed", Style.EMPTY.fg(Color.LIGHT_RED).bold())));
+                    Span.styled(" Status:   ", Theme.muted()),
+                    Span.styled("Failed", Theme.error().bold())));
         }
 
         // Compute BHPV change indicators
@@ -967,7 +966,7 @@ class HistoryTab extends AbstractTab {
         boolean varsChanged = changes.length() > 3 && changes.charAt(3) == 'V';
 
         List<Span> changeSpans = new ArrayList<>();
-        changeSpans.add(Span.styled(" Changed:  ", Style.EMPTY.fg(Color.YELLOW).bold()));
+        changeSpans.add(Span.styled(" Changed:  ", Theme.muted()));
         if (!changes.isBlank()) {
             changeSpans.addAll(buildChangeSpans(changes));
         }
@@ -981,12 +980,12 @@ class HistoryTab extends AbstractTab {
 
         if (exception != null && !exception.isBlank()) {
             lines.add(Line.from(Span.raw("")));
-            lines.add(Line.from(Span.styled(" Exception", Style.EMPTY.fg(Color.LIGHT_RED).bold())));
+            lines.add(Line.from(Span.styled(" Exception", Theme.error().bold())));
             lines.add(Line.from(Span.raw(" " + exception)));
         }
 
         if (showBody && body != null) {
-            Style headerStyle = bodyChanged ? Style.EMPTY.fg(Color.YELLOW).bold() : Style.EMPTY.fg(Color.GREEN).bold();
+            Style headerStyle = bodyChanged ? Theme.change().bold() : Theme.muted();
             lines.add(Line.from(Span.raw("")));
             lines.add(Line.from(
                     Span.styled(" Body", headerStyle),
@@ -997,21 +996,21 @@ class HistoryTab extends AbstractTab {
         }
 
         if (showHeaders && headers != null && !headers.isEmpty()) {
-            Style sectionStyle = headersChanged ? Style.EMPTY.fg(Color.YELLOW).bold() : Style.EMPTY.fg(Color.GREEN).bold();
+            Style sectionStyle = headersChanged ? Theme.change().bold() : Theme.muted();
             lines.add(Line.from(Span.raw("")));
             lines.add(Line.from(Span.styled(" Headers", sectionStyle)));
             addInfoKvLines(lines, headers, headersChanged, prevHeaders);
         }
 
         if (showProps && properties != null && !properties.isEmpty()) {
-            Style sectionStyle = propsChanged ? Style.EMPTY.fg(Color.YELLOW).bold() : Style.EMPTY.fg(Color.GREEN).bold();
+            Style sectionStyle = propsChanged ? Theme.change().bold() : Theme.muted();
             lines.add(Line.from(Span.raw("")));
             lines.add(Line.from(Span.styled(" Properties", sectionStyle)));
             addInfoKvLines(lines, properties, propsChanged, prevProperties);
         }
 
         if (showVars && variables != null && !variables.isEmpty()) {
-            Style sectionStyle = varsChanged ? Style.EMPTY.fg(Color.YELLOW).bold() : Style.EMPTY.fg(Color.GREEN).bold();
+            Style sectionStyle = varsChanged ? Theme.change().bold() : Theme.muted();
             lines.add(Line.from(Span.raw("")));
             lines.add(Line.from(Span.styled(" Variables", sectionStyle)));
             addInfoKvLines(lines, variables, varsChanged, prevVariables);
@@ -1035,8 +1034,8 @@ class HistoryTab extends AbstractTab {
             boolean keyChanged = sectionChanged && prevMap != null
                     && (!prevMap.containsKey(entry.getKey())
                             || !Objects.equals(prevMap.get(entry.getKey()), entry.getValue()));
-            Style keyStyle = keyChanged ? Style.EMPTY.fg(Color.YELLOW) : Style.EMPTY.fg(Color.CYAN);
-            Style valStyle = keyChanged ? Style.EMPTY.fg(Color.YELLOW) : Style.EMPTY;
+            Style keyStyle = keyChanged ? Theme.change() : Theme.muted();
+            Style valStyle = keyChanged ? Theme.change() : Style.EMPTY;
             lines.add(Line.from(
                     Span.styled(" " + entry.getKey(), keyStyle),
                     Span.raw(" = "),
@@ -1194,16 +1193,16 @@ class HistoryTab extends AbstractTab {
         List<Row> rows = new ArrayList<>();
         for (ExchangeSummary s : summaries) {
             Style statusStyle = switch (s.status) {
-                case "Done" -> Style.EMPTY.fg(Color.GREEN);
-                case "Failed" -> Style.EMPTY.fg(Color.LIGHT_RED);
-                case "Processing" -> Style.EMPTY.fg(Color.YELLOW);
+                case "Done" -> Theme.success();
+                case "Failed" -> Theme.error();
+                case "Processing" -> Theme.warning();
                 default -> Style.EMPTY;
             };
             rows.add(Row.from(
                     Cell.from(s.timestamp != null ? TuiHelper.truncate(s.timestamp, 12) : ""),
                     Cell.from(Span.styled(
                             s.routeId != null ? TuiHelper.truncate(s.routeId, 25) : "",
-                            Style.EMPTY.fg(Color.CYAN))),
+                            Style.EMPTY.fg(Theme.accent()))),
                     Cell.from(Span.styled(s.status, statusStyle)),
                     rightCell(s.elapsed + "ms", 10),
                     rightCell(String.valueOf(s.steps), 6),
@@ -1496,14 +1495,14 @@ class HistoryTab extends AbstractTab {
         String durationStr = entry.elapsed + "ms";
         int pad = Math.max(1, 8 - durationStr.length());
 
-        Style labelStyle = selected ? Style.EMPTY.fg(Color.CYAN).bold() : Style.EMPTY.fg(Color.CYAN);
+        Style labelStyle = selected ? Style.EMPTY.fg(Theme.accent()).bold() : Style.EMPTY.fg(Theme.accent());
 
         return Line.from(
-                Span.styled(indicator, Style.EMPTY.fg(Color.YELLOW).bold()),
+                Span.styled(indicator, Theme.label().bold()),
                 Span.styled(label, labelStyle),
                 Span.styled(bar, bandStyle),
                 Span.raw(" ".repeat(pad)),
-                Span.styled(durationStr, isRoute ? Style.EMPTY.dim() : Style.EMPTY.fg(Color.WHITE).bold()));
+                Span.styled(durationStr, isRoute ? Style.EMPTY.dim() : Style.EMPTY.fg(Theme.baseFg()).bold()));
     }
 
     private static boolean nodeIdEquals(String a, String b) {
@@ -1883,10 +1882,10 @@ class HistoryTab extends AbstractTab {
     private static void hintShowBhpv(List<Span> spans, boolean body, boolean headers, boolean props, boolean vars) {
         spans.add(Span.styled(" show", Theme.hintKey()));
         spans.add(Span.raw(" "));
-        spans.add(Span.styled(body ? "B" : "b", body ? Style.EMPTY.fg(Color.WHITE).bold() : Style.EMPTY.dim()));
-        spans.add(Span.styled(headers ? "H" : "h", headers ? Style.EMPTY.fg(Color.WHITE).bold() : Style.EMPTY.dim()));
-        spans.add(Span.styled(props ? "P" : "p", props ? Style.EMPTY.fg(Color.WHITE).bold() : Style.EMPTY.dim()));
-        spans.add(Span.styled(vars ? "V" : "v", vars ? Style.EMPTY.fg(Color.WHITE).bold() : Style.EMPTY.dim()));
+        spans.add(Span.styled(body ? "B" : "b", body ? Style.EMPTY.fg(Theme.baseFg()).bold() : Style.EMPTY.dim()));
+        spans.add(Span.styled(headers ? "H" : "h", headers ? Style.EMPTY.fg(Theme.baseFg()).bold() : Style.EMPTY.dim()));
+        spans.add(Span.styled(props ? "P" : "p", props ? Style.EMPTY.fg(Theme.baseFg()).bold() : Style.EMPTY.dim()));
+        spans.add(Span.styled(vars ? "V" : "v", vars ? Style.EMPTY.fg(Theme.baseFg()).bold() : Style.EMPTY.dim()));
         spans.add(Span.raw("  "));
     }
 
@@ -1905,9 +1904,9 @@ class HistoryTab extends AbstractTab {
             String description, long elapsed, String changes) {
         Style dirStyle;
         if (first || last || !direction.isBlank()) {
-            dirStyle = failed ? Style.EMPTY.fg(Color.LIGHT_RED) : Style.EMPTY.fg(Color.GREEN);
+            dirStyle = failed ? Theme.error() : Theme.success();
         } else {
-            dirStyle = failed ? Style.EMPTY.fg(Color.LIGHT_RED) : Style.EMPTY;
+            dirStyle = failed ? Theme.error() : Style.EMPTY;
         }
         String elapsedStr = elapsed >= 0 ? elapsed + "ms" : "";
         String display = description != null ? description : (processor != null ? processor : "");
@@ -1917,7 +1916,7 @@ class HistoryTab extends AbstractTab {
                 rightCell(String.valueOf(stepNumber), 3),
                 Cell.from(Span.styled(direction, dirStyle)),
                 Cell.from(timestamp != null ? TuiHelper.truncate(timestamp, 12) : ""),
-                Cell.from(Span.styled(routeId != null ? TuiHelper.truncate(routeId, 25) : "", Style.EMPTY.fg(Color.CYAN))),
+                Cell.from(Span.styled(routeId != null ? TuiHelper.truncate(routeId, 25) : "", Style.EMPTY.fg(Theme.accent()))),
                 Cell.from(indent + (nodeId != null ? TuiHelper.truncate(nodeId, 25) : "")),
                 Cell.from(indent + display),
                 Cell.from(Line.from(changeSpans)),
@@ -1934,7 +1933,7 @@ class HistoryTab extends AbstractTab {
             if (c == ' ') {
                 spans.add(Span.styled(String.valueOf(c), Style.EMPTY.dim()));
             } else {
-                spans.add(Span.styled(String.valueOf(c), Style.EMPTY.fg(Color.YELLOW)));
+                spans.add(Span.styled(String.valueOf(c), Theme.change()));
             }
         }
         return spans;
@@ -2015,7 +2014,7 @@ class HistoryTab extends AbstractTab {
         spans.add(Span.raw(" History of last completed — " + entries.size() + " steps ("));
         boolean failed = last.failed;
         spans.add(Span.styled("status:" + (failed ? "failed" : "success"),
-                failed ? Style.EMPTY.fg(Color.LIGHT_RED).bold() : Style.EMPTY.fg(Color.GREEN).bold()));
+                failed ? Theme.error().bold() : Theme.success().bold()));
         if (last.elapsed >= 0) {
             spans.add(Span.raw(" elapsed:" + TimeUtils.printDuration(last.elapsed, true)));
         }
@@ -2031,26 +2030,26 @@ class HistoryTab extends AbstractTab {
             List<Line> lines, String exchangeId, String routeId,
             String nodeId, String nodeLabel, String location, long elapsed, String threadName, boolean failed) {
         lines.add(Line.from(
-                Span.styled(" Exchange: ", Style.EMPTY.fg(Color.YELLOW).bold()),
+                Span.styled(" Exchange: ", Theme.muted()),
                 Span.raw(exchangeId != null ? exchangeId : "")));
         lines.add(Line.from(
-                Span.styled(" Route:    ", Style.EMPTY.fg(Color.YELLOW).bold()),
+                Span.styled(" Route:    ", Theme.muted()),
                 Span.raw(String.format("%-25s", routeId != null ? routeId : "")),
-                Span.styled("  Node: ", Style.EMPTY.fg(Color.YELLOW).bold()),
+                Span.styled("  Node: ", Theme.muted()),
                 Span.raw(nodeId != null ? nodeId : ""),
                 Span.raw(nodeLabel != null ? " (" + nodeLabel + ")" : "")));
         lines.add(Line.from(
-                Span.styled(" Location: ", Style.EMPTY.fg(Color.YELLOW).bold()),
+                Span.styled(" Location: ", Theme.muted()),
                 Span.raw(location != null ? location : "")));
         lines.add(Line.from(
-                Span.styled(" Elapsed:  ", Style.EMPTY.fg(Color.YELLOW).bold()),
+                Span.styled(" Elapsed:  ", Theme.muted()),
                 Span.raw(elapsed >= 0 ? elapsed + "ms" : ""),
-                Span.styled("  Thread: ", Style.EMPTY.fg(Color.YELLOW).bold()),
+                Span.styled("  Thread: ", Theme.muted()),
                 Span.raw(threadName != null ? threadName : "")));
         if (failed) {
             lines.add(Line.from(
-                    Span.styled(" Status:   ", Style.EMPTY.fg(Color.YELLOW).bold()),
-                    Span.styled("Failed", Style.EMPTY.fg(Color.LIGHT_RED).bold())));
+                    Span.styled(" Status:   ", Theme.muted()),
+                    Span.styled("Failed", Theme.error().bold())));
         }
         lines.add(Line.from(Span.raw("")));
     }
@@ -2062,7 +2061,7 @@ class HistoryTab extends AbstractTab {
         if (map == null || map.isEmpty()) {
             return;
         }
-        Style headerStyle = changed ? Style.EMPTY.fg(Color.YELLOW).bold() : Style.EMPTY.fg(Color.GREEN).bold();
+        Style headerStyle = changed ? Theme.change().bold() : Theme.muted();
         lines.add(Line.from(Span.styled(section, headerStyle)));
         for (Map.Entry<String, Object> entry : map.entrySet()) {
             String type = types != null ? types.get(entry.getKey()) : null;
@@ -2084,8 +2083,8 @@ class HistoryTab extends AbstractTab {
             boolean keyChanged = changed && prevMap != null
                     && (!prevMap.containsKey(entry.getKey())
                             || !Objects.equals(prevMap.get(entry.getKey()), entry.getValue()));
-            Style keyStyle = keyChanged ? Style.EMPTY.fg(Color.YELLOW) : Style.EMPTY.fg(Color.CYAN);
-            Style valStyle = keyChanged ? Style.EMPTY.fg(Color.YELLOW) : Style.EMPTY;
+            Style keyStyle = keyChanged ? Theme.change() : Theme.muted();
+            Style valStyle = keyChanged ? Theme.change() : Style.EMPTY;
             lines.add(Line.from(
                     Span.styled("   " + typeLabel, Style.EMPTY.dim()),
                     Span.styled(entry.getKey(), keyStyle),
@@ -2096,7 +2095,7 @@ class HistoryTab extends AbstractTab {
     }
 
     static void addBodyLines(List<Line> lines, String body, String bodyType, boolean changed) {
-        Style headerStyle = changed ? Style.EMPTY.fg(Color.YELLOW).bold() : Style.EMPTY.fg(Color.GREEN).bold();
+        Style headerStyle = changed ? Theme.change().bold() : Theme.muted();
         if (body != null) {
             if (bodyType != null) {
                 lines.add(Line.from(
@@ -2153,7 +2152,7 @@ class HistoryTab extends AbstractTab {
         if (exception == null) {
             return;
         }
-        lines.add(Line.from(Span.styled(" Exception:", Style.EMPTY.fg(Color.LIGHT_RED).bold())));
+        lines.add(Line.from(Span.styled(" Exception:", Theme.error().bold())));
         for (String l : exception.split("\n", -1)) {
             lines.add(Line.from(Span.raw("   " + TuiHelper.fixControlChars(l))));
         }

@@ -29,7 +29,6 @@ import dev.tamboui.layout.Constraint;
 import dev.tamboui.layout.Layout;
 import dev.tamboui.layout.Rect;
 import dev.tamboui.markdown.MarkdownView;
-import dev.tamboui.style.Color;
 import dev.tamboui.style.Style;
 import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.Line;
@@ -169,7 +168,7 @@ class CveAuditTab extends AbstractTableTab {
             frame.renderWidget(
                     Paragraph.builder()
                             .text(Text.from(Line.from(
-                                    Span.styled("  " + errorMessage, Style.EMPTY.fg(Color.LIGHT_RED)))))
+                                    Span.styled("  " + errorMessage, Theme.error()))))
                             .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
                                     .title(" CVE Audit ").build())
                             .build(),
@@ -183,7 +182,7 @@ class CveAuditTab extends AbstractTableTab {
                             .text(Text.from(
                                     Line.from(Span.raw("")),
                                     Line.from(Span.styled("  No vulnerabilities found",
-                                            Style.EMPTY.fg(Color.GREEN))),
+                                            Theme.success())),
                                     Line.from(Span.raw("")),
                                     Line.from(Span.styled(
                                             String.format("  Scanned %d dependencies", scannedCount),
@@ -220,7 +219,7 @@ class CveAuditTab extends AbstractTableTab {
             rows.add(Row.from(
                     Cell.from(Span.styled(group.severity != null ? group.severity : "", severityStyle(group.severity))),
                     Cell.from(Span.styled(group.canonicalId != null ? group.canonicalId : "", Style.EMPTY.bold())),
-                    Cell.from(Span.styled(artDisplay, Style.EMPTY.fg(Color.CYAN))),
+                    Cell.from(Span.styled(artDisplay, Style.EMPTY.fg(Theme.accent()))),
                     Cell.from(Span.styled(group.summary != null ? group.summary : "", Style.EMPTY.dim()))));
         }
 
@@ -308,6 +307,7 @@ class CveAuditTab extends AbstractTableTab {
                         .source(md.toString())
                         .scroll(detailScroll)
                         .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(title).build())
+                        .styles(Theme.markdownStyles())
                         .build(),
                 area);
     }

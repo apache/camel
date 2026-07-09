@@ -101,7 +101,7 @@ class ErrorsTabRenderTest {
         Frame frame = Frame.forTesting(buffer);
         tab.render(frame, area);
 
-        boolean foundCyan = findCellWithColor(buffer, "m", Color.CYAN);
+        boolean foundCyan = findCellWithColor(buffer, "m", Theme.accent());
         assertTrue(foundCyan, "Route ID should use CYAN color");
     }
 
@@ -116,7 +116,7 @@ class ErrorsTabRenderTest {
         Frame frame = Frame.forTesting(buffer);
         tab.render(frame, area);
 
-        boolean foundGreen = findCellWithColor(buffer, "t", Color.GREEN);
+        boolean foundGreen = findCellWithColor(buffer, "t", Theme.success().fg().orElse(Color.GREEN));
         assertTrue(foundGreen, "handled=true should be rendered in GREEN");
     }
 
@@ -131,7 +131,7 @@ class ErrorsTabRenderTest {
         Frame frame = Frame.forTesting(buffer);
         tab.render(frame, area);
 
-        boolean foundRed = findCellWithColor(buffer, "f", Color.LIGHT_RED);
+        boolean foundRed = findCellWithColor(buffer, "f", Theme.error().fg().orElse(Color.LIGHT_RED));
         assertTrue(foundRed, "handled=false should be rendered in LIGHT_RED");
     }
 

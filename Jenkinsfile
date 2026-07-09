@@ -132,7 +132,7 @@ pipeline {
                     stage('Clean workspace') {
                         steps {
                             cleanWs()
-                            sh 'rm -rvf /home/jenkins/.m2/repository/org/apache/camel'
+                            sh 'if [ -d /home/jenkins/.m2/repository/org/apache/camel ]; then rm -rf /home/jenkins/.m2/repository/org/apache/camel; fi'
                             script {
                                 // Use full clone for JDK 21 on ubuntu-avx (needed for Sonar analysis)
                                 // Use shallow clone for all other combinations
@@ -210,6 +210,15 @@ pipeline {
                             body: '${DEFAULT_CONTENT}',
                             recipientProviders: [[$class: 'DevelopersRecipientProvider']]
                         )
+                        cleanWs(
+                            cleanWhenNotBuilt: false,
+                            cleanWhenUnstable: false,
+                            cleanWhenFailure: false,
+                            cleanWhenAborted: false,
+                            cleanWhenSuccess: true,
+                            deleteDirs: true,
+                            disableDeferredWipeout: true,
+                            notFailBuild: true)
                     }
                 }
             }

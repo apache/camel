@@ -1,0 +1,54 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+/* Camel TUI Dracula theme. Dark theme based on the Dracula color palette. */
+
+$brand: #BD93F9;
+$dracula-bg: #282A36;
+$dracula-fg: #F8F8F2;
+
+#accent         { color: $brand; }
+#accent-bg      { color: white; background: $brand; text-style: bold; }
+#hint-key       { color: black; background: $brand; text-style: bold; }
+#border         { color: #6272A4; }
+#border-focused { color: $brand; }
+#title          { color: $brand; text-style: bold; }
+#success        { color: #50FA7B; }
+#warning        { color: #F1FA8C; }
+#error          { color: #FF5555; }
+#muted          { color: #6272A4; }
+#selection      { color: white; background: #44475A; text-style: bold; }
+#info           { color: #8BE9FD; }
+#notice         { color: #BD93F9; }
+#row-alt        { background: #2D2F3B; }
+#base-bg        { background: $dracula-bg; }
+#base-fg        { color: $dracula-fg; }
+
+/* Content tokens — labels, change indicators, search highlight */
+#label          { color: #F1FA8C; }
+#change         { color: #F1FA8C; }
+#search-match   { color: black; background: #F1FA8C; }
+#mnemonic       { color: #F1FA8C; text-style: bold underline; }
+
+/* Diagram tokens */
+#diagram-border  { color: #6272A4; }
+#diagram-id      { color: $dracula-fg; }
+#diagram-from    { color: #50FA7B; }
+#diagram-to      { color: #8BE9FD; }
+#diagram-choice  { color: #F1FA8C; }
+#diagram-action  { color: #FF79C6; }
+#diagram-eip     { color: #BD93F9; }
+#diagram-default { color: #6272A4; }

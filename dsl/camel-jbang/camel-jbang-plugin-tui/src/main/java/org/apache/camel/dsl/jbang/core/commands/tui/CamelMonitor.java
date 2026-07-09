@@ -33,6 +33,8 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+import dev.tamboui.buffer.Buffer;
+import dev.tamboui.buffer.Cell;
 import dev.tamboui.layout.Constraint;
 import dev.tamboui.layout.Layout;
 import dev.tamboui.layout.Rect;
@@ -107,6 +109,11 @@ public class CamelMonitor extends CamelCommand {
                         defaultValue = "8123")
     int mcpPort = 8123;
 
+    @CommandLine.Option(names = { "--theme" },
+                        description = "Color theme (overrides persisted preference for this session)",
+                        completionCandidates = ThemeModeCompletionCandidates.class)
+    String theme;
+
     // State
     private final TabsState tabsState = new TabsState(TAB_OVERVIEW);
     private TabRegistry tabRegistry;
@@ -126,6 +133,7 @@ public class CamelMonitor extends CamelCommand {
     private final CaptionOverlay captionOverlay = new CaptionOverlay();
     private final RecordingManager recordingManager = new RecordingManager(captionOverlay);
     private final DrawOverlay drawOverlay = new DrawOverlay();
+    private final CanvasOverlay canvasOverlay = new CanvasOverlay();
     private final HelpOverlay helpOverlay = new HelpOverlay();
     private final ShellPanel shellPanel = new ShellPanel();
     private final AiPanel aiPanel = new AiPanel();
@@ -162,6 +170,16 @@ public class CamelMonitor extends CamelCommand {
     @Override
     public Integer doCall() throws Exception {
         System.setProperty("java.awt.headless", "true");
+
+        if (theme != null) {
+            if (!Theme.isValidMode(theme)) {
+                String expected = String.join("' or '", ThemeMode.ids());
+                throw new CommandLine.ParameterException(
+                        new CommandLine(this),
+                        "Invalid value for option '--theme': expected '" + expected + "', was '" + theme + "'");
+            }
+            Theme.applyStartupMode(theme);
+        }
 
         // Configure TamboUI recording if --record is specified
         if (record != null) {
@@ -251,6 +269,7 @@ public class CamelMonitor extends CamelCommand {
         shellPanel.setContext(ctx);
         aiPanel.setContext(ctx);
         actionsPopup.setOpenShellAction(shellPanel::open);
+        actionsPopup.setOpenAiPromptAction(aiPanel::open);
         actionsPopup.setBrowseFilesAction(this::openFilesPopup);
         actionsPopup.setSwitchIntegrationAction(
                 () -> popupManager.openSwitchPopup(ctx.selectedPid, getNonVanishingIntegrations()));
@@ -294,10 +313,21 @@ public class CamelMonitor extends CamelCommand {
             }
         });
 
-        actionsPopup.setGotoTabSupport(tabRegistry.allTabEntries(), () -> {
+        List<TabRegistry.TabEntry> gotoEntries = tabRegistry.allTabEntries();
+        gotoEntries.add(
+                new TabRegistry.TabEntry(TuiIcons.SWITCH, "Switch Integration", "Switch between integrations", "F3", -10, -1));
+        gotoEntries.add(new TabRegistry.TabEntry(TuiIcons.COMPUTER, "Shell", "Open embedded terminal", "F6", -11, -1));
+        gotoEntries.add(new TabRegistry.TabEntry(TuiIcons.MCP_BRAIN, "AI Prompt", "Open AI prompt panel", "F8", -12, -1));
+        actionsPopup.setGotoTabSupport(gotoEntries, () -> {
             TabRegistry.TabEntry entry = actionsPopup.consumePendingGotoEntry();
             if (entry != null) {
-                if (entry.moreIndex() >= 0) {
+                if (entry.tabIndex() == -10) {
+                    popupManager.openSwitchPopup(ctx.selectedPid, getNonVanishingIntegrations());
+                } else if (entry.tabIndex() == -11) {
+                    shellPanel.open();
+                } else if (entry.tabIndex() == -12) {
+                    aiPanel.open();
+                } else if (entry.moreIndex() >= 0) {
                     tabRegistry.selectMoreTab(entry.moreIndex());
                 } else {
                     tabRegistry.handleTabKey(entry.tabIndex(), ctx, dataService);
@@ -367,9 +397,18 @@ public class CamelMonitor extends CamelCommand {
         // Auto-select if there's exactly one integration running
         tabRegistry.overviewTab().selectCurrentIntegration();
 
+        canvasOverlay.setOnOpen(() -> {
+            popupManager.dismissAll();
+            actionsPopup.close();
+            helpOverlay.close();
+            captionOverlay.close();
+            shellPanel.close();
+            aiPanel.close();
+        });
+        canvasOverlay.setOnClose(drawOverlay::clear);
         mcpFacade = new McpFacade(
                 ctx, dataService.data(), tabsState, recordingManager,
-                captionOverlay, drawOverlay, helpOverlay,
+                captionOverlay, drawOverlay, canvasOverlay, helpOverlay,
                 actionsPopup, filesBrowser,
                 tabRegistry,
                 pendingKeys,
@@ -446,6 +485,8 @@ public class CamelMonitor extends CamelCommand {
             ctx.runner = tui;
             actionsPopup.setScheduler(tui.scheduler());
             actionsPopup.setResetScreenAction(() -> tui.terminal().clear());
+            actionsPopup.setThemeRefreshAction(() -> tui.terminal().clear());
+            actionsPopup.setCamelAnimationAction(() -> playBuiltinAnimation("camel"));
             // Preload diagram data if an integration was auto-selected
             tabRegistry.routesTab().preloadDiagram();
             tabRegistry.diagramTab().preloadDiagram();
@@ -491,6 +532,9 @@ public class CamelMonitor extends CamelCommand {
             }
             if (helpOverlay.isVisible()) {
                 return helpOverlay.handleKeyEvent(ke);
+            }
+            if (canvasOverlay.isVisible()) {
+                return canvasOverlay.handleKeyEvent(ke);
             }
             if (shellPanel.isOpen()) {
                 // Shift+F6 cycles shell height — handle before delegating to shell
@@ -683,6 +727,10 @@ public class CamelMonitor extends CamelCommand {
             }
             return true;
         }
+        if (ke.isKey(KeyCode.F2) && ke.hasShift()) {
+            actionsPopup.openGotoTab();
+            return true;
+        }
         if (ke.isKey(KeyCode.F2)) {
             if (tabRegistry.selectedTabIndex() == TAB_ROUTES && tabRegistry.routesTab() != null) {
                 actionsPopup.setPreSelectedRouteId(tabRegistry.routesTab().selectedRouteId());
@@ -692,6 +740,10 @@ public class CamelMonitor extends CamelCommand {
         }
         if (ke.isKey(KeyCode.F3)) {
             popupManager.openSwitchPopup(ctx.selectedPid, getNonVanishingIntegrations());
+            return true;
+        }
+        if (ke.hasCtrl() && ke.isChar('f')) {
+            openFilesPopup();
             return true;
         }
         return false;
@@ -1062,14 +1114,23 @@ public class CamelMonitor extends CamelCommand {
             setNotification(reloadMsg, false);
         }
 
-        renderHeader(frame, mainChunks.get(0));
-        renderTabs(frame, mainChunks.get(1));
-        lastTabsArea = mainChunks.get(1);
-        Rect contentArea = mainChunks.get(2);
-        lastContentArea = contentArea;
+        Rect contentArea;
+        if (canvasOverlay.isVisible()) {
+            // Canvas covers header + tabs + content
+            contentArea = new Rect(area.x(), area.y(), area.width(), area.height() - 1);
+            lastContentArea = contentArea;
+        } else {
+            renderHeader(frame, mainChunks.get(0));
+            renderTabs(frame, mainChunks.get(1));
+            lastTabsArea = mainChunks.get(1);
+            contentArea = mainChunks.get(2);
+            lastContentArea = contentArea;
+        }
         shellPanel.tickAnimation();
         aiPanel.tickAnimation();
-        if (shellPanel.isOpen()) {
+        if (canvasOverlay.isVisible()) {
+            canvasOverlay.render(frame, contentArea);
+        } else if (shellPanel.isOpen()) {
             shellPanel.initHeight(contentArea.height());
             int ph = shellPanel.panelHeight();
             ctx.shellPercent = ph * 100 / Math.max(1, contentArea.height());
@@ -1099,7 +1160,6 @@ public class CamelMonitor extends CamelCommand {
             renderContent(frame, contentArea);
             panelSplit.clearBorderPos();
         }
-        // Overlays render on top of the full content area regardless of shell state
         if (drawOverlay.isVisible()) {
             drawOverlay.render(frame, contentArea);
         }
@@ -1114,6 +1174,7 @@ public class CamelMonitor extends CamelCommand {
             helpOverlay.render(frame, contentArea);
         }
         renderFooter(frame, mainChunks.get(3));
+        applyThemeBaseColors(frame.buffer(), area);
 
         recordingManager.updateBuffer(frame.buffer());
         recordingManager.processPendingScreenshot();
@@ -1168,8 +1229,8 @@ public class CamelMonitor extends CamelCommand {
                         Paragraph.builder().text(Text.from(titleLine)).build(),
                         leftArea);
                 Color waveColor = activeNotificationError
-                        ? Theme.error().fg().orElse(Color.LIGHT_RED)
-                        : Theme.success().fg().orElse(Color.LIGHT_GREEN);
+                        ? Theme.error().fg().orElseThrow()
+                        : Theme.success().fg().orElseThrow();
                 WaveText wave = WaveText.builder()
                         .text(activeNotification)
                         .color(waveColor)
@@ -1192,7 +1253,7 @@ public class CamelMonitor extends CamelCommand {
     }
 
     private void renderTooSmall(Frame frame, Rect area) {
-        Style orange = Style.EMPTY.fg(Color.rgb(0xF6, 0x91, 0x23));
+        Style orange = Style.EMPTY.fg(Theme.accent());
         Style normal = Style.EMPTY;
         Style bold = Style.EMPTY.bold();
 
@@ -1228,6 +1289,7 @@ public class CamelMonitor extends CamelCommand {
 
         int x5 = area.x() + Math.max(0, (area.width() - CharWidth.of(line5)) / 2);
         frame.buffer().setString(x5, startY + 4, line5, normal);
+        applyThemeBaseColors(frame.buffer(), area);
     }
 
     private void renderTabs(Frame frame, Rect area) {
@@ -1240,7 +1302,7 @@ public class CamelMonitor extends CamelCommand {
             // Infra mode: only Overview and Log tabs
             Line[] labels = {
                     Line.from(TuiIcons.primaryTabHeader(TuiIcons.TAB_OVERVIEW, "1", "Overview")),
-                    Line.from(TuiIcons.primaryTabHeader(TuiIcons.TAB_LOG, "2", "Log")),
+                    Line.from(TuiIcons.primaryTabHeader(TuiIcons.TAB_LOG, "2", "Log"))
             };
 
             // Map real tab index to infra tab index for highlight
@@ -1337,10 +1399,42 @@ public class CamelMonitor extends CamelCommand {
         }
     }
 
+    /**
+     * Fills cells that still have no explicit fg/bg after widget rendering. TamboUI clears the buffer to
+     * {@link Cell#EMPTY} each frame; when bg is unset the terminal falls back to its own default (usually black). Only
+     * patches missing colors so selection highlights, zebra stripes, and other widget backgrounds are preserved.
+     */
+    static void applyThemeBaseColors(Buffer buffer, Rect area) {
+        Color baseBg = Theme.baseBg();
+        Color baseFg = Theme.baseFg();
+        Rect intersection = buffer.area().intersection(area);
+        for (int y = intersection.top(); y < intersection.bottom(); y++) {
+            for (int x = intersection.left(); x < intersection.right(); x++) {
+                Cell cell = buffer.get(x, y);
+                if (cell.isContinuation()) {
+                    continue;
+                }
+                Style style = cell.style();
+                Color cellBg = style.bg().orElse(null);
+                Color cellFg = style.fg().orElse(null);
+                if (cellBg == null || cellFg == null) {
+                    Style patch = Style.EMPTY;
+                    if (cellBg == null) {
+                        patch = patch.bg(baseBg);
+                    }
+                    if (cellFg == null) {
+                        patch = patch.fg(baseFg);
+                    }
+                    buffer.set(x, y, cell.patchStyle(patch));
+                }
+            }
+        }
+    }
+
     private void computeTabBadges(String[] badgeTexts, Style[] badgeStyles) {
-        Style yellow = Style.EMPTY.fg(Color.YELLOW).bold();
-        Style cyan = Style.EMPTY.fg(Color.CYAN).bold();
-        Style red = Style.EMPTY.fg(Color.LIGHT_RED).bold();
+        Style yellow = Theme.label();
+        Style cyan = Style.EMPTY.fg(Theme.accent()).bold();
+        Style red = Theme.error().bold();
         for (int j = 0; j < badgeStyles.length; j++) {
             badgeTexts[j] = "";
             badgeStyles[j] = yellow;
@@ -1622,6 +1716,36 @@ public class CamelMonitor extends CamelCommand {
         dataService.metrics().resetStats(pid);
     }
 
+    private void playBuiltinAnimation(String name) {
+        List<BuiltinAnimations.Frame> frames = BuiltinAnimations.get(name);
+        if (frames == null) {
+            return;
+        }
+        canvasOverlay.open();
+        Thread thread = new Thread(() -> {
+            try {
+                for (BuiltinAnimations.Frame f : frames) {
+                    if (!canvasOverlay.isVisible()) {
+                        return;
+                    }
+                    if (f.delayMs() > 0) {
+                        Thread.sleep(f.delayMs());
+                    }
+                    if (!canvasOverlay.isVisible()) {
+                        return;
+                    }
+                    drawOverlay.setDrawing(f.cells(), 0);
+                }
+                Thread.sleep(100);
+                canvasOverlay.close();
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        }, "camel-animation");
+        thread.setDaemon(true);
+        thread.start();
+    }
+
     private void sendRouteCommand(String pid, String routeId, String command) {
         dataService.enableBurstMode();
         JsonObject root = new JsonObject();
@@ -1657,6 +1781,12 @@ public class CamelMonitor extends CamelCommand {
 
         if (captionOverlay.isCaptionVisible()) {
             captionOverlay.renderFooter(spans);
+            frame.renderWidget(Paragraph.from(Line.from(spans)), area);
+            return;
+        }
+
+        if (canvasOverlay.isVisible()) {
+            canvasOverlay.renderFooter(spans);
             frame.renderWidget(Paragraph.from(Line.from(spans)), area);
             return;
         }
@@ -1716,11 +1846,11 @@ public class CamelMonitor extends CamelCommand {
                 suffix = active ? " " + TuiIcons.SELECTED : " " + TuiIcons.IDLE;
                 mcpLabel += " (" + client + ")";
                 labelStyle = Theme.success();
-                suffixStyle = active ? Theme.mcpActive() : Theme.mcpIdle();
+                suffixStyle = active ? Theme.success() : Theme.muted();
             } else {
                 suffix = " " + TuiIcons.CROSS;
                 labelStyle = Theme.muted();
-                suffixStyle = Theme.mcpDown();
+                suffixStyle = Theme.error();
             }
             rightSpans.add(Span.styled(mcpLabel, labelStyle));
             rightSpans.add(Span.styled(suffix, suffixStyle));
@@ -1767,25 +1897,19 @@ public class CamelMonitor extends CamelCommand {
             hint(fKeySpans, "F1", "help");
         }
         hint(fKeySpans, "F2", "actions");
-        if (popupManager.getNonVanishingIntegrations().size() > 1) {
-            hint(fKeySpans, "F3", "switch");
-        }
-        hint(fKeySpans, "F6", "shell");
-        hint(fKeySpans, "F8", "AI");
         spans.addAll(insertPos, fKeySpans);
         // Return total F-key span count. The footer drop loop uses this to remove pairs from
-        // the tail (F6, then F3, F2), stopping before the first pair (F1 help when present).
+        // the tail, stopping before the first pair (F1 help when present).
         return fKeySpans.size();
     }
 
     /**
      * Drops secondary F-key hint pairs from an overflowing footer. The F-key pairs are inserted at position 2 (after
      * the first tab hint), so the last pair's key span sits at index {@code fKeyTotal}. Pairs are removed from the
-     * tail, so F6 goes first, then F3, then F2, and the loop stops at 2 so the first pair (F1 help when present) is
-     * always preserved.
+     * tail, so F2 goes first, and the loop stops at 2 so the first pair (F1 help when present) is always preserved.
      *
      * @param  spans      the footer spans, mutated in place by removing dropped pairs
-     * @param  fKeyTotal  total number of F-key spans that were inserted (e.g. 8 for F1/F2/F3/F6)
+     * @param  fKeyTotal  total number of F-key spans that were inserted (e.g. 4 for F1/F2)
      * @param  hintsWidth the current rendered width of {@code spans}
      * @param  available  the available footer width
      * @return            the rendered width of {@code spans} after dropping

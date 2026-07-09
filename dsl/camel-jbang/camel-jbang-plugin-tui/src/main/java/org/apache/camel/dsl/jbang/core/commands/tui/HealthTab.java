@@ -21,7 +21,6 @@ import java.util.List;
 
 import dev.tamboui.layout.Constraint;
 import dev.tamboui.layout.Rect;
-import dev.tamboui.style.Color;
 import dev.tamboui.style.Style;
 import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.Span;
@@ -97,13 +96,13 @@ class HealthTab extends AbstractTableTab {
             Style stateStyle;
             String icon;
             if ("UP".equals(hc.state)) {
-                stateStyle = Style.EMPTY.fg(Color.GREEN);
+                stateStyle = Theme.success();
                 icon = TuiIcons.HEALTH_UP + " ";
             } else if ("DOWN".equals(hc.state)) {
-                stateStyle = Style.EMPTY.fg(Color.LIGHT_RED);
+                stateStyle = Theme.error();
                 icon = TuiIcons.HEALTH_DOWN + " ";
             } else {
-                stateStyle = Style.EMPTY.fg(Color.YELLOW);
+                stateStyle = Theme.warning();
                 icon = TuiIcons.HEALTH_WARN + " ";
             }
 
@@ -117,7 +116,7 @@ class HealthTab extends AbstractTableTab {
 
             rows.add(Row.from(
                     Cell.from(Span.styled(" " + (hc.group != null ? hc.group : ""), Style.EMPTY.dim())),
-                    Cell.from(Span.styled(hc.name != null ? hc.name : "", Style.EMPTY.fg(Color.CYAN))),
+                    Cell.from(Span.styled(hc.name != null ? hc.name : "", Style.EMPTY.fg(Theme.accent()))),
                     Cell.from(Span.styled(icon + hc.state, stateStyle)),
                     Cell.from(kind),
                     Cell.from(hc.message != null ? hc.message : "")));

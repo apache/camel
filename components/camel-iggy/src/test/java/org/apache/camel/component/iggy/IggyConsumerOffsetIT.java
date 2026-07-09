@@ -16,15 +16,22 @@
  */
 package org.apache.camel.component.iggy;
 
+import java.util.stream.IntStream;
+
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 
 @DisabledIfSystemProperty(named = "ci.env.name", matches = ".*",
                           disabledReason = "Iggy 0.6.0+ requires io_uring which is not available on CI environments")
 public class IggyConsumerOffsetIT extends IggyTestBase {
+
+    private static final String OFFSET_TOPIC = "test-topic-offset";
+    private static final String OFFSET_STREAM = "test-stream-offset";
+    private static final String OFFSET_CONSUMER_GROUP = "test-consumer-group-offset";
 
     int startingOffset = 5;
 
@@ -35,10 +42,17 @@ public class IggyConsumerOffsetIT extends IggyTestBase {
         mockEndpoint.expectedMessageCount(messages - startingOffset);
 
         for (int i = 0; i < messages; i++) {
-            sendMessage("Message " + i);
+            sendMessage(OFFSET_STREAM, OFFSET_TOPIC, "Message " + i);
         }
 
         mockEndpoint.assertIsSatisfied();
+        Assertions.assertEquals(
+                IntStream.range(startingOffset, messages)
+                        .mapToObj(i -> "Message " + i)
+                        .toList(),
+                mockEndpoint.getExchanges().stream()
+                        .map(exchange -> exchange.getMessage().getBody(String.class))
+                        .toList());
 
         // send more messages to check offset update
         int newMessages = 20;
@@ -46,10 +60,17 @@ public class IggyConsumerOffsetIT extends IggyTestBase {
         mockEndpoint.expectedMessageCount(newMessages);
 
         for (int i = 0; i < newMessages; i++) {
-            sendMessage("Second Message " + i);
+            sendMessage(OFFSET_STREAM, OFFSET_TOPIC, "Second Message " + i);
         }
 
         mockEndpoint.assertIsSatisfied();
+        Assertions.assertEquals(
+                IntStream.range(0, newMessages)
+                        .mapToObj(i -> "Second Message " + i)
+                        .toList(),
+                mockEndpoint.getExchanges().stream()
+                        .map(exchange -> exchange.getMessage().getBody(String.class))
+                        .toList());
     }
 
     @Override
@@ -58,13 +79,13 @@ public class IggyConsumerOffsetIT extends IggyTestBase {
             @Override
             public void configure() {
                 fromF("iggy:%s?username=%s&password=%s&streamName=%s&host=%s&port=%d&consumerGroupName=%s&autoCommit=false&startingOffset=%d",
-                        TOPIC,
+                        OFFSET_TOPIC,
                         iggyService.username(),
                         iggyService.password(),
-                        STREAM,
+                        OFFSET_STREAM,
                         iggyService.host(),
                         iggyService.port(),
-                        CONSUMER_GROUP,
+                        OFFSET_CONSUMER_GROUP,
                         startingOffset)
                         .to("mock:result");
             }

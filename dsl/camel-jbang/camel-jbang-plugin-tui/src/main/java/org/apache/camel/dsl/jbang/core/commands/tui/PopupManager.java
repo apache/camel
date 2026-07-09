@@ -20,7 +20,6 @@ import java.util.List;
 import java.util.function.Supplier;
 
 import dev.tamboui.layout.Rect;
-import dev.tamboui.style.Color;
 import dev.tamboui.style.Style;
 import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.CharWidth;
@@ -147,6 +146,13 @@ class PopupManager {
         if (showMorePopup) {
             morePopupState.select(lastMoreSelection);
         }
+    }
+
+    void dismissAll() {
+        showMorePopup = false;
+        showSwitchPopup = false;
+        showKillConfirm = false;
+        filesBrowser.reset();
     }
 
     void closeMorePopup() {
@@ -410,7 +416,7 @@ class PopupManager {
 
         frame.renderWidget(Clear.INSTANCE, popup);
 
-        Style keyStyle = Style.EMPTY.fg(Color.YELLOW).bold();
+        Style keyStyle = Theme.mnemonic();
         ListItem[] items = morePopupItems(keyStyle);
         ListWidget list = ListWidget.builder()
                 .items(items)
@@ -421,7 +427,7 @@ class PopupManager {
                         .borderType(BorderType.ROUNDED).borders(Borders.ALL)
                         .title(Title.from(Line.from(Span.styled(
                                 " " + TuiIcons.TAB_MORE + " More Tabs ",
-                                Style.EMPTY.fg(Color.YELLOW).bold()))))
+                                Theme.label().bold()))))
                         .build())
                 .build();
         frame.renderStatefulWidget(list, popup, morePopupState);
@@ -478,7 +484,7 @@ class PopupManager {
             String label = String.format("  %s %s (pid:%s)%s", TuiIcons.CAMEL, name, info.pid,
                     current ? " " + TuiIcons.SELECTED : "");
             if (current) {
-                items[i] = ListItem.from(Line.from(Span.styled(label, Style.EMPTY.fg(Color.CYAN))));
+                items[i] = ListItem.from(Line.from(Span.styled(label, Style.EMPTY.fg(Theme.accent()))));
             } else {
                 items[i] = ListItem.from(label);
             }
@@ -492,7 +498,7 @@ class PopupManager {
                 .block(Block.builder()
                         .borderType(BorderType.ROUNDED).borders(Borders.ALL)
                         .title(Title.from(
-                                Line.from(Span.styled(" Switch Integration ", Style.EMPTY.fg(Color.YELLOW).bold()))))
+                                Line.from(Span.styled(" Switch Integration ", Theme.label().bold()))))
                         .build())
                 .build();
         frame.renderStatefulWidget(listWidget, popup, switchPopupState);
@@ -510,7 +516,7 @@ class PopupManager {
         frame.renderWidget(Clear.INSTANCE, popup);
         Block block = Block.builder()
                 .borderType(BorderType.ROUNDED).borders(Borders.ALL)
-                .borderStyle(Style.EMPTY.fg(Color.LIGHT_RED))
+                .borderStyle(Theme.error())
                 .title(" Confirm Kill ")
                 .build();
         frame.renderWidget(block, popup);
@@ -519,7 +525,7 @@ class PopupManager {
                 Paragraph.builder()
                         .text(Text.from(
                                 Line.from(Span.raw("")),
-                                Line.from(Span.styled(msg, Style.EMPTY.fg(Color.LIGHT_RED).bold())),
+                                Line.from(Span.styled(msg, Theme.error().bold())),
                                 Line.from(Span.raw("")),
                                 Line.from(
                                         Span.raw("  "),

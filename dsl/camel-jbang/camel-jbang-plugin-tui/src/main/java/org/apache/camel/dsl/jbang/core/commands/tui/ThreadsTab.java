@@ -25,7 +25,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import dev.tamboui.layout.Constraint;
 import dev.tamboui.layout.Layout;
 import dev.tamboui.layout.Rect;
-import dev.tamboui.style.Color;
 import dev.tamboui.style.Style;
 import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.Line;
@@ -174,7 +173,7 @@ class ThreadsTab extends AbstractTableTab {
 
             rows.add(Row.from(
                     rightCell(String.valueOf(t.id), 8),
-                    Cell.from(Span.styled(t.name != null ? t.name : "", Style.EMPTY.fg(Color.CYAN))),
+                    Cell.from(Span.styled(t.name != null ? t.name : "", Style.EMPTY.fg(Theme.accent()))),
                     Cell.from(Span.styled(state, stateStyle(state))),
                     rightCell(blocked, 14),
                     rightCell(waited, 14)));
@@ -251,7 +250,7 @@ class ThreadsTab extends AbstractTableTab {
             String frame2 = thread.stackTrace.get(i);
             Style style = Style.EMPTY;
             if (frame2 != null && frame2.contains("org.apache.camel")) {
-                style = Style.EMPTY.fg(Color.YELLOW);
+                style = Theme.label();
             }
             lines.add(Line.from(Span.styled("  " + (frame2 != null ? frame2 : ""), style)));
         }
@@ -316,10 +315,10 @@ class ThreadsTab extends AbstractTableTab {
             return Style.EMPTY;
         }
         return switch (state) {
-            case "RUNNABLE" -> Style.EMPTY.fg(Color.GREEN);
-            case "BLOCKED" -> Style.EMPTY.fg(Color.LIGHT_RED);
-            case "WAITING" -> Style.EMPTY.fg(Color.YELLOW);
-            case "TIMED_WAITING" -> Style.EMPTY.fg(Color.CYAN);
+            case "RUNNABLE" -> Theme.success();
+            case "BLOCKED" -> Theme.error();
+            case "WAITING" -> Theme.warning();
+            case "TIMED_WAITING" -> Style.EMPTY.fg(Theme.accent());
             default -> Style.EMPTY;
         };
     }

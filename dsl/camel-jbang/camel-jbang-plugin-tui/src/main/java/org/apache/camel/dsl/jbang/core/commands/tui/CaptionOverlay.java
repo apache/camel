@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import dev.tamboui.layout.Rect;
-import dev.tamboui.style.Color;
 import dev.tamboui.style.Style;
 import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.Line;
@@ -188,10 +187,9 @@ class CaptionOverlay {
     }
 
     private void renderInline(Frame frame, Rect area) {
-        Style style = Style.EMPTY.fg(Color.WHITE).bold();
+        Style style = Style.EMPTY.fg(Theme.baseFg()).bold();
         String text = inlineBuffer != null ? inlineBuffer.toString() : "";
-        boolean cursorVisible = (System.currentTimeMillis() / 500) % 2 == 0;
-        String display = text + (cursorVisible ? "▌" : " ");
+        String display = text + "█";
 
         String[] parts = display.split("\\\\n", -1);
         List<Line> lines = new ArrayList<>();
@@ -223,7 +221,7 @@ class CaptionOverlay {
 
         Style style;
         if (captionFullyTypedTime == 0 || now - captionFullyTypedTime < HOLD_DURATION_MS) {
-            style = Style.EMPTY.fg(Color.WHITE).bold();
+            style = Style.EMPTY.fg(Theme.baseFg()).bold();
         } else {
             style = Style.EMPTY.dim();
         }

@@ -22,6 +22,8 @@ import java.util.Properties;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CamelCaseOrderedPropertiesTest {
 
@@ -75,6 +77,23 @@ public class CamelCaseOrderedPropertiesTest {
         assertEquals("500", prop.getProperty("camel.component.seda.queue-size", "MyDefault"));
         assertEquals("500", prop.getProperty("camel.component.seda.queueSize", "MyDefault"));
         assertEquals("1234", prop.getProperty("camel.component.direct.timeout", "MyDefault"));
+    }
+
+    @Test
+    public void testContainsKeyCamelCaseAndDashFallback() {
+        Properties prop = new CamelCaseOrderedProperties();
+        prop.setProperty("camel.main.stream-caching-enabled", "true");
+        prop.setProperty("camel.component.seda.queueSize", "500");
+
+        // stored as dash, looked up as dash or camelCase
+        assertTrue(prop.containsKey("camel.main.stream-caching-enabled"));
+        assertTrue(prop.containsKey("camel.main.streamCachingEnabled"));
+
+        // stored as camelCase, looked up as camelCase or dash
+        assertTrue(prop.containsKey("camel.component.seda.queueSize"));
+        assertTrue(prop.containsKey("camel.component.seda.queue-size"));
+
+        assertFalse(prop.containsKey("camel.main.unknown"));
     }
 
 }

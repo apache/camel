@@ -325,7 +325,9 @@ public class KeycloakSecurityProcessor extends DelegateProcessor {
         // Get public key from auto-fetch resolver or manual configuration
         if (policy.isAutoFetchPublicKey() && resolver != null) {
             try {
-                publicKey = resolver.getPublicKey(null);
+                // select the JWKS key matching the token's kid (handles key rotation)
+                String kid = KeycloakSecurityHelper.extractKeyId(accessToken);
+                publicKey = resolver.getPublicKey(kid);
             } catch (IOException e) {
                 LOG.error("Failed to fetch public key from JWKS endpoint: {}", e.getMessage());
                 throw new CamelAuthorizationException("Failed to fetch public key for token verification", exchange, e);

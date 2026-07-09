@@ -101,6 +101,30 @@ See xref:others:pqc-hybrid.adoc[PQC Hybrid Cryptography] for configuration detai
 
 See xref:others:pqc-key-lifecycle.adoc[PQC Key Lifecycle Management] for full details.
 
+== Metrics
+
+When https://micrometer.io[Micrometer] is on the classpath and a `MeterRegistry` bean is available in the Camel
+registry, the PQC producer records metrics automatically. Micrometer is an *optional* dependency: without it (or without
+a `MeterRegistry`) no metrics are emitted and there is no runtime overhead.
+
+[cols="2,1,4",options="header"]
+|===
+| Meter | Type | Description
+
+| `camel.pqc.operations`
+| Counter
+| Number of PQC operations performed, tagged by `operation` (sign, verify, generateSecretKeyEncapsulation,
+  extractSecretKeyFromEncapsulation, ...), `algorithm`, and `outcome` (`success` / `failure`).
+
+| `camel.pqc.stateful.key.remaining`
+| Gauge
+| Remaining signatures for a stateful signature key (XMSS, XMSSMT, LMS, HSS), tagged by `algorithm`. Registered only for
+  producers configured with a stateful signature algorithm.
+|===
+
+To enable the metrics, add `camel-micrometer` (or Micrometer directly) to your application and bind a `MeterRegistry` in
+the registry - for example a `SimpleMeterRegistry`, or the registry provided by Spring Boot or Quarkus.
+
 == Sub-Pages
 
 The PQC component documentation is split into focused sub-pages:

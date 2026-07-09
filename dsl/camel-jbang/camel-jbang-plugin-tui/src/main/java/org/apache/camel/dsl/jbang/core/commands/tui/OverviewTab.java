@@ -25,7 +25,6 @@ import java.util.Set;
 import dev.tamboui.layout.Constraint;
 import dev.tamboui.layout.Layout;
 import dev.tamboui.layout.Rect;
-import dev.tamboui.style.AnsiColor;
 import dev.tamboui.style.Color;
 import dev.tamboui.style.Style;
 import dev.tamboui.terminal.Frame;
@@ -294,7 +293,7 @@ class OverviewTab extends AbstractTab {
                         Cell.from(Span.styled(vanishName, dimStyle)),
                         Cell.from(Span.styled("", dimStyle)),
                         Cell.from(Span.styled("", dimStyle)),
-                        Cell.from(Span.styled(TuiIcons.STOPPED + " Stopped", Style.EMPTY.fg(Color.LIGHT_RED).dim())),
+                        Cell.from(Span.styled(TuiIcons.STOPPED + " Stopped", Theme.error().dim())),
                         Cell.from(Span.styled(info.ago != null ? info.ago : "", dimStyle)),
                         Cell.from(Span.styled("", dimStyle)),
                         Cell.from(Span.styled("", dimStyle)),
@@ -328,9 +327,9 @@ class OverviewTab extends AbstractTab {
                 String platformIcon = TuiIcons.runtimeIcon(info.platform != null ? info.platform : "");
                 String nameText = platformIcon + " " + (info.name != null ? info.name : "");
                 List<Span> nameSpans = new ArrayList<>();
-                nameSpans.add(Span.styled(nameText, Style.EMPTY.fg(Color.CYAN)));
+                nameSpans.add(Span.styled(nameText, Theme.info()));
                 if (info.devMode) {
-                    nameSpans.add(Span.styled(" [dev]", Style.EMPTY.fg(Color.YELLOW).dim()));
+                    nameSpans.add(Span.styled(" [dev]", Theme.label()));
                 }
                 if (hasDoc) {
                     nameSpans.add(Span.styled(" " + TuiIcons.README, Style.EMPTY));
@@ -401,7 +400,7 @@ class OverviewTab extends AbstractTab {
                         Cell.from(Span.styled(vanishAlias, dimStyle)),
                         Cell.from(Span.styled("", dimStyle)),
                         Cell.from(Span.styled("", dimStyle)),
-                        Cell.from(Span.styled(TuiIcons.STOPPED + " Stopped", Style.EMPTY.fg(Color.LIGHT_RED).dim())),
+                        Cell.from(Span.styled(TuiIcons.STOPPED + " Stopped", Theme.error().dim())),
                         Cell.from(Span.styled("", dimStyle)),
                         Cell.from(Span.styled("", dimStyle)),
                         Cell.from(Span.styled("", dimStyle)),
@@ -415,7 +414,7 @@ class OverviewTab extends AbstractTab {
                 String version = info.serviceVersion != null ? info.serviceVersion : "";
                 rows.add(Row.from(
                         Cell.from(info.pid),
-                        Cell.from(Span.styled(infraAlias, Style.EMPTY.fg(Color.MAGENTA))),
+                        Cell.from(Span.styled(infraAlias, Theme.notice())),
                         Cell.from(version),
                         Cell.from(""),
                         Cell.from(Span.styled(statusText, statusStyle)),
@@ -504,10 +503,17 @@ class OverviewTab extends AbstractTab {
             for (long v : mergedTotal) {
                 rawMax = Math.max(rawMax, v);
             }
-            long maxTp = roundUpNice(rawMax);
+            long maxTp = MetricsCollector.niceMax(rawMax);
             long curTp = mergedTotal[renderPoints - 1];
-            long curFailed = mergedFailed[renderPoints - 1];
+            // Clamp failed to total so the title matches the chart bars (total comes from
+            // EWMA while failed is still delta-based, so failed can momentarily exceed total)
+            long curFailed = Math.min(mergedFailed[renderPoints - 1], curTp);
             long curOk = Math.max(0, curTp - curFailed);
+
+            // Format throughput values unscaled for display
+            String curTpFmt = MetricsCollector.formatThroughput(curTp);
+            String curOkFmt = MetricsCollector.formatThroughput(curOk);
+            String curFailFmt = MetricsCollector.formatThroughput(curFailed);
 
             Line titleLine;
             if (chartMode == CHART_SINGLE && ctx.selectedPid != null) {
@@ -516,19 +522,19 @@ class OverviewTab extends AbstractTab {
                         : ctx.selectedPid != null ? ctx.selectedPid : "?";
                 titleLine = Line.from(
                         Span.raw(" ["),
-                        Span.styled(chartName, Style.EMPTY.fg(Color.YELLOW)),
-                        Span.raw(String.format("] Throughput: %d msg/s  ", curTp)),
-                        Span.styled("■", Style.EMPTY.fg(Color.ansi(AnsiColor.BRIGHT_GREEN))),
-                        Span.raw(String.format(" ok:%d  ", curOk)),
-                        Span.styled("■", Style.EMPTY.fg(Color.RED)),
-                        Span.raw(String.format(" fail:%d ", curFailed)));
+                        Span.styled(chartName, Theme.label().bold()),
+                        Span.raw(String.format("] Throughput: %s msg/s  ", curTpFmt)),
+                        Span.styled("■", Theme.success()),
+                        Span.raw(String.format(" ok:%s  ", curOkFmt)),
+                        Span.styled("■", Theme.error()),
+                        Span.raw(String.format(" fail:%s ", curFailFmt)));
             } else {
                 titleLine = Line.from(
-                        Span.raw(String.format(" [All] Throughput: %d msg/s  ", curTp)),
-                        Span.styled("■", Style.EMPTY.fg(Color.ansi(AnsiColor.BRIGHT_GREEN))),
-                        Span.raw(String.format(" ok:%d  ", curOk)),
-                        Span.styled("■", Style.EMPTY.fg(Color.RED)),
-                        Span.raw(String.format(" fail:%d ", curFailed)));
+                        Span.raw(String.format(" [All] Throughput: %s msg/s  ", curTpFmt)),
+                        Span.styled("■", Theme.success()),
+                        Span.raw(String.format(" ok:%s  ", curOkFmt)),
+                        Span.styled("■", Theme.error()),
+                        Span.raw(String.format(" fail:%s ", curFailFmt)));
             }
 
             Block chartBlock = Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
@@ -540,14 +546,14 @@ class OverviewTab extends AbstractTab {
                 long failed = Math.min(mergedFailed[i], mergedTotal[i]);
                 long ok = Math.max(0, mergedTotal[i] - failed);
                 groups.add(BarGroup.of(
-                        Bar.builder().value(ok).textValue("").style(Style.EMPTY.fg(Color.ansi(AnsiColor.BRIGHT_GREEN)))
+                        Bar.builder().value(ok).textValue("").style(Theme.success())
                                 .build(),
-                        Bar.builder().value(failed).textValue("").style(Style.EMPTY.fg(Color.RED)).build()));
+                        Bar.builder().value(failed).textValue("").style(Theme.error()).build()));
             }
 
             BarChart barChart = BarChart.builder()
                     .data(groups)
-                    .max(maxTp > 0 ? maxTp + 2 : 2)
+                    .max(maxTp)
                     .barWidth(1)
                     .barGap(0)
                     .groupGap(0)
@@ -560,9 +566,11 @@ class OverviewTab extends AbstractTab {
             Style dimStyle = Style.EMPTY.dim();
             for (int row = 0; row < barRows; row++) {
                 if (row == 0) {
-                    yLines.add(Line.from(Span.styled(String.format("%3d", maxTp), dimStyle)));
+                    yLines.add(
+                            Line.from(Span.styled(String.format("%3s", MetricsCollector.formatThroughput(maxTp)), dimStyle)));
                 } else if (barRows > 4 && row == barRows / 2) {
-                    yLines.add(Line.from(Span.styled(String.format("%3d", maxTp / 2), dimStyle)));
+                    yLines.add(Line
+                            .from(Span.styled(String.format("%3s", MetricsCollector.formatThroughput(maxTp / 2)), dimStyle)));
                 } else if (row == barRows - 1) {
                     yLines.add(Line.from(Span.styled("  0", dimStyle)));
                 } else {
@@ -625,7 +633,7 @@ class OverviewTab extends AbstractTab {
         frame.renderWidget(infoBlock, area);
         Rect inner = infoBlock.inner(area);
         List<Line> lines = new ArrayList<>();
-        Style dim = Style.EMPTY.dim();
+        Style dim = Theme.muted();
         int jvmDetailStart = -1;
         int jvmDetailCount = 0;
         if (sel != null) {
@@ -741,10 +749,10 @@ class OverviewTab extends AbstractTab {
         frame.renderWidget(infoBlock, area);
         Rect inner = infoBlock.inner(area);
         List<Line> lines = new ArrayList<>();
-        Style dim = Style.EMPTY.dim();
+        Style dim = Theme.muted();
         lines.add(Line.from(
                 Span.styled("Service: ", dim),
-                Span.styled(infra.alias, Style.EMPTY.fg(Color.MAGENTA))));
+                Span.styled(infra.alias, Theme.notice())));
         lines.add(Line.from(Span.raw("")));
         for (Map.Entry<String, Object> e : infra.properties.entrySet()) {
             String key = e.getKey();
@@ -895,18 +903,6 @@ class OverviewTab extends AbstractTab {
 
     private Style sortStyle(String column) {
         return sortStyle(column, sort);
-    }
-
-    private static long roundUpNice(long value) {
-        if (value <= 10) {
-            return 10;
-        }
-        long step = (long) Math.pow(10, Math.floor(Math.log10(value)));
-        long rounded = ((value + step - 1) / step) * step;
-        if (rounded % 2 != 0) {
-            rounded += step;
-        }
-        return rounded;
     }
 
     private static boolean hasReadmeInSourceDir(IntegrationInfo info) {

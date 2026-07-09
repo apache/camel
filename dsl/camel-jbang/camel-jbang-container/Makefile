@@ -97,12 +97,12 @@ images-check-all:
 image-check:
 	@echo "####### Checking Camel JBang (CLI) $(IMAGE_CHECK) container image..."
 	@EXPECTED="$(CAMEL_VERSION)"; \
-	ACTUAL=$$(docker run --rm $(IMAGE_CHECK) version | sed -n 's/^Camel JBang version: //p'); \
+	ACTUAL=$$(docker run --rm $(IMAGE_CHECK) version | sed -n 's/^Camel CLI version: //p'); \
 	test "$$ACTUAL" = "$$EXPECTED"
 	@for arch in $(ARCH_VERSIONS); do \
 		echo "####### Checking $$arch"; \
 		EXPECTED="$(CAMEL_VERSION)"; \
 		ACTUAL=$$(docker run --rm --platform linux/$$arch $(IMAGE_CHECK) version | \
-			sed -n 's/^Camel JBang version: //p'); \
+			sed -n 's/^Camel CLI version: //p'); \
 		test "$$ACTUAL" = "$$EXPECTED" || exit 1; \
 	done

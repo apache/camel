@@ -59,7 +59,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class HttpCompressionTest extends BaseHttpTest {
 
-    private HttpServer localServer;
+    protected HttpServer localServer;
 
     @Override
     public void setupResources() throws Exception {

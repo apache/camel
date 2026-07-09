@@ -59,6 +59,14 @@ public class PQCComponentConfigurer extends PropertyConfigurerSupport implements
         case "keyPair": getOrCreateConfiguration(target).setKeyPair(property(camelContext, java.security.KeyPair.class, value)); return true;
         case "keypairalias":
         case "keyPairAlias": getOrCreateConfiguration(target).setKeyPairAlias(property(camelContext, java.lang.String.class, value)); return true;
+        case "keyrotationcheckinterval":
+        case "keyRotationCheckInterval": target.setKeyRotationCheckInterval(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
+        case "keyrotationmaxage":
+        case "keyRotationMaxAge": target.setKeyRotationMaxAge(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
+        case "keyrotationmaxusage":
+        case "keyRotationMaxUsage": target.setKeyRotationMaxUsage(property(camelContext, long.class, value)); return true;
+        case "keyrotationschedulerenabled":
+        case "keyRotationSchedulerEnabled": target.setKeyRotationSchedulerEnabled(property(camelContext, boolean.class, value)); return true;
         case "keystore":
         case "keyStore": getOrCreateConfiguration(target).setKeyStore(property(camelContext, java.security.KeyStore.class, value)); return true;
         case "keystorepassword":
@@ -120,6 +128,14 @@ public class PQCComponentConfigurer extends PropertyConfigurerSupport implements
         case "keyPair": return java.security.KeyPair.class;
         case "keypairalias":
         case "keyPairAlias": return java.lang.String.class;
+        case "keyrotationcheckinterval":
+        case "keyRotationCheckInterval": return long.class;
+        case "keyrotationmaxage":
+        case "keyRotationMaxAge": return long.class;
+        case "keyrotationmaxusage":
+        case "keyRotationMaxUsage": return long.class;
+        case "keyrotationschedulerenabled":
+        case "keyRotationSchedulerEnabled": return boolean.class;
         case "keystore":
         case "keyStore": return java.security.KeyStore.class;
         case "keystorepassword":
@@ -177,6 +193,14 @@ public class PQCComponentConfigurer extends PropertyConfigurerSupport implements
         case "keyPair": return getOrCreateConfiguration(target).getKeyPair();
         case "keypairalias":
         case "keyPairAlias": return getOrCreateConfiguration(target).getKeyPairAlias();
+        case "keyrotationcheckinterval":
+        case "keyRotationCheckInterval": return target.getKeyRotationCheckInterval();
+        case "keyrotationmaxage":
+        case "keyRotationMaxAge": return target.getKeyRotationMaxAge();
+        case "keyrotationmaxusage":
+        case "keyRotationMaxUsage": return target.getKeyRotationMaxUsage();
+        case "keyrotationschedulerenabled":
+        case "keyRotationSchedulerEnabled": return target.isKeyRotationSchedulerEnabled();
         case "keystore":
         case "keyStore": return getOrCreateConfiguration(target).getKeyStore();
         case "keystorepassword":

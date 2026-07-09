@@ -27,7 +27,6 @@ import java.util.function.Consumer;
 import dev.tamboui.layout.Constraint;
 import dev.tamboui.layout.Layout;
 import dev.tamboui.layout.Rect;
-import dev.tamboui.style.Color;
 import dev.tamboui.style.Style;
 import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.Line;
@@ -144,10 +143,10 @@ class SqlTraceTab extends AbstractTableTab {
     }
 
     private void renderKpiStrip(Frame frame, Rect area, IntegrationInfo info) {
-        Style labelStyle = Style.EMPTY.dim();
-        Style valueStyle = Style.EMPTY.fg(Color.CYAN).bold();
-        Style warnStyle = Style.EMPTY.fg(Color.YELLOW).bold();
-        Style errorStyle = Style.EMPTY.fg(Color.LIGHT_RED).bold();
+        Style labelStyle = Theme.muted();
+        Style valueStyle = Style.EMPTY.fg(Theme.accent()).bold();
+        Style warnStyle = Theme.warning().bold();
+        Style errorStyle = Theme.error().bold();
 
         List<Span> spans = new ArrayList<>();
         spans.add(Span.styled("  Total: ", labelStyle));
@@ -233,8 +232,8 @@ class SqlTraceTab extends AbstractTableTab {
     private void renderTable(Frame frame, Rect area, List<SqlTraceInfo> sorted) {
         List<Row> rows = new ArrayList<>();
         for (SqlTraceInfo si : sorted) {
-            Style durStyle = si.duration >= 100 ? Style.EMPTY.fg(Color.YELLOW) : Style.EMPTY;
-            Style statusStyle = si.failed ? Style.EMPTY.fg(Color.LIGHT_RED) : Style.EMPTY.fg(Color.GREEN);
+            Style durStyle = si.duration >= 100 ? Theme.warning() : Style.EMPTY;
+            Style statusStyle = si.failed ? Theme.error() : Theme.success();
             String status = si.failed ? "FAIL" : "OK";
 
             String time = "";
@@ -254,7 +253,7 @@ class SqlTraceTab extends AbstractTableTab {
                     Cell.from(Span.styled(time, Style.EMPTY.dim())),
                     Cell.from(Span.styled(si.category != null ? si.category : "", categoryStyle(si.category))),
                     Cell.from(si.query != null ? si.query : ""),
-                    Cell.from(Span.styled(si.routeId != null ? si.routeId : "", Style.EMPTY.fg(Color.CYAN))),
+                    Cell.from(Span.styled(si.routeId != null ? si.routeId : "", Style.EMPTY.fg(Theme.accent()))),
                     rightCell(String.valueOf(si.duration), 10, durStyle),
                     rightCell(rowsStr, 8),
                     Cell.from(Span.styled(status, statusStyle))));
@@ -311,7 +310,7 @@ class SqlTraceTab extends AbstractTableTab {
 
     private void renderDetail(Frame frame, Rect area, SqlTraceInfo si) {
         List<Line> lines = new ArrayList<>();
-        Style labelStyle = Style.EMPTY.fg(Color.CYAN).bold();
+        Style labelStyle = Theme.muted();
         Style valueStyle = Style.EMPTY;
 
         lines.add(Line.from(
@@ -339,8 +338,8 @@ class SqlTraceTab extends AbstractTableTab {
             time = LocalDateTime.ofInstant(Instant.ofEpochMilli(si.timestamp), ZoneId.systemDefault())
                     .format(TIME_FMT);
         }
-        Style durStyle = si.duration >= 100 ? Style.EMPTY.fg(Color.YELLOW) : Style.EMPTY;
-        Style statusStyle = si.failed ? Style.EMPTY.fg(Color.LIGHT_RED) : Style.EMPTY.fg(Color.GREEN);
+        Style durStyle = si.duration >= 100 ? Theme.warning() : Style.EMPTY;
+        Style statusStyle = si.failed ? Theme.error() : Theme.success();
         lines.add(Line.from(
                 Span.styled(" Time: ", labelStyle),
                 Span.styled(time, valueStyle),
@@ -376,10 +375,10 @@ class SqlTraceTab extends AbstractTableTab {
             return Style.EMPTY;
         }
         return switch (category) {
-            case "SELECT" -> Style.EMPTY.fg(Color.CYAN);
-            case "INSERT" -> Style.EMPTY.fg(Color.GREEN);
-            case "UPDATE" -> Style.EMPTY.fg(Color.YELLOW);
-            case "DELETE" -> Style.EMPTY.fg(Color.LIGHT_RED);
+            case "SELECT" -> Style.EMPTY.fg(Theme.accent());
+            case "INSERT" -> Theme.success();
+            case "UPDATE" -> Theme.label();
+            case "DELETE" -> Theme.error();
             default -> Style.EMPTY;
         };
     }

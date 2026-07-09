@@ -169,9 +169,10 @@ abstract class ActionCommandTestSupport extends CamelCommandBaseTestSupport {
         ProcessHandle ph = mock(ProcessHandle.class);
         ProcessHandle.Info info = mock(ProcessHandle.Info.class);
         when(ph.pid()).thenReturn(pid);
-        when(ph.info()).thenReturn(info);
-        when(info.commandLine()).thenReturn(Optional.empty());
-        // lenient: only read when a status file is matched
+        // lenient: info()/commandLine()/startInstant() are only read when a status file is matched; a test that
+        // exercises the "no status file for this pid" path never reaches that code, leaving these unused
+        lenient().when(ph.info()).thenReturn(info);
+        lenient().when(info.commandLine()).thenReturn(Optional.empty());
         lenient().when(info.startInstant()).thenReturn(Optional.of(Instant.now().minusSeconds(60)));
         return ph;
     }

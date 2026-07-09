@@ -77,6 +77,36 @@ abstract class BaseOrderedProperties extends Properties {
     }
 
     @Override
+    public boolean containsKey(Object key) {
+        lock.lock();
+        try {
+            return map.containsKey(key);
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    @Override
+    public boolean containsValue(Object value) {
+        lock.lock();
+        try {
+            return map.containsValue(value);
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    @Override
+    public boolean contains(Object value) {
+        lock.lock();
+        try {
+            return map.containsValue(value);
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    @Override
     public boolean isEmpty() {
         lock.lock();
         try {

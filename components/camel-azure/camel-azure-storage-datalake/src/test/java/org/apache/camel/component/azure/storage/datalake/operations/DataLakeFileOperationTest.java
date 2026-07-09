@@ -44,6 +44,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -91,6 +92,19 @@ public class DataLakeFileOperationTest extends CamelTestSupport {
         assertNotNull(secondResponse);
         assertNotNull(secondResponse.getBody());
         assertNotNull(secondResponse.getHeaders());
+    }
+
+    @Test
+    void testDownloadToFileRejectsPathTraversalName() {
+        // a file name is influenced by whoever writes to the file system and may contain ../ segments;
+        // the download must stay within the configured fileDir
+        configuration.setFileDir("/tmp/camel-azure-datalake-download");
+        when(client.getFileName()).thenReturn("../escaped/PROOF_PWNED");
+
+        final DataLakeFileOperations operations = new DataLakeFileOperations(configuration, client);
+        final Exchange exchange = new DefaultExchange(context);
+
+        assertThrows(IllegalArgumentException.class, () -> operations.downloadToFile(exchange));
     }
 
     @Test

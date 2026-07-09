@@ -30,6 +30,7 @@ import org.apache.camel.throttling.ThrottlingInflightRoutePolicy;
 import org.junit.jupiter.api.Test;
 import org.reactivestreams.Publisher;
 
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -82,11 +83,11 @@ public class BackpressurePublisherRoutePolicyTest extends BaseReactiveTest {
 
         // fire a delayed request from the subscriber (required by camel core)
         subscriber.request(1);
-        Thread.sleep(250);
 
+        // Wait for the route policy to stop or suspend the route
         StatefulService service = (StatefulService) context().getRoute("policy-route").getConsumer();
-        // ensure the route is stopped or suspended
-        assertTrue(service.isStopped() || service.isSuspended());
+        await().atMost(5, TimeUnit.SECONDS)
+                .untilAsserted(() -> assertTrue(service.isStopped() || service.isSuspended()));
 
         // request all the remaining exchanges
         subscriber.request(24);
@@ -141,11 +142,11 @@ public class BackpressurePublisherRoutePolicyTest extends BaseReactiveTest {
 
         // fire a delayed request from the subscriber (required by camel core)
         subscriber.request(1);
-        Thread.sleep(250);
 
+        // Wait for the route policy to stop or suspend the route
         StatefulService service = (StatefulService) context().getRoute("policy-route").getConsumer();
-        // ensure the route is stopped or suspended
-        assertTrue(service.isStopped() || service.isSuspended());
+        await().atMost(5, TimeUnit.SECONDS)
+                .untilAsserted(() -> assertTrue(service.isStopped() || service.isSuspended()));
         subscriber.cancel();
 
         // request other exchanges to ensure that the route works

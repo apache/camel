@@ -18,17 +18,13 @@ package org.apache.camel.dsl.jbang.core.commands.tui.diagram;
 
 import dev.tamboui.buffer.Buffer;
 import dev.tamboui.layout.Rect;
-import dev.tamboui.style.Color;
 import dev.tamboui.style.Style;
 import dev.tamboui.widget.Widget;
 import org.apache.camel.diagram.TopologyLayoutEngine.TopologyLayoutNode;
 import org.apache.camel.diagram.TopologyLayoutEngine.TopologyLayoutResult;
+import org.apache.camel.dsl.jbang.core.commands.tui.Theme;
 
 public class TopologyMinimapWidget implements Widget {
-
-    private static final Style CURRENT_STYLE = Style.EMPTY.fg(Color.YELLOW).bold();
-    private static final Style OTHER_STYLE = Style.EMPTY.fg(Color.DARK_GRAY);
-    private static final Style EXTERNAL_STYLE = Style.EMPTY.fg(Color.CYAN).dim();
 
     private final TopologyLayoutResult layout;
     private final String currentRouteId;
@@ -69,7 +65,7 @@ public class TopologyMinimapWidget implements Widget {
             col = Math.max(0, col);
             row = Math.max(0, row);
 
-            Style style = isCurrent ? CURRENT_STYLE : OTHER_STYLE;
+            Style style = isCurrent ? Theme.label().bold() : Theme.muted();
 
             drawMiniBox(buffer, area, col, row, nodeW, nodeH, style, isCurrent);
         }

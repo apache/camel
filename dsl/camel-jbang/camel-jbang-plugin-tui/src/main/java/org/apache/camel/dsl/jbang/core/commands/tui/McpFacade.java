@@ -93,6 +93,7 @@ class McpFacade {
     private final RecordingManager recordingManager;
     private final CaptionOverlay captionOverlay;
     private final DrawOverlay drawOverlay;
+    private final CanvasOverlay canvasOverlay;
     private final HelpOverlay helpOverlay;
     private final ActionsPopup actionsPopup;
     private final FilesBrowser filesBrowser;
@@ -107,6 +108,7 @@ class McpFacade {
               RecordingManager recordingManager,
               CaptionOverlay captionOverlay,
               DrawOverlay drawOverlay,
+              CanvasOverlay canvasOverlay,
               HelpOverlay helpOverlay,
               ActionsPopup actionsPopup,
               FilesBrowser filesBrowser,
@@ -119,6 +121,7 @@ class McpFacade {
         this.recordingManager = recordingManager;
         this.captionOverlay = captionOverlay;
         this.drawOverlay = drawOverlay;
+        this.canvasOverlay = canvasOverlay;
         this.helpOverlay = helpOverlay;
         this.actionsPopup = actionsPopup;
         this.filesBrowser = filesBrowser;
@@ -215,6 +218,18 @@ class McpFacade {
 
     void clearDrawing() {
         drawOverlay.clear();
+    }
+
+    void openCanvas() {
+        canvasOverlay.open();
+    }
+
+    void closeCanvas() {
+        canvasOverlay.close();
+    }
+
+    boolean isCanvasVisible() {
+        return canvasOverlay.isVisible();
     }
 
     // ---- Tab navigation ----
