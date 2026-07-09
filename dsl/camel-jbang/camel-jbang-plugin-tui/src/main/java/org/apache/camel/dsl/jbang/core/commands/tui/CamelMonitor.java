@@ -1206,6 +1206,7 @@ public class CamelMonitor extends CamelCommand {
             logPinAnim.initHeight(contentArea.height());
             int ph = logPinAnim.panelHeight();
             ctx.shellPercent = ph * 100 / Math.max(1, contentArea.height());
+            ctx.logPinVisible = true;
             List<Rect> splitChunks = Layout.vertical()
                     .constraints(Constraint.fill(), Constraint.length(ph))
                     .split(contentArea);
@@ -1214,6 +1215,7 @@ public class CamelMonitor extends CamelCommand {
             panelSplit.setBorderPos(splitChunks.get(1).y());
         } else {
             ctx.shellPercent = 0;
+            ctx.logPinVisible = false;
             renderContent(frame, contentArea);
             panelSplit.clearBorderPos();
         }

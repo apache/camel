@@ -304,7 +304,7 @@ class LogTab extends AbstractTab {
             titleSpans.add(Span.styled("(*)", Theme.label()));
             titleSpans.add(Span.raw(" "));
         }
-        if (ctx.logPinned && ctx.logPinPercent > 0) {
+        if (ctx.logPinned && ctx.logPinPercent > 0 && ctx.logPinVisible) {
             titleSpans.add(Span.styled(" Ctrl+L ", Theme.hintKey()));
             titleSpans.add(Span.raw(" pin (" + ctx.logPinPercent + "%)  "));
         }

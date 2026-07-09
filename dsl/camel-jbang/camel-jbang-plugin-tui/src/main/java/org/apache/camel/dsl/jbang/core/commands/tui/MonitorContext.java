@@ -37,6 +37,7 @@ class MonitorContext {
     int shellPercent;
     boolean logPinned;
     int logPinPercent;
+    boolean logPinVisible;
 
     MonitorContext(
                    AtomicReference<List<IntegrationInfo>> data,
