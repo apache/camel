@@ -93,12 +93,21 @@ public interface ManagedPerformanceCounterMBean extends ManagedCounterMBean {
     @ManagedAttribute(description = "First Exchange Failed ExchangeId")
     String getFirstExchangeFailureExchangeId();
 
+    /**
+     * @since 4.22
+     */
     @ManagedAttribute(description = "50th percentile (median) of recent processing times [milliseconds]. Requires Extended statistics level, returns -1 otherwise.")
     long getProcessingTimeP50();
 
+    /**
+     * @since 4.22
+     */
     @ManagedAttribute(description = "95th percentile of recent processing times [milliseconds]. Requires Extended statistics level, returns -1 otherwise.")
     long getProcessingTimeP95();
 
+    /**
+     * @since 4.22
+     */
     @ManagedAttribute(description = "99th percentile of recent processing times [milliseconds]. Requires Extended statistics level, returns -1 otherwise.")
     long getProcessingTimeP99();
 
