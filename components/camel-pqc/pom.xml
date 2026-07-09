@@ -58,6 +58,13 @@
             <version>${jackson2-version}</version>
         </dependency>
 
+        <!-- Micrometer for optional PQC metrics/observability -->
+        <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-core</artifactId>
+            <optional>true</optional>
+        </dependency>
+
         <!-- Spring Vault for HashicorpVaultKeyLifecycleManager (optional) -->
         <dependency>
             <groupId>org.springframework.vault</groupId>

@@ -28,6 +28,7 @@ import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
@@ -36,6 +37,8 @@ import org.apache.camel.component.pqc.crypto.hybrid.HybridKEM;
 import org.apache.camel.component.pqc.crypto.hybrid.HybridSignature;
 import org.apache.camel.component.pqc.lifecycle.KeyLifecycleManager;
 import org.apache.camel.component.pqc.lifecycle.KeyMetadata;
+import org.apache.camel.component.pqc.metrics.PQCMetrics;
+import org.apache.camel.component.pqc.metrics.PQCMicrometerMetrics;
 import org.apache.camel.component.pqc.stateful.StatefulKeyState;
 import org.apache.camel.health.HealthCheck;
 import org.apache.camel.health.HealthCheckHelper;
@@ -117,6 +120,9 @@ public class PQCProducer extends DefaultProducer {
     private HealthCheck producerHealthCheck;
     private WritableHealthCheckRepository healthCheckRepository;
 
+    // Metrics (optional; a no-op unless Micrometer and a MeterRegistry are available)
+    private PQCMetrics metrics = PQCMetrics.NOOP;
+
     public PQCProducer(Endpoint endpoint) {
         super(endpoint);
     }
@@ -133,72 +139,78 @@ public class PQCProducer extends DefaultProducer {
     public void process(Exchange exchange) throws Exception {
         PQCOperations operation = determineOperation(exchange);
         enforceKeyStatus(exchange, operation);
-        switch (operation) {
-            case sign:
-                signature(exchange);
-                break;
-            case verify:
-                verification(exchange);
-                break;
-            case hybridSign:
-                hybridSignature(exchange);
-                break;
-            case hybridVerify:
-                hybridVerification(exchange);
-                break;
-            case generateSecretKeyEncapsulation:
-                generateEncapsulation(exchange);
-                break;
-            case extractSecretKeyEncapsulation:
-                extractEncapsulation(exchange);
-                break;
-            case extractSecretKeyFromEncapsulation:
-                extractSecretKeyFromEncapsulation(exchange);
-                break;
-            case hybridGenerateSecretKeyEncapsulation:
-                hybridGenerateEncapsulation(exchange);
-                break;
-            case hybridExtractSecretKeyEncapsulation:
-                hybridExtractEncapsulation(exchange);
-                break;
-            case hybridExtractSecretKeyFromEncapsulation:
-                hybridExtractSecretKeyFromEncapsulation(exchange);
-                break;
-            case generateKeyPair:
-                lifecycleGenerateKeyPair(exchange);
-                break;
-            case exportKey:
-                lifecycleExportKey(exchange);
-                break;
-            case importKey:
-                lifecycleImportKey(exchange);
-                break;
-            case rotateKey:
-                lifecycleRotateKey(exchange);
-                break;
-            case getKeyMetadata:
-                lifecycleGetKeyMetadata(exchange);
-                break;
-            case listKeys:
-                lifecycleListKeys(exchange);
-                break;
-            case expireKey:
-                lifecycleExpireKey(exchange);
-                break;
-            case revokeKey:
-                lifecycleRevokeKey(exchange);
-                break;
-            case getRemainingSignatures:
-                statefulGetRemainingSignatures(exchange);
-                break;
-            case getKeyState:
-                statefulGetKeyState(exchange);
-                break;
-            case deleteKeyState:
-                statefulDeleteKeyState(exchange);
-                break;
-            default:
-                throw new IllegalArgumentException("Unsupported operation");
+        boolean success = false;
+        try {
+            switch (operation) {
+                case sign:
+                    signature(exchange);
+                    break;
+                case verify:
+                    verification(exchange);
+                    break;
+                case hybridSign:
+                    hybridSignature(exchange);
+                    break;
+                case hybridVerify:
+                    hybridVerification(exchange);
+                    break;
+                case generateSecretKeyEncapsulation:
+                    generateEncapsulation(exchange);
+                    break;
+                case extractSecretKeyEncapsulation:
+                    extractEncapsulation(exchange);
+                    break;
+                case extractSecretKeyFromEncapsulation:
+                    extractSecretKeyFromEncapsulation(exchange);
+                    break;
+                case hybridGenerateSecretKeyEncapsulation:
+                    hybridGenerateEncapsulation(exchange);
+                    break;
+                case hybridExtractSecretKeyEncapsulation:
+                    hybridExtractEncapsulation(exchange);
+                    break;
+                case hybridExtractSecretKeyFromEncapsulation:
+                    hybridExtractSecretKeyFromEncapsulation(exchange);
+                    break;
+                case generateKeyPair:
+                    lifecycleGenerateKeyPair(exchange);
+                    break;
+                case exportKey:
+                    lifecycleExportKey(exchange);
+                    break;
+                case importKey:
+                    lifecycleImportKey(exchange);
+                    break;
+                case rotateKey:
+                    lifecycleRotateKey(exchange);
+                    break;
+                case getKeyMetadata:
+                    lifecycleGetKeyMetadata(exchange);
+                    break;
+                case listKeys:
+                    lifecycleListKeys(exchange);
+                    break;
+                case expireKey:
+                    lifecycleExpireKey(exchange);
+                    break;
+                case revokeKey:
+                    lifecycleRevokeKey(exchange);
+                    break;
+                case getRemainingSignatures:
+                    statefulGetRemainingSignatures(exchange);
+                    break;
+                case getKeyState:
+                    statefulGetKeyState(exchange);
+                    break;
+                case deleteKeyState:
+                    statefulDeleteKeyState(exchange);
+                    break;
+                default:
+                    throw new IllegalArgumentException("Unsupported operation");
+            }
+            success = true;
+        } finally {
+            metrics.recordOperation(operation.name(), currentAlgorithm(), success);
         }
     }
 
@@ -212,6 +224,35 @@ public class PQCProducer extends DefaultProducer {
 
     protected PQCConfiguration getConfiguration() {
         return getEndpoint().getConfiguration();
+    }
+
+    private String currentAlgorithm() {
+        String alg = getConfiguration().getSignatureAlgorithm();
+        if (ObjectHelper.isEmpty(alg)) {
+            alg = getConfiguration().getKeyEncapsulationAlgorithm();
+        }
+        return ObjectHelper.isNotEmpty(alg) ? alg : "unknown";
+    }
+
+    private PQCMetrics createMetrics() {
+        CamelContext camelContext = getEndpoint().getCamelContext();
+        // Only touch Micrometer if it is actually on the classpath, keeping it an optional dependency
+        if (camelContext.getClassResolver().resolveClass("io.micrometer.core.instrument.MeterRegistry") == null) {
+            return PQCMetrics.NOOP;
+        }
+        try {
+            return PQCMicrometerMetrics.create(camelContext);
+        } catch (Throwable t) {
+            LOG.debug("Micrometer metrics are not available for the PQC producer: {}", t.getMessage());
+            return PQCMetrics.NOOP;
+        }
+    }
+
+    private static boolean isStatefulSignatureAlgorithm(String algorithm) {
+        return PQCSignatureAlgorithms.XMSS.name().equals(algorithm)
+                || PQCSignatureAlgorithms.XMSSMT.name().equals(algorithm)
+                || PQCSignatureAlgorithms.LMS.name().equals(algorithm)
+                || PQCSignatureAlgorithms.HSS.name().equals(algorithm);
     }
 
     /**
@@ -411,6 +452,16 @@ public class PQCProducer extends DefaultProducer {
             producerHealthCheck.setEnabled(getEndpoint().getComponent().isHealthCheckProducerEnabled());
             healthCheckRepository.addHealthCheck(producerHealthCheck);
         }
+
+        // Optional Micrometer metrics (no-op unless a MeterRegistry is available)
+        metrics = createMetrics();
+        String signatureAlgorithm = getConfiguration().getSignatureAlgorithm();
+        if (isStatefulSignatureAlgorithm(signatureAlgorithm)) {
+            metrics.registerStatefulKeyGauge(signatureAlgorithm, () -> {
+                KeyPair kp = getRuntimeKeyPair();
+                return kp != null && kp.getPrivate() != null ? getStatefulKeyRemaining(kp.getPrivate()) : -1;
+            });
+        }
     }
 
     @Override
@@ -419,6 +470,8 @@ public class PQCProducer extends DefaultProducer {
             healthCheckRepository.removeHealthCheck(producerHealthCheck);
             producerHealthCheck = null;
         }
+        metrics.close();
+        metrics = PQCMetrics.NOOP;
         super.doStop();
     }
 
