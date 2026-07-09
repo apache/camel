@@ -61,8 +61,15 @@ public class ZeebeService {
     private String oAuthAPI;
 
     public ZeebeService(String gatewayHost, int gatewayPort) {
+        this(gatewayHost, gatewayPort, null, null, null);
+    }
+
+    public ZeebeService(String gatewayHost, int gatewayPort, String clientId, String clientSecret, String oAuthAPI) {
         this.gatewayHost = gatewayHost;
         this.gatewayPort = gatewayPort;
+        this.clientId = clientId;
+        this.clientSecret = clientSecret;
+        this.oAuthAPI = oAuthAPI;
 
         objectMapper = new ObjectMapper();
     }
