@@ -1,7 +1,7 @@
 # Camel TUI Theme Reference
 
 This document describes the CSS token system used by the Camel TUI.
-Every `.tcss` theme file must define all 27 tokens listed below.
+Every `.tcss` theme file must define all 28 tokens listed below.
 Missing tokens cause a startup validation error.
 
 ## File Format
@@ -52,13 +52,14 @@ $brand: #F69123;
 | `info` | fg | Informational accent (counts, prompts) |
 | `notice` | fg | Secondary accent, typically purple (e.g., TRACE log level) |
 
-### Content (3 tokens)
+### Content (4 tokens)
 
 | Token | Type | Purpose |
 |-------|------|---------|
 | `label` | fg | Field labels, section headers, key hints, table headers |
 | `change` | fg | Changed-value indicator in trace diffs |
 | `search-match` | fg+bg | Search/find match highlight |
+| `mnemonic` | fg+bold+underline | Keyboard shortcut mnemonic in tab headers and menus |
 
 ### Diagram (8 tokens)
 
@@ -66,12 +67,12 @@ $brand: #F69123;
 |-------|------|---------|
 | `diagram-border` | fg | Box-drawing borders in route diagrams |
 | `diagram-id` | fg | Route ID text |
-| `diagram-from` | fg | "from" EIP nodes |
-| `diagram-to` | fg | "to", "enrich", "marshal", "transform" nodes |
-| `diagram-choice` | fg | "choice", "when", "otherwise" nodes |
-| `diagram-action` | fg | "bean", "process", "log", "script" nodes |
-| `diagram-eip` | fg | Routing EIPs (split, aggregate, multicast, etc.) |
-| `diagram-default` | fg | Fallback for unknown EIP types |
+| `diagram-from` | fg | `from` EIP nodes |
+| `diagram-to` | fg | `to`, `enrich`, `marshal`, `transform` nodes |
+| `diagram-choice` | fg | `choice`, `when`, `otherwise` nodes |
+| `diagram-action` | fg | `bean`, `process`, `log`, `script` nodes |
+| `diagram-eip` | fg | Routing EIPs (`split`, `aggregate`, `multicast`, etc.) |
+| `diagram-default` | fg | Fallback for unspecified EIP types |
 
 ## Design Guidelines
 
@@ -96,3 +97,16 @@ When creating a new theme:
 |-------|------|-------------|
 | `dark` | `dark.tcss` | VS Code-inspired dark palette (default) |
 | `light` | `light.tcss` | GitHub-inspired light palette |
+| `dracula` | `dracula.tcss` | Dracula purple-and-pink-on-dark palette |
+| `nord` | `nord.tcss` | Nord arctic, bluish dark palette |
+| `solarized-dark` | `solarized-dark.tcss` | Solarized dark palette |
+| `solarized-light` | `solarized-light.tcss` | Solarized light palette |
+| `gruvbox-dark` | `gruvbox-dark.tcss` | Gruvbox retro-groove dark palette |
+| `catppuccin-mocha` | `catppuccin-mocha.tcss` | Catppuccin Mocha pastel dark palette |
+| `catppuccin-latte` | `catppuccin-latte.tcss` | Catppuccin Latte pastel light palette |
+| `tokyo-night` | `tokyo-night.tcss` | Tokyo Night neon-on-dark palette |
+| `rose-pine` | `rose-pine.tcss` | Rosé Pine muted dark palette |
+| `kanagawa` | `kanagawa.tcss` | Kanagawa Japanese-wave-inspired dark palette |
+| `everforest` | `everforest.tcss` | Everforest warm, green-forest dark palette |
+| `monochrome` | `monochrome.tcss` | Grayscale palette, no color, brightness only |
+| `crt` | `crt.tcss` | Retro green-phosphor terminal palette |
