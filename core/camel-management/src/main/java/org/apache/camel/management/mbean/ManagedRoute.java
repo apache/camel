@@ -105,6 +105,9 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
         boolean enabled
                 = context.getManagementStrategy().getManagementAgent().getStatisticsLevel() != ManagementStatisticsLevel.Off;
         setStatisticsEnabled(enabled);
+        if (context.getManagementStrategy().getManagementAgent().getStatisticsLevel().isExtended()) {
+            initExtendedStatistics();
+        }
     }
 
     public Route getRoute() {

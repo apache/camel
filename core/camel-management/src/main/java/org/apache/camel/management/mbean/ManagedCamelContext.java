@@ -88,6 +88,10 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
         boolean enabled = context.getManagementStrategy().getManagementAgent() != null
                 && context.getManagementStrategy().getManagementAgent().getStatisticsLevel() != ManagementStatisticsLevel.Off;
         setStatisticsEnabled(enabled);
+        if (context.getManagementStrategy().getManagementAgent() != null
+                && context.getManagementStrategy().getManagementAgent().getStatisticsLevel().isExtended()) {
+            initExtendedStatistics();
+        }
     }
 
     @Override

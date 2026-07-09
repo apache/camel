@@ -187,6 +187,11 @@ public class ContextDevConsole extends AbstractDevConsole {
                 stats.put("meanProcessingTime", mb.getMeanProcessingTime());
                 stats.put("maxProcessingTime", mb.getMaxProcessingTime());
                 stats.put("minProcessingTime", mb.getMinProcessingTime());
+                if (mb.getProcessingTimeP50() >= 0) {
+                    stats.put("p50ProcessingTime", mb.getProcessingTimeP50());
+                    stats.put("p95ProcessingTime", mb.getProcessingTimeP95());
+                    stats.put("p99ProcessingTime", mb.getProcessingTimeP99());
+                }
                 if (mb.getExchangesTotal() > 0) {
                     stats.put("lastProcessingTime", mb.getLastProcessingTime());
                     stats.put("deltaProcessingTime", mb.getDeltaProcessingTime());

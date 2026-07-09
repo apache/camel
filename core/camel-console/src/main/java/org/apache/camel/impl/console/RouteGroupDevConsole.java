@@ -180,6 +180,11 @@ public class RouteGroupDevConsole extends AbstractDevConsole {
             stats.put("meanProcessingTime", mrg.getMeanProcessingTime());
             stats.put("maxProcessingTime", mrg.getMaxProcessingTime());
             stats.put("minProcessingTime", mrg.getMinProcessingTime());
+            if (mrg.getProcessingTimeP50() >= 0) {
+                stats.put("p50ProcessingTime", mrg.getProcessingTimeP50());
+                stats.put("p95ProcessingTime", mrg.getProcessingTimeP95());
+                stats.put("p99ProcessingTime", mrg.getProcessingTimeP99());
+            }
             if (mrg.getExchangesTotal() > 0) {
                 stats.put("lastProcessingTime", mrg.getLastProcessingTime());
                 stats.put("deltaProcessingTime", mrg.getDeltaProcessingTime());
