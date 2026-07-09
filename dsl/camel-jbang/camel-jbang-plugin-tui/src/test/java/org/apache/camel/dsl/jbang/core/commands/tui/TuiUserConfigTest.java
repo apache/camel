@@ -129,6 +129,31 @@ class TuiUserConfigTest {
     }
 
     @Test
+    void writeUpdatesLocalForExistingLocalKeyWithEmptyValue(@TempDir Path tempDir) throws Exception {
+        useHome(tempDir);
+        Path globalFile = tempDir.resolve(CommandLineHelper.USER_CONFIG);
+        Files.writeString(globalFile, "camel.tui.startTab=Overview\n");
+
+        Path localFile = Path.of(CommandLineHelper.LOCAL_USER_CONFIG);
+        try {
+            // An explicitly-set but empty-valued local key must still be recognized as a local override
+            // (an empty property line loads as "", not null).
+            Files.writeString(localFile, "camel.tui.startTab=\n");
+
+            TuiUserConfig.write("camel.tui.startTab", "Trace");
+
+            String localContent = Files.readString(localFile);
+            assertTrue(localContent.contains("camel.tui.startTab=Trace"),
+                    "an existing empty-valued local override must be updated in the local file, not the global one");
+            String globalContent = Files.readString(globalFile);
+            assertFalse(globalContent.contains("camel.tui.startTab=Trace"),
+                    "the write must not leak into the global file");
+        } finally {
+            Files.deleteIfExists(localFile);
+        }
+    }
+
+    @Test
     void readReturnsNullWhenKeyAbsentFromBothFiles(@TempDir Path tempDir) {
         useHome(tempDir);
         assertNull(TuiUserConfig.read("camel.tui.theme"));

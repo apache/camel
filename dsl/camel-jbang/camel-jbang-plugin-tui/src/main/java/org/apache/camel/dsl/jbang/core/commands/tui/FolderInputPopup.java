@@ -97,6 +97,10 @@ class FolderInputPopup {
         return detectedPomPath;
     }
 
+    String getInputText() {
+        return inputState != null ? inputState.text() : null;
+    }
+
     void clearSelection() {
         selectedFolder = null;
         detectedPomPath = null;
@@ -108,13 +112,13 @@ class FolderInputPopup {
 
     void open() {
         showInput = true;
-        String defaultFolder = TuiSettings.load().getDefaultFolder();
+        String lastFolder = loadLastFolder();
         String initialFolder;
-        if (defaultFolder != null) {
-            initialFolder = defaultFolder;
+        if (lastFolder != null) {
+            initialFolder = lastFolder;
         } else {
-            String lastFolder = loadLastFolder();
-            initialFolder = lastFolder != null ? lastFolder : System.getProperty("user.dir");
+            String defaultFolder = TuiSettings.load().getDefaultFolder();
+            initialFolder = defaultFolder != null ? defaultFolder : System.getProperty("user.dir");
         }
         inputState = new TextInputState(initialFolder);
         historyIndex = -1;
