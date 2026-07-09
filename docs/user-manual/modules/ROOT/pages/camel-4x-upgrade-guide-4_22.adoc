@@ -214,10 +214,3 @@ by the file-based consumers (see the `localWorkDirectory` note in the 4.21 upgra
 
 Ordinary object names are unaffected. A name that resolves outside `fileDir` is now rejected with an
 `IllegalArgumentException`.
-
-=== camel-jpa - entity enhancement now documented
-
-The xref:components::jpa-component.adoc[JPA component] docs now cover OpenJPA entity enhancement:
-build-time enhancement (via the `openjpa-maven-plugin`) is recommended over runtime/dynamic
-enhancement (`-javaagent`), which OpenJPA discourages for production use. This is a documentation
-addition only; no component behavior has changed.
