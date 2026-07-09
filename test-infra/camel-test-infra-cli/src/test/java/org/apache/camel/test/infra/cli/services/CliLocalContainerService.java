@@ -17,6 +17,8 @@
 package org.apache.camel.test.infra.cli.services;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -76,7 +78,7 @@ public class CliLocalContainerService implements CliService, ContainerService<Cl
         if (!container.isRunning()) {
             LOG.info("Trying to start the {} container", CONTAINER_NAME);
             container.start();
-
+            fixJBangAppScript();
             registerProperties();
             LOG.info("{} instance running", CONTAINER_NAME);
             if (ObjectHelper.isNotEmpty(forceToRunVersion)) {
@@ -94,6 +96,25 @@ public class CliLocalContainerService implements CliService, ContainerService<Cl
             LOG.debug("the container is already running");
         }
 
+    }
+
+    private void fixJBangAppScript() {
+        // JBang 0.138+ has a bug: "jbang app install -Dkey=value" generates wrapper scripts
+        // with "-D key=value" (space-separated), but "jbang run" rejects that format.
+        // Patch the wrapper script to use "-Dkey=value" (no space).
+        String cmd = getMainCommand();
+        Path script = Path.of(System.getProperty("user.home"), ".jbang", "bin", cmd);
+        try {
+            if (Files.exists(script)) {
+                String content = Files.readString(script);
+                if (content.contains(" -D ")) {
+                    Files.writeString(script, content.replace(" -D ", " -D"));
+                    LOG.info("Patched JBang app script to fix -D property serialization");
+                }
+            }
+        } catch (IOException e) {
+            LOG.warn("Failed to patch JBang app script: {}", e.getMessage());
+        }
     }
 
     @Override
