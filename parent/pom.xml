@@ -494,7 +494,7 @@
         <sql-maven-plugin-version>3.0.0</sql-maven-plugin-version>
         <squareup-okhttp5-version>5.4.0</squareup-okhttp5-version>
         <squareup-okio-version>1.17.5</squareup-okio-version>
-        <sshd-version>2.18.0</sshd-version>
+        <sshd-version>2.19.0</sshd-version>
         <stompjms-version>1.19</stompjms-version>
         <stripe-java-version>33.1.0</stripe-java-version>
         <swagger-java-version>1.6.10</swagger-java-version>

@@ -547,7 +547,7 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-ftp",
   "version" : "4.22.0-SNAPSHOT",
-  "serviceVersion" : "2.18.0"
+  "serviceVersion" : "2.19.0"
 }, {
   "service" : "org.apache.camel.test.infra.jaeger.services.JaegerInfraService",
   "description" : "Jaeger is a distributed tracing backend with OTLP collector and UI",
