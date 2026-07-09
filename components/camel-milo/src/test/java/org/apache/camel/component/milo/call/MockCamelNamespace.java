@@ -30,7 +30,7 @@ import org.eclipse.milo.opcua.sdk.server.methods.AbstractMethodInvocationHandler
 import org.eclipse.milo.opcua.sdk.server.nodes.UaFolderNode;
 import org.eclipse.milo.opcua.sdk.server.nodes.UaMethodNode;
 import org.eclipse.milo.opcua.sdk.server.util.SubscriptionModel;
-import org.eclipse.milo.opcua.stack.core.Identifiers;
+import org.eclipse.milo.opcua.stack.core.NodeIds0;
 import org.eclipse.milo.opcua.stack.core.types.builtin.LocalizedText;
 import org.eclipse.milo.opcua.stack.core.types.builtin.NodeId;
 import org.eclipse.milo.opcua.stack.core.types.builtin.QualifiedName;
@@ -88,8 +88,8 @@ public class MockCamelNamespace extends ManagedNamespaceWithLifecycle {
 
         folder.addReference(new Reference(
                 folder.getNodeId(),
-                Identifiers.Organizes,
-                Identifiers.ObjectsFolder.expanded(),
+                NodeIds0.Organizes,
+                NodeIds0.ObjectsFolder.expanded(),
                 false));
 
         addCallMethod(folder);
@@ -113,13 +113,13 @@ public class MockCamelNamespace extends ManagedNamespaceWithLifecycle {
 
         methodNode.addReference(new Reference(
                 methodNode.getNodeId(),
-                Identifiers.HasComponent,
+                NodeIds0.HasComponent,
                 folderNode.getNodeId().expanded(),
                 false));
 
         methodNode.addReference(new Reference(
                 methodNode.getNodeId(),
-                Identifiers.HasComponent,
+                NodeIds0.HasComponent,
                 folderNode.getNodeId().expanded(),
                 false));
     }
