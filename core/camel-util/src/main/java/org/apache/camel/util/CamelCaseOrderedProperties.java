@@ -16,6 +16,7 @@
  */
 package org.apache.camel.util;
 
+import java.util.Map;
 import java.util.Properties;
 
 /**
@@ -48,9 +49,10 @@ public final class CamelCaseOrderedProperties extends BaseOrderedProperties {
         lock.lock();
         try {
             String k = key.toString();
-            return super.containsKey(k)
-                    || super.containsKey(StringHelper.dashToCamelCase(k))
-                    || super.containsKey(StringHelper.camelCaseToDash(k));
+            Map<String, Object> m = asMap();
+            return m.containsKey(k)
+                    || m.containsKey(StringHelper.dashToCamelCase(k))
+                    || m.containsKey(StringHelper.camelCaseToDash(k));
         } finally {
             lock.unlock();
         }
