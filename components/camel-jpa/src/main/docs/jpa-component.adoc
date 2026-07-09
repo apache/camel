@@ -37,7 +37,7 @@ jpa:entityClassName[?options]
 ----
 
 For sending to the endpoint, the _entityClassName_ is optional. If
-specified, it helps the http://camel.apache.org/type-converter.html[Type Converter] to
+specified, it helps the xref:manual::type-converter.adoc[Type Converter] to
 ensure the body is of the correct type.
 
 For consuming, the _entityClassName_ is mandatory.
@@ -56,7 +56,7 @@ include::partial$component-endpoint-headers.adoc[]
 You can store a Java entity bean in a database by sending it to a JPA
 producer endpoint. The body of the _In_ message is assumed to be an
 entity bean (that is a POJO with an
-https://jakarta.ee/specifications/persistence/2.2/apidocs/javax/persistence/entity[@Entity]
+https://jakarta.ee/specifications/persistence/3.2/apidocs/jakarta.persistence/jakarta/persistence/entity[@Entity]
 annotation on it) or a collection or array of entity beans.
 
 If the body is a List of entities, make sure to use
@@ -149,6 +149,45 @@ explicitly configure a JPA component that references the
    <property name="transactionStrategy" ref="myTransactionStrategy"/>
 </bean>
 ----
+
+=== Entity enhancement
+
+JPA providers such as OpenJPA need to enhance (byte-code weave) your `@Entity` classes so they
+can track field access and manage lazy loading. Without enhancement, you may see errors such as
+`ArgumentException: ... were not enhanced at build time or at class load time with a javaagent`
+when the entity is first used.
+
+OpenJPA supports enhancing entities either dynamically at runtime (for example through a
+`-javaagent`, or automatic class-loading hooks in a Jakarta EE/OSGi container) or at build time.
+https://openjpa.apache.org/entity-enhancement.html[Build-time enhancement] is recommended: it is
+faster and more reliable than dynamic enhancement, which OpenJPA's own documentation discourages
+for production use due to known performance and functional issues.
+
+To enable build-time enhancement with Maven, add the `openjpa-maven-plugin` to your `pom.xml`
+bound to the `process-classes` phase:
+
+[source,xml]
+----
+<plugin>
+    <groupId>org.apache.openjpa</groupId>
+    <artifactId>openjpa-maven-plugin</artifactId>
+    <!-- use the same version as your OpenJPA runtime dependency -->
+    <version>4.1.1</version>
+    <executions>
+        <execution>
+            <id>enhancer</id>
+            <phase>process-classes</phase>
+            <goals>
+                <goal>enhance</goal>
+            </goals>
+        </execution>
+    </executions>
+</plugin>
+----
+
+See https://openjpa.apache.org/enhancement-with-maven.html[Entity Enhancement with Maven] for the
+full set of plugin options (such as scoping enhancement to specific packages with
+`includes`/`excludes`) and for the `maven-antrun-plugin` alternative.
 
 === Using a consumer with a named query
 
@@ -431,23 +470,40 @@ the message body.
 
 === Using the JPA-Based Idempotent Repository
 
-The Idempotent Consumer from the http://camel.apache.org/enterprise-integration-patterns.html[EIP patterns] is used to filter out duplicate messages. A JPA-based idempotent repository is provided.
+Camel supports the Idempotent Consumer EIP, which is used to filter out duplicate messages. A JPA-based idempotent repository is provided.
 
 To use the JPA based idempotent repository.
 
 .Procedure
 
 . Set up a `persistence-unit` in the persistence.xml file:
++
+[source,xml]
+----
+<persistence-unit name="idempotentDb" transaction-type="RESOURCE_LOCAL">
+    <class>org.apache.camel.processor.idempotent.jpa.MessageProcessed</class>
 
-. Set up a `org.springframework.orm.jpa.JpaTemplate`
-which is used by the
-`org.apache.camel.processor.idempotent.jpa.JpaMessageIdRepository`:
+    <properties>
+        <property name="openjpa.ConnectionURL" value="jdbc:h2:./target/idempotentTest;DB_CLOSE_DELAY=-1"/>
+        <property name="openjpa.ConnectionDriverName" value="org.h2.Driver"/>
+        <property name="openjpa.jdbc.SynchronizeMappings" value="buildSchema"/>
+    </properties>
+</persistence-unit>
+----
 
-. Configure the error formatting macro: snippet: java.lang.IndexOutOfBoundsException:
-Index: 20, Size: 20
-
-. Configure the idempotent repository:
-`org.apache.camel.processor.idempotent.jpa.JpaMessageIdRepository`:
+. Configure the `org.apache.camel.processor.idempotent.jpa.JpaMessageIdRepository` bean,
+referencing the `EntityManagerFactory` built from that persistence unit:
++
+[source,xml]
+----
+<bean id="jpaStore" class="org.apache.camel.processor.idempotent.jpa.JpaMessageIdRepository">
+    <!-- Here we refer to the entityManagerFactory -->
+    <constructor-arg index="0" ref="entityManagerFactory"/>
+    <!-- This 2nd parameter is the name (a category name).
+         You can have different repositories with different names -->
+    <constructor-arg index="1" value="myProcessorName"/>
+</bean>
+----
 
 . Create the JPA idempotent repository in the Spring XML file:
 
@@ -520,10 +576,10 @@ https://github.com/apache/camel/blob/main/components/camel-jpa/pom.xml[enhance
 the byte-code at build time]. To overcome this, you need to enable
 http://openjpa.apache.org/entity-enhancement.html#dynamic-enhancement[dynamic
 byte-code enhancement of OpenJPA]. For example, assuming the current
-OpenJPA version being used in Camel is 2.2.1, to run the
+OpenJPA version being used in Camel is 4.1.1, to run the
 tests inside your IDE, you would need to pass the following
 argument to the JVM:
 
 ----
--javaagent:<path_to_your_local_m2_cache>/org/apache/openjpa/openjpa/2.2.1/openjpa-2.2.1.jar
+-javaagent:<path_to_your_local_m2_cache>/org/apache/openjpa/openjpa/4.1.1/openjpa-4.1.1.jar
 ----
