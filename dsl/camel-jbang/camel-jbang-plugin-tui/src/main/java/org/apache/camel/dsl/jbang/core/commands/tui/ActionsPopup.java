@@ -897,12 +897,12 @@ class ActionsPopup {
             return;
         }
         if (gotoTabPopup.isVisible()) {
-        hint(spans, "type", "filter");
-        hint(spans, TuiIcons.HINT_SCROLL, "navigate");
-        hint(spans, "Enter", "go to");
-        hintLast(spans, "Esc", "back");
-        return;
-    }
+            hint(spans, "type", "filter");
+            hint(spans, TuiIcons.HINT_SCROLL, "navigate");
+            hint(spans, "Enter", "go to");
+            hintLast(spans, "Esc", "back");
+            return;
+        }
         if (showActionsMenu) {
             hint(spans, TuiIcons.HINT_SCROLL, "navigate");
             hint(spans, "Enter", "select");
