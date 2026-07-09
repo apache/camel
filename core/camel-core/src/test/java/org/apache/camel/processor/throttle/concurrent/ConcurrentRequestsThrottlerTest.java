@@ -28,7 +28,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.ThrottlerRejectedExecutionException;
 import org.apache.camel.support.SynchronizationAdapter;
-import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledOnOs;
 import org.junit.jupiter.api.condition.OS;
@@ -96,18 +95,15 @@ public class ConcurrentRequestsThrottlerTest extends ContextTestSupport {
         try {
             MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
             sendMessagesWithHeaderExpression(executor, resultEndpoint, 2, MESSAGE_COUNT);
-            Awaitility.await().atMost(10, TimeUnit.SECONDS)
-                    .untilAsserted(resultEndpoint::assertIsSatisfied);
+            resultEndpoint.assertIsSatisfied();
 
             resultEndpoint.reset();
             sendMessagesWithHeaderExpression(executor, resultEndpoint, 4, MESSAGE_COUNT);
-            Awaitility.await().atMost(10, TimeUnit.SECONDS)
-                    .untilAsserted(resultEndpoint::assertIsSatisfied);
+            resultEndpoint.assertIsSatisfied();
 
             resultEndpoint.reset();
             sendMessagesWithHeaderExpression(executor, resultEndpoint, 2, MESSAGE_COUNT);
-            Awaitility.await().atMost(10, TimeUnit.SECONDS)
-                    .untilAsserted(resultEndpoint::assertIsSatisfied);
+            resultEndpoint.assertIsSatisfied();
 
             resultEndpoint.reset();
             sendMessagesWithHeaderExpression(executor, resultEndpoint, 4, MESSAGE_COUNT);

@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.file.remote.integration;
 
-import java.util.concurrent.TimeUnit;
-
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Producer;
@@ -25,8 +23,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.awaitility.Awaitility.await;
 
 /**
  * Unit test to poll a fixed file from the FTP server without using the list command.
@@ -55,14 +51,13 @@ public class FromFtpUseListFalseIT extends FtpServerTestSupport {
     }
 
     @Test
-    public void testUseListFalse() {
+    public void testUseListFalse() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World from FTPServer");
 
         // just allow to poll a few more times, but we should only get the file
         // once
-        await().atMost(2, TimeUnit.SECONDS)
-                .untilAsserted(() -> mock.assertIsSatisfied());
+        mock.assertIsSatisfied();
     }
 
     @Override
