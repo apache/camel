@@ -287,13 +287,13 @@ class ExportCamelMain extends Export {
             Properties prop = new CamelCaseOrderedProperties();
             RuntimeUtil.loadProperties(prop, profile);
             // if metrics is defined then include camel-micrometer-prometheus for camel-main runtime
-            if (prop.getProperty("camel.metrics.enabled") != null
-                    || prop.getProperty("camel.management.metricsEnabled") != null
-                    || prop.getProperty("camel.server.metricsEnabled") != null) {
+            if (prop.containsKey("camel.metrics.enabled")
+                    || prop.containsKey("camel.management.metricsEnabled")
+                    || prop.containsKey("camel.server.metricsEnabled")) {
                 answer.add("mvn:org.apache.camel:camel-micrometer-prometheus");
             }
             // if health-check is defined then include camel-health for camel-main runtime
-            if (prop.getProperty("camel.management.healthCheckEnabled") != null) {
+            if (prop.containsKey("camel.management.healthCheckEnabled")) {
                 answer.add("mvn:org.apache.camel:camel-health");
             }
         }
