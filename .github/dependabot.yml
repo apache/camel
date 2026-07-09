@@ -47,6 +47,8 @@ updates:
         patterns: ["org.apache.parquet:*"]
       CometD:
         patterns: ["org.cometd.java:*"]
+      Google-cloud:
+        patterns: ["com.google.cloud:*"]
     open-pull-requests-limit: 20
   - package-ecosystem: "npm"
     directory: "docs"
