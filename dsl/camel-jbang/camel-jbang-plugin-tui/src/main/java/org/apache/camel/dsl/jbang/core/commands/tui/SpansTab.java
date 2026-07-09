@@ -446,7 +446,7 @@ class SpansTab extends AbstractTab {
 
         // Split: waterfall top, detail bottom
         List<Rect> chunks = Layout.vertical()
-                .constraints(Constraint.fill(), Constraint.length(10))
+                .constraints(Constraint.fill(), Constraint.length(15))
                 .split(area);
 
         renderWaterfall(frame, chunks.get(0), nodes, traceStart, traceDuration, minDuration, maxDuration);
