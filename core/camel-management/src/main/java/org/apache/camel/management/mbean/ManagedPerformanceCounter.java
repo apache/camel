@@ -17,6 +17,7 @@
 package org.apache.camel.management.mbean;
 
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Map;
 
@@ -33,6 +34,8 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter
         implements PerformanceCounter, ManagedPerformanceCounterMBean {
 
     public static final String TIMESTAMP_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSZ";
+
+    private static final int PERCENTILE_WINDOW_SIZE = 1024;
 
     private Statistic exchangesCompleted;
     private Statistic exchangesFailed;
@@ -57,6 +60,11 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter
     private Statistic lastExchangeFailureTimestamp;
     private String lastExchangeFailureExchangeId;
     private boolean statisticsEnabled = true;
+
+    // sliding window ring buffer for percentile computation (Extended statistics only)
+    private long[] percentileWindow;
+    private int percentileIndex;
+    private int percentileCount;
 
     @Override
     public void init(ManagementStrategy strategy) {
@@ -84,6 +92,12 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter
         this.lastExchangeFailureTimestamp = new StatisticValue();
     }
 
+    public void initExtendedStatistics() {
+        percentileWindow = new long[PERCENTILE_WINDOW_SIZE];
+        percentileIndex = 0;
+        percentileCount = 0;
+    }
+
     @Override
     public void reset() {
         super.reset();
@@ -109,6 +123,10 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter
         lastExchangeFailureHandledTimestamp.reset();
         lastExchangeFailureTimestamp.reset();
         lastExchangeFailureExchangeId = null;
+        if (percentileWindow != null) {
+            percentileIndex = 0;
+            percentileCount = 0;
+        }
     }
 
     @Override
@@ -169,6 +187,21 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter
     @Override
     public long getDeltaProcessingTime() {
         return deltaProcessingTime.getValue();
+    }
+
+    @Override
+    public long getProcessingTimeP50() {
+        return getPercentile(0.50);
+    }
+
+    @Override
+    public long getProcessingTimeP95() {
+        return getPercentile(0.95);
+    }
+
+    @Override
+    public long getProcessingTimeP99() {
+        return getPercentile(0.99);
     }
 
     @Override
@@ -282,6 +315,14 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter
         lastProcessingTime.updateValue(time);
         deltaProcessingTime.updateValue(time);
 
+        if (percentileWindow != null) {
+            percentileWindow[percentileIndex] = time;
+            percentileIndex = (percentileIndex + 1) % PERCENTILE_WINDOW_SIZE;
+            if (percentileCount < PERCENTILE_WINDOW_SIZE) {
+                percentileCount++;
+            }
+        }
+
         long now = System.currentTimeMillis();
         if (!firstExchangeCompletedTimestamp.isUpdated()) {
             firstExchangeCompletedTimestamp.updateValue(now);
@@ -327,6 +368,17 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter
         lastExchangeFailureExchangeId = exchange.getExchangeId();
     }
 
+    private long getPercentile(double percentile) {
+        if (percentileWindow == null || percentileCount == 0) {
+            return -1;
+        }
+        long[] snapshot = new long[percentileCount];
+        System.arraycopy(percentileWindow, 0, snapshot, 0, percentileCount);
+        Arrays.sort(snapshot);
+        int index = (int) Math.ceil(percentile * percentileCount) - 1;
+        return snapshot[Math.max(0, index)];
+    }
+
     @Override
     public String dumpStatsAsXml(boolean fullStats) {
         StringBuilder sb = new StringBuilder();
@@ -343,6 +395,11 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter
         sb.append(String.format(" lastProcessingTime=\"%s\"", lastProcessingTime.getValue()));
         sb.append(String.format(" deltaProcessingTime=\"%s\"", deltaProcessingTime.getValue()));
         sb.append(String.format(" meanProcessingTime=\"%s\"", meanProcessingTime.getValue()));
+        if (percentileWindow != null) {
+            sb.append(String.format(" p50ProcessingTime=\"%s\"", getProcessingTimeP50()));
+            sb.append(String.format(" p95ProcessingTime=\"%s\"", getProcessingTimeP95()));
+            sb.append(String.format(" p99ProcessingTime=\"%s\"", getProcessingTimeP99()));
+        }
         sb.append(String.format(" idleSince=\"%s\"", getIdleSince()));
 
         if (fullStats) {
@@ -390,6 +447,11 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter
         jo.put("lastProcessingTime", lastProcessingTime.getValue());
         jo.put("deltaProcessingTime", deltaProcessingTime.getValue());
         jo.put("meanProcessingTime", meanProcessingTime.getValue());
+        if (percentileWindow != null) {
+            jo.put("p50ProcessingTime", getProcessingTimeP50());
+            jo.put("p95ProcessingTime", getProcessingTimeP95());
+            jo.put("p99ProcessingTime", getProcessingTimeP99());
+        }
         jo.put("idleSince", getIdleSince());
         if (fullStats) {
             jo.put("startTimestamp", startTimestamp.getTime());

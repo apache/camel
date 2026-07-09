@@ -53,6 +53,9 @@ public class ManagedRouteGroup extends ManagedPerformanceCounter implements Time
         boolean enabled
                 = context.getManagementStrategy().getManagementAgent().getStatisticsLevel() != ManagementStatisticsLevel.Off;
         setStatisticsEnabled(enabled);
+        if (context.getManagementStrategy().getManagementAgent().getStatisticsLevel().isExtended()) {
+            initExtendedStatistics();
+        }
     }
 
     public CamelContext getContext() {

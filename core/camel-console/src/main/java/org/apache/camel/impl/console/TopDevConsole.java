@@ -257,6 +257,11 @@ public class TopDevConsole extends AbstractDevConsole {
         stats.put("lastProcessingTime", mpb.getLastProcessingTime());
         stats.put("deltaProcessingTime", mpb.getDeltaProcessingTime());
         stats.put("totalProcessingTime", mpb.getTotalProcessingTime());
+        if (mpb.getProcessingTimeP50() >= 0) {
+            stats.put("p50ProcessingTime", mpb.getProcessingTimeP50());
+            stats.put("p95ProcessingTime", mpb.getProcessingTimeP95());
+            stats.put("p99ProcessingTime", mpb.getProcessingTimeP99());
+        }
         return stats;
     }
 
@@ -271,6 +276,11 @@ public class TopDevConsole extends AbstractDevConsole {
         stats.put("lastProcessingTime", mrb.getLastProcessingTime());
         stats.put("deltaProcessingTime", mrb.getDeltaProcessingTime());
         stats.put("totalProcessingTime", mrb.getTotalProcessingTime());
+        if (mrb.getProcessingTimeP50() >= 0) {
+            stats.put("p50ProcessingTime", mrb.getProcessingTimeP50());
+            stats.put("p95ProcessingTime", mrb.getProcessingTimeP95());
+            stats.put("p99ProcessingTime", mrb.getProcessingTimeP99());
+        }
         return stats;
     }
 

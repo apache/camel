@@ -153,6 +153,11 @@ public class RouteDevConsole extends AbstractDevConsole {
             sb.append(String.format("%n    Mean Time: %s", TimeUtils.printDuration(mrb.getMeanProcessingTime(), true)));
             sb.append(String.format("%n    Max Time: %s", TimeUtils.printDuration(mrb.getMaxProcessingTime(), true)));
             sb.append(String.format("%n    Min Time: %s", TimeUtils.printDuration(mrb.getMinProcessingTime(), true)));
+            if (mrb.getProcessingTimeP50() >= 0) {
+                sb.append(String.format("%n    p50 Time: %s", TimeUtils.printDuration(mrb.getProcessingTimeP50(), true)));
+                sb.append(String.format("%n    p95 Time: %s", TimeUtils.printDuration(mrb.getProcessingTimeP95(), true)));
+                sb.append(String.format("%n    p99 Time: %s", TimeUtils.printDuration(mrb.getProcessingTimeP99(), true)));
+            }
             if (mrb.getExchangesTotal() > 0) {
                 sb.append(String.format("%n    Last Time: %s", TimeUtils.printDuration(mrb.getLastProcessingTime(), true)));
                 sb.append(String.format("%n    Delta Time: %s", TimeUtils.printDuration(mrb.getDeltaProcessingTime(), true)));
@@ -484,6 +489,11 @@ public class RouteDevConsole extends AbstractDevConsole {
         stats.put("meanProcessingTime", mrb.getMeanProcessingTime());
         stats.put("maxProcessingTime", mrb.getMaxProcessingTime());
         stats.put("minProcessingTime", mrb.getMinProcessingTime());
+        if (mrb.getProcessingTimeP50() >= 0) {
+            stats.put("p50ProcessingTime", mrb.getProcessingTimeP50());
+            stats.put("p95ProcessingTime", mrb.getProcessingTimeP95());
+            stats.put("p99ProcessingTime", mrb.getProcessingTimeP99());
+        }
         if (mrb.getExchangesTotal() > 0) {
             stats.put("lastProcessingTime", mrb.getLastProcessingTime());
             stats.put("deltaProcessingTime", mrb.getDeltaProcessingTime());
