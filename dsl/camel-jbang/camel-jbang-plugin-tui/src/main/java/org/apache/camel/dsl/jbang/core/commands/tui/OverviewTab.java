@@ -76,6 +76,7 @@ class OverviewTab extends AbstractTab {
     private static final long VANISH_DURATION_MS = 6000;
     private static final int MAX_SPARKLINE_POINTS = 300;
     private static final String[] SORT_COLUMNS = { "pid", "name", "version", "status", "total", "fail" };
+    private static final String[] INFRA_SORT_COLUMNS = { "service", "version", "port", "status" };
 
     static final int CHART_ALL = 0;
     static final int CHART_SINGLE = 1;
@@ -91,7 +92,12 @@ class OverviewTab extends AbstractTab {
     final TableState tableState = new TableState();
     private final ScrollbarState tableScrollState = new ScrollbarState();
     private Rect lastTableArea;
-    int dividerIndex = -1;
+    final TableState infraTableState = new TableState();
+    private final ScrollbarState infraScrollState = new ScrollbarState();
+    private Rect lastInfraTableArea;
+    boolean infraFocused;
+    boolean infraDetailVisible;
+    private String lastIntegrationPid;
     int chartMode = CHART_SINGLE;
     private int bottomPanelHeight = 16;
     private final DragSplit vSplit = new DragSplit();
@@ -99,6 +105,9 @@ class OverviewTab extends AbstractTab {
     private String sort = "name";
     private int sortIndex = 1;
     private boolean sortReversed;
+    private String infraSort = "service";
+    private int infraSortIndex = 0;
+    private boolean infraSortReversed;
 
     OverviewTab(
                 MonitorContext ctx,
@@ -120,13 +129,40 @@ class OverviewTab extends AbstractTab {
     @Override
     public boolean handleKeyEvent(KeyEvent ke) {
         if (ke.isChar('s')) {
-            sortIndex = (sortIndex + 1) % SORT_COLUMNS.length;
-            sort = SORT_COLUMNS[sortIndex];
-            sortReversed = false;
+            if (infraFocused) {
+                infraSortIndex = (infraSortIndex + 1) % INFRA_SORT_COLUMNS.length;
+                infraSort = INFRA_SORT_COLUMNS[infraSortIndex];
+                infraSortReversed = false;
+            } else {
+                sortIndex = (sortIndex + 1) % SORT_COLUMNS.length;
+                sort = SORT_COLUMNS[sortIndex];
+                sortReversed = false;
+            }
             return true;
         }
         if (ke.isChar('S')) {
-            sortReversed = !sortReversed;
+            if (infraFocused) {
+                infraSortReversed = !infraSortReversed;
+            } else {
+                sortReversed = !sortReversed;
+            }
+            return true;
+        }
+        if (ke.isChar('i') && !ctx.infraData.get().isEmpty()) {
+            infraFocused = !infraFocused;
+            if (infraFocused && infraTableState.selected() == null) {
+                infraTableState.select(0);
+            } else if (!infraFocused && tableState.selected() == null) {
+                tableState.select(0);
+            }
+            if (!infraFocused) {
+                infraDetailVisible = false;
+            }
+            syncSelectedPid();
+            return true;
+        }
+        if (ke.isChar('d') && infraFocused) {
+            infraDetailVisible = !infraDetailVisible;
             return true;
         }
         if (ke.isCharIgnoreCase('a')) {
@@ -184,17 +220,15 @@ class OverviewTab extends AbstractTab {
             }
             return true;
         }
-        Integer before = tableState.selected();
-        if (handleTableClick(me, lastTableArea, tableState, totalRows())) {
-            // The Dev/Infra divider row is not selectable; restore the prior selection when it is clicked.
-            Integer sel = tableState.selected();
-            if (sel != null && dividerIndex >= 0 && sel == dividerIndex) {
-                if (before != null) {
-                    tableState.select(before);
-                }
-            } else {
-                syncSelectedPid();
-            }
+        if (handleTableClick(me, lastTableArea, tableState, sortedInfos().size())) {
+            infraFocused = false;
+            syncSelectedPid();
+            return true;
+        }
+        if (lastInfraTableArea != null && handleTableClick(me, lastInfraTableArea, infraTableState,
+                ctx.infraData.get().size())) {
+            infraFocused = true;
+            syncSelectedPid();
             return true;
         }
         return false;
@@ -202,9 +236,9 @@ class OverviewTab extends AbstractTab {
 
     @Override
     public void navigateUp() {
-        tableState.selectPrevious();
-        Integer sel = tableState.selected();
-        if (sel != null && dividerIndex >= 0 && sel == dividerIndex) {
+        if (infraFocused) {
+            infraTableState.selectPrevious();
+        } else {
             tableState.selectPrevious();
         }
         syncSelectedPid();
@@ -212,11 +246,10 @@ class OverviewTab extends AbstractTab {
 
     @Override
     public void navigateDown() {
-        int totalRows = totalRows();
-        tableState.selectNext(totalRows);
-        Integer sel = tableState.selected();
-        if (sel != null && dividerIndex >= 0 && sel == dividerIndex) {
-            tableState.selectNext(totalRows);
+        if (infraFocused) {
+            infraTableState.selectNext(ctx.infraData.get().size());
+        } else {
+            tableState.selectNext(sortedInfos().size());
         }
         syncSelectedPid();
     }
@@ -224,15 +257,18 @@ class OverviewTab extends AbstractTab {
     @Override
     public void render(Frame frame, Rect area) {
         List<IntegrationInfo> infos = sortedInfos();
-        List<InfraInfo> infraInfos = ctx.infraData.get();
+        List<InfraInfo> infraInfos = sortedInfraInfos();
 
         int integrationCount = infos.size();
         int infraCount = infraInfos.size();
-        dividerIndex = infraCount > 0 ? integrationCount : -1;
 
         if (integrationCount == 0 && infraCount == 0) {
             renderEmptyState(frame, area);
             return;
+        }
+
+        if (infraCount == 0) {
+            infraFocused = false;
         }
 
         if (ctx.selectedPid != null) {
@@ -244,32 +280,33 @@ class OverviewTab extends AbstractTab {
             }
             for (int i = 0; i < infraInfos.size(); i++) {
                 if (ctx.selectedPid.equals(infraInfos.get(i).pid)) {
-                    int tableIndex = integrationCount + 1 + i;
-                    tableState.select(tableIndex);
+                    infraTableState.select(i);
                     break;
                 }
             }
         }
 
-        boolean hasSparkline = chartMode != CHART_OFF && !throughputHistory.isEmpty() && !ctx.isInfraSelected()
-                && ctx.shellPercent < 50;
-        InfraInfo infraSel = ctx.isInfraSelected() ? ctx.findSelectedInfra() : null;
-        boolean showInfoPanel = infraSel != null && !hasSparkline;
+        InfraInfo infraSel = infraDetailVisible ? ctx.findSelectedInfra() : null;
+        boolean showInfraDetail = infraSel != null;
+        boolean hasSparkline = !showInfraDetail && chartMode != CHART_OFF
+                && !throughputHistory.isEmpty() && ctx.shellPercent < 50;
         List<Constraint> constraints = new ArrayList<>();
         constraints.add(Constraint.fill());
-        if (hasSparkline) {
+        if (infraCount > 0) {
+            int infraPanelHeight = Math.max(6, Math.min(infraCount + 3, area.height() / 3));
+            constraints.add(Constraint.length(infraPanelHeight));
+        }
+        if (hasSparkline || showInfraDetail) {
             bottomPanelHeight = Math.max(5, Math.min(bottomPanelHeight, area.height() - 5));
-            constraints.add(Constraint.length(bottomPanelHeight));
-        } else if (showInfoPanel) {
-            int panelH = countInfraLines(infraSel) + 2;
-            bottomPanelHeight = Math.max(5, Math.min(Math.min(panelH, bottomPanelHeight), area.height() / 2));
             constraints.add(Constraint.length(bottomPanelHeight));
         }
         List<Rect> chunks = Layout.vertical()
                 .constraints(constraints)
                 .split(area);
-        if (chunks.size() > 1) {
-            vSplit.setBorderPos(chunks.get(1).y());
+
+        int bottomPanelIndex = infraCount > 0 ? 2 : 1;
+        if (chunks.size() > bottomPanelIndex) {
+            vSplit.setBorderPos(chunks.get(bottomPanelIndex).y());
         } else {
             vSplit.clearBorderPos();
         }
@@ -278,7 +315,6 @@ class OverviewTab extends AbstractTab {
         int rowIndex = 0;
         for (IntegrationInfo info : infos) {
             boolean isEven = (rowIndex++ % 2 == 0);
-            // Zebra striping at the row level so the selection highlight (patched on top) always wins.
             Style rowBg = isEven ? Style.EMPTY.bg(Theme.zebra()) : Style.EMPTY;
 
             if (info.vanishing) {
@@ -375,60 +411,7 @@ class OverviewTab extends AbstractTab {
                 rightCell("INFLIGHT", 8, Style.EMPTY.bold()),
                 Cell.from(Span.styled("SINCE-LAST", Style.EMPTY.bold())));
 
-        if (dividerIndex >= 0) {
-            rows.add(Row.from(
-                    Cell.from(""),
-                    Cell.from(Span.styled("─── Dev/Infra Services ───", Style.EMPTY.dim())),
-                    Cell.from(""), Cell.from(""), Cell.from(""), Cell.from(""),
-                    Cell.from(""), Cell.from(""), Cell.from(""), Cell.from(""),
-                    Cell.from(""), Cell.from("")));
-        }
-
-        for (InfraInfo info : infraInfos) {
-            boolean isEven = (rowIndex++ % 2 == 0);
-            Style rowBg = isEven ? Style.EMPTY.bg(Theme.zebra()) : Style.EMPTY;
-            Style statusStyle = info.alive ? Theme.success() : Theme.error();
-
-            if (info.vanishing) {
-                long elapsed = System.currentTimeMillis() - info.vanishStart;
-                float fade = 1.0f - Math.min(1.0f, (float) elapsed / VANISH_DURATION_MS);
-                int gray = (int) (100 * fade);
-                Style dimStyle = Style.EMPTY.fg(Color.indexed(232 + Math.min(gray / 4, 23)));
-                String vanishAlias = TuiIcons.INFRA + "  " + info.alias;
-                rows.add(Row.from(
-                        Cell.from(Span.styled(info.pid, dimStyle)),
-                        Cell.from(Span.styled(vanishAlias, dimStyle)),
-                        Cell.from(Span.styled("", dimStyle)),
-                        Cell.from(Span.styled("", dimStyle)),
-                        Cell.from(Span.styled(TuiIcons.STOPPED + " Stopped", Theme.error().dim())),
-                        Cell.from(Span.styled("", dimStyle)),
-                        Cell.from(Span.styled("", dimStyle)),
-                        Cell.from(Span.styled("", dimStyle)),
-                        Cell.from(Span.styled("", dimStyle)),
-                        Cell.from(Span.styled("", dimStyle)),
-                        Cell.from(Span.styled("", dimStyle)),
-                        Cell.from(Span.styled("", dimStyle))).style(rowBg));
-            } else {
-                String statusText = info.alive ? "Running" : "Stopped";
-                String infraAlias = TuiIcons.INFRA + "  " + info.alias;
-                String version = info.serviceVersion != null ? info.serviceVersion : "";
-                rows.add(Row.from(
-                        Cell.from(info.pid),
-                        Cell.from(Span.styled(infraAlias, Theme.notice())),
-                        Cell.from(version),
-                        Cell.from(""),
-                        Cell.from(Span.styled(statusText, statusStyle)),
-                        Cell.from(""),
-                        Cell.from(""),
-                        Cell.from(""),
-                        Cell.from(""),
-                        Cell.from(""),
-                        Cell.from(""),
-                        Cell.from("")).style(rowBg));
-            }
-        }
-
-        Table table = Table.builder()
+        Table.Builder tableBuilder = Table.builder()
                 .rows(rows)
                 .header(header)
                 .widths(
@@ -444,14 +427,24 @@ class OverviewTab extends AbstractTab {
                         Constraint.length(6),
                         Constraint.length(8),
                         Constraint.length(13))
-                .highlightStyle(Theme.selectionBg())
                 .highlightSpacing(Table.HighlightSpacing.ALWAYS)
-                .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(" Overview ").build())
-                .build();
+                .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
+                        .title(infraCount > 0 ? " Integrations " : " Overview ").build());
+        if (!infraFocused) {
+            tableBuilder.highlightStyle(Theme.selectionBg());
+        }
+        Table table = tableBuilder.build();
 
         lastTableArea = chunks.get(0);
-        frame.renderStatefulWidget(table, chunks.get(0), tableState);
-        renderTableScrollbar(frame, lastTableArea, tableState, tableScrollState, totalRows());
+        TableState renderState = infraFocused ? new TableState() : tableState;
+        frame.renderStatefulWidget(table, chunks.get(0), renderState);
+        renderTableScrollbar(frame, lastTableArea, tableState, tableScrollState, integrationCount);
+
+        if (infraCount > 0) {
+            renderInfraTable(frame, chunks.get(1), infraInfos);
+        } else {
+            lastInfraTableArea = null;
+        }
 
         if (hasSparkline && chunks.size() > 1) {
             Rect chartTotalArea = chunks.get(chunks.size() - 1);
@@ -479,7 +472,8 @@ class OverviewTab extends AbstractTab {
 
             long[] mergedTotal = new long[renderPoints];
             long[] mergedFailed = new long[renderPoints];
-            String chartPid = (chartMode == CHART_SINGLE && ctx.selectedPid != null) ? ctx.selectedPid : null;
+            final String chartPid = chartMode == CHART_SINGLE
+                    ? (infraFocused ? lastIntegrationPid : ctx.selectedPid) : null;
             for (int i = 0; i < renderPoints; i++) {
                 for (Map.Entry<String, LinkedList<Long>> e : throughputHistory.entrySet()) {
                     if (chartPid == null || chartPid.equals(e.getKey())) {
@@ -516,10 +510,10 @@ class OverviewTab extends AbstractTab {
             String curFailFmt = MetricsCollector.formatThroughput(curFailed);
 
             Line titleLine;
-            if (chartMode == CHART_SINGLE && ctx.selectedPid != null) {
-                IntegrationInfo chartSel = ctx.findSelectedIntegration();
-                String chartName = chartSel != null ? TuiHelper.truncate(chartSel.name, 12)
-                        : ctx.selectedPid != null ? ctx.selectedPid : "?";
+            if (chartMode == CHART_SINGLE && chartPid != null) {
+                IntegrationInfo chartSel = ctx.data.get().stream()
+                        .filter(ii -> chartPid.equals(ii.pid)).findFirst().orElse(null);
+                String chartName = chartSel != null ? TuiHelper.truncate(chartSel.name, 30) : chartPid;
                 titleLine = Line.from(
                         Span.raw(" ["),
                         Span.styled(chartName, Theme.label().bold()),
@@ -610,21 +604,29 @@ class OverviewTab extends AbstractTab {
             }
 
             renderInfoPanel(frame, infoArea);
-        } else if (showInfoPanel) {
-            renderInfoPanel(frame, chunks.get(chunks.size() - 1));
+        } else if (showInfraDetail) {
+            renderInfraInfoPanel(frame, chunks.get(chunks.size() - 1), infraSel);
         }
     }
 
     private void renderInfoPanel(Frame frame, Rect area) {
-        InfraInfo infraSel = ctx.findSelectedInfra();
-        if (infraSel != null) {
-            renderInfraInfoPanel(frame, area, infraSel);
-            return;
+        if (!infraFocused) {
+            InfraInfo infra = ctx.findSelectedInfra();
+            if (infra != null) {
+                renderInfraInfoPanel(frame, area, infra);
+                return;
+            }
         }
 
-        IntegrationInfo sel = ctx.findSelectedIntegration();
+        IntegrationInfo sel = null;
+        String pidToFind = infraFocused ? lastIntegrationPid : ctx.selectedPid;
+        if (pidToFind != null) {
+            sel = ctx.data.get().stream()
+                    .filter(ii -> pidToFind.equals(ii.pid) && !ii.vanishing)
+                    .findFirst().orElse(null);
+        }
         if (sel == null) {
-            List<IntegrationInfo> active = ctx.data.get().stream().filter(i -> !i.vanishing).toList();
+            List<IntegrationInfo> active = ctx.data.get().stream().filter(ii -> !ii.vanishing).toList();
             if (active.size() == 1) {
                 sel = active.get(0);
             }
@@ -779,6 +781,83 @@ class OverviewTab extends AbstractTab {
         frame.renderWidget(Paragraph.builder().text(Text.from(lines)).build(), inner);
     }
 
+    private void renderInfraTable(Frame frame, Rect area, List<InfraInfo> infraInfos) {
+        List<Row> infraRows = new ArrayList<>();
+        int rowIndex = 0;
+        for (InfraInfo info : infraInfos) {
+            boolean isEven = (rowIndex++ % 2 == 0);
+            Style rowBg = isEven ? Style.EMPTY.bg(Theme.zebra()) : Style.EMPTY;
+            Style statusStyle = info.alive ? Theme.success() : Theme.error();
+
+            if (info.vanishing) {
+                long elapsed = System.currentTimeMillis() - info.vanishStart;
+                float fade = 1.0f - Math.min(1.0f, (float) elapsed / VANISH_DURATION_MS);
+                int gray = (int) (100 * fade);
+                Style dimStyle = Style.EMPTY.fg(Color.indexed(232 + Math.min(gray / 4, 23)));
+                String vanishAlias = TuiIcons.INFRA + "  " + info.alias;
+                infraRows.add(Row.from(
+                        Cell.from(Span.styled(info.pid, dimStyle)),
+                        Cell.from(Span.styled(vanishAlias, dimStyle)),
+                        Cell.from(Span.styled("", dimStyle)),
+                        Cell.from(Span.styled("", dimStyle)),
+                        Cell.from(Span.styled(TuiIcons.STOPPED + " Stopped", Theme.error().dim())),
+                        Cell.from(Span.styled("", dimStyle))).style(rowBg));
+            } else {
+                String statusText = info.alive ? "Running" : "Stopped";
+                String infraAlias = TuiIcons.INFRA + "  " + info.alias;
+                String version = info.serviceVersion != null ? info.serviceVersion : "";
+                String port = extractInfraPort(info);
+                String desc = info.description != null ? info.description : "";
+                infraRows.add(Row.from(
+                        Cell.from(info.pid),
+                        Cell.from(Span.styled(infraAlias, Theme.notice())),
+                        Cell.from(version),
+                        rightCell(port, 7),
+                        Cell.from(Span.styled(statusText, statusStyle)),
+                        Cell.from(desc)).style(rowBg));
+            }
+        }
+
+        Row infraHeader = Row.from(
+                Cell.from(Span.styled("PID", Style.EMPTY.bold())),
+                Cell.from(Span.styled(infraSortLabel("SERVICE", "service"), infraSortStyle("service"))),
+                Cell.from(Span.styled(infraSortLabel("VERSION", "version"), infraSortStyle("version"))),
+                rightCell(infraSortLabel("PORT", "port"), 7, infraSortStyle("port")),
+                Cell.from(Span.styled(infraSortLabel("STATUS", "status"), infraSortStyle("status"))),
+                Cell.from(Span.styled("DESCRIPTION", Style.EMPTY.bold())));
+
+        Table.Builder infraBuilder = Table.builder()
+                .rows(infraRows)
+                .header(infraHeader)
+                .widths(
+                        Constraint.length(8),
+                        Constraint.fill(),
+                        Constraint.length(16),
+                        Constraint.length(7),
+                        Constraint.length(10),
+                        Constraint.fill())
+                .highlightSpacing(Table.HighlightSpacing.ALWAYS)
+                .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
+                        .title(" Dev/Infra Services ").build());
+        if (infraFocused) {
+            infraBuilder.highlightStyle(Theme.selectionBg());
+        }
+        Table infraTable = infraBuilder.build();
+
+        lastInfraTableArea = area;
+        TableState renderState = infraFocused ? infraTableState : new TableState();
+        frame.renderStatefulWidget(infraTable, area, renderState);
+        renderTableScrollbar(frame, area, infraTableState, infraScrollState, infraInfos.size());
+    }
+
+    private static String extractInfraPort(InfraInfo info) {
+        Object port = info.properties.get("port");
+        if (port != null) {
+            return String.valueOf(port);
+        }
+        return "";
+    }
+
     @Override
     public void renderFooter(List<Span> spans) {
         hint(spans, "q", "quit");
@@ -786,6 +865,12 @@ class OverviewTab extends AbstractTab {
             hint(spans, "Esc", "unselect");
         }
         hint(spans, TuiIcons.HINT_SCROLL, "navigate");
+        if (!ctx.infraData.get().isEmpty()) {
+            hint(spans, "i", infraFocused ? "integrations" : "infra");
+        }
+        if (infraFocused) {
+            hint(spans, "d", "details");
+        }
         if (!ctx.isInfraSelected()) {
             hint(spans, "s", "sort");
             int effectiveMode = (chartMode == CHART_SINGLE && ctx.selectedPid == null) ? CHART_ALL : chartMode;
@@ -799,6 +884,15 @@ class OverviewTab extends AbstractTab {
 
     @Override
     public SelectionContext getSelectionContext() {
+        if (infraFocused) {
+            List<InfraInfo> infras = ctx.infraData.get();
+            if (infras.isEmpty()) {
+                return null;
+            }
+            List<String> items = infras.stream().map(i -> i.alias != null ? i.alias : i.pid).toList();
+            Integer sel = infraTableState.selected();
+            return new SelectionContext("table", items, sel != null ? sel : -1, items.size(), "Services");
+        }
         List<IntegrationInfo> infos = sortedInfos();
         if (infos.isEmpty()) {
             return null;
@@ -821,52 +915,49 @@ class OverviewTab extends AbstractTab {
             }
             ctx.selectedPid = null;
         }
-        List<IntegrationInfo> infos = sortedInfos();
-        List<InfraInfo> infras = ctx.infraData.get();
-        Integer sel = tableState.selected();
-        if (sel != null && sel >= 0) {
-            String pid = indexToPid(infos, infras, sel);
-            if (pid != null) {
-                ctx.selectedPid = pid;
+        if (infraFocused) {
+            List<InfraInfo> infras = sortedInfraInfos();
+            Integer sel = infraTableState.selected();
+            if (sel != null && sel >= 0 && sel < infras.size()) {
+                ctx.selectedPid = infras.get(sel).pid;
             }
-        } else if (infos.size() == 1) {
-            ctx.selectedPid = infos.get(0).pid;
+        } else {
+            List<IntegrationInfo> infos = sortedInfos();
+            Integer sel = tableState.selected();
+            if (sel != null && sel >= 0 && sel < infos.size()) {
+                ctx.selectedPid = infos.get(sel).pid;
+            } else if (infos.size() == 1) {
+                ctx.selectedPid = infos.get(0).pid;
+            }
         }
-    }
-
-    int totalRows() {
-        int integrations = sortedInfos().size();
-        int infra = ctx.infraData.get().size();
-        return integrations + (infra > 0 ? 1 : 0) + infra;
     }
 
     private void syncSelectedPid() {
-        List<IntegrationInfo> infos = sortedInfos();
-        List<InfraInfo> infras = ctx.infraData.get();
-        Integer sel = tableState.selected();
         String newPid = null;
-        if (sel != null && sel >= 0) {
-            newPid = indexToPid(infos, infras, sel);
-        }
-        if (newPid == null && infos.size() == 1) {
-            newPid = infos.get(0).pid;
+        if (infraFocused) {
+            List<InfraInfo> infras = sortedInfraInfos();
+            Integer sel = infraTableState.selected();
+            if (sel != null && sel >= 0 && sel < infras.size()) {
+                newPid = infras.get(sel).pid;
+            }
+        } else {
+            List<IntegrationInfo> infos = sortedInfos();
+            Integer sel = tableState.selected();
+            if (sel != null && sel >= 0 && sel < infos.size()) {
+                newPid = infos.get(sel).pid;
+            }
+            if (newPid == null && infos.size() == 1) {
+                newPid = infos.get(0).pid;
+            }
+            if (newPid != null) {
+                lastIntegrationPid = newPid;
+            }
         }
         if (newPid != null && !newPid.equals(ctx.selectedPid)) {
             ctx.selectedPid = newPid;
             ctx.lastSelectedName = null;
             onPidChanged.run();
         }
-    }
-
-    String indexToPid(List<IntegrationInfo> infos, List<InfraInfo> infras, int index) {
-        if (index < infos.size()) {
-            return infos.get(index).pid;
-        }
-        int infraIndex = index - infos.size() - (dividerIndex >= 0 ? 1 : 0);
-        if (infraIndex >= 0 && infraIndex < infras.size()) {
-            return infras.get(infraIndex).pid;
-        }
-        return null;
     }
 
     private int sortCompare(IntegrationInfo a, IntegrationInfo b) {
@@ -897,12 +988,52 @@ class OverviewTab extends AbstractTab {
         return sortReversed ? -result : result;
     }
 
+    private int infraSortCompare(InfraInfo a, InfraInfo b) {
+        if (a.vanishing != b.vanishing) {
+            return a.vanishing ? 1 : -1;
+        }
+        int result = switch (infraSort) {
+            case "service" -> {
+                String sa = a.alias != null ? a.alias : "";
+                String sb = b.alias != null ? b.alias : "";
+                yield sa.compareToIgnoreCase(sb);
+            }
+            case "version" -> {
+                String va = a.serviceVersion != null ? a.serviceVersion : "";
+                String vb = b.serviceVersion != null ? b.serviceVersion : "";
+                yield va.compareToIgnoreCase(vb);
+            }
+            case "port" -> {
+                String pa = extractInfraPort(a);
+                String pb = extractInfraPort(b);
+                yield pa.compareTo(pb);
+            }
+            case "status" -> Boolean.compare(b.alive, a.alive);
+            default -> 0;
+        };
+        return infraSortReversed ? -result : result;
+    }
+
+    private List<InfraInfo> sortedInfraInfos() {
+        List<InfraInfo> infras = new ArrayList<>(ctx.infraData.get());
+        infras.sort(this::infraSortCompare);
+        return infras;
+    }
+
     private String sortLabel(String label, String column) {
         return sortLabel(label, column, sort, sortReversed);
     }
 
+    private String infraSortLabel(String label, String column) {
+        return sortLabel(label, column, infraSort, infraSortReversed);
+    }
+
     private Style sortStyle(String column) {
         return sortStyle(column, sort);
+    }
+
+    private Style infraSortStyle(String column) {
+        return sortStyle(column, infraSort);
     }
 
     private static boolean hasReadmeInSourceDir(IntegrationInfo info) {
@@ -987,20 +1118,34 @@ class OverviewTab extends AbstractTab {
 
                 For example, if your integration uses Kafka, you can start a Kafka broker
                 directly from the TUI using `F2` → `Run Dev/Infra Service...` → select `kafka`.
-                The service starts in the background and appears below the integrations list,
-                separated by a divider line.
+                The service starts in the background and appears in a separate panel below
+                the integrations list with its own columns:
+
+                - **PID** — Container process ID
+                - **SERVICE** — Service alias (e.g., `kafka`, `postgres`)
+                - **VERSION** — Service version
+                - **PORT** — Primary port number
+                - **STATUS** — Running or Stopped
 
                 When running an example that requires infra services, they are started
                 automatically before the example launches.
 
-                Selecting an infra service in the list shows its connection properties
-                (host, port, etc.) in the info panel on the right.
+                Press `i` to toggle focus between the integrations and infra panels.
+                Each panel remembers its own selection. Press `d` while the infra panel
+                is focused to toggle a details panel showing the service's connection
+                properties (host, port, etc.).
+
+                Sorting applies to whichever panel is focused. Press `s` to cycle through
+                the sort columns of the focused panel (integration columns: PID, NAME,
+                VERSION, STATUS, TOTAL, FAIL; infra columns: SERVICE, VERSION, PORT, STATUS).
 
                 ## Keys
 
-                - `Up/Down` — select integration
+                - `Up/Down` — select within the focused panel
+                - `i` — toggle focus between integrations and infra panels
+                - `d` — toggle infra service details panel (when infra panel is focused)
                 - `Enter` — view routes for selected integration
-                - `s` — cycle sort column
+                - `s` — cycle sort column (for the focused panel)
                 - `S` — reverse sort order
                 - `F2` — actions menu (includes theme toggle, go to tab, etc.)
                 - `F3` — switch integration

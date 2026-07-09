@@ -263,7 +263,29 @@ class OverviewTabRenderTest {
     }
 
     @Test
-    void clickingTheDividerRowSelectsNothing() {
+    void infraServicesRenderInSeparatePanel() {
+        info.state = 5;
+        InfraInfo infra = new InfraInfo();
+        infra.pid = "9999";
+        infra.alias = "kafka";
+        infra.alive = true;
+
+        AtomicReference<List<IntegrationInfo>> data = new AtomicReference<>(List.of(info));
+        AtomicReference<List<InfraInfo>> infraData = new AtomicReference<>(List.of(infra));
+        MonitorContext ctx2 = new MonitorContext(data, infraData);
+        ctx2.selectedPid = "1234";
+
+        OverviewTab tab = new OverviewTab(ctx2, new MetricsCollector(), new HashSet<>(), () -> {
+        });
+        String rendered = TuiTestHelper.renderToString(tab, 160, 30);
+
+        assertTrue(rendered.contains("Dev/Infra Services"), "Should show infra panel title");
+        assertTrue(rendered.contains("kafka"), "Should show infra service alias");
+        assertTrue(rendered.contains("SERVICE"), "Infra panel should have SERVICE header");
+    }
+
+    @Test
+    void toggleInfraFocusWithKeyI() {
         info.state = 5;
         InfraInfo infra = new InfraInfo();
         infra.pid = "9999";
@@ -281,13 +303,62 @@ class OverviewTabRenderTest {
         Rect area = new Rect(0, 0, 160, 30);
         renderOnce(tab, area);
 
-        // Rows: 0 = the integration, 1 = the "Dev/Infra Services" divider, 2 = the infra service.
-        Rect tableArea = tab.getTableArea();
-        int dividerRowY = tableArea.y() + 3;
-        assertTrue(tab.handleMouseEvent(MouseEvent.press(MouseButton.LEFT, tableArea.x() + 2, dividerRowY), area),
-                "a click on the divider row is consumed");
-        assertEquals("1234", ctx2.selectedPid, "the divider row is not selectable, so the selection is unchanged");
-        assertFalse(pidChanged[0], "clicking the divider does not fire the pid-changed callback");
+        assertFalse(tab.infraFocused, "infra panel should not be focused initially");
+
+        tab.handleKeyEvent(KeyEvent.ofChar('i', KeyModifiers.NONE));
+        assertTrue(tab.infraFocused, "pressing 'i' should toggle focus to infra panel");
+
+        tab.handleKeyEvent(KeyEvent.ofChar('i', KeyModifiers.NONE));
+        assertFalse(tab.infraFocused, "pressing 'i' again should toggle back to integrations");
+    }
+
+    @Test
+    void toggleInfraIgnoredWhenNoInfra() {
+        info.state = 5;
+
+        OverviewTab tab = new OverviewTab(ctx, new MetricsCollector(), new HashSet<>(), () -> {
+        });
+
+        assertFalse(tab.infraFocused);
+        tab.handleKeyEvent(KeyEvent.ofChar('i', KeyModifiers.NONE));
+        assertFalse(tab.infraFocused, "pressing 'i' with no infra services should have no effect");
+    }
+
+    @Test
+    void sortCyclesInfraColumnsWhenInfraFocused() {
+        info.state = 5;
+        InfraInfo infra = new InfraInfo();
+        infra.pid = "9999";
+        infra.alias = "kafka";
+        infra.alive = true;
+
+        AtomicReference<List<IntegrationInfo>> data = new AtomicReference<>(List.of(info));
+        AtomicReference<List<InfraInfo>> infraData = new AtomicReference<>(List.of(infra));
+        MonitorContext ctx2 = new MonitorContext(data, infraData);
+        ctx2.selectedPid = "1234";
+
+        OverviewTab tab = new OverviewTab(ctx2, new MetricsCollector(), new HashSet<>(), () -> {
+        });
+
+        Rect area = new Rect(0, 0, 160, 30);
+        renderOnce(tab, area);
+
+        // Toggle to infra panel
+        tab.handleKeyEvent(KeyEvent.ofChar('i', KeyModifiers.NONE));
+        assertTrue(tab.infraFocused);
+
+        // Default infra sort is SERVICE - pressing 's' should cycle to VERSION
+        tab.handleKeyEvent(KeyEvent.ofChar('s', KeyModifiers.NONE));
+        String rendered = TuiTestHelper.renderToString(tab, 160, 30);
+        assertTrue(rendered.contains("VERSION▼") || rendered.contains("VERSION▲"),
+                "After sort cycle in infra panel, indicator should move to VERSION");
+
+        // Integration sort should remain unchanged on NAME
+        tab.handleKeyEvent(KeyEvent.ofChar('i', KeyModifiers.NONE));
+        assertFalse(tab.infraFocused);
+        rendered = TuiTestHelper.renderToString(tab, 160, 30);
+        assertTrue(rendered.contains("NAME▼") || rendered.contains("NAME▲"),
+                "Integration sort should still be on NAME after infra sort cycle");
     }
 
     // ---- Helper methods ----

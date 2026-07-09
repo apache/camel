@@ -427,6 +427,7 @@ class DataRefreshService {
                             // ignore parse errors
                         }
                         info.serviceVersion = StatusParser.objToString(info.properties.get("serviceVersion"));
+                        info.description = StatusParser.objToString(info.properties.get("description"));
                         infraInfos.add(info);
                     }
                 }

@@ -137,9 +137,14 @@ final class TuiHelper {
         return null;
     }
 
-    /**
-     * Truncate a string to max length, appending an ellipsis if truncated.
-     */
+    static String stripCategory(String name) {
+        if (name == null) {
+            return "";
+        }
+        int slash = name.lastIndexOf('/');
+        return slash >= 0 ? name.substring(slash + 1) : name;
+    }
+
     static String truncate(String s, int max) {
         if (s == null) {
             return "";

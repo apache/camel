@@ -261,6 +261,9 @@ class ExampleBrowserPopup {
             cmd.add("--example=" + exampleName);
             cmd.add("--logging-color=true");
             cmd.addAll(extraArgs);
+            if (exampleName.contains("/") && extraArgs.stream().noneMatch(a -> a.startsWith("--name"))) {
+                cmd.add("--name=" + TuiHelper.stripCategory(exampleName));
+            }
             Path outputFile = Files.createTempFile("camel-example-", ".log");
             outputFile.toFile().deleteOnExit();
             ProcessBuilder pb = new ProcessBuilder(cmd);

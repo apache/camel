@@ -219,6 +219,9 @@ public class InfraRun extends InfraBaseCommand {
         if (testInfraService.serviceVersion() != null && !testInfraService.serviceVersion().isEmpty()) {
             properties.put("serviceVersion", testInfraService.serviceVersion());
         }
+        if (testInfraService.description() != null && !testInfraService.description().isEmpty()) {
+            properties.put("description", testInfraService.description());
+        }
 
         String jsonProperties = jsonMapper.writerWithDefaultPrettyPrinter().writeValueAsString(properties);
         printer().println(jsonProperties);

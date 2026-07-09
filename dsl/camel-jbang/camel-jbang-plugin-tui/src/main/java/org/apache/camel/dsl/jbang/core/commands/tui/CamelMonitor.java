@@ -629,6 +629,9 @@ public class CamelMonitor extends CamelCommand {
                 ctx.selectedPid = null;
                 ctx.lastSelectedName = null;
                 tabRegistry.overviewTab().tableState.clearSelection();
+                tabRegistry.overviewTab().infraTableState.clearSelection();
+                tabRegistry.overviewTab().infraFocused = false;
+                tabRegistry.overviewTab().infraDetailVisible = false;
                 return true;
             }
             return true;

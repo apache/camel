@@ -1186,7 +1186,7 @@ class ActionsPopup {
         if (example == null) {
             return;
         }
-        String baseName = example.getStringOrDefault("name", "");
+        String baseName = TuiHelper.stripCategory(example.getStringOrDefault("name", ""));
         String autoName = generateUniqueName(baseName);
         runOptionsForm.open(autoName, baseName, ExampleHelper.isBundled(example));
     }
@@ -1212,7 +1212,7 @@ class ActionsPopup {
         String exampleName = example.getStringOrDefault("name", "");
         String displayName = runOptionsForm.name();
         if (displayName.isEmpty()) {
-            displayName = exampleName;
+            displayName = TuiHelper.stripCategory(exampleName);
         }
         List<String> extraArgs = runOptionsForm.buildArgs();
         boolean stub = runOptionsForm.isStubMode();
