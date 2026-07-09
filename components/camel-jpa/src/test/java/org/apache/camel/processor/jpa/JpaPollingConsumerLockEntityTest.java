@@ -50,7 +50,10 @@ public class JpaPollingConsumerLockEntityTest extends AbstractJpaTest {
     public void testPollingConsumerWithLock() throws Exception {
 
         MockEndpoint mock = getMockEndpoint("mock:locked");
-        mock.expectedBodiesReceived(
+        // The two concurrent requests race for the optimistic lock, so whichever one wins the
+        // uncontended read (and thus produces "orders: 1") is not deterministic, and the winner's
+        // exchange is not guaranteed to reach the mock endpoint first under CI-level thread contention.
+        mock.expectedBodiesReceivedInAnyOrder(
                 "orders: 1",
                 "orders: 2");
 
@@ -104,8 +107,10 @@ public class JpaPollingConsumerLockEntityTest extends AbstractJpaTest {
 
                 from("direct:locked")
                         .onException(OptimisticLockException.class)
-                        .redeliveryDelay(60)
-                        .maximumRedeliveries(2)
+                        // Generous budget so the losing side of the optimistic-lock race has enough
+                        // room to succeed even under heavy CI host contention.
+                        .redeliveryDelay(100)
+                        .maximumRedeliveries(10)
                         .end()
                         .pollEnrich()
                         .simple("jpa://" + Customer.class.getName()
