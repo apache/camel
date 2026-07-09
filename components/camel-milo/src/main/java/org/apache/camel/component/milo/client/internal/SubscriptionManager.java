@@ -54,7 +54,7 @@ import org.eclipse.milo.opcua.sdk.client.identity.UsernameProvider;
 import org.eclipse.milo.opcua.sdk.client.subscriptions.OpcUaMonitoredItem;
 import org.eclipse.milo.opcua.sdk.client.subscriptions.OpcUaSubscription;
 import org.eclipse.milo.opcua.stack.core.AttributeId;
-import org.eclipse.milo.opcua.stack.core.Identifiers;
+import org.eclipse.milo.opcua.stack.core.NodeIds0;
 import org.eclipse.milo.opcua.stack.core.StatusCodes;
 import org.eclipse.milo.opcua.stack.core.UaException;
 import org.eclipse.milo.opcua.stack.core.types.builtin.ByteString;
@@ -279,7 +279,7 @@ public class SubscriptionManager {
             //                    = this.client.readValue(0, TimestampsToReturn.Neither, Identifiers.Server_NamespaceArray);
             CompletableFuture<DataValue> future = this.client
                     .readValuesAsync(0, TimestampsToReturn.Neither,
-                            Collections.singletonList(Identifiers.Server_NamespaceArray))
+                            Collections.singletonList(NodeIds0.Server_NamespaceArray))
                     .thenApply(r -> r.get(0));
 
             return future.thenApply(value -> {
@@ -573,7 +573,7 @@ public class SubscriptionManager {
                                 .collect(Collectors.toList());
 
                         return completedFuture(nodeIds.stream().map(nodeId -> new BrowseDescription(
-                                nodeId, direction, Identifiers.References, includeSubTypes, uint(nodeClasses),
+                                nodeId, direction, NodeIds0.References, includeSubTypes, uint(nodeClasses),
                                 uint(BrowseResultMask.All.getValue()))).collect(Collectors.toList()));
                     })
 

@@ -31,7 +31,7 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
-import org.eclipse.milo.opcua.stack.core.Identifiers;
+import org.eclipse.milo.opcua.stack.core.NodeIds0;
 import org.eclipse.milo.opcua.stack.core.types.builtin.NodeId;
 import org.eclipse.milo.opcua.stack.core.types.enumerated.BrowseDirection;
 import org.eclipse.milo.opcua.stack.core.types.enumerated.NodeClass;
@@ -62,7 +62,7 @@ public class MiloBrowseEndpoint extends DefaultEndpoint {
      * The node definition (see Node ID)
      */
     @UriParam(defaultValue = "ns=0;id=84", defaultValueNote = "Root folder as per OPC-UA spec")
-    private String node = Identifiers.RootFolder.toParseableString();
+    private String node = NodeIds0.RootFolder.toParseableString();
 
     /**
      * The direction to browse (forward, inverse, ...)

@@ -31,7 +31,7 @@ import org.eclipse.milo.opcua.sdk.server.items.MonitoredItem;
 import org.eclipse.milo.opcua.sdk.server.nodes.UaFolderNode;
 import org.eclipse.milo.opcua.sdk.server.nodes.UaObjectNode;
 import org.eclipse.milo.opcua.sdk.server.util.SubscriptionModel;
-import org.eclipse.milo.opcua.stack.core.Identifiers;
+import org.eclipse.milo.opcua.stack.core.NodeIds0;
 import org.eclipse.milo.opcua.stack.core.types.builtin.LocalizedText;
 import org.eclipse.milo.opcua.stack.core.types.builtin.NodeId;
 import org.eclipse.milo.opcua.stack.core.types.builtin.QualifiedName;
@@ -82,7 +82,7 @@ public class CamelNamespace extends ManagedNamespaceWithLifecycle {
                 .setNodeId(nodeId2)
                 .setBrowseName(name2)
                 .setDisplayName(displayName2)
-                .setTypeDefinition(Identifiers.FolderType)
+                .setTypeDefinition(NodeIds0.FolderType)
                 .buildAndAdd());
         this.folder.addComponent(this.itemsObject);
         this.getNodeManager().addNode(this.itemsObject);
@@ -91,14 +91,14 @@ public class CamelNamespace extends ManagedNamespaceWithLifecycle {
 
         folder.addReference(new Reference(
                 folder.getNodeId(),
-                Identifiers.Organizes,
-                Identifiers.ObjectsFolder.expanded(),
+                NodeIds0.Organizes,
+                NodeIds0.ObjectsFolder.expanded(),
                 false));
 
         itemsObject.addReference(new Reference(
                 nodeId,
-                Identifiers.HasComponent,
-                Identifiers.ObjectNode.expanded(),
+                NodeIds0.HasComponent,
+                NodeIds0.ObjectNode.expanded(),
                 Reference.Direction.INVERSE));
     }
 
