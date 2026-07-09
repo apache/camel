@@ -20,7 +20,6 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
-
 import dev.tamboui.buffer.Buffer;
 import dev.tamboui.layout.Rect;
 import dev.tamboui.terminal.Frame;
@@ -29,12 +28,13 @@ import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.tui.event.KeyModifiers;
 import org.apache.camel.dsl.jbang.core.commands.LlmClient;
 import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import java.nio.file.Path;
+
 
 class AiPanelTest {
 
@@ -439,6 +439,25 @@ class AiPanelTest {
                 pendingCli.complete(new AiCliCommandExecutor.Result("", 130, "", 0, true));
             }
         }
+    }
+
+    @Test
+    void ctrlPOpensProviderSwitchPopupAndSelectionAddsSystemEntry() {
+        AiPanel panel = new AiPanel();
+        panel.setClientForTesting(LlmClient.create());
+        panel.open();
+
+        panel.setProviderChoicesForTesting(List.of(
+                new AiProviderSwitchPopup.ProviderChoice("auto", "", "", true),
+                new AiProviderSwitchPopup.ProviderChoice("gemini", "gemini-3.5-flash", "", false)));
+        panel.handleKeyEvent(KeyEvent.ofChar('p', KeyModifiers.of(true, false, false)));
+        assertTrue(panel.isProviderSwitchVisibleForTesting());
+
+        panel.handleKeyEvent(KeyEvent.ofKey(KeyCode.DOWN, KeyModifiers.NONE));
+        panel.handleKeyEvent(KeyEvent.ofKey(KeyCode.ENTER, KeyModifiers.NONE));
+
+        assertTrue(panel.conversationForTesting().stream()
+                .anyMatch(entry -> entry.text().contains("Switched to gemini-3.5-flash (gemini)")));
     }
 
     static class BlockingLlmClient extends LlmClient {

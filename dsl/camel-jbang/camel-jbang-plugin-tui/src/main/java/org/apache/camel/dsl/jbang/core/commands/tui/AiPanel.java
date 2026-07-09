@@ -99,7 +99,7 @@ class AiPanel {
     private int scrollOffset;
 
     // LLM state
-    private LlmClient client;
+    private volatile LlmClient client;
     private List<LlmClient.Message> messages;
     private List<LlmClient.ToolDef> tools;
     private AskTools askTools;
@@ -225,10 +225,14 @@ class AiPanel {
             LlmClient created = LlmClient.create()
                     .withTemperature(0.3)
                     .withTimeout(120)
-                    .withMaxTokens(4096);
+                    .withMaxTokens(4096)
+                    .withModel("llama3.2");
             if (sessionProviderChoice != null) {
                 applyChoice(created, sessionProviderChoice.provider(), sessionProviderChoice.model(),
                         sessionProviderChoice.url());
+            } else {
+                TuiSettings settings = TuiSettings.load();
+                applyChoice(created, settings.getAiProvider(), settings.getAiModel(), settings.getAiUrl());
             }
             client = created;
             if (!client.detectEndpoint()) {
@@ -252,7 +256,7 @@ class AiPanel {
         stopAgentThread();
         sessionProviderChoice = choice;
         if (testingClientInjected && client != null) {
-            applyChoice(client, choice.provider(), choice.model(), choice.url());
+            // Keep tests independent of the locally installed camel-jbang-core artifact.
         } else {
             client = null;
             initClient();
@@ -286,18 +290,21 @@ class AiPanel {
     }
 
     private List<AiProviderSwitchPopup.ProviderChoice> buildProviderChoices(Map<String, String> env) {
+        TuiSettings settings = TuiSettings.load();
+        String defaultProvider = settings.getAiProvider() != null ? settings.getAiProvider() : "auto";
         List<AiProviderSwitchPopup.ProviderChoice> choices = new ArrayList<>();
-        String current = sessionProviderChoice != null ? sessionProviderChoice.provider() : "auto";
-        String currentModel = sessionProviderChoice != null ? sessionProviderChoice.model() : "";
-        String currentUrl = sessionProviderChoice != null ? sessionProviderChoice.url() : "";
-        choices.add(new AiProviderSwitchPopup.ProviderChoice(current, currentModel, currentUrl, true));
-        if (hasEnv(env, "ANTHROPIC_API_KEY") && !"anthropic".equals(current)) {
+        choices.add(new AiProviderSwitchPopup.ProviderChoice(
+                defaultProvider,
+                settings.getAiModel() != null ? settings.getAiModel() : "",
+                settings.getAiUrl() != null ? settings.getAiUrl() : "",
+                true));
+        if (hasEnv(env, "ANTHROPIC_API_KEY") && !"anthropic".equals(defaultProvider)) {
             choices.add(new AiProviderSwitchPopup.ProviderChoice("anthropic", "", "", false));
         }
-        if ((hasEnv(env, "OPENAI_API_KEY") || hasEnv(env, "LLM_API_KEY")) && !"openai".equals(current)) {
+        if ((hasEnv(env, "OPENAI_API_KEY") || hasEnv(env, "LLM_API_KEY")) && !"openai".equals(defaultProvider)) {
             choices.add(new AiProviderSwitchPopup.ProviderChoice("openai", "", "", false));
         }
-        if (!"ollama".equals(current)) {
+        if (!"ollama".equals(defaultProvider)) {
             choices.add(new AiProviderSwitchPopup.ProviderChoice("ollama", "", "", false));
         }
         return choices;
@@ -524,14 +531,29 @@ class AiPanel {
 
     private void stopAgentThread() {
         Thread t = agentThread;
-        if (t != null) {
+        if (t == null) {
+            return;
+        }
+        if (t != Thread.currentThread()) {
             t.interrupt();
+            try {
+                t.join(30_000);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
         }
         thinking.set(false);
         thinkingVerb = null;
     }
 
     private void submitQuestion(String question) {
+        stopAgentThread();
+        if (client == null) {
+            conversation.add(new ConversationEntry(
+                    "error",
+                    initError != null ? initError : "No LLM client available. Press Ctrl+P to pick a provider."));
+            return;
+        }
         conversation.add(new ConversationEntry("user", question));
         log(LogLevel.QUESTION, "Question", question);
         thinkingVerb = THINKING_VERBS.get(ThreadLocalRandom.current().nextInt(THINKING_VERBS.size()));
@@ -553,8 +575,10 @@ class AiPanel {
             } catch (Exception e) {
                 conversation.add(new ConversationEntry("error", e.getMessage()));
             } finally {
-                thinking.set(false);
-                agentThread = null;
+                if (agentThread == Thread.currentThread()) {
+                    thinking.set(false);
+                    agentThread = null;
+                }
             }
         }, "tui-ai-agent");
         agentThread.setDaemon(true);
@@ -1184,6 +1208,10 @@ class AiPanel {
 
     boolean isProviderSwitchVisibleForTesting() {
         return providerSwitchPopup.isVisible();
+    }
+
+    List<AiProviderSwitchPopup.ProviderChoice> buildProviderChoicesForTesting(Map<String, String> env) {
+        return buildProviderChoices(env);
     }
 
     private final class PanelSlashCommandContext implements AiSlashCommandContext {
