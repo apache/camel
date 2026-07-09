@@ -44,6 +44,19 @@ public final class CamelCaseOrderedProperties extends BaseOrderedProperties {
     }
 
     @Override
+    public boolean containsKey(Object key) {
+        lock.lock();
+        try {
+            String k = key.toString();
+            return super.containsKey(k)
+                    || super.containsKey(StringHelper.dashToCamelCase(k))
+                    || super.containsKey(StringHelper.camelCaseToDash(k));
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    @Override
     public String getProperty(String key) {
         String answer = super.getProperty(key);
         if (answer == null) {
