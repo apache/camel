@@ -742,6 +742,10 @@ public class CamelMonitor extends CamelCommand {
             popupManager.openSwitchPopup(ctx.selectedPid, getNonVanishingIntegrations());
             return true;
         }
+        if (ke.hasCtrl() && ke.isChar('f')) {
+            openFilesPopup();
+            return true;
+        }
         return false;
     }
 

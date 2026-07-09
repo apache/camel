@@ -721,14 +721,14 @@ class MemoryLeakTab extends AbstractTab {
         String modeLabel = recordingMode == RecordingMode.DUAL ? "dual" : "single";
         switch (state) {
             case IDLE -> {
+                hint(spans, "Esc", "back");
                 hint(spans, "R", "record");
                 hint(spans, "d", "mode [" + modeLabel + "]");
                 hint(spans, "+/-", "duration [" + duration + "s]");
-                hintLast(spans, "Esc", "back");
             }
             case RECORDING -> {
+                hint(spans, "Esc", "back");
                 hint(spans, "X", "stop");
-                hintLast(spans, "Esc", "back");
             }
             case HAS_RESULTS -> {
                 hint(spans, "Esc", "back");

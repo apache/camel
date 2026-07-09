@@ -827,9 +827,10 @@ class SqlQueryTab extends AbstractTab {
     @Override
     public void renderFooter(List<Span> spans) {
         if (editMode) {
-            hint(spans, "F5", "save");
             hint(spans, "Esc", "cancel");
+            hint(spans, "F5", "save");
         } else if (focusOnInput) {
+            hint(spans, "Esc", "back");
             hint(spans, "F5", "execute");
             if (!sqlHistory.isEmpty()) {
                 hint(spans, "C-e", "history");
@@ -841,6 +842,7 @@ class SqlQueryTab extends AbstractTab {
                 hint(spans, "Tab", "results");
             }
         } else {
+            hint(spans, "Esc", "back");
             hint(spans, "Tab", "input");
             hint(spans, TuiIcons.HINT_SCROLL, "navigate");
             if (isEditable()) {

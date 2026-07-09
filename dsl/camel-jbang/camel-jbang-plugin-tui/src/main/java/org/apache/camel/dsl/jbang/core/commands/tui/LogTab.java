@@ -406,9 +406,9 @@ class LogTab extends AbstractTab {
             return;
         }
         if (showLogLevelPopup) {
+            hint(spans, "Esc", "cancel");
             hint(spans, TuiIcons.HINT_SCROLL, "navigate");
-            hint(spans, "Enter", "set level");
-            hintLast(spans, "Esc", "cancel");
+            hintLast(spans, "Enter", "set level");
             return;
         }
 

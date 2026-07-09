@@ -96,11 +96,21 @@ class SendMessagePopup {
     private final List<SendHistoryEntry> history = new ArrayList<>();
     private int historyIndex;
 
+    // File chooser
+    private FolderBrowser fileBrowser;
+    private String sourceDirectory;
+
     boolean isVisible() {
         return visible;
     }
 
     void open(MonitorContext ctx, String pid, String name, List<RouteInfo> routes, String preSelectRouteId) {
+        open(ctx, pid, name, routes, preSelectRouteId, null);
+    }
+
+    void open(
+            MonitorContext ctx, String pid, String name, List<RouteInfo> routes,
+            String preSelectRouteId, String sourceDirectory) {
         if (pid == null || routes == null || routes.isEmpty()) {
             return;
         }
@@ -115,6 +125,7 @@ class SendMessagePopup {
         this.headers = null;
         this.selectedHeader = 0;
         this.editingHeaderKey = true;
+        this.sourceDirectory = sourceDirectory;
         clearResponse();
         this.historyIndex = 0;
         this.visible = true;
@@ -124,9 +135,16 @@ class SendMessagePopup {
         visible = false;
     }
 
+    void setFileBrowser(FolderBrowser fileBrowser) {
+        this.fileBrowser = fileBrowser;
+    }
+
     boolean handleKeyEvent(KeyEvent ke) {
         if (!visible) {
             return false;
+        }
+        if (fileBrowser != null && fileBrowser.isVisible()) {
+            return fileBrowser.handleKeyEvent(ke);
         }
         if (sending) {
             return true;
@@ -197,6 +215,10 @@ class SendMessagePopup {
                 } else {
                     selectedField = FIELD_MODE;
                 }
+                return true;
+            }
+            if (ke.hasCtrl() && ke.isChar('f') && fileBrowser != null) {
+                openFileBrowser();
                 return true;
             }
             if (ke.isUp()) {
@@ -435,6 +457,13 @@ class SendMessagePopup {
 
     private boolean hasHeaders() {
         return headers != null && !headers.isEmpty();
+    }
+
+    private void openFileBrowser() {
+        fileBrowser.setFileSelectMode(true);
+        fileBrowser.setOnSelect(path -> bodyState.setText("file:" + path));
+        String startDir = sourceDirectory != null ? sourceDirectory : System.getProperty("user.dir");
+        fileBrowser.open(startDir);
     }
 
     void handlePaste(String text) {
@@ -723,6 +752,10 @@ class SendMessagePopup {
 
     void render(Frame frame, Rect area) {
         if (!visible) {
+            return;
+        }
+        if (fileBrowser != null && fileBrowser.isVisible()) {
+            fileBrowser.render(frame, area);
             return;
         }
 
@@ -1028,9 +1061,14 @@ class SendMessagePopup {
     }
 
     void renderFooter(List<Span> spans) {
+        if (fileBrowser != null && fileBrowser.isVisible()) {
+            fileBrowser.renderFooter(spans);
+            return;
+        }
         hint(spans, "Esc", "back");
         hint(spans, "Tab", "fields");
         hint(spans, "F5", "send");
+        hint(spans, "Ctrl+F", "file");
         hint(spans, "+", "header");
         hint(spans, "b", "body" + (showResponseBody ? " [on]" : ""));
         hint(spans, "h", "headers" + (showResponseHeaders ? " [on]" : ""));

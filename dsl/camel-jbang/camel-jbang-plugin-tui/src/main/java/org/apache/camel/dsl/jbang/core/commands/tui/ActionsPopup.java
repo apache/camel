@@ -123,6 +123,7 @@ class ActionsPopup {
     private final AiLogPopup aiLogPopup = new AiLogPopup();
 
     private final DoctorPopup doctorPopup = new DoctorPopup();
+    private final FolderBrowser sendFileBrowser = new FolderBrowser();
     private final SendMessagePopup sendMessagePopup = new SendMessagePopup();
     private final StopAllPopup stopAllPopup;
     private final CaptionOverlay captionOverlay;
@@ -160,6 +161,7 @@ class ActionsPopup {
         folderInputPopup.setBurstCallback(burstCallback);
         folderInputPopup.setOnFolderConfirmed(this::openFolderRunOptionsForm);
         folderInputPopup.setInfraCatalogClearer(infraBrowserPopup::clearCatalog);
+        sendMessagePopup.setFileBrowser(sendFileBrowser);
     }
 
     void setContext(MonitorContext ctx) {
@@ -403,7 +405,7 @@ class ActionsPopup {
         labels.add("Run an Example...");
         labels.add("Run from Folder...");
         labels.add("Run Dev/Infra Service...");
-        labels.add("Browse Files...");
+        labels.add("Browse Files... (Ctrl+F)");
         labels.add("Stop All");
         labels.add("───");
         labels.add("Run Doctor");
@@ -462,7 +464,7 @@ class ActionsPopup {
 
     boolean handleKeyEvent(KeyEvent ke) {
         if (sendMessagePopup.isVisible()) {
-            if (ke.isKey(KeyCode.F5)) {
+            if (ke.isKey(KeyCode.F5) && !sendFileBrowser.isVisible()) {
                 sendMessagePopup.doSend(ctx, scheduler);
             } else {
                 sendMessagePopup.handleKeyEvent(ke);
@@ -930,8 +932,8 @@ class ActionsPopup {
         items.add(ListItem.from(TuiIcons.menuItem(TuiIcons.FOLDER_OPEN, "Run from Folder...")));
         items.add(ListItem.from(TuiIcons.menuItem(TuiIcons.INFRA, "Run Dev/Infra Service...")));
         items.add(hasSelection
-                ? ListItem.from(TuiIcons.menuItem(TuiIcons.FOLDER, "Browse Files..."))
-                : ListItem.from(TuiIcons.menuItem(TuiIcons.FOLDER, "Browse Files...")).style(Style.EMPTY.dim()));
+                ? ListItem.from(TuiIcons.menuItem(TuiIcons.FOLDER, "Browse Files... (Ctrl+F)"))
+                : ListItem.from(TuiIcons.menuItem(TuiIcons.FOLDER, "Browse Files... (Ctrl+F)")).style(Style.EMPTY.dim()));
         items.add(ListItem.from(stopLabel));
         items.add(ListItem.from(divider).style(Style.EMPTY.dim()));
         // Group 2: Diagnostics & Screen
@@ -1082,7 +1084,7 @@ class ActionsPopup {
             setNotification("No routes available", true);
             return;
         }
-        sendMessagePopup.open(ctx, pid, info.name, info.routes, preSelectedRouteId);
+        sendMessagePopup.open(ctx, pid, info.name, info.routes, preSelectedRouteId, info.directory);
         preSelectedRouteId = null;
     }
 
