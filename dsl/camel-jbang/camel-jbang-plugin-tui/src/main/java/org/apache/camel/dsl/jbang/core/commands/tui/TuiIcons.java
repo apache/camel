@@ -62,6 +62,7 @@ final class TuiIcons {
     static final String CLEAN = "🧹";
     static final String LIGHT_THEME = "🌞";
     static final String DARK_THEME = "🌙";
+    static final String THEMES = "🎨";
     static final String SCREENSHOT = "📸";
     static final String CAPTION = "💬";
     static final String MCP_BRAIN = "🧠";

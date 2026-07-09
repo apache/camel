@@ -1,0 +1,54 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+/* Camel TUI Kanagawa theme. Dark theme inspired by Katsushika Hokusai's famous wave painting. */
+
+$brand: #7E9CD8;
+$kanagawa-bg: #1F1F28;
+$kanagawa-fg: #DCD7BA;
+
+#accent         { color: $brand; }
+#accent-bg      { color: white; background: $brand; text-style: bold; }
+#hint-key       { color: white; background: $brand; text-style: bold; }
+#border         { color: #727169; }
+#border-focused { color: $brand; }
+#title          { color: $brand; text-style: bold; }
+#success        { color: #98BB6C; }
+#warning        { color: #E6C384; }
+#error          { color: #E46876; }
+#muted          { color: #727169; }
+#selection      { color: white; background: #2A2A37; text-style: bold; }
+#info           { color: #7E9CD8; }
+#notice         { color: #957FB8; }
+#row-alt        { background: #2A2A37; }
+#base-bg        { background: $kanagawa-bg; }
+#base-fg        { color: $kanagawa-fg; }
+
+/* Content tokens — labels, change indicators, search highlight */
+#label          { color: #E6C384; }
+#change         { color: #E6C384; }
+#search-match   { color: black; background: #E6C384; }
+#mnemonic       { color: #E6C384; text-style: bold underline; }
+
+/* Diagram tokens */
+#diagram-border  { color: #727169; }
+#diagram-id      { color: $kanagawa-fg; }
+#diagram-from    { color: #98BB6C; }
+#diagram-to      { color: #7E9CD8; }
+#diagram-choice  { color: #E6C384; }
+#diagram-action  { color: #D27E99; }
+#diagram-eip     { color: #957FB8; }
+#diagram-default { color: #727169; }

@@ -66,6 +66,7 @@ class ActionsPopup {
         BACK,
         SCREENSHOT,
         TOGGLE_THEME,
+        THEMES_SUBMENU,
         RESET_SCREEN,
         TAPE_RECORDING,
         TAPE_INSTRUCTIONS,
@@ -87,7 +88,7 @@ class ActionsPopup {
     private final Runnable burstCallback;
     private Runnable resetStatsAction;
     private Runnable resetScreenAction;
-    private Runnable themeToggleAction;
+    private Runnable themeRefreshAction;
     private Runnable openShellAction;
     private Runnable browseFilesAction;
     private Runnable switchIntegrationAction;
@@ -106,6 +107,7 @@ class ActionsPopup {
     private Rect actionsMenuRect;
 
     private final GotoTabPopup gotoTabPopup = new GotoTabPopup();
+    private final ThemePopup themePopup = new ThemePopup();
     private final DocViewerPopup docViewerPopup = new DocViewerPopup();
 
     private final ExampleBrowserPopup exampleBrowserPopup;
@@ -177,8 +179,9 @@ class ActionsPopup {
         this.resetScreenAction = resetScreenAction;
     }
 
-    void setThemeToggleAction(Runnable themeToggleAction) {
-        this.themeToggleAction = themeToggleAction;
+    void setThemeRefreshAction(Runnable themeRefreshAction) {
+        this.themeRefreshAction = themeRefreshAction;
+        themePopup.setThemeRefreshAction(themeRefreshAction);
     }
 
     void setOpenShellAction(Runnable openShellAction) {
@@ -264,7 +267,7 @@ class ActionsPopup {
         List<Action> flat = new ArrayList<>();
         flat.add(Action.BACK);
         flat.add(null);
-        flat.addAll(List.of(Action.SCREENSHOT, Action.TOGGLE_THEME, Action.RESET_SCREEN));
+        flat.addAll(List.of(Action.SCREENSHOT, Action.THEMES_SUBMENU, Action.RESET_SCREEN));
         flat.add(null);
         flat.addAll(List.of(Action.TAPE_RECORDING, Action.TAPE_INSTRUCTIONS, Action.CAPTION, Action.SHOW_KEYSTROKES));
         return flat;
@@ -312,7 +315,8 @@ class ActionsPopup {
     }
 
     boolean isVisible() {
-        return showActionsMenu || gotoTabPopup.isVisible() || exampleBrowserPopup.isVisible()
+        return showActionsMenu || themePopup.isVisible() || gotoTabPopup.isVisible()
+                || exampleBrowserPopup.isVisible()
                 || folderInputPopup.isVisible()
                 || runOptionsForm.isVisible()
                 || docViewerPopup.isVisible()
@@ -322,6 +326,9 @@ class ActionsPopup {
     }
 
     SelectionContext getSelectionContext() {
+        if (themePopup.isVisible()) {
+            return themePopup.getSelectionContext();
+        }
         if (gotoTabPopup.isVisible()) {
             return gotoTabPopup.getSelectionContext();
         }
@@ -353,7 +360,7 @@ class ActionsPopup {
             labels.add("..");
             labels.add("───");
             labels.add("Take Screenshot");
-            labels.add(Theme.isDark() ? "Light Theme" : "Dark Theme");
+            labels.add("Themes...");
             labels.add("Reset Screen");
             labels.add("───");
             labels.add(tapeRecordingActive.get() ? "Stop Tape Recording" : "Start Tape Recording");
@@ -403,6 +410,7 @@ class ActionsPopup {
     void close() {
         showActionsMenu = false;
         currentSubmenu = null;
+        themePopup.close();
         gotoTabPopup.close();
         exampleBrowserPopup.close();
         folderInputPopup.close();
@@ -507,6 +515,9 @@ class ActionsPopup {
         if (doctorPopup.handleKeyEvent(ke)) {
             return true;
         }
+        if (themePopup.handleKeyEvent(ke)) {
+            return true;
+        }
         if (gotoTabPopup.isVisible()) {
             boolean wasVisible = gotoTabPopup.isVisible();
             gotoTabPopup.handleKeyEvent(ke);
@@ -551,6 +562,9 @@ class ActionsPopup {
                     } else if (action == Action.BACK) {
                         currentSubmenu = null;
                         actionsMenuState.select(savedMainSelection);
+                    } else if (action == Action.THEMES_SUBMENU) {
+                        showActionsMenu = false;
+                        themePopup.open();
                     } else if (action == Action.SCREEN_SUBMENU) {
                         savedMainSelection = sel;
                         currentSubmenu = "screen";
@@ -633,8 +647,9 @@ class ActionsPopup {
                             resetScreenAction.run();
                         }
                     } else if (action == Action.TOGGLE_THEME) {
+                        Theme.toggle();
+                        refreshTheme();
                         showActionsMenu = false;
-                        toggleTheme();
                     } else if (action == Action.STOP_ALL) {
                         showActionsMenu = false;
                         stopAllPopup.open();
@@ -662,6 +677,9 @@ class ActionsPopup {
     boolean handleMouseEvent(MouseEvent me) {
         if (!isVisible()) {
             return false;
+        }
+        if (themePopup.isVisible()) {
+            return themePopup.handleMouseEvent(me);
         }
         if (gotoTabPopup.isVisible()) {
             return gotoTabPopup.handleMouseEvent(me);
@@ -726,6 +744,9 @@ class ActionsPopup {
     }
 
     void render(Frame frame, Rect area) {
+        if (themePopup.isVisible()) {
+            themePopup.render(frame, area);
+        }
         if (gotoTabPopup.isVisible()) {
             gotoTabPopup.render(frame, area);
         }
@@ -810,6 +831,10 @@ class ActionsPopup {
         }
         if (exampleBrowserPopup.isVisible()) {
             exampleBrowserPopup.renderFooter(spans);
+            return;
+        }
+        if (themePopup.isVisible()) {
+            themePopup.renderFooter(spans);
             return;
         }
         if (gotoTabPopup.isVisible()) {
@@ -920,15 +945,11 @@ class ActionsPopup {
         String tapeLabel = tapeRecordingActive.get()
                 ? TuiIcons.menuItem(TuiIcons.STOP, "Stop Tape Recording (Ctrl+R)")
                 : TuiIcons.menuItem(TuiIcons.RECORD, "Start Tape Recording (Ctrl+R)");
-        String themeLabel = Theme.isDark()
-                ? TuiIcons.menuItem(TuiIcons.LIGHT_THEME, "Light Theme")
-                : TuiIcons.menuItem(TuiIcons.DARK_THEME, "Dark Theme");
-
         List<ListItem> items = new ArrayList<>();
         items.add(ListItem.from("  .."));
         items.add(ListItem.from(divider).style(Style.EMPTY.dim()));
         items.add(ListItem.from(TuiIcons.menuItem(TuiIcons.SCREENSHOT, "Take Screenshot")));
-        items.add(ListItem.from(themeLabel));
+        items.add(ListItem.from(TuiIcons.menuItem(TuiIcons.THEMES, "Themes...")));
         items.add(ListItem.from(TuiIcons.menuItem(TuiIcons.CLEAN, "Reset Screen")));
         items.add(ListItem.from(divider).style(Style.EMPTY.dim()));
         items.add(ListItem.from(tapeLabel));
@@ -1185,7 +1206,10 @@ class ActionsPopup {
                     resetScreenAction.run();
                 }
             }
-            case TOGGLE_THEME -> toggleTheme();
+            case TOGGLE_THEME -> {
+                Theme.toggle();
+                refreshTheme();
+            }
             case SCREENSHOT -> screenshotAction.run();
             case SHOW_KEYSTROKES -> toggleKeystrokes.run();
             case TAPE_RECORDING -> toggleTapeRecording.run();
@@ -1206,11 +1230,9 @@ class ActionsPopup {
         return gotoTabPopup.consumePendingEntry();
     }
 
-    private void toggleTheme() {
-        if (themeToggleAction != null) {
-            themeToggleAction.run();
-        } else {
-            Theme.toggle();
+    private void refreshTheme() {
+        if (themeRefreshAction != null) {
+            themeRefreshAction.run();
         }
     }
 

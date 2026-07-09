@@ -110,7 +110,7 @@ public class CamelMonitor extends CamelCommand {
     int mcpPort = 8123;
 
     @CommandLine.Option(names = { "--theme" },
-                        description = "Color theme: dark or light (overrides persisted preference for this session)",
+                        description = "Color theme (overrides persisted preference for this session)",
                         completionCandidates = ThemeModeCompletionCandidates.class)
     String theme;
 
@@ -463,10 +463,7 @@ public class CamelMonitor extends CamelCommand {
             ctx.runner = tui;
             actionsPopup.setScheduler(tui.scheduler());
             actionsPopup.setResetScreenAction(() -> tui.terminal().clear());
-            actionsPopup.setThemeToggleAction(() -> {
-                Theme.toggle();
-                tui.terminal().clear();
-            });
+            actionsPopup.setThemeRefreshAction(() -> tui.terminal().clear());
             // Preload diagram data if an integration was auto-selected
             tabRegistry.routesTab().preloadDiagram();
             tabRegistry.diagramTab().preloadDiagram();

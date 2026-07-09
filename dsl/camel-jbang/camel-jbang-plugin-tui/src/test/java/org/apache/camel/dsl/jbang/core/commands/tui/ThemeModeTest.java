@@ -59,26 +59,47 @@ class ThemeModeTest {
     }
 
     @Test
-    void toggleFlipsBetweenTheTwoModes() {
-        assertEquals(ThemeMode.LIGHT, ThemeMode.DARK.toggle());
-        assertEquals(ThemeMode.DARK, ThemeMode.LIGHT.toggle());
+    void nextCyclesToNextThemeInDeclarationOrder() {
+        assertEquals(ThemeMode.LIGHT, ThemeMode.DARK.next());
+        assertEquals(ThemeMode.DRACULA, ThemeMode.LIGHT.next());
+        assertEquals(ThemeMode.DARK, ThemeMode.CRT.next());
     }
 
     @Test
-    void idsListsBothCanonicalValuesInDeclarationOrder() {
-        assertEquals(List.of("dark", "light"), ThemeMode.ids());
+    void idsListsAllCanonicalValuesInDeclarationOrder() {
+        assertEquals(List.of(
+                "dark", "light", "dracula", "nord", "solarized-dark", "solarized-light",
+                "gruvbox-dark", "catppuccin-mocha", "catppuccin-latte", "tokyo-night",
+                "rose-pine", "kanagawa", "everforest", "monochrome", "crt"), ThemeMode.ids());
     }
 
     @Test
     void stylesheetResourcePointsAtTheModeSpecificTcssFile() {
         assertEquals("tui/themes/dark.tcss", ThemeMode.DARK.stylesheetResource());
         assertEquals("tui/themes/light.tcss", ThemeMode.LIGHT.stylesheetResource());
+        assertEquals("tui/themes/catppuccin-mocha.tcss", ThemeMode.CATPPUCCIN_MOCHA.stylesheetResource());
+        assertEquals("tui/themes/tokyo-night.tcss", ThemeMode.TOKYO_NIGHT.stylesheetResource());
     }
 
     @Test
     void idIsDistinctLowercaseCanonicalFormPerMode() {
         assertEquals("dark", ThemeMode.DARK.id());
         assertEquals("light", ThemeMode.LIGHT.id());
+        assertEquals("catppuccin-mocha", ThemeMode.CATPPUCCIN_MOCHA.id());
         assertNotEquals(ThemeMode.DARK.id(), ThemeMode.LIGHT.id());
+    }
+
+    @Test
+    void labelReturnsHumanReadableDisplayName() {
+        assertEquals("Dark", ThemeMode.DARK.label());
+        assertEquals("Catppuccin Mocha", ThemeMode.CATPPUCCIN_MOCHA.label());
+        assertEquals("Rosé Pine", ThemeMode.ROSE_PINE.label());
+    }
+
+    @Test
+    void parseRecognizesAllThemeIds() {
+        for (ThemeMode m : ThemeMode.values()) {
+            assertEquals(Optional.of(m), ThemeMode.parse(m.id()));
+        }
     }
 }

@@ -26,10 +26,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class ThemeModeCompletionCandidatesTest {
 
     @Test
-    void offersDarkAndLightForShellCompletion() {
+    void offersAllThemeIdsForShellCompletion() {
         List<String> candidates = new ArrayList<>();
         new ThemeModeCompletionCandidates().forEach(candidates::add);
 
-        assertEquals(List.of("dark", "light"), candidates);
+        assertEquals(List.of(
+                "dark", "light", "dracula", "nord", "solarized-dark", "solarized-light",
+                "gruvbox-dark", "catppuccin-mocha", "catppuccin-latte", "tokyo-night",
+                "rose-pine", "kanagawa", "everforest", "monochrome", "crt"), candidates);
     }
 }

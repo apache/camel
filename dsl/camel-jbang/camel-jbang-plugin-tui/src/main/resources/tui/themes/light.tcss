@@ -16,13 +16,13 @@
  */
 /* Camel TUI light theme. Brand orange stays truecolor; status hues darkened for light terminals. */
 
-$brand: #F69123;
+$brand: #D97706;
 $light-bg: #FFFFFF;
 $light-fg: #24292E;
 
 #accent         { color: $brand; }
 #accent-bg      { color: white; background: $brand; text-style: bold; }
-#hint-key       { color: black; background: $brand; text-style: bold; }
+#hint-key       { color: black; background: #F0A030; text-style: bold; }
 #border         { color: #C0C0C0; }
 #border-focused { color: $brand; }
 #title          { color: $brand; text-style: bold; }

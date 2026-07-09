@@ -403,6 +403,16 @@ class TuiMcpServer {
                 Map.of("action", propDef("string", "Action name in kebab-case (e.g. 'reset-stats', 'screenshot')")),
                 List.of("action")));
         toolList.add(toolDef(
+                "tui_get_themes",
+                "Returns available TUI themes grouped by dark and light, "
+                                  + "with the currently active theme marked.",
+                Map.of()));
+        toolList.add(toolDef(
+                "tui_set_theme",
+                "Switches the TUI to a named theme. Use tui_get_themes to list available theme IDs.",
+                Map.of("theme", propDef("string", "Theme ID (e.g. 'dracula', 'nord', 'catppuccin-mocha')")),
+                List.of("theme")));
+        toolList.add(toolDef(
                 "tui_get_log",
                 "Returns recent log lines as structured data with optional filtering. "
                                + "Returns newest entries first.",
@@ -607,6 +617,8 @@ class TuiMcpServer {
                 case "tui_draw_clear" -> callDrawClear();
                 case "tui_get_table" -> callGetTable(args);
                 case "tui_action" -> callAction(args);
+                case "tui_get_themes" -> callGetThemes();
+                case "tui_set_theme" -> callSetTheme(args);
                 case "tui_get_log" -> callGetLog(args);
                 case "tui_get_errors" -> callGetErrors();
                 case "tui_get_diagram" -> callGetDiagram();
@@ -1168,6 +1180,43 @@ class TuiMcpServer {
         return "Unknown or unsupported action: " + action
                + ". Available: reset-stats, reset-screen, screenshot, show-keystrokes, "
                + "tape-recording, doctor, caption, mcp-info, mcp-log, toggle-theme";
+    }
+
+    private String callGetThemes() {
+        JsonObject result = new JsonObject();
+        result.put("current", Theme.mode());
+        JsonArray dark = new JsonArray();
+        for (ThemeMode m : ThemeMode.darkThemes()) {
+            JsonObject t = new JsonObject();
+            t.put("id", m.id());
+            t.put("label", m.label());
+            t.put("active", m.id().equals(Theme.mode()));
+            dark.add(t);
+        }
+        JsonArray light = new JsonArray();
+        for (ThemeMode m : ThemeMode.lightThemes()) {
+            JsonObject t = new JsonObject();
+            t.put("id", m.id());
+            t.put("label", m.label());
+            t.put("active", m.id().equals(Theme.mode()));
+            light.add(t);
+        }
+        result.put("dark", dark);
+        result.put("light", light);
+        return Jsoner.serialize(result);
+    }
+
+    private String callSetTheme(Map<String, Object> args) {
+        String themeId = (String) args.get("theme");
+        if (themeId == null || themeId.isBlank()) {
+            return "Error: theme is required. Use tui_get_themes to list available IDs.";
+        }
+        if (!Theme.isValidMode(themeId)) {
+            return "Error: unknown theme '" + themeId + "'. Use tui_get_themes to list available IDs.";
+        }
+        Theme.setTheme(themeId);
+        facade.executeAction("reset-screen");
+        return "Theme switched to '" + themeId + "'";
     }
 
     private String callGetLog(Map<String, Object> args) {

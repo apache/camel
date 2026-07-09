@@ -82,7 +82,7 @@ class ThemeTest {
     void lightPaletteDiffersForStatusTokensButKeepsBrand() {
         // Light theme: status hues are explicit dark hex; brand orange is unchanged.
         Theme.setMode("light");
-        assertEquals(Color.rgb(0xF6, 0x91, 0x23), Theme.accent());
+        assertEquals(Color.rgb(0xD9, 0x77, 0x06), Theme.accent());
         assertEquals(Style.EMPTY.fg(Color.rgb(0x22, 0x86, 0x3A)), Theme.success());
         assertEquals(Style.EMPTY.fg(Color.rgb(0xC0, 0xC0, 0xC0)), Theme.border());
         // Zebra background is theme-aware: light gray on light, unlike the dark gray used on dark.
@@ -93,7 +93,7 @@ class ThemeTest {
     }
 
     @Test
-    void toggleFlipsModeAndChangesThemeDependentToken() {
+    void toggleCyclesToNextThemeAndChangesToken() {
         Theme.setMode("dark");
         assertEquals("dark", Theme.mode());
         Style darkBorder = Theme.border();
@@ -106,12 +106,10 @@ class ThemeTest {
     }
 
     @Test
-    void toggleFlipsModeBackAndForth() {
+    void toggleCyclesThroughAllThemes() {
         Theme.setMode("dark");
         assertEquals("light", Theme.toggle());
-        assertEquals("light", Theme.mode());
-        assertEquals("dark", Theme.toggle());
-        assertEquals("dark", Theme.mode());
+        assertEquals("dracula", Theme.toggle());
     }
 
     @Test
@@ -142,9 +140,12 @@ class ThemeTest {
     }
 
     @Test
-    void isValidModeAcceptsDarkAndLightOnly() {
+    void isValidModeAcceptsAllKnownThemes() {
         assertTrue(Theme.isValidMode("dark"));
         assertTrue(Theme.isValidMode("LIGHT"));
+        assertTrue(Theme.isValidMode("dracula"));
+        assertTrue(Theme.isValidMode("catppuccin-mocha"));
+        assertTrue(Theme.isValidMode("tokyo-night"));
         assertFalse(Theme.isValidMode("sepia"));
         assertFalse(Theme.isValidMode(null));
     }
@@ -216,6 +217,60 @@ class ThemeTest {
         } finally {
             CommandLineHelper.useHomeDir(originalHomeDir);
             Theme.resetForTesting();
+        }
+    }
+
+    @Test
+    void previewAppliesThemeWithoutPersisting() {
+        Theme.setMode("dark");
+        Theme.preview("dracula");
+        assertEquals("dracula", Theme.mode());
+        assertEquals("dark", Theme.persistedMode());
+    }
+
+    @Test
+    void revertPreviewRestoresOriginalTheme() {
+        Theme.setMode("dark");
+        Theme.preview("nord");
+        assertEquals("nord", Theme.mode());
+
+        Theme.revertPreview();
+        assertEquals("dark", Theme.mode());
+        assertEquals("dark", Theme.persistedMode());
+    }
+
+    @Test
+    void confirmPreviewClearsPreviewState() {
+        Theme.setMode("dark");
+        Theme.preview("tokyo-night");
+        Theme.confirmPreview();
+        assertEquals("tokyo-night", Theme.mode());
+        assertEquals("tokyo-night", Theme.persistedMode());
+    }
+
+    @Test
+    void previewSequenceTracksOnlyOriginal() {
+        Theme.setMode("dark");
+        Theme.preview("dracula");
+        Theme.preview("nord");
+        Theme.preview("catppuccin-mocha");
+        assertEquals("dark", Theme.persistedMode());
+
+        Theme.revertPreview();
+        assertEquals("dark", Theme.mode());
+    }
+
+    @Test
+    void allThemesLoadSuccessfully() {
+        for (ThemeMode m : ThemeMode.values()) {
+            Theme.resetForTesting();
+            Theme.setMode(m.id());
+            assertEquals(m.id(), Theme.mode());
+            assertNotNull(Theme.accent());
+            assertNotNull(Theme.baseBg());
+            assertNotNull(Theme.baseFg());
+            assertNotNull(Theme.success());
+            assertNotNull(Theme.error());
         }
     }
 

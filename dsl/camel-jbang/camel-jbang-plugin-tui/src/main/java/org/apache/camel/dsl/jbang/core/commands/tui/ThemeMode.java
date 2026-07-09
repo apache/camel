@@ -21,21 +21,48 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 
-/** Canonical dark/light palette selector for the Camel TUI. */
+/** Named color theme selector for the Camel TUI. */
 enum ThemeMode {
 
-    DARK("dark"),
-    LIGHT("light");
+    DARK("dark", "Dark", false),
+    LIGHT("light", "Light", true),
+    DRACULA("dracula", "Dracula", false),
+    NORD("nord", "Nord", false),
+    SOLARIZED_DARK("solarized-dark", "Solarized Dark", false),
+    SOLARIZED_LIGHT("solarized-light", "Solarized Light", true),
+    GRUVBOX_DARK("gruvbox-dark", "Gruvbox Dark", false),
+    CATPPUCCIN_MOCHA("catppuccin-mocha", "Catppuccin Mocha", false),
+    CATPPUCCIN_LATTE("catppuccin-latte", "Catppuccin Latte", true),
+    TOKYO_NIGHT("tokyo-night", "Tokyo Night", false),
+    ROSE_PINE("rose-pine", "Rosé Pine", false),
+    KANAGAWA("kanagawa", "Kanagawa", false),
+    EVERFOREST("everforest", "Everforest", false),
+    MONOCHROME("monochrome", "Monochrome", false),
+    CRT("crt", "CRT", false);
 
     private final String id;
+    private final String label;
+    private final boolean light;
 
-    ThemeMode(String id) {
+    ThemeMode(String id, String label, boolean light) {
         this.id = id;
+        this.label = label;
+        this.light = light;
     }
 
-    /** Lowercase config / CLI value ({@code dark} or {@code light}). */
+    /** Lowercase config / CLI value (e.g. {@code dark}, {@code catppuccin-mocha}). */
     String id() {
         return id;
+    }
+
+    /** Human-readable display name (e.g. {@code Catppuccin Mocha}). */
+    String label() {
+        return label;
+    }
+
+    /** Whether this is a light-background theme. */
+    boolean isLight() {
+        return light;
     }
 
     /** Classpath resource path of this mode's stylesheet, e.g. {@code tui/themes/dark.tcss}. */
@@ -43,9 +70,10 @@ enum ThemeMode {
         return "tui/themes/" + id + ".tcss";
     }
 
-    // Only two modes exist today, so toggling is a simple flip; revisit this if a third mode is ever added.
-    ThemeMode toggle() {
-        return this == DARK ? LIGHT : DARK;
+    /** Returns the next theme in declaration order, wrapping around at the end. */
+    ThemeMode next() {
+        ThemeMode[] all = values();
+        return all[(ordinal() + 1) % all.length];
     }
 
     static Optional<ThemeMode> parse(String value) {
@@ -67,5 +95,15 @@ enum ThemeMode {
 
     static List<String> ids() {
         return Arrays.stream(values()).map(m -> m.id).toList();
+    }
+
+    /** Dark themes in declaration order. */
+    static List<ThemeMode> darkThemes() {
+        return Arrays.stream(values()).filter(m -> !m.light).toList();
+    }
+
+    /** Light themes in declaration order. */
+    static List<ThemeMode> lightThemes() {
+        return Arrays.stream(values()).filter(m -> m.light).toList();
     }
 }

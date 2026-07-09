@@ -108,6 +108,7 @@ public final class Theme {
     private static boolean testMode;
     private static StyleEngine engine;
     private static ThemeMode mode = ThemeMode.DARK;
+    private static ThemeMode previewOriginal;
 
     private Theme() {
     }
@@ -315,9 +316,49 @@ public final class Theme {
         return mode == ThemeMode.DARK;
     }
 
-    /** Flip the active theme mode, persist it (outside test mode), and activate it, returning the new mode. */
+    /** Cycle to the next theme in declaration order, persist it (outside test mode), and activate it. */
     public static synchronized String toggle() {
-        ThemeMode next = mode.toggle();
+        ThemeMode next = mode.next();
+        if (!testMode) {
+            persist(next);
+        }
+        activate(next, false);
+        return next.id();
+    }
+
+    /** Apply a theme as a live preview without persisting. Saves the original mode on the first call in a sequence. */
+    public static synchronized void preview(String modeId) {
+        if (previewOriginal == null) {
+            previewOriginal = mode;
+        }
+        activate(ThemeMode.parseOrDefault(modeId), false);
+    }
+
+    /** Restore the theme that was active before previewing started. No-op if not previewing. */
+    public static synchronized void revertPreview() {
+        if (previewOriginal != null) {
+            ThemeMode original = previewOriginal;
+            previewOriginal = null;
+            activate(original, false);
+        }
+    }
+
+    /** Persist the currently previewed theme and clear the preview state. */
+    public static synchronized void confirmPreview() {
+        previewOriginal = null;
+        if (!testMode) {
+            persist(mode);
+        }
+    }
+
+    /** The persisted theme mode id (unaffected by an in-progress preview). */
+    public static synchronized String persistedMode() {
+        return previewOriginal != null ? previewOriginal.id() : mode.id();
+    }
+
+    /** Apply and persist a specific theme. For programmatic / MCP use. */
+    public static synchronized String setTheme(String modeId) {
+        ThemeMode next = ThemeMode.parseOrDefault(modeId);
         if (!testMode) {
             persist(next);
         }
@@ -370,6 +411,7 @@ public final class Theme {
         persistedReadFallbackLogged = false;
         persistedWriteFallbackLogged = false;
         persistedModeLoaded = false;
+        previewOriginal = null;
         CACHE.clear();
         engine = null;
         initialized = false;
