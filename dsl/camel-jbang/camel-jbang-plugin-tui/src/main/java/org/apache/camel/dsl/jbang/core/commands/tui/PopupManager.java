@@ -395,7 +395,8 @@ class PopupManager {
 
     void renderMorePopup(Frame frame, Rect area) {
         int popupW = 28;
-        int popupH = 21;
+        int itemCount = moreTabCount();
+        int popupH = Math.min(itemCount + 2, area.height());
         // Position just below the More tab label
         int dividerW = CharWidth.of(" | ");
         int tabBarX = 0;
@@ -411,7 +412,7 @@ class PopupManager {
         if (x + popupW > area.right()) {
             x = Math.max(area.left(), area.right() - popupW);
         }
-        Rect popup = new Rect(x, y, Math.min(popupW, area.width() - (x - area.left())), Math.min(popupH, area.height()));
+        Rect popup = new Rect(x, y, Math.min(popupW, area.width() - (x - area.left())), popupH);
         lastMorePopupRect = popup;
 
         frame.renderWidget(Clear.INSTANCE, popup);
@@ -422,7 +423,7 @@ class PopupManager {
                 .items(items)
                 .highlightStyle(Theme.selectionBg())
                 .highlightSymbol("")
-                .scrollMode(ScrollMode.NONE)
+                .scrollMode(ScrollMode.AUTO_SCROLL)
                 .block(Block.builder()
                         .borderType(BorderType.ROUNDED).borders(Borders.ALL)
                         .title(Title.from(Line.from(Span.styled(

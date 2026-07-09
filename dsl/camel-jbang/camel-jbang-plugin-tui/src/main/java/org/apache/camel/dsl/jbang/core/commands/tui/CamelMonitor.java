@@ -137,6 +137,8 @@ public class CamelMonitor extends CamelCommand {
     private final HelpOverlay helpOverlay = new HelpOverlay();
     private final ShellPanel shellPanel = new ShellPanel();
     private final AiPanel aiPanel = new AiPanel();
+    private boolean logPinned;
+    private final PanelAnimation logPinAnim = new PanelAnimation();
 
     private ActionsPopup actionsPopup;
     private TuiRunner runner;
@@ -727,6 +729,21 @@ public class CamelMonitor extends CamelCommand {
             }
             return true;
         }
+        if (ke.hasCtrl() && ke.isCharIgnoreCase('l')) {
+            if (!logPinned) {
+                logPinned = true;
+                logPinAnim.reset(0);
+            } else if (lastContentArea != null) {
+                logPinAnim.cycleHeight(lastContentArea.height());
+                if (logPinAnim.cyclePercent() >= 100) {
+                    logPinned = false;
+                    logPinAnim.reset(0);
+                }
+            }
+            ctx.logPinned = logPinned;
+            ctx.logPinPercent = logPinned ? logPinAnim.cyclePercent() : 0;
+            return true;
+        }
         if (ke.isKey(KeyCode.F2) && ke.hasShift()) {
             actionsPopup.openGotoTab();
             return true;
@@ -824,7 +841,9 @@ public class CamelMonitor extends CamelCommand {
 
     private boolean handleMouseEvent(MouseEvent me, TuiRunner runner) {
         // Panel border drag resize: detect press on the border row, then track drag
-        if (lastContentArea != null && (shellPanel.isOpen() || aiPanel.isOpen())
+        boolean hasBottomPanel = shellPanel.isOpen() || aiPanel.isOpen()
+                || (logPinned && tabRegistry.selectedTabIndex() != TAB_LOG);
+        if (lastContentArea != null && hasBottomPanel
                 && panelSplit.handleMouse(me, me.y())) {
             if (panelSplit.isDragging() && me.kind() == MouseEventKind.DRAG) {
                 int contentHeight = lastContentArea.height();
@@ -833,8 +852,10 @@ public class CamelMonitor extends CamelCommand {
                     newHeight = Math.max(3, Math.min(contentHeight - 3, newHeight));
                     if (shellPanel.isOpen()) {
                         shellPanel.setPanelHeight(newHeight);
-                    } else {
+                    } else if (aiPanel.isOpen()) {
                         aiPanel.setPanelHeight(newHeight);
+                    } else {
+                        logPinAnim.setPanelHeight(newHeight);
                     }
                 }
             }
@@ -1128,6 +1149,7 @@ public class CamelMonitor extends CamelCommand {
         }
         shellPanel.tickAnimation();
         aiPanel.tickAnimation();
+        logPinAnim.tickAnimation();
         if (canvasOverlay.isVisible()) {
             canvasOverlay.render(frame, contentArea);
         } else if (shellPanel.isOpen()) {
@@ -1155,10 +1177,29 @@ public class CamelMonitor extends CamelCommand {
             renderContent(frame, splitChunks.get(0));
             aiPanel.render(frame, splitChunks.get(1));
             panelSplit.setBorderPos(splitChunks.get(1).y());
+        } else if (logPinned && tabRegistry.selectedTabIndex() != TAB_LOG) {
+            logPinAnim.initHeight(contentArea.height());
+            int ph = logPinAnim.panelHeight();
+            ctx.shellPercent = ph * 100 / Math.max(1, contentArea.height());
+            List<Rect> splitChunks = Layout.vertical()
+                    .constraints(Constraint.fill(), Constraint.length(ph))
+                    .split(contentArea);
+            renderContent(frame, splitChunks.get(0));
+            tabRegistry.logTab().render(frame, splitChunks.get(1));
+            panelSplit.setBorderPos(splitChunks.get(1).y());
         } else {
             ctx.shellPercent = 0;
             renderContent(frame, contentArea);
             panelSplit.clearBorderPos();
+        }
+        if (popupManager.isMorePopupVisible()) {
+            popupManager.renderMorePopup(frame, contentArea);
+        }
+        if (popupManager.isSwitchPopupVisible()) {
+            popupManager.renderSwitchPopup(frame, contentArea);
+        }
+        if (filesBrowser.isVisible()) {
+            filesBrowser.render(frame, contentArea);
         }
         if (drawOverlay.isVisible()) {
             drawOverlay.render(frame, contentArea);
@@ -1384,18 +1425,6 @@ public class CamelMonitor extends CamelCommand {
         MonitorTab tab = tabRegistry.activeTab();
         if (tab != null) {
             tab.render(frame, area);
-        }
-        // Render "More" popup overlay when visible
-        if (popupManager.isMorePopupVisible()) {
-            popupManager.renderMorePopup(frame, area);
-        }
-        // Render "Switch integration" popup overlay when visible
-        if (popupManager.isSwitchPopupVisible()) {
-            popupManager.renderSwitchPopup(frame, area);
-        }
-        // Render "Files" popup overlay when visible
-        if (filesBrowser.isVisible()) {
-            filesBrowser.render(frame, area);
         }
     }
 
@@ -1951,7 +1980,7 @@ public class CamelMonitor extends CamelCommand {
     // ---- Data Loading ----
 
     private void refreshLogData() {
-        if (tabRegistry.selectedTabIndex() != TAB_LOG) {
+        if (tabRegistry.selectedTabIndex() != TAB_LOG && !logPinned) {
             return;
         }
         String logPid = null;

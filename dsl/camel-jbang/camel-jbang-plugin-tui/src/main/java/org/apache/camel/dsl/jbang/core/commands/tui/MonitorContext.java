@@ -35,6 +35,8 @@ class MonitorContext {
     String selectedPid;
     String lastSelectedName;
     int shellPercent;
+    boolean logPinned;
+    int logPinPercent;
 
     MonitorContext(
                    AtomicReference<List<IntegrationInfo>> data,

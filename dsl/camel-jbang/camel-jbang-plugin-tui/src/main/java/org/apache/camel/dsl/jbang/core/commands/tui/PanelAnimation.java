@@ -71,4 +71,10 @@ class PanelAnimation {
         panelHeight = height;
         targetPanelHeight = height;
     }
+
+    void reset(int startIndex) {
+        panelHeight = -1;
+        targetPanelHeight = -1;
+        cycleIndex = startIndex;
+    }
 }

@@ -298,14 +298,17 @@ class LogTab extends AbstractTab {
             logLabel = " Log";
         }
         Line titleLine;
+        List<Span> titleSpans = new ArrayList<>();
+        titleSpans.add(Span.raw(logLabel + " "));
         if (hasNew) {
-            titleLine = Line.from(
-                    Span.raw(logLabel + " "),
-                    Span.styled("(*)", Theme.label()),
-                    Span.raw(" "));
-        } else {
-            titleLine = Line.from(Span.raw(logLabel + " "));
+            titleSpans.add(Span.styled("(*)", Theme.label()));
+            titleSpans.add(Span.raw(" "));
         }
+        if (ctx.logPinned && ctx.logPinPercent > 0) {
+            titleSpans.add(Span.styled(" Ctrl+L ", Theme.hintKey()));
+            titleSpans.add(Span.raw(" pin (" + ctx.logPinPercent + "%)  "));
+        }
+        titleLine = Line.from(titleSpans);
         Block block = Block.builder()
                 .borderType(BorderType.ROUNDED).borders(Borders.ALL)
                 .title(Title.from(titleLine))
@@ -424,6 +427,11 @@ class LogTab extends AbstractTab {
             hint(spans, "l", "level");
         }
         hint(spans, "f", "follow" + (followMode ? " [on]" : " [off]"));
+        if (ctx.logPinned) {
+            hint(spans, "Ctrl+L", "pin (" + ctx.logPinPercent + "%)");
+        } else {
+            hint(spans, "Ctrl+L", "pin");
+        }
     }
 
     private void renderLogLevelPopup(Frame frame, Rect area) {
@@ -765,6 +773,25 @@ class LogTab extends AbstractTab {
                 tells you which thread produced the log message. This helps correlate
                 log entries with specific routes when multiple routes run concurrently.
 
+                ## Pinned Log
+
+                Press `Ctrl+L` from any tab to pin the log to the bottom of the screen.
+                This lets you watch log output while working in other tabs (Routes,
+                Diagram, Overview, etc.) without switching back and forth.
+
+                When pinned, pressing `Ctrl+L` again cycles the panel height through
+                25%, 50%, 75%, and then turns the pin off. The default pin size is 50%.
+
+                When you navigate to the Log tab itself (key `2`), the log goes
+                full-screen as usual. Leaving the Log tab brings the pin back.
+
+                If the Shell (`F6`) or AI panel (`F8`) is opened while the log is
+                pinned, it temporarily takes over the bottom panel. Closing Shell/AI
+                restores the pinned log automatically.
+
+                The pinned log panel can also be resized by dragging its top border
+                with the mouse.
+
                 ## Keys
 
                 - `Up/Down` — scroll log
@@ -777,6 +804,7 @@ class LogTab extends AbstractTab {
                 - `l` — change log level filter
                 - `f` — toggle follow mode
                 - `w` — toggle word wrap
+                - `Ctrl+L` — pin/cycle/unpin log panel (works from any tab)
                 - `Esc` — clear find / back
                 """;
     }
