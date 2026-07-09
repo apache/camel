@@ -26,6 +26,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import dev.tamboui.layout.Constraint;
@@ -48,6 +49,9 @@ import dev.tamboui.widgets.block.BorderType;
 import dev.tamboui.widgets.block.Borders;
 import dev.tamboui.widgets.block.Title;
 import dev.tamboui.widgets.paragraph.Paragraph;
+import dev.tamboui.widgets.spinner.Spinner;
+import dev.tamboui.widgets.spinner.SpinnerState;
+import dev.tamboui.widgets.spinner.SpinnerStyle;
 import dev.tamboui.widgets.table.Cell;
 import dev.tamboui.widgets.table.Row;
 import dev.tamboui.widgets.table.Table;
@@ -65,6 +69,11 @@ class AiPanel {
     private static final int MAX_LOG_ENTRIES = 200;
     private static final DateTimeFormatter TIME_FMT
             = DateTimeFormatter.ofPattern("HH:mm:ss").withZone(ZoneId.systemDefault());
+    private static final String INPUT_PROMPT = "❯ ";
+    private static final List<String> THINKING_VERBS = List.of(
+            "Herding thoughts", "Chewing the cud", "Crossing the desert", "Loading the caravan",
+            "Sniffing out an oasis", "Trekking onward", "Kicking up sand", "Grazing on context",
+            "Following the trail", "Navigating dunes", "Unpacking the saddlebags", "Warming up the hump");
 
     enum LogLevel {
         QUESTION,
@@ -98,8 +107,8 @@ class AiPanel {
     private volatile Thread agentThread;
     private String initError;
     private long thinkingStartTime;
+    private String thinkingVerb;
     private volatile int sessionTotalTokens;
-    private String thinkingVerb = "thinking";
 
     // Slash commands
     private final AiSlashCommandRegistry slashCommands = AiSlashCommandRegistry.defaults();
@@ -479,7 +488,7 @@ class AiPanel {
             activeCliCommand = null;
         }
         thinking.set(false);
-        thinkingVerb = "thinking";
+        thinkingVerb = null;
 
         if (error != null) {
             String displayText = cliResult != null ? cliResult.displayText() : "command";
@@ -506,7 +515,7 @@ class AiPanel {
             slashCommandContext.cancelCli();
             conversation.add(new ConversationEntry("system", "(command cancelled)"));
             thinking.set(false);
-            thinkingVerb = "thinking";
+            thinkingVerb = null;
         } else {
             stopAgentThread();
             conversation.add(new ConversationEntry("system", "(cancelled)"));
@@ -519,14 +528,14 @@ class AiPanel {
             t.interrupt();
         }
         thinking.set(false);
-        thinkingVerb = "thinking";
+        thinkingVerb = null;
     }
 
     private void submitQuestion(String question) {
         conversation.add(new ConversationEntry("user", question));
         log(LogLevel.QUESTION, "Question", question);
+        thinkingVerb = THINKING_VERBS.get(ThreadLocalRandom.current().nextInt(THINKING_VERBS.size()));
         thinkingStartTime = System.currentTimeMillis();
-        thinkingVerb = "thinking";
         thinking.set(true);
 
         // rebuild tools if target process changed
@@ -764,16 +773,6 @@ class AiPanel {
             }
         }
 
-        if (thinking.get()) {
-            long elapsed = (System.currentTimeMillis() - thinkingStartTime) / 1000;
-            long dots = (System.currentTimeMillis() / 500) % 4;
-            md.append("*" + TuiIcons.THINKING + " " + thinkingVerb);
-            if (elapsed > 0) {
-                md.append(" (").append(elapsed).append("s)");
-            }
-            md.append(".".repeat((int) dots + 1)).append("*\n");
-        }
-
         // Show elapsed time and token count as a dimmed line below the markdown when at the bottom
         long lastElapsed = -1;
         int lastTokens = 0;
@@ -787,8 +786,15 @@ class AiPanel {
 
         // Reserve 1 row for dimmed elapsed time (skip at 25% — shown in title bar instead)
         Rect mdArea = area;
+        Rect statusArea = null;
         Rect elapsedArea = null;
-        if (lastElapsed >= 0 && anim.cyclePercent() > 25 && area.height() > 2) {
+        if (thinking.get() && area.height() > 2) {
+            List<Rect> vParts = Layout.vertical()
+                    .constraints(Constraint.fill(), Constraint.length(1))
+                    .split(area);
+            mdArea = vParts.get(0);
+            statusArea = vParts.get(1);
+        } else if (lastElapsed >= 0 && anim.cyclePercent() > 25 && area.height() > 2) {
             List<Rect> vParts = Layout.vertical()
                     .constraints(Constraint.fill(), Constraint.length(1))
                     .split(area);
@@ -841,10 +847,30 @@ class AiPanel {
                     Paragraph.from(Line.from(Span.styled("(" + lastElapsed + "s" + tokenSuffix + ")", Style.EMPTY.dim()))),
                     elapsedArea);
         }
+        if (statusArea != null) {
+            renderThinkingStatus(frame, statusArea);
+        }
+    }
+
+    private void renderThinkingStatus(Frame frame, Rect area) {
+        long elapsed = (System.currentTimeMillis() - thinkingStartTime) / 1000;
+        Spinner spinner = Spinner.builder()
+                .spinnerStyle(SpinnerStyle.DOTS)
+                .style(Style.EMPTY.fg(Theme.accent()).bold())
+                .build();
+        Rect spinnerArea = new Rect(area.left(), area.top(), 2, 1);
+        frame.renderStatefulWidget(spinner, spinnerArea, new SpinnerState(System.currentTimeMillis() / 100));
+
+        String text = " " + (thinkingVerb != null ? thinkingVerb : THINKING_VERBS.get(0));
+        if (elapsed > 0) {
+            text += " (" + elapsed + "s)";
+        }
+        frame.renderWidget(Paragraph.from(Line.from(Span.styled(text, Style.EMPTY.fg(Theme.accent())))),
+                new Rect(area.left() + 2, area.top(), Math.max(0, area.width() - 2), 1));
     }
 
     private void renderInput(Frame frame, Rect area) {
-        String prompt = "> ";
+        String prompt = INPUT_PROMPT;
         String text = inputBuffer.toString();
 
         List<Span> spans = new ArrayList<>();
@@ -903,8 +929,7 @@ class AiPanel {
             if (!thinking.get()) {
                 TuiHelper.hint(spans, "Enter", "send");
             } else {
-                TuiHelper.hint(spans, "Esc", "cancel");
-                TuiHelper.hint(spans, "Ctrl+C", "cancel");
+                TuiHelper.hint(spans, "Esc/Ctrl+C", "interrupt");
             }
         }
     }
@@ -1139,6 +1164,14 @@ class AiPanel {
 
     boolean isThinkingForTesting() {
         return thinking.get();
+    }
+
+    String thinkingVerbForTesting() {
+        return thinkingVerb;
+    }
+
+    String inputPromptForTesting() {
+        return INPUT_PROMPT;
     }
 
     void setExitCallbackForTestingOrRuntime(Runnable callback) {

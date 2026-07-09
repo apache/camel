@@ -32,6 +32,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -271,6 +272,62 @@ class AiPanelTest {
                 .anyMatch(entry -> "system".equals(entry.role()) && entry.text().contains("cancelled")));
     }
 
+    @Test
+    void inputPromptUsesAccentChevron() {
+        AiPanel panel = new AiPanel();
+        assertEquals("❯ ", panel.inputPromptForTesting());
+    }
+
+    @Test
+    void thinkingVerbStaysStableForOneQuestion() {
+        AiPanel panel = new AiPanel();
+        panel.setClientForTesting(new BlockingLlmClient());
+        panel.open();
+        type(panel, "what routes are running?");
+        panel.handleKeyEvent(KeyEvent.ofKey(KeyCode.ENTER, KeyModifiers.NONE));
+        String first = panel.thinkingVerbForTesting();
+        String second = panel.thinkingVerbForTesting();
+
+        assertNotNull(first);
+        assertEquals(first, second);
+        panel.handleKeyEvent(KeyEvent.ofKey(KeyCode.ESCAPE, KeyModifiers.NONE));
+    }
+
+    @Test
+    void escapeInterruptsThinkingRequest() {
+        AiPanel panel = new AiPanel();
+        panel.setClientForTesting(new BlockingLlmClient());
+        panel.open();
+        type(panel, "cancel this");
+        panel.handleKeyEvent(KeyEvent.ofKey(KeyCode.ENTER, KeyModifiers.NONE));
+        assertTrue(panel.isThinkingForTesting());
+
+        panel.handleKeyEvent(KeyEvent.ofKey(KeyCode.ESCAPE, KeyModifiers.NONE));
+
+        assertFalse(panel.isThinkingForTesting());
+        assertTrue(panel.conversationForTesting().stream()
+                .anyMatch(entry -> "system".equals(entry.role()) && "(cancelled)".equals(entry.text())));
+    }
+
+    @Test
+    void renderShowsThinkingStatusOutsideMarkdown() {
+        AiPanel panel = new AiPanel();
+        panel.setClientForTesting(new BlockingLlmClient());
+        panel.open();
+        type(panel, "render thinking");
+        panel.handleKeyEvent(KeyEvent.ofKey(KeyCode.ENTER, KeyModifiers.NONE));
+
+        Rect area = new Rect(0, 0, 80, 12);
+        Buffer buffer = Buffer.empty(area);
+        panel.render(Frame.forTesting(buffer), area);
+        String rendered = TuiTestHelper.bufferToString(buffer);
+
+        assertTrue(rendered.contains(panel.thinkingVerbForTesting()));
+        assertFalse(rendered.contains("thinking..."));
+
+        panel.handleKeyEvent(KeyEvent.ofKey(KeyCode.ESCAPE, KeyModifiers.NONE));
+    }
+
     private static void type(AiPanel panel, String text) {
         for (char ch : text.toCharArray()) {
             panel.handleKeyEvent(KeyEvent.ofChar(ch));
@@ -381,6 +438,16 @@ class AiPanelTest {
             if (pendingCli != null) {
                 pendingCli.complete(new AiCliCommandExecutor.Result("", 130, "", 0, true));
             }
+        }
+    }
+
+    static class BlockingLlmClient extends LlmClient {
+        @Override
+        public ChatResponse chatWithTools(String systemPrompt, List<Message> messages, List<ToolDef> tools) {
+            while (!Thread.currentThread().isInterrupted()) {
+                Thread.onSpinWait();
+            }
+            return new ChatResponse(null, List.of(), "error", false, TokenUsage.EMPTY);
         }
     }
 }
