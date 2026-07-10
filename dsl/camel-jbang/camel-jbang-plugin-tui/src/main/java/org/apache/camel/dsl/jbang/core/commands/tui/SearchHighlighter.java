@@ -214,6 +214,13 @@ class SearchHighlighter {
             return line;
         }
 
+        // sort ranges by start position so the emit loop can assume ascending order
+        Integer[] order = new Integer[ranges.size()];
+        for (int i = 0; i < order.length; i++) {
+            order[i] = i;
+        }
+        java.util.Arrays.sort(order, (a, b) -> Integer.compare(ranges.get(a)[0], ranges.get(b)[0]));
+
         List<Span> original = line.spans();
         List<Span> result = new ArrayList<>();
         int charPos = 0;
@@ -223,18 +230,24 @@ class SearchHighlighter {
             int spanStart = charPos;
             int spanEnd = charPos + content.length();
             int cursor = 0;
-            for (int r = 0; r < ranges.size(); r++) {
-                int matchStart = ranges.get(r)[0];
-                int matchEnd = ranges.get(r)[1];
+            for (int idx : order) {
+                int matchStart = ranges.get(idx)[0];
+                int matchEnd = ranges.get(idx)[1];
                 if (matchEnd <= spanStart || matchStart >= spanEnd) {
                     continue;
                 }
                 int localStart = Math.max(0, matchStart - spanStart);
                 int localEnd = Math.min(content.length(), matchEnd - spanStart);
+                if (localStart < cursor) {
+                    localStart = cursor;
+                }
+                if (localStart >= localEnd) {
+                    continue;
+                }
                 if (localStart > cursor) {
                     result.add(Span.styled(content.substring(cursor, localStart), baseStyle));
                 }
-                result.add(Span.styled(content.substring(localStart, localEnd), rangeStyles.get(r)));
+                result.add(Span.styled(content.substring(localStart, localEnd), rangeStyles.get(idx)));
                 cursor = localEnd;
             }
             if (cursor < content.length()) {
