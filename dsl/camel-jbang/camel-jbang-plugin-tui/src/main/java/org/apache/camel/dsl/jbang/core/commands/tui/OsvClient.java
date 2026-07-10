@@ -59,7 +59,7 @@ class OsvClient {
         List<DependencyLoader.DepEntry> uncached = new ArrayList<>();
 
         for (DependencyLoader.DepEntry entry : entries) {
-            if (entry.groupId() == null) {
+            if (entry.groupId() == null || entry.version() == null) {
                 continue;
             }
             String gav = entry.display();
