@@ -685,7 +685,8 @@ final class StatusParser {
             entry.exception = msg != null ? Jsoner.unescape(msg) : null;
             String st = excJson.getString("stackTrace");
             if (st != null && !st.isEmpty()) {
-                entry.exception = entry.exception + "\n" + Jsoner.unescape(st);
+                String ust = Jsoner.unescape(st);
+                entry.exception = entry.exception != null ? entry.exception + "\n" + ust : ust;
             }
         }
 
@@ -789,7 +790,8 @@ final class StatusParser {
             entry.exception = msg != null ? Jsoner.unescape(msg) : null;
             String st = excJson.getString("stackTrace");
             if (st != null && !st.isEmpty()) {
-                entry.exception = entry.exception + "\n" + Jsoner.unescape(st);
+                String ust = Jsoner.unescape(st);
+                entry.exception = entry.exception != null ? entry.exception + "\n" + ust : ust;
             }
         }
 
