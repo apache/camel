@@ -40,7 +40,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * Integration tests for MINA SFTP concurrency and thread safety.
  */
 @EnabledIf(value = "org.apache.camel.test.infra.ftp.services.embedded.SftpUtil#hasRequiredAlgorithms('src/test/resources/hostkey.pem')")
-@Tag("not-parallel")
+@Tag("isolated")
 public class MinaSftpConcurrencyIT extends MinaSftpServerTestSupport {
 
     private static final Logger log = LoggerFactory.getLogger(MinaSftpConcurrencyIT.class);
