@@ -16,11 +16,11 @@
  */
 package org.apache.camel.component.ai.tool;
 
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.camel.CamelContext;
@@ -46,7 +46,7 @@ public final class AiToolRegistry {
     private final Set<AiToolSpec> defaultTools;
 
     AiToolRegistry() {
-        tools = new ConcurrentHashMap<>();
+        tools = new HashMap<>();
         defaultTools = new LinkedHashSet<>();
     }
 

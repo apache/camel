@@ -257,6 +257,70 @@ public class AiToolEndpointLifecycleTest extends CamelTestSupport {
     }
 
     @Test
+    public void testSuspendDeregistersAndResumeReregisters() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            public void configure() {
+                from("ai-tool:suspendable"
+                     + "?tags=lifecycle"
+                     + "&description=Tool for suspend test")
+                        .routeId("suspendableRoute")
+                        .setBody(constant("ok"));
+            }
+        });
+
+        AiToolRegistry registry = AiToolRegistry.getOrCreate(context);
+        assertThat(registry.getToolsByTag("lifecycle"))
+                .as("Tool should be registered before suspend")
+                .extracting(AiToolSpec::getName)
+                .contains("suspendable");
+
+        context.getRouteController().suspendRoute("suspendableRoute");
+
+        assertThat(registry.getTools().get("lifecycle"))
+                .as("Tool should be deregistered after suspend")
+                .isNull();
+
+        context.getRouteController().resumeRoute("suspendableRoute");
+
+        assertThat(registry.getToolsByTag("lifecycle"))
+                .as("Tool should be re-registered after resume")
+                .extracting(AiToolSpec::getName)
+                .contains("suspendable");
+    }
+
+    @Test
+    public void testSuspendDefaultPoolToolDeregistersAndResumeReregisters() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            public void configure() {
+                from("ai-tool:suspendableDefault"
+                     + "?description=Default pool suspend test")
+                        .routeId("suspendableDefaultRoute")
+                        .setBody(constant("ok"));
+            }
+        });
+
+        AiToolRegistry registry = AiToolRegistry.getOrCreate(context);
+        assertThat(registry.getDefaultTools())
+                .as("Tool should be in default pool before suspend")
+                .extracting(AiToolSpec::getName)
+                .contains("suspendableDefault");
+
+        context.getRouteController().suspendRoute("suspendableDefaultRoute");
+
+        assertThat(registry.getDefaultTools())
+                .as("Default pool should not contain tool after suspend")
+                .extracting(AiToolSpec::getName)
+                .doesNotContain("suspendableDefault");
+
+        context.getRouteController().resumeRoute("suspendableDefaultRoute");
+
+        assertThat(registry.getDefaultTools())
+                .as("Tool should be back in default pool after resume")
+                .extracting(AiToolSpec::getName)
+                .contains("suspendableDefault");
+    }
+
+    @Test
     public void testGetAllToolsReturnsAllPools() throws Exception {
         context.addRoutes(new RouteBuilder() {
             public void configure() {

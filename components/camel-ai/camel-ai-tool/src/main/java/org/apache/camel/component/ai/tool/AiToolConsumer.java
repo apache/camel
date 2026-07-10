@@ -58,8 +58,13 @@ public class AiToolConsumer extends DefaultConsumer {
                 ? AiToolParameterHelper.buildJsonSchemaFromDefs(parameterDefs)
                 : null;
 
+        String desc = configuration.getDescription();
+        if (desc == null || desc.isBlank()) {
+            desc = toolName;
+        }
+
         registeredSpec = new AiToolSpec(
-                toolName, configuration.getDescription(), parameterDefs, jsonSchema, this);
+                toolName, desc, parameterDefs, jsonSchema, this);
 
         String tags = configuration.getTags();
         String[] parsedTags = (tags != null && !tags.isBlank())

@@ -131,7 +131,7 @@ public final class AiToolExecutor {
         // header-namespace injection (CVE-2025-27636 family).
         for (Map.Entry<String, Object> entry : argsCopy.entrySet()) {
             String name = entry.getKey();
-            String lower = name.toLowerCase(Locale.ENGLISH);
+            String lower = name.toLowerCase(Locale.ROOT);
             if (lower.startsWith("camel") || lower.startsWith("org.apache.camel.")) {
                 LOG.warn("Rejecting tool argument '{}' for tool '{}' -- argument names starting with "
                          + "'Camel' or 'org.apache.camel.' are reserved for internal use",

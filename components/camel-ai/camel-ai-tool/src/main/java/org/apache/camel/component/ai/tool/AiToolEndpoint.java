@@ -68,10 +68,6 @@ public class AiToolEndpoint extends DefaultEndpoint {
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        if (configuration.getDescription() == null || configuration.getDescription().isBlank()) {
-            configuration.setDescription(toolName);
-        }
-
         AiToolConsumer consumer = new AiToolConsumer(this, processor);
         configureConsumer(consumer);
         return consumer;
