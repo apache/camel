@@ -574,6 +574,15 @@ process is running).
 | `camel_runtime_memory`
 | Show JVM memory usage (heap/non-heap), garbage collection stats, and thread counts.
 
+| `camel_runtime_heap_histogram`
+| Get a class-level heap histogram showing instance counts and byte usage per class.
+  Useful for diagnosing memory leaks and understanding which classes dominate heap usage.
+
+| `camel_runtime_memory_leak`
+| Diagnose memory leaks in a running Camel integration using Java Flight Recorder (JFR).
+  Use command 'start' to begin recording, 'stop' to get results, 'status' to check state,
+  and 'query' to retrieve cached results. Supports dual-recording mode for trend comparison.
+
 | `camel_runtime_errors`
 | Get captured routing errors from the running application. Returns error details including exception,
   exchange context, and route information.
@@ -664,4 +673,14 @@ instructions and executes each step by calling the referenced tools.
   for security-sensitive components and vulnerabilities, understand the route structure and data flow, and
   produce an actionable audit checklist organized into critical issues, warnings, positive findings,
   recommendations, and compliance notes.
+
+| `camel_diagnose_route`
+| `routeId` (optional), `symptom` (optional)
+| Guided workflow to diagnose issues with a running Camel route: gather runtime state, errors, health,
+  message history, and produce a root cause analysis with actionable fixes.
+
+| `camel_optimize_route`
+| `routeId` (optional), `goal` (optional)
+| Guided workflow to optimize a Camel application's performance: analyze throughput, identify bottlenecks,
+  review resource usage, and produce prioritized optimization recommendations.
 |===

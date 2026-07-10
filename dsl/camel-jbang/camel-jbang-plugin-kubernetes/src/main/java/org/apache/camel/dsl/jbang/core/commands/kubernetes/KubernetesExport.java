@@ -76,11 +76,11 @@ public class KubernetesExport extends Export {
     protected String[] resources;
 
     @CommandLine.Option(names = { "--env" },
-                        description = "Set an environment variable in the integration container, for instance \"-e MY_VAR=my-value\".")
+                        description = "Set an environment variable in the integration container, for instance \"--env MY_VAR=my-value\".")
     protected String[] envVars;
 
     @CommandLine.Option(names = { "--volume" },
-                        description = "Mount a volume into the integration container, for instance \"-v pvcname:/container/path\".")
+                        description = "Mount a volume into the integration container, for instance \"--volume pvcname:/container/path\".")
     protected String[] volumes;
 
     @CommandLine.Option(names = { "--connect" },

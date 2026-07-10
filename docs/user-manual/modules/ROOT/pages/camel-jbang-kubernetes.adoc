@@ -60,10 +60,10 @@ The export command provides several options to customize the project:
 |Add an OpenAPI spec (syntax: [configmap,file]:name).
 
 |--env
-|Set an environment variable in the integration container, for instance "-e MY_VAR=my-value".
+|Set an environment variable in the integration container, for instance "--env MY_VAR=my-value".
 
 |--volume
-|Mount a volume into the integration container, for instance "-v pvcname:/container/path".
+|Mount a volume into the integration container, for instance "--volume pvcname:/container/path".
 
 |--connect
 |A Service that the integration should bind to, specified as [[apigroup/]version:]kind:[namespace/]name.
@@ -236,7 +236,7 @@ camel kubernetes export Sample.java --trait=cronjob.enabled=true --trait=cronjob
 
 === Labels and annotations
 
-By default, resources have the label `camel.apache.org/integration` set to the project name.
+By default, resources have the label `app.kubernetes.io/name` set to the project name.
 Add custom labels and annotations:
 
 [source,bash]
@@ -722,10 +722,7 @@ Remove a deployment and all its resources:
 [source,bash]
 ----
 camel kubernetes delete --name=route
-camel kubernetes delete --name=route --cluster-type=openshift
 ----
-
-NOTE: If you used `--cluster-type` during export/run, you must specify it for delete as well.
 
 == Minikube deployment tips
 
