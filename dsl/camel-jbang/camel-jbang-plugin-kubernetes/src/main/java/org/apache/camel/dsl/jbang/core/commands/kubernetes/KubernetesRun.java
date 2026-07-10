@@ -342,7 +342,8 @@ public class KubernetesRun extends KubernetesBaseCommand {
 
         String workingDir = getIndexedWorkingDir(projectName);
         KubernetesExport export = configureExport(workingDir, baseDir);
-        boolean cronEnabled = computedTraits.getCronjob() != null && computedTraits.getCronjob().getEnabled();
+        boolean cronEnabled = computedTraits.getCronjob() != null
+                && Boolean.TRUE.equals(computedTraits.getCronjob().getEnabled());
         if (cronEnabled) {
             // disable observability-services as CronJob doesn't use the container probes
             export.setObserve(false);
@@ -354,7 +355,8 @@ public class KubernetesRun extends KubernetesBaseCommand {
         }
 
         if (output != null) {
-            boolean ksvcEnabled = computedTraits.getKnativeService() != null && computedTraits.getKnativeService().getEnabled();
+            boolean ksvcEnabled = computedTraits.getKnativeService() != null
+                    && Boolean.TRUE.equals(computedTraits.getKnativeService().getEnabled());
 
             exit = buildProjectOutput(workingDir);
             if (exit != 0) {
@@ -551,6 +553,7 @@ public class KubernetesRun extends KubernetesBaseCommand {
                     //
                     KubernetesDelete deleteCommand = new KubernetesDelete(getMain());
                     deleteCommand.name = projectName;
+                    deleteCommand.namespace = namespace;
                     deleteCommand.doCall();
 
                     // Re-deploy updated project
@@ -620,6 +623,7 @@ public class KubernetesRun extends KubernetesBaseCommand {
         devModeShutdownTask = new Thread(() -> {
             KubernetesDelete deleteCommand = new KubernetesDelete(getMain());
             deleteCommand.name = projectName;
+            deleteCommand.namespace = namespace;
             try (var client = createKubernetesClientForShutdownHook()) {
                 KubernetesHelper.setKubernetesClient(client);
                 deleteCommand.doCall();
@@ -676,7 +680,8 @@ public class KubernetesRun extends KubernetesBaseCommand {
         // suppress maven transfer progress
         args.add("-ntp");
 
-        if (computedTraits.getKnativeService() != null && computedTraits.getKnativeService().getEnabled()) {
+        if (computedTraits.getKnativeService() != null
+                && Boolean.TRUE.equals(computedTraits.getKnativeService().getEnabled())) {
             // by default jkube creates a Deployment manifest and it doesn't support knative controller yet.
             // however when knative-service is enabled the knative-service trait generates a src/main/jkube/service.yml
             // and there is no need for the regular Deployment as the knative Service manifest, once deployed
@@ -745,7 +750,8 @@ public class KubernetesRun extends KubernetesBaseCommand {
 
         boolean isOpenshift = ClusterType.OPENSHIFT.isEqualTo(clusterType);
         var prefix = isOpenshift ? "oc" : "k8s";
-        if (computedTraits.getKnativeService() != null && computedTraits.getKnativeService().getEnabled()) {
+        if (computedTraits.getKnativeService() != null
+                && Boolean.TRUE.equals(computedTraits.getKnativeService().getEnabled())) {
             // by default jkube creates a Deployment manifest and it doesn't support knative controller yet.
             // however when knative-service is enabled the knative-service trait generates a src/main/jkube/service.yml
             // and there is no need for the regular Deployment as the knative Service manifest, once deployed
@@ -868,7 +874,15 @@ public class KubernetesRun extends KubernetesBaseCommand {
         if (namespace != null || client.getNamespace() != null) {
             ns = namespace != null ? namespace : client.getNamespace();
         }
-        Map<String, String> data = client.configMaps().inNamespace(ns).withName(name).get().getData();
+        var cm = client.configMaps().inNamespace(ns).withName(name).get();
+        if (cm == null) {
+            printer().printf("ConfigMap '%s' not found in namespace '%s'%n", name, ns);
+            return Set.of();
+        }
+        Map<String, String> data = cm.getData();
+        if (data == null) {
+            return Set.of();
+        }
         return data.keySet();
     }
 
@@ -878,7 +892,15 @@ public class KubernetesRun extends KubernetesBaseCommand {
         if (namespace != null || client.getNamespace() != null) {
             ns = namespace != null ? namespace : client.getNamespace();
         }
-        Map<String, String> data = client.secrets().inNamespace(ns).withName(name).get().getData();
+        var secret = client.secrets().inNamespace(ns).withName(name).get();
+        if (secret == null) {
+            printer().printf("Secret '%s' not found in namespace '%s'%n", name, ns);
+            return Set.of();
+        }
+        Map<String, String> data = secret.getData();
+        if (data == null) {
+            return Set.of();
+        }
         return data.keySet();
     }
 

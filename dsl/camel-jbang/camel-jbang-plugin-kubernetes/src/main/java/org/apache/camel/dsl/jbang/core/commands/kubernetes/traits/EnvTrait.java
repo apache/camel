@@ -22,6 +22,7 @@ import java.util.stream.Collectors;
 
 import io.fabric8.kubernetes.api.model.EnvVarBuilder;
 import io.fabric8.kubernetes.api.model.apps.DeploymentBuilder;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.model.Environment;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.model.Traits;
 import org.apache.camel.util.ObjectHelper;
@@ -55,6 +56,11 @@ public class EnvTrait extends BaseTrait {
                             .editFirstContainer()
                             .addAllToEnv(envTrait.getVars().stream().map(envvar -> {
                                 String[] parts = envvar.split("=", 2);
+                                if (parts.length != 2) {
+                                    throw new RuntimeCamelException(
+                                            "Invalid environment variable '%s', must be in NAME=value format"
+                                                    .formatted(envvar));
+                                }
                                 return new EnvVarBuilder()
                                         .withName(parts[0])
                                         .withValue(parts[1])

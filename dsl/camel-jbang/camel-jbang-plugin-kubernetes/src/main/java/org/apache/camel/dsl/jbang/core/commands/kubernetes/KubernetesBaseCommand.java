@@ -17,6 +17,9 @@
 
 package org.apache.camel.dsl.jbang.core.commands.kubernetes;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -36,7 +39,6 @@ import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.SourceScheme;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.StringHelper;
 import picocli.CommandLine;
 
 /**
@@ -69,7 +71,7 @@ public abstract class KubernetesBaseCommand extends CamelCommand {
     }
 
     protected String projectNameFromImage(Supplier<String> imageSupplier) {
-        return KubernetesHelper.sanitize(StringHelper.beforeLast(imageSupplier.get(), ":"));
+        return KubernetesHelper.sanitize(KubernetesHelper.imageWithoutTag(imageSupplier.get()));
     }
 
     protected String projectNameFromGav(Supplier<String> gavSupplier) {
@@ -126,6 +128,14 @@ public abstract class KubernetesBaseCommand extends CamelCommand {
      * uses default client.
      */
     protected KubernetesClient client() {
+        if (kubeConfig != null) {
+            try {
+                String content = Files.readString(Path.of(kubeConfig));
+                return KubernetesHelper.getKubernetesClient(content);
+            } catch (IOException e) {
+                throw new RuntimeCamelException("Failed to read kube config file: " + kubeConfig, e);
+            }
+        }
         return KubernetesHelper.getKubernetesClient();
     }
 

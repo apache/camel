@@ -56,7 +56,6 @@ import org.apache.camel.dsl.jbang.core.common.SourceHelper;
 import org.apache.camel.tooling.maven.MavenGav;
 import org.apache.camel.util.CamelCaseOrderedProperties;
 import org.apache.camel.util.FileUtil;
-import org.apache.camel.util.StringHelper;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
@@ -264,13 +263,7 @@ public class KubernetesExport extends Export {
         //
         annotations = Optional.ofNullable(annotations).orElse(new String[0]);
         context.addAnnotations(Arrays.stream(annotations)
-                .map(item -> item.split("="))
-                .filter(parts -> parts.length == 2)
-                .collect(Collectors.toMap(parts -> parts[0], parts -> parts[1])));
-
-        annotations = Optional.ofNullable(annotations).orElse(new String[0]);
-        context.addAnnotations(Arrays.stream(annotations)
-                .map(item -> item.split("="))
+                .map(item -> item.split("=", 2))
                 .filter(parts -> parts.length == 2)
                 .collect(Collectors.toMap(parts -> parts[0], parts -> parts[1])));
 
@@ -287,7 +280,7 @@ public class KubernetesExport extends Export {
         }
         if (labels != null) {
             context.addLabels(Arrays.stream(labels)
-                    .map(item -> item.split("="))
+                    .map(item -> item.split("=", 2))
                     .filter(parts -> parts.length == 2)
                     .collect(Collectors.toMap(parts -> parts[0], parts -> parts[1])));
         }
@@ -391,7 +384,8 @@ public class KubernetesExport extends Export {
         var managementPort = httpManagementPort(settingsPath);
         buildProperties.add("jkube.version=%s".formatted(jkubeVersion));
 
-        boolean cronJobEnabled = traitsSpec.getCronjob() != null && traitsSpec.getCronjob().getEnabled();
+        boolean cronJobEnabled = traitsSpec.getCronjob() != null
+                && Boolean.TRUE.equals(traitsSpec.getCronjob().getEnabled());
         if (cronJobEnabled) {
             // set this property to allow the JVM to finish quickly once there are no more exchange messages
             // important for cronjobs so that the jvm can end quickly
@@ -603,14 +597,17 @@ public class KubernetesExport extends Export {
             return KubernetesHelper.sanitize(name);
         }
         if (image != null) {
-            return KubernetesHelper.sanitize(StringHelper.beforeLast(image, ":"));
+            return KubernetesHelper.sanitize(KubernetesHelper.imageWithoutTag(image));
         }
         return KubernetesHelper.sanitize(super.getProjectName());
     }
 
     protected String getVersion() {
         if (image != null) {
-            return StringHelper.afterLast(image, ":");
+            String tag = KubernetesHelper.imageTag(image);
+            if (tag != null) {
+                return tag;
+            }
         }
         return super.getVersion();
     }

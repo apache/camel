@@ -74,7 +74,8 @@ public class KubernetesPodLogs extends KubernetesBaseCommand {
 
         String[] parts = label.split("=", 2);
         if (parts.length != 2) {
-            printer().println("--label selector must be in syntax: key=value");
+            printer().printErr("--label selector must be in syntax: key=value");
+            return 1;
         }
 
         var retry = watchLogs();
