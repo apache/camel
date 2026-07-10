@@ -419,7 +419,7 @@ public class CatalogDoc extends CamelCommand {
         printer().println("");
         printer().println("    <dependency>");
         printer().println("        <groupId>" + "org.apache.camel" + "</groupId>");
-        printer().println("        <artifactId>" + "camel.main" + "</artifactId>");
+        printer().println("        <artifactId>" + "camel-main" + "</artifactId>");
         printer().println("        <version>" + catalog.getCatalogVersion() + "</version>");
         printer().println("    </dependency>");
         printer().println("");
@@ -759,7 +759,7 @@ public class CatalogDoc extends CamelCommand {
         }
         String target = name.toLowerCase(Locale.ROOT);
         return options.stream().filter(
-                r -> r.getName().contains(target) || r.getName().equalsIgnoreCase(target)
+                r -> r.getName().toLowerCase(Locale.ROOT).contains(target) || r.getName().equalsIgnoreCase(target)
                         || r.getDescription().toLowerCase(Locale.ROOT).contains(target)
                         || r.getShortGroup() != null && r.getShortGroup().toLowerCase(Locale.ROOT).contains(target))
                 .collect(Collectors.toList());
@@ -805,7 +805,7 @@ public class CatalogDoc extends CamelCommand {
         }
         String target = name.toLowerCase(Locale.ROOT);
         return options.stream().filter(
-                r -> r.getName().contains(target) || r.getName().equalsIgnoreCase(target)
+                r -> r.getName().toLowerCase(Locale.ROOT).contains(target) || r.getName().equalsIgnoreCase(target)
                         || r.getDescription().toLowerCase(Locale.ROOT).contains(target)
                         || r.getShortGroup() != null && r.getShortGroup().toLowerCase(Locale.ROOT).contains(target))
                 .collect(Collectors.toList());
