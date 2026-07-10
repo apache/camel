@@ -20,7 +20,6 @@ import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,7 +28,6 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.stream.Collectors;
 
 import dev.tamboui.layout.Constraint;
 import dev.tamboui.layout.Layout;
@@ -122,6 +120,7 @@ class AiPanel {
 
     // Provider switch popup
     private final AiProviderSwitchPopup providerSwitchPopup = new AiProviderSwitchPopup();
+    private final AiProviderSelector providerSelector = new AiProviderSelector();
     private AiProviderSwitchPopup.ProviderChoice sessionProviderChoice;
     private List<AiProviderSwitchPopup.ProviderChoice> providerChoicesForTesting;
     private boolean testingClientInjected;
@@ -231,11 +230,11 @@ class AiPanel {
                     .withMaxTokens(4096)
                     .withModel("llama3.2");
             if (sessionProviderChoice != null) {
-                applyChoice(created, sessionProviderChoice.provider(), sessionProviderChoice.model(),
+                providerSelector.applyChoice(created, sessionProviderChoice.provider(), sessionProviderChoice.model(),
                         sessionProviderChoice.url());
             } else {
                 TuiSettings settings = TuiSettings.load();
-                applyChoice(created, settings.getAiProvider(), settings.getAiModel(), settings.getAiUrl());
+                providerSelector.applyChoice(created, settings.getAiProvider(), settings.getAiModel(), settings.getAiUrl());
             }
             client = created;
             if (!client.detectEndpoint()) {
@@ -280,71 +279,10 @@ class AiPanel {
         return choice.model() == null || choice.model().isBlank() ? "auto" : choice.model();
     }
 
-    private void applyChoice(LlmClient target, String provider, String model, String url) {
-        if (provider != null && !provider.isBlank() && !"auto".equals(provider)) {
-            target.withApiType(parseApiType(provider));
-        }
-        if (model != null && !model.isBlank()) {
-            target.withModel(model);
-        }
-        if (url != null && !url.isBlank()) {
-            target.withUrl(url);
-        }
-    }
-
-    private static LlmClient.ApiType parseApiType(String provider) {
-        try {
-            return LlmClient.ApiType.valueOf(provider.replace('-', '_'));
-        } catch (IllegalArgumentException e) {
-            String valid = Arrays.stream(LlmClient.ApiType.values())
-                    .map(Enum::name)
-                    .collect(Collectors.joining(", "));
-            throw new IllegalArgumentException(
-                    "Unknown AI provider '" + provider + "'. Valid values: " + valid + ", auto.");
-        }
-    }
-
-    private List<AiProviderSwitchPopup.ProviderChoice> buildProviderChoices(Map<String, String> env) {
-        TuiSettings settings = TuiSettings.load();
-        String defaultProvider = settings.getAiProvider() != null ? settings.getAiProvider() : "auto";
-        List<AiProviderSwitchPopup.ProviderChoice> choices = new ArrayList<>();
-        choices.add(new AiProviderSwitchPopup.ProviderChoice(
-                defaultProvider,
-                settings.getAiModel() != null ? settings.getAiModel() : "",
-                settings.getAiUrl() != null ? settings.getAiUrl() : "",
-                true));
-        if (hasEnv(env, "ANTHROPIC_API_KEY") && !"anthropic".equals(defaultProvider)) {
-            choices.add(new AiProviderSwitchPopup.ProviderChoice("anthropic", "", "", false));
-        }
-        if ((hasEnv(env, "OPENAI_API_KEY") || hasEnv(env, "LLM_API_KEY")) && !"openai".equals(defaultProvider)) {
-            choices.add(new AiProviderSwitchPopup.ProviderChoice("openai", "", "", false));
-        }
-        if (!"ollama".equals(defaultProvider)) {
-            choices.add(new AiProviderSwitchPopup.ProviderChoice("ollama", "", "", false));
-        }
-        return choices;
-    }
-
-    private static boolean hasEnv(Map<String, String> env, String key) {
-        String value = env.get(key);
-        return value != null && !value.isBlank();
-    }
-
-    private Map<String, String> envSnapshot() {
-        Map<String, String> env = new LinkedHashMap<>();
-        for (String key : List.of("ANTHROPIC_API_KEY", "OPENAI_API_KEY", "LLM_API_KEY")) {
-            String value = System.getenv(key);
-            if (value != null) {
-                env.put(key, value);
-            }
-        }
-        return env;
-    }
-
     void openProviderSwitch() {
         providerSwitchPopup.open(providerChoicesForTesting != null
                 ? providerChoicesForTesting
-                : buildProviderChoices(envSnapshot()));
+                : providerSelector.buildChoices(AiProviderSelector.envSnapshot()));
     }
 
     boolean handleMouseEvent(MouseEvent me) {
@@ -1244,7 +1182,7 @@ class AiPanel {
     }
 
     List<AiProviderSwitchPopup.ProviderChoice> buildProviderChoicesForTesting(Map<String, String> env) {
-        return buildProviderChoices(env);
+        return providerSelector.buildChoices(env);
     }
 
     private final class PanelSlashCommandContext implements AiSlashCommandContext {
