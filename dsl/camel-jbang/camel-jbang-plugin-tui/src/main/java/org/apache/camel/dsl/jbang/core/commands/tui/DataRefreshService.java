@@ -600,20 +600,23 @@ class DataRefreshService {
     // ---- Error data ----
 
     void refreshErrorData(List<Long> pids) {
-        IntegrationInfo sel = ctx.findSelectedIntegration();
-        if (sel == null) {
-            return;
-        }
-        try {
-            long pid = Long.parseLong(sel.pid);
-            JsonObject root = loadErrorFile(pid);
-            if (root != null) {
-                List<ErrorInfo> parsed = StatusParser.parseErrors(root);
-                sel.errors.clear();
-                sel.errors.addAll(parsed);
+        for (Long pid : pids) {
+            IntegrationInfo sel = ctx.data.get().stream()
+                    .filter(i -> String.valueOf(pid).equals(i.pid) && !i.vanishing)
+                    .findFirst().orElse(null);
+            if (sel == null) {
+                continue;
             }
-        } catch (Exception e) {
-            // ignore
+            try {
+                JsonObject root = loadErrorFile(pid);
+                if (root != null) {
+                    List<ErrorInfo> parsed = StatusParser.parseErrors(root);
+                    sel.errors.clear();
+                    sel.errors.addAll(parsed);
+                }
+            } catch (Exception e) {
+                // ignore
+            }
         }
     }
 
