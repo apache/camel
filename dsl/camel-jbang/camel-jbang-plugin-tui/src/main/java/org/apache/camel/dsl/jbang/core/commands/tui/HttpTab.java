@@ -1175,7 +1175,7 @@ class HttpTab extends AbstractTableTab {
         visible.sort((a, b) -> {
             int result = switch (sort) {
                 case "path" -> compareStr(a.path, b.path);
-                case "total" -> Long.compare(a.hits, b.hits);
+                case "total" -> Long.compare(b.hits, a.hits);
                 case "source" -> Boolean.compare(b.fromRest, a.fromRest);
                 case "consumes" -> compareStr(a.consumes, b.consumes);
                 case "produces" -> compareStr(a.produces, b.produces);
