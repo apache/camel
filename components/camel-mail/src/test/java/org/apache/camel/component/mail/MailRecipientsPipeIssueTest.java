@@ -22,6 +22,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mail.Mailbox.MailboxUser;
 import org.apache.camel.component.mail.Mailbox.Protocol;
 import org.apache.camel.test.junit6.CamelTestSupport;
+import org.apache.camel.test.junit6.TestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -38,7 +39,7 @@ public class MailRecipientsPipeIssueTest extends CamelTestSupport {
     public void testMultiRecipients() throws Exception {
         Mailbox.clearAll();
 
-        sendBody("direct:a", "Camel does really rock");
+        TestSupport.sendBody(template, "direct:a", "Camel does really rock");
 
         Mailbox inbox = camelPipes.getInbox();
         Message msg = inbox.get(0);

@@ -45,7 +45,7 @@ public class MailIdempotentRepositoryTest extends CamelTestSupport {
     private MemoryIdempotentRepository myRepo = new MemoryIdempotentRepository();
 
     @Override
-    public void doPreSetup() throws Exception {
+    public void setupResources() throws Exception {
         myRepo.start();
         prepareMailbox();
     }

@@ -39,7 +39,7 @@ public class MailConvertersTest extends CamelTestSupport {
     private MailboxUser james;
 
     @Override
-    public void doPreSetup() {
+    public void setupResources() {
         Mailbox.clearAll();
         james = Mailbox.getOrCreateUser("james", "secret");
     }

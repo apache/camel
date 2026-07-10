@@ -35,8 +35,8 @@ public class MailProducerUnsupportedCharsetTest extends CamelTestSupport {
     private static final MailboxUser jones = Mailbox.getOrCreateUser("jones", "secret");
 
     @Override
-    public boolean isUseRouteBuilder() {
-        return false;
+    public void setupResources() throws Exception {
+        testConfiguration().withUseRouteBuilder(false);
     }
 
     @Test

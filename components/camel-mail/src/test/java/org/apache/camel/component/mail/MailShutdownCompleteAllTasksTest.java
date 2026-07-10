@@ -39,13 +39,9 @@ public class MailShutdownCompleteAllTasksTest extends CamelTestSupport {
     private static final MailboxUser jones = Mailbox.getOrCreateUser("jones", "secret");
 
     @Override
-    public void doPreSetup() throws Exception {
+    public void setupResources() throws Exception {
         prepareMailbox();
-    }
-
-    @Override
-    public boolean isUseRouteBuilder() {
-        return false;
+        testConfiguration().withUseRouteBuilder(false);
     }
 
     @Test

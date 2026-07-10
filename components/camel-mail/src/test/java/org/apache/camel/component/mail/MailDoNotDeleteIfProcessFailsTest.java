@@ -42,7 +42,7 @@ public class MailDoNotDeleteIfProcessFailsTest extends CamelTestSupport {
     private static int counter;
 
     @Override
-    public void doPreSetup() throws Exception {
+    public void setupResources() throws Exception {
         prepareMailbox();
     }
 

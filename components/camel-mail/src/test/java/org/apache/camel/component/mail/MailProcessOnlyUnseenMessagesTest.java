@@ -27,6 +27,7 @@ import org.apache.camel.component.mail.Mailbox.MailboxUser;
 import org.apache.camel.component.mail.Mailbox.Protocol;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit6.CamelTestSupport;
+import org.apache.camel.test.junit6.TestSupport;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -36,13 +37,13 @@ public class MailProcessOnlyUnseenMessagesTest extends CamelTestSupport {
     private static final MailboxUser claus = Mailbox.getOrCreateUser("claus", "secret");
 
     @Override
-    public void doPreSetup() throws Exception {
+    public void setupResources() throws Exception {
         prepareMailbox();
     }
 
     @Test
     public void testProcessOnlyUnseenMessages() throws Exception {
-        sendBody("direct:a", "Message 3");
+        TestSupport.sendBody(template, "direct:a", "Message 3");
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
@@ -53,7 +54,7 @@ public class MailProcessOnlyUnseenMessagesTest extends CamelTestSupport {
         mock.reset();
 
         // send a new message, now we should only receive this new massages as all the others has been SEEN
-        sendBody("direct:a", "Message 4");
+        TestSupport.sendBody(template, "direct:a", "Message 4");
         mock.expectedMessageCount(1);
         mock.expectedBodiesReceived("Message 4");
         mock.assertIsSatisfied();

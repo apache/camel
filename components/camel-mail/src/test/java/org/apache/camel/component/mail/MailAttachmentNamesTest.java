@@ -57,7 +57,7 @@ public class MailAttachmentNamesTest extends CamelTestSupport {
     Session session;
 
     @Override
-    public void doPreSetup() {
+    public void setupResources() {
         session = Mailbox.getSmtpSession();
     }
 

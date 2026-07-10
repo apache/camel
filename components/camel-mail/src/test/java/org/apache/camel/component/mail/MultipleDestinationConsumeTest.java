@@ -104,7 +104,7 @@ public class MultipleDestinationConsumeTest extends CamelTestSupport {
     }
 
     @Override
-    public void doPreSetup() throws Exception {
+    public void setupResources() throws Exception {
         mailSession = Mailbox.getSmtpSession();
     }
 
