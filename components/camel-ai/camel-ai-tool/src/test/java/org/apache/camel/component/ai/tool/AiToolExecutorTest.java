@@ -27,7 +27,6 @@ import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class AiToolExecutorTest extends CamelTestSupport {
 
@@ -204,87 +203,6 @@ public class AiToolExecutorTest extends CamelTestSupport {
     }
 
     @Test
-    public void testArgumentsAccessibleViaVariable() {
-        AiToolSpec spec = findSpec("greetUser");
-        Exchange exchange = new DefaultExchange(context);
-
-        Map<String, Object> arguments = new HashMap<>();
-        arguments.put("name", "Carol");
-        arguments.put("age", 42);
-
-        AiToolResult result = AiToolExecutor.execute(spec, arguments, exchange);
-
-        assertThat(result)
-                .as("Execution should succeed")
-                .isInstanceOf(AiToolResult.Success.class);
-
-        AiToolArguments args = exchange.getVariable(AiTool.TOOL_ARGUMENTS, AiToolArguments.class);
-        assertThat(args)
-                .as("AiToolArguments should be set as exchange variable")
-                .isNotNull();
-        assertThat(args.getToolName())
-                .as("Tool name")
-                .isEqualTo("greetUser");
-        assertThat(args.getString("name"))
-                .as("String argument")
-                .isEqualTo("Carol");
-        assertThat(args.getInteger("age"))
-                .as("Integer argument")
-                .isEqualTo(42);
-        assertThat(args.has("name"))
-                .as("has() for existing argument")
-                .isTrue();
-        assertThat(args.has("missing"))
-                .as("has() for missing argument")
-                .isFalse();
-    }
-
-    @Test
-    public void testArgumentsTypedGettersReturnNullOnBadInput() {
-        AiToolArguments args = new AiToolArguments("test", Map.of("bad", "not_a_number"));
-
-        assertThat(args.getInteger("bad"))
-                .as("getInteger on non-numeric string should return null")
-                .isNull();
-        assertThat(args.getDouble("bad"))
-                .as("getDouble on non-numeric string should return null")
-                .isNull();
-        assertThat(args.getBoolean("bad"))
-                .as("getBoolean on non-boolean string should return null")
-                .isNull();
-        assertThat(args.getInteger("missing"))
-                .as("getInteger on missing key should return null")
-                .isNull();
-    }
-
-    @Test
-    public void testArgumentsGetBooleanVariants() {
-        Map<String, Object> params = new HashMap<>();
-        params.put("boolTrue", Boolean.TRUE);
-        params.put("boolFalse", Boolean.FALSE);
-        params.put("strTrue", "true");
-        params.put("strTrueUpper", "TRUE");
-        params.put("strFalse", "false");
-        params.put("strFalseMixed", "False");
-        params.put("strGarbage", "yes");
-
-        AiToolArguments args = new AiToolArguments("test", params);
-
-        assertThat(args.getBoolean("boolTrue")).isTrue();
-        assertThat(args.getBoolean("boolFalse")).isFalse();
-        assertThat(args.getBoolean("strTrue")).isTrue();
-        assertThat(args.getBoolean("strTrueUpper")).isTrue();
-        assertThat(args.getBoolean("strFalse")).isFalse();
-        assertThat(args.getBoolean("strFalseMixed")).isFalse();
-        assertThat(args.getBoolean("strGarbage"))
-                .as("non-boolean string should return null, not false")
-                .isNull();
-        assertThat(args.getBoolean("missing"))
-                .as("missing key should return null")
-                .isNull();
-    }
-
-    @Test
     public void testExecuteReturnsNoResultForNullBody() {
         AiToolSpec spec = findSpec("nullBodyTool");
         Exchange exchange = new DefaultExchange(context);
@@ -341,55 +259,6 @@ public class AiToolExecutorTest extends CamelTestSupport {
         assertThat(exchange.getMessage().getHeader("safeParam", String.class))
                 .as("Non-Camel argument should be set as header")
                 .isEqualTo("ok");
-    }
-
-    @Test
-    public void testArgumentsParametersAreImmutable() {
-        Map<String, Object> params = new HashMap<>();
-        params.put("key", "value");
-        AiToolArguments args = new AiToolArguments("test", params);
-
-        assertThat(args.getParameters()).containsEntry("key", "value");
-        assertThatThrownBy(() -> args.getParameters().put("new", "entry"))
-                .as("getParameters() should return an unmodifiable map")
-                .isInstanceOf(UnsupportedOperationException.class);
-    }
-
-    @Test
-    public void testArgumentsGetDoubleWithNumericInput() {
-        Map<String, Object> params = new HashMap<>();
-        params.put("pi", 3.14);
-        params.put("count", 42);
-        params.put("strNum", "2.718");
-        AiToolArguments args = new AiToolArguments("test", params);
-
-        assertThat(args.getDouble("pi"))
-                .as("Double value should be returned directly")
-                .isEqualTo(3.14);
-        assertThat(args.getDouble("count"))
-                .as("Integer value should be converted to Double")
-                .isEqualTo(42.0);
-        assertThat(args.getDouble("strNum"))
-                .as("Numeric string should be parsed to Double")
-                .isEqualTo(2.718);
-    }
-
-    @Test
-    public void testArgumentsGetStringWithNonStringValue() {
-        Map<String, Object> params = new HashMap<>();
-        params.put("number", 42);
-        params.put("bool", true);
-        AiToolArguments args = new AiToolArguments("test", params);
-
-        assertThat(args.getString("number"))
-                .as("Integer should be converted via toString()")
-                .isEqualTo("42");
-        assertThat(args.getString("bool"))
-                .as("Boolean should be converted via toString()")
-                .isEqualTo("true");
-        assertThat(args.getString("missing"))
-                .as("Missing key should return null")
-                .isNull();
     }
 
     private AiToolSpec findSpec(String toolName) {

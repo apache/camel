@@ -50,8 +50,7 @@ and bug fixes must be applied in multiple places.
 * Provide `AiToolExecutor`, a shared utility that resolves the route processor, validates
   arguments against declared parameters, sets them as individual exchange headers (filtering
   out `Camel*` / `org.apache.camel.*` prefixed names to prevent header-namespace injection),
-  and also wraps them in an `AiToolArguments` variable for programmatic access. It then
-  invokes the route and returns the result. Framework adapters only need to parse their
+  invokes the route, and returns the result. Framework adapters only need to parse their
   native argument format into a `Map<String, Object>`.
 * Allow each AI component to discover tools from the shared registry via a `tags` parameter
   and convert them to its native format (`ToolSpecification` for LangChain4j,
@@ -225,10 +224,8 @@ Static utility class that handles the common dispatch logic:
 3. Set each argument as an individual exchange header (filtering out names starting with
    `camel` or `org.apache.camel.` case-insensitively to prevent header-namespace injection,
    following the same pattern as the A2A component)
-4. Also wrap arguments in an `AiToolArguments` object and set it as an exchange variable
-   for programmatic access
-5. Invoke the route processor
-6. Return the result body as a string
+4. Invoke the route processor
+5. Return the result body as a string
 
 Framework adapters call `AiToolExecutor.execute(spec, arguments, exchange)` after
 parsing their native argument format (JSON string, Map, etc.) into a

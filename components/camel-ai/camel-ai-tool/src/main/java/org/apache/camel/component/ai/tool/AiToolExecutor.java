@@ -58,9 +58,7 @@ public final class AiToolExecutor {
      * warning, required arguments are checked). Each argument is set as an individual exchange header so that route
      * expressions like {@code ${header.city}} and SQL bindings work naturally. Argument names that start with
      * {@code camel} or {@code org.apache.camel.} (case-insensitive) are rejected to prevent collision with internal
-     * Camel headers (following the same pattern as the A2A component). Arguments are also wrapped in an
-     * {@link AiToolArguments} object set as an exchange variable under {@link AiTool#TOOL_ARGUMENTS} for programmatic
-     * access.
+     * Camel headers (following the same pattern as the A2A component).
      * <p>
      * The calling adapter owns the exchange lifecycle: it must create the exchange before calling this method and
      * release it afterwards (via {@code consumer.releaseExchange()}) in a try-finally block.
@@ -124,8 +122,6 @@ public final class AiToolExecutor {
                 return new AiToolResult.ArgumentError(cause.getMessage(), cause);
             }
         }
-        exchange.setVariable(AiTool.TOOL_ARGUMENTS, new AiToolArguments(toolName, argsCopy));
-
         // Set each argument as an exchange header so route expressions (${header.city})
         // and SQL bindings work naturally. Filter out Camel-internal names to prevent
         // header-namespace injection (CVE-2025-27636 family).

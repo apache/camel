@@ -25,11 +25,6 @@ public final class AiTool {
 
     public static final String SCHEME = "ai-tool";
 
-    /**
-     * Exchange variable name under which {@link AiToolArguments} is set by the executor.
-     */
-    public static final String TOOL_ARGUMENTS = "CamelAiToolArguments";
-
     private AiTool() {
     }
 }
