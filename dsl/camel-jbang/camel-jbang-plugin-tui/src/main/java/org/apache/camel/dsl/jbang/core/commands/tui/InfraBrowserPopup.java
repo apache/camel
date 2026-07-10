@@ -377,7 +377,7 @@ class InfraBrowserPopup {
                 .scrollMode(ScrollMode.AUTO_SCROLL)
                 .block(Block.builder()
                         .borderType(BorderType.ROUNDED).borders(Borders.ALL)
-                        .title(" Run Dev/Infra Service (" + available + "/" + catalog.size() + ") ")
+                        .title(" Run Dev/Infra Service [" + available + "/" + catalog.size() + "] ")
                         .build())
                 .build();
         frame.renderStatefulWidget(list, popup, browserState);

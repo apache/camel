@@ -753,7 +753,7 @@ class SqlQueryTab extends AbstractTab {
 
         Block block = Block.builder()
                 .borderType(BorderType.ROUNDED)
-                .title(Title.from(Line.from(Span.styled(title, Theme.label().bold()))))
+                .title(title)
                 .build();
         Rect inner = block.inner(popup);
         frame.renderWidget(block, popup);

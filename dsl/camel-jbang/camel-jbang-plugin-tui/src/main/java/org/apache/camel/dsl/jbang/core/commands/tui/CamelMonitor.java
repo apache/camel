@@ -495,6 +495,7 @@ public class CamelMonitor extends CamelCommand {
             tabRegistry.diagramTab().preloadDiagram();
             // Open on the configured starting tab (if any), now that all tab wiring is in place
             applyStartingTab();
+            applyLogPin();
             // Intercept Ctrl+C: quit the TUI cleanly instead of letting
             // the JVM tear down the classloader while we're still running
             Signal.handle(new Signal("INT"), sig -> tui.quit());
@@ -533,6 +534,31 @@ public class CamelMonitor extends CamelCommand {
                 return;
             }
         }
+    }
+
+    private void applyLogPin() {
+        String logPin = TuiSettings.load().getLogPin();
+        if (logPin == null || logPin.isBlank()) {
+            return;
+        }
+        int cycleIndex;
+        switch (logPin) {
+            case "25":
+                cycleIndex = 0;
+                break;
+            case "50":
+                cycleIndex = 1;
+                break;
+            case "75":
+                cycleIndex = 2;
+                break;
+            default:
+                return;
+        }
+        logPinned = true;
+        logPinAnim.reset(cycleIndex);
+        ctx.logPinned = true;
+        ctx.logPinPercent = Integer.parseInt(logPin);
     }
 
     // ---- Event Handling ----

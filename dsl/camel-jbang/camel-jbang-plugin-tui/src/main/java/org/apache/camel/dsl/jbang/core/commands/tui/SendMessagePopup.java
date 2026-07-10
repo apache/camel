@@ -462,7 +462,11 @@ class SendMessagePopup {
     private void openFileBrowser() {
         fileBrowser.setFileSelectMode(true);
         fileBrowser.setOnSelect(path -> bodyState.setText("file:" + path));
-        String startDir = sourceDirectory != null ? sourceDirectory : System.getProperty("user.dir");
+        String startDir = sourceDirectory;
+        if (startDir == null) {
+            String settingsFolder = TuiSettings.load().getDefaultFolder();
+            startDir = settingsFolder != null ? settingsFolder : System.getProperty("user.dir");
+        }
         fileBrowser.open(startDir);
     }
 
@@ -800,7 +804,7 @@ class SendMessagePopup {
 
         Block block = Block.builder()
                 .borderType(BorderType.ROUNDED).borders(Borders.ALL)
-                .title(Title.from(Line.from(Span.styled(title, Theme.label().bold()))))
+                .title(title)
                 .build();
         frame.renderWidget(block, area);
         Rect inner = block.inner(area);

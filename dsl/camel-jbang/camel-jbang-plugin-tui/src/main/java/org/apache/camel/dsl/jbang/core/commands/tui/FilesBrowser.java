@@ -37,7 +37,6 @@ import dev.tamboui.widgets.Clear;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
 import dev.tamboui.widgets.block.Borders;
-import dev.tamboui.widgets.block.Title;
 import dev.tamboui.widgets.list.ListItem;
 import dev.tamboui.widgets.list.ListState;
 import dev.tamboui.widgets.list.ListWidget;
@@ -282,8 +281,7 @@ class FilesBrowser {
                 .scrollMode(ScrollMode.AUTO_SCROLL)
                 .block(Block.builder()
                         .borderType(BorderType.ROUNDED).borders(Borders.ALL)
-                        .title(Title.from(Line
-                                .from(Span.styled(popupTitle, Theme.label().bold()))))
+                        .title(popupTitle)
                         .build())
                 .build();
         frame.renderStatefulWidget(list, popup, listState);

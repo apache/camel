@@ -134,7 +134,8 @@ class SettingsPopupTest {
 
         popup.handleKeyEvent(key(KeyCode.DOWN));
         popup.handleKeyEvent(key(KeyCode.DOWN));
-        assertEquals(2, popup.selectedRow());
+        popup.handleKeyEvent(key(KeyCode.DOWN));
+        assertEquals(3, popup.selectedRow());
         popup.handleKeyEvent(KeyEvent.ofChar('/'));
         popup.handleKeyEvent(KeyEvent.ofChar('a'));
         assertEquals("/a", popup.folderText());
@@ -149,7 +150,8 @@ class SettingsPopupTest {
 
         popup.handleKeyEvent(key(KeyCode.DOWN));
         popup.handleKeyEvent(key(KeyCode.DOWN));
-        assertEquals(2, popup.selectedRow());
+        popup.handleKeyEvent(key(KeyCode.DOWN));
+        assertEquals(3, popup.selectedRow());
         popup.handleKeyEvent(KeyEvent.ofChar(0x01));
         popup.handleKeyEvent(KeyEvent.ofChar(0x00));
         popup.handleKeyEvent(KeyEvent.ofChar('x'));
@@ -174,6 +176,7 @@ class SettingsPopupTest {
         popup.handleKeyEvent(key(KeyCode.DOWN));
         popup.handleKeyEvent(KeyEvent.ofChar(' ')); // starting tab Overview -> Health
         assertEquals("Health", popup.selectedStartTab());
+        popup.handleKeyEvent(key(KeyCode.DOWN));
         popup.handleKeyEvent(key(KeyCode.DOWN));
         for (char c : "/tmp/p".toCharArray()) {
             popup.handleKeyEvent(KeyEvent.ofChar(c));

@@ -32,8 +32,8 @@ import org.junit.jupiter.api.parallel.Isolated;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Renders {@link SettingsPopup} into a virtual buffer and asserts the dialog shows its title and all three setting
- * rows, mirroring the other {@code *RenderTest} classes in this package.
+ * Renders {@link SettingsPopup} into a virtual buffer and asserts the dialog shows its title and all setting rows,
+ * mirroring the other {@code *RenderTest} classes in this package.
  */
 @Isolated
 class SettingsPopupRenderTest {
@@ -59,7 +59,7 @@ class SettingsPopupRenderTest {
     }
 
     @Test
-    void rendersTitleAndAllThreeSettingRows(@TempDir Path tempDir) {
+    void rendersTitleAndAllSettingRows(@TempDir Path tempDir) {
         useHome(tempDir);
         SettingsPopup popup = new SettingsPopup();
         popup.setTabEntries(List.of(
@@ -76,6 +76,7 @@ class SettingsPopupRenderTest {
         assertTrue(rendered.contains("Settings"), "the popup title should be shown");
         assertTrue(rendered.contains("Theme"), "the Theme row should be shown");
         assertTrue(rendered.contains("Starting Tab"), "the Starting Tab row should be shown");
+        assertTrue(rendered.contains("Log Pin"), "the Log Pin row should be shown");
         assertTrue(rendered.contains("Default Folder"), "the Default Folder row should be shown");
     }
 }

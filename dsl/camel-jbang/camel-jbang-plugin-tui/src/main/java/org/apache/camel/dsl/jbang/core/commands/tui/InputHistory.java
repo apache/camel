@@ -27,7 +27,6 @@ import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.widgets.Clear;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
-import dev.tamboui.widgets.block.Title;
 import dev.tamboui.widgets.list.ListItem;
 import dev.tamboui.widgets.list.ListState;
 import dev.tamboui.widgets.list.ListWidget;
@@ -143,7 +142,7 @@ class InputHistory {
                 .highlightSymbol("")
                 .block(Block.builder()
                         .borderType(BorderType.ROUNDED)
-                        .title(Title.from(Line.from(Span.styled(" " + title + " ", Theme.label().bold()))))
+                        .title(" " + title + " ")
                         .build())
                 .build();
         frame.renderStatefulWidget(list, popup, listState);

@@ -29,10 +29,12 @@ final class TuiSettings {
 
     static final String PROP_THEME = "camel.tui.theme";
     static final String PROP_START_TAB = "camel.tui.startTab";
+    static final String PROP_LOG_PIN = "camel.tui.logPin";
     static final String PROP_DEFAULT_FOLDER = "camel.tui.defaultFolder";
 
     private String themeId;
     private String startTab;
+    private String logPin;
     private String defaultFolder;
 
     String getThemeId() {
@@ -49,6 +51,14 @@ final class TuiSettings {
 
     void setStartTab(String startTab) {
         this.startTab = startTab;
+    }
+
+    String getLogPin() {
+        return logPin;
+    }
+
+    void setLogPin(String logPin) {
+        this.logPin = logPin;
     }
 
     String getDefaultFolder() {
@@ -69,6 +79,7 @@ final class TuiSettings {
         try {
             settings.themeId = trimToNull(TuiUserConfig.read(PROP_THEME));
             settings.startTab = trimToNull(TuiUserConfig.read(PROP_START_TAB));
+            settings.logPin = trimToNull(TuiUserConfig.read(PROP_LOG_PIN));
             settings.defaultFolder = trimToNull(TuiUserConfig.read(PROP_DEFAULT_FOLDER));
         } catch (RuntimeException e) {
             // best-effort: return an object with null fields on read failure
@@ -85,6 +96,7 @@ final class TuiSettings {
         try {
             TuiUserConfig.write(PROP_THEME, themeId);
             TuiUserConfig.write(PROP_START_TAB, startTab);
+            TuiUserConfig.write(PROP_LOG_PIN, logPin);
             TuiUserConfig.write(PROP_DEFAULT_FOLDER, defaultFolder);
         } catch (RuntimeException e) {
             // best-effort: a save failure must not disrupt the TUI

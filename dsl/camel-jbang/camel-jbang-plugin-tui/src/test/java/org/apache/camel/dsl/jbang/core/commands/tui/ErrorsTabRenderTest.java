@@ -166,7 +166,7 @@ class ErrorsTabRenderTest {
         ErrorsTab tab = new ErrorsTab(ctx);
         String rendered = renderToString(tab, 160, 30);
 
-        assertTrue(rendered.contains("Errors (2)"), "Title should show error count");
+        assertTrue(rendered.contains("Errors [2]"), "Title should show error count");
     }
 
     @Test

@@ -47,8 +47,11 @@ class SettingsPopup {
 
     private static final int ROW_THEME = 0;
     private static final int ROW_START_TAB = 1;
-    private static final int ROW_FOLDER = 2;
-    private static final int ROW_COUNT = 3;
+    private static final int ROW_LOG_PIN = 2;
+    private static final int ROW_FOLDER = 3;
+    private static final int ROW_COUNT = 4;
+
+    private static final String[] LOG_PIN_OPTIONS = { "off", "25", "50", "75" };
 
     private boolean visible;
     private int selectedRow;
@@ -56,6 +59,7 @@ class SettingsPopup {
     private TuiSettings settings;
     private int themeIndex;
     private int startTabIndex;
+    private int logPinIndex;
     private TextInputState folderInput;
     private List<String> tabNames = new ArrayList<>();
 
@@ -90,6 +94,15 @@ class SettingsPopup {
         String currentStartTab = settings.getStartTab() != null ? settings.getStartTab() : "Overview";
         int idx = tabNames.indexOf(currentStartTab);
         startTabIndex = idx >= 0 ? idx : 0;
+
+        String currentLogPin = settings.getLogPin() != null ? settings.getLogPin() : "off";
+        logPinIndex = 0;
+        for (int i = 0; i < LOG_PIN_OPTIONS.length; i++) {
+            if (LOG_PIN_OPTIONS[i].equals(currentLogPin)) {
+                logPinIndex = i;
+                break;
+            }
+        }
 
         folderInput = new TextInputState(settings.getDefaultFolder() != null ? settings.getDefaultFolder() : "");
         selectedRow = ROW_THEME;
@@ -150,6 +163,14 @@ class SettingsPopup {
             }
             return true;
         }
+        if (selectedRow == ROW_LOG_PIN) {
+            if (ke.isChar(' ') || ke.isRight()) {
+                logPinIndex = (logPinIndex + 1) % LOG_PIN_OPTIONS.length;
+            } else if (ke.isLeft()) {
+                logPinIndex = (logPinIndex - 1 + LOG_PIN_OPTIONS.length) % LOG_PIN_OPTIONS.length;
+            }
+            return true;
+        }
         if (selectedRow == ROW_FOLDER) {
             handleTextInput(ke, folderInput);
             return true;
@@ -163,6 +184,8 @@ class SettingsPopup {
         if (!tabNames.isEmpty()) {
             settings.setStartTab(tabNames.get(startTabIndex));
         }
+        String logPinValue = LOG_PIN_OPTIONS[logPinIndex];
+        settings.setLogPin("off".equals(logPinValue) ? null : logPinValue);
         settings.setDefaultFolder(stripControlChars(folderInput.text().trim()));
         settings.save();
         if (Theme.mode().equals(selectedThemeId)) {
@@ -177,11 +200,11 @@ class SettingsPopup {
     }
 
     void render(Frame frame, Rect area) {
-        int popupW = Math.min(64, area.width() - 4);
+        int popupW = Math.min(80, area.width() - 4);
         int popupH = 2 + ROW_COUNT;
         int x = area.left() + Math.max(0, (area.width() - popupW) / 2);
-        int y = area.top() + Math.max(0, (area.height() - popupH) / 4);
-        Rect popup = new Rect(x, y, Math.min(popupW, area.width()), Math.min(popupH, area.height()));
+        int y = area.top() + 2;
+        Rect popup = new Rect(x, y, Math.min(popupW, area.width()), Math.min(popupH, area.height() - 2));
 
         frame.renderWidget(Clear.INSTANCE, popup);
 
@@ -205,13 +228,20 @@ class SettingsPopup {
         renderValue(frame, innerX + labelW, rowY, fieldW, currentTabLabel(), selectedRow == ROW_START_TAB);
         rowY++;
 
+        String logPinLabel = "off".equals(LOG_PIN_OPTIONS[logPinIndex])
+                ? "off"
+                : LOG_PIN_OPTIONS[logPinIndex] + "%";
+        renderLabel(frame, innerX, rowY, labelW, "  Log Pin:", selectedRow == ROW_LOG_PIN);
+        renderValue(frame, innerX + labelW, rowY, fieldW, logPinLabel, selectedRow == ROW_LOG_PIN);
+        rowY++;
+
         renderLabel(frame, innerX, rowY, labelW, "Default Folder:", selectedRow == ROW_FOLDER);
         renderFolder(frame, innerX + labelW, rowY, fieldW, selectedRow == ROW_FOLDER);
     }
 
     void renderFooter(List<Span> spans) {
         hint(spans, TuiIcons.HINT_SCROLL, "navigate");
-        if (selectedRow == ROW_THEME || selectedRow == ROW_START_TAB) {
+        if (selectedRow == ROW_THEME || selectedRow == ROW_START_TAB || selectedRow == ROW_LOG_PIN) {
             hint(spans, "Space", "cycle");
         }
         hint(spans, "Enter", "save");
@@ -307,6 +337,10 @@ class SettingsPopup {
 
     String selectedStartTab() {
         return tabNames.isEmpty() ? null : tabNames.get(startTabIndex);
+    }
+
+    String selectedLogPin() {
+        return LOG_PIN_OPTIONS[logPinIndex];
     }
 
     String folderText() {
