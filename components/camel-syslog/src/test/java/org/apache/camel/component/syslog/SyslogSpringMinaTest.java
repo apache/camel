@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
-import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.AvailablePortFinder;
@@ -73,6 +72,6 @@ public class SyslogSpringMinaTest extends CamelSpringTestSupport {
             socket.close();
         }
 
-        MockEndpoint.assertIsSatisfied(context, 10, TimeUnit.SECONDS);
+        MockEndpoint.assertIsSatisfied(context);
     }
 }

@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
-import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -67,7 +66,7 @@ public class MinaDataFormatTest extends CamelTestSupport {
             socket.close();
         }
 
-        MockEndpoint.assertIsSatisfied(context, 10, TimeUnit.SECONDS);
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override
