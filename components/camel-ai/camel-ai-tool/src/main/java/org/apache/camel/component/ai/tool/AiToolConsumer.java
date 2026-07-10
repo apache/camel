@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.ai.tools;
+package org.apache.camel.component.ai.tool;
 
 import java.util.Map;
 
@@ -61,40 +61,71 @@ public class AiToolConsumer extends DefaultConsumer {
         registeredSpec = new AiToolSpec(
                 toolName, configuration.getDescription(), parameterDefs, jsonSchema, this);
 
-        AiToolRegistry registry = AiToolRegistry.getOrCreate(getEndpoint().getCamelContext());
         String tags = configuration.getTags();
-        if (tags != null && !tags.isBlank()) {
-            registeredTags = AiToolParameterHelper.splitTags(tags);
+        String[] parsedTags = (tags != null && !tags.isBlank())
+                ? AiToolParameterHelper.splitTags(tags)
+                : null;
+        if (parsedTags != null && parsedTags.length > 0) {
+            registeredTags = parsedTags;
             registeredInDefaultPool = false;
-            for (String tag : registeredTags) {
-                LOG.debug("Registering tool '{}' with tag '{}'", toolName, tag);
-                registry.put(tag, registeredSpec);
-            }
         } else {
             registeredTags = null;
             registeredInDefaultPool = true;
-            LOG.debug("Registering tool '{}' in default pool (no tags)", toolName);
-            registry.putDefault(registeredSpec);
+        }
+
+        register();
+    }
+
+    @Override
+    protected void doSuspend() throws Exception {
+        if (registeredSpec != null) {
+            deregister();
+        }
+        super.doSuspend();
+    }
+
+    @Override
+    protected void doResume() throws Exception {
+        super.doResume();
+        if (registeredSpec != null) {
+            register();
         }
     }
 
     @Override
     protected void doStop() throws Exception {
         if (registeredSpec != null) {
-            AiToolRegistry registry = AiToolRegistry.getOrCreate(getEndpoint().getCamelContext());
-            if (registeredTags != null) {
-                for (String tag : registeredTags) {
-                    LOG.debug("Removing tool '{}' from tag '{}'", registeredSpec.getName(), tag);
-                    registry.remove(tag, registeredSpec);
-                }
-            } else if (registeredInDefaultPool) {
-                LOG.debug("Removing tool '{}' from default pool", registeredSpec.getName());
-                registry.removeDefault(registeredSpec);
-            }
+            deregister();
             registeredSpec = null;
             registeredTags = null;
             registeredInDefaultPool = false;
         }
         super.doStop();
+    }
+
+    private void register() {
+        AiToolRegistry registry = AiToolRegistry.getOrCreate(getEndpoint().getCamelContext());
+        if (registeredTags != null) {
+            for (String tag : registeredTags) {
+                LOG.debug("Registering tool '{}' with tag '{}'", toolName, tag);
+                registry.put(tag, registeredSpec);
+            }
+        } else if (registeredInDefaultPool) {
+            LOG.debug("Registering tool '{}' in default pool (no tags)", toolName);
+            registry.putDefault(registeredSpec);
+        }
+    }
+
+    private void deregister() {
+        AiToolRegistry registry = AiToolRegistry.getOrCreate(getEndpoint().getCamelContext());
+        if (registeredTags != null) {
+            for (String tag : registeredTags) {
+                LOG.debug("Removing tool '{}' from tag '{}'", registeredSpec.getName(), tag);
+                registry.remove(tag, registeredSpec);
+            }
+        } else if (registeredInDefaultPool) {
+            LOG.debug("Removing tool '{}' from default pool", registeredSpec.getName());
+            registry.removeDefault(registeredSpec);
+        }
     }
 }

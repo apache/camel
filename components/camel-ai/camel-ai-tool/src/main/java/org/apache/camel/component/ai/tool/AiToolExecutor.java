@@ -14,9 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.ai.tools;
+package org.apache.camel.component.ai.tool;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -53,10 +54,13 @@ public final class AiToolExecutor {
      * Executes a Camel route tool by resolving the route processor from the spec's consumer, populating the exchange
      * with the provided arguments, and invoking the route.
      * <p>
-     * Arguments are validated against the tool's declared parameters (undeclared arguments are warned about but not
-     * rejected, required arguments are checked) and then wrapped in an {@link AiToolArguments} object set as an
-     * exchange variable under {@link AiTool#TOOL_ARGUMENTS}. This avoids polluting the exchange header namespace and
-     * eliminates any risk of colliding with internal Camel headers.
+     * Arguments are validated against the tool's declared parameters (undeclared arguments are filtered out with a
+     * warning, required arguments are checked). Each argument is set as an individual exchange header so that route
+     * expressions like {@code ${header.city}} and SQL bindings work naturally. Argument names that start with
+     * {@code camel} or {@code org.apache.camel.} (case-insensitive) are rejected to prevent collision with internal
+     * Camel headers (following the same pattern as the A2A component). Arguments are also wrapped in an
+     * {@link AiToolArguments} object set as an exchange variable under {@link AiTool#TOOL_ARGUMENTS} for programmatic
+     * access.
      * <p>
      * The calling adapter owns the exchange lifecycle: it must create the exchange before calling this method and
      * release it afterwards (via {@code consumer.releaseExchange()}) in a try-finally block.
@@ -90,18 +94,23 @@ public final class AiToolExecutor {
 
         LOG.debug("Executing Camel route tool: '{}'", toolName);
 
-        // Warn about undeclared arguments but do not reject them -- LLMs frequently
-        // hallucinate extra parameters and rejecting them would break valid tool calls.
-        if (arguments != null && !arguments.isEmpty() && !spec.getParameterDefs().isEmpty()) {
+        // Defensive copy so callers cannot mutate arguments during route execution
+        Map<String, Object> argsCopy = arguments != null ? new HashMap<>(arguments) : new HashMap<>();
+
+        // Filter out undeclared arguments -- LLMs frequently hallucinate extra parameters
+        // and the generated schema advertises additionalProperties: false.
+        if (!argsCopy.isEmpty() && !spec.getParameterDefs().isEmpty()) {
             Set<String> declaredParams = spec.getParameterDefs().keySet();
 
-            for (String name : arguments.keySet()) {
+            argsCopy.keySet().removeIf(name -> {
                 if (!declaredParams.contains(name)) {
                     LOG.warn("Undeclared tool argument '{}' for tool '{}' -- the LLM sent a parameter "
-                             + "that is not declared in the tool specification; ignoring it",
+                             + "that is not declared in the tool specification; filtering it out",
                             name, toolName);
+                    return true;
                 }
-            }
+                return false;
+            });
         }
 
         for (Map.Entry<String, AiToolParameterHelper.ParameterDef> entry : spec.getParameterDefs().entrySet()) {
@@ -115,29 +124,41 @@ public final class AiToolExecutor {
                 return new AiToolResult.ArgumentError(cause.getMessage(), cause);
             }
         }
-
-        // Defensive copy so callers cannot mutate arguments during route execution
-        Map<String, Object> argsCopy = arguments != null ? new HashMap<>(arguments) : Map.of();
         exchange.setVariable(AiTool.TOOL_ARGUMENTS, new AiToolArguments(toolName, argsCopy));
+
+        // Set each argument as an exchange header so route expressions (${header.city})
+        // and SQL bindings work naturally. Filter out Camel-internal names to prevent
+        // header-namespace injection (CVE-2025-27636 family).
+        for (Map.Entry<String, Object> entry : argsCopy.entrySet()) {
+            String name = entry.getKey();
+            String lower = name.toLowerCase(Locale.ENGLISH);
+            if (lower.startsWith("camel") || lower.startsWith("org.apache.camel.")) {
+                LOG.warn("Rejecting tool argument '{}' for tool '{}' -- argument names starting with "
+                         + "'Camel' or 'org.apache.camel.' are reserved for internal use",
+                        name, toolName);
+                continue;
+            }
+            exchange.getMessage().setHeader(name, entry.getValue());
+        }
 
         // Execute the route
         try {
             routeProcessor.process(exchange);
+
+            if (exchange.getException() != null) {
+                Exception routeError = exchange.getException();
+                LOG.error("Error executing tool '{}': {}", toolName, routeError.getMessage(), routeError);
+                return new AiToolResult.ExecutionError(
+                        String.format("Error executing tool '%s': %s", toolName, routeError.getMessage()), routeError);
+            }
+
+            String result = exchange.getMessage().getBody(String.class);
+            LOG.debug("Tool '{}' execution completed successfully", toolName);
+            return new AiToolResult.Success(result != null ? result : "No result");
         } catch (Exception e) {
             LOG.error("Error executing tool '{}': {}", toolName, e.getMessage(), e);
             return new AiToolResult.ExecutionError(
                     String.format("Error executing tool '%s': %s", toolName, e.getMessage()), e);
         }
-
-        if (exchange.getException() != null) {
-            Exception routeError = exchange.getException();
-            LOG.error("Error executing tool '{}': {}", toolName, routeError.getMessage(), routeError);
-            return new AiToolResult.ExecutionError(
-                    String.format("Error executing tool '%s': %s", toolName, routeError.getMessage()), routeError);
-        }
-
-        String result = exchange.getMessage().getBody(String.class);
-        LOG.debug("Tool '{}' execution completed successfully", toolName);
-        return new AiToolResult.Success(result != null ? result : "No result");
     }
 }

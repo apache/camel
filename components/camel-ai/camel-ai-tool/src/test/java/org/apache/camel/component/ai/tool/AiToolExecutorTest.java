@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.ai.tools;
+package org.apache.camel.component.ai.tool;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -43,12 +43,7 @@ public class AiToolExecutorTest extends CamelTestSupport {
                      + "&parameter.name.required=true"
                      + "&parameter.age=integer"
                      + "&parameter.age.description=The user age")
-                        .process(exchange -> {
-                            AiToolArguments args
-                                    = exchange.getVariable(AiTool.TOOL_ARGUMENTS, AiToolArguments.class);
-                            exchange.getMessage().setBody(
-                                    "Hello " + args.getString("name") + ", age " + args.get("age"));
-                        });
+                        .setBody(simple("Hello ${header.name}, age ${header.age}"));
 
                 from("ai-tool:noParams"
                      + "?tags=test"
@@ -58,7 +53,7 @@ public class AiToolExecutorTest extends CamelTestSupport {
                 from("ai-tool:nullBodyTool"
                      + "?tags=test"
                      + "&description=A tool that returns null body")
-                        .setBody(constant(null));
+                        .setBody(constant((Object) null));
 
                 from("ai-tool:failingTool"
                      + "?tags=test"
@@ -106,6 +101,9 @@ public class AiToolExecutorTest extends CamelTestSupport {
         assertThat(((AiToolResult.Success) result).value())
                 .as("Undeclared arguments should not affect the result")
                 .isEqualTo("Hello Bob, age 25");
+        assertThat(exchange.getMessage().getHeader("extraParam"))
+                .as("Undeclared argument must not be set as header")
+                .isNull();
     }
 
     @Test
@@ -297,6 +295,52 @@ public class AiToolExecutorTest extends CamelTestSupport {
         assertThat(((AiToolResult.Success) result).value())
                 .as("Null body should produce 'No result' sentinel")
                 .isEqualTo("No result");
+    }
+
+    @Test
+    public void testArgumentsAccessibleViaHeaders() {
+        AiToolSpec spec = findSpec("greetUser");
+        Exchange exchange = new DefaultExchange(context);
+
+        Map<String, Object> arguments = new HashMap<>();
+        arguments.put("name", "Diana");
+        arguments.put("age", 28);
+
+        AiToolExecutor.execute(spec, arguments, exchange);
+
+        assertThat(exchange.getMessage().getHeader("name", String.class))
+                .as("Argument should be set as exchange header")
+                .isEqualTo("Diana");
+        assertThat(exchange.getMessage().getHeader("age", Integer.class))
+                .as("Integer argument should be set as exchange header")
+                .isEqualTo(28);
+    }
+
+    @Test
+    public void testCamelPrefixedArgumentsRejectedFromHeaders() {
+        AiToolSpec spec = findSpec("noParams");
+        Exchange exchange = new DefaultExchange(context);
+
+        Map<String, Object> arguments = new HashMap<>();
+        arguments.put("CamelOverrideEndpoint", "http://evil.com");
+        arguments.put("camelFoo", "bar");
+        arguments.put("org.apache.camel.hack", "value");
+        arguments.put("safeParam", "ok");
+
+        AiToolExecutor.execute(spec, arguments, exchange);
+
+        assertThat(exchange.getMessage().getHeader("CamelOverrideEndpoint"))
+                .as("Camel-prefixed argument must not be set as header")
+                .isNull();
+        assertThat(exchange.getMessage().getHeader("camelFoo"))
+                .as("camel-prefixed argument must not be set as header")
+                .isNull();
+        assertThat(exchange.getMessage().getHeader("org.apache.camel.hack"))
+                .as("org.apache.camel. prefixed argument must not be set as header")
+                .isNull();
+        assertThat(exchange.getMessage().getHeader("safeParam", String.class))
+                .as("Non-Camel argument should be set as header")
+                .isEqualTo("ok");
     }
 
     @Test

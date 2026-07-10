@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.ai.tools;
+package org.apache.camel.component.ai.tool;
 
 /**
  * Constants for the AI Tool component.
@@ -28,7 +28,7 @@ public final class AiTool {
     /**
      * Exchange variable name under which {@link AiToolArguments} is set by the executor.
      */
-    public static final String TOOL_ARGUMENTS = "AiToolArguments";
+    public static final String TOOL_ARGUMENTS = "CamelAiToolArguments";
 
     private AiTool() {
     }

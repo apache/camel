@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.ai.tools;
+package org.apache.camel.component.ai.tool;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -50,7 +50,9 @@ public final class AiToolParameterHelper {
         if (tagList == null || tagList.isBlank()) {
             return new String[0];
         }
-        return tagList.trim().split("\\s*,\\s*");
+        return Arrays.stream(tagList.trim().split("\\s*,\\s*"))
+                .filter(s -> !s.isEmpty())
+                .toArray(String[]::new);
     }
 
     /**

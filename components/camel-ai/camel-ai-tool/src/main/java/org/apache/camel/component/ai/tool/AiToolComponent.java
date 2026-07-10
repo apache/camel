@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.ai.tools;
+package org.apache.camel.component.ai.tool;
 
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -26,9 +26,8 @@ import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.PropertiesHelper;
-import org.apache.camel.util.StringHelper;
 
-import static org.apache.camel.component.ai.tools.AiTool.SCHEME;
+import static org.apache.camel.component.ai.tool.AiTool.SCHEME;
 
 /**
  * Camel component that registers routes as LLM-callable tools in the shared {@link AiToolRegistry}.
@@ -56,8 +55,12 @@ public class AiToolComponent extends DefaultComponent {
             throw new IllegalArgumentException(
                     "A toolName must be provided: ai-tool:<toolName>?description=<desc>");
         }
+        if (remaining.contains("/")) {
+            throw new IllegalArgumentException(
+                    "Tool name must not contain '/': ai-tool:<toolName>?description=<desc>");
+        }
 
-        final String toolName = StringHelper.before(remaining, "/", remaining);
+        final String toolName = remaining;
 
         AiToolConfiguration config = this.configuration.copy();
 

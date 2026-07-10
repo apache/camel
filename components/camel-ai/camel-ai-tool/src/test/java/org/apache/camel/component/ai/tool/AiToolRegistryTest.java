@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.ai.tools;
+package org.apache.camel.component.ai.tool;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,6 +30,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class AiToolRegistryTest {
 
@@ -210,6 +211,68 @@ public class AiToolRegistryTest {
         assertThat(registry.getToolsByTag("concurrent"))
                 .as("All tools should be removed after concurrent ops")
                 .isEmpty();
+    }
+
+    @Test
+    public void testDuplicateToolNameUnderSameTagThrows() {
+        AiToolSpec spec1 = new AiToolSpec("sameName", "First", Map.of(), null, null);
+        AiToolSpec spec2 = new AiToolSpec("sameName", "Second", Map.of(), null, null);
+
+        registry.put("weather", spec1);
+
+        assertThatThrownBy(() -> registry.put("weather", spec2))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("Duplicate tool name 'sameName'")
+                .hasMessageContaining("tag 'weather'");
+
+        assertThat(registry.getTools().get("weather"))
+                .as("Only the first tool should be registered")
+                .hasSize(1)
+                .contains(spec1);
+    }
+
+    @Test
+    public void testDuplicateToolNameInDefaultPoolThrows() {
+        AiToolSpec spec1 = new AiToolSpec("sameName", "First", Map.of(), null, null);
+        AiToolSpec spec2 = new AiToolSpec("sameName", "Second", Map.of(), null, null);
+
+        registry.putDefault(spec1);
+
+        assertThatThrownBy(() -> registry.putDefault(spec2))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("Duplicate tool name 'sameName'")
+                .hasMessageContaining("default pool");
+
+        assertThat(registry.getDefaultTools())
+                .as("Only the first tool should be in the default pool")
+                .hasSize(1)
+                .contains(spec1);
+    }
+
+    @Test
+    public void testSameToolNameDifferentTagsIsAllowed() {
+        AiToolSpec spec1 = new AiToolSpec("sameName", "Weather version", Map.of(), null, null);
+        AiToolSpec spec2 = new AiToolSpec("sameName", "Email version", Map.of(), null, null);
+
+        registry.put("weather", spec1);
+        registry.put("email", spec2);
+
+        assertThat(registry.getTools().get("weather")).hasSize(1).contains(spec1);
+        assertThat(registry.getTools().get("email")).hasSize(1).contains(spec2);
+    }
+
+    @Test
+    public void testReRegisterAfterRemoveIsAllowed() {
+        AiToolSpec spec1 = new AiToolSpec("tool", "First", Map.of(), null, null);
+        AiToolSpec spec2 = new AiToolSpec("tool", "Second", Map.of(), null, null);
+
+        registry.put("weather", spec1);
+        registry.remove("weather", spec1);
+        registry.put("weather", spec2);
+
+        assertThat(registry.getTools().get("weather"))
+                .hasSize(1)
+                .contains(spec2);
     }
 
     @Test

@@ -21,7 +21,7 @@ import javax.annotation.processing.Generated;
 import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
-import org.apache.camel.component.ai.tools.AiToolComponent;
+import org.apache.camel.component.ai.tool.AiToolComponent;
 
 /**
  * Framework-agnostic consumer endpoint that registers a Camel route as an LLM
@@ -84,14 +84,14 @@ public interface AiToolComponentBuilderFactory {
          * The component configuration.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.ai.tools.AiToolConfiguration&lt;/code&gt; type.
+         * &lt;code&gt;org.apache.camel.component.ai.tool.AiToolConfiguration&lt;/code&gt; type.
          * 
          * Group: consumer
          * 
          * @param configuration the value to set
          * @return the dsl builder
          */
-        default AiToolComponentBuilder configuration(org.apache.camel.component.ai.tools.AiToolConfiguration configuration) {
+        default AiToolComponentBuilder configuration(org.apache.camel.component.ai.tool.AiToolConfiguration configuration) {
             doSetProperty("configuration", configuration);
             return this;
         }
@@ -181,9 +181,9 @@ public interface AiToolComponentBuilderFactory {
         protected AiToolComponent buildConcreteComponent() {
             return new AiToolComponent();
         }
-        private org.apache.camel.component.ai.tools.AiToolConfiguration getOrCreateConfiguration(AiToolComponent component) {
+        private org.apache.camel.component.ai.tool.AiToolConfiguration getOrCreateConfiguration(AiToolComponent component) {
             if (component.getConfiguration() == null) {
-                component.setConfiguration(new org.apache.camel.component.ai.tools.AiToolConfiguration());
+                component.setConfiguration(new org.apache.camel.component.ai.tool.AiToolConfiguration());
             }
             return component.getConfiguration();
         }
@@ -194,7 +194,7 @@ public interface AiToolComponentBuilderFactory {
                 Object value) {
             switch (name) {
             case "bridgeErrorHandler": ((AiToolComponent) component).setBridgeErrorHandler((boolean) value); return true;
-            case "configuration": ((AiToolComponent) component).setConfiguration((org.apache.camel.component.ai.tools.AiToolConfiguration) value); return true;
+            case "configuration": ((AiToolComponent) component).setConfiguration((org.apache.camel.component.ai.tool.AiToolConfiguration) value); return true;
             case "description": getOrCreateConfiguration((AiToolComponent) component).setDescription((java.lang.String) value); return true;
             case "parameters": getOrCreateConfiguration((AiToolComponent) component).setParameters((java.util.Map) value); return true;
             case "tags": getOrCreateConfiguration((AiToolComponent) component).setTags((java.lang.String) value); return true;

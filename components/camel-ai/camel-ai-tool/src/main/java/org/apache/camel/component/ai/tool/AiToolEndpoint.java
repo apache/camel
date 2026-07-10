@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.ai.tools;
+package org.apache.camel.component.ai.tool;
 
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
@@ -26,7 +26,7 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 
-import static org.apache.camel.component.ai.tools.AiTool.SCHEME;
+import static org.apache.camel.component.ai.tool.AiTool.SCHEME;
 
 /**
  * Framework-agnostic consumer endpoint that registers a Camel route as an LLM tool in the shared

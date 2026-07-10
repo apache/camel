@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.ai.tools;
+package org.apache.camel.component.ai.tool;
 
 import java.util.Set;
 
@@ -39,12 +39,7 @@ public class AiToolEndpointLifecycleTest extends CamelTestSupport {
                      + "&parameter.city.required=true"
                      + "&parameter.unit=string"
                      + "&parameter.unit.enum=celsius,fahrenheit")
-                        .process(exchange -> {
-                            AiToolArguments args
-                                    = exchange.getVariable(AiTool.TOOL_ARGUMENTS, AiToolArguments.class);
-                            String city = args != null ? args.getString("city") : "unknown";
-                            exchange.getMessage().setBody("Sunny in " + city);
-                        });
+                        .setBody(simple("Sunny in ${header.city}"));
             }
         };
     }

@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.ai.tools;
+package org.apache.camel.component.ai.tool;
 
 /**
  * Result of a tool execution by {@link AiToolExecutor}. Classifies the outcome without deciding error handling policy.

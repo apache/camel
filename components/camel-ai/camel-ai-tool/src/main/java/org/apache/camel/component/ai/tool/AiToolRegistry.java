@@ -14,18 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.ai.tools;
+package org.apache.camel.component.ai.tool;
 
-import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.camel.CamelContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * CamelContext-scoped registry mapping tags to {@link AiToolSpec} instances. AI components (LangChain4j, Spring AI)
@@ -41,14 +39,15 @@ import org.slf4j.LoggerFactory;
  */
 public final class AiToolRegistry {
 
-    private static final Logger LOG = LoggerFactory.getLogger(AiToolRegistry.class);
+    private static final ReentrantLock FACTORY_LOCK = new ReentrantLock();
 
+    private final ReentrantLock lock = new ReentrantLock();
     private final Map<String, Set<AiToolSpec>> tools;
     private final Set<AiToolSpec> defaultTools;
 
     AiToolRegistry() {
         tools = new ConcurrentHashMap<>();
-        defaultTools = Collections.synchronizedSet(new LinkedHashSet<>());
+        defaultTools = new LinkedHashSet<>();
     }
 
     /**
@@ -56,7 +55,8 @@ public final class AiToolRegistry {
      * plugin if it does not yet exist.
      */
     public static AiToolRegistry getOrCreate(CamelContext context) {
-        synchronized (context) {
+        FACTORY_LOCK.lock();
+        try {
             AiToolRegistry registry = context.getCamelContextExtension()
                     .getContextPlugin(AiToolRegistry.class);
             if (registry == null) {
@@ -65,107 +65,120 @@ public final class AiToolRegistry {
                         .addContextPlugin(AiToolRegistry.class, registry);
             }
             return registry;
+        } finally {
+            FACTORY_LOCK.unlock();
         }
     }
 
     public void put(String tag, AiToolSpec spec) {
-        tools.compute(tag, (k, set) -> {
-            if (set == null) {
-                set = Collections.synchronizedSet(new LinkedHashSet<>());
-            }
-            synchronized (set) {
-                for (AiToolSpec existing : set) {
-                    if (existing.getName().equals(spec.getName()) && existing != spec) {
-                        LOG.warn("Duplicate toolName '{}' under tag '{}' -- the LLM adapter will see both "
-                                 + "and may not be able to distinguish them",
-                                spec.getName(), tag);
-                        break;
-                    }
+        lock.lock();
+        try {
+            Set<AiToolSpec> set = tools.computeIfAbsent(tag, k -> new LinkedHashSet<>());
+            for (AiToolSpec existing : set) {
+                if (existing.getName().equals(spec.getName()) && existing != spec) {
+                    throw new IllegalArgumentException(
+                            "Duplicate tool name '" + spec.getName() + "' under tag '" + tag
+                                                       + "': tool names must be unique per tag");
                 }
-                set.add(spec);
             }
-            return set;
-        });
+            set.add(spec);
+        } finally {
+            lock.unlock();
+        }
     }
 
     public void remove(String tag, AiToolSpec spec) {
-        tools.compute(tag, (k, set) -> {
+        lock.lock();
+        try {
+            Set<AiToolSpec> set = tools.get(tag);
             if (set != null) {
-                synchronized (set) {
-                    set.remove(spec);
-                    if (set.isEmpty()) {
-                        return null;
-                    }
+                set.remove(spec);
+                if (set.isEmpty()) {
+                    tools.remove(tag);
                 }
             }
-            return set;
-        });
+        } finally {
+            lock.unlock();
+        }
     }
 
     public void putDefault(AiToolSpec spec) {
-        synchronized (defaultTools) {
+        lock.lock();
+        try {
             for (AiToolSpec existing : defaultTools) {
                 if (existing.getName().equals(spec.getName()) && existing != spec) {
-                    LOG.warn("Duplicate toolName '{}' in the default pool -- the LLM adapter will see both "
-                             + "and may not be able to distinguish them",
-                            spec.getName());
-                    break;
+                    throw new IllegalArgumentException(
+                            "Duplicate tool name '" + spec.getName()
+                                                       + "' in the default pool: tool names must be unique");
                 }
             }
             defaultTools.add(spec);
+        } finally {
+            lock.unlock();
         }
     }
 
     public void removeDefault(AiToolSpec spec) {
-        defaultTools.remove(spec);
+        lock.lock();
+        try {
+            defaultTools.remove(spec);
+        } finally {
+            lock.unlock();
+        }
     }
 
     /**
      * Returns tools registered for a specific tag, merged with the default pool (tools with no tags).
      */
     public Set<AiToolSpec> getToolsByTag(String tag) {
-        Set<AiToolSpec> result;
-        synchronized (defaultTools) {
-            result = new LinkedHashSet<>(defaultTools);
-        }
-        Set<AiToolSpec> tagTools = tools.get(tag);
-        if (tagTools != null) {
-            synchronized (tagTools) {
+        lock.lock();
+        try {
+            Set<AiToolSpec> result = new LinkedHashSet<>(defaultTools);
+            Set<AiToolSpec> tagTools = tools.get(tag);
+            if (tagTools != null) {
                 result.addAll(tagTools);
             }
+            return result;
+        } finally {
+            lock.unlock();
         }
-        return result;
     }
 
     /**
      * Returns all tools across all tags and the default pool.
      */
     public Set<AiToolSpec> getAllTools() {
-        Set<AiToolSpec> result;
-        synchronized (defaultTools) {
-            result = new LinkedHashSet<>(defaultTools);
-        }
-        for (Set<AiToolSpec> tagTools : tools.values()) {
-            synchronized (tagTools) {
+        lock.lock();
+        try {
+            Set<AiToolSpec> result = new LinkedHashSet<>(defaultTools);
+            for (Set<AiToolSpec> tagTools : tools.values()) {
                 result.addAll(tagTools);
             }
+            return result;
+        } finally {
+            lock.unlock();
         }
-        return result;
     }
 
     public Map<String, Set<AiToolSpec>> getTools() {
-        Map<String, Set<AiToolSpec>> snapshot = new LinkedHashMap<>();
-        for (Map.Entry<String, Set<AiToolSpec>> entry : tools.entrySet()) {
-            synchronized (entry.getValue()) {
+        lock.lock();
+        try {
+            Map<String, Set<AiToolSpec>> snapshot = new LinkedHashMap<>();
+            for (Map.Entry<String, Set<AiToolSpec>> entry : tools.entrySet()) {
                 snapshot.put(entry.getKey(), new LinkedHashSet<>(entry.getValue()));
             }
+            return Map.copyOf(snapshot);
+        } finally {
+            lock.unlock();
         }
-        return Collections.unmodifiableMap(snapshot);
     }
 
     public Set<AiToolSpec> getDefaultTools() {
-        synchronized (defaultTools) {
+        lock.lock();
+        try {
             return new LinkedHashSet<>(defaultTools);
+        } finally {
+            lock.unlock();
         }
     }
 }

@@ -19,9 +19,8 @@ superseded-by: []
 Camel's AI components (`camel-langchain4j-tools`, `camel-spring-ai-tools`,
 `camel-langchain4j-agent`) each implement their own mechanism for exposing Camel routes as
 LLM-callable tools, while `camel-openai` lacks this capability entirely. This document
-proposes a shared, framework-agnostic tool abstraction (`camel-ai-tool`) that all AI
-components discover tools from. One way to define tools, regardless of which AI framework
-you choose. No more duplication.
+proposes a shared tool abstraction (`camel-ai-tool`) that all AI components discover
+tools from.
 
 == Motivation
 
@@ -32,11 +31,10 @@ same behavior and workflow when implementing tools. Today that is not the case:
   each independently implement the same pattern (consumer endpoint, registry, spec classes)
   for exposing Camel routes as LLM-callable tools, with duplicated code tightly coupled to
   their respective framework types.
-* **`camel-openai`** does not support yet Camel routes as tools.
+* **`camel-openai`** does not support Camel routes as tools.
 
 A tool defined for one framework cannot be used by another without re-registering it,
-bug fixes must be applied in multiple places, and new AI components would need to
-re-implement the same pattern from scratch.
+and bug fixes must be applied in multiple places.
 
 == Goals
 
@@ -50,8 +48,10 @@ re-implement the same pattern from scratch.
   parameter definitions, JSON Schema, and a reference to the Camel consumer that
   implements the tool.
 * Provide `AiToolExecutor`, a shared utility that resolves the route processor, validates
-  arguments against declared parameters, wraps them in an `AiToolArguments` variable,
-  invokes the route, and returns the result. Framework adapters only need to parse their
+  arguments against declared parameters, sets them as individual exchange headers (filtering
+  out `Camel*` / `org.apache.camel.*` prefixed names to prevent header-namespace injection),
+  and also wraps them in an `AiToolArguments` variable for programmatic access. It then
+  invokes the route and returns the result. Framework adapters only need to parse their
   native argument format into a `Map<String, Object>`.
 * Allow each AI component to discover tools from the shared registry via a `tags` parameter
   and convert them to its native format (`ToolSpecification` for LangChain4j,
@@ -165,7 +165,7 @@ registered in the LangChain4j cache is invisible to Spring AI and vice versa.
 === Module: `camel-ai-tool`
 
 Located at `components/camel-ai/camel-ai-tool` (Java package:
-`org.apache.camel.component.ai.tools`). Consumer-only component with no AI
+`org.apache.camel.component.ai.tool`). Consumer-only component with no AI
 framework dependencies. Only `camel-support` (which transitively provides
 `camel-util-json` for JSON Schema generation).
 
@@ -201,7 +201,7 @@ CamelContext-scoped registry mapping tags to sets of `AiToolSpec` instances. Eac
 `CamelContext` gets its own instance, registered as a context plugin via
 `context.getCamelContextExtension().addContextPlugin()`. Use the static factory
 `AiToolRegistry.getOrCreate(context)` to obtain the instance for a given context.
-Thread-safe via `ConcurrentHashMap` with synchronized value sets.
+Thread-safe via `ReentrantLock` (virtual-thread compatible).
 
 Two pools:
 
@@ -221,10 +221,14 @@ Key methods:
 Static utility class that handles the common dispatch logic:
 
 1. Resolve the route `Processor` from the spec's consumer
-2. Validate arguments against declared parameters (warn about undeclared, check required)
-3. Wrap arguments in an `AiToolArguments` object and set it as an exchange variable
-4. Invoke the route processor
-5. Return the result body as a string
+2. Validate arguments against declared parameters (filter out undeclared, check required)
+3. Set each argument as an individual exchange header (filtering out names starting with
+   `camel` or `org.apache.camel.` case-insensitively to prevent header-namespace injection,
+   following the same pattern as the A2A component)
+4. Also wrap arguments in an `AiToolArguments` object and set it as an exchange variable
+   for programmatic access
+5. Invoke the route processor
+6. Return the result body as a string
 
 Framework adapters call `AiToolExecutor.execute(spec, arguments, exchange)` after
 parsing their native argument format (JSON string, Map, etc.) into a
@@ -255,8 +259,8 @@ public sealed interface AiToolResult {
 
 * **`Success`**: route executed normally, body returned as string.
 * **`ArgumentError`**: the tool call failed before reaching the route. Missing required
-  argument or type mismatch. The LLM sent bad input. (Undeclared arguments are warned
-  about but not rejected, since LLMs frequently hallucinate extra parameters.)
+  argument or type mismatch. The LLM sent bad input. (Undeclared arguments are filtered
+  out with a warning, since LLMs frequently hallucinate extra parameters.)
 * **`ExecutionError`**: the route processor threw an exception or the exchange carries
   an exception after processing.
 
@@ -343,7 +347,9 @@ URI syntax: `ai-tool:toolName[?options]`
 Lifecycle (managed by `AiToolConsumer`):
 
 * **`doStart()`**: builds `AiToolSpec` from configuration, registers in `AiToolRegistry`
-* **`doStop()`**: deregisters from `AiToolRegistry`
+* **`doStop()`**: deregisters from `AiToolRegistry`, clears state
+* **`doSuspend()`**: deregisters from `AiToolRegistry` (keeps state for resume)
+* **`doResume()`**: re-registers in `AiToolRegistry` using saved state
 
 === Adapter pattern for AI components
 
@@ -398,8 +404,7 @@ Converts `AiToolSpec` → `ChatCompletionFunctionTool`:
 * `spec.getDescription()` → `FunctionDefinition.description()`
 * `spec.getParametersJsonSchema()` → `FunctionDefinition.parameters()` (used directly)
 
-This is the big one. It gives `camel-openai` Camel route tool support
-for the first time.
+This adds Camel route tool support to `camel-openai`.
 
 === User-facing example
 

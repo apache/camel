@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.ai.tools;
+package org.apache.camel.component.ai.tool;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -34,6 +34,7 @@ import org.apache.camel.spi.UriParams;
 @UriParams
 public class AiToolConfiguration implements Cloneable {
 
+    @Metadata(label = "consumer")
     @UriParam(description = "Comma-separated list of tags used to group tools. "
                             + "Producers filter the registry by these tags to select which tools to expose to the LLM. "
                             + "When omitted, the tool goes into a default pool available to all producers.")
