@@ -156,6 +156,18 @@ class TuiMcpServer {
                 return;
             }
 
+            String origin = exchange.getRequestHeaders().getFirst("Origin");
+            if (origin != null) {
+                exchange.sendResponseHeaders(403, -1);
+                return;
+            }
+
+            String contentType = exchange.getRequestHeaders().getFirst("Content-Type");
+            if (contentType == null || !contentType.startsWith("application/json")) {
+                exchange.sendResponseHeaders(415, -1);
+                return;
+            }
+
             String body;
             try (InputStream is = exchange.getRequestBody()) {
                 body = new String(is.readAllBytes(), StandardCharsets.UTF_8);

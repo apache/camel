@@ -686,8 +686,8 @@ class McpFacade {
             return null;
         }
         if (file != null && !file.isEmpty()) {
-            Path filePath = dir.resolve(file);
-            if (!Files.isRegularFile(filePath)) {
+            Path filePath = dir.resolve(file).normalize();
+            if (!filePath.startsWith(dir) || !Files.isRegularFile(filePath)) {
                 return null;
             }
             try {
