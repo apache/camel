@@ -599,6 +599,44 @@ final class TuiHelper {
         return "█".repeat(len);
     }
 
+    static Line buildPercentileBarLine(long p50, long p95, long p99, int barWidth) {
+        if (p99 <= 0 || barWidth <= 1) {
+            return Line.from(Span.raw(""));
+        }
+        int segments = (p50 > 0 ? 1 : 0) + (p95 > p50 ? 1 : 0) + (p99 > p95 ? 1 : 0);
+        if (segments < 2) {
+            return Line.from(Span.raw(""));
+        }
+        int greenWidth = (int) Math.round((double) p50 / p99 * barWidth);
+        int yellowWidth = (int) Math.round((double) (p95 - p50) / p99 * barWidth);
+        int redWidth = barWidth - greenWidth - yellowWidth;
+        if (greenWidth <= 0 && p50 > 0) {
+            greenWidth = 1;
+        }
+        if (yellowWidth <= 0 && p95 > p50) {
+            yellowWidth = 1;
+        }
+        if (redWidth <= 0 && p99 > p95) {
+            redWidth = 1;
+        }
+        int total = greenWidth + yellowWidth + redWidth;
+        if (total > barWidth) {
+            redWidth = Math.max(0, barWidth - greenWidth - yellowWidth);
+        }
+        List<Span> spans = new ArrayList<>();
+        spans.add(Span.raw(" "));
+        if (greenWidth > 0) {
+            spans.add(Span.styled("█".repeat(greenWidth), Theme.success()));
+        }
+        if (yellowWidth > 0) {
+            spans.add(Span.styled("▒".repeat(yellowWidth), Theme.warning()));
+        }
+        if (redWidth > 0) {
+            spans.add(Span.styled("░".repeat(redWidth), Theme.error()));
+        }
+        return Line.from(spans);
+    }
+
     static String shortTypeName(String type) {
         if (type == null) {
             return "null";

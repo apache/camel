@@ -434,6 +434,10 @@ class OverviewTab extends AbstractTab {
             };
         } else {
             boolean hasPercentiles = infos.stream().anyMatch(i -> i.p50Time >= 0);
+            long maxTotal = infos.stream().mapToLong(i -> i.exchangesTotal).max().orElse(0);
+            long maxFailed = infos.stream().mapToLong(i -> i.failed).max().orElse(0);
+            int tw = Math.max(numWidth(maxTotal), 6);
+            int fw = Math.max(numWidth(maxFailed), 6);
             for (IntegrationInfo info : infos) {
                 boolean isEven = (rowIndex++ % 2 == 0);
                 Style rowBg = isEven ? Style.EMPTY.bg(Theme.zebra()) : Style.EMPTY;
@@ -451,8 +455,6 @@ class OverviewTab extends AbstractTab {
                             Cell.from(Span.styled("", dimStyle)),
                             Cell.from(Span.styled("", dimStyle)),
                             Cell.from(Span.styled(TuiIcons.STOPPED + " Stopped", Theme.error().dim())),
-                            Cell.from(Span.styled(info.ago != null ? info.ago : "", dimStyle)),
-                            Cell.from(Span.styled("", dimStyle)),
                             Cell.from(Span.styled("", dimStyle)),
                             Cell.from(Span.styled("", dimStyle)),
                             Cell.from(Span.styled("", dimStyle)),
@@ -475,8 +477,6 @@ class OverviewTab extends AbstractTab {
                     };
 
                     Style failStyle = info.failed > 0 ? Theme.error().bold() : Style.EMPTY;
-
-                    String sinceLastDisplay = formatSinceLast(info);
 
                     boolean hasDoc = info.readmeFiles != null && !info.readmeFiles.isEmpty();
                     if (!hasDoc) {
@@ -511,20 +511,27 @@ class OverviewTab extends AbstractTab {
                     } else {
                         timingCol = "";
                     }
+                    Line totalCell = info.sinceLastCompleted != null
+                            ? Line.from(Span.raw(String.format("%" + tw + "d", info.exchangesTotal)),
+                                    Span.styled(" (" + info.sinceLastCompleted + ")", Theme.muted()))
+                            : Line.from(Span.raw(String.format("%" + tw + "d", info.exchangesTotal)));
+                    Line failCell = info.sinceLastFailed != null
+                            ? Line.from(Span.styled(String.format("%" + fw + "d", info.failed), failStyle),
+                                    Span.styled(" (" + info.sinceLastFailed + ")", Theme.muted()))
+                            : Line.from(Span.styled(String.format("%" + fw + "d", info.failed), failStyle));
+
                     rows.add(Row.from(
                             Cell.from(info.pid),
                             Cell.from(nameLine),
                             Cell.from(info.camelVersion != null ? info.camelVersion : ""),
-                            centerCell(info.ready != null ? info.ready : "", 5),
+                            centerCell(info.ready != null ? info.ready : "", 7),
                             Cell.from(Span.styled(stateText, statusStyle)),
-                            Cell.from(info.ago != null ? info.ago : ""),
                             rightCell(info.routeStarted + "/" + info.routeTotal, 7),
                             rightCell(throughputDisplay != null ? throughputDisplay : "", 8),
-                            rightCell(String.valueOf(info.exchangesTotal), 8),
-                            rightCell(String.valueOf(info.failed), 6, failStyle),
-                            rightCell(String.valueOf(info.inflight), 8),
+                            Cell.from(totalCell),
+                            Cell.from(failCell),
                             rightCell(timingCol, 14),
-                            Cell.from(sinceLastDisplay)).style(rowBg));
+                            Cell.from(buildPercentileBarLine(info.p50Time, info.p95Time, info.p99Time, 10))).style(rowBg));
                 }
             }
 
@@ -533,31 +540,27 @@ class OverviewTab extends AbstractTab {
                     Cell.from(Span.styled(sortLabel("PID", "pid"), sortStyle("pid"))),
                     Cell.from(Span.styled(sortLabel("NAME", "name"), sortStyle("name"))),
                     Cell.from(Span.styled(sortLabel("VERSION", "version"), sortStyle("version"))),
-                    centerCell("READY", 5, Style.EMPTY.bold()),
+                    centerCell("READY", 7, Style.EMPTY.bold()),
                     Cell.from(Span.styled(sortLabel("STATUS", "status"), sortStyle("status"))),
-                    Cell.from(Span.styled("AGE", Style.EMPTY.bold())),
                     rightCell("ROUTE", 7, Style.EMPTY.bold()),
                     rightCell("MSG/S", 8, Style.EMPTY.bold()),
-                    rightCell(sortLabel("TOTAL", "total"), 8, sortStyle("total")),
-                    rightCell(sortLabel("FAIL", "fail"), 6, sortStyle("fail")),
-                    rightCell("INFLIGHT", 8, Style.EMPTY.bold()),
+                    centerCell(sortLabel("TOTAL", "total"), 14, sortStyle("total")),
+                    centerCell(sortLabel("FAIL", "fail"), 10, sortStyle("fail")),
                     rightCell(timingHeader, 14, Style.EMPTY.bold()),
-                    Cell.from(Span.styled("SINCE-LAST", Style.EMPTY.bold())));
+                    Cell.from(""));
 
             widths = new Constraint[] {
                     Constraint.length(8),
                     Constraint.fill(),
                     Constraint.length(16),
-                    Constraint.length(5),
+                    Constraint.length(7),
                     Constraint.length(10),
-                    Constraint.length(8),
                     Constraint.length(7),
                     Constraint.length(8),
-                    Constraint.length(8),
-                    Constraint.length(6),
-                    Constraint.length(8),
                     Constraint.length(14),
-                    Constraint.length(13)
+                    Constraint.length(10),
+                    Constraint.length(14),
+                    Constraint.fill()
             };
         }
 
@@ -1151,6 +1154,14 @@ class OverviewTab extends AbstractTab {
 
     private Style topSortStyle(String column) {
         return sortStyle(column, topSort);
+    }
+
+    private static int numWidth(long... values) {
+        long max = 0;
+        for (long v : values) {
+            max = Math.max(max, Math.abs(v));
+        }
+        return Math.max(String.valueOf(max).length(), 1);
     }
 
     private int infraSortCompare(InfraInfo a, InfraInfo b) {

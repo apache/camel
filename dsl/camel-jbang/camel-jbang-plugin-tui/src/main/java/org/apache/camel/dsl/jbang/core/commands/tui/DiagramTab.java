@@ -487,6 +487,8 @@ class DiagramTab extends AbstractTab {
                     lines.add(Line.from(
                             Span.styled(" p99:  ", Theme.muted()),
                             Span.raw(String.format("%" + pw + "d ms", route.p99Time))));
+                    lines.add(buildPercentileBarLine(
+                            route.p50Time, route.p95Time, route.p99Time, area.width() - 3));
                 }
             }
 
@@ -586,18 +588,17 @@ class DiagramTab extends AbstractTab {
                         Span.raw(ln.id)));
             }
 
-            lines.add(Line.from(Span.raw("")));
             String linkedRoute = diagram.findLinkedRouteId(drillDownRouteId);
             if (linkedRoute != null && diagram.getRouteLayout(linkedRoute) != null) {
+                lines.add(Line.from(Span.raw("")));
                 lines.add(Line.from(
                         Span.styled(" ↵ ", Theme.label().bold()),
                         Span.styled(linkedRoute, Style.EMPTY.fg(Theme.baseFg()))));
             } else if (ln.treeNode != null && ln.treeNode.info.remote) {
+                lines.add(Line.from(Span.raw("")));
                 String arrow = "from".equals(ln.type) ? " external → " : " → external";
                 lines.add(Line.from(
                         Span.styled(arrow, Theme.muted())));
-            } else {
-                lines.add(Line.from(Span.raw("")));
             }
 
             if (ln.treeNode != null && ln.treeNode.info.stat != null) {
@@ -645,6 +646,9 @@ class DiagramTab extends AbstractTab {
                         lines.add(Line.from(
                                 Span.styled(" p99:  ", Theme.muted()),
                                 Span.raw(String.format("%" + pw + "d ms", stat.p99ProcessingTime))));
+                        lines.add(buildPercentileBarLine(
+                                stat.p50ProcessingTime, stat.p95ProcessingTime,
+                                stat.p99ProcessingTime, area.width() - 3));
                     }
 
                     if (stat.lastCompletedExchangeTimestamp > 0 || stat.lastFailedExchangeTimestamp > 0) {
