@@ -285,7 +285,7 @@ class CircuitBreakerTab extends AbstractTableTab {
             barColor = Theme.success();
         }
         String rateLabel = String.format(" %.0f%%", Math.max(0, cb.failureRate));
-        int barWidth = MAX_CHART_POINTS;
+        int barWidth = Math.max(0, vSplit.get(0).width() - 6);
         int usable = barWidth - rateLabel.length();
         int filled = Math.max(0, (int) (usable * rate / 100.0));
         int empty = Math.max(0, usable - filled);
