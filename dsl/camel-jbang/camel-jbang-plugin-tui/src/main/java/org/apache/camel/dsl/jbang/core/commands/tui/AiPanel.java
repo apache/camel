@@ -1216,7 +1216,7 @@ class AiPanel {
 
         @Override
         public List<String> availableModels() {
-            return List.of();
+            return client != null ? client.listModels() : List.of();
         }
 
         @Override

@@ -205,6 +205,34 @@ class AiPanelTest {
     }
 
     @Test
+    void modelCommandListsModelsFromRealClientWhenNoArgsGiven() {
+        AiPanel panel = new AiPanel();
+        panel.setClientForTesting(new ModelListingLlmClient(List.of("model-a", "model-b")));
+        panel.open();
+
+        type(panel, "/model");
+        panel.handleKeyEvent(KeyEvent.ofKey(KeyCode.ENTER, KeyModifiers.NONE));
+
+        assertTrue(panel.conversationForTesting().stream()
+                .anyMatch(entry -> entry.text().contains("Current model: test-model")
+                        && entry.text().contains("model-a")
+                        && entry.text().contains("model-b")));
+    }
+
+    @Test
+    void modelCommandShowsOnlyCurrentModelWhenClientReturnsNoModels() {
+        AiPanel panel = new AiPanel();
+        panel.setClientForTesting(new ModelListingLlmClient(List.of()));
+        panel.open();
+
+        type(panel, "/model");
+        panel.handleKeyEvent(KeyEvent.ofKey(KeyCode.ENTER, KeyModifiers.NONE));
+
+        assertTrue(panel.conversationForTesting().stream()
+                .anyMatch(entry -> entry.text().equals("Current model: test-model")));
+    }
+
+    @Test
     void unknownCommandRendersHelpHint() {
         AiPanel panel = new AiPanel();
         panel.setClientForTesting(LlmClient.create());
@@ -456,6 +484,21 @@ class AiPanelTest {
 
         boolean awaitAnswer(long timeout, TimeUnit unit) throws InterruptedException {
             return answered.await(timeout, unit);
+        }
+    }
+
+    private static final class ModelListingLlmClient extends LlmClient {
+
+        private final List<String> models;
+
+        ModelListingLlmClient(List<String> models) {
+            this.models = models;
+            withModel("test-model");
+        }
+
+        @Override
+        public List<String> listModels() {
+            return models;
         }
     }
 
