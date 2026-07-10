@@ -31,7 +31,7 @@ class AiSlashCommandRegistryTest {
     void descriptorsKeepStableOrder() {
         AiSlashCommandRegistry registry = AiSlashCommandRegistry.defaults();
 
-        assertEquals(List.of("help", "provider", "model", "clear", "close", "exit", "quit", "run", "infra", "send"),
+        assertEquals(List.of("help", "provider", "model", "clear", "close", "quit", "run", "infra", "send"),
                 registry.descriptors().stream().map(AiSlashCommandRegistry.Descriptor::name).toList());
     }
 
@@ -43,6 +43,8 @@ class AiSlashCommandRegistryTest {
         assertEquals("provider", registry.lookup("p").orElseThrow().name());
         assertEquals("model", registry.lookup("m").orElseThrow().name());
         assertEquals("quit", registry.lookup("q").orElseThrow().name());
+        assertEquals("quit", registry.lookup("exit").orElseThrow().name());
+        assertEquals("quit", registry.lookup("x").orElseThrow().name());
     }
 
     @Test
@@ -54,19 +56,23 @@ class AiSlashCommandRegistryTest {
 
     @Test
     void helpTextComesFromDescriptors() {
-        String help = AiSlashCommandRegistry.defaults().helpText();
+        AiSlashCommandRegistry registry = AiSlashCommandRegistry.defaults();
+        String help = registry.helpText();
+        AiSlashCommandRegistry.Descriptor provider = registry.lookup("provider").orElseThrow();
+        int width = registry.commandColumnWidth(registry.descriptors());
 
         assertTrue(help.contains("/run <camel run args>"));
         assertTrue(help.contains("/send <endpoint> <message text | @file>"));
-        assertTrue(help.contains("/provider — Switch the AI provider"));
-        assertTrue(help.contains("\n\n"));
+        assertTrue(help.contains(registry.formatAlignedLine(provider, width)));
+        assertFalse(help.contains("\n\n/"));
     }
 
     @Test
     void completionsIncludeAllCommandsForBareSlash() {
         AiSlashCommandRegistry registry = AiSlashCommandRegistry.defaults();
 
-        assertEquals(registry.descriptors().size(), registry.completionsFor("/").size());
+        assertEquals(9, registry.completionsFor("/").size());
+        assertFalse(registry.completionsFor("/").stream().anyMatch(descriptor -> "exit".equals(descriptor.name())));
     }
 
     @Test

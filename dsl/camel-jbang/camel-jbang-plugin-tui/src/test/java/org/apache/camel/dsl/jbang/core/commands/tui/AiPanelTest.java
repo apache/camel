@@ -66,8 +66,8 @@ class AiPanelTest {
         assertTrue(panel.conversationForTesting().stream()
                 .anyMatch(entry -> "system".equals(entry.role()) && entry.text().contains("/run <camel run args>")));
         assertTrue(panel.conversationForTesting().stream()
-                .anyMatch(
-                        entry -> "system".equals(entry.role()) && entry.text().contains("/provider — Switch the AI provider")));
+                .anyMatch(entry -> "system".equals(entry.role()) && entry.text().contains("/provider")
+                        && entry.text().contains("Switch the AI provider")));
     }
 
     @Test

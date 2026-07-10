@@ -453,7 +453,7 @@ When the AI panel is open, input that starts with `/` runs a local panel command
 | `/close`
 | Close the AI panel.
 
-| `/exit`, `/quit`
+| `/quit` (`/exit`, `/q`, `/x`)
 | Exit the TUI.
 
 | `/run <camel run args>`

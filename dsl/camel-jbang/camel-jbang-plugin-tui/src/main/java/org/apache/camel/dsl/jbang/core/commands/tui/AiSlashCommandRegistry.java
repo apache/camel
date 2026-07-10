@@ -69,13 +69,7 @@ final class AiSlashCommandRegistry {
                     return CommandResult.system("Closing AI panel");
                 }));
         commands.add(new Descriptor(
-                "exit", List.of("x"), "Exit the TUI", null, false,
-                (context, arguments) -> {
-                    context.requestExit();
-                    return CommandResult.system("Exiting TUI");
-                }));
-        commands.add(new Descriptor(
-                "quit", List.of("q"), "Exit the TUI", null, false,
+                "quit", List.of("q", "x", "exit"), "Exit the TUI", null, false,
                 (context, arguments) -> {
                     context.requestExit();
                     return CommandResult.system("Exiting TUI");
@@ -141,9 +135,10 @@ final class AiSlashCommandRegistry {
     }
 
     String helpText() {
-        StringBuilder text = new StringBuilder("Available commands:\n\n");
+        int width = commandColumnWidth(descriptors);
+        StringBuilder text = new StringBuilder("Available commands:\n");
         for (Descriptor descriptor : descriptors) {
-            text.append(helpLine(descriptor)).append("\n\n");
+            text.append(formatAlignedLine(descriptor, width)).append('\n');
         }
         return text.toString().strip();
     }
@@ -187,13 +182,30 @@ final class AiSlashCommandRegistry {
         return false;
     }
 
-    private String helpLine(Descriptor descriptor) {
-        String command = helpUsage(descriptor);
+    String commandLabel(Descriptor descriptor) {
+        return helpUsage(descriptor);
+    }
+
+    String descriptionLabel(Descriptor descriptor) {
         String description = descriptor.description();
         if (description.startsWith("<")) {
+            return "";
+        }
+        return description;
+    }
+
+    int commandColumnWidth(List<Descriptor> items) {
+        return items.stream().mapToInt(descriptor -> commandLabel(descriptor).length()).max().orElse(0);
+    }
+
+    String formatAlignedLine(Descriptor descriptor, int width) {
+        String command = commandLabel(descriptor);
+        String description = descriptionLabel(descriptor);
+        if (description.isEmpty()) {
             return command;
         }
-        return command + " — " + description;
+        int padding = Math.max(2, width - command.length() + 2);
+        return command + " ".repeat(padding) + description;
     }
 
     private String helpUsage(Descriptor descriptor) {

@@ -720,15 +720,20 @@ class AiPanel {
         if (area.height() < 1 || hints.isEmpty()) {
             return;
         }
+        int commandWidth = slashCommands.commandColumnWidth(hints);
         int rows = Math.min(area.height(), hints.size());
         for (int i = 0; i < rows; i++) {
             AiSlashCommandRegistry.Descriptor descriptor = hints.get(i);
-            String description = descriptor.description();
-            String suffix = description.startsWith("<") ? "" : " — " + description;
-            Line line = Line.from(
-                    Span.styled(descriptor.usage(), Style.EMPTY.fg(Theme.accent())),
-                    Span.styled(suffix, Style.EMPTY.dim()));
-            frame.renderWidget(Paragraph.from(line), new Rect(area.left(), area.top() + i, area.width(), 1));
+            String command = slashCommands.commandLabel(descriptor);
+            String description = slashCommands.descriptionLabel(descriptor);
+            List<Span> spans = new ArrayList<>();
+            spans.add(Span.styled(command, Style.EMPTY.fg(Theme.accent())));
+            if (!description.isEmpty()) {
+                int padding = Math.max(2, commandWidth - command.length() + 2);
+                spans.add(Span.raw(" ".repeat(padding)));
+                spans.add(Span.styled(description, Style.EMPTY.dim()));
+            }
+            frame.renderWidget(Paragraph.from(Line.from(spans)), new Rect(area.left(), area.top() + i, area.width(), 1));
         }
     }
 
