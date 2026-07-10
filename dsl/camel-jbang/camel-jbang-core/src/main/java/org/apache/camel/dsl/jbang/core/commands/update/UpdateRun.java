@@ -99,9 +99,7 @@ public class UpdateRun extends CamelCommand {
             }
         }
 
-        executeCommand(command);
-
-        return 0;
+        return executeCommand(command);
     }
 
     /**

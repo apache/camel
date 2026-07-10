@@ -42,14 +42,11 @@ public sealed interface Update permits CamelUpdate, CamelQuarkusUpdate {
 
     String getArtifactCoordinates();
 
-    default String mvnProgramCall() {
-        String mvnProgramCall;
+    default List<String> mvnProgramCall() {
         if (FileUtil.isWindows()) {
-            mvnProgramCall = "cmd /c mvn";
+            return List.of("cmd", "/c", "mvn");
         } else {
-            mvnProgramCall = "mvn";
+            return List.of("mvn");
         }
-
-        return mvnProgramCall;
     }
 }

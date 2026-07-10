@@ -214,12 +214,12 @@ public class VersionList extends CamelCommand {
                 if (eol != null) {
                     try {
                         Date d = sdf.parse(r.eolDate);
-                        return d.before(now);
+                        return d.after(now);
                     } catch (Exception e) {
                         // ignore
                     }
                 }
-                return false;
+                return true;
             });
         }
 

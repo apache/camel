@@ -158,10 +158,11 @@ public class UpdateList extends CamelCommand {
             // Translate quarkus versions to Camel
             recipesVersions.camelQuarkusRecipesVersions();
             recipesVersions.quarkusUpdateRecipes().forEach(l -> {
-                List<String[]> runtimeVersions = recipesVersions.qVersions().stream().filter(v -> v[1].startsWith(l.version()))
+                List<String[]> runtimeVersions = recipesVersions.qVersions().stream()
+                        .filter(v -> v[1].equals(l.version()) || v[1].startsWith(l.version() + "."))
                         .collect(Collectors.toList());
                 if (!runtimeVersions.isEmpty()) {
-                    runtimeVersions.sort(Comparator.comparing(o -> o[1]));
+                    runtimeVersions.sort(Comparator.comparing(o -> new ComparableVersion(o[1])));
                     String[] runtimeVersion = runtimeVersions.get(runtimeVersions.size() - 1);
                     // Quarkus may release patches independently, therefore, we do not know the real micro version
                     String quarkusVersion = runtimeVersion[1];
@@ -320,8 +321,9 @@ public class UpdateList extends CamelCommand {
                         /* Quarkus specific, maybe in the future can be removed */
                         && !name.contains("alpha")) {
 
-                    String content = new String(jarFile.getInputStream(jarEntry).readAllBytes());
-                    String description = Arrays.stream(content.split(System.lineSeparator()))
+                    String content = new String(
+                            jarFile.getInputStream(jarEntry).readAllBytes(), java.nio.charset.StandardCharsets.UTF_8);
+                    String description = Arrays.stream(content.split("\\R"))
                             .filter(l -> l.startsWith("description"))
                             .map(l -> l.substring(l.indexOf(":") + 1).trim())
                             .findFirst().orElse("");
