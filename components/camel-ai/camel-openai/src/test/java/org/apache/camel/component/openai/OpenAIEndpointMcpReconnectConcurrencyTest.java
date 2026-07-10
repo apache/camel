@@ -16,11 +16,8 @@
  */
 package org.apache.camel.component.openai;
 
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CountDownLatch;
@@ -91,17 +88,18 @@ class OpenAIEndpointMcpReconnectConcurrencyTest {
         TestEndpoint endpoint = new TestEndpoint(component);
         endpoint.setCamelContext(ctx);
 
-        endpoint.setMcpTools(new ArrayList<>(McpToolConverter.convert(mockTools())));
-
         Map<String, McpSyncClient> clientMap = new ConcurrentHashMap<>();
         Map<String, String> toolToServer = new ConcurrentHashMap<>();
         for (String n : serverTools) {
             clientMap.put(n, initialClient);
             toolToServer.put(n, SERVER);
         }
-        endpoint.setToolClientMap(clientMap);
-        endpoint.setToolToServerName(toolToServer);
-        endpoint.setReturnDirectTools(ConcurrentHashMap.newKeySet());
+
+        endpoint.setMcpToolState(new McpToolState(
+                McpToolConverter.convert(mockTools()),
+                clientMap,
+                toolToServer,
+                ConcurrentHashMap.newKeySet()));
 
         Map<String, Map<String, String>> serverConfigs = new ConcurrentHashMap<>();
         serverConfigs.put(SERVER, Map.of("transportType", "stdio"));
@@ -130,13 +128,13 @@ class OpenAIEndpointMcpReconnectConcurrencyTest {
                 try {
                     start.await();
                     for (int k = 0; k < iterations; k++) {
-                        for (ChatCompletionFunctionTool t : endpoint.getMcpTools()) {
+                        for (ChatCompletionFunctionTool t : endpoint.getMcpToolState().tools()) {
                             t.function().name();
                         }
-                        for (String name : endpoint.getToolClientMap().keySet()) {
-                            endpoint.getToolClientMap().get(name);
+                        for (String name : endpoint.getMcpToolState().toolClientMap().keySet()) {
+                            endpoint.getMcpToolState().toolClientMap().get(name);
                         }
-                        endpoint.getReturnDirectTools().size();
+                        endpoint.getMcpToolState().returnDirectTools().size();
                     }
                 } catch (Throwable t) {
                     errors.add(t);
@@ -149,7 +147,7 @@ class OpenAIEndpointMcpReconnectConcurrencyTest {
                     start.await();
                     for (int k = 0; k < iterations; k++) {
                         String tool = TOOL_NAMES.get(k % TOOL_NAMES.size());
-                        endpoint.reconnectMcpServer(endpoint.getToolClientMap().get(tool), tool);
+                        endpoint.reconnectMcpServer(endpoint.getMcpToolState().toolClientMap().get(tool), tool);
                     }
                 } catch (Throwable t) {
                     errors.add(t);
@@ -164,10 +162,10 @@ class OpenAIEndpointMcpReconnectConcurrencyTest {
         assertTrue(errors.isEmpty(), "concurrent access threw: " + errors);
 
         // state consistency checks
-        assertEquals(TOOL_NAMES.size(), endpoint.getMcpTools().size());
-        assertEquals(TOOL_NAMES.size(), endpoint.getToolClientMap().size());
+        assertEquals(TOOL_NAMES.size(), endpoint.getMcpToolState().tools().size());
+        assertEquals(TOOL_NAMES.size(), endpoint.getMcpToolState().toolClientMap().size());
         for (String name : TOOL_NAMES) {
-            assertNotNull(endpoint.getToolClientMap().get(name), "missing client for " + name);
+            assertNotNull(endpoint.getMcpToolState().toolClientMap().get(name), "missing client for " + name);
         }
     }
 
@@ -206,7 +204,7 @@ class OpenAIEndpointMcpReconnectConcurrencyTest {
         verify(initial, times(1)).closeGracefully();
 
         // every caller observed the same, non-null reconnected client
-        McpSyncClient reconnected = endpoint.getToolClientMap().get("get_weather");
+        McpSyncClient reconnected = endpoint.getMcpToolState().toolClientMap().get("get_weather");
         assertNotNull(reconnected);
         for (McpSyncClient c : results) {
             assertEquals(reconnected, c, "all callers should observe the same reconnected client");
@@ -218,7 +216,7 @@ class OpenAIEndpointMcpReconnectConcurrencyTest {
         serverTools = List.of("get_weather", "find_location");
         McpSyncClient initial = newMockClient();
         TestEndpoint endpoint = newEndpoint(initial);
-        endpoint.setReturnDirectTools(new HashSet<>(Set.of("find_location")));
+        endpoint.addReturnDirectTool("find_location");
 
         // The server now only advertises 'get_weather', 'find_location' disappeared
         serverTools = List.of("get_weather");
@@ -226,16 +224,18 @@ class OpenAIEndpointMcpReconnectConcurrencyTest {
         assertNotNull(reconnected);
 
         // 'find_location' must be pruned from every shared collection
-        assertFalse(endpoint.getToolClientMap().containsKey("find_location"), "stale entry in toolClientMap");
-        assertFalse(endpoint.getToolToServerName().containsKey("find_location"), "stale entry in toolToServerName");
-        assertFalse(endpoint.getReturnDirectTools().contains("find_location"), "stale entry in returnDirectTools");
-        assertFalse(endpoint.getMcpTools().stream().anyMatch(t -> t.function().name().equals("find_location")),
+        assertFalse(endpoint.getMcpToolState().toolClientMap().containsKey("find_location"), "stale entry in toolClientMap");
+        assertFalse(endpoint.getMcpToolState().toolToServerName().containsKey("find_location"),
+                "stale entry in toolToServerName");
+        assertFalse(endpoint.getMcpToolState().returnDirectTools().contains("find_location"),
+                "stale entry in returnDirectTools");
+        assertFalse(endpoint.getMcpToolState().tools().stream().anyMatch(t -> t.function().name().equals("find_location")),
                 "stale entry in cachedMcpTools");
 
         // 'get_weather' is still present and consistent across the collections
-        assertTrue(endpoint.getToolClientMap().containsKey("get_weather"));
-        assertEquals(SERVER, endpoint.getToolToServerName().get("get_weather"));
-        assertEquals(1, endpoint.getMcpTools().size());
-        assertEquals("get_weather", endpoint.getMcpTools().get(0).function().name());
+        assertTrue(endpoint.getMcpToolState().toolClientMap().containsKey("get_weather"));
+        assertEquals(SERVER, endpoint.getMcpToolState().toolToServerName().get("get_weather"));
+        assertEquals(1, endpoint.getMcpToolState().tools().size());
+        assertEquals("get_weather", endpoint.getMcpToolState().tools().get(0).function().name());
     }
 }

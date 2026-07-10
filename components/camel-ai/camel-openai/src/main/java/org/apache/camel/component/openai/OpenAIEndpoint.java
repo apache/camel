@@ -88,12 +88,12 @@ public class OpenAIEndpoint extends DefaultEndpoint {
 
     private OpenAIClient client;
 
+    private final ReentrantLock globalMcpLock = new ReentrantLock();
     private Map<String, ReentrantLock> mcpClientLocks;
-    private volatile List<ChatCompletionFunctionTool> cachedMcpTools;
-    private volatile Map<String, McpSyncClient> toolClientMap;
-    private volatile Set<String> returnDirectTools;
+
+    private volatile McpToolState mcpToolState = McpToolState.empty();
+    private volatile boolean mcpStopped;
     private Map<String, Map<String, String>> serverConfigs;
-    private volatile Map<String, String> toolToServerName;
 
     public OpenAIEndpoint(String uri, OpenAIComponent component, OpenAIConfiguration configuration) {
         super(uri, component);
@@ -118,26 +118,30 @@ public class OpenAIEndpoint extends DefaultEndpoint {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
+        mcpStopped = false;
         client = createClient();
         initializeMcpServers();
     }
 
     @Override
     protected void doStop() throws Exception {
-        if (toolClientMap != null) {
-            for (McpSyncClient mcpClient : new HashSet<>(toolClientMap.values())) {
-                try {
-                    mcpClient.closeGracefully();
-                } catch (Exception e) {
-                    LOG.warn("Error closing MCP client: {}", e.getMessage(), e);
-                }
-            }
-            toolClientMap = null;
+        Set<McpSyncClient> toClose;
+        globalMcpLock.lock();
+        try {
+            mcpStopped = true;
+            toClose = new HashSet<>(mcpToolState.toolClientMap().values());
+            mcpToolState = McpToolState.empty();
+        } finally {
+            globalMcpLock.unlock();
         }
 
-        cachedMcpTools = null;
-        returnDirectTools = null;
-        toolToServerName = null;
+        for (McpSyncClient mcpClient : toClose) {
+            try {
+                mcpClient.closeGracefully();
+            } catch (Exception e) {
+                LOG.warn("Error closing MCP client: {}", e.getMessage(), e);
+            }
+        }
 
         if (client != null) {
             client.close();
@@ -156,11 +160,6 @@ public class OpenAIEndpoint extends DefaultEndpoint {
 
         mcpClientLocks = new HashMap<>();
 
-        cachedMcpTools = new ArrayList<>();
-        toolClientMap = new HashMap<>();
-        returnDirectTools = new HashSet<>();
-        toolToServerName = new HashMap<>();
-
         // Group flat keys by server name: "fs.transportType" -> {"fs": {"transportType": ...}}
         serverConfigs = new HashMap<>();
         for (Map.Entry<String, Object> entry : mcpServerConfig.entrySet()) {
@@ -175,6 +174,11 @@ public class OpenAIEndpoint extends DefaultEndpoint {
             mcpClientLocks.putIfAbsent(serverName, new ReentrantLock());
         }
 
+        List<ChatCompletionFunctionTool> tools = new ArrayList<>();
+        Map<String, McpSyncClient> toolClientMap = new HashMap<>();
+        Map<String, String> toolToServerName = new HashMap<>();
+        Set<String> returnDirectTools = new HashSet<>();
+
         for (Map.Entry<String, Map<String, String>> entry : serverConfigs.entrySet()) {
             String serverName = entry.getKey();
             Map<String, String> props = entry.getValue();
@@ -187,11 +191,11 @@ public class OpenAIEndpoint extends DefaultEndpoint {
             LOG.debug("MCP server '{}' initialized, listing tools", serverName);
 
             McpSchema.ListToolsResult toolsResult = mcpClient.listTools();
-            List<McpSchema.Tool> tools = toolsResult.tools();
+            List<McpSchema.Tool> serverTools = toolsResult.tools();
 
-            cachedMcpTools.addAll(McpToolConverter.convert(tools));
+            tools.addAll(McpToolConverter.convert(serverTools));
 
-            for (McpSchema.Tool tool : tools) {
+            for (McpSchema.Tool tool : serverTools) {
                 if (toolClientMap.putIfAbsent(tool.name(), mcpClient) != null) {
                     LOG.warn("Duplicate MCP tool name '{}' from server '{}', using first registered", tool.name(),
                             serverName);
@@ -204,9 +208,11 @@ public class OpenAIEndpoint extends DefaultEndpoint {
                 }
             }
 
-            LOG.info("Initialized MCP server '{}' with {} tools: {}", serverName, tools.size(),
-                    tools.stream().map(McpSchema.Tool::name).toList());
+            LOG.info("Initialized MCP server '{}' with {} tools: {}", serverName, serverTools.size(),
+                    serverTools.stream().map(McpSchema.Tool::name).toList());
         }
+
+        mcpToolState = new McpToolState(tools, toolClientMap, toolToServerName, returnDirectTools);
     }
 
     private McpClientTransport createMcpTransport(String serverName, String transportType, Map<String, String> props)
@@ -300,7 +306,7 @@ public class OpenAIEndpoint extends DefaultEndpoint {
      * @return           the new (or already-reconnected) McpSyncClient, or null if reconnection failed
      */
     McpSyncClient reconnectMcpServer(McpSyncClient oldClient, String toolName) {
-        String serverName = toolToServerName.get(toolName);
+        String serverName = mcpToolState.toolToServerName().get(toolName);
         if (serverName == null || serverConfigs == null) {
             LOG.warn("Cannot reconnect: no server configuration found for tool '{}'", toolName);
             return null;
@@ -314,7 +320,7 @@ public class OpenAIEndpoint extends DefaultEndpoint {
 
         lock.lock();
         try {
-            McpSyncClient currClient = toolClientMap.get(toolName);
+            McpSyncClient currClient = mcpToolState.toolClientMap().get(toolName);
             if (currClient != null && currClient != oldClient) {
                 return currClient;
             }
@@ -355,32 +361,38 @@ public class OpenAIEndpoint extends DefaultEndpoint {
 
             List<McpSchema.Tool> tools = newClient.listTools().tools();
 
-            // Rebuild shared tool state, replacing this server's old tools with the freshly listed ones
-            Set<String> oldServerTools = toolsForServer(serverName);
-            List<ChatCompletionFunctionTool> newTools = new ArrayList<>(cachedMcpTools);
-            Map<String, McpSyncClient> newClientMap = new HashMap<>(toolClientMap);
-            Map<String, String> newToolToServer = new HashMap<>(toolToServerName);
-            Set<String> newReturnDirect = new HashSet<>(returnDirectTools);
-
-            newTools.removeIf(t -> oldServerTools.contains(t.function().name()));
-            newClientMap.keySet().removeIf(oldServerTools::contains);
-            newToolToServer.keySet().removeIf(oldServerTools::contains);
-            newReturnDirect.removeIf(oldServerTools::contains);
-
-            newTools.addAll(McpToolConverter.convert(tools));
-            for (McpSchema.Tool tool : tools) {
-                newClientMap.put(tool.name(), newClient);
-                newToolToServer.put(tool.name(), serverName);
-                if (isReturnDirect(tool)) {
-                    newReturnDirect.add(tool.name());
+            globalMcpLock.lock();
+            try {
+                if (mcpStopped) {
+                    newClient.closeGracefully();
+                    return null;
                 }
-            }
+                // Rebuild shared tool state, replacing this server's old tools with the freshly listed ones
+                Set<String> oldServerTools = toolsForServer(serverName);
+                List<ChatCompletionFunctionTool> newTools = new ArrayList<>(mcpToolState.tools());
+                Map<String, McpSyncClient> newClientMap = new HashMap<>(mcpToolState.toolClientMap());
+                Map<String, String> newToolToServer = new HashMap<>(mcpToolState.toolToServerName());
+                Set<String> newReturnDirect = new HashSet<>(mcpToolState.returnDirectTools());
 
-            // Publish immutable snapshots for lock-free readers
-            cachedMcpTools = List.copyOf(newTools);
-            toolClientMap = Map.copyOf(newClientMap);
-            toolToServerName = Map.copyOf(newToolToServer);
-            returnDirectTools = Set.copyOf(newReturnDirect);
+                newTools.removeIf(t -> oldServerTools.contains(t.function().name()));
+                newClientMap.keySet().removeIf(oldServerTools::contains);
+                newToolToServer.keySet().removeIf(oldServerTools::contains);
+                newReturnDirect.removeIf(oldServerTools::contains);
+
+                newTools.addAll(McpToolConverter.convert(tools));
+                for (McpSchema.Tool tool : tools) {
+                    newClientMap.put(tool.name(), newClient);
+                    newToolToServer.put(tool.name(), serverName);
+                    if (isReturnDirect(tool)) {
+                        newReturnDirect.add(tool.name());
+                    }
+                }
+
+                // Publish immutable snapshots for lock-free readers
+                mcpToolState = new McpToolState(newTools, newClientMap, newToolToServer, newReturnDirect);
+            } finally {
+                globalMcpLock.unlock();
+            }
 
             LOG.info("Reconnected MCP server '{}' with {} tools: {}", serverName, tools.size(),
                     tools.stream().map(McpSchema.Tool::name).toList());
@@ -392,7 +404,7 @@ public class OpenAIEndpoint extends DefaultEndpoint {
     }
 
     private Set<String> toolsForServer(String serverName) {
-        return toolToServerName.entrySet().stream()
+        return mcpToolState.toolToServerName().entrySet().stream()
                 .filter(e -> serverName.equals(e.getValue()))
                 .map(Map.Entry::getKey)
                 .collect(Collectors.toSet());
@@ -568,37 +580,40 @@ public class OpenAIEndpoint extends DefaultEndpoint {
         return client;
     }
 
-    public List<ChatCompletionFunctionTool> getMcpTools() {
-        return cachedMcpTools;
+    public void addReturnDirectTool(String toolName) {
+        globalMcpLock.lock();
+        try {
+            Set<String> newReturnDirect = new HashSet<>(mcpToolState.returnDirectTools());
+            newReturnDirect.add(toolName);
+            mcpToolState = new McpToolState(
+                    mcpToolState.tools(), mcpToolState.toolClientMap(),
+                    mcpToolState.toolToServerName(), newReturnDirect);
+        } finally {
+            globalMcpLock.unlock();
+        }
     }
 
-    public Map<String, McpSyncClient> getToolClientMap() {
-        return toolClientMap;
+    public void removeReturnDirectTool(String toolName) {
+        globalMcpLock.lock();
+        try {
+            Set<String> newReturnDirect = new HashSet<>(mcpToolState.returnDirectTools());
+            newReturnDirect.remove(toolName);
+            mcpToolState = new McpToolState(
+                    mcpToolState.tools(), mcpToolState.toolClientMap(),
+                    mcpToolState.toolToServerName(), newReturnDirect);
+        } finally {
+            globalMcpLock.unlock();
+        }
     }
 
-    public Set<String> getReturnDirectTools() {
-        return returnDirectTools;
+    McpToolState getMcpToolState() {
+        return mcpToolState;
     }
 
     // Package-private setters for testing
-    void setMcpTools(List<ChatCompletionFunctionTool> tools) {
-        this.cachedMcpTools = tools;
-    }
 
-    void setToolClientMap(Map<String, McpSyncClient> map) {
-        this.toolClientMap = map;
-    }
-
-    void setReturnDirectTools(Set<String> tools) {
-        this.returnDirectTools = tools;
-    }
-
-    void setToolToServerName(Map<String, String> map) {
-        this.toolToServerName = map;
-    }
-
-    Map<String, String> getToolToServerName() {
-        return toolToServerName;
+    void setMcpToolState(McpToolState state) {
+        this.mcpToolState = state;
     }
 
     void setServerConfigs(Map<String, Map<String, String>> configs) {

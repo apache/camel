@@ -124,8 +124,7 @@ public class OpenAIToolExecutionProducer extends DefaultProducer {
                         .build()));
 
         // Execute each tool call via MCP and add tool result messages
-        Map<String, McpSyncClient> toolClientMap = getEndpoint().getToolClientMap();
-        if (toolClientMap == null || toolClientMap.isEmpty()) {
+        if (getEndpoint().getMcpToolState().toolClientMap().isEmpty()) {
             throw new IllegalStateException(
                     "No MCP tool clients configured on the endpoint. Configure mcpServer.* parameters.");
         }
@@ -136,7 +135,8 @@ public class OpenAIToolExecutionProducer extends DefaultProducer {
             String argsJson = toolCall.asFunction().function().arguments();
             String toolCallId = toolCall.asFunction().id();
 
-            McpSyncClient mcpClient = toolClientMap.get(toolName);
+            McpToolState mcpToolState = getEndpoint().getMcpToolState();
+            McpSyncClient mcpClient = mcpToolState.toolClientMap().get(toolName);
             if (mcpClient == null) {
                 throw new IllegalStateException(
                         "Tool '" + toolName + "' not found in any configured MCP server");

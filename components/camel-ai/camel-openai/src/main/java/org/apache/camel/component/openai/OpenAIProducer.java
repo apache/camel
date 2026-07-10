@@ -26,7 +26,6 @@ import java.util.Base64;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -182,7 +181,7 @@ public class OpenAIProducer extends DefaultAsyncProducer {
         applyAdditionalBodyProperties(paramsBuilder, config);
 
         // Add MCP tools to the request if configured
-        List<ChatCompletionFunctionTool> mcpTools = getEndpoint().getMcpTools();
+        List<ChatCompletionFunctionTool> mcpTools = getEndpoint().getMcpToolState().tools();
         boolean hasMcpTools = mcpTools != null && !mcpTools.isEmpty();
         if (hasMcpTools) {
             for (ChatCompletionFunctionTool tool : mcpTools) {
@@ -415,7 +414,7 @@ public class OpenAIProducer extends DefaultAsyncProducer {
 
     private void processNonStreaming(Exchange exchange, ChatCompletionCreateParams params, OpenAIConfiguration config)
             throws Exception {
-        List<ChatCompletionFunctionTool> mcpTools = getEndpoint().getMcpTools();
+        List<ChatCompletionFunctionTool> mcpTools = getEndpoint().getMcpToolState().tools();
         boolean hasMcpTools = mcpTools != null && !mcpTools.isEmpty();
 
         if (!hasMcpTools || !config.isAutoToolExecution()) {
@@ -452,11 +451,9 @@ public class OpenAIProducer extends DefaultAsyncProducer {
             Exchange exchange, ChatCompletionCreateParams params, OpenAIConfiguration config)
             throws Exception {
 
-        Map<String, McpSyncClient> toolClientMap = getEndpoint().getToolClientMap();
-        Set<String> returnDirectTools = getEndpoint().getReturnDirectTools();
         int maxIterations = config.getMaxToolIterations();
         LOG.debug("Starting agentic loop with maxToolIterations={}, available tools: {}", maxIterations,
-                toolClientMap.keySet());
+                getEndpoint().getMcpToolState().toolClientMap().keySet());
 
         // Rebuild the builder from the immutable params so we can accumulate messages
         ChatCompletionCreateParams.Builder paramsBuilder = params.toBuilder();
@@ -513,7 +510,8 @@ public class OpenAIProducer extends DefaultAsyncProducer {
                 String toolCallId = toolCall.asFunction().id();
                 toolCallsLog.add(toolName);
 
-                McpSyncClient mcpClient = toolClientMap.get(toolName);
+                McpToolState mcpToolState = getEndpoint().getMcpToolState();
+                McpSyncClient mcpClient = mcpToolState.toolClientMap().get(toolName);
                 if (mcpClient == null) {
                     throw new IllegalStateException(
                             "Tool '" + toolName + "' not found in any configured MCP server");
@@ -532,7 +530,7 @@ public class OpenAIProducer extends DefaultAsyncProducer {
                         allReturnDirect = false;
                     } else {
                         resultContent = extractTextContent(toolResult.content());
-                        if (!returnDirectTools.contains(toolName)) {
+                        if (!mcpToolState.returnDirectTools().contains(toolName)) {
                             allReturnDirect = false;
                         }
                     }
