@@ -282,7 +282,7 @@ class AiPanel {
     void openProviderSwitch() {
         providerSwitchPopup.open(providerChoicesForTesting != null
                 ? providerChoicesForTesting
-                : providerSelector.buildChoices(AiProviderSelector.envSnapshot()));
+                : providerSelector.buildChoices());
     }
 
     boolean handleMouseEvent(MouseEvent me) {
@@ -750,7 +750,7 @@ class AiPanel {
         for (ConversationEntry entry : conversation) {
             switch (entry.role()) {
                 case USER -> md.append("**You:** ").append(entry.text()).append("\n\n");
-                case ASSISTANT -> md.append(toHardBreaks(entry.text())).append("\n\n");
+                case ASSISTANT -> md.append("**TUI:** ").append(toHardBreaks(entry.text())).append("\n\n");
                 case ERROR -> md.append("**Error:** ").append(entry.text()).append("\n\n");
                 case SYSTEM -> md.append(toHardBreaks(entry.text())).append("\n\n");
             }
@@ -844,10 +844,12 @@ class AiPanel {
         Rect spinnerArea = new Rect(area.left(), area.top(), 2, 1);
         frame.renderStatefulWidget(spinner, spinnerArea, new SpinnerState(System.currentTimeMillis() / 100));
 
+        long dots = (System.currentTimeMillis() / 500) % 4;
         String text = " " + (thinkingVerb != null ? thinkingVerb : THINKING_VERBS.get(0));
         if (elapsed > 0) {
             text += " (" + elapsed + "s)";
         }
+        text += ".".repeat((int) dots + 1);
         frame.renderWidget(Paragraph.from(Line.from(Span.styled(text, Style.EMPTY.fg(Theme.accent())))),
                 new Rect(area.left() + 2, area.top(), Math.max(0, area.width() - 2), 1));
     }
@@ -1181,8 +1183,8 @@ class AiPanel {
         return providerSwitchPopup.isVisible();
     }
 
-    List<AiProviderSwitchPopup.ProviderChoice> buildProviderChoicesForTesting(Map<String, String> env) {
-        return providerSelector.buildChoices(env);
+    List<AiProviderSwitchPopup.ProviderChoice> buildProviderChoicesForTesting() {
+        return providerSelector.buildChoices();
     }
 
     private final class PanelSlashCommandContext implements AiSlashCommandContext {

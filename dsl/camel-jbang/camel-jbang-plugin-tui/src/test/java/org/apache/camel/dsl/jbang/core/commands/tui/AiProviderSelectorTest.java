@@ -18,7 +18,6 @@ package org.apache.camel.dsl.jbang.core.commands.tui;
 
 import java.nio.file.Path;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.camel.dsl.jbang.core.commands.LlmClient;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
@@ -54,50 +53,29 @@ class AiProviderSelectorTest {
     }
 
     @Test
-    void noEnvKeysYieldsOnlyDefaultAndOllama(@TempDir Path tempDir) {
+    void buildChoicesAlwaysListsAllProvidersForManualSelection(@TempDir Path tempDir) {
         useHome(tempDir);
 
-        List<AiProviderSwitchPopup.ProviderChoice> choices = selector.buildChoices(Map.of());
+        List<AiProviderSwitchPopup.ProviderChoice> choices = selector.buildChoices();
 
-        assertEquals(List.of("auto", "ollama"),
-                choices.stream().map(AiProviderSwitchPopup.ProviderChoice::provider).toList());
+        assertEquals(List.of("auto", "anthropic", "openai", "ollama"),
+                choices.stream().map(AiProviderSwitchPopup.ProviderChoice::provider).toList(),
+                "all known providers must be offered, even without a detected API key, so they remain selectable");
         assertTrue(choices.get(0).persistedDefault());
     }
 
     @Test
-    void anthropicKeyAddsAnthropicUnlessAlreadyDefault(@TempDir Path tempDir) {
+    void defaultProviderIsNotDuplicated(@TempDir Path tempDir) {
         useHome(tempDir);
-
-        List<AiProviderSwitchPopup.ProviderChoice> choices
-                = selector.buildChoices(Map.of("ANTHROPIC_API_KEY", "sk-test"));
-        assertEquals(List.of("auto", "anthropic", "ollama"),
-                choices.stream().map(AiProviderSwitchPopup.ProviderChoice::provider).toList());
-
         TuiSettings settings = TuiSettings.load();
         settings.setAiProvider("anthropic");
         settings.save();
 
-        List<AiProviderSwitchPopup.ProviderChoice> withAnthropicDefault
-                = selector.buildChoices(Map.of("ANTHROPIC_API_KEY", "sk-test"));
-        assertEquals(List.of("anthropic", "ollama"),
-                withAnthropicDefault.stream().map(AiProviderSwitchPopup.ProviderChoice::provider).toList(),
+        List<AiProviderSwitchPopup.ProviderChoice> choices = selector.buildChoices();
+
+        assertEquals(List.of("anthropic", "openai", "ollama"),
+                choices.stream().map(AiProviderSwitchPopup.ProviderChoice::provider).toList(),
                 "anthropic must not be listed twice when it's already the default");
-    }
-
-    @Test
-    void openaiKeyOrLlmApiKeyBothAddOpenaiOnlyOnce(@TempDir Path tempDir) {
-        useHome(tempDir);
-
-        List<AiProviderSwitchPopup.ProviderChoice> viaOpenaiKey
-                = selector.buildChoices(Map.of("OPENAI_API_KEY", "sk-test"));
-        assertEquals(List.of("auto", "openai", "ollama"),
-                viaOpenaiKey.stream().map(AiProviderSwitchPopup.ProviderChoice::provider).toList());
-
-        List<AiProviderSwitchPopup.ProviderChoice> viaBothKeys
-                = selector.buildChoices(Map.of("OPENAI_API_KEY", "sk-test", "LLM_API_KEY", "sk-other"));
-        assertEquals(List.of("auto", "openai", "ollama"),
-                viaBothKeys.stream().map(AiProviderSwitchPopup.ProviderChoice::provider).toList(),
-                "openai must appear only once even when both env vars are set");
     }
 
     @Test
@@ -107,9 +85,9 @@ class AiProviderSelectorTest {
         settings.setAiProvider("ollama");
         settings.save();
 
-        List<AiProviderSwitchPopup.ProviderChoice> choices = selector.buildChoices(Map.of());
+        List<AiProviderSwitchPopup.ProviderChoice> choices = selector.buildChoices();
 
-        assertEquals(List.of("ollama"),
+        assertEquals(List.of("ollama", "anthropic", "openai"),
                 choices.stream().map(AiProviderSwitchPopup.ProviderChoice::provider).toList());
     }
 

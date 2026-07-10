@@ -18,31 +18,26 @@ package org.apache.camel.dsl.jbang.core.commands.tui;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.apache.camel.dsl.jbang.core.commands.LlmClient;
 
 /**
  * Resolves AI provider/model/url choices for the AI panel: builds the ordered list of choices shown in the
- * {@link AiProviderSwitchPopup} from persisted {@link TuiSettings} and API-key environment variables, and applies a
- * chosen provider/model/url onto an {@link LlmClient}. Kept independent of {@link AiPanel} so these rules (choice
- * ordering, de-duplication against the persisted default, provider-name validation) can be tested directly instead of
- * only through the panel's key-event handling.
+ * {@link AiProviderSwitchPopup} from persisted {@link TuiSettings}, and applies a chosen provider/model/url onto an
+ * {@link LlmClient}. Kept independent of {@link AiPanel} so these rules (choice ordering, de-duplication against the
+ * persisted default, provider-name validation) can be tested directly instead of only through the panel's key-event
+ * handling.
  */
 final class AiProviderSelector {
 
-    private static final List<String> API_KEY_ENV_VARS = List.of("ANTHROPIC_API_KEY", "OPENAI_API_KEY", "LLM_API_KEY");
-
     /**
-     * Builds the ordered provider choices for the switch popup: the persisted default first (always present, even
-     * without a matching API key, since it may point at a local endpoint like Ollama that needs none), followed by one
-     * entry per detected API key that isn't already the default, followed by {@code ollama} unless it's already the
-     * default.
+     * Builds the ordered provider choices for the switch popup: the persisted default first, followed by every other
+     * known provider (regardless of whether an API key is currently detected for it, so it stays available for manual
+     * selection), skipping whichever one is already the default to avoid listing it twice.
      */
-    List<AiProviderSwitchPopup.ProviderChoice> buildChoices(Map<String, String> env) {
+    List<AiProviderSwitchPopup.ProviderChoice> buildChoices() {
         TuiSettings settings = TuiSettings.load();
         String defaultProvider = settings.getAiProvider() != null ? settings.getAiProvider() : "auto";
         List<AiProviderSwitchPopup.ProviderChoice> choices = new ArrayList<>();
@@ -51,33 +46,16 @@ final class AiProviderSelector {
                 settings.getAiModel() != null ? settings.getAiModel() : "",
                 settings.getAiUrl() != null ? settings.getAiUrl() : "",
                 true));
-        if (hasEnv(env, "ANTHROPIC_API_KEY") && !"anthropic".equals(defaultProvider)) {
+        if (!"anthropic".equals(defaultProvider)) {
             choices.add(new AiProviderSwitchPopup.ProviderChoice("anthropic", "", "", false));
         }
-        if ((hasEnv(env, "OPENAI_API_KEY") || hasEnv(env, "LLM_API_KEY")) && !"openai".equals(defaultProvider)) {
+        if (!"openai".equals(defaultProvider)) {
             choices.add(new AiProviderSwitchPopup.ProviderChoice("openai", "", "", false));
         }
         if (!"ollama".equals(defaultProvider)) {
             choices.add(new AiProviderSwitchPopup.ProviderChoice("ollama", "", "", false));
         }
         return choices;
-    }
-
-    /** Snapshot of the API-key environment variables {@link #buildChoices(Map)} looks for. */
-    static Map<String, String> envSnapshot() {
-        Map<String, String> env = new LinkedHashMap<>();
-        for (String key : API_KEY_ENV_VARS) {
-            String value = System.getenv(key);
-            if (value != null) {
-                env.put(key, value);
-            }
-        }
-        return env;
-    }
-
-    private static boolean hasEnv(Map<String, String> env, String key) {
-        String value = env.get(key);
-        return value != null && !value.isBlank();
     }
 
     /**
