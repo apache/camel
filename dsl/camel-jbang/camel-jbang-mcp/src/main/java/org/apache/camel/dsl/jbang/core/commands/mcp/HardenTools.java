@@ -17,7 +17,11 @@
 package org.apache.camel.dsl.jbang.core.commands.mcp;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -27,6 +31,7 @@ import io.quarkiverse.mcp.server.ToolArg;
 import io.quarkiverse.mcp.server.ToolCallException;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.tooling.model.ComponentModel;
+import org.apache.camel.tooling.model.SecurityAdvisoryModel;
 
 /**
  * MCP Tool for providing security hardening context and analysis for Camel routes.
@@ -37,11 +42,17 @@ import org.apache.camel.tooling.model.ComponentModel;
 @ApplicationScoped
 public class HardenTools {
 
+    /** Upper bound of known-CVE advisories embedded in the hardening context to keep the response focused. */
+    private static final int MAX_ADVISORIES = 20;
+
     @Inject
     CatalogService catalogService;
 
     @Inject
     SecurityData securityData;
+
+    @Inject
+    AdvisoryService advisoryService;
 
     /**
      * Tool to get security hardening context for a Camel route.
@@ -49,8 +60,10 @@ public class HardenTools {
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = "Get security hardening analysis context for a Camel route. " +
                         "Returns security-sensitive components, potential vulnerabilities, " +
-                        "and security best practices. Use this context to provide security " +
-                        "hardening recommendations for the route.")
+                        "security best practices, and known published CVE advisories affecting " +
+                        "the components used by the route at the given Camel version (advisory data " +
+                        "from https://camel.apache.org/security/ shipped with the Camel catalog). " +
+                        "Use this context to provide security hardening recommendations for the route.")
     public HardenContextResult camel_route_harden_context(
             @ToolArg(description = "The Camel route content (YAML, XML, or Java DSL)") String route,
             @ToolArg(description = "Route format: yaml, xml, or java (default: yaml)") String format,
@@ -85,6 +98,27 @@ public class HardenTools {
             // Best practices
             List<String> bestPractices = List.copyOf(securityData.getBestPractices());
 
+            // Known published CVE advisories affecting the components used by the route.
+            // Failures here must degrade to a note, never break the hardening analysis.
+            List<AdvisoryService.AdvisoryView> knownAdvisories = null;
+            String advisoriesNote = null;
+            try {
+                String effectiveVersion = camelVersion != null && !camelVersion.isBlank()
+                        ? camelVersion : catalog.getCatalogVersion();
+                knownAdvisories = matchAdvisories(
+                        advisoryService.advisories(), catalog, securityComponentNames, effectiveVersion);
+                if (knownAdvisories.size() > MAX_ADVISORIES) {
+                    advisoriesNote = "Showing " + MAX_ADVISORIES + " of " + knownAdvisories.size()
+                                     + " matched advisories; use the camel_security_advisories tool for the full list.";
+                    knownAdvisories = knownAdvisories.subList(0, MAX_ADVISORIES);
+                }
+                if (knownAdvisories.isEmpty()) {
+                    knownAdvisories = null;
+                }
+            } catch (Exception e) {
+                advisoriesNote = "Known-CVE advisory check skipped: " + e.getMessage();
+            }
+
             // Summary
             HardenSummary summary = new HardenSummary(
                     securityComponents.size(),
@@ -95,7 +129,8 @@ public class HardenTools {
                     usesTLS(route), hasAuthentication(route));
 
             return new HardenContextResult(
-                    resolvedFormat, route, securityComponents, securityAnalysis, bestPractices, summary);
+                    resolvedFormat, route, securityComponents, securityAnalysis, bestPractices,
+                    knownAdvisories, advisoriesNote, summary);
         } catch (ToolCallException e) {
             throw e;
         } catch (Throwable e) {
@@ -118,6 +153,34 @@ public class HardenTools {
         }
 
         return found;
+    }
+
+    /**
+     * Match published CVE advisories against the components used by the route, keeping only advisories that affect the
+     * given Camel version (advisories whose affected ranges cannot be parsed are kept for the LLM to judge). Components
+     * are matched by Maven artifact id where the catalog knows it (e.g. scheme {@code https} maps to
+     * {@code camel-http}), with the scheme-derived {@code camel-<name>} as fallback.
+     */
+    private List<AdvisoryService.AdvisoryView> matchAdvisories(
+            List<SecurityAdvisoryModel> advisories, CamelCatalog catalog,
+            List<String> componentNames, String camelVersion) {
+
+        Set<String> artifacts = new LinkedHashSet<>();
+        for (String name : componentNames) {
+            ComponentModel model = catalog.componentModel(name);
+            if (model != null && model.getArtifactId() != null) {
+                artifacts.add(model.getArtifactId());
+            }
+            artifacts.add("camel-" + name);
+        }
+
+        Map<String, AdvisoryService.AdvisoryView> byCve = new LinkedHashMap<>();
+        for (String artifact : artifacts) {
+            for (AdvisoryService.AdvisoryView view : AdvisoryService.query(advisories, camelVersion, artifact, null)) {
+                byCve.putIfAbsent(view.cve(), view);
+            }
+        }
+        return new ArrayList<>(byCve.values());
     }
 
     /**
@@ -282,6 +345,7 @@ public class HardenTools {
     public record HardenContextResult(
             String format, String route, List<SecurityComponent> securitySensitiveComponents,
             SecurityAnalysis securityAnalysis, List<String> securityBestPractices,
+            List<AdvisoryService.AdvisoryView> knownSecurityAdvisories, String advisoriesNote,
             HardenSummary summary) {
     }
 

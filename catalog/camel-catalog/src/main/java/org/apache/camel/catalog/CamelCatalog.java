@@ -36,6 +36,7 @@ import org.apache.camel.tooling.model.MainModel;
 import org.apache.camel.tooling.model.OtherModel;
 import org.apache.camel.tooling.model.PojoBeanModel;
 import org.apache.camel.tooling.model.ReleaseModel;
+import org.apache.camel.tooling.model.SecurityAdvisoryModel;
 import org.apache.camel.tooling.model.TransformerModel;
 
 /**
@@ -662,6 +663,13 @@ public interface CamelCatalog {
      * Load all Camel Quarkus releases from catalog
      */
     List<ReleaseModel> camelQuarkusReleases();
+
+    /**
+     * Load all published Camel CVE security advisories from catalog (the data behind
+     * <a href="https://camel.apache.org/security/">camel.apache.org/security</a>, synced into the catalog when it was
+     * built).
+     */
+    List<SecurityAdvisoryModel> camelSecurityAdvisories();
 
     /**
      * Checks whether two endpoint URIs refer to the same logical endpoint.

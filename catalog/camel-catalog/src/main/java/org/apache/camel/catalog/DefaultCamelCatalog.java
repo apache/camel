@@ -47,6 +47,7 @@ import org.apache.camel.tooling.model.MainModel;
 import org.apache.camel.tooling.model.OtherModel;
 import org.apache.camel.tooling.model.PojoBeanModel;
 import org.apache.camel.tooling.model.ReleaseModel;
+import org.apache.camel.tooling.model.SecurityAdvisoryModel;
 import org.apache.camel.tooling.model.TransformerModel;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
@@ -685,6 +686,25 @@ public class DefaultCamelCatalog extends AbstractCachingCamelCatalog implements 
                 for (Object o : arr) {
                     JsonObject jo = (JsonObject) o;
                     answer.add(JsonMapper.generateReleaseModel(jo));
+                }
+                return answer;
+            } catch (Exception e) {
+                return Collections.emptyList();
+            }
+        });
+    }
+
+    @Override
+    public List<SecurityAdvisoryModel> camelSecurityAdvisories() {
+        return cache("camel-security-advisories.json", () -> {
+            try {
+                List<SecurityAdvisoryModel> answer = new ArrayList<>();
+                InputStream is = loadResource("advisories", "camel-security-advisories.json");
+                String json = CatalogHelper.loadText(is);
+                JsonArray arr = (JsonArray) Jsoner.deserialize(json);
+                for (Object o : arr) {
+                    JsonObject jo = (JsonObject) o;
+                    answer.add(JsonMapper.generateSecurityAdvisoryModel(jo));
                 }
                 return answer;
             } catch (Exception e) {

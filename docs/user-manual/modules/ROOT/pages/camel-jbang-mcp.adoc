@@ -194,7 +194,8 @@ The assistant discovers components, looks up documentation, builds a YAML route,
 === Understanding, security, and testing
 
 * _"Explain what this route does"_ — uses `camel_route_context` for catalog-enriched analysis
-* _"Analyze this route for security concerns"_ — uses `camel_route_harden_context` to detect hardcoded credentials, plain-text protocols, etc.
+* _"Analyze this route for security concerns"_ — uses `camel_route_harden_context` to detect hardcoded credentials, plain-text protocols, known CVE advisories, etc.
+* _"Is my Camel 4.10.1 project affected by known CVEs?"_ — uses `camel_security_advisories` to match the published Apache Camel security advisories against a Camel version or component
 * _"Generate a JUnit 5 test for this route"_ — uses `camel_route_test_scaffold` to produce test class with mock endpoints and test-infra stubs
 
 === Error diagnosis
@@ -366,8 +367,28 @@ plus prompts that provide structured multi-step workflows.
 | `camel_route_harden_context`
 | Analyzes a route for security concerns. Identifies security-sensitive components, assigns risk levels, detects
   issues like hardcoded credentials or plain-text protocols, and returns structured security findings alongside
-  best practices.
+  best practices and the known published CVE advisories affecting the components used by the route at the given
+  Camel version.
+
+| `camel_security_advisories`
+| Lists the published Apache Camel CVE security advisories (the data behind
+  https://camel.apache.org/security/[camel.apache.org/security]), optionally filtered by Camel version, component
+  and severity. Each advisory includes the summary, affected and fixed versions, mitigation, and a best-effort
+  verdict on whether the given Camel version is affected. Use it to answer questions such as "is my Camel 4.10.1
+  project affected by known CVEs?".
 |===
+
+==== Security advisory data
+
+The advisory data ships with the Camel catalog bundled in the MCP server, where it is synced from the official
+published Apache Camel security advisories (the sources of
+https://camel.apache.org/security/[camel.apache.org/security]) when Camel is built — the same way the known
+releases are synced. Lookups are therefore fully offline, only published advisories are included, and the data
+is as fresh as the Camel version of the MCP server: advisories published after that release are not included,
+so check the web page for the very latest. When the catalog carries no advisory data the tools report it as
+unavailable rather than returning an empty list, so a missing data set is never mistaken for "no known CVEs".
+The advisories are also browseable as MCP resources: `camel://security/advisories` (full list) and
+`camel://security/advisory/\{cve}` (detail for one CVE).
 
 === Error Diagnosis
 
