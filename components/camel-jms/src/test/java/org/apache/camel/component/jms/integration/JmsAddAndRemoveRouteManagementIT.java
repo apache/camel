@@ -27,9 +27,9 @@ import javax.management.ObjectName;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.ProducerTemplate;
-import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.AbstractJMSTest;
+import org.apache.camel.component.jms.JmsTestHelper;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.infra.core.CamelContextExtension;
@@ -101,10 +101,9 @@ public class JmsAddAndRemoveRouteManagementIT extends AbstractJMSTest {
             duringRef.set(during);
         });
 
-        // Wait for the route to be fully started — thread pool registration in JMX
-        // does not guarantee the JMS consumer has subscribed to the broker yet
-        Awaitility.await().atMost(10, TimeUnit.SECONDS)
-                .until(() -> context.getRouteController().getRouteStatus("myNewRoute") == ServiceStatus.Started);
+        // Wait for the JMS consumer to actually subscribe to the broker —
+        // thread pool registration in JMX does not guarantee the listener is ready
+        JmsTestHelper.waitForJmsConsumerRoutes(context, "myNewRoute");
 
         // Identify the thread pools added by the new route
         Set<ObjectName> addedPools = new HashSet<>(duringRef.get());
