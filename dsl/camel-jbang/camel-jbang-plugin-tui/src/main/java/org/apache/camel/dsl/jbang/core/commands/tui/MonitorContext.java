@@ -32,8 +32,8 @@ class MonitorContext {
     final AtomicReference<List<InfraInfo>> infraData;
     TuiRunner runner;
 
-    String selectedPid;
-    String lastSelectedName;
+    volatile String selectedPid;
+    volatile String lastSelectedName;
     int shellPercent;
     boolean logPinned;
     int logPinPercent;

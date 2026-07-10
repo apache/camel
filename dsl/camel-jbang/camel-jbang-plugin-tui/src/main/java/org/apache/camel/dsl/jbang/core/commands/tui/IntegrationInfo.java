@@ -18,6 +18,7 @@ package org.apache.camel.dsl.jbang.core.commands.tui;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 class IntegrationInfo {
     String pid;
@@ -84,7 +85,7 @@ class IntegrationInfo {
     final List<EndpointInfo> endpoints = new ArrayList<>();
     final List<CircuitBreakerInfo> circuitBreakers = new ArrayList<>();
     int errorCount;
-    final List<ErrorInfo> errors = new ArrayList<>();
+    final List<ErrorInfo> errors = new CopyOnWriteArrayList<>();
     boolean inflightBrowseEnabled;
     final List<InflightInfo> inflightExchanges = new ArrayList<>();
     final List<MicrometerMeterInfo> meters = new ArrayList<>();
